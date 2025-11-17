@@ -13,6 +13,18 @@ This project aims to make Sharia-compliant financial services accessible to the 
 
 Our mission is to democratize access to trustworthy, Sharia-compliant financial technology for everyone, regardless of background.
 
+## Freedom to Use
+
+This project is built entirely on open-source components and is licensed under the **MIT License**. This means you are free to use this project for:
+
+- 🎯 **Commercial projects** - Build commercial products and services
+- 🏢 **Enterprise solutions** - Deploy in enterprise environments
+- 🔬 **Research and education** - Use for academic and educational purposes
+- 🛠️ **Modifications and derivatives** - Fork, modify, and create derivative works
+- 📦 **Distribution** - Include in your own projects or distribute freely
+
+**No restrictions.** You can use this code for anything you want, with complete freedom and flexibility. The MIT License grants you broad rights while maintaining proper attribution.
+
 ## Getting Started
 
 ### Prerequisites
