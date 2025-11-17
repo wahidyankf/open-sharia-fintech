@@ -54,7 +54,18 @@ Once Phase 1 is complete, the architecture will be generalized to support:
 - **Community feedback** from local users helps refine the solution
 - **Gradual expansion** reduces complexity and ensures quality
 
-**Contributors from other regions are welcome!** Help us extend compliance to your jurisdiction.
+### Contributing
+
+**Contributions are currently closed** until the project patterns and architecture are stable enough to accept external contributions. This ensures we maintain code quality and regulatory compliance as we build the foundation.
+
+However, **you are welcome to fork this repository!** Feel free to:
+
+- Create your own fork for your region or use case
+- Experiment with extensions and modifications
+- Build upon this project for your specific needs
+- Share your improvements with the community
+
+Once the core patterns are established and the project is mature enough, we will open the contribution process. We look forward to collaborating with the community in the future!
 
 ## Getting Started
 
