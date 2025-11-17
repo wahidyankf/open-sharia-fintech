@@ -33,18 +33,67 @@ open-sharia-fintech/
 
 ## Code Quality & Git Hooks
 
-The project enforces code quality through automated git hooks:
+The project enforces code quality through automated git hooks managed by **Husky** and **lint-staged**:
 
-### Pre-commit Hook
+### Pre-commit Hook (`.husky/pre-commit`)
 
-- Runs **Prettier** to format staged files
-- Formats: JS/TS, JSON, Markdown, YAML, CSS/SCSS, HTML
+Runs automatically before a commit is created:
 
-### Commit-msg Hook
+1. **Lint-staged** selects staged files
+2. **Prettier** formats matching files:
+   - `*.{js,jsx,ts,tsx,mjs,cjs}` - JavaScript/TypeScript
+   - `*.json` - JSON files
+   - `*.md` - Markdown
+   - `*.{yml,yaml}` - YAML
+   - `*.{css,scss}` - Styles
+   - `*.html` - HTML
+3. Formatted files are automatically staged
+4. Commit blocked if any issues found
 
-- Runs **Commitlint** to validate commit messages
-- Enforces **Conventional Commits** format: `type(scope): description`
-- Valid types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `revert`, `ci`
+### Commit-msg Hook (`.husky/commit-msg`)
+
+Runs after pre-commit hook, before commit is finalized:
+
+1. **Commitlint** validates the commit message
+2. Checks against **@commitlint/config-conventional** rules
+3. Rejects commit if format is invalid
+4. Provides helpful error message
+
+### Conventional Commits Rules
+
+**Format:**
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Validation Rules:**
+
+- `type` is REQUIRED and must be lowercase
+- `scope` is OPTIONAL (recommended)
+- `description` is REQUIRED (imperative mood, no period)
+- First line (header) ≤ 50 characters
+- Body lines (if present) ≤ 100 characters
+- Blank line between header and body
+
+**Valid types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `revert`
+
+**Valid examples:**
+
+- `feat(auth): add login functionality`
+- `fix: prevent race condition`
+- `docs: update API documentation`
+- `refactor(parser): extract common logic`
+
+**Common errors:**
+
+- Missing type: `⧗ type may not be empty`
+- Empty description: `⧗ subject may not be empty`
+- Line too long: `⧗ body's lines must not be longer than 100 characters`
 
 ## Common Development Commands
 
