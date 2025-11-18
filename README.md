@@ -192,6 +192,24 @@ This project strictly follows [Conventional Commits](https://www.conventionalcom
 
 All project documentation is organized using the [Diataxis framework](https://diataxis.fr/). See [`docs/README.md`](./docs/README.md) for more information.
 
+### Viewing Documentation with Obsidian
+
+The `docs/` folder is optimized to be read using [Obsidian](https://obsidian.md/), a powerful knowledge management tool. While the documentation works fine in any markdown viewer, Obsidian provides:
+
+- **Better navigation** through internal links between documents
+- **Visual graph view** to explore documentation structure
+- **Full-text search** across all documentation
+- **Quick navigation** with command palette
+- **Customizable themes** for comfortable reading
+
+To view the docs in Obsidian:
+
+1. [Download and install Obsidian](https://obsidian.md/)
+2. Open the `docs/` folder as a vault in Obsidian
+3. Navigate using the sidebar or use the graph view to explore relationships
+
+You can also view the documentation directly on GitHub or in any markdown viewer of your choice.
+
 ## License
 
 MIT

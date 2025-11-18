@@ -27,6 +27,14 @@ out/
 *.iml
 .gradle/
 
+# Obsidian
+.obsidian/
+**/.obsidian/
+.obsidian.json
+.obsidian-git-data
+.trash/
+.smart-connections/
+
 # Testing
 coverage/
 .nyc_output/

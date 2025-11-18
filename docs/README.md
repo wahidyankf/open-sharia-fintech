@@ -2,6 +2,8 @@
 
 This directory contains comprehensive documentation for the open-sharia-fintech repository, organized using the [Diátaxis framework](https://diataxis.fr/).
 
+> **💡 Tip:** This documentation folder is optimized for reading in [Obsidian](https://obsidian.md/). Open the `docs/` folder as a vault to enjoy enhanced navigation, graph view, and full-text search. However, all documentation is also readable in any markdown viewer or on GitHub.
+
 ## Organization Structure
 
 The documentation is divided into four main categories based on the Diátaxis framework:
