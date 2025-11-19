@@ -41,6 +41,10 @@ docs/.smart-connections/
 # Excalidraw files in docs
 docs/**/*.excalidraw.md
 
+# Journals (daily notes in docs)
+docs/journals/*
+!docs/journals/.gitkeep
+
 # Testing
 coverage/
 .nyc_output/
