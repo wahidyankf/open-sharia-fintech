@@ -27,13 +27,29 @@ out/
 *.iml
 .gradle/
 
-# Obsidian
-.obsidian/
-**/.obsidian/
+# Obsidian - Vault settings and cache
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+.obsidian/plugins/*/data.json
+.obsidian/plugins/*/cache/
 .obsidian.json
 .obsidian-git-data
 .trash/
 .smart-connections/
+
+# Obsidian plugins cache and temp
+.obsidian/plugins/text-extractor/cache/
+.obsidian/plugins/obsidian-pandoc/cache/
+.obsidian/plugins/better-search-views/data/
+
+# Excalidraw files
+*.excalidraw.md
+
+# Logs and temporary content
+logs/
+*.log
+*.bak
 
 # Testing
 coverage/
