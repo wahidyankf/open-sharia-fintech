@@ -16,7 +16,9 @@ Documentation conventions and standards for the open-sharia-fintech project. The
 
 ## Contents
 
-- [Documentation File Naming Convention](./ex-co__file-naming-convention.md) - Systematic approach to naming files in the documentation vault
+- [Documentation File Naming Convention](./ex-co__file-naming-convention.md) - Systematic approach to naming files with hierarchical prefixes
+- [Documentation Linking Convention](./ex-co__linking-convention.md) - Standards for linking between documentation files using GitHub-compatible markdown
+- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the four-category documentation organization framework we use
 
 ---
 

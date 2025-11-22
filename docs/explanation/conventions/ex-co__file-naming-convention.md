@@ -178,28 +178,6 @@ journals/2025-11/2025-11-19.md
 ht-de__release-process-2025-11.md
 ```
 
-## Linking Syntax
-
-Use GitHub-compatible markdown link syntax to ensure compatibility across GitHub web browser, Obsidian, and other markdown viewers:
-
-```markdown
-✅ Correct:
-[Getting Started](./tutorials/tu__getting-started-with-authentication.md)
-[Murabaha Structure](./explanation/sharia-compliance/ex-shco__murabaha-contract-structure.md)
-[Transaction API](./reference/api/endpoints/re-ap-en__transaction-endpoints.md)
-
-❌ Incorrect (Obsidian-only):
-[[tu__getting-started-with-authentication]]
-[[ex-shco__murabaha-contract-structure|Murabaha Structure]]
-[[getting-started.md]]
-```
-
-**Key points:**
-
-- Always include the `.md` extension
-- Use relative paths from the current file's location
-- Use descriptive link text instead of filename identifiers
-
 ## Special Cases
 
 ### Index Files
@@ -279,7 +257,8 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ## Related Documentation
 
-- [Explanation Index](../ex__explanation.md) - Overview of all conceptual documentation
+- [Linking Convention](./ex-co__linking-convention.md) - How to link between documentation files
+- [Diátaxis Framework](./ex-co__diataxis-framework.md) - Understanding the documentation organization framework
 - [Conventions Index](./ex-co__conventions.md) - Index of all documentation conventions
 
 ---

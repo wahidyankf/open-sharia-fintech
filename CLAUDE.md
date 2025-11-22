@@ -119,7 +119,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/):
 
 ## Documentation Standards
 
-All documentation must follow the conventions defined in [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md):
+All documentation must follow three core conventions defined in `docs/explanation/conventions/`:
 
 ### File Naming Convention
 
@@ -131,6 +131,7 @@ All documentation must follow the conventions defined in [`docs/explanation/conv
   - `re` = Reference
   - `ex` = Explanation
   - Multi-level: Add 2-letter abbreviations for subdirectories (e.g., `ex-co` = explanation/conventions)
+- **Details:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
 
 ### Linking Convention
 
@@ -138,11 +139,21 @@ All documentation must follow the conventions defined in [`docs/explanation/conv
 - Always include the `.md` extension
 - Use relative paths from the current file's location
 - Avoid Obsidian-only wiki link syntax (`[[filename]]`)
+- **Details:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
+
+### Diátaxis Framework
+
+- All documentation organized into **four categories**: Tutorials, How-To, Reference, Explanation
+- Each category serves different user needs (learning, problem-solving, lookup, understanding)
+- File prefixes map to categories (`tu`, `ht`, `re`, `ex`)
+- **Details:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
 
 ### Key Resources
 
-- **File Naming Convention Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Conventions Index:** [`docs/explanation/conventions/ex-co__conventions.md`](docs/explanation/conventions/ex-co__conventions.md)
+- **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
+- **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
+- **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
 
 ## Important Notes
 

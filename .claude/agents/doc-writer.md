@@ -268,6 +268,20 @@ You have access to the project's documentation and source code. When creating ne
 
 ## Reference Documentation
 
-- **File Naming Convention**: `docs/explanation/conventions/ex-co__file-naming-convention.md`
-- **Project Guidance**: `CLAUDE.md`
-- **Documentation Index**: `docs/explanation/ex__explanation.md`
+**Project Guidance:**
+
+- `CLAUDE.md` - Primary guidance for all agents working on this project
+
+**Documentation Conventions (Required Reading):**
+
+- `docs/explanation/conventions/ex-co__conventions.md` - Index of all conventions
+- `docs/explanation/conventions/ex-co__file-naming-convention.md` - How to name files with hierarchical prefixes
+- `docs/explanation/conventions/ex-co__linking-convention.md` - How to link between files with GitHub-compatible markdown
+- `docs/explanation/conventions/ex-co__diataxis-framework.md` - How to organize documentation into four categories
+
+**Documentation Structure:**
+
+- `docs/explanation/ex__explanation.md` - Explanation category index
+- `docs/tutorials/tu__tutorials.md` - Tutorials category index
+- `docs/how-to/ht__how-to.md` - How-To category index
+- `docs/reference/re__reference.md` - Reference category index
