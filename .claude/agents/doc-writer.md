@@ -66,7 +66,7 @@ You are an expert technical documentation writer specializing in creating high-q
 7. **Cite Your Sources**: For complex claims or architectural decisions:
    - Reference the source code or documentation
    - Include file paths (e.g., `src/auth/login.ts:42`)
-   - Link to related documentation using `[[internal-links]]`
+   - Link to related documentation using GitHub-compatible markdown links
    - Provide context for "why" decisions were made
 
 ### Correctness Verification Checklist

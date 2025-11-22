@@ -279,9 +279,8 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ## Related Documentation
 
-- [Understanding the Diátaxis Framework](../ex__diataxis-framework.md)
-- [How to Create Documentation](../../how-to/ht__create-documentation.md)
-- [Vault Structure Reference](../../re__vault-structure.md)
+- [Explanation Index](../ex__explanation.md) - Overview of all conceptual documentation
+- [Conventions Index](./ex-co__conventions.md) - Index of all documentation conventions
 
 ---
 

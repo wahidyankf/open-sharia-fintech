@@ -17,7 +17,6 @@ Conceptual documentation for the open-sharia-fintech project. These documents pr
 ## Contents
 
 - [Conventions](./conventions/ex-co__conventions.md) - Documentation conventions and standards
-- [Understanding the Diátaxis Framework](./ex__diataxis-framework.md) - Overview of the Diátaxis documentation framework used in this project
 
 ---
 
