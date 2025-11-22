@@ -178,20 +178,27 @@ journals/2025-11/2025-11-19.md
 ht-de__release-process-2025-11.md
 ```
 
-## Wiki Link Syntax
+## Linking Syntax
 
-In wiki links, **omit the `.md` extension**:
+Use GitHub-compatible markdown link syntax to ensure compatibility across GitHub web browser, Obsidian, and other markdown viewers:
 
 ```markdown
 ✅ Correct:
+[Getting Started](./tutorials/tu__getting-started-with-authentication.md)
+[Murabaha Structure](./explanation/sharia-compliance/ex-shco__murabaha-contract-structure.md)
+[Transaction API](./reference/api/endpoints/re-ap-en__transaction-endpoints.md)
+
+❌ Incorrect (Obsidian-only):
 [[tu__getting-started-with-authentication]]
 [[ex-shco__murabaha-contract-structure|Murabaha Structure]]
-[[re-ap-en__transaction-endpoints|Transaction API]]
-
-❌ Incorrect:
 [[getting-started.md]]
-[[tu__getting-started-with-authentication.md]]
 ```
+
+**Key points:**
+
+- Always include the `.md` extension
+- Use relative paths from the current file's location
+- Use descriptive link text instead of filename identifiers
 
 ## Special Cases
 
@@ -271,10 +278,10 @@ tu-au-oa-fl__authorization-code-flow.md
 
 ## Related Documentation
 
-- [[ex__diataxis-framework|Understanding the Diátaxis Framework]]
-- [[ht__create-documentation|How to Create Documentation]]
-- [[re__vault-structure|Vault Structure Reference]]
+- [Understanding the Diátaxis Framework](./ex__diataxis-framework.md)
+- [How to Create Documentation](../how-to/ht__create-documentation.md)
+- [Vault Structure Reference](../re__vault-structure.md)
 
 ---
 
-**Last Updated**: November 19, 2025
+**Last Updated**: November 22, 2025

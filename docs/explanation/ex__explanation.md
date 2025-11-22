@@ -16,8 +16,8 @@ Conceptual documentation for the open-sharia-fintech project. These documents pr
 
 ## Contents
 
-- [[ex__file-naming-convention|Documentation File Naming Convention]] - Systematic approach to naming files in the documentation vault
-- [[ex__diataxis-framework|Understanding the Diátaxis Framework]] - Overview of the Diátaxis documentation framework used in this project
+- [Documentation File Naming Convention](./ex__file-naming-convention.md) - Systematic approach to naming files in the documentation vault
+- [Understanding the Diátaxis Framework](./ex__diataxis-framework.md) - Overview of the Diátaxis documentation framework used in this project
 
 ---
 
