@@ -1,5 +1,5 @@
 ---
-title: "Explanation"
+title: Explanation
 description: Conceptual documentation for open-sharia-fintech
 category: explanation
 tags:
@@ -16,7 +16,7 @@ Conceptual documentation for the open-sharia-fintech project. These documents pr
 
 ## Contents
 
-- [Conventions](./conventions/ex-co__conventions.md) - Documentation conventions and standards
+- [Conventions](./conventions/README.md) - Documentation conventions and standards
 
 ---
 

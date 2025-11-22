@@ -155,7 +155,7 @@ All documentation must follow three core conventions defined in `docs/explanatio
 
 ### Key Resources
 
-- **Conventions Index:** [`docs/explanation/conventions/`](docs/explanation/conventions/) (displays README.md)
+- **Conventions Index:** [`docs/explanation/conventions/README.md`](docs/explanation/conventions/README.md)
 - **File Naming Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)

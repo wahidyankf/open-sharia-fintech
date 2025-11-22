@@ -61,17 +61,18 @@ Use standard markdown link syntax with relative paths:
 ```markdown
 <!-- Link to category index files -->
 
-[Tutorials](./tutorials/tu__tutorials.md)
-[How-To Guides](./how-to/ht__how-to.md)
-[Reference](./reference/re__reference.md)
-[Explanation](./explanation/ex__explanation.md)
+[Tutorials](./tutorials/README.md)
+[How-To Guides](./how-to/README.md)
+[Reference](./reference/README.md)
+[Explanation](./explanation/README.md)
 
 <!-- Link to nested files -->
 
 [File Naming Convention](./explanation/conventions/ex-co__file-naming-convention.md)
+[Conventions Index](./explanation/conventions/README.md)
 ```
 
-### Linking from Category Index (`docs/tutorials/tu__tutorials.md`)
+### Linking from Category Index (`docs/tutorials/README.md`)
 
 ```markdown
 <!-- Link to sibling files in same directory -->
@@ -85,11 +86,11 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to other categories -->
 
-[How-To Guides](../how-to/ht__how-to.md)
-[API Reference](../reference/re__api-reference.md)
+[How-To Guides](../how-to/README.md)
+[API Reference](../reference/README.md)
 ```
 
-### Linking from Nested Files (`docs/explanation/conventions/ex-co__conventions.md`)
+### Linking from Nested Files (`docs/explanation/conventions/README.md`)
 
 ```markdown
 <!-- Link to sibling files in same directory -->
@@ -99,7 +100,7 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to parent directory -->
 
-[Explanation Index](../ex__explanation.md)
+[Explanation Index](../README.md)
 
 <!-- Link to root -->
 
@@ -107,7 +108,7 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to other categories -->
 
-[Tutorials](../../tutorials/tu__tutorials.md)
+[Tutorials](../../tutorials/README.md)
 ```
 
 ## Correct vs. Incorrect Examples
@@ -141,7 +142,7 @@ For more information, refer to our [authentication tutorial](../../tutorials/aut
 
 <!-- Absolute paths -->
 
-[Conventions](/docs/explanation/conventions/ex-co__conventions.md)
+[Conventions](/docs/explanation/conventions/README.md)
 
 <!-- Using filename as link text -->
 

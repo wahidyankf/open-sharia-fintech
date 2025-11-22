@@ -43,7 +43,7 @@ The Diátaxis framework provides a clear structure that:
 
 ## Getting Started
 
-1. **New to the project?** Start with the [Tutorials](./tutorials/)
-2. **Trying to solve a problem?** Check the [How-To Guides](./how-to/)
-3. **Need specific details?** Refer to the [Reference](./reference/)
-4. **Want to understand the project?** Read the [Explanation](./explanation/)
+1. **New to the project?** Start with the [Tutorials](./tutorials/README.md)
+2. **Trying to solve a problem?** Check the [How-To Guides](./how-to/README.md)
+3. **Need specific details?** Refer to the [Reference](./reference/README.md)
+4. **Want to understand the project?** Read the [Explanation](./explanation/README.md)
