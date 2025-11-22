@@ -19,16 +19,19 @@ These versions are pinned in `package.json` under the `volta` field. When you ru
 
 ```
 open-sharia-fintech/
-├── docs/                 # Documentation (Diátaxis framework)
-│   ├── tutorials/       # Learning-oriented guides
-│   ├── how-to/          # Problem-oriented guides
-│   ├── reference/       # Technical reference
-│   └── explanation/     # Conceptual documentation
-├── .husky/              # Git hooks (pre-commit, commit-msg)
-├── package.json         # Node.js project manifest with Volta pinning
-├── commitlint.config.js # Commitlint configuration
-├── .gitignore          # Git ignore rules (Node.js and fintech)
-└── README.md           # Project README
+├── docs/                      # Documentation (Diátaxis framework)
+│   ├── tutorials/            # Learning-oriented guides
+│   ├── how-to/               # Problem-oriented guides
+│   ├── reference/            # Technical reference
+│   ├── explanation/          # Conceptual documentation
+│   │   └── conventions/      # Documentation conventions and standards
+│   └── journals/             # Daily notes (Obsidian vault)
+├── .husky/                    # Git hooks (pre-commit, commit-msg)
+├── package.json              # Node.js project manifest with Volta pinning
+├── commitlint.config.js       # Commitlint configuration
+├── .gitignore               # Git ignore rules (Node.js and fintech)
+├── CLAUDE.md                # This file - guidance for Claude Code
+└── README.md                # Project README
 ```
 
 ## Code Quality & Git Hooks
@@ -113,6 +116,33 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/):
 - **How-to Guides** (`docs/how-to/`) - Problem-solving guides
 - **Reference** (`docs/reference/`) - Technical documentation
 - **Explanation** (`docs/explanation/`) - Conceptual material
+
+## Documentation Standards
+
+All documentation must follow the conventions defined in [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md):
+
+### File Naming Convention
+
+- **Pattern:** `[prefix]__[content-identifier].[extension]`
+- **Examples:** `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `re-ap-en__endpoints.md`
+- **Prefixes:**
+  - `tu` = Tutorials
+  - `ht` = How-To
+  - `re` = Reference
+  - `ex` = Explanation
+  - Multi-level: Add 2-letter abbreviations for subdirectories (e.g., `ex-co` = explanation/conventions)
+
+### Linking Convention
+
+- Use **GitHub-compatible markdown links**: `[Display Text](./path/to/file.md)`
+- Always include the `.md` extension
+- Use relative paths from the current file's location
+- Avoid Obsidian-only wiki link syntax (`[[filename]]`)
+
+### Key Resources
+
+- **File Naming Convention Guide:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
+- **Conventions Index:** [`docs/explanation/conventions/ex-co__conventions.md`](docs/explanation/conventions/ex-co__conventions.md)
 
 ## Important Notes
 
