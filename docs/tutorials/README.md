@@ -1,7 +1,7 @@
 ---
 title: "Tutorials"
 description: Learning-oriented guides for open-sharia-fintech
-category: tutorials
+category: tutorial
 tags:
   - index
   - tutorials

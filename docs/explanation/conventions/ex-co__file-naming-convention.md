@@ -21,7 +21,7 @@ The naming convention serves three critical purposes:
 
 1. **Hierarchical Organization** - File names encode the folder path, making it possible to identify a file's location just by reading the filename
 2. **Discoverability** - Consistent prefixes make it easy to find related files across the documentation
-3. **Obsidian Compatibility** - Since Obsidian resolves wiki links by filename (not path), this system creates unambiguous identifiers
+3. **Global Uniqueness** - Hierarchical prefixes ensure no two files have the same name, preventing ambiguity across the entire documentation vault
 
 ## Scope
 
@@ -42,7 +42,7 @@ This naming convention applies to **all files in the `docs/` directory** (the Ob
 
 ## The Universal Pattern
 
-All files follow this pattern:
+All documentation files (except index files) follow this pattern:
 
 ```
 [hierarchical-prefix]__[content-identifier].[extension]
@@ -59,7 +59,9 @@ Breaking this down:
 
 **Why this pattern?**
 
-Obsidian resolves wiki links by filename only, not by folder path. Without encoded paths, two files with the same name in different folders would create ambiguity. By encoding the folder hierarchy in the filename, we make all files globally unique and self-documenting.
+By encoding the folder hierarchy in the filename, we make all files globally unique and self-documenting. This prevents naming conflicts and makes it immediately clear where a file belongs in the documentation structure.
+
+**Exception**: Index files use `README.md` for GitHub compatibility (see Special Cases below).
 
 ## How to Build a Prefix
 
@@ -73,6 +75,17 @@ The four main Diátaxis categories have short prefixes:
 - `ht` - How-To (`docs/how-to/`)
 - `re` - Reference (`docs/reference/`)
 - `ex` - Explanation (`docs/explanation/`)
+
+**Note on Directory Naming:**
+
+The directory names follow semantic conventions from the Diátaxis framework:
+
+- `tutorials/` - **Plural** (collection of discrete tutorial documents)
+- `how-to/` - **Singular category name** (the folder contains "how-to guides", matching the category name)
+- `reference/` - **Singular/mass noun** (reference material as a collective whole, like "reference library")
+- `explanation/` - **Singular/mass noun** (explanatory material as a collective whole)
+
+This apparent inconsistency is intentional and follows standard documentation conventions. Only `tutorials/` is plural because tutorials are naturally countable discrete units, while the other categories represent types of content that are better expressed as mass nouns.
 
 ### Abbreviation Strategy
 
@@ -188,7 +201,7 @@ Each category and subcategory should have an index file named `README.md`. This 
 
 ```
 docs/tutorials/README.md                          # Main category index
-docs/tutorials/authentication/README.md          # Subcategory index (follows prefix pattern)
+docs/tutorials/authentication/README.md          # Subcategory index (also uses README.md)
 docs/how-to/README.md                            # Main category index
 docs/reference/README.md                         # Main category index
 docs/explanation/README.md                       # Main category index

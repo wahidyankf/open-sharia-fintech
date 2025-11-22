@@ -122,6 +122,8 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/):
 - **Reference** (`docs/reference/`) - Technical documentation
 - **Explanation** (`docs/explanation/`) - Conceptual material
 
+**Note**: Directory names follow semantic conventions - `tutorials/` is plural (countable documents), while `how-to/`, `reference/`, and `explanation/` are singular/mass nouns (category names). This is intentional.
+
 ## Documentation Standards
 
 All documentation must follow three core conventions defined in `docs/explanation/conventions/`:
@@ -130,6 +132,7 @@ All documentation must follow three core conventions defined in `docs/explanatio
 
 - **Pattern:** `[prefix]__[content-identifier].[extension]`
 - **Examples:** `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `re-ap-en__endpoints.md`
+- **Exception:** Index files use `README.md` (no prefix) for GitHub compatibility
 - **Prefixes:**
   - `tu` = Tutorials
   - `ht` = How-To

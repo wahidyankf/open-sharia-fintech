@@ -188,6 +188,17 @@ docs/
         └── ex-co__diataxis-framework.md (this file)
 ```
 
+**Note on Directory Naming:**
+
+The directory names follow semantic conventions:
+
+- `tutorials/` is **plural** because tutorials are discrete, countable documents
+- `how-to/` is the **category name** (singular) matching "How-to Guides" from Diátaxis
+- `reference/` is a **mass noun** (like "reference library") representing reference material as a whole
+- `explanation/` is a **mass noun** representing explanatory content as a collective
+
+This is intentional and follows standard documentation naming conventions. See the [File Naming Convention](./ex-co__file-naming-convention.md) for more details.
+
 ### File Naming Integration
 
 Each category has a unique prefix that encodes the Diátaxis category:
