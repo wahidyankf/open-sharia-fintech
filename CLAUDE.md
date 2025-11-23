@@ -28,8 +28,10 @@ open-sharia-fintech/
 │   │   └── README.md         # Reference index
 │   ├── explanation/          # Conceptual documentation
 │   │   ├── README.md         # Explanation index
-│   │   └── conventions/      # Documentation conventions and standards
-│   │       └── README.md     # Conventions index
+│   │   ├── conventions/      # Documentation conventions and standards
+│   │   │   └── README.md     # Conventions index
+│   │   └── development/      # Development conventions and standards
+│   │       └── README.md     # Development index
 │   └── journals/             # Daily notes (Obsidian vault)
 ├── .husky/                    # Git hooks (pre-commit, commit-msg)
 ├── package.json              # Node.js project manifest with Volta pinning
@@ -124,37 +126,29 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/):
 
 **Note**: Directory names follow semantic conventions - `tutorials/` is plural (countable documents), while `how-to/`, `reference/`, and `explanation/` are singular/mass nouns (category names). This is intentional.
 
+**Special Directory**: The `journals/` directory is separate from the Diátaxis framework and contains daily notes in Obsidian vault format (`YYYY-MM/YYYY-MM-DD.md`).
+
 ## Documentation Standards
 
 All documentation must follow three core conventions defined in `docs/explanation/conventions/`:
 
 ### File Naming Convention
 
-- **Pattern:** `[prefix]__[content-identifier].[extension]`
-- **Examples:** `tu__getting-started.md`, `ex-co__file-naming-convention.md`, `re-ap-en__endpoints.md`
-- **Exception:** Index files use `README.md` (no prefix) for GitHub compatibility
-- **Prefixes:**
-  - `tu` = Tutorials
-  - `ht` = How-To
-  - `re` = Reference
-  - `ex` = Explanation
-  - Multi-level: Add 2-letter abbreviations for subdirectories (e.g., `ex-co` = explanation/conventions)
-- **Details:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path using 2-letter abbreviations (`tu`, `ht`, `re`, `ex` for root directories, plus subdirectory codes like `ex-co`). Index files use `README.md` (no prefix) for GitHub compatibility.
+
+**Details:** [`docs/explanation/conventions/ex-co__file-naming-convention.md`](docs/explanation/conventions/ex-co__file-naming-convention.md)
 
 ### Linking Convention
 
-- Use **GitHub-compatible markdown links**: `[Display Text](./path/to/file.md)`
-- Always include the `.md` extension
-- Use relative paths from the current file's location
-- Avoid Obsidian-only wiki link syntax (`[[filename]]`)
-- **Details:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
+Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension, use relative paths, and avoid Obsidian wiki links (`[[filename]]`). This ensures compatibility across GitHub web interface, Obsidian, and all other markdown viewers.
+
+**Details:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
 
 ### Diátaxis Framework
 
-- All documentation organized into **four categories**: Tutorials, How-To, Reference, Explanation
-- Each category serves different user needs (learning, problem-solving, lookup, understanding)
-- File prefixes map to categories (`tu`, `ht`, `re`, `ex`)
-- **Details:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
+All documentation organized into four categories (Tutorials, How-To, Reference, Explanation), each serving different user needs. File prefixes map to categories (`tu`, `ht`, `re`, `ex`).
+
+**Details:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
 
 ### Key Resources
 
@@ -173,11 +167,9 @@ All AI agents in `.claude/agents/` must follow the convention defined in `docs/e
 
 ### Key Requirements
 
-- **Frontmatter:** All agents must have `name`, `description`, `tools`, and `model` fields
-- **Tool Access:** Follow principle of least privilege (read-only, documentation, or development patterns)
-- **Model Selection:** Use `inherit` by default; specific models only when justified
-- **References:** All agents must reference CLAUDE.md and the AI agents convention
-- **Single Responsibility:** Each agent has one clear, focused purpose
+All agents must have `name`, `description`, `tools`, and `model` frontmatter fields, reference both CLAUDE.md and the AI agents convention, and maintain single responsibility with least-privilege tool access.
+
+**Details:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
 
 ### Resources
 

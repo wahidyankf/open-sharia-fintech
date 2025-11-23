@@ -19,6 +19,10 @@ Development conventions and standards for the open-sharia-fintech project. These
 
 - [AI Agents Convention](./ex-de__ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory
 
+## Related Documentation
+
+- [Documentation Conventions](../conventions/README.md) - File naming, linking, and Diátaxis framework standards
+
 ---
 
 **Last Updated**: November 23, 2025

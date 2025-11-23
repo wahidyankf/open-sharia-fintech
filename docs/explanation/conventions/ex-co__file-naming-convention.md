@@ -89,44 +89,13 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 ### Abbreviation Strategy
 
-Use a systematic 2-letter encoding rule for subdirectories:
+Use a systematic 2-letter encoding rule:
 
-1. **2 letters per word** (universal rule)
-   - Take first 2 letters of each word
-   - Examples: `authentication` → `au`, `api` → `ap`, `config` → `co`
+1. **2 letters per word** - Take first 2 letters (`authentication` → `au`, `api` → `ap`)
+2. **Multi-word directories** - Concatenate without hyphens (`sharia-compliance` → `shco`)
+3. **Single character words** - Add underscore suffix (`v` → `v_`)
 
-2. **Multi-word directories: concatenate without internal hyphens**
-   - `sharia-compliance` → `shco` (sh+co)
-   - `api-endpoints` → `apen` (ap+en)
-   - `database-schema` → `dasc` (da+sc)
-
-3. **Single character words get underscore suffix**
-   - `x` → `x_`, `v` → `v_`, `1` → `1_`
-   - Example: `api-v2` → `apv2_` (ap+v+2\_)
-
-### Examples
-
-```
-File at:     docs/tutorials/getting-started.md
-Prefix:      tu
-Pattern:     tu__getting-started.md
-
-File at:     docs/tutorials/authentication/oauth2.md
-Prefix:      tu-au
-Pattern:     tu-au__oauth2.md
-
-File at:     docs/how-to/deploy/kubernetes.md
-Prefix:      ht-de
-Pattern:     ht-de__kubernetes.md
-
-File at:     docs/reference/api/endpoints/transactions.md
-Prefix:      re-ap-en
-Pattern:     re-ap-en__transactions.md
-
-File at:     docs/explanation/sharia-compliance/murabaha.md
-Prefix:      ex-shco
-Pattern:     ex-shco__murabaha.md
-```
+Examples: `tu__getting-started.md` (tutorials), `tu-au__oauth2.md` (tutorials/authentication), `re-ap-en__transactions.md` (reference/api/endpoints)
 
 ## The `__` Separator
 

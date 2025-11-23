@@ -171,152 +171,17 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 
 Tool permissions follow the **principle of least privilege**: agents should only have access to tools they actually need.
 
-### Pattern 1: Read-Only Agents
-
-**Tools**: `Read, Glob, Grep`
-
-**Use for:**
-
-- Validation and checking
-- Analysis and reporting
-- Consistency verification
-- Code review (without modifications)
-
-**Example:**
-
-```yaml
----
-name: repo-rule-checker
-description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
-tools: Read, Glob, Grep
-model: sonnet
----
-```
-
-**Why read-only?**
-
-- These agents should never modify files
-- Read-only access prevents accidental changes
-- Security through explicit restriction
-
-### Pattern 2: Documentation Agents
-
-**Tools**: `Read, Write, Edit, Glob, Grep`
-
-**Use for:**
-
-- Creating documentation
-- Editing existing docs
-- Organizing documentation files
-- Managing documentation structure
-
-**Example:**
-
-```yaml
----
-name: doc-writer
-description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
-tools: Read, Write, Edit, Glob, Grep
-model: inherit
----
-```
-
-**Why these tools?**
-
-- `Read`: Understand existing documentation
-- `Write`: Create new files
-- `Edit`: Modify existing files
-- `Glob`/`Grep`: Find and search documentation
-- **No Bash**: Documentation doesn't need shell access
-
-### Pattern 3: Development Agents
-
-**Tools**: `Read, Write, Edit, Glob, Grep, Bash`
-
-**Use for:**
-
-- Code generation
-- Running tests
-- Build processes
-- Deployment tasks
-
-**Example:**
-
-```yaml
----
-name: test-runner
-description: Runs tests, analyzes failures, and suggests fixes.
-tools: Read, Write, Edit, Glob, Grep, Bash
-model: inherit
----
-```
-
-**Why Bash access?**
-
-- Need to execute commands (npm test, etc.)
-- Interact with development tools
-- Run build and deployment scripts
-
-**⚠️ Warning**: Bash access is powerful. Only grant when absolutely necessary.
-
-### Tool Selection Matrix
-
-| Agent Purpose       | Read | Write | Edit | Glob | Grep | Bash | Rationale                  |
-| ------------------- | ---- | ----- | ---- | ---- | ---- | ---- | -------------------------- |
-| Validation/Checking | ✅   | ❌    | ❌   | ✅   | ✅   | ❌   | Read-only analysis         |
-| Documentation       | ✅   | ✅    | ✅   | ✅   | ✅   | ❌   | File creation/editing only |
-| Code Generation     | ✅   | ✅    | ✅   | ✅   | ✅   | ⚠️   | May need compilation       |
-| Testing/Deployment  | ✅   | ✅    | ✅   | ✅   | ✅   | ✅   | Requires shell commands    |
+| Pattern           | Tools                               | Use For                                       | Example           | Rationale                                                     |
+| ----------------- | ----------------------------------- | --------------------------------------------- | ----------------- | ------------------------------------------------------------- |
+| **Read-Only**     | Read, Glob, Grep                    | Validation, analysis, checking, code review   | repo-rule-checker | Should never modify files; prevents accidental changes        |
+| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer        | Needs file creation/editing but no shell access               |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner       | Requires command execution (⚠️ powerful, only when necessary) |
 
 ## Model Selection Guidelines
 
-### When to Use `inherit`
+**Default**: Use `inherit` (allows centralized control, flexibility, cost optimization)
 
-**Default choice for most agents.**
-
-```yaml
-model: inherit
-```
-
-**Benefits:**
-
-- Uses the model selected by the user or parent context
-- Centralized control over model selection
-- Flexibility to change models without modifying agents
-- Cost optimization (users can choose lighter models)
-
-**Use `inherit` when:**
-
-- Agent doesn't require specific model capabilities
-- Standard file operations (reading, writing, editing)
-- Simple validation or checking tasks
-- File organization and management tasks
-
-**Examples:**
-
-- `doc-writer` (documentation writing)
-- `api-validator` (checking API compliance)
-- `test-analyzer` (analyzing test results)
-
-### When to Use Specific Models
-
-**Only when there's a clear need for specific capabilities.**
-
-```yaml
-model: sonnet
-```
-
-**Use specific model when:**
-
-- Advanced reasoning tasks requiring deep analysis
-- Complex validation requiring subtle pattern detection
-- Multi-step planning and strategy
-- Meticulous consistency checking across multiple sources
-
-**Examples:**
-
-- `repo-rule-checker` uses `sonnet` (requires advanced reasoning for detecting subtle contradictions)
-- `architect` uses `sonnet` (system design decisions requiring complex reasoning)
+**Specific models** (e.g., `sonnet`): Only when requiring advanced reasoning, complex validation, multi-step planning, or meticulous consistency checking. Document reasoning with inline comment.
 
 ### Model Selection Decision Tree
 
@@ -498,121 +363,20 @@ Follow these guidelines when writing agent documentation:
 
 ## Information Accuracy and Verification
 
-### Core Principle: Verify, Never Assume
+### Core Principle
 
-**All agents must prioritize factual accuracy over assumptions.** When dealing with information that can be verified, agents MUST verify it rather than relying on assumptions or general knowledge.
+**Verify, never assume.** All agents must prioritize factual accuracy by actively verifying information through tools (Read, Grep, Glob, WebSearch, WebFetch) rather than relying on assumptions or outdated general knowledge.
 
 ### Verification Requirements
 
-#### 1. Code-Related Information
+Use appropriate tools to verify all claims:
 
-When discussing code, libraries, APIs, or technical implementations:
-
-**✅ REQUIRED: Read the Actual Code**
-
-```markdown
-❌ Bad (Assumption):
-"This function probably uses async/await based on common patterns."
-
-✅ Good (Verified):
-"This function uses async/await (confirmed by reading src/utils/api.ts:42-58)."
-```
-
-**How to verify:**
-
-- Use `Read` tool to examine actual source files
-- Use `Grep` to search for specific patterns
-- Use `Glob` to find related files
-- Quote exact line numbers when referencing code
-
-**Example verification process:**
-
-```markdown
-1. User asks: "How does authentication work in this project?"
-2. ❌ DON'T: Assume common auth patterns and describe generic implementation
-3. ✅ DO:
-   - Search for auth-related files: Grep for "auth", "login", "token"
-   - Read actual implementation files
-   - Trace the authentication flow through the code
-   - Report findings with specific file paths and line numbers
-```
-
-#### 2. Documentation and Convention Claims
-
-When referencing project conventions, documentation, or standards:
-
-**✅ REQUIRED: Read the Actual Documents**
-
-```markdown
-❌ Bad (Assumption):
-"Files should probably follow kebab-case naming."
-
-✅ Good (Verified):
-"Files must follow the pattern [prefix]\_\_[content-identifier].[extension]
-per docs/explanation/conventions/ex-co\_\_file-naming-convention.md:44-48"
-```
-
-**How to verify:**
-
-- Read convention documents before referencing them
-- Quote exact sections when making claims
-- Link to specific files and line numbers
-- Never paraphrase without verification
-
-#### 3. External Libraries and Technologies
-
-When discussing external libraries, frameworks, or technologies:
-
-**✅ REQUIRED: Use Web Search and Fetch**
-
-```markdown
-❌ Bad (Outdated Knowledge):
-"React Router v6 uses <Switch> component for routing."
-
-✅ Good (Verified):
-"React Router v6 uses <Routes> component (verified via official docs at
-reactrouter.com/docs - accessed 2025-11-23). The <Switch> component
-was replaced in v6."
-```
-
-**How to verify:**
-
-- Use `WebSearch` to find official documentation
-- Use `WebFetch` to read official docs directly
-- Cite sources with URLs and access dates
-- Prefer official documentation over blog posts
-- Cross-reference multiple sources for controversial topics
-
-**When to use web verification:**
-
-- Library versions and compatibility
-- API changes and deprecations
-- Best practices and recommendations
-- Framework-specific conventions
-- Security advisories
-- Current state of external projects
-
-#### 4. File and Directory Structure
-
-When making claims about project structure:
-
-**✅ REQUIRED: Verify with Actual File System**
-
-```markdown
-❌ Bad (Assumption):
-"The tests are probably in a **tests** directory."
-
-✅ Good (Verified):
-"Tests are located in src/**tests**/ (confirmed via Glob: 'src/\*_/_.test.ts'
-found 15 files in src/**tests**/)"
-```
-
-**How to verify:**
-
-- Use `Glob` to search for files and directories
-- Use `Bash` (if permitted) to list directory contents
-- Use `Read` to verify file contents
-- Report exact paths found
+- **Code/Implementation**: Read actual source with `Read`, search with `Grep/Glob`, quote line numbers
+- **Project Conventions**: Read convention docs before referencing, quote exact sections with file:line
+- **External Libraries**: Use `WebSearch/WebFetch` for current docs, cite sources with URLs and dates
+- **File Structure**: Use `Glob` to verify paths exist, `Bash` to list contents, report exact paths
+- **Commands**: Test all examples, verify outputs match documentation
+- **Links**: Use `Glob/Grep` to confirm targets exist before creating links
 
 ### Verification Tools Matrix
 
@@ -626,166 +390,15 @@ found 15 files in src/**tests**/)"
 | Best practices      | WebSearch    | WebFetch         | ⚠️ Recommended |
 | Historical context  | WebSearch    | Read (changelog) | ⚠️ Recommended |
 
-### When Verification is NOT Possible
+### When Verification is Not Possible
 
-If information cannot be verified through available tools:
+If information cannot be verified: (1) State the limitation explicitly, (2) Provide verification steps for the user, (3) Never present unverified information as fact.
 
-1. **State the limitation explicitly**
+### Agent-Specific Requirements
 
-   ```markdown
-   ⚠️ "I cannot verify this without access to [X]. Based on general knowledge,
-   [Y], but this should be confirmed by [how to verify]."
-   ```
-
-2. **Provide verification steps for the user**
-
-   ```markdown
-   "To verify this, please:
-
-   1. Check [specific location]
-   2. Run [specific command]
-   3. Confirm [expected outcome]"
-   ```
-
-3. **Never present unverified information as fact**
-   ```markdown
-   ❌ "The API uses JWT tokens."
-   ✅ "The API likely uses JWT tokens (common pattern for REST APIs),
-   but I cannot verify without reading the actual implementation."
-   ```
-
-### Verification Best Practices
-
-#### Before Making Claims
-
-1. **Ask yourself**: "Can I verify this?"
-2. **If yes**: Use appropriate tools to verify
-3. **If no**: State the limitation clearly
-4. **Always**: Provide sources and evidence
-
-#### When Reading Code
-
-```markdown
-✅ Good verification pattern:
-
-1. Read the file: Read("src/auth/login.ts")
-2. Quote specific lines: "Lines 42-58 show the login implementation"
-3. Explain what you found: "Uses bcrypt for password hashing"
-4. Provide context: "This aligns with security best practices"
-```
-
-#### When Using Web Search
-
-```markdown
-✅ Good verification pattern:
-
-1. Search for official docs: WebSearch("React 18 official documentation")
-2. Fetch the actual page: WebFetch(official_url, "What are the new features?")
-3. Quote the source: "According to reactjs.org/blog/2022/03/29/..."
-4. Include access date: "(accessed 2025-11-23)"
-```
-
-#### When Uncertain
-
-```markdown
-✅ Good uncertainty handling:
-"I searched for [X] using [tool] but found [Y]. This suggests [Z],
-however I recommend verifying by [verification method]."
-
-❌ Bad uncertainty handling:
-"I'm not sure, but it's probably [guess]."
-```
-
-### Agent-Specific Verification Requirements
-
-Different agents have different verification needs:
-
-#### Documentation Agents (doc-writer)
-
-- ✅ Must verify all code examples by reading actual code
-- ✅ Must verify all file paths exist using Glob
-- ✅ Must verify all claims about project structure
-- ✅ Must cross-reference convention documents
-- ✅ Must use WebSearch for external library documentation
-
-#### Validation Agents (repo-rule-checker)
-
-- ✅ Must read all files before validating
-- ✅ Must never assume compliance without checking
-- ✅ Must provide specific line numbers for issues
-- ✅ Must verify links point to existing files
-- ✅ Must check actual frontmatter, not assumed format
-
-#### Development Agents (test-runner, etc.)
-
-- ✅ Must read actual test files to understand setup
-- ✅ Must verify command output by actually running commands
-- ✅ Must check actual error messages, not assumed messages
-- ✅ Must verify tool availability before suggesting commands
-
-### Verification Anti-Patterns
-
-#### ❌ Making Assumptions
-
-**Bad:**
-
-```markdown
-"Most Node.js projects use npm, so this project probably uses npm."
-```
-
-**Good:**
-
-```markdown
-"Checking package.json... (Read tool) Confirmed: project uses npm 11.6.2
-as specified in package.json:5 under volta.npm field."
-```
-
-#### ❌ Outdated General Knowledge
-
-**Bad:**
-
-```markdown
-"Vue 3 uses the Options API by default."
-```
-
-**Good:**
-
-```markdown
-"Checking Vue 3 documentation... (WebFetch) Vue 3 documentation recommends
-Composition API for new projects (vuejs.org/guide/introduction.html,
-accessed 2025-11-23)."
-```
-
-#### ❌ Vague References
-
-**Bad:**
-
-```markdown
-"According to the documentation, files should be named a certain way."
-```
-
-**Good:**
-
-```markdown
-"According to docs/explanation/conventions/ex-co\_\_file-naming-convention.md:44-48,
-files must follow the pattern: [prefix]\_\_[content-identifier].[extension]"
-```
-
-#### ❌ Unverified File Paths
-
-**Bad:**
-
-```markdown
-"The configuration is in config/app.js"
-```
-
-**Good:**
-
-```markdown
-"Searching for config files... (Glob: 'config/\*_/_.js')
-Found: config/app.js, config/database.js, config/auth.js
-The app configuration is in config/app.js (verified)"
-```
+- **Documentation agents (doc-writer)**: Verify code examples, file paths, project structure claims, convention references, external library docs
+- **Validation agents (repo-rule-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
+- **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability
 
 ### Verification Checklist for Agents
 
@@ -801,26 +414,6 @@ Before providing information, verify:
 - [ ] Have I cited sources with URLs and access dates?
 - [ ] If I cannot verify, have I stated this limitation clearly?
 - [ ] Have I provided steps for the user to verify themselves?
-
-### When to Ask for Clarification
-
-If verification reveals uncertainty or contradictions:
-
-```markdown
-"I found two different implementations:
-
-1. src/auth/jwt.ts uses JWT tokens
-2. src/auth/session.ts uses session cookies
-
-Both are active. Could you clarify which authentication method
-is currently in use, or if both are supported?"
-```
-
-This is better than:
-
-- Assuming one is correct
-- Presenting both without clarification
-- Guessing based on "best practices"
 
 ## Creating New Agents
 
@@ -1027,128 +620,14 @@ If an agent is no longer needed:
 
 ## Anti-Patterns
 
-### ❌ Vague Descriptions
-
-**Bad:**
-
-```yaml
-description: Helper agent for various tasks
-```
-
-**Good:**
-
-```yaml
-description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
-```
-
-### ❌ Tool Permission Creep
-
-**Bad:**
-
-```yaml
-name: doc-validator
-tools: Read, Write, Edit, Glob, Grep, Bash # Too many tools for validation!
-```
-
-**Good:**
-
-```yaml
-name: doc-validator
-tools: Read, Glob, Grep # Read-only for validation
-```
-
-### ❌ Model Specification Without Justification
-
-**Bad:**
-
-```yaml
-model: sonnet # No explanation why
-```
-
-**Good:**
-
-```yaml
-model: sonnet # Advanced reasoning required for detecting subtle contradictions
-```
-
-Or better (if applicable):
-
-```yaml
-model: inherit # Use default unless there's a specific need
-```
-
-### ❌ Duplicating CLAUDE.md
-
-**Bad:**
-
-```markdown
-## Project Setup
-
-This project uses Volta for Node.js version management...
-[Repeats entire CLAUDE.md section]
-```
-
-**Good:**
-
-```markdown
-## Reference Documentation
-
-**Project Guidance:**
-
-- `CLAUDE.md` - Primary guidance including environment setup
-```
-
-### ❌ Missing Reference Section
-
-**Bad:**
-
-```markdown
-# My Agent
-
-Does stuff.
-
-[No references to conventions or CLAUDE.md]
-```
-
-**Good:**
-
-```markdown
-# My Agent
-
-Does stuff.
-
-## Reference Documentation
-
-**Project Guidance:**
-
-- `CLAUDE.md` - Primary guidance for all agents
-
-**Agent Conventions:**
-
-- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention
-```
-
-### ❌ Overlapping Responsibilities
-
-**Bad:**
-
-```yaml
-name: doc-writer-and-validator
-description: Writes documentation and validates it
-```
-
-**Good:**
-Create two separate agents:
-
-```yaml
-name: doc-writer
-description: Expert documentation writer...
-```
-
-```yaml
-name: doc-validator
-description: Validates documentation consistency...
-```
+| Anti-Pattern                     | ❌ Bad                                                              | ✅ Good                                                                                                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Vague Description**            | `description: Helper agent for various tasks`                       | `description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.` |
+| **Tool Permission Creep**        | `tools: Read, Write, Edit, Glob, Grep, Bash` (for validation agent) | `tools: Read, Glob, Grep` (read-only for validation)                                                                                                                            |
+| **Model Without Justification**  | `model: sonnet` (no comment)                                        | `model: sonnet # Advanced reasoning required` or `model: inherit`                                                                                                               |
+| **Duplicating CLAUDE.md**        | Repeating entire environment setup section                          | Reference: `CLAUDE.md` - Primary guidance including environment setup                                                                                                           |
+| **Missing Reference Section**    | No references to conventions or CLAUDE.md                           | Include Reference Documentation section with links to CLAUDE.md and ex-de\_\_ai-agents.md                                                                                       |
+| **Overlapping Responsibilities** | `doc-writer-and-validator` (multiple responsibilities)              | Separate `doc-writer` and `doc-validator` agents                                                                                                                                |
 
 ## Validation and Compliance
 
