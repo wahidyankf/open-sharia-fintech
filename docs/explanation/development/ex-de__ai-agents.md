@@ -496,6 +496,332 @@ Follow these guidelines when writing agent documentation:
    - ✅ "Checks file naming against ex-co\_\_file-naming-convention.md"
    - ❌ "Validates files"
 
+## Information Accuracy and Verification
+
+### Core Principle: Verify, Never Assume
+
+**All agents must prioritize factual accuracy over assumptions.** When dealing with information that can be verified, agents MUST verify it rather than relying on assumptions or general knowledge.
+
+### Verification Requirements
+
+#### 1. Code-Related Information
+
+When discussing code, libraries, APIs, or technical implementations:
+
+**✅ REQUIRED: Read the Actual Code**
+
+```markdown
+❌ Bad (Assumption):
+"This function probably uses async/await based on common patterns."
+
+✅ Good (Verified):
+"This function uses async/await (confirmed by reading src/utils/api.ts:42-58)."
+```
+
+**How to verify:**
+
+- Use `Read` tool to examine actual source files
+- Use `Grep` to search for specific patterns
+- Use `Glob` to find related files
+- Quote exact line numbers when referencing code
+
+**Example verification process:**
+
+```markdown
+1. User asks: "How does authentication work in this project?"
+2. ❌ DON'T: Assume common auth patterns and describe generic implementation
+3. ✅ DO:
+   - Search for auth-related files: Grep for "auth", "login", "token"
+   - Read actual implementation files
+   - Trace the authentication flow through the code
+   - Report findings with specific file paths and line numbers
+```
+
+#### 2. Documentation and Convention Claims
+
+When referencing project conventions, documentation, or standards:
+
+**✅ REQUIRED: Read the Actual Documents**
+
+```markdown
+❌ Bad (Assumption):
+"Files should probably follow kebab-case naming."
+
+✅ Good (Verified):
+"Files must follow the pattern [prefix]**[content-identifier].[extension]
+per docs/explanation/conventions/ex-co**file-naming-convention.md:44-48"
+```
+
+**How to verify:**
+
+- Read convention documents before referencing them
+- Quote exact sections when making claims
+- Link to specific files and line numbers
+- Never paraphrase without verification
+
+#### 3. External Libraries and Technologies
+
+When discussing external libraries, frameworks, or technologies:
+
+**✅ REQUIRED: Use Web Search and Fetch**
+
+```markdown
+❌ Bad (Outdated Knowledge):
+"React Router v6 uses <Switch> component for routing."
+
+✅ Good (Verified):
+"React Router v6 uses <Routes> component (verified via official docs at
+reactrouter.com/docs - accessed 2025-11-23). The <Switch> component
+was replaced in v6."
+```
+
+**How to verify:**
+
+- Use `WebSearch` to find official documentation
+- Use `WebFetch` to read official docs directly
+- Cite sources with URLs and access dates
+- Prefer official documentation over blog posts
+- Cross-reference multiple sources for controversial topics
+
+**When to use web verification:**
+
+- Library versions and compatibility
+- API changes and deprecations
+- Best practices and recommendations
+- Framework-specific conventions
+- Security advisories
+- Current state of external projects
+
+#### 4. File and Directory Structure
+
+When making claims about project structure:
+
+**✅ REQUIRED: Verify with Actual File System**
+
+```markdown
+❌ Bad (Assumption):
+"The tests are probably in a **tests** directory."
+
+✅ Good (Verified):
+"Tests are located in src/**tests**/ (confirmed via Glob: 'src/\*_/_.test.ts'
+found 15 files in src/**tests**/)"
+```
+
+**How to verify:**
+
+- Use `Glob` to search for files and directories
+- Use `Bash` (if permitted) to list directory contents
+- Use `Read` to verify file contents
+- Report exact paths found
+
+### Verification Tools Matrix
+
+| Information Type    | Primary Tool | Secondary Tool   | Required?      |
+| ------------------- | ------------ | ---------------- | -------------- |
+| Code implementation | Read         | Grep, Glob       | ✅ Required    |
+| Project conventions | Read         | Grep             | ✅ Required    |
+| File structure      | Glob         | Bash             | ✅ Required    |
+| External libraries  | WebSearch    | WebFetch         | ✅ Required    |
+| Official docs       | WebFetch     | WebSearch        | ✅ Required    |
+| Best practices      | WebSearch    | WebFetch         | ⚠️ Recommended |
+| Historical context  | WebSearch    | Read (changelog) | ⚠️ Recommended |
+
+### When Verification is NOT Possible
+
+If information cannot be verified through available tools:
+
+1. **State the limitation explicitly**
+
+   ```markdown
+   ⚠️ "I cannot verify this without access to [X]. Based on general knowledge,
+   [Y], but this should be confirmed by [how to verify]."
+   ```
+
+2. **Provide verification steps for the user**
+
+   ```markdown
+   "To verify this, please:
+
+   1. Check [specific location]
+   2. Run [specific command]
+   3. Confirm [expected outcome]"
+   ```
+
+3. **Never present unverified information as fact**
+   ```markdown
+   ❌ "The API uses JWT tokens."
+   ✅ "The API likely uses JWT tokens (common pattern for REST APIs),
+   but I cannot verify without reading the actual implementation."
+   ```
+
+### Verification Best Practices
+
+#### Before Making Claims
+
+1. **Ask yourself**: "Can I verify this?"
+2. **If yes**: Use appropriate tools to verify
+3. **If no**: State the limitation clearly
+4. **Always**: Provide sources and evidence
+
+#### When Reading Code
+
+```markdown
+✅ Good verification pattern:
+
+1. Read the file: Read("src/auth/login.ts")
+2. Quote specific lines: "Lines 42-58 show the login implementation"
+3. Explain what you found: "Uses bcrypt for password hashing"
+4. Provide context: "This aligns with security best practices"
+```
+
+#### When Using Web Search
+
+```markdown
+✅ Good verification pattern:
+
+1. Search for official docs: WebSearch("React 18 official documentation")
+2. Fetch the actual page: WebFetch(official_url, "What are the new features?")
+3. Quote the source: "According to reactjs.org/blog/2022/03/29/..."
+4. Include access date: "(accessed 2025-11-23)"
+```
+
+#### When Uncertain
+
+```markdown
+✅ Good uncertainty handling:
+"I searched for [X] using [tool] but found [Y]. This suggests [Z],
+however I recommend verifying by [verification method]."
+
+❌ Bad uncertainty handling:
+"I'm not sure, but it's probably [guess]."
+```
+
+### Agent-Specific Verification Requirements
+
+Different agents have different verification needs:
+
+#### Documentation Agents (doc-writer)
+
+- ✅ Must verify all code examples by reading actual code
+- ✅ Must verify all file paths exist using Glob
+- ✅ Must verify all claims about project structure
+- ✅ Must cross-reference convention documents
+- ✅ Must use WebSearch for external library documentation
+
+#### Validation Agents (repo-rule-checker)
+
+- ✅ Must read all files before validating
+- ✅ Must never assume compliance without checking
+- ✅ Must provide specific line numbers for issues
+- ✅ Must verify links point to existing files
+- ✅ Must check actual frontmatter, not assumed format
+
+#### Development Agents (test-runner, etc.)
+
+- ✅ Must read actual test files to understand setup
+- ✅ Must verify command output by actually running commands
+- ✅ Must check actual error messages, not assumed messages
+- ✅ Must verify tool availability before suggesting commands
+
+### Verification Anti-Patterns
+
+#### ❌ Making Assumptions
+
+**Bad:**
+
+```markdown
+"Most Node.js projects use npm, so this project probably uses npm."
+```
+
+**Good:**
+
+```markdown
+"Checking package.json... (Read tool) Confirmed: project uses npm 11.6.2
+as specified in package.json:5 under volta.npm field."
+```
+
+#### ❌ Outdated General Knowledge
+
+**Bad:**
+
+```markdown
+"Vue 3 uses the Options API by default."
+```
+
+**Good:**
+
+```markdown
+"Checking Vue 3 documentation... (WebFetch) Vue 3 documentation recommends
+Composition API for new projects (vuejs.org/guide/introduction.html,
+accessed 2025-11-23)."
+```
+
+#### ❌ Vague References
+
+**Bad:**
+
+```markdown
+"According to the documentation, files should be named a certain way."
+```
+
+**Good:**
+
+```markdown
+"According to docs/explanation/conventions/ex-co**file-naming-convention.md:44-48,
+files must follow the pattern: [prefix]**[content-identifier].[extension]"
+```
+
+#### ❌ Unverified File Paths
+
+**Bad:**
+
+```markdown
+"The configuration is in config/app.js"
+```
+
+**Good:**
+
+```markdown
+"Searching for config files... (Glob: 'config/\*_/_.js')
+Found: config/app.js, config/database.js, config/auth.js
+The app configuration is in config/app.js (verified)"
+```
+
+### Verification Checklist for Agents
+
+Before providing information, verify:
+
+- [ ] Have I read the actual files being discussed?
+- [ ] Have I verified file paths exist?
+- [ ] Have I checked the actual code implementation?
+- [ ] Have I consulted official documentation for external libraries?
+- [ ] Have I provided specific line numbers and file paths?
+- [ ] Have I stated clearly what I verified vs. what I assumed?
+- [ ] Have I used appropriate tools (Read, Grep, Glob, WebSearch, WebFetch)?
+- [ ] Have I cited sources with URLs and access dates?
+- [ ] If I cannot verify, have I stated this limitation clearly?
+- [ ] Have I provided steps for the user to verify themselves?
+
+### When to Ask for Clarification
+
+If verification reveals uncertainty or contradictions:
+
+```markdown
+"I found two different implementations:
+
+1. src/auth/jwt.ts uses JWT tokens
+2. src/auth/session.ts uses session cookies
+
+Both are active. Could you clarify which authentication method
+is currently in use, or if both are supported?"
+```
+
+This is better than:
+
+- Assuming one is correct
+- Presenting both without clarification
+- Guessing based on "best practices"
+
 ## Creating New Agents
 
 ### When to Create a New Agent
@@ -545,6 +871,14 @@ Before submitting a new agent, verify:
 - [ ] References AI agents convention (`ex-de__ai-agents.md`)
 - [ ] References relevant domain conventions
 - [ ] Links use correct GitHub-compatible format
+
+#### Information Accuracy
+
+- [ ] Agent includes verification requirements for its domain
+- [ ] Agent specifies when to use Read/Grep/Glob for verification
+- [ ] Agent specifies when to use WebSearch/WebFetch for verification
+- [ ] Agent emphasizes verification over assumptions
+- [ ] Agent provides examples of good vs bad verification practices
 
 #### Testing
 
