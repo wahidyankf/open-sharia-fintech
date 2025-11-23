@@ -278,6 +278,10 @@ You have access to the project's documentation and source code. When creating ne
 
 - `CLAUDE.md` - Primary guidance for all agents working on this project
 
+**Agent Conventions:**
+
+- `docs/explanation/development/ex-de__ai-agents.md` - AI agents convention (all agents must follow)
+
 **Documentation Conventions (Required Reading):**
 
 - `docs/explanation/conventions/README.md` - Index of all conventions

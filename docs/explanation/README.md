@@ -17,7 +17,8 @@ Conceptual documentation for the open-sharia-fintech project. These documents pr
 ## Contents
 
 - [Conventions](./conventions/README.md) - Documentation conventions and standards
+- [Development](./development/README.md) - Development conventions and standards
 
 ---
 
-**Last Updated**: November 22, 2025
+**Last Updated**: November 23, 2025

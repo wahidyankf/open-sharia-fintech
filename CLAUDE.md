@@ -163,6 +163,27 @@ All documentation must follow three core conventions defined in `docs/explanatio
 - **Linking Guide:** [`docs/explanation/conventions/ex-co__linking-convention.md`](docs/explanation/conventions/ex-co__linking-convention.md)
 - **Diátaxis Guide:** [`docs/explanation/conventions/ex-co__diataxis-framework.md`](docs/explanation/conventions/ex-co__diataxis-framework.md)
 
+## AI Agent Standards
+
+All AI agents in `.claude/agents/` must follow the convention defined in `docs/explanation/development/`:
+
+- **AI Agents Convention:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
+- Defines agent file structure, naming, tool access patterns, and model selection
+- Required reading for all agent creators and maintainers
+
+### Key Requirements
+
+- **Frontmatter:** All agents must have `name`, `description`, `tools`, and `model` fields
+- **Tool Access:** Follow principle of least privilege (read-only, documentation, or development patterns)
+- **Model Selection:** Use `inherit` by default; specific models only when justified
+- **References:** All agents must reference CLAUDE.md and the AI agents convention
+- **Single Responsibility:** Each agent has one clear, focused purpose
+
+### Resources
+
+- **AI Agents Guide:** [`docs/explanation/development/ex-de__ai-agents.md`](docs/explanation/development/ex-de__ai-agents.md)
+- **Development Index:** [`docs/explanation/development/README.md`](docs/explanation/development/README.md)
+
 ## Important Notes
 
 - Do not stage or commit changes unless explicitly instructed. Per-request commits are one-time only
