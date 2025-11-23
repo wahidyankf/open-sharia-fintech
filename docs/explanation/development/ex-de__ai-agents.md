@@ -189,7 +189,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 name: repo-rule-checker
 description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
 tools: Read, Glob, Grep
-model: inherit
+model: sonnet
 ---
 ```
 
@@ -217,7 +217,7 @@ model: inherit
 name: doc-writer
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 tools: Read, Write, Edit, Glob, Grep
-model: sonnet
+model: inherit
 ---
 ```
 
@@ -288,13 +288,13 @@ model: inherit
 **Use `inherit` when:**
 
 - Agent doesn't require specific model capabilities
-- General-purpose validation or checking
-- Standard code analysis
-- File organization tasks
+- Standard file operations (reading, writing, editing)
+- Simple validation or checking tasks
+- File organization and management tasks
 
 **Examples:**
 
-- `repo-rule-checker` (validation)
+- `doc-writer` (documentation writing)
 - `api-validator` (checking API compliance)
 - `test-analyzer` (analyzing test results)
 
@@ -308,15 +308,15 @@ model: sonnet
 
 **Use specific model when:**
 
-- Complex writing requiring nuance (e.g., documentation)
-- Advanced reasoning tasks
-- Creative content generation
+- Advanced reasoning tasks requiring deep analysis
+- Complex validation requiring subtle pattern detection
 - Multi-step planning and strategy
+- Meticulous consistency checking across multiple sources
 
 **Examples:**
 
-- `doc-writer` uses `sonnet` (complex technical writing)
-- `architect` uses `sonnet` (system design decisions)
+- `repo-rule-checker` uses `sonnet` (requires advanced reasoning for detecting subtle contradictions)
+- `architect` uses `sonnet` (system design decisions requiring complex reasoning)
 
 ### Model Selection Decision Tree
 
@@ -330,9 +330,9 @@ Start: Choosing Agent Model
     │   │
     │   └─ Yes → What specific capability?
     │              │
-    │              ├─ Complex writing/documentation → `model: sonnet`
-    │              ├─ Advanced reasoning/planning → `model: sonnet`
-    │              ├─ Creative content generation → `model: sonnet`
+    │              ├─ Advanced reasoning/deep analysis → `model: sonnet`
+    │              ├─ Complex validation/consistency checking → `model: sonnet`
+    │              ├─ Multi-step planning and strategy → `model: sonnet`
     │              └─ Unsure → Use `model: inherit` ✅
     │                         (Can always change later)
 ```
@@ -548,8 +548,8 @@ When referencing project conventions, documentation, or standards:
 "Files should probably follow kebab-case naming."
 
 ✅ Good (Verified):
-"Files must follow the pattern [prefix]**[content-identifier].[extension]
-per docs/explanation/conventions/ex-co**file-naming-convention.md:44-48"
+"Files must follow the pattern [prefix]\_\_[content-identifier].[extension]
+per docs/explanation/conventions/ex-co\_\_file-naming-convention.md:44-48"
 ```
 
 **How to verify:**
@@ -767,8 +767,8 @@ accessed 2025-11-23)."
 **Good:**
 
 ```markdown
-"According to docs/explanation/conventions/ex-co**file-naming-convention.md:44-48,
-files must follow the pattern: [prefix]**[content-identifier].[extension]"
+"According to docs/explanation/conventions/ex-co\_\_file-naming-convention.md:44-48,
+files must follow the pattern: [prefix]\_\_[content-identifier].[extension]"
 ```
 
 #### ❌ Unverified File Paths
@@ -1068,10 +1068,10 @@ model: sonnet # No explanation why
 **Good:**
 
 ```yaml
-model: sonnet # Complex technical writing requires advanced language capabilities
+model: sonnet # Advanced reasoning required for detecting subtle contradictions
 ```
 
-Or better:
+Or better (if applicable):
 
 ```yaml
 model: inherit # Use default unless there's a specific need
