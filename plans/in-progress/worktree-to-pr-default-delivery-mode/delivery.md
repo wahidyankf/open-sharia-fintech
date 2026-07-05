@@ -162,7 +162,7 @@ stateDiagram-v2
 
 > All edits in the worktree; commits push to the PR branch, never to `main`.
 
-- [ ] [AI] Edit `repo-governance/conventions/structure/plans.md`: add a `## Delivery Mode` section
+- [x] [AI] Edit `repo-governance/conventions/structure/plans.md`: add a `## Delivery Mode` section
       (sibling to the existing `## Worktree` section) defining the four modes
       (`worktree-to-pr` [default], `worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr`),
       each mode's three attributes (work location, integration target, merge authority), and the
@@ -170,45 +170,66 @@ stateDiagram-v2
       — acceptance: `grep -c "worktree-to-pr" repo-governance/conventions/structure/plans.md` ≥ 1 and
       all four mode names appear in the file.
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit `repo-governance/conventions/structure/worktree-path.md`: cross-reference the delivery
+  - **Done**: added `### Delivery Mode` as an H3 sibling of `### Worktree Specification` under
+    `## Plan Contents` (the file has no literal H2 `## Worktree`, so this is the structurally
+    accurate placement). `grep -c "worktree-to-pr" plans.md` = 5; all four mode names present.
+- [x] [AI] Edit `repo-governance/conventions/structure/worktree-path.md`: cross-reference the delivery
       mode (a worktree is used by `worktree-to-pr` and `worktree-to-origin-main`); link to the new
       `## Delivery Mode` section in `plans.md`.
       — acceptance: `grep -c "Delivery Mode" repo-governance/conventions/structure/worktree-path.md` ≥ 1.
   - _Suggested executor: `repo-rules-maker`_
+  - **Done**: added `## Relationship to Delivery Mode` section after `## Purpose`. `grep -c
+"Delivery Mode" worktree-path.md` = 3.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] Fix + verify markdown: `npm run lint:md:fix && npm run lint:md`
+- [x] [AI] Fix + verify markdown: `npm run lint:md:fix && npm run lint:md`
       — acceptance: exits 0, no violations.
-- [ ] [AI] Validate mermaid/links/headings on changed docs:
+  - **Done**: exits 0, 2249 files linted, 0 errors.
+- [x] [AI] Validate mermaid/links/headings on changed docs:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
       — acceptance: all three exit 0.
-- [ ] [AI] Run affected gates: `npx nx affected -t typecheck lint test:quick specs:behavior:coverage`
+  - **Done**: mermaid validator's 4 reported failures are pre-existing negative-test fixtures under
+    `apps/rhino-cli/tests/fixtures/state/` (unrelated to this diff, confirmed via `git diff
+--name-only origin/main...HEAD`). Links validator caught one real regression (a forward
+    reference to a Phase-2-only file) — fixed by converting to backtick prose; re-run confirmed
+    zero broken links in both changed files. Heading-hierarchy clean.
+- [x] [AI] Run affected gates: `npx nx affected -t typecheck lint test:quick specs:behavior:coverage`
       — acceptance: exits 0. **Fix ALL failures found — including preexisting issues not caused by
       these changes** (root-cause orientation).
+  - **Done**: `NX No tasks were run` — both changed files are docs under `repo-governance/`, not
+    owned by any Nx project, so the affected graph is empty. Exits 0.
 
 ### Commit + Push to PR branch
 
-- [ ] [AI] Commit thematically (Conventional Commits):
+- [x] [AI] Commit thematically (Conventional Commits):
       `git commit -m "docs(governance): define delivery-mode vocabulary in plans + worktree-path conventions"`
       — acceptance: commit created on branch `worktree-to-pr-default-delivery-mode`.
-- [ ] [AI] Push to the PR branch (NOT `main`): `git push origin worktree-to-pr-default-delivery-mode`
+  - **Done**: commit `9428548`.
+- [x] [AI] Push to the PR branch (NOT `main`): `git push origin worktree-to-pr-default-delivery-mode`
       — acceptance: `gh pr view --json commits` shows the new commit on the PR.
+  - **Done**: pushed `f31c7b074..9428548`; `gh pr view 29 --json headRefOid` confirms head =
+    `9428548e7662df003e924b22be1ed1fb143d558f`.
 
 ### Post-Push CI Verification (on the PR)
 
-- [ ] [AI] Monitor CI on the PR (poll every ~2 min): `gh pr checks --watch` or
+- [x] [AI] Monitor CI on the PR (poll every ~2 min): `gh pr checks --watch` or
       `gh run list --branch worktree-to-pr-default-delivery-mode`
       — acceptance: all PR checks green; if any fail, fix at root and push a follow-up commit; repeat
       until green. Do NOT proceed while any PR check is red.
+  - **Done**: all checks reached `pass` or `skipping` (expected for untouched .NET/Rust/TypeScript
+    stacks) on commit `9428548`. No failures — no follow-up commit needed.
 
 ### Phase 1 Gate
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `grep -l "worktree-to-pr" repo-governance/conventions/structure/plans.md` returns the file
+- [x] [AI] `grep -l "worktree-to-pr" repo-governance/conventions/structure/plans.md` returns the file
       and all four mode names are present.
-- [ ] [AI] `gh pr checks` shows all checks passing for the PR after the Phase 1 push.
+  - **Done**: confirmed above.
+- [x] [AI] `gh pr checks` shows all checks passing for the PR after the Phase 1 push.
+  - **Done**: `gh pr checks 29 --repo wahidyankf/ose-public` on head `9428548` — every check `pass`
+    or `skipping`, none `pending`/`fail`.
 
 > **Pause Safety**: convention-layer edits are committed and pushed to a green (still-draft) PR; `main`
 > is untouched. Safe to stop. To resume: `git -C worktrees/worktree-to-pr-default-delivery-mode status`
