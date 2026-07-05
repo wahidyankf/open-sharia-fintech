@@ -126,31 +126,31 @@ stateDiagram-v2
 > `ose-public` PR (per `worktree-to-pr` mechanics — one PR per plan, opened at execution start). The
 > ose-public PR stays **open** through Phase 6 and is finalized in Phase 7.
 
-- [ ] [AI] Provision the worktree from latest `origin/main` (from `ose-public` root):
+- [x] [AI] Provision the worktree from latest `origin/main` (from `ose-public` root):
       `git fetch origin && git worktree add -b worktree-to-pr-default-delivery-mode worktrees/worktree-to-pr-default-delivery-mode origin/main`
-      — acceptance: `git worktree list` shows `worktrees/worktree-to-pr-default-delivery-mode` on branch `worktree-to-pr-default-delivery-mode`.
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
-      — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
-      — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] Establish the docs/governance baseline in the worktree:
+      — acceptance: `git worktree list` shows `worktrees/worktree-to-pr-default-delivery-mode` on branch `worktree-to-pr-default-delivery-mode`. Done: worktree created at HEAD `b3b6d18b7`.
+- [x] [AI] Install dependencies in the root worktree: `npm install`
+      — acceptance: exits 0, `node_modules/` synchronized. Done: 13/13 doctor tools OK, exit 0.
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+      — acceptance: exits 0 with no unresolved drift. Done: "Nothing to fix — all tools are installed."
+- [x] [AI] Establish the docs/governance baseline in the worktree:
       `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` (and `npm run lint:md` if present)
-      — acceptance: baseline pass/fail recorded; every preexisting failure documented.
-- [ ] [AI] Resolve all preexisting failures before proceeding
-      — acceptance: no preexisting failures remain unresolved.
-- [ ] [AI] Open the single draft PR for this plan (from the worktree):
+      — acceptance: baseline pass/fail recorded; every preexisting failure documented. Done: 0 projects affected vs. `origin/main` (worktree HEAD == main, no drift).
+- [x] [AI] Resolve all preexisting failures before proceeding
+      — acceptance: no preexisting failures remain unresolved. Done: zero failures (zero affected projects).
+- [x] [AI] Open the single draft PR for this plan (from the worktree):
       `gh pr create --draft --base main --head worktree-to-pr-default-delivery-mode --title "docs(governance): worktree-to-pr default delivery mode" --body "Establishes the worktree-to-pr default delivery mode, the four-mode vocabulary, and the pr-review maker→fixer cycle. Delivered via this PR (dogfooding). See plans/in-progress/worktree-to-pr-default-delivery-mode/."`
-      — acceptance: `gh pr view --json number,isDraft` shows a draft PR number for this branch.
+      — acceptance: `gh pr view --json number,isDraft` shows a draft PR number for this branch. Done: ose-public PR [#29](https://github.com/wahidyankf/ose-public/pull/29) (an empty marker commit was required first — GitHub refuses PR creation with zero commit diff).
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` baseline recorded and every
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` baseline recorded and every
       preexisting failure resolved (zero unresolved).
-- [ ] [AI] `gh pr view --json number,state` returns an open draft PR for
-      `worktree-to-pr-default-delivery-mode`.
+- [x] [AI] `gh pr view --json number,state` returns an open draft PR for
+      `worktree-to-pr-default-delivery-mode`. Confirmed: PR #29, `state: OPEN`, `isDraft: true`.
 
 > **Pause Safety**: only the toolchain was verified, the baseline recorded, and an empty draft PR
 > opened — no governance edits exist yet. Safe to stop indefinitely. To resume: re-run the baseline
