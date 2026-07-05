@@ -522,6 +522,65 @@ claude --worktree auth-rewrite
 The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting the worktree after the plan is archived and pushed.
 ````
 
+### Delivery Mode
+
+Every plan resolves to exactly one **delivery mode** before execution begins. The delivery mode
+determines where implementation work happens and how it reaches `origin/main`. This is a sibling
+concern to [Worktree Specification](#worktree-specification) above: a worktree is a **work
+location**, while delivery mode additionally fixes the **integration target** and **merge
+authority**.
+
+**The four modes**:
+
+| Mode                           | Work location                  | Integration target             | Merge authority                                       |
+| ------------------------------ | ------------------------------ | ------------------------------ | ----------------------------------------------------- |
+| `worktree-to-pr` **(default)** | `worktrees/<plan-identifier>/` | Draft PR opened against `main` | `[HUMAN]` — merges the PR whenever they choose        |
+| `worktree-to-origin-main`      | `worktrees/<plan-identifier>/` | Direct push to `origin main`   | `[AI]` — pushes directly, per Trunk Based Development |
+| `main-to-origin-main`          | Primary checkout (no worktree) | Direct push to `origin main`   | `[AI]` — pushes directly, per Trunk Based Development |
+| `main-to-pr`                   | Primary checkout (no worktree) | PR opened against `main`       | `[HUMAN]` — merges the PR whenever they choose        |
+
+`worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
+disposable worktree and routes it through review before it touches `main`, so it is the safest
+choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
+PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`) before
+the PR is considered done; the `[HUMAN]` merge itself sits **outside** that done-boundary — the AI
+hands off a green, fully-reviewed PR and the human merges on their own schedule.
+
+**Three-tier precedence** — the active mode resolves deterministically:
+
+```text
+resolve_delivery_mode(invocation_arg, plan_field):
+    if invocation_arg is a valid mode:      # tier 1: given at invocation time
+        return invocation_arg
+    if plan_field is a valid mode:          # tier 2: declared in the plan's own docs
+        return plan_field
+    return "worktree-to-pr"                 # tier 3: default
+```
+
+```mermaid
+flowchart LR
+    A["Invocation argument given?"] -->|Yes, valid mode| Z["Use invocation argument"]
+    A -->|No| B["Plan field declares a mode?"]
+    B -->|Yes, valid mode| Y["Use plan field"]
+    B -->|No| X["Default: worktree-to-pr"]
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style Z fill:#029E73,stroke:#000000,color:#FFFFFF
+    style Y fill:#029E73,stroke:#000000,color:#FFFFFF
+    style X fill:#CA9161,stroke:#000000,color:#FFFFFF
+```
+
+An invalid non-empty value at either tier (a string that is not one of the four modes) is a
+`plan-checker` finding — it is never silently coerced to the default.
+
+**Declaring the mode in a plan**: state it explicitly alongside the `## Worktree` /
+`## Worktree Specification` declaration, e.g. `## Delivery Mode: worktree-to-pr`. An unmarked plan
+resolves to the tier-3 default per the algorithm above.
+
+See the [plan-execution workflow](../../workflows/plan/plan-execution.md) for how each mode changes
+Step 0 (worktree entry), the per-phase push target, and Step 8 (finalization and merge hand-off).
+
 ### Important Note on File Naming
 
 Files inside plan folders use descriptive kebab-case names or short industry-standard acronyms (e.g., `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`). The folder structure provides sufficient context, so the filename only needs to describe its purpose.

@@ -28,6 +28,17 @@ This convention implements the following core principles:
 
 Standardize worktree creation so that `claude --worktree <name>` routes to `worktrees/<name>/` in the repository root (not the default `.claude/worktrees/`). This keeps worktrees visible at the repo root level while gitignoring both the conventional and custom paths.
 
+## Relationship to Delivery Mode
+
+A worktree is a **work location**, not the full picture of how a plan reaches `origin/main`. That
+broader question — where work happens, what it integrates into, and who holds merge authority — is
+the [Delivery Mode](./plans.md#delivery-mode) defined in the Plans Organization Convention. A
+worktree (this convention) is used by two of the four delivery modes — `worktree-to-pr` (the
+default) and `worktree-to-origin-main` — while the other two (`main-to-origin-main`, `main-to-pr`)
+operate directly in the primary checkout with no worktree at all. Consult
+[Delivery Mode](./plans.md#delivery-mode) to resolve which mode a given plan uses before
+provisioning a worktree per this convention.
+
 ## Scope
 
 ### What This Convention Covers
