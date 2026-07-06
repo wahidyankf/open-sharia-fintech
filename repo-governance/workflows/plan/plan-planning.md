@@ -168,7 +168,15 @@ Resolve ALL of the following:
    later steps.
 7. **Push target**: Confirm where the finished plan should be pushed (default: `origin main`).
    Record — used verbatim in Step 7 without re-asking.
-8. **PR vs. direct push**: Is a PR needed, or direct push to `main`?
+8. **PR vs. direct push — Delivery Mode**: Confirm which of the four
+   [Delivery Mode](../../conventions/structure/plans.md#delivery-mode) options — `worktree-to-pr`
+   (default), `worktree-to-origin-main`, `main-to-origin-main`, or `main-to-pr` — governs this
+   plan's own future execution. Record the answer so Step 4 instructs `plan-maker` to declare it
+   explicitly in the plan's `## Delivery Mode` field; an unmarked field falls through to the
+   three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) resolved
+   later by [plan-execution.md Step 0](./plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
+   Choosing a `*-to-pr` mode means the plan's own execution runs the
+   [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) before archival.
 9. **Definition of done**: What must the finished plan contain for the user to consider it ready?
 10. **Research needed**: Are there external claims (library versions, third-party best practices,
     API behavior) that require verification before writing?
@@ -252,7 +260,7 @@ Delegate via the Agent tool. Provide a self-contained handoff prompt containing 
 3. Research findings from Step 2 (cited) — or note that research was skipped
 4. Confirmed plan identifier and resolved `<plan-dir>` (the exact target folder, relative to the
    worktree root at `worktrees/<identifier>/`)
-5. Confirmed push target
+5. Confirmed push target and delivery mode (Step 1 item 8)
 6. Definition of done (from Step 1)
 7. **Explicit instruction**: write the plan directly to the resolved `<plan-dir>` inside the
    worktree at `worktrees/<identifier>/`. For `target-stage=in-progress` this is
@@ -389,3 +397,7 @@ resolution.
 - [web-researcher Agent](../../../.claude/agents/web-researcher.md) — Step 2
 - [repo-setup-manager Agent](../../../.claude/agents/repo-setup-manager.md) — Phase 0 of plans
   created by this workflow
+- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) —
+  the four-mode vocabulary and three-tier precedence confirmed in Step 1 item 8
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — the review loop that runs
+  during execution when the plan's confirmed delivery mode is `worktree-to-pr` or `main-to-pr`

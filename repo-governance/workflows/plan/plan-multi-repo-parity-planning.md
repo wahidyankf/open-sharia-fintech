@@ -166,6 +166,25 @@ worktree, but the delivery mode is the caller's per-run choice and neither is th
 grilling in Step 3 MUST surface the delivery-mode choice explicitly and record the invoker's decision
 before proceeding.
 
+### Relationship to Each Repo's Own `## Delivery Mode`
+
+The three modes above govern how THIS workflow delivers the **plan documents** it authors — a
+planning-phase concern. They are distinct from the
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+field (`worktree-to-pr`, `worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr`) that each
+authored plan separately declares for its own **future execution** by
+[plan-execution](./plan-execution.md) — an execution-phase concern layered on top of whichever mode
+delivered the plan document itself.
+
+Because this workflow produces one independent plan document per repo, each repo's own
+`## Delivery Mode` is resolved independently, per that repo's own plan and its own
+`## Worktree`/`## Delivery Mode` declaration, using the standard three-tier precedence (invocation
+argument > plan field > `worktree-to-pr` default). Repos in the same parity set are free to diverge
+here — for example, `ose-infra` may resolve to a direct-push mode while `ose-public` resolves to
+`worktree-to-pr` — exactly like any other per-repo deviation this workflow grills and records in the
+deviation matrix (Step 2). See Step 6 item 8 below for how `plan-maker` receives this instruction
+per repo.
+
 ## Steps
 
 ### Step 1 — Parity-Set Survey (Per Repo, Parallelizable)
@@ -386,7 +405,16 @@ Provide a self-contained handoff prompt per repo covering:
 5. Confirmed plan folder path (per stage above)
 6. Cross-links to the sibling plans in the other repos (even if those plans are not yet
    authored — use the expected paths)
-7. Delivery mode (from `mode` input)
+7. Delivery mode (from `mode` input) — this governs how the **plan document** itself is delivered
+   (see [Modes](#modes) above), distinct from the plan's own `## Delivery Mode` declaration below
+8. **Instruction for `plan-maker`** to declare this repo's own
+   [`## Delivery Mode`](../../conventions/structure/plans.md#delivery-mode) field in the authored
+   plan — the four-mode vocabulary (`worktree-to-pr` default, `worktree-to-origin-main`,
+   `main-to-origin-main`, `main-to-pr`) governing that plan's own future execution, resolved
+   independently per repo through the standard three-tier precedence (invocation argument > plan
+   field > default) and recorded as its own deviation-matrix row when it diverges from sibling
+   repos. A repo whose plan resolves to a `*-to-pr` mode additionally runs the
+   [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) during its own execution.
 
 Each plan MUST include:
 
@@ -611,6 +639,8 @@ select `worktree-to-pr`. The PRs remain in draft until the invoker promotes them
 - [Plan Multi-Repo Parity Planning and Execution](./plan-multi-repo-parity-planning-and-execution.md) —
   end-to-end composite that runs this workflow as its planning phase and continues directly into
   plan-execution for every resulting plan
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — runs during each repo's
+  execution phase when that repo's authored plan resolves to a `*-to-pr` delivery mode
 
 ## Principles Implemented/Respected
 
@@ -653,3 +683,8 @@ select `worktree-to-pr`. The PRs remain in draft until the invoker promotes them
 - **[Web Research Delegation Convention](../../conventions/writing/web-research-delegation.md)**:
   External research delegated to `web-researcher` in Step 4 when the research-needed flag
   is set.
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**:
+  each per-repo plan authored in Step 6 declares its own `## Delivery Mode` field, resolved
+  independently per repo via the three-tier precedence; divergence across repos is recorded as a
+  deviation-matrix row like any other per-repo difference — distinct from this workflow's own
+  planning-phase `mode` input.

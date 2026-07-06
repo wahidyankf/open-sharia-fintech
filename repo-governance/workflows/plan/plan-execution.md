@@ -187,6 +187,13 @@ These rules govern ALL execution steps. No exception. No shortcut.
 
 Plan execution happens on the plan's **work branch**, synced to the latest `origin/main`. The work branch is chosen by precedence: (1) a branch the **user explicitly specifies at invocation** — a dedicated worktree, the `main` checkout, or any other existing branch — wins; (2) if the user specifies nothing, the **plan docs win** — the plan's `## Worktree` section (or declared work branch) governs, and absent any override that defaults to a dedicated worktree provisioned from `origin/main`. Whichever branch is selected, the executor's **default first action is to pull the latest `origin/main` into that work branch** before any implementation, to minimize merge collisions later at push time. Executing a plan from a **stale** work branch — one not synced to the latest `origin/main` — is forbidden.
 
+**Delivery-mode resolution (same three-tier precedence)**: alongside the work-branch precedence above, the executor also resolves the plan's active **delivery mode**, using the identical three-tier pattern: (1) a mode given as an **invocation argument** wins; (2) if none is given, the plan's own `## Delivery Mode` declaration wins; (3) absent either, the default is **`worktree-to-pr`**. See [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) for the full four-mode table and the precedence algorithm. The resolved mode determines which work-location branch below applies:
+
+- `worktree-to-pr` and `worktree-to-origin-main` — work happens in a dedicated **worktree**; follow the worktree provisioning and entry steps below.
+- `main-to-origin-main` and `main-to-pr` — work happens directly in the **primary checkout**; skip worktree provisioning entirely per the "Work-branch provisioning vs. entry" note immediately below, and apply the freshness gate (step 5) directly to the primary checkout.
+
+The resolved delivery mode also determines the per-phase push target (Steps 2b/2c) and the finalization/archival path (Step 8) — each of those steps documents its mode-specific behavior.
+
 **Work-branch provisioning vs. entry**: when the work branch is a dedicated worktree (the default-when-unspecified case), follow the provisioning and entry steps below. When the user specifies the `main` checkout or another existing branch, skip provisioning (orchestrator-action steps 1–4): confirm you are on that branch, then apply the freshness gate (step 5) directly to it.
 
 **Orchestrator action**:
@@ -357,7 +364,9 @@ After completing all items in a delivery phase, verify the phase's authored gate
 3. **Fix ALL failures** — including preexisting ones (Iron Rule 3)
 4. Re-run failing checks to confirm resolution
 5. Commit thematically (Iron Rule 7) — separate plan work from preexisting fixes
-6. Push to `main` only after ALL local quality gates pass (Iron Rule 5)
+6. Push to the resolved delivery mode's target (Iron Rule 5), only after ALL local quality gates pass. The push target depends on the delivery mode resolved in Step 0:
+   - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): push directly to `origin main`.
+   - **`worktree-to-pr` / `main-to-pr`** (`*-to-pr` modes): push to the plan's **PR branch**. If no PR exists yet for this branch, open one on the first push of the plan (`gh pr create --base main --head <branch> --title "<plan-identifier>" --body "<summary>"`, draft or non-draft per plan/user preference); every subsequent phase push targets that same PR branch. CI is monitored on the PR itself, not on `main` — see Step 2c.
 
 **Output**: All quality gates passing, changes pushed
 
@@ -365,11 +374,11 @@ After completing all items in a delivery phase, verify the phase's authored gate
 
 ### 2c. Post-Push CI Verification (Sequential, After Each Push)
 
-After every push to `main`, verify GitHub Actions.
+After every push, verify CI on the resolved delivery mode's target — `origin main` for the direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`), the PR branch for the `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`).
 
-**Monitoring tool**: The required default for standard CI jobs (10–35 min) is `ScheduleWakeup` + a single `gh run view` call on wakeup (2 API calls total per run). Use `gh run watch <run-id>` only if the job is expected to complete in under 5 minutes — `gh run watch` polls every ~3 s and exhausts the GitHub API rate limit (5,000 req/hour) on any job longer than ~5 min. Manual tight-loop polling of `gh run view` without a sleep interval is also **forbidden**. See [CI Monitoring Convention](../../development/workflow/ci-monitoring.md) for required tooling, minimum poll intervals, trigger discipline, and rate-limit recovery procedures.
+**Monitoring tool**: The required default for standard CI jobs (10–35 min) is `ScheduleWakeup` + a single `gh run view` (direct-push modes) or `gh pr checks` (`*-to-pr` modes) call on wakeup (2 API calls total per run). Use `gh run watch <run-id>` (or tight polling of `gh pr checks`) only if the job is expected to complete in under 5 minutes — both poll every ~3 s and exhaust the GitHub API rate limit (5,000 req/hour) on any job longer than ~5 min. Manual tight-loop polling without a sleep interval is also **forbidden**. See [CI Monitoring Convention](../../development/workflow/ci-monitoring.md) for required tooling, minimum poll intervals, trigger discipline, and rate-limit recovery procedures.
 
-**Orchestrator action**:
+**Orchestrator action — `worktree-to-origin-main` / `main-to-origin-main` (direct push to `origin main`)**:
 
 1. Identify which GitHub Actions workflows were triggered by the push
 2. Find the run ID: `gh run list --workflow=<workflow-file> --limit=3`
@@ -387,7 +396,25 @@ After every push to `main`, verify GitHub Actions.
 6. Do NOT proceed to the next delivery phase until CI is fully green
 7. If rate-limited (HTTP 403 from `gh`): stop all `gh` calls immediately, use `ScheduleWakeup(delaySeconds=2100)` (35 min) to resume after the rolling window clears — do NOT spin in a retry loop
 
-**Output**: All CI workflows passing
+**Orchestrator action — `worktree-to-pr` / `main-to-pr` (PR branch)**:
+
+1. Identify the PR: `gh pr view <PR> --json number,url,headRefName` (the PR opened in Step 2b for this plan's branch)
+2. Check status: `gh pr checks <PR>` — lists every required check and its conclusion for the PR's current head commit
+3. Monitor to completion using the correct approach for the job duration:
+   - **Standard jobs (10–35 min, required default)**: `ScheduleWakeup(delaySeconds=120)` (2 min), check with one `gh pr checks <PR>` call, repeat every 2-5 min until every check reports a conclusion
+   - **Short jobs (<5 min only)**: poll `gh pr checks <PR>` at short intervals — do NOT use for 20–35 min CI jobs
+   - Never tight-loop `gh pr checks` without a sleep interval — it exhausts the GitHub API rate limit the same way `gh run watch` does
+4. If ANY check fails:
+   - Pull failure logs for the failing run (`gh run view <run-id> --log-failed`, with `<run-id>` found via the failing check's linked run in `gh pr checks <PR>` output)
+   - Fix locally (including preexisting CI failures — Iron Rule 3)
+   - Run local quality gates again (Step 2b)
+   - Push the fix commit to the **PR branch** (never to `main`)
+   - Monitor again with `ScheduleWakeup` + a single `gh pr checks <PR>` call
+5. Repeat until ALL checks on the PR pass with zero failures
+6. Do NOT proceed to the next delivery phase until the PR's CI is fully green
+7. If rate-limited (HTTP 403 from `gh`): identical recovery to the direct-push path — `ScheduleWakeup(delaySeconds=2100)` (35 min), no retry loop
+
+**Output**: All CI checks passing on the resolved target (`origin main` or the PR)
 
 **On failure**: Keep fixing and pushing until CI is green. If stuck after 3 attempts on the same failure, escalate to user.
 
@@ -640,6 +667,38 @@ proceed until the plan's Knowledge Capture phase is complete.
 - A plan with no Knowledge Capture phase and no explicit "none" record in `learnings.md` is
   incomplete for archival purposes.
 
+**PR-Review Maker→Fixer Cycle gate (mandatory for `*-to-pr` modes, before archival and before the
+`[HUMAN]` merge)**: When the delivery mode resolved in Step 0 is `worktree-to-pr` or `main-to-pr`,
+archival additionally requires the
+[PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) workflow to run to completion
+against the plan's PR before any archival step below. This gate does not apply to the direct-push
+modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and no review cycle.
+
+- Run the workflow's strictly sequential N-cycle loop (default **N = 3**): each cycle, a fresh
+  `pr-review-maker` posts line-anchored findings against the PR's current head commit via the
+  GitHub Reviews API, a `pr-review-fixer` triages and resolves every unresolved thread, and CI on
+  the PR must be GREEN before the next cycle starts. See the linked workflow for the full Loop
+  Algorithm, posting mechanics, and escalation rules.
+- **Done-definition for `*-to-pr` modes** (all four items required):
+  1. **N review cycles complete** (default 3).
+  2. **Every inline review comment is answered** — a fix applied and pushed, or a reasoned reject,
+     on every thread.
+  3. **All PR quality gates are GREEN** — both the local gates (Step 2b) and CI on the PR (Step 2c),
+     as of the PR's current head commit.
+  4. **Archival-in-PR is committed** — see below.
+- **Archival-in-PR**: for `*-to-pr` modes, the `git mv plans/in-progress/... plans/done/...` move
+  (and the accompanying README index updates) is committed **inside the delivering PR itself**, as a
+  normal commit on the PR branch pushed before the `[HUMAN]` merge — not as a separate commit landed
+  on `main` after merge. This keeps the archival move inside the same review cycle as the rest of the
+  plan's changes, so the PR that the human merges already contains the finished, archived plan.
+- The `[HUMAN]` merge sits **outside** this AI done-boundary: once all four done-definition items
+  are satisfied, the orchestrator hands off a green, fully-reviewed, archival-included PR, and the
+  human merges it on their own schedule — "done" (for the AI) is not the same as "merged" (see
+  [Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)).
+  Worktree cleanup for `*-to-pr` modes happens **after** the `[HUMAN]` merge completes (see the
+  archival Logic below) — in contrast to the direct-push modes, where cleanup already correctly
+  happens right after the push is confirmed green, because those modes have no separate merge step.
+
 **Logic**:
 
 - If status is `pass` (zero findings):
@@ -653,7 +712,11 @@ proceed until the plan's Knowledge Capture phase is complete.
 
   Zero validation findings alone is NOT sufficient for archival when an infra-apply step is still pending — the apply must be genuinely performed and its acceptance criterion verified (the provisioned resource exists and the target service responds), not merely reviewed or deferred. Only when all infra-apply steps in the delivery checklist are confirmed executed from the primary checkout may archival proceed.
 
-  When the gate passes, proceed with archival:
+  When the gate passes, proceed with archival. The remaining steps branch by the delivery mode
+  resolved in Step 0.
+
+  **`worktree-to-origin-main` / `main-to-origin-main` (direct-push modes)** — archival lands as a
+  direct commit pushed to `origin main`, matching the default flow:
   1. Move entire plan folder from current location to `plans/done/`:
 
      ```bash
@@ -687,6 +750,63 @@ proceed until the plan's Knowledge Capture phase is complete.
         If either check fails, do NOT offer deletion — surface what is uncommitted or unpushed and keep the worktree.
 
      2. **Prompt the user** (interactive question — this is a sanctioned stop): `Plan complete and pushed to origin main. Delete worktree worktrees/<plan-identifier>/ and its local branch?` NEVER delete the worktree without explicit user confirmation.
+     3. **On approval**, from the repo root:
+
+        ```bash
+        git worktree remove worktrees/<plan-identifier>
+        git worktree prune
+        git branch -d <plan-identifier> 2>/dev/null || true   # safe delete; only succeeds when fully merged
+        ```
+
+        If `git worktree remove` refuses (unexpected dirty state), do NOT force — re-run the safety precondition and escalate to the user.
+
+     4. **On decline**: keep the worktree and emit one line: `Worktree retained at worktrees/<plan-identifier>/ per user choice.`
+
+  **`worktree-to-pr` / `main-to-pr` (`*-to-pr` modes)** — archival-in-PR: the plan-folder move lands
+  inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, before the `[HUMAN]`
+  merge:
+  1. Move entire plan folder from current location to `plans/done/` (same command as the direct-push
+     path):
+
+     ```bash
+     git mv plans/in-progress/plan-name/ plans/done/YYYY-MM-DD__plan-name/
+     ```
+
+  2. **Update `plans/in-progress/README.md`** — remove the plan entry from the list
+  3. **Update `plans/done/README.md`** — add the plan entry with completion date and brief summary
+     (same format as above)
+  4. **Update any other READMEs** that reference this plan
+  5. **Search for orphaned references** to the old `plans/in-progress/[plan-name]` path and fix them
+  6. **Commit the archival and push to the PR branch** (never to `main` directly):
+
+     ```
+     chore(plans): move [plan-identifier] to done
+     ```
+
+  7. **Run or complete the PR-Review Maker→Fixer Cycle** against the PR (see the gate above) — because
+     each cycle's `pr-review-maker` reviews the full current state of the PR, its final pass also
+     covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
+     complete, every comment answered, all gates GREEN (including CI on this last push), and the
+     archival commit present on the PR branch.
+  8. **`[HUMAN]` merge**: once the done-definition is fully satisfied, surface the PR URL and the
+     done-definition checklist to the user and STOP — do not merge. Merging the PR is a `[HUMAN]`
+     step outside the AI done-boundary; the orchestrator's role ends at handing off a ready-to-merge
+     PR.
+  9. **Worktree cleanup — prompted (after the `[HUMAN]` merge completes)**: once the user confirms
+     the PR is merged, offer to delete the plan's worktree, using the same safety preconditions and
+     prompt mechanics as the direct-push path, but gated on merge completion instead of push
+     completion:
+     1. **Verify nothing unpushed and the merge landed** (safety precondition):
+
+        ```bash
+        git -C worktrees/<plan-identifier> status --porcelain   # must be empty
+        git fetch origin
+        git merge-base --is-ancestor "$(git -C worktrees/<plan-identifier> rev-parse HEAD)" origin/main   # must succeed, post-merge
+        ```
+
+        If either check fails, do NOT offer deletion — surface what is uncommitted or unmerged and keep the worktree.
+
+     2. **Prompt the user** (interactive question — this is a sanctioned stop): `PR merged. Delete worktree worktrees/<plan-identifier>/ and its local branch?` NEVER delete the worktree without explicit user confirmation, and never before the merge is confirmed.
      3. **On approval**, from the repo root:
 
         ```bash

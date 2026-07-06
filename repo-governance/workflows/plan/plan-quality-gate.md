@@ -273,6 +273,19 @@ Report final status and summary.
 
 **Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).
 
+## Relationship to Delivery-Mode Done-Definition
+
+This workflow's `pass` status certifies the plan **document** is complete and technically accurate
+before execution starts — it does not by itself certify the plan's **delivery** is done. Every plan
+resolves to one of four [Delivery Modes](../../conventions/structure/plans.md#delivery-mode) via
+the three-tier precedence (invocation argument > plan field > `worktree-to-pr` default). For a plan
+executing under a `*-to-pr` mode (`worktree-to-pr` or `main-to-pr`), full "done" for the plan's
+actual delivery additionally requires satisfying the
+[PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md)'s done-definition — N review
+cycles complete, every inline comment answered, all PR gates GREEN, archival committed inside the
+PR — before the `[HUMAN]` merge. The two gates sit at different lifecycle stages: this workflow
+gates the plan document pre-execution; the PR-review cycle gates the delivered change pre-merge.
+
 ## Example Usage
 
 ### Validate All Plans
@@ -441,6 +454,10 @@ This workflow can be composed with:
 - Content creation workflows (validate plans before creating content)
 - Execution workflows (validate before starting implementation)
 - Release workflows (validate plan completeness before release planning)
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — the complementary
+  post-execution gate for plans resolving to a `*-to-pr` delivery mode; see
+  [Relationship to Delivery-Mode Done-Definition](#relationship-to-delivery-mode-done-definition)
+  above
 
 ## Success Metrics
 
@@ -479,3 +496,4 @@ This workflow ensures plan quality and implementation readiness through iterativ
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: Workflow validates the five-document structure and worktree section per the convention
 - **[Plan Anti-Hallucination Convention](../../development/quality/plan-anti-hallucination.md)**: plan-checker's Step 5f enforces this convention's recipes, confidence labels, and Anti-Pattern Catalog
 - **[Multi-Harness Binding Convention](../../conventions/structure/multi-harness-binding.md)**: plan-checker's Step 5g (harness-neutrality scan) enforces this convention when the plan touches agents, skills, rules, or `repo-governance/` paths
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**: for plans resolving to a `*-to-pr` delivery mode, this workflow's `pass` status is a pre-execution gate, not a substitute for the [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md)'s done-definition that gates the eventual PR before the `[HUMAN]` merge

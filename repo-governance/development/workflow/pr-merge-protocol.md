@@ -34,7 +34,7 @@ This practice implements/respects the following conventions:
 
 - **[Code Quality Convention](../quality/code.md)**: The quality gates enforced by this protocol (typecheck, lint, test:quick, specs:coverage) are the same gates enforced by the pre-push hook. This convention extends the same standard to the PR merge boundary.
 
-- **[Trunk Based Development Convention](./trunk-based-development.md)**: PRs exist in TBD only for short-lived branches (worktree mode, code review, external contributions). This protocol governs the merge step of that workflow.
+- **[Trunk Based Development Convention](./trunk-based-development.md)**: `worktree-to-pr` -- a short-lived plan branch pushed to a PR -- is the repo-wide default TBD flavor. PRs also exist for `main-to-pr`, code review, and external contributions. This protocol governs the merge step for all of them.
 
 - **[Git Push Safety Convention](./git-push-safety.md)**: Both conventions share the principle that destructive or irreversible git operations require explicit, per-instance user approval. This convention applies the same standard to PR merges.
 
@@ -78,30 +78,64 @@ If the user explicitly says "merge despite the failing lint check" (or equivalen
 
 This protocol applies whenever a pull request exists as part of the development workflow:
 
-- **Opt-in PR mode**: When the user's prompt or plan explicitly requests a branch + pull request (worktree execution context does NOT automatically trigger this), the resulting PR follows this protocol at merge time.
+- **`worktree-to-pr` (repo-wide default)**: every plan delivered without an explicit mode override
+  resolves to this mode -- a short-lived plan branch, a draft PR opened against `main`, and this
+  protocol at merge time. See [Delivery Mode](#the-worktree-to-pr-terminal-step) below for the full
+  terminal-step sequence.
+- **`main-to-pr`**: primary-checkout work still routed through a PR follows the same protocol.
 - **External contributions**: PRs from external contributors follow this protocol.
 - **Code review workflow**: Any short-lived branch created for review purposes follows this protocol.
 
 This protocol does **not** apply to:
 
-- Direct commits to `main` (the default TBD workflow has no PR to merge).
+- Direct commits under `worktree-to-origin-main` or `main-to-origin-main` (no PR exists to merge).
 - Environment branch deployments managed by CI (e.g., `prod-ayokoding-www`), which are governed by their own documented CI workflows.
 
-### Draft PR Lifecycle (Opt-In PR Mode)
+## The `worktree-to-pr` Terminal Step
 
-Per the [Trunk Based Development Convention](./trunk-based-development.md#branch--draft-pr-opt-in), when a PR is explicitly requested (opt-in only — not triggered by worktree context), all such PRs are **opened as GitHub drafts** (`gh pr create --draft`), not as ready-for-review PRs. This protocol fires at the moment the author flips the draft to ready for review (or at an explicit merge request), not at PR open time.
+Under the repo-wide `worktree-to-pr` default (see the
+[Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) and
+the [Trunk Based Development Convention](./trunk-based-development.md#default-delivery-mode-worktree-to-pr)),
+the AI's work on a plan branch does not end at "all commits pushed." The terminal step, run by `[AI]`,
+is:
+
+1. Run the **PR-Review Maker→Fixer Cycle**
+   (`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`) -- sequential review/fix cycles
+   against the open PR, driving it toward a fully reviewed, green state.
+2. Confirm the **done-definition** is met:
+   - The review cycle has completed its configured number of passes.
+   - Every inline review comment has a reply (resolved or explicitly addressed).
+   - All quality gates are GREEN -- both local (pre-push hook) and CI.
+   - Archival-in-PR is committed (ose-public only -- the plan folder's archival move lands in the same
+     PR, since the plan folder lives solely in this repo).
+3. Flip the PR from draft to ready for review (`gh pr ready`).
+
+**This done-definition is the AI's done-boundary.** Meeting it means the AI's work on the plan is
+complete -- it does **not** mean the plan is merged. The actual merge is a separate, subsequent action
+performed by `[HUMAN]`, per the approval rule in [The Rule](#the-rule) above. "Done" (for the AI) is
+not "merged" -- the merge sits outside the AI's done-boundary entirely, on the human's own schedule.
+
+### Draft PR Lifecycle
+
+Per the [Trunk Based Development Convention](./trunk-based-development.md#why-draft-not-ready-for-review-on-open),
+every PR opened under `worktree-to-pr` or `main-to-pr` is **opened as a GitHub draft**
+(`gh pr create --draft`), not as a ready-for-review PR. This protocol's approval gate fires at the
+moment the AI flips the draft to ready for review (having met the done-definition above), not at PR
+open time.
 
 **Lifecycle**:
 
-1. **Draft opened** -- agent or human runs `gh pr create --draft --base main ...`. No approval gate yet. CI may still run on the draft.
-2. **Iterate on the branch** -- additional commits push to the same draft PR. The PR stays in draft status throughout iteration. No approval gate yet.
-3. **Author flips to ready** -- when the work is complete, the author runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol approval gate fires.** The agent must:
+1. **Draft opened** -- `[AI]` runs `gh pr create --draft --base main ...`. No approval gate yet. CI may still run on the draft.
+2. **Iterate on the branch** -- `[AI]` pushes additional commits and runs the PR-Review Maker→Fixer Cycle. The PR stays in draft status throughout iteration. No approval gate yet.
+3. **`[AI]` flips to ready** -- once the done-definition is met, `[AI]` runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol approval gate fires.** The agent must:
    - Verify all quality gates have passed (see Quality Gates above).
    - Present the approval prompt to the user.
    - Wait for explicit confirmation before merging.
-4. **Merge** -- only after explicit user approval, per the rules above.
+4. **`[HUMAN]` merges** -- only after explicit user approval, per the rules above. This step is outside the AI's done-boundary.
 
-An agent that opens a draft PR is **not** authorized to flip it to ready-for-review or merge it without explicit user instruction. The draft-to-ready transition is itself a deliberate human moment.
+An agent that opens a draft PR is **not** authorized to merge it without explicit user instruction --
+flipping to ready is the deliberate signal that the AI's own work is done; the merge itself remains a
+separate, human-owned action.
 
 ## Agent Workflow
 
@@ -222,7 +256,9 @@ This rule applies to:
 
 - [Git Push Safety Convention](./git-push-safety.md) -- Per-instance approval for destructive git operations
 - [Code Quality Convention](../quality/code.md) -- Quality gates enforced by git hooks
-- [Trunk Based Development Convention](./trunk-based-development.md) -- When PRs are used in TBD
+- [Trunk Based Development Convention](./trunk-based-development.md) -- The `worktree-to-pr` default delivery mode and how it relates to TBD
 - [Worktree Toolchain Initialization](./worktree-setup.md) -- Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree
 - [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names for quality gates
-- [Git Push Default Convention](./git-push-default.md) -- Governs whether a PR should be created at all (opt-in); this convention governs what happens once a PR exists
+- [Git Push Default Convention](./git-push-default.md) -- Governs the default `worktree-to-pr` push target and the explicit direct-push modes; this convention governs what happens once a PR exists
+- [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) -- The four-mode vocabulary and three-tier precedence that determines when this protocol applies
+- `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` -- The review/fix cycle that runs before a `worktree-to-pr` PR meets the done-definition described above
