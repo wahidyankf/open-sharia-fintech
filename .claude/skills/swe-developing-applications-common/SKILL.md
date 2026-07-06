@@ -398,7 +398,7 @@ See also:
 
 **Workflow Conventions**:
 
-- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow details (default = direct push to main regardless of execution context; branch + draft PR is opt-in only when explicitly requested)
+- [Trunk Based Development](../../../repo-governance/development/workflow/trunk-based-development.md) - Git workflow details (all development targets `main`; see [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode) for how a plan reaches `main` — `worktree-to-pr` is the default)
 - [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) - Explicit user approval required, all quality gates must pass
 - [Commit Messages Convention](../../../repo-governance/development/workflow/commit-messages.md) - Conventional Commits specification
 - [Implementation Workflow](../../../repo-governance/development/workflow/implementation.md) - Make it work → right → fast

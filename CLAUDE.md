@@ -25,6 +25,15 @@ Edit `.claude/` and `.opencode/` files with normal `Write` / `Edit` tools. Both 
 
 **See**: [primary binding agent catalog](./.claude/agents/README.md)
 
+### Delivery Mode default (Claude-Code binding)
+
+`worktree-to-pr` is inherited as the plan default from `AGENTS.md` §Git Workflow §Delivery Mode (no
+local override in this file — direct push to `main` is no longer the assumed default). The two
+PR-review-cycle agents, `pr-review-maker` and `pr-review-fixer`, are ordinary `.claude/agents/*.md`
+files under this binding; `pr-review-maker` writes only via the GitHub Reviews API (no local `git
+push`), while `pr-review-fixer` pushes commits to the PR branch through the same git tooling as any
+other agent in this repo.
+
 ### Multi-harness configuration (Claude Code + OpenCode + Amazon Q)
 
 Repo maintains **multi-harness compatibility** with Claude Code, OpenCode, and Amazon Q Developer:

@@ -128,16 +128,20 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **Rule-16 API exploratory retest (API feature-change plans)**: an API **feature-change** plan (REST or GraphQL endpoints in a backend or tRPC app) MUST carry a near-end "Rule-16 API exploratory retest" step running `api-exploratory-tester` (`output-mode: delivery`, the plan's `plan-path`) against the running endpoint(s) with the contract (OpenAPI 3.x / GraphQL SDL) as ground truth, with each `AET-###` defect finding folded into `delivery.md` as an unchecked checkbox that MUST be fixed (ticked) before archival — deferral of an AET defect finding requires explicit user permission and is allowed only when the fix is genuinely impossible. (`SG-###` spec-gap proposals are proposals, not defects, and may be triaged or deferred.) An unfixed `AET-###` defect checkbox at archival time is a **HIGH** finding. A missing step on an API feature-change plan is **HIGH**. The API tester never drives a browser, so this is independent of Rule 15 — a plan changing both a web UI and its API carries both retest steps. Frontend-only, CLI/text output, and pure governance/agent-definition plans are exempt. See [User-Facing Delivery Hardening](../../repo-governance/development/quality/user-facing-delivery-hardening.md) Rule 16.
 - **Knowledge Capture phase presence**: every substantive plan's `delivery.md` MUST carry a final Knowledge Capture phase (or an explicit "none" record) per the [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md). Validated in detail by Step 5l. Silent absence (no phase AND no explicit "none" record anywhere) is flagged **MEDIUM**; an explicit "none" record PASSES without a finding.
 
-#### PR Step Authorization Check (per [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md))
+#### PR Step Authorization Check (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
 
-Flag as **HIGH** any delivery checklist containing a `- [ ] Create PR`, `- [ ] Open PR`, or equivalent PR creation step unless EITHER:
+A PR creation step (`- [ ] Create PR`, `- [ ] Open PR`, or equivalent) is **expected and correct**
+when the plan's resolved Delivery Mode is `worktree-to-pr` (the default) or `main-to-pr` — no
+separate authorization is needed beyond the mode declaration itself; validate it via Step 5m
+instead (PR-Review Maker→Fixer Cycle present, `[HUMAN]` merge tag correct).
 
-1. The plan's `README.md` or `prd.md` contains an explicit statement that a PR is required (e.g., "This plan requires review via PR", external contribution, regulatory requirement)
-2. The plan's Git Workflow section explicitly documents a branch-based flow and explicitly requests a PR
+Flag as **HIGH** a PR creation step on a plan whose resolved Delivery Mode is
+`worktree-to-origin-main` or `main-to-origin-main` (a direct-push mode) — an unsolicited PR step
+under a direct-push mode conflicts with the declared mode and must be removed or the mode
+corrected.
 
-Note: executing in a worktree context does NOT authorize a PR step. The authorizing signal must be an explicit PR instruction, not the use of worktrees.
-
-Unsolicited PR steps conflict with Trunk Based Development and must be removed.
+Note: executing in a worktree context does not by itself select a mode either way — the resolved
+Delivery Mode (declared or defaulted) is the only authorizing signal, per Step 5m.
 
 ### 5. Consistency Validation
 
@@ -791,3 +795,55 @@ safety gates (secret/sensitivity, repo-relevance) — before the plan may be arc
 - Explicit "none" record present (in `learnings.md` or `delivery.md`): **PASS** — not a finding
 - Phase present but missing the code-routing rule or either safety-gate reference: **MEDIUM**
 - Illegitimate trivial-plan exemption used to skip on a genuinely substantive plan: **MEDIUM**
+
+### 19. Delivery Mode Validation (Step 5m — MANDATORY)
+
+Enforces the
+[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode):
+every plan resolves to exactly one of the four delivery modes (`worktree-to-pr` **(default)**,
+`worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr`) before execution begins. This is a
+sibling check to Step 5d (Worktree Specification) — a worktree is a work location, while delivery
+mode additionally fixes the integration target and merge authority.
+
+#### What to Validate
+
+1. **Value validity when declared** — if `delivery.md` (or a single-file plan's `README.md`)
+   contains a `## Delivery Mode: <value>` declaration, `<value>` MUST be exactly one of the four
+   valid modes. An invalid non-empty value (a typo, a retired mode name, free text) is NEVER
+   silently coerced to the default — flag it directly.
+2. **Absence is not itself a violation** — per the three-tier precedence rule, an unmarked plan
+   resolves to the tier-3 default (`worktree-to-pr`). Do not flag a plan for omitting the section.
+   However, `plan-maker` is instructed to always author the section explicitly (see
+   `.claude/agents/plan-maker.md` Step 7) — flag a freshly-authored plan missing it entirely at
+   **LOW** as a best-practice gap, not a correctness defect.
+3. **`*-to-pr` modes carry the PR-Review Maker→Fixer Cycle** — when the resolved mode is
+   `worktree-to-pr` or `main-to-pr`, `delivery.md` MUST emit the PR-Review Maker→Fixer Cycle steps
+   (strictly sequential maker→fixer cycles, default 3, CI-green-gated) per the
+   [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md),
+   positioned before the `[HUMAN]` PR-merge step. A `*-to-pr` plan whose checklist jumps straight
+   from PR creation to `[HUMAN]` merge with no review-cycle steps is missing required steps.
+4. **`[HUMAN]` merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
+   tagged `[HUMAN]` (never `[AI]`); for `*-to-origin-main` modes, the final push MUST be tagged
+   `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
+   [PR Step Authorization Check](#pr-step-authorization-check-per-git-push-default-convention) —
+   that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
+   since a PR step is expected and correct under `*-to-pr` modes.
+5. **"Done" is not "merged"** — a `*-to-pr` plan's own completion/Gate criteria MUST NOT require the
+   PR to actually be merged; a green, fully-reviewed PR awaiting `[HUMAN]` merge on their own
+   schedule is a valid done state. Flag a plan that conflates the two.
+6. **Archival-in-PR present** — for `*-to-pr` modes (where the plan folder is tracked in the
+   repo being delivered), the checklist MUST include an archival step — `git mv` the plan folder
+   to `plans/done/`, plus README/index updates — committed **inside the delivering PR** itself
+   (not deferred to a follow-up commit/PR after merge). Missing archival-in-PR, or archival
+   deferred to after merge, on a `*-to-pr` plan whose folder is tracked in-repo: flag it. This item
+   is N/A for repos where the plan folder isn't tracked (the three-repo nuance noted in the
+   [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)).
+
+#### Finding Severity
+
+- Invalid non-empty `## Delivery Mode` value: **HIGH**
+- `*-to-pr` mode missing the PR-Review Maker→Fixer Cycle steps before `[HUMAN]` merge: **HIGH**
+- `[HUMAN]`/`[AI]` merge-tag mismatch with the resolved mode: **HIGH**
+- Plan completion criteria conflating "done" with "merged" on a `*-to-pr` plan: **MEDIUM**
+- Missing or post-merge-deferred archival-in-PR step on an applicable `*-to-pr` plan: **HIGH**
+- Freshly-authored plan missing the `## Delivery Mode` declaration entirely: **LOW**

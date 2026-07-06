@@ -50,6 +50,7 @@ Exactly one of the following tokens MUST appear as the first token of every agen
 - **`docs`** — Agents scoped to the `docs/` tree (Diátaxis content, link integrity, software-engineering separation).
 - **`pdf-to-md`** — Agents that convert PDF documents to verbatim Markdown and validate conversion fidelity (text completeness, tables, diagrams, OCR quality).
 - **`plan`** — Agents in the plan lifecycle (authoring, checking, executing, validating execution, fixing plans).
+- **`pr`** — Agents that operate directly on GitHub pull requests (posting/triaging review findings, resolving review threads), distinct from the `plan` scope's plan-lifecycle agents.
 - **`readme`** — Agents that create, validate, or repair README files across the repository.
 - **`repo`** — Repository-wide governance agents (conventions, workflows, cross-reference integrity).
 - **`social`** — Agents that produce social-media artifacts (LinkedIn posts, monthly updates).

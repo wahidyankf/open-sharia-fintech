@@ -180,11 +180,13 @@ top of `delivery.md`, and every `[HUMAN]` step MUST state what the human does pl
 the agent checks to resume.
 
 **Git-mechanical steps are `[AI]` (HARD RULE)** — three recurring steps MUST be tagged `[AI]`, never
-`[HUMAN]`: provisioning the worktree (`git worktree add …`), committing and pushing to `origin main`, and
-removing the worktree (`git worktree remove …`). Direct push to `main` is the repo default (Trunk Based
-Development) — do NOT emit a `[HUMAN]` "review the diff and approve push to main" gate unless the user or
-plan explicitly requested a PR or an out-of-band sign-off for that change. Write the push step as
-`- [ ] [AI] Commit and push to origin main`. See the
+`[HUMAN]`: provisioning the worktree (`git worktree add …`), committing and pushing (to `origin main`
+for `*-to-origin-main` modes, or to the PR branch for `*-to-pr` modes), and removing the worktree
+(`git worktree remove …`). For the default `worktree-to-pr` mode, do NOT emit a `[HUMAN]` "review the
+diff and approve push" gate for the push itself — pushing to the PR branch is `[AI]`; only the final
+PR merge to `main` is `[HUMAN]`, and only after the PR-Review Maker→Fixer Cycle has completed (see
+Step 7 below). Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
+or `- [ ] [AI] Commit and push to origin <pr-branch>` (`*-to-pr` modes). See the
 [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) and
 [Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
 
@@ -197,15 +199,39 @@ bleed unrelated work across a boundary with no safe stop point. See
 and
 [§Phases as Natural Pauses With Clear Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
 
-### Step 7: Add Git Workflow
+### Step 7: Add Delivery Mode
 
-Specify branch strategy:
+Author a `## Delivery Mode: <mode>` section in `delivery.md` (single-file plans: in `README.md`),
+placed alongside `## Worktree`, declaring exactly one of the four modes:
 
-**Default (all contexts including worktrees)**: Work directly on `main` (Trunk Based Development) -- commit and push to `main` with no PR. Running inside a git worktree does NOT change this default. The same direct-push-to-main rule applies whether the plan executes in a worktree session or in the main checkout.
-**PR (opt-in only)**: A draft PR is used only when the user's prompt explicitly requests a PR, or when the plan's delivery.md contains an explicit `- [ ] Create PR` step that the user has confirmed. The trigger is an explicit instruction, not the execution context.
-**Other exception**: Plain feature branch (non-worktree) requires justification.
+| Mode                      | Work location    | Integration target | Merge authority |
+| ------------------------- | ---------------- | ------------------ | --------------- |
+| `worktree-to-pr`          | Worktree         | Draft PR           | `[HUMAN]`       |
+| `worktree-to-origin-main` | Worktree         | Direct push        | `[AI]`          |
+| `main-to-origin-main`     | Primary checkout | Direct push        | `[AI]`          |
+| `main-to-pr`              | Primary checkout | Draft PR           | `[HUMAN]`       |
 
-See [Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md) and especially the [Default Push and Worktree Execution](../../repo-governance/development/workflow/trunk-based-development.md#default-push-and-worktree-execution) section for workflow details.
+**`worktree-to-pr` is the default** — apply three-tier precedence: invocation argument (if the
+user or calling context specified a mode explicitly) → plan field (if a prior draft already
+declared one) → default `worktree-to-pr`. Never silently coerce an invalid non-empty value —
+treat it as a grill question instead (Step 8).
+
+**For `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`)**: the delivery checklist MUST emit the
+**PR-Review Maker→Fixer Cycle** steps (see
+[PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)) —
+strictly sequential maker→fixer→maker→fixer→maker→fixer cycles (default 3), each cycle gated by a
+green CI run — **before** the `[HUMAN]` PR-merge step. Recall "done" (AI hands off a green,
+fully-reviewed PR) is NOT the same as "merged" (on the human's own schedule) — do not tag the PR
+merge itself as anything but `[HUMAN]`, and do not treat plan completion as blocked on the merge
+happening.
+
+**For `*-to-origin-main` modes**: no PR-review cycle applies; the final push is `[AI]` and the plan
+completes once CI is green on `main`.
+
+See [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode)
+for the authoritative mode table, precedence rule, and declaration syntax, and
+[Trunk Based Development Convention](../../repo-governance/development/workflow/trunk-based-development.md)
+for the underlying git-workflow details.
 
 ### Step 8: Grill the User (Mandatory — Post-Write)
 
@@ -229,6 +255,9 @@ Cover (each as a structured multiple-choice question):
   separate checkboxes per the HARD RULE in
   [test-driven-development.md](../../repo-governance/development/workflow/test-driven-development.md))?
 - Is the `## Worktree` section present in `delivery.md`?
+- Is `## Delivery Mode: <mode>` present alongside `## Worktree`, declaring one of the four valid
+  modes (defaulting to `worktree-to-pr` when unspecified), and — for `*-to-pr` modes — does the
+  checklist emit the PR-Review Maker→Fixer Cycle steps before the `[HUMAN]` merge?
 - Is Phase 0 (Environment Setup and Baseline) the first phase in `delivery.md`, with
   `repo-setup-manager` as the designated executor?
 - Does every phase (including Phase 0) end with a `### Phase N Gate` and a **Pause Safety** note,
