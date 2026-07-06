@@ -239,7 +239,7 @@ stateDiagram-v2
 
 ## Phase 2: ose-public — Workflow Layer (incl. pr-review-cycle doc + loop wiring)
 
-- [ ] [AI] Edit `repo-governance/workflows/plan/plan-execution.md`:
+- [x] [AI] Edit `repo-governance/workflows/plan/plan-execution.md`:
       (a) Step 0 — add delivery-mode selection with the three-tier precedence alongside the existing
       work-branch precedence; (b) Steps 2b/2c — under `worktree-to-pr` the push target is the PR
       branch and CI is monitored on the PR; (c) Step 8 finalization — wire the **PR-Review
@@ -252,7 +252,7 @@ stateDiagram-v2
       the precedence phrase (invocation > plan > default) appears near Step 0, and Step 8 references
       both the review cycle and archival-in-PR.
   - _Suggested executor: `repo-workflow-maker`_
-- [ ] [AI] Create the new workflow doc
+- [x] [AI] Create the new workflow doc
       `repo-governance/workflows/pr/pr-review-quality-gate.md` _(New file; new `pr/` workflow
       subdir)_ documenting the loop: participants (`pr-review-maker`, `pr-review-fixer`), the strictly
       sequential N-cycle algorithm (default N=3), the GitHub Reviews API mechanics
@@ -264,7 +264,7 @@ stateDiagram-v2
       `grep -c "pr-review-maker" repo-governance/workflows/pr/pr-review-quality-gate.md` ≥ 1 and
       the workflows index links the new doc.
   - _Suggested executor: `repo-workflow-maker`_
-- [ ] [AI] Edit `repo-governance/development/workflow/trunk-based-development.md`: reconcile the "all
+- [x] [AI] Edit `repo-governance/development/workflow/trunk-based-development.md`: reconcile the "all
       development on `main`" posture (decision 6) — frame worktree → PR via short-lived plan branches
       as a valid TBD flavor; update `## Default Push and Worktree Execution` so the default is
       short-lived-branch-via-PR while preserving TBD spirit. Honor the maintenance note listing the
@@ -272,20 +272,20 @@ stateDiagram-v2
       — acceptance: `grep -ci "short-lived" repo-governance/development/workflow/trunk-based-development.md` ≥ 1
       and the doc no longer states direct-push-to-main as the sole default.
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit `repo-governance/development/workflow/git-push-default.md` and
+- [x] [AI] Edit `repo-governance/development/workflow/git-push-default.md` and
       `repo-governance/development/workflow/git-push-safety.md`: reconcile push semantics — default
       integration target is a PR branch; direct push remains available via `*-to-origin-main` modes;
       keep force-push/linear-history rules correct for plan branches.
       — acceptance: both files reference the PR-branch default and the `*-to-origin-main` modes.
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit `repo-governance/development/workflow/pr-merge-protocol.md`: document the
+- [x] [AI] Edit `repo-governance/development/workflow/pr-merge-protocol.md`: document the
       `worktree-to-pr` terminal step — `[AI]` runs the PR-Review Maker→Fixer Cycle and ensures all
       gates (local + CI) are GREEN and the done-definition is met; `[HUMAN]` merge performs the trunk
       write, outside the AI done-boundary.
       — acceptance: `grep -ci "worktree-to-pr" repo-governance/development/workflow/pr-merge-protocol.md` ≥ 1
       and the doc references the review cycle + done-boundary.
   - _Suggested executor: `repo-rules-maker`_
-- [ ] [AI] Edit `repo-governance/workflows/plan/plan-planning.md`,
+- [x] [AI] Edit `repo-governance/workflows/plan/plan-planning.md`,
       `repo-governance/workflows/plan/plan-quality-gate.md`,
       `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`, and
       `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md`: reference
@@ -297,36 +297,36 @@ stateDiagram-v2
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
+- [x] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
       — acceptance: all exit 0.
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
       **Fix ALL failures, including preexisting.**
 
 ### Commit + Push to PR branch
 
-- [ ] [AI] Commit thematically:
+- [x] [AI] Commit thematically:
       `git commit -m "docs(workflow): add delivery-mode selection + pr-review maker→fixer cycle to plan-execution; reconcile TBD/push semantics"`
       — acceptance: commit created on the plan branch.
-- [ ] [AI] Push to the PR branch: `git push origin worktree-to-pr-default-delivery-mode`
+- [x] [AI] Push to the PR branch: `git push origin worktree-to-pr-default-delivery-mode`
       — acceptance: PR shows the new commit.
 
 ### Post-Push CI Verification (on the PR)
 
-- [ ] [AI] Monitor CI on the PR until green (`gh pr checks --watch`); fix at root + follow-up commit
+- [x] [AI] Monitor CI on the PR until green (`gh pr checks --watch`); fix at root + follow-up commit
       if red; repeat until green.
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `grep -c "worktree-to-pr" repo-governance/workflows/plan/plan-execution.md` ≥ 1 and Step 0
+- [x] [AI] `grep -c "worktree-to-pr" repo-governance/workflows/plan/plan-execution.md` ≥ 1 and Step 0
       documents the three-tier delivery-mode precedence; Step 8 references the review cycle +
       archival-in-PR + done-definition.
-- [ ] [AI] `test -f repo-governance/workflows/pr/pr-review-quality-gate.md` passes and the
+- [x] [AI] `test -f repo-governance/workflows/pr/pr-review-quality-gate.md` passes and the
       workflows index links it.
-- [ ] [AI] All four plan-workflow docs reference `Delivery Mode`; TBD doc reconciled.
-- [ ] [AI] `gh pr checks` all green after the Phase 2 push.
+- [x] [AI] All four plan-workflow docs reference `Delivery Mode`; TBD doc reconciled.
+- [x] [AI] `gh pr checks` all green after the Phase 2 push.
 
 > **Pause Safety**: workflow + development-workflow edits and the new pr-review-cycle doc are committed
 > to a green (still-draft) PR; `main` untouched. Safe to stop. To resume:
