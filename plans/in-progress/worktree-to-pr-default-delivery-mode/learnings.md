@@ -1,9 +1,6 @@
 # Learnings — Worktree-to-PR Default Delivery Mode
 
-> Running log per the Knowledge Capture convention. Phases 0–4 (ose-public authoring + ose-primer
-> port) entries below are triaged already. Phase 5 (ose-infra port) is still executing at the time of
-> this draft — its entries will be appended and triaged once that phase completes, before this file's
-> final routing pass and Phase 6 Gate are ticked.
+> Running log per the Knowledge Capture convention. All entries below (Phases 0–5) are triaged.
 
 ---
 
@@ -93,16 +90,55 @@
 
 ---
 
-## Phase 5 (ose-infra) — pending
+## Learning: a single green-CI reading is not sufficient proof a background agent's own poll loop has silently stopped
 
-Phase 5 execution is still in progress. This section will be populated with candidate learnings from
-the ose-infra port (worktree provisioning, Surface Inventory edits, quality gates, CI, and its own
-PR-Review Maker→Fixer cycle) once that phase completes, before the final triage/routing pass and the
-Phase 6 Gate are marked done.
+- **Context**: Phase 5's ose-infra port hit the same mid-poll-loop stop as the earlier learning above
+  (background agent `aa0cc284970d15ffd` armed a CI-wait then went `completed` before flipping the PR
+  to ready). The main thread then took over CI monitoring directly via repeating `ScheduleWakeup`
+  cycles (~270s apart) rather than resuming the agent blindly. Across roughly 8 poll cycles, CI
+  progressed steadily (5 → 8 → 10 → 11 → 12 → 13 → 15 → 17 → 19 passing checks) before finally
+  reaching fully green — at no point during that climb was it actually safe to conclude the agent had
+  stalled, because CI was still visibly moving.
+- **Observation**: once CI did reach fully green for the first time, escalating immediately (assuming
+  the agent's own wait had also seen green and simply failed to act) would have raced the agent's own
+  next poll tick — a plausible source of duplicate or conflicting action (e.g., two callers both
+  invoking `gh pr ready`). Requiring a **second consecutive** green reading, with the PR's review
+  count and `headRefOid` also unchanged across both readings, gave a clean, low-risk signal that
+  nothing was moving — at which point the main thread ran the single mechanical `gh pr ready` command
+  itself.
+- **Why it might generalize**: any future hand-off of an open-ended CI-wait to a background agent
+  (the pattern already flagged as an anti-pattern above) will face the identical judgment call about
+  when to conclude the agent silently stopped versus is still legitimately mid-cycle. A concrete
+  debounce rule (2 consecutive green + no state movement) is directly reusable, not specific to this
+  plan.
+- **Litmus**: PASSES — a concrete, checkable debounce rule prevents both false-positive escalation
+  (racing a live agent) and false-negative under-escalation (waiting forever on a truly-dead agent).
+- **Secret/sensitivity gate**: no secrets involved — pure orchestration/monitoring behavior.
+- **Repo-relevance gate**: shared across all three repos (agent-orchestration behavior, not
+  repo-specific).
+- **Routing decision**: **routed** to
+  `repo-governance/development/agents/subagent-orchestration.md` §Anti-Patterns — added a "Debounce
+  before resuming" addendum to the existing "Delegating an Open-Ended Poll Loop Inside a Long Chunk"
+  entry.
 
 ---
 
-## Summary (Phases 0–4 only — Phase 5 pending)
+## Learning: self-hosted-runner CI can take many poll cycles to clear even when nothing is actually stuck
+
+- **Context**: the ose-infra PR #6 CI run on the final fixer commit took roughly 8 consecutive
+  ~270-second poll cycles (well over 30 minutes of wall-clock) to go from the first passing checks to
+  fully green, with checks turning green a few at a time rather than in a burst.
+- **Observation**: this matches the already-known, already-tracked self-hosted-runner capacity
+  behavior (see the existing project note on rustup-concurrency contention on the runner) rather than
+  revealing anything new. A backlog plan for CI runner-health monitoring was already created in
+  Phase 6 (see `plans/backlog/`) to track the underlying infrastructure question.
+- **Litmus**: FAILS — no new fact; an existing tracked issue with an existing backlog item.
+- **Routing decision**: **discarded** — reason: duplicate of already-tracked infra behavior; the
+  Phase 6 ose-infra CI-runner-health backlog plan is the correct home, and it already exists.
+
+---
+
+## Summary (Phases 0–5, complete)
 
 | Entry                                                            | Terminal state | Destination                                                                     |
 | ---------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------- |
@@ -110,3 +146,5 @@ Phase 6 Gate are marked done.
 | Background agent stopped mid-poll-loop, needed resume            | Routed         | `repo-governance/development/agents/subagent-orchestration.md` §Anti-Patterns   |
 | Final-cycle thoroughness instruction worked as designed          | Discarded      | — (validation, not a new fact)                                                  |
 | Link-label/target semantic mismatch bug class                    | Discarded      | — (no clear automatable rule; caught by existing review mechanism)              |
+| Single green-CI reading insufficient proof of agent stall        | Routed         | `repo-governance/development/agents/subagent-orchestration.md` §Anti-Patterns   |
+| Self-hosted-runner CI slow-clear over many poll cycles           | Discarded      | — (duplicate of already-tracked infra issue + existing backlog plan)            |

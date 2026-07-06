@@ -226,6 +226,15 @@ downstream tasks. If the result shows an in-progress wait rather than a final ou
 same agent via `SendMessage` (restating the remaining steps) rather than assuming completion or
 spawning a duplicate agent for the same chunk.
 
+**Debounce before resuming**: a single externally-observed "CI is green" snapshot is not proof the
+agent's own poll noticed it — the main thread's check and the agent's next poll cycle race each
+other, and one green reading can be a transient blip (flaky self-hosted-runner check, a check that
+briefly reports success then reruns). Require the terminal state to hold for **two consecutive**
+external poll cycles — CI still green, PR review count and `headRefOid` unchanged both times —
+before concluding the agent silently stopped and taking over its remaining step (e.g., running the
+mechanical `gh pr ready` yourself). Resuming on the first green reading risks duplicating or racing
+work the agent is about to do on its own next tick.
+
 ## Tooling Reference
 
 | Tool             | Purpose in This Convention                                     |
