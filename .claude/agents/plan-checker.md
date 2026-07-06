@@ -825,7 +825,7 @@ mode additionally fixes the integration target and merge authority.
 4. **`[HUMAN]` merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
    tagged `[HUMAN]` (never `[AI]`); for `*-to-origin-main` modes, the final push MUST be tagged
    `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
-   [PR Step Authorization Check](#pr-step-authorization-check-per-git-push-default-convention) —
+   [PR Step Authorization Check](#pr-step-authorization-check-per-plans-organization-convention-delivery-mode) —
    that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
    since a PR step is expected and correct under `*-to-pr` modes.
 5. **"Done" is not "merged"** — a `*-to-pr` plan's own completion/Gate criteria MUST NOT require the
