@@ -144,7 +144,7 @@ git push origin main
 Under the repo-wide `worktree-to-pr` default, a short-lived plan branch is the norm, not the exception.
 Direct commit to `main` (`worktree-to-origin-main`, `main-to-origin-main`) remains the norm only for
 small, well-understood changes -- see [Direct-Push Modes Remain Fully Available](#direct-push-modes-remain-fully-available)
-above.
+below.
 
 Branches are also used, as they always have been, for:
 
