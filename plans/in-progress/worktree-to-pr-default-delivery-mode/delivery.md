@@ -336,13 +336,13 @@ stateDiagram-v2
 
 ## Phase 3: ose-public — Agents (incl. two review agents), Skill, Root, Checkers, Bindings
 
-- [ ] [AI] Edit `.claude/skills/plan-creating-project-plans/SKILL.md`: add a `## Delivery Mode`
+- [x] [AI] Edit `.claude/skills/plan-creating-project-plans/SKILL.md`: add a `## Delivery Mode`
       requirement + vocabulary + precedence + template (default `worktree-to-pr`), sibling to the
       existing `## Worktree Specification` section; note that `*-to-pr` modes run the PR-Review
       Maker→Fixer Cycle before the `[HUMAN]` merge.
       — acceptance: `grep -c "Delivery Mode" .claude/skills/plan-creating-project-plans/SKILL.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Create `.claude/agents/pr-review-maker.md` _(New file)_ — a planning-grade (opus-tier,
+- [x] [AI] Create `.claude/agents/pr-review-maker.md` _(New file)_ — a planning-grade (opus-tier,
       omit/`opus` model) reviewer agent that: reads PR diff + plan context first; posts inline
       comments via the GitHub Reviews API (`gh api` / `gh api graphql`); assigns a numeric confidence
       0–100 and **hard-drops findings < 80**; tags severity CRITICAL/HIGH/MEDIUM/LOW; cites concrete
@@ -354,7 +354,7 @@ stateDiagram-v2
       — acceptance: `test -f .claude/agents/pr-review-maker.md` and
       `grep -ci "confidence" .claude/agents/pr-review-maker.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Create `.claude/agents/pr-review-fixer.md` _(New file)_ — an execution-grade (sonnet-tier)
+- [x] [AI] Create `.claude/agents/pr-review-fixer.md` _(New file)_ — an execution-grade (sonnet-tier)
       fixer agent that: enumerates unresolved maker threads
       (`gh api graphql` `reviewThreads(isResolved:false)`); applies a 4-way triage
       (fix / reject-with-reason / defer-with-reason / clarify); implements fixes, pushes to the PR
@@ -365,78 +365,78 @@ stateDiagram-v2
       — acceptance: `test -f .claude/agents/pr-review-fixer.md` and
       `grep -ci "reviewThreads" .claude/agents/pr-review-fixer.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Edit `.claude/agents/plan-maker.md`: instruct authoring of the `## Delivery Mode` section
+- [x] [AI] Edit `.claude/agents/plan-maker.md`: instruct authoring of the `## Delivery Mode` section
       (default `worktree-to-pr`) and, for `*-to-pr` plans, emitting the PR-Review Maker→Fixer Cycle
       steps before the `[HUMAN]` merge.
       — acceptance: `grep -c "Delivery Mode" .claude/agents/plan-maker.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Edit `.claude/agents/plan-checker.md`: validate `## Delivery Mode` presence + valid
+- [x] [AI] Edit `.claude/agents/plan-checker.md`: validate `## Delivery Mode` presence + valid
       vocabulary (closed enum); for `*-to-pr` plans, validate the plan emits the review-cycle steps +
       done-definition + archival-in-PR; flag missing/invalid as findings.
       — acceptance: `grep -c "Delivery Mode" .claude/agents/plan-checker.md` ≥ 1 and
       `grep -ci "pr-review" .claude/agents/plan-checker.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Edit `.claude/agents/plan-execution-checker.md`: validate delivery matched the declared
+- [x] [AI] Edit `.claude/agents/plan-execution-checker.md`: validate delivery matched the declared
       mode; for `worktree-to-pr`, validate the PR exists, its gates are green, the **review loop ran**
       (N cycles present, every maker thread answered/resolved), and **archival-in-PR** is present in
       the delivering PR (ose-public).
       — acceptance: `grep -c "Delivery Mode" .claude/agents/plan-execution-checker.md` ≥ 1 and
       `grep -ci "review loop\|reviewThreads\|archival-in-PR" .claude/agents/plan-execution-checker.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Edit `.claude/agents/plan-fixer.md`: scaffold a missing `## Delivery Mode` section and, for
+- [x] [AI] Edit `.claude/agents/plan-fixer.md`: scaffold a missing `## Delivery Mode` section and, for
       `*-to-pr` plans, scaffold the missing PR-Review Maker→Fixer Cycle steps.
       — acceptance: `grep -c "Delivery Mode" .claude/agents/plan-fixer.md` ≥ 1.
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Update the agent catalog `.claude/agents/README.md` and the `AGENTS.md` AI-Agents section
+- [x] [AI] Update the agent catalog `.claude/agents/README.md` and the `AGENTS.md` AI-Agents section
       to list `pr-review-maker` + `pr-review-fixer` under an appropriate role grouping.
       — acceptance: `grep -c "pr-review-maker" .claude/agents/README.md AGENTS.md` shows both files
       reference the new agents.
-- [ ] [AI] Edit `AGENTS.md` (Git Workflow section): update the delivery/TBD description to reflect the
+- [x] [AI] Edit `AGENTS.md` (Git Workflow section): update the delivery/TBD description to reflect the
       worktree → PR default, name the four modes, and mention the pr-review cycle for `*-to-pr` modes.
       — acceptance: `grep -c "worktree-to-pr" AGENTS.md` ≥ 1.
-- [ ] [AI] Edit `CLAUDE.md`: align the Claude-specific binding text with the worktree → PR default
+- [x] [AI] Edit `CLAUDE.md`: align the Claude-specific binding text with the worktree → PR default
       (note `CLAUDE.md` imports `AGENTS.md`).
       — acceptance: delivery description in `CLAUDE.md` is consistent with `AGENTS.md` (no stale
       "direct push to main is the default" wording remains).
-- [ ] [AI] Re-sync bindings after the `.claude/**` edits: `npm run generate:bindings`
+- [x] [AI] Re-sync bindings after the `.claude/**` edits: `npm run generate:bindings`
       — acceptance: exits 0 and `git status --porcelain .opencode .amazonq` shows only intended,
       staged regenerated changes (including the two new agents' `.opencode`/`.amazonq` mirrors; no
       unexplained drift).
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
-- [ ] [AI] Validate bindings sync is clean: `npm run validate:claude && npm run validate:opencode`
+- [x] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
+- [x] [AI] Validate bindings sync is clean: `npm run validate:claude && npm run validate:opencode`
       (or the repo's binding-validation targets) — acceptance: exits 0, no sync drift reported (the
       two new agents appear in `.opencode`/`.amazonq`).
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
       **Fix ALL failures, including preexisting.**
 
 ### Commit + Push to PR branch
 
-- [ ] [AI] Commit thematically (split agent/skill edits from generated bindings if cleaner):
+- [x] [AI] Commit thematically (split agent/skill edits from generated bindings if cleaner):
       `git commit -m "docs(agents): add pr-review maker/fixer agents + require Delivery Mode in plan agents/skill + root instructions"`
       then `git commit -m "chore(bindings): re-sync .opencode/.amazonq for delivery-mode + review agents"`
       — acceptance: commits created on the plan branch.
-- [ ] [AI] Push to the PR branch: `git push origin worktree-to-pr-default-delivery-mode`
+- [x] [AI] Push to the PR branch: `git push origin worktree-to-pr-default-delivery-mode`
       — acceptance: PR shows the new commits.
 
 ### Post-Push CI Verification (on the PR)
 
-- [ ] [AI] Monitor CI on the PR until green; fix at root + follow-up commit if red; repeat.
+- [x] [AI] Monitor CI on the PR until green; fix at root + follow-up commit if red; repeat.
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `test -f .claude/agents/pr-review-maker.md` and `test -f .claude/agents/pr-review-fixer.md`
+- [x] [AI] `test -f .claude/agents/pr-review-maker.md` and `test -f .claude/agents/pr-review-fixer.md`
       both pass; both are listed in `.claude/agents/README.md` + `AGENTS.md`.
-- [ ] [AI] All five `.claude/agents/plan-*.md` + the plan-creating SKILL reference `Delivery Mode`;
+- [x] [AI] All five `.claude/agents/plan-*.md` + the plan-creating SKILL reference `Delivery Mode`;
       plan-checker + plan-execution-checker reference the review loop + archival-in-PR;
       `AGENTS.md` references `worktree-to-pr`.
-- [ ] [AI] `npm run generate:bindings` leaves the tree clean (`git status --porcelain .opencode .amazonq`
+- [x] [AI] `npm run generate:bindings` leaves the tree clean (`git status --porcelain .opencode .amazonq`
       empty after staging) and binding validation passes (new agents mirrored).
-- [ ] [AI] `gh pr checks` all green after the Phase 3 push.
+- [x] [AI] `gh pr checks` all green after the Phase 3 push.
 
 > **Pause Safety**: all ose-public content edits — including the two review agents and checker
 > enforcement — are committed to a green (still-draft) PR with synced bindings; `main` untouched. The
