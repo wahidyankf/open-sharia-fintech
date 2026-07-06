@@ -134,7 +134,9 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **Rule-16 API exploratory retest (API feature-change plans)**: an API **feature-change** plan (REST or GraphQL endpoints in a backend or tRPC app) MUST carry a near-end "Rule-16 API exploratory retest" step running `api-exploratory-tester` (`output-mode: delivery`, the plan's `plan-path`) against the running endpoint(s) with the contract (OpenAPI 3.x / GraphQL SDL) as ground truth, with each `AET-###` defect finding folded into `delivery.md` as an unchecked checkbox that MUST be fixed (ticked) before archival — deferral of an AET defect finding requires explicit user permission and is allowed only when the fix is genuinely impossible. (`SG-###` spec-gap proposals are proposals, not defects, and may be triaged or deferred.) An unfixed `AET-###` defect checkbox at archival time is a **HIGH** finding. A missing step on an API feature-change plan is **HIGH**. The API tester never drives a browser, so this is independent of Rule 15 — a plan changing both a web UI and its API carries both retest steps. Frontend-only, CLI/text output, and pure governance/agent-definition plans are exempt. See [User-Facing Delivery Hardening](../../repo-governance/development/quality/user-facing-delivery-hardening.md) Rule 16.
 - **Knowledge Capture phase presence**: every substantive plan's `delivery.md` MUST carry a final Knowledge Capture phase (or an explicit "none" record) per the [Knowledge Capture Convention](../../repo-governance/development/quality/knowledge-capture.md). Validated in detail by Step 5l. Silent absence (no phase AND no explicit "none" record anywhere) is flagged **MEDIUM**; an explicit "none" record PASSES without a finding.
 
-#### PR Step Authorization Check (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
+#### PR Step Authorization Check
+
+Authoritative source: [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode).
 
 A PR creation step (`- [ ] Create PR`, `- [ ] Open PR`, or equivalent) is **expected and correct**
 when the plan's resolved Delivery Mode is `worktree-to-pr` (the default) or `main-to-pr` — no
@@ -831,7 +833,7 @@ mode additionally fixes the integration target and merge authority.
 4. **`[HUMAN]` merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
    tagged `[HUMAN]` (never `[AI]`); for `*-to-origin-main` modes, the final push MUST be tagged
    `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
-   [PR Step Authorization Check](#pr-step-authorization-check-per-plans-organization-convention-delivery-mode) —
+   [PR Step Authorization Check](#pr-step-authorization-check) —
    that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
    since a PR step is expected and correct under `*-to-pr` modes.
 5. **"Done" is not "merged"** — a `*-to-pr` plan's own completion/Gate criteria MUST NOT require the
