@@ -414,7 +414,7 @@ Provide a self-contained handoff prompt per repo covering:
    independently per repo through the standard three-tier precedence (invocation argument > plan
    field > default) and recorded as its own deviation-matrix row when it diverges from sibling
    repos. A repo whose plan resolves to a `*-to-pr` mode additionally runs the
-   [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) during its own execution.
+   [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) during its own execution.
 
 Each plan MUST include:
 
@@ -639,7 +639,7 @@ select `worktree-to-pr`. The PRs remain in draft until the invoker promotes them
 - [Plan Multi-Repo Parity Planning and Execution](./plan-multi-repo-parity-planning-and-execution.md) —
   end-to-end composite that runs this workflow as its planning phase and continues directly into
   plan-execution for every resulting plan
-- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — runs during each repo's
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — runs during each repo's
   execution phase when that repo's authored plan resolves to a `*-to-pr` delivery mode
 
 ## Principles Implemented/Respected

@@ -271,7 +271,7 @@ Scenario: Only the ose-public PR carries the archival move
   across all three repos.
 - Reconciling Trunk-Based-Development language (decision 6).
 - Two new agents (`pr-review-maker`, `pr-review-fixer`) created in all three repos, plus the new
-  `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` workflow doc, plus wiring the loop +
+  `repo-governance/workflows/pr/pr-review-quality-gate.md` workflow doc, plus wiring the loop +
   done-definition + archival-in-PR into `plan-execution.md`, and enforcement updates to
   `plan-checker` / `plan-execution-checker`.
 - Re-syncing `.opencode/` and `.amazonq/` bindings after `.claude/**` edits.

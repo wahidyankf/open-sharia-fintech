@@ -347,7 +347,7 @@ by a human.**
 - Quality gates run on every push to the PR branch via the pre-push hook (typecheck, lint, test:quick,
   specs:coverage) AND on the PR itself via CI.
 - `*-to-pr` deliveries additionally run the **PR-Review Maker→Fixer Cycle**
-  (`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`) before the PR is considered done --
+  (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before the PR is considered done --
   see that workflow doc and the [PR Merge Protocol](./pr-merge-protocol.md) for the full cycle and
   done-definition.
 

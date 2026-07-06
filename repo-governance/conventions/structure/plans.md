@@ -542,7 +542,7 @@ authority**.
 `worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
 disposable worktree and routes it through review before it touches `main`, so it is the safest
 choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
-PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`) before
+PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
 the PR is considered done; the `[HUMAN]` merge itself sits **outside** that done-boundary — the AI
 hands off a green, fully-reviewed PR and the human merges on their own schedule.
 

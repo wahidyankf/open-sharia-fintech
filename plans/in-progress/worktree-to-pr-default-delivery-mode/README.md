@@ -40,7 +40,7 @@ This plan also introduces a **PR-review maker→fixer cycle** for every `*-to-pr
 (`pr-review-maker` posts strict inline review comments; `pr-review-fixer` applies/answers them) run a
 sequential N-cycle loop (default 3) that drives each PR to a fully-reviewed, green, archival-included
 state before the human merges. A new workflow doc
-`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` defines the loop.
+`repo-governance/workflows/pr/pr-review-quality-gate.md` defines the loop.
 
 **Out of scope** — see [`prd.md`](./prd.md#product-scope). Notably: no new `rhino-cli` structural
 validator (enforcement is via agent-checker prose), no changes to environment/deploy branches, no

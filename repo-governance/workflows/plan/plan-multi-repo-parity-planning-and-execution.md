@@ -240,7 +240,7 @@ Every plan-execution rule applies unchanged, including:
   standard three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) —
   distinct from this composite's own `mode` input, which governs only the planning-phase delivery
   of the plan **documents** (Step 1). A repo whose plan resolves to a `*-to-pr` delivery mode
-  additionally runs the [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) inside
+  additionally runs the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) inside
   plan-execution's Step 8 before that repo's `[HUMAN]` merge — its "done" for that repo is a green,
   fully-reviewed, archival-included PR handed off to the human, not a direct push to `origin main`.
   See [plan-execution.md Step 8](./plan-execution.md).
@@ -318,7 +318,7 @@ archival commit to `origin main` for the direct-push modes (`worktree-to-origin-
 `main-to-origin-main`), or a green, fully-reviewed PR with the archival move committed inside it,
 awaiting the `[HUMAN]` merge outside the AI done-boundary, for the `*-to-pr` modes
 (`worktree-to-pr`, `main-to-pr`) — see the
-[PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) done-definition. Because each
+[PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) done-definition. Because each
 repo resolves its delivery mode independently, a single composite run may end with some repos
 merged directly and others handed off as open PRs.
 
@@ -385,7 +385,7 @@ Plans and executes only the two listed repos; the pre-execution grill confirms w
 - [Plan Quality Gate](./plan-quality-gate.md) — nested inside the planning phase per plan
 - [Plan Planning](./plan-planning.md) — the single-repo analogue of the
   planning phase
-- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — nested inside
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — nested inside
   plan-execution's Step 8 for any repo whose plan resolves to a `*-to-pr` delivery mode
 
 ## Principles Implemented/Respected

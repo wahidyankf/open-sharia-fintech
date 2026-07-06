@@ -176,7 +176,7 @@ Resolve ALL of the following:
    three-tier precedence (invocation argument > plan field > `worktree-to-pr` default) resolved
    later by [plan-execution.md Step 0](./plan-execution.md#0-enter-the-designated-worktree-sequential-hard-gate).
    Choosing a `*-to-pr` mode means the plan's own execution runs the
-   [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) before archival.
+   [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) before archival.
 9. **Definition of done**: What must the finished plan contain for the user to consider it ready?
 10. **Research needed**: Are there external claims (library versions, third-party best practices,
     API behavior) that require verification before writing?
@@ -399,5 +399,5 @@ resolution.
   created by this workflow
 - [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) —
   the four-mode vocabulary and three-tier precedence confirmed in Step 1 item 8
-- [PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) — the review loop that runs
+- [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) — the review loop that runs
   during execution when the plan's confirmed delivery mode is `worktree-to-pr` or `main-to-pr`

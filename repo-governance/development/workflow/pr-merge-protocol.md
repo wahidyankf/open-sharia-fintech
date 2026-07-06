@@ -100,7 +100,7 @@ the AI's work on a plan branch does not end at "all commits pushed." The termina
 is:
 
 1. Run the **PR-Review Maker→Fixer Cycle**
-   (`repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`) -- sequential review/fix cycles
+   (`repo-governance/workflows/pr/pr-review-quality-gate.md`) -- sequential review/fix cycles
    against the open PR, driving it toward a fully reviewed, green state.
 2. Confirm the **done-definition** is met:
    - The review cycle has completed its configured number of passes.
@@ -261,4 +261,4 @@ This rule applies to:
 - [Nx Target Standards](../infra/nx-targets.md) -- Canonical target names for quality gates
 - [Git Push Default Convention](./git-push-default.md) -- Governs the default `worktree-to-pr` push target and the explicit direct-push modes; this convention governs what happens once a PR exists
 - [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) -- The four-mode vocabulary and three-tier precedence that determines when this protocol applies
-- `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` -- The review/fix cycle that runs before a `worktree-to-pr` PR meets the done-definition described above
+- `repo-governance/workflows/pr/pr-review-quality-gate.md` -- The review/fix cycle that runs before a `worktree-to-pr` PR meets the done-definition described above

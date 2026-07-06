@@ -66,7 +66,7 @@ done (archival-in-PR committed) → `[HUMAN]` merge.
 
 > Referenced by every `*-to-pr` delivery phase (Phases 4, 5, 7). Full design + agent specs live in
 > [`tech-docs.md` §PR-Review Maker→Fixer Cycle](./tech-docs.md#pr-review-makerfixer-cycle-design-spec)
-> and the new workflow doc `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` (created in
+> and the new workflow doc `repo-governance/workflows/pr/pr-review-quality-gate.md` (created in
 > Phase 2). Run this loop against a PR AFTER its own local + CI gates are green and BEFORE the
 > `[HUMAN]` merge. `N` defaults to **3** and cycles run **strictly sequentially** (a fresh
 > `pr-review-maker` each cycle; `pr-review-fixer` answers every thread before the next cycle).
@@ -253,15 +253,15 @@ stateDiagram-v2
       both the review cycle and archival-in-PR.
   - _Suggested executor: `repo-workflow-maker`_
 - [ ] [AI] Create the new workflow doc
-      `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` _(New file; new `pr/` workflow
+      `repo-governance/workflows/pr/pr-review-quality-gate.md` _(New file; new `pr/` workflow
       subdir)_ documenting the loop: participants (`pr-review-maker`, `pr-review-fixer`), the strictly
       sequential N-cycle algorithm (default N=3), the GitHub Reviews API mechanics
       (`gh api` / `gh api graphql`, `reviewThreads(isResolved:false)`, `resolveReviewThread`,
       `gh pr view <PR> --json headRefOid`), the loop-exit + escalation rules, and the applicability
       (every `*-to-pr` mode). Link it from `plan-execution.md` Step 8 and from the workflows index
       `repo-governance/workflows/README.md`.
-      — acceptance: `test -f repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` and
-      `grep -c "pr-review-maker" repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` ≥ 1 and
+      — acceptance: `test -f repo-governance/workflows/pr/pr-review-quality-gate.md` and
+      `grep -c "pr-review-maker" repo-governance/workflows/pr/pr-review-quality-gate.md` ≥ 1 and
       the workflows index links the new doc.
   - _Suggested executor: `repo-workflow-maker`_
 - [ ] [AI] Edit `repo-governance/development/workflow/trunk-based-development.md`: reconcile the "all
@@ -323,7 +323,7 @@ stateDiagram-v2
 - [ ] [AI] `grep -c "worktree-to-pr" repo-governance/workflows/plan/plan-execution.md` ≥ 1 and Step 0
       documents the three-tier delivery-mode precedence; Step 8 references the review cycle +
       archival-in-PR + done-definition.
-- [ ] [AI] `test -f repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` passes and the
+- [ ] [AI] `test -f repo-governance/workflows/pr/pr-review-quality-gate.md` passes and the
       workflows index links it.
 - [ ] [AI] All four plan-workflow docs reference `Delivery Mode`; TBD doc reconciled.
 - [ ] [AI] `gh pr checks` all green after the Phase 2 push.
@@ -465,7 +465,7 @@ stateDiagram-v2
 - [ ] [AI] Apply the identical edits to the primer copies of every file in
       [`tech-docs.md` §Surface Inventory](./tech-docs.md#surface-inventory): the two conventions, the
       four development-workflow docs, the plan workflow docs + the new
-      `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md`, the five `.claude/agents/plan-*.md` + the two new `pr-review-*.md` agents + the plan-creating SKILL, and `AGENTS.md` + `CLAUDE.md` +
+      `repo-governance/workflows/pr/pr-review-quality-gate.md`, the five `.claude/agents/plan-*.md` + the two new `pr-review-*.md` agents + the plan-creating SKILL, and `AGENTS.md` + `CLAUDE.md` +
       `.claude/agents/README.md`.
       — acceptance: `grep -rc "worktree-to-pr" repo-governance AGENTS.md .claude` (from primer worktree)
       returns non-zero matches across the same surfaces as ose-public, and both `pr-review-*.md` agents
@@ -542,7 +542,7 @@ stateDiagram-v2
       — acceptance: `gh pr view --json number` returns a PR number.
 - [ ] [AI] Apply the identical edits to the infra copies of every file in
       [`tech-docs.md` §Surface Inventory](./tech-docs.md#surface-inventory), including the new
-      `repo-governance/workflows/pr/pr-review-maker-fixer-cycle.md` and the two `pr-review-*.md` agents.
+      `repo-governance/workflows/pr/pr-review-quality-gate.md` and the two `pr-review-*.md` agents.
       — acceptance: `grep -rc "worktree-to-pr" repo-governance AGENTS.md .claude` (from infra worktree)
       returns non-zero matches across the same surfaces; both `pr-review-*.md` agents exist.
   - _Suggested executor: `repo-rules-maker` + `repo-workflow-maker` + `agent-maker`_

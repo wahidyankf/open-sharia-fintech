@@ -1,6 +1,6 @@
 ---
-name: pr-review-maker-fixer-cycle
-title: "pr-review-maker-fixer-cycle"
+name: pr-review-quality-gate
+title: "pr-review-quality-gate"
 goal: Run a strictly sequential N-cycle pr-review-maker to pr-review-fixer loop against a pull request until the *-to-pr done-definition is satisfied
 termination: N review cycles complete (default 3), every inline review comment answered, and CI green on the PR after each cycle
 inputs:

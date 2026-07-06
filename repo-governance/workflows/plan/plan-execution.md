@@ -670,7 +670,7 @@ proceed until the plan's Knowledge Capture phase is complete.
 **PR-Review Maker→Fixer Cycle gate (mandatory for `*-to-pr` modes, before archival and before the
 `[HUMAN]` merge)**: When the delivery mode resolved in Step 0 is `worktree-to-pr` or `main-to-pr`,
 archival additionally requires the
-[PR-Review Maker→Fixer Cycle](../pr/pr-review-maker-fixer-cycle.md) workflow to run to completion
+[PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) workflow to run to completion
 against the plan's PR before any archival step below. This gate does not apply to the direct-push
 modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and no review cycle.
 
