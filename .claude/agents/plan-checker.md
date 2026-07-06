@@ -829,7 +829,7 @@ mode additionally fixes the integration target and merge authority.
    `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
    [PR Step Authorization Check](#pr-step-authorization-check) —
    that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
-   since a PR step is expected and correct under `*-to-pr` modes.
+   since a PR step is expected and correct under `*-to-pr` modes).
 5. **"Done" is not "merged"** — a `*-to-pr` plan's own completion/Gate criteria MUST NOT require the
    PR to actually be merged; a green, fully-reviewed PR awaiting `[HUMAN]` merge on their own
    schedule is a valid done state. Flag a plan that conflates the two.

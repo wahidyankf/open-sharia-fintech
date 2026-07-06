@@ -80,8 +80,8 @@ This protocol applies whenever a pull request exists as part of the development 
 
 - **`worktree-to-pr` (repo-wide default)**: every plan delivered without an explicit mode override
   resolves to this mode -- a short-lived plan branch, a draft PR opened against `main`, and this
-  protocol at merge time. See [Delivery Mode](#the-worktree-to-pr-terminal-step) below for the full
-  terminal-step sequence.
+  protocol at merge time. See [the `worktree-to-pr` terminal step](#the-worktree-to-pr-terminal-step)
+  below for the full terminal-step sequence.
 - **`main-to-pr`**: primary-checkout work still routed through a PR follows the same protocol.
 - **External contributions**: PRs from external contributors follow this protocol.
 - **Code review workflow**: Any short-lived branch created for review purposes follows this protocol.
