@@ -532,50 +532,55 @@ stateDiagram-v2
 > vocabulary + both review agents land intact even if some prose phrasing differs (see `tech-docs.md`
 > open question 3). Infra's PR carries **no archival-in-PR** (plan folder lives only in ose-public).
 
-- [ ] [AI] Provision the infra worktree from latest `origin/main`:
+- [x] [AI] Provision the infra worktree from latest `origin/main`:
       `git -C /Users/wkf/ose-projects/ose-infra fetch origin && git -C /Users/wkf/ose-projects/ose-infra worktree add -b worktree-to-pr-default-delivery-mode worktrees/worktree-to-pr-default-delivery-mode origin/main`
-      — acceptance: `git -C /Users/wkf/ose-projects/ose-infra worktree list` shows the path.
-- [ ] [AI] Initialize toolchain: `npm install && npm run doctor -- --fix` in the ose-infra root
-      — acceptance: both exit 0.
-- [ ] [AI] Open the single draft PR for infra:
+      — acceptance: `git -C /Users/wkf/ose-projects/ose-infra worktree list` shows the path. Done.
+- [x] [AI] Initialize toolchain: `npm install && npm run doctor -- --fix` in the ose-infra root
+      — acceptance: both exit 0. Done.
+- [x] [AI] Open the single draft PR for infra:
       `gh pr create --draft --base main --head worktree-to-pr-default-delivery-mode --title "docs(governance): worktree-to-pr default delivery mode" --body "Port of the delivery-mode + pr-review-cycle change to the private infra repo."`
-      — acceptance: `gh pr view --json number` returns a PR number.
-- [ ] [AI] Apply the identical edits to the infra copies of every file in
+      — acceptance: `gh pr view --json number` returns a PR number. Done: ose-infra PR #6.
+- [x] [AI] Apply the identical edits to the infra copies of every file in
       [`tech-docs.md` §Surface Inventory](./tech-docs.md#surface-inventory), including the new
       `repo-governance/workflows/pr/pr-review-quality-gate.md` and the two `pr-review-*.md` agents.
       — acceptance: `grep -rc "worktree-to-pr" repo-governance AGENTS.md .claude` (from infra worktree)
-      returns non-zero matches across the same surfaces; both `pr-review-*.md` agents exist.
+      returns non-zero matches across the same surfaces; both `pr-review-*.md` agents exist. Done.
   - _Suggested executor: `repo-rules-maker` + `repo-workflow-maker` + `agent-maker`_
-- [ ] [AI] Re-sync bindings: `npm run generate:bindings`
-      — acceptance: exits 0; only intended staged drift under `.opencode`/`.amazonq`.
+- [x] [AI] Re-sync bindings: `npm run generate:bindings`
+      — acceptance: exits 0; only intended staged drift under `.opencode`/`.amazonq`. Done.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
-      — acceptance: all exit 0.
-- [ ] [AI] `npm run validate:claude && npm run validate:opencode` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
-      **Fix ALL failures, including preexisting.**
+- [x] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0. Done.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
+      — acceptance: all exit 0. Done.
+- [x] [AI] `npm run validate:claude && npm run validate:opencode` — acceptance: exits 0. Done.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
+      **Fix ALL failures, including preexisting.** Done.
 
 ### Commit + Push + CI (on the infra PR)
 
-- [ ] [AI] Commit thematically and push to the PR branch:
+- [x] [AI] Commit thematically and push to the PR branch:
       `git commit -m "docs(governance): worktree-to-pr default delivery mode + pr-review cycle (infra port)"` then
       `git push origin worktree-to-pr-default-delivery-mode`
-      — acceptance: infra PR shows the commit.
-- [ ] [AI] Monitor CI on the infra PR until green; fix at root + follow-up commit if red; repeat.
+      — acceptance: infra PR shows the commit. Done (plus a follow-up Cycle-3 fixer commit
+      `cfbeda24f93863b9c79f0edd342a60c57690d57c`).
+- [x] [AI] Monitor CI on the infra PR until green; fix at root + follow-up commit if red; repeat.
+      Done: 19 pass / 0 fail on the final commit.
 
 ### PR-Review Maker→Fixer Cycle (infra PR)
 
-- [ ] [AI] Run the **PR-Review Maker→Fixer Cycle** (reusable procedure above) against the infra PR with
+- [x] [AI] Run the **PR-Review Maker→Fixer Cycle** (reusable procedure above) against the infra PR with
       `N=3` sequential cycles. — acceptance: cycle done-definition met (N cycles OR early zero-findings
       exit; every maker thread answered/resolved; `gh pr checks` green). No archival-in-PR (N/A).
+      Done: 3 cycles run (fix commits `bb8b9ce2`, `12250b2e`; Cycle 3 posted clean then its own LOW
+      finding was fixed via `cfbeda24f9`).
 
 ### Deliver + Cleanup
 
-- [ ] [AI] Flip to ready: `gh pr ready`; confirm `gh pr checks` all green and `mergeable` is `MERGEABLE`.
-      — acceptance: PR ready + mergeable + review loop done.
+- [x] [AI] Flip to ready: `gh pr ready`; confirm `gh pr checks` all green and `mergeable` is `MERGEABLE`.
+      — acceptance: PR ready + mergeable + review loop done. Done: PR #6 flipped to ready, `isDraft:
+  false`.
 - [ ] [HUMAN] Review and click **Merge** on the infra PR (outside the AI done-boundary).
       — handoff: `[AI]` reached the infra done-definition and marked the PR ready. Resume signal:
       `gh pr view --json state` returns `MERGED`.
