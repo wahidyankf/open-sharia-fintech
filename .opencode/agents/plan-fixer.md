@@ -105,14 +105,22 @@ When the audit reports misplaced content per the [Content-Placement Rules](../..
 
 After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
 
-#### Unsolicited PR Step Removal (per [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md))
+#### Unsolicited PR Step Removal (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
 
-When plan-checker flags a HIGH finding for an unsolicited PR step in a delivery checklist, remove such steps (HIGH confidence — mechanical, unambiguous):
+When plan-checker flags a HIGH finding for a PR step under a direct-push Delivery Mode, resolve it
+by reconciling the mode and the step rather than reflexively deleting the step:
 
-- **`- [ ] Create PR`**, **`- [ ] Open PR`**, **`- [ ] Submit PR`**, or equivalent PR creation steps in `delivery.md` → **remove the line** unless EITHER:
-  1. The plan's `README.md` or `prd.md` explicitly states that a PR is required (e.g., "This plan requires review via PR", external contribution, regulatory requirement)
-  2. The plan's Git Workflow section contains an explicit PR instruction (not merely worktree execution)
-- After removal, verify the delivery checklist remains logically sequential without the removed step.
+- If the plan's resolved Delivery Mode is `worktree-to-origin-main` or `main-to-origin-main` (a
+  direct-push mode) and a PR creation step (`- [ ] Create PR`, `- [ ] Open PR`, `- [ ] Submit PR`,
+  or equivalent) is present with no explicit PR requirement documented → **remove the line**
+  (HIGH confidence — mechanical, unambiguous) and verify the checklist remains sequential.
+- If the PR step is actually wanted, **correct the declared mode instead of deleting the step**:
+  rewrite `## Delivery Mode: <mode>` to `worktree-to-pr` or `main-to-pr` (matching the plan's work
+  location) and scaffold the missing PR-Review Maker→Fixer Cycle steps (see
+  [Delivery Mode Fixes](#delivery-mode-fixes) below) rather than stripping the PR step and leaving
+  the plan mode-inconsistent.
+- A `*-to-pr` plan's PR step is never itself a finding — only its absence (missing review-cycle
+  steps) or a mismatched mode declaration is.
 
 ### 4. Fix Report Generation
 
@@ -545,6 +553,54 @@ Insert the canonical fenced bash block immediately under the path declaration:
 ```bash
 claude --worktree <plan-identifier>
 ```
+
+## Delivery Mode Fixes
+
+When plan-checker reports a missing, invalid, or incomplete `## Delivery Mode` declaration
+(Step 5m findings), apply these fixes. This is a sibling scaffold to Worktree Specification Fixes
+above — see the
+[Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode)
+for the authoritative mode table and precedence rule.
+
+### Confidence Assessment
+
+- **HIGH Confidence**: section is entirely missing on a freshly-authored plan, OR a `*-to-pr` plan
+  is missing its PR-Review Maker→Fixer Cycle steps, OR the `[HUMAN]`/`[AI]` merge tag doesn't match
+  the declared mode. Fix is mechanical once the intended mode is known.
+- **MEDIUM Confidence → grill first**: the declared value is invalid/unrecognized. Do NOT guess
+  which of the four modes was intended — surface it as a grill question (per `grill-me`) with the
+  four modes as options, `worktree-to-pr` marked `(Recommended)`, before writing a value.
+
+### How to Fix a Missing `## Delivery Mode` Section
+
+Insert `## Delivery Mode: worktree-to-pr` immediately after the `## Worktree` section (default
+mode, absent any signal the user wants otherwise) — multi-file plans: in `delivery.md` before the
+first phase heading; single-file plans: in `README.md` before `## Delivery Checklist`. If the
+plan's existing checklist already shows direct-push-only steps (no PR step anywhere and no
+worktree at all), that is itself a signal to grill the user rather than silently defaulting.
+
+### How to Fix an Invalid Non-Empty Value
+
+Never silently coerce an invalid value to the default. Grill the user with the four-mode table
+(`worktree-to-pr` marked `(Recommended)`) plus the standing blank-state/"chat about this" options,
+then write whichever mode they select.
+
+### How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
+
+Insert the cycle steps (strictly sequential maker→fixer, default N=3, each cycle CI-green-gated)
+immediately before the `[HUMAN]` PR-merge step, sourced verbatim in structure from the
+[PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md):
+one `- [ ] [AI] Invoke pr-review-maker on $PR` / `- [ ] [AI] Invoke pr-review-fixer on $PR` pair per
+cycle, a loop-exit condition (N cycles complete, or a cycle with zero new findings), and — where
+the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to `plans/done/` +
+README updates) committed inside the same PR, before the final `- [ ] [HUMAN] Merge PR` step.
+
+### How to Fix a Merge-Tag Mismatch
+
+- `*-to-pr` mode with the merge step tagged `[AI]` → retag `[HUMAN]`.
+- `*-to-origin-main` mode with the final push gated behind an unrequested `[HUMAN]` approval step →
+  retag `[AI]` and remove the approval-gate framing (the push itself needs no sign-off under a
+  direct-push mode).
 
 ## Execution-Grade Clarity Fixes (HARD RULE)
 

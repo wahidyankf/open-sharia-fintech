@@ -584,3 +584,55 @@ confirmed satisfied.
 - Infra-private content cross-routed into a public repo: **CRITICAL** (BLOCKS archival)
 - Knowledge Capture phase entirely absent with no explicit "none" record carried through to
   archival time: **HIGH** (escalated from `plan-checker`'s authoring-time MEDIUM if left unresolved)
+
+### 13. Delivery Mode and PR-Review Cycle Verification (Step 5i — MANDATORY)
+
+After the Knowledge Capture blocking gate (Step 5h), verify that execution actually matched the
+plan's resolved [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode).
+For `*-to-pr` modes this replaces the plain-`main` assumption baked into Step 5d (Archival) and
+Step 5e (Worktree) above: archival lands **inside the delivering PR**, and completion does not
+require the PR to be merged.
+
+#### What to Validate
+
+1. **Resolved mode matches actual execution** — confirm the mode declared in `delivery.md` (or the
+   tier-3 default `worktree-to-pr` if undeclared) matches what actually happened: worktree vs.
+   primary-checkout work location, and PR vs. direct-push integration target. A mismatch (e.g., plan
+   declares `worktree-to-origin-main` but a PR was opened, or vice versa): **HIGH** finding.
+2. **For `worktree-to-pr` / `main-to-pr`**:
+   - **PR exists** and targets `main` from the plan's branch. Missing: **CRITICAL**.
+   - **PR's CI gates are green** on the current head SHA (`gh pr view <PR> --json statusCheckRollup`
+     or equivalent). Not green: **CRITICAL** — plan is not done, regardless of other criteria.
+   - **Review loop ran** — evidence of the PR-Review Maker→Fixer Cycle (default N=3 sequential
+     maker→fixer cycles) actually executing: `gh api graphql` `reviewThreads` shows maker-authored
+     review comments interleaved with fixer replies across the expected cycle count, each cycle
+     CI-green-gated. Fewer cycles than the plan specified with no documented early-exit reason
+     (nothing left to fix): **HIGH**. No review-loop evidence at all: **CRITICAL**.
+   - **Every thread answered/resolved** — `reviewThreads(isResolved: false)` returns zero unresolved
+     threads, OR each remaining open thread carries an explicit escalation-to-`[HUMAN]` note in the
+     PR description (the documented escalation path). An unresolved thread with no reply and no
+     escalation note: **HIGH**.
+   - **Archival-in-PR present** — the archival commit (`git mv` plan to `plans/done/` + README
+     updates) is part of the delivering PR's own commit history (`gh pr view <PR> --json commits` or
+     `git log <branch>`), not deferred to a separate post-merge commit. This item is **N/A** for
+     repos where the plan folder is not tracked (the three-repo nuance: e.g. a plan folder that
+     lives only in `ose-public` while the same plan also touches `ose-primer`/`ose-infra`). Missing
+     or post-merge-deferred archival on an applicable repo: **HIGH**.
+   - **Completion does not require merge** — do NOT file a finding solely because the PR is still
+     open/unmerged; a green, fully-reviewed, archival-committed PR awaiting `[HUMAN]` merge on their
+     own schedule is the correct terminal state for this mode.
+3. **For `worktree-to-origin-main` / `main-to-origin-main`**: confirm no PR-review-cycle evidence is
+   expected (its absence is correct, not a finding) and that the final push landed directly on
+   `origin main` with CI green — this reuses Step 5d/5e's existing plain-`main` checks unchanged.
+
+#### Finding Severity
+
+- Actual execution path mismatches the plan's resolved Delivery Mode: **HIGH**
+- `*-to-pr` mode: PR missing: **CRITICAL**
+- `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
+- `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**
+- `*-to-pr` mode: fewer review cycles than specified with no documented early-exit reason: **HIGH**
+- `*-to-pr` mode: unresolved thread with no reply and no `[HUMAN]` escalation note: **HIGH**
+- `*-to-pr` mode: archival-in-PR missing or deferred post-merge (where applicable): **HIGH**
+- Filing a finding solely because a `*-to-pr` PR remains unmerged: **not a finding** (false positive
+  to avoid — flag the CHECK itself as wrong if this occurs)
