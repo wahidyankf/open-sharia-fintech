@@ -1964,6 +1964,15 @@ Before submitting a new agent, verify:
 - [ ] Confirmed no tool permission creep
 - [ ] Verified model selection is appropriate
 
+**Same-session invocation gap**: a `.claude/agents/<name>.md` file created earlier in the current
+session is not guaranteed to appear in the Agent tool's available `subagent_type` list — that list
+is populated at session/process start, not from a live directory read. A plan that authors a new
+agent and needs to invoke it within the same run (e.g., wiring a freshly created review agent into
+a later phase) should not treat an unlisted `subagent_type` as a broken agent. **Workaround**:
+invoke `general-purpose` and instruct it, as its first step, to `Read` the new agent's `.md` file in
+full and follow its instructions verbatim, then perform the task — this reproduces the target
+agent's behavior without requiring session-level registration.
+
 ### Agent Template
 
 Use this template when creating new agents:

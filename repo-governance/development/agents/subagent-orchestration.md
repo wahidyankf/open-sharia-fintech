@@ -211,6 +211,21 @@ Task-notification messages from the harness signal completion (or kill). These a
 
 **Fix**: Target 3–10 minute runtime per agent. Size chunks empirically for each agent type.
 
+### Delegating an Open-Ended Poll Loop Inside a Long Chunk
+
+**Problem**: A background agent's assigned chunk embeds an open-ended wait (e.g., "poll CI every 2
+minutes until all checks are terminal") as one step in a longer multi-step sequence (provision →
+edit → push → **poll** → review-cycle → flip-ready).
+
+**Why it fails**: The agent's turn can end mid-poll — reporting a task-notification with
+`status: completed` even though the wait, and every step after it, never ran. Treating that
+notification as "the whole chunk finished" silently skips the remaining steps.
+
+**Fix**: Read the agent's actual reported result, not just the `completed` label, before advancing
+downstream tasks. If the result shows an in-progress wait rather than a final outcome, resume the
+same agent via `SendMessage` (restating the remaining steps) rather than assuming completion or
+spawning a duplicate agent for the same chunk.
+
 ## Tooling Reference
 
 | Tool             | Purpose in This Convention                                     |
