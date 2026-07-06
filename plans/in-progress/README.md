@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [worktree-to-pr-default-delivery-mode](./worktree-to-pr-default-delivery-mode/) — Flip the default plan-delivery mode from worktree→main to worktree→PR (four named modes + precedence) across all 3 repos.
+None currently.
 
 ## Instructions
 
