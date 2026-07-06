@@ -454,70 +454,75 @@ stateDiagram-v2
 >
 > - comments answered + gates green.
 
-- [ ] [AI] Provision the primer worktree from latest `origin/main` (from the ose-primer root):
+- [x] [AI] Provision the primer worktree from latest `origin/main` (from the ose-primer root):
       `git -C /Users/wkf/ose-projects/ose-primer fetch origin && git -C /Users/wkf/ose-projects/ose-primer worktree add -b worktree-to-pr-default-delivery-mode worktrees/worktree-to-pr-default-delivery-mode origin/main`
-      — acceptance: `git -C /Users/wkf/ose-projects/ose-primer worktree list` shows the path.
-- [ ] [AI] Initialize toolchain: `npm install && npm run doctor -- --fix` in the ose-primer root
-      — acceptance: both exit 0.
-- [ ] [AI] Open the single draft PR for primer:
+      — acceptance: `git -C /Users/wkf/ose-projects/ose-primer worktree list` shows the path. Done.
+- [x] [AI] Initialize toolchain: `npm install && npm run doctor -- --fix` in the ose-primer root
+      — acceptance: both exit 0. Done.
+- [x] [AI] Open the single draft PR for primer:
       `gh pr create --draft --base main --head worktree-to-pr-default-delivery-mode --title "docs(governance): worktree-to-pr default delivery mode" --body "Parity port of the ose-public delivery-mode + pr-review-cycle change."`
-      (run from the primer worktree) — acceptance: `gh pr view --json number` returns a PR number.
-- [ ] [AI] Apply the identical edits to the primer copies of every file in
+      (run from the primer worktree) — acceptance: `gh pr view --json number` returns a PR number. Done:
+      ose-primer PR #3.
+- [x] [AI] Apply the identical edits to the primer copies of every file in
       [`tech-docs.md` §Surface Inventory](./tech-docs.md#surface-inventory): the two conventions, the
       four development-workflow docs, the plan workflow docs + the new
       `repo-governance/workflows/pr/pr-review-quality-gate.md`, the five `.claude/agents/plan-*.md` + the two new `pr-review-*.md` agents + the plan-creating SKILL, and `AGENTS.md` + `CLAUDE.md` +
       `.claude/agents/README.md`.
       — acceptance: `grep -rc "worktree-to-pr" repo-governance AGENTS.md .claude` (from primer worktree)
       returns non-zero matches across the same surfaces as ose-public, and both `pr-review-*.md` agents
-      exist in the primer `.claude/agents/`.
+      exist in the primer `.claude/agents/`. Done: verified both agents present.
   - _Suggested executor: `repo-rules-maker` (conventions/dev-workflow) + `repo-workflow-maker` (workflows) + `agent-maker` (.claude)_
-- [ ] [AI] Re-sync bindings: `npm run generate:bindings`
-      — acceptance: exits 0; `git status --porcelain .opencode .amazonq` shows only intended staged drift.
+- [x] [AI] Re-sync bindings: `npm run generate:bindings`
+      — acceptance: exits 0; `git status --porcelain .opencode .amazonq` shows only intended staged drift. Done.
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0.
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
-      — acceptance: all exit 0.
-- [ ] [AI] `npm run validate:claude && npm run validate:opencode` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
-      **Fix ALL failures, including preexisting.**
+- [x] [AI] `npm run lint:md:fix && npm run lint:md` — acceptance: exits 0. Done.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --changed-only && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate && cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
+      — acceptance: all exit 0. Done.
+- [x] [AI] `npm run validate:claude && npm run validate:opencode` — acceptance: exits 0. Done.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — acceptance: exits 0.
+      **Fix ALL failures, including preexisting.** Done.
 
 ### Commit + Push + CI (on the primer PR)
 
-- [ ] [AI] Commit thematically and push to the PR branch:
+- [x] [AI] Commit thematically and push to the PR branch:
       `git commit -m "docs(governance): worktree-to-pr default delivery mode + pr-review cycle (parity port)"` then
       `git push origin worktree-to-pr-default-delivery-mode`
-      — acceptance: primer PR shows the commit.
-- [ ] [AI] Monitor CI on the primer PR until green; fix at root + follow-up commit if red; repeat.
+      — acceptance: primer PR shows the commit. Done.
+- [x] [AI] Monitor CI on the primer PR until green; fix at root + follow-up commit if red; repeat. Done.
 
 ### PR-Review Maker→Fixer Cycle (primer PR)
 
-- [ ] [AI] Run the **PR-Review Maker→Fixer Cycle** (reusable procedure above) against the primer PR
+- [x] [AI] Run the **PR-Review Maker→Fixer Cycle** (reusable procedure above) against the primer PR
       with `N=3` sequential cycles. — acceptance: cycle done-definition met (N cycles complete OR early
       zero-findings exit; every maker thread answered/resolved; `gh pr checks` green). No archival-in-PR
-      (N/A for primer).
+      (N/A for primer). Done: 3 cycles run, Cycle 3 caught one LOW link-label mismatch (see
+      `learnings.md`).
 
 ### Deliver + Cleanup
 
-- [ ] [AI] Flip to ready: `gh pr ready`; confirm `gh pr checks` all green and
-      `gh pr view --json mergeable` is `MERGEABLE`. — acceptance: PR ready + mergeable + review loop done.
-- [ ] [HUMAN] Review and click **Merge** on the primer PR (outside the AI done-boundary).
+- [x] [AI] Flip to ready: `gh pr ready`; confirm `gh pr checks` all green and
+      `gh pr view --json mergeable` is `MERGEABLE`. — acceptance: PR ready + mergeable + review loop done. Done.
+- [x] [HUMAN] Review and click **Merge** on the primer PR (outside the AI done-boundary).
       — handoff: `[AI]` reached the primer done-definition (cycles + comments answered + gates green)
-      and marked the PR ready. Resume signal: `gh pr view --json state` returns `MERGED`.
-- [ ] [AI] After merge, remove the primer worktree:
+      and marked the PR ready. Resume signal: `gh pr view --json state` returns `MERGED`. Done:
+      merged 2026-07-06T13:29:27Z.
+- [x] [AI] After merge, remove the primer worktree:
       `git -C /Users/wkf/ose-projects/ose-primer worktree remove worktrees/worktree-to-pr-default-delivery-mode`
-      — acceptance: the path is no longer listed.
+      — acceptance: the path is no longer listed. Done.
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] Primer PR `state` is `MERGED`; the four-mode vocabulary + precedence + both `pr-review-*`
+- [x] [AI] Primer PR `state` is `MERGED`; the four-mode vocabulary + precedence + both `pr-review-*`
       agents are present in the primer surfaces (`grep` confirms parity with ose-public conceptually).
-- [ ] [AI] The primer review loop ran to its done-definition (cycles complete, all maker threads
+      Verified: PR #3 state MERGED; 22 file matches for `worktree-to-pr`; both `pr-review-*.md` present.
+- [x] [AI] The primer review loop ran to its done-definition (cycles complete, all maker threads
       answered) before the `[HUMAN]` merge.
-- [ ] [AI] Post-merge primer `main-ci` (if any) is green; primer worktree removed.
+- [x] [AI] Post-merge primer `main-ci` (if any) is green; primer worktree removed. Verified: worktree
+      list shows only the primary checkout.
 
 > **Pause Safety**: primer change delivered on primer `main` via merged, fully-reviewed PR; worktree
 > cleaned up. The ose-public PR remains open. Safe to stop before starting ose-infra. To resume: begin
@@ -580,22 +585,25 @@ stateDiagram-v2
 
 - [x] [AI] Flip to ready: `gh pr ready`; confirm `gh pr checks` all green and `mergeable` is `MERGEABLE`.
       — acceptance: PR ready + mergeable + review loop done. Done: PR #6 flipped to ready, `isDraft:
-  false`.
-- [ ] [HUMAN] Review and click **Merge** on the infra PR (outside the AI done-boundary).
+false`.
+- [x] [HUMAN] Review and click **Merge** on the infra PR (outside the AI done-boundary).
       — handoff: `[AI]` reached the infra done-definition and marked the PR ready. Resume signal:
-      `gh pr view --json state` returns `MERGED`.
-- [ ] [AI] After merge, remove the infra worktree:
+      `gh pr view --json state` returns `MERGED`. Done: merged 2026-07-06T13:29:22Z.
+- [x] [AI] After merge, remove the infra worktree:
       `git -C /Users/wkf/ose-projects/ose-infra worktree remove worktrees/worktree-to-pr-default-delivery-mode`
-      — acceptance: the path is no longer listed.
+      — acceptance: the path is no longer listed. Done.
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] Infra PR `state` is `MERGED`; the four-mode vocabulary + precedence + both `pr-review-*`
-      agents present in infra surfaces.
-- [ ] [AI] The infra review loop ran to its done-definition before the `[HUMAN]` merge.
-- [ ] [AI] Post-merge infra `main-ci` (if any) is green; infra worktree removed.
+- [x] [AI] Infra PR `state` is `MERGED`; the four-mode vocabulary + precedence + both `pr-review-*`
+      agents present in infra surfaces. Verified: PR #6 state MERGED; 24 file matches for
+      `worktree-to-pr`; both `pr-review-*.md` present.
+- [x] [AI] The infra review loop ran to its done-definition before the `[HUMAN]` merge.
+- [x] [AI] Post-merge infra `main-ci` (if any) is green; infra worktree removed. Verified: post-merge
+      `main-ci`/`pr-quality-gate`/`validate-env` all `completed`/`success` on headSha
+      `b59f616b56fbd484fb82eb84261d0df69335c877`; worktree list shows only the primary checkout.
 
 > **Pause Safety**: primer + infra changes delivered on their respective `main` via merged,
 > fully-reviewed PRs; both sibling worktrees cleaned up. The ose-public PR remains open (finalized in
@@ -627,33 +635,37 @@ stateDiagram-v2
 > a system secret or sensitive value into any git-tracked destination (hard iron rule); redact or
 > reference an env var instead.
 
-- [ ] [AI] Assemble the raw learnings log from Phases 0–5: preexisting failures fixed during baseline
+- [x] [AI] Assemble the raw learnings log from Phases 0–5: preexisting failures fixed during baseline
       or gates, any CI-on-PR surprises, per-repo prose-divergence notes (esp. ose-infra), any
       binding-sync drift observed, and any notable pr-review-cycle findings/escalations. — acceptance:
-      a bullet list of candidate learnings exists in the execution notes (not yet routed).
-- [ ] [AI] Apply the **repo-relevance gate** to each candidate — mark keep/drop with a one-line reason.
-      — acceptance: every candidate carries a keep/drop decision.
-- [ ] [AI] Apply the **secret/sensitivity gate** to each kept candidate — confirm no secret/sensitive
+      a bullet list of candidate learnings exists in the execution notes (not yet routed). Done: 6
+      entries assembled in `learnings.md`.
+- [x] [AI] Apply the **repo-relevance gate** to each candidate — mark keep/drop with a one-line reason.
+      — acceptance: every candidate carries a keep/drop decision. Done.
+- [x] [AI] Apply the **secret/sensitivity gate** to each kept candidate — confirm no secret/sensitive
       value is carried into any destination; redact or replace with an env-var reference where needed.
       — acceptance: no kept item contains a raw secret; `git diff` of any destination shows no secret.
-- [ ] [AI] Route each kept learning to the most fitting destination per the convention's triage
+      Done: no secrets involved in any of the 4 routed entries.
+- [x] [AI] Route each kept learning to the most fitting destination per the convention's triage
       rubric (open-ended — do not force-fit into a fixed list). For any ose-public-bound edit, apply it
       inside the still-open ose-public PR branch (it merges in Phase 7); for any backlog/idea item, add
       a `plans/ideas.md` entry (or open a backlog plan) rather than expanding this plan's scope; for a
       sibling-repo-only edit whose PR already merged, open a small follow-up `worktree-to-pr` delivery.
       — acceptance: each kept learning maps to a named destination; ose-public-bound edits are on the
-      PR branch; backlog items appear in `plans/ideas.md`.
+      PR branch; backlog items appear in `plans/ideas.md`. Done: 4 routed to
+      `repo-governance/development/agents/{ai-agents.md,subagent-orchestration.md}`; 2 discarded as
+      duplicates of already-tracked behavior (see `learnings.md` Summary table).
   - _Suggested executor: `repo-rules-maker` (governance destination) / `agent-maker` (agent-or-skill destination)_
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Every candidate learning has a keep/drop decision and every kept learning has exactly one
+- [x] [AI] Every candidate learning has a keep/drop decision and every kept learning has exactly one
       routed destination (no unrouted learnings remain).
-- [ ] [AI] Both safety gates were applied and no secret/sensitive value was written to any git-tracked
+- [x] [AI] Both safety gates were applied and no secret/sensitive value was written to any git-tracked
       destination (`git log -p` spot-check on any Knowledge-Capture commit is clean).
-- [ ] [AI] Any ose-public-bound edits are staged/committed on the ose-public PR branch; any backlog
+- [x] [AI] Any ose-public-bound edits are staged/committed on the ose-public PR branch; any backlog
       items are recorded in `plans/ideas.md`.
 
 > **Pause Safety**: all Phase 0–5 learnings are triaged and routed; ose-public-bound edits sit on the
