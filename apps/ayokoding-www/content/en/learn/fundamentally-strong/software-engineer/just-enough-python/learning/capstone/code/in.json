@@ -1,0 +1,4 @@
+[
+  { "name": "widget", "quantity": 3, "price": 2.5 },
+  { "name": "gadget", "quantity": 1, "price": 12.0 }
+]

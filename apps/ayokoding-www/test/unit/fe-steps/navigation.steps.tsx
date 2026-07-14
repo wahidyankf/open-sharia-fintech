@@ -6,6 +6,7 @@ import "./helpers/test-setup";
 import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
 import { TableOfContents } from "@/features/navigation/shell/toc";
 import { PrevNext } from "@/features/navigation/shell/prev-next";
+import { parseMarkdown } from "@/features/content/core/parser";
 
 const feature = await loadFeature(
   path.resolve(
@@ -168,4 +169,62 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
   });
+
+  Scenario("In-body relative markdown links resolve to real site routes", ({ Given, When, Then, And }) => {
+    const markdown = "[Overview (section)](../../overview.md)";
+    let html = "";
+
+    Given("a content page's markdown body contains a relative link to another content file", () => {
+      expect(markdown).toContain("](../../overview.md)");
+    });
+
+    When("the page is rendered to HTML", async () => {
+      const currentSlug = "learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/overview";
+      const result = await parseMarkdown(markdown, { locale: "en", slug: currentSlug });
+      html = result.html;
+    });
+
+    Then("the rendered link's href should be the linked page's real site URL", () => {
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+    });
+
+    And('the href should not contain a literal ".md" extension', () => {
+      expect(html).not.toContain(".md");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:In-body relative markdown links resolve to real site routes
+    And("the href should not be a raw filesystem-relative path", () => {
+      expect(html).not.toContain('href="../');
+      expect(html).not.toContain('href="./');
+    });
+  });
+
+  Scenario(
+    "In-body relative markdown links authored from a section index page resolve to real site routes",
+    ({ Given, When, Then, And }) => {
+      const markdown = "[Sibling Topic](./sibling.md)";
+      let html = "";
+
+      Given("a section index page's markdown body contains a relative link to a sibling content file", () => {
+        expect(markdown).toContain("](./sibling.md)");
+      });
+
+      When("the page is rendered to HTML", async () => {
+        // This slug's file is `.../just-enough-nvim/_index.md` (isSection: true), so the
+        // page's own containing directory is the slug itself, not dirname(slug).
+        const currentSlug = "learn/fundamentally-strong/software-engineer/just-enough-nvim";
+        const result = await parseMarkdown(markdown, { locale: "en", slug: currentSlug, isSection: true });
+        html = result.html;
+      });
+
+      Then("the rendered link's href should be resolved relative to the section's own directory", () => {
+        expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:In-body relative markdown links authored from a section index page resolve to real site routes
+      And('the href should not contain a literal ".md" extension', () => {
+        expect(html).not.toContain(".md");
+      });
+    },
+  );
 });

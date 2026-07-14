@@ -1167,138 +1167,138 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Primer · Python · topic wt 140 · Learn 104 / Drill 204 · **primer**. Template →
 [`syllabus/04-just-enough-python.md`](./syllabus/04-just-enough-python.md).
 
-- [ ] **[AI] V** — `web-researcher` for `just-enough-python`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `just-enough-python`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/04-just-enough-python.md`](./syllabus/04-just-enough-python.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/just-enough-python/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/just-enough-python/learning/` teaching **every** concept in
       `syllabus/04-just-enough-python.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · running-python
-  - [ ] co-02 · virtual-environments
-  - [ ] co-03 · formatting-and-linting
-  - [ ] co-04 · variables-and-binding
-  - [ ] co-05 · primitive-types
-  - [ ] co-06 · type-hints
-  - [ ] co-07 · operators
-  - [ ] co-08 · strings-and-fstrings
-  - [ ] co-09 · lists
-  - [ ] co-10 · tuples
-  - [ ] co-11 · dictionaries
-  - [ ] co-12 · sets
-  - [ ] co-13 · slicing
-  - [ ] co-14 · comprehensions
-  - [ ] co-15 · conditionals
-  - [ ] co-16 · loops
-  - [ ] co-17 · functions
-  - [ ] co-18 · variadic-args
-  - [ ] co-19 · lambdas-and-scope
-  - [ ] co-20 · modules-and-imports
-  - [ ] co-21 · exceptions
-  - [ ] co-22 · files-and-io
-  - [ ] co-23 · json-serialization
-  - [ ] co-24 · classes
-  - [ ] co-25 · static-type-checking
-- [ ] **[AI] A1-examples** — Author `CONTENT/just-enough-python/learning/code/` — one runnable `.py` script +
+  - [x] co-01 · running-python
+  - [x] co-02 · virtual-environments
+  - [x] co-03 · formatting-and-linting
+  - [x] co-04 · variables-and-binding
+  - [x] co-05 · primitive-types
+  - [x] co-06 · type-hints
+  - [x] co-07 · operators
+  - [x] co-08 · strings-and-fstrings
+  - [x] co-09 · lists
+  - [x] co-10 · tuples
+  - [x] co-11 · dictionaries
+  - [x] co-12 · sets
+  - [x] co-13 · slicing
+  - [x] co-14 · comprehensions
+  - [x] co-15 · conditionals
+  - [x] co-16 · loops
+  - [x] co-17 · functions
+  - [x] co-18 · variadic-args
+  - [x] co-19 · lambdas-and-scope
+  - [x] co-20 · modules-and-imports
+  - [x] co-21 · exceptions
+  - [x] co-22 · files-and-io
+  - [x] co-23 · json-serialization
+  - [x] co-24 · classes
+  - [x] co-25 · static-type-checking
+- [x] **[AI] A1-examples** — Author `CONTENT/just-enough-python/learning/code/` — one runnable `.py` script +
       expected output per worked example in `syllabus/04-just-enough-python.md` §Worked examples (DD-20/DD-30/DD-39).
       One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · hello-script — verify `Hello, world!`
-  - [ ] ex-02 · run-inline-code — verify `42`
-  - [ ] ex-03 · create-venv-install — verify pip show prints version
-  - [ ] ex-04 · format-with-black — verify `1 file reformatted` then `unchanged`
-  - [ ] ex-05 · lint-with-ruff — verify `F401` finding, non-zero exit
-  - [ ] ex-06 · int-and-float — verify `3 1.5`
-  - [ ] ex-07 · bool-and-none — verify `True None`
-  - [ ] ex-08 · arithmetic-operators — verify `3`/`1`/`32`
-  - [ ] ex-09 · comparison-operators — verify `True True False`
-  - [ ] ex-10 · boolean-operators — verify `False True False`
-  - [ ] ex-11 · fstring-interpolation — verify `Ada is 36`
-  - [ ] ex-12 · fstring-formatting — verify `3.14`
-  - [ ] ex-13 · string-methods — verify `A B C`/`a b c`/`['a','b','c']`
-  - [ ] ex-14 · list-basics — verify `[1, 2, 3, 4]`
-  - [ ] ex-15 · list-index-mutate — verify `[9, 2, 3]`
-  - [ ] ex-16 · tuple-unpacking — verify `10 20`
-  - [ ] ex-17 · tuple-immutable — verify catches TypeError prints `immutable`
-  - [ ] ex-18 · dict-basics — verify `36`
-  - [ ] ex-19 · dict-iterate-items — verify `a=1` then `b=2`
-  - [ ] ex-20 · set-dedup — verify `3`
-  - [ ] ex-21 · set-operations — verify `[1,2,3,4]` then `[2,3]`
-  - [ ] ex-22 · slice-list — verify `[1,2,3]` then reversed
-  - [ ] ex-23 · slice-string — verify `pyt`
-  - [ ] ex-24 · if-elif-else — verify negative/zero/positive
-  - [ ] ex-25 · truthiness — verify `empty`
-  - [ ] ex-26 · for-range — verify `15`
-  - [ ] ex-27 · while-loop — verify `3 2 1 0`
-  - [ ] ex-28 · enumerate-zip — verify indexed + paired output
-  - [ ] ex-29 · list-comprehension — verify `[0, 1, 4, 9, 16]`
-  - [ ] ex-30 · comprehension-filter — verify `[0, 2, 4]`
-  - [ ] ex-31 · dict-comprehension — verify `{0: 0, 1: 1, 2: 4}`
-  - [ ] ex-32 · set-comprehension — verify sorted `[1, 2]`
-  - [ ] ex-33 · generator-expression — verify `14`
-  - [ ] ex-34 · nested-comprehension — verify `[1, 2, 3, 4]`
-  - [ ] ex-35 · define-typed-function — verify `5`
-  - [ ] ex-36 · default-args — verify `Hello, world` then `Hello, Ada`
-  - [ ] ex-37 · keyword-args — verify positional-order match
-  - [ ] ex-38 · args-kwargs — verify correct counts
-  - [ ] ex-39 · return-tuple — verify `3 1`
-  - [ ] ex-40 · lambda-sort — verify `[('a', 1), ('b', 2)]`
-  - [ ] ex-41 · closure-counter — verify `1 2 3`
-  - [ ] ex-42 · scope-global-local — verify outer value changed
-  - [ ] ex-43 · map-filter — verify `[0, 4, 8]`
-  - [ ] ex-44 · import-stdlib-math — verify `4.0`
-  - [ ] ex-45 · from-import — verify `2`
-  - [ ] ex-46 · name-main-guard — verify prints on run, silent on import
-  - [ ] ex-47 · custom-module-import — verify imported output prints
-  - [ ] ex-48 · try-except — verify `cannot divide`
-  - [ ] ex-49 · try-except-else-finally — verify `try`/`else`/`finally`
-  - [ ] ex-50 · raise-valueerror — verify non-zero exit + traceback message
-  - [ ] ex-51 · catch-specific-exceptions — verify correct branch per trigger
-  - [ ] ex-52 · read-text-file — verify stdout matches file
-  - [ ] ex-53 · write-text-file — verify `line1\nline2\n`
-  - [ ] ex-54 · append-file — verify grows by one line
-  - [ ] ex-55 · json-dumps — verify `{"a": 1}`
-  - [ ] ex-56 · json-loads — verify `1`
-  - [ ] ex-57 · json-dump-file — verify roundtrip parses back
-  - [ ] ex-58 · json-load-file — verify expected value prints
-  - [ ] ex-59 · class-basics — verify updated coordinates print
-  - [ ] ex-60 · class-repr — verify `Point(x=1, y=2)`
-  - [ ] ex-61 · argparse-cli — verify `Hello, Ada`
-  - [ ] ex-62 · argparse-optional-flag — verify `HELLO, ADA`
-  - [ ] ex-63 · argparse-help — verify usage block, exit 0
-  - [ ] ex-64 · multi-module-package — verify `python3 -m app` output
-  - [ ] ex-65 · custom-exception-class — verify custom message printed
-  - [ ] ex-66 · reraise-with-context — verify chained traceback
-  - [ ] ex-67 · dataclass — verify `Point(x=1, y=2)`
-  - [ ] ex-68 · typed-signatures-ruff-clean — verify ruff exits 0
-  - [ ] ex-69 · comprehension-json-transform — verify uppercased names in output JSON
-  - [ ] ex-70 · generator-function-yield — verify `[0, 1, 2]`
-  - [ ] ex-71 · context-manager-custom — verify `enter`/`body`/`exit`
-  - [ ] ex-72 · json-file-roundtrip-pipeline — verify only kept records
-  - [ ] ex-73 · exception-exit-code — verify non-zero `$?`
-  - [ ] ex-74 · pytest-unit-test — verify `1 passed`
-  - [ ] ex-75 · pytest-raises — verify test passes
-  - [ ] ex-76 · nested-dict-access — verify default returned on missing path
-  - [ ] ex-77 · sort-dicts-by-key — verify ascending age order
-  - [ ] ex-78 · counter-frequency — verify most frequent word + count
-  - [ ] ex-79 · enumerate-file-lines — verify 1-based line prefixes
-  - [ ] ex-80 · fstring-debug — verify `value=42`
-  - [ ] ex-81 · typed-cli-json-roundtrip — verify roundtrip + ruff clean
-  - [ ] ex-82 · module-docstring-and-main — verify prints + docstring accessible
-  - [ ] ex-83 · pyright-clean-pass — verify `pyright` reports 0 errors on a fully-annotated module
-  - [ ] ex-84 · pyright-catches-type-error — verify `pyright` flags a `str`-for-`int` mismatch while the script still runs
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-python/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · hello-script — verify `Hello, world!`
+  - [x] ex-02 · run-inline-code — verify `42`
+  - [x] ex-03 · create-venv-install — verify pip show prints version
+  - [x] ex-04 · format-with-black — verify `1 file reformatted` then `unchanged`
+  - [x] ex-05 · lint-with-ruff — verify `F401` finding, non-zero exit
+  - [x] ex-06 · int-and-float — verify `3 1.5`
+  - [x] ex-07 · bool-and-none — verify `True None`
+  - [x] ex-08 · arithmetic-operators — verify `3`/`1`/`32`
+  - [x] ex-09 · comparison-operators — verify `True True False`
+  - [x] ex-10 · boolean-operators — verify `False True False`
+  - [x] ex-11 · fstring-interpolation — verify `Ada is 36`
+  - [x] ex-12 · fstring-formatting — verify `3.14`
+  - [x] ex-13 · string-methods — verify `A B C`/`a b c`/`['a','b','c']`
+  - [x] ex-14 · list-basics — verify `[1, 2, 3, 4]`
+  - [x] ex-15 · list-index-mutate — verify `[9, 2, 3]`
+  - [x] ex-16 · tuple-unpacking — verify `10 20`
+  - [x] ex-17 · tuple-immutable — verify catches TypeError prints `immutable`
+  - [x] ex-18 · dict-basics — verify `36`
+  - [x] ex-19 · dict-iterate-items — verify `a=1` then `b=2`
+  - [x] ex-20 · set-dedup — verify `3`
+  - [x] ex-21 · set-operations — verify `[1,2,3,4]` then `[2,3]`
+  - [x] ex-22 · slice-list — verify `[1,2,3]` then reversed
+  - [x] ex-23 · slice-string — verify `pyt`
+  - [x] ex-24 · if-elif-else — verify negative/zero/positive
+  - [x] ex-25 · truthiness — verify `empty`
+  - [x] ex-26 · for-range — verify `15`
+  - [x] ex-27 · while-loop — verify `3 2 1 0`
+  - [x] ex-28 · enumerate-zip — verify indexed + paired output
+  - [x] ex-29 · list-comprehension — verify `[0, 1, 4, 9, 16]`
+  - [x] ex-30 · comprehension-filter — verify `[0, 2, 4]`
+  - [x] ex-31 · dict-comprehension — verify `{0: 0, 1: 1, 2: 4}`
+  - [x] ex-32 · set-comprehension — verify sorted `[1, 2]`
+  - [x] ex-33 · generator-expression — verify `14`
+  - [x] ex-34 · nested-comprehension — verify `[1, 2, 3, 4]`
+  - [x] ex-35 · define-typed-function — verify `5`
+  - [x] ex-36 · default-args — verify `Hello, world` then `Hello, Ada`
+  - [x] ex-37 · keyword-args — verify positional-order match
+  - [x] ex-38 · args-kwargs — verify correct counts
+  - [x] ex-39 · return-tuple — verify `3 1`
+  - [x] ex-40 · lambda-sort — verify `[('a', 1), ('b', 2)]`
+  - [x] ex-41 · closure-counter — verify `1 2 3`
+  - [x] ex-42 · scope-global-local — verify outer value changed
+  - [x] ex-43 · map-filter — verify `[0, 4, 8]`
+  - [x] ex-44 · import-stdlib-math — verify `4.0`
+  - [x] ex-45 · from-import — verify `2`
+  - [x] ex-46 · name-main-guard — verify prints on run, silent on import
+  - [x] ex-47 · custom-module-import — verify imported output prints
+  - [x] ex-48 · try-except — verify `cannot divide`
+  - [x] ex-49 · try-except-else-finally — verify `try`/`else`/`finally`
+  - [x] ex-50 · raise-valueerror — verify non-zero exit + traceback message
+  - [x] ex-51 · catch-specific-exceptions — verify correct branch per trigger
+  - [x] ex-52 · read-text-file — verify stdout matches file
+  - [x] ex-53 · write-text-file — verify `line1\nline2\n`
+  - [x] ex-54 · append-file — verify grows by one line
+  - [x] ex-55 · json-dumps — verify `{"a": 1}`
+  - [x] ex-56 · json-loads — verify `1`
+  - [x] ex-57 · json-dump-file — verify roundtrip parses back
+  - [x] ex-58 · json-load-file — verify expected value prints
+  - [x] ex-59 · class-basics — verify updated coordinates print
+  - [x] ex-60 · class-repr — verify `Point(x=1, y=2)`
+  - [x] ex-61 · argparse-cli — verify `Hello, Ada`
+  - [x] ex-62 · argparse-optional-flag — verify `HELLO, ADA`
+  - [x] ex-63 · argparse-help — verify usage block, exit 0
+  - [x] ex-64 · multi-module-package — verify `python3 -m app` output
+  - [x] ex-65 · custom-exception-class — verify custom message printed
+  - [x] ex-66 · reraise-with-context — verify chained traceback
+  - [x] ex-67 · dataclass — verify `Point(x=1, y=2)`
+  - [x] ex-68 · typed-signatures-ruff-clean — verify ruff exits 0
+  - [x] ex-69 · comprehension-json-transform — verify uppercased names in output JSON
+  - [x] ex-70 · generator-function-yield — verify `[0, 1, 2]`
+  - [x] ex-71 · context-manager-custom — verify `enter`/`body`/`exit`
+  - [x] ex-72 · json-file-roundtrip-pipeline — verify only kept records
+  - [x] ex-73 · exception-exit-code — verify non-zero `$?`
+  - [x] ex-74 · pytest-unit-test — verify `1 passed`
+  - [x] ex-75 · pytest-raises — verify test passes
+  - [x] ex-76 · nested-dict-access — verify default returned on missing path
+  - [x] ex-77 · sort-dicts-by-key — verify ascending age order
+  - [x] ex-78 · counter-frequency — verify most frequent word + count
+  - [x] ex-79 · enumerate-file-lines — verify 1-based line prefixes
+  - [x] ex-80 · fstring-debug — verify `value=42`
+  - [x] ex-81 · typed-cli-json-roundtrip — verify roundtrip + ruff clean
+  - [x] ex-82 · module-docstring-and-main — verify prints + docstring accessible
+  - [x] ex-83 · pyright-clean-pass — verify `pyright` reports 0 errors on a fully-annotated module
+  - [x] ex-84 · pyright-catches-type-error — verify `pyright` flags a `str`-for-`int` mismatch while the script still runs
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-python/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/just-enough-python/drilling/_index.md` (wt 204) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 5 Gate
 
-- [ ] [AI] `just-enough-python/` complete: `_index.md` wt 140, `learning/_index.md` wt 104,
+- [x] [AI] `just-enough-python/` complete: `_index.md` wt 140, `learning/_index.md` wt 104,
       `drilling/_index.md` wt 204, capstone wt 900; all 25 concepts + 84 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit

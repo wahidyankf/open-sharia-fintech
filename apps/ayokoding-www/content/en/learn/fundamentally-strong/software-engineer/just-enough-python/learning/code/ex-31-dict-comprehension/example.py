@@ -1,0 +1,5 @@
+"""Example 31: Dict Comprehension."""
+
+# A `key: value` shape inside {} builds a dict, not a set.
+squares: dict[int, int] = {n: n * n for n in range(3)}
+print(squares)  # => Output: {0: 0, 1: 1, 2: 4}
