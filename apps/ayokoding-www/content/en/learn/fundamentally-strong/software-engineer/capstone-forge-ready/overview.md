@@ -85,9 +85,10 @@ require("plugins.greet").setup()
 vim.lsp.enable("pyright")
 ```
 
-The remaining five modules -- `lua/options.lua`, `lua/keymaps.lua`, `lua/lsp.lua`,
-`lua/treesitter.lua`, `lua/plugins/greet.lua`, and `lsp/pyright.lua` -- are byte-identical to the
-files topic 3's own capstone already built and verified; see
+The remaining five modules and one auto-discovered LSP config file -- `lua/options.lua`,
+`lua/keymaps.lua`, `lua/lsp.lua`, `lua/treesitter.lua`, `lua/plugins/greet.lua`, and
+`lsp/pyright.lua` -- are byte-identical to the files topic 3's own capstone already built and
+verified; see
 [Extending Neovim's capstone](../extending-neovim/learning/capstone/overview.md) for their annotated
 listings, or `code/nvim-config/` in this folder for the files themselves.
 
