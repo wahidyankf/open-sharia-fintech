@@ -33,6 +33,20 @@ and deeper design go to [`21-object-oriented-design-and-patterns`](./21-object-o
   (since 3.10, drops per-instance `__dict__`), `eq` (generates `__eq__`); when `eq` and `frozen` are both
   True, `__hash__` is auto-generated. Overriding `__eq__` without `__hash__` sets `__hash__ = None`
   (unhashable). `abc.ABC`/`abstractmethod` mechanics stable. (docs.python.org dataclasses/datamodel)
+- 2026-07-14 — re-confirmed for Phase 9 authoring, no changes since 2026-07-12 sweep: `frozen=True`
+  field assignment still raises `dataclasses.FrozenInstanceError`; `slots=True` still "Added in
+  version 3.10" and still drops per-instance `__dict__`; `eq=True` (default) still auto-generates
+  `__eq__` (Python 3.13 changed the generated method to compare fields individually rather than as
+  tuples — behavior-equivalent, not breaking); hash table unchanged (`eq`+`frozen` both True → auto
+  `__hash__`; `eq=True`/`frozen=False` default → `__hash__ = None`); `order=True` still adds
+  `__lt__`/`__le__`/`__gt__`/`__ge__`; `field(default_factory=...)` still the documented
+  mutable-default mechanism. Plain-class `__eq__` without `__hash__` still sets `__hash__ = None`
+  ([datamodel](https://docs.python.org/3/reference/datamodel.html#object.__hash__)). `abc.ABC` +
+  `@abstractmethod` instantiation still raises `TypeError`
+  ([abc](https://docs.python.org/3/library/abc.html)). `typing.Protocol` structural typing unchanged
+  since 3.8 ([typing](https://docs.python.org/3/library/typing.html#typing.Protocol)).
+  `object.__init_subclass__` (added 3.6) still fires on subclass creation. (re-fetched 2026-07-14,
+  docs.python.org dataclasses/datamodel/abc/typing)
 
 ### DD-35 primary-source citations (fetched-and-read)
 
