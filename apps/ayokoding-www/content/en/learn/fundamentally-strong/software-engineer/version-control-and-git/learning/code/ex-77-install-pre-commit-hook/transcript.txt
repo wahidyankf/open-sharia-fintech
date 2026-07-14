@@ -1,0 +1,2 @@
+pre-commit: staged changes contain a TODO marker -- commit blocked
+62ceb76 initial notes

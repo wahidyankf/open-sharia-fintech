@@ -1,0 +1,7 @@
+warning: You appear to have cloned an empty repository.
+From /tmp/git-example/remote
+   2cfccb8..10156c2  main       -> origin/main
+Successfully rebased and updated refs/heads/main.
+* 0ee5de9 local change (own file)
+* 10156c2 remote change (own file)
+* 2cfccb8 initial

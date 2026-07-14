@@ -1,0 +1,8 @@
+[detached HEAD bcbf1a8] commit two (reworded)
+ Date: Tue Jul 14 12:27:36 2026 +0700
+ 1 file changed, 1 insertion(+)
+Successfully rebased and updated refs/heads/main.
+b17960c commit three
+bcbf1a8 commit two (reworded)
+1b163d9 commit one
+c646364 initial

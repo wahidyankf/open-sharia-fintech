@@ -1,0 +1,6 @@
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   alpha.txt
+	modified:   beta.txt
+

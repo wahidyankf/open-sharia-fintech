@@ -1,0 +1,6 @@
+=== BUGGY: muscle-memory reset --hard when meaning to just discard ONE edit ===
+base
+dec4f53 HEAD@{0}: reset: moving to HEAD
+dec4f53 HEAD@{1}: commit (initial): initial
+=== FIX: commit or stash BEFORE any --hard operation, as a safety habit ===
+hours of uncommitted work, take two

@@ -1,0 +1,20 @@
+tag
+tag v1.0
+Tagger: Dev <dev@example.com>
+Date:   Tue Jul 14 12:35:45 2026 +0700
+
+release
+
+commit b18e6d84ce536b648913fea3cf1ac2444acfeb8c
+Author: Dev <dev@example.com>
+Date:   Tue Jul 14 12:35:45 2026 +0700
+
+    release candidate
+
+diff --git a/file.txt b/file.txt
+new file mode 100644
+index 0000000..df967b9
+--- /dev/null
++++ b/file.txt
+@@ -0,0 +1 @@
++base

@@ -41,6 +41,12 @@ lives at [`90-build-your-own-git`](./90-build-your-own-git.md).
   describe the store as hash-addressed without asserting the default hash is already SHA-256.
 - 2026-07-12 — verified: "trunk-based development" and the pull-request review flow described here
   match current mainstream practice; there is no version claim to pin.
+- 2026-07-14 — corrected (post-authoring `apps-ayokoding-www-facts-checker` sweep): the reflog concept
+  entry (co-22, `learning/overview.md`) originally claimed the reflog "by default expires unreachable
+  entries after 90 days." Verified against [git-gc](https://git-scm.com/docs/git-gc) that Git has two
+  separate defaults: `gc.reflogExpire` = 90 days for entries still **reachable** from a branch tip, but
+  `gc.reflogExpireUnreachable` = **30 days** for entries made unreachable (exactly the `reset --hard`
+  recovery scenario the passage describes). Content corrected to state both defaults accurately.
 
 ### DD-35 primary-source citations (fetched-and-read)
 

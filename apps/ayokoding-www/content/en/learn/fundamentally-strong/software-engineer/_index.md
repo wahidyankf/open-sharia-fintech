@@ -23,3 +23,6 @@ weight: 1750
 - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)
+- [6 · Version Control & Git](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git/drilling)

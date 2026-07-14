@@ -1,0 +1,6 @@
+warning: You appear to have cloned an empty repository.
+From /tmp/git-example/remote
+   1412ef2..74fe648  main       -> origin/main
+1412ef2 initial
+74fe648 second commit
+1412ef2 initial

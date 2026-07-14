@@ -1,0 +1,26 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+error: could not apply 3695364... feature edits line
+hint: After resolving the conflicts, mark them with
+hint: "git add/rm <pathspec>", then run
+hint: "git cherry-pick --continue".
+hint: You can instead skip this commit with "git cherry-pick --skip".
+hint: To abort and get back to the state before "git cherry-pick",
+hint: run "git cherry-pick --abort".
+On branch main
+You are currently cherry-picking commit 3695364.
+  (fix conflicts and run "git cherry-pick --continue")
+  (use "git cherry-pick --skip" to skip this patch)
+  (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	both modified:   file.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[main 10df869] feature edits line
+ Date: Tue Jul 14 12:35:46 2026 +0700
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+10df869 feature edits line
+8ea431e main edits line first
+05ce7cf initial

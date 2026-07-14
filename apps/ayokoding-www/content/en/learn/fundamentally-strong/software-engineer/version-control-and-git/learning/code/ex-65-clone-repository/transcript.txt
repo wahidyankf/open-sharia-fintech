@@ -1,0 +1,5 @@
+Cloning into 'dest'...
+done.
+dest/.git exists: TRUE
+e8e0295 second commit
+5809a21 initial

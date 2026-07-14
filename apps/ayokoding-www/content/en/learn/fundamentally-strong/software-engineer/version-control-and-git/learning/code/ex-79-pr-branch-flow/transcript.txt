@@ -1,0 +1,14 @@
+Merge made by the 'ort' strategy.
+ greeting.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 greeting.txt
+*   e8d7dbf Merge pull request: add greeting file
+|\  
+| * b6db666 add greeting file
+|/  
+* 6f2ec24 initial
+*   e8d7dbf Merge pull request: add greeting file
+|\  
+| * b6db666 add greeting file
+|/  
+* 6f2ec24 initial
