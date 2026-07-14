@@ -10,3 +10,4 @@ weight: 107
   - [1 · Just Enough Nvim](/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim)
   - [2 · Just Enough Lua](/en/c/learn/fundamentally-strong/software-engineer/just-enough-lua)
   - [3 · Extending Neovim](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim)
+  - [4 · Just Enough Python](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python)
