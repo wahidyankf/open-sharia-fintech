@@ -15,12 +15,8 @@ def test_update_returns_200_with_new_title() -> None:
 
 
 def test_update_actually_persists() -> None:
-    client.put(
-        "/tasks/2", json={"title": "Walk the dog twice"}
-    )  # => via the HTTP layer
-    row = repository.get_task(
-        2
-    )  # => bypass HTTP -- confirm the change reached the DB file
+    client.put("/tasks/2", json={"title": "Walk the dog twice"})  # => via the HTTP layer
+    row = repository.get_task(2)  # => bypass HTTP -- confirm the change reached the DB file
     assert row is not None
     assert row["title"] == "Walk the dog twice"
 

@@ -4,21 +4,15 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-TaskStatus = Literal[
-    "todo", "in_progress", "done"
-]  # => co-10: a closed set -- anything else is a 422
+TaskStatus = Literal["todo", "in_progress", "done"]  # => co-10: a closed set -- anything else is a 422
 
 
 class TaskCreate(BaseModel):  # => co-10: the shape POST /tasks requires
-    title: str = Field(
-        min_length=1, max_length=200
-    )  # => co-10: constrained -- empty titles are rejected
+    title: str = Field(min_length=1, max_length=200)  # => co-10: constrained -- empty titles are rejected
     description: str = Field(default="", max_length=2000)
 
 
-class TaskUpdate(
-    BaseModel
-):  # => co-02, co-10: PUT REPLACES the full resource with this exact shape
+class TaskUpdate(BaseModel):  # => co-02, co-10: PUT REPLACES the full resource with this exact shape
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(default="", max_length=2000)
     status: TaskStatus = "todo"

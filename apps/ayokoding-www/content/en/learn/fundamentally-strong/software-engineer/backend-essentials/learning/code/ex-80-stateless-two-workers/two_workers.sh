@@ -31,7 +31,7 @@ echo                                    # => a blank line separator between this
 echo "== create a task on WORKER A (:8003) ==" # => co-05, co-24: the WRITE happens through worker A only
 # => captures the FULL response body so task_id can be extracted below
 create_response=$(curl -s -X POST -H "Content-Type: application/json" \
-	-d '{"title":"created on worker A"}' http://localhost:8003/tasks)                                   # => co-24: routed to worker A's port
+  -d '{"title":"created on worker A"}' http://localhost:8003/tasks)                                  # => co-24: routed to worker A's port
 echo "$create_response"                                                                              # => prints the raw JSON body so the created task's id is visible
 task_id=$(echo "$create_response" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])') # => extracts "id"
 

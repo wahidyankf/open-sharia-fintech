@@ -1,9 +1,6 @@
 """Example 2: Raw Status Line."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class StatusHandler(BaseHTTPRequestHandler):  # => one instance created per request

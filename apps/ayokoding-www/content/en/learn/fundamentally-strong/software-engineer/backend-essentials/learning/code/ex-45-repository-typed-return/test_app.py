@@ -9,9 +9,7 @@ client = TestClient(app)
 
 
 def test_typed_row_shape_is_preserved_over_json() -> None:
-    row: TaskRow = TaskRow(
-        id=1, title="Buy milk"
-    )  # => construct one directly, like the type checker sees it
+    row: TaskRow = TaskRow(id=1, title="Buy milk")  # => construct one directly, like the type checker sees it
     assert row["id"] == 1
     assert row["title"] == "Buy milk"
 

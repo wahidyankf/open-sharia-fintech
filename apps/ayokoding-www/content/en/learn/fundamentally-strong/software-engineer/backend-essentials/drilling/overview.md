@@ -675,9 +675,7 @@ missing field(s). (co-10, co-11)
 <summary>Reference solution</summary>
 
 ```python
-def validate_required(
-    body: dict[str, object], required: list[str]
-) -> dict[str, object] | None:  # => co-10/co-11: reject bad shapes with a 422 BEFORE handler logic runs
+def validate_required(body: dict[str, object], required: list[str]) -> dict[str, object] | None:  # => co-10/co-11: reject bad shapes with a 422 BEFORE handler logic runs
     missing = [field for field in required if field not in body]  # => every required field not present
     if not missing:  # => nothing missing -- the body is shaped correctly, no error to return
         return None
@@ -1375,13 +1373,9 @@ FILTER_KEYS: dict[str, Callable[[Task], str]] = {  # => co-20: an allowlist -- n
 SORT_KEYS: dict[str, Callable[[Task], str]] = FILTER_KEYS  # => same typed accessors double as sort keys
 
 
-def filter_and_sort(
-    tasks: list[Task], filters: dict[str, str], sort_key: str | None
-) -> list[Task]:  # => co-20: query-param-like filters narrow the list, an optional sort orders it
+def filter_and_sort(tasks: list[Task], filters: dict[str, str], sort_key: str | None) -> list[Task]:  # => co-20: query-param-like filters narrow the list, an optional sort orders it
     result = [  # => co-20: AND semantics -- a row must match EVERY supplied filter, not just one
-        task
-        for task in tasks
-        if all(FILTER_KEYS[field](task) == value for field, value in filters.items())
+        task for task in tasks if all(FILTER_KEYS[field](task) == value for field, value in filters.items())
     ]
     if sort_key is not None:  # => co-20: sort is optional -- absent means "keep insertion order"
         result = sorted(result, key=SORT_KEYS[sort_key])  # => Timsort: stable, O(n log n)

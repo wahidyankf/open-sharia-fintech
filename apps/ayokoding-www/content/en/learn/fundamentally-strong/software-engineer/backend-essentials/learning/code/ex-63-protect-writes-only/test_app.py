@@ -29,9 +29,5 @@ def test_post_with_token_succeeds() -> None:
 
 
 def test_delete_without_token_is_401_but_get_still_open() -> None:
-    assert (
-        client.delete("/items/1").status_code == 401
-    )  # => another write, still guarded
-    assert (
-        client.get("/items").status_code == 200
-    )  # => reads remain unaffected by the write guard
+    assert client.delete("/items/1").status_code == 401  # => another write, still guarded
+    assert client.get("/items").status_code == 200  # => reads remain unaffected by the write guard

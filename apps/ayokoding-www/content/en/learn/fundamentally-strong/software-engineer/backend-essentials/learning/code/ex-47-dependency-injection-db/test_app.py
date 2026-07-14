@@ -19,16 +19,12 @@ def test_list_tasks_via_injected_connection() -> None:
 def test_get_connection_yields_and_then_closes() -> None:
     # => co-23: drive the DEPENDENCY generator directly, the way FastAPI does internally
     generator = repository.get_connection()
-    connection = next(
-        generator
-    )  # => runs the code BEFORE "yield" -- connection is open
+    connection = next(generator)  # => runs the code BEFORE "yield" -- connection is open
     assert isinstance(connection, sqlite3.Connection)
     connection.execute("SELECT 1")  # => still usable while the generator is suspended
 
     try:
-        next(
-            generator
-        )  # => resumes AFTER "yield": runs finally, then raises StopIteration
+        next(generator)  # => resumes AFTER "yield": runs finally, then raises StopIteration
     except StopIteration:
         pass  # => expected -- a generator dependency has exactly one yield point
 

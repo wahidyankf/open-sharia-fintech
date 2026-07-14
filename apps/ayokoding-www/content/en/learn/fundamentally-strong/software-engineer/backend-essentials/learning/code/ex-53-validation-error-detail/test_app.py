@@ -16,12 +16,8 @@ def test_single_violation_yields_one_detail_entry() -> None:
 
 
 def test_two_simultaneous_violations_yield_two_detail_entries() -> None:
-    response = client.post(
-        "/tasks", json={"title": "", "priority": -1}
-    )  # => BOTH fail at once
-    assert (
-        response.status_code == 422
-    )  # => co-03: still a single 422, not two responses
+    response = client.post("/tasks", json={"title": "", "priority": -1})  # => BOTH fail at once
+    assert response.status_code == 422  # => co-03: still a single 422, not two responses
     detail = response.json()["detail"]  # => co-10/co-11: the ARRAY lists BOTH offenders
     assert len(detail) == 2
     fields = {entry["loc"][-1] for entry in detail}

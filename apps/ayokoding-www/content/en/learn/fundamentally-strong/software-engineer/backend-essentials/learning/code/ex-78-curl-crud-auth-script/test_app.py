@@ -14,9 +14,7 @@ def test_create_without_token_is_401() -> None:
     assert response.status_code == 401
 
 
-def test_full_crud_round_trip_with_token() -> (
-    None
-):  # => mirrors the companion shell script step for step
+def test_full_crud_round_trip_with_token() -> None:  # => mirrors the companion shell script step for step
     created = client.post("/tasks", json={"title": "write the report"}, headers=AUTH)
     assert created.status_code == 201
     task_id = created.json()["id"]

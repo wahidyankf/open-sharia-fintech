@@ -1,9 +1,6 @@
 """Example 4: Raw Read Path."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class PathHandler(BaseHTTPRequestHandler):  # => one instance created per request

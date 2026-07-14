@@ -8,14 +8,10 @@ client = TestClient(app)
 
 
 def test_login_with_correct_credentials_returns_token() -> None:
-    response = client.post(
-        "/login", json={"username": "alice", "password": "wonderland"}
-    )
+    response = client.post("/login", json={"username": "alice", "password": "wonderland"})
     assert response.status_code == 200  # => co-03: a successful login
     body = response.json()
-    assert (
-        body["token"] == "s3cr3t-token-abc123"
-    )  # => the exact token string is present in the body
+    assert body["token"] == "s3cr3t-token-abc123"  # => the exact token string is present in the body
 
 
 def test_login_with_wrong_password_is_401() -> None:
@@ -25,9 +21,5 @@ def test_login_with_wrong_password_is_401() -> None:
 
 
 def test_login_missing_field_is_422() -> None:
-    response = client.post(
-        "/login", json={"username": "alice"}
-    )  # => password omitted entirely
-    assert (
-        response.status_code == 422
-    )  # => co-10: Pydantic validation runs BEFORE handler logic
+    response = client.post("/login", json={"username": "alice"})  # => password omitted entirely
+    assert response.status_code == 422  # => co-10: Pydantic validation runs BEFORE handler logic

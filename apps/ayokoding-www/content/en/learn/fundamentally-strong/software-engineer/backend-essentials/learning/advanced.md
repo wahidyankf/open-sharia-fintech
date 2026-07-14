@@ -208,9 +208,7 @@ class TokenResponse(BaseModel):  # => co-09: declares the exact shape of a succe
 def login(credentials: Credentials) -> TokenResponse:
     # => co-10: FastAPI already validated `credentials` matches the Credentials shape above --
     # => by the time this line runs, both fields are guaranteed to be present strings
-    if (
-        credentials.username != USERNAME or credentials.password != PASSWORD
-    ):  # => co-10: reject any mismatch immediately -- deliberately the SAME message for both
+    if credentials.username != USERNAME or credentials.password != PASSWORD:  # => co-10: reject any mismatch immediately -- deliberately the SAME message for both
         # => a wrong username and a wrong password, so a caller can't enumerate valid usernames
         raise HTTPException(status_code=401, detail="invalid credentials")  # => co-03: 401, not 404
     return TokenResponse(token=VALID_TOKEN)  # => co-09: the response body IS just the token --
@@ -1856,7 +1854,7 @@ _ex-70 &middot; exercises co-20_
 # => co-20: this is exactly WHY Example 65's seed decorrelates status from priority -- the two
 # => filters below only prove something new if their intersection is smaller than either alone
 
-import os
+import os  # => builds DB_PATH below in an OS-independent way
 import sqlite3  # => co-14: the stdlib DB driver -- no ORM, no extra dependency needed
 from typing import TypedDict  # => co-09: a typed dict shape for what the repository returns
 
@@ -1946,7 +1944,8 @@ def list_tasks(status: str | None, priority: str | None) -> list[TaskRow]:  # =>
     # => filter -- zero filters means an empty string here, reproducing Example 65's unfiltered query
     cursor = conn.execute(  # => co-14: only the CLAUSE STRUCTURE is built dynamically; every value
         # => still flows through params as a placeholder, so injection is impossible regardless of input
-        f"SELECT id, title, status, priority, created_at FROM tasks{where} ORDER BY id", params
+        f"SELECT id, title, status, priority, created_at FROM tasks{where} ORDER BY id",  # => co-20
+        params,  # => co-14: 0, 1, or 2 bound values, matching however many clauses were built above
     )
     result = [dict(row) for row in cursor.fetchall()]  # type: ignore[misc]  # => sqlite3.Row -> dict
     conn.close()  # => co-14: closed immediately after this one query
@@ -2069,10 +2068,7 @@ def _seed(conn: sqlite3.Connection) -> None:  # => co-14: builds the SAME determ
     priorities = ["low", "normal", "high"]  # => rotates every 2 rows via (i // 2) % 3 --
     # => DECORRELATED from status ON PURPOSE, so a combined status+priority filter genuinely
     # => narrows further than either field alone, instead of the two columns moving in lockstep
-    rows = [
-        (f"task {i}", statuses[i % 3], priorities[(i // 2) % 3], f"2026-07-{i:02d}T00:00:00")
-        for i in range(1, 26)
-    ]
+    rows = [(f"task {i}", statuses[i % 3], priorities[(i // 2) % 3], f"2026-07-{i:02d}T00:00:00") for i in range(1, 26)]
     conn.executemany(  # => co-14: a single batched INSERT for all 25 rows, one transaction
         "INSERT INTO tasks (title, status, priority, created_at) VALUES (?, ?, ?, ?)",  # => co-14:
         # => ? placeholders -- the SAME parameterization principle Example 71 stress-tests directly
@@ -2289,9 +2285,7 @@ def list_tasks(sort: SortValue) -> list[TaskRow]:  # => co-14, co-20: sort is a 
     order_clause = _COLUMN_BY_SORT[sort]  # => co-14: looked up from a FIXED mapping -- never
     # => interpolates raw user input directly into ORDER BY, which parameterization cannot protect
     # => against (SQLite has no `?` placeholder syntax for column names or ASC/DESC keywords at all)
-    cursor = conn.execute(
-        f"SELECT id, title, status, priority, created_at FROM tasks ORDER BY {order_clause}"
-    )
+    cursor = conn.execute(f"SELECT id, title, status, priority, created_at FROM tasks ORDER BY {order_clause}")
     result = [dict(row) for row in cursor.fetchall()]  # type: ignore[misc]  # => sqlite3.Row -> dict
     conn.close()  # => co-14: closed immediately after this one query
     return result  # type: ignore[return-value]  # => shape matches TaskRow at runtime
@@ -2480,14 +2474,11 @@ def list_page(  # => co-19, co-20: ALL THREE features compose in one repository 
         params.append(status)  # => co-14: the bound value, positionally matched to the ? above
     where = f" WHERE {' AND '.join(clauses)}" if clauses else ""  # => empty string when unfiltered
 
-    total = int(
-        conn.execute(f"SELECT COUNT(*) FROM tasks{where}", params).fetchone()[0]
-    )  # => co-19: total reflects the FILTERED count, not the whole table -- computed with the
+    total = int(conn.execute(f"SELECT COUNT(*) FROM tasks{where}", params).fetchone()[0])  # => co-19: total reflects the FILTERED count, not the whole table -- computed with the
     # => SAME where clause and params as the main query below, so the two numbers stay consistent
     order_clause = _COLUMN_BY_SORT[sort]  # => co-20: the sort half -- looked up, never interpolated raw
     cursor = conn.execute(  # => co-14, co-19, co-20: filter, sort, AND paginate in one statement
-        f"SELECT id, title, status, priority, created_at FROM tasks{where} "
-        f"ORDER BY {order_clause} LIMIT ? OFFSET ?",  # => co-19: the pagination half, composed last --
+        f"SELECT id, title, status, priority, created_at FROM tasks{where} ORDER BY {order_clause} LIMIT ? OFFSET ?",  # => co-19: the pagination half, composed last --
         # => SQL applies WHERE, then ORDER BY, then LIMIT/OFFSET, in that fixed evaluation order
         [*params, limit, offset],  # => co-14: filter params FIRST, then limit/offset -- position
         # => must match the ? placeholders' left-to-right order in the SQL string exactly above
@@ -2851,9 +2842,7 @@ from fastapi import FastAPI, Response  # => co-08: Response lets a handler overr
 # => DB_PATH is read from an env var so the SAME code can point at a real file (co-14) or a
 # => deliberately unreachable path -- used ONLY to genuinely simulate "the database is down"
 # => without faking any response by hand
-DB_PATH = os.environ.get(
-    "TASKS_DB_PATH", os.path.join(os.path.dirname(__file__), "tasks.db")
-)  # => co-14: no hardcoded path here at all -- this example's curl run overrides it directly
+DB_PATH = os.environ.get("TASKS_DB_PATH", os.path.join(os.path.dirname(__file__), "tasks.db"))  # => co-14: no hardcoded path here at all -- this example's curl run overrides it directly
 
 app = FastAPI()  # => a fresh app -- this example needs no auth, only the health/readiness contrast
 
@@ -3012,7 +3001,8 @@ async def handle_validation_error(request: Request, exc: RequestValidationError)
 async def handle_unexpected_exception(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(  # => co-11: the SAME two-key {"error": {code, message}} shape as every
         # => OTHER handler in this file -- a client never needs to special-case a 500 differently
-        status_code=500, content=envelope("internal_error", "an unexpected error occurred")
+        status_code=500,
+        content=envelope("internal_error", "an unexpected error occurred"),
     )  # => co-11: NEVER leaks exc's message or a stack trace to the client -- deliberately generic
 
 
@@ -3162,6 +3152,7 @@ graph LR
 # => earlier examples in this topic. What's NEW is the companion crud_auth.sh script that drives it
 
 import os  # => co-14: used for the DB_PATH lookup and the "start fresh" file check below
+
 # => co-02, co-18: every route below maps to exactly one HTTP verb -- POST create, GET read,
 # => PUT replace, DELETE remove -- the four verbs a REST-style CRUD resource conventionally exposes
 import sqlite3  # => co-14: the stdlib DB driver -- no ORM, no extra dependency needed
@@ -3225,7 +3216,8 @@ def create_task(title: str) -> TaskRow:  # => co-14: repository create -- the "C
     cursor = conn.execute("INSERT INTO tasks (title) VALUES (?)", (title,))  # => co-14: parameterized
     conn.commit()  # => co-14: commits the new row before reading it back below
     row = conn.execute(  # => co-14: re-reads the row to return its server-assigned id + default status
-        "SELECT id, title, status FROM tasks WHERE id = ?", (cursor.lastrowid,)  # => cursor.lastrowid
+        "SELECT id, title, status FROM tasks WHERE id = ?",
+        (cursor.lastrowid,),  # => cursor.lastrowid
     ).fetchone()  # => co-14: the just-inserted row, guaranteed to exist immediately after commit
     conn.close()  # => co-14: closed after both the INSERT and the confirming SELECT finish
     return dict(row)  # type: ignore[return-value]  # => sqlite3.Row -> TaskRow-shaped dict
@@ -3244,14 +3236,16 @@ def update_task(task_id: int, title: str, status: str) -> TaskRow | None:  # => 
     # => update -- the "U" of CRUD, backing this example's PUT route
     conn = get_connection()  # => co-14: one connection for the UPDATE and the confirming SELECT
     cursor = conn.execute(  # => co-14: parameterized UPDATE, matching this topic's convention throughout
-        "UPDATE tasks SET title = ?, status = ? WHERE id = ?", (title, status, task_id)  # => co-14
+        "UPDATE tasks SET title = ?, status = ? WHERE id = ?",
+        (title, status, task_id),  # => co-14
     )  # => co-14: cursor.rowcount below reveals whether this actually matched a row
     if cursor.rowcount == 0:  # => co-02: no row matched this id -- the route maps this to a 404
         conn.close()  # => co-14: close before returning -- never leak a connection on this path
         return None  # => co-02: signals "not found" up to the route, which raises the actual 404
     conn.commit()  # => co-14: commits the UPDATE now that we know a row genuinely matched
     row = conn.execute(  # => co-14: re-reads the row to return its post-update state to the caller
-        "SELECT id, title, status FROM tasks WHERE id = ?", (task_id,)  # => co-14: same id as the UPDATE
+        "SELECT id, title, status FROM tasks WHERE id = ?",
+        (task_id,),  # => co-14: same id as the UPDATE
     ).fetchone()  # => co-14: guaranteed non-None -- we just confirmed rowcount > 0 above
     conn.close()  # => co-14: closed after the confirming SELECT returns the fresh row
     return dict(row)  # type: ignore[return-value]  # => sqlite3.Row -> TaskRow-shaped dict
@@ -3346,49 +3340,49 @@ def remove_task(task_id: int) -> None:  # => co-02: None return type -- 204 forb
 #!/usr/bin/env bash
 # Example 78: a documented curl sequence exercising CRUD + auth end-to-end (co-22, co-18).
 # Run against a live server: uvicorn app:app --port 8003 (from this directory).
-set -euo pipefail  # => co-22: abort immediately on any failing command, unset var, or pipe error
+set -euo pipefail # => co-22: abort immediately on any failing command, unset var, or pipe error
 
-BASE_URL="http://localhost:8003"  # => the target server this script drives end-to-end
-TOKEN="s3cr3t-token-abc123"  # => matches app.py's VALID_TOKEN -- the SAME literal both sides expect
+BASE_URL="http://localhost:8003" # => the target server this script drives end-to-end
+TOKEN="s3cr3t-token-abc123"      # => matches app.py's VALID_TOKEN -- the SAME literal both sides expect
 
-echo "== Step 1: create WITHOUT a token -- expect 401 =="  # => co-18: no Authorization header at all
+echo "== Step 1: create WITHOUT a token -- expect 401 ==" # => co-18: no Authorization header at all
 # => captures ONLY the HTTP status code, discarding the response body via -o /dev/null
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "Content-Type: application/json" \
-  -d '{"title":"write the report"}' "$BASE_URL/tasks")  # => co-02: POST with no Authorization header
-echo "status: $code"  # => prints the captured status code for a human reading the script's output
-test "$code" = "401"  # => co-03: aborts the script (set -e) if this specific assertion fails
+  -d '{"title":"write the report"}' "$BASE_URL/tasks") # => co-02: POST with no Authorization header
+echo "status: $code"                                   # => prints the captured status code for a human reading the script's output
+test "$code" = "401"                                   # => co-03: aborts the script (set -e) if this specific assertion fails
 
-echo "== Step 2: create WITH a valid token -- expect 201 =="  # => co-18: the SAME create, now WITH a token
+echo "== Step 2: create WITH a valid token -- expect 201 ==" # => co-18: the SAME create, now WITH a token
 # => this time the FULL response body is captured, not just the status
 create_response=$(curl -s -X POST -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" -d '{"title":"write the report"}' "$BASE_URL/tasks")  # => co-18
-echo "$create_response"  # => prints the raw JSON body so the created task's id is visible
-task_id=$(echo "$create_response" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')  # => extracts "id"
-echo "created task id: $task_id"  # => the id every remaining step below operates on
+  -H "Authorization: Bearer $TOKEN" -d '{"title":"write the report"}' "$BASE_URL/tasks")             # => co-18
+echo "$create_response"                                                                              # => prints the raw JSON body so the created task's id is visible
+task_id=$(echo "$create_response" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])') # => extracts "id"
+echo "created task id: $task_id"                                                                     # => the id every remaining step below operates on
 
-echo "== Step 3: read the created task (no token needed) -- expect 200 =="  # => co-02: reads stay OPEN
-curl -s -i "$BASE_URL/tasks/$task_id"  # => -i prints response headers too, not just the body
-echo  # => a blank line separator between this step's output and the next
+echo "== Step 3: read the created task (no token needed) -- expect 200 ==" # => co-02: reads stay OPEN
+curl -s -i "$BASE_URL/tasks/$task_id"                                      # => -i prints response headers too, not just the body
+echo                                                                       # => a blank line separator between this step's output and the next
 
-echo "== Step 4: update WITH a valid token -- expect 200, status becomes done =="  # => co-02: PUT replaces
+echo "== Step 4: update WITH a valid token -- expect 200, status becomes done ==" # => co-02: PUT replaces
 # => co-18: PUT is guarded the same way POST was in Step 2
 curl -s -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" \
-  -d '{"title":"write the report","status":"done"}' "$BASE_URL/tasks/$task_id"  # => full-body replace
-echo  # => separates this step's raw JSON response from the next step's header
+  -d '{"title":"write the report","status":"done"}' "$BASE_URL/tasks/$task_id" # => full-body replace
+echo                                                                           # => separates this step's raw JSON response from the next step's header
 
-echo "== Step 5: delete WITH a valid token -- expect 204 =="  # => co-18: DELETE is guarded too
+echo "== Step 5: delete WITH a valid token -- expect 204 ==" # => co-18: DELETE is guarded too
 # => co-02: DELETE carries no body -- only the status code is captured
 code=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: Bearer $TOKEN" \
-  "$BASE_URL/tasks/$task_id")  # => co-02: same task_id created back in Step 2
-echo "status: $code"  # => prints the captured DELETE status code
-test "$code" = "204"  # => co-03: 204 means success with no response body
+  "$BASE_URL/tasks/$task_id") # => co-02: same task_id created back in Step 2
+echo "status: $code"          # => prints the captured DELETE status code
+test "$code" = "204"          # => co-03: 204 means success with no response body
 
-echo "== Step 6: read after delete -- expect 404 (genuinely gone) =="  # => proves the row is truly gone
-code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/tasks/$task_id")  # => co-02: same unguarded GET
-echo "status: $code"  # => prints the captured final status code
-test "$code" = "404"  # => co-03: confirms the row is genuinely gone, not just soft-deleted
+echo "== Step 6: read after delete -- expect 404 (genuinely gone) =="     # => proves the row is truly gone
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE_URL/tasks/$task_id") # => co-02: same unguarded GET
+echo "status: $code"                                                      # => prints the captured final status code
+test "$code" = "404"                                                      # => co-03: confirms the row is genuinely gone, not just soft-deleted
 
-echo "== ALL STEPS PASSED =="  # => only reached if every test assertion above succeeded (set -e)
+echo "== ALL STEPS PASSED ==" # => only reached if every test assertion above succeeded (set -e)
 ```
 
 **Run**: `uvicorn app:app --port 8003` in one terminal, then `bash crud_auth.sh` in another (the script targets `localhost:8003` directly), plus `pytest -v` against the same directory.
@@ -3475,6 +3469,7 @@ all three, ONE test"]
 # => topic precisely because it verifies all three areas (CRUD, auth, pagination) genuinely coexist
 
 import os  # => co-14: used for the DB_PATH lookup and the "start fresh" file check below
+
 # => co-02: every route maps to exactly one HTTP verb -- POST create, GET read, PUT replace,
 # => DELETE remove, plus a second GET for the paginated list -- the full set this topic covers
 import sqlite3  # => co-14: the stdlib DB driver -- no ORM, no extra dependency needed
@@ -3543,7 +3538,8 @@ def create_task(title: str) -> TaskRow:  # => co-14: repository create -- the "C
     cursor = conn.execute("INSERT INTO tasks (title) VALUES (?)", (title,))  # => co-14: parameterized
     conn.commit()  # => co-14: commits the new row before reading it back below
     row = conn.execute(  # => co-14: re-reads the row to return its server-assigned id + default status
-        "SELECT id, title, status FROM tasks WHERE id = ?", (cursor.lastrowid,)  # => cursor.lastrowid
+        "SELECT id, title, status FROM tasks WHERE id = ?",
+        (cursor.lastrowid,),  # => cursor.lastrowid
     ).fetchone()  # => co-14: the just-inserted row, guaranteed to exist immediately after commit
     conn.close()  # => co-14: closed after both the INSERT and the confirming SELECT finish
     return dict(row)  # type: ignore[return-value]  # => sqlite3.Row -> TaskRow-shaped dict
@@ -3562,14 +3558,16 @@ def update_task(task_id: int, title: str, status: str) -> TaskRow | None:  # => 
     # => update -- the "U" of CRUD, backing this example's PUT route
     conn = get_connection()  # => co-14: one connection for the UPDATE and the confirming SELECT
     cursor = conn.execute(  # => co-14: parameterized UPDATE, matching this topic's convention throughout
-        "UPDATE tasks SET title = ?, status = ? WHERE id = ?", (title, status, task_id)  # => co-14
+        "UPDATE tasks SET title = ?, status = ? WHERE id = ?",
+        (title, status, task_id),  # => co-14
     )  # => co-14: cursor.rowcount below reveals whether this actually matched a row
     if cursor.rowcount == 0:  # => co-02: no row matched this id -- the route maps this to a 404
         conn.close()  # => co-14: close before returning -- never leak a connection on this path
         return None  # => co-02: signals "not found" up to the route, which raises the actual 404
     conn.commit()  # => co-14: commits the UPDATE now that we know a row genuinely matched
     row = conn.execute(  # => co-14: re-reads the row to return its post-update state to the caller
-        "SELECT id, title, status FROM tasks WHERE id = ?", (task_id,)  # => co-14: same id as the UPDATE
+        "SELECT id, title, status FROM tasks WHERE id = ?",
+        (task_id,),  # => co-14: same id as the UPDATE
     ).fetchone()  # => co-14: guaranteed non-None -- we just confirmed rowcount > 0 above
     conn.close()  # => co-14: closed after the confirming SELECT returns the fresh row
     return dict(row)  # type: ignore[return-value]  # => sqlite3.Row -> TaskRow-shaped dict
@@ -3735,7 +3733,9 @@ class TestCrud:  # => co-14: groups every create/read/update/delete assertion un
         assert read.json()["status"] == "todo"  # => co-15: confirms the schema's DEFAULT applied server-side
 
         updated = client.put(  # => co-02: PUT replaces the full resource, guarded by require_token
-            f"/tasks/{task_id}", json={"title": "write the report", "status": "done"}, headers=AUTH  # => co-02: full body
+            f"/tasks/{task_id}",
+            json={"title": "write the report", "status": "done"},
+            headers=AUTH,  # => co-02: full body
         )  # => co-18: valid token required for this write
         assert updated.status_code == 200  # => co-02: a successful replace on an existing id
         assert updated.json()["status"] == "done"  # => co-14: confirms the UPDATE actually landed
@@ -3749,7 +3749,9 @@ class TestCrud:  # => co-14: groups every create/read/update/delete assertion un
 
     def test_update_missing_id_is_404(self, client: TestClient) -> None:  # => co-02: PUT never creates
         response = client.put(  # => co-02: id 99999 was never created by this test
-            "/tasks/99999", json={"title": "x", "status": "todo"}, headers=AUTH  # => co-18: a valid token is supplied
+            "/tasks/99999",
+            json={"title": "x", "status": "todo"},
+            headers=AUTH,  # => co-18: a valid token is supplied
         )  # => co-18: a valid token alone does not manufacture a matching row
         assert response.status_code == 404  # => co-02: confirms PUT only replaces, never upserts
         # => distinguishes THIS 404 (valid token, missing row) from the 401 cases in TestTokenAuth below
@@ -4005,46 +4007,46 @@ def whoami() -> dict[str, str]:
 #!/usr/bin/env bash
 # Example 80: two INDEPENDENT uvicorn processes sharing only the SQLite file (co-05, co-24).
 # Worker A serves port 8003, Worker B serves port 8004 -- separate OS processes, no shared memory.
-set -euo pipefail  # => co-22: abort immediately on any failing command, unset var, or pipe error
+set -euo pipefail # => co-22: abort immediately on any failing command, unset var, or pipe error
 
-cd "$(dirname "$0")"  # => ensures the relative paths below resolve from this script's own directory
-rm -f tasks.db  # => co-05: start from a clean, deterministic file both workers will share
+cd "$(dirname "$0")" # => ensures the relative paths below resolve from this script's own directory
+rm -f tasks.db       # => co-05: start from a clean, deterministic file both workers will share
 
-VENV_PY="../../../.venv/bin/python"  # => the shared venv's interpreter, three levels up from this dir
+VENV_PY="../../../.venv/bin/python" # => the shared venv's interpreter, three levels up from this dir
 
-echo "== starting worker A on :8003 =="  # => co-05: the FIRST of two separate OS processes
-WORKER_PORT=8003 "$VENV_PY" -m uvicorn app:app --port 8003 > /tmp/ex80_worker_a.log 2>&1 &  # => backgrounds worker A, its own env var, its own log file
-WORKER_A_PID=$!  # => co-05: captures worker A's OS process id for later confirmation and cleanup
-echo "== starting worker B on :8004 =="  # => co-05: the SECOND, entirely separate OS process
-WORKER_PORT=8004 "$VENV_PY" -m uvicorn app:app --port 8004 > /tmp/ex80_worker_b.log 2>&1 &  # => backgrounds worker B, a DIFFERENT env var, its own log file
-WORKER_B_PID=$!  # => co-05: captures worker B's OS process id for later confirmation and cleanup
+echo "== starting worker A on :8003 =="                                                   # => co-05: the FIRST of two separate OS processes
+WORKER_PORT=8003 "$VENV_PY" -m uvicorn app:app --port 8003 >/tmp/ex80_worker_a.log 2>&1 & # => backgrounds worker A, its own env var, its own log file
+WORKER_A_PID=$!                                                                           # => co-05: captures worker A's OS process id for later confirmation and cleanup
+echo "== starting worker B on :8004 =="                                                   # => co-05: the SECOND, entirely separate OS process
+WORKER_PORT=8004 "$VENV_PY" -m uvicorn app:app --port 8004 >/tmp/ex80_worker_b.log 2>&1 & # => backgrounds worker B, a DIFFERENT env var, its own log file
+WORKER_B_PID=$!                                                                           # => co-05: captures worker B's OS process id for later confirmation and cleanup
 
-sleep 2  # => gives both uvicorn processes time to finish starting before the curl calls below
+sleep 2 # => gives both uvicorn processes time to finish starting before the curl calls below
 
-echo "== confirm TWO distinct OS processes are running =="  # => co-05: proof this is genuinely two processes
-ps -p "$WORKER_A_PID" -o pid,command | tail -1  # => co-05: shows worker A's real OS pid and command line
-ps -p "$WORKER_B_PID" -o pid,command | tail -1  # => co-05: shows worker B's real OS pid -- DIFFERENT from A's
+echo "== confirm TWO distinct OS processes are running ==" # => co-05: proof this is genuinely two processes
+ps -p "$WORKER_A_PID" -o pid,command | tail -1             # => co-05: shows worker A's real OS pid and command line
+ps -p "$WORKER_B_PID" -o pid,command | tail -1             # => co-05: shows worker B's real OS pid -- DIFFERENT from A's
 
-echo "== worker A identifies itself =="  # => co-05: /whoami reports which PROCESS answered this request
-curl -s http://localhost:8003/whoami  # => co-05: hits worker A directly by its own port
-echo  # => a blank line separator between this step's output and the next
-echo "== worker B identifies itself =="  # => co-05: the SAME /whoami route, now against the OTHER process
-curl -s http://localhost:8004/whoami  # => co-05: hits worker B directly by its own port
-echo  # => a blank line separator between this step's output and the next
+echo "== worker A identifies itself ==" # => co-05: /whoami reports which PROCESS answered this request
+curl -s http://localhost:8003/whoami    # => co-05: hits worker A directly by its own port
+echo                                    # => a blank line separator between this step's output and the next
+echo "== worker B identifies itself ==" # => co-05: the SAME /whoami route, now against the OTHER process
+curl -s http://localhost:8004/whoami    # => co-05: hits worker B directly by its own port
+echo                                    # => a blank line separator between this step's output and the next
 
-echo "== create a task on WORKER A (:8003) =="  # => co-05, co-24: the WRITE happens through worker A only
+echo "== create a task on WORKER A (:8003) ==" # => co-05, co-24: the WRITE happens through worker A only
 # => captures the FULL response body so task_id can be extracted below
 create_response=$(curl -s -X POST -H "Content-Type: application/json" \
-  -d '{"title":"created on worker A"}' http://localhost:8003/tasks)  # => co-24: routed to worker A's port
-echo "$create_response"  # => prints the raw JSON body so the created task's id is visible
-task_id=$(echo "$create_response" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')  # => extracts "id"
+  -d '{"title":"created on worker A"}' http://localhost:8003/tasks)                                  # => co-24: routed to worker A's port
+echo "$create_response"                                                                              # => prints the raw JSON body so the created task's id is visible
+task_id=$(echo "$create_response" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])') # => extracts "id"
 
-echo "== read the SAME task from WORKER B (:8004) -- proves the file, not memory, is the source of truth =="  # => co-05: the READ happens through a DIFFERENT process
-curl -s http://localhost:8004/tasks/"$task_id"  # => co-05: worker B never saw the write -- only the shared file did
-echo  # => a blank line separator before the cleanup step below
+echo "== read the SAME task from WORKER B (:8004) -- proves the file, not memory, is the source of truth ==" # => co-05: the READ happens through a DIFFERENT process
+curl -s http://localhost:8004/tasks/"$task_id"                                                               # => co-05: worker B never saw the write -- only the shared file did
+echo                                                                                                         # => a blank line separator before the cleanup step below
 
-kill "$WORKER_A_PID" "$WORKER_B_PID" 2>/dev/null || true  # => co-05: stops both background processes; || true tolerates an already-exited pid
-echo "== workers stopped =="  # => confirms cleanup ran to completion
+kill "$WORKER_A_PID" "$WORKER_B_PID" 2>/dev/null || true # => co-05: stops both background processes; || true tolerates an already-exited pid
+echo "== workers stopped =="                             # => confirms cleanup ran to completion
 ```
 
 **Run**: `WORKER_PORT=8003 uvicorn app:app --port 8003` and `WORKER_PORT=8004 uvicorn app:app --port 8004` as two separate background processes (or `bash two_workers.sh`, which does both), plus `pytest -v` against the same directory for the in-process `TestClient` half of the proof.

@@ -16,9 +16,7 @@ def test_app_module_contains_no_sql_keywords() -> None:
     #    app.py's own source text never mentions a SQL verb
     source = Path(__file__).parent.joinpath("app.py").read_text().upper()
     for keyword in SQL_KEYWORDS:
-        assert keyword not in source, (
-            f"found {keyword!r} in app.py -- SQL leaked into the handler"
-        )
+        assert keyword not in source, f"found {keyword!r} in app.py -- SQL leaked into the handler"
 
 
 def test_list_tasks_still_works_through_the_layered_repository() -> None:

@@ -17,6 +17,7 @@ build/
 **/build/
 **/target/
 .next/
+**/.next/
 .nx/
 
 # Static public directories

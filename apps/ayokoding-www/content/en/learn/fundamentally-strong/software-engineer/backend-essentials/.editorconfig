@@ -1,0 +1,18 @@
+root = true
+
+# Scoped to this By Example topic's runnable shell scripts (learning/code/**).
+#
+# Why this file exists: the repo's lint-staged hook runs `shfmt -w` with no
+# `-i` flag, so shfmt falls back to its own default indent style -- a hard
+# tab -- for wrapped continuation lines (e.g. a `curl ... \` command whose
+# second line is indented). That tab is fine in a plain .sh file, but this
+# topic's shell scripts (crud_auth.sh, two_workers.sh) are also embedded
+# verbatim as markdown code fences in learning/advanced.md, and the repo's
+# markdownlint config enforces MD010 (no hard tabs) even inside code blocks.
+# shfmt reads .editorconfig (when present) in preference to its own default,
+# so this file makes shfmt emit 2-space indentation instead, keeping the
+# standalone scripts and their markdown embeds both clean and stable across
+# any future `shfmt -w` re-run.
+[*.sh]
+indent_style = space
+indent_size = 2

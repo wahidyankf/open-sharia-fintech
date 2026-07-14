@@ -14,16 +14,12 @@ def test_filter_alone_reports_the_filtered_total() -> None:
 
 
 def test_filter_plus_pagination_plus_sort_all_compose() -> None:
-    response = (
-        client.get(  # => co-19, co-20: this example's focus -- three features, one call
-            "/tasks",
-            params={"status": "done", "limit": 3, "offset": 0, "sort": "-created_at"},
-        )
+    response = client.get(  # => co-19, co-20: this example's focus -- three features, one call
+        "/tasks",
+        params={"status": "done", "limit": 3, "offset": 0, "sort": "-created_at"},
     )
     body = response.json()
-    assert (
-        body["total"] == 8
-    )  # => the FILTERED total (status=done), unaffected by pagination
+    assert body["total"] == 8  # => the FILTERED total (status=done), unaffected by pagination
     assert len(body["items"]) == 3  # => the PAGE size, honoring limit
     assert [t["id"] for t in body["items"]] == [
         23,

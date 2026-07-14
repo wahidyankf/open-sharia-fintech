@@ -2,20 +2,13 @@
 
 # => co-11: the /boom handler below ALWAYS raises -- real uvicorn+curl gets
 #    the sanitized JSON below; the raw exception detail only ever reaches server logs
-from fastapi import (
-    FastAPI,
-    Request,
-)  # => Request gives the handler access to the raw ASGI request
-from fastapi.responses import (
-    JSONResponse,
-)  # => the response type this handler builds by hand
+from fastapi import FastAPI, Request  # => Request gives the handler access to the raw ASGI request
+from fastapi.responses import JSONResponse  # => the response type this handler builds by hand
 
 app = FastAPI()  # => the ASGI application uvicorn will serve
 
 
-@app.exception_handler(
-    Exception
-)  # => co-11: catches EVERYTHING not already handled elsewhere
+@app.exception_handler(Exception)  # => co-11: catches EVERYTHING not already handled elsewhere
 async def unhandled_exception_handler(
     request: Request,
     exc: Exception,  # => exc is the ORIGINAL exception, never shown to the caller
@@ -34,9 +27,7 @@ async def unhandled_exception_handler(
 
 
 @app.get("/boom")  # => co-08: a handler that always fails, on purpose, for this example
-def boom() -> (
-    None
-):  # => never returns normally -- exists solely to trigger the handler above
+def boom() -> None:  # => never returns normally -- exists solely to trigger the handler above
     raise RuntimeError(  # => co-11: an ORDINARY, unhandled exception -- not a domain error
         "something exploded with sensitive internal details"  # => never reaches the client
     )  # => this string never reaches the client -- the handler above replaces it entirely

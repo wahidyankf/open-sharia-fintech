@@ -6,9 +6,7 @@ from app import app
 
 client = TestClient(app)
 
-EXPECTED_ENVELOPE = {
-    "error": {"code": "task_not_found", "message": "task 999 does not exist"}
-}
+EXPECTED_ENVELOPE = {"error": {"code": "task_not_found", "message": "task 999 does not exist"}}
 
 
 def test_update_missing_id_returns_envelope() -> None:

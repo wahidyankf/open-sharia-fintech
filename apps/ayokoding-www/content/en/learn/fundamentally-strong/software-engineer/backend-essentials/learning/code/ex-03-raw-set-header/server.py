@@ -1,9 +1,6 @@
 """Example 3: Raw Set Header."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class HeaderHandler(BaseHTTPRequestHandler):  # => one instance created per request

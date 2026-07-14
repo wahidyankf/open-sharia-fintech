@@ -2,31 +2,19 @@
 # => co-03: FastAPI/Starlette handle THIS status code entirely automatically -- there is no
 # => `raise HTTPException(405)` anywhere in this file; the 405 comes purely from route registration
 
-from fastapi import (
-    FastAPI,
-)  # => co-16: no other import needed -- routing alone drives this example
+from fastapi import FastAPI  # => co-16: no other import needed -- routing alone drives this example
 
-app = (
-    FastAPI()
-)  # => a fresh app -- this example needs no database, only route registration
+app = FastAPI()  # => a fresh app -- this example needs no database, only route registration
 
 
-@app.get(
-    "/tasks"
-)  # => co-02: ONLY GET is registered for this exact path -- no PUT/POST/DELETE at all
+@app.get("/tasks")  # => co-02: ONLY GET is registered for this exact path -- no PUT/POST/DELETE at all
 def list_tasks() -> list[str]:
-    return [
-        "write the report"
-    ]  # => a fixed, single-item list -- this example never mutates state
+    return ["write the report"]  # => a fixed, single-item list -- this example never mutates state
 
 
-@app.post(
-    "/reports"
-)  # => a DIFFERENT path, registered with ONLY POST -- proves Allow is per-PATH
+@app.post("/reports")  # => a DIFFERENT path, registered with ONLY POST -- proves Allow is per-PATH
 def create_report() -> dict[str, str]:
-    return {
-        "created": "true"
-    }  # => reachable only via POST -- GET /reports itself would 405 too
+    return {"created": "true"}  # => reachable only via POST -- GET /reports itself would 405 too
 
 
 # => co-03: RFC 9110 SS15.5.6 requires a 405 response to carry an Allow header listing the method(s)

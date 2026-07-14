@@ -1,10 +1,7 @@
 """Example 5: Raw JSON Response."""
 
 import json  # => standard library's JSON encoder/decoder, no dependency needed
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class JsonHandler(BaseHTTPRequestHandler):  # => one instance created per request

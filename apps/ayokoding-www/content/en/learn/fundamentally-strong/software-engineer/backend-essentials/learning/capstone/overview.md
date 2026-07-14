@@ -96,11 +96,7 @@ def get_db() -> Iterator[sqlite3.Connection]:  # => co-23: dependency injection 
 
 @app.exception_handler(HTTPException)  # => co-11: one consistent {"error": {...}} envelope, app-wide
 async def handle_http_exception(request: Request, exc: HTTPException) -> JSONResponse:
-    body = (
-        exc.detail
-        if isinstance(exc.detail, dict)
-        else {"error": {"code": "error", "message": str(exc.detail)}}
-    )
+    body = exc.detail if isinstance(exc.detail, dict) else {"error": {"code": "error", "message": str(exc.detail)}}
     return JSONResponse(status_code=exc.status_code, content=body)
 
 
@@ -130,30 +126,22 @@ def create_task_route(  # => by the middleware above, since this is a WRITE
 def read_task_route(task_id: int, conn: sqlite3.Connection = Depends(get_db)) -> Task:
     task = repo.get_task(conn, task_id)
     if task is None:
-        raise HTTPException(
-            status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}}
-        )
+        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}})
     return task
 
 
 @app.put("/tasks/{task_id}", response_model=Task)  # => co-02: replace -- guarded (a WRITE)
-def update_task_route(
-    task_id: int, body: TaskUpdate, conn: sqlite3.Connection = Depends(get_db)
-) -> Task:
+def update_task_route(task_id: int, body: TaskUpdate, conn: sqlite3.Connection = Depends(get_db)) -> Task:
     updated = repo.update_task(conn, task_id, body)
     if updated is None:
-        raise HTTPException(
-            status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}}
-        )
+        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}})
     return updated
 
 
 @app.delete("/tasks/{task_id}", status_code=204)  # => co-02, co-03: delete -- guarded (a WRITE)
 def delete_task_route(task_id: int, conn: sqlite3.Connection = Depends(get_db)) -> None:
     if not repo.delete_task(conn, task_id):
-        raise HTTPException(
-            status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}}
-        )
+        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such task"}})
 
 
 @app.get("/tasks", response_model=TaskPage)  # => co-19, co-20: pagination + filtering -- OPEN, no token
@@ -254,9 +242,7 @@ def list_tasks(  # => co-19, co-20: pagination + filtering, composed in ONE para
     )
     items = [_row_to_task(row) for row in cursor.fetchall()]
     next_offset = offset + limit
-    return TaskPage(
-        items=items, total=total, next=next_offset if next_offset < total else None
-    )  # => co-19: None is the explicit "no further page" sentinel
+    return TaskPage(items=items, total=total, next=next_offset if next_offset < total else None)  # => co-19: None is the explicit "no further page" sentinel
 
 
 def ping(conn: sqlite3.Connection) -> bool:  # => co-14: the cheapest possible real query -- used by /ready
@@ -437,9 +423,7 @@ WRITE_METHODS = {"POST", "PUT", "DELETE"}  # => co-02: only WRITES need a token 
 async def token_check_middleware(  # => co-16: wraps every request/response, deciding per method + path
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> Response:
-    needs_token = (
-        request.url.path.startswith("/tasks") and request.method in WRITE_METHODS
-    )  # => co-02, co-18: /health and /ready are NEVER guarded; GET /tasks* is NEVER guarded
+    needs_token = request.url.path.startswith("/tasks") and request.method in WRITE_METHODS  # => co-02, co-18: /health and /ready are NEVER guarded; GET /tasks* is NEVER guarded
     if needs_token:
         auth_header = request.headers.get("authorization")  # => co-04: reads the raw Authorization header
         if auth_header != f"Bearer {VALID_TOKEN}":  # => co-18: exact match required
@@ -574,9 +558,7 @@ class TestHealthAndReadiness:  # => Step 1 of the capstone spec
 
 class TestCrudRoundTrip:  # => Step 2 of the capstone spec
     def test_create_read_update_delete(self, client: TestClient) -> None:
-        created = client.post(
-            "/tasks", json={"title": "write the report", "description": "Q3 summary"}, headers=AUTH
-        )
+        created = client.post("/tasks", json={"title": "write the report", "description": "Q3 summary"}, headers=AUTH)
         assert created.status_code == 201
         task_id = created.json()["id"]
 
@@ -620,9 +602,7 @@ class TestTokenCheckMiddleware:  # => Step 3 of the capstone spec
         assert response.json()["error"]["code"] == "unauthorized"
 
     def test_create_with_invalid_token_is_401(self, client: TestClient) -> None:
-        response = client.post(
-            "/tasks", json={"title": "x"}, headers={"Authorization": "Bearer garbage"}
-        )
+        response = client.post("/tasks", json={"title": "x"}, headers={"Authorization": "Bearer garbage"})
         assert response.status_code == 401
 
     def test_reads_never_require_a_token(self, client: TestClient) -> None:
@@ -632,12 +612,7 @@ class TestTokenCheckMiddleware:  # => Step 3 of the capstone spec
     def test_put_and_delete_also_require_a_token(self, client: TestClient) -> None:
         created = client.post("/tasks", json={"title": "x"}, headers=AUTH).json()
         task_id = created["id"]
-        assert (
-            client.put(
-                f"/tasks/{task_id}", json={"title": "x", "description": "", "status": "todo"}
-            ).status_code
-            == 401
-        )
+        assert client.put(f"/tasks/{task_id}", json={"title": "x", "description": "", "status": "todo"}).status_code == 401
         assert client.delete(f"/tasks/{task_id}").status_code == 401
 
 
@@ -656,14 +631,9 @@ class TestPaginationAndFiltering:  # => Step 4 of the capstone spec
         assert last_page.json()["next"] is None
 
     def test_status_filter_narrows_results(self, client: TestClient) -> None:
-        ids = [
-            client.post("/tasks", json={"title": f"t{i}"}, headers=AUTH).json()["id"]
-            for i in range(4)
-        ]
+        ids = [client.post("/tasks", json={"title": f"t{i}"}, headers=AUTH).json()["id"] for i in range(4)]
         for task_id in ids[:2]:  # => mark exactly TWO of the four as done
-            client.put(
-                f"/tasks/{task_id}", json={"title": "t", "description": "", "status": "done"}, headers=AUTH
-            )
+            client.put(f"/tasks/{task_id}", json={"title": "t", "description": "", "status": "done"}, headers=AUTH)
         response = client.get("/tasks", params={"status": "done", "limit": 50})
         body = response.json()
         assert body["total"] == 2  # => the FILTERED total, not all 4

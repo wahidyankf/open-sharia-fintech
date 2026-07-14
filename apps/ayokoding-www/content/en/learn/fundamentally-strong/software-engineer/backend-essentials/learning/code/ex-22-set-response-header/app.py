@@ -1,9 +1,6 @@
 """Example 22: Set Response Header."""
 
-from fastapi import (
-    FastAPI,
-    Response,
-)  # => Response is injected to let a handler set headers
+from fastapi import FastAPI, Response  # => Response is injected to let a handler set headers
 
 app = FastAPI()  # => the ASGI application uvicorn will serve
 

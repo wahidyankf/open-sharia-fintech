@@ -16,6 +16,4 @@ def test_existing_task_returns_200() -> None:
 def test_missing_task_returns_mapped_404() -> None:
     response = client.get("/tasks/99")  # => id 99 was never seeded
     assert response.status_code == 404  # => TaskNotFoundError -> 404, via the handler
-    assert response.json() == {
-        "error": {"code": "task_not_found", "message": "task 99 does not exist"}
-    }
+    assert response.json() == {"error": {"code": "task_not_found", "message": "task 99 does not exist"}}

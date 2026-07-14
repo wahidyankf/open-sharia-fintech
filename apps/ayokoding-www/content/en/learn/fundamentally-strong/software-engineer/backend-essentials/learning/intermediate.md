@@ -231,13 +231,16 @@ class TaskCreate(BaseModel):  # => the shape of a valid POST /tasks body
 
 @app.exception_handler(RequestValidationError)  # => overrides FastAPI's DEFAULT 422 handler
 async def validation_exception_handler(
-    request: Request, exc: RequestValidationError  # => exc carries every violation FastAPI found
+    request: Request,  # => unused here, but FastAPI's handler signature always passes it
+    exc: RequestValidationError,  # => exc carries every violation FastAPI found
 ) -> JSONResponse:  # => must return a Response FastAPI can send back to the client
     # => co-11: reshape the default {"detail": [...]} array into a bespoke,
     #    project-specific envelope -- {"error": {"code", "message"}}
     first_error = exc.errors()[0]  # => take the first offending field for a concise message
     field = ".".join(  # => joins the loc TUPLE into one dotted field path string
-        str(part) for part in first_error["loc"] if part != "body"  # => drops the generic "body" segment
+        str(part)
+        for part in first_error["loc"]
+        if part != "body"  # => drops the generic "body" segment
     )  # => e.g. "title" (drops the generic "body" location segment)
     return JSONResponse(  # => builds the bespoke envelope BY HAND -- no automatic reshaping exists
         status_code=422,  # => co-03: still 422 -- only the BODY shape changed, not the status
@@ -326,7 +329,8 @@ class TaskNotFoundError(Exception):  # => a DOMAIN error -- knows nothing about 
 
 @app.exception_handler(TaskNotFoundError)  # => co-11: maps the domain error to an HTTP shape
 async def task_not_found_handler(  # => co-11: registered handler's signature spans three lines
-    request: Request, exc: TaskNotFoundError  # => exc carries the id that was missing
+    request: Request,
+    exc: TaskNotFoundError,  # => exc carries the id that was missing
 ) -> JSONResponse:  # => must return a Response FastAPI can send back to the client
     return JSONResponse(  # => builds the 404 envelope by hand, same shape as Example 32's 422
         status_code=404,  # => co-03: not-found status, decided HERE, not in the handler
@@ -411,7 +415,8 @@ class TaskNotFoundError(Exception):  # => the same domain error shape as Example
 
 @app.exception_handler(TaskNotFoundError)  # => co-11: ONE handler, reused by every route below
 async def task_not_found_handler(  # => co-11: registered handler's signature spans three lines
-    request: Request, exc: TaskNotFoundError  # => exc carries the id that was missing
+    request: Request,
+    exc: TaskNotFoundError,  # => exc carries the id that was missing
 ) -> JSONResponse:  # => must return a Response FastAPI can send back to the client
     return JSONResponse(  # => builds the 404 envelope by hand, once, for every caller
         status_code=404,  # => co-03: identical status for every caller of this handler
@@ -799,7 +804,8 @@ def init_db() -> None:  # => (re)creates the schema, starting EMPTY
 def create_task(title: str) -> int:  # => co-14/co-08: the ONLY function that runs an INSERT
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => "?" binds title as DATA, the safety property from Example 36
-        "INSERT INTO tasks (title) VALUES (?)", (title,)  # => one placeholder, one bound value
+        "INSERT INTO tasks (title) VALUES (?)",
+        (title,),  # => one placeholder, one bound value
     )  # => cursor.lastrowid below reads the id SQLite just assigned
     connection.commit()  # => without this, the row exists only in this connection's transaction
     new_id = cursor.lastrowid  # => sqlite3 exposes the AUTOINCREMENT id straight off the cursor
@@ -811,7 +817,8 @@ def create_task(title: str) -> int:  # => co-14/co-08: the ONLY function that ru
 def get_task(task_id: int) -> sqlite3.Row | None:  # => used only to PROVE persistence
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => looks up exactly one row by its primary key
-        "SELECT id, title FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "SELECT id, title FROM tasks WHERE id = ?",
+        (task_id,),  # => one placeholder, one bound value
     ).fetchone()  # => a single Row, or None if task_id does not exist
     connection.close()  # => releases the connection immediately after reading
     return row  # => propagates the None case straight through to the caller
@@ -906,7 +913,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => AUTOINCREMENT guarantees ids only ever go up, never get reused
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows -- id 1 and id 2, in insertion order
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -915,7 +923,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
 def get_task(task_id: int) -> sqlite3.Row | None:  # => co-14/co-12: one row, by its path parameter
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => looks up exactly one row by its primary key
-        "SELECT id, title FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "SELECT id, title FROM tasks WHERE id = ?",
+        (task_id,),  # => one placeholder, one bound value
     ).fetchone()  # => fetchone() -- a single Row, or None when nothing matches
     connection.close()  # => co-24: connection lifetime is scoped to one call, not shared state
     return row  # => the handler decides what a None result means (a 404)
@@ -1028,7 +1037,8 @@ def init_db() -> None:  # => (re)creates the schema, starting EMPTY
 def create_task(title: str) -> int:  # => co-14: reused so curl/pytest can grow the list first
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => "?" binds title as DATA, the same property as every example
-        "INSERT INTO tasks (title) VALUES (?)", (title,)  # => one placeholder, one bound value
+        "INSERT INTO tasks (title) VALUES (?)",
+        (title,),  # => one placeholder, one bound value
     )  # => cursor.lastrowid below reads the id SQLite just assigned
     connection.commit()  # => without this, the row exists only in this connection's transaction
     new_id = cursor.lastrowid  # => sqlite3 exposes the AUTOINCREMENT id straight off the cursor
@@ -1160,7 +1170,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => AUTOINCREMENT guarantees ids only ever go up, never get reused
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",  # => one "?" placeholder, bound per tuple
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows -- id 1 and id 2, both about to be updated
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -1169,7 +1180,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
 def update_task(task_id: int, title: str) -> bool:  # => co-14/co-02: UPDATE, not DELETE+INSERT
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => two "?" placeholders, bound positionally in tuple order
-        "UPDATE tasks SET title = ? WHERE id = ?", (title, task_id)  # => title first, then task_id
+        "UPDATE tasks SET title = ? WHERE id = ?",  # => co-14: parameterized -- never string-formatted
+        (title, task_id),  # => title first, then task_id
     )  # => cursor.rowcount below reports how many rows this statement touched
     connection.commit()  # => without this, the change never reaches the file on disk
     changed = cursor.rowcount > 0  # => rowcount is 0 when task_id did not match any row
@@ -1180,7 +1192,8 @@ def update_task(task_id: int, title: str) -> bool:  # => co-14/co-02: UPDATE, no
 def get_task(task_id: int) -> sqlite3.Row | None:  # => used only to PROVE the update landed on disk
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => looks up exactly one row by its primary key
-        "SELECT id, title FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "SELECT id, title FROM tasks WHERE id = ?",  # => co-14: same parameterized pattern throughout
+        (task_id,),  # => one placeholder, one bound value
     ).fetchone()  # => a single Row, or None if task_id does not exist
     connection.close()  # => releases the connection immediately after reading
     return row  # => propagates the None case straight through to the caller
@@ -1278,7 +1291,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => AUTOINCREMENT guarantees ids only ever go up, never get reused
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",  # => one "?" placeholder, bound per tuple
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows -- id 1 and id 2, both about to be deleted
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -1287,7 +1301,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
 def delete_task(task_id: int) -> bool:  # => co-14: gated on rowcount, same shape as update_task
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => "?" binds task_id as DATA, never as literal SQL text
-        "DELETE FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "DELETE FROM tasks WHERE id = ?",  # => co-14: parameterized -- never string-formatted
+        (task_id,),  # => one placeholder, one bound value
     )  # => cursor.rowcount below reports how many rows this statement touched
     connection.commit()  # => without this, the deletion never reaches the file on disk
     removed = cursor.rowcount > 0  # => rowcount is 0 when task_id did not match any row
@@ -1298,7 +1313,8 @@ def delete_task(task_id: int) -> bool:  # => co-14: gated on rowcount, same shap
 def get_task(task_id: int) -> sqlite3.Row | None:  # => used only to PROVE the row is genuinely gone
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => looks up exactly one row by its primary key
-        "SELECT id, title FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "SELECT id, title FROM tasks WHERE id = ?",  # => co-14: same parameterized pattern throughout
+        (task_id,),  # => one placeholder, one bound value
     ).fetchone()  # => a single Row, or None once the row is deleted
     connection.close()  # => releases the connection immediately after reading
     return row  # => propagates the None case straight through to the caller
@@ -1379,7 +1395,8 @@ class TaskNotFoundError(Exception):  # => the same envelope-shaped domain error 
 
 @app.exception_handler(TaskNotFoundError)  # => co-11: ONE handler for BOTH routes below
 async def task_not_found_handler(  # => co-11: registered handler's signature spans three lines
-    request: Request, exc: TaskNotFoundError  # => exc carries the id that was missing
+    request: Request,
+    exc: TaskNotFoundError,  # => exc carries the id that was missing
 ) -> JSONResponse:  # => must return a Response FastAPI can send back to the client
     return JSONResponse(  # => builds the 404 envelope by hand, shared by PUT and DELETE below
         status_code=404,  # => co-03: identical status for every caller of this handler
@@ -1439,7 +1456,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds exactly ONE starte
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => AUTOINCREMENT guarantees ids only ever go up, never get reused
     connection.execute(  # => runs the INSERT exactly once, unlike executemany() elsewhere
-        "INSERT INTO tasks (title) VALUES (?)", ("Buy milk",)  # => one seed row
+        "INSERT INTO tasks (title) VALUES (?)",
+        ("Buy milk",),  # => one seed row
     )  # => one seed row, id 1 -- every id this example queries besides 1 is missing
     connection.commit()  # => without this, the insert never reaches the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -1448,7 +1466,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds exactly ONE starte
 def update_task(task_id: int, title: str) -> bool:  # => co-14/co-02: identical shape to ex-40
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => two "?" placeholders, bound positionally in tuple order
-        "UPDATE tasks SET title = ? WHERE id = ?", (title, task_id)  # => title first, then task_id
+        "UPDATE tasks SET title = ? WHERE id = ?",
+        (title, task_id),  # => title first, then task_id
     )  # => cursor.rowcount below reports how many rows this statement touched
     connection.commit()  # => without this, the change never reaches the file on disk
     changed = cursor.rowcount > 0  # => rowcount is 0 when task_id did not match any row
@@ -1459,7 +1478,8 @@ def update_task(task_id: int, title: str) -> bool:  # => co-14/co-02: identical 
 def delete_task(task_id: int) -> bool:  # => co-14: identical shape to ex-41's delete_task
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => "?" binds task_id as DATA, never as literal SQL text
-        "DELETE FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,),  # => one placeholder, one bound value
     )  # => cursor.rowcount below reports how many rows this statement touched
     connection.commit()  # => without this, the deletion never reaches the file on disk
     removed = cursor.rowcount > 0  # => rowcount is 0 when task_id did not match any row
@@ -1692,7 +1712,8 @@ def create_v1_schema() -> None:  # => co-15: the ORIGINAL schema, before this mi
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact v1 DDL
     )  # => v1: only (id, title) -- no "priority" column exists yet
     connection.execute(  # => runs BEFORE migrate_add_priority_column() below ever executes
-        "INSERT INTO tasks (title) VALUES (?)", ("Buy milk",)  # => one pre-migration row
+        "INSERT INTO tasks (title) VALUES (?)",
+        ("Buy milk",),  # => one pre-migration row
     )  # => a row inserted BEFORE the "priority" column exists at all
     connection.commit()  # => without this, the insert never reaches the file on disk
     connection.close()  # => releases the connection -- create_v1_schema() is a one-shot call
@@ -1724,7 +1745,8 @@ def column_names() -> set[str]:  # => introspects the live schema, used to PROVE
 def get_task(task_id: int) -> sqlite3.Row | None:  # => used only to PROVE the backfilled value
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => reads the POST-migration shape, including "priority"
-        "SELECT id, title, priority FROM tasks WHERE id = ?", (task_id,)  # => one bound value
+        "SELECT id, title, priority FROM tasks WHERE id = ?",
+        (task_id,),  # => one bound value
     ).fetchone()  # => includes the BACKFILLED "priority" column, post-migration
     connection.close()  # => releases the connection immediately after reading
     return row  # => propagates the None case straight through to the caller
@@ -1788,7 +1810,8 @@ repository.init_db()  # => fresh, seeded tasks.db for every run
 def list_tasks() -> list[TaskRow]:  # => co-24: the handler's own signature names the typed shape
     tasks: list[TaskRow] = repository.list_tasks()  # => pyright checks this assignment for real
     total_title_chars = sum(  # => a trivial computation that only WORKS if "title" really exists
-        len(task["title"]) for task in tasks  # => typed access -- pyright knows "title" is a str
+        len(task["title"])
+        for task in tasks  # => typed access -- pyright knows "title" is a str
     )  # => typed access: pyright would flag task["missing_key"] as an error at edit time
     print(f"total title characters: {total_title_chars}")  # => proves the typed data is genuinely usable
     return tasks  # => TypedDict serializes to JSON exactly like a plain dict
@@ -1828,7 +1851,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => defines the table's shape once, for the whole example
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows so list_tasks() below has something real to return
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -1935,7 +1959,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => defines the table's shape once, for the whole example
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows so list_tasks() below has something real to return
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -2055,7 +2080,8 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
     )  # => defines the table's shape once, for the whole example
     connection.executemany(  # => runs the SAME statement once per tuple below
-        "INSERT INTO tasks (title) VALUES (?)", [("Buy milk",), ("Walk dog",)]  # => two seed rows
+        "INSERT INTO tasks (title) VALUES (?)",
+        [("Buy milk",), ("Walk dog",)],  # => two seed rows
     )  # => two seed rows so list_tasks() below has something real to return
     connection.commit()  # => without this, the inserts never reach the file on disk
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
@@ -2151,7 +2177,9 @@ app = FastAPI()  # => the ASGI application uvicorn will serve
 
 class RequestIdMiddleware(BaseHTTPMiddleware):  # => co-16: wraps EVERY request/response pair
     async def dispatch(  # => co-16: dispatch()'s signature spans three lines
-        self, request: Request, call_next: RequestResponseEndpoint  # => call_next runs the rest of the app
+        self,
+        request: Request,
+        call_next: RequestResponseEndpoint,  # => call_next runs the rest of the app
     ) -> Response:  # => must return the Response that eventually reaches the client
         response = await call_next(request)  # => runs routing + the matched handler first
         response.headers["X-Request-Id"] = str(  # => co-04: mutates the OUTGOING response headers
@@ -2237,11 +2265,16 @@ app = FastAPI()  # => the ASGI application uvicorn will serve
 
 class LoggingMiddleware(BaseHTTPMiddleware):  # => co-16: wraps EVERY request/response pair
     async def dispatch(  # => co-16: dispatch()'s signature spans three lines
-        self, request: Request, call_next: RequestResponseEndpoint  # => call_next runs the rest of the app
+        self,  # => the middleware instance itself
+        request: Request,  # => the incoming request, read but never mutated here
+        call_next: RequestResponseEndpoint,  # => call_next runs the rest of the app
     ) -> Response:  # => must return the Response that eventually reaches the client
         response = await call_next(request)  # => the handler runs BEFORE the log line
         logger.info(  # => %s-style formatting -- logging module builds the string lazily
-            "%s %s -> %s", request.method, request.url.path, response.status_code  # => three fields, one line
+            "%s %s -> %s",  # => the format template: method, path, status
+            request.method,  # => e.g. "GET"
+            request.url.path,  # => e.g. "/tasks"
+            response.status_code,  # => three fields, one line
         )  # => co-16: one structured line per request, method + path + outcome
         return response  # => the SAME response object, unmodified by logging
 
@@ -2332,7 +2365,9 @@ app = FastAPI()  # => the ASGI application uvicorn will serve
 
 class TimingMiddleware(BaseHTTPMiddleware):  # => co-16: wraps EVERY request/response pair
     async def dispatch(  # => co-16: dispatch()'s signature spans three lines
-        self, request: Request, call_next: RequestResponseEndpoint  # => call_next runs the rest of the app
+        self,
+        request: Request,
+        call_next: RequestResponseEndpoint,  # => call_next runs the rest of the app
     ) -> Response:  # => must return the Response that eventually reaches the client
         start = time.perf_counter()  # => co-16: wall-clock start, BEFORE the handler runs
         response = await call_next(request)  # => the handler (and any inner middleware) runs here
@@ -2485,7 +2520,8 @@ app = FastAPI()  # => the ASGI application uvicorn will serve
 
 @app.exception_handler(Exception)  # => co-11: catches EVERYTHING not already handled elsewhere
 async def unhandled_exception_handler(
-    request: Request, exc: Exception  # => exc is the ORIGINAL exception, never shown to the caller
+    request: Request,
+    exc: Exception,  # => exc is the ORIGINAL exception, never shown to the caller
 ) -> JSONResponse:  # => must return a Response FastAPI can send back to the client
     # => deliberately generic -- never leaks exc's message or a stack trace to the client;
     #    a real deployment would log str(exc) SERVER-SIDE here, just never return it
@@ -2754,7 +2790,8 @@ def create_task(title: str) -> int:  # => co-02/co-14: step one of the round tri
     # => co-02/co-14: step one of the round trip -- the write half
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => "?" binds title as DATA, the same safety property as before
-        "INSERT INTO tasks (title) VALUES (?)", (title,)  # => one placeholder, one bound value
+        "INSERT INTO tasks (title) VALUES (?)",
+        (title,),  # => one placeholder, one bound value
     )  # => "?" binds title as DATA, the same safety property as every earlier example
     connection.commit()  # => without this, the row exists only in this connection's transaction
     new_id = cursor.lastrowid  # => sqlite3 exposes the AUTOINCREMENT id straight off the cursor
@@ -2767,7 +2804,8 @@ def get_task(task_id: int) -> sqlite3.Row | None:  # => co-02/co-14: step two of
     # => co-02/co-14: step two of the round trip -- the read half
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => a SEPARATE connection from the one create_task() used
-        "SELECT id, title FROM tasks WHERE id = ?", (task_id,)  # => one placeholder, one bound value
+        "SELECT id, title FROM tasks WHERE id = ?",
+        (task_id,),  # => one placeholder, one bound value
     ).fetchone()  # => a single Row, if the earlier INSERT genuinely persisted
     connection.close()  # => co-24: connection lifetime is scoped to one call, not shared state
     return row  # => propagates the None case straight through to the caller

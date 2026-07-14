@@ -9,9 +9,7 @@ client = TestClient(app)
 
 
 def test_table_exists_after_migration() -> None:
-    assert (
-        repository.table_exists("tasks") is True
-    )  # => co-15: the direct, low-level check
+    assert repository.table_exists("tasks") is True  # => co-15: the direct, low-level check
 
 
 def test_health_endpoint_confirms_readiness() -> None:

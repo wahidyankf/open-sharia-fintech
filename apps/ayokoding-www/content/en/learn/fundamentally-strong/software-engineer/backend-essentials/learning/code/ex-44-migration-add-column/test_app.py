@@ -25,9 +25,7 @@ def test_migration_mechanics_directly() -> None:
     repository.migrate_add_priority_column()  # => run the additive migration + backfill
     assert "priority" in repository.column_names()  # => column now exists
 
-    after = repository.get_task(
-        1
-    )  # => the SAME row, inserted before the column existed
+    after = repository.get_task(1)  # => the SAME row, inserted before the column existed
     assert after is not None
     assert after["title"] == "Buy milk"  # => untouched by the migration
     assert after["priority"] == 3  # => backfilled, not left NULL

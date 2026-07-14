@@ -1,9 +1,6 @@
 """Example 9: Method 405 Raw."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class GetOnlyWith405Handler(BaseHTTPRequestHandler):  # => one instance per request

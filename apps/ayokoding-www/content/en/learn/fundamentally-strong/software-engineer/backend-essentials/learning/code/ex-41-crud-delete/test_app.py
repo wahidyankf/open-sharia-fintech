@@ -16,9 +16,7 @@ def test_delete_returns_204() -> None:
 
 def test_delete_actually_removes_the_row() -> None:
     client.delete("/tasks/2")  # => via the HTTP layer
-    assert (
-        repository.get_task(2) is None
-    )  # => bypass HTTP -- confirm it is gone from the DB
+    assert repository.get_task(2) is None  # => bypass HTTP -- confirm it is gone from the DB
 
 
 def test_delete_missing_id_returns_404() -> None:

@@ -2,32 +2,22 @@
 
 # => the SAME update_task()/delete_task() shape as ex-40/ex-41, seeded with
 # => only ONE row this time so most ids the app queries are genuinely missing
-from __future__ import (
-    annotations,
-)  # => lets sqlite3.Row appear in return-type hints below
+from __future__ import annotations  # => lets sqlite3.Row appear in return-type hints below
 
 import sqlite3  # => the ONLY database driver this module needs -- it ships with Python itself
 from pathlib import Path  # => builds an absolute, OS-independent path to the db file
 
-DB_PATH = (
-    Path(__file__).parent / "tasks.db"
-)  # => co-14: one fixed db file, next to this module
+DB_PATH = Path(__file__).parent / "tasks.db"  # => co-14: one fixed db file, next to this module
 
 
 def connect() -> sqlite3.Connection:  # => opens and configures one sqlite3 connection
-    connection = sqlite3.connect(
-        DB_PATH
-    )  # => DB_PATH is the single file this module reads/writes
-    connection.row_factory = (
-        sqlite3.Row
-    )  # => rows behave like dicts: row["title"], not just row[0]
+    connection = sqlite3.connect(DB_PATH)  # => DB_PATH is the single file this module reads/writes
+    connection.row_factory = sqlite3.Row  # => rows behave like dicts: row["title"], not just row[0]
     return connection  # => the caller owns closing this connection when done
 
 
 def init_db() -> None:  # => (re)creates the schema and seeds exactly ONE starter row
-    DB_PATH.unlink(
-        missing_ok=True
-    )  # => start every run from a clean, deterministic file
+    DB_PATH.unlink(missing_ok=True)  # => start every run from a clean, deterministic file
     connection = connect()  # => a fresh connection, scoped to just this setup call
     connection.execute(  # => defines the table's shape once, for the whole example
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
@@ -40,9 +30,7 @@ def init_db() -> None:  # => (re)creates the schema and seeds exactly ONE starte
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
 
 
-def update_task(
-    task_id: int, title: str
-) -> bool:  # => co-14/co-02: identical shape to ex-40
+def update_task(task_id: int, title: str) -> bool:  # => co-14/co-02: identical shape to ex-40
     connection = connect()  # => a fresh connection, scoped to just this call
     cursor = connection.execute(  # => two "?" placeholders, bound positionally in tuple order
         "UPDATE tasks SET title = ? WHERE id = ?",
@@ -54,19 +42,13 @@ def update_task(
     return changed  # => drives the app-level TaskNotFoundError below
 
 
-def delete_task(
-    task_id: int,
-) -> bool:  # => co-14: identical shape to ex-41's delete_task
+def delete_task(task_id: int) -> bool:  # => co-14: identical shape to ex-41's delete_task
     connection = connect()  # => a fresh connection, scoped to just this call
-    cursor = (
-        connection.execute(  # => "?" binds task_id as DATA, never as literal SQL text
-            "DELETE FROM tasks WHERE id = ?",
-            (task_id,),  # => one placeholder, one bound value
-        )
+    cursor = connection.execute(  # => "?" binds task_id as DATA, never as literal SQL text
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,),  # => one placeholder, one bound value
     )  # => cursor.rowcount below reports how many rows this statement touched
     connection.commit()  # => without this, the deletion never reaches the file on disk
     removed = cursor.rowcount > 0  # => rowcount is 0 when task_id did not match any row
     connection.close()  # => releases the connection immediately after writing
-    return (
-        removed  # => drives the SAME app-level TaskNotFoundError as update_task above
-    )
+    return removed  # => drives the SAME app-level TaskNotFoundError as update_task above

@@ -12,6 +12,7 @@
     "**/build/**",
     "**/target/**",
     ".next/**",
+    "**/.next/**",
     ".nx/**",
     "apps/*/public/**",
     "generated-reports/**",

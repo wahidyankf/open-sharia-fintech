@@ -1,17 +1,11 @@
 """Example 20: Status 204 No Content."""
 
-from fastapi import (
-    FastAPI,
-    Response,
-    status,
-)  # => Response lets a handler control the body directly
+from fastapi import FastAPI, Response, status  # => Response lets a handler control the body directly
 
 app = FastAPI()  # => the ASGI application uvicorn will serve
 
 
-@app.delete(
-    "/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT
-)  # => override 200 default
+@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)  # => override 200 default
 def delete_task(task_id: int) -> Response:
     """204 means "succeeded, nothing more to say" -- the body MUST be empty."""
     # => task_id is accepted but never used below -- a real handler would look

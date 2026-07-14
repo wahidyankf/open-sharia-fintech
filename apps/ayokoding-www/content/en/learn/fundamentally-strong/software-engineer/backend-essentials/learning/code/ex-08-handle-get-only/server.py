@@ -1,9 +1,6 @@
 """Example 8: Handle GET Only."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class GetOnlyHandler(BaseHTTPRequestHandler):  # => one instance created per request

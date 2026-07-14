@@ -1,9 +1,6 @@
 """Example 6: Raw 404."""
 
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 class NotFoundHandler(BaseHTTPRequestHandler):  # => one instance created per request

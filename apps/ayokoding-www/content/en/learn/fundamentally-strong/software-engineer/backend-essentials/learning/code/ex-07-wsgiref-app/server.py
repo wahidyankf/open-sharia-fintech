@@ -1,14 +1,8 @@
 """Example 7: wsgiref App."""
 
 from collections.abc import Iterable  # => generic type for "iterable of X" annotations
-from wsgiref.simple_server import (
-    WSGIServer,
-    make_server,
-)  # => stdlib's reference WSGI server
-from wsgiref.types import (
-    StartResponse,
-    WSGIEnvironment,
-)  # => stdlib's PEP 3333 protocol types
+from wsgiref.simple_server import WSGIServer, make_server  # => stdlib's reference WSGI server
+from wsgiref.types import StartResponse, WSGIEnvironment  # => stdlib's PEP 3333 protocol types
 
 # => StartResponse/WSGIEnvironment are the PEP 3333 stdlib protocol types --
 # => this is the SAME callable signature every WSGI framework (Flask included)

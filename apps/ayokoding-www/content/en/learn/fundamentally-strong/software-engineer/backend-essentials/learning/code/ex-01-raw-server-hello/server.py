@@ -2,10 +2,7 @@
 
 # => http.server is the standard library's minimal HTTP toolkit -- no
 # => third-party package is installed for this example or the next 8 (co-06)
-from http.server import (
-    BaseHTTPRequestHandler,
-    HTTPServer,
-)  # => imports the base class + server
+from http.server import BaseHTTPRequestHandler, HTTPServer  # => imports the base class + server
 
 
 # => subclassing BaseHTTPRequestHandler gets request PARSING for free (method,

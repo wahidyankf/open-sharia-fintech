@@ -2,13 +2,8 @@
 
 # => the exception class below knows NOTHING about HTTP -- no status code, no
 # => JSON -- that translation happens in exactly one place, the handler below
-from fastapi import (
-    FastAPI,
-    Request,
-)  # => Request gives the handler access to the raw ASGI request
-from fastapi.responses import (
-    JSONResponse,
-)  # => the response type this handler builds by hand
+from fastapi import FastAPI, Request  # => Request gives the handler access to the raw ASGI request
+from fastapi.responses import JSONResponse  # => the response type this handler builds by hand
 
 app = FastAPI()  # => the ASGI application uvicorn will serve
 
@@ -18,9 +13,7 @@ class TaskNotFoundError(Exception):  # => a DOMAIN error -- knows nothing about 
         self.task_id = task_id  # => the id the caller asked for and did not get
 
 
-@app.exception_handler(
-    TaskNotFoundError
-)  # => co-11: maps the domain error to an HTTP shape
+@app.exception_handler(TaskNotFoundError)  # => co-11: maps the domain error to an HTTP shape
 async def task_not_found_handler(  # => co-11: registered handler's signature spans three lines
     request: Request,
     exc: TaskNotFoundError,  # => exc carries the id that was missing
@@ -36,18 +29,11 @@ async def task_not_found_handler(  # => co-11: registered handler's signature sp
     )  # => closes the JSONResponse(...) call itself
 
 
-_TASKS: dict[int, str] = {
-    1: "Buy milk",
-    2: "Walk dog",
-}  # => a tiny in-memory store for this example
+_TASKS: dict[int, str] = {1: "Buy milk", 2: "Walk dog"}  # => a tiny in-memory store for this example
 
 
 @app.get("/tasks/{task_id}")  # => co-12: a typed path parameter
-def get_task(
-    task_id: int,
-) -> dict[str, str]:  # => task_id arrives already parsed as an int
+def get_task(task_id: int) -> dict[str, str]:  # => task_id arrives already parsed as an int
     if task_id not in _TASKS:  # => the handler stays free of any HTTP-status knowledge
-        raise TaskNotFoundError(
-            task_id
-        )  # => co-24: raise the DOMAIN error, let it be mapped
+        raise TaskNotFoundError(task_id)  # => co-24: raise the DOMAIN error, let it be mapped
     return {"title": _TASKS[task_id]}  # => the found-case return value

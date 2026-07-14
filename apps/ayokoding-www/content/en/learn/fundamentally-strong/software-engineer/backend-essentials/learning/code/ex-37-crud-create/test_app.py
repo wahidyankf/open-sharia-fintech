@@ -15,11 +15,7 @@ def test_create_returns_201_with_new_id() -> None:
 
 
 def test_created_row_actually_persists() -> None:
-    client.post(
-        "/tasks", json={"title": "Walk dog"}
-    )  # => via the HTTP layer, like a real caller
-    row = repository.get_task(
-        2
-    )  # => bypass HTTP -- read straight from the DB to prove persistence
+    client.post("/tasks", json={"title": "Walk dog"})  # => via the HTTP layer, like a real caller
+    row = repository.get_task(2)  # => bypass HTTP -- read straight from the DB to prove persistence
     assert row is not None
     assert row["title"] == "Walk dog"

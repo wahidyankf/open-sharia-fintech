@@ -2,13 +2,8 @@
 
 # => the same domain error, the same handler, and the same shared helper
 # => serve BOTH a GET route and a DELETE route below -- consistency by construction
-from fastapi import (
-    FastAPI,
-    Request,
-)  # => Request gives the handler access to the raw ASGI request
-from fastapi.responses import (
-    JSONResponse,
-)  # => the response type this handler builds by hand
+from fastapi import FastAPI, Request  # => Request gives the handler access to the raw ASGI request
+from fastapi.responses import JSONResponse  # => the response type this handler builds by hand
 
 app = FastAPI()  # => the ASGI application uvicorn will serve
 
@@ -18,9 +13,7 @@ class TaskNotFoundError(Exception):  # => the same domain error shape as Example
         self.task_id = task_id  # => the id the caller asked for and did not get
 
 
-@app.exception_handler(
-    TaskNotFoundError
-)  # => co-11: ONE handler, reused by every route below
+@app.exception_handler(TaskNotFoundError)  # => co-11: ONE handler, reused by every route below
 async def task_not_found_handler(  # => co-11: registered handler's signature spans three lines
     request: Request,
     exc: TaskNotFoundError,  # => exc carries the id that was missing
@@ -46,17 +39,11 @@ def _require_task(task_id: int) -> str:  # => a small shared helper both routes 
 
 
 @app.get("/tasks/{task_id}")  # => co-12: GET reads
-def get_task(
-    task_id: int,
-) -> dict[str, str]:  # => task_id arrives already parsed as an int
-    return {
-        "title": _require_task(task_id)
-    }  # => delegates the existence check to the shared helper
+def get_task(task_id: int) -> dict[str, str]:  # => task_id arrives already parsed as an int
+    return {"title": _require_task(task_id)}  # => delegates the existence check to the shared helper
 
 
 @app.delete("/tasks/{task_id}", status_code=204)  # => co-02: DELETE removes
-def delete_task(
-    task_id: int,
-) -> None:  # => 204 means "no body" -- there is nothing to return
+def delete_task(task_id: int) -> None:  # => 204 means "no body" -- there is nothing to return
     _require_task(task_id)  # => raises the SAME error for a missing id as GET does
     del _TASKS[task_id]  # => only reached once the id is confirmed to exist

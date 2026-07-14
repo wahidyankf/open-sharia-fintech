@@ -2,32 +2,22 @@
 
 # => the "R" (singular) in CRUD -- this file's job is one function, get_task(),
 #    and every SELECT-by-id detail for the whole example lives right here
-from __future__ import (
-    annotations,
-)  # => lets sqlite3.Row appear in return-type hints below
+from __future__ import annotations  # => lets sqlite3.Row appear in return-type hints below
 
 import sqlite3  # => co-14: the ONLY database driver this module needs -- ships with Python itself
 from pathlib import Path  # => builds an absolute, OS-independent path to the db file
 
-DB_PATH = (
-    Path(__file__).parent / "tasks.db"
-)  # => co-14: one fixed db file, next to this module
+DB_PATH = Path(__file__).parent / "tasks.db"  # => co-14: one fixed db file, next to this module
 
 
 def connect() -> sqlite3.Connection:  # => opens and configures one sqlite3 connection
-    connection = sqlite3.connect(
-        DB_PATH
-    )  # => DB_PATH is the single file this module reads/writes
-    connection.row_factory = (
-        sqlite3.Row
-    )  # => rows behave like dicts: row["title"], not row[1]
+    connection = sqlite3.connect(DB_PATH)  # => DB_PATH is the single file this module reads/writes
+    connection.row_factory = sqlite3.Row  # => rows behave like dicts: row["title"], not row[1]
     return connection  # => the caller owns closing this connection when done
 
 
 def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
-    DB_PATH.unlink(
-        missing_ok=True
-    )  # => delete any stale file first -- every run starts clean
+    DB_PATH.unlink(missing_ok=True)  # => delete any stale file first -- every run starts clean
     connection = connect()  # => a fresh connection, scoped to just this setup call
     connection.execute(  # => defines the table's shape once, for the whole example
         "CREATE TABLE tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL)"  # => the exact DDL
@@ -40,9 +30,7 @@ def init_db() -> None:  # => (re)creates the schema and seeds two starter rows
     connection.close()  # => releases the connection -- init_db() is a one-shot setup call
 
 
-def get_task(
-    task_id: int,
-) -> sqlite3.Row | None:  # => co-14/co-12: one row, by its path parameter
+def get_task(task_id: int) -> sqlite3.Row | None:  # => co-14/co-12: one row, by its path parameter
     connection = connect()  # => a fresh connection, scoped to just this call
     row = connection.execute(  # => looks up exactly one row by its primary key
         "SELECT id, title FROM tasks WHERE id = ?",
