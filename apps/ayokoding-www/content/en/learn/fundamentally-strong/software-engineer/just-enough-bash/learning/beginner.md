@@ -645,7 +645,7 @@ echo                # => prints one final newline so the shell prompt starts cle
 
 **Run**: `bash example.sh`
 
-**Output**:
+**Output** (this doc's Markdown formatter strips the trailing space that real stdout has after the final `5` -- see the script's own comment above for the byte-exact value):
 
 ```text
 1 2 3 4 5
