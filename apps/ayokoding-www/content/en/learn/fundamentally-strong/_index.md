@@ -15,4 +15,5 @@ weight: 107
   - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [6 · Version Control & Git](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git)
   - [7 · Data Structures & Algorithms Essentials](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials)
+  - [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
   - [12 · Networking Essentials](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials)

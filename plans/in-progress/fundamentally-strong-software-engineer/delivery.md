@@ -1790,14 +1790,14 @@ Row: By Example · Python · topic wt 170 · Learn 107 / Drill 207 · **subject*
       `drilling/_index.md` wt 207, capstone wt 900; all 22 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -1805,7 +1805,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -1814,7 +1814,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
@@ -1978,81 +1978,86 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Annotated-concept · ‡ no-code · topic wt 190 · Learn 109 / Drill 209 · **leadership/design artifact (no code)**. Template →
 [`syllabus/09-project-management.md`](./syllabus/09-project-management.md).
 
-- [ ] **[AI] V** — `web-researcher` for `project-management`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `project-management`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/09-project-management.md`](./syllabus/09-project-management.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/project-management/learning/` teaching **every** concept in `syllabus/09-project-management.md` §Concepts (DD-34 1:1 mirror; concepts before scenarios). One checkbox per `co-NN`:
-  - [ ] co-01 · triple-constraint
-  - [ ] co-02 · delivery-methodologies
-  - [ ] co-03 · work-breakdown-structure
-  - [ ] co-04 · dependency-graph-and-critical-path
-  - [ ] co-05 · estimation-points-velocity
-  - [ ] co-06 · planning-poker-pitfalls
-  - [ ] co-07 · sprint-and-backlog-planning
-  - [ ] co-08 · execution-mechanics
-  - [ ] co-09 · metrics
-  - [ ] co-10 · risk-management
-  - [ ] co-11 · change-management
-  - [ ] co-12 · retrospectives
-  - [ ] co-13 · stakeholder-communication
-  - [ ] co-14 · goodhart-metric-abuse
-  - [ ] co-15 · process-weight-fit
-- [ ] **[AI] A1-examples** — Author `CONTENT/project-management/learning/artifacts/` — one worked scenario / decision artifact (prose + diagrams, no `code/` runtime; ‡ leadership DD-27) per worked example in `syllabus/09-project-management.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · triple-constraint-tradeoff — verify memo names two fixed, what third absorbs
-  - [ ] ex-02 · pick-methodology — verify each mapping cites driving context property
-  - [ ] ex-03 · wbs-decompose — verify every leaf independently estimable/assignable
-  - [ ] ex-04 · dependency-graph — verify every edge encodes a real precedence
-  - [ ] ex-05 · identify-critical-path — verify longest chain, zero slack
-  - [ ] ex-06 · story-point-estimate — verify estimates relative to reference
-  - [ ] ex-07 · velocity-forecast — verify forecast uses average velocity
-  - [ ] ex-08 · metric-decision-map — verify each metric states a concrete decision
-  - [ ] ex-09 · sprint-backlog-plan — verify no sprint exceeds velocity, deps respected
-  - [ ] ex-10 · planning-poker-debias — verify each rule maps to a named bias
-  - [ ] ex-11 · burndown-diagnosis — verify names cause + corrective action
-  - [ ] ex-12 · burnup-vs-burndown — verify rationale ties scope-change to burnup line
-  - [ ] ex-13 · cycle-time-bottleneck — verify identifies stage with growing WIP
-  - [ ] ex-14 · risk-register — verify each top risk has assigned mitigation
-  - [ ] ex-15 · risk-prioritization — verify ranking consistent with likelihood×impact
-  - [ ] ex-16 · change-request-decision — verify states what is dropped/extended
-  - [ ] ex-17 · standup-redesign — verify format surfaces blockers/WIP not status
-  - [ ] ex-18 · stakeholder-comm-plan — verify each audience row names driven decision
-  - [ ] ex-19 · velocity-goodhart-memo — verify explains point inflation + outcome metric
-  - [ ] ex-20 · process-weight-right-size — verify cites `n(n-1)/2` paths
-  - [ ] ex-21 · methodology-antipattern — verify names mismatch + better fit
-  - [ ] ex-22 · crashing-vs-fast-tracking — verify each option tied to constraint spent
-  - [ ] ex-23 · retrospective-to-action — verify each action has owner + done-signal
-  - [ ] ex-24 · risk-register-over-time — verify risks retired/added across sprints
-  - [ ] ex-25 · full-delivery-plan — verify critical path drives schedule, metrics name decisions
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/project-management/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/project-management/learning/` teaching **every** concept in `syllabus/09-project-management.md` §Concepts (DD-34 1:1 mirror; concepts before scenarios). One checkbox per `co-NN`:
+  - [x] co-01 · triple-constraint
+  - [x] co-02 · delivery-methodologies
+  - [x] co-03 · work-breakdown-structure
+  - [x] co-04 · dependency-graph-and-critical-path
+  - [x] co-05 · estimation-points-velocity
+  - [x] co-06 · planning-poker-pitfalls
+  - [x] co-07 · sprint-and-backlog-planning
+  - [x] co-08 · execution-mechanics
+  - [x] co-09 · metrics
+  - [x] co-10 · risk-management
+  - [x] co-11 · change-management
+  - [x] co-12 · retrospectives
+  - [x] co-13 · stakeholder-communication
+  - [x] co-14 · goodhart-metric-abuse
+  - [x] co-15 · process-weight-fit
+- [x] **[AI] A1-examples** — Author `CONTENT/project-management/learning/artifacts/` — one worked scenario / decision artifact (prose + diagrams, no `code/` runtime; ‡ leadership DD-27) per worked example in `syllabus/09-project-management.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · triple-constraint-tradeoff — verify memo names two fixed, what third absorbs
+  - [x] ex-02 · pick-methodology — verify each mapping cites driving context property
+  - [x] ex-03 · wbs-decompose — verify every leaf independently estimable/assignable
+  - [x] ex-04 · dependency-graph — verify every edge encodes a real precedence
+  - [x] ex-05 · identify-critical-path — verify longest chain, zero slack
+  - [x] ex-06 · story-point-estimate — verify estimates relative to reference
+  - [x] ex-07 · velocity-forecast — verify forecast uses average velocity
+  - [x] ex-08 · metric-decision-map — verify each metric states a concrete decision
+  - [x] ex-09 · sprint-backlog-plan — verify no sprint exceeds velocity, deps respected
+  - [x] ex-10 · planning-poker-debias — verify each rule maps to a named bias
+  - [x] ex-11 · burndown-diagnosis — verify names cause + corrective action
+  - [x] ex-12 · burnup-vs-burndown — verify rationale ties scope-change to burnup line
+  - [x] ex-13 · cycle-time-bottleneck — verify identifies stage with growing WIP
+  - [x] ex-14 · risk-register — verify each top risk has assigned mitigation
+  - [x] ex-15 · risk-prioritization — verify ranking consistent with likelihood×impact
+  - [x] ex-16 · change-request-decision — verify states what is dropped/extended
+  - [x] ex-17 · standup-redesign — verify format surfaces blockers/WIP not status
+  - [x] ex-18 · stakeholder-comm-plan — verify each audience row names driven decision
+  - [x] ex-19 · velocity-goodhart-memo — verify explains point inflation + outcome metric
+  - [x] ex-20 · process-weight-right-size — verify cites `n(n-1)/2` paths
+  - [x] ex-21 · methodology-antipattern — verify names mismatch + better fit
+  - [x] ex-22 · crashing-vs-fast-tracking — verify each option tied to constraint spent
+  - [x] ex-23 · retrospective-to-action — verify each action has owner + done-signal
+  - [x] ex-24 · risk-register-over-time — verify risks retired/added across sprints
+  - [x] ex-25 · full-delivery-plan — verify critical path drives schedule, metrics name decisions
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/project-management/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-annotated-concept-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-annotated-concept-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/project-management/drilling/_index.md` (wt 209) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 10 Gate
 
-- [ ] [AI] `project-management/` complete: `_index.md` wt 190, `learning/_index.md` wt 109,
+- [x] [AI] `project-management/` complete: `_index.md` wt 190, `learning/_index.md` wt 109,
       `drilling/_index.md` wt 209, capstone wt 900; all 15 concepts + 25 worked scenarios + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
-      draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+      draft PR open carrying this phase's commit; CI running on the PR. **Done**: dedicated worktree
+      `worktrees/fundamentally-strong-software-engineer-phase-10/` on branch
+      `fundamentally-strong-software-engineer/phase-10-project-management`; draft PR
+      [#36](https://github.com/wahidyankf/ose-public/pull/36).
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
       done-definition is met (review cycles complete, every inline comment addressed, all quality gates
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
-      marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+      marked ready for review; all CI checks green; no unresolved review threads. **Done**: 3 cycles run
+      (Cycle 1: 1 MEDIUM finding, fixed + resolved; Cycles 2-3: 0 new findings, 0 unresolved threads); PR
+      flipped ready via `gh pr ready 36`; CI green (`mergeStateStatus: CLEAN`).
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -2060,11 +2065,15 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       once the quality gate passes, to keep phases flowing without a manual click every time — a
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
-      merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+      merge time. **Done**: squash-merged, commit
+      `4d4a43a05bbc266f00e4190711dc6381f4f0292e`; branch deleted.
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
-      production as it completes.
+      production as it completes. **Done**: `prod-ayokoding-www` force-pushed and independently verified
+      (`git merge-base --is-ancestor`) to descend from `4d4a43a05bbc266f00e4190711dc6381f4f0292e` (the
+      first deployer pass force-pushed a stale local `main` checkout that predated this merge; corrected
+      by pushing the freshly-fetched `origin/main` ref directly).
 
 > **Pause Safety**: Topic self-contained, not yet nav-wired. Safe to pause.
 

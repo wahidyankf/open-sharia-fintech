@@ -36,6 +36,17 @@ later at [`33-engineering-management`](./33-engineering-management.md), where pe
   Sutherland) — no newer official revision supersedes it in 2026; cite the 2020 guide specifically
   (13 pages, softened prescriptive language). Critical-path method, burndown/cycle-time/lead-time metrics,
   and story-point/velocity estimation remain standard unchanged PM vocabulary. (scrumguides.org)
+- 2026-07-14 — re-confirmed (Phase 10 pre-authoring currency check, `web-researcher`): all four
+  load-bearing claim groups still current — (1) Scrum Guide's revision history at
+  [scrumguides.org/revisions.html](https://scrumguides.org/revisions.html) still lists November 2020 as
+  the latest entry, no newer official revision exists; (2) Agile Manifesto site
+  ([agilemanifesto.org](https://agilemanifesto.org/)) unchanged — 17 signatories, four values, links to
+  the twelve principles; (3) CPM/PERT 1950s lineage (DuPont/Remington Rand CPM, US Navy Special Projects
+  Office PERT) independently corroborated via [PMI](https://www.pmi.org/learning/library/origins-cpm-personal-history-3762)
+  and cross-checked against Wikipedia's Critical path method article, no correction needed; (4) all three
+  "Read more" book citations (Brooks, DeMarco & Lister 3rd ed. 2013, McConnell 2006) independently
+  re-corroborated, including a spot-check resolving an unrelated ACM-catalog "2016" artifact in favor of
+  Peopleware's confirmed 2013 3rd-edition date. No syllabus corrections required.
 
 ### DD-35 primary-source citations (fetched-and-read)
 
