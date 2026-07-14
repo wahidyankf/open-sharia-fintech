@@ -1826,123 +1826,123 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 180 · Learn 108 / Drill 208 · **subject**. Template →
 [`syllabus/08-object-oriented-programming-essentials.md`](./syllabus/08-object-oriented-programming-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `object-oriented-programming-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `object-oriented-programming-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/08-object-oriented-programming-essentials.md`](./syllabus/08-object-oriented-programming-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/object-oriented-programming-essentials/learning/` teaching **every** concept in `syllabus/08-object-oriented-programming-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · class-and-instance
-  - [ ] co-02 · encapsulation
-  - [ ] co-03 · identity-vs-equality
-  - [ ] co-04 · repr-and-str
-  - [ ] co-05 · eq-and-hash
-  - [ ] co-06 · dataclass-value-object
-  - [ ] co-07 · properties
-  - [ ] co-08 · inheritance
-  - [ ] co-09 · method-overriding
-  - [ ] co-10 · polymorphism
-  - [ ] co-11 · abstraction-abc
-  - [ ] co-12 · duck-typing
-  - [ ] co-13 · composition-over-inheritance
-  - [ ] co-14 · class-vs-instance-attributes
-  - [ ] co-15 · classmethod-and-staticmethod
-  - [ ] co-16 · encapsulation-conventions
-  - [ ] co-17 · invariant-enforcement
-- [ ] **[AI] A1-examples** — Author `CONTENT/object-oriented-programming-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/08-object-oriented-programming-essentials.md` §Worked examples (DD-20/DD-30/DD-39). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · define-minimal-class — verify `type(d) is Dog`
-  - [ ] ex-02 · init-with-fields — verify `Dog("Rex").name == "Rex"`
-  - [ ] ex-03 · instance-method — verify `d.bark() == "woof"`
-  - [ ] ex-04 · method-reads-state — verify returned string contains name
-  - [ ] ex-05 · multiple-instances-independent — verify each keeps own name
-  - [ ] ex-06 · method-mutates-state — verify name reflects new value
-  - [ ] ex-07 · default-init-argument — verify default applies when omitted
-  - [ ] ex-08 · repr-for-debugging — verify `repr(d)` matches expected
-  - [ ] ex-09 · str-vs-repr — verify `str` and `repr` differ
-  - [ ] ex-10 · identity-with-is — verify `a is b` True
-  - [ ] ex-11 · default-equality-is-identity — verify `==` False without `__eq__`
-  - [ ] ex-12 · define-eq — verify same-name dogs compare equal
-  - [ ] ex-13 · class-attribute-shared — verify both read shared value
-  - [ ] ex-14 · instance-shadows-class-attr — verify only one instance changes
-  - [ ] ex-15 · encapsulate-balance — verify deposit raises balance
-  - [ ] ex-16 · reject-negative-deposit — verify `ValueError` fires
-  - [ ] ex-17 · withdraw-guard-overdraft — verify overdraw rejected, balance unchanged
-  - [ ] ex-18 · protected-attr-convention — verify `_balance` signals internal
-  - [ ] ex-19 · name-mangled-attr — verify `obj.__pin` raises `AttributeError`
-  - [ ] ex-20 · dataclass-basic — verify auto `__init__` builds `Point(1, 2)`
-  - [ ] ex-21 · dataclass-auto-repr — verify prints `Point(x=1, y=2)`
-  - [ ] ex-22 · dataclass-auto-eq — verify `Point(1,2) == Point(1,2)` by value
-  - [ ] ex-23 · dataclass-default-field — verify omitting uses default
-  - [ ] ex-24 · dataclass-default-factory — verify each instance own list
-  - [ ] ex-25 · post-init-validation — verify invalid construction raises
-  - [ ] ex-26 · duck-typed-area-preview — verify both accepted
-  - [ ] ex-27 · objects-in-collection — verify iteration yields each in order
-  - [ ] ex-28 · self-is-explicit — verify `Dog.bark(d)` equals `d.bark()`
-  - [ ] ex-29 · property-read-only — verify `r.area` read without parens
-  - [ ] ex-30 · property-setter-validation — verify `r.width = -1` raises
-  - [ ] ex-31 · property-backed-by-private — verify external uses `.width`
-  - [ ] ex-32 · computed-property-derived — verify updates after width changes
-  - [ ] ex-33 · eq-value-object — verify equal amount+currency compare equal
-  - [ ] ex-34 · hash-consistent-with-eq — verify dedup in `set[Money]`
-  - [ ] ex-35 · eq-without-hash-unhashable — verify `TypeError` in set
-  - [ ] ex-36 · frozen-dataclass-immutable — verify `FrozenInstanceError`
-  - [ ] ex-37 · frozen-dataclass-hashable — verify works as dict key / set member
-  - [ ] ex-38 · dataclass-eq-false — verify equality falls back to identity
-  - [ ] ex-39 · dataclass-slots — verify undeclared attr raises, no `__dict__`
-  - [ ] ex-40 · dataclass-order — verify instances sort by field tuple
-  - [ ] ex-41 · inherit-fields-methods — verify `Cat` inherits base `__init__`
-  - [ ] ex-42 · super-init-chain — verify base + subclass fields set
-  - [ ] ex-43 · override-method — verify subclass version runs
-  - [ ] ex-44 · super-call-in-override — verify combined result
-  - [ ] ex-45 · polymorphic-list-dispatch — verify each dispatches to own override
-  - [ ] ex-46 · isinstance-check — verify `isinstance(cat, Animal)` True
-  - [ ] ex-47 · classmethod-alt-constructor — verify builds from parsed text
-  - [ ] ex-48 · staticmethod-namespaced — verify callable without instance
-  - [ ] ex-49 · classmethod-uses-cls — verify subclass factory returns subclass
-  - [ ] ex-50 · class-attr-instance-counter — verify counter equals instances
-  - [ ] ex-51 · mutable-class-attr-pitfall — verify fix isolates per-instance state
-  - [ ] ex-52 · invariant-in-init-and-setter — verify neither path admits invalid
-  - [ ] ex-53 · repr-round-trip — verify `eval(repr(obj)) == obj`
-  - [ ] ex-54 · encapsulated-collection — verify caller mutation leaves internals untouched
-  - [ ] ex-55 · duck-typed-function — verify mix of unrelated types sums correctly
-  - [ ] ex-56 · protocol-structural-type — verify satisfies without inheriting
-  - [ ] ex-57 · equality-across-subclass — verify type-strict contract holds
-  - [ ] ex-58 · dataclass-inheritance — verify combined `__init__` field order
-  - [ ] ex-59 · define-abc-interface — verify `Shape()` cannot instantiate
-  - [ ] ex-60 · abc-subclass-must-implement — verify incomplete subclass cannot instantiate
-  - [ ] ex-61 · abc-concrete-implementations — verify both instantiate + compute
-  - [ ] ex-62 · abc-polymorphic-callsite — verify one call-site handles all
-  - [ ] ex-63 · abstract-with-shared-helper — verify subclass inherits shared logic
-  - [ ] ex-64 · register-virtual-subclass — verify `isinstance` True without inheritance
-  - [ ] ex-65 · naive-inheritance-smell — verify `Stack(list)` leaks interface
-  - [ ] ex-66 · refactor-to-composition — verify only push/pop/peek public, tests green
-  - [ ] ex-67 · composition-delegates — verify swapping collaborator changes behavior
-  - [ ] ex-68 · dependency-injection-constructor — verify fake substitutes cleanly
-  - [ ] ex-69 · strategy-via-composition — verify swapping strategy changes price
-  - [ ] ex-70 · favor-interface-over-concrete — verify any conforming impl accepted
-  - [ ] ex-71 · encapsulated-state-machine — verify illegal transition raises
-  - [ ] ex-72 · immutable-value-object-full — verify operands unchanged
-  - [ ] ex-73 · value-objects-set-dedup — verify duplicates collapse
-  - [ ] ex-74 · polymorphism-without-inheritance — verify single pipeline handles all
-  - [ ] ex-75 · template-method-pattern — verify fixed flow, varying hooks
-  - [ ] ex-76 · refactor-god-class — verify each collaborator one responsibility
-  - [ ] ex-77 · invariant-survives-refactor — verify invariant still unviolable
-  - [ ] ex-78 · subclass-registry — verify each subclass appears in registry
-  - [ ] ex-79 · full-domain-model — verify `pytest` green end-to-end
-  - [ ] ex-80 · property-based-invariant-test — verify no random input reaches invalid state
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-programming-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/object-oriented-programming-essentials/learning/` teaching **every** concept in `syllabus/08-object-oriented-programming-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · class-and-instance
+  - [x] co-02 · encapsulation
+  - [x] co-03 · identity-vs-equality
+  - [x] co-04 · repr-and-str
+  - [x] co-05 · eq-and-hash
+  - [x] co-06 · dataclass-value-object
+  - [x] co-07 · properties
+  - [x] co-08 · inheritance
+  - [x] co-09 · method-overriding
+  - [x] co-10 · polymorphism
+  - [x] co-11 · abstraction-abc
+  - [x] co-12 · duck-typing
+  - [x] co-13 · composition-over-inheritance
+  - [x] co-14 · class-vs-instance-attributes
+  - [x] co-15 · classmethod-and-staticmethod
+  - [x] co-16 · encapsulation-conventions
+  - [x] co-17 · invariant-enforcement
+- [x] **[AI] A1-examples** — Author `CONTENT/object-oriented-programming-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/08-object-oriented-programming-essentials.md` §Worked examples (DD-20/DD-30/DD-39). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · define-minimal-class — verify `type(d) is Dog`
+  - [x] ex-02 · init-with-fields — verify `Dog("Rex").name == "Rex"`
+  - [x] ex-03 · instance-method — verify `d.bark() == "woof"`
+  - [x] ex-04 · method-reads-state — verify returned string contains name
+  - [x] ex-05 · multiple-instances-independent — verify each keeps own name
+  - [x] ex-06 · method-mutates-state — verify name reflects new value
+  - [x] ex-07 · default-init-argument — verify default applies when omitted
+  - [x] ex-08 · repr-for-debugging — verify `repr(d)` matches expected
+  - [x] ex-09 · str-vs-repr — verify `str` and `repr` differ
+  - [x] ex-10 · identity-with-is — verify `a is b` True
+  - [x] ex-11 · default-equality-is-identity — verify `==` False without `__eq__`
+  - [x] ex-12 · define-eq — verify same-name dogs compare equal
+  - [x] ex-13 · class-attribute-shared — verify both read shared value
+  - [x] ex-14 · instance-shadows-class-attr — verify only one instance changes
+  - [x] ex-15 · encapsulate-balance — verify deposit raises balance
+  - [x] ex-16 · reject-negative-deposit — verify `ValueError` fires
+  - [x] ex-17 · withdraw-guard-overdraft — verify overdraw rejected, balance unchanged
+  - [x] ex-18 · protected-attr-convention — verify `_balance` signals internal
+  - [x] ex-19 · name-mangled-attr — verify `obj.__pin` raises `AttributeError`
+  - [x] ex-20 · dataclass-basic — verify auto `__init__` builds `Point(1, 2)`
+  - [x] ex-21 · dataclass-auto-repr — verify prints `Point(x=1, y=2)`
+  - [x] ex-22 · dataclass-auto-eq — verify `Point(1,2) == Point(1,2)` by value
+  - [x] ex-23 · dataclass-default-field — verify omitting uses default
+  - [x] ex-24 · dataclass-default-factory — verify each instance own list
+  - [x] ex-25 · post-init-validation — verify invalid construction raises
+  - [x] ex-26 · duck-typed-area-preview — verify both accepted
+  - [x] ex-27 · objects-in-collection — verify iteration yields each in order
+  - [x] ex-28 · self-is-explicit — verify `Dog.bark(d)` equals `d.bark()`
+  - [x] ex-29 · property-read-only — verify `r.area` read without parens
+  - [x] ex-30 · property-setter-validation — verify `r.width = -1` raises
+  - [x] ex-31 · property-backed-by-private — verify external uses `.width`
+  - [x] ex-32 · computed-property-derived — verify updates after width changes
+  - [x] ex-33 · eq-value-object — verify equal amount+currency compare equal
+  - [x] ex-34 · hash-consistent-with-eq — verify dedup in `set[Money]`
+  - [x] ex-35 · eq-without-hash-unhashable — verify `TypeError` in set
+  - [x] ex-36 · frozen-dataclass-immutable — verify `FrozenInstanceError`
+  - [x] ex-37 · frozen-dataclass-hashable — verify works as dict key / set member
+  - [x] ex-38 · dataclass-eq-false — verify equality falls back to identity
+  - [x] ex-39 · dataclass-slots — verify undeclared attr raises, no `__dict__`
+  - [x] ex-40 · dataclass-order — verify instances sort by field tuple
+  - [x] ex-41 · inherit-fields-methods — verify `Cat` inherits base `__init__`
+  - [x] ex-42 · super-init-chain — verify base + subclass fields set
+  - [x] ex-43 · override-method — verify subclass version runs
+  - [x] ex-44 · super-call-in-override — verify combined result
+  - [x] ex-45 · polymorphic-list-dispatch — verify each dispatches to own override
+  - [x] ex-46 · isinstance-check — verify `isinstance(cat, Animal)` True
+  - [x] ex-47 · classmethod-alt-constructor — verify builds from parsed text
+  - [x] ex-48 · staticmethod-namespaced — verify callable without instance
+  - [x] ex-49 · classmethod-uses-cls — verify subclass factory returns subclass
+  - [x] ex-50 · class-attr-instance-counter — verify counter equals instances
+  - [x] ex-51 · mutable-class-attr-pitfall — verify fix isolates per-instance state
+  - [x] ex-52 · invariant-in-init-and-setter — verify neither path admits invalid
+  - [x] ex-53 · repr-round-trip — verify `eval(repr(obj)) == obj`
+  - [x] ex-54 · encapsulated-collection — verify caller mutation leaves internals untouched
+  - [x] ex-55 · duck-typed-function — verify mix of unrelated types sums correctly
+  - [x] ex-56 · protocol-structural-type — verify satisfies without inheriting
+  - [x] ex-57 · equality-across-subclass — verify type-strict contract holds
+  - [x] ex-58 · dataclass-inheritance — verify combined `__init__` field order
+  - [x] ex-59 · define-abc-interface — verify `Shape()` cannot instantiate
+  - [x] ex-60 · abc-subclass-must-implement — verify incomplete subclass cannot instantiate
+  - [x] ex-61 · abc-concrete-implementations — verify both instantiate + compute
+  - [x] ex-62 · abc-polymorphic-callsite — verify one call-site handles all
+  - [x] ex-63 · abstract-with-shared-helper — verify subclass inherits shared logic
+  - [x] ex-64 · register-virtual-subclass — verify `isinstance` True without inheritance
+  - [x] ex-65 · naive-inheritance-smell — verify `Stack(list)` leaks interface
+  - [x] ex-66 · refactor-to-composition — verify only push/pop/peek public, tests green
+  - [x] ex-67 · composition-delegates — verify swapping collaborator changes behavior
+  - [x] ex-68 · dependency-injection-constructor — verify fake substitutes cleanly
+  - [x] ex-69 · strategy-via-composition — verify swapping strategy changes price
+  - [x] ex-70 · favor-interface-over-concrete — verify any conforming impl accepted
+  - [x] ex-71 · encapsulated-state-machine — verify illegal transition raises
+  - [x] ex-72 · immutable-value-object-full — verify operands unchanged
+  - [x] ex-73 · value-objects-set-dedup — verify duplicates collapse
+  - [x] ex-74 · polymorphism-without-inheritance — verify single pipeline handles all
+  - [x] ex-75 · template-method-pattern — verify fixed flow, varying hooks
+  - [x] ex-76 · refactor-god-class — verify each collaborator one responsibility
+  - [x] ex-77 · invariant-survives-refactor — verify invariant still unviolable
+  - [x] ex-78 · subclass-registry — verify each subclass appears in registry
+  - [x] ex-79 · full-domain-model — verify `pytest` green end-to-end
+  - [x] ex-80 · property-based-invariant-test — verify no random input reaches invalid state
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-programming-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/object-oriented-programming-essentials/drilling/_index.md` (wt 208) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 9 Gate
 
-- [ ] [AI] `object-oriented-programming-essentials/` complete: `_index.md` wt 180, `learning/_index.md` wt 108,
+- [x] [AI] `object-oriented-programming-essentials/` complete: `_index.md` wt 180, `learning/_index.md` wt 108,
       `drilling/_index.md` wt 208, capstone wt 900; all 17 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit

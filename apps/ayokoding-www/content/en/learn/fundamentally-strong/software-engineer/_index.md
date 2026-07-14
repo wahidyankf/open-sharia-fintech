@@ -23,3 +23,6 @@ weight: 1750
 - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)
+- [8 · Object-Oriented Programming Essentials](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-programming-essentials)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-programming-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-programming-essentials/drilling)
