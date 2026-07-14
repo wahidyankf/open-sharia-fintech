@@ -2566,133 +2566,133 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Primer · TypeScript † · topic wt 230 · Learn 113 / Drill 213 · **primer**. Template →
 [`syllabus/13-just-enough-typescript.md`](./syllabus/13-just-enough-typescript.md).
 
-- [ ] **[AI] V** — `web-researcher` for `just-enough-typescript`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `just-enough-typescript`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/13-just-enough-typescript.md`](./syllabus/13-just-enough-typescript.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/just-enough-typescript/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/just-enough-typescript/learning/` teaching **every** concept in
       `syllabus/13-just-enough-typescript.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · running-ts
-  - [ ] co-02 · minimal-tsconfig
-  - [ ] co-03 · primitive-types
-  - [ ] co-04 · type-inference
-  - [ ] co-05 · arrays-and-tuples
-  - [ ] co-06 · object-types
-  - [ ] co-07 · type-vs-interface
-  - [ ] co-08 · union-types
-  - [ ] co-09 · literal-types
-  - [ ] co-10 · intersection-types
-  - [ ] co-11 · function-typing
-  - [ ] co-12 · optional-default-rest-params
-  - [ ] co-13 · arrow-and-function-type-expressions
-  - [ ] co-14 · narrowing
-  - [ ] co-15 · type-guards-user-defined
-  - [ ] co-16 · discriminated-unions
-  - [ ] co-17 · generics
-  - [ ] co-18 · unknown-any-never
-  - [ ] co-19 · structural-typing
-  - [ ] co-20 · type-assertions
-  - [ ] co-21 · enums-and-const-assertions
-  - [ ] co-22 · modules-esm
-  - [ ] co-23 · promises-async-await
-  - [ ] co-24 · utility-types
-  - [ ] co-25 · keyof-and-index-signatures
-  - [ ] co-26 · tooling-eslint-prettier
-- [ ] **[AI] A1-examples** — Author `CONTENT/just-enough-typescript/learning/code/` — one runnable file per worked
+  - [x] co-01 · running-ts
+  - [x] co-02 · minimal-tsconfig
+  - [x] co-03 · primitive-types
+  - [x] co-04 · type-inference
+  - [x] co-05 · arrays-and-tuples
+  - [x] co-06 · object-types
+  - [x] co-07 · type-vs-interface
+  - [x] co-08 · union-types
+  - [x] co-09 · literal-types
+  - [x] co-10 · intersection-types
+  - [x] co-11 · function-typing
+  - [x] co-12 · optional-default-rest-params
+  - [x] co-13 · arrow-and-function-type-expressions
+  - [x] co-14 · narrowing
+  - [x] co-15 · type-guards-user-defined
+  - [x] co-16 · discriminated-unions
+  - [x] co-17 · generics
+  - [x] co-18 · unknown-any-never
+  - [x] co-19 · structural-typing
+  - [x] co-20 · type-assertions
+  - [x] co-21 · enums-and-const-assertions
+  - [x] co-22 · modules-esm
+  - [x] co-23 · promises-async-await
+  - [x] co-24 · utility-types
+  - [x] co-25 · keyof-and-index-signatures
+  - [x] co-26 · tooling-eslint-prettier
+- [x] **[AI] A1-examples** — Author `CONTENT/just-enough-typescript/learning/code/` — one runnable file per worked
       example (run via `tsx` or checked with `tsc --noEmit`, DD-20/DD-30), covering **every** example in
       `syllabus/13-just-enough-typescript.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · hello-tsx — verify string prints
-  - [ ] ex-02 · compile-with-tsc — verify emitted `hello.js` runs under node
-  - [ ] ex-03 · minimal-tsconfig — verify `tsc --noEmit` clean
-  - [ ] ex-04 · annotate-primitives — verify matching assignments accepted
-  - [ ] ex-05 · type-error-on-mismatch — verify `tsc` reports the error
-  - [ ] ex-06 · null-under-strict — verify union allows null, bare string rejects
-  - [ ] ex-07 · inference-no-annotation — verify inferred number, string reassign errors
-  - [ ] ex-08 · const-literal-inference — verify literal `"on"` not wide string
-  - [ ] ex-09 · array-type — verify pushing string errors
-  - [ ] ex-10 · readonly-array — verify `push` is compile error
-  - [ ] ex-11 · tuple-type — verify third element errors
-  - [ ] ex-12 · named-tuple — verify labels + arity enforced
-  - [ ] ex-13 · object-type-inline — verify missing field errors at call-site
-  - [ ] ex-14 · optional-property — verify omitting `age` type-checks
-  - [ ] ex-15 · type-alias — verify matching literal satisfies
-  - [ ] ex-16 · interface-declaration — verify conforming object satisfies
-  - [ ] ex-17 · interface-extends — verify Admin requires all three fields
-  - [ ] ex-18 · union-type — verify number + string both assign
-  - [ ] ex-19 · literal-union — verify `"north"` errors
-  - [ ] ex-20 · function-typed — verify non-number arg errors
-  - [ ] ex-21 · void-return — verify returning a value errors
-  - [ ] ex-22 · optional-param — verify one-arg call type-checks
-  - [ ] ex-23 · default-param — verify omitting `exp` uses default
-  - [ ] ex-24 · rest-params — verify variadic OK, string arg errors
-  - [ ] ex-25 · arrow-function-typed — verify returns a number
-  - [ ] ex-26 · function-type-expression — verify mismatch arrow errors
-  - [ ] ex-27 · typed-callback-param — verify element param inferred
-  - [ ] ex-28 · run-typed-script-tsx — verify expected console output
-  - [ ] ex-29 · narrow-with-typeof — verify each branch narrowed
-  - [ ] ex-30 · narrow-truthiness — verify branch is string
-  - [ ] ex-31 · narrow-in-operator — verify branch typed to variant
-  - [ ] ex-32 · narrow-instanceof — verify branch typed Date
-  - [ ] ex-33 · narrow-equality — verify branch narrows to matched literal
-  - [ ] ex-34 · user-defined-type-guard — verify callers narrow after call
-  - [ ] ex-35 · assertion-function — verify code after call treats x as string
-  - [ ] ex-36 · discriminated-union-shape — verify each variant type-checks
-  - [ ] ex-37 · discriminated-switch — verify branch accesses only own fields
-  - [ ] ex-38 · exhaustiveness-never — verify unhandled new variant errors
-  - [ ] ex-39 · state-machine-union — verify accessing data on loading errors
-  - [ ] ex-40 · generic-identity — verify return type matches argument
-  - [ ] ex-41 · generic-array-first — verify `number | undefined` return
-  - [ ] ex-42 · generic-constraint — verify no-`length` argument errors
-  - [ ] ex-43 · generic-default-param — verify omitting type arg uses default
-  - [ ] ex-44 · generic-two-params — verify tuple element types preserved
-  - [ ] ex-45 · generic-interface — verify `Box<number>` requires numeric value
-  - [ ] ex-46 · unknown-requires-narrowing — verify method call errors until narrowed
-  - [ ] ex-47 · any-escapes-checking — verify no compile error (contrast unknown)
-  - [ ] ex-48 · never-from-throw — verify inferred return `never`
-  - [ ] ex-49 · structural-compatibility — verify shape-based compatibility
-  - [ ] ex-50 · excess-property-check — verify excess-property error fires
-  - [ ] ex-51 · structural-interface-match — verify type-checks by shape
-  - [ ] ex-52 · intersection-type — verify Staff requires all fields of both
-  - [ ] ex-53 · intersection-config-merge — verify combined object requires both sets
-  - [ ] ex-54 · as-assertion — verify compiles (noting runtime risk)
-  - [ ] ex-55 · non-null-assertion — verify null asserted away
-  - [ ] ex-56 · const-assertion — verify literal `"dark"` + readonly
-  - [ ] ex-57 · numeric-enum — verify `Color.Red === 0` + reverse mapping
-  - [ ] ex-58 · const-object-union — verify derived literal-union type
-  - [ ] ex-59 · keyof-operator — verify `K` is `"x" | "y"`
-  - [ ] ex-60 · index-signature — verify string keys hold numbers, string value errors
-  - [ ] ex-61 · esm-named-export-import — verify executes via tsx
-  - [ ] ex-62 · esm-default-export — verify default binding resolves
-  - [ ] ex-63 · type-only-import — verify imports with no runtime emit
-  - [ ] ex-64 · re-export-barrel — verify single import path resolves all
-  - [ ] ex-65 · typed-promise — verify `.then` receives number
-  - [ ] ex-66 · async-await-typed — verify awaited value is number
-  - [ ] ex-67 · async-error-typed — verify narrowing caught unknown error
-  - [ ] ex-68 · promise-all-tuple — verify resolved tuple types preserved
-  - [ ] ex-69 · async-discriminated-state — verify each state narrowed at call-site
-  - [ ] ex-70 · utility-partial — verify every field optional
-  - [ ] ex-71 · utility-pick-omit — verify resulting shapes
-  - [ ] ex-72 · utility-record — verify behaves like string index signature
-  - [ ] ex-73 · utility-readonly-required — verify both effects
-  - [ ] ex-74 · utility-returntype — verify extracts return type
-  - [ ] ex-75 · mapped-type — verify transforms every property
-  - [ ] ex-76 · generic-constrained-getter — verify return is indexed property type
-  - [ ] ex-77 · eslint-clean — verify flags unused var, then clean
-  - [ ] ex-78 · prettier-format — verify formatting applied
-  - [ ] ex-79 · tsc-noemit-catches-error — verify fails then fixed
-  - [ ] ex-80 · typed-argv-parsing — verify echoes a passed argument
-  - [ ] ex-81 · end-to-end-typed-fetch — verify valid payload narrows, invalid rejected
-  - [ ] ex-82 · full-typed-module — verify clean compile + expected tsx output
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-typescript/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · hello-tsx — verify string prints
+  - [x] ex-02 · compile-with-tsc — verify emitted `hello.js` runs under node
+  - [x] ex-03 · minimal-tsconfig — verify `tsc --noEmit` clean
+  - [x] ex-04 · annotate-primitives — verify matching assignments accepted
+  - [x] ex-05 · type-error-on-mismatch — verify `tsc` reports the error
+  - [x] ex-06 · null-under-strict — verify union allows null, bare string rejects
+  - [x] ex-07 · inference-no-annotation — verify inferred number, string reassign errors
+  - [x] ex-08 · const-literal-inference — verify literal `"on"` not wide string
+  - [x] ex-09 · array-type — verify pushing string errors
+  - [x] ex-10 · readonly-array — verify `push` is compile error
+  - [x] ex-11 · tuple-type — verify third element errors
+  - [x] ex-12 · named-tuple — verify labels + arity enforced
+  - [x] ex-13 · object-type-inline — verify missing field errors at call-site
+  - [x] ex-14 · optional-property — verify omitting `age` type-checks
+  - [x] ex-15 · type-alias — verify matching literal satisfies
+  - [x] ex-16 · interface-declaration — verify conforming object satisfies
+  - [x] ex-17 · interface-extends — verify Admin requires all three fields
+  - [x] ex-18 · union-type — verify number + string both assign
+  - [x] ex-19 · literal-union — verify `"north"` errors
+  - [x] ex-20 · function-typed — verify non-number arg errors
+  - [x] ex-21 · void-return — verify returning a value errors
+  - [x] ex-22 · optional-param — verify one-arg call type-checks
+  - [x] ex-23 · default-param — verify omitting `exp` uses default
+  - [x] ex-24 · rest-params — verify variadic OK, string arg errors
+  - [x] ex-25 · arrow-function-typed — verify returns a number
+  - [x] ex-26 · function-type-expression — verify mismatch arrow errors
+  - [x] ex-27 · typed-callback-param — verify element param inferred
+  - [x] ex-28 · run-typed-script-tsx — verify expected console output
+  - [x] ex-29 · narrow-with-typeof — verify each branch narrowed
+  - [x] ex-30 · narrow-truthiness — verify branch is string
+  - [x] ex-31 · narrow-in-operator — verify branch typed to variant
+  - [x] ex-32 · narrow-instanceof — verify branch typed Date
+  - [x] ex-33 · narrow-equality — verify branch narrows to matched literal
+  - [x] ex-34 · user-defined-type-guard — verify callers narrow after call
+  - [x] ex-35 · assertion-function — verify code after call treats x as string
+  - [x] ex-36 · discriminated-union-shape — verify each variant type-checks
+  - [x] ex-37 · discriminated-switch — verify branch accesses only own fields
+  - [x] ex-38 · exhaustiveness-never — verify unhandled new variant errors
+  - [x] ex-39 · state-machine-union — verify accessing data on loading errors
+  - [x] ex-40 · generic-identity — verify return type matches argument
+  - [x] ex-41 · generic-array-first — verify `number | undefined` return
+  - [x] ex-42 · generic-constraint — verify no-`length` argument errors
+  - [x] ex-43 · generic-default-param — verify omitting type arg uses default
+  - [x] ex-44 · generic-two-params — verify tuple element types preserved
+  - [x] ex-45 · generic-interface — verify `Box<number>` requires numeric value
+  - [x] ex-46 · unknown-requires-narrowing — verify method call errors until narrowed
+  - [x] ex-47 · any-escapes-checking — verify no compile error (contrast unknown)
+  - [x] ex-48 · never-from-throw — verify inferred return `never`
+  - [x] ex-49 · structural-compatibility — verify shape-based compatibility
+  - [x] ex-50 · excess-property-check — verify excess-property error fires
+  - [x] ex-51 · structural-interface-match — verify type-checks by shape
+  - [x] ex-52 · intersection-type — verify Staff requires all fields of both
+  - [x] ex-53 · intersection-config-merge — verify combined object requires both sets
+  - [x] ex-54 · as-assertion — verify compiles (noting runtime risk)
+  - [x] ex-55 · non-null-assertion — verify null asserted away
+  - [x] ex-56 · const-assertion — verify literal `"dark"` + readonly
+  - [x] ex-57 · numeric-enum — verify `Color.Red === 0` + reverse mapping
+  - [x] ex-58 · const-object-union — verify derived literal-union type
+  - [x] ex-59 · keyof-operator — verify `K` is `"x" | "y"`
+  - [x] ex-60 · index-signature — verify string keys hold numbers, string value errors
+  - [x] ex-61 · esm-named-export-import — verify executes via tsx
+  - [x] ex-62 · esm-default-export — verify default binding resolves
+  - [x] ex-63 · type-only-import — verify imports with no runtime emit
+  - [x] ex-64 · re-export-barrel — verify single import path resolves all
+  - [x] ex-65 · typed-promise — verify `.then` receives number
+  - [x] ex-66 · async-await-typed — verify awaited value is number
+  - [x] ex-67 · async-error-typed — verify narrowing caught unknown error
+  - [x] ex-68 · promise-all-tuple — verify resolved tuple types preserved
+  - [x] ex-69 · async-discriminated-state — verify each state narrowed at call-site
+  - [x] ex-70 · utility-partial — verify every field optional
+  - [x] ex-71 · utility-pick-omit — verify resulting shapes
+  - [x] ex-72 · utility-record — verify behaves like string index signature
+  - [x] ex-73 · utility-readonly-required — verify both effects
+  - [x] ex-74 · utility-returntype — verify extracts return type
+  - [x] ex-75 · mapped-type — verify transforms every property
+  - [x] ex-76 · generic-constrained-getter — verify return is indexed property type
+  - [x] ex-77 · eslint-clean — verify flags unused var, then clean
+  - [x] ex-78 · prettier-format — verify formatting applied
+  - [x] ex-79 · tsc-noemit-catches-error — verify fails then fixed
+  - [x] ex-80 · typed-argv-parsing — verify echoes a passed argument
+  - [x] ex-81 · end-to-end-typed-fetch — verify valid payload narrows, invalid rejected
+  - [x] ex-82 · full-typed-module — verify clean compile + expected tsx output
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-typescript/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/just-enough-typescript/drilling/_index.md` (wt 213) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 14 Gate
 
-- [ ] [AI] `just-enough-typescript/` complete: `_index.md` wt 230, `learning/_index.md` wt 113,
+- [x] [AI] `just-enough-typescript/` complete: `_index.md` wt 230, `learning/_index.md` wt 113,
       `drilling/_index.md` wt 213, capstone wt 900; all 26 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

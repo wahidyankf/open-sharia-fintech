@@ -33,3 +33,6 @@ weight: 1750
 - [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/project-management/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/project-management/drilling)
+- [13 · Just Enough TypeScript](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript/drilling)
