@@ -28,8 +28,9 @@ and the TS side of [`15-software-testing`](./15-software-testing.md). Node/TS ar
 
 ## Accuracy notes (web-verified)
 
-> Verified in the pre-authoring `web-researcher` sweep (#48, DD-28). **TS 7.0 landed days before this
-> sweep — re-check devblogs.microsoft.com/typescript immediately before authoring.**
+> Verified in the pre-authoring `web-researcher` sweep (#48, DD-28); re-verified 2026-07-14 immediately
+> before authoring, resolving that sweep's own escalation note. TS 7.0 GA (2026-07-08) is the confirmed
+> stable baseline for this topic.
 
 - 2026-07-12 — verified (CORRECTION, time-sensitive): **TypeScript 7.0 became stable 2026-07-08** — a
   native-Go compiler rewrite ("Project Corsa", ~10-12x faster type-checking; TS 6.0 / 2026-03-23 was the
@@ -46,6 +47,33 @@ and the TS side of [`15-software-testing`](./15-software-testing.md). Node/TS ar
   errors**. The recommended minimal config above uses none of the removed options and is fully
   forward-compatible; `strict: true` is now explicit-for-clarity rather than strictly required.
   (typescriptlang.org release-notes 6.0/7.0)
+- 2026-07-14 — re-verified (no material changes): **TypeScript is still 7.0.2 GA** (npm registry) — no
+  7.0.3 patch or 7.1 beta/RC posted at devblogs.microsoft.com/typescript (latest post remains
+  "Announcing TypeScript 7.0", 2026-07-08); the 7.1 programmatic API for Vue/Svelte/Astro/MDX editor
+  tooling has **not** landed, so the caveat above still holds. **Node 24 "Krypton" confirmed Active LTS**
+  (LTS since 2025-10-28, Maintenance from 2026-10-20; Node 22 "Jod" now in Maintenance since 2025-10-21;
+  Node 26 Current, LTS from 2026-10-28) — matches the 2026-07-12 sweep exactly.
+  (registry.npmjs.org/typescript; devblogs.microsoft.com/typescript;
+  github.com/nodejs/Release/schedule.json)
+- 2026-07-14 — re-verified (minor delta): **`tsx` bumped 4.23.0 → 4.23.1** (patch release) — still the
+  recommended TS-run tool over stale `ts-node`. **This repo's pinned `typescript` devDependency is
+  5.8.3 and `tsx` is 4.21.0** (root `package.json`) — noticeably behind the 7.0.2/4.23.1 upstream-latest
+  cited above; worked examples in this topic are authored and verified against the **actually-installed
+  5.8.3/4.21.0 toolchain** (a dependency bump is out of scope for this content-only pass; see
+  Dependency Bump Stability & Safety Policy), using only syntax and tsconfig options that are valid on
+  both 5.8.3 and forward-compatible with 7.0 (no removed/deprecated options used). `tsconfig.json` hard
+  errors on TS 7.0 reconfirmed verbatim; two TS 7.0 defaults not previously logged, both minor/non-
+  blocking for the minimal config taught here: `types: []` (auto-discovery removed — list `@types/*`
+  packages explicitly if needed) and `rootDir` now defaults to `./` (larger layouts may need
+  `rootDir: "./src"`). Utility Types Handbook page spot-checked, unchanged (shows a 2026-07-13 update,
+  no removals/renames). **eslint 10.7.0 / prettier 3.9.5** both current upstream and CLI-invoked as
+  described (co-26); eslint's flat config (default filename `eslint.config.js`, `.mjs`/`.cjs` also
+  valid) remains default since v9 (legacy `.eslintrc` deprecated) — ex-77 ships a real flat
+  `eslint.config.mjs` (shown in full, not just invoked from the CLI); ex-78 (prettier) runs
+  `prettier --check`/`--write` directly with no config file, relying on prettier's built-in defaults —
+  both are described accurately, so no correction needed.
+  (npmjs.com/package/tsx; devblogs.microsoft.com/typescript/announcing-typescript-7-0;
+  typescriptlang.org/docs/handbook/utility-types.html; eslint.org)
 
 ### DD-35 primary-source citations (fetched-and-read)
 

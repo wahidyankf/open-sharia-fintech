@@ -165,6 +165,16 @@ per-agent checker density/format bands are applied as **quality floors**, never 
 topic is done when its core surface is covered to mastery depth and it clears the checker, however
 long that turns out to be.
 
+**Scope clarification for colocated verification blocks**: Topics that layer a colocated
+per-example pytest verification file (`test_example.py`, first used starting with the Phase 9
+Python OOP topics) on top of the base by-example convention measure the DD-8 annotation density
+against the primary taught example block (`example.py`) alone. The colocated `test_example.py`
+is out of scope for the density formula, same as the base `swe-by-example.md` convention already
+excludes "Run"/"Output" scaffolding blocks — its role is proving the example works, not teaching
+the concept. [Fixer interpretation, applied 2026-07-14 while resolving
+`apps-ayokoding-www-by-example-checker` Finding 2 for
+`object-oriented-programming-essentials`, so future phases do not re-litigate this per topic]
+
 ## Follow-Along Completeness Rule (HARD RULE, DD-30)
 
 Every example AND every capstone in the section is **followable step-by-step, code-by-code,

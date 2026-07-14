@@ -1826,130 +1826,130 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 180 · Learn 108 / Drill 208 · **subject**. Template →
 [`syllabus/08-object-oriented-programming-essentials.md`](./syllabus/08-object-oriented-programming-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `object-oriented-programming-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `object-oriented-programming-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/08-object-oriented-programming-essentials.md`](./syllabus/08-object-oriented-programming-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/object-oriented-programming-essentials/learning/` teaching **every** concept in `syllabus/08-object-oriented-programming-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · class-and-instance
-  - [ ] co-02 · encapsulation
-  - [ ] co-03 · identity-vs-equality
-  - [ ] co-04 · repr-and-str
-  - [ ] co-05 · eq-and-hash
-  - [ ] co-06 · dataclass-value-object
-  - [ ] co-07 · properties
-  - [ ] co-08 · inheritance
-  - [ ] co-09 · method-overriding
-  - [ ] co-10 · polymorphism
-  - [ ] co-11 · abstraction-abc
-  - [ ] co-12 · duck-typing
-  - [ ] co-13 · composition-over-inheritance
-  - [ ] co-14 · class-vs-instance-attributes
-  - [ ] co-15 · classmethod-and-staticmethod
-  - [ ] co-16 · encapsulation-conventions
-  - [ ] co-17 · invariant-enforcement
-- [ ] **[AI] A1-examples** — Author `CONTENT/object-oriented-programming-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/08-object-oriented-programming-essentials.md` §Worked examples (DD-20/DD-30/DD-39). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · define-minimal-class — verify `type(d) is Dog`
-  - [ ] ex-02 · init-with-fields — verify `Dog("Rex").name == "Rex"`
-  - [ ] ex-03 · instance-method — verify `d.bark() == "woof"`
-  - [ ] ex-04 · method-reads-state — verify returned string contains name
-  - [ ] ex-05 · multiple-instances-independent — verify each keeps own name
-  - [ ] ex-06 · method-mutates-state — verify name reflects new value
-  - [ ] ex-07 · default-init-argument — verify default applies when omitted
-  - [ ] ex-08 · repr-for-debugging — verify `repr(d)` matches expected
-  - [ ] ex-09 · str-vs-repr — verify `str` and `repr` differ
-  - [ ] ex-10 · identity-with-is — verify `a is b` True
-  - [ ] ex-11 · default-equality-is-identity — verify `==` False without `__eq__`
-  - [ ] ex-12 · define-eq — verify same-name dogs compare equal
-  - [ ] ex-13 · class-attribute-shared — verify both read shared value
-  - [ ] ex-14 · instance-shadows-class-attr — verify only one instance changes
-  - [ ] ex-15 · encapsulate-balance — verify deposit raises balance
-  - [ ] ex-16 · reject-negative-deposit — verify `ValueError` fires
-  - [ ] ex-17 · withdraw-guard-overdraft — verify overdraw rejected, balance unchanged
-  - [ ] ex-18 · protected-attr-convention — verify `_balance` signals internal
-  - [ ] ex-19 · name-mangled-attr — verify `obj.__pin` raises `AttributeError`
-  - [ ] ex-20 · dataclass-basic — verify auto `__init__` builds `Point(1, 2)`
-  - [ ] ex-21 · dataclass-auto-repr — verify prints `Point(x=1, y=2)`
-  - [ ] ex-22 · dataclass-auto-eq — verify `Point(1,2) == Point(1,2)` by value
-  - [ ] ex-23 · dataclass-default-field — verify omitting uses default
-  - [ ] ex-24 · dataclass-default-factory — verify each instance own list
-  - [ ] ex-25 · post-init-validation — verify invalid construction raises
-  - [ ] ex-26 · duck-typed-area-preview — verify both accepted
-  - [ ] ex-27 · objects-in-collection — verify iteration yields each in order
-  - [ ] ex-28 · self-is-explicit — verify `Dog.bark(d)` equals `d.bark()`
-  - [ ] ex-29 · property-read-only — verify `r.area` read without parens
-  - [ ] ex-30 · property-setter-validation — verify `r.width = -1` raises
-  - [ ] ex-31 · property-backed-by-private — verify external uses `.width`
-  - [ ] ex-32 · computed-property-derived — verify updates after width changes
-  - [ ] ex-33 · eq-value-object — verify equal amount+currency compare equal
-  - [ ] ex-34 · hash-consistent-with-eq — verify dedup in `set[Money]`
-  - [ ] ex-35 · eq-without-hash-unhashable — verify `TypeError` in set
-  - [ ] ex-36 · frozen-dataclass-immutable — verify `FrozenInstanceError`
-  - [ ] ex-37 · frozen-dataclass-hashable — verify works as dict key / set member
-  - [ ] ex-38 · dataclass-eq-false — verify equality falls back to identity
-  - [ ] ex-39 · dataclass-slots — verify undeclared attr raises, no `__dict__`
-  - [ ] ex-40 · dataclass-order — verify instances sort by field tuple
-  - [ ] ex-41 · inherit-fields-methods — verify `Cat` inherits base `__init__`
-  - [ ] ex-42 · super-init-chain — verify base + subclass fields set
-  - [ ] ex-43 · override-method — verify subclass version runs
-  - [ ] ex-44 · super-call-in-override — verify combined result
-  - [ ] ex-45 · polymorphic-list-dispatch — verify each dispatches to own override
-  - [ ] ex-46 · isinstance-check — verify `isinstance(cat, Animal)` True
-  - [ ] ex-47 · classmethod-alt-constructor — verify builds from parsed text
-  - [ ] ex-48 · staticmethod-namespaced — verify callable without instance
-  - [ ] ex-49 · classmethod-uses-cls — verify subclass factory returns subclass
-  - [ ] ex-50 · class-attr-instance-counter — verify counter equals instances
-  - [ ] ex-51 · mutable-class-attr-pitfall — verify fix isolates per-instance state
-  - [ ] ex-52 · invariant-in-init-and-setter — verify neither path admits invalid
-  - [ ] ex-53 · repr-round-trip — verify `eval(repr(obj)) == obj`
-  - [ ] ex-54 · encapsulated-collection — verify caller mutation leaves internals untouched
-  - [ ] ex-55 · duck-typed-function — verify mix of unrelated types sums correctly
-  - [ ] ex-56 · protocol-structural-type — verify satisfies without inheriting
-  - [ ] ex-57 · equality-across-subclass — verify type-strict contract holds
-  - [ ] ex-58 · dataclass-inheritance — verify combined `__init__` field order
-  - [ ] ex-59 · define-abc-interface — verify `Shape()` cannot instantiate
-  - [ ] ex-60 · abc-subclass-must-implement — verify incomplete subclass cannot instantiate
-  - [ ] ex-61 · abc-concrete-implementations — verify both instantiate + compute
-  - [ ] ex-62 · abc-polymorphic-callsite — verify one call-site handles all
-  - [ ] ex-63 · abstract-with-shared-helper — verify subclass inherits shared logic
-  - [ ] ex-64 · register-virtual-subclass — verify `isinstance` True without inheritance
-  - [ ] ex-65 · naive-inheritance-smell — verify `Stack(list)` leaks interface
-  - [ ] ex-66 · refactor-to-composition — verify only push/pop/peek public, tests green
-  - [ ] ex-67 · composition-delegates — verify swapping collaborator changes behavior
-  - [ ] ex-68 · dependency-injection-constructor — verify fake substitutes cleanly
-  - [ ] ex-69 · strategy-via-composition — verify swapping strategy changes price
-  - [ ] ex-70 · favor-interface-over-concrete — verify any conforming impl accepted
-  - [ ] ex-71 · encapsulated-state-machine — verify illegal transition raises
-  - [ ] ex-72 · immutable-value-object-full — verify operands unchanged
-  - [ ] ex-73 · value-objects-set-dedup — verify duplicates collapse
-  - [ ] ex-74 · polymorphism-without-inheritance — verify single pipeline handles all
-  - [ ] ex-75 · template-method-pattern — verify fixed flow, varying hooks
-  - [ ] ex-76 · refactor-god-class — verify each collaborator one responsibility
-  - [ ] ex-77 · invariant-survives-refactor — verify invariant still unviolable
-  - [ ] ex-78 · subclass-registry — verify each subclass appears in registry
-  - [ ] ex-79 · full-domain-model — verify `pytest` green end-to-end
-  - [ ] ex-80 · property-based-invariant-test — verify no random input reaches invalid state
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-programming-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/object-oriented-programming-essentials/learning/` teaching **every** concept in `syllabus/08-object-oriented-programming-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · class-and-instance
+  - [x] co-02 · encapsulation
+  - [x] co-03 · identity-vs-equality
+  - [x] co-04 · repr-and-str
+  - [x] co-05 · eq-and-hash
+  - [x] co-06 · dataclass-value-object
+  - [x] co-07 · properties
+  - [x] co-08 · inheritance
+  - [x] co-09 · method-overriding
+  - [x] co-10 · polymorphism
+  - [x] co-11 · abstraction-abc
+  - [x] co-12 · duck-typing
+  - [x] co-13 · composition-over-inheritance
+  - [x] co-14 · class-vs-instance-attributes
+  - [x] co-15 · classmethod-and-staticmethod
+  - [x] co-16 · encapsulation-conventions
+  - [x] co-17 · invariant-enforcement
+- [x] **[AI] A1-examples** — Author `CONTENT/object-oriented-programming-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/08-object-oriented-programming-essentials.md` §Worked examples (DD-20/DD-30/DD-39). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · define-minimal-class — verify `type(d) is Dog`
+  - [x] ex-02 · init-with-fields — verify `Dog("Rex").name == "Rex"`
+  - [x] ex-03 · instance-method — verify `d.bark() == "woof"`
+  - [x] ex-04 · method-reads-state — verify returned string contains name
+  - [x] ex-05 · multiple-instances-independent — verify each keeps own name
+  - [x] ex-06 · method-mutates-state — verify name reflects new value
+  - [x] ex-07 · default-init-argument — verify default applies when omitted
+  - [x] ex-08 · repr-for-debugging — verify `repr(d)` matches expected
+  - [x] ex-09 · str-vs-repr — verify `str` and `repr` differ
+  - [x] ex-10 · identity-with-is — verify `a is b` True
+  - [x] ex-11 · default-equality-is-identity — verify `==` False without `__eq__`
+  - [x] ex-12 · define-eq — verify same-name dogs compare equal
+  - [x] ex-13 · class-attribute-shared — verify both read shared value
+  - [x] ex-14 · instance-shadows-class-attr — verify only one instance changes
+  - [x] ex-15 · encapsulate-balance — verify deposit raises balance
+  - [x] ex-16 · reject-negative-deposit — verify `ValueError` fires
+  - [x] ex-17 · withdraw-guard-overdraft — verify overdraw rejected, balance unchanged
+  - [x] ex-18 · protected-attr-convention — verify `_balance` signals internal
+  - [x] ex-19 · name-mangled-attr — verify `obj.__pin` raises `AttributeError`
+  - [x] ex-20 · dataclass-basic — verify auto `__init__` builds `Point(1, 2)`
+  - [x] ex-21 · dataclass-auto-repr — verify prints `Point(x=1, y=2)`
+  - [x] ex-22 · dataclass-auto-eq — verify `Point(1,2) == Point(1,2)` by value
+  - [x] ex-23 · dataclass-default-field — verify omitting uses default
+  - [x] ex-24 · dataclass-default-factory — verify each instance own list
+  - [x] ex-25 · post-init-validation — verify invalid construction raises
+  - [x] ex-26 · duck-typed-area-preview — verify both accepted
+  - [x] ex-27 · objects-in-collection — verify iteration yields each in order
+  - [x] ex-28 · self-is-explicit — verify `Dog.bark(d)` equals `d.bark()`
+  - [x] ex-29 · property-read-only — verify `r.area` read without parens
+  - [x] ex-30 · property-setter-validation — verify `r.width = -1` raises
+  - [x] ex-31 · property-backed-by-private — verify external uses `.width`
+  - [x] ex-32 · computed-property-derived — verify updates after width changes
+  - [x] ex-33 · eq-value-object — verify equal amount+currency compare equal
+  - [x] ex-34 · hash-consistent-with-eq — verify dedup in `set[Money]`
+  - [x] ex-35 · eq-without-hash-unhashable — verify `TypeError` in set
+  - [x] ex-36 · frozen-dataclass-immutable — verify `FrozenInstanceError`
+  - [x] ex-37 · frozen-dataclass-hashable — verify works as dict key / set member
+  - [x] ex-38 · dataclass-eq-false — verify equality falls back to identity
+  - [x] ex-39 · dataclass-slots — verify undeclared attr raises, no `__dict__`
+  - [x] ex-40 · dataclass-order — verify instances sort by field tuple
+  - [x] ex-41 · inherit-fields-methods — verify `Cat` inherits base `__init__`
+  - [x] ex-42 · super-init-chain — verify base + subclass fields set
+  - [x] ex-43 · override-method — verify subclass version runs
+  - [x] ex-44 · super-call-in-override — verify combined result
+  - [x] ex-45 · polymorphic-list-dispatch — verify each dispatches to own override
+  - [x] ex-46 · isinstance-check — verify `isinstance(cat, Animal)` True
+  - [x] ex-47 · classmethod-alt-constructor — verify builds from parsed text
+  - [x] ex-48 · staticmethod-namespaced — verify callable without instance
+  - [x] ex-49 · classmethod-uses-cls — verify subclass factory returns subclass
+  - [x] ex-50 · class-attr-instance-counter — verify counter equals instances
+  - [x] ex-51 · mutable-class-attr-pitfall — verify fix isolates per-instance state
+  - [x] ex-52 · invariant-in-init-and-setter — verify neither path admits invalid
+  - [x] ex-53 · repr-round-trip — verify `eval(repr(obj)) == obj`
+  - [x] ex-54 · encapsulated-collection — verify caller mutation leaves internals untouched
+  - [x] ex-55 · duck-typed-function — verify mix of unrelated types sums correctly
+  - [x] ex-56 · protocol-structural-type — verify satisfies without inheriting
+  - [x] ex-57 · equality-across-subclass — verify type-strict contract holds
+  - [x] ex-58 · dataclass-inheritance — verify combined `__init__` field order
+  - [x] ex-59 · define-abc-interface — verify `Shape()` cannot instantiate
+  - [x] ex-60 · abc-subclass-must-implement — verify incomplete subclass cannot instantiate
+  - [x] ex-61 · abc-concrete-implementations — verify both instantiate + compute
+  - [x] ex-62 · abc-polymorphic-callsite — verify one call-site handles all
+  - [x] ex-63 · abstract-with-shared-helper — verify subclass inherits shared logic
+  - [x] ex-64 · register-virtual-subclass — verify `isinstance` True without inheritance
+  - [x] ex-65 · naive-inheritance-smell — verify `Stack(list)` leaks interface
+  - [x] ex-66 · refactor-to-composition — verify only push/pop/peek public, tests green
+  - [x] ex-67 · composition-delegates — verify swapping collaborator changes behavior
+  - [x] ex-68 · dependency-injection-constructor — verify fake substitutes cleanly
+  - [x] ex-69 · strategy-via-composition — verify swapping strategy changes price
+  - [x] ex-70 · favor-interface-over-concrete — verify any conforming impl accepted
+  - [x] ex-71 · encapsulated-state-machine — verify illegal transition raises
+  - [x] ex-72 · immutable-value-object-full — verify operands unchanged
+  - [x] ex-73 · value-objects-set-dedup — verify duplicates collapse
+  - [x] ex-74 · polymorphism-without-inheritance — verify single pipeline handles all
+  - [x] ex-75 · template-method-pattern — verify fixed flow, varying hooks
+  - [x] ex-76 · refactor-god-class — verify each collaborator one responsibility
+  - [x] ex-77 · invariant-survives-refactor — verify invariant still unviolable
+  - [x] ex-78 · subclass-registry — verify each subclass appears in registry
+  - [x] ex-79 · full-domain-model — verify `pytest` green end-to-end
+  - [x] ex-80 · property-based-invariant-test — verify no random input reaches invalid state
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-programming-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/object-oriented-programming-essentials/drilling/_index.md` (wt 208) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 9 Gate
 
-- [ ] [AI] `object-oriented-programming-essentials/` complete: `_index.md` wt 180, `learning/_index.md` wt 108,
+- [x] [AI] `object-oriented-programming-essentials/` complete: `_index.md` wt 180, `learning/_index.md` wt 108,
       `drilling/_index.md` wt 208, capstone wt 900; all 17 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -1957,7 +1957,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -1966,7 +1966,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
@@ -2082,137 +2082,137 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · SQL + Python † (SQLite) · topic wt 200 · Learn 110 / Drill 210 · **subject**. Template →
 [`syllabus/10-sql-essentials.md`](./syllabus/10-sql-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `sql-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `sql-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/10-sql-essentials.md`](./syllabus/10-sql-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/sql-essentials/learning/` teaching **every** concept in `syllabus/10-sql-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · relational-model
-  - [ ] co-02 · primary-keys
-  - [ ] co-03 · foreign-keys
-  - [ ] co-04 · constraints
-  - [ ] co-05 · normalization
-  - [ ] co-06 · column-types
-  - [ ] co-07 · ddl-create-table
-  - [ ] co-08 · select-projection-filtering
-  - [ ] co-09 · ordering-and-limiting
-  - [ ] co-10 · insert
-  - [ ] co-11 · update
-  - [ ] co-12 · delete
-  - [ ] co-13 · inner-join
-  - [ ] co-14 · outer-join
-  - [ ] co-15 · aggregation
-  - [ ] co-16 · having-filter
-  - [ ] co-17 · null-semantics
-  - [ ] co-18 · transactions
-  - [ ] co-19 · python-sqlite3-connection
-  - [ ] co-20 · parameterized-queries
-  - [ ] co-21 · cursor-and-results
-  - [ ] co-22 · schema-migration
-  - [ ] co-23 · n-plus-1-avoidance
-  - [ ] co-24 · cli-usage
-- [ ] **[AI] A1-examples** — Author `CONTENT/sql-essentials/learning/code/` — one runnable `.sql`/`python3` example per worked example in `syllabus/10-sql-essentials.md` §Worked examples (DD-20/DD-30/DD-34/DD-39). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · create-author-table — verify `.schema` lists column + PK
-  - [ ] ex-02 · open-database-cli — verify prompt opens, no tables yet
-  - [ ] ex-03 · insert-single-row — verify exactly one row returns
-  - [ ] ex-04 · insert-multiple-rows — verify `count(*)` returns 3
-  - [ ] ex-05 · select-all-columns — verify every column and row returned
-  - [ ] ex-06 · select-projection — verify only `title` appears
-  - [ ] ex-07 · where-equality — verify single matching row
-  - [ ] ex-08 · where-comparison — verify only rows above threshold
-  - [ ] ex-09 · where-and-or — verify combined boolean filtering
-  - [ ] ex-10 · where-like-prefix — verify prefix pattern matches
-  - [ ] ex-11 · where-in-set — verify set-membership filtering
-  - [ ] ex-12 · order-by-ascending — verify alphabetical ordering
-  - [ ] ex-13 · order-by-descending — verify most-expensive-first
-  - [ ] ex-14 · limit-rows — verify at most two rows
-  - [ ] ex-15 · limit-offset-paging — verify second page of two rows
-  - [ ] ex-16 · select-distinct — verify duplicate values collapse
-  - [ ] ex-17 · type-affinity — verify `'42'` stored as integer
-  - [ ] ex-18 · not-null-constraint — verify NOT NULL error
-  - [ ] ex-19 · unique-constraint — verify UNIQUE error
-  - [ ] ex-20 · default-value — verify default applied
-  - [ ] ex-21 · check-constraint — verify negative price rejected
-  - [ ] ex-22 · autoincrement-rowid — verify ids auto-assign 1, 2
-  - [ ] ex-23 · update-one-row — verify only that row changed
-  - [ ] ex-24 · update-all-rows — verify every row changed
-  - [ ] ex-25 · delete-row — verify row gone, count drops by one
-  - [ ] ex-26 · declare-foreign-key — verify FK clause in `.schema`
-  - [ ] ex-27 · enforce-foreign-key — verify orphan rejected
-  - [ ] ex-28 · inner-join-two-tables — verify each book pairs with author
-  - [ ] ex-29 · python-connect-and-query — verify script prints rows
-  - [ ] ex-30 · python-parameterized-insert — verify inserts without interpolation
-  - [ ] ex-31 · left-join-unmatched — verify authors with no books show NULL title
-  - [ ] ex-32 · join-with-aliases — verify same result more readably
-  - [ ] ex-33 · three-table-join — verify combined columns across three relations
-  - [ ] ex-34 · group-by-count — verify per-author book counts
-  - [ ] ex-35 · group-by-sum — verify per-group totals
-  - [ ] ex-36 · group-by-avg — verify per-group averages
-  - [ ] ex-37 · min-max-aggregate — verify cheapest and dearest
-  - [ ] ex-38 · having-filter-groups — verify only authors with >1 book
-  - [ ] ex-39 · where-plus-having — verify row filter before, group filter after
-  - [ ] ex-40 · count-star-vs-column — verify column count excludes NULLs
-  - [ ] ex-41 · null-is-null — verify rows with unknown year match
-  - [ ] ex-42 · null-coalesce — verify NULLs substituted with 0
-  - [ ] ex-43 · null-three-valued — verify `= NULL` returns no rows
-  - [ ] ex-44 · aggregate-over-join — verify per-author total across join
-  - [ ] ex-45 · normalize-repeating-group — verify 1NF/2NF removes repeating group
-  - [ ] ex-46 · normalize-transitive-dep — verify 3NF holds one fact per place
-  - [ ] ex-47 · python-named-params — verify named binding
-  - [ ] ex-48 · python-executemany — verify bulk insert of all rows
-  - [ ] ex-49 · python-fetchone-loop — verify streamed row-by-row consumption
-  - [ ] ex-50 · python-row-factory — verify column-name access
-  - [ ] ex-51 · transaction-commit — verify write persists in new connection
-  - [ ] ex-52 · transaction-rollback — verify DB unchanged
-  - [ ] ex-53 · transaction-context-manager — verify auto-rollback on raise
-  - [ ] ex-54 · injection-safe-vs-unsafe — verify only parameterized form safe
-  - [ ] ex-55 · upsert-on-conflict — verify second insert updates
-  - [ ] ex-56 · subquery-in-where — verify filtering by subquery result
-  - [ ] ex-57 · self-join — verify each employee pairs with manager
-  - [ ] ex-58 · case-expression — verify conditional derived column
-  - [ ] ex-59 · migration-add-column — verify existing rows gain default
-  - [ ] ex-60 · migration-backfill — verify all rows populated
-  - [ ] ex-61 · migration-version-tracking — verify `user_version` bumps
-  - [ ] ex-62 · n-plus-1-demonstrated — verify N+1 round-trips occur
-  - [ ] ex-63 · n-plus-1-fixed-join — verify one query returns same data
-  - [ ] ex-64 · n-plus-1-fixed-in — verify single round-trip
-  - [ ] ex-65 · composite-primary-key — verify duplicate pair rejected
-  - [ ] ex-66 · cascade-delete — verify author's books removed too
-  - [ ] ex-67 · restrict-delete — verify delete blocked
-  - [ ] ex-68 · savepoint-partial-rollback — verify only inner work undone
-  - [ ] ex-69 · python-report-function — verify returned rows match expected
-  - [ ] ex-70 · group-concat — verify titles concatenate per group
-  - [ ] ex-71 · anti-join-missing — verify authors with zero books isolated
-  - [ ] ex-72 · atomic-transfer — verify all-or-nothing transfer
-  - [ ] ex-73 · python-dal-module — verify pytest suite green
-  - [ ] ex-74 · seed-from-sql-file — verify seeded row count
-  - [ ] ex-75 · export-query-to-csv — verify CSV contains result rows
-  - [ ] ex-76 · integrity-checks — verify both PRAGMA checks report no problems
-  - [ ] ex-77 · design-3nf-schema — verify no transitive dependency remains
-  - [ ] ex-78 · correlated-subquery — verify per-row computed count
-  - [ ] ex-79 · report-join-group-having — verify matches expected values
-  - [ ] ex-80 · pytest-rollback-integration — verify green (row count unchanged)
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/sql-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/sql-essentials/learning/` teaching **every** concept in `syllabus/10-sql-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · relational-model
+  - [x] co-02 · primary-keys
+  - [x] co-03 · foreign-keys
+  - [x] co-04 · constraints
+  - [x] co-05 · normalization
+  - [x] co-06 · column-types
+  - [x] co-07 · ddl-create-table
+  - [x] co-08 · select-projection-filtering
+  - [x] co-09 · ordering-and-limiting
+  - [x] co-10 · insert
+  - [x] co-11 · update
+  - [x] co-12 · delete
+  - [x] co-13 · inner-join
+  - [x] co-14 · outer-join
+  - [x] co-15 · aggregation
+  - [x] co-16 · having-filter
+  - [x] co-17 · null-semantics
+  - [x] co-18 · transactions
+  - [x] co-19 · python-sqlite3-connection
+  - [x] co-20 · parameterized-queries
+  - [x] co-21 · cursor-and-results
+  - [x] co-22 · schema-migration
+  - [x] co-23 · n-plus-1-avoidance
+  - [x] co-24 · cli-usage
+- [x] **[AI] A1-examples** — Author `CONTENT/sql-essentials/learning/code/` — one runnable `.sql`/`python3` example per worked example in `syllabus/10-sql-essentials.md` §Worked examples (DD-20/DD-30/DD-34/DD-39). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · create-author-table — verify `.schema` lists column + PK
+  - [x] ex-02 · open-database-cli — verify prompt opens, no tables yet
+  - [x] ex-03 · insert-single-row — verify exactly one row returns
+  - [x] ex-04 · insert-multiple-rows — verify `count(*)` returns 3
+  - [x] ex-05 · select-all-columns — verify every column and row returned
+  - [x] ex-06 · select-projection — verify only `title` appears
+  - [x] ex-07 · where-equality — verify single matching row
+  - [x] ex-08 · where-comparison — verify only rows above threshold
+  - [x] ex-09 · where-and-or — verify combined boolean filtering
+  - [x] ex-10 · where-like-prefix — verify prefix pattern matches
+  - [x] ex-11 · where-in-set — verify set-membership filtering
+  - [x] ex-12 · order-by-ascending — verify alphabetical ordering
+  - [x] ex-13 · order-by-descending — verify most-expensive-first
+  - [x] ex-14 · limit-rows — verify at most two rows
+  - [x] ex-15 · limit-offset-paging — verify second page of two rows
+  - [x] ex-16 · select-distinct — verify duplicate values collapse
+  - [x] ex-17 · type-affinity — verify `'42'` stored as integer
+  - [x] ex-18 · not-null-constraint — verify NOT NULL error
+  - [x] ex-19 · unique-constraint — verify UNIQUE error
+  - [x] ex-20 · default-value — verify default applied
+  - [x] ex-21 · check-constraint — verify negative price rejected
+  - [x] ex-22 · autoincrement-rowid — verify ids auto-assign 1, 2
+  - [x] ex-23 · update-one-row — verify only that row changed
+  - [x] ex-24 · update-all-rows — verify every row changed
+  - [x] ex-25 · delete-row — verify row gone, count drops by one
+  - [x] ex-26 · declare-foreign-key — verify FK clause in `.schema`
+  - [x] ex-27 · enforce-foreign-key — verify orphan rejected
+  - [x] ex-28 · inner-join-two-tables — verify each book pairs with author
+  - [x] ex-29 · python-connect-and-query — verify script prints rows
+  - [x] ex-30 · python-parameterized-insert — verify inserts without interpolation
+  - [x] ex-31 · left-join-unmatched — verify authors with no books show NULL title
+  - [x] ex-32 · join-with-aliases — verify same result more readably
+  - [x] ex-33 · three-table-join — verify combined columns across three relations
+  - [x] ex-34 · group-by-count — verify per-author book counts
+  - [x] ex-35 · group-by-sum — verify per-group totals
+  - [x] ex-36 · group-by-avg — verify per-group averages
+  - [x] ex-37 · min-max-aggregate — verify cheapest and dearest
+  - [x] ex-38 · having-filter-groups — verify only authors with >1 book
+  - [x] ex-39 · where-plus-having — verify row filter before, group filter after
+  - [x] ex-40 · count-star-vs-column — verify column count excludes NULLs
+  - [x] ex-41 · null-is-null — verify rows with unknown year match
+  - [x] ex-42 · null-coalesce — verify NULLs substituted with 0
+  - [x] ex-43 · null-three-valued — verify `= NULL` returns no rows
+  - [x] ex-44 · aggregate-over-join — verify per-author total across join
+  - [x] ex-45 · normalize-repeating-group — verify 1NF/2NF removes repeating group
+  - [x] ex-46 · normalize-transitive-dep — verify 3NF holds one fact per place
+  - [x] ex-47 · python-named-params — verify named binding
+  - [x] ex-48 · python-executemany — verify bulk insert of all rows
+  - [x] ex-49 · python-fetchone-loop — verify streamed row-by-row consumption
+  - [x] ex-50 · python-row-factory — verify column-name access
+  - [x] ex-51 · transaction-commit — verify write persists in new connection
+  - [x] ex-52 · transaction-rollback — verify DB unchanged
+  - [x] ex-53 · transaction-context-manager — verify auto-rollback on raise
+  - [x] ex-54 · injection-safe-vs-unsafe — verify only parameterized form safe
+  - [x] ex-55 · upsert-on-conflict — verify second insert updates
+  - [x] ex-56 · subquery-in-where — verify filtering by subquery result
+  - [x] ex-57 · self-join — verify each employee pairs with manager
+  - [x] ex-58 · case-expression — verify conditional derived column
+  - [x] ex-59 · migration-add-column — verify existing rows gain default
+  - [x] ex-60 · migration-backfill — verify all rows populated
+  - [x] ex-61 · migration-version-tracking — verify `user_version` bumps
+  - [x] ex-62 · n-plus-1-demonstrated — verify N+1 round-trips occur
+  - [x] ex-63 · n-plus-1-fixed-join — verify one query returns same data
+  - [x] ex-64 · n-plus-1-fixed-in — verify single round-trip
+  - [x] ex-65 · composite-primary-key — verify duplicate pair rejected
+  - [x] ex-66 · cascade-delete — verify author's books removed too
+  - [x] ex-67 · restrict-delete — verify delete blocked
+  - [x] ex-68 · savepoint-partial-rollback — verify only inner work undone
+  - [x] ex-69 · python-report-function — verify returned rows match expected
+  - [x] ex-70 · group-concat — verify titles concatenate per group
+  - [x] ex-71 · anti-join-missing — verify authors with zero books isolated
+  - [x] ex-72 · atomic-transfer — verify all-or-nothing transfer
+  - [x] ex-73 · python-dal-module — verify pytest suite green
+  - [x] ex-74 · seed-from-sql-file — verify seeded row count
+  - [x] ex-75 · export-query-to-csv — verify CSV contains result rows
+  - [x] ex-76 · integrity-checks — verify both PRAGMA checks report no problems
+  - [x] ex-77 · design-3nf-schema — verify no transitive dependency remains
+  - [x] ex-78 · correlated-subquery — verify per-row computed count
+  - [x] ex-79 · report-join-group-having — verify matches expected values
+  - [x] ex-80 · pytest-rollback-integration — verify green (row count unchanged)
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/sql-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/sql-essentials/drilling/_index.md` (wt 210) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 11 Gate
 
-- [ ] [AI] `sql-essentials/` complete: `_index.md` wt 200, `learning/_index.md` wt 110,
+- [x] [AI] `sql-essentials/` complete: `_index.md` wt 200, `learning/_index.md` wt 110,
       `drilling/_index.md` wt 210, capstone wt 900; all 24 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -2220,7 +2220,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -2229,7 +2229,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
@@ -2566,144 +2566,144 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Primer · TypeScript † · topic wt 230 · Learn 113 / Drill 213 · **primer**. Template →
 [`syllabus/13-just-enough-typescript.md`](./syllabus/13-just-enough-typescript.md).
 
-- [ ] **[AI] V** — `web-researcher` for `just-enough-typescript`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `just-enough-typescript`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/13-just-enough-typescript.md`](./syllabus/13-just-enough-typescript.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/just-enough-typescript/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/just-enough-typescript/learning/` teaching **every** concept in
       `syllabus/13-just-enough-typescript.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · running-ts
-  - [ ] co-02 · minimal-tsconfig
-  - [ ] co-03 · primitive-types
-  - [ ] co-04 · type-inference
-  - [ ] co-05 · arrays-and-tuples
-  - [ ] co-06 · object-types
-  - [ ] co-07 · type-vs-interface
-  - [ ] co-08 · union-types
-  - [ ] co-09 · literal-types
-  - [ ] co-10 · intersection-types
-  - [ ] co-11 · function-typing
-  - [ ] co-12 · optional-default-rest-params
-  - [ ] co-13 · arrow-and-function-type-expressions
-  - [ ] co-14 · narrowing
-  - [ ] co-15 · type-guards-user-defined
-  - [ ] co-16 · discriminated-unions
-  - [ ] co-17 · generics
-  - [ ] co-18 · unknown-any-never
-  - [ ] co-19 · structural-typing
-  - [ ] co-20 · type-assertions
-  - [ ] co-21 · enums-and-const-assertions
-  - [ ] co-22 · modules-esm
-  - [ ] co-23 · promises-async-await
-  - [ ] co-24 · utility-types
-  - [ ] co-25 · keyof-and-index-signatures
-  - [ ] co-26 · tooling-eslint-prettier
-- [ ] **[AI] A1-examples** — Author `CONTENT/just-enough-typescript/learning/code/` — one runnable file per worked
+  - [x] co-01 · running-ts
+  - [x] co-02 · minimal-tsconfig
+  - [x] co-03 · primitive-types
+  - [x] co-04 · type-inference
+  - [x] co-05 · arrays-and-tuples
+  - [x] co-06 · object-types
+  - [x] co-07 · type-vs-interface
+  - [x] co-08 · union-types
+  - [x] co-09 · literal-types
+  - [x] co-10 · intersection-types
+  - [x] co-11 · function-typing
+  - [x] co-12 · optional-default-rest-params
+  - [x] co-13 · arrow-and-function-type-expressions
+  - [x] co-14 · narrowing
+  - [x] co-15 · type-guards-user-defined
+  - [x] co-16 · discriminated-unions
+  - [x] co-17 · generics
+  - [x] co-18 · unknown-any-never
+  - [x] co-19 · structural-typing
+  - [x] co-20 · type-assertions
+  - [x] co-21 · enums-and-const-assertions
+  - [x] co-22 · modules-esm
+  - [x] co-23 · promises-async-await
+  - [x] co-24 · utility-types
+  - [x] co-25 · keyof-and-index-signatures
+  - [x] co-26 · tooling-eslint-prettier
+- [x] **[AI] A1-examples** — Author `CONTENT/just-enough-typescript/learning/code/` — one runnable file per worked
       example (run via `tsx` or checked with `tsc --noEmit`, DD-20/DD-30), covering **every** example in
       `syllabus/13-just-enough-typescript.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · hello-tsx — verify string prints
-  - [ ] ex-02 · compile-with-tsc — verify emitted `hello.js` runs under node
-  - [ ] ex-03 · minimal-tsconfig — verify `tsc --noEmit` clean
-  - [ ] ex-04 · annotate-primitives — verify matching assignments accepted
-  - [ ] ex-05 · type-error-on-mismatch — verify `tsc` reports the error
-  - [ ] ex-06 · null-under-strict — verify union allows null, bare string rejects
-  - [ ] ex-07 · inference-no-annotation — verify inferred number, string reassign errors
-  - [ ] ex-08 · const-literal-inference — verify literal `"on"` not wide string
-  - [ ] ex-09 · array-type — verify pushing string errors
-  - [ ] ex-10 · readonly-array — verify `push` is compile error
-  - [ ] ex-11 · tuple-type — verify third element errors
-  - [ ] ex-12 · named-tuple — verify labels + arity enforced
-  - [ ] ex-13 · object-type-inline — verify missing field errors at call-site
-  - [ ] ex-14 · optional-property — verify omitting `age` type-checks
-  - [ ] ex-15 · type-alias — verify matching literal satisfies
-  - [ ] ex-16 · interface-declaration — verify conforming object satisfies
-  - [ ] ex-17 · interface-extends — verify Admin requires all three fields
-  - [ ] ex-18 · union-type — verify number + string both assign
-  - [ ] ex-19 · literal-union — verify `"north"` errors
-  - [ ] ex-20 · function-typed — verify non-number arg errors
-  - [ ] ex-21 · void-return — verify returning a value errors
-  - [ ] ex-22 · optional-param — verify one-arg call type-checks
-  - [ ] ex-23 · default-param — verify omitting `exp` uses default
-  - [ ] ex-24 · rest-params — verify variadic OK, string arg errors
-  - [ ] ex-25 · arrow-function-typed — verify returns a number
-  - [ ] ex-26 · function-type-expression — verify mismatch arrow errors
-  - [ ] ex-27 · typed-callback-param — verify element param inferred
-  - [ ] ex-28 · run-typed-script-tsx — verify expected console output
-  - [ ] ex-29 · narrow-with-typeof — verify each branch narrowed
-  - [ ] ex-30 · narrow-truthiness — verify branch is string
-  - [ ] ex-31 · narrow-in-operator — verify branch typed to variant
-  - [ ] ex-32 · narrow-instanceof — verify branch typed Date
-  - [ ] ex-33 · narrow-equality — verify branch narrows to matched literal
-  - [ ] ex-34 · user-defined-type-guard — verify callers narrow after call
-  - [ ] ex-35 · assertion-function — verify code after call treats x as string
-  - [ ] ex-36 · discriminated-union-shape — verify each variant type-checks
-  - [ ] ex-37 · discriminated-switch — verify branch accesses only own fields
-  - [ ] ex-38 · exhaustiveness-never — verify unhandled new variant errors
-  - [ ] ex-39 · state-machine-union — verify accessing data on loading errors
-  - [ ] ex-40 · generic-identity — verify return type matches argument
-  - [ ] ex-41 · generic-array-first — verify `number | undefined` return
-  - [ ] ex-42 · generic-constraint — verify no-`length` argument errors
-  - [ ] ex-43 · generic-default-param — verify omitting type arg uses default
-  - [ ] ex-44 · generic-two-params — verify tuple element types preserved
-  - [ ] ex-45 · generic-interface — verify `Box<number>` requires numeric value
-  - [ ] ex-46 · unknown-requires-narrowing — verify method call errors until narrowed
-  - [ ] ex-47 · any-escapes-checking — verify no compile error (contrast unknown)
-  - [ ] ex-48 · never-from-throw — verify inferred return `never`
-  - [ ] ex-49 · structural-compatibility — verify shape-based compatibility
-  - [ ] ex-50 · excess-property-check — verify excess-property error fires
-  - [ ] ex-51 · structural-interface-match — verify type-checks by shape
-  - [ ] ex-52 · intersection-type — verify Staff requires all fields of both
-  - [ ] ex-53 · intersection-config-merge — verify combined object requires both sets
-  - [ ] ex-54 · as-assertion — verify compiles (noting runtime risk)
-  - [ ] ex-55 · non-null-assertion — verify null asserted away
-  - [ ] ex-56 · const-assertion — verify literal `"dark"` + readonly
-  - [ ] ex-57 · numeric-enum — verify `Color.Red === 0` + reverse mapping
-  - [ ] ex-58 · const-object-union — verify derived literal-union type
-  - [ ] ex-59 · keyof-operator — verify `K` is `"x" | "y"`
-  - [ ] ex-60 · index-signature — verify string keys hold numbers, string value errors
-  - [ ] ex-61 · esm-named-export-import — verify executes via tsx
-  - [ ] ex-62 · esm-default-export — verify default binding resolves
-  - [ ] ex-63 · type-only-import — verify imports with no runtime emit
-  - [ ] ex-64 · re-export-barrel — verify single import path resolves all
-  - [ ] ex-65 · typed-promise — verify `.then` receives number
-  - [ ] ex-66 · async-await-typed — verify awaited value is number
-  - [ ] ex-67 · async-error-typed — verify narrowing caught unknown error
-  - [ ] ex-68 · promise-all-tuple — verify resolved tuple types preserved
-  - [ ] ex-69 · async-discriminated-state — verify each state narrowed at call-site
-  - [ ] ex-70 · utility-partial — verify every field optional
-  - [ ] ex-71 · utility-pick-omit — verify resulting shapes
-  - [ ] ex-72 · utility-record — verify behaves like string index signature
-  - [ ] ex-73 · utility-readonly-required — verify both effects
-  - [ ] ex-74 · utility-returntype — verify extracts return type
-  - [ ] ex-75 · mapped-type — verify transforms every property
-  - [ ] ex-76 · generic-constrained-getter — verify return is indexed property type
-  - [ ] ex-77 · eslint-clean — verify flags unused var, then clean
-  - [ ] ex-78 · prettier-format — verify formatting applied
-  - [ ] ex-79 · tsc-noemit-catches-error — verify fails then fixed
-  - [ ] ex-80 · typed-argv-parsing — verify echoes a passed argument
-  - [ ] ex-81 · end-to-end-typed-fetch — verify valid payload narrows, invalid rejected
-  - [ ] ex-82 · full-typed-module — verify clean compile + expected tsx output
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-typescript/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · hello-tsx — verify string prints
+  - [x] ex-02 · compile-with-tsc — verify emitted `hello.js` runs under node
+  - [x] ex-03 · minimal-tsconfig — verify `tsc --noEmit` clean
+  - [x] ex-04 · annotate-primitives — verify matching assignments accepted
+  - [x] ex-05 · type-error-on-mismatch — verify `tsc` reports the error
+  - [x] ex-06 · null-under-strict — verify union allows null, bare string rejects
+  - [x] ex-07 · inference-no-annotation — verify inferred number, string reassign errors
+  - [x] ex-08 · const-literal-inference — verify literal `"on"` not wide string
+  - [x] ex-09 · array-type — verify pushing string errors
+  - [x] ex-10 · readonly-array — verify `push` is compile error
+  - [x] ex-11 · tuple-type — verify third element errors
+  - [x] ex-12 · named-tuple — verify labels + arity enforced
+  - [x] ex-13 · object-type-inline — verify missing field errors at call-site
+  - [x] ex-14 · optional-property — verify omitting `age` type-checks
+  - [x] ex-15 · type-alias — verify matching literal satisfies
+  - [x] ex-16 · interface-declaration — verify conforming object satisfies
+  - [x] ex-17 · interface-extends — verify Admin requires all three fields
+  - [x] ex-18 · union-type — verify number + string both assign
+  - [x] ex-19 · literal-union — verify `"north"` errors
+  - [x] ex-20 · function-typed — verify non-number arg errors
+  - [x] ex-21 · void-return — verify returning a value errors
+  - [x] ex-22 · optional-param — verify one-arg call type-checks
+  - [x] ex-23 · default-param — verify omitting `exp` uses default
+  - [x] ex-24 · rest-params — verify variadic OK, string arg errors
+  - [x] ex-25 · arrow-function-typed — verify returns a number
+  - [x] ex-26 · function-type-expression — verify mismatch arrow errors
+  - [x] ex-27 · typed-callback-param — verify element param inferred
+  - [x] ex-28 · run-typed-script-tsx — verify expected console output
+  - [x] ex-29 · narrow-with-typeof — verify each branch narrowed
+  - [x] ex-30 · narrow-truthiness — verify branch is string
+  - [x] ex-31 · narrow-in-operator — verify branch typed to variant
+  - [x] ex-32 · narrow-instanceof — verify branch typed Date
+  - [x] ex-33 · narrow-equality — verify branch narrows to matched literal
+  - [x] ex-34 · user-defined-type-guard — verify callers narrow after call
+  - [x] ex-35 · assertion-function — verify code after call treats x as string
+  - [x] ex-36 · discriminated-union-shape — verify each variant type-checks
+  - [x] ex-37 · discriminated-switch — verify branch accesses only own fields
+  - [x] ex-38 · exhaustiveness-never — verify unhandled new variant errors
+  - [x] ex-39 · state-machine-union — verify accessing data on loading errors
+  - [x] ex-40 · generic-identity — verify return type matches argument
+  - [x] ex-41 · generic-array-first — verify `number | undefined` return
+  - [x] ex-42 · generic-constraint — verify no-`length` argument errors
+  - [x] ex-43 · generic-default-param — verify omitting type arg uses default
+  - [x] ex-44 · generic-two-params — verify tuple element types preserved
+  - [x] ex-45 · generic-interface — verify `Box<number>` requires numeric value
+  - [x] ex-46 · unknown-requires-narrowing — verify method call errors until narrowed
+  - [x] ex-47 · any-escapes-checking — verify no compile error (contrast unknown)
+  - [x] ex-48 · never-from-throw — verify inferred return `never`
+  - [x] ex-49 · structural-compatibility — verify shape-based compatibility
+  - [x] ex-50 · excess-property-check — verify excess-property error fires
+  - [x] ex-51 · structural-interface-match — verify type-checks by shape
+  - [x] ex-52 · intersection-type — verify Staff requires all fields of both
+  - [x] ex-53 · intersection-config-merge — verify combined object requires both sets
+  - [x] ex-54 · as-assertion — verify compiles (noting runtime risk)
+  - [x] ex-55 · non-null-assertion — verify null asserted away
+  - [x] ex-56 · const-assertion — verify literal `"dark"` + readonly
+  - [x] ex-57 · numeric-enum — verify `Color.Red === 0` + reverse mapping
+  - [x] ex-58 · const-object-union — verify derived literal-union type
+  - [x] ex-59 · keyof-operator — verify `K` is `"x" | "y"`
+  - [x] ex-60 · index-signature — verify string keys hold numbers, string value errors
+  - [x] ex-61 · esm-named-export-import — verify executes via tsx
+  - [x] ex-62 · esm-default-export — verify default binding resolves
+  - [x] ex-63 · type-only-import — verify imports with no runtime emit
+  - [x] ex-64 · re-export-barrel — verify single import path resolves all
+  - [x] ex-65 · typed-promise — verify `.then` receives number
+  - [x] ex-66 · async-await-typed — verify awaited value is number
+  - [x] ex-67 · async-error-typed — verify narrowing caught unknown error
+  - [x] ex-68 · promise-all-tuple — verify resolved tuple types preserved
+  - [x] ex-69 · async-discriminated-state — verify each state narrowed at call-site
+  - [x] ex-70 · utility-partial — verify every field optional
+  - [x] ex-71 · utility-pick-omit — verify resulting shapes
+  - [x] ex-72 · utility-record — verify behaves like string index signature
+  - [x] ex-73 · utility-readonly-required — verify both effects
+  - [x] ex-74 · utility-returntype — verify extracts return type
+  - [x] ex-75 · mapped-type — verify transforms every property
+  - [x] ex-76 · generic-constrained-getter — verify return is indexed property type
+  - [x] ex-77 · eslint-clean — verify flags unused var, then clean
+  - [x] ex-78 · prettier-format — verify formatting applied
+  - [x] ex-79 · tsc-noemit-catches-error — verify fails then fixed
+  - [x] ex-80 · typed-argv-parsing — verify echoes a passed argument
+  - [x] ex-81 · end-to-end-typed-fetch — verify valid payload narrows, invalid rejected
+  - [x] ex-82 · full-typed-module — verify clean compile + expected tsx output
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-typescript/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/just-enough-typescript/drilling/_index.md` (wt 213) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 14 Gate
 
-- [ ] [AI] `just-enough-typescript/` complete: `_index.md` wt 230, `learning/_index.md` wt 113,
+- [x] [AI] `just-enough-typescript/` complete: `_index.md` wt 230, `learning/_index.md` wt 113,
       `drilling/_index.md` wt 213, capstone wt 900; all 26 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -2711,7 +2711,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -2720,7 +2720,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
