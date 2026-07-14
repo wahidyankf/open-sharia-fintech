@@ -7,8 +7,9 @@ libs/*/_build/
 apps/*/deps/
 apps/*/_build/
 
-# Python virtual environments
+# Python virtual environments (any depth, e.g. nested under content/ for By Example topics)
 apps/*/.venv/
+**/.venv/
 
 # Build outputs
 dist/
@@ -16,6 +17,7 @@ build/
 **/build/
 **/target/
 .next/
+**/.next/
 .nx/
 
 # Static public directories

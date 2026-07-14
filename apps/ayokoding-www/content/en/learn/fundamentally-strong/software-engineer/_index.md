@@ -36,3 +36,7 @@ weight: 1750
 - [10 · SQL Essentials](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials/drilling)
+- [11 · Backend Essentials](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/drilling)
