@@ -34,6 +34,13 @@ public-domain (Tier-1, DD-21).
   param) — both current. Note the SQLite version bundled with a given Python build varies; phrase the
   topic to read `sqlite3.sqlite_version` at runtime rather than asserting a fixed bundled version.
   (sqlite.org / docs.python.org)
+- 2026-07-14 — re-verified: no drift since 2026-07-12. SQLite remains **3.53.3** (2026-06-26, still
+  latest per sqlite.org/changes.html) and public-domain (sqlite.org/copyright.html). Python `sqlite3`
+  API surface (`connect`/`cursor`/`execute`/`commit`/`close`, `?`/`:name` placeholders, `with conn:`
+  auto-commit/rollback, `sqlite3.Row`, `executemany`, `sqlite3.sqlite_version`) unchanged, no
+  deprecations (docs.python.org/3/library/sqlite3.html). UPSERT, foreign-key pragma/CASCADE/RESTRICT,
+  SAVEPOINT/ROLLBACK TO, PRAGMA user_version/integrity_check/foreign_key_check, and CLI dot-commands
+  (`.tables`/`.schema`/`.mode`/`.output`) all confirmed unchanged against sqlite.org primary docs.
 
 ### DD-35 primary-source citations (fetched-and-read)
 

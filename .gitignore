@@ -122,6 +122,7 @@ __pycache__/
 *.pyo
 *.egg-info/
 .ruff_cache/
+.pytest_cache/
 .venv/
 .coverage
 

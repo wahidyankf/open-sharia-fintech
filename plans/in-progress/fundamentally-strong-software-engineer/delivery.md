@@ -2073,126 +2073,126 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · SQL + Python † (SQLite) · topic wt 200 · Learn 110 / Drill 210 · **subject**. Template →
 [`syllabus/10-sql-essentials.md`](./syllabus/10-sql-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `sql-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `sql-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/10-sql-essentials.md`](./syllabus/10-sql-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/sql-essentials/learning/` teaching **every** concept in `syllabus/10-sql-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · relational-model
-  - [ ] co-02 · primary-keys
-  - [ ] co-03 · foreign-keys
-  - [ ] co-04 · constraints
-  - [ ] co-05 · normalization
-  - [ ] co-06 · column-types
-  - [ ] co-07 · ddl-create-table
-  - [ ] co-08 · select-projection-filtering
-  - [ ] co-09 · ordering-and-limiting
-  - [ ] co-10 · insert
-  - [ ] co-11 · update
-  - [ ] co-12 · delete
-  - [ ] co-13 · inner-join
-  - [ ] co-14 · outer-join
-  - [ ] co-15 · aggregation
-  - [ ] co-16 · having-filter
-  - [ ] co-17 · null-semantics
-  - [ ] co-18 · transactions
-  - [ ] co-19 · python-sqlite3-connection
-  - [ ] co-20 · parameterized-queries
-  - [ ] co-21 · cursor-and-results
-  - [ ] co-22 · schema-migration
-  - [ ] co-23 · n-plus-1-avoidance
-  - [ ] co-24 · cli-usage
-- [ ] **[AI] A1-examples** — Author `CONTENT/sql-essentials/learning/code/` — one runnable `.sql`/`python3` example per worked example in `syllabus/10-sql-essentials.md` §Worked examples (DD-20/DD-30/DD-34/DD-39). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · create-author-table — verify `.schema` lists column + PK
-  - [ ] ex-02 · open-database-cli — verify prompt opens, no tables yet
-  - [ ] ex-03 · insert-single-row — verify exactly one row returns
-  - [ ] ex-04 · insert-multiple-rows — verify `count(*)` returns 3
-  - [ ] ex-05 · select-all-columns — verify every column and row returned
-  - [ ] ex-06 · select-projection — verify only `title` appears
-  - [ ] ex-07 · where-equality — verify single matching row
-  - [ ] ex-08 · where-comparison — verify only rows above threshold
-  - [ ] ex-09 · where-and-or — verify combined boolean filtering
-  - [ ] ex-10 · where-like-prefix — verify prefix pattern matches
-  - [ ] ex-11 · where-in-set — verify set-membership filtering
-  - [ ] ex-12 · order-by-ascending — verify alphabetical ordering
-  - [ ] ex-13 · order-by-descending — verify most-expensive-first
-  - [ ] ex-14 · limit-rows — verify at most two rows
-  - [ ] ex-15 · limit-offset-paging — verify second page of two rows
-  - [ ] ex-16 · select-distinct — verify duplicate values collapse
-  - [ ] ex-17 · type-affinity — verify `'42'` stored as integer
-  - [ ] ex-18 · not-null-constraint — verify NOT NULL error
-  - [ ] ex-19 · unique-constraint — verify UNIQUE error
-  - [ ] ex-20 · default-value — verify default applied
-  - [ ] ex-21 · check-constraint — verify negative price rejected
-  - [ ] ex-22 · autoincrement-rowid — verify ids auto-assign 1, 2
-  - [ ] ex-23 · update-one-row — verify only that row changed
-  - [ ] ex-24 · update-all-rows — verify every row changed
-  - [ ] ex-25 · delete-row — verify row gone, count drops by one
-  - [ ] ex-26 · declare-foreign-key — verify FK clause in `.schema`
-  - [ ] ex-27 · enforce-foreign-key — verify orphan rejected
-  - [ ] ex-28 · inner-join-two-tables — verify each book pairs with author
-  - [ ] ex-29 · python-connect-and-query — verify script prints rows
-  - [ ] ex-30 · python-parameterized-insert — verify inserts without interpolation
-  - [ ] ex-31 · left-join-unmatched — verify authors with no books show NULL title
-  - [ ] ex-32 · join-with-aliases — verify same result more readably
-  - [ ] ex-33 · three-table-join — verify combined columns across three relations
-  - [ ] ex-34 · group-by-count — verify per-author book counts
-  - [ ] ex-35 · group-by-sum — verify per-group totals
-  - [ ] ex-36 · group-by-avg — verify per-group averages
-  - [ ] ex-37 · min-max-aggregate — verify cheapest and dearest
-  - [ ] ex-38 · having-filter-groups — verify only authors with >1 book
-  - [ ] ex-39 · where-plus-having — verify row filter before, group filter after
-  - [ ] ex-40 · count-star-vs-column — verify column count excludes NULLs
-  - [ ] ex-41 · null-is-null — verify rows with unknown year match
-  - [ ] ex-42 · null-coalesce — verify NULLs substituted with 0
-  - [ ] ex-43 · null-three-valued — verify `= NULL` returns no rows
-  - [ ] ex-44 · aggregate-over-join — verify per-author total across join
-  - [ ] ex-45 · normalize-repeating-group — verify 1NF/2NF removes repeating group
-  - [ ] ex-46 · normalize-transitive-dep — verify 3NF holds one fact per place
-  - [ ] ex-47 · python-named-params — verify named binding
-  - [ ] ex-48 · python-executemany — verify bulk insert of all rows
-  - [ ] ex-49 · python-fetchone-loop — verify streamed row-by-row consumption
-  - [ ] ex-50 · python-row-factory — verify column-name access
-  - [ ] ex-51 · transaction-commit — verify write persists in new connection
-  - [ ] ex-52 · transaction-rollback — verify DB unchanged
-  - [ ] ex-53 · transaction-context-manager — verify auto-rollback on raise
-  - [ ] ex-54 · injection-safe-vs-unsafe — verify only parameterized form safe
-  - [ ] ex-55 · upsert-on-conflict — verify second insert updates
-  - [ ] ex-56 · subquery-in-where — verify filtering by subquery result
-  - [ ] ex-57 · self-join — verify each employee pairs with manager
-  - [ ] ex-58 · case-expression — verify conditional derived column
-  - [ ] ex-59 · migration-add-column — verify existing rows gain default
-  - [ ] ex-60 · migration-backfill — verify all rows populated
-  - [ ] ex-61 · migration-version-tracking — verify `user_version` bumps
-  - [ ] ex-62 · n-plus-1-demonstrated — verify N+1 round-trips occur
-  - [ ] ex-63 · n-plus-1-fixed-join — verify one query returns same data
-  - [ ] ex-64 · n-plus-1-fixed-in — verify single round-trip
-  - [ ] ex-65 · composite-primary-key — verify duplicate pair rejected
-  - [ ] ex-66 · cascade-delete — verify author's books removed too
-  - [ ] ex-67 · restrict-delete — verify delete blocked
-  - [ ] ex-68 · savepoint-partial-rollback — verify only inner work undone
-  - [ ] ex-69 · python-report-function — verify returned rows match expected
-  - [ ] ex-70 · group-concat — verify titles concatenate per group
-  - [ ] ex-71 · anti-join-missing — verify authors with zero books isolated
-  - [ ] ex-72 · atomic-transfer — verify all-or-nothing transfer
-  - [ ] ex-73 · python-dal-module — verify pytest suite green
-  - [ ] ex-74 · seed-from-sql-file — verify seeded row count
-  - [ ] ex-75 · export-query-to-csv — verify CSV contains result rows
-  - [ ] ex-76 · integrity-checks — verify both PRAGMA checks report no problems
-  - [ ] ex-77 · design-3nf-schema — verify no transitive dependency remains
-  - [ ] ex-78 · correlated-subquery — verify per-row computed count
-  - [ ] ex-79 · report-join-group-having — verify matches expected values
-  - [ ] ex-80 · pytest-rollback-integration — verify green (row count unchanged)
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/sql-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/sql-essentials/learning/` teaching **every** concept in `syllabus/10-sql-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · relational-model
+  - [x] co-02 · primary-keys
+  - [x] co-03 · foreign-keys
+  - [x] co-04 · constraints
+  - [x] co-05 · normalization
+  - [x] co-06 · column-types
+  - [x] co-07 · ddl-create-table
+  - [x] co-08 · select-projection-filtering
+  - [x] co-09 · ordering-and-limiting
+  - [x] co-10 · insert
+  - [x] co-11 · update
+  - [x] co-12 · delete
+  - [x] co-13 · inner-join
+  - [x] co-14 · outer-join
+  - [x] co-15 · aggregation
+  - [x] co-16 · having-filter
+  - [x] co-17 · null-semantics
+  - [x] co-18 · transactions
+  - [x] co-19 · python-sqlite3-connection
+  - [x] co-20 · parameterized-queries
+  - [x] co-21 · cursor-and-results
+  - [x] co-22 · schema-migration
+  - [x] co-23 · n-plus-1-avoidance
+  - [x] co-24 · cli-usage
+- [x] **[AI] A1-examples** — Author `CONTENT/sql-essentials/learning/code/` — one runnable `.sql`/`python3` example per worked example in `syllabus/10-sql-essentials.md` §Worked examples (DD-20/DD-30/DD-34/DD-39). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · create-author-table — verify `.schema` lists column + PK
+  - [x] ex-02 · open-database-cli — verify prompt opens, no tables yet
+  - [x] ex-03 · insert-single-row — verify exactly one row returns
+  - [x] ex-04 · insert-multiple-rows — verify `count(*)` returns 3
+  - [x] ex-05 · select-all-columns — verify every column and row returned
+  - [x] ex-06 · select-projection — verify only `title` appears
+  - [x] ex-07 · where-equality — verify single matching row
+  - [x] ex-08 · where-comparison — verify only rows above threshold
+  - [x] ex-09 · where-and-or — verify combined boolean filtering
+  - [x] ex-10 · where-like-prefix — verify prefix pattern matches
+  - [x] ex-11 · where-in-set — verify set-membership filtering
+  - [x] ex-12 · order-by-ascending — verify alphabetical ordering
+  - [x] ex-13 · order-by-descending — verify most-expensive-first
+  - [x] ex-14 · limit-rows — verify at most two rows
+  - [x] ex-15 · limit-offset-paging — verify second page of two rows
+  - [x] ex-16 · select-distinct — verify duplicate values collapse
+  - [x] ex-17 · type-affinity — verify `'42'` stored as integer
+  - [x] ex-18 · not-null-constraint — verify NOT NULL error
+  - [x] ex-19 · unique-constraint — verify UNIQUE error
+  - [x] ex-20 · default-value — verify default applied
+  - [x] ex-21 · check-constraint — verify negative price rejected
+  - [x] ex-22 · autoincrement-rowid — verify ids auto-assign 1, 2
+  - [x] ex-23 · update-one-row — verify only that row changed
+  - [x] ex-24 · update-all-rows — verify every row changed
+  - [x] ex-25 · delete-row — verify row gone, count drops by one
+  - [x] ex-26 · declare-foreign-key — verify FK clause in `.schema`
+  - [x] ex-27 · enforce-foreign-key — verify orphan rejected
+  - [x] ex-28 · inner-join-two-tables — verify each book pairs with author
+  - [x] ex-29 · python-connect-and-query — verify script prints rows
+  - [x] ex-30 · python-parameterized-insert — verify inserts without interpolation
+  - [x] ex-31 · left-join-unmatched — verify authors with no books show NULL title
+  - [x] ex-32 · join-with-aliases — verify same result more readably
+  - [x] ex-33 · three-table-join — verify combined columns across three relations
+  - [x] ex-34 · group-by-count — verify per-author book counts
+  - [x] ex-35 · group-by-sum — verify per-group totals
+  - [x] ex-36 · group-by-avg — verify per-group averages
+  - [x] ex-37 · min-max-aggregate — verify cheapest and dearest
+  - [x] ex-38 · having-filter-groups — verify only authors with >1 book
+  - [x] ex-39 · where-plus-having — verify row filter before, group filter after
+  - [x] ex-40 · count-star-vs-column — verify column count excludes NULLs
+  - [x] ex-41 · null-is-null — verify rows with unknown year match
+  - [x] ex-42 · null-coalesce — verify NULLs substituted with 0
+  - [x] ex-43 · null-three-valued — verify `= NULL` returns no rows
+  - [x] ex-44 · aggregate-over-join — verify per-author total across join
+  - [x] ex-45 · normalize-repeating-group — verify 1NF/2NF removes repeating group
+  - [x] ex-46 · normalize-transitive-dep — verify 3NF holds one fact per place
+  - [x] ex-47 · python-named-params — verify named binding
+  - [x] ex-48 · python-executemany — verify bulk insert of all rows
+  - [x] ex-49 · python-fetchone-loop — verify streamed row-by-row consumption
+  - [x] ex-50 · python-row-factory — verify column-name access
+  - [x] ex-51 · transaction-commit — verify write persists in new connection
+  - [x] ex-52 · transaction-rollback — verify DB unchanged
+  - [x] ex-53 · transaction-context-manager — verify auto-rollback on raise
+  - [x] ex-54 · injection-safe-vs-unsafe — verify only parameterized form safe
+  - [x] ex-55 · upsert-on-conflict — verify second insert updates
+  - [x] ex-56 · subquery-in-where — verify filtering by subquery result
+  - [x] ex-57 · self-join — verify each employee pairs with manager
+  - [x] ex-58 · case-expression — verify conditional derived column
+  - [x] ex-59 · migration-add-column — verify existing rows gain default
+  - [x] ex-60 · migration-backfill — verify all rows populated
+  - [x] ex-61 · migration-version-tracking — verify `user_version` bumps
+  - [x] ex-62 · n-plus-1-demonstrated — verify N+1 round-trips occur
+  - [x] ex-63 · n-plus-1-fixed-join — verify one query returns same data
+  - [x] ex-64 · n-plus-1-fixed-in — verify single round-trip
+  - [x] ex-65 · composite-primary-key — verify duplicate pair rejected
+  - [x] ex-66 · cascade-delete — verify author's books removed too
+  - [x] ex-67 · restrict-delete — verify delete blocked
+  - [x] ex-68 · savepoint-partial-rollback — verify only inner work undone
+  - [x] ex-69 · python-report-function — verify returned rows match expected
+  - [x] ex-70 · group-concat — verify titles concatenate per group
+  - [x] ex-71 · anti-join-missing — verify authors with zero books isolated
+  - [x] ex-72 · atomic-transfer — verify all-or-nothing transfer
+  - [x] ex-73 · python-dal-module — verify pytest suite green
+  - [x] ex-74 · seed-from-sql-file — verify seeded row count
+  - [x] ex-75 · export-query-to-csv — verify CSV contains result rows
+  - [x] ex-76 · integrity-checks — verify both PRAGMA checks report no problems
+  - [x] ex-77 · design-3nf-schema — verify no transitive dependency remains
+  - [x] ex-78 · correlated-subquery — verify per-row computed count
+  - [x] ex-79 · report-join-group-having — verify matches expected values
+  - [x] ex-80 · pytest-rollback-integration — verify green (row count unchanged)
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/sql-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/sql-essentials/drilling/_index.md` (wt 210) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 11 Gate
 
-- [ ] [AI] `sql-essentials/` complete: `_index.md` wt 200, `learning/_index.md` wt 110,
+- [x] [AI] `sql-essentials/` complete: `_index.md` wt 200, `learning/_index.md` wt 110,
       `drilling/_index.md` wt 210, capstone wt 900; all 24 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

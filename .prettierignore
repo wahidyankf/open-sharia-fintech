@@ -56,3 +56,11 @@ apps/*/coverage/
 
 # Raw design reference files (prototype source, not production code)
 plans/**/raw/
+
+# ayokoding-www tutorial example-code .sql files: these are sqlite3 CLI REPL
+# scripts (they legitimately embed dot-commands like `.headers`/`.mode`/`.tables`,
+# which are not valid SQL and which prettier-plugin-sql cannot parse), not
+# portable database-migration SQL. Real migration .sql files (e.g.
+# apps/organiclever-be/db/migrations/, apps/ose-be/db/migrations/) are
+# intentionally NOT covered by this exclusion and remain prettier-formatted.
+apps/ayokoding-www/content/**/code/**/*.sql

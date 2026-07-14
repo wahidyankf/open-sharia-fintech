@@ -23,3 +23,6 @@ weight: 1750
 - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)
+- [10 · SQL Essentials](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials/drilling)
