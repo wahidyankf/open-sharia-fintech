@@ -23,3 +23,7 @@ weight: 1750
 - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)
+- [7 · Data Structures & Algorithms Essentials](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/drilling)

@@ -13,3 +13,4 @@ weight: 107
   - [Pass 0 Capstone · Forge-Ready](/en/c/learn/fundamentally-strong/software-engineer/capstone-forge-ready)
   - [4 · Just Enough Python](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python)
   - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
+  - [7 · Data Structures & Algorithms Essentials](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials)
