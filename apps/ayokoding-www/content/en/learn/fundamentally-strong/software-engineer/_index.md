@@ -23,3 +23,6 @@ weight: 1750
 - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)
+- [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/project-management/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/project-management/drilling)
