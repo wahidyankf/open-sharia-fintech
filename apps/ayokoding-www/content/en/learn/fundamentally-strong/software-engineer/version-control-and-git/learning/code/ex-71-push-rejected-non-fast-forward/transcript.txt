@@ -1,0 +1,9 @@
+warning: You appear to have cloned an empty repository.
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.ViwAutGld0/remote.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.ViwAutGld0/remote.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.

@@ -1,0 +1,9 @@
+diff --git a/file.txt b/file.txt
+index 59c8536..b1005af 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1,2 +1,4 @@
+ base
+ change one
++change two
++change three

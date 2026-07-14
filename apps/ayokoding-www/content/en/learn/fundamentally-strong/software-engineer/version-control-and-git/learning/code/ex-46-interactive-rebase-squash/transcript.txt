@@ -1,0 +1,16 @@
+7935489 commit three
+028c09f commit two
+1b163d9 commit one
+c646364 initial
+[detached HEAD b76f6dd] commit one
+ Date: Tue Jul 14 12:27:36 2026 +0700
+ 1 file changed, 3 insertions(+)
+Successfully rebased and updated refs/heads/main.
+b76f6dd commit one
+c646364 initial
+commit one
+
+commit two
+
+commit three
+

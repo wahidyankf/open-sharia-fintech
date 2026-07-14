@@ -1,0 +1,8 @@
+[
+  { "id": "compile", "priority": 3, "deps": [] },
+  { "id": "lint", "priority": 5, "deps": [] },
+  { "id": "unit_test", "priority": 4, "deps": ["compile"] },
+  { "id": "integration_test", "priority": 2, "deps": ["compile", "lint"] },
+  { "id": "package", "priority": 1, "deps": ["unit_test", "integration_test"] },
+  { "id": "deploy", "priority": 1, "deps": ["package"] }
+]

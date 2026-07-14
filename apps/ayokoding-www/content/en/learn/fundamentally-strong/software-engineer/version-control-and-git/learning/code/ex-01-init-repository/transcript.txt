@@ -1,0 +1,11 @@
+Initialized empty Git repository in /private/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.48D1ujQpDg/.git/
+.
+..
+config
+description
+HEAD
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)

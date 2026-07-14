@@ -1,0 +1,2 @@
+Saved working directory and index state On main: wip: half-done feature
+stash@{0}: On main: wip: half-done feature

@@ -1,0 +1,9 @@
+warning: You appear to have cloned an empty repository.
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.4rLcWpHo2R/remote
+   057607c..4262b36  main       -> origin/main
+Updating 057607c..4262b36
+Fast-forward
+ file.txt | 1 +
+ 1 file changed, 1 insertion(+)
+4262b36 second commit
+057607c initial

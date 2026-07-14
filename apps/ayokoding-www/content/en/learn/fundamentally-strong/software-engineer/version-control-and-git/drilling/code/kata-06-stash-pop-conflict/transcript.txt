@@ -1,0 +1,20 @@
+=== BUGGY: forgetting a stash exists, making an UNRELATED edit to the same file, then popping ===
+error: Your local changes to the following files would be overwritten by merge:
+	file.txt
+Please commit your changes or stash them before you merge.
+Aborting
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   file.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+The stash entry is kept in case you need it again.
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+=== FIX: git stash list BEFORE editing, or resolve the conflict like any other (co-14) ===
+base
+a different, newer edit

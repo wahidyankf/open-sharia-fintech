@@ -1,0 +1,13 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+error: could not apply b7fd775... feature edits line
+hint: Resolve all conflicts manually, mark them as resolved with
+hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+hint: You can instead skip this commit: run "git rebase --skip".
+hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+Could not apply b7fd775... feature edits line
+b7fd775 feature edits line
+c646364 initial
+feature tip identical to pre-rebase hash: TRUE
+On branch feature
+nothing to commit, working tree clean

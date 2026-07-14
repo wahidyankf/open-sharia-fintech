@@ -1,0 +1,10 @@
+Merge made by the 'ort' strategy.
+ a.txt | 1 +
+ 1 file changed, 1 insertion(+)
+tree a9181d5ebdd78552aa0301d66ae7595dbd119c37
+parent 4c445cd71b33206146bb90740e6078ee0960643b
+parent b72f3807b728ce6f1ca0086f292e8fc5e697e2fd
+author Dev <dev@example.com> 1784006854 +0700
+committer Dev <dev@example.com> 1784006854 +0700
+
+Merge branch 'feature'

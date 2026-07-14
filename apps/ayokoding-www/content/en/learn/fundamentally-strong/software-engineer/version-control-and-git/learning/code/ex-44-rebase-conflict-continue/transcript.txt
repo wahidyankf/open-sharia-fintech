@@ -1,0 +1,29 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+error: could not apply b24bc0e... feature edits line
+hint: Resolve all conflicts manually, mark them as resolved with
+hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+hint: You can instead skip this commit: run "git rebase --skip".
+hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+Could not apply b24bc0e... feature edits line
+interactive rebase in progress; onto b13a2e8
+Last command done (1 command done):
+   pick b24bc0e feature edits line
+No commands remaining.
+You are currently rebasing branch 'feature' on 'b13a2e8'.
+  (fix conflicts and then run "git rebase --continue")
+  (use "git rebase --skip" to skip this patch)
+  (use "git rebase --abort" to check out the original branch)
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both modified:   file.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[detached HEAD ee6300c] feature edits line
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Successfully rebased and updated refs/heads/feature.
+* ee6300c feature edits line
+* b13a2e8 main edits line
+* ce3db91 initial

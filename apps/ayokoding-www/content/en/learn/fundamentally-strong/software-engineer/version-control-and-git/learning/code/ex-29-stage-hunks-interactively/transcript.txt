@@ -1,0 +1,41 @@
+diff --git a/file.txt b/file.txt
+index 0ff3bbb..f8f2e1a 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1,5 +1,5 @@
+ 1
+-2
++2 (edited)
+ 3
+ 4
+ 5
+(1/2) Stage this hunk [y,n,q,a,d,j,J,g,/,e,?]? @@ -16,5 +16,5 @@
+ 16
+ 17
+ 18
+-19
++19 (edited)
+ 20
+(2/2) Stage this hunk [y,n,q,a,d,K,g,/,e,?]? 
+diff --git a/file.txt b/file.txt
+index 0ff3bbb..ff90fc7 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1,5 +1,5 @@
+ 1
+-2
++2 (edited)
+ 3
+ 4
+ 5
+diff --git a/file.txt b/file.txt
+index ff90fc7..f8f2e1a 100644
+--- a/file.txt
++++ b/file.txt
+@@ -16,5 +16,5 @@
+ 16
+ 17
+ 18
+-19
++19 (edited)
+ 20

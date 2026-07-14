@@ -1,0 +1,5 @@
+To ../remote.git
+ * [new branch]      feature -> feature
+branch 'feature' set up to track 'origin/feature'.
+* feature 431fb08 [origin/feature] feature work
+  main    1412ef2 initial
