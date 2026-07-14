@@ -127,8 +127,9 @@ const user: User = { id: 1, name: "Ada" }; // => User is used only as a type ann
 console.log(user); // => Output: { id: 1, name: 'Ada' }
 ```
 
-**Run**: `tsc -p tsconfig.json` (this example's `tsconfig.json` sets `outDir: "dist"`, so it actually
-emits, unlike most examples in this primer) then `tsx main.ts`
+**Run**: `tsc -p tsconfig.json && ls dist && tsx main.ts` (this example's `tsconfig.json` sets
+`outDir: "dist"`, so it actually emits, unlike most examples in this primer -- `ls dist` is what
+produces the first two `Output` lines below)
 
 **Output**:
 
@@ -473,7 +474,7 @@ const patch: PartialUser = { name: "Ada" }; // => id may be omitted -- Partial m
 console.log(patch); // => Output: { name: 'Ada' }
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -510,7 +511,7 @@ const rest: UserWithoutId = { name: "Ada", email: "ada@example.com" };
 console.log(idOnly, rest); // => Output: { id: 1 } { name: 'Ada', email: 'ada@example.com' }
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -545,7 +546,7 @@ const scores: Scores = { alice: 90, bob: 85 }; // => arbitrary string keys, all 
 console.log(scores.alice); // => Output: 90
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -585,7 +586,7 @@ const frozen: Readonly<Config> = { mode: "dark" }; // => every field becomes rea
 console.log(frozen.mode); // => Output: dark
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -663,7 +664,7 @@ const u: MakeUserResult = { id: 2, name: "Grace" }; // => matches makeUser's ret
 console.log(u); // => Output: { id: 2, name: 'Grace' }
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -700,7 +701,7 @@ const changed: Flags<User> = { id: true, name: false }; // => id and name, both 
 console.log(changed); // => Output: { id: true, name: false }
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
@@ -740,7 +741,7 @@ const userName = get(user, "name"); // => userName's type is inferred as string,
 console.log(userName); // => Output: Ada
 ```
 
-**Run**: `tsc --noEmit example.ts && tsx example.ts`
+**Run**: `tsc --noEmit --skipLibCheck example.ts && tsx example.ts`
 
 **Output**:
 
