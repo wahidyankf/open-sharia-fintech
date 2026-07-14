@@ -15,6 +15,8 @@ weight: 1750
 - [3 · Extending Neovim](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim/drilling)
+- [Pass 0 Capstone · Forge-Ready](/en/c/learn/fundamentally-strong/software-engineer/capstone-forge-ready)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-forge-ready/overview)
 - [4 · Just Enough Python](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python/drilling)
