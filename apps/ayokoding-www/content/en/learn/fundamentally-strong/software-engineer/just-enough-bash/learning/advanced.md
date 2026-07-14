@@ -626,6 +626,9 @@ rm $file                   # => BUG: $file is unquoted, so it word-splits on the
 
 Did you mean:
 rm "$file"                   # => BUG: $file is unquoted, so it word-splits on the space at expansion time
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...
 ```
 
 **Key takeaway**: `rm $file` with `file="not a real file.txt"` does not do what it looks like -- word-splitting turns the unquoted expansion into three separate arguments (`not`, `a`, `real file.txt`), and `shellcheck` catches exactly this class of bug as `SC2086`, without ever running the script.
