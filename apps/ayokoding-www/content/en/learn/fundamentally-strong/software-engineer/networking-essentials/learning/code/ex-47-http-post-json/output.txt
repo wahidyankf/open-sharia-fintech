@@ -1,0 +1,6 @@
+{
+  "data": {},
+  "json": {"x": 1},
+  "headers": {"content-type": "application/json"},
+  "url": "https://postman-echo.com/post"
+}

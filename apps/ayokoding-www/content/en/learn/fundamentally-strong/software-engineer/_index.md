@@ -30,3 +30,7 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/drilling)
+- [12 · Networking Essentials](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials/drilling)

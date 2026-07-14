@@ -1,0 +1,8 @@
+PING example.com (172.66.147.243): 56 data bytes
+64 bytes from 172.66.147.243: icmp_seq=0 ttl=51 time=22.610 ms
+64 bytes from 172.66.147.243: icmp_seq=1 ttl=51 time=22.558 ms
+64 bytes from 172.66.147.243: icmp_seq=2 ttl=51 time=66.973 ms
+
+--- example.com ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 22.558/37.380/66.973/20.925 ms

@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Date: Tue, 14 Jul 2026 09:58:33 GMT
+Content-Type: text/html
+Connection: keep-alive
+Server: cloudflare
+Last-Modified: Wed, 01 Jul 2026 17:50:18 GMT
+Allow: GET, HEAD
+Accept-Ranges: bytes
+Age: 2
+Cf-Cache-Status: HIT
+CF-RAY: a1afab6dbf29fde2-SIN

@@ -1,0 +1,5 @@
+example.com has address 172.66.147.243
+example.com has address 104.20.23.154
+example.com has IPv6 address 2606:4700:10::ac42:93f3
+example.com has IPv6 address 2606:4700:10::6814:179a
+example.com mail is handled by 0 .

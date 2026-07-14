@@ -1,0 +1,10 @@
+HTTP/2 200
+date: Tue, 14 Jul 2026 10:24:52 GMT
+content-type: text/html
+server: cloudflare
+last-modified: Wed, 01 Jul 2026 17:50:18 GMT
+allow: GET, HEAD
+accept-ranges: bytes
+age: 4524
+cf-cache-status: HIT
+cf-ray: a1afd1f52861ce23-SIN

@@ -1,0 +1,17 @@
+; <<>> DiG 9.10.6 <<>> example.com A
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 29242
+;; flags: qr rd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		42	IN	A	104.20.23.154
+example.com.		42	IN	A	172.66.147.243
+
+;; Query time: 3 msec
+;; SERVER: 100.100.100.100#53(100.100.100.100)
+;; WHEN: Tue Jul 14 16:56:12 WIB 2026
+;; MSG SIZE  rcvd: 72

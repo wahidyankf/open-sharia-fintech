@@ -35,13 +35,28 @@ sockets intro, all from the terminal. OSI layering, subnetting, congestion contr
   `create_connection()`) unchanged; `curl -v` verbose format (`>` sent, `<` received, `*` info) unchanged;
   **TLS 1.3 (RFC 8446)** is current, 1-RTT handshake description accurate. `dig` output format stable but
   not primary-source re-quoted — spot-check `man dig` at authoring. (docs.python.org / ietf.org)
+- 2026-07-14 — re-verified (pre-authoring `web-researcher` sweep, Phase 13): Python `socket` TCP API
+  (`bind`/`listen`/`accept`/`connect`, `create_connection()`) still matches
+  `docs.python.org/3/library/socket.html` (Python 3.14 docs); `curl -v` verbose format (`>` sent, `<`
+  received, `*` info) unchanged; RFC 9293 (TCP) still current, not superseded; RFC 9110 (HTTP semantics)
+  still current; RFC 9112 (HTTP/1.1 message syntax) still current but **updated** (not obsoleted) by
+  [RFC 9931](https://www.rfc-editor.org/rfc/rfc9931) — a narrow `CONNECT`-proxy security addendum that
+  doesn't change request/status-line ABNF, no correction needed; AAAA still RFC 3596; `nc -l <port>`
+  positional-port syntax confirmed current on OpenBSD per
+  [man.openbsd.org/nc.1](https://man.openbsd.org/nc.1); IANA ports 80/443/53/22 confirmed
+  http/https/domain/ssh unchanged. **Correction**: RFC 8446 (TLS 1.3) has been obsoleted by
+  [RFC 9846](https://www.rfc-editor.org/rfc/rfc9846) (E. Rescorla, published 2026, confirmed by direct
+  fetch of both `rfc-editor.org/rfc/rfc8446` — "This RFC is now obsolete, see RFC 9846" — and
+  `rfc-editor.org/rfc/rfc9846` itself) — a "bis" revision retaining the same TLS 1.3 version number and
+  1-RTT handshake, so no worked-example content changes needed; the DD-35 TLS citation below is corrected
+  accordingly. (docs.python.org / ietf.org / iana.org / man.openbsd.org)
 
 ### DD-35 primary-source citations (fetched-and-read)
 
 > Every claim below traces to a primary source fetched and read in the retroactive grounding sweep
-> (2026-07-12, `web-researcher`). Sources: IETF RFCs, IANA port registry, `docs.python.org`, curl/OpenSSL/
-> OpenBSD man pages, ISC BIND docs. All checkable claims verified; no corrections (advisory coverage notes
-> below).
+> (2026-07-12, `web-researcher`), re-verified 2026-07-14 (Phase 13 pre-authoring sweep). Sources: IETF
+> RFCs, IANA port registry, `docs.python.org`, curl/OpenSSL/OpenBSD man pages, ISC BIND docs. All
+> checkable claims verified; one correction applied 2026-07-14 (TLS RFC citation, see below).
 
 - **Transport (co-06/07/08)** — TCP three-way handshake + "reliable, in-order, byte-stream" per
   **[RFC 9293](https://www.rfc-editor.org/rfc/rfc9293)** (W. Eddy ed., 2022, obsoletes 793 — file correctly
@@ -54,7 +69,10 @@ sockets intro, all from the terminal. OSI layering, subnetting, congestion contr
   [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110). (These HTTP RFCs govern ~25 examples but aren't in
   Read more — advisory only; every claim checks out against them.)
 - **TLS + ports (co-05/17)** — 1-RTT TLS 1.3 full handshake per
-  [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446) §2; ports 80/443/53/22 (http/https/domain/ssh) per the
+  [RFC 9846](https://www.rfc-editor.org/rfc/rfc9846) §2 (**corrected 2026-07-14**: RFC 8446 was obsoleted by
+  RFC 9846 in 2026 — a minor, backward-compatible "bis" revision keeping the same TLS 1.3 version number
+  and 1-RTT handshake, so no example content changes needed); ports 80/443/53/22 (http/https/domain/ssh)
+  confirmed unchanged per the
   [IANA registry](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).
 - **DNS (co-04, Read more)** — A/CNAME/MX/NS/TXT per [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035)
   (Mockapetris, 1987); **AAAA is RFC 3596** (not 1035 — file does not misattribute it); `dig +trace`

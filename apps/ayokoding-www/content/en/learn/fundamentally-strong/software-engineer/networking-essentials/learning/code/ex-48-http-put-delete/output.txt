@@ -1,0 +1,5 @@
+$ curl -s -X PUT https://postman-echo.com/put -d "a=1"
+{"args": {}, "data": "", "form": {"a": "1"}, "json": {"a": "1"}, "url": "https://postman-echo.com/put"}
+
+$ curl -s -X DELETE https://postman-echo.com/delete
+{"args": {}, "data": "", "form": {}, "json": null, "url": "https://postman-echo.com/delete"}

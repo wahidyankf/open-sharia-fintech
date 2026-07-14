@@ -1,0 +1,5 @@
+scheme: https
+host: host
+port: 443
+path: /path
+query: q=1

@@ -1,0 +1,8 @@
+{
+  "args": {},
+  "data": "",
+  "files": {},
+  "form": {"a": "1", "b": "2"},
+  "json": {"a": "1", "b": "2"},
+  "url": "https://postman-echo.com/post"
+}

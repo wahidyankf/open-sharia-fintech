@@ -1,0 +1,5 @@
+* ALPN: curl offers h2,http/1.1
+* ALPN: server accepted h2
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256
+*  subject: CN=example.com
+*  issuer: C=US; O=SSL Corporation; CN=Cloudflare TLS Issuing ECC CA 3

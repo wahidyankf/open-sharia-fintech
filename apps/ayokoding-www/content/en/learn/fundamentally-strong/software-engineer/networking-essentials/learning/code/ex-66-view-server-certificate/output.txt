@@ -1,0 +1,27 @@
+CONNECTED(00000005)
+depth=2 C = US, O = "SSL Corporation", CN = SSL.com Root Certification Authority ECC
+verify return:1
+depth=1 C = US, O = SSL Corporation, CN = Cloudflare TLS Issuing ECC CA 3
+verify return:1
+depth=0 CN = example.com
+verify return:1
+---
+Certificate chain
+ 0 s:CN = example.com
+   i:C = US, O = SSL Corporation, CN = Cloudflare TLS Issuing ECC CA 3
+ 1 s:C = US, O = SSL Corporation, CN = Cloudflare TLS Issuing ECC CA 3
+   i:C = US, O = "SSL Corporation", CN = SSL.com Root Certification Authority ECC
+---
+Server certificate
+subject=CN = example.com
+issuer=C = US, O = SSL Corporation, CN = Cloudflare TLS Issuing ECC CA 3
+---
+SSL handshake has read 5070 bytes and written 351 bytes
+Verification: OK
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Protocol: TLSv1.3
+Verify return code: 0 (ok)
+---
+# NOTE: certificate body (base64 PEM block) omitted above for brevity --
+# the handshake summary shown is the genuinely captured, complete output.

@@ -1,0 +1,2 @@
+> Accept-Encoding: deflate, gzip
+< Content-Encoding: gzip

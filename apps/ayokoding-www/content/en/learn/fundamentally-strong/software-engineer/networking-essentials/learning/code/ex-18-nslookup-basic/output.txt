@@ -1,0 +1,9 @@
+;; Got recursion not available from 100.100.100.100, trying next server
+Server:		fd7a:115c:a1e0::53
+Address:	fd7a:115c:a1e0::53#53
+
+Non-authoritative answer:
+Name:	example.com
+Address: 172.66.147.243
+Name:	example.com
+Address: 104.20.23.154

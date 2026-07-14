@@ -1,0 +1,16 @@
+HTTP/1.1 302 Found
+location: https://go.dev/
+x-cloud-trace-context: 2a3b2199ed04ce268e09df3db0ec5d30
+date: Tue, 14 Jul 2026 09:56:37 GMT
+content-type: text/html
+server: Google Frontend
+Transfer-Encoding: chunked
+
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+vary: Accept-Encoding
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-cloud-trace-context: 6180bb4d8c0005627dfdb633ddb4789e
+date: Tue, 14 Jul 2026 09:56:38 GMT
+server: Google Frontend
+Transfer-Encoding: chunked

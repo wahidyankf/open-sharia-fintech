@@ -1,0 +1,7 @@
+$ curl -v --http1.1 http://example.com 2>&1 1>/dev/null | grep -E "Trying|Connected"
+*   Trying 172.66.147.243:80...
+* Connected to example.com (172.66.147.243) port 80
+
+$ curl -v --http1.1 https://example.com 2>&1 1>/dev/null | grep -E "Trying|Connected"
+*   Trying 104.20.23.154:443...
+* Connected to example.com (104.20.23.154) port 443

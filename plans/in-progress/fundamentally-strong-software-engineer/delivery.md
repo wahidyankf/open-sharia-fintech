@@ -2394,130 +2394,130 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 220 · Learn 112 / Drill 212 · **subject**. Template →
 [`syllabus/12-networking-essentials.md`](./syllabus/12-networking-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `networking-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `networking-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/12-networking-essentials.md`](./syllabus/12-networking-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/networking-essentials/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/networking-essentials/learning/` teaching **every** concept in
       `syllabus/12-networking-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · client-server-model
-  - [ ] co-02 · url-anatomy
-  - [ ] co-03 · dns-resolution
-  - [ ] co-04 · dns-record-types
-  - [ ] co-05 · ip-and-ports
-  - [ ] co-06 · icmp-ping
-  - [ ] co-07 · tcp-connection
-  - [ ] co-08 · udp-datagram
-  - [ ] co-09 · tcp-vs-udp
-  - [ ] co-10 · sockets-api
-  - [ ] co-11 · request-response-framing
-  - [ ] co-12 · http-request-structure
-  - [ ] co-13 · http-response-structure
-  - [ ] co-14 · http-methods
-  - [ ] co-15 · http-status-codes
-  - [ ] co-16 · http-headers
-  - [ ] co-17 · http-vs-https-tls
-  - [ ] co-18 · redirects
-  - [ ] co-19 · curl-tooling
-  - [ ] co-20 · dns-tooling
-  - [ ] co-21 · connection-inspection
-  - [ ] co-22 · content-negotiation
-  - [ ] co-23 · stdlib-http-client
-- [ ] **[AI] A1-examples** — Author `CONTENT/networking-essentials/learning/code/` — one runnable CLI/socket recipe
+  - [x] co-01 · client-server-model
+  - [x] co-02 · url-anatomy
+  - [x] co-03 · dns-resolution
+  - [x] co-04 · dns-record-types
+  - [x] co-05 · ip-and-ports
+  - [x] co-06 · icmp-ping
+  - [x] co-07 · tcp-connection
+  - [x] co-08 · udp-datagram
+  - [x] co-09 · tcp-vs-udp
+  - [x] co-10 · sockets-api
+  - [x] co-11 · request-response-framing
+  - [x] co-12 · http-request-structure
+  - [x] co-13 · http-response-structure
+  - [x] co-14 · http-methods
+  - [x] co-15 · http-status-codes
+  - [x] co-16 · http-headers
+  - [x] co-17 · http-vs-https-tls
+  - [x] co-18 · redirects
+  - [x] co-19 · curl-tooling
+  - [x] co-20 · dns-tooling
+  - [x] co-21 · connection-inspection
+  - [x] co-22 · content-negotiation
+  - [x] co-23 · stdlib-http-client
+- [x] **[AI] A1-examples** — Author `CONTENT/networking-essentials/learning/code/` — one runnable CLI/socket recipe
       (Python + `curl`/`dig`/`nc` transcript) per worked example (DD-20/DD-30), covering **every** example in
       `syllabus/12-networking-essentials.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · curl-a-url — verify HTML body prints
-  - [ ] ex-02 · curl-verbose — verify `>` request + `<` response lines print
-  - [ ] ex-03 · curl-headers-only — verify only status + response headers (no body)
-  - [ ] ex-04 · read-status-line — verify a `2xx` status
-  - [ ] ex-05 · identify-request-line — verify method + path + version
-  - [ ] ex-06 · inspect-response-headers — verify `Content-Type`/`Content-Length`
-  - [ ] ex-07 · url-anatomy-breakdown — verify each component
-  - [ ] ex-08 · default-ports — verify HTTP→80, HTTPS→443
-  - [ ] ex-09 · ping-host — verify three ICMP replies with RTT
-  - [ ] ex-10 · ping-shows-ip — verify resolved IP printed
-  - [ ] ex-11 · dig-a-record — verify ANSWER shows A-record IP
-  - [ ] ex-12 · dig-short — verify only IP prints
-  - [ ] ex-13 · dig-aaaa — verify IPv6 (or empty ANSWER)
-  - [ ] ex-14 · dig-mx — verify MX records with priorities
-  - [ ] ex-15 · dig-ns — verify authoritative nameservers
-  - [ ] ex-16 · dig-cname — verify CNAME alias resolves
-  - [ ] ex-17 · dig-txt — verify TXT records print
-  - [ ] ex-18 · nslookup-basic — verify server + resolved address
-  - [ ] ex-19 · host-command — verify A/AAAA/MX summary
-  - [ ] ex-20 · dig-trace — verify iterative root→authoritative resolution
-  - [ ] ex-21 · curl-follow-redirect — verify `3xx` then final `200`
-  - [ ] ex-22 · curl-status-404 — verify prints `404`
-  - [ ] ex-23 · curl-user-agent — verify `User-Agent` request header sent
-  - [ ] ex-24 · curl-custom-header — verify custom header in request
-  - [ ] ex-25 · curl-timing — verify total-time figure prints
-  - [ ] ex-26 · curl-head-method — verify headers, no body
-  - [ ] ex-27 · well-known-ports — verify 80/443/22/53 associations
-  - [ ] ex-28 · resolve-then-curl-by-ip — verify page loads by IP
-  - [ ] ex-29 · tcp-echo-server — verify starts + accepts connection
-  - [ ] ex-30 · tcp-echo-client — verify receives echoed line
-  - [ ] ex-31 · socket-bind-listen-accept — verify `accept` blocks until connect
-  - [ ] ex-32 · socket-connect-send-recv — verify full round-trip
-  - [ ] ex-33 · line-framing — verify partial reads reassemble into lines
-  - [ ] ex-34 · handle-partial-recv — verify large message intact
-  - [ ] ex-35 · multi-message-session — verify each line responds in order
-  - [ ] ex-36 · command-protocol — verify `PING`→`PONG`/`TIME` replies
-  - [ ] ex-37 · graceful-close — verify server loop ends cleanly
-  - [ ] ex-38 · reuseaddr-option — verify immediate restart, no bind error
-  - [ ] ex-39 · one-client-at-a-time — verify second client waits then served
-  - [ ] ex-40 · concurrent-clients-threads — verify two clients served at once
-  - [ ] ex-41 · raw-http-with-nc — verify raw HTTP response prints
-  - [ ] ex-42 · nc-listen-server — verify raw request bytes in listener
-  - [ ] ex-43 · handcraft-http-request — verify `200` response returns
-  - [ ] ex-44 · read-http-response-parts — verify status/headers/body identifiable
-  - [ ] ex-45 · http-get-method — verify body returned
-  - [ ] ex-46 · http-post-form — verify server receives POST body
-  - [ ] ex-47 · http-post-json — verify JSON posted with content-type
-  - [ ] ex-48 · http-put-delete — verify each method reaches endpoint
-  - [ ] ex-49 · status-class-tour — verify 200/301/404/500 classes
-  - [ ] ex-50 · content-length-header — verify matches body byte size
-  - [ ] ex-51 · accept-header-negotiation — verify server returns JSON
-  - [ ] ex-52 · gzip-encoding — verify `Accept-Encoding: gzip` + compressed response
-  - [ ] ex-53 · chunked-transfer — verify `Transfer-Encoding: chunked`, no Content-Length
-  - [ ] ex-54 · udp-echo-server — verify echoes a datagram
-  - [ ] ex-55 · udp-echo-client — verify echo returns
-  - [ ] ex-56 · udp-no-handshake — verify no handshake, possibly no reply
-  - [ ] ex-57 · tcp-vs-udp-contrast — verify TCP ordered, UDP may drop/reorder
-  - [ ] ex-58 · measure-latency-socket — verify millisecond figure prints
-  - [ ] ex-59 · port-scan-connect — verify open success vs `ConnectionRefusedError`
-  - [ ] ex-60 · resolve-in-python — verify host resolves to IP in code
-  - [ ] ex-61 · stdlib-http-client-get — verify status + body
-  - [ ] ex-62 · urllib-request — verify response code + read body
-  - [ ] ex-63 · parse-status-and-headers — verify status code + header list
-  - [ ] ex-64 · https-with-tls — verify TLS-encrypted `200`
-  - [ ] ex-65 · inspect-tls-handshake — verify negotiated `TLSv1.3` protocol/cipher
-  - [ ] ex-66 · view-server-certificate — verify certificate chain prints
-  - [ ] ex-67 · http-vs-https-contrast — verify 443 encrypted, 80 plaintext
-  - [ ] ex-68 · follow-redirect-manually — verify final resource via `Location`
-  - [ ] ex-69 · minimal-http-client-from-socket — verify real HTTP status line
-  - [ ] ex-70 · narrate-dns-tcp-http — verify each stage prints
-  - [ ] ex-71 · keepalive-reuse-connection — verify both responses, no reconnect
-  - [ ] ex-72 · handle-http-errors — verify 404/500 handled by class
-  - [ ] ex-73 · post-json-stdlib — verify server accepts posted JSON
-  - [ ] ex-74 · timeout-on-connect — verify `timeout` raised
-  - [ ] ex-75 · udp-packet-loss — verify some dropped, no retransmission
-  - [ ] ex-76 · concurrent-command-server — verify concurrent sessions
-  - [ ] ex-77 · protocol-error-handling — verify error line, no crash
-  - [ ] ex-78 · content-type-router — verify negotiation both ways
-  - [ ] ex-79 · measure-dns-vs-connect-time — verify separate DNS + TCP timings
-  - [ ] ex-80 · trace-layers-on-failure — verify error surfaces at right layer
-  - [ ] ex-81 · full-echo-command-protocol — verify end-to-end localhost round-trips
-  - [ ] ex-82 · full-dns-to-http-explorer — verify real status line + UDP contrast
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/networking-essentials/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · curl-a-url — verify HTML body prints
+  - [x] ex-02 · curl-verbose — verify `>` request + `<` response lines print
+  - [x] ex-03 · curl-headers-only — verify only status + response headers (no body)
+  - [x] ex-04 · read-status-line — verify a `2xx` status
+  - [x] ex-05 · identify-request-line — verify method + path + version
+  - [x] ex-06 · inspect-response-headers — verify `Content-Type`/`Content-Length`
+  - [x] ex-07 · url-anatomy-breakdown — verify each component
+  - [x] ex-08 · default-ports — verify HTTP→80, HTTPS→443
+  - [x] ex-09 · ping-host — verify three ICMP replies with RTT
+  - [x] ex-10 · ping-shows-ip — verify resolved IP printed
+  - [x] ex-11 · dig-a-record — verify ANSWER shows A-record IP
+  - [x] ex-12 · dig-short — verify only IP prints
+  - [x] ex-13 · dig-aaaa — verify IPv6 (or empty ANSWER)
+  - [x] ex-14 · dig-mx — verify MX records with priorities
+  - [x] ex-15 · dig-ns — verify authoritative nameservers
+  - [x] ex-16 · dig-cname — verify CNAME alias resolves
+  - [x] ex-17 · dig-txt — verify TXT records print
+  - [x] ex-18 · nslookup-basic — verify server + resolved address
+  - [x] ex-19 · host-command — verify A/AAAA/MX summary
+  - [x] ex-20 · dig-trace — verify iterative root→authoritative resolution
+  - [x] ex-21 · curl-follow-redirect — verify `3xx` then final `200`
+  - [x] ex-22 · curl-status-404 — verify prints `404`
+  - [x] ex-23 · curl-user-agent — verify `User-Agent` request header sent
+  - [x] ex-24 · curl-custom-header — verify custom header in request
+  - [x] ex-25 · curl-timing — verify total-time figure prints
+  - [x] ex-26 · curl-head-method — verify headers, no body
+  - [x] ex-27 · well-known-ports — verify 80/443/22/53 associations
+  - [x] ex-28 · resolve-then-curl-by-ip — verify page loads by IP
+  - [x] ex-29 · tcp-echo-server — verify starts + accepts connection
+  - [x] ex-30 · tcp-echo-client — verify receives echoed line
+  - [x] ex-31 · socket-bind-listen-accept — verify `accept` blocks until connect
+  - [x] ex-32 · socket-connect-send-recv — verify full round-trip
+  - [x] ex-33 · line-framing — verify partial reads reassemble into lines
+  - [x] ex-34 · handle-partial-recv — verify large message intact
+  - [x] ex-35 · multi-message-session — verify each line responds in order
+  - [x] ex-36 · command-protocol — verify `PING`→`PONG`/`TIME` replies
+  - [x] ex-37 · graceful-close — verify server loop ends cleanly
+  - [x] ex-38 · reuseaddr-option — verify immediate restart, no bind error
+  - [x] ex-39 · one-client-at-a-time — verify second client waits then served
+  - [x] ex-40 · concurrent-clients-threads — verify two clients served at once
+  - [x] ex-41 · raw-http-with-nc — verify raw HTTP response prints
+  - [x] ex-42 · nc-listen-server — verify raw request bytes in listener
+  - [x] ex-43 · handcraft-http-request — verify `200` response returns
+  - [x] ex-44 · read-http-response-parts — verify status/headers/body identifiable
+  - [x] ex-45 · http-get-method — verify body returned
+  - [x] ex-46 · http-post-form — verify server receives POST body
+  - [x] ex-47 · http-post-json — verify JSON posted with content-type
+  - [x] ex-48 · http-put-delete — verify each method reaches endpoint
+  - [x] ex-49 · status-class-tour — verify 200/301/404/500 classes
+  - [x] ex-50 · content-length-header — verify matches body byte size
+  - [x] ex-51 · accept-header-negotiation — verify server returns JSON
+  - [x] ex-52 · gzip-encoding — verify `Accept-Encoding: gzip` + compressed response
+  - [x] ex-53 · chunked-transfer — verify `Transfer-Encoding: chunked`, no Content-Length
+  - [x] ex-54 · udp-echo-server — verify echoes a datagram
+  - [x] ex-55 · udp-echo-client — verify echo returns
+  - [x] ex-56 · udp-no-handshake — verify no handshake, possibly no reply
+  - [x] ex-57 · tcp-vs-udp-contrast — verify TCP ordered, UDP may drop/reorder
+  - [x] ex-58 · measure-latency-socket — verify millisecond figure prints
+  - [x] ex-59 · port-scan-connect — verify open success vs `ConnectionRefusedError`
+  - [x] ex-60 · resolve-in-python — verify host resolves to IP in code
+  - [x] ex-61 · stdlib-http-client-get — verify status + body
+  - [x] ex-62 · urllib-request — verify response code + read body
+  - [x] ex-63 · parse-status-and-headers — verify status code + header list
+  - [x] ex-64 · https-with-tls — verify TLS-encrypted `200`
+  - [x] ex-65 · inspect-tls-handshake — verify negotiated `TLSv1.3` protocol/cipher
+  - [x] ex-66 · view-server-certificate — verify certificate chain prints
+  - [x] ex-67 · http-vs-https-contrast — verify 443 encrypted, 80 plaintext
+  - [x] ex-68 · follow-redirect-manually — verify final resource via `Location`
+  - [x] ex-69 · minimal-http-client-from-socket — verify real HTTP status line
+  - [x] ex-70 · narrate-dns-tcp-http — verify each stage prints
+  - [x] ex-71 · keepalive-reuse-connection — verify both responses, no reconnect
+  - [x] ex-72 · handle-http-errors — verify 404/500 handled by class
+  - [x] ex-73 · post-json-stdlib — verify server accepts posted JSON
+  - [x] ex-74 · timeout-on-connect — verify `timeout` raised
+  - [x] ex-75 · udp-packet-loss — verify some dropped, no retransmission
+  - [x] ex-76 · concurrent-command-server — verify concurrent sessions
+  - [x] ex-77 · protocol-error-handling — verify error line, no crash
+  - [x] ex-78 · content-type-router — verify negotiation both ways
+  - [x] ex-79 · measure-dns-vs-connect-time — verify separate DNS + TCP timings
+  - [x] ex-80 · trace-layers-on-failure — verify error surfaces at right layer
+  - [x] ex-81 · full-echo-command-protocol — verify end-to-end localhost round-trips
+  - [x] ex-82 · full-dns-to-http-explorer — verify real status line + UDP contrast
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/networking-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/networking-essentials/drilling/_index.md` (wt 212) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 13 Gate
 
-- [ ] [AI] `networking-essentials/` complete: `_index.md` wt 220, `learning/_index.md` wt 112,
+- [x] [AI] `networking-essentials/` complete: `_index.md` wt 220, `learning/_index.md` wt 112,
       `drilling/_index.md` wt 212, capstone wt 900; all 23 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
