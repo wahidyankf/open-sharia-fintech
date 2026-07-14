@@ -30,6 +30,13 @@ daily. Deep paradigms (amortized/Θ/Ω rigor, graph/DP/greedy families) are defe
 - 2026-07-12 — verified: `heapq`, `collections.deque`, and `bisect` stdlib APIs are current/unchanged in
   Python 3.14; list `.append()` is amortized O(1), dict lookup average-case O(1) (degrades only under
   pathological collisions). (docs.python.org / wiki.python.org TimeComplexity)
+- 2026-07-14 — re-verified (independent `web-researcher` confirmation pass): 5 of 6 checked claims hold
+  unchanged (`heapq`/`deque`/`bisect` APIs, `sorted()`/`list.sort()` = Timsort, the wiki TimeComplexity
+  complexity table, dict insertion-order as a 3.7+ language-spec guarantee, `RecursionError` as a
+  `RuntimeError` subclass). Only the Python version pin had drifted: **latest stable patch is now
+  3.14.6 (2026-06-10)** — the 3.14 series itself is still current/latest and no cited API changed; 3.14.0
+  (2025-10-07) is simply an older patch within the same still-current series. (python.org/downloads,
+  docs.python.org)
 
 ### DD-35 primary-source citations (fetched-and-read)
 
@@ -40,8 +47,9 @@ daily. Deep paradigms (amortized/Θ/Ω rigor, graph/DP/greedy families) are defe
 
 - **Complexity table (co-02/03/05/06/08/09/12/14)** — [wiki TimeComplexity](https://wiki.python.org/moin/TimeComplexity)
   verbatim: `list.append` amortized O(1), `list.insert(0)`/`pop(0)` O(n), `dict`/`set` get/set/delete +
-  `x in s` average O(1), `deque` append/appendleft/pop/popleft all O(1). Python **3.14.0** (2025-10-07)
-  current; `heapq`/`deque`/`bisect` unchanged (3.14 only _adds_ `heapify_max` etc., unused here) per
+  `x in s` average O(1), `deque` append/appendleft/pop/popleft all O(1). Python **3.14.x** current
+  (series released 2025-10-07 as 3.14.0; latest patch **3.14.6**, 2026-06-10 — re-verified 2026-07-14);
+  `heapq`/`deque`/`bisect` unchanged (3.14 only _adds_ `heapify_max` etc., unused here) per
   [What's New 3.14](https://docs.python.org/3/whatsnew/3.14.html).
 - **Sorting (co-15/16)** — [sorting howto](https://docs.python.org/3/howto/sorting.html) names the stable
   algorithm "Timsort" (CPython 3.11+ uses a Powersort merge policy but the docs still say Timsort — claim

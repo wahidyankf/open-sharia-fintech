@@ -1667,126 +1667,126 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 170 · Learn 107 / Drill 207 · **subject**. Template →
 [`syllabus/07-data-structures-and-algorithms-essentials.md`](./syllabus/07-data-structures-and-algorithms-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `data-structures-and-algorithms-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `data-structures-and-algorithms-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/07-data-structures-and-algorithms-essentials.md`](./syllabus/07-data-structures-and-algorithms-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/` teaching **every** concept in `syllabus/07-data-structures-and-algorithms-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · big-o-notation
-  - [ ] co-02 · amortized-analysis
-  - [ ] co-03 · dynamic-array
-  - [ ] co-04 · stack
-  - [ ] co-05 · queue
-  - [ ] co-06 · deque
-  - [ ] co-07 · singly-linked-list
-  - [ ] co-08 · hash-map
-  - [ ] co-09 · hash-set
-  - [ ] co-10 · binary-tree
-  - [ ] co-11 · binary-search-tree
-  - [ ] co-12 · heap-priority-queue
-  - [ ] co-13 · linear-search
-  - [ ] co-14 · binary-search
-  - [ ] co-15 · builtin-sort
-  - [ ] co-16 · comparison-sorts
-  - [ ] co-17 · recursion
-  - [ ] co-18 · iterate-vs-recurse
-  - [ ] co-19 · memoization
-  - [ ] co-20 · two-pointer-and-sliding-window
-  - [ ] co-21 · graph-adjacency
-  - [ ] co-22 · static-type-hints
-- [ ] **[AI] A1-examples** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/07-data-structures-and-algorithms-essentials.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · list-append-index — verify printed length + element match
-  - [ ] ex-02 · list-slicing — verify sub-list equals expected slice
-  - [ ] ex-03 · list-reverse-inplace — verify equals expected order
-  - [ ] ex-04 · list-reverse-slice — verify new reversed list, original unchanged
-  - [ ] ex-05 · stack-push-pop — verify LIFO order
-  - [ ] ex-06 · balanced-parentheses — verify `"(())"` True, `"(()"` False
-  - [ ] ex-07 · queue-with-deque — verify FIFO order
-  - [ ] ex-08 · deque-both-ends — verify resulting order
-  - [ ] ex-09 · list-front-pop-is-slow — verify identical order, note O(n) vs O(1)
-  - [ ] ex-10 · dict-lookup — verify value and default
-  - [ ] ex-11 · dict-count-frequencies — verify frequency map
-  - [ ] ex-12 · set-membership — verify True/False results
-  - [ ] ex-13 · set-dedup — verify unique count
-  - [ ] ex-14 · two-sum-with-dict — verify indices
-  - [ ] ex-15 · linear-search-found — verify correct index
-  - [ ] ex-16 · linear-search-not-found — verify returns -1
-  - [ ] ex-17 · builtin-sorted — verify ascending order
-  - [ ] ex-18 · sort-with-key — verify order by length
-  - [ ] ex-19 · sort-reverse — verify descending order
-  - [ ] ex-20 · sort-tuples-by-field — verify order by second field
-  - [ ] ex-21 · factorial-recursive — verify `factorial(5) == 120`
-  - [ ] ex-22 · sum-list-recursive — verify total
-  - [ ] ex-23 · countdown-iterative-vs-recursive — verify identical results
-  - [ ] ex-24 · big-o-constant-vs-linear — verify lookup stays 1 step, scan grows
-  - [ ] ex-25 · type-hints-on-function — verify runs, annotations print
-  - [ ] ex-26 · type-hints-on-collections — verify runs on typed inputs
-  - [ ] ex-27 · singly-linked-list-build — verify traversal prints values in order
-  - [ ] ex-28 · linked-list-length — verify length
-  - [ ] ex-29 · linked-list-reverse — verify new order
-  - [ ] ex-30 · linked-list-middle — verify middle value (slow/fast)
-  - [ ] ex-31 · binary-search-iterative — verify index of target
-  - [ ] ex-32 · binary-search-not-found — verify returns -1
-  - [ ] ex-33 · binary-search-first-occurrence — verify leftmost index
-  - [ ] ex-34 · binary-search-last-occurrence — verify rightmost index
-  - [ ] ex-35 · bisect-insertion-point — verify insertion point
-  - [ ] ex-36 · bisect-insort — verify list stays sorted
-  - [ ] ex-37 · min-heap-push-pop — verify ascending pop order
-  - [ ] ex-38 · heapify-list — verify `heap[0]` is minimum
-  - [ ] ex-39 · top-k-largest — verify result set
-  - [ ] ex-40 · priority-queue-tuples — verify pop order by priority
-  - [ ] ex-41 · max-heap-via-negation — verify largest pops first
-  - [ ] ex-42 · merge-sorted-with-heapq — verify merged order
-  - [ ] ex-43 · insertion-sort — verify output equals `sorted()`
-  - [ ] ex-44 · selection-sort — verify sorted output
-  - [ ] ex-45 · bubble-sort — verify sorted output
-  - [ ] ex-46 · merge-sort — verify sorted output
-  - [ ] ex-47 · quicksort — verify sorted output
-  - [ ] ex-48 · binary-tree-build — verify structure via level-order print
-  - [ ] ex-49 · tree-inorder-traversal — verify visited order
-  - [ ] ex-50 · tree-pre-and-post-order — verify both orders
-  - [ ] ex-51 · tree-level-order-bfs — verify per-level lists
-  - [ ] ex-52 · tree-height — verify height
-  - [ ] ex-53 · bst-insert — verify inorder yields sorted values
-  - [ ] ex-54 · bst-search — verify found and not-found
-  - [ ] ex-55 · bst-min-max — verify min (leftmost) and max (rightmost)
-  - [ ] ex-56 · graph-adjacency-build — verify each node's neighbors print
-  - [ ] ex-57 · graph-bfs — verify visit order
-  - [ ] ex-58 · graph-dfs — verify visit order
-  - [ ] ex-59 · graph-bfs-shortest-path — verify distance
-  - [ ] ex-60 · sliding-window-max-sum — verify result
-  - [ ] ex-61 · fibonacci-naive-recursive — verify `fib(10) == 55`, print call count
-  - [ ] ex-62 · fibonacci-memoized-dict — verify same result, fewer calls
-  - [ ] ex-63 · fibonacci-lru-cache — verify result, print `cache_info()` hits
-  - [ ] ex-64 · fibonacci-iterative — verify result, O(1) space
-  - [ ] ex-65 · coin-change-memoized — verify answer
-  - [ ] ex-66 · grid-paths-memoized — verify count
-  - [ ] ex-67 · bst-delete — verify inorder stays sorted (all 3 cases)
-  - [ ] ex-68 · bst-inorder-iterative — verify equals recursive order
-  - [ ] ex-69 · tree-is-balanced — verify True/False on fixtures
-  - [ ] ex-70 · bst-lowest-common-ancestor — verify ancestor
-  - [ ] ex-71 · dijkstra-with-heap — verify distances
-  - [ ] ex-72 · topological-sort-kahn — verify valid order
-  - [ ] ex-73 · detect-cycle-directed — verify True cyclic / False acyclic
-  - [ ] ex-74 · merge-k-sorted-lists — verify merged order
-  - [ ] ex-75 · quickselect-kth-smallest — verify value
-  - [ ] ex-76 · two-pointer-pair-sum — verify indices
-  - [ ] ex-77 · sliding-window-longest-unique — verify length
-  - [ ] ex-78 · lru-cache-from-scratch — verify eviction order
-  - [ ] ex-79 · trie-insert-search — verify insert, search, prefix queries
-  - [ ] ex-80 · big-o-empirical-doubling — verify binary ~log n, linear ~n
-  - [ ] ex-81 · stable-multi-key-sort — verify stable multi-key order
-  - [ ] ex-82 · deep-recursion-to-iteration — verify large input succeeds iteratively
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/` teaching **every** concept in `syllabus/07-data-structures-and-algorithms-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · big-o-notation
+  - [x] co-02 · amortized-analysis
+  - [x] co-03 · dynamic-array
+  - [x] co-04 · stack
+  - [x] co-05 · queue
+  - [x] co-06 · deque
+  - [x] co-07 · singly-linked-list
+  - [x] co-08 · hash-map
+  - [x] co-09 · hash-set
+  - [x] co-10 · binary-tree
+  - [x] co-11 · binary-search-tree
+  - [x] co-12 · heap-priority-queue
+  - [x] co-13 · linear-search
+  - [x] co-14 · binary-search
+  - [x] co-15 · builtin-sort
+  - [x] co-16 · comparison-sorts
+  - [x] co-17 · recursion
+  - [x] co-18 · iterate-vs-recurse
+  - [x] co-19 · memoization
+  - [x] co-20 · two-pointer-and-sliding-window
+  - [x] co-21 · graph-adjacency
+  - [x] co-22 · static-type-hints
+- [x] **[AI] A1-examples** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/07-data-structures-and-algorithms-essentials.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · list-append-index — verify printed length + element match
+  - [x] ex-02 · list-slicing — verify sub-list equals expected slice
+  - [x] ex-03 · list-reverse-inplace — verify equals expected order
+  - [x] ex-04 · list-reverse-slice — verify new reversed list, original unchanged
+  - [x] ex-05 · stack-push-pop — verify LIFO order
+  - [x] ex-06 · balanced-parentheses — verify `"(())"` True, `"(()"` False
+  - [x] ex-07 · queue-with-deque — verify FIFO order
+  - [x] ex-08 · deque-both-ends — verify resulting order
+  - [x] ex-09 · list-front-pop-is-slow — verify identical order, note O(n) vs O(1)
+  - [x] ex-10 · dict-lookup — verify value and default
+  - [x] ex-11 · dict-count-frequencies — verify frequency map
+  - [x] ex-12 · set-membership — verify True/False results
+  - [x] ex-13 · set-dedup — verify unique count
+  - [x] ex-14 · two-sum-with-dict — verify indices
+  - [x] ex-15 · linear-search-found — verify correct index
+  - [x] ex-16 · linear-search-not-found — verify returns -1
+  - [x] ex-17 · builtin-sorted — verify ascending order
+  - [x] ex-18 · sort-with-key — verify order by length
+  - [x] ex-19 · sort-reverse — verify descending order
+  - [x] ex-20 · sort-tuples-by-field — verify order by second field
+  - [x] ex-21 · factorial-recursive — verify `factorial(5) == 120`
+  - [x] ex-22 · sum-list-recursive — verify total
+  - [x] ex-23 · countdown-iterative-vs-recursive — verify identical results
+  - [x] ex-24 · big-o-constant-vs-linear — verify lookup stays 1 step, scan grows
+  - [x] ex-25 · type-hints-on-function — verify runs, annotations print
+  - [x] ex-26 · type-hints-on-collections — verify runs on typed inputs
+  - [x] ex-27 · singly-linked-list-build — verify traversal prints values in order
+  - [x] ex-28 · linked-list-length — verify length
+  - [x] ex-29 · linked-list-reverse — verify new order
+  - [x] ex-30 · linked-list-middle — verify middle value (slow/fast)
+  - [x] ex-31 · binary-search-iterative — verify index of target
+  - [x] ex-32 · binary-search-not-found — verify returns -1
+  - [x] ex-33 · binary-search-first-occurrence — verify leftmost index
+  - [x] ex-34 · binary-search-last-occurrence — verify rightmost index
+  - [x] ex-35 · bisect-insertion-point — verify insertion point
+  - [x] ex-36 · bisect-insort — verify list stays sorted
+  - [x] ex-37 · min-heap-push-pop — verify ascending pop order
+  - [x] ex-38 · heapify-list — verify `heap[0]` is minimum
+  - [x] ex-39 · top-k-largest — verify result set
+  - [x] ex-40 · priority-queue-tuples — verify pop order by priority
+  - [x] ex-41 · max-heap-via-negation — verify largest pops first
+  - [x] ex-42 · merge-sorted-with-heapq — verify merged order
+  - [x] ex-43 · insertion-sort — verify output equals `sorted()`
+  - [x] ex-44 · selection-sort — verify sorted output
+  - [x] ex-45 · bubble-sort — verify sorted output
+  - [x] ex-46 · merge-sort — verify sorted output
+  - [x] ex-47 · quicksort — verify sorted output
+  - [x] ex-48 · binary-tree-build — verify structure via level-order print
+  - [x] ex-49 · tree-inorder-traversal — verify visited order
+  - [x] ex-50 · tree-pre-and-post-order — verify both orders
+  - [x] ex-51 · tree-level-order-bfs — verify per-level lists
+  - [x] ex-52 · tree-height — verify height
+  - [x] ex-53 · bst-insert — verify inorder yields sorted values
+  - [x] ex-54 · bst-search — verify found and not-found
+  - [x] ex-55 · bst-min-max — verify min (leftmost) and max (rightmost)
+  - [x] ex-56 · graph-adjacency-build — verify each node's neighbors print
+  - [x] ex-57 · graph-bfs — verify visit order
+  - [x] ex-58 · graph-dfs — verify visit order
+  - [x] ex-59 · graph-bfs-shortest-path — verify distance
+  - [x] ex-60 · sliding-window-max-sum — verify result
+  - [x] ex-61 · fibonacci-naive-recursive — verify `fib(10) == 55`, print call count
+  - [x] ex-62 · fibonacci-memoized-dict — verify same result, fewer calls
+  - [x] ex-63 · fibonacci-lru-cache — verify result, print `cache_info()` hits
+  - [x] ex-64 · fibonacci-iterative — verify result, O(1) space
+  - [x] ex-65 · coin-change-memoized — verify answer
+  - [x] ex-66 · grid-paths-memoized — verify count
+  - [x] ex-67 · bst-delete — verify inorder stays sorted (all 3 cases)
+  - [x] ex-68 · bst-inorder-iterative — verify equals recursive order
+  - [x] ex-69 · tree-is-balanced — verify True/False on fixtures
+  - [x] ex-70 · bst-lowest-common-ancestor — verify ancestor
+  - [x] ex-71 · dijkstra-with-heap — verify distances
+  - [x] ex-72 · topological-sort-kahn — verify valid order
+  - [x] ex-73 · detect-cycle-directed — verify True cyclic / False acyclic
+  - [x] ex-74 · merge-k-sorted-lists — verify merged order
+  - [x] ex-75 · quickselect-kth-smallest — verify value
+  - [x] ex-76 · two-pointer-pair-sum — verify indices
+  - [x] ex-77 · sliding-window-longest-unique — verify length
+  - [x] ex-78 · lru-cache-from-scratch — verify eviction order
+  - [x] ex-79 · trie-insert-search — verify insert, search, prefix queries
+  - [x] ex-80 · big-o-empirical-doubling — verify binary ~log n, linear ~n
+  - [x] ex-81 · stable-multi-key-sort — verify stable multi-key order
+  - [x] ex-82 · deep-recursion-to-iteration — verify large input succeeds iteratively
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/data-structures-and-algorithms-essentials/drilling/_index.md` (wt 207) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 8 Gate
 
-- [ ] [AI] `data-structures-and-algorithms-essentials/` complete: `_index.md` wt 170, `learning/_index.md` wt 107,
+- [x] [AI] `data-structures-and-algorithms-essentials/` complete: `_index.md` wt 170, `learning/_index.md` wt 107,
       `drilling/_index.md` wt 207, capstone wt 900; all 22 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
