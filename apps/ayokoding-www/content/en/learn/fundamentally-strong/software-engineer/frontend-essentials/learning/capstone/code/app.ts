@@ -4,6 +4,19 @@
 import { renderTaskList } from "./render";
 import type { Loader, Task, TaskListState } from "./types";
 
+// co-24: a client-generated task id must never collide with an id the loader already
+// supplied -- two DOM elements sharing an id breaks the label[for] accessible-name
+// association. Deriving the next id from the loaded tasks' own ids keeps client- and
+// loader-issued ids in the same never-colliding sequence.
+function nextIdAfterLoad(tasks: Task[]): number {
+  let maxId = 0;
+  for (const task of tasks) {
+    const parsed = Number(task.id);
+    if (Number.isInteger(parsed) && parsed > maxId) maxId = parsed;
+  }
+  return maxId + 1;
+}
+
 export function mountApp(root: HTMLElement, loadTasks: Loader): void {
   root.innerHTML = "";
 
@@ -88,10 +101,16 @@ export function mountApp(root: HTMLElement, loadTasks: Loader): void {
   render();
   loadTasks().then(
     (tasks) => {
+      // guard against a lost update: if a local add already happened while this load was
+      // still pending, state has already moved past "loading" -- keep that local state and
+      // drop the (now-stale) loader result instead of silently overwriting it
+      if (state.status !== "loading") return;
+      nextId = nextIdAfterLoad(tasks);
       state = tasks.length === 0 ? { status: "empty" } : { status: "loaded", tasks };
       render();
     },
     (error: unknown) => {
+      if (state.status !== "loading") return;
       state = {
         status: "error",
         message: error instanceof Error ? error.message : "Failed to load tasks",

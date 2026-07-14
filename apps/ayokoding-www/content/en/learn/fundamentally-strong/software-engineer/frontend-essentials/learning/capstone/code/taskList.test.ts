@@ -151,3 +151,60 @@ describe("capstone: accessibility pass (step 4, co-24/co-25/co-26)", () => {
     expect(within(list).getByText(/Keyboard-only task/)).toBeTruthy();
   });
 });
+
+describe("capstone: async load race regression (finding 1)", () => {
+  it("does not discard a task added locally while the initial load is still pending", async () => {
+    const root = freshRoot();
+    let resolveLoader!: (tasks: Task[]) => void;
+    const pendingLoader = () =>
+      new Promise<Task[]>((resolve) => {
+        resolveLoader = resolve;
+      });
+    mountApp(root, pendingLoader);
+
+    // the loader is still pending (state.status === "loading") -- add a task locally now
+    const titleInput = screen.getByLabelText("New task") as HTMLInputElement;
+    fireEvent.input(titleInput, { target: { value: "Added while loading" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add task" }));
+
+    const list = await screen.findByRole("list", { name: "Tasks" });
+    expect(within(list).getByText(/Added while loading/)).toBeTruthy();
+
+    // now let the loader resolve -- the locally-added task must survive, not get silently
+    // overwritten by the loader's own (now-stale) result
+    resolveLoader([]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const listAfterLoad = screen.getByRole("list", { name: "Tasks" });
+    expect(within(listAfterLoad).getByText(/Added while loading/)).toBeTruthy();
+  });
+});
+
+describe("capstone: id collision regression (finding 2)", () => {
+  it("does not let a newly added task collide with an already-loaded task's id", async () => {
+    const root = freshRoot();
+    const seed: Task[] = [{ id: "1", title: "Existing task", done: false }];
+    mountApp(root, async () => seed);
+    await screen.findByRole("list", { name: "Tasks" });
+
+    const titleInput = screen.getByLabelText("New task") as HTMLInputElement;
+    fireEvent.input(titleInput, { target: { value: "Newly added task" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add task" }));
+
+    const list = screen.getByRole("list", { name: "Tasks" });
+    const checkboxes = within(list).getAllByRole("checkbox") as HTMLInputElement[];
+    const ids = checkboxes.map((checkbox) => checkbox.id);
+    expect(new Set(ids).size).toBe(ids.length); // no duplicate DOM ids (label[for] would break)
+
+    // toggling the newly added task must not also toggle the pre-existing task it collided with
+    const existingCheckbox = within(list).getByRole("checkbox", {
+      name: "Existing task",
+    }) as HTMLInputElement;
+    const newCheckbox = within(list).getByRole("checkbox", {
+      name: "Newly added task",
+    }) as HTMLInputElement;
+    fireEvent.click(newCheckbox);
+    expect(newCheckbox.checked).toBe(true);
+    expect(existingCheckbox.checked).toBe(false);
+  });
+});

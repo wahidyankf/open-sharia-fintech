@@ -182,6 +182,19 @@ is also where `co-19`'s component-as-function-of-props idea and `co-20`'s local 
 import { renderTaskList } from "./render";
 import type { Loader, Task, TaskListState } from "./types";
 
+// co-24: a client-generated task id must never collide with an id the loader already
+// supplied -- two DOM elements sharing an id breaks the label[for] accessible-name
+// association. Deriving the next id from the loaded tasks' own ids keeps client- and
+// loader-issued ids in the same never-colliding sequence.
+function nextIdAfterLoad(tasks: Task[]): number {
+  let maxId = 0;
+  for (const task of tasks) {
+    const parsed = Number(task.id);
+    if (Number.isInteger(parsed) && parsed > maxId) maxId = parsed;
+  }
+  return maxId + 1;
+}
+
 export function mountApp(root: HTMLElement, loadTasks: Loader): void {
   root.innerHTML = "";
 
@@ -266,10 +279,16 @@ export function mountApp(root: HTMLElement, loadTasks: Loader): void {
   render();
   loadTasks().then(
     (tasks) => {
+      // guard against a lost update: if a local add already happened while this load was
+      // still pending, state has already moved past "loading" -- keep that local state and
+      // drop the (now-stale) loader result instead of silently overwriting it
+      if (state.status !== "loading") return;
+      nextId = nextIdAfterLoad(tasks);
       state = tasks.length === 0 ? { status: "empty" } : { status: "loaded", tasks };
       render();
     },
     (error: unknown) => {
+      if (state.status !== "loading") return;
       state = {
         status: "error",
         message: error instanceof Error ? error.message : "Failed to load tasks",
@@ -473,6 +492,63 @@ describe("capstone: accessibility pass (step 4, co-24/co-25/co-26)", () => {
     expect(within(list).getByText(/Keyboard-only task/)).toBeTruthy();
   });
 });
+
+describe("capstone: async load race regression (finding 1)", () => {
+  it("does not discard a task added locally while the initial load is still pending", async () => {
+    const root = freshRoot();
+    let resolveLoader!: (tasks: Task[]) => void;
+    const pendingLoader = () =>
+      new Promise<Task[]>((resolve) => {
+        resolveLoader = resolve;
+      });
+    mountApp(root, pendingLoader);
+
+    // the loader is still pending (state.status === "loading") -- add a task locally now
+    const titleInput = screen.getByLabelText("New task") as HTMLInputElement;
+    fireEvent.input(titleInput, { target: { value: "Added while loading" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add task" }));
+
+    const list = await screen.findByRole("list", { name: "Tasks" });
+    expect(within(list).getByText(/Added while loading/)).toBeTruthy();
+
+    // now let the loader resolve -- the locally-added task must survive, not get silently
+    // overwritten by the loader's own (now-stale) result
+    resolveLoader([]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const listAfterLoad = screen.getByRole("list", { name: "Tasks" });
+    expect(within(listAfterLoad).getByText(/Added while loading/)).toBeTruthy();
+  });
+});
+
+describe("capstone: id collision regression (finding 2)", () => {
+  it("does not let a newly added task collide with an already-loaded task's id", async () => {
+    const root = freshRoot();
+    const seed: Task[] = [{ id: "1", title: "Existing task", done: false }];
+    mountApp(root, async () => seed);
+    await screen.findByRole("list", { name: "Tasks" });
+
+    const titleInput = screen.getByLabelText("New task") as HTMLInputElement;
+    fireEvent.input(titleInput, { target: { value: "Newly added task" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add task" }));
+
+    const list = screen.getByRole("list", { name: "Tasks" });
+    const checkboxes = within(list).getAllByRole("checkbox") as HTMLInputElement[];
+    const ids = checkboxes.map((checkbox) => checkbox.id);
+    expect(new Set(ids).size).toBe(ids.length); // no duplicate DOM ids (label[for] would break)
+
+    // toggling the newly added task must not also toggle the pre-existing task it collided with
+    const existingCheckbox = within(list).getByRole("checkbox", {
+      name: "Existing task",
+    }) as HTMLInputElement;
+    const newCheckbox = within(list).getByRole("checkbox", {
+      name: "Newly added task",
+    }) as HTMLInputElement;
+    fireEvent.click(newCheckbox);
+    expect(newCheckbox.checked).toBe(true);
+    expect(existingCheckbox.checked).toBe(false);
+  });
+});
 ```
 
 **Verify** (the three accessibility-pass tests, isolated with `-t`):
@@ -497,7 +573,7 @@ pass.
  RUN  v4.1.0
 
  Test Files  1 passed (1)
-      Tests  11 passed (11)
+      Tests  13 passed (13)
 ```
 
 `tsc --noEmit -p tsconfig.json` (from inside `learning/capstone/code/`, using the colocated
@@ -505,10 +581,12 @@ pass.
 
 ## Acceptance criteria
 
-- `npx vitest run .../taskList.test.ts --environment=jsdom` reports `11 passed`, covering the
+- `npx vitest run .../taskList.test.ts --environment=jsdom` reports `13 passed`, covering the
   initial loading render, all three further discriminated-union transitions (error, empty, loaded),
   keyed toggle events, the controlled filter, the controlled+validated add-form's both invalid and
-  valid paths, and three accessibility-focused assertions.
+  valid paths, three accessibility-focused assertions, and two regression guards -- a lost-update
+  race between a pending load and a local add, and an id collision between a client-generated task
+  id and an already-loaded task's id.
 - The feature is keyboard-operable: the `Add task` control is a real `<button>` reachable and
   activatable purely through focus, with no mouse-only interaction anywhere in the component.
 - Every UI state (`loading`, `error`, `empty`, `loaded`) is reachable through `mountApp`'s real async
@@ -521,7 +599,7 @@ pass.
 
 This capstone is runnable end to end: a reader who copies the four files above (`types.ts`,
 `render.ts`, `app.ts`, `taskList.test.ts`) into a `learning/capstone/code/`-shaped tree and runs
-`npx vitest run taskList.test.ts --environment=jsdom` there reaches the identical `11 passed` result
+`npx vitest run taskList.test.ts --environment=jsdom` there reaches the identical `13 passed` result
 shown above, verified against a real Vitest 4.1.0 + `@testing-library/dom` 10.4.1 run (not merely
 described) in this sandbox on 2026-07-15. Every mechanism combined here -- components as functions
 of props/state (co-19, co-20), list rendering with real DOM events (co-21), a controlled+validated
