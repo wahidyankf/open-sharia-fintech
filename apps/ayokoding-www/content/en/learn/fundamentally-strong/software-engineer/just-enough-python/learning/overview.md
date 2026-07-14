@@ -9,7 +9,7 @@ weight: 1
 
 - **Prior topics**: [1 · Just Enough Nvim](../../just-enough-nvim/learning/overview.md) -- you should
   be comfortable opening, editing, and saving files before writing and running Python scripts; the
-  [Pass 0 forge capstone](../../extending-neovim/learning/capstone/overview.md) is recommended but not
+  [Pass 0 forge capstone](../../capstone-forge-ready/overview.md) is recommended but not
   required.
 - **Tools & environment**: a macOS/Linux terminal; **Python 3.x** installed (`python3 --version`) with
   `venv` and `pip` (both ship with CPython); the `black`, `ruff`, and `pyright` CLIs, installable via
@@ -63,10 +63,10 @@ python3 example.py
 ```
 
 **Exceptions, all deliberate**: Examples 2-5 demonstrate CLI workflows (`-c` inline execution, `venv`
-creation, `black`, `ruff`) rather than a single script run; Examples 46, 47, 61-64, 69, 72-75, 79,
-81-84 name their file differently (`mod.py`, `cli.py`, a package under `app/`, and so on) because the
-filename itself is part of what the example teaches -- each one states its exact run command in its
-own **Run** line.
+creation, `black`, `ruff`) rather than a single script run; Examples 46, 47, 61-64, 73-75, 81-82 name
+their file differently (`mod.py`, `cli.py`, a package under `app/`, and so on) because the filename
+itself is part of what the example teaches -- each one states its exact run command in its own **Run**
+line.
 
 ## How this primer is organized
 
@@ -97,4 +97,5 @@ topic in this journey, it is out of scope here on purpose, not by oversight.
 
 ---
 
-Next: [Beginner Examples](./beginner.md) →
+← Previous: [Pass 0 Capstone · Forge-Ready](../../capstone-forge-ready/overview.md) · Next:
+[Beginner Examples](./beginner.md) →
