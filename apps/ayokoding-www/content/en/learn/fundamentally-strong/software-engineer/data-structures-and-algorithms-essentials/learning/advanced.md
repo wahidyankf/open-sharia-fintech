@@ -476,13 +476,16 @@ root = delete(
 result = inorder(root)  # => must STILL be sorted after both deletes
 print(result)  # => Output: [1, 5, 7, 8, 9]
 
-assert result == [
-    1,
-    5,
-    7,
-    8,
-    9,
-]  # => confirms sorted order survives all three delete cases (two-children, leaf, one-child)
+assert (
+    result
+    == [
+        1,
+        5,
+        7,
+        8,
+        9,
+    ]
+)  # => confirms sorted order survives all three delete cases (two-children, leaf, one-child)
 assert 2 not in result and 3 not in result  # => confirms both deleted values are gone
 print("ex-67 OK")  # => Output: ex-67 OK
 ```
@@ -1193,9 +1196,9 @@ class Node:  # => the standard singly-linked node shape (co-07)
 def merge_k_lists(
     heads: list[Node | None],
 ) -> Node | None:  # => a heap-driven k-way merge
-    heap: list[tuple[int, int, Node]] = (
-        []
-    )  # => (value, tie_breaker, node) -- see note below
+    heap: list[
+        tuple[int, int, Node]
+    ] = []  # => (value, tie_breaker, node) -- see note below
     for i, head in enumerate(
         heads
     ):  # => tie_breaker=i avoids comparing Node objects directly
