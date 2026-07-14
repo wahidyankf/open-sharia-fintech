@@ -52,3 +52,10 @@ Feature: Site Navigation
     Then the rendered link's href should be the linked page's real site URL
     And the href should not contain a literal ".md" extension
     And the href should not be a raw filesystem-relative path
+
+  @unit
+  Scenario: In-body relative markdown links authored from a section index page resolve to real site routes
+    Given a section index page's markdown body contains a relative link to a sibling content file
+    When the page is rendered to HTML
+    Then the rendered link's href should be resolved relative to the section's own directory
+    And the href should not contain a literal ".md" extension

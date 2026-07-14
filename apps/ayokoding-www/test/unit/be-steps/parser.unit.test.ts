@@ -131,4 +131,33 @@ describe("parseMarkdown", () => {
       expect(html).not.toContain("/en/c/");
     });
   });
+
+  describe("in-body relative content links authored from a section index page", () => {
+    // isSection: true means this slug's file is `.../just-enough-nvim/_index.md`, so the
+    // section's own containing directory is the slug itself, not dirname(slug).
+    const sectionSlug = "learn/fundamentally-strong/software-engineer/just-enough-nvim";
+
+    it("resolves a same-directory sibling link relative to the section's own directory, not its parent", async () => {
+      const md = "[Sibling Topic](./sibling.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: true });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
+      expect(html).not.toContain(".md");
+    });
+
+    it("resolves a directory-climbing link relative to the section's own directory, not one level above it", async () => {
+      const md = "[Parent Topic](../overview.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: true });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+      expect(html).not.toContain(".md");
+    });
+
+    it("resolves the identical sibling link differently when the same slug is a leaf page instead of a section index", async () => {
+      const md = "[Sibling Topic](./sibling.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: false });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/sibling"');
+    });
+  });
 });

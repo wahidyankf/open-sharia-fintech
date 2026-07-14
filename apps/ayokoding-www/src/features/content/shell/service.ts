@@ -51,7 +51,11 @@ export class ContentService {
     if (!meta) return null;
 
     const { content } = await this.repository.readFileContent(meta.filePath);
-    const { html, headings } = await parseMarkdown(content, { locale: locale as Locale, slug });
+    const { html, headings } = await parseMarkdown(content, {
+      locale: locale as Locale,
+      slug,
+      isSection: meta.isSection,
+    });
     const prevNext = index.prevNext.get(`${locale}:${slug}`);
 
     return {

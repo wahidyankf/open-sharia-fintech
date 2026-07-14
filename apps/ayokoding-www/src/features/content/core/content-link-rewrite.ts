@@ -21,11 +21,21 @@ const ABSOLUTE_HREF = /^(https?:|mailto:|tel:|\/|#)/i;
  * a site-root path, or an in-page anchor), when `context` is not provided (no slug to
  * resolve against), or when the relative target does not end in `.md` (not a content
  * link per the repo's Linking convention — e.g. an image or PDF asset). Otherwise
- * resolves the relative path against `context.slug`'s directory, strips the
- * `.md`/`_index` suffix the same way the content reader derives slugs from file paths,
- * and maps the result through {@link contentUrl}.
+ * resolves the relative path against the current page's containing directory, strips
+ * the `.md`/`_index` suffix the same way the content reader derives slugs from file
+ * paths, and maps the result through {@link contentUrl}.
+ *
+ * The current page's containing directory is `context.slug` itself when the current
+ * page is a section index (`context.isSection`, e.g. slug `learn/x` -> file
+ * `learn/x/_index.md`, containing dir `learn/x/`) and `dirname(context.slug)` when it
+ * is a leaf content file (e.g. slug `learn/x/overview` -> file `learn/x/overview.md`,
+ * containing dir `learn/x/`). Getting this wrong resolves sibling/parent-relative links
+ * one directory level off for section-index source pages.
  */
-export function resolveContentHref(href: string, context?: { locale: Locale; slug: string }): string {
+export function resolveContentHref(
+  href: string,
+  context?: { locale: Locale; slug: string; isSection?: boolean },
+): string {
   if (!context || ABSOLUTE_HREF.test(href)) {
     return href;
   }
@@ -36,7 +46,7 @@ export function resolveContentHref(href: string, context?: { locale: Locale; slu
     return href;
   }
 
-  const currentDir = path.posix.dirname(`/${context.slug}`);
+  const currentDir = context.isSection ? `/${context.slug}` : path.posix.dirname(`/${context.slug}`);
   const resolved = path.posix.normalize(path.posix.join(currentDir, pathPart));
 
   let slug = resolved.replace(/^\/+/, "").replace(/\.md$/, "");

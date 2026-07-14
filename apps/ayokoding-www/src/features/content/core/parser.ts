@@ -22,6 +22,12 @@ interface ParseResult {
 export interface ParseContext {
   locale: Locale;
   slug: string;
+  /**
+   * True when the page being parsed is a section index (`_index.md`), whose containing
+   * directory is `slug` itself rather than `dirname(slug)`. Required by
+   * {@link resolveContentHref} to resolve in-body relative links correctly from section pages.
+   */
+  isSection?: boolean;
 }
 
 export async function parseMarkdown(content: string, context?: ParseContext): Promise<ParseResult> {
