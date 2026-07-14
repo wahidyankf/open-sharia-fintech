@@ -799,8 +799,10 @@ class Node:  # => co-07: a node-based sequence
 def find_middle(head: Node) -> Node:  # => co-07/co-20: two pointers, one pass, no length() call
     slow = fast = head  # => both start at the head
     while fast.next is not None and fast.next.next is not None:  # => fast still has 2 more hops
-        slow = slow.next  # type: ignore[assignment]  # => slow advances one node
+        assert slow is not None  # => invariant: slow never runs past fast, so it's always live here
+        slow = slow.next  # => slow advances one node
         fast = fast.next.next  # => fast moves twice as fast as slow
+    assert slow is not None  # => the list is non-empty in this example
     return slow  # => once fast nears the end, slow sits exactly at the middle
 
 

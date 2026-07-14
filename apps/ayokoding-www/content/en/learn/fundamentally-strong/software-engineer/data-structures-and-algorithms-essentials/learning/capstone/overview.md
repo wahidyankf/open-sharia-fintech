@@ -159,20 +159,34 @@ def schedule(tasks: dict[str, Task]) -> list[str]:
     ready: list[tuple[int, str]] = [
         (-tasks[tid].priority, tid) for tid in tasks if in_degree[tid] == 0
     ]  # => seeds the heap with every task that has NO dependencies at all
-    heapq.heapify(ready)  # => O(k) where k = len(ready), turns the list into a valid heap
+    heapq.heapify(
+        ready
+    )  # => O(k) where k = len(ready), turns the list into a valid heap
 
     order: list[str] = []  # => the emitted run order, respecting deps and priority ties
-    while ready:  # => drains the heap -- each task pushed/popped at most once, O(log n) each
+    while (
+        ready
+    ):  # => drains the heap -- each task pushed/popped at most once, O(log n) each
         _, task_id = heapq.heappop(ready)  # => always the highest-priority ready task
         order.append(task_id)
-        for dependent in adjacency[task_id]:  # => relax every edge OUT of task_id, O(e) total
+        for dependent in adjacency[
+            task_id
+        ]:  # => relax every edge OUT of task_id, O(e) total
             in_degree[dependent] -= 1  # => task_id no longer blocks dependent
-            if in_degree[dependent] == 0:  # => dependent has NO unresolved deps left -- ready
+            if (
+                in_degree[dependent] == 0
+            ):  # => dependent has NO unresolved deps left -- ready
                 heapq.heappush(ready, (-tasks[dependent].priority, dependent))
 
-    if len(order) != len(tasks):  # => O(1): fewer emissions than tasks means a cycle exists
-        stuck = sorted(tid for tid in tasks if tid not in order)  # => O(n log n), diagnostics only
-        raise SchedulerCycleError(f"dependency cycle detected among: {', '.join(stuck)}")
+    if len(order) != len(
+        tasks
+    ):  # => O(1): fewer emissions than tasks means a cycle exists
+        stuck = sorted(
+            tid for tid in tasks if tid not in order
+        )  # => O(n log n), diagnostics only
+        raise SchedulerCycleError(
+            f"dependency cycle detected among: {', '.join(stuck)}"
+        )
     return order  # => a complete, valid run order -- every dep precedes its dependents
 
 
@@ -185,13 +199,17 @@ def load_tasks(path: Path) -> dict[str, Task]:
 
 def main() -> None:
     """CLI entry point: schedule the sample tasks.json next to this file."""
-    tasks_path = Path(__file__).parent / "tasks.json"  # => resolves relative to THIS file
+    tasks_path = (
+        Path(__file__).parent / "tasks.json"
+    )  # => resolves relative to THIS file
     tasks = load_tasks(tasks_path)
     order = schedule(tasks)
     print(" -> ".join(order))  # => prints the run order as an arrow-joined chain
 
 
-if __name__ == "__main__":  # => only runs main() when invoked directly, not when imported
+if (
+    __name__ == "__main__"
+):  # => only runs main() when invoked directly, not when imported
     main()
 ```
 
@@ -234,7 +252,7 @@ from scheduler import SchedulerCycleError, parse_tasks, schedule
 
 def test_acyclic_order_respects_dependencies() -> None:
     """Every dependency must be emitted strictly before every task that depends on it."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "compile", "priority": 3, "deps": []},
         {"id": "lint", "priority": 5, "deps": []},
         {"id": "unit_test", "priority": 4, "deps": ["compile"]},
@@ -255,7 +273,7 @@ def test_acyclic_order_respects_dependencies() -> None:
 
 def test_acyclic_order_breaks_ties_by_priority() -> None:
     """Among tasks with no remaining dependencies, the higher-priority task runs first."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "compile", "priority": 3, "deps": []},
         {"id": "lint", "priority": 5, "deps": []},
     ]
@@ -268,7 +286,7 @@ def test_acyclic_order_breaks_ties_by_priority() -> None:
 
 def test_cyclic_graph_raises_scheduler_cycle_error() -> None:
     """A dependency cycle must raise a clear, dedicated error, not silently drop tasks."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "a", "priority": 1, "deps": ["c"]},
         {"id": "b", "priority": 1, "deps": ["a"]},
         {"id": "c", "priority": 1, "deps": ["b"]},  # a -> b -> c -> a: a cycle
@@ -281,7 +299,7 @@ def test_cyclic_graph_raises_scheduler_cycle_error() -> None:
 
 def test_cyclic_graph_error_names_the_stuck_tasks() -> None:
     """The raised error message names every task caught in (or blocked by) the cycle."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "a", "priority": 1, "deps": ["b"]},
         {"id": "b", "priority": 1, "deps": ["a"]},
         {"id": "independent", "priority": 1, "deps": []},  # not part of the cycle

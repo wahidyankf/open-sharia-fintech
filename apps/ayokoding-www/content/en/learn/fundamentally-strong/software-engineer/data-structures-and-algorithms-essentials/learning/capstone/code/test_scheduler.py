@@ -7,7 +7,7 @@ from scheduler import SchedulerCycleError, parse_tasks, schedule
 
 def test_acyclic_order_respects_dependencies() -> None:
     """Every dependency must be emitted strictly before every task that depends on it."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "compile", "priority": 3, "deps": []},
         {"id": "lint", "priority": 5, "deps": []},
         {"id": "unit_test", "priority": 4, "deps": ["compile"]},
@@ -28,7 +28,7 @@ def test_acyclic_order_respects_dependencies() -> None:
 
 def test_acyclic_order_breaks_ties_by_priority() -> None:
     """Among tasks with no remaining dependencies, the higher-priority task runs first."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "compile", "priority": 3, "deps": []},
         {"id": "lint", "priority": 5, "deps": []},
     ]
@@ -41,7 +41,7 @@ def test_acyclic_order_breaks_ties_by_priority() -> None:
 
 def test_cyclic_graph_raises_scheduler_cycle_error() -> None:
     """A dependency cycle must raise a clear, dedicated error, not silently drop tasks."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "a", "priority": 1, "deps": ["c"]},
         {"id": "b", "priority": 1, "deps": ["a"]},
         {"id": "c", "priority": 1, "deps": ["b"]},  # a -> b -> c -> a: a cycle
@@ -54,7 +54,7 @@ def test_cyclic_graph_raises_scheduler_cycle_error() -> None:
 
 def test_cyclic_graph_error_names_the_stuck_tasks() -> None:
     """The raised error message names every task caught in (or blocked by) the cycle."""
-    raw_tasks = [
+    raw_tasks: list[dict[str, object]] = [
         {"id": "a", "priority": 1, "deps": ["b"]},
         {"id": "b", "priority": 1, "deps": ["a"]},
         {"id": "independent", "priority": 1, "deps": []},  # not part of the cycle
