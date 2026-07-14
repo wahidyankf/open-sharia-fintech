@@ -70,6 +70,12 @@ opts)` (and `vim.opt`/`vim.g`/`vim.keymap.set`) signatures are current. (neovim.
   self-describes as "under development"; Neovim's own `lsp.txt` does not pin a spec version number — it
   links to whichever spec Microsoft currently marks "current," so citing "3.17" as Neovim's target is
   illustrative, not a settled fact confirmed by a Neovim primary source.
+- 2026-07-14 — new finding surfaced at authoring time (Phase 4 V step, `web-researcher`,
+  `capstone-forge-ready`): re-running `:checkhealth` against the pinned `nvim-lspconfig` **v2.10.0** shows
+  it now marks its own `:checkhealth lspconfig` integration **deprecated**, pointing users instead at
+  `:checkhealth vim.lsp` (the plugin itself still functions; only its healthcheck hook is being retired).
+  Independently reproduced against the pinned tag; no impact on the native `vim.lsp.config()` /
+  `vim.lsp.enable()` guidance already recorded above.
 
 ### DD-35 primary-source citations (fetched-and-read)
 
