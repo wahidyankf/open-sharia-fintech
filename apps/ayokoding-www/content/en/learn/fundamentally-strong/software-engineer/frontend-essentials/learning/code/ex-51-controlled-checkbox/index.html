@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 51: Controlled Checkbox</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <label><input id="agree" type="checkbox" /> I agree</label>
+    <!-- => wrapping the input makes the whole label clickable -->
+    <p id="state-view">state.agreed = false</p>
+    <!-- => a live view, kept in sync by the change listener below -->
+    <!-- => a controlled checkbox mirrors a boolean field the same way a text input mirrors a string -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const state = { agreed: false }; // => the single source of truth this checkbox mirrors
+      const box = document.getElementById("agree"); // => the real checkbox this example keeps in sync
+      const view = document.getElementById("state-view"); // => a read-only reflection of state, for verification
+      box.addEventListener("change", () => {
+        // => fires when the user toggles the checkbox
+        state.agreed = box.checked; // => mirrors the checkbox's real checked property INTO state
+        view.textContent = "state.agreed = " + state.agreed; // => shows the real current state value
+      }); // => end of the "change" listener
+      // => same controlled-input shape as Example 50 -- only the mirrored property (checked, not value) differs
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

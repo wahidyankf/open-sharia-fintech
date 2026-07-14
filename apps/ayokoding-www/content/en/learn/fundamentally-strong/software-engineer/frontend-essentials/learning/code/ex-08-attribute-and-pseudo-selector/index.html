@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 8: Attribute and Pseudo Selector</title>
+    <!-- => tab title -->
+    <style>
+      /* => an attribute selector reads the LIVE attribute value, not just a static match at parse time */
+      input[type="email"]:focus {
+        /* => two conditions AND-ed together: this attribute value, AND this state */
+        border-color: rgb(0, 150, 80); /* => applies only while the email input genuinely has focus */
+        border-width: 3px; /* => a thicker border makes the focus state visibly obvious */
+        border-style: solid; /* => without an explicit style, border-color/width alone render nothing */
+      } /* => end of the attribute+pseudo-class rule */
+      input[type="text"] {
+        /* => a separate, unconditional rule -- no :focus requirement here */
+        border: 1px solid rgb(120, 120, 120); /* => always applied, focused or not */
+      } /* => end of the plain attribute rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => two inputs: one email, one text, only one ever matches the :focus rule -->
+    <input id="email" type="email" />
+    <!-- => matches input[type="email"]:focus, but only while focused -->
+    <!-- => before focus this input still has SOME border, from the browser's own default input styling -->
+    <input id="name" type="text" />
+    <!-- => matches input[type="text"] unconditionally; never matches the email rule -->
+    <!-- => focusing the text input never triggers the email rule; the two selectors never overlap -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

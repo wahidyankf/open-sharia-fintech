@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- => triggers standards mode so layout below computes exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 32: Grid Gap</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin so the pixel math below is exact */
+      .grid {
+        display: grid;
+        grid-template-columns: 100px 100px;
+        gap: 16px;
+        width: 216px;
+      } /* => 100 + 16 + 100 = 216px total */
+      /* => gap lives on the CONTAINER, not on either child -- no per-cell margin bookkeeping */
+      .cell {
+        height: 40px;
+        background: rgb(220, 220, 220);
+      } /* => shared cell styling so both tracks look identical */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="grid">
+      <!-- => two 100px columns with a 16px gap between them -->
+      <div class="cell" id="a"></div>
+      <!-- => occupies column 1, x: 0 to 100 -->
+      <div class="cell" id="b"></div>
+      <!-- => occupies column 2, starting 16px after #a ends -->
+      <!-- => verify.mjs measures b.x - (a.x + a.width), which equals exactly 16 -->
+      <!-- => neither cell has its own margin -- the seam comes entirely from the container's gap -->
+    </div>
+    <!-- => end of the grid container -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

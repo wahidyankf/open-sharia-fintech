@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 27: Flex Row Distribution</title>
+    <!-- => tab title -->
+    <style>
+      /* => justify-content distributes children ALONG THE MAIN AXIS -- a row's main axis is horizontal */
+      body {
+        /* => the page-level container */
+        margin: 0; /* => removes the default body margin so the 400px row below measures exactly */
+      } /* => end of the body rule */
+      .row {
+        /* => the flex container */
+        display: flex; /* => turns on flex layout for this element's direct children */
+        justify-content: space-between; /* => pins the first child to the start, the last to the end */
+        width: 400px; /* => a fixed reference width so the edge positions below are exact */
+      } /* => end of the .row rule */
+      .chip {
+        /* => the three flex items distributed inside .row */
+        width: 40px; /* => a fixed item width, unrelated to how justify-content distributes them */
+        height: 20px; /* => a fixed item height */
+        background: rgb(180, 200, 240); /* => visual only; not measured by verify.mjs */
+      } /* => end of the .chip rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => three chips inside one flex row -->
+    <div class="row">
+      <!-- => the flex container all three chips are direct children of -->
+      <div class="chip" id="left"></div>
+      <!-- => the first child: pinned flush to the row's left edge -->
+      <div class="chip" id="middle"></div>
+      <!-- => the middle child: floats in the remaining space -->
+      <div class="chip" id="right"></div>
+      <!-- => the last child: pinned flush to the row's right edge -->
+    </div>
+    <!-- => end of the flex row -->
+    <!-- => verify.mjs measures real bounding rectangles and confirms both edge chips align with the row's own edges -->
+    <!-- => no manual margin math was needed here; space-between computed the middle gap on its own -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

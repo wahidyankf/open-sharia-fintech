@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 49: Keyed List Update</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <ul id="list"></ul>
+    <!-- => starts empty -- renderItems(...) below is the only thing that ever fills it -->
+    <!-- => verify.mjs calls renderItems, __markUnchanged, __updateOne, then compares node IDENTITY, not just text -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const nodesByKey = new Map(); // => maps a stable item.id to the REAL <li> DOM node created for it
+      function renderItems(items) {
+        // => can be called MULTIPLE times, with different item arrays each time
+        const list = document.getElementById("list"); // => the container every rendered node lives inside
+        for (const item of items) {
+          // => iterates the NEW data, one item at a time
+          let li = nodesByKey.get(item.id); // => looks up whether this key already has a node
+          if (!li) {
+            // => only reached for a key seen for the FIRST time -- unchanged keys skip this whole block
+            li = document.createElement("li"); // => a brand-new node, created only once per key
+            li.dataset.key = String(item.id); // => stamps the key onto the node for debugging/inspection
+            nodesByKey.set(item.id, li); // => remembers this node so future renders can find and reuse it
+            list.append(li); // => attached to the DOM exactly once, the first time its key appears
+          } // => end of the "create if missing" branch
+          li.textContent = item.label; // => updates text on EVERY render, whether the node is new or reused
+        } // => end of the items loop
+      } // => end of renderItems
+      renderItems([
+        // => call #1 -- three brand-new keys, so three brand-new nodes are created
+        { id: 1, label: "Alpha" }, // => first render: key 1 is new, so a fresh node is created
+        { id: 2, label: "Beta" }, // => first render: key 2 is new, so a fresh node is created
+        { id: 3, label: "Gamma" }, // => first render: key 3 is new, so a fresh node is created
+      ]); // => end of the initial render call
+      window.__markUnchanged = function () {
+        // => a test hook, called between the two renderItems calls
+        // tag the untouched nodes so we can prove they were reused, not recreated
+        document.querySelectorAll("#list li").forEach((li) => (li.dataset.marked = "yes"));
+        // => a test hook: stamps every CURRENT node so a later re-render can prove which nodes survived
+      }; // => end of __markUnchanged
+      window.__updateOne = function () {
+        // => a test hook that triggers the SECOND render, with one label changed
+        renderItems([
+          // => call #2 -- reuses two nodes, updates the third node's text in place
+          { id: 1, label: "Alpha" }, // => key 1 unchanged -- renderItems reuses its existing node
+          { id: 2, label: "Beta (changed)" }, // => key 2's label changed -- same node, new textContent
+          { id: 3, label: "Gamma" }, // => key 3 unchanged -- renderItems reuses its existing node
+        ]); // => end of the second renderItems call
+      }; // => end of __updateOne
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

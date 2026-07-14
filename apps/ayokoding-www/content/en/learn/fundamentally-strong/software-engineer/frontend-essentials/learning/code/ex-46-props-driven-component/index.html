@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 46: Props-Driven Component</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="a"></div>
+    <!-- => will hold the FIRST call's output -->
+    <div id="b"></div>
+    <!-- => will hold the SECOND call's output, from the same function -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      function Greeting(props) {
+        // => a component is just a function that takes props in
+        return "Hello, " + props.name + "!"; // => and returns markup/text out -- no shared state, no side effects
+      } // => end of Greeting
+      document.getElementById("a").textContent = Greeting({ name: "Ada" }); // => call #1, with one props object
+      document.getElementById("b").textContent = Greeting({ name: "Grace" }); // => call #2, with a DIFFERENT props object
+      // => same function, two independent calls -- neither call affects the other's result
+      // => Greeting has no state of its own -- its entire output is a pure function of its props argument
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

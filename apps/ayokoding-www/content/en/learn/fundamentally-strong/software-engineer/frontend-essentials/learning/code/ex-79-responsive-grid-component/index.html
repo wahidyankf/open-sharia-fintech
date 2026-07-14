@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the responsive grid logic below -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => co-11: without this, mobile browsers zoom out to a fake "desktop" width -->
+    <title>Example 79: Responsive Grid Component</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+    <style>
+      /* => everything below is the responsive grid; the HTML markup itself never changes */
+      body {
+        /* => this rule only exists to keep measurements below from being thrown off */
+        margin: 0; /* => removes default body margin so measured widths aren't thrown off */
+      } /* => end of the body rule */
+      .cards {
+        /* => the base rule, active at every viewport width unless a media query overrides it */
+        display: grid; /* => co-10: a two-dimensional grid, not a one-dimensional flex row */
+        grid-template-columns: repeat(1, 1fr); /* => the narrow-viewport default: 1 column */
+        gap: 8px; /* => spacing between cards, in every breakpoint below */
+      } /* => end of the base .cards rule */
+      @media (min-width: 500px) {
+        /* => co-11: this breakpoint alone changes the SAME .cards rule below 500px wide */
+        .cards {
+          /* => overrides ONLY grid-template-columns; display and gap are inherited unchanged */
+          grid-template-columns: repeat(2, 1fr); /* => medium viewport: 2 columns */
+        } /* => end of the medium-breakpoint override */
+      } /* => end of the 500px media query */
+      @media (min-width: 900px) {
+        /* => a second, wider breakpoint layered on top of the one above */
+        .cards {
+          /* => this is the LAST matching rule at 900px+, so it wins the cascade there */
+          grid-template-columns: repeat(3, 1fr); /* => wide viewport: 3 columns */
+        } /* => end of the wide-breakpoint override */
+      } /* => end of the 900px media query */
+      .card {
+        /* => purely cosmetic; the actual column-count logic lives entirely in .cards above */
+        height: 40px; /* => a fixed height makes each card easy to measure in verify.mjs */
+        background: rgb(220, 220, 240); /* => purely visual; unrelated to the column-count logic */
+      } /* => end of .card; the SAME three <div class="card"> elements exist at every width */
+    </style>
+    <!-- => </style> ends the entire responsive layout; nothing below this point is CSS -->
+  </head>
+  <!-- => </head> closes metadata + styles; the grid markup itself never changes across breakpoints -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <div class="cards" id="cards">
+      <!-- => id lets verify.mjs measure real bounding rectangles at three different viewport widths -->
+      <div class="card"></div>
+      <!-- => card 1 of 3 -- the SAME markup at every viewport width; only the CSS above changes -->
+      <div class="card"></div>
+      <!-- => card 2 of 3 -->
+      <div class="card"></div>
+      <!-- => card 3 of 3 -->
+    </div>
+    <!-- => </div> closes the grid; verify.mjs resizes the real viewport and re-measures this -->
+  </body>
+  <!-- => end of document; verify.mjs below confirms 1 -> 2 -> 3 columns at three real widths -->
+  <!-- => co-10 + co-11 combined: the same two-dimensional grid, reflowing its own track count -->
+</html>

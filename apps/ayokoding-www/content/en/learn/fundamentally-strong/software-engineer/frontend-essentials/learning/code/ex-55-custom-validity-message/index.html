@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 55: Custom Validity Message</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <input id="confirm" type="text" />
+    <!-- => the field being validated against the hidden password field below -->
+    <input id="password" type="text" value="secret123" style="display: none" />
+    <!-- => hidden, but still a real value in the DOM -- this example compares against it, not a hardcoded string -->
+    <!-- => display: none only affects rendering -- .value still reads normally via JavaScript -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const confirmEl = document.getElementById("confirm"); // => the field whose validity this example controls
+      const passwordEl = document.getElementById("password"); // => the value confirmEl must match to be valid
+      confirmEl.addEventListener("input", () => {
+        // => re-checks on every keystroke in the confirm field
+        if (confirmEl.value !== passwordEl.value) {
+          confirmEl.setCustomValidity("Passwords must match"); // => marks the field invalid with THIS message
+          // => this message is EXACTLY what validationMessage reports until the mismatch is resolved
+        } else {
+          confirmEl.setCustomValidity(""); // => an EMPTY string clears any previously-set custom validity
+        } // => end of the mismatch/match branch
+      }); // => end of the "input" listener
+      // => setCustomValidity plugs application logic into the SAME native validity system as required/pattern
+      // => verify.mjs reads confirmEl.validationMessage directly for both the mismatch and the match case
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

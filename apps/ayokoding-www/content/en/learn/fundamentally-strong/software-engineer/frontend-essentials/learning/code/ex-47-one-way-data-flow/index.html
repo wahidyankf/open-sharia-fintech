@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 47: One-Way Data Flow</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="app"></div>
+    <!-- => the mount point; ChildView(...) below is appended into it -->
+    <!-- => verify.mjs reads BOTH #child's rendered text AND the parent's real state afterward -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const parentState = { label: "from parent" }; // => the PARENT's own state -- the only source of truth
+      function ChildView(label) {
+        // label arrives as a primitive string -- a COPY, not a reference to
+        // parentState itself, so nothing the child does here can reach back up
+        const p = document.createElement("p"); // => a fresh element the child builds for itself
+        p.id = "child";
+        p.textContent = label; // => reflects whatever label the parent passed in, unmodified
+        label = "mutated locally"; // reassigns only this local copy
+        return p; // => hands the built element back to the parent; the child never touches parentState directly
+      } // => end of ChildView
+      document.getElementById("app").append(ChildView(parentState.label));
+      // => parentState.label is passed BY VALUE (a string primitive), not by reference to the object
+      // => if objects were passed instead, a child mutating a nested field COULD reach back into the parent
+      window.__parentLabel = () => parentState.label; // => a test hook to read the parent's REAL state afterward
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

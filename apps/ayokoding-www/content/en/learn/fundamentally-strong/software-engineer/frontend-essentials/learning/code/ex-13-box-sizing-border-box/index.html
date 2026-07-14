@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 13: box-sizing border-box</title>
+    <!-- => tab title -->
+    <style>
+      /* => border-box is why so many CSS resets set box-sizing: border-box globally on every element */
+      #box {
+        /* => same padding and border as Example 12 -- only box-sizing differs */
+        box-sizing: border-box; /* => redefines what "width" measures: padding and border now fold INSIDE it */
+        width: 200px; /* => the FINAL rendered width, not just the content area's width */
+        padding: 10px; /* => now consumes space taken FROM the 200px, rather than adding to it */
+        border: 5px solid black; /* => also consumes space from the same 200px budget */
+      } /* => end of the #box rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the identical padding/border as Example 12, but box-sizing changes the outcome -->
+    <div id="box">content</div>
+    <!-- => offsetWidth stays at exactly 200, the declared width -->
+    <!-- => compare directly to Example 12's 230px result for the same padding and border values -->
+    <!-- => "declared width equals rendered width" is what most authors intuitively expect from width -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

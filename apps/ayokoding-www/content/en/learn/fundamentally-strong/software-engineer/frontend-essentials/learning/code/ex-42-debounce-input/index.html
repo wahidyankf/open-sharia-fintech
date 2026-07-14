@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 42: Debounce Input</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <input id="search" type="text" />
+    <!-- => typing here fires an "input" event on every keystroke -->
+    <p id="processed">none</p>
+    <!-- => only updated once, after the debounce delay settles -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      window.__calls = 0; // => counts how many times the debounced handler actually ran
+      let timer = null; // => holds the ONE pending timer id, shared across every "input" event
+      const input = document.getElementById("search"); // => the element whose "input" event drives everything below
+      const processed = document.getElementById("processed"); // => rewritten only after the delay settles
+      input.addEventListener("input", () => {
+        // => this callback runs on EVERY keystroke, but the setTimeout below is what makes it debounced
+        clearTimeout(timer); // => cancels the PREVIOUS pending timer, if one was still waiting
+        // => this line is what makes it a debounce, not just a delay -- each new keystroke resets the clock
+        timer = setTimeout(() => {
+          window.__calls += 1; // => only increments once the input has been quiet for the full 50ms
+          processed.textContent = input.value; // => reads whatever value is CURRENT at this later moment
+        }, 50); // => end of the deferred callback
+      }); // => end of the "input" listener
+      // => three rapid edits reset the timer twice and let only the LAST scheduled callback ever run
+      // => verify.mjs fills the input three times in a row, then waits 150ms before reading the result
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

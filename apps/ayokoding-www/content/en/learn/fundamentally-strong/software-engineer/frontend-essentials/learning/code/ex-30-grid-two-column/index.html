@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- => triggers standards mode so layout below computes exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 30: Grid Two Column</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin so the 400px math below is exact */
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 400px;
+      } /* => two equal fractional tracks share the 400px width */
+      /* => 1fr 1fr means "split the free space into two EQUAL shares", so each track is 200px */
+      .cell {
+        height: 40px;
+      } /* => a fixed height so both cells are easy to compare visually */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="grid">
+      <!-- => the grid container; children below are auto-placed into its cells -->
+      <div class="cell" id="a">A</div>
+      <!-- => no explicit grid-column set -- auto-placement puts this first, in column 1 -->
+      <div class="cell" id="b">B</div>
+      <!-- => auto-placement continues left to right, landing this in column 2 -->
+      <!-- => verify.mjs confirms: a.x === 0, a.width === 200, b.x === 200 -->
+    </div>
+    <!-- => end of the grid container -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

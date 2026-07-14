@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 25: event.target</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one listener on #row must distinguish which of its three buttons was actually clicked -->
+    <div id="row">
+      <!-- => the single element the click listener below is actually attached to -->
+      <button id="a" data-id="a">A</button>
+      <!-- => data-id is what event.target.dataset.id reads back -->
+      <button id="b" data-id="b">B</button>
+      <!-- => a second, independent possible click source -->
+      <button id="c" data-id="c">C</button>
+      <!-- => a third possible click source -->
+    </div>
+    <!-- => end of the button row -->
+    <p id="report">none</p>
+    <!-- => starts as "none"; the handler below overwrites it with the clicked id -->
+    <script>
+      document.getElementById("row").addEventListener("click", (event) => {
+        // => one listener, attached once to #row, handles clicks from any of its three current buttons
+        document.getElementById("report").textContent = event.target.dataset.id;
+        // => event.target is the EXACT element the click originated on, never the listener's own #row element
+      }); // => end of the delegated click handler
+    </script>
+    <!-- => end of the inline script -->
+    <!-- => verify.mjs clicks button b specifically and confirms the report reads "b", not "a" or "c" -->
+    <!-- => this exact target-inspection mechanism is what event delegation (Example 37) is built entirely on -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

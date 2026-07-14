@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 10: Cascade Source Order</title>
+    <!-- => tab title -->
+    <style>
+      /* => the cascade's tie-breaker only activates once specificity is genuinely equal, as it is here */
+      .badge {
+        /* => first declaration: specificity 0-1-0, identical to the rule below */
+        color: rgb(0, 128, 0); /* => green -- but this loses, because it appears EARLIER in the file */
+      } /* => end of the first .badge rule */
+      .badge {
+        /* => second declaration: SAME selector, SAME specificity as the rule above */
+        color: rgb(128, 0, 128); /* => purple -- this wins purely because it comes LAST in source order */
+      } /* => end of the second .badge rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one element, two equal-specificity rules targeting it -->
+    <span class="badge">New</span>
+    <!-- => computed color is purple: the later rule, not the earlier one -->
+    <!-- => merging the two identical selectors into one rule would avoid this trap entirely -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

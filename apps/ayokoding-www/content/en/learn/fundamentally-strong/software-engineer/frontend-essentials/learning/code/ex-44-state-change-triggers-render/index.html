@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 44: State Change Triggers Render</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="app"></div>
+    <!-- => the only DOM node render() ever writes to -->
+    <!-- => nothing here changes when count changes -- only re-running render() ever updates it -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const state = { count: 0 }; // => the single source of truth; nothing else tracks the count separately
+      function render() {
+        // => takes no arguments -- it always reads the shared state variable directly
+        const app = document.getElementById("app"); // => the one DOM node this function is allowed to write to
+        app.innerHTML = ""; // => clears the PREVIOUS render before rebuilding from the current state
+        const p = document.createElement("p"); // => a fresh element, built from scratch on every render
+        p.id = "count"; // => gives the element a stable id so verify.mjs can find it after any re-render
+        p.textContent = "count: " + state.count; // => always reads the CURRENT state.count, never a stale copy
+        app.append(p); // => the ONLY place this element is ever attached to the page
+      } // => end of render()
+      window.__bump = function () {
+        // => a test hook that performs the full "mutate then render" cycle
+        state.count += 1; // => step 1: mutate the state object directly
+        render(); // => step 2: re-invoke render() so the DOM catches up to the new state
+      }; // => end of __bump -- notice no code anywhere else ever touches the DOM directly
+      render(); // => the initial render, so the page shows count: 0 before any bump ever happens
+      // => verify.mjs reads the rendered text once before calling __bump() and once after
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

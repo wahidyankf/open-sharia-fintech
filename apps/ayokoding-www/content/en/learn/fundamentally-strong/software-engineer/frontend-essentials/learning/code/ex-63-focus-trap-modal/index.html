@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the trap logic demonstrated below -->
+  <head>
+    <!-- => the four Tab presses this example verifies all happen further down, in <body> -->
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 63: Focus Trap Modal</title>
+    <!-- => shown in the browser tab only; unrelated to the trap logic below -->
+  </head>
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <button id="outside">Outside (must stay unreachable while trapped)</button>
+    <!-- => this button proves the trap: Tab must NEVER reach it while the modal is "open" -->
+    <div id="modal" role="dialog" aria-modal="true">
+      <!-- => aria-modal="true" tells assistive tech everything OUTSIDE this dialog is inert -->
+      <button id="first">First</button>
+      <!-- => the trap's low edge: Shift+Tab here must wrap around to the LAST button -->
+      <button id="second">Second</button>
+      <!-- => the middle button: Tab moves through it exactly like ordinary DOM-order focus -->
+      <button id="last">Last</button>
+      <!-- => the trap's high edge: Tab here must wrap around to the FIRST button -->
+    </div>
+    <!-- => </div> closes the trapped region; nothing outside it may ever receive focus below -->
+    <script>
+      // => everything below is the trap's entire implementation: about a dozen real lines
+      const modal = document.getElementById("modal"); // => the element the trap's listener attaches to
+      // => modal is where the trap's one keydown listener is attached, not each button individually
+      const focusables = ["first", "second", "last"].map((id) => document.getElementById(id));
+      // => focusables is the ordered list of the modal's three real focus stops
+      modal.addEventListener("keydown", (event) => {
+        // => one listener on the container catches Tab from any button inside it, via bubbling
+        if (event.key !== "Tab") return; // => every other key is ignored; only Tab is trapped
+        const first = focusables[0]; // => first is always the low edge of the trap
+        const last = focusables[focusables.length - 1]; // => last is always the high edge
+        if (event.shiftKey && document.activeElement === first) {
+          // => Shift+Tab AT the first button is the one case that must wrap BACKWARD
+          event.preventDefault(); // => cancels the browser's own default: leaving the modal
+          last.focus(); // => wraps focus around to the last button instead
+        } else if (!event.shiftKey && document.activeElement === last) {
+          // => plain Tab AT the last button is the one case that must wrap FORWARD
+          event.preventDefault(); // => cancels the browser's own default: leaving the modal
+          first.focus(); // => wraps focus around to the first button instead
+        } // => every OTHER Tab press inside the modal falls through and moves focus normally
+      }); // => end of the trap's one keydown handler
+      focusables[0].focus(); // => moves real focus into the modal the instant it "opens"
+    </script>
+    <!-- => </script> ends the trap's entire implementation -->
+  </body>
+  <!-- => end of document; the outside button above was never reachable across all four Tabs -->
+</html>

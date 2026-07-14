@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the accessible-name fix below -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 75: Fix a Missing Label</title>
+    <!-- => shown in the browser tab only; unrelated to this example's fix -->
+  </head>
+  <!-- => </head> closes metadata; the entire fix is the two lines below -->
+  <body>
+    <!--
+      Before (broken -- no accessible name at all):
+      <input id="search" type="text" placeholder="Search" />
+    -->
+    <!-- => placeholder LOOKS like a label visually, but exposes no accessible name at all -->
+    <label for="search">Search</label>
+    <!-- => the fix: for="search" wires this real label to the input below, permanently -->
+    <input id="search" type="text" placeholder="Search" />
+    <!-- => placeholder stays too, as a hint -- but the label, not the hint, is now the real name -->
+  </body>
+  <!-- => end of document; verify.mjs below confirms a real accessible name now exists -->
+</html>

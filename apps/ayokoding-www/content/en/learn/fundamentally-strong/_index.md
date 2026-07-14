@@ -21,3 +21,4 @@ weight: 107
   - [11 · Backend Essentials](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials)
   - [12 · Networking Essentials](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials)
   - [13 · Just Enough TypeScript](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript)
+  - [14 · Frontend Essentials](/en/c/learn/fundamentally-strong/software-engineer/frontend-essentials)

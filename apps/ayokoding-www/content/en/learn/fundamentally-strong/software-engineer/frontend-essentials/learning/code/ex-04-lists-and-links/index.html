@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 4: Lists and Links</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => verify.mjs reads every anchor's href and text from the list below -->
+    <h1>Reading List</h1>
+    <!-- => page heading, not itself part of the anchor check -->
+    <ul>
+      <!-- => a real list, not three bare <a> tags side by side -->
+      <li><a href="#mdn">MDN Web Docs</a></li>
+      <!-- => real href plus visible, descriptive text -->
+      <li><a href="#whatwg">HTML Living Standard</a></li>
+      <!-- => descriptive text, not "click here" -->
+      <!-- => a link with no visible text or a missing href would fail verify.mjs's anchor check -->
+      <li><a href="#wcag">WCAG 2.2</a></li>
+      <!-- => third anchor, same real-href-plus-real-text pattern -->
+    </ul>
+    <!-- => end of the reading list -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

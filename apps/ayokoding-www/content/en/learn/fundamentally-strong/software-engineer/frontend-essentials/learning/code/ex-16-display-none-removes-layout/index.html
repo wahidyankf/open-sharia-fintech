@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 16: display none Removes Layout</title>
+    <!-- => tab title -->
+    <style>
+      .hidden {
+        /* => a class this example's verify.mjs toggles onto #panel at runtime, not declared on it here */
+        display: none; /* => removes the element from layout entirely -- not merely painted transparent */
+      } /* => end of the .hidden rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the panel starts visible; verify.mjs applies .hidden programmatically, then re-measures -->
+    <div id="panel">Visible panel</div>
+    <!-- => before hiding, has a real offsetParent (proof it's in layout) -->
+    <button id="toggle">Hide</button>
+    <!-- => present so a real interaction could trigger the toggle -->
+    <!-- => offsetParent becomes null the instant display:none applies -- the layout-removal proof this example checks -->
+    <!-- => visibility: hidden or opacity: 0 would hide the panel visually but leave offsetParent non-null -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

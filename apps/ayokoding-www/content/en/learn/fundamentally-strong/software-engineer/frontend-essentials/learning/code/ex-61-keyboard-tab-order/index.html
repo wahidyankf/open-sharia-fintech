@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- => sets standards mode; every example in this topic starts from this exact skeleton -->
+<html lang="en">
+  <!-- => lang="en" lets assistive tech choose correct pronunciation and hyphenation -->
+  <head>
+    <!-- => metadata lives here, resolved BEFORE the browser renders any visible content -->
+    <meta charset="utf-8" />
+    <!-- => must appear this early: it decides how every later byte in the file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => opts into a readable mobile scale instead of a zoomed-out desktop rendering -->
+    <title>Example 61: Keyboard Tab Order</title>
+    <!-- => shown in the browser tab only; has no effect on this example's Tab order -->
+  </head>
+  <body>
+    <!-- =>
+      This form has NO tabindex attribute anywhere below -- Tab order is decided
+      ENTIRELY by source order, which is exactly what this example is here to prove.
+    -->
+    <form>
+      <input id="first-name" type="text" />
+      <!-- => Tab stop 1: the first focusable element in the DOM, in source order -->
+      <input id="last-name" type="text" />
+      <!-- => Tab stop 2: second in source order, so Tab reaches it second, unprompted -->
+      <button id="submit-btn" type="submit">Submit</button>
+      <!-- => Tab stop 3: last in source order -- Tab never skips ahead of it -->
+      <!-- => type="submit" also makes this the button a real Enter keypress activates -->
+    </form>
+    <!-- => closes the only interactive region on the page -->
+  </body>
+  <!-- => end of document; nothing after this point participates in Tab order -->
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 52: Controlled Select</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <select id="color">
+      <!-- => a THIRD controlled-input type, after text and checkbox -->
+      <option value="red">Red</option>
+      <!-- => matches state.color's initial value below -->
+      <option value="green">Green</option>
+      <!-- => an alternative the change listener below can select -->
+      <option value="blue">Blue</option>
+      <!-- => another alternative the change listener below can select -->
+    </select>
+    <!-- => end of the select element -->
+    <p id="state-view">state.color = "red"</p>
+    <!-- => a live view, kept in sync by the change listener below -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const state = { color: "red" }; // => the single source of truth this select mirrors
+      const select = document.getElementById("color"); // => the real <select> this example keeps in sync
+      const view = document.getElementById("state-view"); // => a read-only reflection of state, for verification
+      select.addEventListener("change", () => {
+        // => fires when the user picks a different option
+        state.color = select.value; // => mirrors the select's real chosen value INTO state
+        view.textContent = 'state.color = "' + state.color + '"'; // => shows the real current state value
+      }); // => end of the "change" listener
+      // => the pattern is now recognizable: state drives display, the event writes back -- same as Examples 50-51
+      // => verify.mjs selects "blue" on the real <select>, then reads state-view's text
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

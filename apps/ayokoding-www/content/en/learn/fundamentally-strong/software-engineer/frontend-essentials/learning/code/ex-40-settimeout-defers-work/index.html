@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 40: setTimeout Defers Work</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <p id="log"></p>
+    <!-- => unused visually; verify.mjs reads window.__order directly instead -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      window.__order = []; // => a shared array recording the ACTUAL order statements ran in
+      window.__order.push("sync-1"); // => runs synchronously, first, in source order
+      setTimeout(() => window.__order.push("timeout"), 0); // => schedules a callback -- does NOT run it now
+      // => even with delay 0, this callback is deferred until the synchronous code below finishes
+      window.__order.push("sync-2"); // => runs synchronously, second, still before any timer callback
+      // => only once the call stack is empty does the event loop even consider running the timer
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

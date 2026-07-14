@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 18: Select All Nodes</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => four list items; verify.mjs counts them via querySelectorAll -->
+    <ul>
+      <!-- => a real list; each child <li> is one node the selector below matches -->
+      <li>Alpha</li>
+      <!-- => first match -->
+      <li>Beta</li>
+      <!-- => second match -->
+      <li>Gamma</li>
+      <!-- => third match -->
+      <li>Delta</li>
+      <!-- => fourth match -->
+    </ul>
+    <!-- => end of the list; querySelectorAll('li').length reads exactly 4 here -->
+    <!-- => the returned NodeList is a static snapshot -- a node added after this call would NOT retroactively appear -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

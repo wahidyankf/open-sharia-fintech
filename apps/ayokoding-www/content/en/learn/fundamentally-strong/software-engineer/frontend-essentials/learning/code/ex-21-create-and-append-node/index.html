@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 21: Create and Append a Node</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => verify.mjs runs createElement + append here, then re-counts the list's children -->
+    <ul id="list">
+      <!-- => starts with exactly one child; the target append() attaches a second node to -->
+      <li>First</li>
+      <!-- => the only item present before verify.mjs's createElement + append call -->
+    </ul>
+    <!-- => end of the list, before the append -->
+    <!-- => document.createElement builds a detached node in memory; nothing on the page changes yet -->
+    <!-- => only the follow-up append() call actually attaches that node to a parent already in the document -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

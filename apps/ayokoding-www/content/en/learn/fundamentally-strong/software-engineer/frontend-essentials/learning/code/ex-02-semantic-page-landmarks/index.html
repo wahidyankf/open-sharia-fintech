@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => announces the page language to assistive tech -->
+  <head>
+    <!-- => metadata; not part of the accessibility tree's landmark roles -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 2: Semantic Page Landmarks</title>
+    <!-- => tab title, unrelated to landmark roles -->
+    <!-- => landmarks are what verify.mjs's DOM query actually counts, not head metadata -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the four landmark elements below are what verify.mjs inspects -->
+    <header>
+      <!-- => maps automatically to the ARIA "banner" landmark role -->
+      <p>Site header</p>
+      <!-- => ordinary content; the role comes from the parent <header>, not this <p> -->
+    </header>
+    <!-- => closes the banner landmark -->
+    <nav>
+      <!-- => maps automatically to the ARIA "navigation" landmark role -->
+      <ul>
+        <!-- => a real list groups the nav links semantically -->
+        <li><a href="#home">Home</a></li>
+        <!-- => real href + visible text, not an icon-only link -->
+        <li><a href="#about">About</a></li>
+        <!-- => same pattern repeated for the second nav item -->
+      </ul>
+      <!-- => end of the nav list -->
+    </nav>
+    <!-- => closes the navigation landmark -->
+    <!-- => two landmarks confirmed so far: banner and navigation -->
+    <main>
+      <!-- => maps automatically to the ARIA "main" landmark role -->
+      <h1>Semantic Landmarks</h1>
+      <!-- => the page's single h1, inside main, not header -->
+      <p>The main content lives here.</p>
+      <!-- => ordinary paragraph content -->
+    </main>
+    <!-- => closes the main landmark; a page has at most one -->
+    <!-- => three landmarks confirmed; footer's contentinfo role is the fourth and last -->
+    <footer>
+      <!-- => maps automatically to the ARIA "contentinfo" landmark role -->
+      <p>Site footer</p>
+      <!-- => ordinary content; the role comes from the parent <footer> -->
+    </footer>
+    <!-- => closes the contentinfo landmark -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

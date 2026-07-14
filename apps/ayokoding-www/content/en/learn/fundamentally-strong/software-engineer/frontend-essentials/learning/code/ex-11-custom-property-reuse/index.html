@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 11: Custom Property Reuse</title>
+    <!-- => tab title -->
+    <style>
+      /* => a custom property is declared once and read anywhere via var(); it is not a Sass-style compile-time constant */
+      :root {
+        /* => the document root; scoping the declaration here makes it visible everywhere */
+        --brand: rgb(10, 100, 200); /* => the single source of truth every var(--brand) call below resolves to */
+      } /* => end of the :root declaration */
+      .heading {
+        /* => an ordinary class rule */
+        color: var(--brand); /* => resolves to whatever --brand currently holds, looked up at paint time */
+      } /* => end of the .heading rule */
+      .link {
+        /* => a second, unrelated class rule */
+        color: var(--brand); /* => resolves to the SAME value as .heading, without repeating the color literal */
+      } /* => end of the .link rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => two independent elements, both reading the one custom property -->
+    <h1 class="heading">Title</h1>
+    <!-- => reads var(--brand) via .heading -->
+    <a class="link" href="#x">Read more</a>
+    <!-- => reads the identical var(--brand) via .link -->
+    <!-- => changing only the :root declaration above would recolor both elements at once, with no other edit -->
+    <!-- => a plain Sass variable would need a full rebuild to take effect; var() resolves live in the browser -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

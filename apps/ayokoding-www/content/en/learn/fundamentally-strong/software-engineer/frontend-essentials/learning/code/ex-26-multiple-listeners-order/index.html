@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 26: Multiple Listeners, Registration Order</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one button, two independent listeners attached to the exact same event type -->
+    <button id="btn">Go</button>
+    <!-- => the click target both listeners below are attached to -->
+    <ul id="log"></ul>
+    <!-- => present but unused by this example; the real log lives on window.__log -->
+    <script>
+      const log = []; // => records the order listeners actually fired in, not merely that they fired
+      window.__log = log; // => exposed on window so an outside script (verify.mjs) can read it back after the click
+      // => a plain local variable would be invisible outside this script block once execution finished
+      const btn = document.getElementById("btn"); // => the shared click target for both listeners below
+      btn.addEventListener("click", () => log.push("first"));
+      // => registers the FIRST independent listener for this element's click event
+      btn.addEventListener("click", () => log.push("second"));
+      // => addEventListener is additive: this SECOND call does not replace the first one at all
+    </script>
+    <!-- => end of the inline script -->
+    <!-- => verify.mjs dispatches one click and confirms both listeners fired, in registration order -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

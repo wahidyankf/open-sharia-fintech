@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 56: Label-Input Association</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <label for="username">Username</label>
+    <!-- => for="username" links this text to the input sharing that id -->
+    <input id="username" type="text" />
+    <!-- => the id the label above targets -->
+    <!-- => no JavaScript is needed -- the browser wires clicking the label to focusing the input for free -->
+    <!-- => verify.mjs clicks the label text, then checks document.activeElement -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- => triggers standards mode so layout below computes exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 31: Grid Named Areas</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin so the 400px math below is exact */
+      .layout {
+        /* => a named-areas grid combining columns, rows, and an ASCII-art region map */
+        display: grid; /* => turns .layout into a grid container */
+        width: 400px; /* => the grid's total content-box width */
+        grid-template-columns: 100px 300px; /* => two column tracks: a 100px rail, a 300px main area */
+        grid-template-rows: 50px 150px; /* => two row tracks: a 50px band, a 150px band */
+        grid-template-areas:
+          "header header" /* => row 1: "header" spans BOTH column tracks */
+          "sidebar content"; /* => row 2: "sidebar" gets column 1, "content" gets column 2 */
+      } /* => the ASCII-art strings above ARE the layout, read directly from the CSS */
+      #header {
+        grid-area: header;
+      } /* => places #header into every cell named "header" */
+      /* => "header" resolves to the region declared by the grid-template-areas string above */
+      #sidebar {
+        grid-area: sidebar;
+      } /* => places #sidebar into the cell named "sidebar" */
+      #content {
+        grid-area: content;
+      } /* => places #content into the cell named "content" */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="layout">
+      <!-- => the grid container; children below are placed by grid-area, not by markup order -->
+      <div id="header">Header</div>
+      <!-- => spans the full 400px width across both column tracks -->
+      <div id="sidebar">Sidebar</div>
+      <!-- => occupies the 100px column, second row -->
+      <div id="content">Content</div>
+      <!-- => occupies the 300px column, second row -->
+      <!-- => verify.mjs confirms each element's real {x, y, width, height} matches its named area -->
+      <!-- => markup order here is header, sidebar, content -- but grid-area, not source order, decides placement -->
+    </div>
+    <!-- => end of the named-areas grid -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

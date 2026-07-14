@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- => HTML5 doctype: triggers standards mode, not legacy quirks mode -->
+<html lang="en">
+  <!-- => lang tells screen readers and translators which language to expect -->
+  <head>
+    <!-- => metadata section: nothing here paints a pixel -->
+    <meta charset="utf-8" />
+    <!-- => must be declared first so the byte stream decodes correctly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => pins the layout viewport to the device's real width -->
+    <title>Example 1: Minimal HTML Document</title>
+    <!-- => this exact string is what verify.mjs asserts document.title equals -->
+    <!-- => a wrong or missing title here would fail Example 1's own PASS check, not just look wrong -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => everything below this line is what the browser actually renders -->
+    <p>This is the smallest complete, valid HTML5 document this topic uses.</p>
+    <!-- => the only rendered node; verify.mjs confirms the body's visible text is non-empty -->
+    <!-- => an empty body would still be "valid" HTML, but verify.mjs's non-empty-text check would fail -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

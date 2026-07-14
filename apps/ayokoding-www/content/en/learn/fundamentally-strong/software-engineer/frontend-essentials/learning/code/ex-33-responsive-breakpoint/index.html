@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- => triggers standards mode so layout below computes exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => required for @media width queries to match real device width, not a desktop default -->
+    <title>Example 33: Responsive Breakpoint</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin */
+      .layout {
+        display: flex;
+      } /* => default flex-direction is row, so columns sit side by side */
+      .col {
+        width: 200px;
+        height: 30px;
+        background: rgb(200, 200, 220);
+      } /* => fixed 200px width in the wide layout */
+      @media (max-width: 600px) {
+        /* => only applies its rules when the viewport is 600px or narrower */
+        .layout {
+          flex-direction: column;
+        } /* => switches the SAME container to stack children vertically */
+        .col {
+          width: 100%;
+        } /* => at this width, each column fills the full available width instead */
+      } /* => outside this block, at wide viewports, none of these three overrides apply */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="layout">
+      <!-- => the SAME markup renders differently depending purely on viewport width -->
+      <div class="col" id="a"></div>
+      <!-- => side by side above 600px, stacked on top below it -->
+      <div class="col" id="b"></div>
+      <!-- => side by side above 600px, stacked below #a below it -->
+      <!-- => verify.mjs resizes the real viewport and re-measures both elements' y positions -->
+      <!-- => equal y values mean side-by-side; b.y greater than a.y means stacked -->
+    </div>
+    <!-- => end of the responsive layout -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

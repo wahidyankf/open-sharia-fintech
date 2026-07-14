@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the delegation logic below -->
+  <!-- => contrast with Example 37's static list: here, items are added AFTER page load -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 78: Delegated Dynamic List</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the whole demo lives in <body> below -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <ul id="list">
+      <!-- => the ONE element the delegated click listener below attaches to -->
+      <li>Task one <button data-action="remove">Remove</button></li>
+      <!-- => this item exists BEFORE the listener is attached -- delegation still covers it -->
+    </ul>
+    <button id="add">Add task</button>
+    <!-- => co-15: clicking this adds NEW items AFTER the listener already exists -->
+    <script>
+      let nextId = 2; // => nextId numbers each dynamically-added task; item one is implicitly #1
+      // => nextId is the only piece of state this file tracks outside the DOM itself
+      document.getElementById("list").addEventListener("click", (event) => {
+        // => one listener on the <ul> parent catches clicks from every <li> inside it, via bubbling
+        if (event.target.dataset.action === "remove") {
+          // => checks WHICH descendant was actually clicked, using the bubbled event's target
+          event.target.closest("li").remove(); // => removes the clicked item's whole <li>
+        } // => end of the remove check; a click anywhere else inside #list does nothing
+      }); // => end of the ONE delegated click listener -- no per-item listener exists anywhere
+      document.getElementById("add").addEventListener("click", () => {
+        // => adds a brand-new item; note NO new click listener is ever attached here
+        const li = document.createElement("li"); // => the new item's container
+        li.textContent = "Task " + nextId++ + " "; // => labels it, then increments nextId
+        const btn = document.createElement("button"); // => this new button needs no listener of its own
+        btn.dataset.action = "remove"; // => the SAME data attribute the delegated listener checks for
+        btn.textContent = "Remove"; // => matches item one's existing button label exactly
+        li.append(btn); // => attaches the button to its new <li>
+        document.getElementById("list").append(li);
+        // => mounts the new <li> into #list -- the existing delegated listener covers it instantly
+      }); // => end of the add-task handler
+    </script>
+    <!-- => </script> ends the entire delegation implementation; zero rebinding code exists -->
+  </body>
+  <!-- => end of document; verify.mjs below adds two items and removes one, via the one listener -->
+  <!-- => co-15: bubbling is the entire mechanism this delegation pattern depends on -->
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 36: Event Bubbling</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <!-- => #parent is the ANCESTOR that will listen for clicks, even though it isn't clicked directly -->
+    <div id="parent">
+      <button id="child">Click me</button>
+      <!-- => the DESCENDANT that actually receives the real click -->
+    </div>
+    <!-- => end of the ancestor/descendant pair -->
+    <p id="report">not fired</p>
+    <!-- => starts as "not fired"; the listener below rewrites this text -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      // => addEventListener registers a click listener on #parent, NOT on #child
+      document.getElementById("parent").addEventListener("click", () => {
+        // => #child itself has no listener of its own -- this callback only runs via bubbling
+        document.getElementById("report").textContent = "parent saw it";
+        // => this only runs if a click event reaches #parent -- bubbling is what delivers it here
+      }); // => end of the parent's click listener
+      // => clicking #child fires a click event that BUBBLES up through #parent, triggering this listener
+      // => without bubbling, a listener on #parent could only ever see clicks ON #parent itself
+    </script>
+    <!-- => end of this example's JavaScript -->
+    <!-- => this <p id="report"> is the only visible proof the click was actually observed by #parent -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

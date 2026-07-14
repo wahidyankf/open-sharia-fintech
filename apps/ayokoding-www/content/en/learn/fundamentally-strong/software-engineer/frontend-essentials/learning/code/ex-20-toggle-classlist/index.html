@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 20: Toggle classList</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => no class is declared here at all; verify.mjs toggles "active" on and off programmatically -->
+    <div id="panel">Panel</div>
+    <!-- => starts with zero classes; classList.toggle adds "active" on the first call -->
+    <!-- => a second toggle call on the same element removes "active" again -- a full add-then-remove round trip -->
+    <!-- => toggle needs no prior contains()/add()/remove() branching -- it decides which action to take itself -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

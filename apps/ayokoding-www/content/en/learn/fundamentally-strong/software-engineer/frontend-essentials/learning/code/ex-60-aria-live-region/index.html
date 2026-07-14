@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 60: aria-live Region</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <button id="save">Save</button>
+    <!-- => triggers the status update below when clicked -->
+    <p id="status" aria-live="polite"></p>
+    <!-- => content changes here are announced automatically -->
+    <!-- => "polite" waits for the user's current activity to pause before announcing -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      document.getElementById("save").addEventListener("click", () => {
+        document.getElementById("status").textContent = "Saved successfully";
+        // => this text change is what aria-live="polite" picks up and announces to assistive tech
+      }); // => end of the "click" listener
+      // => without aria-live, a screen reader user would need to navigate back to this exact spot to notice it
+      // => verify.mjs reads #status's text before AND after clicking, to prove the update genuinely happened
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

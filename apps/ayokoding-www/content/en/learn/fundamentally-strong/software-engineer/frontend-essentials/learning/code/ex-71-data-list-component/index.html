@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the component logic below -->
+  <!-- => verify.mjs, further down, calls DataList four times with four different states -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 71: Data List Component</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the whole component lives in one <div> below -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <div id="app"></div>
+    <!-- => the ONE mount point; DataList() below always clears and rebuilds everything inside it -->
+    <script>
+      // => DataList is a genuine component: one function driven purely by the state it's given
+      function DataList(root, state) {
+        // => root is the mount point; state is the ONLY input that decides what renders
+        root.innerHTML = ""; // => always clears first; never appends onto stale markup
+        switch (state.status) {
+          // => co-27: the exact four-branch discriminated-union pattern from Examples 65-68
+          case "loading": // => reached by this file's own initial DataList() call, below
+            root.innerHTML = '<p id="spinner">Loading...</p>'; // => id lets verify.mjs assert this branch
+            break; // => stops here; no other case's markup is built for this call
+          case "error": // => reached by one of verify.mjs's four separate DataList() calls
+            root.innerHTML = '<p id="error-message">' + state.message + "</p>";
+            // => state.message ONLY exists on this variant, same narrowing as Example 66
+            break; // => stops here; no other case's markup is built for this call
+          case "empty": // => reached by one of verify.mjs's four separate DataList() calls
+            root.innerHTML = '<p id="empty-state">No results</p>'; // => an intentional message, not blank
+            break; // => stops here; no other case's markup is built for this call
+          case "loaded": {
+            // => co-21: this branch further maps an array to list items, like Example 48
+            const ul = document.createElement("ul"); // => the loaded UI is a real list, not text
+            ul.id = "results"; // => id lets verify.mjs assert this branch and count its items
+            for (const item of state.items) {
+              // => maps each array item to one <li>, exactly like Example 48's list rendering
+              const li = document.createElement("li"); // => one <li> per array element
+              li.textContent = item; // => shows this element's own text
+              ul.append(li); // => adds this <li> to the growing <ul>
+            }
+            root.append(ul); // => mounts the finished list as root's only child
+            break; // => stops here; no other case's markup is built for this call
+          }
+        } // => end of the switch; every one of the four possible states has its own branch
+      } // => end of DataList; the ENTIRE component is this one function
+      window.__DataList = DataList; // => exposes DataList so verify.mjs can call it directly, four times
+      DataList(document.getElementById("app"), { status: "loading" });
+      // => the initial call on page load; verify.mjs re-calls DataList with the other three states
+      // => every call rebuilds #app from scratch -- no state persists between calls
+    </script>
+    <!-- => </script> ends the entire DataList component implementation -->
+  </body>
+  <!-- => end of document; one component, four states, each verified by a separate DataList() call -->
+  <!-- => combines co-27's state modeling with co-21's array-to-DOM list rendering -->
+</html>
