@@ -472,54 +472,60 @@ the real problem sits -- exactly the `layering-and-leaks` idea this topic keeps 
 ## Code katas
 
 Eight hands-on drills, spanning beginner tools through advanced socket work. Each is a
-self-contained, runnable task using fresh hostnames, ports, or scenarios distinct from the learning
-track's 82 worked examples: attempt the task yourself first, then compare against the reference
-approach and the genuinely captured output shown.
+self-contained, runnable task with a scenario distinct from the learning track's 82 worked
+examples -- reusing this topic's own `example.com`/`example.org`/`example.net` reproducibility
+pattern wherever a live host is genuinely needed, per DD-30: attempt the task yourself first, then
+compare against the reference approach and the genuinely captured output shown.
 
 ### Kata 1 -- Read a status line and one header from curl -v
 
-**Task.** Run `curl -v --http1.1 https://www.iana.org` and, from the verbose trace alone (no other
+**Task.** Run `curl -v --http1.1 https://example.com` and, from the verbose trace alone (no other
 tool), report the response's status line and its `Content-Type` header value.
 
 **Reference approach**: grep the `-v` trace for lines starting with `< HTTP` (the status line) and
 `< Content-Type` (the header).
 
 ```bash
-curl -v --http1.1 https://www.iana.org 2>&1 1>/dev/null | grep -E "^< HTTP|^< Content-Type"
+curl -v --http1.1 https://example.com 2>&1 1>/dev/null | grep -E "^< HTTP|^< Content-Type"
 ```
 
 **Output** (genuinely captured):
 
 ```text
 < HTTP/1.1 200 OK
-< Content-Type: text/html; charset=UTF-8
+< Content-Type: text/html
 ```
 
 **Key takeaway**: The same `grep`-the-verbose-trace technique this topic used throughout Examples
-1-28 applies to any HTTPS host, not just `example.com` -- the trace format itself is fixed by curl,
-not by the target.
+1-28 works unchanged here -- extracting a status line and one header from a `-v` trace is a
+host-agnostic skill. `example.com` is reused deliberately, not a fresh production host, so this
+kata's captured output stays reproducible for every reader (DD-30) instead of drifting if a
+third-party site ever changes its headers.
 
 ### Kata 2 -- Compare A and NS records for a different domain
 
-**Task.** Run `dig +short wikipedia.org A` and `dig wikipedia.org NS`, and report how many A records
-and how many nameservers each returns.
+**Task.** Run `dig +short example.org A` and `dig example.org NS`, and report how many A records and
+how many nameservers each returns. (`example.org` is deliberately a different domain from Examples
+11 and 15's `example.com`, so this kata still exercises the technique against fresh `dig` output
+rather than recalling an already-memorized answer.)
 
 **Output** (genuinely captured):
 
 ```text
-$ dig +short wikipedia.org A
-103.102.166.224
+$ dig +short example.org A
+104.20.26.136
+172.66.157.237
 
-$ dig wikipedia.org NS
+$ dig example.org NS
 ;; ANSWER SECTION:
-wikipedia.org.  172800 IN NS ns0.wikimedia.org.
-wikipedia.org.  172800 IN NS ns1.wikimedia.org.
-wikipedia.org.  172800 IN NS ns2.wikimedia.org.
+example.org.  3500 IN NS mitch.ns.cloudflare.com.
+example.org.  3500 IN NS katelyn.ns.cloudflare.com.
 ```
 
-**Key takeaway**: `wikipedia.org` has one A record but three authoritative nameservers -- a
-concrete reminder that "how many records" is answered independently per record TYPE, not as one
-combined count for the whole domain.
+**Key takeaway**: `example.org` has two A records and two authoritative nameservers -- a concrete
+reminder that "how many records" is answered independently per record TYPE (`dig ... A` says
+nothing about how many NS records exist, and vice versa), not as one combined count for the whole
+domain.
 
 ### Kata 3 -- Write your own `read_line()` framing helper
 
@@ -585,7 +591,10 @@ hosts/ports -- it's a general debugging pattern, not something tied to one speci
 ### Kata 6 -- Time a DNS lookup against two different hosts
 
 **Task.** Using `time.perf_counter()`, measure `socket.gethostbyname()`'s time for two DIFFERENT
-real hosts (pick any two you haven't used elsewhere in this topic) and compare.
+real hosts and compare. This kata reuses `example.com` and `example.net` -- the same RFC
+2606-reserved documentation domains this topic relies on everywhere else -- specifically so the
+captured timings below stay reproducible for every reader, instead of drifting with a production
+site's own infrastructure changes.
 
 **Reference approach**:
 
@@ -593,7 +602,7 @@ real hosts (pick any two you haven't used elsewhere in this topic) and compare.
 import socket
 import time
 
-for host in ("www.python.org", "www.iana.org"):
+for host in ("example.com", "example.net"):
     start = time.perf_counter()
     ip = socket.gethostbyname(host)
     elapsed_ms = (time.perf_counter() - start) * 1000
@@ -603,13 +612,14 @@ for host in ("www.python.org", "www.iana.org"):
 **Output** (genuinely captured):
 
 ```text
-www.python.org -> 151.101.0.223 (28.1 ms)
-www.iana.org -> 104.18.25.232 (0.6 ms)
+example.com -> 172.66.147.243 (14.2 ms)
+example.net -> 104.20.21.8 (3.1 ms)
 ```
 
 **Key takeaway**: Two different, real hosts genuinely resolve in different amounts of time --
 resolution speed depends on caching state and which resolvers are involved, not on some fixed "DNS
-always takes X ms" constant.
+always takes X ms" constant; reusing this topic's reserved documentation domains here doesn't
+change that this is a genuine, live DNS lookup against two distinct authoritative infrastructures.
 
 ### Kata 7 -- Send a UDP datagram to a well-known DNS resolver's port and observe
 
@@ -619,6 +629,16 @@ closed port.
 
 **Reference approach**: reuse Example 56's `sendto()`/`recvfrom()` shape, but target `("8.8.8.8",
 53)` instead of a closed local port, with a short timeout.
+
+**Why a live host here, unlike Katas 1/2/6**: this kata's entire point is contrasting behavior
+against a REAL, LISTENING third-party service with Example 56's closed-port case -- a mocked or
+self-contained target cannot substitute for that, since a mock only ever reproduces whatever
+behavior the reader coded into it, never a genuinely independent service's own error handling.
+`8.8.8.8` (Google Public DNS) is chosen deliberately over an arbitrary production site: unlike
+`www.iana.org`'s exact response headers or `wikipedia.org`'s exact record set, this kata asserts no
+single specific byte-for-byte output (see the takeaway below), and `8.8.8.8` has been long-lived,
+stable, well-known public infrastructure since 2009. This is a deliberate, scoped exception to this
+topic's `example.com`/`example.org`/`example.net` reproducibility pattern, not an oversight.
 
 **Key takeaway**: Sending malformed bytes to a REAL, listening UDP service (as opposed to a closed
 port) can produce a range of outcomes depending on that service's own error handling -- reinforcing
