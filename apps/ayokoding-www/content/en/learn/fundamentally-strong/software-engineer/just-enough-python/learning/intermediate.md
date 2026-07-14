@@ -1327,7 +1327,7 @@ meaningful output -- Python calls it automatically, no explicit `.repr()` call n
 
 **Why it matters**: A good `__repr__` (ideally one that looks like valid Python that could recreate
 the object, exactly as this one does) turns debugging sessions and test failure output from opaque
-memory addresses into readable, actionable information -- Example 68's dataclass gets this for free,
+memory addresses into readable, actionable information -- Example 67's dataclass gets this for free,
 without writing `__repr__` by hand at all.
 
 ---

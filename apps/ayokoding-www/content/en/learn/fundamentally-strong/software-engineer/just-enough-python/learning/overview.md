@@ -63,10 +63,10 @@ python3 example.py
 ```
 
 **Exceptions, all deliberate**: Examples 2-5 demonstrate CLI workflows (`-c` inline execution, `venv`
-creation, `black`, `ruff`) rather than a single script run; Examples 46, 47, 61-64, 69, 72-84 name
-their file differently (`mod.py`, `cli.py`, a package under `app/`, and so on) because the filename
-itself is part of what the example teaches -- each one states its exact run command in its own
-**Run** line.
+creation, `black`, `ruff`) rather than a single script run; Examples 46, 47, 61-64, 69, 72-75, 79,
+81-84 name their file differently (`mod.py`, `cli.py`, a package under `app/`, and so on) because the
+filename itself is part of what the example teaches -- each one states its exact run command in its
+own **Run** line.
 
 ## How this primer is organized
 
