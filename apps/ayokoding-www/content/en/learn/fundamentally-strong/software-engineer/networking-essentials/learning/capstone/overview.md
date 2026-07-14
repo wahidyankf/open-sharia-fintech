@@ -58,7 +58,7 @@ flowchart LR
 All colocated code lives under `learning/capstone/code/`: the server in `server.py`, the client in
 `client.py`, and the explorer script in `explore.py`. Every listing below is the complete, verbatim
 file -- nothing on this page is truncated or paraphrased. Every listing is also fully type-hinted and
-passes `pyright --typeCheckingMode strict` with zero errors, zero warnings.
+passes strict-mode `pyright` (via the colocated `pyrightconfig.json`) with zero errors, zero warnings.
 
 ## Step 1: `server.py` -- bind, listen, and serve clients concurrently
 
@@ -409,13 +409,24 @@ finished watching TCP's guarantees do real work.
 _exercises DD-39 (typed Python)_
 
 Every file in `learning/capstone/code/` is fully type-hinted with PEP 585 built-in generics (`list[bytes]`, `tuple[str, int]`, `bytes | None`) and no untyped `Any` leaks. `server.py`, `client.py`, and
-`explore.py` all pass `pyright --typeCheckingMode strict` -- the strictest mode this topic's DD-39
-rule requires, one level above the `basic` mode the other 82 worked examples are held to.
+`explore.py` all pass strict-mode `pyright` -- the strictest mode this topic's DD-39 rule requires,
+one level above the `basic` mode the other 82 worked examples are held to. `pyright` has no
+`--strict`/`--typeCheckingMode` CLI flag (per DD-39); strict mode is enabled via the colocated
+`pyrightconfig.json` instead.
+
+**`learning/capstone/code/pyrightconfig.json`**
+
+```json
+{
+  "typeCheckingMode": "strict",
+  "pythonVersion": "3.13"
+}
+```
 
 **Verify**
 
 ```text
-$ pyright --typeCheckingMode strict learning/capstone/code/
+$ pyright learning/capstone/code/
 0 errors, 0 warnings, 0 informations
 ```
 
@@ -433,7 +444,8 @@ afterward.
   in the order those clients connected.
 - `python3 explore.py` exits `0` and prints all four staged sections (`[DNS]`, `[TCP]`, `[HTTP]`,
   `[UDP contrast]`) shown in Step 3's Output block, ending with `explore.py OK`.
-- `pyright --typeCheckingMode strict learning/capstone/code/` reports zero errors and zero warnings.
+- `pyright learning/capstone/code/` (strict mode via the colocated `pyrightconfig.json`) reports zero
+  errors and zero warnings.
 - No background process from any of `server.py`, `client.py`, or `explore.py` is left running after
   this capstone's verification completes.
 - Every listing on this page (`server.py`, `client.py`, `explore.py`) is the complete file, runnable
