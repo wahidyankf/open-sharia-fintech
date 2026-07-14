@@ -58,7 +58,8 @@ exact tag or commit hash.
 -- init.lua -- Pass-0 capstone forge: complete config entry point
 -- Reproducible from an empty ~/.config/nvim: copy this whole nvim-config/ tree into
 -- $XDG_CONFIG_HOME/nvim (default ~/.config/nvim) and restart Neovim.
--- Reuses topic-03 (Extending Neovim)'s proven capstone config verbatim.
+-- Reuses the same pinned plugins, require order, and vim.lsp.enable call as
+-- topic-03 (Extending Neovim)'s capstone config; comments rewritten for this page.
 
 vim.pack.add({ -- vim.pack: Neovim's built-in, Git-backed plugin manager
   {

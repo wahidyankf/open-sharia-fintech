@@ -1106,6 +1106,11 @@ Junction: Topics 01–03 (nvim + lua + extending). Apply the Inter-Topic Capston
 
 - [x] **[AI] V** — `web-researcher` confirms the pinned Neovim + plugin versions still current/CVE-clean
       at build time (reuse topic-03 findings). **Acceptance**: versions confirmed or updated in the spec.
+      Notes: pinned versions re-confirmed current/CVE-clean; one new finding surfaced while re-running
+      `:checkhealth` — `nvim-lspconfig` v2.10.0 now marks its own `:checkhealth lspconfig` integration
+      deprecated in favor of `:checkhealth vim.lsp` (plugin itself still functions). Folded back into
+      [`syllabus/03-extending-neovim.md`](./syllabus/03-extending-neovim.md)'s Accuracy notes as a dated
+      2026-07-14 entry, per the same precedent Phase 3's V step set in that file.
 - [x] **[AI] A** — Author `CONTENT/capstone-forge-ready/` (`_index.md` `weight: 135`, + `code/`) per the
       spec's ordered steps: (1) `code/nvim-config/` self-contained config repo with a pinned plugin
       lockfile — verify `XDG_CONFIG_HOME=$(mktemp -d) nvim --headless "+checkhealth" "+qa"` bootstraps
