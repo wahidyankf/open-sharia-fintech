@@ -101,12 +101,12 @@ def read_line(sock: socket.socket, buffer: bytearray) -> bytes | None:
     """
     while b"\n" not in buffer:  # => keep reading until a full line has actually arrived
         chunk = sock.recv(256)  # => a single recv() may return only PART of a line
-        if not chunk:  # => an empty recv() means the peer closed -- co-07's graceful signal
+        if not chunk:  # => an empty recv() means the peer closed -- co-07's graceful signal  # fmt: skip
             return None
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(b"\n")  # => split off exactly one line, keep the remainder
-    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT call
-    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one line, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT call  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
 def handle_command(command: bytes) -> bytes:
@@ -115,16 +115,16 @@ def handle_command(command: bytes) -> bytes:
         return b"PONG"
     if command == b"TIME":  # => a command that returns SERVER-side state, not an echo
         return str(int(time.time())).encode()  # => Unix epoch seconds, as ASCII digits
-    return b"ERR unknown command: " + command  # => a graceful reply, never a crash (co-11)
+    return b"ERR unknown command: " + command  # => a graceful reply, never a crash (co-11)  # fmt: skip
 
 
 def handle_client(conn: socket.socket, addr: tuple[str, int]) -> None:
     """Serve one client's full session: read/reply until it disconnects, then close cleanly."""
     with conn:
         buffer = bytearray()  # => this connection's own leftover-bytes buffer (co-11)
-        while True:  # => co-07: loops until the CONNECTION itself signals it is finished
+        while True:  # => co-07: loops until the CONNECTION itself signals it is finished  # fmt: skip
             command = read_line(conn, buffer)
-            if command is None:  # => co-07: the client closed -- exit this loop gracefully
+            if command is None:  # => co-07: the client closed -- exit this loop gracefully  # fmt: skip
                 break
             reply = handle_command(command)
             conn.sendall(reply + b"\n")
@@ -140,14 +140,14 @@ def run_server(host: str, port: int, client_count: int | None) -> None:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((host, port))  # => claims (host, port) for this process
         sock.listen(5)  # => a backlog of 5 pending, not-yet-accepted connections
-        print(f"listening on {host}:{port}", flush=True)  # => the signal client.py waits for
+        print(f"listening on {host}:{port}", flush=True)  # => the signal client.py waits for  # fmt: skip
 
         handlers: list[threading.Thread] = []
         served = 0
         while client_count is None or served < client_count:
-            conn, addr = sock.accept()  # => co-07: blocks for the next client's handshake
+            conn, addr = sock.accept()  # => co-07: blocks for the next client's handshake  # fmt: skip
             handler = threading.Thread(target=handle_client, args=(conn, addr))
-            handler.start()  # => co-10: each client is served concurrently, on its own thread
+            handler.start()  # => co-10: each client is served concurrently, on its own thread  # fmt: skip
             handlers.append(handler)
             served += 1
         for handler in handlers:
@@ -214,12 +214,12 @@ def read_line(sock: socket.socket, buffer: bytearray) -> bytes | None:
 def run_client(host: str, port: int, commands: list[bytes]) -> list[bytes]:
     """Connect once, send every command in ``commands`` in order, and return every reply."""
     replies: list[bytes] = []
-    with socket.create_connection((host, port), timeout=5) as sock:  # => co-07: the TCP handshake
+    with socket.create_connection((host, port), timeout=5) as sock:  # => co-07: the TCP handshake  # fmt: skip
         buffer = bytearray()
         for command in commands:  # => co-11: many messages, ONE persistent connection
             sock.sendall(command + b"\n")
             reply = read_line(sock, buffer)
-            if reply is None:  # => the server closed unexpectedly -- surfaced, not swallowed
+            if reply is None:  # => the server closed unexpectedly -- surfaced, not swallowed  # fmt: skip
                 raise ConnectionError("server closed before replying")
             replies.append(reply)
         # Exiting this `with` block calls close() -- co-07: this IS the graceful shutdown
@@ -315,7 +315,7 @@ def resolve(host: str) -> str:
 def open_tcp_connection(address: str, port: int) -> socket.socket:
     """Stage 2 -- TCP: open a reliable, ordered byte-stream connection (co-07)."""
     start = time.perf_counter()
-    sock = socket.create_connection((address, port), timeout=5)  # => the three-way handshake
+    sock = socket.create_connection((address, port), timeout=5)  # => the three-way handshake  # fmt: skip
     elapsed_ms = (time.perf_counter() - start) * 1000
     print(f"[TCP]  connected to {address}:{port}  ({elapsed_ms:.1f} ms)")
     return sock
@@ -327,7 +327,7 @@ def issue_get(sock: socket.socket, host: str, path: str) -> str:
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"
     sock.sendall(request.encode("ascii"))
     response = b""
-    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)
+    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
         chunk = sock.recv(4096)
         if not chunk:
             break
@@ -366,14 +366,14 @@ def explore(host: str, port: int, path: str) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Narrate DNS -> TCP -> HTTP for a real host.")
+    parser = argparse.ArgumentParser(description="Narrate DNS -> TCP -> HTTP for a real host.")  # fmt: skip
     parser.add_argument("--host", default="example.com")
     parser.add_argument("--port", type=int, default=80)
     parser.add_argument("--path", default="/")
     args = parser.parse_args()
 
     status_line: str = explore(args.host, args.port, args.path)
-    assert status_line.startswith("HTTP/1.1 200")  # => confirms a real, successful response
+    assert status_line.startswith("HTTP/1.1 200")  # => confirms a real, successful response  # fmt: skip
     print("explore.py OK")
 
 

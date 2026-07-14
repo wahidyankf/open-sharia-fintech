@@ -24,16 +24,12 @@ def read_line(sock: socket.socket, buffer: bytearray) -> bytes | None:
 def run_client(host: str, port: int, commands: list[bytes]) -> list[bytes]:
     """Connect once, send every command in ``commands`` in order, and return every reply."""
     replies: list[bytes] = []
-    with socket.create_connection(
-        (host, port), timeout=5
-    ) as sock:  # => co-07: the TCP handshake
+    with socket.create_connection((host, port), timeout=5) as sock:  # => co-07: the TCP handshake  # fmt: skip
         buffer = bytearray()
         for command in commands:  # => co-11: many messages, ONE persistent connection
             sock.sendall(command + b"\n")
             reply = read_line(sock, buffer)
-            if (
-                reply is None
-            ):  # => the server closed unexpectedly -- surfaced, not swallowed
+            if reply is None:  # => the server closed unexpectedly -- surfaced, not swallowed  # fmt: skip
                 raise ConnectionError("server closed before replying")
             replies.append(reply)
         # Exiting this `with` block calls close() -- co-07: this IS the graceful shutdown

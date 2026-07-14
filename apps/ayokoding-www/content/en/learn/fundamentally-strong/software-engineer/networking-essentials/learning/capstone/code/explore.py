@@ -25,9 +25,7 @@ def resolve(host: str) -> str:
 def open_tcp_connection(address: str, port: int) -> socket.socket:
     """Stage 2 -- TCP: open a reliable, ordered byte-stream connection (co-07)."""
     start = time.perf_counter()
-    sock = socket.create_connection(
-        (address, port), timeout=5
-    )  # => the three-way handshake
+    sock = socket.create_connection((address, port), timeout=5)  # => the three-way handshake  # fmt: skip
     elapsed_ms = (time.perf_counter() - start) * 1000
     print(f"[TCP]  connected to {address}:{port}  ({elapsed_ms:.1f} ms)")
     return sock
@@ -39,9 +37,7 @@ def issue_get(sock: socket.socket, host: str, path: str) -> str:
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"
     sock.sendall(request.encode("ascii"))
     response = b""
-    while (
-        True
-    ):  # => co-11: loop until the server closes (Connection: close makes this safe)
+    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
         chunk = sock.recv(4096)
         if not chunk:
             break
@@ -80,18 +76,14 @@ def explore(host: str, port: int, path: str) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Narrate DNS -> TCP -> HTTP for a real host."
-    )
+    parser = argparse.ArgumentParser(description="Narrate DNS -> TCP -> HTTP for a real host.")  # fmt: skip
     parser.add_argument("--host", default="example.com")
     parser.add_argument("--port", type=int, default=80)
     parser.add_argument("--path", default="/")
     args = parser.parse_args()
 
     status_line: str = explore(args.host, args.port, args.path)
-    assert status_line.startswith(
-        "HTTP/1.1 200"
-    )  # => confirms a real, successful response
+    assert status_line.startswith("HTTP/1.1 200")  # => confirms a real, successful response  # fmt: skip
     print("explore.py OK")
 
 
