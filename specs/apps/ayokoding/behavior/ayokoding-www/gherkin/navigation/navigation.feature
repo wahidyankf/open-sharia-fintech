@@ -44,3 +44,11 @@ Feature: Site Navigation
     When a visitor is on a specific content page
     Then the corresponding item in the sidebar should be visually highlighted as active
     And no other sidebar item should be highlighted as active
+
+  @unit
+  Scenario: In-body relative markdown links resolve to real site routes
+    Given a content page's markdown body contains a relative link to another content file
+    When the page is rendered to HTML
+    Then the rendered link's href should be the linked page's real site URL
+    And the href should not contain a literal ".md" extension
+    And the href should not be a raw filesystem-relative path

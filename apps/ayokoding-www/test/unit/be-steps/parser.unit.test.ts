@@ -70,4 +70,56 @@ describe("parseMarkdown", () => {
     expect(html).toContain('data-callout="info"');
     expect(html).toContain("Important note");
   });
+
+  describe("in-body relative content links", () => {
+    const currentSlug = "learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/overview";
+
+    it("rewrites a relative link that climbs directories to the linked page's real site route", async () => {
+      const md = "[Overview (section)](../../overview.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+      expect(html).not.toContain(".md");
+    });
+
+    it("rewrites a same-directory relative link to the linked page's real site route", async () => {
+      const md = "[Beginner Examples](./beginner.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain(
+        'href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/beginner"',
+      );
+      expect(html).not.toContain(".md");
+    });
+
+    it("resolves a relative link to a section's _index.md to the section's own route", async () => {
+      const md = "[Section](../_index.md)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim"');
+    });
+
+    it("leaves already-absolute /en/ links untouched", async () => {
+      const md = "[Home](/en/c/learn/fundamentally-strong)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong"');
+    });
+
+    it("leaves external, mailto, and in-page anchor links untouched", async () => {
+      const md = "[External](https://example.com/x.md) [Mail](mailto:a@example.com) [Anchor](#section)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain('href="https://example.com/x.md"');
+      expect(html).toContain('href="mailto:a@example.com"');
+      expect(html).toContain('href="#section"');
+    });
+
+    it("passes relative links through unresolved when no slug context is provided", async () => {
+      const md = "[Beginner Examples](./beginner.md)";
+      const { html } = await parseMarkdown(md);
+
+      expect(html).toContain('href="./beginner.md"');
+    });
+  });
 });

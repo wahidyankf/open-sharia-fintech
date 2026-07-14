@@ -6,6 +6,7 @@ import "./helpers/test-setup";
 import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
 import { TableOfContents } from "@/features/navigation/shell/toc";
 import { PrevNext } from "@/features/navigation/shell/prev-next";
+import { parseMarkdown } from "@/features/content/core/parser";
 
 const feature = await loadFeature(
   path.resolve(
@@ -166,6 +167,35 @@ describeFeature(feature, ({ Scenario, Background }) => {
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Active page is highlighted in the sidebar
     And("no other sidebar item should be highlighted as active", () => {
       expect(true).toBe(true);
+    });
+  });
+
+  Scenario("In-body relative markdown links resolve to real site routes", ({ Given, When, Then, And }) => {
+    const markdown = "[Overview (section)](../../overview.md)";
+    let html = "";
+
+    Given("a content page's markdown body contains a relative link to another content file", () => {
+      expect(markdown).toContain("](../../overview.md)");
+    });
+
+    When("the page is rendered to HTML", async () => {
+      const currentSlug = "learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/overview";
+      const result = await parseMarkdown(markdown, { locale: "en", slug: currentSlug });
+      html = result.html;
+    });
+
+    Then("the rendered link's href should be the linked page's real site URL", () => {
+      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+    });
+
+    And('the href should not contain a literal ".md" extension', () => {
+      expect(html).not.toContain(".md");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:In-body relative markdown links resolve to real site routes
+    And("the href should not be a raw filesystem-relative path", () => {
+      expect(html).not.toContain('href="../');
+      expect(html).not.toContain('href="./');
     });
   });
 });

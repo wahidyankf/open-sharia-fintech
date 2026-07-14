@@ -9,15 +9,22 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeStringify from "rehype-stringify";
+import type { Locale } from "@/features/i18n/core/config";
 import type { Heading } from "./types";
 import { transformShortcodes } from "./shortcodes";
+import { resolveContentHref } from "./content-link-rewrite";
 
 interface ParseResult {
   html: string;
   headings: Heading[];
 }
 
-export async function parseMarkdown(content: string): Promise<ParseResult> {
+export interface ParseContext {
+  locale: Locale;
+  slug: string;
+}
+
+export async function parseMarkdown(content: string, context?: ParseContext): Promise<ParseResult> {
   const headings: Heading[] = [];
 
   // Pre-process shortcodes before markdown parsing
@@ -43,6 +50,7 @@ export async function parseMarkdown(content: string): Promise<ParseResult> {
       // Extract headings (H2-H4) for table of contents
       extractHeadings(tree, headings);
     })
+    .use(() => (tree) => rewriteContentLinks(tree, context))
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(processed);
 
@@ -72,6 +80,22 @@ function extractHeadings(tree: HastNode, headings: Heading[]): void {
     }
     if (node.children) {
       extractHeadings(node, headings);
+    }
+  }
+}
+
+function rewriteContentLinks(tree: HastNode, context?: ParseContext): void {
+  if (!tree.children) return;
+
+  for (const node of tree.children) {
+    if (node.type === "element" && node.tagName === "a" && node.properties) {
+      const href = node.properties.href;
+      if (typeof href === "string") {
+        node.properties.href = resolveContentHref(href, context);
+      }
+    }
+    if (node.children) {
+      rewriteContentLinks(node, context);
     }
   }
 }
