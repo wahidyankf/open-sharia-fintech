@@ -470,11 +470,11 @@ git log origin/main --oneline                                       # => the rem
 
 ```text
 warning: You appear to have cloned an empty repository.
-From /tmp/git-example/remote
-   1412ef2..74fe648  main       -> origin/main
-1412ef2 initial
-74fe648 second commit
-1412ef2 initial
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.OBfCjChZJQ/remote
+   5c484dc..2f40570  main       -> origin/main
+5c484dc initial
+2f40570 second commit
+5c484dc initial
 ```
 
 **Key takeaway**: `fetch` is deliberately non-destructive and non-intrusive -- it only updates Git's
@@ -525,14 +525,14 @@ git log --oneline                                                    # => local 
 
 ```text
 warning: You appear to have cloned an empty repository.
-From /tmp/git-example/remote
-   1412ef2..28b2d54  main       -> origin/main
-Updating 1412ef2..28b2d54
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.4rLcWpHo2R/remote
+   057607c..4262b36  main       -> origin/main
+Updating 057607c..4262b36
 Fast-forward
  file.txt | 1 +
  1 file changed, 1 insertion(+)
-28b2d54 second commit
-1412ef2 initial
+4262b36 second commit
+057607c initial
 ```
 
 **Key takeaway**: `git pull` = `git fetch` + `git merge origin/<branch>` by default -- when there is
@@ -600,12 +600,12 @@ git log --oneline --graph                                              # => a st
 
 ```text
 warning: You appear to have cloned an empty repository.
-From /tmp/git-example/remote
-   2cfccb8..10156c2  main       -> origin/main
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.UhqEcAXykM/remote
+   11cb87a..d472475  main       -> origin/main
 Successfully rebased and updated refs/heads/main.
-* 0ee5de9 local change (own file)
-* 10156c2 remote change (own file)
-* 2cfccb8 initial
+* ee0a9a5 local change (own file)
+* d472475 remote change (own file)
+* 11cb87a initial
 ```
 
 **Key takeaway**: `pull --rebase` swaps out `pull`'s default merge integration step for a rebase --
@@ -667,9 +667,9 @@ git push origin main || true                                            # => co-
 
 ```text
 warning: You appear to have cloned an empty repository.
-To /tmp/git-example/remote.git
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.ViwAutGld0/remote.git
  ! [rejected]        main -> main (fetch first)
-error: failed to push some refs to '/tmp/git-example/remote.git'
+error: failed to push some refs to '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.ViwAutGld0/remote.git'
 hint: Updates were rejected because the remote contains work that you do
 hint: not have locally. This is usually caused by another repository pushing
 hint: to the same ref. You may want to first integrate the remote changes

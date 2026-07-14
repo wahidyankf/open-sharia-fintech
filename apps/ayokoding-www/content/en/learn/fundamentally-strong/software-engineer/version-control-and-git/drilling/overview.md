@@ -730,19 +730,20 @@ git push origin main                                     # => FIXED: succeeds --
 history-rewriting filter) is only safe on commits nobody else has pulled yet. Once shared, the fix for
 "I need to change this" is always a NEW commit on top, never a rewrite of the old one.
 
-**Output** (real, captured -- volatile temp paths normalized):
+**Output** (real, captured -- the scratch-directory path below is this run's actual `mktemp -d` result
+and, like the commit hashes, differs on a different run):
 
 ```text
 === BUGGY: rebasing the ALREADY-PUSHED, already-shared commit anyway ===
-To /tmp/git-example/remote.git
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git
  ! [rejected]        main -> main (non-fast-forward)
-error: failed to push some refs to '/tmp/git-example/remote.git'
+error: failed to push some refs to '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git'
 hint: Updates were rejected because the tip of your current branch is behind
 hint: its remote counterpart. Integrate the remote changes (e.g.
 hint: 'git pull ...') before pushing again.
 === FIX: never rewrite a commit that has already been pushed and pulled -- add a NEW commit instead ===
-To /tmp/git-example/remote.git
-   6b7dfbc..9f916a0  main -> main
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git
+   f83d7c1..86e9989  main -> main
 ```
 
 </details>

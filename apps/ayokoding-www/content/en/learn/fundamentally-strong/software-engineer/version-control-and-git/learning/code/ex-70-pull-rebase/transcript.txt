@@ -1,7 +1,7 @@
 warning: You appear to have cloned an empty repository.
-From /tmp/git-example/remote
-   2cfccb8..10156c2  main       -> origin/main
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.UhqEcAXykM/remote
+   11cb87a..d472475  main       -> origin/main
 Successfully rebased and updated refs/heads/main.
-* 0ee5de9 local change (own file)
-* 10156c2 remote change (own file)
-* 2cfccb8 initial
+* ee0a9a5 local change (own file)
+* d472475 remote change (own file)
+* 11cb87a initial

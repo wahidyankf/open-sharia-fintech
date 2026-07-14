@@ -53,7 +53,7 @@ git status                                       # => the very first status repo
 **Output**:
 
 ```text
-Initialized empty Git repository in /tmp/git-example/.git/
+Initialized empty Git repository in /private/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.48D1ujQpDg/.git/
 .
 ..
 config
