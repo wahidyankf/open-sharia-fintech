@@ -41,4 +41,12 @@ def test_account_rejects_non_positive_deposit() -> None:
         account.deposit(Money(0))
 
 
-# => Run: pytest -- Output: 5 passed
+def test_account_rejects_mismatched_currency_withdraw() -> None:
+    account: Account = Account("Alice", Money(1000, "USD"))
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: withdraw guards currency match too, same as deposit does via Money.__add__
+        account.withdraw(Money(500, "JPY"))
+
+
+# => Run: pytest -- Output: 6 passed

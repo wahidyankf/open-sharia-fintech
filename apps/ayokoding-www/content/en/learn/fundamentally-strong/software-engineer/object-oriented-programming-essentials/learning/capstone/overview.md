@@ -132,6 +132,8 @@ class Account:
     def withdraw(self, amount: Money) -> None:  # => defines the withdraw() method
         if amount.amount <= 0:  # => co-17: rejects a zero or negative withdrawal outright
             raise ValueError("withdraw amount must be positive")
+        if amount.currency != self._balance.currency:  # => co-17: same currency guard deposit gets for free via Money.__add__
+            raise ValueError("cannot withdraw Money in a different currency")
         if amount.amount > self._balance.amount:  # => co-17: the core invariant -- no overdraft, ever
             raise ValueError("insufficient funds")
         self._balance = Money(self._balance.amount - amount.amount, self._balance.currency)
@@ -218,14 +220,20 @@ def test_account_rejects_non_positive_deposit() -> None:
         account.deposit(Money(0))
 
 
-# => Run: pytest -- Output: 5 passed
+def test_account_rejects_mismatched_currency_withdraw() -> None:
+    account: Account = Account("Alice", Money(1000, "USD"))
+    with pytest.raises(ValueError):  # => co-17: withdraw guards currency match too, same as deposit does via Money.__add__
+        account.withdraw(Money(500, "JPY"))
+
+
+# => Run: pytest -- Output: 6 passed
 ```
 
 **Verify**
 
 ```text
 $ pytest -q tests/test_money.py tests/test_account.py
-11 passed
+12 passed
 ```
 
 ## Step 2: An `abc.ABC` interface with two polymorphic implementations
@@ -453,7 +461,7 @@ pass.
 **Output** (genuinely captured):
 
 ```text
-19 passed
+20 passed
 ```
 
 The following interactive session (genuinely captured, using the same `domain` package the test suite
@@ -491,13 +499,14 @@ ValueError: insufficient funds
 
 ## Acceptance criteria
 
-- `pytest -q` (from `learning/capstone/code/`) reports `19 passed`, covering `Money`'s invariant and
-  eq/hash contract, `Account`'s encapsulated overdraft invariant, `PaymentMethod`'s polymorphic
-  dispatch across two implementations, and `LedgerNaive`'s leaked interface alongside `Ledger`'s
-  composition-based fix.
+- `pytest -q` (from `learning/capstone/code/`) reports `20 passed`, covering `Money`'s invariant and
+  eq/hash contract, `Account`'s encapsulated overdraft and currency-match invariants, `PaymentMethod`'s
+  polymorphic dispatch across two implementations, and `LedgerNaive`'s leaked interface alongside
+  `Ledger`'s composition-based fix.
 - Invariants cannot be violated: `Money(-1)`, `Account("Alice", Money(-50))`,
-  `account.withdraw(Money(too_much))`, and `account.deposit(Money(0))` all raise `ValueError` --
-  every path is checked, not only the constructor.
+  `account.withdraw(Money(too_much))`, `account.withdraw(Money(amount, "JPY"))` against a USD balance,
+  and `account.deposit(Money(0))` all raise `ValueError` -- every path is checked, not only the
+  constructor.
 - The polymorphic call-site (`process_payment`) is implementation-agnostic: it is typed against
   `PaymentMethod`, never against `CardPayment` or `BankTransferPayment` concretely, and dispatches
   correctly to whichever one it receives.
@@ -511,7 +520,7 @@ ValueError: insufficient funds
 This capstone is runnable end to end: a reader who copies the six files above (`domain/money.py`,
 `domain/account.py`, `domain/payment_method.py`, `domain/ledger_naive.py`, `domain/ledger.py`, plus the
 four `tests/test_*.py` files) into a `learning/capstone/code/`-shaped tree and runs `pytest -q` there
-reaches the identical `19 passed` result shown above, verified against a real CPython 3.13.12
+reaches the identical `20 passed` result shown above, verified against a real CPython 3.13.12
 interpreter run (not merely described). Every mechanism combined here -- an encapsulated invariant
 (co-02, co-17), polymorphism via a shared method (co-10), a `@dataclass` value object with `__eq__`/
 `__hash__` (co-05, co-06), composition over inheritance (co-13), and an `abc.ABC` interface (co-11) --

@@ -46,6 +46,10 @@ class Account:
         ):  # => co-17: rejects a zero or negative withdrawal outright
             raise ValueError("withdraw amount must be positive")
         if (
+            amount.currency != self._balance.currency
+        ):  # => co-17: same currency guard deposit gets for free via Money.__add__
+            raise ValueError("cannot withdraw Money in a different currency")
+        if (
             amount.amount > self._balance.amount
         ):  # => co-17: the core invariant -- no overdraft, ever
             raise ValueError("insufficient funds")
