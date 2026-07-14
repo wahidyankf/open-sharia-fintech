@@ -1716,4 +1716,5 @@ another pass.
 
 ---
 
-← Previous: [Capstone](../learning/capstone/overview.md)
+← Previous: [Capstone](../learning/capstone/overview.md) · Next:
+[8 · Object-Oriented Programming Essentials](../../object-oriented-programming-essentials/learning/overview.md) →
