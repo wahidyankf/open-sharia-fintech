@@ -121,5 +121,14 @@ describe("parseMarkdown", () => {
 
       expect(html).toContain('href="./beginner.md"');
     });
+
+    it("leaves a relative link to a non-.md asset untouched instead of routing it as content", async () => {
+      const md = "[Slides](./slides.pdf) [Diagram](../assets/diagram.svg)";
+      const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
+
+      expect(html).toContain('href="./slides.pdf"');
+      expect(html).toContain('href="../assets/diagram.svg"');
+      expect(html).not.toContain("/en/c/");
+    });
   });
 });

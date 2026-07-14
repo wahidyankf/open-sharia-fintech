@@ -18,10 +18,12 @@ const ABSOLUTE_HREF = /^(https?:|mailto:|tel:|\/|#)/i;
  * Resolve one markdown-authored `href` against the current page's content slug.
  *
  * Returns `href` unchanged when it is already absolute (external URL, `mailto:`/`tel:`,
- * a site-root path, or an in-page anchor) or when `context` is not provided (no slug to
- * resolve against). Otherwise resolves the relative path against `context.slug`'s
- * directory, strips the `.md`/`_index` suffix the same way the content reader derives
- * slugs from file paths, and maps the result through {@link contentUrl}.
+ * a site-root path, or an in-page anchor), when `context` is not provided (no slug to
+ * resolve against), or when the relative target does not end in `.md` (not a content
+ * link per the repo's Linking convention — e.g. an image or PDF asset). Otherwise
+ * resolves the relative path against `context.slug`'s directory, strips the
+ * `.md`/`_index` suffix the same way the content reader derives slugs from file paths,
+ * and maps the result through {@link contentUrl}.
  */
 export function resolveContentHref(href: string, context?: { locale: Locale; slug: string }): string {
   if (!context || ABSOLUTE_HREF.test(href)) {
@@ -29,6 +31,11 @@ export function resolveContentHref(href: string, context?: { locale: Locale; slu
   }
 
   const [pathPart, hash] = splitHash(href);
+
+  if (!pathPart.endsWith(".md")) {
+    return href;
+  }
+
   const currentDir = path.posix.dirname(`/${context.slug}`);
   const resolved = path.posix.normalize(path.posix.join(currentDir, pathPart));
 
