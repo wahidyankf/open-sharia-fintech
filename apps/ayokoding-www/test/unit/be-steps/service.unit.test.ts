@@ -61,6 +61,26 @@ const baseItems: ContentMeta[] = [
     tags: [],
     filePath: "/en/learn/topic/deep.md",
   },
+  {
+    title: "Linked",
+    slug: "learn/linked",
+    locale: "en",
+    weight: 30,
+    draft: false,
+    isSection: false,
+    tags: [],
+    filePath: "/en/learn/linked.md",
+  },
+  {
+    title: "Guides",
+    slug: "learn/guides",
+    locale: "en",
+    weight: 40,
+    draft: false,
+    isSection: true,
+    tags: [],
+    filePath: "/en/learn/guides/_index.md",
+  },
 ];
 
 const baseFiles = new Map<string, { content: string; frontmatter: Record<string, unknown> }>();
@@ -75,6 +95,14 @@ baseFiles.set("/en/learn/advanced.md", {
   frontmatter: { title: "Advanced" },
 });
 baseFiles.set("/en/learn/topic/deep.md", { content: "## Deep\n\nDeep dive content.", frontmatter: { title: "Deep" } });
+baseFiles.set("/en/learn/linked.md", {
+  content: "## Linked\n\nSee [Advanced](./advanced.md) for more.",
+  frontmatter: { title: "Linked" },
+});
+baseFiles.set("/en/learn/guides/_index.md", {
+  content: "# Guides\n\nSee [Tips](./tips.md) for details.",
+  frontmatter: { title: "Guides" },
+});
 
 describe("ContentService", () => {
   it("getBySlug returns null for non-existent slug", async () => {
@@ -147,6 +175,25 @@ describe("ContentService", () => {
 
     const advanced = await service.getBySlug("en", "learn/advanced");
     expect(advanced?.prev?.slug).toBe("learn/intro");
+  });
+
+  it("getBySlug rewrites an in-body relative markdown link to its real site route", async () => {
+    const service = createService(baseItems, baseFiles);
+    const result = await service.getBySlug("en", "learn/linked");
+    expect(result).not.toBeNull();
+    expect(result?.html).toContain('href="/en/c/learn/advanced"');
+    expect(result?.html).not.toContain(".md");
+  });
+
+  it("getBySlug on a section index (_index.md) rewrites an in-body relative link against the section's own directory", async () => {
+    const service = createService(baseItems, baseFiles);
+    const result = await service.getBySlug("en", "learn/guides");
+    expect(result).not.toBeNull();
+    expect(result?.isSection).toBe(true);
+    // If meta.isSection were dropped on its way into parseMarkdown, this would incorrectly
+    // resolve against dirname("learn/guides") == "learn" and produce "/en/c/learn/tips".
+    expect(result?.html).toContain('href="/en/c/learn/guides/tips"');
+    expect(result?.html).not.toContain(".md");
   });
 
   it("readFileContent error in search is silently skipped", async () => {

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import FlexSearch from "flexsearch";
+import type { Locale } from "@/features/i18n/core/config";
 import type { ContentRepository } from "../core/repository";
 import type { ContentIndex, ContentMeta, TreeNode, PageLink, SearchResult, Heading } from "../core/types";
 import { parseMarkdown } from "../core/parser";
@@ -50,7 +51,11 @@ export class ContentService {
     if (!meta) return null;
 
     const { content } = await this.repository.readFileContent(meta.filePath);
-    const { html, headings } = await parseMarkdown(content);
+    const { html, headings } = await parseMarkdown(content, {
+      locale: locale as Locale,
+      slug,
+      isSection: meta.isSection,
+    });
     const prevNext = index.prevNext.get(`${locale}:${slug}`);
 
     return {
