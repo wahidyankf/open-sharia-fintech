@@ -1293,7 +1293,7 @@ Row: Primer · Python · topic wt 140 · Learn 104 / Drill 204 · **primer**. Te
       `drilling/_index.md` wt 204, capstone wt 900; all 25 concepts + 84 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
