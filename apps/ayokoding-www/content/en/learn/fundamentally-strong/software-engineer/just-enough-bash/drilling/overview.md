@@ -1154,10 +1154,10 @@ This is a historical Bourne-shell compatibility default that Bash inherited rath
 modern shell would choose from scratch (Bash does offer `shopt -s nullglob` to opt into the
 "expand to nothing" behavior instead, but it's off by default). Leaving the pattern unexpanded means
 a command that receives it downstream, like `ls *.txt` in an empty directory, gets a literal
-argument it can meaningfully report an error about ("No such file: _.txt") rather than silently
-receiving zero arguments and doing something unintended (like `rm _.txt`with nullglob accidentally
-expanding to a bare`rm`with no arguments, or worse, unexpectedly matching something else entirely
-if not carefully guarded). The`[[-e "$f"]] || continue` guard this primer uses handles the
+argument it can meaningfully report an error about (`ls: *.txt: No such file or directory`) rather than silently
+receiving zero arguments and doing something unintended (like `rm *.txt` with `nullglob` accidentally
+expanding to a bare `rm` with no arguments, or worse, unexpectedly matching something else entirely
+if not carefully guarded). The `[[ -e "$f" ]] || continue` guard this primer uses handles the
 default behavior explicitly, rather than depending on a shell option a reader's environment might
 not have set.
 
