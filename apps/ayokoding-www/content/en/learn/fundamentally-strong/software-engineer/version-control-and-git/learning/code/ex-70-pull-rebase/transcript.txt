@@ -1,0 +1,7 @@
+warning: You appear to have cloned an empty repository.
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.UhqEcAXykM/remote
+   11cb87a..d472475  main       -> origin/main
+Successfully rebased and updated refs/heads/main.
+* ee0a9a5 local change (own file)
+* d472475 remote change (own file)
+* 11cb87a initial

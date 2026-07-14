@@ -1,0 +1,9 @@
+Updating 6f2ec24..5419b76
+Fast-forward
+ fix.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 fix.txt
+Deleted branch quick-fix (was 5419b76).
+5419b76 quick trunk fix
+6f2ec24 initial
+* main

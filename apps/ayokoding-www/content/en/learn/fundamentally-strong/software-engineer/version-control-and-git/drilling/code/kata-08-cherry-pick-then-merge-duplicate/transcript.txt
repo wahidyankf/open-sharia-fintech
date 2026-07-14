@@ -1,0 +1,14 @@
+=== RISKY: cherry-pick the urgent fix onto main immediately (co-29) ===
+cf7e15e urgent bugfix needed on main now
+178227b main: unrelated progress
+9eb1a65 initial
+=== LATER: feature is fully done and gets merged normally ===
+*   0a80439 Merge branch 'feature'
+|\  
+| * 42d9fc7 unrelated feature work
+| * db3c567 urgent bugfix needed on main now
+* | cf7e15e urgent bugfix needed on main now
+* | 178227b main: unrelated progress
+|/  
+* 9eb1a65 initial
+=== WHY THIS IS SAFE, NOT A CONFLICT: Git's merge machinery still gets it right ===

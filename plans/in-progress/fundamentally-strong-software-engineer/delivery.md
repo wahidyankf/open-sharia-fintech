@@ -1501,144 +1501,144 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Git † · topic wt 160 · Learn 106 / Drill 206 · **subject**. Template →
 [`syllabus/06-version-control-and-git.md`](./syllabus/06-version-control-and-git.md).
 
-- [ ] **[AI] V** — `web-researcher` for `version-control-and-git`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `version-control-and-git`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/06-version-control-and-git.md`](./syllabus/06-version-control-and-git.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/version-control-and-git/learning/` teaching **every** concept in `syllabus/06-version-control-and-git.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · repository-init-and-clone
-  - [ ] co-02 · three-states-model
-  - [ ] co-03 · object-model
-  - [ ] co-04 · refs-branches-head
-  - [ ] co-05 · staging-and-status
-  - [ ] co-06 · hunk-staging
-  - [ ] co-07 · committing-and-messages
-  - [ ] co-08 · amending-commits
-  - [ ] co-09 · diffing
-  - [ ] co-10 · history-inspection
-  - [ ] co-11 · branching
-  - [ ] co-12 · fast-forward-merge
-  - [ ] co-13 · three-way-merge
-  - [ ] co-14 · conflict-resolution
-  - [ ] co-15 · rebase
-  - [ ] co-16 · interactive-rebase
-  - [ ] co-17 · rebase-vs-merge-policy
-  - [ ] co-18 · reset-modes
-  - [ ] co-19 · revert
-  - [ ] co-20 · restore-files
-  - [ ] co-21 · stash
-  - [ ] co-22 · reflog
-  - [ ] co-23 · remotes-fetch-push-pull
-  - [ ] co-24 · tracking-branches
-  - [ ] co-25 · tagging
-  - [ ] co-26 · gitignore
-  - [ ] co-27 · commit-hooks
-  - [ ] co-28 · pull-request-trunk-flow
-  - [ ] co-29 · cherry-pick
-- [ ] **[AI] A1-examples** — Author `CONTENT/version-control-and-git/learning/code/` — one runnable repo/recipe per worked example in `syllabus/06-version-control-and-git.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · init-repository — verify `.git/` exists, status "No commits yet"
-  - [ ] ex-02 · check-status-clean — verify branch named, "nothing to commit"
-  - [ ] ex-03 · create-untracked-file — verify file under "Untracked files"
-  - [ ] ex-04 · stage-a-file — verify moved to "Changes to be committed"
-  - [ ] ex-05 · first-commit — verify `git log --oneline` shows one commit
-  - [ ] ex-06 · commit-shows-snapshot — verify `git show HEAD` prints metadata + diff
-  - [ ] ex-07 · stage-all-changes — verify both files staged
-  - [ ] ex-08 · unstage-file — verify returns to unstaged
-  - [ ] ex-09 · diff-working-tree — verify unstaged change appears
-  - [ ] ex-10 · diff-staged — verify staged change shows, plain diff empty
-  - [ ] ex-11 · view-log-oneline — verify one line per commit, abbreviated hashes
-  - [ ] ex-12 · view-log-graph — verify ASCII commit graph renders
-  - [ ] ex-13 · inspect-blob-cat-file — verify prints committed file contents
-  - [ ] ex-14 · inspect-commit-object — verify tree hash, parent, author, message
-  - [ ] ex-15 · inspect-tree-object — verify lists blob/tree entries with modes/names
-  - [ ] ex-16 · object-type — verify prints "commit"
-  - [ ] ex-17 · amend-last-commit — verify updated message and new hash
-  - [ ] ex-18 · amend-add-forgotten-file — verify file in HEAD's tree
-  - [ ] ex-19 · gitignore-basics — verify `x.log` not listed
-  - [ ] ex-20 · force-add-ignored — verify ignored file stages
-  - [ ] ex-21 · create-branch — verify `feature` listed
-  - [ ] ex-22 · switch-branch — verify "On branch feature"
-  - [ ] ex-23 · create-and-switch — verify branch created + checked out in one step
-  - [ ] ex-24 · head-tracks-branch — verify HEAD and branch hashes identical
-  - [ ] ex-25 · list-refs — verify each branch maps to a commit hash
-  - [ ] ex-26 · delete-merged-branch — verify branch no longer listed
-  - [ ] ex-27 · rename-branch — verify new name shown
-  - [ ] ex-28 · tag-lightweight — verify `v1` listed and rev-parse matches HEAD
-  - [ ] ex-29 · stage-hunks-interactively — verify only chosen hunk staged
-  - [ ] ex-30 · split-a-hunk — verify only chosen sub-hunk staged
-  - [ ] ex-31 · commit-with-body — verify subject + body both print
-  - [ ] ex-32 · diff-two-commits — verify combined change across last two commits
-  - [ ] ex-33 · diff-branches — verify only feature's divergent changes
-  - [ ] ex-34 · log-limit-and-format — verify exactly three commits, custom format
-  - [ ] ex-35 · log-by-path — verify only commits touching `file.txt`
-  - [ ] ex-36 · fast-forward-merge — verify main advances, no merge commit, linear
-  - [ ] ex-37 · no-ff-merge — verify merge commit created despite ff possible
-  - [ ] ex-38 · three-way-merge-clean — verify HEAD shows two parent lines
-  - [ ] ex-39 · create-merge-conflict — verify conflict, file "both modified"
-  - [ ] ex-40 · resolve-conflict — verify merge completes, shown in `log --graph`
-  - [ ] ex-41 · abort-merge — verify working tree returns to pre-merge, status clean
-  - [ ] ex-42 · inspect-conflict-diff — verify combined conflict diff with both sides
-  - [ ] ex-43 · rebase-onto-main — verify commits replay with new hashes, linear
-  - [ ] ex-44 · rebase-conflict-continue — verify rebase finishes
-  - [ ] ex-45 · rebase-abort — verify branch returns to pre-rebase tip
-  - [ ] ex-46 · interactive-rebase-squash — verify two commits combined into one
-  - [ ] ex-47 · interactive-rebase-reword — verify target message changed, others stay
-  - [ ] ex-48 · interactive-rebase-reorder — verify new commit order
-  - [ ] ex-49 · interactive-rebase-drop — verify dropped commit gone from log
-  - [ ] ex-50 · compare-merge-vs-rebase-history — verify one has merge commit, other linear
-  - [ ] ex-51 · reset-soft — verify HEAD back one, changes remain staged
-  - [ ] ex-52 · reset-mixed — verify HEAD back, changes unstaged but present
-  - [ ] ex-53 · reset-hard — verify HEAD back, working tree matches (change gone)
-  - [ ] ex-54 · unstage-with-reset — verify file becomes unstaged
-  - [ ] ex-55 · revert-commit — verify inverse commit, change undone, history preserved
-  - [ ] ex-56 · restore-file-from-head — verify file reverts to HEAD's version
-  - [ ] ex-57 · restore-file-from-commit — verify content matches older commit
-  - [ ] ex-58 · stash-changes — verify status clean, one stash entry
-  - [ ] ex-59 · stash-pop — verify changes return, stash entry removed
-  - [ ] ex-60 · stash-named-and-list — verify labeled entry appears
-  - [ ] ex-61 · reflog-inspect — verify lists `HEAD@{n}` entries
-  - [ ] ex-62 · recover-after-hard-reset — verify lost commits restored via reflog
-  - [ ] ex-63 · recover-deleted-branch — verify branch and commits reappear
-  - [ ] ex-64 · add-remote — verify `git remote -v` lists origin URLs
-  - [ ] ex-65 · clone-repository — verify `dest/.git` exists, source history present
-  - [ ] ex-66 · push-to-remote — verify bare remote log shows pushed commit
-  - [ ] ex-67 · set-upstream-tracking — verify `branch -vv` shows tracking ref
-  - [ ] ex-68 · fetch-updates — verify `origin/main` advances, local does not
-  - [ ] ex-69 · pull-fast-forward — verify local fast-forwards to origin
-  - [ ] ex-70 · pull-rebase — verify local commits replay atop fetched, linear
-  - [ ] ex-71 · push-rejected-non-fast-forward — verify non-fast-forward error
-  - [ ] ex-72 · checkout-remote-tracking-branch — verify local tracking branch created
-  - [ ] ex-73 · annotated-tag — verify object type "tag", tagger shown
-  - [ ] ex-74 · push-tags — verify tag appears in remote
-  - [ ] ex-75 · cherry-pick-commit — verify single commit's change applied, new hash
-  - [ ] ex-76 · cherry-pick-conflict — verify cherry-pick completes after resolve
-  - [ ] ex-77 · install-pre-commit-hook — verify commit blocked with hook message
-  - [ ] ex-78 · hook-allows-clean-commit — verify clean commit succeeds
-  - [ ] ex-79 · pr-branch-flow — verify trunk has change and a merge commit
-  - [ ] ex-80 · trunk-based-short-branch — verify main advanced, branch gone
-  - [ ] ex-81 · revert-a-merge — verify merge changes undone, history intact
-  - [ ] ex-82 · verify-history-intact-after-recovery — verify no dangling/lost commits
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/version-control-and-git/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/version-control-and-git/learning/` teaching **every** concept in `syllabus/06-version-control-and-git.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · repository-init-and-clone
+  - [x] co-02 · three-states-model
+  - [x] co-03 · object-model
+  - [x] co-04 · refs-branches-head
+  - [x] co-05 · staging-and-status
+  - [x] co-06 · hunk-staging
+  - [x] co-07 · committing-and-messages
+  - [x] co-08 · amending-commits
+  - [x] co-09 · diffing
+  - [x] co-10 · history-inspection
+  - [x] co-11 · branching
+  - [x] co-12 · fast-forward-merge
+  - [x] co-13 · three-way-merge
+  - [x] co-14 · conflict-resolution
+  - [x] co-15 · rebase
+  - [x] co-16 · interactive-rebase
+  - [x] co-17 · rebase-vs-merge-policy
+  - [x] co-18 · reset-modes
+  - [x] co-19 · revert
+  - [x] co-20 · restore-files
+  - [x] co-21 · stash
+  - [x] co-22 · reflog
+  - [x] co-23 · remotes-fetch-push-pull
+  - [x] co-24 · tracking-branches
+  - [x] co-25 · tagging
+  - [x] co-26 · gitignore
+  - [x] co-27 · commit-hooks
+  - [x] co-28 · pull-request-trunk-flow
+  - [x] co-29 · cherry-pick
+- [x] **[AI] A1-examples** — Author `CONTENT/version-control-and-git/learning/code/` — one runnable repo/recipe per worked example in `syllabus/06-version-control-and-git.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · init-repository — verify `.git/` exists, status "No commits yet"
+  - [x] ex-02 · check-status-clean — verify branch named, "nothing to commit"
+  - [x] ex-03 · create-untracked-file — verify file under "Untracked files"
+  - [x] ex-04 · stage-a-file — verify moved to "Changes to be committed"
+  - [x] ex-05 · first-commit — verify `git log --oneline` shows one commit
+  - [x] ex-06 · commit-shows-snapshot — verify `git show HEAD` prints metadata + diff
+  - [x] ex-07 · stage-all-changes — verify both files staged
+  - [x] ex-08 · unstage-file — verify returns to unstaged
+  - [x] ex-09 · diff-working-tree — verify unstaged change appears
+  - [x] ex-10 · diff-staged — verify staged change shows, plain diff empty
+  - [x] ex-11 · view-log-oneline — verify one line per commit, abbreviated hashes
+  - [x] ex-12 · view-log-graph — verify ASCII commit graph renders
+  - [x] ex-13 · inspect-blob-cat-file — verify prints committed file contents
+  - [x] ex-14 · inspect-commit-object — verify tree hash, parent, author, message
+  - [x] ex-15 · inspect-tree-object — verify lists blob/tree entries with modes/names
+  - [x] ex-16 · object-type — verify prints "commit"
+  - [x] ex-17 · amend-last-commit — verify updated message and new hash
+  - [x] ex-18 · amend-add-forgotten-file — verify file in HEAD's tree
+  - [x] ex-19 · gitignore-basics — verify `x.log` not listed
+  - [x] ex-20 · force-add-ignored — verify ignored file stages
+  - [x] ex-21 · create-branch — verify `feature` listed
+  - [x] ex-22 · switch-branch — verify "On branch feature"
+  - [x] ex-23 · create-and-switch — verify branch created + checked out in one step
+  - [x] ex-24 · head-tracks-branch — verify HEAD and branch hashes identical
+  - [x] ex-25 · list-refs — verify each branch maps to a commit hash
+  - [x] ex-26 · delete-merged-branch — verify branch no longer listed
+  - [x] ex-27 · rename-branch — verify new name shown
+  - [x] ex-28 · tag-lightweight — verify `v1` listed and rev-parse matches HEAD
+  - [x] ex-29 · stage-hunks-interactively — verify only chosen hunk staged
+  - [x] ex-30 · split-a-hunk — verify only chosen sub-hunk staged
+  - [x] ex-31 · commit-with-body — verify subject + body both print
+  - [x] ex-32 · diff-two-commits — verify combined change across last two commits
+  - [x] ex-33 · diff-branches — verify only feature's divergent changes
+  - [x] ex-34 · log-limit-and-format — verify exactly three commits, custom format
+  - [x] ex-35 · log-by-path — verify only commits touching `file.txt`
+  - [x] ex-36 · fast-forward-merge — verify main advances, no merge commit, linear
+  - [x] ex-37 · no-ff-merge — verify merge commit created despite ff possible
+  - [x] ex-38 · three-way-merge-clean — verify HEAD shows two parent lines
+  - [x] ex-39 · create-merge-conflict — verify conflict, file "both modified"
+  - [x] ex-40 · resolve-conflict — verify merge completes, shown in `log --graph`
+  - [x] ex-41 · abort-merge — verify working tree returns to pre-merge, status clean
+  - [x] ex-42 · inspect-conflict-diff — verify combined conflict diff with both sides
+  - [x] ex-43 · rebase-onto-main — verify commits replay with new hashes, linear
+  - [x] ex-44 · rebase-conflict-continue — verify rebase finishes
+  - [x] ex-45 · rebase-abort — verify branch returns to pre-rebase tip
+  - [x] ex-46 · interactive-rebase-squash — verify two commits combined into one
+  - [x] ex-47 · interactive-rebase-reword — verify target message changed, others stay
+  - [x] ex-48 · interactive-rebase-reorder — verify new commit order
+  - [x] ex-49 · interactive-rebase-drop — verify dropped commit gone from log
+  - [x] ex-50 · compare-merge-vs-rebase-history — verify one has merge commit, other linear
+  - [x] ex-51 · reset-soft — verify HEAD back one, changes remain staged
+  - [x] ex-52 · reset-mixed — verify HEAD back, changes unstaged but present
+  - [x] ex-53 · reset-hard — verify HEAD back, working tree matches (change gone)
+  - [x] ex-54 · unstage-with-reset — verify file becomes unstaged
+  - [x] ex-55 · revert-commit — verify inverse commit, change undone, history preserved
+  - [x] ex-56 · restore-file-from-head — verify file reverts to HEAD's version
+  - [x] ex-57 · restore-file-from-commit — verify content matches older commit
+  - [x] ex-58 · stash-changes — verify status clean, one stash entry
+  - [x] ex-59 · stash-pop — verify changes return, stash entry removed
+  - [x] ex-60 · stash-named-and-list — verify labeled entry appears
+  - [x] ex-61 · reflog-inspect — verify lists `HEAD@{n}` entries
+  - [x] ex-62 · recover-after-hard-reset — verify lost commits restored via reflog
+  - [x] ex-63 · recover-deleted-branch — verify branch and commits reappear
+  - [x] ex-64 · add-remote — verify `git remote -v` lists origin URLs
+  - [x] ex-65 · clone-repository — verify `dest/.git` exists, source history present
+  - [x] ex-66 · push-to-remote — verify bare remote log shows pushed commit
+  - [x] ex-67 · set-upstream-tracking — verify `branch -vv` shows tracking ref
+  - [x] ex-68 · fetch-updates — verify `origin/main` advances, local does not
+  - [x] ex-69 · pull-fast-forward — verify local fast-forwards to origin
+  - [x] ex-70 · pull-rebase — verify local commits replay atop fetched, linear
+  - [x] ex-71 · push-rejected-non-fast-forward — verify non-fast-forward error
+  - [x] ex-72 · checkout-remote-tracking-branch — verify local tracking branch created
+  - [x] ex-73 · annotated-tag — verify object type "tag", tagger shown
+  - [x] ex-74 · push-tags — verify tag appears in remote
+  - [x] ex-75 · cherry-pick-commit — verify single commit's change applied, new hash
+  - [x] ex-76 · cherry-pick-conflict — verify cherry-pick completes after resolve
+  - [x] ex-77 · install-pre-commit-hook — verify commit blocked with hook message
+  - [x] ex-78 · hook-allows-clean-commit — verify clean commit succeeds
+  - [x] ex-79 · pr-branch-flow — verify trunk has change and a merge commit
+  - [x] ex-80 · trunk-based-short-branch — verify main advanced, branch gone
+  - [x] ex-81 · revert-a-merge — verify merge changes undone, history intact
+  - [x] ex-82 · verify-history-intact-after-recovery — verify no dangling/lost commits
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/version-control-and-git/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/version-control-and-git/drilling/_index.md` (wt 206) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 7 Gate
 
-- [ ] [AI] `version-control-and-git/` complete: `_index.md` wt 160, `learning/_index.md` wt 106,
+- [x] [AI] `version-control-and-git/` complete: `_index.md` wt 160, `learning/_index.md` wt 106,
       `drilling/_index.md` wt 206, capstone wt 900; all 29 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -1646,7 +1646,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -1655,7 +1655,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
@@ -1667,137 +1667,137 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 170 · Learn 107 / Drill 207 · **subject**. Template →
 [`syllabus/07-data-structures-and-algorithms-essentials.md`](./syllabus/07-data-structures-and-algorithms-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `data-structures-and-algorithms-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `data-structures-and-algorithms-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/07-data-structures-and-algorithms-essentials.md`](./syllabus/07-data-structures-and-algorithms-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/` teaching **every** concept in `syllabus/07-data-structures-and-algorithms-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · big-o-notation
-  - [ ] co-02 · amortized-analysis
-  - [ ] co-03 · dynamic-array
-  - [ ] co-04 · stack
-  - [ ] co-05 · queue
-  - [ ] co-06 · deque
-  - [ ] co-07 · singly-linked-list
-  - [ ] co-08 · hash-map
-  - [ ] co-09 · hash-set
-  - [ ] co-10 · binary-tree
-  - [ ] co-11 · binary-search-tree
-  - [ ] co-12 · heap-priority-queue
-  - [ ] co-13 · linear-search
-  - [ ] co-14 · binary-search
-  - [ ] co-15 · builtin-sort
-  - [ ] co-16 · comparison-sorts
-  - [ ] co-17 · recursion
-  - [ ] co-18 · iterate-vs-recurse
-  - [ ] co-19 · memoization
-  - [ ] co-20 · two-pointer-and-sliding-window
-  - [ ] co-21 · graph-adjacency
-  - [ ] co-22 · static-type-hints
-- [ ] **[AI] A1-examples** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/07-data-structures-and-algorithms-essentials.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · list-append-index — verify printed length + element match
-  - [ ] ex-02 · list-slicing — verify sub-list equals expected slice
-  - [ ] ex-03 · list-reverse-inplace — verify equals expected order
-  - [ ] ex-04 · list-reverse-slice — verify new reversed list, original unchanged
-  - [ ] ex-05 · stack-push-pop — verify LIFO order
-  - [ ] ex-06 · balanced-parentheses — verify `"(())"` True, `"(()"` False
-  - [ ] ex-07 · queue-with-deque — verify FIFO order
-  - [ ] ex-08 · deque-both-ends — verify resulting order
-  - [ ] ex-09 · list-front-pop-is-slow — verify identical order, note O(n) vs O(1)
-  - [ ] ex-10 · dict-lookup — verify value and default
-  - [ ] ex-11 · dict-count-frequencies — verify frequency map
-  - [ ] ex-12 · set-membership — verify True/False results
-  - [ ] ex-13 · set-dedup — verify unique count
-  - [ ] ex-14 · two-sum-with-dict — verify indices
-  - [ ] ex-15 · linear-search-found — verify correct index
-  - [ ] ex-16 · linear-search-not-found — verify returns -1
-  - [ ] ex-17 · builtin-sorted — verify ascending order
-  - [ ] ex-18 · sort-with-key — verify order by length
-  - [ ] ex-19 · sort-reverse — verify descending order
-  - [ ] ex-20 · sort-tuples-by-field — verify order by second field
-  - [ ] ex-21 · factorial-recursive — verify `factorial(5) == 120`
-  - [ ] ex-22 · sum-list-recursive — verify total
-  - [ ] ex-23 · countdown-iterative-vs-recursive — verify identical results
-  - [ ] ex-24 · big-o-constant-vs-linear — verify lookup stays 1 step, scan grows
-  - [ ] ex-25 · type-hints-on-function — verify runs, annotations print
-  - [ ] ex-26 · type-hints-on-collections — verify runs on typed inputs
-  - [ ] ex-27 · singly-linked-list-build — verify traversal prints values in order
-  - [ ] ex-28 · linked-list-length — verify length
-  - [ ] ex-29 · linked-list-reverse — verify new order
-  - [ ] ex-30 · linked-list-middle — verify middle value (slow/fast)
-  - [ ] ex-31 · binary-search-iterative — verify index of target
-  - [ ] ex-32 · binary-search-not-found — verify returns -1
-  - [ ] ex-33 · binary-search-first-occurrence — verify leftmost index
-  - [ ] ex-34 · binary-search-last-occurrence — verify rightmost index
-  - [ ] ex-35 · bisect-insertion-point — verify insertion point
-  - [ ] ex-36 · bisect-insort — verify list stays sorted
-  - [ ] ex-37 · min-heap-push-pop — verify ascending pop order
-  - [ ] ex-38 · heapify-list — verify `heap[0]` is minimum
-  - [ ] ex-39 · top-k-largest — verify result set
-  - [ ] ex-40 · priority-queue-tuples — verify pop order by priority
-  - [ ] ex-41 · max-heap-via-negation — verify largest pops first
-  - [ ] ex-42 · merge-sorted-with-heapq — verify merged order
-  - [ ] ex-43 · insertion-sort — verify output equals `sorted()`
-  - [ ] ex-44 · selection-sort — verify sorted output
-  - [ ] ex-45 · bubble-sort — verify sorted output
-  - [ ] ex-46 · merge-sort — verify sorted output
-  - [ ] ex-47 · quicksort — verify sorted output
-  - [ ] ex-48 · binary-tree-build — verify structure via level-order print
-  - [ ] ex-49 · tree-inorder-traversal — verify visited order
-  - [ ] ex-50 · tree-pre-and-post-order — verify both orders
-  - [ ] ex-51 · tree-level-order-bfs — verify per-level lists
-  - [ ] ex-52 · tree-height — verify height
-  - [ ] ex-53 · bst-insert — verify inorder yields sorted values
-  - [ ] ex-54 · bst-search — verify found and not-found
-  - [ ] ex-55 · bst-min-max — verify min (leftmost) and max (rightmost)
-  - [ ] ex-56 · graph-adjacency-build — verify each node's neighbors print
-  - [ ] ex-57 · graph-bfs — verify visit order
-  - [ ] ex-58 · graph-dfs — verify visit order
-  - [ ] ex-59 · graph-bfs-shortest-path — verify distance
-  - [ ] ex-60 · sliding-window-max-sum — verify result
-  - [ ] ex-61 · fibonacci-naive-recursive — verify `fib(10) == 55`, print call count
-  - [ ] ex-62 · fibonacci-memoized-dict — verify same result, fewer calls
-  - [ ] ex-63 · fibonacci-lru-cache — verify result, print `cache_info()` hits
-  - [ ] ex-64 · fibonacci-iterative — verify result, O(1) space
-  - [ ] ex-65 · coin-change-memoized — verify answer
-  - [ ] ex-66 · grid-paths-memoized — verify count
-  - [ ] ex-67 · bst-delete — verify inorder stays sorted (all 3 cases)
-  - [ ] ex-68 · bst-inorder-iterative — verify equals recursive order
-  - [ ] ex-69 · tree-is-balanced — verify True/False on fixtures
-  - [ ] ex-70 · bst-lowest-common-ancestor — verify ancestor
-  - [ ] ex-71 · dijkstra-with-heap — verify distances
-  - [ ] ex-72 · topological-sort-kahn — verify valid order
-  - [ ] ex-73 · detect-cycle-directed — verify True cyclic / False acyclic
-  - [ ] ex-74 · merge-k-sorted-lists — verify merged order
-  - [ ] ex-75 · quickselect-kth-smallest — verify value
-  - [ ] ex-76 · two-pointer-pair-sum — verify indices
-  - [ ] ex-77 · sliding-window-longest-unique — verify length
-  - [ ] ex-78 · lru-cache-from-scratch — verify eviction order
-  - [ ] ex-79 · trie-insert-search — verify insert, search, prefix queries
-  - [ ] ex-80 · big-o-empirical-doubling — verify binary ~log n, linear ~n
-  - [ ] ex-81 · stable-multi-key-sort — verify stable multi-key order
-  - [ ] ex-82 · deep-recursion-to-iteration — verify large input succeeds iteratively
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/` teaching **every** concept in `syllabus/07-data-structures-and-algorithms-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · big-o-notation
+  - [x] co-02 · amortized-analysis
+  - [x] co-03 · dynamic-array
+  - [x] co-04 · stack
+  - [x] co-05 · queue
+  - [x] co-06 · deque
+  - [x] co-07 · singly-linked-list
+  - [x] co-08 · hash-map
+  - [x] co-09 · hash-set
+  - [x] co-10 · binary-tree
+  - [x] co-11 · binary-search-tree
+  - [x] co-12 · heap-priority-queue
+  - [x] co-13 · linear-search
+  - [x] co-14 · binary-search
+  - [x] co-15 · builtin-sort
+  - [x] co-16 · comparison-sorts
+  - [x] co-17 · recursion
+  - [x] co-18 · iterate-vs-recurse
+  - [x] co-19 · memoization
+  - [x] co-20 · two-pointer-and-sliding-window
+  - [x] co-21 · graph-adjacency
+  - [x] co-22 · static-type-hints
+- [x] **[AI] A1-examples** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/code/` — one runnable Python module per worked example in `syllabus/07-data-structures-and-algorithms-essentials.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · list-append-index — verify printed length + element match
+  - [x] ex-02 · list-slicing — verify sub-list equals expected slice
+  - [x] ex-03 · list-reverse-inplace — verify equals expected order
+  - [x] ex-04 · list-reverse-slice — verify new reversed list, original unchanged
+  - [x] ex-05 · stack-push-pop — verify LIFO order
+  - [x] ex-06 · balanced-parentheses — verify `"(())"` True, `"(()"` False
+  - [x] ex-07 · queue-with-deque — verify FIFO order
+  - [x] ex-08 · deque-both-ends — verify resulting order
+  - [x] ex-09 · list-front-pop-is-slow — verify identical order, note O(n) vs O(1)
+  - [x] ex-10 · dict-lookup — verify value and default
+  - [x] ex-11 · dict-count-frequencies — verify frequency map
+  - [x] ex-12 · set-membership — verify True/False results
+  - [x] ex-13 · set-dedup — verify unique count
+  - [x] ex-14 · two-sum-with-dict — verify indices
+  - [x] ex-15 · linear-search-found — verify correct index
+  - [x] ex-16 · linear-search-not-found — verify returns -1
+  - [x] ex-17 · builtin-sorted — verify ascending order
+  - [x] ex-18 · sort-with-key — verify order by length
+  - [x] ex-19 · sort-reverse — verify descending order
+  - [x] ex-20 · sort-tuples-by-field — verify order by second field
+  - [x] ex-21 · factorial-recursive — verify `factorial(5) == 120`
+  - [x] ex-22 · sum-list-recursive — verify total
+  - [x] ex-23 · countdown-iterative-vs-recursive — verify identical results
+  - [x] ex-24 · big-o-constant-vs-linear — verify lookup stays 1 step, scan grows
+  - [x] ex-25 · type-hints-on-function — verify runs, annotations print
+  - [x] ex-26 · type-hints-on-collections — verify runs on typed inputs
+  - [x] ex-27 · singly-linked-list-build — verify traversal prints values in order
+  - [x] ex-28 · linked-list-length — verify length
+  - [x] ex-29 · linked-list-reverse — verify new order
+  - [x] ex-30 · linked-list-middle — verify middle value (slow/fast)
+  - [x] ex-31 · binary-search-iterative — verify index of target
+  - [x] ex-32 · binary-search-not-found — verify returns -1
+  - [x] ex-33 · binary-search-first-occurrence — verify leftmost index
+  - [x] ex-34 · binary-search-last-occurrence — verify rightmost index
+  - [x] ex-35 · bisect-insertion-point — verify insertion point
+  - [x] ex-36 · bisect-insort — verify list stays sorted
+  - [x] ex-37 · min-heap-push-pop — verify ascending pop order
+  - [x] ex-38 · heapify-list — verify `heap[0]` is minimum
+  - [x] ex-39 · top-k-largest — verify result set
+  - [x] ex-40 · priority-queue-tuples — verify pop order by priority
+  - [x] ex-41 · max-heap-via-negation — verify largest pops first
+  - [x] ex-42 · merge-sorted-with-heapq — verify merged order
+  - [x] ex-43 · insertion-sort — verify output equals `sorted()`
+  - [x] ex-44 · selection-sort — verify sorted output
+  - [x] ex-45 · bubble-sort — verify sorted output
+  - [x] ex-46 · merge-sort — verify sorted output
+  - [x] ex-47 · quicksort — verify sorted output
+  - [x] ex-48 · binary-tree-build — verify structure via level-order print
+  - [x] ex-49 · tree-inorder-traversal — verify visited order
+  - [x] ex-50 · tree-pre-and-post-order — verify both orders
+  - [x] ex-51 · tree-level-order-bfs — verify per-level lists
+  - [x] ex-52 · tree-height — verify height
+  - [x] ex-53 · bst-insert — verify inorder yields sorted values
+  - [x] ex-54 · bst-search — verify found and not-found
+  - [x] ex-55 · bst-min-max — verify min (leftmost) and max (rightmost)
+  - [x] ex-56 · graph-adjacency-build — verify each node's neighbors print
+  - [x] ex-57 · graph-bfs — verify visit order
+  - [x] ex-58 · graph-dfs — verify visit order
+  - [x] ex-59 · graph-bfs-shortest-path — verify distance
+  - [x] ex-60 · sliding-window-max-sum — verify result
+  - [x] ex-61 · fibonacci-naive-recursive — verify `fib(10) == 55`, print call count
+  - [x] ex-62 · fibonacci-memoized-dict — verify same result, fewer calls
+  - [x] ex-63 · fibonacci-lru-cache — verify result, print `cache_info()` hits
+  - [x] ex-64 · fibonacci-iterative — verify result, O(1) space
+  - [x] ex-65 · coin-change-memoized — verify answer
+  - [x] ex-66 · grid-paths-memoized — verify count
+  - [x] ex-67 · bst-delete — verify inorder stays sorted (all 3 cases)
+  - [x] ex-68 · bst-inorder-iterative — verify equals recursive order
+  - [x] ex-69 · tree-is-balanced — verify True/False on fixtures
+  - [x] ex-70 · bst-lowest-common-ancestor — verify ancestor
+  - [x] ex-71 · dijkstra-with-heap — verify distances
+  - [x] ex-72 · topological-sort-kahn — verify valid order
+  - [x] ex-73 · detect-cycle-directed — verify True cyclic / False acyclic
+  - [x] ex-74 · merge-k-sorted-lists — verify merged order
+  - [x] ex-75 · quickselect-kth-smallest — verify value
+  - [x] ex-76 · two-pointer-pair-sum — verify indices
+  - [x] ex-77 · sliding-window-longest-unique — verify length
+  - [x] ex-78 · lru-cache-from-scratch — verify eviction order
+  - [x] ex-79 · trie-insert-search — verify insert, search, prefix queries
+  - [x] ex-80 · big-o-empirical-doubling — verify binary ~log n, linear ~n
+  - [x] ex-81 · stable-multi-key-sort — verify stable multi-key order
+  - [x] ex-82 · deep-recursion-to-iteration — verify large input succeeds iteratively
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/data-structures-and-algorithms-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/data-structures-and-algorithms-essentials/drilling/_index.md` (wt 207) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 8 Gate
 
-- [ ] [AI] `data-structures-and-algorithms-essentials/` complete: `_index.md` wt 170, `learning/_index.md` wt 107,
+- [x] [AI] `data-structures-and-algorithms-essentials/` complete: `_index.md` wt 170, `learning/_index.md` wt 107,
       `drilling/_index.md` wt 207, capstone wt 900; all 22 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -1805,7 +1805,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -1814,7 +1814,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
@@ -1978,81 +1978,86 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Annotated-concept · ‡ no-code · topic wt 190 · Learn 109 / Drill 209 · **leadership/design artifact (no code)**. Template →
 [`syllabus/09-project-management.md`](./syllabus/09-project-management.md).
 
-- [ ] **[AI] V** — `web-researcher` for `project-management`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `project-management`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/09-project-management.md`](./syllabus/09-project-management.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/project-management/learning/` teaching **every** concept in `syllabus/09-project-management.md` §Concepts (DD-34 1:1 mirror; concepts before scenarios). One checkbox per `co-NN`:
-  - [ ] co-01 · triple-constraint
-  - [ ] co-02 · delivery-methodologies
-  - [ ] co-03 · work-breakdown-structure
-  - [ ] co-04 · dependency-graph-and-critical-path
-  - [ ] co-05 · estimation-points-velocity
-  - [ ] co-06 · planning-poker-pitfalls
-  - [ ] co-07 · sprint-and-backlog-planning
-  - [ ] co-08 · execution-mechanics
-  - [ ] co-09 · metrics
-  - [ ] co-10 · risk-management
-  - [ ] co-11 · change-management
-  - [ ] co-12 · retrospectives
-  - [ ] co-13 · stakeholder-communication
-  - [ ] co-14 · goodhart-metric-abuse
-  - [ ] co-15 · process-weight-fit
-- [ ] **[AI] A1-examples** — Author `CONTENT/project-management/learning/artifacts/` — one worked scenario / decision artifact (prose + diagrams, no `code/` runtime; ‡ leadership DD-27) per worked example in `syllabus/09-project-management.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · triple-constraint-tradeoff — verify memo names two fixed, what third absorbs
-  - [ ] ex-02 · pick-methodology — verify each mapping cites driving context property
-  - [ ] ex-03 · wbs-decompose — verify every leaf independently estimable/assignable
-  - [ ] ex-04 · dependency-graph — verify every edge encodes a real precedence
-  - [ ] ex-05 · identify-critical-path — verify longest chain, zero slack
-  - [ ] ex-06 · story-point-estimate — verify estimates relative to reference
-  - [ ] ex-07 · velocity-forecast — verify forecast uses average velocity
-  - [ ] ex-08 · metric-decision-map — verify each metric states a concrete decision
-  - [ ] ex-09 · sprint-backlog-plan — verify no sprint exceeds velocity, deps respected
-  - [ ] ex-10 · planning-poker-debias — verify each rule maps to a named bias
-  - [ ] ex-11 · burndown-diagnosis — verify names cause + corrective action
-  - [ ] ex-12 · burnup-vs-burndown — verify rationale ties scope-change to burnup line
-  - [ ] ex-13 · cycle-time-bottleneck — verify identifies stage with growing WIP
-  - [ ] ex-14 · risk-register — verify each top risk has assigned mitigation
-  - [ ] ex-15 · risk-prioritization — verify ranking consistent with likelihood×impact
-  - [ ] ex-16 · change-request-decision — verify states what is dropped/extended
-  - [ ] ex-17 · standup-redesign — verify format surfaces blockers/WIP not status
-  - [ ] ex-18 · stakeholder-comm-plan — verify each audience row names driven decision
-  - [ ] ex-19 · velocity-goodhart-memo — verify explains point inflation + outcome metric
-  - [ ] ex-20 · process-weight-right-size — verify cites `n(n-1)/2` paths
-  - [ ] ex-21 · methodology-antipattern — verify names mismatch + better fit
-  - [ ] ex-22 · crashing-vs-fast-tracking — verify each option tied to constraint spent
-  - [ ] ex-23 · retrospective-to-action — verify each action has owner + done-signal
-  - [ ] ex-24 · risk-register-over-time — verify risks retired/added across sprints
-  - [ ] ex-25 · full-delivery-plan — verify critical path drives schedule, metrics name decisions
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/project-management/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/project-management/learning/` teaching **every** concept in `syllabus/09-project-management.md` §Concepts (DD-34 1:1 mirror; concepts before scenarios). One checkbox per `co-NN`:
+  - [x] co-01 · triple-constraint
+  - [x] co-02 · delivery-methodologies
+  - [x] co-03 · work-breakdown-structure
+  - [x] co-04 · dependency-graph-and-critical-path
+  - [x] co-05 · estimation-points-velocity
+  - [x] co-06 · planning-poker-pitfalls
+  - [x] co-07 · sprint-and-backlog-planning
+  - [x] co-08 · execution-mechanics
+  - [x] co-09 · metrics
+  - [x] co-10 · risk-management
+  - [x] co-11 · change-management
+  - [x] co-12 · retrospectives
+  - [x] co-13 · stakeholder-communication
+  - [x] co-14 · goodhart-metric-abuse
+  - [x] co-15 · process-weight-fit
+- [x] **[AI] A1-examples** — Author `CONTENT/project-management/learning/artifacts/` — one worked scenario / decision artifact (prose + diagrams, no `code/` runtime; ‡ leadership DD-27) per worked example in `syllabus/09-project-management.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · triple-constraint-tradeoff — verify memo names two fixed, what third absorbs
+  - [x] ex-02 · pick-methodology — verify each mapping cites driving context property
+  - [x] ex-03 · wbs-decompose — verify every leaf independently estimable/assignable
+  - [x] ex-04 · dependency-graph — verify every edge encodes a real precedence
+  - [x] ex-05 · identify-critical-path — verify longest chain, zero slack
+  - [x] ex-06 · story-point-estimate — verify estimates relative to reference
+  - [x] ex-07 · velocity-forecast — verify forecast uses average velocity
+  - [x] ex-08 · metric-decision-map — verify each metric states a concrete decision
+  - [x] ex-09 · sprint-backlog-plan — verify no sprint exceeds velocity, deps respected
+  - [x] ex-10 · planning-poker-debias — verify each rule maps to a named bias
+  - [x] ex-11 · burndown-diagnosis — verify names cause + corrective action
+  - [x] ex-12 · burnup-vs-burndown — verify rationale ties scope-change to burnup line
+  - [x] ex-13 · cycle-time-bottleneck — verify identifies stage with growing WIP
+  - [x] ex-14 · risk-register — verify each top risk has assigned mitigation
+  - [x] ex-15 · risk-prioritization — verify ranking consistent with likelihood×impact
+  - [x] ex-16 · change-request-decision — verify states what is dropped/extended
+  - [x] ex-17 · standup-redesign — verify format surfaces blockers/WIP not status
+  - [x] ex-18 · stakeholder-comm-plan — verify each audience row names driven decision
+  - [x] ex-19 · velocity-goodhart-memo — verify explains point inflation + outcome metric
+  - [x] ex-20 · process-weight-right-size — verify cites `n(n-1)/2` paths
+  - [x] ex-21 · methodology-antipattern — verify names mismatch + better fit
+  - [x] ex-22 · crashing-vs-fast-tracking — verify each option tied to constraint spent
+  - [x] ex-23 · retrospective-to-action — verify each action has owner + done-signal
+  - [x] ex-24 · risk-register-over-time — verify risks retired/added across sprints
+  - [x] ex-25 · full-delivery-plan — verify critical path drives schedule, metrics name decisions
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/project-management/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-annotated-concept-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-annotated-concept-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/project-management/drilling/_index.md` (wt 209) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 10 Gate
 
-- [ ] [AI] `project-management/` complete: `_index.md` wt 190, `learning/_index.md` wt 109,
+- [x] [AI] `project-management/` complete: `_index.md` wt 190, `learning/_index.md` wt 109,
       `drilling/_index.md` wt 209, capstone wt 900; all 15 concepts + 25 worked scenarios + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
-      draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+      draft PR open carrying this phase's commit; CI running on the PR. **Done**: dedicated worktree
+      `worktrees/fundamentally-strong-software-engineer-phase-10/` on branch
+      `fundamentally-strong-software-engineer/phase-10-project-management`; draft PR
+      [#36](https://github.com/wahidyankf/ose-public/pull/36).
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
       done-definition is met (review cycles complete, every inline comment addressed, all quality gates
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
-      marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+      marked ready for review; all CI checks green; no unresolved review threads. **Done**: 3 cycles run
+      (Cycle 1: 1 MEDIUM finding, fixed + resolved; Cycles 2-3: 0 new findings, 0 unresolved threads); PR
+      flipped ready via `gh pr ready 36`; CI green (`mergeStateStatus: CLEAN`).
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -2060,11 +2065,15 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       once the quality gate passes, to keep phases flowing without a manual click every time — a
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
-      merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+      merge time. **Done**: squash-merged, commit
+      `4d4a43a05bbc266f00e4190711dc6381f4f0292e`; branch deleted.
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
-      production as it completes.
+      production as it completes. **Done**: `prod-ayokoding-www` force-pushed and independently verified
+      (`git merge-base --is-ancestor`) to descend from `4d4a43a05bbc266f00e4190711dc6381f4f0292e` (the
+      first deployer pass force-pushed a stale local `main` checkout that predated this merge; corrected
+      by pushing the freshly-fetched `origin/main` ref directly).
 
 > **Pause Safety**: Topic self-contained, not yet nav-wired. Safe to pause.
 
@@ -2196,7 +2205,7 @@ Row: By Example · SQL + Python † (SQLite) · topic wt 200 · Learn 110 / Dril
       `drilling/_index.md` wt 210, capstone wt 900; all 24 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit

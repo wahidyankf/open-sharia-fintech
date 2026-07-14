@@ -1,0 +1,5 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.
+On branch main
+nothing to commit, working tree clean

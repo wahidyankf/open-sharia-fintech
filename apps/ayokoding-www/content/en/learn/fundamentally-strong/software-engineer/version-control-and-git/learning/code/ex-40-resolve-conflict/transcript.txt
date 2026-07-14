@@ -1,0 +1,10 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.
+[main 1839d88] Merge branch 'feature'
+*   1839d88 Merge branch 'feature'
+|\  
+| * 6fe3629 feature edits line
+* | a6b01d2 main edits line
+|/  
+* c2264c7 initial

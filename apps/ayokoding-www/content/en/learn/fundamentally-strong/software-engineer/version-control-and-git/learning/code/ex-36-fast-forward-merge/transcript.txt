@@ -1,0 +1,6 @@
+Updating 2e44568..68a3d96
+Fast-forward
+ file.txt | 1 +
+ 1 file changed, 1 insertion(+)
+* 68a3d96 feature change
+* 2e44568 initial

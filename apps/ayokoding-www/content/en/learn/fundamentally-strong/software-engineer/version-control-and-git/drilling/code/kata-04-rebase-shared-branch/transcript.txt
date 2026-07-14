@@ -1,0 +1,12 @@
+warning: You appear to have cloned an empty repository.
+=== BUGGY: rebasing the ALREADY-PUSHED, already-shared commit anyway ===
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to '/var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+=== FIX: never rewrite a commit that has already been pushed and pulled -- add a NEW commit instead ===
+To /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.SGjH1j3x57/remote.git
+   f83d7c1..86e9989  main -> main

@@ -1,0 +1,13 @@
+e704c1e c2
+edce045 c1
+5809a21 initial
+HEAD is now at 5809a21 initial
+5809a21 initial
+5809a21 HEAD@{0}: reset: moving to HEAD~2
+e704c1e HEAD@{1}: commit: c2
+edce045 HEAD@{2}: commit: c1
+5809a21 HEAD@{3}: commit (initial): initial
+HEAD is now at e704c1e c2
+e704c1e c2
+edce045 c1
+5809a21 initial

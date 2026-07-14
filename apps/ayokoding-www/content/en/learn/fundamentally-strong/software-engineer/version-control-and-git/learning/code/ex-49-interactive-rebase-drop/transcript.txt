@@ -1,0 +1,7 @@
+Successfully rebased and updated refs/heads/main.
+80529ac commit three
+0b15b13 commit one
+1d5ae21 initial
+base.txt
+one.txt
+three.txt

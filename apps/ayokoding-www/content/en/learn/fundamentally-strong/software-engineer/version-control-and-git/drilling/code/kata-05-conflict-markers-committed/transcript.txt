@@ -1,0 +1,8 @@
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.
+=== BUGGY: git add the conflicted file WITHOUT actually editing out the markers ===
+1
+1
+=== FIX: always search for leftover markers BEFORE staging a conflict resolution ===
+0

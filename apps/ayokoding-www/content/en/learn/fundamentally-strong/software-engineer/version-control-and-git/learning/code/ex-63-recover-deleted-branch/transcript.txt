@@ -1,0 +1,10 @@
+Deleted branch doomed (was aa0be75).
+* main
+5809a21 HEAD@{0}: checkout: moving from doomed to main
+aa0be75 HEAD@{1}: commit: important work on doomed branch
+5809a21 HEAD@{2}: checkout: moving from main to doomed
+5809a21 HEAD@{3}: commit (initial): initial
+* main
+  recovered
+aa0be75 important work on doomed branch
+5809a21 initial

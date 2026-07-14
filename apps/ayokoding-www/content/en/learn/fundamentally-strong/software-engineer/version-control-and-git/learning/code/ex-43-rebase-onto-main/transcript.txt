@@ -1,0 +1,5 @@
+Successfully rebased and updated refs/heads/feature.
+* 9cf88c3 feature commit 2
+* 01f4d89 feature commit 1
+* 5cb9b05 main commit 1
+* ce3db91 initial
