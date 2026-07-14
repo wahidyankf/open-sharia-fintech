@@ -974,9 +974,11 @@ fail atomically, the failed `INSERT` touches zero rows -- there is no partial wr
 Runtime error near line 15: FOREIGN KEY constraint failed (19)
 ```
 
-The script halts at the failed statement -- `sqlite3`'s non-interactive default stops on the first
-error -- so the trailing `SELECT` never runs. That is exactly the point: the orphan row was never
-created to select.
+The script does not halt -- `sqlite3`'s non-interactive default does not stop on the first error, so
+the trailing `SELECT id, title, author_id FROM book;` still runs. It prints nothing because the
+rejected `INSERT` never touched `book`, so the query legitimately returns zero rows, and
+`.headers on`/`.mode column` print nothing at all for an empty result set (the same mechanism Kata 2
+uses above). That is exactly the point: the orphan row was never created to select.
 
 </details>
 

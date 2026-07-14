@@ -163,4 +163,4 @@ docs.python.org primary documentation on 2026-07-12, and re-verified with no dri
 
 ---
 
-← Previous: [9 · Project Management](../../../overview.md) · Next: [Beginner Examples](./beginner.md) →
+← Previous: [9 · Project Management](../../project-management/drilling/overview.md) · Next: [Beginner Examples](./beginner.md) →
