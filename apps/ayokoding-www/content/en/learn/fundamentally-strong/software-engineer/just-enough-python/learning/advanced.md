@@ -54,7 +54,7 @@ Hello, Ada
 string the caller passed as the first positional argument.
 
 **Why it matters**: `argparse` is the standard-library default for building command-line tools --
-every later CLI in this primer (Examples 62-64, 81) builds directly on this same
+every later CLI in this primer (Examples 62-63, 81) builds directly on this same
 `ArgumentParser`/`add_argument`/`parse_args` shape.
 
 ---

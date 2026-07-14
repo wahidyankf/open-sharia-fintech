@@ -49,7 +49,7 @@ the version installed in the sandbox that produced every captured "Output" block
 the current published patch release at authoring time -- any 3.14.x patch behaves identically for
 everything this primer teaches (f-strings, type hints, comprehensions, `match`, and the standard
 library surface used here are all stable across 3.14 patch releases). `black` **26.5.1** and `ruff`
-**0.15.21** are the exact versions this primer's `black`/`ruff` examples (3, 4, 5, 68, 81) were run
+**0.15.21** are the exact versions this primer's `black`/`ruff` examples (4, 5, 68, 81) were run
 against; `pyright` **1.1.411** is the exact version Examples 83-84 were run against. All three are
 CVE-clean at authoring time. Strict mode for `pyright` is set via config
 (`"typeCheckingMode": "strict"`) or an inline `# pyright: strict` comment -- there is **no** `--strict`
