@@ -68,7 +68,7 @@ print("ex-61 OK")  # => confirms both the status parsing and the body reading ro
 
 ```text
 status: 200
-body starts with: b'<html><head></head><body><header'
+body starts with: b'<html><head></head><body><head'
 ex-61 OK
 ```
 
@@ -116,7 +116,7 @@ print("ex-62 OK")  # => confirms both the status parsing and the body reading ro
 
 ```text
 status: 200
-body starts with: b'<html><head></head><body><header'
+body starts with: b'<html><head></head><body><head'
 ex-62 OK
 ```
 
@@ -222,7 +222,7 @@ print("ex-64 OK")  # => confirms the same request/response cycle worked, now ful
 
 ```text
 status: 200
-body starts with: b'<!doctype html><html lang="en">'
+body starts with: b'<!doctype html><html lang="en"'
 ex-64 OK
 ```
 
@@ -851,7 +851,7 @@ print("ex-74 OK")  # => confirms the timeout was honored, bounding an otherwise-
 
 ```text
 outcome: TimeoutError raised, as expected
-elapsed: 2.00s (timeout was set to 2.00s)
+elapsed: 2.00s (timeout was set to 2.0s)
 ex-74 OK
 ```
 
