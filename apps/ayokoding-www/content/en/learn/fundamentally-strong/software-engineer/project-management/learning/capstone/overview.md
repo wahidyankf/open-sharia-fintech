@@ -8,7 +8,7 @@ weight: 1
 ## Goal
 
 Produce a compact **delivery plan** for a small project -- the Nimbus Notification Service, a
-4-person team's four-week build of a multi-channel (email, SMS, push) notification service -- that
+4-person team's six-week build of a multi-channel (email, SMS, push) notification service -- that
 assembles a work-breakdown structure with a dependency graph and critical path, a velocity-based
 estimate, a sprint/backlog plan, a risk register, and a metrics plan into one decision artifact a
 team could execute against directly. This is a leadership `‡` design/decision capstone: no code,
