@@ -1,0 +1,19 @@
+=== integrate branch-a into main BY MERGE ===
+Merge made by the 'ort' strategy.
+ file.txt | 1 +
+ 1 file changed, 1 insertion(+)
+*   e7d5230 Merge branch 'branch-a'
+|\  
+| * a987ffb branch-a work
+* | b1465fd main advances
+|/  
+* f0ff064 initial
+=== the SAME situation, integrated BY REBASE instead ===
+Successfully rebased and updated refs/heads/branch-b.
+Updating b1465fd..40acf99
+Fast-forward
+ file.txt | 1 +
+ 1 file changed, 1 insertion(+)
+* 40acf99 branch-b work
+* b1465fd main advances
+* f0ff064 initial

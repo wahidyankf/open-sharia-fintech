@@ -13,4 +13,5 @@ weight: 107
   - [Pass 0 Capstone · Forge-Ready](/en/c/learn/fundamentally-strong/software-engineer/capstone-forge-ready)
   - [4 · Just Enough Python](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python)
   - [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
+  - [6 · Version Control & Git](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git)
   - [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)

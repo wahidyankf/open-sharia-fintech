@@ -1,0 +1,157 @@
+############################################
+# Step 1: curated hunk-staged commit history
+############################################
+diff --git a/tasks.txt b/tasks.txt
+index 2470b3b..dd9f878 100644
+--- a/tasks.txt
++++ b/tasks.txt
+@@ -1,4 +1,4 @@
+-task 1
++task 1 (buy groceries)
+ task 2
+ task 3
+ task 4
+(1/2) Stage this hunk [y,n,q,a,d,j,J,g,/,e,?]? @@ -17,4 +17,4 @@ task 16
+ task 17
+ task 18
+ task 19
+-task 20
++task 20 (plan trip)
+(2/2) Stage this hunk [y,n,q,a,d,K,g,/,e,?]? 
+[main f7e7606] fix: label groceries task
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[main 104e99d] fix: label trip task
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+* 104e99d fix: label trip task
+* f7e7606 fix: label groceries task
+* eb2c405 feat: add initial task list
+* 8a72d0e docs: start task tracker notes
+tree ea4fbf7d74b443df06a66a83023fe33542b7167d
+parent f7e760607ae8e80aafdb3b8ea0eb2d20066c336b
+author Dev <dev@example.com> 1784007739 +0700
+committer Dev <dev@example.com> 1784007739 +0700
+
+fix: label trip task
+100644 blob 8c743539b7afced64240d31bea99624e42cdd819	notes.md
+100644 blob dd9f87851706d8c6e0dd0a98eae081bcbaa69f98	tasks.txt
+############################################
+# Step 2: branch + forced conflict + three-way merge
+############################################
+Auto-merging tasks.txt
+CONFLICT (content): Merge conflict in tasks.txt
+Automatic merge failed; fix conflicts and then commit the result.
+On branch main
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	both modified:   tasks.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[main 78228e9] Merge branch 'retitle'
+*   78228e9 Merge branch 'retitle'
+|\  
+| * 29e7c11 fix: retitle task 2 on retitle branch
+* | 7d3c3c9 fix: retitle task 2 on main
+|/  
+* 104e99d fix: label trip task
+* f7e7606 fix: label groceries task
+* eb2c405 feat: add initial task list
+* 8a72d0e docs: start task tracker notes
+parent 7d3c3c924090411d37637c0050bad019dc894db8
+parent 29e7c11a82137ff6e2b4c7f829539c78dd521cbb
+############################################
+# Step 3: interactive rebase curation, then a reset --hard mistake + reflog recovery
+############################################
+[detached HEAD e41b53a] docs: add budget notes
+ Date: Tue Jul 14 12:42:19 2026 +0700
+ 1 file changed, 1 insertion(+)
+ create mode 100644 budget.md
+Successfully rebased and updated refs/heads/cleanup.
+[detached HEAD 809cedc] docs: add trip itinerary
+ Date: Tue Jul 14 12:42:19 2026 +0700
+ 2 files changed, 3 insertions(+)
+ create mode 100644 itinerary.md
+Successfully rebased and updated refs/heads/cleanup.
+809cedc docs: add trip itinerary
+e41b53a docs: add budget notes
+78228e9 Merge branch 'retitle'
+7d3c3c9 fix: retitle task 2 on main
+29e7c11 fix: retitle task 2 on retitle branch
+104e99d fix: label trip task
+f7e7606 fix: label groceries task
+eb2c405 feat: add initial task list
+8a72d0e docs: start task tracker notes
+--- deliberate mistake: reset --hard loses the just-curated itinerary commit ---
+HEAD is now at e41b53a docs: add budget notes
+e41b53a docs: add budget notes
+78228e9 Merge branch 'retitle'
+7d3c3c9 fix: retitle task 2 on main
+29e7c11 fix: retitle task 2 on retitle branch
+104e99d fix: label trip task
+f7e7606 fix: label groceries task
+eb2c405 feat: add initial task list
+8a72d0e docs: start task tracker notes
+--- recovery via reflog ---
+e41b53a HEAD@{0}: reset: moving to HEAD~1
+809cedc HEAD@{1}: rebase (finish): returning to refs/heads/cleanup
+809cedc HEAD@{2}: rebase (squash): docs: add trip itinerary
+3254339 HEAD@{3}: rebase (start): checkout HEAD~2
+HEAD is now at 809cedc docs: add trip itinerary
+809cedc docs: add trip itinerary
+e41b53a docs: add budget notes
+78228e9 Merge branch 'retitle'
+7d3c3c9 fix: retitle task 2 on main
+29e7c11 fix: retitle task 2 on retitle branch
+104e99d fix: label trip task
+f7e7606 fix: label groceries task
+eb2c405 feat: add initial task list
+8a72d0e docs: start task tracker notes
+############################################
+# Step 4: a passing pre-commit hook, then push and land via a PR-style merge
+############################################
+--- prove the hook is genuinely enforced, not decorative ---
+pre-commit: staged changes contain a TODO marker -- commit blocked
+Merge made by the 'ort' strategy.
+ budget.md    | 2 ++
+ itinerary.md | 2 ++
+ 2 files changed, 4 insertions(+)
+ create mode 100644 budget.md
+ create mode 100644 itinerary.md
+*   3d11cfd Merge pull request: task-tracker cleanup
+|\  
+| * 809cedc docs: add trip itinerary
+| * e41b53a docs: add budget notes
+|/  
+*   78228e9 Merge branch 'retitle'
+|\  
+| * 29e7c11 fix: retitle task 2 on retitle branch
+* | 7d3c3c9 fix: retitle task 2 on main
+|/  
+* 104e99d fix: label trip task
+* f7e7606 fix: label groceries task
+* eb2c405 feat: add initial task list
+* 8a72d0e docs: start task tracker notes
+--- push the finished trunk to the shared remote ---
+*   3d11cfd Merge pull request: task-tracker cleanup
+|\  
+| * 809cedc docs: add trip itinerary
+| * e41b53a docs: add budget notes
+|/  
+*   78228e9 Merge branch 'retitle'
+|\  
+| * 29e7c11 fix: retitle task 2 on retitle branch
+* | 7d3c3c9 fix: retitle task 2 on main
+|/  
+* 104e99d fix: label trip task
+* f7e7606 fix: label groceries task
+* eb2c405 feat: add initial task list
+* 8a72d0e docs: start task tracker notes
+--- final acceptance check: nothing INTENDED is dangling or lost ---
+dangling tree 00ac74baf0ed48140bd7c922a4be01c34c7eb144
+dangling commit 2899891757a8902d40e012f815fed0ce6bb196e3
+dangling tree b838fbdecd08fae06df983aaf5d94716a0a4bfa7
+dangling commit 69acb597920c82f9ceefd326c6e1a41f30f8c807
+1

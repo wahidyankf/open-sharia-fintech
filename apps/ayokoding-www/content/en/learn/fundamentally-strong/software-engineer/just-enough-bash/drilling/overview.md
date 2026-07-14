@@ -1184,4 +1184,5 @@ pipeline itself follows.
 
 ---
 
-← Previous: [Capstone](../learning/capstone/overview.md)
+← Previous: [Capstone](../learning/capstone/overview.md) · Next:
+[6 · Version Control & Git](../../version-control-and-git/learning/overview.md) →

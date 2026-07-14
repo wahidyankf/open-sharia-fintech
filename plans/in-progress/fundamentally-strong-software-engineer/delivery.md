@@ -1501,144 +1501,144 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Git † · topic wt 160 · Learn 106 / Drill 206 · **subject**. Template →
 [`syllabus/06-version-control-and-git.md`](./syllabus/06-version-control-and-git.md).
 
-- [ ] **[AI] V** — `web-researcher` for `version-control-and-git`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `version-control-and-git`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/06-version-control-and-git.md`](./syllabus/06-version-control-and-git.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/version-control-and-git/learning/` teaching **every** concept in `syllabus/06-version-control-and-git.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · repository-init-and-clone
-  - [ ] co-02 · three-states-model
-  - [ ] co-03 · object-model
-  - [ ] co-04 · refs-branches-head
-  - [ ] co-05 · staging-and-status
-  - [ ] co-06 · hunk-staging
-  - [ ] co-07 · committing-and-messages
-  - [ ] co-08 · amending-commits
-  - [ ] co-09 · diffing
-  - [ ] co-10 · history-inspection
-  - [ ] co-11 · branching
-  - [ ] co-12 · fast-forward-merge
-  - [ ] co-13 · three-way-merge
-  - [ ] co-14 · conflict-resolution
-  - [ ] co-15 · rebase
-  - [ ] co-16 · interactive-rebase
-  - [ ] co-17 · rebase-vs-merge-policy
-  - [ ] co-18 · reset-modes
-  - [ ] co-19 · revert
-  - [ ] co-20 · restore-files
-  - [ ] co-21 · stash
-  - [ ] co-22 · reflog
-  - [ ] co-23 · remotes-fetch-push-pull
-  - [ ] co-24 · tracking-branches
-  - [ ] co-25 · tagging
-  - [ ] co-26 · gitignore
-  - [ ] co-27 · commit-hooks
-  - [ ] co-28 · pull-request-trunk-flow
-  - [ ] co-29 · cherry-pick
-- [ ] **[AI] A1-examples** — Author `CONTENT/version-control-and-git/learning/code/` — one runnable repo/recipe per worked example in `syllabus/06-version-control-and-git.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · init-repository — verify `.git/` exists, status "No commits yet"
-  - [ ] ex-02 · check-status-clean — verify branch named, "nothing to commit"
-  - [ ] ex-03 · create-untracked-file — verify file under "Untracked files"
-  - [ ] ex-04 · stage-a-file — verify moved to "Changes to be committed"
-  - [ ] ex-05 · first-commit — verify `git log --oneline` shows one commit
-  - [ ] ex-06 · commit-shows-snapshot — verify `git show HEAD` prints metadata + diff
-  - [ ] ex-07 · stage-all-changes — verify both files staged
-  - [ ] ex-08 · unstage-file — verify returns to unstaged
-  - [ ] ex-09 · diff-working-tree — verify unstaged change appears
-  - [ ] ex-10 · diff-staged — verify staged change shows, plain diff empty
-  - [ ] ex-11 · view-log-oneline — verify one line per commit, abbreviated hashes
-  - [ ] ex-12 · view-log-graph — verify ASCII commit graph renders
-  - [ ] ex-13 · inspect-blob-cat-file — verify prints committed file contents
-  - [ ] ex-14 · inspect-commit-object — verify tree hash, parent, author, message
-  - [ ] ex-15 · inspect-tree-object — verify lists blob/tree entries with modes/names
-  - [ ] ex-16 · object-type — verify prints "commit"
-  - [ ] ex-17 · amend-last-commit — verify updated message and new hash
-  - [ ] ex-18 · amend-add-forgotten-file — verify file in HEAD's tree
-  - [ ] ex-19 · gitignore-basics — verify `x.log` not listed
-  - [ ] ex-20 · force-add-ignored — verify ignored file stages
-  - [ ] ex-21 · create-branch — verify `feature` listed
-  - [ ] ex-22 · switch-branch — verify "On branch feature"
-  - [ ] ex-23 · create-and-switch — verify branch created + checked out in one step
-  - [ ] ex-24 · head-tracks-branch — verify HEAD and branch hashes identical
-  - [ ] ex-25 · list-refs — verify each branch maps to a commit hash
-  - [ ] ex-26 · delete-merged-branch — verify branch no longer listed
-  - [ ] ex-27 · rename-branch — verify new name shown
-  - [ ] ex-28 · tag-lightweight — verify `v1` listed and rev-parse matches HEAD
-  - [ ] ex-29 · stage-hunks-interactively — verify only chosen hunk staged
-  - [ ] ex-30 · split-a-hunk — verify only chosen sub-hunk staged
-  - [ ] ex-31 · commit-with-body — verify subject + body both print
-  - [ ] ex-32 · diff-two-commits — verify combined change across last two commits
-  - [ ] ex-33 · diff-branches — verify only feature's divergent changes
-  - [ ] ex-34 · log-limit-and-format — verify exactly three commits, custom format
-  - [ ] ex-35 · log-by-path — verify only commits touching `file.txt`
-  - [ ] ex-36 · fast-forward-merge — verify main advances, no merge commit, linear
-  - [ ] ex-37 · no-ff-merge — verify merge commit created despite ff possible
-  - [ ] ex-38 · three-way-merge-clean — verify HEAD shows two parent lines
-  - [ ] ex-39 · create-merge-conflict — verify conflict, file "both modified"
-  - [ ] ex-40 · resolve-conflict — verify merge completes, shown in `log --graph`
-  - [ ] ex-41 · abort-merge — verify working tree returns to pre-merge, status clean
-  - [ ] ex-42 · inspect-conflict-diff — verify combined conflict diff with both sides
-  - [ ] ex-43 · rebase-onto-main — verify commits replay with new hashes, linear
-  - [ ] ex-44 · rebase-conflict-continue — verify rebase finishes
-  - [ ] ex-45 · rebase-abort — verify branch returns to pre-rebase tip
-  - [ ] ex-46 · interactive-rebase-squash — verify two commits combined into one
-  - [ ] ex-47 · interactive-rebase-reword — verify target message changed, others stay
-  - [ ] ex-48 · interactive-rebase-reorder — verify new commit order
-  - [ ] ex-49 · interactive-rebase-drop — verify dropped commit gone from log
-  - [ ] ex-50 · compare-merge-vs-rebase-history — verify one has merge commit, other linear
-  - [ ] ex-51 · reset-soft — verify HEAD back one, changes remain staged
-  - [ ] ex-52 · reset-mixed — verify HEAD back, changes unstaged but present
-  - [ ] ex-53 · reset-hard — verify HEAD back, working tree matches (change gone)
-  - [ ] ex-54 · unstage-with-reset — verify file becomes unstaged
-  - [ ] ex-55 · revert-commit — verify inverse commit, change undone, history preserved
-  - [ ] ex-56 · restore-file-from-head — verify file reverts to HEAD's version
-  - [ ] ex-57 · restore-file-from-commit — verify content matches older commit
-  - [ ] ex-58 · stash-changes — verify status clean, one stash entry
-  - [ ] ex-59 · stash-pop — verify changes return, stash entry removed
-  - [ ] ex-60 · stash-named-and-list — verify labeled entry appears
-  - [ ] ex-61 · reflog-inspect — verify lists `HEAD@{n}` entries
-  - [ ] ex-62 · recover-after-hard-reset — verify lost commits restored via reflog
-  - [ ] ex-63 · recover-deleted-branch — verify branch and commits reappear
-  - [ ] ex-64 · add-remote — verify `git remote -v` lists origin URLs
-  - [ ] ex-65 · clone-repository — verify `dest/.git` exists, source history present
-  - [ ] ex-66 · push-to-remote — verify bare remote log shows pushed commit
-  - [ ] ex-67 · set-upstream-tracking — verify `branch -vv` shows tracking ref
-  - [ ] ex-68 · fetch-updates — verify `origin/main` advances, local does not
-  - [ ] ex-69 · pull-fast-forward — verify local fast-forwards to origin
-  - [ ] ex-70 · pull-rebase — verify local commits replay atop fetched, linear
-  - [ ] ex-71 · push-rejected-non-fast-forward — verify non-fast-forward error
-  - [ ] ex-72 · checkout-remote-tracking-branch — verify local tracking branch created
-  - [ ] ex-73 · annotated-tag — verify object type "tag", tagger shown
-  - [ ] ex-74 · push-tags — verify tag appears in remote
-  - [ ] ex-75 · cherry-pick-commit — verify single commit's change applied, new hash
-  - [ ] ex-76 · cherry-pick-conflict — verify cherry-pick completes after resolve
-  - [ ] ex-77 · install-pre-commit-hook — verify commit blocked with hook message
-  - [ ] ex-78 · hook-allows-clean-commit — verify clean commit succeeds
-  - [ ] ex-79 · pr-branch-flow — verify trunk has change and a merge commit
-  - [ ] ex-80 · trunk-based-short-branch — verify main advanced, branch gone
-  - [ ] ex-81 · revert-a-merge — verify merge changes undone, history intact
-  - [ ] ex-82 · verify-history-intact-after-recovery — verify no dangling/lost commits
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/version-control-and-git/learning/capstone/` (`_index.md` weight 900) per the
+- [x] **[AI] A1-concepts** — Author `CONTENT/version-control-and-git/learning/` teaching **every** concept in `syllabus/06-version-control-and-git.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
+  - [x] co-01 · repository-init-and-clone
+  - [x] co-02 · three-states-model
+  - [x] co-03 · object-model
+  - [x] co-04 · refs-branches-head
+  - [x] co-05 · staging-and-status
+  - [x] co-06 · hunk-staging
+  - [x] co-07 · committing-and-messages
+  - [x] co-08 · amending-commits
+  - [x] co-09 · diffing
+  - [x] co-10 · history-inspection
+  - [x] co-11 · branching
+  - [x] co-12 · fast-forward-merge
+  - [x] co-13 · three-way-merge
+  - [x] co-14 · conflict-resolution
+  - [x] co-15 · rebase
+  - [x] co-16 · interactive-rebase
+  - [x] co-17 · rebase-vs-merge-policy
+  - [x] co-18 · reset-modes
+  - [x] co-19 · revert
+  - [x] co-20 · restore-files
+  - [x] co-21 · stash
+  - [x] co-22 · reflog
+  - [x] co-23 · remotes-fetch-push-pull
+  - [x] co-24 · tracking-branches
+  - [x] co-25 · tagging
+  - [x] co-26 · gitignore
+  - [x] co-27 · commit-hooks
+  - [x] co-28 · pull-request-trunk-flow
+  - [x] co-29 · cherry-pick
+- [x] **[AI] A1-examples** — Author `CONTENT/version-control-and-git/learning/code/` — one runnable repo/recipe per worked example in `syllabus/06-version-control-and-git.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
+  - [x] ex-01 · init-repository — verify `.git/` exists, status "No commits yet"
+  - [x] ex-02 · check-status-clean — verify branch named, "nothing to commit"
+  - [x] ex-03 · create-untracked-file — verify file under "Untracked files"
+  - [x] ex-04 · stage-a-file — verify moved to "Changes to be committed"
+  - [x] ex-05 · first-commit — verify `git log --oneline` shows one commit
+  - [x] ex-06 · commit-shows-snapshot — verify `git show HEAD` prints metadata + diff
+  - [x] ex-07 · stage-all-changes — verify both files staged
+  - [x] ex-08 · unstage-file — verify returns to unstaged
+  - [x] ex-09 · diff-working-tree — verify unstaged change appears
+  - [x] ex-10 · diff-staged — verify staged change shows, plain diff empty
+  - [x] ex-11 · view-log-oneline — verify one line per commit, abbreviated hashes
+  - [x] ex-12 · view-log-graph — verify ASCII commit graph renders
+  - [x] ex-13 · inspect-blob-cat-file — verify prints committed file contents
+  - [x] ex-14 · inspect-commit-object — verify tree hash, parent, author, message
+  - [x] ex-15 · inspect-tree-object — verify lists blob/tree entries with modes/names
+  - [x] ex-16 · object-type — verify prints "commit"
+  - [x] ex-17 · amend-last-commit — verify updated message and new hash
+  - [x] ex-18 · amend-add-forgotten-file — verify file in HEAD's tree
+  - [x] ex-19 · gitignore-basics — verify `x.log` not listed
+  - [x] ex-20 · force-add-ignored — verify ignored file stages
+  - [x] ex-21 · create-branch — verify `feature` listed
+  - [x] ex-22 · switch-branch — verify "On branch feature"
+  - [x] ex-23 · create-and-switch — verify branch created + checked out in one step
+  - [x] ex-24 · head-tracks-branch — verify HEAD and branch hashes identical
+  - [x] ex-25 · list-refs — verify each branch maps to a commit hash
+  - [x] ex-26 · delete-merged-branch — verify branch no longer listed
+  - [x] ex-27 · rename-branch — verify new name shown
+  - [x] ex-28 · tag-lightweight — verify `v1` listed and rev-parse matches HEAD
+  - [x] ex-29 · stage-hunks-interactively — verify only chosen hunk staged
+  - [x] ex-30 · split-a-hunk — verify only chosen sub-hunk staged
+  - [x] ex-31 · commit-with-body — verify subject + body both print
+  - [x] ex-32 · diff-two-commits — verify combined change across last two commits
+  - [x] ex-33 · diff-branches — verify only feature's divergent changes
+  - [x] ex-34 · log-limit-and-format — verify exactly three commits, custom format
+  - [x] ex-35 · log-by-path — verify only commits touching `file.txt`
+  - [x] ex-36 · fast-forward-merge — verify main advances, no merge commit, linear
+  - [x] ex-37 · no-ff-merge — verify merge commit created despite ff possible
+  - [x] ex-38 · three-way-merge-clean — verify HEAD shows two parent lines
+  - [x] ex-39 · create-merge-conflict — verify conflict, file "both modified"
+  - [x] ex-40 · resolve-conflict — verify merge completes, shown in `log --graph`
+  - [x] ex-41 · abort-merge — verify working tree returns to pre-merge, status clean
+  - [x] ex-42 · inspect-conflict-diff — verify combined conflict diff with both sides
+  - [x] ex-43 · rebase-onto-main — verify commits replay with new hashes, linear
+  - [x] ex-44 · rebase-conflict-continue — verify rebase finishes
+  - [x] ex-45 · rebase-abort — verify branch returns to pre-rebase tip
+  - [x] ex-46 · interactive-rebase-squash — verify two commits combined into one
+  - [x] ex-47 · interactive-rebase-reword — verify target message changed, others stay
+  - [x] ex-48 · interactive-rebase-reorder — verify new commit order
+  - [x] ex-49 · interactive-rebase-drop — verify dropped commit gone from log
+  - [x] ex-50 · compare-merge-vs-rebase-history — verify one has merge commit, other linear
+  - [x] ex-51 · reset-soft — verify HEAD back one, changes remain staged
+  - [x] ex-52 · reset-mixed — verify HEAD back, changes unstaged but present
+  - [x] ex-53 · reset-hard — verify HEAD back, working tree matches (change gone)
+  - [x] ex-54 · unstage-with-reset — verify file becomes unstaged
+  - [x] ex-55 · revert-commit — verify inverse commit, change undone, history preserved
+  - [x] ex-56 · restore-file-from-head — verify file reverts to HEAD's version
+  - [x] ex-57 · restore-file-from-commit — verify content matches older commit
+  - [x] ex-58 · stash-changes — verify status clean, one stash entry
+  - [x] ex-59 · stash-pop — verify changes return, stash entry removed
+  - [x] ex-60 · stash-named-and-list — verify labeled entry appears
+  - [x] ex-61 · reflog-inspect — verify lists `HEAD@{n}` entries
+  - [x] ex-62 · recover-after-hard-reset — verify lost commits restored via reflog
+  - [x] ex-63 · recover-deleted-branch — verify branch and commits reappear
+  - [x] ex-64 · add-remote — verify `git remote -v` lists origin URLs
+  - [x] ex-65 · clone-repository — verify `dest/.git` exists, source history present
+  - [x] ex-66 · push-to-remote — verify bare remote log shows pushed commit
+  - [x] ex-67 · set-upstream-tracking — verify `branch -vv` shows tracking ref
+  - [x] ex-68 · fetch-updates — verify `origin/main` advances, local does not
+  - [x] ex-69 · pull-fast-forward — verify local fast-forwards to origin
+  - [x] ex-70 · pull-rebase — verify local commits replay atop fetched, linear
+  - [x] ex-71 · push-rejected-non-fast-forward — verify non-fast-forward error
+  - [x] ex-72 · checkout-remote-tracking-branch — verify local tracking branch created
+  - [x] ex-73 · annotated-tag — verify object type "tag", tagger shown
+  - [x] ex-74 · push-tags — verify tag appears in remote
+  - [x] ex-75 · cherry-pick-commit — verify single commit's change applied, new hash
+  - [x] ex-76 · cherry-pick-conflict — verify cherry-pick completes after resolve
+  - [x] ex-77 · install-pre-commit-hook — verify commit blocked with hook message
+  - [x] ex-78 · hook-allows-clean-commit — verify clean commit succeeds
+  - [x] ex-79 · pr-branch-flow — verify trunk has change and a merge commit
+  - [x] ex-80 · trunk-based-short-branch — verify main advanced, branch gone
+  - [x] ex-81 · revert-a-merge — verify merge changes undone, history intact
+  - [x] ex-82 · verify-history-intact-after-recovery — verify no dangling/lost commits
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/version-control-and-git/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/version-control-and-git/drilling/_index.md` (wt 206) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 7 Gate
 
-- [ ] [AI] `version-control-and-git/` complete: `_index.md` wt 160, `learning/_index.md` wt 106,
+- [x] [AI] `version-control-and-git/` complete: `_index.md` wt 160, `learning/_index.md` wt 106,
       `drilling/_index.md` wt 206, capstone wt 900; all 29 concepts + 82 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -1646,7 +1646,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -1655,7 +1655,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.

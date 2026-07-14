@@ -1,0 +1,6 @@
+=== BUGGY: checking out a commit hash directly, not a branch ===
+HEAD detached at 9fb8998
+nothing to commit, working tree clean
+0
+=== FIX: create a branch BEFORE committing in detached HEAD, or immediately after ===
+1
