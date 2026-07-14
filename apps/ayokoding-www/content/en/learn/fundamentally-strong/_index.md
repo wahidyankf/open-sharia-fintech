@@ -17,3 +17,4 @@ weight: 107
   - [7 · Data Structures & Algorithms Essentials](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials)
   - [8 · Object-Oriented Programming Essentials](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-programming-essentials)
   - [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
+  - [11 · Backend Essentials](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials)
