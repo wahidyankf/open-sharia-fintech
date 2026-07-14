@@ -2241,129 +2241,129 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python (PostgreSQL) · topic wt 210 · Learn 111 / Drill 211 · **subject**. Template →
 [`syllabus/11-backend-essentials.md`](./syllabus/11-backend-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `backend-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `backend-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/11-backend-essentials.md`](./syllabus/11-backend-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/backend-essentials/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/backend-essentials/learning/` teaching **every** concept in
       `syllabus/11-backend-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · http-request-response
-  - [ ] co-02 · http-methods
-  - [ ] co-03 · http-status-codes
-  - [ ] co-04 · http-headers
-  - [ ] co-05 · statelessness
-  - [ ] co-06 · raw-stdlib-server
-  - [ ] co-07 · routing
-  - [ ] co-08 · request-handlers
-  - [ ] co-09 · json-serialization
-  - [ ] co-10 · request-validation
-  - [ ] co-11 · structured-errors
-  - [ ] co-12 · path-and-query-params
-  - [ ] co-13 · request-body-parsing
-  - [ ] co-14 · persistence-repository
-  - [ ] co-15 · migrations
-  - [ ] co-16 · middleware
-  - [ ] co-17 · authn-sessions-vs-tokens
-  - [ ] co-18 · token-check
-  - [ ] co-19 · pagination
-  - [ ] co-20 · filtering
-  - [ ] co-21 · content-negotiation
-  - [ ] co-22 · local-dev-loop
-  - [ ] co-23 · dependency-injection
-  - [ ] co-24 · layering
-- [ ] **[AI] A1-examples** — Author `CONTENT/backend-essentials/learning/code/` — one runnable HTTP service / endpoint
+  - [x] co-01 · http-request-response
+  - [x] co-02 · http-methods
+  - [x] co-03 · http-status-codes
+  - [x] co-04 · http-headers
+  - [x] co-05 · statelessness
+  - [x] co-06 · raw-stdlib-server
+  - [x] co-07 · routing
+  - [x] co-08 · request-handlers
+  - [x] co-09 · json-serialization
+  - [x] co-10 · request-validation
+  - [x] co-11 · structured-errors
+  - [x] co-12 · path-and-query-params
+  - [x] co-13 · request-body-parsing
+  - [x] co-14 · persistence-repository
+  - [x] co-15 · migrations
+  - [x] co-16 · middleware
+  - [x] co-17 · authn-sessions-vs-tokens
+  - [x] co-18 · token-check
+  - [x] co-19 · pagination
+  - [x] co-20 · filtering
+  - [x] co-21 · content-negotiation
+  - [x] co-22 · local-dev-loop
+  - [x] co-23 · dependency-injection
+  - [x] co-24 · layering
+- [x] **[AI] A1-examples** — Author `CONTENT/backend-essentials/learning/code/` — one runnable HTTP service / endpoint
       per worked example, served via `uvicorn`/stdlib and exercised with `curl`+`pytest` (DD-20/DD-30/DD-34/DD-39), covering **every**
       example in `syllabus/11-backend-essentials.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · raw-server-hello — verify `curl localhost:8000/` returns `hello`
-  - [ ] ex-02 · raw-status-line — verify `curl -i` shows `HTTP/1.0 200`
-  - [ ] ex-03 · raw-set-header — verify header appears in `curl -i`
-  - [ ] ex-04 · raw-read-path — verify `/a` and `/b` return different bodies
-  - [ ] ex-05 · raw-json-response — verify `curl` receives parseable JSON
-  - [ ] ex-06 · raw-404 — verify `%{http_code}` prints 404
-  - [ ] ex-07 · wsgiref-app — verify `curl` returns 200
-  - [ ] ex-08 · handle-get-only — verify GET succeeds
-  - [ ] ex-09 · method-405-raw — verify 405 + `Allow` header via `curl -i -X POST`
-  - [ ] ex-10 · install-framework — verify pinned CVE-clean version
-  - [ ] ex-11 · fastapi-hello — verify `uvicorn` serves JSON `{"msg":...}`
-  - [ ] ex-12 · run-via-uvicorn — verify `curl localhost:8000/` responds
-  - [ ] ex-13 · health-endpoint — verify `curl` returns `{"status":"ok"}` 200
-  - [ ] ex-14 · typed-path-param — verify `curl /items/5` echoes 5
-  - [ ] ex-15 · typed-query-param — verify `?q=hi` is parsed
-  - [ ] ex-16 · optional-query-default — verify omitting uses default
-  - [ ] ex-17 · json-request-body — verify fields echo back
-  - [ ] ex-18 · response-model — verify response shape matches model
-  - [ ] ex-19 · status-201-created — verify `curl -i` shows 201
-  - [ ] ex-20 · status-204-no-content — verify no body in `curl -i`
-  - [ ] ex-21 · read-request-header — verify `X-Request-Id` echoed
-  - [ ] ex-22 · set-response-header — verify `X-App-Version` in `curl -i`
-  - [ ] ex-23 · flask-hello — verify `curl` returns 200 (framework-agnostic)
-  - [ ] ex-24 · put-idempotent — verify two identical PUTs yield same state
-  - [ ] ex-25 · patch-partial — verify only that field changed
-  - [ ] ex-26 · statelessness-demo — verify each request independent
-  - [ ] ex-27 · require-json-content-type — verify 415/422 rejection
-  - [ ] ex-28 · curl-post-json — verify JSON round-trips
-  - [ ] ex-29 · validation-required-field — verify 422 with structured detail
-  - [ ] ex-30 · validation-wrong-type — verify 422 type error
-  - [ ] ex-31 · validation-constraints — verify out-of-range rejected
-  - [ ] ex-32 · error-envelope — verify envelope shape on failure
-  - [ ] ex-33 · exception-handler — verify mapped 4xx response
-  - [ ] ex-34 · not-found-404-json — verify status + body
-  - [ ] ex-35 · repository-connect — verify repo returns rows
-  - [ ] ex-36 · repository-parameterized — verify injection neutralized
-  - [ ] ex-37 · crud-create — verify 201 and row persists
-  - [ ] ex-38 · crud-read-one — verify row returned
-  - [ ] ex-39 · crud-read-list — verify JSON array
-  - [ ] ex-40 · crud-update — verify change persists
-  - [ ] ex-41 · crud-delete — verify 204 and row gone
-  - [ ] ex-42 · crud-missing-404 — verify 404 envelope
-  - [ ] ex-43 · migration-apply-schema — verify table exists before serving
-  - [ ] ex-44 · migration-add-column — verify existing rows stay valid
-  - [ ] ex-45 · repository-typed-return — verify handler consumes typed rows
-  - [ ] ex-46 · layering-no-sql-in-handler — verify clean layering
-  - [ ] ex-47 · dependency-injection-db — verify injected connection used
-  - [ ] ex-48 · request-id-middleware — verify header present
-  - [ ] ex-49 · logging-middleware — verify log line appears
-  - [ ] ex-50 · timing-middleware — verify `X-Process-Time` header
-  - [ ] ex-51 · cors-header — verify `Access-Control-Allow-Origin`
-  - [ ] ex-52 · error-500-envelope — verify sanitized body (no stack trace)
-  - [ ] ex-53 · validation-error-detail — verify detail array
-  - [ ] ex-54 · accept-json-negotiation — verify negotiation (else 406)
-  - [ ] ex-55 · create-then-read-roundtrip — verify persisted round-trip
-  - [ ] ex-56 · pytest-testclient — verify assertions pass
-  - [ ] ex-57 · sessions-vs-tokens — verify both identify caller
-  - [ ] ex-58 · issue-token — verify response contains token string
-  - [ ] ex-59 · token-check-middleware — verify valid token reaches handler
-  - [ ] ex-60 · missing-token-401 — verify 401 envelope
-  - [ ] ex-61 · invalid-token-401 — verify 401
-  - [ ] ex-62 · valid-token-200 — verify 200
-  - [ ] ex-63 · protect-writes-only — verify read/write split
-  - [ ] ex-64 · session-cookie-auth — verify session persists
-  - [ ] ex-65 · pagination-limit-offset — verify page window
-  - [ ] ex-66 · pagination-default — verify bounded page
-  - [ ] ex-67 · pagination-metadata — verify `total`/`next` envelope
-  - [ ] ex-68 · pagination-bounds — verify limit clamped or 422'd
-  - [ ] ex-69 · filter-by-field — verify subset
-  - [ ] ex-70 · filter-multiple — verify AND semantics
-  - [ ] ex-71 · filter-parameterized-sql — verify injection safety
-  - [ ] ex-72 · sort-param — verify ordering
-  - [ ] ex-73 · combined-list-query — verify pagination+filter+sort compose
-  - [ ] ex-74 · idempotent-put-verified — verify second PUT idempotent
-  - [ ] ex-75 · method-not-allowed-405 — verify 405 + `Allow` header
-  - [ ] ex-76 · health-vs-readiness — verify readiness fails when DB down
-  - [ ] ex-77 · error-envelope-consistency — verify uniformity across 400/401/404/422/500
-  - [ ] ex-78 · curl-crud-auth-script — verify every step passes
-  - [ ] ex-79 · pytest-full-integration — verify green (CRUD+token+pagination)
-  - [ ] ex-80 · stateless-two-workers — verify consistent responses across workers
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/backend-essentials/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · raw-server-hello — verify `curl localhost:8000/` returns `hello`
+  - [x] ex-02 · raw-status-line — verify `curl -i` shows `HTTP/1.0 200`
+  - [x] ex-03 · raw-set-header — verify header appears in `curl -i`
+  - [x] ex-04 · raw-read-path — verify `/a` and `/b` return different bodies
+  - [x] ex-05 · raw-json-response — verify `curl` receives parseable JSON
+  - [x] ex-06 · raw-404 — verify `%{http_code}` prints 404
+  - [x] ex-07 · wsgiref-app — verify `curl` returns 200
+  - [x] ex-08 · handle-get-only — verify GET succeeds
+  - [x] ex-09 · method-405-raw — verify 405 + `Allow` header via `curl -i -X POST`
+  - [x] ex-10 · install-framework — verify pinned CVE-clean version
+  - [x] ex-11 · fastapi-hello — verify `uvicorn` serves JSON `{"msg":...}`
+  - [x] ex-12 · run-via-uvicorn — verify `curl localhost:8000/` responds
+  - [x] ex-13 · health-endpoint — verify `curl` returns `{"status":"ok"}` 200
+  - [x] ex-14 · typed-path-param — verify `curl /items/5` echoes 5
+  - [x] ex-15 · typed-query-param — verify `?q=hi` is parsed
+  - [x] ex-16 · optional-query-default — verify omitting uses default
+  - [x] ex-17 · json-request-body — verify fields echo back
+  - [x] ex-18 · response-model — verify response shape matches model
+  - [x] ex-19 · status-201-created — verify `curl -i` shows 201
+  - [x] ex-20 · status-204-no-content — verify no body in `curl -i`
+  - [x] ex-21 · read-request-header — verify `X-Request-Id` echoed
+  - [x] ex-22 · set-response-header — verify `X-App-Version` in `curl -i`
+  - [x] ex-23 · flask-hello — verify `curl` returns 200 (framework-agnostic)
+  - [x] ex-24 · put-idempotent — verify two identical PUTs yield same state
+  - [x] ex-25 · patch-partial — verify only that field changed
+  - [x] ex-26 · statelessness-demo — verify each request independent
+  - [x] ex-27 · require-json-content-type — verify 415/422 rejection
+  - [x] ex-28 · curl-post-json — verify JSON round-trips
+  - [x] ex-29 · validation-required-field — verify 422 with structured detail
+  - [x] ex-30 · validation-wrong-type — verify 422 type error
+  - [x] ex-31 · validation-constraints — verify out-of-range rejected
+  - [x] ex-32 · error-envelope — verify envelope shape on failure
+  - [x] ex-33 · exception-handler — verify mapped 4xx response
+  - [x] ex-34 · not-found-404-json — verify status + body
+  - [x] ex-35 · repository-connect — verify repo returns rows
+  - [x] ex-36 · repository-parameterized — verify injection neutralized
+  - [x] ex-37 · crud-create — verify 201 and row persists
+  - [x] ex-38 · crud-read-one — verify row returned
+  - [x] ex-39 · crud-read-list — verify JSON array
+  - [x] ex-40 · crud-update — verify change persists
+  - [x] ex-41 · crud-delete — verify 204 and row gone
+  - [x] ex-42 · crud-missing-404 — verify 404 envelope
+  - [x] ex-43 · migration-apply-schema — verify table exists before serving
+  - [x] ex-44 · migration-add-column — verify existing rows stay valid
+  - [x] ex-45 · repository-typed-return — verify handler consumes typed rows
+  - [x] ex-46 · layering-no-sql-in-handler — verify clean layering
+  - [x] ex-47 · dependency-injection-db — verify injected connection used
+  - [x] ex-48 · request-id-middleware — verify header present
+  - [x] ex-49 · logging-middleware — verify log line appears
+  - [x] ex-50 · timing-middleware — verify `X-Process-Time` header
+  - [x] ex-51 · cors-header — verify `Access-Control-Allow-Origin`
+  - [x] ex-52 · error-500-envelope — verify sanitized body (no stack trace)
+  - [x] ex-53 · validation-error-detail — verify detail array
+  - [x] ex-54 · accept-json-negotiation — verify negotiation (else 406)
+  - [x] ex-55 · create-then-read-roundtrip — verify persisted round-trip
+  - [x] ex-56 · pytest-testclient — verify assertions pass
+  - [x] ex-57 · sessions-vs-tokens — verify both identify caller
+  - [x] ex-58 · issue-token — verify response contains token string
+  - [x] ex-59 · token-check-middleware — verify valid token reaches handler
+  - [x] ex-60 · missing-token-401 — verify 401 envelope
+  - [x] ex-61 · invalid-token-401 — verify 401
+  - [x] ex-62 · valid-token-200 — verify 200
+  - [x] ex-63 · protect-writes-only — verify read/write split
+  - [x] ex-64 · session-cookie-auth — verify session persists
+  - [x] ex-65 · pagination-limit-offset — verify page window
+  - [x] ex-66 · pagination-default — verify bounded page
+  - [x] ex-67 · pagination-metadata — verify `total`/`next` envelope
+  - [x] ex-68 · pagination-bounds — verify limit clamped or 422'd
+  - [x] ex-69 · filter-by-field — verify subset
+  - [x] ex-70 · filter-multiple — verify AND semantics
+  - [x] ex-71 · filter-parameterized-sql — verify injection safety
+  - [x] ex-72 · sort-param — verify ordering
+  - [x] ex-73 · combined-list-query — verify pagination+filter+sort compose
+  - [x] ex-74 · idempotent-put-verified — verify second PUT idempotent
+  - [x] ex-75 · method-not-allowed-405 — verify 405 + `Allow` header
+  - [x] ex-76 · health-vs-readiness — verify readiness fails when DB down
+  - [x] ex-77 · error-envelope-consistency — verify uniformity across 400/401/404/422/500
+  - [x] ex-78 · curl-crud-auth-script — verify every step passes
+  - [x] ex-79 · pytest-full-integration — verify green (CRUD+token+pagination)
+  - [x] ex-80 · stateless-two-workers — verify consistent responses across workers
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/backend-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/backend-essentials/drilling/_index.md` (wt 211) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 12 Gate
 
-- [ ] [AI] `backend-essentials/` complete: `_index.md` wt 210, `learning/_index.md` wt 111,
+- [x] [AI] `backend-essentials/` complete: `_index.md` wt 210, `learning/_index.md` wt 111,
       `drilling/_index.md` wt 211, capstone wt 900; all 24 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

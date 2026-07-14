@@ -33,3 +33,7 @@ weight: 1750
 - [9 · Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/project-management/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/project-management/drilling)
+- [11 · Backend Essentials](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials/drilling)
