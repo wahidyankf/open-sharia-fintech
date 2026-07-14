@@ -1104,25 +1104,30 @@ Junction: Topics 01–03 (nvim + lua + extending). Apply the Inter-Topic Capston
 **Detail source**: [`syllabus/03-extending-neovim.md`](./syllabus/03-extending-neovim.md) §"inter-topic:
 `capstone-forge-ready`".
 
-- [ ] **[AI] V** — `web-researcher` confirms the pinned Neovim + plugin versions still current/CVE-clean
+- [x] **[AI] V** — `web-researcher` confirms the pinned Neovim + plugin versions still current/CVE-clean
       at build time (reuse topic-03 findings). **Acceptance**: versions confirmed or updated in the spec.
-- [ ] **[AI] A** — Author `CONTENT/capstone-forge-ready/` (`_index.md` `weight: 135`, + `code/`) per the
+      Notes: pinned versions re-confirmed current/CVE-clean; one new finding surfaced while re-running
+      `:checkhealth` — `nvim-lspconfig` v2.10.0 now marks its own `:checkhealth lspconfig` integration
+      deprecated in favor of `:checkhealth vim.lsp` (plugin itself still functions). Folded back into
+      [`syllabus/03-extending-neovim.md`](./syllabus/03-extending-neovim.md)'s Accuracy notes as a dated
+      2026-07-14 entry, per the same precedent Phase 3's V step set in that file.
+- [x] **[AI] A** — Author `CONTENT/capstone-forge-ready/` (`_index.md` `weight: 135`, + `code/`) per the
       spec's ordered steps: (1) `code/nvim-config/` self-contained config repo with a pinned plugin
       lockfile — verify `XDG_CONFIG_HOME=$(mktemp -d) nvim --headless "+checkhealth" "+qa"` bootstraps
       healthy; (2) `code/sample-project/` Python project opened in the forge with working LSP+Treesitter;
       (3) a scripted mouse-free refactor across it (motions+macros+quickfix) with a saved transcript;
       (4) a `:terminal` check beside the source. **Acceptance**: a clean-machine reader reproduces the
       forge, opens the sample with LSP+Treesitter, and replays the transcript to the identical result.
-- [ ] **[AI] Check/Fact/Build** — checker + facts-checker clean; `npx nx run ayokoding-www:build` +
+- [x] **[AI] Check/Fact/Build** — checker + facts-checker clean; `npx nx run ayokoding-www:build` +
       `npm run lint:md` exit 0.
 
 ### Phase 4 Gate
 
-- [ ] [AI] `capstone-forge-ready/` complete (wt 135); all four ordered steps present and the
+- [x] [AI] `capstone-forge-ready/` complete (wt 135); all four ordered steps present and the
       done bar met (clean-machine reproduction runnable end-to-end + web-verified); checker +
       facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
