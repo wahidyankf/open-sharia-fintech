@@ -1,0 +1,5 @@
+=== BUGGY: tag the release, push main, but forget --tags ===
+=== FIX: git push --tags (or push the specific tag by name) ===
+To ../remote.git
+ * [new tag]         v1.0 -> v1.0
+v1.0

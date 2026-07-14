@@ -1,0 +1,18 @@
+Merge made by the 'ort' strategy.
+ file.txt | 1 +
+ 1 file changed, 1 insertion(+)
+*   d8ec948 Merge branch 'feature'
+|\  
+| * 3a379c8 feature change
+|/  
+* 50d1092 initial
+[main 48d39cb] Revert "Merge branch 'feature'"
+ Date: Tue Jul 14 12:35:48 2026 +0700
+ 1 file changed, 1 deletion(-)
+* 48d39cb Revert "Merge branch 'feature'"
+*   d8ec948 Merge branch 'feature'
+|\  
+| * 3a379c8 feature change
+|/  
+* 50d1092 initial
+base

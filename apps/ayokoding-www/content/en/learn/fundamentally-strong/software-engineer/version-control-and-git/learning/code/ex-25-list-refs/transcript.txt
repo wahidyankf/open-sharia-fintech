@@ -1,0 +1,6 @@
+f1097c7057ab9862bd9855f2069729dc1945a68b refs/heads/feature
+f1097c7057ab9862bd9855f2069729dc1945a68b refs/heads/hotfix
+f1097c7057ab9862bd9855f2069729dc1945a68b refs/heads/main
+  feature f1097c7 initial
+  hotfix  f1097c7 initial
+* main    f1097c7 initial

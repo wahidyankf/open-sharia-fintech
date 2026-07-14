@@ -1,0 +1,6 @@
+warning: You appear to have cloned an empty repository.
+From /var/folders/fr/jg3jv_4d39b48cyqlqz18mgr0000gn/T/tmp.OBfCjChZJQ/remote
+   5c484dc..2f40570  main       -> origin/main
+5c484dc initial
+2f40570 second commit
+5c484dc initial
