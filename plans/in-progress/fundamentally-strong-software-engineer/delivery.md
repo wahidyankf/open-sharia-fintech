@@ -1329,134 +1329,134 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: Primer · Bash/shell † · topic wt 150 · Learn 105 / Drill 205 · **primer**. Template →
 [`syllabus/05-just-enough-bash.md`](./syllabus/05-just-enough-bash.md).
 
-- [ ] **[AI] V** — `web-researcher` for `just-enough-bash`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `just-enough-bash`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/05-just-enough-bash.md`](./syllabus/05-just-enough-bash.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/just-enough-bash/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/just-enough-bash/learning/` teaching **every** concept in
       `syllabus/05-just-enough-bash.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · shebang-and-execution
-  - [ ] co-02 · interactive-vs-script
-  - [ ] co-03 · strict-mode
-  - [ ] co-04 · bash-vs-posix
-  - [ ] co-05 · variables-and-expansion
-  - [ ] co-06 · quoting
-  - [ ] co-07 · command-substitution
-  - [ ] co-08 · arithmetic-expansion
-  - [ ] co-09 · exit-codes
-  - [ ] co-10 · conditionals
-  - [ ] co-11 · case-statement
-  - [ ] co-12 · loops
-  - [ ] co-13 · functions
-  - [ ] co-14 · io-redirection
-  - [ ] co-15 · pipes
-  - [ ] co-16 · here-docs-and-strings
-  - [ ] co-17 · read-input
-  - [ ] co-18 · text-pipeline-tools
-  - [ ] co-19 · positional-parameters
-  - [ ] co-20 · getopts
-  - [ ] co-21 · trap-and-cleanup
-  - [ ] co-22 · mktemp
-  - [ ] co-23 · globbing
-  - [ ] co-24 · regular-expressions
-  - [ ] co-25 · shellcheck-and-shfmt
-  - [ ] co-26 · process-substitution
-- [ ] **[AI] A1-examples** — Author `CONTENT/just-enough-bash/learning/code/` — one runnable `.sh` script +
+  - [x] co-01 · shebang-and-execution
+  - [x] co-02 · interactive-vs-script
+  - [x] co-03 · strict-mode
+  - [x] co-04 · bash-vs-posix
+  - [x] co-05 · variables-and-expansion
+  - [x] co-06 · quoting
+  - [x] co-07 · command-substitution
+  - [x] co-08 · arithmetic-expansion
+  - [x] co-09 · exit-codes
+  - [x] co-10 · conditionals
+  - [x] co-11 · case-statement
+  - [x] co-12 · loops
+  - [x] co-13 · functions
+  - [x] co-14 · io-redirection
+  - [x] co-15 · pipes
+  - [x] co-16 · here-docs-and-strings
+  - [x] co-17 · read-input
+  - [x] co-18 · text-pipeline-tools
+  - [x] co-19 · positional-parameters
+  - [x] co-20 · getopts
+  - [x] co-21 · trap-and-cleanup
+  - [x] co-22 · mktemp
+  - [x] co-23 · globbing
+  - [x] co-24 · regular-expressions
+  - [x] co-25 · shellcheck-and-shfmt
+  - [x] co-26 · process-substitution
+- [x] **[AI] A1-examples** — Author `CONTENT/just-enough-bash/learning/code/` — one runnable `.sh` script +
       expected output per worked example in `syllabus/05-just-enough-bash.md` §Worked examples (DD-20/DD-30),
       `shellcheck`-clean. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · shebang-script — verify `Hello, world!`
-  - [ ] ex-02 · make-executable — verify runs without explicit `bash`
-  - [ ] ex-03 · strict-mode-header — verify `echo $?` prints `0`
-  - [ ] ex-04 · unset-var-fails — verify non-zero + `unbound variable`
-  - [ ] ex-05 · assign-and-echo — verify `Ada`
-  - [ ] ex-06 · brace-var-expansion — verify `Hi Ada`
-  - [ ] ex-07 · single-vs-double-quote — verify literal `$name` then `Ada`
-  - [ ] ex-08 · quoting-spaces — verify quoted one word, unquoted splits
-  - [ ] ex-09 · command-substitution — verify 4-digit year
-  - [ ] ex-10 · arithmetic — verify `42`
-  - [ ] ex-11 · arithmetic-increment — verify final = loop count
-  - [ ] ex-12 · exit-code-success — verify `0`
-  - [ ] ex-13 · exit-code-failure — verify `1`
-  - [ ] ex-14 · explicit-exit — verify `3`
-  - [ ] ex-15 · if-string-test — verify `equal`
-  - [ ] ex-16 · if-numeric-test — verify `big`
-  - [ ] ex-17 · if-file-test — verify `exists`
-  - [ ] ex-18 · test-vs-bracket — verify both branches same result
-  - [ ] ex-19 · for-loop-list — verify `a`/`b`/`c`
-  - [ ] ex-20 · for-loop-range — verify `1 2 3 4 5`
-  - [ ] ex-21 · while-loop — verify `1`/`2`/`3`
-  - [ ] ex-22 · until-loop — verify `0`/`1`/`2`
-  - [ ] ex-23 · break-continue — verify expected odds before 5
-  - [ ] ex-24 · echo-to-stdout — verify matches argument
-  - [ ] ex-25 · redirect-to-file — verify `out.txt` contains `hi`
-  - [ ] ex-26 · append-to-file — verify two lines
-  - [ ] ex-27 · redirect-stderr — verify `err.txt` non-empty, stdout clean
-  - [ ] ex-28 · simple-pipe — verify `a` then `b`
-  - [ ] ex-29 · case-statement — verify each input routes correctly
-  - [ ] ex-30 · function-define-call — verify `Hi Ada`
-  - [ ] ex-31 · function-local-var — verify outer var unchanged
-  - [ ] ex-32 · function-return-status — verify failure branch runs
-  - [ ] ex-33 · positional-params — verify counts + values
-  - [ ] ex-34 · all-args-quoted — verify each arg intact on own line
-  - [ ] ex-35 · shift-args — verify each processed once
-  - [ ] ex-36 · read-from-stdin — verify echoes piped line
-  - [ ] ex-37 · read-loop-file — verify each line in order
-  - [ ] ex-38 · heredoc — verify variable expanded
-  - [ ] ex-39 · heredoc-quoted — verify `$name` literal
-  - [ ] ex-40 · here-string — verify matches when text contains `foo`
-  - [ ] ex-41 · pipe-grep — verify only matching lines
-  - [ ] ex-42 · grep-count — verify exact match count
-  - [ ] ex-43 · sed-substitute — verify every `old` → `new`
-  - [ ] ex-44 · sed-delete-lines — verify `DROP` lines removed
-  - [ ] ex-45 · awk-field — verify second column
-  - [ ] ex-46 · awk-sum — verify correct total
-  - [ ] ex-47 · cut-columns — verify second field
-  - [ ] ex-48 · sort-uniq-count — verify each line with count
-  - [ ] ex-49 · tr-translate — verify uppercased
-  - [ ] ex-50 · find-files — verify lists matching paths
-  - [ ] ex-51 · find-exec-delete — verify `.tmp` files gone
-  - [ ] ex-52 · xargs-pipeline — verify lists files with `TODO`
-  - [ ] ex-53 · pipeline-chore — verify final aggregated output
-  - [ ] ex-54 · stderr-to-stdout — verify error line captured
-  - [ ] ex-55 · devnull-discard — verify no output, status preserved
-  - [ ] ex-56 · getopts-flags — verify parsed flag + value
-  - [ ] ex-57 · getopts-usage — verify `-h` exits 0, bad opt non-zero
-  - [ ] ex-58 · default-value-param — verify default used when unset
-  - [ ] ex-59 · check-command-success — verify correct branch on exit status
-  - [ ] ex-60 · pipefail-catches-failure — verify non-zero pipeline status
-  - [ ] ex-61 · trap-exit-cleanup — verify temp file gone after finish
-  - [ ] ex-62 · mktemp-file — verify unique temp created + removed
-  - [ ] ex-63 · mktemp-dir — verify scratch dir created + removed
-  - [ ] ex-64 · trap-signal-int — verify handler message on SIGINT
-  - [ ] ex-65 · regex-grep-ere — verify only phone-shaped lines match
-  - [ ] ex-66 · regex-char-class — verify digit lines match
-  - [ ] ex-67 · regex-anchors — verify only `^ERROR` lines
-  - [ ] ex-68 · regex-capture-sed — verify `foobar` → `foobaz`
-  - [ ] ex-69 · regex-quantifiers — verify `abc`/`abbc` match, `ac` not
-  - [ ] ex-70 · safe-glob-loop — verify skips when no `.txt`
-  - [ ] ex-71 · array-iteration — verify each element on own line
-  - [ ] ex-72 · array-length — verify `3`
-  - [ ] ex-73 · param-expansion-required — verify non-zero + `input required`
-  - [ ] ex-74 · string-manipulation — verify basename + extension strip
-  - [ ] ex-75 · shellcheck-clean — verify no findings, exit 0
-  - [ ] ex-76 · shellcheck-catches-bug — verify `SC2086`
-  - [ ] ex-77 · shfmt-format — verify re-run `-d` no diff
-  - [ ] ex-78 · robust-arg-parser — verify non-zero + message when required opt missing
-  - [ ] ex-79 · temp-pipeline-atomic — verify no partial file after failure
-  - [ ] ex-80 · trap-err-report — verify prints offending line number
-  - [ ] ex-81 · full-report-tool — verify correct output + cleanup + non-zero on error
-  - [ ] ex-82 · posix-portable-script — verify identical under `sh` and `bash`
-  - [ ] ex-83 · process-substitution-diff — verify `diff <(sort a) <(sort b)` matches temp-file staging
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-bash/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · shebang-script — verify `Hello, world!`
+  - [x] ex-02 · make-executable — verify runs without explicit `bash`
+  - [x] ex-03 · strict-mode-header — verify `echo $?` prints `0`
+  - [x] ex-04 · unset-var-fails — verify non-zero + `unbound variable`
+  - [x] ex-05 · assign-and-echo — verify `Ada`
+  - [x] ex-06 · brace-var-expansion — verify `Hi Ada`
+  - [x] ex-07 · single-vs-double-quote — verify literal `$name` then `Ada`
+  - [x] ex-08 · quoting-spaces — verify quoted one word, unquoted splits
+  - [x] ex-09 · command-substitution — verify 4-digit year
+  - [x] ex-10 · arithmetic — verify `42`
+  - [x] ex-11 · arithmetic-increment — verify final = loop count
+  - [x] ex-12 · exit-code-success — verify `0`
+  - [x] ex-13 · exit-code-failure — verify `1`
+  - [x] ex-14 · explicit-exit — verify `3`
+  - [x] ex-15 · if-string-test — verify `equal`
+  - [x] ex-16 · if-numeric-test — verify `big`
+  - [x] ex-17 · if-file-test — verify `exists`
+  - [x] ex-18 · test-vs-bracket — verify both branches same result
+  - [x] ex-19 · for-loop-list — verify `a`/`b`/`c`
+  - [x] ex-20 · for-loop-range — verify `1 2 3 4 5`
+  - [x] ex-21 · while-loop — verify `1`/`2`/`3`
+  - [x] ex-22 · until-loop — verify `0`/`1`/`2`
+  - [x] ex-23 · break-continue — verify expected odds before 5
+  - [x] ex-24 · echo-to-stdout — verify matches argument
+  - [x] ex-25 · redirect-to-file — verify `out.txt` contains `hi`
+  - [x] ex-26 · append-to-file — verify two lines
+  - [x] ex-27 · redirect-stderr — verify `err.txt` non-empty, stdout clean
+  - [x] ex-28 · simple-pipe — verify `a` then `b`
+  - [x] ex-29 · case-statement — verify each input routes correctly
+  - [x] ex-30 · function-define-call — verify `Hi Ada`
+  - [x] ex-31 · function-local-var — verify outer var unchanged
+  - [x] ex-32 · function-return-status — verify failure branch runs
+  - [x] ex-33 · positional-params — verify counts + values
+  - [x] ex-34 · all-args-quoted — verify each arg intact on own line
+  - [x] ex-35 · shift-args — verify each processed once
+  - [x] ex-36 · read-from-stdin — verify echoes piped line
+  - [x] ex-37 · read-loop-file — verify each line in order
+  - [x] ex-38 · heredoc — verify variable expanded
+  - [x] ex-39 · heredoc-quoted — verify `$name` literal
+  - [x] ex-40 · here-string — verify matches when text contains `foo`
+  - [x] ex-41 · pipe-grep — verify only matching lines
+  - [x] ex-42 · grep-count — verify exact match count
+  - [x] ex-43 · sed-substitute — verify every `old` → `new`
+  - [x] ex-44 · sed-delete-lines — verify `DROP` lines removed
+  - [x] ex-45 · awk-field — verify second column
+  - [x] ex-46 · awk-sum — verify correct total
+  - [x] ex-47 · cut-columns — verify second field
+  - [x] ex-48 · sort-uniq-count — verify each line with count
+  - [x] ex-49 · tr-translate — verify uppercased
+  - [x] ex-50 · find-files — verify lists matching paths
+  - [x] ex-51 · find-exec-delete — verify `.tmp` files gone
+  - [x] ex-52 · xargs-pipeline — verify lists files with `TODO`
+  - [x] ex-53 · pipeline-chore — verify final aggregated output
+  - [x] ex-54 · stderr-to-stdout — verify error line captured
+  - [x] ex-55 · devnull-discard — verify no output, status preserved
+  - [x] ex-56 · getopts-flags — verify parsed flag + value
+  - [x] ex-57 · getopts-usage — verify `-h` exits 0, bad opt non-zero
+  - [x] ex-58 · default-value-param — verify default used when unset
+  - [x] ex-59 · check-command-success — verify correct branch on exit status
+  - [x] ex-60 · pipefail-catches-failure — verify non-zero pipeline status
+  - [x] ex-61 · trap-exit-cleanup — verify temp file gone after finish
+  - [x] ex-62 · mktemp-file — verify unique temp created + removed
+  - [x] ex-63 · mktemp-dir — verify scratch dir created + removed
+  - [x] ex-64 · trap-signal-int — verify handler message on SIGINT
+  - [x] ex-65 · regex-grep-ere — verify only phone-shaped lines match
+  - [x] ex-66 · regex-char-class — verify digit lines match
+  - [x] ex-67 · regex-anchors — verify only `^ERROR` lines
+  - [x] ex-68 · regex-capture-sed — verify `foobar` → `foobaz`
+  - [x] ex-69 · regex-quantifiers — verify `abc`/`abbc` match, `ac` not
+  - [x] ex-70 · safe-glob-loop — verify skips when no `.txt`
+  - [x] ex-71 · array-iteration — verify each element on own line
+  - [x] ex-72 · array-length — verify `3`
+  - [x] ex-73 · param-expansion-required — verify non-zero + `input required`
+  - [x] ex-74 · string-manipulation — verify basename + extension strip
+  - [x] ex-75 · shellcheck-clean — verify no findings, exit 0
+  - [x] ex-76 · shellcheck-catches-bug — verify `SC2086`
+  - [x] ex-77 · shfmt-format — verify re-run `-d` no diff
+  - [x] ex-78 · robust-arg-parser — verify non-zero + message when required opt missing
+  - [x] ex-79 · temp-pipeline-atomic — verify no partial file after failure
+  - [x] ex-80 · trap-err-report — verify prints offending line number
+  - [x] ex-81 · full-report-tool — verify correct output + cleanup + non-zero on error
+  - [x] ex-82 · posix-portable-script — verify identical under `sh` and `bash`
+  - [x] ex-83 · process-substitution-diff — verify `diff <(sort a) <(sort b)` matches temp-file staging
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/just-enough-bash/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-primer-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/just-enough-bash/drilling/_index.md` (wt 205) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 6 Gate
 
-- [ ] [AI] `just-enough-bash/` complete: `_index.md` wt 150, `learning/_index.md` wt 105,
+- [x] [AI] `just-enough-bash/` complete: `_index.md` wt 150, `learning/_index.md` wt 105,
       `drilling/_index.md` wt 205, capstone wt 900; all 26 concepts + 83 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

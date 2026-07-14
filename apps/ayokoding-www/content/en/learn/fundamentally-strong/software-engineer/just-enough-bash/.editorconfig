@@ -1,0 +1,13 @@
+# EditorConfig scoped to this topic's shell examples only (does not affect any other .sh file in
+# the repo -- EditorConfig lookup starts at the target file and walks upward, so this file only
+# applies to files under `just-enough-bash/`).
+
+# shfmt (this repo's canonical Bash formatter, wired bare as `shfmt -w` in the root
+# package.json lint-staged config) reads EditorConfig indent settings automatically. Without this
+# file, shfmt's undocumented-flag default is tabs; this topic instead follows the Google Shell
+# Style Guide ("Indent 2 spaces. No tabs.", cited in this topic's own "Read more" section) so the
+# scripts shown in `learning/code/**/*.sh` render with readable indentation both on disk and
+# inside this topic's Markdown pages.
+[*.sh]
+indent_style = space
+indent_size = 2

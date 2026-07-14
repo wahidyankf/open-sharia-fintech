@@ -15,3 +15,6 @@ weight: 1750
 - [3 · Extending Neovim](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/extending-neovim/drilling)
+- [5 · Just Enough Bash](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-bash/drilling)

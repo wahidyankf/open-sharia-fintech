@@ -33,6 +33,23 @@ taught here. All tooling is OSS (Tier-1, DD-21).
 - 2026-07-12 — verified: `shellcheck` **0.11.0** (2025-08-03, still latest). `shfmt` **v3.13.1** (mvdan/sh, latest
   release) — the earlier v3.9.0 pin was stale; re-confirmed against github.com/mvdan/sh/releases.
   (github.com koalaman/shellcheck, mvdan/sh)
+- 2026-07-14 — re-confirmed (Phase 6 authoring sweep, `web-researcher`): Bash **5.3** (2025-07-30) is
+  still the latest tarball at [ftp.gnu.org/gnu/bash](https://ftp.gnu.org/gnu/bash/), no newer
+  `bash-announce` thread exists; `shellcheck` **0.11.0** still the latest
+  [release](https://github.com/koalaman/shellcheck/releases); `shfmt` **v3.13.1** still the newest
+  [tag](https://api.github.com/repos/mvdan/sh/tags); no breaking changes to `set -euo pipefail`,
+  `[[ ]]`, or `getopts` per the [Bash 5.2/5.3 NEWS file](https://tiswww.case.edu/php/chet/bash/NEWS);
+  SC2086's wiki title unchanged; _The Linux Command Line_ still the 7th internet edition (version
+  25.12) at [linuxcommand.org/tlcl.php](https://linuxcommand.org/tlcl.php). One pre-existing citation
+  nuance found (not a 07-12→07-14 change): the POSIX citations below point to the 2017 edition path
+  (`9699919799`); the currently-published edition is **Issue 8 / POSIX.1-2024**
+  (`9799919799`, published 2024-06-14) at
+  [pubs.opengroup.org](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html) —
+  the same conclusion (`[[ ]]`/arrays/`<<<` are Bash extensions, absent from POSIX) holds under either
+  edition, so no content correction is needed, only a citation-currency note. Bonus finding: POSIX.1-2024
+  newly standardizes `set -o pipefail` (absent from the 2017 edition) — this does not contradict
+  anything in this syllabus, since co-04's Bash-extensions list never claimed `pipefail` as
+  Bash-only, but is noted here for completeness.
 
 ### DD-35 primary-source citations (fetched-and-read)
 
@@ -47,8 +64,9 @@ taught here. All tooling is OSS (Tier-1, DD-21).
   — date corrected from erroneous 2026-01-05); `shfmt` **v3.13.1** ([mvdan/sh tags](https://api.github.com/repos/mvdan/sh/tags)).
 - **Strict mode + POSIX delta (co-03/04)** —
   [Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html) verbatim for
-  `-e`/`-u`/`pipefail`; [POSIX Shell Command Language](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html)
-  confirms `[[ ]]`, arrays, `<<<` are Bash extensions (absent from the standard).
+  `-e`/`-u`/`pipefail`; [POSIX Shell Command Language](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
+  (Issue 8 / POSIX.1-2024, the currently-published edition, re-verified 2026-07-14) confirms `[[ ]]`,
+  arrays, `<<<` are Bash extensions (absent from the standard).
 - **Expansion, conditionals, redirection (co-05/10/14/16)** —
   [Parameter Expansion](https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion)
   (`${v:-}`/`${v:?}`/`${p##*/}`) + [Arrays](https://www.gnu.org/software/bash/manual/html_node/Arrays.html);
@@ -65,10 +83,12 @@ taught here. All tooling is OSS (Tier-1, DD-21).
   (`<(…)`/`>(…)`, non-POSIX) — all verbatim.
 - **shellcheck SC2086 (co-25, ex-76)** — [SC2086 wiki](https://www.shellcheck.net/wiki/SC2086) title
   "Double quote to prevent globbing and word splitting" — exact match to the unquoted-`$var` scenario.
-- **Read more** — _The Linux Command Line_, William Shotts, **latest internet edition (7th as of
-  2026-07-12)** ([linuxcommand.org/tlcl.php](https://linuxcommand.org/tlcl.php) — edition generalized, was
-  stale "5th"); GNU Bash Reference Manual (Chet Ramey), POSIX IEEE Std 1003.1-2017
-  ([Open Group](https://pubs.opengroup.org/onlinepubs/9699919799/utilities/contents.html)), Google Shell
+- **Read more** — _The Linux Command Line_, William Shotts, **latest internet edition (7th, version
+  25.12, re-confirmed 2026-07-14)** ([linuxcommand.org/tlcl.php](https://linuxcommand.org/tlcl.php) —
+  edition generalized, was stale "5th"); GNU Bash Reference Manual (Chet Ramey), **POSIX.1-2024 /
+  Issue 8** (the currently-published edition; superseded IEEE Std 1003.1-2017 — same conclusions on
+  Bash-vs-POSIX apply under either edition)
+  ([Open Group](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/contents.html)), Google Shell
   Style Guide ([google.github.io](https://google.github.io/styleguide/shellguide.html)) — all confirmed.
 
 ## Concepts

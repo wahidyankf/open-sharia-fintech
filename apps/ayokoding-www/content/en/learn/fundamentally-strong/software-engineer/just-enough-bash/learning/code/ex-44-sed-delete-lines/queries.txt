@@ -1,0 +1,4 @@
+SELECT * FROM users;
+DROP TABLE users;
+INSERT INTO users VALUES (1);
+DROP TABLE logs;
