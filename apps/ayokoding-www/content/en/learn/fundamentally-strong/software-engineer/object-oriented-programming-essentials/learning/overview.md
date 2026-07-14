@@ -278,4 +278,4 @@ Validate in `__init__`, `__post_init__`, and setters on every path so an object 
 
 ---
 
-← Previous: [5 · Just Enough Bash Drilling](../../just-enough-bash/drilling/overview.md) · Next: [Beginner Examples](./beginner.md) →
+← Previous: [7 · Data Structures & Algorithms Essentials Drilling](../../data-structures-and-algorithms-essentials/drilling/overview.md) · Next: [Beginner Examples](./beginner.md) →
