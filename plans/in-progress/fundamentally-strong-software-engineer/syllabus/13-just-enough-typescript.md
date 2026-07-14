@@ -67,9 +67,11 @@ and the TS side of [`15-software-testing`](./15-software-testing.md). Node/TS ar
   packages explicitly if needed) and `rootDir` now defaults to `./` (larger layouts may need
   `rootDir: "./src"`). Utility Types Handbook page spot-checked, unchanged (shows a 2026-07-13 update,
   no removals/renames). **eslint 10.7.0 / prettier 3.9.5** both current upstream and CLI-invoked as
-  described (co-26); eslint's flat config (`eslint.config.js`) remains default since v9 (legacy
-  `.eslintrc` deprecated) — this topic's eslint/prettier examples (ex-77/ex-78) run the CLIs directly
-  with no config file shown, so no correction needed.
+  described (co-26); eslint's flat config (default filename `eslint.config.js`, `.mjs`/`.cjs` also
+  valid) remains default since v9 (legacy `.eslintrc` deprecated) — ex-77 ships a real flat
+  `eslint.config.mjs` (shown in full, not just invoked from the CLI); ex-78 (prettier) runs
+  `prettier --check`/`--write` directly with no config file, relying on prettier's built-in defaults —
+  both are described accurately, so no correction needed.
   (npmjs.com/package/tsx; devblogs.microsoft.com/typescript/announcing-typescript-7-0;
   typescriptlang.org/docs/handbook/utility-types.html; eslint.org)
 
