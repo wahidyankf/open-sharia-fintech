@@ -14,33 +14,17 @@ request = (  # => plain string concatenation -- no HTTP library builds this for 
     "\r\n"  # => the blank line that ends the headers -- REQUIRED even with no body
 )
 
-with socket.create_connection(
-    (HOST, PORT), timeout=5
-) as sock:  # => co-07: the TCP handshake
-    sock.sendall(
-        request.encode("ascii")
-    )  # => co-12: HTTP headers are ASCII, sent as raw bytes
-    response = (
-        b""  # => accumulates the full response -- its final size isn't known in advance
-    )
-    while (
-        True
-    ):  # => co-11: loop until the server closes (Connection: close makes this safe)
+with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => co-07: the TCP handshake  # fmt: skip
+    sock.sendall(request.encode("ascii"))  # => co-12: HTTP headers are ASCII, sent as raw bytes  # fmt: skip
+    response = b""  # => accumulates the full response -- its final size isn't known in advance  # fmt: skip
+    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
         chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
         if not chunk:  # => an empty recv() means the server closed its side
             break
-        response += (
-            chunk  # => appends this chunk -- the loop above may run several times
-        )
+        response += chunk  # => appends this chunk -- the loop above may run several times  # fmt: skip
 
 status_line = response.split(b"\r\n", 1)[0]  # => co-13: everything up to the first \r\n
-print(
-    f"status line: {status_line.decode()}"
-)  # => decoded to str only for display purposes
+print(f"status line: {status_line.decode()}")  # => decoded to str only for display purposes  # fmt: skip
 
-assert (
-    status_line == b"HTTP/1.1 200 OK"
-)  # => confirms a hand-crafted request gets a real reply
-print(
-    "ex-43 OK"
-)  # => confirms the request/response round trip completed with the expected status
+assert status_line == b"HTTP/1.1 200 OK"  # => confirms a hand-crafted request gets a real reply  # fmt: skip
+print("ex-43 OK")  # => confirms the request/response round trip completed with the expected status  # fmt: skip

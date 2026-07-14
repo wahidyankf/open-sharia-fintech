@@ -13,26 +13,16 @@ def read_line(sock: socket.socket, buffer: bytearray) -> bytes:
     # A TCP byte stream has NO message boundaries -- co-11 says the protocol must invent
     # its own framing. Here, "one message" means "bytes up to the next newline."
     while b"\n" not in buffer:  # => keep reading until a full line has actually arrived
-        chunk = sock.recv(
-            4
-        )  # => a DELIBERATELY tiny read size to force multiple recv() calls
+        chunk = sock.recv(4)  # => a DELIBERATELY tiny read size to force multiple recv() calls  # fmt: skip
         if not chunk:  # => the peer closed before a full line arrived
             raise ConnectionError("peer closed mid-line")
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(
-        b"\n"
-    )  # => split off exactly one line, keep the remainder
-    buffer[:] = (
-        rest  # => whatever came AFTER the newline stays buffered for the next call
-    )
-    return bytes(
-        line
-    )  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one line, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the next call  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
-def server(
-    ready: threading.Event,
-) -> None:  # => backgrounded so the client below can run inline
+def server(ready: threading.Event) -> None:  # => backgrounded so the client below can run inline  # fmt: skip
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # => IPv4 + TCP, scoped to this "with" block so the fd always closes on exit
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -47,12 +37,8 @@ def server(
         # => BLOCKS until the client's connect() completes the TCP handshake
         with conn:
             buf = bytearray()  # => per-connection leftover-bytes buffer (co-11)
-            line = read_line(
-                conn, buf
-            )  # => reassembles ONE full line from many small recv()s
-            print(
-                f"server framed: {line!r}"
-            )  # => proves the tiny 4-byte reads still yield one line
+            line = read_line(conn, buf)  # => reassembles ONE full line from many small recv()s  # fmt: skip
+            print(f"server framed: {line!r}")  # => proves the tiny 4-byte reads still yield one line  # fmt: skip
 
 
 ready_event = threading.Event()

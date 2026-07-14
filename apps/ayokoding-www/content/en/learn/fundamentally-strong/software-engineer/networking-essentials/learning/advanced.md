@@ -36,30 +36,30 @@ graph LR
 
 import http.client  # => co-23: a stdlib HTTP client, no raw sockets and no third-party package
 
-HOST = "info.cern.ch"  # => a plain, non-chunked host -- keeps this example's output simple
+HOST = "info.cern.ch"  # => a plain, non-chunked host -- keeps this example's output simple  # fmt: skip
 
 
-def fetch(host: str, path: str) -> tuple[int, bytes]:  # => returns (status code, response body)
-    conn = http.client.HTTPConnection(host, 80, timeout=5)  # => co-23: builds ON the socket API
+def fetch(host: str, path: str) -> tuple[int, bytes]:  # => returns (status code, response body)  # fmt: skip
+    conn = http.client.HTTPConnection(host, 80, timeout=5)  # => co-23: builds ON the socket API  # fmt: skip
     try:  # => wrapped so conn.close() below always runs, even if request()/getresponse() raises
-        conn.request("GET", path)  # => co-14: sends a GET -- http.client writes the request line
+        conn.request("GET", path)  # => co-14: sends a GET -- http.client writes the request line  # fmt: skip
         # => and headers for you, but it is still the exact request line/headers shape (co-12)
         # Example 43 hand-crafted over a raw socket
-        response = conn.getresponse()  # => co-13: parses the status line + headers automatically
-        status = response.status  # => an int, e.g. 200 -- no manual string-splitting needed
-        body = response.read()  # => reads (and, if needed, de-chunks) the full body for you
+        response = conn.getresponse()  # => co-13: parses the status line + headers automatically  # fmt: skip
+        status = response.status  # => an int, e.g. 200 -- no manual string-splitting needed  # fmt: skip
+        body = response.read()  # => reads (and, if needed, de-chunks) the full body for you  # fmt: skip
         return status, body
     finally:
         conn.close()  # => releases the underlying socket
 
 
-status, body = fetch(HOST, "/")  # => a real GET against a real host, via the stdlib client
+status, body = fetch(HOST, "/")  # => a real GET against a real host, via the stdlib client  # fmt: skip
 print(f"status: {status}")  # => expect 200, since HOST genuinely answers
-print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not an empty response
+print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not an empty response  # fmt: skip
 
 assert status == 200  # => confirms the stdlib client parsed a real 200 response
-assert body.startswith(b"<html>")  # => confirms the body was read (and any chunking undone)
-print("ex-61 OK")  # => confirms both the status parsing and the body reading round-tripped
+assert body.startswith(b"<html>")  # => confirms the body was read (and any chunking undone)  # fmt: skip
+print("ex-61 OK")  # => confirms both the status parsing and the body reading round-tripped  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -94,20 +94,20 @@ URL = "http://info.cern.ch/"  # => co-02: urllib.request parses scheme/host/path
 
 
 def fetch(url: str) -> tuple[int, bytes]:  # => returns (status code, response body)
-    with urllib.request.urlopen(url, timeout=5) as response:  # => co-02: parses the URL, connects
+    with urllib.request.urlopen(url, timeout=5) as response:  # => co-02: parses the URL, connects  # fmt: skip
         # => and issues the request in ONE call -- no separate HTTPConnection object needed
         status = response.status  # => co-13: the numeric status code
         body = response.read()  # => the full response body, already assembled
         return status, body
 
 
-status, body = fetch(URL)  # => a real GET against a real URL, via urlopen()'s one-call API
+status, body = fetch(URL)  # => a real GET against a real URL, via urlopen()'s one-call API  # fmt: skip
 print(f"status: {status}")  # => expect 200, since URL genuinely answers
-print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not an empty response
+print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not an empty response  # fmt: skip
 
 assert status == 200  # => confirms urlopen() parsed a real 200 response
 assert body.startswith(b"<html>")  # => confirms the body was read via response.read()
-print("ex-62 OK")  # => confirms both the status parsing and the body reading round-tripped
+print("ex-62 OK")  # => confirms both the status parsing and the body reading round-tripped  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -138,27 +138,27 @@ _ex-63 &middot; exercises co-16, co-23_
 
 import http.client  # => co-23: the same lower-level client Example 61 used, no urllib this time
 
-conn = http.client.HTTPConnection("info.cern.ch", 80, timeout=5)  # => co-23: same triple as Ex 61
+conn = http.client.HTTPConnection("info.cern.ch", 80, timeout=5)  # => co-23: same triple as Ex 61  # fmt: skip
 conn.request("GET", "/")  # => co-14: sends the GET -- no response has been read yet
-response = conn.getresponse()  # => co-13: parses the status line + headers, body still unread
+response = conn.getresponse()  # => co-13: parses the status line + headers, body still unread  # fmt: skip
 
 status = response.status  # => co-13/co-23: the status code as a plain int, e.g. 200
 reason = response.reason  # => co-13: the human-readable reason phrase, e.g. "OK"
-headers = response.getheaders()  # => co-16/co-23: a list of (name, value) tuples, in order
-body = response.read()  # => reads the body LAST -- headers are already fully parsed by now
+headers = response.getheaders()  # => co-16/co-23: a list of (name, value) tuples, in order  # fmt: skip
+body = response.read()  # => reads the body LAST -- headers are already fully parsed by now  # fmt: skip
 conn.close()  # => releases the underlying socket once every value needed has been captured
 
-print(f"status: {status} {reason}")  # => the int status paired with its human-readable reason
-print(f"header count: {len(headers)}")  # => how many (name, value) pairs getheaders() found
-for name, value in headers:  # => co-16: every header the raw response carried, already parsed
-    print(f"  {name}: {value}")  # => each header printed on its own line, name and value split
+print(f"status: {status} {reason}")  # => the int status paired with its human-readable reason  # fmt: skip
+print(f"header count: {len(headers)}")  # => how many (name, value) pairs getheaders() found  # fmt: skip
+for name, value in headers:  # => co-16: every header the raw response carried, already parsed  # fmt: skip
+    print(f"  {name}: {value}")  # => each header printed on its own line, name and value split  # fmt: skip
 
-header_names = {name.lower() for name, _ in headers}  # => co-08: a set for O(1) membership checks
+header_names = {name.lower() for name, _ in headers}  # => co-08: a set for O(1) membership checks  # fmt: skip
 assert status == 200  # => confirms the request itself genuinely succeeded
-assert "content-length" in header_names  # => confirms a specific header was actually parsed out
-declared_length = int(response.getheader("Content-Length", "0"))  # => the header's CLAIMED size
-assert declared_length == len(body)  # => co-16/co-13: header value matches the real body size
-print("ex-63 OK")  # => confirms status, headers, and the Content-Length cross-check all held
+assert "content-length" in header_names  # => confirms a specific header was actually parsed out  # fmt: skip
+declared_length = int(response.getheader("Content-Length", "0"))  # => the header's CLAIMED size  # fmt: skip
+assert declared_length == len(body)  # => co-16/co-13: header value matches the real body size  # fmt: skip
+print("ex-63 OK")  # => confirms status, headers, and the Content-Length cross-check all held  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -201,19 +201,19 @@ HOST = "example.com"  # => co-01: the same demo host every dig-based example res
 
 # HTTPSConnection is HTTPConnection PLUS a TLS handshake, transparently -- co-17: the same
 # GET/request/getresponse API as Example 61, but every byte on the wire is now encrypted.
-conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-05: HTTPS's well-known port
-conn.request("GET", "/")  # => co-14: sends the GET -- identical call shape to Example 61
-response = conn.getresponse()  # => co-13: parses the (now decrypted) status line + headers
+conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-05: HTTPS's well-known port  # fmt: skip
+conn.request("GET", "/")  # => co-14: sends the GET -- identical call shape to Example 61  # fmt: skip
+response = conn.getresponse()  # => co-13: parses the (now decrypted) status line + headers  # fmt: skip
 status = response.status  # => an int, e.g. 200 -- unchanged by TLS being present
-body = response.read()  # => the decrypted body, already assembled -- no manual TLS handling
+body = response.read()  # => the decrypted body, already assembled -- no manual TLS handling  # fmt: skip
 conn.close()  # => releases the underlying encrypted connection
 
 print(f"status: {status}")  # => expect 200, since HOST genuinely answers over HTTPS
-print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not TLS handshake bytes
+print(f"body starts with: {body[:30]!r}")  # => confirms real HTML bytes, not TLS handshake bytes  # fmt: skip
 
 assert status == 200  # => confirms a real, successfully DECRYPTED 200 response
-assert body.startswith(b"<!doctype")  # => confirms the actual HTML, not TLS handshake bytes
-print("ex-64 OK")  # => confirms the same request/response cycle worked, now fully encrypted
+assert body.startswith(b"<!doctype")  # => confirms the actual HTML, not TLS handshake bytes  # fmt: skip
+print("ex-64 OK")  # => confirms the same request/response cycle worked, now fully encrypted  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -350,42 +350,42 @@ import socket  # => stdlib sockets -- deliberately NOT http.client, so no TLS is
 HOST = "example.com"  # => co-01: a real host that genuinely serves both plaintext and TLS ports
 
 
-def fetch_plaintext_over(port: int) -> bytes:  # => sends the SAME raw bytes to either port
+def fetch_plaintext_over(port: int) -> bytes:  # => sends the SAME raw bytes to either port  # fmt: skip
     request = f"GET / HTTP/1.1\r\nHost: {HOST}\r\nConnection: close\r\n\r\n".encode()
-    with socket.create_connection((HOST, port), timeout=5) as sock:  # => co-05: port varies, host doesn't
-        sock.sendall(request)  # => co-17: no TLS handshake attempted here -- raw bytes only
+    with socket.create_connection((HOST, port), timeout=5) as sock:  # => co-05: port varies, host doesn't  # fmt: skip
+        sock.sendall(request)  # => co-17: no TLS handshake attempted here -- raw bytes only  # fmt: skip
         data = b""  # => accumulates whatever bytes come back, however the port chooses to respond
-        sock.settimeout(3)  # => bounds the read loop below in case a port simply stays silent
+        sock.settimeout(3)  # => bounds the read loop below in case a port simply stays silent  # fmt: skip
         try:  # => port 443 may time out instead of replying -- that path is handled, not a crash
-            while True:  # => co-11: loop until the peer closes or the timeout above fires
-                chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
+            while True:  # => co-11: loop until the peer closes or the timeout above fires  # fmt: skip
+                chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes  # fmt: skip
                 if not chunk:  # => an empty recv() means the server closed its side
                     break
                 data += chunk  # => appends this chunk -- the loop above may run several times
-        except TimeoutError:  # => co-17: 443 may simply refuse to reply to un-negotiated bytes
+        except TimeoutError:  # => co-17: 443 may simply refuse to reply to un-negotiated bytes  # fmt: skip
             pass
     return data  # => whatever WAS received before close or timeout, possibly a real HTTP reply
 
 
 # Port 80: plain HTTP happily reads and answers the raw request line/headers (co-01/co-12).
-port_80_response = fetch_plaintext_over(80)  # => the exact same request bytes as port 443 below
-port_80_status = port_80_response.split(b"\r\n", 1)[0]  # => co-13: everything up to the first \r\n
+port_80_response = fetch_plaintext_over(80)  # => the exact same request bytes as port 443 below  # fmt: skip
+port_80_status = port_80_response.split(b"\r\n", 1)[0]  # => co-13: everything up to the first \r\n  # fmt: skip
 print(f"port 80 (plaintext), sent raw HTTP directly: {port_80_status.decode()}")
 
 # Port 443: the SAME raw plaintext bytes, sent to the TLS port WITHOUT a TLS handshake.
 # The server can tell these aren't a valid TLS ClientHello and rejects them -- but Cloudflare's
 # edge specifically detects "this looks like plain HTTP" and replies in PLAIN TEXT to explain
 # why, rather than staying silent -- proof port 443 expects encryption, not proof of silence.
-port_443_response = fetch_plaintext_over(443)  # => identical request() call, different PORT only
-port_443_status = port_443_response.split(b"\r\n", 1)[0]  # => co-13: the same parsing as port 80
+port_443_response = fetch_plaintext_over(443)  # => identical request() call, different PORT only  # fmt: skip
+port_443_status = port_443_response.split(b"\r\n", 1)[0]  # => co-13: the same parsing as port 80  # fmt: skip
 print(f"port 443 (expects TLS), sent raw HTTP directly: {port_443_status.decode()}")
 
-assert port_80_status == b"HTTP/1.1 200 OK"  # => co-17: port 80 speaks plain HTTP, no complaints
-assert port_443_status == b"HTTP/1.1 400 Bad Request"  # => port 443 rejects un-encrypted bytes
-assert b"plain HTTP request was sent to HTTPS port" in port_443_response  # => the WHY, in plain text
+assert port_80_status == b"HTTP/1.1 200 OK"  # => co-17: port 80 speaks plain HTTP, no complaints  # fmt: skip
+assert port_443_status == b"HTTP/1.1 400 Bad Request"  # => port 443 rejects un-encrypted bytes  # fmt: skip
+assert b"plain HTTP request was sent to HTTPS port" in port_443_response  # => the WHY, in plain text  # fmt: skip
 # co-17: a REAL TLS-negotiated request to this same port 443 (Examples 64-66) succeeds with a
 # real 200 -- the difference is entirely the TLS handshake this script deliberately skipped.
-print("ex-67 OK")  # => confirms both ports were probed with the identical plaintext request
+print("ex-67 OK")  # => confirms both ports were probed with the identical plaintext request  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -433,38 +433,38 @@ HOST = "go.dev"  # => a real host that redirects plain HTTP to HTTPS (co-18)
 
 
 # Step 1: request the ORIGINAL, plaintext URL -- expect a redirect, not the final page.
-conn = http.client.HTTPConnection(HOST, 80, timeout=5)  # => co-23: plaintext port -- same as Ex 61
+conn = http.client.HTTPConnection(HOST, 80, timeout=5)  # => co-23: plaintext port -- same as Ex 61  # fmt: skip
 conn.request("GET", "/")  # => co-14: the FIRST of two requests this example makes
-first_response = conn.getresponse()  # => co-13: parses the redirect status line + headers
-first_status = first_response.status  # => co-15: a 3xx status signals "go elsewhere instead"
+first_response = conn.getresponse()  # => co-13: parses the redirect status line + headers  # fmt: skip
+first_status = first_response.status  # => co-15: a 3xx status signals "go elsewhere instead"  # fmt: skip
 location = first_response.getheader("Location")  # => co-18: WHERE to go instead
 first_response.read()  # => drains the (usually empty) redirect body before closing
 conn.close()  # => releases the FIRST connection -- the second request needs its own connection
 
-print(f"first request: {first_status}, Location: {location}")  # => co-15: a 3xx, plus WHERE to go
+print(f"first request: {first_status}, Location: {location}")  # => co-15: a 3xx, plus WHERE to go  # fmt: skip
 
 assert location is not None  # => confirms a Location header was actually present
-assert first_status in (301, 302, 307, 308)  # => confirms this really was a redirect status
+assert first_status in (301, 302, 307, 308)  # => confirms this really was a redirect status  # fmt: skip
 
 # Step 2: parse the Location header and issue a SECOND, manual request to it (co-18).
-parsed = urlsplit(location)  # => co-02: breaks the redirect target into scheme/host/path parts
+parsed = urlsplit(location)  # => co-02: breaks the redirect target into scheme/host/path parts  # fmt: skip
 assert parsed.hostname is not None  # => narrows str | None to str for the type checker
-target_host: str = parsed.hostname  # => the SECOND request's host -- may differ from HOST above
-follow_conn: http.client.HTTPConnection  # => declared here since its concrete type varies below
-if parsed.scheme == "https":  # => co-17: the redirect target may switch schemes entirely
-    follow_conn = http.client.HTTPSConnection(target_host, timeout=5)  # => co-17: TLS this time
+target_host: str = parsed.hostname  # => the SECOND request's host -- may differ from HOST above  # fmt: skip
+follow_conn: http.client.HTTPConnection  # => declared here since its concrete type varies below  # fmt: skip
+if parsed.scheme == "https":  # => co-17: the redirect target may switch schemes entirely  # fmt: skip
+    follow_conn = http.client.HTTPSConnection(target_host, timeout=5)  # => co-17: TLS this time  # fmt: skip
 else:
-    follow_conn = http.client.HTTPConnection(target_host, timeout=5)  # => stays plaintext
-follow_conn.request("GET", parsed.path or "/")  # => co-14: the SECOND request, to the NEW target
-final_response = follow_conn.getresponse()  # => co-13: parses the FINAL page's status + headers
-final_status = final_response.status  # => expected to be a real 200, not another redirect
+    follow_conn = http.client.HTTPConnection(target_host, timeout=5)  # => stays plaintext  # fmt: skip
+follow_conn.request("GET", parsed.path or "/")  # => co-14: the SECOND request, to the NEW target  # fmt: skip
+final_response = follow_conn.getresponse()  # => co-13: parses the FINAL page's status + headers  # fmt: skip
+final_status = final_response.status  # => expected to be a real 200, not another redirect  # fmt: skip
 final_response.read()  # => drains the final page's body before closing
 follow_conn.close()  # => releases the SECOND connection
 
 print(f"second request (to {location}): {final_status}")
 
-assert final_status == 200  # => confirms manually following the redirect reached the real page
-print("ex-68 OK")  # => confirms both the redirect detection and the manual follow-up succeeded
+assert final_status == 200  # => confirms manually following the redirect reached the real page  # fmt: skip
+print("ex-68 OK")  # => confirms both the redirect detection and the manual follow-up succeeded  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -496,27 +496,27 @@ One more pass at building an HTTP client from nothing but `socket.create_connect
 import socket  # => stdlib sockets -- the ONLY import this whole HTTP client needs
 
 
-def http_get_status_line(host: str, port: int, path: str) -> str:  # => DNS+TCP+HTTP, all by hand
+def http_get_status_line(host: str, port: int, path: str) -> str:  # => DNS+TCP+HTTP, all by hand  # fmt: skip
     # co-10/co-12/co-13: every layer this topic covered, composed by hand, one more time --
     # no http.client, no urllib -- just socket.connect + a hand-written request + a raw parse.
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"  # => co-12: by hand
-    with socket.create_connection((host, port), timeout=5) as sock:  # => co-07: TCP handshake
-        sock.sendall(request.encode("ascii"))  # => co-12: the hand-built request, sent raw
+    with socket.create_connection((host, port), timeout=5) as sock:  # => co-07: TCP handshake  # fmt: skip
+        sock.sendall(request.encode("ascii"))  # => co-12: the hand-built request, sent raw  # fmt: skip
         response = b""  # => accumulates the full response -- its final size isn't known in advance
-        while True:  # => co-11: keep reading until the server closes (Connection: close)
+        while True:  # => co-11: keep reading until the server closes (Connection: close)  # fmt: skip
             chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
             if not chunk:  # => an empty recv() means the server closed its side
                 break
-            response += chunk  # => appends this chunk -- the loop above may run several times
-    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only
+            response += chunk  # => appends this chunk -- the loop above may run several times  # fmt: skip
+    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only  # fmt: skip
     return status_line  # => the ONE value this function hands back, the whole point of calling it
 
 
-status_line = http_get_status_line("example.com", 80, "/")  # => resolves, connects, requests, parses
-print(f"status line: {status_line}")  # => expect a real status line, e.g. "HTTP/1.1 200 OK"
+status_line = http_get_status_line("example.com", 80, "/")  # => resolves, connects, requests, parses  # fmt: skip
+print(f"status line: {status_line}")  # => expect a real status line, e.g. "HTTP/1.1 200 OK"  # fmt: skip
 
-assert status_line == "HTTP/1.1 200 OK"  # => a real status line, from a real server, real bytes
-print("ex-69 OK")  # => confirms a hand-built HTTP client, with zero libraries, genuinely worked
+assert status_line == "HTTP/1.1 200 OK"  # => a real status line, from a real server, real bytes  # fmt: skip
+print("ex-69 OK")  # => confirms a hand-built HTTP client, with zero libraries, genuinely worked  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -566,36 +566,36 @@ PORT = 80  # => co-05: HTTP's well-known port
 PATH = "/"  # => co-02: the simplest possible request path
 
 
-def narrate(host: str, port: int, path: str) -> None:  # => prints one line per stage as it happens
+def narrate(host: str, port: int, path: str) -> None:  # => prints one line per stage as it happens  # fmt: skip
     # Stage 1 -- DNS: name -> address (co-03). Nothing below this line can happen without it.
-    dns_start = time.perf_counter()  # => a clock reading taken right before the DNS lookup
+    dns_start = time.perf_counter()  # => a clock reading taken right before the DNS lookup  # fmt: skip
     address = socket.gethostbyname(host)  # => a real, blocking resolver call
-    dns_ms = (time.perf_counter() - dns_start) * 1000  # => convert seconds to milliseconds
-    print(f"[DNS]  {host} -> {address}  ({dns_ms:.1f} ms)")  # => stage 1's own isolated timing
+    dns_ms = (time.perf_counter() - dns_start) * 1000  # => convert seconds to milliseconds  # fmt: skip
+    print(f"[DNS]  {host} -> {address}  ({dns_ms:.1f} ms)")  # => stage 1's own isolated timing  # fmt: skip
 
     # Stage 2 -- TCP: address -> an open, reliable byte-stream connection (co-07).
-    tcp_start = time.perf_counter()  # => a SEPARATE clock, so DNS time isn't folded into this
-    sock = socket.create_connection((address, port), timeout=5)  # => the three-way handshake
-    tcp_ms = (time.perf_counter() - tcp_start) * 1000  # => convert seconds to milliseconds
-    print(f"[TCP]  connected to {address}:{port}  ({tcp_ms:.1f} ms)")  # => stage 2's own timing
+    tcp_start = time.perf_counter()  # => a SEPARATE clock, so DNS time isn't folded into this  # fmt: skip
+    sock = socket.create_connection((address, port), timeout=5)  # => the three-way handshake  # fmt: skip
+    tcp_ms = (time.perf_counter() - tcp_start) * 1000  # => convert seconds to milliseconds  # fmt: skip
+    print(f"[TCP]  connected to {address}:{port}  ({tcp_ms:.1f} ms)")  # => stage 2's own timing  # fmt: skip
 
     # Stage 3 -- HTTP: a request/response message exchanged OVER that open connection (co-12).
-    http_start = time.perf_counter()  # => a THIRD clock, isolating just the request/response
+    http_start = time.perf_counter()  # => a THIRD clock, isolating just the request/response  # fmt: skip
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"  # => co-12: by hand
-    sock.sendall(request.encode("ascii"))  # => co-12: the hand-built request, sent as raw bytes
-    response = b""  # => accumulates the full response -- its final size isn't known in advance
-    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)
+    sock.sendall(request.encode("ascii"))  # => co-12: the hand-built request, sent as raw bytes  # fmt: skip
+    response = b""  # => accumulates the full response -- its final size isn't known in advance  # fmt: skip
+    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
         chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
         if not chunk:  # => an empty recv() means the server closed its side
             break
-        response += chunk  # => appends this chunk -- the loop above may run several times
+        response += chunk  # => appends this chunk -- the loop above may run several times  # fmt: skip
     sock.close()  # => releases the socket once the full response has been read
-    http_ms = (time.perf_counter() - http_start) * 1000  # => convert seconds to milliseconds
-    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only
-    print(f"[HTTP] {status_line}  ({http_ms:.1f} ms)")  # => stage 3's own isolated timing
+    http_ms = (time.perf_counter() - http_start) * 1000  # => convert seconds to milliseconds  # fmt: skip
+    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only  # fmt: skip
+    print(f"[HTTP] {status_line}  ({http_ms:.1f} ms)")  # => stage 3's own isolated timing  # fmt: skip
 
 
-narrate(HOST, PORT, PATH)  # => runs all three stages, timing each one separately, in sequence
+narrate(HOST, PORT, PATH)  # => runs all three stages, timing each one separately, in sequence  # fmt: skip
 print("ex-70 OK -- three distinct layers, three distinct stages, one real request")
 ```
 
@@ -642,7 +642,7 @@ sequenceDiagram
 
 import http.client  # => co-23: the same stdlib client -- keep-alive is a property of ONE conn
 
-HOST = "info.cern.ch"  # => a plain, non-chunked host -- keeps this example's output simple
+HOST = "info.cern.ch"  # => a plain, non-chunked host -- keeps this example's output simple  # fmt: skip
 
 # HTTP/1.1 defaults to keep-alive: the SAME TCP connection can carry MULTIPLE requests,
 # avoiding a fresh handshake (co-07) for every single one (co-12).
@@ -653,9 +653,9 @@ first = conn.getresponse()  # => co-13: parses request 1's status line + headers
 first_status = first.status  # => captured BEFORE request 2 reuses the same conn object
 first.read()  # => MUST fully read the body before reusing the connection for request 2
 
-conn.request("GET", "/")  # => request 2, over the EXACT SAME socket -- no reconnect happened
+conn.request("GET", "/")  # => request 2, over the EXACT SAME socket -- no reconnect happened  # fmt: skip
 second = conn.getresponse()  # => co-13: parses request 2's status line + headers
-second_status = second.status  # => captured from the SAME conn, no new HTTPConnection() call
+second_status = second.status  # => captured from the SAME conn, no new HTTPConnection() call  # fmt: skip
 second.read()  # => drains request 2's body before the connection finally closes below
 
 conn.close()  # => only NOW does the underlying socket actually close
@@ -665,7 +665,7 @@ print(f"request 2 status: {second_status}")
 
 assert first_status == 200  # => confirms both requests succeeded ...
 assert second_status == 200  # => ... over what was, underneath, a single TCP connection
-print("ex-71 OK")  # => confirms two full request/response cycles shared one real connection
+print("ex-71 OK")  # => confirms two full request/response cycles shared one real connection  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -696,37 +696,37 @@ Real error-handling code branches on the STATUS CLASS (`4xx` vs. `5xx`), not the
 
 import http.client  # => co-23: the same stdlib client -- mock.codes is real, live HTTPS
 
-HOST = "mock.codes"  # => a service purpose-built to return an exact requested status code
+HOST = "mock.codes"  # => a service purpose-built to return an exact requested status code  # fmt: skip
 
 
-def fetch_status(path: str) -> int:  # => the path ITSELF picks the status code mock.codes returns
-    conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-23: a fresh conn per call
-    conn.request("GET", path)  # => co-14: e.g. GET /404 genuinely returns a 404, by design
+def fetch_status(path: str) -> int:  # => the path ITSELF picks the status code mock.codes returns  # fmt: skip
+    conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-23: a fresh conn per call  # fmt: skip
+    conn.request("GET", path)  # => co-14: e.g. GET /404 genuinely returns a 404, by design  # fmt: skip
     response = conn.getresponse()  # => co-13: parses the real status line + headers
     response.read()  # => drains the body so the connection can close cleanly
     conn.close()  # => releases this call's own connection
     return response.status  # => the ONE value this function hands back to its caller
 
 
-def classify(status: int) -> str:  # => co-15: branch on the STATUS CLASS, not the exact code
+def classify(status: int) -> str:  # => co-15: branch on the STATUS CLASS, not the exact code  # fmt: skip
     if 200 <= status < 300:  # => co-15: the 2xx class -- request succeeded
         return "success"  # => the ONLY branch with no retry consideration at all
-    if 400 <= status < 500:  # => co-15: the 4xx class -- something about THIS request was wrong
+    if 400 <= status < 500:  # => co-15: the 4xx class -- something about THIS request was wrong  # fmt: skip
         return "client error -- the REQUEST was likely wrong, retrying unchanged won't help"  # => 404 lands here
-    if 500 <= status < 600:  # => co-15: the 5xx class -- the SERVER had the problem, not the client
+    if 500 <= status < 600:  # => co-15: the 5xx class -- the SERVER had the problem, not the client  # fmt: skip
         return "server error -- the request was probably fine, retrying LATER might help"  # => 500 lands here
     return "unhandled class"  # => co-15: any status outside 2xx/4xx/5xx this function checks for
 
 
-not_found_status = fetch_status("/404")  # => a genuinely fetched 404, not a hardcoded literal
-server_error_status = fetch_status("/500")  # => a genuinely fetched 500, not a hardcoded literal
+not_found_status = fetch_status("/404")  # => a genuinely fetched 404, not a hardcoded literal  # fmt: skip
+server_error_status = fetch_status("/500")  # => a genuinely fetched 500, not a hardcoded literal  # fmt: skip
 
-print(f"/404 -> {not_found_status}: {classify(not_found_status)}")  # => the 4xx branch, live
-print(f"/500 -> {server_error_status}: {classify(server_error_status)}")  # => the 5xx branch, live
+print(f"/404 -> {not_found_status}: {classify(not_found_status)}")  # => the 4xx branch, live  # fmt: skip
+print(f"/500 -> {server_error_status}: {classify(server_error_status)}")  # => the 5xx branch, live  # fmt: skip
 
-assert classify(not_found_status).startswith("client error")  # => confirms the 4xx branch fired
-assert classify(server_error_status).startswith("server error")  # => confirms the 5xx branch
-print("ex-72 OK")  # => confirms both real status codes routed through the correct classify() branch
+assert classify(not_found_status).startswith("client error")  # => confirms the 4xx branch fired  # fmt: skip
+assert classify(server_error_status).startswith("server error")  # => confirms the 5xx branch  # fmt: skip
+print("ex-72 OK")  # => confirms both real status codes routed through the correct classify() branch  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -760,32 +760,33 @@ import json  # => co-14: encodes the Python dict below into the wire-format JSON
 
 HOST = "postman-echo.com"  # => echoes back exactly what it received, ideal for verification
 
-payload = {"event": "networking-essentials", "example": 73}  # => co-22: a typed dict literal
+payload = {"event": "networking-essentials", "example": 73}  # => co-22: a typed dict literal  # fmt: skip
 body = json.dumps(payload).encode("utf-8")  # => co-14: JSON text, encoded to raw bytes
 
-conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-23: HTTPS, like Example 72
+conn = http.client.HTTPSConnection(HOST, 443, timeout=5)  # => co-23: HTTPS, like Example 72  # fmt: skip
 conn.request(  # => co-14: unlike GET, POST carries a body AND needs matching headers
     "POST",  # => co-14: POST -- creating/submitting data, unlike GET's read-only semantics
     "/post",  # => postman-echo's dedicated POST-echoing endpoint
     body=body,  # => the JSON bytes built above -- http.client sends these as the request body
     headers={  # => co-16: headers the SERVER needs to correctly interpret the body
         "Content-Type": "application/json",  # => tells the server HOW to parse the body
-        "Content-Length": str(len(body)),  # => tells the server exactly how many bytes to read
+        # => tells the server exactly how many bytes to read
+        "Content-Length": str(len(body)),
     },  # => end of the headers dict
 )  # => end of the request() call -- the POST has now genuinely gone out
-response = conn.getresponse()  # => co-13: parses the echoed response's status line + headers
+response = conn.getresponse()  # => co-13: parses the echoed response's status line + headers  # fmt: skip
 status = response.status  # => an int, e.g. 200 -- the POST's own success/failure signal
-response_body = json.loads(response.read())  # => postman-echo replies with JSON describing what it saw
+response_body = json.loads(response.read())  # => postman-echo replies with JSON describing what it saw  # fmt: skip
 conn.close()  # => releases the connection once the echoed body has been fully read and parsed
 
 print(f"status: {status}")  # => expect 200, since the POST itself genuinely succeeded
-print(f"echoed content-type: {response_body['headers']['content-type']}")  # => the header round-trip
-print(f"echoed json: {response_body['json']}")  # => the exact payload dict, echoed back unchanged
+print(f"echoed content-type: {response_body['headers']['content-type']}")  # => the header round-trip  # fmt: skip
+print(f"echoed json: {response_body['json']}")  # => the exact payload dict, echoed back unchanged  # fmt: skip
 
 assert status == 200  # => confirms the POST itself succeeded
-assert response_body["headers"]["content-type"] == "application/json"  # => header arrived intact
-assert response_body["json"] == payload  # => confirms the exact payload round-tripped correctly
-print("ex-73 OK")  # => confirms the headers, encoding, and body all worked together correctly
+assert response_body["headers"]["content-type"] == "application/json"  # => header arrived intact  # fmt: skip
+assert response_body["json"] == payload  # => confirms the exact payload round-tripped correctly  # fmt: skip
+print("ex-73 OK")  # => confirms the headers, encoding, and body all worked together correctly  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -821,27 +822,27 @@ import time  # => wall-clock timing is what proves the timeout was actually hono
 # 192.0.2.0/24 is TEST-NET-1 (RFC 5737): reserved for documentation, deliberately
 # NOT routed on the real internet -- connect() here can never succeed OR be refused,
 # it can only time out (co-10).
-UNREACHABLE_HOST = "192.0.2.1"  # => co-01: guaranteed non-routed, unlike Example 59's real hosts
+UNREACHABLE_HOST = "192.0.2.1"  # => co-01: guaranteed non-routed, unlike Example 59's real hosts  # fmt: skip
 PORT = 80  # => co-05: the port doesn't matter here -- the HOST itself is unreachable
-TIMEOUT_SECONDS = 2.0  # => the exact upper bound this example's assertion below checks against
+TIMEOUT_SECONDS = 2.0  # => the exact upper bound this example's assertion below checks against  # fmt: skip
 
-start = time.perf_counter()  # => a clock reading taken right before the doomed connect() attempt
+start = time.perf_counter()  # => a clock reading taken right before the doomed connect() attempt  # fmt: skip
 try:  # => wrapped because a TimeoutError (or, on some networks, an OSError) is EXPECTED here
     conn = socket.create_connection((UNREACHABLE_HOST, PORT), timeout=TIMEOUT_SECONDS)
     # => blocks for AT MOST timeout seconds, then raises
     conn.close()  # => reached only if the connection unexpectedly succeeded
     outcome = "connected (unexpected on this reserved, non-routed network)"
-except TimeoutError:  # => co-10: no SYN-ACK and no RST ever arrived -- silence, not rejection
+except TimeoutError:  # => co-10: no SYN-ACK and no RST ever arrived -- silence, not rejection  # fmt: skip
     outcome = "TimeoutError raised, as expected"
-except OSError as err:  # => some networks respond with an ICMP unreachable instead of silence
+except OSError as err:  # => some networks respond with an ICMP unreachable instead of silence  # fmt: skip
     outcome = f"OSError raised instead: {err}"
 elapsed = time.perf_counter() - start  # => convert to a real, measured elapsed duration
 
-print(f"outcome: {outcome}")  # => expect "TimeoutError raised, as expected" on a real network
-print(f"elapsed: {elapsed:.2f}s (timeout was set to {TIMEOUT_SECONDS}s)")  # => bounded, not endless
+print(f"outcome: {outcome}")  # => expect "TimeoutError raised, as expected" on a real network  # fmt: skip
+print(f"elapsed: {elapsed:.2f}s (timeout was set to {TIMEOUT_SECONDS}s)")  # => bounded, not endless  # fmt: skip
 
-assert elapsed < TIMEOUT_SECONDS + 1.0  # => confirms the call didn't hang well past the timeout
-print("ex-74 OK")  # => confirms the timeout was honored, bounding an otherwise-endless wait
+assert elapsed < TIMEOUT_SECONDS + 1.0  # => confirms the call didn't hang well past the timeout  # fmt: skip
+print("ex-74 OK")  # => confirms the timeout was honored, bounding an otherwise-endless wait  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -876,41 +877,41 @@ import time  # => only a brief startup head start, not real measurement
 
 HOST = "127.0.0.1"  # => loopback -- keeps this packet-loss demo local and deterministic
 PORT = 50075  # => co-05: a fresh ephemeral port, unique to this example
-DATAGRAM_COUNT = 2000  # => far more datagrams than the deliberately tiny receive buffer can hold
+DATAGRAM_COUNT = 2000  # => far more datagrams than the deliberately tiny receive buffer can hold  # fmt: skip
 
 
-def run_server(result: dict[str, int]) -> None:  # => "result" is how the count escapes this thread
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:  # => co-08: UDP, not TCP
+def run_server(result: dict[str, int]) -> None:  # => "result" is how the count escapes this thread  # fmt: skip
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:  # => co-08: UDP, not TCP  # fmt: skip
         # A deliberately TINY receive buffer (co-08): once the kernel's queue for this socket
         # fills up, the OS silently DROPS any further arriving datagrams -- no error, no
         # retransmission, exactly the "delivery is not guaranteed" behavior RFC 768 describes.
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2048)  # => the deliberately tiny buffer
-        sock.bind((HOST, PORT))  # => UDP: binds, but never listen()s or accept()s at all
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 2048)  # => the deliberately tiny buffer  # fmt: skip
+        sock.bind((HOST, PORT))  # => UDP: binds, but never listen()s or accept()s at all  # fmt: skip
         sock.settimeout(1.0)  # => stop reading once the sender has clearly finished
-        received = 0  # => counts only datagrams that ACTUALLY arrived, not ones that were sent
+        received = 0  # => counts only datagrams that ACTUALLY arrived, not ones that were sent  # fmt: skip
         try:  # => wrapped because the timeout above is EXPECTED to fire once sending stops
-            while True:  # => co-11: keeps reading until no more datagrams arrive within 1 second
-                sock.recvfrom(64)  # => each call surfaces one datagram, if the buffer still has one
-                received += 1  # => incremented once per datagram that genuinely made it through
+            while True:  # => co-11: keeps reading until no more datagrams arrive within 1 second  # fmt: skip
+                sock.recvfrom(64)  # => each call surfaces one datagram, if the buffer still has one  # fmt: skip
+                received += 1  # => incremented once per datagram that genuinely made it through  # fmt: skip
         except TimeoutError:
             pass  # => no more datagrams arriving -- the sender is done
-        result["received"] = received  # => the final tally, handed back to the main thread
+        result["received"] = received  # => the final tally, handed back to the main thread  # fmt: skip
 
 
-result: dict[str, int] = {}  # => co-01: measured, not assumed, exactly like Example 24 did
+result: dict[str, int] = {}  # => co-01: measured, not assumed, exactly like Example 24 did  # fmt: skip
 server_thread = threading.Thread(target=run_server, args=(result,), daemon=True)
 server_thread.start()  # => the tiny-buffered receiver begins running concurrently
-time.sleep(0.1)  # => a brief head start so the server's tiny-buffered socket is bound and ready
+time.sleep(0.1)  # => a brief head start so the server's tiny-buffered socket is bound and ready  # fmt: skip
 
-with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:  # => the sender's own UDP socket
-    for i in range(DATAGRAM_COUNT):  # => co-08: fired as fast as possible, NO waiting for acks
-        sock.sendto(f"packet-{i}".encode(), (HOST, PORT))  # => sendto never blocks on the buffer
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:  # => the sender's own UDP socket  # fmt: skip
+    for i in range(DATAGRAM_COUNT):  # => co-08: fired as fast as possible, NO waiting for acks  # fmt: skip
+        sock.sendto(f"packet-{i}".encode(), (HOST, PORT))  # => sendto never blocks on the buffer  # fmt: skip
 
-server_thread.join(timeout=5)  # => waits for the server's 1-second post-burst timeout to fire
+server_thread.join(timeout=5)  # => waits for the server's 1-second post-burst timeout to fire  # fmt: skip
 
-received = result["received"]  # => the ACTUAL count of datagrams that survived the tiny buffer
-dropped = DATAGRAM_COUNT - received  # => everything sent but never received -- genuine loss
-print(f"sent {DATAGRAM_COUNT} datagrams, server received {received}, {dropped} were dropped")
+received = result["received"]  # => the ACTUAL count of datagrams that survived the tiny buffer  # fmt: skip
+dropped = DATAGRAM_COUNT - received  # => everything sent but never received -- genuine loss  # fmt: skip
+print(f"sent {DATAGRAM_COUNT} datagrams, server received {received}, {dropped} were dropped")  # fmt: skip
 
 # The EXACT drop count varies run to run (kernel scheduling, buffer timing) -- what's
 # guaranteed is that AT LEAST some were dropped, since 2000 datagrams into a 2048-byte
@@ -966,18 +967,18 @@ HOST = "127.0.0.1"  # => loopback -- keeps this concurrency demo local and deter
 PORT = 50076  # => co-05: a fresh ephemeral port, unique to this example
 
 
-def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33
+def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33  # fmt: skip
     while b"\n" not in buffer:  # => keep reading until a full command line has arrived
-        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time
+        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time  # fmt: skip
         if not chunk:  # => the peer closed before a full line arrived
             raise ConnectionError("peer closed mid-line")
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder
-    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command
-    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
-def handle_command(command: bytes) -> bytes:  # => the same PING/TIME protocol as Example 36
+def handle_command(command: bytes) -> bytes:  # => the same PING/TIME protocol as Example 36  # fmt: skip
     if command == b"PING":  # => the simplest possible liveness check
         return b"PONG"  # => a FIXED reply -- the same for every PING, unlike TIME below
     if command == b"TIME":  # => a command that returns SERVER-side state, not an echo
@@ -985,60 +986,60 @@ def handle_command(command: bytes) -> bytes:  # => the same PING/TIME protocol a
     return b"ERR unknown command"  # => co-01: the server, not the client, decides what's valid
 
 
-def handle_client(conn: socket.socket, delay: float) -> None:  # => co-10: runs on ITS OWN thread
+def handle_client(conn: socket.socket, delay: float) -> None:  # => co-10: runs on ITS OWN thread  # fmt: skip
     with conn:  # => this handler's own connection -- closes automatically on block exit
-        buf = bytearray()  # => this client's own leftover-bytes buffer, private to its thread
-        command = read_line(conn, buf)  # => blocks only THIS thread while waiting for a command
+        buf = bytearray()  # => this client's own leftover-bytes buffer, private to its thread  # fmt: skip
+        command = read_line(conn, buf)  # => blocks only THIS thread while waiting for a command  # fmt: skip
         time.sleep(delay)  # => simulates one client being slower than the other
-        conn.sendall(handle_command(command) + b"\n")  # => reply, once this thread's delay elapses
+        conn.sendall(handle_command(command) + b"\n")  # => reply, once this thread's delay elapses  # fmt: skip
 
 
-def server(ready: threading.Event) -> None:  # => co-01: one thread spawned per accepted client
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before
+def server(ready: threading.Event) -> None:  # => co-01: one thread spawned per accepted client  # fmt: skip
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+  # fmt: skip
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before  # fmt: skip
         sock.bind((HOST, PORT))  # => claims (HOST, PORT) for this process
         sock.listen(5)  # => backlog large enough for both clients to queue if needed
         ready.set()  # => unblocks the main thread's wait() below -- no guessed sleep() needed
-        handlers: list[threading.Thread] = []  # => one thread PER accepted connection (co-10)
+        handlers: list[threading.Thread] = []  # => one thread PER accepted connection (co-10)  # fmt: skip
         # Whichever client connects first gets the 0.3s delay -- which PHYSICAL client (A or
         # B) that turns out to be depends on OS scheduling, but the concurrency proof below
         # doesn't depend on knowing that in advance: it only depends on the TOTAL wall-clock.
-        for delay in (0.3, 0.0):  # => accept exactly two clients, one delayed, one immediate
-            conn, _ = sock.accept()  # => accept() itself is still sequential, one at a time
-            handler = threading.Thread(target=handle_client, args=(conn, delay))  # => co-10: unstarted
+        for delay in (0.3, 0.0):  # => accept exactly two clients, one delayed, one immediate  # fmt: skip
+            conn, _ = sock.accept()  # => accept() itself is still sequential, one at a time  # fmt: skip
+            handler = threading.Thread(target=handle_client, args=(conn, delay))  # => co-10: unstarted  # fmt: skip
             handler.start()  # => co-01: each client is served on its OWN thread, concurrently
-            handlers.append(handler)  # => tracked so the loop below can wait for every one
-        for handler in handlers:  # => waits for BOTH handler threads, not just the last started
-            handler.join(timeout=5)  # => waits for every spawned handler thread to finish
+            handlers.append(handler)  # => tracked so the loop below can wait for every one  # fmt: skip
+        for handler in handlers:  # => waits for BOTH handler threads, not just the last started  # fmt: skip
+            handler.join(timeout=5)  # => waits for every spawned handler thread to finish  # fmt: skip
 
 
-def client(name: bytes, command: bytes, results: dict[bytes, tuple[bytes, float]]) -> None:
+def client(name: bytes, command: bytes, results: dict[bytes, tuple[bytes, float]]) -> None:  # fmt: skip
     # => "results" is shared across both client threads, keyed by name
     start = time.monotonic()  # => this client's own local clock, for relative timing
     sock = socket.create_connection((HOST, PORT), timeout=5)  # => connects immediately
     sock.sendall(command + b"\n")  # => sends this client's own command, e.g. PING
-    buf = bytearray()  # => this client's own leftover-bytes buffer -- separate from the server's
-    reply = read_line(sock, buf)  # => blocks until this client's OWN handler thread replies
-    elapsed = time.monotonic() - start  # => total time from connect to being served, for THIS client
-    results[name] = (reply, elapsed)  # => stores both the reply AND the timing, keyed by name
+    buf = bytearray()  # => this client's own leftover-bytes buffer -- separate from the server's  # fmt: skip
+    reply = read_line(sock, buf)  # => blocks until this client's OWN handler thread replies  # fmt: skip
+    elapsed = time.monotonic() - start  # => total time from connect to being served, for THIS client  # fmt: skip
+    results[name] = (reply, elapsed)  # => stores both the reply AND the timing, keyed by name  # fmt: skip
     sock.close()  # => releases this client's socket once its own round trip is done
 
 
-ready_event = threading.Event()  # => the same ready-signal pattern used since Example 34
+ready_event = threading.Event()  # => the same ready-signal pattern used since Example 34  # fmt: skip
 server_thread = threading.Thread(target=server, args=(ready_event,), daemon=True)
 server_thread.start()  # => runs the server concurrently with the two client threads below
 ready_event.wait(timeout=5)  # => blocks until bind()+listen() genuinely completed
 
-results: dict[bytes, tuple[bytes, float]] = {}  # => co-01: measured, not assumed, per-client timing
+results: dict[bytes, tuple[bytes, float]] = {}  # => co-01: measured, not assumed, per-client timing  # fmt: skip
 overall_start = time.monotonic()  # => a SEPARATE clock measuring both clients TOGETHER
-thread_a = threading.Thread(target=client, args=(b"A", b"PING", results))  # => A's own thread
-thread_b = threading.Thread(target=client, args=(b"B", b"PING", results))  # => B's own thread
+thread_a = threading.Thread(target=client, args=(b"A", b"PING", results))  # => A's own thread  # fmt: skip
+thread_b = threading.Thread(target=client, args=(b"B", b"PING", results))  # => B's own thread  # fmt: skip
 thread_a.start()  # => A's connect() begins racing B's, just like the server's two handlers
 thread_b.start()  # => B's connect() begins concurrently, immediately after A's
 thread_a.join(timeout=5)  # => waits for A's full round trip to finish
 thread_b.join(timeout=5)  # => waits for B's full round trip to finish
-overall_elapsed = time.monotonic() - overall_start  # => the aggregate proof of concurrency
-server_thread.join(timeout=5)  # => waits for the server to have handled both connections
+overall_elapsed = time.monotonic() - overall_start  # => the aggregate proof of concurrency  # fmt: skip
+server_thread.join(timeout=5)  # => waits for the server to have handled both connections  # fmt: skip
 
 a_reply, a_elapsed = results[b"A"]  # => unpacks A's own (reply, elapsed) tuple
 b_reply, b_elapsed = results[b"B"]  # => unpacks B's own (reply, elapsed) tuple
@@ -1046,12 +1047,12 @@ print(f"client A: reply={a_reply!r}, elapsed={a_elapsed:.3f}s")
 print(f"client B: reply={b_reply!r}, elapsed={b_elapsed:.3f}s")
 print(f"overall wall-clock for BOTH clients: {overall_elapsed:.3f}s")
 
-assert a_reply == b"PONG"  # => confirms A's command genuinely round-tripped through the server
-assert b_reply == b"PONG"  # => confirms B's command genuinely round-tripped through the server
+assert a_reply == b"PONG"  # => confirms A's command genuinely round-tripped through the server  # fmt: skip
+assert b_reply == b"PONG"  # => confirms B's command genuinely round-tripped through the server  # fmt: skip
 # co-01: if the two clients were served SEQUENTIALLY, overall time would approach 0.3s (one
 # delay) PLUS B's own time; served concurrently, B finishes almost immediately regardless of A.
-assert overall_elapsed < 0.5  # => well under the ~0.6s a sequential server would have taken
-print("ex-76 OK")  # => confirms the PING/TIME protocol survived being served concurrently
+assert overall_elapsed < 0.5  # => well under the ~0.6s a sequential server would have taken  # fmt: skip
+print("ex-76 OK")  # => confirms the PING/TIME protocol survived being served concurrently  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -1084,64 +1085,64 @@ A well-designed protocol handler treats an unrecognized command as a normal, exp
 import socket  # => stdlib sockets -- the error-reply behavior lives entirely in application code
 import threading  # => only the ready-signal + background thread, not real concurrency
 
-HOST = "127.0.0.1"  # => loopback -- keeps this error-handling demo local and deterministic
+HOST = "127.0.0.1"  # => loopback -- keeps this error-handling demo local and deterministic  # fmt: skip
 PORT = 50077  # => co-05: a fresh ephemeral port, unique to this example
 
 
-def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33
+def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33  # fmt: skip
     while b"\n" not in buffer:  # => keep reading until a full command line has arrived
-        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time
+        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time  # fmt: skip
         if not chunk:  # => the peer closed before a full line arrived
-            raise ConnectionError("peer closed mid-line")  # => a genuinely EXCEPTIONAL framing error
+            raise ConnectionError("peer closed mid-line")  # => a genuinely EXCEPTIONAL framing error  # fmt: skip
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder
-    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command
-    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
-def handle_command(command: bytes) -> bytes:  # => co-01/co-11: the server DECIDES what's valid
+def handle_command(command: bytes) -> bytes:  # => co-01/co-11: the server DECIDES what's valid  # fmt: skip
     if command == b"PING":  # => the simplest possible liveness check
         return b"PONG"  # => a FIXED reply -- the same for every PING, unlike TIME below
     if command == b"TIME":  # => a command that returns SERVER-side state, not an echo
         return b"1234567890"  # => a FIXED stand-in reply -- this example is about errors, not clocks
-    return b"ERR unknown command: " + command  # => a graceful, protocol-level error reply
+    return b"ERR unknown command: " + command  # => a graceful, protocol-level error reply  # fmt: skip
 
 
-def server(ready: threading.Event) -> None:  # => co-11: never crashes, whatever the client sends
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before
+def server(ready: threading.Event) -> None:  # => co-11: never crashes, whatever the client sends  # fmt: skip
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+  # fmt: skip
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before  # fmt: skip
         sock.bind((HOST, PORT))  # => claims (HOST, PORT) for this process
-        sock.listen(1)  # => flips the socket passive, ready to queue one pending connection
+        sock.listen(1)  # => flips the socket passive, ready to queue one pending connection  # fmt: skip
         ready.set()  # => unblocks the main thread's wait() below -- no guessed sleep() needed
-        conn, _ = sock.accept()  # => BLOCKS until the client's connect() completes the handshake
-        with conn:  # => this one connection's socket -- closes automatically on block exit
-            buf = bytearray()  # => ONE buffer shared across both commands on this connection
-            for _ in range(2):  # => this client sends one BAD command, then one GOOD command
+        conn, _ = sock.accept()  # => BLOCKS until the client's connect() completes the handshake  # fmt: skip
+        with conn:  # => this one connection's socket -- closes automatically on block exit  # fmt: skip
+            buf = bytearray()  # => ONE buffer shared across both commands on this connection  # fmt: skip
+            for _ in range(2):  # => this client sends one BAD command, then one GOOD command  # fmt: skip
                 command = read_line(conn, buf)  # => reads ONE command line at a time
-                reply = handle_command(command)  # => never raises -- always returns SOME reply
-                conn.sendall(reply + b"\n")  # => reply, then wait for the next -- no early close
+                reply = handle_command(command)  # => never raises -- always returns SOME reply  # fmt: skip
+                conn.sendall(reply + b"\n")  # => reply, then wait for the next -- no early close  # fmt: skip
 
 
-ready_event = threading.Event()  # => the same ready-signal pattern used since Example 34
-thread = threading.Thread(target=server, args=(ready_event,), daemon=True)  # => co-11: unstarted yet
+ready_event = threading.Event()  # => the same ready-signal pattern used since Example 34  # fmt: skip
+thread = threading.Thread(target=server, args=(ready_event,), daemon=True)  # => co-11: unstarted yet  # fmt: skip
 thread.start()  # => runs the server concurrently with the two-command client code below
 ready_event.wait(timeout=5)  # => blocks until bind()+listen() genuinely completed
 
-with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => a plain, ordinary connect()
-    buf = bytearray()  # => the CLIENT's own leftover-bytes buffer -- separate from the server's
+with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => a plain, ordinary connect()  # fmt: skip
+    buf = bytearray()  # => the CLIENT's own leftover-bytes buffer -- separate from the server's  # fmt: skip
     sock.sendall(b"BOGUS\n")  # => a malformed / unrecognized command
-    bad_reply = read_line(sock, buf)  # => waits for the server's ERR reply, not a dropped connection
-    print(f"BOGUS -> {bad_reply!r}")  # => shows the ERR reply, proving no crash occurred
+    bad_reply = read_line(sock, buf)  # => waits for the server's ERR reply, not a dropped connection  # fmt: skip
+    print(f"BOGUS -> {bad_reply!r}")  # => shows the ERR reply, proving no crash occurred  # fmt: skip
 
-    sock.sendall(b"PING\n")  # => the SAME connection still works afterward -- no crash occurred
-    good_reply = read_line(sock, buf)  # => waits for a NORMAL reply, proving the session survived
-    print(f"PING -> {good_reply!r}")  # => shows the SAME connection still answering normally
+    sock.sendall(b"PING\n")  # => the SAME connection still works afterward -- no crash occurred  # fmt: skip
+    good_reply = read_line(sock, buf)  # => waits for a NORMAL reply, proving the session survived  # fmt: skip
+    print(f"PING -> {good_reply!r}")  # => shows the SAME connection still answering normally  # fmt: skip
 
-thread.join(timeout=5)  # => waits for the server thread to finish handling both commands
+thread.join(timeout=5)  # => waits for the server thread to finish handling both commands  # fmt: skip
 
-assert bad_reply.startswith(b"ERR")  # => confirms a clear error reply, not a dropped connection
-assert good_reply == b"PONG"  # => confirms the connection survived the bad command entirely
-print("ex-77 OK")  # => confirms one malformed command didn't corrupt the rest of the session
+assert bad_reply.startswith(b"ERR")  # => confirms a clear error reply, not a dropped connection  # fmt: skip
+assert good_reply == b"PONG"  # => confirms the connection survived the bad command entirely  # fmt: skip
+print("ex-77 OK")  # => confirms one malformed command didn't corrupt the rest of the session  # fmt: skip
 ```
 
 **Run**: `python3 example.py`
@@ -1177,71 +1178,77 @@ HOST = "127.0.0.1"  # => loopback -- keeps this two-round negotiation demo local
 PORT = 50078  # => co-05: reused across BOTH rounds, thanks to SO_REUSEADDR below
 
 
-def build_response(accept_header: str) -> bytes:  # => co-22: content negotiation, both directions
-    if "application/json" in accept_header:  # => co-22: the client explicitly asked for JSON
+def build_response(accept_header: str) -> bytes:  # => co-22: content negotiation, both directions  # fmt: skip
+    if "application/json" in accept_header:  # => co-22: the client explicitly asked for JSON  # fmt: skip
         body = b'{"status": "ok"}'  # => the JSON representation of the SAME status
-        content_type = b"application/json"  # => the Content-Type that MATCHES the body
+        content_type = b"application/json"  # => the Content-Type that MATCHES the body  # fmt: skip
     else:  # => co-22: no JSON requested -- fall back to plain text, the safe default
         body = b"status: ok"  # => the plain-text representation of the SAME status
-        content_type = b"text/plain"  # => the Content-Type that MATCHES this body instead
+        content_type = b"text/plain"  # => the Content-Type that MATCHES this body instead  # fmt: skip
     return (  # => built by hand, byte by byte -- no HTTP library involved
         b"HTTP/1.1 200 OK\r\n"  # => co-13: the status line -- version, code, reason phrase
-        b"Content-Type: " + content_type + b"\r\n"  # => the negotiated type, not hardcoded
-        b"Content-Length: " + str(len(body)).encode() + b"\r\n"  # => the actual body's size
+        # => the negotiated type, not hardcoded
+        b"Content-Type: " + content_type + b"\r\n"
+        # => the actual body's size
+        b"Content-Length: " + str(len(body)).encode() + b"\r\n"
         b"Connection: close\r\n"  # => tells the client to expect the connection to close
-        b"\r\n" + body)  # => the mandatory blank-line separator, then the chosen body
+        # => the mandatory blank-line separator, then the chosen body
+        b"\r\n" + body
+    )
 
 
-def handle_one(port: int, ready: threading.Event) -> None:  # => a fresh single-shot server
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => lets round 2 reuse PORT
+def handle_one(port: int, ready: threading.Event) -> None:  # => a fresh single-shot server  # fmt: skip
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+  # fmt: skip
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => lets round 2 reuse PORT  # fmt: skip
         sock.bind((HOST, port))  # => claims (HOST, port) for THIS round only
-        sock.listen(1)  # => flips the socket passive, ready to queue one pending connection
+        sock.listen(1)  # => flips the socket passive, ready to queue one pending connection  # fmt: skip
         ready.set()  # => unblocks run_round()'s wait() below -- no guessed sleep() needed
-        conn, _ = sock.accept()  # => BLOCKS until this round's client completes the handshake
+        conn, _ = sock.accept()  # => BLOCKS until this round's client completes the handshake  # fmt: skip
         with conn:  # => this round's connection -- closes automatically on block exit
-            request = conn.recv(4096).decode()  # => reads the raw request bytes, decoded to text
+            request = conn.recv(4096).decode()  # => reads the raw request bytes, decoded to text  # fmt: skip
             accept_line = next(  # => finds the ONE header line this server actually cares about
-                (line for line in request.split("\r\n") if line.startswith("Accept:")), ""  # => match
+                # => matches the Accept header, if the client sent one
+                (line for line in request.split("\r\n") if line.startswith("Accept:")),
+                "",
             )  # => "" if no Accept header was sent at all -- falls to the plain-text default
-            conn.sendall(build_response(accept_line))  # => the negotiated reply, sent back
+            conn.sendall(build_response(accept_line))  # => the negotiated reply, sent back  # fmt: skip
 
 
-def request_with_accept(accept_value: str) -> bytes:  # => sends one GET with a chosen Accept value
-    with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => co-07: the TCP handshake
+def request_with_accept(accept_value: str) -> bytes:  # => sends one GET with a chosen Accept value  # fmt: skip
+    with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => co-07: the TCP handshake  # fmt: skip
         request = f"GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nAccept: {accept_value}\r\nConnection: close\r\n\r\n"  # => co-22
-        sock.sendall(request.encode())  # => co-12: the hand-built request, sent as raw bytes
+        sock.sendall(request.encode())  # => co-12: the hand-built request, sent as raw bytes  # fmt: skip
         data = b""  # => accumulates the full response -- its final size isn't known in advance
-        while True:  # => co-11: loop until the server closes (Connection: close makes this safe)
+        while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
             chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
             if not chunk:  # => an empty recv() means the server closed its side
                 break  # => exits the loop -- the full response has now been fully read
-            data += chunk  # => appends this chunk -- the loop above may run several times
+            data += chunk  # => appends this chunk -- the loop above may run several times  # fmt: skip
     return data  # => the ONE value this function hands back to its caller
 
 
-def run_round(accept_value: str) -> bytes:  # => co-01: one fresh server + one request, per round
-    ready = threading.Event()  # => a NEW event per round -- this round's own ready-signal
-    server_thread = threading.Thread(target=handle_one, args=(PORT, ready), daemon=True)  # => co-11
+def run_round(accept_value: str) -> bytes:  # => co-01: one fresh server + one request, per round  # fmt: skip
+    ready = threading.Event()  # => a NEW event per round -- this round's own ready-signal  # fmt: skip
+    server_thread = threading.Thread(target=handle_one, args=(PORT, ready), daemon=True)  # => co-11  # fmt: skip
     server_thread.start()  # => runs THIS round's single-shot server concurrently
-    ready.wait(timeout=5)  # => blocks until THIS round's bind()+listen() genuinely completed
-    response = request_with_accept(accept_value)  # => sends the request, waits for the reply
-    server_thread.join(timeout=5)  # => waits for THIS round's server to finish before returning
+    ready.wait(timeout=5)  # => blocks until THIS round's bind()+listen() genuinely completed  # fmt: skip
+    response = request_with_accept(accept_value)  # => sends the request, waits for the reply  # fmt: skip
+    server_thread.join(timeout=5)  # => waits for THIS round's server to finish before returning  # fmt: skip
     return response  # => the ONE value this function hands back to its caller
 
 
 # Round 1: client asks for JSON.
-json_response = run_round("application/json")  # => a fresh server + one JSON-requesting client
-json_head, _, json_body = json_response.partition(b"\r\n\r\n")  # => co-13: split at the boundary
+json_response = run_round("application/json")  # => a fresh server + one JSON-requesting client  # fmt: skip
+json_head, _, json_body = json_response.partition(b"\r\n\r\n")  # => co-13: split at the boundary  # fmt: skip
 
 # Round 2: client asks for plain text -- a FRESH server, same port, reused via SO_REUSEADDR.
-text_response = run_round("text/plain")  # => a SECOND fresh server + one plain-text-requesting client
-text_head, _, text_body = text_response.partition(b"\r\n\r\n")  # => co-13: split at the boundary
+text_response = run_round("text/plain")  # => a SECOND fresh server + one plain-text-requesting client  # fmt: skip
+text_head, _, text_body = text_response.partition(b"\r\n\r\n")  # => co-13: split at the boundary  # fmt: skip
 
-print(f"Accept: application/json -> {json_body!r}")  # => expect the JSON body from round 1
-print(f"Accept: text/plain -> {text_body!r}")  # => expect the plain-text body from round 2
+print(f"Accept: application/json -> {json_body!r}")  # => expect the JSON body from round 1  # fmt: skip
+print(f"Accept: text/plain -> {text_body!r}")  # => expect the plain-text body from round 2  # fmt: skip
 
-assert b"application/json" in json_head and json_body == b'{"status": "ok"}'  # => round 1 correct
+assert b"application/json" in json_head and json_body == b'{"status": "ok"}'  # => round 1 correct  # fmt: skip
 assert b"text/plain" in text_head and text_body == b"status: ok"  # => round 2 correct
 print("ex-78 OK")  # => confirms the SAME routing logic branched correctly both ways
 ```
@@ -1324,27 +1331,27 @@ CLOSED_HOST = "127.0.0.1"
 CLOSED_PORT = 50080  # => deliberately unused in this entire topic's port range
 
 
-def classify_failure(host: str, port: int) -> str:  # => tries DNS FIRST, then TCP, in that order
+def classify_failure(host: str, port: int) -> str:  # => tries DNS FIRST, then TCP, in that order  # fmt: skip
     try:  # => wrapped so a DNS failure doesn't crash -- it's reported, not raised uncaught
-        socket.gethostbyname(host)  # => co-03: DNS resolution -- the FIRST layer that can fail
-    except socket.gaierror as err:  # => "gai" = getaddrinfo -- the resolver itself failed
+        socket.gethostbyname(host)  # => co-03: DNS resolution -- the FIRST layer that can fail  # fmt: skip
+    except socket.gaierror as err:  # => "gai" = getaddrinfo -- the resolver itself failed  # fmt: skip
         return f"failed at DNS layer: {err}"
 
     try:  # => reached only if DNS succeeded -- this tries the NEXT layer down
-        with socket.create_connection((host, port), timeout=5):  # => co-07: the SECOND layer
+        with socket.create_connection((host, port), timeout=5):  # => co-07: the SECOND layer  # fmt: skip
             return "connected successfully"
-    except ConnectionRefusedError as err:  # => DNS succeeded, but nobody answered on this port
+    except ConnectionRefusedError as err:  # => DNS succeeded, but nobody answered on this port  # fmt: skip
         return f"failed at TCP layer: {err}"
 
 
-dns_failure = classify_failure(BAD_HOST, 80)  # => guaranteed to fail at DNS, never reaches TCP
-tcp_failure = classify_failure(CLOSED_HOST, CLOSED_PORT)  # => DNS succeeds, TCP is what fails
+dns_failure = classify_failure(BAD_HOST, 80)  # => guaranteed to fail at DNS, never reaches TCP  # fmt: skip
+tcp_failure = classify_failure(CLOSED_HOST, CLOSED_PORT)  # => DNS succeeds, TCP is what fails  # fmt: skip
 
 print(f"{BAD_HOST}:80 -> {dns_failure}")
 print(f"{CLOSED_HOST}:{CLOSED_PORT} -> {tcp_failure}")
 
-assert dns_failure.startswith("failed at DNS layer")  # => the bad host never even got an IP
-assert tcp_failure.startswith("failed at TCP layer")  # => this host resolved fine; TCP refused
+assert dns_failure.startswith("failed at DNS layer")  # => the bad host never even got an IP  # fmt: skip
+assert tcp_failure.startswith("failed at TCP layer")  # => this host resolved fine; TCP refused  # fmt: skip
 # co-01: this is `layering-and-leaks` made concrete -- the SAME exception-handling shape
 # (try resolve, try connect) surfaces two COMPLETELY different failures at two DIFFERENT
 # layers, and telling them apart is exactly what makes a real outage debuggable.
@@ -1398,58 +1405,58 @@ import socket  # => stdlib sockets -- every layer this full server/client pair b
 import threading  # => co-10: one thread PER accepted client, the same fix as Example 40/76
 import time  # => TIME's reply is real wall-clock state, not an echo of client input
 
-HOST = "127.0.0.1"  # => loopback -- keeps this server/client demo local and deterministic
+HOST = "127.0.0.1"  # => loopback -- keeps this server/client demo local and deterministic  # fmt: skip
 PORT = 50081  # => co-05: a fresh ephemeral port, unique to this example
 
 
-def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => co-11: line framing
+def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => co-11: line framing  # fmt: skip
     while b"\n" not in buffer:  # => keep reading until a full command line has arrived
-        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time
-        if not chunk:  # => co-07: the client closed -- signal it upward as an empty line
+        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time  # fmt: skip
+        if not chunk:  # => co-07: the client closed -- signal it upward as an empty line  # fmt: skip
             return b""  # => an EMPTY line signals "peer closed" up to the caller
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder
-    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command
-    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one command, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT command  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
-def handle_command(command: bytes) -> bytes:  # => co-01: the same PING/TIME protocol throughout
+def handle_command(command: bytes) -> bytes:  # => co-01: the same PING/TIME protocol throughout  # fmt: skip
     if command == b"PING":  # => the simplest possible liveness check
         return b"PONG"  # => a FIXED reply -- the same for every PING, unlike TIME below
     if command == b"TIME":  # => a command that returns SERVER-side state, not an echo
         return str(int(time.time())).encode()  # => Unix epoch seconds, as ASCII digits
-    return b"ERR unknown command: " + command  # => a graceful, protocol-level error reply
+    return b"ERR unknown command: " + command  # => a graceful, protocol-level error reply  # fmt: skip
 
 
-def handle_client(conn: socket.socket, addr: tuple[str, int]) -> None:  # => co-10: one per client
+def handle_client(conn: socket.socket, addr: tuple[str, int]) -> None:  # => co-10: one per client  # fmt: skip
     with conn:  # => this handler's own connection -- closes automatically on block exit
-        buf = bytearray()  # => this client's own leftover-bytes buffer, private to its thread
+        buf = bytearray()  # => this client's own leftover-bytes buffer, private to its thread  # fmt: skip
         while True:  # => co-07: keeps serving commands until the client disconnects
             command = read_line(conn, buf)  # => reads ONE command line at a time
-            if not command:  # => co-07: an empty line means the peer closed -- exit gracefully
+            if not command:  # => co-07: an empty line means the peer closed -- exit gracefully  # fmt: skip
                 break  # => exits the loop -- the "with conn" block then closes gracefully
-            conn.sendall(handle_command(command) + b"\n")  # => reply, then wait for the next
-    print(f"connection from {addr} closed gracefully")  # => runs AFTER the "with" block's close()
+            conn.sendall(handle_command(command) + b"\n")  # => reply, then wait for the next  # fmt: skip
+    print(f"connection from {addr} closed gracefully")  # => runs AFTER the "with" block's close()  # fmt: skip
 
 
-def run_server(client_count: int) -> None:  # => co-10: serves exactly client_count connections
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before
+def run_server(client_count: int) -> None:  # => co-10: serves exactly client_count connections  # fmt: skip
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:  # => same triple as Ex 29+  # fmt: skip
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # => same boilerplate as before  # fmt: skip
         sock.bind((HOST, PORT))  # => claims (HOST, PORT) for this process
-        sock.listen(5)  # => backlog large enough for multiple clients to queue if needed
-        print(f"listening on {HOST}:{PORT}", flush=True)  # => the signal a caller can wait for
-        handlers: list[threading.Thread] = []  # => one thread PER accepted connection (co-10)
-        for _ in range(client_count):  # => accepts exactly client_count clients, then stops
-            conn, addr = sock.accept()  # => accept() itself is still sequential, one at a time
-            handler = threading.Thread(target=handle_client, args=(conn, addr))  # => co-10: unstarted
+        sock.listen(5)  # => backlog large enough for multiple clients to queue if needed  # fmt: skip
+        print(f"listening on {HOST}:{PORT}", flush=True)  # => the signal a caller can wait for  # fmt: skip
+        handlers: list[threading.Thread] = []  # => one thread PER accepted connection (co-10)  # fmt: skip
+        for _ in range(client_count):  # => accepts exactly client_count clients, then stops  # fmt: skip
+            conn, addr = sock.accept()  # => accept() itself is still sequential, one at a time  # fmt: skip
+            handler = threading.Thread(target=handle_client, args=(conn, addr))  # => co-10: unstarted  # fmt: skip
             handler.start()  # => handling happens CONCURRENTLY once each thread starts
-            handlers.append(handler)  # => tracked so the loop below can wait for every one
-        for handler in handlers:  # => waits for EVERY handler thread, not just the last started
+            handlers.append(handler)  # => tracked so the loop below can wait for every one  # fmt: skip
+        for handler in handlers:  # => waits for EVERY handler thread, not just the last started  # fmt: skip
             handler.join()  # => waits for every spawned handler thread to finish
 
 
 if __name__ == "__main__":  # => only runs when invoked directly, not when imported
-    run_server(client_count=2)  # => this demo serves exactly two concurrent clients, then exits
+    run_server(client_count=2)  # => this demo serves exactly two concurrent clients, then exits  # fmt: skip
 ```
 
 ```python
@@ -1462,35 +1469,35 @@ HOST = "127.0.0.1"  # => loopback -- matches server.py's own HOST exactly
 PORT = 50081  # => co-05: matches server.py's own PORT exactly
 
 
-def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33
+def read_line(sock: socket.socket, buffer: bytearray) -> bytes:  # => same framing as Example 33  # fmt: skip
     while b"\n" not in buffer:  # => keep reading until a full reply line has arrived
-        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time
+        chunk = sock.recv(64)  # => reads whatever is available, up to 64 bytes at a time  # fmt: skip
         if not chunk:  # => the peer closed before a full line arrived
             return b""  # => an EMPTY line signals "peer closed" up to the caller
         buffer.extend(chunk)  # => accumulate bytes across possibly many small reads
-    line, _, rest = buffer.partition(b"\n")  # => split off exactly one reply, keep the remainder
-    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT reply
-    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes
+    line, _, rest = buffer.partition(b"\n")  # => split off exactly one reply, keep the remainder  # fmt: skip
+    buffer[:] = rest  # => whatever came AFTER the newline stays buffered for the NEXT reply  # fmt: skip
+    return bytes(line)  # => bytearray.partition returns bytearray -- normalize to plain bytes  # fmt: skip
 
 
-def run_client(client_name: str) -> list[bytes]:  # => "client_name" only labels this run's output
-    replies: list[bytes] = []  # => co-01: measured, not assumed, one reply per command sent
-    with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => co-07: one connection
-        buf = bytearray()  # => this client's own leftover-bytes buffer, private to this run
-        for command in (b"PING", b"TIME"):  # => two commands over the ONE connection (co-11)
-            sock.sendall(command + b"\n")  # => sends this command, then waits for its own reply
-            replies.append(read_line(sock, buf))  # => waits for THIS command's reply before looping
+def run_client(client_name: str) -> list[bytes]:  # => "client_name" only labels this run's output  # fmt: skip
+    replies: list[bytes] = []  # => co-01: measured, not assumed, one reply per command sent  # fmt: skip
+    with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => co-07: one connection  # fmt: skip
+        buf = bytearray()  # => this client's own leftover-bytes buffer, private to this run  # fmt: skip
+        for command in (b"PING", b"TIME"):  # => two commands over the ONE connection (co-11)  # fmt: skip
+            sock.sendall(command + b"\n")  # => sends this command, then waits for its own reply  # fmt: skip
+            replies.append(read_line(sock, buf))  # => waits for THIS command's reply before looping  # fmt: skip
         # Exiting the `with` block calls close() -- co-07: this is the GRACEFUL shutdown
         # the server's read_line() detects as an empty recv() and handles cleanly.
-    print(f"{client_name}: PING -> {replies[0]!r}, TIME -> {replies[1]!r}")  # => both replies at once
+    print(f"{client_name}: PING -> {replies[0]!r}, TIME -> {replies[1]!r}")  # => both replies at once  # fmt: skip
     return replies  # => both replies, for the caller's own assertions below
 
 
 if __name__ == "__main__":  # => only runs when invoked directly, not when imported
     replies = run_client("client")  # => a real connection to the real server.py process
     assert replies[0] == b"PONG"  # => confirms PING got its fixed reply
-    assert replies[1].isdigit()  # => confirms TIME returned a plausible-looking epoch timestamp
-    print("ex-81 client OK")  # => confirms both commands round-tripped over one connection
+    assert replies[1].isdigit()  # => confirms TIME returned a plausible-looking epoch timestamp  # fmt: skip
+    print("ex-81 client OK")  # => confirms both commands round-tripped over one connection  # fmt: skip
 ```
 
 **Run**: `python3 server.py &` (backgrounded, `--clients 2` behavior via `client_count=2`), then `python3 client.py` run twice as separate processes
@@ -1548,49 +1555,49 @@ PORT = 80  # => co-05: HTTP's well-known port
 PATH = "/"  # => co-02: the simplest possible request path
 
 
-def dig_short(host: str) -> str:  # => co-20: shell out to `dig` for a real, tool-verified answer
+def dig_short(host: str) -> str:  # => co-20: shell out to `dig` for a real, tool-verified answer  # fmt: skip
     result = subprocess.run(  # => co-20: an EXTERNAL process, independent of Python's own resolver
-        ["dig", "+short", host], capture_output=True, text=True, timeout=5, check=True)  # => args
+        ["dig", "+short", host], capture_output=True, text=True, timeout=5, check=True)  # => args  # fmt: skip
     return result.stdout.strip().splitlines()[0]  # => the FIRST A record dig reports
 
 
-def explore(host: str, port: int, path: str) -> None:  # => narrates every layer as it happens
-    print(f"=== resolving {host} ===")  # => marks the START of the DNS stage in the transcript
+def explore(host: str, port: int, path: str) -> None:  # => narrates every layer as it happens  # fmt: skip
+    print(f"=== resolving {host} ===")  # => marks the START of the DNS stage in the transcript  # fmt: skip
     dig_ip = dig_short(host)  # => Stage 1a: an EXTERNAL tool's independent answer
-    print(f"[dig]      {host} -> {dig_ip}")  # => the external tool's own independent result
-    python_ip = socket.gethostbyname(host)  # => Stage 1b: Python's OWN resolver call (co-03)
-    print(f"[gethostbyname] {host} -> {python_ip}")  # => Python's own result, for comparison
+    print(f"[dig]      {host} -> {dig_ip}")  # => the external tool's own independent result  # fmt: skip
+    python_ip = socket.gethostbyname(host)  # => Stage 1b: Python's OWN resolver call (co-03)  # fmt: skip
+    print(f"[gethostbyname] {host} -> {python_ip}")  # => Python's own result, for comparison  # fmt: skip
 
-    print(f"=== opening a TCP connection to {python_ip}:{port} ===")  # => marks the TCP stage start
-    tcp_start = time.perf_counter()  # => a clock reading taken right before the TCP handshake
-    sock = socket.create_connection((python_ip, port), timeout=5)  # => Stage 2: co-07 handshake
-    tcp_ms = (time.perf_counter() - tcp_start) * 1000  # => convert seconds to milliseconds
-    print(f"[TCP]      connected in {tcp_ms:.1f} ms")  # => this stage's own isolated timing
+    print(f"=== opening a TCP connection to {python_ip}:{port} ===")  # => marks the TCP stage start  # fmt: skip
+    tcp_start = time.perf_counter()  # => a clock reading taken right before the TCP handshake  # fmt: skip
+    sock = socket.create_connection((python_ip, port), timeout=5)  # => Stage 2: co-07 handshake  # fmt: skip
+    tcp_ms = (time.perf_counter() - tcp_start) * 1000  # => convert seconds to milliseconds  # fmt: skip
+    print(f"[TCP]      connected in {tcp_ms:.1f} ms")  # => this stage's own isolated timing  # fmt: skip
 
-    print(f"=== issuing GET {path} over that connection ===")  # => marks the HTTP stage start
+    print(f"=== issuing GET {path} over that connection ===")  # => marks the HTTP stage start  # fmt: skip
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"  # => co-12: by hand
     sock.sendall(request.encode("ascii"))  # => Stage 3: co-12
-    response = b""  # => accumulates the full response -- its final size isn't known in advance
-    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)
+    response = b""  # => accumulates the full response -- its final size isn't known in advance  # fmt: skip
+    while True:  # => co-11: loop until the server closes (Connection: close makes this safe)  # fmt: skip
         chunk = sock.recv(4096)  # => reads whatever arrives next, up to 4096 bytes
         if not chunk:  # => an empty recv() means the server closed its side
             break  # => exits the while loop -- the full response has now been fully read
-        response += chunk  # => appends this chunk -- the loop above may run several times
+        response += chunk  # => appends this chunk -- the loop above may run several times  # fmt: skip
     sock.close()  # => releases the socket once the full response has been read
-    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only
-    print(f"[HTTP]     {status_line}")  # => the final stage's own result, closing the DNS-to-HTTP chain
+    status_line = response.split(b"\r\n", 1)[0].decode()  # => co-13: the FIRST line, only  # fmt: skip
+    print(f"[HTTP]     {status_line}")  # => the final stage's own result, closing the DNS-to-HTTP chain  # fmt: skip
 
-    print("=== UDP contrast (co-08, co-09) ===")  # => marks the closing prose note's start
+    print("=== UDP contrast (co-08, co-09) ===")  # => marks the closing prose note's start  # fmt: skip
     udp_note = (  # => co-08/co-09: a closing PROSE note, not a re-executed UDP request in this script
         "The DNS lookup above almost certainly traveled over UDP (dig's own transport, not"  # => co-08
         " shown on the wire here) -- a single connectionless query/response datagram, no"  # => co-09
         " handshake. Had it been dropped, dig would simply retry or time out; nothing"  # => text
-        " resembling the TCP handshake or the ordered HTTP byte stream above would apply.")  # => end
-    print(udp_note)  # => the note itself, tying the DNS stage back to co-08's UDP behavior
+        " resembling the TCP handshake or the ordered HTTP byte stream above would apply.")  # => end  # fmt: skip
+    print(udp_note)  # => the note itself, tying the DNS stage back to co-08's UDP behavior  # fmt: skip
 
 
 explore(HOST, PORT, PATH)  # => runs every stage, DNS through HTTP, on one real request
-print("ex-82 OK")  # => confirms all four stages -- dig, gethostbyname, TCP, HTTP -- completed
+print("ex-82 OK")  # => confirms all four stages -- dig, gethostbyname, TCP, HTTP -- completed  # fmt: skip
 ```
 
 **Run**: `python3 example.py`

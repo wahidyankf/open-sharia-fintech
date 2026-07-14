@@ -10,9 +10,7 @@ PORT = 50058  # => co-05: a fresh ephemeral port, unique to this example
 # socket + OS overhead, the minimum any TCP round trip on this machine could possibly cost.
 
 
-def server(
-    ready: threading.Event,
-) -> None:  # => backgrounded so the client below can run inline
+def server(ready: threading.Event) -> None:  # => backgrounded so the client below can run inline  # fmt: skip
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # => IPv4 + TCP, scoped to this "with" block so the fd always closes on exit
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -30,14 +28,10 @@ def server(
                 data = conn.recv(64)
                 if not data:
                     break
-                conn.sendall(
-                    data
-                )  # => echoes back as fast as possible -- no artificial delay
+                conn.sendall(data)  # => echoes back as fast as possible -- no artificial delay  # fmt: skip
 
 
-ready_event = (
-    threading.Event()
-)  # => the same ready-signal pattern used since Example 34
+ready_event = threading.Event()  # => the same ready-signal pattern used since Example 34  # fmt: skip
 thread = threading.Thread(target=server, args=(ready_event,), daemon=True)
 # => daemon=True: this thread never blocks process exit if something above hangs
 thread.start()
@@ -45,47 +39,25 @@ thread.start()
 ready_event.wait(timeout=5)
 # => blocks here until bind()+listen() genuinely completed, avoiding a race with connect()
 
-latencies_ms: list[
-    float
-] = []  # => co-01: measured, not assumed, exactly like Example 24 did
+latencies_ms: list[float] = []  # => co-01: measured, not assumed, exactly like Example 24 did  # fmt: skip
 # perf_counter() (not time.time()) is used because it's monotonic and immune to clock adjustments.
-with socket.create_connection(
-    (HOST, PORT), timeout=5
-) as sock:  # => one connection, reused below
-    for i in range(
-        5
-    ):  # => five independent measurements smooth out one-off scheduling jitter
-        start = (
-            time.perf_counter()
-        )  # => a high-resolution clock, appropriate for sub-ms timing
-        sock.sendall(
-            b"ping"
-        )  # => a tiny 4-byte payload -- measures overhead, not bandwidth
+with socket.create_connection((HOST, PORT), timeout=5) as sock:  # => one connection, reused below  # fmt: skip
+    for i in range(5):  # => five independent measurements smooth out one-off scheduling jitter  # fmt: skip
+        start = time.perf_counter()  # => a high-resolution clock, appropriate for sub-ms timing  # fmt: skip
+        sock.sendall(b"ping")  # => a tiny 4-byte payload -- measures overhead, not bandwidth  # fmt: skip
         sock.recv(64)  # => blocks until the echoed reply arrives
         # 64 bytes comfortably exceeds the 4-byte payload -- no partial-read handling needed here.
-        elapsed_ms = (
-            time.perf_counter() - start
-        ) * 1000  # => convert seconds to milliseconds
-        latencies_ms.append(
-            elapsed_ms
-        )  # => accumulated across all 5 iterations for the average
-        print(
-            f"round trip {i + 1}: {elapsed_ms:.3f} ms"
-        )  # => per-iteration figure shows jitter
+        elapsed_ms = (time.perf_counter() - start) * 1000  # => convert seconds to milliseconds  # fmt: skip
+        latencies_ms.append(elapsed_ms)  # => accumulated across all 5 iterations for the average  # fmt: skip
+        print(f"round trip {i + 1}: {elapsed_ms:.3f} ms")  # => per-iteration figure shows jitter  # fmt: skip
 
 thread.join(timeout=5)
 # => waits for the server thread to finish handling all five round trips before exiting
 
-average_ms = sum(latencies_ms) / len(
-    latencies_ms
-)  # => a simple mean across the 5 measurements
+average_ms = sum(latencies_ms) / len(latencies_ms)  # => a simple mean across the 5 measurements  # fmt: skip
 # a genuine average of REAL measurements, not a hand-picked "looks about right" number.
-print(
-    f"average: {average_ms:.3f} ms"
-)  # => the single headline number this example exists to produce
+print(f"average: {average_ms:.3f} ms")  # => the single headline number this example exists to produce  # fmt: skip
 
 assert all(ms >= 0 for ms in latencies_ms)  # => sanity check: time never runs backward
 assert average_ms < 50  # => loopback round trips are consistently well under 50ms
-print(
-    "ex-58 OK"
-)  # => confirms all five round trips were measured and stayed within bounds
+print("ex-58 OK")  # => confirms all five round trips were measured and stayed within bounds  # fmt: skip

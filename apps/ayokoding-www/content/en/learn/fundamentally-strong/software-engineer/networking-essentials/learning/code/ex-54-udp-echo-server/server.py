@@ -9,21 +9,13 @@ PORT = 50054  # => co-05: a fresh ephemeral port, unique to this example
 def run_server() -> None:  # => a UDP server needs no bind/listen/accept sequence at all
     # SOCK_DGRAM selects UDP: connectionless, message-oriented, no handshake (co-08).
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.bind(
-            (HOST, PORT)
-        )  # => UDP still binds to claim a local port -- but never listen()s
-        print(
-            f"listening on {HOST}:{PORT}", flush=True
-        )  # => the signal the client script waits for
+        sock.bind((HOST, PORT))  # => UDP still binds to claim a local port -- but never listen()s  # fmt: skip
+        print(f"listening on {HOST}:{PORT}", flush=True)  # => the signal the client script waits for  # fmt: skip
         # recvfrom (not recv!) returns BOTH the datagram's bytes AND the sender's address --
         # there is no persistent "connection" object like TCP's accept() returns (co-08).
         data, sender_addr = sock.recvfrom(1024)  # => blocks until ONE datagram arrives
-        print(
-            f"received {data!r} from {sender_addr}"
-        )  # => shows the sender's address, learned here
-        sock.sendto(
-            data, sender_addr
-        )  # => sendto: no connection needed, just an address
+        print(f"received {data!r} from {sender_addr}")  # => shows the sender's address, learned here  # fmt: skip
+        sock.sendto(data, sender_addr)  # => sendto: no connection needed, just an address  # fmt: skip
 
 
 if __name__ == "__main__":  # => only runs when invoked directly, not when imported
