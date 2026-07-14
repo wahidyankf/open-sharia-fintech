@@ -34,16 +34,22 @@ flowchart TD
 import abc  # => imports the abc module
 
 
-class Shape(abc.ABC):  # => abc.ABC marks this class as an INTERFACE, never directly instantiable
+class Shape(
+    abc.ABC
+):  # => abc.ABC marks this class as an INTERFACE, never directly instantiable
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def area(self) -> float:  # => no body implementation -- a REQUIRED contract for subclasses
+    def area(
+        self,
+    ) -> float:  # => no body implementation -- a REQUIRED contract for subclasses
         ...  # => the ellipsis stub -- Shape() below proves this makes the class uninstantiable
 
 
 try:  # => the block below is expected to raise
     Shape()  # type: ignore  # => instantiating an ABC with unimplemented methods always fails
 except TypeError as exc:  # => catches the TypeError raised above
-    print(type(exc).__name__)  # => confirms it is genuinely a TypeError, not merely any exception
+    print(
+        type(exc).__name__
+    )  # => confirms it is genuinely a TypeError, not merely any exception
 # => Output: TypeError
 # => `abc.ABC` plus at least one `@abstractmethod` makes a class impossible to instantiate directly
 ```
@@ -104,7 +110,9 @@ import abc  # => imports the abc module
 
 class Shape(abc.ABC):  # => Shape extends abc.ABC
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def area(self) -> float: ...  # => no body -- Triangle below never supplies one either
+    def area(
+        self,
+    ) -> float: ...  # => no body -- Triangle below never supplies one either
 
 
 class Triangle(Shape):  # => subclasses Shape but forgets to implement area()
@@ -114,7 +122,9 @@ class Triangle(Shape):  # => subclasses Shape but forgets to implement area()
 try:  # => the block below is expected to raise
     Triangle()  # type: ignore  # => fails for the same reason Shape() does: area() is unimplemented
 except TypeError as exc:  # => catches the TypeError raised above
-    print(type(exc).__name__)  # => confirms it is genuinely a TypeError, same as Example 59
+    print(
+        type(exc).__name__
+    )  # => confirms it is genuinely a TypeError, same as Example 59
 # => Output: TypeError
 # => Subclassing an ABC does not automatically satisfy its contract
 ```
@@ -190,26 +200,38 @@ import math  # => imports the math module
 
 class Shape(abc.ABC):  # => Shape extends abc.ABC
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def area(self) -> float: ...  # => no body -- Circle and Square below each supply their own
+    def area(
+        self,
+    ) -> float: ...  # => no body -- Circle and Square below each supply their own
 
 
 class Circle(Shape):  # => Circle extends Shape
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
-    def area(self) -> float:  # => implements the required abstract method -- now instantiable
+    def area(
+        self,
+    ) -> float:  # => implements the required abstract method -- now instantiable
         return math.pi * self.radius**2  # => returns this value to the caller
 
 
 class Square(Shape):  # => Square extends Shape
-    def __init__(self, side: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, side: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.side = side  # => stores side on this instance
 
-    def area(self) -> float:  # => a SECOND, independent implementation of the same contract
+    def area(
+        self,
+    ) -> float:  # => a SECOND, independent implementation of the same contract
         return self.side**2  # => returns this value to the caller
 
 
-print(round(Circle(2.0).area(), 2), Square(3.0).area())  # => both classes instantiate AND compute
+print(
+    round(Circle(2.0).area(), 2), Square(3.0).area()
+)  # => both classes instantiate AND compute
 # => Output: 12.57 9.0
 # => Implementing every abstract method a base class declares is the entire requirement for instantiability
 ```
@@ -269,11 +291,15 @@ import math  # => imports the math module
 
 class Shape(abc.ABC):  # => Shape extends abc.ABC
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def area(self) -> float: ...  # => no body -- Circle and Square below each supply their own
+    def area(
+        self,
+    ) -> float: ...  # => no body -- Circle and Square below each supply their own
 
 
 class Circle(Shape):  # => Circle extends Shape
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
     def area(self) -> float:  # => defines the area() method
@@ -281,19 +307,28 @@ class Circle(Shape):  # => Circle extends Shape
 
 
 class Square(Shape):  # => Square extends Shape
-    def __init__(self, side: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, side: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.side = side  # => stores side on this instance
 
     def area(self) -> float:  # => defines the area() method
         return self.side**2  # => returns this value to the caller
 
 
-def describe(shape: Shape) -> str:  # => typed against the ABC -- accepts ANY Shape subclass
+def describe(
+    shape: Shape,
+) -> str:  # => typed against the ABC -- accepts ANY Shape subclass
     return f"{type(shape).__name__} area is {shape.area():.2f}"  # => returns this value to the caller
 
 
-shapes: list[Shape] = [Circle(2.0), Square(3.0)]  # => mixed concrete types, one shared base
-print([describe(s) for s in shapes])  # => the SAME function handles both, no branching by type
+shapes: list[Shape] = [
+    Circle(2.0),
+    Square(3.0),
+]  # => mixed concrete types, one shared base
+print(
+    [describe(s) for s in shapes]
+)  # => the SAME function handles both, no branching by type
 # => Output: ['Circle area is 12.57', 'Square area is 9.00']
 # => `describe(shape: Shape)` contains no `if isinstance(shape, Circle)` branch anywhere
 ```
@@ -316,7 +351,9 @@ from example import Circle, Square, describe
 
 def test_one_function_handles_every_shape_subclass() -> None:
     assert describe(Circle(2.0)) == "Circle area is 12.57"
-    assert describe(Square(3.0)) == "Square area is 9.00"  # => same describe(), no type branching
+    assert (
+        describe(Square(3.0)) == "Square area is 9.00"
+    )  # => same describe(), no type branching
 
 
 # => Run: pytest -- Output: 1 passed
@@ -352,21 +389,29 @@ import abc  # => imports the abc module
 
 class Shape(abc.ABC):  # => Shape extends abc.ABC
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def area(self) -> float: ...  # => no body -- Square below supplies the required implementation
+    def area(
+        self,
+    ) -> float: ...  # => no body -- Square below supplies the required implementation
 
-    def describe(self) -> str:  # => a CONCRETE method -- every subclass inherits this for free
+    def describe(
+        self,
+    ) -> str:  # => a CONCRETE method -- every subclass inherits this for free
         return f"{type(self).__name__}: area={self.area():.2f}"  # => reuses the abstract method
 
 
 class Square(Shape):  # => Square extends Shape
-    def __init__(self, side: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, side: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.side = side  # => stores side on this instance
 
     def area(self) -> float:  # => Square only implements the REQUIRED abstract part
         return self.side**2  # => returns this value to the caller
 
 
-print(Square(3.0).describe())  # => describe() was never redefined -- inherited straight from Shape
+print(
+    Square(3.0).describe()
+)  # => describe() was never redefined -- inherited straight from Shape
 # => Output: Square: area=9.00
 # => An ABC is not "every method abstract"
 ```
@@ -388,7 +433,9 @@ from example import Square
 
 
 def test_subclass_inherits_shared_concrete_helper() -> None:
-    assert Square(3.0).describe() == "Square: area=9.00"  # => inherited, not redefined, method
+    assert (
+        Square(3.0).describe() == "Square: area=9.00"
+    )  # => inherited, not redefined, method
 
 
 # => Run: pytest -- Output: 1 passed
@@ -428,17 +475,25 @@ class Shape(abc.ABC):  # => Shape extends abc.ABC
 
 
 class ThirdPartyCircle:  # => a class Shape never declares any relationship to at all
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
     def area(self) -> float:  # => defines the area() method
         return 3.14159 * self.radius**2  # => returns this value to the caller
 
 
-Shape.register(ThirdPartyCircle)  # => tells the ABC machinery to treat this class as a Shape
-print(isinstance(ThirdPartyCircle(1.0), Shape))  # => True, with ZERO inheritance declared anywhere
+Shape.register(
+    ThirdPartyCircle
+)  # => tells the ABC machinery to treat this class as a Shape
+print(
+    isinstance(ThirdPartyCircle(1.0), Shape)
+)  # => True, with ZERO inheritance declared anywhere
 # => Output: True
-print(ThirdPartyCircle in Shape.__subclasses__())  # => .register() does NOT appear in the MRO list
+print(
+    ThirdPartyCircle in Shape.__subclasses__()
+)  # => .register() does NOT appear in the MRO list
 # => Output: False
 # => `.register()` grants `isinstance`/`issubclass` compatibility without touching the registered class's own definition or its method resolution order at all
 ```
@@ -461,8 +516,12 @@ from example import Shape, ThirdPartyCircle
 
 
 def test_registered_class_passes_isinstance_without_inheriting() -> None:
-    Shape.register(ThirdPartyCircle)  # => idempotent to call more than once across test runs
-    assert isinstance(ThirdPartyCircle(1.0), Shape)  # => True with no `class ThirdPartyCircle(Shape)`
+    Shape.register(
+        ThirdPartyCircle
+    )  # => idempotent to call more than once across test runs
+    assert isinstance(
+        ThirdPartyCircle(1.0), Shape
+    )  # => True with no `class ThirdPartyCircle(Shape)`
 
 
 # => Run: pytest -- Output: 1 passed
@@ -505,7 +564,9 @@ flowchart TD
 """Example 65: A Naive Stack(list) Leaks the Wrong Interface."""
 
 
-class Stack(list[int]):  # => "is-a list" -- inherits EVERY list method, not just stack operations
+class Stack(
+    list[int]
+):  # => "is-a list" -- inherits EVERY list method, not just stack operations
     def push(self, item: int) -> None:  # => defines the push() method
         self.append(item)  # => reuses list.append -- convenient, but see the leak below
 
@@ -544,7 +605,11 @@ def test_naive_stack_leaks_list_insert() -> None:
     s.push(1)
     s.push(2)
     s.insert(0, 99)  # => a method a stack should never have exposed
-    assert list(s) == [99, 1, 2]  # => reproduces the interface leak: insert() bypassed push/pop
+    assert list(s) == [
+        99,
+        1,
+        2,
+    ]  # => reproduces the interface leak: insert() bypassed push/pop
 
 
 # => Run: pytest -- Output: 1 passed
@@ -588,17 +653,25 @@ flowchart LR
 
 
 class Stack:  # => no longer subclasses list -- HOLDS one instead
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self._items: list[int] = []  # => a private collaborator, not an inherited interface
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self._items: list[
+            int
+        ] = []  # => a private collaborator, not an inherited interface
 
     def push(self, item: int) -> None:  # => defines the push() method
-        self._items.append(item)  # => delegates to the list, but does not EXPOSE the list
+        self._items.append(
+            item
+        )  # => delegates to the list, but does not EXPOSE the list
 
     def pop(self) -> int:  # => defines the pop() method
         return self._items.pop()  # => returns this value to the caller
 
     def peek(self) -> int:  # => defines the peek() method
-        return self._items[-1]  # => only push/pop/peek exist -- insert() is simply not here
+        return self._items[
+            -1
+        ]  # => only push/pop/peek exist -- insert() is simply not here
 
 
 s: Stack = Stack()  # => constructs s
@@ -608,7 +681,9 @@ print(s.peek())  # => reads the top without removing it
 # => Output: 2
 print(s.pop())  # => removes and returns the top
 # => Output: 2
-print(hasattr(s, "insert"))  # => the leaked method from Example 65 no longer exists on Stack
+print(
+    hasattr(s, "insert")
+)  # => the leaked method from Example 65 no longer exists on Stack
 # => Output: False
 # => Composing a `list` as `self._items` and forwarding only `push`/`pop`/`peek` gives `Stack` an interface entirely of its own choosing
 ```
@@ -637,7 +712,9 @@ def test_only_push_pop_peek_are_public() -> None:
     s.push(2)
     assert s.peek() == 2
     assert s.pop() == 2
-    assert not hasattr(s, "insert")  # => composition means Stack exposes only its OWN interface
+    assert not hasattr(
+        s, "insert"
+    )  # => composition means Stack exposes only its OWN interface
 
 
 def test_original_push_pop_behavior_still_holds() -> None:
@@ -691,7 +768,9 @@ from typing import Protocol  # => imports Protocol from typing
 
 
 class SupportsLog(Protocol):  # => the structural contract Service actually depends on
-    def log(self, message: str) -> str: ...  # => no body -- Logger and SilentLogger each supply one
+    def log(
+        self, message: str
+    ) -> str: ...  # => no body -- Logger and SilentLogger each supply one
 
 
 class Logger:  # => begins the Logger class body
@@ -705,16 +784,22 @@ class SilentLogger:  # => unrelated to Logger -- satisfies SupportsLog structura
 
 
 class Service:  # => begins the Service class body
-    def __init__(self, logger: SupportsLog) -> None:  # => typed against the PROTOCOL, not a class
+    def __init__(
+        self, logger: SupportsLog
+    ) -> None:  # => typed against the PROTOCOL, not a class
         self.logger = logger  # => HOLDS a collaborator -- does not inherit from it
 
     def run(self) -> str:  # => defines the run() method
-        return self.logger.log("service ran")  # => delegates the actual work to the collaborator
+        return self.logger.log(
+            "service ran"
+        )  # => delegates the actual work to the collaborator
 
 
 loud: Service = Service(Logger())  # => constructs loud
 quiet: Service = Service(SilentLogger())  # => structurally compatible, accepted cleanly
-print(f"{loud.run()!r} | {quiet.run()!r}")  # => swapping the collaborator changed the observed behavior
+print(
+    f"{loud.run()!r} | {quiet.run()!r}"
+)  # => swapping the collaborator changed the observed behavior
 # => Output: '[LOG] service ran' | ''
 # => `Service.run()` never knows or cares which `log()` implementation it holds
 ```
@@ -737,9 +822,13 @@ from example import Logger, Service, SilentLogger
 
 def test_swapping_the_collaborator_changes_observed_behavior() -> None:
     loud: Service = Service(Logger())
-    quiet: Service = Service(SilentLogger())  # => structurally compatible, accepted cleanly
+    quiet: Service = Service(
+        SilentLogger()
+    )  # => structurally compatible, accepted cleanly
     assert loud.run() == "[LOG] service ran"
-    assert quiet.run() == ""  # => same Service code, a different collaborator, different behavior
+    assert (
+        quiet.run() == ""
+    )  # => same Service code, a different collaborator, different behavior
 
 
 # => Run: pytest -- Output: 1 passed
@@ -782,7 +871,9 @@ class FakeClock:  # => a TEST DOUBLE -- no shared base class with RealClock, by 
 
 
 class Event:  # => begins the Event class body
-    def __init__(self, clock: RealClock) -> None:  # => the collaborator is INJECTED, not built inside
+    def __init__(
+        self, clock: RealClock
+    ) -> None:  # => the collaborator is INJECTED, not built inside
         self.clock = clock  # => stores clock on this instance
 
     def timestamp(self) -> str:  # => defines the timestamp() method
@@ -791,7 +882,9 @@ class Event:  # => begins the Event class body
 
 real_event: Event = Event(RealClock())  # => constructs real_event
 fake_event: Event = Event(FakeClock())  # type: ignore  # => duck typing lets a fake substitute cleanly
-print(real_event.timestamp(), "|", fake_event.timestamp())  # => the SAME Event class, two results
+print(
+    real_event.timestamp(), "|", fake_event.timestamp()
+)  # => the SAME Event class, two results
 # => Output: 2026-07-14T00:00:00 | 1999-01-01T00:00:00
 # => Because `Event` never constructs its own clock, a test can inject `FakeClock()`
 ```
@@ -814,7 +907,9 @@ from example import Event, FakeClock
 
 def test_fake_collaborator_substitutes_cleanly_in_a_test() -> None:
     event: Event = Event(FakeClock())  # type: ignore  # => duck typing accepts the structural match
-    assert event.timestamp() == "1999-01-01T00:00:00"  # => no real clock or real time involved
+    assert (
+        event.timestamp() == "1999-01-01T00:00:00"
+    )  # => no real clock or real time involved
 
 
 # => Run: pytest -- Output: 1 passed
@@ -871,16 +966,24 @@ class DiscountPricing:  # => unrelated to RegularPricing -- no shared base class
 
 
 class Order:  # => begins the Order class body
-    def __init__(self, pricing: RegularPricing) -> None:  # => too NARROW a type -- Example 70 fixes this
-        self.pricing = pricing  # => held, not inherited -- swappable at construction time
+    def __init__(
+        self, pricing: RegularPricing
+    ) -> None:  # => too NARROW a type -- Example 70 fixes this
+        self.pricing = (
+            pricing  # => held, not inherited -- swappable at construction time
+        )
 
     def total(self, base: float) -> float:  # => defines the total() method
-        return self.pricing.price(base)  # => delegates the pricing DECISION to the collaborator
+        return self.pricing.price(
+            base
+        )  # => delegates the pricing DECISION to the collaborator
 
 
 regular: Order = Order(RegularPricing())  # => constructs regular
 discounted: Order = Order(DiscountPricing())  # type: ignore  # => works at runtime despite the narrow hint
-print(regular.total(100.0), discounted.total(100.0))  # => same Order class, two different totals
+print(
+    regular.total(100.0), discounted.total(100.0)
+)  # => same Order class, two different totals
 # => Output: 100.0 80.0
 # => Swapping the collaborator `Order` holds changes `total()`'s result with no subclass of `Order` anywhere
 ```
@@ -939,9 +1042,13 @@ Typing the injected collaborator as an ABC (`PricingStrategy`) rather than one c
 import abc  # => imports the abc module
 
 
-class PricingStrategy(abc.ABC):  # => the interface Order depends on -- never a concrete class
+class PricingStrategy(
+    abc.ABC
+):  # => the interface Order depends on -- never a concrete class
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def price(self, base: float) -> float: ...  # => no body -- both implementations below supply one
+    def price(
+        self, base: float
+    ) -> float: ...  # => no body -- both implementations below supply one
 
 
 class RegularPricing(PricingStrategy):  # => RegularPricing extends PricingStrategy
@@ -949,22 +1056,33 @@ class RegularPricing(PricingStrategy):  # => RegularPricing extends PricingStrat
         return base  # => returns this value to the caller
 
 
-class DiscountPricing(PricingStrategy):  # => a SECOND implementation of the same interface
+class DiscountPricing(
+    PricingStrategy
+):  # => a SECOND implementation of the same interface
     def price(self, base: float) -> float:  # => defines the price() method
         return base * 0.8  # => returns this value to the caller
 
 
 class Order:  # => begins the Order class body
-    def __init__(self, pricing: PricingStrategy) -> None:  # => typed against the ABC, not a class
+    def __init__(
+        self, pricing: PricingStrategy
+    ) -> None:  # => typed against the ABC, not a class
         self.pricing = pricing  # => stores pricing on this instance
 
     def total(self, base: float) -> float:  # => defines the total() method
         return self.pricing.price(base)  # => returns this value to the caller
 
 
-strategies: list[PricingStrategy] = [RegularPricing(), DiscountPricing()]  # => two conforming impls
-totals: list[float] = [Order(s).total(100.0) for s in strategies]  # => any conforming impl accepted
-print(totals)  # => both implementations plug into the SAME Order class with no special-casing
+strategies: list[PricingStrategy] = [
+    RegularPricing(),
+    DiscountPricing(),
+]  # => two conforming impls
+totals: list[float] = [
+    Order(s).total(100.0) for s in strategies
+]  # => any conforming impl accepted
+print(
+    totals
+)  # => both implementations plug into the SAME Order class with no special-casing
 # => Output: [100.0, 80.0]
 # => Typing `pricing` as the `PricingStrategy` ABC, not a concrete class, is what lets both implementations pass static type checking
 ```
@@ -988,7 +1106,10 @@ from example import DiscountPricing, Order, PricingStrategy, RegularPricing
 def test_any_conforming_implementation_is_accepted() -> None:
     strategies: list[PricingStrategy] = [RegularPricing(), DiscountPricing()]
     totals: list[float] = [Order(s).total(100.0) for s in strategies]
-    assert totals == [100.0, 80.0]  # => Order never mentions a concrete pricing class anywhere
+    assert totals == [
+        100.0,
+        80.0,
+    ]  # => Order never mentions a concrete pricing class anywhere
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1035,21 +1156,38 @@ flowchart LR
 
 
 class Order:  # => begins the Order class body
-    _LEGAL_NEXT: dict[str, set[str]] = {  # => the whole state machine, declared in one place
-        "pending": {"shipped", "cancelled"},  # => from pending, only shipped or cancelled are legal
+    _LEGAL_NEXT: dict[
+        str, set[str]
+    ] = {  # => the whole state machine, declared in one place
+        "pending": {
+            "shipped",
+            "cancelled",
+        },  # => from pending, only shipped or cancelled are legal
         "shipped": {"delivered"},  # => from shipped, only delivered is legal
         "delivered": set(),  # => a terminal state -- no legal transitions out of it
         "cancelled": set(),  # => also terminal -- no legal transitions out of it
     }  # => closes the state-machine table
 
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.status: str = "pending"  # => every Order starts in the same initial state
 
-    def transition_to(self, new_status: str) -> None:  # => defines the transition_to() method
-        allowed: set[str] = self._LEGAL_NEXT[self.status]  # => looks up what THIS status permits
-        if new_status not in allowed:  # => guards every transition, not just the "obvious" ones
-            raise ValueError(f"cannot go from {self.status} to {new_status}")  # => rejects it
-        self.status = new_status  # => only reached once the transition is confirmed legal
+    def transition_to(
+        self, new_status: str
+    ) -> None:  # => defines the transition_to() method
+        allowed: set[str] = self._LEGAL_NEXT[
+            self.status
+        ]  # => looks up what THIS status permits
+        if (
+            new_status not in allowed
+        ):  # => guards every transition, not just the "obvious" ones
+            raise ValueError(
+                f"cannot go from {self.status} to {new_status}"
+            )  # => rejects it
+        self.status = (
+            new_status  # => only reached once the transition is confirmed legal
+        )
 
 
 order: Order = Order()  # => constructs order
@@ -1211,7 +1349,9 @@ flowchart LR
 from dataclasses import dataclass  # => imports dataclass from dataclasses
 
 
-@dataclass(frozen=True)  # => frozen gives consistent __eq__ AND __hash__ together, for free
+@dataclass(
+    frozen=True
+)  # => frozen gives consistent __eq__ AND __hash__ together, for free
 class Money:  # => begins the Money class body
     amount: int  # => a required dataclass field, part of the generated __init__
     currency: str  # => a required dataclass field, part of the generated __init__
@@ -1223,7 +1363,9 @@ payments: list[Money] = [  # => a list that deliberately contains one exact dupl
     Money(100, "USD"),  # => a distinct amount -- never collides with the entries above
     Money(500, "EUR"),  # => same amount, different currency -- NOT a duplicate
 ]  # => closes the payments list
-unique: set[Money] = set(payments)  # => relies on __eq__ + __hash__ working together, correctly
+unique: set[Money] = set(
+    payments
+)  # => relies on __eq__ + __hash__ working together, correctly
 print(len(unique))  # => three distinct (amount, currency) pairs survive
 # => Output: 3
 # => `set(payments)` deduplicates by value, not identity, because `Money`'s generated `__eq__`/`__hash__` pair compares and hashes `(amount, currency)` together
@@ -1286,7 +1428,9 @@ A single rendering pipeline can dispatch across several completely unrelated ren
 
 
 class HtmlRenderer:  # => begins the HtmlRenderer class body
-    def render(self, text: str) -> str:  # => no inheritance from any shared Renderer base
+    def render(
+        self, text: str
+    ) -> str:  # => no inheritance from any shared Renderer base
         return f"<p>{text}</p>"  # => returns this value to the caller
 
 
@@ -1295,11 +1439,15 @@ class MarkdownRenderer:  # => a second, entirely unrelated class
         return f"**{text}**"  # => returns this value to the caller
 
 
-def render_all(text: str, renderers: list[object]) -> list[str]:  # => a SINGLE shared pipeline
+def render_all(
+    text: str, renderers: list[object]
+) -> list[str]:  # => a SINGLE shared pipeline
     return [r.render(text) for r in renderers]  # type: ignore
 
 
-output: list[str] = render_all("hi", [HtmlRenderer(), MarkdownRenderer()])  # => constructs output
+output: list[str] = render_all(
+    "hi", [HtmlRenderer(), MarkdownRenderer()]
+)  # => constructs output
 print(output)  # => one pipeline call handled BOTH unrelated renderer types
 # => Output: ['<p>hi</p>', '**hi**']
 # => `render_all` never imports `HtmlRenderer` or `MarkdownRenderer`
@@ -1374,11 +1522,15 @@ class ReportBuilder(abc.ABC):  # => ReportBuilder extends abc.ABC
     def build(self) -> str:  # => the FIXED algorithm -- never overridden by subclasses
         return f"{self.header()} | {self.body()} | {self.footer()}"  # => calls the hooks below
 
-    def header(self) -> str:  # => a hook with a sensible default -- optional to override
+    def header(
+        self,
+    ) -> str:  # => a hook with a sensible default -- optional to override
         return "REPORT"  # => returns this value to the caller
 
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def body(self) -> str: ...  # => a REQUIRED hook -- every subclass must supply its own
+    def body(
+        self,
+    ) -> str: ...  # => a REQUIRED hook -- every subclass must supply its own
 
     def footer(self) -> str:  # => another optional hook, with its own default
         return "END"  # => returns this value to the caller
@@ -1389,7 +1541,9 @@ class SalesReport(ReportBuilder):  # => SalesReport extends ReportBuilder
         return "sales figures"  # => returns this value to the caller
 
 
-print(SalesReport().build())  # => the overall flow (build) is fixed; only body() varied per subclass
+print(
+    SalesReport().build()
+)  # => the overall flow (build) is fixed; only body() varied per subclass
 # => Output: REPORT | sales figures | END
 # => `build()` is never overridden by any subclass
 ```
@@ -1411,7 +1565,9 @@ from example import SalesReport
 
 
 def test_fixed_flow_with_only_the_required_hook_overridden() -> None:
-    assert SalesReport().build() == "REPORT | sales figures | END"  # => header/footer defaults used
+    assert (
+        SalesReport().build() == "REPORT | sales figures | END"
+    )  # => header/footer defaults used
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1444,7 +1600,9 @@ A class doing two unrelated jobs at once (formatting AND sending a report) can b
 
 
 class ReportGenerator:  # => AFTER the refactor -- each collaborator owns ONE responsibility
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.formatter: Formatter = Formatter()  # => composed, not inherited
         self.sender: Sender = Sender()  # => stores sender on this instance
 
@@ -1464,7 +1622,9 @@ class Sender:  # => responsibility #2: delivering an already-formatted string
 
 
 generator: ReportGenerator = ReportGenerator()  # => constructs generator
-print(generator.send_report("Q3 numbers"))  # => the same overall behavior, now composed of two units
+print(
+    generator.send_report("Q3 numbers")
+)  # => the same overall behavior, now composed of two units
 # => Output: sent: [REPORT] Q3 numbers
 # => `Formatter` and `Sender` can each be tested, understood, and changed independently
 ```
@@ -1539,18 +1699,28 @@ flowchart LR
 
 
 class Validator:  # => holds the invariant rule as its OWN, testable responsibility
-    def check_non_negative(self, amount: float) -> None:  # => defines the check_non_negative() method
+    def check_non_negative(
+        self, amount: float
+    ) -> None:  # => defines the check_non_negative() method
         if amount < 0:  # => the ORIGINAL invariant, now living in its own collaborator
-            raise ValueError("amount must be non-negative")  # => rejects the invalid amount
+            raise ValueError(
+                "amount must be non-negative"
+            )  # => rejects the invalid amount
 
 
 class BankAccount:  # => now COMPOSED with a Validator, instead of checking inline
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self._balance: float = 0.0  # => stores _balance on this instance
-        self._validator: Validator = Validator()  # => the invariant now lives in its own object
+        self._validator: Validator = (
+            Validator()
+        )  # => the invariant now lives in its own object
 
     def deposit(self, amount: float) -> float:  # => defines the deposit() method
-        self._validator.check_non_negative(amount)  # => delegates the SAME rule as before
+        self._validator.check_non_negative(
+            amount
+        )  # => delegates the SAME rule as before
         self._balance += amount  # => only reached once the delegated validation passed
         return self._balance  # => returns this value to the caller
 
@@ -1587,7 +1757,9 @@ def test_valid_deposit_still_works_after_refactor() -> None:
 
 def test_invariant_still_cannot_be_violated_after_refactor() -> None:
     account: BankAccount = BankAccount()
-    with pytest.raises(ValueError):  # => the ORIGINAL invariant, now enforced by a collaborator
+    with pytest.raises(
+        ValueError
+    ):  # => the ORIGINAL invariant, now enforced by a collaborator
         account.deposit(-10.0)
 
 
@@ -1635,22 +1807,34 @@ flowchart TD
 
 
 class Shape:  # => begins the Shape class body
-    registry: dict[str, type["Shape"]] = {}  # => ONE shared registry, living on the base class
+    registry: dict[
+        str, type["Shape"]
+    ] = {}  # => ONE shared registry, living on the base class
 
-    def __init_subclass__(cls, **kwargs: object) -> None:  # => fires automatically at SUBCLASS DEFINITION
-        super().__init_subclass__(**kwargs)  # => cooperates with any other __init_subclass__ in the MRO
-        Shape.registry[cls.__name__] = cls  # => registers itself -- no manual call needed anywhere
+    def __init_subclass__(
+        cls, **kwargs: object
+    ) -> None:  # => fires automatically at SUBCLASS DEFINITION
+        super().__init_subclass__(
+            **kwargs
+        )  # => cooperates with any other __init_subclass__ in the MRO
+        Shape.registry[cls.__name__] = (
+            cls  # => registers itself -- no manual call needed anywhere
+        )
 
 
 class Circle(Shape):  # => defining this class alone triggers __init_subclass__
     pass  # => an intentionally empty body
 
 
-class Square(Shape):  # => same here -- registration happens at class-definition time, not instantiation
+class Square(
+    Shape
+):  # => same here -- registration happens at class-definition time, not instantiation
     pass  # => an intentionally empty body
 
 
-print(sorted(Shape.registry.keys()))  # => both subclasses appear, with zero manual registration code
+print(
+    sorted(Shape.registry.keys())
+)  # => both subclasses appear, with zero manual registration code
 # => Output: ['Circle', 'Square']
 # => `__init_subclass__` runs once per subclass, at the moment `class Circle(Shape):` finishes executing
 ```
@@ -1672,7 +1856,9 @@ from example import Circle, Shape, Square
 
 
 def test_every_subclass_appears_in_the_registry_on_definition() -> None:
-    assert Shape.registry["Circle"] is Circle  # => registered the moment the class was defined
+    assert (
+        Shape.registry["Circle"] is Circle
+    )  # => registered the moment the class was defined
     assert Shape.registry["Square"] is Square
 
 
@@ -1732,7 +1918,9 @@ class Money:  # => begins the Money class body
 
 class PricingStrategy(abc.ABC):  # => co-11: an ABC interface
     @abc.abstractmethod  # => marks the next method as required for every subclass
-    def price(self, base: Money) -> Money: ...  # => no body -- FlatPricing below supplies one
+    def price(
+        self, base: Money
+    ) -> Money: ...  # => no body -- FlatPricing below supplies one
 
 
 class FlatPricing(PricingStrategy):  # => FlatPricing extends PricingStrategy
@@ -1741,15 +1929,23 @@ class FlatPricing(PricingStrategy):  # => FlatPricing extends PricingStrategy
 
 
 class Invoice:  # => co-02: an encapsulated entity with an invariant
-    def __init__(self, pricing: PricingStrategy) -> None:  # => co-13: pricing is COMPOSED, not inherited
+    def __init__(
+        self, pricing: PricingStrategy
+    ) -> None:  # => co-13: pricing is COMPOSED, not inherited
         self._pricing: PricingStrategy = pricing  # => stores _pricing on this instance
-        self._total: Money = Money(0)  # => private state, only ever changed through add_item
+        self._total: Money = Money(
+            0
+        )  # => private state, only ever changed through add_item
 
     def add_item(self, base: Money) -> None:  # => defines the add_item() method
         if base.amount < 0:  # => the invariant: no negative line item is ever accepted
-            raise ValueError("item amount must be non-negative")  # => co-17: rejects it entirely
+            raise ValueError(
+                "item amount must be non-negative"
+            )  # => co-17: rejects it entirely
         priced: Money = self._pricing.price(base)  # => delegates the pricing decision
-        self._total = Money(self._total.amount + priced.amount)  # => accumulates the running total
+        self._total = Money(
+            self._total.amount + priced.amount
+        )  # => accumulates the running total
 
     @property  # => marks the next method as a computed attribute
     def total(self) -> Money:  # => defines the total() method
@@ -1759,7 +1955,9 @@ class Invoice:  # => co-02: an encapsulated entity with an invariant
 invoice: Invoice = Invoice(FlatPricing())  # => constructs invoice
 invoice.add_item(Money(500))  # => adds the first, valid line item
 invoice.add_item(Money(300))  # => adds a second, valid line item
-print(invoice.total.amount)  # => every piece (value object, ABC, composition, invariant) working together
+print(
+    invoice.total.amount
+)  # => every piece (value object, ABC, composition, invariant) working together
 # => Output: 800
 # => `Invoice` composes a `PricingStrategy` (co-13, co-11), accumulates `Money` value objects (co-06), and enforces its own invariant (co-02, co-17)
 ```
@@ -1827,7 +2025,9 @@ import random  # => imports the random module
 
 
 class Percentage:  # => begins the Percentage class body
-    def __init__(self, value: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, value: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.value = value  # => routes through the validating setter below
 
     @property  # => marks the next method as a computed attribute
@@ -1836,26 +2036,42 @@ class Percentage:  # => begins the Percentage class body
 
     @value.setter  # => marks the next method as value's validating setter
     def value(self, v: float) -> None:  # => defines the value() method
-        if not (0 <= v <= 100):  # => the invariant EVERY constructed instance must satisfy
-            raise ValueError("value must be between 0 and 100")  # => rejects out-of-range values
+        if not (
+            0 <= v <= 100
+        ):  # => the invariant EVERY constructed instance must satisfy
+            raise ValueError(
+                "value must be between 0 and 100"
+            )  # => rejects out-of-range values
         self._value = v  # => stores _value on this instance
 
 
-def random_valid_or_invalid(rng: random.Random) -> float:  # => generates BOTH in- and out-of-range values
-    return rng.uniform(-50, 150)  # => a wide range spanning valid (0-100) and invalid values
+def random_valid_or_invalid(
+    rng: random.Random,
+) -> float:  # => generates BOTH in- and out-of-range values
+    return rng.uniform(
+        -50, 150
+    )  # => a wide range spanning valid (0-100) and invalid values
 
 
 rng: random.Random = random.Random(42)  # => a FIXED seed makes this run reproducible
 violations: int = 0  # => tallies any successfully constructed, out-of-range Percentage
-for _ in range(500):  # => hundreds of randomized inputs, not just a handful of hand-picked ones
+for _ in range(
+    500
+):  # => hundreds of randomized inputs, not just a handful of hand-picked ones
     candidate: float = random_valid_or_invalid(rng)  # => constructs candidate
     try:  # => the block below is expected to raise
         p: Percentage = Percentage(candidate)  # => constructs p
-        if not (0 <= p.value <= 100):  # => if construction ever SUCCEEDS with a bad value, that's a bug
-            violations += 1  # => would indicate the invariant was violated -- should never happen
+        if not (
+            0 <= p.value <= 100
+        ):  # => if construction ever SUCCEEDS with a bad value, that's a bug
+            violations += (
+                1  # => would indicate the invariant was violated -- should never happen
+            )
     except ValueError:  # => catches the ValueError raised above
         pass  # => the expected outcome for an out-of-range candidate
-print(violations)  # => zero means no generated input ever reached an invalid constructed state
+print(
+    violations
+)  # => zero means no generated input ever reached an invalid constructed state
 # => Output: 0
 # => Testing an invariant against hundreds of randomized inputs is a much stronger claim than a couple of hand-picked edge cases
 ```
@@ -1879,14 +2095,18 @@ from example import Percentage
 
 
 def test_no_randomized_input_reaches_an_invalid_state() -> None:
-    rng: random.Random = random.Random(1234)  # => a different, still-fixed seed for reproducibility
+    rng: random.Random = random.Random(
+        1234
+    )  # => a different, still-fixed seed for reproducibility
     for _ in range(500):
         candidate: float = rng.uniform(-50, 150)
         try:
             p: Percentage = Percentage(candidate)
         except ValueError:
             continue  # => rejection is the correct outcome for an out-of-range candidate
-        assert 0 <= p.value <= 100  # => any SUCCESSFULLY constructed instance must satisfy the invariant
+        assert (
+            0 <= p.value <= 100
+        )  # => any SUCCESSFULLY constructed instance must satisfy the invariant
 
 
 # => Run: pytest -- Output: 1 passed

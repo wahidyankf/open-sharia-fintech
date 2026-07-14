@@ -69,23 +69,37 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)  # => frozen -> immutable AND auto __hash__ alongside auto __eq__
+@dataclass(
+    frozen=True
+)  # => frozen -> immutable AND auto __hash__ alongside auto __eq__
 class Money:
     """An immutable amount of money, stored in integer cents to avoid float rounding error."""
 
-    amount: int  # => whole cents -- never a float, so equality never suffers rounding drift
+    amount: (
+        int  # => whole cents -- never a float, so equality never suffers rounding drift
+    )
     currency: str = "USD"  # => a default keeps most call-sites in this capstone terse
 
-    def __post_init__(self) -> None:  # => runs once, right after the frozen fields are set
-        if self.amount < 0:  # => co-17: the invariant -- a Money can never represent a negative amount
+    def __post_init__(
+        self,
+    ) -> None:  # => runs once, right after the frozen fields are set
+        if (
+            self.amount < 0
+        ):  # => co-17: the invariant -- a Money can never represent a negative amount
             raise ValueError(f"Money amount cannot be negative, got {self.amount}")
-        if len(self.currency) != 3:  # => co-17: a second invariant -- currency must be a 3-letter code
+        if (
+            len(self.currency) != 3
+        ):  # => co-17: a second invariant -- currency must be a 3-letter code
             raise ValueError(f"currency must be a 3-letter code, got {self.currency!r}")
 
     def __add__(self, other: Money) -> Money:  # => defines the __add__() method
-        if self.currency != other.currency:  # => guards against silently mixing currencies
+        if (
+            self.currency != other.currency
+        ):  # => guards against silently mixing currencies
             raise ValueError("cannot add Money in different currencies")
-        return Money(self.amount + other.amount, self.currency)  # => returns a NEW Money -- frozen, no mutation
+        return Money(
+            self.amount + other.amount, self.currency
+        )  # => returns a NEW Money -- frozen, no mutation
 ```
 
 `domain/account.py` defines `Account`, an entity that encapsulates its own balance: `_balance` only
@@ -112,9 +126,13 @@ from domain.money import Money
 class Account:
     """A named account holding a non-negative Money balance."""
 
-    def __init__(self, owner: str, opening_balance: Money) -> None:  # => the constructor
+    def __init__(
+        self, owner: str, opening_balance: Money
+    ) -> None:  # => the constructor
         self._owner: str = owner  # => stores owner on this instance
-        self._balance: Money = opening_balance  # => co-02: private -- never assigned to directly again
+        self._balance: Money = (
+            opening_balance  # => co-02: private -- never assigned to directly again
+        )
 
     @property  # => marks the next method as a computed, read-only attribute
     def owner(self) -> str:  # => defines the owner() method
@@ -122,21 +140,33 @@ class Account:
 
     @property  # => marks the next method as a computed, read-only attribute
     def balance(self) -> Money:  # => defines the balance() method
-        return self._balance  # => co-07: read-only view -- callers cannot do account.balance = ...
+        return (
+            self._balance
+        )  # => co-07: read-only view -- callers cannot do account.balance = ...
 
     def deposit(self, amount: Money) -> None:  # => defines the deposit() method
         if amount.amount <= 0:  # => co-17: rejects a zero or negative deposit outright
             raise ValueError("deposit amount must be positive")
-        self._balance = self._balance + amount  # => the ONLY line in this class that grows the balance
+        self._balance = (
+            self._balance + amount
+        )  # => the ONLY line in this class that grows the balance
 
     def withdraw(self, amount: Money) -> None:  # => defines the withdraw() method
-        if amount.amount <= 0:  # => co-17: rejects a zero or negative withdrawal outright
+        if (
+            amount.amount <= 0
+        ):  # => co-17: rejects a zero or negative withdrawal outright
             raise ValueError("withdraw amount must be positive")
-        if amount.currency != self._balance.currency:  # => co-17: same currency guard deposit gets for free via Money.__add__
+        if (
+            amount.currency != self._balance.currency
+        ):  # => co-17: same currency guard deposit gets for free via Money.__add__
             raise ValueError("cannot withdraw Money in a different currency")
-        if amount.amount > self._balance.amount:  # => co-17: the core invariant -- no overdraft, ever
+        if (
+            amount.amount > self._balance.amount
+        ):  # => co-17: the core invariant -- no overdraft, ever
             raise ValueError("insufficient funds")
-        self._balance = Money(self._balance.amount - amount.amount, self._balance.currency)
+        self._balance = Money(
+            self._balance.amount - amount.amount, self._balance.currency
+        )
         # => the ONLY line in this class that shrinks the balance -- always via a fresh Money
 ```
 
@@ -155,26 +185,36 @@ def test_money_equal_amounts_compare_equal() -> None:
 
 
 def test_money_is_hashable_and_dedups_in_a_set() -> None:
-    assert len({Money(500), Money(500), Money(300)}) == 2  # => frozen -> auto __hash__ alongside __eq__
+    assert (
+        len({Money(500), Money(500), Money(300)}) == 2
+    )  # => frozen -> auto __hash__ alongside __eq__
 
 
 def test_money_rejects_negative_amount() -> None:
-    with pytest.raises(ValueError):  # => co-17: __post_init__ rejects this before construction completes
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: __post_init__ rejects this before construction completes
         Money(-1)
 
 
 def test_money_rejects_bad_currency_code() -> None:
-    with pytest.raises(ValueError):  # => co-17: the second invariant -- currency must be 3 letters
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: the second invariant -- currency must be 3 letters
         Money(100, "US")
 
 
 def test_money_add_combines_same_currency() -> None:
-    assert Money(200) + Money(300) == Money(500)  # => __add__ returns a NEW, still-valid Money
+    assert Money(200) + Money(300) == Money(
+        500
+    )  # => __add__ returns a NEW, still-valid Money
 
 
 def test_money_add_rejects_mismatched_currency() -> None:
     with pytest.raises(ValueError):  # => guards against silently mixing currencies
-        _ = Money(200, "USD") + Money(300, "EUR")  # => discarding the result -- only the raise matters
+        _ = Money(200, "USD") + Money(
+            300, "EUR"
+        )  # => discarding the result -- only the raise matters
 
 
 # => Run: pytest -- Output: 6 passed
@@ -205,24 +245,32 @@ def test_account_withdraw_decreases_balance() -> None:
 
 def test_account_rejects_overdraft() -> None:
     account: Account = Account("Alice", Money(100))
-    with pytest.raises(ValueError):  # => co-17: the core invariant -- no overdraft, ever
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: the core invariant -- no overdraft, ever
         account.withdraw(Money(200))
 
 
 def test_account_rejects_negative_opening_balance() -> None:
-    with pytest.raises(ValueError):  # => Money itself rejects this before Account even runs
+    with pytest.raises(
+        ValueError
+    ):  # => Money itself rejects this before Account even runs
         Account("Alice", Money(-50))
 
 
 def test_account_rejects_non_positive_deposit() -> None:
     account: Account = Account("Alice", Money(100))
-    with pytest.raises(ValueError):  # => co-17: the same guard fires on the deposit path too
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: the same guard fires on the deposit path too
         account.deposit(Money(0))
 
 
 def test_account_rejects_mismatched_currency_withdraw() -> None:
     account: Account = Account("Alice", Money(1000, "USD"))
-    with pytest.raises(ValueError):  # => co-17: withdraw guards currency match too, same as deposit does via Money.__add__
+    with pytest.raises(
+        ValueError
+    ):  # => co-17: withdraw guards currency match too, same as deposit does via Money.__add__
         account.withdraw(Money(500, "JPY"))
 
 
@@ -265,33 +313,53 @@ from domain.account import Account
 from domain.money import Money
 
 
-class PaymentMethod(abc.ABC):  # => abc.ABC marks this as an INTERFACE, never directly instantiable
+class PaymentMethod(
+    abc.ABC
+):  # => abc.ABC marks this as an INTERFACE, never directly instantiable
     @abc.abstractmethod  # => marks the next method as a REQUIRED contract for every subclass
-    def process(self, account: Account, amount: Money) -> str:  # => no body -- subclasses supply one
+    def process(
+        self, account: Account, amount: Money
+    ) -> str:  # => no body -- subclasses supply one
         ...
 
 
 class CardPayment(PaymentMethod):  # => CardPayment extends PaymentMethod
-    def __init__(self, last4: str) -> None:  # => the constructor -- runs once, automatically
+    def __init__(
+        self, last4: str
+    ) -> None:  # => the constructor -- runs once, automatically
         self.last4: str = last4  # => stores last4 on this instance
 
-    def process(self, account: Account, amount: Money) -> str:  # => defines the process() method
-        account.deposit(amount)  # => delegates to Account's own guarded deposit -- co-17 still applies
+    def process(
+        self, account: Account, amount: Money
+    ) -> str:  # => defines the process() method
+        account.deposit(
+            amount
+        )  # => delegates to Account's own guarded deposit -- co-17 still applies
         return f"card ending {self.last4} deposited {amount.amount} {amount.currency}"
 
 
-class BankTransferPayment(PaymentMethod):  # => BankTransferPayment extends PaymentMethod
-    def __init__(self, iban: str) -> None:  # => the constructor -- runs once, automatically
+class BankTransferPayment(
+    PaymentMethod
+):  # => BankTransferPayment extends PaymentMethod
+    def __init__(
+        self, iban: str
+    ) -> None:  # => the constructor -- runs once, automatically
         self.iban: str = iban  # => stores iban on this instance
 
-    def process(self, account: Account, amount: Money) -> str:  # => defines the process() method
-        account.deposit(amount)  # => the SAME Account.deposit call-site CardPayment also uses
+    def process(
+        self, account: Account, amount: Money
+    ) -> str:  # => defines the process() method
+        account.deposit(
+            amount
+        )  # => the SAME Account.deposit call-site CardPayment also uses
         return f"bank transfer {self.iban} deposited {amount.amount} {amount.currency}"
 
 
 def process_payment(method: PaymentMethod, account: Account, amount: Money) -> str:
     # => co-10: ONE function, typed against the INTERFACE -- never a concrete subclass
-    return method.process(account, amount)  # => dispatches to whichever concrete class was actually passed
+    return method.process(
+        account, amount
+    )  # => dispatches to whichever concrete class was actually passed
 ```
 
 **`learning/capstone/code/tests/test_payment_method.py`** (complete file)
@@ -303,34 +371,51 @@ import pytest
 
 from domain.account import Account
 from domain.money import Money
-from domain.payment_method import BankTransferPayment, CardPayment, PaymentMethod, process_payment
+from domain.payment_method import (
+    BankTransferPayment,
+    CardPayment,
+    PaymentMethod,
+    process_payment,
+)
 
 
 def test_payment_method_cannot_be_instantiated_directly() -> None:
-    with pytest.raises(TypeError):  # => co-11: an ABC with an unimplemented method always rejects this
+    with pytest.raises(
+        TypeError
+    ):  # => co-11: an ABC with an unimplemented method always rejects this
         PaymentMethod()  # type: ignore  # => deliberately triggers the ABC instantiation guard
 
 
 def test_card_payment_deposits_into_account() -> None:
     account: Account = Account("Alice", Money(0))
     result: str = process_payment(CardPayment("4242"), account, Money(500))
-    assert account.balance == Money(500)  # => the deposit genuinely landed on the account
-    assert "4242" in result  # => the concrete implementation's own detail is still visible in the result
+    assert account.balance == Money(
+        500
+    )  # => the deposit genuinely landed on the account
+    assert (
+        "4242" in result
+    )  # => the concrete implementation's own detail is still visible in the result
 
 
 def test_bank_transfer_payment_deposits_into_account() -> None:
     account: Account = Account("Alice", Money(0))
     result: str = process_payment(BankTransferPayment("DE89"), account, Money(700))
-    assert account.balance == Money(700)  # => the SAME call-site, a DIFFERENT concrete implementation
+    assert account.balance == Money(
+        700
+    )  # => the SAME call-site, a DIFFERENT concrete implementation
     assert "DE89" in result
 
 
 def test_process_payment_call_site_is_implementation_agnostic() -> None:
     account: Account = Account("Alice", Money(0))
     methods: list[PaymentMethod] = [CardPayment("0000"), BankTransferPayment("XX00")]
-    for method in methods:  # => co-10: ONE loop body, dispatching polymorphically per element
+    for (
+        method
+    ) in methods:  # => co-10: ONE loop body, dispatching polymorphically per element
         process_payment(method, account, Money(100))
-    assert account.balance == Money(200)  # => both payments landed, regardless of concrete type
+    assert account.balance == Money(
+        200
+    )  # => both payments landed, regardless of concrete type
 
 
 # => Run: pytest -- Output: 4 passed
@@ -368,12 +453,18 @@ from __future__ import annotations
 from domain.money import Money
 
 
-class LedgerNaive(list[Money]):  # => is-a list[Money] -- inherits EVERY list method, wanted or not
+class LedgerNaive(
+    list[Money]
+):  # => is-a list[Money] -- inherits EVERY list method, wanted or not
     def record(self, entry: Money) -> None:  # => defines the record() method
-        self.append(entry)  # => reuses list.append -- convenient, but see the leak below
+        self.append(
+            entry
+        )  # => reuses list.append -- convenient, but see the leak below
 
     def total(self) -> int:  # => defines the total() method
-        return sum(entry.amount for entry in self)  # => sums every recorded entry's amount
+        return sum(
+            entry.amount for entry in self
+        )  # => sums every recorded entry's amount
 ```
 
 **`learning/capstone/code/domain/ledger.py`** (complete file)
@@ -392,17 +483,27 @@ from domain.money import Money
 
 
 class Ledger:  # => has-a list[Money] -- never subclasses list
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self._entries: list[Money] = []  # => a private collaborator, not an inherited interface
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self._entries: list[
+            Money
+        ] = []  # => a private collaborator, not an inherited interface
 
     def record(self, entry: Money) -> None:  # => defines the record() method
-        self._entries.append(entry)  # => delegates to the list, but does not EXPOSE the list
+        self._entries.append(
+            entry
+        )  # => delegates to the list, but does not EXPOSE the list
 
     def total(self) -> int:  # => defines the total() method
-        return sum(entry.amount for entry in self._entries)  # => same computation as LedgerNaive.total
+        return sum(
+            entry.amount for entry in self._entries
+        )  # => same computation as LedgerNaive.total
 
     def __len__(self) -> int:  # => defines the __len__() method
-        return len(self._entries)  # => len(ledger) still works -- deliberately re-exposed, not leaked
+        return len(
+            self._entries
+        )  # => len(ledger) still works -- deliberately re-exposed, not leaked
 ```
 
 **`learning/capstone/code/tests/test_ledger.py`** (complete file)
@@ -419,26 +520,36 @@ def test_ledger_naive_records_and_totals() -> None:
     ledger: LedgerNaive = LedgerNaive()
     ledger.record(Money(500))
     ledger.record(Money(300))
-    assert ledger.total() == 800  # => baseline behavior, BEFORE the composition refactor
+    assert (
+        ledger.total() == 800
+    )  # => baseline behavior, BEFORE the composition refactor
 
 
 def test_ledger_naive_leaks_list_insert() -> None:
     ledger: LedgerNaive = LedgerNaive()
     ledger.record(Money(500))
-    ledger.insert(0, Money(999))  # => the SMELL: insert() was never meant to be part of a ledger's API
-    assert ledger.total() == 1499  # => the leak actually mutated ledger state via a non-ledger method
+    ledger.insert(
+        0, Money(999)
+    )  # => the SMELL: insert() was never meant to be part of a ledger's API
+    assert (
+        ledger.total() == 1499
+    )  # => the leak actually mutated ledger state via a non-ledger method
 
 
 def test_ledger_records_and_totals_matches_naive_behavior() -> None:
     ledger: Ledger = Ledger()
     ledger.record(Money(500))
     ledger.record(Money(300))
-    assert ledger.total() == 800  # => SAME behavior as LedgerNaive -- tests still green after the refactor
+    assert (
+        ledger.total() == 800
+    )  # => SAME behavior as LedgerNaive -- tests still green after the refactor
 
 
 def test_ledger_has_no_leaked_list_interface() -> None:
     ledger: Ledger = Ledger()
-    assert not hasattr(ledger, "insert")  # => the smell from LedgerNaive no longer exists on Ledger
+    assert not hasattr(
+        ledger, "insert"
+    )  # => the smell from LedgerNaive no longer exists on Ledger
 
 
 # => Run: pytest -- Output: 4 passed

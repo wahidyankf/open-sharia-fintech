@@ -613,7 +613,7 @@ class Point:
 
 
 def move_right(p: Point) -> None:
-    p.x = p.x + 1  # looks like a normal mutation -- but Point is frozen
+    p.x = p.x + 1  # type: ignore  # looks like a normal mutation -- but Point is frozen
 
 
 p = Point(1, 2)
@@ -707,6 +707,7 @@ class Shape(abc.ABC):
 class Square(Shape):
     def __init__(self, side: float) -> None:
         self.side = side
+
     # forgot to implement area()
 
 
@@ -718,8 +719,8 @@ print(s.area())
 
 ```text
 Traceback (most recent call last):
-  File ".../kata-04-abc-incomplete-subclass/before/kata.py", line 17, in <module>
-    s = Square(3.0)
+  File ".../kata-04-abc-incomplete-subclass/before/kata.py", line 18, in <module>
+    s = Square(3.0)  # type: ignore
 TypeError: Can't instantiate abstract class Square without an implementation for abstract method 'area'
 ```
 
@@ -1003,7 +1004,9 @@ silently accepted):
 
 class Temperature:
     def __init__(self, celsius: float) -> None:
-        self.celsius = celsius  # routes through the property setter below, even in __init__
+        self.celsius = (
+            celsius  # routes through the property setter below, even in __init__
+        )
 
     @property
     def celsius(self) -> float:
@@ -1082,7 +1085,9 @@ still, incorrectly, returns a plain `Animal`.
 class Animal:
     @classmethod
     def create(cls) -> "Animal":
-        return Animal()  # hardcoded -- ignores whichever class create() was actually called on
+        return (
+            Animal()
+        )  # hardcoded -- ignores whichever class create() was actually called on
 
 
 class Cat(Animal):

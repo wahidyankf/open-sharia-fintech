@@ -33,13 +33,19 @@ flowchart LR
 
 
 class Rectangle:  # => begins the Rectangle class body
-    def __init__(self, width: float, height: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, width: float, height: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.width = width  # => stores width on this instance
         self.height = height  # => stores height on this instance
 
     @property  # => marks the next method as a computed attribute
-    def area(self) -> float:  # => computed on every access -- never stored as its own field
-        return self.width * self.height  # => always reflects the CURRENT width and height
+    def area(
+        self,
+    ) -> float:  # => computed on every access -- never stored as its own field
+        return (
+            self.width * self.height
+        )  # => always reflects the CURRENT width and height
 
 
 r: Rectangle = Rectangle(3.0, 4.0)  # => constructs r
@@ -99,7 +105,9 @@ A `@width.setter` runs on every assignment to `.width`, which means it is the id
 
 
 class Rectangle:  # => begins the Rectangle class body
-    def __init__(self, width: float, height: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, width: float, height: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.width = width  # => routes through the setter below, even during __init__
         self.height = height  # => stores height on this instance
 
@@ -108,9 +116,13 @@ class Rectangle:  # => begins the Rectangle class body
         return self._width  # => returns this value to the caller
 
     @width.setter  # => marks the next method as width's validating setter
-    def width(self, value: float) -> None:  # => every assignment to .width passes through here
+    def width(
+        self, value: float
+    ) -> None:  # => every assignment to .width passes through here
         if value <= 0:  # => guards the invariant: a rectangle's width must be positive
-            raise ValueError("width must be positive")  # => rejects the assignment entirely
+            raise ValueError(
+                "width must be positive"
+            )  # => rejects the assignment entirely
         self._width = value  # => only reached when the value passed validation
 
 
@@ -143,7 +155,9 @@ from example import Rectangle
 
 def test_negative_width_assignment_raises() -> None:
     r: Rectangle = Rectangle(3.0, 4.0)
-    with pytest.raises(ValueError):  # => r.width = -1 must raise, not silently accept it
+    with pytest.raises(
+        ValueError
+    ):  # => r.width = -1 must raise, not silently accept it
         r.width = -1
 
 
@@ -177,12 +191,18 @@ The property's storage lives in a conventionally-internal `_width` field, while 
 
 
 class Rectangle:  # => begins the Rectangle class body
-    def __init__(self, width: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self.width = width  # => external code always uses THIS name, never _width directly
+    def __init__(
+        self, width: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self.width = (
+            width  # => external code always uses THIS name, never _width directly
+        )
 
     @property  # => marks the next method as a computed attribute
     def width(self) -> float:  # => defines the width() method
-        return self._width  # => internally-named storage field, hidden behind the property
+        return (
+            self._width
+        )  # => internally-named storage field, hidden behind the property
 
     @width.setter  # => marks the next method as width's validating setter
     def width(self, value: float) -> None:  # => defines the width() method
@@ -192,7 +212,9 @@ class Rectangle:  # => begins the Rectangle class body
 r: Rectangle = Rectangle(5.0)  # => constructs r
 print(r.width)  # => external code never spells out ._width anywhere
 # => Output: 5.0
-print(hasattr(r, "_width"))  # => the storage field exists, but is not the public interface
+print(
+    hasattr(r, "_width")
+)  # => the storage field exists, but is not the public interface
 # => Output: True
 # => A property's public name (`width`) and its private storage name (`_width`) can differ
 ```
@@ -250,7 +272,9 @@ A property can derive its value from more than one field, and it recomputes on e
 
 
 class Rectangle:  # => begins the Rectangle class body
-    def __init__(self, width: float, height: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, width: float, height: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.width = width  # => stores width on this instance
         self.height = height  # => stores height on this instance
 
@@ -289,7 +313,9 @@ def test_perimeter_updates_after_width_changes() -> None:
     r: Rectangle = Rectangle(3.0, 4.0)
     assert r.perimeter == 14.0
     r.width = 10.0  # => mutate the field the property is derived from
-    assert r.perimeter == 28.0  # => the computed value tracks the mutation automatically
+    assert (
+        r.perimeter == 28.0
+    )  # => the computed value tracks the mutation automatically
 
 
 # => Run: pytest -- Output: 1 passed
@@ -322,14 +348,18 @@ A value object's equality should depend on every field that makes up its value -
 
 
 class Money:  # => begins the Money class body
-    def __init__(self, amount: int, currency: str) -> None:  # => amount in integer cents
+    def __init__(
+        self, amount: int, currency: str
+    ) -> None:  # => amount in integer cents
         self.amount = amount  # => stores amount on this instance
         self.currency = currency  # => stores currency on this instance
 
     def __eq__(self, other: object) -> bool:  # => defines the __eq__() method
         if not isinstance(other, Money):
             return NotImplemented  # => returns this value to the caller
-        return self.amount == other.amount and self.currency == other.currency  # => returns this value to the caller
+        return (
+            self.amount == other.amount and self.currency == other.currency
+        )  # => returns this value to the caller
         # => equal ONLY when BOTH fields match -- a partial match is not equality
 
 
@@ -408,17 +438,25 @@ flowchart TD
 
 
 class Money:  # => begins the Money class body
-    def __init__(self, amount: int, currency: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, amount: int, currency: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.amount = amount  # => stores amount on this instance
         self.currency = currency  # => stores currency on this instance
 
     def __eq__(self, other: object) -> bool:  # => defines the __eq__() method
-        if not isinstance(other, Money):  # => guards against comparing a Money to an unrelated type
+        if not isinstance(
+            other, Money
+        ):  # => guards against comparing a Money to an unrelated type
             return NotImplemented  # => returns this value to the caller
-        return self.amount == other.amount and self.currency == other.currency  # => returns this value to the caller
+        return (
+            self.amount == other.amount and self.currency == other.currency
+        )  # => returns this value to the caller
 
     def __hash__(self) -> int:  # => MUST hash the SAME fields __eq__ compares
-        return hash((self.amount, self.currency))  # => tuple hash -- combines both fields at once
+        return hash(
+            (self.amount, self.currency)
+        )  # => tuple hash -- combines both fields at once
 
 
 wallet: set[Money] = {Money(500, "USD"), Money(500, "USD"), Money(100, "USD")}
@@ -450,7 +488,9 @@ def test_equal_money_objects_deduplicate_in_a_set() -> None:
 
 
 def test_equal_objects_share_a_hash() -> None:
-    assert hash(Money(500, "USD")) == hash(Money(500, "USD"))  # => required by the eq/hash contract
+    assert hash(Money(500, "USD")) == hash(
+        Money(500, "USD")
+    )  # => required by the eq/hash contract
 
 
 # => Run: pytest -- Output: 2 passed
@@ -483,14 +523,19 @@ Defining `__eq__` alone, with no accompanying `__hash__`, makes Python set `__ha
 
 
 class Money:  # => begins the Money class body
-    def __init__(self, amount: int, currency: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, amount: int, currency: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.amount = amount  # => stores amount on this instance
         self.currency = currency  # => stores currency on this instance
 
     def __eq__(self, other: object) -> bool:  # => defining __eq__ ALONE
         if not isinstance(other, Money):
             return NotImplemented  # => returns this value to the caller
-        return self.amount == other.amount and self.currency == other.currency  # => returns this value to the caller
+        return (
+            self.amount == other.amount and self.currency == other.currency
+        )  # => returns this value to the caller
+
     # => Python sets __hash__ = None automatically the moment __eq__ is defined without __hash__
 
 
@@ -521,7 +566,9 @@ from example import Money
 
 
 def test_eq_only_class_is_unhashable() -> None:
-    with pytest.raises(TypeError):  # => hash(Money(...)) must raise, not silently succeed
+    with pytest.raises(
+        TypeError
+    ):  # => hash(Money(...)) must raise, not silently succeed
         {Money(500, "USD")}  # type: ignore  # => set construction calls hash() internally (static checkers correctly flag Money as unhashable)
 
 
@@ -577,7 +624,9 @@ class Point:  # => begins the Point class body
 p: Point = Point(1, 2)  # => constructs p
 try:  # => the block below is expected to raise
     p.x = 99  # type: ignore  # => assignment to a frozen field always raises (static checkers also flag it as read-only)
-except Exception as exc:  # => dataclasses.FrozenInstanceError, a subclass of AttributeError
+except (
+    Exception
+) as exc:  # => dataclasses.FrozenInstanceError, a subclass of AttributeError
     print(type(exc).__name__)  # => confirms the exact exception type raised
 # => Output: FrozenInstanceError
 # => `dataclasses.FrozenInstanceError` (a subclass of `AttributeError`) fires on every attempted field assignment after construction
@@ -605,7 +654,9 @@ from example import Point
 
 def test_assigning_frozen_field_raises_frozen_instance_error() -> None:
     p: Point = Point(1, 2)
-    with pytest.raises(dataclasses.FrozenInstanceError):  # => the exact documented exception type
+    with pytest.raises(
+        dataclasses.FrozenInstanceError
+    ):  # => the exact documented exception type
         p.x = 99  # type: ignore  # => static checkers also flag frozen-field assignment as an error
 
 
@@ -640,15 +691,24 @@ _ex-37 &middot; exercises co-06, co-05_
 from dataclasses import dataclass  # => imports dataclass from dataclasses
 
 
-@dataclass(frozen=True)  # => frozen=True (with the default eq=True) auto-generates __hash__ too
+@dataclass(
+    frozen=True
+)  # => frozen=True (with the default eq=True) auto-generates __hash__ too
 class Point:  # => begins the Point class body
     x: int  # => a required dataclass field, part of the generated __init__
     y: int  # => a required dataclass field, part of the generated __init__
 
 
-lookup: dict[Point, str] = {Point(1, 2): "origin-ish"}  # => works as a dict key -- it is hashable
-members: set[Point] = {Point(1, 2), Point(1, 2)}  # => equal frozen instances deduplicate
-print(lookup[Point(1, 2)], len(members))  # => a NEW equal Point still finds the same entry
+lookup: dict[Point, str] = {
+    Point(1, 2): "origin-ish"
+}  # => works as a dict key -- it is hashable
+members: set[Point] = {
+    Point(1, 2),
+    Point(1, 2),
+}  # => equal frozen instances deduplicate
+print(
+    lookup[Point(1, 2)], len(members)
+)  # => a NEW equal Point still finds the same entry
 # => Output: origin-ish 1
 # => `@dataclass(frozen=True)` is the shortest path to a fully correct, hashable value object
 ```
@@ -671,7 +731,9 @@ from example import Point
 
 def test_frozen_dataclass_works_as_dict_key() -> None:
     lookup: dict[Point, str] = {Point(1, 2): "origin-ish"}
-    assert lookup[Point(1, 2)] == "origin-ish"  # => a NEW, equal Point finds the same entry
+    assert (
+        lookup[Point(1, 2)] == "origin-ish"
+    )  # => a NEW, equal Point finds the same entry
 
 
 def test_frozen_dataclass_deduplicates_in_a_set() -> None:
@@ -710,7 +772,9 @@ _ex-38 &middot; exercises co-06, co-03_
 from dataclasses import dataclass  # => imports dataclass from dataclasses
 
 
-@dataclass(eq=False)  # => suppresses the generated __eq__ entirely -- object's default is used
+@dataclass(
+    eq=False
+)  # => suppresses the generated __eq__ entirely -- object's default is used
 class Point:  # => begins the Point class body
     x: int  # => a required dataclass field, part of the generated __init__
     y: int  # => a required dataclass field, part of the generated __init__
@@ -781,7 +845,9 @@ _ex-39 &middot; exercises co-06_
 from dataclasses import dataclass  # => imports dataclass from dataclasses
 
 
-@dataclass(slots=True)  # => added in Python 3.10 -- generates __slots__ from the field list
+@dataclass(
+    slots=True
+)  # => added in Python 3.10 -- generates __slots__ from the field list
 class Point:  # => begins the Point class body
     x: int  # => a required dataclass field, part of the generated __init__
     y: int  # => a required dataclass field, part of the generated __init__
@@ -819,7 +885,9 @@ from example import Point
 
 def test_slots_instance_has_no_dict() -> None:
     p: Point = Point(1, 2)
-    assert not hasattr(p, "__dict__")  # => __slots__ replaces the usual per-instance __dict__
+    assert not hasattr(
+        p, "__dict__"
+    )  # => __slots__ replaces the usual per-instance __dict__
 
 
 def test_undeclared_attribute_assignment_raises() -> None:
@@ -865,7 +933,11 @@ class Point:  # => begins the Point class body
     y: int  # => comparisons check x first, then y -- exactly like tuple comparison
 
 
-points: list[Point] = [Point(2, 1), Point(1, 5), Point(1, 2)]  # => deliberately out of order
+points: list[Point] = [
+    Point(2, 1),
+    Point(1, 5),
+    Point(1, 2),
+]  # => deliberately out of order
 points.sort()  # => sort() uses the generated __lt__ under the hood
 print(points)  # => sorted by (x, y) as a tuple: (1,2) < (1,5) < (2,1)
 # => Output: [Point(x=1, y=2), Point(x=1, y=5), Point(x=2, y=1)]
@@ -936,7 +1008,9 @@ flowchart TD
 
 
 class Animal:  # => begins the Animal class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => defined ONCE, on the base class
 
 
@@ -944,7 +1018,9 @@ class Cat(Animal):  # => Cat inherits EVERYTHING Animal defines, with no body of
     pass  # => an intentionally empty body
 
 
-c: Cat = Cat("Whiskers")  # => Animal.__init__ ran, even though Cat wrote no __init__ itself
+c: Cat = Cat(
+    "Whiskers"
+)  # => Animal.__init__ ran, even though Cat wrote no __init__ itself
 print(c.name)  # => the inherited field, set by the inherited __init__
 # => Output: Whiskers
 # => A subclass with no `__init__` of its own falls back to the nearest ancestor's `__init__` automatically
@@ -967,7 +1043,9 @@ from example import Cat
 
 
 def test_subclass_inherits_base_init_field() -> None:
-    c: Cat = Cat("Whiskers")  # => Cat has no __init__ of its own -- Animal's runs instead
+    c: Cat = Cat(
+        "Whiskers"
+    )  # => Cat has no __init__ of its own -- Animal's runs instead
     assert c.name == "Whiskers"
 
 
@@ -1013,12 +1091,16 @@ flowchart LR
 
 
 class Animal:  # => begins the Animal class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => set by the BASE class's own __init__
 
 
 class Cat(Animal):  # => Cat extends Animal
-    def __init__(self, name: str, indoor: bool) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str, indoor: bool
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         super().__init__(name)  # => explicitly runs Animal.__init__ first
         self.indoor = indoor  # => THEN adds the subclass's own field
 
@@ -1154,7 +1236,9 @@ class Animal:  # => begins the Animal class body
 
 class Cat(Animal):  # => Cat extends Animal
     def speak(self) -> str:  # => defines the speak() method
-        base: str = super().speak()  # => explicitly invokes Animal's own implementation first
+        base: str = (
+            super().speak()
+        )  # => explicitly invokes Animal's own implementation first
         return f"Meow (base said: {base})"  # => AUGMENTS the base result instead of discarding it
 
 
@@ -1246,8 +1330,14 @@ class Dog(Animal):  # => Dog extends Animal
         return "Woof"  # => returns this value to the caller
 
 
-animals: list[Animal] = [Cat(), Dog(), Animal()]  # => ONE list, THREE different runtime types
-sounds: list[str] = [a.speak() for a in animals]  # => same .speak() call-site for every element
+animals: list[Animal] = [
+    Cat(),
+    Dog(),
+    Animal(),
+]  # => ONE list, THREE different runtime types
+sounds: list[str] = [
+    a.speak() for a in animals
+]  # => same .speak() call-site for every element
 print(sounds)  # => each element dispatched to its OWN class's implementation
 # => Output: ['Meow', 'Woof', '...']
 # => `[a.speak() for a in animals]` never branches on `type(a)` anywhere
@@ -1271,7 +1361,9 @@ from example import Animal, Cat, Dog
 
 def test_each_element_dispatches_to_its_own_override() -> None:
     animals: list[Animal] = [Cat(), Dog(), Animal()]
-    sounds: list[str] = [a.speak() for a in animals]  # => one shared call-site, three behaviors
+    sounds: list[str] = [
+        a.speak() for a in animals
+    ]  # => one shared call-site, three behaviors
     assert sounds == ["Meow", "Woof", "..."]
 
 
@@ -1315,7 +1407,9 @@ class Cat(Animal):  # => Cat extends Animal
 c: Cat = Cat()  # => constructs c
 print(isinstance(c, Cat))  # => True: c's own, exact class
 # => Output: True
-print(isinstance(c, Animal))  # => ALSO True: isinstance checks the WHOLE hierarchy, not exact type
+print(
+    isinstance(c, Animal)
+)  # => ALSO True: isinstance checks the WHOLE hierarchy, not exact type
 # => Output: True
 # => `isinstance` answers "is this object a Cat, or anything that IS-A Cat's ancestor"
 ```
@@ -1383,23 +1477,37 @@ flowchart LR
 ```python
 """Example 47: A classmethod Alternative Constructor."""
 
-from __future__ import annotations  # => lets "Date" be used as a forward-referenced return type
+from __future__ import (
+    annotations,
+)  # => lets "Date" be used as a forward-referenced return type
 
 
 class Date:  # => begins the Date class body
-    def __init__(self, year: int, month: int, day: int) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, year: int, month: int, day: int
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.year = year  # => stores year on this instance
         self.month = month  # => stores month on this instance
         self.day = day  # => stores day on this instance
 
     @classmethod  # => marks the next method as receiving cls, not self
-    def from_string(cls, s: str) -> Date:  # => cls is the Date class itself, passed automatically
-        year_s, month_s, day_s = s.split("-")  # => parses "YYYY-MM-DD" into three string pieces
-        return cls(int(year_s), int(month_s), int(day_s))  # => builds an instance via cls(...)
+    def from_string(
+        cls, s: str
+    ) -> Date:  # => cls is the Date class itself, passed automatically
+        year_s, month_s, day_s = s.split(
+            "-"
+        )  # => parses "YYYY-MM-DD" into three string pieces
+        return cls(
+            int(year_s), int(month_s), int(day_s)
+        )  # => builds an instance via cls(...)
 
 
-d: Date = Date.from_string("2026-07-14")  # => an alternative entry point beside Date(...)
-print(d.year, d.month, d.day)  # => confirms the parsed pieces landed in the right fields
+d: Date = Date.from_string(
+    "2026-07-14"
+)  # => an alternative entry point beside Date(...)
+print(
+    d.year, d.month, d.day
+)  # => confirms the parsed pieces landed in the right fields
 # => Output: 2026 7 14
 # => `@classmethod` alternative constructors give a class more than one named entry point
 ```
@@ -1422,7 +1530,11 @@ from example import Date
 
 def test_from_string_builds_instance_from_parsed_text() -> None:
     d: Date = Date.from_string("2026-07-14")
-    assert (d.year, d.month, d.day) == (2026, 7, 14)  # => parsed pieces landed in the right fields
+    assert (d.year, d.month, d.day) == (
+        2026,
+        7,
+        14,
+    )  # => parsed pieces landed in the right fields
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1456,11 +1568,17 @@ _ex-48 &middot; exercises co-15_
 
 class Date:  # => begins the Date class body
     @staticmethod  # => marks the next method as needing neither self nor cls
-    def is_leap(year: int) -> bool:  # => neither self nor cls -- an ordinary function in a namespace
-        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)  # => returns this value to the caller
+    def is_leap(
+        year: int,
+    ) -> bool:  # => neither self nor cls -- an ordinary function in a namespace
+        return year % 4 == 0 and (
+            year % 100 != 0 or year % 400 == 0
+        )  # => returns this value to the caller
 
 
-print(Date.is_leap(2024))  # => callable directly on the class -- no instance needed anywhere
+print(
+    Date.is_leap(2024)
+)  # => callable directly on the class -- no instance needed anywhere
 # => Output: True
 print(Date.is_leap(1900))  # => divisible by 100 but not 400 -- not a leap year
 # => Output: False
@@ -1485,7 +1603,9 @@ from example import Date
 
 
 def test_staticmethod_callable_without_an_instance() -> None:
-    assert Date.is_leap(2024) is True  # => called on the class itself, no Date(...) constructed
+    assert (
+        Date.is_leap(2024) is True
+    )  # => called on the class itself, no Date(...) constructed
     assert Date.is_leap(1900) is False  # => the century-not-divisible-by-400 exception
 
 
@@ -1520,12 +1640,16 @@ Calling `cls()` instead of a hardcoded class name inside a `@classmethod` makes 
 from typing import TypeVar  # => imports TypeVar from typing
 
 # => bound="Animal" ties T to Animal or any of its subclasses
-T = TypeVar("T", bound="Animal")  # => T stands for "whatever concrete subclass calls create()"
+T = TypeVar(
+    "T", bound="Animal"
+)  # => T stands for "whatever concrete subclass calls create()"
 
 
 class Animal:  # => begins the Animal class body
     @classmethod  # => marks the next method as receiving cls, not self
-    def create(cls: type[T]) -> T:  # => cls: type[T] lets the return type track the CALLING class
+    def create(
+        cls: type[T],
+    ) -> T:  # => cls: type[T] lets the return type track the CALLING class
         return cls()  # => NOT "return Animal()" -- cls() adapts to the calling subclass
 
 
@@ -1593,9 +1717,13 @@ A class attribute mutated through the class name itself (`Dog.population += 1`) 
 class Dog:  # => begins the Dog class body
     population: int = 0  # => ONE shared counter, living on the class, not any instance
 
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
-        Dog.population += 1  # => mutates the CLASS attribute -- every instance sees the update
+        Dog.population += (
+            1  # => mutates the CLASS attribute -- every instance sees the update
+        )
 
 
 Dog("Rex")  # => constructs one Dog, incrementing Dog.population to 1
@@ -1623,7 +1751,9 @@ from example import Dog
 
 
 def test_population_counts_every_constructed_instance() -> None:
-    before: int = Dog.population  # => baseline, in case another test constructed Dogs first
+    before: int = (
+        Dog.population
+    )  # => baseline, in case another test constructed Dogs first
     Dog("Rex")
     Dog("Fido")
     Dog("Max")
@@ -1675,27 +1805,47 @@ flowchart TD
 
 
 class BuggyCart:  # => begins the BuggyCart class body
-    items: list[str] = []  # => BUG: declared on the CLASS -- ONE list shared by every instance
+    items: list[
+        str
+    ] = []  # => BUG: declared on the CLASS -- ONE list shared by every instance
 
     def add(self, item: str) -> None:  # => defines the add() method
-        self.items.append(item)  # => looks like instance state, but mutates the SHARED list
+        self.items.append(
+            item
+        )  # => looks like instance state, but mutates the SHARED list
 
 
 class Cart:  # => begins the Cart class body
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self.items: list[str] = []  # => FIX: a fresh list is created INSIDE __init__, per instance
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self.items: list[
+            str
+        ] = []  # => FIX: a fresh list is created INSIDE __init__, per instance
 
     def add(self, item: str) -> None:  # => defines the add() method
-        self.items.append(item)  # => now genuinely mutates only THIS instance's own list
+        self.items.append(
+            item
+        )  # => now genuinely mutates only THIS instance's own list
 
 
-if __name__ == "__main__":  # => guards the demo so IMPORTING this module (for pytest) stays side-effect-free
-    buggy_a, buggy_b = BuggyCart(), BuggyCart()  # => two "separate" carts sharing one class list
-    buggy_a.add("apple")  # => appends to the class-level list every BuggyCart instance sees
+if (
+    __name__ == "__main__"
+):  # => guards the demo so IMPORTING this module (for pytest) stays side-effect-free
+    buggy_a, buggy_b = (
+        BuggyCart(),
+        BuggyCart(),
+    )  # => two "separate" carts sharing one class list
+    buggy_a.add(
+        "apple"
+    )  # => appends to the class-level list every BuggyCart instance sees
     print(buggy_b.items)  # => the bug: buggy_b sees buggy_a's item too
     # => Output: ['apple']
 
-    fixed_a, fixed_b = Cart(), Cart()  # => two GENUINELY separate carts, each with its own list
+    fixed_a, fixed_b = (
+        Cart(),
+        Cart(),
+    )  # => two GENUINELY separate carts, each with its own list
     fixed_a.add("apple")  # => appends to fixed_a's own list only
     print(fixed_b.items)  # => the fix: fixed_b's own list stays empty
     # => Output: []
@@ -1722,7 +1872,9 @@ from example import BuggyCart, Cart
 def test_buggy_cart_shares_state_across_instances() -> None:
     a, b = BuggyCart(), BuggyCart()
     a.add("apple")
-    assert b.items == ["apple"]  # => reproduces the bug: b sees a's item through the shared list
+    assert b.items == [
+        "apple"
+    ]  # => reproduces the bug: b sees a's item through the shared list
 
 
 def test_fixed_cart_isolates_state_per_instance() -> None:
@@ -1761,31 +1913,47 @@ Routing `__init__`'s field assignment through a validating property setter means
 
 
 class Percentage:  # => begins the Percentage class body
-    def __init__(self, value: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self.value = value  # => routes through the setter below -- validated on construction too
+    def __init__(
+        self, value: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self.value = (
+            value  # => routes through the setter below -- validated on construction too
+        )
 
     @property  # => marks the next method as a computed attribute
     def value(self) -> float:  # => defines the value() method
         return self._value  # => returns this value to the caller
 
     @value.setter  # => marks the next method as value's validating setter
-    def value(self, v: float) -> None:  # => the ONE place the 0-100 invariant is actually checked
-        if not (0 <= v <= 100):  # => guards the invariant on every assignment, not just __init__
-            raise ValueError("value must be between 0 and 100")  # => rejects the whole assignment
+    def value(
+        self, v: float
+    ) -> None:  # => the ONE place the 0-100 invariant is actually checked
+        if not (
+            0 <= v <= 100
+        ):  # => guards the invariant on every assignment, not just __init__
+            raise ValueError(
+                "value must be between 0 and 100"
+            )  # => rejects the whole assignment
         self._value = v  # => stores _value on this instance
 
 
 try:  # => the block below is expected to raise
-    Percentage(150)  # => rejected by __init__, because __init__ assigns through the setter
+    Percentage(
+        150
+    )  # => rejected by __init__, because __init__ assigns through the setter
 except ValueError:  # => catches the ValueError raised above
-    print("constructor path rejected 150")  # => proves the CONSTRUCTOR path enforces the invariant
+    print(
+        "constructor path rejected 150"
+    )  # => proves the CONSTRUCTOR path enforces the invariant
 # => Output: constructor path rejected 150
 
 p: Percentage = Percentage(50)  # => constructs p
 try:  # => the block below is expected to raise
     p.value = 150  # => rejected by the setter path too -- the SAME guard, reused
 except ValueError:  # => catches the ValueError raised above
-    print("setter path rejected 150")  # => proves the SETTER path enforces the SAME invariant
+    print(
+        "setter path rejected 150"
+    )  # => proves the SETTER path enforces the SAME invariant
 # => Output: setter path rejected 150
 # => Writing the invariant check exactly once, inside the setter, covers both `__init__` and later assignments
 ```
@@ -1811,7 +1979,9 @@ from example import Percentage
 
 def test_constructor_path_rejects_out_of_range_value() -> None:
     with pytest.raises(ValueError):
-        Percentage(150)  # => __init__ assigns through the property setter -- same guard fires
+        Percentage(
+            150
+        )  # => __init__ assigns through the property setter -- same guard fires
 
 
 def test_setter_path_rejects_out_of_range_value() -> None:
@@ -1850,21 +2020,33 @@ A `__repr__` that returns the exact constructor call needed to rebuild an object
 
 
 class Point:  # => begins the Point class body
-    def __init__(self, x: int, y: int) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, x: int, y: int
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.x = x  # => stores x on this instance
         self.y = y  # => stores y on this instance
 
-    def __repr__(self) -> str:  # => shows the EXACT constructor call needed to rebuild this object
+    def __repr__(
+        self,
+    ) -> str:  # => shows the EXACT constructor call needed to rebuild this object
         return f"Point({self.x!r}, {self.y!r})"  # => returns this value to the caller
 
-    def __eq__(self, other: object) -> bool:  # => needed so eval(repr(obj)) == obj can be checked
-        if not isinstance(other, Point):  # => guards against comparing a Point to an unrelated type
+    def __eq__(
+        self, other: object
+    ) -> bool:  # => needed so eval(repr(obj)) == obj can be checked
+        if not isinstance(
+            other, Point
+        ):  # => guards against comparing a Point to an unrelated type
             return NotImplemented  # => returns this value to the caller
-        return self.x == other.x and self.y == other.y  # => returns this value to the caller
+        return (
+            self.x == other.x and self.y == other.y
+        )  # => returns this value to the caller
 
 
 p: Point = Point(3, 4)  # => constructs p
-rebuilt: Point = eval(repr(p))  # => literally re-executes the repr string as Python source
+rebuilt: Point = eval(
+    repr(p)
+)  # => literally re-executes the repr string as Python source
 print(rebuilt == p)  # => the round-tripped object is equal to the original
 # => Output: True
 # => A repr shaped exactly like the constructor call (`Point(3, 4)`) is not just readable
@@ -1922,15 +2104,23 @@ Returning `tuple(self._songs)` instead of `self._songs` directly hands callers a
 
 
 class Playlist:  # => begins the Playlist class body
-    def __init__(self) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self._songs: list[str] = []  # => internal, mutable storage -- never handed out directly
+    def __init__(
+        self,
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self._songs: list[
+            str
+        ] = []  # => internal, mutable storage -- never handed out directly
 
     def add(self, song: str) -> None:  # => defines the add() method
         self._songs.append(song)  # => the ONLY sanctioned way to grow the internal list
 
     @property  # => marks the next method as a computed attribute
-    def songs(self) -> tuple[str, ...]:  # => returns an IMMUTABLE copy, not the internal list itself
-        return tuple(self._songs)  # => a tuple cannot be appended to -- mutation cannot leak back
+    def songs(
+        self,
+    ) -> tuple[str, ...]:  # => returns an IMMUTABLE copy, not the internal list itself
+        return tuple(
+            self._songs
+        )  # => a tuple cannot be appended to -- mutation cannot leak back
 
 
 p: Playlist = Playlist()  # => constructs p
@@ -1939,7 +2129,9 @@ view: tuple[str, ...] = p.songs  # => a snapshot copy, not a reference to _songs
 print(view)  # => shows the current contents
 # => Output: ('Song A',)
 p.add("Song B")  # => mutates the internal list AFTER the view was taken
-print(view, p.songs)  # => the old view is frozen; a fresh .songs call reflects the new song
+print(
+    view, p.songs
+)  # => the old view is frozen; a fresh .songs call reflects the new song
 # => Output: ('Song A',) ('Song A', 'Song B')
 # => `tuple(self._songs)` builds a genuinely separate, immutable copy on every access
 ```
@@ -1966,7 +2158,9 @@ def test_returned_view_is_a_tuple_not_the_internal_list() -> None:
     p.add("Song A")
     view: tuple[str, ...] = p.songs
     assert view == ("Song A",)
-    assert not hasattr(view, "append")  # => a tuple has no mutating methods -- callers cannot leak in
+    assert not hasattr(
+        view, "append"
+    )  # => a tuple has no mutating methods -- callers cannot leak in
 
 
 def test_mutating_the_playlist_does_not_retroactively_change_a_taken_view() -> None:
@@ -2010,7 +2204,9 @@ from typing import Iterable  # => imports Iterable from typing
 
 
 class Circle:  # => begins the Circle class body
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
     def area(self) -> float:  # => defines the area() method
@@ -2018,20 +2214,30 @@ class Circle:  # => begins the Circle class body
 
 
 class Square:  # => begins the Square class body
-    def __init__(self, side: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, side: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.side = side  # => stores side on this instance
 
     def area(self) -> float:  # => defines the area() method
         return self.side**2  # => returns this value to the caller
 
 
-def total_area(shapes: Iterable[object]) -> float:  # => accepts ANY iterable of area()-having objects
+def total_area(
+    shapes: Iterable[object],
+) -> float:  # => accepts ANY iterable of area()-having objects
     return sum(shape.area() for shape in shapes)  # type: ignore
     # => duck typing: only .area() is required, not a shared base class
 
 
-shapes: list[object] = [Circle(1.0), Square(2.0), Circle(2.0)]  # => two unrelated types, mixed
-print(round(total_area(shapes), 5))  # => sums every shape's own area formula in one pass
+shapes: list[object] = [
+    Circle(1.0),
+    Square(2.0),
+    Circle(2.0),
+]  # => two unrelated types, mixed
+print(
+    round(total_area(shapes), 5)
+)  # => sums every shape's own area formula in one pass
 # => Output: 19.70795
 # => `total_area` never imports or checks `Circle`/`Square` at all
 ```
@@ -2054,7 +2260,9 @@ from example import Circle, Square, total_area
 
 def test_mixed_unrelated_types_sum_correctly() -> None:
     shapes: list[object] = [Circle(1.0), Square(2.0), Circle(2.0)]
-    assert round(total_area(shapes), 5) == 19.70795  # => 3.14159 + 4.0 + 12.56636 (rounded)
+    assert (
+        round(total_area(shapes), 5) == 19.70795
+    )  # => 3.14159 + 4.0 + 12.56636 (rounded)
 
 
 # => Run: pytest -- Output: 1 passed
@@ -2096,29 +2304,46 @@ flowchart TD
 ```python
 """Example 56: typing.Protocol Formalizes Duck Typing."""
 
-from typing import Protocol, runtime_checkable  # => imports Protocol, runtime_checkable from typing
+from typing import (
+    Protocol,
+    runtime_checkable,
+)  # => imports Protocol, runtime_checkable from typing
 
 
 @runtime_checkable  # => opts this Protocol into isinstance() checks at runtime, not just static
-class HasArea(Protocol):  # => a STRUCTURAL type: "anything with an area() -> float method"
-    def area(self) -> float: ...  # => no implementation -- just the shape of the contract
+class HasArea(
+    Protocol
+):  # => a STRUCTURAL type: "anything with an area() -> float method"
+    def area(
+        self,
+    ) -> float: ...  # => no implementation -- just the shape of the contract
 
 
 class Circle:  # => NEVER declares `class Circle(HasArea)` -- no inheritance link at all
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
-    def area(self) -> float:  # => satisfies HasArea purely by having this exact method shape
+    def area(
+        self,
+    ) -> float:  # => satisfies HasArea purely by having this exact method shape
         return 3.14159 * self.radius**2  # => returns this value to the caller
 
 
-def describe(shape: HasArea) -> str:  # => type-hinted against the PROTOCOL, not a concrete class
+def describe(
+    shape: HasArea,
+) -> str:  # => type-hinted against the PROTOCOL, not a concrete class
     return f"area is {shape.area()}"  # => returns this value to the caller
 
 
-print(describe(Circle(2.0)))  # => a static checker accepts this with zero inheritance declared
+print(
+    describe(Circle(2.0))
+)  # => a static checker accepts this with zero inheritance declared
 # => Output: area is 12.56636
-print(isinstance(Circle(2.0), HasArea))  # => @runtime_checkable makes THIS check work too
+print(
+    isinstance(Circle(2.0), HasArea)
+)  # => @runtime_checkable makes THIS check work too
 # => Output: True
 # => `Protocol` gives duck typing a name a static checker can verify ahead of time
 ```
@@ -2142,11 +2367,15 @@ from example import Circle, HasArea
 
 def test_class_satisfies_protocol_without_inheriting() -> None:
     circle: Circle = Circle(2.0)
-    assert isinstance(circle, HasArea)  # => structural match, with no `class Circle(HasArea)` anywhere
+    assert isinstance(
+        circle, HasArea
+    )  # => structural match, with no `class Circle(HasArea)` anywhere
 
 
 def test_class_bases_do_not_mention_the_protocol() -> None:
-    assert HasArea not in Circle.__bases__  # => confirms there is genuinely no inheritance link
+    assert (
+        HasArea not in Circle.__bases__
+    )  # => confirms there is genuinely no inheritance link
 
 
 # => Run: pytest -- Output: 2 passed
@@ -2179,11 +2408,15 @@ An `__eq__` that checks `type(other) is not type(self)` (exact type match) rathe
 
 
 class Money:  # => begins the Money class body
-    def __init__(self, amount: int) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, amount: int
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.amount = amount  # => stores amount on this instance
 
     def __eq__(self, other: object) -> bool:  # => defines the __eq__() method
-        if type(other) is not type(self):  # => STRICT: exact type match, not isinstance()
+        if type(other) is not type(
+            self
+        ):  # => STRICT: exact type match, not isinstance()
             return NotImplemented  # => a subclass instance is deliberately never equal to a Money
         return self.amount == other.amount  # type: ignore
 
@@ -2276,11 +2509,17 @@ class Vehicle:  # => begins the Vehicle class body
 
 @dataclass  # => generates boilerplate methods from the field list below
 class Car(Vehicle):  # => inherits make/model, adds its OWN field after them
-    doors: int = 4  # => new fields must come AFTER inherited fields in the generated __init__
+    doors: int = (
+        4  # => new fields must come AFTER inherited fields in the generated __init__
+    )
 
 
-c: Car = Car("Toyota", "Corolla", doors=4)  # => positional order: make, model, THEN doors
-print(c.make, c.model, c.doors)  # => confirms all three fields, from both classes, are set
+c: Car = Car(
+    "Toyota", "Corolla", doors=4
+)  # => positional order: make, model, THEN doors
+print(
+    c.make, c.model, c.doors
+)  # => confirms all three fields, from both classes, are set
 # => Output: Toyota Corolla 4
 # => `@dataclass` inheritance concatenates field lists, base class first, subclass second
 ```
@@ -2302,7 +2541,9 @@ from example import Car
 
 
 def test_combined_init_field_order_is_base_then_subclass() -> None:
-    c: Car = Car("Toyota", "Corolla", doors=4)  # => positional: make, model (base), doors (subclass)
+    c: Car = Car(
+        "Toyota", "Corolla", doors=4
+    )  # => positional: make, model (base), doors (subclass)
     assert (c.make, c.model, c.doors) == ("Toyota", "Corolla", 4)
 
 

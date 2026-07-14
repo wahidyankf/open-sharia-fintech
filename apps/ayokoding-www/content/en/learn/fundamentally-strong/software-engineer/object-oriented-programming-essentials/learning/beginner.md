@@ -93,7 +93,9 @@ _ex-02 &middot; exercises co-01_
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => runs automatically when Dog(...) is called
+    def __init__(
+        self, name: str
+    ) -> None:  # => runs automatically when Dog(...) is called
         self.name = name  # => stores the argument on THIS instance's own namespace
 
 
@@ -120,7 +122,9 @@ from example import Dog
 
 
 def test_init_sets_name_field() -> None:
-    assert Dog("Rex").name == "Rex"  # => __init__ stored the constructor argument on the instance
+    assert (
+        Dog("Rex").name == "Rex"
+    )  # => __init__ stored the constructor argument on the instance
 
 
 # => Run: pytest -- Output: 1 passed
@@ -153,15 +157,21 @@ A method is a function defined inside a class body whose first parameter, `self`
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => per-instance state, unrelated to the method below
 
-    def bark(self) -> str:  # => an instance method: self is bound automatically on d.bark()
+    def bark(
+        self,
+    ) -> str:  # => an instance method: self is bound automatically on d.bark()
         return "woof"  # => a method body is ordinary Python code, same as any function
 
 
 d: Dog = Dog("Rex")  # => constructs d
-print(d.bark())  # => d.bark() implicitly passes d as self -- no argument needed at the call site
+print(
+    d.bark()
+)  # => d.bark() implicitly passes d as self -- no argument needed at the call site
 # => Output: woof
 # => `d.bark()` and `def bark(self)` are two halves of the same mechanism: the dot-call syntax implicitly supplies `self`
 ```
@@ -184,7 +194,9 @@ from example import Dog
 
 def test_bark_returns_woof() -> None:
     d: Dog = Dog("Rex")
-    assert d.bark() == "woof"  # => calling the instance method returns its literal string
+    assert (
+        d.bark() == "woof"
+    )  # => calling the instance method returns its literal string
 
 
 # => Run: pytest -- Output: 1 passed
@@ -217,10 +229,14 @@ A method's body can reach back into `self` to read whatever `__init__` (or any o
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => state greet() below will read back out
 
-    def greet(self) -> str:  # => a method that builds its return value FROM self's own state
+    def greet(
+        self,
+    ) -> str:  # => a method that builds its return value FROM self's own state
         return f"Hi, I'm {self.name}"  # => f-string interpolates self.name at call time
 
 
@@ -282,7 +298,9 @@ Each call to `Dog(...)` builds a separate object with its own `self.name` bindin
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => each Dog() call creates a SEPARATE self.name binding
 
 
@@ -312,7 +330,9 @@ from example import Dog
 def test_instances_keep_separate_names() -> None:
     rex: Dog = Dog("Rex")
     fido: Dog = Dog("Fido")
-    assert rex.name == "Rex" and fido.name == "Fido"  # => no cross-talk between the two objects
+    assert (
+        rex.name == "Rex" and fido.name == "Fido"
+    )  # => no cross-talk between the two objects
 
 
 # => Run: pytest -- Output: 1 passed
@@ -357,10 +377,14 @@ flowchart LR
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => starting value rename() below will overwrite
 
-    def rename(self, new: str) -> None:  # => mutates self in place; returns nothing (None)
+    def rename(
+        self, new: str
+    ) -> None:  # => mutates self in place; returns nothing (None)
         self.name = new  # => reassigns the SAME instance's name attribute
 
 
@@ -423,7 +447,9 @@ _ex-07 &middot; exercises co-01_
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str, legs: int = 4) -> None:  # => legs defaults when omitted
+    def __init__(
+        self, name: str, legs: int = 4
+    ) -> None:  # => legs defaults when omitted
         self.name = name  # => stores name on this instance
         self.legs = legs  # => uses the caller's value, or 4 if none was given
 
@@ -451,11 +477,15 @@ from example import Dog
 
 
 def test_default_legs_applies_when_omitted() -> None:
-    assert Dog("Rex").legs == 4  # => no legs= argument supplied, so the default (4) is used
+    assert (
+        Dog("Rex").legs == 4
+    )  # => no legs= argument supplied, so the default (4) is used
 
 
 def test_explicit_legs_overrides_default() -> None:
-    assert Dog("Tripod", legs=3).legs == 3  # => an explicit argument overrides the default
+    assert (
+        Dog("Tripod", legs=3).legs == 3
+    )  # => an explicit argument overrides the default
 
 
 # => Run: pytest -- Output: 2 passed
@@ -488,7 +518,9 @@ _ex-08 &middot; exercises co-04_
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
     def __repr__(self) -> str:  # => called by print(), the REPL, and every traceback
@@ -552,7 +584,9 @@ _ex-09 &middot; exercises co-04_
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
     def __repr__(self) -> str:  # => developer-facing, unambiguous
@@ -634,7 +668,9 @@ flowchart LR
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
 
@@ -697,13 +733,19 @@ Without a custom `__eq__`, Python's `==` operator falls back to the same check a
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self.name = name  # => no __eq__ defined -- Python uses object's default comparison
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self.name = (
+            name  # => no __eq__ defined -- Python uses object's default comparison
+        )
 
 
 a: Dog = Dog("Rex")  # => first, independent object
 b: Dog = Dog("Rex")  # => second, independent object with the SAME name value
-print(a == b)  # => without __eq__, == falls back to `is` -- identical VALUES, different OBJECTS
+print(
+    a == b
+)  # => without __eq__, == falls back to `is` -- identical VALUES, different OBJECTS
 # => Output: False
 # => A class with no `__eq__` compares by identity even if `==` is the operator written
 ```
@@ -727,7 +769,9 @@ from example import Dog
 def test_equal_looking_objects_compare_false_without_eq() -> None:
     a: Dog = Dog("Rex")
     b: Dog = Dog("Rex")  # => same name, but a DIFFERENT object
-    assert a != b  # => default equality is identity: two distinct objects are never equal
+    assert (
+        a != b
+    )  # => default equality is identity: two distinct objects are never equal
 
 
 # => Run: pytest -- Output: 1 passed
@@ -773,11 +817,17 @@ flowchart LR
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
-    def __eq__(self, other: object) -> bool:  # => other is `object`, not Dog -- must narrow it
-        if not isinstance(other, Dog):  # => guards against comparing a Dog to an unrelated type
+    def __eq__(
+        self, other: object
+    ) -> bool:  # => other is `object`, not Dog -- must narrow it
+        if not isinstance(
+            other, Dog
+        ):  # => guards against comparing a Dog to an unrelated type
             return NotImplemented  # => lets Python try the other object's __eq__ next
         return self.name == other.name  # => value equality: same name means equal dogs
 
@@ -858,9 +908,13 @@ flowchart TD
 
 
 class Dog:  # => begins the Dog class body
-    species: str = "canine"  # => declared on the CLASS, not inside __init__ -- one shared value
+    species: str = (
+        "canine"  # => declared on the CLASS, not inside __init__ -- one shared value
+    )
 
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => this one IS per-instance
 
 
@@ -925,15 +979,21 @@ Assigning to `instance.attr` creates a brand-new instance attribute with that na
 class Dog:  # => begins the Dog class body
     species: str = "canine"  # => the shared default every instance starts out reading
 
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
 
 a: Dog = Dog("Rex")  # => constructs a
 b: Dog = Dog("Fido")  # => constructs b
-a.species = "wolf"  # => creates a NEW instance attribute on a, shadowing the class attribute
+a.species = (
+    "wolf"  # => creates a NEW instance attribute on a, shadowing the class attribute
+)
 # => this does NOT touch Dog.species or b.species at all
-print(a.species, b.species)  # => a now reads its own shadow; b still reads the class value
+print(
+    a.species, b.species
+)  # => a now reads its own shadow; b still reads the class value
 # => Output: wolf canine
 # => `a.species = "wolf"` never mutates `Dog.species`
 ```
@@ -1005,20 +1065,30 @@ flowchart TD
 
 
 class BankAccount:  # => begins the BankAccount class body
-    def __init__(self, opening_balance: float = 0.0) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self._balance: float = opening_balance  # => single leading underscore: internal state
+    def __init__(
+        self, opening_balance: float = 0.0
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self._balance: float = (
+            opening_balance  # => single leading underscore: internal state
+        )
 
-    def deposit(self, amount: float) -> float:  # => the ONLY sanctioned way to grow _balance
+    def deposit(
+        self, amount: float
+    ) -> float:  # => the ONLY sanctioned way to grow _balance
         self._balance += amount  # => mutates the guarded field
         return self._balance  # => returns the new balance for convenience
 
     @property  # => marks the next method as a computed attribute
-    def balance(self) -> float:  # => read access without exposing the raw field for writes
+    def balance(
+        self,
+    ) -> float:  # => read access without exposing the raw field for writes
         return self._balance  # => returns this value to the caller
 
 
 account: BankAccount = BankAccount()  # => constructs account
-new_balance: float = account.deposit(100.0)  # => routes the mutation through the guarded method
+new_balance: float = account.deposit(
+    100.0
+)  # => routes the mutation through the guarded method
 print(new_balance, account.balance)  # => both reflect the SAME underlying _balance
 # => Output: 100.0 100.0
 # => Routing every mutation of `_balance` through `deposit()` means the invariant "balance changes only through sanctioned methods" holds by construction, not by convention alone
@@ -1042,7 +1112,9 @@ from example import BankAccount
 
 def test_deposit_raises_reported_balance() -> None:
     account: BankAccount = BankAccount()
-    result: float = account.deposit(100.0)  # => deposit both mutates and returns the new balance
+    result: float = account.deposit(
+        100.0
+    )  # => deposit both mutates and returns the new balance
     assert result == 100.0
     assert account.balance == 100.0  # => the read-only property reflects the same state
 
@@ -1077,12 +1149,16 @@ _ex-16 &middot; exercises co-02, co-17_
 
 
 class BankAccount:  # => begins the BankAccount class body
-    def __init__(self, opening_balance: float = 0.0) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, opening_balance: float = 0.0
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self._balance: float = opening_balance  # => stores _balance on this instance
 
     def deposit(self, amount: float) -> float:  # => defines the deposit() method
         if amount < 0:  # => guards the invariant: a deposit can never be negative
-            raise ValueError("deposit amount must be non-negative")  # => rejects the whole call
+            raise ValueError(
+                "deposit amount must be non-negative"
+            )  # => rejects the whole call
         self._balance += amount  # => only reached when the amount passed validation
         return self._balance  # => returns this value to the caller
 
@@ -1154,12 +1230,18 @@ _ex-17 &middot; exercises co-02, co-17_
 
 
 class BankAccount:  # => begins the BankAccount class body
-    def __init__(self, opening_balance: float = 0.0) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, opening_balance: float = 0.0
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self._balance: float = opening_balance  # => stores _balance on this instance
 
     def withdraw(self, amount: float) -> float:  # => defines the withdraw() method
-        if amount > self._balance:  # => guards the invariant: balance never goes negative
-            raise ValueError("insufficient funds")  # => rejects the overdrawing call entirely
+        if (
+            amount > self._balance
+        ):  # => guards the invariant: balance never goes negative
+            raise ValueError(
+                "insufficient funds"
+            )  # => rejects the overdrawing call entirely
         self._balance -= amount  # => only reached when funds are sufficient
         return self._balance  # => returns this value to the caller
 
@@ -1233,8 +1315,12 @@ A single leading underscore (`_balance`) is Python's convention for "internal, d
 
 
 class BankAccount:  # => begins the BankAccount class body
-    def __init__(self, opening_balance: float = 0.0) -> None:  # => the constructor -- runs once, automatically, per instantiation
-        self._balance: float = opening_balance  # => single underscore: "internal, do not touch"
+    def __init__(
+        self, opening_balance: float = 0.0
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
+        self._balance: float = (
+            opening_balance  # => single underscore: "internal, do not touch"
+        )
 
 
 account: BankAccount = BankAccount(75.0)  # => constructs account
@@ -1262,7 +1348,9 @@ from example import BankAccount
 def test_single_underscore_field_is_still_reachable() -> None:
     account: BankAccount = BankAccount(75.0)
     # => a single leading underscore is a NAMING CONVENTION, not enforced access control
-    assert account._balance == 75.0  # => still directly accessible, unlike __balance (Example 19)
+    assert (
+        account._balance == 75.0
+    )  # => still directly accessible, unlike __balance (Example 19)
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1295,10 +1383,14 @@ A double leading underscore (`__pin`) triggers Python's name mangling: inside th
 
 
 class SecureBox:  # => begins the SecureBox class body
-    def __init__(self, pin: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, pin: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.__pin: str = pin  # => double leading underscore triggers NAME MANGLING
 
-    def check_pin(self, guess: str) -> bool:  # => the sanctioned way to compare against __pin
+    def check_pin(
+        self, guess: str
+    ) -> bool:  # => the sanctioned way to compare against __pin
         return guess == self.__pin  # => inside the class, __pin still reads normally
 
 
@@ -1331,7 +1423,9 @@ from example import SecureBox
 
 def test_direct_dunder_access_raises_attribute_error() -> None:
     box: SecureBox = SecureBox("1234")
-    with pytest.raises(AttributeError):  # => box.__pin does NOT exist under that literal name
+    with pytest.raises(
+        AttributeError
+    ):  # => box.__pin does NOT exist under that literal name
         _ = box.__pin  # type: ignore  # => deliberately triggers the mangling gap this example teaches
 
 
@@ -1381,7 +1475,9 @@ flowchart LR
 ```python
 """Example 20: A Basic Dataclass."""
 
-from dataclasses import dataclass  # => imports the decorator that generates boilerplate methods
+from dataclasses import (
+    dataclass,
+)  # => imports the decorator that generates boilerplate methods
 
 
 @dataclass  # => auto-generates __init__, __repr__, and __eq__ from the fields below
@@ -1479,7 +1575,9 @@ from example import Point
 
 def test_generated_repr_names_every_field() -> None:
     p: Point = Point(1, 2)
-    assert repr(p) == "Point(x=1, y=2)"  # => exact string the @dataclass decorator generated
+    assert (
+        repr(p) == "Point(x=1, y=2)"
+    )  # => exact string the @dataclass decorator generated
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1521,7 +1619,9 @@ class Point:  # => begins the Point class body
 
 a: Point = Point(1, 2)  # => constructs a
 b: Point = Point(1, 2)  # => a distinct object, but equal field values
-print(a == b, a is b)  # => == is True by VALUE; is remains False -- two different objects
+print(
+    a == b, a is b
+)  # => == is True by VALUE; is remains False -- two different objects
 # => Output: True False
 # => A bare `@dataclass` gives value equality automatically
 ```
@@ -1584,7 +1684,9 @@ from dataclasses import dataclass  # => imports dataclass from dataclasses
 class Point:  # => begins the Point class body
     x: int  # => a required dataclass field, part of the generated __init__
     y: int  # => a required dataclass field, part of the generated __init__
-    label: str = ""  # => a default value -- fields with defaults must follow fields without one
+    label: str = (
+        ""  # => a default value -- fields with defaults must follow fields without one
+    )
 
 
 p: Point = Point(1, 2)  # => label omitted entirely
@@ -1661,21 +1763,28 @@ flowchart LR
 ```python
 """Example 24: default_factory for a Mutable Default."""
 
-from dataclasses import dataclass, field  # => field() lets a mutable default be per-instance
+from dataclasses import (
+    dataclass,
+    field,
+)  # => field() lets a mutable default be per-instance
 
 
 @dataclass  # => generates boilerplate methods from the field list below
 class Point:  # => begins the Point class body
     x: int  # => a required dataclass field, part of the generated __init__
     y: int  # => a required dataclass field, part of the generated __init__
-    tags: list[str] = field(default_factory=list)  # => calls list() FRESH for every instance
+    tags: list[str] = field(
+        default_factory=list
+    )  # => calls list() FRESH for every instance
     # => a bare `tags: list[str] = []` would raise ValueError -- @dataclass forbids it outright
 
 
 a: Point = Point(1, 2)  # => constructs a
 b: Point = Point(3, 4)  # => constructs b
 a.tags.append("origin")  # => mutates ONLY a's own list
-print(a.tags, b.tags)  # => b's list is untouched -- proves each instance got its own list
+print(
+    a.tags, b.tags
+)  # => b's list is untouched -- proves each instance got its own list
 # => Output: ['origin'] []
 # => `field(default_factory=list)` calls the factory function once per instance construction
 ```
@@ -1734,19 +1843,27 @@ _ex-25 &middot; exercises co-06, co-17_
 
 from dataclasses import dataclass  # => imports dataclass from dataclasses
 
-ABSOLUTE_ZERO_CELSIUS: float = -273.15  # => the physical lower bound this class enforces
+ABSOLUTE_ZERO_CELSIUS: float = (
+    -273.15
+)  # => the physical lower bound this class enforces
 
 
 @dataclass  # => generates boilerplate methods from the field list below
 class Temperature:  # => begins the Temperature class body
     celsius: float  # => a required dataclass field, part of the generated __init__
 
-    def __post_init__(self) -> None:  # => runs automatically right after the generated __init__
+    def __post_init__(
+        self,
+    ) -> None:  # => runs automatically right after the generated __init__
         if self.celsius < ABSOLUTE_ZERO_CELSIUS:  # => guards the physical invariant
-            raise ValueError("temperature below absolute zero")  # => rejects construction entirely
+            raise ValueError(
+                "temperature below absolute zero"
+            )  # => rejects construction entirely
 
 
-valid: Temperature = Temperature(20.0)  # => passes validation -- ordinary room temperature
+valid: Temperature = Temperature(
+    20.0
+)  # => passes validation -- ordinary room temperature
 print(valid.celsius)  # => confirms the value survived __post_init__ unchanged
 # => Output: 20.0
 # => `__post_init__` is where a dataclass validates invariants the generated `__init__` cannot express on its own
@@ -1775,7 +1892,9 @@ def test_valid_temperature_constructs() -> None:
 
 
 def test_below_absolute_zero_raises_value_error() -> None:
-    with pytest.raises(ValueError):  # => __post_init__ raises before construction completes
+    with pytest.raises(
+        ValueError
+    ):  # => __post_init__ raises before construction completes
         Temperature(-300.0)  # => colder than physically possible
 
 
@@ -1823,18 +1942,26 @@ flowchart LR
 
 
 class Circle:  # => begins the Circle class body
-    def __init__(self, radius: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, radius: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.radius = radius  # => stores radius on this instance
 
-    def area(self) -> float:  # => no shared base class with Square below -- just this one method
+    def area(
+        self,
+    ) -> float:  # => no shared base class with Square below -- just this one method
         return 3.14159 * self.radius**2  # => returns this value to the caller
 
 
 class Square:  # => begins the Square class body
-    def __init__(self, side: float) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, side: float
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.side = side  # => stores side on this instance
 
-    def area(self) -> float:  # => an UNRELATED class that happens to have the same method name
+    def area(
+        self,
+    ) -> float:  # => an UNRELATED class that happens to have the same method name
         return self.side**2  # => returns this value to the caller
 
 
@@ -1844,7 +1971,9 @@ def print_area(shape: object) -> None:  # => accepts ANYTHING with an area() met
 
 print_area(Circle(2.0))  # => works because Circle has area()
 # => Output: 12.56636
-print_area(Square(3.0))  # => works because Square ALSO has area(), despite no shared ancestor
+print_area(
+    Square(3.0)
+)  # => works because Square ALSO has area(), despite no shared ancestor
 # => Output: 9.0
 # => A function typed to accept `object` and calling `.area()` on it works with any class that happens to define `area()`
 ```
@@ -1870,7 +1999,9 @@ def test_unrelated_classes_both_expose_area() -> None:
     circle: Circle = Circle(2.0)
     square: Square = Square(3.0)
     assert round(circle.area(), 5) == 12.56636  # => Circle's own area formula
-    assert square.area() == 9.0  # => Square's own area formula -- no common base class needed
+    assert (
+        square.area() == 9.0
+    )  # => Square's own area formula -- no common base class needed
 
 
 # => Run: pytest -- Output: 1 passed
@@ -1903,12 +2034,20 @@ Instances are ordinary values -- a `list[Dog]` holds them exactly like a list of
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
 
-dogs: list[Dog] = [Dog("Rex"), Dog("Fido"), Dog("Max")]  # => three independent Dog instances
-names: list[str] = [dog.name for dog in dogs]  # => iteration yields each object, in order
+dogs: list[Dog] = [
+    Dog("Rex"),
+    Dog("Fido"),
+    Dog("Max"),
+]  # => three independent Dog instances
+names: list[str] = [
+    dog.name for dog in dogs
+]  # => iteration yields each object, in order
 print(names)  # => confirms the iteration order matches construction order
 # => Output: ['Rex', 'Fido', 'Max']
 # => `list[Dog]` is a list of objects like any other
@@ -1932,7 +2071,9 @@ from example import Dog
 
 def test_iteration_yields_each_object_in_order() -> None:
     dogs: list[Dog] = [Dog("Rex"), Dog("Fido"), Dog("Max")]
-    names: list[str] = [dog.name for dog in dogs]  # => walks the list in construction order
+    names: list[str] = [
+        dog.name for dog in dogs
+    ]  # => walks the list in construction order
     assert names == ["Rex", "Fido", "Max"]
 
 
@@ -1966,16 +2107,24 @@ _ex-28 &middot; exercises co-01_
 
 
 class Dog:  # => begins the Dog class body
-    def __init__(self, name: str) -> None:  # => the constructor -- runs once, automatically, per instantiation
+    def __init__(
+        self, name: str
+    ) -> None:  # => the constructor -- runs once, automatically, per instantiation
         self.name = name  # => stores name on this instance
 
-    def bark(self) -> str:  # => self here is the SAME parameter Dog.bark(d) passes explicitly
+    def bark(
+        self,
+    ) -> str:  # => self here is the SAME parameter Dog.bark(d) passes explicitly
         return f"{self.name} says woof"  # => returns this value to the caller
 
 
 d: Dog = Dog("Rex")  # => constructs d
-via_instance: str = d.bark()  # => the familiar dot-call syntax -- self is bound implicitly
-via_class: str = Dog.bark(d)  # => the SAME call, with self passed explicitly as an argument
+via_instance: str = (
+    d.bark()
+)  # => the familiar dot-call syntax -- self is bound implicitly
+via_class: str = Dog.bark(
+    d
+)  # => the SAME call, with self passed explicitly as an argument
 print(via_instance == via_class)  # => both forms are exactly equivalent
 # => Output: True
 # => `self` is not magic
