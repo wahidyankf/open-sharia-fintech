@@ -32,7 +32,7 @@ def merge_k_lists(
     dummy = Node(0)  # => a throwaway head so the result never needs a None-check
     tail = dummy  # => tail always points at the last node appended so far
     while heap:  # => O((n) log k): n total nodes, each heap op costs log k
-        val, i, node = heapq.heappop(
+        _val, i, node = heapq.heappop(
             heap
         )  # => the smallest value among all k frontiers
         tail.next = node  # => appends the global minimum to the merged result

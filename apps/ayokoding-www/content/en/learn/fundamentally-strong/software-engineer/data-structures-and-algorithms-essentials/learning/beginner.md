@@ -73,7 +73,13 @@ print(tail)  # => Output: ['d', 'e']
 
 assert middle == ["b", "c", "d"]  # => confirms the sub-list matches the expected slice
 assert tail == ["d", "e"]  # => confirms the open-ended slice reached the last element
-assert letters == ["a", "b", "c", "d", "e"]  # => confirms slicing never mutates the source
+assert letters == [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+]  # => confirms slicing never mutates the source
 print("ex-02 OK")  # => Output: ex-02 OK
 ```
 
@@ -972,11 +978,11 @@ graph LR
 def factorial(n: int) -> int:  # => a plain recursive function
     if n == 0:  # => the BASE CASE -- stops the recursion from going forever
         return 1  # => 0! is defined as 1 by convention
-    return n _ factorial(n - 1)  # => the RECURSIVE CASE -- n! = n _ (n-1)!
+    return n * factorial(n - 1)  # => the RECURSIVE CASE -- n! = n * (n-1)!
     # => each call consumes one call-stack frame until n reaches 0
 
 
-result = factorial(5)  # => 5_4_3_2_1*1 -- five nested calls, then unwinds
+result = factorial(5)  # => 5*4*3*2*1*1 -- five nested calls, then unwinds
 print(result)  # => Output: 120
 
 assert result == 120  # => confirms factorial(5) matches the known value
@@ -1067,7 +1073,9 @@ def countdown_iterative(n: int) -> list[int]:  # => the iterative version
 def countdown_recursive(n: int) -> list[int]:  # => the recursive version
     if n == 0:  # => BASE CASE: nothing left to count down
         return []  # => an empty list -- recursion bottoms out here
-    return [n] + countdown_recursive(n - 1)  # => RECURSIVE CASE: prepend n, recurse smaller
+    return [n] + countdown_recursive(
+        n - 1
+    )  # => RECURSIVE CASE: prepend n, recurse smaller
 
 
 iterative_result = countdown_iterative(4)  # => [4, 3, 2, 1] via a while loop
@@ -1075,7 +1083,9 @@ recursive_result = countdown_recursive(4)  # => [4, 3, 2, 1] via recursive calls
 print(iterative_result)  # => Output: [4, 3, 2, 1]
 print(recursive_result)  # => Output: [4, 3, 2, 1]
 
-assert iterative_result == recursive_result == [4, 3, 2, 1]  # => confirms identical results
+assert (
+    iterative_result == recursive_result == [4, 3, 2, 1]
+)  # => confirms identical results
 print("ex-23 OK")  # => Output: ex-23 OK
 ```
 
@@ -1121,7 +1131,9 @@ graph LR
 
 
 # A dict lookup takes exactly 1 "step" regardless of dict size (co-01, co-08).
-def dict_lookup_steps(lookup: dict[int, int], target: int) -> int:  # => step-counting version
+def dict_lookup_steps(
+    lookup: dict[int, int], target: int
+) -> int:  # => step-counting version
     _ = lookup.get(target)  # => hashing does the work -- no per-element counting needed
     return 1  # => O(1): the step count never grows with len(lookup)
 
@@ -1185,12 +1197,18 @@ def add(a: int, b: int) -> int:  # => a and b MUST be int; the return MUST be in
     return a + b  # => runs identically whether or not the hints are present
 
 
-result = add(2, 3)  # => hints are advisory here -- CPython never checks them at call time
+result = add(
+    2, 3
+)  # => hints are advisory here -- CPython never checks them at call time
 print(result)  # => Output: 5
 print(add.__annotations__)  # => introspects the hints themselves, as a dict
 
 assert result == 5  # => confirms the function's actual behavior is unaffected by hints
-assert add.__annotations__ == {"a": int, "b": int, "return": int}  # => confirms hints stored
+assert add.__annotations__ == {
+    "a": int,
+    "b": int,
+    "return": int,
+}  # => confirms hints stored
 print("ex-25 OK")  # => Output: ex-25 OK
 ```
 
@@ -1223,7 +1241,9 @@ Type hints extend naturally to collection parameters: `list[int]` and `dict[str,
 
 
 # cart holds quantities per line; prices maps item name -> unit price (co-22).
-def total_price(cart: list[int], prices: dict[str, int]) -> int:  # => typed collection params
+def total_price(
+    cart: list[int], prices: dict[str, int]
+) -> int:  # => typed collection params
     names = list(prices.keys())  # => names[i] pairs positionally with cart[i] here
     return sum(qty * prices[name] for qty, name in zip(cart, names))
     # => zip pairs (quantity, item name); the generator sums qty * unit price per pair
@@ -1231,7 +1251,7 @@ def total_price(cart: list[int], prices: dict[str, int]) -> int:  # => typed col
 
 cart: list[int] = [2, 1, 3]  # => quantities: 2 apples, 1 bread, 3 milk
 prices: dict[str, int] = {"apple": 1, "bread": 3, "milk": 2}  # => unit price per item
-grand_total = total_price(cart, prices)  # => 2_1 + 1_3 + 3*2 = 2 + 3 + 6
+grand_total = total_price(cart, prices)  # => 2*1 + 1*3 + 3*2 = 2 + 3 + 6
 print(grand_total)  # => Output: 11
 
 assert grand_total == 11  # => confirms the typed function computed the correct total
@@ -1277,7 +1297,9 @@ graph LR
 ```python
 """Example 27: Build a Singly Linked List."""
 
-from __future__ import annotations  # => lets Node reference "Node" before it's fully defined
+from __future__ import (
+    annotations,
+)  # => lets Node reference "Node" before it's fully defined
 
 
 class Node:  # => a node-based sequence: each Node holds one value plus a pointer (co-07, co-22)

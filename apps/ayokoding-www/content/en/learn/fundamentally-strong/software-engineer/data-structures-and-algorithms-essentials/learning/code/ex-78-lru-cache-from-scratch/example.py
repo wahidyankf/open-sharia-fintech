@@ -80,14 +80,14 @@ class LRUCache:
 
 
 cache = LRUCache(2)  # => capacity 2 -- the third distinct key forces an eviction
-cache.put(1, "a")  # => cache: {1: "a"} -- most-recent is 1
-cache.put(2, "b")  # => cache: {1: "a", 2: "b"} -- most-recent is 2
+cache.put(1, 100)  # => cache: {1: 100} -- most-recent is 1
+cache.put(2, 200)  # => cache: {1: 100, 2: 200} -- most-recent is 2
 cache.get(1)  # => touches 1 -- 1 becomes most-recently-used again, 2 becomes least
-cache.put(3, "c")  # => over capacity -- evicts 2 (the least recently used)
+cache.put(3, 300)  # => over capacity -- evicts 2 (the least recently used)
 evicted = cache.get(2)  # => 2 was evicted -- lookup misses
 kept = cache.get(1)  # => 1 was touched recently -- survives eviction
-print(evicted, kept)  # => Output: -1 a
+print(evicted, kept)  # => Output: -1 100
 
 assert evicted == -1  # => confirms the least-recently-used key was evicted
-assert kept == "a"  # => confirms the recently-touched key survived
+assert kept == 100  # => confirms the recently-touched key survived
 print("ex-78 OK")  # => Output: ex-78 OK

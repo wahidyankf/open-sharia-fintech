@@ -17,6 +17,9 @@ def middle_value(head: Node | None) -> int:  # => a two-pointer traversal
     slow = head  # => the "tortoise" -- moves one node per step
     fast = head  # => the "hare" -- moves two nodes per step
     while fast is not None and fast.next is not None:  # => stop when fast runs out
+        assert (
+            slow is not None
+        )  # => invariant: slow never runs past fast, so it's always live here
         slow = slow.next  # => tortoise: +1 node
         fast = fast.next.next  # => hare: +2 nodes -- reaches the end twice as fast
     assert slow is not None  # => the list is non-empty in this example

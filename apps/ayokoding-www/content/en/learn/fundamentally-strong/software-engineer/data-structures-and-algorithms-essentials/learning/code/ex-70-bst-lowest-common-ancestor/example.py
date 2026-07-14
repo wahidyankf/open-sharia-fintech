@@ -37,10 +37,16 @@ def lowest_common_ancestor(
             p < node.val and q < node.val
         ):  # => both targets are smaller -- LCA is further left
             node = node.left  # => descend into the left subtree
+            assert (
+                node is not None
+            )  # => p and q are both present in the tree, so this can't walk past a leaf
         elif (
             p > node.val and q > node.val
         ):  # => both targets are larger -- LCA is further right
             node = node.right  # => descend into the right subtree
+            assert (
+                node is not None
+            )  # => p and q are both present in the tree, so this can't walk past a leaf
         else:  # => p and q are now on OPPOSITE sides (or one equals node.val) -- found it
             return node.val  # => this node is the lowest common ancestor
 

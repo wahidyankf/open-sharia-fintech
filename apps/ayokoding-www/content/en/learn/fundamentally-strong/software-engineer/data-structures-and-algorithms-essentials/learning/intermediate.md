@@ -20,7 +20,9 @@ Reversing a singly linked list iteratively walks the chain once, re-pointing eac
 ```python
 """Example 29: Reverse a Singly Linked List Iteratively."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class Node:  # => the standard singly-linked node shape (co-07)
@@ -52,7 +54,9 @@ def to_list(head: Node | None) -> list[int]:  # => a plain traversal helper
 
 
 original = Node(1, Node(2, Node(3, Node(4))))  # => 1 -> 2 -> 3 -> 4
-reversed_head = reverse(original)  # => rewires in place -- returns the new head (old node 4)
+reversed_head = reverse(
+    original
+)  # => rewires in place -- returns the new head (old node 4)
 print(to_list(reversed_head))  # => Output: [4, 3, 2, 1]
 
 assert to_list(reversed_head) == [4, 3, 2, 1]  # => confirms the chain is fully reversed
@@ -100,7 +104,9 @@ graph LR
 ```python
 """Example 30: Find the Middle Node with Slow/Fast Pointers."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class Node:  # => the standard singly-linked node shape (co-07)
@@ -115,6 +121,9 @@ def middle_value(head: Node | None) -> int:  # => a two-pointer traversal
     slow = head  # => the "tortoise" -- moves one node per step
     fast = head  # => the "hare" -- moves two nodes per step
     while fast is not None and fast.next is not None:  # => stop when fast runs out
+        assert (
+            slow is not None
+        )  # => invariant: slow never runs past fast, so it's always live here
         slow = slow.next  # => tortoise: +1 node
         fast = fast.next.next  # => hare: +2 nodes -- reaches the end twice as fast
     assert slow is not None  # => the list is non-empty in this example
@@ -170,7 +179,9 @@ graph LR
 
 
 # Halves the candidate range each step -- requires a SORTED input, O(log n) (co-14).
-def binary_search(items: list[int], target: int) -> int:  # => a plain iterative function
+def binary_search(
+    items: list[int], target: int
+) -> int:  # => a plain iterative function
     low, high = 0, len(items) - 1  # => the inclusive range still being searched
     while low <= high:  # => keeps narrowing until the range is empty
         mid = (low + high) // 2  # => the midpoint of the current range
@@ -220,7 +231,9 @@ The mirror case of Example 31: binary search over a sorted list that does **not*
 
 
 # Same halving search as Example 31; -1 signals "absent" (co-14).
-def binary_search(items: list[int], target: int) -> int:  # => a plain iterative function
+def binary_search(
+    items: list[int], target: int
+) -> int:  # => a plain iterative function
     low, high = 0, len(items) - 1  # => the inclusive range still being searched
     while low <= high:  # => O(log n): the range shrinks by half every iteration
         mid = (low + high) // 2  # => the midpoint of the current range
@@ -234,10 +247,14 @@ def binary_search(items: list[int], target: int) -> int:  # => a plain iterative
 
 
 sorted_values = [1, 3, 5, 7, 9, 11, 13]  # => the same sorted list as Example 31
-index = binary_search(sorted_values, 6)  # => 6 is not present -- it would sit between 5 and 7
+index = binary_search(
+    sorted_values, 6
+)  # => 6 is not present -- it would sit between 5 and 7
 print(index)  # => Output: -1
 
-assert index == -1  # => confirms a missing value returns the sentinel, not a wrong index
+assert (
+    index == -1
+)  # => confirms a missing value returns the sentinel, not a wrong index
 assert 6 not in sorted_values  # => confirms the target really is absent from the source
 print("ex-32 OK")  # => Output: ex-32 OK
 ```
@@ -273,9 +290,13 @@ When a sorted list has duplicate values, plain binary search (Example 31) might 
 def find_first(items: list[int], target: int) -> int:  # => a plain iterative function
     low, high = 0, len(items) - 1  # => the inclusive range still being searched
     result = -1  # => tracks the best (leftmost) match found so far
-    while low <= high:  # => still O(log n) -- one extra comparison per step, not a rescan
+    while (
+        low <= high
+    ):  # => still O(log n) -- one extra comparison per step, not a rescan
         mid = (low + high) // 2  # => the midpoint of the current range
-        if items[mid] == target:  # => a candidate match -- but maybe not the leftmost one
+        if (
+            items[mid] == target
+        ):  # => a candidate match -- but maybe not the leftmost one
             result = mid  # => record this match...
             high = mid - 1  # => ...then keep searching the LEFT half for an earlier one
         elif items[mid] < target:  # => the midpoint is too small
@@ -326,7 +347,9 @@ def find_last(items: list[int], target: int) -> int:  # => a plain iterative fun
     result = -1  # => tracks the best (rightmost) match found so far
     while low <= high:  # => O(log n) -- same shape as find_first, mirrored
         mid = (low + high) // 2  # => the midpoint of the current range
-        if items[mid] == target:  # => a candidate match -- but maybe not the rightmost one
+        if (
+            items[mid] == target
+        ):  # => a candidate match -- but maybe not the rightmost one
             result = mid  # => record this match...
             low = mid + 1  # => ...then keep searching the RIGHT half for a later one
         elif items[mid] < target:  # => the midpoint is too small
@@ -340,7 +363,9 @@ duplicates = [1, 2, 2, 2, 3, 4]  # => target 2 appears at indices 1, 2, and 3
 last_index = find_last(duplicates, 2)  # => the rightmost occurrence is index 3
 print(last_index)  # => Output: 3
 
-assert last_index == 3  # => confirms the rightmost occurrence, not the first match found
+assert (
+    last_index == 3
+)  # => confirms the rightmost occurrence, not the first match found
 print("ex-34 OK")  # => Output: ex-34 OK
 ```
 
@@ -375,12 +400,16 @@ _ex-35 &middot; exercises co-14_
 import bisect
 
 sorted_values: list[int] = [1, 3, 5, 7, 9]  # => must already be sorted
-point_for_present = bisect.bisect_left(sorted_values, 5)  # => 5 already exists at index 2
+point_for_present = bisect.bisect_left(
+    sorted_values, 5
+)  # => 5 already exists at index 2
 point_for_absent = bisect.bisect_left(sorted_values, 6)  # => 6 belongs between 5 and 7
 print(point_for_present)  # => Output: 2
 print(point_for_absent)  # => Output: 3
 
-assert point_for_present == 2  # => confirms bisect_left lands ON an existing equal value
+assert (
+    point_for_present == 2
+)  # => confirms bisect_left lands ON an existing equal value
 assert point_for_absent == 3  # => confirms the insertion index for a missing value
 print("ex-35 OK")  # => Output: ex-35 OK
 ```
@@ -420,7 +449,13 @@ sorted_values: list[int] = [1, 3, 5, 9]  # => already sorted ascending
 bisect.insort(sorted_values, 7)  # => inserts 7 at the position that keeps order intact
 print(sorted_values)  # => Output: [1, 3, 5, 7, 9]
 
-assert sorted_values == [1, 3, 5, 7, 9]  # => confirms the list stayed sorted after insert
+assert sorted_values == [
+    1,
+    3,
+    5,
+    7,
+    9,
+]  # => confirms the list stayed sorted after insert
 assert sorted_values == sorted(sorted_values)  # => cross-checks against sorted() itself
 print("ex-36 OK")  # => Output: ex-36 OK
 ```
@@ -473,14 +508,23 @@ import heapq
 
 heap: list[int] = []  # => an ordinary list, treated as a heap by the heapq functions
 for value in (5, 1, 8, 3):  # => pushes in arbitrary order, not sorted order
-    heapq.heappush(heap, value)  # => O(log n): inserts, then bubbles up to restore heap order
+    heapq.heappush(
+        heap, value
+    )  # => O(log n): inserts, then bubbles up to restore heap order
 
 popped_order: list[int] = []  # => collects pops to prove ascending order
 while heap:  # => drains the heap completely
-    popped_order.append(heapq.heappop(heap))  # => O(log n): always removes the CURRENT min
+    popped_order.append(
+        heapq.heappop(heap)
+    )  # => O(log n): always removes the CURRENT min
 print(popped_order)  # => Output: [1, 3, 5, 8]
 
-assert popped_order == [1, 3, 5, 8]  # => confirms heappop always returns ascending order
+assert popped_order == [
+    1,
+    3,
+    5,
+    8,
+]  # => confirms heappop always returns ascending order
 print("ex-37 OK")  # => Output: ex-37 OK
 ```
 
@@ -592,18 +636,28 @@ Pushing `(priority, task)` tuples onto a heap makes `heapq` behave as a priority
 # by priority first -- the standard way to build a priority queue (co-12).
 import heapq
 
-tasks: list[tuple[int, str]] = []  # => each entry is (priority, task_name); lower = more urgent
+tasks: list[
+    tuple[int, str]
+] = []  # => each entry is (priority, task_name); lower = more urgent
 heapq.heappush(tasks, (3, "cleanup"))  # => low urgency
-heapq.heappush(tasks, (1, "fix outage"))  # => highest urgency -- smallest priority number
+heapq.heappush(
+    tasks, (1, "fix outage")
+)  # => highest urgency -- smallest priority number
 heapq.heappush(tasks, (2, "deploy"))  # => medium urgency
 
 order: list[str] = []  # => records the order tasks are served in
 while tasks:  # => drains the heap, always taking the lowest-priority-number tuple first
-    priority, task = heapq.heappop(tasks)  # => unpacks the popped (priority, task) tuple
+    priority, task = heapq.heappop(
+        tasks
+    )  # => unpacks the popped (priority, task) tuple
     order.append(task)  # => records just the task name for the assertion below
 print(order)  # => Output: ['fix outage', 'deploy', 'cleanup']
 
-assert order == ["fix outage", "deploy", "cleanup"]  # => confirms urgent-first pop order
+assert order == [
+    "fix outage",
+    "deploy",
+    "cleanup",
+]  # => confirms urgent-first pop order
 print("ex-40 OK")  # => Output: ex-40 OK
 ```
 
@@ -639,9 +693,13 @@ import heapq  # => imports the stdlib binary-heap functions
 
 max_heap: list[int] = []  # => stores NEGATED values internally
 for value in (5, 1, 8, 3):  # => pushes each source value in turn
-    heapq.heappush(max_heap, -value)  # => pushes -5, -1, -8, -3 -- min-heap on negatives
+    heapq.heappush(
+        max_heap, -value
+    )  # => pushes -5, -1, -8, -3 -- min-heap on negatives
 
-largest = -heapq.heappop(max_heap)  # => pops the smallest negative (-8), then negates back
+largest = -heapq.heappop(
+    max_heap
+)  # => pops the smallest negative (-8), then negates back
 second_largest = -heapq.heappop(max_heap)  # => pops the next smallest negative (-5)
 print(largest, second_largest)  # => Output: 8 5
 
@@ -682,11 +740,15 @@ import heapq
 
 left: list[int] = [1, 4, 7]  # => already sorted
 right: list[int] = [2, 3, 8]  # => already sorted
-merged = list(heapq.merge(left, right))  # => lazily interleaves both inputs in sorted order
+merged = list(
+    heapq.merge(left, right)
+)  # => lazily interleaves both inputs in sorted order
 print(merged)  # => Output: [1, 2, 3, 4, 7, 8]
 
 assert merged == [1, 2, 3, 4, 7, 8]  # => confirms full interleaved sorted order
-assert merged == sorted(left + right)  # => cross-checks against a plain sort of the union
+assert merged == sorted(
+    left + right
+)  # => cross-checks against a plain sort of the union
 print("ex-42 OK")  # => Output: ex-42 OK
 ```
 
@@ -769,11 +831,16 @@ Selection sort repeatedly finds the minimum of the remaining unsorted portion an
 def selection_sort(items: list[int]) -> list[int]:  # => a plain sorting function
     values = items.copy()  # => works on a copy so the caller's list is untouched
     for i in range(len(values)):  # => values[:i] is the growing sorted prefix
-        min_index = i  # => assume the current position holds the smallest remaining value
+        min_index = (
+            i  # => assume the current position holds the smallest remaining value
+        )
         for j in range(i + 1, len(values)):  # => O(n) linear scan for the true minimum
             if values[j] < values[min_index]:  # => found a smaller candidate
                 min_index = j  # => track its index for the swap below
-        values[i], values[min_index] = values[min_index], values[i]  # => one swap per outer pass
+        values[i], values[min_index] = (
+            values[min_index],
+            values[i],
+        )  # => one swap per outer pass
     return values  # => the fully sorted list
 
 
@@ -818,7 +885,9 @@ def bubble_sort(items: list[int]) -> list[int]:  # => a plain sorting function
     n = len(values)  # => cached length, reused every outer pass
     for i in range(n):  # => after pass i, the LAST i elements are guaranteed sorted
         swapped = False  # => tracks whether this pass did any work at all
-        for j in range(n - 1 - i):  # => shrinks the unsorted range by one each outer pass
+        for j in range(
+            n - 1 - i
+        ):  # => shrinks the unsorted range by one each outer pass
             if values[j] > values[j + 1]:  # => adjacent pair is out of order
                 values[j], values[j + 1] = values[j + 1], values[j]  # => swap them
                 swapped = True  # => records that this pass made progress
@@ -891,7 +960,9 @@ def merge_sort(items: list[int]) -> list[int]:  # => the recursive driver
 def _merge(left: list[int], right: list[int]) -> list[int]:  # => a merge helper
     merged: list[int] = []  # => the combined, sorted result
     i = j = 0  # => independent cursors into left and right
-    while i < len(left) and j < len(right):  # => picks the smaller front element each step
+    while i < len(left) and j < len(
+        right
+    ):  # => picks the smaller front element each step
         if left[i] <= right[j]:  # => the left cursor's element is smaller-or-equal
             merged.append(left[i])  # => takes from the left side
             i += 1  # => advances the left cursor
@@ -960,13 +1031,21 @@ def quicksort(items: list[int]) -> list[int]:  # => the recursive driver
         return items  # => nothing to sort
     pivot = items[len(items) // 2]  # => picks a middle element as the pivot
     less = [x for x in items if x < pivot]  # => everything strictly smaller than pivot
-    equal = [x for x in items if x == pivot]  # => every occurrence of the pivot value itself
-    greater = [x for x in items if x > pivot]  # => everything strictly larger than pivot
-    return quicksort(less) + equal + quicksort(greater)  # => RECURSIVE CASE: sort each part
+    equal = [
+        x for x in items if x == pivot
+    ]  # => every occurrence of the pivot value itself
+    greater = [
+        x for x in items if x > pivot
+    ]  # => everything strictly larger than pivot
+    return (
+        quicksort(less) + equal + quicksort(greater)
+    )  # => RECURSIVE CASE: sort each part
 
 
 unsorted = [5, 2, 4, 6, 1, 3]  # => the same fixture as prior sorting examples
-result = quicksort(unsorted)  # => partitions around a pivot, then recurses on both sides
+result = quicksort(
+    unsorted
+)  # => partitions around a pivot, then recurses on both sides
 print(result)  # => Output: [1, 2, 3, 4, 5, 6]
 
 assert result == sorted(unsorted)  # => confirms the hand-rolled sort matches sorted()
@@ -1017,8 +1096,12 @@ graph TD
 ```python
 """Example 48: Build a Binary Tree."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
-from collections import deque  # => imports the stdlib double-ended queue for the BFS below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
+from collections import (
+    deque,
+)  # => imports the stdlib double-ended queue for the BFS below
 
 
 class TreeNode:  # => a node with up to two children: left and right (co-10, co-22)
@@ -1035,7 +1118,9 @@ class TreeNode:  # => a node with up to two children: left and right (co-10, co-
 #      2   6
 #     / \
 #    1   3
-root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6))  # => builds by hand
+root = TreeNode(
+    4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6)
+)  # => builds by hand
 
 level_order: list[int] = []  # => collects values level by level, to eyeball the shape
 queue: deque[TreeNode] = deque([root])  # => a queue seeded with just the root
@@ -1096,7 +1181,9 @@ graph TD
 ```python
 """Example 49: Recursive Inorder Traversal."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
@@ -1172,7 +1259,9 @@ graph TD
 ```python
 """Example 50: Preorder and Postorder Traversals."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
@@ -1188,14 +1277,18 @@ class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
 def preorder(node: TreeNode | None) -> list[int]:  # => a plain recursive traversal
     if node is None:  # => BASE CASE -- nothing to visit
         return []  # => no values from this branch
-    return [node.val] + preorder(node.left) + preorder(node.right)  # => self, left, right
+    return (
+        [node.val] + preorder(node.left) + preorder(node.right)
+    )  # => self, left, right
 
 
 # Visits left, THEN right, THEN self -- self is visited LAST (co-10, co-17).
 def postorder(node: TreeNode | None) -> list[int]:  # => a plain recursive traversal
     if node is None:  # => BASE CASE -- nothing to visit
         return []  # => no values from this branch
-    return postorder(node.left) + postorder(node.right) + [node.val]  # => left, right, self
+    return (
+        postorder(node.left) + postorder(node.right) + [node.val]
+    )  # => left, right, self
 
 
 #        4
@@ -1209,8 +1302,20 @@ post = postorder(root)  # => root last: 1, 3, 2, 6, 4
 print(pre)  # => Output: [4, 2, 1, 3, 6]
 print(post)  # => Output: [1, 3, 2, 6, 4]
 
-assert pre == [4, 2, 1, 3, 6]  # => confirms preorder visits the root before its children
-assert post == [1, 3, 2, 6, 4]  # => confirms postorder visits the root after its children
+assert pre == [
+    4,
+    2,
+    1,
+    3,
+    6,
+]  # => confirms preorder visits the root before its children
+assert post == [
+    1,
+    3,
+    2,
+    6,
+    4,
+]  # => confirms postorder visits the root after its children
 print("ex-50 OK")  # => Output: ex-50 OK
 ```
 
@@ -1259,8 +1364,12 @@ graph TD
 ```python
 """Example 51: Level-Order (BFS) Traversal, Grouped by Level."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
-from collections import deque  # => imports the stdlib double-ended queue used as the BFS frontier
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
+from collections import (
+    deque,
+)  # => imports the stdlib double-ended queue used as the BFS frontier
 
 
 class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
@@ -1274,13 +1383,17 @@ class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
 
 # Breadth-first traversal, one inner list PER DEPTH LEVEL -- a deque as the
 # queue gives O(1) popleft, unlike list.pop(0)'s O(n) (co-10, co-06).
-def level_order(root: TreeNode | None) -> list[list[int]]:  # => a queue-driven traversal
+def level_order(
+    root: TreeNode | None,
+) -> list[list[int]]:  # => a queue-driven traversal
     if root is None:  # => an empty tree has zero levels
         return []  # => nothing to traverse
     levels: list[list[int]] = []  # => one entry per depth level, in top-to-bottom order
     queue: deque[TreeNode] = deque([root])  # => FIFO queue seeded with just the root
     while queue:  # => continues until every node has been visited
-        level_size = len(queue)  # => freezes "how many nodes are AT this level right now"
+        level_size = len(
+            queue
+        )  # => freezes "how many nodes are AT this level right now"
         current_level: list[int] = []  # => collects just this level's values
         for _ in range(level_size):  # => processes exactly this level, not the next one
             node = queue.popleft()  # => O(1): dequeue the next node at this level
@@ -1302,7 +1415,11 @@ root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6))
 levels = level_order(root)  # => groups nodes by depth: [4], [2,6], [1,3]
 print(levels)  # => Output: [[4], [2, 6], [1, 3]]
 
-assert levels == [[4], [2, 6], [1, 3]]  # => confirms both the grouping and per-level order
+assert levels == [
+    [4],
+    [2, 6],
+    [1, 3],
+]  # => confirms both the grouping and per-level order
 print("ex-51 OK")  # => Output: ex-51 OK
 ```
 
@@ -1332,7 +1449,9 @@ A tree's height is the number of edges on the longest path from the root to a le
 ```python
 """Example 52: Compute Tree Height Recursively."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class TreeNode:  # => the same binary-tree node shape as Example 48 (co-10)
@@ -1358,7 +1477,9 @@ def height(node: TreeNode | None) -> int:  # => a plain recursive function
 #      2   6
 #     / \
 #    1   3
-root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6))  # => 3 levels deep
+root = TreeNode(
+    4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6)
+)  # => 3 levels deep
 tree_height = height(root)  # => 4 -> 2 -> 1 is the longest path, 3 nodes deep
 print(tree_height)  # => Output: 3
 
@@ -1411,7 +1532,9 @@ graph TD
 ```python
 """Example 53: Insert into a Binary Search Tree."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class BSTNode:  # => an ordered binary tree: left < node < right, always (co-11)
@@ -1475,7 +1598,9 @@ Searching a BST reuses the same left/right descent logic as insertion (Example 5
 ```python
 """Example 54: Search a Binary Search Tree."""
 
-from __future__ import annotations  # => lets BSTNode reference "BSTNode" before fully defined
+from __future__ import (
+    annotations,
+)  # => lets BSTNode reference "BSTNode" before fully defined
 
 
 class BSTNode:  # => the same BST node shape as Example 53 (co-11)
@@ -1485,7 +1610,9 @@ class BSTNode:  # => the same BST node shape as Example 53 (co-11)
         self.right: BSTNode | None = None  # => no right child yet
 
 
-def insert(root: BSTNode | None, val: int) -> BSTNode:  # => same insert as Example 53 (co-11)
+def insert(
+    root: BSTNode | None, val: int
+) -> BSTNode:  # => same insert as Example 53 (co-11)
     if root is None:  # => BASE CASE -- empty slot found
         return BSTNode(val)  # => becomes the new leaf
     if val < root.val:  # => smaller values go left
@@ -1547,7 +1674,9 @@ A BST's minimum value is always the leftmost node (keep following `.left` until 
 ```python
 """Example 55: BST Minimum and Maximum."""
 
-from __future__ import annotations  # => enables forward references to the class defined below
+from __future__ import (
+    annotations,
+)  # => enables forward references to the class defined below
 
 
 class BSTNode:  # => the same BST node shape as Example 53 (co-11)
@@ -1557,7 +1686,9 @@ class BSTNode:  # => the same BST node shape as Example 53 (co-11)
         self.right: BSTNode | None = None  # => no right child yet
 
 
-def insert(root: BSTNode | None, val: int) -> BSTNode:  # => same insert as Example 53 (co-11)
+def insert(
+    root: BSTNode | None, val: int
+) -> BSTNode:  # => same insert as Example 53 (co-11)
     if root is None:  # => BASE CASE -- empty slot found
         return BSTNode(val)  # => becomes the new leaf
     if val < root.val:  # => smaller values go left
@@ -1648,10 +1779,16 @@ graph: dict[str, list[str]] = {  # => a 4-node, undirected-by-convention graph l
     "d": ["b", "c"],  # => "d" connects back to "b" and "c" -- a 4-node cycle
 }  # => four keys total, each mapping to its own neighbor list
 
-for node, neighbors in graph.items():  # => dict iteration is insertion-ordered (Python 3.7+)
+for (
+    node,
+    neighbors,
+) in graph.items():  # => dict iteration is insertion-ordered (Python 3.7+)
     print(f"{node}: {neighbors}")  # => Output: one "node: [...]" line per graph key
 
-assert graph["a"] == ["b", "c"]  # => confirms a's neighbor list matches what was declared
+assert graph["a"] == [
+    "b",
+    "c",
+]  # => confirms a's neighbor list matches what was declared
 assert "a" in graph["b"]  # => confirms the edge a-b is represented in BOTH directions
 print("ex-56 OK")  # => Output: ex-56 OK
 ```
@@ -1702,7 +1839,9 @@ graph LR
 
 # BFS explores neighbor-by-neighbor, level by level, using a deque as the
 # frontier queue and a set to avoid revisiting nodes (co-21, co-05, co-09).
-from collections import deque  # => imports the stdlib double-ended queue as the frontier
+from collections import (
+    deque,
+)  # => imports the stdlib double-ended queue as the frontier
 
 graph: dict[str, list[str]] = {  # => the same 4-node graph as Example 56
     "a": ["b", "c"],  # => a's neighbors
@@ -1713,8 +1852,12 @@ graph: dict[str, list[str]] = {  # => the same 4-node graph as Example 56
 
 
 # Visits start, then all its neighbors, then all of THEIR unvisited neighbors, ...
-def bfs(graph: dict[str, list[str]], start: str) -> list[str]:  # => a plain BFS function
-    visited: set[str] = {start}  # => tracks every node already enqueued -- O(1) membership
+def bfs(
+    graph: dict[str, list[str]], start: str
+) -> list[str]:  # => a plain BFS function
+    visited: set[str] = {
+        start
+    }  # => tracks every node already enqueued -- O(1) membership
     order: list[str] = []  # => records the order nodes are actually VISITED (dequeued)
     queue: deque[str] = deque([start])  # => the frontier, FIFO
     while queue:  # => continues until the frontier is empty
@@ -1722,7 +1865,9 @@ def bfs(graph: dict[str, list[str]], start: str) -> list[str]:  # => a plain BFS
         order.append(node)  # => records the visit
         for neighbor in graph[node]:  # => looks at every edge out of this node
             if neighbor not in visited:  # => O(1) average -- skip already-seen nodes
-                visited.add(neighbor)  # => mark BEFORE enqueueing to avoid duplicate enqueues
+                visited.add(
+                    neighbor
+                )  # => mark BEFORE enqueueing to avoid duplicate enqueues
                 queue.append(neighbor)  # => schedules the neighbor for a later visit
     return order  # => the full breadth-first visit order
 
@@ -1730,7 +1875,12 @@ def bfs(graph: dict[str, list[str]], start: str) -> list[str]:  # => a plain BFS
 visit_order = bfs(graph, "a")  # => a -> its neighbors b,c -> their unvisited neighbor d
 print(visit_order)  # => Output: ['a', 'b', 'c', 'd']
 
-assert visit_order == ["a", "b", "c", "d"]  # => confirms the exact breadth-first visit order
+assert visit_order == [
+    "a",
+    "b",
+    "c",
+    "d",
+]  # => confirms the exact breadth-first visit order
 assert len(visit_order) == len(graph)  # => confirms every node was visited exactly once
 print("ex-57 OK")  # => Output: ex-57 OK
 ```
@@ -1787,17 +1937,25 @@ graph: dict[str, list[str]] = {  # => the same 4-node graph as Example 56
 
 
 # Visits node, then recurses fully into the FIRST unvisited neighbor before any other.
-def dfs(graph: dict[str, list[str]], node: str, visited: set[str], order: list[str]) -> None:
+def dfs(
+    graph: dict[str, list[str]], node: str, visited: set[str], order: list[str]
+) -> None:
     visited.add(node)  # => marks node as seen -- prevents infinite loops on cycles
     order.append(node)  # => records visit order for inspection
     for neighbor in graph[node]:  # => tries each neighbor in listed order
         if neighbor not in visited:  # => O(1) average membership check
-            dfs(graph, neighbor, visited, order)  # => RECURSIVE CASE: plunge deeper first
+            dfs(
+                graph, neighbor, visited, order
+            )  # => RECURSIVE CASE: plunge deeper first
 
 
-visited: set[str] = set()  # => shared across the whole traversal via the same set object
+visited: set[str] = (
+    set()
+)  # => shared across the whole traversal via the same set object
 order: list[str] = []  # => shared across the whole traversal via the same list object
-dfs(graph, "a", visited, order)  # => a -> b (first neighbor) -> d (b's unvisited neighbor) -> c
+dfs(
+    graph, "a", visited, order
+)  # => a -> b (first neighbor) -> d (b's unvisited neighbor) -> c
 print(order)  # => Output: ['a', 'b', 'd', 'c']
 
 assert order == ["a", "b", "d", "c"]  # => confirms the exact depth-first visit order
@@ -1833,7 +1991,9 @@ On an **unweighted** graph, BFS's level-by-level exploration order directly give
 
 # BFS's level-by-level nature means the FIRST time a node is reached, it was
 # reached by the shortest possible number of edges -- unweighted only (co-21, co-05).
-from collections import deque  # => imports the stdlib double-ended queue as the frontier
+from collections import (
+    deque,
+)  # => imports the stdlib double-ended queue as the frontier
 
 graph: dict[str, list[str]] = {  # => a 5-node graph, one edge longer than Example 57's
     "a": ["b", "c"],  # => a's neighbors
@@ -1850,16 +2010,24 @@ def shortest_path_length(graph: dict[str, list[str]], start: str, end: str) -> i
     queue: deque[str] = deque([start])  # => the frontier, FIFO
     while queue:  # => continues until the frontier is empty or end is reached
         node = queue.popleft()  # => O(1): visit the earliest-enqueued node
-        if node == end:  # => the FIRST time end is dequeued, its distance is final and minimal
+        if (
+            node == end
+        ):  # => the FIRST time end is dequeued, its distance is final and minimal
             return distances[node]  # => the shortest number of edges from start to end
         for neighbor in graph[node]:  # => looks at every edge out of this node
-            if neighbor not in distances:  # => first discovery -- distance can only get worse later
-                distances[neighbor] = distances[node] + 1  # => one edge farther than node
+            if (
+                neighbor not in distances
+            ):  # => first discovery -- distance can only get worse later
+                distances[neighbor] = (
+                    distances[node] + 1
+                )  # => one edge farther than node
                 queue.append(neighbor)  # => schedules the neighbor for a later visit
     return -1  # => end was never reached -- no path exists (not hit in this example)
 
 
-distance = shortest_path_length(graph, "a", "e")  # => a -> b/c (1 edge) -> d (2 edges) -> e (3)
+distance = shortest_path_length(
+    graph, "a", "e"
+)  # => a -> b/c (1 edge) -> d (2 edges) -> e (3)
 print(distance)  # => Output: 3
 
 assert distance == 3  # => confirms the shortest a-to-e path uses exactly 3 edges
@@ -1895,18 +2063,24 @@ Finding the maximum sum of any length-k contiguous window in a list can be done 
 
 # Slides a fixed-size window, updating the sum incrementally -- O(n),
 # instead of re-summing each window from scratch, which would be O(n*k) (co-20).
-def max_window_sum(values: list[int], k: int) -> int:  # => a plain sliding-window function
+def max_window_sum(
+    values: list[int], k: int
+) -> int:  # => a plain sliding-window function
     window_sum = sum(values[:k])  # => O(k): the sum of the FIRST window only
     best = window_sum  # => tracks the best sum seen so far
     for i in range(k, len(values)):  # => slides the window one element at a time
-        window_sum += values[i] - values[i - k]  # => add the new element, drop the old one
+        window_sum += (
+            values[i] - values[i - k]
+        )  # => add the new element, drop the old one
         # => this single O(1) update replaces re-summing k elements from scratch
         best = max(best, window_sum)  # => keep the running maximum
     return best  # => the maximum window sum found across every position
 
 
 numbers = [2, 1, 5, 1, 3, 2]  # => 6 values; window size 3
-result = max_window_sum(numbers, 3)  # => windows: [2,1,5]=8, [1,5,1]=7, [5,1,3]=9, [1,3,2]=6
+result = max_window_sum(
+    numbers, 3
+)  # => windows: [2,1,5]=8, [1,5,1]=7, [5,1,3]=9, [1,3,2]=6
 print(result)  # => Output: 9
 
 assert result == 9  # => confirms the best window (index 2..4: 5+1+3) was found

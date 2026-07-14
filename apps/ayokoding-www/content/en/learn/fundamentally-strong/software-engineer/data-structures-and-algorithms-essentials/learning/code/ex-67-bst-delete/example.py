@@ -65,17 +65,25 @@ def inorder(
 root: BSTNode | None = None  # => starts as an empty tree
 for value in (5, 2, 8, 1, 3, 7, 9):  # => builds a small, non-trivial BST
     root = insert(root, value)
-root = delete(root, 2)  # => deletes a two-child node (2 has children 1 and 3)
-result = inorder(root)  # => must STILL be sorted after the delete
-print(result)  # => Output: [1, 3, 5, 7, 8, 9]
+root = delete(
+    root, 2
+)  # => two-children case (2 has children 1 and 3), which recurses into the leaf case
+# => (successor 3 has no children of its own) -- 2's slot now holds val 3, left=1, right=None
+root = delete(
+    root, 3
+)  # => one-child case: the node now holding 3 has only a left child (1), no right child
+result = inorder(root)  # => must STILL be sorted after both deletes
+print(result)  # => Output: [1, 5, 7, 8, 9]
 
-assert result == [
-    1,
-    3,
-    5,
-    7,
-    8,
-    9,
-]  # => confirms sorted order survives a two-child delete
-assert 2 not in result  # => confirms the deleted value is genuinely gone
+assert (
+    result
+    == [
+        1,
+        5,
+        7,
+        8,
+        9,
+    ]
+)  # => confirms sorted order survives all three delete cases (two-children, leaf, one-child)
+assert 2 not in result and 3 not in result  # => confirms both deleted values are gone
 print("ex-67 OK")  # => Output: ex-67 OK

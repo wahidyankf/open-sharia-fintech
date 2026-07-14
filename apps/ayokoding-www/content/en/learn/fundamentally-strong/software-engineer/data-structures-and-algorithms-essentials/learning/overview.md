@@ -290,8 +290,9 @@ unbalanced.
 
 **Verify it**: Example 53 inserts values and asserts an inorder traversal yields sorted output;
 Example 54 asserts both a found and a not-found search; Example 55 asserts the leftmost (minimum) and
-rightmost (maximum) nodes; Example 67 deletes a node covering all three deletion cases (leaf, one
-child, two children) and re-asserts the inorder invariant still holds afterward.
+rightmost (maximum) nodes; Example 67 deletes two nodes in sequence, covering all three deletion cases
+(leaf, one child, two children) across the pair, and re-asserts the inorder invariant still holds
+afterward.
 
 ### co-12 · Heap / Priority Queue
 
