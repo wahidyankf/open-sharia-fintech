@@ -38,8 +38,9 @@ precede [topic 12 Networking](./12-networking-essentials.md) in the spiral).
 ### DD-35 primary-source citations (fetched-and-read)
 
 > Every claim below traces to a primary/authoritative source fetched and read in the retroactive
-> grounding sweep (2026-07-12, `web-researcher`). Sources: PyPI + NVD (versions/CVE), IETF RFCs, MDN,
-> FastAPI docs, and publisher records. 14/15 claim clusters verified; 1 implementation nuance flagged.
+> grounding sweep (2026-07-12, `web-researcher`; content-negotiation nuance re-verified 2026-07-14).
+> Sources: PyPI + NVD (versions/CVE), IETF RFCs, MDN, FastAPI docs, GitHub release notes/source, and
+> publisher records. 15/15 claim clusters verified.
 
 - **Version pins** — FastAPI **0.139.0** (2026-07-01), uvicorn **0.51.0** (2026-07-08), Flask **3.1.3**
   (2026-02-19) all confirmed latest on [PyPI](https://pypi.org/project/fastapi/#history); Flask 3.1.3 is
@@ -55,12 +56,22 @@ precede [topic 12 Networking](./12-networking-essentials.md) in the spiral).
   ([Python docs](https://docs.python.org/3/library/http.server.html)) → `curl -i` shows `HTTP/1.0 200`;
   FastAPI default 422 body `{"detail":[{"loc","msg","type"}]}`
   ([Handling Errors](https://fastapi.tiangolo.com/tutorial/handling-errors/)).
-- **Content-negotiation nuance (co-21, ex-27/54)** `[Needs Verification → implementation-dependent]` —
-  FastAPI does **not** enforce `Content-Type` (415) or `Accept` (406) out of the box; the 415/422/406
-  rejection outcomes require hand-written validation (a `Header` dependency or middleware). co-21 phrases
-  this as behavior the server "honors" (deliberate implementation), so it's not a factual error — but the
-  delivery/authoring pass must implement content negotiation explicitly rather than rely on a framework
-  default. (per [FastAPI discussion #9371](https://github.com/fastapi/fastapi/discussions/9371))
+- **Content-negotiation nuance (co-21, ex-27/54)** `2026-07-14 — verified` — FastAPI's
+  `strict_content_type=True` default, added in
+  [FastAPI 0.132.0](https://github.com/fastapi/fastapi/releases/tag/0.132.0) (2026-02-23) and still
+  in effect at the pinned 0.139.0, natively rejects a JSON body sent without an
+  `application/json`-compatible `Content-Type`: the body is not parsed as JSON, so it fails the
+  declared Pydantic model and returns a native **422** — confirmed in
+  [`fastapi/routing.py`](https://github.com/fastapi/fastapi/blob/master/fastapi/routing.py) and the
+  [Strict Content-Type Checking docs](https://fastapi.tiangolo.com/advanced/strict-content-type/).
+  ex-27's 422 half is therefore a framework default, not hand-written code. FastAPI still does
+  **not** raise a dedicated **415** for that same case (no such status appears in `routing.py`), and
+  still does **not** enforce `Accept` (406) at all (ex-54) — both still require hand-written
+  validation (a `Header` dependency or middleware), unchanged per
+  [FastAPI discussion #9371](https://github.com/fastapi/fastapi/discussions/9371) and
+  [#11157](https://github.com/fastapi/fastapi/discussions/11157). co-21's "honors" phrasing is now
+  literally accurate for Content-Type (a framework default) and remains accurate as deliberate
+  implementation for Accept.
 - **Read more** — Fielding's dissertation (2000, UC Irvine,
   [roy.gbiv.com](https://roy.gbiv.com/pubs/dissertation/top.htm)); RFC 9110 (2022); _RESTful Web APIs_
   (Richardson/Amundsen/Ruby, O'Reilly 2013); _Building Microservices_ 2nd ed. (Newman, O'Reilly 2021);
