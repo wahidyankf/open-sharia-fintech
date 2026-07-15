@@ -4,6 +4,8 @@ export * from "./card/card";
 export * from "./command/command";
 export * from "./dialog/dialog";
 export * from "./dropdown-menu/dropdown-menu";
+export * from "./resizable-panel/resizable-panel";
+export { parsePersistedWidth } from "./resizable-panel/width-model";
 export * from "./scroll-area/scroll-area";
 export * from "./separator/separator";
 export * from "./sheet/sheet";

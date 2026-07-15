@@ -28,6 +28,7 @@ specs/libs/web-ui/
         ├── input/
         ├── label/
         ├── progress-ring/
+        ├── resizable-panel/
         ├── sheet/
         ├── side-nav/
         ├── stat-card/
@@ -43,4 +44,6 @@ nx run web-ui:test:unit
 ```
 
 Every scenario is consumed at the unit level via the matching `*.steps.tsx` file co-located with
-each component under `libs/web-ui/src/components/`.
+each component under `libs/web-ui/src/components/`. `libs/web-ui/src/primitives/` MAY also carry
+Gherkin coverage the same way — `resizable-panel` (`libs/web-ui/src/primitives/resizable-panel/resizable-panel.steps.tsx`)
+is the first primitive to do so; the remaining `primitives/` folders have none.
