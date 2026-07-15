@@ -154,7 +154,7 @@ const SCROLL_CONTAINER_SELECTOR = `aside:has(${PANEL_SELECTOR}) .overflow-x-auto
 
 Given(
   "a docs sidebar narrowed to {int} pixels containing a nav label wider than {int} pixels",
-  async ({ page }, widthPx: number) => {
+  async ({ page }, widthPx: number, _minLabelWidthPx: number) => {
     // `useResizableWidth` re-clamps a persisted width against MIN_WIDTH_PCT of the CURRENT
     // viewport on mount (see width-model.ts's `clampWidth`, wired since the primitive was
     // introduced). At Playwright's default 1280px-wide viewport, MIN_WIDTH_PCT (15%) is 192px —
