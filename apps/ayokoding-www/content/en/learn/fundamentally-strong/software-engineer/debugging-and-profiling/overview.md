@@ -21,10 +21,11 @@ weight: 1
   **py-spy 0.4.2**, **debugpy 1.8.21**, **line_profiler 5.0.2** (provides `kernprof`), **hypothesis
   6.156.6**, **gprof2dot 2025.4.14**, and **snakeviz 2.2.2** from PyPI; **Python 3.14.3** for the two
   examples that need pdb's 3.14-only remote-attach features; **git 2.39.5+** for the bisection
-  examples; on Linux, **gdb 17.2+** (bundles Python-awareness via `python-gdb.py`) and **perf**
-  (ships with the Linux kernel's `linux-tools` package, no separate version) for the native-debugging
-  tier; on macOS, **lldb** (ships with Xcode Command Line Tools) plus **cpython_lldb 0.3.3** from
-  PyPI. This topic is explicit, throughout, about which native-tooling examples need root privileges
+  examples; **inferno** (`cargo install inferno`) for flame-graph rendering; on Linux, **gdb 17.2+**
+  (bundles Python-awareness via `python-gdb.py`) and **perf** (ships with the Linux kernel's
+  `linux-tools` package, no separate version) for the native-debugging tier; on macOS, **lldb** (ships
+  with Xcode Command Line Tools) plus **cpython_lldb 0.3.3** from PyPI. This topic is explicit,
+  throughout, about which native-tooling examples need root privileges
   or a specific OS -- see the Native & Systems tier's opening note for exactly what that means and how
   each such example is still verified honestly in this sandbox.
 - **Assumed knowledge**: reading and writing typed Python functions and classes; running a program

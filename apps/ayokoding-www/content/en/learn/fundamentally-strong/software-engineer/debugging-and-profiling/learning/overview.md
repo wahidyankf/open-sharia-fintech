@@ -117,42 +117,44 @@ account of every such limitation and its real, disclosed substitute.
 
 - **co-01 · Interactive breakpoints and stepping** -- pausing execution at a chosen line and driving
   it forward with step-into / step-over / step-out, versus letting it run to completion. Examples
-  1-2, 50, 54, 59.
+  1-3, 14, 25-26, 39, 54, 59.
 - **co-02 · Conditional and watch breakpoints** -- halting only when a predicate holds (`i == 47`,
-  `id(obj) == ...`) or a value changes, instead of stopping on every hit. Examples 8-11.
+  `id(obj) == ...`) or a value changes, instead of stopping on every hit. Examples 8-11, 38-39.
 - **co-03 · Call-stack, frame, and variable inspection** -- reading the stack, moving between frames,
-  and printing or mutating locals at a paused point to test a hypothesis. Examples 3-7, 50-51, 64.
+  and printing or mutating locals at a paused point to test a hypothesis. Examples 4-7, 25, 32, 50-51, 64.
 - **co-04 · Post-mortem debugging** -- entering a debugger on an already-thrown, uncaught exception
-  (`pdb.pm()`, `python -m pdb`) to inspect the failing frame without a rerun. Examples 15-16, 51, 66.
+  (`pdb.pm()`, `python -m pdb`) to inspect the failing frame without a rerun. Examples 15-16, 42, 51,
+  66, 72.
 - **co-05 · Print/logging versus interactive debugging** -- when `print`/`logging` beats a breakpoint
   (long-lived processes, production, timing) and when it does not (one-off, deep state). Examples
   12-13, 52.
 - **co-06 · Remote and DAP debugging** -- attaching a debugger to an already-running process over the
-  Debug Adapter Protocol (`debugpy`, editor DAP) or `pdb -p <pid>`. Examples 40-42, 54.
+  Debug Adapter Protocol (`debugpy`, editor DAP) or `pdb -p <pid>`. Examples 40-42, 54, 59.
 - **co-07 · Scientific-method debugging loop** -- expected-vs-actual, one falsifiable hypothesis, one
-  change, observe, repeat -- debugging as controlled experiment, not guessing. Examples 23, 50, 78.
+  change, observe, repeat -- debugging as controlled experiment, not guessing. Examples 7, 23, 50, 78.
 - **co-08 · Bisection search as a general strategy** -- halving the search space (commits, input, code
-  region) to localize a fault in logarithmic rather than linear steps. Examples 22, 24-25.
+  region) to localize a fault in logarithmic rather than linear steps. Examples 22, 24, 43.
 - **co-09 · `git bisect`, manual** -- driving `git bisect start`/`good`/`bad` by hand to name the
   commit that introduced a regression. Examples 22, 72.
 - **co-10 · `git bisect`, automated** -- `git bisect run <script>` with a pass/fail (or 125-skip) exit
-  code so the whole search runs unattended. Examples 43-44, 61, 79.
+  code so the whole search runs unattended. Examples 43-44, 61, 72, 79.
 - **co-11 · Delta-debugging input minimization** -- shrinking a failing input to a 1-minimal
   reproducer (hand-rolled `ddmin`, Hypothesis shrinking) so every remaining piece is necessary.
   Examples 24, 45-47, 62.
 - **co-12 · Sampling versus instrumenting profilers** -- periodic stack sampling (low overhead,
   statistical) versus per-call instrumentation (exact counts, high overhead), and when each is right.
-  Examples 21, 28-31, 53.
+  Examples 28-29.
 - **co-13 · CPU profiling with `cProfile`** -- the stdlib instrumenting profiler: running it from the
-  CLI or programmatically and reading its `pstats` table. Examples 17-18, 33, 53, 55, 70, 73.
+  CLI or programmatically and reading its `pstats` table. Examples 17-18, 28, 33, 35, 53, 55, 70,
+  72-73, 75.
 - **co-14 · CPU profiling with `py-spy`** -- a sampling profiler that attaches to a live PID with no
   code changes (`top`, `record`, `dump`, `--native`) -- and the honest, disclosed substitute
   (`mini_sampler.py`, built from `sys._current_frames()`) used wherever root access is unavailable.
-  Examples 21, 29-32, 60, 71.
+  Examples 28-32, 60, 71.
 - **co-15 · Wall-clock versus CPU time** -- distinguishing elapsed time (`perf_counter`) from on-CPU
   time (`process_time`); I/O-bound versus CPU-bound diagnosis. Examples 19, 60, 76.
 - **co-16 · `tottime` versus `cumtime`** -- a function's own time versus time including callees, and
-  which one to optimize (many-cheap leaf versus one-expensive parent). Examples 18, 73.
+  which one to optimize (many-cheap leaf versus one-expensive parent). Examples 18, 33, 73.
 - **co-17 · Memory profiling with `tracemalloc`** -- snapshotting allocations, diffing two snapshots to
   find a leak, and widening the traceback (`nframe`) to split allocation sites. Examples 20, 36-37, 74.
 - **co-18 · Line-level profiling** -- attributing cost to individual source lines (`line_profiler`'s
@@ -160,15 +162,16 @@ account of every such limitation and its real, disclosed substitute.
 - **co-19 · Flame-graph reading** -- width = total time in a call subtree, height = stack depth;
   finding the widest frame (the hot spot), not the tallest stack. Examples 21, 30-31, 53, 68-69, 71, 77.
 - **co-20 · Race and heisenbug reproduction** -- forcing nondeterministic concurrency bugs to
-  reproduce reliably (forced yields, seeds, barriers) before attempting a fix. Examples 56-59, 78-79.
+  reproduce reliably (forced yields, seeds, barriers) before attempting a fix. Examples 56-58, 76,
+  78-79.
 - **co-21 · Load-representative versus toy profiling** -- profiling at realistic scale and
   concurrency, because the hot spot at 100 items or a single call differs from production. Examples
   48-49, 60, 76.
 - **co-22 · Native-layer costs and native debugging** -- seeing costs the interpreter hides:
   `gdb`/`lldb` Python-aware backtraces, `perf` with Python perf-maps, `py-spy --native`, core dumps.
-  Examples 63-71, 75.
+  Examples 63-68, 70-71, 75, 80.
 - **co-23 · Before/after measurement discipline** -- proving a fix with a repeated, documented
-  measurement, and confirming zero regressions. Examples 27, 55, 57, 72, 74-75, 77.
+  measurement, and confirming zero regressions. Examples 27, 55, 57, 72, 74-75, 77, 80.
 
 ## Examples by Level
 
