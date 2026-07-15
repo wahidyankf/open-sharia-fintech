@@ -65,3 +65,5 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/drilling)
+- [Pass 1 Capstone · First Working Software](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software/overview)

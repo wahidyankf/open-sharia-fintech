@@ -62,6 +62,30 @@ This topic closes Pass 1 and anchors two inter-topic capstones.
   github.com/advisories/GHSA-752w-5fwx-jx9f · nvd.nist.gov/vuln/detail/CVE-2026-32597 ·
   pyjwt.readthedocs.io · developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS ·
   flask.palletsprojects.com/en/stable/web-security/)
+- 2026-07-16 — re-verified for Phase 19 (`capstone-first-working-software`, the Pass-1 inter-topic
+  capstone anchored in this file's "Capstone spec" section below): every version this capstone's Python
+  stack reuses is current and CVE-clean today. **FastAPI 0.139.0** (2026-07-01), **uvicorn 0.51.0**
+  (2026-07-08, `[standard]` extras), **pydantic 2.13.4** (2026-05-06), **argon2-cffi 25.1.0**
+  (2025-06-03, no known CVEs), **pytest 9.1.1** (2026-06-19), **Hypothesis 6.156.6** (2026-07-10, no
+  known CVEs), **pip-audit 2.10.1** (2026-06-10), **coverage.py 7.15.2** (topic 15 co-21, verified via
+  `pip index versions coverage` against PyPI directly at authoring time, no known CVEs) — all confirmed
+  current on PyPI, no regressions since the 2026-07-15 sweep above. **New finding**: Starlette's `TestClient` (imported by FastAPI's own
+  testing docs) now tries `import httpx2 as httpx` first, falling back to plain `httpx` with a
+  `StarletteDeprecationWarning` — confirmed by fetching Starlette's `testclient.py` source directly.
+  `httpx2` **2.7.0** (2026-07-14) is a genuine PyPI package, drop-in-API-compatible with `httpx`, now
+  maintained by Pydantic Services Inc. as `httpx`'s de facto successor (upstream `httpx` has not
+  released since 0.28.1, 2024-12-06). FastAPI's own published testing docs have not yet been updated to
+  mention `httpx2` (still say `pip install httpx`) — this repo's own `security-essentials` capstone
+  already pinned `httpx2==2.7.0` for the same reason (2026-07-15 entry above); this capstone's
+  `requirements.txt` does the same for consistency. Python: **3.13.12** (the exact interpreter used for
+  every real run captured on this capstone's page — CPython's own downloads page lists 3.14.6 as the
+  newest stable line and 3.13.x as the actively-patched N-1 line as of today; 3.13 remains a fully
+  supported, CVE-clean choice, matching the interpreter this whole Pass-1 track's other capstone already
+  ran against). (pypi.org/project/fastapi · pypi.org/project/uvicorn · pypi.org/project/pydantic ·
+  pypi.org/project/argon2-cffi · pypi.org/project/pytest · pypi.org/project/hypothesis ·
+  pypi.org/project/pip-audit · pypi.org/project/httpx2 ·
+  raw.githubusercontent.com/encode/starlette/master/starlette/testclient.py ·
+  fastapi.tiangolo.com/tutorial/testing/ · python.org/downloads)
 
 ## Concepts
 
