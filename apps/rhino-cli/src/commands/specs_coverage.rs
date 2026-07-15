@@ -30,9 +30,16 @@ pub struct ValidateArgs {
     /// Skip file matching; validate steps across ALL source files.
     #[arg(long = "shared-steps")]
     pub shared_steps: bool,
-    /// Spec directory names to exclude (repeatable).
+    /// Spec directory names to exclude from the `.feature`-file walk (repeatable).
     #[arg(long = "exclude-dir", value_name = "DIR")]
     pub exclude_dir: Vec<String>,
+    /// App-dir directory names to exclude from the step-implementation source
+    /// walk (repeatable). Separate from `--exclude-dir`: a name can be a
+    /// legitimate spec-organization folder in the spec tree while also being
+    /// a legitimate app-source folder name (e.g. a Next.js content-layer
+    /// `content/` directory holding step-decorator-shaped teaching examples).
+    #[arg(long = "exclude-source-dir", value_name = "DIR")]
+    pub exclude_source_dir: Vec<String>,
     /// Directory containing unit test implementations (three-level mode).
     #[arg(long = "unit-dir", value_name = "DIR")]
     pub unit_dir: Option<String>,
@@ -145,6 +152,7 @@ fn run_level_check(
         quiet: false,
         shared_steps: args.shared_steps,
         exclude_dirs: args.exclude_dir.clone(),
+        exclude_source_dirs: args.exclude_source_dir.clone(),
     };
 
     let result = checker::check_all(&opts)
@@ -442,6 +450,7 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
         quiet: false,
         shared_steps: args.shared_steps,
         exclude_dirs: args.exclude_dir.clone(),
+        exclude_source_dirs: args.exclude_source_dir.clone(),
     };
 
     let result = checker::check_all(&opts).context("spec coverage check failed")?;
@@ -556,6 +565,7 @@ mod tests {
             paths,
             shared_steps: false,
             exclude_dir: vec![],
+            exclude_source_dir: vec![],
             unit_dir: None,
             integration_dir: None,
             e2e_dir: None,
@@ -646,6 +656,7 @@ mod tests {
             ],
             shared_steps: true,
             exclude_dir: vec![],
+            exclude_source_dir: vec![],
             unit_dir: Some("apps/rhino-cli/tests/fixtures/three-level/unit".to_string()),
             integration_dir: Some(
                 "apps/rhino-cli/tests/fixtures/three-level/integration".to_string(),
@@ -677,6 +688,7 @@ mod tests {
             ],
             shared_steps: true,
             exclude_dir: vec![],
+            exclude_source_dir: vec![],
             unit_dir: Some("apps/rhino-cli/tests/fixtures/three-level/unit".to_string()),
             integration_dir: Some("apps/rhino-cli/tests/fixtures/three-level/unit".to_string()),
             e2e_dir: Some("apps/rhino-cli/tests/fixtures/three-level/unit".to_string()),
@@ -700,6 +712,7 @@ mod tests {
             ],
             shared_steps: true,
             exclude_dir: vec![],
+            exclude_source_dir: vec![],
             unit_dir: Some("apps/rhino-cli/tests/fixtures/three-level/unit".to_string()),
             integration_dir: None,
             e2e_dir: None,
@@ -731,6 +744,7 @@ mod tests {
             ],
             shared_steps: true,
             exclude_dir: vec![],
+            exclude_source_dir: vec![],
             unit_dir: None,
             integration_dir: None,
             e2e_dir: None,
