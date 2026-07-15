@@ -14,19 +14,19 @@ When an idea is ready for implementation, create a proper plan folder in `backlo
   Gherkin glob lacked a step def — roughly 104 pre-existing scenarios had no implementation. Fixed
   to `missingSteps: "skip-scenario"` (marks uncovered scenarios `test.fixme` instead of hard-block)
   during the `ayokoding-resizable-docs-sidebar` plan so its own new E2E scenarios could run at all.
-- That fix newly surfaced 8 real, deterministic full-suite failures previously masked by the
-  generation block, confirmed via a full `npx nx run ayokoding-www-fe-e2e:test:e2e` run on
-  2026-07-15 (463 passed, 117 skipped, 8 failed) — none in `resizable-sidebar.feature` (its own 21
-  scenarios, `--grep "Resizable"`, are 100% green across chromium/firefox/webkit):
-  - 2× `cost-of-living-calculator.feature.spec.js` scenarios ("Pre-school children incur childcare,
-    not schooling", "Household composition changes the minimum qualifying role"), each failing on
-    all 3 browsers (6 instances) — currency/school-type toggle and minimum-qualifying-role marker
-    assertions.
-  - 2× `ia-navigation-revamp.feature.spec.js` scenarios ("Sitemap lists only the new /c content
-    URLs", "RSS feed item links use the new /c content URLs"), chromium only.
-    Future plan: investigate and fix these 8 failures — unrelated to the resizable-sidebar plan
-    (calculator logic and sitemap/RSS generation are separate bounded contexts), left out of its
-    scope.
+- **Resolved 2026-07-16** (PR #49 review cycle 1, `pr-review-fixer`): that fix had newly surfaced
+  what a 2026-07-15 run read as 8 full-suite failures, filed here as a deferred backlog note per a
+  cited "Root Cause Orientation scope-discipline carve-out" — `pr-review-maker` correctly flagged
+  that no such carve-out exists (the practice's "Medium Fixes" category explicitly covers "Broken
+  tests," fix within the session). Re-investigation found 3 real, root-cause-fixable chromium
+  failures (a genuine viewport-clamp gap in this plan's own new `resizable-sidebar.feature`
+  coverage, plus 2 stale e2e-step assertions in `cost-of-living-calculator.feature.spec.js` —
+  "Pre-school children incur childcare, not schooling" and "Household composition changes the
+  minimum qualifying role") — all fixed at the root cause in
+  `apps/ayokoding-www-fe-e2e/src/steps/{resizable-sidebar,cost-of-living-calculator}.steps.ts`.
+  The 2 `ia-navigation-revamp.feature.spec.js` scenarios originally counted (sitemap/RSS) did not
+  reproduce on re-verification and needed no fix. `npx nx run ayokoding-www-fe-e2e:test:e2e` now
+  exits 0.
 - Future plan: burn down the ~104 scenarios now marked `test.fixme` across
   `navigation.feature`/`content-rendering.feature`/`search.feature`/etc. — implement their missing
   E2E step defs so `skip-scenario` can eventually revert to `fail-on-gen` (the safer default).
