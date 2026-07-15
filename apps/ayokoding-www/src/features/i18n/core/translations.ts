@@ -226,6 +226,14 @@ const translations: Record<Locale, Record<string, string>> = {
     footerTerms: "Terms & Conditions",
     footerProject: "Project",
     sectionExploreHeading: "Explore",
+
+    // Mobile nav drawer — preset width control
+    mobileNavWidthLabel: "Drawer width",
+    mobileNavWidthDefault: "Default",
+    mobileNavWidthWide: "Wide",
+
+    // Resizable docs sidebar — drag/keyboard handle accessible name
+    resizableSidebarHandleLabel: "Resize panel",
   },
   id: {
     readMore: "Baca Selengkapnya",
@@ -458,6 +466,14 @@ const translations: Record<Locale, Record<string, string>> = {
     footerTerms: "Syarat & Ketentuan",
     footerProject: "Proyek",
     sectionExploreHeading: "Jelajahi",
+
+    // Mobile nav drawer — preset width control
+    mobileNavWidthLabel: "Lebar drawer",
+    mobileNavWidthDefault: "Standar",
+    mobileNavWidthWide: "Lebar",
+
+    // Resizable docs sidebar — drag/keyboard handle accessible name
+    resizableSidebarHandleLabel: "Ubah ukuran panel",
   },
 };
 

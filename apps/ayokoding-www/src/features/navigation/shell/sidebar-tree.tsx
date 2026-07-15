@@ -16,13 +16,21 @@ interface SidebarTreeProps {
 }
 
 export function SidebarTree({ nodes, locale, depth = 0 }: SidebarTreeProps) {
-  return (
-    <ul className={cn("space-y-0.5", depth > 0 && "ml-3 border-l border-border pl-2")}>
+  const list = (
+    <ul className={cn("min-w-max space-y-0.5", depth > 0 && "ml-3 border-l border-border pl-2")}>
       {nodes.map((node) => (
         <SidebarNode key={node.slug} node={node} locale={locale} depth={depth} />
       ))}
     </ul>
   );
+
+  // Only the root-level tree owns the horizontal scroll container — wrapping every
+  // recursive nested call too would nest scroll regions inside scroll regions.
+  if (depth > 0) {
+    return list;
+  }
+
+  return <div className="overflow-x-auto">{list}</div>;
 }
 
 function SidebarNode({ node, locale, depth }: { node: TreeNode; locale: string; depth: number }) {
@@ -40,7 +48,7 @@ function SidebarNode({ node, locale, depth }: { node: TreeNode; locale: string; 
         <Link
           href={href}
           className={cn(
-            "flex-1 truncate rounded-md px-2 py-1.5 text-sm transition-colors",
+            "flex-1 rounded-md px-2 py-1.5 text-sm whitespace-nowrap transition-colors",
             isActive
               ? "bg-primary/10 font-medium text-primary"
               : "text-muted-foreground hover:bg-accent hover:text-foreground",
