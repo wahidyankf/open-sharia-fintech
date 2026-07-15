@@ -2,7 +2,6 @@
 -- Three normalized tables, one fact per place (co-05 normalization): a user owns habits, a habit
 -- owns check-ins. No repeated columns, no computed/derived data stored (current_streak is always
 -- computed by app/domain.py from these rows, never persisted).
-
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT, -- co-02 primary-keys: aliases SQLite's rowid, auto-assigned
   username TEXT NOT NULL UNIQUE, -- co-04 constraints: NOT NULL + UNIQUE enforced by the engine
@@ -24,5 +23,7 @@ CREATE TABLE IF NOT EXISTS checkins (
   UNIQUE (habit_id, checkin_date) -- co-04 constraint: the DB itself forbids a double check-in for one day
 );
 
-CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits (user_id); -- co-23: avoids an O(n) table scan per "list my habits" query
-CREATE INDEX IF NOT EXISTS idx_checkins_habit_id ON checkins (habit_id); -- co-23: same, for "load this habit's check-ins"
+-- co-23: an index on each foreign key avoids an O(n) table scan per "list my habits"/"load this habit's check-ins" query
+CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits (user_id);
+
+CREATE INDEX IF NOT EXISTS idx_checkins_habit_id ON checkins (habit_id);

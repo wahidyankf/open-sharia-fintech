@@ -31,24 +31,20 @@ from .models import (
     UserRegister,
 )
 
-DB_PATH = os.environ.get(  # => overridable so tests can point at a fresh, isolated file
+# overridable so tests can point at a fresh, isolated file
+DB_PATH = os.environ.get(
     "CAPSTONE1_DB_PATH", os.path.join(os.path.dirname(__file__), "habits.db")
 )
-AUTH_SECRET = os.environ[
-    "CAPSTONE1_AUTH_SECRET"
-]  # => REQUIRED, no hardcoded fallback --
-# => this line raises KeyError and refuses to start if the secret is missing, by design (topic 17)
+# REQUIRED, no hardcoded fallback -- this line raises KeyError and refuses to
+# start if the secret is missing, by design (topic 17)
+AUTH_SECRET = os.environ["CAPSTONE1_AUTH_SECRET"]
 
-repo.init_db(
-    DB_PATH
-)  # => applies schema_v1.sql + migration_v2.sql once, at import/startup time
+repo.init_db(DB_PATH)  # => applies schema_v1.sql + migration_v2.sql once, at startup
 
 app = FastAPI(title="Pass-1 Capstone: Habit Tracker API")
 
 
-def get_db() -> Iterator[
-    sqlite3.Connection
-]:  # => one connection per request, dependency-injected
+def get_db() -> Iterator[sqlite3.Connection]:  # => one connection per request
     conn = repo.get_connection(DB_PATH)
     try:
         yield conn
@@ -56,33 +52,24 @@ def get_db() -> Iterator[
         conn.close()
 
 
-def _resolve_token(
-    token: str,
-) -> int | None:  # => the ONE place AUTH_SECRET is actually used
+def _resolve_token(token: str) -> int | None:  # => the ONE place AUTH_SECRET is used
     return auth.resolve_token(token, AUTH_SECRET)
 
 
 def _current_user_id(request: Request) -> int:
-    user_id = getattr(
-        request.state, "user_id", None
-    )  # => set by the token-check middleware below
-    assert (
-        user_id is not None
-    )  # => guaranteed once token_check_middleware has run for this path
+    # => set by the token-check middleware below
+    user_id = getattr(request.state, "user_id", None)
+    # => guaranteed once token_check_middleware has run for this path
+    assert user_id is not None
     return int(user_id)
 
 
-app.middleware("http")(
-    make_token_check_middleware(_resolve_token)
-)  # => guards every /habits request
-app.middleware("http")(
-    security_headers_middleware
-)  # => stamps every response, success or error
+app.middleware("http")(make_token_check_middleware(_resolve_token))  # guards /habits
+app.middleware("http")(security_headers_middleware)  # stamps every response
 
 
-@app.exception_handler(
-    StarletteHTTPException
-)  # => registered on Starlette's BASE HTTPException
+# => registered on Starlette's BASE HTTPException
+@app.exception_handler(StarletteHTTPException)
 async def handle_http_exception(
     request: Request, exc: StarletteHTTPException
 ) -> JSONResponse:
@@ -104,9 +91,8 @@ def _habit_to_public(conn: sqlite3.Connection, habit: Habit) -> HabitPublic:
     row = conn.execute(
         "SELECT created_at FROM habits WHERE id = ?", (habit.id,)
     ).fetchone()
-    assert (
-        row is not None
-    )  # => the caller only ever passes a habit it just loaded/created/updated
+    # => the caller only ever passes a habit it just loaded/created/updated
+    assert row is not None
     return HabitPublic(
         id=habit.id,
         name=habit.name,
@@ -139,16 +125,14 @@ def register_route(
     body: UserRegister, conn: sqlite3.Connection = Depends(get_db)
 ) -> UserPublic:
     existing = repo.get_user_by_username(conn, body.username)
-    if (
-        existing is not None
-    ):  # => a specific, honest conflict -- distinct from login's generic error
+    # => a specific, honest conflict -- distinct from login's generic error
+    if existing is not None:
         raise HTTPException(
             status_code=409,
             detail={"error": {"code": "conflict", "message": "username already taken"}},
         )
-    password_hash = auth.hash_password(
-        body.password
-    )  # => hash BEFORE it ever touches the DB
+    # => hash BEFORE it ever touches the DB
+    password_hash = auth.hash_password(body.password)
     return repo.create_user(conn, body.username, password_hash)
 
 
@@ -157,8 +141,10 @@ def login_route(
     body: UserLogin, conn: sqlite3.Connection = Depends(get_db)
 ) -> TokenResponse:
     row = repo.get_user_by_username(conn, body.username)
-    generic_error = HTTPException(  # => SAME message for "no such user" and "wrong password" --
-        status_code=401,  # => an attacker probing usernames learns nothing from the response either way
+    # => SAME message for "no such user" and "wrong password" -- an attacker
+    # => probing usernames learns nothing from the response either way
+    generic_error = HTTPException(
+        status_code=401,
         detail={
             "error": {"code": "unauthorized", "message": "invalid username or password"}
         },
@@ -171,9 +157,8 @@ def login_route(
     return TokenResponse(access_token=token)
 
 
-@app.post(
-    "/habits", response_model=HabitPublic, status_code=201
-)  # => guarded -- token required
+# guarded: token required
+@app.post("/habits", response_model=HabitPublic, status_code=201)
 def create_habit_route(
     body: HabitCreate, request: Request, conn: sqlite3.Connection = Depends(get_db)
 ) -> HabitPublic:
@@ -182,14 +167,12 @@ def create_habit_route(
     return _habit_to_public(conn, habit)
 
 
-@app.get(
-    "/habits", response_model=list[HabitPublic]
-)  # => guarded -- token required (reads are user-scoped)
+# guarded -- token required (reads are user-scoped)
+@app.get("/habits", response_model=list[HabitPublic])
 def list_habits_route(
     request: Request,
-    q: str | None = Query(
-        default=None, max_length=200
-    ),  # => co-03 (topic 17): FIXED, parameterized search
+    # => co-03 (topic 17): FIXED, parameterized search
+    q: str | None = Query(default=None, max_length=200),
     include_archived: bool = Query(default=False),
     conn: sqlite3.Connection = Depends(get_db),
 ) -> list[HabitPublic]:
@@ -202,9 +185,8 @@ def list_habits_route(
     return [_habit_to_public(conn, h) for h in habits]
 
 
-@app.get(
-    "/habits/{habit_id}", response_model=HabitPublic
-)  # => guarded -- token required, ownership-scoped
+# guarded -- token required, ownership-scoped
+@app.get("/habits/{habit_id}", response_model=HabitPublic)
 def get_habit_route(
     habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)
 ) -> HabitPublic:
@@ -234,10 +216,9 @@ def record_checkin_route(
         )
     checkin_day = body.checkin_date if body.checkin_date is not None else date.today()
     repo.record_checkin(conn, habit_id, checkin_day.isoformat())
-    habit.record_checkin(
-        checkin_day
-    )  # => mirror the write into the in-memory domain object too,
-    # => so the response below reflects it without a second DB round trip
+    # => mirror the write into the in-memory domain object too, so the response
+    # => below reflects it without a second DB round trip
+    habit.record_checkin(checkin_day)
     return CheckinPublic(
         habit_id=habit_id,
         checkin_date=checkin_day,
@@ -260,9 +241,8 @@ def archive_habit_route(
     return _habit_to_public(conn, habit)
 
 
-@app.delete(
-    "/habits/{habit_id}", status_code=204
-)  # => guarded -- token required, ownership-scoped
+# guarded -- token required, ownership-scoped
+@app.delete("/habits/{habit_id}", status_code=204)
 def delete_habit_route(
     habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)
 ) -> None:

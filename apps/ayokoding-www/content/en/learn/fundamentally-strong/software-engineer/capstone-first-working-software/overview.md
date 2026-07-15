@@ -108,12 +108,10 @@ CREATE TABLE IF NOT EXISTS checkins (
   UNIQUE (habit_id, checkin_date) -- co-04 constraint: the DB itself forbids a double check-in for one day
 );
 
+-- co-23: an index on each foreign key avoids an O(n) table scan per "list my habits"/"load this habit's check-ins" query
 CREATE INDEX IF NOT EXISTS idx_habits_user_id ON habits (user_id);
 
--- co-23: avoids an O(n) table scan per "list my habits" query
 CREATE INDEX IF NOT EXISTS idx_checkins_habit_id ON checkins (habit_id);
-
--- co-23: same, for "load this habit's check-ins"
 ```
 
 An additive migration then bumps the schema to version 2, adding an `archived` column Step 3's
@@ -127,10 +125,9 @@ schema without breaking existing rows":
 -- Applied once at PRAGMA user_version 1 -> 2 by app/repository.py's init_db(). An ADDITIVE
 -- ALTER TABLE with a DEFAULT never breaks a row that already exists -- every pre-migration
 -- habit reads back with archived = 0 (not archived) with no backfill step needed.
+-- 0 = active, 1 = archived
 ALTER TABLE habits
 ADD COLUMN archived INTEGER NOT NULL DEFAULT 0;
-
--- 0 = active, 1 = archived
 ```
 
 `setup.sh` (topic 05 Just Enough Bash) is the ONE command a clean-machine reader runs: it creates a
@@ -255,18 +252,28 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 
-@dataclass(slots=True)  # => slots=True (Python 3.10+): no per-instance __dict__ (topic 08 co-06)
+@dataclass(
+    slots=True
+)  # => slots=True (Python 3.10+): no per-instance __dict__ (topic 08 co-06)
 class Habit:
     """A single habit, its archived flag, and the check-in history that decides its streak."""
 
     id: int  # => the DB row id; 0 for a not-yet-persisted (in-memory only) instance
     name: str  # => e.g. "Read 20 minutes" -- validated non-blank in __post_init__ below
-    archived: bool = False  # => guarded ONLY by archive() below -- never flipped from outside
-    _checkin_dates: set[date] = field(default_factory=set[date])  # => co-09: hash-set, O(1) average membership
+    archived: bool = (
+        False  # => guarded ONLY by archive() below -- never flipped from outside
+    )
+    _checkin_dates: set[date] = field(
+        default_factory=set[date]
+    )  # => co-09: hash-set, O(1) average membership
 
     def __post_init__(self) -> None:
-        if not self.name.strip():  # => co-04 constraint enforced in the domain layer, not just the DB
-            raise ValueError("habit name must not be blank")  # => an invalid Habit can never exist
+        if (
+            not self.name.strip()
+        ):  # => co-04 constraint enforced in the domain layer, not just the DB
+            raise ValueError(
+                "habit name must not be blank"
+            )  # => an invalid Habit can never exist
 
     def archive(self) -> None:
         """The ONE way to archive a habit -- bundles the state change with its own guard
@@ -296,7 +303,9 @@ class Habit:
         """
         streak = 0
         day = today
-        while self.has_checkin_on(day):  # => stops at the first missing day, walking backward
+        while self.has_checkin_on(
+            day
+        ):  # => stops at the first missing day, walking backward
             streak += 1
             day -= timedelta(days=1)  # => one calendar day earlier
         return streak
@@ -332,8 +341,12 @@ MIGRATION_V2_PATH = Path(__file__).parent / "migration_v2.sql"
 
 def get_connection(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row  # => rows are addressable by column name, not just position
-    conn.execute("PRAGMA foreign_keys = ON")  # => co-03: enforce FK constraints on this connection
+    conn.row_factory = (
+        sqlite3.Row
+    )  # => rows are addressable by column name, not just position
+    conn.execute(
+        "PRAGMA foreign_keys = ON"
+    )  # => co-03: enforce FK constraints on this connection
     return conn
 
 
@@ -351,7 +364,9 @@ def init_db(db_path: str) -> None:  # => co-22 schema-migration: safe to call re
     conn.close()
 
 
-def ping(conn: sqlite3.Connection) -> bool:  # => the cheapest possible real query -- used by /ready
+def ping(
+    conn: sqlite3.Connection,
+) -> bool:  # => the cheapest possible real query -- used by /ready
     conn.execute("SELECT 1")
     return True
 
@@ -359,7 +374,9 @@ def ping(conn: sqlite3.Connection) -> bool:  # => the cheapest possible real que
 # --- users -----------------------------------------------------------------------------------
 
 
-def create_user(conn: sqlite3.Connection, username: str, password_hash: str) -> UserPublic:
+def create_user(
+    conn: sqlite3.Connection, username: str, password_hash: str
+) -> UserPublic:
     cursor = conn.execute(
         "INSERT INTO users (username, password_hash) VALUES (?, ?)",  # => parameterized; hash only, never raw
         (username, password_hash),
@@ -368,12 +385,20 @@ def create_user(conn: sqlite3.Connection, username: str, password_hash: str) -> 
     row = conn.execute(
         "SELECT id, username, created_at FROM users WHERE id = ?", (cursor.lastrowid,)
     ).fetchone()
-    assert row is not None  # => guaranteed by the INSERT above -- narrows Row | None for strict-mode pyright
-    return UserPublic(id=int(row["id"]), username=str(row["username"]), created_at=str(row["created_at"]))
+    assert (
+        row is not None
+    )  # => guaranteed by the INSERT above -- narrows Row | None for strict-mode pyright
+    return UserPublic(
+        id=int(row["id"]),
+        username=str(row["username"]),
+        created_at=str(row["created_at"]),
+    )
 
 
 def get_user_by_username(conn: sqlite3.Connection, username: str) -> sqlite3.Row | None:
-    return conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()  # => co-20
+    return conn.execute(
+        "SELECT * FROM users WHERE username = ?", (username,)
+    ).fetchone()  # => co-20
 
 
 # --- habits + check-ins -----------------------------------------------------------------------
@@ -384,9 +409,14 @@ def _load_habit(conn: sqlite3.Connection, habit_row: sqlite3.Row) -> Habit:
     replaying every stored check-in through `record_checkin` so the domain object's hash-set
     (topic 07 co-09) reflects the full, real history -- the DB is the source of truth; the
     domain object is a transient in-memory VIEW of it, rebuilt on every load."""
-    habit = Habit(id=int(habit_row["id"]), name=str(habit_row["name"]), archived=bool(habit_row["archived"]))
+    habit = Habit(
+        id=int(habit_row["id"]),
+        name=str(habit_row["name"]),
+        archived=bool(habit_row["archived"]),
+    )
     for checkin_row in conn.execute(
-        "SELECT checkin_date FROM checkins WHERE habit_id = ?", (habit_row["id"],)  # => co-20
+        "SELECT checkin_date FROM checkins WHERE habit_id = ?",
+        (habit_row["id"],),  # => co-20
     ):
         habit.record_checkin(date.fromisoformat(str(checkin_row["checkin_date"])))
     return habit
@@ -394,39 +424,50 @@ def _load_habit(conn: sqlite3.Connection, habit_row: sqlite3.Row) -> Habit:
 
 def create_habit(conn: sqlite3.Connection, user_id: int, data: HabitCreate) -> Habit:
     cursor = conn.execute(
-        "INSERT INTO habits (user_id, name) VALUES (?, ?)", (user_id, data.name)  # => co-20
+        "INSERT INTO habits (user_id, name) VALUES (?, ?)",
+        (user_id, data.name),  # => co-20
     )
     conn.commit()
-    row = conn.execute("SELECT * FROM habits WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    row = conn.execute(
+        "SELECT * FROM habits WHERE id = ?", (cursor.lastrowid,)
+    ).fetchone()
     assert row is not None
     return _load_habit(conn, row)
 
 
 def get_habit(conn: sqlite3.Connection, habit_id: int, user_id: int) -> Habit | None:
     row = conn.execute(
-        "SELECT * FROM habits WHERE id = ? AND user_id = ?", (habit_id, user_id)  # => co-20; ownership-scoped
+        "SELECT * FROM habits WHERE id = ? AND user_id = ?",
+        (habit_id, user_id),  # => co-20; ownership-scoped
     ).fetchone()
     return _load_habit(conn, row) if row is not None else None
 
 
-def list_habits(conn: sqlite3.Connection, user_id: int, include_archived: bool = False) -> list[Habit]:
+def list_habits(
+    conn: sqlite3.Connection, user_id: int, include_archived: bool = False
+) -> list[Habit]:
     if include_archived:
         rows = conn.execute(
-            "SELECT * FROM habits WHERE user_id = ? ORDER BY id", (user_id,)  # => co-20
+            "SELECT * FROM habits WHERE user_id = ? ORDER BY id",
+            (user_id,),  # => co-20
         ).fetchall()
     else:
         rows = conn.execute(
-            "SELECT * FROM habits WHERE user_id = ? AND archived = 0 ORDER BY id", (user_id,)  # => co-20
+            "SELECT * FROM habits WHERE user_id = ? AND archived = 0 ORDER BY id",
+            (user_id,),  # => co-20
         ).fetchall()
     return [_load_habit(conn, row) for row in rows]
 
 
-def archive_habit(conn: sqlite3.Connection, habit_id: int, user_id: int) -> Habit | None:
+def archive_habit(
+    conn: sqlite3.Connection, habit_id: int, user_id: int
+) -> Habit | None:
     """Load the habit, archive it through the DOMAIN OBJECT's own guarded method (topic 08 --
     `habits.archived` is never set with a bare `UPDATE ... SET archived = 1` written by hand
     at the call site), then persist the domain object's decision back to the row."""
     row = conn.execute(
-        "SELECT * FROM habits WHERE id = ? AND user_id = ?", (habit_id, user_id)  # => co-20
+        "SELECT * FROM habits WHERE id = ? AND user_id = ?",
+        (habit_id, user_id),  # => co-20
     ).fetchone()
     if row is None:
         return None
@@ -442,13 +483,16 @@ def archive_habit(conn: sqlite3.Connection, habit_id: int, user_id: int) -> Habi
 
 def delete_habit(conn: sqlite3.Connection, habit_id: int, user_id: int) -> bool:
     cursor = conn.execute(
-        "DELETE FROM habits WHERE id = ? AND user_id = ?", (habit_id, user_id)  # => co-20; ownership-scoped
+        "DELETE FROM habits WHERE id = ? AND user_id = ?",
+        (habit_id, user_id),  # => co-20; ownership-scoped
     )
     conn.commit()
     return cursor.rowcount > 0
 
 
-def record_checkin(conn: sqlite3.Connection, habit_id: int, checkin_date_iso: str) -> None:
+def record_checkin(
+    conn: sqlite3.Connection, habit_id: int, checkin_date_iso: str
+) -> None:
     conn.execute(
         "INSERT INTO checkins (habit_id, checkin_date) VALUES (?, ?) "  # => co-20
         "ON CONFLICT (habit_id, checkin_date) DO NOTHING",  # => co-10 upsert: a repeat check-in is a no-op
@@ -489,7 +533,9 @@ class UserRegister(BaseModel):
     username: str = Field(min_length=3, max_length=32, pattern=r"^[a-zA-Z0-9_]+$")
     # => an allow-list: only letters/digits/underscore -- rejects `admin'--` outright,
     # => before any handler code runs (topic 17 co-07)
-    password: str = Field(min_length=8, max_length=128)  # => bounds only -- the HASH is what protects it
+    password: str = Field(
+        min_length=8, max_length=128
+    )  # => bounds only -- the HASH is what protects it
 
 
 class UserLogin(BaseModel):
@@ -521,11 +567,15 @@ class HabitPublic(BaseModel):
     created_at: str
     archived: bool
     checkin_count: int
-    current_streak: int  # => computed by app/domain.py's Habit.current_streak(), never stored
+    current_streak: (
+        int  # => computed by app/domain.py's Habit.current_streak(), never stored
+    )
 
 
 class CheckinCreate(BaseModel):
-    checkin_date: date | None = None  # => omit to check in for TODAY; pass an explicit date to backfill
+    checkin_date: date | None = (
+        None  # => omit to check in for TODAY; pass an explicit date to backfill
+    )
 
 
 class CheckinPublic(BaseModel):
@@ -608,57 +658,74 @@ import hmac
 import json
 import time
 
-from argon2 import PasswordHasher  # => argon2-cffi's high-level hasher (topic 17 co-09)
-from argon2.exceptions import VerifyMismatchError  # => the specific "wrong password" exception
+# argon2-cffi's high-level hasher (topic 17 co-09)
+from argon2 import PasswordHasher
+
+# the specific "wrong password" exception
+from argon2.exceptions import VerifyMismatchError
 
 # OWASP's current minimum-tier argon2id parameters -- 19 MiB memory, 2 iterations, 1 degree of
 # parallelism -- deliberately slow AND memory-hard against offline cracking (topic 17 co-09).
 _HASHER = PasswordHasher(memory_cost=19456, time_cost=2, parallelism=1)
 
-TOKEN_TTL_SECONDS = 3600  # => a bounded lifetime -- a leaked token stops working on its own
+# a bounded lifetime -- a leaked token stops working on its own
+TOKEN_TTL_SECONDS = 3600
 
 
-def hash_password(password: str) -> str:  # => the ONLY function allowed to touch a raw password
+# => the ONLY function allowed to touch a raw password
+def hash_password(password: str) -> str:
     """Hash a password with argon2id. The DB stores ONLY this value, never the raw password."""
-    return _HASHER.hash(password)  # => argon2id generates its own random salt internally, every call
+    # => argon2id generates its own random salt internally, every call
+    return _HASHER.hash(password)
 
 
 def verify_password(stored_hash: str, candidate: str) -> bool:
     """Verify a candidate password against a stored argon2id hash."""
     try:
-        return _HASHER.verify(stored_hash, candidate)  # => True only if candidate re-hashes to stored_hash
-    except VerifyMismatchError:  # => argon2-cffi's specific exception for "wrong password"
+        # => True only if candidate re-hashes to stored_hash
+        return _HASHER.verify(stored_hash, candidate)
+    # => argon2-cffi's specific exception for "wrong password"
+    except VerifyMismatchError:
         return False  # => normalizes the exception into a plain boolean for callers
 
 
-def _sign(payload_b64: str, secret: str) -> str:  # => `secret` is ALWAYS a caller-supplied env value --
-    digest = hmac.new(secret.encode("utf-8"), payload_b64.encode("utf-8"), hashlib.sha256)  # never hardcoded here
+# => `secret` is ALWAYS a caller-supplied env value -- never hardcoded here
+def _sign(payload_b64: str, secret: str) -> str:
+    digest = hmac.new(
+        secret.encode("utf-8"),
+        payload_b64.encode("utf-8"),
+        hashlib.sha256,
+    )
     return digest.hexdigest()
 
 
 def issue_token(user_id: int, secret: str) -> str:
     """Mint a signed, expiring bearer token. The signing algorithm is FIXED at HMAC-SHA256 --
     never read from the token itself, so an attacker cannot downgrade or confuse it."""
-    payload = {"sub": user_id, "exp": int(time.time()) + TOKEN_TTL_SECONDS}  # => a bounded-lifetime claim
-    payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode("utf-8")).decode("ascii")
+    # => a bounded-lifetime claim
+    payload = {"sub": user_id, "exp": int(time.time()) + TOKEN_TTL_SECONDS}
+    payload_json = json.dumps(payload).encode("utf-8")  # => co-05 encoding, then base64
+    payload_b64 = base64.urlsafe_b64encode(payload_json).decode("ascii")
     signature = _sign(payload_b64, secret)
-    return f"{payload_b64}.{signature}"  # => opaque to the client -- carries no readable secret itself
+    return f"{payload_b64}.{signature}"  # => opaque to the client, no readable secret inside
 
 
 def resolve_token(token: str, secret: str) -> int | None:
     """Verify a bearer token's signature and expiry, returning the user id if valid."""
     try:
         payload_b64, signature = token.split(".", 1)
-    except ValueError:  # => malformed input fails closed -- no crash, just "not authenticated"
+    # => malformed input fails closed -- no crash, just "not authenticated"
+    except ValueError:
         return None
     expected_signature = _sign(payload_b64, secret)
-    if not hmac.compare_digest(signature, expected_signature):  # => TIMING-SAFE compare --
-        return None  # => a plain `==` here would leak how many leading bytes of the signature matched
+    if not hmac.compare_digest(signature, expected_signature):  # => TIMING-SAFE compare
+        return None  # => a plain `==` here would leak how many leading bytes matched
     try:
         payload = json.loads(base64.urlsafe_b64decode(payload_b64.encode("ascii")))
     except (ValueError, UnicodeDecodeError):
         return None
-    if int(payload.get("exp", 0)) < int(time.time()):  # => expired tokens are rejected, not just old ones
+    # => expired tokens are rejected too, not just malformed ones
+    if int(payload.get("exp", 0)) < int(time.time()):
         return None
     return int(payload["sub"])
 ```
@@ -695,17 +762,32 @@ def make_token_check_middleware(
     async def token_check_middleware(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        needs_token = request.url.path.startswith("/habits")  # => ALL habit ops are user-scoped, reads included
+        needs_token = request.url.path.startswith(
+            "/habits"
+        )  # => ALL habit ops are user-scoped, reads included
         if needs_token:
             auth_header = request.headers.get("authorization", "")
-            token = auth_header.removeprefix("Bearer ") if auth_header.startswith("Bearer ") else ""
-            user_id = resolve_token(token) if token else None  # => real signature + expiry check
+            token = (
+                auth_header.removeprefix("Bearer ")
+                if auth_header.startswith("Bearer ")
+                else ""
+            )
+            user_id = (
+                resolve_token(token) if token else None
+            )  # => real signature + expiry check
             if user_id is None:
                 return JSONResponse(  # => the SAME structured envelope every other error uses
                     status_code=401,
-                    content={"error": {"code": "unauthorized", "message": "missing or invalid token"}},
+                    content={
+                        "error": {
+                            "code": "unauthorized",
+                            "message": "missing or invalid token",
+                        }
+                    },
                 )
-            request.state.user_id = user_id  # => available to route handlers -- "who is this?"
+            request.state.user_id = (
+                user_id  # => available to route handlers -- "who is this?"
+            )
         return await call_next(request)
 
     return token_check_middleware
@@ -715,9 +797,15 @@ async def security_headers_middleware(  # => runs on EVERY response, success or 
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> Response:
     response = await call_next(request)
-    response.headers["Content-Security-Policy"] = "default-src 'self'"  # => restricts script/style sources
-    response.headers["X-Content-Type-Options"] = "nosniff"  # => stops MIME-sniffing of response bodies
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"  # => forces HTTPS
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'"  # => restricts script/style sources
+    )
+    response.headers["X-Content-Type-Options"] = (
+        "nosniff"  # => stops MIME-sniffing of response bodies
+    )
+    response.headers["Strict-Transport-Security"] = (
+        "max-age=31536000; includeSubDomains"  # => forces HTTPS
+    )
     return response
 ```
 
@@ -766,18 +854,20 @@ from .models import (
     UserRegister,
 )
 
-DB_PATH = os.environ.get(  # => overridable so tests can point at a fresh, isolated file
+# overridable so tests can point at a fresh, isolated file
+DB_PATH = os.environ.get(
     "CAPSTONE1_DB_PATH", os.path.join(os.path.dirname(__file__), "habits.db")
 )
-AUTH_SECRET = os.environ["CAPSTONE1_AUTH_SECRET"]  # => REQUIRED, no hardcoded fallback --
-# => this line raises KeyError and refuses to start if the secret is missing, by design (topic 17)
+# REQUIRED, no hardcoded fallback -- this line raises KeyError and refuses to
+# start if the secret is missing, by design (topic 17)
+AUTH_SECRET = os.environ["CAPSTONE1_AUTH_SECRET"]
 
-repo.init_db(DB_PATH)  # => applies schema_v1.sql + migration_v2.sql once, at import/startup time
+repo.init_db(DB_PATH)  # => applies schema_v1.sql + migration_v2.sql once, at startup
 
 app = FastAPI(title="Pass-1 Capstone: Habit Tracker API")
 
 
-def get_db() -> Iterator[sqlite3.Connection]:  # => one connection per request, dependency-injected
+def get_db() -> Iterator[sqlite3.Connection]:  # => one connection per request
     conn = repo.get_connection(DB_PATH)
     try:
         yield conn
@@ -785,26 +875,35 @@ def get_db() -> Iterator[sqlite3.Connection]:  # => one connection per request, 
         conn.close()
 
 
-def _resolve_token(token: str) -> int | None:  # => the ONE place AUTH_SECRET is actually used
+def _resolve_token(token: str) -> int | None:  # => the ONE place AUTH_SECRET is used
     return auth.resolve_token(token, AUTH_SECRET)
 
 
 def _current_user_id(request: Request) -> int:
-    user_id = getattr(request.state, "user_id", None)  # => set by the token-check middleware below
-    assert user_id is not None  # => guaranteed once token_check_middleware has run for this path
+    # => set by the token-check middleware below
+    user_id = getattr(request.state, "user_id", None)
+    # => guaranteed once token_check_middleware has run for this path
+    assert user_id is not None
     return int(user_id)
 
 
-app.middleware("http")(make_token_check_middleware(_resolve_token))  # => guards every /habits request
-app.middleware("http")(security_headers_middleware)  # => stamps every response, success or error
+app.middleware("http")(make_token_check_middleware(_resolve_token))  # guards /habits
+app.middleware("http")(security_headers_middleware)  # stamps every response
 
 
-@app.exception_handler(StarletteHTTPException)  # => registered on Starlette's BASE HTTPException
-async def handle_http_exception(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+# => registered on Starlette's BASE HTTPException
+@app.exception_handler(StarletteHTTPException)
+async def handle_http_exception(
+    request: Request, exc: StarletteHTTPException
+) -> JSONResponse:
     # => fastapi.HTTPException (raised by every route below) is a SUBCLASS of Starlette's, so this
     # => one handler also catches exceptions Starlette itself raises internally -- unmatched-route 404s,
     # => wrong-method 405s -- giving the SAME {"error": {...}} envelope app-wide, not just route-raised ones.
-    body = exc.detail if isinstance(exc.detail, dict) else {"error": {"code": "error", "message": str(exc.detail)}}
+    body = (
+        exc.detail
+        if isinstance(exc.detail, dict)
+        else {"error": {"code": "error", "message": str(exc.detail)}}
+    )
     return JSONResponse(status_code=exc.status_code, content=body)
 
 
@@ -812,8 +911,11 @@ def _habit_to_public(conn: sqlite3.Connection, habit: Habit) -> HabitPublic:
     """One shared place that turns a domain `Habit` into the HTTP response shape -- every route
     below calls this instead of repeating the same five-field mapping (and the streak-as-of-today
     computation) four separate times."""
-    row = conn.execute("SELECT created_at FROM habits WHERE id = ?", (habit.id,)).fetchone()
-    assert row is not None  # => the caller only ever passes a habit it just loaded/created/updated
+    row = conn.execute(
+        "SELECT created_at FROM habits WHERE id = ?", (habit.id,)
+    ).fetchone()
+    # => the caller only ever passes a habit it just loaded/created/updated
+    assert row is not None
     return HabitPublic(
         id=habit.id,
         name=habit.name,
@@ -830,7 +932,9 @@ def health() -> dict[str, str]:
 
 
 @app.get("/ready")  # => READINESS -- genuinely pings the database
-def ready(response: Response, conn: sqlite3.Connection = Depends(get_db)) -> dict[str, str]:
+def ready(
+    response: Response, conn: sqlite3.Connection = Depends(get_db)
+) -> dict[str, str]:
     try:
         repo.ping(conn)
         return {"status": "ready"}
@@ -840,23 +944,33 @@ def ready(response: Response, conn: sqlite3.Connection = Depends(get_db)) -> dic
 
 
 @app.post("/auth/register", response_model=UserPublic, status_code=201)
-def register_route(body: UserRegister, conn: sqlite3.Connection = Depends(get_db)) -> UserPublic:
+def register_route(
+    body: UserRegister, conn: sqlite3.Connection = Depends(get_db)
+) -> UserPublic:
     existing = repo.get_user_by_username(conn, body.username)
-    if existing is not None:  # => a specific, honest conflict -- distinct from login's generic error
+    # => a specific, honest conflict -- distinct from login's generic error
+    if existing is not None:
         raise HTTPException(
             status_code=409,
             detail={"error": {"code": "conflict", "message": "username already taken"}},
         )
-    password_hash = auth.hash_password(body.password)  # => hash BEFORE it ever touches the DB
+    # => hash BEFORE it ever touches the DB
+    password_hash = auth.hash_password(body.password)
     return repo.create_user(conn, body.username, password_hash)
 
 
 @app.post("/auth/login", response_model=TokenResponse)
-def login_route(body: UserLogin, conn: sqlite3.Connection = Depends(get_db)) -> TokenResponse:
+def login_route(
+    body: UserLogin, conn: sqlite3.Connection = Depends(get_db)
+) -> TokenResponse:
     row = repo.get_user_by_username(conn, body.username)
-    generic_error = HTTPException(  # => SAME message for "no such user" and "wrong password" --
-        status_code=401,  # => an attacker probing usernames learns nothing from the response either way
-        detail={"error": {"code": "unauthorized", "message": "invalid username or password"}},
+    # => SAME message for "no such user" and "wrong password" -- an attacker
+    # => probing usernames learns nothing from the response either way
+    generic_error = HTTPException(
+        status_code=401,
+        detail={
+            "error": {"code": "unauthorized", "message": "invalid username or password"}
+        },
     )
     if row is None:
         raise generic_error
@@ -866,7 +980,8 @@ def login_route(body: UserLogin, conn: sqlite3.Connection = Depends(get_db)) -> 
     return TokenResponse(access_token=token)
 
 
-@app.post("/habits", response_model=HabitPublic, status_code=201)  # => guarded -- token required
+# guarded: token required
+@app.post("/habits", response_model=HabitPublic, status_code=201)
 def create_habit_route(
     body: HabitCreate, request: Request, conn: sqlite3.Connection = Depends(get_db)
 ) -> HabitPublic:
@@ -875,39 +990,58 @@ def create_habit_route(
     return _habit_to_public(conn, habit)
 
 
-@app.get("/habits", response_model=list[HabitPublic])  # => guarded -- token required (reads are user-scoped)
+# guarded -- token required (reads are user-scoped)
+@app.get("/habits", response_model=list[HabitPublic])
 def list_habits_route(
     request: Request,
-    q: str | None = Query(default=None, max_length=200),  # => co-03 (topic 17): FIXED, parameterized search
+    # => co-03 (topic 17): FIXED, parameterized search
+    q: str | None = Query(default=None, max_length=200),
     include_archived: bool = Query(default=False),
     conn: sqlite3.Connection = Depends(get_db),
 ) -> list[HabitPublic]:
     user_id = _current_user_id(request)
-    habits = repo.search_habits(conn, user_id, q) if q else repo.list_habits(conn, user_id, include_archived)
+    habits = (
+        repo.search_habits(conn, user_id, q)
+        if q
+        else repo.list_habits(conn, user_id, include_archived)
+    )
     return [_habit_to_public(conn, h) for h in habits]
 
 
-@app.get("/habits/{habit_id}", response_model=HabitPublic)  # => guarded -- token required, ownership-scoped
-def get_habit_route(habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)) -> HabitPublic:
+# guarded -- token required, ownership-scoped
+@app.get("/habits/{habit_id}", response_model=HabitPublic)
+def get_habit_route(
+    habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)
+) -> HabitPublic:
     user_id = _current_user_id(request)
     habit = repo.get_habit(conn, habit_id, user_id)
     if habit is None:
-        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such habit"}})
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "not_found", "message": "no such habit"}},
+        )
     return _habit_to_public(conn, habit)
 
 
 @app.post("/habits/{habit_id}/checkins", response_model=CheckinPublic, status_code=201)
 def record_checkin_route(
-    habit_id: int, body: CheckinCreate, request: Request, conn: sqlite3.Connection = Depends(get_db)
+    habit_id: int,
+    body: CheckinCreate,
+    request: Request,
+    conn: sqlite3.Connection = Depends(get_db),
 ) -> CheckinPublic:
     user_id = _current_user_id(request)
     habit = repo.get_habit(conn, habit_id, user_id)
     if habit is None:
-        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such habit"}})
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "not_found", "message": "no such habit"}},
+        )
     checkin_day = body.checkin_date if body.checkin_date is not None else date.today()
     repo.record_checkin(conn, habit_id, checkin_day.isoformat())
-    habit.record_checkin(checkin_day)  # => mirror the write into the in-memory domain object too,
-    # => so the response below reflects it without a second DB round trip
+    # => mirror the write into the in-memory domain object too, so the response
+    # => below reflects it without a second DB round trip
+    habit.record_checkin(checkin_day)
     return CheckinPublic(
         habit_id=habit_id,
         checkin_date=checkin_day,
@@ -917,19 +1051,30 @@ def record_checkin_route(
 
 
 @app.post("/habits/{habit_id}/archive", response_model=HabitPublic)
-def archive_habit_route(habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)) -> HabitPublic:
+def archive_habit_route(
+    habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)
+) -> HabitPublic:
     user_id = _current_user_id(request)
     habit = repo.archive_habit(conn, habit_id, user_id)
     if habit is None:
-        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such habit"}})
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "not_found", "message": "no such habit"}},
+        )
     return _habit_to_public(conn, habit)
 
 
-@app.delete("/habits/{habit_id}", status_code=204)  # => guarded -- token required, ownership-scoped
-def delete_habit_route(habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)) -> None:
+# guarded -- token required, ownership-scoped
+@app.delete("/habits/{habit_id}", status_code=204)
+def delete_habit_route(
+    habit_id: int, request: Request, conn: sqlite3.Connection = Depends(get_db)
+) -> None:
     user_id = _current_user_id(request)
     if not repo.delete_habit(conn, habit_id, user_id):
-        raise HTTPException(status_code=404, detail={"error": {"code": "not_found", "message": "no such habit"}})
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "not_found", "message": "no such habit"}},
+        )
 ```
 
 ### The SQL injection this hardening closes
@@ -989,7 +1134,7 @@ $ grep -rn "dev-only-not-a-real-secret-please-change" app/ test_app.py requireme
 (no matches -- grep exit code 1)
 
 $ grep -rn "CAPSTONE1_AUTH_SECRET" app/main.py
-app/main.py:37:AUTH_SECRET = os.environ["CAPSTONE1_AUTH_SECRET"]  # => REQUIRED, no hardcoded fallback --
+app/main.py:40:AUTH_SECRET = os.environ["CAPSTONE1_AUTH_SECRET"]
 ```
 
 Finally, `pip-audit` against a throwaway venv containing exactly what `requirements.txt` pins:
@@ -1091,12 +1236,16 @@ class TestCurrentStreak:
         habit = Habit(id=1, name="Read 20 minutes")
         today = date(2026, 7, 16)
         habit.record_checkin(today - timedelta(days=1))  # => yesterday, but NOT today
-        assert habit.current_streak(today) == 0  # => a streak with no check-in today is 0, not 1
+        assert (
+            habit.current_streak(today) == 0
+        )  # => a streak with no check-in today is 0, not 1
 
     def test_full_month_of_consecutive_checkins(self) -> None:
         habit = Habit(id=1, name="Read 20 minutes")
         today = date(2026, 7, 16)
-        for offset in range(30):  # => 30 consecutive days, today back through 29 days ago
+        for offset in range(
+            30
+        ):  # => 30 consecutive days, today back through 29 days ago
             habit.record_checkin(today - timedelta(days=offset))
         assert habit.current_streak(today) == 30
 ```
@@ -1113,36 +1262,50 @@ test_domain.py could offer alone.
 
 from datetime import date, timedelta
 
-from hypothesis import given  # => same property-test decorator style as software-testing/ex-44 (co-18)
+from hypothesis import (
+    given,
+)  # => same property-test decorator style as software-testing/ex-44 (co-18)
 from hypothesis import strategies as st  # => st.integers() generates the streak length to test  # fmt: skip
 
 from app.domain import Habit
 
-TODAY = date(2026, 7, 16)  # => a FIXED reference date -- keeps every generated example reproducible
+TODAY = date(
+    2026, 7, 16
+)  # => a FIXED reference date -- keeps every generated example reproducible
 
 
 @given(st.integers(min_value=0, max_value=90))  # => co-20 strategies: any streak from 0 to 90 days  # fmt: skip
-def test_n_consecutive_checkins_ending_today_produce_a_streak_of_exactly_n(streak_length: int) -> None:
+def test_n_consecutive_checkins_ending_today_produce_a_streak_of_exactly_n(
+    streak_length: int,
+) -> None:
     # => INVARIANT: recording exactly `streak_length` CONSECUTIVE days ending at TODAY must
     # => always produce current_streak(TODAY) == streak_length -- true for streak_length == 0
     # => (no check-ins at all) all the way up to any arbitrarily long run Hypothesis picks (co-18)
     habit = Habit(id=1, name="Read 20 minutes")
-    for offset in range(streak_length):  # => offset 0 = today, offset 1 = yesterday, ...
+    for offset in range(
+        streak_length
+    ):  # => offset 0 = today, offset 1 = yesterday, ...
         habit.record_checkin(TODAY - timedelta(days=offset))
     assert habit.current_streak(TODAY) == streak_length
 
 
 @given(st.integers(min_value=1, max_value=90))  # => fmt: skip
-def test_a_single_gap_the_day_before_the_streak_never_extends_it(streak_length: int) -> None:
+def test_a_single_gap_the_day_before_the_streak_never_extends_it(
+    streak_length: int,
+) -> None:
     # => INVARIANT: check-ins are recorded for `streak_length` consecutive days ending today,
     # => but the day IMMEDIATELY BEFORE that run is deliberately left un-checked-in -- the
     # => streak must stop exactly at `streak_length`, never accidentally "leak" past the gap
     habit = Habit(id=1, name="Read 20 minutes")
     for offset in range(streak_length):
         habit.record_checkin(TODAY - timedelta(days=offset))
-    gap_day = TODAY - timedelta(days=streak_length)  # => the one day this test NEVER checks in
+    gap_day = TODAY - timedelta(
+        days=streak_length
+    )  # => the one day this test NEVER checks in
     assert habit.has_checkin_on(gap_day) is False  # => sanity: the gap really is a gap
-    assert habit.current_streak(TODAY) == streak_length  # => the gap bounds the streak exactly
+    assert (
+        habit.current_streak(TODAY) == streak_length
+    )  # => the gap bounds the streak exactly
 ```
 
 **`code/test_app.py`** (complete file)
@@ -1164,17 +1327,25 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture()
 def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
-    monkeypatch.setenv("CAPSTONE1_DB_PATH", str(tmp_path / "habits.db"))  # => a FRESH DB file per test
+    monkeypatch.setenv(
+        "CAPSTONE1_DB_PATH", str(tmp_path / "habits.db")
+    )  # => a FRESH DB file per test
     monkeypatch.setenv("CAPSTONE1_AUTH_SECRET", "test-only-secret-never-committed")
-    from app import main as main_module  # => imported here so the env vars above are set BEFORE module load
+    from app import (
+        main as main_module,
+    )  # => imported here so the env vars above are set BEFORE module load
 
     importlib.reload(main_module)
     return TestClient(main_module.app)
 
 
-def _register_and_login(client: TestClient, username: str = "alice", password: str = "Sup3rSecret!") -> str:
+def _register_and_login(
+    client: TestClient, username: str = "alice", password: str = "Sup3rSecret!"
+) -> str:
     client.post("/auth/register", json={"username": username, "password": password})
-    login = client.post("/auth/login", json={"username": username, "password": password})
+    login = client.post(
+        "/auth/login", json={"username": username, "password": password}
+    )
     token: str = login.json()["access_token"]
     return token
 
@@ -1200,26 +1371,51 @@ class TestAuth:
         token = _register_and_login(client)
         assert token != ""
 
-    def test_stored_password_is_never_plaintext(self, client: TestClient, tmp_path: Path) -> None:
+    def test_stored_password_is_never_plaintext(
+        self, client: TestClient, tmp_path: Path
+    ) -> None:
         _register_and_login(client, "bob", "AnotherSecret1!")
-        conn = sqlite3.connect(tmp_path / "habits.db")  # => reads the DB FILE DIRECTLY, bypassing the API
+        conn = sqlite3.connect(
+            tmp_path / "habits.db"
+        )  # => reads the DB FILE DIRECTLY, bypassing the API
         conn.row_factory = sqlite3.Row
-        row = conn.execute("SELECT password_hash FROM users WHERE username = ?", ("bob",)).fetchone()
+        row = conn.execute(
+            "SELECT password_hash FROM users WHERE username = ?", ("bob",)
+        ).fetchone()
         stored_hash = str(row["password_hash"])
-        assert stored_hash.startswith("$argon2id$")  # => a real PHC-format argon2id hash
-        assert "AnotherSecret1!" not in stored_hash  # => the raw password is provably NOT in storage
+        assert stored_hash.startswith(
+            "$argon2id$"
+        )  # => a real PHC-format argon2id hash
+        assert (
+            "AnotherSecret1!" not in stored_hash
+        )  # => the raw password is provably NOT in storage
 
-    def test_hostile_username_is_rejected_by_the_allow_list(self, client: TestClient) -> None:
-        response = client.post("/auth/register", json={"username": "admin'--", "password": "Sup3rSecret!"})
-        assert response.status_code == 422  # => Pydantic's Field(pattern=...) rejects it before any handler runs
+    def test_hostile_username_is_rejected_by_the_allow_list(
+        self, client: TestClient
+    ) -> None:
+        response = client.post(
+            "/auth/register", json={"username": "admin'--", "password": "Sup3rSecret!"}
+        )
+        assert (
+            response.status_code == 422
+        )  # => Pydantic's Field(pattern=...) rejects it before any handler runs
 
-    def test_wrong_password_gets_the_same_generic_error_as_unknown_user(self, client: TestClient) -> None:
+    def test_wrong_password_gets_the_same_generic_error_as_unknown_user(
+        self, client: TestClient
+    ) -> None:
         _register_and_login(client, "carol", "RightPassword1!")
-        wrong = client.post("/auth/login", json={"username": "carol", "password": "WrongPassword1!"})
-        unknown = client.post("/auth/login", json={"username": "nosuchuser", "password": "WrongPassword1!"})
+        wrong = client.post(
+            "/auth/login", json={"username": "carol", "password": "WrongPassword1!"}
+        )
+        unknown = client.post(
+            "/auth/login",
+            json={"username": "nosuchuser", "password": "WrongPassword1!"},
+        )
         assert wrong.status_code == 401
         assert unknown.status_code == 401
-        assert wrong.json() == unknown.json()  # => identical body -- no username-enumeration signal
+        assert (
+            wrong.json() == unknown.json()
+        )  # => identical body -- no username-enumeration signal
 
 
 class TestHabitsRequireAuth:
@@ -1235,12 +1431,16 @@ class TestHabitsRequireAuth:
 class TestHabitsCrudAndStreak:
     def test_create_checkin_and_streak_round_trip(self, client: TestClient) -> None:
         token = _register_and_login(client)
-        created = client.post("/habits", json={"name": "Read 20 minutes"}, headers=_auth_headers(token))
+        created = client.post(
+            "/habits", json={"name": "Read 20 minutes"}, headers=_auth_headers(token)
+        )
         assert created.status_code == 201
         habit_id = created.json()["id"]
         assert created.json()["current_streak"] == 0
 
-        checkin = client.post(f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token))
+        checkin = client.post(
+            f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token)
+        )
         assert checkin.status_code == 201
         assert checkin.json()["current_streak"] == 1
 
@@ -1249,42 +1449,70 @@ class TestHabitsCrudAndStreak:
         assert fetched.json()["current_streak"] == 1
         assert fetched.json()["checkin_count"] == 1
 
-    def test_checkin_on_the_same_day_twice_does_not_double_count(self, client: TestClient) -> None:
+    def test_checkin_on_the_same_day_twice_does_not_double_count(
+        self, client: TestClient
+    ) -> None:
         token = _register_and_login(client)
-        habit_id = client.post("/habits", json={"name": "Floss"}, headers=_auth_headers(token)).json()["id"]
-        client.post(f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token))
-        second = client.post(f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token))
+        habit_id = client.post(
+            "/habits", json={"name": "Floss"}, headers=_auth_headers(token)
+        ).json()["id"]
+        client.post(
+            f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token)
+        )
+        second = client.post(
+            f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token)
+        )
         assert second.json()["checkin_count"] == 1  # => idempotent, not 2
 
-    def test_invalid_habit_name_yields_a_structured_error(self, client: TestClient) -> None:
+    def test_invalid_habit_name_yields_a_structured_error(
+        self, client: TestClient
+    ) -> None:
         token = _register_and_login(client)
-        response = client.post("/habits", json={"name": ""}, headers=_auth_headers(token))
+        response = client.post(
+            "/habits", json={"name": ""}, headers=_auth_headers(token)
+        )
         assert response.status_code == 422
         assert "detail" in response.json()
 
     def test_one_user_cannot_read_another_users_habit(self, client: TestClient) -> None:
         token_a = _register_and_login(client, "dave", "Sup3rSecret!")
         token_b = _register_and_login(client, "erin", "Sup3rSecret!")
-        habit_id = client.post("/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)).json()["id"]
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
         cross_user = client.get(f"/habits/{habit_id}", headers=_auth_headers(token_b))
-        assert cross_user.status_code == 404  # => not 403 -- existence isn't confirmed to a non-owner either
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
 
-    def test_archive_hides_a_habit_from_the_default_list(self, client: TestClient) -> None:
+    def test_archive_hides_a_habit_from_the_default_list(
+        self, client: TestClient
+    ) -> None:
         token = _register_and_login(client)
-        habit_id = client.post("/habits", json={"name": "Old habit"}, headers=_auth_headers(token)).json()["id"]
-        archived = client.post(f"/habits/{habit_id}/archive", headers=_auth_headers(token))
+        habit_id = client.post(
+            "/habits", json={"name": "Old habit"}, headers=_auth_headers(token)
+        ).json()["id"]
+        archived = client.post(
+            f"/habits/{habit_id}/archive", headers=_auth_headers(token)
+        )
         assert archived.status_code == 200
         assert archived.json()["archived"] is True
 
         default_list = client.get("/habits", headers=_auth_headers(token))
         assert default_list.json() == []  # => archived habits are hidden by default
 
-        full_list = client.get("/habits?include_archived=true", headers=_auth_headers(token))
-        assert len(full_list.json()) == 1  # => but still there when explicitly requested
+        full_list = client.get(
+            "/habits?include_archived=true", headers=_auth_headers(token)
+        )
+        assert (
+            len(full_list.json()) == 1
+        )  # => but still there when explicitly requested
 
     def test_delete_then_get_returns_404(self, client: TestClient) -> None:
         token = _register_and_login(client)
-        habit_id = client.post("/habits", json={"name": "Temp"}, headers=_auth_headers(token)).json()["id"]
+        habit_id = client.post(
+            "/habits", json={"name": "Temp"}, headers=_auth_headers(token)
+        ).json()["id"]
         delete = client.delete(f"/habits/{habit_id}", headers=_auth_headers(token))
         assert delete.status_code == 204
         after = client.get(f"/habits/{habit_id}", headers=_auth_headers(token))
@@ -1292,17 +1520,27 @@ class TestHabitsCrudAndStreak:
 
 
 class TestSearchIsInjectionSafe:
-    def test_classic_sql_injection_payload_returns_no_rows_and_no_leak(self, client: TestClient) -> None:
+    def test_classic_sql_injection_payload_returns_no_rows_and_no_leak(
+        self, client: TestClient
+    ) -> None:
         token = _register_and_login(client)
-        client.post("/habits", json={"name": "Read 20 minutes"}, headers=_auth_headers(token))
-        client.post("/habits", json={"name": "Drink water"}, headers=_auth_headers(token))
+        client.post(
+            "/habits", json={"name": "Read 20 minutes"}, headers=_auth_headers(token)
+        )
+        client.post(
+            "/habits", json={"name": "Drink water"}, headers=_auth_headers(token)
+        )
 
         legit = client.get("/habits?q=Read", headers=_auth_headers(token))
-        assert len(legit.json()) == 1  # => a normal substring search matches exactly one habit
+        assert (
+            len(legit.json()) == 1
+        )  # => a normal substring search matches exactly one habit
 
         attack = client.get("/habits?q=' OR 1=1 -- ", headers=_auth_headers(token))
         assert attack.status_code == 200
-        assert attack.json() == []  # => the payload is DATA, matches no real habit name, leaks nothing
+        assert (
+            attack.json() == []
+        )  # => the payload is DATA, matches no real habit name, leaks nothing
 ```
 
 **Verify**: `coverage run --branch -m pytest -q` then `coverage report -m` from `code/` (a fresh
@@ -1313,22 +1551,22 @@ class TestSearchIsInjectionSafe:
 ```text
 $ coverage run --branch -m pytest -q
 ..........................                                               [100%]
-26 passed in 2.44s
+26 passed in 1.50s
 
 $ coverage report -m
 Name                            Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------------------------------
-app/auth.py                        40      6      4      2    82%   57-58, 61, 64-65, 67
+app/auth.py                        41      6      4      2    82%   73-74, 77, 80-81, 84
 app/domain.py                      27      0      4      0   100%
-app/main.py                       104      7     14      4    91%   102-104, 111, 171, 189, 197
+app/main.py                       104      7     14      4    91%   118-120, 130, 213, 237, 251
 app/middleware.py                  21      0      4      0   100%
 app/models.py                      31      0      0      0   100%
-app/repository.py                  74      1     10      1    98%   121
+app/repository.py                  74      1     10      1    98%   153
 test_app.py                       115      0      0      0   100%
 test_domain.py                     53      0      2      0   100%
 test_habit_streak_property.py      19      0      4      0   100%
 ---------------------------------------------------------------------------
-TOTAL                             484     14     42      7    96%
+TOTAL                             485     14     42      7    96%
 ```
 
 **Key takeaway**: 26 tests -- 9 pure unit tests, 2 Hypothesis property tests (each running hundreds of
@@ -1375,13 +1613,18 @@ BASE_URL = "http://127.0.0.1:8100"
 
 
 def _request(
-    method: str, path: str, body: dict[str, object] | None = None, token: str | None = None
+    method: str,
+    path: str,
+    body: dict[str, object] | None = None,
+    token: str | None = None,
 ) -> tuple[int, str]:
     data = json.dumps(body).encode("utf-8") if body is not None else None
     headers = {"Content-Type": "application/json"}
     if token is not None:
         headers["Authorization"] = f"Bearer {token}"
-    request = urllib.request.Request(BASE_URL + path, data=data, headers=headers, method=method)
+    request = urllib.request.Request(
+        BASE_URL + path, data=data, headers=headers, method=method
+    )
     try:
         with urllib.request.urlopen(request) as response:  # noqa: S310 -- 127.0.0.1 only, local demo
             return response.status, response.read().decode("utf-8")
@@ -1398,24 +1641,42 @@ def main() -> int:
     all_passed = True
 
     # Register + log in TWO real users, exactly the way legitimate clients would.
-    _request("POST", "/auth/register", {"username": "attacker_demo", "password": "Sup3rSecret!"})
-    status, body = _request("POST", "/auth/login", {"username": "attacker_demo", "password": "Sup3rSecret!"})
+    _request(
+        "POST",
+        "/auth/register",
+        {"username": "attacker_demo", "password": "Sup3rSecret!"},
+    )
+    status, body = _request(
+        "POST", "/auth/login", {"username": "attacker_demo", "password": "Sup3rSecret!"}
+    )
     all_passed &= _check("login succeeds end-to-end", status == 200)
     attacker_token = json.loads(body)["access_token"]
 
-    _request("POST", "/auth/register", {"username": "victim_demo", "password": "Sup3rSecret!"})
-    status, body = _request("POST", "/auth/login", {"username": "victim_demo", "password": "Sup3rSecret!"})
+    _request(
+        "POST",
+        "/auth/register",
+        {"username": "victim_demo", "password": "Sup3rSecret!"},
+    )
+    status, body = _request(
+        "POST", "/auth/login", {"username": "victim_demo", "password": "Sup3rSecret!"}
+    )
     victim_token = json.loads(body)["access_token"]
 
     # Seed one public-looking habit for the attacker and one PRIVATE habit for the victim.
     _request("POST", "/habits", {"name": "Read 20 minutes"}, token=attacker_token)
-    _request("POST", "/habits", {"name": "victim's private therapy journal"}, token=victim_token)
+    _request(
+        "POST",
+        "/habits",
+        {"name": "victim's private therapy journal"},
+        token=victim_token,
+    )
 
     # Attack 1: SQL injection via /habits?q= -- must not leak the victim's habit.
     q = urllib.parse.quote("' OR 1=1 -- ")
     status, body = _request("GET", f"/habits?q={q}", token=attacker_token)
     all_passed &= _check(
-        "SQL injection payload returns zero rows (no cross-user leak)", status == 200 and json.loads(body) == []
+        "SQL injection payload returns zero rows (no cross-user leak)",
+        status == 200 and json.loads(body) == [],
     )
 
     # Attack 2: writing without a valid bearer token.
@@ -1428,14 +1689,20 @@ def main() -> int:
     all_passed &= _check("unauthenticated read is rejected (401)", status == 401)
 
     # Attack 4: registering a username carrying SQL metacharacters.
-    status, _ = _request("POST", "/auth/register", {"username": "admin'--", "password": "Sup3rSecret!"})
-    all_passed &= _check("hostile username is rejected by the allow-list (422)", status == 422)
+    status, _ = _request(
+        "POST", "/auth/register", {"username": "admin'--", "password": "Sup3rSecret!"}
+    )
+    all_passed &= _check(
+        "hostile username is rejected by the allow-list (422)", status == 422
+    )
 
     # Attack 5: attacker tries to read the victim's habit by guessing its id.
     status, body = _request("GET", "/habits?include_archived=true", token=victim_token)
     victim_habit_id = json.loads(body)[0]["id"]
     status, _ = _request("GET", f"/habits/{victim_habit_id}", token=attacker_token)
-    all_passed &= _check("cross-user habit read is rejected (404, not leaked)", status == 404)
+    all_passed &= _check(
+        "cross-user habit read is rejected (404, not leaked)", status == 404
+    )
 
     print()
     print("ALL ATTACKS BLOCKED" if all_passed else "AT LEAST ONE ATTACK SUCCEEDED")
