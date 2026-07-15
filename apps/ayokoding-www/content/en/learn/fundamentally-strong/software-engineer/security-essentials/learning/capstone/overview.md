@@ -447,6 +447,8 @@ uvicorn==0.51.0
 pydantic==2.13.4
 argon2-cffi==25.1.0
 jinja2==3.1.6
+pytest==9.1.1
+httpx2==2.7.0
 ```
 
 **Running `pip-audit`**: `pip-audit -r requirements.txt` tries to resolve the full dependency tree
@@ -471,7 +473,9 @@ No known vulnerabilities found
 
 Exit code `0`. This audited FastAPI 0.139.0, Starlette (FastAPI's dependency), Uvicorn 0.51.0,
 Pydantic 2.13.4 + pydantic-core, argon2-cffi 25.1.0 + argon2-cffi-bindings, and Jinja2 3.1.6 +
-MarkupSafe -- the complete resolved dependency graph this app actually runs on.
+MarkupSafe -- the complete resolved dependency graph this app actually runs on -- plus the two
+test-only packages `test_app.py` requires, `pytest==9.1.1` and `httpx2==2.7.0` (Starlette's
+`TestClient` now requires `httpx2`; see "Full Acceptance Suite" below).
 
 **Key takeaway**: `os.environ["CAPSTONE_AUTH_SECRET"]` (no `.get()`, no default) is a deliberate
 fail-closed choice -- a missing secret is a startup crash, never a silent hardcoded fallback that
@@ -1286,14 +1290,7 @@ test_app.py::TestSecurityHeaders::test_headers_present_even_on_error_responses P
 test_app.py::TestPaginationAndFiltering::test_pagination_window_and_metadata PASSED [ 94%]
 test_app.py::TestPaginationAndFiltering::test_limit_over_maximum_is_422 PASSED [100%]
 
-=============================== warnings summary ===============================
-.venv/lib/python3.13/site-packages/fastapi/testclient.py:1
-  .../fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with
-  `starlette.testclient` is deprecated; install `httpx2` instead.
-    from starlette.testclient import TestClient as TestClient  # noqa
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================== 19 passed, 1 warning in 0.83s =========================
+============================== 19 passed in 0.93s ==============================
 ```
 
 **Key takeaway**: `TestSqlInjectionIsFixed` and `TestXssIsFixed` encode the exact two attacks

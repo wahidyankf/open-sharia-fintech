@@ -240,22 +240,27 @@ defense against cross-site request forgery, not either of these two issues.)
 
 </details>
 
-**Q14 (co-14 -- jwt-specific-pitfalls).** A verifier is written as
-`jwt.decode(token, options={"verify_signature": True})` with no `algorithms=` parameter. An attacker
-who knows the server's RSA public key crafts a token signed with HS256 using that public key's bytes AS
-the HMAC secret. Why does this forged token verify successfully, and what single missing parameter
-would have stopped it?
+**Q14 (co-14 -- jwt-specific-pitfalls).** A verifier reads a token's own `alg` header first: if it says
+`HS256`, the verifier hand-computes an HMAC-SHA256 signature using the server's known RSA public key as
+the secret and compares it byte-for-byte; any other `alg` is passed to
+`jwt.decode(token, public_key, algorithms=["RS256"])`. An attacker who knows the server's RSA public key
+crafts a token signed with HS256 using that public key's bytes AS the HMAC secret. Why does this forged
+token verify successfully, and what single change to the verifier's structure would have stopped it?
 
 <details>
 <summary>Answer</summary>
 
-Without an explicit, pinned `algorithms=` allow-list, the verifier trusts whatever algorithm the token
-itself claims in its header -- if the server's real keys are RSA (asymmetric: public key verifies,
-private key signs), an attacker can switch the header to HS256 (symmetric: the SAME key both signs and
-verifies) and use the publicly-known RSA public key as the HMAC secret; told to trust the token's own
-`alg` claim, the library verifies the forged signature against that same key and accepts it. Passing an
-explicit `algorithms=["RS256"]` (never letting the token's own header dictate the acceptable algorithm
-family) closes this -- a token claiming HS256 is rejected outright.
+Because the verifier dispatches on the token's own, attacker-controlled `alg` header instead of pinning
+one expected algorithm family, an attacker who declares `alg: HS256` diverts verification into the
+hand-rolled HMAC branch, where the publicly-known RSA public key is treated as if it were a shared HMAC
+secret -- the attacker signed with that exact same "secret," so the recomputed HMAC matches. The fix is
+to never let the token's own header choose the verification path: call
+`jwt.decode(token, public_key, algorithms=["RS256"])` unconditionally, so a token claiming HS256 is
+rejected outright by PyJWT's algorithm allow-list instead of ever reaching a hand-rolled verifier. (PyJWT
+`>=2.x`'s `jwt.decode()` itself already fails closed here -- calling it with no `algorithms=` argument
+raises `DecodeError` unconditionally, before ever inspecting the token's claimed `alg`; the vulnerability
+lives in the hand-rolled dispatch layer sitting in front of `jwt.decode()`, not in `jwt.decode()`'s own
+default behavior.)
 
 </details>
 
@@ -825,9 +830,12 @@ Using `PyJWT` 2.13.0, generate a real RSA keypair, sign a legitimate token with 
 verify it correctly with `algorithms=["RS256"]`. Then build two forged tokens by hand: one with `alg` set
 to `none` and no signature, and one signed with HS256 using the RSA public key's PEM bytes as the HMAC
 secret. Confirm a verifier that pins `algorithms=["RS256"]` rejects both forgeries. As a controlled
-negative case only (never write code like this outside this drill), also confirm that a verifier calling
-`jwt.decode(token, options={"verify_signature": True})` with no `algorithms=` argument accepts the
-`alg:none` forgery (co-14).
+negative case only (never write code like this outside this drill), also build a verifier that reads the
+token's own `alg` header and, only when it says `HS256`, hand-computes the HMAC using the RSA public
+key's PEM bytes as the secret instead of ever calling `jwt.decode()` for that branch; confirm it accepts
+the HS256-forged token from above, then confirm a verifier that calls
+`jwt.decode(token, public_key, algorithms=["RS256"])` unconditionally rejects the same forged token
+(co-14).
 
 ### Kata 5 -- Build a minimal CSRF token check with Flask's in-process test client
 

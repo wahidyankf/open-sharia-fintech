@@ -76,7 +76,7 @@ Install the packages every tier needs with one `pip` command (ideally into a vir
 ```text
 pip install flask==3.1.3 argon2-cffi==25.1.0 "bcrypt==5.0.0" "PyJWT>=2.12.0,==2.13.0" \
   pydantic==2.13.4 pip-audit==2.10.1 detect-secrets==1.5.0 cyclonedx-bom==7.3.0 \
-  flask-limiter==4.1.1 fakeredis==2.36.2 requests==2.34.2 cryptography==49.0.0
+  flask-limiter==4.1.1 fakeredis==2.36.2 requests==2.34.2 cryptography==49.0.0 pytest==9.1.1
 ```
 
 **A note on versions**: this topic's examples were authored and verified against these exact package
