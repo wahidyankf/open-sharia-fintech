@@ -105,6 +105,27 @@ fn skip_dirs() -> &'static HashSet<&'static str> {
     })
 }
 
+/// Returns `true` if `name` should be skipped when walking an `app_dir`
+/// source tree: either a universal skip-dir (see [`skip_dirs`]) or one of
+/// the caller-supplied `exclude_source_dirs` (fed from
+/// `ScanOptions::exclude_source_dirs`, i.e. the `--exclude-source-dir` CLI
+/// flag).
+///
+/// Deliberately a *separate* exclusion list from `--exclude-dir` (which only
+/// filters the `.feature`-file walk, see [`walk_feature_files`]): a directory
+/// name can be a legitimate spec-organization folder in the spec tree while
+/// also being a legitimate app-source folder name in the app tree (e.g. a
+/// Next.js content-layer `content/` directory holding step-decorator-shaped
+/// teaching examples, coexisting with a Gherkin `content/` folder grouping
+/// content-API scenarios). Sharing one exclusion list between both walks
+/// would let excluding one tree silently exclude the other. This lets a
+/// project declare the app-tree exclusion explicitly in its own Nx target
+/// rather than rhino-cli hardcoding that project's directory-naming
+/// convention for every repo that links this binary.
+fn is_excluded_source_dir(name: &str, exclude_source_dirs: &[String]) -> bool {
+    skip_dirs().contains(name) || exclude_source_dirs.iter().any(|d| d == name)
+}
+
 // ============================================================
 // Public entry point
 // ============================================================
@@ -162,7 +183,7 @@ fn collect_feature_files(opts: &ScanOptions) -> std::result::Result<Vec<PathBuf>
 fn check_shared_steps(opts: &ScanOptions) -> std::result::Result<CheckResult, Error> {
     let start = Instant::now();
     let spec_files = collect_feature_files(opts)?;
-    let all_step_texts = extract_all_step_texts(&opts.app_dir)?;
+    let all_step_texts = extract_all_step_texts(&opts.app_dir, &opts.exclude_source_dirs)?;
     let mut step_gaps: Vec<StepGap> = Vec::new();
     let mut all_gherkin_steps: Vec<String> = Vec::new();
     let mut total_scenarios = 0usize;
@@ -212,7 +233,7 @@ fn check_shared_steps(opts: &ScanOptions) -> std::result::Result<CheckResult, Er
 fn check_one_to_one(opts: &ScanOptions) -> std::result::Result<CheckResult, Error> {
     let start = Instant::now();
     let spec_files = collect_feature_files(opts)?;
-    let all_step_texts = extract_all_step_texts(&opts.app_dir)?;
+    let all_step_texts = extract_all_step_texts(&opts.app_dir, &opts.exclude_source_dirs)?;
     let mut gaps: Vec<CoverageGap> = Vec::new();
     let mut scenario_gaps: Vec<ScenarioGap> = Vec::new();
     let mut step_gaps: Vec<StepGap> = Vec::new();
@@ -227,7 +248,8 @@ fn check_one_to_one(opts: &ScanOptions) -> std::result::Result<CheckResult, Erro
             .map(|s| s.trim_end_matches(".feature").to_string())
             .unwrap_or_default();
 
-        let test_file_paths = find_all_matching_test_files(&opts.app_dir, &stem)?;
+        let test_file_paths =
+            find_all_matching_test_files(&opts.app_dir, &stem, &opts.exclude_source_dirs)?;
 
         if test_file_paths.is_empty() {
             let rel_path = rel_to(&opts.repo_root, spec_file);
@@ -519,7 +541,7 @@ fn is_in_test_dir(path: &Path) -> bool {
 }
 
 /// Recursively walks `app_dir` and returns all test/step files whose base name
-/// matches `stem`, skipping directories listed in [`skip_dirs`].
+/// matches `stem`, skipping directories per [`is_excluded_source_dir`].
 ///
 /// Returns an empty `Vec` if `app_dir` does not exist.
 ///
@@ -529,6 +551,7 @@ fn is_in_test_dir(path: &Path) -> bool {
 fn find_all_matching_test_files(
     app_dir: &Path,
     stem: &str,
+    exclude_source_dirs: &[String],
 ) -> std::result::Result<Vec<PathBuf>, Error> {
     if !app_dir.exists() {
         return Ok(Vec::new());
@@ -537,7 +560,7 @@ fn find_all_matching_test_files(
     let walker = WalkDir::new(app_dir).into_iter().filter_entry(|e| {
         if e.file_type().is_dir() {
             let name = e.file_name().to_string_lossy();
-            !skip_dirs().contains(name.as_ref())
+            !is_excluded_source_dir(name.as_ref(), exclude_source_dirs)
         } else {
             true
         }
@@ -629,13 +652,17 @@ fn extract_go_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, 
 /// Walks `app_dir` recursively and extracts all step definitions from every
 /// recognised source file, aggregating them into a single [`StepMatcher`].
 ///
-/// Skips directories in `skip_dirs`. Returns an empty matcher if `app_dir`
-/// does not exist.
+/// Skips directories per [`is_excluded_source_dir`] — the universal
+/// `skip_dirs` set plus any caller-supplied `exclude_source_dirs`. Returns an
+/// empty matcher if `app_dir` does not exist.
 ///
 /// # Errors
 ///
 /// Returns an error if the directory walk encounters an I/O error.
-pub fn extract_all_step_texts(app_dir: &Path) -> std::result::Result<StepMatcher, Error> {
+pub fn extract_all_step_texts(
+    app_dir: &Path,
+    exclude_source_dirs: &[String],
+) -> std::result::Result<StepMatcher, Error> {
     let mut sm = StepMatcher::new();
     if !app_dir.exists() {
         return Ok(sm);
@@ -644,7 +671,7 @@ pub fn extract_all_step_texts(app_dir: &Path) -> std::result::Result<StepMatcher
     let walker = WalkDir::new(app_dir).into_iter().filter_entry(|e| {
         if e.file_type().is_dir() {
             let name = e.file_name().to_string_lossy();
-            !skip_dirs().contains(name.as_ref())
+            !is_excluded_source_dir(name.as_ref(), exclude_source_dirs)
         } else {
             true
         }
@@ -922,9 +949,39 @@ mod tests {
             "@Given(\"a user\")\nvoid step() {}\n",
         )
         .unwrap();
-        let sm = extract_all_step_texts(tmp.path()).unwrap();
+        let sm = extract_all_step_texts(tmp.path(), &[]).unwrap();
         assert!(sm.matches("user logs in"));
         assert!(sm.matches("a user"));
+    }
+
+    #[test]
+    fn extract_all_step_texts_honors_exclude_dirs_in_source_walk() {
+        // `--exclude-dir` was originally wired only into the `.feature`-file walk
+        // (see `walk_feature_files_skips_excluded_dirs` above); it must also apply to the
+        // app_dir *source* walk so a project with a directory-naming convention `skip_dirs`
+        // doesn't know about (e.g. a content-layer directory holding step-decorator-shaped
+        // teaching examples) can declare the exclusion explicitly via its own Nx target
+        // rather than rhino-cli hardcoding that project's convention for every repo.
+        let tmp = TempDir::new().unwrap();
+        std::fs::create_dir_all(tmp.path().join("content/learning/code")).unwrap();
+        std::fs::write(
+            tmp.path().join("content/learning/code/test_bdd_example.py"),
+            "@given(\"a taught condition\")\ndef given_taught():\n    pass\n",
+        )
+        .unwrap();
+        std::fs::create_dir_all(tmp.path().join("src")).unwrap();
+        std::fs::write(
+            tmp.path().join("src/real_steps.rs"),
+            "#[given(\"a real step\")]\nfn given_real() {}\n",
+        )
+        .unwrap();
+
+        let unfiltered = extract_all_step_texts(tmp.path(), &[]).unwrap();
+        assert!(unfiltered.matches("a taught condition"));
+
+        let filtered = extract_all_step_texts(tmp.path(), &["content".to_string()]).unwrap();
+        assert!(filtered.matches("a real step"));
+        assert!(!filtered.matches("a taught condition"));
     }
 
     #[test]
@@ -951,7 +1008,7 @@ mod tests {
             "#[given(\"a real step\")]\nfn given_real() {}\n",
         )
         .unwrap();
-        let sm = extract_all_step_texts(tmp.path()).unwrap();
+        let sm = extract_all_step_texts(tmp.path(), &[]).unwrap();
         assert!(sm.matches("a real step"));
         assert!(!sm.matches("a condition"));
     }
@@ -978,10 +1035,61 @@ mod tests {
             quiet: false,
             shared_steps: false,
             exclude_dirs: vec![],
+            exclude_source_dirs: vec![],
         };
         let r = check_all(&opts).unwrap();
         assert_eq!(r.gaps.len(), 1);
         assert_eq!(r.gaps[0].stem, "user-login");
+    }
+
+    #[test]
+    fn exclude_dirs_and_exclude_source_dirs_are_independent() {
+        // A directory name can be legitimate in BOTH trees at once for different
+        // reasons — e.g. `content/` grouping content-API Gherkin scenarios in the
+        // spec tree while also being a Next.js content-layer directory in the app
+        // tree. Excluding it from one walk must never silently exclude it from the
+        // other: `exclude_dirs` (feature-file walk) and `exclude_source_dirs`
+        // (app_dir source walk) are deliberately separate CLI flags/fields for
+        // exactly this reason.
+        let tmp = TempDir::new().unwrap();
+        let specs = tmp.path().join("specs");
+        let app = tmp.path().join("app");
+        std::fs::create_dir_all(specs.join("content")).unwrap();
+        std::fs::create_dir_all(app.join("content")).unwrap();
+        std::fs::write(
+            specs.join("content/content-api.feature"),
+            "Feature: x\nScenario: T\n  Given a taught condition\n",
+        )
+        .unwrap();
+        std::fs::write(
+            app.join("content/steps.py"),
+            "@given(\"a taught condition\")\ndef given_taught():\n    pass\n",
+        )
+        .unwrap();
+
+        // Excluding "content" only via exclude_source_dirs must still pick up the
+        // real spec scenario in specs/content/ — no false step gap.
+        let opts = ScanOptions {
+            repo_root: tmp.path().to_path_buf(),
+            specs_dir: specs.clone(),
+            specs_dirs: vec![],
+            app_dir: app.clone(),
+            verbose: false,
+            quiet: false,
+            shared_steps: true,
+            exclude_dirs: vec![],
+            exclude_source_dirs: vec!["content".to_string()],
+        };
+        let r = check_all(&opts).unwrap();
+        assert_eq!(
+            r.total_scenarios, 1,
+            "spec scenario must still be collected"
+        );
+        assert_eq!(
+            r.step_gaps.len(),
+            1,
+            "step impl was excluded from the source walk, so the step is uncovered"
+        );
     }
 
     #[test]
@@ -1088,14 +1196,14 @@ mod tests {
         std::fs::create_dir_all(tmp.path().join("src")).unwrap();
         std::fs::write(tmp.path().join("node_modules/x.test.ts"), "").unwrap();
         std::fs::write(tmp.path().join("src/x.test.ts"), "").unwrap();
-        let matches = find_all_matching_test_files(tmp.path(), "x").unwrap();
+        let matches = find_all_matching_test_files(tmp.path(), "x", &[]).unwrap();
         assert_eq!(matches.len(), 1);
         assert!(matches[0].to_string_lossy().contains("src"));
     }
 
     #[test]
     fn find_all_matching_test_files_returns_empty_for_missing_dir() {
-        let matches = find_all_matching_test_files(Path::new("/nonexistent"), "x").unwrap();
+        let matches = find_all_matching_test_files(Path::new("/nonexistent"), "x", &[]).unwrap();
         assert!(matches.is_empty());
     }
 
@@ -1114,6 +1222,7 @@ mod tests {
             quiet: false,
             shared_steps: false,
             exclude_dirs: vec![],
+            exclude_source_dirs: vec![],
         };
         let files = collect_feature_files(&opts).unwrap();
         assert_eq!(files.len(), 1);
@@ -1145,6 +1254,7 @@ mod tests {
             quiet: false,
             shared_steps: true,
             exclude_dirs: vec![],
+            exclude_source_dirs: vec![],
         };
         let r = check_all(&opts).unwrap();
         assert_eq!(r.gaps.len(), 0); // shared_steps skips file matching

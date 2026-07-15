@@ -35,6 +35,19 @@ pub struct ScanOptions {
     pub shared_steps: bool,
     /// Directory names to skip during the feature-file walk.
     pub exclude_dirs: Vec<String>,
+    /// Directory names to skip during the `app_dir` source walk (step-definition
+    /// extraction and 1-to-1 test-file matching), in addition to the built-in
+    /// universal skip set.
+    ///
+    /// Kept separate from `exclude_dirs`: the two walks scan different trees
+    /// (spec files vs. application source) and a directory name can be a
+    /// legitimate spec-organization folder in one tree while also being a
+    /// legitimate app-source folder name in the other (e.g. a Gherkin
+    /// directory named `content/` grouping content-API scenarios coexisting
+    /// with a Next.js `content/` content-layer directory) — collapsing them
+    /// into one flag would make excluding one tree silently exclude the
+    /// other.
+    pub exclude_source_dirs: Vec<String>,
 }
 
 /// A feature file that has no corresponding test/step file in the app directory.

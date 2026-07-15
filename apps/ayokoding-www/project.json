@@ -114,7 +114,7 @@
     "specs:behavior:coverage": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps specs/apps/ayokoding/behavior/ayokoding-www/gherkin specs/apps/ayokoding/behavior/ayokoding-be/gherkin specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin apps/ayokoding-www"
+        "command": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/behavior/ayokoding-www/gherkin specs/apps/ayokoding/behavior/ayokoding-be/gherkin specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin apps/ayokoding-www"
       },
       "cache": true,
       "inputs": [
