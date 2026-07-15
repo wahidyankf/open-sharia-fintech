@@ -1600,9 +1600,10 @@ formally measured here.
 
 ### Push + Draft PR + PR-Review Maker→Fixer Cycle
 
-- [ ] [AI] Commit and push to origin `ayokoding-resizable-docs-sidebar` (the PR branch)
-      — acceptance: branch pushed to origin
-- [ ] [AI] Open a draft PR against `main` — acceptance: PR URL recorded
+- [x] [AI] Commit and push to origin `ayokoding-resizable-docs-sidebar` (the PR branch)
+      — acceptance: branch pushed to origin — pushed as 8 commits (626a65f6b..ef741d0fe)
+- [x] [AI] Open a draft PR against `main` — acceptance: PR URL recorded —
+      <https://github.com/wahidyankf/ose-public/pull/49>
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle (default 3 sequential CI-gated cycles:
       `pr-review-maker` → `pr-review-fixer`), each cycle gated by a green CI run
       — acceptance: 3 cycles complete, CI green after the final cycle
