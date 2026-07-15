@@ -1,7 +1,7 @@
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { axe } from "vitest-axe";
-import { describe, it, expect, afterEach, beforeEach } from "vitest";
+import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 
 import { ResizablePanel } from "./resizable-panel";
 
@@ -59,6 +59,58 @@ describe("ResizablePanel", () => {
     dragHandleBy(getHandle(container), 100);
 
     expect(getPanelWidthPx(container)).toBe(350);
+  });
+
+  it("updates the visual width live but does not persist to localStorage on intermediate pointermove events", () => {
+    const { container } = render(
+      <ResizablePanel
+        storageKey="test-drag-no-persist-mid-drag"
+        defaultWidth={250}
+        minPct={15}
+        maxPct={35}
+        viewportPx={1000}
+      >
+        content
+      </ResizablePanel>,
+    );
+    const handle = getHandle(container);
+
+    fireEvent.pointerDown(handle, { clientX: 0 });
+    fireEvent.pointerMove(document, { clientX: 30 });
+
+    expect(getPanelWidthPx(container)).toBe(280);
+    expect(localStorage.getItem("test-drag-no-persist-mid-drag")).toBeNull();
+
+    fireEvent.pointerUp(document);
+  });
+
+  it("persists to localStorage exactly once, at pointerup (drag end), not once per pointermove", () => {
+    const { container } = render(
+      <ResizablePanel
+        storageKey="test-drag-persist-on-end"
+        defaultWidth={250}
+        minPct={15}
+        maxPct={35}
+        viewportPx={1000}
+      >
+        content
+      </ResizablePanel>,
+    );
+    const handle = getHandle(container);
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+
+    fireEvent.pointerDown(handle, { clientX: 0 });
+    fireEvent.pointerMove(document, { clientX: 20 });
+    fireEvent.pointerMove(document, { clientX: 40 });
+    fireEvent.pointerMove(document, { clientX: 60 });
+    expect(localStorage.getItem("test-drag-persist-on-end")).toBeNull();
+
+    fireEvent.pointerUp(document);
+
+    expect(localStorage.getItem("test-drag-persist-on-end")).toBe("310");
+    expect(setItemSpy).toHaveBeenCalledTimes(1);
+
+    setItemSpy.mockRestore();
   });
 
   it("widens the panel by the keyboard step and updates aria-valuenow on ArrowRight", () => {
@@ -191,6 +243,20 @@ describe("ResizablePanel", () => {
 
     expect(getPanelWidthPx(container)).toBe(350);
     expect(handle.getAttribute("aria-valuenow")).toBe("350");
+  });
+
+  it("prevents native text selection while dragging the handle", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-select-none" defaultWidth={250} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+
+    // `touch-none` alone only sets `touch-action: none` (touch-gesture handling); it does not
+    // stop a mouse-based drag from starting a native text-selection drag over surrounding page
+    // content, so `select-none` (user-select: none) is required alongside it — matching
+    // scroll-area.tsx's own draggable-thumb precedent.
+    expect(getHandle(container).className).toContain("select-none");
   });
 
   it("widens the handle's interactive hit target past its visible line so touch/coarse pointers meet the WCAG 2.5.8 minimum", () => {

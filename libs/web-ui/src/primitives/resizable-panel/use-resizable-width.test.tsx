@@ -33,6 +33,17 @@ describe("useResizableWidth", () => {
     expect(localStorage.getItem("ayokoding-sidebar-width")).toBe("310");
   });
 
+  it("updates width without writing to localStorage when called via updateWidth (live drag feedback)", () => {
+    const { result } = renderHook(() => useResizableWidth({ storageKey: "test-update-width-no-persist" }));
+
+    act(() => {
+      result.current.updateWidth(275);
+    });
+
+    expect(result.current.width).toBe(275);
+    expect(localStorage.getItem("test-update-width-no-persist")).toBeNull();
+  });
+
   it("re-clamps a persisted value above the max band to the maximum on mount", () => {
     localStorage.setItem("test-width-corrupted-above", "999999");
 

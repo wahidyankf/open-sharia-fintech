@@ -81,6 +81,62 @@ describeFeature(feature, ({ Scenario }) => {
     });
   });
 
+  Scenario("Dragging live-updates the width without persisting to localStorage", ({ Given, When, Then }) => {
+    let resultWidthPx: number;
+    const storageKey = "steps-drag-no-persist-mid-drag";
+
+    Given("a resizable panel rendered at 250 pixels with a 150 to 350 pixel band", () => {
+      // precondition noted; render + drag happen together in the When step
+    });
+
+    When("the user drags the separator handle 60 pixels to the right without releasing", () => {
+      cleanup();
+      localStorage.removeItem(storageKey);
+      const { container } = render(
+        <ResizablePanel storageKey={storageKey} defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      fireEvent.pointerDown(handle, { clientX: 0 });
+      fireEvent.pointerMove(document, { clientX: 60 });
+      resultWidthPx = getPanelWidthPx(container);
+    });
+
+    Then("the panel width becomes 310 pixels but nothing is yet persisted to localStorage", () => {
+      expect(resultWidthPx).toBe(310);
+      expect(localStorage.getItem(storageKey)).toBeNull();
+      // release the still-active drag so it doesn't leak document-level listeners
+      // into the next scenario's `fireEvent` calls
+      fireEvent.pointerUp(document);
+    });
+  });
+
+  Scenario("Releasing the drag persists the final width to localStorage", ({ Given, When, Then }) => {
+    let persistedValue: string | null;
+    const storageKey = "steps-drag-persist-on-release";
+
+    Given("a resizable panel rendered at 250 pixels with a 150 to 350 pixel band", () => {
+      // precondition noted; render + drag happen together in the When step
+    });
+
+    When("the user drags the separator handle 60 pixels to the right", () => {
+      cleanup();
+      localStorage.removeItem(storageKey);
+      const { container } = render(
+        <ResizablePanel storageKey={storageKey} defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      dragHandleBy(getHandle(container), 60);
+      persistedValue = localStorage.getItem(storageKey);
+    });
+
+    Then("the width 310 pixels is persisted to localStorage", () => {
+      expect(persistedValue).toBe("310");
+    });
+  });
+
   Scenario("Widen the panel with the ArrowRight key", ({ Given, When, Then, And }) => {
     let resultWidthPx: number;
     let ariaValueNow: string | null;
@@ -115,6 +171,7 @@ describeFeature(feature, ({ Scenario }) => {
   Scenario("The handle exposes separator semantics", ({ Given, When, Then, And }) => {
     let handleRole: string | null;
     let handleOrientation: string | null;
+    let handleClassName: string;
 
     Given("a resizable panel is rendered", () => {
       // precondition noted; render + inspection happen together in the When step
@@ -133,6 +190,7 @@ describeFeature(feature, ({ Scenario }) => {
       const handle = getHandle(container);
       handleRole = handle.getAttribute("role");
       handleOrientation = handle.getAttribute("aria-orientation");
+      handleClassName = handle.className;
     });
 
     Then('the handle has role "separator"', () => {
@@ -141,6 +199,13 @@ describeFeature(feature, ({ Scenario }) => {
 
     And('the handle has aria-orientation "vertical"', () => {
       expect(handleOrientation).toBe("vertical");
+    });
+
+    And("the handle prevents native text selection", () => {
+      // `touch-none` alone only governs touch-gesture handling; `select-none` (user-select:
+      // none) is what actually stops a mouse-drag on the handle from selecting page text —
+      // matching scroll-area.tsx's own draggable-thumb precedent.
+      expect(handleClassName).toContain("select-none");
     });
   });
 

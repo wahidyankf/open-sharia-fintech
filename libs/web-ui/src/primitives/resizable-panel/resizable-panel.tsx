@@ -57,7 +57,13 @@ function ResizablePanel({
   children,
   ...props
 }: ResizablePanelProps) {
-  const { width, commitWidth } = useResizableWidth({ storageKey, defaultWidth, minPct, maxPct, viewportPx });
+  const { width, updateWidth, commitWidth } = useResizableWidth({
+    storageKey,
+    defaultWidth,
+    minPct,
+    maxPct,
+    viewportPx,
+  });
   // Starts at `viewportPx ?? 0` (never reads `window` during render) so the initial client
   // render matches the server-rendered HTML exactly; the effect below corrects it to the real
   // viewport width right after mount, avoiding a React hydration-mismatch warning.
@@ -70,7 +76,38 @@ function ResizablePanel({
   const minPx = (minPct / 100) * resolvedViewportPx;
   const maxPx = (maxPct / 100) * resolvedViewportPx;
 
-  const handleDelta = (deltaPx: number) => {
+  // Tracks the width reached mid-drag so `handleDragEnd` can commit exactly that value once, at
+  // `pointerup`. `handleDragDelta` is bound once at `pointerdown` time (see `ResizableHandle`'s
+  // `handlePointerDown`) and keeps closing over the pre-drag `width`/`resolvedViewportPx` for the
+  // whole drag -- that's fine for the delta math itself (`deltaPx` is the *cumulative* offset
+  // from drag start, so `applyWidth(preDragWidth, cumulativeDelta, ...)` stays correct throughout),
+  // but it means `handleDragEnd` cannot read the final width off a `width` closure without going
+  // stale. A `ref` is a stable, mutable identity across renders, so writes from the (also stale,
+  // but referencing the same ref object) `handleDragDelta` closure are visible to `handleDragEnd`.
+  const dragWidthRef = React.useRef<number | null>(null);
+
+  // Called on every pointermove of an in-progress drag: updates the live/visual width only. Does
+  // NOT persist to localStorage -- see tech-docs.md's "Resize sequence (drag)" sequence diagram,
+  // which gates the `localStorage.setItem` write to the separate, once-per-drag `onResizeEnd`.
+  const handleDragDelta = (deltaPx: number) => {
+    const nextWidth = applyWidth(width, deltaPx, resolvedViewportPx, minPct, maxPct);
+    dragWidthRef.current = nextWidth;
+    updateWidth(nextWidth);
+  };
+
+  // Called once, on pointerup: persists the width the drag settled on. The single commit point
+  // for a drag, matching the plan's documented onResizeEnd.
+  const handleDragEnd = () => {
+    if (dragWidthRef.current !== null) {
+      commitWidth(dragWidthRef.current);
+      dragWidthRef.current = null;
+    }
+  };
+
+  // Keyboard Arrow-key steps are discrete, single-commit interactions (one keypress = one step),
+  // unlike a drag's continuous pointermove stream -- committing (and persisting) immediately here
+  // is correct and unaffected by the drag-persist-throttling concern above.
+  const handleKeyDelta = (deltaPx: number) => {
     commitWidth(applyWidth(width, deltaPx, resolvedViewportPx, minPct, maxPct));
   };
 
@@ -97,7 +134,9 @@ function ResizablePanel({
         minPx={minPx}
         maxPx={maxPx}
         keyboardStep={keyboardStep}
-        onDelta={handleDelta}
+        onDragDelta={handleDragDelta}
+        onDragEnd={handleDragEnd}
+        onKeyDelta={handleKeyDelta}
         onAbsolute={handleAbsolute}
         onReset={handleReset}
         aria-label={handleAriaLabel}
@@ -115,7 +154,12 @@ interface ResizableHandleProps extends Omit<React.ComponentProps<"div">, "onPoin
   maxPx: number;
   /** Pixel step applied per ArrowLeft/ArrowRight keypress. */
   keyboardStep: number;
-  onDelta: (deltaPx: number) => void;
+  /** Called on every `pointermove` of an in-progress drag — live visual update, no persist. */
+  onDragDelta: (deltaPx: number) => void;
+  /** Called once, on `pointerup` — the single commit/persist point for a drag. */
+  onDragEnd: () => void;
+  /** Called on a keyboard Arrow-key step — a discrete, single-shot commit/persist. */
+  onKeyDelta: (deltaPx: number) => void;
   /** Jumps directly to an absolute pixel width (clamped), used by the Home/End keys. */
   onAbsolute: (px: number) => void;
   /** Resets the panel back to its default width, used by a double-click on the handle. */
@@ -127,7 +171,9 @@ function ResizableHandle({
   minPx,
   maxPx,
   keyboardStep,
-  onDelta,
+  onDragDelta,
+  onDragEnd,
+  onKeyDelta,
   onAbsolute,
   onReset,
   className,
@@ -138,10 +184,11 @@ function ResizableHandle({
     const startX = event.clientX;
 
     const handlePointerMove = (moveEvent: PointerEvent) => {
-      onDelta(moveEvent.clientX - startX);
+      onDragDelta(moveEvent.clientX - startX);
     };
 
     const handlePointerUp = () => {
+      onDragEnd();
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("pointerup", handlePointerUp);
     };
@@ -153,7 +200,7 @@ function ResizableHandle({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const sign = KEY_DELTA_SIGN[event.key];
     if (sign !== undefined) {
-      onDelta(sign * keyboardStep);
+      onKeyDelta(sign * keyboardStep);
       return;
     }
     // WAI-ARIA APG separator convention: Home/End jump to the band's bounds.
@@ -184,7 +231,7 @@ function ResizableHandle({
         onKeyDown={handleKeyDown}
         onDoubleClick={onReset}
         className={cn(
-          "absolute inset-y-0 -right-2.5 -left-2.5 flex cursor-col-resize touch-none items-stretch justify-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+          "absolute inset-y-0 -right-2.5 -left-2.5 flex cursor-col-resize touch-none items-stretch justify-center select-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
           className,
         )}
         {...props}

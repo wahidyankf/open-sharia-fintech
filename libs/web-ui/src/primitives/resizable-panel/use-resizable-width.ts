@@ -24,12 +24,23 @@ export interface UseResizableWidthResult {
   /** The current panel width, in pixels. */
   width: number;
   /**
+   * Updates the width for live visual feedback only — updates state but does NOT persist to
+   * `localStorage`. Intended for every intermediate `pointermove` of an in-progress drag, so a
+   * fast drag doesn't fire the synchronous, main-thread-blocking `localStorage.setItem` dozens of
+   * times per second. Callers are responsible for clamping the value first, same as `commitWidth`.
+   */
+  updateWidth: (nextWidth: number) => void;
+  /**
    * Commits a new width: updates state and persists it to `localStorage`.
    *
    * Callers are responsible for clamping the value (via `width-model.ts`'s
    * `clampWidth`) before calling this — the hook itself performs no clamping
    * on this path. The mount-read path below clamps a persisted value itself,
    * since that value may be stale, corrupted, or tampered with.
+   *
+   * Intended for discrete, single-shot interactions — drag end (`pointerup`), a keyboard
+   * Arrow-key step, Home/End, or the double-click reset. NOT for every intermediate
+   * `pointermove` of a drag; use `updateWidth` for that (see its docstring for why).
    */
   commitWidth: (nextWidth: number) => void;
 }
@@ -56,10 +67,14 @@ export function useResizableWidth({
     // Intentionally mirrors theme-toggle.tsx: read once on mount / when the key changes.
   }, [storageKey, minPct, maxPct, viewportPx]);
 
+  const updateWidth = (nextWidth: number) => {
+    setWidth(nextWidth);
+  };
+
   const commitWidth = (nextWidth: number) => {
     setWidth(nextWidth);
     localStorage.setItem(storageKey, String(nextWidth));
   };
 
-  return { width, commitWidth };
+  return { width, updateWidth, commitWidth };
 }

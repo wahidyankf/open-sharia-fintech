@@ -14,6 +14,16 @@ Feature: Resizable panel primitive
     When the user drags the separator handle 100 pixels to the right
     Then the panel width stops at 350 pixels
 
+  Scenario: Dragging live-updates the width without persisting to localStorage
+    Given a resizable panel rendered at 250 pixels with a 150 to 350 pixel band
+    When the user drags the separator handle 60 pixels to the right without releasing
+    Then the panel width becomes 310 pixels but nothing is yet persisted to localStorage
+
+  Scenario: Releasing the drag persists the final width to localStorage
+    Given a resizable panel rendered at 250 pixels with a 150 to 350 pixel band
+    When the user drags the separator handle 60 pixels to the right
+    Then the width 310 pixels is persisted to localStorage
+
   Scenario: Widen the panel with the ArrowRight key
     Given the separator handle is focused on a panel at 250 pixels
     When the user presses ArrowRight
@@ -25,6 +35,7 @@ Feature: Resizable panel primitive
     When the accessibility tree is inspected
     Then the handle has role "separator"
     And the handle has aria-orientation "vertical"
+    And the handle prevents native text selection
 
   Scenario: The handle's accessible label can be localized
     Given a resizable panel is rendered with a custom handle label "Ubah ukuran panel"
