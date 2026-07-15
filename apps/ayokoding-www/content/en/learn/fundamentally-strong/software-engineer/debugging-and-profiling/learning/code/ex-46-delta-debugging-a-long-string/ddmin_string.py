@@ -58,7 +58,7 @@ def main() -> None:
     prefix = "x" * 140
     middle = "y" * 20
     suffix = "z" * 140
-    original = prefix + "#" + middle + "@" + suffix  # =>  301 chars, markers 161 apart
+    original = prefix + "#" + middle + "@" + suffix  # =>  302 chars, markers 21 apart
     assert still_fails(original)
     minimal = ddmin(original)
     print(f"original length: {len(original)}")
@@ -69,7 +69,8 @@ def main() -> None:
         "expected the minimal repro to be exactly the two markers"
     )
     print(
-        "confirmed: ddmin correctly kept BOTH markers despite plain halving being unable to"
+        "confirmed: ddmin correctly kept BOTH markers despite plain halving being "
+        "unable to isolate both markers simultaneously"
     )
 
     # co-11: 1-minimal means NO single remaining char can be deleted without the

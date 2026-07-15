@@ -2023,7 +2023,7 @@ def main() -> None:  # => co-11: builds the two-marker fixture, shrinks it, then
     prefix = "x" * 140  # => co-11: 140 filler characters before the first marker
     middle = "y" * 20  # => co-11: 20 filler characters BETWEEN the two markers
     suffix = "z" * 140  # => co-11: 140 more filler characters after the second marker
-    original = prefix + "#" + middle + "@" + suffix  # =>  301 chars, markers 161 apart
+    original = prefix + "#" + middle + "@" + suffix  # =>  302 chars, markers 21 apart
     assert still_fails(original)  # => co-11: sanity check -- the FULL, unshrunk string must fail first
     minimal = ddmin(original)  # => co-11: the real shrink -- both markers must survive it together
     print(f"original length: {len(original)}")  # => co-11: the STARTING length, before any shrinking
@@ -2031,7 +2031,7 @@ def main() -> None:  # => co-11: builds the two-marker fixture, shrinks it, then
     print(f"minimal string:  {minimal!r}")  # => co-11: the human-readable shrunk result
     assert still_fails(minimal)  # => co-11: sanity check -- the SHRUNK string must still crash
     assert sorted(minimal) == sorted("#@"), "expected the minimal repro to be exactly the two markers"  # => co-11: exact match
-    print("confirmed: ddmin correctly kept BOTH markers despite plain halving being unable to")  # => co-11: narrates the result
+    print("confirmed: ddmin correctly kept BOTH markers despite plain halving being unable to isolate both markers simultaneously")  # => co-11: narrates the result
 
     # co-11: 1-minimal means NO single remaining char can be deleted without the
     # bug disappearing -- verify that directly, character by character.
@@ -2056,7 +2056,7 @@ if __name__ == "__main__":  # => co-11: run this directly to see the real n-way 
 original length: 302
 minimal length:  2
 minimal string:  '#@'
-confirmed: ddmin correctly kept BOTH markers despite plain halving being unable to
+confirmed: ddmin correctly kept BOTH markers despite plain halving being unable to isolate both markers simultaneously
   removing '#' at index 0 -> '@' -- bug cleared, as expected
   removing '@' at index 1 -> '#' -- bug cleared, as expected
 confirmed: the 2-char result is 1-minimal (every further single-char removal clears the bug)
