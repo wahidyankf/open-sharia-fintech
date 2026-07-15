@@ -908,8 +908,9 @@ another pass.
       tokens. (co-12)
 - [ ] I can name which cookie flag stops a JS-readable session theft and which stops transmission over
       plain HTTP, and explain why they are independent controls. (co-13)
-- [ ] I can explain how omitting an explicit `algorithms=` allow-list lets an attacker forge a token via
-      algorithm confusion. (co-14)
+- [ ] I can explain why a hand-rolled verifier that dispatches on the token's own `alg` header (rather
+      than always calling `jwt.decode(..., algorithms=[...])`) is vulnerable to algorithm confusion, even
+      though `jwt.decode()` itself fails closed when `algorithms=` is omitted. (co-14)
 - [ ] I can explain why a missing permission check is an authorization bug even when the request's
       authentication was entirely correct. (co-15)
 - [ ] I can explain why the specific database/service credentials a component connects with bound the
