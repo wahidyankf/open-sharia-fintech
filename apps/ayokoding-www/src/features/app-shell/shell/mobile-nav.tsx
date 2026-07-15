@@ -44,11 +44,14 @@ export function MobileNav({ locale, open, onOpenChange }: MobileNavProps) {
   const [widthPx, setWidthPx] = useState<number>(MOBILE_NAV_WIDTH_PRESETS[0].widthPx);
 
   // Mount-effect read of the persisted preset width — mirrors the pattern
-  // `useResizableWidth` (libs/web-ui) uses for the desktop rail.
+  // `useResizableWidth` (libs/web-ui) uses for the desktop rail. Only one of
+  // the two declared presets is accepted; a stale/tampered value (there is no
+  // free-drag range to clamp into here) falls back to the default preset.
   useEffect(() => {
     const persisted = parsePersistedWidth(localStorage.getItem(MOBILE_NAV_WIDTH_STORAGE_KEY));
-    if (persisted !== undefined) {
-      setWidthPx(persisted);
+    const isValidPreset = MOBILE_NAV_WIDTH_PRESETS.some((preset) => preset.widthPx === persisted);
+    if (isValidPreset) {
+      setWidthPx(persisted as number);
     }
   }, []);
 
@@ -73,20 +76,24 @@ export function MobileNav({ locale, open, onOpenChange }: MobileNavProps) {
       <SheetContent side="left" className="overflow-y-auto p-4" style={{ width: `${widthPx}px` }}>
         <SheetHeader>
           <SheetTitle className="text-left text-lg font-bold">AyoKoding</SheetTitle>
-          <fieldset className="m-0 flex items-center gap-1 border-0 p-0">
-            <legend className="sr-only">{t(locale as Locale, "mobileNavWidthLabel")}</legend>
-            {MOBILE_NAV_WIDTH_PRESETS.map((preset) => (
-              <Button
-                key={preset.id}
-                type="button"
-                variant={widthPx === preset.widthPx ? "secondary" : "outline"}
-                size="xs"
-                aria-pressed={widthPx === preset.widthPx}
-                onClick={() => selectPreset(preset.widthPx)}
-              >
-                {t(locale as Locale, preset.labelKey)}
-              </Button>
-            ))}
+          <fieldset className="m-0 mb-2 border-0 p-0">
+            <legend className="mb-1 block text-xs font-medium text-muted-foreground">
+              {t(locale as Locale, "mobileNavWidthLabel")}
+            </legend>
+            <div className="flex items-center gap-1">
+              {MOBILE_NAV_WIDTH_PRESETS.map((preset) => (
+                <Button
+                  key={preset.id}
+                  type="button"
+                  variant={widthPx === preset.widthPx ? "secondary" : "outline"}
+                  size="xs"
+                  aria-pressed={widthPx === preset.widthPx}
+                  onClick={() => selectPreset(preset.widthPx)}
+                >
+                  {t(locale as Locale, preset.labelKey)}
+                </Button>
+              ))}
+            </div>
           </fieldset>
         </SheetHeader>
         <nav className="mt-4" aria-label="Mobile navigation">

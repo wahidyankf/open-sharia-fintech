@@ -38,3 +38,15 @@ Feature: Resizable Docs Sidebar
     Given the docs page is open in the "id" locale
     When the layout renders
     Then the resize handle's aria-label is the "id" translation of "Resize panel"
+
+  @unit
+  Scenario: An invalid persisted preset width falls back to the mobile drawer's default
+    Given the mobile nav drawer has a corrupted persisted preset width
+    When the mobile nav drawer opens at a 375 pixel viewport
+    Then the drawer renders at the default preset width
+
+  @unit
+  Scenario: The drawer's width-preset control shows a visible caption
+    Given the mobile nav drawer is open at a 375 pixel viewport
+    When the reader looks at the width-preset buttons
+    Then a visible caption explains that the buttons control the drawer's width

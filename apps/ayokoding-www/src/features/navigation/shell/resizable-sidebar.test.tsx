@@ -187,4 +187,41 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect((handle as HTMLElement).getAttribute("aria-label")).toBe(t("id", "resizableSidebarHandleLabel"));
     });
   });
+
+  Scenario("An invalid persisted preset width falls back to the mobile drawer's default", ({ Given, When, Then }) => {
+    Given("the mobile nav drawer has a corrupted persisted preset width", () => {
+      localStorage.clear();
+      localStorage.setItem("ayokoding-mobilenav-width", "999999");
+    });
+
+    When("the mobile nav drawer opens at a 375 pixel viewport", () => {
+      cleanup();
+      render(<MobileNav locale="en" open={true} onOpenChange={() => {}} />);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:An invalid persisted preset width falls back to the mobile drawer's default
+    Then("the drawer renders at the default preset width", () => {
+      const content = document.querySelector('[data-slot="sheet-content"]');
+      expect(content).toBeInstanceOf(HTMLElement);
+      expect((content as HTMLElement).style.width).toBe("280px");
+    });
+  });
+
+  Scenario("The drawer's width-preset control shows a visible caption", ({ Given, When, Then }) => {
+    Given("the mobile nav drawer is open at a 375 pixel viewport", () => {
+      localStorage.clear();
+      cleanup();
+      render(<MobileNav locale="en" open={true} onOpenChange={() => {}} />);
+    });
+
+    When("the reader looks at the width-preset buttons", () => {
+      // precondition noted; inspection happens in the Then step
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:The drawer's width-preset control shows a visible caption
+    Then("a visible caption explains that the buttons control the drawer's width", () => {
+      const legend = screen.getByText(t("en", "mobileNavWidthLabel"));
+      expect(legend.className).not.toContain("sr-only");
+    });
+  });
 });

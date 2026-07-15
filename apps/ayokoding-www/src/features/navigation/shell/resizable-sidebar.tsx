@@ -22,18 +22,22 @@ interface ResizableSidebarProps {
  * `ResizablePanel` primitive (which internally wires `useResizableWidth`).
  *
  * Renders the docs sidebar's `<aside>` shell itself — hidden below `md`, a
- * sticky right-bordered rail from `md` up — with `ResizablePanel` nested
- * inside it (providing width + the drag/keyboard handle), rather than the
- * reverse. `ResizablePanel`'s content wrapper is `overflow-hidden` by design
- * (see `resizable-panel.tsx`), and `overflow: hidden` on any ancestor of a
+ * sticky rail from `md` up — with `ResizablePanel` nested inside it
+ * (providing width + the drag/keyboard handle), rather than the reverse.
+ * `ResizablePanel`'s content wrapper is `overflow-hidden` by design (see
+ * `resizable-panel.tsx`), and `overflow: hidden` on any ancestor of a
  * `position: sticky` element breaks its stickiness — so `sticky`,
  * `overflow-y-auto`, and the fixed height live on `<aside>` itself (which has
  * no such ancestor above it), never on a div nested inside `ResizablePanel`'s
- * children.
+ * children. `<aside>` deliberately has no `border-r` of its own — the
+ * `ResizablePanel` handle already renders the sidebar/content boundary, and a
+ * second static border on the same edge produced an unintentional compound
+ * double-border with no visible seam between the two (see DWT-003 in this
+ * plan's rule-15 retest).
  */
 export function ResizableSidebar({ locale, children }: ResizableSidebarProps) {
   return (
-    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 overflow-y-auto border-r border-border md:block">
+    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 overflow-y-auto md:block">
       <ResizablePanel
         storageKey={SIDEBAR_STORAGE_KEY}
         minPct={MIN_WIDTH_PCT}

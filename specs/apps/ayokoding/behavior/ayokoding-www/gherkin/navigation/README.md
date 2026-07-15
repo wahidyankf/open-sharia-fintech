@@ -16,8 +16,8 @@ UI-semantic scenarios for the AyoKoding navigation bounded context.
   navigation revamp (12 scenarios)
 - **[resizable-sidebar.feature](./resizable-sidebar.feature)** — Resizable desktop docs sidebar:
   width persistence, `< md` rail visibility, horizontal scroll of overflowing labels, the mobile
-  nav drawer's preset-width control, and the resize handle's localized accessible label
-  (5 scenarios)
+  nav drawer's preset-width control (and its corrupted-value fallback + visible caption), and the
+  resize handle's localized accessible label (7 scenarios)
 
 ## Related
 
