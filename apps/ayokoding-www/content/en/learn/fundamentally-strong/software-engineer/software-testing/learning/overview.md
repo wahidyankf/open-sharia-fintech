@@ -12,8 +12,9 @@ weight: 1
   `list`/`dict` literals, and exceptions the way that primer taught them; [13 · Just Enough
   TypeScript](../../just-enough-typescript/learning/overview.md) covers the same ground for the
   one TypeScript example (Example 51) and the Advanced-tier TS cross-refs; [11 · Backend
-  Essentials](../../backend-essentials/learning/overview.md) supplies the small Flask/FastAPI app
-  the Advanced tier's integration and contract tests exercise.
+  Essentials](../../backend-essentials/learning/overview.md) is a useful style reference -- the
+  Advanced tier's integration and contract tests build their own small, self-contained FastAPI
+  stand-in app rather than importing code from Topic 11.
 - **Tools & environment**: a macOS/Linux terminal; **Python 3.13** with **pytest 9.1.1**,
   **Hypothesis 6.156.6**, **coverage.py 7.15.1** (via `pytest-cov`), and **freezegun 1.5.5**
   installed; **Node.js** with **Vitest** (this repo already depends on 4.1.0; the one TypeScript
@@ -124,7 +125,8 @@ genuine TDD red-then-green transition across separate files, one file per state.
   decision between a unit TDD test and a BDD acceptance scenario.
 - **Capstone** -- one small feature built out across the full pyramid: TDD'd unit tests, a mocked
   dependency, a Hypothesis (+ fast-check) property test with a demonstrated shrink, and an
-  integration test against the Backend Essentials app, with a coverage report read from the CLI.
+  integration test against its own small, self-contained FastAPI stand-in app (modeled on Backend
+  Essentials' style), with a coverage report read from the CLI.
 
 Every example cites the concept (`co-NN`) it exercises, and every version pin and API claim traces
 to `docs.pytest.org`, `docs.python.org/unittest.mock`, `hypothesis.readthedocs.io`,
@@ -479,7 +481,8 @@ serialization format neither side actually agrees on -- which is exactly the gap
 close.
 
 **Verify it**: the Advanced tier's Example 63 tests two real modules together; Example 64 runs
-against a real temporary database; Example 65 hits a real Backend-Essentials HTTP endpoint.
+against a real temporary database; Example 65 hits a real HTTP endpoint on the tier's own small,
+self-contained FastAPI stand-in app.
 
 ### co-24 · Contract Testing
 
@@ -707,3 +710,7 @@ and its intended audience.
 - [Example 84: One Scenario Outline, Driven Over an Examples Table](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning/bdd#example-84-one-scenario-outline-driven-over-an-examples-table)
 - [Example 85: behave and pytest-bdd, Run Against the Identical `.feature` File](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning/bdd#example-85-behave-and-pytest-bdd-run-against-the-identical-feature-file)
 - [Example 86: One Codebase, Two Changes -- Which Gets a Unit Test, Which Gets a BDD Scenario](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning/bdd#example-86-one-codebase-two-changes----which-gets-a-unit-test-which-gets-a-bdd-scenario)
+
+---
+
+← Previous: [Overview](../overview.md) · Next: [Beginner Examples](./beginner.md) →
