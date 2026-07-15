@@ -24,6 +24,10 @@ const PANEL_SELECTOR = '[data-slot="resizable-panel"]';
  */
 const MAX_WIDTH_PCT = 35;
 
+/** `clampWidth`'s lower band bound, as a percentage of the viewport width — mirrors
+ * `width-model.ts`'s `MIN_PCT` (see `MAX_WIDTH_PCT` above for why this is duplicated locally). */
+const MIN_WIDTH_PCT = 15;
+
 /** Sets the desktop rail's persisted width directly, mirroring a prior drag/keyboard commit. */
 async function setPersistedSidebarWidth(page: Page, widthPx: number): Promise<void> {
   await page.evaluate(({ key, px }) => localStorage.setItem(key, String(px)), {
@@ -151,6 +155,15 @@ const SCROLL_CONTAINER_SELECTOR = `aside:has(${PANEL_SELECTOR}) .overflow-x-auto
 Given(
   "a docs sidebar narrowed to {int} pixels containing a nav label wider than {int} pixels",
   async ({ page }, widthPx: number) => {
+    // `useResizableWidth` re-clamps a persisted width against MIN_WIDTH_PCT of the CURRENT
+    // viewport on mount (see width-model.ts's `clampWidth`, wired since the primitive was
+    // introduced). At Playwright's default 1280px-wide viewport, MIN_WIDTH_PCT (15%) is 192px —
+    // above this scenario's literal 150px — so the persisted value silently got clamped upward
+    // instead of applying. Size the viewport so `widthPx` sits exactly at the minimum band
+    // bound and is therefore not clamped, mirroring the same technique already used by the
+    // "resizable panel rendered at N pixels with a M to K pixel band" step above.
+    const viewportWidth = Math.round(widthPx / (MIN_WIDTH_PCT / 100));
+    await page.setViewportSize({ width: viewportWidth, height: 800 });
     await page.goto(DOCS_PAGE);
     await setPersistedSidebarWidth(page, widthPx);
     await page.reload();
