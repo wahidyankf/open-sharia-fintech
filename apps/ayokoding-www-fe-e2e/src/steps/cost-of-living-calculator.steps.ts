@@ -653,8 +653,13 @@ Then("the childcare expense is added for the one pre-school child", async ({ pag
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Pre-school children incur childcare, not schooling
 Then("no schooling cost is added", async ({ page }) => {
-  const schoolTypeToggle = page.getByLabel("School type");
-  await expect(schoolTypeToggle).toBeHidden();
+  // The school-type toggle is shown-but-disabled (not hidden) when there are no school-age
+  // children — see the "School type toggle is shown but disabled without school-age children"
+  // scenario/design (controls.tsx's SegmentedControl `disabled` prop). The correct assertion
+  // for "no schooling cost is added" is the modeled schooling figure itself (matching the
+  // @unit-level binding in cost-of-living-calculator.steps.tsx), not toggle visibility.
+  const schoolCell = page.locator("[data-testid^='col-school-']").first();
+  await expect(schoolCell).toHaveAttribute("data-raw", "0");
 });
 
 // ── School type toggle hidden ─────────────────────────────────────────────────
@@ -955,8 +960,16 @@ Then("no money column shows only a single currency", async ({ page }) => {
 When(
   "I change the household to {string} and the area to {string}",
   async ({ page }, _household: string, area: string) => {
+    // Each control push is a URL-state commit (router.push in calculator-content.tsx's
+    // handleHouseholdChange/handleAreaChange). Firing the next action before a commit's
+    // navigation lands starts that handler from a stale `currentState` closure and silently
+    // clobbers the previous change — `waitForURL` after each field settles the commit before
+    // the next one starts (matching the `waitForURL`-after-mutation pattern already used
+    // elsewhere in this file, e.g. the geo-filter steps).
     await page.getByLabel("Adults").selectOption("2");
+    await page.waitForURL(/adults=2/);
     await page.getByLabel("School-age children").selectOption("2");
+    await page.waitForURL(/schoolkids=2/);
     const areaLabel = area === "center" ? "City center" : "Rural";
     // Area is a SegmentedControl (radiogroup), not a <select>
     await page.getByRole("radio", { name: areaLabel }).click();
@@ -977,7 +990,14 @@ Then(
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Household composition changes the minimum qualifying role
 Then("a more senior role becomes the marked minimum", async ({ page }) => {
-  const marker = page.locator("[data-testid='minimum-marker']");
+  // The minimum-role marker can render on more than one row when several cities tie at the same
+  // minimum-qualifying role rank (see min-role.tsx's RoleRow `isMin` prop — this is correct,
+  // expected product behaviour, not a bug). `.isVisible()` on a locator that resolves to more
+  // than one element throws a strict-mode-violation error; the `.catch(() => false)` below was
+  // silently swallowing that error, making `hasMarker` always false whenever more than one role
+  // tied for the minimum — i.e. this assertion could fail regardless of the real DOM state.
+  // `.first()` narrows to Playwright's single-element strict-mode requirement.
+  const marker = page.locator("[data-testid='minimum-marker']").first();
   const noQual = page.locator("[data-testid='no-qualifier-message']");
   const hasMarker = await marker.isVisible().catch(() => false);
   const hasNoQual = await noQual.isVisible().catch(() => false);
