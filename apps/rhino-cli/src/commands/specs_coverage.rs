@@ -559,6 +559,128 @@ pub fn run_domain(
 mod tests {
     use super::*;
     use crate::test_support::CwdLock;
+    use std::process::Command;
+    use tempfile::TempDir;
+
+    /// Initializes a bare-minimum git repo at `root` (no commit required —
+    /// `git rev-parse --show-toplevel` only needs a `.git` directory).
+    fn init_git_repo(root: &Path) {
+        let status = Command::new("git")
+            .args(["init"])
+            .current_dir(root)
+            .status()
+            .expect("git init");
+        assert!(status.success(), "git init must succeed");
+    }
+
+    /// Writes a spec dir with one scenario ("a real step") and an app dir
+    /// containing both a matching step implementation (`src/real_steps.rs`)
+    /// and an orphan step implementation under a directory named `content`
+    /// (`content/legacy_steps.py`, matching no Gherkin step) — the same
+    /// content-vs-spec-tree name collision the `--exclude-source-dir` flag
+    /// exists to resolve.
+    ///
+    /// Returns `(specs_dir_rel, app_dir_rel)`, the two path args callers pass
+    /// as [`ValidateArgs::paths`] (relative to `root`, which becomes the repo
+    /// root once `init_git_repo` + `set_current_dir` have run).
+    fn write_exclude_source_dir_fixture(root: &Path) -> (String, String) {
+        let specs_dir = root.join("specs");
+        std::fs::create_dir_all(&specs_dir).unwrap();
+        std::fs::write(
+            specs_dir.join("example.feature"),
+            "Feature: Example\n  Scenario: A scenario\n    Given a real step\n",
+        )
+        .unwrap();
+
+        let app_dir = root.join("app");
+        std::fs::create_dir_all(app_dir.join("content")).unwrap();
+        std::fs::write(
+            app_dir.join("content/legacy_steps.py"),
+            "@given(\"a taught condition\")\ndef given_taught():\n    pass\n",
+        )
+        .unwrap();
+        std::fs::create_dir_all(app_dir.join("src")).unwrap();
+        std::fs::write(
+            app_dir.join("src/real_steps.rs"),
+            "#[given(\"a real step\")]\nfn given_real() {}\n",
+        )
+        .unwrap();
+
+        ("specs".to_string(), "app".to_string())
+    }
+
+    #[test]
+    fn run_honors_exclude_source_dir_end_to_end() {
+        let _cwd = CwdLock::acquire();
+        let repo = TempDir::new().unwrap();
+        let root = repo.path();
+        init_git_repo(root);
+        let (specs_dir, app_dir) = write_exclude_source_dir_fixture(root);
+        std::env::set_current_dir(root).expect("chdir to temp repo root");
+
+        let mut args = base_args(vec![specs_dir, app_dir]);
+        args.shared_steps = true;
+
+        // Without --exclude-source-dir, the app-tree walk picks up the Python
+        // step decorator under `content/`. It matches no Gherkin step, so it
+        // surfaces as an orphan step impl and run() fails.
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        assert!(
+            err.to_string().contains("1 orphan step impl"),
+            "expected an orphan-step-impl gap from the unexcluded content/ dir, got: {err}"
+        );
+
+        // With --exclude-source-dir content, args.exclude_source_dir must be
+        // threaded into opts.exclude_source_dirs (specs_coverage.rs's run()),
+        // excluding content/ from the app-tree walk so only the matching
+        // `real_steps.rs` step implementation remains.
+        args.exclude_source_dir = vec!["content".to_string()];
+        assert!(
+            run(&args, OutputFormat::Text).is_ok(),
+            "expected --exclude-source-dir content to exclude the app-tree content/ dir end-to-end"
+        );
+    }
+
+    #[test]
+    fn run_level_check_honors_exclude_source_dir_end_to_end() {
+        let _cwd = CwdLock::acquire();
+        let repo = TempDir::new().unwrap();
+        let root = repo.path();
+        init_git_repo(root);
+        let (specs_dir, level_dir) = write_exclude_source_dir_fixture(root);
+        std::env::set_current_dir(root).expect("chdir to temp repo root");
+
+        let mut args = ValidateArgs {
+            paths: vec![specs_dir, level_dir.clone()],
+            shared_steps: true,
+            exclude_dir: vec![],
+            exclude_source_dir: vec![],
+            unit_dir: Some(level_dir.clone()),
+            integration_dir: Some(level_dir.clone()),
+            e2e_dir: Some(level_dir),
+            unit_report: None,
+            integration_report: None,
+            e2e_report: None,
+        };
+
+        // Without --exclude-source-dir, every level's scan sees the same
+        // orphan step impl under content/, so run_level_check (invoked once
+        // per level by run_three_level) reports every level as failing.
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        assert!(
+            err.to_string().contains("level(s)"),
+            "expected all three levels to fail from the unexcluded content/ dir, got: {err}"
+        );
+
+        // With --exclude-source-dir content, args.exclude_source_dir must be
+        // threaded into opts.exclude_source_dirs inside run_level_check too,
+        // so every level's scan excludes content/ and passes.
+        args.exclude_source_dir = vec!["content".to_string()];
+        assert!(
+            run(&args, OutputFormat::Text).is_ok(),
+            "expected --exclude-source-dir content to exclude the app-tree content/ dir in three-level mode"
+        );
+    }
 
     fn base_args(paths: Vec<String>) -> ValidateArgs {
         ValidateArgs {

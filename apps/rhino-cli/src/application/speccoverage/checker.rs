@@ -107,8 +107,9 @@ fn skip_dirs() -> &'static HashSet<&'static str> {
 
 /// Returns `true` if `name` should be skipped when walking an `app_dir`
 /// source tree: either a universal skip-dir (see [`skip_dirs`]) or one of
-/// the caller-supplied `exclude_dirs` (fed from `ScanOptions::exclude_source_dirs`,
-/// i.e. the `--exclude-source-dir` CLI flag).
+/// the caller-supplied `exclude_source_dirs` (fed from
+/// `ScanOptions::exclude_source_dirs`, i.e. the `--exclude-source-dir` CLI
+/// flag).
 ///
 /// Deliberately a *separate* exclusion list from `--exclude-dir` (which only
 /// filters the `.feature`-file walk, see [`walk_feature_files`]): a directory
@@ -121,8 +122,8 @@ fn skip_dirs() -> &'static HashSet<&'static str> {
 /// project declare the app-tree exclusion explicitly in its own Nx target
 /// rather than rhino-cli hardcoding that project's directory-naming
 /// convention for every repo that links this binary.
-fn is_excluded_source_dir(name: &str, exclude_dirs: &[String]) -> bool {
-    skip_dirs().contains(name) || exclude_dirs.iter().any(|d| d == name)
+fn is_excluded_source_dir(name: &str, exclude_source_dirs: &[String]) -> bool {
+    skip_dirs().contains(name) || exclude_source_dirs.iter().any(|d| d == name)
 }
 
 // ============================================================
@@ -550,7 +551,7 @@ fn is_in_test_dir(path: &Path) -> bool {
 fn find_all_matching_test_files(
     app_dir: &Path,
     stem: &str,
-    exclude_dirs: &[String],
+    exclude_source_dirs: &[String],
 ) -> std::result::Result<Vec<PathBuf>, Error> {
     if !app_dir.exists() {
         return Ok(Vec::new());
@@ -559,7 +560,7 @@ fn find_all_matching_test_files(
     let walker = WalkDir::new(app_dir).into_iter().filter_entry(|e| {
         if e.file_type().is_dir() {
             let name = e.file_name().to_string_lossy();
-            !is_excluded_source_dir(name.as_ref(), exclude_dirs)
+            !is_excluded_source_dir(name.as_ref(), exclude_source_dirs)
         } else {
             true
         }
@@ -652,15 +653,15 @@ fn extract_go_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, 
 /// recognised source file, aggregating them into a single [`StepMatcher`].
 ///
 /// Skips directories per [`is_excluded_source_dir`] — the universal
-/// `skip_dirs` set plus any caller-supplied `exclude_dirs`. Returns an empty
-/// matcher if `app_dir` does not exist.
+/// `skip_dirs` set plus any caller-supplied `exclude_source_dirs`. Returns an
+/// empty matcher if `app_dir` does not exist.
 ///
 /// # Errors
 ///
 /// Returns an error if the directory walk encounters an I/O error.
 pub fn extract_all_step_texts(
     app_dir: &Path,
-    exclude_dirs: &[String],
+    exclude_source_dirs: &[String],
 ) -> std::result::Result<StepMatcher, Error> {
     let mut sm = StepMatcher::new();
     if !app_dir.exists() {
@@ -670,7 +671,7 @@ pub fn extract_all_step_texts(
     let walker = WalkDir::new(app_dir).into_iter().filter_entry(|e| {
         if e.file_type().is_dir() {
             let name = e.file_name().to_string_lossy();
-            !is_excluded_source_dir(name.as_ref(), exclude_dirs)
+            !is_excluded_source_dir(name.as_ref(), exclude_source_dirs)
         } else {
             true
         }
