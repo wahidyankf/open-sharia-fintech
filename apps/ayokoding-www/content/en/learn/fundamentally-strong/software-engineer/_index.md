@@ -50,3 +50,7 @@ weight: 1750
 - [13 · Just Enough TypeScript](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript/drilling)
+- [15 · Software Testing](/en/c/learn/fundamentally-strong/software-engineer/software-testing)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-testing/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-testing/drilling)

@@ -75,9 +75,31 @@ Regression Test Mandate the whole repo enforces.
   table are from the [Cucumber Gherkin reference](https://cucumber.io/docs/gherkin/reference/); Python
   runners [`pytest-bdd`](https://pytest-bdd.readthedocs.io/) (MIT) and
   [`behave`](https://behave.readthedocs.io/) (BSD-2). Concepts (Given/When/Then framing, step-definition
-  binding, outline-over-examples, BDD/ATDD-vs-TDD placement) authored from established knowledge;
-  **exact package versions + the pytest-bdd/behave/Cucumber.js step-binding API are `[Needs
-Verification]`** — pin and re-verify against the registries + primary docs at authoring time (DD-35).
+  binding, outline-over-examples, BDD/ATDD-vs-TDD placement) authored from established knowledge and
+  confirmed accurate by the 2026-07-15 `web-researcher` verification sweep below — no corrections
+  needed to the prose, only version/license/date pins.
+- 2026-07-15 — verified (`web-researcher`, DD-35 resolution — the last remaining "to verify" line):
+  **pytest-bdd 8.1.0** (MIT; released 2024-12-05 — actively maintained per continued GitHub
+  commits/issues despite the ~19-month-stale release, no known CVEs) — `@given`/`@when`/`@then`
+  decorators from `pytest_bdd` bind Gherkin steps to functions via pytest-fixture-style injection;
+  `parsers.parse("...{n:d}...")`/`parsers.cfparse(...)` extract typed named parameters;
+  `scenarios('features/')` auto-binds every scenario under a path, `@scenario('file.feature', 'Name')`
+  binds one scenario to one test function; `target_fixture=` lets a step publish a fixture for later
+  steps. **behave 1.3.3** (BSD-2; released 2025-09-04; Snyk "Healthy", no known CVEs) —
+  `@given`/`@when`/`@then`/`@step` decorators from `behave` bind Gherkin text to functions taking
+  `context` as the first argument; `context` carries state across a scenario's steps;
+  `features/environment.py` supplies `before_all`/`after_all`/`before_feature`/`after_feature`/
+  `before_scenario`/`after_scenario`/`before_step`/`after_step` hooks. **`@cucumber/cucumber`
+  (Cucumber.js) 13.1.0** (MIT; released 2026-07-14, no known CVEs — an unrelated typosquat package
+  named bare `cucumber-js` exists, not the scoped package used here) — `Given`/`When`/`Then` functions
+  imported from `@cucumber/cucumber`; step-definition callbacks must be non-arrow `function`
+  expressions to access the shared `World` instance via `this` (arrow functions cannot bind `this`).
+  Sources: [PyPI pytest-bdd](https://pypi.org/project/pytest-bdd/),
+  [pytest-bdd README](https://github.com/pytest-dev/pytest-bdd/blob/master/README.rst),
+  [PyPI behave](https://pypi.org/project/behave/),
+  [behave tutorial](https://behave.readthedocs.io/en/latest/tutorial/),
+  [npm @cucumber/cucumber](https://registry.npmjs.org/@cucumber/cucumber/latest),
+  [cucumber-js step-definitions docs](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/step_definitions.md).
 
 ## Concepts
 

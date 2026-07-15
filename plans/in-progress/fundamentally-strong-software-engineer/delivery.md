@@ -2898,143 +2898,143 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python + TS · topic wt 250 · Learn 115 / Drill 215 · **subject**. Template →
 [`syllabus/15-software-testing.md`](./syllabus/15-software-testing.md).
 
-- [ ] **[AI] V** — `web-researcher` for `software-testing`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `software-testing`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/15-software-testing.md`](./syllabus/15-software-testing.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/software-testing/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/software-testing/learning/` teaching **every** concept in
       `syllabus/15-software-testing.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · why-test-and-aaa
-  - [ ] co-02 · test-discovery-and-run
-  - [ ] co-03 · assertions
-  - [ ] co-04 · exception-testing
-  - [ ] co-05 · fixtures
-  - [ ] co-06 · parametrization
-  - [ ] co-07 · approx-and-floats
-  - [ ] co-08 · markers-and-selection
-  - [ ] co-09 · test-organization
-  - [ ] co-10 · test-pyramid-vs-trophy
-  - [ ] co-11 · test-doubles-taxonomy
-  - [ ] co-12 · stubbing
-  - [ ] co-13 · mocking-and-verification
-  - [ ] co-14 · patching
-  - [ ] co-15 · spies
-  - [ ] co-16 · fakes
-  - [ ] co-17 · tdd-red-green-refactor
-  - [ ] co-18 · property-based-testing
-  - [ ] co-19 · shrinking
-  - [ ] co-20 · strategies
-  - [ ] co-21 · coverage
-  - [ ] co-22 · mutation-testing
-  - [ ] co-23 · integration-testing
-  - [ ] co-24 · contract-testing
-  - [ ] co-25 · e2e-and-test-containers
-  - [ ] co-26 · test-isolation-and-determinism
-  - [ ] co-27 · reading-reports
-  - [ ] co-28 · bdd-given-when-then
-  - [ ] co-29 · gherkin-feature-scenario
-  - [ ] co-30 · step-definitions
-  - [ ] co-31 · scenario-outline-examples
-  - [ ] co-32 · bdd-vs-tdd-and-atdd
-- [ ] **[AI] A1-examples** — Author `CONTENT/software-testing/learning/code/` — one runnable pytest (primary; TS/Vitest
+  - [x] co-01 · why-test-and-aaa
+  - [x] co-02 · test-discovery-and-run
+  - [x] co-03 · assertions
+  - [x] co-04 · exception-testing
+  - [x] co-05 · fixtures
+  - [x] co-06 · parametrization
+  - [x] co-07 · approx-and-floats
+  - [x] co-08 · markers-and-selection
+  - [x] co-09 · test-organization
+  - [x] co-10 · test-pyramid-vs-trophy
+  - [x] co-11 · test-doubles-taxonomy
+  - [x] co-12 · stubbing
+  - [x] co-13 · mocking-and-verification
+  - [x] co-14 · patching
+  - [x] co-15 · spies
+  - [x] co-16 · fakes
+  - [x] co-17 · tdd-red-green-refactor
+  - [x] co-18 · property-based-testing
+  - [x] co-19 · shrinking
+  - [x] co-20 · strategies
+  - [x] co-21 · coverage
+  - [x] co-22 · mutation-testing
+  - [x] co-23 · integration-testing
+  - [x] co-24 · contract-testing
+  - [x] co-25 · e2e-and-test-containers
+  - [x] co-26 · test-isolation-and-determinism
+  - [x] co-27 · reading-reports
+  - [x] co-28 · bdd-given-when-then
+  - [x] co-29 · gherkin-feature-scenario
+  - [x] co-30 · step-definitions
+  - [x] co-31 · scenario-outline-examples
+  - [x] co-32 · bdd-vs-tdd-and-atdd
+- [x] **[AI] A1-examples** — Author `CONTENT/software-testing/learning/code/` — one runnable pytest (primary; TS/Vitest
       cross-refs where noted) per worked example (DD-20/DD-30), covering **every** example in
       `syllabus/15-software-testing.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · first-passing-test — verify `pytest` reports `1 passed`
-  - [ ] ex-02 · failing-test-output — verify pytest prints the expected-vs-actual introspection
-  - [ ] ex-03 · arrange-act-assert — verify it passes and each phase is distinct
-  - [ ] ex-04 · run-single-test — verify only that test executes
-  - [ ] ex-05 · assert-equality — verify it passes on a match and fails otherwise
-  - [ ] ex-06 · assert-truthiness — verify pytest reports the operands on failure
-  - [ ] ex-07 · assert-membership — verify it passes for a present element
-  - [ ] ex-08 · raises-valueerror — verify the test passes when it raises
-  - [ ] ex-09 · raises-match-message — verify it asserts the message text
-  - [ ] ex-10 · approx-float — verify the float comparison passes
-  - [ ] ex-11 · simple-fixture — verify the test receives it
-  - [ ] ex-12 · fixture-teardown — verify teardown runs after the test body
-  - [ ] ex-13 · fixture-scope — verify it is built once across the module's tests
-  - [ ] ex-14 · parametrize-cases — verify three cases run
-  - [ ] ex-15 · parametrize-ids — verify each shows its id in the output
-  - [ ] ex-16 · parametrize-multiple-args — verify each combination runs
-  - [ ] ex-17 · mark-skip — verify the test reports skipped, not failed
-  - [ ] ex-18 · mark-xfail — verify it reports xfail
-  - [ ] ex-19 · custom-marker-select — verify the slow ones are excluded
-  - [ ] ex-20 · keyword-select — verify only matching-named tests run
-  - [ ] ex-21 · group-tests-in-class — verify they run together
-  - [ ] ex-22 · shared-conftest-fixture — verify multiple test files can use it
-  - [ ] ex-23 · tdd-write-failing-first — verify it fails red with an `ImportError`/`AssertionError`
-  - [ ] ex-24 · tdd-make-it-pass — verify the previously red test goes green
-  - [ ] ex-25 · tdd-refactor-under-green — verify the tests stay green throughout
-  - [ ] ex-26 · test-pure-function — verify deterministic outputs
-  - [ ] ex-27 · deterministic-no-hidden-state — verify identical results with no order dependence
-  - [ ] ex-28 · run-verbose-report — verify per-test names and PASS/FAIL lines appear
-  - [ ] ex-29 · stub-returns-canned-value — verify the unit uses it without the real dependency
-  - [ ] ex-30 · dummy-object-unused — verify it only satisfies the signature
-  - [ ] ex-31 · mock-records-call — verify the interaction happened
-  - [ ] ex-32 · mock-assert-called-with — verify the exact arguments passed
-  - [ ] ex-33 · mock-return-value — verify the unit consumes the mocked return
-  - [ ] ex-34 · mock-side-effect-raises — verify the unit handles the raised error
-  - [ ] ex-35 · patch-dependency — verify the real dependency is replaced during the call
-  - [ ] ex-36 · monkeypatch-attr — verify the patched version runs
-  - [ ] ex-37 · monkeypatch-env — verify code reads the patched environment variable
-  - [ ] ex-38 · spy-wraps-real — verify calls are recorded while delegating to the real object
-  - [ ] ex-39 · fake-in-memory-repo — verify the service works against it
-  - [ ] ex-40 · fake-vs-mock-contrast — verify both pass but assert different things (state vs interaction)
-  - [ ] ex-41 · patch-time — verify time-dependent logic becomes deterministic
-  - [ ] ex-42 · control-randomness-seed — verify repeatable "random" output
-  - [ ] ex-43 · property-idempotent — verify the invariant holds
-  - [ ] ex-44 · property-roundtrip — verify the round-trip property
-  - [ ] ex-45 · property-commutative — verify commutativity
-  - [ ] ex-46 · property-list-invariant — verify both invariants
-  - [ ] ex-47 · shrinking-minimal-counterexample — verify it reports a minimal shrunk input
-  - [ ] ex-48 · custom-strategy-composite — verify generated values satisfy the preconditions
-  - [ ] ex-49 · hypothesis-assume — verify only valid cases are exercised
-  - [ ] ex-50 · example-plus-property — verify the pinned case always runs alongside generated ones
-  - [ ] ex-51 · fast-check-property-ts — verify it passes in the TS stack
-  - [ ] ex-52 · coverage-line-report — verify the report shows per-file line coverage
-  - [ ] ex-53 · coverage-branch — verify an untaken branch is reported as missed
-  - [ ] ex-54 · coverage-gap-then-cover — verify coverage rises to include it
-  - [ ] ex-55 · coverage-not-proof — verify coverage passes yet a property test catches the bug
-  - [ ] ex-56 · fixture-parametrized — verify each variant runs
-  - [ ] ex-57 · aaa-with-double — verify the combined check
-  - [ ] ex-58 · tdd-with-double — verify red→green with the double in place
-  - [ ] ex-59 · isolate-io-boundary — verify the unit test performs no real IO
-  - [ ] ex-60 · marker-for-integration — verify they are skipped in the fast unit run
-  - [ ] ex-61 · pyramid-shape-suite — verify the counts reflect the pyramid
-  - [ ] ex-62 · trophy-weighted-integration — verify the integration tier carries the most cases
-  - [ ] ex-63 · integration-two-modules — verify the combined behavior without stubbing the seam
-  - [ ] ex-64 · integration-app-plus-db — verify a write then read round-trips
-  - [ ] ex-65 · integration-http-endpoint — verify the response status and body
-  - [ ] ex-66 · testcontainers-ephemeral-db — verify it is created and torn down around the run
-  - [ ] ex-67 · contract-consumer-pact — verify it produces a pact file
-  - [ ] ex-68 · contract-provider-verify — verify the provider against the pact — verify the provider satisfies the recorded contract
-  - [ ] ex-69 · e2e-happy-path — verify the resulting end-state is correct
-  - [ ] ex-70 · mutation-baseline — verify the surviving-mutant report is produced
-  - [ ] ex-71 · mutation-kill-survivor — verify the mutation score improves
-  - [ ] ex-72 · mutation-vs-coverage — verify mutation exposes weak assertions that coverage missed
-  - [ ] ex-73 · read-coverage-report — verify you can name the uncovered lines
-  - [ ] ex-74 · read-failing-traceback — verify you can locate the assertion and the offending values
-  - [ ] ex-75 · flaky-test-diagnosis — verify it becomes deterministic
-  - [ ] ex-76 · fixture-cleanup-isolation — verify order-independence across the module
-  - [ ] ex-77 · double-taxonomy-mapping — verify each matches its Meszaros definition
-  - [ ] ex-78 · choose-right-double — verify the test asserts the correct dimension (state vs behavior)
-  - [ ] ex-79 · full-pyramid-feature — verify every tier is green
-  - [ ] ex-80 · full-verification-suite — verify every gate passes and the mutation score is read
-  - [ ] ex-81 · pytest-bdd-first-scenario — verify `pytest` runs the scenario and reports `1 passed`
-  - [ ] ex-82 · gherkin-feature-grammar — verify the runner parses it and lists the named scenario
-  - [ ] ex-83 · step-definition-shared-context — verify a value set in `Given` is asserted in `Then`
-  - [ ] ex-84 · scenario-outline-examples-table — verify each row runs as its own case
-  - [ ] ex-85 · behave-vs-pytest-bdd-same-feature — verify both execute the identical scenario green
-  - [ ] ex-86 · bdd-vs-tdd-decision — verify the choice matches the risk and the audience
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/software-testing/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · first-passing-test — verify `pytest` reports `1 passed`
+  - [x] ex-02 · failing-test-output — verify pytest prints the expected-vs-actual introspection
+  - [x] ex-03 · arrange-act-assert — verify it passes and each phase is distinct
+  - [x] ex-04 · run-single-test — verify only that test executes
+  - [x] ex-05 · assert-equality — verify it passes on a match and fails otherwise
+  - [x] ex-06 · assert-truthiness — verify pytest reports the operands on failure
+  - [x] ex-07 · assert-membership — verify it passes for a present element
+  - [x] ex-08 · raises-valueerror — verify the test passes when it raises
+  - [x] ex-09 · raises-match-message — verify it asserts the message text
+  - [x] ex-10 · approx-float — verify the float comparison passes
+  - [x] ex-11 · simple-fixture — verify the test receives it
+  - [x] ex-12 · fixture-teardown — verify teardown runs after the test body
+  - [x] ex-13 · fixture-scope — verify it is built once across the module's tests
+  - [x] ex-14 · parametrize-cases — verify three cases run
+  - [x] ex-15 · parametrize-ids — verify each shows its id in the output
+  - [x] ex-16 · parametrize-multiple-args — verify each combination runs
+  - [x] ex-17 · mark-skip — verify the test reports skipped, not failed
+  - [x] ex-18 · mark-xfail — verify it reports xfail
+  - [x] ex-19 · custom-marker-select — verify the slow ones are excluded
+  - [x] ex-20 · keyword-select — verify only matching-named tests run
+  - [x] ex-21 · group-tests-in-class — verify they run together
+  - [x] ex-22 · shared-conftest-fixture — verify multiple test files can use it
+  - [x] ex-23 · tdd-write-failing-first — verify it fails red with an `ImportError`/`AssertionError`
+  - [x] ex-24 · tdd-make-it-pass — verify the previously red test goes green
+  - [x] ex-25 · tdd-refactor-under-green — verify the tests stay green throughout
+  - [x] ex-26 · test-pure-function — verify deterministic outputs
+  - [x] ex-27 · deterministic-no-hidden-state — verify identical results with no order dependence
+  - [x] ex-28 · run-verbose-report — verify per-test names and PASS/FAIL lines appear
+  - [x] ex-29 · stub-returns-canned-value — verify the unit uses it without the real dependency
+  - [x] ex-30 · dummy-object-unused — verify it only satisfies the signature
+  - [x] ex-31 · mock-records-call — verify the interaction happened
+  - [x] ex-32 · mock-assert-called-with — verify the exact arguments passed
+  - [x] ex-33 · mock-return-value — verify the unit consumes the mocked return
+  - [x] ex-34 · mock-side-effect-raises — verify the unit handles the raised error
+  - [x] ex-35 · patch-dependency — verify the real dependency is replaced during the call
+  - [x] ex-36 · monkeypatch-attr — verify the patched version runs
+  - [x] ex-37 · monkeypatch-env — verify code reads the patched environment variable
+  - [x] ex-38 · spy-wraps-real — verify calls are recorded while delegating to the real object
+  - [x] ex-39 · fake-in-memory-repo — verify the service works against it
+  - [x] ex-40 · fake-vs-mock-contrast — verify both pass but assert different things (state vs interaction)
+  - [x] ex-41 · patch-time — verify time-dependent logic becomes deterministic
+  - [x] ex-42 · control-randomness-seed — verify repeatable "random" output
+  - [x] ex-43 · property-idempotent — verify the invariant holds
+  - [x] ex-44 · property-roundtrip — verify the round-trip property
+  - [x] ex-45 · property-commutative — verify commutativity
+  - [x] ex-46 · property-list-invariant — verify both invariants
+  - [x] ex-47 · shrinking-minimal-counterexample — verify it reports a minimal shrunk input
+  - [x] ex-48 · custom-strategy-composite — verify generated values satisfy the preconditions
+  - [x] ex-49 · hypothesis-assume — verify only valid cases are exercised
+  - [x] ex-50 · example-plus-property — verify the pinned case always runs alongside generated ones
+  - [x] ex-51 · fast-check-property-ts — verify it passes in the TS stack
+  - [x] ex-52 · coverage-line-report — verify the report shows per-file line coverage
+  - [x] ex-53 · coverage-branch — verify an untaken branch is reported as missed
+  - [x] ex-54 · coverage-gap-then-cover — verify coverage rises to include it
+  - [x] ex-55 · coverage-not-proof — verify coverage passes yet a property test catches the bug
+  - [x] ex-56 · fixture-parametrized — verify each variant runs
+  - [x] ex-57 · aaa-with-double — verify the combined check
+  - [x] ex-58 · tdd-with-double — verify red→green with the double in place
+  - [x] ex-59 · isolate-io-boundary — verify the unit test performs no real IO
+  - [x] ex-60 · marker-for-integration — verify they are skipped in the fast unit run
+  - [x] ex-61 · pyramid-shape-suite — verify the counts reflect the pyramid
+  - [x] ex-62 · trophy-weighted-integration — verify the integration tier carries the most cases
+  - [x] ex-63 · integration-two-modules — verify the combined behavior without stubbing the seam
+  - [x] ex-64 · integration-app-plus-db — verify a write then read round-trips
+  - [x] ex-65 · integration-http-endpoint — verify the response status and body
+  - [x] ex-66 · testcontainers-ephemeral-db — verify it is created and torn down around the run
+  - [x] ex-67 · contract-consumer-pact — verify it produces a pact file
+  - [x] ex-68 · contract-provider-verify — verify the provider against the pact — verify the provider satisfies the recorded contract
+  - [x] ex-69 · e2e-happy-path — verify the resulting end-state is correct
+  - [x] ex-70 · mutation-baseline — verify the surviving-mutant report is produced
+  - [x] ex-71 · mutation-kill-survivor — verify the mutation score improves
+  - [x] ex-72 · mutation-vs-coverage — verify mutation exposes weak assertions that coverage missed
+  - [x] ex-73 · read-coverage-report — verify you can name the uncovered lines
+  - [x] ex-74 · read-failing-traceback — verify you can locate the assertion and the offending values
+  - [x] ex-75 · flaky-test-diagnosis — verify it becomes deterministic
+  - [x] ex-76 · fixture-cleanup-isolation — verify order-independence across the module
+  - [x] ex-77 · double-taxonomy-mapping — verify each matches its Meszaros definition
+  - [x] ex-78 · choose-right-double — verify the test asserts the correct dimension (state vs behavior)
+  - [x] ex-79 · full-pyramid-feature — verify every tier is green
+  - [x] ex-80 · full-verification-suite — verify every gate passes and the mutation score is read
+  - [x] ex-81 · pytest-bdd-first-scenario — verify `pytest` runs the scenario and reports `1 passed`
+  - [x] ex-82 · gherkin-feature-grammar — verify the runner parses it and lists the named scenario
+  - [x] ex-83 · step-definition-shared-context — verify a value set in `Given` is asserted in `Then`
+  - [x] ex-84 · scenario-outline-examples-table — verify each row runs as its own case
+  - [x] ex-85 · behave-vs-pytest-bdd-same-feature — verify both execute the identical scenario green
+  - [x] ex-86 · bdd-vs-tdd-decision — verify the choice matches the risk and the audience
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/software-testing/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/software-testing/drilling/_index.md` (wt 215) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 16 Gate
 
-- [ ] [AI] `software-testing/` complete: `_index.md` wt 250, `learning/_index.md` wt 115,
+- [x] [AI] `software-testing/` complete: `_index.md` wt 250, `learning/_index.md` wt 115,
       `drilling/_index.md` wt 215, capstone wt 900; all 32 concepts + 86 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
