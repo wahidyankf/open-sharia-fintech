@@ -1,0 +1,44 @@
+{
+  "$schema": "https://www.speedscope.app/file-format-schema.json",
+  "shared": {
+    "frames": [
+      {
+        "name": "<module>"
+      },
+      {
+        "name": "collect_samples"
+      },
+      {
+        "name": "start"
+      },
+      {
+        "name": "wait"
+      },
+      {
+        "name": "run_workload"
+      },
+      {
+        "name": "clean_rows"
+      },
+      {
+        "name": "validate_row"
+      }
+    ]
+  },
+  "profiles": [
+    {
+      "type": "sampled",
+      "name": "Example 31 workload",
+      "unit": "none",
+      "startValue": 0,
+      "endValue": 39,
+      "samples": [
+        [0, 1, 2, 3, 3],
+        [0, 1],
+        [0, 1, 4, 5],
+        [0, 1, 4, 5, 6]
+      ],
+      "weights": [1, 16, 19, 3]
+    }
+  ]
+}

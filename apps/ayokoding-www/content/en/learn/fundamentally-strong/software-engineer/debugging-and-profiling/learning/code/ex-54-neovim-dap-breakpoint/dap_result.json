@@ -1,0 +1,10 @@
+{
+  "stopped_line": 11,
+  "stopped_source": "/Users/wkf/ose-projects/ose-public/worktrees/fundamentally-strong-software-engineer-phase-17/apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/debugging-and-profiling/learning/code/ex-54-neovim-dap-breakpoint/target.py",
+  "locals": {
+    "base_rate": "2.5",
+    "cost": "34.3",
+    "distance_km": "430.0",
+    "weight_kg": "12.0"
+  }
+}

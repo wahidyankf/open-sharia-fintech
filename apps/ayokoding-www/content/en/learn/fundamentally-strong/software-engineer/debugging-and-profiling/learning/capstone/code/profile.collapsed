@@ -1,0 +1,3 @@
+<module>;main;collect_samples;start;wait;wait 1
+<module>;main;collect_samples 40
+<module>;main;collect_samples;run;build_customer_report;dedupe_customers 61

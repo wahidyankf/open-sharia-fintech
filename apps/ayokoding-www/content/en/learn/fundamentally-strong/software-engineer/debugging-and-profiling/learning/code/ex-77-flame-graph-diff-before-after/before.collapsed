@@ -1,0 +1,3 @@
+<module>;main;record_folded_stacks;collect_samples;start;wait;wait 1
+<module>;main;record_folded_stacks;collect_samples 27
+<module>;main;record_folded_stacks;collect_samples;run;pipeline;validate_batch 48

@@ -3074,128 +3074,128 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python + native † · topic wt 260 · Learn 116 / Drill 216 · **subject**. Template →
 [`syllabus/16-debugging-and-profiling.md`](./syllabus/16-debugging-and-profiling.md).
 
-- [ ] **[AI] V** — `web-researcher` for `debugging-and-profiling`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `debugging-and-profiling`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/16-debugging-and-profiling.md`](./syllabus/16-debugging-and-profiling.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/debugging-and-profiling/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/debugging-and-profiling/learning/` teaching **every** concept in
       `syllabus/16-debugging-and-profiling.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · interactive-breakpoints-and-stepping
-  - [ ] co-02 · conditional-and-watch-breakpoints
-  - [ ] co-03 · call-stack-frame-and-variable-inspection
-  - [ ] co-04 · post-mortem-debugging
-  - [ ] co-05 · print-and-logging-vs-interactive-debugging
-  - [ ] co-06 · remote-and-dap-debugging
-  - [ ] co-07 · scientific-method-debugging-loop
-  - [ ] co-08 · bisection-search-as-a-general-strategy
-  - [ ] co-09 · git-bisect-manual
-  - [ ] co-10 · git-bisect-automated
-  - [ ] co-11 · delta-debugging-input-minimization
-  - [ ] co-12 · sampling-vs-instrumenting-profilers
-  - [ ] co-13 · cpu-profiling-with-cprofile
-  - [ ] co-14 · cpu-profiling-with-py-spy
-  - [ ] co-15 · wall-clock-vs-cpu-time
-  - [ ] co-16 · tottime-vs-cumtime
-  - [ ] co-17 · memory-profiling-with-tracemalloc
-  - [ ] co-18 · line-level-profiling
-  - [ ] co-19 · flame-graph-reading
-  - [ ] co-20 · race-and-heisenbug-reproduction
-  - [ ] co-21 · load-representative-vs-toy-profiling
-  - [ ] co-22 · native-layer-costs-and-native-debugging
-  - [ ] co-23 · before-after-measurement-discipline
-- [ ] **[AI] A1-examples** — Author `CONTENT/debugging-and-profiling/learning/code/` — one runnable, fully type-annotated
+  - [x] co-01 · interactive-breakpoints-and-stepping
+  - [x] co-02 · conditional-and-watch-breakpoints
+  - [x] co-03 · call-stack-frame-and-variable-inspection
+  - [x] co-04 · post-mortem-debugging
+  - [x] co-05 · print-and-logging-vs-interactive-debugging
+  - [x] co-06 · remote-and-dap-debugging
+  - [x] co-07 · scientific-method-debugging-loop
+  - [x] co-08 · bisection-search-as-a-general-strategy
+  - [x] co-09 · git-bisect-manual
+  - [x] co-10 · git-bisect-automated
+  - [x] co-11 · delta-debugging-input-minimization
+  - [x] co-12 · sampling-vs-instrumenting-profilers
+  - [x] co-13 · cpu-profiling-with-cprofile
+  - [x] co-14 · cpu-profiling-with-py-spy
+  - [x] co-15 · wall-clock-vs-cpu-time
+  - [x] co-16 · tottime-vs-cumtime
+  - [x] co-17 · memory-profiling-with-tracemalloc
+  - [x] co-18 · line-level-profiling
+  - [x] co-19 · flame-graph-reading
+  - [x] co-20 · race-and-heisenbug-reproduction
+  - [x] co-21 · load-representative-vs-toy-profiling
+  - [x] co-22 · native-layer-costs-and-native-debugging
+  - [x] co-23 · before-after-measurement-discipline
+- [x] **[AI] A1-examples** — Author `CONTENT/debugging-and-profiling/learning/code/` — one runnable, fully type-annotated
       Python (+ one native pass) per worked example (DD-20/DD-30/DD-34/DD-39), covering **every** example in
       `syllabus/16-debugging-and-profiling.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · first-breakpoint-with-breakpoint — verify reader names the line the total first goes wrong
-  - [ ] ex-02 · step-into-vs-step-over — verify `s` enters helper, `n` skips the call
-  - [ ] ex-03 · step-out-of-a-deep-call — verify `r` prints the function's return value
-  - [ ] ex-04 · reading-the-call-stack-with-w — verify reader names the frame owning the bad var
-  - [ ] ex-05 · navigating-frames-with-up-down — verify two different values at two frames
-  - [ ] ex-06 · inspecting-locals-with-p-and-pp — verify reader identifies the reused/shadowed key
-  - [ ] ex-07 · mutating-a-variable-to-confirm-hypothesis — verify post-mutation output matches expected
-  - [ ] ex-08 · conditional-breakpoint-in-a-loop — verify pdb halts exactly once at i==47
-  - [ ] ex-09 · condition-command-on-existing-breakpoint — verify only negative x stops
-  - [ ] ex-10 · watching-a-variable-with-display — verify `[old → new]` prints only on change
-  - [ ] ex-11 · display-in-place-mutation-caveat — verify `display lst[:]` fixes the silence
-  - [ ] ex-12 · print-debugging-a-one-off-script — verify bug found, rerun cost noted
-  - [ ] ex-13 · logging-vs-print-in-long-lived-process — verify bug found from log output, no pause
-  - [ ] ex-14 · breakpoint-builtin-and-pythonbreakpoint — verify unset stops, `PYTHONBREAKPOINT=0` skips
-  - [ ] ex-15 · first-post-mortem-with-pdb — verify debugger lands on the raising frame
-  - [ ] ex-16 · pdb-pm-in-a-repl-session — verify `pdb.pm()` reaches same state, no restart
-  - [ ] ex-17 · first-cprofile-run-command-line — verify reader names top-cumulative function
-  - [ ] ex-18 · cprofile-programmatic-with-pstats — verify top tottime ≠ top cumtime, explained
-  - [ ] ex-19 · wall-time-vs-cpu-time — verify wall ≫ CPU for sleep, ≈ for busy loop
-  - [ ] ex-20 · first-tracemalloc-snapshot — verify top line matches the list-building line
-  - [ ] ex-21 · reading-a-pregenerated-flame-graph — verify widest frame named as hot spot
-  - [ ] ex-22 · git-bisect-by-hand — verify git names the exact bad commit
-  - [ ] ex-23 · rubber-duck-hypothesis-writing — verify confirmed/refuted in exactly one stop
-  - [ ] ex-24 · minimizing-a-failing-input-by-hand — verify failing region under 50 chars in ≤4 steps
-  - [ ] ex-25 · sticky-mode-and-list-command — verify reader spots a nearby line to fix
-  - [ ] ex-26 · tbreak-one-shot-breakpoint — verify stops once, runs on afterward
-  - [ ] ex-27 · before-after-timing-a-one-line-fix — verify "after" consistently faster
-  - [ ] ex-28 · profiling-two-ways-sampling-and-instrumenting — verify both agree on top function
-  - [ ] ex-29 · py-spy-top-live-view — verify predicted hot function tops the live view
-  - [ ] ex-30 · py-spy-record-flamegraph-svg — verify widest SVG frame matches cProfile
-  - [ ] ex-31 · py-spy-record-speedscope — verify "left heavy" view surfaces same hot function
-  - [ ] ex-32 · py-spy-dump-on-a-hung-process — verify dumped stack shows the stuck line
-  - [ ] ex-33 · sorting-pstats-tottime-vs-cumtime — verify both rankings labelled
-  - [ ] ex-34 · line-profiler-kernprof — verify hot line matches seeded redundant re-sort
-  - [ ] ex-35 · line-profiler-vs-function-level — verify reader states the exact hot line
-  - [ ] ex-36 · tracemalloc-snapshot-diff-for-a-leak — verify top diff = append line, grows with N
-  - [ ] ex-37 · tracemalloc-nframe-traceback — verify only one path is the real leak
-  - [ ] ex-38 · conditional-breakpoint-on-object-identity — verify stops only on that instance
-  - [ ] ex-39 · commands-attached-to-a-breakpoint — verify runs unattended through hits
-  - [ ] ex-40 · debugpy-attach-to-a-running-server — verify client stops, local var inspectable
-  - [ ] ex-41 · debugpy-wait-for-client-vs-attach-later — verify only wait-for-client catches import-time bug
-  - [ ] ex-42 · pdb-remote-attach-by-pid — verify live stack shown without restart (3.14+)
-  - [ ] ex-43 · git-bisect-run-automated — verify names same commit unattended
-  - [ ] ex-44 · git-bisect-run-skip-125 — verify final result still names true culprit
-  - [ ] ex-45 · delta-debugging-a-json-payload — verify minimized payload crashes, under 5 keys
-  - [ ] ex-46 · delta-debugging-a-long-string — verify removing any remaining char clears the bug
-  - [ ] ex-47 · hypothesis-shrinking-as-delta-debugging — verify shrunk example comparably minimal
-  - [ ] ex-48 · profiling-toy-vs-realistic-input — verify toy hot spot ≠ realistic hot spot
-  - [ ] ex-49 · profiling-under-concurrent-load — verify contention shows only under load
-  - [ ] ex-50 · pdb-interact-mode — verify corrected value copied into the real fix
-  - [ ] ex-51 · pdb-exceptions-command-chained — verify reader identifies root-cause exception
-  - [ ] ex-52 · logging-config-multi-module-bug — verify cause found from correlated logs, no breakpoints
-  - [ ] ex-53 · cprofile-to-flame-graph — verify both point at same widest frame
-  - [ ] ex-54 · neovim-dap-breakpoint — verify DAP UI stops at same line/value as CLI pdb
-  - [ ] ex-55 · before-after-with-cprofile — verify percent-of-total tottime drop measurable
-  - [ ] ex-56 · reproducing-a-threading-race — verify ≥1 run shows count below expected
-  - [ ] ex-57 · fixing-the-race-with-a-lock — verify 100+ runs all exact
-  - [ ] ex-58 · asyncio-interleaving-bug — verify reliable failure under forced yield
-  - [ ] ex-59 · pdb-set-trace-async — verify `$_asynctask` identifies paused coroutine
-  - [ ] ex-60 · multiprocessing-vs-threading-profiling — verify threaded wall ≈ single-CPU (GIL), mp drops
-  - [ ] ex-61 · git-bisect-run-perf-regression — verify benchmark confirms crossing at named commit
-  - [ ] ex-62 · delta-debugging-10000-line-crash — verify reduced input under 10 lines, same exception
-  - [ ] ex-63 · gdb-attach-to-cpython — verify `py-bt` frame names match py-spy dump
-  - [ ] ex-64 · gdb-py-locals-py-print — verify value matches logging
-  - [ ] ex-65 · lldb-with-cpython-lldb — verify `py-bt` shows Python stack, matching gdb
-  - [ ] ex-66 · lldb-core-dump-postmortem — verify backtrace shows the seeded fault's function
-  - [ ] ex-67 · perf-record-with-python-perf-support — verify `perf report` shows Python names
-  - [ ] ex-68 · perf-script-to-flamegraph-pl — verify SVG's widest frame is a Python name
-  - [ ] ex-69 · perf-script-to-inferno — verify same widest frame, tool-independent
-  - [ ] ex-70 · native-cost-hidden-from-cprofile — verify native profiling reveals C hot functions
-  - [ ] ex-71 · py-spy-native-flag-mixed-stacks — verify native frames shown under Python caller
-  - [ ] ex-72 · correctness-and-performance-bug — verify bisect correct, test red→green, fix measured
-  - [ ] ex-73 · recursive-tottime-vs-cumtime-trap — verify fix targets leaf names by tottime
-  - [ ] ex-74 · cache-that-never-evicts-leak — verify third snapshot shows near-zero net growth
-  - [ ] ex-75 · import-time-startup-profiling — verify deferring module reduces startup wall time
-  - [ ] ex-76 · lock-contention-under-load — verify wall-vs-CPU gap only under load
-  - [ ] ex-77 · flame-graph-diff-before-after — verify wide frame shrinks, nothing else grew
-  - [ ] ex-78 · deterministic-seeding-for-a-flaky-bug — verify 1-in-20 failure reproduces every run
-  - [ ] ex-79 · bisecting-with-a-flaky-test-guard — verify guarded runs converge on same commit
-  - [ ] ex-80 · sys-monitoring-low-overhead-tracer — verify `sys.monitoring` overhead measurably lower
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/debugging-and-profiling/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · first-breakpoint-with-breakpoint — verify reader names the line the total first goes wrong
+  - [x] ex-02 · step-into-vs-step-over — verify `s` enters helper, `n` skips the call
+  - [x] ex-03 · step-out-of-a-deep-call — verify `r` prints the function's return value
+  - [x] ex-04 · reading-the-call-stack-with-w — verify reader names the frame owning the bad var
+  - [x] ex-05 · navigating-frames-with-up-down — verify two different values at two frames
+  - [x] ex-06 · inspecting-locals-with-p-and-pp — verify reader identifies the reused/shadowed key
+  - [x] ex-07 · mutating-a-variable-to-confirm-hypothesis — verify post-mutation output matches expected
+  - [x] ex-08 · conditional-breakpoint-in-a-loop — verify pdb halts exactly once at i==47
+  - [x] ex-09 · condition-command-on-existing-breakpoint — verify only negative x stops
+  - [x] ex-10 · watching-a-variable-with-display — verify `[old → new]` prints only on change
+  - [x] ex-11 · display-in-place-mutation-caveat — verify `display lst[:]` fixes the silence
+  - [x] ex-12 · print-debugging-a-one-off-script — verify bug found, rerun cost noted
+  - [x] ex-13 · logging-vs-print-in-long-lived-process — verify bug found from log output, no pause
+  - [x] ex-14 · breakpoint-builtin-and-pythonbreakpoint — verify unset stops, `PYTHONBREAKPOINT=0` skips
+  - [x] ex-15 · first-post-mortem-with-pdb — verify debugger lands on the raising frame
+  - [x] ex-16 · pdb-pm-in-a-repl-session — verify `pdb.pm()` reaches same state, no restart
+  - [x] ex-17 · first-cprofile-run-command-line — verify reader names top-cumulative function
+  - [x] ex-18 · cprofile-programmatic-with-pstats — verify top tottime ≠ top cumtime, explained
+  - [x] ex-19 · wall-time-vs-cpu-time — verify wall ≫ CPU for sleep, ≈ for busy loop
+  - [x] ex-20 · first-tracemalloc-snapshot — verify top line matches the list-building line
+  - [x] ex-21 · reading-a-pregenerated-flame-graph — verify widest frame named as hot spot
+  - [x] ex-22 · git-bisect-by-hand — verify git names the exact bad commit
+  - [x] ex-23 · rubber-duck-hypothesis-writing — verify confirmed/refuted in exactly one stop
+  - [x] ex-24 · minimizing-a-failing-input-by-hand — verify failing region under 50 chars in ≤4 steps
+  - [x] ex-25 · sticky-mode-and-list-command — verify reader spots a nearby line to fix
+  - [x] ex-26 · tbreak-one-shot-breakpoint — verify stops once, runs on afterward
+  - [x] ex-27 · before-after-timing-a-one-line-fix — verify "after" consistently faster
+  - [x] ex-28 · profiling-two-ways-sampling-and-instrumenting — verify both agree on top function
+  - [x] ex-29 · py-spy-top-live-view — verify predicted hot function tops the live view
+  - [x] ex-30 · py-spy-record-flamegraph-svg — verify widest SVG frame matches cProfile
+  - [x] ex-31 · py-spy-record-speedscope — verify "left heavy" view surfaces same hot function
+  - [x] ex-32 · py-spy-dump-on-a-hung-process — verify dumped stack shows the stuck line
+  - [x] ex-33 · sorting-pstats-tottime-vs-cumtime — verify both rankings labelled
+  - [x] ex-34 · line-profiler-kernprof — verify hot line matches seeded redundant re-sort
+  - [x] ex-35 · line-profiler-vs-function-level — verify reader states the exact hot line
+  - [x] ex-36 · tracemalloc-snapshot-diff-for-a-leak — verify top diff = append line, grows with N
+  - [x] ex-37 · tracemalloc-nframe-traceback — verify only one path is the real leak
+  - [x] ex-38 · conditional-breakpoint-on-object-identity — verify stops only on that instance
+  - [x] ex-39 · commands-attached-to-a-breakpoint — verify runs unattended through hits
+  - [x] ex-40 · debugpy-attach-to-a-running-server — verify client stops, local var inspectable
+  - [x] ex-41 · debugpy-wait-for-client-vs-attach-later — verify only wait-for-client catches import-time bug
+  - [x] ex-42 · pdb-remote-attach-by-pid — verify live stack shown without restart (3.14+)
+  - [x] ex-43 · git-bisect-run-automated — verify names same commit unattended
+  - [x] ex-44 · git-bisect-run-skip-125 — verify final result still names true culprit
+  - [x] ex-45 · delta-debugging-a-json-payload — verify minimized payload crashes, under 5 keys
+  - [x] ex-46 · delta-debugging-a-long-string — verify removing any remaining char clears the bug
+  - [x] ex-47 · hypothesis-shrinking-as-delta-debugging — verify shrunk example comparably minimal
+  - [x] ex-48 · profiling-toy-vs-realistic-input — verify toy hot spot ≠ realistic hot spot
+  - [x] ex-49 · profiling-under-concurrent-load — verify contention shows only under load
+  - [x] ex-50 · pdb-interact-mode — verify corrected value copied into the real fix
+  - [x] ex-51 · pdb-exceptions-command-chained — verify reader identifies root-cause exception
+  - [x] ex-52 · logging-config-multi-module-bug — verify cause found from correlated logs, no breakpoints
+  - [x] ex-53 · cprofile-to-flame-graph — verify both point at same widest frame
+  - [x] ex-54 · neovim-dap-breakpoint — verify DAP UI stops at same line/value as CLI pdb
+  - [x] ex-55 · before-after-with-cprofile — verify percent-of-total tottime drop measurable
+  - [x] ex-56 · reproducing-a-threading-race — verify ≥1 run shows count below expected
+  - [x] ex-57 · fixing-the-race-with-a-lock — verify 100+ runs all exact
+  - [x] ex-58 · asyncio-interleaving-bug — verify reliable failure under forced yield
+  - [x] ex-59 · pdb-set-trace-async — verify `$_asynctask` identifies paused coroutine
+  - [x] ex-60 · multiprocessing-vs-threading-profiling — verify threaded wall ≈ single-CPU (GIL), mp drops
+  - [x] ex-61 · git-bisect-run-perf-regression — verify benchmark confirms crossing at named commit
+  - [x] ex-62 · delta-debugging-10000-line-crash — verify reduced input under 10 lines, same exception
+  - [x] ex-63 · gdb-attach-to-cpython — verify `py-bt` frame names match py-spy dump
+  - [x] ex-64 · gdb-py-locals-py-print — verify value matches logging
+  - [x] ex-65 · lldb-with-cpython-lldb — verify `py-bt` shows Python stack, matching gdb
+  - [x] ex-66 · lldb-core-dump-postmortem — verify backtrace shows the seeded fault's function
+  - [x] ex-67 · perf-record-with-python-perf-support — verify `perf report` shows Python names
+  - [x] ex-68 · perf-script-to-flamegraph-pl — verify SVG's widest frame is a Python name
+  - [x] ex-69 · perf-script-to-inferno — verify same widest frame, tool-independent
+  - [x] ex-70 · native-cost-hidden-from-cprofile — verify native profiling reveals C hot functions
+  - [x] ex-71 · py-spy-native-flag-mixed-stacks — verify native frames shown under Python caller
+  - [x] ex-72 · correctness-and-performance-bug — verify bisect correct, test red→green, fix measured
+  - [x] ex-73 · recursive-tottime-vs-cumtime-trap — verify fix targets leaf names by tottime
+  - [x] ex-74 · cache-that-never-evicts-leak — verify third snapshot shows near-zero net growth
+  - [x] ex-75 · import-time-startup-profiling — verify deferring module reduces startup wall time
+  - [x] ex-76 · lock-contention-under-load — verify wall-vs-CPU gap only under load
+  - [x] ex-77 · flame-graph-diff-before-after — verify wide frame shrinks, nothing else grew
+  - [x] ex-78 · deterministic-seeding-for-a-flaky-bug — verify 1-in-20 failure reproduces every run
+  - [x] ex-79 · bisecting-with-a-flaky-test-guard — verify guarded runs converge on same commit
+  - [x] ex-80 · sys-monitoring-low-overhead-tracer — verify `sys.monitoring` overhead measurably lower
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/debugging-and-profiling/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/debugging-and-profiling/drilling/_index.md` (wt 216) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 17 Gate
 
-- [ ] [AI] `debugging-and-profiling/` complete: `_index.md` wt 260, `learning/_index.md` wt 116,
+- [x] [AI] `debugging-and-profiling/` complete: `_index.md` wt 260, `learning/_index.md` wt 116,
       `drilling/_index.md` wt 216, capstone wt 900; all 23 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

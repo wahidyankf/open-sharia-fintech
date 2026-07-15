@@ -1,0 +1,5 @@
+<module>;main;collect_samples;start;wait;wait 1
+<module>;main;collect_samples 27
+<module>;main;collect_samples;run;pipeline;cheap_filter 2
+<module>;main;collect_samples;run;pipeline;slow_transform;<genexpr> 95
+<module>;main;collect_samples;run;pipeline;slow_transform 5

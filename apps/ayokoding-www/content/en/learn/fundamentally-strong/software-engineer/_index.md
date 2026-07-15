@@ -57,3 +57,7 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-testing/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-testing/drilling)
+- [16 · Debugging & Profiling](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/drilling)

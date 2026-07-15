@@ -23,3 +23,4 @@ weight: 107
   - [13 · Just Enough TypeScript](/en/c/learn/fundamentally-strong/software-engineer/just-enough-typescript)
   - [14 · Frontend Essentials](/en/c/learn/fundamentally-strong/software-engineer/frontend-essentials)
   - [15 · Software Testing](/en/c/learn/fundamentally-strong/software-engineer/software-testing)
+  - [16 · Debugging & Profiling](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling)
