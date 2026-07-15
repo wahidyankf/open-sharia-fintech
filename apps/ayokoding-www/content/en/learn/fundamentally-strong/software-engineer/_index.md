@@ -61,3 +61,7 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/drilling)
+- [17 · Security Essentials](/en/c/learn/fundamentally-strong/software-engineer/security-essentials)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/drilling)

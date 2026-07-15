@@ -1,0 +1,3 @@
+# learning/code/ex-55-dependency-pinning-and-lockfile/requirements.txt
+# Example 55: exact `==` pins, no ranges -- co-21's rule (pip-audit 2.10.1, PyPI, 2026-07)
+requests==2.34.2

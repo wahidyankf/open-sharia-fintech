@@ -1,0 +1,4 @@
+# learning/code/ex-76-sbom-and-provenance/requirements.txt
+# Example 76: exact pins -- this topic's own canonical, CVE-clean versions (co-21)
+requests==2.34.2
+flask==3.1.3

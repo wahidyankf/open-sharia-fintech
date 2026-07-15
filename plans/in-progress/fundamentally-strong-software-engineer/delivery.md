@@ -3235,134 +3235,170 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 270 · Learn 117 / Drill 217 · **subject**. Template →
 [`syllabus/17-security-essentials.md`](./syllabus/17-security-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `security-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `security-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/17-security-essentials.md`](./syllabus/17-security-essentials.md) and fold dated findings back into that file.
-      **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/security-essentials/learning/` teaching **every** concept in
-      `syllabus/17-security-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · trust-boundaries-never-trust-input
-  - [ ] co-02 · owasp-top-10-as-risk-map
-  - [ ] co-03 · sql-injection-and-parameterized-queries
-  - [ ] co-04 · command-injection
-  - [ ] co-05 · path-traversal
-  - [ ] co-06 · xss-and-output-encoding
-  - [ ] co-07 · allow-list-vs-deny-list-validation
-  - [ ] co-08 · mass-assignment-and-over-posting
-  - [ ] co-09 · password-hashing-argon2id-bcrypt
-  - [ ] co-10 · salting-and-why
-  - [ ] co-11 · timing-safe-comparison
-  - [ ] co-12 · session-vs-token-auth
-  - [ ] co-13 · secure-cookie-flags
-  - [ ] co-14 · jwt-specific-pitfalls
-  - [ ] co-15 · authentication-vs-authorization
-  - [ ] co-16 · least-privilege-access-control
-  - [ ] co-17 · secret-hygiene
-  - [ ] co-18 · https-tls-in-practice
-  - [ ] co-19 · security-headers
-  - [ ] co-20 · cors-configuration
-  - [ ] co-21 · dependency-safety-supply-chain
-  - [ ] co-22 · security-logging-and-alerting
-  - [ ] co-23 · safe-error-handling
-  - [ ] co-24 · security-misconfiguration
-  - [ ] co-25 · insecure-design
-  - [ ] co-26 · csrf-protection
-  - [ ] co-27 · rate-limiting-and-brute-force-protection
-  - [ ] co-28 · open-redirect
-- [ ] **[AI] A1-examples** — Author `CONTENT/security-essentials/learning/code/` — runnable, type-annotated sources
-      (DD-20/DD-30/DD-39) for **every** worked example in `syllabus/17-security-essentials.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · trust-boundary-map-tainted-input — verify every entry point listed + attacker-controlled marked
-  - [ ] ex-02 · owasp-top-10-mapping-exercise — verify each bug tagged with correct A0N id
-  - [ ] ex-03 · sql-injection-live-exploit — verify attacker logs in with no valid password
-  - [ ] ex-04 · sql-injection-parameterized-fix — verify payload treated as literal and fails
-  - [ ] ex-05 · sql-injection-union-data-exfil — verify UNION leaks rows, then parameterization blocks it
-  - [ ] ex-06 · command-injection-live — verify injected command runs, then shell=False blocks it
-  - [ ] ex-07 · path-traversal-file-read — verify out-of-root read, then realpath+prefix blocks it
-  - [ ] ex-08 · reflected-xss-live — verify script executes, then autoescape neutralizes it
-  - [ ] ex-09 · stored-xss-live — verify script fires on view, then output-encoding stops it
-  - [ ] ex-10 · output-encoding-by-context — verify each context uses correct encoder; mismatch leaks
-  - [ ] ex-11 · allow-list-vs-deny-list — verify allow-list rejects input the blocklist misses
-  - [ ] ex-12 · input-validation-at-the-boundary — verify malformed JSON yields 422 before logic runs
-  - [ ] ex-13 · plaintext-password-store-is-broken — verify every password visible in dump
-  - [ ] ex-14 · md5-password-store-is-broken — verify common passwords recovered in seconds
-  - [ ] ex-15 · argon2id-hash-and-verify — verify `$argon2id$` PHC string, verify() accepts/rejects correctly
-  - [ ] ex-16 · bcrypt-hash-and-verify — verify hash embeds cost; 72-byte truncation demo
-  - [ ] ex-17 · salt-makes-identical-passwords-differ — verify two stored hashes differ
-  - [ ] ex-18 · timing-safe-token-compare — verify reader explains timing side-channel `==` leaks
-  - [ ] ex-19 · secure-cookie-flags — verify `curl -I` shows Secure/HttpOnly/SameSite; JS can't read
-  - [ ] ex-20 · secret-in-env-not-code — verify no secret in source, app still authenticates
-  - [ ] ex-21 · gitignore-and-env-example — verify `git status` never lists `.env`; example holds no real value
-  - [ ] ex-22 · security-headers-baseline — verify `curl -I` shows CSP, X-Content-Type-Options, HSTS
-  - [ ] ex-23 · pip-audit-first-run — verify it reports the CVE and the fixed version
-  - [ ] ex-24 · pin-and-remediate-a-cve — verify `pip-audit` exits clean
-  - [ ] ex-25 · safe-error-message — verify client sees no internal detail; log has the trace
-  - [ ] ex-26 · second-order-sql-injection — verify it fires on second use, then parameterizing blocks it
-  - [ ] ex-27 · orm-raw-fragment-injection — verify it injects, then bound params via ORM fix it
-  - [ ] ex-28 · blind-boolean-sql-injection — verify one char extracted, then fix removes the oracle
-  - [ ] ex-29 · argument-injection-not-just-shell — verify unexpected flag changes behavior, then allow-list blocks
-  - [ ] ex-30 · dom-based-xss — verify payload executes client-side, then textContent/sanitizer fixes
-  - [ ] ex-31 · csp-blocks-inline-script — verify inline script blocked, nonce'd one runs
-  - [ ] ex-32 · mass-assignment-privilege-escalation — verify escalation, then field allow-list blocks it
-  - [ ] ex-33 · idor-broken-object-access — verify cross-user read, then ownership check fixes it
-  - [ ] ex-34 · missing-function-level-authorization — verify access, then role check returns 403
-  - [ ] ex-35 · authn-vs-authz-separation — verify code checks identity and permission separately
-  - [ ] ex-36 · session-fixation — verify fixation works, then session-id regeneration fixes it
-  - [ ] ex-37 · session-vs-token-tradeoffs — verify each authenticates; reader states one trade-off
-  - [ ] ex-38 · jwt-alg-none-attack — verify forged unsigned token accepted, then pinning alg rejects it
-  - [ ] ex-39 · jwt-hs256-rs256-confusion — verify confusion forges token, then binding alg+key blocks it
-  - [ ] ex-40 · jwt-expiry-and-claims-validation — verify expired/wrong-audience token rejected
-  - [ ] ex-41 · csrf-live-exploit — verify state-changing request succeeds, then CSRF token blocks it
-  - [ ] ex-42 · samesite-cookie-mitigates-csrf — verify cross-site POST no longer carries the cookie
-  - [ ] ex-43 · cors-misconfig-reflects-origin — verify any origin reads response, then allow-list fixes it
-  - [ ] ex-44 · cors-preflight-correctness — verify browser allows only declared methods/headers/origin
-  - [ ] ex-45 · open-redirect — verify redirect leaves site, then allow-list/relative-only fixes it
-  - [ ] ex-46 · rate-limiting-login — verify the Nth rapid attempt is throttled (429)
-  - [ ] ex-47 · account-lockout-vs-throttle — verify brute force slows; reader names the DoS risk
-  - [ ] ex-48 · constant-time-login-response — verify timing/response diff no longer reveals accounts
-  - [ ] ex-49 · security-misconfig-debug-mode — verify console reachable, then disabling debug closes it
-  - [ ] ex-50 · directory-listing-and-default-creds — verify both reachable, then hardening closes them
-  - [ ] ex-51 · tls-verify-not-disabled — verify MITM cert accepted, then verification rejects it
-  - [ ] ex-52 · hsts-and-redirect-to-https — verify http upgrades; repeat visits skip http
-  - [ ] ex-53 · secret-scanning-pre-commit — verify commit blocked when a secret is present
-  - [ ] ex-54 · secret-rotation-drill — verify old key stops working, new one authenticates
-  - [ ] ex-55 · dependency-pinning-and-lockfile — verify resolved versions identical and audit-clean
-  - [ ] ex-56 · supply-chain-typosquat-check — verify reader identifies the malicious lookalike
-  - [ ] ex-57 · structured-security-logging — verify failed-login event queryable, contains no password
-  - [ ] ex-58 · alert-on-brute-force-pattern — verify the burst triggers exactly one alert
-  - [ ] ex-59 · insecure-design-vs-bug — verify reader distinguishes design flaw from implementation bug
-  - [ ] ex-60 · threat-model-a-feature — verify each threat maps to a concrete control
-  - [ ] ex-61 · end-to-end-injection-audit — verify no concatenated-untrusted-input sink remains
-  - [ ] ex-62 · ssti-server-side-template-injection — verify code execution, then data-as-context blocks it
-  - [ ] ex-63 · argon2-parameter-tuning — verify chosen params hit budget and beat weaker baseline
-  - [ ] ex-64 · password-upgrade-on-login — verify legacy hash upgrades after one successful login
-  - [ ] ex-65 · token-revocation-strategy — verify revoked refresh token can't mint access tokens
-  - [ ] ex-66 · rbac-vs-abac-authorization — verify ownership+role rule allows/denies correctly
-  - [ ] ex-67 · least-privilege-db-account — verify destructive query denied by DB even when injected
-  - [ ] ex-68 · defense-in-depth-xss — verify removing any one layer still leaves others catching payload
-  - [ ] ex-69 · csrf-for-json-and-spa — verify forged cross-site request lacks the header, rejected
-  - [ ] ex-70 · clickjacking-frame-protection — verify page refuses to render in a foreign frame
-  - [ ] ex-71 · secure-file-upload — verify disguised executable rejected; stored files non-executable
-  - [ ] ex-72 · ssrf-safe-outbound-fetch — verify request to a private range is denied
-  - [ ] ex-73 · rate-limit-distributed — verify global limit holds across two workers
-  - [ ] ex-74 · audit-log-integrity — verify tampering with a past entry is detectable
-  - [ ] ex-75 · dependency-cve-triage-workflow — verify each finding ends resolved or documented-waived
-  - [ ] ex-76 · sbom-and-provenance — verify every component enumerated and audit-clean
-  - [ ] ex-77 · secrets-manager-integration — verify secret never in image/tree; rotates without redeploy
-  - [ ] ex-78 · harden-the-full-app-transcript — verify each seeded attack flips from success to blocked
-  - [ ] ex-79 · security-regression-test-suite — verify every attack has red-before/green-after test
-  - [ ] ex-80 · secure-error-and-logging-review — verify fuzz of error paths leaks nothing; logs secret-free
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/security-essentials/learning/capstone/` (`_index.md` weight 900) per the
+      **Acceptance**: no unresolved "verify" line remains. - _Date: 2026-07-15. Status: done. Files changed:
+      `syllabus/17-security-essentials.md`. Notes: no "to verify" lines existed; independent re-verification
+      pass confirmed both prior accuracy-note bullets accurate, added a new dated bullet with pinned PyPI
+      versions for every package the topic's examples use plus PyJWT CVE-2026-32597 (fixed in 2.12.0; pin
+      `>=2.12.0`, author against 2.13.0)._
+- [x] **[AI] A1-concepts** — Author `CONTENT/security-essentials/learning/` teaching **every** concept in
+      `syllabus/17-security-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`: - _Date: 2026-07-15/16. Status: done. Files changed: `learning/overview.md` (concept catalogue with
+      example cross-references), `learning/{beginner,intermediate,advanced}.md`. Notes: all 28 concepts
+      exercised across the 80 worked examples per the computed co-NN → ex-NN mapping; each tier verified
+      directly (example counts, tag lines, Output/Key-takeaway blocks, footers) before ticking._
+  - [x] co-01 · trust-boundaries-never-trust-input
+  - [x] co-02 · owasp-top-10-as-risk-map
+  - [x] co-03 · sql-injection-and-parameterized-queries
+  - [x] co-04 · command-injection
+  - [x] co-05 · path-traversal
+  - [x] co-06 · xss-and-output-encoding
+  - [x] co-07 · allow-list-vs-deny-list-validation
+  - [x] co-08 · mass-assignment-and-over-posting
+  - [x] co-09 · password-hashing-argon2id-bcrypt
+  - [x] co-10 · salting-and-why
+  - [x] co-11 · timing-safe-comparison
+  - [x] co-12 · session-vs-token-auth
+  - [x] co-13 · secure-cookie-flags
+  - [x] co-14 · jwt-specific-pitfalls
+  - [x] co-15 · authentication-vs-authorization
+  - [x] co-16 · least-privilege-access-control
+  - [x] co-17 · secret-hygiene
+  - [x] co-18 · https-tls-in-practice
+  - [x] co-19 · security-headers
+  - [x] co-20 · cors-configuration
+  - [x] co-21 · dependency-safety-supply-chain
+  - [x] co-22 · security-logging-and-alerting
+  - [x] co-23 · safe-error-handling
+  - [x] co-24 · security-misconfiguration
+  - [x] co-25 · insecure-design
+  - [x] co-26 · csrf-protection
+  - [x] co-27 · rate-limiting-and-brute-force-protection
+  - [x] co-28 · open-redirect
+- [x] **[AI] A1-examples** — Author `CONTENT/security-essentials/learning/code/` — runnable, type-annotated sources
+      (DD-20/DD-30/DD-39) for **every** worked example in `syllabus/17-security-essentials.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror): - _Date: 2026-07-15/16. Status: done. Files changed: `learning/code/ex-01-*/` through `ex-80-*/` (80
+      runnable code dirs), `learning/{beginner,intermediate,advanced}.md`. Notes: beginner (ex-01..27,
+      2495 lines), intermediate (ex-28..49, 2443 lines), advanced (ex-50..80, 4391 lines) each verified
+      directly for example/tag/Output/Key-takeaway counts and correct nav footer; spot-read multiple
+      examples per tier for genuine DD-19-compliant captured output, not fabricated transcripts. Two
+      honest follow-up items flagged by the advanced-tier author for the checker/fixer pass: (1) a few
+      `overview.md` "Examples by Level" title strings don't character-for-character match the fuller
+      headings actually used in the tier pages (pre-existing pattern from prior phases too); (2) roughly
+      half of ex-50..80 sit at 0.85-0.99 annotation-density on a strict per-line count, largely from
+      embedded multi-line string/data-table literals inflating the code-line denominator — flagged for
+      the by-example-checker's own count to confirm or refute._
+  - [x] ex-01 · trust-boundary-map-tainted-input — verify every entry point listed + attacker-controlled marked
+  - [x] ex-02 · owasp-top-10-mapping-exercise — verify each bug tagged with correct A0N id
+  - [x] ex-03 · sql-injection-live-exploit — verify attacker logs in with no valid password
+  - [x] ex-04 · sql-injection-parameterized-fix — verify payload treated as literal and fails
+  - [x] ex-05 · sql-injection-union-data-exfil — verify UNION leaks rows, then parameterization blocks it
+  - [x] ex-06 · command-injection-live — verify injected command runs, then shell=False blocks it
+  - [x] ex-07 · path-traversal-file-read — verify out-of-root read, then realpath+prefix blocks it
+  - [x] ex-08 · reflected-xss-live — verify script executes, then autoescape neutralizes it
+  - [x] ex-09 · stored-xss-live — verify script fires on view, then output-encoding stops it
+  - [x] ex-10 · output-encoding-by-context — verify each context uses correct encoder; mismatch leaks
+  - [x] ex-11 · allow-list-vs-deny-list — verify allow-list rejects input the blocklist misses
+  - [x] ex-12 · input-validation-at-the-boundary — verify malformed JSON yields 422 before logic runs
+  - [x] ex-13 · plaintext-password-store-is-broken — verify every password visible in dump
+  - [x] ex-14 · md5-password-store-is-broken — verify common passwords recovered in seconds
+  - [x] ex-15 · argon2id-hash-and-verify — verify `$argon2id$` PHC string, verify() accepts/rejects correctly
+  - [x] ex-16 · bcrypt-hash-and-verify — verify hash embeds cost; 72-byte truncation demo
+  - [x] ex-17 · salt-makes-identical-passwords-differ — verify two stored hashes differ
+  - [x] ex-18 · timing-safe-token-compare — verify reader explains timing side-channel `==` leaks
+  - [x] ex-19 · secure-cookie-flags — verify `curl -I` shows Secure/HttpOnly/SameSite; JS can't read
+  - [x] ex-20 · secret-in-env-not-code — verify no secret in source, app still authenticates
+  - [x] ex-21 · gitignore-and-env-example — verify `git status` never lists `.env`; example holds no real value
+  - [x] ex-22 · security-headers-baseline — verify `curl -I` shows CSP, X-Content-Type-Options, HSTS
+  - [x] ex-23 · pip-audit-first-run — verify it reports the CVE and the fixed version
+  - [x] ex-24 · pin-and-remediate-a-cve — verify `pip-audit` exits clean
+  - [x] ex-25 · safe-error-message — verify client sees no internal detail; log has the trace
+  - [x] ex-26 · second-order-sql-injection — verify it fires on second use, then parameterizing blocks it
+  - [x] ex-27 · orm-raw-fragment-injection — verify it injects, then bound params via ORM fix it
+  - [x] ex-28 · blind-boolean-sql-injection — verify one char extracted, then fix removes the oracle
+  - [x] ex-29 · argument-injection-not-just-shell — verify unexpected flag changes behavior, then allow-list blocks
+  - [x] ex-30 · dom-based-xss — verify payload executes client-side, then textContent/sanitizer fixes
+  - [x] ex-31 · csp-blocks-inline-script — verify inline script blocked, nonce'd one runs
+  - [x] ex-32 · mass-assignment-privilege-escalation — verify escalation, then field allow-list blocks it
+  - [x] ex-33 · idor-broken-object-access — verify cross-user read, then ownership check fixes it
+  - [x] ex-34 · missing-function-level-authorization — verify access, then role check returns 403
+  - [x] ex-35 · authn-vs-authz-separation — verify code checks identity and permission separately
+  - [x] ex-36 · session-fixation — verify fixation works, then session-id regeneration fixes it
+  - [x] ex-37 · session-vs-token-tradeoffs — verify each authenticates; reader states one trade-off
+  - [x] ex-38 · jwt-alg-none-attack — verify forged unsigned token accepted, then pinning alg rejects it
+  - [x] ex-39 · jwt-hs256-rs256-confusion — verify confusion forges token, then binding alg+key blocks it
+  - [x] ex-40 · jwt-expiry-and-claims-validation — verify expired/wrong-audience token rejected
+  - [x] ex-41 · csrf-live-exploit — verify state-changing request succeeds, then CSRF token blocks it
+  - [x] ex-42 · samesite-cookie-mitigates-csrf — verify cross-site POST no longer carries the cookie
+  - [x] ex-43 · cors-misconfig-reflects-origin — verify any origin reads response, then allow-list fixes it
+  - [x] ex-44 · cors-preflight-correctness — verify browser allows only declared methods/headers/origin
+  - [x] ex-45 · open-redirect — verify redirect leaves site, then allow-list/relative-only fixes it
+  - [x] ex-46 · rate-limiting-login — verify the Nth rapid attempt is throttled (429)
+  - [x] ex-47 · account-lockout-vs-throttle — verify brute force slows; reader names the DoS risk
+  - [x] ex-48 · constant-time-login-response — verify timing/response diff no longer reveals accounts
+  - [x] ex-49 · security-misconfig-debug-mode — verify console reachable, then disabling debug closes it
+  - [x] ex-50 · directory-listing-and-default-creds — verify both reachable, then hardening closes them
+  - [x] ex-51 · tls-verify-not-disabled — verify MITM cert accepted, then verification rejects it
+  - [x] ex-52 · hsts-and-redirect-to-https — verify http upgrades; repeat visits skip http
+  - [x] ex-53 · secret-scanning-pre-commit — verify commit blocked when a secret is present
+  - [x] ex-54 · secret-rotation-drill — verify old key stops working, new one authenticates
+  - [x] ex-55 · dependency-pinning-and-lockfile — verify resolved versions identical and audit-clean
+  - [x] ex-56 · supply-chain-typosquat-check — verify reader identifies the malicious lookalike
+  - [x] ex-57 · structured-security-logging — verify failed-login event queryable, contains no password
+  - [x] ex-58 · alert-on-brute-force-pattern — verify the burst triggers exactly one alert
+  - [x] ex-59 · insecure-design-vs-bug — verify reader distinguishes design flaw from implementation bug
+  - [x] ex-60 · threat-model-a-feature — verify each threat maps to a concrete control
+  - [x] ex-61 · end-to-end-injection-audit — verify no concatenated-untrusted-input sink remains
+  - [x] ex-62 · ssti-server-side-template-injection — verify code execution, then data-as-context blocks it
+  - [x] ex-63 · argon2-parameter-tuning — verify chosen params hit budget and beat weaker baseline
+  - [x] ex-64 · password-upgrade-on-login — verify legacy hash upgrades after one successful login
+  - [x] ex-65 · token-revocation-strategy — verify revoked refresh token can't mint access tokens
+  - [x] ex-66 · rbac-vs-abac-authorization — verify ownership+role rule allows/denies correctly
+  - [x] ex-67 · least-privilege-db-account — verify destructive query denied by DB even when injected
+  - [x] ex-68 · defense-in-depth-xss — verify removing any one layer still leaves others catching payload
+  - [x] ex-69 · csrf-for-json-and-spa — verify forged cross-site request lacks the header, rejected
+  - [x] ex-70 · clickjacking-frame-protection — verify page refuses to render in a foreign frame
+  - [x] ex-71 · secure-file-upload — verify disguised executable rejected; stored files non-executable
+  - [x] ex-72 · ssrf-safe-outbound-fetch — verify request to a private range is denied
+  - [x] ex-73 · rate-limit-distributed — verify global limit holds across two workers
+  - [x] ex-74 · audit-log-integrity — verify tampering with a past entry is detectable
+  - [x] ex-75 · dependency-cve-triage-workflow — verify each finding ends resolved or documented-waived
+  - [x] ex-76 · sbom-and-provenance — verify every component enumerated and audit-clean
+  - [x] ex-77 · secrets-manager-integration — verify secret never in image/tree; rotates without redeploy
+  - [x] ex-78 · harden-the-full-app-transcript — verify each seeded attack flips from success to blocked
+  - [x] ex-79 · security-regression-test-suite — verify every attack has red-before/green-after test
+  - [x] ex-80 · secure-error-and-logging-review — verify fuzz of error paths leaks nothing; logs secret-free
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/security-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
-      is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+      is fully hit. - _Date: 2026-07-15. Status: done. Files changed: `learning/capstone/overview.md` +
+      `learning/capstone/code/**` (hardened FastAPI Task API: SQL-injection fix, argon2id auth, allow-list
+      validation + output encoding, security headers, env-sourced secrets, clean `pip-audit`). Notes: real
+      before/after attack transcript captured; 19/19 pytest green; strict pyright clean on `app/`._
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/security-essentials/drilling/_index.md` (wt 217) covering the same Items with mocked/self-contained
-      inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
+      inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0. - _Date: 2026-07-16. Status:
+      done. Files changed: `drilling/overview.md` (new — 28 Recall Q&A, 15 Applied problems, 8 Code
+      katas, 28-item Self-check checklist, all mocked/self-contained, distinct from the 80 worked
+      examples); `learning/overview.md` + `overview.md` (Examples-by-Level anchors regenerated for all 80
+      entries, `cryptography==49.0.0` + `requests` added to Tools & environment); `learning/advanced.md` +
+      `learning/intermediate.md` (annotation-density fixes, 21 examples). Notes: by-example-checker found
+      6 findings (2 CRITICAL: 37 broken anchors + undeclared `cryptography` dep; 3 HIGH: 3 text
+      mismatches + 21 sub-floor-density examples; 1 LOW: `requests` prose gap) — all fixed and
+      independently re-verified by me directly (github-slugger anchor check: 80/80 resolve; tokenize-based
+      density re-measurement: all 21 now 1.0-2.25, full 80-example sweep clean; `compile()` syntax check:
+      0 errors). link-checker re-run confirmed 0 findings post-fix. facts-checker found 1 additional
+      CRITICAL/HIGH pair (same `cryptography` gap plus ex-52's transitive need via Werkzeug
+      `ssl_context="adhoc"`) — folded into the same fix. `npx nx run ayokoding-www:build` exit 0 (1518
+      pages, all `_index.md` auto-populated); `npm run lint:md` exit 0 (2591 files, 0 errors)._
 
 ### Phase 18 Gate
 
-- [ ] [AI] `security-essentials/` complete: `_index.md` wt 270, `learning/_index.md` wt 117,
+- [x] [AI] `security-essentials/` complete: `_index.md` wt 270, `learning/_index.md` wt 117,
       `drilling/_index.md` wt 217, capstone wt 900; all 28 concepts + 80 worked examples + capstone present;
-      checkers + facts-checker clean; build + `lint:md` exit 0.
+      checkers + facts-checker clean; build + `lint:md` exit 0. - _Date: 2026-07-16. Status: done. Verified
+      directly: weights confirmed (270/117/217/900, beginner/intermediate/advanced sub-weights
+      10/20/30); 28/28 concepts + 80/80 examples + capstone present; by-example-checker, link-checker,
+      facts-checker all clean after fix round; `build` and `lint:md` both exit 0._
 
 - [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b

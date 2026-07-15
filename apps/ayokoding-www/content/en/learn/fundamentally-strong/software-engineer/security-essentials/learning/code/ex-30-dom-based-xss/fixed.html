@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- Example 30: the fix -- textContent, never innerHTML, for untrusted data (co-06). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ex-30 fixed</title>
+  </head>
+  <body>
+    <div id="content">no hash yet</div>
+    <script>
+      // fix: textContent stores the string as DATA -- the browser's HTML parser
+      // never runs over it, so no tag or attribute in it is ever created as a real element
+      var raw = location.hash.slice(1);
+      document.getElementById("content").textContent = decodeURIComponent(raw);
+    </script>
+  </body>
+</html>

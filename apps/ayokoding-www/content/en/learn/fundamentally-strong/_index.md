@@ -24,3 +24,4 @@ weight: 107
   - [14 · Frontend Essentials](/en/c/learn/fundamentally-strong/software-engineer/frontend-essentials)
   - [15 · Software Testing](/en/c/learn/fundamentally-strong/software-engineer/software-testing)
   - [16 · Debugging & Profiling](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling)
+  - [17 · Security Essentials](/en/c/learn/fundamentally-strong/software-engineer/security-essentials)
