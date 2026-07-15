@@ -146,4 +146,89 @@ describe("ResizablePanel", () => {
 
     expect(getHandle(container).getAttribute("aria-label")).toBe("Resize panel");
   });
+
+  it("resets to the default width when the handle is double-clicked", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-double-click-reset" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+    const handle = getHandle(container);
+
+    dragHandleBy(handle, 60);
+    expect(getPanelWidthPx(container)).toBe(310);
+
+    fireEvent.doubleClick(handle);
+
+    expect(getPanelWidthPx(container)).toBe(250);
+  });
+
+  it("jumps to the minimum band width when Home is pressed on the handle", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-home-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+    const handle = getHandle(container);
+    handle.focus();
+
+    fireEvent.keyDown(handle, { key: "Home" });
+
+    expect(getPanelWidthPx(container)).toBe(150);
+    expect(handle.getAttribute("aria-valuenow")).toBe("150");
+  });
+
+  it("jumps to the maximum band width when End is pressed on the handle", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-end-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+    const handle = getHandle(container);
+    handle.focus();
+
+    fireEvent.keyDown(handle, { key: "End" });
+
+    expect(getPanelWidthPx(container)).toBe(350);
+    expect(handle.getAttribute("aria-valuenow")).toBe("350");
+  });
+
+  it("widens the handle's interactive hit target past its visible line so touch/coarse pointers meet the WCAG 2.5.8 minimum", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-hit-target" defaultWidth={250} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+
+    const handle = getHandle(container);
+    // 4px visible line (w-1) + 10px padding on each side (-left-2.5/-right-2.5) = 24px,
+    // meeting WCAG 2.5.8's 24x24 CSS px minimum without shifting the flex layout width.
+    expect(handle.className).toContain("-left-2.5");
+    expect(handle.className).toContain("-right-2.5");
+  });
+
+  it("exposes a title tooltip matching the handle's accessible name", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-title" defaultWidth={250} viewportPx={1000} handleAriaLabel="Ubah ukuran panel">
+        content
+      </ResizablePanel>,
+    );
+
+    expect(getHandle(container).getAttribute("title")).toBe("Ubah ukuran panel");
+  });
+
+  it("gives the handle's visible line a rest-state token that meets the non-text contrast minimum", () => {
+    const { container } = render(
+      <ResizablePanel storageKey="test-contrast" defaultWidth={250} viewportPx={1000}>
+        content
+      </ResizablePanel>,
+    );
+
+    const visibleLine = getHandle(container).querySelector("span");
+    expect(visibleLine).toBeInstanceOf(HTMLElement);
+    // bg-border computed to ~1.26:1 against the page background (DWT-002); bg-muted-foreground
+    // computes to ~4.7:1, clearing WCAG 2.1 SC 1.4.11's 3:1 minimum for a UI-component boundary.
+    expect((visibleLine as HTMLElement).className).toContain("bg-muted-foreground");
+    expect((visibleLine as HTMLElement).className).not.toContain("bg-border");
+  });
 });

@@ -57,7 +57,7 @@ function ResizablePanel({
   children,
   ...props
 }: ResizablePanelProps) {
-  const { width, commitWidth } = useResizableWidth({ storageKey, defaultWidth });
+  const { width, commitWidth } = useResizableWidth({ storageKey, defaultWidth, minPct, maxPct, viewportPx });
   // Starts at `viewportPx ?? 0` (never reads `window` during render) so the initial client
   // render matches the server-rendered HTML exactly; the effect below corrects it to the real
   // viewport width right after mount, avoiding a React hydration-mismatch warning.
@@ -72,6 +72,14 @@ function ResizablePanel({
 
   const handleDelta = (deltaPx: number) => {
     commitWidth(applyWidth(width, deltaPx, resolvedViewportPx, minPct, maxPct));
+  };
+
+  const handleAbsolute = (px: number) => {
+    commitWidth(clampWidth(px, resolvedViewportPx, minPct, maxPct));
+  };
+
+  const handleReset = () => {
+    commitWidth(clampWidth(defaultWidth, resolvedViewportPx, minPct, maxPct));
   };
 
   return (
@@ -90,6 +98,8 @@ function ResizablePanel({
         maxPx={maxPx}
         keyboardStep={keyboardStep}
         onDelta={handleDelta}
+        onAbsolute={handleAbsolute}
+        onReset={handleReset}
         aria-label={handleAriaLabel}
       />
     </div>
@@ -106,6 +116,10 @@ interface ResizableHandleProps extends Omit<React.ComponentProps<"div">, "onPoin
   /** Pixel step applied per ArrowLeft/ArrowRight keypress. */
   keyboardStep: number;
   onDelta: (deltaPx: number) => void;
+  /** Jumps directly to an absolute pixel width (clamped), used by the Home/End keys. */
+  onAbsolute: (px: number) => void;
+  /** Resets the panel back to its default width, used by a double-click on the handle. */
+  onReset: () => void;
 }
 
 function ResizableHandle({
@@ -114,6 +128,8 @@ function ResizableHandle({
   maxPx,
   keyboardStep,
   onDelta,
+  onAbsolute,
+  onReset,
   className,
   "aria-label": ariaLabel = "Resize panel",
   ...props
@@ -138,27 +154,47 @@ function ResizableHandle({
     const sign = KEY_DELTA_SIGN[event.key];
     if (sign !== undefined) {
       onDelta(sign * keyboardStep);
+      return;
+    }
+    // WAI-ARIA APG separator convention: Home/End jump to the band's bounds.
+    if (event.key === "Home") {
+      onAbsolute(minPx);
+    } else if (event.key === "End") {
+      onAbsolute(maxPx);
     }
   };
 
   return (
-    <div
-      data-slot="resizable-panel-handle"
-      role="separator"
-      aria-orientation="vertical"
-      aria-label={ariaLabel}
-      aria-valuemin={minPx}
-      aria-valuemax={maxPx}
-      aria-valuenow={width}
-      tabIndex={0}
-      onPointerDown={handlePointerDown}
-      onKeyDown={handleKeyDown}
-      className={cn(
-        "w-1 shrink-0 cursor-col-resize touch-none bg-border hover:bg-accent focus-visible:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        className,
-      )}
-      {...props}
-    />
+    // The outer element reserves the same `w-1` of flex layout space the handle always has;
+    // the actual interactive hit target is the absolutely-positioned inner element below,
+    // widened well past the visible line so it meets WCAG 2.5.8's 24x24 CSS px minimum
+    // without shifting layout (see EWT-002 in this plan's rule-15 retest).
+    <div className="group relative w-1 shrink-0">
+      <div
+        data-slot="resizable-panel-handle"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label={ariaLabel}
+        title={ariaLabel}
+        aria-valuemin={minPx}
+        aria-valuemax={maxPx}
+        aria-valuenow={width}
+        tabIndex={0}
+        onPointerDown={handlePointerDown}
+        onKeyDown={handleKeyDown}
+        onDoubleClick={onReset}
+        className={cn(
+          "absolute inset-y-0 -right-2.5 -left-2.5 flex cursor-col-resize touch-none items-stretch justify-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+          className,
+        )}
+        {...props}
+      >
+        <span
+          aria-hidden="true"
+          className="w-1 bg-muted-foreground transition-colors group-hover:bg-accent-foreground group-focus-visible:bg-accent-foreground"
+        />
+      </div>
+    </div>
   );
 }
 

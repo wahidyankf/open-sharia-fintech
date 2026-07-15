@@ -32,4 +32,24 @@ describe("useResizableWidth", () => {
 
     expect(localStorage.getItem("ayokoding-sidebar-width")).toBe("310");
   });
+
+  it("re-clamps a persisted value above the max band to the maximum on mount", () => {
+    localStorage.setItem("test-width-corrupted-above", "999999");
+
+    const { result } = renderHook(() =>
+      useResizableWidth({ storageKey: "test-width-corrupted-above", minPct: 15, maxPct: 35, viewportPx: 1000 }),
+    );
+
+    expect(result.current.width).toBe(350);
+  });
+
+  it("re-clamps a persisted value below the min band to the minimum on mount", () => {
+    localStorage.setItem("test-width-corrupted-below", "-500");
+
+    const { result } = renderHook(() =>
+      useResizableWidth({ storageKey: "test-width-corrupted-below", minPct: 15, maxPct: 35, viewportPx: 1000 }),
+    );
+
+    expect(result.current.width).toBe(150);
+  });
 });

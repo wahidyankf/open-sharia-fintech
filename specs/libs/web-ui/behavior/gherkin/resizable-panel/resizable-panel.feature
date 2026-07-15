@@ -30,3 +30,23 @@ Feature: Resizable panel primitive
     Given a resizable panel is rendered with a custom handle label "Ubah ukuran panel"
     When the accessibility tree is inspected
     Then the handle has aria-label "Ubah ukuran panel"
+
+  Scenario: Reset the panel to its default width by double-clicking the handle
+    Given a resizable panel rendered at 250 pixels has been dragged to 310 pixels
+    When the user double-clicks the separator handle
+    Then the panel width returns to 250 pixels
+
+  Scenario: Jump to the minimum band width when Home is pressed
+    Given the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band
+    When the user presses Home
+    Then the panel width becomes 150 pixels
+
+  Scenario: Jump to the maximum band width when End is pressed
+    Given the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band
+    When the user presses End
+    Then the panel width becomes 350 pixels
+
+  Scenario: Re-clamp a persisted width that falls outside the band on load
+    Given a corrupted localStorage value of 999999 pixels for the panel width
+    When a resizable panel with a 150 to 350 pixel band is rendered
+    Then the panel width renders at the maximum band width, not the corrupted value

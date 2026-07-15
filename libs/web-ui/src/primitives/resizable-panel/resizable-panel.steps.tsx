@@ -170,4 +170,109 @@ describeFeature(feature, ({ Scenario }) => {
       expect(handleAriaLabelAttr).toBe("Ubah ukuran panel");
     });
   });
+
+  Scenario("Reset the panel to its default width by double-clicking the handle", ({ Given, When, Then }) => {
+    let resultWidthPx: number;
+
+    Given("a resizable panel rendered at 250 pixels has been dragged to 310 pixels", () => {
+      // precondition noted; render + drag + double-click happen together in the When step
+      // because @testing-library/react auto-cleans the DOM between each Given/When/Then step
+    });
+
+    When("the user double-clicks the separator handle", () => {
+      cleanup();
+      const { container } = render(
+        <ResizablePanel
+          storageKey="steps-double-click-reset"
+          defaultWidth={250}
+          minPct={15}
+          maxPct={35}
+          viewportPx={1000}
+        >
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      dragHandleBy(handle, 60);
+      expect(getPanelWidthPx(container)).toBe(310);
+      fireEvent.doubleClick(handle);
+      resultWidthPx = getPanelWidthPx(container);
+    });
+
+    Then("the panel width returns to 250 pixels", () => {
+      expect(resultWidthPx).toBe(250);
+    });
+  });
+
+  Scenario("Jump to the minimum band width when Home is pressed", ({ Given, When, Then }) => {
+    let resultWidthPx: number;
+
+    Given("the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band", () => {
+      // precondition noted; render + focus + keypress happen together in the When step
+    });
+
+    When("the user presses Home", () => {
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="steps-home-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      handle.focus();
+      fireEvent.keyDown(handle, { key: "Home" });
+      resultWidthPx = getPanelWidthPx(container);
+    });
+
+    Then("the panel width becomes 150 pixels", () => {
+      expect(resultWidthPx).toBe(150);
+    });
+  });
+
+  Scenario("Jump to the maximum band width when End is pressed", ({ Given, When, Then }) => {
+    let resultWidthPx: number;
+
+    Given("the separator handle is focused on a panel at 250 pixels with a 150 to 350 pixel band", () => {
+      // precondition noted; render + focus + keypress happen together in the When step
+    });
+
+    When("the user presses End", () => {
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="steps-end-key" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      const handle = getHandle(container);
+      handle.focus();
+      fireEvent.keyDown(handle, { key: "End" });
+      resultWidthPx = getPanelWidthPx(container);
+    });
+
+    Then("the panel width becomes 350 pixels", () => {
+      expect(resultWidthPx).toBe(350);
+    });
+  });
+
+  Scenario("Re-clamp a persisted width that falls outside the band on load", ({ Given, When, Then }) => {
+    let resultWidthPx: number;
+
+    Given("a corrupted localStorage value of 999999 pixels for the panel width", () => {
+      localStorage.setItem("steps-reclamp-on-load", "999999");
+    });
+
+    When("a resizable panel with a 150 to 350 pixel band is rendered", () => {
+      cleanup();
+      const { container } = render(
+        <ResizablePanel storageKey="steps-reclamp-on-load" defaultWidth={250} minPct={15} maxPct={35} viewportPx={1000}>
+          content
+        </ResizablePanel>,
+      );
+      resultWidthPx = getPanelWidthPx(container);
+    });
+
+    Then("the panel width renders at the maximum band width, not the corrupted value", () => {
+      expect(resultWidthPx).toBe(350);
+    });
+  });
 });
