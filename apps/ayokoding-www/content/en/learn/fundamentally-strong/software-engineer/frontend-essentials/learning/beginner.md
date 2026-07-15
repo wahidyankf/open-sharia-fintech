@@ -793,10 +793,10 @@ flowchart LR
 
 ```text
 offsetWidth: 230
-PASS: offsetWidth (240) = content (200) + padding (20) + border (10); margin excluded
+PASS: offsetWidth (230) = content (200) + padding (20) + border (10); margin excluded
 ```
 
-**Key takeaway**: `offsetWidth` (240px) equaled content (200px) + padding (20px) + border (10px) exactly -- margin was not part of that measurement at all.
+**Key takeaway**: `offsetWidth` (230px) equaled content (200px) + padding (20px) + border (10px) exactly -- margin was not part of that measurement at all.
 
 **Why it matters**: Assuming a declared `width: 200px` means the element renders at 200px is a very common box-model bug -- content-box quietly adds padding and border on top of it. This surprises developers constantly when a fixed-width sidebar or card grid seems to overflow its container by a few dozen pixels for no visible reason; the culprit is almost always padding or border added under content-box sizing. Example 13 shows the direct fix -- `box-sizing: border-box` -- applied to this exact same markup, so the two examples are meant to be read as a matched before/after pair.
 

@@ -10,11 +10,11 @@ await page.goto("file://" + path.join(__dirname, "index.html"));
 
 const offsetWidth = await page.locator("#box").evaluate((el) => el.offsetWidth);
 console.log("offsetWidth:", offsetWidth);
-// content 200 + padding 10*2 + border 5*2 = 240; margin is OUTSIDE offsetWidth entirely
+// content 200 + padding 10*2 + border 5*2 = 230; margin is OUTSIDE offsetWidth entirely
 const expected = 200 + 10 * 2 + 5 * 2;
 if (offsetWidth !== expected) {
   throw new Error(`expected offsetWidth ${expected}, got ${offsetWidth}`);
 }
-console.log("PASS: offsetWidth (240) = content (200) + padding (20) + border (10); margin excluded");
+console.log("PASS: offsetWidth (230) = content (200) + padding (20) + border (10); margin excluded");
 
 await browser.close();
