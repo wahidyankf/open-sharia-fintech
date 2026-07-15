@@ -2274,7 +2274,7 @@ probing for stack traces) receives -- file paths and Flask internals included. T
 that same traceback to `logger.exception()` instead, so the operator still gets full diagnostic detail
 while the client sees only `{"error": "internal server error"}`.
 
-**Why it matters**: Error messages are an information-disclosure surface (OWASP A05, Security
+**Why it matters**: Error messages are an information-disclosure surface (OWASP A02, Security
 Misconfiguration): a leaked traceback can reveal file layout, library versions, and even query
 fragments, all of which help an attacker refine the next attempt. Separating "what the operator needs to
 debug" from "what the client is allowed to see" is a five-line fix that closes this class of leak
