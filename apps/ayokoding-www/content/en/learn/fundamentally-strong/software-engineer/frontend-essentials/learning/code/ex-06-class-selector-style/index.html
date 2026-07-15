@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 6: Class Selector Style</title>
+    <!-- => tab title -->
+    <style>
+      /* => a class selector matches every element sharing this class, unlike an id selector's single match */
+      .btn {
+        /* => targets every element carrying class="btn", however many there are */
+        color: rgb(220, 20, 20); /* => verify.mjs reads this back via getComputedStyle, the browser's ground truth */
+      } /* => end of the .btn rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => rendered content -->
+    <button class="btn">Submit</button>
+    <!-- => the one element the .btn selector matches -->
+    <!-- => getComputedStyle(el).color reports what ACTUALLY applied, not what the source merely declared -->
+    <!-- => a declared style that got overridden later would still show up here as the LOSING value, not this one -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

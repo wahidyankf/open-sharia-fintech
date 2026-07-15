@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 41: Microtask Before Timeout</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      window.__order = []; // => a shared array recording the ACTUAL order callbacks ran in
+      setTimeout(() => window.__order.push("timeout"), 0); // => scheduled FIRST -- a macrotask
+      Promise.resolve().then(() => window.__order.push("microtask")); // => scheduled SECOND -- a microtask
+      // => despite being scheduled second, the microtask queue is always fully drained first
+      // => the event loop processes: current sync code -> ALL pending microtasks -> next macrotask
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

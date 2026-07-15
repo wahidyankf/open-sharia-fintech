@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the contrast fix below -->
+  <!-- => verify.mjs, further down, reads the real computed colors and calculates a real ratio -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 77: Fix Color Contrast</title>
+    <!-- => shown in the browser tab only; unrelated to this example's fix -->
+    <style>
+      /* Before (broken -- rgb(170,170,170) on white is roughly 2.3:1, well under AA): */
+      /* .notice { color: rgb(170, 170, 170); background: rgb(255, 255, 255); } */
+      /* => co-05: WCAG AA requires at least 4.5:1 for normal-size text -- 2.3:1 fails outright */
+      .notice {
+        color: rgb(89, 89, 89); /* => darkened until the computed ratio clears 4.5:1 */
+        background: rgb(255, 255, 255); /* => background stays white; only the text got darker */
+      } /* => end of the fixed rule; verify.mjs computes the real ratio against these two values */
+    </style>
+  </head>
+  <!-- => </head> closes metadata + styles; the entire demo is one paragraph below -->
+  <body>
+    <p class="notice" id="notice">Your changes have been saved.</p>
+    <!-- => id lets verify.mjs read the real computed colors and calculate a real contrast ratio -->
+  </body>
+  <!-- => end of document; verify.mjs below computes the exact WCAG relative-luminance ratio -->
+  <!-- => co-05: this ratio has an exact numeric threshold, unlike many accessibility checks -->
+</html>

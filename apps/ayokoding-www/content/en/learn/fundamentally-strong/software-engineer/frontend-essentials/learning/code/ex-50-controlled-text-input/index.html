@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 50: Controlled Text Input</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <input id="name" type="text" />
+    <!-- => its displayed value is CONTROLLED by state.name below, not typed freely -->
+    <p id="state-view"></p>
+    <!-- => a live view of the state object, kept in sync by render() -->
+    <!-- => "controlled" means state is the single source of truth for what the input displays -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const state = { name: "" }; // => the single source of truth the input's value is derived from
+      const input = document.getElementById("name"); // => the real DOM input this example keeps in sync
+      const view = document.getElementById("state-view"); // => a read-only reflection of state, for verification
+      function render() {
+        // => the single place that ever writes to the input's .value or the view's text
+        input.value = state.name; // => the input's displayed value ALWAYS comes FROM state, never set elsewhere
+        view.textContent = "state.name = " + JSON.stringify(state.name); // => shows the real current state value
+      } // => end of render()
+      input.addEventListener("input", () => {
+        state.name = input.value; // => writes the user's keystroke BACK into state
+        render(); // => re-syncs the input's value and the visible state view from that same state
+      }); // => end of the "input" listener
+      // => the input never holds a value the state object doesn't also know about -- the two never drift apart
+      render(); // => initial render, so state and the empty input start in sync
+      // => verify.mjs types into the real input, then reads BOTH input.value and state-view's text
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

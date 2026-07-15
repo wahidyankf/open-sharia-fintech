@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 23: Click Handler Counter</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the count only ever changes in response to a genuine click event, nothing else -->
+    <button id="incr">Count: <span id="count">0</span></button>
+    <!-- => the span is what the handler below rewrites -->
+    <script>
+      let count = 0; // => the counter state; not reset between clicks, only when the page reloads
+      // => count lives outside the handler function; the handler closes over it and mutates it on every call
+      const countEl = document.getElementById("count"); // => cached once, up front, not re-queried per click
+      // => caching avoids re-running a DOM query the handler would otherwise repeat on every single click
+      document.getElementById("incr").addEventListener("click", () => {
+        // => this arrow function is the handler; it runs once per genuine click, in full, top to bottom
+        count += 1; // => mutates the closed-over count, not a fresh local variable each time
+        // => the closure remembers count's value between separate, independent click events
+        countEl.textContent = String(count); // => Number must become a String before textContent accepts it
+        // => the visible number only updates because this line explicitly writes the new value into the DOM
+      }); // => end of the click handler
+    </script>
+    <!-- => end of the inline script -->
+    <!-- => verify.mjs dispatches three real clicks and confirms the displayed count reads 3, not just "some number" -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

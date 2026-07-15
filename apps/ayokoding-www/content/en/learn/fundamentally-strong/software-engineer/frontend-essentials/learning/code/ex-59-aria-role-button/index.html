@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 59: aria-role Button</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="fake-button" role="button" tabindex="0">Do the thing</div>
+    <!-- => role="button" tells assistive tech to treat this <div> as a button in the accessibility tree -->
+    <!-- => tabindex="0" makes it keyboard-focusable -- role alone would NOT add that -->
+    <!-- => verify.mjs queries the accessibility tree by role, not by tag name, to confirm it's exposed -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

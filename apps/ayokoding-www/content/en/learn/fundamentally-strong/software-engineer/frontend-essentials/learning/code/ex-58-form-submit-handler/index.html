@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 58: Form Submit Handler</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <form id="signup">
+      <!-- => the submit listener below intercepts this form's real submit event -->
+      <input name="username" type="text" value="ada" />
+      <!-- => name="username" is the key FormData reads it under -->
+      <input name="email" type="email" value="ada@example.com" />
+      <!-- => name="email" is the key FormData reads it under -->
+      <button type="submit">Sign up</button>
+      <!-- => triggers the form's submit event, handled below -->
+    </form>
+    <!-- => end of the signup form -->
+    <p id="collected"></p>
+    <!-- => starts empty; the submit handler below writes the collected data here -->
+    <!-- => intercepting submit here means the page never actually navigates or reloads -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      document.getElementById("signup").addEventListener("submit", (event) => {
+        event.preventDefault(); // => cancels the browser's default full-page navigation on submit
+        // => event.target is the real <form> element, exactly what FormData needs below
+        const data = new FormData(event.target); // => reads whatever is CURRENTLY in the form's real inputs
+        document.getElementById("collected").textContent = JSON.stringify(
+          Object.fromEntries(data.entries()), // => converts FormData's entries into a plain, printable object
+        ); // => end of the JSON.stringify call
+      }); // => end of the "submit" listener
+      // => no per-field "input" listeners are needed -- FormData reads every value at submit time
+      // => verify.mjs clicks "Sign up" and reads #collected's text to confirm the real values were captured
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 28: Flex Align Center</title>
+    <!-- => tab title -->
+    <style>
+      /* => align-items controls the CROSS axis -- in a row, that's vertical, the complement to justify-content */
+      body {
+        /* => the page-level container */
+        margin: 0; /* => removes the default body margin so the 120px row below measures exactly */
+      } /* => end of the body rule */
+      .row {
+        /* => the flex container */
+        display: flex; /* => turns on flex layout for its one direct child below */
+        align-items: center; /* => centers that child vertically inside the row's full height */
+        height: 120px; /* => a tall reference height, so vertical centering is visibly meaningful */
+        background: rgb(240, 240, 240); /* => visual only; not measured by verify.mjs */
+      } /* => end of the .row rule */
+      .chip {
+        /* => the single flex item being vertically centered */
+        width: 30px; /* => a fixed item width, unrelated to alignment */
+        height: 30px; /* => a fixed item height, deliberately smaller than the 120px row */
+        background: rgb(180, 200, 240); /* => visual only; not measured by verify.mjs */
+      } /* => end of the .chip rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one chip, one row, one alignment rule to verify -->
+    <div class="row">
+      <!-- => the 120px-tall flex container -->
+      <div class="chip" id="chip"></div>
+      <!-- => the 30px chip align-items: center vertically centers -->
+    </div>
+    <!-- => end of the flex row -->
+    <!-- => verify.mjs measures both elements' real vertical centers and confirms they match exactly -->
+    <!-- => no table-cell display or absolute-positioning negative-margin hack was needed to achieve this -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

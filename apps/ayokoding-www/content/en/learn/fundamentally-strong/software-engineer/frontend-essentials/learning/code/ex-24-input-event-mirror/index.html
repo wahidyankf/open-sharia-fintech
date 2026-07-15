@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 24: Input Event Mirror</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the mirror span updates live, on every keystroke, not just once on submit -->
+    <label for="name">Name</label>
+    <!-- => associates this label with #name via the for/id pair -->
+    <input id="name" type="text" />
+    <!-- => the field the input listener below watches -->
+    <p>You typed: <span id="mirror"></span></p>
+    <!-- => starts empty; the handler writes into it live -->
+    <script>
+      const input = document.getElementById("name"); // => the field being watched
+      const mirror = document.getElementById("mirror"); // => the element the handler writes into
+      // => both elements looked up once, up front, and reused on every fired event below
+      input.addEventListener("input", () => {
+        // => this handler re-runs on every single keystroke while the field has focus
+        mirror.textContent = input.value; // => reads the field's CURRENT value at the moment the event fired
+        // => "input" fires on every keystroke, paste, and IME commit -- not just when the field loses focus
+      }); // => end of the input handler
+    </script>
+    <!-- => end of the inline script -->
+    <!-- => verify.mjs fills the field with real text and confirms the mirror reflects it live, not after a delay -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

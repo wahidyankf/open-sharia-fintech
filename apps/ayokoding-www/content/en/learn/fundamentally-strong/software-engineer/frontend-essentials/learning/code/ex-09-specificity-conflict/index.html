@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 9: Specificity Conflict</title>
+    <!-- => tab title -->
+    <style>
+      /* => specificity is compared as three counted tiers: (id count, class/attr/pseudo-class count, tag count) */
+      .label {
+        /* => a class selector: specificity 0-1-0 */
+        color: rgb(0, 0, 255); /* => blue -- but specificity, not source order, decides the winner below */
+      } /* => end of the class rule */
+      #price {
+        /* => an id selector: specificity 1-0-0, which always outranks a class selector */
+        color: rgb(255, 0, 0); /* => red -- this wins regardless of where either rule appears in the file */
+      } /* => end of the id rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one element carries BOTH the class and the id, so both rules genuinely target it -->
+    <span id="price" class="label">$42</span>
+    <!-- => id wins: computed color is red, not blue -->
+    <!-- => moving .label's rule to the very end of the stylesheet still would not change this outcome -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

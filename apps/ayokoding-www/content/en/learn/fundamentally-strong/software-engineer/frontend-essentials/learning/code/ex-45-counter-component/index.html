@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 45: Counter Component</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="app"></div>
+    <!-- => the mount point; CounterComponent below owns everything inside it -->
+    <!-- => nothing else on the page touches #app directly -- the component is fully self-contained -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      function CounterComponent(root) {
+        // => root is where this component mounts -- passed in, not hardcoded
+        let count = 0; // => local state, CLOSED OVER by render() and the click handler below -- no globals
+        // => no framework required: state (count) plus render is the entire component, in plain JS
+        function render() {
+          root.innerHTML = ""; // => clears the PREVIOUS button before rebuilding
+          const button = document.createElement("button"); // => a fresh button, built from scratch each render
+          button.id = "counter-btn"; // => a stable id so verify.mjs can find it across re-renders
+          button.textContent = "Count: " + count; // => reads the CURRENT closed-over count value
+          // => the button's text is always a direct reflection of count -- never edited independently
+          button.addEventListener("click", () => {
+            count += 1; // => step 1: mutate the closed-over local state
+            render(); // => step 2: re-invoke render() -- the exact state+render cycle from Examples 43-44
+          }); // => end of the click listener
+          root.append(button); // => the ONLY place the button is ever attached
+        } // => end of render()
+        render(); // => the initial render, so the component shows Count: 0 before any click
+      } // => end of CounterComponent
+      CounterComponent(document.getElementById("app")); // => mounts one instance, with its own private count
+      // => verify.mjs clicks #counter-btn twice, then reads its text -- proving real clicks drove real state
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

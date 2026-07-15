@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 38: preventDefault on a Link</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <a id="link" href="somewhere-else.html">Go elsewhere</a>
+    <!-- => a real link -- its DEFAULT action is navigation -->
+    <!-- => href points at a page that doesn't exist -- if navigation happened, this example would break -->
+    <p id="report">not clicked</p>
+    <!-- => starts as "not clicked"; the listener below rewrites this text -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      document.getElementById("link").addEventListener("click", (event) => {
+        event.preventDefault(); // => cancels the link's built-in default action -- the browser never navigates
+        // => "event" here is the real Click event the browser dispatched, not a synthetic stand-in
+        document.getElementById("report").textContent = "click handled, default prevented";
+        // => confirms the handler ran, even though the page itself never left this document
+      }); // => end of the link's click listener
+      // => verify.mjs compares page.url() before and after the click -- an unchanged URL proves navigation never happened
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

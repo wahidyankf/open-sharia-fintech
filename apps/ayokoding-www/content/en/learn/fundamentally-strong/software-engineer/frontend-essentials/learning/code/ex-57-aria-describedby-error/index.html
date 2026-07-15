@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 57: aria-describedby Error</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <label for="age">Age</label>
+    <!-- => gives the input its accessible NAME (Example 56) -->
+    <input id="age" type="number" aria-describedby="age-error" />
+    <!-- => links to a SECOND piece of announced text -->
+    <p id="age-error">Enter a whole number of years</p>
+    <!-- => the id aria-describedby points at -->
+    <!-- => visual proximity alone means nothing to a screen reader -- this attribute is what wires it in -->
+    <!-- => verify.mjs reads the input's computed accessible DESCRIPTION, not just nearby text -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

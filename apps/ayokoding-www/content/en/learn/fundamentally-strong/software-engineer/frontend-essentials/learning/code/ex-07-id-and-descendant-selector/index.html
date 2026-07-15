@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 7: Id and Descendant Selector</title>
+    <!-- => tab title -->
+    <style>
+      /* => a descendant selector combinator (the space) means "anywhere inside," not "direct child only" */
+      #nav a {
+        /* => matches an <a> ONLY when it has #nav somewhere among its ancestors */
+        color: rgb(0, 100, 200); /* => applies solely inside the scoped #nav subtree */
+      } /* => end of the descendant rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => two links live inside #nav, one lives outside it -->
+    <nav id="nav">
+      <!-- => the ancestor the descendant selector requires -->
+      <a href="#home">Home</a>
+      <!-- => inside #nav: matched by "#nav a" -->
+      <a href="#about">About</a>
+      <!-- => also inside #nav: matched -->
+    </nav>
+    <!-- => closes the scoped subtree -->
+    <!-- => the link below is outside #nav entirely, so "#nav a" cannot reach it -->
+    <!-- => a broader rule like "a { color: ... }" would have repainted this link too; the scoping here avoids that -->
+    <p>Outside link: <a href="#other">Other</a></p>
+    <!-- => untouched: default link color, not rgb(0, 100, 200) -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

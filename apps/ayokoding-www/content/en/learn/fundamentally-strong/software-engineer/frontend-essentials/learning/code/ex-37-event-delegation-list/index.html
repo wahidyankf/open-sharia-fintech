@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 37: Event Delegation List</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <ul id="items">
+      <!-- => the ONLY element with a click listener; no <li> has one of its own -->
+      <li data-id="1">One</li>
+      <!-- => data-id is read back inside the delegated handler below -->
+      <li data-id="2">Two</li>
+      <!-- => a second item, no separate listener needed -->
+      <li data-id="3">Three</li>
+      <!-- => a third item, still no separate listener needed -->
+    </ul>
+    <!-- => end of the delegated list -->
+    <p id="report">none</p>
+    <!-- => starts as "none"; the delegated handler rewrites this text -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      // => ONE listener on the parent <ul> -- bubbling (Example 36) is what delivers every child's click here
+      document.getElementById("items").addEventListener("click", (event) => {
+        const li = event.target.closest("li"); // => walks up from event.target to find its <li> ancestor
+        // => event.target is whatever was ACTUALLY clicked -- could be the <li> itself or text inside it
+        if (li) document.getElementById("report").textContent = li.dataset.id;
+        // => reads the specific clicked item's data-id, proving the delegated handler resolved the right target
+      }); // => end of the delegated click listener
+      // => no listener is ever attached per-<li> -- one handler covers all three, and any added later
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

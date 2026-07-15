@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the filtering logic below -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 73: Filterable List</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the whole demo lives in <body> below -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <input id="search" type="text" placeholder="Filter..." />
+    <!-- => co-22: a controlled input -- its input event below drives every re-render -->
+    <ul id="list"></ul>
+    <!-- => the ONE mount point; render() below always clears and rebuilds everything inside it -->
+    <script>
+      const allItems = ["Apple", "Apricot", "Banana", "Blueberry", "Cherry"]; // => the fixed source data
+      // => allItems never changes; only the QUERY changes what's currently visible
+      const list = document.getElementById("list"); // => the list's mount point, found once
+      function render(query) {
+        // => render is the single source of "what's currently on screen" for any given query
+        list.innerHTML = ""; // => always clears first; never appends onto a stale filtered list
+        const matches = allItems.filter((item) => {
+          // => filters the FULL array fresh, every call -- the filtered array, not the DOM, is the source of truth
+          return item.toLowerCase().includes(query.toLowerCase());
+          // => case-insensitive on both sides, so "AP" and "ap" match identically
+        }); // => matches now holds only the items whose text contains this query
+        // => this recomputes from scratch on every keystroke -- no incremental diffing exists here
+        for (const item of matches) {
+          // => maps each surviving match to one <li>, exactly like Example 48's list rendering
+          const li = document.createElement("li"); // => one <li> per matching item
+          li.textContent = item; // => shows this matching item's own text
+          list.append(li); // => adds this <li> to the growing, freshly-filtered list
+        } // => end of the loop; list now shows exactly the items in matches, nothing else
+      } // => end of render; every call fully replaces the visible list from allItems + query
+      document.getElementById("search").addEventListener("input", (event) => {
+        // => fires on every keystroke; the controlled input's live value drives the re-render
+        render(event.target.value); // => re-renders using whatever the field currently contains
+      }); // => end of the input listener
+      render(""); // => the initial render, with an empty query, shows every item unfiltered
+    </script>
+    <!-- => </script> ends the entire filter + render implementation -->
+  </body>
+  <!-- => end of document; verify.mjs below types "ap" and checks the narrowed result -->
+</html>

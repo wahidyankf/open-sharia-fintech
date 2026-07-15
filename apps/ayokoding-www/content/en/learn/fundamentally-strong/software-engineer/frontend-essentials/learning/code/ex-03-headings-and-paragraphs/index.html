@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata; the heading outline below lives entirely in the body -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 3: Headings and Paragraphs</title>
+    <!-- => tab title, separate from the h1 below -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => verify.mjs reads every heading's level, in document order, from here down -->
+    <h1>Frontend Essentials</h1>
+    <!-- => the page's single h1: names the whole page -->
+    <!-- => level 1 opens the outline; verify.mjs's captured level array starts with 1 -->
+    <p>An introduction paragraph under the single top-level heading.</p>
+    <!-- => ordinary body text, not part of the outline -->
+    <h2>The Platform</h2>
+    <!-- => first h2: one level deeper than h1, no level skipped -->
+    <p>HTML, CSS, and the DOM.</p>
+    <!-- => content under the first h2 section -->
+    <h3>HTML</h3>
+    <!-- => h3 nests under the current h2, again with no skipped level -->
+    <!-- => level 3 here directly follows level 2 above it -- no gap in the outline -->
+    <p>Structure and semantics.</p>
+    <!-- => content under the h3 subsection -->
+    <h2>The Component Model</h2>
+    <!-- => a second h2, stepping back OUT of the h3, still no level skipped -->
+    <!-- => stepping from h3 back to h2 is valid; only skipping FORWARD (e.g. h2 straight to h4) breaks the outline -->
+    <p>State drives the render.</p>
+    <!-- => content under the second h2 section -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

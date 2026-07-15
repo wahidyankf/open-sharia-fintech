@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 53: Required Field Validation</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <input id="email" type="email" required />
+    <!-- => "required" alone is enough -- no JavaScript validation code is written anywhere in this file -->
+    <!-- => the browser's built-in Constraint Validation API evaluates this attribute automatically -->
+    <!-- => verify.mjs calls checkValidity() while empty, then again after filling in a real email -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

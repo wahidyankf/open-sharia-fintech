@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 14: Block vs Inline</title>
+    <!-- => tab title -->
+    <style>
+      body {
+        /* => the container both boxes below measure themselves against */
+        margin: 0; /* => removes the browser's default body margin so 600px below is exact */
+        width: 600px; /* => a fixed reference width for comparing the block box against */
+      } /* => end of the body rule */
+      #blockBox {
+        /* => targets the <div>, a block-level element by default */
+        background: rgb(200, 200, 200); /* => visual only; not measured by verify.mjs */
+      } /* => end of the #blockBox rule */
+      #inlineSpan {
+        /* => targets the <span>, an inline element by default */
+        background: rgb(220, 220, 100); /* => visual only; not measured by verify.mjs */
+      } /* => end of the #inlineSpan rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => neither element has an explicit display or width declared -->
+    <div id="blockBox">block</div>
+    <!-- => a block box fills 100% of its container's width by default -->
+    <span id="inlineSpan">inline</span>
+    <!-- => an inline box sizes itself to only its own content's width -->
+    <!-- => verify.mjs measures both real widths and confirms they differ dramatically, with no CSS width set -->
+    <!-- => swapping the tag names alone (div for span) would swap this behavior too, with zero other changes -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

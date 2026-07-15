@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 54: Pattern Validation</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <input id="code" type="text" pattern="[0-9]{4}" />
+    <!-- => pattern is a regular expression the CURRENT value must fully match to be considered valid -->
+    <!-- => [0-9]{4} means "exactly four digits" -- neither more nor fewer characters pass -->
+    <!-- => verify.mjs calls checkValidity() for a non-matching value, then for a matching one -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

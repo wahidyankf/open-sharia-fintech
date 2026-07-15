@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the derived-value logic below -->
+  <!-- => verify.mjs, further down, changes qty and reads the recomputed #total text -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 74: Derived Value Render</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the whole demo lives in <body> below -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <input id="price" type="number" value="10" />
+    <!-- => co-22: a controlled input -- its input event below is one of two things that re-renders -->
+    <input id="qty" type="number" value="2" />
+    <!-- => the second controlled input; changing EITHER one triggers the same render() -->
+    <p id="total"></p>
+    <!-- => the ONE place the derived total is ever written; nowhere else holds this value -->
+    <script>
+      const state = { price: 10, qty: 2 }; // => state holds ONLY the two real inputs, never a total
+      // => there is deliberately no state.total field anywhere in this object
+      function render() {
+        // total is DERIVED at render time -- it is never stored as its own state field
+        const total = state.price * state.qty; // => recomputed fresh from state, every single call
+        document.getElementById("total").textContent = "Total: " + total;
+        // => the only place total is ever written; it never lives anywhere else
+      } // => end of render; total never drifts out of sync because it is never stored separately
+      document.getElementById("price").addEventListener("input", (event) => {
+        state.price = Number(event.target.value); // => updates ONLY the price field on state
+        render(); // => re-derives total from the now-updated state
+      }); // => end of the price listener
+      document.getElementById("qty").addEventListener("input", (event) => {
+        state.qty = Number(event.target.value); // => updates ONLY the qty field on state
+        render(); // => re-derives total from the now-updated state
+      }); // => end of the qty listener
+      render(); // => the initial render, computing the starting total from price=10, qty=2
+      // => this is the ONLY render() call made outside the two input listeners above
+    </script>
+    <!-- => </script> ends the entire state + derived-render implementation -->
+  </body>
+  <!-- => end of document; verify.mjs below changes qty and confirms total recomputes correctly -->
+  <!-- => co-18/co-20: state changes, then render() derives the DOM -- never the reverse -->
+</html>

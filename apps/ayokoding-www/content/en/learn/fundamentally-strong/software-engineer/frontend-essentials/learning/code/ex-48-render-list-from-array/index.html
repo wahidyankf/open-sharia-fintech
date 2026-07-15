@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 48: Render List From Array</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <ul id="list"></ul>
+    <!-- => starts empty -- the forEach loop below is the only thing that fills it -->
+    <!-- => no <li> is hand-authored anywhere in this file -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      const items = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon"]; // => the array driving the render below
+      const list = document.getElementById("list"); // => the single container every rendered <li> is appended to
+      items.forEach((label) => {
+        // => runs once per array element -- 5 elements means 5 iterations
+        const li = document.createElement("li"); // => a fresh <li>, built from scratch for THIS label
+        li.textContent = label; // => one label per node -- no manual duplication
+        list.append(li); // => appended immediately, so the rendered order matches the array order
+      }); // => end of the forEach loop
+      // => the rendered <li> count is a direct FUNCTION of items.length, not a fixed number
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

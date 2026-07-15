@@ -2732,137 +2732,137 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · TypeScript † · topic wt 240 · Learn 114 / Drill 214 · **subject**. Template →
 [`syllabus/14-frontend-essentials.md`](./syllabus/14-frontend-essentials.md).
 
-- [ ] **[AI] V** — `web-researcher` for `frontend-essentials`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `frontend-essentials`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/14-frontend-essentials.md`](./syllabus/14-frontend-essentials.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/frontend-essentials/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/frontend-essentials/learning/` teaching **every** concept in
       `syllabus/14-frontend-essentials.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · html-document-structure
-  - [ ] co-02 · html-semantics
-  - [ ] co-03 · text-and-links
-  - [ ] co-04 · css-selectors
-  - [ ] co-05 · css-specificity-cascade
-  - [ ] co-06 · css-custom-properties
-  - [ ] co-07 · box-model
-  - [ ] co-08 · normal-flow-display
-  - [ ] co-09 · flexbox
-  - [ ] co-10 · grid
-  - [ ] co-11 · responsive-media-queries
-  - [ ] co-12 · dom-selection
-  - [ ] co-13 · dom-manipulation
-  - [ ] co-14 · event-handling
-  - [ ] co-15 · event-propagation
-  - [ ] co-16 · default-action-control
-  - [ ] co-17 · event-loop
-  - [ ] co-18 · ui-as-function-of-state
-  - [ ] co-19 · component-props
-  - [ ] co-20 · component-state
-  - [ ] co-21 · list-rendering
-  - [ ] co-22 · forms-controlled-input
-  - [ ] co-23 · form-validation
-  - [ ] co-24 · accessible-forms
-  - [ ] co-25 · aria-roles-semantics
-  - [ ] co-26 · keyboard-navigation
-  - [ ] co-27 · discriminated-union-states
-  - [ ] co-28 · typing-props-state
-- [ ] **[AI] A1-examples** — Author `CONTENT/frontend-essentials/learning/code/` — one runnable HTML/CSS/JS snippet
+  - [x] co-01 · html-document-structure
+  - [x] co-02 · html-semantics
+  - [x] co-03 · text-and-links
+  - [x] co-04 · css-selectors
+  - [x] co-05 · css-specificity-cascade
+  - [x] co-06 · css-custom-properties
+  - [x] co-07 · box-model
+  - [x] co-08 · normal-flow-display
+  - [x] co-09 · flexbox
+  - [x] co-10 · grid
+  - [x] co-11 · responsive-media-queries
+  - [x] co-12 · dom-selection
+  - [x] co-13 · dom-manipulation
+  - [x] co-14 · event-handling
+  - [x] co-15 · event-propagation
+  - [x] co-16 · default-action-control
+  - [x] co-17 · event-loop
+  - [x] co-18 · ui-as-function-of-state
+  - [x] co-19 · component-props
+  - [x] co-20 · component-state
+  - [x] co-21 · list-rendering
+  - [x] co-22 · forms-controlled-input
+  - [x] co-23 · form-validation
+  - [x] co-24 · accessible-forms
+  - [x] co-25 · aria-roles-semantics
+  - [x] co-26 · keyboard-navigation
+  - [x] co-27 · discriminated-union-states
+  - [x] co-28 · typing-props-state
+- [x] **[AI] A1-examples** — Author `CONTENT/frontend-essentials/learning/code/` — one runnable HTML/CSS/JS snippet
       (browser or DOM harness, `getComputedStyle`/`tsc`-asserted) per worked example (DD-20/DD-30), covering **every**
       example in `syllabus/14-frontend-essentials.md` §Worked examples. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · minimal-html-document — verify renders + tab shows title
-  - [ ] ex-02 · semantic-page-landmarks — verify four landmark roles in a11y tree
-  - [ ] ex-03 · headings-and-paragraphs — verify one h1 + nested outline
-  - [ ] ex-04 · lists-and-links — verify each `a` has href + text
-  - [ ] ex-05 · image-with-alt — verify alt surfaces on load failure
-  - [ ] ex-06 · class-selector-style — verify `getComputedStyle` reports color
-  - [ ] ex-07 · id-and-descendant-selector — verify only `#nav a` styled
-  - [ ] ex-08 · attribute-and-pseudo-selector — verify focused email input styled
-  - [ ] ex-09 · specificity-conflict — verify id rule wins
-  - [ ] ex-10 · cascade-source-order — verify later declaration applies
-  - [ ] ex-11 · custom-property-reuse — verify both resolve same computed color
-  - [ ] ex-12 · box-model-padding-border-margin — verify offsetWidth = content+pad+border
-  - [ ] ex-13 · box-sizing-border-box — verify rendered width = declared width
-  - [ ] ex-14 · block-vs-inline — verify block full-width, span wraps content
-  - [ ] ex-15 · inline-block-sizing — verify inline yet honors size
-  - [ ] ex-16 · display-none-removes-layout — verify offsetParent null
-  - [ ] ex-17 · select-single-node — verify returns matching element
-  - [ ] ex-18 · select-all-nodes — verify NodeList length = item count
-  - [ ] ex-19 · set-textcontent — verify rendered text updates
-  - [ ] ex-20 · toggle-classlist — verify class added then removed
-  - [ ] ex-21 · create-and-append-node — verify list grows by one
-  - [ ] ex-22 · remove-node — verify querySelector no longer finds it
-  - [ ] ex-23 · click-handler-counter — verify count rises per click
-  - [ ] ex-24 · input-event-mirror — verify span mirrors typed text
-  - [ ] ex-25 · event-object-target — verify identifies clicked element
-  - [ ] ex-26 · multiple-listeners-order — verify both fire in order
-  - [ ] ex-27 · flex-row-distribution — verify children spread to edges
-  - [ ] ex-28 · flex-align-center — verify vertical centering
-  - [ ] ex-29 · flex-grow-absorbs-space — verify child absorbs free space
-  - [ ] ex-30 · grid-two-column — verify two children in separate columns
-  - [ ] ex-31 · grid-named-areas — verify each element in named region
-  - [ ] ex-32 · grid-gap — verify measured spacing between tracks
-  - [ ] ex-33 · responsive-breakpoint — verify layout changes below 600px
-  - [ ] ex-34 · responsive-fluid-image — verify never overflows container
-  - [ ] ex-35 · custom-property-theming — verify descendants recompute color
-  - [ ] ex-36 · event-bubbling — verify parent handler sees event
-  - [ ] ex-37 · event-delegation-list — verify any li fires with correct target
-  - [ ] ex-38 · prevent-default-link — verify navigation does not occur
-  - [ ] ex-39 · stop-propagation — verify parent listener does not fire
-  - [ ] ex-40 · settimeout-defers-work — verify runs after synchronous code
-  - [ ] ex-41 · microtask-before-timeout — verify microtask before timeout
-  - [ ] ex-42 · debounce-input — verify only final value processed
-  - [ ] ex-43 · render-from-state — verify rendered DOM matches state
-  - [ ] ex-44 · state-change-triggers-render — verify only derived DOM changes
-  - [ ] ex-45 · counter-component — verify clicking increments number
-  - [ ] ex-46 · props-driven-component — verify different props → different output
-  - [ ] ex-47 · one-way-data-flow — verify child reflects parent, cannot write up
-  - [ ] ex-48 · render-list-from-array — verify count = array length
-  - [ ] ex-49 · keyed-list-update — verify only changed node updates
-  - [ ] ex-50 · controlled-text-input — verify state + input in sync
-  - [ ] ex-51 · controlled-checkbox — verify toggling updates state + checked
-  - [ ] ex-52 · controlled-select — verify choosing option updates state
-  - [ ] ex-53 · required-field-validation — verify empty field invalid
-  - [ ] ex-54 · pattern-validation — verify non-matching input fails
-  - [ ] ex-55 · custom-validity-message — verify reported message
-  - [ ] ex-56 · label-input-association — verify clicking label focuses input
-  - [ ] ex-57 · aria-describedby-error — verify accessible description includes error
-  - [ ] ex-58 · form-submit-handler — verify collected data matches inputs
-  - [ ] ex-59 · aria-role-button — verify a11y tree exposes button role
-  - [ ] ex-60 · aria-live-region — verify region content updates
-  - [ ] ex-61 · keyboard-tab-order — verify Tab moves focus in sequence
-  - [ ] ex-62 · keyboard-activate-custom-button — verify Enter/Space fires action
-  - [ ] ex-63 · focus-trap-modal — verify Tab cycles within modal
-  - [ ] ex-64 · roving-tabindex-menu — verify arrow keys move focus
-  - [ ] ex-65 · discriminated-union-loading — verify loading branch renders spinner
-  - [ ] ex-66 · discriminated-union-error — verify error branch shows text
-  - [ ] ex-67 · discriminated-union-empty — verify empty view on zero results
-  - [ ] ex-68 · discriminated-union-exhaustive — verify tsc flags missing case
-  - [ ] ex-69 · typed-props — verify tsc rejects wrong-typed prop
-  - [ ] ex-70 · typed-state — verify tsc catches invalid state assignment
-  - [ ] ex-71 · data-list-component — verify each state renders correctly
-  - [ ] ex-72 · validated-form-component — verify invalid submit blocked + errors show
-  - [ ] ex-73 · filterable-list — verify only matching items in DOM
-  - [ ] ex-74 · derived-value-render — verify updates when state changes
-  - [ ] ex-75 · fix-missing-label — verify accessible name present
-  - [ ] ex-76 · fix-div-button-to-semantic — verify keyboard-operable + button role
-  - [ ] ex-77 · fix-color-contrast — verify contrast ratio ≥ 4.5:1
-  - [ ] ex-78 · delegated-dynamic-list — verify new items work without rebinding
-  - [ ] ex-79 · responsive-grid-component — verify column count changes with viewport
-  - [ ] ex-80 · accessible-interactive-widget — verify toggles + fully keyboard/AT-operable
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/frontend-essentials/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · minimal-html-document — verify renders + tab shows title
+  - [x] ex-02 · semantic-page-landmarks — verify four landmark roles in a11y tree
+  - [x] ex-03 · headings-and-paragraphs — verify one h1 + nested outline
+  - [x] ex-04 · lists-and-links — verify each `a` has href + text
+  - [x] ex-05 · image-with-alt — verify alt surfaces on load failure
+  - [x] ex-06 · class-selector-style — verify `getComputedStyle` reports color
+  - [x] ex-07 · id-and-descendant-selector — verify only `#nav a` styled
+  - [x] ex-08 · attribute-and-pseudo-selector — verify focused email input styled
+  - [x] ex-09 · specificity-conflict — verify id rule wins
+  - [x] ex-10 · cascade-source-order — verify later declaration applies
+  - [x] ex-11 · custom-property-reuse — verify both resolve same computed color
+  - [x] ex-12 · box-model-padding-border-margin — verify offsetWidth = content+pad+border
+  - [x] ex-13 · box-sizing-border-box — verify rendered width = declared width
+  - [x] ex-14 · block-vs-inline — verify block full-width, span wraps content
+  - [x] ex-15 · inline-block-sizing — verify inline yet honors size
+  - [x] ex-16 · display-none-removes-layout — verify offsetParent null
+  - [x] ex-17 · select-single-node — verify returns matching element
+  - [x] ex-18 · select-all-nodes — verify NodeList length = item count
+  - [x] ex-19 · set-textcontent — verify rendered text updates
+  - [x] ex-20 · toggle-classlist — verify class added then removed
+  - [x] ex-21 · create-and-append-node — verify list grows by one
+  - [x] ex-22 · remove-node — verify querySelector no longer finds it
+  - [x] ex-23 · click-handler-counter — verify count rises per click
+  - [x] ex-24 · input-event-mirror — verify span mirrors typed text
+  - [x] ex-25 · event-object-target — verify identifies clicked element
+  - [x] ex-26 · multiple-listeners-order — verify both fire in order
+  - [x] ex-27 · flex-row-distribution — verify children spread to edges
+  - [x] ex-28 · flex-align-center — verify vertical centering
+  - [x] ex-29 · flex-grow-absorbs-space — verify child absorbs free space
+  - [x] ex-30 · grid-two-column — verify two children in separate columns
+  - [x] ex-31 · grid-named-areas — verify each element in named region
+  - [x] ex-32 · grid-gap — verify measured spacing between tracks
+  - [x] ex-33 · responsive-breakpoint — verify layout changes below 600px
+  - [x] ex-34 · responsive-fluid-image — verify never overflows container
+  - [x] ex-35 · custom-property-theming — verify descendants recompute color
+  - [x] ex-36 · event-bubbling — verify parent handler sees event
+  - [x] ex-37 · event-delegation-list — verify any li fires with correct target
+  - [x] ex-38 · prevent-default-link — verify navigation does not occur
+  - [x] ex-39 · stop-propagation — verify parent listener does not fire
+  - [x] ex-40 · settimeout-defers-work — verify runs after synchronous code
+  - [x] ex-41 · microtask-before-timeout — verify microtask before timeout
+  - [x] ex-42 · debounce-input — verify only final value processed
+  - [x] ex-43 · render-from-state — verify rendered DOM matches state
+  - [x] ex-44 · state-change-triggers-render — verify only derived DOM changes
+  - [x] ex-45 · counter-component — verify clicking increments number
+  - [x] ex-46 · props-driven-component — verify different props → different output
+  - [x] ex-47 · one-way-data-flow — verify child reflects parent, cannot write up
+  - [x] ex-48 · render-list-from-array — verify count = array length
+  - [x] ex-49 · keyed-list-update — verify only changed node updates
+  - [x] ex-50 · controlled-text-input — verify state + input in sync
+  - [x] ex-51 · controlled-checkbox — verify toggling updates state + checked
+  - [x] ex-52 · controlled-select — verify choosing option updates state
+  - [x] ex-53 · required-field-validation — verify empty field invalid
+  - [x] ex-54 · pattern-validation — verify non-matching input fails
+  - [x] ex-55 · custom-validity-message — verify reported message
+  - [x] ex-56 · label-input-association — verify clicking label focuses input
+  - [x] ex-57 · aria-describedby-error — verify accessible description includes error
+  - [x] ex-58 · form-submit-handler — verify collected data matches inputs
+  - [x] ex-59 · aria-role-button — verify a11y tree exposes button role
+  - [x] ex-60 · aria-live-region — verify region content updates
+  - [x] ex-61 · keyboard-tab-order — verify Tab moves focus in sequence
+  - [x] ex-62 · keyboard-activate-custom-button — verify Enter/Space fires action
+  - [x] ex-63 · focus-trap-modal — verify Tab cycles within modal
+  - [x] ex-64 · roving-tabindex-menu — verify arrow keys move focus
+  - [x] ex-65 · discriminated-union-loading — verify loading branch renders spinner
+  - [x] ex-66 · discriminated-union-error — verify error branch shows text
+  - [x] ex-67 · discriminated-union-empty — verify empty view on zero results
+  - [x] ex-68 · discriminated-union-exhaustive — verify tsc flags missing case
+  - [x] ex-69 · typed-props — verify tsc rejects wrong-typed prop
+  - [x] ex-70 · typed-state — verify tsc catches invalid state assignment
+  - [x] ex-71 · data-list-component — verify each state renders correctly
+  - [x] ex-72 · validated-form-component — verify invalid submit blocked + errors show
+  - [x] ex-73 · filterable-list — verify only matching items in DOM
+  - [x] ex-74 · derived-value-render — verify updates when state changes
+  - [x] ex-75 · fix-missing-label — verify accessible name present
+  - [x] ex-76 · fix-div-button-to-semantic — verify keyboard-operable + button role
+  - [x] ex-77 · fix-color-contrast — verify contrast ratio ≥ 4.5:1
+  - [x] ex-78 · delegated-dynamic-list — verify new items work without rebinding
+  - [x] ex-79 · responsive-grid-component — verify column count changes with viewport
+  - [x] ex-80 · accessible-interactive-widget — verify toggles + fully keyboard/AT-operable
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/frontend-essentials/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/frontend-essentials/drilling/_index.md` (wt 214) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 15 Gate
 
-- [ ] [AI] `frontend-essentials/` complete: `_index.md` wt 240, `learning/_index.md` wt 114,
+- [x] [AI] `frontend-essentials/` complete: `_index.md` wt 240, `learning/_index.md` wt 114,
       `drilling/_index.md` wt 214, capstone wt 900; all 28 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit

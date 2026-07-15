@@ -1,0 +1,38 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 15: inline-block Sizing</title>
+    <!-- => tab title -->
+    <style>
+      body {
+        /* => the container the two chips below sit inside */
+        margin: 0; /* => removes the default body margin so positions measure cleanly */
+      } /* => end of the body rule */
+      .chip {
+        /* => a hybrid display value shared by both chips below */
+        display: inline-block; /* => sits on a line like inline, but still honors width/height like block */
+        width: 80px; /* => a real width; a pure inline element would ignore this entirely */
+        height: 30px; /* => a real height; also ignored by pure inline elements */
+        background: rgb(180, 200, 240); /* => visual only; not measured by verify.mjs */
+      } /* => end of the .chip rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => two chips, placed with no whitespace between them so they sit flush -->
+    <span class="chip" id="chip1"></span><span class="chip" id="chip2"></span>
+    <!-- => both share a line AND honor their declared 80x30 size -->
+    <!-- => verify.mjs confirms both chips report the same vertical position (same line) and the declared size -->
+    <!-- => a pure display: inline element would silently ignore the width/height declarations entirely -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

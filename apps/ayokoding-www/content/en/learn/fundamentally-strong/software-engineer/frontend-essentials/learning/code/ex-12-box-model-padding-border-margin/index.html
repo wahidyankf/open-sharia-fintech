@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata plus this page's only stylesheet -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 12: Box Model</title>
+    <!-- => tab title -->
+    <style>
+      /* => box-sizing defaults to content-box in every browser unless a reset overrides it */
+      #box {
+        /* => the default box-sizing is content-box, so width below sizes ONLY the content area */
+        width: 200px; /* => the content box's own width; padding and border are added on top of this */
+        padding: 10px; /* => 10px on every side, ADDED to the content width for the final rendered size */
+        border: 5px solid black; /* => 5px on every side, ALSO added on top of content + padding */
+        margin: 20px; /* => space outside the border; excluded entirely from offsetWidth */
+      } /* => end of the #box rule */
+    </style>
+    <!-- => end of the page's only stylesheet -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => one box; verify.mjs measures its real rendered offsetWidth -->
+    <div id="box">content</div>
+    <!-- => 200 (width) + 2*10 (padding) + 2*5 (border) = 230px offsetWidth -->
+    <!-- => the 40px of margin around this box is real space, but offsetWidth never counts it -->
+    <!-- => Example 13 keeps this exact padding/border but changes box-sizing to compare the outcome directly -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

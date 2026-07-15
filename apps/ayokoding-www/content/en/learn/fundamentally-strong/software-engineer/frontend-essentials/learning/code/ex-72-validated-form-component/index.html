@@ -1,0 +1,56 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the validation logic below -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 72: Validated Form Component</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the whole component lives in <body> below -->
+  <body>
+    <!--
+      novalidate turns off the browser's native validation UI (which would otherwise
+      block the "submit" event from ever firing on an invalid field) so this component
+      owns the full validate -> block -> show-error flow itself, in JavaScript.
+    -->
+    <form id="signup" novalidate>
+      <label for="email">Email</label>
+      <!-- => co-24: a real label[for], not a placeholder -- see Example 75's fix for the contrast -->
+      <input id="email" name="email" type="email" required pattern="[^@]+@[^@]+\.[^@]+" />
+      <!-- => required + pattern are the Constraint Validation API rules checkValidity() reads below -->
+      <p id="error" hidden>Enter a valid email address</p>
+      <!-- => hidden by default; the submit handler below is the ONLY thing that reveals it -->
+      <button type="submit">Sign up</button>
+      <!-- => a real <button> -- keyboard-operable and role-exposing for free, like Example 76 -->
+    </form>
+    <!-- => </form> closes the controlled, validated input; everything below is just status text -->
+    <p id="result">not submitted</p>
+    <!-- => starts as "not submitted"; only the submit handler below ever changes it -->
+    <script>
+      const form = document.getElementById("signup"); // => the form this whole example validates
+      const emailInput = document.getElementById("email"); // => the one field being validated
+      const error = document.getElementById("error"); // => the error message this validation reveals
+      form.addEventListener("submit", (event) => {
+        // => one listener owns the entire validate -> block -> show-error flow
+        event.preventDefault(); // => cancels the browser's own default: an actual page navigation
+        if (!emailInput.checkValidity()) {
+          // => checkValidity() reads the required + pattern constraints declared above, for free
+          error.hidden = false; // => reveals the error message on an invalid submission
+          document.getElementById("result").textContent = "blocked: invalid";
+          // => confirms the submission was genuinely blocked, not silently accepted
+          return; // => stops here; a blocked submission never reaches the success path below
+        }
+        error.hidden = true; // => a later valid submission re-hides any previously shown error
+        document.getElementById("result").textContent = "submitted: " + emailInput.value;
+        // => the success path: shows the real, valid value that was actually submitted
+      }); // => end of the submit handler
+    </script>
+    <!-- => </script> ends the entire validate -> block -> show-error implementation -->
+  </body>
+  <!-- => end of document; verify.mjs below exercises both the invalid and the valid path -->
+</html>

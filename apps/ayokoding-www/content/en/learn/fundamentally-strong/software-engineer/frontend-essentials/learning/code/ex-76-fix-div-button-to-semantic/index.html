@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the semantic-button fix below -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 76: Fix a div-as-Button to a Real Button</title>
+    <!-- => shown in the browser tab only; unrelated to this example's fix -->
+  </head>
+  <!-- => </head> closes metadata; the entire fix is swapping one element below -->
+  <body>
+    <!-- Before (broken -- a click-only div with no keyboard support, no role):
+      <div class="save-btn" onclick="save()">Save</div>
+    -->
+    <!-- => the broken div needed manual role="button" + tabindex + a keydown handler (Example 62) -->
+    <button id="save-btn">Save</button>
+    <!-- => the fix: a real <button> gets keyboard operability + the button role for free -->
+    <p id="report">not saved</p>
+    <!-- => starts as "not saved"; only the click handler below ever changes it -->
+    <script>
+      document.getElementById("save-btn").addEventListener("click", () => {
+        // => a real <button> fires this SAME click event on a real Enter/Space press too
+        document.getElementById("report").textContent = "saved";
+        // => no separate keydown handler exists anywhere in this file, unlike Example 62
+      }); // => end of the click handler; this is the entire behavior this example needs
+    </script>
+    <!-- => </script> ends the entire fix; zero extra ARIA or keydown code was required -->
+  </body>
+  <!-- => end of document; verify.mjs below confirms the button role and real keyboard activation -->
+</html>

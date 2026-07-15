@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; it has no bearing on this example's keyboard logic -->
+  <head>
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 62: Keyboard-Activate a Custom Button</title>
+    <!-- => shown in the browser tab only; unrelated to the keyboard logic below -->
+  </head>
+  <!-- => </head> closes metadata; everything demonstrated below lives in <body> -->
+  <body>
+    <!-- =>
+      role="button" only fixes what a screen reader ANNOUNCES -- it adds zero real
+      keyboard behavior. tabindex="0" is what makes this div reachable by Tab at all.
+    -->
+    <div id="fake-button" role="button" tabindex="0">Archive</div>
+    <!-- => the fake button under test; note there is no real <button> anywhere on this page -->
+    <p id="report">not activated</p>
+    <!-- => starts as "not activated"; only the keydown handler below ever changes it -->
+    <script>
+      const el = document.getElementById("fake-button"); // => el is the fake div-as-button element
+      // => el is looked up once, by id, and reused by both listeners registered below
+      function activate() {
+        // => the ONE shared action both a real click and a keyboard activation must trigger
+        document.getElementById("report").textContent = "activated"; // => flips the visible report text
+      } // => end of activate(); both listeners below call this exact same function
+      el.addEventListener("click", activate); // => the mouse path: works even with no keydown code
+      // => a real <button> gets click-to-activate for free; a div never does
+      el.addEventListener("keydown", (event) => {
+        // => this entire handler is the manual work role="button" alone never adds
+        if (event.key === "Enter" || event.key === " ") {
+          // => Enter AND Space both activate a real <button> -- both must be handled here too
+          event.preventDefault(); // => on Space specifically, stops the page itself from scrolling
+          activate(); // => the keyboard path re-uses the identical function the click path calls
+        } // => end of the Enter/Space check -- any other key falls through and does nothing
+      }); // => end of the keydown handler
+    </script>
+    <!-- => </script> ends the only behavior on this page -->
+  </body>
+</html>

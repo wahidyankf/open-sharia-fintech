@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- => triggers standards mode so layout below computes exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => required so 90vw below tracks the real device width -->
+    <title>Example 34: Responsive Fluid Image</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => "fluid image" means the rendered size adapts continuously, not just at fixed breakpoints -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin so the vw math below is exact */
+      .frame {
+        width: 90vw;
+        max-width: 600px;
+      } /* => 90% of viewport width, but never wider than 600px */
+      /* => at a 1400px viewport, 90vw would be 1260px -- max-width caps it at 600px instead */
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      } /* => the image can never exceed its container's width */
+      /* => height: auto preserves aspect ratio as max-width shrinks the rendered width */
+      /* => display: block removes the small inline-image gap that would otherwise appear below it */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="frame">
+      <!-- => the container whose computed width the image below must never exceed -->
+      <!-- => explicit width/height attributes below reserve layout space before the image finishes loading -->
+      <!-- => width="800" height="400" set the image's INTRINSIC size -- the browser reserves that aspect ratio -->
+      <img
+        id="pic"
+        width="800"
+        height="400"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23789'/%3E%3C/svg%3E"
+        alt="Placeholder graphic"
+      />
+      <!-- => without max-width: 100%, this 800px-intrinsic image would force horizontal overflow on any narrower viewport -->
+      <!-- => verify.mjs resizes the real viewport 4 times and re-measures both frame and image width each time -->
+    </div>
+    <!-- => end of the fluid-image frame -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

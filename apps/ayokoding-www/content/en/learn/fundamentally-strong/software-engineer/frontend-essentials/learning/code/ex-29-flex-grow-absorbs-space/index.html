@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- => triggers standards mode so the pixel widths below compute exactly -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 29: flex-grow Absorbs Space</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      body {
+        margin: 0;
+      } /* => removes the default 8px body margin so the 400px math below is exact */
+      .row {
+        display: flex;
+        width: 400px;
+      } /* => a flex container fixed at exactly 400px wide */
+      /* => .row has no border or padding, so its content box is exactly 400px */
+      .fixed {
+        width: 60px;
+        height: 30px;
+        background: rgb(200, 200, 200);
+      } /* => a rigid 60px sibling that never grows */
+      /* => flex items default to flex-grow: 0, so .fixed keeps exactly its declared width */
+      .grower {
+        flex-grow: 1;
+        height: 30px;
+        background: rgb(180, 200, 240);
+      } /* => flex-grow:1 absorbs all remaining free space */
+      /* => the id="grower" child is the only one with flex-grow set, so it alone expands */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div class="row">
+      <!-- => .row's content box is 400px wide; children below split that width -->
+      <div class="fixed"></div>
+      <!-- => takes exactly its declared 60px, nothing more -->
+      <div class="grower" id="grower"></div>
+      <!-- => flex-grow:1 absorbs 400 - 60 = 340px of remaining space -->
+      <!-- => verify.mjs confirms this: grower.getBoundingClientRect().width === 340 -->
+    </div>
+    <!-- => end of the flex row -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

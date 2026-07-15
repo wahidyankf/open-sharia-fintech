@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 35: Custom Property Theming</title>
+    <!-- => sets only the browser tab title -->
+    <!-- => begins this example's scoped CSS -->
+    <style>
+      :root {
+        --brand: rgb(10, 100, 200);
+      } /* => defines --brand at the document root, a blue */
+      .dark {
+        --brand: rgb(240, 200, 60);
+      } /* => REDEFINES --brand only for descendants of .dark, a gold */
+      /* => this is a normal cascade rule -- more specific scope wins, exactly like any other property */
+      .label {
+        color: var(--brand);
+      } /* => reads whatever --brand resolves to in ITS OWN cascade scope */
+    </style>
+    <!-- => end of scoped CSS -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <p class="label" id="light">Light theme label</p>
+    <!-- => outside .dark, --brand resolves to the :root value -->
+    <div class="dark">
+      <!-- => everything inside this div sees the REDEFINED --brand -->
+      <p class="label" id="dark">Dark theme label</p>
+      <!-- => same .label rule, different resolved color -->
+      <!-- => verify.mjs reads getComputedStyle(...).color for both #light and #dark -->
+    </div>
+    <!-- => end of the dark-themed scope -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the roving-tabindex logic below -->
+  <!-- => three ArrowRight/ArrowLeft presses are exercised by verify.mjs, further down -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 64: Roving Tabindex Menu</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; the roving-tabindex menu lives entirely in <body> -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <div role="menu" id="menu">
+      <!-- => the one keydown listener below attaches HERE, not to each menuitem -->
+      <div role="menuitem" id="item-0" tabindex="0">File</div>
+      <!-- => tabindex="0": the ONLY roving stop right now -- this is the single Tab target -->
+      <div role="menuitem" id="item-1" tabindex="-1">Edit</div>
+      <!-- => tabindex="-1": focusable via .focus() in JS, but skipped entirely by real Tab -->
+      <div role="menuitem" id="item-2" tabindex="-1">View</div>
+      <!-- => tabindex="-1": same as Edit -- only ONE item may ever hold tabindex="0" -->
+    </div>
+    <!-- => </div> closes the menu; from Tab's perspective this whole group is ONE stop -->
+    <script>
+      // => everything below is the roving-tabindex implementation, about a dozen real lines
+      const items = Array.from(document.querySelectorAll('[role="menuitem"]'));
+      // => items is the ordered list of the three roving-tabindex candidates
+      let current = 0; // => current tracks the INDEX of whichever item currently holds tabindex="0"
+      // => current starts at 0 because item-0 is the only element that starts as tabindex="0"
+      document.getElementById("menu").addEventListener("keydown", (event) => {
+        // => one listener on the menu container, not one per menuitem
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+        // => Tab itself is left completely alone; only the arrow keys are handled here
+        items[current].tabIndex = -1;
+        // => demotes the OLD current item first, so only one item is ever tabindex="0"
+        current = // => recomputes which index becomes the new roving stop
+          event.key === "ArrowRight"
+            ? (current + 1) % items.length // => wraps forward past the last item back to 0
+            : (current - 1 + items.length) % items.length; // => wraps backward past 0 to the last item
+        items[current].tabIndex = 0;
+        // => promotes the NEW current item to the single tabindex="0" roving stop
+        items[current].focus();
+        // => moves REAL DOM focus in the same keypress the tabindex roved in
+      }); // => end of the roving-tabindex keydown handler
+      items[0].focus(); // => starts real focus on the one item that starts as tabindex="0"
+    </script>
+    <!-- => </script> ends the roving-tabindex implementation -->
+  </body>
+  <!-- => end of document; Tab only ever reaches ONE menuitem, whichever is current -->
+</html>

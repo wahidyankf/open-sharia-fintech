@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 19: Set textContent</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the script below runs once, synchronously, right where the parser reaches it -->
+    <p id="status">Loading&hellip;</p>
+    <!-- => the placeholder text the script below immediately replaces -->
+    <script>
+      // => this line runs synchronously, before the browser ever paints the placeholder text to the screen
+      document.getElementById("status").textContent = "Ready";
+      // => textContent replaces ALL of #status's children with one plain-text node -- no HTML parsing happens
+    </script>
+    <!-- => end of the inline script -->
+    <!-- => verify.mjs reads #status's rendered text and confirms it now says "Ready", not "Loading..." -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

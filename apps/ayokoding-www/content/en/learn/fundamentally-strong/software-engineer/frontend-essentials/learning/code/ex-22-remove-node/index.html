@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 22: Remove a Node</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => verify.mjs confirms #notice exists, calls remove(), then confirms it no longer does -->
+    <p id="notice">Dismiss me</p>
+    <!-- => present in the DOM until verify.mjs's remove() call runs -->
+    <!-- => el.remove() detaches the element from the DOM tree entirely -- not a visual hide -->
+    <!-- => contrast this with Example 16's display: none, which keeps the element in the DOM, just out of layout -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

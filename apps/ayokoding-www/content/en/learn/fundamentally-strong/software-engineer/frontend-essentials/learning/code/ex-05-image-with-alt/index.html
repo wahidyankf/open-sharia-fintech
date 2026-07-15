@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- => HTML5 doctype -->
+<html lang="en">
+  <!-- => document language -->
+  <head>
+    <!-- => metadata -->
+    <meta charset="utf-8" />
+    <!-- => byte-to-character decoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => mobile-width layout viewport -->
+    <title>Example 5: Image with Alt Text</title>
+    <!-- => tab title -->
+  </head>
+  <!-- => end of metadata -->
+  <body>
+    <!-- => the deliberately-broken image below is the whole point of this example -->
+    <h1>Team Photo</h1>
+    <!-- => page heading -->
+    <!-- => a real photo would make this example indistinguishable from any ordinary <img> -->
+    <!-- => src below points at a file that genuinely does not exist; verify.mjs waits for the real load failure, not a timer -->
+    <!-- => id is how verify.mjs's querySelector locates this exact element -->
+    <!-- => width/height reserve layout space up front, so a slow or failed load never shifts the page -->
+    <img
+      id="photo"
+      src="does-not-exist.jpg"
+      alt="Five engineers around a whiteboard sketching a system diagram"
+      width="320"
+      height="240"
+    />
+    <!-- => alt becomes the image's accessible name whether or not the pixels ever load -->
+    <!-- => verify.mjs checks naturalWidth === 0 (proves the load genuinely failed) AND that alt is still exposed -->
+    <!-- => the two checks together prove alt is real fallback content, not just a "nice to have" attribute -->
+    <!-- => contrast this with decorative images, which use alt="" precisely so screen readers skip them -->
+  </body>
+  <!-- => end of rendered content -->
+</html>
+<!-- => closes the document root -->

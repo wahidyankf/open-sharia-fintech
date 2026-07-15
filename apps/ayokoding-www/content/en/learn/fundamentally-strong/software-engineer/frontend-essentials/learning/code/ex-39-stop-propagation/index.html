@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- => triggers standards mode -->
+<html lang="en">
+  <!-- => lang="en" declares the document language for assistive tech -->
+  <head>
+    <!-- => begins document metadata, not rendered content -->
+    <meta charset="utf-8" />
+    <!-- => declares UTF-8 encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => matches viewport to device width at 1x zoom -->
+    <title>Example 39: stopPropagation</title>
+    <!-- => sets only the browser tab title -->
+  </head>
+  <!-- => end of document metadata -->
+  <body>
+    <!-- => begin visible page content -->
+    <div id="parent">
+      <!-- => has a click listener that would normally see bubbled clicks from #child -->
+      <button id="child">Click me</button>
+      <!-- => has its OWN listener that stops the bubble before it can reach #parent -->
+    </div>
+    <!-- => end of the ancestor/descendant pair -->
+    <p id="report">parent not fired</p>
+    <!-- => stays this way ONLY if stopPropagation genuinely blocked the bubble -->
+    <!-- => begins this example's JavaScript -->
+    <script>
+      // => registered on #parent, exactly like Example 36 -- but this time #child stops the bubble
+      document.getElementById("parent").addEventListener("click", () => {
+        document.getElementById("report").textContent = "parent fired (bug)";
+        // => this text would only ever appear if the click somehow still reached #parent
+      }); // => end of the parent's click listener
+      document.getElementById("child").addEventListener("click", (event) => {
+        event.stopPropagation(); // => halts this SAME event's journey up the ancestor chain, right here
+      }); // => end of the child's click listener
+      // => stopPropagation() does NOT cancel the browser's default action -- that's preventDefault (Example 38)
+      // => the two methods solve different problems and calling one never implies the other
+    </script>
+    <!-- => end of this example's JavaScript -->
+  </body>
+  <!-- => end of visible page content -->
+</html>

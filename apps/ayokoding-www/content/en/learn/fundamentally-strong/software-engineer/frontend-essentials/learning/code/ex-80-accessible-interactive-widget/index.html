@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- => same three-tag skeleton every worked example in this topic starts from -->
+<html lang="en">
+  <!-- => lang="en" is metadata only; unrelated to the disclosure-widget logic below -->
+  <!-- => this combines Examples 62, 76, and 43-47's ideas into one small, complete widget -->
+  <head>
+    <!-- => metadata resolved before anything below is ever rendered -->
+    <meta charset="utf-8" />
+    <!-- => decides how every later byte in this file decodes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- => readable mobile scale -->
+    <title>Example 80: Accessible Interactive Widget</title>
+    <!-- => shown in the browser tab only; unrelated to this example's point -->
+  </head>
+  <!-- => </head> closes metadata; this is the topic's capstone-adjacent worked example -->
+  <body>
+    <!-- => everything demonstrated below lives here -->
+    <button id="toggle" aria-expanded="false" aria-controls="panel">Show details</button>
+    <!-- => co-26: a real <button>, keyboard-operable for free -- no role or keydown code needed -->
+    <div id="panel" hidden>
+      <!-- => co-18: visibility is a pure function of state.open -- never toggled directly by hand -->
+      <p>Extra detail content revealed by the disclosure widget.</p>
+      <!-- => the content itself never changes; only whether it's shown or hidden does -->
+    </div>
+    <!-- => </div> closes the panel; aria-controls above links the button to exactly this id -->
+    <script>
+      const state = { open: false }; // => the ONE piece of state this whole widget has
+      const toggle = document.getElementById("toggle"); // => the button that reads and flips state
+      const panel = document.getElementById("panel"); // => the content whose visibility mirrors state
+      function render() {
+        // => render is the ONLY place that ever touches aria-expanded, text, or hidden
+        toggle.setAttribute("aria-expanded", String(state.open));
+        // => co-25: aria-expanded is kept in sync with state on every single render, not just once
+        toggle.textContent = state.open ? "Hide details" : "Show details";
+        // => the visible label always matches the current state too, not just the ARIA attribute
+        panel.hidden = !state.open; // => the panel's visibility is DERIVED from state, never set directly
+      } // => end of render; three things update together, always from the same state.open value
+      toggle.addEventListener("click", () => {
+        // => a real <button> fires this on a real keyboard Enter/Space too, with zero extra code
+        state.open = !state.open; // => flips the ONE state field
+        render(); // => re-derives aria-expanded, text, and visibility from the new state
+      }); // => end of the toggle handler
+    </script>
+    <!-- => </script> ends the entire widget; keyboard operability, ARIA, and rendering, all combined -->
+  </body>
+  <!-- => end of document; verify.mjs below toggles twice via keyboard and checks all three in sync -->
+  <!-- => the capstone (learning/capstone/) builds a larger component on these exact same ideas -->
+</html>
