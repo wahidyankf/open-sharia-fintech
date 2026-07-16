@@ -7,6 +7,10 @@ Active project plans currently being worked on.
 - [fundamentally-strong-software-engineer](./fundamentally-strong-software-engineer/) — new breadth-first
   relearn-and-drill tutorial section on ayokoding-www (61 topics, Pass 0 forge prologue + five-pass
   spiral, learning + drilling tracks, Python-primary). Delivery Mode: `main-to-origin-main`.
+- [web-ui-code-block-copy-button](./web-ui-code-block-copy-button/) — reusable `libs/web-ui` copy-to-clipboard
+  primitive (`CopyButton` + `CodeBlock` + `useCopyToClipboard`) wired into the code-block rendering of
+  ayokoding-www (bilingual en/id, live e2e) and ose-www (latent, unit-only), copying verbatim annotated
+  source; deploys both apps to prod. Delivery Mode: `worktree-to-pr` (AI-automerge variant).
 
 ## Instructions
 

@@ -200,6 +200,55 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
+  Scenario(
+    "Scroll the sidebar vertically when the nav tree is taller than the viewport",
+    ({ Given, When, Then, And }) => {
+      let container: HTMLElement;
+
+      Given("a docs sidebar whose nav tree is taller than the visible rail height", () => {
+        // jsdom has no real layout engine (no scrollHeight/clientHeight measurement), so exact
+        // overflow measurement is verified at E2E level; here the tree is rendered with enough
+        // nodes that it would overflow a real, fixed-height rail.
+      });
+
+      When("the reader views the sidebar", () => {
+        // Clean up any previous renders to isolate this scenario.
+        cleanup();
+        const manyNodes = Array.from({ length: 40 }, (_, i) => ({
+          slug: `topic-${i}`,
+          title: `Topic ${i}`,
+          weight: i,
+          isSection: true,
+          children: [],
+        }));
+        const result = render(
+          <ResizableSidebar locale="en">
+            <SidebarTree nodes={manyNodes} locale="en" />
+          </ResizableSidebar>,
+        );
+        container = result.container;
+      });
+
+      Then("the sidebar content area is vertically scrollable", () => {
+        // The wrapper is the immediate child of ResizablePanel's content slot — the element
+        // resizable-sidebar.tsx renders directly inside `<ResizablePanel>`, matching the "new
+        // wrapper" this scenario exercises regardless of its exact className contents.
+        const wrapper = container.querySelector('[data-slot="resizable-panel-content"] > div') as HTMLElement;
+        expect(wrapper).toBeInstanceOf(HTMLElement);
+        expect(wrapper.className).toContain("overflow-y-auto");
+        // `overflow-x-hidden` is the crux of this fix: it stops the CSS overflow spec from
+        // computing `overflow-x: auto` and duplicating sidebar-tree.tsx's horizontal scroll one
+        // level deeper. Pin it explicitly, not just `overflow-y-auto`.
+        expect(wrapper.className).toContain("overflow-x-hidden");
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Scroll the sidebar vertically when the nav tree is taller than the viewport
+      And("the horizontal scroll behavior is unaffected", () => {
+        expect(container.querySelector(".overflow-x-auto")).toBeTruthy();
+      });
+    },
+  );
+
   Scenario("Apply a preset width to the mobile nav drawer", ({ Given, When, Then }) => {
     Given("the mobile nav drawer is open at a 375 pixel viewport", () => {
       // jsdom does not evaluate @media rules, so the 375px viewport itself is not

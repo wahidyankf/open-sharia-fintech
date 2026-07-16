@@ -2,12 +2,10 @@
   "permissions": {
     "allow": [
       "Read(.claude/**)",
-      "Write(.claude/**)",
       "Edit(.claude/**)",
       "Read(.opencode/**)",
-      "Write(.opencode/**)",
       "Edit(.opencode/**)",
-      "Write(/tmp/**)",
+      "Edit(/tmp/**)",
       "Read(/tmp/**)",
       "Bash",
       "Bash(npm run sync\\:claude-to-opencode:*)",
