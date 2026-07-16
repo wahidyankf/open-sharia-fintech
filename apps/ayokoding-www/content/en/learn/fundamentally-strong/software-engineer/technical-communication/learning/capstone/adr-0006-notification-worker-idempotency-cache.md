@@ -2,7 +2,7 @@
 title: "ADR-0006: Idempotency Cache for the Notification Worker"
 date: 2026-07-16T00:00:00+07:00
 draft: false
-weight: 2
+weight: 3
 ---
 
 > File path: `services/notification-worker/docs/adr/0006-notification-worker-idempotency-cache.md`

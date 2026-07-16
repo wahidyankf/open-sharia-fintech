@@ -2,7 +2,7 @@
 title: "RFC: Preventing Duplicate Shipment Notifications"
 date: 2026-07-16T00:00:00+07:00
 draft: false
-weight: 3
+weight: 2
 ---
 
 **Status**: Accepted (2026-04-08)
