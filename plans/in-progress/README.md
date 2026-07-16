@@ -7,10 +7,6 @@ Active project plans currently being worked on.
 - [fundamentally-strong-software-engineer](./fundamentally-strong-software-engineer/) — new breadth-first
   relearn-and-drill tutorial section on ayokoding-www (61 topics, Pass 0 forge prologue + five-pass
   spiral, learning + drilling tracks, Python-primary). Delivery Mode: `main-to-origin-main`.
-- [ayokoding-resizable-docs-sidebar](./ayokoding-resizable-docs-sidebar/) — make the ayokoding-www docs
-  sidebar user-resizable (drag + keyboard, `localStorage` persistence, 15%–35% relative width band,
-  horizontal content scroll) via a new reusable `libs/web-ui` `resizable-panel` primitive; mobile drawer
-  gains preset widths. Delivery Mode: `worktree-to-pr`.
 
 ## Instructions
 

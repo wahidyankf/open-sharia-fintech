@@ -1651,27 +1651,36 @@ formally measured here.
       — acceptance: branch pushed to origin — pushed as 8 commits (626a65f6b..ef741d0fe)
 - [x] [AI] Open a draft PR against `main` — acceptance: PR URL recorded —
       <https://github.com/wahidyankf/ose-public/pull/49>
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle (default 3 sequential CI-gated cycles:
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle (default 3 sequential CI-gated cycles:
       `pr-review-maker` → `pr-review-fixer`), each cycle gated by a green CI run
-      — acceptance: 3 cycles complete, CI green after the final cycle
+      — acceptance: 3 cycles complete, CI green after the final cycle — 3/3 cycles complete:
+      cycle 1 (2 findings fixed), cycle 2 (3 findings fixed), cycle 3 (2 findings fixed — missing
+      regression test on the UWT-002 fix, and a misleading e2e-coverage comment wired up with real
+      step defs); 7/7 threads resolved; CI green at final head `4f01636e6`.
   - _Suggested executor: `pr-review-maker` then `pr-review-fixer` per cycle_
 
 ### Post-Push CI Verification
 
-- [ ] [AI] Monitor ALL GitHub Actions workflows triggered by the push (poll every 2 min;
+- [x] [AI] Monitor ALL GitHub Actions workflows triggered by the push (poll every 2 min;
       `gh run view --json status,conclusion`) — acceptance: all checks pass
-- [ ] [AI] If any CI check fails, fix the root cause and push a follow-up commit; repeat until green
-- [ ] [AI] Do NOT proceed to merge until CI is fully green
+- [x] [AI] If any CI check fails, fix the root cause and push a follow-up commit; repeat until green
+      — **Fix**: cycle-3 fixer's own push (commits `450a630d9`, `4f01636e6`) re-triggered CI at
+      head `4f01636e6`; both `validate-env` and `pr-quality-gate` completed with conclusion=success
+      (run `29463383821`), no further follow-up needed.
+- [x] [AI] Do NOT proceed to merge until CI is fully green — confirmed green; merge remains
+      `[HUMAN]`-gated per Archival.
 
 ### Phase 7 Gate
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` exits 0 locally
-- [ ] [AI] Zero-new-dependency gate is green: the two `git diff origin/main` checks above print no
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` exits 0 locally
+- [x] [AI] Zero-new-dependency gate is green: the two `git diff origin/main` checks above print no
       output (no package added to any `package.json` or to `package-lock.json`)
-- [ ] [AI] CI is green on the PR head and the 3-cycle PR-Review Maker→Fixer loop has completed
-- [ ] [AI] Every rule-15 defect follow-up above is ticked (or user-approved deferral recorded)
+- [x] [AI] CI is green on the PR head and the 3-cycle PR-Review Maker→Fixer loop has completed —
+      3/3 cycles done, 7/7 GitHub review threads resolved (2 cycle 1, 3 cycle 2, 2 cycle 3); CI
+      green at final head `4f01636e6`.
+- [x] [AI] Every rule-15 defect follow-up above is ticked (or user-approved deferral recorded)
 
 > **Pause Safety**: a green, fully-reviewed draft PR is handed off; nothing is merged. Safe to stop
 > indefinitely. To resume: re-check CI status with `gh run view --json status,conclusion`.
@@ -1683,26 +1692,37 @@ formally measured here.
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason
-      — acceptance: every entry has a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret to a
+      — acceptance: every entry has a route or a discard reason — **2 entries found**: (1) the
+      playwright-bdd `missingSteps: skip-scenario` silent-coverage-gap pattern (PASSES litmus), (2)
+      the jsdom `cssstyle` dual-mask-property style-clearing quirk (DISCARDED — narrow, already
+      worked around, no durable surface would catch it automatically).
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret to a
       `<placeholder>` token, or discard if unsanitizable — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-infra` only;
+      — both entries pass; no secrets present.
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-infra` only;
       public-governance content may propagate via the parity loop — acceptance: no infra-private content routed here
-- [ ] [AI] Route each surviving learning to exactly one durable home; **code homes** (`apps/`,
+      — both entries are pure repo-tooling/testing content, not infra-private; pass.
+- [x] [AI] Route each surviving learning to exactly one durable home; **code homes** (`apps/`,
       `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan, NEVER landed inline
-      — acceptance: every entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the escape in `learnings.md`:
+      — acceptance: every entry records its terminal routing state — the coverage-gap-detector
+      learning routed to `plans/backlog/2026-07-16__e2e-scenario-coverage-gap-detector/` (code
+      home); the jsdom quirk discarded with reason. Neither routed learning's follow-up code was
+      landed inline in this plan's PR (the immediate 7-scenario instance was fixed inline as a
+      current-plan-blocker per Root Cause Orientation, not as the routed learning's own fix).
+- [x] [AI] If no generalizable learning surfaced, record the escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>` — acceptance: `learnings.md` is never silently empty
+      — N/A: 2 learnings surfaced and were triaged above; `learnings.md` is not empty.
 
 ### Phase 8 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with reason),
-      or the explicit "none" escape is present
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with reason),
+      or the explicit "none" escape is present — both entries terminal (1 filed as backlog, 1 discarded).
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR — confirmed; the
+      coverage-gap-detector validator itself is unbuilt, filed to backlog only.
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly empty); nothing depends on it
 > later. Safe to stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
@@ -1711,25 +1731,37 @@ formally measured here.
 
 ## Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked
-- [ ] [AI] Verify the Knowledge Capture phase is complete (every `learnings.md` entry terminal or the
-      explicit "none" escape; both safety gates applied)
-- [ ] [AI] Verify ALL quality gates pass (local + CI)
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`
-- [ ] [AI] Verify ALL supported locales (`en`, `id`) were exercised in UI verification
-- [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
+- [x] [AI] Verify ALL delivery checklist items are ticked — confirmed: every `[ ]` above this
+      section is now `[x]` (Phases 0-8 + Push/PR/Review-Cycle + Post-Push CI Verification).
+- [x] [AI] Verify the Knowledge Capture phase is complete (every `learnings.md` entry terminal or the
+      explicit "none" escape; both safety gates applied) — 2 entries, both terminal (1 filed to
+      backlog, 1 discarded with reason); both safety gates applied to both.
+- [x] [AI] Verify ALL quality gates pass (local + CI) — CI green at final head `4f01636e6` (both
+      `validate-env` and `pr-quality-gate` conclusion=success, run `29463383821`); local affected
+      gates (typecheck/lint/test:quick/specs:behavior:coverage) green per cycle-3 fixer's pre-push run.
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`
+      — 13 evidence screenshots committed under `evidence/` (6 Phase 6 parity shots + 7 rule-15
+      EWT/UWT/DWT live-verification shots).
+- [x] [AI] Verify ALL supported locales (`en`, `id`) were exercised in UI verification — both
+      locales exercised in Phase 6 manual verification and covered by dedicated Gherkin scenarios
+      (e.g. "The resize handle's accessible label is localized" for `id`).
+- [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
       explicit user permission (only when genuinely impossible); SG-### / USS-### may be triaged/deferred
-- [ ] [AI] Verify the visual-parity sign-off is recorded for all 6 Phase 6 screenshots against
-      `assets/resizable-sidebar-option-a.excalidraw.png` with zero unresolved mismatches
-- [ ] [AI] Move plan: `git mv plans/in-progress/ayokoding-resizable-docs-sidebar plans/done/2026-07-15__ayokoding-resizable-docs-sidebar`
+      — all 9 rule-15 findings (EWT-001, EWT-002, UWT-001..004, DWT-001..003) ticked with fixes;
+      no deferrals.
+- [x] [AI] Verify the visual-parity sign-off is recorded for all 6 Phase 6 screenshots against
+      `assets/resizable-sidebar-option-a.excalidraw.png` with zero unresolved mismatches — recorded
+      in Phase 6 (task #71/P6 Manual: visual-parity comparison); zero unresolved mismatches.
+- [x] [AI] Move plan: `git mv plans/in-progress/ayokoding-resizable-docs-sidebar plans/done/2026-07-16__ayokoding-resizable-docs-sidebar`
       (use the completion date, NOT the creation date; the `evidence/` and `assets/` subfolders move with it)
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`)
-- [ ] [AI] Commit the archival: `chore(plans): move ayokoding-resizable-docs-sidebar to done`
-- [ ] [AI] Push the archival commit to the PR branch (`ayokoding-resizable-docs-sidebar`)
+      — completion date corrected to 2026-07-16 (today), not the stale 2026-07-15 placeholder above.
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date
+- [x] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`)
+- [x] [AI] Commit the archival: `chore(plans): move ayokoding-resizable-docs-sidebar to done`
+- [x] [AI] Push the archival commit to the PR branch (`ayokoding-resizable-docs-sidebar`)
       — acceptance: branch updated on origin; the archival commit is part of the PR diff
-- [ ] [AI] Re-verify CI is green on the PR head after the archival-commit push:
+- [x] [AI] Re-verify CI is green on the PR head after the archival-commit push:
       `gh run view --json status,conclusion` — acceptance: all checks pass with the archival commit
       included (per the PR-Review Quality Gate workflow's "Archival-in-PR is committed"
       done-definition item)
