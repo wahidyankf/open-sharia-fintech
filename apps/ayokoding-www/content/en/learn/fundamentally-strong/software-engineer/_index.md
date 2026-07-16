@@ -69,3 +69,6 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software/overview)
 - [Inter-Topic Capstone · Full-Stack App](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app)
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app/overview)
+- [18 · Technical Communication](/en/c/learn/fundamentally-strong/software-engineer/technical-communication)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/drilling)

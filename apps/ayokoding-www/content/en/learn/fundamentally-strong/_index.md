@@ -27,3 +27,4 @@ weight: 107
   - [17 · Security Essentials](/en/c/learn/fundamentally-strong/software-engineer/security-essentials)
   - [Pass 1 Capstone · First Working Software](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software)
   - [Inter-Topic Capstone · Full-Stack App](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app)
+  - [18 · Technical Communication](/en/c/learn/fundamentally-strong/software-engineer/technical-communication)

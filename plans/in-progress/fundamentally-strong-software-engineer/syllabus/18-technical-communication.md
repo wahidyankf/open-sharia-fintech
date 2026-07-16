@@ -40,6 +40,16 @@ reader-review pass rather than a compiler.
 - 2026-07-12 — verified (GAP for plan owner): this is a no-code topic, so the "runnable" acceptance bar
   is reframed as a reader-review/comprehension pass — there is nothing to execute, and the shipped text
   reflects that.
+- 2026-07-16 — re-verified, no changes since 2026-07-12: RFC 2119 (rfc-editor.org/rfc/rfc2119, S.
+  Bradner, March 1997, BCP 14) remains unsuperseded and is only "Updated by" RFC 8174
+  (rfc-editor.org/rfc/rfc8174, May 2017), which still confirms the ALL-CAPS-only special meaning for
+  MUST/SHOULD/MAY — no obsoletion for either. Michael Nygard's ADR post
+  (cognitect.com/blog/2011/11/15/documenting-architecture-decisions) is still live and still cited by
+  adr.github.io as the origin of the context/decision/status/consequences format, with no competing
+  standard supplanting it as the default. c4model.com is still live, still authored by Simon Brown, and
+  still describes the same four levels (System Context, Container, Component, Code) as
+  "notation independent" and "tooling independent," with no breaking version change. All three claims:
+  still current.
 
 ## Concepts
 
