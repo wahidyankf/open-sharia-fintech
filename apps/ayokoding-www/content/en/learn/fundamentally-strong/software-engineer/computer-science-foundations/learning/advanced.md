@@ -873,7 +873,8 @@ def build_tree(text: str) -> HuffmanTree:  # => co-27: the classic greedy Huffma
     """Build a Huffman tree from text's character frequencies: repeatedly merge the two rarest nodes."""  # => co-27: documents build_tree's contract -- no runtime output, just sets its __doc__
     counts = Counter(text)  # => co-27: how often each character appears -- rarer characters get LONGER codes
     heap: list[tuple[int, int, HuffmanTree]] = [  # => co-27: (frequency, tie-breaker, node) -- heapq needs a total order
-        (freq, i, char) for i, (char, freq) in enumerate(counts.items())  # => co-27: one leaf per distinct character
+        (freq, i, char)
+        for i, (char, freq) in enumerate(counts.items())  # => co-27: one leaf per distinct character
     ]  # => co-27: closes the multi-line construct opened above
     heapq.heapify(heap)  # => co-27: O(n) heap construction from the initial leaf list
     next_id = len(heap)  # => co-27: unique tie-breaker ids for freshly merged internal nodes

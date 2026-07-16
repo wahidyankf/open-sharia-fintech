@@ -625,7 +625,8 @@ if __name__ == "__main__":  # => co-16: entry point -- this block runs only when
         print(f"{level.name:<12} ~{level.approx_nanoseconds:>12,.1f} ns")  # => co-16: comma-grouped for readability
     latencies = [level.approx_nanoseconds for level in HIERARCHY]  # => co-16: extracted for the ordering check
     is_strictly_increasing = all(  # => co-16: every level must be slower than the one before it
-        latencies[i] < latencies[i + 1] for i in range(len(latencies) - 1)  # => co-16: adjacent-pair comparison
+        latencies[i] < latencies[i + 1]
+        for i in range(len(latencies) - 1)  # => co-16: adjacent-pair comparison
     )  # => co-16: closes the multi-line construct opened above
     print(f"strictly increasing latency, register -> disk: {is_strictly_increasing}")  # => co-16
     assert is_strictly_increasing, "each hierarchy level must be strictly slower than the previous one"  # => co-16
@@ -1068,8 +1069,10 @@ if __name__ == "__main__":  # => co-18: entry point -- this block runs only when
         states=frozenset({"S0", "S1"}),  # => co-18: S0 = "last symbol was 0 or start", S1 = "last symbol was 1"
         alphabet=frozenset({"0", "1"}),  # => co-18: Σ
         transitions={  # => co-18: δ -- the full transition table for this machine
-            ("S0", "0"): "S0", ("S0", "1"): "S1",  # => co-18: from S0: "0" stays, "1" moves to S1
-            ("S1", "0"): "S0", ("S1", "1"): "S1",  # => co-18: from S1: "0" moves to S0, "1" stays
+            ("S0", "0"): "S0",  # => co-18: from S0, "0" stays at S0 -- last symbol still not "1"
+            ("S0", "1"): "S1",  # => co-18: from S0, "1" moves to S1 -- last symbol is now "1"
+            ("S1", "0"): "S0",  # => co-18: from S1, "0" moves back to S0 -- last symbol is now "0"
+            ("S1", "1"): "S1",  # => co-18: from S1, "1" stays at S1 -- last symbol still "1"
         },  # => co-18: closes the multi-line construct opened above
         start="S0",  # => co-18: q0
         accept=frozenset({"S1"}),  # => co-18: F -- accept iff the string's last symbol was "1"
@@ -1246,7 +1249,8 @@ DFA_TRANSITIONS: dict[tuple[str, str], str] = {  # => co-19: δ for the hand-bui
     ("MID", "b"): "S",  # => co-19: MID sees "b" -> completes a pair, back to accepting S
     ("S", "b"): "DEAD",  # => co-19: S seeing "b" first is never valid in (ab)* -- trap state
     ("MID", "a"): "DEAD",  # => co-19: MID seeing "a" again (two a's in a row) is never valid -- trap state
-    ("DEAD", "a"): "DEAD", ("DEAD", "b"): "DEAD",  # => co-19: DEAD is a sink -- no escape once trapped
+    ("DEAD", "a"): "DEAD",
+    ("DEAD", "b"): "DEAD",  # => co-19: DEAD is a sink -- no escape once trapped
 }  # => co-19: closes the multi-line construct opened above
 DFA_ACCEPT = {"S"}  # => co-19: only S accepts -- exactly "an even, complete number of ab pairs so far"
 
@@ -1407,8 +1411,16 @@ def is_balanced(s: str) -> bool:  # => co-20: accepted iff the WHOLE string is c
 
 if __name__ == "__main__":  # => co-20: entry point -- this block runs only when the file executes directly, not on import
     test_cases = {  # => co-20: string -> hand-verified balanced/unbalanced expectation
-        "": True, "()": True, "(())": True, "()()": True, "(()())": True,  # => co-20: valid derivations of S
-        "(": False, ")": False, "(()": False, "())": False, ")(":  False,  # => co-20: no valid S derivation
+        "": True,  # => co-20: the empty string -- S -> ε, the base case
+        "()": True,  # => co-20: one S -> "(" S ")" S step, both inner S's empty
+        "(())": True,  # => co-20: nested pair, both levels a valid S
+        "()()": True,  # => co-20: two sibling pairs, S's trailing S production
+        "(()())": True,  # => co-20: valid derivations of S
+        "(": False,  # => co-20: an open with no matching close -- no S derivation
+        ")": False,  # => co-20: a close with no preceding open -- no S derivation
+        "(()": False,  # => co-20: inner pair closes but the outer open never does
+        "())": False,  # => co-20: a close with nothing left open to match
+        ")(": False,  # => co-20: no valid S derivation
     }  # => co-20: closes the multi-line construct opened above
     for s, expected in test_cases.items():  # => co-20: run every case through the recursive-descent parser
         actual = is_balanced(s)  # => co-20: the CFG-derived parser's own verdict
@@ -1481,8 +1493,15 @@ def run_pda(s: str) -> bool:  # => co-20: a PDA -- exactly an FA plus one stack,
 
 if __name__ == "__main__":  # => co-20: entry point -- this block runs only when the file executes directly, not on import
     test_cases = {  # => co-20: string -> hand-verified a^n b^n membership
-        "": True, "ab": True, "aabb": True, "aaabbb": True,  # => co-20: n=0,1,2,3 -- all valid a^n b^n
-        "a": False, "b": False, "aab": False, "abb": False, "ba": False,  # => co-20: unequal counts or wrong order
+        "": True,  # => co-20: n=0 -- the empty string is trivially a^0 b^0
+        "ab": True,  # => co-20: n=1 -- one push, one matching pop, stack ends empty
+        "aabb": True,  # => co-20: n=2 -- two pushes, two matching pops
+        "aaabbb": True,  # => co-20: n=0,1,2,3 -- all valid a^n b^n
+        "a": False,  # => co-20: pushes but never pops -- stack non-empty at the end
+        "b": False,  # => co-20: pops with nothing pushed -- immediate stack underflow
+        "aab": False,  # => co-20: two pushes, only one pop -- stack non-empty at the end
+        "abb": False,  # => co-20: one push, second "b" hits an empty stack -- underflow
+        "ba": False,  # => co-20: unequal counts or wrong order
     }  # => co-20: closes the multi-line construct opened above
     for s, expected in test_cases.items():  # => co-20: run every case through the PDA simulator
         actual = run_pda(s)  # => co-20: the PDA's own accept/reject verdict

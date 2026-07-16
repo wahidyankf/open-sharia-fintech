@@ -196,9 +196,12 @@ from dataclasses import dataclass  # => co-19: stdlib-only import backing this e
 #   S1 = "last symbol read was a 0" (a potential start of '01')
 #   S2 = "last two symbols read were exactly '0' then '1'" (ACCEPTING -- ends in "01" right now)
 TRANSITIONS: dict[tuple[str, str], str] = {  # => co-18: δ -- the full transition table for this DFA
-    ("S0", "0"): "S1", ("S0", "1"): "S0",  # => co-18: from S0: a "0" moves toward acceptance, a "1" stays put
-    ("S1", "0"): "S1", ("S1", "1"): "S2",  # => co-18: from S1: another "0" stays (still "just saw a 0"), "1" completes "01"
-    ("S2", "0"): "S1", ("S2", "1"): "S0",  # => co-18: from S2: a NEW "0" restarts the watch, a "1" breaks the ending
+    ("S0", "0"): "S1",  # => co-18: from S0, a "0" moves toward acceptance (potential start of "01")
+    ("S0", "1"): "S0",  # => co-18: from S0, a "1" stays put -- can't start "01" with a "1"
+    ("S1", "0"): "S1",  # => co-18: from S1, another "0" stays (still "just saw a 0")
+    ("S1", "1"): "S2",  # => co-18: from S1, "1" completes "01" -- move to the accepting state
+    ("S2", "0"): "S1",  # => co-18: from S2, a NEW "0" restarts the watch for another "01"
+    ("S2", "1"): "S0",  # => co-18: from S2, "1" breaks the ending -- back to "not watching"
 }  # => co-18: closes the multi-line construct opened above
 ACCEPT = {"S2"}  # => co-18: F -- accepting iff the walk currently ends in S2 ("...01" just seen)
 REGEX = re.compile(r".*01$")  # => co-19: the SAME language, expressed as a regex -- Kleene's theorem says these must agree
@@ -370,8 +373,10 @@ if __name__ == "__main__":  # => co-16: entry point -- this block runs only when
     ratio = best_col / best_row  # => co-16: how much slower column-major was, as a multiple
     print(f"\nrow-major best of {TRIALS}: {best_row:.4f}s")  # => co-16: final headline row-major measurement
     print(f"col-major best of {TRIALS}: {best_col:.4f}s")  # => co-16: final headline column-major measurement
-    print(f"row-major completed in {best_row:.4f}s vs column-major {best_col:.4f}s, "  # => co-16: the capstone claim
-          f"row-major faster by {ratio:.2f}x")  # => co-16: phrased with the ACTUAL measured numbers, not fabricated ones
+    print(
+        f"row-major completed in {best_row:.4f}s vs column-major {best_col:.4f}s, "  # => co-16: the capstone claim
+        f"row-major faster by {ratio:.2f}x"
+    )  # => co-16: phrased with the ACTUAL measured numbers, not fabricated ones
     assert best_row < best_col, "row-major (sequential access) must be measurably faster than column-major"  # => co-16
     print(f"\nRow-major is measurably faster than column-major: True")  # => co-16: reached only if the timing assert held
     print(  # => co-16: ties the measurement back to the theory -- WHY row-major wins
