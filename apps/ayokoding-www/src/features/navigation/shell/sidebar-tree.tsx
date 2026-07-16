@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { TreeNode } from "@/features/content/core/types";
 import { contentUrl } from "@/features/content/core/content-url";
@@ -16,12 +16,67 @@ interface SidebarTreeProps {
 }
 
 export function SidebarTree({ nodes, locale, depth = 0 }: SidebarTreeProps) {
-  return (
-    <ul className={cn("space-y-0.5", depth > 0 && "ml-3 border-l border-border pl-2")}>
+  const list = (
+    <ul className={cn("min-w-max space-y-0.5", depth > 0 && "ml-3 border-l border-border pl-2")}>
       {nodes.map((node) => (
         <SidebarNode key={node.slug} node={node} locale={locale} depth={depth} />
       ))}
     </ul>
+  );
+
+  // Only the root-level tree owns the horizontal scroll container — wrapping every
+  // recursive nested call too would nest scroll regions inside scroll regions.
+  if (depth > 0) {
+    return list;
+  }
+
+  return <ScrollableTree>{list}</ScrollableTree>;
+}
+
+/**
+ * Wraps the root nav tree in a horizontally-scrollable container and fades its
+ * trailing edge only while content actually overflows — tracked live so the
+ * cue appears/disappears as the reader resizes the sidebar, rather than a
+ * silent clip with no signal that a label continues off-screen (see UWT-002 in
+ * this plan's rule-15 retest).
+ */
+function ScrollableTree({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) {
+      return;
+    }
+
+    const checkOverflow = () => setIsOverflowing(el.scrollWidth > el.clientWidth);
+    checkOverflow();
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [children]);
+
+  return (
+    <div
+      ref={containerRef}
+      data-overflowing={isOverflowing || undefined}
+      className="overflow-x-auto"
+      style={
+        isOverflowing
+          ? {
+              maskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
+              WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
+            }
+          : undefined
+      }
+    >
+      {children}
+    </div>
   );
 }
 
@@ -40,7 +95,7 @@ function SidebarNode({ node, locale, depth }: { node: TreeNode; locale: string; 
         <Link
           href={href}
           className={cn(
-            "flex-1 truncate rounded-md px-2 py-1.5 text-sm transition-colors",
+            "flex-1 rounded-md px-2 py-1.5 text-sm whitespace-nowrap transition-colors",
             isActive
               ? "bg-primary/10 font-medium text-primary"
               : "text-muted-foreground hover:bg-accent hover:text-foreground",
@@ -51,7 +106,7 @@ function SidebarNode({ node, locale, depth }: { node: TreeNode; locale: string; 
         {hasChildren && (
           <button
             onClick={() => setExpanded(!expanded)}
-            className="p-1 text-muted-foreground hover:text-foreground"
+            className="sticky right-0 shrink-0 bg-background p-1 text-muted-foreground hover:text-foreground"
             aria-label={expanded ? "Collapse section" : "Expand section"}
           >
             <ChevronRight className={cn("h-4 w-4 transition-transform", expanded && "rotate-90")} />

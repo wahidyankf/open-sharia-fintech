@@ -182,10 +182,39 @@ implementation.
 
 ### R7 prior-art citation
 
-Delegate a `web-researcher` survey (Phase 1 delivery step) of how comparable docs sites solve a
-resizable side rail (e.g. VS Code side bar, Docusaurus/Nextra sidebars, `react-resizable-panels`
-handle semantics) to inform the divergent alternatives, returning `[Verified]`/`[Needs Verification]`
-cited findings. _Prior-art specifics: [Unverified] until the Phase 1 research step runs._
+**Prior-art findings** (Phase 1 `web-researcher` survey, 2026-07-15):
+
+- **VS Code Side Bar** — drag resize uses VS Code's internal "sash" widget, and layout (including
+  sizes) persists across sessions per official docs (`[Verified]`,
+  [code.visualstudio.com/docs/configure/custom-layout](https://code.visualstudio.com/docs/configure/custom-layout)).
+  Keyboard resize exists for the primary Side Bar via `workbench.action.increaseViewSize`/
+  `decreaseViewSize` but ships with **no default keybinding** (`[Needs Verification]`,
+  community-sourced); the newer secondary/auxiliary sidebar has no keyboard-resize path at all — a
+  2026 feature request for it was closed "not planned" (`[Verified]`,
+  [microsoft/vscode#300121](https://github.com/microsoft/vscode/issues/300121)). This plan's
+  default-functional keyboard handle improves on VS Code's own inconsistent story.
+- **Docusaurus and Nextra** — **neither ships a resizable sidebar** (`[Verified]`, negative
+  finding). Docusaurus exposes only a static `--doc-sidebar-width` CSS variable (default 300px) and
+  has an open, unshipped feature request
+  ([docusaurus.io/feature-requests/p/make-sidebar-width-resizable-in-gui](https://docusaurus.io/feature-requests/p/make-sidebar-width-resizable-in-gui));
+  community guidance in
+  [facebook/docusaurus#9676](https://github.com/facebook/docusaurus/discussions/9676) recommends a
+  fully custom drag-divider implementation. Nextra's official Layout docs
+  ([nextra.site/docs/docs-theme/built-ins/layout](https://nextra.site/docs/docs-theme/built-ins/layout))
+  document only collapse-level and visibility props, no width control. This confirms building
+  `resizable-panel` as a first-class `libs/web-ui` primitive fills a real gap neither framework
+  covers.
+- **`react-resizable-panels`** — its handle (`PanelResizeHandle`, renamed `Separator` in v4.0.0)
+  renders `role="separator"` plus `aria-orientation`, `aria-valuemin`/`aria-valuemax`/
+  `aria-valuenow`, `aria-controls`, `aria-disabled`, and `tabIndex=0` (`[Verified]`, inspected
+  directly in the shipped v4.12.2 bundle and
+  [CHANGELOG.md](https://raw.githubusercontent.com/bvaughn/react-resizable-panels/main/CHANGELOG.md)/
+  [README.md](https://raw.githubusercontent.com/bvaughn/react-resizable-panels/main/README.md)).
+  Keyboard step is a fixed **±5** per arrow-key press on the matching axis (orthogonal-axis arrows
+  are no-ops), with `Home`/`End` snapping to the min/max bound (`[Verified]`, read from
+  [dist/react-resizable-panels.js](https://unpkg.com/react-resizable-panels@latest/dist/react-resizable-panels.js)).
+  This confirms this plan's `role="separator"` + `aria-valuenow` + arrow-key-step design matches the
+  closest external prior art's accessible contract.
 
 **Sequencing note**: the three alternatives below and the Select/Justify decision were already
 directed by the user's own explicit choices during pre-write grilling (edge-handle drag + keyboard,

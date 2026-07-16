@@ -4,7 +4,9 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-_(no backlog plans)_
+- [2026-07-16\_\_e2e-scenario-coverage-gap-detector](./2026-07-16__e2e-scenario-coverage-gap-detector/README.md) —
+  detect Gherkin scenarios that silently lose E2E coverage under `playwright-bdd`'s
+  `missingSteps: skip-scenario` config
 
 ## Instructions
 

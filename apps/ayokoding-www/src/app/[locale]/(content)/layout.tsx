@@ -1,4 +1,6 @@
+import { ResizableSidebar } from "@/features/navigation/shell/resizable-sidebar";
 import { Sidebar } from "@/features/navigation/shell/sidebar";
+import type { Locale } from "@/features/i18n/core/config";
 
 interface Props {
   children: React.ReactNode;
@@ -10,11 +12,9 @@ export default async function ContentLayout({ children, params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-screen-2xl">
-      <aside className="hidden w-[250px] shrink-0 border-r border-border md:block">
-        <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto p-4">
-          <Sidebar locale={locale} />
-        </div>
-      </aside>
+      <ResizableSidebar locale={locale as Locale}>
+        <Sidebar locale={locale} />
+      </ResizableSidebar>
       <div className="flex min-w-0 flex-1">{children}</div>
     </div>
   );
