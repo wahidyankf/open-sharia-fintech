@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- Example 30: a real DOM-based XSS sink -- innerHTML assigned directly from location.hash (co-06). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ex-30 vulnerable</title>
+  </head>
+  <body>
+    <div id="content">no hash yet</div>
+    <script>
+      // seeded bug: whatever follows "#" in the URL is decoded then handed straight
+      // to innerHTML -- the browser's HTML PARSER runs over it, not a text renderer
+      var raw = location.hash.slice(1);
+      document.getElementById("content").innerHTML = decodeURIComponent(raw);
+    </script>
+  </body>
+</html>

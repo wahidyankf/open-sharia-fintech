@@ -1,0 +1,13 @@
+{# co-06: rendered through Jinja2Templates, whose default loader enables autoescape() for .html files -- every template
+expression below is HTML-escaped automatically. #}
+<!doctype html>
+<html>
+  <head>
+    <title>Task {{ task.id }}</title>
+  </head>
+  <body>
+    <h1>{{ task.title }}</h1>
+    <p>{{ task.description }}</p>
+    <p>Status: {{ task.status }}</p>
+  </body>
+</html>

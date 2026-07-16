@@ -43,8 +43,49 @@ This topic closes Pass 1 and anchors two inter-topic capstones.
   (owasp.org Top10/2025)
 - 2026-07-12 — verified: Argon2id min-tier params `m=19456 (19 MiB), t=2, p=1`; bcrypt work factor min 10
   (as high as perf allows), hard 72-byte input limit. `pip-audit` **2.10.1** (latest; reads requirements/
-  pyproject/venv against PyPA Advisory DB + OSV, needs Python ≥3.10). Parameterized-query guidance
-  unchanged. (cheatsheetseries.owasp.org / pypi.org)
+  pyproject/venv against the PyPA Advisory DB by default, OSV available as an alternate `-s osv` source,
+  needs Python ≥3.10). Parameterized-query guidance unchanged. (cheatsheetseries.owasp.org / pypi.org)
+- 2026-07-15 — re-verified (independent second pass, no corrections needed to either prior bullet):
+  OWASP Top 10:2025 ordering/names confirmed unchanged against owasp.org/Top10/2025/. Pinned versions to
+  author this topic's examples against, confirmed current on PyPI today: **argon2-cffi 25.1.0**,
+  **bcrypt 5.0.0**, **PyJWT 2.13.0**, **pip-audit 2.10.1**, **detect-secrets 1.5.0** (no new PyPI release
+  since 2024-05-06 — flagged stale-but-still-maintained upstream, not abandoned; author against 1.5.0 and
+  note the freshness caveat rather than treating the version as evergreen), **cyclonedx-bom 7.3.0**
+  (installs the `cyclonedx-py` CLI command — the separate `cyclonedx-py` PyPI package is a thin pointer
+  package, do not install it directly), **Flask 3.1.3** (bundles Jinja2 3.1.6, Werkzeug 3.1.8, MarkupSafe
+  3.0.3, itsdangerous 2.2.0), **pydantic 2.13.4**, **flask-limiter 4.1.1**, **fakeredis 2.36.2** (in-memory
+  Redis stand-in, keeps the distributed-rate-limit example self-contained with no external service).
+  **PyJWT CVE-2026-32597** (CVSS 7.5, HIGH — `crit` header parameter, RFC 7515 §4.1.11, not validated):
+  affects PyJWT ≤2.11.0, fixed in 2.12.0; current 2.13.0 is unaffected — pin PyJWT to `>=2.12.0`, author
+  against 2.13.0, and use the CVE itself as a one-line "why pin exact versions" aside in the JWT examples.
+  No other CVEs found against the pinned versions above. (owasp.org/Top10/2025 · pypi.org ·
+  github.com/advisories/GHSA-752w-5fwx-jx9f · nvd.nist.gov/vuln/detail/CVE-2026-32597 ·
+  pyjwt.readthedocs.io · developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS ·
+  flask.palletsprojects.com/en/stable/web-security/)
+- 2026-07-16 — re-verified for Phase 19 (`capstone-first-working-software`, the Pass-1 inter-topic
+  capstone anchored in this file's "Capstone spec" section below): every version this capstone's Python
+  stack reuses is current and CVE-clean today. **FastAPI 0.139.0** (2026-07-01), **uvicorn 0.51.0**
+  (2026-07-08, `[standard]` extras), **pydantic 2.13.4** (2026-05-06), **argon2-cffi 25.1.0**
+  (2025-06-03, no known CVEs), **pytest 9.1.1** (2026-06-19), **Hypothesis 6.156.6** (2026-07-10, no
+  known CVEs), **pip-audit 2.10.1** (2026-06-10), **coverage.py 7.15.2** (topic 15 co-21, verified via
+  `pip index versions coverage` against PyPI directly at authoring time, no known CVEs) — all confirmed
+  current on PyPI, no regressions since the 2026-07-15 sweep above. **New finding**: Starlette's `TestClient` (imported by FastAPI's own
+  testing docs) now tries `import httpx2 as httpx` first, falling back to plain `httpx` with a
+  `StarletteDeprecationWarning` — confirmed by fetching Starlette's `testclient.py` source directly.
+  `httpx2` **2.7.0** (2026-07-14) is a genuine PyPI package, drop-in-API-compatible with `httpx`, now
+  maintained by Pydantic Services Inc. as `httpx`'s de facto successor (upstream `httpx` has not
+  released since 0.28.1, 2024-12-06). FastAPI's own published testing docs have not yet been updated to
+  mention `httpx2` (still say `pip install httpx`) — this repo's own `security-essentials` capstone
+  already pinned `httpx2==2.7.0` for the same reason (2026-07-15 entry above); this capstone's
+  `requirements.txt` does the same for consistency. Python: **3.13.12** (the exact interpreter used for
+  every real run captured on this capstone's page — CPython's own downloads page lists 3.14.6 as the
+  newest stable line and 3.13.x as the actively-patched N-1 line as of today; 3.13 remains a fully
+  supported, CVE-clean choice, matching the interpreter this whole Pass-1 track's other capstone already
+  ran against). (pypi.org/project/fastapi · pypi.org/project/uvicorn · pypi.org/project/pydantic ·
+  pypi.org/project/argon2-cffi · pypi.org/project/pytest · pypi.org/project/hypothesis ·
+  pypi.org/project/pip-audit · pypi.org/project/httpx2 ·
+  raw.githubusercontent.com/encode/starlette/master/starlette/testclient.py ·
+  fastapi.tiangolo.com/tutorial/testing/ · python.org/downloads)
 
 ## Concepts
 
