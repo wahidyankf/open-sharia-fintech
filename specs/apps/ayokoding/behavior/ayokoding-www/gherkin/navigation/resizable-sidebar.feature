@@ -27,6 +27,13 @@ Feature: Resizable Docs Sidebar
     Then the sidebar content area is horizontally scrollable
     And the label is not clipped or wrapped
 
+  @unit
+  Scenario: Overflowing nav labels signal that more content is scrollable
+    Given the docs sidebar is narrowed enough that a nav label's text exceeds the visible rail width
+    When the reader views the sidebar without scrolling it
+    Then a visible cue indicates the label continues off-screen
+    And the item's expand-or-collapse chevron remains visible
+
   @unit @e2e
   Scenario: Apply a preset width to the mobile nav drawer
     Given the mobile nav drawer is open at a 375 pixel viewport

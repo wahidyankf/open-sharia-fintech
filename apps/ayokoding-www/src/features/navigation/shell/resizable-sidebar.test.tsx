@@ -142,6 +142,64 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
+  Scenario("Overflowing nav labels signal that more content is scrollable", ({ Given, When, Then, And }) => {
+    const longLabel = "A very long navigation label that overflows a narrow docs sidebar rail";
+    let container: HTMLElement;
+    let scrollWidthSpy: ReturnType<typeof vi.spyOn>;
+    let clientWidthSpy: ReturnType<typeof vi.spyOn>;
+
+    Given("the docs sidebar is narrowed enough that a nav label's text exceeds the visible rail width", () => {
+      // jsdom has no real layout engine (no scrollWidth/clientWidth measurement), so the overflow
+      // condition ScrollableTree derives from those two properties is forced directly here — unlike
+      // the "Scroll the sidebar horizontally..." scenario above (which only asserts static classes),
+      // this scenario needs the derived isOverflowing state to actually flip true.
+      scrollWidthSpy = vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(300);
+      clientWidthSpy = vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(100);
+    });
+
+    When("the reader views the sidebar without scrolling it", () => {
+      // Clean up any previous renders to isolate this scenario.
+      cleanup();
+      const result = render(
+        <SidebarTree
+          nodes={[
+            {
+              slug: "wide-section",
+              title: longLabel,
+              weight: 0,
+              isSection: true,
+              children: [{ slug: "wide-section-child", title: "Child", weight: 0, isSection: true, children: [] }],
+            },
+          ]}
+          locale="en"
+        />,
+      );
+      container = result.container;
+    });
+
+    Then("a visible cue indicates the label continues off-screen", () => {
+      const scrollContainer = container.querySelector(".overflow-x-auto") as HTMLElement;
+      // `data-overflowing` and the mask-image fade gradient are driven by the exact same
+      // `isOverflowing` boolean in sidebar-tree.tsx (see `ScrollableTree`), so asserting the
+      // attribute pins the fade-cue behavior too. The inline style itself isn't asserted
+      // directly here: jsdom's `cssstyle` package (as vendored by this repo's jsdom version)
+      // silently clears the whole `style` attribute when both the `maskImage` and
+      // `WebkitMaskImage` camelCase properties are set on the same element, regardless of
+      // assignment order — an environment quirk, not an app defect (confirmed against the raw
+      // `jsdom` package directly, outside React, while writing this test).
+      expect(scrollContainer.getAttribute("data-overflowing")).toBe("true");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Overflowing nav labels signal that more content is scrollable
+    And("the item's expand-or-collapse chevron remains visible", () => {
+      const chevronButton = screen.getByRole("button", { name: "Expand section" });
+      expect(chevronButton.className).toContain("sticky");
+      expect(chevronButton.className).toContain("right-0");
+      scrollWidthSpy.mockRestore();
+      clientWidthSpy.mockRestore();
+    });
+  });
+
   Scenario("Apply a preset width to the mobile nav drawer", ({ Given, When, Then }) => {
     Given("the mobile nav drawer is open at a 375 pixel viewport", () => {
       // jsdom does not evaluate @media rules, so the 375px viewport itself is not
