@@ -17,7 +17,7 @@ reader. Scenarios 19-20 introduce a new incident on the **Harborlight Shipment T
 ### Worked Scenario 19: Blameless Postmortem Timeline
 
 **Context**: Exercises co-10. The Shipment API returned 500 errors to a subset of customers for 12
-minutes during a Tuesday morning traffic spike. The team writes the incident's timeline first, before
+minutes during a Wednesday morning traffic spike. The team writes the incident's timeline first, before
 attempting root cause -- and writes it in actor-neutral, timestamped language from the start.
 
 **Decision artifact**:
@@ -64,7 +64,7 @@ with a named owner and a done-signal.
 >
 > 1. Why did requests 500? The connection pool was exhausted, so new requests timed out waiting for a
 >    connection.
-> 2. Why was the pool exhausted? A Tuesday-morning order-ingestion burst (this is a known weekly
+> 2. Why was the pool exhausted? A Wednesday-morning order-ingestion burst (this is a known weekly
 >    pattern) combined with read traffic from a new dashboard feature launched Monday.
 > 3. Why didn't the pool size account for the new dashboard's added read load? The dashboard's launch
 >    checklist did not include a connection-pool capacity review.

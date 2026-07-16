@@ -15,7 +15,7 @@ endpoints).
 
 1. Why did requests 500? The connection pool was exhausted, so new requests timed out waiting for a
    connection.
-2. Why was the pool exhausted? A Tuesday-morning order-ingestion burst (a known weekly pattern)
+2. Why was the pool exhausted? A Wednesday-morning order-ingestion burst (a known weekly pattern)
    combined with read traffic from a new dashboard feature launched the day before.
 3. Why didn't the pool size account for the new dashboard's added read load? The dashboard's launch
    checklist did not include a connection-pool capacity review.
