@@ -605,9 +605,25 @@ async function parseErrorMessage(response: Response): Promise<string> {
     ) {
       return (body as { error: { message: string } }).error.message;
     }
+    // => this app's own handlers (404s, etc.) always use the {"error": {"message": ...}}
+    // => envelope above, but FastAPI's DEFAULT 422 handler for a Pydantic validation failure
+    // => (e.g. a title over the 200-char limit) is never routed through that envelope -- it's
+    // => {"detail": ...}, where `detail` is either a plain string or FastAPI's list-of-error-
+    // => objects shape (each entry carrying a human-readable `msg`)
+    if (typeof body === "object" && body !== null && "detail" in body) {
+      const detail = (body as { detail: unknown }).detail;
+      if (typeof detail === "string") return detail;
+      if (Array.isArray(detail)) {
+        const messages = detail.filter(
+          (item): item is { msg: string } =>
+            typeof item === "object" && item !== null && typeof (item as { msg?: unknown }).msg === "string",
+        );
+        if (messages.length > 0) return messages.map((item) => item.msg).join("; ");
+      }
+    }
   } catch {
-    // => body wasn't JSON, or didn't match the {"error": {"message": ...}} envelope -- fall
-    // => through to the generic message below rather than let a parse error mask the real one
+    // => body wasn't JSON, or didn't match a recognized error envelope -- fall through to the
+    // => generic message below rather than let a parse error mask the real one
   }
   return `request failed with status ${response.status}`;
 }
@@ -1462,6 +1478,50 @@ describe("capstone: create/update form (step 3)", () => {
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", "Enter a task title");
     expect(fetchMock.mock.calls.length).toBe(callsBeforeSubmit); // no network call was made
   });
+
+  // => there's no client-side mirror of the backend's 200-char title limit (models.py's
+  // => `Field(max_length=200)`), so an over-length title genuinely reaches the server and comes
+  // => back as a real 422 -- in FastAPI's OWN default validation-error envelope
+  // => (`{"detail": [...]}`), never this app's `{"error": {"message": ...}}` envelope. The exact
+  // => body below is what a real POST with a 201-character title returns from the live backend.
+  it("shows FastAPI's own validation-error reason when the server rejects an over-length title with a 422", async () => {
+    const root = freshRoot();
+    const overLengthTitle = "x".repeat(201);
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+      const method = init?.method ?? "GET";
+      if (method === "POST") {
+        return Promise.resolve(
+          jsonResponse(
+            {
+              detail: [
+                {
+                  type: "string_too_long",
+                  loc: ["body", "title"],
+                  msg: "String should have at most 200 characters",
+                  input: overLengthTitle,
+                  ctx: { max_length: 200 },
+                },
+              ],
+            },
+            422,
+          ),
+        );
+      }
+      return Promise.resolve(jsonResponse([])); // initial mount load; no refetch since the POST fails
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    mountApp(root, makeApi("http://api.test"));
+    await screen.findByText("No tasks yet.");
+
+    fireEvent.input(screen.getByLabelText("Title"), { target: { value: overLengthTitle } });
+    fireEvent.submit(screen.getByRole("button", { name: "Add task" }).closest("form") as HTMLFormElement);
+
+    expect(await screen.findByRole("alert")).toHaveProperty(
+      "textContent",
+      "String should have at most 200 characters", // not the generic "request failed with status 422"
+    );
+  });
 });
 ```
 
@@ -1513,16 +1573,16 @@ No known vulnerabilities found
 $ npx vitest run apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/capstone-full-stack-app/code/frontend/taskList.test.ts --environment=jsdom
 
  Test Files  1 passed (1)
-      Tests  8 passed (8)
+      Tests  9 passed (9)
 ```
 
 **Key takeaway**: 12 backend tests (health/readiness -- including the `/ready` endpoint's 503
 failure branch --, CRUD round trip, validation, CORS, security headers) at 100% statement coverage
 (201 statements, including the test file itself), `pyright --strict` at zero errors, `pip-audit`
-clean, and 8 frontend Testing-Library tests (initial loading, all three non-loading
+clean, and 9 frontend Testing-Library tests (initial loading, all three non-loading
 discriminated-union states -- the error state covered via both a server error response and a
-rejected fetch/network failure --, create, update, and client-side validation) -- all green, all
-run for real.
+rejected fetch/network failure --, create, update, client-side validation, and the server's own
+422 validation-error envelope surfacing its specific reason) -- all green, all run for real.
 
 **Why it matters**: this closes Step 4's acceptance bar -- both the API integration test and the
 Testing-Library UI test pass, and together they exercise the identical create -> refetch -> update ->

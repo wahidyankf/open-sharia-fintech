@@ -39,9 +39,25 @@ async function parseErrorMessage(response: Response): Promise<string> {
     ) {
       return (body as { error: { message: string } }).error.message;
     }
+    // => this app's own handlers (404s, etc.) always use the {"error": {"message": ...}}
+    // => envelope above, but FastAPI's DEFAULT 422 handler for a Pydantic validation failure
+    // => (e.g. a title over the 200-char limit) is never routed through that envelope -- it's
+    // => {"detail": ...}, where `detail` is either a plain string or FastAPI's list-of-error-
+    // => objects shape (each entry carrying a human-readable `msg`)
+    if (typeof body === "object" && body !== null && "detail" in body) {
+      const detail = (body as { detail: unknown }).detail;
+      if (typeof detail === "string") return detail;
+      if (Array.isArray(detail)) {
+        const messages = detail.filter(
+          (item): item is { msg: string } =>
+            typeof item === "object" && item !== null && typeof (item as { msg?: unknown }).msg === "string",
+        );
+        if (messages.length > 0) return messages.map((item) => item.msg).join("; ");
+      }
+    }
   } catch {
-    // => body wasn't JSON, or didn't match the {"error": {"message": ...}} envelope -- fall
-    // => through to the generic message below rather than let a parse error mask the real one
+    // => body wasn't JSON, or didn't match a recognized error envelope -- fall through to the
+    // => generic message below rather than let a parse error mask the real one
   }
   return `request failed with status ${response.status}`;
 }
