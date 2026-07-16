@@ -654,4 +654,5 @@ co-06 give the document formats themselves.
 
 ---
 
-← Previous: [Capstone](../learning/capstone/overview.md)
+← Previous: [Capstone](../learning/capstone/overview.md) &middot; Next:
+[19 · Computer Science Foundations](../../computer-science-foundations/learning/overview.md) →

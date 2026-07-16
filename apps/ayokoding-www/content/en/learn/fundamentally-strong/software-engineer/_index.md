@@ -72,3 +72,7 @@ weight: 1750
 - [18 · Technical Communication](/en/c/learn/fundamentally-strong/software-engineer/technical-communication)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/drilling)
+- [19 · Computer Science Foundations](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/drilling)
