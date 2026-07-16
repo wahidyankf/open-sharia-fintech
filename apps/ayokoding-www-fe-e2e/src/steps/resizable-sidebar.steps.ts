@@ -36,6 +36,13 @@ async function setPersistedSidebarWidth(page: Page, widthPx: number): Promise<vo
   });
 }
 
+/**
+ * Bridges "a resizable panel rendered at N pixels with a M to K pixel band" (which records the
+ * panel's pre-drag width) to the mid-drag Then step that must confirm nothing new has persisted
+ * yet — same per-page `WeakMap` technique as `keyboardScenarioStartWidth` below.
+ */
+const dragScenarioStartWidth = new WeakMap<Page, number>();
+
 Given(
   "a resizable panel rendered at {int} pixels with a {int} to {int} pixel band",
   async ({ page }, startPx: number, _minPx: number, maxPx: number) => {
@@ -50,10 +57,16 @@ Given(
 
     const panel = page.locator(PANEL_SELECTOR);
     await expect(panel).toHaveCSS("width", `${startPx}px`);
+    dragScenarioStartWidth.set(page, startPx);
   },
 );
 
-When("the user drags the separator handle {int} pixels to the right", async ({ page }, deltaPx: number) => {
+/**
+ * Presses down on the separator handle and drags it by `deltaPx`, releasing the mouse button
+ * afterward unless `release` is `false` — the shared drag mechanics behind every drag-driven
+ * Given/When step in this file.
+ */
+async function dragSeparatorHandle(page: Page, deltaPx: number, release = true): Promise<void> {
   const handle = page.getByRole("separator");
   const box = await handle.boundingBox();
   if (!box) {
@@ -65,12 +78,49 @@ When("the user drags the separator handle {int} pixels to the right", async ({ p
   await page.mouse.move(startX, y);
   await page.mouse.down();
   await page.mouse.move(startX + deltaPx, y, { steps: 10 });
-  await page.mouse.up();
+  if (release) {
+    await page.mouse.up();
+  }
+}
+
+When("the user drags the separator handle {int} pixels to the right", async ({ page }, deltaPx: number) => {
+  await dragSeparatorHandle(page, deltaPx);
 });
+
+When(
+  "the user drags the separator handle {int} pixels to the right without releasing",
+  async ({ page }, deltaPx: number) => {
+    await dragSeparatorHandle(page, deltaPx, false);
+  },
+);
 
 Then("the panel width becomes {int} pixels", async ({ page }, expectedPx: number) => {
   const panel = page.locator(PANEL_SELECTOR);
   await expect(panel).toHaveCSS("width", `${expectedPx}px`);
+});
+
+Then(
+  "the panel width becomes {int} pixels but nothing is yet persisted to localStorage",
+  async ({ page }, expectedPx: number) => {
+    const panel = page.locator(PANEL_SELECTOR);
+    await expect(panel).toHaveCSS("width", `${expectedPx}px`);
+
+    const startPx = dragScenarioStartWidth.get(page);
+    if (startPx === undefined) {
+      throw new Error("expected the panel's starting width to have been recorded by the Given step");
+    }
+    const persisted = await page.evaluate((key) => localStorage.getItem(key), SIDEBAR_STORAGE_KEY);
+    expect(persisted).toBe(String(startPx));
+
+    // Release the still-in-progress drag so it doesn't leak an active pointer-capture into
+    // whatever this page does next.
+    await page.mouse.up();
+  },
+);
+
+Then("the width {int} pixels is persisted to localStorage", async ({ page }, expectedPx: number) => {
+  const persisted = await page.evaluate((key) => localStorage.getItem(key), SIDEBAR_STORAGE_KEY);
+  expect(persisted).toBe(String(expectedPx));
 });
 
 Then("the panel width stops at {int} pixels", async ({ page }, expectedPx: number) => {
@@ -115,6 +165,132 @@ Then("the handle exposes the new width via aria-valuenow", async ({ page }) => {
   const panel = page.locator(PANEL_SELECTOR);
   const width = await panel.evaluate((el) => el.getBoundingClientRect().width);
   await expect(page.getByRole("separator")).toHaveAttribute("aria-valuenow", String(width));
+});
+
+Given("a resizable panel is rendered", async ({ page }) => {
+  await page.goto(DOCS_PAGE);
+  await expect(page.locator(PANEL_SELECTOR)).toBeVisible();
+});
+
+// Shared by both "The handle exposes separator semantics" and "The handle's accessible label can
+// be localized" — inspection happens directly in each scenario's own Then/And steps below, via
+// role/attribute locators rather than a snapshot taken here.
+When("the accessibility tree is inspected", async () => {});
+
+Then('the handle has role "separator"', async ({ page }) => {
+  await expect(page.getByRole("separator")).toBeVisible();
+});
+
+Then('the handle has aria-orientation "vertical"', async ({ page }) => {
+  await expect(page.getByRole("separator")).toHaveAttribute("aria-orientation", "vertical");
+});
+
+Then("the handle prevents native text selection", async ({ page }) => {
+  // `select-none` (`user-select: none`) is the Tailwind utility resizable-panel.tsx's handle
+  // carries unconditionally — see resizable-panel.steps.tsx's own unit-level assertion of the
+  // same className for the underlying mechanism this checks the real computed style for instead.
+  // Playwright's bundled WebKit engine reports an empty string for the unprefixed `user-select`
+  // computed style (it only resolves the `-webkit-user-select` longhand it actually implements),
+  // so both are read directly here rather than relying on `toHaveCSS`'s single-property match.
+  await expect
+    .poll(() =>
+      page.getByRole("separator").evaluate((el) => {
+        const style = getComputedStyle(el);
+        return style.userSelect || style.getPropertyValue("-webkit-user-select");
+      }),
+    )
+    .toBe("none");
+});
+
+Given('a resizable panel is rendered with a custom handle label "Ubah ukuran panel"', async ({ page }) => {
+  // AyoKoding's own "id" locale translation for `resizableSidebarHandleLabel` IS this exact
+  // string (see apps/ayokoding-www/src/features/i18n/core/translations.ts) — the primitive's
+  // generic "custom label" concept is exercised here via the real app's Indonesian locale route
+  // rather than a synthetic prop, matching this file's "real browser, real docs page" convention.
+  await page.goto("/id/belajar/ikhtisar");
+  await expect(page.locator(PANEL_SELECTOR)).toBeVisible();
+});
+
+Then('the handle has aria-label "Ubah ukuran panel"', async ({ page }) => {
+  await expect(page.getByRole("separator")).toHaveAttribute("aria-label", "Ubah ukuran panel");
+});
+
+Given(
+  "a resizable panel rendered at {int} pixels has been dragged to {int} pixels",
+  async ({ page }, startPx: number, draggedPx: number) => {
+    await page.goto(DOCS_PAGE);
+    await setPersistedSidebarWidth(page, startPx);
+    await page.reload();
+
+    const panel = page.locator(PANEL_SELECTOR);
+    await expect(panel).toHaveCSS("width", `${startPx}px`);
+
+    await dragSeparatorHandle(page, draggedPx - startPx);
+    await expect(panel).toHaveCSS("width", `${draggedPx}px`);
+  },
+);
+
+When("the user double-clicks the separator handle", async ({ page }) => {
+  await page.getByRole("separator").dblclick();
+});
+
+Then("the panel width returns to {int} pixels", async ({ page }, expectedPx: number) => {
+  const panel = page.locator(PANEL_SELECTOR);
+  await expect(panel).toHaveCSS("width", `${expectedPx}px`);
+});
+
+Given(
+  "the separator handle is focused on a panel at {int} pixels with a {int} to {int} pixel band",
+  async ({ page }, startPx: number, _minPx: number, maxPx: number) => {
+    const viewportWidth = Math.round(maxPx / (MAX_WIDTH_PCT / 100));
+    await page.setViewportSize({ width: viewportWidth, height: 800 });
+    await page.goto(DOCS_PAGE);
+    await setPersistedSidebarWidth(page, startPx);
+    await page.reload();
+
+    const panel = page.locator(PANEL_SELECTOR);
+    await expect(panel).toHaveCSS("width", `${startPx}px`);
+    await page.getByRole("separator").focus();
+  },
+);
+
+When("the user presses Home", async ({ page }) => {
+  await page.keyboard.press("Home");
+});
+
+When("the user presses End", async ({ page }) => {
+  await page.keyboard.press("End");
+});
+
+Given("a corrupted localStorage value of {int} pixels for the panel width", async ({ page }, corruptedPx: number) => {
+  await page.goto(DOCS_PAGE);
+  await setPersistedSidebarWidth(page, corruptedPx);
+});
+
+/** Bridges the re-clamp scenario's When (which knows the target band) to its Then (which asserts
+ * against that band's max) — same per-page `WeakMap` technique used elsewhere in this file. */
+const reclampMaxWidth = new WeakMap<Page, number>();
+
+When(
+  "a resizable panel with a {int} to {int} pixel band is rendered",
+  async ({ page }, _minPx: number, maxPx: number) => {
+    const viewportWidth = Math.round(maxPx / (MAX_WIDTH_PCT / 100));
+    await page.setViewportSize({ width: viewportWidth, height: 800 });
+    // The corrupted value was already written to localStorage by the Given step (against a page
+    // that hadn't yet been sized to this band) — reloading now re-mounts under the right
+    // viewport, so useResizableWidth's mount-time re-clamp runs against the intended band.
+    await page.reload();
+    reclampMaxWidth.set(page, maxPx);
+  },
+);
+
+Then("the panel width renders at the maximum band width, not the corrupted value", async ({ page }) => {
+  const maxPx = reclampMaxWidth.get(page);
+  if (maxPx === undefined) {
+    throw new Error("expected the clamp band's max width to have been recorded by the When step");
+  }
+  const panel = page.locator(PANEL_SELECTOR);
+  await expect(panel).toHaveCSS("width", `${maxPx}px`);
 });
 
 Given("the reader has resized the docs sidebar to {int} pixels on a desktop viewport", async ({ page }, px: number) => {
