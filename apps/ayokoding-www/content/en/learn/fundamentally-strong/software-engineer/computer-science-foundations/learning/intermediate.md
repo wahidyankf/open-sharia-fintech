@@ -1751,10 +1751,20 @@ recursively-enumerable (even-length palindromes):
 Every sample classified against its matching automaton/level: True
 ```
 
-**Key takeaway**: `'aabb'` is accepted by both the regular (`a*b*`) and context-free (`a^n b^n`)
-classifiers but rejected by the context-sensitive one -- a direct, observable demonstration that
-each level's languages are a strict superset of the level "below" it (regular subset-of context-free
-subset-of context-sensitive subset-of recursively-enumerable).
+**Key takeaway**: each classifier above tests membership in one DIFFERENT sample language, not one
+language re-classified at increasingly powerful tiers -- so the four sample languages are not nested
+subsets of one another, and the output shows this directly: `'aabb'` is accepted by the context-free
+classifier (`a^n b^n`, n=2) but rejected by the context-sensitive one (`a^n b^n c^n`, which also
+requires a trailing c-run), while `'abc'` shows the reverse pattern -- rejected by context-free,
+accepted by context-sensitive. What each classifier DOES demonstrate is its own tier's characteristic
+recognition mechanism: `a*b*` needs only a DFA's fixed states (regular), `a^n b^n` needs a PDA's one
+stack to match counts (context-free), `a^n b^n c^n` needs two counts tracked together, which needs a
+linear-bounded tape (context-sensitive), and the palindrome check stands in for unrestricted
+TM-style recognition (recursively-enumerable). The general Chomsky-hierarchy containment theorem --
+every regular language is also context-free, every context-free language is also context-sensitive,
+and so on -- is true, but it is a statement about LANGUAGE CLASSES, not about these four specific
+sample languages being subsets of one another; this demo's structure (one disjoint sample per tier)
+illustrates each tier's memory requirement, not that theorem.
 
 **Why it matters**: this hierarchy is the roadmap for "how much computational power does parsing
 this actually need" -- a lexer only needs regular languages, most programming-language grammars need

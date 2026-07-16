@@ -18,7 +18,8 @@ against **Python 3.13.12** to capture the output shown below.
 - **Step 2 -- `automaton.py`**: a finite-automaton simulator, run against a hand-traced regular
   language. Ties together co-18, co-19.
 - **Step 3 -- `memory.py`**: times row-major vs. column-major traversal of a 2-D array, at a larger,
-  capstone-grade scale than Example 28. Ties together co-16, co-17.
+  capstone-grade scale than Example 28, then traces a recursive function's call-stack push/pop
+  events over a slice of the same buffer. Ties together co-16, co-17.
 
 Together, the three steps span representation (Beginner tier), automata theory (Intermediate tier),
 and machine organization (Intermediate tier) -- deliberately not just a rehash of the Advanced
@@ -303,18 +304,21 @@ much stronger evidence of correctness than any single implementation's self-cons
 
 ## Step 3: memory.py -- capstone-grade cache-locality measurement
 
-**Context**: Example 28 measured row-major vs. column-major traversal at N=1400 with 3 trials. This
-step reruns the same experiment at a larger scale (N=1600, 5 trials) as the topic's closing proof
-that the memory hierarchy's latency gap (co-16) is not a one-off fluke but a reproducible property
-of how the stack, heap, and cache actually interact (co-17).
+**Context**: Example 28 measured row-major vs. column-major traversal at N=1400 with 3 trials, and
+Example 29 traced a recursive function's call-stack push/pop events. This step combines both
+techniques at a larger, capstone-grade scale: it reruns the cache-traversal experiment (N=1600, 5
+trials) as the topic's closing proof that the memory hierarchy's latency gap (co-16) is not a
+one-off fluke, then runs a small recursive call-stack trace over a slice of the same underlying
+buffer (co-17) so the stack-frame/heap-buffer distinction is directly observable in one script.
 
 ```python
 # learning/capstone/code/memory.py
-"""Capstone Step 3: timing row-major vs. column-major traversal of a 2-D array.
+"""Capstone Step 3: timing row-major vs. column-major traversal of a 2-D array, plus a call-stack trace.
 
 Ties together co-16 (memory-hierarchy intuition) and co-17 (stack-and-heap familiarity with how
-Python objects are actually laid out) into one real, measured demonstration -- the same technique
-Example 28 introduced, run here with more trials for a more decisive, capstone-grade measurement.
+Python objects are actually laid out) into two real, measured demonstrations run in this same
+script: a larger-scale rerun of Example 28's cache-timing technique (co-16), and a small recursive
+call-stack push/pop trace (co-17), the same logging pattern Example 29 introduced.
 """  # => co-16: this file's own restated purpose, doubling as its module __doc__
 # => co-16: no runtime output beyond setting __doc__ -- the three paragraphs above just orient the reader
 
@@ -325,6 +329,7 @@ import time  # => co-16: perf_counter -- a monotonic, high-resolution clock, the
 
 N = 1600  # => co-16: N*N doubles (~20.5 MB) -- comfortably exceeds typical L2/L3 cache, keeping the run fast
 TRIALS = 5  # => co-16: best-of-5 -- a capstone-grade measurement, more trials than Example 28's best-of-3
+call_log: list[str] = []  # => co-17: records "push" and "pop" events, in the ACTUAL order they happen
 
 
 def build_matrix(n: int) -> array.array[float]:  # => co-16: one FLAT contiguous buffer -- row i lives at [i*n : i*n+n]
@@ -352,6 +357,21 @@ def col_major_sum(flat: array.array[float], n: int) -> float:  # => co-16: walks
         for i in range(n):  # => co-16: inner loop jumps n flat-indices apart on every single step
             total += flat[i * n + j]  # => co-16: stride-n access -- each step likely lands in a DIFFERENT cache line
     return total  # => co-16: returns this computed value to the caller
+
+
+def recursive_frame_sum(flat: array.array[float], start: int, end: int, depth: int = 0) -> float:  # => co-17: each call is a NEW STACK FRAME with its own start/end/depth
+    """Recursively sum flat[start:end] by binary splitting, logging every frame's push/pop (co-17)."""  # => co-17: documents recursive_frame_sum's contract -- no runtime output, just sets its __doc__
+    call_log.append(f"push depth={depth} range=[{start}:{end}]")  # => co-17: a new frame is pushed onto the call stack HERE
+    if end - start <= 1:  # => co-17: base case -- the deepest frame, popping immediately without recursing further
+        total = flat[start] if start < end else 0.0  # => co-17: a single element (or an empty slice) needs no further split
+        call_log.append(f"pop  depth={depth} range=[{start}:{end}] returns={total:.1f}")  # => co-17: this frame's automatic-lifetime storage ends
+        return total  # => co-17: unwinds back to the caller -- the frame's local variables cease to exist
+    mid = (start + end) // 2  # => co-17: splits the range in half -- each half becomes its own recursive call
+    left = recursive_frame_sum(flat, start, mid, depth + 1)  # => co-17: a NEW frame is pushed for the left half, one level deeper
+    right = recursive_frame_sum(flat, mid, end, depth + 1)  # => co-17: a NEW frame is pushed for the right half, one level deeper
+    total = left + right  # => co-17: this frame's own result, combining both children's returned sums
+    call_log.append(f"pop  depth={depth} range=[{start}:{end}] returns={total:.1f}")  # => co-17: THIS frame pops only after both children return
+    return total  # => co-17: this frame's own local storage (start, end, depth, left, right, total) is reclaimed here
 
 
 if __name__ == "__main__":  # => co-16: entry point -- this block runs only when the file executes directly, not on import
@@ -391,6 +411,34 @@ if __name__ == "__main__":  # => co-16: entry point -- this block runs only when
     # => co-16: TRIALS=5 (vs. Example 28's 3) trades a longer run for a tighter best-of-N estimate, appropriate for a capstone-grade measurement
     # => co-16: row_major_sum and col_major_sum read the SAME underlying buffer -- only the traversal ORDER differs between the two functions
     # => co-16: the closing print above ties the measured ratio back to cache-line prefetching -- the theory Example 27's latency table introduced
+
+    call_log.clear()  # => co-17: fresh log for this run
+    frame_count = 8  # => co-17: small enough to print every frame, big enough to show 4 levels of recursion depth
+    recursive_total = recursive_frame_sum(matrix, 0, frame_count)  # => co-17: recursively sums the first 8 elements of row 0, one call-stack frame per split
+    iterative_total = sum(matrix[0:frame_count])  # => co-17: the SAME 8 elements, summed the plain iterative way, as a correctness cross-check
+    assert abs(recursive_total - iterative_total) < 1e-9, "recursive and iterative sums of the same slice must agree"  # => co-17
+    pushes = [line for line in call_log if line.startswith("push")]  # => co-17: all push events, in order
+    pops = [line for line in call_log if line.startswith("pop")]  # => co-17: all pop events, in order
+    assert len(pushes) == len(pops) == 2 * frame_count - 1, "binary-splitting frame_count elements produces exactly 2*frame_count-1 frames"  # => co-17
+    assert call_log[0].startswith("push depth=0"), "the outermost call must push FIRST"  # => co-17: LIFO order
+    assert call_log[-1].startswith("pop  depth=0"), "the outermost call must pop LAST"  # => co-17: LIFO order
+    print(f"\nrecursive call-stack trace over matrix[0:{frame_count}] ({len(pushes)} frames):")  # => co-17: heading for the trace readout
+    for line in call_log:  # => co-17: prints the frame push/pop sequence, in the exact order it happened
+        print(f"  {line}")  # => co-17: every push must eventually be followed by a MATCHING pop
+    print(  # => co-17: reports the cross-checked result
+        f"recursive sum: {recursive_total:.1f}  (iterative cross-check: {iterative_total:.1f}, "  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+        f"match: {recursive_total == iterative_total})"  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+    )  # => co-17: closes the multi-line construct opened above
+    print(f"Frames pushed then popped in correct LIFO order: True")  # => co-17: reached only if the asserts above held
+    print(  # => co-17: ties the trace back to the theory -- WHY this matters alongside co-16
+        "Why: every recursive call above pushed a NEW stack frame (its own start/end/depth) while the "  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+        "matrix itself stayed a single HEAP-allocated array.array buffer the whole time -- the stack "  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+        "(frames, LIFO, automatic lifetime) and the heap (the flat buffer, one long-lived allocation) "  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+        "are the two DIFFERENT memory regions co-17 asked you to keep straight."  # => co-17: one chunk of the multi-line literal, concatenated with its neighbors
+    )  # => co-17: closes the multi-line construct opened above
+    # => co-17: recursive_frame_sum's own asserts above ARE this section's test suite -- matching push/pop counts and LIFO order both held
+    # => co-17: the iterative sum() cross-check proves the recursive result is CORRECT, not just that recursion ran without error
+    # => co-17: this trace deliberately stays small (8 elements, 15 frames) so every push/pop line above can be read, unlike the co-16 timing loop above which only prints per-trial summaries
 ```
 
 **Run**: `python3 memory.py`
@@ -400,35 +448,80 @@ the reproducible claim is that row-major consistently wins, matching Example 28'
 measured ratio):
 
 ```text
-trial 0: row=0.1723s col=0.1228s
-trial 1: row=0.0832s col=0.1118s
-trial 2: row=0.1089s col=0.1120s
-trial 3: row=0.0844s col=0.1776s
-trial 4: row=0.0925s col=0.1190s
+trial 0: row=0.0763s col=0.1035s
+trial 1: row=0.0808s col=0.1045s
+trial 2: row=0.0813s col=0.1056s
+trial 3: row=0.0804s col=0.1137s
+trial 4: row=0.0862s col=0.1161s
 
-row-major best of 5: 0.0832s
-col-major best of 5: 0.1118s
-row-major completed in 0.0832s vs column-major 0.1118s, row-major faster by 1.35x
+row-major best of 5: 0.0763s
+col-major best of 5: 0.1035s
+row-major completed in 0.0763s vs column-major 0.1035s, row-major faster by 1.36x
 
 Row-major is measurably faster than column-major: True
 Why: row-major visits array.array's underlying C doubles in the SAME order they sit in memory (stride 1), letting the CPU's cache-line prefetcher stay useful. Column-major jumps N doubles (a full row's width) between consecutive accesses (stride N), so almost every access lands in a DIFFERENT cache line -- the memory hierarchy's latency (co-16) becomes visible in wall-clock time, exactly as the register-to-disk latency survey predicted.
+
+recursive call-stack trace over matrix[0:8] (15 frames):
+  push depth=0 range=[0:8]
+  push depth=1 range=[0:4]
+  push depth=2 range=[0:2]
+  push depth=3 range=[0:1]
+  pop  depth=3 range=[0:1] returns=0.0
+  push depth=3 range=[1:2]
+  pop  depth=3 range=[1:2] returns=1.0
+  pop  depth=2 range=[0:2] returns=1.0
+  push depth=2 range=[2:4]
+  push depth=3 range=[2:3]
+  pop  depth=3 range=[2:3] returns=2.0
+  push depth=3 range=[3:4]
+  pop  depth=3 range=[3:4] returns=3.0
+  pop  depth=2 range=[2:4] returns=5.0
+  pop  depth=1 range=[0:4] returns=6.0
+  push depth=1 range=[4:8]
+  push depth=2 range=[4:6]
+  push depth=3 range=[4:5]
+  pop  depth=3 range=[4:5] returns=4.0
+  push depth=3 range=[5:6]
+  pop  depth=3 range=[5:6] returns=5.0
+  pop  depth=2 range=[4:6] returns=9.0
+  push depth=2 range=[6:8]
+  push depth=3 range=[6:7]
+  pop  depth=3 range=[6:7] returns=6.0
+  push depth=3 range=[7:8]
+  pop  depth=3 range=[7:8] returns=7.0
+  pop  depth=2 range=[6:8] returns=13.0
+  pop  depth=1 range=[4:8] returns=22.0
+  pop  depth=0 range=[0:8] returns=28.0
+recursive sum: 28.0  (iterative cross-check: 28.0, match: True)
+Frames pushed then popped in correct LIFO order: True
+Why: every recursive call above pushed a NEW stack frame (its own start/end/depth) while the matrix itself stayed a single HEAP-allocated array.array buffer the whole time -- the stack (frames, LIFO, automatic lifetime) and the heap (the flat buffer, one long-lived allocation) are the two DIFFERENT memory regions co-17 asked you to keep straight.
 ```
 
 **Acceptance criteria**: `row_major_sum` and `col_major_sum` must agree on the total (correctness,
 verified by an in-script assert for every trial), and `best_row` (the minimum of 5 trials) must be
-strictly less than `best_col` (co-16). Both hold: `0.0832s < 0.1118s`, a `1.35x` measured ratio --
+strictly less than `best_col` (co-16). Both hold: `0.0763s < 0.1035s`, a `1.36x` measured ratio --
 directionally consistent with Example 28's independently measured `1.35x` ratio at a smaller N,
-confirming this is a reproducible effect rather than a one-off measurement.
+confirming this is a reproducible effect rather than a one-off measurement. Separately (co-17),
+`recursive_frame_sum`'s recursive sum of `matrix[0:8]` must match a plain iterative sum of the same
+slice, and the 15 logged push/pop events must be exactly balanced with the outermost call pushing
+first and popping last (LIFO order). All hold: `28.0 == 28.0`, `15 == 15` push/pop events, first
+push at `depth=0`, last pop at `depth=0`.
 
 **Key takeaway**: at a larger scale and with more trials than Example 28, the same row-major-beats-
-column-major result reproduces -- `0.0832s` vs. `0.1118s`, a `1.35x` gap -- confirming the memory
+column-major result reproduces -- `0.0763s` vs. `0.1035s`, a `1.36x` gap -- confirming the memory
 hierarchy's latency ordering (Example 27) has a directly observable, repeatable consequence in
-ordinary Python code.
+ordinary Python code. Separately, the recursive call-stack trace makes co-17 just as concrete: 15
+stack frames are pushed and popped in strict LIFO order while operating on a slice of the SAME
+heap-resident `array.array` buffer the timing demo above just measured -- the stack (frames,
+automatic lifetime) and the heap (the one long-lived buffer) are visibly two different memory
+regions, not just textbook vocabulary.
 
 **Why it matters**: this closing measurement is the topic's proof that "the memory hierarchy
 matters" isn't an abstract claim from a textbook diagram -- it's something you can measure yourself,
 in five lines of timing code, on any machine, any time you're unsure whether an access pattern is
-cache-friendly.
+cache-friendly. The recursive trace alongside it makes the same point for the call stack: every
+function call allocates and frees a real stack frame, in a strict push-then-pop order -- not a
+mental abstraction, but something this script's own `call_log` genuinely recorded and verified.
 
 ---
 
