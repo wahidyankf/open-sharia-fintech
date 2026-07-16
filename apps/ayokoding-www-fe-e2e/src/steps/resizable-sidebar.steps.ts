@@ -364,6 +364,33 @@ Then("the label is not clipped or wrapped", async ({ page }) => {
   await expect(noWrapLinks.first()).toBeAttached();
 });
 
+/**
+ * The div `resizable-sidebar.tsx` renders as `ResizablePanel`'s sole child — the immediate
+ * child of the primitive's `resizable-panel-content` slot — which owns the rail's vertical
+ * scroll (see that file's docstring for why it, not `<aside>`, is the real scroll owner).
+ */
+const VERTICAL_SCROLL_CONTAINER_SELECTOR = `aside:has(${PANEL_SELECTOR}) [data-slot="resizable-panel-content"] > div`;
+
+Given("a docs sidebar whose nav tree is taller than the visible rail height", async ({ page }) => {
+  // Rather than fabricating tall content, shrink the viewport height enough that the docs
+  // page's real nav tree exceeds the rail's `h-[calc(100vh-4rem)]` height — mirroring the
+  // "narrowed to N pixels" technique above, which shrinks width instead for the horizontal
+  // scenario.
+  await page.setViewportSize({ width: 1280, height: 300 });
+  await page.goto(DOCS_PAGE);
+});
+
+Then("the sidebar content area is vertically scrollable", async ({ page }) => {
+  const scrollContainer = page.locator(VERTICAL_SCROLL_CONTAINER_SELECTOR);
+  await expect(scrollContainer).toHaveCount(1);
+  await expect.poll(async () => scrollContainer.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+});
+
+Then("the horizontal scroll behavior is unaffected", async ({ page }) => {
+  const scrollContainer = page.locator(SCROLL_CONTAINER_SELECTOR);
+  await expect(scrollContainer).toHaveCount(1);
+});
+
 /** Selector for `mobile-nav.tsx`'s `SheetContent` root (see its `data-slot`). */
 const MOBILE_DRAWER_SELECTOR = '[data-slot="sheet-content"]';
 

@@ -35,6 +35,13 @@ Feature: Resizable Docs Sidebar
     And the item's expand-or-collapse chevron remains visible
 
   @unit @e2e
+  Scenario: Scroll the sidebar vertically when the nav tree is taller than the viewport
+    Given a docs sidebar whose nav tree is taller than the visible rail height
+    When the reader views the sidebar
+    Then the sidebar content area is vertically scrollable
+    And the horizontal scroll behavior is unaffected
+
+  @unit @e2e
   Scenario: Apply a preset width to the mobile nav drawer
     Given the mobile nav drawer is open at a 375 pixel viewport
     When the reader selects the wider preset
