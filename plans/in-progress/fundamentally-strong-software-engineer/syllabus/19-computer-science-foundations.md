@@ -229,7 +229,7 @@ Contiguous `ex-01..ex-55`.
   language, and a stack-frame + cache-traversal timing demo — each output explained against the theory.
 - **Concepts exercised**: [ ] two's-complement + IEEE-754 representation (co-02, co-03) [ ] a regex→FA
   mapping run by a simulator (co-18, co-19) [ ] call-stack tracing (co-17) [ ] cache-friendly vs hostile
-  access timing (co-16) [ ] a checksum/hash demo (co-28).
+  access timing (co-16).
 - **Ordered steps**:
   1. `.../learning/capstone/code/represent.py` — int/float ↔ binary/hex converter + float-bit inspector.
      Verify it prints the exact bit pattern for a known value and demonstrates `0.1+0.2 != 0.3`.
