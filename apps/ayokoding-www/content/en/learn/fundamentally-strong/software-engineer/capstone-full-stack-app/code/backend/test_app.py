@@ -5,6 +5,8 @@ preflight/response headers, and 404s.
 """
 
 import importlib
+import sqlite3
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -27,6 +29,12 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
     return TestClient(main_module.app)
 
 
+class _UnreachableConnection:  # => a fake conn whose every query genuinely raises, so /ready's
+    # => except sqlite3.OperationalError branch is exercised for real, not mocked away
+    def execute(self, *_args: object, **_kwargs: object) -> None:
+        raise sqlite3.OperationalError("database is locked")
+
+
 class TestHealthAndReadiness:
     def test_health_is_always_200(self, client: TestClient) -> None:
         response = client.get("/health")
@@ -37,6 +45,26 @@ class TestHealthAndReadiness:
         response = client.get("/ready")
         assert response.status_code == 200
         assert response.json() == {"status": "ready"}
+
+    def test_ready_is_503_when_db_ping_fails(self, client: TestClient) -> None:
+        from app import (
+            main as main_module,
+        )  # => same module the `client` fixture just reloaded
+
+        def broken_get_db() -> Iterator[_UnreachableConnection]:
+            yield _UnreachableConnection()
+
+        main_module.app.dependency_overrides[main_module.get_db] = broken_get_db
+        try:
+            response = client.get("/ready")
+        finally:
+            main_module.app.dependency_overrides.clear()  # => never leak into later tests
+
+        assert response.status_code == 503
+        assert response.json() == {
+            "status": "not_ready",
+            "reason": "database is locked",
+        }
 
 
 class TestCrudRoundTrip:  # => Steps 1 and 3 of the capstone spec

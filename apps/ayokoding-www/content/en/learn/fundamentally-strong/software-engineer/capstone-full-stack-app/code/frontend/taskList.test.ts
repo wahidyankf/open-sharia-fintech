@@ -69,6 +69,18 @@ describe("capstone: discriminated-union states (step 2, co-27 reused)", () => {
     expect(alert.textContent).toBe("database unreachable");
   });
 
+  it("transitions loading -> error with the browser's own message when fetch rejects (network failure, no response at all)", async () => {
+    const root = freshRoot();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(new TypeError("Failed to fetch"))),
+    );
+    mountApp(root, makeApi("http://api.test"));
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toBe("Failed to fetch"); // => the generic `error instanceof Error`
+    // => branch in app.ts's errorMessage(), distinct from the ApiError branch tested above
+  });
+
   it("transitions loading -> loaded, rendering an Edit button per task", async () => {
     const root = freshRoot();
     vi.stubGlobal(

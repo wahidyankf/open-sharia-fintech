@@ -1122,6 +1122,8 @@ preflight/response headers, and 404s.
 """
 
 import importlib
+import sqlite3
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -1144,6 +1146,12 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
     return TestClient(main_module.app)
 
 
+class _UnreachableConnection:  # => a fake conn whose every query genuinely raises, so /ready's
+    # => except sqlite3.OperationalError branch is exercised for real, not mocked away
+    def execute(self, *_args: object, **_kwargs: object) -> None:
+        raise sqlite3.OperationalError("database is locked")
+
+
 class TestHealthAndReadiness:
     def test_health_is_always_200(self, client: TestClient) -> None:
         response = client.get("/health")
@@ -1154,6 +1162,24 @@ class TestHealthAndReadiness:
         response = client.get("/ready")
         assert response.status_code == 200
         assert response.json() == {"status": "ready"}
+
+    def test_ready_is_503_when_db_ping_fails(self, client: TestClient) -> None:
+        from app import main as main_module  # => same module the `client` fixture just reloaded
+
+        def broken_get_db() -> Iterator[_UnreachableConnection]:
+            yield _UnreachableConnection()
+
+        main_module.app.dependency_overrides[main_module.get_db] = broken_get_db
+        try:
+            response = client.get("/ready")
+        finally:
+            main_module.app.dependency_overrides.clear()  # => never leak into later tests
+
+        assert response.status_code == 503
+        assert response.json() == {
+            "status": "not_ready",
+            "reason": "database is locked",
+        }
 
 
 class TestCrudRoundTrip:  # => Steps 1 and 3 of the capstone spec
@@ -1332,6 +1358,18 @@ describe("capstone: discriminated-union states (step 2, co-27 reused)", () => {
     expect(alert.textContent).toBe("database unreachable");
   });
 
+  it("transitions loading -> error with the browser's own message when fetch rejects (network failure, no response at all)", async () => {
+    const root = freshRoot();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(new TypeError("Failed to fetch"))),
+    );
+    mountApp(root, makeApi("http://api.test"));
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toBe("Failed to fetch"); // => the generic `error instanceof Error`
+    // => branch in app.ts's errorMessage(), distinct from the ApiError branch tested above
+  });
+
   it("transitions loading -> loaded, rendering an Edit button per task", async () => {
     const root = freshRoot();
     vi.stubGlobal(
@@ -1435,31 +1473,32 @@ apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/capst
 
 ```text
 $ coverage run -m pytest -v
-test_app.py::TestHealthAndReadiness::test_health_is_always_200 PASSED             [  9%]
-test_app.py::TestHealthAndReadiness::test_ready_is_200_when_db_is_reachable PASSED [ 18%]
-test_app.py::TestCrudRoundTrip::test_create_read_update PASSED                    [ 27%]
-test_app.py::TestCrudRoundTrip::test_invalid_body_returns_structured_422 PASSED   [ 36%]
-test_app.py::TestCrudRoundTrip::test_invalid_status_on_put_is_422 PASSED          [ 45%]
-test_app.py::TestCrudRoundTrip::test_update_of_missing_task_is_404 PASSED         [ 54%]
-test_app.py::TestCrudRoundTrip::test_read_of_missing_task_is_404 PASSED           [ 63%]
-test_app.py::TestCors::test_allowed_origin_gets_the_header_back PASSED            [ 72%]
-test_app.py::TestCors::test_other_origin_gets_no_cors_header PASSED               [ 81%]
-test_app.py::TestCors::test_preflight_for_the_allowed_origin_succeeds PASSED      [ 90%]
+test_app.py::TestHealthAndReadiness::test_health_is_always_200 PASSED    [  8%]
+test_app.py::TestHealthAndReadiness::test_ready_is_200_when_db_is_reachable PASSED [ 16%]
+test_app.py::TestHealthAndReadiness::test_ready_is_503_when_db_ping_fails PASSED [ 25%]
+test_app.py::TestCrudRoundTrip::test_create_read_update PASSED           [ 33%]
+test_app.py::TestCrudRoundTrip::test_invalid_body_returns_structured_422 PASSED [ 41%]
+test_app.py::TestCrudRoundTrip::test_invalid_status_on_put_is_422 PASSED [ 50%]
+test_app.py::TestCrudRoundTrip::test_update_of_missing_task_is_404 PASSED [ 58%]
+test_app.py::TestCrudRoundTrip::test_read_of_missing_task_is_404 PASSED  [ 66%]
+test_app.py::TestCors::test_allowed_origin_gets_the_header_back PASSED   [ 75%]
+test_app.py::TestCors::test_other_origin_gets_no_cors_header PASSED      [ 83%]
+test_app.py::TestCors::test_preflight_for_the_allowed_origin_succeeds PASSED [ 91%]
 test_app.py::TestSecurityHeaders::test_every_response_carries_the_header_baseline PASSED [100%]
 
-======================== 11 passed, 1 warning in 0.44s =========================
+======================== 12 passed, 1 warning in 0.44s =========================
 
 $ coverage report -m
 Name                Stmts   Miss  Cover   Missing
 -------------------------------------------------
 app/__init__.py         0      0   100%
-app/main.py            54      3    94%   78-80
+app/main.py            54      0   100%
 app/middleware.py       8      0   100%
 app/models.py          16      0   100%
 app/repository.py      38      0   100%
-test_app.py            70      0   100%
+test_app.py            85      0   100%
 -------------------------------------------------
-TOTAL                 186      3    98%
+TOTAL                 201      0   100%
 
 $ pyright
 0 errors, 0 warnings, 0 informations
@@ -1472,14 +1511,16 @@ No known vulnerabilities found
 $ npx vitest run apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/capstone-full-stack-app/code/frontend/taskList.test.ts --environment=jsdom
 
  Test Files  1 passed (1)
-      Tests  7 passed (7)
+      Tests  8 passed (8)
 ```
 
-**Key takeaway**: 11 backend tests (health/readiness, CRUD round trip, validation, CORS, security
-headers) at 98% statement coverage (186 statements, including the test file itself), `pyright
---strict` at zero errors, `pip-audit` clean, and 7
-frontend Testing-Library tests (initial loading, all three non-loading discriminated-union states,
-create, update, and client-side validation) -- all green, all run for real.
+**Key takeaway**: 12 backend tests (health/readiness -- including the `/ready` endpoint's 503
+failure branch --, CRUD round trip, validation, CORS, security headers) at 100% statement coverage
+(201 statements, including the test file itself), `pyright --strict` at zero errors, `pip-audit`
+clean, and 8 frontend Testing-Library tests (initial loading, all three non-loading
+discriminated-union states -- the error state covered via both a server error response and a
+rejected fetch/network failure --, create, update, and client-side validation) -- all green, all
+run for real.
 
 **Why it matters**: this closes Step 4's acceptance bar -- both the API integration test and the
 Testing-Library UI test pass, and together they exercise the identical create -> refetch -> update ->
