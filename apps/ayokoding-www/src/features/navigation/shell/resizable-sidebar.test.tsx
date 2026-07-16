@@ -236,6 +236,10 @@ describeFeature(feature, ({ Scenario, Background }) => {
         const wrapper = container.querySelector('[data-slot="resizable-panel-content"] > div') as HTMLElement;
         expect(wrapper).toBeInstanceOf(HTMLElement);
         expect(wrapper.className).toContain("overflow-y-auto");
+        // `overflow-x-hidden` is the crux of this fix: it stops the CSS overflow spec from
+        // computing `overflow-x: auto` and duplicating sidebar-tree.tsx's horizontal scroll one
+        // level deeper. Pin it explicitly, not just `overflow-y-auto`.
+        expect(wrapper.className).toContain("overflow-x-hidden");
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature:Scroll the sidebar vertically when the nav tree is taller than the viewport

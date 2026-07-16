@@ -387,8 +387,15 @@ Then("the sidebar content area is vertically scrollable", async ({ page }) => {
 });
 
 Then("the horizontal scroll behavior is unaffected", async ({ page }) => {
+  // This scenario's 1280px-wide viewport (see the Given step above, which only shrinks height)
+  // means a real docs label is unlikely to overflow horizontally here, so asserting live
+  // `scrollWidth > clientWidth` overflow (as the dedicated horizontal scenario at line 356-360
+  // does) would be flaky at this viewport. Instead assert the container still carries the
+  // `overflow-x: auto` computed style — proving the horizontal-scroll *capability* the vertical
+  // fix must not remove, without depending on this viewport happening to trigger overflow.
   const scrollContainer = page.locator(SCROLL_CONTAINER_SELECTOR);
   await expect(scrollContainer).toHaveCount(1);
+  await expect(scrollContainer).toHaveCSS("overflow-x", "auto");
 });
 
 /** Selector for `mobile-nav.tsx`'s `SheetContent` root (see its `data-slot`). */
