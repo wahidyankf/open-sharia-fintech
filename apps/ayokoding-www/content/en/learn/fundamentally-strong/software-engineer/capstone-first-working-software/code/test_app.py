@@ -172,6 +172,51 @@ class TestHabitsCrudAndStreak:
             cross_user.status_code == 404
         )  # => not 403 -- existence isn't confirmed to a non-owner either
 
+    def test_one_user_cannot_check_in_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.post(
+            f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
+    def test_one_user_cannot_archive_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.post(
+            f"/habits/{habit_id}/archive", headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
+    def test_one_user_cannot_delete_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.delete(
+            f"/habits/{habit_id}", headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
     def test_archive_hides_a_habit_from_the_default_list(
         self, client: TestClient
     ) -> None:

@@ -613,12 +613,18 @@ $ curl -s -i -X POST http://127.0.0.1:8100/habits -H "Content-Type: application/
     -H "Authorization: Bearer $TOKEN" -d '{"name":""}'
 HTTP/1.1 422 Unprocessable Content
 content-type: application/json
+content-security-policy: default-src 'self'
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains
 
 {"detail":[{"type":"string_too_short","loc":["body","name"],"msg":"String should have at least 1 character","input":"","ctx":{"min_length":1}}]}
 
 $ curl -s -i http://127.0.0.1:8100/habits
 HTTP/1.1 401 Unauthorized
 content-type: application/json
+content-security-policy: default-src 'self'
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains
 
 {"error":{"code":"unauthorized","message":"missing or invalid token"}}
 ```
@@ -1113,6 +1119,9 @@ $ curl -s -i -X POST http://127.0.0.1:8100/auth/register -H "Content-Type: appli
     -d "{\"username\":\"admin'--\",\"password\":\"Sup3rSecret!\"}"
 HTTP/1.1 422 Unprocessable Content
 content-type: application/json
+content-security-policy: default-src 'self'
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains
 
 {"detail":[{"type":"string_pattern_mismatch","loc":["body","username"],"msg":"String should match pattern '^[a-zA-Z0-9_]+$'","input":"admin'--","ctx":{"pattern":"^[a-zA-Z0-9_]+$"}}]}
 ```
@@ -1485,6 +1494,51 @@ class TestHabitsCrudAndStreak:
             cross_user.status_code == 404
         )  # => not 403 -- existence isn't confirmed to a non-owner either
 
+    def test_one_user_cannot_check_in_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.post(
+            f"/habits/{habit_id}/checkins", json={}, headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
+    def test_one_user_cannot_archive_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.post(
+            f"/habits/{habit_id}/archive", headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
+    def test_one_user_cannot_delete_another_users_habit(
+        self, client: TestClient
+    ) -> None:
+        token_a = _register_and_login(client, "dave", "Sup3rSecret!")
+        token_b = _register_and_login(client, "erin", "Sup3rSecret!")
+        habit_id = client.post(
+            "/habits", json={"name": "Dave's habit"}, headers=_auth_headers(token_a)
+        ).json()["id"]
+        cross_user = client.delete(
+            f"/habits/{habit_id}", headers=_auth_headers(token_b)
+        )
+        assert (
+            cross_user.status_code == 404
+        )  # => not 403 -- existence isn't confirmed to a non-owner either
+
     def test_archive_hides_a_habit_from_the_default_list(
         self, client: TestClient
     ) -> None:
@@ -1550,28 +1604,28 @@ class TestSearchIsInjectionSafe:
 
 ```text
 $ coverage run --branch -m pytest -q
-..........................                                               [100%]
-26 passed in 1.50s
+.............................                                            [100%]
+29 passed in 1.88s
 
 $ coverage report -m
 Name                            Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------------------------------
 app/auth.py                        41      6      4      2    82%   73-74, 77, 80-81, 84
 app/domain.py                      27      0      4      0   100%
-app/main.py                       104      7     14      4    91%   118-120, 130, 213, 237, 251
+app/main.py                       104      4     14      1    96%   118-120, 130
 app/middleware.py                  21      0      4      0   100%
 app/models.py                      31      0      0      0   100%
-app/repository.py                  74      1     10      1    98%   153
-test_app.py                       115      0      0      0   100%
+app/repository.py                  74      0     10      0   100%
+test_app.py                       133      0      0      0   100%
 test_domain.py                     53      0      2      0   100%
 test_habit_streak_property.py      19      0      4      0   100%
 ---------------------------------------------------------------------------
-TOTAL                             485     14     42      7    96%
+TOTAL                             503     10     42      3    98%
 ```
 
-**Key takeaway**: 26 tests -- 9 pure unit tests, 2 Hypothesis property tests (each running hundreds of
-generated cases under the hood), and 15 integration tests against the live `TestClient` -- all pass,
-at 96% combined statement+branch coverage; `pyright --strict` (Step 2's `pyrightconfig.json`) reports
+**Key takeaway**: 29 tests -- 9 pure unit tests, 2 Hypothesis property tests (each running hundreds of
+generated cases under the hood), and 18 integration tests against the live `TestClient` -- all pass,
+at 98% combined statement+branch coverage; `pyright --strict` (Step 2's `pyrightconfig.json`) reports
 `0 errors` across every file in `app/`.
 
 **Why it matters**: this is the testing PYRAMID topic 15 teaches, applied for real: cheap, fast unit
@@ -1786,8 +1840,8 @@ where they visibly compound:
   cross-user leak), auth is hashed (`$argon2id$`, never plaintext, confirmed by reading the DB file
   directly), no secret is committed anywhere in the tree, and `pip-audit -l` exits clean against the
   full pinned dependency graph.
-- `attack_transcript.py` and the full `pytest` suite (26 tests: 9 unit, 2 property, 15 integration)
-  both exit `0`, with a coverage report generated (96% combined statement+branch coverage).
+- `attack_transcript.py` and the full `pytest` suite (29 tests: 9 unit, 2 property, 18 integration)
+  both exit `0`, with a coverage report generated (98% combined statement+branch coverage).
 
 ## Done bar
 
@@ -1797,7 +1851,7 @@ every `curl` command shown on this page reaches the identical output shown here 
 `uvicorn` 0.51.0), including a genuine SQL-injection attack that succeeded against the documented
 naive draft and failed against the shipped, hardened code; a genuine argon2id hash read directly from
 the SQLite file; a genuine `pip-audit -l` clean run against the full pinned dependency graph; and a
-genuine `pytest`/`coverage` run (26/26 passing, 96% coverage) -- nothing on this page is a fabricated
+genuine `pytest`/`coverage` run (29/29 passing, 98% coverage) -- nothing on this page is a fabricated
 transcript (DD-19). Every version this capstone's Python stack pins is confirmed current and
 CVE-clean as of 2026-07-16 in
 [`syllabus/17-security-essentials.md`](https://github.com/wahidyankf/ose-public/blob/main/plans/in-progress/fundamentally-strong-software-engineer/syllabus/17-security-essentials.md)'s
