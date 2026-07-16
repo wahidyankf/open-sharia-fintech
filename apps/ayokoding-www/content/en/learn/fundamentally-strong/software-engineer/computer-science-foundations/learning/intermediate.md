@@ -1311,7 +1311,7 @@ not just on a hand-picked sample.
 
 ```python
 # learning/code/ex-36-kleene-equivalence/kleene_equivalence.py
-"""Example 36: Kleene Equivalence -- re.match vs. a Hand-Built DFA, Randomized Agreement."""  # => co-19: this file's own restated purpose, doubling as its module __doc__
+"""Example 36: Kleene Equivalence -- re.match vs. a Hand-Built DFA, Exhaustive Agreement."""  # => co-19: this file's own restated purpose, doubling as its module __doc__
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 

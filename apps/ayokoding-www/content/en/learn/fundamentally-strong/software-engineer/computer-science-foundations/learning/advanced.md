@@ -1157,9 +1157,12 @@ of the digest's `256` bits (`47.7%`) -- close to the theoretical 50% an ideal ha
 produce, and the two hex digests share no visible resemblance whatsoever.
 
 **Why it matters**: this avalanche property is exactly what makes SHA-256 usable for integrity
-verification, password storage, and digital signatures -- unlike CRC32 (Example 54), it is
-computationally infeasible to find two different inputs producing similar-looking, let alone
-identical, digests, which is precisely what a security-relevant hash function requires.
+verification and digital signatures -- unlike CRC32 (Example 54), it is computationally infeasible
+to find two different inputs producing similar-looking, let alone identical, digests, which is
+precisely what a security-relevant hash function requires. Password storage is a different case:
+SHA-256 is deliberately fast, the opposite of what password hashing needs -- storing passwords
+safely requires a slow, memory-hard KDF such as bcrypt, scrypt, or Argon2, not a direct SHA-256
+hash (the same anti-pattern Security Essentials' Example 14 demonstrates being broken).
 
 ---
 
