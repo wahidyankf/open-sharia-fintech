@@ -1164,7 +1164,9 @@ class TestHealthAndReadiness:
         assert response.json() == {"status": "ready"}
 
     def test_ready_is_503_when_db_ping_fails(self, client: TestClient) -> None:
-        from app import main as main_module  # => same module the `client` fixture just reloaded
+        from app import (
+            main as main_module,
+        )  # => same module the `client` fixture just reloaded
 
         def broken_get_db() -> Iterator[_UnreachableConnection]:
             yield _UnreachableConnection()
