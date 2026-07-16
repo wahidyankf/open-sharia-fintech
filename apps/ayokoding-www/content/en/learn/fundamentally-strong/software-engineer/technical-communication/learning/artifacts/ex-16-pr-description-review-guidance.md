@@ -13,8 +13,8 @@ per ADR-0005.
 **Why**: enables message replay after worker bugs instead of manual data reconciliation.
 
 **How verified**: full existing Notification Worker test suite passes against a local Kafka instance;
-ran a replay drill in staging (killed the consumer mid-batch, restarted, confirmed no duplicate sends
-via the idempotency check added in a follow-on PR).
+ran a replay drill in staging (killed the consumer mid-batch, restarted, confirmed every message the
+old queue would have delivered is still delivered, in order, under the new Kafka consumer).
 
 **Where to review first**: `notification_worker/consumer.py`'s `handle_rebalance()` method --
 everything else in this diff (import changes, config wiring, thirteen other files) is mechanical.

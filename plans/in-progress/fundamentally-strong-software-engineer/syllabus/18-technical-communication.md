@@ -194,9 +194,9 @@ compiler (DD-20/DD-30). Contiguous `ex-01..ex-25`.
   diagram (co-11, co-12) [ ] precise RFC 2119 keywords + edited, register-matched prose (co-13, co-14,
   co-15) [ ] proportional, close-to-code artifacts (co-16, co-17).
 - **Ordered steps**:
-  1. `.../learning/capstone/adr/` and `.../rfc.md` — the decision, options, trade-off, and open
-     questions. Verify a peer reviewer can restate the decision and its rationale from the document
-     alone.
+  1. `.../learning/capstone/adr-0006-notification-worker-idempotency-cache.md` and `.../rfc.md` — the
+     decision, options, trade-off, and open questions. Verify a peer reviewer can restate the
+     decision and its rationale from the document alone.
   2. `.../pr-description.md` — a real change described (what / why / how-verified / where-to-look).
      Verify a reviewer knows where to start within thirty seconds.
   3. `.../postmortem.md` + `.../context.md` (C4) — timeline, impact, root cause, follow-ups, and a

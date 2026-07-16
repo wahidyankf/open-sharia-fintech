@@ -264,7 +264,7 @@ engineer who will implement the fix.
 >
 > **Engineer version**: The Notification Worker consumes from an at-least-once queue and processes
 > each message without checking whether it already ran -- a consumer-group rebalance during a
-> deployment restart replayed roughly 40 already-processed messages, and every one fired a duplicate
+> deployment restart replayed roughly 340 already-processed messages, and every one fired a duplicate
 > SMS/email. The fix: a Redis-backed idempotency cache keyed on the event's `event_id` (co-13's schema
 > field), with a 48-hour TTL comfortably longer than any plausible replay window. See the ADR and RFC
 > under this topic's capstone for the full design.
