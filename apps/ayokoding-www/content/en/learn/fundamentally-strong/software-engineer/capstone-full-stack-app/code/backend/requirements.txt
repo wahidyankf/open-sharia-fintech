@@ -1,0 +1,6 @@
+fastapi==0.139.0
+uvicorn==0.51.0
+pydantic==2.13.4
+pytest==9.1.1
+httpx==0.28.1
+coverage==7.15.2

@@ -67,3 +67,5 @@ weight: 1750
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/drilling)
 - [Pass 1 Capstone · First Working Software](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software)
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-first-working-software/overview)
+- [Inter-Topic Capstone · Full-Stack App](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app/overview)
