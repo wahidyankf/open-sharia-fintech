@@ -39,6 +39,7 @@ pub mod specs_audit;
 pub mod specs_bc;
 pub mod specs_clean_java_imports;
 pub mod specs_coverage;
+pub mod specs_e2e_coverage;
 pub mod specs_gherkin_cardinality;
 pub mod specs_scaffold_dart;
 pub mod specs_structure_validate;
