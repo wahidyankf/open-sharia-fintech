@@ -43,9 +43,16 @@ is about designing well with them. Domain modeling at scale continues in
   (docs.python.org / GoF canon / Larman 1997)
 - 2026-07-12 — state-machine rung (co-35..co-37, ex-81..ex-84): the GoF **State** pattern (co-29) is the
   object-per-state form; **statecharts** are Harel's 1987 extension (nested/orthogonal states, guards,
-  entry/exit actions) — the model **XState** implements — both stable canon. `[Needs Verification]` at
-  authoring: confirm the current XState statechart terminology (states/events/guards/actions/actors) against
-  stately.ai/docs before quoting any XState-specific API in prose.
+  entry/exit actions) — the model **XState** implements — both stable canon.
+- 2026-07-17 — verified: XState is current, actively maintained software (not deprecated or renamed) —
+  current major version **XState v5** (latest patch `5.32.5` as of this sweep), with v4 relegated to
+  legacy/archived docs. The terminology **states / events / guards / actions / actors** is confirmed
+  current XState v5 vocabulary against `stately.ai/docs`: guards gate transitions, entry/exit actions
+  fire on entering/leaving a state node, and actors are v5's organizing concept (created via
+  `createActor`). The official repo explicitly cites Harel's statecharts and the SCXML spec as its
+  theoretical foundation, confirming the "the model XState implements" framing. v4-era terms to avoid
+  (`services`, `withConfig()`, `useInterpret()` — renamed `actors`, `provide()`, `useActorRef()` in v5)
+  do not appear in this topic's prose. (stately.ai/docs / github.com/statelyai/xstate)
 
 ## Concepts
 
@@ -243,7 +250,7 @@ it exercises. Contiguous `ex-01..ex-84`.
 - **Object-Oriented Software Construction** — Bertrand Meyer (1997, 2nd ed.). Foundational text on OO design principles; introduced Design by Contract and the Open/Closed Principle. <https://bertrandmeyer.com/wp-content/upLoads/OOSC2.pdf>
 - **Refactoring: Improving the Design of Existing Code** — Martin Fowler (1999; 2nd ed. 2018). Canonical catalog of code smells and refactorings for evolving object-oriented designs safely.
 - **Agile Software Development: Principles, Patterns, and Practices** — Robert C. Martin (2002). Introduced the SOLID principles alongside worked object-oriented design case studies.
-- **Head First Design Patterns** — Eric Freeman & Elisabeth Robson (2004; 2nd ed. 2020). The most widely used accessible introduction to the GoF patterns.
+- **Head First Design Patterns** — Eric Freeman, Elisabeth Robson, Bert Bates & Kathy Sierra (2004; 2nd ed. 2020, Freeman & Robson only). The most widely used accessible introduction to the GoF patterns.
 
 **Papers & articles**
 

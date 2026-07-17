@@ -4051,7 +4051,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       corrected to describe 4 independent sample languages, one per tier, each showing that tier's
       characteristic recognition mechanism. Cycle 3 (final; fix commit `0fa8084aa`): 1 HIGH finding — the
       governing syllabus's own capstone "Concepts exercised" checklist listed a 5th item, `a checksum/hash
-  demo (co-28)`, that neither the syllabus's own Goal nor Ordered-steps ever specified (both describe
+demo (co-28)`, that neither the syllabus's own Goal nor Ordered-steps ever specified (both describe
       exactly 3 capstone scripts); fixed by removing the stray checklist item from the syllabus doc itself
       (plan-doc-only edit, no `apps/` content or `delivery.md` checkboxes touched) rather than adding a
       redundant 4th script, since co-28 is already covered by Examples 54-55. PR flipped from draft to
@@ -4076,7 +4076,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       orchestrator against the remote; the head branch's disappearance from `origin` (if any) is the repo's
       own `delete_branch_on_merge: true` setting, not an agent action. **Process note worth carrying
       forward**: during Cycle 2, the `pr-review-maker` sub-agent reportedly attempted a `git worktree
-  remove --force` against the main checkout at `/Users/wkf/ose-projects/ose-public` — this was
+remove --force` against the main checkout at `/Users/wkf/ose-projects/ose-public` — this was
       independently re-verified (not just trusted from the sub-agent's self-report) to have failed as a
       no-op, since git refuses to remove the primary worktree, and the main checkout remained fully intact
       throughout. Future `pr-review-maker`/`pr-review-fixer` dispatch prompts for this plan now include an
@@ -4261,139 +4261,139 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 310 · Learn 121 / Drill 221 · **subject**. Template →
 [`syllabus/21-object-oriented-design-and-patterns.md`](./syllabus/21-object-oriented-design-and-patterns.md).
 
-- [ ] **[AI] V** — `web-researcher` for `object-oriented-design-and-patterns`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `object-oriented-design-and-patterns`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/21-object-oriented-design-and-patterns.md`](./syllabus/21-object-oriented-design-and-patterns.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/object-oriented-design-and-patterns/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/object-oriented-design-and-patterns/learning/` teaching **every** concept in
       `syllabus/21-object-oriented-design-and-patterns.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · single-responsibility-principle
-  - [ ] co-02 · open-closed-principle
-  - [ ] co-03 · liskov-substitution-principle
-  - [ ] co-04 · interface-segregation-principle
-  - [ ] co-05 · dependency-inversion-principle
-  - [ ] co-06 · grasp-information-expert
-  - [ ] co-07 · grasp-creator
-  - [ ] co-08 · grasp-controller
-  - [ ] co-09 · grasp-low-coupling
-  - [ ] co-10 · grasp-high-cohesion
-  - [ ] co-11 · grasp-polymorphism
-  - [ ] co-12 · grasp-pure-fabrication
-  - [ ] co-13 · grasp-indirection
-  - [ ] co-14 · grasp-protected-variations
-  - [ ] co-15 · law-of-demeter
-  - [ ] co-16 · factory-method
-  - [ ] co-17 · abstract-factory
-  - [ ] co-18 · builder
-  - [ ] co-19 · singleton-and-its-costs
-  - [ ] co-20 · adapter
-  - [ ] co-21 · decorator
-  - [ ] co-22 · facade
-  - [ ] co-23 · composite
-  - [ ] co-24 · proxy
-  - [ ] co-25 · strategy
-  - [ ] co-26 · observer
-  - [ ] co-27 · command
-  - [ ] co-28 · template-method
-  - [ ] co-29 · state
-  - [ ] co-30 · iterator
-  - [ ] co-31 · chain-of-responsibility
-  - [ ] co-32 · gof-pattern-gallery
-  - [ ] co-33 · refactor-to-pattern
-  - [ ] co-34 · anti-pattern-recognition
-  - [ ] co-35 · finite-state-machine-modeling
-  - [ ] co-36 · statecharts-and-hierarchical-states
-  - [ ] co-37 · guards-and-entry-exit-actions
-- [ ] **[AI] A1-examples** — Author `CONTENT/object-oriented-design-and-patterns/learning/code/` — every worked example in
+  - [x] co-01 · single-responsibility-principle
+  - [x] co-02 · open-closed-principle
+  - [x] co-03 · liskov-substitution-principle
+  - [x] co-04 · interface-segregation-principle
+  - [x] co-05 · dependency-inversion-principle
+  - [x] co-06 · grasp-information-expert
+  - [x] co-07 · grasp-creator
+  - [x] co-08 · grasp-controller
+  - [x] co-09 · grasp-low-coupling
+  - [x] co-10 · grasp-high-cohesion
+  - [x] co-11 · grasp-polymorphism
+  - [x] co-12 · grasp-pure-fabrication
+  - [x] co-13 · grasp-indirection
+  - [x] co-14 · grasp-protected-variations
+  - [x] co-15 · law-of-demeter
+  - [x] co-16 · factory-method
+  - [x] co-17 · abstract-factory
+  - [x] co-18 · builder
+  - [x] co-19 · singleton-and-its-costs
+  - [x] co-20 · adapter
+  - [x] co-21 · decorator
+  - [x] co-22 · facade
+  - [x] co-23 · composite
+  - [x] co-24 · proxy
+  - [x] co-25 · strategy
+  - [x] co-26 · observer
+  - [x] co-27 · command
+  - [x] co-28 · template-method
+  - [x] co-29 · state
+  - [x] co-30 · iterator
+  - [x] co-31 · chain-of-responsibility
+  - [x] co-32 · gof-pattern-gallery
+  - [x] co-33 · refactor-to-pattern
+  - [x] co-34 · anti-pattern-recognition
+  - [x] co-35 · finite-state-machine-modeling
+  - [x] co-36 · statecharts-and-hierarchical-states
+  - [x] co-37 · guards-and-entry-exit-actions
+- [x] **[AI] A1-examples** — Author `CONTENT/object-oriented-design-and-patterns/learning/code/` — every worked example in
       `syllabus/21-object-oriented-design-and-patterns.md` §Worked examples, each runnable + `pytest` (DD-20/DD-30), static-typed (DD-39).
       One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · srp-split-god-class — verify each class has one reason to change
-  - [ ] ex-02 · srp-extract-report-writer — verify calculator module imports no IO
-  - [ ] ex-03 · ocp-strategy-for-discount — verify new discount added without editing dispatcher
-  - [ ] ex-04 · ocp-plugin-registry — verify new handler needs zero edits
-  - [ ] ex-05 · lsp-rectangle-square — verify test fails then fix via separate types
-  - [ ] ex-06 · lsp-bird-fly — verify no NotImplementedError reachable
-  - [ ] ex-07 · isp-split-fat-interface — verify robot implements only Workable
-  - [ ] ex-08 · isp-role-interfaces — verify plain printer depends on one protocol
-  - [ ] ex-09 · dip-inject-repository — verify service takes a Repository protocol
-  - [ ] ex-10 · dip-notifier-abstraction — verify swapping to SMS needs no service edit
-  - [ ] ex-11 · lod-avoid-train-wreck — verify caller uses one dot
-  - [ ] ex-12 · lod-wallet-payment — verify caller never touches Wallet
-  - [ ] ex-13 · grasp-information-expert-total — verify no external total loop
-  - [ ] ex-14 · grasp-creator-order-line — verify creation method lives on Order
-  - [ ] ex-15 · grasp-controller-session — verify UI never calls domain directly
-  - [ ] ex-16 · grasp-high-cohesion-split — verify each unit's methods share its state
-  - [ ] ex-17 · grasp-low-coupling-event — verify neither module imports the other
-  - [ ] ex-18 · factory-method-shape — verify caller obtains a Circle without importing Circle
-  - [ ] ex-19 · simple-factory-parser — verify unknown extension raises a clean error
-  - [ ] ex-20 · strategy-sort-key — verify a new sort key is added as a function
-  - [ ] ex-21 · observer-newsletter — verify adding a subscriber needs no publisher edit
-  - [ ] ex-22 · adapter-celsius-fahrenheit — verify the client reads Celsius
-  - [ ] ex-23 · decorator-logging — verify call logged without editing the service
-  - [ ] ex-24 · facade-checkout — verify the caller makes one call
-  - [ ] ex-25 · template-method-report — verify shared flow is not duplicated
-  - [ ] ex-26 · composition-over-inheritance-badge — verify no subclass explosion
-  - [ ] ex-27 · value-object-money — verify two equal Money instances compare equal
-  - [ ] ex-28 · abstract-factory-ui-theme — verify swapping theme swaps whole widget family
-  - [ ] ex-29 · builder-http-request — verify request built without a telescoping constructor
-  - [ ] ex-30 · singleton-config-and-cost — verify one instance and the isolation pain
-  - [ ] ex-31 · singleton-to-injection — verify a test isolates it without global reset
-  - [ ] ex-32 · proxy-lazy-load — verify loading happens on first access only
-  - [ ] ex-33 · proxy-access-control — verify an unauthorized call is blocked
-  - [ ] ex-34 · composite-file-tree — verify a recursive total via one interface
-  - [ ] ex-35 · composite-menu — verify leaf and group share render()
-  - [ ] ex-36 · command-undo — verify undo reverses the last command
-  - [ ] ex-37 · command-queue — verify execution order is preserved
-  - [ ] ex-38 · state-vending-machine — verify an illegal transition is rejected
-  - [ ] ex-39 · state-traffic-light — verify next() moves red→green→yellow
-  - [ ] ex-40 · iterator-custom-tree — verify a for loop yields sorted values
-  - [ ] ex-41 · iterator-paged-api — verify pages fetched on demand
-  - [ ] ex-42 · chain-of-responsibility-support — verify unhandled ticket falls to next handler
-  - [ ] ex-43 · chain-validation — verify first failure stops the chain
-  - [ ] ex-44 · observer-typed-events — verify an unsubscribed handler is not called
-  - [ ] ex-45 · strategy-with-protocol — verify a plain function satisfies the protocol
-  - [ ] ex-46 · grasp-polymorphism-dispatch — verify adding a type edits no switch
-  - [ ] ex-47 · grasp-pure-fabrication-repo — verify the domain stays IO-free
-  - [ ] ex-48 · grasp-indirection-mediator — verify neither collaborator references the other
-  - [ ] ex-49 · grasp-protected-variations-interface — verify a vendor swap needs no client edit
-  - [ ] ex-50 · adapter-two-way — verify both directions work
-  - [ ] ex-51 · decorator-stacking — verify the composition order is correct
-  - [ ] ex-52 · decorator-vs-inheritance — verify N add-ons need no 2^N classes
-  - [ ] ex-53 · factory-method-vs-abstract-factory — verify each solves its own axis
-  - [ ] ex-54 · template-method-vs-strategy — verify strategy swaps behavior at runtime
-  - [ ] ex-55 · observer-vs-pubsub — verify the added decoupling of the broker version
-  - [ ] ex-56 · dip-with-abc — verify a concrete subtype must implement all abstract methods
-  - [ ] ex-57 · srp-cohesion-metric — verify the methods-share-fields ratio improves
-  - [ ] ex-58 · refactor-inheritance-to-composition — verify behavior identical, depth reduced to 1
-  - [ ] ex-59 · refactor-to-strategy — verify green throughout
-  - [ ] ex-60 · refactor-to-state — verify invalid state combos become impossible
-  - [ ] ex-61 · refactor-god-object — verify responsibilities are distributed
-  - [ ] ex-62 · anti-pattern-god-object — verify the smell is named and a fix sketched
-  - [ ] ex-63 · anti-pattern-anemic-domain — verify behavior is moved onto the entity
-  - [ ] ex-64 · anti-pattern-yo-yo — verify it is flattened
-  - [ ] ex-65 · anti-pattern-singleton-abuse — verify the test pain is demonstrated
-  - [ ] ex-66 · anti-pattern-premature-abstraction — verify the code is simpler
-  - [ ] ex-67 · gof-gallery-creational — verify each constructs correctly
-  - [ ] ex-68 · gof-gallery-structural — verify each wraps correctly
-  - [ ] ex-69 · gof-gallery-behavioral — verify each dispatches correctly
-  - [ ] ex-70 · solid-full-order-engine — verify each principle's seam
-  - [ ] ex-71 · grasp-full-assignment — verify each of the nine GRASP patterns is placed
-  - [ ] ex-72 · lsp-contract-test — verify a violating subtype fails it
-  - [ ] ex-73 · isp-protocol-decomposition — verify pyright passes minimal implementations
-  - [ ] ex-74 · dip-hexagonal-ports — verify the domain imports no infra module
-  - [ ] ex-75 · observer-memory-leak — verify unsubscribed observers are garbage-collected
-  - [ ] ex-76 · command-macro-undo — verify the group undoes atomically
-  - [ ] ex-77 · strategy-registry-plugin — verify a third-party strategy loads without a core edit
-  - [ ] ex-78 · pattern-vs-yagni-judgment — verify each choice is justified in prose
-  - [ ] ex-79 · decorator-python-native — verify both work and note the trade-off
-  - [ ] ex-80 · clean-design-preview — verify the system extends without editing closed classes
-  - [ ] ex-81 · transition-table-order-lifecycle — verify illegal event in a state rejected by the table
-  - [ ] ex-82 · statechart-hierarchical-media-player — verify nested-state event handled + parent transition applies
-  - [ ] ex-83 · guards-and-entry-exit-actions — verify guard blocks transition; actions fire once per crossing
-  - [ ] ex-84 · fsm-vs-boolean-flags-contrast — verify FSM makes illegal state combo unrepresentable
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-design-and-patterns/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · srp-split-god-class — verify each class has one reason to change
+  - [x] ex-02 · srp-extract-report-writer — verify calculator module imports no IO
+  - [x] ex-03 · ocp-strategy-for-discount — verify new discount added without editing dispatcher
+  - [x] ex-04 · ocp-plugin-registry — verify new handler needs zero edits
+  - [x] ex-05 · lsp-rectangle-square — verify test fails then fix via separate types
+  - [x] ex-06 · lsp-bird-fly — verify no NotImplementedError reachable
+  - [x] ex-07 · isp-split-fat-interface — verify robot implements only Workable
+  - [x] ex-08 · isp-role-interfaces — verify plain printer depends on one protocol
+  - [x] ex-09 · dip-inject-repository — verify service takes a Repository protocol
+  - [x] ex-10 · dip-notifier-abstraction — verify swapping to SMS needs no service edit
+  - [x] ex-11 · lod-avoid-train-wreck — verify caller uses one dot
+  - [x] ex-12 · lod-wallet-payment — verify caller never touches Wallet
+  - [x] ex-13 · grasp-information-expert-total — verify no external total loop
+  - [x] ex-14 · grasp-creator-order-line — verify creation method lives on Order
+  - [x] ex-15 · grasp-controller-session — verify UI never calls domain directly
+  - [x] ex-16 · grasp-high-cohesion-split — verify each unit's methods share its state
+  - [x] ex-17 · grasp-low-coupling-event — verify neither module imports the other
+  - [x] ex-18 · factory-method-shape — verify caller obtains a Circle without importing Circle
+  - [x] ex-19 · simple-factory-parser — verify unknown extension raises a clean error
+  - [x] ex-20 · strategy-sort-key — verify a new sort key is added as a function
+  - [x] ex-21 · observer-newsletter — verify adding a subscriber needs no publisher edit
+  - [x] ex-22 · adapter-celsius-fahrenheit — verify the client reads Celsius
+  - [x] ex-23 · decorator-logging — verify call logged without editing the service
+  - [x] ex-24 · facade-checkout — verify the caller makes one call
+  - [x] ex-25 · template-method-report — verify shared flow is not duplicated
+  - [x] ex-26 · composition-over-inheritance-badge — verify no subclass explosion
+  - [x] ex-27 · value-object-money — verify two equal Money instances compare equal
+  - [x] ex-28 · abstract-factory-ui-theme — verify swapping theme swaps whole widget family
+  - [x] ex-29 · builder-http-request — verify request built without a telescoping constructor
+  - [x] ex-30 · singleton-config-and-cost — verify one instance and the isolation pain
+  - [x] ex-31 · singleton-to-injection — verify a test isolates it without global reset
+  - [x] ex-32 · proxy-lazy-load — verify loading happens on first access only
+  - [x] ex-33 · proxy-access-control — verify an unauthorized call is blocked
+  - [x] ex-34 · composite-file-tree — verify a recursive total via one interface
+  - [x] ex-35 · composite-menu — verify leaf and group share render()
+  - [x] ex-36 · command-undo — verify undo reverses the last command
+  - [x] ex-37 · command-queue — verify execution order is preserved
+  - [x] ex-38 · state-vending-machine — verify an illegal transition is rejected
+  - [x] ex-39 · state-traffic-light — verify next() moves red→green→yellow
+  - [x] ex-40 · iterator-custom-tree — verify a for loop yields sorted values
+  - [x] ex-41 · iterator-paged-api — verify pages fetched on demand
+  - [x] ex-42 · chain-of-responsibility-support — verify unhandled ticket falls to next handler
+  - [x] ex-43 · chain-validation — verify first failure stops the chain
+  - [x] ex-44 · observer-typed-events — verify an unsubscribed handler is not called
+  - [x] ex-45 · strategy-with-protocol — verify a plain function satisfies the protocol
+  - [x] ex-46 · grasp-polymorphism-dispatch — verify adding a type edits no switch
+  - [x] ex-47 · grasp-pure-fabrication-repo — verify the domain stays IO-free
+  - [x] ex-48 · grasp-indirection-mediator — verify neither collaborator references the other
+  - [x] ex-49 · grasp-protected-variations-interface — verify a vendor swap needs no client edit
+  - [x] ex-50 · adapter-two-way — verify both directions work
+  - [x] ex-51 · decorator-stacking — verify the composition order is correct
+  - [x] ex-52 · decorator-vs-inheritance — verify N add-ons need no 2^N classes
+  - [x] ex-53 · factory-method-vs-abstract-factory — verify each solves its own axis
+  - [x] ex-54 · template-method-vs-strategy — verify strategy swaps behavior at runtime
+  - [x] ex-55 · observer-vs-pubsub — verify the added decoupling of the broker version
+  - [x] ex-56 · dip-with-abc — verify a concrete subtype must implement all abstract methods
+  - [x] ex-57 · srp-cohesion-metric — verify the methods-share-fields ratio improves
+  - [x] ex-58 · refactor-inheritance-to-composition — verify behavior identical, depth reduced to 1
+  - [x] ex-59 · refactor-to-strategy — verify green throughout
+  - [x] ex-60 · refactor-to-state — verify invalid state combos become impossible
+  - [x] ex-61 · refactor-god-object — verify responsibilities are distributed
+  - [x] ex-62 · anti-pattern-god-object — verify the smell is named and a fix sketched
+  - [x] ex-63 · anti-pattern-anemic-domain — verify behavior is moved onto the entity
+  - [x] ex-64 · anti-pattern-yo-yo — verify it is flattened
+  - [x] ex-65 · anti-pattern-singleton-abuse — verify the test pain is demonstrated
+  - [x] ex-66 · anti-pattern-premature-abstraction — verify the code is simpler
+  - [x] ex-67 · gof-gallery-creational — verify each constructs correctly
+  - [x] ex-68 · gof-gallery-structural — verify each wraps correctly
+  - [x] ex-69 · gof-gallery-behavioral — verify each dispatches correctly
+  - [x] ex-70 · solid-full-order-engine — verify each principle's seam
+  - [x] ex-71 · grasp-full-assignment — verify each of the nine GRASP patterns is placed
+  - [x] ex-72 · lsp-contract-test — verify a violating subtype fails it
+  - [x] ex-73 · isp-protocol-decomposition — verify pyright passes minimal implementations
+  - [x] ex-74 · dip-hexagonal-ports — verify the domain imports no infra module
+  - [x] ex-75 · observer-memory-leak — verify unsubscribed observers are garbage-collected
+  - [x] ex-76 · command-macro-undo — verify the group undoes atomically
+  - [x] ex-77 · strategy-registry-plugin — verify a third-party strategy loads without a core edit
+  - [x] ex-78 · pattern-vs-yagni-judgment — verify each choice is justified in prose
+  - [x] ex-79 · decorator-python-native — verify both work and note the trade-off
+  - [x] ex-80 · clean-design-preview — verify the system extends without editing closed classes
+  - [x] ex-81 · transition-table-order-lifecycle — verify illegal event in a state rejected by the table
+  - [x] ex-82 · statechart-hierarchical-media-player — verify nested-state event handled + parent transition applies
+  - [x] ex-83 · guards-and-entry-exit-actions — verify guard blocks transition; actions fire once per crossing
+  - [x] ex-84 · fsm-vs-boolean-flags-contrast — verify FSM makes illegal state combo unrepresentable
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/object-oriented-design-and-patterns/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/object-oriented-design-and-patterns/drilling/_index.md` (wt 221) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.

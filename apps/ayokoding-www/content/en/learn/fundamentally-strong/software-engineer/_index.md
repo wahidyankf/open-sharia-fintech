@@ -76,3 +76,6 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/drilling)
+- [21 · Object-Oriented Design & Patterns](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/drilling)
