@@ -4530,129 +4530,129 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python \*\* · topic wt 320 · Learn 122 / Drill 222 · **subject**. Template →
 [`syllabus/22-programming-paradigms.md`](./syllabus/22-programming-paradigms.md).
 
-- [ ] **[AI] V** — `web-researcher` for `programming-paradigms`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `programming-paradigms`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/22-programming-paradigms.md`](./syllabus/22-programming-paradigms.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/programming-paradigms/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/programming-paradigms/learning/` teaching **every** concept in
       `syllabus/22-programming-paradigms.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · imperative-programming
-  - [ ] co-02 · procedural-abstraction
-  - [ ] co-03 · structured-programming
-  - [ ] co-04 · mutable-state-and-assignment
-  - [ ] co-05 · object-oriented-paradigm
-  - [ ] co-06 · encapsulation-as-state-containment
-  - [ ] co-07 · message-passing-vs-method-call
-  - [ ] co-08 · declarative-vs-imperative
-  - [ ] co-09 · functional-paradigm-overview
-  - [ ] co-10 · expressions-vs-statements
-  - [ ] co-11 · pure-vs-impure
-  - [ ] co-12 · first-class-and-higher-order-functions
-  - [ ] co-13 · logic-programming
-  - [ ] co-14 · unification-and-backtracking
-  - [ ] co-15 · constraint-programming
-  - [ ] co-16 · event-driven-paradigm
-  - [ ] co-17 · reactive-programming
-  - [ ] co-18 · dataflow-programming
-  - [ ] co-19 · relational-set-based-thinking
-  - [ ] co-20 · multi-paradigm-languages
-  - [ ] co-21 · paradigm-as-constraint-buys-property
-  - [ ] co-22 · state-as-the-fault-line
-  - [ ] co-23 · matching-paradigm-to-problem
-  - [ ] co-24 · paradigm-cost-and-tradeoff
-  - [ ] co-25 · mixing-paradigms-at-boundaries
-- [ ] **[AI] A1-examples** — Author `CONTENT/programming-paradigms/learning/code/` (runnable sources, DD-20/DD-30) rendering
+  - [x] co-01 · imperative-programming
+  - [x] co-02 · procedural-abstraction
+  - [x] co-03 · structured-programming
+  - [x] co-04 · mutable-state-and-assignment
+  - [x] co-05 · object-oriented-paradigm
+  - [x] co-06 · encapsulation-as-state-containment
+  - [x] co-07 · message-passing-vs-method-call
+  - [x] co-08 · declarative-vs-imperative
+  - [x] co-09 · functional-paradigm-overview
+  - [x] co-10 · expressions-vs-statements
+  - [x] co-11 · pure-vs-impure
+  - [x] co-12 · first-class-and-higher-order-functions
+  - [x] co-13 · logic-programming
+  - [x] co-14 · unification-and-backtracking
+  - [x] co-15 · constraint-programming
+  - [x] co-16 · event-driven-paradigm
+  - [x] co-17 · reactive-programming
+  - [x] co-18 · dataflow-programming
+  - [x] co-19 · relational-set-based-thinking
+  - [x] co-20 · multi-paradigm-languages
+  - [x] co-21 · paradigm-as-constraint-buys-property
+  - [x] co-22 · state-as-the-fault-line
+  - [x] co-23 · matching-paradigm-to-problem
+  - [x] co-24 · paradigm-cost-and-tradeoff
+  - [x] co-25 · mixing-paradigms-at-boundaries
+- [x] **[AI] A1-examples** — Author `CONTENT/programming-paradigms/learning/code/` (runnable sources, DD-20/DD-30) rendering
       **every** Worked example in `syllabus/22-programming-paradigms.md`. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · imperative-word-count — verify counts match a known text
-  - [ ] ex-02 · procedural-decompose — verify identical output, smaller main
-  - [ ] ex-03 · structured-three-constructs — verify no boolean goto flag remains
-  - [ ] ex-04 · mutable-variable-box — verify original sees the aliased change
-  - [ ] ex-05 · goto-free-loop — verify equivalent output
-  - [ ] ex-06 · oo-word-count — verify count via the method
-  - [ ] ex-07 · encapsulation-private-state — verify invariant held
-  - [ ] ex-08 · method-call-as-message — verify dispatch picks the right message
-  - [ ] ex-09 · declarative-comprehension — verify identical list
-  - [ ] ex-10 · imperative-vs-declarative-sum — verify same integer
-  - [ ] ex-11 · functional-word-count — verify same counts
-  - [ ] ex-12 · expression-vs-statement — verify both compute the same value
-  - [ ] ex-13 · pure-vs-impure-pair — verify the pure one is referentially transparent
-  - [ ] ex-14 · higher-order-map — verify function-as-value transforms each item
-  - [ ] ex-15 · sql-declarative-query — verify rows match the functional version
-  - [ ] ex-16 · event-driven-callback — verify the handler ran with the payload
-  - [ ] ex-17 · reactive-counter — verify a subscriber saw the new value
-  - [ ] ex-18 · dataflow-two-cells — verify B updates
-  - [ ] ex-19 · logic-family-facts — verify the grandparent is inferred
-  - [ ] ex-20 · multi-paradigm-one-file — verify all three run and agree
-  - [ ] ex-21 · constraint-buys-property — verify neither function can mutate it
-  - [ ] ex-22 · state-fault-line-demo — verify both count, contrast where state lives
-  - [ ] ex-23 · match-case-dispatch — verify each branch fires
-  - [ ] ex-24 · imperative-fizzbuzz — verify the 1..20 output
-  - [ ] ex-25 · declarative-fizzbuzz — verify identical output to ex-24
-  - [ ] ex-26 · structured-guard-clauses — verify same behavior, lower nesting
-  - [ ] ex-27 · oo-vs-procedural-area — verify equal areas
-  - [ ] ex-28 · paradigm-is-noise-tiny-script — verify it runs
-  - [ ] ex-29 · four-ways-imperative — verify counts
-  - [ ] ex-30 · four-ways-oo — verify same counts
-  - [ ] ex-31 · four-ways-functional — verify same counts
-  - [ ] ex-32 · four-ways-declarative — verify same counts across all four
-  - [ ] ex-33 · state-machine-imperative — verify locked→unlocked→locked sequence
-  - [ ] ex-34 · state-machine-oo — verify same sequence
-  - [ ] ex-35 · state-machine-functional — verify same sequence, no mutation
-  - [ ] ex-36 · prolog-in-python — verify a grandparent query resolves via search
-  - [ ] ex-37 · backtracking-n-queens — verify no two queens attack
-  - [ ] ex-38 · constraint-map-coloring — verify no adjacent regions share a color
-  - [ ] ex-39 · constraint-mini-sudoku — verify rows/cols/boxes valid
-  - [ ] ex-40 · event-driven-loop — verify events processed in order
-  - [ ] ex-41 · reactive-derived-value — verify c after two updates
-  - [ ] ex-42 · reactive-vs-manual-recompute — verify both consistent, one forgets on a new path
-  - [ ] ex-43 · dataflow-topo-execute — verify order respects deps and the result
-  - [ ] ex-44 · generator-pull-pipeline — verify laziness
-  - [ ] ex-45 · inversion-of-control — verify the handler is invoked by the framework
-  - [ ] ex-46 · declarative-config-vs-setup — verify equal objects
-  - [ ] ex-47 · relational-vs-nested-loop-join — verify identical rows
-  - [ ] ex-48 · pure-core-imperative-shell — verify the core is tested with no I/O
-  - [ ] ex-49 · multi-paradigm-boundary — verify the boundary passes only immutable data
-  - [ ] ex-50 · paradigm-soup-antipattern — verify the aliasing bug reproduces
-  - [ ] ex-51 · logic-vs-imperative-reachability — verify identical reachable set
-  - [ ] ex-52 · match-case-adt-dispatch — verify each variant handled
-  - [ ] ex-53 · enum-state-tags — verify a full transition cycle
-  - [ ] ex-54 · declarative-validation-rules — verify a bad input is flagged with the failing rule
-  - [ ] ex-55 · event-bus-pubsub — verify all subscribers notified once each
-  - [ ] ex-56 · reactive-debounce — verify only the final value is delivered
-  - [ ] ex-57 · dataflow-memoized-nodes — verify an unchanged subtree isn't recomputed
-  - [ ] ex-58 · paradigm-cost-table — verify a comparison table with concrete numbers
-  - [ ] ex-59 · four-paradigms-shared-test — verify all four pass it
-  - [ ] ex-60 · mini-logic-engine — verify a transitive-closure query resolves
-  - [ ] ex-61 · generic-csp-solver — verify it solves both map-coloring and mini-sudoku
-  - [ ] ex-62 · reactive-graph-diamond — verify d recomputes exactly once per a update
-  - [ ] ex-63 · dataflow-scheduler — verify correct order under a dependency chain
-  - [ ] ex-64 · event-sourcing-fold — verify replay reproduces the live state
-  - [ ] ex-65 · actor-mailbox — verify messages handled in arrival order
-  - [ ] ex-66 · paradigm-decision-record — verify each row cites a concrete selection criterion
-  - [ ] ex-67 · imperative-to-functional-refactor — verify identical output and no mutation of inputs
-  - [ ] ex-68 · oo-behind-functional-facade — verify the facade exposes no mutable state
-  - [ ] ex-69 · declarative-mini-dsl — verify a composed rule runs
-  - [ ] ex-70 · logic-type-inference-toy — verify the inferred type
-  - [ ] ex-71 · constraint-scheduling — verify a returned schedule is feasible
-  - [ ] ex-72 · reactive-spreadsheet — verify a multi-level cascade updates
-  - [ ] ex-73 · multi-paradigm-request-handler — verify a request is handled end to end
-  - [ ] ex-74 · state-fault-line-case-study — verify a race in one design and none in the other
-  - [ ] ex-75 · paradigm-mismatch-cost — verify both correct, contrast effort/lines
-  - [ ] ex-76 · dataflow-vs-callback — verify identical output, contrast readability
-  - [ ] ex-77 · relational-algebra-engine — verify a composed query's result
-  - [ ] ex-78 · paradigm-portfolio-readme — verify the matrix covers all solutions with a criterion each
-  - [ ] ex-79 · immutable-vs-mutable-perf — verify both correct, note the trade-off numerically
-  - [ ] ex-80 · choose-and-defend — verify the defense references concrete functions
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/programming-paradigms/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · imperative-word-count — verify counts match a known text
+  - [x] ex-02 · procedural-decompose — verify identical output, smaller main
+  - [x] ex-03 · structured-three-constructs — verify no boolean goto flag remains
+  - [x] ex-04 · mutable-variable-box — verify original sees the aliased change
+  - [x] ex-05 · goto-free-loop — verify equivalent output
+  - [x] ex-06 · oo-word-count — verify count via the method
+  - [x] ex-07 · encapsulation-private-state — verify invariant held
+  - [x] ex-08 · method-call-as-message — verify dispatch picks the right message
+  - [x] ex-09 · declarative-comprehension — verify identical list
+  - [x] ex-10 · imperative-vs-declarative-sum — verify same integer
+  - [x] ex-11 · functional-word-count — verify same counts
+  - [x] ex-12 · expression-vs-statement — verify both compute the same value
+  - [x] ex-13 · pure-vs-impure-pair — verify the pure one is referentially transparent
+  - [x] ex-14 · higher-order-map — verify function-as-value transforms each item
+  - [x] ex-15 · sql-declarative-query — verify rows match the functional version
+  - [x] ex-16 · event-driven-callback — verify the handler ran with the payload
+  - [x] ex-17 · reactive-counter — verify a subscriber saw the new value
+  - [x] ex-18 · dataflow-two-cells — verify B updates
+  - [x] ex-19 · logic-family-facts — verify the grandparent is inferred
+  - [x] ex-20 · multi-paradigm-one-file — verify all three run and agree
+  - [x] ex-21 · constraint-buys-property — verify neither function can mutate it
+  - [x] ex-22 · state-fault-line-demo — verify both count, contrast where state lives
+  - [x] ex-23 · match-case-dispatch — verify each branch fires
+  - [x] ex-24 · imperative-fizzbuzz — verify the 1..20 output
+  - [x] ex-25 · declarative-fizzbuzz — verify identical output to ex-24
+  - [x] ex-26 · structured-guard-clauses — verify same behavior, lower nesting
+  - [x] ex-27 · oo-vs-procedural-area — verify equal areas
+  - [x] ex-28 · paradigm-is-noise-tiny-script — verify it runs
+  - [x] ex-29 · four-ways-imperative — verify counts
+  - [x] ex-30 · four-ways-oo — verify same counts
+  - [x] ex-31 · four-ways-functional — verify same counts
+  - [x] ex-32 · four-ways-declarative — verify same counts across all four
+  - [x] ex-33 · state-machine-imperative — verify locked→unlocked→locked sequence
+  - [x] ex-34 · state-machine-oo — verify same sequence
+  - [x] ex-35 · state-machine-functional — verify same sequence, no mutation
+  - [x] ex-36 · prolog-in-python — verify a grandparent query resolves via search
+  - [x] ex-37 · backtracking-n-queens — verify no two queens attack
+  - [x] ex-38 · constraint-map-coloring — verify no adjacent regions share a color
+  - [x] ex-39 · constraint-mini-sudoku — verify rows/cols/boxes valid
+  - [x] ex-40 · event-driven-loop — verify events processed in order
+  - [x] ex-41 · reactive-derived-value — verify c after two updates
+  - [x] ex-42 · reactive-vs-manual-recompute — verify both consistent, one forgets on a new path
+  - [x] ex-43 · dataflow-topo-execute — verify order respects deps and the result
+  - [x] ex-44 · generator-pull-pipeline — verify laziness
+  - [x] ex-45 · inversion-of-control — verify the handler is invoked by the framework
+  - [x] ex-46 · declarative-config-vs-setup — verify equal objects
+  - [x] ex-47 · relational-vs-nested-loop-join — verify identical rows
+  - [x] ex-48 · pure-core-imperative-shell — verify the core is tested with no I/O
+  - [x] ex-49 · multi-paradigm-boundary — verify the boundary passes only immutable data
+  - [x] ex-50 · paradigm-soup-antipattern — verify the aliasing bug reproduces
+  - [x] ex-51 · logic-vs-imperative-reachability — verify identical reachable set
+  - [x] ex-52 · match-case-adt-dispatch — verify each variant handled
+  - [x] ex-53 · enum-state-tags — verify a full transition cycle
+  - [x] ex-54 · declarative-validation-rules — verify a bad input is flagged with the failing rule
+  - [x] ex-55 · event-bus-pubsub — verify all subscribers notified once each
+  - [x] ex-56 · reactive-debounce — verify only the final value is delivered
+  - [x] ex-57 · dataflow-memoized-nodes — verify an unchanged subtree isn't recomputed
+  - [x] ex-58 · paradigm-cost-table — verify a comparison table with concrete numbers
+  - [x] ex-59 · four-paradigms-shared-test — verify all four pass it
+  - [x] ex-60 · mini-logic-engine — verify a transitive-closure query resolves
+  - [x] ex-61 · generic-csp-solver — verify it solves both map-coloring and mini-sudoku
+  - [x] ex-62 · reactive-graph-diamond — verify d recomputes exactly once per a update
+  - [x] ex-63 · dataflow-scheduler — verify correct order under a dependency chain
+  - [x] ex-64 · event-sourcing-fold — verify replay reproduces the live state
+  - [x] ex-65 · actor-mailbox — verify messages handled in arrival order
+  - [x] ex-66 · paradigm-decision-record — verify each row cites a concrete selection criterion
+  - [x] ex-67 · imperative-to-functional-refactor — verify identical output and no mutation of inputs
+  - [x] ex-68 · oo-behind-functional-facade — verify the facade exposes no mutable state
+  - [x] ex-69 · declarative-mini-dsl — verify a composed rule runs
+  - [x] ex-70 · logic-type-inference-toy — verify the inferred type
+  - [x] ex-71 · constraint-scheduling — verify a returned schedule is feasible
+  - [x] ex-72 · reactive-spreadsheet — verify a multi-level cascade updates
+  - [x] ex-73 · multi-paradigm-request-handler — verify a request is handled end to end
+  - [x] ex-74 · state-fault-line-case-study — verify a race in one design and none in the other
+  - [x] ex-75 · paradigm-mismatch-cost — verify both correct, contrast effort/lines
+  - [x] ex-76 · dataflow-vs-callback — verify identical output, contrast readability
+  - [x] ex-77 · relational-algebra-engine — verify a composed query's result
+  - [x] ex-78 · paradigm-portfolio-readme — verify the matrix covers all solutions with a criterion each
+  - [x] ex-79 · immutable-vs-mutable-perf — verify both correct, note the trade-off numerically
+  - [x] ex-80 · choose-and-defend — verify the defense references concrete functions
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/programming-paradigms/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/programming-paradigms/drilling/_index.md` (wt 222) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 25 Gate
 
-- [ ] [AI] `programming-paradigms/` complete: `_index.md` wt 320, `learning/_index.md` wt 122,
+- [x] [AI] `programming-paradigms/` complete: `_index.md` wt 320, `learning/_index.md` wt 122,
       `drilling/_index.md` wt 222, capstone wt 900; all 25 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 

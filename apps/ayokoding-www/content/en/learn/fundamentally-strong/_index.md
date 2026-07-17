@@ -31,3 +31,4 @@ weight: 107
   - [19 · Computer Science Foundations](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations)
   - [20 · Computer Architecture](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture)
   - [21 · Object-Oriented Design & Patterns](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns)
+  - [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)

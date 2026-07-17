@@ -83,3 +83,6 @@ weight: 1750
 - [21 · Object-Oriented Design & Patterns](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/drilling)
+- [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms/drilling)
