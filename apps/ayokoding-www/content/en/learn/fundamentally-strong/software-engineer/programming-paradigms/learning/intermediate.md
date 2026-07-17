@@ -1225,13 +1225,14 @@ python3 example.py
 """Example 40: pytest verification for Event-Driven Loop."""
 
 from collections import deque
+from collections.abc import Callable
 
-from example import Event, on_login, on_logout
+from example import Event
 
 
 def test_events_processed_in_fifo_order() -> None:
     seen: list[str] = []  # => local recorder, isolated from the module-level demo
-    handlers = {
+    handlers: dict[str, Callable[[Event], None]] = {
         "login": lambda e: seen.append(f"login:{e.payload}"),
         "logout": lambda e: seen.append(f"logout:{e.payload}"),
     }
@@ -1626,6 +1627,8 @@ python3 example.py
 ```python
 """Example 43: pytest verification for Dataflow Topological Execute."""
 
+from collections.abc import Callable
+
 from example import topological_order
 
 
@@ -1639,7 +1642,11 @@ def test_order_respects_every_dependency() -> None:
 
 def test_result_matches_the_documented_formulas() -> None:
     graph = {"c": ["a", "b"], "b": ["a"], "a": []}
-    formulas = {"a": lambda r: 1, "b": lambda r: r["a"] + 1, "c": lambda r: r["a"] + r["b"]}
+    formulas: dict[str, Callable[[dict[str, int]], int]] = {
+        "a": lambda r: 1,
+        "b": lambda r: r["a"] + 1,
+        "c": lambda r: r["a"] + r["b"],
+    }
     order = topological_order(graph)
     results: dict[str, int] = {}
     for node in order:
@@ -1697,7 +1704,7 @@ graph LR
 ```python
 """Example 44: Generator Pull Pipeline."""
 
-from collections.abc import Iterator  # => every function below is typed as a lazy, pull-based Iterator
+from collections.abc import Callable, Iterator  # => every function below is typed as a lazy, pull-based Iterator
 
 computed_log: list[int] = []  # => records every value the source generator actually produced
 
@@ -1710,12 +1717,12 @@ def source() -> Iterator[int]:  # => an "infinite" source -- would hang if fully
         yield n  # => PULL-based: this line only runs when something asks the generator for its next value
 
 
-def gen_map(it: Iterator[int], fn) -> Iterator[int]:  # => lazy map: transforms values ONE AT A TIME, on demand
+def gen_map(it: Iterator[int], fn: Callable[[int], int]) -> Iterator[int]:  # => lazy map: transforms values ONE AT A TIME, on demand
     for value in it:  # => pulling from `it` only happens as this generator itself is pulled from
         yield fn(value)  # => nothing is computed until a consumer asks for the next item
 
 
-def gen_filter(it: Iterator[int], predicate) -> Iterator[int]:  # => lazy filter: same pull-based contract
+def gen_filter(it: Iterator[int], predicate: Callable[[int], bool]) -> Iterator[int]:  # => lazy filter: same pull-based contract
     for value in it:  # => each pull here triggers exactly one pull upstream
         if predicate(value):  # => only values passing the predicate are ever yielded downstream
             yield value  # => only yield values that pass the predicate
@@ -1838,7 +1845,7 @@ class ReportFramework:  # => FRAMEWORK-CALLS-YOU: the framework owns the loop, y
 
 
 rows = ["alice", "bob"]  # => shared sample data
-shout = lambda row: row.upper()  # noqa: E731  # => the same transformation logic in both styles
+shout: Callable[[str], str] = lambda row: row.upper()  # noqa: E731  # => the same transformation logic in both styles
 
 you_call_result = render_report_you_call_library(rows, shout)  # => your code drives the call
 print(you_call_result)  # => both styles must produce identical output
@@ -1872,12 +1879,14 @@ True
 ```python
 """Example 45: pytest verification for Inversion of Control."""
 
+from collections.abc import Callable
+
 from example import ReportFramework, render_report_you_call_library
 
 
 def test_you_call_library_and_framework_calls_you_agree() -> None:
     rows = ["x", "y", "z"]  # => fresh sample, isolated from the module-level demo
-    handler = lambda row: row.upper()  # noqa: E731
+    handler: Callable[[str], str] = lambda row: row.upper()  # noqa: E731
     direct = render_report_you_call_library(rows, handler)  # => your code drives the loop
 
     framework = ReportFramework()
@@ -1939,7 +1948,7 @@ from dataclasses import dataclass, field  # => @dataclass generates __init__; fi
 class Server:  # => the object both styles below must end up constructing, identically
     host: str = "localhost"  # => default value, overridden by both build functions below
     port: int = 8080  # => default value, overridden by both build functions below
-    routes: list[str] = field(default_factory=list)  # => default: a fresh empty list per instance
+    routes: list[str] = field(default_factory=list[str])  # => default: a fresh empty list per instance
 
 
 def build_via_imperative_setup() -> Server:  # => HOW: step-by-step mutation after construction
@@ -2075,7 +2084,7 @@ def join_via_sql(customers: list[tuple[int, str]], orders: list[tuple[int, int, 
 
 def join_via_nested_loop(customers: list[tuple[int, str]], orders: list[tuple[int, int, str]]) -> list[tuple[str, str]]:  # => imperative leg
     result: list[tuple[str, str]] = []  # => mutable accumulator
-    for order_id, customer_id, item in orders:  # => outer loop: every order, in insertion order
+    for _order_id, customer_id, item in orders:  # => outer loop: every order, in insertion order
         for cid, name in customers:  # => inner loop: scan every customer looking for a match
             if cid == customer_id:  # => the join condition, written out explicitly as a comparison
                 result.append((name, item))  # => explicit accumulation, one matched pair at a time
@@ -2787,14 +2796,14 @@ order, reporting exactly which declared rule failed.
 ```python
 """Example 54: Declarative Validation Rules."""
 
-from collections.abc import Callable  # => types the check function every Rule below carries
+from collections.abc import Callable, Mapping  # => types the check function every Rule below carries
 from dataclasses import dataclass  # => @dataclass generates Rule's __init__ from its two fields
 
 
 @dataclass(frozen=True)  # => each rule is a plain DATA record: a name plus a check function
 class Rule:  # => frozen=True makes every Rule immutable once constructed
     name: str  # => the label reported when this rule fails
-    check: Callable[[dict[str, object]], bool]  # => returns True if the input satisfies this rule
+    check: Callable[[Mapping[str, object]], bool]  # => returns True if the input satisfies this rule
 
 
 RULES: list[Rule] = [  # => the whole validation policy STATED as a list of data, not a chain of ifs
@@ -2804,7 +2813,7 @@ RULES: list[Rule] = [  # => the whole validation policy STATED as a list of data
 ]  # => closes the declared policy -- adding a rule means appending one more line here
 
 
-def validate(data: dict[str, object]) -> str | None:  # => evaluate the rule list declaratively
+def validate(data: Mapping[str, object]) -> str | None:  # => evaluate the rule list declaratively
     for rule in RULES:  # => walk the declared rules in order
         if not rule.check(data):  # => the first rule that fails IS the answer
             return rule.name  # => report exactly which declared rule was violated
@@ -2906,7 +2915,7 @@ T = TypeVar("T")  # => generic payload type, so the bus is reusable for any even
 
 @dataclass  # => auto-generates EventBus's __init__ from the field below
 class EventBus:  # => a TYPED publish/subscribe bus: multiple subscribers per topic
-    _subscribers: dict[str, list[Callable[[object], None]]] = field(default_factory=dict)  # => topic -> handlers, one fresh dict per instance
+    _subscribers: dict[str, list[Callable[[object], None]]] = field(default_factory=dict[str, list[Callable[[object], None]]])  # => topic -> handlers, one fresh dict per instance
 
     def subscribe(self, topic: str, handler: Callable[[object], None]) -> None:  # => register a subscriber
         self._subscribers.setdefault(topic, []).append(handler)  # => topics may have MANY subscribers
@@ -3248,6 +3257,7 @@ Example 9's task, via `inspect.getsource()` line counts and `__code__.co_nlocals
 """Example 58: Paradigm Cost Table."""
 
 import inspect  # => inspect.getsource() reads a function's own source text, used by count_lines() below
+from collections.abc import Callable  # => types the plain-function argument shared by both metric helpers below
 
 
 def evens_squared_imperative(nums: list[int]) -> list[int]:  # => same task as example 9, measured here
@@ -3262,12 +3272,13 @@ def evens_squared_declarative(nums: list[int]) -> list[int]:  # => the declarati
     return [n * n for n in nums if n % 2 == 0]  # => the same result, no named accumulator anywhere
 
 
-def count_lines(fn) -> int:  # => a concrete, reproducible metric: physical lines of the function's body
+def count_lines(fn: Callable[..., object]) -> int:  # => a concrete, reproducible metric: physical lines of the function's body
     return len(inspect.getsource(fn).strip().splitlines())  # => counts every line, def line included
 
 
-def count_local_names(fn) -> int:  # => a second concrete metric: how many local variable names the body binds
-    return fn.__code__.co_nlocals - len(fn.__code__.co_varnames[: fn.__code__.co_argcount])  # => locals minus params
+def count_local_names(fn: Callable[..., object]) -> int:  # => a second concrete metric: how many local variable names the body binds
+    code = fn.__code__  # => plain functions always carry __code__, pyright resolves it on Callable[..., object]
+    return code.co_nlocals - len(code.co_varnames[: code.co_argcount])  # => locals minus params
     # => co_nlocals counts every local slot; subtracting the parameters leaves ONLY the names the body itself
     # => introduces -- both versions need the loop variable `n`, but only imperative ALSO needs a separate
     # => named accumulator (`result`) to collect results across iterations, one extra name declarative avoids

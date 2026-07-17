@@ -1,11 +1,13 @@
 """Example 45: pytest verification for Inversion of Control."""
 
+from collections.abc import Callable
+
 from example import ReportFramework, render_report_you_call_library
 
 
 def test_you_call_library_and_framework_calls_you_agree() -> None:
     rows = ["x", "y", "z"]  # => fresh sample, isolated from the module-level demo
-    handler = lambda row: row.upper()  # noqa: E731
+    handler: Callable[[str], str] = lambda row: row.upper()  # noqa: E731
     direct = render_report_you_call_library(rows, handler)  # => your code drives the loop
 
     framework = ReportFramework()

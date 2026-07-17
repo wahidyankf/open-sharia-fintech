@@ -1,10 +1,12 @@
 """Example 77: Relational Algebra Engine."""
 
+from collections.abc import Callable  # => types the SELECT predicate below
+
 Row = dict[str, object]  # => one relation "row" as a plain dict
 Relation = list[Row]  # => a relation is just a list of rows -- no database needed
 
 
-def select(relation: Relation, predicate) -> Relation:  # => relational SELECT (sigma): filter rows
+def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:  # => relational SELECT (sigma): filter rows
     return [row for row in relation if predicate(row)]  # => "the rows satisfying this condition"
 
 

@@ -1,6 +1,7 @@
 """Example 59: Four Paradigms, One Shared Test."""
 
 from abc import ABC, abstractmethod  # => ABC/abstractmethod define way #2's strategy interface
+from collections.abc import Callable  # => types the count_fn parameter shared_test() accepts below
 from functools import reduce  # => reduce() is way #3's fold, threading a count through the list
 
 TASK = "count how many numbers in a list are prime"  # => the ONE problem, solved four ways below
@@ -30,15 +31,19 @@ class TrialDivisionPrimeCounter(PrimeCounter):  # => the concrete OO strategy
         return sum(1 for n in nums if is_prime(n))  # => OO wraps the same core check in an object
 
 
+def _count_or_skip(acc: int, n: int) -> int:  # => the fold's step function, fully typed so reduce() infers cleanly
+    return acc + 1 if is_prime(n) else acc  # => same rule as the imperative/OO/declarative versions, expressed as a fold step
+
+
 def count_primes_functional(nums: list[int]) -> int:  # => way #3: a pure fold, no mutation
-    return reduce(lambda acc, n: acc + 1 if is_prime(n) else acc, nums, 0)  # => threads a count, no named accumulator
+    return reduce(_count_or_skip, nums, 0)  # => threads a count, no named accumulator
 
 
 def count_primes_declarative(nums: list[int]) -> int:  # => way #4: states WHAT to count, not HOW
     return len([n for n in nums if is_prime(n)])  # => "the length of the list of primes"
 
 
-def shared_test(count_fn) -> bool:  # => the ONE test all four solutions must pass, given as a function
+def shared_test(count_fn: Callable[[list[int]], int]) -> bool:  # => the ONE test all four solutions must pass, given as a function
     sample = [2, 3, 4, 5, 6, 7, 8, 9, 10]  # => primes here: 2, 3, 5, 7 -- four of them
     return count_fn(sample) == 4  # => every paradigm's answer must equal 4
 

@@ -1,5 +1,7 @@
 """Example 43: pytest verification for Dataflow Topological Execute."""
 
+from collections.abc import Callable
+
 from example import topological_order
 
 
@@ -13,7 +15,11 @@ def test_order_respects_every_dependency() -> None:
 
 def test_result_matches_the_documented_formulas() -> None:
     graph = {"c": ["a", "b"], "b": ["a"], "a": []}
-    formulas = {"a": lambda r: 1, "b": lambda r: r["a"] + 1, "c": lambda r: r["a"] + r["b"]}
+    formulas: dict[str, Callable[[dict[str, int]], int]] = {
+        "a": lambda r: 1,
+        "b": lambda r: r["a"] + 1,
+        "c": lambda r: r["a"] + r["b"],
+    }
     order = topological_order(graph)
     results: dict[str, int] = {}
     for node in order:

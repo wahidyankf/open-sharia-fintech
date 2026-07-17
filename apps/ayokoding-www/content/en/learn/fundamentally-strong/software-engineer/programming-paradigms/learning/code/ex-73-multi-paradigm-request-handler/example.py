@@ -6,7 +6,7 @@ from dataclasses import dataclass, field  # => @dataclass generates Order's __in
 @dataclass  # => the OO domain model: an order with mutable, encapsulated state
 class Order:  # => not frozen -- this domain model is intentionally mutable, unlike the pure core below
     order_id: str  # => the order's identifier
-    items: list[str] = field(default_factory=list)  # => the ordered items
+    items: list[str] = field(default_factory=list[str])  # => the ordered items
     status: str = "pending"  # => mutable OO state, changed ONLY through mark_shipped() below
 
     def mark_shipped(self) -> None:  # => the ONLY sanctioned way to change status

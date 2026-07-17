@@ -1,13 +1,13 @@
 """Example 54: Declarative Validation Rules."""
 
-from collections.abc import Callable  # => types the check function every Rule below carries
+from collections.abc import Callable, Mapping  # => types the check function every Rule below carries
 from dataclasses import dataclass  # => @dataclass generates Rule's __init__ from its two fields
 
 
 @dataclass(frozen=True)  # => each rule is a plain DATA record: a name plus a check function
 class Rule:  # => frozen=True makes every Rule immutable once constructed
     name: str  # => the label reported when this rule fails
-    check: Callable[[dict[str, object]], bool]  # => returns True if the input satisfies this rule
+    check: Callable[[Mapping[str, object]], bool]  # => returns True if the input satisfies this rule
 
 
 RULES: list[Rule] = [  # => the whole validation policy STATED as a list of data, not a chain of ifs
@@ -17,7 +17,7 @@ RULES: list[Rule] = [  # => the whole validation policy STATED as a list of data
 ]  # => closes the declared policy -- adding a rule means appending one more line here
 
 
-def validate(data: dict[str, object]) -> str | None:  # => evaluate the rule list declaratively
+def validate(data: Mapping[str, object]) -> str | None:  # => evaluate the rule list declaratively
     for rule in RULES:  # => walk the declared rules in order
         if not rule.check(data):  # => the first rule that fails IS the answer
             return rule.name  # => report exactly which declared rule was violated

@@ -15,13 +15,13 @@ def _build_diamond() -> tuple[Signal, Computed, Computed, Computed]:  # => same 
 
 
 def test_d_recomputes_exactly_once_per_a_update() -> None:
-    a, b, c, d = _build_diamond()  # => fresh diamond, isolated from the module-level demo
+    a, _b, _c, d = _build_diamond()  # => fresh diamond, isolated from the module-level demo
     a.write(5)  # => one write at the top
     assert d.recompute_count == 1  # => the crux of this example: NOT 2, despite d having two incoming edges
 
 
 def test_d_value_reflects_both_branches_after_update() -> None:
-    a, b, c, d = _build_diamond()  # => fresh diamond
+    a, _b, _c, d = _build_diamond()  # => fresh diamond
     a.write(5)  # => b becomes 6, c becomes 7
     assert d.value == 13  # => 6 + 7
 

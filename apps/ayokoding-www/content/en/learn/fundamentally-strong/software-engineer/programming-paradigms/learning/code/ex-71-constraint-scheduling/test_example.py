@@ -20,7 +20,7 @@ def test_returned_schedule_never_double_books_the_single_resource() -> None:
     tasks = [Task("a", 2), Task("b", 3, depends_on=("a",)), Task("c", 1, depends_on=("a",))]
     result = schedule(tasks)
     intervals = sorted(result.values())  # => sort by (start, end)
-    for (s1, e1), (s2, e2) in zip(intervals, intervals[1:]):  # => every consecutive pair
+    for (_s1, e1), (s2, _e2) in zip(intervals, intervals[1:]):  # => every consecutive pair
         assert e1 <= s2  # => no two tasks overlap in time -- the single-resource constraint holds
 
 

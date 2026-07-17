@@ -17,8 +17,12 @@ class EvensSquaredOO:  # => OO solution: a strategy object with a single method
         return [n * n for n in nums if n % 2 == 0]  # => same computation, wrapped in an object identity
 
 
+def _append_if_even_squared(acc: tuple[int, ...], n: int) -> tuple[int, ...]:  # => the fold's step function, fully typed so reduce() infers cleanly
+    return acc + (n * n,) if n % 2 == 0 else acc  # => same rule as the other three solutions, expressed as a fold step
+
+
 def evens_squared_functional(nums: tuple[int, ...]) -> tuple[int, ...]:  # => functional: a pure fold
-    return reduce(lambda acc, n: acc + (n * n,) if n % 2 == 0 else acc, nums, ())  # => no mutation, one fold expression
+    return reduce(_append_if_even_squared, nums, ())  # => no mutation, one fold expression
 
 
 def evens_squared_declarative(nums: list[int]) -> list[int]:  # => declarative: states WHAT, one expression

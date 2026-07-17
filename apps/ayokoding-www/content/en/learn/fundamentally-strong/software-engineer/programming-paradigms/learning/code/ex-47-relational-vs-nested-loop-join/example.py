@@ -23,7 +23,7 @@ def join_via_sql(customers: list[tuple[int, str]], orders: list[tuple[int, int, 
 
 def join_via_nested_loop(customers: list[tuple[int, str]], orders: list[tuple[int, int, str]]) -> list[tuple[str, str]]:  # => imperative leg
     result: list[tuple[str, str]] = []  # => mutable accumulator
-    for order_id, customer_id, item in orders:  # => outer loop: every order, in insertion order
+    for _order_id, customer_id, item in orders:  # => outer loop: every order, in insertion order
         for cid, name in customers:  # => inner loop: scan every customer looking for a match
             if cid == customer_id:  # => the join condition, written out explicitly as a comparison
                 result.append((name, item))  # => explicit accumulation, one matched pair at a time

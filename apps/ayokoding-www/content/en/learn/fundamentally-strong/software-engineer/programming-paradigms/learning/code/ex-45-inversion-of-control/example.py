@@ -21,7 +21,7 @@ class ReportFramework:  # => FRAMEWORK-CALLS-YOU: the framework owns the loop, y
 
 
 rows = ["alice", "bob"]  # => shared sample data
-shout = lambda row: row.upper()  # noqa: E731  # => the same transformation logic in both styles
+shout: Callable[[str], str] = lambda row: row.upper()  # noqa: E731  # => the same transformation logic in both styles
 
 you_call_result = render_report_you_call_library(rows, shout)  # => your code drives the call
 print(you_call_result)  # => both styles must produce identical output

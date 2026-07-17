@@ -6,9 +6,9 @@ from dataclasses import dataclass, field  # => @dataclass generates __init__; fi
 
 @dataclass  # => message-passing object: state is private, only reachable via messages in its mailbox
 class CounterActor:  # => auto-generates CounterActor's __init__ from the three fields below
-    _mailbox: deque[str] = field(default_factory=deque)  # => the ONLY way to talk to this actor
+    _mailbox: deque[str] = field(default_factory=deque[str])  # => the ONLY way to talk to this actor
     _count: int = 0  # => private state -- never touched directly from outside this class
-    handled_order: list[str] = field(default_factory=list)  # => records the ORDER messages were processed
+    handled_order: list[str] = field(default_factory=list[str])  # => records the ORDER messages were processed
 
     def send(self, message: str) -> None:  # => enqueue a message -- does NOT process it yet
         self._mailbox.append(message)  # => arrival order is preserved by a FIFO queue

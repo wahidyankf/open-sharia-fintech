@@ -1,6 +1,7 @@
 """Example 58: Paradigm Cost Table."""
 
 import inspect  # => inspect.getsource() reads a function's own source text, used by count_lines() below
+from collections.abc import Callable  # => types the plain-function argument shared by both metric helpers below
 
 
 def evens_squared_imperative(nums: list[int]) -> list[int]:  # => same task as example 9, measured here
@@ -15,12 +16,13 @@ def evens_squared_declarative(nums: list[int]) -> list[int]:  # => the declarati
     return [n * n for n in nums if n % 2 == 0]  # => the same result, no named accumulator anywhere
 
 
-def count_lines(fn) -> int:  # => a concrete, reproducible metric: physical lines of the function's body
+def count_lines(fn: Callable[..., object]) -> int:  # => a concrete, reproducible metric: physical lines of the function's body
     return len(inspect.getsource(fn).strip().splitlines())  # => counts every line, def line included
 
 
-def count_local_names(fn) -> int:  # => a second concrete metric: how many local variable names the body binds
-    return fn.__code__.co_nlocals - len(fn.__code__.co_varnames[: fn.__code__.co_argcount])  # => locals minus params
+def count_local_names(fn: Callable[..., object]) -> int:  # => a second concrete metric: how many local variable names the body binds
+    code = fn.__code__  # => plain functions always carry __code__, pyright resolves it on Callable[..., object]
+    return code.co_nlocals - len(code.co_varnames[: code.co_argcount])  # => locals minus params
     # => co_nlocals counts every local slot; subtracting the parameters leaves ONLY the names the body itself
     # => introduces -- both versions need the loop variable `n`, but only imperative ALSO needs a separate
     # => named accumulator (`result`) to collect results across iterations, one extra name declarative avoids

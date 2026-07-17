@@ -1538,7 +1538,7 @@ from dataclasses import dataclass, field  # => @dataclass auto-generates __init_
 
 @dataclass
 class Dispatcher:  # => a minimal event dispatcher: register handlers, then fire events later
-    handlers: dict[str, list[Callable[[dict[str, str]], None]]] = field(default_factory=dict)
+    handlers: dict[str, list[Callable[[dict[str, str]], None]]] = field(default_factory=dict[str, list[Callable[[dict[str, str]], None]]])
     # => maps an event name to a list of callbacks that "answer the phone" when it fires
 
     def on(self, event: str, handler: Callable[[dict[str, str]], None]) -> None:  # => REGISTER a handler
@@ -2177,7 +2177,7 @@ A running total kept as a mutable `global` versus the identical total computed v
 
 from functools import reduce
 
-running_total = 0  # => MUTABLE GLOBAL: state lives outside any function, anyone can touch it
+running_total: int = 0  # => MUTABLE GLOBAL: state lives outside any function, anyone can touch it
 
 
 def add_mutable(n: int) -> None:  # => mutates the module-level global -- state lives "out there"

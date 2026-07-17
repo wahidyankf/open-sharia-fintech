@@ -1,5 +1,6 @@
 """Example 80: Choose and Defend."""
 
+from collections.abc import Mapping  # => the covariant read-only view validate_order() accepts below
 from dataclasses import dataclass  # => @dataclass generates PriceRule's __init__ from its two fields
 
 
@@ -23,7 +24,7 @@ PRICING_RULES: list[PriceRule] = [  # => THE PROBLEM: validate incoming price re
 ]  # => closes the declared rule list -- adding rule 3 means appending here, not editing validate_order()
 
 
-def validate_order(order: dict[str, object]) -> str | None:  # => declarative validation, same shape as ex-54
+def validate_order(order: Mapping[str, object]) -> str | None:  # => declarative validation, same shape as ex-54
     for rule in PRICING_RULES:  # => walks the declared list -- no rule-specific branching written here
         if not rule.check(order):  # type: ignore[operator]  # => the first rule that fails wins
             return rule.name  # => names the specific rule that failed

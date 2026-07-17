@@ -7,7 +7,7 @@ from dataclasses import dataclass, field  # => @dataclass generates __init__; fi
 class Server:  # => the object both styles below must end up constructing, identically
     host: str = "localhost"  # => default value, overridden by both build functions below
     port: int = 8080  # => default value, overridden by both build functions below
-    routes: list[str] = field(default_factory=list)  # => default: a fresh empty list per instance
+    routes: list[str] = field(default_factory=list[str])  # => default: a fresh empty list per instance
 
 
 def build_via_imperative_setup() -> Server:  # => HOW: step-by-step mutation after construction

@@ -9,7 +9,7 @@ T = TypeVar("T")  # => generic payload type, so the bus is reusable for any even
 
 @dataclass  # => auto-generates EventBus's __init__ from the field below
 class EventBus:  # => a TYPED publish/subscribe bus: multiple subscribers per topic
-    _subscribers: dict[str, list[Callable[[object], None]]] = field(default_factory=dict)  # => topic -> handlers, one fresh dict per instance
+    _subscribers: dict[str, list[Callable[[object], None]]] = field(default_factory=dict[str, list[Callable[[object], None]]])  # => topic -> handlers, one fresh dict per instance
 
     def subscribe(self, topic: str, handler: Callable[[object], None]) -> None:  # => register a subscriber
         self._subscribers.setdefault(topic, []).append(handler)  # => topics may have MANY subscribers

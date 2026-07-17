@@ -1,6 +1,6 @@
 """Example 44: Generator Pull Pipeline."""
 
-from collections.abc import Iterator  # => every function below is typed as a lazy, pull-based Iterator
+from collections.abc import Callable, Iterator  # => every function below is typed as a lazy, pull-based Iterator
 
 computed_log: list[int] = []  # => records every value the source generator actually produced
 
@@ -13,12 +13,12 @@ def source() -> Iterator[int]:  # => an "infinite" source -- would hang if fully
         yield n  # => PULL-based: this line only runs when something asks the generator for its next value
 
 
-def gen_map(it: Iterator[int], fn) -> Iterator[int]:  # => lazy map: transforms values ONE AT A TIME, on demand
+def gen_map(it: Iterator[int], fn: Callable[[int], int]) -> Iterator[int]:  # => lazy map: transforms values ONE AT A TIME, on demand
     for value in it:  # => pulling from `it` only happens as this generator itself is pulled from
         yield fn(value)  # => nothing is computed until a consumer asks for the next item
 
 
-def gen_filter(it: Iterator[int], predicate) -> Iterator[int]:  # => lazy filter: same pull-based contract
+def gen_filter(it: Iterator[int], predicate: Callable[[int], bool]) -> Iterator[int]:  # => lazy filter: same pull-based contract
     for value in it:  # => each pull here triggers exactly one pull upstream
         if predicate(value):  # => only values passing the predicate are ever yielded downstream
             yield value  # => only yield values that pass the predicate

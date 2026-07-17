@@ -7,7 +7,7 @@ from dataclasses import dataclass, field  # => @dataclass auto-generates __init_
 
 @dataclass
 class Dispatcher:  # => a minimal event dispatcher: register handlers, then fire events later
-    handlers: dict[str, list[Callable[[dict[str, str]], None]]] = field(default_factory=dict)
+    handlers: dict[str, list[Callable[[dict[str, str]], None]]] = field(default_factory=dict[str, list[Callable[[dict[str, str]], None]]])
     # => maps an event name to a list of callbacks that "answer the phone" when it fires
 
     def on(self, event: str, handler: Callable[[dict[str, str]], None]) -> None:  # => REGISTER a handler

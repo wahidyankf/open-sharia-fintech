@@ -25,6 +25,7 @@ functionally, and declaratively, with all four implementations checked against t
 """Example 59: Four Paradigms, One Shared Test."""
 
 from abc import ABC, abstractmethod  # => ABC/abstractmethod define way #2's strategy interface
+from collections.abc import Callable  # => types the count_fn parameter shared_test() accepts below
 from functools import reduce  # => reduce() is way #3's fold, threading a count through the list
 
 TASK = "count how many numbers in a list are prime"  # => the ONE problem, solved four ways below
@@ -54,15 +55,19 @@ class TrialDivisionPrimeCounter(PrimeCounter):  # => the concrete OO strategy
         return sum(1 for n in nums if is_prime(n))  # => OO wraps the same core check in an object
 
 
+def _count_or_skip(acc: int, n: int) -> int:  # => the fold's step function, fully typed so reduce() infers cleanly
+    return acc + 1 if is_prime(n) else acc  # => same rule as the imperative/OO/declarative versions, expressed as a fold step
+
+
 def count_primes_functional(nums: list[int]) -> int:  # => way #3: a pure fold, no mutation
-    return reduce(lambda acc, n: acc + 1 if is_prime(n) else acc, nums, 0)  # => threads a count, no named accumulator
+    return reduce(_count_or_skip, nums, 0)  # => threads a count, no named accumulator
 
 
 def count_primes_declarative(nums: list[int]) -> int:  # => way #4: states WHAT to count, not HOW
     return len([n for n in nums if is_prime(n)])  # => "the length of the list of primes"
 
 
-def shared_test(count_fn) -> bool:  # => the ONE test all four solutions must pass, given as a function
+def shared_test(count_fn: Callable[[list[int]], int]) -> bool:  # => the ONE test all four solutions must pass, given as a function
     sample = [2, 3, 4, 5, 6, 7, 8, 9, 10]  # => primes here: 2, 3, 5, 7 -- four of them
     return count_fn(sample) == 4  # => every paradigm's answer must equal 4
 
@@ -559,13 +564,13 @@ def _build_diamond() -> tuple[Signal, Computed, Computed, Computed]:  # => same 
 
 
 def test_d_recomputes_exactly_once_per_a_update() -> None:
-    a, b, c, d = _build_diamond()  # => fresh diamond, isolated from the module-level demo
+    a, _b, _c, d = _build_diamond()  # => fresh diamond, isolated from the module-level demo
     a.write(5)  # => one write at the top
     assert d.recompute_count == 1  # => the crux of this example: NOT 2, despite d having two incoming edges
 
 
 def test_d_value_reflects_both_branches_after_update() -> None:
-    a, b, c, d = _build_diamond()  # => fresh diamond
+    a, _b, _c, d = _build_diamond()  # => fresh diamond
     a.write(5)  # => b becomes 6, c becomes 7
     assert d.value == 13  # => 6 + 7
 
@@ -863,9 +868,9 @@ from dataclasses import dataclass, field  # => @dataclass generates __init__; fi
 
 @dataclass  # => message-passing object: state is private, only reachable via messages in its mailbox
 class CounterActor:  # => auto-generates CounterActor's __init__ from the three fields below
-    _mailbox: deque[str] = field(default_factory=deque)  # => the ONLY way to talk to this actor
+    _mailbox: deque[str] = field(default_factory=deque[str])  # => the ONLY way to talk to this actor
     _count: int = 0  # => private state -- never touched directly from outside this class
-    handled_order: list[str] = field(default_factory=list)  # => records the ORDER messages were processed
+    handled_order: list[str] = field(default_factory=list[str])  # => records the ORDER messages were processed
 
     def send(self, message: str) -> None:  # => enqueue a message -- does NOT process it yet
         self._mailbox.append(message)  # => arrival order is preserved by a FIFO queue
@@ -1630,27 +1635,25 @@ python3 example.py
 from example import Task, schedule
 
 
-def test_schedule_respects_every_precedence_constraint() -> None:
+def test_returned_schedule_respects_every_precedence_constraint() -> None:
     tasks = [
-        Task("a", 2),
-        Task("b", 3, depends_on=("a",)),
-        Task("c", 1, depends_on=("b",)),
+        Task("design", 2),
+        Task("build", 3, depends_on=("design",)),
+        Task("test", 2, depends_on=("build",)),
+        Task("docs", 1, depends_on=("design",)),
     ]
-    result = schedule(tasks)  # => a fresh, smaller schedule than the module-level demo
-    assert result["a"][1] <= result["b"][0]  # => a must finish before b starts
-    assert result["b"][1] <= result["c"][0]  # => b must finish before c starts
+    result = schedule(tasks)  # => same tasks as the module-level demo
+    for task in tasks:  # => every declared dependency must finish before the dependent task starts
+        for dep in task.depends_on:
+            assert result[dep][1] <= result[task.name][0]
 
 
-def test_schedule_respects_the_single_resource_constraint() -> None:
-    result = {
-        "design": (0, 2),
-        "docs": (2, 3),
-        "build": (3, 6),
-        "test": (6, 8),
-    }  # => matches example.py's own documented Output exactly
-    intervals = sorted(result.values())  # => sort by start time to check for overlaps
-    for (s1, e1), (s2, e2) in zip(intervals, intervals[1:]):
-        assert e1 <= s2  # => no two intervals may overlap -- only one task runs at a time
+def test_returned_schedule_never_double_books_the_single_resource() -> None:
+    tasks = [Task("a", 2), Task("b", 3, depends_on=("a",)), Task("c", 1, depends_on=("a",))]
+    result = schedule(tasks)
+    intervals = sorted(result.values())  # => sort by (start, end)
+    for (_s1, e1), (s2, _e2) in zip(intervals, intervals[1:]):  # => every consecutive pair
+        assert e1 <= s2  # => no two tasks overlap in time -- the single-resource constraint holds
 
 
 # => Run: pytest -- Output: 2 passed
@@ -1832,7 +1835,7 @@ from dataclasses import dataclass, field  # => @dataclass generates Order's __in
 @dataclass  # => the OO domain model: an order with mutable, encapsulated state
 class Order:  # => not frozen -- this domain model is intentionally mutable, unlike the pure core below
     order_id: str  # => the order's identifier
-    items: list[str] = field(default_factory=list)  # => the ordered items
+    items: list[str] = field(default_factory=list[str])  # => the ordered items
     status: str = "pending"  # => mutable OO state, changed ONLY through mark_shipped() below
 
     def mark_shipped(self) -> None:  # => the ONLY sanctioned way to change status
@@ -2356,11 +2359,13 @@ graph LR
 ```python
 """Example 77: Relational Algebra Engine."""
 
+from collections.abc import Callable  # => types the SELECT predicate below
+
 Row = dict[str, object]  # => one relation "row" as a plain dict
 Relation = list[Row]  # => a relation is just a list of rows -- no database needed
 
 
-def select(relation: Relation, predicate) -> Relation:  # => relational SELECT (sigma): filter rows
+def select(relation: Relation, predicate: Callable[[Row], bool]) -> Relation:  # => relational SELECT (sigma): filter rows
     return [row for row in relation if predicate(row)]  # => "the rows satisfying this condition"
 
 
@@ -2414,16 +2419,16 @@ python3 example.py
 ```python
 """Example 77: pytest verification for Relational Algebra Engine."""
 
-from example import join, project, select
+from example import Relation, join, project, select
 
 
 def test_composed_query_matches_the_module_level_demo() -> None:
-    employees = [
+    employees: Relation = [
         {"emp_id": 1, "name": "alice", "dept_id": 10},
         {"emp_id": 2, "name": "bob", "dept_id": 20},
         {"emp_id": 3, "name": "carol", "dept_id": 10},
     ]
-    departments = [{"dept_id": 10, "dept_name": "engineering"}, {"dept_id": 20, "dept_name": "sales"}]
+    departments: Relation = [{"dept_id": 10, "dept_name": "engineering"}, {"dept_id": 20, "dept_name": "sales"}]
     result = select(
         project(join(employees, departments, on="dept_id"), ["name", "dept_name"]),
         lambda row: row["dept_name"] == "engineering",
@@ -2435,8 +2440,8 @@ def test_composed_query_matches_the_module_level_demo() -> None:
 
 
 def test_join_with_no_matching_rows_returns_an_empty_relation() -> None:
-    left = [{"id": 1, "x": "a"}]  # => no row here shares an id with `right`
-    right = [{"id": 99, "y": "b"}]
+    left: Relation = [{"id": 1, "x": "a"}]  # => no row here shares an id with `right`
+    right: Relation = [{"id": 99, "y": "b"}]
     assert join(left, right, on="id") == []  # => an empty relation, not an error
 
 
@@ -2494,8 +2499,12 @@ class EvensSquaredOO:  # => OO solution: a strategy object with a single method
         return [n * n for n in nums if n % 2 == 0]  # => same computation, wrapped in an object identity
 
 
+def _append_if_even_squared(acc: tuple[int, ...], n: int) -> tuple[int, ...]:  # => the fold's step function, fully typed so reduce() infers cleanly
+    return acc + (n * n,) if n % 2 == 0 else acc  # => same rule as the other three solutions, expressed as a fold step
+
+
 def evens_squared_functional(nums: tuple[int, ...]) -> tuple[int, ...]:  # => functional: a pure fold
-    return reduce(lambda acc, n: acc + (n * n,) if n % 2 == 0 else acc, nums, ())  # => no mutation, one fold expression
+    return reduce(_append_if_even_squared, nums, ())  # => no mutation, one fold expression
 
 
 def evens_squared_declarative(nums: list[int]) -> list[int]:  # => declarative: states WHAT, one expression
@@ -2722,6 +2731,7 @@ for this specific problem.
 ```python
 """Example 80: Choose and Defend."""
 
+from collections.abc import Mapping  # => the covariant read-only view validate_order() accepts below
 from dataclasses import dataclass  # => @dataclass generates PriceRule's __init__ from its two fields
 
 
@@ -2745,7 +2755,7 @@ PRICING_RULES: list[PriceRule] = [  # => THE PROBLEM: validate incoming price re
 ]  # => closes the declared rule list -- adding rule 3 means appending here, not editing validate_order()
 
 
-def validate_order(order: dict[str, object]) -> str | None:  # => declarative validation, same shape as ex-54
+def validate_order(order: Mapping[str, object]) -> str | None:  # => declarative validation, same shape as ex-54
     for rule in PRICING_RULES:  # => walks the declared list -- no rule-specific branching written here
         if not rule.check(order):  # type: ignore[operator]  # => the first rule that fails wins
             return rule.name  # => names the specific rule that failed

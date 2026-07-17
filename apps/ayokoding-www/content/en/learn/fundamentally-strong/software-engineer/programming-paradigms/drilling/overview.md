@@ -597,7 +597,7 @@ reset, so it silently skips every order that comes after it too.
 """Kata 2 (before): structured-programming violation -- a goto-style flag leaks past its intended scope."""
 
 
-def process_orders(orders: list[dict]) -> list[str]:
+def process_orders(orders: list[dict[str, object]]) -> list[str]:
     processed: list[str] = []
     skip = False  # SMELL: this flag is meant to skip ONE refunded order, but nothing ever resets it
     for order in orders:
@@ -605,11 +605,11 @@ def process_orders(orders: list[dict]) -> list[str]:
             skip = True  # goto-style: "jump past" this one order
         if skip:
             continue  # BUG: skip is never turned back off, so every order AFTER the first refund is also skipped
-        processed.append(order["id"])
+        processed.append(str(order["id"]))
     return processed
 
 
-orders = [
+orders: list[dict[str, object]] = [
     {"id": "A", "refunded": False},
     {"id": "B", "refunded": True},
     {"id": "C", "refunded": False},  # should still be processed -- it was never refunded
@@ -629,16 +629,16 @@ print(process_orders(orders))
 """Kata 2 (after): structured-programming fix -- a per-iteration `continue` replaces the leaking flag."""
 
 
-def process_orders(orders: list[dict]) -> list[str]:
+def process_orders(orders: list[dict[str, object]]) -> list[str]:
     processed: list[str] = []
     for order in orders:
         if order["refunded"]:  # decision scoped to THIS iteration only -- nothing leaks to the next one
             continue
-        processed.append(order["id"])
+        processed.append(str(order["id"]))
     return processed
 
 
-orders = [
+orders: list[dict[str, object]] = [
     {"id": "A", "refunded": False},
     {"id": "B", "refunded": True},
     {"id": "C", "refunded": False},
@@ -1255,19 +1255,21 @@ second call disagrees with the first.
 ```python
 """Kata 10 (before): paradigm-soup violation -- a `map`-based pipeline secretly mutates shared MODULE state."""
 
+from typing import cast
+
 _seen_ids: list[int] = []  # SMELL: module-level mutable state captured by a "functional-looking" map
 
 
-def enrich(row: dict) -> dict:
-    _seen_ids.append(row["id"])  # BUG: side effect hidden inside what looks like a pure transform
+def enrich(row: dict[str, object]) -> dict[str, object]:
+    _seen_ids.append(cast(int, row["id"]))  # BUG: side effect hidden inside what looks like a pure transform
     return {"id": row["id"], "seen_count": len(_seen_ids)}
 
 
-def build_report(rows: list[dict]) -> list[dict]:
+def build_report(rows: list[dict[str, object]]) -> list[dict[str, object]]:
     return list(map(enrich, rows))
 
 
-rows = [{"id": 1}, {"id": 2}]
+rows: list[dict[str, object]] = [{"id": 1}, {"id": 2}]
 report_a = build_report(rows)
 report_b = build_report(rows)  # same input, called again
 print([r["seen_count"] for r in report_a])
@@ -1287,15 +1289,15 @@ print([r["seen_count"] for r in report_b])  # BUG: NOT equal to report_a -- prov
 """Kata 10 (after): paradigm-soup fix -- the transform depends ONLY on its own arguments, no shared state."""
 
 
-def enrich(row: dict, index: int) -> dict:
+def enrich(row: dict[str, object], index: int) -> dict[str, object]:
     return {"id": row["id"], "seen_count": index + 1}  # depends only on its OWN inputs -- no closure, no shared list
 
 
-def build_report(rows: list[dict]) -> list[dict]:
+def build_report(rows: list[dict[str, object]]) -> list[dict[str, object]]:
     return [enrich(row, i) for i, row in enumerate(rows)]  # pure -- same input always produces same output
 
 
-rows = [{"id": 1}, {"id": 2}]
+rows: list[dict[str, object]] = [{"id": 1}, {"id": 2}]
 report_a = build_report(rows)
 report_b = build_report(rows)
 print([r["seen_count"] for r in report_a])

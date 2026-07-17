@@ -2,7 +2,7 @@
 
 from functools import reduce
 
-running_total = 0  # => MUTABLE GLOBAL: state lives outside any function, anyone can touch it
+running_total: int = 0  # => MUTABLE GLOBAL: state lives outside any function, anyone can touch it
 
 
 def add_mutable(n: int) -> None:  # => mutates the module-level global -- state lives "out there"
