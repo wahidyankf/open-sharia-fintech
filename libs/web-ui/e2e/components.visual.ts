@@ -2,12 +2,33 @@ import { expect, test } from "@playwright/test";
 
 const STORYBOOK_ROOT = "#storybook-root";
 
-async function loadStory(
-  page: Parameters<typeof test>[1] extends (args: { page: infer P }, ...rest: unknown[]) => unknown ? P : never,
-  storyId: string,
-): Promise<void> {
-  await page.goto(`/iframe.html?id=${storyId}&viewMode=story`);
+type StoryPage = Parameters<typeof test>[1] extends (args: { page: infer P }, ...rest: unknown[]) => unknown
+  ? P
+  : never;
+
+async function loadStory(page: StoryPage, storyId: string, theme?: "light" | "dark"): Promise<void> {
+  // Dark is selected via the `@storybook/addon-themes` `withThemeByClassName` global, toggled by
+  // the `theme` global on the iframe URL (the addon applies the matching class to <html>).
+  const themeParam = theme ? `&globals=theme:${theme}` : "";
+  await page.goto(`/iframe.html?id=${storyId}&viewMode=story${themeParam}`);
   await page.locator(STORYBOOK_ROOT).waitFor({ state: "visible" });
+  // The addon applies the theme class to <html> asynchronously after the iframe boots; wait for it
+  // so a screenshot (especially after a `captureCopied` interaction) can never race a not-yet-dark
+  // frame and capture the light ground instead (`withThemeByClassName` maps dark → `html.dark`).
+  if (theme === "dark") {
+    await page.locator("html.dark").waitFor({ state: "attached" });
+  }
+}
+
+/**
+ * Drives the copy button into its success state with a **trusted** Playwright click (a programmatic
+ * click from a Storybook `play` lacks transient activation, so `navigator.clipboard.writeText`
+ * rejects and the Check never appears). Grants clipboard-write, clicks, and waits for the Check icon.
+ */
+async function captureCopied(page: StoryPage): Promise<void> {
+  await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.locator(`${STORYBOOK_ROOT} button`).click();
+  await page.locator(`${STORYBOOK_ROOT} .lucide-check`).waitFor({ state: "visible" });
 }
 
 // Button — Feedback/Button
@@ -140,6 +161,64 @@ test.describe("Card", () => {
     await loadStory(page, "layout-card--header-only");
     const screenshot = await page.screenshot();
     expect(screenshot).toMatchSnapshot("card-header-only.png");
+  });
+});
+
+// CopyButton — Primitives/CopyButton
+test.describe("CopyButton", () => {
+  test("resting state renders correctly in light theme", async ({ page }) => {
+    await loadStory(page, "primitives-copybutton--default", "light");
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("copy-button-resting-light.png");
+  });
+
+  test("resting state renders correctly in dark theme", async ({ page }) => {
+    await loadStory(page, "primitives-copybutton--default", "dark");
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("copy-button-resting-dark.png");
+  });
+
+  test("copied state renders correctly in light theme", async ({ page }) => {
+    await loadStory(page, "primitives-copybutton--copied", "light");
+    await captureCopied(page);
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("copy-button-copied-light.png");
+  });
+
+  test("copied state renders correctly in dark theme", async ({ page }) => {
+    await loadStory(page, "primitives-copybutton--copied", "dark");
+    await captureCopied(page);
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("copy-button-copied-dark.png");
+  });
+});
+
+// CodeBlock — Primitives/CodeBlock
+test.describe("CodeBlock", () => {
+  test("resting state renders correctly in light theme", async ({ page }) => {
+    await loadStory(page, "primitives-codeblock--default", "light");
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("code-block-resting-light.png");
+  });
+
+  test("resting state renders correctly in dark theme", async ({ page }) => {
+    await loadStory(page, "primitives-codeblock--default", "dark");
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("code-block-resting-dark.png");
+  });
+
+  test("copied state renders correctly in light theme", async ({ page }) => {
+    await loadStory(page, "primitives-codeblock--copied", "light");
+    await captureCopied(page);
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("code-block-copied-light.png");
+  });
+
+  test("copied state renders correctly in dark theme", async ({ page }) => {
+    await loadStory(page, "primitives-codeblock--copied", "dark");
+    await captureCopied(page);
+    const screenshot = await page.locator(STORYBOOK_ROOT).screenshot();
+    expect(screenshot).toMatchSnapshot("code-block-copied-dark.png");
   });
 });
 

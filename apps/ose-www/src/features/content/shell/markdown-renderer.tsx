@@ -1,7 +1,14 @@
 "use client";
 
-import parse, { type HTMLReactParserOptions, Element, domToReact, type DOMNode } from "html-react-parser";
+import parse, {
+  type HTMLReactParserOptions,
+  Element,
+  domToReact,
+  attributesToProps,
+  type DOMNode,
+} from "html-react-parser";
 import Link from "next/link";
+import { CodeBlock } from "@open-sharia-enterprise/web-ui/primitives";
 import { MermaidDiagram } from "./mermaid";
 
 interface MarkdownRendererProps {
@@ -34,6 +41,19 @@ export function MarkdownRenderer({ html }: MarkdownRendererProps) {
             const text = getTextContent(code);
             return <MermaidDiagram chart={text} />;
           }
+        } else if (pre) {
+          // Latent wiring: ose-www ships no non-mermaid fenced content today, but any that appears gets
+          // a copy-to-clipboard affordance layered around the already-highlighted Shiki subtree. CodeBlock
+          // never re-highlights (getTextContent(pre) is the verbatim clipboard value) and the figure is
+          // reconstructed unchanged via attributesToProps (NOT domToReact([domNode]), which would re-enter
+          // this branch and recurse forever). ose-www is English-only, so the Copy/Copied defaults apply.
+          return (
+            <CodeBlock code={getTextContent(pre)}>
+              <figure {...attributesToProps(domNode.attribs, domNode.name)}>
+                {domToReact(domNode.children as DOMNode[], options)}
+              </figure>
+            </CodeBlock>
+          );
         }
       }
 

@@ -85,7 +85,10 @@ figure[data-rehype-pretty-code-figure] {
 }
 
 .prose figure[data-rehype-pretty-code-figure] pre {
-  background-color: var(--shiki-light-bg, #f6f8fa) !important;
+  /* Pin the light code surface to the documented #f6f8fa (GitHub "canvas subtle"): the github-light
+     Shiki theme sets an inline --shiki-light-bg:#fff that would otherwise shadow the fallback here,
+     rendering pure white and diverging from the design tokens / Storybook baseline (DWT-001). */
+  background-color: #f6f8fa !important;
   color: var(--shiki-light, #24292e) !important;
 }
 

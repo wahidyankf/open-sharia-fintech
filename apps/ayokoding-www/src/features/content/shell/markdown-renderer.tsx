@@ -1,19 +1,28 @@
 "use client";
 
-import parse, { type HTMLReactParserOptions, Element, domToReact, type DOMNode } from "html-react-parser";
+import parse, {
+  type HTMLReactParserOptions,
+  Element,
+  domToReact,
+  attributesToProps,
+  type DOMNode,
+} from "html-react-parser";
 import Link from "next/link";
+import { CodeBlock } from "@open-sharia-enterprise/web-ui/primitives";
 import { Callout } from "./callout";
 import { ContentTabs } from "./tabs";
 import { YouTube } from "./youtube";
 import { Steps } from "./steps";
 import { MermaidDiagram } from "./mermaid";
+import { t } from "@/features/i18n/core/translations";
+import type { Locale } from "@/features/i18n/core/config";
 
 interface MarkdownRendererProps {
   html: string;
   locale: string;
 }
 
-export function MarkdownRenderer({ html }: MarkdownRendererProps) {
+export function MarkdownRenderer({ html, locale }: MarkdownRendererProps) {
   const options: HTMLReactParserOptions = {
     replace: (domNode) => {
       if (!(domNode instanceof Element)) return;
@@ -67,6 +76,25 @@ export function MarkdownRenderer({ html }: MarkdownRendererProps) {
             const text = getTextContent(code);
             return <MermaidDiagram chart={text} />;
           }
+        } else if (pre) {
+          // Every other figure gets a copy-to-clipboard affordance layered around the
+          // already-highlighted Shiki subtree. CodeBlock never re-highlights: getTextContent(pre)
+          // supplies the verbatim clipboard payload (every annotation and newline, byte-for-byte),
+          // while the figure itself is reconstructed unchanged via attributesToProps (not
+          // domToReact([domNode], options), which would re-invoke this same `replace` branch on
+          // itself and recurse forever) so existing figure-scoped CSS/selectors keep working.
+          return (
+            <CodeBlock
+              code={getTextContent(pre)}
+              copyLabel={t(locale as Locale, "copy")}
+              copiedLabel={t(locale as Locale, "copied")}
+              errorLabel={t(locale as Locale, "copyFailed")}
+            >
+              <figure {...attributesToProps(domNode.attribs, domNode.name)}>
+                {domToReact(domNode.children as DOMNode[], options)}
+              </figure>
+            </CodeBlock>
+          );
         }
       }
 

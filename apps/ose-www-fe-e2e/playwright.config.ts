@@ -8,6 +8,12 @@ const testDir = defineBddConfig({
   featuresRoot: workspaceRoot,
   features: path.join(workspaceRoot, "specs/apps/ose/behavior/platform-web/gherkin/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
+  // Only generate e2e tests for scenarios that declare e2e intent (`@e2e`). Every existing
+  // platform-web scenario is `@unit @e2e`, so this is a no-op for them; it scopes OUT pure-`@unit`
+  // scenarios — e.g. the content code-block renderer scenarios, which are verified at the unit tier
+  // (jsdom) and have no live page surface (ose-www ships no non-mermaid fenced content) — keeping the
+  // default `fail-on-gen` strictness for everything that genuinely runs at e2e.
+  tags: "@e2e",
 });
 
 export default defineConfig({

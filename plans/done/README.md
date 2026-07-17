@@ -4,6 +4,28 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-16: web-ui-code-block-copy-button](./2026-07-16__web-ui-code-block-copy-button/README.md) —
+  Added a reusable `libs/web-ui` copy-to-clipboard primitive (`CopyButton` + `CodeBlock` +
+  `useCopyToClipboard` hook) and wired it into the fenced-code-block rendering of `ayokoding-www`
+  (bilingual en/id, live e2e) and `ose-www` (latent, unit-only), copying the **verbatim** annotated
+  source (byte-equal, mermaid diagrams excluded). Full RED/GREEN/REFACTOR TDD across the hook, button,
+  and block; native `<button>` semantics (Enter + Space), axe-clean, ≥24px target, success/idle/error
+  states with a polite live-region announcement and localized labels (`Copy`/`Salin`,
+  `Copied`/`Tersalin`, `Copy failed`/`Gagal menyalin`). Storybook stories + platform-agnostic visual
+  baselines (light/dark). Phase-4 Rule-15 three-tester retest (exploratory/usability/design) filed
+  **0 EWT defects**, 4 UWT + 3 DWT findings and 4 spec-gaps; per the maintainer's "fix absolutely
+  everything" directive all 12 were fixed inside the PR (incl. two pre-existing/site-wide items: the
+  skip-link now moves focus to `#main-content`, and the light-theme shiki code background was pinned to
+  `#f6f8fa` in both apps after `keepBackground`'s inline `--shiki-light-bg:#fff` was found shadowing the
+  CSS fallback). Also root-caused a `tailwind-merge` transition-group collapse (stacked `transition-*`
+  utilities → last wins) that had silently dropped the button's colour animation, and an idle
+  discoverability affordance (`opacity-60` at rest → full on hover/focus/touch) plus `scroll-mt-16` so
+  the button clears the sticky header. 3-cycle PR-Review Maker→Fixer loop on PR #56. Knowledge Capture
+  surfaced one durable learning — rhino's `speccoverage` scenario-title extractor scans per physical
+  line, so a prettier-wrapped `Scenario(...)` call reports a spurious coverage gap — routed to a new
+  backlog plan (`rhino-speccoverage-multiline-scenario-scan`); other candidates discarded with reasons.
+  Delivery Mode: `worktree-to-pr` (maintainer-directed AI-automerge variant); both apps deployed to
+  production. Completed 2026-07-16.
 - [2026-07-16: ayokoding-resizable-docs-sidebar](./2026-07-16__ayokoding-resizable-docs-sidebar/README.md) —
   Made the ayokoding-www docs sidebar user-resizable via a new reusable `libs/web-ui`
   `resizable-panel` primitive (drag + keyboard, `localStorage` persistence, 15%–35% relative width
