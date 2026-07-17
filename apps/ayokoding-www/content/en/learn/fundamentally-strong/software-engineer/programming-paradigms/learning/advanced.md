@@ -1763,22 +1763,25 @@ python3 example.py
 from example import Spreadsheet
 
 
-def test_two_level_cascade_reflects_a_single_root_update() -> None:
-    sheet = Spreadsheet()  # => fresh spreadsheet, isolated from the module-level demo
-    sheet.set_value("x", 1)
-    sheet.set_formula("y", lambda s: s.get("x") + 10, depends_on=["x"])
-    sheet.set_formula("z", lambda s: s.get("y") * 2, depends_on=["y"])
-    assert sheet.get("z") == 22  # => x=1 -> y=11 -> z=22
+def test_multi_level_cascade_updates_every_downstream_formula() -> None:
+    sheet = Spreadsheet()  # => fresh sheet, isolated from the module-level demo
+    sheet.set_value("a1", 1)
+    sheet.set_formula("b1", lambda s: s.get("a1") * 10, depends_on=["a1"])
+    sheet.set_formula("c1", lambda s: s.get("b1") + 5, depends_on=["b1"])
+    assert sheet.get("c1") == 15  # => 1*10+5 at construction time
 
-    sheet.set_value("x", 5)  # => one update at the root
-    assert sheet.get("y") == 15  # => level 1 reflects it
-    assert sheet.get("z") == 30  # => level 2 reflects it too, without a separate manual step
+    sheet.set_value("a1", 2)  # => change the root -- both b1 and c1 must cascade
+    assert sheet.get("b1") == 20  # => 2*10
+    assert sheet.get("c1") == 25  # => 20+5, reflecting the two-level cascade
 
 
-def test_get_reads_current_values_for_both_raw_and_formula_cells() -> None:
-    sheet = Spreadsheet()  # => fresh spreadsheet
-    sheet.set_value("raw", 7)  # => a plain raw cell
-    assert sheet.get("raw") == 7  # => reads through the same uniform API as a formula cell
+def test_unrelated_formula_is_not_affected_by_a_different_cells_update() -> None:
+    sheet = Spreadsheet()  # => fresh sheet
+    sheet.set_value("x1", 1)
+    sheet.set_value("y1", 100)
+    sheet.set_formula("z1", lambda s: s.get("x1") + 1, depends_on=["x1"])  # => z1 depends only on x1
+    sheet.set_value("y1", 999)  # => update a cell z1 does NOT depend on
+    assert sheet.get("z1") == 2  # => z1 is unaffected -- still 1+1
 
 
 # => Run: pytest -- Output: 2 passed
@@ -2179,16 +2182,18 @@ True
 from example import solve_imperative_painfully, solve_with_constraints
 
 
-def test_both_versions_find_a_valid_triple() -> None:
-    digits = [2, 3, 4, 5, 10, 12]  # => a fresh search space, isolated from the module-level demo
+def test_both_versions_find_a_correct_triple_summing_to_fifteen() -> None:
+    digits = [1, 4, 5, 6, 9, 10]  # => same search space as the module-level demo
     painful = solve_imperative_painfully(digits)
     clean = solve_with_constraints(digits)
-    assert painful is not None and sum(painful) == 15  # => a valid triple summing to 15
-    assert clean is not None and sum(clean) == 15  # => the constraint version must also find a valid one
+    assert painful is not None and sum(painful) == 15  # => a genuinely valid triple
+    assert clean is not None and sum(clean) == 15  # => a genuinely valid triple, possibly a different one
+    assert len(set(painful)) == 3  # => all three digits distinct, per the constraint
+    assert len(set(clean)) == 3
 
 
-def test_an_unsolvable_search_returns_none_from_both_versions() -> None:
-    digits = [1, 1, 1]  # => not enough distinct values to ever reach three distinct digits summing to 15
+def test_a_search_space_with_no_valid_triple_returns_none_in_both_versions() -> None:
+    digits = [1, 1, 1]  # => only one distinct digit repeated -- no combination of three distinct digits exists
     assert solve_imperative_painfully(digits) is None
     assert solve_with_constraints(digits) is None
 
