@@ -301,6 +301,17 @@ Track across executions:
 - **Agents not yet implemented**: `pr-review-maker` and `pr-review-fixer` are referenced here by name
   as this workflow's actors; their agent definition files are scaffolded in a later delivery phase of
   the `worktree-to-pr-default-delivery-mode` plan, not by this document.
+- **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
+  plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
+  (e.g. `ose-primer`, `ose-infra`), running all repos' review-cycle loops concurrently from the start
+  means every fixer commit on the source PR immediately makes the siblings stale again, and each
+  sibling's next cycle re-discovers "stale vs. upstream" as its top finding instead of surfacing new
+  issues — a self-correcting but wasteful pattern observed to cost an extra cycle per sibling in
+  practice. Prefer running the source PR's loop to completion (CI-green at a stable head) first, then
+  starting or resuming each sibling's remaining cycles against that final head — a sibling cycle
+  already in flight when the source PR converges can still finish its current pass and resync on its
+  own next cycle, but do not deliberately kick off a NEW sibling cycle while the source PR's loop is
+  still open.
 
 ## Principles Implemented/Respected
 
