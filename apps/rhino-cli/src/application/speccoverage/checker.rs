@@ -1188,18 +1188,25 @@ mod tests {
         assert!(titles.contains("Wrapped single title"));
     }
 
+    // GUARD (characterization): a same-line title and a cross-line title coexisting in one file
+    // must both survive the whole-content scan (`captures_iter(&content)`, checker.rs:625). This
+    // is the actual regression the whole-content rewrite could plausibly introduce — a same-line
+    // title silently dropped once scanning became content-wide instead of line-wide — and it's a
+    // combination the picks_up_double_quoted_title / picks_up_cross_line_* tests never jointly
+    // exercise (each covers exactly one shape in isolation).
     #[test]
-    fn extract_ts_scenario_titles_preserves_same_line_titles() {
+    fn extract_ts_scenario_titles_preserves_same_line_titles_alongside_cross_line_titles() {
         let tmp = TempDir::new().unwrap();
         let p = tmp.path().join("x.test.ts");
         std::fs::write(
             &p,
-            "Scenario(\"User logs in\", () => {});\nScenario('Another title', () => {});\n",
+            "Scenario(\"User logs in\", () => {});\nScenario('Another title', () => {});\nScenario(\n  \"Wrapped title\",\n  () => {});\n",
         )
         .unwrap();
         let titles = extract_ts_scenario_titles(&p).unwrap();
         assert!(titles.contains("User logs in"));
         assert!(titles.contains("Another title"));
+        assert!(titles.contains("Wrapped title"));
     }
 
     #[test]

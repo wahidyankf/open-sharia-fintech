@@ -147,13 +147,20 @@ lives in `ose-public` alone.
       — acceptance: the new test FAILS
       — done: confirmed FAIL — `assertion failed: titles.contains("Wrapped single title")`
 - [x] [AI] **GUARD** (characterization, not RED) — Add an explicit same-line guard fixture
-      `extract_ts_scenario_titles_preserves_same_line_titles` asserting both a double- and
-      single-quoted same-line title are still returned. This locks the pre-change behavior so the
-      GREEN whole-content rewrite cannot silently regress it; it PASSES on current code by design.
+      `extract_ts_scenario_titles_preserves_same_line_titles_alongside_cross_line_titles` asserting
+      a double-quoted same-line title, a single-quoted same-line title, AND a cross-line title all
+      extract correctly from one shared file. This locks the pre-change behavior so the GREEN
+      whole-content rewrite cannot silently regress it — specifically the combination the isolated
+      RED/pre-existing fixtures never jointly exercise: a same-line title surviving in a file that
+      also contains a cross-line title; it PASSES on current code by design. (Renamed and
+      differentiated in the PR #62 Cycle 3 review cycle — the original fixture was byte-identical to
+      the pre-existing `extract_ts_scenario_titles_picks_up_double_quoted_title` test and added no
+      incremental regression coverage; see that PR's review thread for the finding.)
       **Gherkin (underpins) →** AC-3.
-      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles_preserves_same_line_titles`
+      — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles_preserves_same_line_titles_alongside_cross_line_titles`
       — acceptance: the guard test PASSES against the current code, and MUST still pass after the GREEN step
-      — done: confirmed PASS on current (pre-GREEN) code
+      — done: confirmed PASS on current (pre-GREEN) code; re-confirmed PASS after differentiation
+      against the post-GREEN (already-rewritten) code in Cycle 3
 
 ### 1c. Implementation
 
