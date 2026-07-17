@@ -1,6 +1,6 @@
 //! Cucumber-rs integration tests for `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/`.
 //!
-//! Wires all 12 feature files under `gherkin/specs/`, spanning seven distinct
+//! Wires all 13 feature files under `gherkin/specs/`, spanning eight distinct
 //! validator domains:
 //!
 //! - `behavior-coverage.feature` / `domain-coverage.feature`: the per-level
@@ -19,6 +19,15 @@
 //!   `ddd`/`test-coverage` — not because the CLI path is unreachable.
 //! - `env-staged-guard.feature`: the real `env staged-guard validate` CLI verb,
 //!   driven as a subprocess against a synthetic git-rooted fixture.
+//! - `e2e-coverage.feature`: the real `specs e2e-coverage validate` CLI verb
+//!   (`commands::specs_e2e_coverage::run`), driven as a subprocess against a
+//!   synthetic playwright-bdd-shaped fixture — `.feature` files declaring
+//!   `@e2e`-tagged scenarios, generated `.spec.js` output containing
+//!   `test.fixme(...)` calls, and (where the scenario needs one) a
+//!   checked-in baseline manifest. The manifest is bootstrapped via the
+//!   command's own `--update-baseline` flag rather than hand-written, so its
+//!   `feature` paths are byte-identical to the absolute, glob-resolved paths
+//!   the real command computes at runtime.
 //! - `harness-bindings.feature` / `harness-registry-driven.feature`: harness
 //!   binding/naming/instruction-size/duplication validators. `harness bindings
 //!   validate`'s core (`application::agents::bindings::validate_bindings`) is
@@ -97,7 +106,28 @@ use tempfile::TempDir;
 /// scenario/marker built in the behavior-coverage/domain-coverage steps.
 const BC_FEATURE_PATH: &str = "specs/apps/example/foo.feature";
 
-/// Shared scenario state spanning all 10 feature files under `gherkin/specs/`.
+/// Project-relative glob (relative to the synthetic project root in `work`)
+/// matching every `.feature` file the e2e-coverage.feature subprocess
+/// fixtures declare scenarios into. Passed verbatim as `--features` to every
+/// `specs e2e-coverage validate` invocation in that block.
+const EC_FEATURES_GLOB: &str = "features/*.feature";
+/// Project-relative directory the [`EC_FEATURES_GLOB`] fixture lives under.
+const EC_FEATURES_DIR: &str = "features";
+/// Filename of the single shared `.feature` file scenarios 1-5 and 7-8 of
+/// e2e-coverage.feature declare scenarios into. ("Output identifies each new
+/// gap by feature path and scenario title" uses its own dedicated
+/// file/title instead, matching its Gherkin's explicit filename.)
+const EC_FEATURE_FILE: &str = "example.feature";
+/// Project-relative directory playwright-bdd's generated `.spec.js` output
+/// lives in for the e2e-coverage.feature subprocess fixtures.
+const EC_FEATURES_GEN_DIR: &str = ".features-gen";
+/// Filename of the generated `.spec.js` fixture written under
+/// [`EC_FEATURES_GEN_DIR`].
+const EC_SPEC_JS_FILE: &str = "example.spec.js";
+/// Project-relative path to the checked-in baseline manifest.
+const EC_BASELINE_PATH: &str = "e2e-coverage-baseline.json";
+
+/// Shared scenario state spanning all 13 feature files under `gherkin/specs/`.
 #[derive(cucumber::World)]
 #[world(init = Self::new)]
 struct SpecsTreeWorld {
@@ -119,6 +149,21 @@ struct SpecsTreeWorld {
 
     // --- env-staged-guard.feature (subprocess) ---
     output: Option<Output>,
+
+    // --- e2e-coverage.feature (subprocess) ---
+    /// `@e2e`-tagged scenario titles declared so far into the shared
+    /// [`EC_FEATURE_FILE`] fixture — cumulative across a scenario's Given
+    /// steps regardless of their Gherkin order, since [`SpecsTreeWorld::ec_write_feature_file`]
+    /// always regenerates the whole file from this list.
+    ec_declared_titles: Vec<String>,
+    /// `@unit`-only (non-`@e2e`) scenario titles declared into the shared
+    /// fixture — used by the "not `@e2e`-tagged" ignore scenario.
+    ec_unit_only_titles: Vec<String>,
+    /// The most recently written "current" `test.fixme` title set (may
+    /// differ from any set used to bootstrap the baseline earlier in the
+    /// same scenario) — lets Then steps assert fixture-level invariants the
+    /// CLI's own text output does not expose (e.g. a total count).
+    ec_fixme_titles: Vec<String>,
 
     // --- validate-adoption.feature / validate-tree.feature / validate-counts.feature /
     // validate-links.feature (in-process, shared exit/output slots) ---
@@ -167,6 +212,9 @@ impl SpecsTreeWorld {
             dc_domain_areas: Vec::new(),
             dc_eligible: false,
             output: None,
+            ec_declared_titles: Vec::new(),
+            ec_unit_only_titles: Vec::new(),
+            ec_fixme_titles: Vec::new(),
             last_output: String::new(),
             last_exit_ok: false,
             hb_harness: Vec::new(),
@@ -206,6 +254,79 @@ impl SpecsTreeWorld {
     /// the result in `self.output`.
     fn exec(&mut self, args: &[&str]) {
         self.output = Some(run_rhino(self.work.path(), args));
+    }
+
+    /// Regenerates [`EC_FEATURE_FILE`] from `self.ec_declared_titles`
+    /// (`@e2e`-tagged) and `self.ec_unit_only_titles` (`@unit`-only),
+    /// overwriting any previous content. Safe to call repeatedly as Given
+    /// steps grow either list, in any order.
+    fn ec_write_feature_file(&self) {
+        let mut body = String::from("Feature: fixture\n\n");
+        for t in &self.ec_declared_titles {
+            let _ = writeln!(body, "@e2e\nScenario: {t}\n  Given a step\n");
+        }
+        for t in &self.ec_unit_only_titles {
+            let _ = writeln!(body, "@unit\nScenario: {t}\n  Given a step\n");
+        }
+        self.write(&format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"), &body);
+    }
+
+    /// Adds any of `titles` not yet tracked to `self.ec_declared_titles`
+    /// (the `@e2e` declared set) and regenerates [`EC_FEATURE_FILE`].
+    fn ec_ensure_declared(&mut self, titles: &[&str]) {
+        for t in titles.iter().copied() {
+            if !self.ec_declared_titles.iter().any(|d| d.as_str() == t) {
+                self.ec_declared_titles.push(t.to_string());
+            }
+        }
+        self.ec_write_feature_file();
+    }
+
+    /// Overwrites the generated `.spec.js` fixture at [`EC_SPEC_JS_FILE`] so
+    /// exactly `titles` are marked `test.fixme` — the "current" unbound set
+    /// a subsequent validate run observes. Also records `titles` into
+    /// `self.ec_fixme_titles` for Then-step introspection.
+    fn ec_write_fixme(&mut self, titles: &[&str]) {
+        self.ec_fixme_titles = titles.iter().map(|t| (*t).to_string()).collect();
+        let mut body = String::new();
+        for t in titles {
+            let _ = writeln!(body, "test.fixme(\"{t}\", async ({{ page }}) => {{}});");
+        }
+        self.write(&format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"), &body);
+    }
+
+    /// Bootstraps the checked-in baseline manifest at [`EC_BASELINE_PATH`]
+    /// to exactly `titles` by running the real CLI's `--update-baseline`
+    /// flag against a temporary `test.fixme` fixture matching `titles`.
+    ///
+    /// This is the only way to get the manifest's `feature` paths
+    /// byte-identical to what the real command later computes (an
+    /// absolute, glob-resolved path) instead of guessing them by hand.
+    fn ec_bootstrap_baseline(&mut self, titles: &[&str]) {
+        self.ec_ensure_declared(titles);
+        self.ec_write_fixme(titles);
+        let out = run_rhino(
+            self.work.path(),
+            &[
+                "specs",
+                "e2e-coverage",
+                "validate",
+                "--update-baseline",
+                "--features",
+                EC_FEATURES_GLOB,
+                "--features-gen",
+                EC_FEATURES_GEN_DIR,
+                "--baseline",
+                EC_BASELINE_PATH,
+                "--project",
+                "test-project",
+            ],
+        );
+        assert!(
+            out.status.success(),
+            "baseline bootstrap must succeed: {}",
+            combined_output(&out)
+        );
     }
 }
 
@@ -1204,6 +1325,284 @@ fn then_gc_names_offender(w: &mut SpecsTreeWorld) {
         "got: {}",
         w.last_output
     );
+}
+
+// ===========================================================================
+// e2e-coverage.feature (subprocess)
+// ===========================================================================
+
+#[given(
+    regex = r#"^a playwright-bdd project whose generated output marks scenarios "([^"]+)" and "([^"]+)" as test\.fixme$"#
+)]
+fn given_ec_project_marks_pair_fixme(w: &mut SpecsTreeWorld, a: String, b: String) {
+    w.ec_ensure_declared(&[&a, &b]);
+    w.ec_write_fixme(&[&a, &b]);
+}
+
+#[given(
+    regex = r#"^generated output that marks scenarios "([^"]+)" and "([^"]+)" as test\.fixme$"#
+)]
+fn given_ec_generated_marks_pair_fixme(w: &mut SpecsTreeWorld, a: String, b: String) {
+    w.ec_ensure_declared(&[&a, &b]);
+    w.ec_write_fixme(&[&a, &b]);
+}
+
+#[given(regex = r#"^generated output that marks only scenario "([^"]+)" as test\.fixme$"#)]
+fn given_ec_generated_marks_one_fixme(w: &mut SpecsTreeWorld, a: String) {
+    w.ec_ensure_declared(&[&a]);
+    w.ec_write_fixme(&[&a]);
+}
+
+#[given(
+    regex = r#"^a baseline manifest that lists exactly scenarios "([^"]+)" and "([^"]+)" as allowed unbound$"#
+)]
+fn given_ec_baseline_exactly_pair(w: &mut SpecsTreeWorld, a: String, b: String) {
+    w.ec_bootstrap_baseline(&[&a, &b]);
+}
+
+#[given(
+    regex = r#"^a baseline manifest that lists exactly scenario "([^"]+)" as allowed unbound$"#
+)]
+fn given_ec_baseline_exactly_one(w: &mut SpecsTreeWorld, a: String) {
+    w.ec_bootstrap_baseline(&[&a]);
+}
+
+#[given(
+    regex = r#"^a baseline manifest that lists scenarios "([^"]+)" and "([^"]+)" as allowed unbound$"#
+)]
+fn given_ec_baseline_pair(w: &mut SpecsTreeWorld, a: String, b: String) {
+    w.ec_bootstrap_baseline(&[&a, &b]);
+}
+
+#[given("a baseline manifest that lists no allowed unbound scenarios")]
+fn given_ec_baseline_empty(w: &mut SpecsTreeWorld) {
+    w.write(
+        EC_BASELINE_PATH,
+        "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+    );
+}
+
+#[given("a scenario tagged @unit only that appears as test.fixme in the generated output")]
+fn given_ec_unit_only_fixme(w: &mut SpecsTreeWorld) {
+    let title = "Unit only scenario";
+    w.ec_unit_only_titles.push(title.to_string());
+    w.ec_write_feature_file();
+    w.ec_write_fixme(&[title]);
+}
+
+#[given("a project with no baseline manifest yet")]
+fn given_ec_no_baseline_yet(_w: &mut SpecsTreeWorld) {
+    // No-op: deliberately never write a baseline manifest. `types::load_baseline`
+    // treats a missing path as an empty manifest, matching this scenario's setup.
+}
+
+#[given(regex = r#"^a new unbound scenario "([^"]+)" in "([^"]+)"$"#)]
+fn given_ec_new_gap_scenario(w: &mut SpecsTreeWorld, title: String, file_name: String) {
+    w.write(
+        &format!("{EC_FEATURES_DIR}/{file_name}"),
+        &format!("Feature: fixture\n\n@e2e\nScenario: {title}\n  Given a step\n"),
+    );
+    w.write(
+        &format!("{EC_FEATURES_GEN_DIR}/gap.spec.js"),
+        &format!("test.fixme(\"{title}\", async ({{ page }}) => {{}});\n"),
+    );
+}
+
+#[given("a project whose .features-gen directory does not exist")]
+fn given_ec_no_features_gen_dir(_w: &mut SpecsTreeWorld) {
+    // No-op: deliberately never create `.features-gen` (the "bddgen never ran" case).
+}
+
+#[when("rhino-cli specs e2e-coverage validate runs for that project")]
+fn when_ec_validate_runs(w: &mut SpecsTreeWorld) {
+    w.exec(&[
+        "specs",
+        "e2e-coverage",
+        "validate",
+        "--features",
+        EC_FEATURES_GLOB,
+        "--features-gen",
+        EC_FEATURES_GEN_DIR,
+        "--baseline",
+        EC_BASELINE_PATH,
+        "--project",
+        "test-project",
+    ]);
+}
+
+#[when("rhino-cli specs e2e-coverage validate runs and detects it as a new gap")]
+fn when_ec_validate_detects_new_gap(w: &mut SpecsTreeWorld) {
+    w.exec(&[
+        "specs",
+        "e2e-coverage",
+        "validate",
+        "--features",
+        EC_FEATURES_GLOB,
+        "--features-gen",
+        EC_FEATURES_GEN_DIR,
+        "--baseline",
+        EC_BASELINE_PATH,
+        "--project",
+        "test-project",
+    ]);
+}
+
+#[when("rhino-cli specs e2e-coverage validate runs with the --update-baseline flag")]
+fn when_ec_validate_update_baseline_runs(w: &mut SpecsTreeWorld) {
+    w.exec(&[
+        "specs",
+        "e2e-coverage",
+        "validate",
+        "--update-baseline",
+        "--features",
+        EC_FEATURES_GLOB,
+        "--features-gen",
+        EC_FEATURES_GEN_DIR,
+        "--baseline",
+        EC_BASELINE_PATH,
+        "--project",
+        "test-project",
+    ]);
+}
+
+#[then("it passes with exit code 0")]
+fn then_ec_passes(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    assert!(out.status.success(), "got: {}", combined_output(out));
+}
+
+#[then("it fails with a non-zero exit code")]
+fn then_ec_fails(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    assert!(!out.status.success(), "got: {}", combined_output(out));
+}
+
+#[then("it reports 2 declared-but-unbound scenarios all covered by the baseline")]
+fn then_ec_two_covered_by_baseline(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(out.status.success(), "got: {text}");
+    assert_eq!(
+        w.ec_fixme_titles.len(),
+        2,
+        "fixture must currently mark exactly 2 scenarios as test.fixme"
+    );
+    assert!(
+        text.contains("0 new unbound scenario(s) beyond baseline"),
+        "got: {text}"
+    );
+}
+
+#[then(
+    regex = r#"^it names scenario "([^"]+)" and its containing \.feature file as a new unbound gap$"#
+)]
+fn then_ec_names_new_gap(w: &mut SpecsTreeWorld, title: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(text.contains(&title), "got: {text}");
+    assert!(text.contains(EC_FEATURE_FILE), "got: {text}");
+}
+
+#[then(regex = r#"^it does not report scenario "([^"]+)" as a new gap$"#)]
+fn then_ec_not_new_gap(w: &mut SpecsTreeWorld, title: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    let marker = format!("\"{title}\"");
+    assert!(!text.contains(&marker), "got: {text}");
+}
+
+#[then(regex = r#"^it reports scenario "([^"]+)" as newly bound relative to the baseline$"#)]
+fn then_ec_newly_bound(w: &mut SpecsTreeWorld, title: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(out.status.success(), "got: {text}");
+    assert!(text.contains("stale baseline entrie"), "got: {text}");
+    let marker = format!("\"{title}\"");
+    assert!(text.contains(&marker), "got: {text}");
+}
+
+#[then(regex = r#"^it reports scenario "([^"]+)" as a stale baseline entry that can be pruned$"#)]
+fn then_ec_stale_entry_prunable(w: &mut SpecsTreeWorld, title: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(out.status.success(), "got: {text}");
+    assert!(text.contains("stale baseline entrie"), "got: {text}");
+    let marker = format!("\"{title}\"");
+    assert!(text.contains(&marker), "got: {text}");
+}
+
+#[then("it does not report the @unit-only scenario as an unbound gap")]
+fn then_ec_unit_only_ignored(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(out.status.success(), "got: {text}");
+    for title in &w.ec_unit_only_titles {
+        assert!(!text.contains(title.as_str()), "got: {text}");
+    }
+}
+
+#[then(regex = r#"^the failure output contains the scenario title "([^"]+)"$"#)]
+fn then_ec_failure_contains_title(w: &mut SpecsTreeWorld, title: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(text.contains(&title), "got: {text}");
+}
+
+#[then(regex = r#"^the failure output contains the feature file path ending in "([^"]+)"$"#)]
+fn then_ec_failure_contains_path_suffix(w: &mut SpecsTreeWorld, suffix: String) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(text.contains(&suffix), "got: {text}");
+}
+
+#[then("the failure output states the delta is an increase of 1 over baseline")]
+fn then_ec_failure_states_increase_of_one(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(text.contains("increase of 1"), "got: {text}");
+}
+
+#[then(
+    regex = r#"^it writes a baseline manifest listing scenarios "([^"]+)" and "([^"]+)" as allowed unbound$"#
+)]
+fn then_ec_writes_baseline_manifest(w: &mut SpecsTreeWorld, a: String, b: String) {
+    let out = w.output.as_ref().expect("ran");
+    assert!(out.status.success(), "got: {}", combined_output(out));
+    let baseline_path = w.work.path().join(EC_BASELINE_PATH);
+    assert!(baseline_path.exists(), "baseline manifest was not written");
+    let content = std::fs::read_to_string(&baseline_path).expect("read baseline manifest");
+    assert!(content.contains(&format!("\"{a}\"")), "got: {content}");
+    assert!(content.contains(&format!("\"{b}\"")), "got: {content}");
+}
+
+#[then("a subsequent validate run for that project passes with exit code 0")]
+fn then_ec_subsequent_validate_passes(w: &mut SpecsTreeWorld) {
+    let out = run_rhino(
+        w.work.path(),
+        &[
+            "specs",
+            "e2e-coverage",
+            "validate",
+            "--features",
+            EC_FEATURES_GLOB,
+            "--features-gen",
+            EC_FEATURES_GEN_DIR,
+            "--baseline",
+            EC_BASELINE_PATH,
+            "--project",
+            "test-project",
+        ],
+    );
+    assert!(out.status.success(), "got: {}", combined_output(&out));
+}
+
+#[then("it reports that bddgen output was not found and must be generated first")]
+fn then_ec_reports_missing_features_gen(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(text.contains(".features-gen"), "got: {text}");
+    assert!(text.contains("bddgen"), "got: {text}");
 }
 
 // ===========================================================================
