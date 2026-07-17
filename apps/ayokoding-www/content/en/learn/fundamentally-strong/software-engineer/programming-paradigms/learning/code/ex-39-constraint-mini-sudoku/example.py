@@ -43,6 +43,7 @@ def solve(board: Board) -> Board | None:  # => backtracking search over empty ce
 
 
 solution = solve([row[:] for row in puzzle])  # => solve a COPY so the original `puzzle` stays untouched
+assert solution is not None  # => narrow away None -- this puzzle's three clues always admit a solution
 print(solution)  # => a fully filled, constraint-satisfying 4x4 grid
 # => Output: [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]]
 rows_ok = all(sorted(row) == [1, 2, 3, 4] for row in solution)  # => every row has 1-4 exactly once

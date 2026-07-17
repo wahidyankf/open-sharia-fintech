@@ -1,6 +1,6 @@
 """Example 61: pytest verification for Generic CSP Solver (with Propagation)."""
 
-from example import CSPSolver, solve_map_coloring
+from example import Assignment, Constraint, CSPSolver, solve_map_coloring
 
 
 def test_generic_solver_solves_map_coloring() -> None:
@@ -15,8 +15,8 @@ def test_generic_solver_solves_a_tiny_sudoku_style_grid() -> None:
     variables = ["r0c0", "r0c1", "r1c0", "r1c1"]
     domains = {v: [1, 2] for v in variables}
 
-    def distinct(a: str, b: str):
-        def constraint(assignment):
+    def distinct(a: str, b: str) -> Constraint:  # => matches example.py's make_constraint signature
+        def constraint(assignment: Assignment) -> bool:  # => fully typed closure, no Unknown inference
             return a not in assignment or b not in assignment or assignment[a] != assignment[b]
 
         return constraint

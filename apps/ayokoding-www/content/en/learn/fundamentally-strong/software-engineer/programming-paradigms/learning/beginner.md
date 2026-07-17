@@ -62,6 +62,7 @@ python3 example.py
 
 import runpy
 from pathlib import Path
+from typing import cast
 
 
 def _run_example() -> dict[str, object]:
@@ -72,7 +73,7 @@ def _run_example() -> dict[str, object]:
 
 def test_known_word_counts_match() -> None:
     ns = _run_example()  # => execute the imperative script once
-    counts: dict[str, int] = ns["counts"]  # => pull the mutated dict back out
+    counts = cast("dict[str, int]", ns["counts"])  # => narrow the untyped namespace lookup
     assert counts["the"] == 3  # => "the" appears three times in the sample sentence
     assert counts["cat"] == 2  # => "cat" appears twice
     assert counts["sat"] == 1  # => every other word appears exactly once
@@ -1033,7 +1034,7 @@ def tally_via_reduce(words: list[str]) -> dict[str, int]:  # => a fold: no loop 
     return reduce(bump, words, {})  # => reduce threads a fresh dict through every step, none shared
 
 
-words: list[str] = "the cat sat on the mat the cat ran".split()  # => same sentence as example 1
+words: list[str] = str("the cat sat on the mat the cat ran").split()  # => str(...) widens away the literal so split() returns list[str]
 before = tuple(words)  # => snapshot of the input, to prove neither function mutates it
 counter_result = tally_via_counter(words)  # => value-producing call
 reduce_result = tally_via_reduce(words)  # => value-producing call
@@ -1066,7 +1067,7 @@ from example import tally_via_counter, tally_via_reduce
 
 
 def test_both_functional_versions_match_the_imperative_counts() -> None:
-    words = "the cat sat on the mat the cat ran".split()  # => identical sentence to ex-01
+    words: list[str] = str("the cat sat on the mat the cat ran").split()  # => identical sentence to ex-01
     expected = {"the": 3, "cat": 2, "sat": 1, "on": 1, "mat": 1, "ran": 1}
     assert dict(tally_via_counter(words)) == expected  # => Counter-based fold matches
     assert tally_via_reduce(words) == expected  # => reduce-based fold matches too
@@ -1417,7 +1418,7 @@ graph LR
 import sqlite3
 
 
-words: list[str] = "the cat sat on the mat the cat ran".split()  # => same sentence as example 1
+words: list[str] = str("the cat sat on the mat the cat ran").split()  # => str(...) widens away the literal so split() returns list[str]
 
 conn = sqlite3.connect(":memory:")  # => an in-process database -- no file, no server (stdlib only)
 conn.execute("CREATE TABLE words (word TEXT)")  # => declare the shape of the data, not how to store it
@@ -1473,13 +1474,13 @@ def top_n_words(words: list[str], n: int) -> list[tuple[str, int]]:  # => reusab
 
 
 def test_top_three_matches_the_functional_word_count() -> None:
-    words = "the cat sat on the mat the cat ran".split()  # => identical sentence to ex-01/ex-11
+    words: list[str] = str("the cat sat on the mat the cat ran").split()  # => identical sentence to ex-01/ex-11
     rows = top_n_words(words, 3)  # => query the declarative top-3
     assert rows == [("the", 3), ("cat", 2), ("mat", 1)]  # => ties broken alphabetically
 
 
 def test_rows_match_a_hand_counted_dict_for_every_word() -> None:
-    words = "a b a c b a".split()  # => a: 3, b: 2, c: 1
+    words: list[str] = str("a b a c b a").split()  # => a: 3, b: 2, c: 1
     rows = top_n_words(words, 3)  # => request all three distinct words
     assert dict(rows) == {"a": 3, "b": 2, "c": 1}  # => every count must match a hand count
 

@@ -37,6 +37,7 @@ def no_two_queens_attack(cols: list[int]) -> bool:  # => independent checker, us
 
 
 solution = solve_n_queens(8)  # => the classic 8-queens problem
+assert solution is not None  # => narrow away None -- 8-queens always has a solution, matching test_example.py
 print(solution)  # => one valid arrangement (the specific columns depend on search order, but it is safe)
 # => Output: [0, 4, 7, 5, 2, 6, 1, 3]
 print(no_two_queens_attack(solution))  # => independently confirms no two queens attack each other

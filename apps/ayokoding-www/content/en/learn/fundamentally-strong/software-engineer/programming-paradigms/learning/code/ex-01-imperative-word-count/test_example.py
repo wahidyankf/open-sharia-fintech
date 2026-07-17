@@ -2,6 +2,7 @@
 
 import runpy
 from pathlib import Path
+from typing import cast
 
 
 def _run_example() -> dict[str, object]:
@@ -12,7 +13,7 @@ def _run_example() -> dict[str, object]:
 
 def test_known_word_counts_match() -> None:
     ns = _run_example()  # => execute the imperative script once
-    counts: dict[str, int] = ns["counts"]  # => pull the mutated dict back out
+    counts = cast("dict[str, int]", ns["counts"])  # => narrow the untyped namespace lookup
     assert counts["the"] == 3  # => "the" appears three times in the sample sentence
     assert counts["cat"] == 2  # => "cat" appears twice
     assert counts["sat"] == 1  # => every other word appears exactly once

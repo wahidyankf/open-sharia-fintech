@@ -3,7 +3,7 @@
 import sqlite3
 
 
-words: list[str] = "the cat sat on the mat the cat ran".split()  # => same sentence as example 1
+words: list[str] = str("the cat sat on the mat the cat ran").split()  # => str(...) widens away the literal so split() returns list[str]
 
 conn = sqlite3.connect(":memory:")  # => an in-process database -- no file, no server (stdlib only)
 conn.execute("CREATE TABLE words (word TEXT)")  # => declare the shape of the data, not how to store it

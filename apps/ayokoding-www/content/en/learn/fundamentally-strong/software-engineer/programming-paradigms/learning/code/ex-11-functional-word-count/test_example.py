@@ -4,7 +4,7 @@ from example import tally_via_counter, tally_via_reduce
 
 
 def test_both_functional_versions_match_the_imperative_counts() -> None:
-    words = "the cat sat on the mat the cat ran".split()  # => identical sentence to ex-01
+    words: list[str] = str("the cat sat on the mat the cat ran").split()  # => identical sentence to ex-01
     expected = {"the": 3, "cat": 2, "sat": 1, "on": 1, "mat": 1, "ran": 1}
     assert dict(tally_via_counter(words)) == expected  # => Counter-based fold matches
     assert tally_via_reduce(words) == expected  # => reduce-based fold matches too

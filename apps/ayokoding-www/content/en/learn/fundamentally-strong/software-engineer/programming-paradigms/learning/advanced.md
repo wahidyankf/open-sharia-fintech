@@ -387,7 +387,7 @@ True
 ```python
 """Example 61: pytest verification for Generic CSP Solver (with Propagation)."""
 
-from example import CSPSolver, solve_map_coloring
+from example import Assignment, Constraint, CSPSolver, solve_map_coloring
 
 
 def test_generic_solver_solves_map_coloring() -> None:
@@ -402,8 +402,8 @@ def test_generic_solver_solves_a_tiny_sudoku_style_grid() -> None:
     variables = ["r0c0", "r0c1", "r1c0", "r1c1"]
     domains = {v: [1, 2] for v in variables}
 
-    def distinct(a: str, b: str):
-        def constraint(assignment):
+    def distinct(a: str, b: str) -> Constraint:  # => matches example.py's make_constraint signature
+        def constraint(assignment: Assignment) -> bool:  # => fully typed closure, no Unknown inference
             return a not in assignment or b not in assignment or assignment[a] != assignment[b]
 
         return constraint
@@ -2137,6 +2137,8 @@ def solve_with_constraints(digits: list[int]) -> tuple[int, int, int] | None:  #
 digits = [1, 4, 5, 6, 9, 10]  # => shared search space for both versions
 painful = solve_imperative_painfully(digits)  # => run the nested-loop version
 clean = solve_with_constraints(digits)  # => run the constraint-declared version
+assert painful is not None  # => narrow away None -- this digit list always has a valid triple
+assert clean is not None  # => narrow away None -- same search space, so the same guarantee holds
 
 print(painful)  # => both must find A valid triple summing to 15 (not necessarily the SAME triple)
 # => Output: (1, 4, 10)

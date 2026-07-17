@@ -16,7 +16,7 @@ def tally_via_reduce(words: list[str]) -> dict[str, int]:  # => a fold: no loop 
     return reduce(bump, words, {})  # => reduce threads a fresh dict through every step, none shared
 
 
-words: list[str] = "the cat sat on the mat the cat ran".split()  # => same sentence as example 1
+words: list[str] = str("the cat sat on the mat the cat ran").split()  # => str(...) widens away the literal so split() returns list[str]
 before = tuple(words)  # => snapshot of the input, to prove neither function mutates it
 counter_result = tally_via_counter(words)  # => value-producing call
 reduce_result = tally_via_reduce(words)  # => value-producing call

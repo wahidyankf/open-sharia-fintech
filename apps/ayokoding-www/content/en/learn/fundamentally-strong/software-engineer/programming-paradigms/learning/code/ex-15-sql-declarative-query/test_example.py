@@ -16,13 +16,13 @@ def top_n_words(words: list[str], n: int) -> list[tuple[str, int]]:  # => reusab
 
 
 def test_top_three_matches_the_functional_word_count() -> None:
-    words = "the cat sat on the mat the cat ran".split()  # => identical sentence to ex-01/ex-11
+    words: list[str] = str("the cat sat on the mat the cat ran").split()  # => identical sentence to ex-01/ex-11
     rows = top_n_words(words, 3)  # => query the declarative top-3
     assert rows == [("the", 3), ("cat", 2), ("mat", 1)]  # => ties broken alphabetically
 
 
 def test_rows_match_a_hand_counted_dict_for_every_word() -> None:
-    words = "a b a c b a".split()  # => a: 3, b: 2, c: 1
+    words: list[str] = str("a b a c b a").split()  # => a: 3, b: 2, c: 1
     rows = top_n_words(words, 3)  # => request all three distinct words
     assert dict(rows) == {"a": 3, "b": 2, "c": 1}  # => every count must match a hand count
 

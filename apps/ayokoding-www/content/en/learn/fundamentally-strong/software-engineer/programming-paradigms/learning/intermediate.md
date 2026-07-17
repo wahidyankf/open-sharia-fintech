@@ -821,6 +821,7 @@ def no_two_queens_attack(cols: list[int]) -> bool:  # => independent checker, us
 
 
 solution = solve_n_queens(8)  # => the classic 8-queens problem
+assert solution is not None  # => narrow away None -- 8-queens always has a solution, matching test_example.py
 print(solution)  # => one valid arrangement (the specific columns depend on search order, but it is safe)
 # => Output: [0, 4, 7, 5, 2, 6, 1, 3]
 print(no_two_queens_attack(solution))  # => independently confirms no two queens attack each other
@@ -941,6 +942,7 @@ def solve_coloring(adj: dict[Region, list[Region]], palette: list[Color]) -> dic
 
 
 result = solve_coloring(adjacency, colors)  # => run the solver
+assert result is not None  # => narrow away None -- this adjacency/palette pair always has a valid coloring
 print(result)  # => west and east may share a color; central must differ from both
 # => Output: {'west': 'red', 'central': 'green', 'east': 'red'}
 print(all(result[a] != result[b] for a, neighbors in adjacency.items() for b in neighbors))  # => verify
@@ -1062,6 +1064,7 @@ def solve(board: Board) -> Board | None:  # => backtracking search over empty ce
 
 
 solution = solve([row[:] for row in puzzle])  # => solve a COPY so the original `puzzle` stays untouched
+assert solution is not None  # => narrow away None -- this puzzle's three clues always admit a solution
 print(solution)  # => a fully filled, constraint-satisfying 4x4 grid
 # => Output: [[1, 2, 3, 4], [3, 4, 1, 2], [2, 1, 4, 3], [4, 3, 2, 1]]
 rows_ok = all(sorted(row) == [1, 2, 3, 4] for row in solution)  # => every row has 1-4 exactly once

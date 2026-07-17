@@ -32,6 +32,7 @@ def solve_coloring(adj: dict[Region, list[Region]], palette: list[Color]) -> dic
 
 
 result = solve_coloring(adjacency, colors)  # => run the solver
+assert result is not None  # => narrow away None -- this adjacency/palette pair always has a valid coloring
 print(result)  # => west and east may share a color; central must differ from both
 # => Output: {'west': 'red', 'central': 'green', 'east': 'red'}
 print(all(result[a] != result[b] for a, neighbors in adjacency.items() for b in neighbors))  # => verify

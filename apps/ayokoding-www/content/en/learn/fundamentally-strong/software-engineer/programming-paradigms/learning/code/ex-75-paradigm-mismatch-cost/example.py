@@ -31,6 +31,8 @@ def solve_with_constraints(digits: list[int]) -> tuple[int, int, int] | None:  #
 digits = [1, 4, 5, 6, 9, 10]  # => shared search space for both versions
 painful = solve_imperative_painfully(digits)  # => run the nested-loop version
 clean = solve_with_constraints(digits)  # => run the constraint-declared version
+assert painful is not None  # => narrow away None -- this digit list always has a valid triple
+assert clean is not None  # => narrow away None -- same search space, so the same guarantee holds
 
 print(painful)  # => both must find A valid triple summing to 15 (not necessarily the SAME triple)
 # => Output: (1, 4, 10)
