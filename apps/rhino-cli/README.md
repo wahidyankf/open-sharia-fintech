@@ -108,5 +108,5 @@ Reviewed 2026-05-23. Policy paths per [Dependency Bump Stability & Safety Policy
 
 ## See also
 
-- Migration plan (completed 2026-05-23): [`plans/done/2026-05-23__rhino-cli-rust-rewrite/`](../../plans/done/2026-05-23__rhino-cli-rust-rewrite/README.md) — documents the Go implementation that preceded this crate (recoverable from git history)
+- Migration plan (completed 2026-05-23, `2026-05-23__rhino-cli-rust-rewrite`): documents the Go implementation that preceded this crate (recoverable from git history; not linked here since `plans/done/` is repo-specific and this crate's README is byte-identical across sibling repos)
 - Gherkin specs (shared with Go binary): [`specs/apps/rhino/behavior/rhino-cli/gherkin/`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/)
