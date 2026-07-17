@@ -68,6 +68,33 @@ Global flags (see `src/cli.rs`):
 - `--say <msg>` — echo a message to stdout
 - `--help, -h` — print help
 
+## Specs: E2E Coverage Gap Detection
+
+`specs e2e-coverage validate` detects Gherkin scenarios that `playwright-bdd`'s `missingSteps:
+"skip-scenario"` setting silently converts to `test.fixme(...)` in generated `.spec.js` output,
+checked against a per-project baseline manifest so only _new_ unbound scenarios fail the gate.
+
+```bash
+cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate \
+  --features "specs/**/*.feature" --features-gen .features-gen \
+  --baseline e2e-coverage-baseline.json --project my-e2e-project
+```
+
+| Flag                   | Required | Description                                                                                       |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `[PROJECT_DIR]`        | No       | Positional project directory; `--features-gen`/`--baseline` resolve relative to it (default: `.`) |
+| `--features <GLOB>`    | Yes      | `.feature` glob(s) this project consumes (repeatable)                                             |
+| `--features-gen <DIR>` | Yes      | Directory of `bddgen`-generated `.spec.js` output to scan for `test.fixme(`                       |
+| `--baseline <PATH>`    | Yes      | Checked-in baseline manifest path                                                                 |
+| `--project <NAME>`     | Yes      | Project name recorded on the baseline when generated via `--update-baseline`                      |
+| `--update-baseline`    | No       | Snapshot the current unbound set to `--baseline` instead of validating against it                 |
+
+Exit codes: `0` on pass (no new unbound scenarios beyond the baseline); non-zero when a new
+`@e2e`-tagged scenario appears as `test.fixme` without a baseline entry, or when `--features-gen`
+names a directory that does not exist (run `npx bddgen` first). See
+[`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
+for the full behavior contract.
+
 ## Dependency Status
 
 Reviewed 2026-05-23. Policy paths per [Dependency Bump Stability & Safety Policy](../../repo-governance/development/workflow/dependency-bump-policy.md).
