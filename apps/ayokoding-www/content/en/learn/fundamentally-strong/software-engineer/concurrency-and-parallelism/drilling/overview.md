@@ -2021,4 +2021,4 @@ a measurable, boundable prediction a team can check their actual results against
 
 ---
 
-← Previous: [Capstone](../learning/capstone/overview.md) · Next: [25 · Advanced Algorithms](../../advanced-algorithms/learning/overview.md) →
+← Previous: [Capstone](../learning/capstone/overview.md) &middot; Next: [25 · Advanced Algorithms](../../advanced-algorithms/learning/overview.md) →
