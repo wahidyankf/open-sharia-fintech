@@ -245,10 +245,29 @@ fn given_multilang(w: &mut SpecWorld) {
     );
 }
 
+#[given(
+    "a feature file whose scenario is bound by a test whose Scenario(...) title wraps onto the next physical line"
+)]
+fn given_wrapped_title(w: &mut SpecWorld) {
+    w.write(
+        "specs/wrapped-title.feature",
+        "Feature: Wrapped\nScenario: Wrapped title covers\n  Given a condition\n",
+    );
+    w.write(
+        "app/wrapped-title.test.ts",
+        "Scenario(\n  \"Wrapped title covers\",\n  () => {});\nGiven(\"a condition\", () => {});\n",
+    );
+}
+
 // --- When steps ---
 
 #[when("the developer runs spec-coverage validate on the specs and app directories")]
 fn when_run(w: &mut SpecWorld) {
+    w.exec(&[]);
+}
+
+#[when("the developer runs behavior-coverage validate on the specs and app directories")]
+fn when_run_behavior_coverage(w: &mut SpecWorld) {
     w.exec(&[]);
 }
 
@@ -343,6 +362,12 @@ fn then_marked_failed(w: &mut SpecWorld) {
     let out = w.stdout();
     assert!(out.contains("marked-but-failed"), "got: {out}");
     assert!(out.contains("Runs at unit level"), "got: {out}");
+}
+
+#[then("the output does not report the wrapped-title scenario as an unimplemented scenario")]
+fn then_wrapped_title_covered(w: &mut SpecWorld) {
+    let out = w.stdout();
+    assert!(!out.contains("Wrapped title covers"), "got: {out}");
 }
 
 #[tokio::main]
