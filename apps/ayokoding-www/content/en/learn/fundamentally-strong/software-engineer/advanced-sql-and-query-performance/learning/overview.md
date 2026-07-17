@@ -10,7 +10,11 @@ weight: 1
 - **Prior topics**: [10 · SQL Essentials](../../sql-essentials/learning/overview.md) -- `SELECT`,
   `JOIN`, `GROUP BY`/`HAVING`, `INSERT`/`UPDATE`/`DELETE`, foreign keys, basic transactions
   (`COMMIT`/`ROLLBACK`), and the first Python `sqlite3` examples this topic assumes as a floor and
-  then extends into a real client-server engine.
+  then extends into a real client-server engine; [4 · Just Enough Python](../../just-enough-python/learning/overview.md)
+  -- the type-annotated Python fluency this topic's data-access-layer examples assume; [11 ·
+  Backend Essentials](../../backend-essentials/learning/overview.md) -- the N+1 query scenario that
+  topic introduces at the application layer, which this topic's co-26 (N+1 diagnosis and fix,
+  Examples 54-56) diagnoses and resolves from the database side.
 - **Tools & environment**: a macOS/Linux terminal; **PostgreSQL 18.x** (the `psql` client and a
   running server -- Docker's `postgres:18` image is the simplest way to get one); **Python 3.x**
   with `psycopg` (v3, `pip install "psycopg[binary]"`) installed in a `venv`; Example 76
