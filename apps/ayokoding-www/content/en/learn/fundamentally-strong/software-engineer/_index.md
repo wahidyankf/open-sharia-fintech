@@ -76,3 +76,7 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/drilling)
+- [20 · Computer Architecture](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture/drilling)

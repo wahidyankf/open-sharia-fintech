@@ -29,3 +29,4 @@ weight: 107
   - [Inter-Topic Capstone · Full-Stack App](/en/c/learn/fundamentally-strong/software-engineer/capstone-full-stack-app)
   - [18 · Technical Communication](/en/c/learn/fundamentally-strong/software-engineer/technical-communication)
   - [19 · Computer Science Foundations](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations)
+  - [20 · Computer Architecture](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture)

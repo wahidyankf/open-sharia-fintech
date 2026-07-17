@@ -4051,7 +4051,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       corrected to describe 4 independent sample languages, one per tier, each showing that tier's
       characteristic recognition mechanism. Cycle 3 (final; fix commit `0fa8084aa`): 1 HIGH finding — the
       governing syllabus's own capstone "Concepts exercised" checklist listed a 5th item, `a checksum/hash
-  demo (co-28)`, that neither the syllabus's own Goal nor Ordered-steps ever specified (both describe
+demo (co-28)`, that neither the syllabus's own Goal nor Ordered-steps ever specified (both describe
       exactly 3 capstone scripts); fixed by removing the stray checklist item from the syllabus doc itself
       (plan-doc-only edit, no `apps/` content or `delivery.md` checkboxes touched) rather than adding a
       redundant 4th script, since co-28 is already covered by Examples 54-55. PR flipped from draft to
@@ -4076,7 +4076,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       orchestrator against the remote; the head branch's disappearance from `origin` (if any) is the repo's
       own `delete_branch_on_merge: true` setting, not an agent action. **Process note worth carrying
       forward**: during Cycle 2, the `pr-review-maker` sub-agent reportedly attempted a `git worktree
-  remove --force` against the main checkout at `/Users/wkf/ose-projects/ose-public` — this was
+remove --force` against the main checkout at `/Users/wkf/ose-projects/ose-public` — this was
       independently re-verified (not just trusted from the sub-agent's self-report) to have failed as a
       no-op, since git refuses to remove the primary worktree, and the main checkout remained fully intact
       throughout. Future `pr-review-maker`/`pr-review-fixer` dispatch prompts for this plan now include an
@@ -4099,131 +4099,195 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · C † · topic wt 300 · Learn 120 / Drill 220 · **subject**. Template →
 [`syllabus/20-computer-architecture.md`](./syllabus/20-computer-architecture.md).
 
-- [ ] **[AI] V** — `web-researcher` for `computer-architecture`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `computer-architecture`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/20-computer-architecture.md`](./syllabus/20-computer-architecture.md) and fold dated findings back into that file.
-      **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/computer-architecture/learning/` teaching **every** concept in
-      `syllabus/20-computer-architecture.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · memory-hierarchy
-  - [ ] co-02 · cache-lines-and-blocks
-  - [ ] co-03 · spatial-locality
-  - [ ] co-04 · temporal-locality
-  - [ ] co-05 · cache-miss-cost
-  - [ ] co-06 · cache-associativity
-  - [ ] co-07 · write-policies
-  - [ ] co-08 · virtual-memory-and-pages
-  - [ ] co-09 · tlb
-  - [ ] co-10 · page-faults-and-swapping
-  - [ ] co-11 · twos-complement-integers
-  - [ ] co-12 · integer-overflow-and-wraparound
-  - [ ] co-13 · ieee-754-in-c
-  - [ ] co-14 · float-comparison-hazards
-  - [ ] co-15 · endianness
-  - [ ] co-16 · struct-padding-and-alignment
-  - [ ] co-17 · data-layout-aos-vs-soa
-  - [ ] co-18 · instruction-set-architecture
-  - [ ] co-19 · assembly-basics
-  - [ ] co-20 · pipelining
-  - [ ] co-21 · branch-prediction
-  - [ ] co-22 · superscalar-and-out-of-order
-  - [ ] co-23 · simd-vectorization
-  - [ ] co-24 · memory-ordering-and-atomics
-  - [ ] co-25 · mechanical-sympathy-and-profiling
-- [ ] **[AI] A1-examples** — Author `CONTENT/computer-architecture/learning/code/` — runnable C per worked example
-      in `syllabus/20-computer-architecture.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · print-int-bytes — verify bytes match two's-complement encoding
-  - [ ] ex-02 · hex-dump-value — verify nibbles match `%x`
-  - [ ] ex-03 · signed-vs-unsigned-print — verify `-1` as `%u` shows `4294967295`
-  - [ ] ex-04 · signed-overflow-wrap — verify `INT_MAX+1` wraps to `INT_MIN` under `-fwrapv`
-  - [ ] ex-05 · unsigned-wraparound — verify `0u-1u == UINT_MAX`
-  - [ ] ex-06 · unsigned-underflow-loop-bug — verify fixed guard terminates
-  - [ ] ex-07 · float-bits-inspect — verify IEEE-754 fields of `1.0`
-  - [ ] ex-08 · float-not-equal — verify `0.1+0.2 != 0.3`
-  - [ ] ex-09 · float-epsilon-compare — verify epsilon test passes
-  - [ ] ex-10 · float-precision-loss — verify tiny addend lost
-  - [ ] ex-11 · endianness-detect — verify little-endian on x86/ARM
-  - [ ] ex-12 · htonl-roundtrip — verify identity
-  - [ ] ex-13 · manual-byteswap — verify matches `htonl`
-  - [ ] ex-14 · struct-sizeof-padding — verify sizeof exceeds field sum
-  - [ ] ex-15 · struct-reorder-shrink — verify smaller sizeof
-  - [ ] ex-16 · packed-struct — verify sizeof equals field sum
-  - [ ] ex-17 · alignof-types — verify increasing alignment
-  - [ ] ex-18 · misaligned-access-cost — verify misaligned slower/faults
-  - [ ] ex-19 · pointer-arithmetic-stride — verify address advances by `sizeof(T)`
-  - [ ] ex-20 · array-row-major-layout — verify matches `&a[i][j]`
-  - [ ] ex-21 · latency-hierarchy-table — verify strictly increasing ordering
-  - [ ] ex-22 · cache-line-size-probe — verify jump at ~64 B (128 B Apple Silicon)
-  - [ ] ex-23 · sequential-vs-random-sum — verify sequential much faster
-  - [ ] ex-24 · temporal-locality-working-set — verify small set faster
-  - [ ] ex-25 · read-disassembly — verify load/store present
-  - [ ] ex-26 · registers-in-asm — verify args in argument registers
-  - [ ] ex-27 · isa-compare-riscv-x86 — verify instruction counts differ
-  - [ ] ex-28 · cache-miss-stride-sweep — verify cliff at line stride
-  - [ ] ex-29 · matrix-traversal-ij-vs-ji — verify `[i][j]` faster
-  - [ ] ex-30 · aos-vs-soa-hot-loop — verify SoA faster
-  - [ ] ex-31 · working-set-cache-cliffs — verify cliff at each cache level
-  - [ ] ex-32 · cache-blocking-matmul — verify tiled faster for large matrices
-  - [ ] ex-33 · false-sharing-demo — verify slowdown vs independent lines
-  - [ ] ex-34 · padding-fixes-false-sharing — verify slowdown disappears
-  - [ ] ex-35 · prefetch-hint — verify measurable improvement
-  - [ ] ex-36 · branch-predictable-vs-random — verify sorted faster
-  - [ ] ex-37 · branchless-max — verify identical output, faster on random
-  - [ ] ex-38 · pipeline-dependency-chain — verify independent adds faster
-  - [ ] ex-39 · loop-unrolling — verify higher throughput
-  - [ ] ex-40 · ilp-multiple-accumulators — verify 4 accumulators faster
-  - [ ] ex-41 · tlb-pressure-random-pages — verify TLB misses dominate
-  - [ ] ex-42 · page-fault-mmap — verify minor faults on first touch
-  - [ ] ex-43 · virtual-address-print — verify two processes reuse same address
-  - [ ] ex-44 · swapping-slowdown — verify major-fault swapping slows access
-  - [ ] ex-45 · write-heavy-cost — verify store-traffic cost
-  - [ ] ex-46 · associativity-conflict-stride — verify conflict-miss spike at critical stride
-  - [ ] ex-47 · simd-auto-vectorize — verify vector regs in asm + speedup
-  - [ ] ex-48 · simd-intrinsics-add — verify matches scalar, faster
-  - [ ] ex-49 · simd-dot-product — verify correct + speedup
-  - [ ] ex-50 · aligned-alloc-for-simd — verify no fault, faster
-  - [ ] ex-51 · atomic-increment — verify no lost updates
-  - [ ] ex-52 · non-atomic-race — verify total undercounts
-  - [ ] ex-53 · memory-barrier-ordering — verify barrier restores order
-  - [ ] ex-54 · div-vs-shift-asm — verify division lowered to shift
-  - [ ] ex-55 · hot-cold-struct-split — verify hot-loop speedup
-  - [ ] ex-56 · perf-cache-miss-count — verify miss count drops after fix
-  - [ ] ex-57 · cpi-ipc-measure — verify CPI differs between loops
-  - [ ] ex-58 · optimize-kernel-end-to-end — verify documented reproducible speedup
-  - [ ] ex-59 · blocked-transpose — verify blocked faster + correct
-  - [ ] ex-60 · particle-sim-soa-simd — verify SoA+SIMD fastest
-  - [ ] ex-61 · parallel-histogram-scaling — verify per-thread bins scale
-  - [ ] ex-62 · mispredict-cost-measure — verify penalty near known depth
-  - [ ] ex-63 · branch-to-lookup-table — verify faster on random input
-  - [ ] ex-64 · numa-local-allocation — verify lower latency than remote node
-  - [ ] ex-65 · hugepages-tlb — verify hugepages cut TLB misses
-  - [ ] ex-66 · integer-overflow-security-bug — verify overflow, then checked-multiply fix
-  - [ ] ex-67 · kahan-summation — verify Kahan more accurate
-  - [ ] ex-68 · fast-inverse-sqrt-bits — verify approximates `1/sqrt(x)`
-  - [ ] ex-69 · portable-serialization — verify round-trip on both byte orders
-  - [ ] ex-70 · soa-enables-vectorization — verify vector regs only for SoA
-  - [ ] ex-71 · loop-interchange — verify interchanged loop faster
-  - [ ] ex-72 · roofline-bandwidth-vs-compute — verify each sits where roofline predicts
-  - [ ] ex-73 · prefetch-distance-tuning — verify optimal distance exists
-  - [ ] ex-74 · pipeline-hazard-diagram — verify diagram stall matches latency
-  - [ ] ex-75 · superscalar-port-contention — verify throughput caps below independent rate
-  - [ ] ex-76 · atomic-vs-mutex-throughput — verify atomic faster under low contention
-  - [ ] ex-77 · cache-friendly-hashmap — verify open-addressing faster
-  - [ ] ex-78 · vectorized-byte-search — verify beats scalar byte loop
-  - [ ] ex-79 · profile-guided-layout-record — verify every claim cites a measured number
-  - [ ] ex-80 · mechanical-sympathy-recap — verify all N assertions hold
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/computer-architecture/learning/capstone/` (`_index.md` weight 900) per the
+      **Acceptance**: no unresolved "verify" line remains. - _Date: 2026-07-16. Status: done. Notes: no
+      unresolved "verify" line remained in the syllabus before authoring began (verified directly against
+      the syllabus's own dated Accuracy-notes section)._
+- [x] **[AI] A1-concepts** — Author `CONTENT/computer-architecture/learning/` teaching **every** concept in
+      `syllabus/20-computer-architecture.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`: -
+      _Date: 2026-07-17. Status: done. Notes: all 25 concepts authored across beginner/intermediate/advanced
+      pages, each concept's `co-NN` byline tag cross-checked line-by-line against the syllabus's own `ex-NN`
+      citations and corrected where the initial draft mistagged a concept (found and fixed 18 tag
+      mismatches in `intermediate.md` during this session's authoring pass)._
+  - [x] co-01 · memory-hierarchy
+  - [x] co-02 · cache-lines-and-blocks
+  - [x] co-03 · spatial-locality
+  - [x] co-04 · temporal-locality
+  - [x] co-05 · cache-miss-cost
+  - [x] co-06 · cache-associativity
+  - [x] co-07 · write-policies
+  - [x] co-08 · virtual-memory-and-pages
+  - [x] co-09 · tlb
+  - [x] co-10 · page-faults-and-swapping
+  - [x] co-11 · twos-complement-integers
+  - [x] co-12 · integer-overflow-and-wraparound
+  - [x] co-13 · ieee-754-in-c
+  - [x] co-14 · float-comparison-hazards
+  - [x] co-15 · endianness
+  - [x] co-16 · struct-padding-and-alignment
+  - [x] co-17 · data-layout-aos-vs-soa
+  - [x] co-18 · instruction-set-architecture
+  - [x] co-19 · assembly-basics
+  - [x] co-20 · pipelining
+  - [x] co-21 · branch-prediction
+  - [x] co-22 · superscalar-and-out-of-order
+  - [x] co-23 · simd-vectorization
+  - [x] co-24 · memory-ordering-and-atomics
+  - [x] co-25 · mechanical-sympathy-and-profiling
+- [x] **[AI] A1-examples** — Author `CONTENT/computer-architecture/learning/code/` — runnable C per worked example
+      in `syllabus/20-computer-architecture.md` §Worked examples (DD-20/DD-30). One checkbox per `ex-NN` (1:1 mirror): -
+      _Date: 2026-07-17. Status: done. Notes: all 80 examples (ex-01..ex-80) present as self-contained C11
+      files under `learning/code/ex-NN-*/`, each actually compiled with Apple clang 17.0.0 and run to
+      capture real output (DD-20); two of the syllabus's expected outcomes did not reproduce as literally
+      worded and were honestly re-reported per DD-20 rather than forced to match: ex-35 (prefetch-hint)
+      measured NO improvement (in some runs a small regression) from `__builtin_prefetch` on this
+      machine's aggressive out-of-order core, and ex-50 (aligned-alloc-for-simd) measured that misaligned
+      NEON loads cost essentially the same as aligned ones on this arm64 core — both are documented in
+      the page prose as real, measured, platform-specific findings rather than fabricated confirmations
+      of the syllabus's assumed textbook result. Session note: authoring was interrupted once mid-session
+      by an org-level Claude API outage and resumed in place from partial progress already on disk._
+  - [x] ex-01 · print-int-bytes — verify bytes match two's-complement encoding
+  - [x] ex-02 · hex-dump-value — verify nibbles match `%x`
+  - [x] ex-03 · signed-vs-unsigned-print — verify `-1` as `%u` shows `4294967295`
+  - [x] ex-04 · signed-overflow-wrap — verify `INT_MAX+1` wraps to `INT_MIN` under `-fwrapv`
+  - [x] ex-05 · unsigned-wraparound — verify `0u-1u == UINT_MAX`
+  - [x] ex-06 · unsigned-underflow-loop-bug — verify fixed guard terminates
+  - [x] ex-07 · float-bits-inspect — verify IEEE-754 fields of `1.0`
+  - [x] ex-08 · float-not-equal — verify `0.1+0.2 != 0.3`
+  - [x] ex-09 · float-epsilon-compare — verify epsilon test passes
+  - [x] ex-10 · float-precision-loss — verify tiny addend lost
+  - [x] ex-11 · endianness-detect — verify little-endian on x86/ARM
+  - [x] ex-12 · htonl-roundtrip — verify identity
+  - [x] ex-13 · manual-byteswap — verify matches `htonl`
+  - [x] ex-14 · struct-sizeof-padding — verify sizeof exceeds field sum
+  - [x] ex-15 · struct-reorder-shrink — verify smaller sizeof
+  - [x] ex-16 · packed-struct — verify sizeof equals field sum
+  - [x] ex-17 · alignof-types — verify increasing alignment
+  - [x] ex-18 · misaligned-access-cost — verify misaligned slower/faults
+  - [x] ex-19 · pointer-arithmetic-stride — verify address advances by `sizeof(T)`
+  - [x] ex-20 · array-row-major-layout — verify matches `&a[i][j]`
+  - [x] ex-21 · latency-hierarchy-table — verify strictly increasing ordering
+  - [x] ex-22 · cache-line-size-probe — verify jump at ~64 B (128 B Apple Silicon)
+  - [x] ex-23 · sequential-vs-random-sum — verify sequential much faster
+  - [x] ex-24 · temporal-locality-working-set — verify small set faster
+  - [x] ex-25 · read-disassembly — verify load/store present
+  - [x] ex-26 · registers-in-asm — verify args in argument registers
+  - [x] ex-27 · isa-compare-riscv-x86 — verify instruction counts differ
+  - [x] ex-28 · cache-miss-stride-sweep — verify cliff at line stride
+  - [x] ex-29 · matrix-traversal-ij-vs-ji — verify `[i][j]` faster
+  - [x] ex-30 · aos-vs-soa-hot-loop — verify SoA faster
+  - [x] ex-31 · working-set-cache-cliffs — verify cliff at each cache level
+  - [x] ex-32 · cache-blocking-matmul — verify tiled faster for large matrices
+  - [x] ex-33 · false-sharing-demo — verify slowdown vs independent lines
+  - [x] ex-34 · padding-fixes-false-sharing — verify slowdown disappears
+  - [x] ex-35 · prefetch-hint — verify measurable improvement
+  - [x] ex-36 · branch-predictable-vs-random — verify sorted faster
+  - [x] ex-37 · branchless-max — verify identical output, faster on random
+  - [x] ex-38 · pipeline-dependency-chain — verify independent adds faster
+  - [x] ex-39 · loop-unrolling — verify higher throughput
+  - [x] ex-40 · ilp-multiple-accumulators — verify 4 accumulators faster
+  - [x] ex-41 · tlb-pressure-random-pages — verify TLB misses dominate
+  - [x] ex-42 · page-fault-mmap — verify minor faults on first touch
+  - [x] ex-43 · virtual-address-print — verify two processes reuse same address
+  - [x] ex-44 · swapping-slowdown — verify major-fault swapping slows access
+  - [x] ex-45 · write-heavy-cost — verify store-traffic cost
+  - [x] ex-46 · associativity-conflict-stride — verify conflict-miss spike at critical stride
+  - [x] ex-47 · simd-auto-vectorize — verify vector regs in asm + speedup
+  - [x] ex-48 · simd-intrinsics-add — verify matches scalar, faster
+  - [x] ex-49 · simd-dot-product — verify correct + speedup
+  - [x] ex-50 · aligned-alloc-for-simd — verify no fault, faster
+  - [x] ex-51 · atomic-increment — verify no lost updates
+  - [x] ex-52 · non-atomic-race — verify total undercounts
+  - [x] ex-53 · memory-barrier-ordering — verify barrier restores order
+  - [x] ex-54 · div-vs-shift-asm — verify division lowered to shift
+  - [x] ex-55 · hot-cold-struct-split — verify hot-loop speedup
+  - [x] ex-56 · perf-cache-miss-count — verify miss count drops after fix
+  - [x] ex-57 · cpi-ipc-measure — verify CPI differs between loops
+  - [x] ex-58 · optimize-kernel-end-to-end — verify documented reproducible speedup
+  - [x] ex-59 · blocked-transpose — verify blocked faster + correct
+  - [x] ex-60 · particle-sim-soa-simd — verify SoA+SIMD fastest
+  - [x] ex-61 · parallel-histogram-scaling — verify per-thread bins scale
+  - [x] ex-62 · mispredict-cost-measure — verify penalty near known depth
+  - [x] ex-63 · branch-to-lookup-table — verify faster on random input
+  - [x] ex-64 · numa-local-allocation — verify lower latency than remote node
+  - [x] ex-65 · hugepages-tlb — verify hugepages cut TLB misses
+  - [x] ex-66 · integer-overflow-security-bug — verify overflow, then checked-multiply fix
+  - [x] ex-67 · kahan-summation — verify Kahan more accurate
+  - [x] ex-68 · fast-inverse-sqrt-bits — verify approximates `1/sqrt(x)`
+  - [x] ex-69 · portable-serialization — verify round-trip on both byte orders
+  - [x] ex-70 · soa-enables-vectorization — verify vector regs only for SoA
+  - [x] ex-71 · loop-interchange — verify interchanged loop faster
+  - [x] ex-72 · roofline-bandwidth-vs-compute — verify each sits where roofline predicts
+  - [x] ex-73 · prefetch-distance-tuning — verify optimal distance exists
+  - [x] ex-74 · pipeline-hazard-diagram — verify diagram stall matches latency
+  - [x] ex-75 · superscalar-port-contention — verify throughput caps below independent rate
+  - [x] ex-76 · atomic-vs-mutex-throughput — verify atomic faster under low contention
+  - [x] ex-77 · cache-friendly-hashmap — verify open-addressing faster
+  - [x] ex-78 · vectorized-byte-search — verify beats scalar byte loop
+  - [x] ex-79 · profile-guided-layout-record — verify every claim cites a measured number
+  - [x] ex-80 · mechanical-sympathy-recap — verify all N assertions hold
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/computer-architecture/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
-      is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+      is fully hit. - _Date: 2026-07-17. Status: done. Notes: three-file intra-topic capstone (repr.c,
+      cache.c, cache_soa.c) built around a sensor-telemetry averaging kernel. repr.c demonstrates an
+      integer-overflow hazard, a double-precision float-equality hazard, and an endianness inspection.
+      cache.c/cache_soa.c are the same averaging kernel built cache-hostile (array-of-structs) then
+      cache-friendly (struct-of-arrays), with a compile-time size assertion verifying the 128-byte
+      Apple Silicon cache-line-sized record. Verified a reproducible ~3.7x AoS-to-SoA speedup with an
+      identical averaged result across 3+ reruns. A float-precision bug was found and fixed during
+      authoring: the original hazard demo used single-precision float, under which `0.1+0.2==0.3`
+      evaluates true at that precision on this toolchain and silently failed to reproduce the intended
+      hazard, so it was switched to double precision to match the averaging kernel's own accumulator
+      precision, documented explicitly in explanation.md per DD-20._
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/computer-architecture/drilling/_index.md` (wt 220) covering the same Items with mocked/self-contained
-      inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
+      inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0. - _Date: 2026-07-17. Status:
+      done. Notes: `apps-ayokoding-www-by-example-checker` FAIL on first pass (3 CRITICAL/3 HIGH/2
+      MEDIUM/1 LOW: annotation density below floor in a cluster of examples, missing "Examples by
+      Level" section in `learning/overview.md`, zero Mermaid diagrams in two of three learning pages,
+      Why-it-matters paragraphs under the 50-100 word band in `intermediate.md`, an `ex-41` byline tag
+      order mismatch, `ex-27` missing explicit Compile/Output labels, a stale date in `advanced.md`, and
+      `ex-72` over the word band); one consolidated `apps-ayokoding-www-by-example-fixer` resolved all 9
+      findings in a single dispatch (avoided parallel-editing the same files). Independently re-verified
+      every finding rather than trusting the fixer's self-report: rewrote the density-measurement script
+      three times after catching two bugs in the first two versions (blank/trailing-comment splitting,
+      then missing block-comment recognition) before confirming all 80 examples clear the 1.0 floor;
+      recomputed all 80 heading-to-anchor slugs with `github-slugger` (the repo's local oracle for anchor
+      disputes) against the new "Examples by Level" links and found zero mismatches; confirmed the
+      aggregate Mermaid diagram count grew from 3 to 31 across the three learning pages with the
+      repo's mermaid-validation tooling reporting 0 violations, and manually confirmed every diagram's
+      hex colors stay inside the accessible palette (Blue/Orange/Teal/Purple/Brown); confirmed all 30 `intermediate.md`
+      Why-it-matters paragraphs now sit in the 50-100 word band, the `ex-41` tag order now matches the
+      syllabus, `ex-27` carries explicit Compile/Output labels, the `advanced.md` date is corrected, and
+      `ex-72` is trimmed to within the word band. `apps-ayokoding-www-link-checker` and
+      `apps-ayokoding-www-facts-checker` both passed clean on first run (facts-checker: 1 harmless LOW,
+      no action needed). Authored `drilling/overview.md` (25 recall Q&A one per concept, applied-judgment
+      items, and hands-on katas, all self-contained/deterministic per DD-20 with only relative timing
+      comparisons, no fabricated absolute numbers) linked from `drilling/_index.md` (wt 220). Also fixed,
+      proactively (not flagged by any checker, since checkers scope to the three learning pages, not
+      capstone code): a missing standard-integer-types include in `cache.c`/`cache_soa.c` that happened
+      to compile only because other headers transitively provided the types on this toolchain, and thin
+      annotation density in `cache_soa.c`. `npx nx run ayokoding-www:build` failed twice with "took more
+      than 60 seconds" timeouts on unrelated pre-existing pages (ansible, tailwindcss, typescript,
+      cliftonstrengths, algorithms-and-data-structures, sitemap.xml/feed.xml — zero `computer-architecture`
+      pages ever appeared in either failure list) under high system load (~26-30 load average on 12
+      cores) — the same transient-flake pattern already documented for Phase 21 (see Phase 21 Gate note);
+      a third clean retry passed with zero failures. `npm run lint:md` exit 0 (2663 files, 0 errors) on
+      first run._
 
 ### Phase 23 Gate
 
-- [ ] [AI] `computer-architecture/` complete: `_index.md` wt 300, `learning/_index.md` wt 120,
+- [x] [AI] `computer-architecture/` complete: `_index.md` wt 300, `learning/_index.md` wt 120,
       `drilling/_index.md` wt 220, capstone wt 900; all 25 concepts + 80 worked examples + capstone present;
-      checkers + facts-checker clean; build + `lint:md` exit 0.
+      checkers + facts-checker clean; build + `lint:md` exit 0. - _Date: 2026-07-17. Status: done. Verified
+      directly: all 25 `co-NN` concepts and 80 `ex-NN` worked examples present, each `.c` file compiled
+      with Apple clang 17.0.0 and byte-identical to its markdown embed (sampled across all three tiers plus
+      capstone, all clean); capstone (`repr.c`, `cache.c`, `cache_soa.c`, `explanation.md`) present at wt
+      900 with a reproducible ~3.7x AoS-to-SoA speedup; `drilling/overview.md` present at wt 220 via
+      `drilling/_index.md`; by-example/link/facts checkers all clean after the one fixer dispatch above;
+      `npx nx run ayokoding-www:build` and `npm run lint:md` both exit 0._
 
 - [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b

@@ -1,0 +1,10 @@
+# This is the first By-Example C topic in the plan, so there is no repo-wide precedent for
+# ignoring compiled build artifacts under apps/ayokoding-www/content/. Every worked example here
+# is compiled locally during authoring/review to capture real, verified output (DD-20), which
+# leaves extension-less binaries (and any generated .s/.o files) sitting next to their .c source.
+# None of that build output is ever meant to be committed -- only the source and the docs that
+# embed its captured output are. Scoped to this directory: keep source and headers, ignore
+# everything else (compiled executables, assembly dumps, object files) inside each ex-NN-*/ dir.
+ex-*/*
+!ex-*/*.c
+!ex-*/*.h

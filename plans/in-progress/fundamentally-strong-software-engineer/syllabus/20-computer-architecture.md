@@ -51,6 +51,15 @@ visible rather than hidden. Builds on [`19-computer-science-foundations`](./19-c
   cache-miss/cycle profiling uses Instruments (the "CPU Counters"/"Time Profiler" templates) or
   `dtrace`; `ex-56`/`ex-57` name the profiler per platform rather than assuming `perf`. (Apple
   Instruments docs / perf.wiki.kernel.org)
+- 2026-07-16 — re-verified (Phase 23 dispatch `V` step): all three findings above re-confirmed
+  still accurate, nothing changed since 2026-07-12. CS:APP remains at its 3rd edition
+  (csapp.cs.cmu.edu, no 4th edition published) — the model taught here is still correctly
+  version-unpinned. Apple Silicon's 128 B cache line is unchanged through the current M-series
+  lineup (confirmed against this dev machine's own `sysctl -n hw.cachelinesize` → `128`, consistent
+  with published Apple Silicon reporting; no generation is documented to have moved off 128 B).
+  `perf` remains Linux-kernel-only (en.wikipedia.org/wiki/Perf\_(Linux)); Instruments/`dtrace` remain
+  the macOS equivalents (`/usr/sbin/dtrace`, `/usr/bin/xctrace` both present on this dev machine).
+  No unresolved "to verify" line remains in this file.
 
 ## Concepts
 
