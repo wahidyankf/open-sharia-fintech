@@ -4,6 +4,21 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-18: rhino-speccoverage-multiline-scenario-scan](./2026-07-18__rhino-speccoverage-multiline-scenario-scan/README.md) —
+  Fixed `rhino-cli`'s `specs coverage` TS/JS scenario-title extractor (`extract_ts_scenario_titles`)
+  to scan whole file content instead of per-line, so a `Scenario("title", ...)` call whose title
+  wraps onto the next physical line (as Prettier does with long titles) is still recognized as
+  covered instead of reporting a spurious gap. Full RED/GREEN/REFACTOR TDD (behavior-level cucumber-rs
+  AC-4 scenario + 3 unit fixtures), then removed 3 `// prettier-ignore` hacks from `libs/web-ui`'s
+  `code-block`/`copy-button` step binders that existed specifically to work around this bug — the
+  removal itself is the regression proof. Propagated byte-identically to `ose-primer`/`ose-infra` per
+  the `apps/rhino-cli` byte-identity boundary. Knowledge Capture routed an absolute-path
+  worktree-vs-primary-checkout gotcha (in a plan's own delivery-checklist commands) to the
+  worktree-setup practice doc, and a byte-identity-boundary sibling-PR sequencing insight (source PR
+  should converge before starting a sibling's next review cycle) to the PR-review-quality-gate
+  workflow doc. Three peer PRs (`ose-public` #62, `ose-primer` #6, `ose-infra` #9), each
+  independently 3-cycle PR-Review Maker→Fixer reviewed and gated. Delivery Mode: `worktree-to-pr`
+  (per repo). Completed 2026-07-18.
 - [2026-07-17: rhino-cli-source-drift-reconciliation](./2026-07-17__rhino-cli-source-drift-reconciliation/README.md) —
   Reconciled pre-existing `apps/rhino-cli` `src/` drift across `ose-public`/`ose-primer`/`ose-infra`
   back to a single canonical union, restoring the tri-repo byte-identity boundary. 4 drifted `src/`

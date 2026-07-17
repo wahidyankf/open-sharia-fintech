@@ -709,19 +709,34 @@ lives in `ose-public` alone.
 
 ## Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked
-- [ ] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
+- [x] [AI] Verify ALL delivery checklist items are ticked
+      — done: swept delivery.md for `- [ ]`; only the archival-move steps below and the final
+      `[HUMAN]`/AI-override merge item remain, as expected at this point in the sequence
+- [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
       terminal state or the file records the explicit `No generalizable learnings — <reason>` escape;
       both safety gates applied to every surviving entry
-- [ ] [AI] Verify ALL quality gates pass (local + CI) across ose-public, ose-primer, ose-infra
-- [ ] [AI] Verify the `ose-primer` and `ose-infra` PRs already show MERGED (completed in Phase 4):
+      — done: Triage Log confirms all 4 entries terminal; secret + repo-relevance gates applied
+- [x] [AI] Verify ALL quality gates pass (local + CI) across ose-public, ose-primer, ose-infra
+      — done: ose-public affected gates green + `gh pr checks 62` 20/0 at final tracking head
+      `37acab679`; ose-primer/ose-infra gates confirmed green pre-merge (Phase 4)
+- [x] [AI] Verify the `ose-primer` and `ose-infra` PRs already show MERGED (completed in Phase 4):
       `gh pr view --json state --jq .state` run from each sibling's worktree — acceptance: prints
       `MERGED` for both
-- [ ] [AI] Verify `checker.rs` and `spec-coverage-validate.feature` are byte-identical across the three repos
-- [ ] [AI] Move and rename: `git mv plans/in-progress/rhino-speccoverage-multiline-scenario-scan plans/done/YYYY-MM-DD__rhino-speccoverage-multiline-scenario-scan` using today's date as the completion date
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Update any other READMEs that reference this plan (e.g., `plans/README.md`)
+      — done: both print `MERGED`
+- [x] [AI] Verify `checker.rs` and `spec-coverage-validate.feature` are byte-identical across the three repos
+      — done: `diff` zero-output on all 4 tracked files (`checker.rs`, `spec_coverage.rs`,
+      `spec-coverage-validate.feature`, gherkin `README.md`) across all 3 worktrees, pairwise
+- [x] [AI] Move and rename: `git mv plans/in-progress/rhino-speccoverage-multiline-scenario-scan plans/done/YYYY-MM-DD__rhino-speccoverage-multiline-scenario-scan` using today's date as the completion date
+      — done: `git mv` to `plans/done/2026-07-18__rhino-speccoverage-multiline-scenario-scan/`
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+      — done: entry removed
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date
+      — done: entry added at top of Completed Projects, dated 2026-07-18
+- [x] [AI] Update any other READMEs that reference this plan (e.g., `plans/README.md`)
+      — done: swept all READMEs for the plan slug; found and fixed a pre-existing broken relative
+      link in `plans/done/2026-07-17__rhino-cli-source-drift-reconciliation/README.md` (pointed at
+      the never-existent `plans/done/rhino-speccoverage-multiline-scenario-scan/`, now corrected to
+      the actual archived path); `plans/README.md` and `plans/ideas.md` had no references
 - [ ] [AI] Commit the archival: `chore(plans): move rhino-speccoverage-multiline-scenario-scan to done`
 - [ ] [HUMAN] Merge the ose-public PR to `main` when ready — acceptance: PR shows MERGED (this sits
       outside the plan's done-boundary; the plan is "done" once the PR is green and fully reviewed)
