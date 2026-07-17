@@ -152,66 +152,70 @@ describeFeature(
       });
     });
 
-    // prettier-ignore
-    Scenario("The copy button is discoverable at rest and reveals fully on hover or focus", ({ Given, When, Then, And }) => {
-      let className = "";
+    Scenario(
+      "The copy button is discoverable at rest and reveals fully on hover or focus",
+      ({ Given, When, Then, And }) => {
+        let className = "";
 
-      Given("a CodeBlock is rendered", () => {
-        // render + inspection happen together in the When step
-      });
+        Given("a CodeBlock is rendered", () => {
+          // render + inspection happen together in the When step
+        });
 
-      When("the copy button's resting presentation is inspected", () => {
-        cleanup();
-        stubClipboard();
-        const { container } = render(
-          <CodeBlock code="x">
-            <pre>x</pre>
-          </CodeBlock>,
-        );
-        const button = getWrapper(container).querySelector('[data-slot="code-block-copy"]');
-        className = (button as HTMLElement).className;
-      });
+        When("the copy button's resting presentation is inspected", () => {
+          cleanup();
+          stubClipboard();
+          const { container } = render(
+            <CodeBlock code="x">
+              <pre>x</pre>
+            </CodeBlock>,
+          );
+          const button = getWrapper(container).querySelector('[data-slot="code-block-copy"]');
+          className = (button as HTMLElement).className;
+        });
 
-      Then("the copy button is partially visible at rest rather than fully hidden", () => {
-        // jsdom performs no layout, so the resting affordance is asserted through the utility class:
-        // `opacity-60` (subtle, discoverable) rather than the old fully-hidden `opacity-0`.
-        expect(className).toContain("opacity-60");
-        expect(className).not.toContain("opacity-0 ");
-      });
+        Then("the copy button is partially visible at rest rather than fully hidden", () => {
+          // jsdom performs no layout, so the resting affordance is asserted through the utility class:
+          // `opacity-60` (subtle, discoverable) rather than the old fully-hidden `opacity-0`.
+          expect(className).toContain("opacity-60");
+          expect(className).not.toContain("opacity-0 ");
+        });
 
-      And("it becomes fully visible on hover, focus, and touch", () => {
-        expect(className).toContain("group-hover:opacity-100");
-        expect(className).toContain("group-focus-within:opacity-100");
-        expect(className).toContain("focus-visible:opacity-100");
-        expect(className).toContain("[@media(hover:none)]:opacity-100");
-      });
-    });
+        And("it becomes fully visible on hover, focus, and touch", () => {
+          expect(className).toContain("group-hover:opacity-100");
+          expect(className).toContain("group-focus-within:opacity-100");
+          expect(className).toContain("focus-visible:opacity-100");
+          expect(className).toContain("[@media(hover:none)]:opacity-100");
+        });
+      },
+    );
 
-    // prettier-ignore
-    Scenario("The code block reserves scroll-margin so its copy button clears a sticky header", ({ Given, When, Then }) => {
-      let className = "";
+    Scenario(
+      "The code block reserves scroll-margin so its copy button clears a sticky header",
+      ({ Given, When, Then }) => {
+        let className = "";
 
-      Given("a CodeBlock is rendered", () => {
-        // render + inspection happen together in the When step
-      });
+        Given("a CodeBlock is rendered", () => {
+          // render + inspection happen together in the When step
+        });
 
-      When("the wrapper is inspected", () => {
-        cleanup();
-        stubClipboard();
-        const { container } = render(
-          <CodeBlock code="x">
-            <pre>x</pre>
-          </CodeBlock>,
-        );
-        className = getWrapper(container).className;
-      });
+        When("the wrapper is inspected", () => {
+          cleanup();
+          stubClipboard();
+          const { container } = render(
+            <CodeBlock code="x">
+              <pre>x</pre>
+            </CodeBlock>,
+          );
+          className = getWrapper(container).className;
+        });
 
-      Then("the wrapper reserves top scroll-margin", () => {
-        // `scroll-mt-16` (4rem) keeps the top-right copy button clear of a sticky site header when a
-        // block is scrolled/anchored to the viewport top (UWT-002).
-        expect(className).toContain("scroll-mt-16");
-      });
-    });
+        Then("the wrapper reserves top scroll-margin", () => {
+          // `scroll-mt-16` (4rem) keeps the top-right copy button clear of a sticky site header when a
+          // block is scrolled/anchored to the viewport top (UWT-002).
+          expect(className).toContain("scroll-mt-16");
+        });
+      },
+    );
 
     // The pixel comparison itself is the Playwright Storybook baseline
     // (`libs/web-ui/e2e/components.visual.ts`), which is not a CI-gated unit target; this

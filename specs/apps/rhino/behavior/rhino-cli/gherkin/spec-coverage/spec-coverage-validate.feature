@@ -56,3 +56,9 @@ Feature: BDD Spec-to-Test Coverage Validation
     When the developer runs behavior-coverage validate with the runtime cross-check
     Then the command exits successfully
     And the output reports all specs as covered
+
+  Scenario: A scenario whose title wraps onto a following physical line is still recognized as covered
+    Given a feature file whose scenario is bound by a test whose Scenario(...) title wraps onto the next physical line
+    When the developer runs spec-coverage validate on the specs and app directories
+    Then the command exits successfully
+    And the output does not report the wrapped-title scenario as an unimplemented scenario

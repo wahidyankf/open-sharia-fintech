@@ -1,0 +1,20 @@
+# Scoped ruff config for this By Example topic's runnable code (learning/code/**).
+#
+# Why this file exists: every example in this topic carries a dense trailing
+# `# => ...` educational annotation on nearly every code line (the by-example
+# convention's annotation-density requirement). The repo has no root-level
+# ruff config, so `ruff format` (run by the pre-commit lint-staged hook) uses
+# its default line-length of 88, which wraps many of these single-line
+# statements across 2-5 physical lines and adds a "magic trailing comma" --
+# once added, that comma makes the multi-line form sticky even at a wider
+# line-length (ruff/Black never re-collapses a line with an explicit trailing
+# comma). The extra unannotated physical lines silently pull annotation
+# density below the required 1.0-per-code-line floor without changing any
+# logic, which is exactly the failure mode this file prevents. See
+# `../object-oriented-design-and-patterns/ruff.toml` for the same fix applied
+# to an earlier topic that hit this identical failure mode.
+#
+# line-length is set generously above the longest annotated line measured in
+# this topic's code (threading/asyncio/multiprocessing call sites run long)
+# so `ruff format` stays a no-op here.
+line-length = 240
