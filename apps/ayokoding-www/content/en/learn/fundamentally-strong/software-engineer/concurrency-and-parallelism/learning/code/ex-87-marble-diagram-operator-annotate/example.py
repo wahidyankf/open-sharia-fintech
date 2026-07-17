@@ -60,7 +60,7 @@ if __name__ == "__main__":  # => module entry point
     # => `merge` only reorders by time -- it never changes a value or drops one. `map` only changes
     # => VALUES -- it never moves a marble in time, which is why the rendered shape is identical
     # => before and after. `debounce` is the one operator here that changes BOTH: it deletes every
-    # => marble that had a successor arrive within the quiet window (a0/b1/b2/a3 all die because
+    # => marble that had a successor arrive within the quiet window (a1/b1/b2/a3 all die because
     # => something followed them too soon), and it DELAYS each survivor by the quiet period itself
     # => (A2 at tick 3 doesn't fire until tick 5) -- the cost of "wait to be sure nothing else is
     # => coming" is always some added latency. Composing operators this way -- each doing exactly
