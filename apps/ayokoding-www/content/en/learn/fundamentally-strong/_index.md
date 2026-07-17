@@ -32,3 +32,4 @@ weight: 107
   - [20 · Computer Architecture](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture)
   - [21 · Object-Oriented Design & Patterns](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns)
   - [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)
+  - [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)

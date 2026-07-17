@@ -4692,132 +4692,132 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python · topic wt 330 · Learn 123 / Drill 223 · **subject**. Template →
 [`syllabus/23-functional-programming.md`](./syllabus/23-functional-programming.md).
 
-- [ ] **[AI] V** — `web-researcher` for `functional-programming`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `functional-programming`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/23-functional-programming.md`](./syllabus/23-functional-programming.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/functional-programming/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/functional-programming/learning/` teaching **every** concept in
       `syllabus/23-functional-programming.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · pure-functions
-  - [ ] co-02 · side-effects-and-purity
-  - [ ] co-03 · referential-transparency
-  - [ ] co-04 · immutability
-  - [ ] co-05 · persistent-data-and-structural-sharing
-  - [ ] co-06 · first-class-functions
-  - [ ] co-07 · higher-order-functions
-  - [ ] co-08 · closures-for-configuration
-  - [ ] co-09 · currying
-  - [ ] co-10 · partial-application
-  - [ ] co-11 · function-composition
-  - [ ] co-12 · pipe-utilities
-  - [ ] co-13 · map-filter-reduce
-  - [ ] co-14 · recursion-and-pythons-missing-tco
-  - [ ] co-15 · lazy-evaluation-and-generators
-  - [ ] co-16 · itertools-toolkit
-  - [ ] co-17 · memoization
-  - [ ] co-18 · decorators-as-higher-order-functions
-  - [ ] co-19 · point-free-style
-  - [ ] co-20 · algebraic-data-types-in-python
-  - [ ] co-21 · structural-pattern-matching
-  - [ ] co-22 · option-maybe-type
-  - [ ] co-23 · result-either-type
-  - [ ] co-24 · railway-oriented-error-handling
-  - [ ] co-25 · functor-intuition
-  - [ ] co-26 · applicative-intuition
-  - [ ] co-27 · monad-intuition
-  - [ ] co-28 · functional-core-imperative-shell
-- [ ] **[AI] A1-examples** — Author `CONTENT/functional-programming/learning/code/` (runnable sources, DD-20/DD-30) rendering
+  - [x] co-01 · pure-functions
+  - [x] co-02 · side-effects-and-purity
+  - [x] co-03 · referential-transparency
+  - [x] co-04 · immutability
+  - [x] co-05 · persistent-data-and-structural-sharing
+  - [x] co-06 · first-class-functions
+  - [x] co-07 · higher-order-functions
+  - [x] co-08 · closures-for-configuration
+  - [x] co-09 · currying
+  - [x] co-10 · partial-application
+  - [x] co-11 · function-composition
+  - [x] co-12 · pipe-utilities
+  - [x] co-13 · map-filter-reduce
+  - [x] co-14 · recursion-and-pythons-missing-tco
+  - [x] co-15 · lazy-evaluation-and-generators
+  - [x] co-16 · itertools-toolkit
+  - [x] co-17 · memoization
+  - [x] co-18 · decorators-as-higher-order-functions
+  - [x] co-19 · point-free-style
+  - [x] co-20 · algebraic-data-types-in-python
+  - [x] co-21 · structural-pattern-matching
+  - [x] co-22 · option-maybe-type
+  - [x] co-23 · result-either-type
+  - [x] co-24 · railway-oriented-error-handling
+  - [x] co-25 · functor-intuition
+  - [x] co-26 · applicative-intuition
+  - [x] co-27 · monad-intuition
+  - [x] co-28 · functional-core-imperative-shell
+- [x] **[AI] A1-examples** — Author `CONTENT/functional-programming/learning/code/` (runnable sources, DD-20/DD-30) rendering
       **every** Worked example in `syllabus/23-functional-programming.md`. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · pure-vs-impure-pair — verify the pure one gives the same result on repeat calls
-  - [ ] ex-02 · referential-transparency-substitution — verify output unchanged after substitution
-  - [ ] ex-03 · detect-side-effect — verify only the pure one is flagged pure
-  - [ ] ex-04 · immutable-tuple-vs-list — verify TypeError on tuple mutation
-  - [ ] ex-05 · frozen-dataclass — verify FrozenInstanceError
-  - [ ] ex-06 · dataclasses-replace-copy — verify original unchanged, copy differs
-  - [ ] ex-07 · structural-sharing-cons — verify old version intact after update
-  - [ ] ex-08 · function-as-value — verify same result via the variable
-  - [ ] ex-09 · functions-in-a-list — verify all invoked with the right output
-  - [ ] ex-10 · higher-order-apply — verify apply(fn, x) works for two functions
-  - [ ] ex-11 · return-a-function — verify multiplier(3)(4) == 12
-  - [ ] ex-12 · closure-captures-config — verify behavior varies with captured config
-  - [ ] ex-13 · map-basic — verify every word uppercased
-  - [ ] ex-14 · filter-basic — verify only evens remain
-  - [ ] ex-15 · reduce-sum — verify the total
-  - [ ] ex-16 · comprehension-vs-map — verify identical list
-  - [ ] ex-17 · curry-manual — verify curried result matches uncurried
-  - [ ] ex-18 · partial-application — verify it computes 2\*\*n
-  - [ ] ex-19 · compose-two — verify f(g(x))
-  - [ ] ex-20 · pipe-left-to-right — verify equals nested calls
-  - [ ] ex-21 · generator-lazy-count — verify only pulled values computed
-  - [ ] ex-22 · generator-vs-list-memory — verify generator doesn't materialize eagerly
-  - [ ] ex-23 · itertools-islice-infinite — verify first N values taken
-  - [ ] ex-24 · itertools-chain-groupby — verify grouped output
-  - [ ] ex-25 · memoize-lru-cache — verify cache_info() shows hits
-  - [ ] ex-26 · decorator-log-wrap — verify wrapped result unchanged
-  - [ ] ex-27 · recursion-factorial — verify value; note no TCO
-  - [ ] ex-28 · optional-none-guard — verify the miss is handled
-  - [ ] ex-29 · pure-core-extract — verify core tested with no I/O
-  - [ ] ex-30 · persistent-list-prepend — verify O(1) sharing and old list intact
-  - [ ] ex-31 · mappingproxy-readonly — verify writes through the view raise
-  - [ ] ex-32 · closure-counter-vs-pure-fold — verify both count, contrast state
-  - [ ] ex-33 · currying-with-partial — verify the composed transform
-  - [ ] ex-34 · compose-n-functions — verify application order
-  - [ ] ex-35 · point-free-transform — verify identical output
-  - [ ] ex-36 · reduce-histogram — verify the counts
-  - [ ] ex-37 · map-filter-reduce-pipeline — verify the result
-  - [ ] ex-38 · lazy-pipeline-generators — verify laziness end to end
-  - [ ] ex-39 · itertools-accumulate — verify prefix sums
-  - [ ] ex-40 · itertools-pairwise-tee — verify adjacent pairs
-  - [ ] ex-41 · memoize-manual-dict — verify second call cached
-  - [ ] ex-42 · decorator-with-args — verify retries counted
-  - [ ] ex-43 · decorator-preserves-metadata — verify **name** preserved
-  - [ ] ex-44 · recursion-to-iteration — verify same result on RecursionError-scale input
-  - [ ] ex-45 · adt-sum-type-dataclasses — verify each variant
-  - [ ] ex-46 · match-case-over-adt — verify each branch; note no exhaustiveness check
-  - [ ] ex-47 · match-guards — verify guard selects the right branch
-  - [ ] ex-48 · option-some-nothing — verify map is skipped on Nothing
-  - [ ] ex-49 · option-chaining — verify short-circuit on first miss
-  - [ ] ex-50 · result-ok-err — verify error carried as a value
-  - [ ] ex-51 · result-map-and-then — verify pipeline stops at first Err
-  - [ ] ex-52 · railway-parse-pipeline — verify one bad field short-circuits
-  - [ ] ex-53 · functor-law-identity — verify identity law holds by example
-  - [ ] ex-54 · functor-over-list-and-option — verify both mapped
-  - [ ] ex-55 · applicative-combine-options — verify both-present combines, any-absent short-circuits
-  - [ ] ex-56 · monad-bind-chain — verify monadic sequencing
-  - [ ] ex-57 · functional-core-imperative-shell-tool — verify core pure-tested, shell holds all I/O
-  - [ ] ex-58 · property-test-purity — verify the property holds across generated inputs
-  - [ ] ex-59 · persistent-tree-update — verify old root intact
-  - [ ] ex-60 · immutable-state-reducer — verify replay reproduces state
-  - [ ] ex-61 · compose-with-result — verify error propagation through composition
-  - [ ] ex-62 · curry-decorator — verify partial calls accumulate arguments
-  - [ ] ex-63 · lazy-infinite-sieve — verify first N primes
-  - [ ] ex-64 · generator-coroutine-pipeline — verify the streaming result
-  - [ ] ex-65 · memoize-bounded-lru — verify eviction of the oldest entry
-  - [ ] ex-66 · tail-recursion-trampoline — verify deep recursion completes without RecursionError
-  - [ ] ex-67 · adt-expression-evaluator — verify an arithmetic result
-  - [ ] ex-68 · option-do-style-sequence — verify short-circuit on absence
-  - [ ] ex-69 · result-form-validation — verify the failing rule is reported
-  - [ ] ex-70 · functor-laws-property-checked — verify identity + composition laws hold
-  - [ ] ex-71 · applicative-validation-accumulate — verify every error is collected
-  - [ ] ex-72 · monad-laws-intuition — verify the three laws hold
-  - [ ] ex-73 · point-free-combinator-lib — verify a composed transform
-  - [ ] ex-74 · pipe-vs-nested-readability — verify identical output, note readability
-  - [ ] ex-75 · immutability-perf-cost — verify both correct, note allocation cost
-  - [ ] ex-76 · reduce-shared-state-refactor — verify no globals remain, output unchanged
-  - [ ] ex-77 · decorator-stack-composition — verify order-dependent behavior
-  - [ ] ex-78 · lazy-vs-eager-tradeoff — verify both behaviors
-  - [ ] ex-79 · monad-option-vs-result — verify each carries its own error model
-  - [ ] ex-80 · capstone-preview-log-analyzer — verify the end-to-end report
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/functional-programming/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · pure-vs-impure-pair — verify the pure one gives the same result on repeat calls
+  - [x] ex-02 · referential-transparency-substitution — verify output unchanged after substitution
+  - [x] ex-03 · detect-side-effect — verify only the pure one is flagged pure
+  - [x] ex-04 · immutable-tuple-vs-list — verify TypeError on tuple mutation
+  - [x] ex-05 · frozen-dataclass — verify FrozenInstanceError
+  - [x] ex-06 · dataclasses-replace-copy — verify original unchanged, copy differs
+  - [x] ex-07 · structural-sharing-cons — verify old version intact after update
+  - [x] ex-08 · function-as-value — verify same result via the variable
+  - [x] ex-09 · functions-in-a-list — verify all invoked with the right output
+  - [x] ex-10 · higher-order-apply — verify apply(fn, x) works for two functions
+  - [x] ex-11 · return-a-function — verify multiplier(3)(4) == 12
+  - [x] ex-12 · closure-captures-config — verify behavior varies with captured config
+  - [x] ex-13 · map-basic — verify every word uppercased
+  - [x] ex-14 · filter-basic — verify only evens remain
+  - [x] ex-15 · reduce-sum — verify the total
+  - [x] ex-16 · comprehension-vs-map — verify identical list
+  - [x] ex-17 · curry-manual — verify curried result matches uncurried
+  - [x] ex-18 · partial-application — verify it computes 2\*\*n
+  - [x] ex-19 · compose-two — verify f(g(x))
+  - [x] ex-20 · pipe-left-to-right — verify equals nested calls
+  - [x] ex-21 · generator-lazy-count — verify only pulled values computed
+  - [x] ex-22 · generator-vs-list-memory — verify generator doesn't materialize eagerly
+  - [x] ex-23 · itertools-islice-infinite — verify first N values taken
+  - [x] ex-24 · itertools-chain-groupby — verify grouped output
+  - [x] ex-25 · memoize-lru-cache — verify cache_info() shows hits
+  - [x] ex-26 · decorator-log-wrap — verify wrapped result unchanged
+  - [x] ex-27 · recursion-factorial — verify value; note no TCO
+  - [x] ex-28 · optional-none-guard — verify the miss is handled
+  - [x] ex-29 · pure-core-extract — verify core tested with no I/O
+  - [x] ex-30 · persistent-list-prepend — verify O(1) sharing and old list intact
+  - [x] ex-31 · mappingproxy-readonly — verify writes through the view raise
+  - [x] ex-32 · closure-counter-vs-pure-fold — verify both count, contrast state
+  - [x] ex-33 · currying-with-partial — verify the composed transform
+  - [x] ex-34 · compose-n-functions — verify application order
+  - [x] ex-35 · point-free-transform — verify identical output
+  - [x] ex-36 · reduce-histogram — verify the counts
+  - [x] ex-37 · map-filter-reduce-pipeline — verify the result
+  - [x] ex-38 · lazy-pipeline-generators — verify laziness end to end
+  - [x] ex-39 · itertools-accumulate — verify prefix sums
+  - [x] ex-40 · itertools-pairwise-tee — verify adjacent pairs
+  - [x] ex-41 · memoize-manual-dict — verify second call cached
+  - [x] ex-42 · decorator-with-args — verify retries counted
+  - [x] ex-43 · decorator-preserves-metadata — verify **name** preserved
+  - [x] ex-44 · recursion-to-iteration — verify same result on RecursionError-scale input
+  - [x] ex-45 · adt-sum-type-dataclasses — verify each variant
+  - [x] ex-46 · match-case-over-adt — verify each branch; note no exhaustiveness check
+  - [x] ex-47 · match-guards — verify guard selects the right branch
+  - [x] ex-48 · option-some-nothing — verify map is skipped on Nothing
+  - [x] ex-49 · option-chaining — verify short-circuit on first miss
+  - [x] ex-50 · result-ok-err — verify error carried as a value
+  - [x] ex-51 · result-map-and-then — verify pipeline stops at first Err
+  - [x] ex-52 · railway-parse-pipeline — verify one bad field short-circuits
+  - [x] ex-53 · functor-law-identity — verify identity law holds by example
+  - [x] ex-54 · functor-over-list-and-option — verify both mapped
+  - [x] ex-55 · applicative-combine-options — verify both-present combines, any-absent short-circuits
+  - [x] ex-56 · monad-bind-chain — verify monadic sequencing
+  - [x] ex-57 · functional-core-imperative-shell-tool — verify core pure-tested, shell holds all I/O
+  - [x] ex-58 · property-test-purity — verify the property holds across generated inputs
+  - [x] ex-59 · persistent-tree-update — verify old root intact
+  - [x] ex-60 · immutable-state-reducer — verify replay reproduces state
+  - [x] ex-61 · compose-with-result — verify error propagation through composition
+  - [x] ex-62 · curry-decorator — verify partial calls accumulate arguments
+  - [x] ex-63 · lazy-infinite-sieve — verify first N primes
+  - [x] ex-64 · generator-coroutine-pipeline — verify the streaming result
+  - [x] ex-65 · memoize-bounded-lru — verify eviction of the oldest entry
+  - [x] ex-66 · tail-recursion-trampoline — verify deep recursion completes without RecursionError
+  - [x] ex-67 · adt-expression-evaluator — verify an arithmetic result
+  - [x] ex-68 · option-do-style-sequence — verify short-circuit on absence
+  - [x] ex-69 · result-form-validation — verify the failing rule is reported
+  - [x] ex-70 · functor-laws-property-checked — verify identity + composition laws hold
+  - [x] ex-71 · applicative-validation-accumulate — verify every error is collected
+  - [x] ex-72 · monad-laws-intuition — verify the three laws hold
+  - [x] ex-73 · point-free-combinator-lib — verify a composed transform
+  - [x] ex-74 · pipe-vs-nested-readability — verify identical output, note readability
+  - [x] ex-75 · immutability-perf-cost — verify both correct, note allocation cost
+  - [x] ex-76 · reduce-shared-state-refactor — verify no globals remain, output unchanged
+  - [x] ex-77 · decorator-stack-composition — verify order-dependent behavior
+  - [x] ex-78 · lazy-vs-eager-tradeoff — verify both behaviors
+  - [x] ex-79 · monad-option-vs-result — verify each carries its own error model
+  - [x] ex-80 · capstone-preview-log-analyzer — verify the end-to-end report
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/functional-programming/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/functional-programming/drilling/_index.md` (wt 223) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 26 Gate
 
-- [ ] [AI] `functional-programming/` complete: `_index.md` wt 330, `learning/_index.md` wt 123,
+- [x] [AI] `functional-programming/` complete: `_index.md` wt 330, `learning/_index.md` wt 123,
       `drilling/_index.md` wt 223, capstone wt 900; all 28 concepts + 80 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
