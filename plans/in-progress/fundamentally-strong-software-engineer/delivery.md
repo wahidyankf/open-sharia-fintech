@@ -4275,7 +4275,16 @@ Row: By Example · C † · topic wt 300 · Learn 120 / Drill 220 · **subject**
       pages ever appeared in either failure list) under high system load (~26-30 load average on 12
       cores) — the same transient-flake pattern already documented for Phase 21 (see Phase 21 Gate note);
       a third clean retry passed with zero failures. `npm run lint:md` exit 0 (2663 files, 0 errors) on
-      first run._
+      first run. Discovered, after the first commit, that this topic's first pre-commit hook run (this
+      is the repo's first-ever C content, so no `.clang-format` had ever been exercised) silently
+      reformatted all 83 example files with no pinned style — reordering `#include` directives and
+      wrapping long annotated lines — which broke byte-identity with the markdown-embedded code blocks
+      and dropped 9 examples' annotation density below the 1.0 floor. Root-caused and fixed with a
+      topic-scoped `.clang-format` (mirroring the existing `computer-science-foundations/ruff.toml`
+      precedent for the identical failure mode in Python content), then re-verified idempotent across
+      all 83 files, resynced every markdown embed, added genuine annotations closing the density gap,
+      and recompiled/reran a sample to confirm behavior was unchanged — landed as a second commit before
+      the first push._
 
 ### Phase 23 Gate
 
