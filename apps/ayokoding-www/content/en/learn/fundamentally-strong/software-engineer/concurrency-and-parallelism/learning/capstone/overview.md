@@ -583,4 +583,4 @@ flakes, the same discipline this topic's Example 30 (deadlock-fix-lock-ordering)
 
 ---
 
-← Previous: [Advanced Examples](../advanced.md)
+← Previous: [Advanced Examples](../advanced.md) &middot; Next: [Drilling](../../drilling/overview.md) →

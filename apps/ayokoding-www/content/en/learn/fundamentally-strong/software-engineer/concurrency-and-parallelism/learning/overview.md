@@ -291,4 +291,4 @@ and honestly on whichever interpreter actually executes them, standard or free-t
 
 ---
 
-Next: [Beginner Examples](./beginner.md) →
+← Previous: [23 · Functional Programming Drilling](../../functional-programming/drilling/overview.md) &middot; Next: [Beginner Examples](./beginner.md) →

@@ -3797,4 +3797,4 @@ def test_debounce_keeps_only_marbles_with_enough_trailing_silence() -> None:
 
 ---
 
-← Previous: [Intermediate Examples](./intermediate.md) →
+← Previous: [Intermediate Examples](./intermediate.md) &middot; Next: [Capstone](./capstone/overview.md) →
