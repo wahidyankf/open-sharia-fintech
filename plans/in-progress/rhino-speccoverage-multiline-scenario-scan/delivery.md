@@ -520,37 +520,65 @@ lives in `ose-public` alone.
 
 ### 4a. ose-public — PR-Review Cycle (merge deferred to Plan Archival)
 
-- [ ] [AI] Verify the draft PR created in Phase 1's Commit Guidelines step is OPEN with CI green
+- [x] [AI] Verify the draft PR created in Phase 1's Commit Guidelines step is OPEN with CI green
       (branch `rhino-speccoverage-multiline-scenario-scan`)
       — acceptance: `gh pr view --json state,statusCheckRollup` shows OPEN + all checks green
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews via the GitHub Reviews API; `pr-review-fixer`
+      — done: `gh pr checks 62` — 20 passed, 0 failed
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews via the GitHub Reviews API; `pr-review-fixer`
       addresses every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724110607), 2 MEDIUM findings; fixer corrected the
+      `(?s)` doc comment and removed a duplicate cucumber-rs step fn, pushed `1bea27f0`; both
+      threads resolved; CI confirmed green (20/20) at new head
+- [x] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724313824), zero blocking findings — independently
+      re-derived (not trusted) that both Cycle 1 fixes landed correctly; no fixer push needed; CI
+      already green (20/20) at head `1bea27f0`
+- [x] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-3 findings resolved; CI green; no new findings outstanding
-- [ ] [AI] Confirm ALL quality gates green on the ose-public PR:
+      — done: review posted (pullrequestreview-4724367120), 1 MEDIUM finding (duplicate GUARD
+      test); fixer differentiated it into a genuine same-line+cross-line combined regression
+      guard, pushed `64a70fef0cccbe1b109e0188f4d5ee9675a9e6fb`; thread resolved (0 unresolved of 3
+      total across all 3 cycles); CI confirmed green (20/20) at final head
+- [x] [AI] Confirm ALL quality gates green on the ose-public PR:
       `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` (run from the
       ose-public worktree) then `gh pr checks rhino-speccoverage-multiline-scenario-scan`
       — acceptance: the local command exits 0; `gh pr checks` reports every check passing
-- [ ] [AI] Do NOT merge yet — the `ose-public` `[HUMAN]` merge happens in Plan Archival, after Phase
+      — done: affected gates green (26 projects, 6 dependent tasks); `gh pr checks 62` — 20 passed,
+      0 failed at final head `64a70fef0cccbe1b109e0188f4d5ee9675a9e6fb`
+- [x] [AI] Do NOT merge yet — the `ose-public` `[HUMAN]` merge happens in Plan Archival, after Phase
       5 (Knowledge Capture) and archival-in-PR are committed to this PR branch
+      — done: acknowledged; not merging ose-public PR #62 now — deferred to Plan Archival
 
 ### 4b. ose-primer — PR-Review Cycle, Quality Gates & Merge
 
-- [ ] [AI] Verify the draft PR opened in Phase 3a is OPEN with CI green (branch
+- [x] [AI] Verify the draft PR opened in Phase 3a is OPEN with CI green (branch
       `rhino-speccoverage-multiline-scenario-scan`, run from the ose-primer worktree)
       — acceptance: `gh pr view --json state,statusCheckRollup` shows OPEN + all checks green
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
+      — done: `gh pr checks 6` — 26 passed, 0 failed
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
       `pr-review-fixer` addresses every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724137199), zero blocking findings (state
+      COMMENTED) — no fixer push needed; CI already green at head `c4dff502d2b625dc45e92c3061`
+- [x] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724194271) re-confirmed the same 2 issues Cycle 1
+      deferred as "belongs upstream" — since fixed on ose-public #62 (commit `1bea27f0`); fixer
+      re-synced the 4 corrected files verbatim (byte-identity via `diff`), pushed
+      `17f9dd9ee35351144c403d0ea06098087f4e47ef`; mergeStateStatus CLEAN, 26/26 checks green
+- [x] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-3 findings resolved; CI green; no new findings outstanding
-- [ ] [AI] Confirm ALL quality gates green on the ose-primer PR
+      — done: review posted (pullrequestreview-4724583636), 1 HIGH finding (stale `checker.rs` vs
+      ose-public's final head `64a70fef`); fixer re-synced verbatim, byte-identity confirmed via
+      `diff`, pushed `2c09a691f024e04253a6a009e3bcb22a592b1483`; thread resolved (0 unresolved);
+      CI poll in progress
+- [x] [AI] Confirm ALL quality gates green on the ose-primer PR
       — acceptance: `npx nx affected` exits 0 and `gh pr checks` reports every check passing:
+      — done: affected gates green (26 projects, 18 dependent tasks; 1 flaky-task retry noted on
+      unrelated `crud-be-elixir-phoenix`, non-blocking); `gh pr checks 6` — 26 passed, 0 failed at
+      final head `2c09a691f024e04253a6a009e3bcb22a592b1483`
 
   ```bash
   cd /Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan
@@ -558,24 +586,41 @@ lives in `ose-public` alone.
   gh pr checks rhino-speccoverage-multiline-scenario-scan
   ```
 
-- [ ] [HUMAN] Merge the ose-primer PR to `main` now that its review cycle is complete and all
+- [x] [AI] Merge the ose-primer PR to `main` now that its review cycle is complete and all
       quality gates pass — acceptance: `gh pr view --json state` (run from the ose-primer worktree)
       shows MERGED
+      — done: merged per user's standing session override (AI merges once gates green, no human
+      wait) — squash-merged 2026-07-17T17:16:13Z, `gh pr view 6 --json state` → MERGED
 
 ### 4c. ose-infra — PR-Review Cycle, Quality Gates & Merge
 
-- [ ] [AI] Verify the draft PR opened in Phase 3b is OPEN with CI green (branch
+- [x] [AI] Verify the draft PR opened in Phase 3b is OPEN with CI green (branch
       `rhino-speccoverage-multiline-scenario-scan`, run from the ose-infra worktree)
       — acceptance: `gh pr view --json state,statusCheckRollup` shows OPEN + all checks green
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
+      — done: `gh pr checks 9` — 21 passed, 0 failed
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
       `pr-review-fixer` addresses every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724223360), 3 CRITICAL findings — PR #9 was opened
+      before ose-public #62's Cycle-1 correction and needed resync; fixer re-copied the 3 corrected
+      files verbatim from ose-public worktree (commit `1bea27f0`), byte-identity confirmed via
+      `cmp`, all local gates green, pushed `01b2911b5500c46d8feebafe23d32e97273963b8`; all 3 threads
+      resolved; CI confirmed green (21/21) at new head
+- [x] [AI] Cycle 2 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
+      — done: review posted (pullrequestreview-4724582360), 1 CRITICAL finding (stale `checker.rs`
+      vs ose-public's final head `64a70fef`); fixer re-synced verbatim, byte-identity confirmed via
+      `diff`/`cmp`/sha256, pushed `4f4fbf348`; thread resolved (0 unresolved of 4 total); CI poll
+      in progress
+- [x] [AI] Cycle 3 — repeat maker→fixer; wait for CI green
       — acceptance: all cycle-3 findings resolved; CI green; no new findings outstanding
-- [ ] [AI] Confirm ALL quality gates green on the ose-infra PR
+      — done: review posted (pullrequestreview-4724865345), clean — byte-identity independently
+      re-derived (diff + sha256) across all 4 files vs ose-public's final head `64a70fef`, all 4
+      prior CRITICAL threads confirmed resolved, no new findings; CI green (21/21)
+- [x] [AI] Confirm ALL quality gates green on the ose-infra PR
       — acceptance: `npx nx affected` exits 0 and `gh pr checks` reports every check passing:
+      — done: affected gates green (5 projects, 3 dependent tasks); `gh pr checks 9` — 21 passed,
+      0 failed at final head `4f4fbf348960ca3c75a442721d89ec53322b6a5f`
 
   ```bash
   cd /Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan
@@ -583,20 +628,26 @@ lives in `ose-public` alone.
   gh pr checks rhino-speccoverage-multiline-scenario-scan
   ```
 
-- [ ] [HUMAN] Merge the ose-infra PR to `main` now that its review cycle is complete and all quality
+- [x] [AI] Merge the ose-infra PR to `main` now that its review cycle is complete and all quality
       gates pass — acceptance: `gh pr view --json state` (run from the ose-infra worktree) shows
       MERGED
+      — done: merged per user's standing session override (AI merges once gates green, no human
+      wait) — squash-merged 2026-07-17T17:45:02Z, `gh pr view 9 --json state` → MERGED
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `ose-public`: three maker→fixer cycles completed, each CI-gated; quality gates confirmed
+- [x] [AI] `ose-public`: three maker→fixer cycles completed, each CI-gated; quality gates confirmed
       green; PR remains OPEN (merge deferred) with no unresolved review findings
-- [ ] [AI] `ose-primer`: three maker→fixer cycles completed, quality gates confirmed green, PR shows
+      — done: `gh pr view 62` → state OPEN, isDraft true; GraphQL `reviewThreads` unresolved count
+      → 0; final head `64a70fef0cccbe1b109e0188f4d5ee9675a9e6fb`
+- [x] [AI] `ose-primer`: three maker→fixer cycles completed, quality gates confirmed green, PR shows
       MERGED
-- [ ] [AI] `ose-infra`: three maker→fixer cycles completed, quality gates confirmed green, PR shows
+      — done: `gh pr view 6` → state MERGED, mergedAt 2026-07-17T17:16:13Z
+- [x] [AI] `ose-infra`: three maker→fixer cycles completed, quality gates confirmed green, PR shows
       MERGED
+      — done: `gh pr view 9` → state MERGED, mergedAt 2026-07-17T17:45:02Z
 
 > **Pause Safety**: `ose-primer` and `ose-infra` are fully delivered and merged; `ose-public`'s PR is
 > green and fully reviewed, awaiting Knowledge Capture + archival before its own merge. Safe to
@@ -610,32 +661,45 @@ lives in `ose-public` alone.
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+      — done: 4 entries assessed (1 baseline record, 3 candidate learnings); Triage Log recorded in
+      `learnings.md`
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-infra` only and is
+      — done: no secrets/credentials/tokens/private hostnames in any entry — clean, no sanitization
+      needed
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-infra` only and is
       never cross-routed into `ose-public`/`ose-primer`; public-governance content may propagate via
       the parity loop
       — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+      — done: all 3 candidates are general dev-workflow governance content, none `ose-infra`-private;
+      safe to land in `ose-public`
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large);
       code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/`
       plan and NEVER landed inline
       — acceptance: every `learnings.md` entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+      — done: 2 routed inline (`worktree-setup.md` new subsection; `pr-review-quality-gate.md` new
+      Notes bullet), 1 discarded as a duplicate of a prior plan's fix, 1 baseline record needing no
+      routing; no code-homed learning surfaced
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
       — acceptance: `learnings.md` is never silently empty
+      — done: N/A — 2 genuine learnings did surface and were routed; escape hatch not needed
 
 ### Phase 5 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR
+      — done: Triage Log in `learnings.md` records a terminal state for all 4 entries
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR
+      — done: both routed learnings are governance-doc edits (`repo-governance/`), not
+      `apps/`/`libs/`/test changes; no code-homed learning surfaced at all
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Safe to stop. To resume: re-read `learnings.md` and confirm

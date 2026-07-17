@@ -52,3 +52,54 @@
   worktree will hit the same wall. Worth documenting in worktree-setup.md as an explicit "polyglot
   demo apps need `mix deps.get`/`dotnet restore` per-project before affected gates will pass" step,
   alongside the existing `npm install` + `npm run doctor -- --fix` guidance.
+
+## Learning: byte-identical sibling PRs repeatedly go stale while the source PR is still mid-review
+
+- **Context**: Phase 4's three-repo PR-review cycle. `ose-public` PR #62 (the byte-identity source)
+  went through its own 3 review cycles, and each cycle's fixer pushed a correcting commit (Cycle 1:
+  doc-comment + duplicate-step fix; Cycle 3: differentiated a duplicate GUARD test). Both sibling PRs
+  (`ose-primer` #6, `ose-infra` #9) had already been opened as verbatim copies of an _earlier_
+  `ose-public` state, so each time `ose-public` moved, both siblings' next review cycle immediately
+  re-discovered "stale vs. upstream" as its top finding and needed another verbatim resync.
+  `ose-infra` needed 2 separate resyncs (Cycles 1 and 2) before finally matching `ose-public`'s truly
+  final head in Cycle 3; `ose-primer` needed 2 as well (Cycles 2 and 3).
+- **Observation**: this was self-correcting (each maker→fixer resync round converged closer to the
+  final state) but wasteful — extra review/fixer rounds spent re-diagnosing the same "the upstream
+  moved again" root cause instead of finding new issues. Deliberately holding a sibling's next cycle
+  until the source PR's cycle finished (used for `ose-primer` Cycle 3 and `ose-infra` Cycle 2)
+  avoided one extra round each.
+- **Why it might generalize**: any future plan with a byte-identity-boundary source PR (like
+  `apps/rhino-cli`) reviewed in parallel with its sibling-repo mirror PRs will hit this same
+  moving-target problem. Worth a process note in the Multi-Repo rhino-cli Delivery convention (or the
+  PR Review Quality Gate workflow) recommending siblings' review cycles be sequenced to start only
+  after the source PR's review cycles are fully complete and CI-green at a stable head, rather than
+  running all three repos' cycles concurrently from the start.
+
+## Triage Log (Phase 5, Knowledge Capture)
+
+Litmus test applied: kept only if a durable surface would catch this automatically next time.
+Secret/sensitivity gate: no secrets, credentials, tokens, or private hostnames in any entry — clean.
+Repo-relevance gate: all three surviving candidates are general development-workflow governance
+content (not `ose-infra`-private), safe to land in `ose-public` (source of truth) and eligible for
+the separate multi-repo parity loop to propagate later — this plan does not perform that
+propagation itself.
+
+- **Phase 0 baseline** — not a generalizable learning, a plan-execution record. No routing needed.
+- **Phase 3's own delivery.md commands pointed at the primary checkout, not the worktree** —
+  ROUTED (non-code, small edit, landed inline): added a new "Absolute Source Paths in
+  Delivery-Checklist Commands (Same-Repo Worktree vs. Primary Checkout)" subsection to
+  `repo-governance/development/workflow/worktree-setup.md`, immediately after the existing
+  "Sibling-Repo Relative Paths" subsection it generalizes alongside.
+- **Touching rhino-cli marks nearly the whole Nx graph "affected," surfacing unrelated
+  fresh-worktree provisioning gaps** — DISCARDED as a duplicate: already captured verbatim in
+  `repo-governance/development/workflow/worktree-setup.md`'s existing "Per-Project Dependency
+  Restoration for Some Language Ecosystems" subsection (landed by a prior plan,
+  `rhino-cli-source-drift-reconciliation`) — same root cause, same fix, same file, nothing left to
+  add.
+- **Byte-identical sibling PRs repeatedly go stale while the source PR is still mid-review** —
+  ROUTED (non-code, small edit, landed inline): added a new bullet to the "Notes" section of
+  `repo-governance/workflows/pr/pr-review-quality-gate.md` recommending source-PR-first sequencing
+  for byte-identity-boundary multi-repo plans.
+
+No code-homed learning surfaced (no `apps/`/`libs/`/test change was implied by any entry), so no
+`plans/backlog/` follow-up plan was filed. Every entry above reached a terminal state.
