@@ -7,32 +7,36 @@
 
 class UnionFind:  # => the optimized version from Example 33
     def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
-        self.parent: list[int] = list(
-            range(n)
+        self.parent: list[int] = list(  # => opens the initial parent-list construction
+            range(n)  # => index i's parent starts as i itself
         )  # => each element starts as its own root
         self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
     def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
         if self.parent[x] != x:  # => x is not yet its own group's root
-            self.parent[x] = self.find(
-                self.parent[x]
+            self.parent[x] = (  # => opens the path-compression reassignment
+                self.find(  # => recurses first, THEN repoints on the way back
+                    self.parent[
+                        x  # => the element whose root is being sought
+                    ]  # => climbs toward the root through x's current parent
+                )  # => closes the recursive find() call
             )  # => path-compresses on the way back
         return self.parent[x]  # => x's parent is now either itself, or the true root
 
     def union(  # => the cycle test IS the union: a failed union means "would cycle"
-        self,
-        a: int,
+        self,  # => the union-find structure being mutated
+        a: int,  # => the candidate edge's first endpoint
         b: int,  # => the two nodes this candidate edge would connect
     ) -> bool:  # => returns True if a merge actually happened
         root_a, root_b = self.find(a), self.find(b)  # => both groups' roots, compressed
         if root_a == root_b:  # => already connected -- adding this edge would cycle
             return False  # => signals "do not add this edge"
-        if (
-            self.rank[root_a] < self.rank[root_b]
+        if (  # => opens the rank comparison
+            self.rank[root_a] < self.rank[root_b]  # => a's tree is strictly shorter
         ):  # => UNION BY RANK: shorter under taller
-            self.parent[root_a] = (
+            self.parent[root_a] = (  # => opens the shorter-under-taller reassignment
                 root_b  # => attaches the shorter tree under the taller
-            )
+            )  # => closes the reassignment
         elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
             self.parent[root_b] = root_a  # => the mirror case
         else:  # => equal rank -- pick either, and the result grows one level taller
@@ -42,11 +46,11 @@ class UnionFind:  # => the optimized version from Example 33
 
 
 def kruskal_mst(  # => sort-then-greedily-add, skipping any edge that would form a cycle
-    n: int,
+    n: int,  # => the number of nodes, labeled 0..n-1
     edges: list[tuple[int, int, int]],  # => node count and (u, v, weight) edges
 ) -> tuple[list[tuple[int, int, int]], int]:  # => (MST edges, total weight)
     sorted_edges = sorted(  # => opens the ascending-by-weight sort
-        edges,
+        edges,  # => the raw, unsorted candidate edges
         key=lambda e: e[2],  # => sorts by the weight field only
     )  # => O(E log E): cheapest edges first
     uf = UnionFind(n)  # => starts with n singleton components
@@ -66,10 +70,10 @@ edges: list[tuple[int, int, int]] = [  # => (u, v, weight)
     (1, 2, 3),  # => second-cheapest -- picked early
     (1, 3, 8),  # => the most expensive edge -- likely rejected as redundant
     (1, 4, 5),  # => connects the otherwise-isolated node 4
-    (
-        2,
-        4,
-        7,
+    (  # => opens the alternate, pricier route to node 4
+        2,  # => the edge's source node
+        4,  # => the edge's destination node
+        7,  # => this alternate route's weight
     ),  # => an alternate, pricier route to node 4 -- rejected once 4 is connected
     (3, 4, 9),  # => the second-most expensive edge -- almost certainly rejected
 ]  # => closes the edge list -- 5 nodes, 7 candidate edges, MST needs exactly 4

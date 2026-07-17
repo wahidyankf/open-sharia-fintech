@@ -7,7 +7,7 @@ import random
 
 
 def quickselect(  # => recurses into only the side containing rank k, not both sides
-    items: list[int],
+    items: list[int],  # => the array to search within (never mutated by the caller)
     k: int,  # => k is the 0-indexed target rank to find
 ) -> int:  # => returns the k-th smallest (0-indexed)
     working = list(items)  # => a copy -- the caller's list is never mutated
@@ -39,6 +39,7 @@ def random_pivot_partition(
     return i  # => the pivot's final, correctly-sorted-position index
 
 
+# a fixed seed makes this whole demo fully reproducible across runs
 random.seed(17)  # => fixed seed -> reproducible pivot choices
 data: list[int] = random.sample(range(1000), 40)  # => 40 distinct random ints
 sorted_data = sorted(data)  # => ground truth to check quickselect against

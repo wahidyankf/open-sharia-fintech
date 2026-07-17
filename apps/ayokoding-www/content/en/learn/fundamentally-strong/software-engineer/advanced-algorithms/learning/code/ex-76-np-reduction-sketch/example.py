@@ -9,7 +9,7 @@
 
 
 def subset_sum_possible(  # => tracks the growing set of reachable sums, level by level
-    items: list[int],
+    items: list[int],  # => the candidate items to sum a subset of
     target: int,  # => the candidate items and the sum to test for
 ) -> bool:  # => the SOURCE problem: is `target` reachable by summing a subset?
     if target < 0:  # => a negative target is never reachable by non-negative sums
@@ -31,13 +31,13 @@ def can_partition(  # => reduces to Subset-Sum with target = half the total
     if total % 2 != 0:  # => an odd total can NEVER split into two equal integer halves
         return False  # => immediately impossible
     return subset_sum_possible(  # => opens the delegated Subset-Sum call
-        items,
+        items,  # => the same items, unchanged
         total // 2,  # => the same items, targeting exactly half the total
     )  # => Partition IS Subset-Sum with target = total/2 -- the "obvious" direction
 
 
 def reduce_subset_sum_to_partition(  # => builds one padding element that makes the reduction exact
-    items: list[int],
+    items: list[int],  # => the original Subset-Sum instance's items
     target: int,  # => the Subset-Sum instance being reduced
 ) -> list[int]:  # => THE REDUCTION: builds a Partition instance from a Subset-Sum one
     total = sum(items)  # => the original items' total sum
@@ -58,7 +58,7 @@ half = total // 2  # => 13 -- the largest valid target for this reduction
 mismatches = 0  # => counts any target where the reduction's answer disagrees
 for target in range(half + 1):  # => sweeps EVERY possible target from 0 to half
     direct_answer = subset_sum_possible(items, target)  # => the SOURCE problem's answer
-    reduced_instance = reduce_subset_sum_to_partition(
+    reduced_instance = reduce_subset_sum_to_partition(  # => opens the reduction call
         items, target
     )  # => builds the reduced instance
     reduced_answer = can_partition(reduced_instance)  # => the TARGET problem's answer
@@ -67,22 +67,22 @@ for target in range(half + 1):  # => sweeps EVERY possible target from 0 to half
 
 print(mismatches)  # => Output: 0 -- every target's answer survives the reduction
 print(subset_sum_possible(items, 12))  # => Output: True -- e.g. {7, 5} sums to 12
-print(
-    can_partition(
+print(  # => opens the reduced-instance-12 print call
+    can_partition(  # => the TARGET problem, applied to the reduced instance
         reduce_subset_sum_to_partition(items, 12)
     )  # => TARGET problem's answer
 )  # => Output: True -- matches
 print(subset_sum_possible(items, 1))  # => Output: False -- no subset sums to 1
-print(
-    can_partition(
+print(  # => opens the reduced-instance-1 print call
+    can_partition(  # => the TARGET problem, applied to the reduced instance
         reduce_subset_sum_to_partition(items, 1)
     )  # => TARGET problem's answer
 )  # => Output: False -- matches
 
-assert (
+assert (  # => opens the zero-mismatches sanity check
     mismatches == 0  # => every single target agreed between the two problems
 )  # => confirms the reduction preserves EVERY yes/no answer, not just one
-assert (
+assert (  # => opens the exactly-one-padding-element check
     len(reduce_subset_sum_to_partition(items, 12))
     == len(items) + 1  # => exactly one padding element
 )  # => adds exactly 1 element

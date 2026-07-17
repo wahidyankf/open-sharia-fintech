@@ -3,20 +3,20 @@
 # Dijkstra (co-19) greedily expands the CHEAPEST-known frontier node next,
 # using a min-heap (co-09) to find that node in O(log n) instead of an O(n)
 # linear scan. Requires NON-NEGATIVE edge weights -- Example 40 shows why.
-import heapq
+import heapq  # => the min-heap priority queue used to pick the cheapest frontier node
 
 
 def dijkstra(  # => greedily finalizes the cheapest-known frontier node each iteration
-    graph: dict[str, list[tuple[str, int]]],
+    graph: dict[str, list[tuple[str, int]]],  # => node -> list of (neighbor, weight)
     start: str,  # => weighted adjacency + origin
 ) -> dict[str, float]:  # => node -> shortest distance from start
     distances: dict[str, float] = {  # => opens the initial all-infinity distance map
-        node: float("inf")
+        node: float("inf")  # => every node starts unreachable, by default
         for node in graph  # => every node starts unreachable
     }  # => everyone starts at infinity
     distances[start] = 0  # => the start node is trivially 0 away from itself
     heap: list[
-        tuple[float, str]
+        tuple[float, str]  # => (distance, node) pairs, ordered by distance
     ] = [  # => opens the initial single-entry priority queue
         (0, start)  # => the only known reachable node at distance 0
     ]  # => (distance, node) -- heapq sorts by distance

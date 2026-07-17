@@ -35,9 +35,9 @@ def solve_sudoku(board: Board) -> bool:  # => mutates board in place; True if so
     r, c = empty  # => the (row, col) to try filling next
     for digit in range(1, 10):  # => tries every candidate digit 1-9
         if is_valid(  # => opens the rule-check call
-            board,
-            r,
-            c,
+            board,  # => the current, partially-filled board
+            r,  # => the row of the cell being tried
+            c,  # => the column of the cell being tried
             digit,  # => the current board state and candidate digit
         ):  # => THE PRUNE: skip digits violating the rules
             board[r][c] = digit  # => commits this candidate
@@ -68,17 +68,17 @@ for r in range(9):  # => confirms every row is a permutation of 1-9
     assert sorted(puzzle[r]) == list(range(1, 10))  # => each row has every digit once
 for c in range(9):  # => confirms every column is a permutation of 1-9
     assert sorted(  # => opens the column-values sort
-        puzzle[i][c]
+        puzzle[i][c]  # => the value at row i, column c
         for i in range(9)  # => gathers column c's value from every row
     ) == list(range(1, 10))  # => each column has every digit once
 for box_r in range(0, 9, 3):  # => confirms every 3x3 box is a permutation of 1-9
     for box_c in range(0, 9, 3):  # => scans every box's top-left corner
         box_values = [  # => opens the box-flattening comprehension
-            puzzle[box_r + i][box_c + j]
-            for i in range(3)
+            puzzle[box_r + i][box_c + j]  # => the value at this box-relative cell
+            for i in range(3)  # => 3 rows within the box
             for j in range(3)  # => one box's cells
         ]  # => flattens one 3x3 box into a flat list
         assert sorted(box_values) == list(
-            range(1, 10)
+            range(1, 10)  # => the digits every box must contain exactly once
         )  # => each box has every digit once
 print("ex-57 OK")  # => Output: ex-57 OK

@@ -4,7 +4,7 @@
 # covers every needed character, then shrink the LEFT edge as far as
 # possible while STILL covering it -- recording the smallest window along
 # the way. A `need` counter tracks exactly how many more characters are missing.
-from collections import Counter
+from collections import Counter  # => a dict subclass that tracks per-character counts
 
 
 def min_window_substring(s: str, target: str) -> str:  # => O(len(s) + len(target))
@@ -22,7 +22,7 @@ def min_window_substring(s: str, target: str) -> str:  # => O(len(s) + len(targe
         )  # => closes the decrement assignment
         while missing == 0:  # => the window FULLY covers target -- try to SHRINK it
             if (  # => opens the new-best-window check
-                right - left + 1
+                right - left + 1  # => this window's own current length
                 < best_len  # => this window's length beats the current best
             ):  # => this window beats the best found so far
                 best_left, best_len = left, right - left + 1  # => records the new best
@@ -30,7 +30,7 @@ def min_window_substring(s: str, target: str) -> str:  # => O(len(s) + len(targe
             if need[s[left]] > 0:  # => that character is now missing again
                 missing += 1  # => the window no longer fully covers target
             left += 1  # => shrinks the window by advancing the left edge
-    return (
+    return (  # => opens the found-window-or-empty-string result
         "" if best_len == float("inf") else s[best_left : best_left + int(best_len)]
     )  # => final window
 
@@ -43,5 +43,7 @@ assert min_window_substring("ADOBECODEBANC", "ABC") == "BANC"  # => the classic 
 assert min_window_substring("a", "a") == "a"  # => the trivial single-character case
 assert min_window_substring("a", "aa") == ""  # => confirms an impossible target
 for ch in "ABC":  # => confirms the found window genuinely contains every needed char
-    assert ch in min_window_substring("ADOBECODEBANC", "ABC")
+    assert ch in min_window_substring(  # => opens the per-character containment check
+        "ADOBECODEBANC", "ABC"
+    )  # => this required character is present somewhere in the found window
 print("ex-72 OK")  # => Output: ex-72 OK

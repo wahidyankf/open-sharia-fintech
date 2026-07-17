@@ -23,7 +23,7 @@ class OptimizedUnionFind:  # => union-find with both classic optimizations appli
                     self.parent[
                         x
                     ]  # => climbs toward the root through x's current parent
-                )
+                )  # => closes the recursive find() call
             )  # => PATH COMPRESSION: recurses to the root, then repoints x DIRECTLY at it
         return self.parent[x]  # => x's parent is now either itself, or the true root
 
@@ -32,12 +32,12 @@ class OptimizedUnionFind:  # => union-find with both classic optimizations appli
         root_b = self.find(b)  # => b's group root
         if root_a == root_b:  # => already the same group -- nothing to merge
             return  # => a union with itself is a no-op
-        if (
+        if (  # => opens the rank comparison
             self.rank[root_a] < self.rank[root_b]
         ):  # => UNION BY RANK: shorter under taller
             self.parent[root_a] = (  # => opens the shorter-under-taller reassignment
                 root_b  # => attaches the shorter tree under the taller
-            )
+            )  # => closes the reassignment
         elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
             self.parent[root_b] = root_a  # => the mirror case
         else:  # => equal rank -- pick either, and the result grows one level taller
@@ -46,7 +46,7 @@ class OptimizedUnionFind:  # => union-find with both classic optimizations appli
 
 
 def total_find_depth(  # => a diagnostic helper -- NOT part of the union-find API itself
-    uf: OptimizedUnionFind,
+    uf: OptimizedUnionFind,  # => the union-find structure being queried
     n: int,  # => the structure to measure, and its element count
 ) -> int:  # => sums parent-hop counts
     total = 0  # => accumulates hops across every element's find()
@@ -64,9 +64,10 @@ def total_find_depth(  # => a diagnostic helper -- NOT part of the union-find AP
     return total  # => the sum of all n elements' current depths
 
 
+# => margin note: n stays large enough that even O(n) depth would be visible
 n = 1000  # => a reasonably large element count, to make near-flat trees visible
 uf = OptimizedUnionFind(n)  # => n singleton groups
-for i in range(
+for i in range(  # => opens the union-count range
     n - 1  # => one union per consecutive pair -- n-1 total union calls
 ):  # => chains everything into ONE big group, worst-case union order
     uf.union(i, i + 1)  # => unions consecutive elements, one after another

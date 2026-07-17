@@ -4,7 +4,7 @@
 # cycle detection possible: WHITE (unseen), GRAY (on the CURRENT recursion
 # path), BLACK (fully finished). A back edge to a GRAY node means the current
 # path loops back on itself -- exactly what a cycle is.
-from enum import Enum, auto
+from enum import Enum, auto  # => Color is an Enum, not a bare string, for type safety
 
 
 class Color(Enum):  # => three DFS visitation states -- enables cycle detection
@@ -17,7 +17,7 @@ def has_cycle(  # => three-color DFS: a GRAY-to-GRAY edge means a back edge, i.e
     graph: dict[str, list[str]],  # => adjacency map: node -> list of nodes it points to
 ) -> bool:  # => True iff a directed cycle exists
     color: dict[str, Color] = {  # => opens the dict-comprehension initializing colors
-        node: Color.WHITE
+        node: Color.WHITE  # => every node begins undiscovered
         for node in graph  # => every node starts undiscovered
     }  # => all start WHITE
 
@@ -27,7 +27,7 @@ def has_cycle(  # => three-color DFS: a GRAY-to-GRAY edge means a back edge, i.e
             if color[neighbor] == Color.GRAY:  # => THE TELLTALE SIGN: an edge back to
                 return True  # => an ancestor still on the stack -- a genuine cycle
             if color[
-                neighbor
+                neighbor  # => this neighbor's current visitation state
             ] == Color.WHITE and recurse(  # => only recurse into unseen nodes
                 neighbor  # => the unvisited neighbor to explore next
             ):  # => explore unseen nodes
@@ -36,7 +36,9 @@ def has_cycle(  # => three-color DFS: a GRAY-to-GRAY edge means a back edge, i.e
         return False  # => no cycle found through this node
 
     return any(  # => True as soon as ANY unvisited component reports a cycle
-        recurse(node) for node in graph if color[node] == Color.WHITE
+        recurse(node)  # => explores each still-undiscovered component
+        for node in graph
+        if color[node] == Color.WHITE
     )  # => checks every component
 
 

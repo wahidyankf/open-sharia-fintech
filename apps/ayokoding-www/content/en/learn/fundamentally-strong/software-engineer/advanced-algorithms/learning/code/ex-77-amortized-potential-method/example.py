@@ -40,7 +40,7 @@ def run_push(value: int) -> None:  # => wraps push with the potential-method boo
     actual = stack.push(value)  # => the operation's REAL cost
     phi_after = potential(stack)  # => Phi AFTER this operation runs
     amortized_costs.append(  # => opens the amortized-cost recording
-        actual
+        actual  # => this operation's real cost
         + (phi_after - phi_before)  # => actual cost plus the potential's own change
     )  # => THE potential-method formula
     total_actual += actual  # => accumulates the running TRUE total
@@ -51,7 +51,7 @@ def run_multipop(k: int) -> None:  # => wraps multipop with the same bookkeeping
     phi_before = potential(stack)  # => Phi BEFORE this operation runs
     actual = stack.multipop(k)  # => the operation's REAL cost
     phi_after = potential(stack)  # => Phi AFTER this operation runs
-    amortized_costs.append(
+    amortized_costs.append(  # => opens the amortized-cost recording
         actual + (phi_after - phi_before)
     )  # => THE potential-method formula
     total_actual += actual  # => accumulates the running TRUE total
@@ -69,18 +69,18 @@ run_multipop(3)  # => a NORMAL partial pop: k=3 is smaller than the stack's 10 e
 run_multipop(BIG_K)  # => pops the remaining 7
 
 print(total_actual)  # => Output: 150 -- bounded by pushes+pops, NEVER by the huge k's
-print(
+print(  # => opens the worst-case-amortized-cost print call
     max(amortized_costs)  # => the single worst-case amortized cost across all ops
 )  # => Output: 2 -- EVERY single op costs at most 2, amortized
 print(len(amortized_costs))  # => Output: 79 -- 75 pushes + 4 multipop calls
 
-assert (
+assert (  # => opens the exact-total-actual-cost check
     total_actual == 150  # => the exact expected total across every real pop/push
 )  # => confirms actual work stayed proportional to real operations
-assert (
+assert (  # => opens the every-op-O(1)-amortized check
     max(amortized_costs) <= 2  # => no single operation ever amortizes above 2
 )  # => THE PROOF: every op is O(1) amortized, push or multipop
-assert total_actual <= 2 * len(
+assert total_actual <= 2 * len(  # => opens the 2x-bound comparison
     amortized_costs  # => the operation count, for the 2x-bound comparison
 )  # => total actual cost never exceeds 2x the operation count
 assert stack.items == []  # => the stack ends empty -- everything pushed got popped

@@ -7,13 +7,13 @@
 
 
 def knapsack_01(  # => for each item, either SKIP it or TAKE it, whichever is better
-    weights: list[int],
-    values: list[int],
+    weights: list[int],  # => each item's own weight
+    values: list[int],  # => each item's own value
     capacity: int,  # => item weights/values + limit
 ) -> int:  # => O(n * capacity) time and space
     n = len(weights)  # => number of available items
     dp: list[list[int]] = [  # => opens the 2D table construction
-        [0] * (capacity + 1)
+        [0] * (capacity + 1)  # => one zero-filled row per item count
         for _ in range(n + 1)  # => one fresh row of zeros per item count
     ]  # => dp[0][*] = 0: zero items always yields zero value
     for i in range(1, n + 1):  # => considers items one at a time
@@ -22,7 +22,8 @@ def knapsack_01(  # => for each item, either SKIP it or TAKE it, whichever is be
             dp[i][w] = dp[i - 1][w]  # => the SKIP option: value stays whatever it was
             if weight <= w:  # => the TAKE option is only possible if it actually fits
                 dp[i][w] = max(
-                    dp[i][w], value + dp[i - 1][w - weight]
+                    dp[i][w],  # => the SKIP option's value
+                    value + dp[i - 1][w - weight],  # => the TAKE option's value
                 )  # => best of skip vs take
     return dp[n][capacity]  # => the best achievable value at full capacity
 

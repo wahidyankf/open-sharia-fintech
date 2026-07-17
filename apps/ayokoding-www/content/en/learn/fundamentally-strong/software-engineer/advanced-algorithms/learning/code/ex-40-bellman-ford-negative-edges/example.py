@@ -6,8 +6,10 @@
 
 
 def bellman_ford(  # => brute-force relax-every-edge, repeated V-1 times, no heap needed
-    n: int,
-    edges: list[tuple[int, int, int]],
+    n: int,  # => the number of nodes, labeled 0..n-1
+    edges: list[
+        tuple[int, int, int]  # => each edge is a (from, to, weight) triple
+    ],  # => (from, to, weight) triples, negatives allowed
     start: int,  # => node count, edges, origin
 ) -> list[float]:  # => edges: (from, to, weight); returns dist[i] for each node
     dist: list[float] = [float("inf")] * n  # => every node starts at infinity
@@ -26,9 +28,9 @@ edges: list[tuple[int, int, int]] = [  # => includes a NEGATIVE edge weight (3 -
     (1, 2, 8),  # => 1 to 2, cost 8
     (1, 3, 5),  # => 1 to 3, cost 5
     (
-        1,
-        4,
-        -4,
+        1,  # => the edge's source node
+        4,  # => the edge's destination node
+        -4,  # => the negative weight itself
     ),  # => 1 to 4, a NEGATIVE edge -- Dijkstra could not handle this correctly
     (2, 3, -3),  # => 2 to 3, another negative edge
     (2, 4, 9),  # => 2 to 4, cost 9
@@ -40,7 +42,7 @@ distances = bellman_ford(n, edges, start=0)  # => shortest distances from node 0
 print(distances)  # => Output: [0, 2, 7, 4, -2]
 
 assert distances[0] == 0  # => the start node is 0 away from itself
-assert (
+assert (  # => opens the "cheaper indirect path wins" check
     distances[1] == 2
 )  # => reached via 0->2->3->1 (7-3-2=2), beats the direct edge (6)
 assert distances[4] == -2  # => the negative edge 1->4 pulls this distance below zero

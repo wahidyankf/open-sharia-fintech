@@ -5,7 +5,7 @@
 # BLACK). The parenthesis theorem: any two nodes' [disc, fin] intervals are
 # either NESTED (one fully inside the other) or DISJOINT -- never partially
 # overlapping, because a node can't finish before all its descendants do.
-from enum import Enum, auto
+from enum import Enum, auto  # => Color is an Enum, not a bare string, for type safety
 
 
 class Color(Enum):  # => the three DFS visitation states
@@ -15,7 +15,7 @@ class Color(Enum):  # => the three DFS visitation states
 
 
 def dfs_timestamps(  # => CLRS-style DFS that stamps a discovery and finish tick per node
-    graph: dict[str, list[str]],
+    graph: dict[str, list[str]],  # => the adjacency map to traverse
     start: str,  # => adjacency map plus the origin node
 ) -> tuple[dict[str, int], dict[str, int]]:  # => (discovery times, finish times)
     color: dict[str, Color] = {  # => opens the dict-comprehension initializing colors
@@ -69,6 +69,7 @@ graph: dict[str, list[str]] = {  # => a small directed graph with a branch and a
     "c": ["d"],  # => "c" also merges into "d", after "b"'s subtree already finished
     "d": [],  # => the merge point -- a sink node with no outgoing edges
 }  # => closes the adjacency map -- 4 nodes, one branch-and-merge diamond
+# runs the full timestamped DFS from "a" once, producing both timestamp maps
 disc, fin = dfs_timestamps(graph, "a")  # => runs the timestamped DFS from "a"
 print(disc)  # => Output: {'a': 0, 'b': 1, 'd': 2, 'c': 5}
 print(fin)  # => Output: {'d': 3, 'b': 4, 'c': 6, 'a': 7}

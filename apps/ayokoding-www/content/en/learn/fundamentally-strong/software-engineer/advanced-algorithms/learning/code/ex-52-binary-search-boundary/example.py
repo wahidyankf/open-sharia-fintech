@@ -28,7 +28,7 @@ def rightmost_index(items: list[int], target: int) -> int:  # => -1 if target is
         if items[mid] == target:  # => found A match -- but is it the LAST one?
             result = mid  # => records this as the best-known rightmost match so far
             lo = mid + 1  # => keeps searching RIGHT for an even later occurrence
-        elif (
+        elif (  # => opens the rightmost-side range-narrowing check
             items[mid] < target
         ):  # => same rule as leftmost -- target lies further right
             lo = mid + 1  # => shrinks the range from the left edge
@@ -47,7 +47,8 @@ assert leftmost_index(data, 2) == 1  # => confirms the first occurrence's index
 assert rightmost_index(data, 2) == 3  # => confirms the last occurrence's index
 assert leftmost_index(data, 9) == -1  # => confirms an absent target returns -1
 assert rightmost_index(data, 9) == -1  # => confirms the mirrored absent case too
-assert leftmost_index(data, 1) == rightmost_index(
-    data, 1
+assert leftmost_index(data, 1) == rightmost_index(  # => a single-occurrence value
+    data,  # => the same sorted array searched throughout
+    1,  # => the value 1, which appears exactly once in data
 )  # => a value with only ONE occurrence has matching leftmost and rightmost
 print("ex-52 OK")  # => Output: ex-52 OK

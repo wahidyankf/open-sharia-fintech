@@ -14,10 +14,10 @@ class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point qu
         self._build(data, 1, 0, self.n - 1)  # => builds the initial tree, O(n)
 
     def _build(  # => bottom-up: leaves first, then each parent sums its two children
-        self,
-        data: list[int],
-        node: int,
-        lo: int,
+        self,  # => the tree instance under construction
+        data: list[int],  # => the source array being indexed
+        node: int,  # => this call's own array-backed tree index
+        lo: int,  # => the low end of this node's range
         hi: int,  # => [lo, hi] is this node's range
     ) -> None:  # => fills self.tree over the array-index encoding, no lazy tags yet
         if lo == hi:  # => leaf: exactly one element
@@ -27,13 +27,14 @@ class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point qu
         self._build(data, 2 * node, lo, mid)  # => builds the left child
         self._build(data, 2 * node + 1, mid + 1, hi)  # => builds the right child
         self.tree[node] = (  # => opens the parent-sum assignment
-            self.tree[2 * node] + self.tree[2 * node + 1]
+            self.tree[2 * node]  # => the left child's own sum
+            + self.tree[2 * node + 1]  # => plus the right child's own sum
         )  # => this node's sum is its children's combined sum
 
     def _push_down(  # => flushes node's pending tag one level down, THEN clears it
-        self,
-        node: int,
-        lo: int,
+        self,  # => the tree instance being flushed
+        node: int,  # => this call's own array-backed tree index
+        lo: int,  # => the low end of this node's range
         hi: int,  # => node's own [lo, hi] range
     ) -> None:  # => flushes a pending tag
         if self.lazy[node] == 0:  # => nothing pending -- nothing to push
@@ -50,20 +51,20 @@ class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point qu
         self.lazy[node] = 0  # => this node's tag has now been fully passed down
 
     def range_add(  # => public entry point -- the only method callers use to update
-        self,
-        lo: int,
-        hi: int,
+        self,  # => the tree instance being updated
+        lo: int,  # => the low end of the range to add to
+        hi: int,  # => the high end of the range to add to
         delta: int,  # => adds delta to every index in [lo, hi]
     ) -> None:  # => O(log n): adds delta
         self._range_add(1, 0, self.n - 1, lo, hi, delta)  # => starts at the root
 
     def _range_add(  # => the classic outside/inside/partial-overlap recursive split
-        self,
-        node: int,
-        node_lo: int,
-        node_hi: int,
-        lo: int,
-        hi: int,
+        self,  # => the tree instance being updated
+        node: int,  # => this call's own array-backed tree index
+        node_lo: int,  # => this node's range's low end
+        node_hi: int,  # => this node's range's high end
+        lo: int,  # => the update range's low end
+        hi: int,  # => the update range's high end
         delta: int,  # => node covers [node_lo, node_hi]
     ) -> None:  # => mutates self.tree and self.lazy in place, returns nothing
         if hi < node_lo or node_hi < lo:  # => this node's range is entirely outside
@@ -75,8 +76,8 @@ class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point qu
             self.lazy[node] += delta  # => defers pushing to children until needed
             return  # => THE LAZY PART: children are not touched yet
         self._push_down(  # => must resolve any pending tag before recursing further
-            node,
-            node_lo,
+            node,  # => this node's own array-backed tree index
+            node_lo,  # => this node's own range low end
             node_hi,  # => flushes THIS node's own stale tag first
         )  # => must resolve any pending tag before recursing further
         mid = (node_lo + node_hi) // 2  # => splits this node's range for the recursion
@@ -88,17 +89,17 @@ class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point qu
         return self._point_query(1, 0, self.n - 1, i)  # => starts at the root
 
     def _point_query(  # => descends one side at each level, pushing down tags first
-        self,
-        node: int,
-        lo: int,
-        hi: int,
+        self,  # => the tree instance being queried
+        node: int,  # => this call's own array-backed tree index
+        lo: int,  # => this node's range's low end
+        hi: int,  # => this node's range's high end
         i: int,  # => node covers [lo, hi]; i is the target
     ) -> int:  # => returns the up-to-date value at index i
         if lo == hi:  # => a leaf -- its stored sum IS the single element's value
             return self.tree[node]  # => already reflects every applied range-add
         self._push_down(  # => resolves any pending tag before descending further
-            node,
-            lo,
+            node,  # => this node's own array-backed tree index
+            lo,  # => this node's own range low end
             hi,  # => this node's own range, needed to size its children
         )  # => resolves any pending tag before descending further
         mid = (lo + hi) // 2  # => decides which child holds index i

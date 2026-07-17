@@ -14,12 +14,12 @@ def three_sum(nums: list[int]) -> list[list[int]]:  # => O(n^2): O(n) outer * O(
     triplets: list[list[int]] = []  # => accumulates unique triplets summing to zero
     for i in range(n - 2):  # => fixes the FIRST element of each candidate triplet
         if (  # => opens the duplicate-first-element check
-            i > 0
+            i > 0  # => there IS a prior i to compare against
             and nums_sorted[i] == nums_sorted[i - 1]  # => same value as the prior i
         ):  # => same first element as before
             continue  # => SKIPS it -- would only regenerate triplets already found
         lo, hi = i + 1, n - 1  # => two pointers over the REMAINING sorted slice
-        target = (
+        target = (  # => opens the target-value negation
             -nums_sorted[  # => opens the target-value lookup
                 i  # => the fixed first element's index
             ]
@@ -27,17 +27,17 @@ def three_sum(nums: list[int]) -> list[list[int]]:  # => O(n^2): O(n) outer * O(
         while lo < hi:  # => Example 23's exact two-pointer pattern, reused here
             pair_sum = nums_sorted[lo] + nums_sorted[hi]  # => the current pair's sum
             if pair_sum == target:  # => found a valid triplet
-                triplets.append(
+                triplets.append(  # => opens the new-triplet record
                     [nums_sorted[i], nums_sorted[lo], nums_sorted[hi]]
                 )  # => records it
                 while (  # => opens the skip-duplicate-lo loop
-                    lo < hi
+                    lo < hi  # => stays within the shrinking two-pointer range
                     and nums_sorted[lo]
                     == nums_sorted[lo + 1]  # => same lo value repeats
                 ):  # => skip dup lo
                     lo += 1  # => advances past the duplicate
                 while (  # => opens the skip-duplicate-hi loop
-                    lo < hi
+                    lo < hi  # => stays within the shrinking two-pointer range
                     and nums_sorted[hi]
                     == nums_sorted[hi - 1]  # => same hi value repeats
                 ):  # => skip dup hi
@@ -51,6 +51,7 @@ def three_sum(nums: list[int]) -> list[list[int]]:  # => O(n^2): O(n) outer * O(
     return triplets  # => every unique triplet summing to zero
 
 
+# => the classic LeetCode 3-sum example, with duplicate -1's to exercise the skip-logic
 nums: list[int] = [-1, 0, 1, 2, -1, -4]  # => the classic LeetCode 3-sum example
 triplets = three_sum(nums)  # => all unique zero-sum triplets
 print(sorted(triplets))  # => Output: [[-1, -1, 2], [-1, 0, 1]]

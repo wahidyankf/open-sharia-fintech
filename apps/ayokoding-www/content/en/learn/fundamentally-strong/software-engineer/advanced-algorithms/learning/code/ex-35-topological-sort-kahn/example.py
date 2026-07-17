@@ -3,7 +3,7 @@
 # Kahn's algorithm (co-18) repeatedly removes nodes with IN-DEGREE ZERO --
 # nodes with no remaining unprocessed prerequisites -- appending each to the
 # result and decrementing its neighbors' in-degrees, until none remain.
-from collections import deque
+from collections import deque  # => O(1) popleft, unlike a plain list
 
 
 def kahn_topological_sort(  # => BFS-style: repeatedly peel off zero-in-degree nodes
@@ -14,7 +14,7 @@ def kahn_topological_sort(  # => BFS-style: repeatedly peel off zero-in-degree n
     }  # => starts every node's in-degree at 0
     for node in graph:  # => O(V+E): counts how many edges point INTO each node
         for neighbor in graph[
-            node
+            node  # => this node's own outgoing edges
         ]:  # => each outgoing edge increments the target's count
             in_degree[neighbor] += 1  # => one more prerequisite for neighbor
 
@@ -46,7 +46,7 @@ print(order)  # => Output: ['fetch_deps', 'compile', 'link', 'test']
 
 assert order is not None  # => confirms no cycle was detected
 position = {  # => opens the node -> index lookup, built from the result order
-    node: i
+    node: i  # => this node's position within the final order
     for i, node in enumerate(order)  # => pairs each node with its position
 }  # => node -> its index in the order
 assert position["fetch_deps"] < position["compile"]  # => a dependency comes first

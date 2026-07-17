@@ -13,7 +13,7 @@ def longest_unique_substring_length(s: str) -> int:  # => O(n): one pass, amorti
         s  # => the string being scanned
     ):  # => grows the window's right edge one char at a time
         if ch in last_seen and last_seen[ch] >= left:  # => a repeat WITHIN the window
-            left = (
+            left = (  # => opens the left-edge jump
                 last_seen[ch] + 1
             )  # => jumps left past the earlier occurrence directly
         last_seen[ch] = right  # => records this character's newest position
@@ -33,12 +33,12 @@ def brute_force_longest_unique_substring(s: str) -> int:  # => O(n^2): every sta
     return best  # => ground truth, for comparison
 
 
-test_strings: list[str] = [
-    "abcabcbb",
-    "bbbbb",
-    "pwwkew",
-    "",
-    "abcdef",
+test_strings: list[str] = [  # => opens the varied-test-case list
+    "abcabcbb",  # => a mix with a repeating 3-char block
+    "bbbbb",  # => every character is the same, worst case for repeats
+    "pwwkew",  # => a repeat right at the start
+    "",  # => the empty-string edge case
+    "abcdef",  # => no repeats at all -- the whole string is the answer
 ]  # => varied test cases
 for s in test_strings:  # => checks the fast approach against brute force, per string
     fast = longest_unique_substring_length(s)  # => O(n) result

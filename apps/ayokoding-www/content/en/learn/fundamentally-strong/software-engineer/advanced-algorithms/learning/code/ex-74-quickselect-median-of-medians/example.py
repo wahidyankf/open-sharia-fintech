@@ -12,8 +12,8 @@ def naive_first_pivot_select(arr: list[int], k: int, counter: list[int]) -> int:
     # => the SAME strategy as Example 8: always pivot on arr[0]
     if len(arr) == 1:  # => base case: only one element left
         return arr[0]  # => base case: one element left -- it must be the answer
-    pivot = arr[
-        0
+    pivot = arr[  # => opens the always-first-element pivot pick
+        0  # => the first index, always -- never randomized or median-picked
     ]  # => ALWAYS the first element -- the vulnerability an adversary can exploit
     lows: list[int] = []  # => elements strictly less than pivot
     highs: list[int] = []  # => elements strictly greater than pivot
@@ -27,12 +27,12 @@ def naive_first_pivot_select(arr: list[int], k: int, counter: list[int]) -> int:
         else:  # => equal to the pivot itself
             pivots.append(x)  # => collects it
     if k < len(lows):  # => the k-th smallest lives entirely within lows
-        return naive_first_pivot_select(
+        return naive_first_pivot_select(  # => opens the left-partition recursion
             lows, k, counter
         )  # => recurse into just that partition
     if k < len(lows) + len(pivots):  # => k lands within the pivot-equal group
         return pivot  # => k lands inside the pivot-equal group -- done
-    return naive_first_pivot_select(
+    return naive_first_pivot_select(  # => opens the right-partition recursion
         highs, k - len(lows) - len(pivots), counter
     )  # => recurse into the remainder
 
@@ -47,7 +47,7 @@ def median_of_medians_select(arr: list[int], k: int, counter: list[int]) -> int:
         group = sorted(arr[i : i + 5])  # => sorting 5 elements is O(1) work
         counter[0] += len(group)  # => charges that bounded cost
         medians.append(group[len(group) // 2])  # => the middle of each group of 5
-    pivot = median_of_medians_select(
+    pivot = median_of_medians_select(  # => opens the median-of-medians recursive call
         medians, len(medians) // 2, counter
     )  # => recursively finds the MEDIAN OF the medians -- the key trick
     lows: list[int] = []  # => elements strictly less than pivot
@@ -65,28 +65,29 @@ def median_of_medians_select(arr: list[int], k: int, counter: list[int]) -> int:
     # => so recursion always shrinks by at least a constant fraction -- this
     # => is what bounds total work to O(n), unlike Example 8's O(n^2) case
     if k < len(lows):  # => the k-th smallest lives entirely within lows
-        return median_of_medians_select(
+        return median_of_medians_select(  # => opens the left-partition recursion
             lows, k, counter
         )  # => recurse into just that partition
     if k < len(lows) + len(pivots):  # => k lands within the pivot-equal group
         return pivot  # => k lands inside the pivot-equal group -- done
-    return median_of_medians_select(
+    return median_of_medians_select(  # => opens the right-partition recursion
         highs, k - len(lows) - len(pivots), counter
     )  # => recurse rightward
 
 
+# => index 0 is used as a shared mutable comparison counter, since ints are immutable
 naive_counter = [0]  # => a single-element list works as a mutable accumulator
 mom_counter = [0]  # => same trick, for the median-of-medians comparison count
 for n in (200, 400):  # => DOUBLING the input size isolates the growth rate
     sorted_input = list(range(n))  # => Example 8's exact adversarial case
     counter = [0]  # => a fresh counter for this run
-    naive_first_pivot_select(
+    naive_first_pivot_select(  # => opens the naive-strategy timing run
         list(sorted_input), n // 2, counter
     )  # => runs the naive version
     naive_counter.append(counter[0])  # => records comparisons at this n
 
     counter = [0]  # => a fresh counter for this run
-    median_of_medians_select(
+    median_of_medians_select(  # => opens the guaranteed-strategy timing run
         list(sorted_input), n // 2, counter
     )  # => runs the guaranteed version
     mom_counter.append(counter[0])  # => records comparisons at this n
@@ -98,26 +99,27 @@ print(mom_counter[1:])  # => Output: [1083, 2299]
 print(round(naive_ratio, 1))  # => Output: 4.0 -- doubling n QUADRUPLES the cost
 print(round(mom_ratio, 1))  # => Output: 2.1 -- doubling n roughly DOUBLES the cost
 
+# => a doubling-ratio near 4 is the signature of quadratic growth, near 2 of linear
 assert naive_ratio > 3.5  # => confirms Example 8's naive pivot is QUADRATIC (~4x)
 assert mom_ratio < 2.5  # => confirms median-of-medians stays LINEAR (~2x), guaranteed
 
-correctness_input = [
-    37,
-    2,
-    91,
-    15,
-    4,
-    68,
-    23,
-    5,
-    100,
-    12,
-    44,
-    8,
+correctness_input = [  # => opens the small, arbitrary correctness-check array
+    37,  # => an arbitrary value
+    2,  # => an arbitrary value
+    91,  # => an arbitrary value
+    15,  # => an arbitrary value
+    4,  # => an arbitrary value
+    68,  # => an arbitrary value
+    23,  # => an arbitrary value
+    5,  # => an arbitrary value
+    100,  # => an arbitrary value
+    12,  # => an arbitrary value
+    44,  # => an arbitrary value
+    8,  # => an arbitrary value
 ]  # => a small, arbitrary array
 for k in range(len(correctness_input)):  # => checks EVERY rank, not just the median
     expected = sorted(correctness_input)[k]  # => the ground-truth k-th smallest
-    got = median_of_medians_select(
+    got = median_of_medians_select(  # => opens the algorithm's own rank-k lookup
         list(correctness_input), k, [0]
     )  # => the algorithm's own answer
     assert got == expected  # => correctness holds regardless of the pivot strategy

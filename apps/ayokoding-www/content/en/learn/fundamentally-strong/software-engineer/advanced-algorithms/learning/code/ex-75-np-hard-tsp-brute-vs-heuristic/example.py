@@ -8,6 +8,7 @@
 import itertools  # => generates every permutation for the brute-force search
 import math  # => hypot() for Euclidean distance, factorial() for the search-space size
 
+# => (x, y) coordinates in an arbitrary 2D plane, used for straight-line distance
 Point = tuple[float, float]  # => an (x, y) coordinate
 
 
@@ -15,7 +16,7 @@ def dist(a: Point, b: Point) -> float:  # => straight-line (Euclidean) distance
     return math.hypot(a[0] - b[0], a[1] - b[1])  # => the distance formula, built in
 
 
-def tour_length(
+def tour_length(  # => sums every consecutive edge, wrapping the tour back to the start
     order: tuple[int, ...], cities: list[Point]
 ) -> float:  # => total tour distance
     total = 0.0  # => running sum of edge lengths
@@ -23,13 +24,13 @@ def tour_length(
     for i in range(  # => opens the edge-summing loop
         n  # => one edge per city in the tour
     ):  # => sums edge (i -> i+1), wrapping the LAST city back to the first
-        total += dist(
+        total += dist(  # => opens the edge-distance addition
             cities[order[i]], cities[order[(i + 1) % n]]
         )  # => this edge's length
     return total  # => the complete tour's total distance
 
 
-def brute_force_tsp(
+def brute_force_tsp(  # => tries EVERY ordering to guarantee the optimal tour
     cities: list[Point],
 ) -> tuple[tuple[int, ...], float]:  # => O(n!) exhaustive
     # => tries EVERY possible ordering -- guaranteed optimal, but O(n!) work
@@ -41,19 +42,19 @@ def brute_force_tsp(
     ):  # => fixes city 0 as the start -- a cyclic tour has no unique "first" city anyway
         order = (0,) + perm  # => reattaches the fixed starting city
         length = tour_length(order, cities)  # => this candidate ordering's total length
-        if (
+        if (  # => opens the new-shortest-tour check
             best_length is None or length < best_length
         ):  # => a strictly shorter tour was found
             best_length = length  # => tracks the shortest tour seen so far
             best_order = order  # => and the ordering that produced it
-    assert (
+    assert (  # => opens the at-least-one-permutation sanity check
         best_order is not None
         and best_length is not None  # => at least one permutation ran
     )  # => n >= 1 guarantees a result
     return best_order, best_length  # => the PROVABLY optimal tour and its length
 
 
-def nearest_neighbor_tsp(
+def nearest_neighbor_tsp(  # => greedily hops to the closest unvisited city each step
     cities: list[Point],
 ) -> tuple[list[int], float]:  # => O(n^2) greedy
     # => GREEDILY hops to the closest unvisited city -- O(n^2), no backtracking
@@ -93,17 +94,17 @@ cities: list[Point] = [  # => opens the 7-city coordinate literal
 brute_order, brute_length = brute_force_tsp(cities)  # => the guaranteed-optimal tour
 nn_order, nn_length = nearest_neighbor_tsp(cities)  # => the fast, non-optimal tour
 print(round(brute_length, 2))  # => Output: 18.81 -- the PROVABLY shortest possible tour
-print(
+print(  # => opens the greedy-tour-length print call
     round(nn_length, 2)  # => greedy's own tour length, rounded for display
 )  # => Output: 22.19 -- greedy's tour, longer but found MUCH faster
 
 assert brute_length <= nn_length  # => brute force NEVER loses -- it tries every option
-assert (
+assert (  # => opens the greedy-is-meaningfully-worse check
     nn_length
     > brute_length
     * 1.1  # => greedy's tour is at least 10% longer, genuinely suboptimal
 )  # => confirms the heuristic is genuinely SUBOPTIMAL here
-assert (
+assert (  # => opens the exact-search-space-size check
     math.factorial(len(cities) - 1)
     == 720  # => 6! = 720, the exact brute-force search space
 )  # => brute force's search space: 6! orderings for 7 cities

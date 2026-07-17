@@ -23,9 +23,9 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
 
 def heapsort(items: list[int]) -> None:  # => sorts items IN PLACE, ascending
     n = len(items)  # => n = the number of elements to sort
-    for start in range(
-        n // 2 - 1,
-        -1,
+    for start in range(  # => opens the bottom-up heap-build range
+        n // 2 - 1,  # => the last non-leaf parent index
+        -1,  # => stops just before index 0
         -1,  # => starts at the last non-leaf parent, walks toward the root
     ):  # => builds a max-heap bottom-up, O(n) total
         sift_down(items, start, n - 1)  # => fixes each subtree, from the last parent up

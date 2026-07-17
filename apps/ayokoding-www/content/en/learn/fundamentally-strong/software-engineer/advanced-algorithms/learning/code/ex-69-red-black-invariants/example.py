@@ -50,26 +50,25 @@ class RedBlackTree:  # => wraps the root pointer and the insert/fixup/rotation l
 
     def _fixup(self, node: RBNode) -> None:  # => the classic CLRS red-black fixup loop
         while (  # => opens the red-red-violation loop condition
-            node.parent is not None
+            node.parent is not None  # => stops once node reaches the (black) root
             and node.parent.color == Color.RED  # => parent exists and is RED
         ):  # => a red-red violation exists between node and its parent
             grandparent = node.parent.parent  # => needed to identify node's UNCLE
             assert (  # => opens the non-root-parent sanity check
-                grandparent
-                is not None  # => guaranteed by the red-red-violation loop condition
+                grandparent is not None  # => guaranteed by the loop's own condition
             )  # => a red parent is never the root (root is black)
             if node.parent == grandparent.left:  # => parent is a LEFT child
                 uncle = grandparent.right  # => the OTHER child of the grandparent
                 if (  # => opens the red-uncle check
-                    uncle is not None
+                    uncle is not None  # => a genuine sibling subtree exists
                     and uncle.color == Color.RED  # => uncle exists and is RED
                 ):  # => RED uncle: recolor
                     node.parent.color = Color.BLACK  # => pushes the red-red fix upward
-                    uncle.color = (
-                        Color.BLACK
+                    uncle.color = (  # => opens the uncle recolor
+                        Color.BLACK  # => the uncle turns black
                     )  # => keeps black-height balanced on both sides
-                    grandparent.color = (
-                        Color.RED
+                    grandparent.color = (  # => opens the grandparent recolor
+                        Color.RED  # => grandparent turns red, absorbing the fix
                     )  # => grandparent may now violate red-red itself
                     node = grandparent  # => the violation may have moved UP -- keep looping
                 else:  # => BLACK (or absent) uncle: rotation(s) needed
@@ -77,56 +76,58 @@ class RedBlackTree:  # => wraps the root pointer and the insert/fixup/rotation l
                         node
                         == node.parent.right  # => node is the RIGHT child of a LEFT-child parent
                     ):  # => a "zig-zag" shape -- straighten first
-                        node = (
-                            node.parent
+                        node = (  # => opens the pre-rotation re-anchor
+                            node.parent  # => the parent becomes the new pivot node
                         )  # => re-anchors node at the parent for the pre-rotation
-                        self._rotate_left(
-                            node
+                        self._rotate_left(  # => opens the zig-zag-straightening rotation
+                            node  # => rotates around the re-anchored node
                         )  # => converts zig-zag into a straight zig-zig
                     assert node.parent is not None  # => the fixup loop guarantees this
                     node.parent.color = Color.BLACK  # => recolors after the rotation
-                    grandparent.color = (
-                        Color.RED
+                    grandparent.color = (  # => opens the grandparent recolor
+                        Color.RED  # => grandparent turns red before dropping down
                     )  # => grandparent drops down and turns red
-                    self._rotate_right(
-                        grandparent
+                    self._rotate_right(  # => opens the final balance-restoring rotation
+                        grandparent  # => rotates around the grandparent
                     )  # => the final rotation restores balance
             else:  # => the mirror image: parent is a RIGHT child
                 uncle = grandparent.left  # => the OTHER child of the grandparent
-                if (
-                    uncle is not None and uncle.color == Color.RED
+                if (  # => opens the mirrored red-uncle check
+                    uncle is not None  # => a genuine sibling subtree exists
+                    and uncle.color == Color.RED  # => uncle exists and is RED
                 ):  # => RED uncle: recolor case
                     node.parent.color = Color.BLACK  # => pushes the red-red fix upward
-                    uncle.color = (
-                        Color.BLACK
+                    uncle.color = (  # => opens the uncle recolor
+                        Color.BLACK  # => the uncle turns black
                     )  # => keeps black-height balanced on both sides
-                    grandparent.color = (
-                        Color.RED
+                    grandparent.color = (  # => opens the grandparent recolor
+                        Color.RED  # => grandparent turns red, absorbing the fix
                     )  # => grandparent may now violate red-red itself
                     node = grandparent  # => the violation may have moved UP -- keep looping
                 else:  # => BLACK (or absent) uncle: rotation(s) needed
-                    if (
-                        node == node.parent.left
+                    if (  # => opens the mirrored zig-zag-shape check
+                        node == node.parent.left  # => node is the LEFT child here
                     ):  # => a "zig-zag" shape -- straighten first case
-                        node = (
-                            node.parent
+                        node = (  # => opens the pre-rotation re-anchor
+                            node.parent  # => the parent becomes the new pivot node
                         )  # => re-anchors node at the parent for the pre-rotation
-                        self._rotate_right(
-                            node
+                        self._rotate_right(  # => opens the zig-zag-straightening rotation
+                            node  # => rotates around the re-anchored node
                         )  # => converts zig-zag into a straight zig-zig
                     assert node.parent is not None  # => the fixup loop guarantees this
                     node.parent.color = Color.BLACK  # => recolors after the rotation
-                    grandparent.color = (
-                        Color.RED
+                    grandparent.color = (  # => opens the grandparent recolor
+                        Color.RED  # => grandparent turns red before dropping down
                     )  # => grandparent drops down and turns red
-                    self._rotate_left(
-                        grandparent
+                    self._rotate_left(  # => opens the final balance-restoring rotation
+                        grandparent  # => rotates around the grandparent
                     )  # => the final rotation restores balance
         assert self.root is not None  # => the tree is non-empty after any insert
         self.root.color = Color.BLACK  # => THE INVARIANT: the root is always black
 
-    def _rotate_left(
-        self, x: RBNode
+    def _rotate_left(  # => standard BST left rotation, plus parent-pointer upkeep
+        self,  # => the tree instance, so self.root can be updated if needed
+        x: RBNode,  # => the node rotating down; its right child rises
     ) -> None:  # => standard BST left rotation, plus parent links
         y = x.right  # => y is guaranteed non-None whenever this is called
         assert y is not None  # => only called when x has a right child
@@ -164,16 +165,18 @@ def no_red_red_violation(node: RBNode | None) -> bool:  # => INVARIANT 1 checker
     if node is None:  # => an absent child counts as black -- no violation possible
         return True  # => nothing to violate at an empty leaf
     if node.color == Color.RED:  # => a red node's children must BOTH be non-red
-        if (
-            node.left is not None and node.left.color == Color.RED
+        if (  # => opens the left-child red-red check
+            node.left is not None  # => a genuine left child exists
+            and node.left.color == Color.RED  # => and it's also RED -- a violation
         ):  # => red-red on the left
             return False  # => a genuine violation
-        if (
-            node.right is not None and node.right.color == Color.RED
+        if (  # => opens the right-child red-red check
+            node.right is not None  # => a genuine right child exists
+            and node.right.color == Color.RED  # => and it's also RED -- a violation
         ):  # => red-red on the right
             return False  # => a genuine violation
-    return no_red_red_violation(
-        node.left
+    return no_red_red_violation(  # => opens the left-subtree recursive check
+        node.left  # => recursively checks the left subtree
     ) and no_red_red_violation(  # => checks the left subtree
         node.right  # => and the right subtree
     )  # => recursively checks the whole tree

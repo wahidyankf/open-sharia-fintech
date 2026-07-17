@@ -8,7 +8,7 @@
 def min_cost_path(grid: list[list[int]]) -> int:  # => O(rows*cols) time and space
     rows, cols = len(grid), len(grid[0])  # => the grid's dimensions
     dp: list[list[int]] = [  # => opens the 2D table construction
-        [0] * cols
+        [0] * cols  # => one zero-filled row per grid row
         for _ in range(rows)  # => one fresh row of zeros per grid row
     ]  # => dp[r][c] = min cost to reach (r, c) from (0, 0)
     dp[0][0] = grid[0][0]  # => base case: reaching the start costs just its own cell
@@ -21,7 +21,7 @@ def min_cost_path(grid: list[list[int]]) -> int:  # => O(rows*cols) time and spa
     for r in range(1, rows):  # => fills the rest of the table, row by row
         for c in range(1, cols):  # => and column by column within each row
             dp[r][c] = grid[r][c] + min(  # => opens the cheaper-predecessor comparison
-                dp[r - 1][c],
+                dp[r - 1][c],  # => cost of arriving from directly above
                 dp[r][c - 1],  # => cost via above vs cost via the left
             )  # => cheaper of "came from above" or "came from the left"
     return dp[rows - 1][  # => opens the final-cell lookup
@@ -37,14 +37,16 @@ def min_cost_path_brute_force(grid: list[list[int]]) -> int:  # => O(2^(rows+col
             return grid[r][c]  # => just this cell's own cost
         if r == rows - 1:  # => bottom row -- the ONLY option is moving right
             return grid[r][c] + recurse(
-                r, c + 1
+                r,  # => stays on the same, bottom row
+                c + 1,  # => the only reachable neighbor from the bottom row
             )  # => this cell's cost plus moving right
         if c == cols - 1:  # => rightmost column -- the ONLY option is moving down
             return grid[r][c] + recurse(
-                r + 1, c
+                r + 1,  # => moves down a row
+                c,  # => the only reachable neighbor from the rightmost column
             )  # => this cell's cost plus moving down
         return grid[r][c] + min(  # => opens the both-directions comparison
-            recurse(r + 1, c),
+            recurse(r + 1, c),  # => cost of continuing downward
             recurse(r, c + 1),  # => cost via down vs cost via right
         )  # => tries BOTH directions, no reuse of overlapping subproblems
 

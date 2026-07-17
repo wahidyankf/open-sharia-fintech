@@ -42,8 +42,9 @@ def nlogn_steps(n: int) -> int:  # => STATED complexity: O(n log n)
 
 sizes: list[int] = [128, 256, 512, 1024]  # => four sizes, each DOUBLING the last
 
-binary_search_counts = [
-    binary_search_steps(n) for n in sizes
+binary_search_counts = [  # => opens the O(log n) step-count collection
+    binary_search_steps(n)  # => this size's own worst-case step count
+    for n in sizes  # => this size's own step count
 ]  # => O(log n) step counts
 linear_counts = [linear_steps(n) for n in sizes]  # => O(n) step counts
 nlogn_counts = [nlogn_steps(n) for n in sizes]  # => O(n log n) step counts
@@ -52,18 +53,18 @@ print(linear_counts)  # => Output: [128, 256, 512, 1024]
 print(nlogn_counts)  # => Output: [896, 2048, 4608, 10240]
 
 for i in range(1, len(sizes)):  # => walks each consecutive doubling step
-    log_diff = (
+    log_diff = (  # => opens the O(log n) step-count difference
         binary_search_counts[i] - binary_search_counts[i - 1]
     )  # => growth in step count
-    linear_ratio = (
+    linear_ratio = (  # => opens the O(n) step-count ratio
         linear_counts[i] / linear_counts[i - 1]
     )  # => growth ratio, not difference
-    nlogn_ratio = (
+    nlogn_ratio = (  # => opens the O(n log n) step-count ratio
         nlogn_counts[i] / nlogn_counts[i - 1]
     )  # => growth ratio, not difference
     assert log_diff == 1  # => O(log n): doubling n adds EXACTLY one more halving step
     assert 1.9 <= linear_ratio <= 2.1  # => O(n): doubling n DOUBLES the step count
-    assert (
+    assert (  # => opens the O(n log n) growth-rate check
         2.1 <= nlogn_ratio <= 2.4
     )  # => O(n log n): doubling n MORE than doubles the count (converging toward 2x)
 print("ex-78 OK")  # => Output: ex-78 OK

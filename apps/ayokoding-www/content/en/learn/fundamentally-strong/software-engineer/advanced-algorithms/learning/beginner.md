@@ -555,7 +555,8 @@ The merge step's defining invariant is that its output stays sorted after every 
 
 
 def merge_with_invariant_check(  # => opens the signature -- wraps for line length
-    left: list[int], right: list[int]  # => both inputs must already be sorted
+    left: list[int],
+    right: list[int],  # => both inputs must already be sorted
 ) -> list[int]:  # => merges two sorted lists, asserting sortedness after each step
     result: list[int] = []  # => the merged output, built one element at a time
     i = j = 0  # => cursors into left and right respectively
@@ -1014,8 +1015,10 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
 
 def heapsort(items: list[int]) -> None:  # => sorts items IN PLACE, ascending
     n = len(items)  # => n = the number of elements to sort
-    for start in range(
-        n // 2 - 1, -1, -1  # => starts at the last non-leaf parent, walks toward the root
+    for start in range(  # => opens the bottom-up heap-build range
+        n // 2 - 1,  # => the last non-leaf parent index
+        -1,  # => stops just before index 0
+        -1,  # => starts at the last non-leaf parent, walks toward the root
     ):  # => builds a max-heap bottom-up, O(n) total
         sift_down(items, start, n - 1)  # => fixes each subtree, from the last parent up
     for end in range(n - 1, 0, -1):  # => repeatedly extracts the current maximum
@@ -1187,7 +1190,8 @@ Radix sort sorts fixed-width integers one digit at a time, starting from the Lea
 
 
 def counting_sort_by_digit(  # => one STABLE counting-sort pass over a single digit
-    items: list[int], digit_place: int  # => digit_place selects ones/tens/hundreds/...
+    items: list[int],
+    digit_place: int,  # => digit_place selects ones/tens/hundreds/...
 ) -> list[int]:  # => sorts by ONE digit (0-9) at digit_place, stably
     counts: list[int] = [0] * 10  # => one bucket per digit value, 0 through 9
     for value in items:  # => O(n): tallies each item's digit at this place
@@ -1591,7 +1595,8 @@ def height(root: Node | None) -> int:  # => longest path from root to a leaf, in
     if root is None:  # => an empty (sub)tree has height -1 by convention
         return -1  # => makes a single-node tree height 0, matching graph-theory height
     return 1 + max(  # => opens the "1 + taller subtree" recursive height formula
-        height(root.left), height(root.right)  # => recurses into BOTH children
+        height(root.left),
+        height(root.right),  # => recurses into BOTH children
     )  # => 1 + the taller child's height
 
 
@@ -1599,7 +1604,8 @@ sorted_keys: list[int] = list(range(20))  # => 0, 1, 2, ..., 19 -- ALREADY SORTE
 degenerate_root: Node | None = None  # => starts empty
 for k in sorted_keys:  # => inserting in ascending order is the worst case for a BST
     degenerate_root = insert(  # => rebinds root each time, in case the tree was empty
-        degenerate_root, k  # => k is always larger than every key inserted so far
+        degenerate_root,
+        k,  # => k is always larger than every key inserted so far
     )  # => each new key attaches on the right
 
 tree_height = height(degenerate_root)  # => how many edges from root to the deepest leaf
@@ -1834,7 +1840,8 @@ class CountingTrie:  # => a trie augmented for O(len(prefix)) prefix counting
         node.is_word_end = True  # => marks the final node as a complete word
 
     def count_with_prefix(  # => reads the count off the prefix's terminal node directly
-        self, prefix: str  # => the prefix string to look up -- may be empty
+        self,
+        prefix: str,  # => the prefix string to look up -- may be empty
     ) -> int:  # => O(len(prefix)): how many inserted words start with prefix
         node = self.root  # => starts at the root
         for ch in prefix:  # => walks exactly len(prefix) hops
@@ -2043,7 +2050,8 @@ from collections import deque  # => O(1) popleft, unlike list.pop(0)'s O(n)
 
 
 def bfs_distances(  # => level-order queue traversal from a single start node
-    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
+    graph: dict[str, list[str]],
+    start: str,  # => adjacency map plus the origin node
 ) -> dict[str, int]:  # => node -> fewest hops from start
     distances: dict[str, int] = {start: 0}  # => the start node is 0 hops from itself
     frontier: deque[str] = deque([start])  # => the BFS queue, seeded with start
@@ -2145,7 +2153,8 @@ DFS plunges as deep as possible before backtracking, using the call stack itself
 
 
 def dfs_visit_order(  # => plunges depth-first via the recursive call stack
-    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
+    graph: dict[str, list[str]],
+    start: str,  # => adjacency map plus the origin node
 ) -> list[str]:  # => the order nodes are first visited
     visited: set[str] = set()  # => tracks nodes already seen, so none repeat
     order: list[str] = []  # => records the order this DFS actually visits nodes
@@ -2246,7 +2255,7 @@ CLRS-style DFS stamps every node with a discovery time (when first seen) and a f
 # BLACK). The parenthesis theorem: any two nodes' [disc, fin] intervals are
 # either NESTED (one fully inside the other) or DISJOINT -- never partially
 # overlapping, because a node can't finish before all its descendants do.
-from enum import Enum, auto
+from enum import Enum, auto  # => Color is an Enum, not a bare string, for type safety
 
 
 class Color(Enum):  # => the three DFS visitation states
@@ -2256,10 +2265,12 @@ class Color(Enum):  # => the three DFS visitation states
 
 
 def dfs_timestamps(  # => CLRS-style DFS that stamps a discovery and finish tick per node
-    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
+    graph: dict[str, list[str]],  # => the adjacency map to traverse
+    start: str,  # => adjacency map plus the origin node
 ) -> tuple[dict[str, int], dict[str, int]]:  # => (discovery times, finish times)
     color: dict[str, Color] = {  # => opens the dict-comprehension initializing colors
-        node: Color.WHITE for node in graph  # => every node starts undiscovered
+        node: Color.WHITE
+        for node in graph  # => every node starts undiscovered
     }  # => everyone starts WHITE
     disc: dict[str, int] = {}  # => node -> the tick it was first discovered
     fin: dict[str, int] = {}  # => node -> the tick it was fully finished
@@ -2283,7 +2294,8 @@ def dfs_timestamps(  # => CLRS-style DFS that stamps a discovery and finish tick
 
 
 def intervals_are_nested_or_disjoint(  # => checks all C(n,2) node pairs, O(n^2) total
-    disc: dict[str, int], fin: dict[str, int]  # => the two timestamp maps to validate
+    disc: dict[str, int],
+    fin: dict[str, int],  # => the two timestamp maps to validate
 ) -> bool:  # => the parenthesis-theorem check itself
     nodes = list(disc.keys())  # => every DFS-visited node
     for i, u in enumerate(nodes):  # => compares every unordered PAIR of nodes once
@@ -2307,6 +2319,7 @@ graph: dict[str, list[str]] = {  # => a small directed graph with a branch and a
     "c": ["d"],  # => "c" also merges into "d", after "b"'s subtree already finished
     "d": [],  # => the merge point -- a sink node with no outgoing edges
 }  # => closes the adjacency map -- 4 nodes, one branch-and-merge diamond
+# runs the full timestamped DFS from "a" once, producing both timestamp maps
 disc, fin = dfs_timestamps(graph, "a")  # => runs the timestamped DFS from "a"
 print(disc)  # => Output: {'a': 0, 'b': 1, 'd': 2, 'c': 5}
 print(fin)  # => Output: {'d': 3, 'b': 4, 'c': 6, 'a': 7}
@@ -2316,7 +2329,8 @@ assert fin["a"] == max(  # => opens the "a finishes last" comparison
     fin.values()  # => every node's finish tick, to find the overall maximum
 )  # => the start node's subtree covers everything -- it finishes LAST
 assert intervals_are_nested_or_disjoint(  # => opens the parenthesis-theorem check
-    disc, fin  # => passes both timestamp maps collected during the DFS run above
+    disc,
+    fin,  # => passes both timestamp maps collected during the DFS run above
 )  # => confirms the parenthesis theorem holds for this DFS run
 print("ex-21 OK")  # => Output: ex-21 OK
 ```
@@ -2598,7 +2612,8 @@ A sliding window reuses the previous window's sum instead of recomputing it from
 
 
 def brute_force_max_window_sum(  # => the naive baseline, used only to check correctness
-    items: list[int], k: int  # => the data and the fixed window width
+    items: list[int],
+    k: int,  # => the data and the fixed window width
 ) -> int:  # => O(n*k): re-sums every window from scratch
     best = sum(items[:k])  # => the first window's sum, as a starting baseline
     for start in range(1, len(items) - k + 1):  # => tries every other window position
@@ -2608,7 +2623,8 @@ def brute_force_max_window_sum(  # => the naive baseline, used only to check cor
 
 
 def sliding_window_max_sum(  # => the O(n) fast path, reusing the previous window's sum
-    items: list[int], k: int  # => same signature as the brute-force version above
+    items: list[int],
+    k: int,  # => same signature as the brute-force version above
 ) -> int:  # => O(n): each element enters and leaves the window exactly once
     window_sum = sum(items[:k])  # => O(k), but only ONCE -- the very first window
     best = window_sum  # => tracks the best sum found so far
