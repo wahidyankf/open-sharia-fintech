@@ -86,3 +86,6 @@ weight: 1750
 - [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms/drilling)
+- [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/drilling)
