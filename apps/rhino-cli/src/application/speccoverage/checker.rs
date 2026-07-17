@@ -25,9 +25,13 @@ use super::util::{first_non_empty, normalize_ws, unescape_string};
 // ============================================================
 
 /// Matches a TypeScript/JavaScript `Scenario("title", …)` call. The `(?s)`
-/// flag is functionally inert here (the pattern has no `.` metacharacter)
-/// but kept for symmetry with `step_def_re()`, signaling that callers scan
-/// the whole file content rather than a single line.
+/// flag (dot-matches-newline) is kept for symmetry with `step_def_re()`,
+/// signaling that callers scan the whole file content rather than a single
+/// line. The pattern's only `.` usages are inside `\\.` (escaped-char
+/// consumption inside quoted titles); with `(?s)` on, that also matches a
+/// backslash followed by a literal newline, but that is not a realistic
+/// case in a Scenario title, so `(?s)` does not change matching output for
+/// real calls.
 fn scenario_def_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {

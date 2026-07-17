@@ -266,11 +266,6 @@ fn when_run(w: &mut SpecWorld) {
     w.exec(&[]);
 }
 
-#[when("the developer runs behavior-coverage validate on the specs and app directories")]
-fn when_run_behavior_coverage(w: &mut SpecWorld) {
-    w.exec(&[]);
-}
-
 #[when("the developer runs spec-coverage validate with shared-steps flag")]
 fn when_run_shared(w: &mut SpecWorld) {
     w.exec(&["--shared-steps"]);
