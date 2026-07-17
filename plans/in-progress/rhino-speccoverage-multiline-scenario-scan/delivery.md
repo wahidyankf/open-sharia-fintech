@@ -221,32 +221,39 @@ lives in `ose-public` alone.
 
 ### Commit Guidelines — Phase 1
 
-- [ ] [AI] Commit thematically, Conventional Commits format, split by concern:
+- [x] [AI] Commit thematically, Conventional Commits format, split by concern:
       `fix(rhino-cli): scan whole file content for TS scenario titles` (source + unit fixtures);
       `test(rhino-cli): add cross-line scenario-coverage behavior scenario` (feature + binder);
       `docs(specs): update spec-coverage scenario count` (README table)
-- [ ] [AI] Commit and push to origin `rhino-speccoverage-multiline-scenario-scan` (the PR branch)
-- [ ] [AI] Create the ose-public draft PR (skip if a PR for this branch already exists):
+      — done: 4 commits — the 3 named above plus `chore(plans): track Phase 0-1 delivery progress`
+      for the plan-tracking docs
+- [x] [AI] Commit and push to origin `rhino-speccoverage-multiline-scenario-scan` (the PR branch)
+      — done: pushed, new branch tracking `origin/rhino-speccoverage-multiline-scenario-scan`
+- [x] [AI] Create the ose-public draft PR (skip if a PR for this branch already exists):
       `gh pr create --draft --title "fix(rhino-cli): scan whole file content for TS scenario titles" --body "Fixes the speccoverage multi-line Scenario(...) title scan (see plans/in-progress/rhino-speccoverage-multiline-scenario-scan/ for full context)." --base main --head rhino-speccoverage-multiline-scenario-scan`
       — acceptance: `gh pr view --json state` shows OPEN
+      — done: PR #62 created — https://github.com/wahidyankf/ose-public/pull/62
 
 ### Post-Push CI Verification — Phase 1
 
-- [ ] [AI] Monitor GitHub Actions workflows triggered by the push: poll
+- [x] [AI] Monitor GitHub Actions workflows triggered by the push: poll
       `gh run view --json status,conclusion` every ~2 min per the
       [CI monitoring convention](../../../repo-governance/development/workflow/ci-monitoring.md) —
       no tight-loop, never `gh run watch`
-- [ ] [AI] Verify ALL CI checks pass; if any fails, fix at root cause and push a follow-up commit
-- [ ] [AI] Do NOT proceed to Phase 2 until CI is fully green
+      — done: polled via background job, no tight-loop
+- [x] [AI] Verify ALL CI checks pass; if any fails, fix at root cause and push a follow-up commit
+      — done: `gh pr checks 62` — 20 passed, 0 failed
+- [x] [AI] Do NOT proceed to Phase 2 until CI is fully green
+      — done: confirmed fully green before starting Phase 2
 
 ### Phase 1 Gate
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles` — all pass
-- [ ] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage` — AC-4 passes
-- [ ] [AI] `npx nx run rhino-cli:specs:behavior:coverage` — exits 0
-- [ ] [AI] CI is green on the pushed commit
+- [x] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles` — all pass
+- [x] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage` — AC-4 passes
+- [x] [AI] `npx nx run rhino-cli:specs:behavior:coverage` — exits 0
+- [x] [AI] CI is green on the pushed commit — 20/20 checks passed on PR #62
 
 > **Pause Safety**: the scanner is fixed and fully covered; the web-ui hacks are untouched and still
 > valid. The repo compiles and all gates pass. Safe to stop. To resume:
@@ -258,26 +265,33 @@ lives in `ose-public` alone.
 
 > _Suggested executor: `swe-typescript-dev`_
 
-- [ ] [AI] Remove the `// prettier-ignore` comment above the two wrapped `Scenario(` calls in
+- [x] [AI] Remove the `// prettier-ignore` comment above the two wrapped `Scenario(` calls in
       `libs/web-ui/src/primitives/code-block/code-block.steps.tsx` (comments at lines 155 and 190),
       then run Prettier so it re-wraps the calls naturally:
       `npx prettier --write libs/web-ui/src/primitives/code-block/code-block.steps.tsx`
       — acceptance: `grep -n "prettier-ignore" libs/web-ui/src/primitives/code-block/code-block.steps.tsx` returns no matches
-- [ ] [AI] Remove the `// prettier-ignore` comment above the wrapped `Scenario(` call in
+      — done: both removed; prettier re-wrapped both titles onto their own line
+- [x] [AI] Remove the `// prettier-ignore` comment above the wrapped `Scenario(` call in
       `libs/web-ui/src/primitives/code-block/copy-button.steps.tsx` (comment at line 45), then run
       `npx prettier --write libs/web-ui/src/primitives/code-block/copy-button.steps.tsx`
       — acceptance: `grep -n "prettier-ignore" libs/web-ui/src/primitives/code-block/copy-button.steps.tsx` returns no matches
-- [ ] [AI] Verify the web-ui spec-coverage gate stays green now that titles are re-wrapped:
+      — done: removed; prettier reformatted
+- [x] [AI] Verify the web-ui spec-coverage gate stays green now that titles are re-wrapped:
       `npx nx run web-ui:specs:behavior:coverage`
       — acceptance: exits 0 with zero scenario gaps (AC-5)
-- [ ] [AI] Verify the web-ui unit tests still pass (step files still execute):
+      — done: "Spec coverage valid! 21 specs, 118 scenarios, 311 steps — all covered."
+- [x] [AI] Verify the web-ui unit tests still pass (step files still execute):
       `npx nx run web-ui:test:unit`
       — acceptance: exits 0
+      — done: "Successfully ran target test:unit for project web-ui"
 
 ### Local Quality Gates (Before Push) — Phase 2
 
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — all exit 0
-- [ ] [AI] Fix ALL failures found, including preexisting ones (Root Cause Orientation)
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` — all exit 0
+      — done: "Successfully ran targets typecheck, lint, test:quick, specs:behavior:coverage for 26
+      projects and 6 tasks they depend on"
+- [x] [AI] Fix ALL failures found, including preexisting ones (Root Cause Orientation)
+      — done: no failures found
 
 ### Commit Guidelines — Phase 2
 
