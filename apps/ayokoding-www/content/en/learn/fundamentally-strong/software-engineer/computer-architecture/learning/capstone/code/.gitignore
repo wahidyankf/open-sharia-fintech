@@ -1,0 +1,10 @@
+# Mirrors ../../code/.gitignore. cache.c, cache_soa.c, and repr.c here are compiled locally
+# during authoring/review to capture real, verified output (DD-20), which leaves extension-less
+# binaries (and any generated .s/.o files) sitting next to their .c source. None of that build
+# output is ever meant to be committed -- only the source is. Unlike learning/code/, this
+# directory is flat (no per-example ex-NN-*/ subdirs), so the pattern is scoped directly to this
+# directory: keep the source (and this file), ignore everything else.
+*
+!*.c
+!*.h
+!.gitignore
