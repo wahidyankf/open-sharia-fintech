@@ -2651,3 +2651,7 @@ moving between languages more than the concept itself does -- Haskell and Scala 
 the SAME chaining operation under different names is what lets this topic's monad-law example
 (Example 78 in the Advanced tier) verify the same three laws regardless of which name a particular
 codebase happens to use.
+
+---
+
+← Previous: [Beginner Examples](./beginner.md) &middot; Next: [Advanced Examples](./advanced.md) →

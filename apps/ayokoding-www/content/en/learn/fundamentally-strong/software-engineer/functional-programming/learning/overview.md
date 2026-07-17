@@ -704,3 +704,7 @@ error handling, and an applicative combine into one end-to-end report.
 - [Example 78: A Case Where Laziness Saves Work, and One Where It Hides a Cost](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning/advanced#example-78-a-case-where-laziness-saves-work-and-one-where-it-hides-a-cost)
 - [Example 79: The Same Pipeline in `Option` vs. `Result`](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning/advanced#example-79-the-same-pipeline-in-option-vs-result)
 - [Example 80: A Functional-Core Log Analyzer With `Result` Errors and an Applicative Combine](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning/advanced#example-80-a-functional-core-log-analyzer-with-result-errors-and-an-applicative-combine)
+
+---
+
+← Previous: [22 · Programming Paradigms Drilling](../../programming-paradigms/drilling/overview.md) &middot; Next: [Beginner Examples](./beginner.md) →

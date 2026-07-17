@@ -2183,3 +2183,7 @@ None` guard is the caller honoring that contract, not defensive boilerplate.
 "`NoneType` has no attribute" error, far from where the `None` actually originated. Example 48 replaces
 this pattern with a hand-rolled `Option` type that forces the caller to unwrap explicitly, turning a
 possible runtime crash into a type-level obligation.
+
+---
+
+← Previous: [Overview](./overview.md) &middot; Next: [Intermediate Examples](./intermediate.md) →
