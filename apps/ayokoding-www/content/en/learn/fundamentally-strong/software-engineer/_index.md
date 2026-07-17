@@ -89,3 +89,6 @@ weight: 1750
 - [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/drilling)
+- [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)

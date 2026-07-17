@@ -86,7 +86,8 @@ def main() -> None:  # => the script's entry point
 
 # In production, pool.wait() at startup is optional but recommended -- without
 # it, the FIRST few requests after the process starts would pay a partial
-# connect cost while the pool lazily opens its minimum connections on demand.
-# it would open, connect, and add each of the 4 minimum connections one at a time.
+# connect cost while the pool lazily opens, connects, and adds each of its 4
+# minimum connections one at a time, on demand, instead of paying that setup
+# cost upfront before any request arrives.
 if __name__ == "__main__":  # => guards against running main() on `import example`
     main()  # => entry point -- runs everything above when executed as a script

@@ -136,6 +136,9 @@ def step2_index_tuning(conn: psycopg.Connection) -> None:
         # see and use it -- an uncommitted index is invisible to other queries.
         conn.commit()
 
+        # This becomes a regular Index Scan, not an Index-Only Scan (co-19) --
+        # the query also selects `amount`, which the composite index above does
+        # not cover, so the planner still visits the heap for that column.
         # AFTER: the composite index now exists -- expect NO Sort node.
         cur.execute(report_sql)
         # Same list-comprehension extraction as before_plan above -- kept
@@ -194,6 +197,10 @@ def step3_n_plus_1_fix(conn: psycopg.Connection) -> None:
     print("  JOIN fix: 1 total query")
 
 
+# `amount` is typed Decimal, not float, throughout this capstone -- money
+# arithmetic must avoid binary floating-point rounding error, and the
+# 700.00 + 700.00 = 1400.00 comparison against a 1000.00 limit below needs
+# to be an EXACT decimal comparison, not an approximately-correct one.
 # This is the UNSAFE half of Step 4's race -- it deliberately omits the row
 # lock that place_order_locked() below adds, reproducing the exact
 # check-then-act race pattern from Example 26's "before" version.
@@ -330,6 +337,9 @@ def step4_anomaly_resolution(conn: psycopg.Connection) -> None:
     # exceeding the limit if both are allowed to commit.
     # A shared list, appended to by both naive worker threads below.
     naive_results: list[str] = []
+    # Plain list.append() from multiple threads is safe here without an explicit
+    # Lock -- CPython's GIL makes each individual append() call atomic, and this
+    # code never reads naive_results until after both threads have joined below.
     threads = [
         threading.Thread(
             target=place_order_naive, args=(2, Decimal("700.00"), naive_results)

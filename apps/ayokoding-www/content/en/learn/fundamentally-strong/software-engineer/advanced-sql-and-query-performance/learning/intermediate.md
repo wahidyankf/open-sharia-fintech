@@ -4148,3 +4148,5 @@ exclusive lock for its duration; Example 75 covers `REFRESH ... CONCURRENTLY`, w
 readers at the cost of requiring a unique index on the view first.
 
 ---
+
+← Previous: [Beginner Examples](./beginner.md) &middot; Next: [Advanced Examples](./advanced.md) →

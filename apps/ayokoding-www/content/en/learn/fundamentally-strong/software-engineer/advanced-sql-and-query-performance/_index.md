@@ -10,3 +10,6 @@ weight: 360
   - [Beginner Examples](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/beginner)
   - [Intermediate Examples](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/intermediate)
   - [Advanced Examples](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/advanced)
+  - [Capstone](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/capstone)
+- [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling/overview)

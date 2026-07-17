@@ -60,9 +60,9 @@ An anchor (non-recursive) term establishes the starting rows, and a recursive te
 the working table back onto itself, adding new rows until a pass produces zero new rows. Over a
 graph that contains a cycle, the engine itself does not detect the cycle for you -- only an
 explicit guard in the RECURSIVE term (typically excluding any node already on the current path)
-stops the recursion; a guard placed anywhere else does not help (Example 6's counter; Example 30's
-cycle-safe graph walk; Kata 2 reproduces exactly what happens when the guard sits in the wrong
-term).
+stops the recursion; without one anywhere in the query, nothing stops it (Example 6's counter;
+Example 30's cycle-safe graph walk; Kata 2 reproduces exactly what happens when that guard is
+missing entirely).
 
 </details>
 
@@ -803,7 +803,7 @@ compares against the subquery's values directly; it only asks "did a matching ro
 
 </details>
 
-### Kata 2 -- a recursive CTE's cycle guard sits in the wrong term
+### Kata 2 -- a recursive CTE has no cycle guard at all
 
 _relates to co-03, Example 30_
 
@@ -812,7 +812,7 @@ reachable node exactly once. The version below is broken: the recursive term has
 revisiting an already-seen node, so the walk keeps retracing the cycle -- only an artificial depth
 cap keeps this demo from running forever.
 
-**Before** (`drilling/code/kata-02-recursive-cte-cycle-guard-misplaced/before/kata.sql`)
+**Before** (`drilling/code/kata-02-recursive-cte-cycle-guard-missing/before/kata.sql`)
 
 ```sql
 -- Kata 2 (before): a depth cap keeps this demo finite, but the MISSING cycle
@@ -859,7 +859,7 @@ node A is revisited at depth 4, and D is reached twice, at depth 2 AND depth 5):
 (8 rows)
 ```
 
-**After** (`drilling/code/kata-02-recursive-cte-cycle-guard-misplaced/after/kata.sql`)
+**After** (`drilling/code/kata-02-recursive-cte-cycle-guard-missing/after/kata.sql`)
 
 ```sql
 -- Kata 2 (after): the cycle guard sits in the RECURSIVE term, where it is

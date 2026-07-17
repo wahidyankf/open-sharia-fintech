@@ -1245,6 +1245,7 @@ import time
 
 import psycopg
 from psycopg.rows import TupleRow
+
 # ConnectionPool is a SEPARATE package from core psycopg -- pooling is an
 # opt-in add-on, not baked into every psycopg connection by default.
 from psycopg_pool import ConnectionPool
@@ -1277,7 +1278,9 @@ def benchmark_per_request_connection() -> float:
 # psycopg.Connection[TupleRow] is the generic type parameter that tells pyright
 # exactly what row shape fetchone()/fetchall() will return -- without it, the
 # pool's connection type would be only partially known under strict mode.
-def benchmark_pooled_connection(pool: ConnectionPool[psycopg.Connection[TupleRow]]) -> float:
+def benchmark_pooled_connection(
+    pool: ConnectionPool[psycopg.Connection[TupleRow]],
+) -> float:
     # => the FIX (co-28): a pool keeps a small set of connections ALREADY open and
     # => authenticated -- "borrowing" one costs almost nothing compared to a fresh
     # => TCP handshake + PostgreSQL's own authentication + backend process startup
@@ -1298,12 +1301,16 @@ def benchmark_pooled_connection(pool: ConnectionPool[psycopg.Connection[TupleRow
 # an order of magnitude faster for this many short-lived requests.
 def main() -> None:  # => the script's entry point
     per_request_seconds = benchmark_per_request_connection()
-    print(f"Per-request connections: {REQUEST_COUNT} requests in {per_request_seconds:.3f}s")
+    print(
+        f"Per-request connections: {REQUEST_COUNT} requests in {per_request_seconds:.3f}s"
+    )
     # => Output: Per-request connections: 300 requests in 1.536s (each pays full connect cost)
 
     # min_size=4, max_size=4 creates a FIXED pool of 4 connections -- enough to
     # serve REQUEST_COUNT sequential requests without ever needing to grow.
-    with ConnectionPool[psycopg.Connection[TupleRow]](DSN, min_size=4, max_size=4) as pool:
+    with ConnectionPool[psycopg.Connection[TupleRow]](
+        DSN, min_size=4, max_size=4
+    ) as pool:
         pool.wait()  # => blocks until the pool's minimum connections are actually open and ready
         pooled_seconds = benchmark_pooled_connection(pool)
         print(f"Pooled connections: {REQUEST_COUNT} requests in {pooled_seconds:.3f}s")
@@ -1317,8 +1324,9 @@ def main() -> None:  # => the script's entry point
 
 # In production, pool.wait() at startup is optional but recommended -- without
 # it, the FIRST few requests after the process starts would pay a partial
-# connect cost while the pool lazily opens its minimum connections on demand.
-# it would open, connect, and add each of the 4 minimum connections one at a time.
+# connect cost while the pool lazily opens, connects, and adds each of its 4
+# minimum connections one at a time, on demand, instead of paying that setup
+# cost upfront before any request arrives.
 if __name__ == "__main__":  # => guards against running main() on `import example`
     main()  # => entry point -- runs everything above when executed as a script
 ```
@@ -2337,9 +2345,7 @@ def setup(conn: psycopg.Connection) -> None:  # => resets state -- fully self-co
         )
         # => 45,000 orders across 3 customers -- large enough that the report query's
         # => ORDER BY genuinely benefits from an index (co-23), unlike a toy-sized table
-        cur.execute(
-            "SELECT setval(pg_get_serial_sequence('cap_order', 'id'), 45000)"
-        )
+        cur.execute("SELECT setval(pg_get_serial_sequence('cap_order', 'id'), 45000)")
         # => advances the IDENTITY sequence PAST the 45,000 explicit ids just inserted,
         # => so Step 4's auto-generated ids never collide with the bulk-seeded ones
     conn.commit()
@@ -2413,6 +2419,9 @@ def step2_index_tuning(conn: psycopg.Connection) -> None:
         # see and use it -- an uncommitted index is invisible to other queries.
         conn.commit()
 
+        # This becomes a regular Index Scan, not an Index-Only Scan (co-19) --
+        # the query also selects `amount`, which the composite index above does
+        # not cover, so the planner still visits the heap for that column.
         # AFTER: the composite index now exists -- expect NO Sort node.
         cur.execute(report_sql)
         # Same list-comprehension extraction as before_plan above -- kept
@@ -2449,7 +2458,9 @@ def step3_n_plus_1_fix(conn: psycopg.Connection) -> None:
             # A BRAND NEW cursor per iteration -- this is the N+1 pattern in
             # its purest form: one extra round trip for every single order.
             with conn.cursor() as inner:
-                inner.execute("SELECT name FROM cap_customer WHERE id = %s", (customer_id,))
+                inner.execute(
+                    "SELECT name FROM cap_customer WHERE id = %s", (customer_id,)
+                )
                 # Result discarded -- this diagnostic only counts queries, it
                 # does not need to actually USE each customer's name.
                 inner.fetchone()
@@ -2469,6 +2480,10 @@ def step3_n_plus_1_fix(conn: psycopg.Connection) -> None:
     print("  JOIN fix: 1 total query")
 
 
+# `amount` is typed Decimal, not float, throughout this capstone -- money
+# arithmetic must avoid binary floating-point rounding error, and the
+# 700.00 + 700.00 = 1400.00 comparison against a 1000.00 limit below needs
+# to be an EXACT decimal comparison, not an approximately-correct one.
 # This is the UNSAFE half of Step 4's race -- it deliberately omits the row
 # lock that place_order_locked() below adds, reproducing the exact
 # check-then-act race pattern from Example 26's "before" version.
@@ -2499,7 +2514,9 @@ def place_order_naive(customer_id: int, amount: Decimal, results: list[str]) -> 
         # (not yet committed) will never be visible to under READ COMMITTED --
         # that invisibility is exactly what makes the race possible.
         if current_total + amount <= credit_limit:
-            time.sleep(0.05)  # => widens the race window so the anomaly is reliably reproducible
+            time.sleep(
+                0.05
+            )  # => widens the race window so the anomaly is reliably reproducible
             cur.execute(
                 "INSERT INTO cap_order(customer_id, order_date, amount) "
                 "VALUES (%s, CURRENT_DATE, %s)",
@@ -2533,14 +2550,18 @@ def place_order_locked(customer_id: int, amount: Decimal, results: list[str]) ->
         cur.execute("BEGIN")
         # FOR UPDATE here is what makes the second concurrent call WAIT instead of
         # reading a stale value -- the entire fix lives in this one clause.
-        cur.execute("SELECT credit_limit FROM cap_customer WHERE id = %s FOR UPDATE", (customer_id,))
+        cur.execute(
+            "SELECT credit_limit FROM cap_customer WHERE id = %s FOR UPDATE",
+            (customer_id,),
+        )
         credit_row = cur.fetchone()
         assert credit_row is not None
         credit_limit = credit_row[0]
         # The running total is read SEPARATELY, but only AFTER the row lock above
         # is held -- any concurrent committer's rows are now guaranteed visible.
         cur.execute(
-            "SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = %s", (customer_id,)
+            "SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = %s",
+            (customer_id,),
         )
         # Two SEPARATE queries (credit_limit, then the SUM) rather than one
         # combined query like the naive version -- FOR UPDATE only applies to
@@ -2583,7 +2604,9 @@ def step4_anomaly_resolution(conn: psycopg.Connection) -> None:
         # => volume, but the credit-limit race needs a CLEAN starting balance
         cur.execute("DELETE FROM cap_order WHERE customer_id IN (2, 3)")
         conn.commit()
-        cur.execute("SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = 2")
+        cur.execute(
+            "SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = 2"
+        )
         row = cur.fetchone()
         # Narrows Optional[Any] for the type checker -- COUNT-style
         # aggregate queries always return exactly one row.
@@ -2597,24 +2620,31 @@ def step4_anomaly_resolution(conn: psycopg.Connection) -> None:
     # exceeding the limit if both are allowed to commit.
     # A shared list, appended to by both naive worker threads below.
     naive_results: list[str] = []
+    # Plain list.append() from multiple threads is safe here without an explicit
+    # Lock -- CPython's GIL makes each individual append() call atomic, and this
+    # code never reads naive_results until after both threads have joined below.
     threads = [
-        threading.Thread(target=place_order_naive, args=(2, Decimal("700.00"), naive_results))
+        threading.Thread(
+            target=place_order_naive, args=(2, Decimal("700.00"), naive_results)
+        )
         for _ in range(2)
     ]
     # Two threads, both targeting customer_id=2 (Bob) with the identical
     # 700.00 amount -- maximizing the chance both race past the check.
     for t in threads:
-    # Starting BOTH threads before joining either is what creates genuine
-    # overlap -- sequential start-then-join-immediately would never race at all.
+        # Starting BOTH threads before joining either is what creates genuine
+        # overlap -- sequential start-then-join-immediately would never race at all.
         t.start()
     for t in threads:
-    # Waits for BOTH naive threads to fully finish before reading Bob's
-    # post-race total below.
+        # Waits for BOTH naive threads to fully finish before reading Bob's
+        # post-race total below.
         t.join()
     print(f"  Naive (no lock): both concurrent 700.00 orders -> {naive_results}")
 
     with conn.cursor() as cur:
-        cur.execute("SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = 2")
+        cur.execute(
+            "SELECT COALESCE(SUM(amount), 0) FROM cap_order WHERE customer_id = 2"
+        )
         row = cur.fetchone()
         assert row is not None
         # If BOTH naive orders committed, this total will read 1400.00 --
@@ -2626,14 +2656,16 @@ def step4_anomaly_resolution(conn: psycopg.Connection) -> None:
     # A shared list, appended to by both locked worker threads below.
     locked_results: list[str] = []
     threads2 = [
-        threading.Thread(target=place_order_locked, args=(3, Decimal("700.00"), locked_results))
+        threading.Thread(
+            target=place_order_locked, args=(3, Decimal("700.00"), locked_results)
+        )
         for _ in range(2)
     ]
     for t in threads2:
-    # Same start-both-before-joining pattern as the naive race above.
+        # Same start-both-before-joining pattern as the naive race above.
         t.start()
     for t in threads2:
-    # Waits for BOTH locked threads to finish before printing the final result.
+        # Waits for BOTH locked threads to finish before printing the final result.
         t.join()
     # Expect exactly one "placed" and one "refused" here -- unlike the naive
     # results above, which can show two "placed" entries under real contention.
@@ -2708,3 +2740,5 @@ project (see the syllabus's capstone spec) extends this same order-book scenario
 more report variations, and a broader set of anomalies to resolve.
 
 ---
+
+← Previous: [Intermediate Examples](./intermediate.md) &middot; Next: [Capstone](./capstone/overview.md) →

@@ -2860,6 +2860,15 @@ threshold, leaving the planner working from outdated or absent statistics exactl
 state above. Manually running `ANALYZE` immediately after a large bulk load (Example 84's `COPY`, for
 instance) is a standard production habit for exactly this reason.
 
+**Accuracy note (PG 18)**: The extra WAL usage, CPU time, and per-row-average timing stats PostgreSQL
+18 gained belong to the standalone `ANALYZE VERBOSE` command run above (co-25) -- not to `EXPLAIN`'s
+own `VERBOSE` option, which is unchanged in PG 18 (still just output column lists, schema-qualified
+names, range-table aliases, trigger names, and the query identifier). Separately, and unrelated to
+`VERBOSE` on either command, `EXPLAIN` itself gained new fields in PG 18: full WAL buffer counts in
+`EXPLAIN (..., WAL)` output, index-lookup-per-scan counts, fractional row counts (visible as `actual
+rows=0.33` in Example 79's parallel-worker output), and memory/disk usage on `Material`/`WindowAgg`/CTE
+nodes.
+
 ---
 
 ### Example 26: FOR UPDATE Row Lock
@@ -3234,3 +3243,5 @@ benchmark with zero extra typing. It complements, rather than replaces, `EXPLAIN
 `\timing` answers "how long did that take," while `EXPLAIN ANALYZE` answers "why."
 
 ---
+
+← Previous: [Overview](./overview.md) &middot; Next: [Intermediate Examples](./intermediate.md) →

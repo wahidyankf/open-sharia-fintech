@@ -238,3 +238,7 @@ CONCURRENTLY` proven via real thread timing, a connection-pooling benchmark, the
 - [Example 83: OLTP-Normalized vs OLAP Star Schema](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/advanced#example-83-oltp-normalized-vs-olap-star-schema)
 - [Example 84: Bulk Load, COPY vs INSERT](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/advanced#example-84-bulk-load-copy-vs-insert)
 - [Example 85: Capstone Preview, Tuning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/advanced#example-85-capstone-preview-tuning)
+
+---
+
+← Previous: [25 · Advanced Algorithms Drilling](../../advanced-algorithms/drilling/overview.md) &middot; Next: [Beginner Examples](./beginner.md) →
