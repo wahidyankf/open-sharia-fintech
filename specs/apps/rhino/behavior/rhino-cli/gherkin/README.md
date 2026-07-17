@@ -91,7 +91,7 @@ behavior/rhino-cli/gherkin/
 
 | File                             | Command(s)       | Scenarios |
 | -------------------------------- | ---------------- | --------- |
-| `spec-coverage-validate.feature` | `specs coverage` | 6         |
+| `spec-coverage-validate.feature` | `specs coverage` | 10        |
 
 ### specs
 

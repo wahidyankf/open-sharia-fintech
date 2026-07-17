@@ -69,13 +69,15 @@ The single change is the iteration unit: `captures_iter(&content)` over the full
 
 ### On the `(?s)` flag (precise note)
 
-`step_def_re()` carries `(?s)` (dot-matches-newline). `scenario_def_re()` does **not**, and it does
-**not need it** for this fix: the pattern contains **no `.` metacharacter**, so `(?s)` would be
-**functionally inert** here [Repo-grounded — pattern text at `checker.rs:31`]. The `\s` classes
-already span newlines, which is all the cross-line case requires. Adding `(?s)` to
-`scenario_def_re()` is therefore optional and purely for **symmetry with `step_def_re()`**; if added,
-it must be documented inline as a no-op-for-this-pattern stylistic choice. This plan treats adding
-`(?s)` as an optional REFACTOR-substep nicety, not a functional requirement.
+`step_def_re()` carries `(?s)` (dot-matches-newline), and the shipped `scenario_def_re()` carries it
+too, for symmetry [Repo-grounded — `checker.rs:34`]. The `\s` classes already span newlines, which is
+all the cross-line fix actually requires — `(?s)` is not load-bearing for that. The pattern's only `.`
+metacharacter usages are inside `\\.` (escaped-backslash-literal followed by "match any char"), used
+to consume escaped quote characters inside a title such as `\"` or `\'`. With `(?s)` enabled, `\\.`
+also matches a backslash immediately followed by a literal newline — an edge case not expected in a
+real Gherkin Scenario title, so `(?s)` does not change matching output for realistic `Scenario()`
+calls. `(?s)` is therefore kept purely for **symmetry with `step_def_re()`**, documented inline as a
+no-op-in-practice stylistic choice.
 
 ## 3. Design decision — whole-content vs whitespace-normalization
 
