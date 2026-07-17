@@ -1,6 +1,6 @@
 """Example 71: pytest verification that each of the nine GRASP patterns is placed correctly."""
 
-from datetime import date, timedelta
+from datetime import timedelta
 
 from example import (
     Library,

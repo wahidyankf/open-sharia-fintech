@@ -12,7 +12,7 @@ class Customer:
 
 
 def shipping_label(customer: Customer) -> str:
-    return customer.address.city.upper()  # SMELL: reaches through TWO links, assumes address is never None
+    return customer.address.city.upper()  # type: ignore[union-attr]  # SMELL: reaches through TWO links, assumes address is never None
 
 
 customer = Customer(address=None)

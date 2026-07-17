@@ -2320,7 +2320,7 @@ pattern placed at the point in the domain that motivated it.
 
 from __future__ import annotations  # => defers type-hint evaluation for the forward references used below
 
-from dataclasses import dataclass, field  # => field is imported but Loan uses only plain fields here
+from dataclasses import dataclass  # => Loan uses only plain fields, so only dataclass itself is needed here
 from datetime import date, timedelta  # => date drives due_date/overdue math, timedelta computes the loan period
 from typing import Callable, Protocol  # => Protocol declares FeePolicy and OverdueNotifier, both stable seams
 
@@ -2389,7 +2389,7 @@ class LoanRepository:  # => co-12: a non-domain class that exists purely to keep
 
 
 class OverdueNotifier(Protocol):  # => co-13: the mediator's narrow interface
-    def __call__(self, loan: Loan) -> None: ...  # => any callable matching this shape works, class or function
+    def __call__(self, loan: Loan, /) -> None: ...  # => positional-only so a bare Callable[[Loan], None] matches structurally
 
 
 class Library:  # => co-9: LOW COUPLING -- Library never imports a concrete notification class
@@ -2476,7 +2476,7 @@ if __name__ == "__main__":  # => demonstration entry point, executed only when t
 ```python
 """Example 71: pytest verification that each of the nine GRASP patterns is placed correctly."""
 
-from datetime import date, timedelta
+from datetime import timedelta
 
 from example import (
     Library,
@@ -2895,13 +2895,12 @@ co-05, co-14: ports-and-adapters (hexagonal architecture) wiring a domain to
 infrastructure. The domain module defines a PORT (an abstract interface it
 needs) and depends on nothing else; concrete ADAPTERS live in a separate
 "infrastructure" namespace and implement the port. The domain's own source
-never names an infrastructure class -- inspected here by walking its module's
-import list, not just asserted in prose.
+never names an infrastructure class -- inspected here via OrderDomain's own
+constructor annotation, not just asserted in prose.
 """
 
 from __future__ import annotations  # => defers type-hint evaluation for the forward references used below
 
-import sys  # => used only by the architectural check function, never by the domain itself
 from typing import Protocol  # => Protocol declares the PORT the domain owns
 
 
@@ -2947,8 +2946,6 @@ class SmsAdapter:  # => a SECOND adapter -- swappable without touching OrderDoma
 
 
 def domain_module_imports_no_infrastructure_names() -> bool:  # => co-05: verify the dependency direction for real
-    domain_module = sys.modules[OrderDomain.__module__]  # => this file plays both roles, so inspect by name instead
-    source = domain_module.__dict__  # => the module's own namespace, inspected rather than merely asserted
     # => the true architectural check: OrderDomain's __init__ signature names only the PORT, never a concrete adapter
     annotation = OrderDomain.__init__.__annotations__.get("notifier")  # => reads the ACTUAL parameter annotation
     return annotation in ("NotificationPort", NotificationPort) or str(annotation) == "NotificationPort"  # => the real check
@@ -3699,7 +3696,7 @@ class LoggingCalculatorDecorator:  # => co-21: GoF Decorator -- wraps an OBJECT,
 if __name__ == "__main__":  # => demonstration entry point, executed only when this file is run directly
     print(add(2, 3))  # => the function decorator runs transparently
     # => Output: 5
-    print(add.calls)  # => cross-cutting logging attached without touching add()'s own body
+    print(add.calls)  # type: ignore[attr-defined]  # => cross-cutting logging attached without touching add()'s own body
     # => Output: [((2, 3), 5)]
 
     decorated_calculator = LoggingCalculatorDecorator(PlainAdder())  # => wraps a WHOLE object, not a bare function
@@ -3734,7 +3731,7 @@ def test_functools_decorator_preserves_the_wrapped_functions_result() -> None:
 
 def test_functools_decorator_adds_cross_cutting_logging_without_touching_add_body() -> None:
     add(10, 20)
-    assert (10, 20) in [call_args for call_args, _ in add.calls]  # => the log recorded the call
+    assert (10, 20) in [call_args for call_args, _ in add.calls]  # type: ignore[attr-defined]  # => the log recorded the call
 
 
 def test_functools_wraps_preserves_the_original_function_name() -> None:

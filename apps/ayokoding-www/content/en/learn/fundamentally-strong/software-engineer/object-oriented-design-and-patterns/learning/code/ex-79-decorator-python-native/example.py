@@ -64,7 +64,7 @@ class LoggingCalculatorDecorator:  # => co-21: GoF Decorator -- wraps an OBJECT,
 if __name__ == "__main__":  # => demonstration entry point, executed only when this file is run directly
     print(add(2, 3))  # => the function decorator runs transparently
     # => Output: 5
-    print(add.calls)  # => cross-cutting logging attached without touching add()'s own body
+    print(add.calls)  # type: ignore[attr-defined]  # => cross-cutting logging attached without touching add()'s own body
     # => Output: [((2, 3), 5)]
 
     decorated_calculator = LoggingCalculatorDecorator(PlainAdder())  # => wraps a WHOLE object, not a bare function

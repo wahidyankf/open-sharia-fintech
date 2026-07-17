@@ -1,6 +1,6 @@
 """Example 29: A Fluent Builder for HTTP Requests."""
 
-from dataclasses import dataclass, field  # => imports dataclass, field from dataclasses
+from dataclasses import dataclass  # => imports dataclass from dataclasses
 
 
 @dataclass(frozen=True)  # => the finished product -- immutable once built() returns it

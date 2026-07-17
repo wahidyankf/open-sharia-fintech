@@ -8,7 +8,7 @@ pattern placed at the point in the domain that motivated it.
 
 from __future__ import annotations  # => defers type-hint evaluation for the forward references used below
 
-from dataclasses import dataclass, field  # => field is imported but Loan uses only plain fields here
+from dataclasses import dataclass  # => Loan uses only plain fields, so only dataclass itself is needed here
 from datetime import date, timedelta  # => date drives due_date/overdue math, timedelta computes the loan period
 from typing import Callable, Protocol  # => Protocol declares FeePolicy and OverdueNotifier, both stable seams
 
@@ -77,7 +77,7 @@ class LoanRepository:  # => co-12: a non-domain class that exists purely to keep
 
 
 class OverdueNotifier(Protocol):  # => co-13: the mediator's narrow interface
-    def __call__(self, loan: Loan) -> None: ...  # => any callable matching this shape works, class or function
+    def __call__(self, loan: Loan, /) -> None: ...  # => positional-only so a bare Callable[[Loan], None] matches structurally
 
 
 class Library:  # => co-9: LOW COUPLING -- Library never imports a concrete notification class

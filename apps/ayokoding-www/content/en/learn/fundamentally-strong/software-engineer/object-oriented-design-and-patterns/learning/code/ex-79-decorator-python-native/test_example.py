@@ -9,7 +9,7 @@ def test_functools_decorator_preserves_the_wrapped_functions_result() -> None:
 
 def test_functools_decorator_adds_cross_cutting_logging_without_touching_add_body() -> None:
     add(10, 20)
-    assert (10, 20) in [call_args for call_args, _ in add.calls]  # => the log recorded the call
+    assert (10, 20) in [call_args for call_args, _ in add.calls]  # type: ignore[attr-defined]  # => the log recorded the call
 
 
 def test_functools_wraps_preserves_the_original_function_name() -> None:

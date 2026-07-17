@@ -4,13 +4,12 @@ co-05, co-14: ports-and-adapters (hexagonal architecture) wiring a domain to
 infrastructure. The domain module defines a PORT (an abstract interface it
 needs) and depends on nothing else; concrete ADAPTERS live in a separate
 "infrastructure" namespace and implement the port. The domain's own source
-never names an infrastructure class -- inspected here by walking its module's
-import list, not just asserted in prose.
+never names an infrastructure class -- inspected here via OrderDomain's own
+constructor annotation, not just asserted in prose.
 """
 
 from __future__ import annotations  # => defers type-hint evaluation for the forward references used below
 
-import sys  # => used only by the architectural check function, never by the domain itself
 from typing import Protocol  # => Protocol declares the PORT the domain owns
 
 
@@ -56,8 +55,6 @@ class SmsAdapter:  # => a SECOND adapter -- swappable without touching OrderDoma
 
 
 def domain_module_imports_no_infrastructure_names() -> bool:  # => co-05: verify the dependency direction for real
-    domain_module = sys.modules[OrderDomain.__module__]  # => this file plays both roles, so inspect by name instead
-    source = domain_module.__dict__  # => the module's own namespace, inspected rather than merely asserted
     # => the true architectural check: OrderDomain's __init__ signature names only the PORT, never a concrete adapter
     annotation = OrderDomain.__init__.__annotations__.get("notifier")  # => reads the ACTUAL parameter annotation
     return annotation in ("NotificationPort", NotificationPort) or str(annotation) == "NotificationPort"  # => the real check
