@@ -7,8 +7,8 @@
 // argument-register rule: the first NGRN (up to 8) integer/pointer arguments go
 // in x0..x7 (w0..w7 for 32-bit)
 int weighted_sum(int a, int b,
-                 int c) { // => co-19: a lands in w0, b in w1, c in w2 -- BEFORE
-                          // the prologue even runs
-  return a * 2 + b * 3 + c * 5; // => co-19: pure arithmetic -- no loads needed
-                                // for the ARGUMENTS themselves
+                 int c) {         // => co-19: a lands in w0, b in w1, c in w2 -- BEFORE
+                                  // the prologue even runs
+    return a * 2 + b * 3 + c * 5; // => co-19: pure arithmetic -- no loads needed
+                                  // for the ARGUMENTS themselves
 }

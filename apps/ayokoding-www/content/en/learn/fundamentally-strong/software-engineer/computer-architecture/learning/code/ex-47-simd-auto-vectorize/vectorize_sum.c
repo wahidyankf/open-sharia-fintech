@@ -6,19 +6,18 @@
    it on its own at -O3. */
 #include <stdio.h>  // => printf -- the timing/PASS report this program prints
 #include <stdlib.h> // => malloc/free -- the array being summed
-#include <time.h> // => clock_gettime -- the portable wall-clock timer used below
+#include <time.h>   // => clock_gettime -- the portable wall-clock timer used below
 
-#define N                                                                      \
-  200000000      // => co-23: 200M ints -- large enough that a vectorized inner
+#define N \
+    200000000    // => co-23: 200M ints -- large enough that a vectorized inner
                  // loop's
                  //    per-element speedup shows up clearly in wall-clock time
 #define TRIALS 3 // => co-25: best-of-3 -- shared-machine noise smoothing
 
-static double now_seconds(
-    void) { // => co-25: shared wall-clock helper, this topic's standard pattern
-  struct timespec ts;
-  clock_gettime(CLOCK_MONOTONIC, &ts);
-  return (double)ts.tv_sec + (double)ts.tv_nsec / 1e9;
+static double now_seconds(void) { // => co-25: shared wall-clock helper, this topic's standard pattern
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (double)ts.tv_sec + (double)ts.tv_nsec / 1e9;
 }
 
 // co-23: a plain scalar-LOOKING sum reduction -- integer addition is
@@ -35,50 +34,44 @@ static double now_seconds(
 // trial's call provably return a DIFFERENT value (salt=0,1,2), which defeats
 // that CSE while adding only one extra scalar add per call -- negligible next
 // to the N-element reduction, so it does not distort the real work being timed.
-__attribute__((noinline)) static long sum_array(const int *arr, int n,
-                                                int salt) {
-  long total = salt; // => co-25: seeds the accumulator with `salt` --
-  for (int i = 0; i < n;
-       i++) {        //    just enough to force a distinct result per call
-    total += arr[i]; // => co-23: -O0 emits one scalar add per element;
-  } //    -O3 emits NEON adds processing several at once
-  return total;
+__attribute__((noinline)) static long sum_array(const int *arr, int n, int salt) {
+    long total = salt;            // => co-25: seeds the accumulator with `salt` --
+    for (int i = 0; i < n; i++) { //    just enough to force a distinct result per call
+        total += arr[i];          // => co-23: -O0 emits one scalar add per element;
+    } //    -O3 emits NEON adds processing several at once
+    return total;
 }
 
 int main(void) {
-  int *arr = malloc((size_t)N * sizeof(int));
-  if (!arr) {
-    fprintf(stderr, "alloc failed\n");
-    return 1;
-  }
-  srand(3); // => co-25: fixed seed -- reproducible values, but
-  for (int i = 0; i < N; i++)
-    arr[i] =
-        (rand() % 7) - 3; //    rand() defeats -O3's closed-form constant-fold
-                          //    of the WHOLE fill+sum pattern (verified: a pure
-                          //    arithmetic fill let -O3 collapse everything to
-                          //    a single constant, timing 0.0000 s -- rand()
-                          //    output isn't known at compile time, so it can't)
+    int *arr = malloc((size_t)N * sizeof(int));
+    if (!arr) {
+        fprintf(stderr, "alloc failed\n");
+        return 1;
+    }
+    srand(3); // => co-25: fixed seed -- reproducible values, but
+    for (int i = 0; i < N; i++)
+        arr[i] = (rand() % 7) - 3; //    rand() defeats -O3's closed-form constant-fold
+                                   //    of the WHOLE fill+sum pattern (verified: a pure
+                                   //    arithmetic fill let -O3 collapse everything to
+                                   //    a single constant, timing 0.0000 s -- rand()
+                                   //    output isn't known at compile time, so it can't)
 
-  double best = 1e18;
-  long total = 0;
-  for (int t = 0; t < TRIALS;
-       t++) { // => co-25: best-of-N -- keep the fastest clean run
-    double t0 = now_seconds();
-    total = sum_array(arr, N, t) -
-            t; // => co-25: subtract the salt back out for the
-    double t1 =
-        now_seconds(); //    printed value -- the REAL reduction work still
-    if (t1 - t0 < best)
-      best = t1 - t0; //    ran fully, every trial (see comment above sum_array)
-  }
+    double best = 1e18;
+    long total = 0;
+    for (int t = 0; t < TRIALS; t++) { // => co-25: best-of-N -- keep the fastest clean run
+        double t0 = now_seconds();
+        total = sum_array(arr, N, t) - t; // => co-25: subtract the salt back out for the
+        double t1 = now_seconds();        //    printed value -- the REAL reduction work still
+        if (t1 - t0 < best)
+            best = t1 - t0; //    ran fully, every trial (see comment above sum_array)
+    }
 
-  printf("N=%d, sum=%ld, best of %d: %.4f s\n", N, total, TRIALS,
-         best); // => co-23: this SAME line prints
-                //    from BOTH the -O0 and -O3
-                //    binaries -- compare their
-                //    output externally, per the
-                //    Compile/Run section below
-  free(arr);
-  return 0;
+    printf("N=%d, sum=%ld, best of %d: %.4f s\n", N, total, TRIALS,
+           best); // => co-23: this SAME line prints
+                  //    from BOTH the -O0 and -O3
+                  //    binaries -- compare their
+                  //    output externally, per the
+                  //    Compile/Run section below
+    free(arr);
+    return 0;
 }

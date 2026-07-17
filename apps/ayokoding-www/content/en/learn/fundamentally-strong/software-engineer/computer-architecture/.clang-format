@@ -1,0 +1,26 @@
+# Scoped clang-format config for this By-Example topic's runnable code (learning/code/**,
+# learning/capstone/code/**).
+#
+# Why this file exists: every example in this topic carries a dense trailing `// => ...`
+# educational annotation on nearly every code line (the by-example convention's annotation-density
+# requirement). The repo has no root-level .clang-format config, so `clang-format -i` (run by the
+# pre-commit lint-staged hook) falls back to LLVM's default style, which wraps long annotated
+# lines/macros across multiple physical lines and reorders #include directives alphabetically --
+# both silently drift the on-disk .c files out of byte-identity with the markdown pages' embedded
+# code blocks. See `../computer-science-foundations/ruff.toml` for the same fix applied to an
+# earlier topic's Python content.
+#
+# ColumnLimit uses a large finite number (2000), NOT 0: clang-format treats `ColumnLimit: 0` as
+# "never wrap, but also never re-join a line that already fits" -- an already-wrapped line stays
+# wrapped even under this config, so it fails to undo damage from a prior run without this file. A
+# large finite limit forces a genuine re-layout, joining every annotated statement onto one line.
+# 2000 comfortably covers every example's longest merged code+comment line here, so
+# `clang-format -i` stays a no-op (idempotent) on a second run. AlignEscapedNewlines defaults to
+# `Right` in LLVM style, which right-pads every line of a multi-line macro's `\` continuation out
+# to the ColumnLimit itself (2000 columns of trailing whitespace) -- `Left` aligns the `\` just
+# past each macro's own longest line instead.
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 2000
+SortIncludes: false
+AlignEscapedNewlines: Left
