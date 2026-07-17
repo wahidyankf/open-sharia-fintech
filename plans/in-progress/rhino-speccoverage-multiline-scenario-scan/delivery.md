@@ -295,24 +295,28 @@ lives in `ose-public` alone.
 
 ### Commit Guidelines — Phase 2
 
-- [ ] [AI] Commit: `chore(web-ui): drop prettier-ignore hacks now that speccoverage scans whole file`
-- [ ] [AI] Commit and push to origin `rhino-speccoverage-multiline-scenario-scan` (the PR branch)
+- [x] [AI] Commit: `chore(web-ui): drop prettier-ignore hacks now that speccoverage scans whole file`
+      — done: plus a `chore(plans)` tracking commit
+- [x] [AI] Commit and push to origin `rhino-speccoverage-multiline-scenario-scan` (the PR branch)
+      — done: pushed `abc115147..b1f358f31`
 
 ### Post-Push CI Verification — Phase 2
 
-- [ ] [AI] Monitor GitHub Actions: poll `gh run view --json status,conclusion` every ~2 min per the
+- [x] [AI] Monitor GitHub Actions: poll `gh run view --json status,conclusion` every ~2 min per the
       [CI monitoring convention](../../../repo-governance/development/workflow/ci-monitoring.md) —
       no tight-loop, never `gh run watch`; verify ALL checks pass; fix at root cause and re-push on
       failure
-- [ ] [AI] Do NOT proceed to Phase 3 until CI is fully green
+      — done: polled via background job, no tight-loop
+- [x] [AI] Do NOT proceed to Phase 3 until CI is fully green
+      — done: `gh pr checks 62` — 20 passed, 0 failed
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `grep -rn "prettier-ignore" libs/web-ui/src/primitives/code-block/` — no matches
-- [ ] [AI] `npx nx run web-ui:specs:behavior:coverage` — exits 0
-- [ ] [AI] CI is green on the pushed commit
+- [x] [AI] `grep -rn "prettier-ignore" libs/web-ui/src/primitives/code-block/` — no matches
+- [x] [AI] `npx nx run web-ui:specs:behavior:coverage` — exits 0
+- [x] [AI] CI is green on the pushed commit — 20/20 checks passed on PR #62
 
 > **Pause Safety**: ose-public carries the full fix and the hacks are gone; coverage is green. The
 > sibling repos still carry the old scanner but are internally consistent (byte-identity is
@@ -352,11 +356,12 @@ lives in `ose-public` alone.
 
 ### 3a. ose-primer propagation
 
-- [ ] [AI] Provision the ose-primer worktree:
+- [x] [AI] Provision the ose-primer worktree:
       `git -C /Users/wkf/ose-projects/ose-primer worktree add worktrees/rhino-speccoverage-multiline-scenario-scan -b rhino-speccoverage-multiline-scenario-scan origin/main`
       — acceptance: directory exists at
       `/Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan/`
-- [ ] [AI] Copy the byte-identical files into the ose-primer worktree, then run the sibling tests
+      — done: provisioned, confirmed on branch `rhino-speccoverage-multiline-scenario-scan`
+- [x] [AI] Copy the byte-identical files into the ose-primer worktree, then run the sibling tests
       — acceptance: both `cargo test` commands exit 0:
 
   ```bash
@@ -372,17 +377,38 @@ lives in `ose-public` alone.
   cd "$OSE_PRIMER_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage
   ```
 
-- [ ] [AI] Verify byte-identity of `checker.rs` between ose-public and the ose-primer worktree:
+  — done: **CORRECTED SOURCE PATH BUG** — the command above (and the two diff commands below) as
+  originally written in this plan sourced from `/Users/wkf/ose-projects/ose-public/apps/...`, the
+  PRIMARY ose-public checkout (on `main`, no Phase 1/2 changes) — not
+  `/Users/wkf/ose-projects/ose-public/worktrees/rhino-speccoverage-multiline-scenario-scan/apps/...`,
+  the worktree where all Phase 1/2 work actually lives. Same worktree-vs-primary-checkout confusion
+  class as Plan 1's incident, this time in the plan text itself. First copy attempt silently pulled
+  stale pre-fix content (only 1/4 unit tests found); caught immediately because the sibling test run
+  only found 1 test instead of 4. Re-copied from the worktree path; all 4 unit tests + all 10
+  behavior scenarios then passed.
+
+- [x] [AI] Verify byte-identity of `checker.rs` between ose-public and the ose-primer worktree:
       `diff /Users/wkf/ose-projects/ose-public/apps/rhino-cli/src/application/speccoverage/checker.rs /Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan/apps/rhino-cli/src/application/speccoverage/checker.rs`
       — acceptance: no diff output (byte-identical)
-- [ ] [AI] Verify byte-identity of the behavior feature file between ose-public and ose-primer:
+      — done: re-run against the corrected worktree source path — no diff (byte-identical)
+- [x] [AI] Verify byte-identity of the behavior feature file between ose-public and ose-primer:
       `diff /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature /Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan/specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature`
       — acceptance: no diff output (AC-6)
-- [ ] [AI] Run the ose-primer parity gate:
+      — done: no diff (byte-identical); also verified `tests/spec_coverage.rs` and `gherkin/README.md` no diff
+- [x] [AI] Run the ose-primer parity gate:
       `cd /Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan && npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: exits 0
-- [ ] [AI] Commit, push, and open the ose-primer draft PR
+      — done: "Spec coverage valid! 57 specs, 317 scenarios, 1317 steps — all covered." (matches
+      ose-public exactly)
+- [x] [AI] Commit, push, and open the ose-primer draft PR
       — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN:
+      — done: PR #6 created — https://github.com/wahidyankf/ose-primer/pull/6. Pre-push `nx affected`
+      initially failed on unrelated, preexisting polyglot-demo toolchain gaps in this fresh worktree
+      (missing `mix deps.get` for `elixir-cabbage`/`elixir-gherkin`/`elixir-openapi-codegen`/
+      `crud-be-elixir-phoenix`, missing `dotnet restore` for `crud-be-fsharp-giraffe`) — these show up
+      as "affected" because nearly every project's `specs:*`/`lint` targets shell out through the
+      rhino-cli binary, so touching rhino-cli marks the whole graph affected. Fetched the missing
+      deps (mechanical, non-destructive); re-ran affected — all green; push then succeeded.
 
   ```bash
   cd /Users/wkf/ose-projects/ose-primer/worktrees/rhino-speccoverage-multiline-scenario-scan
