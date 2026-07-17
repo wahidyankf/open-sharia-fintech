@@ -89,3 +89,6 @@ weight: 1750
 - [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/functional-programming/drilling)
+- [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism/drilling)

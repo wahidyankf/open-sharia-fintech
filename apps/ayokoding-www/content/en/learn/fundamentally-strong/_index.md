@@ -33,3 +33,4 @@ weight: 107
   - [21 · Object-Oriented Design & Patterns](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns)
   - [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)
   - [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)
+  - [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
