@@ -62,27 +62,33 @@ lives in `ose-public` alone.
 
 - [x] [AI] Plan already promoted from backlog to in-progress (date prefix stripped) during planning
       — acceptance: folder exists at `plans/in-progress/rhino-speccoverage-multiline-scenario-scan/`
-- [ ] [AI] Provision/enter the worktree per the `## Worktree` section above
+- [x] [AI] Provision/enter the worktree per the `## Worktree` section above
       — acceptance: shell cwd is `worktrees/rhino-speccoverage-multiline-scenario-scan/`
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
+      — done: `git worktree add worktrees/rhino-speccoverage-multiline-scenario-scan -b rhino-speccoverage-multiline-scenario-scan origin/main`; cwd confirmed
+- [x] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
-- [ ] [AI] Converge the polyglot toolchain in the root worktree: `npm run doctor -- --fix`
+      — done: exited 0, 1572 packages added
+- [x] [AI] Converge the polyglot toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift (Rust toolchain + cargo present)
-- [ ] [AI] Record the rhino-cli baseline:
+      — done: "Summary: 16/16 tools OK, 0 warning, 0 missing" — nothing to fix
+- [x] [AI] Record the rhino-cli baseline:
       `npx nx run rhino-cli:test:unit && npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: baseline pass/fail recorded in `learnings.md`; preexisting failures documented
-- [ ] [AI] Record the web-ui baseline: `npx nx run web-ui:specs:behavior:coverage`
+      — done: both green, recorded in learnings.md (4 features/26 scenarios/102 steps; 57 specs/316 scenarios/1313 steps)
+- [x] [AI] Record the web-ui baseline: `npx nx run web-ui:specs:behavior:coverage`
       — acceptance: baseline pass/fail recorded (expected: passes because the hacks are still present)
-- [ ] [AI] Resolve any preexisting failures before proceeding
+      — done: green, recorded in learnings.md (21 specs/118 scenarios/311 steps)
+- [x] [AI] Resolve any preexisting failures before proceeding
       — acceptance: no unresolved preexisting failures remain
+      — done: none found; all three baselines green on first run
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npx nx run rhino-cli:test:unit` baseline recorded (green) and any preexisting failure resolved
-- [ ] [AI] `npx nx run rhino-cli:specs:behavior:coverage` baseline recorded (green)
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+- [x] [AI] `npx nx run rhino-cli:test:unit` baseline recorded (green) and any preexisting failure resolved
+- [x] [AI] `npx nx run rhino-cli:specs:behavior:coverage` baseline recorded (green)
 
 > **Pause Safety**: only the toolchain was verified and the baseline recorded — no feature work
 > exists yet. Safe to stop indefinitely. To resume: re-run
@@ -99,7 +105,7 @@ lives in `ose-public` alone.
 
 ### 1a. Behavior-level reproducer (cucumber-rs binder)
 
-- [ ] [AI] **RED** — Add the AC-4 scenario to
+- [x] [AI] **RED** — Add the AC-4 scenario to
       `specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature`
       and its cucumber step definitions to `apps/rhino-cli/tests/spec_coverage.rs`. The step def
       builds a fixture whose covering test contains a `Scenario(` token with its title on the NEXT
@@ -109,6 +115,8 @@ lives in `ose-public` alone.
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage`
       — acceptance: the new test FAILS (the wrapped-title scenario is reported as an unimplemented
       gap by the current per-line scanner):
+      — done: confirmed FAIL — "Missing scenarios (1): specs/wrapped-title.feature → Scenario:
+      \"Wrapped title covers\"" (9 passed, 1 failed / 10 scenarios)
 
   ```gherkin
   Scenario: A scenario whose title wraps onto a following physical line is still recognized as covered
@@ -120,7 +128,7 @@ lives in `ose-public` alone.
 
 ### 1b. Unit-level reproducers (pure-core fixtures)
 
-- [ ] [AI] **RED** — Add a unit fixture in the `#[cfg(test)]` module of
+- [x] [AI] **RED** — Add a unit fixture in the `#[cfg(test)]` module of
       `apps/rhino-cli/src/application/speccoverage/checker.rs` (alongside
       `extract_ts_scenario_titles_picks_up_double_quoted_title` at ~line 1153) named
       `extract_ts_scenario_titles_picks_up_cross_line_double_quoted_title`, writing a file whose
@@ -129,42 +137,48 @@ lives in `ose-public` alone.
       **Gherkin (underpins) →** AC-1.
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles_picks_up_cross_line_double_quoted_title`
       — acceptance: the new test FAILS (title missing under per-line scan)
-- [ ] [AI] **RED** — Add a unit fixture
+      — done: confirmed FAIL — `assertion failed: titles.contains("Wrapped double title")`
+- [x] [AI] **RED** — Add a unit fixture
       `extract_ts_scenario_titles_picks_up_cross_line_single_quoted_title` writing
       `Scenario(\n  'Wrapped single title',\n  () => {});\n` and asserting the set contains
       `Wrapped single title`.
       **Gherkin (underpins) →** AC-2.
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles_picks_up_cross_line_single_quoted_title`
       — acceptance: the new test FAILS
-- [ ] [AI] **GUARD** (characterization, not RED) — Add an explicit same-line guard fixture
+      — done: confirmed FAIL — `assertion failed: titles.contains("Wrapped single title")`
+- [x] [AI] **GUARD** (characterization, not RED) — Add an explicit same-line guard fixture
       `extract_ts_scenario_titles_preserves_same_line_titles` asserting both a double- and
       single-quoted same-line title are still returned. This locks the pre-change behavior so the
       GREEN whole-content rewrite cannot silently regress it; it PASSES on current code by design.
       **Gherkin (underpins) →** AC-3.
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles_preserves_same_line_titles`
       — acceptance: the guard test PASSES against the current code, and MUST still pass after the GREEN step
+      — done: confirmed PASS on current (pre-GREEN) code
 
 ### 1c. Implementation
 
-- [ ] [AI] **GREEN** — Rewrite `extract_ts_scenario_titles` (`checker.rs:613-625`) to scan the whole
+- [x] [AI] **GREEN** — Rewrite `extract_ts_scenario_titles` (`checker.rs:613-625`) to scan the whole
       file: replace `for line in content.lines() { for caps in scenario_def_re().captures_iter(line)`
       with a single `for caps in scenario_def_re().captures_iter(&content)` loop (keep the
       `dq`/`sq`/`unescape_string`/`normalize_ws` body unchanged).
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles`
       — acceptance: all `extract_ts_scenario_titles*` unit tests PASS (cross-line + same-line)
-- [ ] [AI] **GREEN** — Re-run the behavior binder:
+      — done: confirmed PASS — 4 passed, 1142 filtered out
+- [x] [AI] **GREEN** — Re-run the behavior binder:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage`
       — acceptance: the AC-4 test PASSES (no false gap for the wrapped binding)
+      — done: confirmed PASS — 10 scenarios (10 passed), 38 steps (38 passed)
 
 ### 1d. Refactor + spec housekeeping
 
-- [ ] [AI] **REFACTOR** — Optionally add a `(?s)` flag to `scenario_def_re()` (`checker.rs:31`) for
+- [x] [AI] **REFACTOR** — Optionally add a `(?s)` flag to `scenario_def_re()` (`checker.rs:31`) for
       symmetry with `step_def_re()`, with an inline comment noting it is functionally inert for this
       pattern (no `.` metacharacter); update the function doc comment to state the scan is
       whole-content.
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib`
       — acceptance: all lib tests still PASS; `npx nx run rhino-cli:lint` exits 0 (clippy clean)
-- [ ] [AI] Update the scenario-count table row for `spec-coverage-validate.feature` in the
+      — done: confirmed — 1145 passed/0 failed/1 ignored; clippy clean (exit 0)
+- [x] [AI] Update the scenario-count table row for `spec-coverage-validate.feature` in the
       **top-level** `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md` (row ~line 94; the table
       lives ONLY in this top-level README — `.../spec-coverage/README.md` is a plain bullet list with
       no count table and must NOT be edited for this). The row currently shows `6`, but the file
@@ -172,23 +186,34 @@ lives in `ose-public` alone.
       single edit reconciles both the preexisting 6-vs-9 drift and the +1 from the new AC-4 scenario.
       — command: `grep -c "^  Scenario:" specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature`
       — acceptance: the `gherkin/README.md` row count equals the grep count (expected: 10 after AC-4 is added)
+      — done: grep confirmed 10; README.md row updated 6→10
 
 ### Specs & Gherkin Delivery (gate)
 
-- [ ] [AI] Run the behavior-coverage gate:
+- [x] [AI] Run the behavior-coverage gate:
       `npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: exits 0; the new AC-4 scenario is reported covered
-- [ ] [AI] Run cardinality + structure validators on the edited feature file:
+      — done: "Spec coverage valid! 57 specs, 317 scenarios, 1317 steps — all covered."
+- [x] [AI] Run cardinality + structure validators on the edited feature file:
       `npx nx run rhino-cli:specs:gherkin-cardinality-validation && npx nx run rhino-cli:specs:structure-validation`
       — acceptance: both exit 0
+      — done: both PASSED (cardinality audit passed; structure validate 0 findings all workspaces)
 
 ### Local Quality Gates (Before Push) — Phase 1
 
-- [ ] [AI] `npx nx affected -t typecheck` — exits 0
-- [ ] [AI] `npx nx affected -t lint` — exits 0
-- [ ] [AI] `npx nx affected -t test:quick` — exits 0
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
-- [ ] [AI] `npx nx run rhino-cli:test:integration` — exits 0 (runs the cucumber `spec_coverage` binder)
+- [x] [AI] `npx nx affected -t typecheck` — exits 0
+      — done: "Successfully ran target typecheck for 25 projects and 6 tasks they depend on"
+- [x] [AI] `npx nx affected -t lint` — exits 0
+      — done: "Successfully ran target lint for 25 projects and 8 tasks they depend on" (preexisting
+      `no-empty-pattern` eslint warnings in unrelated ose-www-be-e2e generated spec files — warnings,
+      not errors, gate still exits 0, out of this plan's scope)
+- [x] [AI] `npx nx affected -t test:quick` — exits 0
+      — done: "Successfully ran target test:quick for 25 projects and 11 tasks they depend on"
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
+      — done: "Successfully ran target specs:behavior:coverage for 25 projects"
+- [x] [AI] `npx nx run rhino-cli:test:integration` — exits 0 (runs the cucumber `spec_coverage` binder)
+      — done: "Successfully ran target test:integration for project rhino-cli" (includes the
+      spec_coverage binder's 10/10 passing scenarios)
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows the Root Cause Orientation principle — proactively fix preexisting errors encountered
