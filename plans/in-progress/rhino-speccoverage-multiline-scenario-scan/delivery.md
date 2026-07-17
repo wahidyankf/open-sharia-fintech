@@ -425,12 +425,17 @@ lives in `ose-public` alone.
 
 ### 3b. ose-infra propagation
 
-- [ ] [AI] Provision the ose-infra worktree:
+- [x] [AI] Provision the ose-infra worktree:
       `git -C /Users/wkf/ose-projects/ose-infra worktree add worktrees/rhino-speccoverage-multiline-scenario-scan -b rhino-speccoverage-multiline-scenario-scan origin/main`
       — acceptance: directory exists at
       `/Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan/`
-- [ ] [AI] Copy the byte-identical files into the ose-infra worktree, then run the sibling tests
-      — acceptance: both `cargo test` commands exit 0:
+      — done: provisioned, confirmed on branch `rhino-speccoverage-multiline-scenario-scan`
+- [x] [AI] Copy the byte-identical files into the ose-infra worktree, then run the sibling tests
+      — acceptance: both `cargo test` commands exit 0: **(source: the ose-public WORKTREE at
+      `/Users/wkf/ose-projects/ose-public/worktrees/rhino-speccoverage-multiline-scenario-scan/...`,
+      not the primary checkout — see Phase 3a's caught bug)**
+      — done: copied from the corrected worktree source; all 4 unit tests + all 10 behavior
+      scenarios passed on first attempt (no repeat of Phase 3a's bug)
 
   ```bash
   OSE_INFRA_WT=/Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan
@@ -445,17 +450,24 @@ lives in `ose-public` alone.
   cd "$OSE_INFRA_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib extract_ts_scenario_titles && cargo test --manifest-path apps/rhino-cli/Cargo.toml --test spec_coverage
   ```
 
-- [ ] [AI] Verify byte-identity of `checker.rs` between ose-public and the ose-infra worktree:
+- [x] [AI] Verify byte-identity of `checker.rs` between ose-public and the ose-infra worktree:
       `diff /Users/wkf/ose-projects/ose-public/apps/rhino-cli/src/application/speccoverage/checker.rs /Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan/apps/rhino-cli/src/application/speccoverage/checker.rs`
       — acceptance: no diff output (byte-identical)
-- [ ] [AI] Verify byte-identity of the behavior feature file between ose-public and ose-infra:
+      — done: no diff (byte-identical)
+- [x] [AI] Verify byte-identity of the behavior feature file between ose-public and ose-infra:
       `diff /Users/wkf/ose-projects/ose-public/specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature /Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan/specs/apps/rhino/behavior/rhino-cli/gherkin/spec-coverage/spec-coverage-validate.feature`
       — acceptance: no diff output (AC-6)
-- [ ] [AI] Run the ose-infra parity gate:
+      — done: no diff (byte-identical); also verified `tests/spec_coverage.rs` and `gherkin/README.md` no diff
+- [x] [AI] Run the ose-infra parity gate:
       `cd /Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan && npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: exits 0
-- [ ] [AI] Commit, push, and open the ose-infra draft PR
+      — done: "Spec coverage valid! 57 specs, 317 scenarios, 1317 steps — all covered." (matches
+      ose-public and ose-primer exactly)
+- [x] [AI] Commit, push, and open the ose-infra draft PR
       — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN:
+      — done: PR #9 created — https://github.com/wahidyankf/ose-infra/pull/9. No polyglot-toolchain
+      gap this time (ose-infra's affected set is just `rhino`/`coralpolyp`); push succeeded cleanly
+      on first attempt.
 
   ```bash
   cd /Users/wkf/ose-projects/ose-infra/worktrees/rhino-speccoverage-multiline-scenario-scan
@@ -474,10 +486,13 @@ lives in `ose-public` alone.
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `checker.rs` and `spec-coverage-validate.feature` are byte-identical across all three repos (diffs empty)
-- [ ] [AI] `npx nx run rhino-cli:specs:behavior:coverage` exits 0 in ose-public, ose-primer, ose-infra
-- [ ] [AI] Each sibling repo's rhino-cli change is committed, pushed, and its own draft PR is OPEN
+- [x] [AI] `checker.rs` and `spec-coverage-validate.feature` are byte-identical across all three repos (diffs empty)
+      — done: verified pairwise ose-public↔ose-primer and ose-public↔ose-infra, all 4 tracked files
+- [x] [AI] `npx nx run rhino-cli:specs:behavior:coverage` exits 0 in ose-public, ose-primer, ose-infra
+      — done: all three report identical "57 specs, 317 scenarios, 1317 steps — all covered."
+- [x] [AI] Each sibling repo's rhino-cli change is committed, pushed, and its own draft PR is OPEN
       (`gh pr view --json state` shows OPEN when run from each sibling's worktree)
+      — done: ose-public #62, ose-primer #6, ose-infra #9 — all `{"isDraft":true,"state":"OPEN"}`
 
 > **Pause Safety**: all three repos carry the byte-identical fixed scanner, pass their coverage
 > gates, and each sibling has its own open draft PR. Safe to stop. To resume: re-run the three-way
