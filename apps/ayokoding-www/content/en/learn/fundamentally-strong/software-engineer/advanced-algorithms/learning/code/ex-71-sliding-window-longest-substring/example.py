@@ -9,8 +9,8 @@ def longest_unique_substring_length(s: str) -> int:  # => O(n): one pass, amorti
     last_seen: dict[str, int] = {}  # => char -> the most recent index it was seen at
     left = 0  # => the window's left edge (inclusive)
     best = 0  # => the longest window length found so far
-    for right, ch in enumerate(
-        s
+    for right, ch in enumerate(  # => opens the right-edge growth loop
+        s  # => the string being scanned
     ):  # => grows the window's right edge one char at a time
         if ch in last_seen and last_seen[ch] >= left:  # => a repeat WITHIN the window
             left = (
@@ -22,21 +22,27 @@ def longest_unique_substring_length(s: str) -> int:  # => O(n): one pass, amorti
 
 
 def brute_force_longest_unique_substring(s: str) -> int:  # => O(n^2): every start point
-    best = 0
+    best = 0  # => the longest repeat-free run found so far
     for i in range(len(s)):  # => tries every possible starting index
         seen: set[str] = set()  # => characters seen in the current run from i
         for j in range(i, len(s)):  # => extends as far as possible without a repeat
-            if s[j] in seen:
+            if s[j] in seen:  # => this character already appeared in the current run
                 break  # => a repeat -- this run from i stops here
-            seen.add(s[j])
+            seen.add(s[j])  # => records this character as seen in the current run
             best = max(best, j - i + 1)  # => updates the longest run found
     return best  # => ground truth, for comparison
 
 
-test_strings: list[str] = ["abcabcbb", "bbbbb", "pwwkew", "", "abcdef"]
+test_strings: list[str] = [
+    "abcabcbb",
+    "bbbbb",
+    "pwwkew",
+    "",
+    "abcdef",
+]  # => varied test cases
 for s in test_strings:  # => checks the fast approach against brute force, per string
-    fast = longest_unique_substring_length(s)
-    brute = brute_force_longest_unique_substring(s)
+    fast = longest_unique_substring_length(s)  # => O(n) result
+    brute = brute_force_longest_unique_substring(s)  # => O(n^2) ground truth
     print(f"{s!r}: {fast}")  # => Output: one "'string': length" line per test string
     assert fast == brute  # => confirms both approaches agree exactly
 

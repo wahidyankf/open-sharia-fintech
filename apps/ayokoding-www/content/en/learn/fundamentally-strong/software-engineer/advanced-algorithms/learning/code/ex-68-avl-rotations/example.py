@@ -10,25 +10,29 @@ import math
 
 
 class AVLNode:  # => a BST node augmented with its own subtree height
-    def __init__(self, value: int) -> None:
-        self.value = value
-        self.left: AVLNode | None = None
-        self.right: AVLNode | None = None
+    def __init__(self, value: int) -> None:  # => a fresh leaf node
+        self.value = value  # => this node's key
+        self.left: AVLNode | None = None  # => no left child yet
+        self.right: AVLNode | None = None  # => no right child yet
         self.height: int = 1  # => a fresh leaf has height 1
 
 
 def height(node: AVLNode | None) -> int:  # => 0 for an empty (sub)tree, by convention
-    return node.height if node is not None else 0
+    return (
+        node.height if node is not None else 0
+    )  # => avoids a None-check at every call site
 
 
 def balance_factor(node: AVLNode) -> int:  # => left height minus right height
     return height(node.left) - height(node.right)  # => >1 or <-1 means "unbalanced"
 
 
-def update_height(
-    node: AVLNode,
+def update_height(  # => recomputes a node's height from its children's already-updated heights
+    node: AVLNode,  # => the node whose height needs recomputing
 ) -> None:  # => recomputes from the (already-updated) children
-    node.height = 1 + max(height(node.left), height(node.right))
+    node.height = 1 + max(
+        height(node.left), height(node.right)
+    )  # => 1 plus the TALLER child
 
 
 def rotate_right(y: AVLNode) -> AVLNode:  # => fixes a LEFT-heavy imbalance
@@ -42,46 +46,59 @@ def rotate_right(y: AVLNode) -> AVLNode:  # => fixes a LEFT-heavy imbalance
 
 
 def rotate_left(x: AVLNode) -> AVLNode:  # => the mirror image: fixes a RIGHT-heavy case
-    y = x.right
+    y = x.right  # => y is guaranteed non-None whenever this is called (right-heavy)
     assert y is not None  # => narrows the type -- a right-heavy node has a right child
-    x.right = y.left
-    y.left = x
-    update_height(x)
-    update_height(y)
-    return y
+    x.right = y.left  # => y's left subtree becomes x's new right subtree
+    y.left = x  # => x becomes y's left child -- y rises to take x's old position
+    update_height(x)  # => x's height must be recomputed FIRST (it's now lower)
+    update_height(y)  # => then y's, since it depends on x's just-updated height
+    return y  # => y is the new root of this rotated subtree
 
 
-def avl_insert(
-    node: AVLNode | None, value: int
+def avl_insert(  # => standard BST insert, then rebalances on the way back up
+    node: AVLNode | None,
+    value: int,  # => the current subtree root and the key to insert
 ) -> AVLNode:  # => returns the new subtree root
     if node is None:  # => base case: an empty spot becomes a new leaf
-        return AVLNode(value)
-    if value < node.value:
-        node.left = avl_insert(node.left, value)
-    elif value > node.value:
-        node.right = avl_insert(node.right, value)
-    else:
+        return AVLNode(value)  # => a brand-new leaf, height 1
+    if value < node.value:  # => belongs in the LEFT subtree
+        node.left = avl_insert(
+            node.left, value
+        )  # => recurses, then re-attaches the result
+    elif value > node.value:  # => belongs in the RIGHT subtree
+        node.right = avl_insert(
+            node.right, value
+        )  # => recurses, then re-attaches the result
+    else:  # => value already exists in the tree
         return node  # => duplicate values are ignored
-    update_height(
-        node
+    update_height(  # => opens the height-refresh call
+        node  # => this insert's subtree root
     )  # => this node's height may have grown after the recursive insert
     balance = balance_factor(node)  # => checks whether THIS node is now unbalanced
 
-    if (
-        balance > 1 and node.left is not None and value < node.left.value
+    if (  # => opens the LEFT-LEFT case check
+        balance > 1
+        and node.left is not None
+        and value < node.left.value  # => left-heavy, straight
     ):  # => LEFT-LEFT
         return rotate_right(node)  # => a single right rotation fixes it
-    if (
-        balance < -1 and node.right is not None and value > node.right.value
+    if (  # => opens the RIGHT-RIGHT case check
+        balance < -1
+        and node.right is not None
+        and value > node.right.value  # => right-heavy, straight
     ):  # => RIGHT-RIGHT
         return rotate_left(node)  # => a single left rotation fixes it
-    if (
-        balance > 1 and node.left is not None and value > node.left.value
+    if (  # => opens the LEFT-RIGHT case check
+        balance > 1
+        and node.left is not None
+        and value > node.left.value  # => left-heavy, zig-zag
     ):  # => LEFT-RIGHT
         node.left = rotate_left(node.left)  # => first straighten the left child...
         return rotate_right(node)  # => ...then rotate this node -- a DOUBLE rotation
-    if (
-        balance < -1 and node.right is not None and value < node.right.value
+    if (  # => opens the RIGHT-LEFT case check
+        balance < -1
+        and node.right is not None
+        and value < node.right.value  # => right-heavy, zig-zag
     ):  # => RIGHT-LEFT
         node.right = rotate_right(node.right)  # => first straighten the right child...
         return rotate_left(node)  # => ...then rotate this node -- a DOUBLE rotation
@@ -89,7 +106,7 @@ def avl_insert(
 
 
 n = 100  # => 100 sorted keys -- Example 15's exact worst case for a plain BST
-root: AVLNode | None = None
+root: AVLNode | None = None  # => starts as an empty tree
 for k in range(n):  # => inserting in ASCENDING order
     root = avl_insert(root, k)  # => the AVL tree self-balances after every insert
 
@@ -97,11 +114,12 @@ tree_height = height(root)  # => the actual resulting height
 log_bound = math.ceil(2 * math.log2(n + 2))  # => a generous O(log n) upper bound
 print(tree_height)  # => Output: 7
 print(
-    log_bound
+    log_bound  # => the computed upper bound
 )  # => Output: 14 -- confirms tree_height comfortably fits under this bound
 
+# confirms the AVL tree's self-balancing rotations kept height logarithmic
 assert tree_height < log_bound  # => confirms O(log n), NOT the O(n) chain of Example 15
 assert (
-    tree_height < n
+    tree_height < n  # => confirms the tree height is nowhere near the input count
 )  # => trivially true, but makes the contrast with Example 15 explicit
 print("ex-68 OK")  # => Output: ex-68 OK

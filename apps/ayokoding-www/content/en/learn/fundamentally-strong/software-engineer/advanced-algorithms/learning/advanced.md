@@ -50,10 +50,10 @@ def solve_n_queens(n: int) -> int:  # => returns the COUNT of distinct solutions
             solutions[0] += 1  # => one more complete, valid solution found
             return  # => backtracks to try other placements at the previous row
         for col in range(n):  # => tries every column in this row
-            if (
-                col in columns_used
-                or (row - col) in diag1_used
-                or (row + col) in diag2_used
+            if (  # => opens the three-way safety check for this column
+                col in columns_used  # => same column already has a queen
+                or (row - col) in diag1_used  # => same "/" diagonal already has a queen
+                or (row + col) in diag2_used  # => same "\" diagonal already has a queen
             ):  # => THE PRUNE: this column is attacked by an earlier queen
                 continue  # => skip this column entirely -- never explore it further
             columns_used.add(col)  # => marks this column as occupied
@@ -69,15 +69,15 @@ def solve_n_queens(n: int) -> int:  # => returns the COUNT of distinct solutions
 
 
 known_counts: dict[int, int] = {  # => OEIS A000170: the known solution count per N
-    4: 2,
-    5: 10,
-    6: 4,
-    7: 40,
-    8: 92,
-}
-for (
-    n,
-    expected,
+    4: 2,  # => N=4 has exactly 2 distinct solutions
+    5: 10,  # => N=5 has exactly 10 distinct solutions
+    6: 4,  # => N=6 has exactly 4 distinct solutions
+    7: 40,  # => N=7 has exactly 40 distinct solutions
+    8: 92,  # => N=8 has exactly 92 distinct solutions
+}  # => closes the known-solution-count table
+for (  # => opens the tuple-unpacking loop header
+    n,  # => the board size N
+    expected,  # => N's known correct solution count
 ) in known_counts.items():  # => verifies N=4..8, as the syllabus specifies
     found = solve_n_queens(n)  # => backtracking's own count
     print(f"N={n}: {found}")  # => Output: one "N=n: count" line per N
@@ -170,13 +170,13 @@ def all_subsets(items: list[int]) -> list[list[int]]:  # => returns all 2^n subs
 items: list[int] = [1, 2, 3]  # => a small 3-element set
 subsets = all_subsets(items)  # => all 8 subsets of {1, 2, 3}
 print(len(subsets))  # => Output: 8
-print(
-    sorted(subsets)
+print(  # => opens the sorted-subsets print call
+    sorted(subsets)  # => sorts for a deterministic, readable print order
 )  # => Output: [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]
 
 assert len(subsets) == 2 ** len(items)  # => confirms exactly 2^n subsets were generated
-unique_subsets = {
-    tuple(s) for s in subsets
+unique_subsets = {  # => opens the duplicate-detection set comprehension
+    tuple(s) for s in subsets  # => converts each list subset to a hashable tuple
 }  # => tuples are hashable, so a set catches duplicates
 assert len(unique_subsets) == len(subsets)  # => confirms NO subset was generated twice
 assert [] in subsets  # => confirms the empty subset is included
@@ -251,14 +251,14 @@ At each position, backtracking tries every unused item: n choices for the first 
 # counting argument, realized directly as recursive choice-and-undo.
 
 
-def all_permutations(
-    items: list[int],
+def all_permutations(  # => builds every ordering by choosing one UNUSED item at a time
+    items: list[int],  # => the items to permute
 ) -> list[list[int]]:  # => returns all n! orderings
     result: list[list[int]] = []  # => accumulates every complete permutation
     current: list[int] = []  # => the in-progress permutation being built
     used: set[int] = set()  # => which items are already placed in `current`
 
-    def backtrack() -> None:
+    def backtrack() -> None:  # => fills the next position, then backtracks to try others
         if len(current) == len(items):  # => base case: every item has been placed
             result.append(list(current))  # => records a COPY of the completed ordering
             return
@@ -278,8 +278,8 @@ def all_permutations(
 items: list[int] = [1, 2, 3]  # => a small 3-element set
 perms = all_permutations(items)  # => all 6 permutations of [1, 2, 3]
 print(len(perms))  # => Output: 6
-print(
-    sorted(perms)
+print(  # => opens the sorted-permutations print call
+    sorted(perms)  # => sorts for a deterministic, readable print order
 )  # => Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
 
 assert len(perms) == 6  # => 3! = 6, confirms the exact expected count
@@ -367,39 +367,39 @@ def word_search(grid: list[list[str]], word: str) -> bool:  # => True if word is
     def backtrack(r: int, c: int, index: int) -> bool:  # => tries to match word[index:]
         if index == len(word):  # => base case: every character has been matched
             return True  # => the whole word was found along this path
-        if (
-            r < 0
-            or r >= rows
-            or c < 0
-            or c >= cols
-            or (r, c) in visited
-            or grid[r][c] != word[index]
+        if (  # => opens the four-way out-of-bounds/reuse/mismatch check
+            r < 0  # => off the top edge
+            or r >= rows  # => off the bottom edge
+            or c < 0  # => off the left edge
+            or c >= cols  # => off the right edge
+            or (r, c) in visited  # => this cell is already used in the current path
+            or grid[r][c] != word[index]  # => this cell's letter doesn't match
         ):  # => out of bounds, already used, or the letter doesn't match
             return False  # => THE PRUNE: this path cannot possibly succeed
         visited.add((r, c))  # => marks this cell as used for the current path
-        found = (
-            backtrack(r + 1, c, index + 1)
-            or backtrack(r - 1, c, index + 1)
-            or backtrack(r, c + 1, index + 1)
-            or backtrack(r, c - 1, index + 1)
+        found = (  # => opens the 4-direction exploration
+            backtrack(r + 1, c, index + 1)  # => try DOWN
+            or backtrack(r - 1, c, index + 1)  # => try UP
+            or backtrack(r, c + 1, index + 1)  # => try RIGHT
+            or backtrack(r, c - 1, index + 1)  # => try LEFT
         )  # => tries all 4 directions -- `or` short-circuits on the first success
-        visited.remove(
-            (r, c)
+        visited.remove(  # => opens the un-mark-cell call
+            (r, c)  # => the cell to free
         )  # => BACKTRACK: frees this cell for OTHER starting attempts
         return found  # => whether any of the 4 directions led to a full match
 
     for r in range(rows):  # => tries every cell as a possible STARTING point
-        for c in range(cols):
+        for c in range(cols):  # => and every column within that row
             if backtrack(r, c, 0):  # => a full match was found starting here
                 return True  # => no need to try any other starting cell
     return False  # => no starting cell led to a complete match anywhere
 
 
 grid: list[list[str]] = [  # => a 3x4 letter grid
-    ["A", "B", "C", "E"],
-    ["S", "F", "C", "S"],
-    ["A", "D", "E", "E"],
-]
+    ["A", "B", "C", "E"],  # => row 0
+    ["S", "F", "C", "S"],  # => row 1
+    ["A", "D", "E", "E"],  # => row 2
+]  # => closes the grid literal
 print(word_search(grid, "ABCCED"))  # => Output: True -- A->B->C->C->E->D, a valid path
 print(word_search(grid, "SEE"))  # => Output: True -- S->E->E, a valid path
 print(word_search(grid, "ABCB"))  # => Output: False -- would need to reuse a cell
@@ -483,7 +483,7 @@ Board = list[list[int]]  # => a 9x9 grid; 0 marks an empty cell
 
 def find_empty(board: Board) -> tuple[int, int] | None:  # => the first 0 cell, or None
     for r in range(9):  # => scans row by row
-        for c in range(9):
+        for c in range(9):  # => and column by column within that row
             if board[r][c] == 0:  # => an unfilled cell
                 return (r, c)  # => the next cell backtracking should try to fill
     return None  # => no empty cells remain -- the board is completely filled
@@ -491,25 +491,25 @@ def find_empty(board: Board) -> tuple[int, int] | None:  # => the first 0 cell, 
 
 def is_valid(board: Board, r: int, c: int, digit: int) -> bool:  # => the 3 Sudoku rules
     if digit in board[r]:  # => RULE 1: digit must not already be in this row
-        return False
+        return False  # => row conflict -- reject
     if digit in [board[i][c] for i in range(9)]:  # => RULE 2: nor in this column
-        return False
+        return False  # => column conflict -- reject
     box_r, box_c = 3 * (r // 3), 3 * (c // 3)  # => the top-left corner of this 3x3 box
     for i in range(box_r, box_r + 3):  # => RULE 3: nor anywhere in this 3x3 box
-        for j in range(box_c, box_c + 3):
-            if board[i][j] == digit:
-                return False
+        for j in range(box_c, box_c + 3):  # => scans every cell of the 3x3 box
+            if board[i][j] == digit:  # => the digit already appears in this box
+                return False  # => box conflict -- reject
     return True  # => digit violates none of the three rules at this position
 
 
 def solve_sudoku(board: Board) -> bool:  # => mutates board in place; True if solved
     empty = find_empty(board)  # => finds the next cell needing a digit
     if empty is None:  # => base case: no empty cells left -- solved!
-        return True
+        return True  # => nothing left to fill -- solved
     r, c = empty  # => the (row, col) to try filling next
     for digit in range(1, 10):  # => tries every candidate digit 1-9
-        if is_valid(
-            board, r, c, digit
+        if is_valid(  # => opens the rule-check call
+            board, r, c, digit  # => the current board state and candidate digit
         ):  # => THE PRUNE: skip digits violating the rules
             board[r][c] = digit  # => commits this candidate
             if solve_sudoku(board):  # => recurses to fill the rest of the board
@@ -519,30 +519,34 @@ def solve_sudoku(board: Board) -> bool:  # => mutates board in place; True if so
 
 
 puzzle: Board = [  # => a well-known easy Sudoku puzzle
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9],
-]
-solved = solve_sudoku(
-    puzzle
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],  # => row 0
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],  # => row 1
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],  # => row 2
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],  # => row 3
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],  # => row 4
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],  # => row 5
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],  # => row 6
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],  # => row 7
+    [0, 0, 0, 0, 8, 0, 0, 7, 9],  # => row 8
+]  # => closes the puzzle literal -- 0 marks each empty cell
+solved = solve_sudoku(  # => opens the solve call
+    puzzle  # => mutated in place by the backtracking solver
 )  # => mutates puzzle in place, returns whether it succeeded
 print(solved)  # => Output: True
 
 assert solved is True  # => confirms this puzzle was solvable
 for r in range(9):  # => confirms every row is a permutation of 1-9
-    assert sorted(puzzle[r]) == list(range(1, 10))
+    assert sorted(puzzle[r]) == list(range(1, 10))  # => each row has every digit once
 for c in range(9):  # => confirms every column is a permutation of 1-9
-    assert sorted(puzzle[i][c] for i in range(9)) == list(range(1, 10))
+    assert sorted(  # => opens the column-values sort
+        puzzle[i][c] for i in range(9)  # => gathers column c's value from every row
+    ) == list(range(1, 10))  # => each column has every digit once
 for box_r in range(0, 9, 3):  # => confirms every 3x3 box is a permutation of 1-9
-    for box_c in range(0, 9, 3):
-        box_values = [puzzle[box_r + i][box_c + j] for i in range(3) for j in range(3)]
-        assert sorted(box_values) == list(range(1, 10))
+    for box_c in range(0, 9, 3):  # => scans every box's top-left corner
+        box_values = [  # => opens the box-flattening comprehension
+            puzzle[box_r + i][box_c + j] for i in range(3) for j in range(3)  # => one box's cells
+        ]  # => flattens one 3x3 box into a flat list
+        assert sorted(box_values) == list(range(1, 10))  # => each box has every digit once
 print("ex-57 OK")  # => Output: ex-57 OK
 ```
 
@@ -621,11 +625,11 @@ Fractional knapsack's greedy-by-ratio is provably optimal when items can be spli
 # simply does not transfer to the 0/1 variant.
 
 
-def greedy_knapsack_by_ratio(
-    weights: list[int], values: list[int], capacity: int
+def greedy_knapsack_by_ratio(  # => sorts by value/weight ratio, then takes greedily
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> int:  # => O(n log n): sorts by ratio, then takes whole items greedily
-    items = sorted(
-        zip(weights, values), key=lambda pair: pair[1] / pair[0], reverse=True
+    items = sorted(  # => opens the ratio-sort call
+        zip(weights, values), key=lambda pair: pair[1] / pair[0], reverse=True  # => best ratio first
     )  # => highest value-per-weight first
     total_value = 0  # => running greedy total
     remaining = capacity  # => how much capacity is still unused
@@ -637,25 +641,25 @@ def greedy_knapsack_by_ratio(
     return total_value  # => greedy's answer -- NOT guaranteed optimal for 0/1
 
 
-def knapsack_01_dp(
-    weights: list[int], values: list[int], capacity: int
+def knapsack_01_dp(  # => the same 2D DP as Example 51, guaranteed globally optimal
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> int:  # => O(n * capacity): the same DP as Example 51, the true optimum
-    n = len(weights)
-    dp: list[list[int]] = [[0] * (capacity + 1) for _ in range(n + 1)]
-    for i in range(1, n + 1):
-        w, v = weights[i - 1], values[i - 1]
-        for c in range(capacity + 1):
-            dp[i][c] = dp[i - 1][c]
-            if w <= c:
-                dp[i][c] = max(dp[i][c], v + dp[i - 1][c - w])
+    n = len(weights)  # => number of available items
+    dp: list[list[int]] = [[0] * (capacity + 1) for _ in range(n + 1)]  # => table of zeros
+    for i in range(1, n + 1):  # => considers items one at a time
+        w, v = weights[i - 1], values[i - 1]  # => this item's own weight/value
+        for c in range(capacity + 1):  # => every possible capacity, from 0 up
+            dp[i][c] = dp[i - 1][c]  # => the SKIP option: value stays whatever it was
+            if w <= c:  # => the TAKE option is only possible if it actually fits
+                dp[i][c] = max(dp[i][c], v + dp[i - 1][c - w])  # => best of skip vs take
     return dp[n][capacity]  # => the true optimal value, considering EVERY combination
 
 
 weights: list[int] = [10, 20, 30]  # => a classic textbook counterexample
 values: list[int] = [60, 100, 120]  # => ratios: 6.0, 5.0, 4.0 -- item 0 looks best
 capacity = 50  # => the knapsack's weight limit
-greedy_answer = greedy_knapsack_by_ratio(
-    weights, values, capacity
+greedy_answer = greedy_knapsack_by_ratio(  # => opens the greedy call
+    weights, values, capacity  # => same inputs as the DP, for a fair comparison
 )  # => takes item 0 (ratio 6), then item 1 (ratio 5); item 2 no longer fits
 optimal_answer = knapsack_01_dp(weights, values, capacity)  # => the TRUE optimum
 print(greedy_answer)  # => Output: 160 -- items 0 and 1: weight 30, value 160
@@ -738,23 +742,23 @@ _ex-59 &middot; exercises co-24_
 
 def min_cost_path(grid: list[list[int]]) -> int:  # => O(rows*cols) time and space
     rows, cols = len(grid), len(grid[0])  # => the grid's dimensions
-    dp: list[list[int]] = [
-        [0] * cols for _ in range(rows)
+    dp: list[list[int]] = [  # => opens the 2D table construction
+        [0] * cols for _ in range(rows)  # => one fresh row of zeros per grid row
     ]  # => dp[r][c] = min cost to reach (r, c) from (0, 0)
     dp[0][0] = grid[0][0]  # => base case: reaching the start costs just its own cell
     for c in range(1, cols):  # => the FIRST row can only be reached by moving right
-        dp[0][c] = (
-            dp[0][c - 1] + grid[0][c]
+        dp[0][c] = (  # => opens the first-row assignment
+            dp[0][c - 1] + grid[0][c]  # => running total plus this cell's own cost
         )  # => only one possible predecessor: the left
     for r in range(1, rows):  # => the FIRST column can only be reached by moving down
         dp[r][0] = dp[r - 1][0] + grid[r][0]  # => only one possible predecessor: above
     for r in range(1, rows):  # => fills the rest of the table, row by row
-        for c in range(1, cols):
-            dp[r][c] = grid[r][c] + min(
-                dp[r - 1][c], dp[r][c - 1]
+        for c in range(1, cols):  # => and column by column within each row
+            dp[r][c] = grid[r][c] + min(  # => opens the cheaper-predecessor comparison
+                dp[r - 1][c], dp[r][c - 1]  # => cost via above vs cost via the left
             )  # => cheaper of "came from above" or "came from the left"
-    return dp[rows - 1][
-        cols - 1
+    return dp[rows - 1][  # => opens the final-cell lookup
+        cols - 1  # => the destination's column index
     ]  # => the bottom-right cell: total cost of the best path
 
 
@@ -765,21 +769,21 @@ def min_cost_path_brute_force(grid: list[list[int]]) -> int:  # => O(2^(rows+col
         if r == rows - 1 and c == cols - 1:  # => reached the destination
             return grid[r][c]  # => just this cell's own cost
         if r == rows - 1:  # => bottom row -- the ONLY option is moving right
-            return grid[r][c] + recurse(r, c + 1)
+            return grid[r][c] + recurse(r, c + 1)  # => this cell's cost plus moving right
         if c == cols - 1:  # => rightmost column -- the ONLY option is moving down
-            return grid[r][c] + recurse(r + 1, c)
-        return grid[r][c] + min(
-            recurse(r + 1, c), recurse(r, c + 1)
+            return grid[r][c] + recurse(r + 1, c)  # => this cell's cost plus moving down
+        return grid[r][c] + min(  # => opens the both-directions comparison
+            recurse(r + 1, c), recurse(r, c + 1)  # => cost via down vs cost via right
         )  # => tries BOTH directions, no reuse of overlapping subproblems
 
     return recurse(0, 0)  # => starts exploring from the top-left corner
 
 
 grid: list[list[int]] = [  # => a small 3x3 cost grid
-    [1, 3, 1],
-    [1, 5, 1],
-    [4, 2, 1],
-]
+    [1, 3, 1],  # => row 0
+    [1, 5, 1],  # => row 1
+    [4, 2, 1],  # => row 2
+]  # => closes the grid literal
 fast_result = min_cost_path(grid)  # => O(rows*cols) DP answer
 brute_result = min_cost_path_brute_force(grid)  # => exhaustive ground truth
 print(fast_result)  # => Output: 7
@@ -860,45 +864,45 @@ import bisect
 
 def lis_length_dp(items: list[int]) -> int:  # => O(n^2): the straightforward DP
     if not items:  # => an empty sequence has LIS length 0
-        return 0
-    dp: list[int] = [1] * len(
-        items
+        return 0  # => nothing to extend
+    dp: list[int] = [1] * len(  # => opens the seed-array construction
+        items  # => one seed entry per element
     )  # => every element is, at minimum, its own LIS of 1
     for i in range(len(items)):  # => for each position...
         for j in range(i):  # => ...checks every EARLIER position
             if items[j] < items[i]:  # => items[i] could extend an increasing run from j
-                dp[i] = max(
-                    dp[i], dp[j] + 1
+                dp[i] = max(  # => opens the best-so-far comparison
+                    dp[i], dp[j] + 1  # => current best vs extending j's LIS by one
                 )  # => extends j's best LIS by one, if better
     return max(dp)  # => the longest LIS ending anywhere
 
 
-def lis_length_patience(
-    items: list[int],
+def lis_length_patience(  # => binary-search variant, same answer, faster asymptotically
+    items: list[int],  # => the sequence to scan
 ) -> int:  # => O(n log n): binary-search variant
     tails: list[int] = []  # => tails[k] = smallest possible tail of a length-(k+1) LIS
     for x in items:  # => processes elements left to right, one at a time
-        pos = bisect.bisect_left(
-            tails, x
+        pos = bisect.bisect_left(  # => opens the insertion-point search
+            tails, x  # => where x would insert to keep tails sorted
         )  # => O(log n): where x would insert to keep tails sorted
         if pos == len(tails):  # => x is bigger than every current tail -- LIS GROWS
             tails.append(x)  # => extends the longest LIS found so far by one
         else:  # => x can replace an existing tail with a SMALLER one, same length
             tails[pos] = x  # => keeps future extensions as easy as possible
-    return len(
-        tails
+    return len(  # => opens the final-length lookup
+        tails  # => tails' LENGTH, not its values, is the LIS length
     )  # => the final length -- tails' VALUES are not the actual sequence
 
 
-sequence: list[int] = [
-    10,
-    9,
-    2,
-    5,
-    3,
-    7,
-    101,
-    18,
+sequence: list[int] = [  # => opens the classic LeetCode LIS example literal
+    10,  # => index 0
+    9,  # => index 1
+    2,  # => index 2
+    5,  # => index 3
+    3,  # => index 4
+    7,  # => index 5
+    101,  # => index 6
+    18,  # => index 7
 ]  # => the classic LeetCode LIS example
 dp_answer = lis_length_dp(sequence)  # => O(n^2) DP result
 patience_answer = lis_length_patience(sequence)  # => O(n log n) patience-sort result
@@ -985,33 +989,33 @@ _ex-61 &middot; exercises co-24_
 INF = float("inf")  # => sentinel for "not yet computed / impossible"
 
 
-def matrix_chain_min_cost(
-    dims: list[int],
+def matrix_chain_min_cost(  # => tries every split point, keeps the cheapest for each interval
+    dims: list[int],  # => n+1 dimension entries describing n matrices
 ) -> int:  # => dims has n+1 entries for n matrices; matrix i is dims[i-1] x dims[i]
     n = len(dims) - 1  # => number of matrices in the chain
-    dp: list[list[float]] = [
-        [0.0] * (n + 1) for _ in range(n + 1)
+    dp: list[list[float]] = [  # => opens the 2D table construction
+        [0.0] * (n + 1) for _ in range(n + 1)  # => one fresh row of zeros per matrix index
     ]  # => dp[i][j] = min cost to multiply matrices i..j (1-indexed)
     for chain_len in range(2, n + 1):  # => builds by INCREASING chain length, 2 up to n
         for i in range(1, n - chain_len + 2):  # => every valid starting matrix index
             j = i + chain_len - 1  # => the ending matrix index for this chain length
             dp[i][j] = INF  # => starts as "no split tried yet"
             for k in range(i, j):  # => tries every possible SPLIT POINT k
-                cost = (
-                    dp[i][k] + dp[k + 1][j] + dims[i - 1] * dims[k] * dims[j]
+                cost = (  # => opens the split-cost computation
+                    dp[i][k] + dp[k + 1][j] + dims[i - 1] * dims[k] * dims[j]  # => split cost
                 )  # => left sub-chain + right sub-chain + this final multiplication
                 dp[i][j] = min(dp[i][j], cost)  # => keeps the cheapest split found
     return int(dp[1][n])  # => the minimum cost to multiply the ENTIRE chain
 
 
-dims: list[int] = [
-    30,
-    35,
-    15,
-    5,
-    10,
-    20,
-    25,
+dims: list[int] = [  # => opens the classic CLRS dimension list
+    30,  # => p0
+    35,  # => p1
+    15,  # => p2
+    5,  # => p3
+    10,  # => p4
+    20,  # => p5
+    25,  # => p6
 ]  # => the classic CLRS example: 6 matrices, dims p0..p6
 min_cost = matrix_chain_min_cost(dims)  # => the minimum possible scalar-multiply count
 print(min_cost)  # => Output: 15125
@@ -1086,26 +1090,26 @@ Each row of the knapsack's 2D table only ever reads the previous row, so a singl
 # each cell still reads last item's value (not this item's, reused twice).
 
 
-def knapsack_2d_full_table(
-    weights: list[int], values: list[int], capacity: int
+def knapsack_2d_full_table(  # => the full O(n*capacity) table, kept only for comparison
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> int:  # => O(n * capacity) TIME and SPACE -- the full table, for comparison
-    n = len(weights)
-    dp: list[list[int]] = [[0] * (capacity + 1) for _ in range(n + 1)]
-    for i in range(1, n + 1):
-        w, v = weights[i - 1], values[i - 1]
-        for c in range(capacity + 1):
-            dp[i][c] = dp[i - 1][c]
-            if w <= c:
-                dp[i][c] = max(dp[i][c], v + dp[i - 1][c - w])
-    return dp[n][capacity]
+    n = len(weights)  # => number of available items
+    dp: list[list[int]] = [[0] * (capacity + 1) for _ in range(n + 1)]  # => full 2D table
+    for i in range(1, n + 1):  # => considers items one at a time
+        w, v = weights[i - 1], values[i - 1]  # => this item's own weight/value
+        for c in range(capacity + 1):  # => every possible capacity, from 0 up
+            dp[i][c] = dp[i - 1][c]  # => the SKIP option: value stays whatever it was
+            if w <= c:  # => the TAKE option is only possible if it actually fits
+                dp[i][c] = max(dp[i][c], v + dp[i - 1][c - w])  # => best of skip vs take
+    return dp[n][capacity]  # => the best achievable value at full capacity
 
 
-def knapsack_1d_space_optimized(
-    weights: list[int], values: list[int], capacity: int
+def knapsack_1d_space_optimized(  # => same recurrence, but reuses ONE row via reverse order
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> int:  # => O(n * capacity) TIME, but only O(capacity) SPACE
     dp: list[int] = [0] * (capacity + 1)  # => ONE row instead of n+1 rows
     for i in range(len(weights)):  # => processes each item once
-        w, v = weights[i], values[i]
+        w, v = weights[i], values[i]  # => this item's own weight/value
         for c in range(
             capacity, w - 1, -1
         ):  # => THE KEY TRICK: iterates capacity DOWNWARD, not upward
@@ -1116,17 +1120,18 @@ def knapsack_1d_space_optimized(
 
 
 weights: list[int] = [2, 3, 4, 5]  # => the same instance as Example 51
-values: list[int] = [3, 4, 5, 6]
-capacity = 5
-full_table_answer = knapsack_2d_full_table(
-    weights, values, capacity
+values: list[int] = [3, 4, 5, 6]  # => their corresponding values
+capacity = 5  # => the knapsack's weight limit
+full_table_answer = knapsack_2d_full_table(  # => opens the full-table call
+    weights, values, capacity  # => same inputs as the space-optimized version
 )  # => O(n*cap) space
-space_optimized_answer = knapsack_1d_space_optimized(
-    weights, values, capacity
+space_optimized_answer = knapsack_1d_space_optimized(  # => opens the 1D-DP call
+    weights, values, capacity  # => same inputs as the full-table version
 )  # => O(cap) space
 print(full_table_answer)  # => Output: 7
 print(space_optimized_answer)  # => Output: 7
 
+# confirms the space-optimized 1D pass agrees exactly with the full 2D table
 assert full_table_answer == space_optimized_answer  # => confirms IDENTICAL results
 assert space_optimized_answer == 7  # => confirms it matches Example 51's known answer
 print("ex-62 OK")  # => Output: ex-62 OK
@@ -1206,60 +1211,58 @@ import heapq
 import random
 
 
-def dijkstra_counted(
-    graph: dict[int, list[tuple[int, int]]], start: int
+def dijkstra_counted(  # => heap-driven: only relaxes edges from the CLOSEST unfinished node
+    graph: dict[int, list[tuple[int, int]]], start: int  # => adjacency list + source node
 ) -> tuple[dict[int, float], int]:  # => (distances, relaxation attempts)
-    distances: dict[int, float] = {node: float("inf") for node in graph}
-    distances[start] = 0
-    heap: list[tuple[float, int]] = [(0, start)]
-    visited: set[int] = set()
+    distances: dict[int, float] = {node: float("inf") for node in graph}  # => all unreached
+    distances[start] = 0  # => the source reaches itself at cost 0
+    heap: list[tuple[float, int]] = [(0, start)]  # => (distance, node), ordered by distance
+    visited: set[int] = set()  # => nodes whose shortest distance is already finalized
     relaxations = 0  # => counts every edge examined, across the whole run
-    while heap:
-        dist, node = heapq.heappop(heap)
-        if node in visited:
-            continue
-        visited.add(node)
-        for neighbor, weight in graph[node]:
+    while heap:  # => keeps going until every reachable node is finalized
+        dist, node = heapq.heappop(heap)  # => pops the CLOSEST unfinished node
+        if node in visited:  # => a stale heap entry -- already finalized via a shorter path
+            continue  # => skip it, no work to redo
+        visited.add(node)  # => this node's shortest distance is now final
+        for neighbor, weight in graph[node]:  # => only relaxes THIS node's own edges
             relaxations += 1  # => one relaxation ATTEMPT per edge examined
-            new_dist = dist + weight
-            if new_dist < distances[neighbor]:
-                distances[neighbor] = new_dist
-                heapq.heappush(heap, (new_dist, neighbor))
-    return distances, relaxations
+            new_dist = dist + weight  # => the candidate distance via this node
+            if new_dist < distances[neighbor]:  # => a strictly shorter path was just found
+                distances[neighbor] = new_dist  # => records the improved distance
+                heapq.heappush(heap, (new_dist, neighbor))  # => queues it for future expansion
+    return distances, relaxations  # => the final shortest distances + total work done
 
 
-def bellman_ford_counted(
-    n: int, edges: list[tuple[int, int, int]], start: int
+def bellman_ford_counted(  # => brute-force: relaxes EVERY edge, EVERY round, no early exit
+    n: int, edges: list[tuple[int, int, int]], start: int  # => node count, edge list, source
 ) -> tuple[list[float], int]:  # => (distances, relaxation attempts)
-    dist: list[float] = [float("inf")] * n
-    dist[start] = 0
+    dist: list[float] = [float("inf")] * n  # => all nodes start unreached
+    dist[start] = 0  # => the source reaches itself at cost 0
     relaxations = 0  # => counts every edge examined, across ALL n-1 rounds
     for _ in range(n - 1):  # => O(V) full rounds, EVEN once nothing more can improve
         for u, v, w in edges:  # => O(E) edges examined, every single round
             relaxations += 1  # => one relaxation attempt, whether or not it improves
-            if dist[u] + w < dist[v]:
-                dist[v] = dist[u] + w
-    return dist, relaxations
+            if dist[u] + w < dist[v]:  # => a strictly shorter path via edge (u, v) was found
+                dist[v] = dist[u] + w  # => records the improved distance
+    return dist, relaxations  # => the final shortest distances + total work done
 
 
 random.seed(91)  # => fixed seed -> reproducible graph structure
 n = 40  # => 40 nodes, labeled 0..39
 edge_list: list[tuple[int, int, int]] = [  # => a moderately dense random graph
-    (u, v, random.randint(1, 20)) for u in range(n) for v in range(n) if u != v
-][
-    :300
-]  # => 300 non-negative-weight edges
+    (u, v, random.randint(1, 20)) for u in range(n) for v in range(n) if u != v  # => random weight
+][:300]  # => 300 non-negative-weight edges
 
-adjacency: dict[int, list[tuple[int, int]]] = {i: [] for i in range(n)}
+adjacency: dict[int, list[tuple[int, int]]] = {i: [] for i in range(n)}  # => empty adjacency lists
 for u, v, w in edge_list:  # => builds Dijkstra's adjacency-list representation
-    adjacency[u].append((v, w))
+    adjacency[u].append((v, w))  # => one directed edge per entry
 
-dijkstra_distances, dijkstra_relaxations = dijkstra_counted(adjacency, 0)
-bellman_distances, bellman_relaxations = bellman_ford_counted(n, edge_list, 0)
+dijkstra_distances, dijkstra_relaxations = dijkstra_counted(adjacency, 0)  # => heap-driven run
+bellman_distances, bellman_relaxations = bellman_ford_counted(n, edge_list, 0)  # => brute-force run
 
 print(dijkstra_relaxations < bellman_relaxations)  # => Output: True
-matches = all(
-    abs(dijkstra_distances[i] - bellman_distances[i]) < 1e-9 for i in range(n)
+matches = all(  # => opens the pairwise distance-agreement check
+    abs(dijkstra_distances[i] - bellman_distances[i]) < 1e-9 for i in range(n)  # => near-equal
 )  # => both algorithms must AGREE, since edges here are all non-negative
 print(matches)  # => Output: True
 
@@ -1364,70 +1367,70 @@ Cell = tuple[int, int]  # => a grid position (row, col)
 
 
 def neighbors(cell: Cell, rows: int, cols: int) -> list[Cell]:  # => 4-directional moves
-    r, c = cell
-    candidates = [
-        (r + 1, c),
-        (r - 1, c),
-        (r, c + 1),
-        (r, c - 1),
+    r, c = cell  # => the cell's own row/column
+    candidates = [  # => opens the four-direction candidate list
+        (r + 1, c),  # => down
+        (r - 1, c),  # => up
+        (r, c + 1),  # => right
+        (r, c - 1),  # => left
     ]  # => down/up/right/left
-    return [
-        (nr, nc) for nr, nc in candidates if 0 <= nr < rows and 0 <= nc < cols
+    return [  # => opens the in-bounds filter
+        (nr, nc) for nr, nc in candidates if 0 <= nr < rows and 0 <= nc < cols  # => in-bounds only
     ]  # => stays within the grid's bounds
 
 
 def manhattan(
-    a: Cell, b: Cell
+    a: Cell, b: Cell  # => the two cells to measure between
 ) -> int:  # => the ADMISSIBLE heuristic: never overestimates
-    return abs(a[0] - b[0]) + abs(
+    return abs(a[0] - b[0]) + abs(  # => row distance plus (opens) column distance
         a[1] - b[1]
     )  # => a lower bound on any grid path's cost
 
 
-def dijkstra_grid(
-    rows: int, cols: int, start: Cell, goal: Cell
+def dijkstra_grid(  # => baseline: orders the frontier by cost-so-far (g) alone
+    rows: int, cols: int, start: Cell, goal: Cell  # => grid size, start cell, goal cell
 ) -> tuple[int, int]:  # => (path cost, nodes expanded)
     dist: dict[Cell, int] = {start: 0}  # => cost-so-far to reach each visited cell
     heap: list[tuple[int, Cell]] = [(0, start)]  # => (g, cell) -- ordered by g alone
     expanded = 0  # => counts FINALIZED node expansions
-    visited: set[Cell] = set()
-    while heap:
-        g, cell = heapq.heappop(heap)
-        if cell in visited:
-            continue
-        visited.add(cell)
+    visited: set[Cell] = set()  # => cells whose shortest cost is already finalized
+    while heap:  # => keeps going until the goal is reached or the heap is empty
+        g, cell = heapq.heappop(heap)  # => pops the cheapest-so-far unfinished cell
+        if cell in visited:  # => a stale heap entry -- already finalized more cheaply
+            continue  # => skip it, no work to redo
+        visited.add(cell)  # => this cell's shortest cost is now final
         expanded += 1  # => one more node finalized
         if cell == goal:  # => reached the goal -- its distance is now final
-            return g, expanded
-        for nxt in neighbors(cell, rows, cols):
+            return g, expanded  # => the optimal cost, plus how much work it took
+        for nxt in neighbors(cell, rows, cols):  # => tries every 4-directional neighbor
             new_g = g + 1  # => every grid step costs 1
-            if new_g < dist.get(nxt, float("inf")):
-                dist[nxt] = new_g
-                heapq.heappush(heap, (new_g, nxt))
+            if new_g < dist.get(nxt, float("inf")):  # => a strictly cheaper path was found
+                dist[nxt] = new_g  # => records the improved cost
+                heapq.heappush(heap, (new_g, nxt))  # => queues it, ordered by g alone
     return -1, expanded  # => unreachable (never happens on a full grid)
 
 
-def a_star_grid(
-    rows: int, cols: int, start: Cell, goal: Cell
+def a_star_grid(  # => same search, but orders the frontier by g+h (estimated total cost)
+    rows: int, cols: int, start: Cell, goal: Cell  # => grid size, start cell, goal cell
 ) -> tuple[int, int]:  # => (path cost, nodes expanded)
     g_score: dict[Cell, int] = {start: 0}  # => cost-so-far to reach each visited cell
     heap: list[tuple[int, Cell]] = [
         (manhattan(start, goal), start)
     ]  # => (f = g+h, cell) -- ordered by the ESTIMATED total cost
     expanded = 0  # => counts FINALIZED node expansions
-    visited: set[Cell] = set()
-    while heap:
-        _, cell = heapq.heappop(heap)
-        if cell in visited:
-            continue
-        visited.add(cell)
+    visited: set[Cell] = set()  # => cells whose shortest cost is already finalized
+    while heap:  # => keeps going until the goal is reached or the heap is empty
+        _, cell = heapq.heappop(heap)  # => pops the most-promising unfinished cell
+        if cell in visited:  # => a stale heap entry -- already finalized more cheaply
+            continue  # => skip it, no work to redo
+        visited.add(cell)  # => this cell's shortest cost is now final
         expanded += 1  # => one more node finalized
         if cell == goal:  # => reached the goal -- its cost is now final and OPTIMAL
-            return g_score[cell], expanded
-        for nxt in neighbors(cell, rows, cols):
+            return g_score[cell], expanded  # => the optimal cost, plus how much work it took
+        for nxt in neighbors(cell, rows, cols):  # => tries every 4-directional neighbor
             new_g = g_score[cell] + 1  # => every grid step costs 1
-            if new_g < g_score.get(nxt, float("inf")):
-                g_score[nxt] = new_g
+            if new_g < g_score.get(nxt, float("inf")):  # => a strictly cheaper path was found
+                g_score[nxt] = new_g  # => records the improved cost-so-far
                 heapq.heappush(
                     heap, (new_g + manhattan(nxt, goal), nxt)
                 )  # => f = g + h steers the search TOWARD the goal
@@ -1441,8 +1444,8 @@ def a_star_grid(
 # smaller rectangle of cells that could plausibly lie on a shortest path.
 rows, cols = 30, 30  # => a large grid -- plenty of room for goal-irrelevant cells
 start, goal = (15, 15), (18, 18)  # => goal is near the center, not a far corner
-dijkstra_cost, dijkstra_expanded = dijkstra_grid(rows, cols, start, goal)
-a_star_cost, a_star_expanded = a_star_grid(rows, cols, start, goal)
+dijkstra_cost, dijkstra_expanded = dijkstra_grid(rows, cols, start, goal)  # => baseline run
+a_star_cost, a_star_expanded = a_star_grid(rows, cols, start, goal)  # => heuristic-guided run
 print(dijkstra_cost == a_star_cost)  # => Output: True
 print(a_star_expanded < dijkstra_expanded)  # => Output: True
 
@@ -1536,73 +1539,73 @@ from collections import deque
 
 
 def topological_order(graph: dict[str, list[str]]) -> list[str]:  # => Kahn's algorithm
-    in_degree: dict[str, int] = {node: 0 for node in graph}
-    for node in graph:
-        for neighbor in graph[node]:
-            in_degree[neighbor] += 1
-    queue: deque[str] = deque([node for node in graph if in_degree[node] == 0])
-    order: list[str] = []
-    while queue:
-        node = queue.popleft()
-        order.append(node)
-        for neighbor in graph[node]:
-            in_degree[neighbor] -= 1
-            if in_degree[neighbor] == 0:
-                queue.append(neighbor)
+    in_degree: dict[str, int] = {node: 0 for node in graph}  # => how many predecessors each node has
+    for node in graph:  # => scans every node's outgoing edges
+        for neighbor in graph[node]:  # => each edge node->neighbor
+            in_degree[neighbor] += 1  # => neighbor gains one more predecessor
+    queue: deque[str] = deque([node for node in graph if in_degree[node] == 0])  # => sources first
+    order: list[str] = []  # => accumulates the topological order as it's discovered
+    while queue:  # => processes nodes in the order their in-degree hits zero
+        node = queue.popleft()  # => the next node with all predecessors already emitted
+        order.append(node)  # => records it as next in topological order
+        for neighbor in graph[node]:  # => this node no longer blocks its successors
+            in_degree[neighbor] -= 1  # => one fewer unresolved predecessor for neighbor
+            if in_degree[neighbor] == 0:  # => neighbor's LAST predecessor was just emitted
+                queue.append(neighbor)  # => neighbor is now safe to process too
     return order  # => a valid topological order (assumes a DAG -- no cycle check here)
 
 
-def critical_path_length(
-    graph: dict[str, list[str]], durations: dict[str, int]
+def critical_path_length(  # => DP over a topological order: the true project length
+    graph: dict[str, list[str]], durations: dict[str, int]  # => task graph + each task's duration
 ) -> tuple[int, dict[str, int]]:  # => (total project length, earliest_finish per task)
-    order = topological_order(
-        graph
+    order = topological_order(  # => opens the topological-order call
+        graph  # => the same task dependency graph
     )  # => process every predecessor before its successors
-    predecessors: dict[str, list[str]] = {
-        node: [] for node in graph
+    predecessors: dict[str, list[str]] = {  # => opens the reversed-edge map construction
+        node: [] for node in graph  # => one empty predecessor list per task
     }  # => reverse the edges -- who must finish before each task
-    for u in graph:
-        for v in graph[u]:
+    for u in graph:  # => scans every node's outgoing edges
+        for v in graph[u]:  # => each edge u->v
             predecessors[v].append(u)  # => u is a predecessor of v
 
-    earliest_finish: dict[str, int] = (
-        {}
-    )  # => DP table: task -> earliest completion time
-    for (
-        task
+    earliest_finish: dict[  # => opens the DP table's type annotation
+        str, int  # => task name -> earliest completion time
+    ] = {}  # => DP table: task -> earliest completion time
+    for (  # => opens the topo-order iteration
+        task  # => the current task, in topological order
     ) in order:  # => processes in topo order -- every predecessor is already known
-        latest_predecessor_finish = max(
-            (earliest_finish[p] for p in predecessors[task]), default=0
+        latest_predecessor_finish = max(  # => opens the slowest-predecessor lookup
+            (earliest_finish[p] for p in predecessors[task]), default=0  # => 0 if no predecessors
         )  # => 0 if this task has no predecessors -- it can start immediately
-        earliest_finish[task] = (
-            durations[task] + latest_predecessor_finish
+        earliest_finish[task] = (  # => opens the DP-table assignment
+            durations[task] + latest_predecessor_finish  # => own duration plus the slowest wait
         )  # => this task's own duration, stacked on top of its slowest predecessor
 
     total_length = max(earliest_finish.values())  # => the whole PROJECT'S critical path
-    return (
-        total_length,
-        earliest_finish,
+    return (  # => opens the result tuple
+        total_length,  # => the overall project length
+        earliest_finish,  # => every task's own earliest-finish time
     )  # => project length and every task's finish time
 
 
 graph: dict[str, list[str]] = {  # => a small hand-computable project schedule
-    "design": ["build_a", "build_b"],
-    "build_a": ["test"],
-    "build_b": ["test"],
-    "test": [],
-}
+    "design": ["build_a", "build_b"],  # => design must finish before either build
+    "build_a": ["test"],  # => build_a must finish before test
+    "build_b": ["test"],  # => build_b must finish before test
+    "test": [],  # => the final task, with no successors
+}  # => closes the graph literal
 durations: dict[str, int] = {  # => how long each task takes, in days
-    "design": 3,
-    "build_a": 5,
-    "build_b": 2,
-    "test": 4,
-}
-total_length, finish_times = critical_path_length(graph, durations)
+    "design": 3,  # => 3 days
+    "build_a": 5,  # => 5 days -- the SLOWER of the two parallel builds
+    "build_b": 2,  # => 2 days
+    "test": 4,  # => 4 days
+}  # => closes the durations literal
+total_length, finish_times = critical_path_length(graph, durations)  # => runs the DP
 print(total_length)  # => Output: 12
 print(finish_times["test"])  # => Output: 12
 
 assert (
-    total_length == 12
+    total_length == 12  # => confirms the DP computed the known critical-path length
 )  # => design(3) -> build_a(5, the SLOWER branch) -> test(4) = 12
 assert finish_times["design"] == 3  # => no predecessors -- finishes at its own duration
 assert finish_times["build_b"] == 5  # => 3 (design) + 2 (build_b) = 5, NOT critical
@@ -1691,51 +1694,51 @@ Kosaraju's algorithm is a two-pass trick: DFS the original graph recording finis
 
 
 def transpose(graph: dict[str, list[str]]) -> dict[str, list[str]]:  # => reverses edges
-    reversed_graph: dict[str, list[str]] = {node: [] for node in graph}
-    for u in graph:
-        for v in graph[u]:
+    reversed_graph: dict[str, list[str]] = {node: [] for node in graph}  # => same nodes, no edges yet
+    for u in graph:  # => scans every node's outgoing edges
+        for v in graph[u]:  # => each original edge u->v
             reversed_graph[v].append(u)  # => flips u->v into v->u
     return reversed_graph  # => same nodes, every edge direction reversed
 
 
-def dfs_finish_order(
-    graph: dict[str, list[str]],
+def dfs_finish_order(  # => PASS 1: records DFS finish order over the ORIGINAL graph
+    graph: dict[str, list[str]],  # => the original adjacency-list graph
 ) -> list[str]:  # => same idea as Ex. 36
-    visited: set[str] = set()
-    finish_order: list[str] = []
+    visited: set[str] = set()  # => nodes already fully explored
+    finish_order: list[str] = []  # => nodes in the order their DFS subtree COMPLETES
 
-    def recurse(node: str) -> None:
-        visited.add(node)
-        for neighbor in graph.get(node, []):
-            if neighbor not in visited:
-                recurse(neighbor)
+    def recurse(node: str) -> None:  # => explores node's subtree before recording it
+        visited.add(node)  # => marks node as being explored
+        for neighbor in graph.get(node, []):  # => tries every outgoing edge
+            if neighbor not in visited:  # => only recurse into UNEXPLORED neighbors
+                recurse(neighbor)  # => fully explores that neighbor's subtree first
         finish_order.append(node)  # => appended only after all descendants finish
 
-    for node in graph:
-        if node not in visited:
-            recurse(node)
-    return finish_order
+    for node in graph:  # => ensures every node gets visited, even disconnected ones
+        if node not in visited:  # => starts a fresh DFS from any unvisited node
+            recurse(node)  # => explores that node's entire reachable subtree
+    return finish_order  # => PASS 1's output: nodes ordered by DFS finish time
 
 
-def strongly_connected_components(
-    graph: dict[str, list[str]],
+def strongly_connected_components(  # => the two-pass Kosaraju driver
+    graph: dict[str, list[str]],  # => the original adjacency-list graph
 ) -> list[list[str]]:  # => Kosaraju's algorithm, O(V+E)
     finish_order = dfs_finish_order(graph)  # => PASS 1: DFS the original graph
     reversed_graph = transpose(graph)  # => build the transposed graph once
-    visited: set[str] = set()
+    visited: set[str] = set()  # => nodes already assigned to a component
     components: list[list[str]] = []  # => each entry is one full SCC
 
-    def recurse(node: str, component: list[str]) -> None:
-        visited.add(node)
+    def recurse(node: str, component: list[str]) -> None:  # => grows one component
+        visited.add(node)  # => marks node as assigned
         component.append(node)  # => this node belongs to the CURRENT component
-        for neighbor in reversed_graph.get(node, []):
-            if neighbor not in visited:
+        for neighbor in reversed_graph.get(node, []):  # => tries every REVERSED edge
+            if neighbor not in visited:  # => only recurse into UNASSIGNED neighbors
                 recurse(neighbor, component)  # => grows the same component further
 
-    for node in reversed(
-        finish_order
+    for node in reversed(  # => opens the reverse-finish-order iteration
+        finish_order  # => PASS 1's output, walked back to front
     ):  # => PASS 2: REVERSE finish order, on the reversed graph
-        if node not in visited:
+        if node not in visited:  # => this node starts a BRAND NEW component
             component: list[str] = []  # => a fresh SCC, seeded by this unvisited node
             recurse(node, component)  # => the ENTIRE reachable set here is one SCC
             components.append(component)  # => records the completed component
@@ -1743,12 +1746,12 @@ def strongly_connected_components(
 
 
 graph: dict[str, list[str]] = {  # => a known digraph with two clear SCCs
-    "a": ["b"],
-    "b": ["c"],
+    "a": ["b"],  # => a points to b
+    "b": ["c"],  # => b points to c
     "c": ["a", "d"],  # => a->b->c->a is a cycle: {a, b, c} form one SCC
-    "d": ["e"],
+    "d": ["e"],  # => d points to e
     "e": ["d"],  # => d->e->d is a cycle: {d, e} form another SCC
-}
+}  # => closes the graph literal
 components = strongly_connected_components(graph)  # => Kosaraju's SCC decomposition
 component_sets = [set(c) for c in components]  # => order-independent comparison
 print(len(components))  # => Output: 2
@@ -1839,82 +1842,82 @@ Both structures answer prefix-sum plus point-update in O(log n) -- but a Fenwick
 
 
 class FenwickTree:  # => identical to Example 30's implementation
-    def __init__(self, n: int) -> None:
-        self.n = n
+    def __init__(self, n: int) -> None:  # => allocates the flat backing array
+        self.n = n  # => the number of elements tracked
         self.tree: list[int] = [0] * (n + 1)  # => O(n) space -- a single flat array
 
-    def update(self, i: int, delta: int) -> None:
-        i += 1
-        while i <= self.n:
-            self.tree[i] += delta
-            i += i & (-i)
+    def update(self, i: int, delta: int) -> None:  # => applies delta at index i
+        i += 1  # => converts to Fenwick's 1-indexed internal scheme
+        while i <= self.n:  # => climbs through every ancestor this index touches
+            self.tree[i] += delta  # => applies the delta at this ancestor node
+            i += i & (-i)  # => THE FENWICK TRICK: jumps to the next responsible ancestor
 
-    def prefix_sum(self, i: int) -> int:
-        i += 1
-        total = 0
-        while i > 0:
-            total += self.tree[i]
-            i -= i & (-i)
-        return total
+    def prefix_sum(self, i: int) -> int:  # => sum of elements [0..i], inclusive
+        i += 1  # => converts to Fenwick's 1-indexed internal scheme
+        total = 0  # => running prefix sum
+        while i > 0:  # => walks DOWN through the ancestors that cover this prefix
+            total += self.tree[i]  # => accumulates this ancestor's contribution
+            i -= i & (-i)  # => THE FENWICK TRICK: jumps to the next covering ancestor
+        return total  # => the completed prefix sum
 
 
 class SegmentTreeSum:  # => a sum-tracking segment tree -- more code, more memory
-    def __init__(self, n: int) -> None:
-        self.n = n
+    def __init__(self, n: int) -> None:  # => allocates the recursive tree array
+        self.n = n  # => the number of elements tracked
         self.tree: list[int] = [0] * (
             4 * n
         )  # => O(4n) space -- 4x a Fenwick tree's array
 
-    def update(self, i: int, delta: int) -> None:
-        self._update(1, 0, self.n - 1, i, delta)
+    def update(self, i: int, delta: int) -> None:  # => public entry point for a point update
+        self._update(1, 0, self.n - 1, i, delta)  # => starts the recursive descent at the root
 
-    def _update(self, node: int, lo: int, hi: int, i: int, delta: int) -> None:
-        if lo == hi:
-            self.tree[node] += delta
-            return
-        mid = (lo + hi) // 2
-        if i <= mid:
-            self._update(2 * node, lo, mid, i, delta)
-        else:
-            self._update(2 * node + 1, mid + 1, hi, i, delta)
-        self.tree[node] = self.tree[2 * node] + self.tree[2 * node + 1]
+    def _update(self, node: int, lo: int, hi: int, i: int, delta: int) -> None:  # => recursive descent
+        if lo == hi:  # => reached the LEAF representing index i
+            self.tree[node] += delta  # => applies the delta directly
+            return  # => nothing more to do at a leaf
+        mid = (lo + hi) // 2  # => splits this node's range in half
+        if i <= mid:  # => index i lives in the LEFT half
+            self._update(2 * node, lo, mid, i, delta)  # => recurse into the left child
+        else:  # => index i lives in the RIGHT half
+            self._update(2 * node + 1, mid + 1, hi, i, delta)  # => recurse into the right child
+        self.tree[node] = self.tree[2 * node] + self.tree[2 * node + 1]  # => re-merge from children
 
     def prefix_sum(self, i: int) -> int:  # => needs its OWN range-query traversal
-        return self._query(1, 0, self.n - 1, 0, i)
+        return self._query(1, 0, self.n - 1, 0, i)  # => queries the range [0, i]
 
-    def _query(self, node: int, node_lo: int, node_hi: int, lo: int, hi: int) -> int:
-        if hi < node_lo or node_hi < lo:
-            return 0
-        if lo <= node_lo and node_hi <= hi:
-            return self.tree[node]
-        mid = (node_lo + node_hi) // 2
-        return self._query(2 * node, node_lo, mid, lo, hi) + self._query(
-            2 * node + 1, mid + 1, node_hi, lo, hi
-        )
+    def _query(self, node: int, node_lo: int, node_hi: int, lo: int, hi: int) -> int:  # => range sum
+        if hi < node_lo or node_hi < lo:  # => this node's range is ENTIRELY outside [lo, hi]
+            return 0  # => contributes nothing
+        if lo <= node_lo and node_hi <= hi:  # => this node's range is ENTIRELY inside [lo, hi]
+            return self.tree[node]  # => its precomputed sum answers this subrange exactly
+        mid = (node_lo + node_hi) // 2  # => a PARTIAL overlap -- must split and recurse
+        return self._query(2 * node, node_lo, mid, lo, hi) + self._query(  # => left contribution
+            2 * node + 1, mid + 1, node_hi, lo, hi  # => plus the right contribution
+        )  # => closes the two-subquery sum
 
 
 n = 12  # => 12 elements, both starting at zero
-fenwick = FenwickTree(n)
-segment_tree = SegmentTreeSum(n)
-updates: list[tuple[int, int]] = [
-    (0, 5),
-    (3, 2),
-    (7, -1),
-    (11, 8),
-    (5, 4),
+fenwick = FenwickTree(n)  # => the Fenwick-tree instance under test
+segment_tree = SegmentTreeSum(n)  # => the segment-tree instance under test
+updates: list[tuple[int, int]] = [  # => opens the shared update sequence
+    (0, 5),  # => index 0, +5
+    (3, 2),  # => index 3, +2
+    (7, -1),  # => index 7, -1
+    (11, 8),  # => index 11, +8
+    (5, 4),  # => index 5, +4
 ]  # => the SAME sequence of point updates, applied to BOTH structures
-for idx, delta in updates:
+for idx, delta in updates:  # => applies every update to both structures identically
     fenwick.update(idx, delta)  # => O(log n): a handful of pointer-arithmetic hops
     segment_tree.update(idx, delta)  # => O(log n): a recursive tree descent
 
 queries: list[int] = [0, 3, 7, 11]  # => a spread of prefix-sum queries to compare
-fenwick_answers = [fenwick.prefix_sum(i) for i in queries]
-segment_answers = [segment_tree.prefix_sum(i) for i in queries]
+fenwick_answers = [fenwick.prefix_sum(i) for i in queries]  # => Fenwick's own answers
+segment_answers = [segment_tree.prefix_sum(i) for i in queries]  # => segment tree's own answers
 print(fenwick_answers)  # => Output: [5, 7, 10, 18]
 print(segment_answers)  # => Output: [5, 7, 10, 18]
 
 assert (
-    fenwick_answers == segment_answers
+    fenwick_answers == segment_answers  # => both structures agree on every query
 )  # => confirms IDENTICAL answers from two structurally different approaches
 assert len(fenwick.tree) == n + 1  # => confirms Fenwick's O(n) space usage
 assert len(segment_tree.tree) == 4 * n  # => confirms segment tree's larger O(4n) space
@@ -2018,25 +2021,25 @@ import math
 
 
 class AVLNode:  # => a BST node augmented with its own subtree height
-    def __init__(self, value: int) -> None:
-        self.value = value
-        self.left: AVLNode | None = None
-        self.right: AVLNode | None = None
+    def __init__(self, value: int) -> None:  # => a fresh leaf node
+        self.value = value  # => this node's key
+        self.left: AVLNode | None = None  # => no left child yet
+        self.right: AVLNode | None = None  # => no right child yet
         self.height: int = 1  # => a fresh leaf has height 1
 
 
 def height(node: AVLNode | None) -> int:  # => 0 for an empty (sub)tree, by convention
-    return node.height if node is not None else 0
+    return node.height if node is not None else 0  # => avoids a None-check at every call site
 
 
 def balance_factor(node: AVLNode) -> int:  # => left height minus right height
     return height(node.left) - height(node.right)  # => >1 or <-1 means "unbalanced"
 
 
-def update_height(
-    node: AVLNode,
+def update_height(  # => recomputes a node's height from its children's already-updated heights
+    node: AVLNode,  # => the node whose height needs recomputing
 ) -> None:  # => recomputes from the (already-updated) children
-    node.height = 1 + max(height(node.left), height(node.right))
+    node.height = 1 + max(height(node.left), height(node.right))  # => 1 plus the TALLER child
 
 
 def rotate_right(y: AVLNode) -> AVLNode:  # => fixes a LEFT-heavy imbalance
@@ -2050,46 +2053,46 @@ def rotate_right(y: AVLNode) -> AVLNode:  # => fixes a LEFT-heavy imbalance
 
 
 def rotate_left(x: AVLNode) -> AVLNode:  # => the mirror image: fixes a RIGHT-heavy case
-    y = x.right
+    y = x.right  # => y is guaranteed non-None whenever this is called (right-heavy)
     assert y is not None  # => narrows the type -- a right-heavy node has a right child
-    x.right = y.left
-    y.left = x
-    update_height(x)
-    update_height(y)
-    return y
+    x.right = y.left  # => y's left subtree becomes x's new right subtree
+    y.left = x  # => x becomes y's left child -- y rises to take x's old position
+    update_height(x)  # => x's height must be recomputed FIRST (it's now lower)
+    update_height(y)  # => then y's, since it depends on x's just-updated height
+    return y  # => y is the new root of this rotated subtree
 
 
-def avl_insert(
-    node: AVLNode | None, value: int
+def avl_insert(  # => standard BST insert, then rebalances on the way back up
+    node: AVLNode | None, value: int  # => the current subtree root and the key to insert
 ) -> AVLNode:  # => returns the new subtree root
     if node is None:  # => base case: an empty spot becomes a new leaf
-        return AVLNode(value)
-    if value < node.value:
-        node.left = avl_insert(node.left, value)
-    elif value > node.value:
-        node.right = avl_insert(node.right, value)
-    else:
+        return AVLNode(value)  # => a brand-new leaf, height 1
+    if value < node.value:  # => belongs in the LEFT subtree
+        node.left = avl_insert(node.left, value)  # => recurses, then re-attaches the result
+    elif value > node.value:  # => belongs in the RIGHT subtree
+        node.right = avl_insert(node.right, value)  # => recurses, then re-attaches the result
+    else:  # => value already exists in the tree
         return node  # => duplicate values are ignored
-    update_height(
-        node
+    update_height(  # => opens the height-refresh call
+        node  # => this insert's subtree root
     )  # => this node's height may have grown after the recursive insert
     balance = balance_factor(node)  # => checks whether THIS node is now unbalanced
 
-    if (
-        balance > 1 and node.left is not None and value < node.left.value
+    if (  # => opens the LEFT-LEFT case check
+        balance > 1 and node.left is not None and value < node.left.value  # => left-heavy, straight
     ):  # => LEFT-LEFT
         return rotate_right(node)  # => a single right rotation fixes it
-    if (
-        balance < -1 and node.right is not None and value > node.right.value
+    if (  # => opens the RIGHT-RIGHT case check
+        balance < -1 and node.right is not None and value > node.right.value  # => right-heavy, straight
     ):  # => RIGHT-RIGHT
         return rotate_left(node)  # => a single left rotation fixes it
-    if (
-        balance > 1 and node.left is not None and value > node.left.value
+    if (  # => opens the LEFT-RIGHT case check
+        balance > 1 and node.left is not None and value > node.left.value  # => left-heavy, zig-zag
     ):  # => LEFT-RIGHT
         node.left = rotate_left(node.left)  # => first straighten the left child...
         return rotate_right(node)  # => ...then rotate this node -- a DOUBLE rotation
-    if (
-        balance < -1 and node.right is not None and value < node.right.value
+    if (  # => opens the RIGHT-LEFT case check
+        balance < -1 and node.right is not None and value < node.right.value  # => right-heavy, zig-zag
     ):  # => RIGHT-LEFT
         node.right = rotate_right(node.right)  # => first straighten the right child...
         return rotate_left(node)  # => ...then rotate this node -- a DOUBLE rotation
@@ -2097,7 +2100,7 @@ def avl_insert(
 
 
 n = 100  # => 100 sorted keys -- Example 15's exact worst case for a plain BST
-root: AVLNode | None = None
+root: AVLNode | None = None  # => starts as an empty tree
 for k in range(n):  # => inserting in ASCENDING order
     root = avl_insert(root, k)  # => the AVL tree self-balances after every insert
 
@@ -2105,12 +2108,13 @@ tree_height = height(root)  # => the actual resulting height
 log_bound = math.ceil(2 * math.log2(n + 2))  # => a generous O(log n) upper bound
 print(tree_height)  # => Output: 7
 print(
-    log_bound
+    log_bound  # => the computed upper bound
 )  # => Output: 14 -- confirms tree_height comfortably fits under this bound
 
+# confirms the AVL tree's self-balancing rotations kept height logarithmic
 assert tree_height < log_bound  # => confirms O(log n), NOT the O(n) chain of Example 15
 assert (
-    tree_height < n
+    tree_height < n  # => confirms the tree height is nowhere near the input count
 )  # => trivially true, but makes the contrast with Example 15 explicit
 print("ex-68 OK")  # => Output: ex-68 OK
 ```
@@ -2192,154 +2196,154 @@ A red-black tree balances via color, not strict height matching: no red node has
 # (1) no red node has a red child ("no red-red"), and (2) every root-to-leaf
 # path has the SAME count of black nodes ("equal black-heights"). Together
 # these two rules bound height at O(log n), enforced by rotations + recolors.
-from __future__ import annotations
+from __future__ import annotations  # => allows RBNode to reference itself in type hints
 
-from enum import Enum, auto
+from enum import Enum, auto  # => Color is an Enum, not a bare string, for type safety
 
 
-class Color(Enum):
+class Color(Enum):  # => the two colors every red-black node can have
     RED = auto()  # => a freshly inserted node always starts RED
     BLACK = auto()  # => the root, and every "missing" leaf, count as BLACK
 
 
 class RBNode:  # => a BST node with a color and an explicit parent pointer
-    def __init__(self, value: int) -> None:
-        self.value = value
+    def __init__(self, value: int) -> None:  # => a fresh node, always inserted RED
+        self.value = value  # => this node's key
         self.color = Color.RED  # => new nodes are always inserted RED
-        self.left: RBNode | None = None
-        self.right: RBNode | None = None
-        self.parent: RBNode | None = None
+        self.left: RBNode | None = None  # => no left child yet
+        self.right: RBNode | None = None  # => no right child yet
+        self.parent: RBNode | None = None  # => no parent yet -- set by the caller
 
 
-class RedBlackTree:
-    def __init__(self) -> None:
-        self.root: RBNode | None = None
+class RedBlackTree:  # => wraps the root pointer and the insert/fixup/rotation logic
+    def __init__(self) -> None:  # => an empty tree
+        self.root: RBNode | None = None  # => no nodes yet
 
     def insert(self, value: int) -> None:  # => standard BST insert, then FIXUP
-        node = RBNode(value)
-        parent: RBNode | None = None
-        current = self.root
+        node = RBNode(value)  # => the new node, colored RED by default
+        parent: RBNode | None = None  # => tracks the eventual parent during descent
+        current = self.root  # => starts the descent from the root
         while current is not None:  # => standard BST descent to find node's spot
-            parent = current
-            if value < current.value:
-                current = current.left
-            elif value > current.value:
-                current = current.right
-            else:
+            parent = current  # => remembers the last node visited
+            if value < current.value:  # => belongs in the LEFT subtree
+                current = current.left  # => descends left
+            elif value > current.value:  # => belongs in the RIGHT subtree
+                current = current.right  # => descends right
+            else:  # => value already exists in the tree
                 return  # => duplicate value -- ignored
-        node.parent = parent
+        node.parent = parent  # => attaches the new node under its found parent
         if parent is None:  # => the tree was empty -- node becomes the root
-            self.root = node
-        elif value < parent.value:
-            parent.left = node
-        else:
-            parent.right = node
+            self.root = node  # => the new node is now the whole tree
+        elif value < parent.value:  # => attaches as the LEFT child
+            parent.left = node  # => links the new node in
+        else:  # => attaches as the RIGHT child
+            parent.right = node  # => links the new node in
         self._fixup(node)  # => restores the two invariants, possibly via rotations
 
     def _fixup(self, node: RBNode) -> None:  # => the classic CLRS red-black fixup loop
-        while (
-            node.parent is not None and node.parent.color == Color.RED
+        while (  # => opens the red-red-violation loop condition
+            node.parent is not None and node.parent.color == Color.RED  # => parent exists and is RED
         ):  # => a red-red violation exists between node and its parent
-            grandparent = node.parent.parent
-            assert (
-                grandparent is not None
+            grandparent = node.parent.parent  # => needed to identify node's UNCLE
+            assert (  # => opens the non-root-parent sanity check
+                grandparent is not None  # => guaranteed by the red-red-violation loop condition
             )  # => a red parent is never the root (root is black)
             if node.parent == grandparent.left:  # => parent is a LEFT child
-                uncle = grandparent.right
-                if (
-                    uncle is not None and uncle.color == Color.RED
+                uncle = grandparent.right  # => the OTHER child of the grandparent
+                if (  # => opens the red-uncle check
+                    uncle is not None and uncle.color == Color.RED  # => uncle exists and is RED
                 ):  # => RED uncle: recolor
-                    node.parent.color = Color.BLACK
-                    uncle.color = Color.BLACK
-                    grandparent.color = Color.RED
+                    node.parent.color = Color.BLACK  # => pushes the red-red fix upward
+                    uncle.color = Color.BLACK  # => keeps black-height balanced on both sides
+                    grandparent.color = Color.RED  # => grandparent may now violate red-red itself
                     node = grandparent  # => the violation may have moved UP -- keep looping
                 else:  # => BLACK (or absent) uncle: rotation(s) needed
-                    if (
-                        node == node.parent.right
+                    if (  # => opens the zig-zag-shape check
+                        node == node.parent.right  # => node is the RIGHT child of a LEFT-child parent
                     ):  # => a "zig-zag" shape -- straighten first
-                        node = node.parent
-                        self._rotate_left(node)
+                        node = node.parent  # => re-anchors node at the parent for the pre-rotation
+                        self._rotate_left(node)  # => converts zig-zag into a straight zig-zig
                     assert node.parent is not None  # => the fixup loop guarantees this
                     node.parent.color = Color.BLACK  # => recolors after the rotation
-                    grandparent.color = Color.RED
-                    self._rotate_right(grandparent)
+                    grandparent.color = Color.RED  # => grandparent drops down and turns red
+                    self._rotate_right(grandparent)  # => the final rotation restores balance
             else:  # => the mirror image: parent is a RIGHT child
-                uncle = grandparent.left
-                if uncle is not None and uncle.color == Color.RED:
-                    node.parent.color = Color.BLACK
-                    uncle.color = Color.BLACK
-                    grandparent.color = Color.RED
-                    node = grandparent
-                else:
-                    if node == node.parent.left:
-                        node = node.parent
-                        self._rotate_right(node)
+                uncle = grandparent.left  # => the OTHER child of the grandparent
+                if uncle is not None and uncle.color == Color.RED:  # => RED uncle: recolor case
+                    node.parent.color = Color.BLACK  # => pushes the red-red fix upward
+                    uncle.color = Color.BLACK  # => keeps black-height balanced on both sides
+                    grandparent.color = Color.RED  # => grandparent may now violate red-red itself
+                    node = grandparent  # => the violation may have moved UP -- keep looping
+                else:  # => BLACK (or absent) uncle: rotation(s) needed
+                    if node == node.parent.left:  # => a "zig-zag" shape -- straighten first case
+                        node = node.parent  # => re-anchors node at the parent for the pre-rotation
+                        self._rotate_right(node)  # => converts zig-zag into a straight zig-zig
                     assert node.parent is not None  # => the fixup loop guarantees this
-                    node.parent.color = Color.BLACK
-                    grandparent.color = Color.RED
-                    self._rotate_left(grandparent)
+                    node.parent.color = Color.BLACK  # => recolors after the rotation
+                    grandparent.color = Color.RED  # => grandparent drops down and turns red
+                    self._rotate_left(grandparent)  # => the final rotation restores balance
         assert self.root is not None  # => the tree is non-empty after any insert
         self.root.color = Color.BLACK  # => THE INVARIANT: the root is always black
 
-    def _rotate_left(self, x: RBNode) -> None:
-        y = x.right
+    def _rotate_left(self, x: RBNode) -> None:  # => standard BST left rotation, plus parent links
+        y = x.right  # => y is guaranteed non-None whenever this is called
         assert y is not None  # => only called when x has a right child
-        x.right = y.left
-        if y.left is not None:
-            y.left.parent = x
-        y.parent = x.parent
-        if x.parent is None:
-            self.root = y
-        elif x == x.parent.left:
-            x.parent.left = y
-        else:
-            x.parent.right = y
-        y.left = x
-        x.parent = y
+        x.right = y.left  # => y's left subtree becomes x's new right subtree
+        if y.left is not None:  # => re-parents that subtree, if it exists
+            y.left.parent = x  # => keeps the parent pointer consistent
+        y.parent = x.parent  # => y takes x's old place in the tree
+        if x.parent is None:  # => x WAS the root
+            self.root = y  # => y becomes the new root
+        elif x == x.parent.left:  # => x was a LEFT child
+            x.parent.left = y  # => y takes x's place as the left child
+        else:  # => x was a RIGHT child
+            x.parent.right = y  # => y takes x's place as the right child
+        y.left = x  # => x becomes y's left child -- y rises to take x's old position
+        x.parent = y  # => completes the parent-pointer swap
 
-    def _rotate_right(self, x: RBNode) -> None:
-        y = x.left
+    def _rotate_right(self, x: RBNode) -> None:  # => the mirror image of _rotate_left
+        y = x.left  # => y is guaranteed non-None whenever this is called
         assert y is not None  # => only called when x has a left child
-        x.left = y.right
-        if y.right is not None:
-            y.right.parent = x
-        y.parent = x.parent
-        if x.parent is None:
-            self.root = y
-        elif x == x.parent.right:
-            x.parent.right = y
-        else:
-            x.parent.left = y
-        y.right = x
-        x.parent = y
+        x.left = y.right  # => y's right subtree becomes x's new left subtree
+        if y.right is not None:  # => re-parents that subtree, if it exists
+            y.right.parent = x  # => keeps the parent pointer consistent
+        y.parent = x.parent  # => y takes x's old place in the tree
+        if x.parent is None:  # => x WAS the root
+            self.root = y  # => y becomes the new root
+        elif x == x.parent.right:  # => x was a RIGHT child
+            x.parent.right = y  # => y takes x's place as the right child
+        else:  # => x was a LEFT child
+            x.parent.left = y  # => y takes x's place as the left child
+        y.right = x  # => x becomes y's right child -- y rises to take x's old position
+        x.parent = y  # => completes the parent-pointer swap
 
 
 def no_red_red_violation(node: RBNode | None) -> bool:  # => INVARIANT 1 checker
     if node is None:  # => an absent child counts as black -- no violation possible
-        return True
+        return True  # => nothing to violate at an empty leaf
     if node.color == Color.RED:  # => a red node's children must BOTH be non-red
-        if node.left is not None and node.left.color == Color.RED:
-            return False
-        if node.right is not None and node.right.color == Color.RED:
-            return False
-    return no_red_red_violation(node.left) and no_red_red_violation(
-        node.right
+        if node.left is not None and node.left.color == Color.RED:  # => red-red on the left
+            return False  # => a genuine violation
+        if node.right is not None and node.right.color == Color.RED:  # => red-red on the right
+            return False  # => a genuine violation
+    return no_red_red_violation(node.left) and no_red_red_violation(  # => checks the left subtree
+        node.right  # => and the right subtree
     )  # => recursively checks the whole tree
 
 
-def black_height(
-    node: RBNode | None,
+def black_height(  # => counts BLACK nodes on any root-to-leaf path, or -1 if unequal
+    node: RBNode | None,  # => the subtree root to measure
 ) -> int:  # => INVARIANT 2 checker: -1 means violated
-    if (
-        node is None
+    if (  # => opens the empty-leaf base case check
+        node is None  # => reached past a real node -- the implicit black leaf
     ):  # => an absent leaf contributes exactly 1 to any path's black count
-        return 1
+        return 1  # => the base case for every root-to-leaf path
     left = black_height(node.left)  # => recursively checks the left subtree first
     right = black_height(node.right)  # => then the right subtree
     if left == -1 or right == -1 or left != right:  # => already broken, or MISMATCHED
         return -1  # => propagates the violation upward
-    return left + (
-        1 if node.color == Color.BLACK else 0
+    return left + (  # => opens the this-node's-own-color tally
+        1 if node.color == Color.BLACK else 0  # => BLACK nodes count, RED nodes don't
     )  # => tallies this node if BLACK
 
 
@@ -2352,11 +2356,11 @@ print(black_height(tree.root) != -1)  # => Output: True
 assert tree.root is not None  # => narrows the type for the color check below
 print(tree.root.color == Color.BLACK)  # => Output: True
 
-assert no_red_red_violation(
-    tree.root
+assert no_red_red_violation(  # => opens the invariant-1 assertion
+    tree.root  # => the fully-built 200-node tree
 )  # => confirms invariant 1 holds after 200 inserts
-assert (
-    black_height(tree.root) != -1
+assert (  # => opens the invariant-2 assertion
+    black_height(tree.root) != -1  # => a non-negative-one result means it's balanced
 )  # => confirms invariant 2 (equal black-heights) holds
 assert tree.root.color == Color.BLACK  # => confirms the root invariant holds
 print("ex-69 OK")  # => Output: ex-69 OK
@@ -2446,38 +2450,38 @@ Fix one element, then two-pointer the remaining sorted array for a pair summing 
 
 
 def three_sum(nums: list[int]) -> list[list[int]]:  # => O(n^2): O(n) outer * O(n) inner
-    nums_sorted = sorted(
-        nums
+    nums_sorted = sorted(  # => opens the sort call
+        nums  # => the raw, unsorted input
     )  # => O(n log n): enables both the skip-logic and 2-pointer
-    n = len(nums_sorted)
+    n = len(nums_sorted)  # => the sequence length
     triplets: list[list[int]] = []  # => accumulates unique triplets summing to zero
     for i in range(n - 2):  # => fixes the FIRST element of each candidate triplet
-        if (
-            i > 0 and nums_sorted[i] == nums_sorted[i - 1]
+        if (  # => opens the duplicate-first-element check
+            i > 0 and nums_sorted[i] == nums_sorted[i - 1]  # => same value as the prior i
         ):  # => same first element as before
             continue  # => SKIPS it -- would only regenerate triplets already found
         lo, hi = i + 1, n - 1  # => two pointers over the REMAINING sorted slice
-        target = -nums_sorted[
-            i
+        target = -nums_sorted[  # => opens the target-value lookup
+            i  # => the fixed first element's index
         ]  # => the pair must sum to exactly this, for a zero total
         while lo < hi:  # => Example 23's exact two-pointer pattern, reused here
-            pair_sum = nums_sorted[lo] + nums_sorted[hi]
+            pair_sum = nums_sorted[lo] + nums_sorted[hi]  # => the current pair's sum
             if pair_sum == target:  # => found a valid triplet
-                triplets.append([nums_sorted[i], nums_sorted[lo], nums_sorted[hi]])
-                while (
-                    lo < hi and nums_sorted[lo] == nums_sorted[lo + 1]
+                triplets.append([nums_sorted[i], nums_sorted[lo], nums_sorted[hi]])  # => records it
+                while (  # => opens the skip-duplicate-lo loop
+                    lo < hi and nums_sorted[lo] == nums_sorted[lo + 1]  # => same lo value repeats
                 ):  # => skip dup lo
-                    lo += 1
-                while (
-                    lo < hi and nums_sorted[hi] == nums_sorted[hi - 1]
+                    lo += 1  # => advances past the duplicate
+                while (  # => opens the skip-duplicate-hi loop
+                    lo < hi and nums_sorted[hi] == nums_sorted[hi - 1]  # => same hi value repeats
                 ):  # => skip dup hi
-                    hi -= 1
+                    hi -= 1  # => advances past the duplicate
                 lo += 1  # => moves past the just-recorded pair
-                hi -= 1
+                hi -= 1  # => moves past the just-recorded pair on the other side
             elif pair_sum < target:  # => sum too small -- need a bigger low value
-                lo += 1
+                lo += 1  # => shrinks the range from the left
             else:  # => sum too big -- need a smaller high value
-                hi -= 1
+                hi -= 1  # => shrinks the range from the right
     return triplets  # => every unique triplet summing to zero
 
 
@@ -2487,7 +2491,7 @@ print(sorted(triplets))  # => Output: [[-1, -1, 2], [-1, 0, 1]]
 
 assert sorted(triplets) == [[-1, -1, 2], [-1, 0, 1]]  # => confirms the known answer
 for t in triplets:  # => confirms EVERY triplet genuinely sums to zero
-    assert sum(t) == 0
+    assert sum(t) == 0  # => this triplet's own three values sum to exactly 0
 unique_triplets = {tuple(t) for t in triplets}  # => hashable form, catches duplicates
 assert len(unique_triplets) == len(triplets)  # => confirms no triplet is repeated
 print("ex-70 OK")  # => Output: ex-70 OK
@@ -2561,8 +2565,8 @@ def longest_unique_substring_length(s: str) -> int:  # => O(n): one pass, amorti
     last_seen: dict[str, int] = {}  # => char -> the most recent index it was seen at
     left = 0  # => the window's left edge (inclusive)
     best = 0  # => the longest window length found so far
-    for right, ch in enumerate(
-        s
+    for right, ch in enumerate(  # => opens the right-edge growth loop
+        s  # => the string being scanned
     ):  # => grows the window's right edge one char at a time
         if ch in last_seen and last_seen[ch] >= left:  # => a repeat WITHIN the window
             left = (
@@ -2574,21 +2578,21 @@ def longest_unique_substring_length(s: str) -> int:  # => O(n): one pass, amorti
 
 
 def brute_force_longest_unique_substring(s: str) -> int:  # => O(n^2): every start point
-    best = 0
+    best = 0  # => the longest repeat-free run found so far
     for i in range(len(s)):  # => tries every possible starting index
         seen: set[str] = set()  # => characters seen in the current run from i
         for j in range(i, len(s)):  # => extends as far as possible without a repeat
-            if s[j] in seen:
+            if s[j] in seen:  # => this character already appeared in the current run
                 break  # => a repeat -- this run from i stops here
-            seen.add(s[j])
+            seen.add(s[j])  # => records this character as seen in the current run
             best = max(best, j - i + 1)  # => updates the longest run found
     return best  # => ground truth, for comparison
 
 
-test_strings: list[str] = ["abcabcbb", "bbbbb", "pwwkew", "", "abcdef"]
+test_strings: list[str] = ["abcabcbb", "bbbbb", "pwwkew", "", "abcdef"]  # => varied test cases
 for s in test_strings:  # => checks the fast approach against brute force, per string
-    fast = longest_unique_substring_length(s)
-    brute = brute_force_longest_unique_substring(s)
+    fast = longest_unique_substring_length(s)  # => O(n) result
+    brute = brute_force_longest_unique_substring(s)  # => O(n^2) ground truth
     print(f"{s!r}: {fast}")  # => Output: one "'string': length" line per test string
     assert fast == brute  # => confirms both approaches agree exactly
 
@@ -2680,7 +2684,7 @@ from collections import Counter
 
 def min_window_substring(s: str, target: str) -> str:  # => O(len(s) + len(target))
     if not target or not s:  # => an empty target or source has no valid window
-        return ""
+        return ""  # => nothing to search for, or nothing to search in
     need = Counter(target)  # => char -> how many of it the window still needs
     missing = len(target)  # => total count of characters still unsatisfied
     left = 0  # => the window's left edge
@@ -2688,19 +2692,19 @@ def min_window_substring(s: str, target: str) -> str:  # => O(len(s) + len(targe
     for right, ch in enumerate(s):  # => grows the window's right edge
         if need[ch] > 0:  # => this character is still needed somewhere in the window
             missing -= 1  # => one fewer character left to satisfy
-        need[
-            ch
-        ] -= 1  # => consumes one unit of "need" for this character (may go negative)
+        need[ch] -= (  # => opens the need-counter decrement
+            1  # => consumes one unit of "need" for this character (may go negative)
+        )  # => closes the decrement assignment
         while missing == 0:  # => the window FULLY covers target -- try to SHRINK it
-            if (
-                right - left + 1 < best_len
+            if (  # => opens the new-best-window check
+                right - left + 1 < best_len  # => this window's length beats the current best
             ):  # => this window beats the best found so far
                 best_left, best_len = left, right - left + 1  # => records the new best
             need[s[left]] += 1  # => giving back the leftmost character's "need" slot
             if need[s[left]] > 0:  # => that character is now missing again
                 missing += 1  # => the window no longer fully covers target
             left += 1  # => shrinks the window by advancing the left edge
-    return "" if best_len == float("inf") else s[best_left : best_left + int(best_len)]
+    return "" if best_len == float("inf") else s[best_left : best_left + int(best_len)]  # => final window
 
 
 print(min_window_substring("ADOBECODEBANC", "ABC"))  # => Output: BANC
@@ -2781,8 +2785,8 @@ Binary-searching over a value space, not an array: 'can capacity C ship everythi
 # valid here, hunting for the smallest C where the feasibility check flips.
 
 
-def can_ship_within_days(
-    weights: list[int], capacity: int, days: int
+def can_ship_within_days(  # => greedily packs, day by day, to test one candidate capacity
+    weights: list[int], capacity: int, days: int  # => packages, candidate capacity, day budget
 ) -> bool:  # => THE MONOTONIC PREDICATE being binary-searched
     days_needed = 1  # => at least one day is always needed
     current_load = 0  # => how much weight is loaded onto the CURRENT day's shipment
@@ -2794,8 +2798,8 @@ def can_ship_within_days(
     return days_needed <= days  # => True iff the greedy packing fits within the budget
 
 
-def min_ship_capacity(
-    weights: list[int], days: int
+def min_ship_capacity(  # => binary-searches the VALUE SPACE for the smallest feasible capacity
+    weights: list[int], days: int  # => packages to ship, and the day budget
 ) -> int:  # => O(n log(sum(weights)))
     lo = max(weights)  # => capacity must fit at LEAST the single heaviest package
     hi = sum(weights)  # => capacity never needs to exceed shipping everything in 1 day
@@ -2808,17 +2812,17 @@ def min_ship_capacity(
     return lo  # => the smallest capacity for which the predicate is True
 
 
-weights: list[int] = [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
+weights: list[int] = [  # => opens the classic LeetCode weights literal
+    1,  # => package 0
+    2,  # => package 1
+    3,  # => package 2
+    4,  # => package 3
+    5,  # => package 4
+    6,  # => package 5
+    7,  # => package 6
+    8,  # => package 7
+    9,  # => package 8
+    10,  # => package 9
 ]  # => the classic LeetCode example
 result = min_ship_capacity(weights, days=5)  # => the smallest feasible ship capacity
 print(result)  # => Output: 15
@@ -2901,23 +2905,23 @@ Example 8's naive first-pivot quickselect degrades to O(n^2) on sorted input; Ex
 
 def naive_first_pivot_select(arr: list[int], k: int, counter: list[int]) -> int:
     # => the SAME strategy as Example 8: always pivot on arr[0]
-    if len(arr) == 1:
+    if len(arr) == 1:  # => base case: only one element left
         return arr[0]  # => base case: one element left -- it must be the answer
-    pivot = arr[0]
+    pivot = arr[0]  # => ALWAYS the first element -- the vulnerability an adversary can exploit
     lows: list[int] = []  # => elements strictly less than pivot
     highs: list[int] = []  # => elements strictly greater than pivot
     pivots: list[int] = []  # => elements equal to pivot (handles duplicates)
-    for x in arr:
+    for x in arr:  # => a single O(n) partition pass
         counter[0] += 1  # => ONE comparison charged per element, per level
-        if x < pivot:
-            lows.append(x)
-        elif x > pivot:
-            highs.append(x)
-        else:
-            pivots.append(x)
-    if k < len(lows):
-        return naive_first_pivot_select(lows, k, counter)
-    if k < len(lows) + len(pivots):
+        if x < pivot:  # => belongs in the lower partition
+            lows.append(x)  # => collects it
+        elif x > pivot:  # => belongs in the upper partition
+            highs.append(x)  # => collects it
+        else:  # => equal to the pivot itself
+            pivots.append(x)  # => collects it
+    if k < len(lows):  # => the k-th smallest lives entirely within lows
+        return naive_first_pivot_select(lows, k, counter)  # => recurse into just that partition
+    if k < len(lows) + len(pivots):  # => k lands within the pivot-equal group
         return pivot  # => k lands inside the pivot-equal group -- done
     return naive_first_pivot_select(
         highs, k - len(lows) - len(pivots), counter
@@ -2928,46 +2932,46 @@ def median_of_medians_select(arr: list[int], k: int, counter: list[int]) -> int:
     # => finds the k-th smallest (0-indexed) with a GUARANTEED-good pivot
     if len(arr) <= 5:  # => base case: small enough to sort directly
         counter[0] += len(arr)  # => charges a small, bounded cost for the sort
-        return sorted(arr)[k]
+        return sorted(arr)[k]  # => trivial for a handful of elements
     medians: list[int] = []  # => one median per group of (up to) 5 elements
-    for i in range(0, len(arr), 5):
+    for i in range(0, len(arr), 5):  # => splits arr into fixed-size groups of 5
         group = sorted(arr[i : i + 5])  # => sorting 5 elements is O(1) work
         counter[0] += len(group)  # => charges that bounded cost
         medians.append(group[len(group) // 2])  # => the middle of each group of 5
     pivot = median_of_medians_select(
         medians, len(medians) // 2, counter
     )  # => recursively finds the MEDIAN OF the medians -- the key trick
-    lows: list[int] = []
-    highs: list[int] = []
-    pivots: list[int] = []
-    for x in arr:
+    lows: list[int] = []  # => elements strictly less than pivot
+    highs: list[int] = []  # => elements strictly greater than pivot
+    pivots: list[int] = []  # => elements equal to pivot (handles duplicates)
+    for x in arr:  # => a single O(n) partition pass, same shape as the naive version
         counter[0] += 1  # => ONE comparison charged per element, per level
-        if x < pivot:
-            lows.append(x)
-        elif x > pivot:
-            highs.append(x)
-        else:
-            pivots.append(x)
+        if x < pivot:  # => belongs in the lower partition
+            lows.append(x)  # => collects it
+        elif x > pivot:  # => belongs in the upper partition
+            highs.append(x)  # => collects it
+        else:  # => equal to the pivot itself
+            pivots.append(x)  # => collects it
     # => the median-of-medians pivot is PROVABLY >= 30% and <= 70% of arr,
     # => so recursion always shrinks by at least a constant fraction -- this
     # => is what bounds total work to O(n), unlike Example 8's O(n^2) case
-    if k < len(lows):
-        return median_of_medians_select(lows, k, counter)
-    if k < len(lows) + len(pivots):
-        return pivot
-    return median_of_medians_select(highs, k - len(lows) - len(pivots), counter)
+    if k < len(lows):  # => the k-th smallest lives entirely within lows
+        return median_of_medians_select(lows, k, counter)  # => recurse into just that partition
+    if k < len(lows) + len(pivots):  # => k lands within the pivot-equal group
+        return pivot  # => k lands inside the pivot-equal group -- done
+    return median_of_medians_select(highs, k - len(lows) - len(pivots), counter)  # => recurse rightward
 
 
 naive_counter = [0]  # => a single-element list works as a mutable accumulator
-mom_counter = [0]
+mom_counter = [0]  # => same trick, for the median-of-medians comparison count
 for n in (200, 400):  # => DOUBLING the input size isolates the growth rate
     sorted_input = list(range(n))  # => Example 8's exact adversarial case
-    counter = [0]
-    naive_first_pivot_select(list(sorted_input), n // 2, counter)
+    counter = [0]  # => a fresh counter for this run
+    naive_first_pivot_select(list(sorted_input), n // 2, counter)  # => runs the naive version
     naive_counter.append(counter[0])  # => records comparisons at this n
 
-    counter = [0]
-    median_of_medians_select(list(sorted_input), n // 2, counter)
+    counter = [0]  # => a fresh counter for this run
+    median_of_medians_select(list(sorted_input), n // 2, counter)  # => runs the guaranteed version
     mom_counter.append(counter[0])  # => records comparisons at this n
 
 naive_ratio = naive_counter[2] / naive_counter[1]  # => growth from n=200 to n=400
@@ -2980,10 +2984,10 @@ print(round(mom_ratio, 1))  # => Output: 2.1 -- doubling n roughly DOUBLES the c
 assert naive_ratio > 3.5  # => confirms Example 8's naive pivot is QUADRATIC (~4x)
 assert mom_ratio < 2.5  # => confirms median-of-medians stays LINEAR (~2x), guaranteed
 
-correctness_input = [37, 2, 91, 15, 4, 68, 23, 5, 100, 12, 44, 8]
+correctness_input = [37, 2, 91, 15, 4, 68, 23, 5, 100, 12, 44, 8]  # => a small, arbitrary array
 for k in range(len(correctness_input)):  # => checks EVERY rank, not just the median
     expected = sorted(correctness_input)[k]  # => the ground-truth k-th smallest
-    got = median_of_medians_select(list(correctness_input), k, [0])
+    got = median_of_medians_select(list(correctness_input), k, [0])  # => the algorithm's own answer
     assert got == expected  # => correctness holds regardless of the pivot strategy
 print("ex-74 OK")  # => Output: ex-74 OK
 ```
@@ -3062,93 +3066,93 @@ The Traveling Salesman Problem is NP-hard: no known algorithm solves it in polyn
 # orderings to guarantee optimality. A GREEDY heuristic like nearest-neighbor
 # runs in polynomial time but offers NO optimality guarantee -- this example
 # proves that gap empirically on one small, concrete instance.
-import itertools
-import math
+import itertools  # => generates every permutation for the brute-force search
+import math  # => hypot() for Euclidean distance, factorial() for the search-space size
 
 Point = tuple[float, float]  # => an (x, y) coordinate
 
 
 def dist(a: Point, b: Point) -> float:  # => straight-line (Euclidean) distance
-    return math.hypot(a[0] - b[0], a[1] - b[1])
+    return math.hypot(a[0] - b[0], a[1] - b[1])  # => the distance formula, built in
 
 
-def tour_length(order: tuple[int, ...], cities: list[Point]) -> float:
-    total = 0.0
-    n = len(order)
-    for i in range(
-        n
+def tour_length(order: tuple[int, ...], cities: list[Point]) -> float:  # => total tour distance
+    total = 0.0  # => running sum of edge lengths
+    n = len(order)  # => the number of cities in this tour
+    for i in range(  # => opens the edge-summing loop
+        n  # => one edge per city in the tour
     ):  # => sums edge (i -> i+1), wrapping the LAST city back to the first
-        total += dist(cities[order[i]], cities[order[(i + 1) % n]])
-    return total
+        total += dist(cities[order[i]], cities[order[(i + 1) % n]])  # => this edge's length
+    return total  # => the complete tour's total distance
 
 
-def brute_force_tsp(cities: list[Point]) -> tuple[tuple[int, ...], float]:
+def brute_force_tsp(cities: list[Point]) -> tuple[tuple[int, ...], float]:  # => O(n!) exhaustive
     # => tries EVERY possible ordering -- guaranteed optimal, but O(n!) work
-    n = len(cities)
-    best_order: tuple[int, ...] | None = None
-    best_length: float | None = None
-    for perm in itertools.permutations(
-        range(1, n)
+    n = len(cities)  # => the number of cities to visit
+    best_order: tuple[int, ...] | None = None  # => the shortest ordering found so far
+    best_length: float | None = None  # => that ordering's total length
+    for perm in itertools.permutations(  # => opens the every-ordering search
+        range(1, n)  # => every OTHER city, in every possible order
     ):  # => fixes city 0 as the start -- a cyclic tour has no unique "first" city anyway
-        order = (0,) + perm
-        length = tour_length(order, cities)
-        if best_length is None or length < best_length:
+        order = (0,) + perm  # => reattaches the fixed starting city
+        length = tour_length(order, cities)  # => this candidate ordering's total length
+        if best_length is None or length < best_length:  # => a strictly shorter tour was found
             best_length = length  # => tracks the shortest tour seen so far
-            best_order = order
+            best_order = order  # => and the ordering that produced it
     assert (
-        best_order is not None and best_length is not None
+        best_order is not None and best_length is not None  # => at least one permutation ran
     )  # => n >= 1 guarantees a result
-    return best_order, best_length
+    return best_order, best_length  # => the PROVABLY optimal tour and its length
 
 
-def nearest_neighbor_tsp(cities: list[Point]) -> tuple[list[int], float]:
+def nearest_neighbor_tsp(cities: list[Point]) -> tuple[list[int], float]:  # => O(n^2) greedy
     # => GREEDILY hops to the closest unvisited city -- O(n^2), no backtracking
-    n = len(cities)
-    visited = [False] * n
+    n = len(cities)  # => the number of cities to visit
+    visited = [False] * n  # => tracks which cities are already in the tour
     order = [0]  # => starts at city 0, same fixed start as brute force
-    visited[0] = True
-    for _ in range(n - 1):
-        last = order[-1]
-        best_j: int | None = None
-        best_d: float | None = None
-        for j in range(n):
+    visited[0] = True  # => marks the starting city as visited
+    for _ in range(n - 1):  # => adds one more city to the tour on each iteration
+        last = order[-1]  # => the most recently added city
+        best_j: int | None = None  # => the closest unvisited city found so far
+        best_d: float | None = None  # => that city's distance from `last`
+        for j in range(n):  # => scans every city as a candidate next hop
             if not visited[j]:  # => only considers cities NOT yet in the tour
-                d = dist(cities[last], cities[j])
-                if best_d is None or d < best_d:
+                d = dist(cities[last], cities[j])  # => distance from the current city
+                if best_d is None or d < best_d:  # => a strictly closer unvisited city
                     best_d = d  # => the CLOSEST unvisited city so far
-                    best_j = j
+                    best_j = j  # => and which city that is
         assert best_j is not None  # => at least one unvisited city remains here
-        order.append(best_j)
-        visited[best_j] = True
-    return order, tour_length(tuple(order), cities)
+        order.append(best_j)  # => greedily commits to the closest city
+        visited[best_j] = True  # => marks it as visited
+    return order, tour_length(tuple(order), cities)  # => the greedy tour and its length
 
 
 # A hand-picked 7-city instance where greedy nearest-neighbor genuinely gets
 # TRAPPED: an early greedy hop leaves a far-away city stranded for last,
 # forcing an expensive final edge that a globally optimal tour avoids.
-cities: list[Point] = [
-    (4.6, 5.2),
-    (6.4, 6.0),
-    (5.6, 6.2),
-    (9.4, 5.1),
-    (4.3, 7.2),
-    (2.4, 3.0),
-    (9.8, 5.2),
-]
+cities: list[Point] = [  # => opens the 7-city coordinate literal
+    (4.6, 5.2),  # => city 0 -- the fixed starting point
+    (6.4, 6.0),  # => city 1
+    (5.6, 6.2),  # => city 2
+    (9.4, 5.1),  # => city 3
+    (4.3, 7.2),  # => city 4
+    (2.4, 3.0),  # => city 5
+    (9.8, 5.2),  # => city 6 -- the far-away trap for greedy
+]  # => closes the coordinate literal
 
-brute_order, brute_length = brute_force_tsp(cities)
-nn_order, nn_length = nearest_neighbor_tsp(cities)
+brute_order, brute_length = brute_force_tsp(cities)  # => the guaranteed-optimal tour
+nn_order, nn_length = nearest_neighbor_tsp(cities)  # => the fast, non-optimal tour
 print(round(brute_length, 2))  # => Output: 18.81 -- the PROVABLY shortest possible tour
 print(
-    round(nn_length, 2)
+    round(nn_length, 2)  # => greedy's own tour length, rounded for display
 )  # => Output: 22.19 -- greedy's tour, longer but found MUCH faster
 
 assert brute_length <= nn_length  # => brute force NEVER loses -- it tries every option
 assert (
-    nn_length > brute_length * 1.1
+    nn_length > brute_length * 1.1  # => greedy's tour is at least 10% longer, genuinely suboptimal
 )  # => confirms the heuristic is genuinely SUBOPTIMAL here
 assert (
-    math.factorial(len(cities) - 1) == 720
+    math.factorial(len(cities) - 1) == 720  # => 6! = 720, the exact brute-force search space
 )  # => brute force's search space: 6! orderings for 7 cities
 print("ex-75 OK")  # => Output: ex-75 OK
 ```
@@ -3231,73 +3235,73 @@ A reduction proves problem B is at least as hard as problem A by turning any A-i
 # Partition is NP-hard, GIVEN that Subset-Sum is already known NP-hard.
 
 
-def subset_sum_possible(
-    items: list[int], target: int
+def subset_sum_possible(  # => tracks the growing set of reachable sums, level by level
+    items: list[int], target: int  # => the candidate items and the sum to test for
 ) -> bool:  # => the SOURCE problem: is `target` reachable by summing a subset?
-    if target < 0:
-        return False
+    if target < 0:  # => a negative target is never reachable by non-negative sums
+        return False  # => trivially unreachable
     achievable: set[int] = {0}  # => 0 is always reachable (the empty subset)
-    for x in items:
-        newly_reachable: set[int] = set()
-        for s in achievable:
+    for x in items:  # => processes each item once, growing the reachable-sums set
+        newly_reachable: set[int] = set()  # => sums discovered by adding x this round
+        for s in achievable:  # => tries adding x to every sum reachable so far
             if s + x <= target:  # => prunes sums that overshoot the target
-                newly_reachable.add(s + x)
+                newly_reachable.add(s + x)  # => a new reachable sum
         achievable |= newly_reachable  # => grows the set of reachable sums
-    return target in achievable
+    return target in achievable  # => True iff some subset sums to exactly target
 
 
-def can_partition(
-    items: list[int],
+def can_partition(  # => reduces to Subset-Sum with target = half the total
+    items: list[int],  # => the items to try splitting into two equal-sum halves
 ) -> bool:  # => the TARGET problem: two equal-sum halves?
-    total = sum(items)
+    total = sum(items)  # => the whole set's total sum
     if total % 2 != 0:  # => an odd total can NEVER split into two equal integer halves
-        return False
-    return subset_sum_possible(
-        items, total // 2
+        return False  # => immediately impossible
+    return subset_sum_possible(  # => opens the delegated Subset-Sum call
+        items, total // 2  # => the same items, targeting exactly half the total
     )  # => Partition IS Subset-Sum with target = total/2 -- the "obvious" direction
 
 
-def reduce_subset_sum_to_partition(
-    items: list[int], target: int
+def reduce_subset_sum_to_partition(  # => builds one padding element that makes the reduction exact
+    items: list[int], target: int  # => the Subset-Sum instance being reduced
 ) -> list[int]:  # => THE REDUCTION: builds a Partition instance from a Subset-Sum one
-    total = sum(items)
+    total = sum(items)  # => the original items' total sum
     padding = total - 2 * target  # => the single new element that makes the trick work
-    assert (
-        padding >= 0
-    ), "reduction requires target <= total / 2"  # => a documented precondition
+    assert padding >= 0, (  # => opens the precondition assertion
+        "reduction requires target <= total / 2"  # => the documented message if it fails
+    )  # => a documented precondition
     # => algebra: if some A subseteq items sums to `target`, then
     # => (items \ A) sums to (total - target), and (A + [padding]) ALSO sums
     # => to (target + padding) = (total - target) -- an EXACT equal split
-    return items + [padding]
+    return items + [padding]  # => the constructed Partition instance
 
 
-items = [3, 7, 2, 9, 5]
+items = [3, 7, 2, 9, 5]  # => a small, arbitrary Subset-Sum instance
 total = sum(items)  # => 26
 half = total // 2  # => 13 -- the largest valid target for this reduction
 
-mismatches = 0
+mismatches = 0  # => counts any target where the reduction's answer disagrees
 for target in range(half + 1):  # => sweeps EVERY possible target from 0 to half
     direct_answer = subset_sum_possible(items, target)  # => the SOURCE problem's answer
-    reduced_instance = reduce_subset_sum_to_partition(items, target)
+    reduced_instance = reduce_subset_sum_to_partition(items, target)  # => builds the reduced instance
     reduced_answer = can_partition(reduced_instance)  # => the TARGET problem's answer
-    if direct_answer != reduced_answer:
+    if direct_answer != reduced_answer:  # => the two answers should ALWAYS agree
         mismatches += 1  # => would indicate the reduction is BROKEN
 
 print(mismatches)  # => Output: 0 -- every target's answer survives the reduction
 print(subset_sum_possible(items, 12))  # => Output: True -- e.g. {7, 5} sums to 12
 print(
-    can_partition(reduce_subset_sum_to_partition(items, 12))
+    can_partition(reduce_subset_sum_to_partition(items, 12))  # => TARGET problem's answer
 )  # => Output: True -- matches
 print(subset_sum_possible(items, 1))  # => Output: False -- no subset sums to 1
 print(
-    can_partition(reduce_subset_sum_to_partition(items, 1))
+    can_partition(reduce_subset_sum_to_partition(items, 1))  # => TARGET problem's answer
 )  # => Output: False -- matches
 
 assert (
-    mismatches == 0
+    mismatches == 0  # => every single target agreed between the two problems
 )  # => confirms the reduction preserves EVERY yes/no answer, not just one
 assert (
-    len(reduce_subset_sum_to_partition(items, 12)) == len(items) + 1
+    len(reduce_subset_sum_to_partition(items, 12)) == len(items) + 1  # => exactly one padding element
 )  # => adds exactly 1 element
 print("ex-76 OK")  # => Output: ex-76 OK
 ```
@@ -3384,17 +3388,17 @@ _ex-77 &middot; exercises co-02_
 
 
 class MultiPopStack:  # => a stack instrumented to report each op's ACTUAL cost
-    def __init__(self) -> None:
-        self.items: list[int] = []
+    def __init__(self) -> None:  # => an empty stack
+        self.items: list[int] = []  # => the underlying storage
 
     def push(self, value: int) -> int:  # => returns the actual cost: always 1
-        self.items.append(value)
-        return 1
+        self.items.append(value)  # => a single O(1) append
+        return 1  # => push always does exactly 1 unit of real work
 
     def multipop(self, k: int) -> int:  # => returns the actual cost: min(k, size)
         removed = min(k, len(self.items))  # => can NEVER pop more than what exists
-        for _ in range(removed):
-            self.items.pop()
+        for _ in range(removed):  # => pops exactly as many as actually exist
+            self.items.pop()  # => one real O(1) pop
         return removed  # => the REAL work done, regardless of how large k was
 
 
@@ -3402,7 +3406,7 @@ def potential(stack: MultiPopStack) -> int:  # => Phi(D) = current stack size
     return len(stack.items)  # => always >= 0, and 0 for an empty stack
 
 
-stack = MultiPopStack()
+stack = MultiPopStack()  # => the shared stack instance under test
 amortized_costs: list[int] = []  # => one entry per operation call, in order
 total_actual = 0  # => the TRUE sum of work done, op by op
 
@@ -3410,50 +3414,50 @@ BIG_K = 1_000_000  # => a deliberately absurd request -- far larger than the sta
 
 
 def run_push(value: int) -> None:  # => wraps push with the potential-method bookkeeping
-    global total_actual
-    phi_before = potential(stack)
-    actual = stack.push(value)
-    phi_after = potential(stack)
-    amortized_costs.append(
-        actual + (phi_after - phi_before)
+    global total_actual  # => accumulates the TRUE running total across all calls
+    phi_before = potential(stack)  # => Phi BEFORE this operation runs
+    actual = stack.push(value)  # => the operation's REAL cost
+    phi_after = potential(stack)  # => Phi AFTER this operation runs
+    amortized_costs.append(  # => opens the amortized-cost recording
+        actual + (phi_after - phi_before)  # => actual cost plus the potential's own change
     )  # => THE potential-method formula
-    total_actual += actual
+    total_actual += actual  # => accumulates the running TRUE total
 
 
 def run_multipop(k: int) -> None:  # => wraps multipop with the same bookkeeping
-    global total_actual
-    phi_before = potential(stack)
-    actual = stack.multipop(k)
-    phi_after = potential(stack)
-    amortized_costs.append(actual + (phi_after - phi_before))
-    total_actual += actual
+    global total_actual  # => accumulates the TRUE running total across all calls
+    phi_before = potential(stack)  # => Phi BEFORE this operation runs
+    actual = stack.multipop(k)  # => the operation's REAL cost
+    phi_after = potential(stack)  # => Phi AFTER this operation runs
+    amortized_costs.append(actual + (phi_after - phi_before))  # => THE potential-method formula
+    total_actual += actual  # => accumulates the running TRUE total
 
 
 for _ in range(40):  # => 40 pushes -- Phi climbs from 0 to 40
-    run_push(1)
+    run_push(1)  # => each push costs 1, actual and amortized
 run_multipop(BIG_K)  # => actual cost is 40 (capped by stack size), NOT 1,000,000
 for _ in range(25):  # => 25 more pushes
-    run_push(1)
+    run_push(1)  # => each push costs 1, actual and amortized
 run_multipop(BIG_K)  # => actual cost is 25, again capped by size, not BIG_K
-for _ in range(10):
-    run_push(1)
+for _ in range(10):  # => 10 more pushes, building up potential again
+    run_push(1)  # => each push costs 1, actual and amortized
 run_multipop(3)  # => a NORMAL partial pop: k=3 is smaller than the stack's 10 elements
 run_multipop(BIG_K)  # => pops the remaining 7
 
 print(total_actual)  # => Output: 150 -- bounded by pushes+pops, NEVER by the huge k's
 print(
-    max(amortized_costs)
+    max(amortized_costs)  # => the single worst-case amortized cost across all ops
 )  # => Output: 2 -- EVERY single op costs at most 2, amortized
 print(len(amortized_costs))  # => Output: 79 -- 75 pushes + 4 multipop calls
 
 assert (
-    total_actual == 150
+    total_actual == 150  # => the exact expected total across every real pop/push
 )  # => confirms actual work stayed proportional to real operations
 assert (
-    max(amortized_costs) <= 2
+    max(amortized_costs) <= 2  # => no single operation ever amortizes above 2
 )  # => THE PROOF: every op is O(1) amortized, push or multipop
 assert total_actual <= 2 * len(
-    amortized_costs
+    amortized_costs  # => the operation count, for the 2x-bound comparison
 )  # => total actual cost never exceeds 2x the operation count
 assert stack.items == []  # => the stack ends empty -- everything pushed got popped
 print("ex-77 OK")  # => Output: ex-77 OK
@@ -3543,51 +3547,51 @@ A complexity claim is only trustworthy once it is tested, not just stated: this 
 
 
 def binary_search_steps(n: int) -> int:  # => STATED complexity: O(log n)
-    lo, hi = 0, n - 1
+    lo, hi = 0, n - 1  # => the initial search bounds
     target = n - 1  # => worst case: the target is the LAST element, found last
-    steps = 0
+    steps = 0  # => counts iterations, not elements touched
     while lo <= hi:  # => each iteration HALVES the remaining search range
-        steps += 1
-        mid = (lo + hi) // 2
-        if mid == target:
-            break
-        elif mid < target:
+        steps += 1  # => one more halving step taken
+        mid = (lo + hi) // 2  # => the midpoint of the current range
+        if mid == target:  # => found it -- worst case, this happens LAST
+            break  # => stops counting once found
+        elif mid < target:  # => target must be further right
             lo = mid + 1  # => discards the lower half
-        else:
+        else:  # => target must be further left
             hi = mid - 1  # => discards the upper half
     return steps  # => grows by roughly log2(n) -- halving n each step
 
 
 def linear_steps(n: int) -> int:  # => STATED complexity: O(n)
-    steps = 0
+    steps = 0  # => counts one increment per element
     for _ in range(n):  # => exactly one increment per element -- no shortcuts
-        steps += 1
+        steps += 1  # => one unit of work per element, no better no worse
     return steps  # => grows EXACTLY proportional to n
 
 
 def nlogn_steps(n: int) -> int:  # => STATED complexity: O(n log n)
-    steps = 0
+    steps = 0  # => counts every inner-loop iteration, across all outer passes
     for _ in range(n):  # => the OUTER n -- one pass per element
-        x = 1
+        x = 1  # => resets the doubling counter for this outer pass
         while x < n:  # => the INNER log n -- doubles x until it reaches n
-            x *= 2
-            steps += 1
+            x *= 2  # => the doubling step
+            steps += 1  # => one more inner iteration counted
     return steps  # => n independent inner passes, each costing ~log2(n)
 
 
 sizes: list[int] = [128, 256, 512, 1024]  # => four sizes, each DOUBLING the last
 
-binary_search_counts = [binary_search_steps(n) for n in sizes]
-linear_counts = [linear_steps(n) for n in sizes]
-nlogn_counts = [nlogn_steps(n) for n in sizes]
+binary_search_counts = [binary_search_steps(n) for n in sizes]  # => O(log n) step counts
+linear_counts = [linear_steps(n) for n in sizes]  # => O(n) step counts
+nlogn_counts = [nlogn_steps(n) for n in sizes]  # => O(n log n) step counts
 print(binary_search_counts)  # => Output: [8, 9, 10, 11]
 print(linear_counts)  # => Output: [128, 256, 512, 1024]
 print(nlogn_counts)  # => Output: [896, 2048, 4608, 10240]
 
 for i in range(1, len(sizes)):  # => walks each consecutive doubling step
-    log_diff = binary_search_counts[i] - binary_search_counts[i - 1]
-    linear_ratio = linear_counts[i] / linear_counts[i - 1]
-    nlogn_ratio = nlogn_counts[i] / nlogn_counts[i - 1]
+    log_diff = binary_search_counts[i] - binary_search_counts[i - 1]  # => growth in step count
+    linear_ratio = linear_counts[i] / linear_counts[i - 1]  # => growth ratio, not difference
+    nlogn_ratio = nlogn_counts[i] / nlogn_counts[i - 1]  # => growth ratio, not difference
     assert log_diff == 1  # => O(log n): doubling n adds EXACTLY one more halving step
     assert 1.9 <= linear_ratio <= 2.1  # => O(n): doubling n DOUBLES the step count
     assert (
@@ -3671,100 +3675,100 @@ The same 0/1 knapsack problem solved three ways exposes each paradigm's tradeoff
 # counts (not wall-clock) reveal exactly where DP overtakes brute force.
 
 
-def brute_force_knapsack(
-    weights: list[int], values: list[int], capacity: int
+def brute_force_knapsack(  # => tries every one of the 2^n subsets, keeps the best feasible one
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> tuple[int, int]:  # => (best value, subsets examined) -- tries EVERY subset
-    n = len(weights)
-    best = 0
-    states_examined = 0
+    n = len(weights)  # => number of available items
+    best = 0  # => the best feasible value found so far
+    states_examined = 0  # => counts every subset (bitmask) tried
     for mask in range(1 << n):  # => 2^n possible subsets -- the exhaustive search space
-        states_examined += 1
-        total_weight = 0
-        total_value = 0
-        for i in range(n):
+        states_examined += 1  # => one more subset examined
+        total_weight = 0  # => this subset's combined weight
+        total_value = 0  # => this subset's combined value
+        for i in range(n):  # => checks each item's bit within this subset's mask
             if mask & (1 << i):  # => bit i set means "item i is in this subset"
-                total_weight += weights[i]
-                total_value += values[i]
-        if total_weight <= capacity and total_value > best:
+                total_weight += weights[i]  # => adds item i's weight
+                total_value += values[i]  # => adds item i's value
+        if total_weight <= capacity and total_value > best:  # => feasible AND strictly better
             best = total_value  # => tracks the best FEASIBLE subset found
-    return best, states_examined
+    return best, states_examined  # => the true optimum, plus how much work it took
 
 
-def greedy_knapsack(weights: list[int], values: list[int], capacity: int) -> int:
+def greedy_knapsack(weights: list[int], values: list[int], capacity: int) -> int:  # => fast, unproven
     # => sorts by value-per-weight ratio, then takes GREEDILY -- O(n log n), no guarantee
-    n = len(weights)
-    order = sorted(
-        range(n), key=lambda i: values[i] / weights[i], reverse=True
+    n = len(weights)  # => number of available items
+    order = sorted(  # => opens the ratio-sort call
+        range(n), key=lambda i: values[i] / weights[i], reverse=True  # => best ratio first
     )  # => best ratio first
-    total_weight = 0
-    total_value = 0
-    for i in order:
+    total_weight = 0  # => running greedy weight total
+    total_value = 0  # => running greedy value total
+    for i in order:  # => tries each item, best ratio first
         if total_weight + weights[i] <= capacity:  # => takes it if it still fits
-            total_weight += weights[i]
-            total_value += values[i]
+            total_weight += weights[i]  # => commits its weight
+            total_value += values[i]  # => commits its value
     return total_value  # => NO optimality guarantee -- unlike fractional knapsack
 
 
-def dp_knapsack(
-    weights: list[int], values: list[int], capacity: int
+def dp_knapsack(  # => fills a 2D table bottom-up, guaranteed globally optimal
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> tuple[int, int]:  # => (best value, table cells filled) -- ALWAYS optimal
-    n = len(weights)
+    n = len(weights)  # => number of available items
     table = [[0] * (capacity + 1) for _ in range(n + 1)]  # => O(n * capacity) space
-    cells_filled = 0
-    for i in range(1, n + 1):
-        for c in range(capacity + 1):
-            cells_filled += 1
+    cells_filled = 0  # => counts every DP table cell computed
+    for i in range(1, n + 1):  # => considers items one at a time
+        for c in range(capacity + 1):  # => every possible capacity, from 0 up
+            cells_filled += 1  # => one more cell computed
             if weights[i - 1] <= c:  # => item i-1 fits within capacity c
-                table[i][c] = max(
+                table[i][c] = max(  # => opens the skip-vs-take comparison
                     table[i - 1][c],  # => option A: skip item i-1
-                    table[i - 1][c - weights[i - 1]]
+                    table[i - 1][c - weights[i - 1]]  # => opens option B's own value lookup
                     + values[i - 1],  # => option B: take it
-                )
-            else:
+                )  # => closes the max(skip, take) comparison
+            else:  # => item i-1 is too heavy for capacity c
                 table[i][c] = table[i - 1][c]  # => too heavy -- forced to skip
-    return table[n][capacity], cells_filled
+    return table[n][capacity], cells_filled  # => the true optimum, plus how much work it took
 
 
 # A textbook 0/1 knapsack instance where greedy DEMONSTRABLY fails: the
 # best ratio item (60/10=6.0) locks in capacity that the true optimal pair
 # needed instead.
-weights = [10, 20, 30]
-values = [60, 100, 120]
-capacity = 50
-brute_best, _ = brute_force_knapsack(weights, values, capacity)
-dp_best, _ = dp_knapsack(weights, values, capacity)
-greedy_best = greedy_knapsack(weights, values, capacity)
+weights = [10, 20, 30]  # => three items' weights
+values = [60, 100, 120]  # => their corresponding values -- ratios 6.0, 5.0, 4.0
+capacity = 50  # => the knapsack's weight limit
+brute_best, _ = brute_force_knapsack(weights, values, capacity)  # => the guaranteed optimum
+dp_best, _ = dp_knapsack(weights, values, capacity)  # => the DP's own optimum
+greedy_best = greedy_knapsack(weights, values, capacity)  # => the greedy heuristic's answer
 print(
-    brute_best
+    brute_best  # => the guaranteed-optimal value, for comparison
 )  # => Output: 220 -- items 1+2 (weight 50, value 220): the true optimum
 print(dp_best)  # => Output: 220 -- DP matches brute force exactly, but polynomial work
 print(
-    greedy_best
+    greedy_best  # => the greedy heuristic's own (suboptimal) value
 )  # => Output: 160 -- greedy locks in item 0 early and MISSES the optimum
 
 assert (
-    brute_best == dp_best == 220
+    brute_best == dp_best == 220  # => both exhaustive AND DP agree on the true optimum
 )  # => confirms DP achieves the SAME optimum as brute force
 assert greedy_best < brute_best  # => confirms greedy is genuinely SUBOPTIMAL here
 
 # Now the "shootout": as n grows, does brute force's 2^n outgrow DP's n*capacity?
-crossover_seen = False
+crossover_seen = False  # => flips True once brute force is caught overtaking DP
 for n in (4, 8, 12, 16, 20):  # => a growing item count, fixed capacity
-    grown_weights = [
-        ((i * 3) % 9) + 2 for i in range(n)
+    grown_weights = [  # => opens the deterministic synthetic-weights comprehension
+        ((i * 3) % 9) + 2 for i in range(n)  # => a repeatable, bounded pseudo-random weight
     ]  # => deterministic synthetic items
-    grown_values = [((i * 7 + 3) % 20) + 1 for i in range(n)]
-    _, brute_states = brute_force_knapsack(grown_weights, grown_values, capacity)
-    _, dp_cells = dp_knapsack(grown_weights, grown_values, capacity)
-    if n == 8:
-        assert (
-            brute_states < dp_cells
+    grown_values = [((i * 7 + 3) % 20) + 1 for i in range(n)]  # => deterministic synthetic values
+    _, brute_states = brute_force_knapsack(grown_weights, grown_values, capacity)  # => 2^n subsets
+    _, dp_cells = dp_knapsack(grown_weights, grown_values, capacity)  # => n*capacity cells
+    if n == 8:  # => a checkpoint BEFORE the expected crossover
+        assert (  # => opens the pre-crossover assertion
+            brute_states < dp_cells  # => brute force is still the cheaper option here
         )  # => at n=8, brute force is STILL cheaper (256 < 408)
-    if n == 12:
-        assert (
-            brute_states > dp_cells
+    if n == 12:  # => a checkpoint AFTER the expected crossover
+        assert (  # => opens the post-crossover assertion
+            brute_states > dp_cells  # => brute force has now become the MORE expensive option
         )  # => at n=12, brute force has CROSSED OVER (4096 > 612)
-        crossover_seen = True
+        crossover_seen = True  # => records that the crossover was genuinely observed
 
 assert crossover_seen  # => confirms the paradigm crossover was actually observed
 print("ex-79 OK")  # => Output: ex-79 OK
@@ -3862,131 +3866,133 @@ flowchart LR
 # Dijkstra (co-19, building on Example 63) computes travel time from a depot
 # to each task's site. The schedule is FEASIBLE only if every task's
 # required travel time fits before its DP-computed earliest start.
-import heapq
-from collections import deque
+import heapq  # => Dijkstra's priority-queue frontier
+from collections import deque  # => Kahn's topological-sort queue
 
 
 def topological_order(graph: dict[str, list[str]]) -> list[str]:  # => Kahn's algorithm
-    in_degree: dict[str, int] = {node: 0 for node in graph}
-    for node in graph:
-        for neighbor in graph[node]:
-            in_degree[neighbor] += 1
-    queue: deque[str] = deque([node for node in graph if in_degree[node] == 0])
-    order: list[str] = []
-    while queue:
-        node = queue.popleft()
-        order.append(node)
-        for neighbor in graph[node]:
-            in_degree[neighbor] -= 1
+    in_degree: dict[str, int] = {node: 0 for node in graph}  # => how many predecessors each node has
+    for node in graph:  # => scans every node's outgoing edges
+        for neighbor in graph[node]:  # => each edge node->neighbor
+            in_degree[neighbor] += 1  # => neighbor gains one more predecessor
+    queue: deque[str] = deque([node for node in graph if in_degree[node] == 0])  # => sources first
+    order: list[str] = []  # => accumulates the topological order as it's discovered
+    while queue:  # => processes nodes in the order their in-degree hits zero
+        node = queue.popleft()  # => the next node with all predecessors already emitted
+        order.append(node)  # => records it as next in topological order
+        for neighbor in graph[node]:  # => this node no longer blocks its successors
+            in_degree[neighbor] -= 1  # => one fewer unresolved predecessor for neighbor
             if in_degree[neighbor] == 0:  # => now has ALL its predecessors processed
-                queue.append(neighbor)
-    return order
+                queue.append(neighbor)  # => neighbor is now safe to process too
+    return order  # => a valid topological order (assumes a DAG -- no cycle check here)
 
 
-def critical_path_schedule(
-    graph: dict[str, list[str]], durations: dict[str, int]
+def critical_path_schedule(  # => topo order + DP: computes every task's start/finish
+    graph: dict[str, list[str]], durations: dict[str, int]  # => task graph + each task's duration
 ) -> tuple[
-    int, dict[str, int], dict[str, int]
+    int, dict[str, int], dict[str, int]  # => (project length, starts, finishes)
 ]:  # => (project length, starts, finishes)
-    order = topological_order(
-        graph
+    order = topological_order(  # => opens the topological-order call
+        graph  # => the same task dependency graph
     )  # => process every predecessor before its successors
-    predecessors: dict[str, list[str]] = {node: [] for node in graph}
-    for u in graph:
-        for v in graph[u]:
+    predecessors: dict[str, list[str]] = {node: [] for node in graph}  # => reverse the edges
+    for u in graph:  # => scans every node's outgoing edges
+        for v in graph[u]:  # => each edge u->v
             predecessors[v].append(u)  # => reverses the edges: who feeds into v
-    earliest_start: dict[str, int] = {}
-    earliest_finish: dict[str, int] = {}
+    earliest_start: dict[str, int] = {}  # => DP table: task -> earliest start time
+    earliest_finish: dict[str, int] = {}  # => DP table: task -> earliest completion time
     for task in order:  # => the DP pass, in topological order
-        latest_pred_finish = max(
-            (earliest_finish[p] for p in predecessors[task]), default=0
+        latest_pred_finish = max(  # => opens the slowest-predecessor lookup
+            (earliest_finish[p] for p in predecessors[task]), default=0  # => 0 if no predecessors
         )  # => 0 if no predecessors -- this task can start immediately
-        earliest_start[task] = (
+        earliest_start[task] = (  # => opens the earliest-start assignment
             latest_pred_finish  # => can't start before ALL deps finish
         )
-        earliest_finish[task] = durations[task] + latest_pred_finish
+        earliest_finish[task] = durations[task] + latest_pred_finish  # => start plus own duration
     total_length = max(earliest_finish.values())  # => the whole project's critical path
-    return total_length, earliest_start, earliest_finish
+    return total_length, earliest_start, earliest_finish  # => length + every task's start/finish
 
 
-def dijkstra_shortest_paths(
-    graph: dict[str, list[tuple[str, int]]], start: str
+def dijkstra_shortest_paths(  # => heap-driven shortest paths from a single source
+    graph: dict[str, list[tuple[str, int]]], start: str  # => weighted adjacency list + source
 ) -> dict[str, float]:  # => shortest travel time from `start` to every reachable node
-    distances: dict[str, float] = {node: float("inf") for node in graph}
-    distances[start] = 0.0
-    heap: list[tuple[float, str]] = [(0.0, start)]
-    visited: set[str] = set()
-    while heap:
-        dist, node = heapq.heappop(heap)
-        if node in visited:
-            continue
-        visited.add(node)
-        for neighbor, weight in graph[node]:
-            new_dist = dist + weight
-            if new_dist < distances[neighbor]:
-                distances[neighbor] = new_dist
-                heapq.heappush(heap, (new_dist, neighbor))
-    return distances
+    distances: dict[str, float] = {node: float("inf") for node in graph}  # => all unreached
+    distances[start] = 0.0  # => the source reaches itself at cost 0
+    heap: list[tuple[float, str]] = [(0.0, start)]  # => (distance, node), ordered by distance
+    visited: set[str] = set()  # => nodes whose shortest distance is already finalized
+    while heap:  # => keeps going until every reachable node is finalized
+        dist, node = heapq.heappop(heap)  # => pops the CLOSEST unfinished node
+        if node in visited:  # => a stale heap entry -- already finalized via a shorter path
+            continue  # => skip it, no work to redo
+        visited.add(node)  # => this node's shortest distance is now final
+        for neighbor, weight in graph[node]:  # => only relaxes THIS node's own edges
+            new_dist = dist + weight  # => the candidate distance via this node
+            if new_dist < distances[neighbor]:  # => a strictly shorter path was just found
+                distances[neighbor] = new_dist  # => records the improved distance
+                heapq.heappush(heap, (new_dist, neighbor))  # => queues it for future expansion
+    return distances  # => the final shortest distances from `start` to every node
 
 
 # The SAME project from Example 65's critical-path demo.
-task_graph: dict[str, list[str]] = {
-    "design": ["build_a", "build_b"],
-    "build_a": ["test"],
-    "build_b": ["test"],
-    "test": [],
-}
-durations: dict[str, int] = {"design": 3, "build_a": 5, "build_b": 2, "test": 4}
+task_graph: dict[str, list[str]] = {  # => opens the task dependency graph
+    "design": ["build_a", "build_b"],  # => design must finish before either build
+    "build_a": ["test"],  # => build_a must finish before test
+    "build_b": ["test"],  # => build_b must finish before test
+    "test": [],  # => the final task, with no successors
+}  # => closes the task graph literal
+durations: dict[str, int] = {"design": 3, "build_a": 5, "build_b": 2, "test": 4}  # => days per task
 total_length, earliest_start, earliest_finish = critical_path_schedule(
-    task_graph, durations
-)
+    task_graph, durations  # => the same task graph and durations
+)  # => runs the topo-order + critical-path DP layer
 
 # A small road network: a DEPOT plus three job sites, connected by
 # weighted (travel-time) edges -- structurally the same graph shape as
 # Example 63's Dijkstra demo.
-road_network: dict[str, list[tuple[str, int]]] = {
-    "DEPOT": [("L1", 2), ("L2", 5)],
-    "L1": [("DEPOT", 2), ("L2", 1), ("L3", 4)],
-    "L2": [("DEPOT", 5), ("L1", 1), ("L3", 2)],
-    "L3": [("L1", 4), ("L2", 2)],
-}
+road_network: dict[str, list[tuple[str, int]]] = {  # => opens the road-network graph
+    "DEPOT": [("L1", 2), ("L2", 5)],  # => depot connects directly to L1 and L2
+    "L1": [("DEPOT", 2), ("L2", 1), ("L3", 4)],  # => L1's own direct connections
+    "L2": [("DEPOT", 5), ("L1", 1), ("L3", 2)],  # => L2's own direct connections
+    "L3": [("L1", 4), ("L2", 2)],  # => L3's own direct connections
+}  # => closes the road-network literal
 travel_time = dijkstra_shortest_paths(
-    road_network, "DEPOT"
+    road_network, "DEPOT"  # => the road graph and the fixed starting depot
 )  # => shortest time FROM depot
 
 task_location: dict[str, str] = {  # => which site each task's resources must reach
-    "design": "DEPOT",
-    "build_a": "L2",
-    "build_b": "L1",
-    "test": "L2",
-}
+    "design": "DEPOT",  # => design happens at the depot itself
+    "build_a": "L2",  # => build_a's resources must reach L2
+    "build_b": "L1",  # => build_b's resources must reach L1
+    "test": "L2",  # => test's resources must reach L2
+}  # => closes the task-location mapping
 
 feasible = True  # => tracks whether EVERY task's resources arrive in time
 for task in task_graph:  # => threads all three algorithms' outputs together
     required_travel = travel_time[task_location[task]]  # => from Dijkstra
     start_time = earliest_start[task]  # => from the critical-path DP
-    if (
-        required_travel > start_time
+    if (  # => opens the feasibility comparison
+        required_travel > start_time  # => arrival happens strictly AFTER the required start
     ):  # => resources would arrive AFTER the task must start
-        feasible = False
+        feasible = False  # => the end-to-end schedule is infeasible for this task
 
 print(total_length)  # => Output: 12 -- the project's critical path, matching Example 65
 print(earliest_start)  # => Output: {'design': 0, 'build_a': 3, 'build_b': 3, 'test': 8}
 print(feasible)  # => Output: True -- every task's resources arrive in time
 
 assert (
-    total_length == 12
+    total_length == 12  # => the known critical-path length for this same project
 )  # => confirms the DP layer still agrees with Example 65's answer
-assert earliest_start == {
-    "design": 0,
-    "build_a": 3,
-    "build_b": 3,
-    "test": 8,
+assert earliest_start == {  # => opens the exact-start-times comparison
+    "design": 0,  # => no predecessors -- starts immediately
+    "build_a": 3,  # => waits for design (3 days) to finish
+    "build_b": 3,  # => also waits for design (3 days) to finish
+    "test": 8,  # => waits for the SLOWER of build_a/build_b to finish
 }  # => confirms the exact DP-computed start times
 assert (
-    travel_time["L3"] == 5
+    travel_time["L3"] == 5  # => the known shortest DEPOT -> L3 distance
 )  # => confirms Dijkstra's shortest DEPOT -> L3 path (via L2)
-assert feasible  # => confirms the END-TO-END schedule -- topo + DP + Dijkstra -- holds together
+assert (
+    feasible  # => every task's travel time fit before its required start
+)  # => confirms the END-TO-END schedule -- topo + DP + Dijkstra -- holds together
 print("ex-80 OK")  # => Output: ex-80 OK
 ```
 

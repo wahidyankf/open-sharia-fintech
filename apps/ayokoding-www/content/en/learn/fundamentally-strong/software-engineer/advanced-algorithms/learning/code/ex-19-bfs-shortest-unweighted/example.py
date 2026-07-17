@@ -6,8 +6,9 @@
 from collections import deque  # => O(1) popleft, unlike list.pop(0)'s O(n)
 
 
-def bfs_distances(
-    graph: dict[str, list[str]], start: str
+def bfs_distances(  # => level-order queue traversal from a single start node
+    graph: dict[str, list[str]],
+    start: str,  # => adjacency map plus the origin node
 ) -> dict[str, int]:  # => node -> fewest hops from start
     distances: dict[str, int] = {start: 0}  # => the start node is 0 hops from itself
     frontier: deque[str] = deque([start])  # => the BFS queue, seeded with start
@@ -17,20 +18,20 @@ def bfs_distances(
             if (
                 neighbor not in distances
             ):  # => first time seeing neighbor -- FINAL hop count
-                distances[neighbor] = (
-                    distances[node] + 1
+                distances[neighbor] = (  # => records neighbor's FINAL shortest distance
+                    distances[node] + 1  # => one hop farther than the current node
                 )  # => exactly one more than node's own distance
                 frontier.append(neighbor)  # => schedules neighbor's own neighbors next
     return distances  # => shortest hop-count to every reachable node
 
 
 graph: dict[str, list[str]] = {  # => a small unweighted, undirected graph
-    "a": ["b", "c"],
-    "b": ["a", "d"],
-    "c": ["a", "d"],
-    "d": ["b", "c", "e"],
-    "e": ["d"],
-}
+    "a": ["b", "c"],  # => a's two direct neighbors -- both 1 hop away
+    "b": ["a", "d"],  # => b connects back to a and onward to d
+    "c": ["a", "d"],  # => c is an alternate 1-hop path to d, alongside b
+    "d": ["b", "c", "e"],  # => d is reachable via either b or c, both 2 hops
+    "e": ["d"],  # => e's only neighbor is d -- the farthest node, 3 hops from a
+}  # => closes the adjacency map -- 5 nodes total
 distances = bfs_distances(graph, "a")  # => shortest hops from "a" to every other node
 print(distances)  # => Output: {'a': 0, 'b': 1, 'c': 1, 'd': 2, 'e': 3}
 

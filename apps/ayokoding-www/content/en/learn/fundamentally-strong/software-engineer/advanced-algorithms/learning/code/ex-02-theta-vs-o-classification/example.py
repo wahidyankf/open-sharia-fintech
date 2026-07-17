@@ -26,17 +26,17 @@ def doubling_ratio(f: Callable[[int], int]) -> float:  # => generic over any cos
 
 
 classifications: dict[str, float] = {  # => maps a human label to its measured ratio
-    "constant (Theta(1))": doubling_ratio(
-        constant_cost
+    "constant (Theta(1))": doubling_ratio(  # => key names the bucket under test
+        constant_cost  # => the zero-growth function passed as the callback
     ),  # => expect ~1.0 -- unaffected by n
     "linear (Theta(n))": doubling_ratio(linear_cost),  # => expect ~2.0
     "quadratic (Theta(n^2))": doubling_ratio(quadratic_cost),  # => expect ~4.0
-}
+}  # => closes the dict -- exactly 3 entries, one per growth bucket
 for label, ratio in classifications.items():  # => walks all three buckets
     print(f"{label}: {ratio:.2f}")  # => Output: one "label: ratio" line per bucket
 
-assert (
-    classifications["constant (Theta(1))"] == 1.0
+assert (  # => opens a parenthesized assert so the long condition can wrap
+    classifications["constant (Theta(1))"] == 1.0  # => True iff the ratio was exact
 )  # => confirms O(1) is untouched by n doubling
 assert classifications["linear (Theta(n))"] == 2.0  # => confirms O(n) exactly doubles
 assert (

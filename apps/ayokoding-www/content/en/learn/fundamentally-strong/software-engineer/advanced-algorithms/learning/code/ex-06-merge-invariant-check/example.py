@@ -5,8 +5,9 @@
 # append, instead of only checking the final list once at the end.
 
 
-def merge_with_invariant_check(
-    left: list[int], right: list[int]
+def merge_with_invariant_check(  # => opens the signature -- wraps for line length
+    left: list[int],
+    right: list[int],  # => both inputs must already be sorted
 ) -> list[int]:  # => merges two sorted lists, asserting sortedness after each step
     result: list[int] = []  # => the merged output, built one element at a time
     i = j = 0  # => cursors into left and right respectively
@@ -18,8 +19,8 @@ def merge_with_invariant_check(
             result.append(right[j])  # => appends right's strictly smaller candidate
             j += 1  # => advances the right cursor only
         if len(result) >= 2:  # => the invariant only applies once there are 2+ elements
-            assert (
-                result[-2] <= result[-1]
+            assert (  # => opens the parenthesized check -- runs after EVERY append
+                result[-2] <= result[-1]  # => compares the two most-recent entries
             )  # => THE INVARIANT: the last two appended stay in order
     result.extend(left[i:])  # => appends any leftover left elements (already sorted)
     result.extend(right[j:])  # => appends any leftover right elements (already sorted)

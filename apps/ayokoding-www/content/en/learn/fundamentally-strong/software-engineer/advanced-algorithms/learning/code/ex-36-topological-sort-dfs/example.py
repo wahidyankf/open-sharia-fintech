@@ -6,11 +6,11 @@
 # come before all of them in a valid ordering.
 
 
-def dfs_topological_sort(
-    graph: dict[str, list[str]],
+def dfs_topological_sort(  # => reverse of DFS finish order -- the mirror of Kahn's
+    graph: dict[str, list[str]],  # => adjacency map: node -> list of nodes it points to
 ) -> list[str]:  # => assumes a DAG -- no cycle check here (that's Example 37)
     visited: set[str] = set()  # => nodes already fully explored
-    finish_order: list[
+    finish_order: list[  # => opens the type annotation split across lines
         str
     ] = []  # => nodes appended in the order they FINISH, not start
 
@@ -29,17 +29,17 @@ def dfs_topological_sort(
 
 
 graph: dict[str, list[str]] = {  # => the same build-dependency DAG as Example 35
-    "compile": ["link"],
-    "link": ["test"],
-    "fetch_deps": ["compile"],
-    "test": [],
-}
+    "compile": ["link"],  # => must happen before "link"
+    "link": ["test"],  # => must happen before "test"
+    "fetch_deps": ["compile"],  # => the true starting point -- no prerequisites at all
+    "test": [],  # => the terminal step -- nothing depends on it
+}  # => closes the dependency map -- same 4 build steps as Example 35
 order = dfs_topological_sort(graph)  # => a valid build order, via DFS this time
 print(order)  # => Output: ['fetch_deps', 'compile', 'link', 'test']
 
 position = {node: i for i, node in enumerate(order)}  # => node -> its index in order
-assert (
-    position["fetch_deps"] < position["compile"]
+assert (  # => opens the first edge-direction check
+    position["fetch_deps"] < position["compile"]  # => True iff "fetch_deps" comes first
 )  # => confirms edge direction honored
 assert position["compile"] < position["link"]  # => confirms another edge's direction
 assert position["link"] < position["test"]  # => confirms the last edge too

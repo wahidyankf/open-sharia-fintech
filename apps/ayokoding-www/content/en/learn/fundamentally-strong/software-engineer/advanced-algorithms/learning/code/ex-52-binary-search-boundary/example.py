@@ -14,9 +14,9 @@ def leftmost_index(items: list[int], target: int) -> int:  # => -1 if target is 
             result = mid  # => records this as the best-known leftmost match so far
             hi = mid - 1  # => keeps searching LEFT for an even earlier occurrence
         elif items[mid] < target:  # => target must be further right
-            lo = mid + 1
+            lo = mid + 1  # => shrinks the range from the left edge
         else:  # => target must be further left
-            hi = mid - 1
+            hi = mid - 1  # => shrinks the range from the right edge
     return result  # => the smallest index where target occurs, or -1
 
 
@@ -28,10 +28,12 @@ def rightmost_index(items: list[int], target: int) -> int:  # => -1 if target is
         if items[mid] == target:  # => found A match -- but is it the LAST one?
             result = mid  # => records this as the best-known rightmost match so far
             lo = mid + 1  # => keeps searching RIGHT for an even later occurrence
-        elif items[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid - 1
+        elif (
+            items[mid] < target
+        ):  # => same rule as leftmost -- target lies further right
+            lo = mid + 1  # => shrinks the range from the left edge
+        else:  # => same rule as leftmost -- target lies further left
+            hi = mid - 1  # => shrinks the range from the right edge
     return result  # => the largest index where target occurs, or -1
 
 

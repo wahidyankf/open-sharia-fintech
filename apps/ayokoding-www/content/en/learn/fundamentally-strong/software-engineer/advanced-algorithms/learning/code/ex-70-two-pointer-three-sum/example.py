@@ -7,38 +7,47 @@
 
 
 def three_sum(nums: list[int]) -> list[list[int]]:  # => O(n^2): O(n) outer * O(n) inner
-    nums_sorted = sorted(
-        nums
+    nums_sorted = sorted(  # => opens the sort call
+        nums  # => the raw, unsorted input
     )  # => O(n log n): enables both the skip-logic and 2-pointer
-    n = len(nums_sorted)
+    n = len(nums_sorted)  # => the sequence length
     triplets: list[list[int]] = []  # => accumulates unique triplets summing to zero
     for i in range(n - 2):  # => fixes the FIRST element of each candidate triplet
-        if (
-            i > 0 and nums_sorted[i] == nums_sorted[i - 1]
+        if (  # => opens the duplicate-first-element check
+            i > 0
+            and nums_sorted[i] == nums_sorted[i - 1]  # => same value as the prior i
         ):  # => same first element as before
             continue  # => SKIPS it -- would only regenerate triplets already found
         lo, hi = i + 1, n - 1  # => two pointers over the REMAINING sorted slice
-        target = -nums_sorted[
-            i
-        ]  # => the pair must sum to exactly this, for a zero total
+        target = (
+            -nums_sorted[  # => opens the target-value lookup
+                i  # => the fixed first element's index
+            ]
+        )  # => the pair must sum to exactly this, for a zero total
         while lo < hi:  # => Example 23's exact two-pointer pattern, reused here
-            pair_sum = nums_sorted[lo] + nums_sorted[hi]
+            pair_sum = nums_sorted[lo] + nums_sorted[hi]  # => the current pair's sum
             if pair_sum == target:  # => found a valid triplet
-                triplets.append([nums_sorted[i], nums_sorted[lo], nums_sorted[hi]])
-                while (
-                    lo < hi and nums_sorted[lo] == nums_sorted[lo + 1]
+                triplets.append(
+                    [nums_sorted[i], nums_sorted[lo], nums_sorted[hi]]
+                )  # => records it
+                while (  # => opens the skip-duplicate-lo loop
+                    lo < hi
+                    and nums_sorted[lo]
+                    == nums_sorted[lo + 1]  # => same lo value repeats
                 ):  # => skip dup lo
-                    lo += 1
-                while (
-                    lo < hi and nums_sorted[hi] == nums_sorted[hi - 1]
+                    lo += 1  # => advances past the duplicate
+                while (  # => opens the skip-duplicate-hi loop
+                    lo < hi
+                    and nums_sorted[hi]
+                    == nums_sorted[hi - 1]  # => same hi value repeats
                 ):  # => skip dup hi
-                    hi -= 1
+                    hi -= 1  # => advances past the duplicate
                 lo += 1  # => moves past the just-recorded pair
-                hi -= 1
+                hi -= 1  # => moves past the just-recorded pair on the other side
             elif pair_sum < target:  # => sum too small -- need a bigger low value
-                lo += 1
+                lo += 1  # => shrinks the range from the left
             else:  # => sum too big -- need a smaller high value
-                hi -= 1
+                hi -= 1  # => shrinks the range from the right
     return triplets  # => every unique triplet summing to zero
 
 
@@ -48,7 +57,7 @@ print(sorted(triplets))  # => Output: [[-1, -1, 2], [-1, 0, 1]]
 
 assert sorted(triplets) == [[-1, -1, 2], [-1, 0, 1]]  # => confirms the known answer
 for t in triplets:  # => confirms EVERY triplet genuinely sums to zero
-    assert sum(t) == 0
+    assert sum(t) == 0  # => this triplet's own three values sum to exactly 0
 unique_triplets = {tuple(t) for t in triplets}  # => hashable form, catches duplicates
 assert len(unique_triplets) == len(triplets)  # => confirms no triplet is repeated
 print("ex-70 OK")  # => Output: ex-70 OK

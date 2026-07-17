@@ -8,73 +8,85 @@ from collections import deque
 
 
 def topological_order(graph: dict[str, list[str]]) -> list[str]:  # => Kahn's algorithm
-    in_degree: dict[str, int] = {node: 0 for node in graph}
-    for node in graph:
-        for neighbor in graph[node]:
-            in_degree[neighbor] += 1
-    queue: deque[str] = deque([node for node in graph if in_degree[node] == 0])
-    order: list[str] = []
-    while queue:
-        node = queue.popleft()
-        order.append(node)
-        for neighbor in graph[node]:
-            in_degree[neighbor] -= 1
-            if in_degree[neighbor] == 0:
-                queue.append(neighbor)
+    in_degree: dict[str, int] = {
+        node: 0 for node in graph
+    }  # => how many predecessors each node has
+    for node in graph:  # => scans every node's outgoing edges
+        for neighbor in graph[node]:  # => each edge node->neighbor
+            in_degree[neighbor] += 1  # => neighbor gains one more predecessor
+    queue: deque[str] = deque(
+        [node for node in graph if in_degree[node] == 0]
+    )  # => sources first
+    order: list[str] = []  # => accumulates the topological order as it's discovered
+    while queue:  # => processes nodes in the order their in-degree hits zero
+        node = queue.popleft()  # => the next node with all predecessors already emitted
+        order.append(node)  # => records it as next in topological order
+        for neighbor in graph[node]:  # => this node no longer blocks its successors
+            in_degree[neighbor] -= 1  # => one fewer unresolved predecessor for neighbor
+            if (
+                in_degree[neighbor] == 0
+            ):  # => neighbor's LAST predecessor was just emitted
+                queue.append(neighbor)  # => neighbor is now safe to process too
     return order  # => a valid topological order (assumes a DAG -- no cycle check here)
 
 
-def critical_path_length(
-    graph: dict[str, list[str]], durations: dict[str, int]
+def critical_path_length(  # => DP over a topological order: the true project length
+    graph: dict[str, list[str]],
+    durations: dict[str, int],  # => task graph + each task's duration
 ) -> tuple[int, dict[str, int]]:  # => (total project length, earliest_finish per task)
-    order = topological_order(
-        graph
+    order = topological_order(  # => opens the topological-order call
+        graph  # => the same task dependency graph
     )  # => process every predecessor before its successors
-    predecessors: dict[str, list[str]] = {
-        node: [] for node in graph
+    predecessors: dict[
+        str, list[str]
+    ] = {  # => opens the reversed-edge map construction
+        node: []
+        for node in graph  # => one empty predecessor list per task
     }  # => reverse the edges -- who must finish before each task
-    for u in graph:
-        for v in graph[u]:
+    for u in graph:  # => scans every node's outgoing edges
+        for v in graph[u]:  # => each edge u->v
             predecessors[v].append(u)  # => u is a predecessor of v
 
-    earliest_finish: dict[
-        str, int
+    earliest_finish: dict[  # => opens the DP table's type annotation
+        str, int  # => task name -> earliest completion time
     ] = {}  # => DP table: task -> earliest completion time
-    for (
-        task
+    for (  # => opens the topo-order iteration
+        task  # => the current task, in topological order
     ) in order:  # => processes in topo order -- every predecessor is already known
-        latest_predecessor_finish = max(
-            (earliest_finish[p] for p in predecessors[task]), default=0
+        latest_predecessor_finish = max(  # => opens the slowest-predecessor lookup
+            (earliest_finish[p] for p in predecessors[task]),
+            default=0,  # => 0 if no predecessors
         )  # => 0 if this task has no predecessors -- it can start immediately
-        earliest_finish[task] = (
-            durations[task] + latest_predecessor_finish
+        earliest_finish[task] = (  # => opens the DP-table assignment
+            durations[task]
+            + latest_predecessor_finish  # => own duration plus the slowest wait
         )  # => this task's own duration, stacked on top of its slowest predecessor
 
     total_length = max(earliest_finish.values())  # => the whole PROJECT'S critical path
-    return (
-        total_length,
-        earliest_finish,
+    return (  # => opens the result tuple
+        total_length,  # => the overall project length
+        earliest_finish,  # => every task's own earliest-finish time
     )  # => project length and every task's finish time
 
 
 graph: dict[str, list[str]] = {  # => a small hand-computable project schedule
-    "design": ["build_a", "build_b"],
-    "build_a": ["test"],
-    "build_b": ["test"],
-    "test": [],
-}
+    "design": ["build_a", "build_b"],  # => design must finish before either build
+    "build_a": ["test"],  # => build_a must finish before test
+    "build_b": ["test"],  # => build_b must finish before test
+    "test": [],  # => the final task, with no successors
+}  # => closes the graph literal
 durations: dict[str, int] = {  # => how long each task takes, in days
-    "design": 3,
-    "build_a": 5,
-    "build_b": 2,
-    "test": 4,
-}
-total_length, finish_times = critical_path_length(graph, durations)
+    "design": 3,  # => 3 days
+    "build_a": 5,  # => 5 days -- the SLOWER of the two parallel builds
+    "build_b": 2,  # => 2 days
+    "test": 4,  # => 4 days
+}  # => closes the durations literal
+total_length, finish_times = critical_path_length(graph, durations)  # => runs the DP
 print(total_length)  # => Output: 12
 print(finish_times["test"])  # => Output: 12
 
 assert (
-    total_length == 12
+    total_length == 12  # => confirms the DP computed the known critical-path length
 )  # => design(3) -> build_a(5, the SLOWER branch) -> test(4) = 12
 assert finish_times["design"] == 3  # => no predecessors -- finishes at its own duration
 assert finish_times["build_b"] == 5  # => 3 (design) + 2 (build_b) = 5, NOT critical

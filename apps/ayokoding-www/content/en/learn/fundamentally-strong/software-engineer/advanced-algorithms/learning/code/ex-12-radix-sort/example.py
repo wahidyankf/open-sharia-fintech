@@ -5,8 +5,9 @@
 # (co-11) -- stability is what lets earlier passes' order survive later ones.
 
 
-def counting_sort_by_digit(
-    items: list[int], digit_place: int
+def counting_sort_by_digit(  # => one STABLE counting-sort pass over a single digit
+    items: list[int],
+    digit_place: int,  # => digit_place selects ones/tens/hundreds/...
 ) -> list[int]:  # => sorts by ONE digit (0-9) at digit_place, stably
     counts: list[int] = [0] * 10  # => one bucket per digit value, 0 through 9
     for value in items:  # => O(n): tallies each item's digit at this place
@@ -35,27 +36,27 @@ def radix_sort(items: list[int]) -> list[int]:  # => sorts non-negative fixed-wi
 
 
 data: list[int] = [
-    170,
-    45,
-    75,
-    90,
-    802,
-    24,
-    2,
-    66,
+    170,  # => 3-digit value -- exercises the hundreds-place pass
+    45,  # => 2-digit value
+    75,  # => 2-digit value, shares tens digit "7" with 75 vs 170's hundreds
+    90,  # => 2-digit value, ones digit is 0
+    802,  # => the LARGEST value -- fixes the pass count at 3 (max_value // 100 > 0)
+    24,  # => 2-digit value
+    2,  # => single-digit value -- ones digit only, zero-padded implicitly
+    66,  # => 2-digit value with matching tens and ones digits
 ]  # => mixed 1-3 digit non-negative ints
 sorted_data = radix_sort(data)  # => LSD radix sort, three digit passes (max is 802)
 print(sorted_data)  # => Output: [2, 24, 45, 66, 75, 90, 170, 802]
 
-assert sorted_data == [
-    2,
-    24,
-    45,
-    66,
-    75,
-    90,
-    170,
-    802,
+assert sorted_data == [  # => opens the expected fully-sorted comparison list
+    2,  # => smallest value -- must sort first
+    24,  # => 2nd smallest
+    45,  # => 3rd smallest
+    66,  # => 4th -- both digits happened to match, unaffected by stability quirks
+    75,  # => 5th
+    90,  # => 6th -- trailing zero digit, still sorts correctly
+    170,  # => 7th -- first 3-digit value in the output
+    802,  # => largest value -- must sort last
 ]  # => confirms ascending order
 assert sorted_data == sorted(data)  # => matches Python's own sort too
 assert radix_sort([]) == []  # => confirms the empty-input edge case

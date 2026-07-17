@@ -33,8 +33,8 @@ def search(root: Node | None, value: int) -> bool:  # => True if value exists in
     return search(root.right, value)  # => recurses right only
 
 
-def inorder(
-    root: Node | None,
+def inorder(  # => classic left-node-right recursive traversal
+    root: Node | None,  # => the subtree to walk -- None yields an empty list
 ) -> list[int]:  # => left, node, right -- yields sorted order
     if root is None:  # => an empty subtree contributes nothing
         return []  # => base case
@@ -50,8 +50,8 @@ print(traversal)  # => Output: [1, 2, 3, 5, 7, 8, 9]
 print(search(tree_root, 7))  # => Output: True
 print(search(tree_root, 4))  # => Output: False
 
-assert traversal == sorted(
-    traversal
+assert traversal == sorted(  # => opens the self-comparison against Python's own sort
+    traversal  # => re-sorts the SAME list -- a no-op if the BST invariant held
 )  # => confirms the BST invariant: inorder is always sorted
 assert search(tree_root, 7) is True  # => confirms a present value is found
 assert search(tree_root, 4) is False  # => confirms an absent value is correctly missed

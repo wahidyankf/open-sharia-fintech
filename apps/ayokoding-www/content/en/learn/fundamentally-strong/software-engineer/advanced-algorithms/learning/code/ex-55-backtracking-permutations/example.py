@@ -5,14 +5,16 @@
 # counting argument, realized directly as recursive choice-and-undo.
 
 
-def all_permutations(
-    items: list[int],
+def all_permutations(  # => builds every ordering by choosing one UNUSED item at a time
+    items: list[int],  # => the items to permute
 ) -> list[list[int]]:  # => returns all n! orderings
     result: list[list[int]] = []  # => accumulates every complete permutation
     current: list[int] = []  # => the in-progress permutation being built
     used: set[int] = set()  # => which items are already placed in `current`
 
-    def backtrack() -> None:
+    def backtrack() -> (
+        None
+    ):  # => fills the next position, then backtracks to try others
         if len(current) == len(items):  # => base case: every item has been placed
             result.append(list(current))  # => records a COPY of the completed ordering
             return
@@ -32,8 +34,8 @@ def all_permutations(
 items: list[int] = [1, 2, 3]  # => a small 3-element set
 perms = all_permutations(items)  # => all 6 permutations of [1, 2, 3]
 print(len(perms))  # => Output: 6
-print(
-    sorted(perms)
+print(  # => opens the sorted-permutations print call
+    sorted(perms)  # => sorts for a deterministic, readable print order
 )  # => Output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
 
 assert len(perms) == 6  # => 3! = 6, confirms the exact expected count

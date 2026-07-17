@@ -11,7 +11,7 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
         child = 2 * root + 1  # => index of root's LEFT child in the array encoding
         if child > end:  # => no children exist within the active heap range
             break  # => root is already in a valid position -- stop sifting
-        if (
+        if (  # => opens the two-part right-child-exists-and-is-bigger check
             child + 1 <= end and items[child + 1] > items[child]
         ):  # => right child bigger
             child += 1  # => picks the LARGER of the two children to compare against
@@ -24,7 +24,9 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
 def heapsort(items: list[int]) -> None:  # => sorts items IN PLACE, ascending
     n = len(items)  # => n = the number of elements to sort
     for start in range(
-        n // 2 - 1, -1, -1
+        n // 2 - 1,
+        -1,
+        -1,  # => starts at the last non-leaf parent, walks toward the root
     ):  # => builds a max-heap bottom-up, O(n) total
         sift_down(items, start, n - 1)  # => fixes each subtree, from the last parent up
     for end in range(n - 1, 0, -1):  # => repeatedly extracts the current maximum

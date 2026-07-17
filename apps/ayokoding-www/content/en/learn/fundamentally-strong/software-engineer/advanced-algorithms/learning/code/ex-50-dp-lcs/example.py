@@ -6,12 +6,14 @@
 # filled table backward, following exactly which choice produced each cell.
 
 
-def lcs_length_table(
-    word1: str, word2: str
+def lcs_length_table(  # => builds the full DP table, bottom-up, one cell at a time
+    word1: str,
+    word2: str,  # => the two strings to compare
 ) -> list[list[int]]:  # => O(m*n) table build
     m, n = len(word1), len(word2)  # => the two strings' lengths
-    dp: list[list[int]] = [
-        [0] * (n + 1) for _ in range(m + 1)
+    dp: list[list[int]] = [  # => opens the 2D table construction
+        [0] * (n + 1)
+        for _ in range(m + 1)  # => one fresh row of zeros per prefix of word1
     ]  # => dp[i][0] and dp[0][j] are already 0 -- an empty prefix has LCS length 0
     for i in range(1, m + 1):  # => fills row by row
         for j in range(1, n + 1):  # => and column by column
@@ -24,8 +26,10 @@ def lcs_length_table(
     return dp  # => the full table -- dp[m][n] is the final LCS length
 
 
-def reconstruct_lcs(
-    word1: str, word2: str, dp: list[list[int]]
+def reconstruct_lcs(  # => retraces which choice built each cell, to recover the actual chars
+    word1: str,
+    word2: str,
+    dp: list[list[int]],  # => the original strings + filled table
 ) -> str:  # => walks the table BACKWARD from (m, n)
     i, j = len(word1), len(word2)  # => starts at the bottom-right cell
     chars: list[str] = []  # => accumulates matched characters, in REVERSE order
@@ -35,7 +39,7 @@ def reconstruct_lcs(
         ):  # => this position was a MATCH -- part of the LCS
             chars.append(word1[i - 1])  # => records this matched character
             i -= 1  # => moves diagonally, retracing the match
-            j -= 1
+            j -= 1  # => both indices step back together on a diagonal match
         elif dp[i - 1][j] >= dp[i][j - 1]:  # => the LCS came from dropping word1's char
             i -= 1  # => moves up, following that earlier decision
         else:  # => the LCS came from dropping word2's char instead
@@ -43,6 +47,7 @@ def reconstruct_lcs(
     return "".join(reversed(chars))  # => reverses back to forward reading order
 
 
+# demonstrates the full pipeline: build the table, then reconstruct from it
 word1, word2 = "ABCBDAB", "BDCABA"  # => the classic LCS example pair
 table = lcs_length_table(word1, word2)  # => builds the DP table once
 length = table[len(word1)][len(word2)]  # => the LCS length, read from the final cell

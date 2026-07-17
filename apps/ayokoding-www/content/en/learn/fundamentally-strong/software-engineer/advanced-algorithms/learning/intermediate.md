@@ -244,37 +244,37 @@ comparisons = 0  # => a global counter, reset before each measurement below
 
 
 def randomized_quicksort(items: list[int], lo: int = 0, hi: int | None = None) -> None:
-    global comparisons
-    if hi is None:
-        hi = len(items) - 1
-    if lo < hi:
+    global comparisons  # => this function mutates the module-level counter
+    if hi is None:  # => top-level call defaults hi to the last index
+        hi = len(items) - 1  # => sorts the WHOLE list on the first call
+    if lo < hi:  # => base case: 0 or 1 elements need no partitioning
         p = random_pivot_partition(items, lo, hi)  # => the only change from Example 8
-        randomized_quicksort(items, lo, p - 1)
-        randomized_quicksort(items, p + 1, hi)
+        randomized_quicksort(items, lo, p - 1)  # => recurses on the left partition
+        randomized_quicksort(items, p + 1, hi)  # => recurses on the right partition
 
 
 def random_pivot_partition(items: list[int], lo: int, hi: int) -> int:
-    global comparisons
+    global comparisons  # => mutates the shared counter
     rand_index = random.randint(lo, hi)  # => picks a UNIFORMLY random index as pivot
-    items[rand_index], items[lo] = (
-        items[lo],
-        items[rand_index],
+    items[rand_index], items[lo] = (  # => opens the swap-to-front tuple assignment
+        items[lo],  # => the old first element moves to the random index's old slot
+        items[rand_index],  # => the randomly chosen value moves to the front
     )  # => swaps it to the front so the rest of the logic is unchanged
     pivot = items[lo]  # => now behaves exactly like Example 8's first-pivot partition
-    i = lo
-    for j in range(lo + 1, hi + 1):
-        comparisons += 1
-        if items[j] < pivot:
-            i += 1
-            items[i], items[j] = items[j], items[i]
-    items[lo], items[i] = items[i], items[lo]
-    return i
+    i = lo  # => boundary of the "<pivot" region
+    for j in range(lo + 1, hi + 1):  # => scans every element after the pivot
+        comparisons += 1  # => counts this one comparison against the pivot
+        if items[j] < pivot:  # => belongs strictly before the pivot
+            i += 1  # => grows the "<pivot" region
+            items[i], items[j] = items[j], items[i]  # => swaps it in
+    items[lo], items[i] = items[i], items[lo]  # => places the pivot at its final spot
+    return i  # => pivot's final index
 
 
 random.seed(99)  # => fixed seed -- makes the "random" pivot choices reproducible
 n = 500  # => how many elements to sort
-already_sorted: list[int] = list(
-    range(n)
+already_sorted: list[int] = list(  # => opens the pre-sorted input construction
+    range(n)  # => builds 0, 1, 2, ..., n-1 in ascending order
 )  # => Example 8's worst case: pre-sorted input
 naive_worst_case = n * (n - 1) // 2  # => what Example 8 would score on this same input
 comparisons = 0  # => resets the shared counter before measuring
@@ -282,8 +282,8 @@ randomized_quicksort(already_sorted)  # => sorts the SAME kind of worst-case inp
 print(comparisons < naive_worst_case)  # => Output: True
 print(already_sorted == list(range(n)))  # => Output: True -- still sorts correctly
 
-assert (
-    comparisons < naive_worst_case
+assert (  # => opens the check -- wraps the long boolean across two lines
+    comparisons < naive_worst_case  # => True only if randomization avoided the blow-up
 )  # => confirms randomization avoids the O(n^2) sorted-input trap
 assert already_sorted == list(range(n))  # => confirms correctness is unaffected
 print("ex-27 OK")  # => Output: ex-27 OK
@@ -362,8 +362,8 @@ Quickselect reuses quicksort's partition step but recurses into only ONE side --
 import random
 
 
-def quickselect(
-    items: list[int], k: int
+def quickselect(  # => recurses into only the side containing rank k, not both sides
+    items: list[int], k: int  # => k is the 0-indexed target rank to find
 ) -> int:  # => returns the k-th smallest (0-indexed)
     working = list(items)  # => a copy -- the caller's list is never mutated
     lo, hi = 0, len(working) - 1  # => the active search range, shrinks each round
@@ -379,14 +379,14 @@ def quickselect(
             hi = p - 1  # => discards the entire right side -- it's already too big
 
 
-def random_pivot_partition(items: list[int], lo: int, hi: int) -> int:
+def random_pivot_partition(items: list[int], lo: int, hi: int) -> int:  # => Lomuto scheme
     rand_index = random.randint(lo, hi)  # => a uniformly random pivot choice
     items[rand_index], items[lo] = items[lo], items[rand_index]  # => moves it to front
     pivot = items[lo]  # => the value being partitioned around
     i = lo  # => boundary of the "<pivot" region
     for j in range(lo + 1, hi + 1):  # => scans the rest of the active range
         if items[j] < pivot:  # => belongs strictly before the pivot
-            i += 1
+            i += 1  # => grows the "<pivot" region by one slot
             items[i], items[j] = items[j], items[i]  # => swaps it into place
     items[lo], items[i] = items[i], items[lo]  # => places the pivot at its final index
     return i  # => the pivot's final, correctly-sorted-position index
@@ -486,7 +486,7 @@ def squared_distance(p: Point, q: Point) -> int:  # => (dx^2 + dy^2), no sqrt ne
 def brute_force_closest_pair(points: list[Point]) -> int:  # => O(n^2): every pair
     best = squared_distance(points[0], points[1])  # => a starting baseline
     for i in range(len(points)):  # => tries every unordered pair once
-        for j in range(i + 1, len(points)):
+        for j in range(i + 1, len(points)):  # => avoids re-checking the same pair twice
             best = min(best, squared_distance(points[i], points[j]))  # => tracks min
     return best  # => the true minimum squared distance, by exhaustive comparison
 
@@ -505,27 +505,27 @@ def _closest_pair(points_by_x: list[Point]) -> int:  # => points, already sorted
     left_best = _closest_pair(points_by_x[:mid])  # => recurses on the left half
     right_best = _closest_pair(points_by_x[mid:])  # => recurses on the right half
     best = min(left_best, right_best)  # => the best purely-within-one-half distance
-    strip = [
-        p for p in points_by_x if (p[0] - mid_x) ** 2 < best
+    strip = [  # => opens the filtered "close to the midline" list comprehension
+        p for p in points_by_x if (p[0] - mid_x) ** 2 < best  # => squared-x pruning
     ]  # => points close enough to the midline to possibly beat `best`
     strip.sort(key=lambda p: p[1])  # => sorting the (small) strip by y enables pruning
     for i in range(len(strip)):  # => checks each strip point against its NEAR neighbors
-        for j in range(
-            i + 1, min(i + 8, len(strip))
+        for j in range(  # => opens the bounded inner-neighbor range
+            i + 1, min(i + 8, len(strip))  # => caps the scan at 7 neighbors, never n
         ):  # => a well-known bound: at most 7 useful neighbors in y-sorted order
             best = min(best, squared_distance(strip[i], strip[j]))  # => updates best
     return best  # => the true minimum squared distance across the whole point set
 
 
-points: list[Point] = [
-    (2, 3),
-    (12, 30),
-    (40, 50),
-    (5, 1),
-    (12, 10),
-    (3, 4),
-    (0, 0),
-    (20, 20),
+points: list[Point] = [  # => opens the 8-point set, deliberately mixing close/far pairs
+    (2, 3),  # => part of the TRUE closest pair, alongside (3, 4)
+    (12, 30),  # => far from the cluster near the origin
+    (40, 50),  # => the most distant outlier point
+    (5, 1),  # => moderately close to the origin cluster
+    (12, 10),  # => sits between the near cluster and the mid-distance points
+    (3, 4),  # => the other half of the TRUE closest pair, alongside (2, 3)
+    (0, 0),  # => the origin -- anchors the near cluster
+    (20, 20),  # => a mid-distance point, closer to the outliers than the cluster
 ]  # => 8 points, deliberately mixing close and far pairs
 brute_answer = brute_force_closest_pair(points)  # => O(n^2) ground truth
 fast_answer = closest_pair_divide_conquer(points)  # => O(n log n) divide-and-conquer
@@ -533,8 +533,8 @@ print(brute_answer)  # => Output: 2
 print(fast_answer)  # => Output: 2
 
 assert brute_answer == fast_answer  # => confirms both approaches agree exactly
-assert brute_answer == squared_distance(
-    (2, 3), (3, 4)
+assert brute_answer == squared_distance(  # => opens the explicit ground-truth check
+    (2, 3), (3, 4)  # => the two points expected to be the closest pair
 )  # => confirms (2,3)-(3,4) is genuinely the closest pair: dist^2 = 1+1 = 2
 print("ex-29 OK")  # => Output: ex-29 OK
 ```
@@ -606,7 +606,7 @@ A Fenwick tree (binary indexed tree) stores partial sums keyed by the lowest set
 
 
 class FenwickTree:  # => 1-indexed internally -- index 0 is unused, by convention
-    def __init__(self, n: int) -> None:
+    def __init__(self, n: int) -> None:  # => allocates a zeroed tree sized for n items
         self.n = n  # => the number of elements this tree covers
         self.tree: list[int] = [0] * (n + 1)  # => tree[i] holds a partial-sum range
 
@@ -617,8 +617,8 @@ class FenwickTree:  # => 1-indexed internally -- index 0 is unused, by conventio
             i += i & (-i)  # => jumps to the next node this index's range feeds into
             # => `i & (-i)` isolates the lowest set bit -- the core BIT trick
 
-    def prefix_sum(
-        self, i: int
+    def prefix_sum(  # => walks DOWN the BIT structure, accumulating partial sums
+        self, i: int  # => the (0-indexed) inclusive upper bound of the prefix
     ) -> int:  # => O(log n): sum of elements [0, i] inclusive
         i += 1  # => converts to 1-indexed
         total = 0  # => accumulates the running sum
@@ -630,8 +630,8 @@ class FenwickTree:  # => 1-indexed internally -- index 0 is unused, by conventio
     def range_sum(self, lo: int, hi: int) -> int:  # => O(log n): sum of [lo, hi]
         if lo == 0:  # => no need to subtract anything below index 0
             return self.prefix_sum(hi)  # => the prefix sum IS the range sum
-        return self.prefix_sum(hi) - self.prefix_sum(
-            lo - 1
+        return self.prefix_sum(hi) - self.prefix_sum(  # => two O(log n) lookups
+            lo - 1  # => excludes everything strictly below lo
         )  # => classic prefix-sum subtraction trick
 
 
@@ -650,11 +650,11 @@ running_array[2] += 10  # => keeps the plain array in sync for comparison
 print(fenwick.prefix_sum(4))  # => Output: 25 -- 15 + 10, reflecting the point update
 print(fenwick.range_sum(3, 7))  # => Output: 15 -- sum of values[3..7] after the update
 
-assert fenwick.prefix_sum(4) == sum(
-    running_array[: 4 + 1]
+assert fenwick.prefix_sum(4) == sum(  # => cross-checks the Fenwick tree vs a plain sum
+    running_array[: 4 + 1]  # => the same [0, 4] slice, summed the naive O(n) way
 )  # => confirms Fenwick matches a plain re-sum after the update
-assert fenwick.range_sum(3, 7) == sum(
-    running_array[3 : 7 + 1]
+assert fenwick.range_sum(3, 7) == sum(  # => cross-checks an arbitrary mid-range sum
+    running_array[3 : 7 + 1]  # => the same [3, 7] slice, summed the naive O(n) way
 )  # => confirms arbitrary range sums match too
 print("ex-30 OK")  # => Output: ex-30 OK
 ```
@@ -733,20 +733,22 @@ A segment tree stores, at each internal node, the aggregate (here, the minimum) 
 # the MIN) of an entire array range -- built once in O(n), then answering any
 # range-min query in O(log n) by combining O(log n) precomputed sub-ranges.
 
-INF = float(
-    "inf"
+INF = float(  # => opens the sentinel construction
+    "inf"  # => Python's built-in way to spell positive infinity as a float
 )  # => the segment tree's "empty range" sentinel, larger than any value
 
 
 class SegmentTreeMin:  # => a segment tree specialized for range-minimum queries
-    def __init__(self, data: list[int]) -> None:
+    def __init__(self, data: list[int]) -> None:  # => O(n): builds the whole tree once
         self.n = len(data)  # => the number of leaf elements
-        self.tree: list[float] = [INF] * (
-            4 * self.n
+        self.tree: list[float] = [INF] * (  # => opens the array-backed tree allocation
+            4 * self.n  # => 4n is a standard safe upper bound on array-based tree size
         )  # => 4n is a standard safe upper bound on array-based tree size
         self._build(data, 1, 0, self.n - 1)  # => builds the tree rooted at index 1
 
-    def _build(self, data: list[int], node: int, lo: int, hi: int) -> None:
+    def _build(  # => recursively fills every node with its range's minimum, bottom-up
+        self, data: list[int], node: int, lo: int, hi: int  # => [lo, hi] is this call's range
+    ) -> None:  # => node uses the implicit-heap array encoding: children 2*node, 2*node+1
         if lo == hi:  # => a leaf: exactly one array element
             self.tree[node] = data[lo]  # => stores that element's own value directly
             return  # => nothing more to combine at a leaf
@@ -755,26 +757,29 @@ class SegmentTreeMin:  # => a segment tree specialized for range-minimum queries
         self._build(
             data, 2 * node + 1, mid + 1, hi
         )  # => builds the right child (2*node+1)
-        self.tree[node] = min(
+        self.tree[node] = min(  # => this node's value is the min of its two children
             self.tree[2 * node], self.tree[2 * node + 1]
         )  # => combines children into this node's own min
 
     def query(self, lo: int, hi: int) -> float:  # => O(log n): min over [lo, hi]
+        # => the public entry point -- always starts recursion at node 1, full range
         return self._query(1, 0, self.n - 1, lo, hi)  # => starts the recursion at root
 
-    def _query(self, node: int, node_lo: int, node_hi: int, lo: int, hi: int) -> float:
+    def _query(  # => the classic three-way split: outside, inside, or partial overlap
+        self, node: int, node_lo: int, node_hi: int, lo: int, hi: int  # => node covers [node_lo, node_hi]
+    ) -> float:  # => the query range [lo, hi] never changes across the recursion
         if hi < node_lo or node_hi < lo:  # => this node's range is entirely OUTSIDE
             return INF  # => contributes nothing to a min -- INF is the identity
         if lo <= node_lo and node_hi <= hi:  # => this node's range is entirely INSIDE
             return self.tree[node]  # => the precomputed min covers this whole range
         mid = (node_lo + node_hi) // 2  # => this node PARTIALLY overlaps -- must split
-        return min(
-            self._query(2 * node, node_lo, mid, lo, hi),
-            self._query(2 * node + 1, mid + 1, node_hi, lo, hi),
+        return min(  # => combines whatever both children individually contribute
+            self._query(2 * node, node_lo, mid, lo, hi),  # => recurses into the left half
+            self._query(2 * node + 1, mid + 1, node_hi, lo, hi),  # => and the right half
         )  # => combines whatever both halves contribute
 
 
-data: list[int] = [5, 2, 8, 1, 9, 3, 7, 4]  # => 8 unsorted integers
+data: list[int] = [5, 2, 8, 1, 9, 3, 7, 4]  # => 8 unsorted integers, min is 1 at index 3
 tree = SegmentTreeMin(data)  # => O(n): builds the tree once
 
 print(tree.query(0, 3))  # => Output: 1 -- min of [5, 2, 8, 1]
@@ -783,6 +788,7 @@ print(tree.query(0, 7))  # => Output: 1 -- min of the whole array
 
 assert tree.query(0, 3) == min(data[0:4])  # => confirms against a brute-force slice min
 assert tree.query(4, 7) == min(data[4:8])  # => confirms another range against a slice
+# => a single-element range is the INSIDE case -- returns the leaf's own value directly
 assert tree.query(2, 2) == data[2]  # => a single-element range returns that element
 print("ex-31 OK")  # => Output: ex-31 OK
 ```
@@ -859,75 +865,79 @@ A plain segment tree's range update touches every leaf in the range: O(n) in the
 
 
 class LazySegmentTree:  # => sum-tracking tree with O(log n) range-add, point query
-    def __init__(self, data: list[int]) -> None:
+    def __init__(self, data: list[int]) -> None:  # => O(n): builds the initial tree
         self.n = len(data)  # => number of leaf elements
         self.tree: list[int] = [0] * (4 * self.n)  # => tree[node] = sum over its range
         self.lazy: list[int] = [0] * (4 * self.n)  # => pending, not-yet-pushed adds
         self._build(data, 1, 0, self.n - 1)  # => builds the initial tree, O(n)
 
-    def _build(self, data: list[int], node: int, lo: int, hi: int) -> None:
+    def _build(  # => bottom-up: leaves first, then each parent sums its two children
+        self, data: list[int], node: int, lo: int, hi: int  # => [lo, hi] is this node's range
+    ) -> None:  # => fills self.tree over the array-index encoding, no lazy tags yet
         if lo == hi:  # => leaf: exactly one element
             self.tree[node] = data[lo]  # => its own starting value
-            return
+            return  # => nothing more to combine at a leaf
         mid = (lo + hi) // 2  # => splits the range
         self._build(data, 2 * node, lo, mid)  # => builds the left child
         self._build(data, 2 * node + 1, mid + 1, hi)  # => builds the right child
-        self.tree[node] = (
+        self.tree[node] = (  # => opens the parent-sum assignment
             self.tree[2 * node] + self.tree[2 * node + 1]
         )  # => this node's sum is its children's combined sum
 
-    def _push_down(
-        self, node: int, lo: int, hi: int
+    def _push_down(  # => flushes node's pending tag one level down, THEN clears it
+        self, node: int, lo: int, hi: int  # => node's own [lo, hi] range
     ) -> None:  # => flushes a pending tag
         if self.lazy[node] == 0:  # => nothing pending -- nothing to push
-            return
+            return  # => an early exit avoids touching children unnecessarily
         mid = (lo + hi) // 2  # => needed to size each child's range
-        for child, child_lo, child_hi in (
-            (2 * node, lo, mid),
-            (2 * node + 1, mid + 1, hi),
+        for child, child_lo, child_hi in (  # => opens the (index, lo, hi) pair loop
+            (2 * node, lo, mid),  # => the left child's index and range
+            (2 * node + 1, mid + 1, hi),  # => the right child's index and range
         ):  # => applies the SAME pending delta to both children
-            self.tree[child] += self.lazy[node] * (
-                child_hi - child_lo + 1
+            self.tree[child] += self.lazy[node] * (  # => scales the delta by range size
+                child_hi - child_lo + 1  # => how many elements this child's range spans
             )  # => scales by range SIZE, since tree[] stores a SUM, not a single value
             self.lazy[child] += self.lazy[node]  # => the child inherits the pending tag
         self.lazy[node] = 0  # => this node's tag has now been fully passed down
 
-    def range_add(
-        self, lo: int, hi: int, delta: int
+    def range_add(  # => public entry point -- the only method callers use to update
+        self, lo: int, hi: int, delta: int  # => adds delta to every index in [lo, hi]
     ) -> None:  # => O(log n): adds delta
         self._range_add(1, 0, self.n - 1, lo, hi, delta)  # => starts at the root
 
-    def _range_add(
-        self, node: int, node_lo: int, node_hi: int, lo: int, hi: int, delta: int
-    ) -> None:
+    def _range_add(  # => the classic outside/inside/partial-overlap recursive split
+        self, node: int, node_lo: int, node_hi: int, lo: int, hi: int, delta: int  # => node covers [node_lo, node_hi]
+    ) -> None:  # => mutates self.tree and self.lazy in place, returns nothing
         if hi < node_lo or node_hi < lo:  # => this node's range is entirely outside
             return  # => nothing to do here
         if lo <= node_lo and node_hi <= hi:  # => this node's range is entirely inside
-            self.tree[node] += delta * (
-                node_hi - node_lo + 1
+            self.tree[node] += delta * (  # => the aggregate sum shifts by delta * count
+                node_hi - node_lo + 1  # => how many elements this whole node covers
             )  # => updates the aggregate sum directly
             self.lazy[node] += delta  # => defers pushing to children until needed
             return  # => THE LAZY PART: children are not touched yet
-        self._push_down(
-            node, node_lo, node_hi
+        self._push_down(  # => must resolve any pending tag before recursing further
+            node, node_lo, node_hi  # => flushes THIS node's own stale tag first
         )  # => must resolve any pending tag before recursing further
-        mid = (node_lo + node_hi) // 2
-        self._range_add(2 * node, node_lo, mid, lo, hi, delta)
-        self._range_add(2 * node + 1, mid + 1, node_hi, lo, hi, delta)
+        mid = (node_lo + node_hi) // 2  # => splits this node's range for the recursion
+        self._range_add(2 * node, node_lo, mid, lo, hi, delta)  # => recurses left
+        self._range_add(2 * node + 1, mid + 1, node_hi, lo, hi, delta)  # => and right
         self.tree[node] = self.tree[2 * node] + self.tree[2 * node + 1]  # => recombines
 
     def point_query(self, i: int) -> int:  # => O(log n): the CURRENT value at index i
         return self._point_query(1, 0, self.n - 1, i)  # => starts at the root
 
-    def _point_query(self, node: int, lo: int, hi: int, i: int) -> int:
+    def _point_query(  # => descends one side at each level, pushing down tags first
+        self, node: int, lo: int, hi: int, i: int  # => node covers [lo, hi]; i is the target
+    ) -> int:  # => returns the up-to-date value at index i
         if lo == hi:  # => a leaf -- its stored sum IS the single element's value
             return self.tree[node]  # => already reflects every applied range-add
-        self._push_down(
-            node, lo, hi
+        self._push_down(  # => resolves any pending tag before descending further
+            node, lo, hi  # => this node's own range, needed to size its children
         )  # => resolves any pending tag before descending further
-        mid = (lo + hi) // 2
+        mid = (lo + hi) // 2  # => decides which child holds index i
         if i <= mid:  # => the target index lives in the left half
-            return self._point_query(2 * node, lo, mid, i)
+            return self._point_query(2 * node, lo, mid, i)  # => recurses left
         return self._point_query(2 * node + 1, mid + 1, hi, i)  # => lives in the right
 
 
@@ -935,13 +945,13 @@ data: list[int] = [1, 2, 3, 4, 5, 6]  # => 6 starting values
 tree = LazySegmentTree(data)  # => O(n): builds the initial tree
 tree.range_add(1, 4, 10)  # => O(log n): adds 10 to every element in indices [1, 4]
 
-expected: list[int] = [
-    1,
-    12,
-    13,
-    14,
-    15,
-    6,
+expected: list[int] = [  # => opens the hand-computed plain-array result
+    1,  # => index 0 -- outside [1, 4], unchanged
+    12,  # => index 1 -- 2 + 10
+    13,  # => index 2 -- 3 + 10
+    14,  # => index 3 -- 4 + 10
+    15,  # => index 4 -- 5 + 10
+    6,  # => index 5 -- outside [1, 4], unchanged
 ]  # => the plain-array result of the same range-add, computed by hand
 for i in range(len(data)):  # => reads every index back through the tree
     print(f"index {i}: {tree.point_query(i)}")  # => Output: index N: value, per index
@@ -1039,16 +1049,16 @@ Two independent optimizations on top of Example 22's plain union-find: union-by-
 
 
 class OptimizedUnionFind:  # => union-find with both classic optimizations applied
-    def __init__(self, n: int) -> None:
-        self.parent: list[int] = list(
-            range(n)
+    def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
+        self.parent: list[int] = list(  # => opens the initial parent-list construction
+            range(n)  # => index i's parent starts as i itself -- n separate groups
         )  # => each element starts as its own root
         self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
     def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
         if self.parent[x] != x:  # => x is not yet its own group's root
-            self.parent[x] = self.find(
-                self.parent[x]
+            self.parent[x] = self.find(  # => recurses first, THEN repoints on the way back
+                self.parent[x]  # => climbs toward the root through x's current parent
             )  # => PATH COMPRESSION: recurses to the root, then repoints x DIRECTLY at it
         return self.parent[x]  # => x's parent is now either itself, or the true root
 
@@ -1056,22 +1066,22 @@ class OptimizedUnionFind:  # => union-find with both classic optimizations appli
         root_a = self.find(a)  # => a's group root (path-compressed along the way)
         root_b = self.find(b)  # => b's group root
         if root_a == root_b:  # => already the same group -- nothing to merge
-            return
+            return  # => a union with itself is a no-op
         if (
             self.rank[root_a] < self.rank[root_b]
         ):  # => UNION BY RANK: shorter under taller
-            self.parent[root_a] = (
+            self.parent[root_a] = (  # => opens the shorter-under-taller reassignment
                 root_b  # => attaches the shorter tree under the taller
             )
-        elif self.rank[root_a] > self.rank[root_b]:
+        elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
             self.parent[root_b] = root_a  # => the mirror case
         else:  # => equal rank -- pick either, and the result grows one level taller
-            self.parent[root_b] = root_a
+            self.parent[root_b] = root_a  # => arbitrarily attaches b's root under a's
             self.rank[root_a] += 1  # => only NOW does the resulting tree's height grow
 
 
-def total_find_depth(
-    uf: OptimizedUnionFind, n: int
+def total_find_depth(  # => a diagnostic helper -- NOT part of the union-find API itself
+    uf: OptimizedUnionFind, n: int  # => the structure to measure, and its element count
 ) -> int:  # => sums parent-hop counts
     total = 0  # => accumulates hops across every element's find()
     for x in range(n):  # => checks every element once
@@ -1091,21 +1101,23 @@ def total_find_depth(
 n = 1000  # => a reasonably large element count, to make near-flat trees visible
 uf = OptimizedUnionFind(n)  # => n singleton groups
 for i in range(
-    n - 1
+    n - 1  # => one union per consecutive pair -- n-1 total union calls
 ):  # => chains everything into ONE big group, worst-case union order
     uf.union(i, i + 1)  # => unions consecutive elements, one after another
 
 for x in range(n):  # => forces every element's find() to run and compress its path
     uf.find(x)  # => after this loop, EVERY element points close to directly at the root
 
-average_depth = (
-    total_find_depth(uf, n) / n
+average_depth = (  # => opens the average-hops-per-element computation
+    total_find_depth(uf, n) / n  # => total hops divided by the element count
 )  # => average remaining hops after compression
 print(average_depth < 3.0)  # => Output: True -- effectively flat, not O(n) deep
 print(uf.find(0) == uf.find(n - 1))  # => Output: True -- all n elements are one group
 
-assert (
-    average_depth < 3.0
+# => without path compression, this 1000-element CHAIN union order would leave average
+# => depth near n/2 -- the near-flat result below is entirely due to the optimizations
+assert (  # => opens the near-flat-depth check
+    average_depth < 3.0  # => True only if the optimizations actually kept trees flat
 )  # => confirms near-constant depth despite a 1000-element chain
 assert uf.find(0) == uf.find(n - 1)  # => confirms the whole chain merged into one group
 print("ex-33 OK")  # => Output: ex-33 OK
@@ -1184,46 +1196,46 @@ Unioning every edge's two endpoints, and counting the distinct surviving roots a
 
 
 class UnionFind:  # => the optimized version from Example 33, reused as-is
-    def __init__(self, n: int) -> None:
-        self.parent: list[int] = list(range(n))
-        self.rank: list[int] = [0] * n
+    def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
+        self.parent: list[int] = list(range(n))  # => each element starts as its own root
+        self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
-    def find(self, x: int) -> int:
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
+    def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
+        if self.parent[x] != x:  # => x is not yet its own group's root
+            self.parent[x] = self.find(self.parent[x])  # => path-compresses on the way back
+        return self.parent[x]  # => x's parent is now either itself, or the true root
 
-    def union(self, a: int, b: int) -> None:
-        root_a, root_b = self.find(a), self.find(b)
-        if root_a == root_b:
-            return
-        if self.rank[root_a] < self.rank[root_b]:
-            self.parent[root_a] = root_b
-        elif self.rank[root_a] > self.rank[root_b]:
-            self.parent[root_b] = root_a
-        else:
-            self.parent[root_b] = root_a
-            self.rank[root_a] += 1
+    def union(self, a: int, b: int) -> None:  # => amortized O(alpha(n))
+        root_a, root_b = self.find(a), self.find(b)  # => both groups' roots, compressed
+        if root_a == root_b:  # => already the same group -- nothing to merge
+            return  # => a union with itself is a no-op
+        if self.rank[root_a] < self.rank[root_b]:  # => UNION BY RANK: shorter under taller
+            self.parent[root_a] = root_b  # => attaches the shorter tree under the taller
+        elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
+            self.parent[root_b] = root_a  # => the mirror case
+        else:  # => equal rank -- pick either, and the result grows one level taller
+            self.parent[root_b] = root_a  # => arbitrarily attaches b's root under a's
+            self.rank[root_a] += 1  # => only NOW does the resulting tree's height grow
 
 
-def count_components(
-    n: int, edges: list[tuple[int, int]]
+def count_components(  # => no traversal at all -- just union every edge, then count roots
+    n: int, edges: list[tuple[int, int]]  # => n nodes labeled 0..n-1, plus the edge list
 ) -> int:  # => O((V+E) alpha(V))
     uf = UnionFind(n)  # => n nodes, each initially its own component
     for a, b in edges:  # => O(E): unions every edge's endpoints
         uf.union(a, b)  # => merges a's and b's components, if not already merged
-    roots = {
-        uf.find(x) for x in range(n)
+    roots = {  # => opens the set-comprehension collecting distinct roots
+        uf.find(x) for x in range(n)  # => a set automatically discards duplicate roots
     }  # => O(V): the set of DISTINCT surviving roots
     return len(roots)  # => one component per distinct root
 
 
 n = 8  # => 8 nodes, labeled 0..7
-edges: list[tuple[int, int]] = [
-    (0, 1),
-    (1, 2),
-    (3, 4),
-    (5, 6),
+edges: list[tuple[int, int]] = [  # => opens the edge list -- deliberately leaves node 7 isolated
+    (0, 1),  # => connects 0 and 1 into one group
+    (1, 2),  # => extends that group to include 2 -- {0, 1, 2}
+    (3, 4),  # => a separate two-node group -- {3, 4}
+    (5, 6),  # => another separate two-node group -- {5, 6}
 ]  # => leaves 7 fully isolated
 component_count = count_components(n, edges)  # => how many separate groups exist
 print(component_count)  # => Output: 4 -- {0,1,2}, {3,4}, {5,6}, {7}
@@ -1298,18 +1310,18 @@ Kahn's algorithm repeatedly removes nodes with in-degree zero -- nodes with no r
 from collections import deque
 
 
-def kahn_topological_sort(
-    graph: dict[str, list[str]],
+def kahn_topological_sort(  # => BFS-style: repeatedly peel off zero-in-degree nodes
+    graph: dict[str, list[str]],  # => adjacency map: node -> list of nodes it points to
 ) -> list[str] | None:  # => None if a cycle makes ordering impossible
-    in_degree: dict[str, int] = {
+    in_degree: dict[str, int] = {  # => opens the initial all-zero in-degree map
         node: 0 for node in graph
     }  # => starts every node's in-degree at 0
     for node in graph:  # => O(V+E): counts how many edges point INTO each node
-        for neighbor in graph[node]:
+        for neighbor in graph[node]:  # => each outgoing edge increments the target's count
             in_degree[neighbor] += 1  # => one more prerequisite for neighbor
 
-    queue: deque[str] = deque(
-        [node for node in graph if in_degree[node] == 0]
+    queue: deque[str] = deque(  # => opens the initial ready-queue construction
+        [node for node in graph if in_degree[node] == 0]  # => the zero-in-degree nodes
     )  # => nodes with NO prerequisites can go first
     order: list[str] = []  # => accumulates the resulting topological order
     while queue:  # => processes nodes in waves of "everything now unblocked"
@@ -1326,17 +1338,17 @@ def kahn_topological_sort(
 
 
 graph: dict[str, list[str]] = {  # => a small build-dependency DAG
-    "compile": ["link"],
-    "link": ["test"],
-    "fetch_deps": ["compile"],
-    "test": [],
-}
+    "compile": ["link"],  # => must happen before "link"
+    "link": ["test"],  # => must happen before "test"
+    "fetch_deps": ["compile"],  # => the true starting point -- no prerequisites at all
+    "test": [],  # => the terminal step -- nothing depends on it
+}  # => closes the dependency map -- 4 build steps, one linear chain
 order = kahn_topological_sort(graph)  # => a valid build order
 print(order)  # => Output: ['fetch_deps', 'compile', 'link', 'test']
 
 assert order is not None  # => confirms no cycle was detected
-position = {
-    node: i for i, node in enumerate(order)
+position = {  # => opens the node -> index lookup, built from the result order
+    node: i for i, node in enumerate(order)  # => pairs each node with its position
 }  # => node -> its index in the order
 assert position["fetch_deps"] < position["compile"]  # => a dependency comes first
 assert position["compile"] < position["link"]  # => confirms edge direction is honored
@@ -1412,13 +1424,13 @@ A DFS-based topological sort is the mirror image of Kahn's algorithm: run DFS, a
 # come before all of them in a valid ordering.
 
 
-def dfs_topological_sort(
-    graph: dict[str, list[str]],
+def dfs_topological_sort(  # => reverse of DFS finish order -- the mirror of Kahn's
+    graph: dict[str, list[str]],  # => adjacency map: node -> list of nodes it points to
 ) -> list[str]:  # => assumes a DAG -- no cycle check here (that's Example 37)
     visited: set[str] = set()  # => nodes already fully explored
-    finish_order: list[str] = (
-        []
-    )  # => nodes appended in the order they FINISH, not start
+    finish_order: list[  # => opens the type annotation split across lines
+        str
+    ] = []  # => nodes appended in the order they FINISH, not start
 
     def recurse(node: str) -> None:  # => a standard recursive DFS visit
         visited.add(node)  # => marks node as being explored
@@ -1435,17 +1447,17 @@ def dfs_topological_sort(
 
 
 graph: dict[str, list[str]] = {  # => the same build-dependency DAG as Example 35
-    "compile": ["link"],
-    "link": ["test"],
-    "fetch_deps": ["compile"],
-    "test": [],
-}
+    "compile": ["link"],  # => must happen before "link"
+    "link": ["test"],  # => must happen before "test"
+    "fetch_deps": ["compile"],  # => the true starting point -- no prerequisites at all
+    "test": [],  # => the terminal step -- nothing depends on it
+}  # => closes the dependency map -- same 4 build steps as Example 35
 order = dfs_topological_sort(graph)  # => a valid build order, via DFS this time
 print(order)  # => Output: ['fetch_deps', 'compile', 'link', 'test']
 
 position = {node: i for i, node in enumerate(order)}  # => node -> its index in order
-assert (
-    position["fetch_deps"] < position["compile"]
+assert (  # => opens the first edge-direction check
+    position["fetch_deps"] < position["compile"]  # => True iff "fetch_deps" comes first
 )  # => confirms edge direction honored
 assert position["compile"] < position["link"]  # => confirms another edge's direction
 assert position["link"] < position["test"]  # => confirms the last edge too
@@ -1520,17 +1532,17 @@ Three colors, not just visited/unvisited, are what makes cycle detection possibl
 from enum import Enum, auto
 
 
-class Color(Enum):
+class Color(Enum):  # => three DFS visitation states -- enables cycle detection
     WHITE = auto()  # => not yet discovered
     GRAY = auto()  # => currently on the recursion stack -- an ANCESTOR of this call
     BLACK = auto()  # => fully explored, off the recursion stack
 
 
-def has_cycle(
-    graph: dict[str, list[str]],
+def has_cycle(  # => three-color DFS: a GRAY-to-GRAY edge means a back edge, i.e. a cycle
+    graph: dict[str, list[str]],  # => adjacency map: node -> list of nodes it points to
 ) -> bool:  # => True iff a directed cycle exists
-    color: dict[str, Color] = {
-        node: Color.WHITE for node in graph
+    color: dict[str, Color] = {  # => opens the dict-comprehension initializing colors
+        node: Color.WHITE for node in graph  # => every node starts undiscovered
     }  # => all start WHITE
 
     def recurse(node: str) -> bool:  # => True if a cycle is found reachable from node
@@ -1538,37 +1550,37 @@ def has_cycle(
         for neighbor in graph.get(node, []):  # => tries every outgoing edge
             if color[neighbor] == Color.GRAY:  # => THE TELLTALE SIGN: an edge back to
                 return True  # => an ancestor still on the stack -- a genuine cycle
-            if color[neighbor] == Color.WHITE and recurse(
-                neighbor
+            if color[neighbor] == Color.WHITE and recurse(  # => only recurse into unseen nodes
+                neighbor  # => the unvisited neighbor to explore next
             ):  # => explore unseen nodes
                 return True  # => a cycle was found deeper in this branch
         color[node] = Color.BLACK  # => node is fully explored -- no longer an ancestor
         return False  # => no cycle found through this node
 
-    return any(
+    return any(  # => True as soon as ANY unvisited component reports a cycle
         recurse(node) for node in graph if color[node] == Color.WHITE
     )  # => checks every component
 
 
-acyclic_graph: dict[str, list[str]] = (
-    {  # => a valid DAG -- Examples 35/36's build order
-        "fetch_deps": ["compile"],
-        "compile": ["link"],
-        "link": ["test"],
-        "test": [],
-    }
-)
+acyclic_graph: dict[  # => opens the type annotation split across lines
+    str, list[str]  # => same node/neighbor-list shape as every other graph example
+] = {  # => a valid DAG -- Examples 35/36's build order
+    "fetch_deps": ["compile"],  # => the true starting point -- no prerequisites at all
+    "compile": ["link"],  # => must happen before "link"
+    "link": ["test"],  # => must happen before "test"
+    "test": [],  # => the terminal step -- nothing depends on it
+}  # => closes the acyclic dependency map -- same DAG as Examples 35/36
 cyclic_graph: dict[str, list[str]] = {  # => the SAME shape, but with one edge reversed
-    "fetch_deps": ["compile"],
-    "compile": ["link"],
+    "fetch_deps": ["compile"],  # => still the nominal starting point
+    "compile": ["link"],  # => still points forward to "link"
     "link": ["test", "fetch_deps"],  # => "link" points back to "fetch_deps" -- a cycle
-    "test": [],
-}
+    "test": [],  # => still a terminal step, uninvolved in the cycle
+}  # => closes the cyclic dependency map -- one back edge creates fetch_deps->compile->link->fetch_deps
 print(has_cycle(acyclic_graph))  # => Output: False
 print(has_cycle(cyclic_graph))  # => Output: True
 
-assert (
-    has_cycle(acyclic_graph) is False
+assert (  # => opens the "acyclic graph correctly accepted" check
+    has_cycle(acyclic_graph) is False  # => True only if no cycle was falsely detected
 )  # => confirms a valid DAG is correctly accepted
 assert has_cycle(cyclic_graph) is True  # => confirms the cycle is correctly detected
 assert has_cycle({"a": ["a"]}) is True  # => a self-loop is the smallest possible cycle
@@ -1642,15 +1654,15 @@ Dijkstra greedily expands the cheapest-known frontier node next, using a min-hea
 import heapq
 
 
-def dijkstra(
-    graph: dict[str, list[tuple[str, int]]], start: str
+def dijkstra(  # => greedily finalizes the cheapest-known frontier node each iteration
+    graph: dict[str, list[tuple[str, int]]], start: str  # => weighted adjacency + origin
 ) -> dict[str, float]:  # => node -> shortest distance from start
-    distances: dict[str, float] = {
-        node: float("inf") for node in graph
+    distances: dict[str, float] = {  # => opens the initial all-infinity distance map
+        node: float("inf") for node in graph  # => every node starts unreachable
     }  # => everyone starts at infinity
     distances[start] = 0  # => the start node is trivially 0 away from itself
-    heap: list[tuple[float, str]] = [
-        (0, start)
+    heap: list[tuple[float, str]] = [  # => opens the initial single-entry priority queue
+        (0, start)  # => the only known reachable node at distance 0
     ]  # => (distance, node) -- heapq sorts by distance
     visited: set[str] = set()  # => nodes whose shortest distance is FINAL
     while heap:  # => processes the frontier until nothing remains
@@ -1667,11 +1679,11 @@ def dijkstra(
 
 
 graph: dict[str, list[tuple[str, int]]] = {  # => node -> list of (neighbor, weight)
-    "a": [("b", 4), ("c", 1)],
-    "b": [("d", 1)],
-    "c": [("b", 2), ("d", 5)],
-    "d": [],
-}
+    "a": [("b", 4), ("c", 1)],  # => a's direct routes: to b (cost 4), to c (cost 1)
+    "b": [("d", 1)],  # => b's only route: to d (cost 1)
+    "c": [("b", 2), ("d", 5)],  # => c offers a cheaper detour to b than a's direct edge
+    "d": [],  # => the terminal node -- no outgoing edges
+}  # => closes the weighted adjacency map -- 4 nodes
 distances = dijkstra(graph, "a")  # => shortest distances from "a" to every other node
 print(distances)  # => Output: {'a': 0, 'b': 3, 'c': 1, 'd': 4}
 
@@ -1748,41 +1760,43 @@ Initializing every distance to infinity before running Dijkstra means a node tha
 import heapq
 
 
-def dijkstra(
-    graph: dict[str, list[tuple[str, int]]], start: str
+def dijkstra(  # => identical to Example 38's implementation
+    graph: dict[str, list[tuple[str, int]]], start: str  # => weighted adjacency + origin
 ) -> dict[str, float]:  # => identical to Example 38's implementation
-    distances: dict[str, float] = {node: float("inf") for node in graph}
-    distances[start] = 0
-    heap: list[tuple[float, str]] = [(0, start)]
-    visited: set[str] = set()
-    while heap:
-        dist, node = heapq.heappop(heap)
-        if node in visited:
-            continue
-        visited.add(node)
-        for neighbor, weight in graph[node]:
-            new_dist = dist + weight
-            if new_dist < distances[neighbor]:
-                distances[neighbor] = new_dist
-                heapq.heappush(heap, (new_dist, neighbor))
-    return distances
+    distances: dict[str, float] = {  # => every node starts unreachable, by design
+        node: float("inf") for node in graph  # => "island" gets this same sentinel too
+    }  # => closes the dict-comprehension
+    distances[start] = 0  # => the start node is trivially 0 away from itself
+    heap: list[tuple[float, str]] = [(0, start)]  # => (distance, node) priority queue
+    visited: set[str] = set()  # => nodes whose shortest distance is FINAL
+    while heap:  # => processes the frontier until nothing remains
+        dist, node = heapq.heappop(heap)  # => the currently cheapest unfinalized node
+        if node in visited:  # => a stale heap entry -- a shorter path already finalized
+            continue  # => skip it, no new information here
+        visited.add(node)  # => node's distance is now FINAL -- never improves further
+        for neighbor, weight in graph[node]:  # => relaxes every outgoing edge
+            new_dist = dist + weight  # => the cost of reaching neighbor THROUGH node
+            if new_dist < distances[neighbor]:  # => a strictly better path was found
+                distances[neighbor] = new_dist  # => records the improved distance
+                heapq.heappush(heap, (new_dist, neighbor))  # => schedules the candidate
+    return distances  # => "island" is never touched -- stays at its initial infinity
 
 
 graph: dict[str, list[tuple[str, int]]] = {  # => "island" has NO incoming edge from "a"
-    "a": [("b", 2)],
-    "b": [],
+    "a": [("b", 2)],  # => a's only route: to b (cost 2)
+    "b": [],  # => a dead end, but still reachable from "a"
     "island": [],  # => completely disconnected from "a"'s component
-}
+}  # => closes the adjacency map -- "island" is a member with zero incoming edges
 distances = dijkstra(graph, "a")  # => runs Dijkstra from "a"
 print(distances["a"])  # => Output: 0
 print(distances["b"])  # => Output: 2
-print(
-    distances["island"]
+print(  # => opens the print call for the unreachable node's distance
+    distances["island"]  # => still the original float("inf") sentinel
 )  # => Output: inf -- never relaxed, stays at its initial value
 
 assert distances["b"] == 2  # => confirms the reachable node got its correct distance
-assert distances["island"] == float(
-    "inf"
+assert distances["island"] == float(  # => opens the unreachable-node check
+    "inf"  # => the exact sentinel value every distance was initialized to
 )  # => confirms the unreachable node reports infinity, not a crash or missing key
 assert "island" in distances  # => confirms the key still exists -- no KeyError risk
 print("ex-39 OK")  # => Output: ex-39 OK
@@ -1855,8 +1869,8 @@ Bellman-Ford relaxes every edge, V-1 times over -- slower than Dijkstra's O((V+E
 # weights, which would silently give Dijkstra's greedy heap the wrong answer.
 
 
-def bellman_ford(
-    n: int, edges: list[tuple[int, int, int]], start: int
+def bellman_ford(  # => brute-force relax-every-edge, repeated V-1 times, no heap needed
+    n: int, edges: list[tuple[int, int, int]], start: int  # => node count, edges, origin
 ) -> list[float]:  # => edges: (from, to, weight); returns dist[i] for each node
     dist: list[float] = [float("inf")] * n  # => every node starts at infinity
     dist[start] = 0  # => the start node is 0 away from itself
@@ -1869,17 +1883,17 @@ def bellman_ford(
 
 n = 5  # => 5 nodes, labeled 0..4
 edges: list[tuple[int, int, int]] = [  # => includes a NEGATIVE edge weight (3 -> 2, -6)
-    (0, 1, 6),
-    (0, 2, 7),
-    (1, 2, 8),
-    (1, 3, 5),
-    (1, 4, -4),
-    (2, 3, -3),
-    (2, 4, 9),
-    (3, 1, -2),
-    (4, 3, 7),
-    (4, 0, 2),
-]
+    (0, 1, 6),  # => 0 to 1, cost 6
+    (0, 2, 7),  # => 0 to 2, cost 7
+    (1, 2, 8),  # => 1 to 2, cost 8
+    (1, 3, 5),  # => 1 to 3, cost 5
+    (1, 4, -4),  # => 1 to 4, a NEGATIVE edge -- Dijkstra could not handle this correctly
+    (2, 3, -3),  # => 2 to 3, another negative edge
+    (2, 4, 9),  # => 2 to 4, cost 9
+    (3, 1, -2),  # => 3 to 1, a negative edge feeding back into an earlier node
+    (4, 3, 7),  # => 4 to 3, cost 7
+    (4, 0, 2),  # => 4 to 0, closes a cycle back to the start -- but NOT a negative one
+]  # => closes the edge list -- 10 directed edges, 3 of them negative-weight
 distances = bellman_ford(n, edges, start=0)  # => shortest distances from node 0
 print(distances)  # => Output: [0, 2, 7, 4, -2]
 
@@ -1968,16 +1982,16 @@ After V-1 relaxation rounds, distances are final -- unless a negative cycle exis
 # relaxes, "shortest path" is not even well-defined -- you could loop forever.
 
 
-def bellman_ford_with_cycle_check(
-    n: int, edges: list[tuple[int, int, int]], start: int
+def bellman_ford_with_cycle_check(  # => runs V-1 rounds, then ONE extra detection round
+    n: int, edges: list[tuple[int, int, int]], start: int  # => node count, edges, origin
 ) -> tuple[list[float], bool]:  # => (distances, has_negative_cycle)
     dist: list[float] = [float("inf")] * n  # => every node starts at infinity
     dist[start] = 0  # => the start node is 0 away from itself
     for _ in range(n - 1):  # => the normal V-1 relaxation rounds
-        for u, v, w in edges:
-            if dist[u] + w < dist[v]:
-                dist[v] = (
-                    dist[u] + w
+        for u, v, w in edges:  # => relaxes every edge, every pass
+            if dist[u] + w < dist[v]:  # => found a strictly cheaper way to reach v
+                dist[v] = (  # => opens the distance-improvement assignment
+                    dist[u] + w  # => the new, cheaper distance to v
                 )  # => a genuine improvement, still within round V-1
     has_negative_cycle = False  # => assumes no negative cycle until proven otherwise
     for u, v, w in edges:  # => the EXTRA, Nth round -- pure detection, no more updates
@@ -1989,20 +2003,20 @@ def bellman_ford_with_cycle_check(
 
 n = 4  # => 4 nodes, labeled 0..3
 edges_with_negative_cycle: list[tuple[int, int, int]] = [
-    (0, 1, 1),
-    (1, 2, -1),
-    (2, 3, -1),
+    (0, 1, 1),  # => the only edge INTO the cycle -- reaches node 1 to start it off
+    (1, 2, -1),  # => first leg of the cycle
+    (2, 3, -1),  # => second leg of the cycle
     (3, 1, -1),  # => 1 -> 2 -> 3 -> 1 sums to -3: a genuine negative CYCLE
-]
-_, has_cycle = bellman_ford_with_cycle_check(n, edges_with_negative_cycle, start=0)
+]  # => closes the edge list -- the 1->2->3->1 loop keeps getting cheaper forever
+_, has_cycle = bellman_ford_with_cycle_check(n, edges_with_negative_cycle, start=0)  # => discards the (unreliable) distances
 print(has_cycle)  # => Output: True
 
 edges_without_cycle: list[tuple[int, int, int]] = [
-    (0, 1, 1),
-    (1, 2, -1),
+    (0, 1, 1),  # => same starting edge as before
+    (1, 2, -1),  # => same negative edge as before
     (2, 3, -1),  # => same negative EDGES, but no cycle -- a simple path this time
-]
-_, no_cycle = bellman_ford_with_cycle_check(n, edges_without_cycle, start=0)
+]  # => closes the edge list -- node 3 has no outgoing edge, so nothing loops back
+_, no_cycle = bellman_ford_with_cycle_check(n, edges_without_cycle, start=0)  # => same discard pattern
 print(no_cycle)  # => Output: False
 
 assert has_cycle is True  # => confirms the genuine negative cycle is flagged
@@ -2080,36 +2094,36 @@ Kruskal's algorithm is greedy on edges: sort every edge by weight, then add each
 
 
 class UnionFind:  # => the optimized version from Example 33
-    def __init__(self, n: int) -> None:
-        self.parent: list[int] = list(range(n))
-        self.rank: list[int] = [0] * n
+    def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
+        self.parent: list[int] = list(range(n))  # => each element starts as its own root
+        self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
-    def find(self, x: int) -> int:
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
+    def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
+        if self.parent[x] != x:  # => x is not yet its own group's root
+            self.parent[x] = self.find(self.parent[x])  # => path-compresses on the way back
+        return self.parent[x]  # => x's parent is now either itself, or the true root
 
-    def union(
-        self, a: int, b: int
+    def union(  # => the cycle test IS the union: a failed union means "would cycle"
+        self, a: int, b: int  # => the two nodes this candidate edge would connect
     ) -> bool:  # => returns True if a merge actually happened
-        root_a, root_b = self.find(a), self.find(b)
+        root_a, root_b = self.find(a), self.find(b)  # => both groups' roots, compressed
         if root_a == root_b:  # => already connected -- adding this edge would cycle
             return False  # => signals "do not add this edge"
-        if self.rank[root_a] < self.rank[root_b]:
-            self.parent[root_a] = root_b
-        elif self.rank[root_a] > self.rank[root_b]:
-            self.parent[root_b] = root_a
-        else:
-            self.parent[root_b] = root_a
-            self.rank[root_a] += 1
+        if self.rank[root_a] < self.rank[root_b]:  # => UNION BY RANK: shorter under taller
+            self.parent[root_a] = root_b  # => attaches the shorter tree under the taller
+        elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
+            self.parent[root_b] = root_a  # => the mirror case
+        else:  # => equal rank -- pick either, and the result grows one level taller
+            self.parent[root_b] = root_a  # => arbitrarily attaches b's root under a's
+            self.rank[root_a] += 1  # => only NOW does the resulting tree's height grow
         return True  # => signals "this edge was safely added"
 
 
-def kruskal_mst(
-    n: int, edges: list[tuple[int, int, int]]
+def kruskal_mst(  # => sort-then-greedily-add, skipping any edge that would form a cycle
+    n: int, edges: list[tuple[int, int, int]]  # => node count and (u, v, weight) edges
 ) -> tuple[list[tuple[int, int, int]], int]:  # => (MST edges, total weight)
-    sorted_edges = sorted(
-        edges, key=lambda e: e[2]
+    sorted_edges = sorted(  # => opens the ascending-by-weight sort
+        edges, key=lambda e: e[2]  # => sorts by the weight field only
     )  # => O(E log E): cheapest edges first
     uf = UnionFind(n)  # => starts with n singleton components
     mst_edges: list[tuple[int, int, int]] = []  # => accumulates the chosen edges
@@ -2123,14 +2137,14 @@ def kruskal_mst(
 
 n = 5  # => 5 nodes, labeled 0..4
 edges: list[tuple[int, int, int]] = [  # => (u, v, weight)
-    (0, 1, 2),
-    (0, 3, 6),
-    (1, 2, 3),
-    (1, 3, 8),
-    (1, 4, 5),
-    (2, 4, 7),
-    (3, 4, 9),
-]
+    (0, 1, 2),  # => the single cheapest edge -- picked first, always safe
+    (0, 3, 6),  # => a mid-cost edge, picked only if it doesn't close a cycle
+    (1, 2, 3),  # => second-cheapest -- picked early
+    (1, 3, 8),  # => the most expensive edge -- likely rejected as redundant
+    (1, 4, 5),  # => connects the otherwise-isolated node 4
+    (2, 4, 7),  # => an alternate, pricier route to node 4 -- rejected once 4 is connected
+    (3, 4, 9),  # => the second-most expensive edge -- almost certainly rejected
+]  # => closes the edge list -- 5 nodes, 7 candidate edges, MST needs exactly 4
 mst_edges, total_weight = kruskal_mst(n, edges)  # => builds the minimum spanning tree
 print(len(mst_edges))  # => Output: 4 -- an MST always has exactly n-1 edges
 print(total_weight)  # => Output: 16
@@ -2214,42 +2228,43 @@ Prim's algorithm is greedy on nodes instead of edges: grow one tree from a start
 import heapq
 
 
-def prim_mst(
-    n: int, adjacency: dict[int, list[tuple[int, int]]]
+def prim_mst(  # => grows ONE tree from node 0, always via the cheapest frontier edge
+    n: int, adjacency: dict[int, list[tuple[int, int]]]  # => node count + weighted adjacency
 ) -> tuple[list[tuple[int, int, int]], int]:  # => (MST edges, total weight)
     in_tree: set[int] = {0}  # => the growing tree starts as just node 0
     mst_edges: list[tuple[int, int, int]] = []  # => accumulates (u, v, weight) chosen
     total_weight = 0  # => running sum of the MST's edge weights
     heap: list[tuple[int, int, int]] = [  # => (weight, from_node, to_node) candidates
-        (w, 0, v) for v, w in adjacency[0]
-    ]
+        (w, 0, v) for v, w in adjacency[0]  # => every edge leaving the start node
+    ]  # => the initial frontier, before heapify imposes heap order
     heapq.heapify(heap)  # => O(E): arranges the initial candidate edges into heap order
     while len(in_tree) < n:  # => stops once every node has joined the tree
         weight, u, v = heapq.heappop(heap)  # => the cheapest candidate edge overall
-        if (
-            v in in_tree
+        if (  # => opens the stale-entry check
+            v in in_tree  # => True if v was already added via an earlier, cheaper pop
         ):  # => a stale entry -- v joined the tree via a cheaper edge already
             continue  # => skip it, no new information
         in_tree.add(v)  # => v now joins the growing tree
         mst_edges.append((u, v, weight))  # => this edge is part of the MST
         total_weight += weight  # => tallies its weight
         for neighbor, w in adjacency[v]:  # => v's edges become new candidates
-            if (
+            if (  # => opens the outside-the-tree check
                 neighbor not in in_tree
             ):  # => only edges reaching OUTSIDE the tree matter
-                heapq.heappush(
-                    heap, (w, v, neighbor)
+                heapq.heappush(  # => the heap may end up holding stale entries too
+                    heap, (w, v, neighbor)  # => a new candidate frontier edge
                 )  # => schedules this new candidate
     return mst_edges, total_weight  # => the MST's edges and its total weight
 
 
 adjacency: dict[int, list[tuple[int, int]]] = {  # => the SAME graph as Example 42
-    0: [(1, 2), (3, 6)],
-    1: [(0, 2), (2, 3), (3, 8), (4, 5)],
-    2: [(1, 3), (4, 7)],
-    3: [(0, 6), (1, 8), (4, 9)],
-    4: [(1, 5), (2, 7), (3, 9)],
-}
+    0: [(1, 2), (3, 6)],  # => node 0's two outgoing edges -- the initial frontier
+    1: [(0, 2), (2, 3), (3, 8), (4, 5)],  # => node 1's edges, including the priciest one
+    2: [(1, 3), (4, 7)],  # => node 2's two edges
+    3: [(0, 6), (1, 8), (4, 9)],  # => node 3's edges, including the two priciest overall
+    4: [(1, 5), (2, 7), (3, 9)],  # => node 4's edges
+}  # => closes the adjacency map -- an undirected graph, each edge listed from both ends
+
 mst_edges, total_weight = prim_mst(5, adjacency)  # => builds the MST, starting from 0
 print(len(mst_edges))  # => Output: 4
 print(total_weight)  # => Output: 16 -- matches Kruskal's answer on the same graph
@@ -2329,11 +2344,11 @@ The greedy-choice property holds here: always pick the interval that finishes ea
 # -- a proof-backed optimal strategy, unlike Example 45's failing greedy.
 
 
-def max_non_overlapping_intervals(
-    intervals: list[tuple[int, int]],
+def max_non_overlapping_intervals(  # => sort by finish time, then greedily take non-overlapping
+    intervals: list[tuple[int, int]],  # => a list of (start, end) candidate intervals
 ) -> list[tuple[int, int]]:  # => (start, end) pairs; returns the chosen subset
-    by_finish = sorted(
-        intervals, key=lambda iv: iv[1]
+    by_finish = sorted(  # => opens the earliest-finish-first sort
+        intervals, key=lambda iv: iv[1]  # => sorts by the END field only
     )  # => O(n log n): earliest-finish first
     chosen: list[tuple[int, int]] = []  # => the greedily selected, non-overlapping set
     last_finish = float("-inf")  # => nothing chosen yet -- any interval can start
@@ -2344,18 +2359,18 @@ def max_non_overlapping_intervals(
     return chosen  # => the maximum-count set of mutually non-overlapping intervals
 
 
-intervals: list[tuple[int, int]] = [
-    (1, 4),
-    (3, 5),
-    (0, 6),
-    (5, 7),
-    (3, 8),
-    (5, 9),
-    (6, 10),
-    (8, 11),
-    (8, 12),
-    (2, 13),
-    (12, 14),
+intervals: list[tuple[int, int]] = [  # => opens the classic CLRS activity-selection set
+    (1, 4),  # => finishes 3rd-earliest -- a likely early pick
+    (3, 5),  # => overlaps (1, 4) -- competes for the same early slot
+    (0, 6),  # => starts earliest but finishes late -- likely skipped in favor of shorter ones
+    (5, 7),  # => finishes early enough to chain after (1, 4)
+    (3, 8),  # => a long interval overlapping several others
+    (5, 9),  # => overlaps (5, 7) -- competes for the same slot
+    (6, 10),  # => overlaps (5, 7) -- starts before it finishes
+    (8, 11),  # => starts right where (5, 7) ends -- a valid chain candidate
+    (8, 12),  # => overlaps (8, 11) -- competes for the same slot
+    (2, 13),  # => a very long interval, overlapping nearly everything
+    (12, 14),  # => starts right where (8, 11) ends -- another valid chain candidate
 ]  # => the classic CLRS activity-selection example set
 chosen = max_non_overlapping_intervals(intervals)  # => the greedy-optimal selection
 print(chosen)  # => Output: [(1, 4), (5, 7), (8, 11), (12, 14)]
@@ -2625,8 +2640,8 @@ _ex-47 &middot; exercises co-23_
 # This is structurally IDENTICAL to Fibonacci, just with different seed values.
 
 
-def count_ways_to_climb(
-    n: int,
+def count_ways_to_climb(  # => Fibonacci-shaped recurrence, computed bottom-up
+    n: int,  # => the target stair count
 ) -> int:  # => bottom-up tabulation, O(n) time, O(1) space
     if n <= 1:  # => 0 stairs: 1 way (do nothing); 1 stair: 1 way (a single 1-step)
         return 1  # => base cases
@@ -2641,11 +2656,11 @@ def count_ways_to_climb(
 
 def count_ways_brute_force(n: int) -> int:  # => O(2^n): enumerates every step sequence
     if n <= 1:  # => same base cases
-        return 1
+        return 1  # => 0 or 1 stairs: exactly one way
     if n == 2:  # => exactly 2 ways: [1,1] or [2]
-        return 2
-    return count_ways_brute_force(n - 1) + count_ways_brute_force(
-        n - 2
+        return 2  # => the second base case
+    return count_ways_brute_force(n - 1) + count_ways_brute_force(  # => the LAST-step split
+        n - 2  # => recurses on the 2-step predecessor
     )  # => no memoization -- deliberately re-derives the same recurrence, slowly
 
 
@@ -2724,24 +2739,24 @@ _ex-48 &middot; exercises co-23_
 INF = float("inf")  # => sentinel for "no way to make this amount (yet)"
 
 
-def min_coins_dp(
-    coins: list[int], amount: int
+def min_coins_dp(  # => tries every coin as the LAST one used, keeps the best count
+    coins: list[int], amount: int  # => the available coin denominations, and the target
 ) -> int | None:  # => None if amount is unreachable with these coins
-    dp: list[float] = [0.0] + [
-        INF
+    dp: list[float] = [0.0] + [  # => opens the dp array construction
+        INF  # => every amount besides 0 starts as "not yet known reachable"
     ] * amount  # => dp[0]=0 coins; everything else unknown
-    for a in range(
-        1, amount + 1
+    for a in range(  # => opens the ascending-amount range
+        1, amount + 1  # => builds every amount from 1 up to the target, in order
     ):  # => builds dp[a] from smaller, already-solved amounts
         for c in coins:  # => tries EVERY coin as the one used LAST to reach amount a
-            if (
+            if (  # => opens the "coin c improves dp[a]" check
                 c <= a and dp[a - c] + 1 < dp[a]
             ):  # => using coin c beats the current best
-                dp[a] = (
-                    dp[a - c] + 1
+                dp[a] = (  # => opens the improved-count assignment
+                    dp[a - c] + 1  # => one more coin on top of the best way to make a-c
                 )  # => one more coin than however dp[a-c] was reached
-    return (
-        None if dp[amount] == INF else int(dp[amount])
+    return (  # => opens the final unreachable-or-int-result decision
+        None if dp[amount] == INF else int(dp[amount])  # => still INF means unreachable
     )  # => None if truly unreachable
 
 
@@ -2822,8 +2837,8 @@ _ex-49 &middot; exercises co-24_
 
 def edit_distance(word1: str, word2: str) -> int:  # => O(m*n) time and space
     m, n = len(word1), len(word2)  # => the two words' lengths
-    dp: list[list[int]] = [
-        [0] * (n + 1) for _ in range(m + 1)
+    dp: list[list[int]] = [  # => opens the 2D table construction
+        [0] * (n + 1) for _ in range(m + 1)  # => one fresh row of zeros per prefix of word1
     ]  # => (m+1) x (n+1) table, one extra row/col for the empty-prefix case
     for i in range(m + 1):  # => turning word1[:i] into "" costs i deletions
         dp[i][0] = i  # => base case along the first column
@@ -2832,15 +2847,15 @@ def edit_distance(word1: str, word2: str) -> int:  # => O(m*n) time and space
     for i in range(1, m + 1):  # => fills the table row by row
         for j in range(1, n + 1):  # => and column by column within each row
             if word1[i - 1] == word2[j - 1]:  # => the last characters already match
-                dp[i][j] = dp[i - 1][
-                    j - 1
+                dp[i][j] = dp[i - 1][  # => opens the diagonal-cell lookup
+                    j - 1  # => the subproblem for both prefixes shortened by one char
                 ]  # => no edit needed here -- reuse the diagonal
             else:  # => the last characters differ -- try each of the three edits
                 dp[i][j] = 1 + min(
                     dp[i - 1][j],  # => DELETE word1[i-1]
                     dp[i][j - 1],  # => INSERT word2[j-1]
                     dp[i - 1][j - 1],  # => SUBSTITUTE word1[i-1] for word2[j-1]
-                )
+                )  # => plus 1 for whichever edit was cheapest
     return dp[m][n]  # => the bottom-right cell: the full-word edit distance
 
 
@@ -2848,8 +2863,8 @@ print(edit_distance("kitten", "sitting"))  # => Output: 3 -- k->s, e->i, +g
 print(edit_distance("", "abc"))  # => Output: 3 -- three insertions
 print(edit_distance("same", "same"))  # => Output: 0 -- identical words need no edits
 
-assert (
-    edit_distance("kitten", "sitting") == 3
+assert (  # => opens the classic-example check
+    edit_distance("kitten", "sitting") == 3  # => True only if the computed distance is 3
 )  # => confirms the classic example's answer
 assert edit_distance("", "abc") == 3  # => confirms the empty-string edge case
 assert edit_distance("same", "same") == 0  # => confirms identical strings cost nothing
@@ -2922,12 +2937,12 @@ _ex-50 &middot; exercises co-24_
 # filled table backward, following exactly which choice produced each cell.
 
 
-def lcs_length_table(
-    word1: str, word2: str
+def lcs_length_table(  # => builds the full DP table, bottom-up, one cell at a time
+    word1: str, word2: str  # => the two strings to compare
 ) -> list[list[int]]:  # => O(m*n) table build
     m, n = len(word1), len(word2)  # => the two strings' lengths
-    dp: list[list[int]] = [
-        [0] * (n + 1) for _ in range(m + 1)
+    dp: list[list[int]] = [  # => opens the 2D table construction
+        [0] * (n + 1) for _ in range(m + 1)  # => one fresh row of zeros per prefix of word1
     ]  # => dp[i][0] and dp[0][j] are already 0 -- an empty prefix has LCS length 0
     for i in range(1, m + 1):  # => fills row by row
         for j in range(1, n + 1):  # => and column by column
@@ -2940,8 +2955,8 @@ def lcs_length_table(
     return dp  # => the full table -- dp[m][n] is the final LCS length
 
 
-def reconstruct_lcs(
-    word1: str, word2: str, dp: list[list[int]]
+def reconstruct_lcs(  # => retraces which choice built each cell, to recover the actual chars
+    word1: str, word2: str, dp: list[list[int]]  # => the original strings + filled table
 ) -> str:  # => walks the table BACKWARD from (m, n)
     i, j = len(word1), len(word2)  # => starts at the bottom-right cell
     chars: list[str] = []  # => accumulates matched characters, in REVERSE order
@@ -2951,7 +2966,7 @@ def reconstruct_lcs(
         ):  # => this position was a MATCH -- part of the LCS
             chars.append(word1[i - 1])  # => records this matched character
             i -= 1  # => moves diagonally, retracing the match
-            j -= 1
+            j -= 1  # => both indices step back together on a diagonal match
         elif dp[i - 1][j] >= dp[i][j - 1]:  # => the LCS came from dropping word1's char
             i -= 1  # => moves up, following that earlier decision
         else:  # => the LCS came from dropping word2's char instead
@@ -2959,6 +2974,7 @@ def reconstruct_lcs(
     return "".join(reversed(chars))  # => reverses back to forward reading order
 
 
+# demonstrates the full pipeline: build the table, then reconstruct from it
 word1, word2 = "ABCBDAB", "BDCABA"  # => the classic LCS example pair
 table = lcs_length_table(word1, word2)  # => builds the DP table once
 length = table[len(word1)][len(word2)]  # => the LCS length, read from the final cell
@@ -3043,12 +3059,12 @@ _ex-51 &middot; exercises co-24_
 # most once, unlike the unbounded knapsack variant.
 
 
-def knapsack_01(
-    weights: list[int], values: list[int], capacity: int
+def knapsack_01(  # => for each item, either SKIP it or TAKE it, whichever is better
+    weights: list[int], values: list[int], capacity: int  # => item weights/values + limit
 ) -> int:  # => O(n * capacity) time and space
     n = len(weights)  # => number of available items
-    dp: list[list[int]] = [
-        [0] * (capacity + 1) for _ in range(n + 1)
+    dp: list[list[int]] = [  # => opens the 2D table construction
+        [0] * (capacity + 1) for _ in range(n + 1)  # => one fresh row of zeros per item count
     ]  # => dp[0][*] = 0: zero items always yields zero value
     for i in range(1, n + 1):  # => considers items one at a time
         weight, value = weights[i - 1], values[i - 1]  # => this item's own weight/value
@@ -3069,8 +3085,8 @@ print(best_value)  # => Output: 7 -- items 0 and 1 (weight 2+3=5, value 3+4=7)
 
 assert best_value == 7  # => confirms the known optimal value for this instance
 assert knapsack_01([], [], 10) == 0  # => no items at all -- nothing to gain
-assert (
-    knapsack_01([100], [50], 1) == 0
+assert (  # => opens the too-heavy-item check
+    knapsack_01([100], [50], 1) == 0  # => True only if the DP correctly skips it
 )  # => an item too heavy to ever fit contributes nothing
 print("ex-51 OK")  # => Output: ex-51 OK
 ```
@@ -3148,9 +3164,9 @@ def leftmost_index(items: list[int], target: int) -> int:  # => -1 if target is 
             result = mid  # => records this as the best-known leftmost match so far
             hi = mid - 1  # => keeps searching LEFT for an even earlier occurrence
         elif items[mid] < target:  # => target must be further right
-            lo = mid + 1
+            lo = mid + 1  # => shrinks the range from the left edge
         else:  # => target must be further left
-            hi = mid - 1
+            hi = mid - 1  # => shrinks the range from the right edge
     return result  # => the smallest index where target occurs, or -1
 
 
@@ -3162,10 +3178,10 @@ def rightmost_index(items: list[int], target: int) -> int:  # => -1 if target is
         if items[mid] == target:  # => found A match -- but is it the LAST one?
             result = mid  # => records this as the best-known rightmost match so far
             lo = mid + 1  # => keeps searching RIGHT for an even later occurrence
-        elif items[mid] < target:
-            lo = mid + 1
-        else:
-            hi = mid - 1
+        elif items[mid] < target:  # => same rule as leftmost -- target lies further right
+            lo = mid + 1  # => shrinks the range from the left edge
+        else:  # => same rule as leftmost -- target lies further left
+            hi = mid - 1  # => shrinks the range from the right edge
     return result  # => the largest index where target occurs, or -1
 
 

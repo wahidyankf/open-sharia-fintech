@@ -143,17 +143,17 @@ def doubling_ratio(f: Callable[[int], int]) -> float:  # => generic over any cos
 
 
 classifications: dict[str, float] = {  # => maps a human label to its measured ratio
-    "constant (Theta(1))": doubling_ratio(
-        constant_cost
+    "constant (Theta(1))": doubling_ratio(  # => key names the bucket under test
+        constant_cost  # => the zero-growth function passed as the callback
     ),  # => expect ~1.0 -- unaffected by n
     "linear (Theta(n))": doubling_ratio(linear_cost),  # => expect ~2.0
     "quadratic (Theta(n^2))": doubling_ratio(quadratic_cost),  # => expect ~4.0
-}
+}  # => closes the dict -- exactly 3 entries, one per growth bucket
 for label, ratio in classifications.items():  # => walks all three buckets
     print(f"{label}: {ratio:.2f}")  # => Output: one "label: ratio" line per bucket
 
-assert (
-    classifications["constant (Theta(1))"] == 1.0
+assert (  # => opens a parenthesized assert so the long condition can wrap
+    classifications["constant (Theta(1))"] == 1.0  # => True iff the ratio was exact
 )  # => confirms O(1) is untouched by n doubling
 assert classifications["linear (Theta(n))"] == 2.0  # => confirms O(n) exactly doubles
 assert (
@@ -554,8 +554,8 @@ The merge step's defining invariant is that its output stays sorted after every 
 # append, instead of only checking the final list once at the end.
 
 
-def merge_with_invariant_check(
-    left: list[int], right: list[int]
+def merge_with_invariant_check(  # => opens the signature -- wraps for line length
+    left: list[int], right: list[int]  # => both inputs must already be sorted
 ) -> list[int]:  # => merges two sorted lists, asserting sortedness after each step
     result: list[int] = []  # => the merged output, built one element at a time
     i = j = 0  # => cursors into left and right respectively
@@ -567,8 +567,8 @@ def merge_with_invariant_check(
             result.append(right[j])  # => appends right's strictly smaller candidate
             j += 1  # => advances the right cursor only
         if len(result) >= 2:  # => the invariant only applies once there are 2+ elements
-            assert (
-                result[-2] <= result[-1]
+            assert (  # => opens the parenthesized check -- runs after EVERY append
+                result[-2] <= result[-1]  # => compares the two most-recent entries
             )  # => THE INVARIANT: the last two appended stay in order
     result.extend(left[i:])  # => appends any leftover left elements (already sorted)
     result.extend(right[j:])  # => appends any leftover right elements (already sorted)
@@ -764,7 +764,9 @@ A quicksort that always picks the first element as pivot degrades badly on alrea
 comparisons = 0  # => a global counter -- counts every pivot comparison made
 
 
-def naive_quicksort(items: list[int], lo: int = 0, hi: int | None = None) -> None:
+def naive_quicksort(  # => sorts items in place between indices lo and hi inclusive
+    items: list[int], lo: int = 0, hi: int | None = None
+) -> None:  # => returns nothing -- mutates items directly
     global comparisons  # => this function mutates the module-level counter
     if hi is None:  # => top-level call defaults hi to the last index
         hi = len(items) - 1  # => sorts the WHOLE list on the first call
@@ -774,7 +776,9 @@ def naive_quicksort(items: list[int], lo: int = 0, hi: int | None = None) -> Non
         naive_quicksort(items, p + 1, hi)  # => recurses on the right partition
 
 
-def first_pivot_partition(items: list[int], lo: int, hi: int) -> int:
+def first_pivot_partition(  # => partitions items[lo..hi] around items[lo]
+    items: list[int], lo: int, hi: int
+) -> int:  # => returns the pivot's final resting index
     global comparisons  # => mutates the shared counter
     pivot = items[lo]  # => THE NAIVE CHOICE: always the first element, never randomized
     i = lo  # => boundary of the "<pivot" region
@@ -794,11 +798,11 @@ predicted_worst_case = n * (n - 1) // 2  # => the exact O(n^2) worst-case formul
 print(comparisons)  # => Output: 19900
 print(predicted_worst_case)  # => Output: 19900
 
-assert (
-    comparisons == predicted_worst_case
+assert (  # => opens the check -- wraps the long boolean across two lines
+    comparisons == predicted_worst_case  # => True only if the blow-up was exact
 )  # => confirms the empirical count matches the O(n^2) formula EXACTLY
-assert already_sorted == list(
-    range(200)
+assert already_sorted == list(  # => opens the second check on final correctness
+    range(200)  # => rebuilds the original 0..199 sequence for comparison
 )  # => confirms the (slow) sort was still correct
 print("ex-08 OK")  # => Output: ex-08 OK
 ```
@@ -891,12 +895,12 @@ import heapq  # => the stdlib binary-heap module -- operates in place on a list
 
 heap: list[int] = []  # => starts as an empty heap -- just an empty list
 for value in [
-    5,
-    1,
-    8,
-    3,
-    9,
-    2,
+    5,  # => first push -- becomes heap[0] until something smaller arrives
+    1,  # => new minimum -- heapq sifts it up to heap[0] in O(log n)
+    8,  # => larger than the current minimum -- sinks below heap[0]
+    3,  # => smaller than 8 but not smaller than 1 -- stays below heap[0]
+    9,  # => the largest value pushed so far -- sinks to a leaf position
+    2,  # => second-smallest overall -- settles near, but not at, the root
 ]:  # => pushes in a deliberately unsorted order
     heapq.heappush(heap, value)  # => O(log n): sift the new value up to its spot
     print(f"after push {value}: heap[0]={heap[0]}")  # => Output: current heap minimum
@@ -909,15 +913,15 @@ while heap:  # => drains the heap one minimum at a time
 print(popped_order)  # => Output: [1, 2, 3, 5, 8, 9]
 
 assert popped_order == [
-    1,
-    2,
-    3,
-    5,
-    8,
-    9,
+    1,  # => smallest pushed value -- must pop first
+    2,  # => second-smallest -- pops right after 1
+    3,  # => third-smallest in the drain order
+    5,  # => fourth -- the original first-pushed value, now mid-order
+    8,  # => fifth -- was pushed early but is large
+    9,  # => largest pushed value -- must pop last
 ]  # => confirms values emerge in ascending order, though pushed unsorted
 assert popped_order == sorted(
-    popped_order
+    popped_order  # => re-sorting an already-sorted list is a no-op if the drain worked
 )  # => a heap-drain is ALWAYS a sorted sequence
 print("ex-09 OK")  # => Output: ex-09 OK
 ```
@@ -998,7 +1002,7 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
         child = 2 * root + 1  # => index of root's LEFT child in the array encoding
         if child > end:  # => no children exist within the active heap range
             break  # => root is already in a valid position -- stop sifting
-        if (
+        if (  # => opens the two-part right-child-exists-and-is-bigger check
             child + 1 <= end and items[child + 1] > items[child]
         ):  # => right child bigger
             child += 1  # => picks the LARGER of the two children to compare against
@@ -1011,7 +1015,7 @@ def sift_down(items: list[int], start: int, end: int) -> None:  # => restores he
 def heapsort(items: list[int]) -> None:  # => sorts items IN PLACE, ascending
     n = len(items)  # => n = the number of elements to sort
     for start in range(
-        n // 2 - 1, -1, -1
+        n // 2 - 1, -1, -1  # => starts at the last non-leaf parent, walks toward the root
     ):  # => builds a max-heap bottom-up, O(n) total
         sift_down(items, start, n - 1)  # => fixes each subtree, from the last parent up
     for end in range(n - 1, 0, -1):  # => repeatedly extracts the current maximum
@@ -1182,8 +1186,8 @@ Radix sort sorts fixed-width integers one digit at a time, starting from the Lea
 # (co-11) -- stability is what lets earlier passes' order survive later ones.
 
 
-def counting_sort_by_digit(
-    items: list[int], digit_place: int
+def counting_sort_by_digit(  # => one STABLE counting-sort pass over a single digit
+    items: list[int], digit_place: int  # => digit_place selects ones/tens/hundreds/...
 ) -> list[int]:  # => sorts by ONE digit (0-9) at digit_place, stably
     counts: list[int] = [0] * 10  # => one bucket per digit value, 0 through 9
     for value in items:  # => O(n): tallies each item's digit at this place
@@ -1212,27 +1216,27 @@ def radix_sort(items: list[int]) -> list[int]:  # => sorts non-negative fixed-wi
 
 
 data: list[int] = [
-    170,
-    45,
-    75,
-    90,
-    802,
-    24,
-    2,
-    66,
+    170,  # => 3-digit value -- exercises the hundreds-place pass
+    45,  # => 2-digit value
+    75,  # => 2-digit value, shares tens digit "7" with 75 vs 170's hundreds
+    90,  # => 2-digit value, ones digit is 0
+    802,  # => the LARGEST value -- fixes the pass count at 3 (max_value // 100 > 0)
+    24,  # => 2-digit value
+    2,  # => single-digit value -- ones digit only, zero-padded implicitly
+    66,  # => 2-digit value with matching tens and ones digits
 ]  # => mixed 1-3 digit non-negative ints
 sorted_data = radix_sort(data)  # => LSD radix sort, three digit passes (max is 802)
 print(sorted_data)  # => Output: [2, 24, 45, 66, 75, 90, 170, 802]
 
-assert sorted_data == [
-    2,
-    24,
-    45,
-    66,
-    75,
-    90,
-    170,
-    802,
+assert sorted_data == [  # => opens the expected fully-sorted comparison list
+    2,  # => smallest value -- must sort first
+    24,  # => 2nd smallest
+    45,  # => 3rd smallest
+    66,  # => 4th -- both digits happened to match, unaffected by stability quirks
+    75,  # => 5th
+    90,  # => 6th -- trailing zero digit, still sorts correctly
+    170,  # => 7th -- first 3-digit value in the output
+    802,  # => largest value -- must sort last
 ]  # => confirms ascending order
 assert sorted_data == sorted(data)  # => matches Python's own sort too
 assert radix_sort([]) == []  # => confirms the empty-input edge case
@@ -1302,14 +1306,14 @@ A stable sort preserves the input order of records sharing the same key; an unst
 # a single swap can leapfrog one equal-key element past another.
 
 
-def stable_sort_by_key(
-    pairs: list[tuple[int, str]],
+def stable_sort_by_key(  # => wraps the builtin sorted() to make its stability explicit
+    pairs: list[tuple[int, str]],  # => each record is (sort key, tie-break label)
 ) -> list[tuple[int, str]]:  # => Timsort, guaranteed stable
     return sorted(pairs, key=lambda p: p[0])  # => sorts by key only, ties keep order
 
 
-def selection_sort_by_key(
-    pairs: list[tuple[int, str]],
+def selection_sort_by_key(  # => finds the min by index, then swaps it into place
+    pairs: list[tuple[int, str]],  # => same record shape as the stable version
 ) -> list[tuple[int, str]]:  # => the classic textbook selection sort -- NOT stable
     items = list(pairs)  # => a working copy -- the caller's list is never mutated
     n = len(items)  # => n = number of (key, seq) records
@@ -1318,32 +1322,32 @@ def selection_sort_by_key(
         for j in range(i + 1, n):  # => scans the unsorted remainder for a smaller key
             if items[j][0] < items[min_idx][0]:  # => strictly smaller key found
                 min_idx = j  # => tracks the new candidate minimum's index
-        items[i], items[min_idx] = (
-            items[min_idx],
-            items[i],
+        items[i], items[min_idx] = (  # => tuple-swap -- a single atomic reassignment
+            items[min_idx],  # => the found minimum moves into position i
+            items[i],  # => whatever was at i moves to the minimum's old slot
         )  # => THE SWAP that can break stability -- it can jump an equal-key element
     return items  # => sorted by key, but relative order of ties is NOT guaranteed
 
 
-data: list[tuple[int, str]] = [
-    (1, "a"),
-    (1, "b"),
-    (0, "c"),
+data: list[tuple[int, str]] = [  # => the input records, deliberately unsorted by key
+    (1, "a"),  # => key=1, tagged "a" -- appears BEFORE "b" in the input
+    (1, "b"),  # => key=1, tagged "b" -- ties with "a" on key alone
+    (0, "c"),  # => the only key=0 record -- always sorts first regardless of stability
 ]  # => two records share key=1: "a" then "b", in that input order
 stable_result = stable_sort_by_key(data)  # => sorted() -- documented stable
 unstable_result = selection_sort_by_key(data)  # => selection sort -- not stable
 print(stable_result)  # => Output: [(0, 'c'), (1, 'a'), (1, 'b')]
 print(unstable_result)  # => Output: [(0, 'c'), (1, 'b'), (1, 'a')]
 
-assert stable_result == [
-    (0, "c"),
-    (1, "a"),
-    (1, "b"),
+assert stable_result == [  # => opens the expected order for the stable path
+    (0, "c"),  # => key=0 always sorts first -- no tie to break here
+    (1, "a"),  # => "a" retained its earlier input position relative to "b"
+    (1, "b"),  # => "b" stayed after "a" -- stability held
 ]  # => "a" stays before "b" -- input order preserved for the tied key
-assert unstable_result == [
-    (0, "c"),
-    (1, "b"),
-    (1, "a"),
+assert unstable_result == [  # => opens the expected order for the unstable path
+    (0, "c"),  # => key=0 still sorts first -- untouched by the swap
+    (1, "b"),  # => "b" now comes first among the tied pair -- order flipped
+    (1, "a"),  # => "a" was leapfrogged by the min-index swap
 ]  # => "b" now precedes "a" -- the swap silently reordered the tie
 assert stable_result != unstable_result  # => same keys sorted, different tie order
 print("ex-13 OK")  # => Output: ex-13 OK
@@ -1459,8 +1463,8 @@ def search(root: Node | None, value: int) -> bool:  # => True if value exists in
     return search(root.right, value)  # => recurses right only
 
 
-def inorder(
-    root: Node | None,
+def inorder(  # => classic left-node-right recursive traversal
+    root: Node | None,  # => the subtree to walk -- None yields an empty list
 ) -> list[int]:  # => left, node, right -- yields sorted order
     if root is None:  # => an empty subtree contributes nothing
         return []  # => base case
@@ -1476,8 +1480,8 @@ print(traversal)  # => Output: [1, 2, 3, 5, 7, 8, 9]
 print(search(tree_root, 7))  # => Output: True
 print(search(tree_root, 4))  # => Output: False
 
-assert traversal == sorted(
-    traversal
+assert traversal == sorted(  # => opens the self-comparison against Python's own sort
+    traversal  # => re-sorts the SAME list -- a no-op if the BST invariant held
 )  # => confirms the BST invariant: inorder is always sorted
 assert search(tree_root, 7) is True  # => confirms a present value is found
 assert search(tree_root, 4) is False  # => confirms an absent value is correctly missed
@@ -1567,35 +1571,35 @@ from __future__ import annotations
 
 
 class Node:  # => same minimal BST node shape as Example 14
-    def __init__(self, value: int) -> None:
+    def __init__(self, value: int) -> None:  # => constructs a leaf with no children yet
         self.value = value  # => this node's key
         self.left: Node | None = None  # => never used when input arrives pre-sorted
         self.right: Node | None = None  # => every new node lands here instead
 
 
 def insert(root: Node | None, value: int) -> Node:  # => identical logic to Example 14
-    if root is None:
-        return Node(value)
-    if value < root.value:
-        root.left = insert(root.left, value)
-    elif value > root.value:
-        root.right = insert(root.right, value)
-    return root
+    if root is None:  # => base case: empty subtree becomes a new leaf
+        return Node(value)  # => this value has no tree yet -- it IS the tree now
+    if value < root.value:  # => sorted input means this branch is NEVER taken here
+        root.left = insert(root.left, value)  # => would recurse left, but unreachable
+    elif value > root.value:  # => sorted input means EVERY insert takes this branch
+        root.right = insert(root.right, value)  # => always attaches to the right side
+    return root  # => the (unchanged) root reference, propagated back up the recursion
 
 
 def height(root: Node | None) -> int:  # => longest path from root to a leaf, in edges
     if root is None:  # => an empty (sub)tree has height -1 by convention
         return -1  # => makes a single-node tree height 0, matching graph-theory height
-    return 1 + max(
-        height(root.left), height(root.right)
+    return 1 + max(  # => opens the "1 + taller subtree" recursive height formula
+        height(root.left), height(root.right)  # => recurses into BOTH children
     )  # => 1 + the taller child's height
 
 
 sorted_keys: list[int] = list(range(20))  # => 0, 1, 2, ..., 19 -- ALREADY SORTED
 degenerate_root: Node | None = None  # => starts empty
 for k in sorted_keys:  # => inserting in ascending order is the worst case for a BST
-    degenerate_root = insert(
-        degenerate_root, k
+    degenerate_root = insert(  # => rebinds root each time, in case the tree was empty
+        degenerate_root, k  # => k is always larger than every key inserted so far
     )  # => each new key attaches on the right
 
 tree_height = height(degenerate_root)  # => how many edges from root to the deepest leaf
@@ -1809,14 +1813,14 @@ from __future__ import annotations
 
 
 class CountingTrieNode:  # => a trie node that also tracks words passing through it
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # => starts with no children and a zero running count
         self.children: dict[str, CountingTrieNode] = {}  # => char -> child node
         self.words_through: int = 0  # => how many inserted words pass through here
         self.is_word_end: bool = False  # => True if a word ends exactly at this node
 
 
 class CountingTrie:  # => a trie augmented for O(len(prefix)) prefix counting
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # => creates a fresh trie with just an empty root node
         self.root = CountingTrieNode()  # => an empty root
 
     def insert(self, word: str) -> None:  # => O(len(word)): inserts, updating counts
@@ -1829,8 +1833,8 @@ class CountingTrie:  # => a trie augmented for O(len(prefix)) prefix counting
             node.words_through += 1  # => this node lies on the path of the new word
         node.is_word_end = True  # => marks the final node as a complete word
 
-    def count_with_prefix(
-        self, prefix: str
+    def count_with_prefix(  # => reads the count off the prefix's terminal node directly
+        self, prefix: str  # => the prefix string to look up -- may be empty
     ) -> int:  # => O(len(prefix)): how many inserted words start with prefix
         node = self.root  # => starts at the root
         for ch in prefix:  # => walks exactly len(prefix) hops
@@ -1841,13 +1845,13 @@ class CountingTrie:  # => a trie augmented for O(len(prefix)) prefix counting
 
 
 trie = CountingTrie()  # => an empty counting trie
-for w in [
-    "cat",
-    "car",
-    "card",
-    "care",
-    "careful",
-    "dog",
+for w in [  # => opens the small word dictionary being inserted
+    "cat",  # => shares only the letter "c" with the "car*" family below
+    "car",  # => a prefix of "card", "care", and "careful"
+    "card",  # => extends "car" by one more character
+    "care",  # => also extends "car", diverging from "card" at the 4th letter
+    "careful",  # => extends "care" further -- deepest word in the "car*" family
+    "dog",  # => shares no prefix at all with the other five words
 ]:  # => a small word dictionary
     trie.insert(w)  # => O(len(w)) per insert, updating every node on the path
 
@@ -1931,8 +1935,8 @@ The adjacency-list representation maps each node to the list of its neighbors, g
 # and O(V+E) total space, versus an adjacency MATRIX's O(V^2) regardless of E.
 
 
-def build_adjacency_list(
-    edges: list[tuple[str, str]],
+def build_adjacency_list(  # => builds an UNDIRECTED graph -- each edge added both ways
+    edges: list[tuple[str, str]],  # => flat list of (source, target) pairs
 ) -> dict[str, list[str]]:  # => converts a flat edge list into a neighbor map
     graph: dict[str, list[str]] = {}  # => starts with no nodes at all
     for u, v in edges:  # => walks each (source, target) edge pair once, O(E) total
@@ -1941,11 +1945,11 @@ def build_adjacency_list(
     return graph  # => a fully built node -> neighbor-list map
 
 
-edge_list: list[tuple[str, str]] = [
-    ("a", "b"),
-    ("a", "c"),
-    ("b", "d"),
-    ("c", "d"),
+edge_list: list[tuple[str, str]] = [  # => opens the raw edge list -- 4 nodes, 4 edges
+    ("a", "b"),  # => connects a and b
+    ("a", "c"),  # => connects a and c -- a now has two neighbors
+    ("b", "d"),  # => connects b and d
+    ("c", "d"),  # => connects c and d -- closes the square (a-b-d-c-a)
 ]  # => a 4-node square graph
 graph = build_adjacency_list(edge_list)  # => O(V+E): builds the full adjacency map
 for node in sorted(graph):  # => sorted() just for deterministic print order
@@ -2038,8 +2042,8 @@ flowchart LR
 from collections import deque  # => O(1) popleft, unlike list.pop(0)'s O(n)
 
 
-def bfs_distances(
-    graph: dict[str, list[str]], start: str
+def bfs_distances(  # => level-order queue traversal from a single start node
+    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
 ) -> dict[str, int]:  # => node -> fewest hops from start
     distances: dict[str, int] = {start: 0}  # => the start node is 0 hops from itself
     frontier: deque[str] = deque([start])  # => the BFS queue, seeded with start
@@ -2049,20 +2053,20 @@ def bfs_distances(
             if (
                 neighbor not in distances
             ):  # => first time seeing neighbor -- FINAL hop count
-                distances[neighbor] = (
-                    distances[node] + 1
+                distances[neighbor] = (  # => records neighbor's FINAL shortest distance
+                    distances[node] + 1  # => one hop farther than the current node
                 )  # => exactly one more than node's own distance
                 frontier.append(neighbor)  # => schedules neighbor's own neighbors next
     return distances  # => shortest hop-count to every reachable node
 
 
 graph: dict[str, list[str]] = {  # => a small unweighted, undirected graph
-    "a": ["b", "c"],
-    "b": ["a", "d"],
-    "c": ["a", "d"],
-    "d": ["b", "c", "e"],
-    "e": ["d"],
-}
+    "a": ["b", "c"],  # => a's two direct neighbors -- both 1 hop away
+    "b": ["a", "d"],  # => b connects back to a and onward to d
+    "c": ["a", "d"],  # => c is an alternate 1-hop path to d, alongside b
+    "d": ["b", "c", "e"],  # => d is reachable via either b or c, both 2 hops
+    "e": ["d"],  # => e's only neighbor is d -- the farthest node, 3 hops from a
+}  # => closes the adjacency map -- 5 nodes total
 distances = bfs_distances(graph, "a")  # => shortest hops from "a" to every other node
 print(distances)  # => Output: {'a': 0, 'b': 1, 'c': 1, 'd': 2, 'e': 3}
 
@@ -2140,8 +2144,8 @@ DFS plunges as deep as possible before backtracking, using the call stack itself
 # level-by-level queue, but both still visit every reachable node exactly once.
 
 
-def dfs_visit_order(
-    graph: dict[str, list[str]], start: str
+def dfs_visit_order(  # => plunges depth-first via the recursive call stack
+    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
 ) -> list[str]:  # => the order nodes are first visited
     visited: set[str] = set()  # => tracks nodes already seen, so none repeat
     order: list[str] = []  # => records the order this DFS actually visits nodes
@@ -2158,22 +2162,22 @@ def dfs_visit_order(
 
 
 graph: dict[str, list[str]] = {  # => the same graph shape as Example 19, for contrast
-    "a": ["b", "c"],
-    "b": ["a", "d"],
-    "c": ["a", "d"],
-    "d": ["b", "c", "e"],
-    "e": ["d"],
-}
+    "a": ["b", "c"],  # => visited first -- DFS tries "b" before "c" (listed order)
+    "b": ["a", "d"],  # => DFS descends into "d" next, skipping already-visited "a"
+    "c": ["a", "d"],  # => visited AFTER "d", since DFS reaches "d" via "b" first
+    "d": ["b", "c", "e"],  # => "b" already visited; DFS descends into "c", then "e"
+    "e": ["d"],  # => the deepest node -- "d" is already visited, so DFS backtracks
+}  # => closes the adjacency map -- 5 nodes total
 order = dfs_visit_order(graph, "a")  # => DFS visit order, starting at "a"
 print(order)  # => Output: ['a', 'b', 'd', 'c', 'e']
 
 assert order[0] == "a"  # => the start node is always visited first
-assert set(order) == {
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
+assert set(order) == {  # => opens the expected-visited-set comparison, order-agnostic
+    "a",  # => the start node
+    "b",  # => reached in the first recursive descent from "a"
+    "c",  # => reached later, via "d", after "b"'s branch is exhausted
+    "d",  # => the hub node connecting both branches
+    "e",  # => the deepest, last-discovered node
 }  # => confirms every reachable node is visited exactly once
 assert len(order) == len(set(order))  # => confirms no node is visited twice
 print("ex-20 OK")  # => Output: ex-20 OK
@@ -2251,11 +2255,11 @@ class Color(Enum):  # => the three DFS visitation states
     BLACK = auto()  # => fully finished -- this node and all descendants are done
 
 
-def dfs_timestamps(
-    graph: dict[str, list[str]], start: str
+def dfs_timestamps(  # => CLRS-style DFS that stamps a discovery and finish tick per node
+    graph: dict[str, list[str]], start: str  # => adjacency map plus the origin node
 ) -> tuple[dict[str, int], dict[str, int]]:  # => (discovery times, finish times)
-    color: dict[str, Color] = {
-        node: Color.WHITE for node in graph
+    color: dict[str, Color] = {  # => opens the dict-comprehension initializing colors
+        node: Color.WHITE for node in graph  # => every node starts undiscovered
     }  # => everyone starts WHITE
     disc: dict[str, int] = {}  # => node -> the tick it was first discovered
     fin: dict[str, int] = {}  # => node -> the tick it was fully finished
@@ -2278,17 +2282,19 @@ def dfs_timestamps(
     return disc, fin  # => both timestamp maps, ready for the nesting check below
 
 
-def intervals_are_nested_or_disjoint(
-    disc: dict[str, int], fin: dict[str, int]
+def intervals_are_nested_or_disjoint(  # => checks all C(n,2) node pairs, O(n^2) total
+    disc: dict[str, int], fin: dict[str, int]  # => the two timestamp maps to validate
 ) -> bool:  # => the parenthesis-theorem check itself
     nodes = list(disc.keys())  # => every DFS-visited node
     for i, u in enumerate(nodes):  # => compares every unordered PAIR of nodes once
         for v in nodes[i + 1 :]:  # => avoids comparing a node against itself or twice
+            # => exactly one of the four shapes below must hold for a valid DFS run
+
             u_before_v = fin[u] < disc[v]  # => u's interval ends before v's even starts
             v_before_u = fin[v] < disc[u]  # => the mirror case: v ends before u starts
             u_contains_v = disc[u] < disc[v] and fin[v] < fin[u]  # => v nested in u
             v_contains_u = disc[v] < disc[u] and fin[u] < fin[v]  # => u nested in v
-            if not (
+            if not (  # => opens the "none of the four valid shapes held" check
                 u_before_v or v_before_u or u_contains_v or v_contains_u
             ):  # => none of the four valid shapes matched -- a partial overlap!
                 return False  # => the parenthesis theorem was violated
@@ -2296,21 +2302,21 @@ def intervals_are_nested_or_disjoint(
 
 
 graph: dict[str, list[str]] = {  # => a small directed graph with a branch and a merge
-    "a": ["b", "c"],
-    "b": ["d"],
-    "c": ["d"],
-    "d": [],
-}
+    "a": ["b", "c"],  # => the root -- branches into both "b" and "c"
+    "b": ["d"],  # => "b"'s only outgoing edge merges back into "d"
+    "c": ["d"],  # => "c" also merges into "d", after "b"'s subtree already finished
+    "d": [],  # => the merge point -- a sink node with no outgoing edges
+}  # => closes the adjacency map -- 4 nodes, one branch-and-merge diamond
 disc, fin = dfs_timestamps(graph, "a")  # => runs the timestamped DFS from "a"
 print(disc)  # => Output: {'a': 0, 'b': 1, 'd': 2, 'c': 5}
 print(fin)  # => Output: {'d': 3, 'b': 4, 'c': 6, 'a': 7}
 
 assert disc["a"] == 0  # => the start node is always discovered first, at tick 0
-assert fin["a"] == max(
-    fin.values()
+assert fin["a"] == max(  # => opens the "a finishes last" comparison
+    fin.values()  # => every node's finish tick, to find the overall maximum
 )  # => the start node's subtree covers everything -- it finishes LAST
-assert intervals_are_nested_or_disjoint(
-    disc, fin
+assert intervals_are_nested_or_disjoint(  # => opens the parenthesis-theorem check
+    disc, fin  # => passes both timestamp maps collected during the DFS run above
 )  # => confirms the parenthesis theorem holds for this DFS run
 print("ex-21 OK")  # => Output: ex-21 OK
 ```
@@ -2591,8 +2597,8 @@ A sliding window reuses the previous window's sum instead of recomputing it from
 # -- O(1) per step, O(n) total -- instead of re-summing all k elements each time.
 
 
-def brute_force_max_window_sum(
-    items: list[int], k: int
+def brute_force_max_window_sum(  # => the naive baseline, used only to check correctness
+    items: list[int], k: int  # => the data and the fixed window width
 ) -> int:  # => O(n*k): re-sums every window from scratch
     best = sum(items[:k])  # => the first window's sum, as a starting baseline
     for start in range(1, len(items) - k + 1):  # => tries every other window position
@@ -2601,14 +2607,14 @@ def brute_force_max_window_sum(
     return best  # => the maximum sum over any k-length window
 
 
-def sliding_window_max_sum(
-    items: list[int], k: int
+def sliding_window_max_sum(  # => the O(n) fast path, reusing the previous window's sum
+    items: list[int], k: int  # => same signature as the brute-force version above
 ) -> int:  # => O(n): each element enters and leaves the window exactly once
     window_sum = sum(items[:k])  # => O(k), but only ONCE -- the very first window
     best = window_sum  # => tracks the best sum found so far
     for i in range(k, len(items)):  # => slides the window one step at a time
-        window_sum += (
-            items[i] - items[i - k]
+        window_sum += (  # => updates the running sum in constant time, no re-summing
+            items[i] - items[i - k]  # => net change: new element in, old element out
         )  # => O(1): add the entering element, drop the leaving one
         best = max(best, window_sum)  # => updates the running maximum
     return best  # => the maximum sum over any k-length window

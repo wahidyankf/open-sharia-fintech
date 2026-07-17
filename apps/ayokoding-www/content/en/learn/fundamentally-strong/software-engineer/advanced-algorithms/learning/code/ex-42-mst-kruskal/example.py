@@ -6,36 +6,48 @@
 
 
 class UnionFind:  # => the optimized version from Example 33
-    def __init__(self, n: int) -> None:
-        self.parent: list[int] = list(range(n))
-        self.rank: list[int] = [0] * n
+    def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
+        self.parent: list[int] = list(
+            range(n)
+        )  # => each element starts as its own root
+        self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
-    def find(self, x: int) -> int:
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
+    def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
+        if self.parent[x] != x:  # => x is not yet its own group's root
+            self.parent[x] = self.find(
+                self.parent[x]
+            )  # => path-compresses on the way back
+        return self.parent[x]  # => x's parent is now either itself, or the true root
 
-    def union(
-        self, a: int, b: int
+    def union(  # => the cycle test IS the union: a failed union means "would cycle"
+        self,
+        a: int,
+        b: int,  # => the two nodes this candidate edge would connect
     ) -> bool:  # => returns True if a merge actually happened
-        root_a, root_b = self.find(a), self.find(b)
+        root_a, root_b = self.find(a), self.find(b)  # => both groups' roots, compressed
         if root_a == root_b:  # => already connected -- adding this edge would cycle
             return False  # => signals "do not add this edge"
-        if self.rank[root_a] < self.rank[root_b]:
-            self.parent[root_a] = root_b
-        elif self.rank[root_a] > self.rank[root_b]:
-            self.parent[root_b] = root_a
-        else:
-            self.parent[root_b] = root_a
-            self.rank[root_a] += 1
+        if (
+            self.rank[root_a] < self.rank[root_b]
+        ):  # => UNION BY RANK: shorter under taller
+            self.parent[root_a] = (
+                root_b  # => attaches the shorter tree under the taller
+            )
+        elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
+            self.parent[root_b] = root_a  # => the mirror case
+        else:  # => equal rank -- pick either, and the result grows one level taller
+            self.parent[root_b] = root_a  # => arbitrarily attaches b's root under a's
+            self.rank[root_a] += 1  # => only NOW does the resulting tree's height grow
         return True  # => signals "this edge was safely added"
 
 
-def kruskal_mst(
-    n: int, edges: list[tuple[int, int, int]]
+def kruskal_mst(  # => sort-then-greedily-add, skipping any edge that would form a cycle
+    n: int,
+    edges: list[tuple[int, int, int]],  # => node count and (u, v, weight) edges
 ) -> tuple[list[tuple[int, int, int]], int]:  # => (MST edges, total weight)
-    sorted_edges = sorted(
-        edges, key=lambda e: e[2]
+    sorted_edges = sorted(  # => opens the ascending-by-weight sort
+        edges,
+        key=lambda e: e[2],  # => sorts by the weight field only
     )  # => O(E log E): cheapest edges first
     uf = UnionFind(n)  # => starts with n singleton components
     mst_edges: list[tuple[int, int, int]] = []  # => accumulates the chosen edges
@@ -49,14 +61,18 @@ def kruskal_mst(
 
 n = 5  # => 5 nodes, labeled 0..4
 edges: list[tuple[int, int, int]] = [  # => (u, v, weight)
-    (0, 1, 2),
-    (0, 3, 6),
-    (1, 2, 3),
-    (1, 3, 8),
-    (1, 4, 5),
-    (2, 4, 7),
-    (3, 4, 9),
-]
+    (0, 1, 2),  # => the single cheapest edge -- picked first, always safe
+    (0, 3, 6),  # => a mid-cost edge, picked only if it doesn't close a cycle
+    (1, 2, 3),  # => second-cheapest -- picked early
+    (1, 3, 8),  # => the most expensive edge -- likely rejected as redundant
+    (1, 4, 5),  # => connects the otherwise-isolated node 4
+    (
+        2,
+        4,
+        7,
+    ),  # => an alternate, pricier route to node 4 -- rejected once 4 is connected
+    (3, 4, 9),  # => the second-most expensive edge -- almost certainly rejected
+]  # => closes the edge list -- 5 nodes, 7 candidate edges, MST needs exactly 4
 mst_edges, total_weight = kruskal_mst(n, edges)  # => builds the minimum spanning tree
 print(len(mst_edges))  # => Output: 4 -- an MST always has exactly n-1 edges
 print(total_weight)  # => Output: 16

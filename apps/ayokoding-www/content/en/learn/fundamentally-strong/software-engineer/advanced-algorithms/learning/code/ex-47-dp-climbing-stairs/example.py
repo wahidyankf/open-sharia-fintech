@@ -6,8 +6,8 @@
 # This is structurally IDENTICAL to Fibonacci, just with different seed values.
 
 
-def count_ways_to_climb(
-    n: int,
+def count_ways_to_climb(  # => Fibonacci-shaped recurrence, computed bottom-up
+    n: int,  # => the target stair count
 ) -> int:  # => bottom-up tabulation, O(n) time, O(1) space
     if n <= 1:  # => 0 stairs: 1 way (do nothing); 1 stair: 1 way (a single 1-step)
         return 1  # => base cases
@@ -22,11 +22,13 @@ def count_ways_to_climb(
 
 def count_ways_brute_force(n: int) -> int:  # => O(2^n): enumerates every step sequence
     if n <= 1:  # => same base cases
-        return 1
+        return 1  # => 0 or 1 stairs: exactly one way
     if n == 2:  # => exactly 2 ways: [1,1] or [2]
-        return 2
-    return count_ways_brute_force(n - 1) + count_ways_brute_force(
-        n - 2
+        return 2  # => the second base case
+    return count_ways_brute_force(
+        n - 1
+    ) + count_ways_brute_force(  # => the LAST-step split
+        n - 2  # => recurses on the 2-step predecessor
     )  # => no memoization -- deliberately re-derives the same recurrence, slowly
 
 

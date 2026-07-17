@@ -6,24 +6,26 @@
 INF = float("inf")  # => sentinel for "no way to make this amount (yet)"
 
 
-def min_coins_dp(
-    coins: list[int], amount: int
+def min_coins_dp(  # => tries every coin as the LAST one used, keeps the best count
+    coins: list[int],
+    amount: int,  # => the available coin denominations, and the target
 ) -> int | None:  # => None if amount is unreachable with these coins
-    dp: list[float] = [0.0] + [
-        INF
+    dp: list[float] = [0.0] + [  # => opens the dp array construction
+        INF  # => every amount besides 0 starts as "not yet known reachable"
     ] * amount  # => dp[0]=0 coins; everything else unknown
-    for a in range(
-        1, amount + 1
+    for a in range(  # => opens the ascending-amount range
+        1,
+        amount + 1,  # => builds every amount from 1 up to the target, in order
     ):  # => builds dp[a] from smaller, already-solved amounts
         for c in coins:  # => tries EVERY coin as the one used LAST to reach amount a
-            if (
+            if (  # => opens the "coin c improves dp[a]" check
                 c <= a and dp[a - c] + 1 < dp[a]
             ):  # => using coin c beats the current best
-                dp[a] = (
-                    dp[a - c] + 1
+                dp[a] = (  # => opens the improved-count assignment
+                    dp[a - c] + 1  # => one more coin on top of the best way to make a-c
                 )  # => one more coin than however dp[a-c] was reached
-    return (
-        None if dp[amount] == INF else int(dp[amount])
+    return (  # => opens the final unreachable-or-int-result decision
+        None if dp[amount] == INF else int(dp[amount])  # => still INF means unreachable
     )  # => None if truly unreachable
 
 

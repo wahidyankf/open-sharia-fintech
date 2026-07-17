@@ -5,8 +5,8 @@
 # and O(V+E) total space, versus an adjacency MATRIX's O(V^2) regardless of E.
 
 
-def build_adjacency_list(
-    edges: list[tuple[str, str]],
+def build_adjacency_list(  # => builds an UNDIRECTED graph -- each edge added both ways
+    edges: list[tuple[str, str]],  # => flat list of (source, target) pairs
 ) -> dict[str, list[str]]:  # => converts a flat edge list into a neighbor map
     graph: dict[str, list[str]] = {}  # => starts with no nodes at all
     for u, v in edges:  # => walks each (source, target) edge pair once, O(E) total
@@ -15,11 +15,11 @@ def build_adjacency_list(
     return graph  # => a fully built node -> neighbor-list map
 
 
-edge_list: list[tuple[str, str]] = [
-    ("a", "b"),
-    ("a", "c"),
-    ("b", "d"),
-    ("c", "d"),
+edge_list: list[tuple[str, str]] = [  # => opens the raw edge list -- 4 nodes, 4 edges
+    ("a", "b"),  # => connects a and b
+    ("a", "c"),  # => connects a and c -- a now has two neighbors
+    ("b", "d"),  # => connects b and d
+    ("c", "d"),  # => connects c and d -- closes the square (a-b-d-c-a)
 ]  # => a 4-node square graph
 graph = build_adjacency_list(edge_list)  # => O(V+E): builds the full adjacency map
 for node in sorted(graph):  # => sorted() just for deterministic print order

@@ -6,46 +6,58 @@
 
 
 class UnionFind:  # => the optimized version from Example 33, reused as-is
-    def __init__(self, n: int) -> None:
-        self.parent: list[int] = list(range(n))
-        self.rank: list[int] = [0] * n
+    def __init__(self, n: int) -> None:  # => n singleton groups, each its own root
+        self.parent: list[int] = list(
+            range(n)
+        )  # => each element starts as its own root
+        self.rank: list[int] = [0] * n  # => an upper bound on each tree's height
 
-    def find(self, x: int) -> int:
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
+    def find(self, x: int) -> int:  # => amortized O(alpha(n)) with path compression
+        if self.parent[x] != x:  # => x is not yet its own group's root
+            self.parent[x] = self.find(
+                self.parent[x]
+            )  # => path-compresses on the way back
+        return self.parent[x]  # => x's parent is now either itself, or the true root
 
-    def union(self, a: int, b: int) -> None:
-        root_a, root_b = self.find(a), self.find(b)
-        if root_a == root_b:
-            return
-        if self.rank[root_a] < self.rank[root_b]:
-            self.parent[root_a] = root_b
-        elif self.rank[root_a] > self.rank[root_b]:
-            self.parent[root_b] = root_a
-        else:
-            self.parent[root_b] = root_a
-            self.rank[root_a] += 1
+    def union(self, a: int, b: int) -> None:  # => amortized O(alpha(n))
+        root_a, root_b = self.find(a), self.find(b)  # => both groups' roots, compressed
+        if root_a == root_b:  # => already the same group -- nothing to merge
+            return  # => a union with itself is a no-op
+        if (
+            self.rank[root_a] < self.rank[root_b]
+        ):  # => UNION BY RANK: shorter under taller
+            self.parent[root_a] = (
+                root_b  # => attaches the shorter tree under the taller
+            )
+        elif self.rank[root_a] > self.rank[root_b]:  # => the mirror comparison
+            self.parent[root_b] = root_a  # => the mirror case
+        else:  # => equal rank -- pick either, and the result grows one level taller
+            self.parent[root_b] = root_a  # => arbitrarily attaches b's root under a's
+            self.rank[root_a] += 1  # => only NOW does the resulting tree's height grow
 
 
-def count_components(
-    n: int, edges: list[tuple[int, int]]
+def count_components(  # => no traversal at all -- just union every edge, then count roots
+    n: int,
+    edges: list[tuple[int, int]],  # => n nodes labeled 0..n-1, plus the edge list
 ) -> int:  # => O((V+E) alpha(V))
     uf = UnionFind(n)  # => n nodes, each initially its own component
     for a, b in edges:  # => O(E): unions every edge's endpoints
         uf.union(a, b)  # => merges a's and b's components, if not already merged
-    roots = {
-        uf.find(x) for x in range(n)
+    roots = {  # => opens the set-comprehension collecting distinct roots
+        uf.find(x)
+        for x in range(n)  # => a set automatically discards duplicate roots
     }  # => O(V): the set of DISTINCT surviving roots
     return len(roots)  # => one component per distinct root
 
 
 n = 8  # => 8 nodes, labeled 0..7
-edges: list[tuple[int, int]] = [
-    (0, 1),
-    (1, 2),
-    (3, 4),
-    (5, 6),
+edges: list[
+    tuple[int, int]
+] = [  # => opens the edge list -- deliberately leaves node 7 isolated
+    (0, 1),  # => connects 0 and 1 into one group
+    (1, 2),  # => extends that group to include 2 -- {0, 1, 2}
+    (3, 4),  # => a separate two-node group -- {3, 4}
+    (5, 6),  # => another separate two-node group -- {5, 6}
 ]  # => leaves 7 fully isolated
 component_count = count_components(n, edges)  # => how many separate groups exist
 print(component_count)  # => Output: 4 -- {0,1,2}, {3,4}, {5,6}, {7}

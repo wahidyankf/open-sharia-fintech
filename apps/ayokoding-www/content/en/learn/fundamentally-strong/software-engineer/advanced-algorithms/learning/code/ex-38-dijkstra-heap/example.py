@@ -6,15 +6,19 @@
 import heapq
 
 
-def dijkstra(
-    graph: dict[str, list[tuple[str, int]]], start: str
+def dijkstra(  # => greedily finalizes the cheapest-known frontier node each iteration
+    graph: dict[str, list[tuple[str, int]]],
+    start: str,  # => weighted adjacency + origin
 ) -> dict[str, float]:  # => node -> shortest distance from start
-    distances: dict[str, float] = {
-        node: float("inf") for node in graph
+    distances: dict[str, float] = {  # => opens the initial all-infinity distance map
+        node: float("inf")
+        for node in graph  # => every node starts unreachable
     }  # => everyone starts at infinity
     distances[start] = 0  # => the start node is trivially 0 away from itself
-    heap: list[tuple[float, str]] = [
-        (0, start)
+    heap: list[
+        tuple[float, str]
+    ] = [  # => opens the initial single-entry priority queue
+        (0, start)  # => the only known reachable node at distance 0
     ]  # => (distance, node) -- heapq sorts by distance
     visited: set[str] = set()  # => nodes whose shortest distance is FINAL
     while heap:  # => processes the frontier until nothing remains
@@ -31,11 +35,11 @@ def dijkstra(
 
 
 graph: dict[str, list[tuple[str, int]]] = {  # => node -> list of (neighbor, weight)
-    "a": [("b", 4), ("c", 1)],
-    "b": [("d", 1)],
-    "c": [("b", 2), ("d", 5)],
-    "d": [],
-}
+    "a": [("b", 4), ("c", 1)],  # => a's direct routes: to b (cost 4), to c (cost 1)
+    "b": [("d", 1)],  # => b's only route: to d (cost 1)
+    "c": [("b", 2), ("d", 5)],  # => c offers a cheaper detour to b than a's direct edge
+    "d": [],  # => the terminal node -- no outgoing edges
+}  # => closes the weighted adjacency map -- 4 nodes
 distances = dijkstra(graph, "a")  # => shortest distances from "a" to every other node
 print(distances)  # => Output: {'a': 0, 'b': 3, 'c': 1, 'd': 4}
 

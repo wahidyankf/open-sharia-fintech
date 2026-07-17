@@ -6,8 +6,9 @@
 import random
 
 
-def quickselect(
-    items: list[int], k: int
+def quickselect(  # => recurses into only the side containing rank k, not both sides
+    items: list[int],
+    k: int,  # => k is the 0-indexed target rank to find
 ) -> int:  # => returns the k-th smallest (0-indexed)
     working = list(items)  # => a copy -- the caller's list is never mutated
     lo, hi = 0, len(working) - 1  # => the active search range, shrinks each round
@@ -23,14 +24,16 @@ def quickselect(
             hi = p - 1  # => discards the entire right side -- it's already too big
 
 
-def random_pivot_partition(items: list[int], lo: int, hi: int) -> int:
+def random_pivot_partition(
+    items: list[int], lo: int, hi: int
+) -> int:  # => Lomuto scheme
     rand_index = random.randint(lo, hi)  # => a uniformly random pivot choice
     items[rand_index], items[lo] = items[lo], items[rand_index]  # => moves it to front
     pivot = items[lo]  # => the value being partitioned around
     i = lo  # => boundary of the "<pivot" region
     for j in range(lo + 1, hi + 1):  # => scans the rest of the active range
         if items[j] < pivot:  # => belongs strictly before the pivot
-            i += 1
+            i += 1  # => grows the "<pivot" region by one slot
             items[i], items[j] = items[j], items[i]  # => swaps it into place
     items[lo], items[i] = items[i], items[lo]  # => places the pivot at its final index
     return i  # => the pivot's final, correctly-sorted-position index

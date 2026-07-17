@@ -5,8 +5,9 @@
 # -- O(1) per step, O(n) total -- instead of re-summing all k elements each time.
 
 
-def brute_force_max_window_sum(
-    items: list[int], k: int
+def brute_force_max_window_sum(  # => the naive baseline, used only to check correctness
+    items: list[int],
+    k: int,  # => the data and the fixed window width
 ) -> int:  # => O(n*k): re-sums every window from scratch
     best = sum(items[:k])  # => the first window's sum, as a starting baseline
     for start in range(1, len(items) - k + 1):  # => tries every other window position
@@ -15,14 +16,15 @@ def brute_force_max_window_sum(
     return best  # => the maximum sum over any k-length window
 
 
-def sliding_window_max_sum(
-    items: list[int], k: int
+def sliding_window_max_sum(  # => the O(n) fast path, reusing the previous window's sum
+    items: list[int],
+    k: int,  # => same signature as the brute-force version above
 ) -> int:  # => O(n): each element enters and leaves the window exactly once
     window_sum = sum(items[:k])  # => O(k), but only ONCE -- the very first window
     best = window_sum  # => tracks the best sum found so far
     for i in range(k, len(items)):  # => slides the window one step at a time
-        window_sum += (
-            items[i] - items[i - k]
+        window_sum += (  # => updates the running sum in constant time, no re-summing
+            items[i] - items[i - k]  # => net change: new element in, old element out
         )  # => O(1): add the entering element, drop the leaving one
         best = max(best, window_sum)  # => updates the running maximum
     return best  # => the maximum sum over any k-length window

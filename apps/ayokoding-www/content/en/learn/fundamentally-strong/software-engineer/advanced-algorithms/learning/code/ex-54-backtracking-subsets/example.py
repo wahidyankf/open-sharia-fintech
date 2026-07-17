@@ -25,13 +25,14 @@ def all_subsets(items: list[int]) -> list[list[int]]:  # => returns all 2^n subs
 items: list[int] = [1, 2, 3]  # => a small 3-element set
 subsets = all_subsets(items)  # => all 8 subsets of {1, 2, 3}
 print(len(subsets))  # => Output: 8
-print(
-    sorted(subsets)
+print(  # => opens the sorted-subsets print call
+    sorted(subsets)  # => sorts for a deterministic, readable print order
 )  # => Output: [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]
 
 assert len(subsets) == 2 ** len(items)  # => confirms exactly 2^n subsets were generated
-unique_subsets = {
-    tuple(s) for s in subsets
+unique_subsets = {  # => opens the duplicate-detection set comprehension
+    tuple(s)
+    for s in subsets  # => converts each list subset to a hashable tuple
 }  # => tuples are hashable, so a set catches duplicates
 assert len(unique_subsets) == len(subsets)  # => confirms NO subset was generated twice
 assert [] in subsets  # => confirms the empty subset is included

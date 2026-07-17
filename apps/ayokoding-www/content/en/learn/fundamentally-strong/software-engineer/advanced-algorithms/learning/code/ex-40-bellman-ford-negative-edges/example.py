@@ -5,8 +5,10 @@
 # weights, which would silently give Dijkstra's greedy heap the wrong answer.
 
 
-def bellman_ford(
-    n: int, edges: list[tuple[int, int, int]], start: int
+def bellman_ford(  # => brute-force relax-every-edge, repeated V-1 times, no heap needed
+    n: int,
+    edges: list[tuple[int, int, int]],
+    start: int,  # => node count, edges, origin
 ) -> list[float]:  # => edges: (from, to, weight); returns dist[i] for each node
     dist: list[float] = [float("inf")] * n  # => every node starts at infinity
     dist[start] = 0  # => the start node is 0 away from itself
@@ -19,17 +21,21 @@ def bellman_ford(
 
 n = 5  # => 5 nodes, labeled 0..4
 edges: list[tuple[int, int, int]] = [  # => includes a NEGATIVE edge weight (3 -> 2, -6)
-    (0, 1, 6),
-    (0, 2, 7),
-    (1, 2, 8),
-    (1, 3, 5),
-    (1, 4, -4),
-    (2, 3, -3),
-    (2, 4, 9),
-    (3, 1, -2),
-    (4, 3, 7),
-    (4, 0, 2),
-]
+    (0, 1, 6),  # => 0 to 1, cost 6
+    (0, 2, 7),  # => 0 to 2, cost 7
+    (1, 2, 8),  # => 1 to 2, cost 8
+    (1, 3, 5),  # => 1 to 3, cost 5
+    (
+        1,
+        4,
+        -4,
+    ),  # => 1 to 4, a NEGATIVE edge -- Dijkstra could not handle this correctly
+    (2, 3, -3),  # => 2 to 3, another negative edge
+    (2, 4, 9),  # => 2 to 4, cost 9
+    (3, 1, -2),  # => 3 to 1, a negative edge feeding back into an earlier node
+    (4, 3, 7),  # => 4 to 3, cost 7
+    (4, 0, 2),  # => 4 to 0, closes a cycle back to the start -- but NOT a negative one
+]  # => closes the edge list -- 10 directed edges, 3 of them negative-weight
 distances = bellman_ford(n, edges, start=0)  # => shortest distances from node 0
 print(distances)  # => Output: [0, 2, 7, 4, -2]
 
