@@ -448,4 +448,4 @@ A **guard** is a boolean condition that gates whether a transition is allowed to
 
 ---
 
-← Previous: [19 · Computer Science Foundations Drilling](../../computer-science-foundations/drilling/overview.md) &middot; Next: [Beginner Examples](./beginner.md) →
+← Previous: [20 · Computer Architecture Drilling](../../computer-architecture/drilling/overview.md) &middot; Next: [Beginner Examples](./beginner.md) →
