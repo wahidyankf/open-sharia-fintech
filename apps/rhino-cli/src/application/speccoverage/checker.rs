@@ -24,11 +24,14 @@ use super::util::{first_non_empty, normalize_ws, unescape_string};
 // TS/JS extraction regexes (live inline in Go checker.go).
 // ============================================================
 
-/// Matches a TypeScript/JavaScript `Scenario("title", …)` call.
+/// Matches a TypeScript/JavaScript `Scenario("title", …)` call. The `(?s)`
+/// flag is functionally inert here (the pattern has no `.` metacharacter)
+/// but kept for symmetry with `step_def_re()`, signaling that callers scan
+/// the whole file content rather than a single line.
 fn scenario_def_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
-        Regex::new(r#"Scenario\s*\(\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')\s*,"#)
+        Regex::new(r#"(?s)Scenario\s*\(\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')\s*,"#)
             .expect("valid regex")
     })
 }
@@ -605,7 +608,9 @@ fn extract_scenario_titles(test_file_path: &Path) -> std::result::Result<HashSet
 }
 
 /// Extracts scenario titles from a TypeScript/JavaScript test file by scanning
-/// for `Scenario("…", …)` and `Scenario('…', …)` call patterns.
+/// the whole file content for `Scenario("…", …)` and `Scenario('…', …)` call
+/// patterns — not line-by-line, so a title that wraps onto the physical line
+/// after `Scenario(` is still recognized.
 ///
 /// # Errors
 ///
@@ -613,13 +618,11 @@ fn extract_scenario_titles(test_file_path: &Path) -> std::result::Result<HashSet
 fn extract_ts_scenario_titles(p: &Path) -> std::result::Result<HashSet<String>, Error> {
     let content = fs::read_to_string(p)?;
     let mut titles = HashSet::new();
-    for line in content.lines() {
-        for caps in scenario_def_re().captures_iter(line) {
-            let dq = caps.get(1).map_or("", |m| m.as_str());
-            let sq = caps.get(2).map_or("", |m| m.as_str());
-            let title = unescape_string(first_non_empty(dq, sq));
-            titles.insert(normalize_ws(&title));
-        }
+    for caps in scenario_def_re().captures_iter(&content) {
+        let dq = caps.get(1).map_or("", |m| m.as_str());
+        let sq = caps.get(2).map_or("", |m| m.as_str());
+        let title = unescape_string(first_non_empty(dq, sq));
+        titles.insert(normalize_ws(&title));
     }
     Ok(titles)
 }
@@ -1151,6 +1154,38 @@ mod tests {
 
     #[test]
     fn extract_ts_scenario_titles_picks_up_double_quoted_title() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.test.ts");
+        std::fs::write(
+            &p,
+            "Scenario(\"User logs in\", () => {});\nScenario('Another title', () => {});\n",
+        )
+        .unwrap();
+        let titles = extract_ts_scenario_titles(&p).unwrap();
+        assert!(titles.contains("User logs in"));
+        assert!(titles.contains("Another title"));
+    }
+
+    #[test]
+    fn extract_ts_scenario_titles_picks_up_cross_line_double_quoted_title() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.test.ts");
+        std::fs::write(&p, "Scenario(\n  \"Wrapped double title\",\n  () => {});\n").unwrap();
+        let titles = extract_ts_scenario_titles(&p).unwrap();
+        assert!(titles.contains("Wrapped double title"));
+    }
+
+    #[test]
+    fn extract_ts_scenario_titles_picks_up_cross_line_single_quoted_title() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.test.ts");
+        std::fs::write(&p, "Scenario(\n  'Wrapped single title',\n  () => {});\n").unwrap();
+        let titles = extract_ts_scenario_titles(&p).unwrap();
+        assert!(titles.contains("Wrapped single title"));
+    }
+
+    #[test]
+    fn extract_ts_scenario_titles_preserves_same_line_titles() {
         let tmp = TempDir::new().unwrap();
         let p = tmp.path().join("x.test.ts");
         std::fs::write(
