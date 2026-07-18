@@ -98,3 +98,7 @@ weight: 1750
 - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+- [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/drilling)
