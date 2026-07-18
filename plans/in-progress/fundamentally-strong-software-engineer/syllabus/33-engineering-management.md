@@ -36,12 +36,28 @@ now anchors at the journey's true close, [`94-site-reliability-engineering`](./9
 
 ## Accuracy notes (web-verified)
 
-> Verified in the pre-authoring `web-researcher` sweep (#48, DD-28).
+> Verified in the pre-authoring `web-researcher` sweep (#48, DD-28); re-verified for Phase 36
+> authoring per DD-35.
 
 - 2026-07-12 — verified: IC→manager transition (e.g. Fournier's _The Manager's Path_), 1:1s, feedback,
-  coaching, growth plans, competency ladders, and the **DORA four keys** (deployment frequency, lead time,
-  change-failure rate, time-to-restore — still tracked via Google Cloud's annual State of DevOps Report)
-  are current/evergreen. No-code topic, nothing version-pinned — nothing to correct.
+  coaching, growth plans, competency ladders are current/evergreen. No-code topic, nothing
+  version-pinned.
+- 2026-07-18 — **correction**: the syllabus's original "DORA four keys" framing is now stale.
+  Google Cloud's DORA program (`dora.dev/guides/dora-metrics-four-keys/`, page last updated
+  2026-01-05, fetched and read 2026-07-18) has formalized a **five-metric model**, split into
+  throughput (change lead time, deployment frequency, failed deployment recovery time — this
+  replaces the older "time to restore service"/MTTR framing) and instability (change fail rate,
+  plus a new fifth metric, deployment rework rate). The classic "four keys" (deployment frequency,
+  lead time for changes, change-failure rate, time-to-restore) remain the widely recognized
+  historical framing — Google's own DORA site now presents them as the origin of the current
+  five-metric model, not the current model itself. co-11 and every worked scenario/artifact citing
+  DORA below use this accurate, dated framing: teach the four-keys history (still how most
+  engineering orgs talk about it day to day) while naming the current five-metric model
+  explicitly, so nothing here misrepresents Google's current published guidance.
+- 2026-07-18 — verified (Open Library API, publication-year check): Fournier's _The Manager's
+  Path_ (2017), Larson's _An Elegant Puzzle_ (2019), DeMarco & Lister's _Peopleware_ (1987, 3rd ed.
+  2013), and Scott's _Radical Candor_ (2017 original) all check out exactly as cited in this
+  file's Read More section — no correction needed.
 
 ## Concepts
 
@@ -64,7 +80,7 @@ teaches _who owns, decides, unblocks, and grows_.
 - **co-08 · delegation-and-context-setting** — a manager delegates the how while retaining the what and why, giving enough context that a report can make the same call the manager would.
 - **co-09 · team-delivery-stewardship** — a manager stewards delivery at the team level — unblocking, sequencing, and managing WIP across people — distinct from the task-level estimation/planning mechanics a single project uses.
 - **co-10 · prioritization-under-competing-demands** — deciding which of several competing team-level demands (new work, tech debt, incidents, staffing asks) gets done now is a leadership call that produces an explicit, defensible trade-off record.
-- **co-11 · dora-metrics-as-outcome-lens** — the DORA four keys (deployment frequency, lead time for changes, change-failure rate, time-to-restore) give a manager an outcome lens on team health, used as a diagnostic, not a per-person scorecard.
+- **co-11 · dora-metrics-as-outcome-lens** — DORA's software delivery metrics (originally four keys — deployment frequency, lead time for changes, change-failure rate, time-to-restore — now formalized by Google Cloud's DORA program as a five-metric throughput/instability model) give a manager an outcome lens on team health, used as a diagnostic, not a per-person scorecard.
 - **co-12 · technical-strategy** — a manager sets a technical direction — what bets, in what order — that ties engineering work to business/product outcomes, distinct from any single project's delivery plan.
 - **co-13 · roadmap-partnership-with-product** — an engineering lead partners with product on the roadmap, representing technical cost, risk, and dependency so trade-offs are made jointly rather than imposed by either side.
 - **co-14 · communicating-tradeoffs** — a leader makes a trade-off and its cost legible to stakeholders, so the decision is understood and ownable instead of read as arbitrary.
