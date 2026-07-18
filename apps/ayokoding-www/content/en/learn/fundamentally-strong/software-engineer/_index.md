@@ -101,3 +101,7 @@ weight: 1750
 - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/drilling)
+- [30 · Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/drilling)
