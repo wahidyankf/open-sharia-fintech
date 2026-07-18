@@ -1963,7 +1963,8 @@ def list_customers(conn: sqlite3.Connection) -> list[Customer]:  # => query 1: t
 def orders_for(conn: sqlite3.Connection, customer_id: int) -> list[tuple[int, float]]:  # => query 2..N+1
     query_log.append(f"SELECT * FROM orders WHERE customer_id = {customer_id}")  # => co-22: logs EACH separate query
     return conn.execute(  # => co-22: this runs ONCE PER customer -- the N+1 pattern this example makes visible
-        "SELECT id, total FROM orders WHERE customer_id = ?", (customer_id,)  # => one bound placeholder
+        "SELECT id, total FROM orders WHERE customer_id = ?",  # => this customer's own child query
+        (customer_id,),  # => one bound placeholder
     ).fetchall()  # => this customer's own orders, fetched independently
 
 
@@ -1972,7 +1973,8 @@ with contextlib.closing(sqlite3.connect(":memory:")) as conn:  # => real local S
     conn.execute("CREATE TABLE orders(id INTEGER PRIMARY KEY, customer_id INTEGER, total REAL)")  # => child table
     conn.executemany("INSERT INTO customers VALUES (?, ?)", [(1, "Alice"), (2, "Bob"), (3, "Carol")])  # => 3 rows
     conn.executemany(  # => a few orders, spread across the three customers
-        "INSERT INTO orders(customer_id, total) VALUES (?, ?)", [(1, 10.0), (2, 20.0), (3, 30.0)]  # => 3 rows
+        "INSERT INTO orders(customer_id, total) VALUES (?, ?)",  # => two placeholders per row
+        [(1, 10.0), (2, 20.0), (3, 30.0)],  # => 3 rows
     )  # => one order per customer, for this example's purposes
     conn.commit()  # => makes every seed row visible
     customers = list_customers(conn)  # => co-22: query 1 -- the ONE list query
@@ -2109,7 +2111,8 @@ with contextlib.closing(sqlite3.connect(":memory:")) as conn:  # => real local S
     conn.execute("CREATE TABLE orders(id INTEGER PRIMARY KEY, customer_id INTEGER, total REAL)")  # => child table
     conn.executemany("INSERT INTO customers VALUES (?, ?)", [(1, "Alice"), (2, "Bob"), (3, "Carol")])  # => 3 rows
     conn.executemany(  # => a few orders, spread across the three customers
-        "INSERT INTO orders(customer_id, total) VALUES (?, ?)", [(1, 10.0), (2, 20.0), (3, 30.0)]  # => 3 rows
+        "INSERT INTO orders(customer_id, total) VALUES (?, ?)",  # => two placeholders per row
+        [(1, 10.0), (2, 20.0), (3, 30.0)],  # => 3 rows
     )  # => one order per customer, for this example's purposes
     conn.commit()  # => makes every seed row visible
     grouped = list_customers_with_orders(conn)  # => co-22: the entire read completes in TWO queries, not N+1

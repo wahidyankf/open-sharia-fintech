@@ -87,7 +87,7 @@ def main() -> None:
             remaining = conn.execute("SELECT COUNT(*) FROM customer_order").fetchone()[0]
             print(f"orders after step D: {remaining}")  # => Output: orders after step D: 2
 
-        # Step F -- co-20: a UNIQUE-email collision rolls back the ENTIRE flush, not just the failing row.
+        # Step E -- co-20: a UNIQUE-email collision rolls back the ENTIRE flush, not just the failing row.
         with Session(conn) as session:
             uow = UnitOfWork(session)
             dave = Customer(id=None, name="Dave", email="dave@example.com")  # => a genuinely new, non-colliding row
@@ -111,7 +111,7 @@ def main() -> None:
             # rewound to match. Never trust an object's state after a flush() you just caught an exception from.
             print(f"dave.id after rollback (stale, do not trust): {dave.id}")  # => Output: dave.id after rollback (stale, do not trust): 4
 
-        # Step E -- co-21, co-22: lazy loading's N+1, then the eager fix, over the SAME data.
+        # Step F -- co-21, co-22: lazy loading's N+1, then the eager fix, over the SAME data.
         lazy.QUERY_LOG.clear()
         all_customers = lazy.load_all_customers_naive(conn)  # => query 1
         for customer in all_customers:  # => co-22: naive per-item loop

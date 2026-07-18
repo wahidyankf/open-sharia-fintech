@@ -35,7 +35,7 @@ with contextlib.closing(sqlite3.connect(":memory:")) as conn:  # => real local S
     conn.execute("CREATE TABLE orders(id INTEGER PRIMARY KEY, customer_id INTEGER, total REAL)")  # => child table
     conn.executemany("INSERT INTO customers VALUES (?, ?)", [(1, "Alice"), (2, "Bob"), (3, "Carol")])  # => 3 rows
     conn.executemany(  # => a few orders, spread across the three customers
-        "INSERT INTO orders(customer_id, total) VALUES (?, ?)",
+        "INSERT INTO orders(customer_id, total) VALUES (?, ?)",  # => two placeholders per row
         [(1, 10.0), (2, 20.0), (3, 30.0)],  # => 3 rows
     )  # => one order per customer, for this example's purposes
     conn.commit()  # => makes every seed row visible

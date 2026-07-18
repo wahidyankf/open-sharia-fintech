@@ -438,7 +438,8 @@ class Query:  # => co-03: an immutable fluent builder over a single table
 
     def where(self, clause: str) -> "Query":  # => returns a NEW Query, self is untouched
         return dataclasses.replace(  # => copies every field, overriding only wheres
-            self, wheres=self.wheres + (clause,)  # => appends clause to a NEW tuple
+            self,
+            wheres=self.wheres + (clause,),  # => appends clause to a NEW tuple
         )
 
     def compile(self) -> str:  # => turns the accumulated fragments into one SQL string
