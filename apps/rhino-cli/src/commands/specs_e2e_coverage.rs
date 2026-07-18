@@ -177,10 +177,14 @@ fn collect_declared(
     Ok((declared, any_feature_file_matched))
 }
 
-/// Recursively scans `dir` for `test.fixme(...)` titles, keyed by EVERY
+/// Recursively scans `dir` for unbound scenario titles, keyed by EVERY
 /// generated `.spec.js` file's path relative to `dir` with the trailing
 /// `.spec.js` suffix stripped — including files with an empty title set
-/// (fully bound, no `test.fixme` calls at all). Any other file playwright-bdd
+/// (fully bound, no unbound scenarios at all). A file's title set is the
+/// union of its plain `test.fixme(...)` call titles (a bare `Scenario:`) and
+/// its `test.describe(...)` block titles that wrap at least one nested
+/// `test.fixme` (a `Scenario Outline:` — see
+/// [`parser::scan_unbound_describe_titles`]). Any other file playwright-bdd
 /// wrote that isn't itself named `*.spec.js` is omitted; a `.spec.js` file
 /// that happens to be non-UTF-8 is recorded with an empty title set rather
 /// than omitted entirely (see [`is_fixme`] for why recording bound files
@@ -220,7 +224,16 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<Str
             continue; // not a generated .spec.js file
         };
         let titles: HashSet<String> = match fs::read_to_string(entry.path()) {
-            Ok(content) => parser::scan_fixme_titles(&content).into_iter().collect(),
+            // Union of two independent unbound-title sources: plain
+            // `test.fixme(...)` call titles (covers a bare `Scenario:`), and
+            // `test.describe(...)` block titles that wrap at least one
+            // nested `test.fixme` (covers a `Scenario Outline:` — see
+            // `scan_unbound_describe_titles`'s doc comment for why a plain
+            // title-only scan can never see an unbound Outline).
+            Ok(content) => parser::scan_fixme_titles(&content)
+                .into_iter()
+                .chain(parser::scan_unbound_describe_titles(&content))
+                .collect(),
             // binary/non-UTF-8 .spec.js carries no readable test.fixme
             // markers, but the file itself must still be recorded (with an
             // empty title set) so it can out-compete a shorter, unrelated
@@ -232,11 +245,12 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<Str
     Ok(by_file)
 }
 
-/// Returns `true` when `scenario` is a `test.fixme` title in the SINGLE
-/// generated file playwright-bdd actually produced for this exact
-/// `.feature` file — resolved as the LONGEST (most specific) mirror key
-/// among all generated files whose mirrored relative path is a
-/// component-wise suffix of `feature_abs`.
+/// Returns `true` when `scenario` is an unbound title (a plain `test.fixme`
+/// call title, or a `Scenario Outline`'s wrapping `describe` title — see
+/// [`scan_fixme_dir`]) in the SINGLE generated file playwright-bdd actually
+/// produced for this exact `.feature` file — resolved as the LONGEST (most
+/// specific) mirror key among all generated files whose mirrored relative
+/// path is a component-wise suffix of `feature_abs`.
 ///
 /// Two different `.feature` files can share a tail directory/basename
 /// sequence at different nesting depths (e.g. `features/a/foo.feature` and
@@ -388,6 +402,64 @@ mod tests {
         fs::write(
             gen_dir.join("b/a/foo.feature.spec.js"),
             "test(\"Same title\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
+    /// Writes a project fixture reproducing the Scenario-Outline blind-spot
+    /// bug: one `.feature` file with an `@e2e Scenario Outline` whose
+    /// Examples table has 2 rows, and a `.features-gen` dir whose generated
+    /// `.spec.js` wraps the two Examples-row tests — titled `Example #1`/
+    /// `Example #2` per playwright-bdd's default Examples-title convention,
+    /// never the outline's own title — in a `test.describe` block titled
+    /// with the outline's raw title. ONE of the two rows is `test.fixme`.
+    /// Returns `(project_dir, baseline_path)`.
+    fn write_outline_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario Outline: Renders the field correctly\n  Given a field\n\n  Examples:\n    | field |\n    | name  |\n    | email |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.describe('Renders the field correctly', () => {\n  test.fixme('Example #1', async ({ page }) => {\n  });\n  test('Example #2', async ({ page }) => {\n  });\n});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
+    /// Negative counterpart of [`write_outline_fixture`]: the SAME outline,
+    /// but BOTH Examples rows are ordinary, fully-implemented `test(...)`
+    /// calls — zero `test.fixme` anywhere. Returns `(project_dir,
+    /// baseline_path)`.
+    fn write_fully_bound_outline_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario Outline: Renders the field correctly\n  Given a field\n\n  Examples:\n    | field |\n    | name  |\n    | email |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.describe('Renders the field correctly', () => {\n  test('Example #1', async ({ page }) => {\n  });\n  test('Example #2', async ({ page }) => {\n  });\n});\n",
         )
         .unwrap();
 
@@ -635,6 +707,174 @@ mod tests {
             run(&args, OutputFormat::Text).is_ok(),
             "a matched .feature file with zero @e2e scenarios must pass, \
              not be mistaken for an empty --features glob match"
+        );
+    }
+
+    /// Regression test for the Scenario-Outline blind-spot bug: `is_fixme`'s
+    /// exact-match `HashSet::contains` check can never equal an Outline's
+    /// raw declared title against playwright-bdd's real Examples-row-derived
+    /// test titles (`Example #<N>` by default — never the outline's own
+    /// title). Reproduces the reviewer's real `bddgen` finding: an outline
+    /// whose Examples table has one unbound row must be reported as a new
+    /// gap, not silently pass as "0 new unbound scenario(s)".
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Scenario Outline ships an unbound Examples-row test
+    #[test]
+    fn outline_scenario_with_unbound_example_row_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the outline (one unbound Examples row) to be reported \
+             as exactly 1 new gap, got: {msg}"
+        );
+    }
+
+    /// Negative counterpart: an outline whose Examples table is fully bound
+    /// (no `test.fixme` rows at all) must not be reported as a gap — guards
+    /// against the fix itself over-matching (e.g. treating every outline as
+    /// unbound regardless of its Examples-row tests' actual state).
+    #[test]
+    fn outline_scenario_fully_bound_is_not_reported_as_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_fully_bound_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        assert!(
+            run(&args, OutputFormat::Text).is_ok(),
+            "a fully-bound outline (zero test.fixme Examples rows) must pass"
+        );
+    }
+
+    /// Regression test for the apostrophe-truncation bug: `fixme_title_re`'s
+    /// naive `[^"']+` capture truncated at an escaped apostrophe, so a
+    /// scenario titled with a possessive/contraction was silently invisible
+    /// to gap detection. Reproduces the reviewer's exact repro: a scenario
+    /// that is 100% unbound, validated against a COMPLETELY EMPTY baseline,
+    /// must be reported as a new gap rather than silently passing.
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A test.fixme title contains an escaped apostrophe
+    #[test]
+    fn apostrophe_titled_scenario_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let features_dir = tmp.path().join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario: A user's profile renders correctly\n  Given a step\n",
+        )
+        .unwrap();
+
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme('A user\\'s profile renders correctly', async ({ page }) => {\n});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the apostrophe-titled scenario to be reported as a \
+             new gap against an empty baseline, got: {msg}"
+        );
+    }
+
+    /// Adjacent edge case to the apostrophe repro: playwright-bdd's default
+    /// single-quote wrapping leaves an embedded double quote completely
+    /// unescaped/literal (`jsStringWrap` only escapes the wrapping quote
+    /// character itself and `\`) — this must not be mistaken for the
+    /// string's own delimiter.
+    #[test]
+    fn double_quote_titled_scenario_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let features_dir = tmp.path().join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario: The banner says \"Welcome\"\n  Given a step\n",
+        )
+        .unwrap();
+
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme('The banner says \"Welcome\"', async ({ page }) => {\n});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the double-quote-bearing scenario to be reported as a \
+             new gap, got: {msg}"
+        );
+    }
+
+    /// Adjacent edge case: a literal backslash character in a title (e.g. a
+    /// Windows-style path fragment) is escaped to `\\` by `jsStringWrap`.
+    #[test]
+    fn backslash_titled_scenario_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let features_dir = tmp.path().join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario: Loads config from C:\\temp\n  Given a step\n",
+        )
+        .unwrap();
+
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme('Loads config from C:\\\\temp', async ({ page }) => {\n});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the backslash-bearing scenario to be reported as a \
+             new gap, got: {msg}"
         );
     }
 }

@@ -48,6 +48,22 @@ Feature: specs e2e-coverage validate
     And it does not report the @unit-only scenario as an unbound gap
 
   @unit
+  Scenario: A Scenario Outline ships an unbound Examples-row test
+    Given an @e2e Scenario Outline whose generated Examples-row tests include one test.fixme
+    And a baseline manifest that lists no allowed unbound scenarios
+    When rhino-cli specs e2e-coverage validate runs for that project
+    Then it fails with a non-zero exit code
+    And it reports exactly one new unbound scenario for the outline
+
+  @unit
+  Scenario: A test.fixme title contains an escaped apostrophe
+    Given an @e2e scenario titled with an apostrophe that appears as test.fixme using playwright-bdd's escaped single-quote convention
+    And a baseline manifest that lists no allowed unbound scenarios
+    When rhino-cli specs e2e-coverage validate runs for that project
+    Then it fails with a non-zero exit code
+    And it reports exactly one new unbound scenario for the apostrophe-bearing title
+
+  @unit
   Scenario: Output identifies each new gap by feature path and scenario title
     Given a new unbound scenario "Resize the sidebar by keyboard" in "resizable-panel.feature"
     When rhino-cli specs e2e-coverage validate runs and detects it as a new gap

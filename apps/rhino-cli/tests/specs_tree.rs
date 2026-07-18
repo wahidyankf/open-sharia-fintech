@@ -1398,6 +1398,56 @@ fn given_ec_unit_only_fixme(w: &mut SpecsTreeWorld) {
     w.ec_write_fixme(&[title]);
 }
 
+/// Declared title of the `Scenario Outline` [`given_ec_outline_with_unbound_example`]
+/// writes — shared with [`then_ec_reports_one_new_gap_for_outline`] so both
+/// sides of the fixture agree on the exact text without duplicating it.
+const EC_OUTLINE_TITLE: &str = "Renders the field correctly";
+
+#[given("an @e2e Scenario Outline whose generated Examples-row tests include one test.fixme")]
+fn given_ec_outline_with_unbound_example(w: &mut SpecsTreeWorld) {
+    // playwright-bdd wraps a Scenario Outline's Examples-row-derived tests in
+    // one `test.describe(...)` block titled with the outline's own raw
+    // Gherkin title; each row inside is titled per playwright-bdd's own
+    // convention (`Example #<N>` by default), never the outline's own title
+    // — see `parser::scan_unbound_describe_titles`'s doc comment. Only ONE
+    // of the two Examples rows is `test.fixme`.
+    w.write(
+        &format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"),
+        &format!(
+            "Feature: fixture\n\n@e2e\nScenario Outline: {EC_OUTLINE_TITLE}\n  Given a field\n\n  Examples:\n    | field |\n    | name  |\n    | email |\n"
+        ),
+    );
+    w.write(
+        &format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"),
+        &format!(
+            "test.describe('{EC_OUTLINE_TITLE}', () => {{\n  test.fixme('Example #1', async ({{ page }}) => {{\n  }});\n  test('Example #2', async ({{ page }}) => {{\n  }});\n}});\n"
+        ),
+    );
+}
+
+/// Declared title of the apostrophe-bearing scenario
+/// [`given_ec_apostrophe_titled_fixme`] writes — shared with
+/// [`then_ec_reports_one_new_gap_for_apostrophe_title`] so both sides of the
+/// fixture agree on the exact text without duplicating it.
+const EC_APOSTROPHE_TITLE: &str = "A user's profile renders correctly";
+
+#[given(
+    "an @e2e scenario titled with an apostrophe that appears as test.fixme using playwright-bdd's escaped single-quote convention"
+)]
+fn given_ec_apostrophe_titled_fixme(w: &mut SpecsTreeWorld) {
+    w.write(
+        &format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"),
+        &format!("Feature: fixture\n\n@e2e\nScenario: {EC_APOSTROPHE_TITLE}\n  Given a step\n"),
+    );
+    // playwright-bdd's default single-quote `jsStringWrap` escapes a literal
+    // `'` in the title to `\'` — the exact convention
+    // `parser::fixme_title_re`'s regression tests reproduce.
+    w.write(
+        &format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"),
+        "test.fixme('A user\\'s profile renders correctly', async ({ page }) => {\n});\n",
+    );
+}
+
 #[given("a project with no baseline manifest yet")]
 fn given_ec_no_baseline_yet(_w: &mut SpecsTreeWorld) {
     // No-op: deliberately never write a baseline manifest. `types::load_baseline`
@@ -1553,6 +1603,30 @@ fn then_ec_unit_only_ignored(w: &mut SpecsTreeWorld) {
     for title in &w.ec_unit_only_titles {
         assert!(!text.contains(title.as_str()), "got: {text}");
     }
+}
+
+#[then("it reports exactly one new unbound scenario for the outline")]
+fn then_ec_reports_one_new_gap_for_outline(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(
+        text.contains("1 new unbound scenario(s) found"),
+        "got: {text}"
+    );
+    assert!(text.contains(EC_OUTLINE_TITLE), "got: {text}");
+}
+
+#[then("it reports exactly one new unbound scenario for the apostrophe-bearing title")]
+fn then_ec_reports_one_new_gap_for_apostrophe_title(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(
+        text.contains("1 new unbound scenario(s) found"),
+        "got: {text}"
+    );
+    assert!(text.contains(EC_APOSTROPHE_TITLE), "got: {text}");
 }
 
 #[then(regex = r#"^the failure output contains the scenario title "([^"]+)"$"#)]
