@@ -1,0 +1,73 @@
+=== STEP 1a: RED -- a failing test against a not-yet-implemented stub ===
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_______________________ test_redeem_within_cap_succeeds ________________________
+
+    def test_redeem_within_cap_succeeds():
+>       assert redeem_points(cart_subtotal=100.0, points_requested=40.0) == 40.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_redemption.py:4:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cart_subtotal = 100.0, points_requested = 40.0
+
+    def redeem_points(cart_subtotal, points_requested):
+>       raise NotImplementedError
+E       NotImplementedError
+
+redemption.py:2: NotImplementedError
+_________________________ test_redeem_above_cap_raises _________________________
+
+    def test_redeem_above_cap_raises():
+        import pytest
+        with pytest.raises(ValueError):
+>           redeem_points(cart_subtotal=100.0, points_requested=60.0)
+
+test_redemption.py:9:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+cart_subtotal = 100.0, points_requested = 60.0
+
+    def redeem_points(cart_subtotal, points_requested):
+>       raise NotImplementedError
+E       NotImplementedError
+
+redemption.py:2: NotImplementedError
+=========================== short test summary info ============================
+FAILED test_redemption.py::test_redeem_within_cap_succeeds - NotImplementedError
+FAILED test_redemption.py::test_redeem_above_cap_raises - NotImplementedError
+2 failed in 0.01s
+
+=== STEP 1b: GREEN -- the minimal implementation that passes ===
+..                                                                       [100%]
+2 passed in 0.00s
+
+=== STEP 1c: REFACTOR -- types, a named constant, ruff-clean formatting ===
+..                                                                       [100%]
+2 passed in 0.00s
+All checks passed!
+
+=== messy history BEFORE cleanup (3 commits) ===
+cd18e25 wip: refactor with types
+3caa38d wip: make it pass
+f5b5e5f wip: add test file and stub
+
+=== STEP 2: collapse into a clean, conventional-commit history ===
+=== clean history AFTER cleanup (2 commits) ===
+3dedac0 feat(loyalty): cap points redemption at 50 percent of cart subtotal
+acfd018 test(loyalty): add failing test for capped points redemption
+TEST_SHA=acfd018
+FEAT_SHA=3dedac0
+
+=== deriving the SemVer bump and changelog entry from v1.0.0..HEAD ===
+feat(loyalty): cap points redemption at 50 percent of cart subtotal
+test(loyalty): add failing test for capped points redemption
+highest-severity commit type present -> SemVer bump: MINOR (v1.0.0 -> v1.1.0)
+--- derived changelog entry (test-only commits excluded, per Example 6) ---
+## [1.1.0] - 2026-07-18
+
+### Added
+
+- A single points redemption is now capped at 50% of the cart subtotal, closing a fraud-detection
+  gap where a compromised account's points could zero out an entire order in one transaction.

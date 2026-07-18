@@ -1,0 +1,24 @@
+# learning/code/ex-46-quality-gate-pipeline-with-pre-commit/ci.yml
+# ex-46: `pre-commit run --all-files` wired as a REQUIRED stage ahead of test (co-10, co-08, co-09)
+name: ci # => co-08: workflow display name, shown in the Actions tab
+on: # => co-08: this pipeline's one trigger, same as ex-16
+  pull_request: # => co-08: runs on every pull request
+
+jobs: # => co-08: two ordered, GATED stages -- pre-commit's own hooks run first, then tests
+  # => co-10: this job's ONLY job is to fail loudly when a contributor skipped `pre-commit install`
+  pre-commit: # => co-10: STAGE 1 -- the SAME hooks a contributor's local `git commit` already ran
+    runs-on: ubuntu-latest # => co-08: a fresh, ephemeral runner, same as every other job in this topic
+    steps: # => co-10: this job's own ordered list of steps
+      - uses: actions/checkout@v7 # => co-08: fetches the commit under test
+      - run: pip install pre-commit # => co-10: installs the identical framework version (v4.6.0)
+      # => co-09: local and CI now agree by CONSTRUCTION -- neither can pass while the other fails
+      - run: pre-commit run --all-files # => co-08, co-09: REQUIRED -- a hook failure here stops the pipeline here
+
+  test: # => co-08: STAGE 2 -- runs ONLY if pre-commit's own hooks all passed
+    # => co-09: without `needs`, GitHub Actions would run both jobs in parallel instead
+    needs: pre-commit # => co-09: the GATE -- identical hook, identical verdict, local or in CI
+    runs-on: ubuntu-latest # => co-08: a fresh, ephemeral runner, same as every other job in this topic
+    steps: # => co-08: mirrors pre-commit's own step shape -- checkout, install, run
+      - uses: actions/checkout@v7 # => co-08: fetches the commit under test
+      - run: pip install pytest # => co-08: installs the test runner
+      - run: pytest -q # => co-08: a red test here MUST stop the merge, same gate as ex-14

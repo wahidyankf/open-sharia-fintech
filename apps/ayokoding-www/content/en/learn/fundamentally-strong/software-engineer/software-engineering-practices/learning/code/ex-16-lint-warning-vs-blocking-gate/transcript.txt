@@ -1,0 +1,8 @@
+NAME                DESCRIPTION       ELAPSED  RESULT
+ci / style-nit-check                  4s       ! neutral (continue-on-error)
+ci / test                             9s       ✓ pass
+
+All required checks were successful
+1 warning (non-blocking): ci / style-nit-check reported 2 import-order nits
+
+Merge button: UNLOCKED (the only required check, ci / test, passed)

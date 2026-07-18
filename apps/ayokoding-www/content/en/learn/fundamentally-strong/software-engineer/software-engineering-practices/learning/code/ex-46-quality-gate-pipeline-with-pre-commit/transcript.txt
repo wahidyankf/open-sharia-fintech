@@ -1,0 +1,21 @@
+--- locally, before pushing ---
+$ git commit -m "feat(cart): add tax calculation"
+trim trailing whitespace.................................................Failed
+- hook id: trailing-whitespace
+- exit code: 1
+- files were modified by this hook
+
+$ git add -u && git commit -m "feat(cart): add tax calculation"
+trim trailing whitespace.................................................Passed
+[feature/tax-calc 9c41abe] feat(cart): add tax calculation
+
+--- the SAME commit, pushed, running in CI ---
+$ git push origin feature/tax-calc
+
+NAME              DESCRIPTION  ELAPSED  RESULT
+ci / pre-commit                6s       ✓ pass
+ci / test                      9s       ✓ pass
+
+Identical hook, identical verdict: the trailing-whitespace failure that blocked the FIRST local
+commit attempt is exactly what `ci / pre-commit` would have caught too, had it not already been
+fixed before push -- the local gate and the CI gate run the same `.pre-commit-config.yaml`.
