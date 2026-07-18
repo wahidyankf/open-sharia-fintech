@@ -556,11 +556,11 @@ defineBddConfig]`.
 
 ### 6a. ose-primer — apply, verify, draft PR, 3-cycle review, gates
 
-- [ ] [AI] Provision the ose-primer worktree:
+- [x] [AI] Provision the ose-primer worktree:
       `git -C /Users/wkf/ose-projects/ose-primer worktree add worktrees/e2e-scenario-coverage-gap-detector -b e2e-scenario-coverage-gap-detector origin/main`
       then `(cd /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector && npm install && npm run doctor -- --fix)`
       — acceptance: worktree dir exists and both commands exit 0
-- [ ] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-primer worktree:
+- [x] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-primer worktree:
 
   ```bash
   OSE_PRIMER_WT=/Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -584,10 +584,10 @@ defineBddConfig]`.
 
   — acceptance: all 9 files exist under `$OSE_PRIMER_WT`
 
-- [ ] [AI] Run the ported crate's tests in the ose-primer worktree:
+- [x] [AI] Run the ported crate's tests in the ose-primer worktree:
       `cd "$OSE_PRIMER_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: both exit 0
-- [ ] [AI] Verify byte-identity of every propagated file against `ose-public`:
+- [x] [AI] Verify byte-identity of every propagated file against `ose-public`:
 
   ```bash
   OSE_PRIMER_WT=/Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -602,17 +602,17 @@ defineBddConfig]`.
 
   — acceptance: zero output from every `diff` invocation (byte-identical)
 
-- [ ] [AI] Wire `ose-primer`'s own `specs:e2e:coverage` target + baseline manifests for its
+- [x] [AI] Wire `ose-primer`'s own `specs:e2e:coverage` target + baseline manifests for its
       playwright-bdd e2e projects (discover via
       `grep -l defineBddConfig "$OSE_PRIMER_WT"/apps/*/playwright.config.ts`), repeating the Phase 5
       baseline-generation + target-wiring pattern per project inside `$OSE_PRIMER_WT`
       — acceptance: `cd "$OSE_PRIMER_WT" && npx nx run-many -t specs:e2e:coverage` exits 0 (or is a
       no-op if `ose-primer` has no playwright-bdd projects)
-- [ ] [AI] Run ose-primer's local quality gates:
+- [x] [AI] Run ose-primer's local quality gates:
       `cd "$OSE_PRIMER_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`
       — acceptance: exits 0; fix ALL failures found, including preexisting ones (Root Cause
       Orientation)
-- [ ] [AI] Commit, push, and open the ose-primer draft PR:
+- [x] [AI] Commit, push, and open the ose-primer draft PR:
 
   ```bash
   cd /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -632,25 +632,25 @@ defineBddConfig]`.
 
   — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
       `pr-review-fixer` resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
       green — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
       green — acceptance: cycle-3 review returns no blocking findings; CI green
-- [ ] [AI] Confirm ALL quality gates green on the ose-primer PR — local:
+- [x] [AI] Confirm ALL quality gates green on the ose-primer PR — local:
       `cd "$OSE_PRIMER_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`;
       CI: `gh pr checks e2e-scenario-coverage-gap-detector` (run from that worktree)
       — acceptance: local exits 0; all CI checks report passing
 
 ### 6b. ose-infra — apply, verify, draft PR, 3-cycle review, gates
 
-- [ ] [AI] Provision the ose-infra worktree:
+- [x] [AI] Provision the ose-infra worktree:
       `git -C /Users/wkf/ose-projects/ose-infra worktree add worktrees/e2e-scenario-coverage-gap-detector -b e2e-scenario-coverage-gap-detector origin/main`
       then `(cd /Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector && npm install && npm run doctor -- --fix)`
       — acceptance: worktree dir exists and both commands exit 0
-- [ ] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-infra worktree:
+- [x] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-infra worktree:
 
   ```bash
   OSE_INFRA_WT=/Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -674,10 +674,10 @@ defineBddConfig]`.
 
   — acceptance: all 9 files exist under `$OSE_INFRA_WT`
 
-- [ ] [AI] Run the ported crate's tests in the ose-infra worktree:
+- [x] [AI] Run the ported crate's tests in the ose-infra worktree:
       `cd "$OSE_INFRA_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: both exit 0
-- [ ] [AI] Verify byte-identity of every propagated file against `ose-public`:
+- [x] [AI] Verify byte-identity of every propagated file against `ose-public`:
 
   ```bash
   OSE_INFRA_WT=/Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -692,17 +692,17 @@ defineBddConfig]`.
 
   — acceptance: zero output from every `diff` invocation (byte-identical)
 
-- [ ] [AI] Wire `ose-infra`'s own `specs:e2e:coverage` target + baseline manifests for its
+- [x] [AI] Wire `ose-infra`'s own `specs:e2e:coverage` target + baseline manifests for its
       playwright-bdd e2e projects (discover via
       `grep -l defineBddConfig "$OSE_INFRA_WT"/apps/*/playwright.config.ts`), repeating the Phase 5
       baseline-generation + target-wiring pattern per project inside `$OSE_INFRA_WT`
       — acceptance: `cd "$OSE_INFRA_WT" && npx nx run-many -t specs:e2e:coverage` exits 0 (or is a
       no-op if `ose-infra` has no playwright-bdd projects)
-- [ ] [AI] Run ose-infra's local quality gates:
+- [x] [AI] Run ose-infra's local quality gates:
       `cd "$OSE_INFRA_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`
       — acceptance: exits 0; fix ALL failures found, including preexisting ones (Root Cause
       Orientation)
-- [ ] [AI] Commit, push, and open the ose-infra draft PR:
+- [x] [AI] Commit, push, and open the ose-infra draft PR:
 
   ```bash
   cd /Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -722,14 +722,14 @@ defineBddConfig]`.
 
   — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
       `pr-review-fixer` resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
       green — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
       green — acceptance: cycle-3 review returns no blocking findings; CI green
-- [ ] [AI] Confirm ALL quality gates green on the ose-infra PR — local:
+- [x] [AI] Confirm ALL quality gates green on the ose-infra PR — local:
       `cd "$OSE_INFRA_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`;
       CI: `gh pr checks e2e-scenario-coverage-gap-detector` (run from that worktree)
       — acceptance: local exits 0; all CI checks report passing
@@ -738,10 +738,10 @@ defineBddConfig]`.
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Byte-identity holds on both open PR branches:
+- [x] [AI] Byte-identity holds on both open PR branches:
       `diff -rq apps/rhino-cli/src/application/e2e_coverage /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector/apps/rhino-cli/src/application/e2e_coverage`
       and the equivalent path swapped for `ose-infra` — acceptance: zero output for both
-- [ ] [AI] Both sibling PRs completed 3 review cycles with CI green and no unresolved blocking
+- [x] [AI] Both sibling PRs completed 3 review cycles with CI green and no unresolved blocking
       findings: `gh pr view e2e-scenario-coverage-gap-detector --json statusCheckRollup` (run from
       each sibling's worktree) — acceptance: all checks green in both
 
@@ -755,12 +755,12 @@ defineBddConfig]`.
 
 ### Final Merge — ose-primer + ose-infra
 
-- [ ] [HUMAN] Merge the ose-primer PR to `main` — only after its 3-cycle review is complete and all
-      its quality gates (local + CI) pass; on the maintainer's own schedule
+- [x] [AI per session override] Merge the ose-primer PR to `main` — only after its 3-cycle review is
+      complete and all its quality gates (local + CI) pass
       — resume signal: from `/Users/wkf/ose-projects/ose-primer`,
       `gh pr view e2e-scenario-coverage-gap-detector --json state --jq .state` prints `MERGED`
-- [ ] [HUMAN] Merge the ose-infra PR to `main` — only after its 3-cycle review is complete and all
-      its quality gates (local + CI) pass; on the maintainer's own schedule
+- [x] [AI per session override] Merge the ose-infra PR to `main` — only after its 3-cycle review is
+      complete and all its quality gates (local + CI) pass
       — resume signal: from `/Users/wkf/ose-projects/ose-infra`,
       `gh pr view e2e-scenario-coverage-gap-detector --json state --jq .state` prints `MERGED`
 
@@ -779,36 +779,52 @@ defineBddConfig]`.
 
 ### PR-Review Maker→Fixer Cycle
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the PR via the GitHub Reviews API; `pr-review-fixer`
+> Ran 7 cycles total, not the default 3 — cycles 3 through 6 each surfaced a genuine new CRITICAL in
+> the same failure family (a playwright-bdd/Gherkin parsing edge case producing a false PASS). The
+> user explicitly flagged the overrun mid-cycle-6 and set the cap via `AskUserQuestion`: let cycle 6
+> finish, one more fixer pass if needed, then hard-stop at cycle 7 and merge regardless of cycle 7's
+> outcome. Cycle 7 found 2 non-blocking MEDIUM findings, both deferred per that decision — see
+> `learnings.md` and the two backlog plans it routes to. See
+> [PR Review Quality Gate workflow — cycle-overrun guidance](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#notes)
+> (added by this plan's Knowledge Capture) for the now-documented process this established.
+
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the PR via the GitHub Reviews API; `pr-review-fixer`
       resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
       — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
       — acceptance: cycle-3 review returns no blocking findings; CI green
+- [x] [AI] Cycle 4 — new CRITICAL (zero-Examples Outline blindness); fixed, CI green
+- [x] [AI] Cycle 5 — new CRITICAL (tag-exclusion, Scenario Template/Scenarios aliases, skip/fixme/only
+      tags); fixed, CI green
+- [x] [AI] Cycle 6 — new CRITICAL (comment line breaks `@e2e` tag association); fixed, CI green
+- [x] [AI] Cycle 7 (final, hard-capped per user decision) — 2 non-blocking MEDIUM findings, both
+      replied-to and deferred to backlog plans; no cycle 8; CI green
 
 ### Knowledge Capture
 
 > Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md).
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch it automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
       `ose-infra` only and is NEVER cross-routed into `ose-public`/`ose-primer`; public-governance
       content may propagate via the existing parity loop
       — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
       — non-code homes land inline (small edit) or as a `plans/backlog/` follow-up (large); code homes
       (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan, NEVER inline
       — acceptance: every `learnings.md` entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
-      — acceptance: `learnings.md` is never silently empty
+      — acceptance: `learnings.md` is never silently empty (N/A this phase — 4 real learnings
+      surfaced and were routed; see the Triage log in `learnings.md`)
 
 ### Archival-in-PR
 
