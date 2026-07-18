@@ -103,7 +103,7 @@ hours in advance).
 **Guardrail**: the SMS notification opt-out rate must not increase by more than 1 percentage point
 during the experiment window -- a proxy for notification fatigue. A reminder feature that reduces
 no-shows while also driving enough employees to disable all Kestrel SMS (including shift-swap
-notifications, Worked Scenario 22) would be trading one problem for a different, possibly worse
+notifications, Worked Scenarios 28-30) would be trading one problem for a different, possibly worse
 one.
 
 ## 7. Internal consistency
