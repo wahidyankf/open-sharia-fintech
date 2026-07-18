@@ -264,8 +264,10 @@ makes the check mandatory regardless of any individual contributor's local setup
 
 _ex-47 &middot; exercises co-12, co-05, co-09_
 
-A change that passes its coverage-baseline check can still carry an unreviewed, risky diff --
-requiring BOTH gates independently is what actually blocks it.
+**co-05 -- code-review-etiquette**: a review names blocking issues versus nits, gives feedback
+promptly, and stays respectful of the author, per established reviewer/author guidance. A change
+that passes its coverage-baseline check can still carry an unreviewed, risky diff -- requiring BOTH
+gates independently is what actually blocks it.
 
 **`learning/code/ex-47-coverage-plus-review-double-gate/branch-protection.yml`**
 

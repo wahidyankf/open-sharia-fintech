@@ -147,6 +147,8 @@ before touching a debugger, on the exact bug Example 20 shipped.
 1. I call redeem(card, amount) with amount less than the card's full balance.
 2. redeem() should compute remaining = card.balance - amount and return it.
 3. I'm SEEING remaining == 0 every time, regardless of amount.
+4. That means either (a) card.balance is already 0 when redeem() runs, (b) amount always equals
+   card.balance, or (c) the subtraction itself is wrong.
 5. ...wait. I'm assuming card.balance is read BEFORE the subtraction. Let me check the actual
    line order -- does something update card.balance to 0 BEFORE the remaining-balance line runs?
 ```
@@ -320,6 +322,9 @@ _ex-25 &middot; exercises co-14, co-15_
 beats deferring it -- and its own separate commit (co-15's boy-scout rule) keeps the feature diff
 and the cleanup diff independently reviewable.
 
+**co-15 -- boy-scout-rule**: leave the code you touch slightly cleaner than you found it, as a
+tiny incidental improvement, not a separate crusade.
+
 **`learning/code/ex-25-refactor-during-a-feature-pr/setup.sh`**
 
 ```bash
@@ -480,6 +485,10 @@ warns about, applied to refactoring specifically.
 ### Example 28: A Technical-Debt Log Entry
 
 _ex-28 &middot; exercises co-16_
+
+**co-16 -- technical-debt-tracking**: naming a shortcut's quadrant (Fowler's prudent/reckless x
+deliberate/inadvertent) and logging it with an owner keeps debt a visible, prioritizable backlog
+item instead of a silent tax.
 
 ```text
 ## DEBT-041: gift-card redemption skips concurrent-redemption locking
@@ -697,6 +706,10 @@ resists the drift a separate wiki (or a "docs later" ticket) invites.
 ### Example 32: Which Change Earns an ADR
 
 _ex-32 &middot; exercises co-18_
+
+**co-18 -- adr-as-engineering-practice**: a hard-to-reverse, architecturally significant code
+decision earns a linked Architecture Decision Record (ADR); a routine, easily-reversible one does
+not -- the two tests below decide which is which.
 
 | Change                               | Hard to reverse? | Architecturally significant? | Earns an ADR? |
 | ------------------------------------ | ---------------- | ---------------------------- | ------------- |
