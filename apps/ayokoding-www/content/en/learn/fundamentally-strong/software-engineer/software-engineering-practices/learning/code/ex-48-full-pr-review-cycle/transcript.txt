@@ -1,0 +1,23 @@
+Switched to a new branch 'feature/loyalty-redemption'
+
+Creating pull request for feature/loyalty-redemption into main in acme/checkout-service
+
+https://github.com/acme/checkout-service/pull/151
+
+✓ Requested changes on acme/checkout-service#151
+
+-- addressing the feedback --
+
+✓ Approved acme/checkout-service#151
+
+feat(loyalty): add points redemption #151
+acme:feature/loyalty-redemption -> main
+Open • reviewer-jane approved
+
+Comments
+  reviewer-jane requested changes (2026-07-18)
+    blocking: missing a test for redeeming more points than the balance holds
+  reviewer-jane approved (2026-07-18)
+    LGTM, thanks for adding the edge case
+
+View this pull request on GitHub: https://github.com/acme/checkout-service/pull/151

@@ -1,0 +1,14 @@
+# learning/code/ex-18-pre-commit-run-all-files/.pre-commit-config.yaml
+# ex-18: the SAME hook set as ex-17, run once across the WHOLE repository (co-10)
+repos: # => co-10: same repos: list as ex-17 -- only the invocation scope differs
+  - repo: https://github.com/pre-commit/pre-commit-hooks # => co-10: the framework's own general-purpose hook set
+    rev: v6.0.0 # => co-10: pinned revision -- reproducible across every contributor's machine
+    hooks: # => co-10: this run walks every hook below, across the whole tracked tree
+      - id: trailing-whitespace # => co-10: this run checks every tracked file, not just staged ones
+      - id: end-of-file-fixer # => co-10: same rule -- applied repo-wide, not diff-scoped
+  - repo: https://github.com/astral-sh/ruff-pre-commit # => co-10: Ruff's own official pre-commit mirror
+    rev: v0.15.17 # => co-10: pinned to the same Ruff line this topic's accuracy notes verified
+    hooks: # => co-10: same hook list as ex-17's -- still repo-wide, not diff-scoped
+      - id: ruff # => co-10: the linter, with autofix enabled
+        args: [--fix] # => co-10: auto-fixes what it safely can, across every tracked file
+      - id: ruff-format # => co-10: the formatter -- Black-compatible as of Ruff 0.15

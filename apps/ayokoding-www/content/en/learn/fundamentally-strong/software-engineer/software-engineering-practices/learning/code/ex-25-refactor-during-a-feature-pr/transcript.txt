@@ -1,0 +1,2 @@
+c5083cb feat(cart): apply gift-card balance to total
+46a2686 refactor(cart): rename calc params, add types
