@@ -98,3 +98,6 @@ weight: 1750
 - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+- [27 · Data Access: ORMs & Query Builders](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders/drilling)
