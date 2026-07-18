@@ -69,7 +69,7 @@ pub fn format_text(report: &GapReport) -> String {
     if !report.stale.is_empty() {
         let _ = writeln!(
             sb,
-            "\n{} stale baseline entrie(s) can be pruned:",
+            "\n{} stale baseline entries can be pruned:",
             report.stale.len()
         );
         for s in &report.stale {

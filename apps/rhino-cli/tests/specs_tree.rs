@@ -1530,7 +1530,7 @@ fn then_ec_newly_bound(w: &mut SpecsTreeWorld, title: String) {
     let out = w.output.as_ref().expect("ran");
     let text = combined_output(out);
     assert!(out.status.success(), "got: {text}");
-    assert!(text.contains("stale baseline entrie"), "got: {text}");
+    assert!(text.contains("stale baseline entries"), "got: {text}");
     let marker = format!("\"{title}\"");
     assert!(text.contains(&marker), "got: {text}");
 }
@@ -1540,7 +1540,7 @@ fn then_ec_stale_entry_prunable(w: &mut SpecsTreeWorld, title: String) {
     let out = w.output.as_ref().expect("ran");
     let text = combined_output(out);
     assert!(out.status.success(), "got: {text}");
-    assert!(text.contains("stale baseline entrie"), "got: {text}");
+    assert!(text.contains("stale baseline entries"), "got: {text}");
     let marker = format!("\"{title}\"");
     assert!(text.contains(&marker), "got: {text}");
 }
