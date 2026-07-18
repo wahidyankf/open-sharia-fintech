@@ -1,0 +1,7 @@
+sqlalchemy==2.0.51
+peewee==4.2.6
+pypika==0.51.1
+alembic==1.18.5
+psycopg[binary]==3.3.4
+greenlet==3.5.3
+pyright==1.1.411
