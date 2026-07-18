@@ -1,0 +1,8 @@
+{
+  "typeCheckingMode": "strict",
+  "pythonVersion": "3.13",
+  "include": ["learning/code", "learning/capstone/code", "drilling/code"],
+  "venvPath": ".",
+  "venv": ".venv",
+  "reportMissingModuleSource": true
+}
