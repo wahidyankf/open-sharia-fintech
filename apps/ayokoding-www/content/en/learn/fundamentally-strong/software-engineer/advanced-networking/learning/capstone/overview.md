@@ -14,6 +14,21 @@ full DNS-to-HTTP timeline (co-01, co-07, co-14), and a written analysis of captu
 script lives under `learning/capstone/code/`, standard-library-only, fully type-annotated (DD-39),
 and was actually run to capture the output shown below.
 
+## Concepts exercised
+
+- [x] CIDR/subnet arithmetic -- hosts/gateway/broadcast (co-04) -- `subnet.py`'s `compute_subnet()`,
+      verified against three hand-computed prefixes in Step 1
+- [x] the layered model applied to a real packet (co-01) -- every stage `trace.py` measures (Step 2)
+      and every hop/packet `analysis.md` annotates (Step 3) is tied back to exactly one layer
+- [x] TCP handshake + TLS 1.3 handshake narrated (co-07, co-14) -- `trace.py`'s `connect_tcp()` and
+      `handshake_tls()` stages (Step 2), cross-checked against `analysis.md`'s own packet-by-packet
+      `tcpdump` annotation (Part B)
+- [x] reading `traceroute`/`tcpdump` output (co-05, co-22) -- `analysis.md`'s hop-by-hop `traceroute`
+      table (Part A) and packet-by-packet `tcpdump` table (Part B)
+- [x] latency vs bandwidth vs throughput reasoning (co-23) -- `trace.py`'s per-stage elapsed-time
+      breakdown (Step 2's `[DNS]`/`[TCP]`/`[TLS]`/`[HTTP]` timings) and `analysis.md`'s per-hop and
+      per-packet millisecond offsets (Parts A and B)
+
 ---
 
 ## Step 1: `subnet.py` -- a CIDR subnet calculator
@@ -318,4 +333,4 @@ into an actual, bisectable diagnosis.
 ---
 
 ← Previous: [VPN & Overlay Networking](../vpn-and-overlay.md) &middot; Next:
-[Drilling](../../drilling/overview.md) →
+[Capstone Analysis](./analysis.md) →
