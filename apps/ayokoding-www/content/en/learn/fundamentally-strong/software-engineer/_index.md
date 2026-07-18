@@ -112,3 +112,6 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/drilling)
+- [33 · Engineering Management](/en/c/learn/fundamentally-strong/software-engineer/engineering-management)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/drilling)
