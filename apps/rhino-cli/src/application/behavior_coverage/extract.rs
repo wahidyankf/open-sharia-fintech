@@ -130,8 +130,14 @@ pub fn extract_scenario_specs(path: &Path, feature_path: &str) -> Result<Vec<Sce
             pending_tags.extend(line.split_whitespace().map(str::to_string));
             continue;
         }
+        // `Scenario Template:` is an official Gherkin dialect alias for
+        // `Scenario Outline:` (`@cucumber/gherkin`'s `gherkin-languages.json`,
+        // `en.scenarioOutline: ["Scenario Outline", "Scenario Template"]`) —
+        // playwright-bdd renders real test output for either spelling, so
+        // both must be recognised here to keep the declared set complete.
         let title = line
             .strip_prefix("Scenario Outline:")
+            .or_else(|| line.strip_prefix("Scenario Template:"))
             .or_else(|| line.strip_prefix("Scenario:"));
         if let Some(title) = title {
             let mut level_tags = HashSet::new();
@@ -282,6 +288,27 @@ mod tests {
         assert_eq!(specs.len(), 1);
         assert_eq!(specs[0].title, "A");
         assert!(specs[0].level_tags.contains(&TestLevel::Unit));
+    }
+
+    /// `Scenario Template:` is an official Gherkin dialect alias for
+    /// `Scenario Outline:` (see `node_modules/@cucumber/gherkin`'s own
+    /// `gherkin-languages.json`, `en.scenarioOutline: ["Scenario Outline",
+    /// "Scenario Template"]`) — playwright-bdd genuinely renders a
+    /// `test`/`test.fixme` for a scenario declared with this keyword, so it
+    /// must be recognised here too, exactly like `Scenario Outline:`.
+    #[test]
+    fn extract_scenario_specs_recognises_scenario_template_alias() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@e2e\nScenario Template: A\n  Given <x>\n\nExamples:\n  | x |\n  | 1 |\n",
+        )
+        .unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert_eq!(specs[0].title, "A");
+        assert!(specs[0].level_tags.contains(&TestLevel::E2e));
     }
 
     #[test]

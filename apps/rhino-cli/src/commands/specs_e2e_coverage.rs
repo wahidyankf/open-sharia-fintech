@@ -512,6 +512,41 @@ mod tests {
         )
     }
 
+    /// Verification fixture for a cycle-5 CRITICAL finding: `Scenarios:` is
+    /// a valid Gherkin alias for `Examples:`. This is a REAL, non-zero-row
+    /// Outline (two data rows, both rendered as ordinary bound `test(...)`
+    /// calls in the generated output) that happens to use the `Scenarios:`
+    /// spelling for its data table. Unlike [`write_zero_row_outline_fixture`],
+    /// this must NOT be reported as a gap — the declared-side extraction
+    /// never inspects the Examples/Scenarios table keyword at all (it only
+    /// matches the `Scenario Outline:` line itself), so the alias has no
+    /// bearing on whether the outline's title is found in the generated
+    /// output. Returns `(project_dir, baseline_path)`.
+    fn write_fully_bound_scenarios_alias_outline_fixture(
+        root: &std::path::Path,
+    ) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario Outline: Renders the field correctly\n  Given a field\n\n  Scenarios:\n    | field |\n    | name  |\n    | email |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.describe('Renders the field correctly', () => {\n  test('Example #1', async ({ page }) => {\n  });\n  test('Example #2', async ({ page }) => {\n  });\n});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
     /// Writes a project fixture reproducing the cycle-4 CRITICAL finding:
     /// an `@e2e Scenario Outline` whose `Examples:` table has a header row
     /// but ZERO data rows underneath it. playwright-bdd's
@@ -887,6 +922,26 @@ mod tests {
         assert!(
             run(&args, OutputFormat::Text).is_ok(),
             "a fully-bound outline (zero test.fixme Examples rows) must pass"
+        );
+    }
+
+    /// Verification test for a cycle-5 CRITICAL finding: a REAL (non-zero
+    /// row) `Scenario Outline` using the `Scenarios:` alias for its data
+    /// table must pass exactly like an ordinary `Examples:`-keyword outline
+    /// — the alias must never be miscounted as zero rows nor cause its
+    /// title to be silently dropped from the declared or rendered sets. See
+    /// [`write_fully_bound_scenarios_alias_outline_fixture`] for why this
+    /// holds structurally (the alias is invisible to both the declared-side
+    /// and generated-side scanners).
+    #[test]
+    fn scenarios_alias_outline_fully_bound_is_not_reported_as_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_fully_bound_scenarios_alias_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        assert!(
+            run(&args, OutputFormat::Text).is_ok(),
+            "a fully-bound outline declared with the Scenarios: Examples alias must pass"
         );
     }
 

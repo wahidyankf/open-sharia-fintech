@@ -301,6 +301,53 @@ mod tests {
         assert_eq!(declared[0].feature, "specs/x.feature");
     }
 
+    /// Regression test for a cycle-5 CRITICAL finding: `Scenario Template:`
+    /// is an official Gherkin dialect alias for `Scenario Outline:`
+    /// (`@cucumber/gherkin`'s `gherkin-languages.json`,
+    /// `en.scenarioOutline: ["Scenario Outline", "Scenario Template"]`), and
+    /// playwright-bdd genuinely renders real test output for a scenario
+    /// declared this way — so `extract_declared` (which delegates to
+    /// `extract_scenario_specs`) must include it in the declared `@e2e`
+    /// scenario set exactly like an ordinary `Scenario Outline:`.
+    #[test]
+    fn extract_declared_recognises_scenario_template_alias() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@e2e\nScenario Template: Renders the field correctly\n  Given a field <field>\n\n  Examples:\n    | field |\n    | name  |\n",
+        )
+        .unwrap();
+
+        let declared = extract_declared(&p, "specs/x.feature").unwrap();
+
+        assert_eq!(declared.len(), 1);
+        assert_eq!(declared[0].scenario, "Renders the field correctly");
+    }
+
+    /// Verification for a cycle-5 CRITICAL finding: `Scenarios:` is a valid
+    /// Gherkin alias for `Examples:`. `extract_declared` never parses the
+    /// Examples-table keyword at all — it only needs the `Scenario Outline:`
+    /// prefix on the scenario's own declaration line — so a `Scenarios:`
+    /// alias table has no effect on the declared set either way. This proves
+    /// that directly: an Outline whose table uses `Scenarios:` instead of
+    /// `Examples:` is still extracted and titled correctly.
+    #[test]
+    fn extract_declared_is_unaffected_by_the_scenarios_examples_alias() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@e2e\nScenario Outline: Renders the field correctly\n  Given a field <field>\n\n  Scenarios:\n    | field |\n    | name  |\n    | email |\n",
+        )
+        .unwrap();
+
+        let declared = extract_declared(&p, "specs/x.feature").unwrap();
+
+        assert_eq!(declared.len(), 1);
+        assert_eq!(declared[0].scenario, "Renders the field correctly");
+    }
+
     #[test]
     fn scan_finds_test_fixme_titles() {
         let spec_js = r#"
