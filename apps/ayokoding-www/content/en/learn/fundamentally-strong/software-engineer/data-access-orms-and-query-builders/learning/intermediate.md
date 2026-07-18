@@ -1070,7 +1070,7 @@ if __name__ == "__main__":  # => module entry point -- only runs when executed d
     assert "LEFT OUTER JOIN customer_order" in select_statements[0]  # => co-14: the ONE query IS a JOIN, not two SELECTs
     # => co-14: joinedload() trades query COUNT for row-set SIZE -- one round trip, but a wider, sometimes-duplicated
     # => result set that needs .unique() to dedupe; selectinload() (Example 37) trades the other way: two queries, but
-    # => each one stays narrow -- which strategy wins depends on how many children each parent typically has (co-40)
+    # => each one stays narrow -- which strategy wins depends on how many children each parent typically has (co-14)
     print("ex-38 OK")  # => Output: ex-38 OK
 ```
 
