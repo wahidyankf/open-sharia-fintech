@@ -1,0 +1,6 @@
+{
+  "typeCheckingMode": "strict",
+  "pythonVersion": "3.13",
+  "include": ["learning/code", "learning/capstone/code", "drilling/code"],
+  "extraPaths": [".venv/lib/python3.13/site-packages"]
+}
