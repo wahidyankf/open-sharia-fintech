@@ -375,6 +375,36 @@ mod tests {
         )
     }
 
+    /// Writes a project fixture reproducing a cycle-6 CRITICAL finding: an
+    /// `@e2e` tag separated from its `Scenario:` line by a `#`-comment line
+    /// — real Gherkin still associates the tag with the scenario across the
+    /// comment, so this scenario belongs in the declared set exactly like an
+    /// ordinary immediately-tagged one, and its generated output here is
+    /// `test.fixme`'d (unbound), so the gate must report it as a new gap.
+    /// Returns `(project_dir, baseline_path)`.
+    fn write_comment_separated_tag_scenario_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\n# some comment\nScenario: X\n  Given a\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme(\"X\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
     /// Writes a project fixture reproducing the title-collision-across-files
     /// bug: two `.feature` files — `file1.feature`, `file2.feature` — each
     /// declaring an identically-titled `@e2e` scenario ("Same title"), but
@@ -717,6 +747,29 @@ mod tests {
         assert!(
             run(&validate_args, OutputFormat::Text).is_ok(),
             "follow-up validate should pass against the freshly written baseline"
+        );
+    }
+
+    /// Regression test for a cycle-6 CRITICAL finding: an `@e2e` tag
+    /// separated from its `Scenario:` line by a `#`-comment line must be
+    /// included in the declared set AND correctly flagged as a new gap when
+    /// its generated output is `test.fixme`'d — before the fix, the
+    /// comment line cleared `pending_tags` in `extract_scenario_specs`, so
+    /// the scenario silently dropped out of the declared set entirely and
+    /// the gate never checked it at all (0 gaps reported instead of 1).
+    #[test]
+    fn tag_separated_from_scenario_by_a_comment_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_comment_separated_tag_scenario_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the comment-separated-tag scenario to be reported as \
+             exactly 1 new gap, got: {msg}"
         );
     }
 

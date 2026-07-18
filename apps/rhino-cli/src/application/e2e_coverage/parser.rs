@@ -424,6 +424,27 @@ mod tests {
         assert_eq!(declared[0].scenario, "Renders the field correctly");
     }
 
+    /// Regression test for a cycle-6 CRITICAL finding: a `#`-comment line
+    /// between an `@e2e` tag and its `Scenario:` line must not drop the
+    /// scenario from the declared set — real Gherkin (`@cucumber/gherkin`,
+    /// which playwright-bdd's own `generateMessages` call uses) ignores a
+    /// comment wherever it appears; the tag still applies to the next real
+    /// keyword line. Before the fix, `extract_scenario_specs`'s
+    /// tag-accumulation loop cleared `pending_tags` on the comment line, so
+    /// this scenario was silently excluded from `extract_declared`'s result
+    /// — never checked, never baselined, never reported as a gap.
+    #[test]
+    fn extract_declared_includes_a_scenario_whose_tag_is_separated_by_a_comment() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(&p, "@e2e\n# some comment\nScenario: X\n  Given a\n").unwrap();
+
+        let declared = extract_declared(&p, "specs/x.feature").unwrap();
+
+        assert_eq!(declared.len(), 1);
+        assert_eq!(declared[0].scenario, "X");
+    }
+
     #[test]
     fn scan_finds_test_fixme_titles() {
         let spec_js = r#"
