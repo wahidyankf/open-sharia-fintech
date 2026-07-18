@@ -87,33 +87,33 @@ stateDiagram-v2
 
 > _Executor: repo-setup-manager_
 
-- [ ] [AI] **Predecessor gate** — confirm [`rhino-cli-source-drift-reconciliation`](../../done/2026-07-17__rhino-cli-source-drift-reconciliation/README.md)
+- [x] [AI] **Predecessor gate** — confirm [`rhino-cli-source-drift-reconciliation`](../../done/2026-07-17__rhino-cli-source-drift-reconciliation/README.md)
       has landed (rhino-cli byte-identity restored) before starting any rhino-cli work: from the
       parent dir of the three repos, run
       `for p in ose-primer ose-infra; do diff -rq ose-public/apps/rhino-cli/src "$p/apps/rhino-cli/src"; done`
       — acceptance: **zero output** (rhino-cli `src/` byte-identical across all three repos); if drift
       remains, stop and complete the predecessor plan first
-- [ ] [AI] Confirm the worktree is entered: `git -C worktrees/e2e-scenario-coverage-gap-detector rev-parse --show-toplevel`
+- [x] [AI] Confirm the worktree is entered: `git -C worktrees/e2e-scenario-coverage-gap-detector rev-parse --show-toplevel`
       — acceptance: prints the worktree path
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
+- [x] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
-- [ ] [AI] Converge the polyglot toolchain in the root worktree: `npm run doctor -- --fix`
+- [x] [AI] Converge the polyglot toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift (Rust toolchain present for `rhino-cli`)
-- [ ] [AI] Establish the `rhino-cli` baseline: `npx nx run rhino-cli:test:quick`
+- [x] [AI] Establish the `rhino-cli` baseline: `npx nx run rhino-cli:test:quick`
       — acceptance: pass/fail count recorded; all preexisting failures documented
-- [ ] [AI] Establish the affected-e2e baseline: `npx nx run ayokoding-www-fe-e2e:specs:behavior:coverage`
+- [x] [AI] Establish the affected-e2e baseline: `npx nx run ayokoding-www-fe-e2e:specs:behavior:coverage`
       — acceptance: current result recorded (the target this plan's new gate sits beside)
-- [ ] [AI] Resolve all preexisting failures before proceeding
+- [x] [AI] Resolve all preexisting failures before proceeding
       — acceptance: no preexisting failures remain unresolved
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder (sibling to this file)
+- [x] [AI] Confirm `learnings.md` exists in the plan folder (sibling to this file)
       — acceptance: `test -f plans/in-progress/e2e-scenario-coverage-gap-detector/learnings.md` exits 0
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npx nx run rhino-cli:test:quick` baseline recorded and every preexisting failure resolved
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+- [x] [AI] `npx nx run rhino-cli:test:quick` baseline recorded and every preexisting failure resolved
 
 > **Pause Safety**: only the local toolchain was verified and the baseline recorded — no feature
 > work exists yet. Safe to stop indefinitely. To resume: re-run `npx nx run rhino-cli:test:quick`
@@ -127,7 +127,7 @@ stateDiagram-v2
 > Each cycle binds exactly one `prd.md` acceptance scenario.
 > _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] Create the module scaffold `apps/rhino-cli/src/application/e2e_coverage/{mod.rs,types.rs,diff.rs}`
+- [x] [AI] Create the module scaffold `apps/rhino-cli/src/application/e2e_coverage/{mod.rs,types.rs,diff.rs}`
       and register it in `apps/rhino-cli/src/application/mod.rs` (model after the sibling
       `application/behavior_coverage/mod.rs`)
       — command: `npx nx run rhino-cli:typecheck`
@@ -136,7 +136,7 @@ stateDiagram-v2
 
 ### AC-1 — Baseline-aware first run does not fail (cycle)
 
-- [ ] [AI] **RED**: add `#[cfg(test)]` test `baseline_match_passes` in
+- [x] [AI] **RED**: add `#[cfg(test)]` test `baseline_match_passes` in
       `apps/rhino-cli/src/application/e2e_coverage/diff.rs` asserting a declared∩fixme set equal to the
       baseline yields an empty new-gap set / pass
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff::tests::baseline_match_passes`
@@ -151,17 +151,17 @@ stateDiagram-v2
     And it reports 2 declared-but-unbound scenarios all covered by the baseline
   ```
 
-- [ ] [AI] **GREEN**: implement `diff(declared, fixme, baseline) -> GapReport` in `diff.rs` computing
+- [x] [AI] **GREEN**: implement `diff(declared, fixme, baseline) -> GapReport` in `diff.rs` computing
       `new_gaps = (declared ∩ fixme) \ baseline`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: `baseline_match_passes` passes; no other tests broken
-- [ ] [AI] **REFACTOR**: extract set operations into named helpers; keep `GapReport` fields explicit
+- [x] [AI] **REFACTOR**: extract set operations into named helpers; keep `GapReport` fields explicit
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: all `e2e_coverage` tests still pass
 
 ### AC-2 — A new unbound scenario beyond baseline fails (cycle)
 
-- [ ] [AI] **RED**: add test `new_gap_fails_and_named` asserting a fixme scenario absent from the
+- [x] [AI] **RED**: add test `new_gap_fails_and_named` asserting a fixme scenario absent from the
       baseline appears in `new_gaps` while a baselined one does not
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff::tests::new_gap_fails_and_named`
       — acceptance: test fails (new-gap detection not yet distinguishing baselined entries) - **Gherkin (binds) →** "A newly added @e2e scenario ships without a step definition"
@@ -176,17 +176,17 @@ stateDiagram-v2
     And it does not report scenario "A" as a new gap
   ```
 
-- [ ] [AI] **GREEN**: ensure `diff` records `{feature, scenario}` for each new gap and a boolean
+- [x] [AI] **GREEN**: ensure `diff` records `{feature, scenario}` for each new gap and a boolean
       `failed` when `new_gaps` is non-empty
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: `new_gap_fails_and_named` passes
-- [ ] [AI] **REFACTOR**: deduplicate the AC-1/AC-2 test fixtures into a shared `fn fixture(...)` helper
+- [x] [AI] **REFACTOR**: deduplicate the AC-1/AC-2 test fixtures into a shared `fn fixture(...)` helper
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: all `e2e_coverage` tests still pass
 
 ### AC-3 — Baseline shrinkage always passes (cycle)
 
-- [ ] [AI] **RED**: add test `shrinkage_passes_and_reports_newly_bound` asserting a baselined scenario
+- [x] [AI] **RED**: add test `shrinkage_passes_and_reports_newly_bound` asserting a baselined scenario
       no longer in the fixme set is reported as newly-bound and never fails the run
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff::tests::shrinkage_passes_and_reports_newly_bound`
       — acceptance: test fails (newly-bound reporting not implemented) - **Gherkin (binds) →** "A previously-unbound scenario is now bound"
@@ -200,16 +200,16 @@ stateDiagram-v2
     And it reports scenario "B" as newly bound relative to the baseline
   ```
 
-- [ ] [AI] **GREEN**: add `newly_bound = baseline \ fixme` to `GapReport`; never let it affect `failed`
+- [x] [AI] **GREEN**: add `newly_bound = baseline \ fixme` to `GapReport`; never let it affect `failed`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: `shrinkage_passes_and_reports_newly_bound` passes
-- [ ] [AI] **REFACTOR**: document each `GapReport` field with a doc comment
+- [x] [AI] **REFACTOR**: document each `GapReport` field with a doc comment
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: all `e2e_coverage` tests still pass
 
 ### AC-8 — Stale baseline entry is reported for pruning (cycle)
 
-- [ ] [AI] **RED**: add test `stale_baseline_entry_reported` asserting a baselined-but-no-longer-fixme
+- [x] [AI] **RED**: add test `stale_baseline_entry_reported` asserting a baselined-but-no-longer-fixme
       scenario surfaces in a `stale` list while the run still passes
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff::tests::stale_baseline_entry_reported`
       — acceptance: test fails (stale classification not implemented; may reuse `newly_bound` naming — assert the `stale` field) - **Gherkin (binds) →** "The baseline lists a scenario that is no longer unbound"
@@ -223,10 +223,10 @@ stateDiagram-v2
     And it reports scenario "B" as a stale baseline entry that can be pruned
   ```
 
-- [ ] [AI] **GREEN**: expose the stale set (baseline entries not currently unbound) on `GapReport`
+- [x] [AI] **GREEN**: expose the stale set (baseline entries not currently unbound) on `GapReport`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: `stale_baseline_entry_reported` passes
-- [ ] [AI] **REFACTOR**: consolidate `newly_bound`/`stale` if identical in meaning; keep one named field
+- [x] [AI] **REFACTOR**: consolidate `newly_bound`/`stale` if identical in meaning; keep one named field
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff`
       — acceptance: all `e2e_coverage` tests still pass
 
@@ -234,9 +234,9 @@ stateDiagram-v2
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff` — all diff-core tests pass
-- [ ] [AI] `npx nx run rhino-cli:typecheck` — exits 0
-- [ ] [AI] `npx nx run rhino-cli:lint` — exits 0
+- [x] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::diff` — all diff-core tests pass
+- [x] [AI] `npx nx run rhino-cli:typecheck` — exits 0
+- [x] [AI] `npx nx run rhino-cli:lint` — exits 0
 
 > **Pause Safety**: the pure diff core compiles and its unit tests pass; nothing is wired into the CLI
 > yet, so the binary behaves exactly as before. Safe to stop. To resume:
@@ -250,7 +250,7 @@ stateDiagram-v2
 
 ### AC-5 — Only @e2e-tagged scenarios count as declared (cycle)
 
-- [ ] [AI] **RED**: add `apps/rhino-cli/src/application/e2e_coverage/parser.rs` with test
+- [x] [AI] **RED**: add `apps/rhino-cli/src/application/e2e_coverage/parser.rs` with test
       `declared_set_is_e2e_only` that feeds a temp `.feature` (one `@unit`-only, one `@e2e`) through the
       declared-extraction fn and asserts only the `@e2e` scenario is returned
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::parser::tests::declared_set_is_e2e_only`
@@ -265,32 +265,32 @@ stateDiagram-v2
     And it does not report the @unit-only scenario as an unbound gap
   ```
 
-- [ ] [AI] **GREEN**: implement declared extraction by delegating to
+- [x] [AI] **GREEN**: implement declared extraction by delegating to
       `crate::application::behavior_coverage::extract::extract_scenario_specs` and filtering to
       `TestLevel::E2e`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::parser`
       — acceptance: `declared_set_is_e2e_only` passes
-- [ ] [AI] **REFACTOR**: remove any duplicated tag-parsing now that extraction is reused
+- [x] [AI] **REFACTOR**: remove any duplicated tag-parsing now that extraction is reused
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage`
       — acceptance: all `e2e_coverage` tests still pass
 
-- [ ] [AI] **RED**: add test `scan_finds_test_fixme_titles` in `parser.rs` feeding a fixture
+- [x] [AI] **RED**: add test `scan_finds_test_fixme_titles` in `parser.rs` feeding a fixture
       `.spec.js` string containing `test.fixme("Title A", ...)` and `test("Title B", ...)` and asserting
       only `Title A` is returned as unbound
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::parser::tests::scan_finds_test_fixme_titles`
       — acceptance: test fails (scan fn not implemented) - **Gherkin (underpins) →** supporting the AC-2 detection path (`test.fixme` = unbound ground truth)
-- [ ] [AI] **GREEN**: implement `scan_fixme_titles(spec_js: &str) -> Vec<String>` via a `regex` matching
+- [x] [AI] **GREEN**: implement `scan_fixme_titles(spec_js: &str) -> Vec<String>` via a `regex` matching
       `test.fixme(` call titles (reuse the crate's existing `regex` dependency)
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::parser`
       — acceptance: `scan_finds_test_fixme_titles` passes
-- [ ] [AI] **REFACTOR**: compile the regex once via `OnceLock`, matching the pattern in
+- [x] [AI] **REFACTOR**: compile the regex once via `OnceLock`, matching the pattern in
       `behavior_coverage/extract.rs`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage`
       — acceptance: all `e2e_coverage` tests still pass
 
 ### AC-4 — Reporting names the specific feature file and scenario title (cycle)
 
-- [ ] [AI] **RED**: add `apps/rhino-cli/src/application/e2e_coverage/reporter.rs` with test
+- [x] [AI] **RED**: add `apps/rhino-cli/src/application/e2e_coverage/reporter.rs` with test
       `text_report_names_feature_and_scenario` asserting the text report for a `GapReport` with one new
       gap contains the scenario title, the `.feature` path suffix, and an "increase of 1" delta line
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::reporter::tests::text_report_names_feature_and_scenario`
@@ -305,11 +305,11 @@ stateDiagram-v2
     And the failure output states the delta is an increase of 1 over baseline
   ```
 
-- [ ] [AI] **GREEN**: implement `format_text`, `format_json`, `format_markdown` for `GapReport`
+- [x] [AI] **GREEN**: implement `format_text`, `format_json`, `format_markdown` for `GapReport`
       (model after `commands/specs_gherkin_cardinality.rs` formatters — `status`, `schema`, `result[]`)
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage::reporter`
       — acceptance: `text_report_names_feature_and_scenario` passes
-- [ ] [AI] **REFACTOR**: share a `SCHEMA` const and a header helper across the three formatters
+- [x] [AI] **REFACTOR**: share a `SCHEMA` const and a header helper across the three formatters
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage`
       — acceptance: all `e2e_coverage` tests still pass
 
@@ -317,8 +317,8 @@ stateDiagram-v2
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage` — all core+parser+reporter tests pass
-- [ ] [AI] `npx nx run rhino-cli:typecheck` and `npx nx run rhino-cli:lint` — both exit 0
+- [x] [AI] `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage` — all core+parser+reporter tests pass
+- [x] [AI] `npx nx run rhino-cli:typecheck` and `npx nx run rhino-cli:lint` — both exit 0
 
 > **Pause Safety**: the full pure pipeline (extract → scan → diff → report) is tested in isolation; the
 > CLI still exposes no new command, so the shipped binary is unchanged. Safe to stop. To resume:
@@ -330,13 +330,13 @@ stateDiagram-v2
 
 > _Suggested executor: `swe-rust-dev`_
 
-- [ ] [AI] Create `apps/rhino-cli/src/commands/specs_e2e_coverage.rs` with a Clap `ValidateArgs`
+- [x] [AI] Create `apps/rhino-cli/src/commands/specs_e2e_coverage.rs` with a Clap `ValidateArgs`
       (positional project-dir + `--features <glob>` repeatable, `--features-gen <dir>`,
       `--baseline <path>`, `--project <name>`, `--update-baseline`) and a `run(args, output_format)`
       that calls the pure core; register it in `apps/rhino-cli/src/commands/mod.rs`
       — command: `npx nx run rhino-cli:typecheck`
       — acceptance: `cargo check` compiles; module is referenced from `mod.rs`
-- [ ] [AI] Wire the CLI grammar in `apps/rhino-cli/src/cli.rs`: add `SpecsCommands::E2eCoverage`
+- [x] [AI] Wire the CLI grammar in `apps/rhino-cli/src/cli.rs`: add `SpecsCommands::E2eCoverage`
       (`#[command(name = "e2e-coverage", subcommand)]`) + a `SpecsE2eCoverageCommands::Validate` leaf +
       the `dispatch_specs` arm, mirroring `BehaviorCoverage`
       — command: `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --help`
@@ -344,7 +344,7 @@ stateDiagram-v2
 
 ### AC-6 — `--update-baseline` snapshot mode (cycle)
 
-- [ ] [AI] **RED**: add test `update_baseline_writes_current_fixme_set` in `specs_e2e_coverage.rs`
+- [x] [AI] **RED**: add test `update_baseline_writes_current_fixme_set` in `specs_e2e_coverage.rs`
       driving `run` with `--update-baseline` against a temp fixture and asserting the written
       `e2e-coverage-baseline.json` lists the current fixme scenarios and a follow-up validate passes
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage::tests::update_baseline_writes_current_fixme_set`
@@ -359,17 +359,17 @@ stateDiagram-v2
     And a subsequent validate run for that project passes with exit code 0
   ```
 
-- [ ] [AI] **GREEN**: implement `--update-baseline` to serialize the current unbound set to the
+- [x] [AI] **GREEN**: implement `--update-baseline` to serialize the current unbound set to the
       `--baseline` path via `serde_json::to_string_pretty`
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: `update_baseline_writes_current_fixme_set` passes
-- [ ] [AI] **REFACTOR**: extract baseline load/save into `application/e2e_coverage/types.rs` helpers
+- [x] [AI] **REFACTOR**: extract baseline load/save into `application/e2e_coverage/types.rs` helpers
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage specs_e2e_coverage`
       — acceptance: all related tests still pass
 
 ### AC-7 — Missing generated output is a clear error (cycle)
 
-- [ ] [AI] **RED**: add test `missing_features_gen_errors` asserting `run` against an absent
+- [x] [AI] **RED**: add test `missing_features_gen_errors` asserting `run` against an absent
       `--features-gen` dir returns a non-zero result naming the missing directory and instructing to run
       `bddgen` first
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage::tests::missing_features_gen_errors`
@@ -383,11 +383,11 @@ stateDiagram-v2
     And it reports that bddgen output was not found and must be generated first
   ```
 
-- [ ] [AI] **GREEN**: guard the scan with an explicit `.features-gen` existence check returning an
+- [x] [AI] **GREEN**: guard the scan with an explicit `.features-gen` existence check returning an
       `anyhow` error with the remediation message
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: `missing_features_gen_errors` passes
-- [ ] [AI] **REFACTOR**: ensure the error message is emitted on stderr via the standard `dispatch`
+- [x] [AI] **REFACTOR**: ensure the error message is emitted on stderr via the standard `dispatch`
       `eprintln!("Error: {e}")` path (no duplicate printing)
       — command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: all `specs_e2e_coverage` tests still pass
@@ -396,8 +396,8 @@ stateDiagram-v2
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0 (typecheck + lint + unit + coverage ≥ 90% + specs)
-- [ ] [AI] `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --help` — lists the command
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0 (typecheck + lint + unit + coverage ≥ 90% + specs)
+- [x] [AI] `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --help` — lists the command
 
 > **Pause Safety**: the new subcommand is fully wired, tested, and passes the full `rhino-cli`
 > quality gate, but no Nx target or baseline manifest consumes it yet — no other project's gate has
@@ -411,25 +411,25 @@ stateDiagram-v2
 
 ### Specs & Gherkin Delivery
 
-- [ ] [AI] **RED**: add `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature`
+- [x] [AI] **RED**: add `specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature`
       (tagged `@specs-e2e-coverage`, one `@unit` scenario per prd.md AC, one primary Given/When/Then
       each) describing the new subcommand's behavior
       — command: `npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: the feature file exists; the coverage gate now sees new scenarios (fails if step
       coverage/`@covers` mapping is incomplete)
-- [ ] [AI] **GREEN**: ensure each new `e2e-coverage.feature` scenario is covered by a corresponding
+- [x] [AI] **GREEN**: ensure each new `e2e-coverage.feature` scenario is covered by a corresponding
       `#[cfg(test)]` unit test / `@covers` marker (model after how `specs/**` scenarios map to the
       Phase 1–3 tests), then re-run the gate
       — command: `npx nx run rhino-cli:specs:behavior:coverage`
       — acceptance: exits 0 (every scenario covered at the declared level)
-- [ ] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md` — add `e2e-coverage.feature`
+- [x] [AI] Update `specs/apps/rhino/behavior/rhino-cli/gherkin/README.md` — add `e2e-coverage.feature`
       to the `specs` domain table with its command (`specs e2e-coverage validate`) and scenario count
       — command: `npx nx run rhino-cli:specs:structure-validation`
       — acceptance: exits 0
-- [ ] [AI] Run the Gherkin cardinality gate over the new feature file:
+- [x] [AI] Run the Gherkin cardinality gate over the new feature file:
       `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate`
       — acceptance: exits 0 (one primary Given/When/Then per scenario)
-- [ ] [AI] Update `apps/rhino-cli/README.md` — document `specs e2e-coverage validate` (flags, exit
+- [x] [AI] Update `apps/rhino-cli/README.md` — document `specs e2e-coverage validate` (flags, exit
       codes, `--update-baseline`) alongside the other `specs` subcommands
       — command: `npm run lint:md:fix`
       — acceptance: markdown lints clean; the new subcommand is documented
@@ -438,8 +438,8 @@ stateDiagram-v2
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `npx nx run rhino-cli:test:quick` — exits 0 (includes `test:specs` → structure + behavior coverage)
-- [ ] [AI] `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate` — exits 0
+- [x] [AI] `npx nx run rhino-cli:test:quick` — exits 0 (includes `test:specs` → structure + behavior coverage)
+- [x] [AI] `cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate` — exits 0
 
 > **Pause Safety**: `rhino-cli` now ships the command plus its companion specs and docs, all gates
 > green, still with no consuming project wired. Safe to stop. To resume: `npx nx run rhino-cli:test:quick`.
@@ -455,12 +455,12 @@ stateDiagram-v2
 defineBddConfig]`.
 > _Suggested executor: `swe-e2e-dev` (Playwright/e2e project config)._
 
-- [ ] [AI] For `ayokoding-www-fe-e2e` (the `skip-scenario` project): generate its baseline by running
+- [x] [AI] For `ayokoding-www-fe-e2e` (the `skip-scenario` project): generate its baseline by running
       `npx nx run ayokoding-www-fe-e2e:install` then, in `apps/ayokoding-www-fe-e2e/`,
       `npx bddgen && cargo run --manifest-path ../../apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --project ayokoding-www-fe-e2e --features "../../specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**/*.feature" --features "../../specs/libs/web-ui/behavior/gherkin/resizable-panel/resizable-panel.feature" --features-gen .features-gen --baseline e2e-coverage-baseline.json --update-baseline`
       — acceptance: `apps/ayokoding-www-fe-e2e/e2e-coverage-baseline.json` is written and lists the
       current unbound scenarios (~104 expected; record the exact count in `learnings.md`)
-- [ ] [AI] Add the `specs:e2e:coverage` target to `apps/ayokoding-www-fe-e2e/project.json` with
+- [x] [AI] Add the `specs:e2e:coverage` target to `apps/ayokoding-www-fe-e2e/project.json` with
       `cache: true`, `inputs` = consumed `.feature` globs + `{projectRoot}/src/steps/**` +
       `{projectRoot}/e2e-coverage-baseline.json`, and a command that runs
       `npx bddgen && cargo run … -- specs e2e-coverage validate … --baseline e2e-coverage-baseline.json`;
@@ -468,29 +468,29 @@ defineBddConfig]`.
       `specs:behavior:coverage`)
       — command: `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage`
       — acceptance: exits 0 (current gaps all equal the just-written baseline)
-- [ ] [AI] Verify the gate fires on a synthetic new gap: temporarily add an `@e2e` scenario with no
+- [x] [AI] Verify the gate fires on a synthetic new gap: temporarily add an `@e2e` scenario with no
       step def to a scratch copy under `apps/ayokoding-www-fe-e2e/`, re-run
       `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage`, confirm it FAILS naming the scratch
       scenario, then revert the scratch change
       — acceptance: gate exits non-zero on the injected gap and exits 0 after revert (record evidence
       in `learnings.md`)
-- [ ] [AI] For each of the remaining 10 playwright-bdd projects: repeat the baseline-generation +
+- [x] [AI] For each of the remaining 10 playwright-bdd projects: repeat the baseline-generation +
       target-wiring steps (each `fail-on-gen` project is expected to produce an empty
       `allowedUnbound: []` baseline and a trivially-passing gate)
       — command: `npx nx run <project>:specs:e2e:coverage` for each
       — acceptance: each exits 0; each `apps/<project>/e2e-coverage-baseline.json` exists
-- [ ] [AI] Confirm workspace-wide wiring: `npx nx run-many -t specs:e2e:coverage`
+- [x] [AI] Confirm workspace-wide wiring: `npx nx run-many -t specs:e2e:coverage`
       — acceptance: every playwright-bdd project's gate exits 0
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` — exits 0
-- [ ] [AI] `npx nx affected -t lint` — exits 0
-- [ ] [AI] `npx nx affected -t test:quick` — exits 0
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
-- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
+- [x] [AI] `npx nx affected -t typecheck` — exits 0
+- [x] [AI] `npx nx affected -t lint` — exits 0
+- [x] [AI] `npx nx affected -t test:quick` — exits 0
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
+- [x] [AI] Fix ALL failures found — including preexisting issues not caused by these changes
       (Root Cause Orientation)
-- [ ] [AI] Re-run any failing checks to confirm resolution; verify zero failures before pushing
+- [x] [AI] Re-run any failing checks to confirm resolution; verify zero failures before pushing
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by these changes.
 > This follows Root Cause Orientation — proactively fix preexisting errors encountered during work.
@@ -498,7 +498,7 @@ defineBddConfig]`.
 
 ### Manual CLI Verification
 
-- [ ] [AI] Run the command end-to-end and inline the output in `learnings.md`:
+- [x] [AI] Run the command end-to-end and inline the output in `learnings.md`:
       `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` (pass case) and the reverted synthetic-gap
       failure output
       — acceptance: pass case shows exit 0 + "all covered by baseline"; fail case names the feature +
@@ -506,27 +506,27 @@ defineBddConfig]`.
 
 ### Commit Guidelines
 
-- [ ] [AI] Commit thematically, Conventional Commits (`feat(rhino-cli): add specs e2e-coverage validate`,
+- [x] [AI] Commit thematically, Conventional Commits (`feat(rhino-cli): add specs e2e-coverage validate`,
       `feat(e2e): wire specs:e2e:coverage gate + baselines`, `docs(rhino-cli): document e2e-coverage`)
-- [ ] [AI] Split rhino-cli source, e2e wiring, and docs into separate commits; preexisting fixes get
+- [x] [AI] Split rhino-cli source, e2e wiring, and docs into separate commits; preexisting fixes get
       their own commits
 
 ### Post-Push CI Verification
 
-- [ ] [AI] Commit and push to origin `e2e-scenario-coverage-gap-detector` (the PR branch)
-- [ ] [AI] Open a draft PR against `main` (worktree-to-pr mode)
-- [ ] [AI] Monitor ALL GitHub Actions workflows triggered by the push (poll every 2 min per
+- [x] [AI] Commit and push to origin `e2e-scenario-coverage-gap-detector` (the PR branch)
+- [x] [AI] Open a draft PR against `main` (worktree-to-pr mode)
+- [x] [AI] Monitor ALL GitHub Actions workflows triggered by the push (poll every 2 min per
       [ci-monitoring](../../../repo-governance/development/workflow/ci-monitoring.md))
-- [ ] [AI] Verify ALL CI checks pass; if any fails, fix at root cause and push a follow-up commit;
+- [x] [AI] Verify ALL CI checks pass; if any fails, fix at root cause and push a follow-up commit;
       repeat until green — do NOT proceed while CI is red
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `npx nx run-many -t specs:e2e:coverage` — every playwright-bdd project exits 0
-- [ ] [AI] Every `apps/<project>-e2e/e2e-coverage-baseline.json` (11 files) exists and is committed
-- [ ] [AI] CI is green on the pushed PR branch
+- [x] [AI] `npx nx run-many -t specs:e2e:coverage` — every playwright-bdd project exits 0
+- [x] [AI] Every `apps/<project>-e2e/e2e-coverage-baseline.json` (11 files) exists and is committed
+- [x] [AI] CI is green on the pushed PR branch
 
 > **Pause Safety**: the gate is live across all playwright-bdd projects with committed baselines and
 > green CI; the repository is coherent and merge-ready pending review. Safe to stop. To resume:
@@ -556,11 +556,11 @@ defineBddConfig]`.
 
 ### 6a. ose-primer — apply, verify, draft PR, 3-cycle review, gates
 
-- [ ] [AI] Provision the ose-primer worktree:
+- [x] [AI] Provision the ose-primer worktree:
       `git -C /Users/wkf/ose-projects/ose-primer worktree add worktrees/e2e-scenario-coverage-gap-detector -b e2e-scenario-coverage-gap-detector origin/main`
       then `(cd /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector && npm install && npm run doctor -- --fix)`
       — acceptance: worktree dir exists and both commands exit 0
-- [ ] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-primer worktree:
+- [x] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-primer worktree:
 
   ```bash
   OSE_PRIMER_WT=/Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -584,10 +584,10 @@ defineBddConfig]`.
 
   — acceptance: all 9 files exist under `$OSE_PRIMER_WT`
 
-- [ ] [AI] Run the ported crate's tests in the ose-primer worktree:
+- [x] [AI] Run the ported crate's tests in the ose-primer worktree:
       `cd "$OSE_PRIMER_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: both exit 0
-- [ ] [AI] Verify byte-identity of every propagated file against `ose-public`:
+- [x] [AI] Verify byte-identity of every propagated file against `ose-public`:
 
   ```bash
   OSE_PRIMER_WT=/Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -602,17 +602,17 @@ defineBddConfig]`.
 
   — acceptance: zero output from every `diff` invocation (byte-identical)
 
-- [ ] [AI] Wire `ose-primer`'s own `specs:e2e:coverage` target + baseline manifests for its
+- [x] [AI] Wire `ose-primer`'s own `specs:e2e:coverage` target + baseline manifests for its
       playwright-bdd e2e projects (discover via
       `grep -l defineBddConfig "$OSE_PRIMER_WT"/apps/*/playwright.config.ts`), repeating the Phase 5
       baseline-generation + target-wiring pattern per project inside `$OSE_PRIMER_WT`
       — acceptance: `cd "$OSE_PRIMER_WT" && npx nx run-many -t specs:e2e:coverage` exits 0 (or is a
       no-op if `ose-primer` has no playwright-bdd projects)
-- [ ] [AI] Run ose-primer's local quality gates:
+- [x] [AI] Run ose-primer's local quality gates:
       `cd "$OSE_PRIMER_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`
       — acceptance: exits 0; fix ALL failures found, including preexisting ones (Root Cause
       Orientation)
-- [ ] [AI] Commit, push, and open the ose-primer draft PR:
+- [x] [AI] Commit, push, and open the ose-primer draft PR:
 
   ```bash
   cd /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector
@@ -632,25 +632,25 @@ defineBddConfig]`.
 
   — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-primer PR via the GitHub Reviews API;
       `pr-review-fixer` resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
       green — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-primer PR; wait for CI
       green — acceptance: cycle-3 review returns no blocking findings; CI green
-- [ ] [AI] Confirm ALL quality gates green on the ose-primer PR — local:
+- [x] [AI] Confirm ALL quality gates green on the ose-primer PR — local:
       `cd "$OSE_PRIMER_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`;
       CI: `gh pr checks e2e-scenario-coverage-gap-detector` (run from that worktree)
       — acceptance: local exits 0; all CI checks report passing
 
 ### 6b. ose-infra — apply, verify, draft PR, 3-cycle review, gates
 
-- [ ] [AI] Provision the ose-infra worktree:
+- [x] [AI] Provision the ose-infra worktree:
       `git -C /Users/wkf/ose-projects/ose-infra worktree add worktrees/e2e-scenario-coverage-gap-detector -b e2e-scenario-coverage-gap-detector origin/main`
       then `(cd /Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector && npm install && npm run doctor -- --fix)`
       — acceptance: worktree dir exists and both commands exit 0
-- [ ] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-infra worktree:
+- [x] [AI] Apply the byte-identical rhino-cli source + specs files into the ose-infra worktree:
 
   ```bash
   OSE_INFRA_WT=/Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -674,10 +674,10 @@ defineBddConfig]`.
 
   — acceptance: all 9 files exist under `$OSE_INFRA_WT`
 
-- [ ] [AI] Run the ported crate's tests in the ose-infra worktree:
+- [x] [AI] Run the ported crate's tests in the ose-infra worktree:
       `cd "$OSE_INFRA_WT" && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib e2e_coverage && cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib specs_e2e_coverage`
       — acceptance: both exit 0
-- [ ] [AI] Verify byte-identity of every propagated file against `ose-public`:
+- [x] [AI] Verify byte-identity of every propagated file against `ose-public`:
 
   ```bash
   OSE_INFRA_WT=/Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -692,17 +692,17 @@ defineBddConfig]`.
 
   — acceptance: zero output from every `diff` invocation (byte-identical)
 
-- [ ] [AI] Wire `ose-infra`'s own `specs:e2e:coverage` target + baseline manifests for its
+- [x] [AI] Wire `ose-infra`'s own `specs:e2e:coverage` target + baseline manifests for its
       playwright-bdd e2e projects (discover via
       `grep -l defineBddConfig "$OSE_INFRA_WT"/apps/*/playwright.config.ts`), repeating the Phase 5
       baseline-generation + target-wiring pattern per project inside `$OSE_INFRA_WT`
       — acceptance: `cd "$OSE_INFRA_WT" && npx nx run-many -t specs:e2e:coverage` exits 0 (or is a
       no-op if `ose-infra` has no playwright-bdd projects)
-- [ ] [AI] Run ose-infra's local quality gates:
+- [x] [AI] Run ose-infra's local quality gates:
       `cd "$OSE_INFRA_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`
       — acceptance: exits 0; fix ALL failures found, including preexisting ones (Root Cause
       Orientation)
-- [ ] [AI] Commit, push, and open the ose-infra draft PR:
+- [x] [AI] Commit, push, and open the ose-infra draft PR:
 
   ```bash
   cd /Users/wkf/ose-projects/ose-infra/worktrees/e2e-scenario-coverage-gap-detector
@@ -722,14 +722,14 @@ defineBddConfig]`.
 
   — acceptance: `gh pr view --json state` (run from that worktree) shows OPEN
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the ose-infra PR via the GitHub Reviews API;
       `pr-review-fixer` resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
       green — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer` on the ose-infra PR; wait for CI
       green — acceptance: cycle-3 review returns no blocking findings; CI green
-- [ ] [AI] Confirm ALL quality gates green on the ose-infra PR — local:
+- [x] [AI] Confirm ALL quality gates green on the ose-infra PR — local:
       `cd "$OSE_INFRA_WT" && npx nx affected -t typecheck lint test:quick specs:behavior:coverage specs:e2e:coverage`;
       CI: `gh pr checks e2e-scenario-coverage-gap-detector` (run from that worktree)
       — acceptance: local exits 0; all CI checks report passing
@@ -738,10 +738,10 @@ defineBddConfig]`.
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Byte-identity holds on both open PR branches:
+- [x] [AI] Byte-identity holds on both open PR branches:
       `diff -rq apps/rhino-cli/src/application/e2e_coverage /Users/wkf/ose-projects/ose-primer/worktrees/e2e-scenario-coverage-gap-detector/apps/rhino-cli/src/application/e2e_coverage`
       and the equivalent path swapped for `ose-infra` — acceptance: zero output for both
-- [ ] [AI] Both sibling PRs completed 3 review cycles with CI green and no unresolved blocking
+- [x] [AI] Both sibling PRs completed 3 review cycles with CI green and no unresolved blocking
       findings: `gh pr view e2e-scenario-coverage-gap-detector --json statusCheckRollup` (run from
       each sibling's worktree) — acceptance: all checks green in both
 
@@ -755,12 +755,12 @@ defineBddConfig]`.
 
 ### Final Merge — ose-primer + ose-infra
 
-- [ ] [HUMAN] Merge the ose-primer PR to `main` — only after its 3-cycle review is complete and all
-      its quality gates (local + CI) pass; on the maintainer's own schedule
+- [x] [AI per session override] Merge the ose-primer PR to `main` — only after its 3-cycle review is
+      complete and all its quality gates (local + CI) pass
       — resume signal: from `/Users/wkf/ose-projects/ose-primer`,
       `gh pr view e2e-scenario-coverage-gap-detector --json state --jq .state` prints `MERGED`
-- [ ] [HUMAN] Merge the ose-infra PR to `main` — only after its 3-cycle review is complete and all
-      its quality gates (local + CI) pass; on the maintainer's own schedule
+- [x] [AI per session override] Merge the ose-infra PR to `main` — only after its 3-cycle review is
+      complete and all its quality gates (local + CI) pass
       — resume signal: from `/Users/wkf/ose-projects/ose-infra`,
       `gh pr view e2e-scenario-coverage-gap-detector --json state --jq .state` prints `MERGED`
 
@@ -779,36 +779,52 @@ defineBddConfig]`.
 
 ### PR-Review Maker→Fixer Cycle
 
-- [ ] [AI] Cycle 1 — `pr-review-maker` reviews the PR via the GitHub Reviews API; `pr-review-fixer`
+> Ran 7 cycles total, not the default 3 — cycles 3 through 6 each surfaced a genuine new CRITICAL in
+> the same failure family (a playwright-bdd/Gherkin parsing edge case producing a false PASS). The
+> user explicitly flagged the overrun mid-cycle-6 and set the cap via `AskUserQuestion`: let cycle 6
+> finish, one more fixer pass if needed, then hard-stop at cycle 7 and merge regardless of cycle 7's
+> outcome. Cycle 7 found 2 non-blocking MEDIUM findings, both deferred per that decision — see
+> `learnings.md` and the two backlog plans it routes to. See
+> [PR Review Quality Gate workflow — cycle-overrun guidance](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#notes)
+> (added by this plan's Knowledge Capture) for the now-documented process this established.
+
+- [x] [AI] Cycle 1 — `pr-review-maker` reviews the PR via the GitHub Reviews API; `pr-review-fixer`
       resolves every finding and pushes to the PR branch; wait for CI green
       — acceptance: all cycle-1 findings resolved; CI green
-- [ ] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
+- [x] [AI] Cycle 2 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
       — acceptance: all cycle-2 findings resolved; CI green
-- [ ] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
+- [x] [AI] Cycle 3 — repeat `pr-review-maker` → `pr-review-fixer`; wait for CI green
       — acceptance: cycle-3 review returns no blocking findings; CI green
+- [x] [AI] Cycle 4 — new CRITICAL (zero-Examples Outline blindness); fixed, CI green
+- [x] [AI] Cycle 5 — new CRITICAL (tag-exclusion, Scenario Template/Scenarios aliases, skip/fixme/only
+      tags); fixed, CI green
+- [x] [AI] Cycle 6 — new CRITICAL (comment line breaks `@e2e` tag association); fixed, CI green
+- [x] [AI] Cycle 7 (final, hard-capped per user decision) — 2 non-blocking MEDIUM findings, both
+      replied-to and deferred to backlog plans; no cycle 8; CI green
 
 ### Knowledge Capture
 
 > Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md).
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch it automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
       `ose-infra` only and is NEVER cross-routed into `ose-public`/`ose-primer`; public-governance
       content may propagate via the existing parity loop
       — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
       — non-code homes land inline (small edit) or as a `plans/backlog/` follow-up (large); code homes
       (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan, NEVER inline
       — acceptance: every `learnings.md` entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
-      — acceptance: `learnings.md` is never silently empty
+      — acceptance: `learnings.md` is never silently empty (N/A this phase — 4 real learnings
+      surfaced and were routed; see the Triage log in `learnings.md`)
 
 ### Archival-in-PR
 

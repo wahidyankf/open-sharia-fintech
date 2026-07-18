@@ -4,6 +4,24 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-18: e2e-scenario-coverage-gap-detector](./2026-07-18__e2e-scenario-coverage-gap-detector/README.md) —
+  Added `rhino-cli specs e2e-coverage validate`, a mechanical, baseline-aware gate that diffs each
+  playwright-bdd project's declared `@e2e` Gherkin scenarios against `test.fixme(...)` markers in
+  generated output, catching new silently-unbound scenarios (`missingSteps: "skip-scenario"`'s gap)
+  automatically. Wired to all 11 playwright-bdd e2e projects via a per-project
+  `e2e-coverage-baseline.json` manifest + `specs:e2e:coverage` Nx target (folded into `test:specs`).
+  PR #66's review ran 7 cycles (not the default 3) — cycles 3 through 6 each found and fixed a genuine
+  new CRITICAL in the same failure family (a Gherkin/playwright-bdd parsing edge case producing a
+  false PASS: Scenario Outline + apostrophe titles, zero-Examples Outlines prompting a full
+  generalized-absence-detection redesign, tag-filter-exclusion + dialect aliases + skip/fixme/only
+  tags, and comment-line tag-association breakage). The user explicitly flagged the cycle-count
+  overrun and capped further cycling at 7 via `AskUserQuestion`; cycle 7 found 2 non-blocking MEDIUM
+  findings, deferred to two new backlog plans
+  (`2026-07-18__rhino-cli-git-root-test-fixture-race`,
+  `2026-07-18__e2e-coverage-rule-feature-skip-fixme-gap`) rather than a cycle-8 fixer pass. Also
+  routed a cycle-overrun check-in guidance addition to the PR-review-quality-gate workflow doc.
+  Propagated byte-identically to `ose-primer`/`ose-infra`. Three peer PRs, each independently
+  reviewed and gated. Delivery Mode: `worktree-to-pr` (per repo). Completed 2026-07-18.
 - [2026-07-18: rhino-speccoverage-multiline-scenario-scan](./2026-07-18__rhino-speccoverage-multiline-scenario-scan/README.md) —
   Fixed `rhino-cli`'s `specs coverage` TS/JS scenario-title extractor (`extract_ts_scenario_titles`)
   to scan whole file content instead of per-line, so a `Scenario("title", ...)` call whose title

@@ -21,7 +21,7 @@ OpenTofu version extraction) that `ose-primer` lacks — a union-surface gap, no
   "rhino-cli is identical across repos" is operating on a broken premise; a fix or feature landed in
   one repo's rhino-cli may not exist in another `[Judgment call]`.
 - **It blocks clean rhino-cli feature work.** The upcoming `specs e2e-coverage` subcommand (the
-  [e2e-scenario-coverage-gap-detector](../e2e-scenario-coverage-gap-detector/README.md)
+  [e2e-scenario-coverage-gap-detector](../2026-07-18__e2e-scenario-coverage-gap-detector/README.md)
   plan) must be added byte-identically to all three repos. Introducing it on top of already-drifted
   source risks compounding the divergence or masking it `[Repo-grounded: sibling plan explicitly
 names this plan as its predecessor]`.

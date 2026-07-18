@@ -1,5 +1,5 @@
 error: 'rhino-cli specs' requires a subcommand but one was not provided
-  [subcommands: gherkin-cardinality, structure, counts, behavior-coverage, domain-coverage, clean, scaffold, audit, help]
+  [subcommands: gherkin-cardinality, structure, counts, behavior-coverage, e2e-coverage, domain-coverage, clean, scaffold, audit, help]
 
 Usage: rhino-cli specs [OPTIONS] <COMMAND>
 

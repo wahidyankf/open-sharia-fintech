@@ -168,10 +168,47 @@ to `"skip-scenario"` on any suite from silently reintroducing the gap.
 
 ### DD-6 — `Scenario Outline` handling
 
-A `Scenario Outline` is counted once in the declared set by its title. playwright-bdd emits one
-generated test per `Examples` row, titled with the outline title plus the example data; the scan
-treats the outline as unbound if **any** emitted variant is `test.fixme`, matching on the outline
-title prefix. Documented here so the parser's matching rule is explicit.
+A `Scenario Outline` is counted once in the declared set by its title. playwright-bdd wraps every
+`Scenario Outline`'s Examples-row-derived tests in one `test.describe(...)` block titled with the
+outline's own raw Gherkin title; each row inside is titled per playwright-bdd's own Examples-row
+convention (`Example #<N>` by default — never the outline's own title, so a title-only scan can
+never see an unbound outline). `scan_unbound_describe_titles`
+(`apps/rhino-cli/src/application/e2e_coverage/parser.rs`) closes that gap by matching on the
+wrapping `describe` block's title instead of the individual row titles: the scan treats the
+outline as unbound if **any** of its Examples-row tests is `test.fixme`. A block's extent is
+resolved via matching leading-whitespace width between its `test.describe(...)` open line and its
+own closing `});` line — playwright-bdd's generator always indents a block's open/close lines
+identically, so this needs no full JS parsing or brace-balancing. Documented here so the parser's
+matching rule is explicit.
+
+**Absence from rendered output, general case (cycle-4 CRITICAL finding, cycle-5 fix)**: an
+`Examples:` table with a header row but zero data rows — or an Outline with no `Examples:` block at
+all — is syntactically valid Gherkin that playwright-bdd's `renderScenarioOutline` emits **nothing**
+for (`scenario.examples.forEach(...)` iterates zero rows; `if (!lines.length) return [];`), so there
+is no `test.describe`/`test`/`test.fixme` at all for `scan_fixme_titles` or
+`scan_unbound_describe_titles` to see. Rather than detecting this one specific shape from the
+declared (raw Gherkin) side, the fix generalizes: `parser::scan_all_rendered_titles` scans a
+generated `.spec.js` file for the union of EVERY title playwright-bdd rendered anything for at
+all — bound (`test(...)`) leaf titles, unbound (`test.fixme(...)`) leaf titles, and every
+`test.describe(...)` block title regardless of whether that block wraps an unbound child. The
+command layer's `is_unbound_or_absent`
+(`apps/rhino-cli/src/commands/specs_e2e_coverage.rs`) then treats a declared title as needing a gap
+entry when it is EITHER genuinely unbound OR simply absent from that full rendered-title set —
+folded into the SAME ordinary new-gap/baseline flow as a `test.fixme`'d scenario, not a separate
+hard error: once a data row is added (or a step definition is written), the title starts rendering
+normally and the manifest's existing stale-entry pruning already handles the transition back to
+covered, so there is nothing structurally unbaseline-able about this case.
+
+This generalizes beyond the exact zero-row-Outline repro without any Outline- or Rule-specific
+code: a `Rule:`-nested zero-row Outline produces the identical "nothing rendered" signature
+(playwright-bdd's own `renderChild` recurses into a `Rule` via the same `renderScenarioOutline`
+call as a top-level Outline), and a plain `Scenario` whose `.feature` file has no corresponding
+generated file at all — e.g. excluded by a `tags` expression in `defineBddConfig` — is caught by
+the same absence check (`is_unbound_or_absent`'s `None`-mirror-key branch), since the detection
+never inspects the declared Gherkin's structure or the exclusion mechanism, only whether the title
+appears anywhere in the generated output. Both shapes are covered by regression tests in
+`apps/rhino-cli/src/commands/specs_e2e_coverage.rs` (`rule_nested_zero_row_outline_is_reported_as_new_gap`,
+`scenario_with_no_generated_file_at_all_is_reported_as_new_gap`).
 
 ## File Impact
 

@@ -130,8 +130,26 @@ pub fn extract_scenario_specs(path: &Path, feature_path: &str) -> Result<Vec<Sce
             pending_tags.extend(line.split_whitespace().map(str::to_string));
             continue;
         }
+        // A `#`-comment line is invisible to real Gherkin's tag-to-scenario
+        // association: `@cucumber/gherkin` (what playwright-bdd's own
+        // `generateMessages` call uses under the hood) simply ignores a
+        // comment wherever it appears — before a tag, between stacked tags,
+        // or between a tag and the `Scenario:`/`Scenario Outline:` line it
+        // applies to — the tag still attaches to the next real keyword line.
+        // Skipping the comment here (without touching `pending_tags`)
+        // preserves any tags already accumulated instead of dropping them,
+        // matching that real-parser behavior exactly.
+        if line.starts_with('#') {
+            continue;
+        }
+        // `Scenario Template:` is an official Gherkin dialect alias for
+        // `Scenario Outline:` (`@cucumber/gherkin`'s `gherkin-languages.json`,
+        // `en.scenarioOutline: ["Scenario Outline", "Scenario Template"]`) —
+        // playwright-bdd renders real test output for either spelling, so
+        // both must be recognised here to keep the declared set complete.
         let title = line
             .strip_prefix("Scenario Outline:")
+            .or_else(|| line.strip_prefix("Scenario Template:"))
             .or_else(|| line.strip_prefix("Scenario:"));
         if let Some(title) = title {
             let mut level_tags = HashSet::new();
@@ -284,11 +302,111 @@ mod tests {
         assert!(specs[0].level_tags.contains(&TestLevel::Unit));
     }
 
+    /// `Scenario Template:` is an official Gherkin dialect alias for
+    /// `Scenario Outline:` (see `node_modules/@cucumber/gherkin`'s own
+    /// `gherkin-languages.json`, `en.scenarioOutline: ["Scenario Outline",
+    /// "Scenario Template"]`) — playwright-bdd genuinely renders a
+    /// `test`/`test.fixme` for a scenario declared with this keyword, so it
+    /// must be recognised here too, exactly like `Scenario Outline:`.
+    #[test]
+    fn extract_scenario_specs_recognises_scenario_template_alias() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@e2e\nScenario Template: A\n  Given <x>\n\nExamples:\n  | x |\n  | 1 |\n",
+        )
+        .unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert_eq!(specs[0].title, "A");
+        assert!(specs[0].level_tags.contains(&TestLevel::E2e));
+    }
+
     #[test]
     fn extract_scenario_specs_feature_level_tag_does_not_leak_into_first_scenario() {
         let tmp = TempDir::new().unwrap();
         let p = tmp.path().join("x.feature");
         std::fs::write(&p, "@feature-tag\nFeature: x\n\nScenario: A\n  Given a\n").unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert!(specs[0].level_tags.is_empty());
+    }
+
+    /// Regression test for a cycle-6 CRITICAL finding: real Gherkin (as
+    /// parsed by `@cucumber/gherkin`, which playwright-bdd's own
+    /// `generateMessages` call uses under the hood) does not break a tag's
+    /// association with its scenario across an intervening `#`-comment line
+    /// — the comment is simply ignored and the tag still applies. Before
+    /// this fix, the tag-accumulation loop cleared `pending_tags` on ANY
+    /// non-blank, non-tag, non-Scenario-keyword line, including a comment,
+    /// so a tag separated from its scenario by a comment silently vanished
+    /// from the declared set.
+    #[test]
+    fn extract_scenario_specs_tag_survives_a_comment_line_before_the_scenario() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(&p, "@e2e\n# some comment\nScenario: X\n  Given a\n").unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert_eq!(specs[0].title, "X");
+        assert!(
+            specs[0].level_tags.contains(&TestLevel::E2e),
+            "expected @e2e to survive the intervening comment line, got: {:?}",
+            specs[0].level_tags
+        );
+    }
+
+    /// Generalization check: a comment BETWEEN two stacked tag lines must
+    /// not drop the earlier tag either — before the fix, the comment line
+    /// cleared `pending_tags` outright, so only the tag(s) accumulated AFTER
+    /// the comment survived to the scenario.
+    #[test]
+    fn extract_scenario_specs_tag_survives_a_comment_between_stacked_tags() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(&p, "@unit\n# some comment\n@e2e\nScenario: X\n  Given a\n").unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert!(
+            specs[0].level_tags.contains(&TestLevel::Unit),
+            "expected @unit (accumulated before the comment) to survive, got: {:?}",
+            specs[0].level_tags
+        );
+        assert!(
+            specs[0].level_tags.contains(&TestLevel::E2e),
+            "expected @e2e (accumulated after the comment) to be present too, got: {:?}",
+            specs[0].level_tags
+        );
+    }
+
+    /// Generalization check: a comment line BEFORE the first tag must not
+    /// confuse the parser — `pending_tags` is empty at that point either
+    /// way, so this mainly proves the comment-skip branch never panics or
+    /// otherwise misbehaves when it has nothing pending to preserve.
+    #[test]
+    fn extract_scenario_specs_tolerates_a_comment_line_before_the_first_tag() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(&p, "# leading file comment\n@e2e\nScenario: X\n  Given a\n").unwrap();
+        let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
+        assert_eq!(specs.len(), 1);
+        assert!(specs[0].level_tags.contains(&TestLevel::E2e));
+    }
+
+    /// Generalization check: a comment line immediately before `Feature:`
+    /// must not change the existing feature-level-tag-does-not-leak
+    /// behavior — `Feature:` itself (a genuine content line, not a comment)
+    /// still clears any pending feature-level tag, comment or no comment.
+    #[test]
+    fn extract_scenario_specs_comment_before_feature_line_does_not_change_leak_behavior() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@feature-tag\n# comment\nFeature: x\n\nScenario: A\n  Given a\n",
+        )
+        .unwrap();
         let specs = extract_scenario_specs(&p, "specs/x.feature").unwrap();
         assert_eq!(specs.len(), 1);
         assert!(specs[0].level_tags.is_empty());

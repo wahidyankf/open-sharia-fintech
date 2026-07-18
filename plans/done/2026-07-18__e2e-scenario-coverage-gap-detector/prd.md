@@ -152,11 +152,11 @@ OutputFormat]`.
 
 ## Product-Level Risks
 
-| Risk                                                                        | Mitigation                                                                                                                                  |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Scenario titles are not unique across feature files, causing diff ambiguity | Baseline entries key on `{feature-path, scenario-title}` pairs, not title alone (AC-4)                                                      |
-| `Scenario Outline` expands to multiple generated tests                      | Declared set counts the outline once by title; the generated scan matches the outline's emitted title prefix (documented in `tech-docs.md`) |
-| A project on `fail-on-gen` never emits `test.fixme`, so the gate is a no-op | Documented as belt-and-suspenders; empty baseline + zero fixme = trivial pass (AC-1 with empty sets)                                        |
+| Risk                                                                        | Mitigation                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scenario titles are not unique across feature files, causing diff ambiguity | Baseline entries key on `{feature-path, scenario-title}` pairs, not title alone (AC-4)                                                                                                                                                               |
+| `Scenario Outline` expands to multiple generated tests                      | Declared set counts the outline once by title; the generated scan matches the outline's wrapping `test.describe(...)` block title, treating the outline as unbound if any Examples-row test inside it is `test.fixme` (documented in `tech-docs.md`) |
+| A project on `fail-on-gen` never emits `test.fixme`, so the gate is a no-op | Documented as belt-and-suspenders; empty baseline + zero fixme = trivial pass (AC-1 with empty sets)                                                                                                                                                 |
 
 ## Related
 
