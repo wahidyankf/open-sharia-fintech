@@ -191,8 +191,11 @@ fn collect_declared(
 /// unbound?" and "is this title rendered here at all?" from one lookup.
 struct FileTitles {
     /// Titles playwright-bdd marked unbound: a plain `test.fixme(...)` call
-    /// title, or a `Scenario Outline`'s wrapping `describe` title (see
-    /// [`parser::scan_unbound_describe_titles`]).
+    /// title, a `Scenario Outline`'s wrapping `describe` title with at least
+    /// one nested `test.fixme` (see [`parser::scan_unbound_describe_titles`]),
+    /// or a `Scenario Outline`'s wrapping `describe` title suffixed
+    /// `.skip`/`.fixme` by a first-class playwright-bdd special tag (see
+    /// [`parser::scan_skip_or_fixme_describe_titles`]).
     unbound: HashSet<String>,
     /// EVERY title playwright-bdd rendered anything for at all — bound or
     /// unbound leaf tests, and every `describe` block title regardless of
@@ -244,16 +247,22 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, FileTitles>
             continue; // not a generated .spec.js file
         };
         let titles = match fs::read_to_string(entry.path()) {
-            // Union of two independent unbound-title sources: plain
-            // `test.fixme(...)` call titles (covers a bare `Scenario:`), and
+            // Union of three independent unbound-title sources: plain
+            // `test.fixme(...)` call titles (covers a bare `Scenario:`),
             // `test.describe(...)` block titles that wrap at least one
             // nested `test.fixme` (covers a `Scenario Outline:` — see
             // `scan_unbound_describe_titles`'s doc comment for why a plain
-            // title-only scan can never see an unbound Outline).
+            // title-only scan can never see an unbound Outline), and
+            // `test.describe.skip(...)`/`test.describe.fixme(...)` block
+            // titles (covers an Outline-level first-class `@skip`/`@fixme`
+            // special tag — see `scan_skip_or_fixme_describe_titles`'s doc
+            // comment for why its nested Examples-row tests never carry
+            // their own `test.fixme` for this case).
             Ok(content) => FileTitles {
                 unbound: parser::scan_fixme_titles(&content)
                     .into_iter()
                     .chain(parser::scan_unbound_describe_titles(&content))
+                    .chain(parser::scan_skip_or_fixme_describe_titles(&content))
                     .collect(),
                 rendered: parser::scan_all_rendered_titles(&content),
             },
@@ -503,6 +512,36 @@ mod tests {
         fs::write(
             gen_dir.join("example.feature.spec.js"),
             "test.describe('Renders the field correctly', () => {\n  test('Example #1', async ({ page }) => {\n  });\n  test('Example #2', async ({ page }) => {\n  });\n});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
+    /// Regression fixture for a cycle-5 MEDIUM finding: an `@e2e Scenario
+    /// Outline` tagged with playwright-bdd's first-class `@skip` special tag
+    /// (distinct from an ordinary Gherkin tag). playwright-bdd renders the
+    /// ENTIRE outline as one `test.describe.skip(...)` block whose nested
+    /// Examples-row tests remain ordinary bound `test(...)` calls — none are
+    /// individually `test.fixme` — since Playwright enforces the skip at the
+    /// parent-suite level. Returns `(project_dir, baseline_path)`.
+    fn write_skip_tagged_outline_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e @skip\nScenario Outline: Renders the field correctly\n  Given a field\n\n  Examples:\n    | field |\n    | name  |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.describe.skip('Renders the field correctly', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n",
         )
         .unwrap();
 
@@ -922,6 +961,29 @@ mod tests {
         assert!(
             run(&args, OutputFormat::Text).is_ok(),
             "a fully-bound outline (zero test.fixme Examples rows) must pass"
+        );
+    }
+
+    /// Regression test for a cycle-5 MEDIUM finding: a `Scenario Outline`
+    /// tagged with playwright-bdd's first-class `@skip` special tag must be
+    /// reported as a new gap, never silently pass as covered — before this
+    /// fix, the generic `describe`-title matching alone put the outline's
+    /// title in `rendered` (present) with nothing in `unbound` (no nested
+    /// `test.fixme`), so `is_unbound_or_absent` treated it as fully covered.
+    /// See [`write_skip_tagged_outline_fixture`] for the exact generated-JS
+    /// shape this reproduces.
+    #[test]
+    fn skip_tagged_outline_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_skip_tagged_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the @skip-tagged outline to be reported as exactly 1 new gap, got: {msg}"
         );
     }
 

@@ -109,6 +109,37 @@ pub fn scan_unbound_describe_titles(spec_js: &str) -> Vec<String> {
     result
 }
 
+/// Scans playwright-bdd generated `.spec.js` source for a `Scenario
+/// Outline`'s wrapping `test.describe.skip(...)` or `test.describe.fixme(...)`
+/// block — playwright-bdd's rendering for an Outline-level `@skip`/`@fixme`
+/// FIRST-CLASS special tag (distinct from an ordinary Gherkin tag; see
+/// `node_modules/playwright-bdd/dist/generate/specialTags.js`), returning
+/// each such block's own title.
+///
+/// Playwright enforces a `.skip`/`.fixme`-suffixed suite entirely at the
+/// PARENT level — none of its nested Examples-row tests are individually
+/// re-marked `test.fixme`, they remain ordinary bound `test(...)` calls (see
+/// `node_modules/playwright-bdd/dist/generate/formatter.js`'s
+/// `withSubFunction`, which chooses the suffix once for the whole block).
+/// [`scan_unbound_describe_titles`] alone can therefore never see this case —
+/// it requires a NESTED `test.fixme` — and because the generic `describe`
+/// title matching matches ANY `.method` suffix uniformly, the block's title
+/// still lands in
+/// [`scan_all_rendered_titles`]'s `rendered` set, making a fully
+/// `@skip`/`@fixme`-tagged Outline structurally indistinguishable from a
+/// genuinely covered one unless this function's result is folded into the
+/// `unbound` set too (see the command layer's `scan_fixme_dir`).
+///
+/// Deliberately excludes `.only` — a `.only`-suffixed suite genuinely
+/// executes its wrapped tests (Playwright restricts execution TO it, it does
+/// not skip it), so treating it as unbound would be a false positive.
+pub fn scan_skip_or_fixme_describe_titles(spec_js: &str) -> Vec<String> {
+    skip_or_fixme_describe_re()
+        .captures_iter(spec_js)
+        .map(|caps| captured_title(&caps))
+        .collect()
+}
+
 /// Scans playwright-bdd generated `.spec.js` source for EVERY title it
 /// rendered anything for at all — the union of bound (`test(...)`) and
 /// unbound (`test.fixme(...)`) leaf test titles, plus every
@@ -145,6 +176,36 @@ pub fn scan_unbound_describe_titles(spec_js: &str) -> Vec<String> {
 /// Outlines or to any one exclusion mechanism — it is simply "no test/
 /// describe title matches this declared title anywhere in the generated
 /// file".
+///
+/// **Explicit scope note (leaf-level `@only`/`@skip`/`@fixme`)**: a PLAIN
+/// `Scenario` (not an Outline) tagged with playwright-bdd's first-class
+/// `@only`/`@skip`/`@fixme` special tag renders as a leaf
+/// `test.only(...)`/`test.skip(...)`/`test.fixme(...)` call (see
+/// `node_modules/playwright-bdd/dist/generate/specialTags.js`). Only the
+/// `.fixme` case is matched by name (identically to the ordinary
+/// `missingSteps: "skip-scenario"` `test.fixme` signal [`scan_fixme_titles`]
+/// already recognises — the two are textually indistinguishable and don't
+/// need to be). `.only` and `.skip` are deliberately NOT matched by name
+/// here: the bound `test(...)` matcher requires a literal `test(` with no
+/// `.` suffix, so `test.only(`/`test.skip(` titles are absent from every one of
+/// this function's three sources, which means a leaf `@only`/`@skip`-tagged
+/// scenario is STILL caught — via the ordinary absence path
+/// (`crate::commands::specs_e2e_coverage::is_unbound_or_absent`'s `!rendered
+/// .contains(scenario)` branch), exactly like a zero-row Outline or a
+/// tags-filtered-out scenario. This is intentionally not a named/labelled
+/// case (the failure message reads as an ordinary new gap, not "this was
+/// @skip-tagged"), because: (1) it costs nothing extra to detect — the
+/// existing absence check already covers it structurally; (2) `@only`
+/// surviving to a committed generated file is exceptionally unlikely in
+/// practice (Playwright's `forbidOnly` CI setting rejects it outright in
+/// most configured pipelines); and (3) zero scenarios in this repo use any
+/// of these three special tags today (verified via `specs/**/*.feature`).
+/// The one case that DOES need explicit handling — an Outline-level
+/// `@skip`/`@fixme` tag, which wraps the ENTIRE `describe` block rather than
+/// any individual leaf test — is handled separately by
+/// [`scan_skip_or_fixme_describe_titles`], since the generic `describe`
+/// title matching alone cannot distinguish "genuinely rendered and covered" from "rendered but
+/// the whole suite never runs."
 pub fn scan_all_rendered_titles(spec_js: &str) -> HashSet<String> {
     let mut titles: HashSet<String> = HashSet::new();
     titles.extend(scan_fixme_titles(spec_js));
@@ -213,6 +274,21 @@ fn describe_re() -> &'static Regex {
     RE.get_or_init(|| {
         Regex::new(&format!(r"test\.describe(?:\.\w+)?\(\s*{QUOTED_JS_STRING}"))
             .expect("valid regex")
+    })
+}
+
+/// Matches specifically a `test.describe.skip("<title>", ...)` or
+/// `test.describe.fixme("<title>", ...)` block's title argument — never a
+/// plain `test.describe(` or a `.only`-suffixed one. See
+/// [`scan_skip_or_fixme_describe_titles`] for why only these two suffixes
+/// signal a genuinely unbound suite.
+fn skip_or_fixme_describe_re() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| {
+        Regex::new(&format!(
+            r"test\.describe\.(?:skip|fixme)\(\s*{QUOTED_JS_STRING}"
+        ))
+        .expect("valid regex")
     })
 }
 
@@ -504,6 +580,67 @@ test.describe('Outline title', () => {
 ";
 
         let titles = scan_unbound_describe_titles(spec_js);
+
+        assert!(titles.is_empty());
+    }
+
+    /// Regression test for a cycle-5 MEDIUM finding: playwright-bdd's
+    /// first-class `@skip`/`@fixme` special tags on a `Scenario Outline`
+    /// (distinct from an ordinary Gherkin tag) render the ENTIRE wrapping
+    /// `test.describe.skip(...)`/`test.describe.fixme(...)` block — none of
+    /// its Examples-row children are individually marked `test.fixme`, since
+    /// Playwright's runner enforces the skip/fixme at the parent-suite level.
+    /// Before this fix, `describe_re` matched `.skip`/`.fixme` suffixes
+    /// identically to a plain `test.describe(...)` open, so the outline's
+    /// title landed in `rendered` only — never `unbound` — and a fully
+    /// `@skip`-tagged Outline was silently treated as covered. This function
+    /// closes that gap by recognising the `.skip`/`.fixme` suffix specifically
+    /// (never `.only`, which genuinely does execute its wrapped tests).
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_skip_suffixed_outline() {
+        let spec_js = "\
+test.describe.skip('Outline title', () => {
+  test('Example #1', async ({ page }) => {
+  });
+});
+";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert_eq!(titles, vec!["Outline title".to_string()]);
+    }
+
+    /// `.fixme` counterpart of the `.skip` case above.
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_fixme_suffixed_outline() {
+        let spec_js = "test.describe.fixme('Outline title', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert_eq!(titles, vec!["Outline title".to_string()]);
+    }
+
+    /// Negative counterpart: `.only` genuinely executes its wrapped tests
+    /// (Playwright restricts execution TO this suite, it does not skip it),
+    /// so a `.only`-suffixed describe must never be reported as unbound.
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_ignores_only_suffixed_outline() {
+        let spec_js = "test.describe.only('Outline title', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(titles.is_empty());
+    }
+
+    /// Negative counterpart: an ordinary unsuffixed `test.describe(...)`
+    /// must never be reported by this function — that is
+    /// [`scan_unbound_describe_titles`]'s job (nested-`test.fixme` based),
+    /// not this one (suffix based).
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_ignores_plain_describe() {
+        let spec_js = "test.describe('Outline title', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
 
         assert!(titles.is_empty());
     }
