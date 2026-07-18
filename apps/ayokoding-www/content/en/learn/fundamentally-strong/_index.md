@@ -40,3 +40,4 @@ weight: 107
   - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
   - [29 · Advanced Networking](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking)
   - [30 · Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)
+  - [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)

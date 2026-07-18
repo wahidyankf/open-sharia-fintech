@@ -112,3 +112,7 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/drilling)
+- [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/drilling)
