@@ -95,3 +95,6 @@ weight: 1750
 - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+- [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/drilling)
