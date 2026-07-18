@@ -149,10 +149,14 @@ fn collect_declared(
     Ok(declared)
 }
 
-/// Recursively scans `dir` for `test.fixme(...)` titles, keyed by each
+/// Recursively scans `dir` for `test.fixme(...)` titles, keyed by EVERY
 /// generated `.spec.js` file's path relative to `dir` with the trailing
-/// `.spec.js` suffix stripped (any other file playwright-bdd wrote —
-/// non-UTF-8 files, or files with no `test.fixme` calls — is omitted).
+/// `.spec.js` suffix stripped — including files with an empty title set
+/// (fully bound, no `test.fixme` calls at all). Any other file playwright-bdd
+/// wrote that isn't itself named `*.spec.js` is omitted; a `.spec.js` file
+/// that happens to be non-UTF-8 is recorded with an empty title set rather
+/// than omitted entirely (see [`is_fixme`] for why recording bound files
+/// matters).
 ///
 /// playwright-bdd generates exactly one `.spec.js` per `.feature` file,
 /// mirroring the directory structure below its `featuresRoot`; stripping the
@@ -177,37 +181,57 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<Str
         if !entry.file_type().is_file() {
             continue;
         }
-        let Ok(content) = fs::read_to_string(entry.path()) else {
-            continue; // binary/non-UTF-8 files carry no test.fixme markers
-        };
-        let titles: HashSet<String> = parser::scan_fixme_titles(&content).into_iter().collect();
-        if titles.is_empty() {
-            continue;
-        }
         let Ok(rel) = entry.path().strip_prefix(dir) else {
             continue;
         };
-        if let Some(mirror_key) = rel.to_string_lossy().strip_suffix(".spec.js") {
-            by_file.insert(mirror_key.to_string(), titles);
-        }
+        let Some(mirror_key) = rel
+            .to_string_lossy()
+            .strip_suffix(".spec.js")
+            .map(str::to_string)
+        else {
+            continue; // not a generated .spec.js file
+        };
+        let titles: HashSet<String> = match fs::read_to_string(entry.path()) {
+            Ok(content) => parser::scan_fixme_titles(&content).into_iter().collect(),
+            // binary/non-UTF-8 .spec.js carries no readable test.fixme
+            // markers, but the file itself must still be recorded (with an
+            // empty title set) so it can out-compete a shorter, unrelated
+            // suffix match in `is_fixme`.
+            Err(_) => HashSet::new(),
+        };
+        by_file.insert(mirror_key, titles);
     }
     Ok(by_file)
 }
 
-/// Returns `true` when `scenario` is a `test.fixme` title in the ONE
-/// generated file whose mirrored relative path matches `feature_abs`'s
-/// trailing path segments — i.e. the specific generated file playwright-bdd
-/// produced for this exact `.feature` file, never a different file that
-/// happens to declare a same-titled scenario elsewhere (the bug this
-/// per-file pairing fixes — see the `fixme` construction note in [`run`]).
+/// Returns `true` when `scenario` is a `test.fixme` title in the SINGLE
+/// generated file playwright-bdd actually produced for this exact
+/// `.feature` file — resolved as the LONGEST (most specific) mirror key
+/// among all generated files whose mirrored relative path is a
+/// component-wise suffix of `feature_abs`.
+///
+/// Two different `.feature` files can share a tail directory/basename
+/// sequence at different nesting depths (e.g. `features/a/foo.feature` and
+/// `features/b/a/foo.feature` both have a mirror key `a/foo.feature`, which
+/// is a *suffix* of `features/b/a/foo.feature`'s canonical path); accepting
+/// ANY suffix match (rather than the longest one) would let the shallower,
+/// unrelated file's fixme titles falsely bind to the deeper file's scenario.
+/// Preferring the longest match disambiguates this — combined with
+/// [`scan_fixme_dir`] now recording EVERY generated file (bound or unbound),
+/// a fully-bound file at a deeper nesting depth is never invisible to this
+/// resolution, so it always wins over a shorter, unrelated suffix match. This
+/// is the per-file pairing this function exists for — see the `fixme`
+/// construction note in [`run`].
 fn is_fixme(
     feature_abs: &Path,
     scenario: &str,
     fixme_by_file: &HashMap<String, HashSet<String>>,
 ) -> bool {
-    fixme_by_file.iter().any(|(mirror_key, titles)| {
-        path_ends_with(feature_abs, mirror_key) && titles.contains(scenario)
-    })
+    fixme_by_file
+        .keys()
+        .filter(|mirror_key| path_ends_with(feature_abs, mirror_key))
+        .max_by_key(|mirror_key| Path::new(mirror_key).components().count())
+        .is_some_and(|mirror_key| fixme_by_file[mirror_key].contains(scenario))
 }
 
 /// Returns `true` when `mirror_key`'s path components are an exact,
@@ -298,6 +322,53 @@ mod tests {
         )
     }
 
+    /// Writes a project fixture reproducing the directory-nesting variant of
+    /// the title-collision bug: two `.feature` files — `features/a/foo.feature`
+    /// and `features/b/a/foo.feature` — share a tail directory/basename
+    /// sequence (`a/foo.feature`) at different nesting depths, and both
+    /// declare an identically-titled `@e2e` scenario ("Same title"). Only
+    /// the shallower file (`a/foo.feature`) is genuinely `test.fixme`'d;
+    /// the deeper one (`b/a/foo.feature`) is a normal, fully-implemented
+    /// `test(...)`. A naive "any component-wise suffix match" would treat
+    /// `a/foo.feature`'s mirror key as a match for BOTH files (since it's a
+    /// trailing-path suffix of `b/a/foo.feature` too), falsely reporting the
+    /// fully-implemented deeper scenario as unbound. Returns
+    /// `(project_dir, baseline_path)`.
+    fn write_nested_directory_collision_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(features_dir.join("a")).unwrap();
+        fs::create_dir_all(features_dir.join("b/a")).unwrap();
+        fs::write(
+            features_dir.join("a/foo.feature"),
+            "@e2e\nScenario: Same title\n  Given a\n",
+        )
+        .unwrap();
+        fs::write(
+            features_dir.join("b/a/foo.feature"),
+            "@e2e\nScenario: Same title\n  Given a\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(gen_dir.join("a")).unwrap();
+        fs::create_dir_all(gen_dir.join("b/a")).unwrap();
+        fs::write(
+            gen_dir.join("a/foo.feature.spec.js"),
+            "test.fixme(\"Same title\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+        fs::write(
+            gen_dir.join("b/a/foo.feature.spec.js"),
+            "test(\"Same title\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
     fn base_args(project_dir: String, baseline: String) -> ValidateArgs {
         ValidateArgs {
             project_dir,
@@ -358,6 +429,40 @@ mod tests {
             "expected exactly 1 new gap (file1's genuinely-unbound scenario only) — \
              file2's identically-titled but fully-implemented scenario must not be \
              falsely reported, got: {msg}"
+        );
+    }
+
+    /// Regression test for the directory-nesting variant of the
+    /// title-collision bug (distinct from
+    /// `fixme_reconstruction_does_not_collide_across_feature_files_with_same_scenario_title`,
+    /// which only covers same-depth files). `features/a/foo.feature` and
+    /// `features/b/a/foo.feature` share a tail path (`a/foo.feature`) at
+    /// different nesting depths and declare an identically-titled `@e2e`
+    /// scenario; only the shallower file is genuinely `test.fixme`'d. Before
+    /// the fix, `is_fixme` accepted ANY component-wise suffix match, so
+    /// `b/a/foo.feature`'s scenario spuriously resolved to `a/foo.feature`'s
+    /// mirror key (a fully-bound generated file for `b/a/foo.feature` was
+    /// never even recorded, since `scan_fixme_dir` skipped files with no
+    /// `test.fixme` calls) — reporting 2 false gaps. After the fix
+    /// (longest-match resolution over a `fixme_by_file` map that records
+    /// every generated file, bound or unbound), only `a/foo.feature`'s
+    /// genuinely-unbound scenario is a new gap (1 gap).
+    #[test]
+    fn fixme_reconstruction_does_not_collide_across_nested_directories_with_same_tail_path() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_nested_directory_collision_fixture(tmp.path());
+        let mut args = base_args(project_dir, baseline);
+        args.features = vec!["features/**/*.feature".to_string()];
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected exactly 1 new gap (features/a/foo.feature's genuinely-unbound \
+             scenario only) — features/b/a/foo.feature's identically-titled but \
+             fully-implemented scenario must not be falsely reported due to a \
+             directory-nesting suffix-match collision, got: {msg}"
         );
     }
 
