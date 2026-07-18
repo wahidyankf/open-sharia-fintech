@@ -34,4 +34,5 @@ weight: 107
   - [22 · Programming Paradigms](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms)
   - [23 · Functional Programming](/en/c/learn/fundamentally-strong/software-engineer/functional-programming)
   - [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
-  - [27 · Data Access: ORMs & Query Builders](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders)
+  - [25 · Advanced Algorithms](/en/c/learn/fundamentally-strong/software-engineer/advanced-algorithms)
+  - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)

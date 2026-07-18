@@ -36,12 +36,34 @@ teaching engine (`†` platform-mandated for `EXPLAIN ANALYZE`/MVCC realism).
 - 2026-07-12 — verified (CORRECTION, version-sensitive): latest stable is **PostgreSQL 18** (18.4);
   **PG 19 Beta 1** released 2026-06-04, GA targeted Sept 2026 — pin content to PG 18 (or 19 if GA lands
   first). **PG 18 changed `EXPLAIN ANALYZE`**: buffer stats now show **automatically by default** (explicit
-  `BUFFERS` no longer required; restore old behavior with `EXPLAIN (ANALYZE, BUFFERS OFF)`), and
-  `EXPLAIN ... VERBOSE` gained WAL/CPU/per-row-average stats. Reflect this in the body. (postgresql.org
+  `BUFFERS` no longer required; restore old behavior with `EXPLAIN (ANALYZE, BUFFERS OFF)`). (postgresql.org
   news / neon.com/postgresql/postgresql-18)
+- 2026-07-17 — verified (CORRECTION, command misattribution): the syllabus previously claimed
+  `EXPLAIN ... VERBOSE` gained WAL/CPU/per-row-average stats in PG 18 — **wrong command**. That addition is
+  on `ANALYZE VERBOSE` (the statistics-gathering command, relevant to co-25), not `EXPLAIN`'s own `VERBOSE`
+  option (relevant to co-23/co-24, unchanged in PG 18: still output column lists, schema-qualified names,
+  range-table aliases, trigger names, query identifier). What `EXPLAIN` itself gained in PG 18: full WAL
+  buffer count in `EXPLAIN (..., WAL)` output, index-lookup-per-scan counts, fractional row counts, and
+  memory/disk usage on Material/WindowAgg/CTE nodes. Reflect the corrected attribution in the body.
+  (postgresql.org/docs/current/release-18.html)
 - 2026-07-12 — verified: window functions, recursive CTEs (`WITH RECURSIVE`), set operations, and
   MVCC isolation-level behavior (Read Committed default, Repeatable Read, Serializable via SSI) are stable
   unchanged across recent PostgreSQL releases. (postgresql.org/docs/current)
+- 2026-07-17 — verified (content note, not a correction): `pg_stat_statements` (ex-82) is **not enabled by
+  default** — requires `shared_preload_libraries = 'pg_stat_statements'` (server restart) plus
+  `CREATE EXTENSION pg_stat_statements`. The `total_exec_time` column name is current and correct. Ensure
+  ex-82 states the setup prerequisite. `REFRESH MATERIALIZED VIEW CONCURRENTLY` (ex-75) requires at least
+  one plain `UNIQUE` index on the view and a prior non-concurrent population — ensure ex-75 states this.
+  (postgresql.org/docs/current)
+- 2026-07-17 — verified (CORRECTION, version-sensitive landmine for ex-40): PG 18 introduced **B-tree skip
+  scan**, letting the planner use a composite index even when the query omits the leading column (via
+  per-distinct-leading-value iteration), when the planner judges it cheaper — typically for a
+  low-cardinality leading column. This is a new exception to the classic left-most-prefix rule that
+  ex-40 ("composite-index-order") is built to demonstrate. **Fix for authoring**: seed ex-40 with a
+  high-cardinality leading column so skip scan does not trigger and the classic "used only with the
+  leading column" behavior holds cleanly; optionally add a follow-on callout naming skip scan as the
+  PG-18-specific exception. (postgresql.org/docs/current/indexes-multicolumn.html;
+  neon.com/postgresql/18/skip-scan-btree)
 
 ## Concepts
 
