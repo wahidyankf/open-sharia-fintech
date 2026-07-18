@@ -66,8 +66,32 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     let features_gen_dir = project_dir.join(&args.features_gen);
     let baseline_path = project_dir.join(&args.baseline);
 
-    let (declared_with_paths, any_feature_file_matched) =
+    let (declared_with_paths, any_feature_file_matched, zero_row_outlines) =
         collect_declared(&project_dir, &args.features)?;
+    // Checked before even touching `.features-gen` — a zero-row `Scenario
+    // Outline` is a pure declared-side (Gherkin-authoring) defect that
+    // playwright-bdd's generator can NEVER produce any signal for (see
+    // `parser::scan_zero_row_e2e_outline_titles`'s doc comment), so there is
+    // no point reading generated output before reporting it. This is a hard
+    // error, not folded into the ordinary new-gap/baseline flow, precisely
+    // so `--update-baseline` can never silently absorb it — that would
+    // reintroduce the exact always-passes failure mode this gate exists to
+    // prevent.
+    if !zero_row_outlines.is_empty() {
+        let named = zero_row_outlines
+            .iter()
+            .map(|e| format!("{}: {}", e.feature, e.scenario))
+            .collect::<Vec<_>>()
+            .join("; ");
+        return Err(anyhow!(
+            "{} @e2e Scenario Outline(s) with zero Examples data rows found — \
+             playwright-bdd generates NO test at all for a zero-row outline (not even \
+             test.fixme), so it is structurally invisible to this gate and can never be \
+             accepted via --update-baseline; add at least one Examples row or remove the \
+             empty outline: {named}",
+            zero_row_outlines.len()
+        ));
+    }
     // `scan_fixme_dir` runs (and may error on a missing `.features-gen`)
     // BEFORE the empty-glob guard below — a missing generated-output
     // directory is a more specific, more actionable diagnostic than an
@@ -129,6 +153,13 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     Ok(())
 }
 
+/// Return type of [`collect_declared`]: a tuple of (declared entries paired
+/// with their originating `.feature` file's canonical path, whether ANY
+/// `.feature` file matched at least one `--features` glob, zero-row-Outline
+/// entries) — see that function's own doc comment for what each element
+/// means.
+type CollectedDeclared = (Vec<(PathBuf, BaselineEntry)>, bool, Vec<BaselineEntry>);
+
 /// Extracts the declared `@e2e` scenario set across every `--features` glob,
 /// resolved relative to `project_dir`. Each entry is paired with the
 /// canonical (symlink- and `..`-resolved) absolute path of its originating
@@ -144,6 +175,13 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 /// omitted flag already caught by `clap`, or a misconfigured/renamed path)
 /// is the misconfiguration `run` guards against — see the caller.
 ///
+/// Also returns every `@e2e Scenario Outline` found with zero total Examples
+/// data rows (see [`parser::scan_zero_row_e2e_outline_titles`]) — these are
+/// deliberately NOT included in the returned `declared` set at all (a
+/// zero-row outline can never legitimately be "bound", so it has no place in
+/// the ordinary declared/fixme/baseline flow); the caller surfaces them as a
+/// dedicated hard error instead.
+///
 /// # Errors
 ///
 /// Returns an error if a glob pattern is invalid, a matched `.feature` file
@@ -151,9 +189,10 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 fn collect_declared(
     project_dir: &Path,
     features: &[String],
-) -> std::result::Result<(Vec<(PathBuf, BaselineEntry)>, bool), Error> {
+) -> std::result::Result<CollectedDeclared, Error> {
     let mut declared = Vec::new();
     let mut any_feature_file_matched = false;
+    let mut zero_row_outlines = Vec::new();
     for pattern in features {
         let abs_pattern = project_dir.join(pattern);
         let pattern_str = abs_pattern
@@ -172,9 +211,10 @@ fn collect_declared(
             for scenario in parser::extract_declared(&path, &feature_path)? {
                 declared.push((canonical.clone(), scenario));
             }
+            zero_row_outlines.extend(parser::extract_zero_row_outlines(&path, &feature_path)?);
         }
     }
-    Ok((declared, any_feature_file_matched))
+    Ok((declared, any_feature_file_matched, zero_row_outlines))
 }
 
 /// Recursively scans `dir` for unbound scenario titles, keyed by EVERY
@@ -469,6 +509,34 @@ mod tests {
         )
     }
 
+    /// Writes a project fixture reproducing the cycle-4 CRITICAL finding:
+    /// an `@e2e Scenario Outline` whose `Examples:` table has a header row
+    /// but ZERO data rows underneath it. playwright-bdd's
+    /// `renderScenarioOutline` emits nothing at all for this — no
+    /// `test.describe`, no `test.fixme`, no `test` — so the generated file
+    /// is empty (bddgen may not even write one for a feature file whose
+    /// only scenario is this outline; an empty file here stands in for
+    /// either case, since both carry zero mirror-key candidates for this
+    /// scenario title). Returns `(project_dir, baseline_path)`.
+    fn write_zero_row_outline_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario Outline: Renders the field correctly\n  Given a field <field>\n\n  Examples:\n    | field |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(gen_dir.join("example.feature.spec.js"), "").unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
     fn base_args(project_dir: String, baseline: String) -> ValidateArgs {
         ValidateArgs {
             project_dir,
@@ -750,6 +818,50 @@ mod tests {
         );
     }
 
+    /// Regression test for the cycle-4 CRITICAL finding: a `Scenario
+    /// Outline` with an `Examples:` header but ZERO data rows must fail the
+    /// gate with an explicit, named error — never silently report "0 new
+    /// unbound scenario(s)". playwright-bdd generates no test at all for
+    /// this outline, so the ordinary declared-vs-fixme diff has nothing to
+    /// compare; this must be caught before that diff even runs.
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Scenario Outline has zero Examples data rows
+    #[test]
+    fn zero_row_outline_errors_instead_of_silently_passing() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_zero_row_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("Renders the field correctly"),
+            "expected the zero-row outline's title to be named in the error, got: {msg}"
+        );
+        assert!(
+            msg.to_lowercase().contains("examples") && msg.to_lowercase().contains("zero"),
+            "expected the error to explain the zero-Examples-data-rows cause, got: {msg}"
+        );
+    }
+
+    /// The zero-row-outline guard must never be foolable via
+    /// `--update-baseline` — it is checked before the update-baseline branch
+    /// is even reached, so it can never be silently absorbed into the
+    /// manifest the way an ordinary new gap can.
+    #[test]
+    fn zero_row_outline_errors_even_with_update_baseline() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_zero_row_outline_fixture(tmp.path());
+        let mut args = base_args(project_dir, baseline);
+        args.update_baseline = true;
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        assert!(
+            err.to_string().contains("Renders the field correctly"),
+            "expected --update-baseline to still surface the zero-row outline error, got: {err}"
+        );
+    }
+
     /// Regression test for the apostrophe-truncation bug: `fixme_title_re`'s
     /// naive `[^"']+` capture truncated at an escaped apostrophe, so a
     /// scenario titled with a possessive/contraction was silently invisible
@@ -874,6 +986,50 @@ mod tests {
         assert!(
             msg.contains("1 new unbound scenario"),
             "expected the backslash-bearing scenario to be reported as a \
+             new gap, got: {msg}"
+        );
+    }
+
+    /// Adjacent edge case: playwright-bdd's `quotes: "backtick"` config
+    /// value (`node_modules/playwright-bdd/dist/config/types.d.ts`) wraps
+    /// generated titles in backticks instead of single/double quotes. Not
+    /// live in any of this repo's 11 wired e2e projects today (all default
+    /// to single-quoted output), but the scanner must still handle it
+    /// end-to-end rather than merely at the unit level.
+    #[test]
+    fn backtick_quoted_scenario_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let features_dir = tmp.path().join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@e2e\nScenario: Renders the `code` block\n  Given a step\n",
+        )
+        .unwrap();
+
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme(`Renders the \\`code\\` block`, async ({ page }) => {\n});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected the backtick-quoted scenario to be reported as a \
              new gap, got: {msg}"
         );
     }

@@ -1,6 +1,7 @@
 //! Declared-scenario extraction and generated-output scanning for the e2e
 //! scenario coverage gap detector.
 
+use std::fs;
 use std::path::Path;
 use std::sync::OnceLock;
 
@@ -32,6 +33,141 @@ pub fn extract_declared(path: &Path, feature_path: &str) -> Result<Vec<BaselineE
             scenario: s.title,
         })
         .collect())
+}
+
+/// Extracts `@e2e`-tagged `Scenario Outline` entries in `path` whose
+/// `Examples:` table(s) carry zero total data rows — see
+/// [`scan_zero_row_e2e_outline_titles`] for why this is a structural,
+/// declared-side-only defect the generated-JS side can never surface.
+///
+/// # Errors
+///
+/// Returns an error if `path` cannot be read.
+pub fn extract_zero_row_outlines(
+    path: &Path,
+    feature_path: &str,
+) -> Result<Vec<BaselineEntry>, Error> {
+    let content = fs::read_to_string(path)?;
+    Ok(scan_zero_row_e2e_outline_titles(&content)
+        .into_iter()
+        .map(|scenario| BaselineEntry {
+            feature: feature_path.to_string(),
+            scenario,
+        })
+        .collect())
+}
+
+/// Scans a `.feature` file's raw text for `@e2e`-tagged `Scenario Outline`
+/// blocks whose `Examples:` table(s) carry zero total data rows —
+/// syntactically valid Gherkin (Cucumber itself accepts an `Examples:`
+/// header with no data rows below it, or an Outline with no `Examples:`
+/// block at all) that playwright-bdd's `renderScenarioOutline` emits
+/// literally **nothing** for: `scenario.examples.forEach(...)` iterates zero
+/// rows, `lines` stays empty, and `if (!lines.length) return [];` — no
+/// `test(...)`, no `test.fixme(...)`, no wrapping `test.describe(...)` at
+/// all (`node_modules/playwright-bdd/dist/generate/file.js`). There is
+/// therefore no generated JS artifact whatsoever for [`scan_fixme_titles`] or
+/// [`scan_unbound_describe_titles`] to ever see — the declared vs. fixme
+/// set-diff this module otherwise relies on has zero signal to work with, so
+/// this must be detected from the declared (raw Gherkin) side instead. Such
+/// an outline can never be resolved by writing a step definition (there is
+/// no row to bind), so the command layer (`crate::commands::specs_e2e_coverage`)
+/// surfaces it as a hard, unbaseline-able error rather than folding it into
+/// the ordinary new-gap/baseline flow — baselining it via `--update-baseline`
+/// would silently reintroduce exactly the always-passes failure mode this
+/// whole gate exists to prevent.
+///
+/// Sums Examples-table data rows across every `Examples:` block belonging to
+/// the same outline (multiple `Examples:` sections are valid Gherkin,
+/// `scenario.examples` is itself an array) — an outline is flagged only when
+/// the total across ALL its tables is zero. Nesting under a `Rule:` needs no
+/// special handling: `Rule:` is purely a text-structuring keyword that falls
+/// through the same "not a tag, not a scenario boundary, not an `Examples:`
+/// line, not a table row" branch as any other non-matching content line
+/// (`Feature:`, `Background:`, a `Given`/`When`/`Then` step, …) — mirroring
+/// playwright-bdd's own `renderChild`, which recurses into a `Rule` via the
+/// identical `renderScenarioOutline` call for a nested Outline as for a
+/// top-level one.
+pub fn scan_zero_row_e2e_outline_titles(content: &str) -> Vec<String> {
+    struct Outline {
+        title: String,
+        is_e2e: bool,
+        total_rows: usize,
+        in_table: bool,
+        seen_header_row: bool,
+    }
+
+    fn flush(current: &mut Option<Outline>, result: &mut Vec<String>) {
+        if let Some(outline) = current.take()
+            && outline.is_e2e
+            && outline.total_rows == 0
+        {
+            result.push(outline.title);
+        }
+    }
+
+    let mut result = Vec::new();
+    let mut pending_tags: Vec<String> = Vec::new();
+    let mut current: Option<Outline> = None;
+
+    for raw in content.lines() {
+        let line = raw.trim();
+        if line.is_empty() {
+            continue;
+        }
+        if line.starts_with('@') {
+            pending_tags.extend(line.split_whitespace().map(str::to_string));
+            continue;
+        }
+        if let Some(title) = line.strip_prefix("Scenario Outline:") {
+            flush(&mut current, &mut result);
+            current = Some(Outline {
+                title: title.trim().to_string(),
+                is_e2e: pending_tags.iter().any(|t| t == "@e2e"),
+                total_rows: 0,
+                in_table: false,
+                seen_header_row: false,
+            });
+            pending_tags.clear();
+            continue;
+        }
+        if line.starts_with("Scenario:") {
+            flush(&mut current, &mut result);
+            pending_tags.clear();
+            continue;
+        }
+        if line.starts_with("Examples:") {
+            if let Some(outline) = current.as_mut() {
+                outline.in_table = true;
+                outline.seen_header_row = false;
+            }
+            pending_tags.clear();
+            continue;
+        }
+        if line.starts_with('|') {
+            if let Some(outline) = current.as_mut()
+                && outline.in_table
+            {
+                if outline.seen_header_row {
+                    outline.total_rows += 1;
+                } else {
+                    outline.seen_header_row = true;
+                }
+            }
+            continue;
+        }
+        // Any other content line (Feature:, Rule:, Background:,
+        // Given/When/Then, …) ends the current Examples table scan (but
+        // never the outline itself — that only ends at the next
+        // Scenario(Outline): boundary or EOF) and clears any pending tags
+        // that never attached to a scenario.
+        if let Some(outline) = current.as_mut() {
+            outline.in_table = false;
+        }
+        pending_tags.clear();
+    }
+    flush(&mut current, &mut result);
+    result
 }
 
 /// Scans playwright-bdd generated `.spec.js` source for `test.fixme(...)`
@@ -108,19 +244,26 @@ pub fn scan_unbound_describe_titles(spec_js: &str) -> Vec<String> {
     result
 }
 
-/// Matches either a single-quoted or double-quoted JS string literal,
-/// respecting backslash-escaped characters (including an escaped instance of
-/// the literal's own delimiter) so a match never terminates early at an
-/// escaped quote. Shared between [`fixme_title_re`] and [`describe_re`] —
-/// both extract a JS string literal argument from a generated `.spec.js`
-/// call, and playwright-bdd's `jsStringWrap` always uses this same
-/// backslash-escaping convention regardless of which call emits the string
-/// (see [`unescape_js_string`]). Capture group 1 holds a single-quoted body,
-/// group 2 a double-quoted body — exactly one is `Some` per match. Rust's
-/// `regex` crate has no backreferences/lookaround, so the two quote styles
-/// are matched via separate alternatives rather than one delimiter-agnostic
-/// pattern.
-const QUOTED_JS_STRING: &str = r#"(?:'((?:\\.|[^'\\])*)'|"((?:\\.|[^"\\])*)")"#;
+/// Matches a single-quoted, double-quoted, or backtick-quoted JS string
+/// literal, respecting backslash-escaped characters (including an escaped
+/// instance of the literal's own delimiter) so a match never terminates
+/// early at an escaped quote. Shared between [`fixme_title_re`] and
+/// [`describe_re`] — both extract a JS string literal argument from a
+/// generated `.spec.js` call, and playwright-bdd's `jsStringWrap` always
+/// uses this same backslash-escaping convention regardless of which call
+/// emits the string or which of its three `quotes` config values
+/// (`'single'` (default) / `'double'` / `'backtick'` — see
+/// `node_modules/playwright-bdd/dist/config/types.d.ts`) produced it (see
+/// [`unescape_js_string`]). Capture group 1 holds a single-quoted body,
+/// group 2 a double-quoted body, group 3 a backtick-quoted body — exactly
+/// one is `Some` per match. Rust's `regex` crate has no
+/// backreferences/lookaround, so the three quote styles are matched via
+/// separate alternatives rather than one delimiter-agnostic pattern. All 11
+/// e2e projects wired in this repo default to single-quoted output today, so
+/// backtick support is presently dormant — but it costs nothing extra to
+/// keep live given this alternation structure, and keeps this parser's
+/// "quote-style-agnostic" claim true rather than a doc-only aspiration.
+const QUOTED_JS_STRING: &str = r#"(?:'((?:\\.|[^'\\])*)'|"((?:\\.|[^"\\])*)"|`((?:\\.|[^`\\])*)`)"#;
 
 /// Matches a `test.fixme("<title>", ...)` call's title argument.
 ///
@@ -148,12 +291,13 @@ fn describe_re() -> &'static Regex {
 }
 
 /// Extracts and unescapes a [`QUOTED_JS_STRING`] match's captured body —
-/// whichever of the two alternative capture groups matched (single- or
-/// double-quoted).
+/// whichever of the three alternative capture groups matched (single-,
+/// double-, or backtick-quoted).
 fn captured_title(caps: &regex::Captures<'_>) -> String {
     let raw = caps
         .get(1)
         .or_else(|| caps.get(2))
+        .or_else(|| caps.get(3))
         .map(|m| m.as_str())
         .unwrap_or_default();
     unescape_js_string(raw)
@@ -313,6 +457,44 @@ mod tests {
         assert_eq!(titles, vec!["He said \"hi\"".to_string()]);
     }
 
+    /// Regression test for the doc-accuracy gap: playwright-bdd's `quotes`
+    /// config also supports `'backtick'`
+    /// (`node_modules/playwright-bdd/dist/config/types.d.ts`), escaping only
+    /// the backtick delimiter itself (and `\`) — a single/double quote
+    /// embedded in a backtick-quoted title must pass through unescaped, and
+    /// an escaped backtick inside the title must round-trip correctly.
+    #[test]
+    fn scan_fixme_titles_unescapes_backtick_quoted_title() {
+        let spec_js = r#"test.fixme(`Uses the \`code\` keyword and "quotes" 'too'`, async ({ page }) => {});"#;
+
+        let titles = scan_fixme_titles(spec_js);
+
+        assert_eq!(
+            titles,
+            vec!["Uses the `code` keyword and \"quotes\" 'too'".to_string()]
+        );
+    }
+
+    /// Backtick-quoted counterpart of
+    /// `scan_unbound_describe_titles_detects_outline_with_unbound_example` —
+    /// proves `describe_re` (which shares `QUOTED_JS_STRING` with
+    /// `fixme_title_re`) resolves a backtick-quoted `describe` title too.
+    #[test]
+    fn scan_unbound_describe_titles_detects_backtick_quoted_outline_title() {
+        let spec_js = "\
+test.describe(`Outline title`, () => {
+  test.fixme(`Example #1`, async ({ page }) => {
+  });
+  test(`Example #2`, async ({ page }) => {
+  });
+});
+";
+
+        let titles = scan_unbound_describe_titles(spec_js);
+
+        assert_eq!(titles, vec!["Outline title".to_string()]);
+    }
+
     /// Regression test for the Scenario-Outline blind spot: `scan_fixme_titles`
     /// alone never sees an unbound outline (its Examples-row tests are titled
     /// `Example #<N>`, never the outline's own title) — `scan_unbound_describe_titles`
@@ -397,5 +579,146 @@ test.describe('Feature', () => {
             !titles.contains(&"Bound outline".to_string()),
             "a fully-bound outline (no nested test.fixme) must not be reported, got: {titles:?}"
         );
+    }
+
+    /// Regression test for the zero-row-Outline blind spot (cycle-4 CRITICAL
+    /// finding): an `@e2e Scenario Outline` whose `Examples:` table has a
+    /// header row but zero data rows produces NO generated JS at all —
+    /// neither `scan_fixme_titles` nor `scan_unbound_describe_titles` has
+    /// anything to scan. Must be detected from the raw declared-side text.
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Scenario Outline has zero Examples data rows
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_detects_header_only_examples_table() {
+        let content = "\
+@e2e
+Scenario Outline: Renders the field correctly
+  Given a field <field>
+
+  Examples:
+    | field |
+";
+
+        let titles = scan_zero_row_e2e_outline_titles(content);
+
+        assert_eq!(titles, vec!["Renders the field correctly".to_string()]);
+    }
+
+    /// An Outline with no `Examples:` block at all is the same structural
+    /// defect (playwright-bdd's `scenario.examples` is an empty array
+    /// either way) — must also be detected.
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_detects_outline_with_no_examples_block() {
+        let content =
+            "@e2e\nScenario Outline: Missing examples entirely\n  Given a field <field>\n";
+
+        let titles = scan_zero_row_e2e_outline_titles(content);
+
+        assert_eq!(titles, vec!["Missing examples entirely".to_string()]);
+    }
+
+    /// Negative counterpart: an Outline with at least one Examples data row
+    /// must never be flagged — guards against the scan over-matching (e.g.
+    /// miscounting the header row itself as data).
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_ignores_outline_with_rows() {
+        let content = "\
+@e2e
+Scenario Outline: Renders the field correctly
+  Given a field <field>
+
+  Examples:
+    | field |
+    | name  |
+";
+
+        assert!(scan_zero_row_e2e_outline_titles(content).is_empty());
+    }
+
+    /// A zero-row Outline that is NOT `@e2e`-tagged (e.g. `@unit`-only) is
+    /// out of this gate's scope entirely — matches `extract_declared`'s own
+    /// `@e2e`-only filter.
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_ignores_non_e2e_outline() {
+        let content = "\
+@unit
+Scenario Outline: Unit-only outline
+  Given a field <field>
+
+  Examples:
+    | field |
+";
+
+        assert!(scan_zero_row_e2e_outline_titles(content).is_empty());
+    }
+
+    /// Multiple `Examples:` blocks under one outline are summed — flagged
+    /// only when the total across every block is zero.
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_sums_rows_across_multiple_examples_blocks() {
+        let content = "\
+@e2e
+Scenario Outline: Two examples sections
+  Given a field <field>
+
+  Examples:
+    | field |
+
+  Examples:
+    | field |
+    | email |
+";
+
+        assert!(scan_zero_row_e2e_outline_titles(content).is_empty());
+    }
+
+    /// A zero-row outline nested under a `Rule:` ancestor must be detected
+    /// identically to a top-level one — `Rule:` is purely a text-structuring
+    /// keyword to this line-scanner, mirroring playwright-bdd's own
+    /// `renderChild`, which recurses into a `Rule` via the same
+    /// `renderScenarioOutline` call path as a top-level Outline.
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_detects_outline_nested_under_a_rule() {
+        let content = "\
+Feature: Example
+
+  Rule: Some business rule
+
+    @e2e
+    Scenario Outline: Nested outline with zero rows
+      Given a field <field>
+
+      Examples:
+        | field |
+";
+
+        let titles = scan_zero_row_e2e_outline_titles(content);
+
+        assert_eq!(titles, vec!["Nested outline with zero rows".to_string()]);
+    }
+
+    /// A plain `Scenario:` (not an Outline) is never flagged by this scan —
+    /// it has no Examples table to be structurally empty in the first place.
+    #[test]
+    fn scan_zero_row_e2e_outline_titles_ignores_plain_scenario() {
+        let content = "@e2e\nScenario: A plain scenario\n  Given a step\n";
+
+        assert!(scan_zero_row_e2e_outline_titles(content).is_empty());
+    }
+
+    #[test]
+    fn extract_zero_row_outlines_reads_from_file() {
+        let tmp = TempDir::new().unwrap();
+        let p = tmp.path().join("x.feature");
+        std::fs::write(
+            &p,
+            "@e2e\nScenario Outline: Zero rows\n  Given a field <field>\n\n  Examples:\n    | field |\n",
+        )
+        .unwrap();
+
+        let entries = extract_zero_row_outlines(&p, "specs/x.feature").unwrap();
+
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].feature, "specs/x.feature");
+        assert_eq!(entries[0].scenario, "Zero rows");
     }
 }

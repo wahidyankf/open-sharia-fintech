@@ -99,7 +99,7 @@ behavior/rhino-cli/gherkin/
 | --------------------------------- | ------------------------------------------------------------------------------------------------ | --------- |
 | `behavior-coverage.feature`       | `specs behavior-coverage validate`                                                               | 6         |
 | `domain-coverage.feature`         | `specs behavior-coverage validate` (domain allowlist gate)                                       | 2         |
-| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                                    | 8         |
+| `e2e-coverage.feature`            | `specs e2e-coverage validate`                                                                    | 9         |
 | `env-staged-guard.feature`        | `env staged-guard validate`                                                                      | 2         |
 | `gherkin-cardinality.feature`     | `specs gherkin-cardinality validate`                                                             | 1         |
 | `harness-bindings.feature`        | `harness bindings validate`                                                                      | 1         |

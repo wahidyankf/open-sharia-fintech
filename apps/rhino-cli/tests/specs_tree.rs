@@ -1425,6 +1425,38 @@ fn given_ec_outline_with_unbound_example(w: &mut SpecsTreeWorld) {
     );
 }
 
+/// Declared title of the zero-row `Scenario Outline`
+/// [`given_ec_zero_row_outline`] writes — shared with
+/// [`then_ec_names_zero_row_outline`] so both sides of the fixture agree on
+/// the exact text without duplicating it.
+const EC_ZERO_ROW_OUTLINE_TITLE: &str = "Renders the field correctly with no examples";
+
+#[given("an @e2e Scenario Outline whose Examples table has zero data rows")]
+fn given_ec_zero_row_outline(w: &mut SpecsTreeWorld) {
+    // playwright-bdd's renderScenarioOutline emits NOTHING at all for a
+    // zero-row outline (see parser::scan_zero_row_e2e_outline_titles's doc
+    // comment) — the fix fires before the command ever reads
+    // `.features-gen`, so no generated-output fixture is written here.
+    w.write(
+        &format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"),
+        &format!(
+            "Feature: fixture\n\n@e2e\nScenario Outline: {EC_ZERO_ROW_OUTLINE_TITLE}\n  Given a field <field>\n\n  Examples:\n    | field |\n"
+        ),
+    );
+}
+
+#[then("it names the zero-row outline as the reason, not a silent pass")]
+fn then_ec_names_zero_row_outline(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(text.contains(EC_ZERO_ROW_OUTLINE_TITLE), "got: {text}");
+    assert!(
+        text.to_lowercase().contains("examples") && text.to_lowercase().contains("zero"),
+        "expected the error to explain the zero-Examples-data-rows cause, got: {text}"
+    );
+}
+
 /// Declared title of the apostrophe-bearing scenario
 /// [`given_ec_apostrophe_titled_fixme`] writes — shared with
 /// [`then_ec_reports_one_new_gap_for_apostrophe_title`] so both sides of the
