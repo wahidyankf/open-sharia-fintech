@@ -98,3 +98,7 @@ weight: 1750
 - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+- [29 · Advanced Networking](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/drilling)

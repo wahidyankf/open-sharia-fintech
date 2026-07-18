@@ -1,0 +1,47 @@
+=== first query ===
+
+; <<>> DiG 9.10.6 <<>> example.com A
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 28721
+;; flags: qr rd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+;; WARNING: recursion requested but not available
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4095
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		150	IN	A	104.20.23.154
+example.com.		150	IN	A	172.66.147.243
+
+;; Query time: 2 msec
+;; SERVER: 100.100.100.100#53(100.100.100.100)
+;; WHEN: Sat Jul 18 08:17:17 WIB 2026
+;; MSG SIZE  rcvd: 72
+
+
+=== second query (~2s later) ===
+
+; <<>> DiG 9.10.6 <<>> example.com A
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 63178
+;; flags: qr rd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
+;; WARNING: recursion requested but not available
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4095
+;; QUESTION SECTION:
+;example.com.			IN	A
+
+;; ANSWER SECTION:
+example.com.		148	IN	A	172.66.147.243
+example.com.		148	IN	A	104.20.23.154
+
+;; Query time: 2 msec
+;; SERVER: 100.100.100.100#53(100.100.100.100)
+;; WHEN: Sat Jul 18 08:17:19 WIB 2026
+;; MSG SIZE  rcvd: 72
+
