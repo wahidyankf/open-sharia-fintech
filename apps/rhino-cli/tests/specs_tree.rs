@@ -122,8 +122,16 @@ const EC_FEATURE_FILE: &str = "example.feature";
 /// lives in for the e2e-coverage.feature subprocess fixtures.
 const EC_FEATURES_GEN_DIR: &str = ".features-gen";
 /// Filename of the generated `.spec.js` fixture written under
-/// [`EC_FEATURES_GEN_DIR`].
-const EC_SPEC_JS_FILE: &str = "example.spec.js";
+/// [`EC_FEATURES_GEN_DIR`]. Deliberately keeps [`EC_FEATURE_FILE`]'s
+/// `.feature` extension and appends `.spec.js` (i.e.
+/// `example.feature.spec.js`, not `example.spec.js`) to match playwright-bdd's
+/// real generated-filename convention — the same convention the `is_fixme`/
+/// `path_ends_with` pairing logic in `commands/specs_e2e_coverage.rs` relies
+/// on to match a declared scenario to its originating generated file. Using
+/// the pre-convention name here made `is_fixme` return `false` for every
+/// scenario this fixture writes (see the cycle-2 PR review finding that
+/// caught this).
+const EC_SPEC_JS_FILE: &str = "example.feature.spec.js";
 /// Project-relative path to the checked-in baseline manifest.
 const EC_BASELINE_PATH: &str = "e2e-coverage-baseline.json";
 
@@ -1402,8 +1410,14 @@ fn given_ec_new_gap_scenario(w: &mut SpecsTreeWorld, title: String, file_name: S
         &format!("{EC_FEATURES_DIR}/{file_name}"),
         &format!("Feature: fixture\n\n@e2e\nScenario: {title}\n  Given a step\n"),
     );
+    // Mirrors playwright-bdd's real convention: the generated file keeps the
+    // declared `.feature` file's name (including its `.feature` extension)
+    // and appends `.spec.js` — matching `EC_SPEC_JS_FILE`'s convention and
+    // what `is_fixme`'s file-pairing logic in `specs_e2e_coverage.rs` relies
+    // on. A hardcoded `gap.spec.js` (unrelated to `file_name`) never pairs
+    // with the declared scenario's `.feature` path.
     w.write(
-        &format!("{EC_FEATURES_GEN_DIR}/gap.spec.js"),
+        &format!("{EC_FEATURES_GEN_DIR}/{file_name}.spec.js"),
         &format!("test.fixme(\"{title}\", async ({{ page }}) => {{}});\n"),
     );
 }
