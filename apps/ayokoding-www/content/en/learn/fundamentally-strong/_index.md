@@ -36,4 +36,5 @@ weight: 107
   - [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
   - [25 · Advanced Algorithms](/en/c/learn/fundamentally-strong/software-engineer/advanced-algorithms)
   - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
+  - [27 · Data Access: ORMs & Query Builders](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders)
   - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
