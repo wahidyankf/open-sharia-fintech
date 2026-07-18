@@ -1,0 +1,58 @@
+* Host example.com:443 was resolved.
+* IPv6: 2606:4700:10::6814:179a, 2606:4700:10::ac42:93f3
+* IPv4: 172.66.147.243, 104.20.23.154
+*   Trying 172.66.147.243:443...
+* Connected to example.com (172.66.147.243) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [316 bytes data]
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [19 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [3687 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [78 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=example.com
+*  start date: May 31 21:39:12 2026 GMT
+*  expire date: Aug 29 21:41:26 2026 GMT
+*  subjectAltName: host "example.com" matched cert's "example.com"
+*  issuer: C=US; O=SSL Corporation; CN=Cloudflare TLS Issuing ECC CA 3
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://example.com/
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: example.com]
+* [HTTP/2] [1] [:path: /]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET / HTTP/2
+> Host: example.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/2 200 
+< date: Sat, 18 Jul 2026 01:16:49 GMT
+< content-type: text/html
+< server: cloudflare
+< last-modified: Wed, 15 Jul 2026 18:48:48 GMT
+< allow: GET, HEAD
+< accept-ranges: bytes
+< age: 1
+< cf-cache-status: HIT
+< cf-ray: a1cda4aac94c40f6-SIN
+< 
+{ [559 bytes data]
+* Connection #0 to host example.com left intact

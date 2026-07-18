@@ -1,0 +1,10 @@
+trim trailing whitespace.................................................Passed
+end-of-file-fixer.........................................................Passed
+ruff.......................................................................Passed
+ruff-format.................................................................Passed
+
+- module_a.py: checked, clean
+- module_b.py: checked, clean
+- .pre-commit-config.yaml: checked, clean
+
+4 hooks x 3 tracked files = every hook ran against every file in the repo, not a `git diff`-scoped subset

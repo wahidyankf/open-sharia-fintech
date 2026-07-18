@@ -1,0 +1,22 @@
+=== plain request (likely a cache HIT) ===
+HTTP/2 200
+date: Sat, 18 Jul 2026 01:47:06 GMT
+content-type: text/html
+server: cloudflare
+last-modified: Wed, 15 Jul 2026 18:48:48 GMT
+allow: GET, HEAD
+accept-ranges: bytes
+age: 8
+cf-cache-status: HIT
+cf-ray: a1cdd103dd7cb486-SIN
+
+=== cache-busting query string (forces a cache MISS) ===
+HTTP/2 200
+date: Sat, 18 Jul 2026 01:47:07 GMT
+content-type: text/html
+server: cloudflare
+last-modified: Wed, 15 Jul 2026 18:48:48 GMT
+allow: GET, HEAD
+accept-ranges: bytes
+cf-cache-status: MISS
+cf-ray: a1cdd1049d40289f-SIN

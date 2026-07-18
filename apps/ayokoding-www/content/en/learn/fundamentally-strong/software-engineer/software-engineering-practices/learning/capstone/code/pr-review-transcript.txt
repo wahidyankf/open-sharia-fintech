@@ -1,0 +1,18 @@
+=== self-review, BEFORE opening the PR ===
+redemption.py      | 12 ++++++++++++
+test_redemption.py |  9 +++++++++
+2 files changed, 21 insertions(+)
+
+Creating pull request for feature/points-redemption-cap into main in acme/checkout-service
+
+https://github.com/acme/checkout-service/pull/201
+
+✓ Commented on acme/checkout-service#201
+
+-- author responds: keeping the bare ValueError for this small a module, noted for later --
+
+✓ Approved acme/checkout-service#201
+
+{
+  "reviewDecision": "APPROVED"
+}

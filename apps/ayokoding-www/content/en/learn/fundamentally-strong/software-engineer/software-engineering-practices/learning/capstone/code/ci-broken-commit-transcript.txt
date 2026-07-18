@@ -1,0 +1,33 @@
+-- A deliberately broken follow-up commit: MAX_REDEMPTION_FRACTION mistakenly bumped from 0.5 to
+-- 1.5 (e.g., a fat-fingered edit while adding a "VIP tier" special case). The lint stage still
+-- passes -- this bug is a WRONG CONSTANT, not a style violation. The test stage is where it is
+-- actually caught, and the pipeline stops there: build never runs.
+--
+-- The `ruff check`/`pytest` output below is genuinely executed against this exact broken file; the
+-- surrounding job list (NAME/DESCRIPTION/ELAPSED/RESULT) is a mocked, hand-constructed GitHub
+-- Actions summary, in the same style as Examples 14 and 46.
+
+NAME              DESCRIPTION  ELAPSED  RESULT
+ci / lint                       4s      ✓ pass
+ci / test                       3s      ✗ fail
+ci / build                      -       ⊘ skipped (needs: test)
+
+--- ci / lint -- ruff check . ---
+All checks passed!
+
+--- ci / test -- pytest -q ---
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+_________________________ test_redeem_above_cap_raises _________________________
+
+    def test_redeem_above_cap_raises() -> None:
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+test_redemption.py:13: Failed
+=========================== short test summary info ============================
+FAILED test_redemption.py::test_redeem_above_cap_raises - Failed: DID NOT RAI...
+1 failed, 1 passed in 0.01s
+
+error: the required check "ci / test" is failing -- this branch cannot be merged until it is fixed

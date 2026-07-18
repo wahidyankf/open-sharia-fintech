@@ -1,0 +1,4 @@
+USD redemption with flag OFF: redeemed 10.0 USD
+EUR redemption with flag OFF: blocked (multi-currency redemption is not yet enabled)
+EUR redemption with flag ON: redeemed 10.0 EUR
+Trunk build stayed green with the flag off, and flag-on unlocks the new path: True

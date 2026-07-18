@@ -23,7 +23,7 @@ Python (DD-39) over the DB-API driver.
 
 - **Prior topics**: [topic 27 Data Access: ORMs & Query Builders](./27-data-access-orms-and-query-builders.md).
 - **Tools & environment**: a macOS/Linux terminal; **Python 3.x** (fully type-annotated); a local
-  SQLite (or equivalent) database reached through the standard DB-API driver (PEP 249); a test runner;
+  SQLite (or equivalent) database reached through the standard DB-API driver (PEP 249); `pytest`;
   Neovim/VSCode with the Python LSP (DD-17).
 - **Assumed knowledge**: the three data-access tiers and the patterns they use — identity map, unit of
   work, lazy load, the N+1 (topic 27); parameterized SQL and joins (topics 10, 26); reading and writing
@@ -39,6 +39,21 @@ Python (DD-39) over the DB-API driver.
   Python ORM is actually structured.
 - 2026-07-12 — verified: PEP 249 (Python DB-API v2.0) is the current standard driver contract the
   hand-built layer sits on; no version to pin.
+- 2026-07-18 — verified (authoring-time re-check): PEP 249 status unchanged (Final, no successor). The
+  AOSA vol. II SQLAlchemy chapter is still live at its usual URL and remains the best available
+  first-person account, though it describes pre-1.0 SQLAlchemy (0.7, 2011) — no newer/better first-person
+  written account of a Python ORM's internals was found, so keep citing it but don't imply it reflects
+  current SQLAlchemy 2.0 architecture. **Content note**: `pytest` (not a generic "test runner") is this
+  repo's actual convention for By-Example topics with tests — tightened the Tools & environment line
+  above accordingly; current stable is `pytest==9.1.1`. **Content note (stdlib `sqlite3`, Python
+  3.13/3.14)**: `sqlite3.connect()`'s optional args (`timeout`, `detect_types`, `isolation_level`,
+  `check_same_thread`, `factory`, `cached_statements`, `uri`) are deprecated as positional — pass them as
+  keywords in any authored example that sets them; an unclosed `Connection` now emits a `ResourceWarning`
+  on GC (reinforces always using a context manager, relevant to co-15/co-25). No breaking change applies
+  to the `?`-placeholder / `row_factory`-assignment style this topic is scoped to use. Source:
+  [AOSA SQLAlchemy chapter](https://aosabook.org/en/v2/sqlalchemy.html),
+  [PEP 249](https://peps.python.org/pep-0249/), [sqlite3 docs](https://docs.python.org/3/library/sqlite3.html),
+  [pytest PyPI](https://pypi.org/project/pytest/).
 
 ## Concepts
 

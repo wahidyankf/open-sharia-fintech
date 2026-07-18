@@ -1,0 +1,11 @@
+--- while fixing an off-by-one bug, ONE nearby bad name gets renamed too ---
+ inventory.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+commit 4046b11926567f4a97be6c475cd9001f25df0d5c
+Author: Dev <dev@example.com>
+Date:   Sat Jul 18 08:18:49 2026 +0700
+
+    fix(inventory): correct off-by-one that dropped the last item
+
+ inventory.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)

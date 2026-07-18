@@ -1,0 +1,53 @@
+* Host example.com:443 was resolved.
+* IPv6: 2606:4700:10::6814:179a, 2606:4700:10::ac42:93f3
+* IPv4: 104.20.23.154, 172.66.147.243
+*   Trying 104.20.23.154:443...
+* Connected to example.com (104.20.23.154) port 443
+* ALPN: curl offers http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [313 bytes data]
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [25 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [3687 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [80 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=example.com
+*  start date: May 31 21:39:12 2026 GMT
+*  expire date: Aug 29 21:41:26 2026 GMT
+*  subjectAltName: host "example.com" matched cert's "example.com"
+*  issuer: C=US; O=SSL Corporation; CN=Cloudflare TLS Issuing ECC CA 3
+*  SSL certificate verify ok.
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: example.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Date: Sat, 18 Jul 2026 01:16:42 GMT
+< Content-Type: text/html
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< Server: cloudflare
+< last-modified: Wed, 15 Jul 2026 18:48:48 GMT
+< allow: GET, HEAD
+< Accept-Ranges: bytes
+< Age: 415
+< cf-cache-status: HIT
+< CF-RAY: a1cda47c5c23fdc3-SIN
+< 
+{ [566 bytes data]
+* Connection #0 to host example.com left intact

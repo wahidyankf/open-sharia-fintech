@@ -1,0 +1,17 @@
+Creating pull request for refactor/async-settlement into main in acme/checkout-service
+
+https://github.com/acme/checkout-service/pull/150
+
+NAME                    DESCRIPTION  ELAPSED  RESULT
+ci / coverage-baseline               7s       ✓ pass (87.2% >= 86.0% baseline)
+ci / test                            10s      ✓ pass
+
+{
+  "reviewDecision": "REVIEW_REQUIRED"
+}
+
+X This branch has passing checks but is missing a required review
+required_pull_request_reviews: 1 approval required, 0 given
+
+error: GraphQL: Pull request acme/checkout-service#150 is not mergeable: the base branch policy
+prohibits the merge (mergeStateStatus: "BLOCKED")

@@ -1,0 +1,12 @@
+### `apply_gift_card(total: 'float', card_balance: 'float') -> 'float'`
+
+Apply a gift card's balance against a cart total.
+
+Args:
+    total: the cart's pre-gift-card total, in dollars.
+    card_balance: the gift card's remaining balance, in dollars.
+
+Returns:
+    The amount still owed after the gift card is applied, never negative.
+
+Generated doc matches the live signature and docstring, no hand-duplicated copy: True

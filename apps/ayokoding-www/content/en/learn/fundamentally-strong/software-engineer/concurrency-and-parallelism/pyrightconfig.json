@@ -1,0 +1,15 @@
+{
+  "typeCheckingMode": "strict",
+  "pythonVersion": "3.13",
+  "include": ["learning/code", "learning/capstone/code", "drilling/code"],
+  "executionEnvironments": [
+    {
+      "root": "learning/code/ex-82-observable-map-filter-rxpy",
+      "extraPaths": ["learning/code/ex-82-observable-map-filter-rxpy/.venv/lib/python3.13/site-packages"]
+    },
+    {
+      "root": "learning/code/ex-83-hot-vs-cold-subscription",
+      "extraPaths": ["learning/code/ex-83-hot-vs-cold-subscription/.venv/lib/python3.13/site-packages"]
+    }
+  ]
+}

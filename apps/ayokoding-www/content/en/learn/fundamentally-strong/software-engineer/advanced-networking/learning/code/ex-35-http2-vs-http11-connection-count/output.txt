@@ -1,0 +1,18 @@
+=== HTTP/1.1, 3 resources, --parallel ===
+*   Trying 104.20.23.154:443...
+*   Trying 104.20.23.154:443...
+*   Trying 104.20.23.154:443...
+* Connected to example.com (104.20.23.154) port 443
+* Connected to example.com (104.20.23.154) port 443
+* Connected to example.com (104.20.23.154) port 443
+< HTTP/1.1 404 Not Found
+< HTTP/1.1 404 Not Found
+< HTTP/1.1 404 Not Found
+
+=== HTTP/2, 3 resources, --parallel ===
+*   Trying 172.66.147.243:443...
+* Connected to example.com (172.66.147.243) port 443
+* using HTTP/2
+< HTTP/2 404
+< HTTP/2 404
+< HTTP/2 404
