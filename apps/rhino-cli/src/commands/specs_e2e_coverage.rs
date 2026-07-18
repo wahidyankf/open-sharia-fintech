@@ -66,32 +66,8 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     let features_gen_dir = project_dir.join(&args.features_gen);
     let baseline_path = project_dir.join(&args.baseline);
 
-    let (declared_with_paths, any_feature_file_matched, zero_row_outlines) =
+    let (declared_with_paths, any_feature_file_matched) =
         collect_declared(&project_dir, &args.features)?;
-    // Checked before even touching `.features-gen` — a zero-row `Scenario
-    // Outline` is a pure declared-side (Gherkin-authoring) defect that
-    // playwright-bdd's generator can NEVER produce any signal for (see
-    // `parser::scan_zero_row_e2e_outline_titles`'s doc comment), so there is
-    // no point reading generated output before reporting it. This is a hard
-    // error, not folded into the ordinary new-gap/baseline flow, precisely
-    // so `--update-baseline` can never silently absorb it — that would
-    // reintroduce the exact always-passes failure mode this gate exists to
-    // prevent.
-    if !zero_row_outlines.is_empty() {
-        let named = zero_row_outlines
-            .iter()
-            .map(|e| format!("{}: {}", e.feature, e.scenario))
-            .collect::<Vec<_>>()
-            .join("; ");
-        return Err(anyhow!(
-            "{} @e2e Scenario Outline(s) with zero Examples data rows found — \
-             playwright-bdd generates NO test at all for a zero-row outline (not even \
-             test.fixme), so it is structurally invisible to this gate and can never be \
-             accepted via --update-baseline; add at least one Examples row or remove the \
-             empty outline: {named}",
-            zero_row_outlines.len()
-        ));
-    }
     // `scan_fixme_dir` runs (and may error on a missing `.features-gen`)
     // BEFORE the empty-glob guard below — a missing generated-output
     // directory is a more specific, more actionable diagnostic than an
@@ -110,16 +86,18 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     // The scan only yields scenario *titles* per generated file (test.fixme
     // carries no feature path of its own); reconstruct {feature, scenario}
     // pairs by matching each declared scenario against ONLY its own
-    // originating generated file's fixme titles — never a flat, cross-file
+    // originating generated file's title sets — never a flat, cross-file
     // title union. Scenario titles can legitimately repeat across different
     // `.feature` files (see `BaselineEntry`'s pairing invariant in
     // `types.rs`), and matching by title alone would falsely credit a
     // fully-implemented scenario as unbound whenever a same-titled scenario
-    // elsewhere happens to be genuinely fixme'd. See `is_fixme` for the
-    // per-file pairing logic.
+    // elsewhere happens to be genuinely fixme'd. See `is_unbound_or_absent`
+    // for the per-file pairing logic.
     let fixme: Vec<BaselineEntry> = declared_with_paths
         .iter()
-        .filter(|(feature_abs, entry)| is_fixme(feature_abs, &entry.scenario, &fixme_by_file))
+        .filter(|(feature_abs, entry)| {
+            is_unbound_or_absent(feature_abs, &entry.scenario, &fixme_by_file)
+        })
         .map(|(_, entry)| entry.clone())
         .collect();
     let declared: Vec<BaselineEntry> = declared_with_paths.into_iter().map(|(_, e)| e).collect();
@@ -155,17 +133,17 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 
 /// Return type of [`collect_declared`]: a tuple of (declared entries paired
 /// with their originating `.feature` file's canonical path, whether ANY
-/// `.feature` file matched at least one `--features` glob, zero-row-Outline
-/// entries) — see that function's own doc comment for what each element
-/// means.
-type CollectedDeclared = (Vec<(PathBuf, BaselineEntry)>, bool, Vec<BaselineEntry>);
+/// `.feature` file matched at least one `--features` glob) — see that
+/// function's own doc comment for what each element means.
+type CollectedDeclared = (Vec<(PathBuf, BaselineEntry)>, bool);
 
 /// Extracts the declared `@e2e` scenario set across every `--features` glob,
 /// resolved relative to `project_dir`. Each entry is paired with the
 /// canonical (symlink- and `..`-resolved) absolute path of its originating
-/// `.feature` file — used only by [`is_fixme`] to pair the entry against the
-/// correct generated `.spec.js` file's fixme titles; never persisted on
-/// `BaselineEntry` itself, so baseline manifest compatibility is unaffected.
+/// `.feature` file — used only by [`is_unbound_or_absent`] to pair the entry
+/// against the correct generated `.spec.js` file's title sets; never
+/// persisted on `BaselineEntry` itself, so baseline manifest compatibility
+/// is unaffected.
 ///
 /// Also returns whether ANY `.feature` file matched at least one glob —
 /// distinct from whether any `@e2e`-tagged scenario was declared. A project
@@ -174,13 +152,6 @@ type CollectedDeclared = (Vec<(PathBuf, BaselineEntry)>, bool, Vec<BaselineEntry
 /// must still pass the gate; only a glob matching NO FILES AT ALL (an
 /// omitted flag already caught by `clap`, or a misconfigured/renamed path)
 /// is the misconfiguration `run` guards against — see the caller.
-///
-/// Also returns every `@e2e Scenario Outline` found with zero total Examples
-/// data rows (see [`parser::scan_zero_row_e2e_outline_titles`]) — these are
-/// deliberately NOT included in the returned `declared` set at all (a
-/// zero-row outline can never legitimately be "bound", so it has no place in
-/// the ordinary declared/fixme/baseline flow); the caller surfaces them as a
-/// dedicated hard error instead.
 ///
 /// # Errors
 ///
@@ -192,7 +163,6 @@ fn collect_declared(
 ) -> std::result::Result<CollectedDeclared, Error> {
     let mut declared = Vec::new();
     let mut any_feature_file_matched = false;
-    let mut zero_row_outlines = Vec::new();
     for pattern in features {
         let abs_pattern = project_dir.join(pattern);
         let pattern_str = abs_pattern
@@ -211,36 +181,46 @@ fn collect_declared(
             for scenario in parser::extract_declared(&path, &feature_path)? {
                 declared.push((canonical.clone(), scenario));
             }
-            zero_row_outlines.extend(parser::extract_zero_row_outlines(&path, &feature_path)?);
         }
     }
-    Ok((declared, any_feature_file_matched, zero_row_outlines))
+    Ok((declared, any_feature_file_matched))
 }
 
-/// Recursively scans `dir` for unbound scenario titles, keyed by EVERY
-/// generated `.spec.js` file's path relative to `dir` with the trailing
-/// `.spec.js` suffix stripped — including files with an empty title set
-/// (fully bound, no unbound scenarios at all). A file's title set is the
-/// union of its plain `test.fixme(...)` call titles (a bare `Scenario:`) and
-/// its `test.describe(...)` block titles that wrap at least one nested
-/// `test.fixme` (a `Scenario Outline:` — see
-/// [`parser::scan_unbound_describe_titles`]). Any other file playwright-bdd
-/// wrote that isn't itself named `*.spec.js` is omitted; a `.spec.js` file
-/// that happens to be non-UTF-8 is recorded with an empty title set rather
-/// than omitted entirely (see [`is_fixme`] for why recording bound files
-/// matters).
+/// A generated `.spec.js` file's two title sets, keyed together per mirror
+/// file so [`is_unbound_or_absent`] can answer both "is this title
+/// unbound?" and "is this title rendered here at all?" from one lookup.
+struct FileTitles {
+    /// Titles playwright-bdd marked unbound: a plain `test.fixme(...)` call
+    /// title, or a `Scenario Outline`'s wrapping `describe` title (see
+    /// [`parser::scan_unbound_describe_titles`]).
+    unbound: HashSet<String>,
+    /// EVERY title playwright-bdd rendered anything for at all — bound or
+    /// unbound leaf tests, and every `describe` block title regardless of
+    /// its nested tests' state (see [`parser::scan_all_rendered_titles`]).
+    /// Always a superset of `unbound`.
+    rendered: HashSet<String>,
+}
+
+/// Recursively scans `dir` for both title sets described by [`FileTitles`],
+/// keyed by EVERY generated `.spec.js` file's path relative to `dir` with
+/// the trailing `.spec.js` suffix stripped — including files with empty
+/// title sets (fully bound, no unbound scenarios at all). Any other file
+/// playwright-bdd wrote that isn't itself named `*.spec.js` is omitted; a
+/// `.spec.js` file that happens to be non-UTF-8 is recorded with empty title
+/// sets rather than omitted entirely (see [`is_unbound_or_absent`] for why
+/// recording bound files matters).
 ///
 /// playwright-bdd generates exactly one `.spec.js` per `.feature` file,
 /// mirroring the directory structure below its `featuresRoot`; stripping the
 /// `.spec.js` suffix therefore reconstructs that `.feature` file's path
-/// relative to `featuresRoot`, which [`is_fixme`] matches as a
+/// relative to `featuresRoot`, which [`is_unbound_or_absent`] matches as a
 /// component-wise suffix of each declared entry's canonical absolute path.
 ///
 /// # Errors
 ///
 /// Returns an error if `dir` does not exist or a directory walk encounters
 /// an I/O error.
-fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<String>>, Error> {
+fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, FileTitles>, Error> {
     if !dir.exists() {
         return Err(anyhow!(
             "generated output directory {} not found — run `npx bddgen` first to produce it",
@@ -263,57 +243,80 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<Str
         else {
             continue; // not a generated .spec.js file
         };
-        let titles: HashSet<String> = match fs::read_to_string(entry.path()) {
+        let titles = match fs::read_to_string(entry.path()) {
             // Union of two independent unbound-title sources: plain
             // `test.fixme(...)` call titles (covers a bare `Scenario:`), and
             // `test.describe(...)` block titles that wrap at least one
             // nested `test.fixme` (covers a `Scenario Outline:` — see
             // `scan_unbound_describe_titles`'s doc comment for why a plain
             // title-only scan can never see an unbound Outline).
-            Ok(content) => parser::scan_fixme_titles(&content)
-                .into_iter()
-                .chain(parser::scan_unbound_describe_titles(&content))
-                .collect(),
+            Ok(content) => FileTitles {
+                unbound: parser::scan_fixme_titles(&content)
+                    .into_iter()
+                    .chain(parser::scan_unbound_describe_titles(&content))
+                    .collect(),
+                rendered: parser::scan_all_rendered_titles(&content),
+            },
             // binary/non-UTF-8 .spec.js carries no readable test.fixme
-            // markers, but the file itself must still be recorded (with an
-            // empty title set) so it can out-compete a shorter, unrelated
-            // suffix match in `is_fixme`.
-            Err(_) => HashSet::new(),
+            // markers, but the file itself must still be recorded (with
+            // empty title sets) so it can out-compete a shorter, unrelated
+            // suffix match in `is_unbound_or_absent`.
+            Err(_) => FileTitles {
+                unbound: HashSet::new(),
+                rendered: HashSet::new(),
+            },
         };
         by_file.insert(mirror_key, titles);
     }
     Ok(by_file)
 }
 
-/// Returns `true` when `scenario` is an unbound title (a plain `test.fixme`
-/// call title, or a `Scenario Outline`'s wrapping `describe` title — see
-/// [`scan_fixme_dir`]) in the SINGLE generated file playwright-bdd actually
-/// produced for this exact `.feature` file — resolved as the LONGEST (most
-/// specific) mirror key among all generated files whose mirrored relative
-/// path is a component-wise suffix of `feature_abs`.
+/// Returns `true` when `scenario` currently has no passing e2e test for this
+/// exact `.feature` file — either because it is an unbound title (a plain
+/// `test.fixme` call title, or a `Scenario Outline`'s wrapping `describe`
+/// title — see [`FileTitles::unbound`]), OR because it is absent from the
+/// file's `rendered` set entirely (see [`FileTitles::rendered`] and
+/// [`parser::scan_all_rendered_titles`]'s doc comment for the cycle-4
+/// CRITICAL finding this second condition closes: a zero-Examples-row
+/// `Scenario Outline` — or any other declared scenario playwright-bdd never
+/// rendered anything for — is otherwise indistinguishable from one that is
+/// fully implemented and passing). The two conditions are mutually
+/// exclusive by construction (`rendered` is always a superset of `unbound`),
+/// so there is no double-counting.
+///
+/// The originating file is resolved as the LONGEST (most specific) mirror
+/// key among all generated files whose mirrored relative path is a
+/// component-wise suffix of `feature_abs`; if NO mirror key resolves at all
+/// (the `.feature` file has no corresponding generated file whatsoever —
+/// e.g. a whole file playwright-bdd never processed), every one of its
+/// declared scenarios is trivially absent, so this also returns `true`.
 ///
 /// Two different `.feature` files can share a tail directory/basename
 /// sequence at different nesting depths (e.g. `features/a/foo.feature` and
 /// `features/b/a/foo.feature` both have a mirror key `a/foo.feature`, which
 /// is a *suffix* of `features/b/a/foo.feature`'s canonical path); accepting
 /// ANY suffix match (rather than the longest one) would let the shallower,
-/// unrelated file's fixme titles falsely bind to the deeper file's scenario.
+/// unrelated file's title sets falsely bind to the deeper file's scenario.
 /// Preferring the longest match disambiguates this — combined with
 /// [`scan_fixme_dir`] now recording EVERY generated file (bound or unbound),
 /// a fully-bound file at a deeper nesting depth is never invisible to this
 /// resolution, so it always wins over a shorter, unrelated suffix match. This
 /// is the per-file pairing this function exists for — see the `fixme`
 /// construction note in [`run`].
-fn is_fixme(
+fn is_unbound_or_absent(
     feature_abs: &Path,
     scenario: &str,
-    fixme_by_file: &HashMap<String, HashSet<String>>,
+    fixme_by_file: &HashMap<String, FileTitles>,
 ) -> bool {
-    fixme_by_file
+    let Some(mirror_key) = fixme_by_file
         .keys()
         .filter(|mirror_key| path_ends_with(feature_abs, mirror_key))
         .max_by_key(|mirror_key| Path::new(mirror_key).components().count())
-        .is_some_and(|mirror_key| fixme_by_file[mirror_key].contains(scenario))
+    else {
+        return true; // no generated file at all for this .feature file
+    };
+    let titles = &fixme_by_file[mirror_key];
+    titles.unbound.contains(scenario) || !titles.rendered.contains(scenario)
 }
 
 /// Returns `true` when `mirror_key`'s path components are an exact,
@@ -338,8 +341,8 @@ mod tests {
     /// `.spec.js` marks both as `test.fixme`. The generated file is named
     /// `example.feature.spec.js` (not `example.spec.js`) to match
     /// playwright-bdd's real naming convention — it keeps the `.feature`
-    /// extension and appends `.spec.js` — which [`is_fixme`]'s file-pairing
-    /// logic relies on. Returns `(project_dir, baseline_path)`.
+    /// extension and appends `.spec.js` — which [`is_unbound_or_absent`]'s
+    /// file-pairing logic relies on. Returns `(project_dir, baseline_path)`.
     fn write_fixture(root: &std::path::Path) -> (String, String) {
         let features_dir = root.join("features");
         fs::create_dir_all(&features_dir).unwrap();
@@ -537,6 +540,75 @@ mod tests {
         )
     }
 
+    /// Same structural defect as [`write_zero_row_outline_fixture`], but
+    /// nested under a `Rule:` ancestor — proves the general "absent from
+    /// rendered output" detection needs no Rule-specific handling at all:
+    /// playwright-bdd's `renderChild` recurses into a `Rule` via the exact
+    /// same `renderScenarioOutline` call as a top-level Outline, so a
+    /// zero-row Outline nested under a `Rule` produces the identical
+    /// "nothing rendered" signature (an empty generated file) as a
+    /// top-level one. Returns `(project_dir, baseline_path)`.
+    fn write_rule_nested_zero_row_outline_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "Feature: Example\n\n  Rule: Some business rule\n\n    @e2e\n    Scenario Outline: Nested outline with zero rows\n      Given a field <field>\n\n      Examples:\n        | field |\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(gen_dir.join("example.feature.spec.js"), "").unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
+    /// Writes a project fixture reproducing a DIFFERENT absence shape than
+    /// the zero-row Outline: a plain `Scenario` (not an Outline) declared in
+    /// a `.feature` file that has NO corresponding generated `.spec.js` file
+    /// AT ALL — as opposed to a generated file that exists but is empty.
+    /// This exercises the `None`-mirror-key branch of `is_unbound_or_absent`
+    /// (no candidate mirror key resolves for `orphan.feature` whatsoever),
+    /// distinct from the zero-row-outline fixtures' "file exists, title
+    /// absent" branch. A second, fully-covered `.feature` file is included
+    /// to prove only the orphaned scenario is reported. Returns
+    /// `(project_dir, baseline_path)`.
+    fn write_orphan_feature_file_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("covered.feature"),
+            "@e2e\nScenario: Covered scenario\n  Given a step\n",
+        )
+        .unwrap();
+        fs::write(
+            features_dir.join("orphan.feature"),
+            "@e2e\nScenario: Orphan scenario\n  Given a step\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("covered.feature.spec.js"),
+            "test('Covered scenario', async ({ page }) => {});\n",
+        )
+        .unwrap();
+        // Deliberately no `orphan.feature.spec.js` at all — reproduces
+        // playwright-bdd never processing this file (e.g. excluded by a
+        // `tags` expression in `defineBddConfig`), not merely rendering it
+        // empty.
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
     fn base_args(project_dir: String, baseline: String) -> ValidateArgs {
         ValidateArgs {
             project_dir,
@@ -607,7 +679,7 @@ mod tests {
     /// `features/b/a/foo.feature` share a tail path (`a/foo.feature`) at
     /// different nesting depths and declare an identically-titled `@e2e`
     /// scenario; only the shallower file is genuinely `test.fixme`'d. Before
-    /// the fix, `is_fixme` accepted ANY component-wise suffix match, so
+    /// the fix, `is_unbound_or_absent` accepted ANY component-wise suffix match, so
     /// `b/a/foo.feature`'s scenario spuriously resolved to `a/foo.feature`'s
     /// mirror key (a fully-bound generated file for `b/a/foo.feature` was
     /// never even recorded, since `scan_fixme_dir` skipped files with no
@@ -778,7 +850,7 @@ mod tests {
         );
     }
 
-    /// Regression test for the Scenario-Outline blind-spot bug: `is_fixme`'s
+    /// Regression test for the Scenario-Outline blind-spot bug: a naive
     /// exact-match `HashSet::contains` check can never equal an Outline's
     /// raw declared title against playwright-bdd's real Examples-row-derived
     /// test titles (`Example #<N>` by default — never the outline's own
@@ -818,15 +890,17 @@ mod tests {
         );
     }
 
-    /// Regression test for the cycle-4 CRITICAL finding: a `Scenario
-    /// Outline` with an `Examples:` header but ZERO data rows must fail the
-    /// gate with an explicit, named error — never silently report "0 new
-    /// unbound scenario(s)". playwright-bdd generates no test at all for
-    /// this outline, so the ordinary declared-vs-fixme diff has nothing to
-    /// compare; this must be caught before that diff even runs.
+    /// Regression test for the cycle-4 CRITICAL finding (general fix): a
+    /// `Scenario Outline` with an `Examples:` header but ZERO data rows must
+    /// be reported as a new gap against an empty baseline — never silently
+    /// pass as "0 new unbound scenario(s)". playwright-bdd generates no test
+    /// at all for this outline, so [`parser::scan_all_rendered_titles`]'s
+    /// result never contains its title, which `is_unbound_or_absent` treats
+    /// as an ordinary "needs a gap entry" signal — the same flow a genuinely
+    /// `test.fixme`'d scenario goes through, not a separate hard error.
     // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Scenario Outline has zero Examples data rows
     #[test]
-    fn zero_row_outline_errors_instead_of_silently_passing() {
+    fn zero_row_outline_is_reported_as_new_gap() {
         let tmp = TempDir::new().unwrap();
         let (project_dir, baseline) = write_zero_row_outline_fixture(tmp.path());
         let args = base_args(project_dir, baseline);
@@ -835,30 +909,86 @@ mod tests {
         let msg = err.to_string();
 
         assert!(
-            msg.contains("Renders the field correctly"),
-            "expected the zero-row outline's title to be named in the error, got: {msg}"
-        );
-        assert!(
-            msg.to_lowercase().contains("examples") && msg.to_lowercase().contains("zero"),
-            "expected the error to explain the zero-Examples-data-rows cause, got: {msg}"
+            msg.contains("1 new unbound scenario"),
+            "expected the zero-row outline to be reported as exactly 1 new gap, got: {msg}"
         );
     }
 
-    /// The zero-row-outline guard must never be foolable via
-    /// `--update-baseline` — it is checked before the update-baseline branch
-    /// is even reached, so it can never be silently absorbed into the
-    /// manifest the way an ordinary new gap can.
+    /// Unlike the superseded hard-error design, a zero-row Outline is now an
+    /// ORDINARY new gap — `--update-baseline` snapshots it just like any
+    /// other unbound scenario, and a follow-up validate run against that
+    /// freshly written baseline passes. This is deliberate: once a data row
+    /// is added (or the empty outline removed), the title starts rendering
+    /// normally and the manifest's stale-entry pruning already handles the
+    /// transition back to covered — there is nothing structurally
+    /// unbaseline-able about this case once it is folded into the general
+    /// absence check.
     #[test]
-    fn zero_row_outline_errors_even_with_update_baseline() {
+    fn zero_row_outline_is_baseline_able_via_update_baseline() {
         let tmp = TempDir::new().unwrap();
         let (project_dir, baseline) = write_zero_row_outline_fixture(tmp.path());
-        let mut args = base_args(project_dir, baseline);
-        args.update_baseline = true;
+
+        let mut update_args = base_args(project_dir.clone(), baseline.clone());
+        update_args.update_baseline = true;
+        run(&update_args, OutputFormat::Text).unwrap();
+
+        let baseline_path = tmp.path().join(&baseline);
+        let content = fs::read_to_string(&baseline_path).unwrap();
+        assert!(
+            content.contains("Renders the field correctly"),
+            "expected the zero-row outline's title in the written baseline, got: {content}"
+        );
+
+        let validate_args = base_args(project_dir, baseline);
+        assert!(
+            run(&validate_args, OutputFormat::Text).is_ok(),
+            "follow-up validate should pass against the freshly written baseline"
+        );
+    }
+
+    /// Brainstormed generalization check (explicitly requested for this
+    /// cycle-4 fix): a zero-row Outline nested under a `Rule:` ancestor must
+    /// be caught identically to a top-level one — proves the general
+    /// "absent from rendered output" detection needs no Rule-specific
+    /// handling, since it never inspects the declared Gherkin's structure at
+    /// all, only the generated JS.
+    #[test]
+    fn rule_nested_zero_row_outline_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_rule_nested_zero_row_outline_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
 
         let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
         assert!(
-            err.to_string().contains("Renders the field correctly"),
-            "expected --update-baseline to still surface the zero-row outline error, got: {err}"
+            msg.contains("1 new unbound scenario"),
+            "expected the Rule-nested zero-row outline to be reported as exactly 1 new gap, got: {msg}"
+        );
+    }
+
+    /// Brainstormed generalization check (explicitly requested for this
+    /// cycle-4 fix): a plain `Scenario` (not an Outline) whose `.feature`
+    /// file has NO corresponding generated `.spec.js` file at all — e.g.
+    /// playwright-bdd never processed it because of a `tags` expression in
+    /// `defineBddConfig` — must be caught the same way a zero-row Outline is,
+    /// even though the code path is different (`is_unbound_or_absent`'s
+    /// `None`-mirror-key branch, not a present-but-title-absent file). A
+    /// sibling, fully-covered `.feature` file proves only the orphaned
+    /// scenario is reported.
+    #[test]
+    fn scenario_with_no_generated_file_at_all_is_reported_as_new_gap() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_orphan_feature_file_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected exactly 1 new gap (the orphaned scenario only) — the covered \
+             sibling scenario must not be falsely reported, got: {msg}"
         );
     }
 

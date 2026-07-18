@@ -90,10 +90,13 @@ cargo run --manifest-path apps/rhino-cli/Cargo.toml -- specs e2e-coverage valida
 | `--update-baseline`    | No       | Snapshot the current unbound set to `--baseline` instead of validating against it                 |
 
 Exit codes: `0` on pass (no new unbound scenarios beyond the baseline); non-zero when a new
-`@e2e`-tagged scenario appears as `test.fixme` without a baseline entry, when an `@e2e Scenario
-Outline`'s `Examples:` table has zero data rows (playwright-bdd generates no test at all for it, so
-it can never be resolved via `--update-baseline` — add a data row or remove the empty outline), or
-when `--features-gen` names a directory that does not exist (run `npx bddgen` first). See
+`@e2e`-tagged scenario appears as `test.fixme` without a baseline entry, when a declared `@e2e`
+scenario or `Scenario Outline` title is entirely absent from the generated `.spec.js` output (most
+notably an `Examples:` table with zero data rows, which playwright-bdd renders no test at all for —
+this is folded into the same new-gap/baseline flow as an ordinary unbound scenario, so
+`--update-baseline` accepts it like any other gap once the underlying cause is understood and
+either fixed or deliberately deferred), or when `--features-gen` names a directory that does not
+exist (run `npx bddgen` first). See
 [`e2e-coverage.feature`](../../specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature)
 for the full behavior contract.
 

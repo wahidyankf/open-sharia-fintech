@@ -58,9 +58,10 @@ Feature: specs e2e-coverage validate
   @unit
   Scenario: A Scenario Outline has zero Examples data rows
     Given an @e2e Scenario Outline whose Examples table has zero data rows
+    And a baseline manifest that lists no allowed unbound scenarios
     When rhino-cli specs e2e-coverage validate runs for that project
     Then it fails with a non-zero exit code
-    And it names the zero-row outline as the reason, not a silent pass
+    And it reports exactly one new unbound scenario for the zero-row outline
 
   @unit
   Scenario: A test.fixme title contains an escaped apostrophe

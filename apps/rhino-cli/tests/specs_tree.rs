@@ -294,11 +294,28 @@ impl SpecsTreeWorld {
     /// exactly `titles` are marked `test.fixme` — the "current" unbound set
     /// a subsequent validate run observes. Also records `titles` into
     /// `self.ec_fixme_titles` for Then-step introspection.
+    ///
+    /// Every OTHER currently-tracked `@e2e` declared title (in
+    /// `self.ec_declared_titles`, not present in `titles`) is emitted as an
+    /// ordinary bound `test(...)` call — faithfully mirroring real
+    /// playwright-bdd output, where every declared scenario in a processed
+    /// `.feature` file gets EITHER a `test`/`test.fixme` call. Omitting a
+    /// non-fixme'd declared title from the generated fixture entirely (as
+    /// this helper did before the cycle-4 general absence fix) would now be
+    /// misread as "absent from rendered output" and falsely reported as a
+    /// gap — this is what the general fix is designed to catch for a REAL
+    /// zero-row Outline, so the fixture must not manufacture a false
+    /// positive of that same shape for an ordinary bound scenario.
     fn ec_write_fixme(&mut self, titles: &[&str]) {
         self.ec_fixme_titles = titles.iter().map(|t| (*t).to_string()).collect();
         let mut body = String::new();
         for t in titles {
             let _ = writeln!(body, "test.fixme(\"{t}\", async ({{ page }}) => {{}});");
+        }
+        for t in &self.ec_declared_titles {
+            if !titles.contains(&t.as_str()) {
+                let _ = writeln!(body, "test(\"{t}\", async ({{ page }}) => {{}});");
+            }
         }
         self.write(&format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"), &body);
     }
@@ -1434,27 +1451,29 @@ const EC_ZERO_ROW_OUTLINE_TITLE: &str = "Renders the field correctly with no exa
 #[given("an @e2e Scenario Outline whose Examples table has zero data rows")]
 fn given_ec_zero_row_outline(w: &mut SpecsTreeWorld) {
     // playwright-bdd's renderScenarioOutline emits NOTHING at all for a
-    // zero-row outline (see parser::scan_zero_row_e2e_outline_titles's doc
-    // comment) — the fix fires before the command ever reads
-    // `.features-gen`, so no generated-output fixture is written here.
+    // zero-row outline (`scenario.examples.forEach(...)` iterates zero rows,
+    // so it returns before emitting a single test/test.fixme/describe — see
+    // `parser::scan_all_rendered_titles`'s doc comment) — an empty generated
+    // file faithfully reproduces that real-world output.
     w.write(
         &format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"),
         &format!(
             "Feature: fixture\n\n@e2e\nScenario Outline: {EC_ZERO_ROW_OUTLINE_TITLE}\n  Given a field <field>\n\n  Examples:\n    | field |\n"
         ),
     );
+    w.write(&format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"), "");
 }
 
-#[then("it names the zero-row outline as the reason, not a silent pass")]
-fn then_ec_names_zero_row_outline(w: &mut SpecsTreeWorld) {
+#[then("it reports exactly one new unbound scenario for the zero-row outline")]
+fn then_ec_reports_one_new_gap_for_zero_row_outline(w: &mut SpecsTreeWorld) {
     let out = w.output.as_ref().expect("ran");
     let text = combined_output(out);
     assert!(!out.status.success(), "expected failure, got: {text}");
-    assert!(text.contains(EC_ZERO_ROW_OUTLINE_TITLE), "got: {text}");
     assert!(
-        text.to_lowercase().contains("examples") && text.to_lowercase().contains("zero"),
-        "expected the error to explain the zero-Examples-data-rows cause, got: {text}"
+        text.contains("1 new unbound scenario(s) found"),
+        "got: {text}"
     );
+    assert!(text.contains(EC_ZERO_ROW_OUTLINE_TITLE), "got: {text}");
 }
 
 /// Declared title of the apostrophe-bearing scenario
