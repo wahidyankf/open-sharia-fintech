@@ -8,7 +8,7 @@
 //! `crate::application::e2e_coverage`. Models after the sibling
 //! `commands/specs_coverage.rs`.
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -62,17 +62,25 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     let features_gen_dir = project_dir.join(&args.features_gen);
     let baseline_path = project_dir.join(&args.baseline);
 
-    let declared = collect_declared(&project_dir, &args.features)?;
-    let fixme_titles = scan_fixme_dir(&features_gen_dir)?;
+    let declared_with_paths = collect_declared(&project_dir, &args.features)?;
+    let fixme_by_file = scan_fixme_dir(&features_gen_dir)?;
 
-    // The scan only yields scenario *titles* (test.fixme carries no feature
-    // path); reconstruct {feature, scenario} pairs by matching declared
-    // scenarios whose title playwright-bdd marked fixme.
-    let fixme: Vec<BaselineEntry> = declared
+    // The scan only yields scenario *titles* per generated file (test.fixme
+    // carries no feature path of its own); reconstruct {feature, scenario}
+    // pairs by matching each declared scenario against ONLY its own
+    // originating generated file's fixme titles — never a flat, cross-file
+    // title union. Scenario titles can legitimately repeat across different
+    // `.feature` files (see `BaselineEntry`'s pairing invariant in
+    // `types.rs`), and matching by title alone would falsely credit a
+    // fully-implemented scenario as unbound whenever a same-titled scenario
+    // elsewhere happens to be genuinely fixme'd. See `is_fixme` for the
+    // per-file pairing logic.
+    let fixme: Vec<BaselineEntry> = declared_with_paths
         .iter()
-        .filter(|e| fixme_titles.contains(&e.scenario))
-        .cloned()
+        .filter(|(feature_abs, entry)| is_fixme(feature_abs, &entry.scenario, &fixme_by_file))
+        .map(|(_, entry)| entry.clone())
         .collect();
+    let declared: Vec<BaselineEntry> = declared_with_paths.into_iter().map(|(_, e)| e).collect();
 
     if args.update_baseline {
         let manifest = BaselineManifest {
@@ -104,16 +112,20 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 }
 
 /// Extracts the declared `@e2e` scenario set across every `--features` glob,
-/// resolved relative to `project_dir`.
+/// resolved relative to `project_dir`. Each entry is paired with the
+/// canonical (symlink- and `..`-resolved) absolute path of its originating
+/// `.feature` file — used only by [`is_fixme`] to pair the entry against the
+/// correct generated `.spec.js` file's fixme titles; never persisted on
+/// `BaselineEntry` itself, so baseline manifest compatibility is unaffected.
 ///
 /// # Errors
 ///
-/// Returns an error if a glob pattern is invalid or a matched `.feature`
-/// file cannot be read.
+/// Returns an error if a glob pattern is invalid, a matched `.feature` file
+/// cannot be read, or its canonical path cannot be resolved.
 fn collect_declared(
     project_dir: &Path,
     features: &[String],
-) -> std::result::Result<Vec<BaselineEntry>, Error> {
+) -> std::result::Result<Vec<(PathBuf, BaselineEntry)>, Error> {
     let mut declared = Vec::new();
     for pattern in features {
         let abs_pattern = project_dir.join(pattern);
@@ -125,29 +137,41 @@ fn collect_declared(
         {
             let path =
                 entry.with_context(|| format!("failed to read glob match for {pattern:?}"))?;
+            let canonical = path.canonicalize().with_context(|| {
+                format!("failed to resolve canonical path for {}", path.display())
+            })?;
             let feature_path = path.to_string_lossy().to_string();
-            declared.extend(parser::extract_declared(&path, &feature_path)?);
+            for scenario in parser::extract_declared(&path, &feature_path)? {
+                declared.push((canonical.clone(), scenario));
+            }
         }
     }
     Ok(declared)
 }
 
-/// Recursively scans `dir` for `test.fixme(...)` titles across every
-/// generated `.spec.js` file (and any other file playwright-bdd wrote —
-/// non-UTF-8 files are silently skipped).
+/// Recursively scans `dir` for `test.fixme(...)` titles, keyed by each
+/// generated `.spec.js` file's path relative to `dir` with the trailing
+/// `.spec.js` suffix stripped (any other file playwright-bdd wrote —
+/// non-UTF-8 files, or files with no `test.fixme` calls — is omitted).
+///
+/// playwright-bdd generates exactly one `.spec.js` per `.feature` file,
+/// mirroring the directory structure below its `featuresRoot`; stripping the
+/// `.spec.js` suffix therefore reconstructs that `.feature` file's path
+/// relative to `featuresRoot`, which [`is_fixme`] matches as a
+/// component-wise suffix of each declared entry's canonical absolute path.
 ///
 /// # Errors
 ///
 /// Returns an error if `dir` does not exist or a directory walk encounters
 /// an I/O error.
-fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashSet<String>, Error> {
+fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashMap<String, HashSet<String>>, Error> {
     if !dir.exists() {
         return Err(anyhow!(
             "generated output directory {} not found — run `npx bddgen` first to produce it",
             dir.display()
         ));
     }
-    let mut titles = HashSet::new();
+    let mut by_file = HashMap::new();
     for entry in WalkDir::new(dir) {
         let entry = entry?;
         if !entry.file_type().is_file() {
@@ -156,9 +180,44 @@ fn scan_fixme_dir(dir: &Path) -> std::result::Result<HashSet<String>, Error> {
         let Ok(content) = fs::read_to_string(entry.path()) else {
             continue; // binary/non-UTF-8 files carry no test.fixme markers
         };
-        titles.extend(parser::scan_fixme_titles(&content));
+        let titles: HashSet<String> = parser::scan_fixme_titles(&content).into_iter().collect();
+        if titles.is_empty() {
+            continue;
+        }
+        let Ok(rel) = entry.path().strip_prefix(dir) else {
+            continue;
+        };
+        if let Some(mirror_key) = rel.to_string_lossy().strip_suffix(".spec.js") {
+            by_file.insert(mirror_key.to_string(), titles);
+        }
     }
-    Ok(titles)
+    Ok(by_file)
+}
+
+/// Returns `true` when `scenario` is a `test.fixme` title in the ONE
+/// generated file whose mirrored relative path matches `feature_abs`'s
+/// trailing path segments — i.e. the specific generated file playwright-bdd
+/// produced for this exact `.feature` file, never a different file that
+/// happens to declare a same-titled scenario elsewhere (the bug this
+/// per-file pairing fixes — see the `fixme` construction note in [`run`]).
+fn is_fixme(
+    feature_abs: &Path,
+    scenario: &str,
+    fixme_by_file: &HashMap<String, HashSet<String>>,
+) -> bool {
+    fixme_by_file.iter().any(|(mirror_key, titles)| {
+        path_ends_with(feature_abs, mirror_key) && titles.contains(scenario)
+    })
+}
+
+/// Returns `true` when `mirror_key`'s path components are an exact,
+/// component-wise suffix of `path`'s components (e.g. `path`
+/// `/repo/specs/x/foo.feature` matches `mirror_key` `specs/x/foo.feature` or
+/// `x/foo.feature`, but never a partial path segment like `o/foo.feature`).
+fn path_ends_with(path: &Path, mirror_key: &str) -> bool {
+    let path_segments: Vec<_> = path.components().collect();
+    let key_segments: Vec<_> = Path::new(mirror_key).components().collect();
+    !key_segments.is_empty() && path_segments.ends_with(&key_segments)
 }
 
 #[cfg(test)]
@@ -170,8 +229,11 @@ mod tests {
 
     /// Writes a project fixture: one `.feature` file with two `@e2e`
     /// scenarios ("A", "B"), and a `.features-gen` dir whose generated
-    /// `.spec.js` marks both as `test.fixme`. Returns `(project_dir,
-    /// baseline_path)`.
+    /// `.spec.js` marks both as `test.fixme`. The generated file is named
+    /// `example.feature.spec.js` (not `example.spec.js`) to match
+    /// playwright-bdd's real naming convention — it keeps the `.feature`
+    /// extension and appends `.spec.js` — which [`is_fixme`]'s file-pairing
+    /// logic relies on. Returns `(project_dir, baseline_path)`.
     fn write_fixture(root: &std::path::Path) -> (String, String) {
         let features_dir = root.join("features");
         fs::create_dir_all(&features_dir).unwrap();
@@ -184,8 +246,49 @@ mod tests {
         let gen_dir = root.join(".features-gen");
         fs::create_dir_all(&gen_dir).unwrap();
         fs::write(
-            gen_dir.join("example.spec.js"),
+            gen_dir.join("example.feature.spec.js"),
             "test.fixme(\"A\", async ({ page }) => {});\ntest.fixme(\"B\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+
+        (
+            root.to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        )
+    }
+
+    /// Writes a project fixture reproducing the title-collision-across-files
+    /// bug: two `.feature` files — `file1.feature`, `file2.feature` — each
+    /// declaring an identically-titled `@e2e` scenario ("Same title"), but
+    /// only `file1`'s generated output actually marks it `test.fixme`;
+    /// `file2`'s is a normal, fully-implemented `test(...)`. A title-only
+    /// match would (incorrectly) treat `file2`'s scenario as unbound too,
+    /// since its title collides with `file1`'s genuinely-unbound one.
+    /// Returns `(project_dir, baseline_path)`.
+    fn write_collision_fixture(root: &std::path::Path) -> (String, String) {
+        let features_dir = root.join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("file1.feature"),
+            "@e2e\nScenario: Same title\n  Given a\n",
+        )
+        .unwrap();
+        fs::write(
+            features_dir.join("file2.feature"),
+            "@e2e\nScenario: Same title\n  Given a\n",
+        )
+        .unwrap();
+
+        let gen_dir = root.join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("file1.feature.spec.js"),
+            "test.fixme(\"Same title\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+        fs::write(
+            gen_dir.join("file2.feature.spec.js"),
+            "test(\"Same title\", async ({ page }) => {});\n",
         )
         .unwrap();
 
@@ -229,6 +332,32 @@ mod tests {
         assert!(
             run(&validate_args, OutputFormat::Text).is_ok(),
             "follow-up validate should pass against the freshly written baseline"
+        );
+    }
+
+    /// Regression test for the title-collision-across-files bug: two
+    /// `.feature` files declare an identically-titled `@e2e` scenario, but
+    /// only ONE is genuinely `test.fixme`'d. Before the fix, `fixme` was
+    /// reconstructed by matching declared entries against a flat,
+    /// cross-file `HashSet<String>` of fixme titles — so `file2`'s
+    /// fully-implemented "Same title" scenario was falsely reported as a
+    /// new gap (2 gaps) purely because `file1` happens to declare a
+    /// same-titled, genuinely-unbound scenario. After the fix, only
+    /// `file1`'s scenario is a new gap (1 gap).
+    #[test]
+    fn fixme_reconstruction_does_not_collide_across_feature_files_with_same_scenario_title() {
+        let tmp = TempDir::new().unwrap();
+        let (project_dir, baseline) = write_collision_fixture(tmp.path());
+        let args = base_args(project_dir, baseline);
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+
+        assert!(
+            msg.contains("1 new unbound scenario"),
+            "expected exactly 1 new gap (file1's genuinely-unbound scenario only) — \
+             file2's identically-titled but fully-implemented scenario must not be \
+             falsely reported, got: {msg}"
         );
     }
 
