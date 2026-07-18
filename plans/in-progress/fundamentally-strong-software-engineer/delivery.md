@@ -5798,18 +5798,18 @@ Row: Annotated-concept · Python \* · topic wt 390 · Learn 129 / Drill 229 · 
 
 ### Phase 32 Gate
 
-- [ ] [AI] `advanced-networking/` complete: `_index.md` wt 390, `learning/_index.md` wt 129,
+- [x] [AI] `advanced-networking/` complete: `_index.md` wt 390, `learning/_index.md` wt 129,
       `drilling/_index.md` wt 229, capstone wt 900; all 29 concepts + 62 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -5817,7 +5817,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -5826,12 +5826,12 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       deliberate, plan-scoped override of the general rule, not a repo-wide change to
       `pr-merge-protocol.md` itself. **Acceptance**: PR merged into `main`; all gates were green at
       merge time.
-- [ ] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
+- [x] **[AI]** Once the PR is merged, dispatch `apps-ayokoding-www-deployer` to deploy ayokoding-www to
       the `prod-ayokoding-www` environment branch (Vercel auto-builds on push). **Acceptance**:
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
 
-> **Pause Safety**: Topic self-contained, not yet nav-wired. Safe to pause.
+> **Pause Safety**: PR #69 merged into `main` at `841e6a8da`; deploy to `prod-ayokoding-www` pending.
 
 ## Phase 33 — Topic 30 Software Engineering Practices (`software-engineering-practices`)
 

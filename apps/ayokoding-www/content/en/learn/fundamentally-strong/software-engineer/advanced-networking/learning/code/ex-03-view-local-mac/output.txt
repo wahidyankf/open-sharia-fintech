@@ -1,0 +1,2 @@
+11: eth0@if43: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65535 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 66:9a:ae:70:cd:c3 brd ff:ff:ff:ff:ff:ff link-netnsid 0
