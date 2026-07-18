@@ -771,7 +771,7 @@ if __name__ == "__main__":  # => module entry point -- only runs when executed d
     # --- Step 4c: a set-based bulk UPDATE (co-23) -- re-triages EVERY 'open' task in one statement ---
     with engine.begin() as conn:  # => reuses the SAME reflected task_tbl -- no re-reflection needed for a second statement
         stmt = update(task_tbl).where(task_tbl.c.status == "open").values(status="triaged")  # => co-23: a SET-BASED expression
-        # => matches BOTH seed.py's original open tasks (2 of the 5 non-done ones -- "Design onboarding flow" and
+        # => matches BOTH seed.py's original open tasks (3 of the 5 non-done ones -- "Design onboarding flow" and
         # => "Write API docs" and "Plan Q3 roadmap") AND all 50 freshly bulk-inserted backlog rows, in ONE pass
         result = conn.execute(stmt)  # => co-23: Postgres reads AND writes every matching row server-side, in a single statement
         rows_matched = result.rowcount  # => the DRIVER's own count of rows this ONE statement actually touched

@@ -8,16 +8,16 @@ weight: 1
 ## Prerequisites
 
 - **Prior topics**: [10 · SQL Essentials](../../sql-essentials/learning/overview.md) -- writing joins,
-  `GROUP BY`, and the Python `sqlite3` DB-API this topic assumes you already know; Advanced SQL & Query
-  Performance -- reading an `EXPLAIN` plan and how indexes change one, a later curriculum topic whose
-  content this topic leans on but does not require in published form yet.
+  `GROUP BY`, and the Python `sqlite3` DB-API this topic assumes you already know; [26 · Advanced SQL &
+  Query Performance](../../advanced-sql-and-query-performance/learning/overview.md) -- reading an
+  `EXPLAIN` plan and how indexes change one, content this topic leans on throughout.
 - **Tools & environment**: a macOS/Linux terminal; **Python 3.x**, fully type-annotated (DD-39); a
   local PostgreSQL instance (a container is the easiest path); the DB-API driver (psycopg, PEP 249), a
   query builder (PyPika), a Data-Mapper ORM (SQLAlchemy 2.0.x), an Active-Record ORM (peewee), and a
   migration tool (Alembic) -- every version pinned and CVE-clean in this topic's own
   `requirements.txt`; Neovim/VSCode with the Python LSP (DD-17); `pyright --strict` for typechecking.
 - **Assumed knowledge**: writing joins and reading an `EXPLAIN` plan (topic 10); indexes and how they
-  change a query plan (topic 26, forthcoming); reading a typed Python module and running a `.py` script
+  change a query plan (topic 26); reading a typed Python module and running a `.py` script
   ([4 · Just Enough Python](../../just-enough-python/learning/overview.md)).
 
 ## Why this exists -- the big idea
@@ -249,5 +249,5 @@ CASCADE`.
 
 ---
 
-← Previous: [10 · SQL Essentials](../../sql-essentials/learning/overview.md) &middot; Next:
-[Beginner Examples](./beginner.md) →
+← Previous: [26 · Advanced SQL & Query Performance Drilling](../../advanced-sql-and-query-performance/drilling/overview.md)
+&middot; Next: [Beginner Examples](./beginner.md) →
