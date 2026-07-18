@@ -5531,138 +5531,138 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
 Row: By Example · Python † · topic wt 380 · Learn 128 / Drill 228 · **subject**. Template →
 [`syllabus/28-build-your-own-orm-and-query-builder.md`](./syllabus/28-build-your-own-orm-and-query-builder.md).
 
-- [ ] **[AI] V** — `web-researcher` for `build-your-own-orm-and-query-builder`; resolve every Accuracy-notes "to verify" line in
+- [x] **[AI] V** — `web-researcher` for `build-your-own-orm-and-query-builder`; resolve every Accuracy-notes "to verify" line in
       [`syllabus/28-build-your-own-orm-and-query-builder.md`](./syllabus/28-build-your-own-orm-and-query-builder.md) and fold dated findings back into that file.
       **Acceptance**: no unresolved "verify" line remains.
-- [ ] **[AI] A1-concepts** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/` teaching **every** concept in
+- [x] **[AI] A1-concepts** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/` teaching **every** concept in
       `syllabus/28-build-your-own-orm-and-query-builder.md` §Concepts (DD-34 1:1 mirror; concepts before examples). One checkbox per `co-NN`:
-  - [ ] co-01 · sql-as-data
-  - [ ] co-02 · parameterized-sql
-  - [ ] co-03 · immutable-fluent-builder
-  - [ ] co-04 · select-clause-composition
-  - [ ] co-05 · where-clause-composition
-  - [ ] co-06 · order-limit-composition
-  - [ ] co-07 · insert-update-delete-builders
-  - [ ] co-08 · compile-to-sql-and-params
-  - [ ] co-09 · table-metadata-registration
-  - [ ] co-10 · row-to-object-mapping
-  - [ ] co-11 · object-to-row-mapping
-  - [ ] co-12 · type-coercion-on-load
-  - [ ] co-13 · identity-map
-  - [ ] co-14 · weak-reference-identity-map
-  - [ ] co-15 · session-as-transaction-boundary
-  - [ ] co-16 · unit-of-work-new-tracking
-  - [ ] co-17 · unit-of-work-dirty-tracking
-  - [ ] co-18 · unit-of-work-deleted-tracking
-  - [ ] co-19 · flush-ordering
-  - [ ] co-20 · atomic-transaction-flush
-  - [ ] co-21 · descriptor-protocol-lazy-load
-  - [ ] co-22 · n-plus-1-from-lazy-loading
-  - [ ] co-23 · connection-cursor-wiring
-  - [ ] co-24 · schema-migration-runner
-  - [ ] co-25 · fully-typed-builder-api
-- [ ] **[AI] A1-examples** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/code/` (runnable type-annotated Python built + unit-tested against local SQLite, DD-20/DD-30/DD-34/DD-39)
+  - [x] co-01 · sql-as-data
+  - [x] co-02 · parameterized-sql
+  - [x] co-03 · immutable-fluent-builder
+  - [x] co-04 · select-clause-composition
+  - [x] co-05 · where-clause-composition
+  - [x] co-06 · order-limit-composition
+  - [x] co-07 · insert-update-delete-builders
+  - [x] co-08 · compile-to-sql-and-params
+  - [x] co-09 · table-metadata-registration
+  - [x] co-10 · row-to-object-mapping
+  - [x] co-11 · object-to-row-mapping
+  - [x] co-12 · type-coercion-on-load
+  - [x] co-13 · identity-map
+  - [x] co-14 · weak-reference-identity-map
+  - [x] co-15 · session-as-transaction-boundary
+  - [x] co-16 · unit-of-work-new-tracking
+  - [x] co-17 · unit-of-work-dirty-tracking
+  - [x] co-18 · unit-of-work-deleted-tracking
+  - [x] co-19 · flush-ordering
+  - [x] co-20 · atomic-transaction-flush
+  - [x] co-21 · descriptor-protocol-lazy-load
+  - [x] co-22 · n-plus-1-from-lazy-loading
+  - [x] co-23 · connection-cursor-wiring
+  - [x] co-24 · schema-migration-runner
+  - [x] co-25 · fully-typed-builder-api
+- [x] **[AI] A1-examples** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/code/` (runnable type-annotated Python built + unit-tested against local SQLite, DD-20/DD-30/DD-34/DD-39)
       rendering **every** Worked example in `syllabus/28-build-your-own-orm-and-query-builder.md`, each with its expected output. One checkbox per `ex-NN` (1:1 mirror):
-  - [ ] ex-01 · clause-as-data-node — verify node stores name, renders lazily
-  - [ ] ex-02 · render-column-node — verify emits `users.id` fragment
-  - [ ] ex-03 · placeholder-not-interpolation — verify `?` + value in params
-  - [ ] ex-04 · params-collected-in-order — verify params ordered left-to-right
-  - [ ] ex-05 · builder-returns-new-instance — verify original unchanged
-  - [ ] ex-06 · branch-a-partial-query — verify each variant independent
-  - [ ] ex-07 · select-columns — verify SELECT lists both columns
-  - [ ] ex-08 · select-from-table — verify FROM clause
-  - [ ] ex-09 · select-star-default — verify emits `SELECT *`
-  - [ ] ex-10 · select-with-join — verify JOIN fragment + ON predicate
-  - [ ] ex-11 · where-equals — verify `WHERE age = ?` + param 30
-  - [ ] ex-12 · where-and — verify `a = ? AND b = ?`
-  - [ ] ex-13 · where-or — verify `(a = ? OR b = ?)`
-  - [ ] ex-14 · where-comparison-operators — verify each operator + params
-  - [ ] ex-15 · where-nested-boolean-tree — verify parenthesized compile + param order
-  - [ ] ex-16 · order-by-clause — verify trailing `ORDER BY name`
-  - [ ] ex-17 · order-by-desc — verify `ORDER BY name DESC`
-  - [ ] ex-18 · limit-offset — verify `LIMIT ? OFFSET ?` + params 10,20
-  - [ ] ex-19 · insert-builder — verify `INSERT INTO users (...) VALUES (?, ?)`
-  - [ ] ex-20 · update-builder — verify `UPDATE ... SET ... WHERE ...` + params
-  - [ ] ex-21 · delete-builder — verify `DELETE FROM users WHERE ...`
-  - [ ] ex-22 · compile-returns-sql-and-params — verify `(sql, params)` tuple
-  - [ ] ex-23 · compile-is-pure — verify identical output, no side effects
-  - [ ] ex-24 · execute-over-cursor — verify rows returned
-  - [ ] ex-25 · connect-cursor-lifecycle — verify PEP 249 flow
-  - [ ] ex-26 · builder-typed-api — verify pyright passes on a query chain
-  - [ ] ex-27 · register-table-metadata — verify registry returns column list
-  - [ ] ex-28 · metadata-drives-select — verify column order matches registration
-  - [ ] ex-29 · primary-key-from-metadata — verify identifies `id`
-  - [ ] ex-30 · row-tuple-to-object — verify attributes assigned by column order
-  - [ ] ex-31 · row-dict-to-object — verify assignment by column name
-  - [ ] ex-32 · map-multiple-rows — verify count + field values
-  - [ ] ex-33 · object-to-insert-values — verify dict matches columns
-  - [ ] ex-34 · object-to-update-set — verify only column values present
-  - [ ] ex-35 · roundtrip-object-row-object — verify result equals original
-  - [ ] ex-36 · type-coerce-bool-on-load — verify attribute is `True`/`False`
-  - [ ] ex-37 · type-coerce-date-on-load — verify `date` instance
-  - [ ] ex-38 · type-coerce-on-store — verify stored value is `0/1`/string
-  - [ ] ex-39 · custom-type-converter — verify dict ⇄ json text
-  - [ ] ex-40 · identity-map-same-instance — verify `a is b`
-  - [ ] ex-41 · identity-map-different-keys — verify distinct instances
-  - [ ] ex-42 · identity-map-miss-then-hit — verify second issues no query
-  - [ ] ex-43 · identity-map-key-shape — verify same pk across tables not conflated
-  - [ ] ex-44 · weak-value-identity-map — verify entry drops after GC
-  - [ ] ex-45 · weak-map-no-leak — verify map shrinks under GC
-  - [ ] ex-46 · session-owns-connection — verify all queries share it
-  - [ ] ex-47 · session-begin-commit — verify row persists after commit
-  - [ ] ex-48 · session-rollback — verify row absent
-  - [ ] ex-49 · session-scope-context-manager — verify commit on exit, rollback on exception
-  - [ ] ex-50 · load-snapshot-for-dirty — verify snapshot stored per object
-  - [ ] ex-51 · identity-map-feeds-mapper — verify cached object reused
-  - [ ] ex-52 · metadata-typed-columns — verify type drives coercer
-  - [ ] ex-53 · builder-plus-mapper-select — verify list of typed objects
-  - [ ] ex-54 · typed-session-api — verify pyright infers return type
-  - [ ] ex-55 · uow-track-new — verify object recorded in new-set
-  - [ ] ex-56 · uow-new-becomes-insert — verify INSERT emitted
-  - [ ] ex-57 · uow-track-dirty — verify dirty detection vs snapshot
-  - [ ] ex-58 · uow-dirty-only-changed-cols — verify UPDATE sets only changed column
-  - [ ] ex-59 · uow-clean-object-no-write — verify no UPDATE emitted
-  - [ ] ex-60 · uow-track-deleted — verify recorded in deleted-set
-  - [ ] ex-61 · uow-deleted-becomes-delete — verify DELETE emitted
-  - [ ] ex-62 · flush-order-insert-before-child — verify parent INSERT precedes child
-  - [ ] ex-63 · flush-order-delete-child-before-parent — verify order respects FK
-  - [ ] ex-64 · flush-atomic-commit — verify one transaction commits all
-  - [ ] ex-65 · flush-atomic-rollback — verify entire flush rolls back, no partial write
-  - [ ] ex-66 · flush-clears-tracking — verify new/dirty/deleted sets reset
-  - [ ] ex-67 · lazy-descriptor-defers — verify child query not issued until access
-  - [ ] ex-68 · lazy-descriptor-set-name — verify descriptor knows its field
-  - [ ] ex-69 · lazy-loads-once — verify only one query, cached after first
-  - [ ] ex-70 · n-plus-1-observable — verify N+1 queries in the log
-  - [ ] ex-71 · n-plus-1-fix-eager — verify collapses to 2 queries
-  - [ ] ex-72 · migration-runner-apply — verify schema changed
-  - [ ] ex-73 · migration-runner-version-table — verify re-run skips applied
-  - [ ] ex-74 · migration-runner-order — verify runs in version order
-  - [ ] ex-75 · wire-full-stack-select — verify typed objects from a real query
-  - [ ] ex-76 · wire-full-stack-write — verify atomic persist
-  - [ ] ex-77 · typed-end-to-end — verify zero pyright type errors
-  - [ ] ex-78 · capstone-preview-mini-orm — verify same result as topic 27 ORM tier
-- [ ] **[AI] A2 (capstone)** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/capstone/` (`_index.md` weight 900) per the
+  - [x] ex-01 · clause-as-data-node — verify node stores name, renders lazily
+  - [x] ex-02 · render-column-node — verify emits `users.id` fragment
+  - [x] ex-03 · placeholder-not-interpolation — verify `?` + value in params
+  - [x] ex-04 · params-collected-in-order — verify params ordered left-to-right
+  - [x] ex-05 · builder-returns-new-instance — verify original unchanged
+  - [x] ex-06 · branch-a-partial-query — verify each variant independent
+  - [x] ex-07 · select-columns — verify SELECT lists both columns
+  - [x] ex-08 · select-from-table — verify FROM clause
+  - [x] ex-09 · select-star-default — verify emits `SELECT *`
+  - [x] ex-10 · select-with-join — verify JOIN fragment + ON predicate
+  - [x] ex-11 · where-equals — verify `WHERE age = ?` + param 30
+  - [x] ex-12 · where-and — verify `a = ? AND b = ?`
+  - [x] ex-13 · where-or — verify `(a = ? OR b = ?)`
+  - [x] ex-14 · where-comparison-operators — verify each operator + params
+  - [x] ex-15 · where-nested-boolean-tree — verify parenthesized compile + param order
+  - [x] ex-16 · order-by-clause — verify trailing `ORDER BY name`
+  - [x] ex-17 · order-by-desc — verify `ORDER BY name DESC`
+  - [x] ex-18 · limit-offset — verify `LIMIT ? OFFSET ?` + params 10,20
+  - [x] ex-19 · insert-builder — verify `INSERT INTO users (...) VALUES (?, ?)`
+  - [x] ex-20 · update-builder — verify `UPDATE ... SET ... WHERE ...` + params
+  - [x] ex-21 · delete-builder — verify `DELETE FROM users WHERE ...`
+  - [x] ex-22 · compile-returns-sql-and-params — verify `(sql, params)` tuple
+  - [x] ex-23 · compile-is-pure — verify identical output, no side effects
+  - [x] ex-24 · execute-over-cursor — verify rows returned
+  - [x] ex-25 · connect-cursor-lifecycle — verify PEP 249 flow
+  - [x] ex-26 · builder-typed-api — verify pyright passes on a query chain
+  - [x] ex-27 · register-table-metadata — verify registry returns column list
+  - [x] ex-28 · metadata-drives-select — verify column order matches registration
+  - [x] ex-29 · primary-key-from-metadata — verify identifies `id`
+  - [x] ex-30 · row-tuple-to-object — verify attributes assigned by column order
+  - [x] ex-31 · row-dict-to-object — verify assignment by column name
+  - [x] ex-32 · map-multiple-rows — verify count + field values
+  - [x] ex-33 · object-to-insert-values — verify dict matches columns
+  - [x] ex-34 · object-to-update-set — verify only column values present
+  - [x] ex-35 · roundtrip-object-row-object — verify result equals original
+  - [x] ex-36 · type-coerce-bool-on-load — verify attribute is `True`/`False`
+  - [x] ex-37 · type-coerce-date-on-load — verify `date` instance
+  - [x] ex-38 · type-coerce-on-store — verify stored value is `0/1`/string
+  - [x] ex-39 · custom-type-converter — verify dict ⇄ json text
+  - [x] ex-40 · identity-map-same-instance — verify `a is b`
+  - [x] ex-41 · identity-map-different-keys — verify distinct instances
+  - [x] ex-42 · identity-map-miss-then-hit — verify second issues no query
+  - [x] ex-43 · identity-map-key-shape — verify same pk across tables not conflated
+  - [x] ex-44 · weak-value-identity-map — verify entry drops after GC
+  - [x] ex-45 · weak-map-no-leak — verify map shrinks under GC
+  - [x] ex-46 · session-owns-connection — verify all queries share it
+  - [x] ex-47 · session-begin-commit — verify row persists after commit
+  - [x] ex-48 · session-rollback — verify row absent
+  - [x] ex-49 · session-scope-context-manager — verify commit on exit, rollback on exception
+  - [x] ex-50 · load-snapshot-for-dirty — verify snapshot stored per object
+  - [x] ex-51 · identity-map-feeds-mapper — verify cached object reused
+  - [x] ex-52 · metadata-typed-columns — verify type drives coercer
+  - [x] ex-53 · builder-plus-mapper-select — verify list of typed objects
+  - [x] ex-54 · typed-session-api — verify pyright infers return type
+  - [x] ex-55 · uow-track-new — verify object recorded in new-set
+  - [x] ex-56 · uow-new-becomes-insert — verify INSERT emitted
+  - [x] ex-57 · uow-track-dirty — verify dirty detection vs snapshot
+  - [x] ex-58 · uow-dirty-only-changed-cols — verify UPDATE sets only changed column
+  - [x] ex-59 · uow-clean-object-no-write — verify no UPDATE emitted
+  - [x] ex-60 · uow-track-deleted — verify recorded in deleted-set
+  - [x] ex-61 · uow-deleted-becomes-delete — verify DELETE emitted
+  - [x] ex-62 · flush-order-insert-before-child — verify parent INSERT precedes child
+  - [x] ex-63 · flush-order-delete-child-before-parent — verify order respects FK
+  - [x] ex-64 · flush-atomic-commit — verify one transaction commits all
+  - [x] ex-65 · flush-atomic-rollback — verify entire flush rolls back, no partial write
+  - [x] ex-66 · flush-clears-tracking — verify new/dirty/deleted sets reset
+  - [x] ex-67 · lazy-descriptor-defers — verify child query not issued until access
+  - [x] ex-68 · lazy-descriptor-set-name — verify descriptor knows its field
+  - [x] ex-69 · lazy-loads-once — verify only one query, cached after first
+  - [x] ex-70 · n-plus-1-observable — verify N+1 queries in the log
+  - [x] ex-71 · n-plus-1-fix-eager — verify collapses to 2 queries
+  - [x] ex-72 · migration-runner-apply — verify schema changed
+  - [x] ex-73 · migration-runner-version-table — verify re-run skips applied
+  - [x] ex-74 · migration-runner-order — verify runs in version order
+  - [x] ex-75 · wire-full-stack-select — verify typed objects from a real query
+  - [x] ex-76 · wire-full-stack-write — verify atomic persist
+  - [x] ex-77 · typed-end-to-end — verify zero pyright type errors
+  - [x] ex-78 · capstone-preview-mini-orm — verify same result as topic 27 ORM tier
+- [x] **[AI] A2 (capstone)** — Author `CONTENT/build-your-own-orm-and-query-builder/learning/capstone/` (`_index.md` weight 900) per the
       syllabus `## Capstone spec`. **Acceptance**: the done bar is met and the concepts-exercised checklist
       is fully hit.
-- [ ] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
+- [x] **[AI] A3/D/F/G** — `apps-ayokoding-www-by-example-checker` + `apps-ayokoding-www-link-checker` +
       `apps-ayokoding-www-facts-checker` clean (resolve via matching fixer); author
       `CONTENT/build-your-own-orm-and-query-builder/drilling/_index.md` (wt 228) covering the same Items with mocked/self-contained
       inputs; `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
 
 ### Phase 31 Gate
 
-- [ ] [AI] `build-your-own-orm-and-query-builder/` complete: `_index.md` wt 380, `learning/_index.md` wt 128,
+- [x] [AI] `build-your-own-orm-and-query-builder/` complete: `_index.md` wt 380, `learning/_index.md` wt 128,
       `drilling/_index.md` wt 228, capstone wt 900; all 25 concepts + 78 worked examples + capstone present;
       checkers + facts-checker clean; build + `lint:md` exit 0.
 
-- [ ] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
+- [x] **[AI]** Sync the shared worktree to latest `origin/main`, branch for this phase (`git fetch
 origin && git checkout main && git pull && git checkout -b
 fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, then stage only this
       phase's paths (`git add <explicit paths>` — never `git add -A`), commit with a Conventional Commit
       message (`Co-Authored-By` trailer per repo policy), push the branch, and open a **draft PR** against
       `main` (`gh pr create --draft --base main ...`). **Acceptance**: branch created from latest `main`;
       draft PR open carrying this phase's commit; CI running on the PR.
-- [ ] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
+- [x] **[AI]** Run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, 3
       sequential CI-gated cycles per
       [pr-review-quality-gate.md](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       against the open PR, then flip it from draft to ready for review (`gh pr ready`) once the
@@ -5670,7 +5670,7 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       green locally and in CI). This wait happens **in parallel with authoring the next phase** (see
       Parallelization Model) — never block starting the next phase's branch on this. **Acceptance**: PR
       marked ready for review; all CI checks green; no unresolved review threads.
-- [ ] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
+- [x] **[AI]** Merge the PR once all quality gates are green (typecheck, lint, test:quick,
       specs:coverage, CI, the 3-cycle review). **DEVIATION FROM STANDING POLICY**: the repo's
       [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
       requires per-instance `[HUMAN]` approval before every merge, with no blanket carve-out. For this
@@ -5684,7 +5684,8 @@ fundamentally-strong-software-engineer/<phase-slug>`), do this phase's work, the
       `prod-ayokoding-www` is force-pushed to (at least) this phase's merge commit — each phase reaches
       production as it completes.
 
-> **Pause Safety**: Topic self-contained, not yet nav-wired. Safe to pause.
+> **Pause Safety**: Topic self-contained, not yet nav-wired. Safe to pause. PR #68 merged into `main`
+> at `34e4fb1fd`; deploy to `prod-ayokoding-www` still pending.
 
 ## Phase 32 — Topic 29 Advanced Networking (`advanced-networking`)
 
