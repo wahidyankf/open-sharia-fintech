@@ -116,7 +116,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx bddgen && cargo run --release --quiet --manifest-path ../../apps/rhino-cli/Cargo.toml -- specs e2e-coverage validate --project wahidyankf-www-fe-e2e --features \"../../specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/**/*.feature\" --features-gen .features-gen --baseline e2e-coverage-baseline.json",
-        "cwd": "{projectRoot}"
+        "cwd": "apps/wahidyankf-www-fe-e2e"
       },
       "cache": true,
       "inputs": [
