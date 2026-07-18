@@ -356,8 +356,16 @@ impl SpecsTreeWorld {
 }
 
 /// Runs `git` with `args` inside `dir`, using a fixed synthetic identity.
+///
+/// Checks the subprocess's exit status (not just that it spawned) — see
+/// `apps/rhino-cli/src/infrastructure/git/root.rs`'s `build_worktree_fixture`
+/// doc comment for the isolation hazard this guards against: cucumber-rs runs
+/// scenarios concurrently (up to 64 by default), so a silently-failed `git
+/// init` here could otherwise let a later "isolated" git command fall back to
+/// whichever repository is `dir`'s nearest ancestor via git's own upward
+/// repository-discovery walk.
 fn run_git(dir: &Path, args: &[&str]) {
-    Command::new("git")
+    let output = Command::new("git")
         .args(args)
         .current_dir(dir)
         .env("GIT_AUTHOR_NAME", "t")
@@ -365,7 +373,13 @@ fn run_git(dir: &Path, args: &[&str]) {
         .env("GIT_COMMITTER_NAME", "t")
         .env("GIT_COMMITTER_EMAIL", "t@t")
         .output()
-        .expect("git command");
+        .expect("git command must spawn");
+    assert!(
+        output.status.success(),
+        "git {args:?} in {} must exit zero, got: {}",
+        dir.display(),
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
 /// Runs the compiled `rhino-cli` binary with `args` inside `dir` and returns
