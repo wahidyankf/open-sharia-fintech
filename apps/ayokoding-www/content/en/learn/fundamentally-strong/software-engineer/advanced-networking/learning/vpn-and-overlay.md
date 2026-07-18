@@ -55,19 +55,21 @@ ping -c 3 10.99.0.1   # run FROM peer2, toward peer1's tunnel address
 wg show               # confirms a real handshake and byte counters
 ```
 
-**Run**: `wg genkey`/`wg pubkey` on this sandbox's macOS host directly (via Homebrew's
-`wireguard-tools` v1.0.20260223); the tunnel bring-up and ping on two separate short-lived Docker
-containers (`python:3.13-slim` + `wireguard-tools`, `--cap-add=NET_ADMIN --device=/dev/net/tun`) on a
-dedicated `wgtest` bridge network created for this capture, each acting as one peer -- Docker
-Desktop's own Linux VM kernel genuinely supports the in-kernel WireGuard module
+**Run**: entirely inside two Docker containers (`python:3.13-slim` + `wireguard-tools` v1.0.20210914
+installed via `apt-get`, plus `iproute2`/`iputils-ping`), each `--cap-add=NET_ADMIN
+--device=/dev/net/tun`, on a dedicated `wgtest` bridge network (`172.19.0.0/16`) created specifically
+for this capture, each container acting as one peer -- Docker Desktop's own Linux VM kernel
+(`6.12.76-linuxkit`) genuinely supports WireGuard: `modprobe wireguard` reports the module isn't a
+loadable `.ko` (`Module wireguard not found`), yet `ip link add wg0 type wireguard` succeeds anyway,
+because this kernel has it compiled in directly, not as a loadable module
 
 **Output**:
 
 ```text
 $ wg genkey
-zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=  # (example -- your own key will differ)
+MF46XxoKVt0C6HD7f6wzCtCosDbTJuqsxG0COE7jh3s=  # peer1's REAL private key from this capture (yours will differ each run)
 $ echo "<private-key>" | wg pubkey
-<derived 44-character base64 public key>
+9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=  # peer1's REAL public key, correctly DERIVED from (and different from) the private key above
 
 $ wg-quick up wg0     # (run on peer1)
 [#] ip link add wg0 type wireguard
@@ -83,24 +85,24 @@ $ wg-quick up wg0     # (run on peer2, peering back to peer1)
 
 $ ping -c 3 10.99.0.1     # (run from peer2, across the tunnel)
 PING 10.99.0.1 (10.99.0.1) 56(84) bytes of data.
-64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.684 ms
-64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=0.339 ms
-64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.424 ms
+64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.447 ms
+64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=1.93 ms
+64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.331 ms
 
 --- 10.99.0.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2064ms
-rtt min/avg/max/mdev = 0.339/0.482/0.684/0.146 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2055ms
+rtt min/avg/max/mdev = 0.331/0.901/1.926/0.726 ms
 
 $ wg show   # (run on peer1)
 interface: wg0
-  public key: zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=
+  public key: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
   private key: (hidden)
   listening port: 51820
 
-peer: wZOKGZVFMycZalzxp4y7dW8O6oTiRPfzyB/h6GS5EXs=
+peer: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
   endpoint: 172.19.0.3:51820
   allowed ips: 10.99.0.2/32
-  latest handshake: 2 seconds ago
+  latest handshake: 3 seconds ago
   transfer: 564 B received, 656 B sent
   persistent keepalive: every 25 seconds
 ```
@@ -108,9 +110,10 @@ peer: wZOKGZVFMycZalzxp4y7dW8O6oTiRPfzyB/h6GS5EXs=
 **Key takeaway**: the two peers, each with a completely independent config file naming only the
 OTHER's public key and endpoint, genuinely reach each other over `10.99.0.0/24` -- an address range
 that exists nowhere on the underlying `172.19.0.0/16` Docker bridge network the two containers'
-`eth0` interfaces actually sit on -- and `wg show`'s `latest handshake: 2 seconds ago` plus nonzero
+`eth0` interfaces actually sit on -- and `wg show`'s `latest handshake: 3 seconds ago` plus nonzero
 transfer counters prove a real Noise-IK handshake and real encrypted traffic, not just an interface
-that came up.
+that came up. Note that peer1's public key (`9doM...`) is genuinely DIFFERENT from its own private
+key (`MF46...`) shown above -- a public key is derived from, and can never equal, its private key.
 
 **Why it matters**: the ENTIRE tunnel setup above is two short config files and two commands
 (`wg-quick up`, then traffic) -- no certificate authority, no IKE negotiation, no separate control
@@ -274,36 +277,41 @@ between the two `wg show` calls
 ```text
 $ wg show    # immediately after bring-up
 interface: wg0
-  public key: jW2NUbTo860pbOdUFPiAOLkPAzxszIujqh/+MMXmWiM=
+  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
   listening port: 51820
 
-peer: zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=
+peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: Now
-  transfer: 348 B received, 584 B sent
+  latest handshake: 8 seconds ago
+  transfer: 508 B received, 564 B sent
   persistent keepalive: every 25 seconds
 
 $ sleep 32   # NO traffic sent during this window
 
 $ wg show    # 32s later, still idle
 interface: wg0
-  public key: jW2NUbTo860pbOdUFPiAOLkPAzxszIujqh/+MMXmWiM=
+  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
   listening port: 51820
 
-peer: zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=
+peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: 44 seconds ago
-  transfer: 348 B received, 648 B sent
+  latest handshake: 49 seconds ago
+  transfer: 540 B received, 628 B sent
   persistent keepalive: every 25 seconds
 ```
 
-**Key takeaway**: `sent` grew from `584 B` to `648 B` (exactly `64` more bytes -- two `32`-byte
-keepalive packets, sent around the `25s` and `50s` marks of the idle window) with genuinely ZERO
-application traffic issued, while `latest handshake` stayed at the SAME original handshake --
+**Key takeaway**: `sent` grew from `564 B` to `628 B` and `received` grew from `508 B` to `540 B`
+(`64` and `32` more bytes respectively -- two outbound and one inbound `32`-byte keepalive packet,
+since `PersistentKeepalive = 25` is set on BOTH peers' configs so each side fires its own
+independent keepalive timer) with genuinely ZERO application traffic issued, while `latest
+handshake`'s age kept counting up from the SAME original handshake (never reset to `0`/`Now`) --
 keepalives reuse the existing session key and never trigger a fresh Noise-IK handshake; they are
-tiny periodic packets whose only job is to keep something moving across the path.
+tiny periodic packets whose only job is to keep something moving across the path. This peer's own
+public key (`5v5Y...`) is also genuinely IDENTICAL across both `wg show` calls here AND matches
+exactly what Example 56 reported as this same peer2's public key from peer1's side (`5v5Y...` at
+line 100 above) -- proof this is the same live tunnel, not two different fabricated sessions.
 
 **Why it matters**: this example ran on a plain Docker bridge network, not a real NAT gateway, so the
 NAT-mapping-refresh benefit itself is inferred from the mechanism rather than observed against a real

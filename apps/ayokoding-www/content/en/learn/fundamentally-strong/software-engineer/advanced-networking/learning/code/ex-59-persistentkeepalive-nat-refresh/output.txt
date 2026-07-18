@@ -1,25 +1,25 @@
 $ wg show    # immediately after bring-up
 interface: wg0
-  public key: jW2NUbTo860pbOdUFPiAOLkPAzxszIujqh/+MMXmWiM=
+  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
   listening port: 51820
 
-peer: zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=
+peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: Now
-  transfer: 348 B received, 584 B sent
+  latest handshake: 8 seconds ago
+  transfer: 508 B received, 564 B sent
   persistent keepalive: every 25 seconds
 
 $ sleep 32   # NO traffic sent during this window
 
 $ wg show    # 32s later, still idle
 interface: wg0
-  public key: jW2NUbTo860pbOdUFPiAOLkPAzxszIujqh/+MMXmWiM=
+  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
   listening port: 51820
 
-peer: zwbPNaKei/7eTRTWkU5GJ5Rjy9onZo8UNuTgOHlnwTE=
+peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: 44 seconds ago
-  transfer: 348 B received, 648 B sent
+  latest handshake: 49 seconds ago
+  transfer: 540 B received, 628 B sent
   persistent keepalive: every 25 seconds
