@@ -6,7 +6,8 @@ weight: 42
 ---
 
 > A vague request ("can you make scheduling easier?") turned into a problem statement -- exercises
-> co-02.
+> co-02. Kestrel is a fictional product; every quoted number, question, or finding here is an
+> illustrative, constructed example, not real data or a real transcript.
 
 **Problem statement**: Restaurant shift managers who build next week's schedule every Thursday
 afternoon -- juggling a paper availability list and a scattered thread of staff text messages --

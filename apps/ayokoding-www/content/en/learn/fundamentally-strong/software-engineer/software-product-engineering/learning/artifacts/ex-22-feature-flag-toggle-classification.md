@@ -5,7 +5,9 @@ draft: false
 weight: 62
 ---
 
-> Five active Kestrel feature flags classified by toggle category -- exercises co-16.
+> Five active Kestrel feature flags classified by toggle category -- exercises co-16. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 | Flag                            | Category   | Expected lifespan                                                                                    |
 | ------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------- |

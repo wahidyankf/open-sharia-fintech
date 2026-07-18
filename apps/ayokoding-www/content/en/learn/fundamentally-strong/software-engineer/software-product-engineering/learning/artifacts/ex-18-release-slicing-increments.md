@@ -5,7 +5,9 @@ draft: false
 weight: 58
 ---
 
-> Team messaging sliced into three thin, end-to-end increments -- exercises co-14.
+> Team messaging sliced into three thin, end-to-end increments -- exercises co-14. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Increment 1 -- one-way announcements**: a manager posts a broadcast message ("early close
 Friday") that every team member sees in-app; no replies yet. **Signal**: do managers use it at

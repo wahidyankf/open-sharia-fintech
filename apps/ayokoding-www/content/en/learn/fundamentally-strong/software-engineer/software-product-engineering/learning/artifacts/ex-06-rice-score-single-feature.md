@@ -5,7 +5,9 @@ draft: false
 weight: 46
 ---
 
-> RICE score for Kestrel's CSV-export ticket -- exercises co-07.
+> RICE score for Kestrel's CSV-export ticket -- exercises co-07. Kestrel is a fictional product;
+> every quoted number, question, or finding here is an illustrative, constructed example, not real
+> data or a real transcript.
 
 | Factor         | Value | Unit                                                                           |
 | -------------- | ----- | ------------------------------------------------------------------------------ |

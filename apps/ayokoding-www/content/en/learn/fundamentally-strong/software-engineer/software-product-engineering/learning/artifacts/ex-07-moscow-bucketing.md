@@ -5,7 +5,9 @@ draft: false
 weight: 47
 ---
 
-> A ten-item Kestrel backlog bucketed into MoSCoW for the Q3 release -- exercises co-08.
+> A ten-item Kestrel backlog bucketed into MoSCoW for the Q3 release -- exercises co-08. Kestrel
+> is a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Must (this release)**: (1) fix the double-booking scheduling bug; (2) SSO login, required by the
 enterprise contract closing this quarter.

@@ -5,7 +5,9 @@ draft: false
 weight: 69
 ---
 
-> A Shape Up pitch for the fast-path swap-approval feature -- exercises co-25.
+> A Shape Up pitch for the fast-path swap-approval feature -- exercises co-25. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Appetite**: 6 weeks, fixed. Not an estimate -- if the shaped solution below can't be built to a
 demoable state in 6 weeks, the scope shrinks; the appetite does not extend.

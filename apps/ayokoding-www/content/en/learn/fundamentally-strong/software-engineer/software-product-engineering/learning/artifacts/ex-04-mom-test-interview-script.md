@@ -5,7 +5,9 @@ draft: false
 weight: 44
 ---
 
-> Six discovery questions for an "AI auto-schedule suggestions" idea -- exercises co-04.
+> Six discovery questions for an "AI auto-schedule suggestions" idea -- exercises co-04. Kestrel
+> is a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 1. Walk me through the last time you built next week's schedule -- what did you actually do, step
    by step?

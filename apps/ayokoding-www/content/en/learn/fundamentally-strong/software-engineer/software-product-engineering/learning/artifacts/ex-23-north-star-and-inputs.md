@@ -6,7 +6,8 @@ weight: 63
 ---
 
 > Kestrel's north-star metric, its input metrics, and how it differs from an OMTM -- exercises
-> co-17, co-20.
+> co-17, co-20. Kestrel is a fictional product; every quoted number, question, or finding here is
+> an illustrative, constructed example, not real data or a real transcript.
 
 **North-star metric**: number of teams with a published schedule active in the last 7 days. This
 measures delivered value directly -- a team only shows up in this number if they're actually

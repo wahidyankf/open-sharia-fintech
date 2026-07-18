@@ -6,6 +6,8 @@ weight: 41
 ---
 
 > Three Kestrel feature-request tickets rewritten as outcome statements -- exercises co-01.
+> Kestrel is a fictional product; every quoted number, question, or finding here is an
+> illustrative, constructed example, not real data or a real transcript.
 
 **Ticket A -- "Add a CSV export button to the schedule page."** Rewritten as outcome: managers who
 currently retype last week's hours into payroll by hand cut payroll prep from about 45 minutes to

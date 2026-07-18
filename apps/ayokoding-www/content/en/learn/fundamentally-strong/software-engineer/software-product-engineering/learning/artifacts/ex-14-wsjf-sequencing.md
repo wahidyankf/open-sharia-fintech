@@ -5,7 +5,9 @@ draft: false
 weight: 54
 ---
 
-> Four Kestrel jobs sequenced by `WSJF = Cost of Delay ÷ Duration` -- exercises co-11.
+> Four Kestrel jobs sequenced by `WSJF = Cost of Delay ÷ Duration` -- exercises co-11. Kestrel is
+> a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 | Job                                   | Cost of Delay (relative points) | Duration (weeks) | WSJF            |
 | ------------------------------------- | ------------------------------- | ---------------- | --------------- |

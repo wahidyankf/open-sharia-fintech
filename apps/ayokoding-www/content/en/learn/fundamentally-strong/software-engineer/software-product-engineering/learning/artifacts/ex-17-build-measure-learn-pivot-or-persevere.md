@@ -5,7 +5,9 @@ draft: false
 weight: 57
 ---
 
-> Pivot-or-persevere decision after the greedy-scheduler MVP shipped -- exercises co-13.
+> Pivot-or-persevere decision after the greedy-scheduler MVP shipped -- exercises co-13. Kestrel
+> is a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Hypothesis**: managers will trust and act on an auto-suggested schedule enough to keep it as a
 starting point rather than deleting it and building from scratch.

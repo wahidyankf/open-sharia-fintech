@@ -5,7 +5,9 @@ draft: false
 weight: 64
 ---
 
-> A HEART Task-Success row for Kestrel's core scheduling flow -- exercises co-19.
+> A HEART Task-Success row for Kestrel's core scheduling flow -- exercises co-19. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 | Element | Content                                                                                                                                                                                   |
 | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

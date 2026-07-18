@@ -5,7 +5,9 @@ draft: false
 weight: 59
 ---
 
-> An opportunity-solution tree for reducing no-show shift incidents -- exercises co-05.
+> An opportunity-solution tree for reducing no-show shift incidents -- exercises co-05. Kestrel is
+> a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC

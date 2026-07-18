@@ -5,7 +5,9 @@ draft: false
 weight: 48
 ---
 
-> Eight Kestrel initiatives placed on an impact-effort grid -- exercises co-09.
+> Eight Kestrel initiatives placed on an impact-effort grid -- exercises co-09. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 | Quadrant                                 | Initiatives                                                   |
 | ---------------------------------------- | ------------------------------------------------------------- |

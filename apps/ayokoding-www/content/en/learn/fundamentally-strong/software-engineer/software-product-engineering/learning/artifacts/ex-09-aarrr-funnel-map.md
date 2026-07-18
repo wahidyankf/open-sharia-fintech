@@ -5,7 +5,9 @@ draft: false
 weight: 49
 ---
 
-> Kestrel's signup-to-paid lifecycle mapped onto the five AARRR stages -- exercises co-18.
+> Kestrel's signup-to-paid lifecycle mapped onto the five AARRR stages -- exercises co-18. Kestrel
+> is a fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 | Stage       | Concrete event                                                                                                |
 | ----------- | ------------------------------------------------------------------------------------------------------------- |

@@ -5,7 +5,9 @@ draft: false
 weight: 45
 ---
 
-> Eight interview questions audited against the Mom Test -- exercises co-04.
+> Eight interview questions audited against the Mom Test -- exercises co-04. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 1. "Would you use an AI-suggested schedule if we built one?" -- **flagged**: hypothetical/future
    prediction.

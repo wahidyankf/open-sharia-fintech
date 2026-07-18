@@ -5,7 +5,9 @@ draft: false
 weight: 61
 ---
 
-> Guardrails chosen for a checkout-speed experiment -- exercises co-15.
+> Guardrails chosen for a checkout-speed experiment -- exercises co-15. Kestrel is a fictional
+> product; every quoted number, question, or finding here is an illustrative, constructed example,
+> not real data or a real transcript.
 
 **Primary metric (OEC)**: checkout completion rate (% of teams that start the upgrade flow and
 finish it).

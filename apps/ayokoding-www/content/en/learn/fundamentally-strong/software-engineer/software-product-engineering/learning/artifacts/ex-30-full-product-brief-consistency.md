@@ -6,7 +6,8 @@ weight: 70
 ---
 
 > A compact product brief assembled and checked for consistency -- exercises co-01, co-07, co-12,
-> co-15, co-17.
+> co-15, co-17. Kestrel is a fictional product; every quoted number, question, or finding here is
+> an illustrative, constructed example, not real data or a real transcript.
 
 **Problem/outcome**: managers currently lose track of routine swap requests for hours; the outcome
 sought is routine swaps resolved within minutes, not a new "approval screen" feature for its own

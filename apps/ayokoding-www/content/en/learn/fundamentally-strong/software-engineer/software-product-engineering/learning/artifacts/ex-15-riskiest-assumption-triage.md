@@ -5,7 +5,9 @@ draft: false
 weight: 55
 ---
 
-> The four big risks triaged for "AI auto-schedule suggestions" -- exercises co-06.
+> The four big risks triaged for "AI auto-schedule suggestions" -- exercises co-06. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 - **Value risk**: will managers actually want and trust a suggested schedule enough to act on it?
   Unconfirmed -- interviews so far only established the underlying pain (scheduling takes 40-60

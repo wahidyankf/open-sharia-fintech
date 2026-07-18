@@ -5,7 +5,9 @@ draft: false
 weight: 68
 ---
 
-> A one-page PR-FAQ for one-tap shift-swap approval -- exercises co-23.
+> A one-page PR-FAQ for one-tap shift-swap approval -- exercises co-23. Kestrel is a fictional
+> product; every quoted number, question, or finding here is an illustrative, constructed example,
+> not real data or a real transcript.
 
 **Press release**
 

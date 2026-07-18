@@ -5,7 +5,9 @@ draft: false
 weight: 51
 ---
 
-> Six Kestrel backlog items RICE-scored and ranked -- exercises co-07.
+> Six Kestrel backlog items RICE-scored and ranked -- exercises co-07. Kestrel is a fictional
+> product; every quoted number, question, or finding here is an illustrative, constructed example,
+> not real data or a real transcript.
 
 | Backlog item                 | Reach (per quarter) | Impact | Confidence | Effort (person-months) | RICE score                 |
 | ---------------------------- | ------------------- | ------ | ---------- | ---------------------- | -------------------------- |

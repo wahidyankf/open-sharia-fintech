@@ -5,7 +5,9 @@ draft: false
 weight: 60
 ---
 
-> An experiment design for the onboarding checklist solution -- exercises co-15.
+> An experiment design for the onboarding checklist solution -- exercises co-15. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Hypothesis**: adding a 3-step onboarding checklist during signup increases the share of new
 teams that publish their first schedule within 3 days (the activation metric), without hurting

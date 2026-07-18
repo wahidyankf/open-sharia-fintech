@@ -5,7 +5,9 @@ draft: false
 weight: 53
 ---
 
-> Six Kestrel features classified by Kano category -- exercises co-10.
+> Six Kestrel features classified by Kano category -- exercises co-10. Kestrel is a fictional
+> product; every quoted number, question, or finding here is an illustrative, constructed example,
+> not real data or a real transcript.
 
 | Feature                                          | Category    | Presence-vs-satisfaction shape                                                                                               |
 | ------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |

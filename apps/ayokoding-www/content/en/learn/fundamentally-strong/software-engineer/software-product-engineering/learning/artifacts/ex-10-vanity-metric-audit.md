@@ -5,7 +5,9 @@ draft: false
 weight: 50
 ---
 
-> Six metrics from Kestrel's weekly email, audited for vanity -- exercises co-21.
+> Six metrics from Kestrel's weekly email, audited for vanity -- exercises co-21. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 1. Total signups (all time) -- **flagged, vanity**: only ever goes up, and no stated decision
    changes based on its value.

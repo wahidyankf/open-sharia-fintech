@@ -6,6 +6,8 @@ weight: 67
 ---
 
 > A commit-now call after five weeks of shift-swap-approval discovery -- exercises co-24, co-06.
+> Kestrel is a fictional product; every quoted number, question, or finding here is an
+> illustrative, constructed example, not real data or a real transcript.
 
 **Riskiest assumption at stake**: will managers actually trust a faster, one-tap approval flow
 enough to stop manually reviewing every swap request line by line?

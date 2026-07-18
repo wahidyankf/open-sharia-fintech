@@ -6,7 +6,8 @@ weight: 56
 ---
 
 > A 12-feature idea cut to an MVP, with a cheaper engineer-proposed alternative -- exercises
-> co-12, co-06, co-26.
+> co-12, co-06, co-26. Kestrel is a fictional product; every quoted number, question, or finding
+> here is an illustrative, constructed example, not real data or a real transcript.
 
 **Original 12-feature scope**: full ML-based constraint solver, historical-pattern learning,
 multi-location optimization, staff-preference weighting, real-time re-optimization on

@@ -5,7 +5,9 @@ draft: false
 weight: 65
 ---
 
-> A precise activation-event definition for Kestrel -- exercises co-20.
+> A precise activation-event definition for Kestrel -- exercises co-20. Kestrel is a fictional
+> product; every quoted number, question, or finding here is an illustrative, constructed example,
+> not real data or a real transcript.
 
 **Activation event**: a new team's manager publishes their first complete weekly schedule -- every
 open shift for the coming week assigned to a specific staff member -- within 3 days of signing up.

@@ -5,7 +5,9 @@ draft: false
 weight: 52
 ---
 
-> SSO login is "Must" in MoSCoW but ranks last by RICE -- exercises co-07, co-08.
+> SSO login is "Must" in MoSCoW but ranks last by RICE -- exercises co-07, co-08. Kestrel is a
+> fictional product; every quoted number, question, or finding here is an illustrative,
+> constructed example, not real data or a real transcript.
 
 **Reconciliation**: RICE assumes value scales with the number of people affected (Reach ×
 Impact) -- fine for features whose value is genuinely diffuse across the user base. SSO login is

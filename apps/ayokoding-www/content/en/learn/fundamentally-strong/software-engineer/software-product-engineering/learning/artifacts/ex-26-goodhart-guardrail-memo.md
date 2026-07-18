@@ -6,7 +6,8 @@ weight: 66
 ---
 
 > A memo diagnosing a gamed "shifts created" metric and proposing a countermeasure -- exercises
-> co-22.
+> co-22. Kestrel is a fictional product; every quoted number, question, or finding here is an
+> illustrative, constructed example, not real data or a real transcript.
 
 **What happened**: support agents, evaluated in part on "shifts created per week" across the
 accounts they onboard, started proactively creating draft placeholder shifts on new customers'
