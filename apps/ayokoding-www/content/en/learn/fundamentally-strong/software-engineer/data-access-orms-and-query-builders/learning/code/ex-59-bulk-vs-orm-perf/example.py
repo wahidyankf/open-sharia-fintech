@@ -68,7 +68,11 @@ if __name__ == "__main__":  # => module entry point -- only runs when executed d
     print(f"bulk is faster: {bulk_seconds < orm_seconds}")  # => Output: bulk is faster: True
     print(f"final row count: {final_count}")  # => Output: final row count: 2000
     assert final_count == n_rows  # => co-23: both paths wrote the SAME number of rows -- this is a speed test, not a correctness gap
-    assert bulk_seconds < orm_seconds  # => co-23: the bulk path measurably wins on THIS run, on THIS machine, for THIS workload
+    # => co-23: no strict `bulk_seconds < orm_seconds` assert here -- unlike a network-round-trip-dominated comparison,
+    # => a modest 2000-row insert has BOTH paths batching into one executemany()-style flush at commit() (co-25), so
+    # => the measured gap is pure Python-side object-construction/identity-map overhead, too thin a margin to assert
+    # => on safely under CI/runner jitter; the printed ratio above is the evidence, matching Topic 26's own convention
+    # => of reporting elapsed time without hard-asserting a comparison between two single-shot wall-clock measurements
     # => co-23 + co-25: the gap widens with row count -- the ORM loop pays a Python-object-construction and identity-map
     # => cost PER row that the bulk path skips entirely; for a handful of rows the difference is invisible, but for
     # => thousands of rows (data imports, batch jobs, ETL) the set-oriented bulk path is the right tool, not the ORM
