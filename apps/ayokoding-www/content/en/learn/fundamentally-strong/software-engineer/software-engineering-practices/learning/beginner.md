@@ -74,9 +74,11 @@ without asking a human to reclassify it later.
 
 _ex-02 &middot; exercises co-02, co-03_
 
-A `feat` commit adds a backward-compatible capability -- under SemVer, that is the exact definition
-of a MINOR bump. Parsing the `type` back out of the subject and mapping it through SemVer's own
-table is entirely mechanical.
+**co-03 -- semantic versioning**: SemVer 2.0.0 ties every bump to one question -- was this change
+backward compatible? -- with no partial credit and no fourth option. A `feat` commit adds a
+backward-compatible capability -- under SemVer, that is the exact definition of a MINOR bump.
+Parsing the `type` back out of the subject and mapping it through SemVer's own table is entirely
+mechanical.
 
 **`learning/code/ex-02-conventional-commit-feat-with-scope/setup.sh`**
 
@@ -205,8 +207,8 @@ MAJOR bump -- redundant signaling is a deliberate robustness choice in the spec,
 
 _ex-04 &middot; exercises co-03_
 
-**co-03 -- semantic versioning**: SemVer 2.0.0 ties every bump to one question -- was this change
-backward compatible? -- with no partial credit and no fourth option.
+Every SemVer bump traces back to that same yes/no compatibility test -- the table below applies it
+to three representative changes side by side.
 
 | #   | Change                                                                           | Backward compatible?                                                          | SemVer bump |
 | --- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------- |
