@@ -42,6 +42,29 @@ tier — reconstructing a minimal ORM so it stops being magic — is
 - 2026-07-12 — verified: specific ORM/query-builder library names and versions move over time — keep
   the shipped text pattern-first and library-agnostic, and re-verify any named library at authoring
   time.
+- 2026-07-18 — verified (authoring-time library re-check per the note above): SQLAlchemy 2.0.51 (2026-06-15)
+  is current stable; no breaking changes to declarative `Mapped[]` mapping, `raiseload()`, or async
+  session/engine patterns since 2.0.0. **Content note**: SQLAlchemy's own docs now describe
+  `subqueryload()` as "mostly legacy," superseded by `selectinload()` — teach it in co-14/ex-39/ex-40 as
+  the older/legacy third strategy, not co-equal with `selectinload`/`joinedload`. The `AsyncAttrs` mixin
+  (`await obj.awaitable_attrs.rel`) is the documented escape hatch for ad hoc lazy access under async and
+  is worth a mention alongside `raiseload()` in co-16/co-24. SQLAlchemy 2.1 is in beta (2.1.0b3,
+  2026-06-27, Python ≥3.10 floor, greenlet no longer bundled by default) — irrelevant to the 2.0.x line
+  taught here, but the natural re-verification trigger if this topic's shelf life needs to survive 2.1
+  going stable. Source: [SQLAlchemy 2.0 changelog](https://docs.sqlalchemy.org/en/20/changelog/changelog_20.html),
+  [Relationship Loading Techniques](https://docs.sqlalchemy.org/en/20/orm/queryguide/relationships.html).
+- 2026-07-18 — verified: peewee 4.2.6 (2026-07-17) is current stable, actively maintained (5 releases in
+  the last week), "Production/Stable" classifier, no deprecation of the Active-Record `.save()` API.
+  PyPika 0.51.1 (2026-02-04) is current stable, not archived, but lightly staffed (192 open issues / 41
+  open PRs against ~3 releases/year, no curated changelog) — **content note**: fine to teach as the
+  query-builder contrast, but flag it as a lighter-weight dependency than the other three rather than a
+  corporate-backed one. Alembic 1.18.5 (2026-06-25) is current stable; no breaking changes to
+  `alembic init`/autogenerate/upgrade-downgrade. **Content note**: a previously-misdetected false-positive
+  (PostgreSQL sequence defaults on non-PK columns flagged as changed on every autogenerate run) is now
+  fixed in current Alembic — worth knowing if co-20/ex-51 discusses autogenerate noise. PEP 249 remains
+  Final with no successor in development. Sources: [peewee CHANGELOG](https://github.com/coleifer/peewee/blob/master/CHANGELOG.md),
+  [PyPika PyPI](https://pypi.org/project/PyPika/), [Alembic changelog](https://alembic.sqlalchemy.org/en/latest/changelog.html),
+  [PEP 249](https://peps.python.org/pep-0249/).
 
 ## Concepts
 

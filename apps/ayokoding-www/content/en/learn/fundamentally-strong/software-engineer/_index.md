@@ -92,3 +92,6 @@ weight: 1750
 - [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism/drilling)
+- [27 · Data Access: ORMs & Query Builders](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders/drilling)
