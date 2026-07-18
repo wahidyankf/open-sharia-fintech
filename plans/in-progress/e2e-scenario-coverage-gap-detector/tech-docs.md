@@ -181,6 +181,22 @@ own closing `});` line — playwright-bdd's generator always indents a block's o
 identically, so this needs no full JS parsing or brace-balancing. Documented here so the parser's
 matching rule is explicit.
 
+**Zero-row Outline (cycle-4 CRITICAL finding)**: an `Examples:` table with a header row but zero
+data rows — or an Outline with no `Examples:` block at all — is syntactically valid Gherkin that
+playwright-bdd's `renderScenarioOutline` emits **nothing** for (`scenario.examples.forEach(...)`
+iterates zero rows; `if (!lines.length) return [];`), so there is no `test.describe`/`test`/
+`test.fixme` at all for `scan_unbound_describe_titles` to see. Because the generated-JS side has no
+signal whatsoever, this is detected from the declared (raw Gherkin) side instead:
+`parser::scan_zero_row_e2e_outline_titles` sums Examples-table data rows per `@e2e`-tagged Outline
+(across every `Examples:` block, correctly handling multi-table Outlines and `Rule:` nesting — a
+`Rule:` line is just another non-scenario, non-Examples content line to this scanner, mirroring how
+playwright-bdd's own `renderChild` recurses into a `Rule` via the identical
+`renderScenarioOutline` call path). A zero-row Outline is surfaced as a **hard, unbaseline-able
+error** (`commands/specs_e2e_coverage.rs::run`, checked before `.features-gen` is even read) rather
+than folded into the ordinary new-gap/baseline flow: since it can never legitimately be "bound" (no
+Example row exists to write a step definition against), accepting it via `--update-baseline` would
+silently reintroduce exactly the always-passes failure mode this whole gate exists to prevent.
+
 ## File Impact
 
 | Path                                                                              | Change | Notes                                                   |
