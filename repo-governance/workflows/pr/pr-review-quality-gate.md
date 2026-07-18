@@ -301,6 +301,14 @@ Track across executions:
 - **Agents not yet implemented**: `pr-review-maker` and `pr-review-fixer` are referenced here by name
   as this workflow's actors; their agent definition files are scaffolded in a later delivery phase of
   the `worktree-to-pr-default-delivery-mode` plan, not by this document.
+- **Extending past `{input.cycles}` requires a proactive user check-in, not silent continuation**:
+  when a cycle keeps finding genuinely new CRITICAL/HIGH findings in the same failure family right up
+  to the configured cycle count, the orchestrator MAY extend the loop with additional cycles beyond
+  the default — but MUST proactively flag the overrun to the user (cycle count so far, why each cycle
+  found something genuinely new) and let them set the cap, rather than silently looping further on
+  its own judgment. A gap-detection or coverage-tool review is the case most likely to trigger this:
+  each cycle can legitimately surface a new parsing edge case in the same failure family, and the
+  fixed-N design exists precisely so effort stays bounded and visible rather than open-ended.
 - **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
   (e.g. `ose-primer`, `ose-infra`), running all repos' review-cycle loops concurrently from the start
