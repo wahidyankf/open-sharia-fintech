@@ -1,3 +1,4 @@
+# learning/code/ex-47-reject-a-confidently-wrong-refactor/reject_wrong_refactor.py
 """Example ex-47: Reject a Confidently Wrong Refactor -- Off-By-One Caught by Regression Test."""  # => co-16: this file's own restated purpose, doubling as its module __doc__
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic

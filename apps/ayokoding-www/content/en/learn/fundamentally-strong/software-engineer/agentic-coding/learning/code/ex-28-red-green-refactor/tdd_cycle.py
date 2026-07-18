@@ -1,3 +1,4 @@
+# learning/code/ex-28-red-green-refactor/tdd_cycle.py
 """Example 28: Red-Green-Refactor -- Three Sequential Diffs, One Passing Test."""  # => co-14: this file's own restated purpose, doubling as its module __doc__
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic

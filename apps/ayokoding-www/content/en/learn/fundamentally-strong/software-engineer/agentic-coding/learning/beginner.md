@@ -959,7 +959,7 @@ kind of spike a running-total table surfaces immediately -- without the table, t
 would be invisible until the ceiling was already crossed.
 
 **Why it matters**: a session with no stated ceiling and no running total has no way to notice cost
-creeping up until it becomes a problem -- tracking both, turn by turn, is what makes co-53's
+creeping up until it becomes a problem -- tracking both, turn by turn, is what makes ex-53's
 budget-bounded escalation (a later, advanced-tier example) possible at all: you cannot halt at a
 budget you never measured against.
 

@@ -1,3 +1,4 @@
+# learning/code/ex-51-spec-driven-tdd-agent-session/shipping_fee_spec_driven.py
 """Example ex-51: Spec-Driven TDD Agent Session -- Red Run, Then Green, Against spec.md's AC Bullets."""  # => co-21: this file's own restated purpose, doubling as its module __doc__
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic

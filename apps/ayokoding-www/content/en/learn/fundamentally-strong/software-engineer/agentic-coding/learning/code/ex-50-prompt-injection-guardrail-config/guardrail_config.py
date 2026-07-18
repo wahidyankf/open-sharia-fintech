@@ -1,3 +1,4 @@
+# learning/code/ex-50-prompt-injection-guardrail-config/guardrail_config.py
 """Example ex-50: Prompt-Injection Guardrail Config -- Blocking Tool Calls Triggered by Fetched Content."""  # => co-19: this file's own restated purpose, doubling as its module __doc__
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
