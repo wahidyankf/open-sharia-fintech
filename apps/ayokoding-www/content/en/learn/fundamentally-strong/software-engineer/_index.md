@@ -101,3 +101,7 @@ weight: 1750
 - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/drilling)
+- [29 · Advanced Networking](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/drilling)
