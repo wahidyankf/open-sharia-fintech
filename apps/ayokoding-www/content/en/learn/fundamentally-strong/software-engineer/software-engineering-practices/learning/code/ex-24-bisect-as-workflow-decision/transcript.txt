@@ -1,0 +1,54 @@
+total commits: 42
+log2(40) ~= 5.3, so bisection needs ~6 steps vs up to 40 for a linear scan
+Bisecting: 19 revisions left to test after this (roughly 4 steps)
+[6dc7d00] chore: unrelated change 20
+running 'python3' 'test_parity.py'
+Bisecting: 9 revisions left to test after this (roughly 3 steps)
+[abc27a5] chore: unrelated change 29
+running 'python3' 'test_parity.py'
+Traceback (most recent call last):
+  File "test_parity.py", line 2, in <module>
+    assert is_even(4) is True
+AssertionError
+Bisecting: 4 revisions left to test after this (roughly 2 steps)
+[62435c6] chore: unrelated change 25
+running 'python3' 'test_parity.py'
+Bisecting: 2 revisions left to test after this (roughly 1 step)
+[e75c689] refactor(parity): tidy modulo expression
+running 'python3' 'test_parity.py'
+Traceback (most recent call last):
+  File "test_parity.py", line 2, in <module>
+    assert is_even(4) is True
+AssertionError
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[8f3c985] chore: unrelated change 26
+running 'python3' 'test_parity.py'
+e75c689f16df98dda07ee7892c8f367f9a300ead is the first bad commit
+commit e75c689f16df98dda07ee7892c8f367f9a300ead
+    refactor(parity): tidy modulo expression
+
+ parity.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+git bisect log:
+git bisect start
+# bad: [bec3999] chore: unrelated change 39
+git bisect bad bec3999a94acaeff845b4af83e13a01784665a5e
+# good: [5492abc] test(parity): add regression test
+git bisect good 5492abc20caae24ba84f82212cc7e8f505045168
+# good: [6dc7d00] chore: unrelated change 20
+git bisect good 6dc7d003afa6b823410398862e77132d70acb434
+# bad: [abc27a5] chore: unrelated change 29
+git bisect bad abc27a5a5dfaf88bbe7c48361f929735ee8741eb
+# good: [62435c6] chore: unrelated change 25
+git bisect good 62435c6464ad1fbb73fc2e288e9de101b5062b03
+# bad: [e75c689] refactor(parity): tidy modulo expression
+git bisect bad e75c689f16df98dda07ee7892c8f367f9a300ead
+# good: [8f3c985] chore: unrelated change 26
+git bisect good 8f3c98591a3c4e1ddfef6cf5241b632db8a8fa97
+# first bad commit: [e75c689] refactor(parity): tidy modulo expression
+Previous HEAD position was 8f3c985 chore: unrelated change 26
+Switched to branch 'main'
+
+Total steps actually taken: 6 (5 test runs plus the final identification step) -- close to the
+predicted ceiling of ceil(log2(40)) = 6, and far below a 40-step linear scan.

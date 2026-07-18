@@ -1,0 +1,4 @@
+subject: feat(api)!: drop v1 endpoint
+bang marker present: true
+footer marker present: true
+either signal alone forces MAJOR: true

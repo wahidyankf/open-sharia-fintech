@@ -1,0 +1,9 @@
+commit 7beb1730bb5da1a6b1c524fa7e169826f55a2d68
+Author: Dev <dev@example.com>
+Date:   Sat Jul 18 08:20:09 2026 +0700
+
+    feat(cart): cap gift-card application at a configurable percentage
+
+ README.md   | 2 +-
+ cart_api.py | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)

@@ -1,0 +1,8 @@
+# learning/code/ex-47-coverage-plus-review-double-gate/branch-protection.yml
+# ex-47: a coverage-not-below-baseline check PLUS a required human review -- BOTH must pass (co-12, co-05, co-09)
+branch: main # => co-09: the protected branch this rule applies to, same as ex-15
+required_status_checks: # => co-09: TWO checks required here, not just one like ex-15
+  - context: "ci / coverage-baseline" # => co-12: coverage must not DROP below the baseline -- a signal, not a 100% target
+  - context: "ci / test" # => co-09: the ordinary test gate, unchanged from Example 46
+required_pull_request_reviews: # => co-05: an approval is required too, independent of BOTH status checks above
+  required_approving_review_count: 1 # => co-05: a human sign-off, INDEPENDENT of whatever the coverage number says

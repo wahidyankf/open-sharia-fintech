@@ -1,0 +1,30 @@
+# learning/capstone/code/ci.yml
+# Capstone Step 3: a lint -> test -> build pipeline that GATES the change (co-08, co-09, co-10).
+# Validated with `actionlint` -- zero findings.
+name: ci
+on:
+  pull_request:
+
+jobs:
+  lint: # => co-10: STAGE 1 -- the SAME ruff commands run.sh (Steps 1-2) already ran locally
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: pip install ruff
+      - run: ruff check . # => co-09: a lint FAILURE stops the pipeline here -- test and build never start
+      - run: ruff format --check .
+
+  test: # => co-08: STAGE 2 -- runs ONLY if lint passed
+    needs: lint # => co-09: the GATE -- no lint pass, no test run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: pip install pytest
+      - run: pytest -q # => co-09: a test FAILURE stops the pipeline here -- build never starts
+
+  build: # => co-08: STAGE 3 -- runs ONLY if lint AND test both passed
+    needs: test # => co-09: the GATE -- no test pass, no build run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: python -m py_compile redemption.py # => co-08: a minimal "build" -- confirms the module at least compiles

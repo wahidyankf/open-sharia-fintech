@@ -1,0 +1,12 @@
+--- messy history, BEFORE cleanup (8 commits) ---
+2ded8e3 wip3
+c85d2fc cleanup
+30a8cf9 tests
+0aacbc9 asdf
+e2994eb oops forgot this
+d674109 fix typo
+ce594c8 more wip
+e1f6e1b wip
+--- clean history, AFTER cleanup (2 commits) ---
+82bda0c test(loyalty): add points calculation regression test
+0d48e1a feat(loyalty): add points calculation and redemption

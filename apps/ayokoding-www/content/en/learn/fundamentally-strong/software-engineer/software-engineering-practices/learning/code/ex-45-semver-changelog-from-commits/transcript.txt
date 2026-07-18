@@ -1,0 +1,16 @@
+--- commits since v1.4.0 ---
+refactor(auth): extract token store helper
+chore: bump ci runner image
+fix(auth): correct token expiry off-by-one
+feat(auth): add token refresh
+highest-severity commit type present -> SemVer bump: MINOR
+--- derived changelog entry (feat/fix only -- chore/refactor excluded, per Example 6) ---
+## [1.5.0] - 2026-07-18
+
+### Added
+
+- Token refresh support, so a session no longer requires a full re-login when it expires.
+
+### Fixed
+
+- Corrected a token-expiry calculation that could log a user out one second early.

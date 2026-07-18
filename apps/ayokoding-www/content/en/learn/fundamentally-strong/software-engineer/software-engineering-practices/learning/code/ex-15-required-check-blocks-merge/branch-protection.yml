@@ -1,0 +1,12 @@
+# learning/code/ex-15-required-check-blocks-merge/branch-protection.yml
+# ex-15: `main`'s branch-protection rule -- one CI job marked REQUIRED (co-09)
+# (illustrative: GitHub stores this as repo settings, not a committed file -- shown here as data so
+# this example stays self-contained and readable without a live GitHub UI.)
+branch: main # => co-09: the protected branch this rule applies to
+required_status_checks: # => co-09: checks that MUST pass before the merge button unlocks
+  # => co-09: the exact job name from ex-14's ci.yml -- protects production directly
+  - context: "ci / test" # => co-09: matched by job NAME, not by file path or workflow name
+required_pull_request_reviews: # => co-09: an approval is required too, independent of CI
+  required_approving_review_count: 1 # => co-09: at least one human sign-off, on top of the green check
+# => co-09: no repo-admin bypass -- the rule protects the branch, not just ordinary contributors
+enforce_admins: true # => co-09: the rule applies to EVERY contributor, no bypass for repo admins

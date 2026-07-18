@@ -1,0 +1,23 @@
+# learning/code/ex-16-lint-warning-vs-blocking-gate/ci.yml
+# ex-16: classifying two checks as warn-only vs. merge-blocking (co-09)
+name: ci # => co-09: workflow display name, shown in the Actions tab
+on: # => co-09: this pipeline's one trigger
+  pull_request: # => co-09: runs on every pull request, same as ex-14
+
+jobs: # => co-09: two INDEPENDENT jobs, classified differently, not two stages of one pipeline
+  # => co-09: `continue-on-error` is the mechanism -- everything else about this job looks
+  #    identical to a normal, blocking job
+  style-nit-check: # => co-09: a REDUNDANT style opinion (e.g. import-sort order) -- low value, noisy
+    runs-on: ubuntu-latest # => co-09: a fresh, ephemeral runner, same as every other job in this topic
+    continue-on-error: true # => co-09: WARN -- surfaces in the UI but never blocks the merge button
+    steps: # => co-09: this job's own ordered list of steps
+      - uses: actions/checkout@v7 # => co-09: fetches the commit under test
+      - run: ruff check --select I --output-format=github . # => co-09: import-sort only -- a nit, not a production risk
+
+  test: # => co-09: the check that actually protects production
+    # => co-09: the ABSENCE of `continue-on-error` is itself the classification signal here
+    runs-on: ubuntu-latest # => co-09: no `continue-on-error` here -- its default is false, i.e. BLOCK
+    steps: # => co-09: mirrors style-nit-check's own step shape -- checkout, then run
+      - uses: actions/checkout@v7 # => co-09: fetches the commit under test
+      - run: pip install pytest # => co-09: installs the test runner
+      - run: pytest -q # => co-09: a red test here MUST stop the merge -- this is the required check

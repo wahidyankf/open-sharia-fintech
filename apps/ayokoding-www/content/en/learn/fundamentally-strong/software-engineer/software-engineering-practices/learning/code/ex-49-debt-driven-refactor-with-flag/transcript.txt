@@ -1,0 +1,4 @@
+old path (flag off): balance=70.0, locked=False
+new path (flag on):  balance=70.0, locked=False
+new path correctly REJECTS a concurrent redemption attempt
+Old and new paths coexist behind the flag, both verified independently: True

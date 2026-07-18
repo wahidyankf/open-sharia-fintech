@@ -1,0 +1,16 @@
+Creating pull request for fix/correct-add into main in acme/checkout-service
+
+https://github.com/acme/checkout-service/pull/144
+
+NAME      DESCRIPTION  ELAPSED  RESULT
+ci / lint             8s       ✓ pass
+ci / test             11s      X fail
+
+Some checks were not successful
+1 failing check
+
+X This branch has failing checks
+To merge this pull request, satisfy the required status check: ci / test
+
+error: GraphQL: Pull request acme/checkout-service#144 is not mergeable: the base branch policy
+prohibits the merge (mergeStateStatus: "BLOCKED")

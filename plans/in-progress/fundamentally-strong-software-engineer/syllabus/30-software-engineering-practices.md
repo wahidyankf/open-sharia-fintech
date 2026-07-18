@@ -52,10 +52,19 @@ debugging/observability basics. Testing mechanics come from
   toggles** (Hodgson, martinfowler.com) — release/experiment/ops/permission categories. **Google
   eng-practices Small CLs** — "~100 lines reasonable, ~1000 too large" (non-absolute). **Scrum Guide 2020**
   — Definition of Done. **#NoEstimates** (Woody Zuill, ~2012) — questions estimate value, not a blanket ban.
-- 2026-07-12 — **[Needs Verification]**: the literal enum casing of `gh pr view --json reviewDecision`
-  (`APPROVED`/`CHANGES_REQUESTED`/`REVIEW_REQUIRED`) is corroborated only by secondary sources, not read off
-  GitHub's primary GraphQL enum reference; the worked examples deliberately use the verified `--comments`
-  flag rather than asserting the unverified enum string.
+- 2026-07-18 — RESOLVED (supersedes the 2026-07-12 [Needs Verification] entry): `gh pr view --json
+reviewDecision` maps to GitHub's GraphQL `PullRequestReviewDecision` enum, confirmed off the primary
+  schema reference at <https://docs.github.com/en/graphql/reference/pulls> — exactly three values,
+  `APPROVED`, `CHANGES_REQUESTED`, `REVIEW_REQUIRED` (casing as already used in this doc). The
+  `reviewDecision` field itself is nullable (no dedicated "no decision" enum member — the field returns
+  `null` when there's no review activity yet).
+- 2026-07-18 — re-confirmed (no material change since 2026-07-12): Conventional Commits still at stable
+  **v1.0.0** (conventionalcommits.org/en/v1.0.0/); **SemVer** still at **2.0.0** (semver.org); `gh pr
+create`, `gh pr review`, `gh pr view` flags (as cited above) unchanged per the official `gh` manual
+  (cli.github.com/manual), despite the `gh` CLI binary itself advancing to **v2.96.0** (released
+  2026-07-02, github.com/cli/cli/releases) in the interim. **Ruff** remains on the **0.15** minor line
+  (patch releases through 0.15.16/0.15.17 as of this check, astral.sh/blog/ruff-v0.15.0) — the
+  Black-replacement/consolidated-tool framing is unaffected.
 
 ## Concepts
 

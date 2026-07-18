@@ -1,0 +1,13 @@
+✓ Approved acme/checkout-service#142
+
+feat(auth): add token refresh #142
+acme:feature/auth-token-refresh -> main
+Open • reviewer-jane approved
+
+Comments
+  reviewer-jane requested changes (2026-07-18)
+    needs a regression test for the empty-token refresh path
+  reviewer-jane approved (2026-07-18)
+    LGTM
+
+View this pull request on GitHub: https://github.com/acme/checkout-service/pull/142
