@@ -1,0 +1,36 @@
+# learning/code/ex-14-minimal-ci-pipeline-lint-test-build/ci.yml
+# ex-14: a minimal 3-stage pipeline -- lint, then test, then build, as ordered, GATED stages (co-08)
+name: ci # => co-08: workflow display name, shown in the Actions tab
+on: # => co-08: this pipeline's triggers...
+  pull_request: # => co-08: ...every pull request...
+  push: # => co-08: ...and every push to main
+    # => co-08: so short-lived feature branches don't burn CI minutes on every commit
+    branches: [main] # => co-08: scoped to main only -- not every branch push
+
+jobs: # => co-08: three ordered, GATED stages follow, cheapest first
+  # => co-08: ordering by cost means an expensive stage never runs after a cheap one already failed
+  lint: # => co-08: STAGE 1 -- cheapest, fastest checks run first
+    runs-on: ubuntu-latest # => co-08: a fresh, ephemeral runner per job
+    steps: # => co-08: this job's own ordered list of steps
+      - uses: actions/checkout@v7 # => co-08: fetches the commit under test
+      - run: pip install ruff # => co-08: installs the linter/formatter (Ruff 0.15, DD-28-verified)
+      - run: ruff check . # => co-08: fails the JOB (and the pipeline) on any lint violation
+      - run: ruff format --check . # => co-08: fails on any unformatted file -- no silent auto-fix in CI
+
+  test: # => co-08: STAGE 2 -- runs ONLY if lint (stage 1) succeeded
+    # => co-08: without `needs`, GitHub Actions would run all three jobs in parallel instead
+    needs: lint # => co-08: `needs` is what makes this GATED, not merely ordered
+    runs-on: ubuntu-latest # => co-08: a fresh, ephemeral runner per job
+    steps: # => co-08: mirrors lint's own step shape -- checkout, install, run
+      - uses: actions/checkout@v7 # => co-08: fetches the commit under test
+      - run: pip install pytest # => co-08: installs the test runner
+      - run: pytest -q # => co-08: fails the pipeline on any red test
+
+  build: # => co-08: STAGE 3 -- runs ONLY if lint AND test both succeeded
+    # => co-08: a chain of single dependencies, not a fan-out of three parallel gates
+    needs: test # => co-08: transitively gated on lint too, via test's own `needs`
+    runs-on: ubuntu-latest # => co-08: a fresh, ephemeral runner per job
+    steps: # => co-08: the final job's own steps -- checkout, then build
+      - uses: actions/checkout@v7 # => co-08: fetches the commit under test
+      # => co-08: a lint or test failure never wastes a build's own compute cost
+      - run: python -m build # => co-08: the most EXPENSIVE stage runs LAST -- fail cheap, fail early

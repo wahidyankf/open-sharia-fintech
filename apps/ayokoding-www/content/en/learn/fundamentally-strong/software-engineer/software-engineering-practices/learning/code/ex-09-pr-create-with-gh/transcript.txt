@@ -1,0 +1,12 @@
+Switched to a new branch 'feature/auth-token-refresh'
+Branch 'feature/auth-token-refresh' set up to track remote branch 'feature/auth-token-refresh' from 'origin'.
+
+Creating pull request for feature/auth-token-refresh into main in acme/checkout-service
+
+https://github.com/acme/checkout-service/pull/142
+{
+  "baseRefName": "main",
+  "number": 142,
+  "title": "feat(auth): add token refresh",
+  "url": "https://github.com/acme/checkout-service/pull/142"
+}

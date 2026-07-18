@@ -98,3 +98,7 @@ weight: 1750
 - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling)
+- [30 · Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices/drilling)

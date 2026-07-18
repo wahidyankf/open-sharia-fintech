@@ -1,0 +1,21 @@
+pre-commit installed at .git/hooks/pre-commit
+
+trim trailing whitespace.................................................Failed
+- hook id: trailing-whitespace
+- exit code: 1
+- files were modified by this hook
+
+Fixing sloppy.py
+
+end-of-file-fixer........................................................Passed
+ruff......................................................................Passed
+ruff-format................................................................Passed
+
+trim trailing whitespace.................................................Passed
+end-of-file-fixer.........................................................Passed
+ruff......................................................................Passed
+ruff-format................................................................Passed
+[main (root-commit) a4c9e21] chore: add pre-commit config
+ 2 files changed, 20 insertions(+)
+ create mode 100644 .pre-commit-config.yaml
+ create mode 100644 sloppy.py

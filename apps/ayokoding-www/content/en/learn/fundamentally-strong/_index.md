@@ -36,3 +36,4 @@ weight: 107
   - [24 · Concurrency & Parallelism](/en/c/learn/fundamentally-strong/software-engineer/concurrency-and-parallelism)
   - [25 · Advanced Algorithms](/en/c/learn/fundamentally-strong/software-engineer/advanced-algorithms)
   - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
+  - [30 · Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)

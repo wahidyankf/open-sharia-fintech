@@ -1,0 +1,11 @@
+--- before the kill switch is flipped ---
+200: checkout processed normally
+200: gift_card_redemption processed normally
+200: profile_update processed normally
+
+--- after the kill switch is flipped (SAME process, no redeploy) ---
+200: checkout processed normally
+503: gift-card redemption temporarily disabled
+200: profile_update processed normally
+
+One feature turned off; the rest of the system stayed up, no redeploy: True

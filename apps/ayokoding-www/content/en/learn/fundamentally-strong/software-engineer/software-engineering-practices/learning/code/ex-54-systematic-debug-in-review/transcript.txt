@@ -1,0 +1,35 @@
+--- reviewer's hypothesis, BEFORE running bisect ---
+hypothesis: the bug is in PR commit 3 ('add tier multiplier scaffold') -- its message
+mentions a multiplier, and multiplier logic is the most likely place for a scaling bug
+
+--- git bisect run, confirming (or refuting) the hypothesis mechanically ---
+Bisecting: 2 revisions left to test after this (roughly 1 step)
+[ffbb013] refactor(loyalty): tidy locals
+running 'python3' 'test_loyalty.py'
+Bisecting: 0 revisions left to test after this (roughly 1 step)
+[5f9ebd1] feat(loyalty): tier scaffold continued
+running 'python3' 'test_loyalty.py'
+Traceback (most recent call last):
+  File "test_loyalty.py", line 2, in <module>
+    assert points_for(100.0) == 100
+AssertionError
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[060e466] feat(loyalty): add tier multiplier scaffold
+running 'python3' 'test_loyalty.py'
+Traceback (most recent call last):
+  File "test_loyalty.py", line 2, in <module>
+    assert points_for(100.0) == 100
+AssertionError
+060e4669e357e30fa85b94fec8ec87199e8eaf03 is the first bad commit
+commit 060e4669e357e30fa85b94fec8ec87199e8eaf03
+    feat(loyalty): add tier multiplier scaffold
+
+ loyalty.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+
+--- bisect's own finding ---
+feat(loyalty): add tier multiplier scaffold
+
+The hypothesis and the full `git bisect run` result are the SAME commit: "add tier multiplier
+scaffold" -- confirmed mechanically, not just by the reviewer's initial guess.
