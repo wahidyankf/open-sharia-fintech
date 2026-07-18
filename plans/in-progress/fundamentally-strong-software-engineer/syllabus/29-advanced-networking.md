@@ -48,21 +48,77 @@ otherwise annotated diagrams and real tool output.
   3022**; **DNSSEC core = RFC 4033/4034/4035**; **TCP window scale/timestamps = RFC 7323**; delayed-ACK
   requirement is normatively **RFC 1122 §4.2.3.2**. **Nagle's RFC 896 is "Legacy"** (no formal IETF
   standing) — cite it only historically. (rfc-editor.org / datatracker.ietf.org)
-- 2026-07-12 — `[Needs Verification]` at content-authoring time (DD-35): the exact `curl --http3-only`
-  manpage wording and the exact `wscale N` print format inside `tcpdump -v` verbose TCP-options output were
-  corroborated only via secondary sources — re-fetch `curl.se/docs/manpage.html` and re-run `tcpdump -v`
-  locally to confirm verbatim before publishing. L4/L7 load-balancing and reverse-proxy/CDN terms are
-  vendor/practitioner (nginx/HAProxy/Envoy/Cloudflare), not IETF — spot-check against one vendor glossary.
-  CIDR/subnet arithmetic stable; `ip`/`ss`/`dig`/`traceroute` output formats stable (spot-check at authoring).
 - 2026-07-12 — DD-35 primary-source pass for the VPN/overlay rung (co-25..co-29, ex-56..ex-62): **WireGuard**
   is a variant of the Noise-framework IK handshake (Curve25519 + ChaCha20-Poly1305 + BLAKE2s), merged into
   mainline **Linux 5.6** (Jan 2020), kernel module **GPLv2**; `AllowedIPs` is the crypto-routing table and
   `PersistentKeepalive ≈ 25s` maintains the NAT mapping — verified against wireguard.com (`/`, `/protocol/`,
   `/quickstart/`). **OpenVPN** is **GPLv2**; 2.6 adds kernel data-channel-offload (DCO), UDP-only — verified
-  against openvpn.net/legal + github.com/openvpn/openvpn + blog.openvpn.net/openvpn-2-6. `[Needs Verification]`
-  at authoring: mesh-VPN specifics (Nebula GPLv3 + lighthouse/host-cert model; Headscale as an OSS Tailscale
-  control server; Tailscale DERP relays) — confirm against tailscale.com + github.com/slackhq/nebula +
-  github.com/juanfont/headscale before publishing.
+  against openvpn.net/legal + github.com/openvpn/openvpn + blog.openvpn.net/openvpn-2-6.
+- 2026-07-18 — **V-step re-verification pass** (Phase 32, `web-researcher`), all sources fetched and read
+  2026-07-18 unless noted, resolving every prior `[Needs Verification]` line above:
+  - **curl HTTP/3**: `--http3` attempts HTTP/3 with fallback to earlier versions on failure; `--http3-only`
+    forces QUIC and fails outright with no fallback if unsupported — HTTPS-only. Current stable curl =
+    **8.21.0** (2026-06-24). HTTP/3 support is **build-time optional**: the two supported backends are (1)
+    **ngtcp2**+nghttp3, needing a QUIC-capable TLS library (OpenSSL **v3.5.0+**, AWS-LC, BoringSSL, LibreSSL,
+    quictls, GnuTLS, or wolfSSL — plain/stock OpenSSL without QUIC support does NOT work), or (2) **quiche**
+    (still EXPERIMENTAL), needing BoringSSL. **Correction**: curl **removed its standalone OpenSSL-QUIC-fork
+    backend as of curl 8.19.0** ("one backend less") — OpenSSL 3.5+ now works only paired with ngtcp2, never
+    as a standalone HTTP/3 backend. Verified: curl.se/docs/manpage.html, github.com/curl/curl/blob/master/docs/HTTP3.md,
+    daniel.haxx.se/blog/2026/01/17/more-http-3-focus-one-backend-less. The exact string curl's `-v` prints on
+    successful HTTP/3 negotiation remains `[Needs Verification]` at authoring time — check for `HTTP/3 200` in
+    the response status line and a `Features: HTTP3` line in `curl --version`, but confirm the literal
+    informational-line wording against a live `curl -v --http3` transcript when authoring ex-36's real attempt
+    (falling back to the documented `[Needs Verification]` pattern if a live HTTP/3 endpoint isn't reachable
+    from the authoring sandbox).
+  - **tcpdump `-v` wscale format**: `[Verified]` shape, `[Needs Verification]` exact primary wording — the
+    documented options-list order is `options [mss 1460,sackOK,TS val ... ecr 0,nop,wscale 7]` (mss first,
+    then sackOK, then TS val/ecr, then nop padding, then wscale last), corroborated across secondary technical
+    sources but not independently re-pulled from tcpdump.org's own manpage this pass — spot-check
+    `tcpdump.org/manpages/tcpdump.1.html` or a live capture at authoring time before quoting verbatim. Current
+    stable tcpdump = **4.99.6**, libpcap = **1.10.6** (both 2025-12-30). Source: tcpdump.org.
+  - **dig / BIND 9**: current stable = **9.20.24**; ESV = 9.18.50; dev = 9.21.23. `+dnssec` is automatically
+    implied when `+trace` is used. `+short` output format unchanged (no contrary changelog evidence found).
+    Source: isc.org/bind, bind9.readthedocs.io.
+  - **iproute2 / `ip` / `ss`**: current stable iproute2 = **7.1.0** (Repology aggregation across
+    distros/Homebrew). `ip netns add`/`ip netns exec`, `ip link show`, `ip neigh show`, `ip route`, `ss -tan`,
+    `ss -tin` all confirmed unchanged — long-stable base subcommands with no deprecation found. Source:
+    man7.org (`ip-netns(8)`, `ss(8)`), repology.org/project/iproute2/versions.
+  - **wireguard-tools**: current stable = **v1.0.20260223**. `wg genkey`/`wg pubkey`/`wg-quick up`/`down` and
+    the `[Interface]`/`[Peer]` keys (`PrivateKey`, `PublicKey`, `AllowedIPs`, `Endpoint`,
+    `PersistentKeepalive`) confirmed unchanged since the WireGuard 1.0 userspace-tools release. Kernel module
+    still mainline (Linux 5.6+, no deprecation). Source: git.zx2c4.com/wireguard-tools/refs, wireguard.com/install.
+  - **L4/L7 load balancing**: `[Verified]`, no material change — L4 forwards on IP/port/protocol without
+    payload inspection; L7 terminates the connection and routes on application content (URL/headers/cookies).
+    Source: nginx.com/resources/glossary (Layer 4 and Layer 7 Load Balancing).
+  - **CDN cache-status headers**: `[Verified]` — Cloudflare uses `CF-Cache-Status` (`HIT`/`MISS`/`EXPIRED`/
+    `STALE`/`BYPASS`/etc.), Fastly uses `X-Cache` (chained per node, e.g. `HIT, HIT`) plus `X-Cache-Hits`; the
+    generic `Age` header (RFC 9111) applies across both. Source: developers.cloudflare.com/cache/concepts/cache-responses,
+    fastly.com/documentation/reference/http/http-headers/X-Cache.
+  - **Mesh VPNs**: `[Verified]` — **Tailscale**'s data plane is WireGuard directly between peers where
+    possible, falling back to relay via **DERP** (Designated Encrypted Relay for Packets) servers when direct
+    connectivity fails (DERP servers forward already-WireGuard-encrypted traffic and cannot decrypt it); a
+    separate coordination/control server handles auth, key distribution, and DERP-map/peer-selection
+    coordination. **Headscale** is **BSD-3-Clause** licensed, explicitly "not associated with Tailscale Inc.",
+    actively maintained (v0.29.2, 2026-07-01). **Nebula** (Slack) confirms the lighthouse + host-certificate
+    model; **license correction**: Nebula is **MIT**, not GPLv3 as this syllabus previously flagged for
+    checking — confirmed by directly fetching the raw `LICENSE` file at
+    `raw.githubusercontent.com/slackhq/nebula/master/LICENSE` (`MIT License, Copyright (c) 2018-2019 Slack
+Technologies, Inc.`), actively maintained (v1.10.3, 2026-02-06). Sources: tailscale.com/docs/reference/derp-servers,
+    tailscale.com/docs/concepts/control-data-planes, github.com/juanfont/headscale, github.com/slackhq/nebula
+    (repo + raw LICENSE file, both 2026-07-18).
+  - **TCP congestion control**: `[Verified]` — **CUBIC** remains the Linux default (since kernel 2.6.19,
+    unchanged through current 2026 kernels). **BBRv3 remains an IETF Internet-Draft**
+    (`draft-ietf-ccwg-bbr-05`, IETF ccwg, expiring 2026-09-03 under the routine 6-month I-D renewal cycle) —
+    still **not an RFC**. Source: datatracker.ietf.org/doc/draft-ietf-ccwg-bbr.
+  - **TLS 1.3 = RFC 9846 re-check**: `[Verified]`, skeptically re-confirmed against the raw RFC text itself
+    (not just search snippets) — `rfc-editor.org/rfc/rfc9846.txt`'s header block reads `Request for Comments:
+9846 ... Obsoletes: 5077, 5246, 6961, 7627, 8422, 8446 ... July 2026 ... Updates: 5705, 6066 ...
+Category: Standards Track`, authored by E. Rescorla; RFC 8446's own datatracker history page confirms
+    "Obsoleted by RFC 9846." No correction needed — the prior 2026-07-12 entry was already accurate.
+  - No unresolved "to verify" / `[Needs Verification]` line remains blocking authoring: the two residual
+    exact-wording spot-checks above (curl `-v` HTTP/3 negotiation string; tcpdump `-v` wscale primary-manpage
+    text) are non-blocking authoring-time spot-checks with a documented `[Needs Verification]` fallback
+    pattern already specified in this topic's worked examples (ex-36, ex-17), not open accuracy gaps.
 
 ## Concepts
 

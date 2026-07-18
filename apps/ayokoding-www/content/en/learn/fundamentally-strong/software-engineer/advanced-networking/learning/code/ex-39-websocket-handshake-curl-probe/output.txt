@@ -1,0 +1,17 @@
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: echo.websocket.org
+> User-Agent: curl/8.7.1
+> Accept: */*
+> Connection: Upgrade
+> Upgrade: websocket
+> Sec-WebSocket-Version: 13
+> Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+>
+* Request completely sent off
+< HTTP/1.1 101 Switching Protocols
+< upgrade: websocket
+< connection: Upgrade
+< sec-websocket-accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+< date: Sat, 18 Jul 2026 01:38:01 GMT
+< server: Fly/6cc1c2f7c8 (2026-07-17)

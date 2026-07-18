@@ -1,0 +1,25 @@
+$ wg show    # right after Example 56/57's traffic on this same tunnel
+interface: wg0
+  public key: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
+  listening port: 51820
+
+peer: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
+  endpoint: 172.19.0.2:51820
+  allowed ips: 10.99.0.1/32
+  latest handshake: 32 seconds ago
+  transfer: 764 B received, 884 B sent
+  persistent keepalive: every 25 seconds
+
+$ sleep 32   # NO traffic sent during this window
+
+$ wg show    # 32s later, still idle
+interface: wg0
+  public key: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
+  listening port: 51820
+
+peer: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
+  endpoint: 172.19.0.2:51820
+  allowed ips: 10.99.0.1/32
+  latest handshake: 1 minute, 13 seconds ago
+  transfer: 796 B received, 916 B sent
+  persistent keepalive: every 25 seconds

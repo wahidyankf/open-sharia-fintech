@@ -38,4 +38,4 @@ weight: 107
   - [26 · Advanced SQL & Query Performance](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance)
   - [27 · Data Access: ORMs & Query Builders](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders)
   - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
-  - [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
+  - [29 · Advanced Networking](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking)
