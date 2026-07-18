@@ -1,3 +1,4 @@
+// learning/code/ex-46-mechanical-refactor-across-files/receipt.ts
 // ex-46-mechanical-refactor-across-files: receipt.ts -- co-15, co-17
 // CALL SITE 3 of 3 -- reviewed and approved as its own, separate diff.
 // Also this example's ENTRY POINT: running this file exercises all three

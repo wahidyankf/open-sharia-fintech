@@ -1,3 +1,4 @@
+// learning/code/ex-46-mechanical-refactor-across-files/checkout.ts
 // ex-46-mechanical-refactor-across-files: checkout.ts -- co-15, co-17
 // CALL SITE 2 of 3 -- reviewed and approved as its own, separate diff.
 import { computeOrderTotal, type LineItem } from "./pricing"; // => co-15: import updated to the renamed export -- was `calculateTotal`

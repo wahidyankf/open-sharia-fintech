@@ -637,6 +637,10 @@ def clamp_v2(value: float, low: float, high: float) -> float:  # => co-13: the a
 # learning/code/ex-13-run-the-suite-before-accepting/test_clamp.py
 """Example ex-13: Run the Suite Before Accepting -- pytest-style tests for clamp()."""  # => co-13: this file's own restated purpose, doubling as its module __doc__
 
+# NAMING TRAP: despite the test_*.py / test_* naming, this file does NOT run under pytest      # => co-13: flags the exact confusion this file's own name invites
+# directly -- `pytest test_clamp.py` errors ("fixture 'clamp_fn' not found") because            # => co-13: clamp_fn is a required positional parameter, not a fixture pytest can supply
+# test_clamp() takes a required clamp_fn argument. Run this file via `python3 test_clamp.py`.   # => co-13: the correct, documented path -- see this page's Run: line
+
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 
 from collections.abc import Callable  # => co-13: types the clamp_fn parameter test_clamp/run_suite are quantified over

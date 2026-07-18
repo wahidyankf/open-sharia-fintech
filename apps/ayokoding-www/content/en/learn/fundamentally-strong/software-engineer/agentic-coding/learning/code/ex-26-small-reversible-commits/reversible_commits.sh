@@ -1,4 +1,5 @@
 #!/bin/sh
+# learning/code/ex-26-small-reversible-commits/reversible_commits.sh
 # ex-26-small-reversible-commits: reversible_commits.sh -- co-12
 # Demonstrates driving a multi-file change as four small commits instead of
 # one large diff, then reverting ONE of them independently without breaking

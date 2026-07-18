@@ -1,3 +1,5 @@
+# learning/code/ex-51-spec-driven-tdd-agent-session/spec.md
+
 # Spec: Shipping Fee Calculator
 
 ## Acceptance criteria

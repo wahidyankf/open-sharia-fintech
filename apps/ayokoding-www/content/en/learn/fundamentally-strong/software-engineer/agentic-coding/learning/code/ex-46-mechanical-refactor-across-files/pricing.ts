@@ -1,3 +1,4 @@
+// learning/code/ex-46-mechanical-refactor-across-files/pricing.ts
 // ex-46-mechanical-refactor-across-files: pricing.ts -- co-15, co-17
 // This file DEFINES the renamed export. Every call site below imports the
 // new name (computeOrderTotal), never the old one (calculateTotal).
