@@ -28,8 +28,11 @@ pub struct ValidateArgs {
     #[arg(default_value = ".")]
     pub project_dir: String,
     /// Glob(s) of `.feature` files this project consumes, resolved relative
-    /// to `project_dir` (repeatable).
-    #[arg(long = "features", value_name = "GLOB")]
+    /// to `project_dir` (repeatable). Required — `clap` rejects an omitted
+    /// flag, but cannot detect a *provided* glob that matches zero files
+    /// (e.g. after a directory rename); [`run`] guards against that case
+    /// explicitly.
+    #[arg(long = "features", value_name = "GLOB", required = true)]
     pub features: Vec<String>,
     /// Directory containing playwright-bdd's generated `.spec.js` output
     /// (e.g. `.features-gen`, produced by `npx bddgen`), resolved relative
@@ -54,7 +57,8 @@ pub struct ValidateArgs {
 ///
 /// # Errors
 ///
-/// Returns an error if the generated output directory is missing, a
+/// Returns an error if `--features` matches zero `.feature` files (e.g. a
+/// misconfigured glob), the generated output directory is missing, a
 /// `.feature` file cannot be read, the baseline manifest cannot be
 /// read/parsed, or new unbound scenarios beyond the baseline are found.
 pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Result<(), Error> {
@@ -62,8 +66,22 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
     let features_gen_dir = project_dir.join(&args.features_gen);
     let baseline_path = project_dir.join(&args.baseline);
 
-    let declared_with_paths = collect_declared(&project_dir, &args.features)?;
+    let (declared_with_paths, any_feature_file_matched) =
+        collect_declared(&project_dir, &args.features)?;
+    // `scan_fixme_dir` runs (and may error on a missing `.features-gen`)
+    // BEFORE the empty-glob guard below — a missing generated-output
+    // directory is a more specific, more actionable diagnostic than an
+    // empty `--features` match, and both conditions can hold at once (e.g.
+    // `bddgen` was simply never run against a freshly scaffolded project).
     let fixme_by_file = scan_fixme_dir(&features_gen_dir)?;
+    if !any_feature_file_matched {
+        return Err(anyhow!(
+            "--features matched no .feature files across glob(s) {:?} — \
+             check for a path typo or directory rename (an empty declared set \
+             would otherwise make this gate always silently pass)",
+            args.features
+        ));
+    }
 
     // The scan only yields scenario *titles* per generated file (test.fixme
     // carries no feature path of its own); reconstruct {feature, scenario}
@@ -118,6 +136,14 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 /// correct generated `.spec.js` file's fixme titles; never persisted on
 /// `BaselineEntry` itself, so baseline manifest compatibility is unaffected.
 ///
+/// Also returns whether ANY `.feature` file matched at least one glob —
+/// distinct from whether any `@e2e`-tagged scenario was declared. A project
+/// whose matched `.feature` files genuinely contain zero `@e2e` scenarios
+/// (all `@unit`/`@integration`) is a legitimate empty-declared-set state that
+/// must still pass the gate; only a glob matching NO FILES AT ALL (an
+/// omitted flag already caught by `clap`, or a misconfigured/renamed path)
+/// is the misconfiguration `run` guards against — see the caller.
+///
 /// # Errors
 ///
 /// Returns an error if a glob pattern is invalid, a matched `.feature` file
@@ -125,8 +151,9 @@ pub fn run(args: &ValidateArgs, output_format: OutputFormat) -> std::result::Res
 fn collect_declared(
     project_dir: &Path,
     features: &[String],
-) -> std::result::Result<Vec<(PathBuf, BaselineEntry)>, Error> {
+) -> std::result::Result<(Vec<(PathBuf, BaselineEntry)>, bool), Error> {
     let mut declared = Vec::new();
+    let mut any_feature_file_matched = false;
     for pattern in features {
         let abs_pattern = project_dir.join(pattern);
         let pattern_str = abs_pattern
@@ -137,6 +164,7 @@ fn collect_declared(
         {
             let path =
                 entry.with_context(|| format!("failed to read glob match for {pattern:?}"))?;
+            any_feature_file_matched = true;
             let canonical = path.canonicalize().with_context(|| {
                 format!("failed to resolve canonical path for {}", path.display())
             })?;
@@ -146,7 +174,7 @@ fn collect_declared(
             }
         }
     }
-    Ok(declared)
+    Ok((declared, any_feature_file_matched))
 }
 
 /// Recursively scans `dir` for `test.fixme(...)` titles, keyed by EVERY
@@ -494,6 +522,119 @@ mod tests {
         assert!(
             msg.contains("bddgen"),
             "expected the error to instruct running bddgen first, got: {msg}"
+        );
+    }
+
+    /// Regression test for the omitted-`--features`-flag case: `clap` must
+    /// reject a missing `--features` occurrence at parse time rather than
+    /// silently defaulting to an empty glob list (which would make the gate
+    /// always report 0 gaps regardless of what `.features-gen` contains).
+    #[test]
+    fn features_flag_is_required_by_clap() {
+        use clap::Parser;
+
+        #[derive(Parser, Debug)]
+        struct Wrapper {
+            #[command(flatten)]
+            args: ValidateArgs,
+        }
+
+        let result = Wrapper::try_parse_from([
+            "rhino-cli",
+            ".",
+            "--features-gen",
+            ".features-gen",
+            "--baseline",
+            "e2e-coverage-baseline.json",
+            "--project",
+            "test-project",
+        ]);
+
+        assert!(
+            result.is_err(),
+            "expected clap to reject an omitted --features flag as a required \
+             argument, got: {result:?}"
+        );
+    }
+
+    /// Regression test for the zero-match-`--features`-glob case: a
+    /// *provided* `--features` glob that matches zero `.feature` files (e.g.
+    /// after a path typo or directory rename) must error explicitly rather
+    /// than silently reporting "0 new unbound scenario(s)" — indistinguishable,
+    /// from the gate's own output, from "everything is correctly covered".
+    /// `clap`'s `required = true` cannot catch this case since the flag IS
+    /// present; only `run`'s explicit `any_feature_file_matched` guard can.
+    #[test]
+    fn empty_features_glob_match_errors_instead_of_silently_passing() {
+        let tmp = TempDir::new().unwrap();
+        // `.features-gen` genuinely contains a test.fixme call, but no
+        // `features/` directory exists at all — the glob matches nothing.
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme(\"A\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        let err = run(&args, OutputFormat::Text).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("--features"),
+            "expected an explicit error naming --features when the glob \
+             matched nothing, got: {msg}"
+        );
+    }
+
+    /// Locks in the distinction the previous two tests rely on: a `--features`
+    /// glob that DOES match a real `.feature` file, but that file genuinely
+    /// declares zero `@e2e`-tagged scenarios (e.g. every scenario is
+    /// `@unit`-only), is a legitimate empty-declared-set state — it must
+    /// still pass with 0 gaps, never be conflated with the "glob matched
+    /// nothing" misconfiguration guarded above.
+    #[test]
+    fn feature_file_with_zero_e2e_scenarios_passes_without_error() {
+        let tmp = TempDir::new().unwrap();
+        let features_dir = tmp.path().join("features");
+        fs::create_dir_all(&features_dir).unwrap();
+        fs::write(
+            features_dir.join("example.feature"),
+            "@unit\nScenario: Unit only\n  Given a\n",
+        )
+        .unwrap();
+
+        let gen_dir = tmp.path().join(".features-gen");
+        fs::create_dir_all(&gen_dir).unwrap();
+        fs::write(
+            gen_dir.join("example.feature.spec.js"),
+            "test.fixme(\"Unit only\", async ({ page }) => {});\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("e2e-coverage-baseline.json"),
+            "{\"project\": \"test-project\", \"allowedUnbound\": []}\n",
+        )
+        .unwrap();
+
+        let args = base_args(
+            tmp.path().to_string_lossy().to_string(),
+            "e2e-coverage-baseline.json".to_string(),
+        );
+
+        assert!(
+            run(&args, OutputFormat::Text).is_ok(),
+            "a matched .feature file with zero @e2e scenarios must pass, \
+             not be mistaken for an empty --features glob match"
         );
     }
 }
