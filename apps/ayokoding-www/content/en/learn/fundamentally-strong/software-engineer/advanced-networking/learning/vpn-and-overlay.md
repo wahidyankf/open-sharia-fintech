@@ -67,9 +67,9 @@ because this kernel has it compiled in directly, not as a loadable module
 
 ```text
 $ wg genkey
-MF46XxoKVt0C6HD7f6wzCtCosDbTJuqsxG0COE7jh3s=  # peer1's REAL private key from this capture (yours will differ each run)
+CHDUVbLBFZJ3gwrcdaB9mto0JJunyeeTV5OH+rkWpHU=  # peer1's REAL private key from this capture (yours will differ each run)
 $ echo "<private-key>" | wg pubkey
-9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=  # peer1's REAL public key, correctly DERIVED from (and different from) the private key above
+MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=  # peer1's REAL public key, correctly DERIVED from (and different from) the private key above
 
 $ wg-quick up wg0     # (run on peer1)
 [#] ip link add wg0 type wireguard
@@ -85,24 +85,24 @@ $ wg-quick up wg0     # (run on peer2, peering back to peer1)
 
 $ ping -c 3 10.99.0.1     # (run from peer2, across the tunnel)
 PING 10.99.0.1 (10.99.0.1) 56(84) bytes of data.
-64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.447 ms
-64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=1.93 ms
-64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.331 ms
+64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.459 ms
+64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=0.234 ms
+64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.535 ms
 
 --- 10.99.0.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2055ms
-rtt min/avg/max/mdev = 0.331/0.901/1.926/0.726 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2091ms
+rtt min/avg/max/mdev = 0.234/0.409/0.535/0.127 ms
 
 $ wg show   # (run on peer1)
 interface: wg0
-  public key: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
+  public key: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
   private key: (hidden)
   listening port: 51820
 
-peer: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
+peer: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
   endpoint: 172.19.0.3:51820
   allowed ips: 10.99.0.2/32
-  latest handshake: 3 seconds ago
+  latest handshake: 7 seconds ago
   transfer: 564 B received, 656 B sent
   persistent keepalive: every 25 seconds
 ```
@@ -110,10 +110,10 @@ peer: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
 **Key takeaway**: the two peers, each with a completely independent config file naming only the
 OTHER's public key and endpoint, genuinely reach each other over `10.99.0.0/24` -- an address range
 that exists nowhere on the underlying `172.19.0.0/16` Docker bridge network the two containers'
-`eth0` interfaces actually sit on -- and `wg show`'s `latest handshake: 3 seconds ago` plus nonzero
+`eth0` interfaces actually sit on -- and `wg show`'s `latest handshake: 7 seconds ago` plus nonzero
 transfer counters prove a real Noise-IK handshake and real encrypted traffic, not just an interface
-that came up. Note that peer1's public key (`9doM...`) is genuinely DIFFERENT from its own private
-key (`MF46...`) shown above -- a public key is derived from, and can never equal, its private key.
+that came up. Note that peer1's public key (`MSG/...`) is genuinely DIFFERENT from its own private
+key (`CHDU...`) shown above -- a public key is derived from, and can never equal, its private key.
 
 **Why it matters**: the ENTIRE tunnel setup above is two short config files and two commands
 (`wg-quick up`, then traffic) -- no certificate authority, no IKE negotiation, no separate control
@@ -157,17 +157,20 @@ $ ping -c 2 10.99.0.99
 PING 10.99.0.99 (10.99.0.99) 56(84) bytes of data.
 From 10.99.0.2 icmp_seq=1 Destination Host Unreachable
 ping: sendmsg: Required key not available
-ping: sendmsg: Required key not available
 From 10.99.0.2 icmp_seq=2 Destination Host Unreachable
+ping: sendmsg: Required key not available
+
+--- 10.99.0.99 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 1043ms
 
 $ ping -c 2 10.99.0.1
 PING 10.99.0.1 (10.99.0.1) 56(84) bytes of data.
-64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.267 ms
-64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=0.362 ms
+64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.269 ms
+64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=0.550 ms
 
 --- 10.99.0.1 ping statistics ---
-2 packets transmitted, 2 received, 0% packet loss, time 1051ms
-rtt min/avg/max/mdev = 0.267/0.314/0.362/0.047 ms
+2 packets transmitted, 2 received, 0% packet loss, time 1020ms
+rtt min/avg/max/mdev = 0.269/0.409/0.550/0.140 ms
 ```
 
 **Key takeaway**: `ping: sendmsg: Required key not available` is WireGuard's OWN kernel-level
@@ -264,54 +267,60 @@ prove the keepalive packets are firing on schedule, with no application traffic 
 # all, wg show's "sent" byte counter should still tick upward every ~25s --
 # proof the keepalive packets are firing on their own schedule, which is
 # EXACTLY the mechanism that would keep a real NAT mapping from expiring (co-28)
-wg show   # baseline, right after the tunnel comes up
+wg show   # baseline, after Example 56/57's traffic on this same tunnel
 sleep 32  # deliberately idle -- no ping, no other traffic sent at all
 wg show   # re-check -- only automatic keepalives could have moved the counters
 ```
 
-**Run**: on peer2 (the same live tunnel from Example 56), with genuinely nothing else run in
-between the two `wg show` calls
+**Run**: on peer2 (the same live tunnel from Example 56, right after Example 57's two ping checks
+ran across it), with genuinely nothing else run in between the two `wg show` calls below
 
 **Output**:
 
 ```text
-$ wg show    # immediately after bring-up
+$ wg show    # right after Example 56/57's traffic on this same tunnel
 interface: wg0
-  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
+  public key: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
   listening port: 51820
 
-peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
+peer: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: 8 seconds ago
-  transfer: 508 B received, 564 B sent
+  latest handshake: 32 seconds ago
+  transfer: 764 B received, 884 B sent
   persistent keepalive: every 25 seconds
 
 $ sleep 32   # NO traffic sent during this window
 
 $ wg show    # 32s later, still idle
 interface: wg0
-  public key: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
+  public key: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
   listening port: 51820
 
-peer: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
+peer: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
   endpoint: 172.19.0.2:51820
   allowed ips: 10.99.0.1/32
-  latest handshake: 49 seconds ago
-  transfer: 540 B received, 628 B sent
+  latest handshake: 1 minute, 13 seconds ago
+  transfer: 796 B received, 916 B sent
   persistent keepalive: every 25 seconds
 ```
 
-**Key takeaway**: `sent` grew from `564 B` to `628 B` and `received` grew from `508 B` to `540 B`
-(`64` and `32` more bytes respectively -- two outbound and one inbound `32`-byte keepalive packet,
-since `PersistentKeepalive = 25` is set on BOTH peers' configs so each side fires its own
-independent keepalive timer) with genuinely ZERO application traffic issued, while `latest
-handshake`'s age kept counting up from the SAME original handshake (never reset to `0`/`Now`) --
-keepalives reuse the existing session key and never trigger a fresh Noise-IK handshake; they are
-tiny periodic packets whose only job is to keep something moving across the path. This peer's own
-public key (`5v5Y...`) is also genuinely IDENTICAL across both `wg show` calls here AND matches
-exactly what Example 56 reported as this same peer2's public key from peer1's side (`5v5Y...` at
-line 100 above) -- proof this is the same live tunnel, not two different fabricated sessions.
+**Key takeaway**: `sent` grew from `884 B` to `916 B` and `received` grew from `764 B` to `796 B`
+(`32` more bytes in EACH direction -- one outbound and one inbound `32`-byte keepalive packet across
+the roughly 41-second gap between the two calls, since `PersistentKeepalive = 25` is set on BOTH
+peers' configs so each side fires its own independent keepalive timer roughly once per 25s window)
+with genuinely ZERO application traffic issued, while `latest handshake`'s age kept counting up from
+the SAME original handshake (never reset to `0`/`Now`) -- keepalives reuse the existing session key
+and never trigger a fresh Noise-IK handshake; they are tiny periodic packets whose only job is to
+keep something moving across the path. This peer's own public key (`wufp...`) is also genuinely
+IDENTICAL across both `wg show` calls here AND matches exactly what Example 56 reported as this same
+peer2's public key from peer1's side (`wufp...` at line 102 above) -- proof this is the same live
+tunnel, not two different fabricated sessions. The byte counters are also cross-consistent with
+Example 56's own `wg show`: peer1 had already confirmed sending `656 B` to peer2 by Example 56's
+earlier checkpoint (`latest handshake: 7 seconds ago`), and peer2's own baseline reading here
+(`884 B` sent, `764 B` received, `latest handshake: 32 seconds ago` -- a later checkpoint of the
+SAME handshake) shows both directions have only grown since, exactly as monotonic per-peer transfer
+counters must.
 
 **Why it matters**: this example ran on a plain Docker bridge network, not a real NAT gateway, so the
 NAT-mapping-refresh benefit itself is inferred from the mechanism rather than observed against a real

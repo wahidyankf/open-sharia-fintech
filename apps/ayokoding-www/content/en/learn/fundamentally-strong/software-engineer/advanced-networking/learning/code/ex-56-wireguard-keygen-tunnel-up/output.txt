@@ -1,7 +1,7 @@
 $ wg genkey
-MF46XxoKVt0C6HD7f6wzCtCosDbTJuqsxG0COE7jh3s=  # peer1's REAL private key from this capture (yours will differ each run)
+CHDUVbLBFZJ3gwrcdaB9mto0JJunyeeTV5OH+rkWpHU=  # peer1's REAL private key from this capture (yours will differ each run)
 $ echo "<private-key>" | wg pubkey
-9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=  # peer1's REAL public key, correctly DERIVED from (and different from) the private key above
+MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=  # peer1's REAL public key, correctly DERIVED from (and different from) the private key above
 
 $ wg-quick up wg0     # (run on peer1)
 [#] ip link add wg0 type wireguard
@@ -17,23 +17,23 @@ $ wg-quick up wg0     # (run on peer2, peering back to peer1)
 
 $ ping -c 3 10.99.0.1     # (run from peer2, across the tunnel)
 PING 10.99.0.1 (10.99.0.1) 56(84) bytes of data.
-64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.447 ms
-64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=1.93 ms
-64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.331 ms
+64 bytes from 10.99.0.1: icmp_seq=1 ttl=64 time=0.459 ms
+64 bytes from 10.99.0.1: icmp_seq=2 ttl=64 time=0.234 ms
+64 bytes from 10.99.0.1: icmp_seq=3 ttl=64 time=0.535 ms
 
 --- 10.99.0.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2055ms
-rtt min/avg/max/mdev = 0.331/0.901/1.926/0.726 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2091ms
+rtt min/avg/max/mdev = 0.234/0.409/0.535/0.127 ms
 
 $ wg show   # (run on peer1)
 interface: wg0
-  public key: 9doMZuY9wmqs+jfG5zWaACgd/wyMD51BIbO5SMmoVkI=
+  public key: MSG/UYgPxJpPiviKJWDMQfoGqSgUXvGOGrf0GLLu30w=
   private key: (hidden)
   listening port: 51820
 
-peer: 5v5YMtncQDw5Ez/juRb2GkghWhWDMSao13VASPDzERE=
+peer: wufpOvCLOT5QmDXTcK1B/MB2b+anbuHq1wGL99DKUSQ=
   endpoint: 172.19.0.3:51820
   allowed ips: 10.99.0.2/32
-  latest handshake: 3 seconds ago
+  latest handshake: 7 seconds ago
   transfer: 564 B received, 656 B sent
   persistent keepalive: every 25 seconds
