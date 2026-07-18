@@ -22,7 +22,7 @@ def median_specific(values: list[float]) -> float:  # => co-05: SECOND diff -- g
 
 
 if __name__ == "__main__":  # => co-05: entry point -- this block runs only when the file executes directly, not on import
-    values = [1, 2, 3, 4]  # => co-05: an EVEN-length case -- the exact case the vague prompt never constrained
+    values: list[float] = [1, 2, 3, 4]  # => co-05: an EVEN-length case -- list[float] annotation needed since pyright infers bare [1, 2, 3, 4] as list[int], invariant vs the list[float] parameters
     expected = 2.5  # => co-05: the textbook median of [1, 2, 3, 4]
     vague_result = median_vague(values)  # => co-05: run the vague-prompt diff against the test case
     specific_result = median_specific(values)  # => co-05: run the specific-prompt diff against the same test case

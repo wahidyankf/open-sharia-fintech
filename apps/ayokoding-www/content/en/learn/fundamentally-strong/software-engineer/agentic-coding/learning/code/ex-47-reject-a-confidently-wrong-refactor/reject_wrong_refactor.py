@@ -2,6 +2,8 @@
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 
+from collections.abc import Callable  # => co-16: types the fn parameter test_sum_even_up_to/run_regression are quantified over
+
 
 def sum_even_up_to_original(limit: int) -> int:  # => co-16: the ORIGINAL, correct implementation -- what the agent was asked to "simplify"
     """Sum every even number from 0 through `limit`, inclusive."""  # => co-16: documents the contract BOTH versions claim to implement
@@ -19,12 +21,12 @@ def sum_even_up_to_refactored(limit: int) -> int:  # => co-16: THE AGENT'S "SIMP
     return sum(n for n in range(0, limit) if n % 2 == 0)  # => co-16: BUG -- range(0, limit) is exclusive of `limit`, dropping it when `limit` is even
 
 
-def test_sum_even_up_to(fn) -> None:  # => co-13: the REGRESSION TEST -- written against the original's documented, inclusive contract
+def test_sum_even_up_to(fn: Callable[[int], int]) -> None:  # => co-13: the REGRESSION TEST -- written against the original's documented, inclusive contract
     """Regression test: sum of even numbers from 0 through 10, inclusive, must be 30."""  # => co-13: documents the test's contract
     assert fn(10) == 30, f"expected 30 (0+2+4+6+8+10), got {fn(10)}"  # => co-13: 10 is even -- exactly the case the refactor's off-by-one drops
 
 
-def run_regression(name: str, fn) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
+def run_regression(name: str, fn: Callable[[int], int]) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
     """Run test_sum_even_up_to against `fn`; return True on pass, False on the first failure."""  # => co-13: documents run_regression's contract
     try:  # => co-13: a real test run either raises AssertionError (fail) or returns cleanly (pass)
         test_sum_even_up_to(fn)  # => co-13: runs the regression test above against this specific candidate

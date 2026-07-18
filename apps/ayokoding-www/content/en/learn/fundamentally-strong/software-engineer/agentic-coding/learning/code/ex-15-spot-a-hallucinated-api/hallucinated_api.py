@@ -6,7 +6,7 @@ from __future__ import annotations  # => DD-39 hygiene: postpones type-annotatio
 
 def hallucinated_pop_front(items: list[int]) -> int:  # => co-16: THE AGENT'S DIFF -- calls a plausible-sounding method Python's list never had
     """Remove and return the first element (agent's version -- calls a nonexistent method)."""  # => co-16: documents the (wrong) contract this diff claims to implement
-    return items.pop_front()  # => co-16: list.pop_front() does not exist in Python -- borrowed from a different language's API (e.g. JS Array, C++ deque)
+    return items.pop_front()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]  # => co-16: list.pop_front() does not exist in Python -- borrowed from a different language's API (e.g. JS Array, C++ deque); suppression is intentional, matching the deliberately-wrong-call convention at computer-science-foundations/.../huffman_lossless.py:51
 
 
 def correct_pop_front(items: list[int]) -> int:  # => co-16: THE VERIFIED FIX -- the real stdlib call that does the same job

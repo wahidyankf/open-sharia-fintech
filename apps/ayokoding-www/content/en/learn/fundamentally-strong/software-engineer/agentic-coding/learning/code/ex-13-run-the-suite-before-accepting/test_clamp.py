@@ -3,17 +3,19 @@
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 
+from collections.abc import Callable  # => co-13: types the clamp_fn parameter test_clamp/run_suite are quantified over
+
 from clamp import clamp_v1, clamp_v2  # => co-13: imports BOTH candidate diffs from the colocated clamp.py -- no hidden dependency
 
 
-def test_clamp(clamp_fn) -> None:  # => co-13: pytest-style test function -- named test_*, plain asserts, runnable by hand with no framework installed
+def test_clamp(clamp_fn: Callable[[float, float, float], float]) -> None:  # => co-13: pytest-style test function -- named test_*, plain asserts, runnable by hand with no framework installed
     """The suite: below-range, in-range, and above-range values must all clamp correctly."""  # => co-13: documents the test's contract
     assert clamp_fn(-5, 0, 10) == 0, "value below low must clamp UP to low"  # => co-13: the exact case clamp_v1 fails
     assert clamp_fn(5, 0, 10) == 5, "value already in range must pass through unchanged"  # => co-13: sanity case both versions pass
     assert clamp_fn(15, 0, 10) == 10, "value above high must clamp DOWN to high"  # => co-13: sanity case both versions pass
 
 
-def run_suite(name: str, clamp_fn) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
+def run_suite(name: str, clamp_fn: Callable[[float, float, float], float]) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
     """Run test_clamp against `clamp_fn`; return True on pass, False on the first failure."""  # => co-13: documents run_suite's contract
     try:  # => co-13: a real test run either raises AssertionError (fail) or returns cleanly (pass)
         test_clamp(clamp_fn)  # => co-13: runs the suite above against this specific candidate function

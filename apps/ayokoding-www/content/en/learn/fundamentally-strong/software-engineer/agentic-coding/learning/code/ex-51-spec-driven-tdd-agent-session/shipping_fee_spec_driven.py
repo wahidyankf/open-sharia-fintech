@@ -2,6 +2,8 @@
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 
+from collections.abc import Callable  # => co-14: types the fn parameter run_acceptance_suite is quantified over
+
 # --- THE SPEC (co-21), restated from the colocated spec.md ------------------  # => co-21: spec-driven means the tests below are DERIVED from this, not invented ad hoc
 # AC1. subtotal >= 50.00 ships free (fee = 0.00).                              # => co-21: AC bullet 1
 # AC2. subtotal < 50.00 pays a flat $5.00 fee.                                  # => co-21: AC bullet 2
@@ -23,7 +25,7 @@ def shipping_fee_v2_spec_compliant(subtotal: float, express: bool = False) -> fl
     return round(max(fee, 0.00), 2)  # => co-21: AC4 -- non-negative, rounded to 2 decimals
 
 
-def run_acceptance_suite(name: str, fn) -> bool:  # => co-14: runs all four AC checks against `fn`; returns True only if every one passes
+def run_acceptance_suite(name: str, fn: Callable[..., float]) -> bool:  # => co-14: runs all four AC checks against `fn`; returns True only if every one passes
     """Check `fn` against AC1-AC4; print + return False on the first failing bullet."""  # => co-14: documents run_acceptance_suite's contract
     checks = [  # => co-14: one tuple per AC bullet -- (label, actual, expected)
         ("AC1 (>=50 ships free)", fn(75.00), 0.00),  # => co-21: AC1's exact case

@@ -24,7 +24,7 @@ def is_clean_palindrome(s: str) -> bool:  # => co-05: THE GENERATED DIFF -- the 
 if __name__ == "__main__":  # => co-05: entry point -- this block runs only when the file executes directly, not on import
     ac1 = is_clean_palindrome("Panama")  # => co-05: AC1 check target
     assert isinstance(ac1, bool), "AC1: must return a bool"  # => co-05: AC1 verified
-    print(f"AC1 (returns bool): {isinstance(ac1, bool)}")  # => co-05: prints AC1 result
+    print(f"AC1 (returns bool): {isinstance(ac1, bool)}")  # pyright: ignore[reportUnnecessaryIsInstance]  # => co-05: prints AC1 result -- pyright already knows the declared return type is bool (that's WHY the assert above is unflagged), but this print restates the same runtime proof deliberately, so the suppression is intentional, not an oversight
     assert is_clean_palindrome("Racecar") is True, "AC2: case must be ignored"  # => co-05: AC2 verified
     print(f"AC2 (case-insensitive 'Racecar'): {is_clean_palindrome('Racecar')}")  # => co-05: prints AC2 result
     example = "A man, a plan, a canal: Panama"  # => co-05: the exact example named in the prompt

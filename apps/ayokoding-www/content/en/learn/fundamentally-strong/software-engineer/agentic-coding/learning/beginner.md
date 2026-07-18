@@ -269,7 +269,7 @@ def is_clean_palindrome(s: str) -> bool:  # => co-05: THE GENERATED DIFF -- the 
 if __name__ == "__main__":  # => co-05: entry point -- this block runs only when the file executes directly, not on import
     ac1 = is_clean_palindrome("Panama")  # => co-05: AC1 check target
     assert isinstance(ac1, bool), "AC1: must return a bool"  # => co-05: AC1 verified
-    print(f"AC1 (returns bool): {isinstance(ac1, bool)}")  # => co-05: prints AC1 result
+    print(f"AC1 (returns bool): {isinstance(ac1, bool)}")  # pyright: ignore[reportUnnecessaryIsInstance]  # => co-05: prints AC1 result -- pyright already knows the declared return type is bool (that's WHY the assert above is unflagged), but this print restates the same runtime proof deliberately, so the suppression is intentional, not an oversight
     assert is_clean_palindrome("Racecar") is True, "AC2: case must be ignored"  # => co-05: AC2 verified
     print(f"AC2 (case-insensitive 'Racecar'): {is_clean_palindrome('Racecar')}")  # => co-05: prints AC2 result
     example = "A man, a plan, a canal: Panama"  # => co-05: the exact example named in the prompt
@@ -341,7 +341,7 @@ def median_specific(values: list[float]) -> float:  # => co-05: SECOND diff -- g
 
 
 if __name__ == "__main__":  # => co-05: entry point -- this block runs only when the file executes directly, not on import
-    values = [1, 2, 3, 4]  # => co-05: an EVEN-length case -- the exact case the vague prompt never constrained
+    values: list[float] = [1, 2, 3, 4]  # => co-05: an EVEN-length case -- list[float] annotation needed since pyright infers bare [1, 2, 3, 4] as list[int], invariant vs the list[float] parameters
     expected = 2.5  # => co-05: the textbook median of [1, 2, 3, 4]
     vague_result = median_vague(values)  # => co-05: run the vague-prompt diff against the test case
     specific_result = median_specific(values)  # => co-05: run the specific-prompt diff against the same test case
@@ -639,17 +639,19 @@ def clamp_v2(value: float, low: float, high: float) -> float:  # => co-13: the a
 
 from __future__ import annotations  # => DD-39 hygiene: postpones type-annotation evaluation, keeping this file interpreter-version-agnostic
 
+from collections.abc import Callable  # => co-13: types the clamp_fn parameter test_clamp/run_suite are quantified over
+
 from clamp import clamp_v1, clamp_v2  # => co-13: imports BOTH candidate diffs from the colocated clamp.py -- no hidden dependency
 
 
-def test_clamp(clamp_fn) -> None:  # => co-13: pytest-style test function -- named test_*, plain asserts, runnable by hand with no framework installed
+def test_clamp(clamp_fn: Callable[[float, float, float], float]) -> None:  # => co-13: pytest-style test function -- named test_*, plain asserts, runnable by hand with no framework installed
     """The suite: below-range, in-range, and above-range values must all clamp correctly."""  # => co-13: documents the test's contract
     assert clamp_fn(-5, 0, 10) == 0, "value below low must clamp UP to low"  # => co-13: the exact case clamp_v1 fails
     assert clamp_fn(5, 0, 10) == 5, "value already in range must pass through unchanged"  # => co-13: sanity case both versions pass
     assert clamp_fn(15, 0, 10) == 10, "value above high must clamp DOWN to high"  # => co-13: sanity case both versions pass
 
 
-def run_suite(name: str, clamp_fn) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
+def run_suite(name: str, clamp_fn: Callable[[float, float, float], float]) -> bool:  # => co-13: a tiny hand-rolled runner -- catches the AssertionError a real pytest run would report
     """Run test_clamp against `clamp_fn`; return True on pass, False on the first failure."""  # => co-13: documents run_suite's contract
     try:  # => co-13: a real test run either raises AssertionError (fail) or returns cleanly (pass)
         test_clamp(clamp_fn)  # => co-13: runs the suite above against this specific candidate function
@@ -764,7 +766,7 @@ from __future__ import annotations  # => DD-39 hygiene: postpones type-annotatio
 
 def hallucinated_pop_front(items: list[int]) -> int:  # => co-16: THE AGENT'S DIFF -- calls a plausible-sounding method Python's list never had
     """Remove and return the first element (agent's version -- calls a nonexistent method)."""  # => co-16: documents the (wrong) contract this diff claims to implement
-    return items.pop_front()  # => co-16: list.pop_front() does not exist in Python -- borrowed from a different language's API (e.g. JS Array, C++ deque)
+    return items.pop_front()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportAttributeAccessIssue]  # => co-16: list.pop_front() does not exist in Python -- borrowed from a different language's API (e.g. JS Array, C++ deque); suppression is intentional, matching the deliberately-wrong-call convention at computer-science-foundations/.../huffman_lossless.py:51
 
 
 def correct_pop_front(items: list[int]) -> int:  # => co-16: THE VERIFIED FIX -- the real stdlib call that does the same job
