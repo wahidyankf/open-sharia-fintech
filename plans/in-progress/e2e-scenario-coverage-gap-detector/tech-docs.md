@@ -168,10 +168,18 @@ to `"skip-scenario"` on any suite from silently reintroducing the gap.
 
 ### DD-6 — `Scenario Outline` handling
 
-A `Scenario Outline` is counted once in the declared set by its title. playwright-bdd emits one
-generated test per `Examples` row, titled with the outline title plus the example data; the scan
-treats the outline as unbound if **any** emitted variant is `test.fixme`, matching on the outline
-title prefix. Documented here so the parser's matching rule is explicit.
+A `Scenario Outline` is counted once in the declared set by its title. playwright-bdd wraps every
+`Scenario Outline`'s Examples-row-derived tests in one `test.describe(...)` block titled with the
+outline's own raw Gherkin title; each row inside is titled per playwright-bdd's own Examples-row
+convention (`Example #<N>` by default — never the outline's own title, so a title-only scan can
+never see an unbound outline). `scan_unbound_describe_titles`
+(`apps/rhino-cli/src/application/e2e_coverage/parser.rs`) closes that gap by matching on the
+wrapping `describe` block's title instead of the individual row titles: the scan treats the
+outline as unbound if **any** of its Examples-row tests is `test.fixme`. A block's extent is
+resolved via matching leading-whitespace width between its `test.describe(...)` open line and its
+own closing `});` line — playwright-bdd's generator always indents a block's open/close lines
+identically, so this needs no full JS parsing or brace-balancing. Documented here so the parser's
+matching rule is explicit.
 
 ## File Impact
 
