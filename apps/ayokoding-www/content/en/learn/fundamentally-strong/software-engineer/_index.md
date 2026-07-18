@@ -101,3 +101,7 @@ weight: 1750
 - [28 · Build Your Own ORM & Query Builder](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/drilling)
+- [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/overview)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/drilling)
