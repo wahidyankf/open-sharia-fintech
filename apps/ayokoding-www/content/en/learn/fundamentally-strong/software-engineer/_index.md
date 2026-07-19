@@ -116,3 +116,6 @@ weight: 1750
   - [Overview](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/overview)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding/drilling)
+- [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/drilling)

@@ -41,3 +41,4 @@ weight: 107
   - [29 · Advanced Networking](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking)
   - [30 · Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)
   - [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)
+  - [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
