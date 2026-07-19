@@ -7,9 +7,19 @@ Active project plans currently being worked on.
 - [fundamentally-strong-software-engineer](./fundamentally-strong-software-engineer/) — new breadth-first
   relearn-and-drill tutorial section on ayokoding-www (61 topics, Pass 0 forge prologue + five-pass
   spiral, learning + drilling tracks, Python-primary). Delivery Mode: `main-to-origin-main`.
-- [e2e-scenario-coverage-gap-detector](./e2e-scenario-coverage-gap-detector/) — detect Gherkin scenarios
-  that silently lose E2E coverage under `playwright-bdd`'s `missingSteps: skip-scenario` config. Its
-  predecessor, `rhino-cli-source-drift-reconciliation`, completed 2026-07-17 (see `plans/done/`).
+- [rhino-cli-git-root-test-fixture-race](./rhino-cli-git-root-test-fixture-race/README.md) —
+  a rhino-cli git-root test fixture races under parallel `nx affected`, corrupting the real
+  repository's git state (stray commits, stray linked worktrees, mis-attributed authorship).
+  Delivery Mode: `worktree-to-pr`.
+- [e2e-coverage-rule-feature-skip-fixme-gap](./e2e-coverage-rule-feature-skip-fixme-gap/README.md) —
+  the e2e-coverage gap detector's `@skip`/`@fixme` special-tag detection is scoped to
+  `Scenario Outline` level only; `Rule:`/`Feature:`-level tags produce the same undetected shape one
+  AST level up. Delivery Mode: `worktree-to-pr`.
+- [rust-cargo-target-dir-sharing](./rust-cargo-target-dir-sharing/README.md) —
+  Rust `target/` directories are duplicated per git worktree (~32 GB observed); share build output
+  across worktrees by folding a per-crate `target/` symlink + worktree-aware cache GC into
+  `rhino-cli doctor` (local-dev-only, CI-guarded), byte-identical across all three repos.
+  Delivery Mode: `worktree-to-pr`.
 
 ## Instructions
 

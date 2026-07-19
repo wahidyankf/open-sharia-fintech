@@ -11,9 +11,9 @@ use crate::commands::{
     harness_validate_sync, lang_java_validate_null_safety, md_audit, md_validate_frontmatter,
     md_validate_frontmatter_dates, md_validate_heading_hierarchy, md_validate_links,
     md_validate_mermaid, md_validate_naming, md_validate_readme_index, repo_config_validate,
-    specs_audit, specs_clean_java_imports, specs_coverage, specs_gherkin_cardinality,
-    specs_scaffold_dart, specs_structure_validate, specs_validate_counts, test_coverage_validate,
-    workflows_validate_naming,
+    specs_audit, specs_clean_java_imports, specs_coverage, specs_e2e_coverage,
+    specs_gherkin_cardinality, specs_scaffold_dart, specs_structure_validate,
+    specs_validate_counts, test_coverage_validate, workflows_validate_naming,
 };
 use crate::domain::cliout::OutputFormat;
 
@@ -459,6 +459,10 @@ pub enum SpecsCommands {
     /// Run per-level @covers behavior coverage validation.
     #[command(name = "behavior-coverage", subcommand)]
     BehaviorCoverage(SpecsBehaviorCoverageCommands),
+    /// Detect Gherkin scenarios playwright-bdd silently skipped via
+    /// `test.fixme`, checked against a per-project baseline manifest.
+    #[command(name = "e2e-coverage", subcommand)]
+    E2eCoverage(SpecsE2eCoverageCommands),
     /// Run per-level @covers coverage validation scoped to domain/** feature files.
     #[command(name = "domain-coverage", subcommand)]
     DomainCoverage(SpecsDomainCoverageCommands),
@@ -487,6 +491,15 @@ pub enum SpecsBehaviorCoverageCommands {
     /// Validate that all BDD spec files have matching test implementations at the required levels.
     #[command(name = "validate")]
     Validate(specs_coverage::ValidateArgs),
+}
+
+/// `specs e2e-coverage` subcommands.
+#[derive(Subcommand, Debug)]
+pub enum SpecsE2eCoverageCommands {
+    /// Validate that generated playwright-bdd output has no new unbound
+    /// `@e2e` scenarios beyond the checked-in baseline manifest.
+    #[command(name = "validate")]
+    Validate(specs_e2e_coverage::ValidateArgs),
 }
 
 /// `specs domain-coverage` subcommands.
@@ -821,6 +834,11 @@ fn dispatch_specs(
         SpecsCommands::BehaviorCoverage(bc) => match bc {
             SpecsBehaviorCoverageCommands::Validate(args) => {
                 specs_coverage::run(args, output_format)
+            }
+        },
+        SpecsCommands::E2eCoverage(ec) => match ec {
+            SpecsE2eCoverageCommands::Validate(args) => {
+                specs_e2e_coverage::run(args, output_format)
             }
         },
         SpecsCommands::DomainCoverage(dc) => match dc {

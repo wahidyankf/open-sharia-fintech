@@ -186,7 +186,7 @@ The change is a source reconciliation with no data migration, so rollback is a c
 
 ## Dependency ordering
 
-Predecessor of [e2e-scenario-coverage-gap-detector](../e2e-scenario-coverage-gap-detector/README.md):
+Predecessor of [e2e-scenario-coverage-gap-detector](../2026-07-18__e2e-scenario-coverage-gap-detector/README.md):
 that plan adds a new rhino-cli subcommand and assumes an already-identical source base. This plan
 must land (all three repos identical, verified) **before** the e2e detector begins its rhino-cli work
 `[Repo-grounded: sibling plan's README §Prerequisite]`.

@@ -48,8 +48,7 @@ revisited in the AI band at [`57-agentic-ai`](./57-agentic-ai.md).
   - **MCP (Model Context Protocol)** — open protocol over JSON-RPC 2.0; architecture is Hosts /
     Clients / Servers exposing Resources, Prompts, and Tools (co-08). Cited spec revision:
     `2025-11-25` (stable, dated schema at spec.modelcontextprotocol.io). Source: modelcontextprotocol.io
-    spec + schema. [Needs Verification] a `2026-07-28` release-candidate revision (stateless transport
-    changes) — confirm the exact date/status against the spec repo before quoting it in shipped text.
+    spec + schema.
   - **AGENTS.md standard** (co-06) — the vendor-neutral instruction-file standard (agents.md,
     stewarded under the Agentic AI Foundation / Linux Foundation). This repo's own AGENTS.md conforms.
     Instruction-file precedence and repo-vs-user layering are harness-specific — the example must state
@@ -58,16 +57,40 @@ revisited in the AI band at [`57-agentic-ai`](./57-agentic-ai.md).
     permission model is deny → ask → allow, harness-enforced (not model-enforced); plan mode is a
     read-only exploration pass; subagents run in isolated contexts returning summaries; skills are
     packaged, named procedures. Named as one concrete harness; keep shipped text tool-agnostic where the
-    concept generalizes. [Needs Verification] any cross-tool "skills are portable across harnesses"
-    claim (e.g. agentskills.io) — verify the interop claim before asserting portability.
+    concept generalizes.
   - **Prompt-injection / guardrails** (co-19) — grounded in the OWASP Top 10 for Agentic Applications
-    (2026 cycle). [Needs Verification] the exact identifier + verbatim title of the top-ranked entry
-    (e.g. an `ASI01`-style code) — confirm against the published OWASP list before citing a code.
+    (2026 cycle).
   - **Spec-driven development** (co-21) — GitHub's Spec Kit is a real, published toolkit for
-    spec-driven agent workflows. [Needs Verification] its exact release date and current command surface
-    — re-verify at authoring time; do not quote a specific version string unread.
+    spec-driven agent workflows.
   - Copilot/Cursor/other-vendor specifics are deliberately NOT named in concept claims; if an example
     names one at authoring time, its behavior must be re-verified against that vendor's current docs (DD-35).
+- 2026-07-18 — verified: a 2026-07-28 MCP spec revision is real — a stateless-transport RC locked
+  2026-05-21, targeting finalization 2026-07-28 (drops the `initialize` handshake and sticky sessions
+  for per-request `Mcp-Method`/`Mcp-Name` headers). As of this sweep it is unshipped; the current
+  stable/published revision remains `2025-11-25`. Shipped text cites `2025-11-25` as the stable spec
+  and does not quote RC-only transport details. Sources:
+  <https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/>,
+  <https://modelcontextprotocol.io/specification/2025-11-25/changelog>.
+- 2026-07-18 — verified: agentskills.io confirms SKILL.md is a real, open, Anthropic-originated
+  cross-tool file format, with Claude Code and OpenCode both listed as compatible clients
+  (<https://code.claude.com/docs/en/skills>, <https://opencode.ai/docs/skills/>); file-format
+  portability is real, but per-harness invocation mechanics still differ (this repo's own
+  Claude Code fork-mode vs. OpenCode native-read distinction is one example) — shipped text scopes
+  the claim to "file-format portable," not "behaviorally identical." Source:
+  <https://agentskills.io/home>.
+- 2026-07-18 — verified: the top-ranked entry in OWASP's "Top 10 for Agentic Applications for 2026"
+  (OWASP GenAI Security Project, published 2025-12-09) is **ASI01: Agent Goal Hijack**. Sources:
+  <https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/>,
+  corroborated by <https://neuraltrust.ai/blog/owasp-agentic-ai-top-10>.
+- 2026-07-18 — verified: GitHub Spec Kit (<https://github.com/github/spec-kit>) is actively
+  maintained — latest release `v0.13.0`, published 2026-07-17T18:58Z UTC; installed via
+  `uv tool install specify-cli`, driven by `specify init <project>`. Source: spec-kit releases page
+  (Atom feed timestamp verified).
+- 2026-07-18 — verified: AGENTS.md remains stewarded by the Agentic AI Foundation (AAIF) under the
+  Linux Foundation, formed 2025-12-09 with OpenAI donating AGENTS.md alongside Anthropic (MCP) and
+  Block (Goose). Sources:
+  <https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation>,
+  <https://aaif.io/projects/agents-md/>.
 
 ## Concepts
 
