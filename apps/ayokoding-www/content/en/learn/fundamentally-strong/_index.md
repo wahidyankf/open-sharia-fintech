@@ -43,3 +43,4 @@ weight: 107
   - [31 · Agentic Coding](/en/c/learn/fundamentally-strong/software-engineer/agentic-coding)
   - [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
   - [33 · Engineering Management](/en/c/learn/fundamentally-strong/software-engineer/engineering-management)
+  - [Pass 2 Capstone · SOLID Core](/en/c/learn/fundamentally-strong/software-engineer/capstone-solid-core)
