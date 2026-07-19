@@ -147,9 +147,7 @@ pub struct TargetShareStatus {
 
 /// Returns `true` when `link` is a symlink whose target equals `expected_target`.
 fn is_correct_symlink(link: &Path, expected_target: &Path) -> bool {
-    std::fs::read_link(link)
-        .map(|actual| actual == expected_target)
-        .unwrap_or(false)
+    std::fs::read_link(link).is_ok_and(|actual| actual == expected_target)
 }
 
 /// Reports every crate under `repo_root` whose `target/` is not yet the
