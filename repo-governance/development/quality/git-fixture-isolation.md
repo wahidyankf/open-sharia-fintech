@@ -75,13 +75,13 @@ This convention implements/respects the following conventions:
   extend to the git repository state living inside that filesystem, not stop at the directory
   boundary alone.
 
-- **[Git Identity From Global Config Convention](../workflow/git-identity-from-global-config.md)**:
-  That convention prohibits a `[user]` override from ever appearing in this repository's own
-  `.git/config`, enforced by a pre-commit guard against manual edits. This convention addresses
-  the same class of corruption reached through a different door: an automated fixture, not a
-  human edit, writing `user.name`/`user.email` into the real repository's local config. Standard 3
-  (identity/config hygiene) is this convention's analogue of that guard, scoped to fixtures rather
-  than commits.
+- **[Reproducible Environments Convention (Git Identity Guardrail)](../workflow/reproducible-environments.md)**:
+  That convention's Git Identity Guardrail prohibits any agent from writing a `[user]` override
+  into a repository's `.git/config` at any scope. This convention addresses the same class of
+  corruption reached through a different door: an automated fixture, not a human edit or an agent
+  command, writing `user.name`/`user.email` into the real repository's local config. Standard 3
+  (identity/config hygiene) is this convention's analogue of that guardrail, scoped to fixtures
+  rather than to commits or agent actions.
 
 ## Purpose
 
@@ -498,7 +498,7 @@ sample; see Standard 6 above.
 - **`repo-rules-checker`**: May additionally audit that this convention itself stays cross-referenced
   from [Regression Test Mandate](./regression-test-mandate.md),
   [Three-Level Testing Standard](./three-level-testing-standard.md), and
-  [Git Identity From Global Config Convention](../workflow/git-identity-from-global-config.md), per
+  [Reproducible Environments Convention](../workflow/reproducible-environments.md), per
   the standard convention-integration checklist.
 
 ## Completeness Checklist
@@ -528,11 +528,9 @@ Before landing a test fixture that shells out to `git` to build a throwaway repo
 - [Three-Level Testing Standard](./three-level-testing-standard.md) -- CLI-app integration tests
   that use real `/tmp` filesystem fixtures are the primary home for git-fixture tests in this
   monorepo; this convention governs their isolation once their test level is chosen.
-- [Git Identity From Global Config Convention](../workflow/git-identity-from-global-config.md) --
-  The sibling convention protecting the real repository's identity config from **manual** edits;
-  this convention protects the same surface from **automated fixture** writes.
-- [AGENTS.md -- Reproducible Environments (Git Identity Guardrail)](../../../AGENTS.md#reproducible-environments) --
-  The repository-wide policy that no AI agent sets or modifies git identity at any scope. The
+- [Reproducible Environments Convention (Git Identity Guardrail)](../workflow/reproducible-environments.md) --
+  The repository-wide policy that no AI agent sets or modifies git identity at any scope, protecting
+  the real repository's identity config from **manual** edits and direct agent commands. The
   motivating incident for this convention is a concrete illustration of how that guardrail can be
   violated **by automation** rather than by direct agent action: a fixture bug, not an agent
   editing `.git/config` directly, produced the identity corruption. This convention is the
