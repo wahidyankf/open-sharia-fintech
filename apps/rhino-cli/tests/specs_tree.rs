@@ -353,6 +353,46 @@ impl SpecsTreeWorld {
             combined_output(&out)
         );
     }
+
+    /// Writes the `.feature`/`.spec.js` fixture pair for the Rule-level
+    /// `@skip` scenario: a top-level `Feature:` wrapping a `Rule:` block
+    /// tagged `@skip` (playwright-bdd's `renderDescribe` is the SAME shared
+    /// rendering path for a `Rule:` node as a `Feature:` node — see
+    /// `application::e2e_coverage::parser::scan_skip_or_fixme_describe_titles`'s
+    /// doc comment) — the Rule contains exactly one `@e2e` Scenario
+    /// ([`EC_RULE_SCENARIO_TITLE`]), rendered as a plain, unsuffixed nested
+    /// `test(...)` inside a `test.describe.skip(...)` block.
+    ///
+    /// `with_other_content` additionally writes [`EC_RULE_OTHER_SCENARIO_TITLE`]
+    /// as an ordinary top-level bound Scenario alongside the skipped Rule —
+    /// proving the file still generates real, unrelated output (AC-1's
+    /// Gherkin "the file also has other, non-skipped content so it still
+    /// generates" clause) and that ONLY the Rule-nested scenario is reported
+    /// as a gap, never this sibling.
+    fn ec_write_rule_skip_fixture(&self, with_other_content: bool) {
+        let mut feature = format!(
+            "Feature: fixture\n\n  @skip\n  Rule: {EC_RULE_TITLE}\n\n    @e2e\n    Scenario: {EC_RULE_SCENARIO_TITLE}\n      Given a step\n"
+        );
+        let mut spec_js = format!(
+            "test.describe('fixture', () => {{\n  test.describe.skip('{EC_RULE_TITLE}', () => {{\n    test('{EC_RULE_SCENARIO_TITLE}', async ({{ page }}) => {{\n    }});\n  }});\n"
+        );
+        if with_other_content {
+            let _ = writeln!(
+                feature,
+                "\n  @e2e\n  Scenario: {EC_RULE_OTHER_SCENARIO_TITLE}\n    Given a step"
+            );
+            let _ = writeln!(
+                spec_js,
+                "  test('{EC_RULE_OTHER_SCENARIO_TITLE}', async ({{ page }}) => {{\n  }});"
+            );
+        }
+        spec_js.push_str("});\n");
+        self.write(&format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"), &feature);
+        self.write(
+            &format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"),
+            &spec_js,
+        );
+    }
 }
 
 /// Runs `git` with `args` inside `dir`, using a fixed synthetic identity.
@@ -1813,6 +1853,100 @@ fn then_ec_reports_missing_features_gen(w: &mut SpecsTreeWorld) {
     let text = combined_output(out);
     assert!(text.contains(".features-gen"), "got: {text}");
     assert!(text.contains("bddgen"), "got: {text}");
+}
+
+/// Declared title of the `Rule:` block [`given_ec_rule_skip_tagged`] writes
+/// — shared with [`ec_write_rule_skip_fixture`](SpecsTreeWorld::ec_write_rule_skip_fixture).
+const EC_RULE_TITLE: &str = "A rule under test";
+/// Declared title of the `@e2e` Scenario nested under [`EC_RULE_TITLE`]'s
+/// `@skip`-tagged Rule — the scenario AC-1 asserts is reported as unbound.
+const EC_RULE_SCENARIO_TITLE: &str = "Scenario nested under the skipped rule";
+/// Declared title of the ordinary, fully-bound top-level Scenario
+/// [`given_ec_rule_has_other_content`] adds alongside the skipped Rule —
+/// AC-1's "the file also has other, non-skipped content" clause, and the
+/// negative half of [`then_ec_rule_nested_scenario_is_new_gap`]'s assertion
+/// (this sibling must never be reported as a gap).
+const EC_RULE_OTHER_SCENARIO_TITLE: &str = "An ordinary bound scenario outside the rule";
+
+#[given(r#"a .feature file with a "Rule:" block tagged "@skip""#)]
+fn given_ec_rule_skip_tagged(w: &mut SpecsTreeWorld) {
+    w.ec_write_rule_skip_fixture(false);
+}
+
+#[given("the Rule contains at least one Scenario")]
+fn given_ec_rule_has_scenario(_w: &mut SpecsTreeWorld) {
+    // No-op: `given_ec_rule_skip_tagged` already wrote exactly one @e2e
+    // Scenario nested under the Rule — this Gherkin clause elaborates on
+    // that same fixture rather than performing a further action.
+}
+
+#[given("the file also has other, non-skipped content so it still generates")]
+fn given_ec_rule_has_other_content(w: &mut SpecsTreeWorld) {
+    w.ec_write_rule_skip_fixture(true);
+}
+
+#[then("every scenario nested under the skipped Rule is reported as unbound")]
+fn then_ec_rule_nested_scenario_is_new_gap(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(
+        text.contains("1 new unbound scenario(s) found"),
+        "got: {text}"
+    );
+    assert!(text.contains(EC_RULE_SCENARIO_TITLE), "got: {text}");
+    let sibling_marker = format!("\"{EC_RULE_OTHER_SCENARIO_TITLE}\"");
+    assert!(
+        !text.contains(&sibling_marker),
+        "the non-skipped sibling scenario outside the Rule must not be \
+         reported as a gap, got: {text}"
+    );
+}
+
+/// Declared title of the first `@e2e` Scenario
+/// [`given_ec_feature_fixme_tagged`] writes directly under the
+/// `@fixme`-tagged top-level `Feature:`.
+const EC_FEATURE_FIXME_TITLE_1: &str = "First scenario in the fixme-tagged feature";
+/// Declared title of the second `@e2e` Scenario
+/// [`given_ec_feature_fixme_tagged`] writes directly under the
+/// `@fixme`-tagged top-level `Feature:` — proves AC-2's "every scenario in
+/// the file" holds for more than a single scenario.
+const EC_FEATURE_FIXME_TITLE_2: &str = "Second scenario in the fixme-tagged feature";
+
+#[given(r#"a .feature file whose top-level "Feature:" is tagged "@fixme""#)]
+fn given_ec_feature_fixme_tagged(w: &mut SpecsTreeWorld) {
+    // playwright-bdd's `renderRootSuite` calls the exact same `renderDescribe`
+    // for the top-level `Feature:` node as it does for a nested `Rule:` node
+    // — a Feature-level `@fixme` first-class special tag therefore wraps
+    // EVERY nested scenario in one `test.describe.fixme(...)` block, each
+    // rendered as a plain, unsuffixed nested `test(...)` call — see
+    // `application::e2e_coverage::parser::scan_skip_or_fixme_describe_titles`'s
+    // doc comment.
+    w.write(
+        &format!("{EC_FEATURES_DIR}/{EC_FEATURE_FILE}"),
+        &format!(
+            "@fixme\nFeature: fixture\n\n  @e2e\n  Scenario: {EC_FEATURE_FIXME_TITLE_1}\n    Given a step\n\n  @e2e\n  Scenario: {EC_FEATURE_FIXME_TITLE_2}\n    Given a step\n"
+        ),
+    );
+    w.write(
+        &format!("{EC_FEATURES_GEN_DIR}/{EC_SPEC_JS_FILE}"),
+        &format!(
+            "test.describe.fixme('fixture', () => {{\n  test('{EC_FEATURE_FIXME_TITLE_1}', async ({{ page }}) => {{\n  }});\n  test('{EC_FEATURE_FIXME_TITLE_2}', async ({{ page }}) => {{\n  }});\n}});\n"
+        ),
+    );
+}
+
+#[then("every scenario in the file is reported as unbound")]
+fn then_ec_feature_fixme_all_scenarios_new_gap(w: &mut SpecsTreeWorld) {
+    let out = w.output.as_ref().expect("ran");
+    let text = combined_output(out);
+    assert!(!out.status.success(), "expected failure, got: {text}");
+    assert!(
+        text.contains("2 new unbound scenario(s) found"),
+        "got: {text}"
+    );
+    assert!(text.contains(EC_FEATURE_FIXME_TITLE_1), "got: {text}");
+    assert!(text.contains(EC_FEATURE_FIXME_TITLE_2), "got: {text}");
 }
 
 // ===========================================================================

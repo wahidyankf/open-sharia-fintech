@@ -64,6 +64,20 @@ Feature: specs e2e-coverage validate
     And it reports exactly one new unbound scenario for the zero-row outline
 
   @unit
+  Scenario: A Rule-level @skip tag is detected as unbound
+    Given a .feature file with a "Rule:" block tagged "@skip"
+    And the Rule contains at least one Scenario
+    And the file also has other, non-skipped content so it still generates
+    When rhino-cli specs e2e-coverage validate runs for that project
+    Then every scenario nested under the skipped Rule is reported as unbound
+
+  @unit
+  Scenario: A Feature-level @fixme tag is detected as unbound
+    Given a .feature file whose top-level "Feature:" is tagged "@fixme"
+    When rhino-cli specs e2e-coverage validate runs for that project
+    Then every scenario in the file is reported as unbound
+
+  @unit
   Scenario: A test.fixme title contains an escaped apostrophe
     Given an @e2e scenario titled with an apostrophe that appears as test.fixme using playwright-bdd's escaped single-quote convention
     And a baseline manifest that lists no allowed unbound scenarios

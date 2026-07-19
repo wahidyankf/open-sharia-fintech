@@ -109,35 +109,97 @@ pub fn scan_unbound_describe_titles(spec_js: &str) -> Vec<String> {
     result
 }
 
-/// Scans playwright-bdd generated `.spec.js` source for a `Scenario
-/// Outline`'s wrapping `test.describe.skip(...)` or `test.describe.fixme(...)`
-/// block — playwright-bdd's rendering for an Outline-level `@skip`/`@fixme`
-/// FIRST-CLASS special tag (distinct from an ordinary Gherkin tag; see
-/// `node_modules/playwright-bdd/dist/generate/specialTags.js`), returning
-/// each such block's own title.
+/// Scans playwright-bdd generated `.spec.js` source for a `Feature`-,
+/// `Rule`-, or `Scenario Outline`-level wrapping `test.describe.skip(...)`
+/// or `test.describe.fixme(...)` block — playwright-bdd's rendering for a
+/// FIRST-CLASS `@skip`/`@fixme` special tag (distinct from an ordinary
+/// Gherkin tag; see
+/// `node_modules/playwright-bdd/dist/generate/specialTags.js`) at any of
+/// those three levels — returning both the block's own title AND every
+/// plain (unsuffixed) `test(...)`/`test.describe(...)` title nested
+/// anywhere inside its span, at any depth.
 ///
-/// Playwright enforces a `.skip`/`.fixme`-suffixed suite entirely at the
-/// PARENT level — none of its nested Examples-row tests are individually
-/// re-marked `test.fixme`, they remain ordinary bound `test(...)` calls (see
-/// `node_modules/playwright-bdd/dist/generate/formatter.js`'s
-/// `withSubFunction`, which chooses the suffix once for the whole block).
-/// [`scan_unbound_describe_titles`] alone can therefore never see this case —
-/// it requires a NESTED `test.fixme` — and because the generic `describe`
-/// title matching matches ANY `.method` suffix uniformly, the block's title
-/// still lands in
-/// [`scan_all_rendered_titles`]'s `rendered` set, making a fully
-/// `@skip`/`@fixme`-tagged Outline structurally indistinguishable from a
-/// genuinely covered one unless this function's result is folded into the
-/// `unbound` set too (see the command layer's `scan_fixme_dir`).
+/// `renderDescribe` (`node_modules/playwright-bdd/dist/generate/file.js`) is
+/// the SAME shared rendering path for a `Feature` node and a `Rule` node —
+/// `renderChild` recurses into `renderDescribe` for a `Rule` child exactly
+/// like `renderRootSuite` calls it for the top-level `Feature` — so a
+/// first-class `@skip`/`@fixme` tag at either level produces the identical
+/// `.skip`/`.fixme`-suffixed wrapping shape a `Scenario Outline` already
+/// produced. Playwright enforces the skip/fixme entirely at the PARENT
+/// level — none of the wrapped children (a directly-declared `Scenario`, a
+/// nested `Scenario Outline`, or a nested `Rule`) are individually
+/// re-marked `test.fixme`/`.skip` themselves; they remain ordinary plain
+/// `test(...)`/`test.describe(...)` calls, since a child's own special-tag
+/// suffix is built from its OWN AST tags only, never inherited from an
+/// ancestor Rule/Feature tag (see
+/// `node_modules/playwright-bdd/dist/generate/test/index.js`'s
+/// `SpecialTags` construction).
+///
+/// This nested-title collection matters because a `Scenario Outline`'s
+/// title IS the declared entity (its Examples-row children are auto-titled
+/// `Example #<N>` by default, which never matches any real declared
+/// scenario), but a `Rule`'s or `Feature`'s nested `Scenario` children carry
+/// their OWN declared titles that never equal the wrapping `Rule`'s/
+/// `Feature`'s own name — so for the command layer's `is_unbound_or_absent`
+/// to correctly flag a `Scenario` nested under a skipped `Rule`/`Feature`,
+/// this function must surface that `Scenario`'s own title too, not just the
+/// wrapping block's title. Recursing into nested content is harmless for
+/// the `Scenario Outline` case: it simply adds `Example #<N>`-shaped
+/// entries alongside the outline's own title, and those auto-generated
+/// titles never collide with a real declared scenario title.
+///
+/// A block's extent is found the same way as in
+/// [`scan_unbound_describe_titles`]: matching leading-whitespace width
+/// between the `.skip`/`.fixme` open line and its own closing `});` line —
+/// playwright-bdd's generator always indents a block's open and close lines
+/// identically, so this never requires full JS parsing or brace-balancing.
 ///
 /// Deliberately excludes `.only` — a `.only`-suffixed suite genuinely
 /// executes its wrapped tests (Playwright restricts execution TO it, it does
-/// not skip it), so treating it as unbound would be a false positive.
+/// not skip it), so treating it (or anything nested inside it) as unbound
+/// would be a false positive.
 pub fn scan_skip_or_fixme_describe_titles(spec_js: &str) -> Vec<String> {
-    skip_or_fixme_describe_re()
-        .captures_iter(spec_js)
-        .map(|caps| captured_title(&caps))
-        .collect()
+    let lines: Vec<&str> = spec_js.lines().collect();
+    let mut result = Vec::new();
+    for (i, line) in lines.iter().enumerate() {
+        let Some(caps) = skip_or_fixme_describe_re().captures(line) else {
+            continue;
+        };
+        result.push(captured_title(&caps));
+        // A `.skip`/`.fixme` block with zero children collapses onto a
+        // single line (`test.describe.skip('title', () => {});`) — its
+        // body is trivially empty, so there is nothing nested to recurse
+        // into.
+        if line.trim_end().ends_with("{});") {
+            continue;
+        }
+        let indent = leading_whitespace_len(line);
+        let body: Vec<&str> = lines[i + 1..]
+            .iter()
+            .copied()
+            .take_while(|candidate| {
+                !(candidate.trim() == "});" && leading_whitespace_len(candidate) == indent)
+            })
+            .collect();
+        let body_text = body.join("\n");
+        // Every plain, unsuffixed `test(...)` leaf call nested anywhere in
+        // the block's span (a directly-declared Scenario) and every plain
+        // `test.describe(...)` block nested anywhere in its span (a nested
+        // Rule or Scenario Outline) is effectively unbound too — see this
+        // function's own doc comment for why the Outline-Examples-row case
+        // stays harmless.
+        result.extend(
+            bound_test_title_re()
+                .captures_iter(&body_text)
+                .map(|caps| captured_title(&caps)),
+        );
+        result.extend(
+            describe_re()
+                .captures_iter(&body_text)
+                .map(|caps| captured_title(&caps)),
+        );
+    }
+    result
 }
 
 /// Scans playwright-bdd generated `.spec.js` source for EVERY title it
@@ -617,6 +679,21 @@ test.describe('Outline title', () => {
     /// `@skip`-tagged Outline was silently treated as covered. This function
     /// closes that gap by recognising the `.skip`/`.fixme` suffix specifically
     /// (never `.only`, which genuinely does execute its wrapped tests).
+    ///
+    /// Asserts the fuller exact `Vec` (AC-4 guard, post-DD-1
+    /// generalization) rather than a looser `contains` check: the
+    /// Rule/Feature-level fix in [`scan_skip_or_fixme_describe_titles`] now
+    /// also surfaces nested `test(...)`/`test.describe(...)` titles found
+    /// within a `.skip`/`.fixme` block's span (needed so a Scenario nested
+    /// under a skipped Rule/Feature is correctly reported) — for THIS
+    /// Outline fixture that deterministically adds the Examples-row's own
+    /// auto-generated `Example #1` title AFTER the outline's own wrapping
+    /// title (the implementation pushes the wrapping title first, then
+    /// walks the block's body left-to-right for nested `test(...)`/
+    /// `test.describe(...)` matches — see the doc comment on
+    /// [`scan_skip_or_fixme_describe_titles`] itself). Keeping this exact
+    /// documents the new behavior precisely rather than merely asserting a
+    /// subset.
     #[test]
     fn scan_skip_or_fixme_describe_titles_detects_skip_suffixed_outline() {
         let spec_js = "\
@@ -628,17 +705,25 @@ test.describe.skip('Outline title', () => {
 
         let titles = scan_skip_or_fixme_describe_titles(spec_js);
 
-        assert_eq!(titles, vec!["Outline title".to_string()]);
+        assert_eq!(
+            titles,
+            vec!["Outline title".to_string(), "Example #1".to_string()]
+        );
     }
 
-    /// `.fixme` counterpart of the `.skip` case above.
+    /// `.fixme` counterpart of the `.skip` case above. See the exact-`Vec`
+    /// rationale on
+    /// [`scan_skip_or_fixme_describe_titles_detects_skip_suffixed_outline`].
     #[test]
     fn scan_skip_or_fixme_describe_titles_detects_fixme_suffixed_outline() {
         let spec_js = "test.describe.fixme('Outline title', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n";
 
         let titles = scan_skip_or_fixme_describe_titles(spec_js);
 
-        assert_eq!(titles, vec!["Outline title".to_string()]);
+        assert_eq!(
+            titles,
+            vec!["Outline title".to_string(), "Example #1".to_string()]
+        );
     }
 
     /// Negative counterpart: `.only` genuinely executes its wrapped tests
@@ -647,6 +732,77 @@ test.describe.skip('Outline title', () => {
     #[test]
     fn scan_skip_or_fixme_describe_titles_ignores_only_suffixed_outline() {
         let spec_js = "test.describe.only('Outline title', () => {\n  test('Example #1', async ({ page }) => {\n  });\n});\n";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(titles.is_empty());
+    }
+
+    /// Generalization of the cycle-5 MEDIUM fix above (AC-1): playwright-bdd's
+    /// `renderDescribe` is the SAME shared rendering path for a `Rule:` node
+    /// as it is for a `Scenario Outline` (see `renderChild`'s direct
+    /// recursion into `renderDescribe` for a `Rule` child) — a Rule-level
+    /// `@skip` tag therefore produces the identical wrapping-`.skip`-suffix
+    /// shape. Unlike an Outline (where the wrapping title itself IS the
+    /// declared entity), a `Rule`'s nested content is a directly-declared
+    /// `Scenario` whose own `test(...)` call title never equals the
+    /// wrapping Rule's own title — so the scanner must also surface the
+    /// nested scenario's own title as unbound for it to be correctly
+    /// flagged by the command layer's `is_unbound_or_absent`.
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Rule-level @skip tag is detected as unbound
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_skip_suffixed_rule() {
+        let spec_js = "\
+test.describe.skip('Some rule', () => {
+  test('Scenario in the rule', async ({ page }) => {
+  });
+});
+";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(
+            titles.contains(&"Scenario in the rule".to_string()),
+            "expected the Rule's nested scenario title to be reported as \
+             unbound, got: {titles:?}"
+        );
+    }
+
+    /// `.fixme` counterpart of the Rule-level case above (AC-2), wrapping a
+    /// top-level `Feature:` instead — `renderRootSuite` calls the exact same
+    /// `renderDescribe` for the `Feature` node, so a Feature-level `@fixme`
+    /// tag produces the identical shape one level further out.
+    // @covers specs/apps/rhino/behavior/rhino-cli/gherkin/specs/e2e-coverage.feature:A Feature-level @fixme tag is detected as unbound
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_fixme_suffixed_feature() {
+        let spec_js = "\
+test.describe.fixme('Example feature', () => {
+  test('Scenario in the feature', async ({ page }) => {
+  });
+});
+";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(
+            titles.contains(&"Scenario in the feature".to_string()),
+            "expected the Feature's nested scenario title to be reported as \
+             unbound, got: {titles:?}"
+        );
+    }
+
+    /// `.only`-suffix guard at the Rule level (AC-3) — mirrors
+    /// [`scan_skip_or_fixme_describe_titles_ignores_only_suffixed_outline`]:
+    /// `.only` genuinely executes its wrapped tests, so a `.only`-suffixed
+    /// Rule must never be reported as unbound.
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_ignores_only_suffixed_rule() {
+        let spec_js = "\
+test.describe.only('Some rule', () => {
+  test('Scenario in the rule', async ({ page }) => {
+  });
+});
+";
 
         let titles = scan_skip_or_fixme_describe_titles(spec_js);
 
