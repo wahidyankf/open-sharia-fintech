@@ -91,9 +91,11 @@ mod tests {
     }
 
     /// Pre-write escape-guard. Panics unless git, under [`iso_git`] isolation,
-    /// resolves its top level to `repo_dir` (canonicalized). Run this once after
-    /// a fixture's `git init` and before any write, so a would-be escape fails
-    /// loud instead of silently corrupting the real repository.
+    /// resolves its top level to `repo_dir` (canonicalized). Run this before
+    /// EVERY write (once `repo_dir/.git` exists), so a would-be escape — a
+    /// missed isolation env on a future write, or any discovery path not
+    /// enumerated — fails loud instead of silently corrupting the real
+    /// repository. Per the convention's Standard 4, guarding once is not enough.
     fn assert_no_escape(repo_dir: &Path) {
         let out = iso_git(repo_dir)
             .args(["rev-parse", "--show-toplevel"])
@@ -147,6 +149,14 @@ mod tests {
         // repository via CWD or discovery — the deeper fix for this plan's
         // corruption class (exit-status checking alone was insufficient).
         let run_checked = |args: &[&str]| {
+            // Standard 4 (pre-write escape guard), applied before EVERY write:
+            // once `main/.git` exists, prove git still resolves to `main` and
+            // not an ancestor before running. `git init` is the sole pre-repo
+            // command (no `.git` yet) and is exempt — its own failure is caught
+            // by the exit-status assert below.
+            if main.join(".git").is_dir() {
+                assert_no_escape(main);
+            }
             let output = iso_git(main)
                 .args(args)
                 .output()
@@ -167,18 +177,19 @@ mod tests {
         } else {
             run_checked(&["init"]);
         }
-        // After a successful `git init` created `main/.git`, prove git resolves
-        // to `main` and not any ancestor before we write anything. (In the
-        // `force_init_failure` path we never reach here — the assert above has
-        // already panicked.)
-        assert_no_escape(main);
+        // Every subsequent write goes through `run_checked`, which re-runs the
+        // escape guard before each one. In the `force_init_failure` path we
+        // never reach here — the exit-status assert has already panicked.
         run_checked(&["config", "user.email", "test@test.com"]);
         run_checked(&["config", "user.name", "Test"]);
         std::fs::write(main.join("README.md"), "test").expect("write README");
         run_checked(&["add", "."]);
         run_checked(&["commit", "-m", "init"]);
 
-        // Create a linked worktree (isolated to `main`'s own `.git`).
+        // Create a linked worktree (isolated to `main`'s own `.git`). Guard
+        // before this write too, per Standard 4 (it does not go through
+        // `run_checked`).
+        assert_no_escape(main);
         let status = iso_git(main)
             .args(["worktree", "add", &wt_path.to_string_lossy(), "HEAD"])
             .status()
@@ -256,25 +267,27 @@ mod tests {
         }
     }
 
-    /// Regression test for the confirmed root cause documented in this plan's
-    /// `tech-docs.md` ("Confirmed mechanism: unchecked git exit status enables
-    /// upward repository-discovery fallback"): `build_worktree_fixture` issues
-    /// 5 of 6 `git` `Command`s via `.output().expect(...)`, which only checks
-    /// that the subprocess spawned — never that `git` itself exited zero. The
-    /// moment `git init` fails for any reason, every later "isolated" git
-    /// command silently falls back to whichever repository is `main`'s nearest
-    /// ancestor via `git`'s own upward repository-discovery walk.
+    /// Concurrency + fail-loud integration test for the corruption class
+    /// documented in this plan's `tech-docs.md`. It exercises the full,
+    /// hardened `build_worktree_fixture` under the same shape as the real
+    /// incident — a fixture whose `main` sits *under* an ancestor repository's
+    /// tree, whose `git init` fails, run on a spawned thread concurrently with
+    /// a `find_root()` call in this thread — and asserts that neither the
+    /// synthetic `ancestor` nor this suite's own real checkout observes any
+    /// git-identity/HEAD/reflog/worktree drift.
     ///
-    /// This test forces that `git init` failure deterministically (an
-    /// intentionally-invalid flag — see `build_worktree_fixture`'s
-    /// `force_init_failure` parameter) inside a synthetic `ancestor`
-    /// repository standing in for "the real repository" the 4 real incidents
-    /// corrupted. A disposable `TempDir`-backed `ancestor`, rather than this
-    /// test suite's own checkout, keeps the reproduction fully safe: whatever
-    /// gets corrupted is deleted with `ancestor`'s `TempDir` when the test
-    /// ends. A sanity snapshot of this test suite's own repository
-    /// (`real_root`) proves no leakage into the actual working repository
-    /// regardless.
+    /// The `force_init_failure` path makes `git init` exit non-zero without
+    /// creating `main/.git`. Two independent layers keep this safe: the
+    /// exit-status check (Standard 5) panics `build_worktree_fixture` on that
+    /// failure before any write is attempted, and the explicit `GIT_DIR` pin
+    /// (Standard 2) would prevent any write that *did* run from resolving into
+    /// the ancestor. This test proves the composed fixture is safe under
+    /// concurrency; the isolated discriminator for the `GIT_DIR` layer
+    /// specifically is [`iso_git_refuses_to_escape_into_ambient_ancestor_repo`],
+    /// which fails RED if that pin is removed. A disposable `TempDir`-backed
+    /// `ancestor`, rather than this suite's own checkout, keeps the reproduction
+    /// safe regardless; a sanity snapshot of `real_root` proves no leakage into
+    /// the actual working repository.
     ///
     /// Gherkin:
     ///   Given a synthetic "ancestor" repository with one real commit
@@ -299,6 +312,11 @@ mod tests {
         // Seed `ancestor` through `iso_git` too, so even this stand-in repo is
         // pinned to its own `.git` and cannot itself escape.
         let run_checked = |args: &[&str]| {
+            // Standard 4: guard before every write once `ancestor/.git` exists;
+            // `git init` is exempt (no `.git` yet).
+            if ancestor_path.join(".git").is_dir() {
+                assert_no_escape(ancestor_path);
+            }
             let status = iso_git(ancestor_path)
                 .args(args)
                 .status()
@@ -309,7 +327,6 @@ mod tests {
             );
         };
         run_checked(&["init"]);
-        assert_no_escape(ancestor_path);
         run_checked(&["config", "user.email", "ancestor@example.com"]);
         run_checked(&["config", "user.name", "Ancestor Real Repo"]);
         std::fs::write(ancestor_path.join("README.md"), "ancestor").expect("write ancestor readme");
@@ -349,10 +366,9 @@ mod tests {
         assert_eq!(
             ancestor_before, ancestor_after,
             "ancestor repository (user.name, user.email, worktree list, HEAD, reflog) must survive the \
-             worktree fixture setup unchanged even when its git init step fails — fails against the \
-             pre-fix fixture because git's own upward repository-discovery silently redirects every \
-             subsequent \"isolated\" git command into ancestor once git init's exit status goes \
-             unchecked"
+             worktree fixture setup unchanged even when its git init step fails — the exit-status \
+             check fails the fixture loud before any write, and the explicit GIT_DIR pin would keep \
+             any write that did run out of the ancestor"
         );
 
         // A post-fix fixture is expected to fail loudly (panic) the moment its
