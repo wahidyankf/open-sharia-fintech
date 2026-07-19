@@ -4,7 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-- [2026-07-18\_\_fundamentally-strong-se-interview-first-resequence](./2026-07-18__fundamentally-strong-se-interview-first-resequence/README.md)
+- [2026-07-18\_\_fundamentally-strong-shared-course-tracks](./2026-07-18__fundamentally-strong-shared-course-tracks/README.md)
   — re-sequences the completed fundamentally-strong/software-engineer curriculum into a new arc
   (Editor Foundations prologue → Interview Prep → Multi-Platform Productivity → Deepening) for an
   experienced SWE re-entering the job market; adds harness-engineering, browser/CDP, async-Python,
