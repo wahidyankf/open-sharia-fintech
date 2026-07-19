@@ -74,6 +74,12 @@ Feature: Shared Cargo Target Directories via Doctor
     Then that referenced cache entry is left in place
     And only entries with no live referrer are removed
 
+  Scenario: prune from the main worktree preserves an entry referenced only by a linked worktree
+    Given a shared-cache entry is referenced only by a crate in a separate linked worktree
+    When the developer runs the doctor command with the prune flag
+    Then the entry referenced only by the linked worktree is left in place
+    And the orphaned cache entry is deleted
+
   Scenario: the prune step no-ops under CI
     Given the environment variable CI is set
     When the developer runs the doctor command with the prune flag

@@ -97,8 +97,10 @@ fn run_target_share_step(repo_root: &std::path::Path, args: &DoctorArgs) {
             println!("Prune: {} orphaned entrie(s) deleted", prune.deleted.len());
         }
 
-        let sweep = sweep_stale(&cache_root, args.dry_run, cargo_sweep_present());
-        if sweep.skipped {
+        let sweep = sweep_stale(&cache_root, args.dry_run, cargo_sweep_present(), ci);
+        if sweep.skipped_ci {
+            println!("Sweep: CI detected — skipped.");
+        } else if sweep.skipped {
             println!("Sweep: cargo-sweep not installed — skipped.");
         }
     }

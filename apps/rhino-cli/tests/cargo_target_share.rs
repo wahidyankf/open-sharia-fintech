@@ -202,6 +202,11 @@ struct TargetShareWorld {
     fix: bool,
     prune: bool,
     dry_run: bool,
+    /// When set, [`Self::exec_in`] drops every `PATH` entry that contains a
+    /// `cargo-sweep` binary before spawning the CLI, so the "cargo-sweep
+    /// absent" scenario establishes that absence deterministically rather
+    /// than assuming the host PATH happens to lack it.
+    scrub_cargo_sweep: bool,
     output: Option<Output>,
     /// The crate directory most recently created/manipulated by a Given step.
     crate_dir: Option<PathBuf>,
@@ -234,6 +239,7 @@ impl TargetShareWorld {
             fix: false,
             prune: false,
             dry_run: false,
+            scrub_cargo_sweep: false,
             output: None,
             crate_dir: None,
             second_repo: None,
@@ -264,6 +270,20 @@ impl TargetShareWorld {
             .current_dir(repo_dir)
             .env("OSE_CARGO_TARGET_CACHE", cache_dir)
             .env_remove("GITHUB_ACTIONS");
+        if self.scrub_cargo_sweep {
+            // Deterministically force `cargo-sweep` absence without disturbing
+            // any other tool: drop only the PATH entries that actually contain
+            // a `cargo-sweep` binary, keeping real `git` (repo-root + worktree
+            // enumeration) and every other tool intact so the command still
+            // exits zero — the one variable under test is cargo-sweep presence.
+            if let Some(path_var) = std::env::var_os("PATH") {
+                let kept: Vec<PathBuf> = std::env::split_paths(&path_var)
+                    .filter(|dir| !dir.join("cargo-sweep").is_file())
+                    .collect();
+                let joined = std::env::join_paths(kept).expect("rejoin scrubbed PATH");
+                cmd.env("PATH", joined);
+            }
+        }
         if self.ci {
             cmd.env("CI", "true");
         } else {
@@ -478,16 +498,55 @@ fn given_dry_run_orphan(w: &mut TargetShareWorld) {
 }
 
 #[given("cargo-sweep is not installed on the developer's PATH")]
-fn given_cargo_sweep_absent(_w: &mut TargetShareWorld) {
-    // No-op: the test harness's own PATH never has a `cargo-sweep` binary
-    // unless the developer's machine happens to have installed it — the
-    // production `sweep_stale` degrade-gracefully path is proven
-    // deterministically in the unit test
-    // `target_share::tests::sweep_skips_when_cargo_sweep_absent`, which
-    // threads `cargo_sweep_present` explicitly rather than probing the real
-    // PATH (see that module's "Deviation" doc comment). This scenario
-    // exercises the same behavior end-to-end through the compiled binary,
-    // on whatever PATH the test process inherits.
+fn given_cargo_sweep_absent(w: &mut TargetShareWorld) {
+    // Establish cargo-sweep absence *deterministically*: `exec_in` drops every
+    // PATH entry that contains a `cargo-sweep` binary before spawning the CLI,
+    // so this end-to-end scenario no longer depends on whether the host (or a
+    // self-hosted runner) happens to have `cargo-sweep` installed. Real `git`
+    // and every other probed tool stay on PATH, so the command still resolves
+    // its repo root and exits zero — only cargo-sweep is guaranteed absent.
+    // (The pure degrade-gracefully logic is additionally proven in the unit
+    // test `target_share::tests::sweep_skips_when_cargo_sweep_absent`, which
+    // threads `cargo_sweep_present` explicitly.)
+    w.scrub_cargo_sweep = true;
+    w.ci = false;
+}
+
+#[given("a shared-cache entry is referenced only by a crate in a separate linked worktree")]
+fn given_entry_referenced_only_by_linked_worktree(w: &mut TargetShareWorld) {
+    // Commit a crate so a linked worktree's HEAD checkout contains it.
+    let crate_dir = make_crate(w.repo.path(), "foo");
+    commit_all(w.repo.path(), "add apps/foo");
+    w.crate_dir = Some(crate_dir);
+
+    // Build linked worktree B and run fix ONLY there, so the cache entry
+    // `<cache>/<repo>/foo` is referenced solely by B's target symlink. The
+    // main worktree A never runs fix and holds no symlink into that entry — so
+    // a prune launched from A must consult B via repo-global
+    // `git worktree list --porcelain` to learn the entry is still live. This is
+    // the genuinely dangerous "no-per-worktree-delete" path the plan singles
+    // out, exercised end-to-end across two *linked* worktrees.
+    let wt_holder = TempDir::new().expect("temp worktree holder");
+    let wt_path = wt_holder.path().join("linked-wt");
+    add_worktree(w.repo.path(), &wt_path);
+    let wt_crate_dir = wt_path.join("apps").join("foo");
+    w.fix = true;
+    let out = w.exec_in(&wt_path, w.cache.path());
+    assert!(
+        out.status.success(),
+        "fix in linked worktree B must succeed: {}",
+        String::from_utf8_lossy(&out.stdout)
+    );
+    w.fix = false; // the When runs prune from A only — never fix in A.
+
+    // Seed a genuine orphan (no live referrer in any worktree) so the paired
+    // Then proves prune still removes true orphans while sparing B's entry.
+    let orphan = w.cache.path().join(w.repo_name()).join("orphan-crate");
+    std::fs::create_dir_all(&orphan).expect("mkdir orphan cache entry");
+    std::fs::write(orphan.join("marker.txt"), "stale").expect("write marker");
+
+    w.second_repo = Some((wt_holder, wt_crate_dir));
+    w.ci = false;
 }
 
 // ===========================================================================
@@ -861,6 +920,23 @@ fn then_referenced_entry_left_in_place(w: &mut TargetShareWorld) {
 fn then_only_orphans_removed(w: &mut TargetShareWorld) {
     let orphan = w.cache.path().join(w.repo_name()).join("orphan-crate");
     assert!(!orphan.exists(), "the paired orphan entry must be removed");
+}
+
+#[then("the entry referenced only by the linked worktree is left in place")]
+fn then_linked_worktree_entry_left_in_place(w: &mut TargetShareWorld) {
+    assert_eq!(w.exit_code(), 0, "stdout: {}", w.stdout());
+    let (_, wt_crate_dir) = w
+        .second_repo
+        .as_ref()
+        .expect("linked worktree set by Given");
+    // Read B's symlink and prove its target survived a prune launched from A —
+    // the repo-global referrer scan spared an entry no crate in A points at.
+    let link = std::fs::read_link(wt_crate_dir.join("target"))
+        .expect("linked worktree crate target is a symlink");
+    assert!(
+        link.exists(),
+        "the entry referenced only by the linked worktree must survive prune"
+    );
 }
 
 #[then("the orphaned entry is reported as a candidate for deletion")]

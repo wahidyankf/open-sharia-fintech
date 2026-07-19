@@ -346,6 +346,11 @@ pub struct SweepOutcome {
     /// `true` when the sweep was skipped because `cargo-sweep` is absent
     /// from `PATH` — never an error, per DD-6's graceful-degrade contract.
     pub skipped: bool,
+    /// `true` when the sweep was skipped because CI was detected. Mirrors the
+    /// CI guard on check/fix/prune (DD-4: the whole prune step, cargo-sweep
+    /// branch included, is a no-op under CI so a runner's shared cache is
+    /// never mutated).
+    pub skipped_ci: bool,
     /// `true` when `cargo-sweep` was actually invoked.
     pub ran: bool,
 }
@@ -371,16 +376,33 @@ pub fn cargo_sweep_present() -> bool {
 /// When `dry_run` is `true` and the binary is present, no subprocess is
 /// invoked at all (a conservative preview: this cleanup lever is optional
 /// and manual per DD-6, so a dry-run never needs to actually shell out).
-pub fn sweep_stale(cache_root: &Path, dry_run: bool, cargo_sweep_present: bool) -> SweepOutcome {
+pub fn sweep_stale(
+    cache_root: &Path,
+    dry_run: bool,
+    cargo_sweep_present: bool,
+    ci: bool,
+) -> SweepOutcome {
+    // CI guard FIRST — before the cargo-sweep-present probe — so that even a
+    // runner with cargo-sweep installed never shells out and mutates the
+    // shared cache (DD-4: the whole prune step is a no-op under CI).
+    if ci {
+        return SweepOutcome {
+            skipped: false,
+            skipped_ci: true,
+            ran: false,
+        };
+    }
     if !cargo_sweep_present {
         return SweepOutcome {
             skipped: true,
+            skipped_ci: false,
             ran: false,
         };
     }
     if dry_run {
         return SweepOutcome {
             skipped: false,
+            skipped_ci: false,
             ran: false,
         };
     }
@@ -390,6 +412,7 @@ pub fn sweep_stale(cache_root: &Path, dry_run: bool, cargo_sweep_present: bool) 
         .output();
     SweepOutcome {
         skipped: false,
+        skipped_ci: false,
         ran: true,
     }
 }
@@ -851,11 +874,36 @@ mod tests {
     #[test]
     fn sweep_skips_when_cargo_sweep_absent() {
         let cache_root = tempfile::tempdir().unwrap();
-        let outcome = super::sweep_stale(cache_root.path(), false, false);
+        let outcome = super::sweep_stale(cache_root.path(), false, false, false);
         assert!(
             outcome.skipped,
             "sweep must report Skipped, not fail, when cargo-sweep is absent"
         );
         assert!(!outcome.ran, "an absent binary must never be invoked");
+    }
+
+    /// Regression guard (cycle-1 HIGH): under CI, `sweep_stale` must be a
+    /// no-op EVEN WHEN cargo-sweep is present on the runner's PATH — it must
+    /// never shell out `cargo-sweep --time 30 --recursive <cache>` and mutate
+    /// the runner's shared cache. The CI guard is checked before the
+    /// present-probe, so `cargo_sweep_present = true` must still yield a
+    /// non-running, CI-skipped outcome (DD-4: the whole prune step no-ops
+    /// under CI).
+    #[test]
+    fn sweep_is_ci_guarded_even_when_cargo_sweep_present() {
+        let cache_root = tempfile::tempdir().unwrap();
+        let outcome = super::sweep_stale(cache_root.path(), false, true, true);
+        assert!(
+            outcome.skipped_ci,
+            "under CI the sweep must report skipped_ci"
+        );
+        assert!(
+            !outcome.ran,
+            "under CI cargo-sweep must never be invoked, even when present"
+        );
+        assert!(
+            !outcome.skipped,
+            "the CI skip is distinct from the cargo-sweep-absent skip"
+        );
     }
 }
