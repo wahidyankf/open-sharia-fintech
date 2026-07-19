@@ -4,7 +4,13 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-_None currently. All planned projects have been promoted to `../in-progress/`._
+- [2026-07-18\_\_fundamentally-strong-se-interview-first-resequence](./2026-07-18__fundamentally-strong-se-interview-first-resequence/README.md)
+  — re-sequences the completed fundamentally-strong/software-engineer curriculum into a new arc
+  (Editor Foundations prologue → Interview Prep → Multi-Platform Productivity → Deepening) for an
+  experienced SWE re-entering the job market; adds harness-engineering, browser/CDP, async-Python,
+  C++, detection-engineering, and build-your-own-{coding-agent,pentest-engine} modules; 108 topics +
+  6 capstones. Assumes the sibling in-progress plan is DONE (hard Phase 0 precondition). Delivery
+  Mode: `worktree-to-pr`. PQG: strict double-zero.
 
 ## Instructions
 

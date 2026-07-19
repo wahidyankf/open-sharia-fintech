@@ -19,7 +19,7 @@ across all three repos and re-establishes byte-identity, so later rhino-cli work
 ## Origin
 
 Surfaced 2026-07-17 during the tri-repo research pass for
-[`e2e-scenario-coverage-gap-detector`](../e2e-scenario-coverage-gap-detector/README.md)
+[`e2e-scenario-coverage-gap-detector`](../2026-07-18__e2e-scenario-coverage-gap-detector/README.md)
 and [`rhino-speccoverage-multiline-scenario-scan`](../2026-07-18__rhino-speccoverage-multiline-scenario-scan/README.md).
 Verifying that those plans' rhino-cli touch-points were identical across repos revealed unrelated
 pre-existing drift in other `src/` files. `speccoverage/checker.rs` (the file those two plans edit)
@@ -45,7 +45,7 @@ repos and are out of scope except as verification targets `[Repo-grounded]`.
 ## Scope note — executes before the e2e detector
 
 This plan is a **predecessor** of
-[`e2e-scenario-coverage-gap-detector`](../e2e-scenario-coverage-gap-detector/README.md):
+[`e2e-scenario-coverage-gap-detector`](../2026-07-18__e2e-scenario-coverage-gap-detector/README.md):
 that plan adds a new rhino-cli subcommand which must be introduced byte-identically across all three
 repos, so it assumes a clean, already-reconciled rhino-cli source base. Sequence: **this plan → e2e
 detector**. The [`rhino-speccoverage-multiline-scenario-scan`](../2026-07-18__rhino-speccoverage-multiline-scenario-scan/README.md)

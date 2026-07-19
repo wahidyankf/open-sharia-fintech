@@ -12,6 +12,8 @@ pub mod docs;
 pub mod doctor;
 /// `specs domain-coverage validate` — behavior coverage scoped to domain/** feature files.
 pub mod domain_coverage;
+/// `specs e2e-coverage validate` — playwright-bdd `test.fixme` baseline gap detector.
+pub mod e2e_coverage;
 /// Environment-file use cases (backup, validate).
 pub mod env;
 /// Filesystem I/O use cases and port definitions.
