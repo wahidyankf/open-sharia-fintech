@@ -10,7 +10,7 @@
       "options": {
         "command": "cargo build --release --manifest-path apps/ose-cli/Cargo.toml && mkdir -p apps/ose-cli/dist && cp apps/ose-cli/target/release/ose-cli apps/ose-cli/dist/ose-cli"
       },
-      "outputs": ["{projectRoot}/dist", "{projectRoot}/target"]
+      "outputs": ["{projectRoot}/dist"]
     },
     "install": {
       "executor": "nx:run-commands",

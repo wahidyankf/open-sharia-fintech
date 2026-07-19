@@ -10,7 +10,7 @@
       "options": {
         "command": "cargo build --release --manifest-path libs/rust-commons/Cargo.toml"
       },
-      "outputs": ["{projectRoot}/target"]
+      "outputs": []
     },
     "install": {
       "executor": "nx:run-commands",

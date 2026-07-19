@@ -116,6 +116,11 @@ target/
 *.jar
 *.exec
 
+# Rust build artifacts + shared-cache `target` symlinks created by
+# `rhino-cli doctor --fix` (the `target/` rule above matches directories only,
+# not the symlink form, so the symlinked `target` entries need their own rule)
+target
+
 # Python cache and virtual environments
 __pycache__/
 *.pyc

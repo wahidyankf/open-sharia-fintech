@@ -10,7 +10,7 @@
       "options": {
         "command": "cargo build --release --manifest-path apps/ayokoding-cli/Cargo.toml && mkdir -p apps/ayokoding-cli/dist && cp apps/ayokoding-cli/target/release/ayokoding-cli apps/ayokoding-cli/dist/ayokoding-cli"
       },
-      "outputs": ["{projectRoot}/dist", "{projectRoot}/target"]
+      "outputs": ["{projectRoot}/dist"]
     },
     "install": {
       "executor": "nx:run-commands",
