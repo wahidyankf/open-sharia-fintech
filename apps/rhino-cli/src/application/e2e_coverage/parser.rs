@@ -791,6 +791,62 @@ test.describe.fixme('Example feature', () => {
         );
     }
 
+    /// Depth-guard: a top-level `Feature:` `@skip` that wraps a `Rule:` which
+    /// in turn wraps the `Scenario` produces a two-level nesting
+    /// (`test.describe.skip` > `test.describe` > `test`). The scanner's block
+    /// scan recurses through the intermediate `Rule` describe and must still
+    /// surface the depth-2 scenario title as unbound. This locks the "collected
+    /// at any depth" claim in [`scan_skip_or_fixme_describe_titles`]'s doc and
+    /// DD-1's `renderDescribe`-recursion rationale so a future single-level-only
+    /// refactor cannot silently reintroduce a false PASS while all the
+    /// one-level fixtures still pass.
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_scenario_nested_two_levels() {
+        let spec_js = "\
+test.describe.skip('Example feature', () => {
+  test.describe('Some rule', () => {
+    test('Scenario in the rule', async ({ page }) => {
+    });
+  });
+});
+";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(
+            titles.contains(&"Scenario in the rule".to_string()),
+            "expected the depth-2 (Feature > Rule > Scenario) scenario title to \
+             be reported as unbound, got: {titles:?}"
+        );
+    }
+
+    /// Mixed-tag guard: a single spec file carrying both a `.skip` block and a
+    /// `.fixme` block must surface the nested scenario title from BOTH — the
+    /// two suffixes are handled by the same `skip_or_fixme_describe_re`
+    /// alternation, so neither block shadows the other.
+    #[test]
+    fn scan_skip_or_fixme_describe_titles_detects_mixed_skip_and_fixme() {
+        let spec_js = "\
+test.describe.skip('Skipped feature', () => {
+  test('Skipped scenario', async ({ page }) => {
+  });
+});
+test.describe.fixme('Fixme feature', () => {
+  test('Fixme scenario', async ({ page }) => {
+  });
+});
+";
+
+        let titles = scan_skip_or_fixme_describe_titles(spec_js);
+
+        assert!(
+            titles.contains(&"Skipped scenario".to_string())
+                && titles.contains(&"Fixme scenario".to_string()),
+            "expected both the .skip and .fixme nested scenario titles to be \
+             reported as unbound, got: {titles:?}"
+        );
+    }
+
     /// `.only`-suffix guard at the Rule level (AC-3) — mirrors
     /// [`scan_skip_or_fixme_describe_titles_ignores_only_suffixed_outline`]:
     /// `.only` genuinely executes its wrapped tests, so a `.only`-suffixed
