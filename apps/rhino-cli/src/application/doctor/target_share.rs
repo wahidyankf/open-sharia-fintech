@@ -252,19 +252,26 @@ pub fn fix_target_shares(
 /// applies to the fixture *construction* in tests, not to this call itself
 /// (see that convention's "Read-only git commands" scope carve-out). `git
 /// worktree list` always reports the main checkout as its first entry, so no
-/// separate "plus the main checkout" step is needed. When the query fails
-/// (e.g. `repo_root` is not a git repository), fails closed to an empty set.
-fn live_referenced_entries(repo_root: &Path) -> HashSet<PathBuf> {
+/// separate "plus the main checkout" step is needed.
+///
+/// Returns `None` when the query itself fails (spawn error or non-zero exit —
+/// e.g. `repo_root` is not a git repository). `None` is distinct from
+/// `Some(empty set)`: a successful enumeration that finds no referencing
+/// symlinks is a genuine empty live set (prune may delete orphans), whereas a
+/// *failed* enumeration means we cannot know what is referenced, so the caller
+/// must fail closed and delete nothing rather than treat every entry as an
+/// orphan.
+fn live_referenced_entries(repo_root: &Path) -> Option<HashSet<PathBuf>> {
     let mut live = HashSet::new();
     let Ok(output) = std::process::Command::new("git")
         .args(["worktree", "list", "--porcelain"])
         .current_dir(repo_root)
         .output()
     else {
-        return live;
+        return None;
     };
     if !output.status.success() {
-        return live;
+        return None;
     }
     let stdout = String::from_utf8_lossy(&output.stdout);
     for worktree in stdout
@@ -287,7 +294,7 @@ fn live_referenced_entries(repo_root: &Path) -> HashSet<PathBuf> {
             live.insert(canonical);
         }
     }
-    live
+    Some(live)
 }
 
 /// Outcome of a [`prune_orphans`] run.
@@ -301,6 +308,10 @@ pub struct PruneOutcome {
     pub candidates: Vec<PathBuf>,
     /// `true` when the run was a CI no-op (nothing was inspected or touched).
     pub skipped_ci: bool,
+    /// `true` when `git worktree list` could not be enumerated, so the run
+    /// failed closed (deleted nothing) rather than risk treating live entries
+    /// as orphans.
+    pub enumeration_failed: bool,
 }
 
 /// Deletes shared-cache entries under `<cache_root>/<repo_name>/*` that no
@@ -318,7 +329,13 @@ pub fn prune_orphans(
         outcome.skipped_ci = true;
         return outcome;
     }
-    let live = live_referenced_entries(repo_root);
+    let Some(live) = live_referenced_entries(repo_root) else {
+        // Worktree enumeration failed — we cannot know which entries are still
+        // referenced, so fail closed and delete nothing rather than treat
+        // every entry as an orphan (which would wipe live caches).
+        outcome.enumeration_failed = true;
+        return outcome;
+    };
     let Ok(entries) = std::fs::read_dir(cache_root.join(repo_name)) else {
         return outcome;
     };
@@ -367,17 +384,30 @@ pub fn cargo_sweep_present() -> bool {
     std::env::split_paths(&path_var).any(|dir| dir.join("cargo-sweep").is_file())
 }
 
-/// Runs `cargo-sweep`'s stale-artifact reclamation over `cache_root` when
-/// the binary is present, degrading gracefully to `Skipped` (never an error)
-/// when it is absent. `cargo_sweep_present` is threaded in explicitly by the
-/// caller (see the module-level "Deviation" note) rather than probed here,
-/// so this function stays a deterministic, unsafe-free unit under test.
+/// The repo-scoped subtree `cargo-sweep` reclaims within —
+/// `<cache_root>/<repo_name>`, never the whole shared `cache_root` (which
+/// spans every repo's caches). Matches prune's `<cache_root>/<repo_name>`
+/// namespace and DD-7 step 5 ("over the surviving entries" of *this* repo), so
+/// a sweep launched from one repo never reclaims another repo's artifacts.
+fn sweep_scope(cache_root: &Path, repo_name: &str) -> PathBuf {
+    cache_root.join(repo_name)
+}
+
+/// Runs `cargo-sweep`'s stale-artifact reclamation over this repo's cache
+/// namespace (`<cache_root>/<repo_name>`, via [`sweep_scope`]) when the binary
+/// is present, degrading gracefully to `Skipped` (never an error) when it is
+/// absent. Scoping to the repo's own namespace — rather than the whole
+/// `cache_root` — keeps the sweep from touching sibling repos' caches.
+/// `cargo_sweep_present` is threaded in explicitly by the caller (see the
+/// module-level "Deviation" note) rather than probed here, so this function
+/// stays a deterministic, unsafe-free unit under test.
 ///
 /// When `dry_run` is `true` and the binary is present, no subprocess is
 /// invoked at all (a conservative preview: this cleanup lever is optional
 /// and manual per DD-6, so a dry-run never needs to actually shell out).
 pub fn sweep_stale(
     cache_root: &Path,
+    repo_name: &str,
     dry_run: bool,
     cargo_sweep_present: bool,
     ci: bool,
@@ -408,7 +438,7 @@ pub fn sweep_stale(
     }
     let _ = std::process::Command::new("cargo-sweep")
         .args(["--time", "30", "--recursive"])
-        .arg(cache_root)
+        .arg(sweep_scope(cache_root, repo_name))
         .output();
     SweepOutcome {
         skipped: false,
@@ -682,9 +712,11 @@ mod tests {
     }
 
     /// `prune_orphans` deletes a shared-cache entry that no live checkout
-    /// references. `repo_root` here has no `.git` at all, so
-    /// `live_referenced_entries` (a `git worktree list` query) fails closed
-    /// to an empty live set — nothing can reference the orphan.
+    /// references. `repo_root` is a real (fully-isolated) throwaway repo, so
+    /// `live_referenced_entries` *succeeds* and returns a genuine empty live
+    /// set (the main checkout has no crate symlinking the orphan) — the
+    /// deletion is driven by "no referrer", NOT by a failed enumeration (which
+    /// now fails closed, see `prune_skips_deletion_when_enumeration_fails`).
     ///
     /// Gherkin (binds) — "prune removes an orphaned shared-cache entry":
     ///   Given the shared cache holds an entry for a crate that no longer exists in the repo outside CI
@@ -693,16 +725,46 @@ mod tests {
     ///   And every entry still referenced by a live worktree or checkout is preserved
     #[test]
     fn prune_removes_orphan() {
-        let repo_root = tempfile::tempdir().unwrap();
+        let repo = tempfile::tempdir().unwrap();
+        build_throwaway_repo(repo.path());
         let cache_root = tempfile::tempdir().unwrap();
         let orphan_dir = cache_root.path().join("myrepo").join("orphan-crate");
         std::fs::create_dir_all(&orphan_dir).unwrap();
         std::fs::write(orphan_dir.join("marker.txt"), "stale").unwrap();
 
-        let outcome =
-            super::prune_orphans(repo_root.path(), cache_root.path(), "myrepo", false, false);
+        let outcome = super::prune_orphans(repo.path(), cache_root.path(), "myrepo", false, false);
         assert_eq!(outcome.deleted, vec![orphan_dir.clone()]);
         assert!(!orphan_dir.exists(), "the orphaned entry must be deleted");
+    }
+
+    /// Regression guard (cycle-2 MEDIUM): when `git worktree list` cannot be
+    /// enumerated (here, `repo_root` has no `.git` at all), `prune_orphans`
+    /// fails **closed** — it deletes nothing and flags `enumeration_failed` —
+    /// rather than treating every cache entry as an orphan and wiping live
+    /// caches. This is the exact scenario the old `prune_removes_orphan`
+    /// accidentally relied on; the two now assert opposite, correct behaviors.
+    #[test]
+    fn prune_skips_deletion_when_enumeration_fails() {
+        let non_repo = tempfile::tempdir().unwrap(); // no .git → git worktree list fails
+        let cache_root = tempfile::tempdir().unwrap();
+        let entry_dir = cache_root.path().join("myrepo").join("some-crate");
+        std::fs::create_dir_all(&entry_dir).unwrap();
+        std::fs::write(entry_dir.join("marker.txt"), "keep").unwrap();
+
+        let outcome =
+            super::prune_orphans(non_repo.path(), cache_root.path(), "myrepo", false, false);
+        assert!(
+            outcome.enumeration_failed,
+            "a failed worktree enumeration must be reported"
+        );
+        assert!(
+            outcome.deleted.is_empty(),
+            "nothing may be deleted when enumeration fails (fail closed)"
+        );
+        assert!(
+            entry_dir.exists(),
+            "the entry must survive a failed enumeration"
+        );
     }
 
     /// Builds a `git` [`std::process::Command`] targeting `repo_dir` with
@@ -840,13 +902,13 @@ mod tests {
     ///   And no cache entry is actually removed
     #[test]
     fn prune_dry_run_reports_without_deleting() {
-        let repo_root = tempfile::tempdir().unwrap();
+        let repo = tempfile::tempdir().unwrap();
+        build_throwaway_repo(repo.path());
         let cache_root = tempfile::tempdir().unwrap();
         let orphan_dir = cache_root.path().join("myrepo").join("orphan-crate");
         std::fs::create_dir_all(&orphan_dir).unwrap();
 
-        let outcome =
-            super::prune_orphans(repo_root.path(), cache_root.path(), "myrepo", true, false);
+        let outcome = super::prune_orphans(repo.path(), cache_root.path(), "myrepo", true, false);
         assert_eq!(
             outcome.candidates,
             vec![orphan_dir.clone()],
@@ -874,12 +936,31 @@ mod tests {
     #[test]
     fn sweep_skips_when_cargo_sweep_absent() {
         let cache_root = tempfile::tempdir().unwrap();
-        let outcome = super::sweep_stale(cache_root.path(), false, false, false);
+        let outcome = super::sweep_stale(cache_root.path(), "myrepo", false, false, false);
         assert!(
             outcome.skipped,
             "sweep must report Skipped, not fail, when cargo-sweep is absent"
         );
         assert!(!outcome.ran, "an absent binary must never be invoked");
+    }
+
+    /// Regression guard (cycle-2 MEDIUM): the sweep is scoped to this repo's
+    /// own cache namespace (`<cache_root>/<repo_name>`), never the whole
+    /// shared `cache_root` — so a sweep launched from one repo never reclaims
+    /// a sibling repo's artifacts.
+    #[test]
+    fn sweep_scope_is_repo_namespaced() {
+        let cache_root = Path::new("/tmp/ose-cargo-target");
+        assert_eq!(
+            super::sweep_scope(cache_root, "ose-public"),
+            cache_root.join("ose-public"),
+            "sweep must target the repo namespace, not the shared root"
+        );
+        assert_ne!(
+            super::sweep_scope(cache_root, "ose-public"),
+            cache_root.to_path_buf(),
+            "sweep must never target the whole cache_root (all repos)"
+        );
     }
 
     /// Regression guard (cycle-1 HIGH): under CI, `sweep_stale` must be a
@@ -892,7 +973,7 @@ mod tests {
     #[test]
     fn sweep_is_ci_guarded_even_when_cargo_sweep_present() {
         let cache_root = tempfile::tempdir().unwrap();
-        let outcome = super::sweep_stale(cache_root.path(), false, true, true);
+        let outcome = super::sweep_stale(cache_root.path(), "myrepo", false, true, true);
         assert!(
             outcome.skipped_ci,
             "under CI the sweep must report skipped_ci"

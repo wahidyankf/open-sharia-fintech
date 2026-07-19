@@ -85,6 +85,8 @@ fn run_target_share_step(repo_root: &std::path::Path, args: &DoctorArgs) {
         let prune = prune_orphans(repo_root, &cache_root, &name, args.dry_run, ci);
         if prune.skipped_ci {
             println!("Prune: CI detected — skipped.");
+        } else if prune.enumeration_failed {
+            println!("Prune: could not enumerate worktrees — skipped (nothing deleted).");
         } else if args.dry_run {
             println!(
                 "Prune (dry-run): {} candidate(s) for deletion",
@@ -97,7 +99,7 @@ fn run_target_share_step(repo_root: &std::path::Path, args: &DoctorArgs) {
             println!("Prune: {} orphaned entrie(s) deleted", prune.deleted.len());
         }
 
-        let sweep = sweep_stale(&cache_root, args.dry_run, cargo_sweep_present(), ci);
+        let sweep = sweep_stale(&cache_root, &name, args.dry_run, cargo_sweep_present(), ci);
         if sweep.skipped_ci {
             println!("Sweep: CI detected — skipped.");
         } else if sweep.skipped {
