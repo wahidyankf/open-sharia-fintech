@@ -119,3 +119,6 @@ weight: 1750
 - [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/drilling)
+- [33 · Engineering Management](/en/c/learn/fundamentally-strong/software-engineer/engineering-management)
+  - [Learning](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning)
+  - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/drilling)
