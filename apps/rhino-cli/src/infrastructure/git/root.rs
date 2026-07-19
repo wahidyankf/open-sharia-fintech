@@ -157,10 +157,15 @@ mod tests {
         );
     }
 
-    /// Snapshot of the four git-identity/state signals the confirmed root
+    /// Snapshot of the five git-identity/state signals the confirmed root
     /// cause corrupts: local `user.name`, local `user.email`, `worktree list
-    /// --porcelain`, and `HEAD` (PRD AC-1, AC-2, and AC-3's git-identity
-    /// non-contamination criterion).
+    /// --porcelain`, `HEAD`, and `reflog` (PRD AC-1, AC-2, and AC-3's
+    /// git-identity non-contamination criterion). `reflog` is captured
+    /// alongside `HEAD` because the documented real-incident corruption is a
+    /// commit-then-`git reset` that can move the branch pointer back to its
+    /// original value (see this plan's `tech-docs.md`): a net-unchanged `HEAD`
+    /// that only the reflog's churn reveals. PRD AC-2 names `git reflog`
+    /// explicitly for exactly this reason.
     #[derive(Debug, PartialEq, Eq)]
     struct GitIdentitySnapshot {
         /// Effective `git config --get user.name` in `dir`.
@@ -171,6 +176,9 @@ mod tests {
         worktree_list: String,
         /// `git rev-parse HEAD` output for the repo rooted at `dir`.
         head: String,
+        /// `git reflog` output for the repo rooted at `dir` — catches a
+        /// commit-then-reset that leaves `HEAD` net-unchanged but churns the ref.
+        reflog: String,
     }
 
     /// Captures a [`GitIdentitySnapshot`] for the repository rooted at `dir`.
@@ -188,6 +196,7 @@ mod tests {
             user_email: capture(&["config", "--get", "user.email"]),
             worktree_list: capture(&["worktree", "list", "--porcelain"]),
             head: capture(&["rev-parse", "HEAD"]),
+            reflog: capture(&["reflog"]),
         }
     }
 
@@ -215,8 +224,8 @@ mod tests {
     ///   Given a synthetic "ancestor" repository with one real commit
     ///   And its `git init` step is forced to fail deterministically
     ///   When the worktree fixture setup runs concurrently with a `find_root()` call
-    ///   Then the ancestor's `user.name`, `user.email`, `HEAD`, and `worktree list`
-    ///     are unchanged before and after
+    ///   Then the ancestor's `user.name`, `user.email`, `HEAD`, `reflog`, and
+    ///     `worktree list` are unchanged before and after
     #[test]
     fn find_root_from_worktree_survives_concurrent_execution() {
         let _cwd = CwdLock::acquire();
@@ -276,12 +285,12 @@ mod tests {
 
         assert_eq!(
             real_before, real_after,
-            "this test suite's own repository must never observe git-identity/HEAD/worktree drift \
-             from this reproduction"
+            "this test suite's own repository must never observe git-identity/HEAD/reflog/worktree \
+             drift from this reproduction"
         );
         assert_eq!(
             ancestor_before, ancestor_after,
-            "ancestor repository (user.name, user.email, worktree list, HEAD) must survive the \
+            "ancestor repository (user.name, user.email, worktree list, HEAD, reflog) must survive the \
              worktree fixture setup unchanged even when its git init step fails — fails against the \
              pre-fix fixture because git's own upward repository-discovery silently redirects every \
              subsequent \"isolated\" git command into ancestor once git init's exit status goes \

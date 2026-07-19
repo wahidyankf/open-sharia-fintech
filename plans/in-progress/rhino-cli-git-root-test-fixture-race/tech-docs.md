@@ -218,10 +218,14 @@ what actually causes the observed corruption before concluding this DD's rewrite
 
 **[Judgment call]** A new test explicitly runs the fixture concurrently (e.g., spawn multiple threads
 or processes executing the fixture's setup logic in parallel) and asserts the real repository's `git
-worktree list` / `HEAD` — and, per H5's coverage of AC-3, `git config user.name`/`user.email` — are
-unchanged before and after: a positive proof of isolation, not just "the existing suite still passes
-serially." This test's exact implementation is finalized in Phase 2 once Phase 1 confirms the
-mechanism it needs to reproduce.
+worktree list`, `HEAD`, and `git reflog` — and, per H5's coverage of AC-3, `git config
+user.name`/`user.email` — are unchanged before and after: a positive proof of isolation, not just
+"the existing suite still passes serially." `git reflog` is captured alongside `HEAD` (not in place
+of it) precisely because AC-2 names it and because the documented real-incident corruption is a
+commit-then-`git reset` that can move the branch pointer back to its original value (see the
+Symptom-Evidence reconciliation above): a net-unchanged `HEAD` whose churn only the reflog reveals. A
+HEAD-only snapshot would be strictly less sensitive than AC-2 requires. This test's exact
+implementation is finalized in Phase 2 once Phase 1 confirms the mechanism it needs to reproduce.
 
 ## File-Impact Analysis
 
