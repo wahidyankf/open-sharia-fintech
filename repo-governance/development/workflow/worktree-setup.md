@@ -61,6 +61,10 @@ The root worktree is the primary checkout of the repository — the directory th
 
 **Use `--fix`, not plain `doctor`.** Plain `npm run doctor` only detects drift and requires a second human action. `npm run doctor -- --fix` actively converges to the declared toolchain state in a single step. If a human wants a preview of what would change first, use `npm run doctor -- --fix --dry-run`.
 
+### Shared Cargo Target Directories (Local-Dev Only)
+
+`npm run doctor -- --fix` also creates per-crate `target/` symlinks pointing into a shared cargo build-artifact cache, so multiple worktrees of the same repo reuse build artifacts instead of recompiling the same crates independently. This step is **local-dev only** — it is a no-op under CI. See [Reproducible Environments §Shared Cargo Target Directories](./reproducible-environments.md#shared-cargo-target-directories) for the full mechanism, including the cache root, the `OSE_CARGO_TARGET_CACHE` override, and the worktree-aware `doctor --prune-cargo-cache` garbage collector.
+
 ## Why This Is Necessary
 
 ### Two Independent Layers of Drift
