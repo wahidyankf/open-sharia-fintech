@@ -52,7 +52,7 @@ co-17).
 
 - **Autonomy vs alignment**: over-direct and you get a team of hands, not minds; under-direct and
   effort scatters. Set the _what_ and _why_, delegate the _how_ -- the lever is context, not
-  control (co-08, co-23 in the drilling companion).
+  control (co-08, co-04).
 - **Delivery vs growth**: shipping this quarter competes with growing people who ship every
   quarter. Over-index on delivery and you spend the team down, stopping the learning that compounds
   into next year's velocity (co-05, co-19).
