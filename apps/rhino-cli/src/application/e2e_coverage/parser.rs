@@ -689,8 +689,9 @@ test.describe('Outline title', () => {
     /// Outline fixture that deterministically adds the Examples-row's own
     /// auto-generated `Example #1` title AFTER the outline's own wrapping
     /// title (the implementation pushes the wrapping title first, then
-    /// walks the block's body left-to-right for nested `test(...)`/
-    /// `test.describe(...)` matches — see the doc comment on
+    /// collects the block's nested `test(...)` titles followed by its nested
+    /// `test.describe(...)` titles — two ordered passes, not a single
+    /// interleaved left-to-right walk — see the doc comment on
     /// [`scan_skip_or_fixme_describe_titles`] itself). Keeping this exact
     /// documents the new behavior precisely rather than merely asserting a
     /// subset.
