@@ -1458,6 +1458,8 @@ CREATE INDEX IF NOT EXISTS idx_checkins_user_id_date ON checkins (user_id, check
 bench/explain_query_plan.sh
 ```
 
+<!-- markdownlint-disable MD010 -->
+
 ```bash
 #!/usr/bin/env bash
 # capstone-solid-core: Step 3's EXPLAIN-guided-index demonstration (topic 26 Advanced SQL &
@@ -1510,10 +1512,12 @@ sqlite3 "$DB" "EXPLAIN QUERY PLAN SELECT habit_id, checkin_date FROM checkins WH
 echo
 echo "=== correctness: BEFORE and AFTER return the identical 20 rows ==="
 diff \
- <(sqlite3 "$DB" "SELECT h.id, c.checkin_date FROM checkins c JOIN habits h ON h.id = c.habit_id WHERE h.user_id = 1 ORDER BY c.checkin_date DESC LIMIT 20;") \
- <(sqlite3 "$DB" "SELECT habit_id, checkin_date FROM checkins WHERE user_id = 1 ORDER BY checkin_date DESC LIMIT 20;") &&
- echo "IDENTICAL -- the index changed the PLAN, not the RESULT"
+	<(sqlite3 "$DB" "SELECT h.id, c.checkin_date FROM checkins c JOIN habits h ON h.id = c.habit_id WHERE h.user_id = 1 ORDER BY c.checkin_date DESC LIMIT 20;") \
+	<(sqlite3 "$DB" "SELECT habit_id, checkin_date FROM checkins WHERE user_id = 1 ORDER BY checkin_date DESC LIMIT 20;") &&
+	echo "IDENTICAL -- the index changed the PLAN, not the RESULT"
 ```
+
+<!-- markdownlint-enable MD010 -->
 
 **Verify** -- correctness first (a scoped `pytest` run: the two algorithms agreeing on 20 random
 histories, the new endpoint, and sequential/concurrent digest agreeing), then the real,
@@ -2220,6 +2224,8 @@ ALL STAGES GREEN
 scripts/build_commit_history_demo.sh
 ```
 
+<!-- markdownlint-disable MD010 -->
+
 ```bash
 #!/usr/bin/env bash
 # capstone-solid-core: Step 4's commit-history demo (topic 09/30 co-01..co-04). Walks this
@@ -2235,8 +2241,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CODE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 if [ ! -x "$CODE_DIR/.venv/bin/pytest" ]; then
- echo "error: $CODE_DIR/.venv not found -- run 'bash setup.sh' from code/ first" >&2
- exit 1
+	echo "error: $CODE_DIR/.venv not found -- run 'bash setup.sh' from code/ first" >&2
+	exit 1
 fi
 PYTEST="$CODE_DIR/.venv/bin/pytest"
 RUFF="$CODE_DIR/.venv/bin/ruff"
@@ -2433,12 +2439,14 @@ echo "$COMMITS"
 
 HIGHEST="PATCH"
 if echo "$COMMITS" | grep -Eq '^[a-z]+(\(.+\))?!:|BREAKING CHANGE:'; then
- HIGHEST="MAJOR"
+	HIGHEST="MAJOR"
 elif echo "$COMMITS" | grep -Eq '^feat(\(.+\))?:'; then
- HIGHEST="MINOR"
+	HIGHEST="MINOR"
 fi
 echo "highest-severity commit type present -> SemVer bump: $HIGHEST (v1.0.0 -> v1.1.0)"
 ```
+
+<!-- markdownlint-enable MD010 -->
 
 **Verify** -- run for real, genuinely green at every commit, with a real, live-measured speedup
 that varies slightly by machine and run (five consecutive runs on the same machine produced
