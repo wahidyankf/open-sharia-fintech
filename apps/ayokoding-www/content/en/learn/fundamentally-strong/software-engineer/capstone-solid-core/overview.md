@@ -87,8 +87,12 @@ Before touching anything, confirm the thing being re-engineered actually works, 
 left it. `app/domain.py`, `app/models.py`, `app/auth.py`, `app/middleware.py`,
 `app/schema_v1.sql`, and `app/migration_v2.sql` are imported from
 [`capstone-first-working-software/code/`](../capstone-first-working-software/overview.md)
-unchanged at this checkpoint -- only `app/repository.py` and `app/main.py` will be replaced in
-Step 2, and only after this baseline is proven green.
+unchanged at this checkpoint -- but not all of them stay that way for long. Step 2 replaces
+`app/repository.py` with `app/ports.py` + `app/repository_sqlite.py`, rewrites `app/main.py`'s
+wiring, and substantially rewrites `app/domain.py` (free functions extracted from `Habit`) and
+`app/models.py` (a new `RecentCheckinPublic` class); only `app/auth.py`, `app/middleware.py`,
+`app/schema_v1.sql`, and `app/migration_v2.sql` ship byte-identical to Pass 1 for the rest of
+this capstone. None of that happens until this baseline is proven green.
 
 ```markdown
 adr/0001-import-baseline-and-goals.md
@@ -165,7 +169,9 @@ does not demonstrate depending on an abstraction rather than a concrete database
 (Dependency Inversion Principle), a business-rule layer independently testable without a
 database (Single Responsibility Principle), or a pure computational core separated from the
 parts that touch state (functional core / imperative shell, topics 22/23). This step introduces
-all three, in four new/changed files.
+all three across six new/changed files: two brand-new ones (`app/ports.py`, `app/services.py`),
+one that replaces `app/repository.py` outright (`app/repository_sqlite.py`), and three
+rewritten in place (`app/domain.py`, `app/main.py`, `app/models.py`).
 
 ```python
 app/ports.py
@@ -583,7 +589,7 @@ def longest_streak_ever(checkin_dates: set[date]) -> int:
     (`date.toordinal()`, Python stdlib -- docs.python.org/3/library/datetime.html:
     "Return the proleptic Gregorian ordinal of the date") once up front, then doing the SAME
     algorithm over a `set[int]` with plain integer +/-1 instead of `timedelta` construction,
-    measured 2.1x-2.9x FASTER than the naive baseline across the same size range -- the
+    measured 2.59x-2.86x FASTER than the naive baseline across the same size range -- the
     asymptotic O(n) advantage only became a real wall-clock advantage once the Python-level
     constant-factor overhead (repeated object construction) was removed. Big-O describes what
     happens as n grows; it does not by itself guarantee a win at any one concrete n in a
@@ -1635,10 +1641,10 @@ if __name__ == "__main__":
 ```console
 $ python3 -m bench.benchmark_algorithm
          n    naive O(n log n) (s)    optimized O(n) (s)    speedup
-      1000                0.000351              0.000128      2.74x
-     10000                0.003831              0.001332      2.88x
-    100000                0.043930              0.015403      2.85x
-    500000                0.254987              0.123812      2.06x
+      1000                0.000348              0.000134      2.59x
+     10000                0.003821              0.001343      2.85x
+    100000                0.044984              0.016978      2.65x
+    500000                0.297311              0.103849      2.86x
 ```
 
 ```python
@@ -1930,7 +1936,7 @@ and was SLOWER at every size up to n=500,000 -- Python's built-in `sorted()` run
 with low per-comparison overhead, while constructing a fresh `timedelta` object on every loop
 iteration in pure Python is comparatively expensive. Converting each `date` to its integer
 `toordinal()` once, then running the identical algorithm over `set[int]` with plain `+1`/`-1`
-arithmetic, measured 2.1x-2.9x FASTER than the baseline across the same range. **Decision**:
+arithmetic, measured 2.59x-2.86x FASTER than the baseline across the same range. **Decision**:
 ship the ordinal-based version. Big-O describes asymptotic growth; it does not by itself
 guarantee a win at any one concrete n in a language with non-trivial per-object overhead --
 that has to be measured, and here it changed which implementation actually shipped.
@@ -1941,17 +1947,17 @@ that has to be measured, and here it changed which implementation actually shipp
 (rebuilding a hash-set from every stored check-in row, then the O(n) scan), which a THREAD pool
 would not meaningfully parallelize (GIL-bound), so a `ProcessPoolExecutor` was chosen. It is
 called directly as a batch job (not behind a synchronous HTTP route -- see digest.py's own
-docstring for why). First benchmarked at a modest scale (16 habits x 8,000 check-ins),
-`concurrent_digest` was measurably SLOWER than `sequential_digest` -- spawning worker processes
-and importing `pydantic` fresh in each one costs tens of milliseconds per process, which
-dominated a workload whose real per-habit work was only a few milliseconds. At a larger, still
-realistic scale (40 habits x 25,000 check-ins = 1,000,000 rows), `concurrent_digest` measured
-1.7x-2.3x FASTER across repeated runs -- the fixed process-pool startup cost is paid ONCE per
-`with ProcessPoolExecutor(...)` block, and is only worth paying when the total real work clears
-that fixed cost by a wide margin. **Decision**: ship `concurrent_digest`, and document the
-small-workload finding here rather than hide it -- it is the actual engineering lesson topic 24
-teaches: concurrency has overhead, and the right call depends on the workload's real size, not
-on "concurrent is always faster."
+docstring for why). First benchmarked at a modest scale (16 habits x 8,000
+check-ins), `concurrent_digest` was measurably SLOWER than `sequential_digest` (0.62x) --
+spawning worker processes and importing `pydantic` fresh in each one costs tens of milliseconds
+per process, which dominated a workload whose real per-habit work was only a few milliseconds.
+At a larger, still realistic scale (40 habits x 25,000 check-ins = 1,000,000 rows),
+`concurrent_digest` measured 1.7x-2.3x FASTER across repeated runs -- the fixed process-pool
+startup cost is paid ONCE per `with ProcessPoolExecutor(...)` block, and is only worth paying
+when the total real work clears that fixed cost by a wide margin. **Decision**: ship
+`concurrent_digest`, and document the small-workload finding here rather than hide it -- it is
+the actual engineering lesson topic 24 teaches: concurrency has overhead, and the right call
+depends on the workload's real size, not on "concurrent is always faster."
 
 ## Decision 3: denormalize `checkins.user_id`, guided by real `EXPLAIN QUERY PLAN` output
 

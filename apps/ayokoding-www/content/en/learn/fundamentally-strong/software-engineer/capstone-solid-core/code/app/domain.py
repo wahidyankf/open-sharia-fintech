@@ -71,7 +71,7 @@ def longest_streak_ever(checkin_dates: set[date]) -> int:
     (`date.toordinal()`, Python stdlib -- docs.python.org/3/library/datetime.html:
     "Return the proleptic Gregorian ordinal of the date") once up front, then doing the SAME
     algorithm over a `set[int]` with plain integer +/-1 instead of `timedelta` construction,
-    measured 2.6x-3.1x FASTER than the naive baseline across the same size range -- the
+    measured 2.59x-2.86x FASTER than the naive baseline across the same size range -- the
     asymptotic O(n) advantage only became a real wall-clock advantage once the Python-level
     constant-factor overhead (repeated object construction) was removed. Big-O describes what
     happens as n grows; it does not by itself guarantee a win at any one concrete n in a

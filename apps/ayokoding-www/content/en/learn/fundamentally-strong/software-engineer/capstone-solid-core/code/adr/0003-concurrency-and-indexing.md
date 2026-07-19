@@ -19,7 +19,7 @@ and was SLOWER at every size up to n=500,000 -- Python's built-in `sorted()` run
 with low per-comparison overhead, while constructing a fresh `timedelta` object on every loop
 iteration in pure Python is comparatively expensive. Converting each `date` to its integer
 `toordinal()` once, then running the identical algorithm over `set[int]` with plain `+1`/`-1`
-arithmetic, measured 2.5x-3.3x FASTER than the baseline across the same range. **Decision**:
+arithmetic, measured 2.59x-2.86x FASTER than the baseline across the same range. **Decision**:
 ship the ordinal-based version. Big-O describes asymptotic growth; it does not by itself
 guarantee a win at any one concrete n in a language with non-trivial per-object overhead --
 that has to be measured, and here it changed which implementation actually shipped.
