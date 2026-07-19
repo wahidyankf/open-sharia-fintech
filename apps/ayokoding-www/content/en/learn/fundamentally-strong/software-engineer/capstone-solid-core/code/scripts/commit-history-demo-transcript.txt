@@ -1,0 +1,41 @@
+Real, captured output of `bash scripts/build_commit_history_demo.sh`, run 2026-07-19 against
+this capstone's shipped `.venv`. The "n=50000" speedup line is a LIVE measurement -- it re-runs
+every time this script runs and will vary slightly by machine; five consecutive runs on the
+same machine produced 2.63x-2.92x, always a genuine speedup, never fabricated.
+
+=== COMMIT 1/4: Step 1 -- import the Pass-1 baseline under a green test ===
+..                                                                       [100%]
+2 passed in 0.11s
+commit 1: green
+
+=== COMMIT 2/4: Step 2 -- SOLID/DIP: a repository Protocol + a fake, zero inheritance ===
+...                                                                      [100%]
+3 passed in 0.07s
+commit 2: green
+
+=== COMMIT 3/4: Step 3 -- O(n) algorithm, measured against the Step 1 baseline ===
+....                                                                     [100%]
+4 passed in 0.08s
+commit 3: green -- now measuring the real, live speedup on THIS machine:
+n=50000: naive 0.017315s, fast 0.006060s, 2.86x
+
+=== COMMIT 4/4: Step 4 -- a local lint+test gate, added and proven ===
+lint:
+All checks passed!
+test:
+....                                                                     [100%]
+4 passed in 0.06s
+commit 4: green
+
+=== clean history (4 commits) ===
+85d5643 docs(capstone): add a local lint+test gate mirroring the pipeline's own two stages
+f8b3404 perf(capstone): replace the sort-based streak scan with an O(n) ordinal scan
+9947883 refactor(capstone): introduce a HabitRepository DIP port and prove OCP with a fake
+9b047e1 feat(capstone): import the pass-1 longest-streak algorithm under a green test
+
+=== deriving the SemVer bump and changelog entry from v1.0.0..HEAD (topic 30 co-03/co-04) ===
+docs(capstone): add a local lint+test gate mirroring the pipeline's own two stages
+perf(capstone): replace the sort-based streak scan with an O(n) ordinal scan
+refactor(capstone): introduce a HabitRepository DIP port and prove OCP with a fake
+feat(capstone): import the pass-1 longest-streak algorithm under a green test
+highest-severity commit type present -> SemVer bump: MINOR (v1.0.0 -> v1.1.0)

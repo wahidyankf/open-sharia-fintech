@@ -119,3 +119,5 @@ weight: 1750
 - [32 · Software Product Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
   - [Learning](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning)
   - [Drilling](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/drilling)
+- [Pass 2 Capstone · SOLID Core](/en/c/learn/fundamentally-strong/software-engineer/capstone-solid-core)
+  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/capstone-solid-core/overview)

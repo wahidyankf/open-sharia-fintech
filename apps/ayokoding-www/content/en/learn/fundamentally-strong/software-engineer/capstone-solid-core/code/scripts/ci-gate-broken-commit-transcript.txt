@@ -1,0 +1,65 @@
+Step 4's CI-gate-fails-on-a-bad-commit demonstration. Both runs below are genuinely executed
+(`bash scripts/run_ci_locally.sh`) against this capstone's real code, on 2026-07-19 -- the
+"AFTER (fixed)" section literally re-runs the SAME command against the code as shipped; the
+"BEFORE (broken)" section re-runs it against one line changed:
+`app/domain.py`'s `current_streak` decremented by `timedelta(days=2)` instead of `days=1`
+(a fat-fingered off-by-one, the same class of bug this plan's own
+software-engineering-practices capstone injects for its own CI-gate demonstration).
+
+The NAME/DESCRIPTION/ELAPSED/RESULT table below is a mocked, hand-constructed GitHub Actions
+summary (no live Actions run was triggered for this page) -- the SAME convention
+`software-engineering-practices/learning/capstone/code/ci-broken-commit-transcript.txt` already
+uses; the `ruff`/`pytest` output beneath it is real, captured `scripts/run_ci_locally.sh` output.
+
+NAME              DESCRIPTION                          ELAPSED  RESULT
+ci / lint         ruff check . && ruff format --check   1s      ✓ pass
+ci / test         pytest -q                             1s      ✗ fail
+ci / build        python -m compileall app              -       ⊘ skipped (needs: test)
+
+=== BROKEN COMMIT: bash scripts/run_ci_locally.sh ===
+=== STAGE 1/3: lint (ruff check + ruff format --check) ===
+All checks passed!
+17 files already formatted
+lint: PASS
+
+=== STAGE 2/3: test (pytest) ===
+......................F........F...............................          [100%]
+=================================== FAILURES ===================================
+_ TestDigestSequentialAndConcurrentAgree.test_sequential_and_concurrent_digest_return_identical_results _
+    assert len(sequential_result) == 4
+>   assert all(d.current_streak == 5 for d in sequential_result)
+E   assert False
+
+__________ TestCurrentStreak.test_full_month_of_consecutive_checkins ___________
+    for offset in range(30):
+        habit.record_checkin(today - timedelta(days=offset))
+>   assert habit.current_streak(today) == 30
+E   AssertionError: assert 15 == 30
+E    +    where current_streak = Habit(...).current_streak
+
+=========================== short test summary info ============================
+FAILED tests/test_app.py::TestDigestSequentialAndConcurrentAgree::test_sequential_and_concurrent_digest_return_identical_results
+FAILED tests/test_domain.py::TestCurrentStreak::test_full_month_of_consecutive_checkins
+2 failed, 61 passed in 1.44s
+
+$ echo "exit code: $?"
+exit code: 1
+# => STAGE 3/3 (build) never ran -- `set -e` stopped the script the instant `pytest` exited
+# => non-zero. The SAME `needs: test` gate in ci.yml stops `build` there too on GitHub Actions.
+
+=== AFTER (fixed -- the off-by-one reverted): bash scripts/run_ci_locally.sh ===
+=== STAGE 1/3: lint (ruff check + ruff format --check) ===
+All checks passed!
+17 files already formatted
+lint: PASS
+
+=== STAGE 2/3: test (pytest) ===
+...............................................................          [100%]
+63 passed in 1.31s
+test: PASS
+
+=== STAGE 3/3: build (python -m compileall app) ===
+Listing 'app'...
+build: PASS
+
+ALL STAGES GREEN

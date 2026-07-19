@@ -1,0 +1,44 @@
+# capstone-solid-core: Step 4's lint -> test -> build pipeline (topic 30 co-08/co-09/co-10,
+# reusing the same three-stage shape this plan's own software-engineering-practices capstone
+# already validated). Copy this file to `.github/workflows/ci.yml` in a real clone of `code/`
+# to run it on GitHub Actions. Validated with `actionlint` -- zero findings.
+name: ci
+on:
+  pull_request:
+
+jobs:
+  lint: # => STAGE 1 -- the SAME ruff commands scripts/run_ci_locally.sh already runs locally
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: ruff check . # => a lint FAILURE stops the pipeline here -- test and build never start
+      - run: ruff format --check .
+
+  test: # => STAGE 2 -- runs ONLY if lint passed
+    needs: lint # => the GATE -- no lint pass, no test run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - env:
+          CAPSTONE_SOLID_CORE_DB_PATH: /tmp/ci-habits.db
+          CAPSTONE_SOLID_CORE_AUTH_SECRET: ci-only-not-a-real-secret
+        run: pytest -q # => a test FAILURE stops the pipeline here -- build never starts
+
+  build: # => STAGE 3 -- runs ONLY if lint AND test both passed
+    needs: test # => the GATE -- no test pass, no build run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: python -m compileall app # => a minimal "build" -- confirms every module compiles

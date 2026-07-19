@@ -1,0 +1,9 @@
+fastapi==0.139.2
+uvicorn==0.51.0
+pydantic==2.13.4
+argon2-cffi==25.1.0
+pytest==9.1.1
+hypothesis==6.156.9
+httpx2==2.7.0
+coverage==7.15.2
+ruff==0.15.22
