@@ -66,6 +66,55 @@ mod tests {
         );
     }
 
+    /// Builds a `git` [`Cmd`] targeting `repo_dir` with full ambient-discovery
+    /// isolation, per the [Git Fixture Isolation] convention. This is the
+    /// deeper fix for the corruption class this plan addresses: exit-status
+    /// checking alone was necessary but NOT sufficient — a fixture `git` call
+    /// can still escape into the real repository if git resolves against the
+    /// wrong working directory (a process-global CWD race under concurrency).
+    /// Setting `GIT_DIR` explicitly makes git use exactly `repo_dir/.git` and
+    /// perform ZERO discovery — it ignores the process CWD entirely — so the
+    /// command cannot reach any other repository. `GIT_CEILING_DIRECTORIES`
+    /// caps any residual upward walk at `repo_dir`, and nulling the global and
+    /// system config keeps the developer's real identity from bleeding in (and
+    /// the throwaway identity from bleeding out).
+    ///
+    /// [Git Fixture Isolation]: repo-governance/development/quality/git-fixture-isolation.md
+    fn iso_git(repo_dir: &Path) -> Cmd {
+        let mut cmd = Cmd::new("git");
+        cmd.current_dir(repo_dir)
+            .env("GIT_DIR", repo_dir.join(".git"))
+            .env("GIT_CEILING_DIRECTORIES", repo_dir)
+            .env("GIT_CONFIG_GLOBAL", "/dev/null")
+            .env("GIT_CONFIG_SYSTEM", "/dev/null");
+        cmd
+    }
+
+    /// Pre-write escape-guard. Panics unless git, under [`iso_git`] isolation,
+    /// resolves its top level to `repo_dir` (canonicalized). Run this once after
+    /// a fixture's `git init` and before any write, so a would-be escape fails
+    /// loud instead of silently corrupting the real repository.
+    fn assert_no_escape(repo_dir: &Path) {
+        let out = iso_git(repo_dir)
+            .args(["rev-parse", "--show-toplevel"])
+            .output()
+            .expect("escape-guard: git rev-parse must spawn");
+        assert!(
+            out.status.success(),
+            "escape-guard: `git rev-parse --show-toplevel` failed in {repo_dir:?} \
+             (git could not confirm an isolated repository here): {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
+        let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        let want = std::fs::canonicalize(repo_dir).unwrap_or_else(|_| repo_dir.to_path_buf());
+        let got = std::fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
+        assert_eq!(
+            got, want,
+            "escape-guard: fixture git resolves to {got:?}, not the intended tempdir \
+             {want:?} — refusing to proceed to avoid corrupting the real repository"
+        );
+    }
+
     /// Builds the throwaway git repository plus linked worktree shared by
     /// [`find_root_from_worktree_returns_worktree_path`] and
     /// [`find_root_from_worktree_survives_concurrent_execution`].
@@ -93,10 +142,13 @@ mod tests {
     /// own `.git`. Post-fix, this is expected to panic here rather than
     /// silently proceed.
     fn build_worktree_fixture(main: &Path, wt_path: &Path, force_init_failure: bool) {
+        // Every git call runs through `iso_git` so it is pinned to `main`'s own
+        // `.git` (explicit `GIT_DIR`) and can never resolve to an ancestor/real
+        // repository via CWD or discovery — the deeper fix for this plan's
+        // corruption class (exit-status checking alone was insufficient).
         let run_checked = |args: &[&str]| {
-            let output = Cmd::new("git")
+            let output = iso_git(main)
                 .args(args)
-                .current_dir(main)
                 .output()
                 .expect("git command must spawn");
             assert!(
@@ -115,16 +167,20 @@ mod tests {
         } else {
             run_checked(&["init"]);
         }
+        // After a successful `git init` created `main/.git`, prove git resolves
+        // to `main` and not any ancestor before we write anything. (In the
+        // `force_init_failure` path we never reach here — the assert above has
+        // already panicked.)
+        assert_no_escape(main);
         run_checked(&["config", "user.email", "test@test.com"]);
         run_checked(&["config", "user.name", "Test"]);
         std::fs::write(main.join("README.md"), "test").expect("write README");
         run_checked(&["add", "."]);
         run_checked(&["commit", "-m", "init"]);
 
-        // Create a linked worktree.
-        let status = Cmd::new("git")
+        // Create a linked worktree (isolated to `main`'s own `.git`).
+        let status = iso_git(main)
             .args(["worktree", "add", &wt_path.to_string_lossy(), "HEAD"])
-            .current_dir(main)
             .status()
             .expect("git worktree add");
         assert!(status.success(), "git worktree add must succeed");
@@ -240,10 +296,11 @@ mod tests {
         // identity (`Ancestor Real Repo`) makes any bleed-through unambiguous.
         let ancestor = TempDir::new().expect("tempdir ancestor");
         let ancestor_path = ancestor.path();
+        // Seed `ancestor` through `iso_git` too, so even this stand-in repo is
+        // pinned to its own `.git` and cannot itself escape.
         let run_checked = |args: &[&str]| {
-            let status = Cmd::new("git")
+            let status = iso_git(ancestor_path)
                 .args(args)
-                .current_dir(ancestor_path)
                 .status()
                 .expect("git seed command must spawn");
             assert!(
@@ -252,6 +309,7 @@ mod tests {
             );
         };
         run_checked(&["init"]);
+        assert_no_escape(ancestor_path);
         run_checked(&["config", "user.email", "ancestor@example.com"]);
         run_checked(&["config", "user.name", "Ancestor Real Repo"]);
         std::fs::write(ancestor_path.join("README.md"), "ancestor").expect("write ancestor readme");
@@ -303,5 +361,65 @@ mod tests {
         // acceptable here — only the snapshot equality assertions above prove
         // isolation held.
         let _ = fixture_outcome;
+    }
+
+    /// Deterministic regression lock for the DEEPER fix ([`iso_git`], per the
+    /// Git Fixture Isolation convention). Exit-status checking alone did not
+    /// prevent the real incident: a fixture git write can still escape into an
+    /// ancestor repository when the target dir has no `.git` of its own and git
+    /// walks *up* the directory tree to find one. Here `inner` is nested
+    /// directly under an `outer` stand-in "real" repo and deliberately has no
+    /// `.git`. Plain `git` run there would discover `outer` and mutate it;
+    /// [`iso_git`] pins `GIT_DIR` to `inner/.git` (which does not exist), so git
+    /// refuses instead of escaping. This reproduces the escape condition without
+    /// relying on a concurrency race, so it fails RED if the `GIT_DIR` pin is
+    /// ever removed from `iso_git`.
+    #[test]
+    fn iso_git_refuses_to_escape_into_ambient_ancestor_repo() {
+        let _cwd = CwdLock::acquire();
+
+        let outer = TempDir::new().expect("tempdir outer");
+        let outer_path = outer.path();
+        let seed = |args: &[&str]| {
+            assert!(
+                iso_git(outer_path)
+                    .args(args)
+                    .status()
+                    .expect("git seed must spawn")
+                    .success(),
+                "seeding outer stand-in repo must succeed: {args:?}"
+            );
+        };
+        seed(&["init"]);
+        seed(&["config", "user.email", "outer@example.com"]);
+        seed(&["config", "user.name", "Outer Repo"]);
+        std::fs::write(outer_path.join("keep.txt"), "outer").expect("write outer file");
+        seed(&["add", "."]);
+        seed(&["commit", "-m", "outer init"]);
+        let outer_before = snapshot_git_identity(outer_path);
+
+        // `inner` sits UNDER `outer` with no `.git` — the exact condition under
+        // which plain git discovery walks up into `outer`.
+        let inner = outer_path.join("inner-no-git");
+        std::fs::create_dir(&inner).expect("create inner dir");
+
+        // Under iso_git, GIT_DIR points at the non-existent `inner/.git`, so git
+        // must refuse rather than discover `outer`. The write MUST fail and MUST
+        // NOT touch `outer`.
+        let out = iso_git(&inner)
+            .args(["commit", "--allow-empty", "-m", "would-escape"])
+            .output()
+            .expect("git commit must spawn");
+        assert!(
+            !out.status.success(),
+            "an isolated commit in a repo-less dir must fail loudly, not escape into an ancestor repo"
+        );
+
+        let outer_after = snapshot_git_identity(outer_path);
+        assert_eq!(
+            outer_before, outer_after,
+            "iso_git must not let a git write in an ancestor-nested dir escape into the outer \
+             repository (HEAD/reflog/worktree list/identity must be unchanged)"
+        );
     }
 }

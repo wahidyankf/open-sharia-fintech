@@ -365,9 +365,21 @@ impl SpecsTreeWorld {
 /// whichever repository is `dir`'s nearest ancestor via git's own upward
 /// repository-discovery walk.
 fn run_git(dir: &Path, args: &[&str]) {
+    // Every caller passes a repository root as `dir`, so `dir/.git` is the repo's
+    // git directory (created by `git init` when args == ["init", …]). Pinning
+    // GIT_DIR explicitly makes git perform NO upward repository-discovery walk:
+    // even if this process's CWD races to the real worktree under cucumber-rs's
+    // concurrency, git operates on exactly `dir/.git` and can never fall back to
+    // an ancestor repository. GIT_CEILING_DIRECTORIES caps any residual walk, and
+    // nulling global/system config keeps identity deterministic and prevents dev
+    // identity from bleeding in. See root.rs `iso_git` for the shared rationale.
     let output = Command::new("git")
         .args(args)
         .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
         .env("GIT_AUTHOR_NAME", "t")
         .env("GIT_AUTHOR_EMAIL", "t@t")
         .env("GIT_COMMITTER_NAME", "t")
@@ -1776,6 +1788,14 @@ fn given_wt_linked_worktree(w: &mut SpecsTreeWorld) {
     let status = Command::new("git")
         .args(["worktree", "add", &wt_path.to_string_lossy(), "HEAD"])
         .current_dir(main)
+        // Same isolation as run_git: pin GIT_DIR to main so this write cannot
+        // escape into an ancestor repo via a CWD race. worktree add resolves the
+        // linked worktree location from its explicit path argument, so no
+        // GIT_WORK_TREE is needed (and setting one would misdirect it).
+        .env("GIT_DIR", main.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", main)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
         .status()
         .expect("git worktree add");
     assert!(status.success(), "git worktree add must succeed");

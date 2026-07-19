@@ -52,3 +52,32 @@ Entry shape:
   change touched is insufficient — it misses ambient drift. The gate should compare the whole tracked
   subtree hash (`git ls-tree -r HEAD -- apps/rhino-cli specs/apps/rhino/.../gherkin`) across repos.
   Candidate hardening for the SDLC Gate Standard / a rhino-cli CI cross-repo check.
+
+## Learning: exit-status checking is NECESSARY BUT NOT SUFFICIENT — git fixtures still escaped
+
+- **Context**: During P7 (review cycles), running the git-root fixtures in the real worktrees
+  (flaky pre-push `nx test:quick` in primer/infra + a neutered RED-proof `cargo test` in public)
+  corrupted all 3 real repos: fixture commits (`init`/`Test`, `ancestor init`/`Ancestor Real Repo`)
+  landed on the real branch, HEAD tree collapsed to a single `README.md`, local `user.*` overwritten,
+  and the corrupted HEAD was pushed to all 3 PR branches. This happened in primer/infra WITH the
+  exit-status-checked fixture in place.
+- **Observation**: the tempdirs live under `$TMPDIR` (`/var/folders/...`), a different tree from the
+  real repo (`~/ose-projects/...`), so git's upward `.git` discovery from a _correct_ tempdir path
+  cannot reach the real repo. The escape therefore is NOT unchecked-init upward-discovery (the plan's
+  confirmed mechanism) — it is a git command resolving against the wrong working directory: process-
+  global `std::env::set_current_dir` (the reason `CwdLock` exists) racing under concurrency
+  (cucumber-rs runs up to 64 scenarios in parallel; the unit test spawns a fixture thread alongside a
+  `find_root()` call), so a command resolves via inherited CWD = real worktree instead of its tempdir.
+  Exit-status checking does nothing for this vector.
+- **Why it generalizes**: passes, strongly. ANY test that shells out to git is one CWD race or one
+  missing `.current_dir()` away from mutating the real repo. The robust, mechanism-agnostic fix is
+  defense-in-depth ISOLATION, not more assertions on one vector:
+  1. `GIT_CEILING_DIRECTORIES=<tempdir>` — git will not search for `.git` above the tempdir.
+  2. explicit `GIT_DIR=<tempdir>/.git` + `GIT_WORK_TREE=<tempdir>` — git performs no discovery at all.
+  3. `GIT_CONFIG_GLOBAL=/dev/null` + `GIT_CONFIG_SYSTEM=/dev/null` — no dev-identity bleed, deterministic.
+  4. a pre-write escape-guard: assert `git rev-parse --show-toplevel` == the intended tempdir (canonical)
+     before ANY write; panic (fail loud) if git would resolve anywhere else.
+     This is the deeper git-root fix (reopens the plan) AND a cross-repo governance convention (any
+     git-touching fixture, any language). Corollary process lesson: NEVER run git-fixture tests in the
+     primary/real worktree while diagnosing this class — run them in a throwaway clone, or the diagnosis
+     itself corrupts the repo (as it did here).
