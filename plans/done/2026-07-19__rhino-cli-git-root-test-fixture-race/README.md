@@ -1,5 +1,8 @@
 # rhino-cli Git Root Test Fixture Race
 
+**Status**: Done (2026-07-19) — delivered across all 3 repos (ose-public #74, ose-primer #10,
+ose-infra #12); 3 PR-review cycles complete (0 CRITICAL/0 HIGH), CI green, byte-identity verified.
+
 ## Context
 
 `apps/rhino-cli/src/infrastructure/git/root.rs` contains a test,

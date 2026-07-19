@@ -73,7 +73,10 @@ Entry shape:
   missing `.current_dir()` away from mutating the real repo. The robust, mechanism-agnostic fix is
   defense-in-depth ISOLATION, not more assertions on one vector:
   1. `GIT_CEILING_DIRECTORIES=<tempdir>` — git will not search for `.git` above the tempdir.
-  2. explicit `GIT_DIR=<tempdir>/.git` + `GIT_WORK_TREE=<tempdir>` — git performs no discovery at all.
+  2. explicit `GIT_DIR=<tempdir>/.git` — git performs no upward discovery at all (it ignores CWD for
+     locating the repo). Do NOT also set `GIT_WORK_TREE`: it misdirects `git worktree add` and makes
+     the Standard-4 escape guard tautological (`git rev-parse --show-toplevel` would just echo the
+     variable). The work tree is inferred from the command's CWD, which the escape guard then verifies.
   3. `GIT_CONFIG_GLOBAL=/dev/null` + `GIT_CONFIG_SYSTEM=/dev/null` — no dev-identity bleed, deterministic.
   4. a pre-write escape-guard: assert `git rev-parse --show-toplevel` == the intended tempdir (canonical)
      before ANY write; panic (fail loud) if git would resolve anywhere else.
@@ -81,3 +84,25 @@ Entry shape:
      git-touching fixture, any language). Corollary process lesson: NEVER run git-fixture tests in the
      primary/real worktree while diagnosing this class — run them in a throwaway clone, or the diagnosis
      itself corrupts the repo (as it did here).
+
+## Triage (Phase 8 Knowledge Capture)
+
+Litmus applied to every entry; both safety gates pass (no secrets — the `test@test.com` identity is a
+synthetic fixture value, not a credential; no infra-private content, so nothing is cross-repo-gated).
+Each surviving entry is routed to exactly one durable home:
+
+- **Entries 1 + 4 (exit-status blindness; exit-status necessary-but-not-sufficient → defense-in-depth
+  isolation)** → durable home: the new
+  [Git Fixture Isolation Convention](../../../repo-governance/development/quality/git-fixture-isolation.md)
+  (six mandatory layers), landed in this plan's own PR as its governance deliverable. `GIT_WORK_TREE`
+  is documented there (and corrected above at step 2) as deliberately-unset.
+- **Entry 2 (`[user] Test <test@test.com>` local-config corruption is the bug's live footprint)** →
+  durable home: memory `project_git_identity_test_override_live_incident` (already captured). No repo
+  change — the fixture fix prevents recurrence and the Git Identity Guardrail keeps remediation human-only.
+- **Entry 3 (byte-identity gate must diff the whole tracked subtree, not just changed files)** →
+  code-routing learning → durable home: `plans/ideas.md` standing-idea for a tri-repo `apps/rhino-cli`
+  subtree-hash CI gate (the `rhino-cli-source-drift-reconciliation` after-action, added 2026-07-17).
+  Per the code-routing rule it is NOT landed inline here; it lives as a future backlog candidate. This
+  plan's Phase 6a/6b gate already adopted the full-subtree-hash comparison manually.
+
+No un-homed generalizable learning remains.
