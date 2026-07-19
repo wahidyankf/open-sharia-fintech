@@ -18,7 +18,7 @@ The full `capstone-forge-ready` spec (goal, concepts-exercised checklist, ordere
 criteria, and done bar) lives in the sibling plan, embedded in the anchor course's
 `## Capstone spec — inter-topic: capstone-forge-ready` section, and is the **single source of truth**:
 
-- [`03-extending-neovim.md`](../../../in-progress/fundamentally-strong-software-engineer/syllabus/03-extending-neovim.md)
+- [`03-extending-neovim.md`](../../../done/2026-07-19__fundamentally-strong-software-engineer/syllabus/03-extending-neovim.md)
   — see its **Capstone spec — inter-topic: `capstone-forge-ready`** section.
 
 See [overview.md](./overview.md) for the capstone policy and the shared-library architecture, and

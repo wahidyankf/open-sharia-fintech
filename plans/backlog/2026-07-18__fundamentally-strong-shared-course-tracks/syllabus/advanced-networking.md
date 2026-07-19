@@ -14,7 +14,7 @@ is a **pointer file**, not a full worked-example page. Order is NOT a property o
 The full worked content for `advanced-networking` (Concepts `co-NN`, Worked examples `ex-NN`, and the intra-course
 Capstone spec) lives in the sibling plan and is the **single source of truth**:
 
-- [`29-advanced-networking.md`](../../../in-progress/fundamentally-strong-software-engineer/syllabus/29-advanced-networking.md)
+- [`29-advanced-networking.md`](../../../done/2026-07-19__fundamentally-strong-software-engineer/syllabus/29-advanced-networking.md)
 
 See [overview.md](./overview.md) for the shared-library architecture and the per-course file template,
 and [README.md](./README.md) for the full course catalog (this course's format, language, and short

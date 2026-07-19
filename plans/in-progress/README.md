@@ -4,9 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [fundamentally-strong-software-engineer](./fundamentally-strong-software-engineer/) — new breadth-first
-  relearn-and-drill tutorial section on ayokoding-www (61 topics, Pass 0 forge prologue + five-pass
-  spiral, learning + drilling tracks, Python-primary). Delivery Mode: `main-to-origin-main`.
 - [e2e-coverage-rule-feature-skip-fixme-gap](./e2e-coverage-rule-feature-skip-fixme-gap/README.md) —
   the e2e-coverage gap detector's `@skip`/`@fixme` special-tag detection is scoped to
   `Scenario Outline` level only; `Rule:`/`Feature:`-level tags produce the same undetected shape one

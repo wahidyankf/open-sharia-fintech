@@ -6,6 +6,31 @@ the single source of truth. Each per-topic phase below reads its row from that t
 items + worked examples + capstone spec from that topic's [syllabus/ file](./syllabus/). When a topic
 is added/removed, edit the prd table + its syllabus file, then add or drop the matching phase here.
 
+## Terminal Status — CLOSED (delivered-as-descoped, 2026-07-19)
+
+This plan is **closed**. It did **not** run to its full 94-topic scope; it was deliberately
+**descoped and its remainder transferred** to a successor plan. Recorded honestly so a future reader
+does not mistake a 94-topic plan closed at topic 33 for abandonment.
+
+- **DELIVERED** — **Pass 0, Pass 1, Pass 2 (Phases 0–37): topics 1–33 + their intra-topic and
+  pass-boundary capstones**, authored, live, and **deployed to production** on 2026-07-19
+  (`prod-ayokoding-www` @ `e21f7a212`; content under
+  `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/`). Phases 0–3 landed via
+  `main-to-origin-main`; Phases 4–37 via `worktree-to-pr` per-phase PRs (#67–#75 et al.), each
+  3-cycle-reviewed and AI-auto-merged.
+- **TRANSFERRED (not abandoned)** — **Pass 3, Pass 4, Pass 5 (Phases 38–109): topics 34–94** and their
+  capstones. This remaining scope is **absorbed by the successor plan**
+  [`fundamentally-strong-shared-course-tracks`](../../backlog/2026-07-18__fundamentally-strong-shared-course-tracks/README.md)
+  (being promoted to `in-progress`), which re-architects the whole curriculum into a **shared course
+  library** (`/en/c/learn/courses/<course-id>`) consumed by **two path manifests** —
+  `interview-ready/software-engineer` (interview-first) and `immediately-effective/software-engineer`
+  (shipping-first) at `/en/c/learn/path/<path-id>`. Under the successor, topics 34–94 are authored
+  **natively into the `courses/` library** (no legacy home), and topics 1–33 are re-homed there with
+  redirects.
+- **Phase 38–109 checklist below is retained as historical scope** — the transferred topic set and its
+  per-topic detail feed the successor's reconciled course catalog. It is **not** executed under this
+  plan.
+
 ## Executor Legend
 
 - **[AI]** — an AI agent performs this step autonomously (authoring, web-research, checking,

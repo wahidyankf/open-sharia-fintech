@@ -1,5 +1,12 @@
 # The Fundamentally Strong Software Engineer
 
+> **Status: CLOSED — delivered-as-descoped (2026-07-19).** Passes 0–2 (Phases 0–37, topics 1–33 +
+> capstones) delivered, live, and **deployed to production**. Passes 3–5 (topics 34–94) **transferred**
+> to the successor plan
+> [`fundamentally-strong-shared-course-tracks`](../../backlog/2026-07-18__fundamentally-strong-shared-course-tracks/README.md)
+> (shared course library + two path manifests: `interview-ready` / `immediately-effective`). Not
+> abandoned. See [delivery.md §Terminal Status](./delivery.md#terminal-status--closed-delivered-as-descoped-2026-07-19).
+
 A cross-cutting **relearn-and-drill** tutorial section on ayokoding-www that lets a working
 software engineer re-ground themselves across the breadth of the discipline — computer science
 through IT security — via two parallel tracks: **learning** (by-example-depth per topic) and

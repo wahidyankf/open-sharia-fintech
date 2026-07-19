@@ -114,7 +114,7 @@ Full phase list in [delivery.md](./delivery.md).
 
 ## Depends-on
 
-**Hard dependency**: [`plans/in-progress/fundamentally-strong-software-engineer/`](../../in-progress/fundamentally-strong-software-engineer/README.md)
+**Hard dependency**: [`plans/done/2026-07-19__fundamentally-strong-software-engineer/`](../../done/2026-07-19__fundamentally-strong-software-engineer/README.md)
 must be **fully DONE** — all 94 topics + 3 capstones authored and live under the sibling plan's
 `.../fundamentally-strong/software-engineer/` content home — **before this plan
 executes**. [Judgment call] At authoring time (2026-07-18) the live content tree holds only the
