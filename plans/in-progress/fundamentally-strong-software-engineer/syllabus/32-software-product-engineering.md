@@ -40,9 +40,12 @@ execution.
   - **RICE** — Sean McBride, Intercom blog, Jan 2018; formula `(Reach × Impact × Confidence) ÷ Effort`.
   - **MoSCoW** — Dai Clegg (Oracle UK, ~1994), donated to the DSDM Consortium; "Won't" means "won't _this
     time_" (out of scope for this timebox), not permanent rejection.
-  - **Kano model** — Noriaki Kano et al., "Attractive Quality and Must-Be Quality," 1984; the core three are
-    must-be/performance/attractive. `[Needs Verification]` — "indifferent" and "reverse" are commonly-added
-    later extensions, not confirmed present in the original 1984 paper; present the core three as original.
+  - **Kano model** — Noriaki Kano et al., "Attractive Quality and Must-Be Quality," 1984; teach the three
+    practically load-bearing categories — must-be/one-dimensional(performance)/attractive. Resolved
+    2026-07-18 (see re-verification entry below): secondary academic literature attributes a fourth
+    category, "indifferent," to the 1984 original alongside these three; "reverse quality" is documented
+    in later literature and is not confirmed as part of the original four — present must-be/performance/
+    attractive as this topic's teaching core, and indifferent/reverse as recognized-but-secondary categories.
   - **AARRR "Pirate Metrics"** — Dave McClure, "Startup Metrics for Pirates," 2007 (predates 500 Startups;
     do not credit the firm).
   - **North-star metric** — coined/popularized by Sean Ellis; systematized as the North Star Framework by
@@ -59,8 +62,10 @@ execution.
   - **Feature-toggle taxonomy** (release / experiment / ops / permission) — authored by **Pete Hodgson**,
     published _on_ martinfowler.com (2016). Credit Hodgson, not Fowler himself.
   - **Four big risks** (value / usability / feasibility / viability) — Marty Cagan, SVPG / _Inspired_.
-    **Dual-track discovery+delivery** — Jeff Patton / Cagan. `[Needs Verification]` — the claim that Cagan
-    later dropped "dual-track" terminology came from secondary sources only; state as principle, not history.
+    **Dual-track discovery+delivery** — Jeff Patton / Cagan. Resolved 2026-07-18 (see re-verification entry
+    below): confirmed via a primary source that Cagan's current writing avoids the term and frames a
+    discovery/delivery team split as an anti-pattern; teach this as a principle (one continuous
+    cross-functional team, not two), not as a dated historical claim about a dropped term.
   - **HEART** (Happiness/Engagement/Adoption/Retention/Task-success) — Rodden, Hutchinson & Fu, Google, ACM
     CHI 2010.
   - **Goodhart's Law** — concept: Charles Goodhart (1975); the popular phrasing "when a measure becomes a
@@ -71,10 +76,41 @@ execution.
     _Working Backwards_ (2021). **Shape Up** (appetite / shaping / betting / circuit-breaker) — Ryan Singer,
     Basecamp (2019), basecamp.com/shapeup.
   - **WSJF** — Reinertsen's CD3: `WSJF = Cost of Delay ÷ Duration` (_Principles of Product Development Flow_,
-    2009). `[Needs Verification]` — SAFe's proxy sub-formula (Business Value + Time Criticality + RR/OE) was
-    behind a login; cite Reinertsen's core ratio, flag SAFe's variant as related-but-different.
+    2009). Resolved 2026-07-18 (see re-verification entry below): SAFe's proxy sub-formula (Business/user
+    Value + Time Criticality + Risk Reduction/Opportunity Enablement, divided by Job Size) is confirmed via
+    SAFe's own public page; cite Reinertsen's core ratio as this topic's primary formula, flag SAFe's named-
+    factor variant as a related-but-distinct proprietary elaboration.
   - **Impact–effort matrix** — a generic/folk 2×2 with no verifiable single originator; present it as a
     common tool, do **not** attribute it to a named person or company.
+- 2026-07-18 — `web-researcher` follow-up pass resolving the three `[Needs Verification]` items above
+  (Phase 35 V step); all three fetched live and read directly (not from cache or a secondary quote):
+  - **Kano model categories**: `en.wikipedia.org/wiki/Kano_model`'s "Satisfaction drivers terminology"
+    comparison table (citing Bartikowski & Llosa, 2003, "Identifying Satisfiers, Dissatisfiers, Criticals
+    and Neutrals in Customer Satisfaction," Euromed working paper) attributes **four** driver types
+    directly to "Kano (1984)": Must-be, Attractive, One-dimensional, and Indifferent — "Reverse Quality" is
+    documented on the same page but not attributed to the 1984 row in that comparison table. Resolution:
+    treat must-be/one-dimensional/attractive as the practically load-bearing three this topic teaches;
+    treat "indifferent" as also traceable to the 1984 original per this secondary academic source, and
+    "reverse" as a related-but-separately-documented category, not confirmed part of the original four.
+  - **Dual-track discovery+delivery**: fetched Marty Cagan's own article "Discovery – Delivery"
+    (svpg.com/discovery-delivery/, Oct 30, 2020, part of his "common confusions" series, still live as of
+    2026-07-18) directly. The article never uses the phrase "dual-track" and explicitly calls a
+    discovery-team/delivery-team split a "very damaging anti-pattern," insisting on one continuous,
+    cross-functional team doing both. This is a primary source consistent with (though not a verbatim
+    quote of) the secondary reports that Cagan moved away from the "dual-track" phrasing. Resolution:
+    teach the underlying principle (one team, continuous discovery+delivery) as intended; do not assert a
+    dated "he dropped the term on date X" historical claim, which remains unconfirmed as a discrete event.
+  - **WSJF / SAFe proxy formula**: fetched `framework.scaledagile.com/wsjf/` (canonical redirect target of
+    `scaledagileframework.com/wsjf/`) directly on 2026-07-18. The publicly visible portion (no login
+    required) confirms SAFe estimates WSJF as relative Cost of Delay ÷ relative job duration, with Cost of
+    Delay composed of relative user/business value, time criticality, and risk reduction/opportunity
+    enablement — matching the commonly-cited proxy sub-formula's factor list; the full worked-arithmetic
+    breakdown remains gated behind SAFe's login as of this date (the page literally reads "Log in to
+    continue reading" past the definition). Resolution: cite Reinertsen's core CD3 ratio (Cost of Delay ÷
+    Duration, _Principles of Product Development Flow_, 2009) as this topic's primary, non-proprietary
+    formula; name SAFe's factor list (value, time criticality, risk reduction/opportunity enablement, job
+    size) as a related-but-distinct proprietary elaboration, confirmed public but not fully reproduced here
+    (its complete worked formula is gated).
 
 ## Concepts
 
