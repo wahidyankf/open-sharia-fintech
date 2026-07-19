@@ -328,7 +328,7 @@ pathId)` appending `?path=<pathId>` — command: `npx nx run ayokoding-www:test:
       [Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md)
       at authoring time (Path A: current LTS-compatible latest patch, CVE-clean) — acceptance:
       `js-yaml` appears in `apps/ayokoding-www/package.json` `dependencies` with an exact version; `npm
-install` resolves with no peer-dependency warning for it.
+  install` resolves with no peer-dependency warning for it.
 - [ ] [AI] **GREEN** — implement `<FEAT>shell/manifest-repository.ts` to read + parse each
       `<FEAT>manifests/<path-id>.yaml` data file via the now-direct `js-yaml` dependency (RESOLVED: the
       manifest data files are always `.yaml`; no JSON fallback); extend the content index to carry

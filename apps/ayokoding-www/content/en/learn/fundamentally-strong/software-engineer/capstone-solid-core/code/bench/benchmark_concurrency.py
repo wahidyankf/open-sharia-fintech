@@ -5,11 +5,15 @@ Seeds a real SQLite database with many habits, each with a long check-in history
 timing numbers are printed -- a benchmark that skipped the correctness check could silently
 compare a slow-but-right implementation to a fast-but-wrong one.
 
-Run: python3 -m bench.benchmark_concurrency   (from capstone-solid-core/code/, inside the venv)
+Run (large, realistic scale -- the default): python3 -m bench.benchmark_concurrency
+Run (small scale, to reproduce ADR-0003's small-workload finding):
+    python3 -m bench.benchmark_concurrency --num-habits 16 --checkins-per-habit 8000
+(from capstone-solid-core/code/, inside the venv)
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import random
 import sys
@@ -63,11 +67,26 @@ def _seed_database(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--num-habits",
+        type=int,
+        default=40,
+        help="Number of habits to seed (default: 40, the large-scale scenario).",
+    )
+    parser.add_argument(
+        "--checkins-per-habit",
+        type=int,
+        default=25_000,
+        help="Check-ins per habit to seed (default: 25000, the large-scale scenario).",
+    )
+    args = parser.parse_args()
+
     db_path = "/tmp/capstone-solid-core-concurrency-bench.db"
     if os.path.exists(db_path):
         os.remove(db_path)
-    num_habits = 40
-    checkins_per_habit = 25_000
+    num_habits = args.num_habits
+    checkins_per_habit = args.checkins_per_habit
     print(
         f"Seeding {num_habits} habits x {checkins_per_habit} check-ins each "
         f"({num_habits * checkins_per_habit} total rows)..."

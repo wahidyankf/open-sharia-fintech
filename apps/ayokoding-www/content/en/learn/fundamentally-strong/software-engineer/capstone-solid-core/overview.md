@@ -1424,7 +1424,9 @@ app / migration_v3.sql
 -- specific habit each one belongs to. Reached through the ORIGINAL normalized schema, that
 -- query has to JOIN checkins to habits just to filter by user_id, then SORT the joined rows by
 -- checkin_date -- confirmed for real via EXPLAIN QUERY PLAN (see bench/explain_query_plan.sh):
--- `SCAN checkins` (a full table scan) followed by `USE TEMP B-TREE FOR ORDER BY`.
+-- `SEARCH h USING COVERING INDEX idx_habits_user_id (user_id=?)` then
+-- `SEARCH c USING COVERING INDEX sqlite_autoindex_checkins_1 (habit_id=?)` (NOT a full table
+-- scan -- both sides of the join already use an index) followed by `USE TEMP B-TREE FOR ORDER BY`.
 --
 -- FIX: a deliberate, DOCUMENTED denormalization (topic 26 co-XX denormalization-tradeoffs) --
 -- copy `user_id` onto `checkins` (it never changes after a habit is created, so there is no
@@ -1659,11 +1661,15 @@ Seeds a real SQLite database with many habits, each with a long check-in history
 timing numbers are printed -- a benchmark that skipped the correctness check could silently
 compare a slow-but-right implementation to a fast-but-wrong one.
 
-Run: python3 -m bench.benchmark_concurrency   (from capstone-solid-core/code/, inside the venv)
+Run (large, realistic scale -- the default): python3 -m bench.benchmark_concurrency
+Run (small scale, to reproduce ADR-0003's small-workload finding):
+    python3 -m bench.benchmark_concurrency --num-habits 16 --checkins-per-habit 8000
+(from capstone-solid-core/code/, inside the venv)
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import random
 import sys
@@ -1717,11 +1723,26 @@ def _seed_database(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--num-habits",
+        type=int,
+        default=40,
+        help="Number of habits to seed (default: 40, the large-scale scenario).",
+    )
+    parser.add_argument(
+        "--checkins-per-habit",
+        type=int,
+        default=25_000,
+        help="Check-ins per habit to seed (default: 25000, the large-scale scenario).",
+    )
+    args = parser.parse_args()
+
     db_path = "/tmp/capstone-solid-core-concurrency-bench.db"
     if os.path.exists(db_path):
         os.remove(db_path)
-    num_habits = 40
-    checkins_per_habit = 25_000
+    num_habits = args.num_habits
+    checkins_per_habit = args.checkins_per_habit
     print(
         f"Seeding {num_habits} habits x {checkins_per_habit} check-ins each "
         f"({num_habits * checkins_per_habit} total rows)..."
@@ -1947,13 +1968,20 @@ that has to be measured, and here it changed which implementation actually shipp
 (rebuilding a hash-set from every stored check-in row, then the O(n) scan), which a THREAD pool
 would not meaningfully parallelize (GIL-bound), so a `ProcessPoolExecutor` was chosen. It is
 called directly as a batch job (not behind a synchronous HTTP route -- see digest.py's own
-docstring for why). First benchmarked at a modest scale (16 habits x 8,000
-check-ins), `concurrent_digest` was measurably SLOWER than `sequential_digest` (0.62x) --
-spawning worker processes and importing `pydantic` fresh in each one costs tens of milliseconds
-per process, which dominated a workload whose real per-habit work was only a few milliseconds.
-At a larger, still realistic scale (40 habits x 25,000 check-ins = 1,000,000 rows),
-`concurrent_digest` measured 1.7x-2.3x FASTER across repeated runs -- the fixed process-pool
-startup cost is paid ONCE per `with ProcessPoolExecutor(...)` block, and is only worth paying
+docstring for why). First benchmarked at a modest scale (16 habits x 8,000 check-ins --
+reproducible via `python3 -m bench.benchmark_concurrency --num-habits 16
+--checkins-per-habit 8000`), `concurrent_digest` was measurably SLOWER than
+`sequential_digest` on every repeated run -- spawning worker processes and importing
+`pydantic` fresh in each one costs tens of milliseconds per process, which dominated a
+workload whose real per-habit work was only a few milliseconds. The exact ratio is itself
+noisy at this small a scale (eight repeated runs on the machine that authored this ADR
+measured between 0.13x and 0.69x -- roughly 1.4x to 8x slower than sequential, never
+faster) because a fixed, OS-scheduled process-spawn cost competes with whatever else the
+machine is doing at that instant; the DIRECTION (slower) reproduces every run, so no single
+precise ratio is quoted here. At a larger, still realistic scale (40 habits x 25,000
+check-ins = 1,000,000 rows), `concurrent_digest` measured 1.7x-2.3x FASTER across repeated
+runs -- the fixed process-pool startup cost is paid ONCE per `with
+ProcessPoolExecutor(...)` block, and is only worth paying
 when the total real work clears that fixed cost by a wide margin. **Decision**: ship
 `concurrent_digest`, and document the small-workload finding here rather than hide it -- it is
 the actual engineering lesson topic 24 teaches: concurrency has overhead, and the right call
@@ -1965,10 +1993,13 @@ This app's database is SQLite, not PostgreSQL -- topic 26's own teaching engine 
 specifically for `EXPLAIN ANALYZE`'s execution-time statistics (confirmed by reading
 sqlite.org/lang_explain.html directly: SQLite's grammar has `EXPLAIN` and
 `EXPLAIN QUERY PLAN`, no `ANALYZE` keyword). Reading this app's OWN engine's real
-`EXPLAIN QUERY PLAN` output for a "recent activity across all my habits" query showed `SEARCH
-c USING COVERING INDEX sqlite_autoindex_checkins_1` plus `USE TEMP B-TREE FOR ORDER BY` -- the
-normalized schema forces a join from `checkins` to `habits` just to filter by `user_id`, then a
-sort. **Decision**: denormalize `user_id` onto `checkins` (it never changes after a habit is
+`EXPLAIN QUERY PLAN` output for a "recent activity across all my habits" query showed TWO
+indexed searches -- `SEARCH h USING COVERING INDEX idx_habits_user_id (user_id=?)` then
+`SEARCH c USING COVERING INDEX sqlite_autoindex_checkins_1 (habit_id=?)` -- plus
+`USE TEMP B-TREE FOR ORDER BY` (NOT a full table scan; see `bench/explain_query_plan.sh`):
+the normalized schema still forces a join from `checkins` to `habits` just to filter by
+`user_id`, then a sort, even with both sides of the join reached through an index.
+**Decision**: denormalize `user_id` onto `checkins` (it never changes after a habit is
 created, so this specific denormalization introduces no update-anomaly risk) and add a
 composite index `(user_id, checkin_date DESC)` (`migration_v3.sql`). The SAME query re-read via
 `EXPLAIN QUERY PLAN` afterward shows a single `SEARCH checkins USING INDEX

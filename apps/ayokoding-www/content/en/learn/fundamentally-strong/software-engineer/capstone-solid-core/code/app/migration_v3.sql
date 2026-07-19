@@ -7,7 +7,9 @@
 -- specific habit each one belongs to. Reached through the ORIGINAL normalized schema, that
 -- query has to JOIN checkins to habits just to filter by user_id, then SORT the joined rows by
 -- checkin_date -- confirmed for real via EXPLAIN QUERY PLAN (see bench/explain_query_plan.sh):
--- `SCAN checkins` (a full table scan) followed by `USE TEMP B-TREE FOR ORDER BY`.
+-- `SEARCH h USING COVERING INDEX idx_habits_user_id (user_id=?)` then
+-- `SEARCH c USING COVERING INDEX sqlite_autoindex_checkins_1 (habit_id=?)` (NOT a full table
+-- scan -- both sides of the join already use an index) followed by `USE TEMP B-TREE FOR ORDER BY`.
 --
 -- FIX: a deliberate, DOCUMENTED denormalization (topic 26 co-XX denormalization-tradeoffs) --
 -- copy `user_id` onto `checkins` (it never changes after a habit is created, so there is no
