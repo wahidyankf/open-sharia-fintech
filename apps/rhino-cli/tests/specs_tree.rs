@@ -356,16 +356,87 @@ impl SpecsTreeWorld {
 }
 
 /// Runs `git` with `args` inside `dir`, using a fixed synthetic identity.
+///
+/// Checks the subprocess's exit status (not just that it spawned) — see
+/// `apps/rhino-cli/src/infrastructure/git/root.rs`'s `build_worktree_fixture`
+/// doc comment for the isolation hazard this guards against: cucumber-rs runs
+/// scenarios concurrently (up to 64 by default), so a silently-failed `git
+/// init` here could otherwise let a later "isolated" git command fall back to
+/// whichever repository is `dir`'s nearest ancestor via git's own upward
+/// repository-discovery walk.
+/// Pre-write escape guard (Git Fixture Isolation convention, Standard 4). Panics
+/// unless git, under the same isolation env as [`run_git`], resolves its
+/// top-level to `dir` (canonicalized). Called before every write once `dir/.git`
+/// exists, so a would-be escape — a missed isolation env on a future write, or a
+/// discovery path not otherwise closed — fails loud instead of silently
+/// corrupting the real repository. GIT_WORK_TREE is deliberately NOT set: it
+/// would make `--show-toplevel` merely echo the variable, defeating the guard.
+fn assert_no_escape(dir: &Path) {
+    let out = Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
+        .output()
+        .expect("escape-guard: git rev-parse must spawn");
+    assert!(
+        out.status.success(),
+        "escape-guard: `git rev-parse --show-toplevel` failed in {} (git could not confirm an \
+         isolated repository here): {}",
+        dir.display(),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let top = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    let want = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_path_buf());
+    let got = std::fs::canonicalize(&top).unwrap_or_else(|_| Path::new(&top).to_path_buf());
+    assert_eq!(
+        got,
+        want,
+        "escape-guard: fixture git resolves to {}, not the intended tempdir {} — \
+         refusing to proceed to avoid corrupting the real repository",
+        got.display(),
+        want.display()
+    );
+}
+
 fn run_git(dir: &Path, args: &[&str]) {
-    Command::new("git")
+    // Every caller passes a repository root as `dir`, so `dir/.git` is the repo's
+    // git directory (created by `git init` when args == ["init", …]). Pinning
+    // GIT_DIR explicitly makes git perform NO upward repository-discovery walk:
+    // even if this process's CWD races to the real worktree under cucumber-rs's
+    // concurrency, git operates on exactly `dir/.git` and can never fall back to
+    // an ancestor repository. GIT_CEILING_DIRECTORIES caps any residual walk, and
+    // nulling global/system config keeps identity deterministic and prevents dev
+    // identity from bleeding in. See root.rs `iso_git` for the shared rationale.
+    //
+    // Standard 4 (pre-write escape guard): before every write, once `dir/.git`
+    // exists, prove git still resolves to `dir`. `git init` is the sole pre-repo
+    // command (no `.git` yet) and is exempt — its own failure is caught by the
+    // exit-status assert below.
+    if dir.join(".git").is_dir() {
+        assert_no_escape(dir);
+    }
+    let output = Command::new("git")
         .args(args)
         .current_dir(dir)
+        .env("GIT_DIR", dir.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", dir)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
         .env("GIT_AUTHOR_NAME", "t")
         .env("GIT_AUTHOR_EMAIL", "t@t")
         .env("GIT_COMMITTER_NAME", "t")
         .env("GIT_COMMITTER_EMAIL", "t@t")
         .output()
-        .expect("git command");
+        .expect("git command must spawn");
+    assert!(
+        output.status.success(),
+        "git {args:?} in {} must exit zero, got: {}",
+        dir.display(),
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
 /// Runs the compiled `rhino-cli` binary with `args` inside `dir` and returns
@@ -1759,9 +1830,19 @@ fn given_wt_linked_worktree(w: &mut SpecsTreeWorld) {
 
     let wt_dir = TempDir::new().expect("tempdir wt");
     let wt_path = wt_dir.path().to_path_buf();
+    // Standard 4: guard before this write too (it does not go through run_git).
+    assert_no_escape(main);
     let status = Command::new("git")
         .args(["worktree", "add", &wt_path.to_string_lossy(), "HEAD"])
         .current_dir(main)
+        // Same isolation as run_git: pin GIT_DIR to main so this write cannot
+        // escape into an ancestor repo via a CWD race. worktree add resolves the
+        // linked worktree location from its explicit path argument, so no
+        // GIT_WORK_TREE is needed (and setting one would misdirect it).
+        .env("GIT_DIR", main.join(".git"))
+        .env("GIT_CEILING_DIRECTORIES", main)
+        .env("GIT_CONFIG_GLOBAL", "/dev/null")
+        .env("GIT_CONFIG_SYSTEM", "/dev/null")
         .status()
         .expect("git worktree add");
     assert!(status.success(), "git worktree add must succeed");

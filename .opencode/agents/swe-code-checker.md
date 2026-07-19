@@ -320,6 +320,43 @@ types, including cosmetic/visual, though the _form_ of the test adapts to the de
 - **Criticality**: HIGH when a bug/regression fix lands with no reproducing test. Unlike Step 6.6, the
   pure-refactor exemption does **not** apply — a fix, by definition, changes behavior to correct it.
 
+### Step 6.8: Git Fixture Isolation (Test Fixtures Shelling Out to `git`)
+
+**Reference**: [Git Fixture Isolation Convention](../../repo-governance/development/quality/git-fixture-isolation.md)
+
+For any test or fixture file (any language) that invokes a raw `git` subprocess to create or
+mutate a **throwaway** repository (`git init`, `git commit`, `git config`, `git worktree add`,
+`git branch`, `git checkout -b`, `git reset --hard`, or equivalents), verify all **six** mandatory
+isolation layers are present:
+
+1. `GIT_CEILING_DIRECTORIES` set to the fixture's temp root
+2. Explicit `GIT_DIR` set — no reliance on `current_dir()`/process CWD to select the repository.
+   (`GIT_WORK_TREE` is context-dependent, **not** mandatory: it must be absent for `git worktree
+add` and the escape guard, so its absence alone is never a finding.)
+3. `GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_SYSTEM=/dev/null` set
+4. A pre-write escape guard (canonicalized `git rev-parse --show-toplevel` compared against the
+   intended tempdir, failing loud on mismatch) called before every write subcommand
+5. A real exit-status check (`status.success()` or the language equivalent) on every `git`
+   subprocess — a bare `.expect()`/try-catch around the spawn call alone does **not** satisfy this;
+   it only fails if the process could not be spawned, not if `git` itself returned non-zero
+
+A grep-based starting point for locating candidate fixture files:
+
+```bash
+rg -l 'Command::new\("git"\)|exec\.Command\("git"|child_process\.(spawn|exec(File)?)\("git"|subprocess\.(run|Popen)\(\s*\[?"git"|ProcessStartInfo\(.*"git"' \
+  -g '*test*' -g '*fixture*' -g '*spec*'
+```
+
+For each match, confirm all five code-level layers (1-5 above) appear in the same function or a
+shared helper it calls. Layer 6 (never diagnosing this class of fixture in the primary/real
+worktree — throwaway clone only) is a process rule, not a code-level check, and is out of scope
+for this static check.
+
+- **Criticality**: **CRITICAL** — this is the exact gap class that let a real fixture repeatedly
+  corrupt the primary repository (stray commits landing on the real branch, local git identity
+  overwritten) in the motivating incident recorded in the convention. Missing isolation layers are
+  not a style deviation; they are a live data-loss/repo-corruption risk.
+
 ### Step 7: Finalize Report
 
 Update report status to "Complete", add summary statistics:

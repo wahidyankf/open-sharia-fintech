@@ -221,4 +221,5 @@ multi-page research, per the
 - [Root Cause Orientation](../../repo-governance/principles/general/root-cause-orientation.md) - Underlies the CI-gaming watch
 - [CI Blocker Resolution Convention](../../repo-governance/development/quality/ci-blocker-resolution.md) - Root-cause-first handling of CI blockers, never bypassed
 - [Regression Test Mandate](../../repo-governance/development/quality/regression-test-mandate.md) - Every bug fix needs a reproducing test; a fix without one is a HIGH finding
+- [Git Fixture Isolation Convention](../../repo-governance/development/quality/git-fixture-isolation.md) - A test that shells out to `git` in a temp dir must isolate against ambient repository discovery (explicit `GIT_DIR`, `GIT_CEILING_DIRECTORIES`, nulled global/system config, pre-write escape guard); a fixture missing these layers is a CRITICAL finding because it can silently corrupt the real repository under concurrency
 - [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md) - When to delegate to `web-researcher` versus verify in-context

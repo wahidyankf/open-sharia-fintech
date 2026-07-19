@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-19: rhino-cli-git-root-test-fixture-race](./2026-07-19__rhino-cli-git-root-test-fixture-race/README.md) — Fix a rhino-cli git-root test fixture that escaped its tempdir under parallel/concurrent execution and corrupted the real repository's git state (stray commits, linked worktrees, overwritten local `user.*`). Root cause was a CWD race, not the originally-hypothesized unchecked-init upward discovery; the fix is defense-in-depth isolation (explicit `GIT_DIR` + `GIT_CEILING_DIRECTORIES` + nulled global/system config + pre-write escape guard), plus a new [Git Fixture Isolation Convention](../../repo-governance/development/quality/git-fixture-isolation.md). Delivered byte-identically across ose-public/ose-primer/ose-infra (Completed: 2026-07-19)
 - [2026-07-18: e2e-scenario-coverage-gap-detector](./2026-07-18__e2e-scenario-coverage-gap-detector/README.md) —
   Added `rhino-cli specs e2e-coverage validate`, a mechanical, baseline-aware gate that diffs each
   playwright-bdd project's declared `@e2e` Gherkin scenarios against `test.fixme(...)` markers in
