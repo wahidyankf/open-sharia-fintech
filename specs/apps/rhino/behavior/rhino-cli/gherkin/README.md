@@ -113,9 +113,10 @@ behavior/rhino-cli/gherkin/
 
 ### system
 
-| File             | Command(s) | Scenarios |
-| ---------------- | ---------- | --------- |
-| `doctor.feature` | `doctor`   | 9         |
+| File                         | Command(s) | Scenarios |
+| ---------------------------- | ---------- | --------- |
+| `cargo-target-share.feature` | `doctor`   | 15        |
+| `doctor.feature`             | `doctor`   | 9         |
 
 ### workflows
 

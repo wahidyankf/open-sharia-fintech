@@ -6,6 +6,7 @@
 mod checker;
 mod fixer;
 mod reporter;
+mod target_share;
 mod tools;
 
 use std::time::Duration;
@@ -13,6 +14,11 @@ use std::time::Duration;
 pub use checker::{check_all, real_runner};
 pub use fixer::{FixOptions, FixResult, fix_all, format_fix_summary};
 pub use reporter::{format_json, format_markdown, format_text};
+pub use target_share::{
+    FixOutcome, PruneOutcome, SweepOutcome, TargetShareStatus, cache_root_ambient,
+    cargo_sweep_present, check_target_shares, fix_target_shares, is_ci_ambient, prune_orphans,
+    repo_name, sweep_stale,
+};
 
 /// Health status of a tool check.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

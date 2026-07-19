@@ -56,6 +56,10 @@ name = "doctor"
 harness = false
 
 [[test]]
+name = "cargo_target_share"
+harness = false
+
+[[test]]
 name = "env"
 harness = false
 

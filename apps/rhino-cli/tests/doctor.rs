@@ -378,12 +378,18 @@ fn then_json_lists_tools(w: &mut DoctorWorld) {
 fn then_minimal_set(w: &mut DoctorWorld) {
     let out = w.stdout();
     assert!(out.contains("(scope: minimal)"), "got: {out}");
+    // Scope the exclusion check to the doctor tool report itself — text
+    // after the "Target-share:" marker belongs to the unrelated
+    // cargo-target-share doctor step and may legitimately mention crate
+    // directory names (e.g. `crud-be-rust-axum`) that coincidentally
+    // contain an excluded tool's name as a substring.
+    let report = out.split("Target-share:").next().unwrap_or(&out);
     for excluded in [
         "java", "maven", "rust", "elixir", "dotnet", "clojure", "flutter",
     ] {
         assert!(
-            !out.contains(excluded),
-            "minimal should exclude {excluded}: {out}"
+            !report.contains(excluded),
+            "minimal should exclude {excluded}: {report}"
         );
     }
 }
@@ -415,14 +421,22 @@ fn then_nothing_to_fix(w: &mut DoctorWorld) {
 async fn main() {
     DoctorWorld::cucumber()
         .fail_on_skipped()
-        .run_and_exit(feature_dir())
+        .run_and_exit(feature_file())
         .await;
 }
 
-fn feature_dir() -> PathBuf {
+/// Points at the single `doctor.feature` file, not its parent `system/`
+/// directory — that directory also holds `cargo-target-share.feature` (its
+/// own binder, `tests/cargo_target_share.rs`, defines a disjoint step
+/// vocabulary). Cucumber's `Basic` parser runs exactly one file, rather than
+/// glob-walking every `*.feature` sibling, whenever the given path resolves
+/// to a file (see `cucumber::parser::basic::Basic::parse`'s
+/// `feats_path.is_file()` branch) — this keeps the two binders' step
+/// vocabularies from cross-contaminating.
+fn feature_file() -> PathBuf {
     let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     manifest
-        .join("../../specs/apps/rhino/behavior/rhino-cli/gherkin/system")
+        .join("../../specs/apps/rhino/behavior/rhino-cli/gherkin/system/doctor.feature")
         .canonicalize()
-        .expect("feature dir resolvable")
+        .expect("feature file resolvable")
 }
