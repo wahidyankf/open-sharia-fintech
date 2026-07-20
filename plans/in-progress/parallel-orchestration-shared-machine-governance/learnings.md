@@ -80,6 +80,54 @@ simply "15 → 0" against this same command — the two greps are deliberately d
 - **Related**: the existing memory note that the PostToolUse markdown formatter rewrites files after
   every Edit is the reason `old_string` anchors drift in this repo in the first place.
 
+## Learning: this plan structurally worsens a preexisting instruction-size warning
+
+- **Context**: Phase 4a, after adding the same-machine assumption and two convention cross-links to
+  `AGENTS.md`.
+- **Observation**: `nx run rhino-cli:instruction-size:validation` exits **0** but emits
+  `[WARN] AGENTS.md is 29049 bytes (over 27000-byte warn threshold)` and
+  `[WARN] resolved-tree (CLAUDE.md) is 36422 bytes (over 34000-byte warn threshold)`. Measured
+  against `origin/main`, `AGENTS.md` was **already 28333 bytes** — over threshold before this plan
+  touched it. This phase added 716 bytes, and Phase 4 mandates further `AGENTS.md` additions (DAG
+  rule, 3-5 min cadence, PR-as-merge-point, hardened merge preconditions, and the Delta 12 merge
+  default rewrite).
+- **Why it might generalize**: the plan and the budget are in **structural tension** — the plan's
+  whole purpose is to thread new rules through the most-loaded instruction surface in the repo, while
+  the budget convention's sole sanctioned remediation is progressive disclosure. Neither is wrong;
+  they were authored independently and nothing forces a plan author to notice the collision. The
+  budget was not surfaced as a constraint anywhere in this plan's surface inventory or acceptance
+  criteria, so an executor only encounters it by running a gate the plan does not require.
+- **Not fixed here, deliberately**: remediating means restructuring `AGENTS.md` into progressive
+  disclosure — a substantial refactor of the canonical instruction file, well outside this plan's
+  declared scope, and directly at odds with the phases still to run. Recording it rather than
+  silently absorbing it (which would hide a real trend) or scope-creeping into it (which would be a
+  different, unreviewed change). Candidate follow-up: a backlog plan to move `AGENTS.md` detail
+  behind progressive disclosure, sequenced **after** this plan lands so the two do not conflict.
+- **Mitigation applied in-plan**: keep every remaining `AGENTS.md` addition as tight as the
+  acceptance criteria allow, and prefer linking to the convention over restating it inline.
+
+## Learning: a whole convention can be the stale surface, and a grep-count sweep will not reveal it
+
+- **Context**: Phase 4b's sweep of hardcoded `[HUMAN]`-merge references (46 pre-edit → 20 post-edit).
+- **Observation**: `repo-governance/development/workflow/pr-merge-protocol.md` contributed only a
+  couple of matching lines, so by hit-count it looked like a minor sweep target. It is in fact an
+  entire convention built on the rule Delta 12 inverts: "AI agents and automation MUST NOT merge a
+  pull request without explicit user approval", "No AI agent, automation script, or workflow may
+  auto-merge", "Prior approval does not carry forward", a `### The Approval Prompt` section, and a
+  `FAIL: … auto-merging` worked example. Most of that text never contains the literal `[HUMAN]`, so
+  the sweep's own pattern could not see it. The plan names the file in **no** checkbox.
+- **Why it matters**: the sweep's acceptance ("every surviving hit is an explicit per-plan opt-in")
+  was technically satisfiable while the repo still shipped a convention asserting the exact opposite
+  rule in different words. A count-based sweep measures the phrasing, not the position.
+- **Why it might generalize**: a governance delta that inverts a default should search for
+  **documents whose thesis is the old default**, not merely lines matching the old default's
+  phrasing. Candidate durable fix: when a plan declares a delta that inverts an existing rule, have
+  `plan-maker`/`plan-checker` require an explicit inventory entry for every convention whose title
+  or `description:` frontmatter names that rule — those files need reading, not grepping.
+- **Related**: same family as the index-staleness learning above (both are surfaces the enumeration
+  missed), but a strictly harder case: an index at least _links_ to the file it describes, so an
+  inbound-link sweep would catch it. A competing convention has no such mechanical trace.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

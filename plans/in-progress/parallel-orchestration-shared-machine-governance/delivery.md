@@ -768,13 +768,47 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
 
 ### 4a. AGENTS.md / CLAUDE.md / indexes
 
-- [ ] [AI] Add the same-machine, concurrent-actors assumption to `AGENTS.md` §Agent Workflow
+- [x] [AI] Add the same-machine, concurrent-actors assumption to `AGENTS.md` §Agent Workflow
       Orchestration (one sentence) and cross-link the two new conventions — acceptance: `grep -n "same machine\|shared machine" AGENTS.md` present; both convention links resolve
-- [ ] [AI] Update `AGENTS.md` §Agent Workflow Orchestration + §Git Workflow §Delivery Mode to add the
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `AGENTS.md` (§Agent Workflow Orchestration)
+  - **Notes**: Added the assumption as a single labelled sentence naming the four shared resources
+    (disk, git object store, worktrees, CI runners) and the consequence — every orchestration and git
+    action must be safe under concurrent actors. Both new conventions appended to the section's
+    existing `**See**:` link list rather than given new prose, keeping the byte cost minimal.
+  - **Verified**: `grep -cn "same machine\|shared machine" AGENTS.md` returns **1**;
+    `no-destructive-git-operations|worktree-and-artifact-cleanup` returns **2** (one each);
+    `md links validate` exit **0**, so both resolve.
+  - **Preexisting warning surfaced, not caused**: `nx run rhino-cli:instruction-size:validation` exits
+    **0** but warns `AGENTS.md is 29049 bytes (over 27000-byte warn threshold)`. Baseline at
+    `origin/main` was **already 28333 bytes** — over threshold before this plan began; this edit added
+    716 bytes. Not remediated here: the sole sanctioned remedy is progressive disclosure, a
+    substantial refactor of the canonical instruction file that is outside this plan's scope and in
+    direct tension with the `AGENTS.md` additions Phase 4 still mandates. Logged to `learnings.md`
+    with a proposed follow-up plan sequenced **after** this one. Remaining `AGENTS.md` edits will
+    prefer linking over restating to hold the growth down.
+- [x] [AI] Update `AGENTS.md` §Agent Workflow Orchestration + §Git Workflow §Delivery Mode to add the
       DAG rule, background-slot preference, 3-5 min status cadence, PR-as-independent-merge-point, and
       the hardened merge preconditions (3 cycles + up-to-date-with-origin-main + gates green)
       — acceptance: `grep -n "DAG\|up-to-date with .*origin/main\|3-5 min" AGENTS.md` present
-- [ ] [AI] Grep `CLAUDE.md` for any Claude-specific concurrency text using a **word-bounded** pattern:
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `AGENTS.md` (§Agent Workflow Orchestration, §Git Workflow §Delivery Mode)
+  - **Notes**: §Agent Workflow Orchestration gained three labelled clauses — DAG-first (with the
+    independent-node-width-is-the-fan-out point and cleanup as terminal node), background-slot
+    preference, and the 3-5-minute status cadence. §Delivery Mode gained the PR-as-independent-merge-point
+    rationale plus the **full (a)-(e)** hardened merge preconditions, using Delta 8's normative
+    lettering verbatim rather than a shortened list.
+  - **Deliberately NOT a shortened (a)-(d)**: `tech-docs.md` declares the (a)-(e) lettering normative
+    precisely because an earlier revision of this plan shipped a 4-item enumeration that silently
+    re-mapped (b)/(c)/(d). Writing five here keeps `AGENTS.md` consistent with the workflow file and
+    the Phase 5/6/7 merge checkboxes that cite the same letters.
+  - **Verified**: acceptance grep returns **6**.
+  - **Downstream preconditions protected**: this edit deliberately did **not** touch the
+    `[HUMAN]` merge default wording, which two later §4b checkboxes depend on as their pre-edit
+    baseline. Re-verified after the edit: <code>grep -cF '`[HUMAN]` merge — \*\*the default\*\*'</code>
+    still returns **1** and <code>grep -cF '`[AI]` merge'</code> still returns **0** — so the Delta 12
+    inversion checkbox remains discriminating in both directions. `md links validate` exit **0**.
+- [x] [AI] Grep `CLAUDE.md` for any Claude-specific concurrency text using a **word-bounded** pattern:
       `grep -niE "concurrent|background agent|\bcap(ped|s)?\b" CLAUDE.md`; update to the N+1 model if
       present, else add nothing — acceptance: that word-bounded grep returns **0** (returns **0**
       today, verified live, and must stay 0 unless an edit deliberately introduces N+1 wording).
@@ -782,22 +816,99 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       used**: it returns **1** today via a false-positive substring match on "**cap**ability-tier
       mapping" (line 54), which has nothing to do with concurrency — so any "no stale fixed cap"
       reading of it is vacuous in both directions.
-- [ ] [AI] Add the two new conventions to `repo-governance/development/workflow/README.md` §Documents
+  - **Date**: 2026-07-20 — **Status**: DONE (no edit required — correctly a no-op)
+  - **Files Changed**: none
+  - **Notes**: The word-bounded pattern returns **0** (exit 1) — `CLAUDE.md` carries no
+    Claude-specific concurrency text, because it inherits the whole model through its single-line
+    `@AGENTS.md` import. Per the checkbox's own instruction ("update to the N+1 model if present,
+    else add nothing"), adding anything would have **created** a second, drift-prone statement of the
+    concurrency model in a file whose design is to hold none.
+  - **Both patterns run, to confirm the warning is real rather than inherited**: the unbounded
+    `grep -n "concurrent\|background agent\|cap" CLAUDE.md` returns **1** — the documented
+    false-positive substring match on "**cap**ability-tier mapping". Had that pattern been used as
+    the acceptance signal, it would read as "stale cap found" today and as "still found" after any
+    edit, discriminating nothing in either direction. The word-bounded form is what makes this
+    checkbox falsifiable.
+  - **Ticked as a verified no-op with evidence**, not skipped — the Phase 0 cap baseline already
+    recorded `CLAUDE.md` as carrying zero hits, and this independently confirms it.
+- [x] [AI] Add the two new conventions to `repo-governance/development/workflow/README.md` §Documents
       (link by name; respect Dynamic Collection References — no hardcoded counts) — acceptance: both
       links present in the Documents list and resolve
-- [ ] [AI] Grep the agents/practice index READMEs for stale cap references and update if present
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/README.md` (§Documents)
+  - **Notes**: Both entries inserted immediately after `Git Push Safety Convention`, placing each new
+    convention beside its companion — the local-side entry next to the remote-side one it pairs with,
+    and the cleanup entry as the declared teardown sibling of the setup convention listed above. Each
+    description matches the index's existing density (a substantive summary, not a bare title), so the
+    two additions read as part of the list rather than as bolt-ons.
+  - **Dynamic Collection References respected**: descriptions name what each convention covers without
+    stating any collection count; a scan for hardcoded document/convention counts in the file returns
+    **0** (exit 1), so nothing was introduced that a future addition would falsify.
+  - **Verified**: both filenames present (**2** matches); `md links validate` exit **0**, so both
+    resolve rather than merely appearing as text.
+- [x] [AI] Grep the agents/practice index READMEs for stale cap references and update if present
       (`grep -rn "cap at 2\|3 total" repo-governance/development/agents/README.md repo-governance/development/practice/README.md`)
       — acceptance: no stale numbers remain in those indexes
+  - **Date**: 2026-07-20 — **Status**: DONE (already satisfied — no edit required)
+  - **Files Changed**: none in this step. `repo-governance/development/agents/README.md` was already
+    corrected during **Phase 1's closing sweep**, where its `≤2 concurrent background agents` line was
+    found stale-on-arrival and fixed rather than deferred to here.
+    `repo-governance/development/practice/README.md` never carried a stale number.
+  - **Verified with two patterns, not one**: the checkbox's own
+    `grep -rn "cap at 2\|3 total"` returns **0** (exit 1) across both files, and a deliberately wider
+    sweep — `cap at 2|cap of 2|3 total|2 background|2 concurrent|stricter cap|never more|≤2` — also
+    returns **0**. The wider form matters because the stale text actually found in Phase 1 was
+    `≤2 concurrent background agents`, which the checkbox's narrow pattern would **not** have matched.
+    Had the fix been deferred to this step as written, this checkbox would have passed while the stale
+    line survived.
+  - **Plan-accuracy note**: recorded in `learnings.md` alongside the related finding that
+    `repo-governance/development/README.md` — which carried the same class of stale index text — is
+    named in no checkbox at all.
 
 ### 4b. Convention surfaces for the new orchestration behaviors
 
-- [ ] [AI] Edit `repo-governance/development/practice/task-list-discipline.md`: add the **3-5 minute
+- [x] [AI] Edit `repo-governance/development/practice/task-list-discipline.md`: add the **3-5 minute
       bounded status-update cadence** (while task-list items are active; not faster; no micro-event
       storming) — acceptance: `grep -ni "3-5\|status update\|cadence" task-list-discipline.md` present
-- [ ] [AI] Edit `repo-governance/conventions/structure/plans.md`: document that `delivery.md` expresses
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/practice/task-list-discipline.md`
+    (new `### Standard 6 — Bounded Status-Update Cadence`)
+  - **Notes**: Written as a **two-directional** bound rather than a floor, because each direction
+    fails differently: too slow leaves the user unable to distinguish progress from a stall (the task
+    list being the only observability surface), while too fast buries the signal under noise and costs
+    more attention than silence would. A one-sided "at least every 5 minutes" rule would have licensed
+    exactly the update-storming the delta names.
+  - **Added beyond the letter**: updates anchor to **meaningful state changes** — a checkbox ticked, a
+    gate flipping, a phase boundary, a blocker surfacing — not to a timer alone. Without that, "every
+    3-5 minutes" reads as an instruction to emit updates on a schedule even when nothing has changed,
+    which is the noise failure mode restated as a requirement.
+  - **Verified**: acceptance grep returns **4** (returned **0** pre-edit, confirmed live before
+    editing — so the clause discriminates in both directions).
+- [x] [AI] Edit `repo-governance/conventions/structure/plans.md`: document that `delivery.md` expresses
       phases/steps as a **DAG** + a `## Parallelization Model` section (which items are concurrent vs
       serial; cleanup = terminal node) — acceptance: `grep -ni "DAG\|Parallelization Model" plans.md` present
-- [ ] [AI] Edit `repo-governance/workflows/pr/pr-review-quality-gate.md`: add the **hardened merge
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/conventions/structure/plans.md`
+    (new `### Delivery Checklists Express a DAG (HARD RULE)`, placed before §Applicability so the
+    existing Applicability paragraph's grandfathering scope continues to read naturally over the
+    hard rules preceding it)
+  - **Notes**: States the three required `## Parallelization Model` contents (concurrent-vs-serial
+    with reasons, the plan's chosen N, cleanup as terminal node) plus the operational independence
+    test — two nodes are independent only when neither reads what the other writes.
+  - **The point the rule turns on, made explicit**: **sequence is not dependency**. A checklist is
+    necessarily written in some order, but only part of that order is load-bearing; without stating
+    the DAG, an executor infers dependency from list position and either serializes work that never
+    needed to be serial or parallelizes work that did. That sentence is why the section exists rather
+    than being a restatement of "write things in order".
+  - **Enforcement added** in the convention's own idiom: `plan-checker` flags a missing
+    `## Parallelization Model` on a non-trivial plan as MEDIUM, and a declared-parallel node set with
+    a real write conflict as HIGH — the second being the failure that actually corrupts work.
+  - **Verified**: acceptance grep returns **5** (was **0**). `md links validate` exit **0**, covering
+    the new relative link into `../../development/agents/agent-workflow-orchestration.md`.
+  - **Downstream precondition protected**: the Delta 12 checkbox below uses this same file with a
+    pre-edit baseline of **0** for `\[AI\] merges|only where.*explicitly|only the actor` — re-verified
+    after this edit and still **0**, so that checkbox stays discriminating.
+- [x] [AI] Edit `repo-governance/workflows/pr/pr-review-quality-gate.md`: add the **hardened merge
       preconditions**, using the **normative (a)-(e) lettering of `tech-docs.md` §Delta 8 verbatim** —
       **(a)** 3 `pr-review-maker`→`pr-review-fixer` cycles; **(b)** 0 CRITICAL + 0 HIGH findings
       outstanding; **(c)** the branch is **up-to-date with the latest `origin/main`** at merge time,
@@ -815,7 +926,32 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       vacuously true before any edit — it cannot discriminate a completed edit in either direction.
       The two `grep -F` literals above are distinctive phrases the Delta 8 text introduces and nothing
       in the file carries today.
-- [ ] [AI] **Delta 12 — invert the merge default in its definitional home**: edit
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/workflows/pr/pr-review-quality-gate.md`
+    (new `### Hardened Merge Preconditions` under §Done-Definition)
+  - **Notes**: Placed as a subsection of the done-definition, opening with the distinction that makes
+    it necessary — **being done is necessary but not sufficient to merge**. Without that framing the
+    file would carry two adjacent lists (four done-items, five merge-preconditions) with nothing
+    saying how they relate.
+  - **Full (a)-(e) emitted, verified structurally**: `grep -oE '\*\*\((a|b|c|d|e)\)\*\*' | sort -u`
+    returns all five letters — so the check confirms the _lettering_ is complete, not merely that some
+    text landed. The normative-lettering warning is reproduced inline as a blockquote, including the
+    specific historical failure (one surface running (a)-(d) while another ran (a)-(e), both citing
+    Delta 8 while disagreeing on what (b)/(c)/(d) meant).
+  - **Precondition (c) given its operational content**: names the non-destructive forward update
+    concretely (`git fetch origin` then `git merge --ff-only origin/main`, or an ordinary forward
+    merge) and cross-links both git-safety conventions, so "non-destructively" is actionable rather
+    than an adjective. Added the reason (c) exists at all: a long-lived PR's green run proved the
+    branch good against a `main` that has since moved.
+  - **Verified both directions**: `grep -Fic "up-to-date with the latest"` and
+    `grep -Fic "non-destructive forward update"` each return **1**; both returned **0** pre-edit,
+    confirmed live. The plan's warned-against pattern (`up-to-date\|origin/main\|3 cycles`) was
+    deliberately not used — it already matched the pre-existing §Success Metrics line.
+  - **Downstream precondition protected**: §4f adds clause (e)'s concrete `api-quality-gate` reference
+    to this same file and requires a pre-edit baseline of **0** — re-verified after this edit and
+    still **0**. Clause (e) is stated here in surface-conditional terms without naming the workflow
+    file, so §4f's checkbox remains discriminating.
+- [x] [AI] **Delta 12 — invert the merge default in its definitional home**: edit
       `repo-governance/conventions/structure/plans.md` §Delivery Mode so `[AI]` merge is the default
       once merge preconditions hold, and a `[HUMAN]` merge gate applies **only** where a plan's own
       step states it explicitly. State plainly that the **preconditions are unchanged — only the actor
@@ -823,7 +959,29 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       `grep -oEi '\[AI\] merges|only where.*explicitly|only the actor' plans.md | sort -u | wc -l`
       returns ≥ 2 (the same command returns **0** against the current pre-edit file), regardless of
       how the prose is line-wrapped
-- [ ] [AI] Propagate the inverted default to `repo-governance/workflows/pr/pr-review-quality-gate.md`
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/conventions/structure/plans.md` (§Delivery Mode)
+  - **Notes**: Inverted in **both** places the default is stated — the four-mode table's Merge
+    authority column (`worktree-to-pr` and `main-to-pr` rows now read `[AI]` — merges once the
+    preconditions hold) **and** the prose beneath it. Editing only the prose would have left the table
+    contradicting it, and the table is what most readers actually consult.
+  - **"Preconditions unchanged, only the actor" made concrete**: the prose restates all five hardened
+    preconditions inline and links the PR gate workflow, then says plainly why the inversion is not a
+    weakening — a human merging a PR that has already satisfied all five is performing a click, not a
+    judgment, so the old default added latency without adding a check.
+  - **Added beyond the letter**: named the cases where a plan _should_ still opt into a `[HUMAN]` gate
+    (irreversible migration, production cutover, blast radius the gates cannot express) and why being
+    explicit matters — a merge gate chosen deliberately is meaningful, while one inherited from a
+    default is indistinguishable from inertia. Without that, "only where a plan says so" gives no
+    guidance on when a plan should say so.
+  - **Acceptance defect caught and fixed mid-item**: the first draft returned **1 of the required 2**.
+    Neither miss was a content gap — both were **line-wrapping and markup artifacts**. `only
+where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges` failed because
+    the prose wrote <code>`[AI]` merges</code>, putting a backtick between `]` and the space. Rewrapped
+    the sentence and dropped the backticks on that one occurrence. Now returns **3**, with all three
+    distinct terms listed. Recorded because the same two artifacts would silently fail any
+    acceptance clause written against wrapped or backticked prose.
+- [x] [AI] Propagate the inverted default to `repo-governance/workflows/pr/pr-review-quality-gate.md`
       (merge-gate done-definition), `plan/plan-execution.md`, and `plan/plan-planning.md` — acceptance:
       the pattern must discriminate pre- from post-edit, and `-c` must not be used (it suppresses the
       matched text this check needs to read). Verified live pre-edit with
@@ -838,7 +996,27 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       returns **2** post-edit — one file each — and returns **0** pre-edit (verified live; neither file
       mentions `[AI]` merge today). **Use `grep -F`** on the literal string: the backticks are part of
       the text, and this counts FILES containing it, so it cannot be gamed by repetition in one file.
-- [ ] [AI] **Update `AGENTS.md` §Git Workflow §Delivery Mode first** — it is the canonical
+  - **Date**: 2026-07-20. Pre-edit baselines confirmed live exactly as stated:
+    `pr-review-quality-gate.md` = 8, `plan-execution.md` = 8, `plan-planning.md` = 0, and
+    `grep -rlF '`[AI]`merge'` on the two files = 0. `plan-planning.md` left untouched (states no
+    merge actor — none invented).
+  - **pr-review-quality-gate.md** — all 8 sites rewritten: line 37 "before the merge"; mermaid node
+    `D --> H["AI merges once preconditions hold"]`; the done-boundary paragraph; the escalation line
+    ("this applies whether the merge actor is `[AI]` (the default) or a plan-declared `[HUMAN]`
+    gate"); the applicability line ("`[AI]` merge authority once the preconditions hold"); the
+    related-workflows line; the conventions line ("the merge actor is explicit — `[AI]` by default,
+    `[HUMAN]` only where a plan says so").
+  - **plan-execution.md** — all 8 sites rewritten: the PR-Review-Cycle gate heading; the
+    Archival-in-PR bullet; the done-boundary bullet (now carries "**`[AI]` merges by default** once
+    the hardened preconditions hold; a `[HUMAN]` merge gate applies only where a plan's own step says
+    so explicitly, and the preconditions are identical either way — only the actor differs"); step 8
+    retitled "**Merge — `[AI]` by default**" (previously "**`[HUMAN]` merge**: … STOP — do not
+    merge"); step 9 cleanup gate re-anchored to "after the merge completes".
+  - **Acceptance verified**: the surviving-line grep prints 3 lines
+    (`pr-review-quality-gate.md:250`, `plan-execution.md:699`, `plan-execution.md:798`) and **every
+    one** is inside the explicit-per-plan-opt-in sentence, never a default. `grep -rlF` returns
+    **2** — one file each, matching the required post-edit value against a verified pre-edit 0.
+- [x] [AI] **Update `AGENTS.md` §Git Workflow §Delivery Mode first** — it is the canonical
       instruction file and states the default outright: "`worktree-to-pr` (worktree → draft PR →
       `[HUMAN]` merge — **the default**)" at line 112, plus `main-to-pr`'s "`[HUMAN]` merge" at line
       114 and "before the human merge" at line 116. Rewrite so `[AI]` merge is the default and
@@ -849,14 +1027,57 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       backticks are part of the text, and an unescaped `grep -E` pattern silently matches nothing.
       **Leaving `AGENTS.md` stale would contradict the whole delta at the single most-loaded surface
       in the repo.**
-- [ ] [AI] Sweep every remaining hardcoded `[HUMAN]`-merge reference across `AGENTS.md`, `CLAUDE.md`,
+  - **Date**: 2026-07-20. Pre-edit baselines verified live and matched the plan exactly:
+    `grep -cF '`[HUMAN]`merge — **the default**' AGENTS.md` = **1**,
+    `grep -cF '`[AI]`merge' AGENTS.md` = **0**.
+  - **Edit**: §Git Workflow §Delivery Mode rewritten — `worktree-to-pr` and `main-to-pr` now both
+    read "→ `[AI]` merge", the mode-list default annotation moved onto the `[AI]` merge, "before the
+    human merge" became "before the merge", and the old "Done ≠ merged (on the human's own
+    schedule)" sentence was replaced by the normative default statement: "**`[AI]` merges by
+    default**; a `[HUMAN]` merge gate applies only where a plan's own step says so explicitly, and
+    the preconditions below are identical either way — only the actor differs."
+  - **Acceptance verified post-edit**: `grep -cF '`[HUMAN]`merge — **the default**' AGENTS.md`
+    returns **0** (required 0, was 1) and `grep -cF '`[AI]`merge' AGENTS.md` returns **3**
+    (required ≥1, was 0). Both directions therefore discriminate pre- from post-edit.
+- [x] [AI] Sweep every remaining hardcoded `[HUMAN]`-merge reference across `AGENTS.md`, `CLAUDE.md`,
       `repo-governance/**`, `.claude/agents/**`, and `.claude/skills/**`:
       `grep -rniE "\[HUMAN\][^.]*merge" AGENTS.md CLAUDE.md repo-governance .claude` — **46 hits
       pre-edit** (verified live; note the earlier figure of 44 omitted `AGENTS.md`/`CLAUDE.md`, which
       is exactly why they are named explicitly here). Rewrite each as an explicit opt-in or delete it
       where it merely restated the old default — acceptance: every surviving hit is an explicit
       per-plan opt-in; the before/after counts are recorded in `learnings.md`
-- [ ] [AI] Confirm DD-10's dissolved-by-Delta-12 status is genuinely wired, not merely textually
+  - **Date**: 2026-07-20. **Counts: 46 pre-edit → 20 post-edit**, and every one of the 20 survivors
+    sits inside an explicit per-plan-opt-in sentence ("a `[HUMAN]` merge gate applies only where a
+    plan's own step says so explicitly" or an equivalent). Verified with the checkbox's own command.
+  - **Files rewritten** — `repo-governance/`: `git-push-default.md` (prose + the PASS-example
+    heading + the `- [ ] [HUMAN] Merge the PR` checklist line itself),
+    `trunk-based-development.md`, `workflows/README.md` (×2), `plan-quality-gate.md` (×2),
+    `workflow-naming.md`, `plan-multi-repo-parity-planning-and-execution.md` (×2).
+    `.claude/`: `plan-maker.md` (×3), `plan-checker.md` (×7 — including the merge-tag rule, which
+    said the final PR-merge step "MUST be tagged `[HUMAN]` (never `[AI]`)" and is now inverted),
+    `plan-fixer.md` (×4 — including "merge step tagged `[AI]` → retag `[HUMAN]`", the rule stated
+    exactly backwards), `plan-execution-checker.md`, and
+    `skills/plan-creating-project-plans/SKILL.md` (×4).
+  - **`npm run generate:bindings` re-run** after the `.claude/` edits (82 agents converted); a
+    follow-up grep of `.opencode/` found **no** stale non-opt-in `[HUMAN]`-merge text, confirming the
+    mirrors carry the inverted default.
+  - **Discovered defect — `repo-governance/development/workflow/pr-merge-protocol.md`** (named in no
+    checkbox in this plan): its core rule was the pre-Delta-12 default at maximum strength — "AI
+    agents and automation MUST NOT merge a pull request without explicit user approval", "No AI
+    agent, automation script, or workflow may auto-merge", "Prior approval does not carry forward" —
+    plus a whole `### The Approval Prompt` section and a `FAIL: … auto-merging` example. **The
+    sweep's acceptance was unsatisfiable while it stood**, so it was realigned rather than skipped:
+    merge authority now derives from the five hardened preconditions (a)-(e) instead of a
+    per-instance prompt, `[AI]` is the default actor, `[HUMAN]` is the explicit per-plan opt-in, and
+    the quality-gate table plus the no-bypass-without-permission rule are unchanged. Its four
+    Principles justifications, the draft-PR lifecycle, the terminal-step done-boundary, the
+    Agent Workflow prompts, and all six worked examples were rewritten to match; the Git Push Safety
+    cross-reference now states _why_ the two conventions gate differently (a force-push's safety is
+    not mechanically checkable, a merge's is).
+  - **Two index descriptions fixed** (same staleness class as Phase 1): `development/README.md:109`
+    and `development/workflow/README.md:47` both still described `pr-merge-protocol.md` as
+    "requiring explicit user approval before merging" / "no auto-merge by agents or automation".
+- [x] [AI] Confirm DD-10's dissolved-by-Delta-12 status is genuinely wired, not merely textually
       present: `tech-docs.md`'s DD-10 bullet already carries **"Status: DISSOLVED BY DELTA 12"**
       (written at plan-authoring time during an earlier bootstrap-timing fix — no further text edit is
       needed to DD-10 itself). **Scoping rationale**: a whole-file grep would
@@ -877,6 +1098,16 @@ validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a
       copy), counting distinct matched terms not matching lines, regardless of how the prose is
       line-wrapped. **Overall compound clause is FALSE today (blocked by the plans.md half returning 0)
       and becomes TRUE only after Delta 12 has actually landed — verified both directions live.**
+  - **Date**: 2026-07-20. **Both halves pass.** Half A (the DD-10→DD-11 sed range) returns **1**,
+    unchanged as predicted — pre-satisfied by the earlier authoring pass, and correctly the
+    non-discriminating half. Half B returns **3** against a required ≥2, having moved from the
+    **0** recorded at plan-authoring time.
+  - **The discriminating half genuinely discriminated**: half B only became non-zero because the
+    sibling Delta-12 checkbox (§4b, `plans.md` §Delivery Mode) actually executed and wrote the
+    inverted default. The three distinct matched terms are `[AI] merges`, the
+    `only where … explicitly` opt-in clause, and `only the actor`. The compound clause was FALSE
+    before that sibling landed and is TRUE now, so DD-10's "dissolved" claim is wired to a real
+    edit rather than to its own pre-authored prose.
 - [ ] [AI] Add the **per-phase-PR + feature-flag + strict 1-PR↔1-worktree** planning-granularity rule
       (Delta 10) to `repo-governance/workflows/plan/plan-planning.md` and cross-reference from
       `repo-governance/conventions/structure/plans.md`: each applicable phase / independent DAG node

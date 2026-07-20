@@ -241,8 +241,8 @@ Every plan-execution rule applies unchanged, including:
   distinct from this composite's own `mode` input, which governs only the planning-phase delivery
   of the plan **documents** (Step 1). A repo whose plan resolves to a `*-to-pr` delivery mode
   additionally runs the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) inside
-  plan-execution's Step 8 before that repo's `[HUMAN]` merge — its "done" for that repo is a green,
-  fully-reviewed, archival-included PR handed off to the human, not a direct push to `origin main`.
+  plan-execution's Step 8 before that repo's merge — its "done" for that repo is a green,
+  fully-reviewed, archival-included PR, not a direct push to `origin main`.
   See [plan-execution.md Step 8](./plan-execution.md).
 - **Step 0 worktree gate**: enter the plan's designated worktree (provision from the latest
   `origin/main` if missing), sync it with `origin/main` before any implementation.
@@ -316,7 +316,7 @@ repo depending on that repo's resolved
 [`## Delivery Mode`](../../conventions/structure/plans.md#delivery-mode) — a direct push of the
 archival commit to `origin main` for the direct-push modes (`worktree-to-origin-main`,
 `main-to-origin-main`), or a green, fully-reviewed PR with the archival move committed inside it,
-awaiting the `[HUMAN]` merge outside the AI done-boundary, for the `*-to-pr` modes
+awaiting the merge outside the AI done-boundary, for the `*-to-pr` modes
 (`worktree-to-pr`, `main-to-pr`) — see the
 [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) done-definition. Because each
 repo resolves its delivery mode independently, a single composite run may end with some repos

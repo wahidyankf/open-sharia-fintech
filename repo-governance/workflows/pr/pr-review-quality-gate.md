@@ -34,7 +34,7 @@ them, with a hard CI-green gate between cycles, until the `*-to-pr` done-definit
 
 **When to use**: Every `*-to-pr` delivery mode (`worktree-to-pr`, `main-to-pr`) — invoked from
 [plan-execution.md Step 8](../plan/plan-execution.md#8-finalization-and-archival-sequential) before
-archival and before the `[HUMAN]` merge. Not applicable to the direct-push delivery modes
+archival and before the merge. Not applicable to the direct-push delivery modes
 (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR.
 
 ## Execution Mode
@@ -204,6 +204,32 @@ A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of 
    committed inside the delivering PR itself. This item is N/A for invocations that do not carry a
    plan folder (see the three-repo nuance below).
 
+### Hardened Merge Preconditions
+
+Being **done** is necessary but not sufficient to merge. A PR merges only when **all five** of the
+following hold:
+
+- **(a)** It has passed the `pr-review-maker` → `pr-review-fixer` cycle for **3 cycles**.
+- **(b)** **0 CRITICAL + 0 HIGH findings outstanding.**
+- **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
+  bring it forward by a **non-destructive forward update** — `git fetch origin` then
+  `git merge --ff-only origin/main`, or an ordinary forward merge. **Never** a shared-history rewrite,
+  and never `reset --hard` or a force-push (see the
+  [No Destructive Git Operations Convention](../../development/workflow/no-destructive-git-operations.md)
+  and the [Git Push Safety Convention](../../development/workflow/git-push-safety.md)).
+- **(d)** **All PR quality gates are green** — local gates and CI on the PR, as of its current head.
+- **(e)** The **surface-conditional tester gates have been run and their defect findings resolved** —
+  a UI-bearing PR runs the UI gates, an API/BE-bearing PR runs the API gate, a PR bearing both runs
+  both, and a PR bearing neither records that exemption **explicitly** rather than leaving it implicit.
+
+> **This (a)-(e) lettering is normative.** The delivery checklists that cite these preconditions use
+> the identical letters, and any future edit must change both together. An earlier revision let one
+> surface run (a)-(d) while another ran (a)-(e), so both cited the same source while disagreeing about
+> what (b), (c), and (d) meant. Do not emit a shortened list.
+
+Precondition (c) is the reason a long-lived PR cannot simply be merged on the strength of a green
+run from last week: the gates proved the branch was good against a `main` that has since moved.
+
 ```mermaid
 %% Color palette: Teal #029E73 (done-definition items), Blue #0173B2 (AI done-boundary), Orange #DE8F05 (human merge)
 flowchart LR
@@ -211,16 +237,20 @@ flowchart LR
   B["comments answered"]:::teal --> D
   C["gates GREEN"]:::teal --> D
   E["archival in PR"]:::teal --> D
-  D --> H["HUMAN merges outside AI done"]:::orange
+  D --> H["AI merges once preconditions hold"]:::orange
 
   classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF
   classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF
   classDef orange fill:#DE8F05,stroke:#000000,color:#000000
 ```
 
-The `[HUMAN]` PR merge sits **outside** this workflow's done-boundary: once all applicable items are
-satisfied, the workflow hands off a green, fully-reviewed PR, and the human merges it on their own
-schedule. "Done" (for this workflow) is not the same as "merged" — see
+The PR merge sits **outside** this workflow's done-boundary: this workflow's job is to establish that
+the PR is green and fully reviewed, not to perform the merge. By default the `[AI]` merge follows
+immediately once all applicable done-items and the five hardened merge preconditions hold — see
+[Delivery Mode](../../conventions/structure/plans.md#delivery-mode). A `[HUMAN]` merge gate applies
+only where a plan's own step states it explicitly; where a plan does opt in, "done" (for this
+workflow) is not the same as "merged", and the workflow hands off a green PR for the human to merge
+on their own schedule. See
 [Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
 
 **Three-repo nuance**: when this workflow runs against a plan whose plan folder lives in a different
@@ -243,7 +273,7 @@ PRs in sibling repos with no plan folder use items 1–3 as their complete done-
 - **Escalation on cycle exhaustion with unresolved threads**: if `{input.cycles}` cycles complete and
   any review thread remains genuinely unresolved (not a reasoned reject, but a stalled discussion),
   status is `escalated`, not `done` — the caller (e.g., `plan-execution.md` Step 8) MUST NOT proceed
-  to the `[HUMAN]` merge handoff until resolved.
+  to the merge until resolved — this applies whether the merge actor is `[AI]` (the default) or a plan-declared `[HUMAN]` gate.
 - **No silent early exit**: the loop does not stop early merely because zero new findings appear in a
   cycle — the cycle count is fixed at `{input.cycles}`, not "until zero findings" (that pattern
   belongs to the `*-quality-gate` workflows, not this one).
@@ -253,7 +283,7 @@ PRs in sibling repos with no plan folder use items 1–3 as their complete done-
 This workflow is the mandatory pre-merge gate for every `*-to-pr` delivery mode:
 
 - `worktree-to-pr` — the default delivery mode (dedicated worktree, PR opened against `main`,
-  `[HUMAN]` merge authority).
+  `[AI]` merge authority once the preconditions hold).
 - `main-to-pr` — same PR/merge semantics, run from the primary checkout instead of a worktree.
 
 It does **not** apply to the direct-push delivery modes (`worktree-to-origin-main`,
@@ -269,7 +299,7 @@ this workflow is wired into plan finalization.
 This workflow is composed with:
 
 - [`plan-execution`](../plan/plan-execution.md) — invokes this workflow from Step 8 (Finalization and
-  Archival) for every `*-to-pr` delivery mode, before the `[HUMAN]` merge handoff.
+  Archival) for every `*-to-pr` delivery mode, before the merge.
 - [`plan-quality-gate`](../plan/plan-quality-gate.md) — a related but distinct
   iterate-to-zero-findings pattern; this workflow instead runs a **fixed** N-cycle loop, not an
   until-zero-findings loop.
@@ -350,4 +380,5 @@ Track across executions:
   this workflow implements the `*-to-pr` modes' review-cycle and done-definition requirements defined
   by that convention.
 - **[Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)**:
-  the `[HUMAN]` merge handoff respects the AI/human executor boundary.
+  the merge actor is explicit — `[AI]` by default, `[HUMAN]` only where a plan says so — so the
+  AI/human executor boundary stays legible rather than assumed.

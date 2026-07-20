@@ -135,7 +135,7 @@ Authoritative source: [Plans Organization Convention §Delivery Mode](../../repo
 A PR creation step (`- [ ] Create PR`, `- [ ] Open PR`, or equivalent) is **expected and correct**
 when the plan's resolved Delivery Mode is `worktree-to-pr` (the default) or `main-to-pr` — no
 separate authorization is needed beyond the mode declaration itself; validate it via Step 5m
-instead (PR-Review Maker→Fixer Cycle present, `[HUMAN]` merge tag correct).
+instead (PR-Review Maker→Fixer Cycle present, merge tag correct).
 
 Flag as **HIGH** a PR creation step on a plan whose resolved Delivery Mode is
 `worktree-to-origin-main` or `main-to-origin-main` (a direct-push mode) — an unsolicited PR step
@@ -822,17 +822,18 @@ mode additionally fixes the integration target and merge authority.
    `worktree-to-pr` or `main-to-pr`, `delivery.md` MUST emit the PR-Review Maker→Fixer Cycle steps
    (strictly sequential maker→fixer cycles, default 3, CI-green-gated) per the
    [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md),
-   positioned before the `[HUMAN]` PR-merge step. A `*-to-pr` plan whose checklist jumps straight
-   from PR creation to `[HUMAN]` merge with no review-cycle steps is missing required steps.
-4. **`[HUMAN]` merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
-   tagged `[HUMAN]` (never `[AI]`); for `*-to-origin-main` modes, the final push MUST be tagged
+   positioned before the PR-merge step. A `*-to-pr` plan whose checklist jumps straight
+   from PR creation to the merge with no review-cycle steps is missing required steps.
+4. **Merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
+   tagged `[AI]`, the default actor once the hardened preconditions hold; `[HUMAN]` is valid only
+   where the plan explicitly opts into that gate, and a `[HUMAN]` tag with no such opt-in is a
+   defect. For `*-to-origin-main` modes, the final push MUST be tagged
    `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
    [PR Step Authorization Check](#pr-step-authorization-check) —
    that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
    since a PR step is expected and correct under `*-to-pr` modes).
 5. **"Done" is not "merged"** — a `*-to-pr` plan's own completion/Gate criteria MUST NOT require the
-   PR to actually be merged; a green, fully-reviewed PR awaiting `[HUMAN]` merge on their own
-   schedule is a valid done state. Flag a plan that conflates the two.
+   PR to actually be merged; a green, fully-reviewed PR awaiting its merge is a valid done state. Flag a plan that conflates the two.
 6. **Archival-in-PR present** — for `*-to-pr` modes (where the plan folder is tracked in the
    repo being delivered), the checklist MUST include an archival step — `git mv` the plan folder
    to `plans/done/`, plus README/index updates — committed **inside the delivering PR** itself
@@ -844,8 +845,8 @@ mode additionally fixes the integration target and merge authority.
 #### Finding Severity
 
 - Invalid non-empty `## Delivery Mode` value: **HIGH**
-- `*-to-pr` mode missing the PR-Review Maker→Fixer Cycle steps before `[HUMAN]` merge: **HIGH**
-- `[HUMAN]`/`[AI]` merge-tag mismatch with the resolved mode: **HIGH**
+- `*-to-pr` mode missing the PR-Review Maker→Fixer Cycle steps before the merge: **HIGH**
+- Merge-tag mismatch with the resolved mode — `[HUMAN]` on a plan with no explicit opt-in, or `[AI]` where the plan does declare a `[HUMAN]` gate: **HIGH**
 - Plan completion criteria conflating "done" with "merged" on a `*-to-pr` plan: **MEDIUM**
 - Missing or post-merge-deferred archival-in-PR step on an applicable `*-to-pr` plan: **HIGH**
 - Freshly-authored plan missing the `## Delivery Mode` declaration entirely: **LOW**

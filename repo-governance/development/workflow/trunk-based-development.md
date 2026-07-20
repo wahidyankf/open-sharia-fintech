@@ -404,8 +404,9 @@ including the linear-history and rebase requirements.
 
 **Plan delivery checklist tagging**: the git-mechanical lifecycle steps -- create worktree, commit,
 push (to the PR branch or to `origin main`, depending on mode), open/flip the PR, and remove worktree
--- MUST be tagged `[AI]`, never `[HUMAN]`, in plan delivery checklists. The one step that is
-legitimately `[HUMAN]` under `*-to-pr` modes is the merge itself. See
+-- MUST be tagged `[AI]`, never `[HUMAN]`, in plan delivery checklists. Under `*-to-pr` modes the
+merge itself is `[AI]` by default too; a `[HUMAN]` merge gate applies only where a plan's own step
+says so explicitly. See
 [Plans Organization Convention §Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)
 and the [Git Push Default Convention §Examples](./git-push-default.md#examples) for the FAIL/PASS
 examples.

@@ -558,8 +558,8 @@ for the authoritative mode table and precedence rule.
 ### Confidence Assessment
 
 - **HIGH Confidence**: section is entirely missing on a freshly-authored plan, OR a `*-to-pr` plan
-  is missing its PR-Review Maker→Fixer Cycle steps, OR the `[HUMAN]`/`[AI]` merge tag doesn't match
-  the declared mode. Fix is mechanical once the intended mode is known.
+  is missing its PR-Review Maker→Fixer Cycle steps, OR the merge tag doesn't match
+  the declared mode (`[AI]` by default; `[HUMAN]` only on an explicit per-plan opt-in). Fix is mechanical once the intended mode is known.
 - **MEDIUM Confidence → grill first**: the declared value is invalid/unrecognized. Do NOT guess
   which of the four modes was intended — surface it as a grill question (per `grill-me`) with the
   four modes as options, `worktree-to-pr` marked `(Recommended)`, before writing a value.
@@ -581,16 +581,19 @@ then write whichever mode they select.
 ### How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
 
 Insert the cycle steps (strictly sequential maker→fixer, default N=3, each cycle CI-green-gated)
-immediately before the `[HUMAN]` PR-merge step, sourced verbatim in structure from the
+immediately before the PR-merge step, sourced verbatim in structure from the
 [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md):
 one `- [ ] [AI] Invoke pr-review-maker on $PR` / `- [ ] [AI] Invoke pr-review-fixer on $PR` pair per
 cycle, a loop-exit condition (N cycles complete, or a cycle with zero new findings), and — where
 the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to `plans/done/` +
-README updates) committed inside the same PR, before the final `- [ ] [HUMAN] Merge PR` step.
+README updates) committed inside the same PR, before the final `- [ ] [AI] Merge PR` step.
 
 ### How to Fix a Merge-Tag Mismatch
 
-- `*-to-pr` mode with the merge step tagged `[AI]` → retag `[HUMAN]`.
+- `*-to-pr` mode with the merge step tagged `[HUMAN]` but no explicit per-plan opt-in to that gate
+  → retag `[AI]`, the default actor once the hardened preconditions hold. Where the plan **does**
+  explicitly declare a `[HUMAN]` merge gate, leave the tag alone — that is a valid opt-in, not a
+  mismatch.
 - `*-to-origin-main` mode with the final push gated behind an unrequested `[HUMAN]` approval step →
   retag `[AI]` and remove the approval-gate framing (the push itself needs no sign-off under a
   direct-push mode).

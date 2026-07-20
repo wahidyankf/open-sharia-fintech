@@ -202,12 +202,12 @@ Workflows that test a live running website and turn findings into a fix plan:
 
 ### PR Review Workflows
 
-Workflows for reviewing and finishing off pull requests before a `[HUMAN]` merge:
+Workflows for reviewing and finishing off pull requests before the merge:
 
 - **pr-review-quality-gate**: Strictly sequential N-cycle (default 3) `pr-review-maker` →
   `pr-review-fixer` loop against a PR — line-anchored findings via the GitHub Reviews API, per-thread
   triage and resolution, CI-green gate between cycles — mandatory before archival and the
-  `[HUMAN]` merge for the `worktree-to-pr` and `main-to-pr` delivery modes
+  merge for the `worktree-to-pr` and `main-to-pr` delivery modes
 
 ### Repository Governance Workflows
 

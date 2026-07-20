@@ -1,6 +1,6 @@
 ---
 title: "PR Merge Protocol"
-description: Practice requiring explicit user approval before merging pull requests and mandating all quality gates pass before merge
+description: Practice governing pull-request merges — merge authority is granted by hardened preconditions rather than a per-instance prompt, `[AI]` merges by default, and all quality gates must pass before merge
 category: explanation
 subcategory: development
 tags:
@@ -8,25 +8,25 @@ tags:
   - merge
   - quality-gates
   - workflow
-  - human-approval
+  - merge-preconditions
 created: 2026-04-04
 ---
 
 # PR Merge Protocol
 
-Merging a pull request requires explicit approval from the user every single time. No AI agent, automation script, or workflow may auto-merge a pull request. All quality gates must pass before merge, and bypassing them without explicit user permission is forbidden.
+Merging a pull request requires a set of hardened preconditions to hold — not a per-instance prompt. Once they hold, `[AI]` merges by default; a `[HUMAN]` merge gate applies only where a plan's own step says so explicitly. All quality gates must pass before merge, and bypassing them without explicit user permission is forbidden.
 
 ## Principles Implemented/Respected
 
 This practice respects the following core principles:
 
-- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Merging a PR is an irreversible integration action that changes the state of the trunk for every contributor. It demands human judgment about timing, completeness, and readiness -- the kind of decision that must not be delegated to autonomous agents.
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: Merging a PR is an irreversible integration action that changes the state of the trunk for every contributor. It demands a deliberate readiness judgment -- which this protocol makes explicit and checkable as preconditions, rather than leaving it to an agent's discretion in the moment.
 
 - **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: When quality gates fail, the correct response is to investigate and fix the root cause, not to bypass the gate and merge anyway. This convention ensures that failing gates are treated as problems to solve, not obstacles to circumvent.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Merge approval must be an explicit, visible action from the user. Implicit approval -- "the user asked me to create a PR, so merging is also implied" -- is the silent assumption this convention forbids.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Merge authority must rest on explicit, checkable state. "The review cycles felt thorough enough" -- an agent's implicit readiness judgment substituting for the stated preconditions -- is the silent assumption this convention forbids. The merge actor is likewise explicit: `[AI]` by default, `[HUMAN]` only where a plan says so.
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Quality gates (typecheck, lint, test:quick, specs:coverage, CI workflows) run automatically. The automation validates; the human decides. This division is deliberate: machines check, humans approve.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Quality gates (typecheck, lint, test:quick, specs:coverage, CI workflows) run automatically, and the merge decision is derived from their outcome rather than re-litigated by hand each time. Encoding readiness as preconditions is what makes automating the merge safe.
 
 ## Conventions Implemented/Respected
 
@@ -36,20 +36,35 @@ This practice implements/respects the following conventions:
 
 - **[Trunk Based Development Convention](./trunk-based-development.md)**: `worktree-to-pr` -- a short-lived plan branch pushed to a PR -- is the repo-wide default TBD flavor. PRs also exist for `main-to-pr`, code review, and external contributions. This protocol governs the merge step for all of them.
 
-- **[Git Push Safety Convention](./git-push-safety.md)**: Both conventions share the principle that destructive or irreversible git operations require explicit, per-instance user approval. This convention applies the same standard to PR merges.
+- **[Git Push Safety Convention](./git-push-safety.md)**: Both conventions treat irreversible git operations as gated rather than routine. They differ in the gate: `git push --force` and friends require explicit, per-instance user approval because no automated check can establish their safety, whereas a PR merge's safety **is** mechanically checkable -- so this convention gates on preconditions instead of a prompt.
 
 ## The Rule
 
-**AI agents and automation MUST NOT merge a pull request without explicit user approval.**
+**AI agents and automation MUST NOT merge a pull request until the hardened preconditions hold.**
+
+A PR merges only when **all five** hold:
+
+- **(a)** the configured `pr-review-maker` → `pr-review-fixer` cycles are complete (default 3);
+- **(b)** 0 CRITICAL and 0 HIGH findings are outstanding;
+- **(c)** the branch is up-to-date with the latest `origin/main`, brought forward
+  **non-destructively** if behind (never a shared-history rewrite);
+- **(d)** all PR quality gates are green (see Quality Gates below);
+- **(e)** the surface-conditional tester gates have been run and their defect findings resolved, or
+  the exemption is explicitly recorded.
 
 For every PR merge -- without exception -- the agent must:
 
-1. Confirm all quality gates have passed (see Quality Gates below).
-2. Present the PR status to the user, including which gates passed and any open review comments.
-3. Wait for the user to provide explicit confirmation to merge.
-4. Execute the merge only after that confirmation is received.
+1. Confirm all five preconditions hold.
+2. Surface the PR status, including which gates passed and how each precondition was satisfied.
+3. Execute the merge -- `[AI]` is the default actor.
 
-**Prior approval does not carry forward.** If the user approved merging one PR, that approval covers only that one merge. The next PR merge starts from zero.
+**A `[HUMAN]` merge gate is an explicit per-plan opt-in**, applying only where a plan's own step
+says so. When a plan declares one, the agent stops at step 2 and hands off the ready-to-merge PR.
+**The preconditions are identical either way -- only the actor differs.** See
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
+
+**Preconditions are evaluated per merge.** Satisfying them for one PR says nothing about the next;
+each PR is assessed from zero against the full set.
 
 ## Quality Gates
 
@@ -111,45 +126,46 @@ is:
 3. Flip the PR from draft to ready for review (`gh pr ready`).
 
 **This done-definition is the AI's done-boundary.** Meeting it means the AI's work on the plan is
-complete -- it does **not** mean the plan is merged. The actual merge is a separate, subsequent action
-performed by `[HUMAN]`, per the approval rule in [The Rule](#the-rule) above. "Done" (for the AI) is
-not "merged" -- the merge sits outside the AI's done-boundary entirely, on the human's own schedule.
+complete -- it does **not** by itself mean the plan is merged. The merge is a separate, subsequent
+action gated on the five preconditions in [The Rule](#the-rule) above, performed by `[AI]` unless the
+plan declares a `[HUMAN]` gate. "Done" is not "merged" -- the merge sits outside the done-boundary
+entirely.
 
 ### Draft PR Lifecycle
 
 Per the [Trunk Based Development Convention](./trunk-based-development.md#why-draft-not-ready-for-review-on-open),
 every PR opened under `worktree-to-pr` or `main-to-pr` is **opened as a GitHub draft**
-(`gh pr create --draft`), not as a ready-for-review PR. This protocol's approval gate fires at the
+(`gh pr create --draft`), not as a ready-for-review PR. This protocol's precondition gate fires at the
 moment the AI flips the draft to ready for review (having met the done-definition above), not at PR
 open time.
 
 **Lifecycle**:
 
-1. **Draft opened** -- `[AI]` runs `gh pr create --draft --base main ...`. No approval gate yet. CI may still run on the draft.
-2. **Iterate on the branch** -- `[AI]` pushes additional commits and runs the PR-Review Maker→Fixer Cycle. The PR stays in draft status throughout iteration. No approval gate yet.
-3. **`[AI]` flips to ready** -- once the done-definition is met, `[AI]` runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol approval gate fires.** The agent must:
+1. **Draft opened** -- `[AI]` runs `gh pr create --draft --base main ...`. No precondition gate yet. CI may still run on the draft.
+2. **Iterate on the branch** -- `[AI]` pushes additional commits and runs the PR-Review Maker→Fixer Cycle. The PR stays in draft status throughout iteration. No precondition gate yet.
+3. **`[AI]` flips to ready** -- once the done-definition is met, `[AI]` runs `gh pr ready` (or marks it ready in the GitHub UI). **This is where the PR Merge Protocol precondition gate fires.** The agent must:
    - Verify all quality gates have passed (see Quality Gates above).
-   - Present the approval prompt to the user.
-   - Wait for explicit confirmation before merging.
-4. **`[HUMAN]` merges** -- only after explicit user approval, per the rules above. This step is outside the AI's done-boundary.
+   - Verify all five preconditions in [The Rule](#the-rule) hold.
+   - Surface the PR status and how each precondition was satisfied.
+4. **The merge** -- `[AI]` by default, once the preconditions hold; `[HUMAN]` only where a plan's own step declares that gate. This step is outside the AI's done-boundary either way.
 
-An agent that opens a draft PR is **not** authorized to merge it without explicit user instruction --
-flipping to ready is the deliberate signal that the AI's own work is done; the merge itself remains a
-separate, human-owned action.
+An agent that opens a draft PR is **not** authorized to merge it on readiness alone --
+flipping to ready is the deliberate signal that the AI's own work is done, and the merge follows only
+from the preconditions, never from the agent's own judgment that the PR looks finished.
 
 ## Agent Workflow
 
-### Before Proposing Merge
+### Before Merging
 
-Before asking the user to approve a merge, the agent must:
+Before merging, the agent must:
 
 1. Verify all CI checks have completed (not still running).
 2. Check for unresolved review comments or requested changes.
 3. Confirm the branch is up to date with the target branch (no merge conflicts).
 
-### The Approval Prompt
+### The Precondition Summary
 
-When all gates pass, the agent presents a clear summary:
+When all preconditions hold, the agent presents a clear summary, then merges:
 
 ```
 PR #42: feat(auth): add email validation
@@ -161,11 +177,18 @@ Quality gates:
   specs:coverage: PASSED
   CI workflows:  PASSED
 
-No unresolved review comments.
-Branch is up to date with main.
+Preconditions:
+  (a) review cycles:     3/3 complete
+  (b) CRITICAL/HIGH:     0 / 0 outstanding
+  (c) branch vs main:    up to date (fast-forwarded, no rewrite)
+  (d) quality gates:     all green (above)
+  (e) tester gates:      run, findings resolved
 
-Do you want me to merge this PR? (yes/no)
+Merging PR #42.
 ```
+
+Where a plan declares a `[HUMAN]` merge gate, the agent prints the same summary and stops, handing
+off the ready-to-merge PR instead of merging.
 
 ### When Gates Fail
 
@@ -175,7 +198,7 @@ If any quality gate fails, the agent must:
 2. Investigate the root cause.
 3. Fix the issue (not bypass the gate).
 4. Re-run the gates.
-5. Only then ask for merge approval.
+5. Only then re-evaluate the merge preconditions.
 
 ```
 PR #42: feat(auth): add email validation
@@ -186,34 +209,40 @@ Quality gates:
   test:quick:    PASSED
   specs:coverage: PASSED
 
-I will investigate and fix the lint errors before asking to merge.
+I will investigate and fix the lint errors before merging.
 ```
 
 ## Examples
 
-### PASS: Correct agent behavior
+### PASS: Correct agent behavior -- preconditions hold, `[AI]` merges
 
 ```
-Agent: All quality gates have passed for PR #42. Here is the summary:
+Agent: All five merge preconditions hold for PR #42:
 
-  typecheck:     PASSED
-  lint:          PASSED
-  test:quick:    PASSED
-  specs:coverage: PASSED
-  CI workflows:  PASSED
+  (a) review cycles:  3/3 complete
+  (b) CRITICAL/HIGH:  0 / 0 outstanding
+  (c) branch vs main: up to date
+  (d) quality gates:  all green
+  (e) tester gates:   run, findings resolved
 
-Do you want me to merge this PR?
-
-User: Yes, merge it.
-
-Agent: Merging PR #42...
+Merging PR #42.
 ```
 
-### FAIL: Incorrect agent behavior -- auto-merging
+### PASS: Correct agent behavior -- plan declares a `[HUMAN]` gate
 
 ```
-Agent: I created PR #42 and all checks passed. Merging now.
-[merges without asking]
+Agent: All five merge preconditions hold for PR #42. This plan's
+       delivery checklist declares a [HUMAN] merge gate, so I am
+       handing off rather than merging.
+
+       PR is ready to merge: https://github.com/.../pull/42
+```
+
+### FAIL: Incorrect agent behavior -- merging before the preconditions hold
+
+```
+Agent: I created PR #42 and CI is green. Merging now.
+[merges after 1 of 3 review cycles -- precondition (a) unmet]
 ```
 
 ### FAIL: Incorrect agent behavior -- merging with failing gates
@@ -221,14 +250,21 @@ Agent: I created PR #42 and all checks passed. Merging now.
 ```
 Agent: PR #42 has a failing lint check, but the rest passed.
        Merging anyway to save time.
-[merges despite failing gate]
+[merges despite failing gate -- precondition (d) unmet]
 ```
 
-### FAIL: Incorrect agent behavior -- reusing prior approval
+### FAIL: Incorrect agent behavior -- merging through a declared `[HUMAN]` gate
 
 ```
-User: [earlier] Yes, merge PR #42.
-Agent: [later, different PR] Reusing your earlier approval to merge PR #43.
+Agent: All preconditions hold, so I merged PR #43.
+[the plan's own step declared a [HUMAN] merge gate; the default does not override it]
+```
+
+### FAIL: Incorrect agent behavior -- carrying a bypass forward
+
+```
+User: [earlier] Merge PR #42 anyway despite specs:coverage.
+Agent: [later, different PR] Reusing that bypass to merge PR #43.
 ```
 
 ### PASS: User explicitly bypasses a gate
@@ -254,7 +290,8 @@ This rule applies to:
 
 ## Related Documentation
 
-- [Git Push Safety Convention](./git-push-safety.md) -- Per-instance approval for destructive git operations
+- [Git Push Safety Convention](./git-push-safety.md) -- Per-instance approval for destructive git operations; gated by a prompt because their safety is not mechanically checkable, unlike a PR merge's
+- [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode) -- Establishes `[AI]` merge as the default and `[HUMAN]` as the explicit per-plan opt-in this protocol implements
 - [Code Quality Convention](../quality/code.md) -- Quality gates enforced by git hooks
 - [Trunk Based Development Convention](./trunk-based-development.md) -- The `worktree-to-pr` default delivery mode and how it relates to TBD
 - [Worktree Toolchain Initialization](./worktree-setup.md) -- Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree

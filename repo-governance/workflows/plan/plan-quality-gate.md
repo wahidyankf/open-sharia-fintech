@@ -283,7 +283,7 @@ executing under a `*-to-pr` mode (`worktree-to-pr` or `main-to-pr`), full "done"
 actual delivery additionally requires satisfying the
 [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md)'s done-definition — N review
 cycles complete, every inline comment answered, all PR gates GREEN, archival committed inside the
-PR — before the `[HUMAN]` merge. The two gates sit at different lifecycle stages: this workflow
+PR — before the merge. The two gates sit at different lifecycle stages: this workflow
 gates the plan document pre-execution; the PR-review cycle gates the delivered change pre-merge.
 
 ## Example Usage
@@ -496,4 +496,4 @@ This workflow ensures plan quality and implementation readiness through iterativ
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: Workflow validates the five-document structure and worktree section per the convention
 - **[Plan Anti-Hallucination Convention](../../development/quality/plan-anti-hallucination.md)**: plan-checker's Step 5f enforces this convention's recipes, confidence labels, and Anti-Pattern Catalog
 - **[Multi-Harness Binding Convention](../../conventions/structure/multi-harness-binding.md)**: plan-checker's Step 5g (harness-neutrality scan) enforces this convention when the plan touches agents, skills, rules, or `repo-governance/` paths
-- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**: for plans resolving to a `*-to-pr` delivery mode, this workflow's `pass` status is a pre-execution gate, not a substitute for the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md)'s done-definition that gates the eventual PR before the `[HUMAN]` merge
+- **[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)**: for plans resolving to a `*-to-pr` delivery mode, this workflow's `pass` status is a pre-execution gate, not a substitute for the [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md)'s done-definition that gates the eventual PR before the merge

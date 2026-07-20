@@ -97,6 +97,22 @@ Each task entry MUST represent one concrete, actionable outcome. Bundling unrela
 
 Large deliverables that require multiple steps should be broken into the component steps as separate tasks.
 
+### Standard 6 — Bounded Status-Update Cadence (3-5 Minutes, Not Faster)
+
+While task-list items are active, give the user a progress update every **3-5 minutes — not faster**.
+
+The bound runs in both directions, and both matter:
+
+- **Not slower.** Long silent stretches leave the user unable to tell progress from a stall. The task
+  list is the primary observability surface; if it goes quiet, there is nothing else to read.
+- **Not faster.** A status update per micro-event is update-storming: it buries the signal that
+  something actually changed under a stream of noise, which costs the user more attention than
+  silence would. Batch the small stuff into the next scheduled update.
+
+Anchor updates to **meaningful state changes** — a checkbox ticked, a gate turning green or red, a
+phase boundary crossed, a blocker surfacing — rather than to a timer alone. The 3-5 minute window is
+the pacing bound, not an instruction to emit an update on a schedule when nothing has changed.
+
 ## Anti-Patterns
 
 ### Starting Without a Task List

@@ -669,7 +669,7 @@ proceed until the plan's Knowledge Capture phase is complete.
   incomplete for archival purposes.
 
 **PR-Review Maker→Fixer Cycle gate (mandatory for `*-to-pr` modes, before archival and before the
-`[HUMAN]` merge)**: When the delivery mode resolved in Step 0 is `worktree-to-pr` or `main-to-pr`,
+merge)**: When the delivery mode resolved in Step 0 is `worktree-to-pr` or `main-to-pr`,
 archival additionally requires the
 [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) workflow to run to completion
 against the plan's PR before any archival step below. This gate does not apply to the direct-push
@@ -689,14 +689,18 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
   4. **Archival-in-PR is committed** — see below.
 - **Archival-in-PR**: for `*-to-pr` modes, the `git mv plans/in-progress/... plans/done/...` move
   (and the accompanying README index updates) is committed **inside the delivering PR itself**, as a
-  normal commit on the PR branch pushed before the `[HUMAN]` merge — not as a separate commit landed
+  normal commit on the PR branch pushed before the merge — not as a separate commit landed
   on `main` after merge. This keeps the archival move inside the same review cycle as the rest of the
-  plan's changes, so the PR that the human merges already contains the finished, archived plan.
-- The `[HUMAN]` merge sits **outside** this AI done-boundary: once all four done-definition items
-  are satisfied, the orchestrator hands off a green, fully-reviewed, archival-included PR, and the
-  human merges it on their own schedule — "done" (for the AI) is not the same as "merged" (see
+  plan's changes, so the merged PR already contains the finished, archived plan.
+- The merge sits **outside** this AI done-boundary: once all four done-definition items
+  are satisfied, the orchestrator holds a green, fully-reviewed, archival-included PR, and the merge
+  follows — "done" is not the same as "merged" (see
   [Executor Tagging](../../conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule)).
-  Worktree cleanup for `*-to-pr` modes happens **after** the `[HUMAN]` merge completes (see the
+  **`[AI]` merges by default** once the hardened preconditions hold; a `[HUMAN]` merge gate applies
+  only where a plan's own step says so explicitly, and the preconditions are identical either way —
+  only the actor differs. See
+  [Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
+  Worktree cleanup for `*-to-pr` modes happens **after** the merge completes (see the
   archival Logic below) — in contrast to the direct-push modes, where cleanup already correctly
   happens right after the push is confirmed green, because those modes have no separate merge step.
 
@@ -789,12 +793,14 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
      covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
      complete, every comment answered, all gates GREEN (including CI on this last push), and the
      archival commit present on the PR branch.
-  8. **`[HUMAN]` merge**: once the done-definition is fully satisfied, surface the PR URL and the
-     done-definition checklist to the user and STOP — do not merge. Merging the PR is a `[HUMAN]`
-     step outside the AI done-boundary; the orchestrator's role ends at handing off a ready-to-merge
-     PR.
-  9. **Worktree cleanup — prompted (after the `[HUMAN]` merge completes)**: once the user confirms
-     the PR is merged, offer to delete the plan's worktree, using the same safety preconditions and
+  8. **Merge — `[AI]` by default**: once the done-definition is fully satisfied and the hardened
+     merge preconditions (a)-(e) hold, surface the PR URL and the done-definition checklist, then
+     merge. A `[HUMAN]` merge gate applies only where the plan's own step says so explicitly — in
+     that case, hand off the ready-to-merge PR and STOP instead of merging. The preconditions are
+     identical in both cases; only the actor differs. See
+     [Delivery Mode](../../conventions/structure/plans.md#delivery-mode).
+  9. **Worktree cleanup — prompted (after the merge completes)**: once the PR is confirmed
+     merged, offer to delete the plan's worktree, using the same safety preconditions and
      prompt mechanics as the direct-push path, but gated on merge completion instead of push
      completion:
      1. **Verify nothing unpushed and the merge landed** (safety precondition):

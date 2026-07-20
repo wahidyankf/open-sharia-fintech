@@ -220,10 +220,11 @@ treat it as a grill question instead (Step 8).
 **PR-Review Maker→Fixer Cycle** steps (see
 [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)) —
 strictly sequential maker→fixer→maker→fixer→maker→fixer cycles (default 3), each cycle gated by a
-green CI run — **before** the `[HUMAN]` PR-merge step. Recall "done" (AI hands off a green,
-fully-reviewed PR) is NOT the same as "merged" (on the human's own schedule) — do not tag the PR
-merge itself as anything but `[HUMAN]`, and do not treat plan completion as blocked on the merge
-happening.
+green CI run — **before** the PR-merge step. Recall "done" (a green, fully-reviewed PR) is NOT the
+same as "merged" — tag the PR merge itself `[AI]`, which is the default actor once the hardened
+preconditions hold, and do not treat plan completion as blocked on the merge happening. Emit a
+`[HUMAN]` merge step only where the plan explicitly opts into that gate; the preconditions are
+identical either way.
 
 **For `*-to-origin-main` modes**: no PR-review cycle applies; the final push is `[AI]` and the plan
 completes once CI is green on `main`.
@@ -257,7 +258,7 @@ Cover (each as a structured multiple-choice question):
 - Is the `## Worktree` section present in `delivery.md`?
 - Is `## Delivery Mode: <mode>` present alongside `## Worktree`, declaring one of the four valid
   modes (defaulting to `worktree-to-pr` when unspecified), and — for `*-to-pr` modes — does the
-  checklist emit the PR-Review Maker→Fixer Cycle steps before the `[HUMAN]` merge?
+  checklist emit the PR-Review Maker→Fixer Cycle steps before the merge?
 - Is Phase 0 (Environment Setup and Baseline) the first phase in `delivery.md`, with
   `repo-setup-manager` as the designated executor?
 - Does every phase (including Phase 0) end with a `### Phase N Gate` and a **Pause Safety** note,

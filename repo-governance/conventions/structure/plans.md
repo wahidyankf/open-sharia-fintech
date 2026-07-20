@@ -467,6 +467,34 @@ Order phases so each builds on a green predecessor. Phase 0 (Environment Setup a
 
 **Enforcement**: `plan-checker` flags any phase lacking a `### Phase N Gate` as **HIGH**, and flags a gate lacking concrete verification commands or criteria, or a missing Pause Safety note, as **MEDIUM**. `plan-execution-checker` verifies each phase gate was satisfied before the next phase's work began (via git history). `plan-fixer` adds missing gates and Pause Safety notes.
 
+### Delivery Checklists Express a DAG (HARD RULE)
+
+`delivery.md` expresses its phases and steps as a **dependency DAG**, not merely as a top-to-bottom
+list. Nodes are phases and checklist items; edges are `blocks` / `blockedBy`. Independent nodes may
+run in parallel; dependent nodes serialize.
+
+Every non-trivial plan carries a **`## Parallelization Model`** section, placed before the first
+phase, stating:
+
+- **Which nodes are concurrent and which are serial**, and why — a serial spine exists because each
+  phase builds the source of truth the next one needs, not because the list happens to be ordered.
+- **The plan's chosen N** (see the [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md)
+  for the N+1 model), and any reason it differs from the default.
+- **Cleanup as the terminal node**, depending on every delivery node — so the cleanup gate can never
+  remove a worktree, branch, or artifact that an in-flight node still needs.
+
+The distinction that makes this worth writing down: **sequence is not dependency**. A checklist is
+necessarily written in some order, but only some of that order is load-bearing. Stating the DAG
+separates the two, so an executor knows which items may fan out and which must wait — rather than
+inferring it from list position and serializing work that never needed to be serial, or parallelizing
+work that did.
+
+Two nodes are independent only when neither reads what the other writes. A shared output file, a
+shared branch, or an ordering constraint makes them dependent however separable they look.
+
+**Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
+as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
+
 ### Applicability (Execution Markers + Phase Gates)
 
 Both HARD RULES above — Executor Tagging and Phases as Natural Pauses With Clear Gates — apply to **net-new plans at authoring time**: a plan created after this convention landed MUST comply from creation, and `plan-checker` flags missing markers or gates as HIGH on those plans.
@@ -534,17 +562,32 @@ authority**.
 
 | Mode                           | Work location                  | Integration target             | Merge authority                                       |
 | ------------------------------ | ------------------------------ | ------------------------------ | ----------------------------------------------------- |
-| `worktree-to-pr` **(default)** | `worktrees/<plan-identifier>/` | Draft PR opened against `main` | `[HUMAN]` — merges the PR whenever they choose        |
+| `worktree-to-pr` **(default)** | `worktrees/<plan-identifier>/` | Draft PR opened against `main` | `[AI]` — merges once the preconditions hold           |
 | `worktree-to-origin-main`      | `worktrees/<plan-identifier>/` | Direct push to `origin main`   | `[AI]` — pushes directly, per Trunk Based Development |
 | `main-to-origin-main`          | Primary checkout (no worktree) | Direct push to `origin main`   | `[AI]` — pushes directly, per Trunk Based Development |
-| `main-to-pr`                   | Primary checkout (no worktree) | PR opened against `main`       | `[HUMAN]` — merges the PR whenever they choose        |
+| `main-to-pr`                   | Primary checkout (no worktree) | PR opened against `main`       | `[AI]` — merges once the preconditions hold           |
 
 `worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
 disposable worktree and routes it through review before it touches `main`, so it is the safest
 choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
-the PR is considered done; the `[HUMAN]` merge itself sits **outside** that done-boundary — the AI
-hands off a green, fully-reviewed PR and the human merges on their own schedule.
+the PR is considered done.
+
+**[AI] merges by default.** A `[HUMAN]` merge gate applies only where a plan's own step says so explicitly.
+The **preconditions are unchanged — only the actor is.** A PR still merges only when
+all five hardened merge preconditions hold (3 review cycles, 0 CRITICAL + 0 HIGH outstanding, branch
+up-to-date with the latest `origin/main` via a non-destructive forward update, all quality gates
+green, and the surface-conditional tester gates run-and-resolved or explicitly exempt — see the
+[PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md)). Inverting the
+default does not weaken any gate; it removes a queueing step that added latency without adding a
+check, since a human merging a PR that has already satisfied all five is performing a click, not a
+judgment.
+
+Where a plan **does** want human judgment at the merge point — an irreversible migration, a
+production cutover, a change whose blast radius the gates cannot express — it says so explicitly in
+the step itself, and that `[HUMAN]` gate then governs. Being explicit is the point: a merge gate that
+exists because someone chose it is meaningful, while one that exists because it was the default is
+indistinguishable from inertia.
 
 **Three-tier precedence** — the active mode resolves deterministically:
 

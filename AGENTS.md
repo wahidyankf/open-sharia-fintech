@@ -109,12 +109,22 @@ repo-local `WorktreeCreate` hook.
 ### Delivery Mode
 
 Every plan declares exactly one of four Delivery Modes controlling where it's worked and how it
-lands: `worktree-to-pr` (worktree → draft PR → `[HUMAN]` merge — **the default**),
+lands: `worktree-to-pr` (worktree → draft PR → `[AI]` merge — **the default**),
 `worktree-to-origin-main` (worktree → direct push, `[AI]`), `main-to-origin-main` (primary checkout
-→ direct push, `[AI]`), `main-to-pr` (primary checkout → draft PR → `[HUMAN]` merge). `*-to-pr`
+→ direct push, `[AI]`), `main-to-pr` (primary checkout → draft PR → `[AI]` merge). `*-to-pr`
 modes run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, default 3
-sequential CI-gated cycles) before the human merge. "Done" (a green, fully-reviewed PR handed off)
-is not the same as "merged" (on the human's own schedule).
+sequential CI-gated cycles) before the merge. **`[AI]` merges by default**; a `[HUMAN]` merge gate
+applies only where a plan's own step says so explicitly, and the preconditions below are identical
+either way — only the actor differs.
+
+**The PR is the independent merge point** — N parallel units become N PRs that review, gate, and
+merge independently, which is why `worktree-to-pr` is the default; each DAG leaf producing changes
+gets its own worktree and PR (strict 1-PR ↔ 1-worktree), while genuinely dependent nodes stay one PR.
+**Hardened merge preconditions** — a PR merges only when **all five** hold: (a) 3 `pr-review-maker`
+→ `pr-review-fixer` cycles complete; (b) 0 CRITICAL + 0 HIGH findings outstanding; (c) the branch is
+**up-to-date with the latest `origin/main`**, brought forward **non-destructively** if behind (never
+a shared-history rewrite); (d) all PR quality gates green; (e) the surface-conditional tester gates
+have been run and their defect findings resolved, or the exemption is explicitly recorded.
 
 **See**: [Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
@@ -269,13 +279,25 @@ per-plan and along the way only when independent work, machine capacity, and bud
 allow, and lower it under budget/runner/disk pressure. Agents MUST NOT silently self-promote beyond
 the declared N. **Subagent concurrency**: poll mtime every 3 min; if stale 30 min, `TaskStop` and
 relaunch.
+**Same-machine assumption**: always assume other agents, engineers, and processes run simultaneously
+on the **same shared machine** — sharing its disk, git object store, worktrees, and CI runners — so
+every orchestration and git action must be safe under concurrent actors.
+**DAG-first**: every non-trivial task list and delivery checklist declares a dependency DAG
+(`blocks`/`blockedBy`); independent nodes fan out up to N, dependent nodes serialize, and cleanup is
+the terminal node. The DAG's independent-node width is the fan-out — N only caps it.
+**Background-slot preference**: fill background slots up to N and keep the main thread vacant and
+responsive (orchestrator, not worker), bounded by the DAG — never split dependent work to fill slots.
+**Status cadence**: while task-list items are active, update the user every **3-5 minutes, not
+faster** — no update-storming on micro-events.
 **Task-list discipline**: maintain live task list for non-trivial work; mark in-progress before starting,
 completed after verifying; add discovered tasks immediately.
 
 **See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md),
 [Subagent Orchestration Convention](./repo-governance/development/agents/subagent-orchestration.md),
 [Parallel-by-Default Practice](./repo-governance/development/practice/parallel-by-default.md),
-[Task List Discipline](./repo-governance/development/practice/task-list-discipline.md)
+[Task List Discipline](./repo-governance/development/practice/task-list-discipline.md),
+[No Destructive Git Operations](./repo-governance/development/workflow/no-destructive-git-operations.md),
+[Worktree and Artifact Cleanup](./repo-governance/development/workflow/worktree-and-artifact-cleanup.md)
 
 ### Manual Verification & CI Blockers
 
