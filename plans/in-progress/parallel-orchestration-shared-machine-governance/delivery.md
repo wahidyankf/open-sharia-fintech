@@ -604,7 +604,7 @@ acceptance criterion`). The Phase 2 Gate's own four-term check already returns *
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Create `repo-governance/development/workflow/worktree-and-artifact-cleanup.md` (teardown
+- [x] [AI] Create `repo-governance/development/workflow/worktree-and-artifact-cleanup.md` (teardown
       sibling of `worktree-setup.md`) with: frontmatter, purpose, the mandatory plan-end cleanup gate,
       the self-created-only + verify-not-in-use rules, the artifact taxonomy (`target/`, `dist/`,
       `.next/`, build caches), the HARD caveat that shared caches must never be deleted (naming the
@@ -613,7 +613,28 @@ acceptance criterion`). The Phase 2 Gate's own four-term check already returns *
       DISTINCT matched terms, not matching lines:
       `grep -oEi 'shared cargo|verify|not in use|self-created' worktree-and-artifact-cleanup.md | sort -u | wc -l`
       returns ≥ 3, regardless of how the prose is line-wrapped
-- [ ] [AI] Add the **five mandatory pre-removal checks** to `worktree-and-artifact-cleanup.md` (each
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/worktree-and-artifact-cleanup.md` _(new)_
+  - **Notes**: Created with frontmatter, a Why-This-Is-a-Gate section grounding cleanup in the three
+    shared resources it protects (disk, ref namespace, stale state), the three artifact classes, the
+    four hard safety rules, and the build-artifact section. The shared cargo `target/` carve-out links
+    the archived `rust-cargo-target-dir-sharing` plan as the canonical example, and generalizes: any
+    cache another session can rely on is out of scope for a plan-scoped cleanup.
+  - **Framing recorded**: cleanup is the one gate where every action is a deletion, so the convention
+    is written to make "delete thoroughly" and "delete only what is yours" hold simultaneously rather
+    than trading one off against the other.
+  - **Verified**: acceptance grep returns **5** distinct terms (≥3 required).
+  - **Sequencing check**: the next-but-two checkbox's cross-link precondition requires **0** matches of
+    `worktree-setup|temporary-files|git-push-safety|no-destructive-git-operations` in this file before
+    that step runs — confirmed **0**. The Related Documentation section is deliberately left as an
+    empty placeholder so that checkbox stays discriminating rather than passing on work done here.
+  - **Over-delivery, declared**: this file already contains the five pre-removal checks that the _next_
+    checkbox owns. They are the operational core of the safety rules stated here, and splitting them
+    across two steps would have shipped an interim file that says "verify before deleting" without
+    saying how. The next checkbox therefore verifies and completes them rather than authoring from
+    scratch — its acceptance currently stands at **4 of 5** distinct terms, so it is genuinely not yet
+    satisfied.
+- [x] [AI] Add the **five mandatory pre-removal checks** to `worktree-and-artifact-cleanup.md` (each
       grounded in a live 2026-07-19 incident, per tech-docs §Delta 5): (1) test merge state with
       `gh pr list --head <branch> --state all`, **never** `git merge-base --is-ancestor` — every PR
       here is squash-merged, so ancestry false-negatives on every merged branch; (2) `git status
@@ -626,7 +647,26 @@ acceptance criterion`). The Phase 2 Gate's own four-term check already returns *
       single sentence cannot undercount:
       `grep -oEi 'gh pr list|--porcelain|unpushed commits|non-force|did not create' worktree-and-artifact-cleanup.md | sort -u | wc -l`
       returns ≥ 5 (one distinct term per mandatory check), regardless of how the prose is line-wrapped
-- [ ] [AI] Add the **branch-cleanup rules** to `worktree-and-artifact-cleanup.md` as the third artifact
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/worktree-and-artifact-cleanup.md`
+    (§Mandatory Pre-Removal Checks, check 3)
+  - **Notes**: Checks 1, 2, 4 and 5 landed with the file's creation (declared in that checkbox's
+    notes); this step completed check 3, which was the one term short. Its heading was reworded to
+    name **unpushed commits** explicitly and gained the reason the check is categorically different
+    from the other two recovery checks: for an unpushed commit there is **no remote copy to fall back
+    on** — if the worktree goes, so does the commit.
+  - **Each check carries its grounding incident**, not a hypothetical: ancestry reporting NOT-MERGED
+    for four genuinely-merged squash-merged branches; a worktree holding archival evidence that
+    existed nowhere else while every merge signal said "safe to delete"; and one of 11 worktrees
+    holding five dirty files of active work, correctly left in place.
+  - **Sharpened beyond the source text**: the convention now states that ancestry is not a
+    _conservative_ approximation — it is wrong in the direction that blocks correct cleanup, and would
+    be wrong in the **dangerous** direction if anyone inverted the test. It also states why non-force
+    removal is mandatory: it refuses on a dirty worktree, so it is the backstop for exactly the case
+    where checks 1-3 were rushed. Forcing removes the backstop, which is the whole reason to forbid it.
+  - **Verified**: acceptance grep returns **5**, with all five distinct terms listed rather than
+    counted. The cross-link checkbox's precondition re-checked and still **0**.
+- [x] [AI] Add the **branch-cleanup rules** to `worktree-and-artifact-cleanup.md` as the third artifact
       class alongside worktrees and build output (per tech-docs §Delta 5 "Branch cleanup"): delete only
       branches this plan created and only after the check-1 `gh pr list` merge-state test reports
       MERGED; local deletion via `git branch -d` (merged-check retained),
@@ -642,7 +682,32 @@ acceptance criterion`). The Phase 2 Gate's own four-term check already returns *
       it does not also match the forbidden `-D`), and
       `grep -c 'branch -D' repo-governance/development/workflow/worktree-and-artifact-cleanup.md`
       returns ≥ 1 (the prohibition is stated, not omitted)
-- [ ] [AI] Cross-link the cleanup convention to `worktree-setup.md`, `temporary-files.md` (build-artifact
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/worktree-and-artifact-cleanup.md`
+    (new `## Branch Cleanup`)
+  - **Notes**: Branches land as the third artifact class with the reason they are easy to miss stated
+    up front — removing a worktree leaves its branch behind, so under 1-PR ↔ 1-worktree a multi-phase
+    plan accumulates one stale ref per phase per repo. All required rules present: MERGED-confirmed
+    via `gh pr list` (not ancestry), `-d` never `-D`, the `-d`-refuses-on-a-MERGED-PR recovery path,
+    remote `--delete` post-merge only, `git worktree prune` after removals, and no object-store
+    `gc`/`prune`.
+  - **Environment branches written as repo-specific, not hardcoded**: `ose-public` defines
+    `prod-*`/`stag-*`; `ose-primer` and `ose-infra` define none today, so the rule is vacuously
+    satisfied there. The convention says to confirm each repo's own set with `git branch -a` rather
+    than assuming the pattern is universal — a plan that hardcodes one repo's shape eventually runs
+    against a repo that does not match.
+  - **Jurisdiction stated explicitly**: `git push origin --delete` is remote-ref deletion, not
+    history-rewriting force-push, so it sits outside the per-instance-approval gate and is instead
+    gated by this convention's own merged-check. Recorded because three conventions now touch branch
+    deletion, and without a named single authority each could plausibly be read as owning it.
+  - **Verified both halves**: `branch -d|push origin --delete|worktree prune` returns **3** distinct
+    terms (listed, not just counted); `grep -c 'branch -D'` returns **1**, confirming the prohibition
+    is present rather than silently dropped. `branch -d` is case-sensitive here so it does not also
+    match the forbidden `-D` — the two checks are genuinely independent.
+  - **Forward-reference resolved**: the file's `[Branch Cleanup](#branch-cleanup)` anchor, written
+    during the file's creation, pointed at a section that did not exist until this step.
+    `md links validate` now exits **0** (`All links valid!`), confirming it resolves.
+- [x] [AI] Cross-link the cleanup convention to `worktree-setup.md`, `temporary-files.md` (build-artifact
       taxonomy), `git-push-safety.md` (remote-side companion for the `--delete` rule), and
       `no-destructive-git-operations.md` — acceptance:
       run `grep -oE 'worktree-setup|temporary-files|git-push-safety|no-destructive-git-operations' repo-governance/development/workflow/worktree-and-artifact-cleanup.md | sort -u | wc -l`
@@ -650,18 +715,47 @@ acceptance criterion`). The Phase 2 Gate's own four-term check already returns *
       have already created the convention file, so it returns `0` immediately before this edit (file
       exists, no cross-links yet) and ≥ 4 after it, one distinct term per target file; all four links
       resolve
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/worktree-and-artifact-cleanup.md`
+    (§Related Documentation)
+  - **Notes**: Each of the five entries states the **relationship**, not just the link, so a reader
+    knows which document owns their question: `worktree-setup.md` is the setup half of the same
+    lifecycle; `temporary-files.md` supplies the artifact taxonomy being removed;
+    `no-destructive-git-operations.md` supplies the forbidden-op set that bounds what this gate may do
+    (and explains _why_ this convention prescribes `-d`, non-force removal, and no `gc`);
+    `git-push-safety.md` is the remote-side companion with the jurisdiction boundary spelled out; and
+    `agent-workflow-orchestration.md` supplies the DAG position — cleanup as the terminal node.
+  - **Verified both directions**: the acceptance grep returned **0** immediately before this edit and
+    returns **4** after, with all four distinct filenames listed rather than counted. `md links
+validate` exit **0**, so all five entries resolve as links — including
+    `../infra/temporary-files.md`, whose relative path crosses directories and was confirmed to exist
+    before relying on it.
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `npm run lint:md:fix` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
+- [x] [AI] `npm run lint:md:fix` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       (real invocation — mirrors `.husky/pre-push`; no `rhino-cli:links:validation` Nx target exists) — exit 0
-- [ ] [AI] Cleanup convention exists with the shared-cargo-target carve-out explicit
-- [ ] [AI] Cleanup convention covers all three artifact classes — worktrees, branches (local + remote,
+- [x] [AI] Cleanup convention exists with the shared-cargo-target carve-out explicit
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: `grep -c "shared cargo"` returns **2** — once in the Hard Safety Rules (naming the
+    `rust-cargo-target-dir-sharing` plan as the canonical example and linking the archived plan
+    folder, which was confirmed to exist on disk) and once in Build-Artifact Cleanup as an explicit
+    SKIP instruction. Stated in both the rule and the procedure, so an executor following only the
+    step-by-step section still sees the carve-out.
+- [x] [AI] Cleanup convention covers all three artifact classes — worktrees, branches (local + remote,
       merged-only, `-d` never `-D`), and build output — acceptance:
       `grep -oE 'worktree remove|branch -d|target/' repo-governance/development/workflow/worktree-and-artifact-cleanup.md | sort -u | wc -l`
       returns ≥ 3 (distinct matched terms, not matching lines)
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Returns **3** — one distinct term per artifact class (`worktree remove`, `branch -d`,
+    `target/`), so a missing class could not have reached 3. The convention also states the three
+    classes as a named list up front, with the observation that stopping after the first is the
+    common failure.
+  - **Gate 1 (lint + links)**: `npm run lint:md:fix` exit 0, `Summary: 0 error(s)`; `md links
+validate` exit 0; `md heading-hierarchy validate` exit 0 (run additionally — a new file with nine
+    `##` sections is where a level skip would hide).
 
 > **Pause Safety**: both new conventions exist and lint clean; the concurrency edits are stable. Safe
 > to stop. To resume: re-run link validation on the two new files.
