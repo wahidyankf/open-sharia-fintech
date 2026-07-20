@@ -82,7 +82,7 @@ CI pipelines exercise both tiers of the `web` container:
 %% Color Palette: Blue #0173B2 | Orange #DE8F05 | Teal #029E73 | Purple #CC78BC | Brown #CA9161 | Gray #808080
 graph TD
     subgraph CICD["CI Pipelines"]
-        MAIN_CI["Main CI<br/>──────────────────<br/>typecheck, lint, test:quick<br/>On push to main"]:::ci
+        MAIN_CI["Main CI<br/>──────────────────<br/>typecheck, lint, test:quick<br/>4x/day schedule + dispatch"]:::ci
 
         BE_E2E["BE E2E CI<br/>──────────────────<br/>Playwright<br/>tRPC API tests<br/>Scheduled"]:::ci
 

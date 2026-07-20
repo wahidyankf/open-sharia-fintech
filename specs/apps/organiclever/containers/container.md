@@ -52,7 +52,7 @@ by both, so adding them would clutter the rank without adding signal). Their wir
 - **DDD enforcement** (`specs/apps/organiclever/ddd/`) is validated by
   `rhino-cli ddd bc` and `rhino-cli ddd ul`, both run as part of `test:quick` for
   `organiclever-app-web`.
-- **Main CI** runs `typecheck`, `lint`, `test:quick` on push to `main` for both containers.
+- **Main CI** runs `typecheck`, `lint`, `test:quick` for both containers on a 4x/day schedule plus manual dispatch (no push trigger); `pr-quality-gate.yml` is what runs them per PR and per push to `main`.
 - **E2E CI** runs the full Docker Compose stack on a twice-daily cron.
 
 ## Container Implementations
