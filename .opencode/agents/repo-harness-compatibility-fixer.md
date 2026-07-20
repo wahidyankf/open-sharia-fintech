@@ -207,7 +207,7 @@ summary report and exits non-zero so the orchestrator escalates:
 
 **From Phase 0 parity invariants:**
 
-- **Invariant 1 fails** (repo-governance vendor-audit violations): rewriting governance prose
+- **Invariant 1 fails** (repo-governance vendor validate violations): rewriting governance prose
   requires human judgment per the convention's Migration Guidance
 - **Invariant 2 fails** (AGENTS.md / CLAUDE.md vendor-audit violations): same — rewriting
   load-bearing root-instruction prose requires human judgment
@@ -301,7 +301,7 @@ to the next finding.
 7. Re-run vendor audit (Rust `apps/rhino-cli/` only):
 
    ```bash
-   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor-audit repo-governance/
+   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
    ```
 
    - **Pass**: exits 0 → log as VALIDATED

@@ -667,10 +667,16 @@ The three git-mechanical lifecycle steps are the most common over-tags — retag
 confidence**:
 
 - `[HUMAN] Create worktree: git worktree add …` → `[AI]`
-- `[HUMAN] Review the diff and approve push to main` → rewrite as `[AI] Commit and push to origin main` (direct push is the repo default — drop the approve-push gate)
+- `[HUMAN] Review the diff and approve push …` → rewrite as `[AI] Commit and push to origin <pr-branch>` under the default `worktree-to-pr`, or `[AI] Commit and push to origin main` under a direct-push mode. Drop the approve-push gate either way — pushing to a PR branch is not a merge.
 - `[HUMAN] Remove the worktree: git worktree remove …` → `[AI]`
 
-**FALSE_POSITIVE** only when the user's prompt or the plan explicitly requested a PR or an out-of-band
+**Never apply this recipe to a merge step.** The PR merge is a separate step from the push. `[AI]` is
+its default actor, but a plan may explicitly opt into a `[HUMAN]` merge gate, and that opt-in is
+legitimate. Retagging a declared `[HUMAN]` merge step to `[AI]` — or worse, rewriting it into a direct
+push to `origin main` — would strip a deliberate gate and bypass the PR entirely. See
+[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) above, which governs merge tags.
+
+**FALSE_POSITIVE** only when the user's prompt or the plan explicitly requested an out-of-band
 sign-off for that change. See the
 [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md).
 

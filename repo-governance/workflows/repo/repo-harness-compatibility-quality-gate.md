@@ -145,7 +145,7 @@ external drift detection (Phase 1).
 
 **Phase 0 — Deterministic parity invariants** (offline, Bash-based, runs first):
 
-1. Governance prose vendor-neutrality — runs `rhino-cli repo-governance vendor-audit repo-governance/`
+1. Governance prose vendor-neutrality — runs `rhino-cli repo-governance vendor validate repo-governance/`
 2. Root instruction surface vendor-neutrality — runs vendor-audit on `AGENTS.md` and `CLAUDE.md`
 3. Binding sync no-op — runs `npm run generate:bindings && git diff --quiet .opencode/ .amazonq/`
 4. Agent count parity — compares `ls .claude/agents/*.md | wc -l` vs `ls .opencode/agents/*.md | wc -l`

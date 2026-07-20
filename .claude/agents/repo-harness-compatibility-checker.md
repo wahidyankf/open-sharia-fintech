@@ -88,7 +88,7 @@ web research.
 
 ### Invariant 1 — Governance prose vendor-neutrality
 
-- **Tool**: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor-audit repo-governance/`
+- **Tool**: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/`
 - **Pass**: command exits 0 with `GOVERNANCE VENDOR AUDIT PASSED: no violations found`
 - **Fail**: any non-zero exit; report each violation with file path, line number, forbidden
   term, and suggested replacement (already in tool output)
@@ -97,7 +97,7 @@ web research.
 
 ### Invariant 2 — Root instruction surface vendor-neutrality
 
-- **Tool**: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor-audit AGENTS.md` and same for `CLAUDE.md`
+- **Tool**: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate AGENTS.md` and same for `CLAUDE.md`
 - **Pass**: both files exit 0 with no violations outside `binding-example` fences and "Platform Binding Examples" headings
 - **Fail**: any violation in load-bearing prose
 - **Default criticality**: HIGH (root surface read by multiple coding agents)
