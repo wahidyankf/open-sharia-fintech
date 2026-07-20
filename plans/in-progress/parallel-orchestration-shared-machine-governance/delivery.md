@@ -1555,13 +1555,23 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `npm run generate:bindings` exited 0 and binding artifacts are in sync (no uncommitted drift beyond intended edits)
-- [ ] [AI] `actionlint .github/workflows/main-ci.yml` exits 0; the trigger is schedule + `workflow_dispatch` only (no `push:`)
-- [ ] [AI] The 4c completeness grep returns no unjustified stale orchestration reference across agents/skills/workflows
-- [ ] [AI] **Repo-wide superseded-cap proof**: `grep -rn "cap at 2\|cap of 2\|cap 3 concurrent\|3 total\|2 background\|stricter cap of 2\|never more" repo-governance/ AGENTS.md CLAUDE.md .claude/agents .claude/skills`
+- [x] [AI] `npm run generate:bindings` exited 0 and binding artifacts are in sync (no uncommitted drift beyond intended edits)
+  - **2026-07-20**: exit 0, 82 agents converted, `.amazonq` bridge re-emitted.
+    `git status --porcelain .opencode .amazonq` returns **empty** — zero drift.
+- [x] [AI] `actionlint .github/workflows/main-ci.yml` exits 0; the trigger is schedule + `workflow_dispatch` only (no `push:`)
+  - **2026-07-20**: `actionlint` exit **0**. Trigger block is `schedule:` (cron `0 5,11,17,23 * * *`)
+    plus `workflow_dispatch:` — grep for `^  push:` returns nothing.
+- [x] [AI] The 4c completeness grep returns no unjustified stale orchestration reference across agents/skills/workflows
+  - **2026-07-20**: the stale-phrasing alternation (`capped at **3 concurrent**`,
+    `background agents cap`, `cap at **2**`, `2 concurrent`) returns **zero** hits across all five
+    roots. Positive counter-check: **27** files now carry the N+1 model wording, so the sweep
+    replaced the old text rather than merely deleting it.
+- [x] [AI] **Repo-wide superseded-cap proof**: `grep -rn "cap at 2\|cap of 2\|cap 3 concurrent\|3 total\|2 background\|stricter cap of 2\|never more" repo-governance/ AGENTS.md CLAUDE.md .claude/agents .claude/skills`
       returns **zero** hits (or only hits explicitly annotated as superseded-historical) — proves no stale
       cap survives in ANY workflow, convention, agent, or skill doc
-- [ ] [AI] **Merge-actor `[HUMAN]`-merge sweep convergence proof** (re-verifies the widened 46-hit sweep,
+  - **2026-07-20**: the alternation grep returns **zero** hits across all five roots. No annotated
+    historical exception was needed — the stale phrasings are simply gone.
+- [x] [AI] **Merge-actor `[HUMAN]`-merge sweep convergence proof** (re-verifies the widened 46-hit sweep,
       §4b, actually converged rather than only partially completing): re-run
       `grep -rniE "\[HUMAN\][^.]*merge" AGENTS.md CLAUDE.md repo-governance .claude | wc -l` and compare
       the count against the "after" count recorded in `learnings.md` by the §4b sweep checkbox — they
@@ -1572,20 +1582,45 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       this is a **human-verifiable acceptance criterion**: individually re-read every surviving hit and
       confirm each states an explicit per-plan opt-in with authorizing context and non-precedential
       scope (DD-10's own wording is the model), never a restated `[HUMAN]`-is-the-default framing
-- [ ] [AI] All SEVEN `repo-governance/workflows/plan/*` files updated:
+  - **2026-07-20, count is 24 — and the rise is the correct outcome.** The §4b sweep recorded 20
+    post-edit; §4c/§4e and the checker-finding fixes each added new sentences of the form "a
+    `[HUMAN]` merge gate applies only where a plan says so", which is precisely the opt-in framing
+    this criterion wants. All 24 survivors were re-read individually: every one is explicit opt-in
+    framing or an index entry describing the new preconditions rule; **zero** restate
+    `[HUMAN]`-as-default. `learnings.md` updated to record 20 → 24 with this justification.
+  - **The §4b regex was the defect, not the count.** `repo-rules-checker` found five stale sites the
+    sweep had passed clean — four in `trunk-based-development.md`, one being `plan-maker.md`'s
+    Delivery Mode **table**. All shared one shape: reverse term order (`merged by a human`) or terms
+    split across table columns, neither of which a fixed-order same-line pattern can bind. Fixed in
+    `488148eca`; re-swept order-independently. Logged to `learnings.md`.
+- [x] [AI] All SEVEN `repo-governance/workflows/plan/*` files updated:
       `ls repo-governance/workflows/plan/` lists 7 files and each appears in this phase's completed 4c-i checkboxes
-- [ ] [AI] `grep -rl "max-concurrency" repo-governance/workflows/ | wc -l` returns 21 (the 20 preexisting + the new `api/api-quality-gate.md`), and `web/web-ux-test-fixing-planning.md` still reads
+  - **2026-07-20**: `ls` returns exactly 7 — `README.md`, `multi-plans-execution.md`,
+    `plan-execution.md`, `plan-multi-repo-parity-planning.md`,
+    `plan-multi-repo-parity-planning-and-execution.md`, `plan-planning.md`, `plan-quality-gate.md`.
+- [x] [AI] `grep -rl "max-concurrency" repo-governance/workflows/ | wc -l` returns 21 (the 20 preexisting + the new `api/api-quality-gate.md`), and `web/web-ux-test-fixing-planning.md` still reads
       `Default 1` with its new justification sentence
-- [ ] [AI] **Delta 11 — new `api/` workflow exists and is registered**:
+- [x] [AI] **Delta 11 — new `api/` workflow exists and is registered**:
       `test -f repo-governance/workflows/api/api-quality-gate.md && test -f repo-governance/workflows/api/README.md`
       exits 0, and `grep -c "api-quality-gate" repo-governance/workflows/README.md` returns ≥ 1
-- [ ] [AI] **Delta 11 — conditional gate rule wired at both binding points**:
+  - **2026-07-20**: both files exist; `grep -c` returns **1**. The `api` scope token was also
+    registered in `conventions/structure/workflow-naming.md` — required by that convention _before_
+    any workflow may be named against the scope, and missed on first authoring (checker HIGH 7).
+- [x] [AI] **Delta 11 — conditional gate rule wired at both binding points**:
       `grep -l "api-quality-gate" repo-governance/workflows/plan/plan-execution.md repo-governance/workflows/plan/plan-planning.md repo-governance/workflows/pr/pr-review-quality-gate.md`
       lists all three files
-- [ ] [AI] **Delta 11 — three-way distinction stated, not conflated**: the 5k / `ui-quality-gate` /
+  - **2026-07-20**: all three files listed.
+- [x] [AI] **Delta 11 — three-way distinction stated, not conflated**: the 5k / `ui-quality-gate` /
       web-triad distinction paragraph is present in `plan-execution.md` — acceptance:
       `grep -ni "ui-quality-gate" repo-governance/workflows/plan/plan-execution.md` returns ≥ 1 hit
-- [ ] [AI] `npx nx affected -t lint` + `npm run lint:md:fix` + link validation — exit 0
+  - **2026-07-20**: returns **2** hits.
+- [x] [AI] `npx nx affected -t lint` + `npm run lint:md:fix` + link validation — exit 0
+  - **2026-07-20**: `npm run lint:md:fix` linted **2978 files, 0 errors**. `rhino-cli md links
+validate` reports no broken link in any file this plan touched. `npx nx affected -t lint`
+    (`--base` = the recorded ose-public baseline SHA) reports **"No tasks were run"** — correct and
+    expected, since this plan changes only governance markdown, `.github/`, and binding artifacts,
+    touching no Nx project source. Recorded explicitly so the empty result reads as _verified
+    not-applicable_ rather than as a skipped gate.
 - [ ] [AI] `repo-rules-checker` + `repo-harness-compatibility-checker` report no unresolved CRITICAL/HIGH findings
 
 > **Pause Safety**: ose-public governance + config are complete, consistent, lint-clean, bindings

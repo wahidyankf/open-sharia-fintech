@@ -108,7 +108,13 @@ simply "15 → 0" against this same command — the two greps are deliberately d
 
 ## Learning: a whole convention can be the stale surface, and a grep-count sweep will not reveal it
 
-- **Context**: Phase 4b's sweep of hardcoded `[HUMAN]`-merge references (46 pre-edit → 20 post-edit).
+- **Context**: Phase 4b's sweep of hardcoded `[HUMAN]`-merge references (46 pre-edit → 20 post-edit;
+  24 at Phase 4 close). The count **rose** after 4b because §4c/§4e and the checker-finding fixes each
+  added new sentences of the form "a `[HUMAN]` merge gate applies only where a plan says so" — every
+  one an explicit opt-in framing, i.e. exactly what the acceptance criterion wants to see. Verified
+  hit-by-hit at Phase 4 close: all 24 survivors are opt-in framing, zero are stale assertions. A
+  falling count was never the right signal here; a **rising** count of correctly-framed hits is the
+  healthy outcome, which is itself an argument against count-based acceptance criteria.
 - **Observation**: `repo-governance/development/workflow/pr-merge-protocol.md` contributed only a
   couple of matching lines, so by hit-count it looked like a minor sweep target. It is in fact an
   entire convention built on the rule Delta 12 inverts: "AI agents and automation MUST NOT merge a
@@ -215,6 +221,27 @@ actually match, so the doc would lie about the tool.
 the vendor-term list in `vendor_audit.rs` and its companion table, landed in all three repos
 together so byte-identity holds. Verified today: `grep -rn "Kiro" repo-governance/` returns
 **nothing**, so there is no live leak to clean up — the gap is preventive, not corrective.
+
+## Learning: a sweep regex with fixed term order is blind to half its own target set
+
+- **Context**: the §4b merge-actor sweep used `\[HUMAN\][^.]*merge` — HUMAN first, `merge` after. The
+  `repo-rules-checker` later found four surviving stale sites in `trunk-based-development.md` alone,
+  plus the `plan-maker.md` Delivery Mode table, all of which the sweep had reported as clean.
+- **Observation**: every miss shared one shape — the terms appeared in the **opposite** order
+  (`merged by a human`, `Merge authority | [HUMAN]`) or were separated by a table pipe rather than
+  prose. The regex was not wrong about what it matched; it was wrong about what the target set looked
+  like. A table cell in particular puts the two terms in different columns, so no single-line
+  same-order pattern can ever bind them.
+- **Compounding factor**: the sweep's acceptance criterion was "the pattern returns only opt-in
+  framing", which the pattern satisfied perfectly while missing a third of the real sites. The check
+  validated the regex against itself.
+- **Why it might generalize**: when sweeping for a **concept** (who merges) rather than a literal
+  string, one pattern is never sufficient. Run the reverse-order pattern too
+  (`merge[^.]{0,40}\[HUMAN\]`), and run a term-only pattern (`merge authority`, `by a human`) that
+  makes no assumption about proximity or order at all — then read the hits rather than counting them.
+  This is the same failure family as the already-recorded grep traps (`-c` counts lines, `-L` follows
+  symlinks, line-based matching cannot span wrapped prose): the tool answers the question asked, and
+  the question was narrower than the intent.
 
 ## Plan-start baseline SHAs
 
