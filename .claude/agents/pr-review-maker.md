@@ -1,6 +1,6 @@
 ---
 name: pr-review-maker
-description: Planning-grade PR reviewer that reads the full diff plus its originating plan/issue context, then posts line-anchored, evidence-cited findings (numeric confidence, CRITICAL/HIGH/MEDIUM/LOW severity) via the GitHub Reviews API. The maker half of the pr-review-quality-gate maker-fixer loop; runs once per cycle against every *-to-pr delivery before the human merge.
+description: Planning-grade PR reviewer that reads the full diff plus its originating plan/issue context, then posts line-anchored, evidence-cited findings (numeric confidence, CRITICAL/HIGH/MEDIUM/LOW severity) via the GitHub Reviews API. The maker half of the pr-review-quality-gate maker-fixer loop; runs once per cycle against every *-to-pr delivery before the merge.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 model:
 color: blue

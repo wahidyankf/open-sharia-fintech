@@ -219,7 +219,8 @@ Plan executor: Delivering governance convention update via the default mode.
   git push origin git-push-default-update
   gh pr create --draft --base main --title "feat(governance): update git push default convention"
 
-Draft PR opened. Iterating until the done-definition is met, then handing off for human merge.
+Draft PR opened. Iterating until the done-definition is met, then merging once the hardened
+preconditions hold -- `[AI]` by default; `[HUMAN]` only where this plan opts into that gate.
 ```
 
 ### FAIL: Incorrect behavior — pushing directly without an explicit mode selection
@@ -330,7 +331,8 @@ finds:
 ```
 
 Correct behavior: retag the step `[AI]`, route it through the default `worktree-to-pr` flow (branch,
-PR, review cycle, human merge), and include the fix in the same commit as the plan work.
+PR, review cycle, `[AI]` merge once the hardened preconditions hold), and include the fix in the
+same commit as the plan work.
 
 ## Agent Responsibilities
 

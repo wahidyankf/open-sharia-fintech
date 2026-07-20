@@ -243,6 +243,56 @@ together so byte-identity holds. Verified today: `grep -rn "Kiro" repo-governanc
   symlinks, line-based matching cannot span wrapped prose): the tool answers the question asked, and
   the question was narrower than the intent.
 
+## Learning: fixing "the generative source" is not the same as fixing the rule
+
+- **Context**: commit `488148eca` fixed `plan-maker.md`'s Delivery Mode table, and its own message
+  justified the scope as targeting "the generative source future plans copy from". The next checker
+  run found the identical stale rule alive in three more places: `plans.md`'s Executor Tagging
+  section, `plan-checker.md` rule 14, and `plan-fixer.md` fix recipe 3.
+- **Observation**: the maker/checker/fixer triad plus the convention they all cite carry the **same
+  boilerplate** — here, the "three recurring git-mechanical steps". Updating the maker changes what
+  gets authored; it does nothing to the checker that will flag correct new plans as defective, or to
+  the fixer that will silently "repair" them. `plan-fixer.md`'s copy was the most dangerous of the
+  four: a blanket HIGH-confidence auto-fix that would have stripped a plan's declared `[HUMAN]` merge
+  opt-in and rewritten the step into a direct push to `origin main`, bypassing the PR entirely.
+- **Sharpest form of the defect**: `plan-checker.md` ended up asserting two rules _exactly backwards_
+  from each other — rule 14 flagged as a HIGH mis-tag the same scenario rule 19 declared valid. Both
+  rules were internally coherent; only reading them together revealed the contradiction.
+- **Why it might generalize**: when a governance delta changes a rule, the unit of work is **every
+  copy of that rule**, not the most upstream one. For any rule stated in a convention, enumerate its
+  maker/checker/fixer copies and treat them as a single atomic edit. A useful discriminator: if a
+  fixer can auto-apply a change at HIGH confidence, a stale fixer copy is strictly worse than a stale
+  convention copy — prose misleads a reader, a fixer recipe rewrites the repo unattended.
+
+## Learning: three sweeps, three regexes, three different blind spots — the pattern was the bug each time
+
+- **Context**: inverting the merge default (Delta 12) took **three** corrective rounds at the Phase 4
+  Gate. Each round the edits were right and the _search_ was wrong, in a different way:
+  1. `\[HUMAN\][^.]*merge` — fixed term order. Missed `merged by a human` and every markdown **table
+     cell**, where the two terms sit in different columns and no same-line same-order pattern can
+     bind them.
+  2. Scope, not pattern: only `plan-maker.md` was swept, on the reasoning that it is "the generative
+     source". The identical boilerplate lived in `plans.md`, `plan-checker.md`, and `plan-fixer.md`.
+  3. `\[HUMAN\][^.]{0,40}merge|human merges` — assumed the tag is **bracketed** and the noun
+     **plural**. Missed the unbracketed singular "human merge" in four places, two of which sat
+     inside blocks headed `PASS: Correct behavior`, actively modelling the wrong default as right.
+- **Observation**: every miss was invisible _in the same way_ — the acceptance criterion ran the same
+  pattern that produced the edits, so it re-confirmed the author's own assumption about what the
+  target text looks like. A sweep validated by its own regex measures phrasing coverage, never
+  concept coverage. The count even **rose** legitimately between rounds (20 → 24) as correct opt-in
+  framing was added, so no count-based signal could have flagged the gap either.
+- **What actually found them**: an outside checker instructed to search order-independently and to
+  _read_ hits rather than count them. Each round it found what the round's own acceptance had passed.
+- **Why it might generalize**: for a **concept** sweep (who performs an action), a single regex is
+  never an acceptance criterion — it is one sampling instrument with known blind spots. Minimum
+  viable discipline: (a) search both term orders; (b) search each term alone, unbracketed and
+  un-cased, accepting the noise; (c) grep the _worked examples and code comments_ specifically, since
+  a stale `PASS:` example teaches the wrong rule more forcefully than stale prose states it; (d)
+  enumerate every copy of the rule — convention plus maker/checker/fixer — and treat them as one
+  atomic edit; (e) have something other than the editing pattern confirm convergence. Candidate
+  durable fix: `plan-checker` should reject an acceptance criterion whose only evidence is the same
+  regex the delivery step used to make its edits.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

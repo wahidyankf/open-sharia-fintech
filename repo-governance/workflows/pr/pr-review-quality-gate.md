@@ -234,7 +234,7 @@ Precondition (c) is the reason a long-lived PR cannot simply be merged on the st
 run from last week: the gates proved the branch was good against a `main` that has since moved.
 
 ```mermaid
-%% Color palette: Teal #029E73 (done-definition items), Blue #0173B2 (AI done-boundary), Orange #DE8F05 (human merge)
+%% Color palette: Teal #029E73 (done-definition items), Blue #0173B2 (AI done-boundary), Orange #DE8F05 (merge step -- [AI] by default)
 flowchart LR
   A["N cycles complete"]:::teal --> D{"AI done-boundary"}:::blue
   B["comments answered"]:::teal --> D

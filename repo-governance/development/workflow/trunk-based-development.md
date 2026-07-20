@@ -171,7 +171,8 @@ gh pr create --draft --base main --title "feat(auth): implement login endpoint"
 
 # Get review within hours (not days), run the PR-Review Maker->Fixer Cycle
 
-# When the done-definition is met, flip to ready and let a human merge via GitHub
+# When the done-definition is met, flip to ready and merge once the hardened
+# preconditions hold -- [AI] by default, [HUMAN] only where a plan says so
 # (squash or rebase merge -- never a local `git merge`, to preserve linear history):
 gh pr ready
 

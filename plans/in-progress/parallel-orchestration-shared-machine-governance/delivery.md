@@ -1049,6 +1049,19 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
   - **Date**: 2026-07-20. **Counts: 46 pre-edit → 20 post-edit**, and every one of the 20 survivors
     sits inside an explicit per-plan-opt-in sentence ("a `[HUMAN]` merge gate applies only where a
     plan's own step says so explicitly" or an equivalent). Verified with the checkbox's own command.
+  - **CORRECTION (Phase 4 Gate, third checker pass): this sweep was NOT complete when first ticked.**
+    Its acceptance regex `\[HUMAN\][^.]{0,40}merge|human merges` has a coverage gap — it matches a
+    bracketed `[HUMAN]` tag adjacent to "merge", or the plural "human merges", but never the
+    **unbracketed singular** "human merge". Four sites used exactly that phrasing and survived three
+    separate sweeps: `trunk-based-development.md:174` ("let a human merge via GitHub", a second copy
+    of a worked example whose twin at :372 _was_ updated), `git-push-default.md:222` and `:333` (both
+    inside blocks explicitly headed **`PASS: Correct behavior`**, so they modelled the wrong default
+    as correct), and `.claude/agents/pr-review-maker.md:3` (agent `description`, mirrored verbatim
+    into `.opencode/`). Fixed in the Phase 4 Gate commit; re-verified with an order-independent
+    pattern (`human[ -]?merge|merge[^.]{0,30}human`) that makes no assumption about brackets, term
+    order, or plurality. Also corrected: a stale mermaid legend comment in
+    `pr-review-quality-gate.md:237` labelling the merge node "human merge" while the node itself
+    reads "AI merges once preconditions hold".
   - **Files rewritten** — `repo-governance/`: `git-push-default.md` (prose + the PASS-example
     heading + the `- [ ] [HUMAN] Merge the PR` checklist line itself),
     `trunk-based-development.md`, `workflows/README.md` (×2), `plan-quality-gate.md` (×2),
@@ -1622,6 +1635,18 @@ validate` reports no broken link in any file this plan touched. `npx nx affected
     touching no Nx project source. Recorded explicitly so the empty result reads as _verified
     not-applicable_ rather than as a skipped gate.
 - [ ] [AI] `repo-rules-checker` + `repo-harness-compatibility-checker` report no unresolved CRITICAL/HIGH findings
+  - **`repo-harness-compatibility-checker`, 2026-07-20: PASS, zero CRITICAL/HIGH.** Report:
+    `generated-reports/harness-compat__393c0e__2026-07-20--13-27__audit.md`. All 5 Phase 0 parity
+    invariants pass — vendor-neutrality (exit 0), root instruction surface, binding sync no-op
+    (`git diff --quiet .opencode/ .amazonq/` exit 0 after regeneration), agent count parity 83 = 83,
+    and full translation-map coverage for all 4 colors and all 5 distinct `model:` values.
+    Specifically confirmed that the `plan-maker.md` Delivery Mode merge-authority edit propagated to
+    `.opencode/` with zero re-sync drift. Phase 1 verified the Kiro succession claims against both
+    cited primary sources by direct fetch (`[Verified]`/HIGH).
+  - **Follow-up logged, not fixed here**: the checker's own spec header names the subcommand
+    `vendor-audit`, but the live CLI is `repo-governance vendor validate`. Spec-text drift in the
+    agent definition, not a repo defect — tracked separately.
+  - `repo-rules-checker` result pending.
 
 > **Pause Safety**: ose-public governance + config are complete, consistent, lint-clean, bindings
 > synced, checker-green, and no stale orchestration reference remains. Safe to stop. To resume: re-run
