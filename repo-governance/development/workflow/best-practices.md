@@ -741,33 +741,46 @@ git rebase --abort
 git pull origin main  # Use merge instead
 ```
 
-### Practice 12: Use Direct Push by Default; Create PRs Only When Explicitly Requested
+### Practice 12: Default to `worktree-to-pr`; Select a Direct-Push Mode Deliberately
 
-**Principle**: PRs are opt-in, not the default. Push directly to `main` unless the user prompt or plan document explicitly requests a PR.
+**Principle**: the repo-wide default delivery mode is `worktree-to-pr` — a short-lived plan branch in a disposable worktree, pushed to a draft PR against `main`, driven green, then merged. The direct-push modes remain fully supported, but they are an explicit selection declared in the plan, not the assumed path.
 
 **Good Example:**
 
 ```bash
-# Complete a feature with direct push (no PR needed)
+# Default: plan branch in a worktree, draft PR
+git worktree add worktrees/my-plan -b my-plan
 git commit -m "feat(auth): add email validation"
+git push origin my-plan
+gh pr create --draft --base main --title "feat(auth): add email validation"
+# Review cycle + CI run; merge once the hardened preconditions hold
+```
+
+**Also correct — a deliberately declared direct-push mode:**
+
+```bash
+# Plan declares `## Delivery Mode: main-to-origin-main` for a one-line doc fix
+git commit -m "docs(readme): fix broken anchor"
 git push origin main
 ```
 
 **Bad Example:**
 
 ```bash
-# Opening a PR for every commit "for safety" (DO NOT DO THIS)
-gh pr create --title "feat: add email validation" --body "..."
-# Unnecessary friction; blocks trunk-based integration
+# Pushing straight to main because no mode was considered at all (DO NOT DO THIS)
+git commit -m "feat(auth): rewrite session handling"
+git push origin main
+# Skips review on a substantial change; the mode was never declared
 ```
 
 **Rationale:**
 
-- Direct push is the TBD default — PRs add friction without safety benefit for routine commits
-- PRs are appropriate only for worktree-based flows, external contributions, or when explicitly requested
-- Plan delivery checklists must not include unsolicited PR steps
+- Short-lived branch via PR is a recognized TBD flavor — TBD forbids long-lived branches, not branches
+- The PR is where the review cycle and the hardened merge preconditions attach; skipping it on a substantial change removes the only review buffer
+- Direct push stays valuable for small, obviously-safe changes — declare the mode so the trade is visible
+- The push itself is always `[AI]`; no "review the diff and approve push" gate belongs in a checklist, because pushing to a PR branch is not a merge
 
-See [Git Push Default Convention](./git-push-default.md) for complete rules.
+See [Git Push Default Convention](./git-push-default.md) for complete rules and the [PR Merge Protocol](./pr-merge-protocol.md) for the merge preconditions.
 
 ## Related Documentation
 

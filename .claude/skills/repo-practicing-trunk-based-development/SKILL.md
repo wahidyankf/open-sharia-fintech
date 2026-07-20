@@ -1,6 +1,6 @@
 ---
 name: repo-practicing-trunk-based-development
-description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (assume main). Essential for understanding repository git workflow and preventing unnecessary branch proliferation
+description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (the repo-wide default delivery mode is `worktree-to-pr` -- a short-lived plan branch in a disposable worktree pushed to a draft PR; direct push to main remains available as an explicit selection). Essential for understanding repository git workflow and keeping branches short-lived
 ---
 
 # Trunk Based Development Skill
@@ -49,11 +49,11 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 - **Depends on CI/CD**: Automated tests prevent breakage
 - **Cultural shift**: Teams used to long-lived branches must adapt
 
-## The 99% Rule: Work on Main
+## Delivery Modes: How Work Reaches `main`
 
 ### Default Behavior
 
-**99% of work happens on `main` branch directly.**
+**Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` remains fully supported for small, well-understood changes via the `worktree-to-origin-main` and `main-to-origin-main` modes.
 
 **Standard workflow**:
 
@@ -75,80 +75,89 @@ git push origin main
 # 5. Repeat steps 2-4 for each small change
 ```
 
-**AI agents assume `main` by default** unless explicitly told otherwise.
+**AI agents assume `worktree-to-pr` by default** unless a plan or invocation explicitly selects another delivery mode. Resolve the mode by three-tier precedence: invocation argument > plan `## Delivery Mode` field > repo default.
 
-### When Main is Default
+### When a Direct-Push Mode Is Appropriate
 
-Use `main` branch for:
+Select `worktree-to-origin-main` or `main-to-origin-main` — pushing straight to `main` with no PR —
+for changes that are small, well-understood, and safe to integrate immediately:
 
-- **Feature development** - Build features incrementally with commits to `main`
-- **Bug fixes** - Fix and push directly to `main`
-- **Refactoring** - Small, safe refactors committed to `main`
-- **Documentation** - Write docs, commit to `main`
-- **Configuration changes** - Update config, push to `main`
-- **Dependency updates** - Upgrade packages, test, push to `main`
+- **Small bug fixes** where the failure and the fix are both obvious
+- **Small, safe refactors** with existing test coverage
+- **Documentation** and **configuration** touch-ups
+- **Dependency updates** that pass the full gate locally
 
-**Key principle**: If work is safe to integrate frequently, do it on `main`.
+**Key principle**: the direct-push modes trade review for speed. Choose them when the change is small
+enough that the trade is obviously worth it — and declare the mode explicitly in the plan, since it is
+a deliberate departure from the `worktree-to-pr` default rather than the assumed path.
 
-## The 1% Exception: When to Branch
+## Keeping Branches Short-Lived
 
-### Justified Branch Scenarios
+### What TBD Actually Forbids
 
-Branches are **exceptional** and require **explicit justification**. Create branch ONLY for:
+TBD forbids **long-lived** branches, not branches. A plan branch that opens, integrates, and is
+deleted within a day or two is fully consistent with TBD; a branch that accumulates weeks of work is
+the anti-pattern. Under the `worktree-to-pr` default, each branch is single-purpose and disposable —
+one branch, one worktree, one PR, deleted at the cleanup gate.
+
+Branch lifespan discipline still applies with full force:
 
 **1. Experimental Work (High Risk)**
 
 - **Definition**: Unproven ideas, may be abandoned
 - **Duration**: Days to weeks (not months)
 - **Example**: Exploring new framework, prototyping radical redesign
-- **Justification**: "Testing viability before committing to main"
+- **Note**: an experimental branch is still short-lived — abandon or land it, do not let it drift
 
 **2. External Contributions**
 
 - **Definition**: Pull requests from external contributors
 - **Duration**: Until review complete
 - **Example**: Open source PR from community member
-- **Justification**: "External contributor cannot push to main"
+- **Note**: fork + PR is the only external path; maintainers review it like any other PR
 
 **3. Compliance/Audit Requirements**
 
 - **Definition**: Regulatory need for branch-based approval
 - **Duration**: Until approval granted
 - **Example**: Financial system change requiring dual approval
-- **Justification**: "Compliance requires formal branch review"
+- **Note**: this is the case where a plan legitimately opts into a `[HUMAN]` merge gate
 
 **4. Parallel Maintenance Versions**
 
 - **Definition**: Supporting multiple major versions simultaneously
 - **Duration**: Ongoing (release branches)
 - **Example**: Supporting v1.x while developing v2.x
-- **Justification**: "Backporting fixes to v1.x users"
+- **Note**: release branches are the one sanctioned long-lived exception
 
-### Branch Justification Template
+### Declaring the Delivery Mode
 
-When creating branch, document justification:
+A plan branch needs no justification — it is the default. What a plan **must** declare is its
+Delivery Mode, which determines where the work lands:
 
 ```yaml
-git-workflow: "Branch: [branch-name]"
-branch-justification: |
-  **Category**: [Experimental | External | Compliance | Parallel Versions]
-  **Reason**: [Specific justification for why main won't work]
-  **Duration**: [Expected branch lifespan]
-  **Merge Strategy**: [How and when to merge back to main]
+delivery-mode: worktree-to-pr # or worktree-to-origin-main | main-to-origin-main | main-to-pr
+worktree: "worktrees/[plan-identifier]"
+branch: "[plan-identifier]"
 ```
 
-### ❌ NOT Justified Branch Scenarios
+For the categories above that go beyond an ordinary plan branch (experimental, compliance, parallel
+maintenance versions), state the expected lifespan and the landing strategy alongside the mode, since
+those are the cases where a branch risks outliving its plan.
 
-These do **NOT** justify branches (use `main` instead):
+### ❌ NOT Justified Reasons to Let a Branch Live Long
 
-- **"Feature in progress"** → Use feature flags on `main`
-- **"Needs review before merge"** → Use pair programming or quick reviews on `main`
-- **"Might break things"** → Use automated tests on `main`
-- **"Working on it for a week"** → Break into smaller commits on `main`
-- **"Multiple people on feature"** → Coordinate commits on `main`
+A plan branch is expected. What is **not** justified is letting one run long — these reasons do not
+excuse a branch that outlives its plan:
+
+- **"Feature in progress"** → Use feature flags and merge the incomplete-but-hidden work
+- **"Might break things"** → Use automated tests and the PR quality gates
+- **"Working on it for a week"** → Break the plan into phases; each phase gets its own branch and PR
+- **"Multiple people on feature"** → Split into independent DAG nodes, one branch each
 - **"Want to keep it separate"** → Preference is not justification
 
-**Key principle**: Branches are for structural necessity, not convenience.
+**Key principle**: branches are short-lived and single-purpose. Integration frequency is what TBD
+protects — the PR is a review buffer, never a parking space.
 
 ## Feature Flags for Incomplete Work
 
@@ -521,35 +530,48 @@ Before pushing to `main`:
 **Ask these questions**:
 
 1. **Can I break this into smaller commits?** → If yes, do it
-2. **Is this work experimental and high-risk?** → If no, use `main`
-3. **Can I hide incomplete work with feature flag?** → If yes, use `main`
-4. **Do I have a valid branch justification?** → If no, use `main`
+2. **Is the change small and obviously safe?** → If yes, a direct-push mode is a reasonable choice
+3. **Can I hide incomplete work behind a feature flag?** → If yes, do so regardless of mode
+4. **Have I declared the mode in the plan?** → If no, the default `worktree-to-pr` applies
 
-**Default to `main` unless you have a compelling reason to branch.**
+**Default to `worktree-to-pr`. Choose a direct-push mode deliberately, and declare it in the plan.**
 
-## PR Opt-In Rule
+## PR Is the Default; Direct Push Is an Explicit Selection
 
-**PRs are opt-in, not the default.** Push directly to `main` unless explicitly instructed otherwise.
+**The repo-wide default delivery mode is `worktree-to-pr`.** Work happens on a short-lived plan
+branch inside a disposable worktree, is pushed to a draft PR opened against `main`, and is driven
+through the review cycle and CI to a fully green state before it merges.
 
-### When a PR is Appropriate
+### Resolving the Delivery Mode
 
-Create a PR only when ONE of the following conditions is satisfied:
+Apply three-tier precedence:
 
-1. **User explicitly requests a PR** in their prompt (e.g., "open a PR", "create a PR for this")
-2. **Plan document explicitly specifies a branch + PR workflow** — the plan's `README.md`, `prd.md`, or Git Workflow section explicitly states a branch + PR workflow is required
+1. **Invocation argument** — the user or calling context named a mode explicitly
+2. **Plan field** — the plan's `## Delivery Mode` section declares one
+3. **Default** — `worktree-to-pr`
+
+Never silently coerce an invalid non-empty value; treat it as a question for the user instead.
 
 ### What This Means for Plans
 
-**Plan delivery checklists must NOT include unsolicited PR steps.** A delivery checklist step like `- [ ] Create PR` or `- [ ] Open PR` is a violation unless one of the two conditions above is met.
-
-- `plan-checker` flags such steps as HIGH findings
-- `plan-fixer` removes such steps automatically
+**Plan delivery checklists SHOULD include the PR steps** under the two `*-to-pr` modes — opening the
+draft PR, running the PR-Review Maker→Fixer Cycle, and the merge step itself. What they must not
+contain is a `[HUMAN]` "review the diff and approve push" gate: pushing to a PR branch is not a
+merge, and the push is always `[AI]`.
 
 ### What This Means for AI Agents
 
-**Always default to direct `git push origin main`** unless the user prompt or active plan document explicitly requests a PR. Opening PRs "for safety" on routine commits is an anti-pattern that conflicts with Trunk Based Development.
+**Default to a plan branch and a draft PR** (`gh pr create --draft --base main …`). Push to the PR
+branch as `[AI]`. The merge is a separate step and is **`[AI]` by default** too, once the five
+hardened preconditions hold; a `[HUMAN]` merge gate applies only where a plan's own step says so
+explicitly, and that opt-in must be left intact rather than "corrected".
 
-See [Git Push Default Convention](../../../repo-governance/development/workflow/git-push-default.md) for complete rules and edge cases.
+Selecting a direct-push mode is legitimate but deliberate — it belongs in the plan's declared
+Delivery Mode, not inferred from context.
+
+See [Git Push Default Convention](../../../repo-governance/development/workflow/git-push-default.md)
+and [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) for
+complete rules and edge cases.
 
 ## References
 
