@@ -522,16 +522,16 @@ And their session is created with correct permissions
 
 ## Git Workflow in Plans
 
-**Trunk Based Development (Default)**:
+**`worktree-to-pr` (Default)**:
 
-- Work on `main` branch directly
-- Small, frequent commits
-- No feature branches (99% of plans)
+- Short-lived plan branch in a disposable worktree
+- Draft PR against `main`; PR-Review Maker→Fixer Cycle before merge
+- Small, frequent commits; merge `[AI]` once the hardened preconditions hold
 
-**Branch-Based (Exceptional)**:
+**Direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`)**:
 
-- Only for experiments, compliance, external contributions
-- Must justify in Git Workflow section
+- For small, obviously-safe changes where a PR adds no review value
+- Declare the mode explicitly in `## Delivery Mode` — never assume it
 - Requires explicit user approval
 
 ## Plan Lifecycle

@@ -272,50 +272,45 @@ Developer commits to main → CI/CD tests → CI/CD deploys to environment branc
 
 ## AI Agent Default Behavior
 
-### Git Workflow in Plans
+### Delivery Mode in Plans
 
-**Default assumption**: All plans use `main` branch unless explicitly specified otherwise.
+**Default assumption**: every plan uses `worktree-to-pr` unless it declares another mode.
 
-**Plan frontmatter** (optional field):
+**Plan field** (in `delivery.md`, alongside `## Worktree`):
 
 ```yaml
-git-workflow: "Trunk Based Development (main branch)"
+delivery-mode: worktree-to-pr # worktree-to-origin-main | main-to-origin-main | main-to-pr
 ```
 
-**If omitted**: Agents assume TBD on `main` by default.
+**If omitted**: agents resolve by three-tier precedence — invocation argument > plan field >
+default `worktree-to-pr`. Never silently coerce an invalid non-empty value; ask instead.
 
-**If branch specified**: Must include justification:
+**If a direct-push mode is selected**: state why, since it trades away the review buffer:
 
 ```yaml
-git-workflow: "Branch: experimental-ui-redesign"
-branch-justification: |
-  **Category**: Experimental
-  **Reason**: Testing radical UI redesign that may be abandoned
-  **Duration**: 2 weeks exploration phase
-  **Merge Strategy**: Merge to main if approved, discard if rejected
+delivery-mode: main-to-origin-main
+rationale: "Single-line doc fix; full gate passes locally; no review value in a PR"
 ```
 
 ### Agent Behavior Rules
 
 **When creating plans**:
 
-- Plan-maker agent defaults to `main` branch
-- Only suggests branch if user provides justification
-- Validates branch justification against TBD criteria
-- Warns if branch seems unnecessary
+- `plan-maker` defaults to `worktree-to-pr` and emits the worktree, PR, review-cycle, and merge steps
+- Tags every git-mechanical step `[AI]` — worktree create/remove and the push
+- Tags the merge `[AI]` by default; emits a `[HUMAN]` merge step only where the plan opts into that gate
 
 **When executing work**:
 
-- Plan-executor agent works on `main` unless plan specifies branch
-- Checks current branch before starting work
-- Warns if accidentally on wrong branch
-- Never creates branches without explicit instruction
+- The executor provisions the worktree and works on the plan branch, not on `main`
+- Pushes to the PR branch as `[AI]`; opening a draft PR is expected, not exceptional
+- Merges once the five hardened preconditions hold, unless the plan declared a `[HUMAN]` gate
 
-**When validating code**:
+**When validating plans**:
 
-- Checker agents validate against `main` branch expectations
-- Flag unexpected branches in audit reports
-- Recommend merging long-lived branches
+- Checkers validate steps against the plan's **declared** Delivery Mode, not against a fixed default
+- A PR step under a `*-to-pr` mode is correct; a PR step under a direct-push mode is a finding
+- A `[HUMAN]`-tagged merge step is valid where the plan opts in — never "corrected" to `[AI]`
 
 ## Common Patterns
 

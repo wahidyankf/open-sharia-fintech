@@ -644,11 +644,11 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 
 ### Transition Steps
 
-1. **Start small**: Pick a simple task, commit directly to `main`
-2. **Use feature flags**: Hide incomplete work, not branches
-3. **Commit frequently**: Push to `main` multiple times per day
+1. **Start small**: Pick a simple task and take it through one short-lived branch and PR end to end
+2. **Use feature flags**: Hide incomplete work, so no branch stays open to hide it
+3. **Integrate frequently**: Land work multiple times per day; measure branch _lifespan_, not count
 4. **Keep CI green**: Fix failures immediately
-5. **Review old habits**: Notice when you create unnecessary branches
+5. **Review old habits**: Notice when a branch starts outliving its plan
 
 ### Common Concerns Addressed
 

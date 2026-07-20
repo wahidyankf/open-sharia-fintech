@@ -98,7 +98,7 @@ When the audit reports misplaced content per the [Content-Placement Rules](../..
 
 After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
 
-#### Unsolicited PR Step Removal (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
+#### PR Step / Delivery Mode Reconciliation (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
 
 When plan-checker flags a HIGH finding for a PR step under a direct-push Delivery Mode, resolve it
 by reconciling the mode and the step rather than reflexively deleting the step:
