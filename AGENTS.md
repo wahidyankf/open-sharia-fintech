@@ -18,11 +18,9 @@
 - **Monorepo**: Nx workspace
 - **App naming tiers**: `[domain]-www` = public website at the domain root; `[domain]-app-web` = product
   web client at `app.*`; `[domain]-be` = generic HTTP backend for a product domain.
-- **Current Apps**: Next.js sites (`ose-www` 3100, `ayokoding-www` 3101, `organiclever-www` 3200,
-  `organiclever-app-web` 3202, `ose-app-web` 3300, `wahidyankf-www` 3201), F# backends (`ose-be` 8302,
-  `organiclever-be` 8202), Rust CLIs (`ayokoding-cli`, `rhino-cli`, `ose-cli`), F# CLI (`crane-cli`),
-  contract spec (`organiclever-contracts`), and paired E2E suites.
-  See [monorepo structure](./docs/reference/monorepo-structure.md) for full details.
+- **Current Apps**: Next.js sites, F# backends, Rust and F# CLIs, a contract spec, and paired E2E
+  suites — names and ports in the Web Sites table below and in
+  [monorepo structure](./docs/reference/monorepo-structure.md).
 
 Polyglot demo apps extracted 2026-04-18 to [`ose-primer`](https://github.com/wahidyankf/ose-primer)
 (now authoritative for the polyglot showcase).
@@ -74,8 +72,8 @@ Linters: shellcheck (`--severity=warning`), hadolint (`--failure-threshold warni
 F# strict (`TreatWarningsAsErrors` + G-Research.FSharp.Analyzers + `fantomas --check`).
 All installed by `npm run doctor -- --fix`.
 
-**Instruction-file size budget** (`nx run rhino-cli:instruction-size:validation`): enforces per-surface
-byte thresholds on auto-loaded instruction files. Sole remediation: progressive disclosure.
+**Instruction-file size budget** (`nx run rhino-cli:instruction-size:validation`): per-surface byte
+thresholds on auto-loaded instruction files; sole remediation is progressive disclosure.
 See [Instruction-File Size Budget Convention](./repo-governance/conventions/structure/instruction-file-size-budget.md).
 
 **See**: [repo-governance/development/quality/cross-language-lint-strictness.md](./repo-governance/development/quality/cross-language-lint-strictness.md)
@@ -92,10 +90,10 @@ See [Instruction-File Size Budget Convention](./repo-governance/conventions/stru
 
 ## Git Workflow
 
-**Trunk Based Development** — All development on `main`. Environment branches (Vercel only — never
-commit directly): `prod-ayokoding-www`, `prod-ose-www`, `prod-organiclever-www`, `prod-wahidyankf-www`,
-`prod-organiclever-app-web`, `prod-ose-app-web` (staging: `stag-*`). **Commit format**: Conventional
-Commits `<type>(<scope>): <description>` — imperative mood, no period. Split commits by domain/concern.
+**Trunk Based Development** — `main` is the single integration target. Environment branches
+(Vercel only — never commit directly): `prod-*` per app, plus `stag-*`; the full list is in the
+Web Sites table below. **Commit format**: Conventional Commits `<type>(<scope>): <description>` —
+imperative mood, no period. Split commits by domain/concern.
 
 **See**: [repo-governance/development/workflow/commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
 
@@ -109,24 +107,22 @@ repo-local `WorktreeCreate` hook.
 ### Delivery Mode
 
 Every plan declares exactly one of four Delivery Modes controlling where it's worked and how it
-lands: `worktree-to-pr` (worktree → draft PR → `[AI]` merge — **the default**),
-`worktree-to-origin-main` (worktree → direct push, `[AI]`), `main-to-origin-main` (primary checkout
-→ direct push, `[AI]`), `main-to-pr` (primary checkout → draft PR → `[AI]` merge). `*-to-pr`
-modes run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` / `pr-review-fixer`, default 3
-sequential CI-gated cycles) before the merge. **`[AI]` merges by default**; a `[HUMAN]` merge gate
-applies only where a plan's own step says so explicitly, and the preconditions below are identical
-either way — only the actor differs.
+lands: `worktree-to-pr` (worktree → draft PR — **the default**), `worktree-to-origin-main` (worktree
+→ direct push), `main-to-origin-main` (primary checkout → direct push), `main-to-pr` (primary
+checkout → draft PR). `*-to-pr` modes run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` /
+`pr-review-fixer`, default 3 sequential CI-gated cycles) before the merge. **`[AI]` merges by
+default** in every mode; a `[HUMAN]` merge gate applies only where a plan's own step says so
+explicitly, with identical preconditions — only the actor differs.
 
 **The PR is the independent merge point** — N parallel units become N PRs that review, gate, and
 merge independently, which is why `worktree-to-pr` is the default; each DAG leaf producing changes
 gets its own worktree and PR (strict 1-PR ↔ 1-worktree), while genuinely dependent nodes stay one PR.
-**Hardened merge preconditions** — a PR merges only when **all five** hold: (a) 3 `pr-review-maker`
-→ `pr-review-fixer` cycles complete; (b) 0 CRITICAL + 0 HIGH findings outstanding; (c) the branch is
-**up-to-date with the latest `origin/main`**, brought forward **non-destructively** if behind (never
-a shared-history rewrite); (d) all PR quality gates green; (e) the surface-conditional tester gates
-have been run and their defect findings resolved, or the exemption is explicitly recorded.
+A PR merges only when **all five hardened preconditions** hold — review cycles complete; 0 CRITICAL +
+0 HIGH outstanding; branch non-destructively up to date with `origin/main`; all quality gates green;
+tester gates run or exemption recorded. Normative lettering (a)-(e) in the PR Merge Protocol.
 
-**See**: [Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
+**See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
+[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
 ## Git Hooks (Automated Quality)
@@ -274,21 +270,19 @@ fast-track and EPSS ≥ 0.5 escalate to Path C.
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions). **Parallel-by-default**: run
 independent sub-units in parallel under the **N+1 model** — `1 main thread + N background agents =
-N+1 total`, **default N=3** (4 total). N=3 is chosen to **bound token/compute-budget burn**; raise N
-per-plan and along the way only when independent work, machine capacity, and budget headroom all
-allow, and lower it under budget/runner/disk pressure. Agents MUST NOT silently self-promote beyond
-the declared N. **Subagent concurrency**: poll mtime every 3 min; if stale 30 min, `TaskStop` and
-relaunch.
+N+1 total`, **default N=3** (4 total). N=3 bounds token/compute-budget burn; raise it per-plan only
+when independent work, machine capacity, and budget headroom all allow, lower it under pressure, and
+never self-promote beyond the declared N. **Subagent concurrency**: poll mtime every 3 min; if stale
+30 min, `TaskStop` and relaunch.
 **Same-machine assumption**: always assume other agents, engineers, and processes run simultaneously
 on the **same shared machine** — sharing its disk, git object store, worktrees, and CI runners — so
 every orchestration and git action must be safe under concurrent actors.
 **DAG-first**: every non-trivial task list and delivery checklist declares a dependency DAG
-(`blocks`/`blockedBy`); independent nodes fan out up to N, dependent nodes serialize, and cleanup is
-the terminal node. The DAG's independent-node width is the fan-out — N only caps it.
-**Background-slot preference**: fill background slots up to N and keep the main thread vacant and
-responsive (orchestrator, not worker), bounded by the DAG — never split dependent work to fill slots.
-**Status cadence**: while task-list items are active, update the user every **3-5 minutes, not
-faster** — no update-storming on micro-events.
+(`blocks`/`blockedBy`); independent nodes fan out up to N, dependent nodes serialize, cleanup is the
+terminal node. DAG width is the fan-out — N only caps it.
+**Background-slot preference**: fill background slots up to N, keeping the main thread vacant and
+responsive (orchestrator, not worker) — never split dependent work to fill a slot.
+**Status cadence**: update the user every **3-5 minutes, not faster**, while items are active.
 **Task-list discipline**: maintain live task list for non-trivial work; mark in-progress before starting,
 completed after verifying; add discovered tasks immediately.
 
@@ -303,14 +297,14 @@ completed after verifying; add discovered tasks immediately.
 
 - **Verify behavior**: Playwright MCP for UI, curl for API.
   See [manual-behavioral-verification.md](./repo-governance/development/quality/manual-behavioral-verification.md)
-- **User-facing delivery hardening**: Sixteen rules; near-end EWT/UWT/DWT retest for UI plans; AET
-  retest for API plans (REST/GraphQL). See [user-facing-delivery-hardening.md](./repo-governance/development/quality/user-facing-delivery-hardening.md)
+- **User-facing delivery hardening**: Sixteen rules; near-end EWT/UWT/DWT retest for UI plans, AET
+  for API plans. See [user-facing-delivery-hardening.md](./repo-governance/development/quality/user-facing-delivery-hardening.md)
 - **CI blockers**: Investigate root cause, fix properly, never bypass.
   See [ci-blocker-resolution.md](./repo-governance/development/quality/ci-blocker-resolution.md)
 - **CI post-push verification**: After pushing app or lib code, trigger CI and verify it passes.
   See [ci-post-push-verification.md](./repo-governance/development/workflow/ci-post-push-verification.md)
 - **CI monitoring**: Poll every **2 minutes** — one `gh run view --json status,conclusion` per wakeup.
-  Never tight-loop. Do not use `gh run watch`. If rate-limited (HTTP 403): wait ~35 min before retrying.
+  Never tight-loop, never `gh run watch`. Rate-limited (403): wait ~35 min.
   See [ci-monitoring.md](./repo-governance/development/workflow/ci-monitoring.md)
 
 ## AI Agents
@@ -443,9 +437,8 @@ Content parity between `ose-public` and `ose-primer` maintained via
 [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
 workflow. `ose-infra` does not participate in the parity loop.
 
-`apps/rhino-cli` is required to be byte-identical (zero carve-outs) across all three repos, including
-its Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**` (every `.feature` file and
-every `README.md`), per the
+`apps/rhino-cli` must be byte-identical (zero carve-outs) across all three repos, including its
+Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
 [SDLC Gate Standard](./docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
 
 See: [Related Repositories reference](./docs/reference/related-repositories.md).
