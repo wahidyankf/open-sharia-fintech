@@ -607,7 +607,9 @@ immediately before the PR-merge step, sourced verbatim in structure from the
 one `- [ ] [AI] Invoke pr-review-maker on $PR` / `- [ ] [AI] Invoke pr-review-fixer on $PR` pair per
 cycle, a loop-exit condition (N cycles complete, or a cycle with zero new findings), and — where
 the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to `plans/done/` +
-README updates) committed inside the same PR, before the final `- [ ] [AI] Merge PR` step.
+README updates) committed inside the same PR, before the final merge step — whatever tag that step
+already carries. Never retag it while scaffolding; see the structural guard in
+[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch).
 
 ### How to Fix a Merge-Tag Mismatch
 
@@ -673,6 +675,12 @@ shape (add file path + verbatim command + observable acceptance criterion) to th
 checkbox.
 
 After rewriting, re-read the checkbox and confirm a sonnet-tier agent could execute it without consulting any other section of the plan. If the rewrite still requires lookups, repeat until the checkbox is self-contained.
+
+**Never apply this rewrite to a merge step.** A merge step missing a verbatim command or acceptance
+criterion is out of scope here and stays governed by
+[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch). Supplying a scripted
+`gh pr merge` command must never become the mechanism that converts a `[HUMAN]` gate to `[AI]` —
+a merge step is a governance gate, not an under-specified action item, and its tag is the gate.
 
 ## Executor-Tagging and Phase-Gate Fixes (Step 5h Findings)
 
