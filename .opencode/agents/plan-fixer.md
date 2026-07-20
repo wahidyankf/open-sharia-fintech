@@ -121,6 +121,15 @@ by reconciling the mode and the step rather than reflexively deleting the step:
   the plan mode-inconsistent.
 - A `*-to-pr` plan's PR step is never itself a finding — only its absence (missing review-cycle
   steps) or a mismatched mode declaration is.
+- **Never apply the "remove the line" action above to a merge step, under any Delivery Mode.** "PR
+  creation step" means the step that opens the PR — never the step that merges it. A merge step is
+  out of scope for this recipe entirely and stays governed exclusively by
+  [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) and the structural guard it
+  states, which never removes, retags, or otherwise weakens a merge step's human gate. "Or
+  equivalent" above resolves only to other PR-_creation_ phrasings (e.g. "Raise PR", "Start PR
+  review") — it never extends to a merge phrasing (`- [ ] Merge PR`, `- [ ] [HUMAN] Merge …`), and a
+  direct-push Delivery Mode does not loosen that boundary: a stray merge step under a direct-push
+  mode is a separate finding to surface, not license to delete it here.
 
 ### 4. Fix Report Generation
 
@@ -602,26 +611,37 @@ README updates) committed inside the same PR, before the final `- [ ] [AI] Merge
 
 ### How to Fix a Merge-Tag Mismatch
 
-**Structural guard (HARD RULE): `plan-fixer` never writes `[AI]` onto an existing merge-step tag,
-under any condition.** This holds regardless of the tag's current value and regardless of whether
-that value appears in some enumerated "known-valid" set. An enumeration-based guard (retag anything
-not in `{[AI], [HUMAN], [AI+HUMAN]}`) fails open on every tag value nobody enumerated — that class of
-bug is exactly how a `[HUMAN → AI]`-tagged merge step was silently stripped to `[AI]` in a prior
-cycle. The only safe rule is unconditional: a merge step's tag is never mechanically rewritten
-toward `[AI]`, full stop. Concretely:
+**Structural guard (HARD RULE — states what it protects, not a tag/verb/mode enumeration): no
+recipe in this file, present or future, may remove, retag, or otherwise weaken a merge step's human
+gate — in ANY Delivery Mode, by ANY verb (write, delete, replace, rewrite, or merge into an
+unrelated recipe's output), under ANY confidence level including HIGH.** A merge step's tag is the
+plan's sole opt-in declaration for a human-gated merge — there is no separate field recording that
+intent — so anything that makes the gate disappear defeats it, regardless of which verb did it or
+which Delivery Mode the recipe fired under. This is deliberately stated by what it protects (the
+human gate) rather than by enumerating tags, verbs, or modes: two prior cycles were each defeated by
+a guard that was correct on the single axis it named — a tag-value set, or a `*-to-pr` mode
+condition — and silently open on an axis nobody had named — a delete instead of a retag, or a
+direct-push mode the guard's wording didn't reach. Enumerating axes is how this bug keeps
+recurring; every recipe in this file that could touch a merge step is scoped by this guard first,
+and a recipe's own confidence table (however "mechanical" or "HIGH confidence" it claims to be) is
+a narrower check layered on top, never a substitute. Concretely:
 
 - `*-to-pr` mode with the merge step carrying a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]` →
   do NOT retag it. Surface it as a MEDIUM-confidence grill question (per the Confidence Assessment
   above) offering the three valid tags plus the standing blank-state/"chat about this" options, and
   apply only whichever tag the user selects. An unrecognized tag may carry human-actor semantics
   this agent must not silently strip — never assume it is safe to overwrite.
-- **Never retag a `[HUMAN]`-tagged merge step under a `*-to-pr` mode.** Per
-  [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode), the `[HUMAN]`
-  tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in" declaration to
-  check for, so a merge step tagged `[HUMAN]` and a merge step that "explicitly declares" a `[HUMAN]`
-  gate describe the identical input. Treating them as two branches, one retaggable and one not, is
-  unsafe: it makes retagging a legitimate `[HUMAN]` merge gate to `[AI]` a live outcome of this
-  recipe. There is no fix action for a `[HUMAN]`-tagged merge step — leave it alone unconditionally.
+- **Never retag, delete, or otherwise remove a `[HUMAN]`- or `[AI+HUMAN]`-tagged merge step, in any
+  Delivery Mode.** Per [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode),
+  the tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in"
+  declaration to check for, so a merge step tagged `[HUMAN]` and a merge step that "explicitly
+  declares" a `[HUMAN]` gate describe the identical input. This is not limited to `*-to-pr` mode: a
+  direct-push mode plan with a `[HUMAN]`-tagged merge step (or a recipe elsewhere in this file that
+  would delete a merge step as a side effect of an unrelated fix, e.g. a mode/PR-step reconciliation)
+  is exactly as unsafe as retagging one under `*-to-pr`, because the observable outcome — the gate
+  is gone — is identical either way. There is no fix action for a `[HUMAN]`- or
+  `[AI+HUMAN]`-tagged merge step — leave it alone unconditionally, regardless of which recipe or
+  Delivery Mode brought the fixer to that line.
 - `*-to-origin-main` mode with the final push gated behind an unrequested `[HUMAN]` approval step →
   retag `[AI]` and remove the approval-gate framing (the push itself needs no sign-off under a
   direct-push mode). This is the push, not the merge, so the structural guard above does not apply
@@ -760,8 +780,8 @@ When any `[HUMAN]` marker exists in `delivery.md` (or the single-file delivery s
 > **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).
 > `[HUMAN]`: reserved for steps only a human can perform — physical/hardware actions,
 > out-of-band approvals (sign a contract, pay an invoice), or interactive credential/SSO gates
-> an agent cannot script. Every `[HUMAN]` step states what the human does and the observable
-> signal the agent checks to resume.
+> an agent cannot script. `[AI+HUMAN]`: agent prepares, human approves or finishes. Every
+> `[HUMAN]` step states what the human does and the observable signal the agent checks to resume.
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate`: a must-pass verification
 > checklist plus a **Pause Safety** note (the safe-to-stop state after the phase and the
