@@ -122,15 +122,26 @@ flowchart TD
 ```mermaid
 %% A single stale passage's states from introduction to closure
 stateDiagram-v2
-  [*] --> Stale: governing rule changed elsewhere
-  Stale --> InCandidateSet: selected by inbound link or blast radius
-  Stale --> Invisible: missed by keyword-shaped search
-  Invisible --> InCandidateSet: stable-key sweep adopted
-  InCandidateSet --> ClassSwept: fixer sweeps whole class
-  ClassSwept --> ClosureVerified: adversarial round finds no residue
+  [*] --> Stale: rule changed
+  Stale --> InCandidateSet: link sweep
+  Stale --> Invisible: keyword miss
+  Invisible --> InCandidateSet: stable key
+  InCandidateSet --> ClassSwept: class swept
+  ClassSwept --> ClosureVerified: no residue
   ClosureVerified --> [*]: closed
-  ClosureVerified --> Stale: fixer's own commit falsified another claim
+  ClosureVerified --> Stale: self-inflicted
 ```
+
+Edge labels are kept short deliberately — `stateDiagram-v2` transition labels clip in GitHub's
+renderer, and a clipped label is a silently wrong diagram. The full transitions read:
+
+- **`[*] --> Stale`** — the governing rule changed somewhere else, stranding this passage.
+- **`Stale --> InCandidateSet`** — selected by inbound-link sweep or blast-radius analysis.
+- **`Stale --> Invisible`** — missed entirely by keyword-shaped search (BS-4, BS-13, BS-14).
+- **`Invisible --> InCandidateSet`** — reached once a stable-key or completeness-diff sweep is adopted.
+- **`InCandidateSet --> ClassSwept`** — the fixer sweeps the whole class, not the single instance.
+- **`ClassSwept --> ClosureVerified`** — an adversarial round finds no residue.
+- **`ClosureVerified --> Stale`** — the fixer's own commit falsified another claim.
 
 The `ClosureVerified --> Stale` edge is blind-spot class 11 — the self-inflicted drift loop that
 commit `362c23aab` had to close.
@@ -161,19 +172,22 @@ flowchart LR
   P2 --> P4[Phase 4<br/>evidence grounding]
   P3 --> P4
   P4 --> P5[Phase 5<br/>adversarial termination]
-  P5 --> P6[Phase 6<br/>replay + bindings + PR]
+  P5 --> P5B[Phase 5B<br/>guard placement +<br/>search validity +<br/>cycle termination]
+  P5B --> P6[Phase 6<br/>replay + bindings + PR]
   P6 --> P7[Phase 7<br/>ose-primer]
   P6 --> P8[Phase 8<br/>ose-infra]
   P7 --> P9[Phase 9<br/>knowledge capture]
   P8 --> P9
 
   style P0 fill:#009E73,stroke:#006147,color:#FFFFFF
+  style P5B fill:#E69F00,stroke:#7A5200,color:#000000
   style P6 fill:#0072B2,stroke:#04395E,color:#FFFFFF
   style P9 fill:#CC79A7,stroke:#6B2F55,color:#000000
 ```
 
 Phases 2 and 3 are independent of each other and may run in parallel (subject to the repo's
-concurrency cap); Phases 7 and 8 likewise.
+concurrency cap); Phases 7 and 8 likewise. Phase 5B carries the three mechanisms added from the
+PR-review session (DECISIONs 9, 10, 12 and 13) and depends on Phase 5's termination rewrite.
 
 ## Blind-Spot Class Registry — seed content
 
@@ -185,24 +199,77 @@ the file list proving the miss — because the cited SHAs live on the unmerged b
 `parallel-orchestration-shared-machine-governance` and will not survive a squash-merge. The SHA is a
 best-effort pointer, never the sole evidence.
 
-### The twelve seed classes
+**Classes compose, they do not partition.** BS-15 is simultaneously an instance of BS-11: it was
+introduced by an instruction-file byte-budget trim that replaced an inline enumeration with a
+pointer to an incomplete table. The registry states this explicitly, because a reader who treats
+entries as mutually exclusive categories stops matching after the first hit.
 
-| ID    | Blind spot                          | Missing sweep form                                    | Catching sweep form                                             | Evidence (commit subject)                                        |
-| ----- | ----------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| BS-1  | Fixed term order                    | Ordered multi-term pattern                            | Order-independent alternation; inspect table cells separately   | `sweep stale direct-push-default boilerplate to all four copies` |
-| BS-2  | Generative-source-only scope        | Edit the doc that generated the rule                  | Include convention + checker + fixer + maker siblings           | `sweep stale direct-push-default boilerplate to all four copies` |
-| BS-3  | Bracketed-tag / plural assumption   | Search the tagged form `[HUMAN]` only                 | Search the untagged prose form too (`human merge`)              | `close the unbracketed "human merge" sweep gap`                  |
-| BS-4  | Paraphrase                          | Any keyword-selected search                           | Inbound-link sweep — select by link, not by wording             | `sweep by inbound link, catching the paraphrase survivors`       |
-| BS-5  | Teaching vs normative content       | Sweep only normative sections                         | Include explanatory/teaching prose in the candidate set         | `rewrite the teaching content that still taught main-by-default` |
-| BS-6  | Untouched sections in touched files | Treat a file as done once edited                      | Re-scan the whole file, not the edited region                   | `rewrite the untouched teaching sections in partly-fixed files`  |
-| BS-7  | Worked examples contradicting prose | Sweep prose only                                      | Diff each example against the paragraph governing it            | `align worked examples with the prose above them`                |
-| BS-8  | Agent-emitted templates             | Sweep documentation only                              | Include templates agents emit into other artifacts              | `make post-push CI templates delivery-mode-aware`                |
-| BS-9  | Obligation scoped to old condition  | Search the changed value                              | Search the **condition** the obligation is keyed on             | `scope CI post-push verification to the delivery target`         |
-| BS-10 | Definition blocks                   | Sweep usage sites                                     | Include the definition/glossary blocks defining the term        | `correct the TBD definition block and the main-ci gate doc`      |
-| BS-11 | Self-inflicted drift                | Sweep only pre-existing content                       | Re-check the chain's own change surface for claims it falsified | `correct nx-targets CI-trigger claims for main-ci schedule`      |
-| BS-12 | Directory-scoped sweep              | `grep -r … repo-governance/` while claiming repo-wide | Repo-wide, or enumerate + justify every exclusion               | `correct main-ci trigger docs outside repo-governance`           |
+### The fifteen seed classes
 
-### BS-12 — worked entry (the highest-cost class)
+| ID    | Blind spot                            | Missing sweep form                                    | Catching sweep form                                             | Evidence (commit subject)                                        |
+| ----- | ------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| BS-1  | Fixed term order                      | Ordered multi-term pattern                            | Order-independent alternation; inspect table cells separately   | `sweep stale direct-push-default boilerplate to all four copies` |
+| BS-2  | Generative-source-only scope          | Edit the doc that generated the rule                  | Include convention + checker + fixer + maker siblings           | `sweep stale direct-push-default boilerplate to all four copies` |
+| BS-3  | Bracketed-tag / plural assumption     | Search the tagged form `[HUMAN]` only                 | Search the untagged prose form too (`human merge`)              | `close the unbracketed "human merge" sweep gap`                  |
+| BS-4  | Paraphrase                            | Any keyword-selected search                           | Inbound-link sweep — select by link, not by wording             | `sweep by inbound link, catching the paraphrase survivors`       |
+| BS-5  | Teaching vs normative content         | Sweep only normative sections                         | Include explanatory/teaching prose in the candidate set         | `rewrite the teaching content that still taught main-by-default` |
+| BS-6  | Untouched sections in touched files   | Treat a file as done once edited                      | Re-scan the whole file, not the edited region                   | `rewrite the untouched teaching sections in partly-fixed files`  |
+| BS-7  | Worked examples contradicting prose   | Sweep prose only                                      | Diff each example against the paragraph governing it            | `align worked examples with the prose above them`                |
+| BS-8  | Agent-emitted templates               | Sweep documentation only                              | Include templates agents emit into other artifacts              | `make post-push CI templates delivery-mode-aware`                |
+| BS-9  | Obligation scoped to old condition    | Search the changed value                              | Search the **condition** the obligation is keyed on             | `scope CI post-push verification to the delivery target`         |
+| BS-10 | Definition blocks                     | Sweep usage sites                                     | Include the definition/glossary blocks defining the term        | `correct the TBD definition block and the main-ci gate doc`      |
+| BS-11 | Self-inflicted drift                  | Sweep only pre-existing content                       | Re-check the chain's own change surface for claims it falsified | `correct nx-targets CI-trigger claims for main-ci schedule`      |
+| BS-12 | Directory-scoped sweep                | `grep -r … repo-governance/` while claiming repo-wide | Repo-wide, or enumerate + justify every exclusion               | `correct main-ci trigger docs outside repo-governance`           |
+| BS-13 | Incomplete description, no swept term | Any phrase sweep; any inbound-link sweep              | Completeness-diff: enumerate what the reference should contain  | `correct the pr-quality-gate trigger description`                |
+| BS-14 | Artifact on disk, in no catalogue     | Any text or link sweep — there is no text and no link | Completeness-diff: enumerate the filesystem, diff the catalogue | `catalogue the missing workflow and storybook deployer`          |
+| BS-15 | Enumeration whose truth is a git ref  | Any sweep of on-disk artifacts                        | Completeness-diff against `git branch -r`                       | `cover the three uncovered environment branches`                 |
+
+### BS-13, BS-14, BS-15 — the classes no text search reaches
+
+These three share the property that makes them the registry's most important entries: **there is
+nothing to search for.** BS-13's text omits the swept term rather than containing a stale one;
+BS-14's artifact has neither text nor inbound link; BS-15's ground truth is not in the tree at all.
+Every mechanism in this plan other than completeness-diff (DD-10) finds zero of the three.
+
+**BS-13 — incomplete description that names no swept term.** `.github/workflows/README.md` stated
+`pr-quality-gate.yml`'s trigger as "Pull request" while the workflow also carries
+`push: branches: [main]`. **Inline evidence**: the corrective commit
+`correct the pr-quality-gate trigger description`; the proving pair is the "PR and repo-wide gates"
+table row in `.github/workflows/README.md` against the `on:` block of
+`.github/workflows/pr-quality-gate.yml` [Repo-grounded — both re-verified during the amendment that
+added this entry]. The same class hit `docs/reference/system-architecture/ci-cd.md` three times.
+**Missing form**: phrase sweep (the row never says "push"); inbound-link sweep (the row links
+nowhere). **Catching form**: enumerate what a CI reference should contain — every trigger of every
+workflow — and diff against `.github/workflows/`. **Detection**: statically detectable, given a
+parser for workflow `on:` blocks.
+
+**BS-14 — the artifact that appears in no catalogue.** **Inline evidence**: the corrective commit
+`catalogue the missing workflow and storybook deployer`. `web-ui-build-deploy-prod.yml` was the only
+one of the 20 `.yml` files under `.github/workflows/` absent from **both**
+`.github/workflows/README.md` and `docs/reference/system-architecture/ci-cd.md`;
+`.claude/agents/apps-web-ui-storybook-deployer.md` exists while the `AGENTS.md` Operations roster
+names only the six `*-www` / `*-app-web` deployers [Repo-grounded — both re-verified during this
+amendment]. **Missing form**: every text- or link-shaped sweep; the artifact is absent from the
+documentation by definition, so there is no occurrence to match and no link to follow.
+**Catching form**: enumerate the filesystem with `find -print0` and diff against the catalogue.
+**Detection**: statically detectable, and the cheapest of the three.
+
+**BS-15 — the enumeration whose ground truth is a live git ref.** **Inline evidence**: the
+corrective commit `cover the three uncovered environment branches`. `AGENTS.md` scoped its "never
+commit directly" rule to "`prod-*` per app, plus `stag-*`; the full list is in the Web Sites table
+below". `git branch -r` shows 11 environment branches against the table's 8; `origin/prod-web-ui`,
+`origin/stag-organiclever-be` and `origin/stag-ose-be` were uncovered [Repo-grounded — re-verified
+during this amendment]. `prod-web-ui` escaped the `prod-*`-per-app reasoning as well, because
+`web-ui` is a **lib**, not an app — and an agent force-pushes to it. **Missing form**: any sweep of
+on-disk artifacts; the ground truth is a set of remote refs. **Catching form**: completeness-diff
+against `git branch -r`. **Detection**: statically detectable, but only by a check that knows to
+consult refs rather than files — which is the entire point of DD-10's rider.
+
+**Composition note**: BS-15 is also a BS-11 instance. It was self-inflicted by a byte-budget trim
+replacing an inline enumeration with a pointer to an incomplete table — the chain's own change
+falsifying the chain's own safety scope.
+
+### BS-12 — worked entry (the highest-cost class of the first twelve)
 
 **Symptom**: a sweep restricted to one subtree, reported as repo-wide. Eleven consecutive rounds
 asserted repo-wide scope without demonstrating it.
@@ -252,7 +319,7 @@ whether a given passage is stale stays an AI judgement.
 
 ### DD-1 — the registry is a governance quality document, not agent-inlined prose
 
-Inlining twelve class descriptions with evidence into `repo-rules-checker.md`, `repo-rules-fixer.md`
+Inlining fifteen class descriptions with evidence into `repo-rules-checker.md`, `repo-rules-fixer.md`
 and `repo-rules-maker.md` would triple their content and push against the instruction-file size
 budget [Repo-grounded — `nx run rhino-cli:instruction-size:validation` exists and is wired into the
 preflight as the `instruction-size` category]. One governance file that all three link to keeps a
@@ -323,6 +390,127 @@ citations die on merge. Each registry entry carries its commit subject and provi
 Delivery steps that replay the chain resolve SHAs **defensively** — if `git cat-file -t <sha>` fails,
 the step falls back to the inline evidence rather than failing the phase.
 
+The BS-13/BS-14/BS-15 SHAs (`e46235226`, `b61e29754`, `3ee6323b7`, `f5f819642`, `72af8ab83`) are on
+the same unmerged branch and are equally perishable. Their entries above carry inline evidence that
+is re-derivable from the current tree at any time — a `find` over `.github/workflows/`, a `grep`
+over the two catalogues, and `git branch -r` — which makes them the most durable entries in the
+registry, not the least.
+
+### DD-9 — a guard is placed at the point of rewrite, not enumerated by hazard axis
+
+The evidence is the five-axis sequence in README DECISION 9: four consecutive fixes, each correct on
+the axis it named, each opening the next. The decisive instance is structural rather than a matter
+of wording. `.claude/agents/plan-fixer.md` carries an umbrella guard claiming to bind "no recipe in
+this file, present or future" — a claim that is **true on its own terms**. But every _enforcement
+pointer_ in that file is indexed by plan-checker **finding type**, and §Execution-Grade Clarity
+Fixes has none. That recipe fires on "checkbox lacks file path / verbatim command / acceptance
+criterion", auto-applies at HIGH confidence, and a step reading
+`- [ ] [HUMAN] Merge PR once all preconditions hold` has none of the three. It derives a verbatim
+command — `gh pr merge` — after which two other rules push the step toward `[AI]`. A fixer entering
+on that finding type never reaches the guard.
+
+Two rules follow:
+
+- **Placement**: a guard protecting an invariant is co-located with every rewrite that could violate
+  it. The umbrella clause may remain, but it is documentation, never the mechanism.
+- **Verification by entry path**: coverage is established by enumerating how an agent **enters** the
+  file — finding type, step number, invocation mode — and tracing each path to the guard. A
+  section's self-description is not evidence; in the observed case it was accurate and irrelevant.
+
+Why not simply extend the axis enumeration: the entry-path set is finite and enumerable; the hazard-
+axis set is neither. This is the **enumeration-fails-open rule** — prefer a property expressed by
+what it protects over one expressed by what it enumerates — of which BS-12 and BS-15 are two further
+instances.
+
+### DD-10 — completeness-diff is a first-class mechanism, and ground truth is not always a file
+
+The never-touched computation (DD-3) derives its candidate set from links and commits. BS-14 defeats
+that derivation by construction: an artifact absent from every catalogue has no inbound link and no
+matchable text, so it is never a candidate. Completeness-diff inverts the direction — enumerate the
+**ground truth**, then diff the document that claims to describe it.
+
+Three ground-truth sources are in evidence:
+
+| Ground truth             | Enumerated by                                | Class caught |
+| ------------------------ | -------------------------------------------- | ------------ |
+| Workflow triggers        | parsing `on:` blocks in `.github/workflows/` | BS-13        |
+| Workflow and agent files | `find .github/workflows -type f -print0`     | BS-14        |
+| Environment branches     | `git branch -r`                              | BS-15        |
+
+The third is the rider that matters most: **ground truth is sometimes not a file on disk**. A
+completeness-diff contract that silently assumes on-disk artifacts reproduces BS-15 rather than
+catching it. Every instance of the contract therefore names its authoritative source explicitly, and
+an unnamed source is itself a finding (AC-20).
+
+Tooling note carried from DD-11: catalogue diffs use `find -print0`, never parsed `ls` output —
+`ls` emits hyperlink escape sequences that eat leading characters and silently corrupt exactly the
+diff this mechanism depends on.
+
+### DD-11 — a sweep's zero is admissible only with a working-tool proof
+
+In this environment `grep` resolves to **ugrep**, which rejects ripgrep's `--glob`. With
+`2>/dev/null` appended, a hard failure and a clean sweep are the same observation. Measured
+first-hand on one pattern in one tree during this amendment:
+
+| Invocation                                                        | Result             |
+| ----------------------------------------------------------------- | ------------------ |
+| `grep -rn --glob '*.md' 'Trunk Based Development' . 2>/dev/null`  | 0 hits — **false** |
+| `command grep -rn --include='*.md' 'Trunk Based Development' .`   | 543 hits           |
+| `/opt/homebrew/bin/rg -c --glob '*.md' 'Trunk Based Development'` | 147 files          |
+
+The contract has four parts, all cheap:
+
+1. the **verbatim command** is recorded in the report;
+2. **stderr is not suppressed** — no `2>/dev/null` on an evidence-producing sweep;
+3. the invocation uses a form the tool accepts — POSIX `--include`, or
+   `/opt/homebrew/bin/rg` **by absolute path**;
+4. a **known-positive control probe** runs the same pattern against a file known to contain it and
+   returns non-zero, before the zero is trusted.
+
+Part 4 is load-bearing. Parts 1-3 address the observed failure; part 4 addresses the next one,
+whatever shape it takes, by converting "the tool returned nothing" into "the tool works **and**
+returned nothing". It is also what makes a zero falsifiable in both directions, which is the
+acceptance-clause standard the sibling plan installs.
+
+### DD-12 — review-cycle termination is evidence-based, mirroring DD-6
+
+The PR-review cycle defaults to three sequential maker→fixer cycles. In the observed run **all three
+found blocking defects, and two further verification passes after cycle 3 each found another** — the
+loop was still productive when arithmetic declared it done. This is DD-7's falsified "1-3
+iterations, escalate at 5" claim reappearing on a different loop, so it takes the same correction
+rather than a larger constant:
+
+- a cycle producing any **new** blocking finding extends the loop;
+- termination requires a cycle producing **no new** finding (repeat findings do not extend it);
+- the verification prompt for each cycle must **license a negative finding** — explicitly permitting
+  the reviewer to refute the requester's hypothesis. In the observed run, one reviewer told to
+  "assume the previous fix introduced a defect" investigated, reported the hypothesis **wrong**, and
+  found a real defect elsewhere in the same pass. A prompt without that license manufactures
+  agreement, and a loop terminating on manufactured agreement is worse than one terminating on a
+  count.
+
+### DD-13 — the three PR-cycle process gaps split by fix-shape
+
+Full reasoning in README DECISION 13. Summary of the split and its rationale:
+
+| Gap                                                  | Disposition        | Why                                                                                       |
+| ---------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| D1 — resolved threads ≠ committed fixes              | **In scope**       | A terminal verdict resting on a proxy signal; same shape as enumeration-fails-open (DD-9) |
+| D3 — fixed cycle count insufficient                  | **In scope**       | The review-loop instance of DD-7 / DD-6; DD-12 above                                      |
+| D2 — `pr-review-maker` cannot post `REQUEST_CHANGES` | **Follow-up plan** | Fix is a token/identity change; shares no surface, mechanism or test with this plan       |
+
+D1's mechanism is worth stating precisely, because the failure was a **correct** action producing a
+wrong aggregate signal. A fixer was instructed not to touch `AGENTS.md` (instruction-size budget),
+so it correctly left the orchestrator's HIGH fix uncommitted in the working tree, replied to the
+thread explaining why, and resolved it. GitHub then reported 0 unresolved threads while the blocking
+defect was absent from the PR. The remedy is to gate merge on the property rather than the proxy:
+**every finding's fix is committed and pushed**, verified against the diff, never inferred from
+thread state.
+
+D2 is left unfixed here deliberately, and until its follow-up lands the mitigation is that merge
+preconditions gate on **finding text**, never on GitHub's review state — which is already what
+AC-26 requires.
+
 ## UI-Design-Funnel Exemption
 
 This plan is **not UI-bearing**. It changes governance markdown, agent definitions, and a CLI
@@ -343,6 +531,11 @@ the design funnel does not apply, and this paragraph is the explicit exemption r
 | Convergence-claim removal  | Grep both directions      | AC-14 — phrase present pre-edit (returns 1), absent post-edit (returns 0)             |
 | No-check-removed invariant | Inventory diff            | AC-15 — Phase 0 records the baseline inventory; Phase 6 compares                      |
 | Bindings + byte identity   | Existing repo validators  | AC-16, AC-17 — `npm run generate:bindings`, harness sync validation, byte-identity    |
+| Registry BS-13/14/15       | Inline-evidence replay    | AC-18, AC-19 — each entry's evidence re-derived from the tree, never from a live SHA  |
+| Completeness-diff contract | Rust unit + Gherkin specs | AC-20, AC-21 — RED tests over catalogue fixtures and a git-ref fixture                |
+| Guard placement            | Entry-path enumeration    | AC-22, AC-23 — every entry path traced to the guard; one bypass falsifies coverage    |
+| Search-tool validity       | Control-probe fixtures    | AC-24 — broken and working invocations both exercised; a zero without a probe fails   |
+| Review-cycle termination   | Workflow text + review    | AC-25, AC-26 — termination criteria and merge preconditions read and verified         |
 
 Per [Test-Driven Development](../../../repo-governance/development/workflow/test-driven-development.md),
 the validator's tests are written before its implementation; each RED step in
@@ -363,7 +556,8 @@ the validator's tests are written before its implementation; each RED step in
 | 9   | `specs/apps/rhino/behavior/rhino-cli/gherkin/repo-governance/`           | **Create** — `repo-governance-sweep-completeness.feature`       | [Repo-grounded] dir exists   |
 | 10  | `repo-governance/development/quality/README.md`, `development/README.md` | Register the new convention in the index tables                 | [Repo-grounded] exist        |
 | 11  | `.opencode/`, `.amazonq/`                                                | **Regenerated only** — never hand-edited                        | Generated artifacts          |
-| 12  | `ose-primer`, `ose-infra`                                                | Propagation of surfaces 1-10                                    | Sibling repos                |
+| 12  | `repo-governance/workflows/pr/pr-review-quality-gate.md`                 | Evidence-based cycle termination; committed-fix precondition    | [Repo-grounded] exists       |
+| 13  | `ose-primer`, `ose-infra`                                                | Propagation of surfaces 1-10 and 12                             | Sibling repos                |
 
 ## Dependencies
 

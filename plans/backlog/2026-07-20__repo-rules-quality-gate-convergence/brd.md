@@ -22,6 +22,30 @@ corrective commits, each closing a class the previous sweep had structurally mis
 never "the checker did not look hard enough" — it was "the checker's search shape excluded a region
 it did not know existed."
 
+**Three of the fifteen classes were unreachable by text search at all.** BS-13, BS-14 and BS-15 —
+surfaced in the follow-on PR-review session — have no swept phrasing, no inbound link, and (for
+BS-15) no ground truth on disk. They were found only by enumerating ground truth and diffing it
+against the document claiming to describe it. Any amount of additional search rigour would have
+missed all three; the missing mechanism was a different one, not a better-tuned version of the
+same one.
+
+**Enumeration-based guards failed open four consecutive times.** In the PR-review cycles, four
+successive fixes each introduced the next defect: a guard covering `[HUMAN]` missed `[HUMAN → AI]`;
+a guard forbidding _writing_ `[AI]` missed _deleting_ the step; a guard scoped to `*-to-pr` missed
+the other modes; a guard on the review path missed the HIGH-confidence auto-apply path. The
+decisive fifth: `plan-fixer.md`'s enforcement pointers are indexed by finding type, and one recipe
+had none — so a fixer entering on "checkbox lacks a file path" could strip the `[HUMAN]` merge gate
+without ever reaching the guard that forbids it. **Every guard was correct on the axis it named and
+open on an axis nobody had named.** The generalization — the enumeration-fails-open rule — is the
+plan's most valuable output.
+
+**A broken search command reported a clean sweep.** `grep` resolves to ugrep here, which rejects
+ripgrep's `--glob`; combined with `2>/dev/null`, the failure is indistinguishable from a real zero.
+Measured on one pattern in one tree: the broken form returned **0**, the POSIX `--include` form
+returned **543** [Repo-grounded — re-measured during the amendment that added this section]. Every
+"swept and found nothing" conclusion produced this way is unsound, and nothing in the workflow
+required a sweep to demonstrate that its tool worked.
+
 **"Repo-wide" was asserted, not demonstrated.** Commit messages and reports described sweeps as
 repo-wide while the sweep never left `repo-governance/`. This is mechanically provable after the
 fact: `.github/` and `specs/` were first touched by the twelfth and final corrective commit
@@ -56,6 +80,13 @@ document rather than the chain.
 - **A zero that survives an adversarial round.** Requiring the checker to argue against its own zero
   before accepting it targets the exact failure the chain exhibited: confident termination on an
   incomplete search.
+- **A mechanism that reaches what no search reaches.** Completeness-diff against ground truth found
+  three classes; every text-shaped mechanism in the plan found zero of them.
+- **Guards that bind on every entry path.** Placing a guard at the point of rewrite, and verifying
+  it by enumerating entry paths rather than reading section self-descriptions, closes a failure mode
+  that four successive correct-looking fixes did not.
+- **A zero that means the tool ran.** Requiring a known-positive control probe before trusting a
+  sweep's zero costs one command and removes an entire category of fabricated evidence.
 - **Durable blind-spot memory.** Each class is paid for once, repo-wide, rather than rediscovered.
 
 ### Non-benefit — explicitly not a goal
@@ -97,6 +128,18 @@ Stated as observable checks, not fabricated numbers.
 5. **Flag-parity guard is live.** A validator invocation cited as evidence either matches CI's flags
    or carries a written divergence justification. Observable by reading the agent contract and by the
    Phase 4 fixture test.
+6. **Completeness-diff catches the three text-invisible classes.** Running the completeness-diff
+   contract against the pre-fix state reproduces all three findings — the `pr-quality-gate.yml`
+   trigger omission (BS-13), the uncatalogued `web-ui-build-deploy-prod.yml` and
+   `apps-web-ui-storybook-deployer` (BS-14), and the three environment branches outside the
+   `AGENTS.md` enumeration (BS-15) — and reports zero against the corrected state. Falsifiable both
+   ways.
+7. **Every guard is reachable from every entry path.** For the guard under test, the enumerated set
+   of entry paths into its file each hit the guard before any rewrite. Observable by enumerating
+   entry paths and tracing each; a single entry path that bypasses the guard falsifies it.
+8. **A sweep's zero carries its control probe.** Any report concluding "found nothing" records the
+   verbatim command, unsuppressed stderr, and a known-positive control returning non-zero.
+   Observable by reading the report; a zero without a probe is itself a finding.
 
 Deliberately not claimed: any specific round-count reduction. [Judgment call] — the mechanisms should
 reduce it substantially, but one archived chain is one data point and the honest position is that the
@@ -120,6 +163,10 @@ next few chains are the measurement.
 | **The BSCR ossifies** — entries added once, never revisited                                     | Every entry carries a git-commit proof that stays checkable; Knowledge Capture obliges appending any newly surfaced class                       |
 | **Tri-repo propagation drift** — `ose-primer` / `ose-infra` diverge from `ose-public`           | Byte-identity check for `apps/rhino-cli` per the SDLC Gate Standard; per-repo propagation phases with their own gates                           |
 | **Scope creep** — the plan grows to fix every maker-checker-fixer gate                          | Explicitly out of scope; recorded as DECISION 5 with a Knowledge Capture follow-up                                                              |
+| **Completeness-diff has no bounded ground truth** — "everything the doc should mention" is open | Each contract instance names its ground-truth source explicitly (a directory, `git branch -r`, an agent roster); an unnamed source is a finding |
+| **The guard-placement rule is read as "add more guards"**                                       | Stated as the enumeration-fails-open rule with its four-failure evidence, so the reader sees why a longer enumeration is the rejected option    |
+| **The control-probe requirement becomes ceremonial** — a probe that always passes               | The probe must target a known-positive control for the same pattern and tree, so a passing probe with a zero result is a real signal            |
+| **D2 stays unfixed indefinitely** — the review-state hole outlives the follow-up plan           | Filed with its evidence during Knowledge Capture (DECISION 13); until then, merge preconditions gate on finding text, never on review state     |
 
 ## Related
 

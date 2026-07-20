@@ -2,7 +2,7 @@
 
 ## Product Overview
 
-Six coordinated changes to the repo-rules-quality-gate loop and its supporting agents, so the loop
+Nine coordinated changes to the repo-rules-quality-gate loop and its supporting agents, so the loop
 reaches a **trustworthy** zero in fewer rounds while catching at least everything it catches today.
 
 The product surface is governance text and one CLI validator. There is no user-facing screen or
@@ -72,6 +72,53 @@ falsified, so that the loop stops generating the drift it exists to remove.
 As the **workflow orchestrator**, I want the checker to run one adversarial round against its own
 zero, using the mechanical never-touched set as its agenda, so that termination reflects search
 completeness rather than operator fatigue.
+
+### US-10 — Completeness-diff against ground truth
+
+As **`repo-rules-checker`**, I want every document that describes an enumerable ground truth checked
+by enumerating that ground truth and diffing it against the document, so that omissions with no
+matchable text and no inbound link stop being invisible.
+
+### US-11 — Ground truth that is not a file on disk
+
+As **`repo-rules-checker`**, I want the completeness-diff contract to name its ground-truth source
+explicitly — including sources that are not files, such as `git branch -r` — so that an enumeration
+validated only against the filesystem cannot report completeness it has not established.
+
+### US-12 — Guards placed at the point of rewrite
+
+As **`repo-rules-fixer`**, I want any guard protecting an invariant placed at the point where a
+rewrite happens rather than in a section I reach only if I already suspected the hazard, so that no
+entry path into the file can bypass it.
+
+### US-13 — Guard verification by entry-path enumeration
+
+As the **maintainer**, I want a guard verified by enumerating every way an agent enters the file and
+checking each path hits the guard before rewriting, so that a section's claim to bind "every recipe"
+is never accepted as evidence that it does.
+
+### US-14 — Search-tool validity before a zero is trusted
+
+As the **maintainer**, I want any sweep concluding "nothing found" to record its verbatim command,
+leave stderr unsuppressed, and demonstrate a known-positive control returning non-zero, so that a
+broken command cannot present itself as a clean result.
+
+### US-15 — Evidence-based review-cycle termination
+
+As the **workflow orchestrator**, I want the PR-review maker→fixer loop to terminate when a cycle
+finds nothing new rather than after a fixed count, so that a loop still producing blocking defects
+is not declared complete by arithmetic.
+
+### US-16 — Verification prompts that license a negative finding
+
+As the **maintainer**, I want a verification prompt to explicitly permit refuting the requester's
+hypothesis, so that a "nothing found" verdict means the reviewer looked rather than agreed.
+
+### US-17 — Merge preconditions gate on committed fixes
+
+As the **maintainer**, I want merge preconditions to verify that every finding's fix is committed
+and pushed rather than that its review thread is resolved, so that a resolved thread over an
+uncommitted fix cannot present the PR as clean.
 
 ## Acceptance Criteria
 
@@ -259,6 +306,108 @@ Scenario: The validator lands byte-identical across all three repositories
   And the Gherkin behavior tree under the rhino specs path is byte-identical across all three
 ```
 
+### AC-18 — The three text-invisible classes are catalogued with inline evidence
+
+```gherkin
+Scenario: BS-13, BS-14 and BS-15 are registered with evidence that survives SHA loss
+  Given the blind-spot registry contains entries BS-13, BS-14 and BS-15
+  When a reader opens each of the three entries
+  Then each entry states why no text search and no inbound-link sweep could reach the defect
+  And each entry names completeness-diff against ground truth as its catching form
+  And the BS-15 entry records that its ground truth is a set of git refs rather than a file on disk
+  And each entry carries its inline evidence so it stays auditable after its commit SHA stops resolving
+```
+
+### AC-19 — Classes compose rather than partition
+
+```gherkin
+Scenario: The registry records that one defect can instantiate several classes
+  Given the registry entry for BS-15
+  When a reader follows its cross-references
+  Then the entry records that BS-15 is simultaneously an instance of BS-11 self-inflicted drift
+  And the registry states that entries are lenses rather than mutually exclusive categories
+  And the registry instructs the reader to continue matching after the first class matches
+```
+
+### AC-20 — Completeness-diff names its ground-truth source
+
+```gherkin
+Scenario: A document describing an enumerable ground truth is diffed against it
+  Given a governance or reference document that enumerates workflows, agents, branches or files
+  When repo-rules-checker validates that document
+  Then the checker enumerates the ground truth from its authoritative source rather than from prose
+  And the audit report names the ground-truth source it enumerated
+  And every member of the ground truth absent from the document is reported as a finding
+  And a report whose ground-truth source is unnamed is itself an incomplete-evidence finding
+```
+
+### AC-21 — Ground truth that is not a file on disk is still enumerated
+
+```gherkin
+Scenario: A rule scoped by an enumeration of git refs is checked against the refs
+  Given a safety rule whose scope is an enumeration of environment branches
+  When the completeness-diff contract evaluates that rule
+  Then the contract enumerates the branches from git rather than from the document's own table
+  And every branch absent from the rule's enumeration is reported as uncovered by the rule
+  And the finding names the enumeration that failed open rather than only the missing members
+```
+
+### AC-22 — Guards sit at the point of rewrite
+
+```gherkin
+Scenario: A guard protecting an invariant binds before any rewrite occurs
+  Given a fixer recipe that rewrites a delivery step
+  When the recipe is applied
+  Then the guard protecting the invariant is stated at the point of rewrite within that recipe
+  And the guard binds regardless of which finding type routed the fixer to that recipe
+  And a recipe that rewrites a step without a co-located guard is reported as a finding
+```
+
+### AC-23 — Guard coverage is verified by enumerating entry paths
+
+```gherkin
+Scenario: Every entry path into a guarded file reaches the guard before rewriting
+  Given a file containing a guard and several recipes reachable by distinct finding types
+  When the guard's coverage is verified
+  Then the verification enumerates every entry path into the file by finding type and step number
+  And each enumerated entry path is traced to confirm it reaches the guard before any rewrite
+  And a section's own claim to bind every recipe is not accepted as evidence of coverage
+```
+
+### AC-24 — A sweep's zero requires a working-tool proof
+
+```gherkin
+Scenario: A zero-result sweep is rejected unless its tool is demonstrated to work
+  Given a sweep whose conclusion is that nothing was found
+  When the report is evaluated as evidence
+  Then the report contains the verbatim command with stderr unsuppressed
+  And the command uses a form the search tool accepts rather than a rejected flag
+  And the report contains a known-positive control probe for the same pattern returning non-zero
+  And a zero without a passing control probe is reported as unverified rather than as a clean result
+```
+
+### AC-25 — Review cycles terminate on evidence, not on a count
+
+```gherkin
+Scenario: The review loop continues while cycles keep finding blocking defects
+  Given a PR-review maker to fixer cycle has completed its configured number of cycles
+  When the loop evaluates termination
+  Then the loop continues while the most recent cycle produced any new blocking finding
+  And the loop terminates only after a cycle that produced no new finding
+  And the verification prompt for that cycle explicitly permits refuting the requester's hypothesis
+```
+
+### AC-26 — Merge preconditions verify committed fixes, not resolved threads
+
+```gherkin
+Scenario: A resolved thread over an uncommitted fix does not satisfy the merge precondition
+  Given a review finding whose thread has been marked resolved
+  When the merge preconditions are evaluated
+  Then the precondition verifies the corresponding fix is committed and pushed to the PR branch
+  And a resolved thread whose fix is absent from the pushed diff is reported as an unmet precondition
+  And the count of unresolved threads is not accepted as evidence that findings were fixed
+```
+
 ## Product Scope
 
 ### In scope
@@ -270,12 +419,20 @@ Scenario: The validator lands byte-identical across all three repositories
 - Evidence-grounding and validator-flag-parity contracts
 - Class-wide remediation and self-inflicted-drift re-check contracts
 - Workflow termination rewrite with the adversarial round, plus the corrected convergence guidance
+- The completeness-diff contract, including non-filesystem ground truth (DECISION 11)
+- The guard-placement contract and entry-path verification (DECISION 9)
+- The search-tool-validity contract with its control-probe requirement (DECISION 10)
+- Evidence-based review-cycle termination and the committed-fix merge precondition (DECISIONs 12
+  and 13) — two narrow edits to `repo-governance/workflows/pr/pr-review-quality-gate.md`
 - Binding regeneration and tri-repo propagation
 
 ### Out of scope
 
 - Revisiting the governance change that supplied the evidence
 - The sibling `plan-quality-gate` loop (DECISION 6) and the other repo gates (DECISION 5)
+- **The `pr-review-maker` `REQUEST_CHANGES` limitation (gap D2)** — filed as a follow-up during
+  Knowledge Capture; its fix is a token/identity change, not a governance-text change. Reasoning
+  recorded in DECISION 13.
 - Any relaxation of a check, threshold or criticality level
 - Retroactive re-sweeps of governance changes already landed
 
@@ -289,3 +446,8 @@ Scenario: The validator lands byte-identical across all three repositories
 | Agent files grow past the instruction-size budget                  | Medium   | Registry content lives in the governance file; agents link rather than inline                         |
 | Exclusion justifications become boilerplate                        | Low      | Exclusions recorded as literal globs, so the reviewer reads scope rather than prose about scope       |
 | Tri-repo propagation partially applied, leaving repos inconsistent | Medium   | Per-repo phases with their own gates; byte-identity check is a gate item                              |
+| Completeness-diff ground truth is unbounded or unnamed             | High     | Each contract instance names its authoritative source; an unnamed source is itself a finding (AC-20)  |
+| Guard-placement rule read as "write more guards"                   | Medium   | Stated as the enumeration-fails-open rule with its four-failure evidence; AC-23 verifies entry paths  |
+| Control probes become ceremonial and always pass trivially         | Medium   | The probe targets a known-positive control for the same pattern and tree (AC-24)                      |
+| Evidence-based cycles never terminate on a noisy reviewer          | Medium   | Termination requires a cycle with no **new** finding; repeat findings do not extend the loop (AC-25)  |
+| D2 review-state hole persists until its follow-up lands            | Medium   | Merge preconditions gate on finding text and committed diffs, never on GitHub review state (AC-26)    |
