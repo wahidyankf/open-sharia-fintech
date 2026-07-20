@@ -90,10 +90,11 @@ See [Instruction-File Size Budget Convention](./repo-governance/conventions/stru
 
 ## Git Workflow
 
-**Trunk Based Development** — `main` is the single integration target. Environment branches
-(Vercel only — never commit directly): `prod-*` per app, plus `stag-*`; the full list is in the
-Web Sites table below. **Commit format**: Conventional Commits `<type>(<scope>): <description>` —
-imperative mood, no period. Split commits by domain/concern.
+**Trunk Based Development** — `main` is the single integration target. Every `prod-*` and `stag-*`
+ref is a deploy target — **never commit directly**. `git branch -r` is authoritative and includes
+lib/backend targets (`prod-web-ui`, `stag-ose-be`) absent from the Web Sites table below.
+**Commit format**: Conventional Commits `<type>(<scope>): <description>` — imperative mood, no
+period. Split by domain/concern.
 
 **See**: [repo-governance/development/workflow/commit-messages.md](./repo-governance/development/workflow/commit-messages.md)
 
