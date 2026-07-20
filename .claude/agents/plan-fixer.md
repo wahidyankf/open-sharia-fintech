@@ -558,8 +558,10 @@ for the authoritative mode table and precedence rule.
 ### Confidence Assessment
 
 - **HIGH Confidence**: section is entirely missing on a freshly-authored plan, OR a `*-to-pr` plan
-  is missing its PR-Review Maker→Fixer Cycle steps, OR the merge tag doesn't match
-  the declared mode (`[AI]` by default; `[HUMAN]` only on an explicit per-plan opt-in). Fix is mechanical once the intended mode is known.
+  is missing its PR-Review Maker→Fixer Cycle steps, OR the merge step carries an invalid tag (not
+  `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`). Fix is mechanical once the intended mode is known. A
+  `[HUMAN]`-tagged merge step is never itself a finding — the tag is its own opt-in — so it is never
+  in scope for this fix.
 - **MEDIUM Confidence → grill first**: the declared value is invalid/unrecognized. Do NOT guess
   which of the four modes was intended — surface it as a grill question (per `grill-me`) with the
   four modes as options, `worktree-to-pr` marked `(Recommended)`, before writing a value.
@@ -590,13 +592,18 @@ README updates) committed inside the same PR, before the final `- [ ] [AI] Merge
 
 ### How to Fix a Merge-Tag Mismatch
 
-- `*-to-pr` mode with the merge step tagged `[HUMAN]` but no explicit per-plan opt-in to that gate
-  → retag `[AI]`, the default actor once the hardened preconditions hold. Where the plan **does**
-  explicitly declare a `[HUMAN]` merge gate, leave the tag alone — that is a valid opt-in, not a
-  mismatch.
+- `*-to-pr` mode with the merge step tagged anything other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`
+  → retag `[AI]`, the default actor once the hardened preconditions hold.
+- **Never retag a `[HUMAN]`-tagged merge step under a `*-to-pr` mode.** Per
+  [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode), the `[HUMAN]`
+  tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in" declaration to
+  check for, so a merge step tagged `[HUMAN]` and a merge step that "explicitly declares" a `[HUMAN]`
+  gate describe the identical input. Treating them as two branches, one retaggable and one not, is
+  unsafe: it makes retagging a legitimate `[HUMAN]` merge gate to `[AI]` a live outcome of this
+  recipe. There is no fix action for a `[HUMAN]`-tagged merge step — leave it alone unconditionally.
 - `*-to-origin-main` mode with the final push gated behind an unrequested `[HUMAN]` approval step →
   retag `[AI]` and remove the approval-gate framing (the push itself needs no sign-off under a
-  direct-push mode).
+  direct-push mode). This is the push, not the merge — see the git-mechanical guard below.
 
 ## Execution-Grade Clarity Fixes (HARD RULE)
 
@@ -664,10 +671,12 @@ confidence**:
 - `[HUMAN] Remove the worktree: git worktree remove …` → `[AI]`
 
 **Never apply this recipe to a merge step.** The PR merge is a separate step from the push. `[AI]` is
-its default actor, but a plan may explicitly opt into a `[HUMAN]` merge gate, and that opt-in is
-legitimate. Retagging a declared `[HUMAN]` merge step to `[AI]` — or worse, rewriting it into a direct
-push to `origin main` — would strip a deliberate gate and bypass the PR entirely. See
-[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) above, which governs merge tags.
+its default actor; a `[HUMAN]` tag on the merge step is itself the legitimate opt-in — the tag IS the
+declaration, with no separate field to check. See
+[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) above, which governs merge tags
+and never retags a `[HUMAN]`-tagged merge step under any condition. Retagging a declared `[HUMAN]`
+merge step to `[AI]` — or worse, rewriting it into a direct push to `origin main` — would strip a
+deliberate gate and bypass the PR entirely.
 
 **FALSE_POSITIVE** only when the user's prompt or the plan explicitly requested an out-of-band
 sign-off for that change. See the

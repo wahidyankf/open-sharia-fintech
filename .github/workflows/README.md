@@ -18,7 +18,7 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 
 | Workflow              | Trigger                | Role                                                                                                                              |
 | --------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `pr-quality-gate.yml` | Pull request           | Typecheck, lint, `test:quick`, `compat:min-version`, naming, md-links, harness-duplication, governance validation (all languages) |
+| `pr-quality-gate.yml` | PR + push              | Typecheck, lint, `test:quick`, `compat:min-version`, naming, md-links, harness-duplication, governance validation (all languages) |
 | `validate-env.yml`    | PR + push              | Environment-variable contract validation                                                                                          |
 | `main-ci.yml`         | 4x/day CRON + dispatch | Same as PR gate but runs across all projects (`nx run-many --all`) — no push trigger                                              |
 | `deps-audit.yml`      | Nightly CRON           | Language-native dependency audit (npm audit, cargo deny, dotnet vulnerable) — CRON-only                                           |

@@ -831,10 +831,15 @@ mode additionally fixes the integration target and merge authority.
    [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md),
    positioned before the PR-merge step. A `*-to-pr` plan whose checklist jumps straight
    from PR creation to the merge with no review-cycle steps is missing required steps.
-4. **Merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step MUST be
-   tagged `[AI]`, the default actor once the hardened preconditions hold; `[HUMAN]` is valid only
-   where the plan explicitly opts into that gate, and a `[HUMAN]` tag with no such opt-in is a
-   defect. For `*-to-origin-main` modes, the final push MUST be tagged
+4. **Merge tagging matches mode** — for `*-to-pr` modes, the final PR-merge step defaults to
+   `[AI]`, the actor once the hardened preconditions hold. A `[HUMAN]` tag on that step IS the
+   plan's opt-in into human merge judgment, per
+   [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode) — the tag
+   itself is the complete, sufficient declaration; there is no separate opt-in field or prose
+   declaration to look for. A `[HUMAN]`-tagged merge step under a `*-to-pr` mode is therefore
+   **NEVER** a defect on that basis and MUST NOT be flagged or retagged. The only defect on the
+   merge step is an invalid tag value (anything other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`).
+   For `*-to-origin-main` modes, the final push MUST be tagged
    `[AI]` (never gated behind an unrequested `[HUMAN]` approval step, per the existing
    [PR Step Authorization Check](#pr-step-authorization-check) —
    that check's "unsolicited PR step" framing now applies only to `*-to-origin-main`-mode plans,
@@ -853,7 +858,8 @@ mode additionally fixes the integration target and merge authority.
 
 - Invalid non-empty `## Delivery Mode` value: **HIGH**
 - `*-to-pr` mode missing the PR-Review Maker→Fixer Cycle steps before the merge: **HIGH**
-- Merge-tag mismatch with the resolved mode — `[HUMAN]` on a plan with no explicit opt-in, or `[AI]` where the plan does declare a `[HUMAN]` gate: **HIGH**
+- Merge step tagged with anything other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`: **HIGH** (a
+  `[HUMAN]`-tagged merge step is always valid and is never itself a finding — the tag is the opt-in)
 - Plan completion criteria conflating "done" with "merged" on a `*-to-pr` plan: **MEDIUM**
 - Missing or post-merge-deferred archival-in-PR step on an applicable `*-to-pr` plan: **HIGH**
 - Freshly-authored plan missing the `## Delivery Mode` declaration entirely: **LOW**

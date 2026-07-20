@@ -127,7 +127,7 @@ graph LR
 
 **File**: `.github/workflows/pr-quality-gate.yml`
 
-**Trigger**: Pull request opened, synchronized, or reopened
+**Trigger**: Pull request opened, synchronized, or reopened, or push to `main`
 
 **Steps:**
 
@@ -145,11 +145,26 @@ validation, and repo-wide markdown link check
 validators (mermaid, heading-hierarchy, markdownlint) now run via lint-staged at commit time; the
 repo-wide `md links validate` check runs as the `md-links` job in this workflow.
 
+### Main CI Workflow
+
+**File**: `.github/workflows/main-ci.yml`
+
+**Trigger**: Scheduled (4x/day: 06:00/12:00/18:00/00:00 WIB) or manual `workflow_dispatch` — no push
+trigger; `pr-quality-gate.yml` already covers push-to-`main`
+
+**Steps:** Same quality gate as the PR workflow — typecheck, lint, `test:quick`,
+`compat:min-version`, naming, instruction-size, specs, env/repo-config validation, md-links,
+harness-duplication, governance validation — but across **all** projects
+(`nx run-many --all`) rather than only affected ones
+
+**Purpose**: Catches drift that affected-only PR checks can miss, by re-running the full gate
+against the entire monorepo on a fixed cadence independent of any single PR
+
 ### AyoKoding Web Test + Deploy Workflow
 
 **File**: `.github/workflows/ayokoding-www-test-local-deploy-prod.yml`
 
-**Trigger**: Push to `main` branch (CRON twice daily + manual dispatch)
+**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch` — no push trigger
 
 **Steps**: Full local-stack test pipeline via `_reusable-www-test-local-deploy.yml` (lint, typecheck, test:quick, E2E), then "deploy" by force-pushing `main` to `prod-ayokoding-www`; Vercel auto-builds.
 
@@ -221,7 +236,7 @@ repo-wide `md links validate` check runs as the `md-links` job in this workflow.
 
 **File**: `.github/workflows/pr-quality-gate.yml`
 
-**Trigger**: Pull request opened, synchronized, or reopened
+**Trigger**: Pull request opened, synchronized, or reopened, or push to `main`
 
 **Purpose**: Runs affected tests and quality checks for pull requests (see primary entry above)
 
