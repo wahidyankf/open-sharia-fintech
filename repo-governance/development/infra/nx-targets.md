@@ -296,7 +296,7 @@ is compulsory for all apps and E2E runners.
 
 > For polyglot backend `typecheck` patterns (Go, F#, Java, Kotlin, Python, Rust, Elixir, TypeScript, C#, Clojure), see the [ose-primer](https://github.com/wahidyankf/ose-primer) repository.
 
-**CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every push to main and every PR (all three gates are identical — see All-Four-Gates Rule below).
+**CI schedules**: Per-service "Test" workflows run 2× daily (WIB 06, 18) combining `test:integration` and `test:e2e` for each service. `typecheck`, `lint`, and `test:quick` run on every PR event and on every push to `main` via `pr-quality-gate.yml`, and again across the whole repo on `main-ci.yml`'s 4x/day schedule (WIB 06/12/18/00) plus manual dispatch — `main-ci.yml` has no push trigger. All gates run the identical check set — see All-Four-Gates Rule below.
 
 ### All Projects
 
@@ -386,7 +386,7 @@ Canonical example for a Rust CLI project (`rhino-cli`):
 | Pre-commit | Formatting only (lint-staged: prettier, rustfmt, fantomas, gofmt, …)                    | Every commit                       |
 | Pre-push   | `typecheck`, `lint`, `test:quick` (includes `test:unit`, `test:coverage`, `test:specs`) | Every push                         |
 | PR gate    | Identical to pre-push                                                                   | Every PR open / update             |
-| Main gate  | Identical to pre-push                                                                   | Every merge to main                |
+| Main gate  | Identical to pre-push, but repo-wide (`run-many --all`)                                 | Schedule 4x/day + dispatch         |
 | CRON-only  | `test:integration`, `test:e2e`                                                          | Scheduled CI (2× daily, WIB 06/18) |
 
 `test:integration` and `test:e2e` are **CRON-only** — they run in scheduled CI workflows (2× daily at
