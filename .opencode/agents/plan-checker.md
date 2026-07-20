@@ -492,7 +492,14 @@ For each `- [ ]` line:
 
 1. Identify whether the action involves (a) editing a file, (b) running a command, (c) verifying an outcome.
 2. Check that the checkbox text names the file path(s) for (a), the verbatim command for (b), and the acceptance criterion for (c).
-3. Treat every missing element as a separate **HIGH** finding (one finding per missing element per checkbox is acceptable — plan-fixer batch-resolves).
+3. **Exempt the final PR-merge step from (b) and (c)** — the single checkbox whose action _is_
+   merging the PR (per rule 19 / Step 5m). It is a governance gate, not an action item; its
+   acceptance criterion is the PR Merge Protocol's five preconditions, and a scripted `gh pr merge`
+   is not an improvement. `plan-fixer` is required to refuse such a finding, so it can only generate
+   churn. This exemption does **not** extend to (a), and does **not** extend to phase-gate or
+   verification checkboxes that merely _mention_ merging (e.g. "PR `[AI]`-merged; deployed") — those
+   are ordinary action items and remain fully subject to (b) and (c).
+4. Treat every missing element as a separate **HIGH** finding (one finding per missing element per checkbox is acceptable — plan-fixer batch-resolves).
 
 #### Finding Severity
 
@@ -501,11 +508,7 @@ For each `- [ ]` line:
 - Command placeholder without verbatim invocation (e.g., `run tests`): **HIGH**
 - Missing acceptance criterion on a checkbox whose action could complete partially without external proof: **HIGH**
 - Multiple missing elements on the same checkbox: still ONE finding (the fixer rewrites the line as a whole)
-- **Merge steps are exempt from (b) and (c).** A merge step is a governance gate, not an action item;
-  its acceptance criterion is the PR Merge Protocol's five preconditions, and supplying a scripted
-  `gh pr merge` command is not an improvement. Emitting a clarity finding against a merge step is a
-  standing false positive — `plan-fixer` is required to refuse it, so the finding can only generate
-  churn. Do not emit one.
+- Final PR-merge step missing (b) or (c): **not a finding** — see How to Audit step 3
 
 ### 12. Anti-Hallucination Scan (Step 5f — MANDATORY HARD RULE)
 

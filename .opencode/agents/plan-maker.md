@@ -193,7 +193,10 @@ for `*-to-origin-main` modes, or to the PR branch for `*-to-pr` modes), and remo
 diff and approve push" gate for the push itself — pushing to the PR branch is `[AI]`; the final
 PR merge to `main` is also `[AI]` by default, once the PR-Review Maker→Fixer Cycle has completed and
 the hardened preconditions hold. Emit a `[HUMAN]` merge step only where the plan explicitly opts into
-that gate (see Step 7 below). Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
+that gate (see Step 7 below). **When re-authoring an existing plan, preserve a `[HUMAN]` merge step
+verbatim** — an already-declared `[HUMAN]` gate IS that plan's opt-in, and `[AI]`-by-default applies
+to plans being written fresh, never as a normalization of one already on disk. Removing or retagging
+it is out of scope for any re-authoring pass. Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
 or `- [ ] [AI] Commit and push to origin <pr-branch>` (`*-to-pr` modes). See the
 [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) and
 [Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).

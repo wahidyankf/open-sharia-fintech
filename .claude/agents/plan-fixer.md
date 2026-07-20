@@ -31,8 +31,9 @@ You may not remove it, retag it, reword it into a scripted command, split it, ab
 step, or delete it to resolve an unverified claim inside it — in any Delivery Mode, at any confidence
 level, under any finding type, by any verb. If a finding appears to require one of those, the finding
 is a false positive on this line: classify MEDIUM and report it. The only section that may alter a
-merge step's tag is [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch), and it
-retags **toward** `[HUMAN]`, never away.
+merge step's tag is [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch), and that
+section never retags a merge step away from `[HUMAN]` — its only tag change is one the user
+explicitly selects when the existing tag is unrecognized.
 
 This rule is stated here, ahead of every recipe, on purpose. It was previously stated only inside the
 merge-tag section, and five consecutive defects reached a merge step through recipes that never
