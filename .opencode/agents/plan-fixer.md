@@ -565,13 +565,16 @@ for the authoritative mode table and precedence rule.
 ### Confidence Assessment
 
 - **HIGH Confidence**: section is entirely missing on a freshly-authored plan, OR a `*-to-pr` plan
-  is missing its PR-Review Maker→Fixer Cycle steps, OR the merge step carries an invalid tag (not
-  `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`). Fix is mechanical once the intended mode is known. A
-  `[HUMAN]`-tagged merge step is never itself a finding — the tag is its own opt-in — so it is never
-  in scope for this fix.
-- **MEDIUM Confidence → grill first**: the declared value is invalid/unrecognized. Do NOT guess
-  which of the four modes was intended — surface it as a grill question (per `grill-me`) with the
-  four modes as options, `worktree-to-pr` marked `(Recommended)`, before writing a value.
+  is missing its PR-Review Maker→Fixer Cycle steps. Fix is mechanical once the intended mode is
+  known. A `[HUMAN]`-tagged merge step is never itself a finding — the tag is its own opt-in — so it
+  is never in scope for this fix, and neither is any other merge-step tag value (see below).
+- **MEDIUM Confidence → grill first**: the declared Delivery Mode value is invalid/unrecognized, OR
+  the merge step carries a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`. Do NOT guess which of
+  the four modes (or which of the three tags) was intended — surface it as a grill question (per
+  `grill-me`) with the valid options (four modes, `worktree-to-pr` marked `(Recommended)`; or the
+  three tags, plus the standing blank-state/"chat about this" options), before writing a value. A
+  merge step's tag is never mechanically retagged, at any confidence level — see
+  [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch) below.
 
 ### How to Fix a Missing `## Delivery Mode` Section
 
@@ -599,8 +602,19 @@ README updates) committed inside the same PR, before the final `- [ ] [AI] Merge
 
 ### How to Fix a Merge-Tag Mismatch
 
-- `*-to-pr` mode with the merge step tagged anything other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]`
-  → retag `[AI]`, the default actor once the hardened preconditions hold.
+**Structural guard (HARD RULE): `plan-fixer` never writes `[AI]` onto an existing merge-step tag,
+under any condition.** This holds regardless of the tag's current value and regardless of whether
+that value appears in some enumerated "known-valid" set. An enumeration-based guard (retag anything
+not in `{[AI], [HUMAN], [AI+HUMAN]}`) fails open on every tag value nobody enumerated — that class of
+bug is exactly how a `[HUMAN → AI]`-tagged merge step was silently stripped to `[AI]` in a prior
+cycle. The only safe rule is unconditional: a merge step's tag is never mechanically rewritten
+toward `[AI]`, full stop. Concretely:
+
+- `*-to-pr` mode with the merge step carrying a tag other than `[AI]`, `[HUMAN]`, or `[AI+HUMAN]` →
+  do NOT retag it. Surface it as a MEDIUM-confidence grill question (per the Confidence Assessment
+  above) offering the three valid tags plus the standing blank-state/"chat about this" options, and
+  apply only whichever tag the user selects. An unrecognized tag may carry human-actor semantics
+  this agent must not silently strip — never assume it is safe to overwrite.
 - **Never retag a `[HUMAN]`-tagged merge step under a `*-to-pr` mode.** Per
   [Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode), the `[HUMAN]`
   tag on the merge step IS the plan's opt-in — there is no separate "explicit opt-in" declaration to
@@ -610,7 +624,8 @@ README updates) committed inside the same PR, before the final `- [ ] [AI] Merge
   recipe. There is no fix action for a `[HUMAN]`-tagged merge step — leave it alone unconditionally.
 - `*-to-origin-main` mode with the final push gated behind an unrequested `[HUMAN]` approval step →
   retag `[AI]` and remove the approval-gate framing (the push itself needs no sign-off under a
-  direct-push mode). This is the push, not the merge — see the git-mechanical guard below.
+  direct-push mode). This is the push, not the merge, so the structural guard above does not apply
+  here — see the git-mechanical guard below.
 
 ## Execution-Grade Clarity Fixes (HARD RULE)
 

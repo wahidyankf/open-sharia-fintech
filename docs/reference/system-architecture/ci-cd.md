@@ -232,6 +232,19 @@ against the entire monorepo on a fixed cadence independent of any single PR
 
 **Purpose**: Continuous gated health check of the staging deployment. Despite the `-deploy-prod` name slot reserved for the future promote step, this workflow currently **stops on pass without promoting** — production CD is deferred. It never deploys today.
 
+### Web UI Storybook Deploy Workflow
+
+**File**: `.github/workflows/web-ui-build-deploy-prod.yml`
+
+**Trigger**: Scheduled (daily at 00:00 UTC) or manual `workflow_dispatch`
+
+**Steps:**
+
+1. Build the shared `web-ui` lib's Storybook (`nx run web-ui:build-storybook`)
+2. Force-push `HEAD` to `prod-web-ui`
+
+**Purpose**: Publish the `web-ui` component library's Storybook to the `prod-web-ui` branch on a fixed daily cadence, independent of any single PR — the same scheduled-CD pattern as the `*-www-test-local-deploy-prod.yml` workflows above, but for the shared component-library Storybook rather than an app.
+
 ### PR Quality Gate Workflow (duplicate entry)
 
 **File**: `.github/workflows/pr-quality-gate.yml`

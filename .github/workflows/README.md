@@ -48,3 +48,9 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 | `publish-images.yml`                    | Build and push `organiclever-be` / `ose-be` images to GHCR (deployed by the ose-infra k3s plans, not Vercel) — transitional |
 | `organiclever-be-build-deploy-stag.yml` | Build the `organiclever-be` image and push it to GHCR; triggered on `stag-organiclever-be` push                             |
 | `ose-be-build-deploy-stag.yml`          | Build the `ose-be` image and push it to GHCR; triggered on `stag-ose-be` push                                               |
+
+## web-ui — Storybook (scheduled deploy)
+
+| Workflow                       | Trigger                           | Role                                                                          |
+| ------------------------------ | --------------------------------- | ----------------------------------------------------------------------------- |
+| `web-ui-build-deploy-prod.yml` | Daily CRON (00:00 UTC) + dispatch | Build the `web-ui` lib's Storybook and force-push the output to `prod-web-ui` |

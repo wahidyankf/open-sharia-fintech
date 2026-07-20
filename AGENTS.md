@@ -340,7 +340,7 @@ Phase 0 first, `[AI]`/`[HUMAN]` tags, gated phases. See
 
 **Development**: swe-{golang,typescript,e2e,csharp,fsharp,rust}-dev
 
-**Operations**: apps-{ayokoding-www,ose-www,organiclever-www,organiclever-app-web,ose-app-web,wahidyankf-www}-deployer
+**Operations**: apps-{ayokoding-www,ose-www,organiclever-www,organiclever-app-web,ose-app-web,wahidyankf-www,web-ui-storybook}-deployer
 
 **Content**: pdf-to-md-{maker,checker,fixer}
 

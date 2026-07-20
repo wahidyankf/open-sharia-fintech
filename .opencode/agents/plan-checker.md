@@ -124,7 +124,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **TDD phase separation (HARD RULE)**: RED, GREEN, and REFACTOR must each be their own `- [ ]` checkbox. A single checkbox that combines multiple phases (e.g., `- [ ] Write test, implement, and refactor feature X`) is a HARD RULE violation. Flag as **HIGH**. See [TDD Shape for Delivery Checklists](../../repo-governance/development/workflow/test-driven-development.md#tdd-shape-for-delivery-checklists).
 - **Non-code step format**: Steps that do NOT ship code (doc edits, config changes, file creation, governance updates) must use the direct action + acceptance criterion format (`[Action verb] [file] — acceptance: [outcome]`) instead of RED/GREEN/REFACTOR. Flag misapplied TDD shape on non-code steps as **MEDIUM**.
 - **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
-- **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[HUMAN → AI]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
+- **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[AI+HUMAN]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
 - **Phase gate & natural pause (HARD RULE)**: every phase ends with a `### Phase N Gate` (must-pass checklist + Pause Safety note) and reaches a safe-to-stop state. Flag a phase missing its gate as **HIGH**; a non-pause phase that should be merged as **MEDIUM**. Validated in detail by Step 5i (rule 15).
 - **Specs & Gherkin delivery (per Two Paths)**: a plan that creates, modifies, or deletes observable behavior in `apps/`, `libs/`, or `specs/` MUST include delivery steps that add/update the companion `specs/` Gherkin `.feature` files and run `specs:coverage`. Validated in detail by Step 5j (rule 16). See [Feature Change Completeness Convention §Two Paths](../../repo-governance/development/quality/feature-change-completeness.md).
 - **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior-implementing RED→GREEN→REFACTOR cycle MUST target **exactly one** Gherkin scenario — the RED step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embeds that scenario's complete `Given/When/Then` inline as a fenced ` ```gherkin ` block, verbatim-equal to the companion `.feature`. Flag as **HIGH**: a behavior RED step whose `binds` tag lists **more than one** scenario (must be split one-cycle-per-scenario), a behavior step missing its Gherkin tag, or a step whose inline `Given/When/Then` is absent or not verbatim-equal to the `.feature`. Two exceptions keep a multi-scenario `;`-list tag and are NOT split: pure-core (`**Gherkin (underpins) →**`) data/calc unit tests, and aggregate BDD binders (a feature-consuming unit test or `playwright-bdd` step-def file consuming the whole `.feature` for `specs:coverage`/E2E). Pure refactors, no-behavior-change bumps, and docs/governance-only steps are exempt. See [Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
@@ -615,15 +615,19 @@ physically impossible action.
 #### What to Validate
 
 1. **Legend present** — `delivery.md` (or a single-file plan's `## Delivery Checklist` section) defines an
-   executor-tag legend (`[AI]` / `[HUMAN]` / `[HUMAN → AI]`) at the top. Missing legend: **HIGH**.
+   executor-tag legend (`[AI]` / `[HUMAN]` / `[AI+HUMAN]`) at the top. Missing legend: **HIGH**.
 2. **Human-only steps are tagged `[HUMAN]`** — scan every checkbox for actions an agent cannot perform with
    its tools: physical acts (unplug/replug, insert USB, press power, move hardware), BIOS/firmware/hardware
    changes, external vendor-portal/console actions needing human auth/2FA/biometrics, account creation, or
    any real-world-presence step. An untagged human-only step is **HIGH** (an execution agent would stall or
    hallucinate success).
 3. **`[AI]` steps are genuinely AI-executable** — a step tagged `[AI]` (or unmarked, which defaults to
-   `[AI]`) that actually requires a human is **HIGH**. `[HUMAN → AI]` is the correct tag when a human
-   supplies a value an agent then consumes.
+   `[AI]`) that actually requires a human is **HIGH**. A step where a human must first supply a value an
+   agent then consumes is not a single blended tag — split it into its own `[HUMAN]` checkbox (supply the
+   value) followed by a separate `[AI]` checkbox (consume it); flag a merged single-checkbox attempt at
+   this shape as **MEDIUM** (imprecise granularity) rather than inventing a fourth tag. `[HUMAN → AI]` is
+   not this repo's vocabulary — see [Plans Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule),
+   which defines exactly three tags.
 4. **Tagging is orthogonal to suggested-executor** — do NOT conflate `[AI]`/`[HUMAN]` with
    `_Suggested executor: <agent>_`; both may appear on one step. Confusing the two is **MEDIUM**.
 5. **Git-mechanical steps must be `[AI]`** — three recurring steps are git-mechanical and an agent performs
