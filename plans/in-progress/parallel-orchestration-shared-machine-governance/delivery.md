@@ -1108,13 +1108,13 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
     `only where … explicitly` opt-in clause, and `only the actor`. The compound clause was FALSE
     before that sibling landed and is TRUE now, so DD-10's "dissolved" claim is wired to a real
     edit rather than to its own pre-authored prose.
-- [ ] [AI] Add the **per-phase-PR + feature-flag + strict 1-PR↔1-worktree** planning-granularity rule
+- [x] [AI] Add the **per-phase-PR + feature-flag + strict 1-PR↔1-worktree** planning-granularity rule
       (Delta 10) to `repo-governance/workflows/plan/plan-planning.md` and cross-reference from
       `repo-governance/conventions/structure/plans.md`: each applicable phase / independent DAG node
       lands as its own PR (one worktree → one branch → one PR → one node), feature-flag partial work
       merged-but-dark on `main`, inseparable dependent phases stay one PR (DAG governs) — acceptance:
       `grep -ni "feature flag\|one PR\|per-phase\|1-PR" plan-planning.md` present
-- [ ] [AI] State in `plan-planning.md` how the `worktree-to-pr` default binds at each plan path:
+- [x] [AI] State in `plan-planning.md` how the `worktree-to-pr` default binds at each plan path:
       **creating/updating** a plan binds it as a **design obligation** (the authoring edit may push
       direct to `main`, but phases must be authored to be independently PR-able, and a plan that
       cannot be so decomposed records why in its `tech-docs.md`); **executing** a plan binds it as the
@@ -1126,7 +1126,7 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       returns ≥3 (the same command returns **0** against the current pre-edit file — verified live, so
       the clause discriminates a done step from an undone one), regardless of how the prose is
       line-wrapped
-- [ ] [AI] Make **per-phase merging** explicit (not merely per-phase PR _opening_) in
+- [x] [AI] Make **per-phase merging** explicit (not merely per-phase PR _opening_) in
       `plan-planning.md` + `plan-execution.md`: each phase PR is opened **and merged** as that phase
       completes and is **not** held for a batch merge at plan end. State the merge actor per **Delta
       12's inverted default**: `[AI]` merges once the preconditions hold, and `[HUMAN]` applies **only**
@@ -1141,7 +1141,7 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       `grep -ohEi 'batch merge|merge actor|opened and merged' plan-planning.md plan-execution.md | sort -u | wc -l`
       returns ≥3 (returns **0** against both current pre-edit files — verified live; the terms track
       the content this checkbox actually mandates, none of them the dropped pre-Delta-12 phrasing)
-- [ ] [AI] Encode the **feature-flag default + escape + removal** rule in `plan-planning.md`:
+- [x] [AI] Encode the **feature-flag default + escape + removal** rule in `plan-planning.md`:
       flagging is the default; a phase lands unflagged **only** when it ships no user-reachable
       behaviour change (pure docs / governance / refactor / test-only) and the step names which
       exemption applies; every flag introduced carries a named **removal step** in the plan's final
@@ -1149,33 +1149,62 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       `grep -oEi 'unflagged|user-reachable|flag removal step' plan-planning.md | sort -u | wc -l`
       returns ≥3 (returns **0** against the current pre-edit file), regardless of how the prose is
       line-wrapped
-- [ ] [AI] Reflect the 1-PR↔1-worktree cleanup tie in `plan-execution.md` (the worktree is the unit
+- [x] [AI] Reflect the 1-PR↔1-worktree cleanup tie in `plan-execution.md` (the worktree is the unit
       cleaned up when its PR lands) — acceptance: `grep -ni "one worktree\|per-PR\|feature flag" plan-execution.md` present
+  - **Date**: 2026-07-20. All five §4b-tail items delivered together, since four of them land in the
+    same file. All five baselines verified live at **0** beforehand.
+  - **New `## Planning Granularity` section in `plan-planning.md`** (placed before `## Steps`), with
+    four subsections: the strict **one worktree → one branch → one PR → one node** mapping and the
+    "sequence is not dependency" framing; **per-phase merging, not batch merging** (with the merge
+    actor stated per Delta 12's inverted default, never the pre-Delta-12 phrasing this checkbox
+    forbids); **feature flags** (default / unflagged escape naming its exemption / named removal
+    step in the final phase); and **how the default binds at each plan path** (design obligation
+    when authoring, delivery route when executing) plus the **plan-docs-only** carve-out stated on
+    its own footing rather than derived from DD-11.
+  - **Cross-reference added to `plans.md`** §Delivery Checklists Express a DAG, tying each
+    independent DAG node to its own PR and linking to the full rule.
+  - **Conflict found and fixed in `plan-execution.md` Step 2b**: item 6 mandated a single
+    plan-wide PR — "every subsequent phase push targets that same PR branch" — which directly
+    contradicts Delta 10's per-phase PR. Rewritten to push to the PR branch **of the DAG node being
+    delivered**, plus two new paragraphs covering per-phase merging and the worktree-as-unit-of-
+    cleanup tie (cleanup is the terminal DAG node, so it cannot remove a worktree an in-flight node
+    still needs).
+  - **Acceptance verified**: #57 = 6 (>0), #58 = 3 (≥3), #60 = 3 (≥3), #61 = 3 (>0). #59's combined
+    two-file grep returns 3 (≥3) — and, deliberately, returns **3 against `plan-execution.md`
+    alone** as well, so the clause is satisfied in each file the checkbox names rather than only in
+    aggregate.
 
 ### 4c. Cross-surface sweep (agents / skills / workflows)
 
-- [ ] [AI] Grep-discover every agent/skill/workflow referencing the old cap numbers, orchestration,
+- [x] [AI] Grep-discover every agent/skill/workflow referencing the old cap numbers, orchestration,
       worktrees, git-safety, or cleanup:
       `grep -rln "cap at 2\|3 total\|2 background\|stricter cap of 2\|max-concurrency\|background agent\|worktree\|git-safety\|cleanup" .claude/agents .claude/skills repo-governance/workflows`
       — acceptance: candidate file list recorded in `learnings.md` (expect ≥20 workflow hits from
       `max-concurrency` alone, plus all 7 `plan/*` files)
+  - **Date**: 2026-07-20. Sweep run verbatim; **36 candidate files** recorded in `learnings.md`
+    under `## Phase 4c discovery sweep`, broken down by area (8 agents / 4 skills / 24 workflows).
+  - **Both expectations met exactly**: `grep -rl "max-concurrency" repo-governance/workflows/`
+    returns **20**, and all **7** `repo-governance/workflows/plan/*` files appear in the list.
+  - **Recorded with a caveat**: the sweep pattern matches any mention of `worktree` or `cleanup`, so
+    a listed file is a candidate requiring a read, not a confirmed stale surface — noted in
+    `learnings.md` so a later reader does not mistake list membership for a defect.
 
 #### 4c-i. ALL SEVEN `repo-governance/workflows/plan/*` files (one checkbox each)
 
-- [ ] [AI] `repo-governance/workflows/plan/README.md` — update the plan-workflow index to reflect the
+- [x] [AI] `repo-governance/workflows/plan/README.md` — update the plan-workflow index to reflect the
       N+1/DAG model and link the two new conventions — acceptance:
       `grep -ci "N+1\|1 main thread + N background" plan/README.md` returns **≥1** (returns **0** today,
       confirmed live — the bare `grep -ni "N+1\|DAG"` pattern is already **1** today via an unrelated
       "dependency DAG" mention describing `multi-plans-execution.md`'s scheduler, so it MUST NOT be used
       alone as the acceptance signal); new convention links resolve
-- [ ] [AI] `repo-governance/workflows/plan/plan-execution.md` — N+1 fan-out, DAG ordering, 1-PR↔1-worktree
+- [x] [AI] `repo-governance/workflows/plan/plan-execution.md` — N+1 fan-out, DAG ordering, 1-PR↔1-worktree
       cleanup tie, no-destructive-git, self-scoped cleanup — acceptance:
       `grep -ci "1 main thread + N background agents\|1-PR.*1-worktree" plan-execution.md` returns **≥1**
       (returns **0** today, confirmed live — the bare `grep -ni "N+1\|DAG\|one worktree"` pattern is
       already **1** today via a false-positive substring match on ordinary "do NOT start phase N+1"
       phase-gate language, so it MUST NOT be used alone as the acceptance signal); no stale "cap at 2 /
       3 total" (confirmed absent both today and required to stay absent)
-- [ ] [AI] `repo-governance/workflows/plan/plan-planning.md` — per-phase PR + feature flags + strict
+- [x] [AI] `repo-governance/workflows/plan/plan-planning.md` — per-phase PR + feature flags + strict
       1-PR↔1-worktree (Delta 10) — **this is the §4c-i cross-workflow consistency pass, NOT a re-do of the
       §4b authoring edit**; §4b writes the rule into `plan-planning.md`, this checkbox verifies every
       _other_ plan workflow that references planning granularity now agrees with it — acceptance:
@@ -1203,18 +1232,18 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
   acceptance clause, so it flips to true the moment §4b completes and can never discriminate
   whether this sweep actually ran.
 
-- [ ] [AI] `repo-governance/workflows/plan/plan-quality-gate.md` — align the `max-concurrency` frontmatter
+- [x] [AI] `repo-governance/workflows/plan/plan-quality-gate.md` — align the `max-concurrency` frontmatter
       default/wording with N+1 **and** add the hardened merge preconditions (3 cycles + up-to-date with
       `origin/main` + all gates green) to its Delivery-Mode done-definition section — acceptance:
       `grep -ci "N+1\|1 main thread + N background" plan-quality-gate.md` returns **≥1** (returns **0**
       today, confirmed live — the bare `grep -ni "max-concurrency\|up-to-date\|3 cycles"` pattern is
       already **1** today via the file's own pre-existing `- name: max-concurrency` YAML frontmatter
       field, so it MUST NOT be used alone as the acceptance signal)
-- [ ] [AI] `repo-governance/workflows/plan/multi-plans-execution.md` (**most affected** — governs running
+- [x] [AI] `repo-governance/workflows/plan/multi-plans-execution.md` (**most affected** — governs running
       multiple plans at once): adopt N+1, background-slot-preference/main-vacant, DAG-first ordering,
       3-5 min status cadence, 1-PR↔1-worktree; **supersede** its "cap 3 concurrent / background cap 2
       never more" language — acceptance: `grep -n "cap 3\|cap at 2\|never more\|3 total" multi-plans-execution.md` returns nothing; N+1/DAG/cadence text present
-- [ ] [AI] `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` — worktree-to-PR default,
+- [x] [AI] `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` — worktree-to-PR default,
       per-phase PR + feature flags, no-destructive-git, self-scoped cleanup, parallel propagation shape
       (ose-public → ose-primer/ose-infra) — acceptance:
       `grep -ci "per-phase PR\|feature.flag\|no-destructive-git\|parallel propagation" plan-multi-repo-parity-planning.md`
@@ -1222,10 +1251,50 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       of "worktree-to-pr" as an already-documented delivery-mode name MUST NOT be used alone as the
       acceptance signal; they predate this plan and are unrelated to the new per-phase-PR/feature-flag
       content)
-- [ ] [AI] `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` — same
+- [x] [AI] `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` — same
       alignment as above for the execution half — acceptance: same narrowed
       `grep -ci "per-phase PR\|feature.flag\|no-destructive-git\|parallel propagation"` clause returns
       **≥1** (returns **0** today, confirmed live, same root cause as the sibling file above)
+  - **Date**: 2026-07-20. All seven §4c-i files delivered; **all seven baselines re-verified live at
+    0** (or, for `multi-plans-execution.md`, at 1 stale-cap hit) before any edit, so each clause
+    discriminates a done step from an undone one.
+  - **`plan/README.md`** — new `## Orchestration Model Shared by These Workflows` section (N+1,
+    DAG-first, 1-PR↔1-worktree) plus three new Related-Documentation links to the orchestration
+    convention and the two new conventions. Acceptance grep: **3** (≥1). All five link targets
+    verified to exist on disk.
+  - **`plan-execution.md`** — new `### Fan-Out, Ordering, and Delivery Shape` subsection under
+    §Orchestration Model covering N+1 fan-out, DAG-first ordering, the 1-PR↔1-worktree cleanup tie,
+    non-destructive/self-scoped git, and the 3-5 min cadence. Acceptance: **2** (≥1); stale
+    "cap at 2 / 3 total" confirmed **0** and required to stay so.
+  - **`plan-quality-gate.md`** — `max-concurrency` frontmatter default **2 → 3** with an N+1-framed
+    description, plus the full hardened merge preconditions (a)-(e) added to §Relationship to
+    Delivery-Mode Done-Definition. Acceptance: **1** (≥1).
+  - **`multi-plans-execution.md`** (most affected) — `max-concurrency` default **2 → 3**; the stale
+    "background subagents cap at 2 (3 total including the main thread)" sentence **superseded** by
+    the N+1 model, and four new bullets added (background-slot preference, DAG-first ordering, 3-5
+    min status cadence, 1-PR↔1-worktree delivery). Acceptance: stale-pattern grep now returns
+    **0**; N+1/DAG/cadence text present (**4**).
+  - **`plan-multi-repo-parity-planning.md`** — three new subsections: Parallel Propagation Shape
+    (`ose-public` as source of truth fanning out to two **independent** downstream nodes, not a
+    chain), Delivery Shape Per Repo (per-phase PRs + feature flags), and Shared-Machine Safety.
+    Acceptance: **5** (≥1).
+  - **`plan-multi-repo-parity-planning-and-execution.md`** — same alignment for the execution half.
+    Acceptance: **5** (≥1).
+  - **Judgement call recorded**: both parity files carried a strict "one repo at a time" sequencing
+    rule. Rather than delete it for Delta 6, the parallel-propagation shape is stated as what applies
+    **when the invoker opts out of strict sequencing**, and the two constraints that genuinely force
+    serialization are named explicitly — `apps/rhino-cli` byte-identity across all three repos, and
+    the general "any node writing what another node reads" independence test. Deleting the
+    sequencing rule outright would have traded one correct constraint for another.
+  - **§4c-i cross-workflow consistency loop passes**: the four-file loop
+    (`plan-execution`, `multi-plans-execution`, and both parity files) **prints nothing**, having
+    printed all four pre-edit; and `grep -rc "cap at 2\|3 total"` returns 0 in every
+    `repo-governance/workflows/plan/` file.
+  - **Preexisting failure surfaced, not caused**: a repo-wide `md links validate` reports **93
+    broken links** — 44 archived `plans/done/` files plus one `ayokoding-www` content page. None sit
+    in any file this plan touches (the pre-commit hook scopes to staged files, which is why the
+    Phase 4b commit passed cleanly). Not remediated here: `plans/done/` is an immutable archive by
+    convention, and a 45-file link repair is a separate change.
 
 #### 4c-ii. Repo-wide `max-concurrency` frontmatter (20 files)
 

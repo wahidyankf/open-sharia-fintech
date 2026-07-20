@@ -495,6 +495,14 @@ shared branch, or an ordering constraint makes them dependent however separable 
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
 as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
 
+**Each independent DAG node lands as its own PR** — one worktree → one branch → one PR → one node,
+opened and merged as that node completes rather than held for a batch merge at plan end. Partial
+work reaches `main` merged-but-dark behind a feature flag; dependent nodes that cannot be separated
+stay a single PR. The full planning-granularity rule — the strict 1-PR↔1-worktree mapping, per-phase
+merging, the feature-flag default with its unflagged escape and named removal step, and how the
+`worktree-to-pr` default binds as a design obligation at authoring time — is stated in the
+[plan-planning workflow §Planning Granularity](../../workflows/plan/plan-planning.md#planning-granularity).
+
 ### Applicability (Execution Markers + Phase Gates)
 
 Both HARD RULES above — Executor Tagging and Phases as Natural Pauses With Clear Gates — apply to **net-new plans at authoring time**: a plan created after this convention landed MUST comply from creation, and `plan-checker` flags missing markers or gates as HIGH on those plans.

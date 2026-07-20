@@ -48,10 +48,22 @@ validation at the end.
 - [Plan Multi-Repo Parity Planning and Execution](./plan-multi-repo-parity-planning-and-execution.md) - End-to-end composite: run the full parity planning workflow (both grills included), then a third pre-execution grill, then plan-execution per repo for every resulting plan — flattened granular Task list kept 1:1 with each delivery.md, archival, sibling-link repair, and prompted worktree cleanup
 - [Plan Quality Gate](./plan-quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan-checker and plan-fixer
 
+## Orchestration Model Shared by These Workflows
+
+Every workflow in this directory fans out under the **N+1 model** — `1 main thread + N background
+agents = N+1 total`, default **N=3**, with the main thread kept vacant as orchestrator. Ordering is
+**DAG-first**: a plan's `## Parallelization Model` declares which nodes are independent, independent
+nodes fan out up to N, and dependent nodes serialize — sequence is not dependency. Delivery is
+**1-PR↔1-worktree**: each independent node gets its own worktree, branch, and PR, merged per-phase
+rather than batched at plan end, with cleanup as the DAG's terminal node.
+
 ## Related Documentation
 
 - [Workflows Index](../README.md) - All orchestrated workflows
 - [Plans Organization Convention](../../conventions/structure/plans.md) - Plan structure standards
+- [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md) - The N+1 model, DAG-first ordering, and background-slot preference these workflows inherit
+- [No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md) - Forbidden operations on the shared machine and the non-destructive equivalent for each
+- [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md) - The plan-end cleanup gate across worktrees, branches, and build output
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 - [Grilling-With-Options Convention](../../development/workflow/grilling-with-options.md) - Every

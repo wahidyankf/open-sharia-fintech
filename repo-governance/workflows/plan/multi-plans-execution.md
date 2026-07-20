@@ -22,9 +22,9 @@ inputs:
     default: 3
   - name: max-concurrency
     type: number
-    description: Harness agent-concurrency ceiling (background subagents). The effective parallelism is min(parallelism, this, harness cap). Never self-promoted above the harness limit.
+    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). The effective parallelism is min(parallelism, this, harness cap). Never self-promoted above the declared value or the harness limit."
     required: false
-    default: 2
+    default: 3
   - name: mode
     type: enum
     values: [execute, plan-only]
@@ -114,11 +114,23 @@ rules win for that plan's internal work; this document governs only cross-plan s
   across all plans — the "N parallel Tasks". The caller overrides it (e.g., "…with parallelism 2" or
   "…serially" = 1).
 - The **effective** concurrency is `min(parallelism, max-concurrency, harness agent cap)`. Per the
-  [Agent Workflow Orchestration guidance](../../development/agents/agent-workflow-orchestration.md),
-  the orchestrator MUST NOT self-promote above the harness cap; background subagents cap at 2 (3
-  total including the main thread) unless the caller explicitly raised it for the session.
+  [Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md),
+  concurrency follows the **N+1 model** — `1 main thread + N background agents = N+1 total`, default
+  **N=3** (4 total). The orchestrator MUST NOT self-promote above the declared N or the harness cap.
+  N is adjustable per-plan and along the way: raise it only when independent work, machine capacity,
+  and budget headroom all allow, and lower it under budget, runner, or disk pressure.
+- **Background-slot preference**: fill background slots up to N and keep the main thread vacant and
+  responsive — orchestrator, not worker. Never split dependent work merely to fill a slot.
+- **Ordering is DAG-first**: independent nodes fan out up to N, dependent nodes serialize, and
+  cleanup is the terminal node. The DAG's independent-node width is the fan-out — N only caps it.
+  Sequence is not dependency.
 - Parallelism is a **ceiling, not a target** — the scheduler runs fewer nodes when the ready set is
   smaller or when resource conflicts force serialization.
+- **Status cadence**: while nodes are in flight, update the user every **3-5 minutes — not faster**,
+  anchored to meaningful state changes (a node completing, a gate flipping, a plan quarantining)
+  rather than to a timer alone.
+- **Delivery is 1-PR↔1-worktree**: each independent node gets its own worktree, branch, and PR,
+  merged per-phase as it completes rather than batched at the end of the run.
 
 ## Steps
 

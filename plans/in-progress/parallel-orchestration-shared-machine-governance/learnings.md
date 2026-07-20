@@ -128,6 +128,34 @@ simply "15 → 0" against this same command — the two greps are deliberately d
   missed), but a strictly harder case: an index at least _links_ to the file it describes, so an
   inbound-link sweep would catch it. A competing convention has no such mechanical trace.
 
+## Phase 4c discovery sweep — candidate surface list
+
+Recorded 2026-07-20. Command run verbatim from the §4c checkbox:
+
+```sh
+grep -rln "cap at 2\|3 total\|2 background\|stricter cap of 2\|max-concurrency\|background agent\|worktree\|git-safety\|cleanup" \
+  .claude/agents .claude/skills repo-governance/workflows
+```
+
+**36 candidate files**, matching the plan's stated expectations exactly — 20 carry
+`max-concurrency`, and all 7 `repo-governance/workflows/plan/*` files appear.
+
+- **`.claude/agents/` (8)**: `docs-file-manager`, `plan-checker`, `plan-execution-checker`,
+  `plan-fixer`, `plan-maker`, `pr-review-maker`, `repo-setup-manager`, `swe-code-checker`
+- **`.claude/skills/` (4)**: `plan-creating-project-plans`, `repo-defining-workflows`,
+  `swe-developing-applications-common`, `swe-developing-e2e-test-with-playwright`
+- **`repo-governance/workflows/` (24)**: all 7 `plan/*` (`README`, `plan-execution`,
+  `plan-planning`, `plan-quality-gate`, `multi-plans-execution`,
+  `plan-multi-repo-parity-planning`, `plan-multi-repo-parity-planning-and-execution`), plus
+  `workflows/README.md`, `pr/pr-review-quality-gate`, 5 × `ayokoding-web/*-quality-gate`,
+  `content/pdf-to-md-quality-gate`, 2 × `docs/*-quality-gate`,
+  `infra/development-environment-setup`, `meta/workflow-identifier`,
+  `repo/repo-harness-compatibility-quality-gate`, `repo/repo-rules-quality-gate`,
+  `specs/specs-quality-gate`, `ui/ui-quality-gate`, `web/web-ux-test-fixing-planning`
+
+Note that the sweep pattern is deliberately broad (it matches any mention of `worktree` or
+`cleanup`), so a listed file is a **candidate** requiring a read, not a confirmed stale surface.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

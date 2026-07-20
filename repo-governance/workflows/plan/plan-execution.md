@@ -108,6 +108,30 @@ The orchestrator selects the best agent for each delivery checklist item using t
 TypeScript backend change that also requires a README update), delegate each concern separately
 to its appropriate agent. Execute the implementation agent first, then the documentation agent.
 
+### Fan-Out, Ordering, and Delivery Shape
+
+**Fan-out follows the N+1 model**: `1 main thread + N background agents = N+1 total`, default
+**N=3**. The orchestrator keeps the main thread vacant and responsive — filling background slots
+first — and never silently self-promotes beyond the plan's declared N. See the
+[Agent Workflow Orchestration Convention](../../development/agents/agent-workflow-orchestration.md).
+
+**Ordering is DAG-first**: the plan's `## Parallelization Model` declares which nodes are
+independent. Independent nodes fan out up to N; dependent nodes serialize; **sequence is not
+dependency**. The DAG's independent-node width is the fan-out — N only caps it.
+
+**Delivery is 1-PR↔1-worktree**: each independent DAG node gets its own worktree, branch, and PR,
+merged per-phase as it completes rather than batched at plan end. Cleanup is the terminal DAG node,
+so a worktree is removed only once its own PR has landed and no in-flight node still needs it.
+
+**Git operations stay non-destructive and self-scoped**: assume other agents and engineers share
+this machine's disk, git object store, and worktrees. Never run an operation that discards a
+concurrent actor's uncommitted work, and never remove a worktree or branch you did not create. See
+[No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md) and
+[Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md).
+
+**Status cadence**: while checklist items are active, update the user every **3-5 minutes — not
+faster**, anchored to meaningful state changes rather than a timer.
+
 ## Task-Checklist Synchronization
 
 The live Task list (`TaskCreate` / `TaskUpdate`) and the on-disk delivery checklist (`delivery.md`) are two views of the same state. They MUST agree at every moment of execution. Disagreement is a bug the orchestrator MUST detect and fix immediately.
@@ -367,7 +391,11 @@ After completing all items in a delivery phase, verify the phase's authored gate
 5. Commit thematically (Iron Rule 7) — separate plan work from preexisting fixes
 6. Push to the resolved delivery mode's target (Iron Rule 5), only after ALL local quality gates pass. The push target depends on the delivery mode resolved in Step 0:
    - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): push directly to `origin main`.
-   - **`worktree-to-pr` / `main-to-pr`** (`*-to-pr` modes): push to the plan's **PR branch**. If no PR exists yet for this branch, open one on the first push of the plan (`gh pr create --base main --head <branch> --title "<plan-identifier>" --body "<summary>"`, draft or non-draft per plan/user preference); every subsequent phase push targets that same PR branch. CI is monitored on the PR itself, not on `main` — see Step 2c.
+   - **`worktree-to-pr` / `main-to-pr`** (`*-to-pr` modes): push to the **PR branch of the DAG node being delivered**. Each independent node gets its own worktree, branch, and PR — a strict **one worktree → one branch → one PR → one node** mapping (see [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity)). If no PR exists yet for this branch, open one on its first push (`gh pr create --base main --head <branch> --title "<plan-identifier>: <node>" --body "<summary>"`, draft or non-draft per plan/user preference). Genuinely dependent phases that cannot be separated share one PR; independent ones do not. CI is monitored on the PR itself, not on `main` — see Step 2c.
+
+   **Per-phase merging (not batch merging)**: each phase PR is **opened and merged** as that phase completes, once the hardened merge preconditions hold. Do **not** hold phase PRs open for a batch merge at plan end — that re-serialises work the DAG declared independent and grows the divergence each PR must reconcile. The **merge actor** is `[AI]` by default; `[HUMAN]` applies only where the plan's own step declares that gate. Partial work reaches `main` **merged but dark** behind a feature flag rather than waiting on a long-lived branch.
+
+   **The worktree is the unit of cleanup**: because the mapping is one worktree per PR, a node's worktree is removed when **its** PR lands — not deferred to plan end. Cleanup is the terminal node of the DAG and depends on every delivery node, so it can never remove a worktree an in-flight node still needs. See [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md).
 
 **Output**: All quality gates passing, changes pushed
 

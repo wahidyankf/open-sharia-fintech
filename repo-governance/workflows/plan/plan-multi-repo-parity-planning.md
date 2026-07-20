@@ -104,6 +104,37 @@ The orchestrator:
 7. Runs `plan-quality-gate` per plan until double-zero
 8. Delivers per the selected mode and reports outcomes
 
+### Parallel Propagation Shape
+
+The repos form a propagation fan-out, not a chain: **`ose-public` is the source of truth**, and
+`ose-primer` and `ose-infra` are independent downstream targets. Once the upstream decision is
+recorded, the two downstream repos are **independent DAG nodes** — author and deliver them in
+parallel under the N+1 model (`1 main thread + N background agents`, default **N=3**), never
+serialized behind one another. `ose-infra` does not participate in the parity loop for content it
+does not carry.
+
+The one hard serialization: **`apps/rhino-cli` must stay byte-identical across all three repos**, so
+plans touching it propagate one repo at a time rather than concurrently.
+
+### Delivery Shape Per Repo
+
+Each repo's plan is authored to the `worktree-to-pr` default, and each independent phase lands as
+its **own PR** — a strict **one worktree → one branch → one PR → one node** mapping, merged
+per-phase rather than batched at the end. Partial work reaches `main` merged-but-dark behind a
+**feature flag**; a phase lands unflagged only when it ships no user-reachable behaviour change and
+the step names that exemption. See
+[plan-planning §Planning Granularity](./plan-planning.md#planning-granularity) for the full rule,
+including per-phase PR granularity and the named flag-removal step.
+
+### Shared-Machine Safety
+
+All three repos share one machine's disk and git object store, and two of them are bare repos driven
+through worktrees. Every git action here is therefore bound by the **no-destructive-git** rule:
+never run an operation that discards a concurrent actor's uncommitted work, and never remove a
+worktree or branch you did not create. See
+[No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md) and
+[Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md).
+
 ## Invocation Point
 
 This workflow runs from the anchor repo — whichever repo in the parity set the invoker is

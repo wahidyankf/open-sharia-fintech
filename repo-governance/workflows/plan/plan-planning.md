@@ -110,6 +110,63 @@ full post-provisioning setup sequence.
 User: "Establish a plan to [describe desired change]"
 ```
 
+## Planning Granularity
+
+How a plan is cut into phases determines how much of it can proceed in parallel and how early each
+piece reaches `main`. These rules bind at authoring time, not merely at execution time.
+
+### One Worktree, One Branch, One PR, One DAG Node (HARD RULE)
+
+Each applicable phase — more precisely, each independent node of the plan's dependency DAG — lands
+as **its own PR**. The mapping is strict and one-to-one: **one worktree → one branch → one PR → one
+node**. Never open two PRs from one worktree, and never drive one PR from two worktrees.
+
+Genuinely dependent phases stay a single PR. The DAG governs, not the phase numbering: phases that
+merely appear in sequence are not thereby dependent, and splitting them into separate PRs is the
+default. Sequence is not dependency.
+
+### Per-Phase Merging, Not Batch Merging
+
+Each phase PR is **opened and merged** as that phase completes. It is **not** held open for a
+**batch merge** at plan end. Holding phase PRs for a batch merge serialises work that the DAG
+already declared independent, and it grows the divergence each PR must reconcile against `main`.
+
+The **merge actor** follows the inverted default in
+[Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode):
+`[AI]` merges once the hardened preconditions hold, and `[HUMAN]` applies **only** where a plan's
+own step states that gate explicitly.
+
+### Feature Flags: Default, Escape, Removal
+
+Partial work reaches `main` **merged but dark** behind a feature flag rather than waiting on a
+long-lived branch. Flagging is the **default**.
+
+- **Escape**: a phase lands **unflagged** only when it ships no **user-reachable** behaviour change
+  — pure docs, governance, refactor, or test-only work — and the delivery step names which
+  exemption applies. An unflagged phase with no named exemption is a defect.
+- **Removal**: every flag introduced carries a named **flag removal step** in the plan's final
+  phase. A flag with no removal step is an unbounded commitment, not a rollout mechanism.
+
+### How the `worktree-to-pr` Default Binds at Each Plan Path
+
+The default binds differently depending on what is being done:
+
+- **Creating or updating a plan** binds it as a **design obligation**. The authoring edit itself may
+  push direct to `main`, but the plan's phases MUST be authored so they are **independently
+  PR-able**. A plan that genuinely cannot be decomposed that way records **why** in its
+  `tech-docs.md` — the constraint is documented, not silently absorbed.
+- **Executing a plan** binds it as the actual delivery route: worktree → PR, per the phase-to-PR
+  mapping above.
+
+### The Plan-Docs-Only Carve-Out
+
+A change touching **only** `plans/**`, with no `apps/` or `libs/` code, may push direct to `main`.
+This **plan-docs-only** carve-out stands on its own footing as a general convention: such a change
+ships no runtime behaviour, so the PR review cycle has no code surface to review.
+
+It is stated here in its own right and is **not** derived from DD-11 of any individual plan, which
+disclaims being a general precedent.
+
 ## Steps
 
 ### 0. Prompt Parsing and Repo Exploration (Sequential)

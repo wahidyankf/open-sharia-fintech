@@ -26,9 +26,9 @@ inputs:
     default: 7
   - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run concurrently during workflow execution
+    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
     required: false
-    default: 2
+    default: 3
 outputs:
   - name: final-status
     type: enum
@@ -285,6 +285,14 @@ actual delivery additionally requires satisfying the
 cycles complete, every inline comment answered, all PR gates GREEN, archival committed inside the
 PR — before the merge. The two gates sit at different lifecycle stages: this workflow
 gates the plan document pre-execution; the PR-review cycle gates the delivered change pre-merge.
+
+**The hardened merge preconditions** that gate that eventual merge — **all five** required: (a) 3
+`pr-review-maker` → `pr-review-fixer` cycles complete; (b) 0 CRITICAL + 0 HIGH findings outstanding;
+(c) the branch **up-to-date with the latest `origin/main`**, brought forward **non-destructively**
+if behind (never a shared-history rewrite); (d) all PR quality gates green; (e) the
+surface-conditional tester gates run and their defect findings resolved, or the exemption explicitly
+recorded. `[AI]` merges once they hold; a `[HUMAN]` merge gate applies only where a plan's own step
+says so explicitly, with identical preconditions either way.
 
 ## Example Usage
 

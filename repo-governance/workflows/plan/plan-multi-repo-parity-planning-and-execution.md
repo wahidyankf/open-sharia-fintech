@@ -269,6 +269,30 @@ Every plan-execution rule applies unchanged, including:
 `pass` (archived, pushed, CI green) — or, under a continue-on-failure policy from Step 3, until
 repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
 
+**Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
+fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` / `ose-infra` are
+**independent downstream nodes** that read from it without reading each other. Once `ose-public`
+reaches `pass`, the two downstream repos may run as concurrent DAG nodes under the N+1 model
+(`1 main thread + N background agents`, default **N=3**) rather than serialized behind one another.
+
+Two constraints override that fan-out and force strict serialization:
+
+- **`apps/rhino-cli` byte-identity** across all three repos — a plan touching it propagates one repo
+  at a time, never concurrently.
+- **Any node writing what another node reads** — the general DAG independence test. Sequence is not
+  dependency, but a shared write target is.
+
+**Per-repo delivery shape**: each repo's phases land as **per-phase PRs** under the strict
+**one worktree → one branch → one PR → one node** mapping, merged as each phase completes rather
+than batched at composite end, with partial work merged-but-dark behind a **feature flag**. See
+[plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
+
+**Shared-machine safety**: all three repos share one machine's disk and git object store, and two of
+them are bare repos driven through worktrees. The **no-destructive-git** rule binds every git action
+here — never discard a concurrent actor's uncommitted work, never remove a worktree or branch you
+did not create. See
+[No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md).
+
 **Output per repo**: plan-execution `final-status`, `iterations-completed`, final validation
 report.
 
