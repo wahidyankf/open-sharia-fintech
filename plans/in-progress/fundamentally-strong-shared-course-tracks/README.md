@@ -199,8 +199,8 @@ and the native authoring of the 61 transferred topics — it does not wait on an
 `worktree-to-pr` (the repo default): work in `worktrees/fundamentally-strong-shared-course-tracks/`,
 open a draft PR per phase against `main`, run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated
 cycles), then `[AI]` merges automatically once the review and all quality gates are green — a
-plan-scoped AI-auto-merge deviation from the standard `[HUMAN]` merge gate (see **DN-11 DECIDED**
-below). `ayokoding-www` is deployed to `prod-ayokoding-www` after every merge. See
+plan-scoped confirmation of the repo-default `[AI]` merge, which this plan does not opt out of (see
+**DN-11 DECIDED** below). `ayokoding-www` is deployed to `prod-ayokoding-www` after every merge. See
 [delivery.md](./delivery.md) for the `## Worktree` and `## Delivery Mode` declarations and the
 PR-review-cycle steps.
 
@@ -250,14 +250,16 @@ courses each path curates, exact orderings) are resolved in the manifests (tech-
   forward-link, does not re-teach at depth) → build-your-own harness cluster (build-your-own depth).
   A cross-reference contract prevents the survey and the cluster from duplicating the
   loop/tools/MCP/memory/evals explanations. **Decided.**
-- **DN-11 DECIDED — `[AI]` auto-merge (plan-scoped).** `[AI]` merges each phase's PR automatically once
-  the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — no `[HUMAN]` merge gate.
-  The maintainer authorized AI-auto-merge for **this plan** (in-session): (a) it uses the SAME delivery
-  methods as the now-closed sibling plan `fundamentally-strong-software-engineer`; and (b) no
-  maintainer permission is needed to merge a PR once it has passed 3 review cycles and the PR quality
-  gate. A deliberate, plan-scoped override recorded here and in
-  [delivery.md](./delivery.md#delivery-mode-worktree-to-pr); it does **not** amend
-  `pr-merge-protocol.md` and applies to no other plan.
+- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each phase's PR
+  automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this
+  plan declares no `[HUMAN]` merge gate. When DN-11 was first recorded, `pr-merge-protocol.md` still
+  defaulted to a `[HUMAN]` merge, so the maintainer authorized AI-auto-merge for **this plan**
+  (in-session): (a) it uses the SAME delivery methods as the now-closed sibling plan
+  `fundamentally-strong-software-engineer`; and (b) no maintainer permission is needed to merge a PR
+  once it has passed 3 review cycles and the PR quality gate. The protocol has since been changed so
+  that `[AI]` merges by default and `[HUMAN]` is an explicit per-plan opt-in, making DN-11 a
+  confirmation of the default rather than an override. Recorded here and in
+  [delivery.md](./delivery.md#delivery-mode-worktree-to-pr).
 - **DL-12 · FS-SE hard dependency REMOVED.** The sibling FS-SE plan is closed; its Passes 3–5 scope is
   absorbed here as the native-authored backfill of topics 34–94. This plan waits on no other plan.
   **Decided.**

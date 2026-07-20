@@ -69,15 +69,17 @@ plan ships to ayokoding.com). See
 [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
-> **DN-11 DECIDED — `[AI]` auto-merge (plan-scoped deviation)**: the repo's
-> [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) normally
-> requires a `[HUMAN]` merge with explicit per-instance approval. For **this plan only**, the
-> maintainer explicitly authorized (2026-07-18, in-session — modeled on the sibling plan
-> `fundamentally-strong-software-engineer`'s own separately-recorded authorization) that `[AI]` merges
-> automatically once the 3-cycle review and all quality gates are green, via two directives: (a) this
-> plan uses the SAME delivery methods as the sibling plan, and (b) no maintainer permission is needed
-> to merge a PR once it has passed 3 review cycles and the PR quality gate. This resolves
-> **DN-11 = AI-auto-merge**; it does **not** amend `pr-merge-protocol.md` and applies to no other plan.
+> **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
+> [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) has `[AI]`
+> merge the PR **by default** once its five hardened preconditions hold; a `[HUMAN]` merge gate is an
+> explicit per-plan opt-in, and this plan does not opt in. When DN-11 was first recorded the protocol
+> still defaulted to a `[HUMAN]` merge, so the maintainer authorized `[AI]` merge for this plan
+> specifically (2026-07-18, in-session — modeled on the sibling plan
+> `fundamentally-strong-software-engineer`'s own separately-recorded authorization) via two directives:
+> (a) this plan uses the SAME delivery methods as the sibling plan, and (b) no maintainer permission is
+> needed to merge a PR once it has passed 3 review cycles and the PR quality gate. The protocol has
+> since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
+> than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
 **Per-Phase Integration Protocol** (each phase's gate lists these as must-pass):
 
