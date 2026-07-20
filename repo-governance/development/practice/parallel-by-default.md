@@ -20,7 +20,7 @@ When independent units of work are ready, run them in parallel. Serial execution
 
 This practice respects the following core principles:
 
-- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: The cap of three is a deliberate, pre-decided constraint — not a reactive limit set after hitting errors. Acting from a bounded model prevents speculative over-parallelism and the cascading failures it causes.
+- **[Deliberate Problem-Solving](../../principles/general/deliberate-problem-solving.md)**: The declared N is a deliberate, pre-decided constraint — not a reactive limit set after hitting errors, and not a number an agent infers mid-batch from how fast things feel. Acting from a bounded model prevents speculative over-parallelism and the cascading failures it causes.
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: One number — three — governs all parallel work. No adaptive scheduling, no per-task caps, no context-dependent arithmetic. A single fixed cap is simple enough to apply consistently without thought.
 
@@ -71,19 +71,29 @@ The default execution model is **parallel**. An agent MUST run multiple independ
 
 The burden of proof is on serialization: an agent that runs independent work serially must have an explicit reason (dependency, ordering constraint, tool conflict). Absence of a reason means parallel.
 
-### Standard 2 — Cap at Three
+### Standard 2 — The N+1 Model (One Adjustable N)
 
-No more than **three** independent units of work run simultaneously at any point in a turn, unless the user explicitly raises the cap for a specific batch or session. After a unit completes, a new one may start immediately to refill the slot — the cap governs the instantaneous maximum, not the batch total.
+No more than **N** independent units of work run simultaneously at any point, where **N defaults to 3**. Counting the always-active main thread as the `+1`, this yields **N+1 concurrently active units in total** — four at the default. After a unit completes, a new one may start immediately to refill the slot: N governs the instantaneous maximum, not the batch total.
 
-**Why three**: Three concurrent units deliver meaningful parallel speedup over serial execution while staying below the token-burn rate and Claude API per-minute quota threshold that cause degraded performance or rate-limit errors. Fewer than three under-uses available throughput; more than three risks rate-limit cascades. Three is the deliberate optimum.
+**One N, not two.** This model replaces an older asymmetry that set a cap of three for tool-call batching but a stricter cap of two for background subagents. Both collapse into the single adjustable N. Background Agent-tool spawns are a **specialization** of this norm, not an exception to it — the [Subagent Orchestration Convention](../agents/subagent-orchestration.md) owns their extra mechanics (polling, stuck detection, relaunch) while using the same N.
 
-**Override rule**: The user may raise the cap for a named session or batch (e.g., "read all eight of these files at once"). The override applies for that session or batch only. The agent MUST NOT self-promote the cap based on its own assessment of available headroom.
+**Why the default is 3**: N=3 is chosen specifically to **bound token/compute-budget burn** — parallelism has real cost, since each concurrent unit independently spends tokens and API quota against the vendor's per-minute limit. Fewer than three under-uses available throughput; more risks rate-limit cascades and budget overrun. Assume the machine is **shared** — other agents, engineers, and processes run concurrently against the same disk, git object store, and CI runners — so the safe N is bounded by what that machine can absorb alongside everyone else.
 
-**Exception**: Delegated Agent-tool spawns running in background follow a stricter cap of 2, not 3 — see Standard 3 below.
+**Adjustment rule**: N is adjustable per-plan and **along the way**. Raising it requires all three of genuinely independent work, machine capacity, and budget headroom; **lowering it is required** under budget, runner, or disk pressure. A plan declares its chosen N in its `## Parallelization Model` section. The agent MUST NOT silently self-promote beyond the declared N based on its own assessment of available headroom.
 
-### Standard 3 — Subagent Specialization (Stricter Cap)
+### Standard 3 — Background-Slot Preference (Keep the Main Thread Vacant)
 
-For delegated Agent-tool spawns running in background, a **stricter cap of 2** applies — not the general cap of three used for tool-call batching. Counting the main thread's own execution, this means at most **3** agents are concurrently active in total (the main thread plus up to 2 background subagents) — never more. This narrower cap exists because each background subagent independently burns tokens and API quota against the vendor's rate limit, unlike batched tool calls within a single turn. Background subagents also require polling, stuck detection, and relaunch procedures beyond the general norm. The [Subagent Orchestration Convention](../agents/subagent-orchestration.md) owns those mechanics and the concrete cap; this practice sets the general norm for other independent work (tool calls, reads, searches).
+Prefer to fill the **background** slots up to N and keep the **main thread vacant** and responsive. The main thread is the **orchestrator**; background agents are the **workers**. A user who asks a question mid-batch should not wait behind the main thread's own long-running work.
+
+This preference is **bounded by the DAG** (Standard 4): fan out only genuinely independent nodes. "Maximize background utilization" never justifies artificially splitting dependent work to fill idle slots — a dependent chain running one node at a time is correct, not a failure to parallelize. Independence governs the fan-out; N only caps it.
+
+### Standard 4 — DAG-First Ordering
+
+Every non-trivial task list **and** plan delivery checklist declares an explicit **dependency DAG**: nodes are tasks or checklist items, edges are `blocks` / `blockedBy`. Independent nodes run in parallel up to N; dependent nodes serialize.
+
+The DAG's **independent-node width** is what the orchestrator fans out to — N only caps that width, it never creates it. Establish the DAG _before_ dispatching, not after: two nodes are independent only when neither reads what the other writes, so a shared output file, a shared branch, or an ordering constraint makes them dependent however separable they appear. **Cleanup is the terminal node**, depending on every other node, so it can never remove an artifact something still in flight needs.
+
+Task lists express this via `blocks` / `blockedBy`; `delivery.md` expresses it as phases/steps plus a `## Parallelization Model` section — see the [Plans Organization Convention](../../conventions/structure/plans.md) and the [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md).
 
 ## Anti-Patterns
 
@@ -136,8 +146,8 @@ For delegated Agent-tool spawns running in background, a **stricter cap of 2** a
 
 **Related Practices:**
 
-- [Subagent Orchestration Convention](../agents/subagent-orchestration.md) - Concrete specialization of this norm for background Agent-tool spawns at a stricter cap of 2 (3 total including the main thread); owns polling, stuck detection, and relaunch mechanics
-- [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) - Broader agent task management strategy of which parallel-by-default is one component
+- [Subagent Orchestration Convention](../agents/subagent-orchestration.md) - Concrete specialization of this norm for background Agent-tool spawns, using the same N (N+1 including the main thread); owns polling, stuck detection, and relaunch mechanics
+- [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) - Broader agent task management strategy of which parallel-by-default is one component; states the N+1 parallelism budget and the same-machine assumption that bounds N
 
 **Agents:**
 

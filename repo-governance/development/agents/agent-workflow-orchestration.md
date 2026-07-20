@@ -112,9 +112,46 @@ A rule that should hold everywhere is created with `repo-rules-maker` in one rep
 
 Parallelize aggressively — prefer running independent work concurrently over serially, and try to keep the parallel budget fully used whenever independent work is available.
 
-The budget is **two (2) concurrent background operations** — background delegated agents spawned via the Agent tool, and equivalent token-spending background tasks. The main thread's own work does not count toward this cap; only concurrent background operations do. Counting the always-active main thread as one agent, this yields **three (3) concurrently active agents in total** — the main thread plus up to two background agents — never more. Within the cap of two background operations, run as much in parallel as possible to keep throughput high while holding the token burn rate in check.
+The budget follows the **N+1 model**: `1 main thread + N background agents = N+1 total`. `N` counts concurrent background operations — background delegated agents spawned via the Agent tool, and equivalent token-spending background tasks. The main thread is the `+1`; its own work is not one of the `N`. The **default is `N = 3`**, yielding four concurrently active agents in total.
 
-Exceeding two concurrent background operations requires clear, explicit permission from the user for that session. Absent that permission, never run more than two background operations at once — queue the remainder and launch the next as a slot frees. The detailed background-batch mechanics (sequencing, stuck detection, relaunch) live in the [Subagent Orchestration Convention](./subagent-orchestration.md), which sets the same cap of two.
+**Why the default is 3.** N=3 is chosen specifically to **bound token/compute-budget burn** — parallelism is not free, and each background agent independently spends tokens and API quota. Raising N is a **deliberate, justified** act requiring all three of: genuinely independent work available, machine capacity to absorb it, and budget headroom. Lowering N is **required** under budget, runner, or disk pressure.
+
+**Adjustable, never self-promoted.** N may be raised per-plan and **along the way** as conditions change, and a plan declares its chosen N in its `## Parallelization Model` section. An agent MUST NOT silently self-promote beyond the declared N — raising it is an explicit decision, recorded, not an inference an agent draws from its own sense of available headroom.
+
+**Same-machine assumption.** Treat the repository as **very active**: assume other AI agents, software engineers, and background processes are running **simultaneously on the same physical machine**, sharing its disk, its git object store, its worktrees, and its self-hosted CI runners. The N you can safely run is bounded by what that shared machine can absorb alongside everyone else's work, not by what this session alone could drive.
+
+The detailed background-batch mechanics (sequencing, stuck detection, relaunch) live in the [Subagent Orchestration Convention](./subagent-orchestration.md), which specializes the same N.
+
+### DAG-First Orchestration
+
+Every non-trivial task list **and** plan delivery checklist declares an explicit **dependency DAG**: nodes are tasks or checklist items, edges are `blocks` / `blockedBy`. **Independent** nodes run in parallel up to N; **dependent** nodes serialize. The DAG's **independent-node width** — not N — is what the orchestrator actually fans out to; N only caps it.
+
+- **Task lists** express dependencies directly via `blocks` / `blockedBy`.
+- **`delivery.md`** expresses phases and steps as a DAG, plus a `## Parallelization Model` section naming which items are concurrent and which are serial. **Cleanup is the terminal node**, depending on every delivery node — it runs last, once nothing else can still need the artifacts it removes.
+
+Determine independence before fanning out, not after. Two nodes are independent only when neither reads what the other writes; a shared output file, a shared branch, or an ordering constraint makes them dependent regardless of how separable they look. The delivery-checklist expression of this rule is documented in the [Plans Organization Convention](../../conventions/structure/plans.md).
+
+### Background-Slot Preference
+
+Fill the **background** slots up to N and keep the **main thread vacant** and responsive — the main thread is the **orchestrator**, background agents are the **workers**. This is **bounded by the DAG**: fan out only genuinely independent nodes, and never split dependent work artificially to raise slot utilization.
+
+### Harness Capability Gating
+
+Not every coding-agent harness can run background or parallel subagents. The model above is stated so that it degrades cleanly rather than becoming inapplicable:
+
+> Where the harness supports background or parallel subagents, execute the DAG's independent nodes concurrently, each in its own git worktree (or equivalent isolated branch checkout), respecting the harness's own documented concurrency ceiling if one exists. Where the harness does NOT support background/parallel subagents, execute the same DAG **serially**, node by node, in dependency order — one worktree/branch at a time is fine (serial execution has no concurrent-edit collision to isolate against). In both modes, the delivery-safety rules (no destructive git operations, worktree cleanup on completion, no direct pushes to protected branches) apply **identically** regardless of concurrency mode.
+
+The DAG itself is the portable artifact: the same dependency graph drives a wide fan-out on a background-capable harness and a serial walk on a single-threaded one. Concurrency changes the schedule, never the ordering or the safety rules.
+
+### The PR Is the Independent Merge Point
+
+`worktree-to-pr` is the default delivery mode (see [Delivery Mode](../../conventions/structure/plans.md#delivery-mode)), and the reason is a parallelism reason, not a review-process one.
+
+A worktree isolates **edits** — two agents writing to the same file in the same checkout would collide, and separate working trees prevent that. But isolated edits still have to land, and if N parallel units all funnel into one shared branch or one shared PR, they re-serialize at exactly the moment that matters. The **PR** is what makes them genuinely independent: N parallel units become **N PRs that review, gate, and merge independently**, none blocking any other. A slow review on one unit does not hold the other N-1 hostage.
+
+Concretely: **every DAG leaf that produces changes gets its own worktree and its own PR** — a strict one-node ↔ one-worktree ↔ one-PR mapping. The corollary matters as much as the rule: nodes that are genuinely _dependent_ stay in one PR. The DAG governs. Never force-split an inseparable chain just to produce more PRs, and never batch independent nodes into one PR just to produce fewer.
+
+Because the worktree is the unit that maps to a PR, it is also the unit that gets cleaned up when that PR lands.
 
 ### CI and GitHub Actions Monitoring Cadence
 

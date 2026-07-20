@@ -263,9 +263,12 @@ fast-track and EPSS ≥ 0.5 escalate to Path C.
 ### Agent Workflow Orchestration
 
 Plan mode for non-trivial tasks (3+ steps or architecture decisions). **Parallel-by-default**: run
-independent sub-units in parallel, capped at **3 concurrent**. Agents MUST NOT self-promote the cap.
-**Subagent concurrency**: background agents cap at **2** (never more), for **3 total including the
-main thread**; poll mtime every 3 min; if stale 30 min, `TaskStop` and relaunch.
+independent sub-units in parallel under the **N+1 model** — `1 main thread + N background agents =
+N+1 total`, **default N=3** (4 total). N=3 is chosen to **bound token/compute-budget burn**; raise N
+per-plan and along the way only when independent work, machine capacity, and budget headroom all
+allow, and lower it under budget/runner/disk pressure. Agents MUST NOT silently self-promote beyond
+the declared N. **Subagent concurrency**: poll mtime every 3 min; if stale 30 min, `TaskStop` and
+relaunch.
 **Task-list discipline**: maintain live task list for non-trivial work; mark in-progress before starting,
 completed after verifying; add discovered tasks immediately.
 

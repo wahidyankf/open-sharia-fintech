@@ -24,7 +24,7 @@ This practice implements/respects the following core principles:
 
 - **[Root Cause Orientation](../../principles/general/root-cause-orientation.md)**: Stuck detection addresses the root cause (output-token-budget exhaustion during planning, causing silent stall) rather than the symptom (batch never completing). Relaunch restores completion; ignoring a stall compounds delay.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: A fixed default cap (2 background subagents, 3 total including the main thread) with a clearly-described override path is simpler than an adaptive scheduler. Three minutes between polls is a single number to remember. Concrete mtime-based stuck detection requires no additional tooling.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: A single default N (3 background subagents, N+1 total including the main thread) with a clearly-described adjustment path is simpler than an adaptive scheduler — one number to reason about, deliberately set rather than continuously inferred. Three minutes between polls is a single number to remember. Concrete mtime-based stuck detection requires no additional tooling.
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The cap, polling interval, and stuck threshold are explicit constants stated in this document. Agents do not infer limits from context; they apply the values here.
 
@@ -70,26 +70,31 @@ This convention codifies two interlocking standards that address both failure mo
 
 ## Standards
 
-### Standard 1 — Default Concurrency Cap: 2 Background (3 Total Including Main Thread)
+### Standard 1 — Default Concurrency: N Background Agents (N+1 Total Including Main Thread)
 
-The main agent MUST NOT have more than **2 background subagents active simultaneously** at any point, unless the user explicitly raises the cap for a specific session or batch. The main thread's own execution does not count toward this background cap, but it is never idle while background subagents run — it is always one of the concurrently active agents. Counting the main thread, **at most 3 agents are concurrently active in total** (the main thread plus up to 2 background subagents) — never more. When independent units of work are ready, background slots should be kept full up to 2 rather than running them one at a time.
+The main agent MUST NOT have more than **N background subagents active simultaneously**, where **N defaults to 3**. The main thread's own execution is the `+1` and does not consume one of the N slots, but it is never idle while background subagents run — it is always one of the concurrently active agents. Counting the main thread, **at most N+1 agents are concurrently active in total** (four at the default N). When independent units of work are ready, background slots should be kept full up to N rather than running them one at a time.
 
-**Applies to**: All Agent-tool spawns, whether background or foreground. Both content-producing makers (e.g., `apps-ayokoding-www-by-example-maker`) and meta-agents (e.g., `repo-rules-maker`) count toward the background cap. Total simultaneous background Agent-tool invocations is the metric, not agent type.
+**Applies to**: All Agent-tool spawns, whether background or foreground. Both content-producing makers (e.g., `apps-ayokoding-www-by-example-maker`) and meta-agents (e.g., `repo-rules-maker`) count toward N. Total simultaneous background Agent-tool invocations is the metric, not agent type.
 
-**Rationale**: Each subagent operates its own independent tool-call stream against the Claude API. Running more than 2 background subagents concurrently (3 total including the main thread) risks saturating the per-minute request quota at the model vendor and increases token burn rate, producing rate-limit errors that cascade and slow the entire batch — this is a token-starvation and rate-limit concern, not merely a throughput cap. Two concurrent background subagents, alongside the main thread's own work, deliver meaningful parallel throughput while staying safely below observed saturation thresholds. This cap is the concrete subagent specialization of the broader parallel-by-default working norm — see [Parallel-by-Default Practice](../practice/parallel-by-default.md) for the general principle.
+**Background-slot preference**: prefer to fill the background slots up to N and keep the **main thread vacant** — the main thread is the responsive **orchestrator**, background agents are the **workers**. A user who asks a question mid-batch should not have to wait behind the main thread's own long-running work. This preference is **bounded by the DAG**: fan out only genuinely independent nodes. Never split dependent work artificially just to raise slot utilization — a serialized dependent chain running at one slot is correct, not a failure to parallelize.
 
-**Sequencing rule**: Launch a new subagent only after a prior one completes (via task-notification message) or after calling `TaskStop` on a stuck agent. Do not pre-queue more than 2 pending background launches at once.
+**Rationale**: Each subagent operates its own independent tool-call stream against the model vendor's API. Running more background subagents than the machine and budget can absorb risks saturating the per-minute request quota and increases token burn rate, producing rate-limit errors that cascade and slow the entire batch — this is a token-starvation and rate-limit concern, not merely a throughput cap. N=3 is chosen to **bound token/compute-budget burn** while still delivering meaningful parallel throughput. Assume the machine is **shared**: other agents, engineers, and processes are running concurrently against the same disk, git object store, and CI runners, so the safe N is bounded by what that shared machine can absorb alongside them. This is the concrete subagent specialization of the broader parallel-by-default working norm — see [Parallel-by-Default Practice](../practice/parallel-by-default.md) for the general principle.
 
-**Override rule**: The user may instruct the main agent to raise the cap temporarily (e.g., "run 3 background agents in parallel this batch"). The override applies for that session or batch only. After the batch completes, the default of 2 background subagents (3 total including the main thread) resumes automatically. The main agent MUST NOT self-promote the cap based on its own assessment of available headroom.
+**Sequencing rule**: Launch a new subagent only after a prior one completes (via task-notification message) or after calling `TaskStop` on a stuck agent. Do not pre-queue more than N pending background launches at once.
+
+**Adjustment rule**: N is adjustable per-plan and along the way — raised when independent work, machine capacity, and budget headroom all allow, and **lowered when required** under budget, runner, or disk pressure. A plan declares its chosen N in its `## Parallelization Model` section. The main agent MUST NOT silently self-promote beyond the declared N based on its own assessment of available headroom.
 
 #### Examples
 
 ```
-PASS: 1 background agent active, a second independent unit is ready → launch the second (keep slots full)
-PASS: 2 background agents active → wait for one to complete → launch next
-PASS: User says "run 3 background agents at once for this batch" → 3 active during that batch only
-FAIL: 3 background agents launched simultaneously without user instruction
-FAIL: Main agent raises cap to 3 background agents because "the first two seem fast"
+PASS: N-1 background agents active, another independent unit is ready → launch it (keep slots full)
+PASS: N background agents active → wait for one to complete → launch next
+PASS: Plan declares N=5 for a wide independent batch → 5 background agents active for that plan
+PASS: Disk pressure on the shared machine → lower N for the rest of the batch
+PASS: Two dependent nodes remain → run them serially even though slots are free (DAG governs)
+FAIL: More than the declared N launched simultaneously
+FAIL: Main agent raises N on its own because "the first few seem fast"
+FAIL: Splitting one dependent chain into fake parallel units to fill idle slots
 ```
 
 ### Standard 2 — 3-Minute Stuck-Detection Polling
@@ -167,9 +172,9 @@ Task-notification messages from the harness signal completion (or kill). These a
 
 **Problem**: The main agent launches all subagents simultaneously to minimize total elapsed time.
 
-**Why it fails**: More than 2 concurrent background agents (3 total including the main thread) saturates the per-minute API quota and increases token burn rate. Rate-limit errors cascade; agents that would have succeeded fast must retry, extending total batch time beyond the sequential baseline.
+**Why it fails**: More than N concurrent background agents (N+1 total including the main thread) saturates the per-minute API quota and increases token burn rate. Rate-limit errors cascade; agents that would have succeeded fast must retry, extending total batch time beyond the sequential baseline. On a shared machine the same overshoot also starves the other agents and engineers working against the same disk and runners.
 
-**Fix**: Cap background agents at 2 (3 total including the main thread). Launch the next agent only after one completes.
+**Fix**: Hold background agents at the declared N (N+1 total including the main thread; N defaults to 3). Launch the next agent only after one completes.
 
 ### Relying Solely on Task-Notifications for Stuck Detection
 
@@ -191,9 +196,9 @@ Task-notification messages from the harness signal completion (or kill). These a
 
 **Problem**: The main agent raises the cap to 3 or 4 background agents on its own judgment because early agents are completing quickly.
 
-**Why it fails**: Completion speed varies. A batch that starts fast can become rate-limited as all agents hit their tool-intensive middle sections simultaneously. The default cap is set deliberately at 2 background agents (3 total including the main thread) — the optimal balance between parallel throughput and API headroom — to stay safely below the saturation threshold at all batch phases.
+**Why it fails**: Completion speed varies. A batch that starts fast can become rate-limited as all agents hit their tool-intensive middle sections simultaneously. The default N is set deliberately at 3 background agents (N+1 total including the main thread) — balancing parallel throughput against API headroom and token/compute-budget burn — to stay safely below the saturation threshold at all batch phases.
 
-**Fix**: The cap is 2 background agents (3 total including the main thread). Only explicit user instruction raises it, and only for a named session or batch.
+**Fix**: Hold at the declared N background agents (N+1 total including the main thread; N defaults to 3). N is adjusted deliberately — per-plan or along the way — never self-promoted by the main agent mid-batch.
 
 ### Running Background Work Serially
 
