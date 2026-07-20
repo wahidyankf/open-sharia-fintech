@@ -126,16 +126,43 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
 
 > _Executor: repo-setup-manager_
 
-- [ ] [AI] Provision/enter the worktree `worktrees/parallel-orchestration-shared-machine-governance/`
+- [x] [AI] Provision/enter the worktree `worktrees/parallel-orchestration-shared-machine-governance/`
       from latest `origin/main` — acceptance: `git -C worktrees/parallel-orchestration-shared-machine-governance status` shows a clean tree on a fresh branch off `origin/main`
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: none (git-mechanical)
+  - **Notes**: `git fetch origin` then
+    `git worktree add -b parallel-orchestration-shared-machine-governance worktrees/parallel-orchestration-shared-machine-governance origin/main`.
+    Verified: `git status --porcelain` empty; `HEAD` = `origin/main` = `a207b66e7`. Execution root is
+    now the worktree. Git identity verified as the maintainer's (`wahidyankf@gmail.com`), not the
+    stray `test@test.com` from the prior fixture incident.
+- [x] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: none tracked (`node_modules/` is gitignored)
+  - **Notes**: `npm install` exited 0 — "added 1572 packages, and audited 1596 packages". The audit
+    summary (47 vulnerabilities) is preexisting upstream-advisory noise carried by the committed
+    `package-lock.json`; it is not a gate this plan's acceptance criterion asserts on, and remediating
+    it would be a dependency-bump change governed by its own policy — out of this plan's scope.
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift
-- [ ] [AI] Record the pre-change grep baseline of the old cap phrasing:
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: none tracked (cargo target-share symlinks are gitignored)
+  - **Notes**: Exit 0. `Summary: 16/16 tools OK, 0 warning, 0 missing`; `Nothing to fix — all tools
+are installed.` First run performed the cargo target-share fix-up for the four Rust crates
+    (`ayokoding-cli`, `ose-cli`, `rhino-cli`, `rust-commons`) — expected for a fresh worktree, since
+    each crate's `target/` must be redirected to the shared store. A confirming second run reported
+    `4 already correct, 0 created`, proving convergence is stable rather than re-fixing every run.
+- [x] [AI] Record the pre-change grep baseline of the old cap phrasing:
       `grep -rn "cap at 2\|3 total\|Cap at Three\|stricter cap of 2\|2 concurrent background\|capped at \*\*3 concurrent\*\*" AGENTS.md CLAUDE.md repo-governance/`
       — acceptance: hit list captured in `learnings.md` as the "surfaces to update" baseline
-- [ ] [AI] Record the **plan-start baseline SHA** for each of the three repos —
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `plans/in-progress/parallel-orchestration-shared-machine-governance/learnings.md`
+  - **Notes**: 15 hits across 8 files, tabulated in `learnings.md` §"Phase 0 baseline — old cap
+    phrasing". `CLAUDE.md` carries **zero** hits — it inherits the concurrency model through its
+    `@AGENTS.md` import, which is why the §4a `CLAUDE.md` checkbox expects its word-bounded grep to
+    stay at 0. Recorded alongside the baseline: the Phase 4 Gate's superseded-cap proof uses a
+    **wider** pattern than this command, so "15 → 0" is not the right cross-check between them.
+- [x] [AI] Record the **plan-start baseline SHA** for each of the three repos —
       `git -C <repo> rev-parse origin/main` for `ose-public`, `ose-primer`, `ose-infra` — and write the
       three SHAs into `learnings.md` under a `## Plan-start baseline SHAs` heading, one per line, in
       exactly this literal format (plain bullet, no bold, repo name then colon then full SHA):
@@ -146,19 +173,53 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       `grep -Ec '^- \*{0,2}(ose-public|ose-primer|ose-infra)\*{0,2}: [0-9a-f]{7,40}' learnings.md`
       returns 3 (the `\*{0,2}` tolerates a bolded repo name so a correctly-executed step cannot fail
       on formatting alone); returns 0 before this step runs
-- [ ] [AI] Establish the docs quality baseline: `npm run lint:md:fix` then
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `plans/in-progress/parallel-orchestration-shared-machine-governance/learnings.md`
+  - **Notes**: Acceptance grep verified live — returns **3**. Baselines (after `git fetch origin main`
+    in each repo): `ose-public` `a207b66e7e59bc6fafd1f650480718fcae02f7e5`, `ose-primer`
+    `1728a6e751980289753bf93934d446b998161741`, `ose-infra`
+    `edbb604e49a1c84f00bd01ea547bbd126b87b29c`. The primer and infra SHAs match the two commits from
+    the prior `GIT_DIR` fixture-isolation fix, confirming both siblings are at their expected tips and
+    no unexpected work landed between that fix and this plan's start.
+- [x] [AI] Establish the docs quality baseline: `npm run lint:md:fix` then
       `npx nx affected -t lint` — acceptance: baseline pass/fail recorded; preexisting failures documented
-- [ ] [AI] Resolve all preexisting failures before proceeding — acceptance: no preexisting failures remain
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: none (both commands were clean)
+  - **Notes**: `npm run lint:md:fix` exit 0 — `Linting: 2974 file(s)` / `Summary: 0 error(s)`, and
+    `git status --porcelain` afterwards showed only this plan's own two in-flight files, proving
+    `--fix` rewrote nothing repo-wide. `npx nx affected -t lint --base=origin/main` exit 0 with
+    `No tasks were run` — correct, not a miss: only `plans/**` markdown differs from `origin/main` so
+    far, and no Nx project owns those paths. **Baseline: zero preexisting failures**, so the next
+    checkbox has nothing to resolve.
+- [x] [AI] Resolve all preexisting failures before proceeding — acceptance: no preexisting failures remain
+  - **Date**: 2026-07-20 — **Status**: DONE (nothing to resolve)
+  - **Files Changed**: none
+  - **Notes**: The previous checkbox's baseline found **zero** preexisting failures — `lint:md:fix`
+    0 errors across 2974 files, `nx affected -t lint` exit 0, `npm run doctor -- --fix` 16/16 tools
+    OK. Ticked as a genuine no-op with the evidence recorded, per the plan-execution rule that an
+    inapplicable item is ticked with a stated reason rather than skipped silently. The one thing
+    deliberately **not** treated as a preexisting failure is `npm audit`'s 47 upstream advisories:
+    no gate in this repo asserts on it, and acting on it would be an out-of-scope dependency bump
+    governed by its own three-path policy.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] The old-cap grep baseline is recorded in `learnings.md` and markdown lint baseline is clean
-- [ ] [AI] The three plan-start baseline SHAs are recorded in `learnings.md` — acceptance:
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Re-verified at gate time (not merely inherited from the earlier item): `doctor --fix`
+    exit 0, `Nothing to fix — all tools are installed.`
+- [x] [AI] The old-cap grep baseline is recorded in `learnings.md` and markdown lint baseline is clean
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: `learnings.md` carries the `## Phase 0 baseline — old cap phrasing` section with all
+    15 hits tabulated by file and line. Markdown baseline re-run at gate time: `Summary: 0 error(s)`
+    across 2974 files.
+- [x] [AI] The three plan-start baseline SHAs are recorded in `learnings.md` — acceptance:
       `grep -Ec '^- \*{0,2}(ose-public|ose-primer|ose-infra)\*{0,2}: [0-9a-f]{7,40}' learnings.md`
       returns 3
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Acceptance grep re-run at gate time — returns **3**.
 
 > **Pause Safety**: only the local toolchain and the grep baseline were established — no governance
 > edits exist yet. Safe to stop indefinitely. To resume: re-run the grep baseline and confirm it
@@ -170,37 +231,123 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Edit `AGENTS.md` §Agent Workflow Orchestration (lines ~264-266): replace
+- [x] [AI] Edit `AGENTS.md` §Agent Workflow Orchestration (lines ~264-266): replace
       "capped at 3 concurrent … background agents cap at 2 (never more), for 3 total including the
       main thread" with the N+1 model — "1 main thread + N background agents = N+1 total; default
       N=3 (4 total); N adjustable per-plan and along the way; never silently self-promote beyond the
       declared N; keep mtime/staleness relaunch guidance" — acceptance: `grep -n "N+1\|N background\|default N=3" AGENTS.md` returns the new text and the old numbers are gone
-- [ ] [AI] Edit `repo-governance/development/agents/agent-workflow-orchestration.md` §Parallelism
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `AGENTS.md` (§Agent Workflow Orchestration)
+  - **Notes**: Executed directly rather than via `repo-rules-maker`. Rationale: the acceptance
+    criteria here are exact grep literals and Delta 1's wording is normative, so paraphrase risk
+    outweighs delegation benefit; the plan's phase-level executor annotation is a heuristic, and the
+    workflow's Agent Selection rule 5 permits direct execution for bounded, context-complete edits.
+  - **Verified both directions**: `grep -n "N+1\|N background\|default N=3" AGENTS.md` returns 2 hits
+    (lines 266-267); `grep -n "cap at 2\|3 total\|capped at \*\*3 concurrent\*\*" AGENTS.md` returns
+    **0** (exit 1) — every old number is gone from this file.
+  - **Scope note**: this checkbox covers the concurrency model only. The DAG rule, 3-5 min status
+    cadence, PR-as-merge-point, and hardened merge preconditions also land in `AGENTS.md`, but via
+    §4a/§4b in Phase 4 — kept separate so each has its own discriminating acceptance check.
+- [x] [AI] Edit `repo-governance/development/agents/agent-workflow-orchestration.md` §Parallelism
       Budget (lines ~111-117): rewrite to the N+1 model with default N=3, adjustable up/down; add the
       same-machine assumption sentence — acceptance: section states N+1 + default N=3 + adjustable; no
       standing "two (2) concurrent background operations" fixed-cap assertion remains
-- [ ] [AI] Edit `repo-governance/development/agents/subagent-orchestration.md` Standard 1 (lines
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/agents/agent-workflow-orchestration.md` (§Parallelism Budget)
+  - **Notes**: Rewrote the two fixed-cap paragraphs into four: the N+1 accounting (`1 main thread +
+N background = N+1`, default N=3), the why-3 rationale, the adjustable/never-self-promoted rule,
+    and the same-machine assumption. The "requires explicit user permission to exceed two" paragraph
+    was **replaced rather than retained** — under an adjustable N it would have re-imposed the very
+    fixed ceiling this delta removes.
+  - **Verified both directions**: N+1/default-N=3, adjustable, and same-physical-machine clauses each
+    return ≥1; `grep -n "two (2) concurrent background operations"` returns **0** (exit 1). A wider
+    residual sweep of this file for `cap of two|two background|≤2 concurrent|cap at 2|3 total` also
+    returns **0** — the stale `≤2 concurrent background agents` phrasing in
+    `agents/README.md` is a different file and is §4a's checkbox, not this one's.
+- [x] [AI] Edit `repo-governance/development/agents/subagent-orchestration.md` Standard 1 (lines
       ~73-93) and the anti-pattern examples (lines ~170-196): change the background cap from a fixed 2
       to N (default 3); keep Standards 2-4 (polling, stuck detection, chunk sizing, relaunch)
       unchanged — acceptance: `grep -n "default N\|N background" subagent-orchestration.md` present; the
       "cap is 2 background" standing assertions rewritten to N (default 3)
-- [ ] [AI] Edit `repo-governance/development/practice/parallel-by-default.md` Standards 2 & 3 (lines
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/agents/subagent-orchestration.md`
+  - **Notes**: Rewrote Standard 1 (heading, cap paragraph, Applies-to, Rationale, Sequencing,
+    Override→**Adjustment** rule, and all six worked examples) plus **three sites the checkbox's
+    stated line ranges did not name**: the Simplicity-Over-Complexity principle bullet at line 27 and
+    the two anti-pattern blocks' `Why it fails` / `Fix` pairs. Those extra sites were caught by
+    grepping the whole file rather than trusting the cited ranges — leaving them would have left the
+    file self-contradicting.
+  - **Verified both directions**: `grep -cn "default N\|N background"` returns **5**; a wide residual
+    sweep for `cap at 2|3 total|2 background|2 concurrent|cap of 2|more than 2` returns **0**
+    (exit 1). Standards 2-4 confirmed structurally intact — `grep -n "^### Standard"` still lists all
+    four headings, with only Standard 1's title changed.
+  - **Beyond the letter of the checkbox**: the Adjustment rule now also states that N is _lowered_
+    under pressure and that a plan declares its N in `## Parallelization Model`, and Standard 1 gained
+    the background-slot-preference paragraph (Delta 7) — the latter is separately acceptance-checked
+    by the Phase 1 background-slot checkbox against `parallel-by-default.md`.
+- [x] [AI] Edit `repo-governance/development/practice/parallel-by-default.md` Standards 2 & 3 (lines
       ~74-86): unify the "cap at three" tool-batching cap and the "stricter cap of 2" subagent cap
       into a single adjustable N (default 3), with +1 = the main thread — acceptance: single N model
       documented; cross-links to subagent-orchestration + agent-workflow-orchestration updated
-- [ ] [AI] Add the **default-N rationale** to `agent-workflow-orchestration.md` + `parallel-by-default.md`:
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/practice/parallel-by-default.md`
+  - **Notes**: Standard 2 became "The N+1 Model (One Adjustable N)" and Standard 3 was **repurposed**
+    from "Subagent Specialization (Stricter Cap)" to "Background-Slot Preference". That repurposing
+    is the point: with one N there is no longer a stricter second cap for Standard 3 to describe, so
+    leaving it as a cap section would have re-stated the asymmetry this delta removes. Subagent
+    spawns are now framed as a _specialization using the same N_, not an exception to it.
+  - **Two sites outside the cited line range** also had to change, found by grepping the whole file:
+    the Deliberate-Problem-Solving principle bullet ("the cap of three is a deliberate constraint")
+    and the Related-Practices cross-link line, which still advertised "a stricter cap of 2 (3 total
+    including the main thread)". Both cross-links were updated as the acceptance criterion requires.
+  - **Verified both directions**: the Phase 4 Gate's own repo-wide pattern
+    (`cap at 2|cap of 2|cap 3 concurrent|3 total|2 background|stricter cap of 2|never more`) returns
+    **0** against this file (exit 1); `N+1 model|One N, not two|default is 3` returns 2. One
+    deliberate survivor: Standard 2's "One N, not two" paragraph describes the superseded asymmetry
+    in **words** ("a stricter cap of two"), not digits, so it documents the history without
+    re-tripping the numeric sweep.
+- [x] [AI] Add the **default-N rationale** to `agent-workflow-orchestration.md` + `parallel-by-default.md`:
       N=3 defaults specifically to bound token/compute-budget burn; raising N is deliberate + justified
       (independent work + capacity + budget headroom); lower under budget/runner/disk pressure
       — acceptance: `grep -ci "bound token/compute-budget burn" agent-workflow-orchestration.md` returns
       **≥1** (returns **0** today, confirmed live — the pre-existing "## Operating Budgets" section
       elsewhere in the file matches the broader `token\|compute\|budget` pattern, so that broader
       pattern is vacuously true pre-edit and MUST NOT be used as the acceptance signal)
-- [ ] [AI] Add the **DAG-first orchestration** rule to `agent-workflow-orchestration.md` +
+  - **Date**: 2026-07-20 — **Status**: DONE (satisfied by the Phase 1 items 2 and 4 edits)
+  - **Files Changed**: none additionally — the rationale landed with the section rewrites in
+    `agent-workflow-orchestration.md` (§Parallelism Budget, "Why the default is 3") and
+    `parallel-by-default.md` (Standard 2, "Why the default is 3").
+  - **Notes**: Ticked as already-satisfied rather than re-edited. Writing the rationale as a separate
+    later pass would have meant either duplicating the paragraph or splitting the "what N is" and
+    "why N is 3" halves across the file — both worse than stating them together. Recording the
+    overlap here so the tick is auditable rather than looking like a skipped step.
+  - **Verified**: the discriminating literal `grep -ci "bound token/compute-budget burn"` returns
+    **1** in each of the two files (it returned **0** in both pre-plan). Raising-is-deliberate and
+    lowering-is-required clauses each confirmed present in both files.
+  - **Grep-pattern correction**: my first verification of the "lowering" clause used
+    `lowering it is \*\*required\*\*` and returned 0 for `parallel-by-default.md` — a **false
+    negative**. The file bolds the whole phrase (`**lowering it is required**`), so the asterisks sit
+    outside, not inside. Confirmed present by re-grepping the plain substring. Recorded because the
+    same mis-anchored-emphasis mistake would silently fail any acceptance clause written this way.
+- [x] [AI] Add the **DAG-first orchestration** rule to `agent-workflow-orchestration.md` +
       `parallel-by-default.md`: every non-trivial task list AND delivery checklist declares a dependency
       DAG (nodes=tasks/items, edges=blocks/blockedBy); independent nodes parallelize up to N, dependent
       nodes serialize; the DAG's independent-node width is the fan-out (capped at N); cleanup is the
       terminal node — acceptance: `grep -ni "DAG\|blockedBy\|dependency graph" agent-workflow-orchestration.md` present
-- [ ] [AI] Add the **background-slot preference** to `parallel-by-default.md` +
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/agents/agent-workflow-orchestration.md` (new
+    `### DAG-First Orchestration`), `repo-governance/development/practice/parallel-by-default.md`
+    (new `### Standard 4 — DAG-First Ordering`)
+  - **Notes**: Both homes state the same four elements — nodes/edges, independent-width-is-the-fan-out
+    (N caps it, never creates it), the `blocks`/`blockedBy` vs `## Parallelization Model` split
+    between task lists and `delivery.md`, and cleanup as the terminal node. Added beyond the
+    checkbox's letter: an operational test for independence — two nodes are independent only when
+    neither reads what the other writes, so a shared output file, shared branch, or ordering
+    constraint makes them dependent however separable they look. Without that, "independent" is
+    self-assessed and the rule is unfalsifiable in practice.
+  - **Verified**: acceptance grep returns **5** in `agent-workflow-orchestration.md` (and 5 in
+    `parallel-by-default.md`); `terminal node` present in both.
+- [x] [AI] Add the **background-slot preference** to `parallel-by-default.md` +
       `subagent-orchestration.md` + `agent-workflow-orchestration.md`: fill background slots up to N,
       keep the main thread vacant/responsive (orchestrator not worker), bounded by the DAG — never force
       parallelism onto dependent nodes — acceptance:
@@ -208,29 +355,110 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       (returns **0** today, confirmed live — the bare word "responsive" alone (an existing, unrelated
       anti-pattern example about API latency) MUST NOT be used as the acceptance signal; it is already
       present pre-edit)
-- [ ] [AI] Add the **vendor-neutral, capability-gated** paragraph to `agent-workflow-orchestration.md`
+  - **Date**: 2026-07-20 — **Status**: DONE (landed with the Phase 1 items 3, 4 and 6 section rewrites)
+  - **Files Changed**: none additionally — the rule sits in `parallel-by-default.md` (Standard 3, its
+    own heading), `subagent-orchestration.md` (Standard 1, **Background-slot preference** paragraph),
+    and `agent-workflow-orchestration.md` (`### Background-Slot Preference`).
+  - **Notes**: Ticked as already-satisfied. In each file the rule had to be written where the
+    concurrency model itself is stated — appending it later as a detached paragraph would have
+    separated "keep the main thread vacant" from the N it is bounded by. Recording the overlap so
+    the tick is auditable rather than looking skipped.
+  - **Verified**: the discriminating pattern `main thread.*vacant|background.slot.preference` returns
+    **2 / 1 / 2** across the three files respectively (it returned **0** in all three pre-plan).
+    Every occurrence is paired with the DAG bound — fan out independent nodes only, never split
+    dependent work to fill idle slots — so the preference cannot be read as licence to over-parallelize.
+- [x] [AI] Add the **vendor-neutral, capability-gated** paragraph to `agent-workflow-orchestration.md`
       verbatim from `tech-docs.md §Cross-harness compatibility` (no vendor names, no numeric caps in the
       prose — per the Governance Vendor-Independence Convention): background-capable harnesses fan out to
       N per-worktree; non-capable harnesses walk the same DAG serially; delivery-safety rules apply
       identically in both modes — acceptance: paragraph present; `npx nx run rhino-cli:governance:vendor-audit-validation`
       (real Nx target, wraps `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/`, per `.github/workflows/main-ci.yml`'s `governance` job) reports no vendor leakage
-- [ ] [AI] Update the **worktree-to-pr as parallelism mechanism** rationale in
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/agents/agent-workflow-orchestration.md`
+    (new `### Harness Capability Gating`)
+  - **Notes**: The tech-docs paragraph landed **verbatim** as a blockquote — copied, not paraphrased,
+    since it was authored specifically to survive the vendor-audit scanner. It carries no vendor name
+    and no numeric ceiling: the harness's own limit is deferred to ("respecting the harness's own
+    documented concurrency ceiling if one exists") rather than restated. The three capability tiers
+    and their vendor names stay in `tech-docs.md`, which is a plan document, not governance prose.
+  - **Added around it**: one closing sentence making the portability claim explicit — the DAG is the
+    portable artifact; concurrency changes the schedule, never the ordering or the safety rules. It
+    names no vendor and no number, so it does not weaken the audit position.
+  - **Verified**: `npx nx run rhino-cli:governance:vendor-audit-validation` exit **0** —
+    `GOVERNANCE VENDOR AUDIT PASSED: no violations found`.
+- [x] [AI] Update the **worktree-to-pr as parallelism mechanism** rationale in
       `agent-workflow-orchestration.md`: sharpen that the **PR** (not just the worktree) is the
       independent merge point — N parallel units → N PRs that review/gate/merge independently without
       blocking each other; each DAG leaf producing changes gets its own worktree + PR — cross-link
       [Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
       — acceptance: rationale names the PR as the enabler; link resolves
-- [ ] [AI] Grep-sweep for any remaining stale numbers using the Phase 0 baseline command
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/agents/agent-workflow-orchestration.md`
+    (new `### The PR Is the Independent Merge Point`)
+  - **Notes**: States the sharpened claim the checkbox asks for — a worktree isolates _edits_, but if
+    N parallel units funnel into one branch or one PR they re-serialize at the moment that matters;
+    the PR is what makes them independently reviewable, gateable, and mergeable. Records the strict
+    one-node ↔ one-worktree ↔ one-PR mapping **with its corollary**: dependent nodes stay in one PR,
+    never force-split to manufacture PRs, and independent nodes are never batched to manufacture
+    fewer. The DAG governs in both directions.
+  - **Defect caught and fixed mid-item**: the first draft closed with a cross-link to
+    `../workflow/worktree-and-artifact-cleanup.md` — a file **Phase 3 has not created yet**. That
+    forward reference would have failed this phase's own gate (`md links validate`). Removed the link
+    and kept the sentence; wiring the cleanup convention is Phase 3's cross-link checkbox, which owns
+    it and runs after the file exists.
+  - **Verified**: `md links validate` exit **0** — `All links valid! No broken links found.`, which
+    covers the new `#delivery-mode` anchor into `conventions/structure/plans.md` (a `###` heading, so
+    the anchor is `#delivery-mode`).
+- [x] [AI] Grep-sweep for any remaining stale numbers using the Phase 0 baseline command
       — acceptance: no unintended "cap at 2"/"3 total"/"stricter cap of 2" hits remain in ose-public
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/README.md` (line 154),
+    `repo-governance/development/agents/README.md` (line 38)
+  - **Notes**: Sweep after the four Phase 1 surface edits left **3** hits. Two were index entries that
+    had become **factually wrong the moment I edited the conventions they describe** —
+    `development/README.md` still advertised "default 2 simultaneous background spawns … 3 total" and
+    `agents/README.md` still advertised "≤2 concurrent background agents". Fixed here rather than
+    deferred: they are fallout from this phase's own edits, and Root Cause Orientation forbids leaving
+    a surface I just broke for a later phase to find.
+  - **Plan gap found**: `repo-governance/development/README.md` is **not named** in the Phase 4 §4a
+    checkbox, which lists only `development/agents/README.md` and `development/practice/README.md`.
+    Had I deferred instead of fixing, that stale line would have survived the entire plan and only
+    surfaced at the Phase 4 Gate's repo-wide superseded-cap proof. Logged to `learnings.md`.
+  - **One hit deliberately left**: `repo-governance/workflows/plan/multi-plans-execution.md:118`
+    ("background subagents cap at 2 (3 total…)"). It is **not** unintended — §4c-i carries a dedicated
+    checkbox for this file requiring a full adoption of N+1 / background-slot-preference / DAG-first /
+    3-5 min cadence / 1-PR↔1-worktree, with its own acceptance grep. A one-line patch here would have
+    made that checkbox's pre-edit baseline vacuous. Phase 4's Gate re-proves the sweep reaches zero.
+  - **Verified**: post-fix sweep returns exactly that one known, checkbox-owned hit.
 
 ### Phase 1 Gate
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `npx nx affected -t lint` and `npm run lint:md:fix` — exit 0, no markdown violations
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
+- [x] [AI] `npx nx affected -t lint` and `npm run lint:md:fix` — exit 0, no markdown violations
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: `npx nx affected -t lint --base=origin/main` exit 0 (`No tasks were run` — Phase 1
+    touched only `repo-governance/**` and `AGENTS.md`, which no Nx project owns; this is a correct
+    result, not a silently-skipped gate). `npm run lint:md:fix` exit 0, `Summary: 0 error(s)` across
+    2974 files.
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       (real invocation — mirrors `.husky/pre-push` and `.github/workflows/main-ci.yml`'s `md-links` job; there is no `rhino-cli:links:validation` Nx target) — exit 0 (no broken links from edited files)
-- [ ] [AI] Grep sweep confirms the N+1 model replaced the old numbers across the four surfaces
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Exit 0 — `All links valid! No broken links found.` This gate is what caught the one
+    real link defect in Phase 1 (a forward reference to the not-yet-created
+    `worktree-and-artifact-cleanup.md`), which was removed at its source rather than excluded here.
+- [x] [AI] Grep sweep confirms the N+1 model replaced the old numbers across the four surfaces
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Checked **both** halves per surface, since "N+1 present" and "old numbers gone" can
+    each pass while the other fails.
+    - N+1 occurrences / stated-default occurrences: `AGENTS.md` 2/1,
+      `agent-workflow-orchestration.md` 1/2, `subagent-orchestration.md` 7/3,
+      `parallel-by-default.md` 4/2 — every surface carries both the model and its default.
+    - `cap at 2|3 total|Cap at Three|stricter cap of 2` returns **0** in all four files.
+  - **Repo-wide**: the only surviving hit anywhere under `AGENTS.md` / `CLAUDE.md` /
+    `repo-governance/` is `workflows/plan/multi-plans-execution.md:118`, owned by its own §4c-i
+    checkbox and re-proved by the Phase 4 Gate. Two index READMEs that this sweep exposed as stale
+    were fixed within Phase 1 rather than deferred.
 
 > **Pause Safety**: the concurrency model is internally consistent across the four ose-public
 > surfaces; conventions build and lint clean. Safe to stop. To resume: re-run the grep sweep + lint.
@@ -241,7 +469,7 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Create `repo-governance/development/workflow/no-destructive-git-operations.md` (sibling of
+- [x] [AI] Create `repo-governance/development/workflow/no-destructive-git-operations.md` (sibling of
       `git-push-safety.md`) with: frontmatter, purpose, the same-machine assumption, the forbidden-op
       table (reset --hard, checkout -f/--force, clean -fd, branch -D on shared branches, force-push to
       shared branches, history rewrite on shared branches, worktree remove --force on others'
@@ -252,7 +480,26 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       would undercount):
       `grep -oE 'reset --hard|clean -fd|git add -A' no-destructive-git-operations.md | sort -u | wc -l`
       returns ≥ 3, regardless of how the prose is line-wrapped
-- [ ] [AI] Add the **whole-tree-staging prohibition** to `no-destructive-git-operations.md` as a shape
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/no-destructive-git-operations.md` _(new)_
+  - **Notes**: Created with frontmatter, the same-machine assumption, Principles/Conventions sections
+    (matching the sibling `git-push-safety.md` shape), a 12-row forbidden-op table pairing each
+    operation with what it destroys **and** its non-destructive equivalent, a Cross-Worktree Facts
+    section, the additive/own-worktree preference, and the reciprocal companion link.
+  - **Two facts called out separately** because they read as safe and are not: bare
+    `--force-with-lease` (a stale fetch satisfies the lease) and `--prune=now` (documented as
+    corruption-risking under concurrency). Both quote `git-scm.com` rather than paraphrasing. The
+    `--ignore-other-worktrees` bypass flag is named explicitly so agents know the guard exists _and_
+    that deliberately defeating it is out of bounds.
+  - **Verified**: acceptance grep returns exactly **3** distinct terms.
+  - **Baseline defect caught and fixed within this item**: the first draft used the literal
+    `--no-verify` twice — in the Conventions section and in Related Documentation — while merely
+    _describing_ the companion convention. That silently broke the **next-but-one** checkbox's
+    "returns 0 immediately before this edit" precondition, which would have made the no-corner-cutting
+    rule's acceptance non-discriminating. Reworded both to "hook-bypass" / "hook bypass". Re-verified:
+    item 2's baseline is **0**, item 3's baseline is now **0**. The literal `--no-verify` is reserved
+    for the rule that actually forbids it.
+- [x] [AI] Add the **whole-tree-staging prohibition** to `no-destructive-git-operations.md` as a shape
       rather than one flag spelling (per tech-docs §Delta 4): forbid `git add -A`, `git add --all`,
       `git add .`, whole-tree `git add -u`/`--update`, `git commit -a`/`--all`, and any wrapper whose
       net effect is "stage everything"; require naming every path explicitly, using `git -C <worktree>`
@@ -263,7 +510,23 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       `grep -oEi 'add --all|add \.|commit -a|status --porcelain' repo-governance/development/workflow/no-destructive-git-operations.md | sort -u | wc -l`
       returns 0 immediately before this edit (the file exists from the previous checkbox but carries
       only the `-A` spelling) and ≥ 4 after it, regardless of how the prose is line-wrapped
-- [ ] [AI] Add the **no-corner-cutting / root-cause** rule to `no-destructive-git-operations.md` (per
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/no-destructive-git-operations.md`
+    (§Whole-Tree Staging Is Forbidden)
+  - **Notes**: Written as a **shape**, with the reason the shape framing matters stated inline —
+    blocking `-A` alone would just redirect the habit to the next spelling, so all five forms are
+    named including the catch-all "any wrapper, alias, or agent shortcut whose net effect is stage
+    everything". The required alternative is a numbered three-step procedure
+    (`status --porcelain` first → stage only accountable paths → `-C <worktree>` when acting on
+    another tree) rather than a bare prohibition, so there is a defined thing to do instead.
+  - **Rationale recorded**: both failure modes, not just one — the correctness bug (committing changes
+    you did not author) _and_ the disclosure risk (a credential-adjacent or scratch file entering a
+    permanent history).
+  - **Verified both directions**: the acceptance grep returned **0** immediately before this edit and
+    returns **4** after — all four distinct terms confirmed present by listing them
+    (`add --all`, `add .`, `commit -a`, `status --porcelain`), not just counting. The next checkbox's
+    own pre-edit baseline was re-checked here and is still **0**, so this edit did not contaminate it.
+- [x] [AI] Add the **no-corner-cutting / root-cause** rule to `no-destructive-git-operations.md` (per
       tech-docs §Delta 4): when a gate, test, lint, type-check, or CI job fails, fix the cause not the
       signal; forbid `--no-verify`, skipping a declared gate, deleting/skipping/`.only`-narrowing a
       failing test, weakening an acceptance criterion or threshold, ticking a checkbox without its
@@ -276,7 +539,21 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       `grep -oEi 'no-verify|weakening an acceptance criterion|escalated and recorded' repo-governance/development/workflow/no-destructive-git-operations.md | sort -u | wc -l`
       (distinct matched terms, not matching lines) returns 0 immediately before this edit and ≥ 3
       after it, regardless of how the prose is line-wrapped
-- [ ] [AI] Cross-link the new convention from the stage-explicit-paths guidance, and edit
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/no-destructive-git-operations.md`
+    (§No Corner-Cutting — Root-Cause Orientation Is Binding)
+  - **Notes**: All six forbidden items landed verbatim from Delta 4, gated on **both** explicit
+    per-instance approval **and** a written reason recorded in the plan — the second condition is
+    what stops "approved" from becoming an unlogged verbal waiver. The escalation path is stated as a
+    legitimate outcome ("escalating is a legitimate outcome; quietly routing around is not"), since a
+    rule that only forbids leaves an agent with no sanctioned move when genuinely blocked.
+  - **Added beyond the letter**: a closing paragraph naming the shared property of all six items —
+    each makes the _report_ green without making the _system_ correct — and why that matters
+    specifically here: on a shared machine, a false completion signal is what another actor builds on.
+  - **Verified both directions**: **0** immediately before this edit, **3** after, with the distinct
+    terms listed rather than merely counted (`escalated and recorded`, `no-verify`, `weakening an
+acceptance criterion`). The Phase 2 Gate's own four-term check already returns **4**.
+- [x] [AI] Cross-link the new convention from the stage-explicit-paths guidance, and edit
       `git-push-safety.md`'s `## Related Documentation` section (lines 188-194) to add the reciprocal
       "see also" link to `no-destructive-git-operations.md` (the new convention already links to
       `git-push-safety.md` per the previous checkbox's companion link) — acceptance:
@@ -284,17 +561,39 @@ until this plan's PR merges. See DD-10's bootstrap-timing paragraph for the full
       returns ≥1 (returns **0** today, confirmed live) and
       `grep -c "git-push-safety" repo-governance/development/workflow/no-destructive-git-operations.md`
       returns ≥1; both links resolve
+  - **Date**: 2026-07-20 — **Status**: DONE
+  - **Files Changed**: `repo-governance/development/workflow/git-push-safety.md`
+    (§Related Documentation)
+  - **Notes**: The reciprocal entry does not just link — it states the **division of labour**, so a
+    reader landing on either file learns which one owns their situation: `git-push-safety.md` governs
+    destruction aimed at the **remote** (force-push, hook bypass), `no-destructive-git-operations.md`
+    governs destruction aimed at the **local shared machine** (hard reset, recursive clean, force
+    branch deletion, object-store pruning, forced worktree removal) plus the staging and
+    no-corner-cutting rules. Without that, two adjacent safety conventions invite the reader to guess.
+  - **Verified**: `no-destructive-git-operations` appears in `git-push-safety.md` **1×** (was **0**);
+    `git-push-safety` appears in the new convention **3×**. `md links validate` exit **0** —
+    `All links valid! No broken links found.` — so both directions resolve, not merely match a grep.
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `npm run lint:md:fix` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
+- [x] [AI] `npm run lint:md:fix` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       (real invocation — mirrors `.husky/pre-push`; no `rhino-cli:links:validation` Nx target exists) — exit 0
-- [ ] [AI] New convention exists and lists the full forbidden-op set, the whole-tree-staging shape
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: `npm run lint:md:fix` exit 0, `Summary: 0 error(s)`. `md links validate` exit 0,
+    `All links valid! No broken links found.` Also ran `md heading-hierarchy validate` (not required
+    by this gate) — exit 0, `DOCS HEADING HIERARCHY VALIDATION PASSED` — because a brand-new file is
+    exactly where a skipped heading level would slip through unnoticed.
+- [x] [AI] New convention exists and lists the full forbidden-op set, the whole-tree-staging shape
       prohibition, and the no-corner-cutting / root-cause rule — acceptance:
       `grep -oEi 'add --all|commit -a|no-verify|weakening an acceptance criterion' repo-governance/development/workflow/no-destructive-git-operations.md | sort -u | wc -l`
       returns ≥ 4 (distinct matched terms, not matching lines)
+  - **Date**: 2026-07-20 — **Status**: GREEN
+  - **Notes**: Returns **4**, with the distinct terms listed rather than merely counted —
+    `add --all`, `commit -a`, `no-verify`, `weakening an acceptance criterion` — one drawn from each
+    of the three rule sets this gate is asserting on, so a single missing rule set could not have
+    reached 4.
 
 > **Pause Safety**: the new convention is a standalone, lint-clean file with resolving links; no index
 > depends on it yet (wired in Phase 4). Safe to stop. To resume: re-run link validation.

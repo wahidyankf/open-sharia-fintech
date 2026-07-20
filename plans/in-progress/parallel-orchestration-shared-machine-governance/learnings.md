@@ -12,3 +12,80 @@ Entry shape:
 - **Observation**: what was noticed (sanitized — see the secret/sensitivity gate)
 - **Why it might generalize**: the litmus reasoning
 -->
+
+## Phase 0 baseline — old cap phrasing ("surfaces to update")
+
+Captured 2026-07-20 in the plan worktree at `a207b66e7`, via the Phase 0 baseline command:
+
+```bash
+grep -rn "cap at 2\|3 total\|Cap at Three\|stricter cap of 2\|2 concurrent background\|capped at \*\*3 concurrent\*\*" \
+  AGENTS.md CLAUDE.md repo-governance/
+```
+
+**15 hits across 8 files** (`CLAUDE.md` carries none — it inherits the model via `@AGENTS.md`):
+
+| File                                                           | Lines                          | Hits |
+| -------------------------------------------------------------- | ------------------------------ | ---: |
+| `AGENTS.md`                                                    | 266, 267                       |    2 |
+| `repo-governance/development/agents/subagent-orchestration.md` | 27, 79, 83, 170, 172, 194, 196 |    7 |
+| `repo-governance/development/agents/README.md`                 | 38                             |    1 |
+| `repo-governance/development/README.md`                        | 154                            |    1 |
+| `repo-governance/development/practice/parallel-by-default.md`  | 74, 82, 86, 139                |    4 |
+| `repo-governance/workflows/plan/multi-plans-execution.md`      | 118                            |    1 |
+
+This is the "surfaces to update" set for Phase 1 and the Phase 4 Gate's repo-wide superseded-cap
+proof. Note the Phase 4 Gate uses a **wider** pattern than this baseline (it adds `cap of 2`,
+`cap 3 concurrent`, `2 background`, `never more`), so its expected post-change hit count is not
+simply "15 → 0" against this same command — the two greps are deliberately different instruments.
+
+## Learning: a plan's surface inventory can miss an index that describes the file being changed
+
+- **Context**: Phase 1's closing grep sweep, after rewriting the four concurrency surfaces.
+- **Observation**: Two index READMEs carried one-line descriptions of the conventions I had just
+  rewritten, and both became factually wrong the instant those rewrites landed —
+  `development/agents/README.md` ("≤2 concurrent background agents") and `development/README.md`
+  ("default 2 simultaneous background Agent-tool spawns; … 3 total"). The plan's Phase 4 §4a checkbox
+  names `development/agents/README.md` and `development/practice/README.md`, but **not**
+  `development/README.md`. That third file was in no checkbox's stated scope; without an unscoped
+  sweep it would have survived to the Phase 4 Gate's repo-wide proof, or past it.
+- **Why it might generalize**: when a plan enumerates "surfaces to change", the enumeration is
+  naturally built from files that _state_ the rule. Files that merely _summarize_ the rule — parent
+  index READMEs, catalog tables, "Related Documentation" blurbs — describe it too, and go stale in
+  exactly the same way. Candidate durable fix: have `plan-maker`/`plan-checker` expand any surface
+  inventory entry `X` with "every index or README that links to and characterizes `X`", derived
+  mechanically by grepping for inbound links, rather than relying on the author to recall them.
+- **Related**: this is the same class as the existing memory note that bulk version-string replaces
+  must be followed by a grep of **all** doc files, not just the ones edited.
+
+## Learning: appending implementation notes is not the same edit as ticking the checkbox
+
+- **Context**: Discovered at the Phase 2 Gate, 18 items into execution.
+- **Observation**: The Atomic Sync Ritual has three steps — tick the checkbox, persist the notes,
+  close the task. When the tick and the notes are written as **one** `Edit` whose `old_string` is the
+  tail of a multi-line checkbox (the acceptance clause), it is easy to land only the notes: the
+  `old_string` anchors on text _below_ the `- [ ]` marker, so the marker is never in the replaced
+  span. The edit succeeds, the notes appear, the task gets closed — and disk still says `- [ ]`.
+  Nothing errors. It accumulated silently across 18 items in Phases 0-2 before a gate check happened
+  to `grep -n "^- \[ \]"` and exposed it.
+- **Why it might generalize**: this failure is **invisible to every signal the executor watches**.
+  The Edit tool reports success, the task list looks correct, and the notes are genuinely on disk. It
+  is caught only by an independent count of `- [x]` versus closed tasks. Candidate durable fixes:
+  (a) make the tick its own `Edit` whose `old_string` includes the literal `- [ ]` marker, so a
+  mis-anchored edit _fails loudly_ instead of silently no-op'ing; (b) have the executor assert
+  `count('- [x]') == count(completed tasks)` at every phase gate rather than only at plan end.
+- **Repair applied**: verified all 18 carried a `**Date**` evidence block bounded by the next
+  checkbox, then flipped exactly those 18 lines and diffed to confirm the change was purely
+  `[ ]` → `[x]` (18 `<` / 18 `>`, no prose touched). Ticking without that evidence check would itself
+  have been a corner-cut — asserting completion from memory rather than from the record.
+- **Related**: the existing memory note that the PostToolUse markdown formatter rewrites files after
+  every Edit is the reason `old_string` anchors drift in this repo in the first place.
+
+## Plan-start baseline SHAs
+
+Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each
+repo. Every later "commits this plan authored" check anchors to these (`<baseline-sha>..origin/main`),
+never to reflog-relative syntax such as `origin/main@{1}`.
+
+- ose-public: a207b66e7e59bc6fafd1f650480718fcae02f7e5
+- ose-primer: 1728a6e751980289753bf93934d446b998161741
+- ose-infra: edbb604e49a1c84f00bd01ea547bbd126b87b29c
