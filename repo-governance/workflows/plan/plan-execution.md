@@ -816,8 +816,8 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
      4. **On decline**: keep the worktree and emit one line: `Worktree retained at worktrees/<plan-identifier>/ per user choice.`
 
   **`worktree-to-pr` / `main-to-pr` (`*-to-pr` modes)** — archival-in-PR: the plan-folder move lands
-  inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, before the `[HUMAN]`
-  merge:
+  inside the delivering PR itself, gated by the PR-Review Maker→Fixer Cycle, before the merge
+  (`[AI]` by default; `[HUMAN]` only where the plan's own step says so):
   1. Move entire plan folder from current location to `plans/done/` (same command as the direct-push
      path):
 

@@ -55,12 +55,12 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 
 **Work happens on short-lived branches that integrate into `main` continuously.** TBD's defining tenet is avoiding _long-lived_ branches, not avoiding branches: a short-lived branch reviewed via PR is a recognized TBD flavor, and it is this repo's default (`worktree-to-pr`). Direct commit to `main` remains fully supported for small, well-understood changes via the `worktree-to-origin-main` and `main-to-origin-main` modes.
 
-**Standard workflow**:
+**Standard workflow** (the default `worktree-to-pr` mode):
 
 ```bash
-# 1. Ensure you're on main
-git checkout main
-git pull origin main
+# 1. Provision a disposable worktree on a plan-scoped branch
+git worktree add worktrees/<plan-identifier> -b <plan-identifier>
+cd worktrees/<plan-identifier>
 
 # 2. Make changes
 # (edit files)
@@ -69,11 +69,21 @@ git pull origin main
 git add [files]
 git commit -m "feat(component): add feature X"
 
-# 4. Push to main
-git push origin main
+# 4. Push to the plan branch and open a draft PR
+git push origin <plan-identifier>
+gh pr create --draft --base main
 
-# 5. Repeat steps 2-4 for each small change
+# 5. Repeat steps 2-4; drive the PR green through the review cycle and CI,
+#    then merge once the hardened preconditions hold ([AI] by default)
 ```
+
+Under a declared direct-push mode the same loop applies without steps 1 and 4 — commit on `main` and
+`git push origin main`.
+
+> **Reading the examples below**: later examples in this document focus on their own topic (commit
+> granularity, feature flags, branch lifespan) and write the push as `git push origin <plan-branch>`.
+> Substitute `git push origin main` when a direct-push mode is the declared Delivery Mode. The push
+> target follows the mode; it is never the point the example is making.
 
 **AI agents assume `worktree-to-pr` by default** unless a plan or invocation explicitly selects another delivery mode. Resolve the mode by three-tier precedence: invocation argument > plan `## Delivery Mode` field > repo default.
 
@@ -371,10 +381,11 @@ git checkout -b experimental-graphql
 # (exploration work)
 
 # Day 7: Decision made
-# If adopting: Merge to main
-git checkout main
-git merge experimental-graphql
-git push origin main
+# If adopting: push the branch and land it through a PR
+git push origin experimental-graphql
+gh pr create --draft --base main
+# ... review cycle + CI, then squash/rebase merge (never a local `git merge`,
+# which would break linear history)
 git branch -d experimental-graphql
 
 # If rejecting: Delete branch
@@ -417,17 +428,17 @@ git branch -D experimental-graphql
 # Commit 1: Add data model
 git add src/models/user.ts
 git commit -m "feat(models): add User data model"
-git push origin main
+git push origin <plan-branch>
 
 # Commit 2: Add repository interface
 git add src/repositories/user-repository.ts
 git commit -m "feat(repositories): add UserRepository interface"
-git push origin main
+git push origin <plan-branch>
 
 # Commit 3: Add service layer
 git add src/services/user-service.ts
 git commit -m "feat(services): add UserService with CRUD operations"
-git push origin main
+git push origin <plan-branch>
 ```
 
 **NOT**:
@@ -436,7 +447,7 @@ git push origin main
 # Bad: One massive commit after 3 days
 git add src/*
 git commit -m "feat(user): add complete user management system"
-git push origin main
+git push origin <plan-branch>
 ```
 
 ### Atomic Commits

@@ -532,7 +532,7 @@ And their session is created with correct permissions
 
 - For small, obviously-safe changes where a PR adds no review value
 - Declare the mode explicitly in `## Delivery Mode` — never assume it
-- Requires explicit user approval
+- No separate approval gate: declaring the mode IS the decision
 
 ## Plan Lifecycle
 
