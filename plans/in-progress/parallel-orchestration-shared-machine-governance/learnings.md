@@ -156,6 +156,40 @@ grep -rln "cap at 2\|3 total\|2 background\|stricter cap of 2\|max-concurrency\|
 Note that the sweep pattern is deliberately broad (it matches any mention of `worktree` or
 `cleanup`), so a listed file is a **candidate** requiring a read, not a confirmed stale surface.
 
+## Phase 4c-ii — the 20 `max-concurrency` files
+
+`grep -rl "max-concurrency" repo-governance/workflows/ | sort` returns exactly **20** files, as the
+plan predicted. Final state after the sweep (2026-07-20):
+
+**Aligned to `default: 3` with N+1 wording (18)** — 5 × `ayokoding-web/*-quality-gate`,
+`content/pdf-to-md-quality-gate`, `docs/docs-quality-gate`,
+`docs/docs-software-engineering-separation-quality-gate`, `meta/workflow-identifier`,
+`plan/multi-plans-execution`, `plan/plan-execution`, `plan/plan-quality-gate`,
+`plan/plan-multi-repo-parity-planning`, `plan/plan-multi-repo-parity-planning-and-execution`,
+`repo/repo-harness-compatibility-quality-gate`, `repo/repo-rules-quality-gate`,
+`specs/specs-quality-gate`, `ui/ui-quality-gate`.
+
+**Prose-only, no YAML block (1)** — `workflows/README.md` documents the parameter in a bullet list
+rather than frontmatter; its `default: 2` text was updated in place.
+
+**Deliberately preserved at `Default 1` (1)** — `web/web-ux-test-fixing-planning.md`. Left alone
+**and** given an explicit justification, because its 1 is a real DAG serialization point, not a
+stale cap: the three testers run exploratory → integrate → usability → integrate → design →
+integrate, so each reads the plan the previous one wrote. They fail the standard independence test
+(two nodes are independent only when neither reads what the other writes). Raising it to N=3 would
+put three testers on one plan file concurrently.
+
+**Deliberately excluded from the sweep (not an oversight)** — `pr/pr-review-quality-gate.md` carries
+zero `max-concurrency` frontmatter and declares its cycle "strictly sequential, never parallel", so
+it is out of scope by construction; verified still 0 post-sweep.
+
+**Method note**: the sweep used a `perl -i -pe` state machine keyed on `- name: max-concurrency`
+rather than a blanket `s/default: 2/default: 3/`, because several of these files use `default: 2`
+for unrelated parameters. A first attempt with `for f in $FILES` silently passed the entire
+newline-joined list as one argument ("File name too long") and changed nothing — caught only
+because the post-sweep verification still showed `default: 2` everywhere. Verify after a bulk edit;
+a loop that fails to iterate looks identical to a loop with nothing to do.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

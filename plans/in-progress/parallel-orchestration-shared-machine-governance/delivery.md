@@ -1298,17 +1298,17 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
 
 #### 4c-ii. Repo-wide `max-concurrency` frontmatter (20 files)
 
-- [ ] [AI] Enumerate: `grep -rl "max-concurrency" repo-governance/workflows/ | sort`
+- [x] [AI] Enumerate: `grep -rl "max-concurrency" repo-governance/workflows/ | sort`
       — acceptance: 20 files listed and recorded in `learnings.md`
-- [ ] [AI] Align the `max-concurrency` default/wording with the N+1 model across the 19 files carrying
+- [x] [AI] Align the `max-concurrency` default/wording with the N+1 model across the 19 files carrying
       `default: 2` — including `workflows/README.md` (which documents "Parallel execution limit -
       default: 2") and `meta/workflow-identifier.md` (which defines the input schema) — acceptance:
       each updated file's `max-concurrency` description references the N+1 model, not a bare fixed 2
-- [ ] [AI] **PRESERVE** `web/web-ux-test-fixing-planning.md` at `Default 1` — the three testers run
+- [x] [AI] **PRESERVE** `web/web-ux-test-fixing-planning.md` at `Default 1` — the three testers run
       SEQUENTIALLY by design (a genuine DAG serialization point, NOT a stale cap); document _why_ it
       stays 1, citing "DAG governs — never force parallelism onto dependent nodes" — acceptance:
       file still reads `Default 1` **and** carries the new justification sentence
-- [ ] [AI] `repo-governance/workflows/repo/repo-dependency-bump-planning.md` — align its prose-level
+- [x] [AI] `repo-governance/workflows/repo/repo-dependency-bump-planning.md` — align its prose-level
       concurrency cap ("one agent per ecosystem batch") + Subagent-Orchestration cross-link with N+1
       — acceptance (compound, BOTH required):
       `grep -ci "N+1\|1 main thread" repo-dependency-bump-planning.md` returns **≥1** (returns **0**
@@ -1318,16 +1318,56 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       today (non-zero pre-edit) and would ALSO still match post-edit (the word "cap" survives in
       plausible fixed phrasing too, e.g. "cap concurrent agents at N"), so it can never discriminate a
       completed edit from an incomplete one in either direction.
-- [ ] [AI] `repo-governance/workflows/pr/pr-review-quality-gate.md` — **NO `max-concurrency` edit**.
+- [x] [AI] `repo-governance/workflows/pr/pr-review-quality-gate.md` — **NO `max-concurrency` edit**.
       This file carries zero `max-concurrency` frontmatter and declares its cycle "Strictly sequential,
       never parallel"; its only edits in this plan are Delta 8 (§4b) and Delta 11 (§4c-ii) — acceptance:
       `grep -c "max-concurrency" repo-governance/workflows/pr/pr-review-quality-gate.md` returns **0**
       (returns **0** today, confirmed live, and must **stay** 0 — this checkbox exists to record that
       the file was deliberately excluded from the 4c-ii sweep, not skipped by oversight)
+  - **Date**: 2026-07-20. Full §4c-ii sweep delivered; the 20-file enumeration and final per-file
+    disposition are recorded in `learnings.md` under `## Phase 4c-ii — the 20 max-concurrency files`.
+  - **Enumeration**: exactly **20** files, matching the plan. 18 now carry `default: 3` with an
+    N+1-framed description; `workflows/README.md` documents the parameter in prose rather than
+    frontmatter (its `default: 2` bullet updated in place); `web-ux-test-fixing-planning.md` stays
+    at `Default 1` by design.
+  - **PRESERVE case honoured with justification**: `web-ux-test-fixing-planning.md` still reads
+    `Default 1` **and** now carries the required rationale — the three testers run
+    exploratory → integrate → usability → integrate → design → integrate, so each reads the plan the
+    previous one wrote and they **fail the independence test**. The added sentence states "This 1 is
+    a genuine DAG serialization point, NOT a stale concurrency cap" and "The DAG governs — never
+    force parallelism onto dependent nodes". Verified: `Default 1` = 1, `DAG governs` = 1.
+  - **`repo-dependency-bump-planning.md` compound acceptance**: `N+1|1 main thread` returns **3**
+    (≥1, was 0) AND `capped at 2 concurrent` returns **0** (was 1) — both directions discriminate.
+    Two sites edited: the Conventions cross-link and the Step 2 prose cap, the latter now noting
+    that ecosystem batches are independent DAG nodes so batch count is the real fan-out.
+  - **`pr-review-quality-gate.md` exclusion recorded**: `grep -c "max-concurrency"` returns **0**,
+    unchanged — the file declares its cycle strictly sequential and has no such frontmatter, so it
+    is out of scope by construction rather than by oversight.
+  - **Bulk-edit near-miss worth noting**: the first sweep attempt used `for f in $FILES` and passed
+    the whole newline-joined list as a single argument ("File name too long"), modifying **nothing**
+    while appearing to run. Caught only by the post-sweep verification loop, which still showed
+    `default: 2` across the board. Logged in `learnings.md`: a loop that fails to iterate is
+    indistinguishable from a loop with no work, so bulk edits need an independent after-check.
 
-- [ ] [AI] Update every discovered `.claude/agents/*.md` and `.claude/skills/*/SKILL.md` that carries
+- [x] [AI] Update every discovered `.claude/agents/*.md` and `.claude/skills/*/SKILL.md` that carries
       stale orchestration text to the N+1/DAG/main-vacant model — acceptance: re-run the 4c grep; only
       intentional historical references remain, each justified inline
+  - **Date**: 2026-07-20. Re-running the 4c discovery grep for stale cap text across
+    `.claude/agents`, `.claude/skills`, and `repo-governance/workflows` now returns **nothing** —
+    **zero** remaining stale references, so no "intentional historical reference" needed justifying.
+  - **One genuinely stale surface found and fixed**: `.claude/skills/repo-defining-workflows/SKILL.md`
+    — the skill that **teaches** the workflow frontmatter schema, so its `max-concurrency` example
+    (`description: Maximum number of agents/tasks that can run in parallel`, `default: 2`) would have
+    reproduced the superseded cap into every workflow authored from it. Both sites updated: the
+    schema template and the `## Standard Input Parameters` bullet, the latter also carrying "the DAG
+    governs the actual fan-out; N only caps it".
+  - **Verified-not-stale (no edit needed)**: the merge-related `.claude/agents/*` text was already
+    corrected in the §4b sweep. The remaining `subagent`/`concurrency`/`parallel` hits across
+    `.claude/` are unrelated domain content — F#/C#/Rust language concurrency-standards links,
+    Playwright parallel-execution guidance, `web-researcher` delegation thresholds — not
+    orchestration-model statements. Read rather than pattern-matched, to avoid editing by keyword.
+  - **`npm run generate:bindings` re-run** after the skill edit (82 agents converted, `.amazonq`
+    bridge re-emitted) so the secondary bindings carry the corrected schema.
 - [ ] [AI] Completeness gate: invoke `repo-rules-checker` + `repo-harness-compatibility-checker` over
       the swept files — acceptance: no CRITICAL/HIGH stale-reference or vendor-leak findings unresolved
 

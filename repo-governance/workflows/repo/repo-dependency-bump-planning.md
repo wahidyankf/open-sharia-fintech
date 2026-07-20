@@ -157,8 +157,11 @@ out of scope per that same policy section.
 For each dependency/runtime, determine its policy path and the version to propose. Delegate the
 external research to `web-researcher` — the [default primitive for public-web information
 gathering](../../conventions/writing/web-research-delegation.md). **Group research by ecosystem**
-(one agent per ecosystem batch) rather than one agent per package, and cap concurrent agents at
-**2** per the [Subagent Orchestration Convention](../../development/agents/subagent-orchestration.md).
+(one agent per ecosystem batch) rather than one agent per package, and fan out under the **N+1
+model** — `1 main thread + N background agents = N+1 total`, default **N=3** — per the
+[Subagent Orchestration Convention](../../development/agents/subagent-orchestration.md). Ecosystem
+batches are independent DAG nodes (no batch reads what another writes), so the number of batches is
+the actual fan-out and N only caps it.
 
 Each research batch must return, per package:
 
@@ -298,7 +301,7 @@ Scenario: User declines at the checkpoint
 - **[Workflow Naming Convention](../../conventions/structure/workflow-naming.md)**: Basename `repo-dependency-bump-planning` parses as scope=`repo`, qualifier=`dependency-bump`, type=`planning`.
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: The backlog plan uses the `YYYY-MM-DD__<identifier>/` creation-date-prefixed folder form.
 - **[Web Research Delegation Convention](../../conventions/writing/web-research-delegation.md)**: Version/CVE/yank research delegated to `web-researcher`.
-- **[Subagent Orchestration Convention](../../development/agents/subagent-orchestration.md)**: Research agents capped at 2 concurrent.
+- **[Subagent Orchestration Convention](../../development/agents/subagent-orchestration.md)**: Research agents fan out under the N+1 model — `1 main thread + N background agents = N+1 total`, default N=3 — with the main thread kept vacant as orchestrator and N never self-promoted beyond the declared value.
 - **[Linking Convention](../../conventions/formatting/linking.md)**: Cross-references use GitHub-compatible markdown with `.md` extensions.
 
 ```

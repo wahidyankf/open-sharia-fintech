@@ -78,6 +78,12 @@ inputs:
       (exploratory → integrate → usability → integrate → design → integrate) so each result set is
       folded into the plan before the next runs, and because all three testers are sonnet-tier the
       staged order keeps each pass's full context available during its integration.
+      This 1 is a genuine DAG serialization point, NOT a stale concurrency cap: each tester
+      reads the plan the previous tester wrote, so the nodes are dependent by the standard
+      independence test (two nodes are independent only when neither reads what the other
+      writes). The DAG governs — never force parallelism onto dependent nodes. Raising this to
+      the N+1 model's default N would produce three testers racing on one plan file, which is
+      why this workflow is deliberately exempt from that default.
     required: false
     default: 1
   - name: push-target

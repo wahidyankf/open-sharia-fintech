@@ -34,9 +34,9 @@ inputs:
     default: value (if not required)
   - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel
+    description: Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total)
     required: false
-    default: 2
+    default: 3
 outputs:
   - name: output-name
     type: string | number | boolean | file | file-list | enum
@@ -189,7 +189,7 @@ Combine sequential, parallel, and conditional:
 
 Most workflows support:
 
-- **max-concurrency** (number, default: 2): Maximum parallel agents
+- **max-concurrency** (number, default: 3): Background agents run concurrently — the N in the N+1 model (`1 main thread + N background agents = N+1 total`). The DAG governs the actual fan-out; N only caps it. Never self-promoted beyond the declared value
 - **dry-run** (boolean, default: false): Preview without executing
 - **verbose** (boolean, default: false): Detailed logging
 

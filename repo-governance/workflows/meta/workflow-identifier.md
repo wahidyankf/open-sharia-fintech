@@ -90,9 +90,9 @@ inputs:
     default: value (if not required)
   - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run in parallel
+    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
     required: false
-    default: 2
+    default: 3
 outputs:
   - name: output-name
     type: string | number | boolean | file | file-list | enum
@@ -288,10 +288,13 @@ Only runs if user approved fixes in step 2.
 
 The `max-concurrency` input parameter controls concurrent execution:
 
-- **Default: 2** - Conservative, suitable for most workflows
-- **Increase** - Faster execution on capable systems (e.g., 4-8 for multi-validator workflows)
-- **Decrease to 1** - Force sequential execution for debugging or resource constraints
+- **Default: 3** - The N in the N+1 model (`1 main thread + N background agents = N+1 total`), chosen to bound token/compute-budget burn
+- **Increase** - Only when independent work, machine capacity, and budget headroom all allow (e.g., 4-8 for multi-validator workflows). Never self-promoted beyond the declared value
+- **Decrease to 1** - Force sequential execution for debugging, or under budget, runner, or disk pressure
 - **Set to validator count** - Maximum efficiency when validators are independent
+
+The **DAG governs, N only caps**: the independent-node width sets the actual fan-out, so raising N
+above that width buys nothing. Never force parallelism onto dependent nodes to fill a slot.
 
 **Notes**:
 
@@ -520,9 +523,9 @@ inputs:
     default: strict
   - name: max-concurrency
     type: number
-    description: Maximum number of agents/tasks that can run concurrently during workflow execution
+    description: "Background agents run concurrently — the N in the N+1 model (1 main thread + N background agents = N+1 total). Raise only when independent work, machine capacity, and budget headroom all allow; lower under budget, runner, or disk pressure. Never self-promoted beyond the declared value."
     required: false
-    default: 2
+    default: 3
   - name: min-iterations
     type: number
     description: Minimum check-fix cycles before allowing zero-finding termination
