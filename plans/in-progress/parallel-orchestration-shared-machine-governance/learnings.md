@@ -190,6 +190,32 @@ newline-joined list as one argument ("File name too long") and changed nothing �
 because the post-sweep verification still showed `default: 2` everywhere. Verify after a bulk edit;
 a loop that fails to iterate looks identical to a loop with nothing to do.
 
+## Follow-up: the vendor-audit scanner does not know the term "Kiro"
+
+Surfaced 2026-07-20 during Phase 4e, **not fixed here** — recording rather than silently absorbing.
+
+Phase 4e introduces "Kiro" / "Kiro CLI" into this repo's vocabulary (the Amazon Q Developer
+succession). The
+[Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md)
+enforces vendor-neutrality in `repo-governance/**` by scanning for a fixed list of vendor terms —
+`Claude Code`, `OpenCode`, `\bCursor\b`, `\bAmazon Q\b`, `\bAntigravity\b`, and so on. **"Kiro" is
+not in that list.** A future Kiro mention leaking into governance prose would therefore pass the
+scanner silently, which is exactly the failure the scanner exists to prevent.
+
+**Why it was not fixed in this plan**: the scanner is implemented in
+`apps/rhino-cli/src/application/repo_governance/vendor_audit.rs`, and `apps/rhino-cli/**` is
+required to be **byte-identical across `ose-public`, `ose-primer`, and `ose-infra`** with zero
+carve-outs, per the
+[SDLC Gate Standard](../../../docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
+Editing it from this single-repo plan would break that boundary. Editing only the convention's
+documented term table would be worse: the table would then describe terms the scanner does not
+actually match, so the doc would lie about the tool.
+
+**Candidate follow-up**: a tri-repo parity plan adding `\bKiro\b` (and the `\.kiro/` path prefix) to
+the vendor-term list in `vendor_audit.rs` and its companion table, landed in all three repos
+together so byte-identity holds. Verified today: `grep -rn "Kiro" repo-governance/` returns
+**nothing**, so there is no live leak to clean up — the gap is preventive, not corrective.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

@@ -158,6 +158,37 @@ The default binds differently depending on what is being done:
 - **Executing a plan** binds it as the actual delivery route: worktree → PR, per the phase-to-PR
   mapping above.
 
+### Surface-Conditional Tester Gates
+
+Which quality gates a plan must run depends on **what surface it ships**. Decide this at authoring
+time and write the result into the delivery checklist — it binds again at execution, and again as a
+merge precondition.
+
+- **UI-bearing plan** → run **both** UI gates: [`ui/ui-quality-gate.md`](../ui/ui-quality-gate.md)
+  (static, over component source) **and**
+  [`web/web-ux-test-fixing-planning.md`](../web/web-ux-test-fixing-planning.md) (the running-UI
+  EWT/UWT/DWT triad).
+- **API- or backend-bearing plan** → run [`api/api-quality-gate.md`](../api/api-quality-gate.md).
+- **Both surfaces** → run both sets.
+- **Neither** → the plan **MUST state the exemption explicitly in its `tech-docs.md`**. An
+  unstated exemption is indistinguishable from an oversight, which is exactly what this rule exists
+  to prevent.
+
+#### The Three UI Gates Are Complementary, Never Substitutes
+
+They act at three different lifecycle stages, and passing one says nothing about the others:
+
+- **`plan-checker` Step 5k** gates the UI **design funnel** in `prd.md` — **pre-build**, before any
+  component exists.
+- **`ui/ui-quality-gate.md`** gates the **built components** via `swe-ui-checker` / `swe-ui-fixer` —
+  static analysis of source, no browser involved.
+- **`web/web-ux-test-fixing-planning.md`** gates the **running UI** via the EWT/UWT/DWT triad — a
+  real browser against a real deployment.
+
+A component can satisfy Step 5k's design funnel, pass static token and accessibility checks, and
+still be broken in the browser. Treating any one of the three as covering another is the failure
+this distinction guards against.
+
 ### The Plan-Docs-Only Carve-Out
 
 A change touching **only** `plans/**`, with no `apps/` or `libs/` code, may push direct to `main`.

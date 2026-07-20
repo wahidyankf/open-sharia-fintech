@@ -1381,7 +1381,7 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
 > drift. Three overlapping layers → no per-push trigger needed; up-to-~6h lag on `main` is an accepted
 > tradeoff (direct-push modes carry only known-safe docs-only edits).
 
-- [ ] [AI] Edit `.github/workflows/main-ci.yml`: remove `push: branches: [main]` and set the trigger to
+- [x] [AI] Edit `.github/workflows/main-ci.yml`: remove `push: branches: [main]` and set the trigger to
       the 4×/day schedule + dispatch:
 
   ```yaml
@@ -1394,20 +1394,66 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
   — acceptance: `grep -n "schedule\|workflow_dispatch" .github/workflows/main-ci.yml` present and
   `grep -n "push:" .github/workflows/main-ci.yml` returns nothing; `actionlint .github/workflows/main-ci.yml` exits 0
   - _Suggested executor: `ci-fixer`_
+  - **Date**: 2026-07-20. Trigger block replaced verbatim with the plan's YAML — the
+    `push: branches: [main]` trigger removed and `schedule: - cron: "0 5,11,17,23 * * *"` +
+    `workflow_dispatch:` put in its place, with the WIB-offset comment retained inline.
+  - **All three acceptance clauses pass**: `grep -c "schedule\|workflow_dispatch"` returns **2**;
+    `grep -n "push:"` returns **nothing**; `actionlint .github/workflows/main-ci.yml` **exits 0**.
+  - **Executed directly rather than via `ci-fixer`**: the suggested executor is a fixer that
+    consumes a `ci-checker` audit report, and no such report exists — this is a prescribed
+    three-line trigger swap with a verbatim target, not a finding to triage. Recorded here because
+    the annotation was deliberately not followed.
 
 ### 4e. Platform-binding catalog: Amazon Q Developer → Kiro CLI succession
 
-- [ ] [AI] Edit `docs/reference/platform-bindings.md`: update the "Amazon Q Developer" entry to record
+- [x] [AI] Edit `docs/reference/platform-bindings.md`: update the "Amazon Q Developer" entry to record
       the Q-Developer-CLI → Kiro-CLI succession — sunset dates (new-signup block 2026-05-15, models
       Kiro-only 2026-05-29, IDE-plugin EOS 2027-04-30) and Kiro capabilities (native DAG task-graphs,
       up to 4 subagents, worktree isolation, `q`/`q chat` preserved, `~/.aws/amazonq`→`~/.kiro`
       auto-migrated) — acceptance: `grep -ni "Kiro" docs/reference/platform-bindings.md` present; no
       "Amazon Q Developer" mention reads as evergreen
-- [ ] [AI] Grep every other "Amazon Q Developer" mention and update consistently
+- [x] [AI] Grep every other "Amazon Q Developer" mention and update consistently
       (`grep -rln "Amazon Q" AGENTS.md docs/reference/`); confine vendor-accurate detail to
       platform-binding surfaces (NOT `repo-governance/` prose) — acceptance: `AGENTS.md` §Platform
       Binding Examples reflects the succession; `repo-governance/` prose remains vendor-neutral
   - _Suggested executor: `repo-harness-compatibility-fixer`_
+  - **Date**: 2026-07-20. Both checkboxes delivered. `grep -ci "Kiro" docs/reference/platform-bindings.md`
+    returns **24** (was 0); `AGENTS.md` §Platform Binding Examples now flags the succession inline;
+    `grep -rn "Kiro" repo-governance/` returns **nothing**, so governance prose stays vendor-neutral.
+  - **Facts verified before writing, and two of the plan's stated claims did not survive.** The plan
+    asserted these as established, but they ship as reference documentation, so each was checked
+    against AWS/Kiro primary sources (`web-researcher`, 2026-07-20):
+    - **CONFIRMED verbatim**: the rebrand itself; new-signup block **2026-05-15**; IDE-plugin EOS
+      **2027-04-30**; native DAG task-graphs; **up to 4** concurrent subagents; `q`/`q chat`
+      preserved; `~/.aws/amazonq` → `~/.kiro` auto-migration.
+    - **CORRECTED — "worktree isolation" is not a Kiro feature.** Kiro's own docs describe subagent
+      isolation as _context-level_ ("its own isolated context") and never mention git worktrees.
+      Worktree isolation for Kiro exists only as a **third-party** community pattern
+      (`requix/kiro-team`). Written up as such rather than repeated as a first-party capability.
+    - **CORRECTED — the 2026-05-29 date is narrower than "models Kiro-only".** The source says
+      Opus 4.6 stops being available on Q Developer Pro that day; Opus 4.5 and others remain, and
+      the newest models are Kiro-exclusive without a single stated cutover date. Written to match
+      the source rather than the broader paraphrase.
+  - **Material finding the plan did not anticipate — the `AGENTS.md` situation reversed.** Q
+    Developer CLI did not read `AGENTS.md` (feature request #2712, still open and never resolved for
+    that product), but **Kiro CLI reads it natively** — workspace root or `~/.kiro/steering/`, and
+    _always included_ unlike custom steering files. The binding-table row and a new
+    `### Amazon Q Developer CLI → Kiro CLI succession` section record this, along with Kiro's full
+    config surface (`.kiro/steering/`, `.kiro/settings/mcp.json`, `.kiro/agents/`, `.kiro/skills/`)
+    and the caveat that custom Kiro agents must opt into steering explicitly.
+  - **Consequence recorded, not acted on**: the generated `.amazonq/` bridge exists _because_ Q
+    Developer could not read `AGENTS.md`. Kiro can, so the bridge becomes redundant once this repo
+    targets Kiro — noted in the reference doc as a deliberate future change rather than retired as a
+    side effect of a catalog update.
+  - **`rhino-cli-command-triage.md` deliberately left alone**: its "Amazon Q" mentions describe the
+    `harness bindings generate` emitter's actual current behaviour (the bridge is still emitted), so
+    they are accurate tooling documentation, not evergreen product claims.
+  - **Follow-up logged, not silently absorbed**: the vendor-audit scanner's term list does not
+    include `Kiro`, so a future leak into governance prose would pass undetected. Not fixed here —
+    the scanner lives in `apps/rhino-cli/**`, which must stay byte-identical across all three repos,
+    and patching only the convention's documented term table would make the doc misdescribe the
+    tool. Recorded in `learnings.md` as a candidate tri-repo parity plan; verified there is no live
+    leak today.
 
 ### 4f. Surface-conditional UI / API tester gates + NEW `workflows/api/` (Delta 11)
 
@@ -1420,7 +1466,7 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
 > `swe-ui-checker`/`swe-ui-fixer` (static, no browser); `web/web-ux-test-fixing-planning.md` gates the
 > **running UI** via the EWT/UWT/DWT triad. Complementary, never substitutes.
 
-- [ ] [AI] Create `repo-governance/workflows/api/api-quality-gate.md` _New file_, modelled on
+- [x] [AI] Create `repo-governance/workflows/api/api-quality-gate.md` _New file_, modelled on
       `repo-governance/workflows/ui/ui-quality-gate.md`: YAML frontmatter with `name: api-quality-gate`,
       `title`, `goal`, `termination`, `inputs` (`scope`, `mode` enum `[lax, normal, strict, ocd]`,
       `min-iterations`, `max-iterations` default 7, **`max-concurrency` aligned with the §4c-ii N+1
@@ -1438,20 +1484,20 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
     agent is anti-pattern AP-7.
   - _Naming_: follows the
     [Workflow Naming Convention](../../../repo-governance/conventions/structure/workflow-naming.md)
-- [ ] [AI] Create `repo-governance/workflows/api/README.md` _New file_ mirroring
+- [x] [AI] Create `repo-governance/workflows/api/README.md` _New file_ mirroring
       `repo-governance/workflows/ui/README.md`: frontmatter (`title: "API Workflows"`, `description`,
       `category: explanation`, `subcategory: workflows/api`, `tags`, `created`), an "Available
       Workflows" table row for API Quality Gate naming `api-exploratory-tester`, and a "Related
       Documentation" section — acceptance: `test -f repo-governance/workflows/api/README.md` exits 0
       and the table links `./api-quality-gate.md`
   - _Suggested executor: `repo-workflow-maker`_
-- [ ] [AI] Register the new category in `repo-governance/workflows/README.md` alongside `ui/`
+- [x] [AI] Register the new category in `repo-governance/workflows/README.md` alongside `ui/`
       — acceptance: `grep -n "workflows/api\|api-quality-gate" repo-governance/workflows/README.md`
       returns ≥ 1 hit; no hardcoded collection counts introduced (Dynamic Collection References)
 - [ ] [AI] Validate the two new workflow files with `repo-workflow-checker`
       — acceptance: no CRITICAL/HIGH findings unresolved
   - _Suggested executor: `repo-workflow-checker`_
-- [ ] [AI] State the **surface-conditional gate rule** in
+- [x] [AI] State the **surface-conditional gate rule** in
       `repo-governance/workflows/plan/plan-execution.md` and
       `repo-governance/workflows/plan/plan-planning.md`: UI-bearing plan → run BOTH UI gates
       (`ui/ui-quality-gate.md` static + `web/web-ux-test-fixing-planning.md` running triad);
@@ -1460,11 +1506,11 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       during plan creation/update/execution, AND as a merge precondition — acceptance:
       `grep -c "api-quality-gate" repo-governance/workflows/plan/plan-execution.md repo-governance/workflows/plan/plan-planning.md`
       returns ≥ 1 for each file
-- [ ] [AI] Add the explicit **three-way distinction** paragraph (5k design funnel / `ui-quality-gate`
+- [x] [AI] Add the explicit **three-way distinction** paragraph (5k design funnel / `ui-quality-gate`
       built components / triad running UI — complementary, not contradictory) to the same two plan
       workflow files so nobody treats one gate as substituting for another — acceptance:
       `grep -ni "5k" repo-governance/workflows/plan/plan-execution.md` returns ≥ 1 hit
-- [ ] [AI] Add the conditional gate to `repo-governance/workflows/pr/pr-review-quality-gate.md` as
+- [x] [AI] Add the conditional gate to `repo-governance/workflows/pr/pr-review-quality-gate.md` as
       **merge precondition clause (e)** — the normative Delta 8 lettering — alongside clauses (a)-(d) (3 cycles / 0 CRITICAL+0 HIGH /
       up-to-date-with-`origin/main` / all gates green) — acceptance:
       `grep -c "api-quality-gate" repo-governance/workflows/pr/pr-review-quality-gate.md` returns ≥ 1

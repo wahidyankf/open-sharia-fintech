@@ -1,8 +1,9 @@
 name: main-ci
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "0 5,11,17,23 * * *" # 06:00/12:00/18:00/00:00 (next day) WIB (UTC+7)
+  workflow_dispatch:
 
 permissions:
   contents: read

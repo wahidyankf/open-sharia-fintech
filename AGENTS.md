@@ -500,7 +500,8 @@ Concrete tool integrations live **outside** `repo-governance/` in platform-bindi
 - **OpenAI Codex CLI** → reads `AGENTS.md` natively (`.codex/config.toml` present)
 - **GitHub Copilot, Cursor, Windsurf, JetBrains Junie, Google Antigravity CLI, Pi** → read root
   `AGENTS.md` natively (Tier-1); no per-tool instruction file shipped by default (see no-shadowing rule)
-- **Amazon Q Developer** → does not read `AGENTS.md` natively; receives a generated bridge under
+- **Amazon Q Developer** (sunsetting — IDE plugins EOS 2027-04-30; succeeded by **Kiro CLI**, which
+  reads `AGENTS.md` natively) → does not read `AGENTS.md` natively; receives a generated bridge under
   `.amazonq/` (`rules/00-agents-md.md` + a default agent config), emitted by `rhino-cli agents emit-bindings`
 - **Aider** → reads `CONVENTIONS.md` natively per Aider's own docs
   (<https://aider.chat/docs/usage/conventions.html>); the agents.md standard site lists Aider as a

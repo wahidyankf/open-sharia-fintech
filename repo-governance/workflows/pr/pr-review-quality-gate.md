@@ -219,8 +219,11 @@ following hold:
   and the [Git Push Safety Convention](../../development/workflow/git-push-safety.md)).
 - **(d)** **All PR quality gates are green** — local gates and CI on the PR, as of its current head.
 - **(e)** The **surface-conditional tester gates have been run and their defect findings resolved** —
-  a UI-bearing PR runs the UI gates, an API/BE-bearing PR runs the API gate, a PR bearing both runs
-  both, and a PR bearing neither records that exemption **explicitly** rather than leaving it implicit.
+  a UI-bearing PR runs **both** UI gates ([`ui/ui-quality-gate.md`](../ui/ui-quality-gate.md) static
+  and [`web/web-ux-test-fixing-planning.md`](../web/web-ux-test-fixing-planning.md) running triad),
+  an API/BE-bearing PR runs [`api/api-quality-gate.md`](../api/api-quality-gate.md), a PR bearing
+  both runs both, and a PR bearing neither records that exemption **explicitly** rather than leaving
+  it implicit.
 
 > **This (a)-(e) lettering is normative.** The delivery checklists that cite these preconditions use
 > the identical letters, and any future edit must change both together. An earlier revision let one

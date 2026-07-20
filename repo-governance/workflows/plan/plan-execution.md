@@ -132,6 +132,26 @@ concurrent actor's uncommitted work, and never remove a worktree or branch you d
 **Status cadence**: while checklist items are active, update the user every **3-5 minutes — not
 faster**, anchored to meaningful state changes rather than a timer.
 
+### Surface-Conditional Tester Gates
+
+Which quality gates this execution must run depends on **what surface the plan ships**. The rule
+binds here at execution, exactly as it bound at authoring time (see
+[plan-planning §Surface-Conditional Tester Gates](./plan-planning.md#surface-conditional-tester-gates)),
+and again as a merge precondition — clause (e) of the
+[PR Review Quality Gate](../pr/pr-review-quality-gate.md)'s hardened preconditions.
+
+- **UI-bearing plan** → run **both** [`ui/ui-quality-gate.md`](../ui/ui-quality-gate.md) (static)
+  and [`web/web-ux-test-fixing-planning.md`](../web/web-ux-test-fixing-planning.md) (running triad).
+- **API- or backend-bearing plan** → run [`api/api-quality-gate.md`](../api/api-quality-gate.md).
+- **Both** → run both sets. **Neither** → the plan MUST state the exemption explicitly in
+  `tech-docs.md`; an executor that finds no such statement treats it as a gap, not as a pass.
+
+**The three UI gates are complementary, never substitutes**: `plan-checker` **Step 5k** gates the
+UI **design funnel** in `prd.md` (pre-build); `ui/ui-quality-gate.md` gates the **built components**
+statically via `swe-ui-checker` / `swe-ui-fixer` (no browser); and
+`web/web-ux-test-fixing-planning.md` gates the **running UI** via the EWT/UWT/DWT triad in a real
+browser. Passing one never discharges another.
+
 ## Task-Checklist Synchronization
 
 The live Task list (`TaskCreate` / `TaskUpdate`) and the on-disk delivery checklist (`delivery.md`) are two views of the same state. They MUST agree at every moment of execution. Disagreement is a bug the orchestrator MUST detect and fix immediately.
