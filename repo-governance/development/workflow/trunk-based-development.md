@@ -687,7 +687,7 @@ TBD works best when combined with:
 - **Pair/Mob Programming**: Real-time collaboration and review
 - **PR Merge Protocol**: [PR Merge Protocol](./pr-merge-protocol.md) - The five hardened merge preconditions (`[AI]` merges by default; `[HUMAN]` is an explicit per-plan opt-in), the PR-Review Maker→Fixer Cycle, and the done-boundary for `worktree-to-pr` PRs
 - **Git Push Default Convention**: [Git Push Default Convention](./git-push-default.md) — Defines the PR-branch-as-default push target and the direct-push modes as explicit selections; governs plan-maker, plan-checker, plan-fixer, and the plan-execution workflow behavior
-- **CI Post-Push Verification**: [CI Post-Push Verification Convention](./ci-post-push-verification.md) — Mandatory verification step after every push to main covering integration tests, E2E tests, and deployment workflows
+- **CI Post-Push Verification**: [CI Post-Push Verification Convention](./ci-post-push-verification.md) — Mandatory verification step after every push — to a PR branch or to `main`, per the declared mode covering integration tests, E2E tests, and deployment workflows
 - **Worktree Toolchain Initialization**: [Worktree Toolchain Initialization](./worktree-setup.md) - Mandatory two-step init (`npm install` + `npm run doctor -- --fix`) after creating or entering a worktree
 
 ## References and Further Reading

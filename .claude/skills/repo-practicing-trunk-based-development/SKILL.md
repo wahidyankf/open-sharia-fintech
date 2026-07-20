@@ -333,20 +333,24 @@ rationale: "Single-line doc fix; full gate passes locally; no review value in a 
 ```
 Day 1:
 - Add feature flag (disabled)
-- Commit basic infrastructure to main
-- Push to main
+- Commit basic infrastructure
+- Push to <plan-branch>; open a draft PR; land it once green
 
 Day 2:
 - Implement core logic (behind flag)
-- Commit to main
-- Push to main
+- Commit
+- Push to <plan-branch>; land it once green
 
 Day 3:
 - Complete feature (behind flag)
 - Test internally with flag enabled
 - Enable flag for all users
-- Push to main
+- Push to <plan-branch>; land it once green
 ```
+
+Each day's work lands on its own short-lived branch and PR — the flag, not an open branch, is what
+hides the half-built feature. Under a declared direct-push mode, substitute `git push origin main`
+for the branch-and-PR step; the daily-integration shape is identical either way.
 
 **❌ Wrong approach (long-lived branch)**:
 
