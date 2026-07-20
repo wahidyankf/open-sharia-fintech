@@ -25,12 +25,16 @@ This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** 
 
 **Trunk Based Development (TBD)** is a git workflow where:
 
-- **All development happens on `main` branch** (the "trunk")
-- **Small, frequent commits** pushed directly to `main`
-- **Minimal branching** - branches are exceptional, not standard
-- **Short-lived feature branches** (if used) - < 1 day, merge quickly
-- **Feature flags** for incomplete work (not branches)
-- **Continuous integration** enabled by frequent merges
+- **All work converges on `main`** (the "trunk") — one integration target, no long-lived parallel lines
+- **Small, frequent commits** integrated continuously, many times a day
+- **Short-lived branches** - single-purpose, landed within 1-2 days; TBD forbids _long-lived_ branches, not branches
+- **Feature flags** for incomplete work, so nothing needs an open branch to stay hidden
+- **Continuous integration** enabled by that frequent landing
+
+In this repo the default shape is `worktree-to-pr`: a short-lived plan branch in a disposable
+worktree, pushed to a draft PR, merged once the hardened preconditions hold. Committing straight to
+`main` is the `worktree-to-origin-main` / `main-to-origin-main` modes — fully supported, explicitly
+declared.
 
 ### Why TBD?
 

@@ -34,7 +34,7 @@ repo). Each stage names the surface file and the exact command sequence.
 | 2. commit-msg        | `.husky/commit-msg`                     | `git commit` (on the message) |
 | 3. pre-push          | `.husky/pre-push`                       | `git push`                    |
 | 4. PR quality gate   | `.github/workflows/pr-quality-gate.yml` | pull request (+ branch push)  |
-| 5. main quality gate | `.github/workflows/main-ci.yml`         | push to `main` (post-merge)   |
+| 5. main quality gate | `.github/workflows/main-ci.yml`         | schedule 4x/day + dispatch    |
 
 A standalone `validate-env.yml` workflow runs on `pull_request` and `push:main` in parallel with the
 PR and main gates. No CRON pipeline is part of the gate set; `test:integration`, `test:e2e`, and
@@ -184,9 +184,12 @@ everything the two local hooks run.
 
 ### Stage 5: Main Quality Gate
 
-`main-ci.yml` (post-merge, on push to `main`). Runs the same job set as the PR gate but across every
-project (`nx run-many --all`, not `nx affected`) — the one post-merge place the whole repo is
-re-verified green. The governance validators run unconditionally (not path-gated). `$P` = `$(($(nproc)-1))`.
+`main-ci.yml` runs on a **4x/day schedule** (`cron: "0 5,11,17,23 * * *"` — 06:00/12:00/18:00/00:00
+WIB) plus `workflow_dispatch`. It has **no `push` trigger**: the per-push trigger was dropped in
+favour of the schedule, accepting up to ~6h lag before `main` is re-verified, with manual dispatch
+available when a result is needed sooner. Runs the same job set as the PR gate but across every
+project (`nx run-many --all`, not `nx affected`) — the one place the whole repo is re-verified green
+rather than just the affected slice. The governance validators run unconditionally (not path-gated). `$P` = `$(($(nproc)-1))`.
 
 | Job                                                   | Exact command(s) CI runs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Scope         |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
