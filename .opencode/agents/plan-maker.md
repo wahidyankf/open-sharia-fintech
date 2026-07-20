@@ -190,9 +190,10 @@ the agent checks to resume.
 `[HUMAN]`: provisioning the worktree (`git worktree add …`), committing and pushing (to `origin main`
 for `*-to-origin-main` modes, or to the PR branch for `*-to-pr` modes), and removing the worktree
 (`git worktree remove …`). For the default `worktree-to-pr` mode, do NOT emit a `[HUMAN]` "review the
-diff and approve push" gate for the push itself — pushing to the PR branch is `[AI]`; only the final
-PR merge to `main` is `[HUMAN]`, and only after the PR-Review Maker→Fixer Cycle has completed (see
-Step 7 below). Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
+diff and approve push" gate for the push itself — pushing to the PR branch is `[AI]`; the final
+PR merge to `main` is also `[AI]` by default, once the PR-Review Maker→Fixer Cycle has completed and
+the hardened preconditions hold. Emit a `[HUMAN]` merge step only where the plan explicitly opts into
+that gate (see Step 7 below). Write the push step as `- [ ] [AI] Commit and push to origin main` (direct-push modes)
 or `- [ ] [AI] Commit and push to origin <pr-branch>` (`*-to-pr` modes). See the
 [Git Push Default Convention](../../repo-governance/development/workflow/git-push-default.md) and
 [Plans Organization Convention §Executor Tagging](../../repo-governance/conventions/structure/plans.md#executor-tagging--ai-vs-human-hard-rule).
@@ -213,10 +214,14 @@ placed alongside `## Worktree`, declaring exactly one of the four modes:
 
 | Mode                      | Work location    | Integration target | Merge authority |
 | ------------------------- | ---------------- | ------------------ | --------------- |
-| `worktree-to-pr`          | Worktree         | Draft PR           | `[HUMAN]`       |
+| `worktree-to-pr`          | Worktree         | Draft PR           | `[AI]`\*        |
 | `worktree-to-origin-main` | Worktree         | Direct push        | `[AI]`          |
 | `main-to-origin-main`     | Primary checkout | Direct push        | `[AI]`          |
-| `main-to-pr`              | Primary checkout | Draft PR           | `[HUMAN]`       |
+| `main-to-pr`              | Primary checkout | Draft PR           | `[AI]`\*        |
+
+\* `[AI]` is the default merge actor for both PR modes, once the hardened preconditions hold. A
+`[HUMAN]` merge gate applies only where a plan explicitly opts into it; the preconditions are
+identical either way and only the actor differs.
 
 **`worktree-to-pr` is the default** — apply three-tier precedence: invocation argument (if the
 user or calling context specified a mode explicitly) → plan field (if a prior draft already

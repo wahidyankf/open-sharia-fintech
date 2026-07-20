@@ -232,6 +232,19 @@ fix before archival`), in a labelled "Rule-15 three-tester retest follow-ups" se
     web triad — a plan that changes BOTH a web UI and its API runs both the Rule 15 and the Rule 16
     rounds.
 
+    **This is the same surface-conditional rule the plan workflows and the merge gate apply**, seen
+    from the delivery-hardening side. Rule 15's web triad is run by
+    [`workflows/web/web-ux-test-fixing-planning.md`](../../workflows/web/web-ux-test-fixing-planning.md)
+    and Rule 16's API round by
+    [`workflows/api/api-quality-gate.md`](../../workflows/api/api-quality-gate.md); a UI-bearing plan
+    additionally runs the static [`workflows/ui/ui-quality-gate.md`](../../workflows/ui/ui-quality-gate.md).
+    The surface-to-gate mapping is stated once in
+    [plan-planning §Surface-Conditional Tester Gates](../../workflows/plan/plan-planning.md#surface-conditional-tester-gates),
+    re-applied at execution, and enforced as **merge precondition clause (e)** in the
+    [PR Review Quality Gate](../../workflows/pr/pr-review-quality-gate.md). A plan bearing neither
+    surface states that exemption explicitly in `tech-docs.md`. These surfaces are meant to agree —
+    if this rule and the workflow mapping ever diverge, the workflow mapping is the one to fix.
+
 ## Examples
 
 ### PASS: A user-facing plan that cannot ship bland
@@ -314,6 +327,9 @@ fix before archival`), in a labelled "Rule-15 three-tester retest follow-ups" se
 - [Plan Execution](../../workflows/plan/plan-execution.md) — execution, finalization, archival gate.
 - [Plan Quality Gate](../../workflows/plan/plan-quality-gate.md) — pre-execution plan validation.
 - [Web UX Test-Fixing Planning](../../workflows/web/web-ux-test-fixing-planning.md) — workflow that runs the three-tester near-end retest (Rule 15).
+- [API Quality Gate](../../workflows/api/api-quality-gate.md) — workflow that runs the near-end `api-exploratory-tester` round (Rule 16); the API counterpart to the web triad.
+- [UI Quality Gate](../../workflows/ui/ui-quality-gate.md) — static component-source gate a UI-bearing plan runs alongside the Rule 15 triad.
+- [PR Review Quality Gate](../../workflows/pr/pr-review-quality-gate.md) — enforces the surface-conditional gates as merge precondition clause (e).
 
 **Agents:**
 

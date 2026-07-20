@@ -44,6 +44,7 @@ Additional filename rules inherit from the [File Naming Convention](./file-namin
 
 Workflow scope MUST match its parent directory under `repo-governance/workflows/`. Current scopes:
 
+- **`api`** — Workflows that operate against a live running HTTP API (REST or GraphQL): contract-conformance, auth/authz, pagination, idempotency, and edge-case exploratory testing of a deployed service. Aligned with agent scope `api` (`api-exploratory-tester`).
 - **`ayokoding-web`** — Workflows scoped to the AyoKoding Web application (content quality gates).
 - **`ci`** — Workflows that diagnose, validate, or repair continuous-integration pipelines.
 - **`docs`** — Workflows scoped to the `docs/` tree (Diátaxis content, link integrity, software-engineering separation).

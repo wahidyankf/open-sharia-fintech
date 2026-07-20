@@ -68,7 +68,7 @@ lands on `main` therefore does not contradict TBD; it is one of TBD's recognized
 
 This repository's **repo-wide default delivery mode is `worktree-to-pr`**: a short-lived plan branch
 inside a disposable git worktree, pushed to a PR, driven to a green and fully-reviewed state, then
-merged by a human. Pure direct-commit-to-`main` remains a fully supported alternative mode. See
+merged once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so. Pure direct-commit-to-`main` remains a fully supported alternative mode. See
 [Default Push and Worktree Execution](#default-push-and-worktree-execution) below for the mechanics of
 all four delivery modes, and the
 [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode) for
@@ -336,14 +336,15 @@ that vocabulary — it explains how each mode plays out for TBD and for worktree
 **The repo-wide default for all development -- including when running from a git worktree -- is
 `worktree-to-pr`: a short-lived, single-purpose plan branch inside a disposable git worktree, pushed
 to a draft PR opened against `main`, driven through review and CI to a fully green state, then merged
-by a human.**
+once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where a plan says so.**
 
 - **Work location**: `worktrees/<plan-identifier>/`, on a plan-scoped branch.
 - **Integration target**: a PR opened against `main` (opened as a GitHub **draft**; see Why Draft below).
-- **Merge authority**: `[HUMAN]` -- the AI drives the branch, the push, the review cycle, and the
-  quality gates; a human performs the actual merge, on their own schedule. This mirrors the
-  [PR Merge Protocol](./pr-merge-protocol.md) done-boundary: the AI hands off a green, fully-reviewed
-  PR; "done" (for the AI) is not "merged".
+- **Merge authority**: `[AI]` by default -- the AI drives the branch, the push, the review cycle, and
+  the quality gates, then merges once the hardened preconditions hold. A `[HUMAN]` merge gate applies
+  **only where a plan's own step says so explicitly**; the preconditions are identical either way and
+  only the actor differs. This mirrors the [PR Merge Protocol](./pr-merge-protocol.md) done-boundary:
+  the merge sits outside it, so "done" is still not the same as "merged".
 - Quality gates run on every push to the PR branch via the pre-push hook (typecheck, lint, test:quick,
   specs:coverage) AND on the PR itself via CI.
 - `*-to-pr` deliveries additionally run the **PR-Review Maker→Fixer Cycle**
@@ -370,7 +371,8 @@ gh pr create --draft --base main --title "feat(auth): add email validation"
 
 # When the done-definition is met (see PR Merge Protocol), flip to ready:
 gh pr ready
-# A human reviews and merges -- outside the AI's done-boundary
+# Merge once the hardened preconditions hold -- [AI] by default,
+# [HUMAN] only where the plan says so. The merge is outside the done-boundary either way.
 ```
 
 ### Why Draft, Not Ready-for-Review, on Open
@@ -546,7 +548,7 @@ The `apps/ayokoding-www/` project uses a production deployment branch:
 When creating project plans in `plans/` folder:
 
 - PASS: **Default assumption**: `worktree-to-pr` (repo-wide default) -- a short-lived plan branch in a
-  disposable worktree, pushed to a draft PR, merged by a human after the done-definition is met.
+  disposable worktree, pushed to a draft PR, merged -- `[AI]` by default -- after the done-definition is met.
 - PASS: **Declare the mode explicitly** using a `## Delivery Mode` field only when overriding the
   default (see the [Plans Organization Convention — Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
   for the field syntax and the three-tier precedence).
@@ -571,7 +573,7 @@ All implementation happens on a `worktree-to-pr` plan branch (the repo-wide defa
 2. Phase 2: Add payment API (flag OFF)
 3. Phase 3: Add payment UI (flag OFF)
 4. Phase 4: Integration testing (flag ON in staging)
-5. Phase 5: Production rollout (flag ON in production) -- PR merged by a human once green
+5. Phase 5: Production rollout (flag ON in production) -- PR merged once green and the hardened preconditions hold (`[AI]` by default)
 ```
 
 ### When Plans Override the Default Mode

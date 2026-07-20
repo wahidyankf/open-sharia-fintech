@@ -1519,21 +1519,36 @@ where.*explicitly` spanned a line break (grep is line-based), and `\[AI\] merges
       Delta 8's `(a)-(e)` lettering, so an OR'd pattern would pass vacuously whether or not this
       checkbox's own work happened. The concrete `api-quality-gate` reference is the discriminating
       signal the Phase 4 Gate actually requires.
-- [ ] [AI] Cross-link Rule 15 (web triad) and Rule 16 (AET) in
+- [x] [AI] Cross-link Rule 15 (web triad) and Rule 16 (AET) in
       `repo-governance/development/quality/user-facing-delivery-hardening.md` to the new conditional
       rule and the new `api/` workflow, so the two surfaces agree rather than drift — acceptance:
       `grep -n "workflows/api" repo-governance/development/quality/user-facing-delivery-hardening.md`
       returns ≥ 1 hit
   - _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Regenerate the platform bindings: `npm run generate:bindings`
+- [x] [AI] Regenerate the platform bindings: `npm run generate:bindings`
       — acceptance: exits 0; `.opencode/**` and `.amazonq/**` updated to reflect the new text; no hand-edits
-- [ ] [AI] Run the harness-binding sync check: `npm run validate:sync` (real npm script, wraps
+- [x] [AI] Run the harness-binding sync check: `npm run validate:sync` (real npm script, wraps
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync validate`
       per `package.json:34`; there is no `rhino-cli:validate:sync` Nx target) — acceptance: exits 0
-- [ ] [AI] Run the vendor-audit check: `npx nx run rhino-cli:governance:vendor-audit-validation`
+- [x] [AI] Run the vendor-audit check: `npx nx run rhino-cli:governance:vendor-audit-validation`
       (real Nx target, wraps `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/`)
       — acceptance: exits 0; no vendor-specific content leaked into governance files
+  - **Date**: 2026-07-20, all three mechanical checks green.
+    - `npm run generate:bindings` → **exit 0**; 82 agents converted, `.amazonq` bridge re-emitted.
+      `git status --porcelain .opencode .amazonq` returns **empty** — no drift, no hand-edits.
+    - `npm run validate:sync` → **exit 0**, **85/85 checks passed, 0 failed**.
+    - `npx nx run rhino-cli:governance:vendor-audit-validation` → **exit 0**,
+      "GOVERNANCE VENDOR AUDIT PASSED: no violations found".
+  - **Cache distrusted deliberately**: the first vendor-audit invocation was served from the Nx cache
+    ("existing outputs match the cache"), which is exactly the wrong thing to trust immediately after
+    editing the files it scans. Re-ran with `--skip-nx-cache`; the uncached run passes too, so the
+    result reflects current disk state rather than a stale hit.
+  - **Rule 15/16 cross-link**: `grep -c "workflows/api" user-facing-delivery-hardening.md` returns
+    **2** (was 0). Rule 16's body now states that this is the same surface-conditional rule the plan
+    workflows and merge gate apply, links all three gate workflows plus the canonical mapping in
+    plan-planning, and names which surface wins on divergence (the workflow mapping). Three entries
+    added to Related Documentation. All five new relative link targets verified present on disk.
 - [ ] [AI] Invoke `repo-rules-checker` over the changed governance files — acceptance: no CRITICAL/HIGH findings unresolved
 
 ### Phase 4 Gate

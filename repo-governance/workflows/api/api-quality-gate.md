@@ -2,7 +2,7 @@
 name: api-quality-gate
 title: "api-quality-gate"
 goal: Validate a live REST or GraphQL API against its contract and existing Gherkin specs, then fix every defect the tester finds and re-test until the defect set is empty
-termination: "Zero outstanding AET-### findings on a re-test against the current deployed build (max-iterations defaults to 7, escalation warning at 5)"
+termination: "Zero outstanding in-threshold AET-### findings on two consecutive re-tests against the current deployed build — the double-zero confirmation (max-iterations defaults to 7, escalation warning at 5)"
 inputs:
   - name: scope
     type: string
@@ -38,8 +38,8 @@ outputs:
     description: Number of test-fix cycles executed
   - name: final-report
     type: file
-    pattern: generated-reports/api-exploratory-tester__*__audit.md
-    description: Final audit report
+    pattern: "the destination selected by the tester's output-mode: the plan folder (plan), the plan's delivery.md (delivery), or local-temp/<slug>/findings.md (local-temp)"
+    description: Final findings record, written wherever the invoked output-mode directs
 ---
 
 # API Quality Gate Workflow
@@ -105,12 +105,25 @@ envelopes), auth/authz boundaries, pagination, idempotency, boundary and edge-ca
 for GraphQL — nullability, partial errors, and query depth. It compares observed behaviour against
 both the contract and existing `specs/**` Gherkin.
 
-**Output**: `generated-reports/api-exploratory-tester__*__audit.md` with `AET-###` findings.
+**Output**: `AET-###` findings, written to the destination the selected `output-mode` directs — an
+existing plan's `delivery.md` under `delivery`, or `local-temp/<slug>/findings.md` under
+`local-temp`. The tester writes nowhere else; in particular it does not emit to `generated-reports/`.
 
 ### 2. Triage Against Mode
 
 Filter findings by the `mode` threshold. Findings below the threshold are reported but do not block
 termination.
+
+`api-exploratory-tester` rates findings on the **ISTQB severity scale** (Blocker / Critical / Major /
+Minor / Trivial), which is not the CRITICAL/HIGH/MEDIUM/LOW vocabulary the `mode` input names. Map
+severity to threshold as follows — Priority is a separate axis and never substitutes for severity:
+
+| `mode`   | In-threshold ISTQB severities            | Equivalent named level |
+| -------- | ---------------------------------------- | ---------------------- |
+| `lax`    | Blocker, Critical                        | CRITICAL only          |
+| `normal` | Blocker, Critical, Major                 | CRITICAL + HIGH        |
+| `strict` | Blocker, Critical, Major, Minor          | + MEDIUM               |
+| `ocd`    | Blocker, Critical, Major, Minor, Trivial | all levels             |
 
 ### 3. Fix (Agent Delegation)
 
@@ -126,12 +139,24 @@ to `specs/**` — a missing spec is a real gap, not a false positive.
 Rebuild and redeploy the service, then re-run step 1 against the **current** build. A fix verified
 only against source, never against a live response, does not count as verified.
 
-### 5. Iteration Control
+### 5. Double-Zero Confirmation
 
-Repeat steps 1-4 until zero in-threshold findings remain, or `max-iterations` is reached. Warn at
+A single zero-finding pass does not terminate the loop. When step 4 returns zero in-threshold
+findings, run **one more** full test pass against the same deployed build:
+
+- Still zero → the double-zero holds; proceed to step 6 with status `pass`.
+- Findings appeared → the first zero was a false negative; return to step 3.
+
+This mirrors the [UI Quality Gate](../ui/ui-quality-gate.md) and is mandated by the
+[Workflow Identifier Convention](../meta/workflow-identifier.md): a gate
+terminates on two consecutive clean validations, never one.
+
+### 6. Iteration Control
+
+Repeat steps 1-5 until the double-zero holds, or `max-iterations` is reached. Warn at
 iteration 5 that the loop is approaching its ceiling.
 
-- **`pass`** — zero in-threshold findings on a re-test against the current build.
+- **`pass`** — zero in-threshold findings on **two consecutive** re-tests against the current build.
 - **`partial`** — findings remain but iterations are exhausted.
 - **`fail`** — the service could not be reached, or the contract could not be resolved.
 
