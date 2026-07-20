@@ -495,6 +495,11 @@ For each `- [ ]` line:
 - Command placeholder without verbatim invocation (e.g., `run tests`): **HIGH**
 - Missing acceptance criterion on a checkbox whose action could complete partially without external proof: **HIGH**
 - Multiple missing elements on the same checkbox: still ONE finding (the fixer rewrites the line as a whole)
+- **Merge steps are exempt from (b) and (c).** A merge step is a governance gate, not an action item;
+  its acceptance criterion is the PR Merge Protocol's five preconditions, and supplying a scripted
+  `gh pr merge` command is not an improvement. Emitting a clarity finding against a merge step is a
+  standing false positive — `plan-fixer` is required to refuse it, so the finding can only generate
+  churn. Do not emit one.
 
 ### 12. Anti-Hallucination Scan (Step 5f — MANDATORY HARD RULE)
 

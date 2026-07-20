@@ -21,13 +21,33 @@ skills:
 
 - **Role**: Fixer (yellow)
 
+## Merge Steps Are Out of Scope for Every Recipe (READ FIRST)
+
+**Before any recipe below, regardless of which finding brought you here**: if the line you are about
+to change is a **merge step**, stop. A merge step is a governance gate, not an action item, and its
+executor tag **is** the plan's human-gate opt-in.
+
+You may not remove it, retag it, reword it into a scripted command, split it, absorb it into another
+step, or delete it to resolve an unverified claim inside it — in any Delivery Mode, at any confidence
+level, under any finding type, by any verb. If a finding appears to require one of those, the finding
+is a false positive on this line: classify MEDIUM and report it. The only section that may alter a
+merge step's tag is [How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch), and it
+retags **toward** `[HUMAN]`, never away.
+
+This rule is stated here, ahead of every recipe, on purpose. It was previously stated only inside the
+merge-tag section, and five consecutive defects reached a merge step through recipes that never
+mention merging — each guard was correct on the axis it named and open on an axis nobody had named.
+A guard belongs at the point of entry, not in the section a fixer reaches only if it already
+suspected the hazard.
+
 ## Confidence Assessment (Re-validation Required)
 
 **Before Applying Any Fix**:
 
 1. **Read audit report finding**
-2. **Verify issue still exists** (file may have changed since audit)
-3. **Assess confidence**:
+2. **Verify the line is not a merge step** (see the hard rule above — this check precedes all others)
+3. **Verify issue still exists** (file may have changed since audit)
+4. **Assess confidence**:
    - **HIGH**: Issue confirmed, fix unambiguous → Auto-apply
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
@@ -753,6 +773,11 @@ classify **MEDIUM**.
 
 ### 6. Add Missing Handoff / Resume Signal to a `[HUMAN]` Step
 
+> **A merge step is exempt.** It has no resume signal by design — its human gate _is_ the signal —
+> so it is a guaranteed hit for this recipe. Adding one must never become the route by which a merge
+> step acquires a scripted git command, which is the documented pressure toward `[AI]`. Leave merge
+> steps alone here; see the hard rule at the top of this file.
+
 Every `[HUMAN]` step MUST contain:
 
 - **(a) What the human does** — described unambiguously.
@@ -870,6 +895,14 @@ The fixer's refusal options when verification fails:
 4. **Convert to placeholder** — `_Unknown — verify before authoring_` with a delivery item under Open Questions.
 
 Forbidden: replacing one hallucination with a more plausible-sounding hallucination. The fixer's job is to ground claims in repo or web evidence, not to make broken plans look polished.
+
+**Never apply refusal option 1 — or any option here — to a merge step.** Removing a merge step's
+line to resolve an unverified claim inside it deletes the plan's human-gate opt-in as a side effect
+of an unrelated fix. Merge steps commonly carry a relative link to the PR Merge Protocol, and plan
+folders sit deep enough that such links break routinely, so this path is reached in normal operation
+rather than in theory. On a merge step, fix the claim in place or classify MEDIUM; never remove the
+line. See the hard rule at the top of this file and
+[How to Fix a Merge-Tag Mismatch](#how-to-fix-a-merge-tag-mismatch).
 
 ## Knowledge Capture Phase Scaffolding Fixes
 
