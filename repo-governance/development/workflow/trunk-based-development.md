@@ -42,7 +42,7 @@ This practice implements/respects the following conventions:
 
 - **[Commit Message Convention](./commit-messages.md)**: TBD workflow requires small, frequent commits with clear conventional commit messages to maintain navigable history.
 
-- **[Code Quality Convention](../quality/code.md)**: Pre-push hooks run affected tests before pushing to main, enforcing quality gates in the TBD workflow.
+- **[Code Quality Convention](../quality/code.md)**: Pre-push hooks run affected tests before **any** push — to a PR branch or to `main` — enforcing quality gates in the TBD workflow.
 
 ## What is Trunk Based Development?
 
@@ -253,7 +253,7 @@ if (betaUsers.includes(currentUser.email)) {
 
 ### Continuous Integration
 
-**Every commit to `main` triggers CI/CD**:
+**Every push triggers CI/CD** — on the PR under `*-to-pr` modes, and on `main` for direct pushes and after any merge:
 
 1. **Automated tests** run on every push
 2. **Build verification** ensures code compiles
@@ -302,7 +302,7 @@ FAIL: **Bad large changes**:
 **How to break down work**:
 
 1. **Identify smallest deliverable**: What's the tiniest useful piece?
-2. **Commit that piece**: Push to `main`
+2. **Commit that piece**: push it to the delivery target for the declared mode (the PR branch by default)
 3. **Repeat**: Build on top of previous work
 4. **Use feature flags**: Hide incomplete full features
 

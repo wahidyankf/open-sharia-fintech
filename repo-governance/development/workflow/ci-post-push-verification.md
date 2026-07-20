@@ -31,7 +31,7 @@ This practice implements/respects the following development practices:
 
 - **[CI Blocker Resolution Convention](../quality/ci-blocker-resolution.md)**: When a CI workflow fails after push, the failure is treated as a CI blocker. Investigate the root cause and fix it properly per that convention. Never defer or bypass.
 
-- **[Trunk Based Development Convention](./trunk-based-development.md)**: TBD requires that `main` is always in a releasable state. A push that breaks CI leaves `main` in an unreleasable state. This convention closes that gap by mandating verification after every push to `main`.
+- **[Trunk Based Development Convention](./trunk-based-development.md)**: TBD requires that `main` is always in a releasable state. Work that breaks CI would leave `main` unreleasable once it lands. This convention closes that gap by mandating verification after every push — on the PR branch under the default `worktree-to-pr`, which catches the breakage _before_ it can reach `main`, and on `main` itself under the direct-push modes, where there is no earlier checkpoint.
 
 - **[Git Push Default Convention](./git-push-default.md)**: The default integration target is a PR branch (`worktree-to-pr`); the direct-push modes remain available where a plan declares them. Under the direct-push modes there is no PR review buffer at all, so CI post-push verification is the only mechanism that catches what the pre-push hook missed; under `worktree-to-pr` it is what makes the PR green before the merge preconditions can hold.
 

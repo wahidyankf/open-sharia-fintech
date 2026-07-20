@@ -7,7 +7,7 @@ description: Trunk Based Development workflow - all development on main branch w
 
 ## Purpose
 
-This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository where all development happens on the `main` branch with small, frequent commits.
+This Skill provides comprehensive guidance on **Trunk Based Development (TBD)** - the git workflow used throughout this repository: small, frequent commits integrated continuously into `main` through short-lived, single-purpose branches. The repo-wide default delivery mode is `worktree-to-pr`; direct commit to `main` remains available as an explicitly declared mode.
 
 **When to use this Skill:**
 

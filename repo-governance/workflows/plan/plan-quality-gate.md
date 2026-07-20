@@ -422,7 +422,10 @@ The plan-checker validates:
 - **Clarity**: Clear problem statements, well-defined scope, unambiguous requirements
 - **Operational Readiness** (CRITICAL): Plans must include all of the following:
   - **Local quality gates**: Steps to run affected tests, linting, typecheck locally before pushing (`nx affected -t typecheck lint test:quick specs:coverage`)
-  - **Post-push CI verification**: Steps to monitor and verify GitHub Actions/workflows pass after pushing to main, with instructions to fix failures immediately
+  - **Post-push CI verification**: Steps to monitor and verify GitHub Actions/workflows pass after
+    the push — against the plan's declared delivery target (the PR's check run under `*-to-pr`,
+    `origin main` under the direct-push modes) — with instructions to fix failures immediately. This
+    requirement is delivery-mode-independent; a `*-to-pr` plan is **not** exempt
   - **Development environment setup**: Steps to set up the dev environment for the features being built (dependencies, env vars, DB, dev server)
   - **Fix-all-issues instruction**: Explicit instruction to fix ALL failures found during quality gates — including preexisting issues not caused by the current changes (root cause orientation principle)
   - **Thematic commit guidance**: Instruction to commit changes thematically with Conventional Commits format, splitting different domains/concerns into separate commits

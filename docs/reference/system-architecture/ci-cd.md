@@ -286,21 +286,24 @@ repo-wide `md links validate` check runs as the `md-links` job in this workflow.
    - Commit-msg hook validates format
    - Commit created
 
-4. **Push to Remote**:
+4. **Push to Remote** — target follows the declared Delivery Mode:
 
    ```bash
+   # Default (`worktree-to-pr`): push the short-lived plan branch
+   git push origin <plan-branch>
+
+   # Direct-push modes, when explicitly declared:
    git push origin main
    ```
 
-   - Pre-push hook runs:
+   - Pre-push hook runs (on any push target):
      - Tests affected projects
      - Lints markdown
 
-5. **Create Pull Request** (if using PR workflow):
-   - GitHub Actions run:
-     - Format check
-     - Link validation
-   - Review and merge
+5. **Open a Pull Request** — the default path (`worktree-to-pr`); skip only under a declared direct-push mode:
+   - GitHub Actions run the full quality gate on every PR event
+   - PR-Review Maker→Fixer Cycle runs before the merge
+   - Merge once the five hardened merge preconditions hold — `[AI]` by default
 
 6. **Deploy** (for Vercel-deployed apps):
 
