@@ -557,7 +557,7 @@ See [Git Push Default Convention](../../../repo-governance/development/workflow/
 
 **Related Conventions**:
 
-- [Git Push Default Convention](../../../repo-governance/development/workflow/git-push-default.md) - PR opt-in rules for AI agents and plans
+- [Git Push Default Convention](../../../repo-governance/development/workflow/git-push-default.md) - The PR-branch-as-default push target, and the direct-push modes as explicit selections
 - [Commit Message Convention](../../../repo-governance/development/workflow/commit-messages.md) - Conventional Commits format
 - [Implementation Workflow](../../../repo-governance/development/workflow/implementation.md) - Development workflow stages
 - [Plans Organization](../../../repo-governance/conventions/structure/plans.md) - Git workflow in plans

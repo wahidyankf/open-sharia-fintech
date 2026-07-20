@@ -293,6 +293,45 @@ together so byte-identity holds. Verified today: `grep -rn "Kiro" repo-governanc
   durable fix: `plan-checker` should reject an acceptance criterion whose only evidence is the same
   regex the delivery step used to make its edits.
 
+## Learning: round four — the paraphrase, where no shared vocabulary exists to search for
+
+- **Context**: after three rounds of Delta-12 corrections, a fourth checker pass (briefed to search
+  **paraphrases and synonyms**, explicitly forbidden from reusing any prior pattern) found two more
+  survivors in `.claude/skills/`: one-line convention summaries reading
+  `- [PR Merge Protocol](...) - Explicit user approval required, all quality gates must pass`.
+- **Observation**: these contain neither "human" nor "merge" as the actor phrase. No variant of the
+  concept sweep — bracketed, unbracketed, either term order, any plurality — could ever have matched
+  them, because they state the old rule in words the old rule never used. Their correctly-fixed
+  siblings (`development/README.md:109`, `development/workflow/README.md:47`) summarize the _same_
+  file and _were_ swept, so this is the round-2 sibling-copy blind spot recurring in a directory the
+  round-2 fix did not reach.
+- **Why it matters more than a doc nit**: both are widely-loaded reference surfaces —
+  `swe-developing-applications-common` serves the whole `swe-*-dev` family, `plan-creating-project-plans`
+  serves `plan-maker`. A wrong one-line summary in a loaded skill steers agent behavior, and agents
+  read the summary far more often than the convention it points at.
+- **Why it might generalize**: a concept sweep bounded by _any_ vocabulary cannot find a paraphrase.
+  The tractable move is not a better regex but a different index: enumerate every **inbound reference
+  to the changed document** (`grep -rn "pr-merge-protocol.md"`) and re-read each referring sentence,
+  regardless of its wording. Link targets are stable where phrasing is not. Durable fix candidate:
+  when a plan rewrites a convention's thesis, require a checkbox that sweeps every file linking to
+  that convention, not every file matching the old rule's phrasing.
+
+## Learning: check the real invocation before calling a validator failure a defect
+
+- **Context**: running `rhino-cli md mermaid validate` bare at the Phase 5 pre-push gate returned
+  exit 1 with 4 violations, all inside `apps/rhino-cli/tests/fixtures/state/` — the validator's own
+  **deliberately-invalid negative fixtures** (over-wide chains, over-long labels), which exist
+  precisely to make the validator fail.
+- **Observation**: `main-ci.yml:114` invokes the same command with
+  `--exclude apps/rhino-cli/tests/fixtures`. The bare invocation was the error, not the repo. Had I
+  treated it as a preexisting defect, the "fix" would have targeted `apps/rhino-cli/**` — inside the
+  tri-repo byte-identity boundary — and manufactured a three-repo parity plan for a non-problem.
+- **Why it might generalize**: same family as the already-recorded no-op-Nx-target trap. Before
+  citing a validator's result as evidence of anything, read how CI and the git hooks actually invoke
+  it; a command that looks canonical in isolation may be missing the flags that make it meaningful.
+  Both failure directions are real: a missing flag can invent failures, and a no-op target can invent
+  passes.
+
 ## Plan-start baseline SHAs
 
 Recorded 2026-07-20 via `git -C <repo> rev-parse origin/main` after `git fetch origin main` in each

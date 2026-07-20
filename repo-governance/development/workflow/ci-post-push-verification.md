@@ -33,7 +33,7 @@ This practice implements/respects the following development practices:
 
 - **[Trunk Based Development Convention](./trunk-based-development.md)**: TBD requires that `main` is always in a releasable state. A push that breaks CI leaves `main` in an unreleasable state. This convention closes that gap by mandating verification after every push to `main`.
 
-- **[Git Push Default Convention](./git-push-default.md)**: The default push is direct to `origin main`. Because there is no PR review buffer, CI post-push verification is the mechanism that catches what the pre-push hook missed.
+- **[Git Push Default Convention](./git-push-default.md)**: The default integration target is a PR branch (`worktree-to-pr`); the direct-push modes remain available where a plan declares them. Under the direct-push modes there is no PR review buffer at all, so CI post-push verification is the only mechanism that catches what the pre-push hook missed; under `worktree-to-pr` it is what makes the PR green before the merge preconditions can hold.
 
 ## The Rule
 
@@ -213,5 +213,5 @@ Result: All steps passed. Work is complete.
 - [CI Monitoring Convention](./ci-monitoring.md) — Safe monitoring mechanics: ScheduleWakeup every 2-5 min as default, `gh run watch` only for <5 min jobs, trigger discipline, rate-limit recovery.
 - [CI Blocker Resolution Convention](../quality/ci-blocker-resolution.md) — How to investigate and fix CI failures found during verification.
 - [Trunk Based Development Convention](./trunk-based-development.md) — Why `main` must remain releasable at all times.
-- [Git Push Default Convention](./git-push-default.md) — Default push behavior (direct to `origin main`, no PR buffer).
+- [Git Push Default Convention](./git-push-default.md) — Default push behavior (a PR branch under the default `worktree-to-pr`; direct to `origin main` under the explicitly-selected direct-push modes, which have no PR buffer).
 - [Code Quality Convention](../quality/code.md) — Pre-push hook quality gates that this convention extends.

@@ -267,7 +267,7 @@ When proposing or executing a dependency bump, follow these steps in order:
 **Related Development Practices:**
 
 - [Reproducible Environments Convention](./reproducible-environments.md) — Runtime pinning and lockfile discipline that this policy extends
-- [Trunk Based Development Convention](./trunk-based-development.md) — Bumps follow the same direct-to-main publish path
+- [Trunk Based Development Convention](./trunk-based-development.md) — Bumps follow the same delivery-mode rules as any other change (`worktree-to-pr` by default)
 - [Native-First Toolchain Management](./native-first-toolchain.md) — Toolchain version management via `rhino-cli doctor`
 - [CI Blocker Resolution Convention](../quality/ci-blocker-resolution.md) — CVE-related CI failures are resolved per root-cause discipline, not suppressed
 

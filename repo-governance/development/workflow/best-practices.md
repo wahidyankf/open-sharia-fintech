@@ -776,7 +776,7 @@ See [Git Push Default Convention](./git-push-default.md) for complete rules.
 - [Implementation Workflow Convention](./implementation.md) - Three-stage methodology
 - [Reproducible Environments Convention](./reproducible-environments.md) - Environment practices
 - [Anti-Patterns](./anti-patterns.md) - Common mistakes to avoid
-- [Git Push Default Convention](./git-push-default.md) - PR opt-in rules for AI agents and plans
+- [Git Push Default Convention](./git-push-default.md) - The PR-branch-as-default push target, and the direct-push modes as explicit selections
 
 ## Summary
 
