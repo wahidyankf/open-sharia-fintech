@@ -49,22 +49,29 @@ git merge feature/user-dashboard
 **Solution:**
 
 ```bash
-# Work on main with feature flags
-git checkout main
+# Split the work into phases. Each phase gets its own short-lived branch and PR,
+# and lands within a day or two -- the default `worktree-to-pr` mode.
+git worktree add worktrees/dashboard-widget -b dashboard-widget
 
-# Commit incremental changes daily
+# Commit incremental changes; the feature flag keeps the half-built UI dark
 git commit -m "feat(dashboard): add user widget (flag OFF)"
-git push origin main
+git push origin dashboard-widget
+gh pr create --draft --base main
+# ... review cycle + CI, then merge. Next phase gets a fresh branch and PR.
 
 # Enable when ready
 # config: ENABLE_USER_DASHBOARD=true
 ```
 
+Under a declared direct-push mode the same shape applies without the branch and PR — commit and
+`git push origin main` daily. Either way the fix is the same: **integrate frequently and hide
+incomplete work behind a flag**, so no branch needs to stay open.
+
 **Rationale:**
 
-- Daily integration prevents conflicts
-- Code always on current main
-- Feature flags control visibility
+- Frequent integration prevents conflicts — the branch's _lifespan_ is the problem, not its existence
+- Each branch is single-purpose and disposable, so it never diverges far from `main`
+- Feature flags control visibility, removing the reason to hold work back
 - Faster feedback
 
 ### Anti-Pattern 2: Large, Infrequent Commits

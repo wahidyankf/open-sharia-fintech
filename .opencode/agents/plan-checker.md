@@ -357,7 +357,7 @@ After validating delivery checklist structure (Step 5), verify the plan includes
    - Must include linting and typecheck steps
 
 2. **Post-Push CI/CD Verification**
-   - Plan MUST include steps to manually verify related GitHub Actions/workflows pass after pushing to main
+   - Plan MUST include steps to manually verify related GitHub Actions/workflows pass after the push — against the plan's declared delivery target (the PR's check run under `*-to-pr`; `origin main` under the direct-push modes). A plan that hardcodes `main` while declaring a `*-to-pr` mode is itself a finding
    - Must specify WHICH workflows to monitor (not just "check CI")
    - Must include instructions to watch for failures and fix them before moving on
 
