@@ -144,8 +144,12 @@ $ git -C ose-primer status --porcelain
 fatal: this operation must be run in a work tree
 
 $ git -C ose-primer fetch origin main:main
-ok fetched
 ```
+
+Unlike the two commands above, this one exits `0` with no error — the point of this example. It is
+shown here with no output line because a `fetch` that finds nothing new to retrieve (the ref is
+already at that tip) prints nothing at all; see the worked example below for the same command
+against a ref that genuinely has new commits to pull, which does print an update line.
 
 `git merge` requires a work tree unconditionally; a bare repository has none. The refspec fetch form
 is the only one of the two idioms that runs in both topologies, which is why the table above keys on
@@ -171,10 +175,12 @@ same-named local branch sitting elsewhere. The bare-repo reconcile closed the ga
 
 ```console
 $ git -C ose-primer fetch origin main:main
+72640e287..53d9081b7  main       -> main
 $ git -C ose-primer rev-list --left-right --count origin/main...main
 0 0
 
 $ git -C ose-infra fetch origin main:main
+fe4a0a66e..f6ecdcc0b  main       -> main
 $ git -C ose-infra rev-list --left-right --count origin/main...main
 0 0
 ```
