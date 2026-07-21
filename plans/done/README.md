@@ -12,7 +12,7 @@ Archived plans and completed project planning documents.
   design decisions, a 128-file `syllabus/` corpus) but was **too wide to deliver as one PR**: its
   work splits cleanly along an ownership boundary into five independently mergeable plans, so it was
   split rather than started. Its entire scope was **transferred, not abandoned**, to the
-  `ayokoding-www-learning-path-01..05-*` plans in [`../backlog/`](../backlog/README.md), whose `NN-`
+  `ayokoding-learning-path-01..05-*` plans in [`../backlog/`](../backlog/README.md), whose `NN-`
   prefix is the execution sequence. This folder is retained as the provenance record those five
   plans cite; it is not schedulable. Superseded 2026-07-21.
 - [2026-07-20: parallel-orchestration-shared-machine-governance](./2026-07-20__parallel-orchestration-shared-machine-governance/README.md) —

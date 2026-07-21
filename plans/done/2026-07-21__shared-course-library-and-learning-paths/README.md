@@ -5,11 +5,11 @@
 > No phase of this plan was ever executed. Its entire scope was **transferred, not abandoned**, to
 > five independently mergeable plans in [`../../backlog/`](../../backlog/README.md), whose `NN-`
 > prefix is the execution sequence:
-> [`01-url-restructure`](../../backlog/ayokoding-www-learning-path-01-url-restructure/README.md),
-> [`02-schema-and-prerequisite-dag`](../../backlog/ayokoding-www-learning-path-02-schema-and-prerequisite-dag/README.md),
-> [`03-navigation-ui`](../../backlog/ayokoding-www-learning-path-03-navigation-ui/README.md),
-> [`04-course-authoring`](../../backlog/ayokoding-www-learning-path-04-course-authoring/README.md),
-> and [`05-manifests`](../../backlog/ayokoding-www-learning-path-05-manifests/README.md).
+> [`01-url-restructure`](../../backlog/ayokoding-learning-path-01-url-restructure/README.md),
+> [`02-schema-and-prerequisite-dag`](../../backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md),
+> [`03-navigation-ui`](../../backlog/ayokoding-learning-path-03-navigation-ui/README.md),
+> [`04-course-authoring`](../../backlog/ayokoding-learning-path-04-course-authoring/README.md),
+> and [`05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md).
 >
 > This folder is retained **only** as the provenance record those five plans cite. Its `syllabus/`
 > corpus and design assets now live in `02-schema-and-prerequisite-dag` and `03-navigation-ui`
