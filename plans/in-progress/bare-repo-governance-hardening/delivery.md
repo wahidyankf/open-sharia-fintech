@@ -163,7 +163,8 @@ graph TD
 - `<PARITY>` = `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
 - `<PROMO>` = `repo-governance/workflows/plan/plan-idea-promotion-planning.md`
 - `<MERGE>` = `repo-governance/development/workflow/pr-merge-protocol.md`
-- `<GATE>` = `repo-governance/workflows/pr/pr-review-quality-gate.md` _(source note; unchanged)_
+- `<GATE>` = `repo-governance/workflows/pr/pr-review-quality-gate.md` _(source note for C5;
+  originally left unedited, corrected during PR-review cycle 1 — see the C5 checklist item below)_
 - `<SDLC>` = `docs/reference/sdlc-gate-standard.md`
 - `<PLANDIR>` = `plans/in-progress/bare-repo-governance-hardening/` — this plan's own folder. It was
   promoted out of `plans/backlog/` on 2026-07-21; neither stage carries a date prefix, so the move
@@ -337,15 +338,19 @@ graph TD
 - [x] [AI] `grep -Fc "bare-repo-delivery-mode-governance-hardening" plans/ideas/README.md` exits 1
 - [x] [AI] `grep -Fc "bare-repo-governance-hardening" plans/in-progress/README.md` prints at least 1,
       and the same grep against `plans/backlog/README.md` exits 1
-- [x] [AI] `npx rhino-cli md links validate` reports zero broken links (no surviving link points at
-      a deleted brief)
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links
+validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
+apps/ose-www/content` reports zero broken links (no surviving link points at a deleted
+      brief)
 - [x] [AI] `git status --porcelain` lists nothing unexpected — every changed path is one this phase
       authored
 
 > **Pause Safety**: the two briefs are retired (at promotion time) and the plan is registered in the
 > `in-progress` index; the repository is self-consistent (no dangling links to the deleted files) and no
 > governance document has been touched yet. Safe to stop. To resume: run
-> `npx rhino-cli md links validate` and confirm it is still clean.
+> `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate
+--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` and
+> confirm it is still clean.
 
 ---
 
@@ -456,9 +461,12 @@ graph TD
 - [x] [AI] In `<C1>`, add the **Related Documentation** section cross-linking
       `no-destructive-git-operations.md`, `worktree-and-artifact-cleanup.md`, `git-push-safety.md`,
       `worktree-setup.md`, and `docs/reference/sdlc-gate-standard.md`
-      — acceptance: `npx rhino-cli md links validate` reports zero broken links in `<C1>`
-      — **Result**: §Related Documentation written with all five links. `npx rhino-cli` could not be
-      invoked this session (no Bash tool available — see the Phase 2 Gate note); every link target
+      — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md
+links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
+apps/ose-www/content` reports zero broken links in `<C1>`
+      — **Result**: §Related Documentation written with all five links. The `cargo run` form above
+      could not be invoked this session (no Bash tool available — see the Phase 2 Gate note); every
+      link target
       was instead confirmed to exist via `Glob`/`Read` (all five files present at the linked relative
       paths), and the two same-document anchors (`#verify-topology-first`, `#terminal-reconcile`)
       were confirmed to match their headings' GitHub-slugger slugs by inspection
@@ -520,7 +528,7 @@ graph TD
 - [x] [AI] `grep -Fc "bare-repo-landing-method.md" repo-governance/development/workflow/no-destructive-git-operations.md`
       prints `2`
       — **Result**: exactly 2
-- [x] [AI] `npx rhino-cli md links validate` and `npx rhino-cli md mermaid validate` both exit 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate` both exit 0
       — **Run for real** after the authoring executor finished (it had no Bash tool, so it correctly
       left this unticked rather than claiming a substitute pass). Actual results:
       `md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
@@ -550,7 +558,9 @@ graph TD
 > registered in both indexes; every cross-link resolves per manual verification. No other governance
 > document has been edited (`worktree-and-artifact-cleanup.md` confirmed unchanged by inspection), so
 > the corpus is internally consistent. Nothing is staged or committed. Safe to stop. To resume: run
-> `npx rhino-cli md links validate`, `npx rhino-cli md mermaid validate`, and
+> `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`,
+> `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate`,
+> and
 > `npx nx affected -t typecheck lint test:quick specs:coverage` with a Bash-capable executor, confirm
 > all three are clean, tick the two remaining Gate checkboxes, then proceed to Phase 3 (which also
 > performs the still-pending Phase 2 commit as its own first staged change, per the Phase 2 Commit
@@ -608,17 +618,25 @@ graph TD
       Fix the class, not only the two sites the briefs named
       — acceptance: a per-site verdict table is recorded in this checklist, one row per site, each
       marked consistent
-      — **Result**: swept all four named sites (plus checked for any other occurrence of
-      `main-to-origin-main`/`main-to-*`/`main-to-pr` in the file via Grep — 8 total occurrences,
-      all accounted for below or in C4a/C4b). Two sites were already accurate and needed no edit;
-      two understated the bareness constraint and were fixed:
+      — **Result (corrected during PR-review cycle 1)**: the original pass here swept four named
+      sites and cross-checked all raw occurrences of
+      `main-to-origin-main`/`main-to-*`/`main-to-pr` in the file via Grep (8 total), claiming all 8
+      were accounted for below or in C4a/C4b. That claim was false: two of the 8 raw occurrences —
+      the `### main-to-origin-main` mode **definition** itself (L151-155) and the Step 6 item 8
+      `plan-maker` handoff instruction (L457) — were not covered by any row below and carried no
+      bareness carve-out. L151-155 was the more serious miss: it is this workflow's own canonical
+      definition of the mode, and as written it described something unperformable under the
+      workflow's default `repos` parity set (which always contains two bare repos). Both are now
+      fixed and added as rows below, bringing the table to six rows covering all 8 occurrences:
 
-  | Site                                                                     | Pre-sweep state                                                                                                                                                                                            | Action                                                                                                                                                                              | Verdict                           |
-  | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-  | The `**Note on ose-primer**:` paragraph (~L198-205)                      | Accurate but scoped to `ose-primer` only, even though `ose-infra` is an equally bare parity-set member                                                                                                     | Retitled to "Note on bare-repo parity targets (`ose-primer`, `ose-infra`)"; body now names both repos and both unavailable modes explicitly, cross-linking `<C1>`                   | Consistent                        |
-  | The `mode` input's `values:` frontmatter list (L18)                      | `[main-to-origin-main, worktree-to-origin-main, worktree-to-pr]` — this workflow's own 3-value planning-delivery vocabulary (distinct from the plan's own 4-value Delivery Mode)                           | No edit — this is the general vocabulary; the Note + meta-question already carve out the bare-target exception per-repo, and §Relationship confirms per-repo divergence is expected | Consistent (unchanged, correctly) |
-  | §Relationship to Each Repo's Own Delivery Mode (~L207-224)               | The worked example said `ose-infra` "may resolve to a direct-push mode" without saying which — ambiguous, since `main-to-origin-main` is NOT available to a bare repo but the sentence didn't rule it out  | Disambiguated to name `worktree-to-origin-main` explicitly and state why `main-to-origin-main` does not apply to `ose-infra`                                                        | Consistent                        |
-  | The Step 8 Part A "**Per mode**:" descriptions (near the end, ~L545-552) | The `main-to-origin-main` bullet said "Push each repo's commits to `origin main` directly" with no bare-repo carve-out — read literally, this would attempt a direct push for a bare parity-set member too | Added a clause: not available for any bare repo in the set (`ose-primer`, `ose-infra`); those targets deliver via `worktree-to-origin-main` instead                                 | Consistent                        |
+  | Site                                                                     | Pre-sweep state                                                                                                                                                                                               | Action                                                                                                                                                                                                                                                                                                           | Verdict                           |
+  | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+  | The `### main-to-origin-main` mode definition (L151-155)                 | No bareness carve-out at all — the mode's own canonical definition, read literally, applied to every repo in the parity set including its two default bare members                                            | Added a clause: unavailable for any bare-repo parity target, cross-linking the Note (below) for the worktree-based alternative                                                                                                                                                                                   | Consistent (fixed, cycle 1)       |
+  | The `**Note on ose-primer**:` paragraph (~L198-205)                      | Accurate but scoped to `ose-primer` only, even though `ose-infra` is an equally bare parity-set member                                                                                                        | Retitled to "Note on bare-repo parity targets (`ose-primer`, `ose-infra`)"; body now names both repos and both unavailable modes explicitly, cross-linking `<C1>`                                                                                                                                                | Consistent                        |
+  | The `mode` input's `values:` frontmatter list (L18)                      | `[main-to-origin-main, worktree-to-origin-main, worktree-to-pr]` — this workflow's own 3-value planning-delivery vocabulary (distinct from the plan's own 4-value Delivery Mode)                              | No edit — this is the general vocabulary; the Note + meta-question already carve out the bare-target exception per-repo, and §Relationship confirms per-repo divergence is expected. This verdict's premise (that the mode-definition prose carries the exception) is now true because of the L151-155 fix above | Consistent (unchanged, correctly) |
+  | §Relationship to Each Repo's Own Delivery Mode (~L207-224)               | The worked example said `ose-infra` "may resolve to a direct-push mode" without saying which — ambiguous, since `main-to-origin-main` is NOT available to a bare repo but the sentence didn't rule it out     | Disambiguated to name `worktree-to-origin-main` explicitly and state why `main-to-origin-main` does not apply to `ose-infra`                                                                                                                                                                                     | Consistent                        |
+  | The Step 8 Part A "**Per mode**:" descriptions (near the end, ~L545-552) | The `main-to-origin-main` bullet said "Push each repo's commits to `origin main` directly" with no bare-repo carve-out — read literally, this would attempt a direct push for a bare parity-set member too    | Added a clause: not available for any bare repo in the set (`ose-primer`, `ose-infra`); those targets deliver via `worktree-to-origin-main` instead                                                                                                                                                              | Consistent                        |
+  | The Step 6 item 8 `plan-maker` handoff instruction (L457-464)            | Handed the full four-mode vocabulary for the plan's own future `## Delivery Mode` field with no bare-repo restriction stated or cross-linked, even though `<PLANS>` (the authoritative source) now states one | Added a cross-link to `<PLANS>#delivery-mode` naming it as the authoritative restriction for this field, distinct from the restriction the Modes section above places on this workflow's own vocabulary                                                                                                          | Consistent (fixed, cycle 1)       |
 
 - [x] [AI] **C5** — in `<MERGE>`, locate the **two** precondition-(a) enumeration sites by content:
       the `- **(a)**` bullet in §The Rule (~L47) and the `1. **(a)**` numbered item in
@@ -635,10 +653,27 @@ graph TD
 - [x] [AI] Confirm `<GATE>` is **unchanged** — it is the source note, not an edit site
       — acceptance: `git diff --name-only HEAD` does **not** list
       `repo-governance/workflows/pr/pr-review-quality-gate.md`
-      — **Result**: no `Edit`/`Write` call was made against this file this phase — it was read once
-      (for the exact heading/anchor text) and never modified. `git diff --name-only HEAD` could not
-      be run this session (no Bash tool — see the tooling note below); confirmed instead by
-      inspection (no tool call against this path in this phase's history)
+      — **Result (Phase 3 authoring pass)**: no `Edit`/`Write` call was made against this file this
+      phase — it was read once (for the exact heading/anchor text) and never modified.
+      `git diff --name-only HEAD` could not be run this session (no Bash tool — see the tooling note
+      below); confirmed instead by inspection (no tool call against this path in this phase's
+      history)
+      — **Reopened and corrected during PR-review cycle 1**: this "unedited source" decision was
+      wrong. `<MERGE>`'s own cross-link text at §The Rule routes the reader to `<GATE>` as the
+      **normative** definition of precondition (a) ("defined normatively in the PR Review Quality
+      Gate"), and at `c67b3f3a7` that normative site (`pr-review-quality-gate.md:235`) still read a
+      flat "**3 cycles**" with no floor qualifier and no cross-link to §Saturation, contradicting the
+      two derivative sites in `<MERGE>` that this step correctly qualified. A partial fix that leaves
+      the source of truth disagreeing with its own derivatives is worse than no fix — the same
+      failure mode `<GATE>`'s own "any future edit must change both together" rule (§Hardened Merge
+      Preconditions) exists to prevent. `<GATE>` precondition (a) (`pr-review-quality-gate.md:235`)
+      now carries the identical floor-not-ceiling qualifier and self-link to §Saturation that
+      `<MERGE>`'s two sites carry; `<PLANS>` (`plans.md:705`, already an edit site for C3) and
+      `plan-execution.md:742` — a fourth site stating the same precondition, found by the same sweep
+      — were brought into agreement too. `git diff --name-only HEAD` now **does** list
+      `repo-governance/workflows/pr/pr-review-quality-gate.md`; the (a)-(e) lettering itself is
+      untouched, only the floor-qualifier text changed, so `<GATE>`'s normative-lettering rule is
+      honored, not violated, by this correction
 - [x] [AI] **C6a** — in `docs/reference/sdlc-gate-standard.md` §Worktree-Agnostic Execution, locate
       the existing sentence prescribing `git rev-parse --git-common-dir` and "never treat `.git/` as
       a directory" (~L217). Extend that same paragraph with the **bareness question**: how to ask it
@@ -669,16 +704,25 @@ graph TD
       `<C1>`, `<SDLC>`, and `<PROMO>`
       — acceptance: a three-row verdict table is recorded in this checklist, one row per file, each
       marked consistent in wording and framing
-      — **Result**:
+      — **Result (corrected during PR-review cycle 1)**: the original pass here left `<SDLC>` and
+      `<PROMO>` keyed on **location** ("run from inside a linked worktree" / "from a linked
+      worktree") while `<C1>` was keyed on the **question itself** (unconditional) — an operative
+      divergence, since `git rev-parse --is-bare-repository` run from a bare repo's own gitdir does
+      answer the bareness question correctly, so a reader following `<SDLC>`/`<PROMO>` literally
+      would be compliant using the command there while a reader following `<C1>` would not. Resolved
+      by adopting `<C1>`'s unconditional form everywhere — it is the safer rule, since it spares the
+      reader from having to know where they are standing before deciding whether the command is safe
+      to run:
 
-  | File                                                                           | Framing                                                                                                                                                                                                                                    | Verdict                                |
-  | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
-  | `<C1>` (`bare-repo-landing-method.md`, §The forbidden command)                 | "documented scoping semantics, to be worked around by asking the right question" — answers a narrower, correctly-scoped question ("is _this checkout_ bare"); explicitly cites `git-worktree(1)` §CONFIGURATION FILE; never calls it a bug | Consistent                             |
-  | `<SDLC>` (`sdlc-gate-standard.md`, §Worktree-Agnostic Execution, new C6a text) | "that command answers 'is _this checkout_ bare' … not 'is the repository bare'" — same scoping distinction, framed as "documented design"; never calls it a bug                                                                            | Consistent                             |
-  | `<PROMO>` (`plan-idea-promotion-planning.md`, Phase 0 pre-flight)              | Terser — states the prohibition ("never `git rev-parse --is-bare-repository` from a linked worktree") without restating the scoping rationale, but does not contradict it or call it a bug                                                 | Consistent (terser, not contradictory) |
+  | File                                                                           | Framing                                                                                                                                                                                                                                                                           | Verdict    |
+  | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+  | `<C1>` (`bare-repo-landing-method.md`, §The forbidden command)                 | "documented scoping semantics, to be worked around by asking the right question" — answers a narrower, correctly-scoped question ("is _this checkout_ bare"); explicitly cites `git-worktree(1)` §CONFIGURATION FILE; never calls it a bug; unconditional — no location qualifier | Consistent |
+  | `<SDLC>` (`sdlc-gate-standard.md`, §Worktree-Agnostic Execution, new C6a text) | "never … `git rev-parse --is-bare-repository` **at all, regardless of where you are standing**" — same scoping distinction as before, now stated unconditionally; framed as "documented design"; never calls it a bug                                                             | Consistent |
+  | `<PROMO>` (`plan-idea-promotion-planning.md`, Phase 0 pre-flight)              | "never `git rev-parse --is-bare-repository`, in any topology, to answer whether a repository is bare" — terser than the other two, no longer scoped to a linked worktree, does not contradict them                                                                                | Consistent |
 
-  All three forbid the identical command for the identical purpose (determining repository
-  bareness from a linked worktree); none frames it as a bug per **F3**'s binding constraint.
+  All three now forbid the identical command for the identical purpose (determining repository
+  bareness) **unconditionally**, not only from a linked worktree; none frames it as a bug per
+  **F3**'s binding constraint.
 
 ### Local Quality Gates (Before Push)
 
@@ -686,9 +730,11 @@ graph TD
 - [ ] [AI] Run affected linting: `npx nx affected -t lint` — exits 0
 - [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick` — exits 0
 - [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — exits 0
-- [x] [AI] Run markdown gates: `npm run lint:md:fix` then `npx rhino-cli md links validate` and
-      `npx rhino-cli md mermaid validate` and `npx rhino-cli md heading-hierarchy validate`
-      — all exit 0
+- [x] [AI] Run markdown gates: `npm run lint:md:fix` then
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+      and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid
+validate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md
+heading-hierarchy validate` — all exit 0
       — **Result**: all green. `md links validate` was run in the **pre-push exclude form**
       (`--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`)
       because the bare repo-wide form is unsatisfiable — ~93 pre-existing broken links live under
@@ -754,7 +800,8 @@ graph TD
       — **Result**: 2 (Grep tool count; no Bash tool this session, see the tooling note below)
 - [x] [AI] `grep -Fc "any bare repo" <PARITY>` prints at least 1, and the per-site verdict table
       from C4c shows every site consistent
-      — **Result**: 1; the C4c verdict table above marks all four swept sites consistent
+      — **Result**: 1; the C4c verdict table above marks all six swept sites consistent (updated to
+      six during PR-review cycle 1 — see the C4c checklist item above)
 - [x] [AI] `grep -Fc "floor" <MERGE>` prints exactly `2`
       — **Result**: 2
 - [x] [AI] `grep -Fc "is-bare-repository" docs/reference/sdlc-gate-standard.md` prints at least 1
@@ -787,12 +834,12 @@ graph TD
 > **DISCHARGED** — a Bash-capable executor re-ran the named commands in this worktree immediately
 > after that pass, and all four are green:
 >
-> | Command (run from the worktree root)                                                                                   | Result                                                                        |
-> | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-> | `rhino-cli md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` | `All links valid! No broken links found.`                                     |
-> | `rhino-cli md mermaid validate repo-governance`                                                                        | `Found 0 violation(s) and 0 warning(s) in 31 file(s) (148 block(s) scanned).` |
-> | `rhino-cli md heading-hierarchy validate repo-governance`                                                              | exit 0                                                                        |
-> | `npx markdownlint-cli2 "repo-governance/**/*.md" "docs/reference/sdlc-gate-standard.md"`                               | `Linting: 203 file(s)` / `Summary: 0 error(s)`                                |
+> | Command (run from the worktree root)                                                                                                                                                  | Result                                                                        |
+> | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+> | `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` | `All links valid! No broken links found.`                                     |
+> | `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate repo-governance`                                                                        | `Found 0 violation(s) and 0 warning(s) in 31 file(s) (148 block(s) scanned).` |
+> | `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate repo-governance`                                                              | exit 0                                                                        |
+> | `npx markdownlint-cli2 "repo-governance/**/*.md" "docs/reference/sdlc-gate-standard.md"`                                                                                              | `Linting: 203 file(s)` / `Summary: 0 error(s)`                                |
 >
 > The bare repo-wide `md links validate` form is **not** the check to run — ~93 pre-existing broken
 > links live under `plans/done/`, so only the pre-push hook's exclude form is satisfiable. `nx affected`
@@ -1222,7 +1269,9 @@ graph TD
       — acceptance: `grep -Fc "bare-repo-governance-hardening" plans/done/README.md` prints at
       least 1
 - [ ] [AI] Update any other README that references this plan
-      — acceptance: `npx rhino-cli md links validate` exits 0
+      — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md
+links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
+apps/ose-www/content` exits 0
 - [ ] [AI] Commit the archival:
       `git commit -m "chore(plans): move bare-repo-governance-hardening to done"`
 - [ ] [AI] **Land the archival commit on `origin/main`.** Archival is plan-document work, not
@@ -1267,7 +1316,11 @@ graph TD
 
 - [ ] [AI] `test -d plans/done/YYYY-MM-DD__bare-repo-governance-hardening` exits 0, and both
       `test -d <PLANDIR>` and `test -d plans/backlog/bare-repo-governance-hardening` exit 1
-- [ ] [AI] `npx rhino-cli md links validate` exits 0 across the repo
+- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links
+validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
+apps/ose-www/content` exits 0 — the pre-push exclude form, not the bare repo-wide form:
+      ~93 pre-existing broken links live under `plans/done/`, so the unqualified form can never
+      exit 0 in this repo
 - [ ] [AI] Exactly **one** plan folder was archived, in `ose-public` — per **DD-10**, no sibling ever
       held one: `ls -d <PRIMER>/plans/*/bare-repo-governance-hardening` and
       `ls -d <INFRA>/plans/*/bare-repo-governance-hardening` both exit non-zero
