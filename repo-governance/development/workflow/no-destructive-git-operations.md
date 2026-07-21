@@ -53,6 +53,11 @@ keeps no undo history for changes that were never committed.
 - **[Worktree Toolchain Initialization](./worktree-setup.md)**: Establishes the worktree as the unit
   of isolation. This convention states what must never be done to a worktree that is not your own.
 
+- **[Bare-Repo Base-Worktree Landing Method](./bare-repo-landing-method.md)**: The procedure whose
+  safety guarantees this convention supplies — every step of that method (worktree removal, the
+  terminal reconcile, the refusal to force a ref update) uses the non-destructive equivalent this
+  convention prescribes.
+
 ## Forbidden Operations
 
 Forbidden without explicit per-instance approval. Grouped by what they destroy.
@@ -180,6 +185,9 @@ looks next. Before any bulk delete, `-n` / `--dry-run` costs nothing.
 - [Git Push Safety Convention](./git-push-safety.md) — the remote-side companion (force-push,
   hook bypass, per-instance approval)
 - [Worktree Toolchain Initialization](./worktree-setup.md) — worktree provisioning and setup
+- [Bare-Repo Base-Worktree Landing Method](./bare-repo-landing-method.md) — the procedure whose
+  safety guarantees this convention supplies, for landing changes into a repository with no primary
+  checkout
 - [Commit Message Convention](./commit-messages.md) — Conventional Commits format
 - [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) — the N+1
   model and the same-machine assumption this convention protects
