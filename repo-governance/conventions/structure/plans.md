@@ -705,8 +705,8 @@ the PR is considered done.
 
 **[AI] merges by default.** A `[HUMAN]` merge gate applies only where a plan's own step says so explicitly.
 The **preconditions are unchanged — only the actor is.** A PR still merges only when
-all five hardened merge preconditions hold (3 review cycles complete — a **floor, not a ceiling**,
-see [Saturation, Not a Fixed Count](../../workflows/pr/pr-review-quality-gate.md#saturation-not-a-fixed-count-loop-exit)
+all five hardened merge preconditions hold (3 review cycles complete — a **hard ceiling, not a
+floor**; a PR merges once (b)-(e) also hold, never on additional cycles beyond this count
 — **and the review loop not exited `escalated`**, 0 CRITICAL + 0 HIGH outstanding, branch up-to-date with the latest
 `origin/main` via a non-destructive forward update, all quality gates green, and the
 surface-conditional tester gates run-and-resolved or explicitly exempt — see the

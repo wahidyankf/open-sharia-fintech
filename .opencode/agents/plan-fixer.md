@@ -622,11 +622,13 @@ then write whichever mode they select.
 
 ### How to Fix a `*-to-pr` Plan Missing the PR-Review Maker→Fixer Cycle
 
-Insert the cycle steps (strictly sequential maker→fixer, default N=3, each cycle CI-green-gated)
-immediately before the PR-merge step, sourced verbatim in structure from the
+Insert the cycle steps (strictly sequential maker→fixer, default N=3 — a **hard ceiling, not a
+floor**, never extended and never exited early — each cycle CI-green-gated) immediately before the
+PR-merge step, sourced verbatim in structure from the
 [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md):
 one `- [ ] [AI] Invoke pr-review-maker on $PR` / `- [ ] [AI] Invoke pr-review-fixer on $PR` pair per
-cycle, a loop-exit condition (N cycles complete, or a cycle with zero new findings), and — where
+cycle, the loop-exit condition (N cycles complete — the loop runs the full fixed count regardless of
+per-cycle finding count), and — where
 the plan folder is tracked in this repo — an archival-in-PR step (`git mv` to `plans/done/` +
 README updates) committed inside the same PR, before the final merge step — whatever tag that step
 already carries. Never retag it while scaffolding; see the structural guard in

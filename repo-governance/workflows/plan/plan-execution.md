@@ -739,8 +739,7 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
   the PR must be GREEN before the next cycle starts. See the linked workflow for the full Loop
   Algorithm, posting mechanics, and escalation rules.
 - **Done-definition for `*-to-pr` modes** (all four items required):
-  1. **N review cycles complete** (default 3 minimum — but see
-     [Saturation, Not a Fixed Count](../pr/pr-review-quality-gate.md#saturation-not-a-fixed-count-loop-exit))
+  1. **N review cycles complete** (default 3 — a **hard ceiling**, never extended past this count)
      **and the review loop did not exit `escalated`** — an escalated exit blocks the merge on its
      own, whatever the other preconditions say.
   2. **Every inline review comment is answered** — a fix applied and pushed, or a reasoned reject,

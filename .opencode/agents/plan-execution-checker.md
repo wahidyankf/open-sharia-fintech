@@ -604,10 +604,12 @@ require the PR to be merged.
    - **PR's CI gates are green** on the current head SHA (`gh pr view <PR> --json statusCheckRollup`
      or equivalent). Not green: **CRITICAL** — plan is not done, regardless of other criteria.
    - **Review loop ran** — evidence of the PR-Review Maker→Fixer Cycle (default N=3 sequential
-     maker→fixer cycles) actually executing: `gh api graphql` `reviewThreads` shows maker-authored
-     review comments interleaved with fixer replies across the expected cycle count, each cycle
-     CI-green-gated. Fewer cycles than the plan specified with no documented early-exit reason
-     (nothing left to fix): **HIGH**. No review-loop evidence at all: **CRITICAL**.
+     maker→fixer cycles — a **hard ceiling, not a floor**, never extended and never exited early)
+     actually executing: `gh api graphql` `reviewThreads` shows maker-authored review comments
+     interleaved with fixer replies across the expected cycle count, each cycle CI-green-gated.
+     Fewer cycles than the plan specified: **HIGH** — there is no legitimate early-exit reason under
+     the hard-ceiling rule; a review loop either ran its full configured count or it did not.
+     No review-loop evidence at all: **CRITICAL**.
    - **Every thread answered/resolved** — `reviewThreads(isResolved: false)` returns zero unresolved
      threads, OR each remaining open thread carries an explicit escalation-to-`[HUMAN]` note in the
      PR description (the documented escalation path). An unresolved thread with no reply and no
@@ -631,7 +633,8 @@ require the PR to be merged.
 - `*-to-pr` mode: PR missing: **CRITICAL**
 - `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
 - `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**
-- `*-to-pr` mode: fewer review cycles than specified with no documented early-exit reason: **HIGH**
+- `*-to-pr` mode: fewer review cycles than specified: **HIGH** (no legitimate early exit exists under
+  the hard-ceiling rule)
 - `*-to-pr` mode: unresolved thread with no reply and no `[HUMAN]` escalation note: **HIGH**
 - `*-to-pr` mode: archival-in-PR missing or deferred post-merge (where applicable): **HIGH**
 - Filing a finding solely because a `*-to-pr` PR remains unmerged: **not a finding** (false positive

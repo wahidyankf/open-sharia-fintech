@@ -48,8 +48,8 @@ A PR merges only when **all five** hold:
   the review loop did not exit `escalated`** — see
   [Loop-Exit and Escalation Rules](../../workflows/pr/pr-review-quality-gate.md#loop-exit-and-escalation-rules).
   An `escalated` exit blocks the merge on its own, for **any** merge actor, and no combination of the
-  other four preconditions discharges it. The configured count is a **floor, not a ceiling** — see
-  [Saturation, Not a Fixed Count](../../workflows/pr/pr-review-quality-gate.md#saturation-not-a-fixed-count-loop-exit);
+  other four preconditions discharges it. The configured count is a **hard ceiling, not a floor** —
+  a PR merges once (b)-(e) also hold, never on additional cycles beyond this count;
 - **(b)** 0 CRITICAL and 0 HIGH findings are outstanding;
 - **(c)** the branch is up-to-date with the latest `origin/main`, brought forward
   **non-destructively** if behind (never a shared-history rewrite);
@@ -169,8 +169,8 @@ Do not substitute the shorter list that used to live here.
 
 1. **(a)** The review cycles are complete **and the loop did not exit `escalated`** — an escalated
    exit blocks the merge by itself, whatever the other four preconditions say. The configured count
-   is a **floor, not a ceiling** — see
-   [Saturation, Not a Fixed Count](../../workflows/pr/pr-review-quality-gate.md#saturation-not-a-fixed-count-loop-exit).
+   is a **hard ceiling, not a floor** — a PR merges once (b)-(e) also hold, never on additional
+   cycles beyond this count.
 2. **(b)** 0 CRITICAL and 0 HIGH findings outstanding, verified against the PR's own diff rather than
    against thread-resolution state.
 3. **(c)** The branch is non-destructively up to date with the target branch (no merge conflicts).

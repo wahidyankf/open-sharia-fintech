@@ -179,9 +179,9 @@ adapted to a **2-role** loop rather than 3: this agent's own confidence-scoring 
 otherwise perform, so findings flow directly from this maker to `pr-review-fixer` with no
 intermediate validation stage.
 
-The workflow spawns a **fresh instance** of this agent each cycle (default 3 sequential cycles), fed
-the prior cycles' findings and their resolution state so it never repeats an already-posted,
-already-resolved comment.
+The workflow spawns a **fresh instance** of this agent each cycle (default 3 sequential cycles — a
+**hard ceiling, not a floor**; the loop never extends past this count), fed the prior cycles'
+findings and their resolution state so it never repeats an already-posted, already-resolved comment.
 
 ## Cross-Cycle Behavior
 
