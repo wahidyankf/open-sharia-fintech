@@ -200,6 +200,20 @@ configured cycles are complete (default 3)" at the merge gate has no local signa
 **Consequence**: C5 exists as its own change ID with its own acceptance criterion (`grep -Fc "floor"`
 prints exactly 2, from a pre-change exit code of 1).
 
+> **Reversed during PR-review cycle 3 (final)**: the direction recorded above is no longer this
+> plan's shipped rule. The user ruled directly, verbatim: "limit pr review cycle to max of 3," and
+> — put to them explicitly that this contradicts the floor-not-ceiling reading DD-3 bundled in —
+> chose to reverse the governance rule itself rather than only cap this PR: **3 cycles is a HARD
+> CEILING, not a floor; a PR merges on preconditions (b)-(e), never on additional cycles.** The
+> `pr-review-quality-gate.md` §Saturation, Not a Fixed Count (Loop Exit) section this DD cited as
+> "the source note" is **removed**, not merely re-cross-linked — its entire premise (an open-ended,
+> saturation-driven extension past `{input.cycles}`) is the reading the user just overruled. Every
+> site DD-3's C5 acceptance criterion swept, plus the fifth derivative site cycle 1's sweep missed
+> (`plan-quality-gate.md:289`), now carries the reversed "hard ceiling, not a floor" phrasing instead.
+> See `delivery.md`'s C5 checklist item (its cycle-3 correction note) for the full site-by-site
+> record; this DD is left otherwise unedited as the historical record of what cycle-1's fix actually
+> did and why, at the time it was made.
+
 ### DD-4 — Delivery Mode for this plan's own execution is `worktree-to-pr`
 
 The plan **documents** are pushed to `origin main`. The plan's own future **execution** runs
@@ -596,17 +610,17 @@ that Google's eng-practices says to automate mechanical checks. The researcher f
 Line numbers below were true at authoring time and **some have already drifted once**. Every
 delivery step re-anchors by **content**. Do not `sed`-address any of these.
 
-| Site                                           | Content anchor                                                                                                   | Status                                                                       |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `plan-multi-repo-parity-planning.md` ~L198-205 | The `**Note on ose-primer**:` paragraph stating the bare restriction                                             | Accurate; the note itself is correct                                         |
-| `plan-multi-repo-parity-planning.md` ~L341-345 | Meta-question #1, opening `If ose-primer is in the parity set:`, offering option (A) `main-to-origin-main`       | **Self-contradiction with the note above — confirmed**                       |
-| `plans.md` ~L683-688                           | The four-row Delivery Mode table (`worktree-to-pr` … `main-to-pr`)                                               | Brief B cited ~L576-582 — **already drifted**; re-anchor on the table itself |
-| `pr-merge-protocol.md` ~L47                    | §The Rule, precondition bullet `- **(a)**` … `(default 3)`                                                       | Accurate                                                                     |
-| `pr-merge-protocol.md` ~L169                   | §Agent Workflow → Before Merging, numbered item `1. **(a)**`                                                     | Accurate                                                                     |
-| `pr-review-quality-gate.md` ~L328-332          | §Saturation, Not a Fixed Count (Loop Exit) — the floor-not-ceiling source note                                   | Accurate; **source only, unchanged**                                         |
-| `docs/reference/sdlc-gate-standard.md` ~L217   | §Worktree-Agnostic Execution — prescribes `git rev-parse --git-common-dir`, "never treat `.git/` as a directory" | Item 3 is a **refinement of an existing partial rule**, not greenfield       |
-| `plan-idea-promotion-planning.md` ~L107        | The `[bare-repo git-ops method](...)` link plus its `never git rev-parse --is-bare-repository` clause            | Partial prohibition exists **in `ose-public` only**; link dangles (DD-9)     |
-| `plans/ideas/README.md` L16, L17               | The two brief index lines                                                                                        | Both present; both removed by C7                                             |
+| Site                                           | Content anchor                                                                                                   | Status                                                                                                                                                                        |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan-multi-repo-parity-planning.md` ~L198-205 | The `**Note on ose-primer**:` paragraph stating the bare restriction                                             | Accurate; the note itself is correct                                                                                                                                          |
+| `plan-multi-repo-parity-planning.md` ~L341-345 | Meta-question #1, opening `If ose-primer is in the parity set:`, offering option (A) `main-to-origin-main`       | **Self-contradiction with the note above — confirmed**                                                                                                                        |
+| `plans.md` ~L683-688                           | The four-row Delivery Mode table (`worktree-to-pr` … `main-to-pr`)                                               | Brief B cited ~L576-582 — **already drifted**; re-anchor on the table itself                                                                                                  |
+| `pr-merge-protocol.md` ~L47                    | §The Rule, precondition bullet `- **(a)**` … `(default 3)`                                                       | Accurate                                                                                                                                                                      |
+| `pr-merge-protocol.md` ~L169                   | §Agent Workflow → Before Merging, numbered item `1. **(a)**`                                                     | Accurate                                                                                                                                                                      |
+| `pr-review-quality-gate.md` ~L328-332          | §Saturation, Not a Fixed Count (Loop Exit) — the floor-not-ceiling source note                                   | Accurate **at authoring time only** — edited in PR-review cycle 1, and that section is **removed** (not merely edited) in PR-review cycle 3; see DD-3's cycle-3 reversal note |
+| `docs/reference/sdlc-gate-standard.md` ~L217   | §Worktree-Agnostic Execution — prescribes `git rev-parse --git-common-dir`, "never treat `.git/` as a directory" | Item 3 is a **refinement of an existing partial rule**, not greenfield                                                                                                        |
+| `plan-idea-promotion-planning.md` ~L107        | The `[bare-repo git-ops method](...)` link plus its `never git rev-parse --is-bare-repository` clause            | Partial prohibition exists **in `ose-public` only**; link dangles (DD-9)                                                                                                      |
+| `plans/ideas/README.md` L16, L17               | The two brief index lines                                                                                        | Both present; both removed by C7                                                                                                                                              |
 
 **Sibling repos**: `/Users/wkf/ose-projects/ose-primer` and `/Users/wkf/ose-projects/ose-infra`,
 both `core.bare=true` [Repo-grounded].

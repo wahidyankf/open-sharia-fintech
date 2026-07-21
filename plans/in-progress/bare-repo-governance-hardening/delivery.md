@@ -222,9 +222,13 @@ graph TD
       [Root Cause Orientation](../../../repo-governance/principles/general/root-cause-orientation.md)
       — acceptance: zero unresolved preexisting failures
       — **Result**: zero preexisting failures were observed (baseline ran 0 tasks), so there is
-      nothing to resolve. Out of scope and untouched, per instruction: the ~93 pre-existing broken
-      markdown links under `plans/done/**` and the concurrent WIP under
-      `plans/backlog/ayokoding-www-learning-path-*/` from other agents
+      nothing to resolve. Out of scope and untouched, per instruction: the pre-existing broken
+      markdown links under `plans/done/**` (**re-measured during PR-review cycle 3**: 137 broken
+      links across 47 files under `plans/done/`, plus 1 more in
+      `apps/ayokoding-www/content/.../capstone-solid-core/overview.md` — 138 total across 48 files,
+      91 distinct targets once duplicates are collapsed; see the C5/Phase-3-Gate correction below for
+      the full measurement — corrects the earlier "~93" estimate, which undercounted) and the
+      concurrent WIP under `plans/backlog/ayokoding-www-learning-path-*/` from other agents
 - [x] [AI] Verify both sibling repos are reachable and bare, using the method this plan documents
       (**never** `git rev-parse --is-bare-repository`):
       `git -C /Users/wkf/ose-projects/ose-primer worktree list` and
@@ -528,7 +532,15 @@ apps/ose-www/content` reports zero broken links in `<C1>`
 - [x] [AI] `grep -Fc "bare-repo-landing-method.md" repo-governance/development/workflow/no-destructive-git-operations.md`
       prints `2`
       — **Result**: exactly 2
-- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate` both exit 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate` both exit 0
+      — **Corrected during PR-review cycle 3 (final)**: this checkbox's literal command previously
+      named the **bare, unqualified** `md links validate` (no `--exclude` flags) — a command that
+      exits 1 in this repo regardless of anything this plan does, because `plans/done/**` and
+      `apps/ayokoding-www/content/**` carry pre-existing broken links this plan does not touch. A
+      ticked `[x]` box whose literal command cannot exit 0 is unsatisfiable as written; the checkbox
+      text above now names the same `--exclude`-qualified form the Result below always actually ran,
+      closing the gap between what was claimed and what was checked. `md mermaid validate` has no
+      such pre-existing-failure caveat and is left bare, correctly.
       — **Run for real** after the authoring executor finished (it had no Bash tool, so it correctly
       left this unticked rather than claiming a substitute pass). Actual results:
       `md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
@@ -536,8 +548,15 @@ apps/ose-www/content` reports zero broken links in `<C1>`
       `md mermaid validate repo-governance/development/workflow` → `0 violation(s), 0 warning(s)`;
       `md heading-hierarchy validate` → `PASSED`;
       `npx markdownlint-cli2 "repo-governance/development/workflow/*.md"` → 22 files, `0 error(s)`.
-      Note the `--exclude` flags are required: the bare repo-wide form fails on ~93 pre-existing
-      broken links under `plans/done/`, so the pre-push hook's exact form is the meaningful check
+      **Re-measured during PR-review cycle 3**: the bare repo-wide form reports exactly **138**
+      broken links (not "~93") — 137 across 47 files under `plans/done/`, plus 1 in
+      `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/capstone-solid-core/overview.md`
+      (48 files total, 91 distinct targets once duplicate mentions of the same target collapse). Both
+      `--exclude` flags are load-bearing: `--exclude plans/done` alone still leaves that one
+      `apps/ayokoding-www/content` link broken (verified: `md links validate --exclude plans/done`
+      reports "found 1 broken links", nonzero exit); only the full three-flag form —
+      `--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` —
+      reports `All links valid!`, so it is the pre-push hook's exact form and the meaningful check
 - [x] [AI] `npx nx affected -t typecheck lint test:quick specs:coverage` exits 0
       — **Run for real**: `NX No tasks were run`, exit 0.
       **Recorded honestly as a VACUOUS pass, not a green one.** `nx affected` diffs _commits_
@@ -558,7 +577,11 @@ apps/ose-www/content` reports zero broken links in `<C1>`
 > registered in both indexes; every cross-link resolves per manual verification. No other governance
 > document has been edited (`worktree-and-artifact-cleanup.md` confirmed unchanged by inspection), so
 > the corpus is internally consistent. Nothing is staged or committed. Safe to stop. To resume: run
-> `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`,
+> `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate
+--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
+> (**corrected during PR-review cycle 3** — the bare form named here previously exits 1 on
+> pre-existing repo-wide broken links unrelated to this plan; see the Phase 2 Gate item above for the
+> measured counts),
 > `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate`,
 > and
 > `npx nx affected -t typecheck lint test:quick specs:coverage` with a Bash-capable executor, confirm
@@ -627,7 +650,29 @@ apps/ose-www/content` reports zero broken links in `<C1>`
       bareness carve-out. L151-155 was the more serious miss: it is this workflow's own canonical
       definition of the mode, and as written it described something unperformable under the
       workflow's default `repos` parity set (which always contains two bare repos). Both are now
-      fixed and added as rows below, bringing the table to six rows covering all 8 occurrences:
+      fixed and added as rows below, bringing the table to six rows.
+      — **LOW finding (confidence 88) from PR-review cycle 2, re-derived this cycle rather than
+      trusted**: "all 8 occurrences" no longer re-derives. `grep -noE
+  "main-to-origin-main|main-to-\*|main-to-pr" repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
+      at this cycle's head returns **9 matching lines** (L18, 151, 206, 217, 227, 354, 460, 463,
+      555), and counting raw substring occurrences rather than lines gives **13**, not 8 — L206
+      alone carries 3 on one line (`main-to-*`, `main-to-origin-main`, `main-to-pr`), L217 carries 2,
+      and L460 carries 2. The finding is right that the integer is stale; the coverage substance
+      underneath it is still correct, verified by mapping every one of the 9 lines: L18→row 3
+      (values frontmatter), L151→row 1 (mode definition), L206→row 2 (Note paragraph), L217 and
+      L227→row 4 (§Relationship — one paragraph spanning both lines), L460 and L463→row 6 (Step 6
+      item 8 — one paragraph spanning both lines), L555→row 5 (Step 8 Part A) — 8 of the 9 lines
+      (12 of the 13 raw occurrences) are covered by the six table rows below. **The 9th line, L354,
+      is covered by C4b, not C4c** — it is meta-question #1's option list itself ("`main-to-origin-main`
+      is never offered here — it requires a primary checkout the bare target does not have"), the
+      exact site C4b's own step fixed; it was never meant to be a seventh C4c row. The count grew
+      from 8 (the cycle-1 pre-fix raw-occurrence baseline, before any bareness carve-out existed) to
+      13 now precisely because each fix necessarily still contains the string it is carving out — a
+      sentence stating "`main-to-origin-main` is NOT available for X" still mentions
+      `main-to-origin-main`, so fixing the substance mechanically adds mentions rather than removing
+      them. **Counting basis used going forward**: raw substring occurrences (13), not distinct
+      lines (9) and not table rows (6) — the three numbers measure different things and none of them
+      is "sites," which the table already tracks separately as 7 (6 in the table below + C4b's L354).
 
   | Site                                                                     | Pre-sweep state                                                                                                                                                                                               | Action                                                                                                                                                                                                                                                                                                           | Verdict                           |
   | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
@@ -650,8 +695,13 @@ apps/ose-www/content` reports zero broken links in `<C1>`
       the anchor matches the live heading `## Saturation, Not a Fixed Count (Loop Exit)`, not
       restating the rule). "floor" → 0 before, 2 after (Grep tool count), each inside its own
       precondition-(a) sentence
-- [x] [AI] Confirm `<GATE>` is **unchanged** — it is the source note, not an edit site
-      — acceptance: `git diff --name-only HEAD` does **not** list
+- [x] [AI] ~~Confirm `<GATE>` is **unchanged** — it is the source note, not an edit site~~ **This
+      checkbox's own original claim is now false and is superseded by the two corrections below —
+      left struck-through rather than deleted so the record of what changed is auditable.** `<GATE>`
+      is a real, intentional edit site as of PR-review cycle 1 and remains one after cycle 3's
+      reversal; it is checked, not against "unchanged," but against "internally consistent with its
+      own derivatives"
+      — acceptance (superseded): `git diff --name-only HEAD` does **not** list
       `repo-governance/workflows/pr/pr-review-quality-gate.md`
       — **Result (Phase 3 authoring pass)**: no `Edit`/`Write` call was made against this file this
       phase — it was read once (for the exact heading/anchor text) and never modified.
@@ -674,6 +724,88 @@ apps/ose-www/content` reports zero broken links in `<C1>`
       `repo-governance/workflows/pr/pr-review-quality-gate.md`; the (a)-(e) lettering itself is
       untouched, only the floor-qualifier text changed, so `<GATE>`'s normative-lettering rule is
       honored, not violated, by this correction
+      — **Reopened and REVERSED during PR-review cycle 3 (final cycle)**: the direction itself was
+      wrong, not just the sweep. The user ruled directly, verbatim: "limit pr review cycle to max of
+      3." Put to them explicitly that this contradicts cycle 1's floor-not-ceiling fix, they chose to
+      fix the governance rule too: **3 cycles is a HARD CEILING, not a floor. A PR merges on
+      preconditions (b)-(e), never on additional cycles.** This reverses cycle 1's fix rather than
+      building on it — cycle 1 had correctly propagated a floor-not-ceiling reading that was itself
+      the wrong reading once the user overruled it here.
+      — **Every site cycle 1 touched, plus the one it missed, now carries the reversed qualifier**
+      ("**hard ceiling, not a floor**", deliberately retaining the word "floor" so the two readings
+      stay one word-diff apart in any future audit): `<MERGE>` §The Rule (`pr-merge-protocol.md:51`)
+      and §Agent Workflow → Before Merging (`pr-merge-protocol.md:172`); `<GATE>` precondition (a)
+      itself (`pr-review-quality-gate.md:235`, the normative site); `<PLANS>` (`plans.md:708`);
+      `plan-execution.md:742`.
+      — **PR-review cycle 2's HIGH finding (confidence 92) on this exact spot**: "the fourth site"
+      claim above was not the end of the enumeration — `plan-quality-gate.md:289-290` is a fifth
+      site that enumerates all five hardened preconditions in prose, and it carried a **flat "3"
+      with no qualifier at all**, unlike the four sites this step had already fixed. That finding is
+      correct, and this record does not repeat the completeness-claim pattern that produced it: the
+      re-derivation below is scoped and shown, not asserted.
+      — **Re-derivation performed this cycle** (not trusted from any prior claim):
+      `grep -rln "all five" repo-governance/ AGENTS.md`, filtered to files also matching
+      `"hardened\|merge precondition"` to exclude the many unrelated "all five" hits elsewhere in the
+      repo (five-part worked examples, five CVE sources, five spec folders, etc. — raw
+      `grep -rln "all five"` across `repo-governance/` alone returns over a dozen files with no
+      connection to this rule). That scoped grep returns exactly **6** files, of which exactly **5**
+      actually restate the hardened-merge-precondition enumeration (the sixth,
+      `plan-execution.md`, matches only because it separately contains the unrelated phrase "all
+      five docs if present" at a different line and also happens to mention "hardened" elsewhere —
+      confirmed by reading, not assumed from the grep count). Per-site verdict (line count first,
+      qualifier state second): `pr-merge-protocol.md` (§The Rule) — states the flat "3"; carries
+      "hard ceiling, not a floor". `pr-review-quality-gate.md` (normative, precondition a) — states
+      the flat "3"; carries "hard ceiling, not a floor". `plan-quality-gate.md:289` — states the flat
+      "3"; **carries the qualifier as of this cycle** (was flat, no qualifier, before this fix).
+      `plans.md:708` — states the flat "3"; carries "hard ceiling, not a floor". `AGENTS.md:121` —
+      states "review cycles complete" with no number, so it cannot drift on the count; correctly
+      silent, no qualifier needed.
+      — All 5 are now consistent. This is the record's fourth attempt at a C5-sweep-completeness
+      claim (authoring pass: 4 sites named, incomplete; cycle 1: 4 sites named including the "fourth
+      site" language cycle 2 flagged, still incomplete; cycle 2: found the gap but did not itself
+      fix it; this cycle: 5 sites re-derived by scoped grep and shown in the table above, not
+      asserted from memory of the prior 3 attempts).
+      — **`<GATE>`'s own §Saturation, Not a Fixed Count (Loop Exit) section — the source note this
+      step's original acceptance clause cross-links — is REMOVED, not rewritten.** That section
+      predates this PR (it landed via a different, already-archived plan,
+      `plans/done/2026-07-20__parallel-orchestration-shared-machine-governance/`); this PR is the one
+      that reopens the rule it encoded, so the removal is recorded here rather than left to look like
+      a PR-local addition being quietly deleted. Its entire premise — that `{input.cycles}` is a
+      floor and an open-ended saturation curve is the real exit condition — is the reading the user
+      just overruled, so keeping it (rewritten or not) would leave the document arguing against its
+      own precondition (a). Removed along with it: the `## Notes` bullet that let the orchestrator
+      "MAY extend the loop with additional cycles beyond the default" on a proactive user check-in,
+      and the "No silent early exit" bullet's floor/ceiling framing (replaced with a "no early exit,
+      no extension" bullet stating the same operational fact — the loop always runs the full
+      `{input.cycles}` — without the now-false floor/ceiling premise). **Every inbound link to the
+      removed `#saturation-not-a-fixed-count-loop-exit` anchor was removed with it** — confirmed via
+      `grep -rn "saturation-not-a-fixed-count"` finding zero remaining matches outside this
+      historical-record paragraph, and `cargo run ... -- md links validate --exclude plans/done
+  --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` reporting `All links
+  valid! No broken links found.` after the removal.
+      — **Precondition (b) stays supreme — the cap bounds cycles, it does not waive findings.** Nothing
+      in this reversal touches the pre-existing, unedited "Escalation on cycle exhaustion with
+      unresolved threads" rule (`pr-review-quality-gate.md`, §Loop-Exit and Escalation Rules): if the
+      3-cycle ceiling is reached with a thread still genuinely unresolved, the loop still exits
+      `escalated`, not `done`, and the caller still MUST NOT proceed to merge. What changed is only
+      that a 4th cycle is never spawned to try to clear it — the fixed ceiling means "escalate to a
+      human," never "run one more cycle."
+      — **Agent definitions reconciled to match**, since "default" language in a "hard ceiling"
+      context needed the same word-diff clarification: `.claude/agents/pr-review-maker.md:182`,
+      `.claude/agents/plan-execution-checker.md:602-606,630` (the "early-exit reason (nothing left to
+      fix)" HIGH-finding carve-out is removed — under a hard ceiling there is no legitimate early
+      exit, so fewer cycles than specified is unconditionally **HIGH**), and
+      `.claude/agents/plan-fixer.md:622` (the scaffolding recipe's loop-exit condition no longer
+      offers "or a cycle with zero new findings" as an alternative to "N cycles complete").
+      `.claude/skills/plan-creating-project-plans/SKILL.md:283` was verified, not edited — it already
+      read "a fixed N-cycle, default 3 ... loop," which is now correct rather than merely
+      coincidentally so.
+      — **Acceptance clause for this Phase 3 Gate item corrected accordingly** — see the Phase 3 Gate
+      section below: `grep -Fc "floor" <MERGE>` still literally prints `2` after this reversal (the
+      new phrase "hard ceiling, not a floor" retains the substring "floor"), which would look like a
+      false-positive pass reusing the pre-reversal check without actually re-verifying the direction.
+      The gate check below now greps `"hard ceiling"` instead, a string that exists only in the
+      post-reversal phrasing and could not have matched before this cycle
 - [x] [AI] **C6a** — in `docs/reference/sdlc-gate-standard.md` §Worktree-Agnostic Execution, locate
       the existing sentence prescribing `git rev-parse --git-common-dir` and "never treat `.git/` as
       a directory" (~L217). Extend that same paragraph with the **bareness question**: how to ask it
@@ -731,14 +863,22 @@ apps/ose-www/content` reports zero broken links in `<C1>`
 - [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick` — exits 0
 - [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — exits 0
 - [x] [AI] Run markdown gates: `npm run lint:md:fix` then
-      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate
+      --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid
 validate` and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md
 heading-hierarchy validate` — all exit 0
+      — **Corrected during PR-review cycle 3 (final)**: this checkbox's literal `md links validate`
+      command previously named the bare, unqualified form, which is unsatisfiable in this repo (see
+      below) — now names the same exclude-qualified form the Result always actually ran
       — **Result**: all green. `md links validate` was run in the **pre-push exclude form**
       (`--exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`)
-      because the bare repo-wide form is unsatisfiable — ~93 pre-existing broken links live under
-      `plans/done/`. Full command/result table in the Phase 3 Gate tooling note below
+      because the bare repo-wide form is unsatisfiable — **re-measured during PR-review cycle 3**:
+      exactly **138** pre-existing broken links (not "~93"), 137 across 47 files under `plans/done/`
+      plus 1 in `apps/ayokoding-www/content/.../capstone-solid-core/overview.md` (48 files total, 91
+      distinct targets after dedup). Both `--exclude` flags are load-bearing — `--exclude plans/done`
+      alone still leaves the one `apps/ayokoding-www/content` link broken. Full command/result table
+      in the Phase 3 Gate tooling note below
 - [ ] [AI] Fix **ALL** failures, including preexisting issues not caused by this changeset; commit
       preexisting fixes separately
 - [ ] [AI] Re-run every failing check to confirm resolution — acceptance: zero failures before push
@@ -767,8 +907,12 @@ heading-hierarchy validate` — all exit 0
 - [ ] [AI] Run the **PR-Review Maker→Fixer Cycle** — 3 strictly sequential
       `pr-review-maker` → `pr-review-fixer` cycles, each gated by a green CI run, per the
       [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
-      `{cycles}` is a **floor**, not a ceiling — apply the saturation exit condition
-      — acceptance: the loop exits `done` (not `escalated`); 0 CRITICAL and 0 HIGH outstanding
+      **Corrected during PR-review cycle 3 (final)**: `{cycles}` is a **hard ceiling**, not a floor —
+      the loop runs exactly 3 cycles and is never extended past that count. The user ruled this
+      directly (see the C5 checklist item's cycle-3 correction note above) and removed the
+      workflow's former saturation-based extension mechanism accordingly
+      — acceptance: the loop exits `done` (not `escalated`) after exactly 3 cycles; 0 CRITICAL and 0
+      HIGH outstanding — per precondition (b), which the 3-cycle ceiling never waives
   - _Suggested executor: `pr-review-maker` then `pr-review-fixer`, alternating_
 
 ### Post-Push CI Verification
@@ -802,26 +946,55 @@ heading-hierarchy validate` — all exit 0
       from C4c shows every site consistent
       — **Result**: 1; the C4c verdict table above marks all six swept sites consistent (updated to
       six during PR-review cycle 1 — see the C4c checklist item above)
-- [x] [AI] `grep -Fc "floor" <MERGE>` prints exactly `2`
-      — **Result**: 2
+- [x] [AI] `grep -Fc "hard ceiling" <MERGE>` prints exactly `2`
+      — **Result**: 2. **Corrected during PR-review cycle 3 (final)**: this check originally read
+      `grep -Fc "floor" <MERGE>` prints exactly `2` — still literally true after the cycle-3
+      reversal (the new phrasing "hard ceiling, not a floor" retains the substring "floor"), which
+      would have let this gate re-pass on stale evidence without actually re-verifying the direction
+      of the rule. Regrepping on `"hard ceiling"` — a string absent from the pre-reversal text —
+      confirms the reversal actually landed rather than merely coexisting with the old check
 - [x] [AI] `grep -Fc "is-bare-repository" docs/reference/sdlc-gate-standard.md` prints at least 1
       — **Result**: 1
 - [x] [AI] `grep -Fc "bare-repo-landing-method.md" <PROMO>` prints at least 1
       — **Result**: 1
-- [ ] [AI] `git diff --name-only origin/main~1 origin/main` does **not** list
+- [ ] [AI] ~~`git diff --name-only origin/main~1 origin/main` does **not** list
       `repo-governance/workflows/pr/pr-review-quality-gate.md` or
-      `repo-governance/development/workflow/worktree-and-artifact-cleanup.md`
-      — **Deliberately not run**: this checks the eventual merge commit on `origin/main`, which does
-      not exist yet — no commit, push, PR, or merge has happened this session by explicit
-      instruction. Both named files were confirmed unedited by inspection (no `Edit`/`Write` call
-      against either path anywhere in this phase's tool-call history)
+      `repo-governance/development/workflow/worktree-and-artifact-cleanup.md`~~
+      **Superseded during PR-review cycle 2/3 — this check is now unsatisfiable as originally
+      written and is corrected below, not left standing.** `pr-review-quality-gate.md` (`<GATE>`) is
+      a real, intentional edit site as of cycle 1 (`4d8cadd7c`) and remains one after cycle 3's
+      floor-to-ceiling reversal — it legitimately **will** appear in the merge-commit diff, so a
+      check requiring its absence can never pass and was wrong to write. Split into two corrected
+      checks: - `git diff --name-only origin/main~1 origin/main` does **not** list
+      `repo-governance/development/workflow/worktree-and-artifact-cleanup.md` (DD-5 still places
+      the WIP rule in `<C1>`, not there — this file genuinely should stay untouched)
+      — acceptance: absent from the diff once merged - `git diff --name-only origin/main~1 origin/main` **DOES** list
+      `repo-governance/workflows/pr/pr-review-quality-gate.md` — its presence is the expected,
+      correct outcome (the C5 floor/ceiling edits), not a violation
+      — acceptance: present in the diff once merged
+      — **Original claim was false, not merely premature**: "Both named files were confirmed
+      unedited by inspection" was already contradicted by this same document's own C5 cycle-1
+      correction note a few hundred lines above, which records `<GATE>` being edited at `4d8cadd7c`.
+      Neither corrected check above can be run against a merge commit yet — this PR is not merged —
+      but they are now at least satisfiable once it is, which the original phrasing was not
 - [ ] [AI] `gh pr view --json state` shows `MERGED`; CI green on `main`
-      — **Deliberately not run**: no PR was opened this session (git/PR work explicitly out of
-      scope — see the "Local Quality Gates" through "Post-Push CI Verification" blocks above, all
-      left unticked for the same reason)
+      — **Corrected during PR-review cycle 3 (final)**: "no PR was opened this session" is false —
+      **PR #79 is open** (`https://github.com/wahidyankf/ose-public/pull/79`, draft, base `main`,
+      head `bare-repo-governance-hardening`, 12 commits as of this cycle, `mergeable: MERGEABLE`).
+      It has been through 3 PR-review cycles (this is cycle 3, the final one per the user's explicit
+      cap) via `pr-review-maker`/`pr-review-fixer`, run directly against the live PR through the
+      GitHub Reviews API rather than by literally re-executing this checklist's git/PR steps
+      top-to-bottom — the checklist's own "Push the branch" / "Open a draft PR" / "Run the PR-Review
+      Maker→Fixer Cycle" steps above stayed unticked through that work and still do, since ticking
+      them would overstate what a re-reader can verify from the checklist alone versus what actually
+      happened on the live PR. `gh pr checks 79` currently reports 17 passed, 0 failed (CI green).
+      `gh pr view --json state` reports `OPEN`, not yet `MERGED` — this specific acceptance clause is
+      genuinely not yet satisfied, honestly, rather than falsely claimed either way
 - [ ] [AI] `git rev-list --left-right --count origin/main...main` prints `0` and `0` in `ose-public`
-      — **Deliberately not run**: no push or merge has happened this session, so this comparison is
-      not yet meaningful
+      — **Deliberately not run**: no push to `main` or merge has happened yet, so this comparison is
+      not yet meaningful. Unlike the two items above, this one's original "not yet meaningful"
+      framing was accurate and needed no correction — only the two items above overstated what had
+      happened
 
 > **Tooling note (this Phase 3 document-editing pass)**: this executor's toolset was `Read`/`Write`/
 > `Edit`/`Glob`/`Grep` with no `Bash` access, so every "prints N" result above was produced with the
@@ -841,19 +1014,29 @@ heading-hierarchy validate` — all exit 0
 > | `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate repo-governance`                                                              | exit 0                                                                        |
 > | `npx markdownlint-cli2 "repo-governance/**/*.md" "docs/reference/sdlc-gate-standard.md"`                                                                                              | `Linting: 203 file(s)` / `Summary: 0 error(s)`                                |
 >
-> The bare repo-wide `md links validate` form is **not** the check to run — ~93 pre-existing broken
-> links live under `plans/done/`, so only the pre-push hook's exclude form is satisfiable. `nx affected`
-> is recorded separately in the Local Quality Gates block, where its vacuity is stated rather than
-> hidden.
+> The bare repo-wide `md links validate` form is **not** the check to run — **re-measured during
+> PR-review cycle 3**: exactly **138** pre-existing broken links (not "~93"), 137 across 47 files
+> under `plans/done/` plus 1 in `apps/ayokoding-www/content/.../capstone-solid-core/overview.md` (48
+> files total, 91 distinct targets after dedup); both `--exclude plans/done` and
+> `--exclude apps/ayokoding-www/content` are load-bearing, so only the full pre-push exclude form is
+> satisfiable. `nx affected` is recorded separately in the Local Quality Gates block, where its
+> vacuity is stated rather than hidden.
 >
-> **Pause Safety**: the C3-C6 document edits are complete and internally consistent — every new
-> cross-link target exists, both `<MERGE>` floor-qualifier sites and all `<PARITY>` bare-repo sites
-> agree, and the `--is-bare-repository` prohibition now reads consistently across `<C1>`, `<SDLC>`,
-> and `<PROMO>`. Nothing is staged, committed, or pushed; no PR exists yet. `<GATE>` and
-> `worktree-and-artifact-cleanup.md` remain untouched. Safe to stop. To resume: run the four
-> `rhino-cli`/`markdownlint-cli2` commands with a Bash-capable executor to close out the tooling
-> note above, then proceed with "Local Quality Gates" through the PR-open/merge/fast-forward steps
-> that this pass deliberately left unticked.
+> **Pause Safety (corrected during PR-review cycle 3 — final)**: the C3-C6 document edits are
+> complete and internally consistent — every new cross-link target exists, both `<MERGE>`
+> ceiling-qualifier sites and all `<PARITY>` bare-repo sites agree, and the `--is-bare-repository`
+> prohibition now reads consistently across `<C1>`, `<SDLC>`, and `<PROMO>`. **This note's original
+> claims that "no PR exists yet" and that `<GATE>` "remain[s] untouched" are both stale and are
+> corrected here rather than left standing**: PR #79 has been open since shortly after this pass,
+> has been through 3 PR-review cycles, and carries 12 commits with CI green (`gh pr checks 79`: 17
+> passed, 0 failed) as of this cycle; `<GATE>` (`pr-review-quality-gate.md`) is a real, intentional
+> edit site as of cycle 1 and remains one after cycle 3's floor-to-ceiling reversal —
+> `worktree-and-artifact-cleanup.md` is the one file that genuinely remains untouched, per DD-5.
+> Nothing from this specific document-editing pass was staged, committed, or pushed **directly by
+> this pass** — later commits (Phase 3's actual commit/push/PR-open, and every PR-review-cycle fix
+> since) landed the work this pass prepared. To resume from a cold start: re-read the current PR
+> state (`gh pr view 79 --json state,isDraft,mergeable`) rather than trusting "no PR exists yet" from
+> any earlier point in this document.
 
 ---
 
@@ -919,11 +1102,14 @@ heading-hierarchy validate` — all exit 0
       — acceptance: a per-site verdict table is recorded in this checklist, one row per site, each
       marked consistent (before this step, at least the note paragraph and meta-question #1
       disagree, mirroring the self-contradiction C4a/C4b fixed in `ose-public`)
-- [ ] [AI] **C5** — in `<PRIMER-WT>/<MERGE>`, append the floor-not-ceiling qualifier at both
-      precondition-(a) sites (§The Rule and §Agent Workflow → Before Merging), mirroring the Phase 3
-      edit. Locate by content, not by line number — sibling line numbers differ
-      — acceptance: `grep -Fc "floor" <PRIMER-WT>/<MERGE>` prints exactly `2` (exits 1 before this
-      step)
+- [ ] [AI] **C5** — in `<PRIMER-WT>/<MERGE>`, append the hard-ceiling-not-floor qualifier at both
+      precondition-(a) sites (§The Rule and §Agent Workflow → Before Merging), mirroring the merged
+      `ose-public` wording (corrected during PR-review cycle 3 — see the `ose-public` C5 checklist
+      item's cycle-3 correction note; propagate the **post-reversal** text, not the pre-reversal
+      "floor, not a ceiling" text this step originally named). Locate by content, not by line
+      number — sibling line numbers differ
+      — acceptance: `grep -Fc "hard ceiling" <PRIMER-WT>/<MERGE>` prints exactly `2` (exits 1 before
+      this step)
 - [ ] [AI] **C6a** — in `<PRIMER-WT>/<SDLC>` §Worktree-Agnostic Execution, extend the existing
       paragraph with the bareness question and the ban on `git rev-parse --is-bare-repository`,
       mirroring the Phase 3 edit. Locate by content, not by line number — sibling line numbers differ
@@ -1049,10 +1235,12 @@ heading-hierarchy validate` — all exit 0
       — acceptance: a per-site verdict table is recorded in this checklist, one row per site, each
       marked consistent (before this step, at least the note paragraph and meta-question #1
       disagree, mirroring the self-contradiction C4a/C4b fixed in `ose-public`)
-- [ ] [AI] **C5** — in `<INFRA-WT>/<MERGE>`, append the floor-not-ceiling qualifier at both
-      precondition-(a) sites, mirroring the Phase 3 edit. Locate by content, not by line number
-      — acceptance: `grep -Fc "floor" <INFRA-WT>/<MERGE>` prints exactly `2` (exits 1 before this
-      step)
+- [ ] [AI] **C5** — in `<INFRA-WT>/<MERGE>`, append the hard-ceiling-not-floor qualifier at both
+      precondition-(a) sites, mirroring the merged `ose-public` wording (corrected during PR-review
+      cycle 3 — propagate the **post-reversal** text, not the pre-reversal "floor, not a ceiling"
+      text this step originally named). Locate by content, not by line number
+      — acceptance: `grep -Fc "hard ceiling" <INFRA-WT>/<MERGE>` prints exactly `2` (exits 1 before
+      this step)
 - [ ] [AI] **C6a** — in `<INFRA-WT>/<SDLC>` §Worktree-Agnostic Execution, extend the existing
       paragraph with the bareness question and the ban on `git rev-parse --is-bare-repository`,
       mirroring the Phase 3 edit. Locate by content, not by line number — `<INFRA>`'s line numbers
@@ -1271,7 +1459,24 @@ heading-hierarchy validate` — all exit 0
 - [ ] [AI] Update any other README that references this plan
       — acceptance: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md
 links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
-apps/ose-www/content` exits 0
+apps/ose-www/content` exits 0 — this check's `--exclude plans/done` covers the rest of the repo
+      **but is blind to the very folder this phase just moved into `plans/done/`** (see the
+      companion staged-only check below, added during PR-review cycle 3, which closes that gap)
+- [ ] [AI] Stage the archival move and README edits (`git add` the moved folder plus
+      `plans/in-progress/README.md` and `plans/done/README.md`), then run a **second, scoped** link
+      check that is not blind to `plans/done/`: `cargo run --release --quiet --manifest-path
+  apps/rhino-cli/Cargo.toml -- md links validate --staged-only` (no `--exclude` flags — this
+      form scans **only staged files**, so it never touches the ~137 pre-existing unstaged broken
+      links elsewhere under `plans/done/`, while still exercising every link inside the
+      newly-archived folder and the two edited READMEs)
+      — **Added during PR-review cycle 3 (final)**: the check above it (`--exclude plans/done`)
+      structurally cannot fail in the one direction this phase's own archival work could break
+      something — a broken link introduced by the `git mv` or by editing `plans/done/README.md`
+      would be silently invisible to it, since that check excludes the exact directory this phase
+      writes into. `--staged-only` was verified this cycle to scope correctly: staging one file and
+      running `md links validate --staged-only` reports on that file alone, confirmed by inspection
+      of the report's file list, not assumed from the flag's `--help` description
+      — acceptance: exits 0 with `All links valid! No broken links found.`
 - [ ] [AI] Commit the archival:
       `git commit -m "chore(plans): move bare-repo-governance-hardening to done"`
 - [ ] [AI] **Land the archival commit on `origin/main`.** Archival is plan-document work, not
@@ -1319,8 +1524,14 @@ apps/ose-www/content` exits 0
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links
 validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude
 apps/ose-www/content` exits 0 — the pre-push exclude form, not the bare repo-wide form:
-      ~93 pre-existing broken links live under `plans/done/`, so the unqualified form can never
-      exit 0 in this repo
+      **re-measured during PR-review cycle 3**: exactly 138 pre-existing broken links (not "~93")
+      live under `plans/done/` (137) and `apps/ayokoding-www/content` (1), so the unqualified form
+      can never exit 0 in this repo. **This exclude form is deliberately blind to `plans/done/`,
+      including the folder this phase just archived into it** — that blind spot is not re-checked
+      here; it was already closed by the `--staged-only` check the archival step runs before commit
+      (see above), which scans exactly the newly-moved folder and the two edited READMEs with no
+      exclusion. This gate item only re-confirms the rest of the repo (everything outside
+      `plans/done/` and the two `apps/` excludes) is still clean after the archival commit
 - [ ] [AI] Exactly **one** plan folder was archived, in `ose-public` — per **DD-10**, no sibling ever
       held one: `ls -d <PRIMER>/plans/*/bare-repo-governance-hardening` and
       `ls -d <INFRA>/plans/*/bare-repo-governance-hardening` both exit non-zero

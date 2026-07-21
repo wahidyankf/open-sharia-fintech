@@ -159,7 +159,7 @@ Scenario: no-destructive-git-operations.md points at the new method document
   Given `grep -Fc "bare-repo-landing-method" repo-governance/development/workflow/no-destructive-git-operations.md` exits 1
   When the C2 step completes
   Then `grep -Fc "bare-repo-landing-method.md" repo-governance/development/workflow/no-destructive-git-operations.md` prints at least 1
-  And `npx rhino-cli md links validate` reports no broken link for that target
+  And `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` reports no broken link for that target
 ```
 
 ### C3 — The Delivery Mode table states the bare-repo restriction

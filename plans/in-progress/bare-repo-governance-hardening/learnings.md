@@ -81,3 +81,28 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   `repo-governance/development/agents/subagent-orchestration.md` (match the tool grant to the
   acceptance clauses when briefing) and `repo-governance/development/pattern/maker-checker-fixer.md`
   (a disclosed substitution is not a discharged check).
+
+## Learning: Phase 4/5's file-agreement steps do not name `<GATE>`, which cycle 1 turned into a real edit site
+
+- **Context**: PR-review cycle 3 (final) reversed cycle 1's floor-not-ceiling fix to
+  `pr-review-quality-gate.md` (`<GATE>`) into a hard-ceiling-not-floor fix, per an explicit user
+  ruling. Re-deriving every site touching this rule (per the cycle-3 fixer brief) required rereading
+  Phase 4 and Phase 5 in full.
+- **Observation**: `<GATE>`'s Path Constants entry (`delivery.md` — the `<GATE>` bullet) still
+  describes it as a "source note ... originally left unedited, corrected during PR-review cycle 1,"
+  but Phase 4's and Phase 5's propagation steps only name `<MERGE>`, `<PARITY>`, `<PLANS>`, `<SDLC>`,
+  `<PROMO>` for the sibling-agreement diff (the "verify the remaining five files agree" step) — never
+  `<GATE>`. Since cycle 1 already made `<GATE>` a real `ose-public`-only edit, and cycle 3 edits it
+  again, Phase 4/5 as currently written would propagate `<MERGE>`/`<PLANS>`/etc. but silently leave
+  the siblings' copies of `<GATE>` un-diffed against the corrected `ose-public` version — nothing
+  in Phase 4 or Phase 5 as written would catch a stale sibling `<GATE>`.
+- **Why it might generalize**: a source-of-truth file that starts as "read-only, never edited" and
+  later becomes a real edit site (as `<GATE>` did across two review cycles) needs its propagation
+  bookkeeping updated at the same time the "unedited" claim is retracted — the retraction and the
+  propagation-list update are two different edits to two different places, and it is easy to make
+  the first without the second.
+- **Terminal state**: pending — triage at Phase 6. Candidate route: before Phase 4 executes, add
+  `<GATE>` to the C5-propagation steps (Phase 4 and Phase 5) and to the "remaining five files agree"
+  step (which becomes six), mirroring how `<MERGE>` is already handled — this is a correction to
+  Phase 4/5's own step list, not yet executed, so it can land as an ordinary edit rather than a
+  reopened-and-corrected retrospective note.
