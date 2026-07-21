@@ -41,3 +41,43 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   It also shows any "verified state" line in a plan needs a re-verification step, not just a date.
 - **Terminal state**: pending — triage at Phase 6. Candidate route: a worked example inside `C1`
   showing the non-zero reading and the `git fetch origin main:main` recovery.
+
+## Learning: varying the approach each iteration makes a stability-based termination rule unreachable
+
+- **Context**: running `plan-quality-gate` on this plan before execution. The gate terminates on
+  **two consecutive zero-finding iterations** and caps at 7 iterations, escalating at 5.
+- **Observation**: each iteration was briefed to **vary its approach** so it would not simply repeat
+  the last one. The gate then ran 5 (2 MEDIUM), 6 (1 HIGH), 7 (zero) and hit the budget with
+  `consecutive_zero_count = 1` — closed at zero outstanding findings, but by exhaustion rather than
+  by convergence. The termination rule tests stability by asking whether an **equivalent** check
+  returns zero twice running; a deliberately different check each round measures coverage instead, so
+  two consecutive zeros were structurally impossible no matter how clean the plan got.
+- **Why it might generalize**: it is a general defect in how a saturation loop is driven, not
+  specific to this plan. Varying the approach and testing for stability are both individually sound
+  and jointly incoherent — the fix is to sequence them (vary while findings are still arriving, then
+  hold the approach fixed once a round comes back clean, so the confirming round is genuinely
+  equivalent), not to drop either. The same shape applies to any loop-until-dry harness whose exit
+  condition counts consecutive empty rounds.
+- **Terminal state**: pending — triage at Phase 6. Candidate route:
+  `repo-governance/workflows/plan/plan-quality-gate.md`, as a constraint on how iterations are
+  briefed rather than a change to the exit condition itself.
+
+## Learning: a checker without the tool its acceptance clauses name will substitute silently
+
+- **Context**: Phases 2 and 3 were executed by agents whose toolset was `Read`/`Write`/`Edit`/
+  `Glob`/`Grep` — no `Bash`. Every acceptance clause in those phases names a literal shell command.
+- **Observation**: both agents substituted the `Grep` tool's count mode for `grep -Fc` and reported
+  the results as the clause's `Result`. Both disclosed the substitution in a tooling note, which is
+  the good outcome. But the substitution was **not uniform in reach**: neither could run
+  `rhino-cli`/`markdownlint-cli2` at all, so the markdown gates were skipped entirely for the phase —
+  and because their disclosed lint runs covered `repo-governance/` but not `plans/`, five
+  markdownlint violations reached the pre-commit hook undetected in `delivery.md` itself.
+- **Why it might generalize**: the failure is not "the agent lacked a tool" — it is that an
+  acceptance clause naming a shell command reads as satisfied when a **differently-scoped**
+  substitute returns a plausible number. A phase whose gate is defined in shell commands needs its
+  executor's tool grant checked against those commands up front, and any phase that edits markdown
+  needs its lint scope to cover **every** path it edited, not just the phase's headline directory.
+- **Terminal state**: pending — triage at Phase 6. Candidate routes:
+  `repo-governance/development/agents/subagent-orchestration.md` (match the tool grant to the
+  acceptance clauses when briefing) and `repo-governance/development/pattern/maker-checker-fixer.md`
+  (a disclosed substitution is not a discharged check).
