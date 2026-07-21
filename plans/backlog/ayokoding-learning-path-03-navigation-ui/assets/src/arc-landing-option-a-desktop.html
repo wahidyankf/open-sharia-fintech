@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --hue-honey: oklch(76% 0.15 75);
+        --hue-sage: oklch(70% 0.1 150);
+        --hue-teal: oklch(66% 0.1 200);
+        --hue-terracotta: oklch(65% 0.16 30);
+        --hue-honey-ink: oklch(44% 0.12 75);
+        --hue-teal-ink: oklch(37% 0.09 200);
+        --hue-sage-ink: oklch(37% 0.09 150);
+        --warm-0: oklch(99% 0.006 85);
+        --warm-50: oklch(97% 0.009 85);
+        --warm-100: oklch(94% 0.012 85);
+        --warm-200: oklch(88% 0.014 85);
+        --warm-500: oklch(48% 0.018 80);
+        --warm-900: oklch(18% 0.016 70);
+        --background: var(--warm-0);
+        --foreground: var(--warm-900);
+        --card: #fff;
+        --secondary: var(--warm-100);
+        --secondary-foreground: var(--warm-900);
+        --primary: var(--hue-honey);
+        --muted-foreground: var(--warm-500);
+        --border: var(--warm-200);
+        --radius-lg: 1rem;
+        --radius-xl: 1.25rem;
+        --shadow-sm: 0 1px 3px 0 oklch(20% 0.02 75/0.08), 0 1px 2px -1px oklch(20% 0.02 75/0.06);
+        --shadow-md: 0 4px 8px -2px oklch(20% 0.02 75/0.08), 0 2px 4px -2px oklch(20% 0.02 75/0.06);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+      .frame {
+        width: 960px;
+      }
+      .cap {
+        font-size: 12px;
+        color: var(--muted-foreground);
+        margin-bottom: 14px;
+        letter-spacing: 0.02em;
+      }
+      .cap b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      .win {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+      }
+      .bar {
+        display: flex;
+        gap: 7px;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--warm-50);
+      }
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .url {
+        margin-left: 10px;
+        font-size: 11px;
+        color: var(--muted-foreground);
+        align-self: center;
+      }
+      .body {
+        padding: 32px 40px 40px;
+      }
+      .crumb {
+        font-size: 12.5px;
+        color: var(--muted-foreground);
+      }
+      .crumb b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-top: 10px;
+      }
+      .sub {
+        margin-top: 8px;
+        color: var(--muted-foreground);
+        font-size: 14.5px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .back {
+        display: inline-block;
+        margin-top: 22px;
+        font-size: 13px;
+        color: var(--muted-foreground);
+      }
+      .badge {
+        display: inline-flex;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .start {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      /* Two-role state */
+      .role-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 24px;
+      }
+      .rcard {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 20px 20px 18px;
+        border-top: 3px solid var(--h);
+      }
+      .rname {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .rdesc {
+        font-size: 13px;
+        color: var(--muted-foreground);
+        margin-top: 8px;
+        line-height: 1.5;
+      }
+      .rfoot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 16px;
+      }
+
+      /* Single-role state */
+      .solo-card {
+        margin-top: 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 26px 28px 24px;
+        border-top: 3px solid var(--hue-honey);
+      }
+      .solo-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .solo-name {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .solo-desc {
+        font-size: 13.5px;
+        color: var(--muted-foreground);
+        margin-top: 8px;
+      }
+      .syllabus {
+        margin-top: 14px;
+        font-size: 12.5px;
+        color: var(--foreground);
+        background: var(--secondary);
+        border-radius: var(--radius-lg);
+        padding: 10px 14px;
+        line-height: 1.6;
+      }
+      .syllabus b {
+        font-weight: 600;
+      }
+      .solo-foot {
+        margin-top: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Frame 1: two-role state (immediately-effective) -->
+    <div class="frame">
+      <div class="cap">
+        Screen 1b · Arc landing — <b>Option A: always-render arc header + role card(s) (Selected)</b> · two-role state ·
+        /en/learn/paths/careers/immediately-effective/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/careers/immediately-effective</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Careers / Immediately-Effective</div>
+          <h1>Immediately-Effective</h1>
+          <p class="sub">Ship fast, then go deeper.</p>
+          <ul class="role-grid">
+            <li>
+              <div class="rcard" style="--h: var(--hue-teal)">
+                <div class="rname">Software Engineer</div>
+                <div class="rdesc">editor → one language → build a real app → deepen</div>
+                <div class="rfoot">
+                  <span class="badge">~116 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="rcard" style="--h: var(--hue-teal)">
+                <div class="rname">AI Engineer</div>
+                <div class="rdesc">go straight at agents, evals, and applied model workflows</div>
+                <div class="rfoot">
+                  <span class="badge">~132 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <a class="back">← Back to Careers</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame 2: single-role state (interview-ready) with inline syllabus preview -->
+    <div class="frame">
+      <div class="cap">
+        Screen 1b · Arc landing — <b>Option A (Selected)</b> · single-role state, with inline syllabus preview so it
+        never reads as a stub · /en/learn/paths/careers/interview-ready/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/careers/interview-ready</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Careers / Interview-Ready</div>
+          <h1>Interview-Ready</h1>
+          <p class="sub">Pass a SWE interview soon.</p>
+          <div class="solo-card">
+            <div class="solo-head">
+              <span class="solo-name">Software Engineer</span>
+              <span class="badge">~119 courses</span>
+            </div>
+            <div class="solo-desc">interview prep → production-effective → deeper</div>
+            <div class="syllabus">
+              <b>Starts with:</b> 1. Just Enough Nvim · 2. Just Enough Lua · 3. Extending Neovim → …
+            </div>
+            <div class="solo-foot">
+              <span class="start"
+                >Start
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M13 6l6 6-6 6" /></svg
+              ></span>
+            </div>
+          </div>
+          <a class="back">← Back to Careers</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

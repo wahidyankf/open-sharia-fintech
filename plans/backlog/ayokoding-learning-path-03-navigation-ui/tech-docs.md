@@ -25,7 +25,7 @@ The new model **moves order out of the body and into the manifest**, and makes p
   it lives here.
 
 `ayokoding-www` is a **Next.js app** [Repo-grounded — `apps/ayokoding-www/next.config.ts`,
-`src/app/[locale]/(content)/c/[...slug]/page.tsx`] following the repo's
+`src/app/[locale]/(content)/[...slug]/page.tsx`] following the repo's
 **functional-core/imperative-shell** feature layout (`src/features/<name>/{core,shell}`)
 [Repo-grounded — `src/features/{content,navigation}/{core,shell}`]. The `course-paths` feature is
 **new** — no such feature directory exists today [Repo-grounded — verified absent at
@@ -47,11 +47,20 @@ apps/ayokoding-www/src/features/course-paths/
     ├── manifest-repository.ts # load manifest data files into validated PathManifest[] (fs)
     ├── path-landing.tsx       # Screen 2 — a path landing rendered from a manifest
     ├── path-card.tsx          # Screens 0 + 1 — one path as a card (hero variant + hub variant)
+    ├── category-landing.tsx   # Screen 1a — NEW (R7): careers/skills category landing, two instances
+    ├── arc-landing.tsx        # Screen 1b — NEW (R7): careers/<arc>/ arc landing, 1- and 2-role states
+    ├── empty-path-list-state.tsx # NEW (R7): shared empty state for 1a/1b before a manifest lands
     ├── path-rail.tsx          # Screen 3 (Option B) — the path's ordered course list as the left rail
     ├── path-banner.tsx        # Screen 3 — compact readout + the below-`md` disclosure trigger
     ├── prerequisite-list.tsx  # a course's prerequisites, rendered in BOTH views
     └── path-course-links.tsx  # "this course is part of: [path A] [path B]" affordance
 ```
+
+**2026-07-21 category-split ruling.** The three new shell files above are this plan's share of R7
+("every URL segment must render"). `category-landing.tsx` and `arc-landing.tsx` render the **pages**;
+the structural `_index.md` files those routes mount are created by
+`ayokoding-learning-path-01-url-restructure` (amendment A3) — same ownership boundary as the existing
+paths-hub/path-landing split below.
 
 **`shell/manifests/` is NOT created here.** The manifest data directory and its four files belong to
 `ayokoding-learning-path-05-manifests`; this plan's `manifest-repository.ts` globs whatever directory
@@ -72,6 +81,9 @@ flowchart LR
     BANNER["path-banner.tsx"]:::mine
     LANDING["path-landing.tsx"]:::mine
     CARD["path-card.tsx"]:::mine
+    CATLAND["category-landing.tsx<br/>NEW (R7)"]:::mine
+    ARCLAND["arc-landing.tsx<br/>NEW (R7)"]:::mine
+    EMPTY["empty-path-list-state.tsx<br/>NEW (R7)"]:::mine
     PREQ["prerequisite-list.tsx"]:::mine
     LINKS["path-course-links.tsx"]:::mine
 
@@ -98,6 +110,12 @@ flowchart LR
     BANNER --> SHEET
     CARD --> HERO
     CARD --> LANDING
+    CATLAND --> CARD
+    ARCLAND --> CARD
+    CATLAND --> EMPTY
+    ARCLAND --> EMPTY
+    PAGE --> CATLAND
+    PAGE --> ARCLAND
     PREVNEXT --> URL
     CRUMB --> URL
     RAIL --> URL
@@ -119,9 +137,27 @@ label names its file, so no meaning depends on colour alone.
   `apps/ayokoding-www/src/features/content/core/types.ts`]. **The repository never defines its own
   validation** — a fixture that would not load in production must not load in a test either.
 - **`path-card.tsx`**: one path rendered as a card. Two variants from one component — `context="hero"`
-  (goal phrase prominent, formal name subordinate; Screen 0) and `context="hub"` (formal name
-  prominent, arc summary, course count; Screen 1). Both are a single `<Link>` wrapping a `Card`, per
-  the shipped `SectionCard` pattern, so there is no link-in-link.
+  (goal phrase prominent, formal name subordinate; Screen 0, careers-only) and `context="hub"` (formal
+  name prominent, arc summary or omitted, course count or omitted; Screen 1, both categories). Both are
+  a single `<Link>` wrapping a `Card`, per the shipped `SectionCard` pattern, so there is no
+  link-in-link. Accent hue is **per-arc** for careers cards (shared by every role in the arc) and
+  **per-subject** for skills cards — see [prd.md's accent hue legend](./prd.md#shared-design-legend-all-six-screens).
+- **`category-landing.tsx`** (NEW, R7): renders `/en/learn/paths/careers/` or `/en/learn/paths/skills/`.
+  **Two distinct instances, not one template with swapped data (R8)**: the careers instance renders an
+  `ArcCard` grid (an arc chooser); the skills instance renders `path-card.tsx`'s `context="hub"` grid
+  plus a `RampMilestoneStrip` per card and states the fixed-arc ramp promise once, with **no** chooser
+  markup present at all — the two branches are separate render paths in the component, not one grid
+  driven by a `hasChooser` prop.
+- **`arc-landing.tsx`** (NEW, R7): renders `/en/learn/paths/careers/<arc>/`. Renders **exactly as many**
+  `path-card.tsx` cards as the arc has roles (never a fixed-size grid); the single-role state
+  additionally renders an inline first-phase syllabus preview inside that card so it never reads as a
+  stub. Careers-only — per R8 there is no `skills/<arc>/` route to serve.
+- **`empty-path-list-state.tsx`** (NEW, R7): shared by `category-landing.tsx` and `arc-landing.tsx`.
+  Renders in place of a category/arc's card grid when its manifest set is empty — a stated
+  "being written, check back soon" message plus a fallback link to a populated sibling category, never
+  a silent blank render. Addresses the real (not theoretical) interval between plan 01's amendment A3
+  creating structural `_index.md` files and the populating plans (careers: plan 05; skills: sibling
+  skills-plans) shipping real manifests.
 - **`path-landing.tsx`**: renders a manifest as phase-grouped semantic `<ol>` sections; the visible
   number **is** the `courseOrder` index. Every course link carries `?path=`.
 - **`path-rail.tsx`**: `<nav aria-label="{Path} course list">` over a semantic `<ol>`. Renders
@@ -136,7 +172,7 @@ label names its file, so no meaning depends on colour alone.
 
 ## Routing and path-context propagation
 
-- **Course pages** stay at their canonical `/en/c/learn/courses/<course-id>` URL; **path context rides
+- **Course pages** stay at their canonical `/en/learn/courses/<course-id>` URL; **path context rides
   in the `?path=<path-id>` query param**, never in the path segment. One canonical URL per course; the
   param is additive and shareable.
 - **`c/[...slug]/page.tsx`** [Repo-grounded] reads `searchParams.path`, calls the upstream
@@ -164,7 +200,7 @@ sequenceDiagram
     participant C as course-paths/core (pure)
     participant V as View (rail · banner · crumb · prev/next)
 
-    R->>P: GET /en/c/learn/courses/<id>?path=<p>
+    R->>P: GET /en/learn/courses/<id>?path=<p>
     P->>M: loadManifests()
     M-->>P: PathManifest[] (schema-validated)
     P->>C: parsePathContext(searchParams, manifests)
@@ -190,7 +226,7 @@ sequenceDiagram
 %% Palette: color-blind-friendly (#0173B2 blue, #DE8F05 orange, #029E73 teal, #CC78BC purple).
 %% TB orientation: the resolution path is a five-node chain, which exceeds the LR width budget.
 flowchart TB
-    REQ["Course page request<br/>/en/c/learn/courses/&lt;id&gt;<br/>?path=&lt;p&gt;"]:::blue
+    REQ["Course page request<br/>/en/learn/courses/&lt;id&gt;<br/>?path=&lt;p&gt;"]:::blue
     CTX["parsePathContext<br/>(core, pure)"]:::teal
     VALID{"valid path<br/>&amp; course in manifest?"}:::orange
     NAVP["resolvePathNav<br/>(manifest order)"]:::teal
@@ -218,6 +254,33 @@ flowchart TB
 `no / missing / omitted`), and each render node's label states its full contents, so the diagram is
 readable without distinguishing the fills.
 
+## R2 rendering consequence: pathId is variable-depth
+
+Per [README.md's R2 ruling](./README.md#category-split-ruling-2026-07-21-r1r8), `pathId` is
+**variable-depth by design**: `careers/<arc>/<role>` (3 segments) or `skills/<subject>` (2 segments).
+This plan's rendering layer must never hardcode a depth invariant. Concretely:
+
+- **`parsePathContext`** (upstream, `course-paths/core`) validates only that the **first** segment is
+  `careers` or `skills` and that the remaining segment(s) resolve to a manifest that exists — it never
+  asserts a segment count. This plan's contract with that function is: pass the raw `?path=` value
+  through unchanged and trust its `pathId | null` return, never re-split or re-validate segment depth
+  in the shell.
+- **`manifest-repository.ts`**'s directory glob walks **both** `careers/<arc>/<role>/` and
+  `skills/<subject>/` shapes without a depth-specific code path — the glob pattern is
+  `manifests/**/manifest.{json,yaml}` (or equivalent), not `manifests/*/*/manifest.*` — so adding a
+  future third category at yet another depth costs no rendering-layer change.
+- **Route-to-page resolution** (`category-landing.tsx` for 1- and 2-segment category roots,
+  `arc-landing.tsx` for the careers-only 2-segment arc root, `path-landing.tsx` for the terminal
+  segment) dispatches on **segment count found**, not on a hardcoded expectation of which category
+  produces which count — the dispatch table is `{2: [category | arc | terminal-skills], 3:
+[terminal-careers]}` disambiguated by the first segment, never `{careers: 3, skills: 2}` baked in as
+  a constant.
+- **Fixture proof (R2, this plan's own testing obligation)**: because the shell must provably handle
+  both depths, this plan's fixture set includes **both** a `careers/`-shaped 3-segment fixture manifest
+  and a `skills/`-shaped 2-segment fixture manifest — see
+  [Fixture strategy](#fixture-strategy-how-this-plan-is-provable-before-any-manifest-exists) below. A
+  single-depth fixture would let a hardcoded-depth regression pass silently.
+
 ## Prev/next resolution
 
 - **With path context**: prev/next come from `resolvePathNav(activeManifest, courseId)` — the manifest
@@ -232,13 +295,32 @@ readable without distinguishing the fills.
 ## Breadcrumb
 
 - **With path context**: `Home / Learn / <Path Title> / <Course Title>` — the path crumb links to the
-  path landing `/en/c/learn/paths/<path-id>` (carrying `?path=`).
+  path landing `/en/learn/paths/<path-id>` (carrying `?path=`).
 - **Without path context**: the existing content-tree breadcrumb, unchanged [Repo-grounded —
-  `buildBreadcrumbs` in `apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`].
+  `buildBreadcrumbs` in `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`].
 - The path-aware trail is a **documented departure** from NN/g's single-canonical-parent default,
   justified because the active path is explicit and shareable in the URL, so the trail is deterministic
   given the URL rather than referrer-driven. Rationale in
   [prd.md §Learner Journey](./prd.md#learner-journey-end-to-end).
+
+**2026-07-21 category-split ruling — breadcrumb depth finding.** A careers path is now 3 URL segments
+deep, so a course-in-path breadcrumb can reach **6 crumbs**: `Home / Learn / Careers / <Arc> / <Role> /
+<Course>`. [Repo-grounded — read directly:
+`apps/ayokoding-www/src/features/navigation/shell/breadcrumb.tsx`, 56 lines.] Findings:
+
+- **No hardcoded depth ceiling exists in the component.** `Breadcrumb` accepts a generic
+  `segments: {label, slug, href?}[]` prop with no length check, and renders via
+  `<nav aria-label="Breadcrumb"><ol className="flex flex-wrap items-center gap-1">` — `flex-wrap`
+  means it **degrades by wrapping to additional lines**, never by breaking or truncating, at any
+  segment count. Six segments will render without a code change.
+- **Residual, not-yet-resolved tension**: this plan's own
+  [Learner Journey](./prd.md#learner-journey-end-to-end) states a "no multi-line breadcrumb wrap on
+  small screens" principle. A full 6-segment careers trail under `?path=` at 375 px is a **plausible
+  violation** of that stated principle even though nothing crashes — `flex-wrap` will happily produce
+  2+ lines. This is flagged, not resolved, here: the 375 px Screen 3 manual-verification step
+  (Playwright MCP) must empirically confirm how many lines the real breadcrumb wraps to at 6 segments
+  and whether that reading is acceptable, rather than this document asserting either outcome without
+  evidence. See the corresponding entry in [prd.md §Product-Level Risks](./prd.md#product-level-risks).
 
 ## Prerequisite display
 
@@ -309,17 +391,31 @@ focus behaviour — is in
 
 ## Path landing and paths hub
 
-- **Path landing** at `/en/c/learn/paths/<path-id>`, rendered by `path-landing.tsx`: the thin content
-  `_index.md` supplies only the landing prose/SEO anchor; the ordered course list is rendered from the
-  loaded manifest data, grouped by the path's phase headings, each course link carrying `?path=`.
-  **Ordering never lives in the `_index.md` frontmatter.**
-- **Paths hub** at `/en/c/learn/paths`: the "choose your path" screen with **four** path cards in a 2×2
-  grid, each built from a loaded manifest (title + description + course count).
-- **Content homes are not created here.** `content/en/learn/paths/_index.md` and
-  `content/en/learn/courses/_index.md` are authored by
-  `ayokoding-learning-path-01-url-restructure`; this plan builds the renderers that those routes mount
-  and proves them against the fixture. This is the boundary that keeps the two plans from racing on the
-  same files.
+- **Path landing** at `/en/learn/paths/<path-id>` (now variable-depth, R2), rendered by
+  `path-landing.tsx`: the thin content `_index.md` supplies only the landing prose/SEO anchor; the
+  ordered course list is rendered from the loaded manifest data, grouped by the path's phase headings,
+  each course link carrying `?path=`. **Ordering never lives in the `_index.md` frontmatter.**
+- **Paths hub** at `/en/learn/paths`: **redesigned by the category-split ruling (R6)** — the
+  "choose your path" screen with a `CategorySection`/`ArcGroup` layout (a `careers/` section grouped by
+  arc, a `skills/` section flat) replacing the retired flat four-card grid, each `PathCard` built from
+  a loaded manifest (title + description + course count for careers; title only, pre-manifest, for
+  skills). See [prd.md §Screen 1 hi-fi](./prd.md#screen-1-hi-fi--paths-hub-enlearnpaths-option-a-category-sections-arc-grouped-within-careers)
+  for the full component contract.
+- **Category and arc landings** (`category-landing.tsx`, `arc-landing.tsx`) — new (R7), rendering the
+  `careers/`, `skills/`, and `careers/<arc>/` URL segments that previously had no page at all. See
+  [Shell module contracts](#shell-module-contracts) above.
+- **Content homes and structural indices are not created here.** `content/en/learn/paths/_index.md`,
+  `content/en/learn/courses/_index.md`, and — per amendment A3 — every category/arc structural index
+  (`paths/careers/_index.md`, the three `paths/careers/<arc>/_index.md`, `paths/skills/_index.md`) are
+  authored by `ayokoding-learning-path-01-url-restructure`; this plan builds the renderers that those
+  routes mount and proves them against the fixtures. This is the boundary that keeps the two plans from
+  racing on the same files.
+- **Sidebar ordering / weight for the new category and arc entries** — this plan **reuses**, and does
+  not re-derive, `ayokoding-learning-path-01-url-restructure`'s own DD-44 reasoning for how new
+  structural entries get a sidebar position (weight assignment for newly-created `_index.md` files is
+  that plan's concern, since it authors those files); this plan's renderers consume whatever
+  tree-position the content layer resolves, the same way `path-landing.tsx` already does for the
+  existing `paths/<path-id>` entries.
 
 ## Accessibility contract
 
@@ -354,21 +450,30 @@ is asserted here as an **e2e regression guard**, not as an owned Gherkin scenari
 
 ## Fixture strategy (how this plan is provable before any manifest exists)
 
-The four real manifests ship in the Wave-3 plan `ayokoding-learning-path-05-manifests`, which depends
-on this plan. Building the renderer against nothing would leave every behaviour unverified until Wave 3
-— so this plan commits a **fixture manifest** (a small `courseOrder` over real, already-live course IDs
-with declared prerequisites) and proves every rendering behaviour against it.
+The four real **careers** manifests ship in the Wave-3 plan `ayokoding-learning-path-05-manifests`,
+which depends on this plan; the two real **skills** manifests ship from sibling skills-plans (R4/R5),
+also downstream of this plan. Building the renderer against nothing would leave every behaviour
+unverified until those plans ship — so this plan commits fixture manifests and proves every rendering
+behaviour against them.
 
-Three rules make the fixture trustworthy rather than a self-fulfilling stub:
+Four rules make the fixtures trustworthy rather than a self-fulfilling stub:
 
-1. **Same schema.** The fixture is validated through the upstream `schemas.ts`, not a test-local shape.
-   A fixture that would not load in production cannot load in a test.
+1. **Same schema.** Every fixture is validated through the upstream `schemas.ts`, not a test-local
+   shape. A fixture that would not load in production cannot load in a test.
 2. **Two fixtures where a behaviour needs two.** The "shared course, no forked body" property and the
-   `path-course-links` multi-badge case are asserted over **two** fixture manifests that share a course
-   ID, because one manifest cannot exhibit sharing.
-3. **No re-assertion downstream.** The manifest plan re-asserts the same four nav behaviours against the
-   **real** manifests as checklist acceptance clauses in its own gates — not as duplicate Gherkin. See
-   [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin) for the provenance note.
+   `path-course-links` multi-badge case are asserted over **two** careers fixture manifests that share
+   a course ID, because one manifest cannot exhibit sharing.
+3. **A careers-shaped AND a skills-shaped fixture, per R2.** Because `pathId` is variable-depth
+   (`careers/<arc>/<role>`, 3 segments, vs. `skills/<subject>`, 2 segments — see
+   [R2 rendering consequence](#r2-rendering-consequence-pathid-is-variable-depth) above), a single-depth
+   fixture set cannot prove the router handles both shapes. This plan therefore commits **both** a
+   3-segment careers fixture and a 2-segment skills fixture, and the variable-depth Gherkin/e2e
+   assertions run against both.
+4. **No re-assertion downstream.** The careers-manifest plan re-asserts the same four nav behaviours
+   against the **real** careers manifests as checklist acceptance clauses in its own gates — not as
+   duplicate Gherkin; the sibling skills-plans do the same for the skills fixtures once their real
+   manifests ship. See [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin) for the
+   provenance note.
 
 ## Design Decisions
 
@@ -402,21 +507,25 @@ Three rules make the fixture trustworthy rather than a self-fulfilling stub:
   funnel previously held desktop-only artefacts (8 `.png`, one per screen per option) with mobile
   behaviour described in prose. A prose footnote cannot be reviewed the way a drawing can, and the
   Screen 3 reselection turned on exactly a mobile question — which is the argument for the rule, not an
-  anecdote against it. The funnel therefore renders **5 screens × 2 options × 3 viewports = 30 `.png`**
-  at **375 / 768 / 1280 px** (Tailwind's default `sm`/`md`/`lg`/`xl` scale [Web-cited —
-  <https://tailwindcss.com/docs/responsive-design>, accessed 2026-07-21]), matching the widths the
-  plan's Playwright verification already resizes to, plus a lo-fi wireframe per viewport. Naming is
-  `assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png` from `assets/src/<same-stem>.html`; the
-  eight pre-existing files were renamed into the scheme and every `![]()` reference updated. `.png`
-  only, per the
+  anecdote against it. **Amended 2026-07-21 by the category-split ruling (R6/R7)** — Screen 1 was
+  redesigned in place and two new screen types (1a, 1b) were added, so the funnel now renders **6
+  screens × 2 options × 3 viewports = 36 `.png`** at **375 / 768 / 1280 px** (Tailwind's default
+  `sm`/`md`/`lg`/`xl` scale [Web-cited — <https://tailwindcss.com/docs/responsive-design>, accessed
+  2026-07-21]), matching the widths the plan's Playwright verification already resizes to, plus a lo-fi
+  wireframe per viewport. Naming is `assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png` from
+  `assets/src/<same-stem>.html`; the eight pre-existing files were renamed into the scheme and every
+  `![]()` reference updated; four new stems (`category-landing-option-{a,b}`,
+  `arc-landing-option-{a,b}`) were added for the two new screen types. `.png` only, per the
   [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
   Delivery enumerates the renders **one checkbox per asset** — a coarse "render all mockups" step can
   be ticked with most of the set missing.
 
-> **DD-47 after the split.** DD-47's **30** is a **two-plan** total: **24** are produced and held here
-> (Screens 0-3), and **6** by `ayokoding-learning-path-01-url-restructure` (Screen 4). Every
-> DD-47-derived acceptance clause in this plan asserts **24** against this plan's own `assets/`. A
-> reader auditing DD-47 against this folder alone must not read 24 as under-delivery, and no executor
+> **DD-47 after the split.** DD-47's original **30** was a **two-plan** total: 24 held here (Screens
+> 0-3) and 6 by `ayokoding-learning-path-01-url-restructure` (Screen 4). **Amended 2026-07-21**: this
+> plan's share grows from 24 to **36**, so the cross-plan total grows to **42** (36 here + 6 there,
+> Screen 4 unchanged). Every DD-47-derived acceptance clause in this plan — including the Phase 1 and
+> archival gate checks in `delivery.md` — now asserts **36** against this plan's own `assets/`. A
+> reader auditing DD-47 against this folder alone must not read 36 as under-delivery, and no executor
 > may close the gap by copying the other plan's six renders here — a matrix duplicated across two
 > folders drifts.
 
@@ -452,17 +561,35 @@ Reproduced verbatim because Group A alone spans three of the five split plans.
 after Group A can start until the rendering layer exists, which is why this plan sits in Wave 2 and
 blocks `ayokoding-learning-path-05-manifests`.
 
+> **Staleness flag on DD-15/DD-27 (this plan does not edit the verbatim text above).** Both decisions
+> predate the 2026-07-21 category-split ruling and are stale in two ways this plan does not correct in
+> place, because the block above is reproduced **verbatim** from its canonical owner
+> (`ayokoding-learning-path-05-manifests`), which is itself being updated concurrently for the same
+> ruling: (1) the path-id `software-engineer-to-ai-engineer` is renamed to `ai-engineer` under
+> `careers/immediately-effective/` (R1/R3); (2) the "~17 courses" figure and the "already a SWE,
+> transition" framing assumed the pre-split model — per R3 the path is now from-scratch, with SWE
+> prerequisites **included** in its own `courseOrder` rather than assumed. Both corrections are
+> plan 05's to make in its canonical copy; flagged here rather than silently drifted from that source.
+
 ### Consumed from sibling plans (not restated)
 
-| Decision    | Subject                                            | Owning plan                                              |
-| ----------- | -------------------------------------------------- | -------------------------------------------------------- |
-| DD-1        | Order lives outside the body                       | `ayokoding-learning-path-02-schema-and-prerequisite-dag` |
-| DD-3        | Path-aware nav via `?path=` client context         | `ayokoding-learning-path-02-schema-and-prerequisite-dag` |
-| DD-24       | AI path links, does not include, SWE prerequisites | `ayokoding-learning-path-05-manifests`                   |
-| DD-40–DD-45 | Three-bucket IA, `legacy/` relocation, redirects   | `ayokoding-learning-path-01-url-restructure`             |
+| Decision    | Subject                                                                               | Owning plan                                              |
+| ----------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| DD-1        | Order lives outside the body                                                          | `ayokoding-learning-path-02-schema-and-prerequisite-dag` |
+| DD-3        | Path-aware nav via `?path=` client context                                            | `ayokoding-learning-path-02-schema-and-prerequisite-dag` |
+| DD-24       | AI path links, does not include, SWE prerequisites — **stale per R3, see flag below** | `ayokoding-learning-path-05-manifests`                   |
+| DD-40–DD-45 | Three-bucket IA, `legacy/` relocation, redirects                                      | `ayokoding-learning-path-01-url-restructure`             |
 
 This plan **implements the rendering consequences** of DD-3 and DD-24 (query-param context; badge only
 for paths that list the course) without re-deciding either.
+
+> **DD-24 staleness flag.** DD-24's own worked example assumed the pre-split transition-path model — the
+> AI path "links, does not include" SWE-fundamentals prerequisites. Per R3,
+> `careers/immediately-effective/ai-engineer` now **includes** its prerequisites in `courseOrder`
+> instead, so DD-24's specific example is stale; this plan's own consumed contract (one badge per path
+> whose `courseOrder` actually lists the course) needs no change, since it was never depth- or
+> path-specific — only DD-24's illustrative claim is affected, and only its owning plan corrects it. See
+> the matching flag in [prd.md Screen 3](./prd.md#screen-3--course-page-in-path-context).
 
 ## File Impact
 
@@ -472,16 +599,16 @@ for paths that list the course) without re-deciding either.
 `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`;
 `<E2E>` = `apps/ayokoding-www-fe-e2e/`.
 
-| Area                    | Change                                    | Files                                                                                                                                                                                      |
-| ----------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `course-paths` shell    | New app code (TDD)                        | `<FEAT>shell/{manifest-repository.ts,path-landing.tsx,path-card.tsx,path-rail.tsx,path-banner.tsx,prerequisite-list.tsx,path-course-links.tsx}` _(all New files)_ + colocated `*.test.tsx` |
-| Route wiring            | Edit                                      | `apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx` [Repo-grounded]                                                                                                       |
-| Extended nav components | Additive props, no fork                   | `<NAV>prev-next.tsx`, `<NAV>breadcrumb.tsx`, `apps/ayokoding-www/src/features/content/core/content-url.ts` [all Repo-grounded]                                                             |
-| Screen 3 hosts          | `children` swap only                      | `<NAV>resizable-sidebar.tsx`, `<SHELL>mobile-nav.tsx` [both Repo-grounded]                                                                                                                 |
-| Screen 0 hero           | Edit — `PathCard` grid + escape-hatch row | `<SHELL>hero.tsx` [Repo-grounded]; existing `<SHELL>landing.test.tsx` extended                                                                                                             |
-| Specs (Gherkin)         | New domain folder                         | `<SPECS>*.feature` + `<SPECS>README.md` _(New files; sibling `navigation/` exists — Repo-grounded)_                                                                                        |
-| E2E                     | New fixture + step defs                   | `<E2E>` fixture manifest _(New file)_ + `course-paths` step definitions _(New files; sibling `resizable-sidebar.steps.ts` exists — Repo-grounded)_                                         |
-| Plan artefacts          | Funnel + evidence                         | `assets/*.png` (16 new), `prd.md` embeds, `evidence/*.png`                                                                                                                                 |
+| Area                    | Change                                            | Files                                                                                                                                                                                                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `course-paths` shell    | New app code (TDD)                                | `<FEAT>shell/{manifest-repository.ts,path-landing.tsx,path-card.tsx,category-landing.tsx,arc-landing.tsx,empty-path-list-state.tsx,path-rail.tsx,path-banner.tsx,prerequisite-list.tsx,path-course-links.tsx}` _(all New files — `category-landing.tsx`, `arc-landing.tsx`, `empty-path-list-state.tsx` added 2026-07-21)_ + colocated `*.test.tsx` |
+| Route wiring            | Edit                                              | `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx` [Repo-grounded]                                                                                                                                                                                                                                                                  |
+| Extended nav components | Additive props, no fork                           | `<NAV>prev-next.tsx`, `<NAV>breadcrumb.tsx`, `apps/ayokoding-www/src/features/content/core/content-url.ts` [all Repo-grounded]                                                                                                                                                                                                                      |
+| Screen 3 hosts          | `children` swap only                              | `<NAV>resizable-sidebar.tsx`, `<SHELL>mobile-nav.tsx` [both Repo-grounded]                                                                                                                                                                                                                                                                          |
+| Screen 0 hero           | Edit — `PathCard` grid + skills escape-hatch link | `<SHELL>hero.tsx` [Repo-grounded]; existing `<SHELL>landing.test.tsx` extended                                                                                                                                                                                                                                                                      |
+| Specs (Gherkin)         | New domain folder                                 | `<SPECS>*.feature` + `<SPECS>README.md` _(New files; sibling `navigation/` exists — Repo-grounded)_                                                                                                                                                                                                                                                 |
+| E2E                     | New fixture + step defs                           | `<E2E>` careers-shaped and skills-shaped fixture manifests _(New files)_ + `course-paths` step definitions _(New files; sibling `resizable-sidebar.steps.ts` exists — Repo-grounded)_                                                                                                                                                               |
+| Plan artefacts          | Funnel + evidence                                 | `assets/*.png` (**36 total**: 8 pre-existing HTML sources content-fixed in place for R6/R8, 4 new HTML source stems added for Screens 1a/1b — all 36 `.png` pending render/re-render), `prd.md` embeds, `evidence/*.png`                                                                                                                            |
 
 **Not touched by this plan**: any file under `apps/ayokoding-www/content/`, `<FEAT>core/`,
 `<FEAT>shell/manifests/`, `apps/ayokoding-www/src/redirects/`, or `next.config.ts`. If a delivery step
@@ -550,3 +677,57 @@ would pass with the sidebar permanently replaced — the exact defect this plan 
 **Locale.** Content verification runs in `en` only — this plan's content locale. The `?path=` mechanism
 itself is locale-neutral, and the `html[lang]` assertion in the accessibility scenario covers the locale
 attribute. See [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals).
+
+## UI-gate and API-gate posture (R9)
+
+Both postures are declared explicitly. Per the
+[api-quality-gate workflow](../../../repo-governance/workflows/api/api-quality-gate.md)'s
+§Relationship to Other Gates, a plan bearing neither surface **is not thereby exempt** — exemption
+belongs only to a plan with no reachable behavioural delta at all, and it must be stated here. This
+plan is the special case among the programme's seven sibling plans: it bears the UI surface, so it
+runs `ui-quality-gate` itself rather than declaring the exemption every sibling plan takes.
+
+### UI gate — **NOT exempt** (this is the plan that runs it)
+
+This plan is the programme's **only component-bearing plan**. Every `.tsx` file the six sibling plans'
+content and manifests render through — `path-landing.tsx`, `path-card.tsx`, `prerequisite-list.tsx`,
+`category-landing.tsx`, `arc-landing.tsx`, `empty-path-list-state.tsx`, `ramp-milestone-strip.tsx`,
+`syllabus-preview.tsx`, the extended `<APPSHELL>hero.tsx`, and the extended `PathRail`/breadcrumb/prev-next
+shell components — is authored **here**. `ayokoding-learning-path-06-skills-accounting`'s `tech-docs.md`
+(§UI-gate and API-gate posture) already names this plan as the one that "runs the gate itself," and this
+section is that declaration.
+
+**Concrete mechanism**: `swe-ui-checker` / `swe-ui-fixer` (the `ui-quality-gate` workflow's checker/fixer
+loop — token compliance, accessibility, color contrast, component patterns, dark mode, responsive,
+anti-patterns) run scoped to
+`apps/ayokoding-www/src/features/course-paths/` and the touched files under
+`apps/ayokoding-www/src/features/app-shell/shell/` and
+`apps/ayokoding-www/src/features/navigation/shell/` — see the
+[Local Quality Gates step in Phase 4](./delivery.md#phase-4-feature-verification), which invokes the
+workflow at `strict` mode before Phase 4's gate closes. A zero-finding double-confirmation is required
+before Phase 4 can close, exactly as the workflow's own termination condition states.
+
+**This does not replace behavioural verification — it is additive.** `swe-ui-checker` validates
+component **source** (static); it cannot observe a running page. Playwright MCP manual verification
+(Phase 5) and the **Rule-15 three-tester retest** (also Phase 5, mandatory here since this plan owns
+the programme's largest UI surface) both still run in full — `ui-quality-gate` and the live-site
+testers check different things (source-level pattern compliance vs. observed runtime behaviour) and
+neither substitutes for the other.
+
+### API gate — **exempt**, and here is the reasoning rather than the assertion
+
+This plan adds **zero** API surface: no new route under `apps/ayokoding-www/src/app/api/`, no new tRPC
+procedure, no server action with an externally-reachable contract. Its entire behavioural delta is
+**client-rendered from data the existing content/manifest loader already reads** — the loader itself
+(and the manifest integrity it validates) is `ayokoding-learning-path-05-manifests`' scope, not this
+plan's; this plan only renders what that loader returns. There is therefore no reachable behavioural
+delta through an API surface for `api-quality-gate` to exercise — the exemption is not "cannot
+currently run" (as `ayokoding-learning-path-06-skills-accounting` correctly states for its own,
+narrower manifest-validation delta) but a genuine **no surface exists**, which is the case the
+workflow's §Relationship to Other Gates calls exemption-eligible.
+
+**Rule-16 API exploratory retest — not applicable.** No REST or GraphQL endpoint changes;
+`api-exploratory-tester` has nothing to exercise. (Recorded per
+[Manual Verification & CI Blockers](../../../AGENTS.md#manual-verification--ci-blockers), matching the
+"recorded as a decision, not an oversight" pattern already used for Phase 5's "Manual API verification
+is not applicable" note.)

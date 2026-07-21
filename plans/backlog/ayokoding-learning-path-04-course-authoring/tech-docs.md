@@ -514,8 +514,8 @@ This plan owns **sixteen** design decisions and carries **two** cross-cutting on
   (ships against topics 1–33, already live on disk; proves routing, manifest loading, `?path` context,
   prev/next, breadcrumb, and prerequisite display against real content, in days not months —
   authoring the 4 NEW interview courses + `capstone-interview-loop` is **no longer bundled into this
-  MVP gate**) → **`software-engineer-to-ai-engineer`** (authoring priority #1 for all authoring effort)
-  → **`immediately-effective/software-engineer`** manifest → **`fundamentally-strong/software-engineer`**
+  MVP gate**) → **`careers/immediately-effective/ai-engineer`** (authoring priority #1 for all authoring effort)
+  → **`careers/immediately-effective/software-engineer`** manifest → **`careers/fundamentally-strong/software-engineer`**
   manifest → **backfill topics 34–94**. Rationale (preserved from the original build-order decision):
   nothing in the AI path exists on disk (~17 courses); making it literally first — ahead of even the
   MVP — would mean nothing ships until all 17 are authored, with the UI architecture unvalidated the
@@ -793,6 +793,62 @@ access date; both are version-sensitive, so the driven NEW courses must re-verif
 discoverable** on 2026-07-18 — all their specifics are maintainer-supplied and must never be written as
 version-pinned facts; the gap-closer courses are grounded primarily in the publicly verified `wazuh`
 target.
+
+## UI-gate and API-gate posture (R9)
+
+Both postures are declared explicitly. Per the
+[api-quality-gate workflow](../../../repo-governance/workflows/api/api-quality-gate.md)'s
+§Relationship to Other Gates, a plan bearing neither surface **is not thereby exempt** — exemption
+belongs only to a plan with no reachable behavioural delta at all, and it must be stated here.
+
+### UI gate — **exempt**, and here is the reasoning rather than the assertion
+
+`swe-ui-checker` validates component **source** — it globs for `.tsx` files. This plan's own
+[Overview](#overview) already states the fact plainly: it "writes no TypeScript, no YAML data file,
+no route, no component, and no redirect rule." Its entire output is 90 markdown page bundles under
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. A checker run scoped to this plan's diff
+would scan **zero** `.tsx` files and return zero findings — a vacuous pass, recorded as an exemption
+rather than a claimed one. The components that render these bodies — `PathRail`, `PathLanding`,
+`PathCard`, the paths hub — are owned and gated by `ayokoding-learning-path-03-navigation-ui`.
+
+**The exemption is narrow.** It covers `ui-quality-gate` **only**. Because this plan ships 90
+user-visible pages, manual behavioural verification via Playwright MCP is **mandatory and
+performed** — [Phase 13](./delivery.md#phase-13-manual-content-verification-playwright-mcp) opens a
+sample of authored course pages at all three breakpoints in the `en` content locale, with committed
+screenshot evidence. The **Rule-15 three-tester retest is separately and already exempted**, with its
+own stated reasons, in
+[README §Rule-15 three-tester retest — exemption recorded](./README.md#rule-15-three-tester-retest--exemption-recorded):
+the triad would exercise the navigation plan's rendering layer, not this plan's content, and this
+plan's content correctness is instead covered by dedicated content-domain checkers
+(`apps-ayokoding-www-{by-example,annotated-concept,primer,general}-checker`,
+`apps-ayokoding-www-facts-checker`, `apps-ayokoding-www-link-checker`) — strictly stronger, for prose
+correctness, than a generalist live-site UX triad. This posture declaration reproduces that existing
+exemption rather than re-deciding it; the two records must not diverge. **The distinction that
+matters**: the Rule-15 triad's exemption is a separate, narrower ruling than `ui-quality-gate`'s —
+both happen to resolve the same way for this plan, but for different reasons, and neither entails the
+other.
+
+### API gate — **exempt**
+
+Unlike its sibling manifest-owning plans, this plan **never edits a manifest file** — forbidden
+outright by [§The manifest ownership invariant](#the-manifest-ownership-invariant-binding) — and
+ships no code, no YAML, no route. Its one piece of structured data, the `prerequisites` frontmatter
+this plan writes into each of the 90 `_index.md` files, is **inert until a downstream consumer reads
+it**: `checkManifestIntegrity` / `checkPrerequisiteConsistency` run against it only once
+`ayokoding-learning-path-05-manifests` grows a manifest to include these courses. This plan's own
+structural check — `test -d` / `test -f` + frontmatter grep (see
+[Testing / Verification Strategy](#testing--verification-strategy)) — verifies only that the field is
+present and well-formed, never that it resolves; that re-verification belongs entirely to the
+manifest plan, which is correspondingly **not** exempt (see its own R9 posture).
+
+The colocated `code/` samples inside each course body are course material, not application code — "no
+importable module, no test target, and no runtime behaviour the app depends on" (already recorded in
+[the TDD exemption](#tdd-exemption-this-plan-ships-no-application-code) above). Between the inert
+frontmatter and the non-runtime content, this plan has **no reachable behavioural delta of its own**
+for `api-quality-gate` to exercise.
+
+**Rule-16 API exploratory retest — not applicable.** No REST or GraphQL endpoint changes;
+`api-exploratory-tester` has nothing to exercise.
 
 ## Exemptions (stated explicitly, not silently taken)
 

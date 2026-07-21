@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --hue-terracotta: oklch(65% 0.16 30);
+        --hue-honey: oklch(76% 0.15 75);
+        --hue-sage: oklch(70% 0.1 150);
+        --hue-teal: oklch(66% 0.1 200);
+        --hue-sky: oklch(68% 0.11 230);
+        --hue-plum: oklch(60% 0.12 305);
+        --hue-terracotta-ink: oklch(40% 0.13 30);
+        --hue-honey-ink: oklch(44% 0.12 75);
+        --hue-sage-ink: oklch(37% 0.09 150);
+        --hue-teal-ink: oklch(37% 0.09 200);
+        --hue-sky-ink: oklch(39% 0.1 230);
+        --hue-plum-ink: oklch(37% 0.1 305);
+        --hue-terracotta-wash: oklch(95% 0.04 30);
+        --hue-honey-wash: oklch(96% 0.05 75);
+        --hue-sage-wash: oklch(95% 0.03 150);
+        --hue-teal-wash: oklch(95% 0.03 200);
+        --hue-sky-wash: oklch(95% 0.03 230);
+        --hue-plum-wash: oklch(95% 0.03 305);
+        --warm-0: oklch(99% 0.006 85);
+        --warm-50: oklch(97% 0.009 85);
+        --warm-100: oklch(94% 0.012 85);
+        --warm-200: oklch(88% 0.014 85);
+        --warm-300: oklch(78% 0.016 85);
+        --warm-400: oklch(62% 0.016 85);
+        --warm-500: oklch(48% 0.018 80);
+        --warm-700: oklch(32% 0.018 75);
+        --warm-800: oklch(24% 0.018 70);
+        --warm-900: oklch(18% 0.016 70);
+        --background: var(--warm-0);
+        --foreground: var(--warm-900);
+        --card: #fff;
+        --card-foreground: var(--warm-900);
+        --primary: var(--hue-honey);
+        --primary-foreground: #fff;
+        --secondary: var(--warm-100);
+        --secondary-foreground: var(--warm-900);
+        --muted: var(--warm-100);
+        --muted-foreground: var(--warm-500);
+        --accent: var(--hue-terracotta-wash);
+        --accent-foreground: var(--hue-terracotta-ink);
+        --border: var(--warm-200);
+        --ring: var(--hue-honey);
+        --radius-sm: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+        --radius-xl: 1.25rem;
+        --shadow-sm: 0 1px 3px 0 oklch(20% 0.02 75/0.08), 0 1px 2px -1px oklch(20% 0.02 75/0.06);
+        --shadow-md: 0 4px 8px -2px oklch(20% 0.02 75/0.08), 0 2px 4px -2px oklch(20% 0.02 75/0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+      .frame {
+        width: 960px;
+        background: var(--background);
+      }
+      .cap {
+        font-size: 12px;
+        color: var(--muted-foreground);
+        margin-bottom: 14px;
+        letter-spacing: 0.02em;
+      }
+      .cap b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      .win {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+      }
+      .bar {
+        display: flex;
+        gap: 7px;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--warm-50);
+      }
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .url {
+        margin-left: 10px;
+        font-size: 11px;
+        color: var(--muted-foreground);
+        align-self: center;
+      }
+      .body {
+        padding: 32px 40px 40px;
+      }
+      .crumb {
+        font-size: 12.5px;
+        color: var(--muted-foreground);
+      }
+      .crumb b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      h1 {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-top: 10px;
+      }
+      .sub {
+        margin-top: 8px;
+        color: var(--muted-foreground);
+        font-size: 14.5px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .back {
+        display: inline-block;
+        margin-top: 22px;
+        font-size: 13px;
+        color: var(--muted-foreground);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+
+      /* Frame 1 — careers instance: arc cards */
+      .arc-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 18px;
+        margin-top: 22px;
+      }
+      .acard {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 20px 20px 18px;
+        border-left: 4px solid var(--h);
+      }
+      .aname {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .atag {
+        font-size: 12.5px;
+        color: var(--muted-foreground);
+        margin-top: 6px;
+        line-height: 1.4;
+      }
+      .achips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .chip {
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .aexplore {
+        margin-top: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      /* Frame 2/3 — skills instance */
+      .skills-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 22px;
+      }
+      .scard {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 20px 20px 18px;
+        border-top: 3px solid var(--h);
+      }
+      .sname {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .ramp {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 14px;
+        font-size: 10px;
+        color: var(--muted-foreground);
+      }
+      .ramp li {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .ramp .tick {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--h);
+      }
+      .sstart {
+        display: inline-block;
+        margin-top: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      /* Frame 3 — empty state */
+      .empty {
+        margin-top: 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--hue-sky-wash);
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .empty .msg {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+      .empty .cta {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--hue-sky-ink);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Frame 1: careers instance -->
+    <div class="frame">
+      <div class="cap">
+        Screen 1a · Category landing — <b>Option A: arc cards with member-role preview (Selected)</b> · careers instance
+        · /en/learn/paths/careers/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/careers</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Careers</div>
+          <h1>Careers</h1>
+          <p class="sub">Three arcs, one shared library, converging within your role.</p>
+          <ul class="arc-grid">
+            <li>
+              <div class="acard" style="--h: var(--hue-honey)">
+                <div class="aname">Interview-Ready</div>
+                <div class="atag">Pass a SWE interview soon.</div>
+                <div class="achips"><span class="chip">Software Engineer</span></div>
+                <div class="aexplore">Explore arc →</div>
+              </div>
+            </li>
+            <li>
+              <div class="acard" style="--h: var(--hue-teal)">
+                <div class="aname">Immediately-Effective</div>
+                <div class="atag">Ship fast, then go deeper.</div>
+                <div class="achips">
+                  <span class="chip">Software Engineer</span><span class="chip">AI Engineer</span>
+                </div>
+                <div class="aexplore">Explore arc →</div>
+              </div>
+            </li>
+            <li>
+              <div class="acard" style="--h: var(--hue-sage)">
+                <div class="aname">Fundamentally Strong</div>
+                <div class="atag">Fundamentals first, then build.</div>
+                <div class="achips"><span class="chip">Software Engineer</span></div>
+                <div class="aexplore">Explore arc →</div>
+              </div>
+            </li>
+          </ul>
+          <a class="back">← Back to all paths</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame 2: skills instance, populated with ramp milestones -->
+    <div class="frame">
+      <div class="cap">
+        Screen 1a · Category landing — <b>Option A (Selected)</b> · skills instance, populated · /en/learn/paths/skills/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/skills</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Skills</div>
+          <h1>Skills</h1>
+          <p class="sub">
+            Up and running fast, then deeper and deeper. Every skills path follows the same promise — no arc to choose
+            here.
+          </p>
+          <ul class="skills-grid">
+            <li>
+              <div class="scard" style="--h: var(--hue-terracotta)">
+                <div class="sname">Enterprise Resource Planning</div>
+                <ol class="ramp">
+                  <li><span class="tick"></span>dangerous: course 4</li>
+                  <li><span class="tick"></span>comfortable: course 10</li>
+                  <li><span class="tick"></span>confident: course 20</li>
+                </ol>
+                <div class="sstart">Start →</div>
+              </div>
+            </li>
+            <li>
+              <div class="scard" style="--h: var(--hue-plum)">
+                <div class="sname">Accounting</div>
+                <ol class="ramp">
+                  <li><span class="tick"></span>dangerous: course 3</li>
+                  <li><span class="tick"></span>comfortable: course 16</li>
+                  <li><span class="tick"></span>confident: course 20</li>
+                </ol>
+                <div class="sstart">Start →</div>
+              </div>
+            </li>
+          </ul>
+          <a class="back">← Back to all paths</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame 3: skills instance, empty state -->
+    <div class="frame">
+      <div class="cap">
+        Screen 1a · Category landing — <b>Option A (Selected)</b> · skills instance, empty state (no manifest published
+        yet) · /en/learn/paths/skills/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/skills</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Skills</div>
+          <h1>Skills</h1>
+          <p class="sub">Up and running fast, then deeper and deeper.</p>
+          <div class="empty">
+            <span class="msg">New skills paths are being written — check back soon.</span>
+            <a class="cta">In the meantime, explore the Careers paths →</a>
+          </div>
+          <a class="back">← Back to all paths</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

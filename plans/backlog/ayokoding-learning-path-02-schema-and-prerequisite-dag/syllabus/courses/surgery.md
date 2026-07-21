@@ -18,7 +18,7 @@ manifest must be re-verified prerequisite-consistent afterward.
 | IR-SE | [`interview-ready/software-engineer`](../paths/manifest-interview-ready-software-engineer.md)             | exists on disk                               |
 | IE-SE | [`immediately-effective/software-engineer`](../paths/manifest-immediately-effective-software-engineer.md) | exists on disk                               |
 | FS-SE | [`fundamentally-strong/software-engineer`](../paths/manifest-fundamentally-strong-software-engineer.md)   | exists on disk                               |
-| IE-AI | `immediately-effective/software-engineer-to-ai-engineer`                                                  | **new** (D3) — authored as part of this plan |
+| IE-AI | `immediately-effective/ai-engineer`                                                                       | **new** (D3) — authored as part of this plan |
 
 > **Membership verification (2026-07-20)**: the `## In which paths` block of every course named in this
 > document lists all three existing manifests. There is no course below whose surgery touches fewer than

@@ -125,7 +125,7 @@ subagents capped per the orchestration convention). The main thread self-promote
 
 **Path constants** (referenced throughout):
 
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>`)
 - `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (path-landing anchors — **read-only here**)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones — **read-only here**; the re-home is the URL-restructure plan's work)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/` (**never written here**)
@@ -458,7 +458,7 @@ deploy), applying the convention:
 - [ ] [AI] **Record the band-completion signal** for the AI-engineering set in this file (see
       [README §Band-completion signal contract](./README.md#band-completion-signal-contract)) — all
       five fields present: `BAND`, `PLAN`, `LANDED_COURSE_IDS` (the six IDs), `GROW_MANIFESTS`
-      (`<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` — the AI path only),
+      (`<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — the AI path only),
       `MERGED_COMMIT` — acceptance: the signal block is present in this file with all five fields
       populated and `MERGED_COMMIT` a real 40-char SHA on `origin/main`
       (`git cat-file -e <sha>^{commit}` exits 0). Falsifiable both ways: a placeholder SHA fails
@@ -886,7 +886,7 @@ rows as part of "convention complete".
 
 - [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` for this band = the three
       software-engineer-role manifests **plus**
-      `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` (DD-33 — this band lands
+      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (DD-33 — this band lands
       eight of the nine courses that manifest walks). Name all four paths explicitly in the signal; a
       signal that omits the AI path leaves it stuck on its six-course smoke-test spine.
 
@@ -1122,7 +1122,7 @@ rows as part of "convention complete".
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` for this band = the three
       software-engineer-role manifests **plus**
-      `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` (DD-33 —
+      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (DD-33 —
       `capstone-build-your-own-coding-agent` is the ninth of the nine courses that manifest walks).
 
 ### Phase 10 Gate
@@ -1205,9 +1205,9 @@ rows as part of "convention complete".
       returns **0**.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [ ] [AI] Apply the three per-band closing steps. **`GROW_MANIFESTS` for this band is only two
-      manifests**: `<MANIFESTS>interview-ready/software-engineer.yaml` and
-      `<MANIFESTS>fundamentally-strong/software-engineer.yaml`.
-      `immediately-effective/software-engineer` does **not** grow — that path omits the
+      manifests**: `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
+      `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`.
+      `careers/immediately-effective/software-engineer` does **not** grow — that path omits the
       interview-technique band from its `courseOrder` by design (its reader reaches these courses via
       their canonical pages). The signal MUST name exactly these two; naming three would cause the
       manifest plan to grow a path the design excludes.
@@ -1327,7 +1327,7 @@ rows as part of "convention complete".
 - [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
 - [ ] [AI] **Sample-verify authored course pages** — for a sample of **nine** authored courses (one per
       band) plus **two** AI-engineering courses, at breakpoints 375 / 768 / 1280 px, via Playwright MCP:
-      `browser_navigate` to `/en/c/learn/courses/<course-id>`, `browser_resize`, then `browser_snapshot`
+      `browser_navigate` to `/en/learn/courses/<course-id>`, `browser_resize`, then `browser_snapshot`
       — acceptance: each page renders its overview, learning track, and drilling track; `html[lang]` is
       `en`; `browser_console_messages` reports **zero** errors per page per breakpoint.
 - [ ] [AI] **Verify prerequisite rendering** — on a course with a declared prerequisite chain (e.g.

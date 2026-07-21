@@ -370,7 +370,7 @@ judge-model separation and agreement measurement are demonstrable with no paid k
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: placed after the agent
+- `immediately-effective/ai-engineer` — **owning path**: placed after the agent
   courses, because agent trajectories are what make derived criteria and process scoring concrete (D5).
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening
   tail — pending manifest re-verification (D8 four-path rule).

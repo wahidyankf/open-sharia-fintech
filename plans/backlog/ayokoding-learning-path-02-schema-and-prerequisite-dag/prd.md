@@ -10,7 +10,9 @@ Concretely, it ships five things:
 
 1. A **course-prerequisite frontmatter contract** — `prerequisites: [course-id, ...]` declared in
    each course's canonical `_index.md`. This plan is its canonical owner.
-2. A **`PathManifest` zod schema** — `pathId`, `title`, `description`, `courseOrder[]`, optional
+2. A **`PathManifest` zod schema** — `pathId` (variable-depth: `careers/<arc>/<role>` or, for the
+   sibling `skills/` category this plan does not own, `skills/<subject>` — R2), `arc` (always
+   required, independent of the URL grammar — R8), `title`, `description`, `courseOrder[]`, optional
    per-course `framing` — describing the standalone YAML data file that is a path's single
    machine-consumed source of truth.
 3. The **`<MANIFESTS>` directory** and its `README.md`, the home those YAML files land in later.
@@ -21,7 +23,7 @@ Concretely, it ships five things:
    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`, authored RED.
 
 It also extends `content-url.ts` with the optional `pathId` param and the canonical
-`/en/c/learn/courses/<course-id>` URL shape, because path context has to be expressible in a link
+`/en/learn/courses/<course-id>` URL shape, because path context has to be expressible in a link
 before any component can render one.
 
 **Nothing user-facing ships here.** No component, no route, no rendered page, no manifest data file,
@@ -34,30 +36,41 @@ component. The exemption is stated with its reasoning in
 
 ## Personas (one per path)
 
-Reproduced **verbatim** from the source plan. All four path personas are carried, not just the ones
-this plan's surface most directly serves: the resolvers and the DAG underpin every path, and a
-reviewer cannot assess fit-for-purpose against a persona living in a sibling folder.
+Reproduced **verbatim** from the source plan, except the fourth persona, which is **corrected
+2026-07-21 (R3, custody exception)** — its original framing became factually wrong once the ruling
+landed, so it is updated in place rather than left as a known-incorrect quotation (same reasoning as
+the `syllabus/` custody exception; see
+[tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding)). All four path personas are
+carried, not just the ones this plan's surface most directly serves: the resolvers and the DAG
+underpin every path, and a reviewer cannot assess fit-for-purpose against a persona living in a
+sibling folder. **This plan is careers-only (R4)** — all four paths below sit under the `careers/`
+URL category; see [tech-docs.md §Ownership split](./tech-docs.md#ownership-split-careers-vs-skills--r4).
 
 - **Experienced engineer re-entering the job market (north-star for the
-  `interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
-  an employed senior wanting to switch. Already owns the editor workflow and deep fundamentals; needs
-  to **refresh breadth fast, relearn interview technique** at mid/senior/staff level, and handle a
-  **layoff / employment-gap narrative** — without walking a from-scratch curriculum. Interview/job prep
-  FIRST.
+  `careers/interview-ready/software-engineer` path)** — recently laid off, returning from a
+  gap/sabbatical, or an employed senior wanting to switch. Already owns the editor workflow and deep
+  fundamentals; needs to **refresh breadth fast, relearn interview technique** at mid/senior/staff
+  level, and handle a **layoff / employment-gap narrative** — without walking a from-scratch
+  curriculum. Interview/job prep FIRST.
 - **A builder who wants to be effective fast (north-star for the
-  `immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
-  editor, learn one language end-to-end, **ship a real app early**, then deepen into CS fundamentals,
-  DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career switcher.
+  `careers/immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set
+  up the editor, learn one language end-to-end, **ship a real app early**, then deepen into CS
+  fundamentals, DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career
+  switcher.
 - **A university-style, fundamentals-first learner (north-star for the
-  `fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
+  `careers/fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
   foundations, computer architecture, paradigms, and data structures & algorithms **before** building
   apps at scale. Prefers to understand the machine and the theory first, then apply it.
-- **An already-working software engineer transitioning to AI engineering (north-star for the
-  `immediately-effective/software-engineer-to-ai-engineer` path, added 2026-07-20)** — already owns the
-  SWE fundamentals the other three paths teach; wants to become immediately effective at **building**
-  AI systems (models, agents, evals, inference serving), not at driving coding agents. Prerequisite
-  courses are **linked, not included** in this path's manifest. Converges on a distinct AI-engineering
-  endpoint, not the other three paths' shared software-engineering endpoint.
+- **A reader with no assumed prior software-engineering competence, specializing directly into AI
+  (north-star for the `careers/immediately-effective/ai-engineer` path, added 2026-07-20, corrected
+  2026-07-21 per R3)** — wants to become immediately effective at **building** AI systems (models,
+  agents, evals, inference serving), not at driving coding agents, starting from scratch. Its
+  software-engineering prerequisites (the courses an already-working engineer would already own) are
+  **included in `courseOrder`, not linked** — a correction from the original framing, which wrongly
+  assumed an already-working software engineer and linked rather than included them. No new course
+  body is authored for this correction; every included prerequisite is an existing library course.
+  Converges on a distinct AI-engineering endpoint, not the other three paths' shared
+  software-engineering endpoint.
 - **A reader who lands on a shared course by deep-link / share** — arrives at a course URL without a
   path context and must get a coherent standalone view (with its prerequisites surfaced) plus an
   obvious way to enter a path.
@@ -98,6 +111,10 @@ downstream plans.
   fallback begins in `parsePathContext`, before any component is involved.
 - As the **maintainer**, I want a link to a course to be able to carry path context, so that a reader
   walking a path stays in that path as they follow prev/next and breadcrumb links.
+- As a **manifest-owning plan author** (careers or skills), I want to link out to a prerequisite my
+  path's audience already has, without being forced to either walk it or drop the course that needs
+  it, so that curation stays possible for an audience with partial, non-standard prior knowledge
+  (OI-4, 2026-07-21).
 
 ## Acceptance Criteria (Gherkin)
 
@@ -106,7 +123,9 @@ with `And`.
 
 Two scenarios below are carried **verbatim** from the source plan and are this plan's own (they
 describe the pure integrity gates, whose entire implementation lives here). The third is this plan's
-scoped share of the decomposed build-green scenario — see the provenance note that follows it.
+scoped share of the decomposed build-green scenario — see the provenance note that follows it. The
+fourth is new, added 2026-07-21 to resolve **OI-4** (see
+[tech-docs.md §Link-don't-walk](./tech-docs.md#link-dont-walk-prerequisite-omission-is-permitted-oi-4-ruling-2026-07-21)).
 
 ```gherkin
 Scenario: A path manifest is a valid topological entry into the prerequisite DAG
@@ -122,6 +141,14 @@ Scenario: Every manifest course reference resolves to a real course
   When the manifest-integrity check runs
   Then every listed course ID resolves to an existing course in the library
   And no course ID appears more than once in the manifest
+```
+
+```gherkin
+Scenario: A path may link a prerequisite it does not include, without failing integrity
+  Given a path manifest includes a course whose declared prerequisite is absent from that manifest
+  When the manifest-integrity check runs
+  Then the absent prerequisite is not reported as a violation
+  And the absent prerequisite appears in the check's informational linkedPrerequisites list
 ```
 
 ```gherkin
@@ -168,7 +195,7 @@ The affected scenarios, by title:
 - _The breadcrumb reflects the active path_ — underpinned by `contentUrl(pathId)`.
 - _A course page surfaces its declared prerequisites_ — underpinned by `resolvePrerequisites`.
 - _A legacy fundamentally-strong URL redirects to the canonical course URL_ — underpinned by
-  `contentUrl`'s canonical `/en/c/learn/courses/<course-id>` shape. **Owned by
+  `contentUrl`'s canonical `/en/learn/courses/<course-id>` shape. **Owned by
   `ayokoding-learning-path-01-url-restructure`**, not by the navigation plan.
 
 ## Product Scope
@@ -187,7 +214,7 @@ The affected scenarios, by title:
   (`resolvePrerequisites`, `checkPrerequisiteConsistency`), `manifest-integrity.ts`
   (`checkManifestIntegrity`) — each built RED → GREEN → REFACTOR.
 - The `content-url.ts` extension: an optional `pathId` param appending `?path=<path-id>`, and the
-  canonical `/en/c/learn/courses/<course-id>` shape.
+  canonical `/en/learn/courses/<course-id>` shape.
 - The `course-paths` Gherkin companion under
   `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/` plus its `README.md`, authored
   RED (step bindings land in `ayokoding-learning-path-03-navigation-ui`).
@@ -196,7 +223,12 @@ The affected scenarios, by title:
 
 **Out-of-scope features:**
 
-- Any `.yaml` manifest data file — owned by `ayokoding-learning-path-05-manifests`.
+- Any **careers** `.yaml` manifest data file — owned by `ayokoding-learning-path-05-manifests`
+  (4 manifests, not 6 — R4).
+- The entire `skills/` URL category — both path landings, both manifests
+  (`skills/enterprise-resource-planning`, `skills/accounting`), and its course corpus — owned
+  end-to-end by a separate, not-yet-created plan (R4). See
+  [tech-docs.md §Ownership split](./tech-docs.md#ownership-split-careers-vs-skills--r4).
 - Any `shell/` component, the `?path=` route wiring, the path rail, the path banner, the paths hub,
   and every mockup render — owned by `ayokoding-learning-path-03-navigation-ui`.
 - Any course body, and any edit to a file under `syllabus/` — owned by
@@ -240,7 +272,7 @@ authored **from** its spec file, never from a fresh judgment call.
 - **Deep-link fallback gap** — a course reached without path context resolves to an error rather than
   a canonical view. Mitigated in the core: `parsePathContext` returns `null` for unknown and absent
   path IDs and never throws; the rendered half is the navigation plan's.
-- **`content-url.ts` regression** — the new canonical `/en/c/learn/courses/<course-id>` shape changes
+- **`content-url.ts` regression** — the new canonical `/en/learn/courses/<course-id>` shape changes
   link generation for pages this plan does not otherwise touch. Mitigated by keeping the `pathId`
   param optional, by updating the existing `content-url` tests in the same commit, and by a Phase 4
   live no-regression sweep across both supported locales at three breakpoints with committed

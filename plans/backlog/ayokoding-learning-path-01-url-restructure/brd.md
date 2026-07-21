@@ -2,7 +2,7 @@
 
 ## Business Goal
 
-Give the ayokoding-www learn section **one explainable shape**. Today `/{locale}/c/learn/` lists
+Give the ayokoding-www learn section **one explainable shape**. Today `/{locale}/learn/` lists
 seven subject domains and nothing that tells a reader what kind of thing each child is. The shared
 course library the sibling plans build needs a **flat, path-neutral `courses/` namespace** and a
 **`paths/` home** to render into; everything not yet a course or a path needs a home that says so.
@@ -28,7 +28,7 @@ would ship a learn section whose top level mixes two structural buckets (`paths/
 six subject domains — an IA that is neither the old one nor the new one, and that cannot be explained
 to a reader in a sentence [Judgment call]. Three consequences follow, and each is a business cost:
 
-- **A reader arriving at `/en/c/learn` cannot tell what kind of thing each child is.** "Follow a
+- **A reader arriving at `/en/learn` cannot tell what kind of thing each child is.** "Follow a
   path", "browse the library", and "dig into the older material" are three understandable choices;
   "paths, courses, artificial-intelligence, business, information-security, it-governance,
   personal-development, software-engineering" is a list with no rule behind it.
@@ -53,7 +53,7 @@ redirect table was moved here at split time rather than left with the navigation
 
 **Pain points addressed**:
 
-- The learn section would be left **half-converted** — `/en/c/learn/` listing two structural buckets
+- The learn section would be left **half-converted** — `/en/learn/` listing two structural buckets
   beside six subject domains, so a reader cannot tell what kind of thing each child is and a future
   author has no rule for where new material belongs.
 - The 33 shipped topics have **no path-neutral home**. While they live under
@@ -66,7 +66,7 @@ redirect table was moved here at split time rather than left with the navigation
 
 **Expected benefits** (qualitative reasoning; no fabricated metrics):
 
-- **One explainable learn section**: `/{locale}/c/learn/` offers three understandable choices —
+- **One explainable learn section**: `/{locale}/learn/` offers three understandable choices —
   follow a path, browse the course library, dig into the older material — instead of a hybrid
   taxonomy, and every future page has an unambiguous home.
 - **A populated, flat, path-neutral course namespace** that the manifest plan can reference by stable
@@ -102,10 +102,11 @@ file under `.claude/agents/`].
   one of the 1,148 relocated files as a pure rename (`git diff --cached --summary -M`), with the only
   edited content files being `en/learn/overview.md` and the new `legacy/_index.md` (DD-41).
 - **No relocated URL 404s** (observable): every relocated domain's old URL — in both its bare and
-  `/c` inbound forms — 308s to its `legacy/` address, and `courses/` and `paths/` URLs are provably
-  **not** rewritten; verified by the redirect unit test and e2e (DD-42).
+  stale-`/c`-bookmark inbound forms (DD-48 inverts which form is canonical) — 308s to its `legacy/`
+  address, and `courses/` and `paths/` URLs are provably **not** rewritten; verified by the redirect
+  unit test and e2e (DD-42).
 - **No re-homed course URL 404s** (observable): every legacy
-  `fundamentally-strong/software-engineer/<slug>` URL 308s to `/en/c/learn/courses/<course-id>` for
+  `fundamentally-strong/software-engineer/<slug>` URL 308s to `/en/learn/courses/<course-id>` for
   all 37 re-homed bundles, verified by the per-course redirect unit test (DD-43). Falsifiable in both
   directions: the test asserts each of the 37 mappings resolves **and** that no bucket rule matches
   the `fundamentally-strong` prefix.
@@ -115,9 +116,14 @@ file under `.claude/agents/`].
 - **The old-way browse still resolves** (observable): after re-homing, every entry in the legacy
   `fundamentally-strong/**` `_index.md` tree links to live content at its canonical course URL or
   through the redirect layer — no dead links, no orphaned section (DD-19).
-- **The `id` locale is provably untouched** (observable):
+- **The `id` locale's three-bucket shape is provably untouched, its de-namespacing is not** (observable):
   `find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l` still returns **53** and
-  `test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero (DD-45).
+  `test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero (DD-45 — content structure
+  unchanged); separately, `id/belajar`, `id/celoteh`, and `id/konten-video` URLs are de-namespaced
+  alongside `en` by the same inverted `content-namespace.ts` (DD-48 — a URL-layer change, not a
+  content-structure one; see
+  [De-namespacing](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48) for why these
+  two are separate axes).
 - **No regressions** (observable): `nx run ayokoding-www:build` renders green; `test:unit`,
   `specs:behavior:coverage`, the paired `ayokoding-www-fe-e2e:test:e2e`, heading-hierarchy,
   markdownlint, and link validation all pass across the app and the section.
@@ -130,9 +136,14 @@ file under `.claude/agents/`].
   [Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive); this plan files no
   per-page migration backlog.
 - **Extending the three-bucket shape to the `id` locale** — deferred and recorded explicitly (DD-45).
-  `id/belajar/` is left untouched — no `legacy/` bucket, no relocation, no `id` redirect rules —
-  because `id` has zero courses and zero paths, so two of the three buckets would ship empty.
-  Recorded as a decision, not an omission; reversal conditions in
+  `id/belajar/` content is left untouched — no `legacy/` bucket, no relocation — because `id` has zero
+  courses and zero paths, so two of the three buckets would ship empty. This deferral is scoped to
+  **content structure only**; it does not extend to `id`'s redirect layer — DD-48's de-namespacing
+  covers `id/belajar`, `id/celoteh`, and `id/konten-video` on the same footing as `en`, because
+  de-namespacing is a site-wide URL-layer change, not a per-locale IA decision (DD-45 and DD-48 are
+  different axes; see the scope note in
+  [De-namespacing](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48)). Recorded as a
+  decision, not an omission; reversal conditions in
   [Q-B](./tech-docs.md#q-b--does-the-id-locale-get-the-same-three-bucket-shape-now) and
   [Q-C](./tech-docs.md#q-c--if-id-is-in-scope-are-the-bucket-segments-translated).
 - **Building the `course-paths` feature** — the pure core belongs to
@@ -149,18 +160,18 @@ file under `.claude/agents/`].
 
 ## Business Risks and Mitigations
 
-| Risk                                                                                                       | Mitigation                                                                                                                                                                                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Re-homing the 33 shipped topics + 4 capstones to `courses/` breaks ~37 live production URLs.               | Every re-home lands **in the same phase** as its redirect (`apps/ayokoding-www/src/redirects/`), from the legacy `fundamentally-strong/software-engineer/<slug>` URL to `/en/c/learn/courses/<course-id>`, asserted by a unit test over all 37 mappings before the phase gate closes.              |
-| Relocating 1,148 pages breaks live URLs at scale.                                                          | Per-domain 308 prefix rules cover every descendant via one `:path*` each (DD-42), asserted by a unit test mirroring `content-namespace.unit.test.ts` and by e2e on both inbound forms; the relocation is a pure `git mv`, so `git revert` restores everything atomically.                          |
-| A blanket redirect rule swallows the `courses/` and `paths/` buckets or self-recurses.                     | A blanket `/en/c/learn/:path*` rule is explicitly FORBIDDEN (DD-42); the six domains are enumerated, and the unit test asserts no blanket source and no `courses`/`paths`/`fundamentally-strong` source prefix exists.                                                                             |
-| A `fundamentally-strong` bucket rule shadows the 37 per-course rules and strands every re-homed course.    | DD-43 states the exclusion as a boundary rule, and the same unit test that asserts the 12 bucket rules asserts the **absence** of any `fundamentally-strong`-prefixed source. Both rule sets live in this one plan, so the negative assertion is writable.                                         |
-| The `next.config.ts` redirect ordering regresses, stranding historical renames or restoring a 3-hop chain. | DD-42 states the required order (`learnReorg` → `learnThreeBucket` → `contentNamespace`) plus e2e coverage of both inbound forms and of the `learn-reorg` → bucket chain (URL-mapping row 9); Phase 4 re-asserts the ordering as a standing regression check.                                      |
-| Search traffic to the six relocated domains (~1,148 pages, ~67% of the `en/learn/` corpus) collapses.      | 308s preserve link equity, and [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)'s recommended answer keeps the bucket **indexed**; `noindex` is explicitly rejected as the default because the replacement courses do not exist yet (~37 of 127 bodies built).                                   |
-| Legacy material and canonical courses cover the same subject, and a reader studies the superseded one.     | Q-D's per-page "superseded by" banner plus recording the supersession in the surviving course's `overview.md` ([Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive)); the bucket is a staging pen expected to shrink, not a permanent parallel library.                       |
-| A missing `legacy/_index.md` makes the bucket sort **first** in the sidebar, ahead of `courses/`/`paths/`. | Authoring `legacy/_index.md` with an explicit `weight` is a delivery step and a phase-gate check (DD-44): `generate-indexes` only rewrites `_index.md` files that already exist, and `buildTreeForLocale` would otherwise synthesize a `weight: 0` "Legacy" node.                                  |
-| The `id` locale silently diverges from `en`'s IA in a bilingual app.                                       | The deferral is a recorded decision (DD-45) with stated reversal conditions, surfaced in Non-Goals, in the delivery checklist, and in the AFTER content tree — not an unstated omission a later reader would read as a bug, and re-asserted at archival against the Phase-0 `id/belajar` baseline. |
-| Feed churn: every relocated item's RSS `<guid>` changes with its URL, re-surfacing ~1,148 items as new.    | Accepted as a one-time cost of the move and called out in the IA-consequence table; no mitigation exists short of not moving the content.                                                                                                                                                          |
-| Navigation regresses for readers who never use a path (the relocation is one of two ways the sidebar can). | The IA is entirely tree-derived (DD-44), so the relocation needs zero production code edits; Phase 5 runs a no-path sweep at all three breakpoints. The **other** way — the path rail sharing `ResizableSidebar` — is guarded by `ayokoding-learning-path-03-navigation-ui`, which owns that risk. |
-| The 37-slug namespace collides with a natively-authored slug from the sibling authoring plan.              | The wave order is the mitigation: `ayokoding-learning-path-04-course-authoring` starts only after this plan merges, so its collision check runs against a **populated** namespace rather than passing vacuously against an empty one.                                                              |
-| The six Open Questions (Q-A…Q-F) are silently resolved by whoever executes first.                          | Every Phase-3 step executes its governing question's **recommended default** and names the alternative inline, so an overturned ruling is a bounded edit rather than a rewrite; Phase 8 asserts all six are recorded as rulings, not left as "RECOMMENDED".                                        |
+| Risk                                                                                                                                                                                              | Mitigation                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Re-homing the 33 shipped topics + 4 capstones to `courses/` breaks ~37 live production URLs.                                                                                                      | Every re-home lands **in the same phase** as its redirect (`apps/ayokoding-www/src/redirects/`), from the legacy `fundamentally-strong/software-engineer/<slug>` URL to `/en/learn/courses/<course-id>`, asserted by a unit test over all 37 mappings before the phase gate closes.                                                                                                                                                                                  |
+| Relocating 1,148 pages breaks live URLs at scale.                                                                                                                                                 | Per-domain 308 prefix rules cover every descendant via one `:path*` each (DD-42), asserted by a unit test mirroring `content-namespace.unit.test.ts` and by e2e on both bare and stale-`/c`-bookmark inbound forms; the relocation is a pure `git mv`, so `git revert` restores everything atomically.                                                                                                                                                               |
+| A blanket redirect rule swallows the `courses/` and `paths/` buckets or self-recurses.                                                                                                            | A blanket `/en/learn/:path*` rule is explicitly FORBIDDEN (DD-42); the six domains are enumerated, and the unit test asserts no blanket source and no `courses`/`paths`/`fundamentally-strong` source prefix exists.                                                                                                                                                                                                                                                 |
+| A `fundamentally-strong` bucket rule shadows the 37 per-course rules and strands every re-homed course.                                                                                           | DD-43 states the exclusion as a boundary rule, and the same unit test that asserts the 6 bucket rules (DD-42, collapsed by DD-48) asserts the **absence** of any `fundamentally-strong`-prefixed source. Both rule sets live in this one plan, so the negative assertion is writable.                                                                                                                                                                                |
+| The `next.config.ts` redirect ordering regresses, stranding historical renames or, since DD-48 inverts `content-namespace.ts`, looping a URL forever instead of merely lengthening its hop chain. | DD-48 states the required order (`contentNamespace` → `learnReorg` → `courseRehome` → `learnThreeBucket`, re-derived from first principles, not reused from the pre-inversion order) plus e2e coverage of both bare and stale-`/c` inbound forms and of the `learn-reorg` → bucket chain (URL-mapping row 9); Phase 4 re-asserts the ordering, and the redirect unit tests assert no rule's destination contains `/c/`, as standing regression checks.               |
+| Search traffic to the six relocated domains (~1,148 pages, ~67% of the `en/learn/` corpus) collapses.                                                                                             | 308s preserve link equity, and [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)'s recommended answer keeps the bucket **indexed**; `noindex` is explicitly rejected as the default because the replacement courses do not exist yet (~37 of 127 bodies built).                                                                                                                                                                                                     |
+| Legacy material and canonical courses cover the same subject, and a reader studies the superseded one.                                                                                            | Q-D's per-page "superseded by" banner plus recording the supersession in the surviving course's `overview.md` ([Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive)); the bucket is a staging pen expected to shrink, not a permanent parallel library.                                                                                                                                                                                         |
+| A missing `legacy/_index.md` makes the bucket sort **first** in the sidebar, ahead of `courses/`/`paths/`.                                                                                        | Authoring `legacy/_index.md` with an explicit `weight` is a delivery step and a phase-gate check (DD-44): `generate-indexes` only rewrites `_index.md` files that already exist, and `buildTreeForLocale` would otherwise synthesize a `weight: 0` "Legacy" node.                                                                                                                                                                                                    |
+| The `id` locale silently diverges from `en`'s IA in a bilingual app.                                                                                                                              | The deferral is a recorded decision (DD-45) with stated reversal conditions, surfaced in Non-Goals, in the delivery checklist, and in the AFTER content tree — not an unstated omission a later reader would read as a bug, and re-asserted at archival against the Phase-0 `id/belajar` baseline.                                                                                                                                                                   |
+| Feed churn, two sources: relocation churns ~1,148 legacy items' RSS `<guid>`s; DD-48's de-namespacing separately churns every namespaced item's `<guid>` across both locales.                     | Both accepted as one-time costs; the 37 re-homed courses are the only overlap, and bundling the inversion into Phase 3 (not an earlier phase) caps their double-churn at 37 items rather than the full 1,148 an earlier placement would cost. No mitigation exists short of not moving/renaming the content.                                                                                                                                                         |
+| Navigation regresses for readers who never use a path (the relocation is one of two ways the sidebar can).                                                                                        | The six-domain relocation's IA is entirely tree-derived (DD-44), so the relocation itself needs zero production code edits — DD-48's de-namespacing is a separate, explicitly-scoped production-code change also landing in Phase 3, not a violation of DD-44; Phase 5 runs a no-path sweep at all three breakpoints. The **other** way — the path rail sharing `ResizableSidebar` — is guarded by `ayokoding-learning-path-03-navigation-ui`, which owns that risk. |
+| The 37-slug namespace collides with a natively-authored slug from the sibling authoring plan.                                                                                                     | The wave order is the mitigation: `ayokoding-learning-path-04-course-authoring` starts only after this plan merges, so its collision check runs against a **populated** namespace rather than passing vacuously against an empty one.                                                                                                                                                                                                                                |
+| The six Open Questions (Q-A…Q-F) are silently resolved by whoever executes first.                                                                                                                 | Every Phase-3 step executes its governing question's **recommended default** and names the alternative inline, so an overturned ruling is a bounded edit rather than a rewrite; Phase 8 asserts all six are recorded as rulings, not left as "RECOMMENDED".                                                                                                                                                                                                          |

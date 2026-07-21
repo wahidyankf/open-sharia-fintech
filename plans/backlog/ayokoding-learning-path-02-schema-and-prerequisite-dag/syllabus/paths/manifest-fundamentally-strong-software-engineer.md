@@ -1,20 +1,25 @@
-# Path Manifest — `fundamentally-strong/software-engineer` (fundamentals-first)
+# Path Manifest — `careers/fundamentally-strong/software-engineer` (fundamentals-first)
 
 The **ordered manifest** for the fundamentals-first path: a **curated, prerequisite-consistent** ordered list of
 **course IDs** over the [shared course library](../courses/README.md). This is the authoritative reading
-order for this path; a course page under `?path=fundamentally-strong/software-engineer` follows it for prev/next + breadcrumb.
-Persona: a **learner who wants university-style depth** — CS theory and fundamentals **first**, then breadth, then application, all the way to the same deep mastery the other two paths converge on.
+order for this path; a course page under `?path=careers/fundamentally-strong/software-engineer` follows
+it for prev/next + breadcrumb. Persona: a **learner who wants university-style depth** — CS theory and
+fundamentals **first**, then breadth, then application, all the way to the same deep mastery the other
+two paths converge on.
 
 This file is the **human-readable mirror** of the manifest. The **machine-consumed source of truth** is
 the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/fundamentally-strong/software-engineer.yaml` (RESOLVED, OQ-2 — a standalone
-YAML/JSON data file in the `course-paths` feature, NOT `courseOrder` frontmatter on any `_index.md`).
-Path landing served at `/en/c/learn/paths/fundamentally-strong/software-engineer`. Order rationale:
-[tech-docs §Path `fundamentally-strong/software-engineer`](../../tech-docs.md#path-fundamentally-strongsoftware-engineer-theory-first).
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml`
+(RESOLVED, OQ-2 — a standalone YAML/JSON data file in the `course-paths` feature, NOT `courseOrder`
+frontmatter on any `_index.md`). Per
+[tech-docs §Variable-depth `pathId`](../../tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8),
+the manifest also carries an explicit `arc: fundamentally-strong` field (R8). Path landing served at
+`/en/learn/paths/careers/fundamentally-strong/software-engineer`. Order rationale:
+[tech-docs §Path `careers/fundamentally-strong/software-engineer`](../../tech-docs.md#path-careersfundamentally-strongsoftware-engineer-theory-first).
 
 ## Composition (curated + converge, LOCKED 2026-07-19)
 
-This is the **complete-mastery** path for the software-engineer role — it includes **all 121 software-engineer-role courses** in a **theory-first** ordering, and it is the only software-engineer-role path that omits none of them. It no longer "includes all library courses": the six **AI-engineer-role** courses this plan added (the eval split `evaluating-ai-output-essentials` / `evaluating-ai-systems-in-depth`, plus `statistics-for-evaluation`, `product-patterns-for-probabilistic-systems`, `inference-serving-and-model-deployment`, and `fine-tuning-and-adaptation`) are outside this path's role scope and compose only the fourth, `immediately-effective/software-engineer-to-ai-engineer` path — paths converge **per role, not globally** (D2). Its distinctive move is to front-load **CS theory and fundamentals** (foundations, architecture, paradigms, DS&A, OO design) before any application/product work — the university sequence. The two curated software-engineer paths (`interview-ready`, `immediately-effective`) reach the same deep endpoint through a smaller spine plus an optional tail / deepening band; this path teaches the whole software-engineer-role library in one arc.
+This is the **complete-mastery** path for the software-engineer role — it includes **all 121 software-engineer-role courses** in a **theory-first** ordering, and it is the only software-engineer-role path that omits none of them. It no longer "includes all library courses": the six **AI-engineer-role** courses this plan added (the eval split `evaluating-ai-output-essentials` / `evaluating-ai-systems-in-depth`, plus `statistics-for-evaluation`, `product-patterns-for-probabilistic-systems`, `inference-serving-and-model-deployment`, and `fine-tuning-and-adaptation`) are outside this path's role scope and compose only the fourth, `careers/immediately-effective/ai-engineer` path — paths converge **per role, not globally** (D2). Its distinctive move is to front-load **CS theory and fundamentals** (foundations, architecture, paradigms, DS&A, OO design) before any application/product work — the university sequence. The two curated software-engineer paths (`careers/interview-ready/software-engineer`, `careers/immediately-effective/software-engineer`) reach the same deep endpoint through a smaller spine plus an optional tail / deepening band; this path teaches the whole software-engineer-role library in one arc.
 
 - **Created**: none — a pure manifest ordering over the shared library. **Zero new bodies.**
 - **Prerequisite-consistent**: a valid topological entry into the library's prerequisite DAG. Every course appears after all of its prerequisites (verified). `just-enough-c` is taught in Stage 1 so `computer-architecture` never forward-references C; the minimal web slice in Stage 5 (`backend-essentials`, `sql-essentials`, `api-design`) precedes the data-depth and architecture courses that declare it as a prerequisite.
@@ -227,8 +232,8 @@ This is the **complete-mastery** path for the software-engineer role — it incl
 5. `capstone-interview-loop`
 
 > The five interview courses in the optional tail appear in **all three** manifests (the main
-> interview-first arc in `interview-ready/software-engineer`; an optional job-hunt tail in
-> `immediately-effective/software-engineer`; and this optional interview tail). Every path references
+> interview-first arc in `careers/interview-ready/software-engineer`; an optional job-hunt tail in
+> `careers/immediately-effective/software-engineer`; and this optional interview tail). Every path references
 > them **by course ID** — one canonical body, three orderings.
 
 ## Smoothness notes (RD-16)

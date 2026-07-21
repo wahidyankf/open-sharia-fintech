@@ -3,61 +3,78 @@
 ## Product Overview
 
 `ayokoding-www` gains a **`course-paths` rendering layer** that makes one canonical, path-neutral
-course body behave correctly under four different reading orders. A **path** is an ordered manifest of
-course IDs; **path context rides in the `?path=<path-id>` query parameter**, never in the URL path
-segment, so a course keeps exactly one canonical URL
-(`/en/c/learn/courses/<course-id>`) no matter how many paths list it.
+course body behave correctly under four different **careers** reading orders, and renders (but does
+not author) two more under `skills/`. A **path** is an ordered manifest of course IDs; **path context
+rides in the `?path=<path-id>` query parameter**, never in the URL path segment, so a course keeps
+exactly one canonical URL (`/en/learn/courses/<course-id>`) no matter how many paths list it.
 
-This plan builds five user-facing surfaces and the shell that feeds them:
+> **2026-07-21 category-split ruling.** `pathId` is now **variable-depth**: `careers/<arc>/<role>`
+> (3 segments) or `skills/<subject>` (2 segments) — never a hardcoded depth. Full record:
+> [README.md §Category Split Ruling](./README.md#category-split-ruling-2026-07-21-r1r8).
 
-| Screen | Surface                                       | What this plan ships                                                                         |
-| ------ | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| 0      | Site landing hero at `/en`                    | Four goal-labelled `PathCard`s plus the "Compare all paths" and "Browse the library" escapes |
-| 1      | Paths hub at `/en/c/learn/paths`              | The 2×2 four-card chooser                                                                    |
-| 2      | Path landing at `/en/c/learn/paths/<path-id>` | The manifest rendered as a phase-grouped, numbered syllabus                                  |
-| 3      | Course page in path context                   | The left `PathRail`, `PathBanner` readout, path breadcrumb, `PrerequisiteList`, prev/next    |
-| 4      | Legacy-bucket landing and page banner         | **Not this plan** — owned by `ayokoding-learning-path-01-url-restructure`                    |
+This plan builds **seven** user-facing surfaces and the shell that feeds them — five carried from the
+original four-path model (Screens 0–4, Screen 4 owned elsewhere), plus **two new screen types** the
+category split introduces (Screens 1a, 1b):
+
+| Screen | Surface                                                                      | What this plan ships                                                                                                                                                    |
+| ------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0      | Site landing hero at `/en`                                                   | Four **career**-goal-labelled `PathCard`s plus the "Compare all paths" and "Browse the library" escapes                                                                 |
+| 1      | Paths hub at `/en/learn/paths`                                               | A **category-grouped** chooser — a `careers/` section (3 arcs, 4 paths) and a `skills/` section (2 paths) — replaces the old flat four-card grid                        |
+| 1a     | Category landing at `/en/learn/paths/careers/` and `/en/learn/paths/skills/` | **Two different jobs, one screen type**: `careers/` is an **arc chooser** (3 options); `skills/` states its fixed arc **once** and lists subjects — **no** chooser (R8) |
+| 1b     | Arc landing at `/en/learn/paths/careers/<arc>/`                              | `careers/`-only. Lists the arc's path(s) — 1 for `interview-ready` and `fundamentally-strong`, **2** for `immediately-effective` (the design case)                      |
+| 2      | Path landing at `/en/learn/paths/<path-id>` (now variable-depth)             | The manifest rendered as a phase-grouped, numbered syllabus                                                                                                             |
+| 3      | Course page in path context                                                  | The left `PathRail`, `PathBanner` readout, path breadcrumb, `PrerequisiteList`, prev/next                                                                               |
+| 4      | Legacy-bucket landing and page banner                                        | **Not this plan** — owned by `ayokoding-learning-path-01-url-restructure`                                                                                               |
 
 The `course-paths` **pure core** (`schemas.ts`, `path-nav.ts`, `path-context.ts`, `prerequisites.ts`,
 `manifest-integrity.ts`) is an upstream artefact from
 `ayokoding-learning-path-02-schema-and-prerequisite-dag`; this plan imports it and never edits it.
-Every rendering behaviour is proven against a **fixture manifest**, because the four real manifests are
-published by the Wave-3 plan `ayokoding-learning-path-05-manifests`.
+Every rendering behaviour is proven against **fixture manifests** — a `careers/`-shaped fixture (the
+four real careers manifests are published by the Wave-3 plan `ayokoding-learning-path-05-manifests`)
+and, per R2, a `skills/`-shaped fixture that exercises the 2-segment `pathId` path with no real skills
+content owned here (a sibling plan publishes the two real skills manifests).
 
 The navigation feature is **app code**, so it carries a `specs/` Gherkin companion and three-level
 tests per the repo's feature-change completeness rule.
 
 ## Personas (one per path)
 
-Duplicated verbatim from the source plan into every split plan — all four paths' readers reach every
-screen this plan builds, so all four personas are carried, not just one.
+Duplicated verbatim from the source plan into every split plan — all four **careers** paths' readers
+reach every screen this plan builds, so all four personas are carried, not just one. Skills personas
+belong to the sibling skills-category plan (R4); not duplicated here.
 
 - **Experienced engineer re-entering the job market (north-star for the
-  `interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
-  an employed senior wanting to switch. Already owns the editor workflow and deep fundamentals; needs
-  to **refresh breadth fast, relearn interview technique** at mid/senior/staff level, and handle a
-  **layoff / employment-gap narrative** — without walking a from-scratch curriculum. Interview/job prep
-  FIRST.
+  `careers/interview-ready/software-engineer` path)** — recently laid off, returning from a
+  gap/sabbatical, or an employed senior wanting to switch. Already owns the editor workflow and deep
+  fundamentals; needs to **refresh breadth fast, relearn interview technique** at mid/senior/staff
+  level, and handle a **layoff / employment-gap narrative** — without walking a from-scratch
+  curriculum. Interview/job prep FIRST.
 - **A builder who wants to be effective fast (north-star for the
-  `immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
-  editor, learn one language end-to-end, **ship a real app early**, then deepen into CS fundamentals,
-  DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career switcher.
+  `careers/immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set
+  up the editor, learn one language end-to-end, **ship a real app early**, then deepen into CS
+  fundamentals, DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career
+  switcher.
 - **A university-style, fundamentals-first learner (north-star for the
-  `fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
+  `careers/fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
   foundations, computer architecture, paradigms, and data structures & algorithms **before** building
   apps at scale. Prefers to understand the machine and the theory first, then apply it.
-- **An already-working software engineer transitioning to AI engineering (north-star for the
-  `immediately-effective/software-engineer-to-ai-engineer` path, added 2026-07-20)** — already owns the
-  SWE fundamentals the other three paths teach; wants to become immediately effective at **building**
-  AI systems (models, agents, evals, inference serving), not at driving coding agents. Prerequisite
-  courses are **linked, not included** in this path's manifest. Converges on a distinct AI-engineering
-  endpoint, not the other three paths' shared software-engineering endpoint.
+- **An aspiring AI engineer starting from scratch (north-star for the
+  `careers/immediately-effective/ai-engineer` path — a content change, not a rename, per the
+  2026-07-21 category-split ruling R3)** — does **not** assume prior software-engineering competence;
+  wants to become immediately effective at **building** AI systems (models, agents, evals, inference
+  serving), not at driving coding agents. Follows the same `immediately-effective` ramp as path 2 and
+  every `skills/` path (R8): get up and running and dangerous fast, then go deeper. Its manifest
+  **includes** the SWE-fundamentals prerequisites it needs in `courseOrder` (not linked, as the retired
+  transition-path model had it) — those are **existing** library courses, so this authors no new
+  course body; the growth is in the manifest only. Converges on a distinct AI-engineering endpoint, not
+  the other three paths' shared software-engineering endpoint.
 - **A reader who lands on a shared course by deep-link / share** — arrives at a course URL without a
   path context and must get a coherent standalone view (with its prerequisites surfaced) plus an
   obvious way to enter a path.
 - **Maintainer (content strategist / frontend engineer / content author / reviewer)** — owns the
-  four-path architecture, builds the navigation feature, and authors the NEW courses via the ayokoding
-  maker agents.
+  six-path, two-category architecture, builds the category-agnostic navigation feature, and authors
+  the NEW careers courses via the ayokoding maker agents (the skills corpus is a sibling plan's
+  authoring scope, rendered through this plan's shared components).
 
 ## User Stories
 
@@ -210,12 +227,19 @@ it reappears in Path B; After→re-entry is the industry's weakest seam and is e
 
 ## UI-Design-Funnel (Path-Aware Navigation Screens)
 
-The path-aware navigation adds/changes **four user-facing screens owned by this plan**: **Screen 0** is
-the site **landing hero** at `/en` (where a first-time visitor first meets the paths); **Screens 1-3**
-live under the `/en/c/learn` URL model (paths hub, path landing, course-in-path). A fifth screen —
-**Screen 4**, the legacy-bucket landing and page banner — belongs to
-`ayokoding-learning-path-01-url-restructure`; see
+The path-aware navigation adds/changes **six user-facing screens owned by this plan**: **Screen 0** is
+the site **landing hero** at `/en` (where a first-time visitor first meets the paths); **Screens
+1-1a-1b-2-3** live under the `/en/learn/paths` URL model (paths hub, category landing, arc landing,
+path landing, course-in-path). A seventh screen — **Screen 4**, the legacy-bucket landing and page
+banner — belongs to `ayokoding-learning-path-01-url-restructure`; see
 [Screen 4 (cross-plan)](#screen-4--legacy-bucket-landing-cross-plan) below.
+
+> **Screens 1, 1a, and 1b are new/redesigned by the 2026-07-21 category-split ruling** (R6, R7); they
+> did not exist in this plan's original four-path draft. Screen 1a and 1b are a genuinely new IA
+> concept — an arc was previously only a URL segment and a manifest attribute, never a page (R7) — and
+> every URL segment now resolves to a real, rendered page rather than a routing waypoint. See
+> [README.md §Category Split Ruling](./README.md#category-split-ruling-2026-07-21-r1r8) for the full
+> record.
 
 Each screen runs the diverge → narrow → select → justify funnel. Low-fidelity wireframes are authored
 below at **all three viewports**; the two high-fidelity finalists per screen are rendered as `.png`
@@ -233,7 +257,7 @@ screen in isolation.
 > and shadow tokens the running app uses), so the mockups are colour- and spacing-accurate rather than
 > sketches. To regenerate: serve `assets/src/` over HTTP and full-page-screenshot each page. The
 > sixteen mobile and tablet renders are produced by
-> [delivery.md Phase 1](./delivery.md#phase-1-ui-design-funnel-screens-03).
+> [delivery.md Phase 1](./delivery.md#phase-1-ui-design-funnel-screens-0-1-1a-1b-2-3).
 
 **R5 grounding note (all screens)** — before drafting, survey the existing UI to reuse rather than
 reinvent: `libs/web-ui` component inventory + tokens + Storybook; the ayokoding app-shell
@@ -308,15 +332,17 @@ _Mobile — 375 px (`<sm`): one column, cards full-width_
 │ │ Fundamentally Strong     ~121  │ │
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │
-│ │ Move from SWE into AI          │ │
-│ │ SWE → AI Engineer         ~15  │ │
+│ │ Become an AI engineer          │ │
+│ │ AI Engineer               ~132 │ │
 │ └────────────────────────────────┘ │
 │ Compare all paths →                │
+│ Or want a fast, focused skill      │
+│ instead? Explore skills paths →    │
 │ Browse the full library →          │
 └────────────────────────────────────┘
 ```
 
-_Tablet — 768 px (`md`): the 2×2 grid turns on (`md:grid-cols-2`)_
+_Tablet — 768 px (`md`): the four-card, two-column grid turns on (`md:grid-cols-2`)_
 
 ```text
 ┌────────────────────── AyoKoding · /en ───────────────────────┐
@@ -328,10 +354,11 @@ _Tablet — 768 px (`md`): the 2×2 grid turns on (`md:grid-cols-2`)_
 │  │ Interview-Ready   ~119 │  │ Immediately-Eff.  ~116 │      │
 │  └────────────────────────┘  └────────────────────────┘      │
 │  ┌────────────────────────┐  ┌────────────────────────┐      │
-│  │ Build fundamentals     │  │ Move from SWE into AI  │      │
-│  │ Fundamentally S.  ~121 │  │ SWE → AI Eng.      ~15 │      │
+│  │ Build fundamentals     │  │ Become an AI engineer  │      │
+│  │ Fundamentally S.  ~121 │  │ AI Engineer       ~132 │      │
 │  └────────────────────────┘  └────────────────────────┘      │
 │  Compare all paths →        Browse the full library →         │
+│  Explore skills paths →                                       │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -347,10 +374,11 @@ _Desktop — 1280 px (`xl`)_
 │  │ Interview-Ready SWE  ~119 │  │ Immediately-Effective ~116 │           │
 │  └───────────────────────────┘  └───────────────────────────┘            │
 │  ┌───────────────────────────┐  ┌───────────────────────────┐            │
-│  │ Build durable fundamentals│  │ Move from SWE into AI      │           │
-│  │ Fundamentally Strong ~121 │  │ SWE → AI Engineer     ~15  │           │
+│  │ Build durable fundamentals│  │ Become an AI engineer      │           │
+│  │ Fundamentally Strong ~121 │  │ AI Engineer           ~132 │           │
 │  └───────────────────────────┘  └───────────────────────────┘            │
 │  Not sure which fits? Compare all paths →     Browse the full library →   │
+│  Want a fast, focused skill instead? Explore skills paths →               │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -369,7 +397,7 @@ _Mobile — 375 px: the two CTAs stack, so all four goals sit below the fold_
 │  • Pass a SWE interview soon →     │
 │  • Get productive & ship fast →    │
 │  • Build durable fundamentals →    │
-│  • Move from SWE into AI →         │
+│  • Become an AI engineer →         │
 └────────────────────────────────────┘
 ```
 
@@ -382,7 +410,7 @@ _Tablet — 768 px: CTAs sit inline; the goal strip becomes two columns_
 │ ───────────────────────────────────────────────────────────── │
 │ What brings you here today?                                   │
 │  • Pass a SWE interview soon →   • Get productive & ship →     │
-│  • Build durable fundamentals →  • Move from SWE into AI →     │
+│  • Build durable fundamentals →  • Become an AI engineer →     │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -395,7 +423,7 @@ _Desktop — 1280 px_
 │ ───────────────────────────────────────────────────────────────────────  │
 │ What brings you here today?                                               │
 │  • Pass a SWE interview soon →     • Get productive & ship fast →         │
-│  • Build durable fundamentals →    • Move from SWE into AI →              │
+│  • Build durable fundamentals →    • Become an AI engineer →              │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -432,37 +460,47 @@ _Desktop — 1280 px_
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Responsive (mobile ↔ desktop)** — Option A shows a **2×2 card grid** at `md+` and **stacks to one
-column** below `md`; each card is a full-width tap target (≥ the WCAG 2.2 §2.5.8 24px floor, sized to
-the ~48px comfort target). The "Compare all paths" / "Browse library" links wrap under the grid on
-mobile. The four cards fit above the fold on desktop and within one short scroll on mobile — no card is
-pushed below a fold-and-a-half the way Option B's strip is once the primary CTAs precede it.
+**Responsive (mobile ↔ desktop)** — Option A shows a **two-column, two-row card grid** at `md+` and
+**stacks to one column** below `md`; each card is a full-width tap target (≥ the WCAG 2.2 §2.5.8 24px
+floor, sized to the ~48px comfort target). The "Compare all paths" / "Explore skills paths" / "Browse
+library" links wrap under the grid on mobile. The four cards fit above the fold on desktop and within
+one short scroll on mobile — no card is pushed below a fold-and-a-half the way Option B's strip is once
+the primary CTAs precede it.
+
+**Why still four cards, not six (careers + skills together).** The hero's whole job is the fastest
+possible goal-to-route decision, and Hick's Law / the jam-study threshold both argue for staying at the
+low end (see the Ergonomics rationale below) — doubling to six cards to fit skills in would undo the
+overload argument that won Option A. Skills gets a **tertiary escape-hatch link** ("Explore skills
+paths →" → `/en/learn/paths/skills/`) beside "Compare all paths" and "Browse the full library", the same
+weight class those two already occupy, rather than hero-card real estate.
 
 **Hi-fi finalists** (rendered from the token-accurate HTML mockups):
 
-![Landing hero, Option A — the AyoKoding landing page with the brand headline and tagline, then a "Choose your path" label above a 2×2 grid of four goal-led cards (Pass a SWE interview soon, Get productive and ship fast, Build durable fundamentals, Move from SWE into AI), each hue-coded with the formal path name and course count and a Start action, and a subordinate "Not sure which fits? Compare all paths" link beside "Browse the full course library"](./assets/landing-hero-option-a-desktop.png)
+![Landing hero, Option A — the AyoKoding landing page with the brand headline and tagline, then a "Choose your path" label above a two-column grid of four goal-led careers cards (Pass a SWE interview soon, Get productive and ship fast, Build durable fundamentals, Become an AI engineer), each hue-coded with the formal path name and course count and a Start action, and a subordinate row of "Compare all paths", "Explore skills paths", and "Browse the full course library" links](./assets/landing-hero-option-a-desktop.png)
 
 ![Landing hero, Option B — the landing page with a single "Start learning" primary CTA and an "Explore tools" secondary button, and below a divider a "What brings you here today?" strip of four goal options each with a hue dot, following the Coursera goal-question pattern](./assets/landing-hero-option-b-desktop.png)
 
 **Selected: Option A — four goal cards in the hero.**
 
-| Design                      | Why it won / lost                                                                                                     |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| A — 4 goal cards in hero ✅ | Zero clicks/scroll to the core decision; strongest information scent (goal verbs + course counts); 4 ≪ overload cap   |
-| B — goal-question strip     | Proven (Coursera), but the primary CTA precedes it, so path choice needs a scroll and competes with "Start learning"  |
-| C — guided quiz             | Best only when paths are ambiguous; ours are already goal-labeled, and no surveyed platform uses a quiz as sole entry |
+| Design                      | Why it won / lost                                                                                                                                               |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — 4 goal cards in hero ✅ | Zero clicks/scroll to the core decision; strongest information scent (goal verbs + course counts); 4 ≪ overload cap; skills escape hatch keeps the count honest |
+| B — goal-question strip     | Proven (Coursera), but the primary CTA precedes it, so path choice needs a scroll and competes with "Start learning"                                            |
+| C — guided quiz             | Best only when paths are ambiguous; ours are already goal-labeled, and no surveyed platform uses a quiz as sole entry                                           |
 
-**Ergonomics rationale** — our four paths are **already goal-labeled**, so no quiz is needed to
-translate intent into a route (avoids Option C's mandatory extra step). Four cards is at the low end of
-every threshold surveyed ([Hick's Law](https://lawsofux.com/hicks-law/); Iyengar & Lepper 2000 jam
-study; NN/g "show a few of the most important options"), so putting them **in** the hero — not one
-scroll below it like Option B — removes the single friction point every "goal-question-then-cards"
+**Ergonomics rationale** — our four **careers** paths are **already goal-labeled**, so no quiz is
+needed to translate intent into a route (avoids Option C's mandatory extra step). Four cards is at the
+low end of every threshold surveyed ([Hick's Law](https://lawsofux.com/hicks-law/); Iyengar & Lepper
+2000 jam study; NN/g "show a few of the most important options"), so putting them **in** the hero — not
+one scroll below it like Option B — removes the single friction point every "goal-question-then-cards"
 platform still has. The subordinate **"Compare all paths →"** link (→ Screen 1) is the escape hatch for
 undecided visitors (Codecademy's "sorting quiz alongside the grid" pattern) without diluting the
-four-card decision; **"Browse the full library →"** preserves the non-path, self-directed entry
-(recognition-over-recall for learners who know the topic they want). The existing **Start learning /
-Explore tools** buttons are **not deleted** — they move into the global nav so the hero's primary
-visual weight is the path decision.
+four-card decision; **"Explore skills paths →"** (→ Screen 1a's skills instance) is the equivalent escape
+hatch for the six-path world the category split introduced, so a skills-seeking visitor is never forced
+through the careers-framed cards to get there; **"Browse the full library →"** preserves the non-path,
+self-directed entry (recognition-over-recall for learners who know the topic they want). The existing
+**Start learning / Explore tools** buttons are **not deleted** — they move into the global nav so the
+hero's primary visual weight is the path decision.
 
 **Implementation is in scope here.** Screen 0 is **not** design-only: this plan's
 [delivery.md Phase 3](./delivery.md#phase-3-path-landing--paths-hub--landing-hero--e2e) carries a
@@ -472,166 +510,491 @@ RED/GREEN/REFACTOR triplet against `hero.tsx`, bound by the Gherkin scenario
 
 ### Screen 1 · Paths hub ("choose your path")
 
-Entry screen at `/en/c/learn/paths` (the paths hub) offering the four paths. The fourth path converges
-on a different endpoint than the other three (per-role convergence, DD-22), so the hub's copy states
-"converging within your role" rather than the earlier single-endpoint framing.
+**Redesigned by the 2026-07-21 category-split ruling (R6).** Entry screen at `/en/learn/paths` (the
+paths hub) now offers **six paths in two categories** at deliberately different URL depth —
+`careers/<arc>/<role>` (4 paths across 3 arcs) and `skills/<subject>` (2 paths, both the
+`immediately-effective` arc per R8, though the arc is not itself a URL segment for skills). The old
+flat four-card, one-card-per-manifest design cannot express this: six paths do not tile a symmetric
+four-card grid, and the two categories' different depth carries real information (skills has no arc
+choice; careers does) that a flat grid would erase. The fourth **careers** path still converges on a different endpoint than the
+other three (per-role convergence, DD-22), so the hub's `careers/` section copy states "converging
+within your role" rather than the earlier single-endpoint framing.
 
-**Low-fi Option A — Path cards, 2×2 grid (Recommended)**
+**Low-fi Option A — Category sections, arc-grouped within Careers (Recommended)**
 
-_Mobile — 375 px (`<sm`): one column; no sidebar (it is `hidden` below `md`)_
+_Mobile — 375 px (`<sm`): one column; sections stack; no sidebar (`hidden` below `md`)_
 
 ```text
 ┌────────────────────────────────────┐
 │ ☰  AyoKoding            ⌕  ☾       │
 ├────────────────────────────────────┤
 │ Choose your path.                  │
-│ One library, converging within     │
-│ your role.                         │
+│ Six paths, two ways in.            │
+│                                     │
+│ CAREERS · converging within role   │
+│ ── Interview-Ready ──────────────  │
 │ ┌────────────────────────────────┐ │
-│ │ Interview-Ready SWE            │ │
-│ │ interview-first · ~N courses   │ │
-│ │ [ Start →                    ] │ │
+│ │ Software Engineer   ~119       │ │
+│ │ [ Start → ]                    │ │
+│ └────────────────────────────────┘ │
+│ ── Immediately-Effective ────────  │
+│ ┌────────────────────────────────┐ │
+│ │ Software Engineer   ~116       │ │
+│ │ [ Start → ]                    │ │
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │
-│ │ Immediately-Effective          │ │
-│ │ build-app-first · ~N courses   │ │
-│ │ [ Start →                    ] │ │
+│ │ AI Engineer          ~132      │ │
+│ │ [ Start → ]                    │ │
+│ └────────────────────────────────┘ │
+│ ── Fundamentally Strong ─────────  │
+│ ┌────────────────────────────────┐ │
+│ │ Software Engineer   ~121       │ │
+│ │ [ Start → ]                    │ │
+│ └────────────────────────────────┘ │
+│                                     │
+│ SKILLS · up and running fast       │
+│ ┌────────────────────────────────┐ │
+│ │ Enterprise Resource Planning   │ │
+│ │ [ Start → ]                    │ │
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │
-│ │ Fundamentally Strong           │ │
-│ │ fundamentals-first · ~N        │ │
-│ │ [ Start →                    ] │ │
-│ └────────────────────────────────┘ │
-│ ┌────────────────────────────────┐ │
-│ │ SWE → AI Engineer              │ │
-│ │ AI-transition-first · ~N       │ │
-│ │ [ Start →                    ] │ │
+│ │ Accounting                     │ │
+│ │ [ Start → ]                    │ │
 │ └────────────────────────────────┘ │
 │ Or browse the full library →       │
 └────────────────────────────────────┘
 ```
 
-_Tablet — 768 px (`md`): sidebar appears; grid goes two-up_
+_Tablet — 768 px (`md`): sidebar appears; each category's cards go two-up_
 
 ```text
 ┌── Sidebar ───┬────────────────────────────────────────────────┐
-│ ▸ Learn      │ Choose your path. One library, converging       │
-│   ▸ Paths    │ within your role.                               │
-│   ▸ Courses  │ ┌──────────────────┐ ┌──────────────────┐      │
-│   ▸ Legacy   │ │ Interview-Ready  │ │ Immediately-Eff. │      │
-│              │ │ ~N · [ Start → ] │ │ ~N · [ Start → ] │      │
-│              │ └──────────────────┘ └──────────────────┘      │
+│ ▸ Learn      │ CAREERS · converging within role                │
+│   ▸ Paths    │ ── Interview-Ready ──  ── Immediately-Eff. ──   │
+│   ▸ Courses  │ ┌──────────────────┐   ┌──────────────────┐    │
+│   ▸ Legacy   │ │ SWE  ~119 [Start]│   │ SWE  ~116 [Start]│    │
+│              │ └──────────────────┘   │ AI   ~132 [Start]│    │
+│              │                        └──────────────────┘    │
+│              │ ── Fundamentally Strong ──                      │
+│              │ ┌──────────────────┐                            │
+│              │ │ SWE  ~121 [Start]│                            │
+│              │ └──────────────────┘                            │
+│              │ SKILLS · up and running fast                    │
 │              │ ┌──────────────────┐ ┌──────────────────┐      │
-│              │ │ Fundamentally S. │ │ SWE → AI Eng.    │      │
-│              │ │ ~N · [ Start → ] │ │ ~N · [ Start → ] │      │
+│              │ │ ERP     [Start]  │ │ Accounting[Start]│      │
 │              │ └──────────────────┘ └──────────────────┘      │
 │              │ Or browse the full course library →             │
 └──────────────┴────────────────────────────────────────────────┘
 ```
 
-_Desktop — 1280 px (`xl`)_
+_Desktop — 1280 px (`xl`): each category is its own labelled section; Careers keeps arc sub-headings_
 
 ```text
-┌────────────────────────── Fundamentally Strong · Learn ──────────────────────────┐
-│  Choose your path. One library, converging within your role.                      │
-│                                                                                    │
-│  ┌────────────────────┐  ┌────────────────────┐                                   │
-│  │ Interview-Ready SWE │  │ Immediately-Effect. │                                  │
-│  │ Interview-first     │  │ Build-app-first     │                                  │
-│  │ Get interview-ready │  │ Ship a real app     │                                  │
-│  │ fast (re-entrant).  │  │ fast, then deepen.  │                                  │
-│  │ ~N courses          │  │ ~N courses          │                                  │
-│  │ [ Start → ]         │  │ [ Start → ]         │                                  │
-│  └────────────────────┘  └────────────────────┘                                   │
-│  ┌────────────────────┐  ┌────────────────────┐                                   │
-│  │ Fundamentally Strong│  │ SWE → AI Engineer   │                                  │
-│  │ Fundamentals-first  │  │ AI-transition-first │                                  │
-│  │ CS theory first,    │  │ Already a SWE? Build│                                  │
-│  │ then deepen.        │  │ AI systems, fast.    │                                 │
-│  │ ~N courses          │  │ ~N courses           │                                 │
-│  │ [ Start → ]         │  │ [ Start → ]          │                                 │
-│  └────────────────────┘  └────────────────────┘                                   │
-│                                                                                    │
+┌────────────────────────────── AyoKoding · Learn ──────────────────────────────────┐
+│  Choose your path. Six paths, two ways in.                                         │
+│                                                                                     │
+│  CAREERS · converging within your role                                             │
+│  Interview-Ready              Immediately-Effective         Fundamentally Strong   │
+│  ┌──────────────────┐   ┌──────────────────┐┌──────────────────┐ ┌──────────────┐ │
+│  │ Software Engineer │   │ Software Engineer││ AI Engineer      │ │ Software Eng.│ │
+│  │ ~119  [ Start → ] │   │ ~116  [ Start → ]││ ~132 [ Start → ] │ │ ~121 [Start →│ │
+│  └──────────────────┘   └──────────────────┘└──────────────────┘ └──────────────┘ │
+│                                                                                     │
+│  SKILLS · get up and running fast, then go deeper                                  │
+│  ┌────────────────────────┐  ┌────────────────────────┐                           │
+│  │ Enterprise Resource    │  │ Accounting              │                           │
+│  │ Planning    [ Start → ]│  │              [ Start → ]│                           │
+│  └────────────────────────┘  └────────────────────────┘                           │
+│                                                                                     │
 │  Or browse the full course library →                                               │
-└────────────────────────────────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Low-fi Option B — Stacked comparison rows**
+**Low-fi Option B — Flat 6-card grid with category+arc badges**
 
-_Mobile — 375 px: each row wraps to three lines, pushing the fourth path far below the fold_
+_Mobile — 375 px: one column, badge is the only grouping signal_
 
 ```text
 ┌────────────────────────────────────┐
-│ Interview-Ready SWE                │
-│ interview-first · ~N courses       │
-│ [ Start → ]                        │
-│ ────────────────────────────────── │
-│ Immediately-Effective              │
-│ build-app-first · ~N courses       │
-│ [ Start → ]                        │
-│ ────────────────────────────────── │
-│ Fundamentally Strong               │
-│ fundamentals-first · ~N courses    │
-│ [ Start → ]                        │
-│ ────────────────────────────────── │
-│ SWE → AI Engineer                  │  ← ~3 screens down
-│ AI-transition-first · ~N courses   │
-│ [ Start → ]                        │
+│ Choose your path.                  │
+│ ┌────────────────────────────────┐ │
+│ │ [careers·interview-ready]      │ │
+│ │ Software Engineer     ~119     │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ [careers·immediately-effective]│ │
+│ │ Software Engineer     ~116     │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ [careers·immediately-effective]│ │
+│ │ AI Engineer            ~132    │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ [careers·fundamentally-strong] │ │
+│ │ Software Engineer     ~121     │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ [skills]  Enterprise Resource  │ │
+│ │ Planning                       │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ [skills]  Accounting           │ │
+│ └────────────────────────────────┘ │
 └────────────────────────────────────┘
 ```
 
-_Tablet — 768 px: rows fit on two lines each; still a vertical ranking_
+_Tablet — 768 px: two-up, badges still the only grouping signal_
 
 ```text
 ┌── Sidebar ───┬────────────────────────────────────────────────┐
-│ ▸ Learn      │ Interview-Ready SWE (interview-first)  ~N       │
-│              │   interview prep → production → deeper  [Start]│
-│              │ ──────────────────────────────────────────────  │
-│              │ Immediately-Effective (build-app-first) ~N      │
-│              │   editor → one language → BUILD → deepen [Start]│
-│              │ ──────────────────────────────────────────────  │
-│              │ Fundamentally Strong … / SWE → AI Engineer …    │
+│ ▸ Learn      │ [careers·interview-ready] SWE          [Start] │
+│              │ [careers·imm-effective] SWE             [Start]│
+│              │ [careers·imm-effective] AI Eng.         [Start]│
+│              │ [careers·fund-strong] SWE               [Start]│
+│              │ [skills] ERP                            [Start]│
+│              │ [skills] Accounting                     [Start]│
 └──────────────┴────────────────────────────────────────────────┘
 ```
 
-_Desktop — 1280 px_
+_Desktop — 1280 px: 3×2 uniform grid, no section headings at all_
 
 ```text
-┌───────────────── Fundamentally Strong · Four Paths ──────────────────┐
-│ Interview-Ready SWE (interview-first) [ Start → ]  ~N courses         │
-│   interview prep → production-effective → deeper                      │
-│ ────────────────────────────────────────────────────────────────────│
-│ Immediately-Effective (build-app-first) [ Start → ]  ~N courses      │
-│   editor → one language → BUILD APP → deepen                         │
-│ ────────────────────────────────────────────────────────────────────│
-│ Fundamentally Strong (fundamentals-first) [ Start → ]  ~N courses    │
-│   CS foundations → architecture → paradigms → DS&A → build           │
-│ ────────────────────────────────────────────────────────────────────│
-│ SWE → AI Engineer (AI-transition-first) [ Start → ]  ~N courses      │
-│   already a SWE → build AI systems (models, agents, evals) fast      │
-└───────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────── AyoKoding · Learn ──────────────────────────────────┐
+│  Choose your path.                                                                 │
+│  ┌──────────────┐┌──────────────┐┌──────────────┐┌──────────────┐┌──────────────┐│
+│  │[careers·int-r]││[careers·im-e]││[careers·im-e]││[careers·fnd-s]││[skills] ERP  ││
+│  │SWE  [Start →] ││SWE  [Start →]││AI  [Start →] ││SWE  [Start →] ││   [Start →]  ││
+│  └──────────────┘└──────────────┘└──────────────┘└──────────────┘└──────────────┘│
+│  ┌──────────────┐                                                                  │
+│  │[skills] Acct ││                                                                 │
+│  │   [Start →]  ││                                                                 │
+│  └──────────────┘                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Responsive (mobile ↔ desktop)** — Option A shows a **2×2 grid** of four cards at `lg` (≥1024px),
-two-up at `md` (≥768px), and **stacks to one column** below `sm`. The "Start" CTA is a full-width tap
-target on mobile.
+**Responsive (mobile ↔ desktop)** — Option A's category sections stack full-width below `sm`; each
+category's cards go to a comfortable two-up at `md`, and Careers' arc sub-groups sit side by side at
+`lg+` while Skills stays a simple row. The "Start" CTA is a full-width tap target on mobile.
 
-**Hi-fi finalists** (rendered from the token-accurate HTML mockups):
+**Hi-fi finalists** (rendered from the token-accurate HTML mockups — the pre-existing
+`paths-hub-option-{a,b}-desktop.png` sources are redesigned in place, not replaced by new filenames,
+so this is a **content change**, covered by the same generic mtime-based re-render check already in
+`delivery.md`):
 
-![Paths hub, Option A — four equal path cards in a 2×2 grid, each with a hue-coded top border, a kind badge, the path name, its one-line arc, a course-count badge, and a Start call-to-action](./assets/paths-hub-option-a-desktop.png)
+![Paths hub, Option A — a Careers section with three labelled arc sub-groups (Interview-Ready, Immediately-Effective showing two path cards, Fundamentally Strong) each containing hue-coded path cards with role name, course count, and a Start action, followed by a Skills section with two subject cards under a "get up and running fast, then go deeper" strap-line](./assets/paths-hub-option-a-desktop.png)
 
-![Paths hub, Option B — the four paths as stacked full-width comparison rows, each with a hue accent bar, name, kind badge, arc summary, course count, and Start action](./assets/paths-hub-option-b-desktop.png)
+![Paths hub, Option B — a uniform 3×2 grid of six path cards with no section headings, each distinguished only by a small category·arc badge above the role or subject name](./assets/paths-hub-option-b-desktop.png)
 
-**Selected: Option A — Path cards, 2×2 grid.**
+**Selected: Option A — Category sections, arc-grouped within Careers.**
 
-| Design                 | Why it won / lost                                                                          |
-| ---------------------- | ------------------------------------------------------------------------------------------ |
-| A — 2×2 card grid ✅   | Four equal, scannable choices; reuses `section-card`; reflows cleanly to stacked mobile    |
-| B — stacked comparison | Denser, but buries the fourth path further below the fold on mobile and reads as a ranking |
+| Design                                | Why it won / lost                                                                                                                                                                                                                                 |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — category sections, arc-grouped ✅ | Grouping is a visible section, not a decoded badge; the arc sub-heading gives `immediately-effective`'s two cards a shared home without inventing a second grid; skills reads as a simpler, separate offer, matching R8's "different job" framing |
+| B — flat 6-card grid                  | Uniform grid is simpler to build, but a reader must parse a compact `category·arc` badge to understand structure the section-header approach gives for free; also implies skills is "just another arc," which R8 explicitly rejects               |
+
+### Screen 1a · Category landing (`careers/` and `skills/`)
+
+**New screen type introduced by the category-split ruling (R7).** `/en/learn/paths/careers/` and
+`/en/learn/paths/skills/` previously did not exist as pages — an arc/category was only a URL segment
+and a manifest attribute. Per R7, every URL segment must resolve to a real, rendered page, so both
+category landings are built here.
+
+**The two instances have different jobs (R8) — not one template with swapped data.** `careers/` is a
+genuine **branch point**: three arcs, and the landing's whole purpose is helping a reader choose
+between them. `skills/` has **no branch to offer** — every skills path is the `immediately-effective`
+arc (R8) — so its landing states that ramp promise **once**, as a fact, not a question, and lists
+subjects directly. Design funnel below is run against the **careers instance** (the harder design
+problem — an arc chooser); the **skills instance** is documented as an explicit content variant of
+the selected option, not a separate alternative-generation pass, because R8 leaves it little design
+freedom to vary.
+
+**Low-fi Option A — Arc cards with member-role preview (Recommended)**
+
+_Mobile — 375 px (`<sm`), careers instance: one column, each arc a card naming its member role(s)_
+
+```text
+┌────────────────────────────────────┐
+│ ☰  AyoKoding            ⌕  ☾       │
+├────────────────────────────────────┤
+│ Home / Learn / Paths / Careers      │
+│ Careers                            │
+│ Three arcs, one shared library.     │
+│ ┌────────────────────────────────┐ │
+│ │ Interview-Ready                │ │
+│ │ Pass a SWE interview soon.     │ │
+│ │ Software Engineer              │ │
+│ │ [ Explore arc → ]              │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ Immediately-Effective          │ │
+│ │ Get productive & ship fast.    │ │
+│ │ Software Engineer · AI Engineer│ │
+│ │ [ Explore arc → ]              │ │
+│ └────────────────────────────────┘ │
+│ ┌────────────────────────────────┐ │
+│ │ Fundamentally Strong           │ │
+│ │ Build durable fundamentals.    │ │
+│ │ Software Engineer              │ │
+│ │ [ Explore arc → ]              │ │
+│ └────────────────────────────────┘ │
+│ ← Back to all paths                │
+└────────────────────────────────────┘
+```
+
+_Tablet — 768 px, careers instance: sidebar returns; cards go two-up with a third full-width_
+
+```text
+┌── Sidebar ───┬────────────────────────────────────────────────┐
+│ ▸ Learn      │ Careers — three arcs, one shared library.       │
+│   ▾ Paths    │ ┌──────────────────┐ ┌──────────────────┐      │
+│     ▾ Careers│ │ Interview-Ready  │ │ Imm.-Effective   │      │
+│     ▸ Skills │ │ SWE  [Explore →] │ │ SWE, AI Eng.     │      │
+│   ▸ Courses  │ └──────────────────┘ │       [Explore →]│      │
+│              │ ┌──────────────────┐ └──────────────────┘      │
+│              │ │ Fund. Strong     │                            │
+│              │ │ SWE  [Explore →] │                            │
+│              │ └──────────────────┘                            │
+└──────────────┴────────────────────────────────────────────────┘
+```
+
+_Desktop — 1280 px, careers instance: three arc cards side by side_
+
+```text
+┌──────────────────────── Careers · Learn ─────────────────────────────────┐
+│ Home / Learn / Paths / Careers                                            │
+│ Careers — three arcs, one shared library, converging within your role.    │
+│                                                                            │
+│ ┌───────────────────┐ ┌───────────────────┐ ┌───────────────────┐        │
+│ │ Interview-Ready    │ │ Immediately-Eff.  │ │ Fundamentally S.  │        │
+│ │ Pass an interview  │ │ Ship fast, deepen │ │ Fundamentals first│        │
+│ │ soon.              │ │ later.            │ │, then build.       │       │
+│ │ Software Engineer  │ │ Software Engineer │ │ Software Engineer │        │
+│ │                     │ │ AI Engineer       │ │                     │      │
+│ │ [ Explore arc → ]  │ │ [ Explore arc → ] │ │ [ Explore arc → ]  │       │
+│ └───────────────────┘ └───────────────────┘ └───────────────────┘        │
+│                                                                            │
+│ ← Back to all paths                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Skills instance (no chooser — R8), desktop, same Option A shell minus the chooser section, plus a
+ramp-boundary strip.** The skills promise is "get us up and running and become dangerous as fast as
+possible, then get deeper and deeper" — a **ramp**, not a chooser — and the most useful thing a skills
+landing can show is **where in the ordering a reader becomes able to do real work**. Each subject card
+therefore carries a small **milestone strip** naming the courses after which the reader is minimally,
+comfortably, and confidently dangerous (course numbers per skills-plan manifest research, e.g.
+Accounting: dangerous after course 3, comfortable after 16, confident after 20; ERP: dangerous after
+course 4, comfortable after 10, confident after 20 — sourced from the sibling skills-plan's manifest
+design, not re-derived here; this plan's own scope is the rendering, not the milestone values):
+
+```text
+┌──────────────────────── Skills · Learn ───────────────────────────────────┐
+│ Home / Learn / Paths / Skills                                             │
+│ Skills — up and running fast, then deeper and deeper.                     │
+│ Every skills path follows the same promise: become able to do real work   │
+│ as fast as possible, then go deeper — no arc to choose here.              │
+│                                                                            │
+│ ┌───────────────────────────┐  ┌───────────────────────────┐             │
+│ │ Enterprise Resource       │  │ Accounting                 │             │
+│ │ Planning                  │  │                             │            │
+│ │ ●───●─────●  dangerous:4  │  │ ●──●───────●  dangerous:3   │            │
+│ │      comfortable:10       │  │     comfortable:16          │            │
+│ │           confident:20    │  │          confident:20        │           │
+│ │ [ Start → ]               │  │ [ Start → ]                 │            │
+│ └───────────────────────────┘  └───────────────────────────┘             │
+│                                                                            │
+│ ← Back to all paths                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Skills instance — empty state (before a skills manifest ships).** Plan 01 (amendment A3) creates
+`paths/skills/_index.md` structurally ahead of the skills-plans that populate real manifests, so this
+page **will render with zero subject cards for a real interval**, not a theoretical one. The empty
+state is a first-class design, not a blank page:
+
+```text
+┌──────────────────────── Skills · Learn ───────────────────────────────────┐
+│ Home / Learn / Paths / Skills                                             │
+│ Skills — up and running fast, then deeper and deeper.                     │
+│ ┌────────────────────────────────────────────────────────────────────┐  │
+│ │  New skills paths are being written — check back soon.               │  │
+│ │  In the meantime, explore the Careers paths →                        │  │
+│ └────────────────────────────────────────────────────────────────────┘  │
+│ ← Back to all paths                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+This is the net-new **`EmptyPathListState`** component (`Alert`/`Card`-composed, not a bare `<p>`):
+one line stating the interval is expected (not an error), one CTA back to a populated sibling category
+(`careers/`, since it always has manifests). It is shared verbatim by Screen 1a's careers instance (if
+an arc's manifest is ever mid-migration) and Screen 1b's arc landing, so the empty case is handled once
+and reused, not redesigned per screen.
+
+**Low-fi Option B — Arc list with inline description (no cards)**
+
+_Desktop — 1280 px, careers instance: a numbered/plain list rather than cards_
+
+```text
+┌──────────────────────── Careers · Learn ─────────────────────────────────┐
+│ Careers — three arcs, one shared library.                                 │
+│ 1. Interview-Ready — pass a SWE interview soon. Software Engineer. →      │
+│ 2. Immediately-Effective — ship fast, deepen later. Software Engineer,    │
+│    AI Engineer. →                                                        │
+│ 3. Fundamentally Strong — fundamentals first, then build. SWE. →         │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Responsive (mobile ↔ desktop)** — Option A's arc cards stack full-width below `sm`, go two-up at
+`md` with the third card wrapping full-width, and sit three-across at `lg+`. The skills instance
+never needs more than a two-up reflow (2 subjects), so it stacks at `<sm` and sits side by side from
+`md` up with no further breakpoint tension.
+
+**Hi-fi finalists** (Option A's render is a **three-frame composite** — careers instance, skills
+instance populated with ramp milestones, and skills instance empty state — following the same
+"one render, multiple documented states" pattern Screen 3 already uses for its rail states; Option B's
+render shows only the careers instance, sufficient to demonstrate why it lost):
+
+![Category landing, Option A — three stacked browser-chrome frames: the Careers instance with three arc cards side by side (Immediately-Effective visibly showing two member roles, Software Engineer and AI Engineer, where the other two arcs show one), the Skills instance with two subject cards each carrying a dangerous/comfortable/confident milestone strip, and the Skills empty state showing a friendly "being written, check back soon" message with a fallback link to Careers](./assets/category-landing-option-a-desktop.png)
+
+![Category landing, Option B — a plain numbered list of the three careers arcs with inline description text instead of cards](./assets/category-landing-option-b-desktop.png)
+
+**Selected: Option A — Arc cards with member-role preview.**
+
+| Design                           | Why it won / lost                                                                                                                                                                                                                              |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — arc cards, member preview ✅ | Reuses the `SectionCard`/`PathCard` visual language already established by the hub and Screen 2, so the IA reads as one system; the member-role preview is what lets `immediately-effective` visibly carry two roles without extra explanation |
+| B — plain list                   | Cheaper to build, but loses the equal-weight comparability a card grid gives the hub and arc landings; harder to scan at a glance which arc has more than one role                                                                             |
+
+### Screen 1b · Arc landing (`careers/<arc>/` only)
+
+**New screen type (R7), scoped to `careers/` only — per R8 there is no `skills/<arc>/` segment to
+land on.** `/en/learn/paths/careers/interview-ready/`,
+`/en/learn/paths/careers/immediately-effective/`, and `/en/learn/paths/careers/fundamentally-strong/`
+each list that arc's role(s). This is R7's explicit design case: **`immediately-effective` lists two
+roles** (Software Engineer, AI Engineer) while the other two arcs list **one role each** — a plain
+`grid-cols-N` populated by count would make the one-role arcs look sparse or half-broken, which is the
+exact failure this screen exists to avoid.
+
+**Low-fi Option A — Always-render arc header + role card(s), single role gets a syllabus preview (Recommended)**
+
+_Desktop — 1280 px, **two-role state** (`immediately-effective`): two cards side by side_
+
+```text
+┌──────────────────── Careers · Immediately-Effective ─────────────────────┐
+│ Home / Learn / Paths / Careers / Immediately-Effective                    │
+│ Immediately-Effective — ship fast, then go deeper.                        │
+│                                                                            │
+│ ┌───────────────────────────┐  ┌───────────────────────────┐             │
+│ │ Software Engineer         │  │ AI Engineer                │             │
+│ │ editor → one language →   │  │ from scratch → agents,     │             │
+│ │ BUILD an app → deepen     │  │ evals, and AI systems      │             │
+│ │ ~116 courses               │  │ ~132 courses                │             │
+│ │ [ Start → ]                │  │ [ Start → ]                 │            │
+│ └───────────────────────────┘  └───────────────────────────┘             │
+│ ← Back to Careers                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+_Desktop — 1280 px, **single-role state** (`interview-ready` / `fundamentally-strong`): one prominent
+card carrying an inline first-phase preview, not a bare thin card, so it does not read as a stub_
+
+```text
+┌──────────────────────── Careers · Interview-Ready ────────────────────────┐
+│ Home / Learn / Paths / Careers / Interview-Ready                          │
+│ Interview-Ready — pass a SWE interview soon.                              │
+│                                                                            │
+│ ┌────────────────────────────────────────────────────────────────────┐  │
+│ │ Software Engineer                                          ~119     │  │
+│ │ interview prep → production-effective → deeper                      │  │
+│ │ Starts with: 1. Just Enough Nvim · 2. Just Enough Lua ·             │  │
+│ │              3. Extending Neovim → …                                │  │
+│ │ [ Start → ]                                                          │  │
+│ └────────────────────────────────────────────────────────────────────┘  │
+│ ← Back to Careers                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+_Mobile — 375 px: both states stack to one column; the single-role card keeps its syllabus preview
+(never shrinks to a bare label-only card)_
+
+```text
+┌────────────────────────────────────┐
+│ ☰  AyoKoding            ⌕  ☾       │
+├────────────────────────────────────┤
+│ Home / … / Careers / Interview-R.  │
+│ Interview-Ready                    │
+│ Pass a SWE interview soon.         │
+│ ┌────────────────────────────────┐ │
+│ │ Software Engineer      ~119    │ │
+│ │ interview prep → … → deeper    │ │
+│ │ Starts with: 1. Just Enough    │ │
+│ │ Nvim · 2. Just Enough Lua → …  │ │
+│ │ [ Start → ]                    │ │
+│ └────────────────────────────────┘ │
+│ ← Back to Careers                  │
+└────────────────────────────────────┘
+```
+
+_Tablet — 768 px, two-role state: cards go two-up (the layout the single-role state never needs to
+fill, so it stays legible at one card wide too)_
+
+```text
+┌── Sidebar ───┬────────────────────────────────────────────────┐
+│ ▸ Learn      │ Immediately-Effective — ship fast, then deeper. │
+│   ▾ Paths    │ ┌──────────────────┐ ┌──────────────────┐      │
+│    ▾ Careers │ │ Software Engineer│ │ AI Engineer      │      │
+│              │ │ ~116 [ Start → ] │ │ ~132 [ Start → ] │      │
+│              │ └──────────────────┘ └──────────────────┘      │
+│              │ ← Back to Careers                               │
+└──────────────┴────────────────────────────────────────────────┘
+```
+
+**Low-fi Option B — Uniform N-card grid regardless of count**
+
+_Desktop — 1280 px, single-role state: the same bare card template the two-role state uses, with
+nothing to fill the second grid cell_
+
+```text
+┌──────────────────────── Careers · Interview-Ready ────────────────────────┐
+│ Interview-Ready                                                           │
+│ ┌───────────────────────────┐                                             │
+│ │ Software Engineer  ~119   │                                             │
+│ │ [ Start → ]                │                                            │
+│ └───────────────────────────┘                                             │
+│                                    ← empty grid cell, reads as broken      │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Responsive (mobile ↔ desktop)** — Option A's card(s) stack full-width below `sm`; the two-role state
+goes two-up at `md+`; the single-role state never needs more than one column at any width, so it stays
+centred/left-aligned rather than stretching to fill a phantom second column.
+
+**Empty-state note (shared with Screen 1a).** Every `careers/<arc>/` structural page plan 01 creates
+already has a populated manifest by the time this plan ships (careers manifests are plan 05's existing
+scope, not new), so arc landing's empty interval is smaller than the skills category landing's — but
+the component still reuses the **same `EmptyPathListState`** described in
+[Screen 1a's empty-state design](#screen-1a--category-landing-careers-and-skills) defensively, so a
+future arc added before its manifest lands never silently renders blank. This is a shared-component
+decision, not a second design pass.
+
+**Hi-fi finalists** (rendered from the token-accurate HTML mockups — each composites **both** the
+two-role and single-role states into one image, following the same "one render, multiple documented
+states" pattern already used for Screen 3's rail states):
+
+![Arc landing, Option A — two stacked browser-chrome frames: the Immediately-Effective arc showing two role cards side by side (Software Engineer, AI Engineer), and the Interview-Ready arc showing one prominent role card with an inline first-phase syllabus preview so a single-role arc never reads as a stub](./assets/arc-landing-option-a-desktop.png)
+
+![Arc landing, Option B — the Interview-Ready arc rendered with the same bare card template the two-role state uses, leaving a visibly empty second grid cell](./assets/arc-landing-option-b-desktop.png)
+
+**Selected: Option A — Always-render arc header + role card(s), single role gets a syllabus preview.**
+
+| Design                            | Why it won / lost                                                                                                                                                                      |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — header + card(s) + preview ✅ | The single-role state is a deliberately different composition (card + inline preview), not a starved copy of the two-role grid — directly answers R7's "must not read as broken/empty" |
+| B — uniform N-card grid           | Simplest to build, but a 1-of-2-filled grid cell is the textbook "broken layout" signal R7 explicitly calls out to avoid                                                               |
 
 ### Screen 2 · Path landing page
 
-At `/en/c/learn/paths/<path-id>` — the manifest rendered as an ordered, phase-grouped course list;
+At `/en/learn/paths/<path-id>` — the manifest rendered as an ordered, phase-grouped course list;
 every course link carries `?path=<path-id>`. The ordering is a valid topological entry into the
 prerequisite DAG.
 
@@ -798,7 +1161,7 @@ _Desktop — 1280 px (`xl`)_
 │   ▸ Legacy    │ …course body (unchanged, canonical, path-neutral)…                        │
 │               │                                                                          │
 │               │ ← Prev: Advanced Algorithms        Next: Take-Home & Live Coding →        │
-│               │   (both links keep ?path=interview-ready/software-engineer)               │
+│               │   (both links keep ?path=careers/interview-ready/software-engineer)               │
 └───────────────┴──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -857,7 +1220,7 @@ _Desktop — 1280 px (`xl`): rail at its resizable default; full titles + phase 
 │  10  Take-Home & Live  │ …course body (unchanged, canonical, path-neutral)…       │
 │ ── PHASE 3 · DESIGN ───│                                                         │
 │  11  System Design     │ ← Prev: Advanced Algorithms   Next: Take-Home & Live →   │
-│ [ view full path → ]   │   (both links keep ?path=interview-ready/software-engineer)│
+│ [ view full path → ]   │   (both links keep ?path=careers/interview-ready/software-engineer)│
 └────────────────────────┴─────────────────────────────────────────────────────────┘
 ```
 
@@ -876,10 +1239,20 @@ changes:
 └────────────────────────┴─────────────────────────────────────────────────────────┘
 ```
 
-`coding-interview` shows only three badges because the `software-engineer-to-ai-engineer` path
-**links** rather than includes SWE-fundamentals courses in its manifest (DD-24); the affordance
-generically renders **one badge per path whose `courseOrder` actually lists the course**, so an
-AI-specific course would instead show a single `[ SWE → AI Engineer ]` badge.
+The affordance generically renders **one badge per path whose `courseOrder` actually lists the
+course** — a course that a path only links (not includes) shows no badge for it. The wireframe above
+shows `coding-interview` carrying three badges as an illustrative example of the rendering rule, not
+an asserted fact about any specific manifest.
+
+> **DD-24 staleness flag (this plan does not correct DD-24 in place).** DD-24's own worked example —
+> "the `software-engineer-to-ai-engineer` path links rather than includes SWE-fundamentals courses" —
+> assumed the pre-split transition-path model. Per R3, `careers/immediately-effective/ai-engineer` is
+> now from-scratch and **includes** its SWE prerequisites in `courseOrder` rather than linking them, so
+> DD-24's specific example is stale; whether `coding-interview` therefore also appears in
+> `ai-engineer`'s `courseOrder` (making it a fourth badge) is a manifest-content decision owned by
+> `ayokoding-learning-path-05-manifests`, not re-derived here. This plan's own contract — one badge
+> per path whose `courseOrder` lists the course — needs no change; only DD-24's illustrative badge
+> count is affected, and DD-24 is flagged for that plan to correct, not edited here.
 
 #### Screen 3 responsive specification (the selected Option B, breakpoint by breakpoint)
 
@@ -924,7 +1297,7 @@ stated explicitly:
 - **Without `?path=`** — byte-identical to today: `ResizableSidebar` + `Sidebar` + `SidebarTree`. No
   regression surface for the majority of pages.
 - **Escape hatch** — the rail footer carries `view full path →` (→ the path landing) and
-  `browse all courses →` (→ `/en/c/learn/courses`), so a reader is never trapped inside a path with no
+  `browse all courses →` (→ `/en/learn/courses`), so a reader is never trapped inside a path with no
   route back to the generic tree.
 
 **A11y (the rail is a navigation landmark).** `<nav aria-label="Interview-Ready SWE course list">`
@@ -938,7 +1311,7 @@ above (not "Menu" or an icon alone), and the drawer's `SheetTitle` becomes the p
 announced with a meaningful label.
 
 **Hi-fi finalists** (desktop renders; the mobile and tablet renders are produced by the delivery steps in
-[Phase 1 · UI design funnel](./delivery.md#phase-1-ui-design-funnel-screens-03) — see the
+[Phase 1 · UI design funnel](./delivery.md#phase-1-ui-design-funnel-screens-0-1-1a-1b-2-3) — see the
 [asset matrix](#hi-fi-asset-matrix-screen--option--viewport)):
 
 ![Course in path, Option A at desktop width — a hue-washed top path banner reading On path with course position and a view-full-path link, a path breadcrumb, an inline prerequisites line with linked prerequisites, the unchanged course body, and a manifest-driven prev/next pair that keeps the path query parameter](./assets/course-path-option-a-desktop.png)
@@ -971,7 +1344,7 @@ one conditional prop on `ResizableSidebar`.
 
 ### Screen 4 · Legacy-bucket landing (cross-plan)
 
-**Not owned here.** The `legacy/` bucket's landing (`/en/c/learn/legacy`) and its per-page
+**Not owned here.** The `legacy/` bucket's landing (`/en/learn/legacy`) and its per-page
 "legacy / superseded" banner are introduced by the whole-section IA revamp, which belongs to
 `ayokoding-learning-path-01-url-restructure`. That plan carries Screen 4's funnel prose, its six
 `legacy-landing-option-{a,b}-{mobile,tablet,desktop}.png` renders, and its selection — which is pending
@@ -987,13 +1360,26 @@ mobile-first, not one desktop drawing with a prose footnote about phones.
 
 **Naming scheme** — `assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png`, rendered from a
 token-accurate source at `assets/src/<same-stem>.html`. Screen slugs: `landing-hero` (0), `paths-hub`
-(1), `path-landing` (2), `course-path` (3), `legacy-landing` (4). The eight pre-existing desktop
-renders were renamed into this scheme (`…-option-a.png` → `…-option-a-desktop.png`) so the set is
-uniform; every `![]()` reference was updated with them.
+(1), `category-landing` (1a), `arc-landing` (1b), `path-landing` (2), `course-path` (3),
+`legacy-landing` (4). The eight pre-existing desktop renders were renamed into this scheme
+(`…-option-a.png` → `…-option-a-desktop.png`) so the set is uniform; every `![]()` reference was
+updated with them. **2026-07-21 category-split ruling (R6/R7):** `paths-hub-option-{a,b}-desktop.html`
+were **rebuilt in place** (same filenames, new category-grouped content — a content change, tracked by
+the mtime re-render check below, not a rename) and four **new** stems
+(`category-landing-option-{a,b}`, `arc-landing-option-{a,b}`) were added for the two new screen types.
 
 **Render widths** — exactly the three in the shared design legend: **375 px** (mobile, below `sm`),
 **768 px** (tablet, `md`), **1280 px** (desktop, `xl`). Identical across all screens, and identical to
 the widths this plan's Playwright verification steps resize to.
+
+**Mobile/tablet variant decision (recorded, not silently skipped).** All 12 desktop `.html` sources
+(the original 8, plus the 4 new stems for Screens 1a/1b) are desktop-only on disk today; mobile/tablet
+renders for every screen — including the redesigned hub and the two new screen types — are **explicitly
+in scope**, produced from their own per-viewport HTML sources during
+[Phase 1](./delivery.md#phase-1-ui-design-funnel-screens-0-1-1a-1b-2-3), following the same pattern the four
+original screens already use. This is a deliberate **yes**, not a default: the two-category hub in
+particular is exactly the kind of layout (a section, sub-grouped by arc, sitting above a second section)
+that can collapse badly on a narrow viewport if the reflow is not designed and rendered, not assumed.
 
 **Format** — `.png` only, per the
 [UI Mockups convention](../../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs):
@@ -1001,26 +1387,38 @@ the widths this plan's Playwright verification steps resize to.
 (GitHub strips styles). The `.html` sources are build inputs, never the embedded artefact.
 
 **Alt text** — each image gets its own descriptive alt text naming **what differs at that width**
-(stacked vs. 2×2, rail present vs. collapsed-into-drawer, truncated vs. full titles). Copying the
+(stacked vs. two-column, rail present vs. collapsed-into-drawer, truncated vs. full titles). Copying the
 desktop alt text onto the mobile render is a defect, not a shortcut.
 
-| Screen           | Option A stem               | Option B stem               | Viewports produced        | Owner and status                                                   |
-| ---------------- | --------------------------- | --------------------------- | ------------------------- | ------------------------------------------------------------------ |
-| 0 Landing hero   | `landing-hero-option-a-*`   | `landing-hero-option-b-*`   | mobile / tablet / desktop | **this plan** — desktop on disk; 2 pending (Phase 1)               |
-| 1 Paths hub      | `paths-hub-option-a-*`      | `paths-hub-option-b-*`      | mobile / tablet / desktop | **this plan** — desktop on disk; 2 pending (Phase 1)               |
-| 2 Path landing   | `path-landing-option-a-*`   | `path-landing-option-b-*`   | mobile / tablet / desktop | **this plan** — desktop on disk; 2 pending (Phase 1)               |
-| 3 Course in path | `course-path-option-a-*`    | `course-path-option-b-*`    | mobile / tablet / desktop | **this plan** — desktop on disk; 2 pending (Phase 1)               |
-| 4 Legacy landing | `legacy-landing-option-a-*` | `legacy-landing-option-b-*` | mobile / tablet / desktop | `ayokoding-learning-path-01-url-restructure` — all 6 pending there |
+| Screen              | Option A stem                 | Option B stem                 | Viewports produced        | Owner and status                                                         |
+| ------------------- | ----------------------------- | ----------------------------- | ------------------------- | ------------------------------------------------------------------------ |
+| 0 Landing hero      | `landing-hero-option-a-*`     | `landing-hero-option-b-*`     | mobile / tablet / desktop | **this plan** — desktop on disk (content fixed, R8); 2 pending (Phase 1) |
+| 1 Paths hub         | `paths-hub-option-a-*`        | `paths-hub-option-b-*`        | mobile / tablet / desktop | **this plan** — desktop rebuilt in place (R6); 2 pending (Phase 1)       |
+| 1a Category landing | `category-landing-option-a-*` | `category-landing-option-b-*` | mobile / tablet / desktop | **this plan** — new (R7); desktop on disk; 2 pending (Phase 1)           |
+| 1b Arc landing      | `arc-landing-option-a-*`      | `arc-landing-option-b-*`      | mobile / tablet / desktop | **this plan** — new (R7); desktop on disk; 2 pending (Phase 1)           |
+| 2 Path landing      | `path-landing-option-a-*`     | `path-landing-option-b-*`     | mobile / tablet / desktop | **this plan** — desktop on disk (path-id fixed); 2 pending (Phase 1)     |
+| 3 Course in path    | `course-path-option-a-*`      | `course-path-option-b-*`      | mobile / tablet / desktop | **this plan** — desktop on disk (path-id fixed); 2 pending (Phase 1)     |
+| 4 Legacy landing    | `legacy-landing-option-a-*`   | `legacy-landing-option-b-*`   | mobile / tablet / desktop | `ayokoding-learning-path-01-url-restructure` — all 6 pending there       |
 
-**This plan's total: 4 screens × 2 options × 3 viewports = 24 `.png`** — 8 on disk today, 16 produced in
-[Phase 1](./delivery.md#phase-1-ui-design-funnel-screens-03). The delivery checklist enumerates them
+**This plan's total: 6 screens × 2 options × 3 viewports = 36 `.png`** — amended 2026-07-21 from the
+original 24 by the category-split ruling (R6/R7), which redesigned Screen 1 in place (no new files) and
+added two new screen types, Screen 1a and Screen 1b (four new `.html` stems, two options each, each
+producing three viewports). **12 desktop `.html` sources on disk today** (the original 8 fixed/rebuilt
+in place, plus 4 new desktop HTML sources for 1a and 1b authored — one per screen per option) — none of
+the 36 `.png` renders themselves exist yet at the fixed content, so **all 36 `.png` are pending**
+re-render/first-render in
+[Phase 1](./delivery.md#phase-1-ui-design-funnel-screens-0-1-1a-1b-2-3)). The delivery checklist enumerates them
 **one checkbox per asset** rather than one coarse "render all mockups" step, because the volume is large
 enough that a single checkbox could be ticked with most of the set missing.
 
 > **Cross-plan note on DD-47.** DD-47 mandates **30** renders across **two** plans — **24 here** and
-> **6** in `ayokoding-learning-path-01-url-restructure` (Screen 4). A reader auditing DD-47 against
-> this plan alone must not conclude the matrix was under-delivered, and no executor may close the gap by
-> copying the other plan's six renders into this folder — a matrix duplicated across two folders drifts.
+> **6** in `ayokoding-learning-path-01-url-restructure` (Screen 4). **Amended 2026-07-21 by the
+> category-split ruling**: this plan's share grows from 24 to **36** (Screen 1 redesigned, Screens 1a/1b
+> added), so the cross-plan total grows from 30 to **42** (36 here + 6 there, Screen 4 unchanged). A
+> reader auditing DD-47 against this plan alone must not conclude the matrix was under-delivered, and no
+> executor may close the gap by copying the other plan's six renders into this folder — a matrix
+> duplicated across two folders drifts. `tech-docs.md`'s DD-47 entry carries the same amendment note
+> (owned there in full; not re-derived here) since the arithmetic is authored in that file.
 
 ### Hi-Fi Specifications (Textual, Repo-Grounded)
 
@@ -1034,7 +1432,7 @@ Screens 0, 1, and 2 selected Option A; **Screen 3 selected Option B** (left path
 `apps/ayokoding-www/src/app/globals.css`), verified against the existing `prev-next`, `breadcrumb`,
 `section-card`, and `hero`/`landing` components — nothing here invents a primitive or token.
 
-#### Shared design legend (all four screens)
+#### Shared design legend (all six screens)
 
 - **Import surface**: `@open-sharia-enterprise/web-ui` (composite `Button`, `Badge`, `Card*`,
   `Alert*`) and `@open-sharia-enterprise/web-ui/primitives` where a primitive is required — **not**
@@ -1043,12 +1441,19 @@ Screens 0, 1, and 2 selected Option A; **Screen 3 selected Option B** (left path
   `text-foreground` / `text-muted-foreground` / `text-card-foreground` / `text-primary`; borders
   `border-border`; focus `ring-ring`. AyoKoding brand primary is **honey/amber**
   (`--color-primary: var(--hue-honey)`).
-- **Per-path accent hue** (the 6-hue system with `-wash` fill / `-ink` text variants): interview-ready
-  → `honey`, immediately-effective → `teal`, fundamentally-strong → `sage`,
-  swe→ai-engineer → `plum` — used as `bg-[var(--hue-<h>-wash)]` fills and `text-[var(--hue-<h>-ink)]`
-  accents so the four paths are colour-coded consistently across hub, landing, and banner. Hue is
-  **never the sole signal** (always paired with the path name/number/icon); the final hue↔path map is
-  confirmed at draw time and must hold WCAG-AA for `-ink` text on `-wash`.
+- **Accent hue (2026-07-21 category-split ruling — hue is now per-arc for careers, per-subject for
+  skills, not per-path uniformly)**: the 6-hue system (`-wash` fill / `-ink` text variants) is now
+  fully spoken for. **Careers arcs** (3 of 6 hues, shared by every role inside the arc — the arc is
+  the meaningful grouping signal): `interview-ready` → `honey`, `immediately-effective` → `teal`
+  (covers **both** Software Engineer and AI Engineer — differentiated by name/badge, never by colour,
+  which the "hue is never the sole signal" rule below already requires), `fundamentally-strong` →
+  `sage`. **Skills subjects** (2 of 6 hues, one per subject — skills has no arc grouping to lean on, so
+  each card needs its own accent): `enterprise-resource-planning` → `terracotta`,
+  `accounting` → `plum`. **Skills section accent** (the 6th hue, used once for the section-level
+  eyebrow/strap-line, not per-card): `sky`. Used as `bg-[var(--hue-<h>-wash)]` fills and
+  `text-[var(--hue-<h>-ink)]` accents. Hue is **never the sole signal** (always paired with the path
+  name/number/icon); the final hue↔entity map is confirmed at draw time and must hold WCAG-AA for
+  `-ink` text on `-wash`.
 - **Radius / elevation**: cards `rounded-xl` (20px on the AyoKoding scale); insets `rounded-lg`;
   `shadow-sm` at rest → `shadow-md` on hover.
 - **Breakpoints**: `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1280 — the only prefixes this app uses. The
@@ -1076,22 +1481,27 @@ Screens 0, 1, and 2 selected Option A; **Screen 3 selected Option B** (left path
   inner `mx-auto max-w-6xl`. H1 unchanged (`text-4xl … sm:text-5xl lg:text-6xl font-extrabold`,
   `t(locale,"heroHeading")`); tagline `mt-5 max-w-2xl text-lg text-muted-foreground` (goal-framed copy).
 - **"Choose your path" eyebrow**: `<p className="mt-8 text-sm font-semibold uppercase tracking-wide text-muted-foreground">`.
-- **Grid**: `<ul className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">` — 2×2 at `md+`, single column
-  below. Each `<li>` a **`PathCard`** (same net-new component as Screen 1, `context="hero"` variant):
-  the whole card is one `<Link>` to `/{locale}/c/learn/paths/{pathId}` (SectionCard pattern, no
-  link-in-link). Card = `Card` (`rounded-lg border-border shadow-sm hover:bg-accent hover:shadow-md`,
-  `border-l-4` in the path hue `border-[var(--hue-<h>)]`). Contents — **goal phrase** as the prominent
-  line (`text-lg font-semibold`), the **formal path name** beneath (`text-xs text-muted-foreground`), a
+- **Grid**: `<ul className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">` — two-column, two-row at
+  `md+`, single column below. Each `<li>` a **`PathCard`** (same net-new component as Screen 1,
+  `context="hero"` variant), populated with the **four careers paths only** (see "Why still four
+  cards" in [Screen 0](#screen-0--landing-hero-path-entry)): the whole card is one `<Link>` to
+  `/{locale}/learn/paths/careers/{arc}/{role}` (SectionCard pattern, no link-in-link). Card = `Card`
+  (`rounded-lg border-border shadow-sm hover:bg-accent hover:shadow-md`, `border-l-4` in the arc hue
+  `border-[var(--hue-<h>)]`). Contents — **goal phrase** as the prominent line
+  (`text-lg font-semibold`), the **formal path name** beneath (`text-xs text-muted-foreground`), a
   course-count `Badge` (`variant="secondary" size="sm"` + hue wash), and a "Start →" `meta`
   (`text-sm font-medium text-primary`, lucide `ArrowRight`).
 - **Escape hatch row**: below the grid, `<div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">`
-  — a primary-weight `<Link className="text-sm font-medium text-[var(--hue-honey-ink)]">` "Not sure
-  which fits? Compare all paths →" (→ `/en/c/learn/paths`, Screen 1) and a subordinate
-  `text-sm text-muted-foreground` "Browse the full course library →" (→ `/en/c/learn/courses`).
+  — a primary-weight `<Link className="text-sm font-medium text-[var(--hue-honey-ink)]">` "Compare all
+  paths →" (→ `/en/learn/paths`, Screen 1), a same-weight
+  `<Link className="text-sm font-medium text-[var(--hue-sky-ink)]">` "Explore skills paths →"
+  (→ `/en/learn/paths/skills/`, Screen 1a's skills instance), and a subordinate
+  `text-sm text-muted-foreground` "Browse the full course library →" (→ `/en/learn/courses`).
 - **States**: card hover `bg-accent shadow-md`, arrow nudges `group-hover:translate-x-0.5`;
   focus-visible `ring-2 ring-ring` on the card. All four cards equal weight — none de-ranked.
-- **Responsive**: 2×2 `md+`; single column `<md` (full-width cards, ≥44px tap height); escape-hatch
-  links wrap under the grid on mobile; four cards + eyebrow stay within one short scroll on a phone.
+- **Responsive**: two-column, two-row `md+`; single column `<md` (full-width cards, ≥44px tap height);
+  escape-hatch links wrap under the grid on mobile; four cards + eyebrow stay within one short scroll
+  on a phone.
 - **A11y**: `<ul>`/`<li>`; each card `<a aria-label="Start the {path} path — {goal}, ~{N} courses">`;
   hue is decorative (goal phrase + path name carry meaning); eyebrow is a real heading landmark, not
   styled text alone if it introduces the list.
@@ -1099,37 +1509,113 @@ Screens 0, 1, and 2 selected Option A; **Screen 3 selected Option B** (left path
   Before any manifest is published, the hero renders the fixture-manifest cards in test and an empty
   grid in production, so shipping order never produces a broken hero.
 
-#### Screen 1 hi-fi — Paths hub (`/en/c/learn/paths`), Option A (2×2 card grid)
+#### Screen 1 hi-fi — Paths hub (`/en/learn/paths`), Option A (category sections, arc-grouped within Careers)
+
+**Redesigned by the 2026-07-21 category-split ruling (R6)** — replaces the retired flat four-card grid.
 
 - **Container**: content column; inner `<section className="mx-auto max-w-6xl px-6 py-8 lg:px-8">`.
   Header: `<h1 className="text-4xl font-extrabold tracking-tight">` "Choose your path" +
-  `<p className="mt-2 text-muted-foreground">` "One library, converging within your role."
-- **Grid**: `<ul className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">` — one column `<md`, **2×2** at
-  `md+`; four `<li>`.
+  `<p className="mt-2 text-muted-foreground">` "Six paths, two ways in."
+- **`CategorySection`** (net-new, one per category, in document order Careers then Skills): a
+  `<section aria-labelledby="{category}-heading">` with an eyebrow `<h2 id="{category}-heading"
+className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">` — "Careers ·
+  converging within your role" (`text-[var(--hue-honey-ink)]`-adjacent neutral) / "Skills · up and
+  running fast, then deeper and deeper" (`text-[var(--hue-sky-ink)]`).
+- **Careers section body**: one **`ArcGroup`** (net-new) per arc, each an `<h3 className="mt-6 text-xs
+font-medium uppercase tracking-wide text-muted-foreground">` arc name followed by
+  `<ul className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">` containing that arc's
+  role `PathCard`s (1 for `interview-ready` / `fundamentally-strong`, 2 for `immediately-effective`).
+- **Skills section body**: no `ArcGroup` wrapper — a flat `<ul className="mt-4 grid grid-cols-1 gap-4
+md:grid-cols-2">` of the two subject `PathCard`s directly under the section heading.
 - **`PathCard`** (net-new, composes the existing **`SectionCard` pattern** — the whole card is a single
   `<Link className="group block focus-visible:outline-none">`, so there is **no** nested button and no
   link-in-link trap): wraps `Card`
   (`h-full rounded-xl transition-colors hover:bg-accent hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-ring`).
-  Contents — a kind `Badge` (`variant="outline"` + `hue`), `CardTitle` (`text-lg font-semibold`) = path
-  name, `CardDescription` (`text-sm text-muted-foreground`) = the one-line arc
-  ("interview prep → production-effective → deeper"), a course-count `Badge`
-  (`variant="secondary" size="sm"`) "~N courses", and the `meta` affordance "Start →"
+  Contents — a kind `Badge` (`variant="outline"` + hue: arc hue for careers cards, subject hue for
+  skills cards), `CardTitle` (`text-lg font-semibold`) = role/subject name, `CardDescription`
+  (`text-sm text-muted-foreground`) = a one-line summary (careers: the arc's phase arrow, e.g.
+  "interview prep → production-effective → deeper"; skills: omitted here — the ramp milestones live on
+  Screen 1a, not the hub card, to keep the hub card lightweight), a course-count `Badge`
+  (`variant="secondary" size="sm"`) "~N courses" (careers cards only — skills subject counts are not
+  yet meaningful pre-manifest), and the `meta` affordance "Start →"
   (`text-sm font-medium text-primary` + lucide `ArrowRight h-3.5 w-3.5`) exactly as `SectionCard`.
 - **States**: default (`bg-card border-border shadow-sm`); hover (`bg-accent shadow-md`, arrow nudges
-  `group-hover:translate-x-0.5`); focus-visible (`ring-2 ring-ring` on the card). The fourth card is
-  never visually de-ranked — equal weight is why Option A beat B.
-- **Below the grid**: a tertiary
+  `group-hover:translate-x-0.5`); focus-visible (`ring-2 ring-ring` on the card). No card is ever
+  visually de-ranked within its group — equal weight is why Option A beat B.
+- **Below both sections**: a tertiary
   `<a className="mt-6 inline-flex text-sm text-muted-foreground hover:text-foreground">` "Browse the
-  full course library →" → `/en/c/learn/courses`.
-- **Responsive**: 2×2 `md+`; single column `<md` (full-width cards, comfortable tap height; the "Start"
-  affordance lives inside the full-card tap target).
-- **A11y**: `<ul>`/`<li>`; each card `<a aria-label="Start the {path} path — {N} courses">`; the hue is
-  decorative (path name carries the meaning).
-- **Grid capacity**: the layout has room for **all four** paths from day one and is populated as each
-  manifest ships in `ayokoding-learning-path-05-manifests`. That plan populates cards; it does not
-  re-invent the grid.
+  full course library →" → `/en/learn/courses`.
+- **Responsive**: Careers arc rows go `grid-cols-1` `<md`, `md:grid-cols-2`, `lg:grid-cols-3` (so the
+  three arcs never crowd below `lg`); Skills stays `grid-cols-1` `<md`, `md:grid-cols-2` (only ever 2
+  cards, never needs a third breakpoint tier). Section headings and arc sub-headings never collapse or
+  hide at any width — the grouping signal must survive to mobile.
+- **A11y**: `<section aria-labelledby>` per category, `<h3>` per arc group (correct heading nesting
+  under the `<h2>` category heading, never skipped); `<ul>`/`<li>`; each card
+  `<a aria-label="Start the {path} path — {N} courses">` (skills cards omit the count clause until a
+  count exists); hue is decorative (name + section/arc heading carry the meaning).
+- **Grid capacity**: the Careers section has room for further arcs and the Skills section for further
+  subjects without a layout change — `ArcGroup`/flat-`<ul>` both grow by adding `<li>`s, not by
+  re-authoring the grid. Careers cards populate from `ayokoding-learning-path-05-manifests`; skills
+  cards populate from the sibling skills-plans. Neither populating plan re-invents this layout.
 
-#### Screen 2 hi-fi — Path landing (`/en/c/learn/paths/<path-id>`), Option A (phase-grouped numbered syllabus)
+#### Screen 1a hi-fi — Category landing (`/en/learn/paths/careers/`, `/en/learn/paths/skills/`), Option A (arc cards with member-role preview)
+
+- **Container**: same content column as Screen 1 (`mx-auto max-w-6xl px-6 py-8 lg:px-8`). A
+  category-aware `Breadcrumb` (`Home / Learn / Paths / Careers` or `.../ Skills`),
+  `<h1 className="text-4xl font-extrabold tracking-tight">` = "Careers" or "Skills",
+  `<p className="mt-2 text-muted-foreground">` = the category strap-line.
+- **Careers instance — `ArcCard` grid** (net-new; distinct from Screen 1's `PathCard`, one level up the
+  hierarchy): `<ul className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">`, one
+  `<li>` per arc. Each `ArcCard` = `Card` (arc hue `border-l-4`), containing the arc name
+  (`CardTitle`), a one-line tagline (`CardDescription`), and a **member-role preview list**
+  (`<ul className="mt-2 flex flex-wrap gap-1">` of small `Badge variant="secondary"` chips, one per
+  role in that arc's `courseOrder` set — `immediately-effective` renders **two** chips, the other two
+  arcs render **one**, with no special-casing: the chip list length is simply the arc's role count),
+  and an "Explore arc →" `meta`.
+- **Skills instance — subject `PathCard` grid plus ramp strip** (no `ArcCard`, no chooser copy): the H1
+  is "Skills", the strap-line states the fixed-arc ramp promise once (R8), and the grid below is the
+  **same two-up `PathCard` grid Screen 1's Skills section uses** — reused, not re-implemented — plus a
+  **`RampMilestoneStrip`** (net-new, subject `PathCard`-only addition on this screen, not on the hub
+  card) rendering the dangerous/comfortable/confident course markers as a small horizontal `<ol>` of
+  three labelled ticks (`text-[10px] text-muted-foreground`, tick dots in the subject hue).
+- **`EmptyPathListState`** (net-new, shared with Screen 1b): `Alert`-composed
+  (`<Alert variant="default" className="mt-8">`), one sentence stating the interval is expected
+  ("New skills paths are being written — check back soon."), one `<Link>` CTA to a populated sibling
+  category (`careers/`). Rendered in place of the grid when the category's manifest set is empty (an
+  interval the skills category is far more likely to hit than careers, since plan 01's amendment A3
+  creates `paths/skills/_index.md` structurally ahead of the skills-populating plans).
+- **Responsive**: careers `ArcCard`s go `grid-cols-1` `<md`, `md:grid-cols-2`, `lg:grid-cols-3`; skills
+  cards stay `grid-cols-1` `<md`, `md:grid-cols-2` (never more than 2). `RampMilestoneStrip` wraps to
+  two lines on mobile rather than truncating a milestone label.
+- **A11y**: `<nav aria-label="Careers arcs">` / `<nav aria-label="Skills paths">` wrapping the
+  respective `<ul>`; each `ArcCard` link `<a aria-label="Explore the {arc} arc — {role list}">`; the
+  empty state is `role="status"` equivalent via `Alert`'s existing semantics, never a silent blank
+  `<div>`.
+
+#### Screen 1b hi-fi — Arc landing (`/en/learn/paths/careers/<arc>/`), Option A (always-render arc header + role card(s), single role gets a syllabus preview)
+
+- **Container**: same content column; an arc-aware `Breadcrumb`
+  (`Home / Learn / Paths / Careers / <Arc Title>`), `<h1>` = arc title,
+  `<p className="mt-2 text-muted-foreground">` = arc tagline.
+- **Role grid**: `<ul className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">` populated with **exactly
+  as many `PathCard`s as the arc has roles** — never padded, never a fixed 2-slot template. The
+  **single-role state** (`interview-ready`, `fundamentally-strong`) additionally renders a
+  **`SyllabusPreview`** (net-new, this screen only) inside that one card: the first phase's course
+  titles as a small inline list (`text-xs text-muted-foreground`, "Starts with: 1. … · 2. … · 3. … →"),
+  which is what keeps a one-card grid from reading as a stub — the card is visually "full" through
+  richer content, not through a fabricated second card.
+- **`EmptyPathListState`**: the same component Screen 1a defines, reused verbatim (see
+  [Screen 1a hi-fi](#screen-1a-hi-fi--category-landing-enlearnpathscareers-enlearnpathsskills-option-a-arc-cards-with-member-role-preview)).
+  Careers arcs already have real manifests by the time this plan ships, so this is a defensive reuse,
+  not an expected-interval design the way the skills category landing's empty state is.
+- **Responsive**: role cards `grid-cols-1` `<md`, `md:grid-cols-2` `md+` — the two-role state fills
+  both columns, the single-role state occupies the first column and leaves the second empty **grid
+  track** (not an empty card) at `md+`, which CSS grid handles natively without extra markup.
+- **A11y**: `<nav aria-label="{Arc} paths">` wrapping the role `<ul>`; each card
+  `<a aria-label="Start the {role} path — {N} courses">`; the `SyllabusPreview` list is a real
+  `<ol>` sharing the same "number is order" semantics as Screen 2's syllabus, not decorative text.
+
+#### Screen 2 hi-fi — Path landing (`/en/learn/paths/<path-id>`), Option A (phase-grouped numbered syllabus)
 
 - **Container**: content column `flex-1 px-6 py-8 lg:px-8`; inner reading column `max-w-3xl`. A
   path-aware `Breadcrumb` (`Home / Learn / <Path Title>`), `<h1 className="text-4xl font-extrabold tracking-tight">`
@@ -1195,9 +1681,10 @@ layered around it.
   `PrerequisiteList` still shows; and a **`PathCourseLinks`** (net-new) affordance renders below the
   body: `<div className="mt-8 text-sm"><span className="text-muted-foreground">This course is part of:</span> …</div>`
   with **one `Badge` link per path whose manifest `courseOrder` actually lists this course** (hue per
-  path, `variant="outline"`, wrapped in a `<Link>` to that path's landing). A course a path only
-  **links** (not includes) shows no badge for it (DD-24) — `coding-interview` shows three badges; an
-  AI-specific course shows a single `SWE → AI Engineer` badge.
+  path, `variant="outline"`, wrapped in a `<Link>` to that path's landing). A course a path only links
+  (not includes) shows no badge for it — see the
+  [DD-24 staleness flag](#screen-3--course-page-in-path-context) for why this plan no longer asserts a
+  specific badge count for any named course.
 - **States**: with-path (rail + banner readout + path breadcrumb + manifest prev/next); without-path
   (generic sidebar + canonical breadcrumb + `PathCourseLinks` + canonical neighbours or omitted
   prev/next); no-prereq (list omitted); single-path course (one `PathCourseLinks` badge); rail-in-drawer
@@ -1334,13 +1821,16 @@ prerequisite-resolver scenarios stay in
 prerequisites" scenario goes to `ayokoding-learning-path-01-url-restructure`, and the **rendering**
 scenario below stays here with a fixture `Given`.
 
-**Two scenarios are this plan's own additions.** "The landing hero surfaces the four goal paths
-directly" binds the Screen 0 implementation (see
+**Two scenarios are this plan's own additions from the source plan's split.** "The landing hero surfaces
+the four goal paths directly" binds the Screen 0 implementation (see
 [README §Screen 0 ruling](./README.md#screen-0-ruling--option-a-implementation-carried-recorded)).
 "The navigation feature builds and validates green" is this plan's scoped share of the source plan's
 composite "The app builds and validates green" scenario, whose `Given` conjoined the navigation feature
 **and** the interview-ready path and therefore spanned two plans by construction; each of the five split
 plans writes its own surface-scoped replacement instead.
+
+**Six further scenarios are new, added by the 2026-07-21 category-split ruling (R6/R7/R8)** to bind
+Screen 1's category-grouped redesign and the two new screen types, Screen 1a and Screen 1b.
 
 **Two behaviours are deliberately NOT Gherkin here.** The no-forked-body check across manifests is a
 **checklist acceptance clause** in this plan (run over two fixture manifests); its Gherkin form —
@@ -1355,13 +1845,13 @@ Scenario: The landing hero surfaces the four goal paths directly
   Given a first-time visitor opens the site landing page at /en
   When the hero section renders
   Then the hero shows a goal-labeled path card for each published path
-  And a "Compare all paths" link to /en/c/learn/paths is visible below the cards
+  And a "Compare all paths" link to /en/learn/paths is visible below the cards
 ```
 
 ```gherkin
 Scenario: A path landing page lists its courses in manifest order
   Given a fixture path manifest is loaded by the manifest repository
-  When a reader opens that fixture path's landing page under /en/c/learn/paths/
+  When a reader opens that fixture path's landing page under /en/learn/paths/
   Then the courses appear in the fixture manifest's courseOrder
   And every course link carries the path context query parameter
 ```
@@ -1387,12 +1877,12 @@ Scenario: The breadcrumb reflects the active path
   Given a reader is on a fixture-manifest course with an active path context
   When the breadcrumb renders
   Then it shows Home, Learn, the path title, and the course title
-  And the path crumb links to the path landing page /en/c/learn/paths/<path-id> with the path context preserved
+  And the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved
 ```
 
 ```gherkin
 Scenario: A course deep-linked without path context renders the canonical view
-  Given a reader opens a course URL /en/c/learn/courses/<course-id> with no path context query parameter
+  Given a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter
   When the course page renders
   Then the course body renders in full with the content-tree breadcrumb and its prerequisite list
   And a "this course is part of" affordance lists every path that includes the course
@@ -1455,31 +1945,89 @@ Scenario: The navigation feature builds and validates green
   And link, heading-hierarchy, and markdownlint validation report no errors
 ```
 
+```gherkin
+Scenario: The paths hub groups paths by category, not a flat grid
+  Given a fixture manifest set covers both a careers-shaped and a skills-shaped fixture
+  When a reader opens the paths hub at /en/learn/paths
+  Then the hub renders a Careers section grouped by arc and a separate Skills section
+  And no path card from either category is rendered outside its category's section
+```
+
+```gherkin
+Scenario: The careers category landing offers an arc chooser
+  Given a fixture careers manifest set with three arcs is loaded
+  When a reader opens the careers category landing at /en/learn/paths/careers/
+  Then the page renders one arc card per arc with its member role(s) previewed
+  And the immediately-effective arc card previews exactly two member roles
+```
+
+```gherkin
+Scenario: The skills category landing states its fixed arc once, with no chooser
+  Given a fixture skills manifest set is loaded
+  When a reader opens the skills category landing at /en/learn/paths/skills/
+  Then the page renders the ramp promise once as a statement, not a question
+  And no arc-selection control is present anywhere on the page
+```
+
+```gherkin
+Scenario: An arc landing with two paths renders both role cards without a placeholder
+  Given the fixture immediately-effective arc manifest lists two roles
+  When a reader opens the arc landing at /en/learn/paths/careers/immediately-effective/
+  Then both role cards render side by side with their own course counts
+  And neither card is a placeholder or an empty grid cell
+```
+
+```gherkin
+Scenario: An arc landing with one path renders a full card, not a sparse stub
+  Given a fixture arc manifest lists exactly one role
+  When a reader opens that arc's landing page
+  Then the single role card renders with an inline first-phase syllabus preview
+  And the layout does not reserve or render a visibly empty second card
+```
+
+```gherkin
+Scenario: A category landing with no populated manifest renders an explicit empty state
+  Given a structural category index exists with zero published path manifests
+  When a reader opens that category's landing page
+  Then the page renders a stated "being written, check back soon" message with a fallback link
+  And the page never renders a blank content area with no message
+```
+
 ## Product Scope
 
 **In-scope features**
 
 - The `course-paths` **shell**: `manifest-repository.ts`, `path-landing.tsx`, `path-card.tsx`,
-  `path-rail.tsx`, `path-banner.tsx`, `prerequisite-list.tsx`, `path-course-links.tsx`.
-- `?path=` route wiring in `apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`, plus
+  `path-rail.tsx`, `path-banner.tsx`, `prerequisite-list.tsx`, `path-course-links.tsx`, and — added by
+  the 2026-07-21 category-split ruling — `category-landing.tsx`, `arc-landing.tsx`, and the shared
+  `empty-path-list-state.tsx` component.
+- `?path=` route wiring in `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`, plus
   the additive path-context props on `prev-next.tsx`, `breadcrumb.tsx`, and `content-url.ts`.
 - The Screen 3 content swap in the two shipped hosts — `ResizableSidebar` on `md+` and `MobileNav`'s
   left `Sheet` below `md` — with no fork, no second `<aside>`, and no second `localStorage` width key.
-- The `/en` landing hero's four goal cards and escape-hatch row (`hero.tsx`).
-- The paths hub and the path landing renderers, plus the accessibility contract for all of them.
-- The **fixture manifest** and the fixture-backed e2e suite in `ayokoding-www-fe-e2e`.
+- The `/en` landing hero's four careers goal cards, escape-hatch row (including the "Explore skills
+  paths" link), and `hero.tsx`.
+- The category-grouped paths hub, the category landing (`careers/` and `skills/` instances), the arc
+  landing, and the path landing renderers, plus the accessibility contract for all of them.
+- The **fixture manifests** (both a `careers/`-shaped and a `skills/`-shaped fixture, per R2) and the
+  fixture-backed e2e suite in `ayokoding-www-fe-e2e`.
 - The `specs/` Gherkin companion under
   `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/` and its step definitions.
-- The complete UI-design funnel for Screens 0–3: 24 renders, embeds, selections, rationale tables, and
-  the per-breakpoint responsive strategy.
+- The complete UI-design funnel for Screens 0, 1, 1a, 1b, 2, 3: **36 renders**, embeds, selections,
+  rationale tables, and the per-breakpoint responsive strategy.
 - The Rule-15 three-tester retest against this plan's own surfaces.
 
 **Out-of-scope features**
 
-- Publishing any real path manifest, or growing one (`ayokoding-learning-path-05-manifests`).
+- Publishing any real **careers** path manifest, or growing one
+  (`ayokoding-learning-path-05-manifests`); publishing any real **skills** path manifest (sibling
+  skills-plans, R4/R5) — this plan proves rendering against fixtures only, for both categories.
 - Authoring or editing any course body (`ayokoding-learning-path-04-course-authoring`).
-- Creating the `courses/` or `paths/` content homes, relocating the `legacy/` bucket, or writing either
-  redirect module (`ayokoding-learning-path-01-url-restructure`).
+- Creating the `courses/` or `paths/` content homes, relocating the `legacy/` bucket, writing either
+  redirect module, or creating any structural `_index.md` — including `paths/careers/_index.md`,
+  the three `paths/careers/<arc>/_index.md`, and `paths/skills/_index.md`
+  (`ayokoding-learning-path-01-url-restructure`, amendment A3). This plan owns how those pages
+  **render**, not the index files themselves.
 - The pure `course-paths/core/` modules, the `PathManifest` zod schema, the `<MANIFESTS>` directory, and
   the whole `syllabus/` detail layer (`ayokoding-learning-path-02-schema-and-prerequisite-dag`).
 - Screen 4 (legacy-bucket landing and page banner) and its six renders.
@@ -1515,9 +2063,31 @@ Scenario: The navigation feature builds and validates green
   against the fixture manifest, so shipping order never yields a broken landing page.
 - **A11y retrofitted after the visuals**: mitigated by giving the a11y scenario its own RED step and its
   own `playwright-bdd` step definition, authored before the landmarks exist.
-- **The DD-47 matrix reads as under-delivered at 24**: mitigated by the cross-plan note beside the asset
+- **The DD-47 matrix reads as under-delivered at 36**: mitigated by the cross-plan note beside the asset
   matrix, beside the Phase-1 gate clause, and again in the archival gate.
 - **Q-E's ruling lands late and changes what the coexistence guard asserts**: mitigated by carrying an
   explicit blocked-on note (see [README §Blocked-on](./README.md#blocked-on-open-questions-owned-by-another-plan))
   and by asserting the legacy browse only as a regression guard here, with the authoritative scenario in
   `ayokoding-learning-path-01-url-restructure`.
+- **A structural category/arc index renders blank before its populating plan ships** (R7/A3): plan 01
+  creates `paths/skills/_index.md` (and the careers structural indices) ahead of the plans that publish
+  real manifests, so a real, non-theoretical interval exists where a category or arc page has zero
+  paths to list. Mitigated by the shared `EmptyPathListState` component (Screen 1a hi-fi) being a
+  first-class design, asserted by its own Gherkin scenario, rather than left to render as an
+  accidental blank page.
+- **Careers and skills landings collapse into "one template, different data," erasing the IA change**
+  (R8): the two categories are a genuine different-depth, different-decision distinction (arc chooser
+  vs. fixed-arc ramp statement), and a lazy implementation could render both from one undifferentiated
+  component. Mitigated by documenting the careers/skills instances as explicitly different content
+  states of Screen 1a (not a shared prop-driven template) in both the hi-fi spec and two dedicated
+  Gherkin scenarios.
+- **A `?path=` breadcrumb reaching 6 segments (`Home / Learn / Careers / <Arc> / <Role> / <Course>`)
+  wraps awkwardly on mobile.** [Repo-grounded — `breadcrumb.tsx` has no hardcoded depth ceiling; it
+  renders via `<ol className="flex flex-wrap items-center gap-1">`, so it degrades by wrapping to
+  multiple lines rather than breaking, at any depth.] The residual risk is **not** breakage but a
+  **design-intent tension**: this plan's own Learner Journey section states a "no multi-line breadcrumb
+  wrap on small screens" principle elsewhere, and a full 6-segment careers breadcrumb under `?path=` on
+  a 375 px viewport is a plausible violation of that principle even though nothing crashes. **Not
+  resolved here** — flagged for the 375 px Screen 3 manual-verification step to confirm empirically
+  (does the real component wrap to 2 lines, and is 2-line wrap acceptable) rather than assumed either
+  way in this document.

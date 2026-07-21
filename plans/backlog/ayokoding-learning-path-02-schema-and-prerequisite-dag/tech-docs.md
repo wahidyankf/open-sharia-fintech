@@ -7,7 +7,7 @@ the two data contracts it operates over: the **course-prerequisite frontmatter c
 **`PathManifest` schema**. It creates no component, no route, and no rendered page.
 
 `ayokoding-www` is a Next.js app [Repo-grounded — `apps/ayokoding-www/next.config.ts`,
-`apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`] following the repo's
+`apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`] following the repo's
 **functional-core/imperative-shell** feature layout, `src/features/<name>/{core,shell}`
 [Repo-grounded — `apps/ayokoding-www/src/features/{content,navigation}/{core,shell}` all exist]. The
 `course-paths` feature is **new**: `test -d apps/ayokoding-www/src/features/course-paths` returns
@@ -19,16 +19,25 @@ half; `ayokoding-learning-path-03-navigation-ui` creates its `shell/` half.
 Used throughout this document and `delivery.md`. Reproduced verbatim in all five split plans — a
 checklist whose `<FEAT>` placeholders cannot be expanded is not executable.
 
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
-- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>`)
+- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/learn/paths/<path-id>`)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
-- `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror slash path ids — `<MANIFESTS><path-id>.yaml`)
-- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/c/learn/legacy/<domain>/…`)
+- `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror slash path ids —
+  `<MANIFESTS><path-id>.yaml`; `<path-id>` is **variable-depth**: `careers/<arc>/<role>` (3 segments) or
+  `skills/<subject>` (2 segments) — see
+  [§Variable-depth `pathId`](#variable-depth-pathid-careers-vs-skills--r2-r8))
+- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/learn/legacy/<domain>/…`)
 - `<REDIR>` = `apps/ayokoding-www/src/redirects/`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<NAVSPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/` (existing domain — the three-bucket Gherkin lands beside `content-namespace-redirects.feature`)
-- Path ids: `interview-ready/software-engineer`, `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`, `immediately-effective/software-engineer-to-ai-engineer` (fourth path, manifest at `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml`)
+- **This plan is careers-only** (R4): the 4 path ids it owns are `careers/interview-ready/software-engineer`,
+  `careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`,
+  `careers/immediately-effective/ai-engineer` (fourth path, corrected 2026-07-21 — see
+  [§Path `careers/immediately-effective/ai-engineer`](#path-careersimmediately-effectiveai-engineer-fourth-path-corrected-2026-07-21) —
+  manifest at `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`). A sibling `skills/` category
+  (2 path ids, e.g. `skills/enterprise-resource-planning`) exists in the wider programme but is out of
+  this plan's scope — see [§Ownership split](#ownership-split-careers-vs-skills--r4).
 
 ## Architecture — the pure core this plan builds
 
@@ -49,7 +58,7 @@ apps/ayokoding-www/src/features/course-paths/          # NEW feature — this pl
 
 Plus one edit outside the feature:
 `apps/ayokoding-www/src/features/content/core/content-url.ts` [Repo-grounded — file exists] gains an
-optional `pathId` param and the canonical `/en/c/learn/courses/<course-id>` shape.
+optional `pathId` param and the canonical `/en/learn/courses/<course-id>` shape.
 
 ### Module interaction
 
@@ -207,17 +216,21 @@ edge. `checkPrerequisiteConsistency` is the function that proves a given walk re
 
 ## Path = ordered manifest (manifest format)
 
-- A **path** is a manifest: a **path ID**, a display **title**, a **description**, and an ordered
-  **`courseOrder`** list of course IDs.
+- A **path** is a manifest: a **path ID**, an **arc**, a display **title**, a **description**, and an
+  ordered **`courseOrder`** list of course IDs. See
+  [§Variable-depth `pathId`](#variable-depth-pathid-careers-vs-skills--r2-r8) for why `arc` is its own
+  field, separate from `pathId`.
 - **Storage**: each manifest is a standalone data file under `<MANIFESTS>` — the loader globs
   `manifests/**/*.yaml` and a **slash in a path ID becomes a nested directory** (e.g.
-  `manifests/interview-ready/software-engineer.yaml`). This data file is the **single
-  machine-consumed source of truth** for the path — it is NOT `courseOrder` frontmatter on any
-  content `_index.md`.
+  `manifests/careers/interview-ready/software-engineer.yaml`, or, for the 2-segment `skills/` category
+  owned by a separate plan, `manifests/skills/enterprise-resource-planning.yaml`). This data file is
+  the **single machine-consumed source of truth** for the path — it is NOT `courseOrder` frontmatter on
+  any content `_index.md`.
 
   ```yaml
-  # apps/ayokoding-www/src/features/course-paths/manifests/interview-ready/software-engineer.yaml
-  pathId: interview-ready/software-engineer
+  # apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+  pathId: careers/interview-ready/software-engineer
+  arc: interview-ready
   title: "Interview-Ready Software Engineer"
   description: "Interview-first track for an experienced engineer re-entering the market."
   courseOrder:
@@ -238,13 +251,112 @@ edge. `checkPrerequisiteConsistency` is the function that proves a given walk re
   modified. `manifest.ts` normalizes both forms to one internal shape so no downstream caller has to
   branch on it.
 
+## Variable-depth `pathId` (careers vs. skills — R2, R8)
+
+**Ruling, 2026-07-21.** `pathId` is the slash-shaped id after `paths/`, and it is **variable-depth by
+design**: `careers/<arc>/<role>` (3 segments) or `skills/<subject>` (2 segments). This plan's schema,
+`?path=` parser (`path-context.ts`), and `<MANIFESTS>` directory globbing must all handle **both**
+depths from day one, without hardcoding either — and this plan is careers-only (R4), so it is the
+`careers/` (3-segment) shape that this plan's own four manifests actually instantiate; the 2-segment
+shape is exercised only via unit-test fixtures proving the code does not silently assume 3 segments.
+
+- **Do NOT hardcode a 3-segment assumption anywhere** — not in `schemas.ts`'s zod refine, not in
+  `path-context.ts`'s parsing, not in the `<MANIFESTS>` glob pattern (`manifests/**/*.yaml` already
+  matches any depth; nothing here needs to change for that reason alone).
+- **Do NOT encode "skills always has exactly 2 segments" as a validated invariant.** That is precisely
+  the constraint the ruling keeps open, so that a future `skills/<arc>/<subject>` (3 segments) is a
+  purely additive change, never a breaking URL/schema migration.
+- **DO validate that the first segment is one of `careers` | `skills`**, and that the id resolves to a
+  loaded manifest. Depth itself is never the thing asserted.
+- **`arc` is a required manifest field, independent of the URL grammar (R8).** Every `PathManifest` —
+  careers or skills — carries an explicit `arc` string. For `careers/*` paths the arc is also the
+  `pathId`'s middle segment (`interview-ready`, `immediately-effective`, or `fundamentally-strong`).
+  For `skills/*` paths the arc is **omitted from the URL** (every skills path is currently the
+  `immediately-effective` arc — R8 — so naming it in every URL would be noise) but **still present in
+  the manifest data**. Conflating "arc" with "a URL segment" is the trap: modelling skills paths as
+  arc-less would make a future second skills arc a schema migration **and** a URL migration — exactly
+  what R2 forbids. Keeping `arc` a required field regardless of category means only the URL grammar
+  would ever need to widen.
+- **Unit-test proof of depth-independence** (Phase 1.2, `schemas.test.ts`): a fixture manifest with a
+  2-segment `skills/<subject>` `pathId` and a fixture manifest with a 3-segment `careers/<arc>/<role>`
+  `pathId` both validate successfully through the same `PathManifestSchema`, and a fixture whose
+  `pathId` starts with neither `careers/` nor `skills/` is rejected. No fixture asserts a specific
+  segment count.
+
+This plan does not itself validate that a `skills/` manifest exists or resolves to any real content —
+the `skills/` category, its manifests, and its corpus are owned end-to-end by a separate, not-yet-created
+plan (see [§Ownership split](#ownership-split-careers-vs-skills--r4)). What this plan guarantees is that
+its own schema and resolvers never structurally prevent that plan's manifests from loading.
+
+### Canonical `pathId` form (2026-07-21 ruling — binding on every sibling plan)
+
+**This plan owns the `pathId` definition; this ruling is citable by every plan that writes or reads
+one.** It resolves a live discrepancy: plan
+`ayokoding-learning-path-01-url-restructure` (and possibly others) used a **2-segment shorthand**
+for careers paths (`interview-ready/software-engineer`) instead of the 3-segment canonical form
+(`careers/interview-ready/software-engineer`). Ruled as follows.
+
+> **Canonical form.** `pathId` is always the **full path string including its category segment as
+> the first `/`-delimited token** — `careers/<arc>/<role>` (3 segments) or `skills/<subject>`
+> (2 segments). There is **no separate `category` field**: the category is the first segment of the
+> one `pathId` string, never a field carried alongside it.
+
+1. **Full form, not a 2-field split.** `PathManifest` has exactly one identifier field, `pathId`,
+   never a `pathId` + `category` pair. Splitting them would let the two drift (a manifest's `category`
+   field disagreeing with its own `pathId`'s first segment) for no benefit — a single string is both
+   the URL suffix (`/en/learn/paths/<pathId>`), the YAML file's nested path
+   (`<MANIFESTS><pathId>.yaml`), and the `?path=` query value, so keeping it one string keeps all
+   three uses trivially in sync.
+2. **A bare 2-segment careers shorthand is never legal — not an alias, not a legacy form. It is
+   invalid.** `interview-ready/software-engineer` is **structurally indistinguishable in arity** from
+   a 2-segment `skills/<subject>` id (R2's own point: a fixed-arity assumption anywhere is already
+   wrong, which is exactly why an arity-only-implied-category shorthand is hazardous). The schema's
+   `.refine()` checks the **literal value** of the first segment, not segment count — so
+   `interview-ready/software-engineer`'s first segment (`interview-ready`) is neither `careers` nor
+   `skills` and `PathManifestSchema.safeParse(...)` **rejects it outright**, exactly like any other
+   malformed `pathId`. No code path in this plan special-cases or coerces the 2-segment shorthand.
+3. **Resolution of the other form is a hard, typed validation failure — never silent acceptance.**
+   `safeParse` returns `success: false`; nothing in this plan's core normalizes, upgrades, or aliases
+   a category-less careers id into its 3-segment canonical form. Silent acceptance is exactly the
+   failure mode this ruling forecloses: it would let two spellings of the same path coexist and
+   diverge without anything failing (per the concern that prompted this ruling). Any plan whose
+   content still writes the 2-segment shorthand for a careers path (plan 01, confirmed; possibly
+   others) is citing an **invalid** `pathId` and must update to the 3-segment canonical form — that
+   conformance sweep is **not** this plan's to run (see the escalation-response note below).
+
+**Filename convention for `syllabus/paths/manifest-*.md` mirrors.** These filenames do **not** encode
+the category today (`manifest-interview-ready-software-engineer.md`,
+`manifest-immediately-effective-ai-engineer.md` — arc + role, dash-joined, no `careers` marker),
+per the flat dash-joined convention this plan's four mirrors already shipped under. Ruling: **the four
+existing careers mirror filenames are not renamed** — no collision risk exists today (the careers
+vocabulary — three arcs, two roles — shares no token with any skills subject), and renaming
+already-settled filenames is pure churn with no correctness benefit. **Going forward, a skills
+manifest mirror filename MUST carry an explicit `skills-` marker** — `manifest-skills-<subject>.md`
+(e.g. `manifest-skills-accounting.md`, `manifest-skills-enterprise-resource-planning.md`) — keeping
+the same flat dash-joined shape (no literal slash in the filename) but making the category
+unambiguous in the filename itself, by design rather than by vocabulary coincidence. This asymmetry
+(careers unmarked, skills marked) is deliberate: the careers filenames are locked, shipped-adjacent
+history; the skills filenames do not exist yet, so there is zero cost to making them collision-proof
+from the start. This is **this plan's ruling for its own `syllabus/paths/` mirrors and the pattern it
+recommends**; it does not itself create or rename any skills-owning plan's files (owned end-to-end by
+the skills plans, R4) — those plans decide their own mirror location, and are pointed at this ruling
+for the naming pattern to apply if their own folder uses an equivalent mirror concept.
+
+**Escalation-response note.** This ruling is recorded here so it is citable; it does not itself edit
+`ayokoding-learning-path-01-url-restructure` or any other sibling plan folder — those stay out of
+scope for this plan-fixer pass (folder-scope restriction) and are conformed by whoever runs the
+cross-plan sweep.
+
 ### The `PathManifest` zod schema
 
 The schema is written in `<FEAT>core/schemas.ts` using **zod 4.3.6** [Repo-grounded —
 `apps/ayokoding-www/package.json` declares `"zod": "4.3.6"`], the version already on the app's
 dependency list. Shape:
 
-- `pathId` — string, the slash-form path ID.
+- `pathId` — string, the slash-form path ID. Validated (via `.refine()`) to start with `careers/` or
+  `skills/`; **never** validated by segment count (R2).
+- `arc` — string, **required** on every manifest regardless of category (R8). Not constrained to a
+  fixed enum — new arcs (careers or skills) are expected to be added later without a schema change.
 - `title` — string, display title.
 - `description` — string, landing-page prose.
 - `courseOrder` — array whose elements are either a course-ID string or an object carrying `id` and
@@ -259,8 +371,11 @@ not validate is not loaded.
 - Every `courseOrder` ID resolves to an existing course under `courses/<course-id>/` (no dangling ref).
 - No course ID appears twice within one manifest.
 - **Prerequisite-consistency**: for every course in a manifest, all of its declared `prerequisites`
-  that are **also present in that manifest** appear **before** it. (A path may omit a prerequisite only
-  if it also omits every course that needs it — enforced as a gate.)
+  that are **also present in that manifest** appear **before** it. **Scope is ordering-only, not
+  completeness**: a declared prerequisite that is simply **absent** from the manifest is not a
+  violation and is never reported — see [§Link-don't-walk: prerequisite omission is
+  permitted](#link-dont-walk-prerequisite-omission-is-permitted-oi-4-ruling-2026-07-21) for the
+  binding ruling and the reasoning.
 - No course body is duplicated per path (all manifests reference courses **by ID**, never copy a
   body) — a "no forked body" check.
 - Course IDs are stable slugs; a re-home changes a body's URL (with a redirect) but never its ID.
@@ -331,6 +446,96 @@ by colour. Fills use the verified accessible palette with black borders and WCAG
 **Three of the four branches end in the canonical view.** That is deliberate — graceful fallback is a
 first-class behaviour of the core, not an error path bolted on by the renderer.
 
+## Link-don't-walk: prerequisite omission is permitted (OI-4 ruling, 2026-07-21)
+
+**This section resolves a real contradiction** between this file's own prose and its own
+implementation spec, surfaced by `ayokoding-learning-path-06-skills-accounting` as **OI-4** and
+correctly routed here rather than fixed in that plan's folder. The prose formerly read: _"A path may
+omit a prerequisite only if it also omits every course that needs it — enforced as a gate."_ That
+sentence was **false as a description of `checkPrerequisiteConsistency`** — the function has never
+enforced it, and its own TDD spec ([delivery.md §2.6](./delivery.md#26-tdd-cycle-6--checkprerequisiteconsistency-prerequisitests))
+explicitly asserts the opposite: _"a prerequisite that is declared but omitted from the manifest is
+not reported."_ Two documents inside the same plan disagreed; this section is the single ruling.
+
+### 1. Direction and disposition
+
+Two directions exist, and only one is at issue:
+
+- **Direction A — a path includes a course but omits (links out to) its declared prerequisite.**
+  **Permitted.** This is the pattern in question.
+- **Direction B — a path includes both a course and its prerequisite.** Always legal and the common
+  case; nothing here restricts it, and ordering between the two is still enforced (below).
+
+**Ruling: Direction A is PERMITTED, not required, and not forbidden.** Grounded independently of any
+single path's history:
+
+1. **Curation already implies partial coverage (DL-2).** A path is defined as _"a curated subset of
+   course IDs... freely omits courses that do not fit."_ A rule that forbade omitting a course's
+   prerequisite while keeping the course itself would make ordinary curation nearly impossible — the
+   overwhelming majority of non-trivial courses in a 121+-course library have _some_ declared
+   prerequisite, so "keep the course, must therefore keep (or exclude) whole prerequisite chains"
+   would collapse the curated-subset model DL-2 already establishes as this plan's foundational
+   design.
+2. **Manifest completeness is an editorial property, not a machine-checkable one — this plan already
+   draws that line elsewhere.** [§Smoothness Architecture](#smoothness-architecture-per-path) already
+   states that difficulty monotonicity, skip affordances, and the refresh register are editorial
+   properties audited by a human, with prerequisite-**ordering** singled out as _"the one
+   machine-checkable component."_ Whether an omitted prerequisite is _appropriate for this path's
+   audience_ requires knowing who the path is for — information a pure function over a DAG and a
+   `courseOrder` array does not and structurally cannot have. Extending the ruling to prerequisite
+   **completeness** would contradict this plan's own already-drawn boundary between what a pure
+   resolver can prove and what only an author/reviewer can judge.
+
+### 2. Does the implementation match? (it already does — the prose was wrong)
+
+**Yes, exactly.** `checkPrerequisiteConsistency`'s scope, as specified in
+[delivery.md §2.6](./delivery.md#26-tdd-cycle-6--checkprerequisiteconsistency-prerequisitests), is
+**ordering-only**: for each course in `courseOrder`, report every declared prerequisite that is
+**both** in the library **and** in the same manifest but appears at a later index. A prerequisite
+that is declared but **absent** from the manifest entirely produces no report — not because of a bug,
+but because the function's RED spec contains an explicit assertion that this case must **not** be
+reported. **The prose changed to match the implementation, not the reverse** — the implementation was
+already correct and required no code change (none has been written yet; this plan has not started
+Phase 0).
+
+### 3. Distinguishing a legitimate linked prerequisite from a genuinely forgotten one
+
+This is the genuinely hard question, and the honest answer has two parts.
+
+**Part A — `checkPrerequisiteConsistency` cannot and should not try.** As established in §1.2 above,
+"was this omission intentional" requires audience context the function never receives. Any attempt to
+infer intent from the DAG alone (e.g., "flag it if the omitted prerequisite has many dependents" or
+"flag it if it's a _direct_ rather than _transitive_ prerequisite") would be a heuristic standing in
+for a judgment call, producing exactly the false-positive/false-negative churn this plan's own
+[Anti-Hallucination](../../../repo-governance/development/quality/plan-anti-hallucination.md)
+discipline warns against for machine-generated claims. **The check's silence in this direction is by
+design, not a hole to be closed by more cleverness inside the function.**
+
+**Part B — the actual distinguishing signal lives one layer up, in documentation, and this plan adds
+one small, additive, non-breaking mechanism to make it checkable by a human reviewer without becoming
+a hard gate.** A **legitimate** linked prerequisite is one the manifest's own human-readable mirror
+(`syllabus/paths/manifest-*.md` for this plan's careers manifests; the equivalent mirror concept for
+any other plan's manifests) **names explicitly** — e.g. a stated "Linked prerequisites (not included
+in this path): `<course-id>`, ... — because `<reason>`" note. A **genuinely forgotten** prerequisite
+has no such note anywhere. This is a **documentation-level, human-reviewable** distinction — the same
+class of guarantee this plan already relies on for smoothness — not a schema field and not a new
+required input, so it creates **zero new authoring burden** on any manifest-owning plan, including
+the two that already conformed to this plan's other rulings.
+
+**The additive mechanism**: `checkPrerequisiteConsistency`'s REFACTOR step
+([delivery.md §2.6](./delivery.md#26-tdd-cycle-6--checkprerequisiteconsistency-prerequisitests)) now
+also returns a second, purely **informational** list —
+`linkedPrerequisites: { courseId, missingPrerequisiteId }[]` — enumerating every declared-but-absent
+prerequisite the function already has enough data to compute (it is a read of the same
+`prerequisitesByCourse` + `courseOrder` inputs the ordering check already uses; **no new manifest
+field, no new required input, and no change to pass/fail semantics** — a manifest is never rejected
+for anything on this list). A reviewer (or a future documentation-linting step, out of this plan's
+scope to build) can then mechanically diff this list against the manifest's own "linked, not
+included" prose: every ID present in `linkedPrerequisites` but **not named** in that prose is the
+concrete, checkable signal of a plausibly-forgotten prerequisite — turning "look identical to the
+checker" into "look identical to the checker, but not to a reviewer holding both artefacts side by
+side." This is diagnostic tooling, not a gate; the manifest still validates either way.
+
 ## Downstream consumption
 
 ```mermaid
@@ -381,6 +586,14 @@ amendment annotations intact.
   topological ordering (DD-6); the old ad-hoc SF-1/SF-2 in-body forward-references are **eliminated** by
   making `just-enough-c` a prerequisite of `computer-architecture` and the language primers
   prerequisites of `building-production-cli-tools` (no course now precedes its own prereqs in any path).
+- **R2 / R8 · Variable-depth `pathId` with a required `arc` field (2026-07-21 ruling; cited by R-number,
+  not `DD-NN`, to avoid colliding with the numbering-gap tokens documented below).** `pathId` is
+  `careers/<arc>/<role>` (3 segments) or `skills/<subject>` (2 segments); the schema validates only the
+  first segment (`careers` | `skills`) and manifest resolvability, never segment count, so a future
+  `skills/<arc>/<subject>` is purely additive. `arc` is a required `PathManifest` field independent of
+  the URL grammar — present even where the URL omits it (every `skills/*` path, always the
+  `immediately-effective` arc per R8). See
+  [§Variable-depth `pathId`](#variable-depth-pathid-careers-vs-skills--r2-r8).
 
 **Referenced but not owned here.** DD-2 (one canonical body + URL, re-home with redirects) and DD-40
 (three structural buckets) are owned by `ayokoding-learning-path-01-url-restructure`; DD-4 (graceful
@@ -415,23 +628,59 @@ paths — **128 files**:
 - `syllabus/paths/` — **4 path-manifest mirrors** + `README.md` (5 directory entries):
   `manifest-interview-ready-software-engineer.md`,
   `manifest-immediately-effective-software-engineer.md`,
-  `manifest-fundamentally-strong-software-engineer.md`, and
-  `manifest-immediately-effective-software-engineer-to-ai-engineer.md`.
+  `manifest-fundamentally-strong-software-engineer.md`, and — **renamed 2026-07-21, R3 custody
+  exception** (was `manifest-immediately-effective-software-engineer-to-ai-engineer.md`) —
+  `manifest-immediately-effective-ai-engineer.md`.
 
 These markdown files are documentation mirrors; the machine-consumed source of truth for each path is
 the nested `manifests/**/*.yaml` data file in the `course-paths` feature.
 
 ### Custody rules (binding)
 
-1. **This plan owns the folder and edits nothing inside it.** The corpus arrived settled. No delivery
-   step in this plan modifies, adds, or removes a file under `syllabus/`.
-2. **The other four plans link into it and never copy it.** A copy forks the source of truth for 121
+1. **This plan owns the folder and performs no content edit inside it, with exactly one recorded
+   content exception (rule 2).** The corpus's curriculum content — course specs, orderings,
+   pedagogical framing — arrived settled and is never re-derived, added to, or removed by this plan,
+   **except** the single R3 content exception below. This is distinct from — and does not conflict
+   with — the mechanical, non-substantive correction in rule 1a.
+   1. **1a — Mechanical `careers/`-prefix correction (not a content exception).** This plan-fixer
+      pass corrected the path-id **strings** already present in `syllabus/README.md`,
+      `syllabus/paths/README.md`, and all four manifest mirrors, to carry the `careers/` category
+      prefix R1/R2 made canonical. This is a **string substitution**, never a curriculum, ordering,
+      or framing decision — the same class of change as repointing a link after a rename (rule 5),
+      required because the R1/R2 URL-grammar ruling changed every path id's canonical spelling
+      programme-wide (see [§Canonical `pathId`
+      form](#canonical-pathid-form-2026-07-21-ruling--binding-on-every-sibling-plan)); leaving the
+      corpus's own cross-references citing a `pathId` form the schema itself now rejects would make
+      the corpus internally broken, not merely stale. It does **not** count against the "one content
+      exception" invariant, and no delivery step performs it — like the R3 exception's rename, it
+      was applied directly in this plan-authoring pass, before Phase 0.
+2. **The R3 custody exception (2026-07-21 ruling).** `careers/immediately-effective/ai-engineer`
+   (formerly modelled as a transition path assuming SWE competence, prerequisites linked not included)
+   is now a genuine from-scratch path. This is a **content change, not a rename** — the retired
+   framing is factually wrong once the ruling lands, so leaving it unedited would mean this plan
+   custodies a known-incorrect corpus rather than a frozen-but-correct one. The rename
+   (`manifest-immediately-effective-software-engineer-to-ai-engineer.md` →
+   `manifest-immediately-effective-ai-engineer.md`) and the top-matter/composition-framing correction
+   were performed directly in this pass; the detailed stage-by-stage re-ordering of the newly-included
+   prerequisite courses is **pending**, tracked as
+   [delivery.md Phase 1.4](./delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3).
+   No new course body was authored — every included course is an existing library course (2026-07-21
+   clarification to R3); the growth is a manifest-composition change, owned by
+   `ayokoding-learning-path-05-manifests` in its eventual YAML transcription, not by
+   `ayokoding-learning-path-04-course-authoring`. **The rename's one mechanical corollary**: the
+   in-corpus link to the old filename in `syllabus/courses/README.md`'s path list was repointed to
+   the new filename in the same pass, for the same reason the Phase 7 archival move repoints its own
+   inbound links in the same commit (see [README.md §Archival is gated on downstream
+   archival](./README.md#archival-is-gated-on-downstream-archival)) — a rename obligates fixing its
+   own inbound references; that is a mechanical corollary of the one recorded exception, not a
+   second, independent content exception.
+3. **The other four plans link into it and never copy it.** A copy forks the source of truth for 121
    course specs and four manifest orderings, so a later spec correction lands in one copy only.
-3. **Cross-plan references use the full relative path** —
+4. **Cross-plan references use the full relative path** —
    `../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/<rest>` while both plans sit
    in the same stage folder. The source plan's `./syllabus/...` form resolves to nothing from any
    other folder.
-4. **Archival repoints every inbound link in the same commit as the move.** See
+5. **Archival repoints every inbound link in the same commit as the move.** See
    [delivery.md Phase 7](./delivery.md#phase-7-plan-archival-and-cross-plan-link-repoint).
 
 ## Sections that route to sibling plans
@@ -458,37 +707,65 @@ The 12 distinct broken targets and their owners:
 
 ### Course Library Catalog
 
-Moved to **`ayokoding-learning-path-04-course-authoring`**. The catalog enumerates the 127-course
-library (121 software-engineer-role baseline + 6 net-new AI-engineering courses, DD-28). The
+Moved to **`ayokoding-learning-path-04-course-authoring`**. The catalog enumerates the **127-course
+careers/software-engineering library** (121 software-engineer-role baseline + 6 net-new AI-engineering
+courses, DD-28) — this figure is the careers-only total (R4/R5); the `skills/` category's ERP +
+accounting corpus is additional and owned end-to-end by a separate, not-yet-created plan. The
 authoritative per-course detail is [`syllabus/courses/`](./syllabus/courses/README.md), custodied
 here.
 
 ### Path Manifests
 
-Moved to **`ayokoding-learning-path-05-manifests`**, which owns every manifest file and every
-manifest mutation. The authoritative human-readable orderings are
-[`syllabus/paths/`](./syllabus/paths/README.md), custodied here; each YAML manifest's `courseOrder`
+Moved to **`ayokoding-learning-path-05-manifests`**, which owns every **careers** manifest file and
+every manifest mutation — **exactly the 4 manifests below**, not 6 (R4). A sibling `skills/` category
+(2 manifests) is owned end-to-end by a separate plan; see
+[§Ownership split](#ownership-split-careers-vs-skills--r4). The authoritative human-readable orderings
+are [`syllabus/paths/`](./syllabus/paths/README.md), custodied here; each YAML manifest's `courseOrder`
 is transcribed from its mirror.
 
-#### Path `interview-ready/software-engineer` (interview-first)
+#### Path `careers/interview-ready/software-engineer` (interview-first)
 
 Ordering owned by `ayokoding-learning-path-05-manifests`; mirror at
 [`syllabus/paths/manifest-interview-ready-software-engineer.md`](./syllabus/paths/manifest-interview-ready-software-engineer.md).
 
-#### Path `immediately-effective/software-engineer` (build-fast-first)
+#### Path `careers/immediately-effective/software-engineer` (build-fast-first)
 
 Ordering owned by `ayokoding-learning-path-05-manifests`; mirror at
 [`syllabus/paths/manifest-immediately-effective-software-engineer.md`](./syllabus/paths/manifest-immediately-effective-software-engineer.md).
 
-#### Path `fundamentally-strong/software-engineer` (theory-first)
+#### Path `careers/fundamentally-strong/software-engineer` (theory-first)
 
 Ordering owned by `ayokoding-learning-path-05-manifests`; mirror at
 [`syllabus/paths/manifest-fundamentally-strong-software-engineer.md`](./syllabus/paths/manifest-fundamentally-strong-software-engineer.md).
 
-#### Path `immediately-effective/software-engineer-to-ai-engineer` (fourth path, added 2026-07-20)
+#### Path `careers/immediately-effective/ai-engineer` (fourth path, corrected 2026-07-21)
 
 Ordering owned by `ayokoding-learning-path-05-manifests`; mirror at
-[`syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md`](./syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md).
+[`syllabus/paths/manifest-immediately-effective-ai-engineer.md`](./syllabus/paths/manifest-immediately-effective-ai-engineer.md).
+Added 2026-07-20 as a transition path; **corrected 2026-07-21 (R3)** to a from-scratch path — see
+[§Custody rules](#custody-rules-binding), rule 2.
+
+## Ownership split (careers vs. skills — R4)
+
+**Ruling, 2026-07-21.** Plans 01-05 (this plan included) absorb the `careers/` URL category segment and
+its content; their wave DAG (W1: 01, 02 · W2: 03, 04 · W3: 05) is unchanged, and they stay
+**careers-only**. A new, not-yet-created "plan 06" owns the `skills/` category **end-to-end** — both
+path landings, both manifests (`skills/enterprise-resource-planning`, `skills/accounting`), and the
+full ERP + accounting course corpus (syllabus specs and authored bodies). Neither category's plans
+touch the other's manifests, corpus, or landing pages.
+
+This scopes the manifest-ownership invariant **per category**, not globally: `ayokoding-learning-path-05-manifests`
+is the sole owner of the **4 careers manifests** (unchanged from its original "owns every manifest
+file" framing, now stated precisely as careers-only); the separate skills plan is the sole owner of the
+**2 skills manifests**. Neither owns the other's. Every place in this plan's docs that states "the
+manifest owner" or "four manifests" is scoped to careers — see the corrections in
+[§Path constants](#path-constants), [§`syllabus/` folder structure](#syllabus-folder-structure-and-custody),
+and [§Path Manifests](#path-manifests) above.
+
+This plan's own surface (schema, resolvers, `<MANIFESTS>` directory) is **category-agnostic by
+construction** (see [§Variable-depth `pathId`](#variable-depth-pathid-careers-vs-skills--r2-r8)) — it
+does not need to know about the skills category's existence to remain correct for it, which is the
+point of not hardcoding depth or category-specific assumptions.
 
 ### Path-Aware Navigation UI (ayokoding-www)
 
@@ -504,6 +781,90 @@ one machine-checkable component of smoothness — prerequisite-consistency, DD-1
 as `checkPrerequisiteConsistency`; everything else in the smoothness architecture (difficulty
 monotonicity, skip affordances, refresh register) is an editorial property of a manifest and is
 audited there.
+
+## Orphan-segment / one-pathId-one-page investigation (R7)
+
+**Task, 2026-07-21**: the decision record's R7 asks every plan touching path ids to check whether its
+own surface assumes a `pathId` maps to exactly one renderable page — since `/paths/careers/` (category
+landing) and `/paths/careers/<arc>/` (arc landing) are now also pages, alongside the existing per-role
+path landing (`/paths/careers/<arc>/<role>`). Findings below are reported per the task's own
+instruction even though the fix, if any is needed, belongs to a sibling plan.
+
+- **This plan's four core modules never assume 1:1 `pathId` → page.** `parsePathContext` and
+  `resolvePathNav` (`path-context.ts`, `path-nav.ts`) treat `pathId` as an **opaque string**, matched
+  only against the set of loaded manifests — they resolve "does a manifest with this id exist," never
+  "is there exactly one page for this id." `manifest-integrity.ts` operates purely over the manifest
+  set, with no page-count assumption. None of the four would need to change if a `pathId` were reachable
+  from more than one page, or from none.
+- **`content-url.ts`'s `contentUrl` only ever builds one URL shape**: the canonical course page,
+  optionally carrying `?path=<pathId>`. It has no function that constructs or enumerates an
+  **arc-landing** (`/paths/careers/<arc>/`) or **category-landing** (`/paths/careers/`,
+  `/paths/skills/`) URL — those two page types are entirely outside this plan's surface.
+- **Conclusion**: this plan's schema/resolvers are **already category-and-depth-agnostic** (R2) and, as
+  of R8, every `PathManifest` carries an explicit `arc` field independent of the URL. That means the
+  data downstream breadcrumb/hub components need to derive an arc-landing or category-landing URL
+  (arc string, category string) is **already present** in this plan's schema output — no new pure
+  function is needed here to support that. Whether a `pathId`-adjacent function to construct those two
+  new page-type URLs is actually needed, and where it should live, is **not this plan's call**: per R7's
+  own table, `/paths/careers/` and `/paths/careers/<arc>/` are pages owned by
+  `ayokoding-learning-path-01-url-restructure` (routing/IA) and rendered by
+  `ayokoding-learning-path-03-navigation-ui` (hub/breadcrumbs). This plan does not add a URL-building
+  function for them, and this finding is reported to those plans' agents rather than acted on here.
+
+## UI-gate and API-gate posture (R9)
+
+Both postures are declared explicitly. Per the
+[api-quality-gate workflow](../../../repo-governance/workflows/api/api-quality-gate.md)'s
+§Relationship to Other Gates, a plan bearing neither surface **is not thereby exempt** — exemption
+belongs only to a plan with no reachable behavioural delta at all, and it must be stated here.
+
+### UI gate — **exempt**, and here is the reasoning rather than the assertion
+
+`swe-ui-checker` validates component **source** — it globs for `.tsx` files. This plan's entire
+`apps/` surface (see [File Impact](#file-impact)) is six pure TypeScript modules under `<FEAT>core/`,
+none of which imports React or renders anything, plus one additive optional parameter on an existing
+pure function in `content-url.ts`. **Zero `.tsx` files.** A checker run scoped to this plan's diff
+would scan zero component files and return zero findings — a vacuous pass, recorded as an exemption
+rather than a claimed one. The rendering components that will eventually consume this plan's core
+(`path-landing.tsx`, `path-card.tsx`, the `?path=` wiring) are owned and gated by
+`ayokoding-learning-path-03-navigation-ui`.
+
+**The exemption is narrow.** It covers `ui-quality-gate` **only**. Manual behavioural verification via
+Playwright MCP is **mandatory and performed** —
+[delivery.md Phase 4](./delivery.md#phase-4-manual-no-regression-verification-and-rule-15-exemption-record)'s
+no-regression sweep, both supported locales (`en`/`id`) at all three breakpoints — because the one
+shipped-code change (`contentUrl`'s optional `pathId` parameter and canonical URL shape) touches an
+existing, already-rendered surface. The **Rule-15 three-tester retest is already exempted, with its
+own stated reason**, in that same phase: this plan ships no new screen or component for the triad to
+explore, and the retest obligation belongs to `ayokoding-learning-path-03-navigation-ui`. This posture
+reproduces that exemption rather than re-deciding it — the two records must not diverge.
+
+### API gate — **NOT exempt**
+
+This plan has a reachable behavioural delta: **it authors the manifest-integrity and path-resolution
+functions themselves.** `checkManifestIntegrity`, `checkPrerequisiteConsistency` (whose OI-4 ruling
+adds an additive, non-breaking `linkedPrerequisites` diagnostic output — see
+[Link-don't-walk](#link-dont-walk-prerequisite-omission-is-permitted-oi-4-ruling-2026-07-21)),
+`parsePathContext`, and `resolvePathNav` are the mechanism by which a malformed manifest fails closed
+and by which a `?path=` query decides which navigation view a reader sees. That this plan ships no
+manifest data of its own to run them against yet does not make the functions unreachable — every
+manifest any Wave-2/3 plan will ever publish is validated by exactly this code, and nothing else in
+the programme re-implements it.
+
+**How it is exercised, named explicitly**: each function's own TDD-authored unit suite
+(`path-context.test.ts`, `prerequisites.test.ts`, `manifest-integrity.test.ts`, `path-nav.test.ts`),
+re-run at every phase gate, plus `content-url.test.ts` for the modified `contentUrl()`.
+
+**What cannot run, and why** [Repo-grounded, re-verified 2026-07-21]: `api-quality-gate` requires a
+running service and an identified contract (OpenAPI 3.x or GraphQL SDL). `ayokoding-www` publishes
+neither; its only API route is the internal tRPC handler. There is also, as yet, no manifest for a
+live loop to exercise — `ayokoding-learning-path-05-manifests` publishes the first one. **This plan
+therefore does not claim the gate was run and passed.** It records the unit-level substitute instead.
+
+**Rule-16 API exploratory retest — not applicable**, already recorded alongside the Rule-15 exemption
+in
+[delivery.md Phase 4](./delivery.md#phase-4-manual-no-regression-verification-and-rule-15-exemption-record):
+this plan exposes no REST or GraphQL endpoint and adds no HTTP surface.
 
 ## UI-design-funnel exemption
 
@@ -542,23 +903,24 @@ domain folder**.
 
 ## File Impact
 
-| Path                                                                             | Change     | Note                                                                                                      |
-| -------------------------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| `apps/ayokoding-www/src/features/course-paths/core/schemas.ts`                   | _New file_ | `PathManifest` zod schema                                                                                 |
-| `apps/ayokoding-www/src/features/course-paths/core/manifest.ts`                  | _New file_ | Type + course-ref normalization                                                                           |
-| `apps/ayokoding-www/src/features/course-paths/core/path-nav.ts`                  | _New file_ | `resolvePathNav`                                                                                          |
-| `apps/ayokoding-www/src/features/course-paths/core/path-nav.test.ts`             | _New test_ | Boundaries + missing course                                                                               |
-| `apps/ayokoding-www/src/features/course-paths/core/path-context.ts`              | _New file_ | `parsePathContext`                                                                                        |
-| `apps/ayokoding-www/src/features/course-paths/core/path-context.test.ts`         | _New test_ | Valid / unknown / absent                                                                                  |
-| `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`             | _New file_ | `resolvePrerequisites`, `checkPrerequisiteConsistency`                                                    |
-| `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`        | _New test_ | Declared / missing; consistent + deliberately-violating fixtures                                          |
-| `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.ts`        | _New file_ | `checkManifestIntegrity`                                                                                  |
-| `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.test.ts`   | _New test_ | Unresolved + duplicate ID fixtures                                                                        |
-| `apps/ayokoding-www/src/features/course-paths/manifests/README.md`               | _New file_ | Directory marker; states which plan writes `.yaml` here                                                   |
-| `apps/ayokoding-www/src/features/content/core/content-url.ts`                    | Modified   | Optional `pathId` param + canonical `/en/c/learn/courses/<course-id>` shape [Repo-grounded — file exists] |
-| `apps/ayokoding-www/src/features/content/core/content-url.test.ts`               | Modified   | New assertions; existing assertions updated for the canonical shape in the same commit                    |
-| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`              | _New dir_  | Gherkin companion + `README.md`                                                                           |
-| `plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` | Unchanged  | Custodied; **no delivery step edits it**                                                                  |
+| Path                                                                                                                                | Change                            | Note                                                                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/ayokoding-www/src/features/course-paths/core/schemas.ts`                                                                      | _New file_                        | `PathManifest` zod schema                                                                                                                     |
+| `apps/ayokoding-www/src/features/course-paths/core/manifest.ts`                                                                     | _New file_                        | Type + course-ref normalization                                                                                                               |
+| `apps/ayokoding-www/src/features/course-paths/core/path-nav.ts`                                                                     | _New file_                        | `resolvePathNav`                                                                                                                              |
+| `apps/ayokoding-www/src/features/course-paths/core/path-nav.test.ts`                                                                | _New test_                        | Boundaries + missing course                                                                                                                   |
+| `apps/ayokoding-www/src/features/course-paths/core/path-context.ts`                                                                 | _New file_                        | `parsePathContext`                                                                                                                            |
+| `apps/ayokoding-www/src/features/course-paths/core/path-context.test.ts`                                                            | _New test_                        | Valid / unknown / absent                                                                                                                      |
+| `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`                                                                | _New file_                        | `resolvePrerequisites`, `checkPrerequisiteConsistency`                                                                                        |
+| `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`                                                           | _New test_                        | Declared / missing; consistent + deliberately-violating fixtures                                                                              |
+| `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.ts`                                                           | _New file_                        | `checkManifestIntegrity`                                                                                                                      |
+| `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.test.ts`                                                      | _New test_                        | Unresolved + duplicate ID fixtures                                                                                                            |
+| `apps/ayokoding-www/src/features/course-paths/manifests/README.md`                                                                  | _New file_                        | Directory marker; states which plan writes `.yaml` here                                                                                       |
+| `apps/ayokoding-www/src/features/content/core/content-url.ts`                                                                       | Modified                          | Optional `pathId` param + canonical `/en/learn/courses/<course-id>` shape [Repo-grounded — file exists]                                       |
+| `apps/ayokoding-www/src/features/content/core/content-url.test.ts`                                                                  | Modified                          | New assertions; existing assertions updated for the canonical shape in the same commit                                                        |
+| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`                                                                 | _New dir_                         | Gherkin companion + `README.md`                                                                                                               |
+| `plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md` | Modified (one recorded exception) | R3 custody exception; Stage 0 ordered in [delivery.md Phase 1.4](./delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3) |
+| `plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (all other files)                                  | Unchanged                         | Custodied; **no delivery step edits any other file**                                                                                          |
 
 ## Dependencies
 

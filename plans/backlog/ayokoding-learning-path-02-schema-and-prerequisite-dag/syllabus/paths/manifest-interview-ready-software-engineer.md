@@ -1,16 +1,20 @@
-# Path Manifest — `interview-ready/software-engineer` (interview-first)
+# Path Manifest — `careers/interview-ready/software-engineer` (interview-first)
 
 The **ordered manifest** for the interview-first path: a **curated, prerequisite-consistent** ordered list of
 **course IDs** over the [shared course library](../courses/README.md). This is the authoritative reading
-order for this path; a course page under `?path=interview-ready/software-engineer` follows it for prev/next + breadcrumb.
-Persona: an **experienced engineer re-entering the job market** (interview/job prep first).
+order for this path; a course page under `?path=careers/interview-ready/software-engineer` follows it for
+prev/next + breadcrumb. Persona: an **experienced engineer re-entering the job market** (interview/job
+prep first).
 
 This file is the **human-readable mirror** of the manifest. The **machine-consumed source of truth** is
 the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/interview-ready/software-engineer.yaml` (RESOLVED, OQ-2 — a standalone
-YAML/JSON data file in the `course-paths` feature, NOT `courseOrder` frontmatter on any `_index.md`).
-Path landing served at `/en/c/learn/paths/interview-ready/software-engineer`. Order rationale:
-[tech-docs §Path `interview-ready/software-engineer`](../../tech-docs.md#path-interview-readysoftware-engineer-interview-first).
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml`
+(RESOLVED, OQ-2 — a standalone YAML/JSON data file in the `course-paths` feature, NOT `courseOrder`
+frontmatter on any `_index.md`). Per
+[tech-docs §Variable-depth `pathId`](../../tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8),
+the manifest also carries an explicit `arc: interview-ready` field (R8). Path landing served at
+`/en/learn/paths/careers/interview-ready/software-engineer`. Order rationale:
+[tech-docs §Path `careers/interview-ready/software-engineer`](../../tech-docs.md#path-careersinterview-readysoftware-engineer-interview-first).
 
 ## Composition (curated + converge, LOCKED 2026-07-19)
 
@@ -24,7 +28,7 @@ A **curated spine** — interview + core + production — with an explicit optio
   capstones, minus the 5 genuinely-omitted above = 121 − 5 = 116). This denominator is the
   **software-engineer-role baseline**, not the **127-course library** total: the six AI-engineer-role
   courses this plan added are outside this path's scope and compose only the fourth,
-  `immediately-effective/software-engineer-to-ai-engineer` path (per-role convergence, D2).
+  `careers/immediately-effective/ai-engineer` path (per-role convergence, D2).
 - **DD-20 addendum (2026-07-19)**: the seven DD-20 inter-topic capstones are all included (none is
   genuinely omitted), placed at their earliest prerequisite-safe position in the Go-deeper tail —
   `capstone-concurrency-showdown` (end of "Go deeper · Concurrency, JVM & languages"),

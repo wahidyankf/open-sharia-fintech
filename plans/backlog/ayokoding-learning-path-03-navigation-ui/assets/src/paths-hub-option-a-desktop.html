@@ -75,7 +75,7 @@
         justify-content: center;
       }
       .frame {
-        width: 900px;
+        width: 960px;
         background: var(--background);
       }
       .cap {
@@ -150,60 +150,103 @@
         color: var(--secondary-foreground);
         border-color: transparent;
       }
-
-      .grid {
-        list-style: none;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 22px;
-        margin-top: 30px;
-      }
-      .pcard {
-        display: block;
-        height: 100%;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-xl);
-        background: var(--card);
-        box-shadow: var(--shadow-sm);
-        padding: 22px 22px 20px;
-        position: relative;
-        border-top: 3px solid var(--h);
-      }
       .badge.kind {
         background: var(--w);
         color: var(--i);
         border-color: transparent;
       }
-      .ptitle {
-        font-size: 19px;
+
+      .category {
+        margin-top: 34px;
+      }
+      .category:first-of-type {
+        margin-top: 28px;
+      }
+      .cat-eyebrow {
+        font-size: 12px;
         font-weight: 700;
-        margin-top: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted-foreground);
+      }
+      .cat-eyebrow.skills {
+        color: var(--hue-sky-ink);
+      }
+      .arc-row {
+        display: flex;
+        gap: 18px;
+        margin-top: 16px;
+        align-items: flex-start;
+      }
+      .arc-group {
+        flex: 1;
+        min-width: 0;
+      }
+      .arc-group.wide {
+        flex: 2;
+      }
+      .arc-name {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted-foreground);
+        margin-bottom: 10px;
+      }
+      .arc-cards {
+        display: flex;
+        gap: 14px;
+      }
+      .skills-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 16px;
+      }
+      .pcard {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 18px 18px 16px;
+        position: relative;
+        border-top: 3px solid var(--h);
+      }
+      .ptitle {
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 11px;
         letter-spacing: -0.01em;
       }
       .parc {
-        font-size: 13.5px;
+        font-size: 12.5px;
         color: var(--muted-foreground);
-        margin-top: 7px;
-        line-height: 1.5;
+        margin-top: 6px;
+        line-height: 1.45;
       }
       .pfoot {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 20px;
+        margin-top: 16px;
       }
       .start {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        font-size: 13.5px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--primary);
       }
       .browse {
         display: inline-flex;
         gap: 6px;
-        margin-top: 26px;
+        margin-top: 30px;
         font-size: 13.5px;
         color: var(--muted-foreground);
       }
@@ -211,107 +254,186 @@
   </head>
   <body>
     <div class="frame">
-      <div class="cap">Screen 1 · Paths hub — <b>Option A: 2×2 card grid (Selected)</b> · /en/c/learn/paths</div>
+      <div class="cap">
+        Screen 1 · Paths hub — <b>Option A: category sections, arc-grouped within Careers (Selected)</b>
+        · /en/learn/paths
+      </div>
       <div class="win">
         <div class="bar">
           <span class="dot" style="background: var(--hue-terracotta)"></span>
           <span class="dot" style="background: var(--hue-honey)"></span>
           <span class="dot" style="background: var(--hue-sage)"></span>
-          <span class="url">ayokoding.com/en/c/learn/paths</span>
+          <span class="url">ayokoding.com/en/learn/paths</span>
         </div>
         <div class="body">
           <h1>Choose your path</h1>
-          <p class="sub">One library, converging within your role.</p>
-          <ul class="grid">
-            <li>
-              <a class="pcard" style="--h: var(--hue-honey); --w: var(--hue-honey-wash); --i: var(--hue-honey-ink)">
-                <span class="badge kind">interview-first</span>
-                <div class="ptitle">Interview-Ready Software Engineer</div>
-                <div class="parc">interview prep → production-effective → deeper</div>
-                <div class="pfoot">
-                  <span class="badge sec">~119 courses</span>
-                  <span class="start"
-                    >Start
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
+          <p class="sub">Six paths, two ways in.</p>
+
+          <div class="category">
+            <div class="cat-eyebrow">Careers · converging within your role</div>
+            <div class="arc-row">
+              <div class="arc-group">
+                <div class="arc-name">Interview-Ready</div>
+                <ul class="arc-cards" style="list-style: none">
+                  <li style="display: flex; flex: 1">
+                    <a
+                      class="pcard"
+                      style="--h: var(--hue-honey); --w: var(--hue-honey-wash); --i: var(--hue-honey-ink)"
                     >
-                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                  ></span>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a class="pcard" style="--h: var(--hue-teal); --w: var(--hue-teal-wash); --i: var(--hue-teal-ink)">
-                <span class="badge kind">build-app-first</span>
-                <div class="ptitle">Immediately-Effective Software Engineer</div>
-                <div class="parc">editor → one language → build a real app → deepen</div>
-                <div class="pfoot">
-                  <span class="badge sec">~116 courses</span>
-                  <span class="start"
-                    >Start
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                    >
-                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                  ></span>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a class="pcard" style="--h: var(--hue-sage); --w: var(--hue-sage-wash); --i: var(--hue-sage-ink)">
-                <span class="badge kind">fundamentals-first</span>
-                <div class="ptitle">Fundamentally Strong Software Engineer</div>
-                <div class="parc">CS foundations → architecture → paradigms → DS&A → build</div>
-                <div class="pfoot">
-                  <span class="badge sec">~121 courses</span>
-                  <span class="start"
-                    >Start
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                    >
-                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                  ></span>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a class="pcard" style="--h: var(--hue-plum); --w: var(--hue-plum-wash); --i: var(--hue-plum-ink)">
-                <span class="badge kind">AI-transition-first</span>
-                <div class="ptitle">Software Engineer → AI Engineer</div>
-                <div class="parc">already a SWE → build AI systems (models, agents, evals) fast</div>
-                <div class="pfoot">
-                  <span class="badge sec">~15 courses</span>
-                  <span class="start"
-                    >Start
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                    >
-                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                  ></span>
-                </div>
-              </a>
-            </li>
-          </ul>
+                      <span class="badge kind">Interview-Ready</span>
+                      <div class="ptitle">Software Engineer</div>
+                      <div class="parc">interview prep → production-effective → deeper</div>
+                      <div class="pfoot">
+                        <span class="badge sec">~119 courses</span>
+                        <span class="start"
+                          >Start
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                        ></span>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="arc-group wide">
+                <div class="arc-name">Immediately-Effective</div>
+                <ul class="arc-cards" style="list-style: none">
+                  <li style="display: flex; flex: 1">
+                    <a class="pcard" style="--h: var(--hue-teal); --w: var(--hue-teal-wash); --i: var(--hue-teal-ink)">
+                      <span class="badge kind">Immediately-Effective</span>
+                      <div class="ptitle">Software Engineer</div>
+                      <div class="parc">editor → one language → build a real app → deepen</div>
+                      <div class="pfoot">
+                        <span class="badge sec">~116 courses</span>
+                        <span class="start"
+                          >Start
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                        ></span>
+                      </div>
+                    </a>
+                  </li>
+                  <li style="display: flex; flex: 1">
+                    <a class="pcard" style="--h: var(--hue-teal); --w: var(--hue-teal-wash); --i: var(--hue-teal-ink)">
+                      <span class="badge kind">Immediately-Effective</span>
+                      <div class="ptitle">AI Engineer</div>
+                      <div class="parc">go straight at agents, evals, and applied model workflows</div>
+                      <div class="pfoot">
+                        <span class="badge sec">~132 courses</span>
+                        <span class="start"
+                          >Start
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                        ></span>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="arc-group">
+                <div class="arc-name">Fundamentally Strong</div>
+                <ul class="arc-cards" style="list-style: none">
+                  <li style="display: flex; flex: 1">
+                    <a class="pcard" style="--h: var(--hue-sage); --w: var(--hue-sage-wash); --i: var(--hue-sage-ink)">
+                      <span class="badge kind">Fundamentally Strong</span>
+                      <div class="ptitle">Software Engineer</div>
+                      <div class="parc">CS foundations → architecture → paradigms → DS&amp;A → build</div>
+                      <div class="pfoot">
+                        <span class="badge sec">~121 courses</span>
+                        <span class="start"
+                          >Start
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                        ></span>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="category">
+            <div class="cat-eyebrow skills">Skills · up and running fast, then deeper and deeper</div>
+            <ul class="skills-grid">
+              <li>
+                <a
+                  class="pcard"
+                  style="--h: var(--hue-terracotta); --w: var(--hue-terracotta-wash); --i: var(--hue-terracotta-ink)"
+                >
+                  <span class="badge kind">Skill path</span>
+                  <div class="ptitle">Enterprise Resource Planning</div>
+                  <div class="parc">orientation → stand up a real ERP → correct process flows → deeper</div>
+                  <div class="pfoot">
+                    <span class="badge sec">20 courses · useful by #4</span>
+                    <span class="start"
+                      >Start
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                      >
+                        <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                    ></span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="pcard" style="--h: var(--hue-plum); --w: var(--hue-plum-wash); --i: var(--hue-plum-ink)">
+                  <span class="badge kind">Skill path</span>
+                  <div class="ptitle">Accounting</div>
+                  <div class="parc">a working ledger by #3 → then slow down, because errors stay silent</div>
+                  <div class="pfoot">
+                    <span class="badge sec">20 courses · useful by #3</span>
+                    <span class="start"
+                      >Start
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                      >
+                        <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                    ></span>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+
           <a class="browse">Browse the full course library →</a>
         </div>
       </div>

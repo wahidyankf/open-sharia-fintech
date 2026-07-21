@@ -85,7 +85,7 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 
 This plan is **Wave 3** and is **blocked by both Wave-2 plans**, not by the navigation plan alone.
 Full rationale in
-[README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant).
+[README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-now-scoped-per-category).
 
 | Direction   | Plan (full folder name)                                               |
 | ----------- | --------------------------------------------------------------------- |
@@ -118,16 +118,16 @@ one.
 Reproduced verbatim from the source plan. A plan missing this table is literally unreadable — every
 acceptance clause below degrades to an unresolvable placeholder.
 
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
-- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>`)
+- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/learn/paths/<path-id>`)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
 - `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror slash path ids — `<MANIFESTS><path-id>.yaml`)
-- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/c/learn/legacy/<domain>/…`)
+- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/learn/legacy/<domain>/…`)
 - `<REDIR>` = `apps/ayokoding-www/src/redirects/`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<NAVSPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/` (existing domain — the three-bucket Gherkin lands beside `content-namespace-redirects.feature`)
-- Path ids: `interview-ready/software-engineer`, `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`, `immediately-effective/software-engineer-to-ai-engineer` (fourth path, manifest at `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml`)
+- Path ids: `careers/interview-ready/software-engineer`, `careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`, `careers/immediately-effective/ai-engineer` (fourth path, manifest at `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`)
 
 One additional constant is owned by this plan: `<MANIFESTS>published-manifests.unit.test.ts` — the
 unit-test file that asserts every published manifest's shape, integrity, and growth state. It lives
@@ -160,8 +160,10 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       current tree, where `<FEAT>` does not exist at all).
 - [ ] [AI] **Start precondition 4** — confirm the manifest directory exists: `test -d <MANIFESTS>`
       — acceptance: exits 0; returns non-zero before the schema plan lands.
-- [ ] [AI] **Start precondition 5** — confirm the full catalog resolves:
-      `find <COURSES> -maxdepth 1 -mindepth 1 -type d | wc -l`
+- [ ] [AI] **Start precondition 5** — confirm the full `careers/`-software-engineering catalog
+      resolves (R5: 127 is the `careers/` catalog total, not a whole-programme total — the sibling
+      `skills/` corpus is a separate corpus owned by `ayokoding-learning-path-06-skills-paths` and is
+      not counted here): `find <COURSES> -maxdepth 1 -mindepth 1 -type d | wc -l`
       — acceptance: returns **127**. Falsifiable both ways: it returns **37** after the
       url-restructure plan's re-home alone, and the `find` fails outright before `<COURSES>` exists.
 - [ ] [AI] Establish baselines: `npx nx run ayokoding-www:build` and
@@ -169,14 +171,19 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       — acceptance: all exit 0; record the pass counts in `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] **Manifest baseline snapshot** — record the current manifest inventory to
       `evidence/phase-0-snapshot.txt` via
-      `find <MANIFESTS> -name '*.yaml' | sort` — acceptance: the command prints **nothing** (no
+      `find <MANIFESTS>careers/ -name '*.yaml' | sort` — acceptance: the command prints **nothing** (no
       manifest exists yet) and the empty result is recorded. Falsifiable both ways: after Phase 4 the
       same command prints four paths.
-- [ ] [AI] **Paths-hub baseline snapshot** — record the current card count to
+- [ ] [AI] **Paths-hub baseline snapshot** — record the current `careers/` card count to
       `evidence/phase-0-snapshot.txt` via
-      `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
-      — acceptance: returns **0** (the hub exists with an empty 2×2 grid, created by the
-      url-restructure plan); returns **4** after Phase 4.
+      `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
+      — acceptance: returns **0** (the hub exists with an empty, category-grouped layout, created by
+      the url-restructure plan); returns **4** after Phase 4. Scoped to `careers/` per R4, so a
+      concurrent `skills/` card from `ayokoding-learning-path-06-skills-paths` cannot change this
+      count. **Not** the older 2-segment pattern (`[a-z-]+/[a-z0-9-]+` with no `careers/` anchor) —
+      that pattern under-counts because it stops matching at the first `/` inside a 3-segment
+      `careers/<arc>/<role>` URL and collapses two different `immediately-effective/*` cards
+      (`software-engineer` and `ai-engineer`) into one match under `sort -u` (DD-34).
 - [ ] [AI] **Syllabus mirror reachability** — confirm the four authoritative orderings are readable
       at their cross-plan path:
       `ls ../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-*.md | wc -l`
@@ -226,11 +233,11 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 - [ ] [AI] **RED** — create `<MANIFESTS>published-manifests.unit.test.ts` _(new file, this plan owns
       `<MANIFESTS>`)_ with a failing assertion that
-      `<MANIFESTS>interview-ready/software-engineer.yaml` loads, zod-validates against
+      `<MANIFESTS>careers/interview-ready/software-engineer.yaml` loads, zod-validates against
       `<FEAT>core/schemas.ts`, and passes `checkManifestIntegrity` +
       `checkPrerequisiteConsistency` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new assertion **fails** with a module-not-found or empty-glob error naming
-      `interview-ready/software-engineer.yaml`. A failure for any other reason (a missing
+      `careers/interview-ready/software-engineer.yaml`. A failure for any other reason (a missing
       `schemas.ts` import, for instance) means a start precondition was not honoured — stop and
       re-check Phase 0.
 
@@ -238,20 +245,20 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
   ```gherkin
   Scenario: The interview-ready MVP proves the architecture before other path work begins
-    Given the interview-ready/software-engineer MVP (an architecture smoke test over already-live topics 1-33) is delivered end-to-end
-    When the software-engineer-to-ai-engineer path's authoring begins
+    Given the careers/interview-ready/software-engineer MVP (an architecture smoke test over already-live topics 1-33) is delivered end-to-end
+    When the careers/immediately-effective/ai-engineer path's authoring begins
     Then the interview-ready MVP's landing page, manifest, and path-aware nav are already live in production
     And the interview cluster's remaining NEW courses are not required for that MVP to be considered shipped
   ```
 
-- [ ] [AI] **GREEN** — author `<MANIFESTS>interview-ready/software-engineer.yaml` _(new file)_ with
-      `pathId: interview-ready/software-engineer`, a `title`, a `description`, and an ordered
+- [ ] [AI] **GREEN** — author `<MANIFESTS>careers/interview-ready/software-engineer.yaml` _(new file)_ with
+      `pathId: careers/interview-ready/software-engineer`, a `title`, a `description`, and an ordered
       `courseOrder` transcribed from
       [`../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md),
       **restricted to the 33 re-homed topics + 4 existing capstones already live under `<COURSES>`**
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0, AND the five deferred IDs are absent —
-      `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>interview-ready/software-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>careers/interview-ready/software-engineer.yaml | sort -u | wc -l`
       returns **0**. Falsifiable both ways: after Phase 5's Band-9 growth the same command must
       return **5**.
 - [ ] [AI] **REFACTOR** — align the YAML's key order and comment style with the schema plan's
@@ -262,11 +269,11 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 ### 1.2 · The landing anchor (content — maker/checker/fixer, not TDD)
 
-- [ ] [AI] Author `<PATHS>interview-ready/software-engineer/_index.md` _(new file)_ — prose and SEO
+- [ ] [AI] Author `<PATHS>careers/interview-ready/software-engineer/_index.md` _(new file)_ — prose and SEO
       only: the arc narrative, the persona fast-path affordance ("experienced and job-hunting? start
       at Phase 1"), and the phase-boundary bridge paragraph. **No `courseOrder` in the landing** — the
       ordered list renders from the loaded manifest — acceptance: the file contains no `courseOrder`
-      key (`grep -oE 'courseOrder' <PATHS>interview-ready/software-engineer/_index.md | wc -l` returns
+      key (`grep -oE 'courseOrder' <PATHS>careers/interview-ready/software-engineer/_index.md | wc -l` returns
       **0**, and returns **1** if one is mistakenly added), and the landing renders the
       manifest-ordered list.
   - _Suggested executor: `apps-ayokoding-www-general-maker`_
@@ -277,7 +284,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Populate the first paths-hub card in `<PATHS>_index.md` _(existing file, created by
       `ayokoding-learning-path-01-url-restructure`)_ — add the `interview-ready` card to the 2×2
       grid, leaving the remaining three slots present but unpopulated — acceptance:
-      `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
+      `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
       **1** (returns **0** before this step).
 
 ### 1.3 · TDD cycle B — old-way and new-way coexistence
@@ -294,8 +301,8 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
   ```gherkin
   Scenario: A path landing and the legacy browse resolve to the same canonical body
-    Given a course lives at its canonical /en/c/learn/courses/<course-id> URL and appears in a published path manifest
-    When a reader reaches that course from the path landing at /en/c/learn/paths/<path-id>
+    Given a course lives at its canonical /en/learn/courses/<course-id> URL and appears in a published path manifest
+    When a reader reaches that course from the path landing at /en/learn/paths/<path-id>
     And another reader reaches it through the legacy section-index browse
     Then both routes resolve to the same single canonical course body
     And neither route serves a duplicated or forked copy of that body
@@ -312,7 +319,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 ### 1.4 · Architecture smoke test and smoothness audit
 
 - [ ] [AI] **Architecture smoke test** — against this real manifest verify the six things DD-27
-      names: routing resolves, the manifest loads, `?path=interview-ready/software-engineer` context
+      names: routing resolves, the manifest loads, `?path=careers/interview-ready/software-engineer` context
       propagates, prev/next walks the manifest order, the breadcrumb shows the path, and course pages
       show their prerequisites — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: the path-walk e2e spec passes in `en` (this plan's content locale).
@@ -330,21 +337,21 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `find <MANIFESTS> -name '*.yaml' | wc -l` returns **1** (returns **0** before this phase).
+- [ ] [AI] `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns **1** (returns **0** before this phase).
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0 — manifest loads, zod-validates, integrity and
       prerequisite-consistency green.
-- [ ] [AI] `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>interview-ready/software-engineer.yaml | sort -u | wc -l`
+- [ ] [AI] `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>careers/interview-ready/software-engineer.yaml | sort -u | wc -l`
       returns **0** — the deferral is real and is recorded, not silently closed.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:specs:behavior:coverage` **and**
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0. (`ayokoding-www:test:e2e` and
       `:test:integration` are no-op echoes and can never fail — omitted deliberately.)
-- [ ] [AI] `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
+- [ ] [AI] `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
       returns **1**.
 - [ ] [AI] Smoothness audit passes for every assessable lever; the refresh-register deferral is
       written into this checklist.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
-> **Pause Safety**: the `interview-ready/software-engineer` path is live end-to-end in production over
+> **Pause Safety**: the `careers/interview-ready/software-engineer` path is live end-to-end in production over
 > its smoke-test-scoped `courseOrder` — **the architecture is proven against real content**. The other
 > three manifests do not exist and nothing references them, so the hub and every course page are
 > coherent. Safe to stop indefinitely. To resume: `npx nx run ayokoding-www-fe-e2e:test:e2e`.
@@ -356,13 +363,24 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 > _Suggested executor: `apps-ayokoding-www-general-maker` (manifest + landing) + `web-researcher`
 > (smoothness facts)._
 >
-> `immediately-effective/software-engineer-to-ai-engineer` — **authoring priority #1** behind the
-> smoke-test MVP (DD-27). Per **DD-33** this path's full composition is **15 courses**: the existing
-> nine-course AI/harness cluster **walked** directly, plus the six new AI-engineer-role courses. This
-> phase ships the manifest **smoke-test-scoped to the six new AI courses** and it grows to the full 15
-> in [Phase 5](#phase-5-manifest-growth-as-backfill-lands). The shared SWE-**fundamentals**
-> prerequisites are **linked, not included** (DD-24, scoped to SWE-fundamentals only — never to the
-> AI/harness cluster, DD-33).
+> `careers/immediately-effective/ai-engineer` — **authoring priority #1** behind the
+> smoke-test MVP (DD-27). This path is **from-scratch** (DD-35, 2026-07-21 ruling): it assumes **no**
+> prior software-engineering competence, so its shared SWE-**fundamentals** prerequisites are
+> **included** at the head of `courseOrder`, not linked out (DD-24's "linked, not included" framing is
+> superseded for this path). Per **DD-33** (still holding in scope) this path's `courseOrder` also
+> **walks**, never links, the existing nine-course AI/harness cluster, plus the six new
+> AI-engineer-role courses. The path's **full** composition is therefore no longer a fixed "15
+> courses" figure — it is the (still-being-ordered) included SWE-fundamentals set **plus** the
+> walked AI/harness cluster **plus** the six new AI-engineer-role courses; see DD-35 for why this
+> plan does not fabricate a total.
+>
+> **Cross-plan dependency (new, 2026-07-21):** the prerequisite-consistent stage-by-stage ordering of
+> the included SWE-fundamentals set is authored by
+> `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4, not this plan's.
+> This phase's GREEN step **transcribes** that ordering from the corrected syllabus mirror once Phase
+> 1.4 lands it; if Phase 1.4 has not landed by the time this phase is reached, this phase blocks on it
+> rather than inventing an order — the same transcribe-never-re-derive rule this plan applies to every
+> other manifest.
 >
 > This phase also **absorbs the manifest re-verification step** the source plan placed in its
 > course-surgery phase. That step was read-only by its own acceptance text, but it re-verifies a
@@ -373,62 +391,78 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 ### 2.1 · TDD cycle — publish the manifest data file
 
 - [ ] [AI] **RED** — extend `<MANIFESTS>published-manifests.unit.test.ts` with a failing assertion
-      that `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` loads,
-      zod-validates, and contains **no** shared SWE-fundamentals course ID — command:
+      that `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` loads, zod-validates, and
+      contains the shared SWE-fundamentals prerequisite course IDs **at the head of** `courseOrder`
+      (present, not absent — inverted 2026-07-21, DD-35) — command:
       `npx nx run ayokoding-www:test:unit`
       — acceptance: the new assertion **fails** because the manifest file does not exist; the Phase-1
       assertions still pass in the same run.
 
-  **Gherkin (binds) →** "The software-engineer-to-ai-engineer path links prerequisites instead of
-  including them"
+  **Gherkin (binds) →** "The AI-engineer path includes its software-engineering prerequisites instead
+  of linking them"
 
   ```gherkin
-  Scenario: The software-engineer-to-ai-engineer path links prerequisites instead of including them
-    Given the immediately-effective/software-engineer-to-ai-engineer path manifest is published
-    When a reader inspects its courseOrder
-    Then no shared software-engineering-fundamentals course from the other three manifests is included in courseOrder
-    And the path landing page links out to those prerequisite courses' canonical pages instead
+  Scenario: The AI-engineer path includes its software-engineering prerequisites instead of linking them
+    Given the careers/immediately-effective/ai-engineer path manifest is published
+    When a reader with no prior software-engineering competence inspects its courseOrder
+    Then the shared software-engineering-fundamentals courses this path's AI-specific spine depends on are present at the head of courseOrder, ordered prerequisite-consistently
+    And that reader can start at courseOrder[0] and finish the whole path from this one manifest, with no external prerequisite link required
   ```
 
 - [ ] [AI] **GREEN** — author
-      `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` _(new file)_ with
-      `pathId: immediately-effective/software-engineer-to-ai-engineer`, a `title`, a `description`,
-      and an ordered `courseOrder` of exactly the six net-new AI courses, transcribed from
-      [`../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md)
-      (light eval gate → statistics for evals → deep evals → product patterns for probabilistic
-      systems → inference serving and model deployment → fine-tuning and adaptation) — command:
-      `npx nx run ayokoding-www:test:unit`
-      — acceptance: exits 0, AND all six spine members are present —
-      `grep -oE 'evaluating-ai-output-essentials|statistics-for-evaluation|evaluating-ai-systems-in-depth|product-patterns-for-probabilistic-systems|inference-serving-and-model-deployment|fine-tuning-and-adaptation' <MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml | sort -u | wc -l`
-      returns **6** (returns **0** before this step), AND no SWE-fundamentals ID leaked in —
-      `grep -oE 'just-enough-typescript|backend-essentials|api-design|frontend-essentials|software-testing' <MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml | sort -u | wc -l`
-      returns **0** (a manifest that mistakenly included one returns ≥ 1).
+      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` _(new file)_ with
+      `pathId: careers/immediately-effective/ai-engineer`, a `title`, a `description`, and an ordered
+      `courseOrder` whose **head** is the prerequisite-consistent ordering of the included
+      SWE-fundamentals set — transcribed verbatim (never re-derived) from
+      [`../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)'s
+      Stage 0 once that plan's own Phase 1.4 lands it — at minimum the 11 named courses
+      `just-enough-python`, `software-testing`, `cicd-and-release-engineering`, `backend-at-scale`,
+      `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`,
+      `data-engineering`, `data-structures-and-algorithms-essentials`, `software-product-engineering`,
+      `frontend-essentials` (the mirror itself notes the closure is likely larger once each course's
+      own transitive prerequisites are added) — **followed by** the six net-new AI-engineer-role
+      courses in the previously established order (light eval gate → statistics for evals → deep
+      evals → product patterns for probabilistic systems → inference serving and model deployment →
+      fine-tuning and adaptation) — command: `npx nx run ayokoding-www:test:unit`
+      — acceptance: exits 0, AND all 11 named SWE-fundamentals IDs are present —
+      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      returns **11** or more (returns **0** before this step — inverted from the pre-2026-07-21 "must
+      return 0" acceptance), AND all six AI-engineer-role spine members are present —
+      `grep -oE 'evaluating-ai-output-essentials|statistics-for-evaluation|evaluating-ai-systems-in-depth|product-patterns-for-probabilistic-systems|inference-serving-and-model-deployment|fine-tuning-and-adaptation' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      returns **6**, AND `checkPrerequisiteConsistency` passes over the combined order (the automated
+      topological check, not a manual grep, is authoritative for inter-course ordering). If plan 02's
+      Phase 1.4 has not landed the Stage 0 ordering yet, this step blocks rather than inventing one.
 - [ ] [AI] **REFACTOR** — record inline in the YAML, as a comment, that the nine AI/harness-cluster
       IDs are deliberately absent pending Phase 5 growth (DD-33), naming the phase — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint`
-      — acceptance: both exit 0 and the six-member check still returns **6**.
+      — acceptance: both exit 0 and the SWE-fundamentals-present and six-AI-member checks above still
+      hold.
 
 ### 2.2 · The landing anchor (content — maker/checker/fixer, not TDD)
 
-- [ ] [AI] Author `<PATHS>immediately-effective/software-engineer-to-ai-engineer/_index.md`
-      _(new file)_ — prose and SEO only, and the landing narrative **links out** to the canonical
-      pages of the prerequisite software-engineer courses this path assumes (DD-24) — acceptance: the
-      landing contains at least one outbound `/en/c/learn/courses/<id>` link to a SWE-fundamentals
-      course (`grep -oE '/en/c/learn/courses/[a-z0-9-]+' <PATHS>immediately-effective/software-engineer-to-ai-engineer/_index.md | sort -u | wc -l`
-      returns ≥ **1**, and returns **0** if the link-out is omitted), and it contains no `courseOrder`
-      key.
+- [ ] [AI] Author `<PATHS>careers/immediately-effective/ai-engineer/_index.md`
+      _(new file)_ — prose and SEO only, framing the path as **from-scratch**: no prior
+      software-engineering competence assumed, and the SWE-fundamentals courses a reader needs are
+      already the first courses in this path's own `courseOrder` (DD-35, inverted 2026-07-21 — the
+      landing no longer needs to link out to those prerequisites, since the manifest includes them) —
+      acceptance: the landing prose describes the path's endpoint (**building AI systems**) without
+      naming or assuming an already-working-software-engineer starting persona
+      (`grep -c -i 'already[- ]working\|transitioning\|role transition\|switcher' <PATHS>careers/immediately-effective/ai-engineer/_index.md`
+      returns **0**), and it contains no `courseOrder` key.
   - _Suggested executor: `apps-ayokoding-www-general-maker`_
 - [ ] [AI] Run `apps-ayokoding-www-link-checker` and `apps-ayokoding-www-general-checker` over the new
       landing; apply the matching fixer to every CRITICAL/HIGH/MEDIUM finding — acceptance: zero
       CRITICAL/HIGH/MEDIUM remain on re-run.
-- [ ] [AI] Populate the second paths-hub card (`SWE → AI Engineer`) in `<PATHS>_index.md` —
-      acceptance: `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
+- [ ] [AI] Populate the second paths-hub card (`AI Engineer` — endpoint-named, not
+      `SWE → AI Engineer`, per the 2026-07-21 rename: the path no longer assumes a starting role, so
+      it is described by its endpoint only) in `<PATHS>_index.md` —
+      acceptance: `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l`
       returns **2** (returned **1** after Phase 1).
 
 ### 2.3 · Verification, build order, and smoothness
 
 - [ ] [AI] Verify path-aware nav end-to-end for this path: from the landing, prev/next walks the
-      manifest order and preserves `?path=immediately-effective/software-engineer-to-ai-engineer`;
+      manifest order and preserves `?path=careers/immediately-effective/ai-engineer`;
       the breadcrumb shows the path; course pages show their prerequisites — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the path-walk e2e spec passes in `en`.
 - [ ] [AI] **Record the build-order assertion (documentation-verified, not harness-executable).**
@@ -445,11 +479,12 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
   Scenario: The AI path is authored before the other two manifests are composed
     Given the interview-ready MVP has shipped
     When authoring effort is allocated across the remaining paths
-    Then the software-engineer-to-ai-engineer path's six net-new courses and manifest are authored first
-    And the immediately-effective/software-engineer and fundamentally-strong/software-engineer manifests are composed only afterward
+    Then the careers/immediately-effective/ai-engineer path's six net-new AI-engineer-role courses (DD-28) and manifest are authored first
+    And the careers/immediately-effective/software-engineer and careers/fundamentally-strong/software-engineer manifests are composed only afterward
   ```
 
-- [ ] [AI] **Progression smoothness audit (AI-transition-first, DD-16)** — walk the manifest order and
+- [ ] [AI] **Progression smoothness audit (from-scratch-first, DD-16, re-labeled 2026-07-21 — was
+      "AI-transition-first")** — walk the manifest order and
       confirm the levers hold (prereq-chaining; monotonic-ish difficulty; the light-eval-gate versus
       deep-evals scope boundary is not itself a smoothness break) per
       [tech-docs §Smoothness Architecture](./tech-docs.md#smoothness-architecture-per-path)
@@ -457,7 +492,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       place, never by reordering.
 - [ ] [AI] **Absorbed step — re-verify every manifest published so far.** Re-run
       `checkManifestIntegrity` + `checkPrerequisiteConsistency` across both published manifests
-      (`interview-ready/software-engineer` and this one) — command:
+      (`careers/interview-ready/software-engineer` and this one) — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: exits 0. This closes the re-verification the
       source plan placed in its course-surgery phase; it lands here because it re-verifies manifests
       this plan authored and would otherwise invert the wave order.
@@ -466,20 +501,24 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `find <MANIFESTS> -name '*.yaml' | wc -l` returns **2**.
-- [ ] [AI] The six-member spine check returns **6** and the SWE-fundamentals-leak check returns **0**.
+- [ ] [AI] `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns **2**.
+- [ ] [AI] The six-AI-member spine check returns **6** and the SWE-fundamentals-presence check returns
+      **11 or more** (inverted 2026-07-21 — the old "leak check returns 0" acceptance is superseded).
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0 — integrity and prerequisite-consistency green
       across **both** published manifests, not only the new one.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:specs:behavior:coverage` **and**
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0.
-- [ ] [AI] Hub card count returns **2**; the landing carries at least one outbound canonical-page link
-      to a linked-not-included prerequisite.
+- [ ] [AI] Hub card count returns **2**; the landing frames the path as from-scratch with no
+      already-working-software-engineer persona named (the SWE-fundamentals-leak-of-persona-language
+      grep above returns **0**).
 - [ ] [AI] The build-order assertion is recorded in writing, with its non-executability stated.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
-> **Pause Safety**: the AI path is live end-to-end in production over its six-course smoke-test spine
-> — DD-27's authoring priority #1 is delivered. Both published manifests validate; the hub shows two
-> of four cards and no placeholder. Safe to stop indefinitely. To resume:
+> **Pause Safety**: the AI path is live end-to-end in production over its smoke-test-scoped starting
+> composition (included SWE-fundamentals prerequisites at the head of `courseOrder`, plus whichever
+> of the six new AI-engineer-role courses exist by this point) — DD-27's authoring priority #1 is
+> delivered. Both published manifests validate; the hub shows two of four cards and no placeholder.
+> Safe to stop indefinitely. To resume:
 > `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
 
 ---
@@ -496,7 +535,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 ### 3.1 · TDD cycle — publish the manifest data file
 
 - [ ] [AI] **RED** — extend `<MANIFESTS>published-manifests.unit.test.ts` with a failing assertion
-      that `<MANIFESTS>immediately-effective/software-engineer.yaml` loads, zod-validates, passes both
+      that `<MANIFESTS>careers/immediately-effective/software-engineer.yaml` loads, zod-validates, passes both
       integrity gates, and places the build-a-real-app capstone before every pure-theory course —
       command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new assertion **fails** because the manifest file does not exist; the Phase-1
@@ -506,19 +545,19 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
   ```gherkin
   Scenario: The immediately-effective path is build-app-first
-    Given the immediately-effective/software-engineer path manifest is published
+    Given the careers/immediately-effective/software-engineer path manifest is published
     When a reader walks the path
     Then editor/tooling, one language end-to-end, and building a real app precede the CS-fundamentals and DS&A courses
     And the reader ships a real deployed app before any pure-theory course
   ```
 
-- [ ] [AI] **GREEN** — author `<MANIFESTS>immediately-effective/software-engineer.yaml` _(new file)_
-      with `pathId: immediately-effective/software-engineer`, a `title`, a `description`, and an
+- [ ] [AI] **GREEN** — author `<MANIFESTS>careers/immediately-effective/software-engineer.yaml` _(new file)_
+      with `pathId: careers/immediately-effective/software-engineer`, a `title`, a `description`, and an
       ordered `courseOrder` transcribed from
       [`../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0, AND the build-before-theory ordering holds:
-      `awk '/^courseOrder:/{f=1;next} f&&/^ *- /{n++; if ($2=="capstone-full-stack-app") print "app@"n; if ($2=="computer-science-foundations") print "theory@"n}' <MANIFESTS>immediately-effective/software-engineer.yaml`
+      `awk '/^courseOrder:/{f=1;next} f&&/^ *- /{n++; if ($2=="capstone-full-stack-app") print "app@"n; if ($2=="computer-science-foundations") print "theory@"n}' <MANIFESTS>careers/immediately-effective/software-engineer.yaml`
       prints the `app@` line **before** the `theory@` line. Falsifiable both ways: a theory-first
       ordering prints them in the opposite order, and the command prints nothing at all if either ID
       is missing (which itself fails the check).
@@ -529,7 +568,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 ### 3.2 · The landing anchor and hub card (content — maker/checker/fixer)
 
-- [ ] [AI] Author `<PATHS>immediately-effective/software-engineer/_index.md` _(new file)_ — prose and
+- [ ] [AI] Author `<PATHS>careers/immediately-effective/software-engineer/_index.md` _(new file)_ — prose and
       SEO only, including the "already know a language? jump to Build A Real App" fast-path affordance
       and the "you shipped; now understand why it worked" bridge paragraph at the shipping → CS-depth
       boundary — acceptance: the landing contains no `courseOrder` key and renders the
@@ -539,13 +578,13 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       matching fixer to every CRITICAL/HIGH/MEDIUM finding — acceptance: zero CRITICAL/HIGH/MEDIUM
       remain on re-run.
 - [ ] [AI] Populate the third paths-hub card in `<PATHS>_index.md` — acceptance:
-      `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
+      `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
       **3** (returned **2** after Phase 2).
 
 ### 3.3 · Verification and smoothness
 
 - [ ] [AI] Verify path-aware nav: prev/next walks the immediately-effective order and preserves
-      `?path=immediately-effective/software-engineer`; a course shared with `interview-ready` shows the
+      `?path=careers/immediately-effective/software-engineer`; a course shared with `interview-ready` shows the
       correct neighbour **per active path** — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: e2e passes in `en`, and a shared course's prev/next differs by active path
       (asserting the same neighbour under both paths would fail the spec).
@@ -559,7 +598,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `find <MANIFESTS> -name '*.yaml' | wc -l` returns **3**.
+- [ ] [AI] `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns **3**.
 - [ ] [AI] The build-before-theory ordering check prints `app@` before `theory@`.
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0 — integrity, prerequisite-consistency, and
       no-forked-body green across all three published manifests.
@@ -586,7 +625,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 ### 4.1 · TDD cycle A — publish the manifest data file
 
 - [ ] [AI] **RED** — extend `<MANIFESTS>published-manifests.unit.test.ts` with a failing assertion
-      that `<MANIFESTS>fundamentally-strong/software-engineer.yaml` loads, zod-validates, and places
+      that `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` loads, zod-validates, and places
       CS foundations / computer architecture / paradigms / DS&A before the build-real-software courses
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new assertion **fails** because the manifest file does not exist; the three
@@ -596,19 +635,19 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
   ```gherkin
   Scenario: The fundamentally-strong path is fundamentals-first
-    Given the fundamentally-strong/software-engineer path manifest is published
+    Given the careers/fundamentally-strong/software-engineer path manifest is published
     When a reader walks the path
     Then CS foundations, computer architecture, paradigms, and DS&A precede the build-real-software courses
     And the ordering is a valid topological entry into the prerequisite DAG
   ```
 
-- [ ] [AI] **GREEN** — author `<MANIFESTS>fundamentally-strong/software-engineer.yaml` _(new file)_
-      with `pathId: fundamentally-strong/software-engineer`, a `title`, a `description`, and an
+- [ ] [AI] **GREEN** — author `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` _(new file)_
+      with `pathId: careers/fundamentally-strong/software-engineer`, a `title`, a `description`, and an
       ordered `courseOrder` transcribed from
       [`../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0, AND the theory-first ordering holds:
-      `awk '/^courseOrder:/{f=1;next} f&&/^ *- /{n++; if ($2=="computer-science-foundations") print "theory@"n; if ($2=="capstone-full-stack-app") print "app@"n}' <MANIFESTS>fundamentally-strong/software-engineer.yaml`
+      `awk '/^courseOrder:/{f=1;next} f&&/^ *- /{n++; if ($2=="computer-science-foundations") print "theory@"n; if ($2=="capstone-full-stack-app") print "app@"n}' <MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
       prints the `theory@` line **before** the `app@` line — the exact inverse of Phase 3's check
       against the same two IDs, so a copy-paste of the wrong arc fails immediately.
 - [ ] [AI] **REFACTOR** — assert the two orderings are inverses of each other in a single shared test
@@ -629,7 +668,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
   ```gherkin
   Scenario: The three software-engineer paths reference a shared course with no body duplication
-    Given a course appears in all three of the interview-ready, immediately-effective/software-engineer, and fundamentally-strong/software-engineer manifests
+    Given a course appears in all three of the interview-ready, careers/immediately-effective/software-engineer, and careers/fundamentally-strong/software-engineer manifests
     When the course library is inspected
     Then exactly one canonical path-neutral body exists for that course
     And each manifest references the course by its stable course ID
@@ -672,7 +711,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 ### 4.4 · Landing, hub completion, verification, and smoothness
 
-- [ ] [AI] Author `<PATHS>fundamentally-strong/software-engineer/_index.md` _(new file)_ — prose and
+- [ ] [AI] Author `<PATHS>careers/fundamentally-strong/software-engineer/_index.md` _(new file)_ — prose and
       SEO only, including the "have a CS degree? skim Stage 2" fast-path affordance and the
       theory → application bridge — acceptance: the landing contains no `courseOrder` key and renders
       the fundamentals-first arc.
@@ -682,10 +721,10 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       remain on re-run.
 - [ ] [AI] Populate the **fourth and final** paths-hub card in `<PATHS>_index.md`, completing the 2×2
       grid — acceptance:
-      `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
+      `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
       **4** (returned **3** after Phase 3).
 - [ ] [AI] Verify path-aware nav: prev/next walks the fundamentals-first order and preserves
-      `?path=fundamentally-strong/software-engineer`; a course shared across paths shows the correct
+      `?path=careers/fundamentally-strong/software-engineer`; a course shared across paths shows the correct
       neighbour per active path — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: e2e passes in `en`.
 - [ ] [AI] **Progression smoothness audit (fundamentals-first, DD-16)** — theory precedes application;
@@ -696,7 +735,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `find <MANIFESTS> -name '*.yaml' | wc -l` returns **4** — all four manifests published.
+- [ ] [AI] `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns **4** — all four manifests published.
 - [ ] [AI] The theory-first check prints `theory@` before `app@`, and Phase 3's inverse check still
       prints `app@` before `theory@` — the two arcs are provably distinct.
 - [ ] [AI] The no-forked-body shell check prints exactly the single line `1`.
@@ -704,14 +743,15 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       no-forked-body green across **all four** manifests.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:specs:behavior:coverage` **and**
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0.
-- [ ] [AI] Hub card count returns **4** — the 2×2 grid is complete.
+- [ ] [AI] Hub card count returns **4** — the `careers/` group of the category-grouped hub is complete.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: all four paths are live over one shared library — zero body duplication among the
-> three software-engineer paths; the AI path links its SWE-fundamentals prerequisites and walks its own
-> spine. Two manifests remain deliberately smoke-test-scoped and both carry a recorded, falsifiable
-> deferral check, so the truncation is visible rather than silent. Safe to stop indefinitely. To
-> resume: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
+> three software-engineer paths; the AI path includes its SWE-fundamentals prerequisites at the head
+> of `courseOrder` and walks its own spine (DD-35). Two manifests remain deliberately
+> smoke-test-scoped and both carry a recorded, falsifiable deferral check, so the truncation is
+> visible rather than silent. Safe to stop indefinitely. To resume:
+> `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
 
 ---
 
@@ -731,9 +771,9 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 - [ ] [AI] For each of Bands 1–8, append that band's newly-available course IDs into the three
       software-engineer-role manifests
-      (`<MANIFESTS>interview-ready/software-engineer.yaml`,
-      `<MANIFESTS>immediately-effective/software-engineer.yaml`,
-      `<MANIFESTS>fundamentally-strong/software-engineer.yaml`) at each path's correct topological
+      (`<MANIFESTS>careers/interview-ready/software-engineer.yaml`,
+      `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`,
+      `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`) at each path's correct topological
       position per its arc, then re-run integrity + prerequisite-consistency + no-forked-body —
       command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0 **after each band's append**, not only after the last one. A band whose
@@ -744,16 +784,16 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Insert the five landed interview-technique courses (`coding-interview`,
       `take-home-and-live-coding`, `system-design-interview`,
       `behavioral-and-leadership-interviews`, `capstone-interview-loop`) into
-      `<MANIFESTS>interview-ready/software-engineer.yaml` — closing the gap Phase 1 deliberately left
-      open — and into `<MANIFESTS>fundamentally-strong/software-engineer.yaml` as its trailing
+      `<MANIFESTS>careers/interview-ready/software-engineer.yaml` — closing the gap Phase 1 deliberately left
+      open — and into `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` as its trailing
       optional interview band, each at its correct topological position.
-      **`<MANIFESTS>immediately-effective/software-engineer.yaml` does NOT grow here** — that path
+      **`<MANIFESTS>careers/immediately-effective/software-engineer.yaml` does NOT grow here** — that path
       omits the interview-technique band by design (DL-13); its reader reaches these courses through
       their canonical pages, not the manifest — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0, AND the Phase-1 deferral check now closes the other way:
-      `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>interview-ready/software-engineer.yaml | sort -u | wc -l`
+      `grep -oE 'coding-interview|take-home-and-live-coding|system-design-interview|behavioral-and-leadership-interviews|capstone-interview-loop' <MANIFESTS>careers/interview-ready/software-engineer.yaml | sort -u | wc -l`
       returns **5** (it returned **0** at Phase 1), AND the **same command against**
-      `<MANIFESTS>immediately-effective/software-engineer.yaml` still returns **0**. Both halves are
+      `<MANIFESTS>careers/immediately-effective/software-engineer.yaml` still returns **0**. Both halves are
       required — a growth applied to all three manifests passes the first check and fails the second.
 
 ### 5.3 · Interview-ready refresh-register smoothness re-audit
@@ -767,29 +807,39 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       in place, never by reordering.
   - _Suggested executor: `web-researcher` for any external claim in the bridge prose_
 
-### 5.4 · AI-path growth to the full 15-course composition (DD-33)
+### 5.4 · AI-path growth to its full composition (DD-33, amended in scope by DD-35 — no longer a
 
+fixed "15-course" figure)
+
+- [ ] [AI] Record the manifest's entry count immediately before this step —
+      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — and save
+      it to `evidence/phase-5-4-pre-growth-count.txt` (this is the falsifiable "before" half of this
+      step's before/after check; its value is whatever Phase 2 and any interim growth landed — an open
+      figure, not fabricated as 6).
 - [ ] [AI] Once the harness cluster (`creating-ai-powered-apps`, `agentic-ai`,
       `browser-automation-with-cdp`, `the-agent-loop`, `agent-tools-and-mcp`,
       `agent-context-and-memory`, `agent-permissions-and-sandboxing`,
       `agent-orchestration-subagents-and-observability`) and `capstone-build-your-own-coding-agent`
       have landed, insert all nine into
-      `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` at their correct
-      topological positions per the already-authoritative
-      [manifest mirror](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md),
-      growing the manifest from its six-course smoke-test spine to its full **15-course** composition
-      — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: exits 0, AND the six cluster IDs the Phase-2 comment named as deferred are now
-      present —
-      `grep -oE 'the-agent-loop|agent-tools-and-mcp|agent-context-and-memory|agent-permissions-and-sandboxing|agent-orchestration-subagents-and-observability|capstone-build-your-own-coding-agent' <MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml | sort -u | wc -l`
-      returns **6** (it returned **0** before this step), AND the spine is exactly fifteen entries —
-      `grep -oE '^ *- [a-z0-9-]+' <MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml | wc -l`
-      returns **15** (it returned **6** after Phase 2). Note this is a **match count**, not a line
-      count of the whole file.
-- [ ] [AI] Confirm the SWE-fundamentals exclusion survived the growth — command:
-      `grep -oE 'just-enough-typescript|backend-essentials|api-design|frontend-essentials|software-testing' <MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml | sort -u | wc -l`
-      — acceptance: still returns **0** (DD-24 holds; DD-33 widened the walk to the AI/harness cluster
-      only, never to SWE-fundamentals).
+      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` at their correct
+      topological positions per the
+      [manifest mirror](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+      (already renamed and corrected for the from-scratch model; this step only inserts the
+      AI/harness cluster the mirror's "AI-specialization spine" section still names unchanged) —
+      command: `npx nx run ayokoding-www:test:unit`
+      — acceptance: exits 0, AND the nine cluster IDs are now present —
+      `grep -oE 'creating-ai-powered-apps|agentic-ai|browser-automation-with-cdp|the-agent-loop|agent-tools-and-mcp|agent-context-and-memory|agent-permissions-and-sandboxing|agent-orchestration-subagents-and-observability|capstone-build-your-own-coding-agent' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      returns **9** (it returned **0** before this step), AND the entry count grew by **exactly 9**
+      over the recorded pre-growth count —
+      `grep -cE '^ *- [a-z0-9-]+' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml`
+      minus the value in `evidence/phase-5-4-pre-growth-count.txt` equals **9**. This before/after
+      delta check replaces the pre-2026-07-21 fixed "returns 15" assertion, which assumed a fixed
+      6-course starting spine that DD-35 superseded.
+- [ ] [AI] Confirm the SWE-fundamentals **inclusion** survived the growth (inverted 2026-07-21 — the
+      pre-ruling check asserted their **exclusion**) — command:
+      `grep -oE 'just-enough-python|software-testing|cicd-and-release-engineering|backend-at-scale|containers-and-orchestration|computer-architecture|site-reliability-engineering|data-engineering|data-structures-and-algorithms-essentials|software-product-engineering|frontend-essentials' <MANIFESTS>careers/immediately-effective/ai-engineer.yaml | sort -u | wc -l`
+      — acceptance: still returns **11 or more** (DD-35 holds; DD-33 widened the walk to the
+      AI/harness cluster in addition to, never instead of, the now-included SWE-fundamentals set).
 
 ### 5.5 · Final arc confirmation
 
@@ -807,10 +857,11 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Bands 1–8 growth applied to all three software-engineer manifests; `test:unit` exited 0
       after each band's append.
 - [ ] [AI] Band 9 check passes **both** ways: the five-ID check returns **5** against
-      `interview-ready/software-engineer.yaml` and **0** against
-      `immediately-effective/software-engineer.yaml`.
-- [ ] [AI] The AI path's six-cluster-ID check returns **6** and its spine is exactly **15** entries;
-      the SWE-fundamentals exclusion check still returns **0**.
+      `careers/interview-ready/software-engineer.yaml` and **0** against
+      `careers/immediately-effective/software-engineer.yaml`.
+- [ ] [AI] The AI path's nine-cluster-ID check returns **9** and its entry count grew by exactly
+      **9** over its recorded pre-growth count (5.4); the SWE-fundamentals **inclusion** check still
+      returns **11 or more** (inverted 2026-07-21 — DD-35).
 - [ ] [AI] The refresh-register lever is verified and the Phase-1 deferral note is marked closed.
 - [ ] [AI] `find <COURSES> -maxdepth 1 -mindepth 1 -type d | wc -l` returns **127**;
       `npx nx run ayokoding-www:test:unit` and `:build` exit 0 with all four manifests validating.
@@ -851,17 +902,22 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 
 - [ ] [AI] **Manifest-integrity + prerequisite-consistency sweep** — all four manifests: every
       `courseOrder` ID resolves; no duplicate ID; prerequisite-consistency holds; no forked body across
-      the three software-engineer-role paths (the AI path links rather than shares SWE-fundamentals
-      bodies, DD-24) — command: `npx nx run ayokoding-www:test:unit`
+      the three software-engineer-role paths (the AI path **includes**, not shares, its
+      SWE-fundamentals prerequisite courses at the head of its own `courseOrder`, DD-35 — including
+      the same course ID in two manifests is inclusion, not a fork, because neither manifest owns or
+      duplicates the course **body**) — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the integrity check reports **zero** violations across all four.
 - [ ] [AI] **All-path smoothness re-check (DD-16)** — re-verify the four levers for each manifest
       against the landed content — acceptance: all four paths pass; every regression fixed by
       softening or bridging in place, never by reordering.
-- [ ] [AI] **Ownership boundary check** — confirm the manifest directory holds exactly the four YAML
-      files this plan authored and nothing else: `find <MANIFESTS> -name '*.yaml' | wc -l` returns
-      **4**, and `find <MANIFESTS> -name '*.yaml' | sort` lists exactly the four declared path IDs
-      — acceptance: both hold. Falsifiable both ways: a fifth manifest added by any other plan makes
-      the count **5**, and a deleted manifest makes it **3**.
+- [ ] [AI] **Ownership boundary check (scoped to `careers/` per R4)** — confirm the `careers/`
+      subdirectory of the manifest directory holds exactly the four YAML files this plan authored and
+      nothing else: `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns
+      **4**, and `find <MANIFESTS>careers/ -name '*.yaml' | sort` lists exactly the four declared path IDs
+      — acceptance: both hold. Scoped to `<MANIFESTS>careers/`, not the bare `<MANIFESTS>` root, so a
+      sibling `skills/*.yaml` manifest landed concurrently by `ayokoding-learning-path-06-skills-paths`
+      cannot change this count in either direction. Falsifiable both ways: a fifth `careers/` manifest
+      added by any other plan makes the count **5**, and a deleted `careers/` manifest makes it **3**.
 - [ ] [AI] **Cross-plan link check (this plan's own folder)** —
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content 2>&1 | grep -F "ayokoding-learning-path-05-manifests"`
       — acceptance: the `grep` finds **no** matching line (exit 1). Falsifiable the other way too:
@@ -911,7 +967,8 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Start the dev server: `npx nx dev ayokoding-www` — acceptance: server up on the app's
       configured port.
 - [ ] [AI] For `en` × breakpoints (375 / 768 / 1280 px), via Playwright MCP `browser_navigate` +
-      `browser_resize`: open the paths hub `/en/c/learn/paths` (2×2 grid, **four** populated cards),
+      `browser_resize`: open the paths hub `/en/learn/paths` (category-grouped layout, **four**
+      populated cards in the `careers/` group),
       then each of the four path landings, then walk 2–3 courses per path via prev/next confirming
       `?path=` persists and the order matches the manifest, then open a course and confirm its
       prerequisite display — acceptance: all behaviours correct at all three breakpoints.
@@ -920,7 +977,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
       invalid `?path=` and confirm the canonical view renders with no error — acceptance: both hold.
 - [ ] [AI] For the AI path landing specifically, confirm the outbound links to prerequisite
       software-engineer courses' canonical pages resolve (DD-24) — acceptance: every outbound
-      `/en/c/learn/courses/<id>` link returns 200.
+      `/en/learn/courses/<id>` link returns 200.
 - [ ] [AI] Verify `html[lang]` is `en` and `browser_console_messages` is clean on every screen —
       acceptance: correct lang attribute; **zero** console errors.
 - [ ] [AI] Capture one screenshot per screen per breakpoint via `browser_take_screenshot` to
@@ -985,7 +1042,7 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
 - [ ] [AI] Full affected suite + e2e + build green on the integrated `main`; the final `main` CI run
       is green.
-- [ ] [AI] `prod-ayokoding-www` serves all four paths and the complete 2×2 hub.
+- [ ] [AI] `prod-ayokoding-www` serves all four paths and the complete `careers/` group of the hub.
 
 > **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production. Safe
 > to stop indefinitely. To resume: re-run the affected suite on `main` and check CI and prod status.
@@ -1048,16 +1105,21 @@ inside `<MANIFESTS>` because this plan owns that directory outright.
 - [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
       explicit user permission and only when genuinely impossible; SG-###/USS-### may be triaged or
       deferred with written rationale.
-- [ ] [AI] **Terminal four-manifest and 127-catalog assertion** — verify all four path manifests are
-      published and at their **full** composition, all four landings are live, the paths hub shows all
-      four cards, and the library holds the full 127-course catalog:
-      `find <MANIFESTS> -name '*.yaml' | wc -l` returns **4**, AND
-      `grep -oE '/en/c/learn/paths/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
+- [ ] [AI] **Terminal four-manifest and 127-catalog assertion (R5: the 127 total is the `careers/`
+      software-engineering catalog only, not a whole-programme total including `skills/`)** — verify
+      all four `careers/` path manifests are published and at their **full** composition, all four
+      landings are live, the paths hub's `careers/` group shows all four cards, and the
+      `careers/`-scoped library holds the full 127-course catalog:
+      `find <MANIFESTS>careers/ -name '*.yaml' | wc -l` returns **4**, AND
+      `grep -oE '/en/learn/paths/careers/[a-z-]+/[a-z0-9-]+' <PATHS>_index.md | sort -u | wc -l` returns
       **4**, AND `find <COURSES> -maxdepth 1 -mindepth 1 -type d | wc -l` returns **127**, AND
       `npx nx run ayokoding-www:test:unit` exits 0 — acceptance: all four hold. This assertion spans
       this plan and `ayokoding-learning-path-04-course-authoring`, and it belongs **here**: that plan
       asserts only the count of bodies it itself authored, while the 127-catalog claim is only
-      meaningful once every manifest resolves against it.
+      meaningful once every manifest resolves against it. `<COURSES>` today holds only the
+      `careers/software-engineering` corpus — the `skills/` category's ERP + accounting corpus is a
+      separate corpus authored by `ayokoding-learning-path-06-skills-paths` and is not counted by this
+      `find`, so this assertion does not need to change when that sibling plan lands.
 - [ ] [AI] **Scoped cross-plan link check** — re-run the Phase 6 filtered link validation and confirm
       it still finds no line naming this plan's folder. If
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` has archived since, confirm every

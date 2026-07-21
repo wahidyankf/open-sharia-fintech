@@ -6,15 +6,23 @@ that genuinely need a full plan's depth to answer.
 
 ## Planned Projects
 
-The five `ayokoding-learning-path-*` plans below are **one five-way split** of the retired
+The seven `ayokoding-learning-path-*` plans below deliver one programme. Plans `01`-`05` are the
+**five-way split** of the retired
 [`shared-course-library-and-learning-paths`](../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
-plan. Their `NN-` prefix **is the execution sequence**, and it encodes a three-wave dependency DAG:
-Wave 1 (`01`, `02`) starts immediately and in parallel; Wave 2 (`03`, `04`) needs both Wave 1 plans
-merged; Wave 3 (`05`) needs both Wave 2 plans merged. Each is a separate `worktree-to-pr` delivery
-with its own PR.
+plan and cover the **`careers/`** category only; plans `06` and `07` add the **`skills/`** category,
+which that retired plan never scoped. Their `NN-` prefix **is the execution sequence**, and it
+encodes a three-wave dependency DAG: Wave 1 (`01`, `02`) starts immediately and in parallel; Wave 2
+(`03`, `04`, `06`) needs both Wave 1 plans merged; Wave 3 (`05`, `07`) needs its own Wave 2
+predecessor merged. Each is a separate `worktree-to-pr` delivery with its own PR.
+
+The two category branches are independent after Wave 1 — nothing in `05` waits on `06`/`07`, and
+nothing in `07` waits on `05`. The one cross-branch edge is `07`'s dependency on `06`, which is
+**soft overall and hard at four wave gates**: ten of the ERP courses have no accounting prerequisite
+at all and are authorable while `06` is still in flight.
 
 - [ayokoding-learning-path-01-url-restructure](./ayokoding-learning-path-01-url-restructure/README.md)
-  — **Wave 1.** Resolves everything under `/en/c/learn` to exactly three buckets (`paths/`,
+  — **Wave 1.** Removes the `/c/` content namespace, then resolves everything under `/en/learn` to
+  exactly three buckets (`paths/`,
   `courses/`, `legacy/`), re-homes 37 existing course slugs into the flat `courses/` namespace, and
   ships the per-course 308 redirect table.
 - [ayokoding-learning-path-02-schema-and-prerequisite-dag](./ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
@@ -27,8 +35,18 @@ with its own PR.
   — **Wave 2.** Authors 90 of the 127 course bodies, band by band, each from its `syllabus/` spec,
   emitting a five-field band-completion signal the manifest plan consumes.
 - [ayokoding-learning-path-05-manifests](./ayokoding-learning-path-05-manifests/README.md)
-  — **Wave 3, terminal.** Owns every `.yaml` manifest and every step that creates, appends to,
-  reorders, or re-verifies one — the ownership invariant that breaks the authoring/manifest cycle.
+  — **Wave 3, terminal for `careers/`.** Owns every `careers/` `.yaml` manifest and every step that
+  creates, appends to, reorders, or re-verifies one — the ownership invariant that breaks the
+  authoring/manifest cycle.
+- [ayokoding-learning-path-06-skills-accounting](./ayokoding-learning-path-06-skills-accounting/README.md)
+  — **Wave 2.** The first `skills/` path: 20 accounting courses on an immediately-effective ramp that
+  reaches a working ledger by course 3, then deliberately slows — because this domain's
+  characteristic failure is **silent** (a trial balance still balances when revenue is recognised in
+  the wrong period). Owns its own manifest.
+- [ayokoding-learning-path-07-skills-erp](./ayokoding-learning-path-07-skills-erp/README.md)
+  — **Wave 3, terminal for `skills/`.** 20 ERP courses. Depends on `06` one-directionally — no
+  accounting course cites an ERP course — with the hard edge first biting at `record-to-report`,
+  since subledger-to-GL posting is meaningless without a balanced ledger. Owns its own manifest.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.

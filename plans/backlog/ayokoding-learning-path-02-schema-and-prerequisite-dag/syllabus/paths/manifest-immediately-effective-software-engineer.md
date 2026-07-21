@@ -1,16 +1,20 @@
-# Path Manifest — `immediately-effective/software-engineer` (shipping-first)
+# Path Manifest — `careers/immediately-effective/software-engineer` (shipping-first)
 
 The **ordered manifest** for the shipping-first path: a **curated, prerequisite-consistent** ordered list of
 **course IDs** over the [shared course library](../courses/README.md). This is the authoritative reading
-order for this path; a course page under `?path=immediately-effective/software-engineer` follows it for prev/next + breadcrumb.
-Persona: a **builder who wants to be effective fast** — editor → one language → **build a real app first** → then deepen.
+order for this path; a course page under `?path=careers/immediately-effective/software-engineer` follows
+it for prev/next + breadcrumb. Persona: a **builder who wants to be effective fast** — editor → one
+language → **build a real app first** → then deepen.
 
 This file is the **human-readable mirror** of the manifest. The **machine-consumed source of truth** is
 the standalone data file
-`apps/ayokoding-www/src/features/course-paths/manifests/immediately-effective/software-engineer.yaml` (RESOLVED, OQ-2 — a standalone
-YAML/JSON data file in the `course-paths` feature, NOT `courseOrder` frontmatter on any `_index.md`).
-Path landing served at `/en/c/learn/paths/immediately-effective/software-engineer`. Order rationale:
-[tech-docs §Path `immediately-effective/software-engineer`](../../tech-docs.md#path-immediately-effectivesoftware-engineer-build-fast-first).
+`apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml`
+(RESOLVED, OQ-2 — a standalone YAML/JSON data file in the `course-paths` feature, NOT `courseOrder`
+frontmatter on any `_index.md`). Per
+[tech-docs §Variable-depth `pathId`](../../tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8),
+the manifest also carries an explicit `arc: immediately-effective` field (R8). Path landing served at
+`/en/learn/paths/careers/immediately-effective/software-engineer`. Order rationale:
+[tech-docs §Path `careers/immediately-effective/software-engineer`](../../tech-docs.md#path-careersimmediately-effectivesoftware-engineer-build-fast-first).
 
 ## Composition (curated + converge, LOCKED 2026-07-19)
 
@@ -24,7 +28,7 @@ A **build-first spine** followed by a **Deepening band**. The spine gets a build
   capstones, minus the 2 genuinely-omitted above = 121 − 2 = 119). This denominator is the
   **software-engineer-role baseline**, not the **127-course library** total: the six AI-engineer-role
   courses this plan added are outside this path's scope and compose only the fourth,
-  `immediately-effective/software-engineer-to-ai-engineer` path (per-role convergence, D2).
+  `careers/immediately-effective/ai-engineer` path (per-role convergence, D2).
 - **DD-20 addendum (2026-07-19)**: the seven DD-20 inter-topic capstones are all included (none is
   genuinely omitted), placed at their earliest prerequisite-safe position in the Deepening band —
   `capstone-concurrency-showdown` (end of "Deepening band · Concurrency & language breadth"),

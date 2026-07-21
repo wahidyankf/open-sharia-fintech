@@ -2,18 +2,34 @@
 
 ## Business Goal
 
-Make one canonical course body behave correctly under **four different reading orders**, so the
-shared-course-library architecture the sibling plans build is actually usable by a reader. Without
-this plan the library is a folder of pages and the manifests are inert data files: nothing renders a
-path, nothing carries path context between pages, and nothing tells a reader where they are in an arc.
+Make one canonical course body behave correctly under **four different reading orders** within the
+`careers/` category, so the shared-course-library architecture the sibling plans build is actually
+usable by a reader. Without this plan the library is a folder of pages and the manifests are inert
+data files: nothing renders a path, nothing carries path context between pages, and nothing tells a
+reader where they are in an arc.
 
-Concretely, this plan delivers the **ayokoding-www rendering layer** for the four-path model:
+> **2026-07-21 category-split ruling.** The maintainer ruled a `careers/` + `skills/` category split
+> (full record in [README.md §Category Split Ruling](./README.md#category-split-ruling-2026-07-21-r1r8)).
+> This plan stays **careers-only** for content (four manifests, four personas), but its rendering
+> components must be **category-agnostic** so a sibling plan can render the `skills/` category
+> through the same code — that is why the paths hub and category landing below now speak of "the
+> **six** paths in **two** categories" rather than "the four paths."
 
-- the **site landing hero** at `/en` that surfaces the four goal paths directly, so a goal-driven
-  visitor is not dropped into a recall-heavy browse index;
-- the **paths hub** at `/en/c/learn/paths` where the four paths are compared and chosen;
-- the **path landing** at `/en/c/learn/paths/<path-id>` that renders a manifest as an ordered,
-  prerequisite-consistent syllabus;
+Concretely, this plan delivers the **ayokoding-www rendering layer** for the six-path, two-category
+model (four `careers/` paths owned here; two `skills/` paths owned by a sibling plan and rendered
+through this plan's category-agnostic components):
+
+- the **site landing hero** at `/en` that surfaces the four **career**-goal paths directly, so a
+  goal-driven visitor is not dropped into a recall-heavy browse index;
+- the **category-grouped paths hub** at `/en/learn/paths` where all six paths, grouped into
+  `careers/` and `skills/`, are compared and chosen;
+- the **category landing** (`/en/learn/paths/careers/`, `/en/learn/paths/skills/`) and, for
+  `careers/` only, the **arc landing** (`/en/learn/paths/careers/<arc>/`) — five new pages that make
+  every URL segment a real, rendered page rather than a routing waypoint (see
+  [README.md R7](./README.md#category-split-ruling-2026-07-21-r1r8));
+- the **path landing** at `/en/learn/paths/<path-id>` (now a variable-depth id — 3 segments under
+  `careers/`, 2 under `skills/`) that renders a manifest as an ordered, prerequisite-consistent
+  syllabus;
 - the **course page in path context** — a left path rail carrying the whole ordered arc, a compact
   position readout, a path-aware breadcrumb, a prerequisite list, and manifest-driven prev/next, all
   keeping `?path=`; and
@@ -30,7 +46,7 @@ course page's prev/next + breadcrumb to **resolve against the active path**. The
 **surface each course's declared prerequisites**.
 
 That is a genuine frontend change to `ayokoding-www` (a Next.js app) — routing under the
-`/en/c/learn` URL model, a `?path=` context, manifest-driven navigation, prerequisite display, and a
+`/en/learn` URL model, a `?path=` context, manifest-driven navigation, prerequisite display, and a
 graceful fallback when a course is deep-linked without path context. The maintainer explicitly asked
 that this UI be **planned properly**, with a design funnel, accessibility, and unit/integration/e2e
 tests plus a `specs/` Gherkin companion. This plan is where that request is discharged.
@@ -113,14 +129,19 @@ Every metric below is **observable** — a command or a rendered behaviour, not 
   if the rail renders without a path context **and** fails if the generic sidebar renders with one.
 - **Prerequisites are surfaced on every course page** (observable): the prerequisite list renders in
   **both** the path-aware and the canonical view, each entry linking to its canonical course URL.
-- **The landing hero surfaces the four paths** (observable): the `/en` hero renders a goal-labelled
-  path card per published path plus a "Compare all paths" link to `/en/c/learn/paths`. Falsifiable in
-  both directions — today's hero renders neither.
-- **The design funnel is complete for Screens 0–3** (observable): this plan's `assets/` holds **24**
-  `*-option-*-*.png` renders (8 before the funnel phase), each embedded in `prd.md` with
-  viewport-specific alt text, and each screen's selection line names its selected finalist's three
-  render files. The remaining 6 of DD-47's 30 belong to
-  `ayokoding-learning-path-01-url-restructure`.
+- **The landing hero surfaces the four career paths** (observable): the `/en` hero renders a
+  goal-labelled path card per published **careers** path plus a "Compare all paths" link to
+  `/en/learn/paths`, which routes into the category-grouped hub. Falsifiable in both directions —
+  today's hero renders neither.
+- **Every URL segment renders, none 404s** (observable, R7): the paths hub, both category landings
+  (`careers/`, `skills/`), and all three `careers/` arc landings each render real page content — none
+  is a bare routing waypoint. `careers/immediately-effective/` renders both its paths without reading
+  as broken or empty; `skills/` renders its fixed-arc ramp statement with no arc chooser (R8).
+- **The design funnel is complete for Screens 0–3 plus the two new screen types (1a, 1b)**
+  (observable): this plan's `assets/` holds **36** `*-option-*-*.png` renders (8 before the funnel
+  phase), each embedded in `prd.md` with viewport-specific alt text, and each screen's selection line
+  names its selected finalist's three render files. `ayokoding-learning-path-01-url-restructure`'s
+  Screen 4 share (6 renders) is unchanged.
 - **Accessibility holds** (observable): the rail, banner, breadcrumb, prerequisite list, and prev/next
   are each a labelled landmark, keyboard-reachable with a visible focus ring; the current course
   carries `aria-current="page"` plus a non-colour signal; `html[lang]` matches the active locale.
@@ -133,13 +154,18 @@ Every metric below is **observable** — a command or a rendered behaviour, not 
 
 ## Business-Scope Non-Goals
 
-- **Publishing any real path manifest.** Every rendering behaviour here is proven against a fixture
-  manifest. All four real manifests belong to `ayokoding-learning-path-05-manifests`.
-- **Authoring or editing any course body.** That is `ayokoding-learning-path-04-course-authoring`'s
-  scope.
+- **Publishing any real path manifest.** Every rendering behaviour here is proven against fixture
+  manifests (including a `skills/`-shaped fixture, per R2). All four **careers** manifests belong to
+  `ayokoding-learning-path-05-manifests`; the two **skills** manifests belong to a sibling plan (see
+  [README.md R4](./README.md#category-split-ruling-2026-07-21-r1r8)).
+- **Authoring or editing any course body**, careers or skills. That is
+  `ayokoding-learning-path-04-course-authoring`'s scope for careers, and a sibling plan's scope for
+  the ERP + accounting corpus.
 - **Moving any content bundle, creating any content home, or writing any redirect rule.** The
-  `courses/` and `paths/` `_index.md` homes, the `legacy/` bucket, and both redirect modules belong to
-  `ayokoding-learning-path-01-url-restructure`.
+  `courses/` and `paths/` `_index.md` homes (including the `careers/` category and arc landing
+  `_index.md` files), the `legacy/` bucket, and both redirect modules belong to
+  `ayokoding-learning-path-01-url-restructure`; the `skills/` category landing's `_index.md` belongs
+  to the sibling skills-category plan.
 - **Writing the pure `course-paths/core/` modules or the `PathManifest` schema.** Those belong to
   `ayokoding-learning-path-02-schema-and-prerequisite-dag`; this plan imports them.
 - **Adding an Indonesian mirror of the section content** — deferred. The path-aware nav UI itself

@@ -8,18 +8,31 @@ stable course ID, a canonical URL, a declared prerequisite list, a learning trac
 track.
 
 A **course** is the unit of reading. A **path** is an ordered manifest of course IDs. This plan owns
-the former and never the latter. Four paths compose these bodies:
+the former and never the latter. Four **`careers/`** paths compose these bodies — the two
+**`skills/`** paths and their corpora belong to
+[`ayokoding-learning-path-06-skills-accounting`](../ayokoding-learning-path-06-skills-accounting/README.md)
+and [`ayokoding-learning-path-07-skills-erp`](../ayokoding-learning-path-07-skills-erp/README.md),
+and are explicitly **not** authored here:
 
-- **`interview-ready/software-engineer`** — the **interview/job-prep-first** arc for an experienced
-  engineer re-entering the market: interview prep FIRST → production-effective → deeper.
-- **`immediately-effective/software-engineer`** — the **immediately-effective** arc: editor/tooling →
-  one language end-to-end → **build a real app first** → then deepen.
-- **`fundamentally-strong/software-engineer`** — the **university-style, fundamentals-first** arc:
-  CS foundations / theory first → deeper.
-- **`immediately-effective/software-engineer-to-ai-engineer`** — the **immediately-effective** arc
-  applied to a **role transition**: assumes an already-working software engineer; prerequisite courses
-  are **linked, not included**; teaches **building** AI systems (models, agents, evals, inference
-  serving), not driving them (`agentic-coding` stays a separate, unrelated axis).
+- **`careers/interview-ready/software-engineer`** — the **interview/job-prep-first** arc for an
+  experienced engineer re-entering the market: interview prep FIRST → production-effective → deeper.
+- **`careers/immediately-effective/software-engineer`** — the **immediately-effective** arc:
+  editor/tooling → one language end-to-end → **build a real app first** → then deepen.
+- **`careers/fundamentally-strong/software-engineer`** — the **university-style, fundamentals-first**
+  arc: CS foundations / theory first → deeper.
+- **`careers/immediately-effective/ai-engineer`** — the **immediately-effective** arc aimed at a
+  **distinct AI-engineering endpoint**. It teaches **building** AI systems (models, agents, evals,
+  inference serving), not driving them (`agentic-coding` stays a separate, unrelated axis).
+
+  > **Amended 2026-07-21 — this path is now from-scratch, not a role transition.** It previously
+  > assumed an already-working software engineer and **linked** its prerequisite courses rather than
+  > including them. That is overturned: the path assumes **no** prior software-engineering
+  > competence, and its prerequisites are **included** in `courseOrder`. The consequence for this
+  > plan is bounded — the included prerequisites are **existing library courses**, so no additional
+  > body is authored here; the growth lands in the path's manifest, which
+  > [`ayokoding-learning-path-05-manifests`](../ayokoding-learning-path-05-manifests/README.md) owns.
+  > **DD-24** ("fourth path's entry point: linked, not included, prerequisites") is superseded by
+  > this amendment.
 
 The library body is **content**, exempt from `specs:coverage`; the navigation feature that renders it
 is app code and carries its `specs/` Gherkin companion in
@@ -33,25 +46,28 @@ Reproduced verbatim from the source plan. All four path personas are carried, no
 plan's bodies serve most directly — every authored course is reached by readers of all four paths.
 
 - **Experienced engineer re-entering the job market (north-star for the
-  `interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
+  `careers/interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
   an employed senior wanting to switch. Already owns the editor workflow and deep fundamentals; needs
   to **refresh breadth fast, relearn interview technique** at mid/senior/staff level, and handle a
   **layoff / employment-gap narrative** — without walking a from-scratch curriculum. Interview/job prep
   FIRST.
 - **A builder who wants to be effective fast (north-star for the
-  `immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
+  `careers/immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
   editor, learn one language end-to-end, **ship a real app early**, then deepen into CS fundamentals,
   DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career switcher.
 - **A university-style, fundamentals-first learner (north-star for the
-  `fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
+  `careers/fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
   foundations, computer architecture, paradigms, and data structures & algorithms **before** building
   apps at scale. Prefers to understand the machine and the theory first, then apply it.
-- **An already-working software engineer transitioning to AI engineering (north-star for the
-  `immediately-effective/software-engineer-to-ai-engineer` path, added 2026-07-20)** — already owns the
-  SWE fundamentals the other three paths teach; wants to become immediately effective at **building**
-  AI systems (models, agents, evals, inference serving), not at driving coding agents. Prerequisite
-  courses are **linked, not included** in this path's manifest. Converges on a distinct AI-engineering
-  endpoint, not the other three paths' shared software-engineering endpoint.
+- **Someone entering AI engineering from scratch (north-star for the
+  `careers/immediately-effective/ai-engineer` path, added 2026-07-20, re-scoped 2026-07-21)** — wants
+  to become immediately effective at **building** AI systems (models, agents, evals, inference
+  serving), not at driving coding agents. **Assumes no prior software-engineering competence**: the
+  prerequisite courses are **included** in this path's `courseOrder`, not linked out, so the path
+  stands alone. Converges on a distinct AI-engineering endpoint, not the other three paths' shared
+  software-engineering endpoint. (Before 2026-07-21 this persona was an _already-working software
+  engineer transitioning_ to AI engineering, with prerequisites linked rather than included; the
+  re-scoping widened the audience and lengthened the manifest, but changed nothing this plan authors.)
 - **A reader who lands on a shared course by deep-link / share** — arrives at a course URL without a
   path context and must get a coherent standalone view (with its prerequisites surfaced) plus an
   obvious way to enter a path.
@@ -241,7 +257,7 @@ a `**Gherkin (binds) →**` marker plus its verbatim fenced block on the named s
 
 This plan authors **twenty NEW courses + eight NEW capstones** — the original fourteen (interview +
 productivity/harness/security clusters) plus **six further NEW AI-specific courses** added 2026-07-20
-for the `software-engineer-to-ai-engineer` path, plus eight capstones (two original plus six of the
+for the `careers/immediately-effective/ai-engineer` path, plus eight capstones (two original plus six of the
 seven DD-20 inter-topic capstones; the seventh, `capstone-solid-core`, is already live on disk and is
 re-homed by `ayokoding-learning-path-01-url-restructure`, not authored here) — alongside the 61
 transferred topics authored native.
@@ -320,7 +336,7 @@ these build the primitives at build-your-own depth; the survey course `agentic-a
 - **`agent-orchestration-subagents-and-observability`** (Annotated-concept) — subagents, background
   tasks, hooks/skills systems, a TUI, evals + tracing/telemetry.
 
-### AI-engineering specialization courses (`software-engineer-to-ai-engineer` path, added 2026-07-20)
+### AI-engineering specialization courses (`careers/immediately-effective/ai-engineer` path, added 2026-07-20)
 
 Six NEW courses for the fourth path, teaching **building** AI systems (not driving coding agents —
 `agentic-coding` stays a separate axis, DD-21). Each is split into a **stable spine** (durable
@@ -342,7 +358,7 @@ interview-ready MVP).
   statistics survey; `analytics-and-experimentation` (classical product A/B testing) stays a scope
   mismatch and a candidate sibling/prerequisite rather than a merge target (DD-26). Declared a **hard
   prerequisite** of deep evals, so it is authored/placed before that course (see the manifest mirror at
-  `syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md`).
+  `syllabus/paths/manifest-immediately-effective-ai-engineer.md`).
 - **Deep evals** (`evaluating-ai-systems-in-depth` — By Example, Python) — sits after agents; error
   analysis, task-specific criteria, LLM-as-judge with measured human agreement, CI gating, judge-scope
   reliability. Absorbs the three scattered evals treatments in `creating-ai-powered-apps`, `agentic-ai`,

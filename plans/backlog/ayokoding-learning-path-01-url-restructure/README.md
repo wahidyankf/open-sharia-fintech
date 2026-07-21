@@ -4,7 +4,7 @@ This plan owns the **URL and IA layer** of the ayokoding-www learn section. It r
 shipped topics + 4 existing capstones into a flat `courses/` namespace with per-course redirects,
 relocates the six remaining `en/learn/` subject domains into a new `legacy/` bucket behind per-domain
 308 prefix rules, creates the `courses/` and `paths/` content homes, and closes
-`/{locale}/c/learn/` at **exactly three** structural buckets: `paths/`, `courses/`, `legacy/`.
+`/{locale}/learn/` at **exactly three** structural buckets: `paths/`, `courses/`, `legacy/`.
 
 It is **Wave 1** of a five-plan split of the closed `shared-course-library-and-learning-paths` plan
 and has **no plan-level prerequisite** — it starts immediately.
@@ -24,7 +24,8 @@ and has **no plan-level prerequisite** — it starts immediately.
 | Paths content home                          | `apps/ayokoding-www/content/en/learn/paths/_index.md` — 2×2 grid, room for four    |
 | Per-course re-home redirects                | `apps/ayokoding-www/src/redirects/` — 37 old-URL → canonical-URL rules             |
 | Legacy bucket                               | `apps/ayokoding-www/content/en/learn/legacy/` — 1,148 `.md` relocated verbatim     |
-| Per-domain 308 prefix module                | `apps/ayokoding-www/src/redirects/learn-three-bucket.ts` — 12 rules + unit test    |
+| Per-domain 308 prefix module                | `apps/ayokoding-www/src/redirects/learn-three-bucket.ts` — 6 rules + unit test     |
+| De-namespacing (DD-48, site-wide)           | `content-namespace.ts` inverted; `c/[...slug]` removed, `[...slug]` widened        |
 | Legacy landing + rewritten section overview | `legacy/_index.md`, `en/learn/overview.md`                                         |
 | Screen 4 design funnel                      | `prd.md` §Screen 4 + `assets/legacy-landing-option-{a,b}-{mobile,tablet,desktop}`  |
 
@@ -39,18 +40,18 @@ and left six in place — a top level mixing two structural buckets with six sub
 neither the old IA nor the new one. This plan closes the section at **exactly three** structural
 buckets (DD-40):
 
-| Bucket     | URL shape                                   | Contents                                                             |
-| ---------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| `paths/`   | `/en/c/learn/paths/<arc>/<role-or-subject>` | The four ordered path manifests (landing anchors only)               |
-| `courses/` | `/en/c/learn/courses/<course-id>`           | Canonical, path-neutral course bodies, **flat** namespace            |
-| `legacy/`  | `/en/c/learn/legacy/<domain>/<…verbatim…>`  | **NEW** — the six remaining domains, **1,148** `.md` [Repo-grounded] |
+| Bucket     | URL shape                                 | Contents                                                             |
+| ---------- | ----------------------------------------- | -------------------------------------------------------------------- |
+| `paths/`   | `/en/learn/paths/<arc>/<role-or-subject>` | The four ordered path manifests (landing anchors only)               |
+| `courses/` | `/en/learn/courses/<course-id>`           | Canonical, path-neutral course bodies, **flat** namespace            |
+| `legacy/`  | `/en/learn/legacy/<domain>/<…verbatim…>`  | **NEW** — the six remaining domains, **1,148** `.md` [Repo-grounded] |
 
 ```mermaid
-%% Target IA of /en/c/learn after this plan lands (DD-40).
+%% Target IA of /en/learn after this plan lands (DD-40).
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC — WCAG-AA, CB-friendly.
 %% Node shape is redundant with colour: the section root is a rectangle, buckets are stadiums.
 flowchart LR
-    LEARN["/en/c/learn<br/>section root<br/>+ _index.md + overview.md"]:::blue
+    LEARN["/en/learn<br/>section root<br/>+ _index.md + overview.md"]:::blue
     PATHS(["paths/<br/>4 ordered manifests<br/>landing anchors only"]):::teal
     COURSES(["courses/<br/>canonical course bodies<br/>FLAT namespace"]):::orange
     LEGACY(["legacy/<br/>6 relocated domains<br/>sub-taxonomy verbatim"]):::purple
@@ -65,13 +66,19 @@ flowchart LR
 ```
 
 The relocation is a **prefix move, not a rewrite**: each domain keeps its sub-taxonomy verbatim, so
-the redirect is a **per-domain 308 prefix rule** (six domains × two inbound tiers = 12 rules for
-`en`), never 1,713 per-file rules and never a blanket `/en/c/learn/:path*` rule — which would swallow
-`courses/` and `paths/` and self-recurse (DD-41, DD-42). `fundamentally-strong/` does **not** appear
-in the bucket module: its 37 topic directories collapse into flat `courses/` bodies with **per-course**
-redirects, which this plan also owns (DD-43). The `id` locale is left untouched and the deferral is
-recorded explicitly (DD-45). Navigation needs **zero** code changes — sidebar, browse index, section
-cards, search, `sitemap.ts`, and `feed.xml` are all tree-derived (DD-44).
+the redirect is a **per-domain 308 prefix rule**, single tier — 6 rules for `en` (DD-42, collapsed
+from an original 12-rule/2-tier design by DD-48's `content-namespace.ts` inversion, which always
+strips a stale `/c/` prefix first) — never 1,713 per-file rules and never a blanket
+`/en/learn/:path*` rule — which would swallow `courses/` and `paths/` and self-recurse (DD-41,
+DD-42). `fundamentally-strong/` does **not** appear in the bucket module: its 37 topic directories
+collapse into flat `courses/` bodies with **per-course** redirects, which this plan also owns
+(DD-43). The `id` locale's three-bucket **content structure** is left untouched and the deferral is
+recorded explicitly (DD-45) — its de-namespacing is separately in scope (DD-48, site-wide). The
+six-domain **relocation itself** needs **zero** code changes beyond the redirect module — sidebar,
+browse index, section cards, search, `sitemap.ts`, and `feed.xml` are all tree-derived (DD-44); DD-48's
+de-namespacing is a separate, explicitly-scoped production-code change (route removal/widening,
+`contentUrl()`, `breadcrumb.tsx`) landing in the same phase — see
+[tech-docs.md's De-namespacing section](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48).
 
 Condensed target tree (full BEFORE/AFTER trees, source tree, and URL-mapping table in
 [tech-docs](./tech-docs.md#content-tree--after-target-state); markers: `✓` verified on disk, `+` new,
@@ -180,7 +187,7 @@ This plan is **Wave 1** of a five-plan split of the closed
 | `ayokoding-learning-path-03-navigation-ui`                               | `prd.md` Screen 4 section + the six `assets/legacy-landing-option-*-*.png` renders   | closes the DD-47 30-render matrix across the two plans                                  |
 | `ayokoding-learning-path-03-navigation-ui`                               | Open Questions **Q-A … Q-F** (this plan owns all six verbatim)                       | Q-E gates the three residual `fundamentally-strong` index pages the nav plan renders    |
 | `ayokoding-learning-path-04-course-authoring`                            | 37 re-homed course bundles occupying the flat `courses/` namespace                   | the 23-new-slug collision check is only meaningful against a populated namespace        |
-| `ayokoding-learning-path-05-manifests` _(transitive, via the two above)_ | canonical `/en/c/learn/courses/<id>` URLs for the 33 topics + 4 capstones            | the first manifest's `courseOrder` references exactly these IDs                         |
+| `ayokoding-learning-path-05-manifests` _(transitive, via the two above)_ | canonical `/en/learn/courses/<id>` URLs for the 33 topics + 4 capstones              | the first manifest's `courseOrder` references exactly these IDs                         |
 
 ### Wave-1 sibling coordination (not a dependency)
 
@@ -216,8 +223,10 @@ constrains).
   (ships against topics 1–33, already live on disk; proves routing, manifest loading, `?path` context,
   prev/next, breadcrumb, and prerequisite display against real content, in days not months —
   authoring the 4 NEW interview courses + `capstone-interview-loop` is **no longer bundled into this
-  MVP gate**) → **`software-engineer-to-ai-engineer`** (authoring priority #1 for all authoring effort)
-  → **`immediately-effective/software-engineer`** manifest → **`fundamentally-strong/software-engineer`**
+  MVP gate**) → **`careers/immediately-effective/ai-engineer`** (id renamed from `software-engineer-to-ai-engineer`
+  2026-07-21 — no longer assumes a prior software-engineering role; authoring priority #1 for all
+  authoring effort) → **`careers/immediately-effective/software-engineer`** manifest →
+  **`careers/fundamentally-strong/software-engineer`**
   manifest → **backfill topics 34–94**. Rationale (preserved from the original build-order decision):
   nothing in the AI path exists on disk (~17 courses); making it literally first — ahead of even the
   MVP — would mean nothing ships until all 17 are authored, with the UI architecture unvalidated the
@@ -243,16 +252,16 @@ citations must survive.
 
 ### Owned by this plan
 
-- **DL-8 · URL model.** Courses at `/en/c/learn/courses/<course-id>` and path landings at
-  `/en/c/learn/paths/<path-id>`, both via the existing `/c/[...slug]` content route; `?path=<path-id>`
+- **DL-8 · URL model.** Courses at `/en/learn/courses/<course-id>` and path landings at
+  `/en/learn/paths/<path-id>`, both via the existing `[...slug]` content route; `?path=<path-id>`
   carries path context. (Renamed from the prior `/en/courses/<id>` + `/en/path/...` forms.) **Decided.**
-- **DL-16 · Whole-section IA revamp — `/{locale}/c/learn/` closes at three structural buckets
+- **DL-16 · Whole-section IA revamp — `/{locale}/learn/` closes at three structural buckets
   (2026-07-21 scope extension).** Summary of the decision record folded into
   [tech-docs.md DD-40 through DD-45](./tech-docs.md#design-decisions): the learn section ends with
   exactly `paths/`, `courses/`, and a new `legacy/` bucket, plus the section's own two hub files
   (DD-40); the legacy move is a **prefix relocation preserving each domain's sub-taxonomy verbatim**,
   rewriting no page (DD-41); redirects are **per-domain 308 prefix rules** in a new
-  `apps/ayokoding-www/src/redirects/learn-three-bucket.ts`, with a blanket `/en/c/learn/:path*` rule
+  `apps/ayokoding-www/src/redirects/learn-three-bucket.ts`, with a blanket `/en/learn/:path*` rule
   explicitly FORBIDDEN and the `next.config.ts` ordering load-bearing (DD-42);
   `fundamentally-strong/` stays on its **per-course** re-home redirects and is excluded from the
   bucket module (DD-43); navigation needs **zero** code changes because the IA is tree-derived, with
@@ -268,9 +277,12 @@ citations must survive.
 - **DL-7 · Build order — amended 2026-07-20, see DL-15 / tech-docs DD-27.** Deliver Group A
   (architecture + UI) first as a hard prerequisite; then an **interview-ready MVP that is an
   architecture smoke test only** (shipped against already-live topics 1–33, not the full interview
-  cluster); then `immediately-effective/software-engineer-to-ai-engineer` (authoring priority #1); then
-  the `immediately-effective/software-engineer` manifest; then the `fundamentally-strong/software-engineer`
-  manifest; then backfill topics 34–94 native as the library fills. **Decided; amended 2026-07-20.**
+  cluster); then `careers/immediately-effective/ai-engineer` (id renamed from
+  `immediately-effective/software-engineer-to-ai-engineer` 2026-07-21 — the path no longer assumes a
+  prior software-engineering role, so a role-transition-shaped id was factually wrong; authoring
+  priority #1); then the `careers/immediately-effective/software-engineer` manifest; then the
+  `careers/fundamentally-strong/software-engineer` manifest; then backfill topics 34–94 native as the library
+  fills. **Decided; amended 2026-07-20; id renamed 2026-07-21.**
 - **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each phase's PR
   automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this
   plan declares no `[HUMAN]` merge gate. When DN-11 was first recorded, `pr-merge-protocol.md` still

@@ -1,9 +1,12 @@
 # AyoKoding Learning Paths — Path-Aware Navigation UI
 
-The **rendering layer** of the four-path shared-course-library product on `ayokoding-www`. This plan
-owns the UI design funnel for Screens 0–3, the `course-paths` **shell** components, the `?path=`
-route wiring, the left path rail, the path landing pages, the paths hub, and the site landing hero
-that surfaces the four paths.
+The **rendering layer** of the shared-course-library product on `ayokoding-www` — **six** paths in
+**two categories** (`careers/` and `skills/`) as of the 2026-07-21 category-split ruling; see
+[Category Split Ruling](#category-split-ruling-2026-07-21-r1r8) below. This plan owns the UI design
+funnel for Screens 0–3 plus the two new screen types the ruling introduces (category landing, arc
+landing), the `course-paths` **shell** components, the `?path=` route wiring, the left path rail, the
+path landing pages, the category-grouped paths hub, and the site landing hero that surfaces the four
+career-goal paths.
 
 It is **Wave 2** of a five-plan split of the closed `shared-course-library-and-learning-paths` plan.
 It builds nothing that stores order (that is the schema plan's), moves no content bundle (that is the
@@ -15,14 +18,67 @@ URL-restructure plan's), authors no course body, and writes no path manifest.
 
 ## Scope in one screen
 
-| Owned here                                                                                    | Owned elsewhere                                                                          |
-| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| UI design funnel, Screens 0–3 — low-fi wireframes, 24 hi-fi renders, selections, rationale    | Screen 4 funnel and its 6 renders — `ayokoding-learning-path-01-url-restructure`         |
-| `course-paths` **shell**: repository, path landing, path card, path rail, banner, prereq list | `course-paths` **core** — `ayokoding-learning-path-02-schema-and-prerequisite-dag`       |
-| `?path=` route wiring, path-aware prev/next and breadcrumb, canonical fallback                | the `courses/` and `paths/` content homes — `ayokoding-learning-path-01-url-restructure` |
-| The `/en` landing hero's four goal cards and "Compare all paths" escape hatch                 | Every `.yaml` path manifest — `ayokoding-learning-path-05-manifests`                     |
-| The paths hub and the four path landing routes (rendered against a **fixture** manifest)      | Every course body — `ayokoding-learning-path-04-course-authoring`                        |
-| The fixture-manifest e2e suite and the accessibility contract for path-aware navigation       | The per-course re-home redirect table — `ayokoding-learning-path-01-url-restructure`     |
+| Owned here                                                                                                                                                                                                                                                     | Owned elsewhere                                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UI design funnel — Screens 0–3 plus the new **Screen 1a** (category landing) and **Screen 1b** (arc landing) — low-fi wireframes, hi-fi renders, selections, rationale                                                                                         | Screen 4 funnel and its 6 renders — `ayokoding-learning-path-01-url-restructure`                                                                                                                                                                                                   |
+| `course-paths` **shell**: repository, path landing, path card, path rail, banner, prereq list, **category landing, arc landing**                                                                                                                               | `course-paths` **core** — `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                                                                                                 |
+| `?path=` route wiring (variable-depth `pathId`), path-aware prev/next and breadcrumb, canonical fallback                                                                                                                                                       | the `courses/` and `paths/` content homes, and every `careers/`-scoped `_index.md` (hub, category, arc landings) — `ayokoding-learning-path-01-url-restructure`                                                                                                                    |
+| The `/en` landing hero's four career-goal cards and "Compare all paths" escape hatch                                                                                                                                                                           | Every `.yaml` **careers** path manifest — `ayokoding-learning-path-05-manifests`                                                                                                                                                                                                   |
+| The category-grouped paths hub (Careers + Skills), the `careers/` category and arc landings, and the four **careers** path landing routes (rendered against **fixture** manifests, including a skills-shaped fixture proving variable-depth `pathId` handling) | Every course body — `ayokoding-learning-path-04-course-authoring`; the `skills/` category landing's `_index.md`, both skills manifests, and the ERP + accounting corpus — the new skills-category plan (see [Category Split Ruling](#category-split-ruling-2026-07-21-r1r8) below) |
+| The fixture-manifest e2e suite and the accessibility contract for path-aware navigation                                                                                                                                                                        | The per-course re-home redirect table — `ayokoding-learning-path-01-url-restructure`                                                                                                                                                                                               |
+
+## Category Split Ruling (2026-07-21, R1–R8)
+
+The maintainer ruled a **path-category split** on 2026-07-21, after this plan was first drafted
+around a flat four-path model. Where the ruling contradicts earlier text anywhere in this folder,
+**the ruling wins**. Summarized here for this plan's own reference; the full ruling record is
+authoritative across all six split plans, not owned by this one alone.
+
+- **R1 — two categories, deliberately different URL depth.** `careers/<arc>/<role>`
+  (3 segments, 4 paths) and `skills/<subject>` (2 segments, 2 paths). `/en/learn/paths/` does not
+  exist in today's content tree — plan 01 creates the whole space — so inserting the category
+  segment costs **zero redirects**.
+- **R2 — `pathId` is variable-depth, by design.** The schema, the `?path=` parser, and the
+  manifest-directory globbing must handle both 2- and 3-segment ids without hardcoding either depth
+  as an invariant; only "first segment is `careers` or `skills`, and the id resolves to a manifest
+  that exists" is validated. See
+  [tech-docs.md §R2 rendering consequence](./tech-docs.md#r2-rendering-consequence-pathid-is-variable-depth)
+  below.
+- **R3 — the fourth path is a from-scratch AI-engineering path**, `careers/immediately-effective/ai-engineer` —
+  a content change, not a rename of the retired `software-engineer-to-ai-engineer` transition path.
+  It no longer assumes an already-working software engineer; its prerequisites are **included** in
+  `courseOrder`, not linked. The included prerequisites are existing library courses, so this authors
+  no new course body — the growth lands in the manifest (plan 05's scope), not in authoring (plan
+  04's). Every place in this plan that assumed the old "already a SWE / prerequisites linked" framing
+  has been corrected — see [prd.md Personas](./prd.md#personas-one-per-path) and
+  [prd.md Screen 3](./prd.md#screen-3--course-page-in-path-context) (the `path-course-links` badge
+  narrative).
+- **R4 — ownership split.** Plans 01–05 stay **careers-only**; a new skills-category plan owns the
+  `skills/` category end-to-end (both path landings' content, both manifests, and the full ERP +
+  accounting corpus). Plan 05 still publishes exactly **4** manifests (careers). This plan's
+  rendering components are category-agnostic so the skills-category plan can render through them —
+  see the [Scope in one screen](#scope-in-one-screen) table above.
+- **R5 — the skills corpus is authored, not scaffolded** (owned by the skills-category plan; this
+  plan only needs a skills-**shaped** fixture to prove R2's variable-depth handling — no real skills
+  content is owned here).
+- **R6 — the hub changes shape.** The paths hub was a 2×2 grid, one card per manifest, for 4 paths.
+  It now shows 6 paths in 2 categories at different depths — see
+  [prd.md Screen 1](./prd.md#screen-1--paths-hub-choose-your-path).
+- **R7 — every URL segment renders a real page; no orphan segments.** Five new pages are needed:
+  the `careers/` category landing, the three `careers/<arc>/` arc landings, and the `skills/`
+  category landing. The arc landing is a genuinely new IA concept — an arc was previously only a URL
+  segment and a manifest attribute. `careers/immediately-effective/` is the design case (it lists
+  **2** paths; the other two arcs list 1 each and must not read as broken or empty for it). See
+  [prd.md Screen 1a](./prd.md#screen-1a--category-landing-careers-and-skills) and
+  [prd.md Screen 1b](./prd.md#screen-1b--arc-landing-careersarc-only).
+- **R8 — skills paths are always the `immediately-effective` arc.** The arc is **constant** for
+  every skills path, so the URL omits it (that is _why_ `skills/<subject>` is only 2 segments, not
+  because skills lacks a pedagogy) — the arc still lives in the manifest's `arc` field, which is what
+  keeps a future `skills/<arc>/<subject>` purely additive. Consequently the `skills/` category
+  landing has **no arc chooser** — it states the ramp promise once — while the `careers/` category
+  landing's whole job is helping a reader choose between three real arc options. The two category
+  landings are **not** one template with swapped data; see
+  [prd.md Screen 1a](./prd.md#screen-1a--category-landing-careers-and-skills).
 
 ## Wave and dependency position
 
@@ -89,14 +145,14 @@ path landings, and the paths hub.
 
 ### Upstream — what must exist before this plan starts
 
-| Upstream plan                                            | Artefact needed                                                                   | Why this plan cannot start without it                                                                                                               |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ayokoding-learning-path-01-url-restructure`             | `apps/ayokoding-www/src/redirects/` per-course re-home table                      | the Phase-4 e2e asserts a legacy `fundamentally-strong` URL redirects to `/en/c/learn/courses/<id>`; without the table that spec can never go green |
-| `ayokoding-learning-path-01-url-restructure`             | `apps/ayokoding-www/content/en/learn/courses/_index.md` and `.../paths/_index.md` | `PathLanding` and `PathCard` render from `<PATHS>_index.md`; with no content home there is no route to render into                                  |
-| `ayokoding-learning-path-01-url-restructure`             | the final three-bucket tree (`courses/`, `paths/`, `legacy/`)                     | the no-path regression sweep must compare against the final IA, not a hybrid one                                                                    |
-| `ayokoding-learning-path-01-url-restructure`             | Open Question **Q-E** ruling (three residual `fundamentally-strong` index pages)  | determines what the legacy-browse coexistence guard asserts                                                                                         |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` | `apps/ayokoding-www/src/features/course-paths/core/` (all five pure modules)      | every shell component imports them; `manifest-repository.ts` cannot validate without `schemas.ts`                                                   |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` | `apps/ayokoding-www/src/features/course-paths/manifests/`                         | the repository globs `**/*.yaml` from this directory                                                                                                |
+| Upstream plan                                            | Artefact needed                                                                   | Why this plan cannot start without it                                                                                                             |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ayokoding-learning-path-01-url-restructure`             | `apps/ayokoding-www/src/redirects/` per-course re-home table                      | the Phase-4 e2e asserts a legacy `fundamentally-strong` URL redirects to `/en/learn/courses/<id>`; without the table that spec can never go green |
+| `ayokoding-learning-path-01-url-restructure`             | `apps/ayokoding-www/content/en/learn/courses/_index.md` and `.../paths/_index.md` | `PathLanding` and `PathCard` render from `<PATHS>_index.md`; with no content home there is no route to render into                                |
+| `ayokoding-learning-path-01-url-restructure`             | the final three-bucket tree (`courses/`, `paths/`, `legacy/`)                     | the no-path regression sweep must compare against the final IA, not a hybrid one                                                                  |
+| `ayokoding-learning-path-01-url-restructure`             | Open Question **Q-E** ruling (three residual `fundamentally-strong` index pages)  | determines what the legacy-browse coexistence guard asserts                                                                                       |
+| `ayokoding-learning-path-02-schema-and-prerequisite-dag` | `apps/ayokoding-www/src/features/course-paths/core/` (all five pure modules)      | every shell component imports them; `manifest-repository.ts` cannot validate without `schemas.ts`                                                 |
+| `ayokoding-learning-path-02-schema-and-prerequisite-dag` | `apps/ayokoding-www/src/features/course-paths/manifests/`                         | the repository globs `**/*.yaml` from this directory                                                                                              |
 
 **Start precondition (checkable — all four must hold):**
 
@@ -107,13 +163,14 @@ path landings, and the paths hub.
 
 ### Downstream — what this plan hands off, and to whom
 
-| Downstream plan                        | Artefact handed over                                                                             | Consumed by                                                                          |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/path-landing.tsx`, `path-card.tsx`                                                  | every path landing and the 2×2 paths-hub grid renders through these                  |
-| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/manifest-repository.ts`                                                             | a published YAML manifest is inert until this loads and validates it                 |
-| `ayokoding-learning-path-05-manifests` | `?path=` wiring in `apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`          | path context, prev/next, breadcrumb                                                  |
-| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/path-rail.tsx`, `path-banner.tsx`, `path-course-links.tsx`, `prerequisite-list.tsx` | the manifest plan's manual verification walks all of these                           |
-| `ayokoding-learning-path-05-manifests` | the fixture-manifest e2e pattern                                                                 | the manifest plan re-asserts the same four nav behaviours against **real** manifests |
+| Downstream plan                        | Artefact handed over                                                                                         | Consumed by                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/path-landing.tsx`, `path-card.tsx`                                                              | every path landing and the category-grouped paths-hub renders through these                                                   |
+| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/manifest-repository.ts`                                                                         | a published YAML manifest is inert until this loads and validates it                                                          |
+| `ayokoding-learning-path-05-manifests` | `?path=` wiring in `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`                        | path context, prev/next, breadcrumb (variable-depth `pathId`, per R2)                                                         |
+| `ayokoding-learning-path-05-manifests` | `<FEAT>shell/path-rail.tsx`, `path-banner.tsx`, `path-course-links.tsx`, `prerequisite-list.tsx`             | the manifest plan's manual verification walks all of these                                                                    |
+| `ayokoding-learning-path-05-manifests` | the fixture-manifest e2e pattern                                                                             | the manifest plan re-asserts the same four nav behaviours against **real** manifests                                          |
+| the new skills-category plan (R4)      | `<FEAT>shell/category-landing.tsx`, `arc-landing.tsx`, `manifest-repository.ts` (2-segment `pathId` support) | the `skills/` category landing and both skills path landings render through these, once that plan publishes its two manifests |
 
 ### Screen 0 is design-only in this plan unless an implementation step is added
 
@@ -149,13 +206,27 @@ this plan cannot tick archival on an unshipped screen. Screen 0 is **not** recor
   `ayokoding-learning-path-01-url-restructure` (all six of Q-A…Q-F live there). Its ruling
   determines what this plan's legacy-browse coexistence guard and no-path regression sweep assert.
   See that plan's `tech-docs.md` §Open Questions for the authoritative copy and its recommended
-  default (fold the three pages into the `fundamentally-strong/software-engineer` path landing).
+  default (fold the three pages into the `careers/fundamentally-strong/software-engineer` path
+  landing).
 
 ## Build order (inherited)
 
 Reproduced **verbatim** from the source plan because Group A alone spans three of the five split
 plans, so no single plan owns the sequencing rule.
 `ayokoding-learning-path-05-manifests` is the canonical owner for citation purposes.
+
+> **Stale relative to the 2026-07-21 category-split ruling — flagged, not silently corrected here.**
+> The unprefixed path ids below (`immediately-effective/software-engineer`, etc.) and the
+> `software-engineer-to-ai-engineer` name predate R1 (the `careers/` prefix) and R3 (the fourth path
+> is renamed `ai-engineer` and its course-count estimate of "~17 courses" no longer holds now that
+> its prerequisites are **included**, not linked — R3's own clarification is that this pulls in
+> **existing** library courses only, so no new course body is authored, but the manifest is larger
+> than "~17" implies). Because this block is a verbatim quote canonically owned by
+> `ayokoding-learning-path-05-manifests`, this plan does **not** edit it in place — editing a
+> verbatim-owned block from a sibling plan risks drifting from that plan's own concurrent correction.
+> Plan 05 is responsible for updating its canonical copy; this plan's own content (personas, Screen
+> designs, the `path-course-links` badge narrative) has been corrected — see
+> [Category Split Ruling](#category-split-ruling-2026-07-21-r1r8) above.
 
 - **DD-15 · Build order (locked; amended 2026-07-20 by DD-27 — see below).** Group A (architecture +
   `course-paths` UI — hard prerequisite) → `interview-ready` MVP ships first (re-home 1–33, author the
@@ -191,7 +262,9 @@ paragraph exists to prevent exactly that.
 ## Decisions Locked (inherited)
 
 Reproduced **verbatim**. `DL-11` does not exist — the slot between `DL-10` and `DL-12` is occupied by
-`DN-11`, a Delivery Note. **Do not renumber to close the gap.**
+`DN-11`, a Delivery Note. **Do not renumber to close the gap.** DL-7 below carries the same
+category-split staleness flagged above the Build order section — not corrected in place here for the
+same verbatim-ownership reason.
 
 - **DL-7 · Build order — amended 2026-07-20, see DL-15 / tech-docs DD-27.** Deliver Group A
   (architecture + UI) first as a hard prerequisite; then an **interview-ready MVP that is an
@@ -229,12 +302,19 @@ Reproduced **verbatim**. `DL-11` does not exist — the slot between `DL-10` and
   [prd.md §Hi-fi asset matrix](./prd.md#hi-fi-asset-matrix-screen--option--viewport).
   **Decided 2026-07-21.**
 
-> **DD-47 arithmetic after the split.** DL-17's "30 `.png` total" is a **two-plan** total. This plan
-> produces and holds **24** of them (Screens 0–3 × 2 options × 3 viewports);
-> `ayokoding-learning-path-01-url-restructure` produces and holds the remaining **6** (Screen 4 × 2
-> options × 3 viewports). A reader auditing DD-47 against this plan alone must **not** read 24 as
-> under-delivery, and no executor may "fix" the gap by copying the other plan's renders here — a
-> duplicated matrix drifts.
+> **DD-47 arithmetic after the split.** DL-17's "30 `.png` total" was a **two-plan** total under the
+> original 4-path model (this plan: 24, Screens 0–3 × 2 options × 3 viewports;
+> `ayokoding-learning-path-01-url-restructure`: the remaining 6, Screen 4 × 2 options × 3 viewports).
+>
+> **Amended 2026-07-21 by the category-split ruling (R6/R7).** Two screen types are added to this
+> plan's own funnel — **Screen 1a** (category landing) and **Screen 1b** (arc landing) — and Screen 1
+> (the hub) is redesigned rather than dropped, so this plan's own screen count rises from 4 to **6**
+> (Screens 0, 1, 1a, 1b, 2, 3). This plan now produces and holds **36** renders
+> (6 screens × 2 options × 3 viewports); `ayokoding-learning-path-01-url-restructure`'s Screen 4 share
+> is unchanged at 6. The grand cross-plan total is therefore **42**, not 30. A reader auditing DD-47
+> against this plan alone must **not** read 36 as over- or under-delivery relative to the old 24/30
+> figures — those predate the category split. No executor may "fix" any apparent gap by copying the
+> other plan's renders here — a duplicated matrix drifts.
 
 ## Design decisions owned here
 
@@ -250,9 +330,13 @@ Three of the source plan's 41 design decisions are canonically owned by this pla
 ## Personas (one per path)
 
 Duplicated verbatim into every split plan: a plan whose personas live in a sibling folder cannot be
-reviewed for fit-for-purpose. All four are carried, not just the ones this surface serves — every
-screen this plan builds is reached by readers of all four paths. See
-[prd.md §Personas](./prd.md#personas-one-per-path) for the authoritative copy in this folder.
+reviewed for fit-for-purpose. All four **careers** personas are carried, not just the ones this
+surface serves — every screen this plan builds is reached by readers of all four careers paths. Two
+of this plan's own screens (the paths hub, the category landing) are **also** reached by skills
+readers once the skills-category plan publishes its content (R4); this plan does not carry skills
+personas — that plan owns them — but its rendering components are proven category-agnostic against a
+skills-shaped fixture (see [tech-docs.md §Fixture strategy](./tech-docs.md#fixture-strategy-how-this-plan-is-provable-before-any-manifest-exists)).
+See [prd.md §Personas](./prd.md#personas-one-per-path) for the authoritative copy in this folder.
 
 ## Navigation
 

@@ -2,16 +2,16 @@
 
 ## Product Overview
 
-When this plan lands, `/{locale}/c/learn/` has **exactly three** structural buckets and nothing else:
+When this plan lands, `/{locale}/learn/` has **exactly three** structural buckets and nothing else:
 
 - **`paths/`** — the ordered path manifests' landing anchors, served at
-  `/en/c/learn/paths/<arc>/<role-or-subject>`. This plan creates the bucket and its 2×2-grid hub
+  `/en/learn/paths/<arc>/<role-or-subject>`. This plan creates the bucket and its 2×2-grid hub
   landing; the four path landings and the manifests behind them belong to sibling plans.
 - **`courses/`** — canonical, path-neutral course bodies in a **flat** namespace, served at
-  `/en/c/learn/courses/<course-id>`. This plan re-homes the **33 shipped topics + 4 existing
+  `/en/learn/courses/<course-id>`. This plan re-homes the **33 shipped topics + 4 existing
   capstones** into it, each with a per-course 308 redirect from its old URL, and each declaring
   `prerequisites: [course-id, ...]`.
-- **`legacy/`** — everything under `/en/c/learn/` that is not yet a course or a path: the six
+- **`legacy/`** — everything under `/en/learn/` that is not yet a course or a path: the six
   remaining domains (`software-engineering`, `artificial-intelligence`, `information-security`,
   `personal-development`, `it-governance`, `business`; **1,148** `.md` [Repo-grounded]), relocated as
   a **prefix move that preserves each domain's sub-taxonomy verbatim** — no page is rewritten — with
@@ -33,25 +33,28 @@ path this plan touches: every plan's surface is reached by readers of all four p
 personas live in a sibling folder cannot be reviewed for fit-for-purpose.
 
 - **Experienced engineer re-entering the job market (north-star for the
-  `interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
+  `careers/interview-ready/software-engineer` path)** — recently laid off, returning from a gap/sabbatical, or
   an employed senior wanting to switch. Already owns the editor workflow and deep fundamentals; needs
   to **refresh breadth fast, relearn interview technique** at mid/senior/staff level, and handle a
   **layoff / employment-gap narrative** — without walking a from-scratch curriculum. Interview/job prep
   FIRST.
 - **A builder who wants to be effective fast (north-star for the
-  `immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
+  `careers/immediately-effective/software-engineer` path)** — wants "immediately effective" SWE: set up the
   editor, learn one language end-to-end, **ship a real app early**, then deepen into CS fundamentals,
   DS&A, algorithms, and systems. Serves both a from-scratch learner and a mid-career switcher.
 - **A university-style, fundamentals-first learner (north-star for the
-  `fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
+  `careers/fundamentally-strong/software-engineer` path)** — wants the rigorous bottom-up route: CS
   foundations, computer architecture, paradigms, and data structures & algorithms **before** building
   apps at scale. Prefers to understand the machine and the theory first, then apply it.
-- **An already-working software engineer transitioning to AI engineering (north-star for the
-  `immediately-effective/software-engineer-to-ai-engineer` path, added 2026-07-20)** — already owns the
-  SWE fundamentals the other three paths teach; wants to become immediately effective at **building**
-  AI systems (models, agents, evals, inference serving), not at driving coding agents. Prerequisite
-  courses are **linked, not included** in this path's manifest. Converges on a distinct AI-engineering
-  endpoint, not the other three paths' shared software-engineering endpoint.
+- **A from-scratch learner who wants to become an AI engineer, with no assumed prior
+  software-engineering competence (north-star for the `careers/immediately-effective/ai-engineer` path, added
+  2026-07-20, renamed from `software-engineer-to-ai-engineer` and re-modelled 2026-07-21 — paths are
+  named by their endpoint, never by an assumed starting point)** — wants to become immediately
+  effective at **building** AI systems (models, agents, evals, inference serving), not at driving
+  coding agents. The needed software-engineering fundamentals are **included** in this path's own
+  composition (existing library courses, not new bodies), not merely linked as an assumed
+  prerequisite. Converges on a distinct AI-engineering endpoint, not the other three paths' shared
+  software-engineering endpoint.
 - **A reader who lands on a shared course by deep-link / share** — arrives at a course URL without a
   path context and must get a coherent standalone view (with its prerequisites surfaced) plus an
   obvious way to enter a path.
@@ -68,7 +71,7 @@ built around:
 
 ## User Stories
 
-- As a **reader browsing `/en/c/learn`**, I want the section to offer exactly three understandable
+- As a **reader browsing `/en/learn`**, I want the section to offer exactly three understandable
   choices — follow a path, browse the course library, or dig into the older material — so that I am
   not handed a mixed taxonomy of two structural buckets sitting beside six subject domains.
 - As a **reader who bookmarked or search-landed on an older learn page**, I want my URL to keep
@@ -100,7 +103,7 @@ and does not restate it.
 
 ## UI-Design-Funnel — Screen 4 · Legacy-bucket landing and page banner
 
-This plan is **UI-bearing**: it adds one user-facing screen (the `/en/c/learn/legacy` landing) and,
+This plan is **UI-bearing**: it adds one user-facing screen (the `/en/learn/legacy` landing) and,
 under [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)'s recommended answer, a per-page
 **"legacy / superseded"** banner on relocated pages. Both run the funnel — with one honest difference
 recorded up front: **the selection is pending the Q-D ruling.** The low-fi alternatives below map 1:1
@@ -114,9 +117,9 @@ renders. This plan carries Screen 4 and its 6.
 **R5 grounding note** — no net-new component is required. The banner is the existing composite
 `Alert` (`Alert` / `AlertTitle` / `AlertDescription` from `@open-sharia-enterprise/web-ui`, the same
 primitive the navigation plan's Screen 2 fast-path callout uses); the landing is an ordinary content
-`_index.md` rendered by the existing `/c/[...slug]` route with the existing `Breadcrumb` +
+`_index.md` rendered by the existing `[...slug]` content route with the existing `Breadcrumb` +
 `MarkdownRenderer` [Repo-grounded —
-`apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`]. **Zero new components; zero
+`apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`]. **Zero new components; zero
 navigation code changes** (DD-44).
 
 **R7 prior-art citation** — the alternatives are informed by how comparable documentation and course
@@ -173,7 +176,7 @@ _Tablet — 768 px: two-column domain list (`md:grid-cols-2`); notice on two lin
 _Desktop — 1280 px_
 
 ```text
-┌──────────────── /en/c/learn/legacy ─────────────────────────────────────┐
+┌──────────────── /en/learn/legacy ─────────────────────────────────────┐
 │ Home / Browse / Learn / Legacy                                           │
 │ # Legacy material                                                        │
 │ ⓘ Older material kept for reference while the course library fills.      │
@@ -221,7 +224,7 @@ _Tablet — 768 px_
 _Desktop — 1280 px_
 
 ```text
-┌──────────────── /en/c/learn/legacy ─────────────────────────────────────┐
+┌──────────────── /en/learn/legacy ─────────────────────────────────────┐
 │ # Legacy material                                                        │
 │ ⓘ Older material kept for reference.                                     │
 │ • Software Engineering   • Artificial Intelligence  • …                  │
@@ -259,7 +262,7 @@ _Tablet — 768 px_
 _Desktop — 1280 px_
 
 ```text
-┌──────────────── /en/c/learn/legacy  (robots: noindex) ──────────────────┐
+┌──────────────── /en/learn/legacy  (robots: noindex) ──────────────────┐
 │ # Legacy material  (not indexed; reachable from in-site nav only)        │
 │ • Software Engineering   • …                                            │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -334,10 +337,11 @@ rendered from a token-accurate source at `assets/src/<same-stem>.html`. Screen s
 
 ## Acceptance Criteria (Gherkin)
 
-Fourteen scenarios. Twelve are inherited whole from the source plan; two are additions made at split
-time and flagged below. Each scenario uses exactly one primary `Given`/`When`/`Then`; extras chain
-with `And`. Every scenario is bound to a delivery step in [delivery.md](./delivery.md) — none is left
-unbound.
+Fifteen scenarios. Twelve are inherited whole from the source plan; two are additions made at split
+time and flagged below; one is a **new addition for the DD-48 de-namespacing scope extension**,
+flagged in its own subsection. Each scenario uses exactly one primary `Given`/`When`/`Then`; extras
+chain with `And`. Every scenario is bound to a delivery step in [delivery.md](./delivery.md) — none
+is left unbound.
 
 ### Re-home and per-course redirects
 
@@ -345,7 +349,7 @@ unbound.
 Scenario: A legacy fundamentally-strong URL redirects to the canonical course URL
   Given a re-homed course previously lived under the legacy fundamentally-strong/software-engineer content path
   When a reader requests the legacy URL
-  Then the app redirects to the course's canonical /en/c/learn/courses/<course-id> URL
+  Then the app redirects to the course's canonical /en/learn/courses/<course-id> URL
   And the redirect preserves any path context query parameter
 ```
 
@@ -367,25 +371,41 @@ Scenario: Every re-homed course declares its prerequisites
 Scenario: The legacy section-index browse still resolves after re-homing
   Given the 33 shipped topics have been re-homed into the course library
   When a reader browses the legacy fundamentally-strong software-engineer section index the old way
-  Then every section-index entry links to live content at its /en/c/learn/courses/<course-id> URL or via a redirect
+  Then every section-index entry links to live content at its /en/learn/courses/<course-id> URL or via a redirect
   And no legacy section-index entry resolves to a drained or missing location
 ```
 
 ```gherkin
 Scenario: The legacy section-index browse resolves to the canonical course body
-  Given a course now lives at its canonical /en/c/learn/courses/<course-id> URL
+  Given a course now lives at its canonical /en/learn/courses/<course-id> URL
   When a reader reaches it via the legacy section-index browse
   Then the browse resolves to that single canonical course body
   And no forked or duplicated body is served for the legacy route
 ```
 
 > _Provenance_: the source plan's "Old-way and new-way navigation coexist" scenario asserted that the
-> legacy browse **and** a `/en/c/learn/paths/<path-id>` path landing resolve to one canonical body.
+> legacy browse **and** a `/en/learn/paths/<path-id>` path landing resolve to one canonical body.
 > The path-landing half needs a published manifest and a landing renderer, neither of which exists in
 > this plan. The scenario was therefore **split in two**: this plan keeps the narrowed legacy-browse
 > half above, and `ayokoding-learning-path-05-manifests` gains the both-routes scenario at its
 > first-manifest gate. Merging this plan with the navigation plan to keep the original whole was
 > rejected: it would collapse Wave 1 into Wave 2 and destroy the parallelism the split exists to buy.
+
+### De-namespacing (DD-48)
+
+```gherkin
+Scenario: The de-namespaced redirect chain never loops
+  Given the content-namespace redirect module has been inverted to leave the retired /c/ segment
+  When every redirect rule across all four of this plan's modules is inspected
+  Then no rule declares a destination containing a /c/ segment
+  And no two rules combine to redirect any URL back to itself
+```
+
+> _Provenance_: **new at split time**, added for the DD-48 scope extension (the site-wide
+> `/c/`-segment removal folded into this plan). Neither the source plan nor the pre-split
+> `ayokoding-learning-path-01-url-restructure` draft carried a scenario for this — the `/c/` namespace
+> did not exist as a routing concern for either. Bound to the Phase 3.0 RED/GREEN steps and the Phase 3
+> gate's loop-safety check in [delivery.md](./delivery.md).
 
 ### Three-bucket learn-section IA
 
@@ -496,15 +516,22 @@ Scenario: The relocated tree builds and validates green
   choose-a-path landing whose 2×2-grid layout has room for all four paths, populated as each ships).
 - The **`legacy/` bucket**: prefix-relocating the six non-course `en/learn/` domains (1,148 `.md`) via
   a pure `git mv` per domain (DD-40/DD-41).
-- A new **per-domain 308 redirect module** `src/redirects/learn-three-bucket.ts` (12 rules: 6 domains
-  × 2 inbound tiers) with its unit test, wired into `next.config.ts` in the load-bearing order
-  (DD-42).
+- A new **per-domain 308 redirect module** `src/redirects/learn-three-bucket.ts` (6 rules, single tier:
+  one per relocated domain) with its unit test, wired into `next.config.ts` in the load-bearing order
+  (DD-42, collapsed to one tier by DD-48).
 - The authored **`legacy/_index.md`** landing (DD-44) and the rewritten hand-authored
   `en/learn/overview.md` (DD-45/Q-F); regeneration of `en/learn/_index.md` and
   `generated/search-data.json`.
 - The **Screen 4 design funnel** for the legacy landing and per-page banner, with its 6 renders.
 - A `specs/` Gherkin companion under the existing `navigation/` domain folder, plus e2e coverage of
-  both inbound redirect forms and both negative cases.
+  both bare and stale-`/c`-bookmark inbound forms and both negative cases.
+- **De-namespacing (DD-48, site-wide scope extension)**: inverting `content-namespace.ts` in place to
+  leave the retired `/c/` segment for all five namespaced sections (`en/learn`, `en/rants`,
+  `id/belajar`, `id/celoteh`, `id/konten-video`); deleting the `c/[...slug]` and `c/page.tsx` routes;
+  widening `[...slug]/page.tsx` to serve loose pages and the full content tree, and relocating the
+  browse index to `browse/page.tsx`; updating `contentUrl()`, `LOOSE_PAGE_ALLOWLIST`'s role, and
+  `breadcrumb.tsx`'s `contentHrefs` collapse — the full file inventory is in
+  [tech-docs.md's De-namespacing section](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48).
 
 **Out-of-scope features**:
 
@@ -529,18 +556,28 @@ Scenario: The relocated tree builds and validates green
 - **URL breakage on re-home**: 37 live production URLs move at once. Mitigated by landing the
   per-course redirect table **in the same phase as the move**, asserted over all 37 mappings by a unit
   test before the phase gate closes, and by an e2e assertion on a real legacy URL.
-- **Blanket-redirect swallow / self-recursion**: a single `/en/c/learn/:path*` →
-  `/en/c/learn/legacy/:path*` rule would swallow `courses/` and `paths/` and re-match its own
+- **Blanket-redirect swallow / self-recursion**: a single `/en/learn/:path*` →
+  `/en/learn/legacy/:path*` rule would swallow `courses/` and `paths/` and re-match its own
   destination. Mitigated by DD-42's explicit per-domain enumeration plus a unit-test assertion that no
-  such blanket source exists — the same guard `content-namespace.ts` already carries in prose.
+  such blanket source exists — the same guard `content-namespace.ts` (now inverted and owned by this
+  plan under DD-48) already carried in prose before this plan touched it.
+- **Namespace-inversion infinite loop (DD-48)**: inverting `content-namespace.ts` while any other
+  module still redirects a bare URL back into `/c/` would loop forever
+  (`/en/learn/x → /en/c/learn/x → /en/learn/x`). Mitigated by landing the inversion and the six-domain
+  relocation atomically in Phase 3 (see
+  [Why Phase 3 is one phase, not two](./tech-docs.md#why-phase-3-is-one-phase-not-two)) and by a
+  standing negative assertion — no rule across any of the four redirect modules has a `/c/`-containing
+  destination — checked in both the redirect unit tests and the Phase 3 gate.
 - **`fundamentally-strong` shadowing**: a `fundamentally-strong` prefix rule in the bucket module
   would shadow the per-course rules for all 37 already-built directories, silently sending every
   re-homed course to a legacy URL that holds nothing. Mitigated by DD-43's explicit exclusion and a
   negative unit assertion — writable only because this plan owns both rule sets.
-- **Redirect-order regression**: moving `learnThreeBucketRedirects` in `next.config.ts` would either
-  strand historical renames under their pre-rename names or restore a three-hop chain. Mitigated by
-  DD-42's stated ordering plus e2e coverage of both inbound forms and of the `learn-reorg` → bucket
-  chain (URL-mapping row 9), re-asserted as a standing check in Phase 4.
+- **Redirect-order regression**: misordering the four modules in `next.config.ts` — the load-bearing
+  order is now `contentNamespace` → `learnReorg` → `courseRehome` → `learnThreeBucket` (re-derived for
+  DD-48, not the pre-de-namespacing order) — would either strand historical renames under their
+  pre-rename names or restore a stale-`/c`-bookmark hop that never resolves. Mitigated by DD-48's
+  stated ordering plus e2e coverage of both bare and stale-`/c` inbound forms and of the `learn-reorg`
+  → bucket chain (URL-mapping row 9), re-asserted as a standing check in Phase 4.
 - **Missing `legacy/_index.md`**: without it, `generate-indexes` produces no child list and
   `buildTreeForLocale` synthesizes a `weight: 0` "Legacy" node that sorts **first** in the sidebar,
   ahead of `courses/` and `paths/`. Mitigated by making the authored `_index.md` (with an explicit
@@ -551,14 +588,20 @@ Scenario: The relocated tree builds and validates green
   (Screen 4); the residual risk is that the banner is only as good as the superseded-by mapping, which
   is why [Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive) recommends
   recording it in the surviving course's `overview.md` rather than in a separate ledger.
-- **Feed churn on relocation**: every relocated item's RSS `<guid>` changes with its URL, so
-  subscribers may see ~1,148 items re-surface as new. Accepted as a one-time cost of the move and
-  called out in the IA-consequence table; no mitigation exists short of not moving the content.
+- **Feed churn, two sources now (DD-48)**: relocation churns ~1,148 legacy items' RSS `<guid>`s;
+  de-namespacing separately churns every namespaced item's `<guid>` (all five sections, both locales)
+  when its URL drops `/c/`. Both are accepted one-time costs — the 37 re-homed courses are the only
+  overlap, and bundling the inversion into Phase 3 caps their double-churn at 37 items rather than the
+  full 1,148 a Phase-1 placement would cost (see
+  [Churn consequence](./tech-docs.md#churn-consequence--sequenced-to-minimize-double-churn-not-eliminate-it)).
+  No mitigation exists short of not moving/renaming the content.
 - **Navigation regresses for non-path readers**: the relocation is one of two ways the sidebar can
-  regress. Mitigated by the IA being entirely tree-derived (DD-44 — zero production code edits beyond
-  the redirect module) plus a no-path sweep at all three breakpoints in Phase 5. The **other** way —
-  the path rail sharing the shipped `ResizableSidebar` — is guarded by
-  `ayokoding-learning-path-03-navigation-ui`, which owns that component and that risk.
+  regress. Mitigated by the six-domain relocation's IA being entirely tree-derived (DD-44 — zero
+  production code edits beyond the redirect module, **scoped to the relocation itself**; DD-48's
+  de-namespacing is a separate, explicitly-scoped production-code change also landing in Phase 3) plus
+  a no-path sweep at all three breakpoints in Phase 5. The **other** way — the path rail sharing the
+  shipped `ResizableSidebar` — is guarded by `ayokoding-learning-path-03-navigation-ui`, which owns
+  that component and that risk.
 - **A prerequisite-frontmatter shape mismatch across Wave 1**: this plan writes
   `prerequisites:` into 37 files while the sibling schema plan writes the resolver that parses it.
   The field is inert until a Wave-2 consumer reads it, so **nothing fails in Wave 1** — a mismatch

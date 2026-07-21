@@ -130,15 +130,19 @@ nothing depends on distinguishing the fills.
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
 - `<NAV>` = `apps/ayokoding-www/src/features/navigation/shell/`
 - `<APPSHELL>` = `apps/ayokoding-www/src/features/app-shell/shell/`
-- `<ROUTE>` = `apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx`
+- `<ROUTE>` = `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<E2E>` = `apps/ayokoding-www-fe-e2e/`
 - `<PLAN>` = `plans/in-progress/ayokoding-learning-path-03-navigation-ui/` (this plan's folder — while
   the plan still sits in `plans/backlog/`, substitute that prefix instead; every `<PLAN>`-scoped
   acceptance command is run **from the repo root** so the path is unambiguous)
-- Path ids (fixture and real): `interview-ready/software-engineer`,
-  `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`,
-  `immediately-effective/software-engineer-to-ai-engineer`
+- Path ids (fixture and real — **renamed 2026-07-21 by the category-split ruling**: every careers path
+  id gains the `careers/` prefix, and the fourth path's terminal segment is renamed
+  `software-engineer-to-ai-engineer` → `ai-engineer` per R3):
+  `careers/interview-ready/software-engineer`, `careers/immediately-effective/software-engineer`,
+  `careers/fundamentally-strong/software-engineer`, `careers/immediately-effective/ai-engineer`,
+  and — new, 2-segment, R2 — the two skills path ids: `skills/enterprise-resource-planning`,
+  `skills/accounting`
 
 ## Markdown validation commands
 
@@ -255,7 +259,7 @@ back to the source plan; do not renumber to "close the gaps".
 
 ---
 
-## Phase 1: UI design funnel (Screens 0–3)
+## Phase 1: UI design funnel (Screens 0, 1, 1a, 1b, 2, 3)
 
 > _Suggested executor: `web-researcher` (R7 prior art) + the `swe-developing-frontend-ui` skill for the
 > funnel work._
@@ -278,12 +282,16 @@ back to the source plan; do not renumber to "close the gaps".
       `[Unverified]` claim survives in that section.
   - _Suggested executor: `web-researcher`_
 
-### Hi-fi mockup matrix — 4 screens × 2 options × 3 viewports = 24 `.png`
+### Hi-fi mockup matrix — 6 screens × 2 options × 3 viewports = 36 `.png`
 
 > **This is a large render volume, so it is enumerated per asset rather than hidden behind one
-> "render all mockups" checkbox.** 8 desktop renders (Screens 0-3) already exist in this plan's
-> `assets/` and carry the `-desktop` suffix; **16** more are produced here (Screens 0-3 × mobile +
-> tablet). Naming scheme, render widths, and alt-text rules:
+> "render all mockups" checkbox.** **Amended 2026-07-21 by the category-split ruling (R6/R7)**: 12
+> desktop HTML sources now exist in `<PLAN>assets/src/` (the original 8, content-fixed/rebuilt in place
+> for R6/R8/path-id renames — same filenames — plus 4 new stems for Screens 1a/1b), but **zero of the
+> 36 target `.png` files are currently valid** — the 8 pre-existing renders are stale against their
+> edited HTML (this is a superset of, not a duplicate of, the already-known de-namespacing staleness:
+> the hub and hero HTML changed for **content**, not just URL strings), and the 4 new screens have no
+> render at all yet. **All 36 are produced here.** Naming scheme, render widths, and alt-text rules:
 > [prd.md §Hi-fi asset matrix](./prd.md#hi-fi-asset-matrix-screen--option--viewport). Every file is
 > `<PLAN>assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png`, rendered from
 > `<PLAN>assets/src/<same-stem>.html` at **375 / 768 / 1280 px** — `.png` only, per the
@@ -291,42 +299,81 @@ back to the source plan; do not renumber to "close the gaps".
 > (`.excalidraw.svg` and inline HTML+CSS are ruled out: GitHub strips styles and blocks Excalidraw fonts).
 >
 > **Screen 4's six renders are NOT produced here** — they belong to
-> `ayokoding-learning-path-01-url-restructure`. DD-47's total of 30 is a two-plan total; see the
+> `ayokoding-learning-path-01-url-restructure`. DD-47's total of 42 is a two-plan total; see the
 > [cross-plan note](./tech-docs.md#owned-by-this-plan).
 
-- [ ] [AI] **Verify the 8 existing desktop renders** carry the `-desktop` suffix and are still embedded
-      — acceptance (run from the repo root):
-      `for s in landing-hero paths-hub path-landing course-path; do for o in a b; do test -f "<PLAN>assets/$s-option-$o-desktop.png" || echo "MISSING $s-$o"; done; done`
-      prints nothing, AND
-      `grep -o -- "assets/[a-z-]*option-[ab]-desktop.png" <PLAN>prd.md | sort -u | wc -l` returns **8**
-      (falsifiable both ways: renaming any one file away from the `-desktop` suffix makes the loop print
-      that pair and drops the count to 7). Use the `grep -o … | sort -u` form — a bare
-      `grep -c -- "-desktop.png"` counts matching **lines**, including prose that merely names the
-      convention, and is therefore inflated.
+- [ ] [AI] **Verify all 12 desktop HTML sources exist and no longer reference the retired flat-grid
+      grammar or the retired AI-path id** — acceptance (run from the repo root):
+      `for s in landing-hero paths-hub category-landing arc-landing path-landing course-path; do for o in a b; do test -f "<PLAN>assets/src/$s-option-$o-desktop.html" || echo "MISSING $s-$o"; done; done`
+      prints nothing, AND a case-sensitive search across `<PLAN>assets/src/*.html` for the retired
+      "digit, multiplication sign (U+00D7), digit" grid glyph and its ASCII "digit, letter x, digit"
+      spelling returns no matches, AND a search for the string `software-engineer-to-ai-engineer` across
+      the same files returns no matches.
+- [ ] [AI] **Re-render all 12 desktop `.png` from their (new or content-changed) HTML sources** — every
+      one of the 8 pre-existing HTML sources changed content under the category-split ruling (the hub
+      was redesigned; the AI-engineer card copy and id were fixed; the path-landing/course-path sources'
+      `?path=` strings gained the `careers/` prefix), and the 4 new stems have no render at all — command:
+      render each at 1280 px from its `src/<same-stem>.html` — acceptance: for every one of the 12 stems,
+      `f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html"` holds (mtime check), i.e.
+      `for s in landing-hero paths-hub category-landing arc-landing path-landing course-path; do for o in a b; do
+f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STALE $s-$o"; done; done`
+      prints nothing. Falsifiable the other way: before this step the loop prints all 12 pairs (the 4 new
+      stems because their `.png` does not exist yet — `test -nt` on a missing file fails — and the 8
+      existing stems because their `.html` mtime now postdates their committed `.png`).
 - [ ] [AI] Render `<PLAN>assets/landing-hero-option-a-mobile.png` from
       `<PLAN>assets/src/landing-hero-option-a-mobile.html` at 375 px — acceptance: file exists;
-      single-column goal cards, no 2×2 grid.
+      single-column goal cards, four careers cards only (skills reachable via the tertiary link, not a
+      fifth card), no retired grid-glyph text anywhere in the rendered copy.
 - [ ] [AI] Render `<PLAN>assets/landing-hero-option-b-mobile.png` from
       `<PLAN>assets/src/landing-hero-option-b-mobile.html` at 375 px — acceptance: file exists; the two
       primary CTAs stack above the goal strip.
 - [ ] [AI] Render `<PLAN>assets/landing-hero-option-a-tablet.png` from
-      `<PLAN>assets/src/landing-hero-option-a-tablet.html` at 768 px — acceptance: file exists; 2×2 grid
-      visible (`md:grid-cols-2` active).
+      `<PLAN>assets/src/landing-hero-option-a-tablet.html` at 768 px — acceptance: file exists;
+      two-column grid visible (`md:grid-cols-2` active), "Explore skills paths" link present.
 - [ ] [AI] Render `<PLAN>assets/landing-hero-option-b-tablet.png` from
       `<PLAN>assets/src/landing-hero-option-b-tablet.html` at 768 px — acceptance: file exists; CTAs
       inline, goal strip two-column.
 - [ ] [AI] Render `<PLAN>assets/paths-hub-option-a-mobile.png` from
-      `<PLAN>assets/src/paths-hub-option-a-mobile.html` at 375 px — acceptance: file exists; four
-      full-width cards stacked; no sidebar column.
+      `<PLAN>assets/src/paths-hub-option-a-mobile.html` at 375 px — acceptance: file exists; a Careers
+      section (arc sub-headings, `immediately-effective` showing two cards) stacked above a Skills
+      section (two cards), both single-column; no flat undifferentiated grid.
 - [ ] [AI] Render `<PLAN>assets/paths-hub-option-b-mobile.png` from
-      `<PLAN>assets/src/paths-hub-option-b-mobile.html` at 375 px — acceptance: file exists; the fourth
-      comparison row sits well below the fold.
+      `<PLAN>assets/src/paths-hub-option-b-mobile.html` at 375 px — acceptance: file exists; all six
+      cards single-column, each carrying its category·arc badge.
 - [ ] [AI] Render `<PLAN>assets/paths-hub-option-a-tablet.png` from
-      `<PLAN>assets/src/paths-hub-option-a-tablet.html` at 768 px — acceptance: file exists; 2×2 grid
-      visible with the sidebar column present.
+      `<PLAN>assets/src/paths-hub-option-a-tablet.html` at 768 px — acceptance: file exists; Careers arc
+      groups two-up, Skills section two-up, sidebar column present.
 - [ ] [AI] Render `<PLAN>assets/paths-hub-option-b-tablet.png` from
-      `<PLAN>assets/src/paths-hub-option-b-tablet.html` at 768 px — acceptance: file exists; rows fit two
-      lines each.
+      `<PLAN>assets/src/paths-hub-option-b-tablet.html` at 768 px — acceptance: file exists; six badged
+      cards, two-up.
+- [ ] [AI] Render `<PLAN>assets/category-landing-option-a-mobile.png` from
+      `<PLAN>assets/src/category-landing-option-a-mobile.html` at 375 px — acceptance: file exists;
+      careers instance shows three stacked arc cards, `immediately-effective` previewing two member
+      roles; skills instance (composited in the same image) shows the ramp-milestone strip and the
+      empty state, both single-column.
+- [ ] [AI] Render `<PLAN>assets/category-landing-option-b-mobile.png` from
+      `<PLAN>assets/src/category-landing-option-b-mobile.html` at 375 px — acceptance: file exists; the
+      careers instance as a single-column plain list.
+- [ ] [AI] Render `<PLAN>assets/category-landing-option-a-tablet.png` from
+      `<PLAN>assets/src/category-landing-option-a-tablet.html` at 768 px — acceptance: file exists;
+      careers arc cards two-up with the third wrapping full-width; sidebar column present.
+- [ ] [AI] Render `<PLAN>assets/category-landing-option-b-tablet.png` from
+      `<PLAN>assets/src/category-landing-option-b-tablet.html` at 768 px — acceptance: file exists; the
+      plain list, sidebar column present.
+- [ ] [AI] Render `<PLAN>assets/arc-landing-option-a-mobile.png` from
+      `<PLAN>assets/src/arc-landing-option-a-mobile.html` at 375 px — acceptance: file exists; both the
+      two-role state and the single-role state (with its inline syllabus preview) stack full-width, and
+      the single-role card is never a visibly bare stub.
+- [ ] [AI] Render `<PLAN>assets/arc-landing-option-b-mobile.png` from
+      `<PLAN>assets/src/arc-landing-option-b-mobile.html` at 375 px — acceptance: file exists; the
+      single-role state's second grid cell renders visibly empty (this is the rejected option — the
+      emptiness is the point of the comparison).
+- [ ] [AI] Render `<PLAN>assets/arc-landing-option-a-tablet.png` from
+      `<PLAN>assets/src/arc-landing-option-a-tablet.html` at 768 px — acceptance: file exists; two-role
+      state two-up, sidebar column present.
+- [ ] [AI] Render `<PLAN>assets/arc-landing-option-b-tablet.png` from
+      `<PLAN>assets/src/arc-landing-option-b-tablet.html` at 768 px — acceptance: file exists; the
+      visibly-empty second grid cell reproduced at this width too.
 - [ ] [AI] Render `<PLAN>assets/path-landing-option-a-mobile.png` from
       `<PLAN>assets/src/path-landing-option-a-mobile.html` at 375 px — acceptance: file exists; phase
       headings inline (not sticky — sticky is `lg+` only).
@@ -353,16 +400,16 @@ back to the source plan; do not renumber to "close the gaps".
       15 % width floor (~115 px)** from `<PLAN>assets/src/course-path-option-b-tablet.html` at 768 px —
       acceptance: file exists; rows render as number + ellipsised title, phase separators are bare rules
       with no labels.
-- [ ] [AI] **Embed all 16 new renders in `prd.md`** under their screen's "Hi-fi finalists" block, each
-      with viewport-specific descriptive alt text that names what differs **at that width** (never a
-      copy of the desktop alt text) — acceptance:
-      `grep -o -- "assets/[a-z-]*option-[ab]-mobile.png" <PLAN>prd.md | sort -u | wc -l` returns **8**
-      and the same form with `-tablet.png` returns **8** (both return **0** before this step), AND the
+- [ ] [AI] **Embed all 24 new (mobile + tablet) renders in `prd.md`** under their screen's "Hi-fi
+      finalists" block, each with viewport-specific descriptive alt text that names what differs **at
+      that width** (never a copy of the desktop alt text) — acceptance:
+      `grep -o -- "assets/[a-z-]*option-[ab]-mobile.png" <PLAN>prd.md | sort -u | wc -l` returns **12**
+      and the same form with `-tablet.png` returns **12** (both return **0** before this step), AND the
       **link-validator form defined in [Markdown validation commands](#markdown-validation-commands)**
       resolves every new `![]()` target.
 - [ ] [AI] **Append each selected option's three finalist render filenames to its selection line** in
       `prd.md` (e.g. `… — finalist renders: landing-hero-option-a-{mobile,tablet,desktop}.png`) —
-      acceptance: `grep -o -- "finalist renders:" <PLAN>prd.md | wc -l` returns **4** (returns **0**
+      acceptance: `grep -o -- "finalist renders:" <PLAN>prd.md | wc -l` returns **6** (returns **0**
       before this step, verified), AND Screen 3's selection still names Option B —
       `grep -o -- "Selected: Option B — Left path rail" <PLAN>prd.md | wc -l` returns **1** (returns
       **0** if the selection is ever flipped back to Option A).
@@ -374,16 +421,19 @@ back to the source plan; do not renumber to "close the gaps".
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] Funnel record complete in `prd.md` for Screens 0-3: ≥2 named low-fi alternatives per screen,
-      both hi-fi finalists, a named selection, a rationale table, the responsive strategy per
-      breakpoint, the R5 grounding note, and the R7 prior-art citation.
-- [ ] [AI] **All 24 of this plan's hi-fi renders exist** —
-      `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **24** (returns **8** before this
+- [ ] [AI] Funnel record complete in `prd.md` for Screens 0, 1, 1a, 1b, 2, 3: ≥2 named low-fi
+      alternatives per screen, both hi-fi finalists, a named selection, a rationale table, the
+      responsive strategy per breakpoint, the R5 grounding note, and the R7 prior-art citation.
+- [ ] [AI] **All 36 of this plan's hi-fi renders exist** —
+      `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **36** (returns **8** before this
       phase), and every one is embedded in `prd.md` with viewport-specific alt text.
-      Screen 4's remaining 6 renders belong to `ayokoding-learning-path-01-url-restructure`; **24 is
-      the complete deliverable here**, not a shortfall against DD-47's cross-plan total of 30.
+      Screen 4's remaining 6 renders belong to `ayokoding-learning-path-01-url-restructure`; **36 is
+      the complete deliverable here**, not a shortfall against DD-47's cross-plan total of 42.
 - [ ] [AI] Screen 3's selection reads **Option B — Left path rail**, and no surviving text in
       `README.md`, `prd.md`, `tech-docs.md`, or `delivery.md` asserts that every screen selected Option A.
+- [ ] [AI] No retired grid-glyph text survives anywhere in `<PLAN>*.md` or `<PLAN>assets/src/*.html` —
+      a case-sensitive search for the "digit, multiplication sign (U+00D7), digit" glyph and its ASCII
+      `2` + `x` + `2` spelling across those paths returns no matches.
 - [ ] [AI] All three checks in [Markdown validation commands](#markdown-validation-commands) pass
       (filtered link validation, heading-hierarchy on this plan's folder, markdownlint on
       `<PLAN>*.md`).
@@ -392,7 +442,7 @@ back to the source plan; do not renumber to "close the gaps".
 
 > **Pause Safety**: the design is fixed and fully reviewable in `prd.md`; **no app code has changed**,
 > so the running site is untouched. Safe to stop indefinitely. To resume:
-> `find <PLAN>assets -name '*-option-*-*.png' | wc -l` and confirm it still returns 24.
+> `find <PLAN>assets -name '*-option-*-*.png' | wc -l` and confirm it still returns 36.
 
 ---
 
@@ -461,7 +511,7 @@ back to the source plan; do not renumber to "close the gaps".
 
 - [ ] [AI] **RED** — write a failing test at `<NAV>breadcrumb.test.tsx` _(New test)_ asserting that with
       an active fixture path context the trail renders `Home / Learn / <Path Title> / <Course Title>`
-      and the path crumb links to `/en/c/learn/paths/<path-id>` with the context preserved — command:
+      and the path crumb links to `/en/learn/paths/<path-id>` with the context preserved — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: the assertion fails (today's breadcrumb is the
       content-tree trail with no path segment [Repo-grounded — `buildBreadcrumbs` in `<ROUTE>`]).
 
@@ -472,7 +522,7 @@ back to the source plan; do not renumber to "close the gaps".
     Given a reader is on a fixture-manifest course with an active path context
     When the breadcrumb renders
     Then it shows Home, Learn, the path title, and the course title
-    And the path crumb links to the path landing page /en/c/learn/paths/<path-id> with the path context preserved
+    And the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved
   ```
 
 - [ ] [AI] **GREEN** — extend `<NAV>breadcrumb.tsx` with an optional path context that injects the path
@@ -486,7 +536,7 @@ back to the source plan; do not renumber to "close the gaps".
 
 - [ ] [AI] **RED** — write a failing test at `<FEAT>shell/prerequisite-list.test.tsx` _(New test)_
       asserting the list renders each declared prerequisite as a link to its canonical
-      `/en/c/learn/courses/<id>` URL **in both** the path-aware and the canonical render, and renders
+      `/en/learn/courses/<id>` URL **in both** the path-aware and the canonical render, and renders
       **nothing at all** (not an empty "Prerequisites:" label) for a course with no prerequisites —
       command: `npx nx run ayokoding-www:test:unit` — acceptance: the suite fails with
       `prerequisite-list` module not found.
@@ -521,7 +571,7 @@ back to the source plan; do not renumber to "close the gaps".
 
   ```gherkin
   Scenario: A course deep-linked without path context renders the canonical view
-    Given a reader opens a course URL /en/c/learn/courses/<course-id> with no path context query parameter
+    Given a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter
     When the course page renders
     Then the course body renders in full with the content-tree breadcrumb and its prerequisite list
     And a "this course is part of" affordance lists every path that includes the course
@@ -755,7 +805,7 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
   ```gherkin
   Scenario: A path landing page lists its courses in manifest order
     Given a fixture path manifest is loaded by the manifest repository
-    When a reader opens that fixture path's landing page under /en/c/learn/paths/
+    When a reader opens that fixture path's landing page under /en/learn/paths/
     Then the courses appear in the fixture manifest's courseOrder
     And every course link carries the path context query parameter
   ```
@@ -769,20 +819,127 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 - [ ] [AI] **GREEN** — author `<FEAT>shell/path-landing.tsx` and `<FEAT>shell/path-card.tsx` _(New
       files)_ per [prd.md Screens 1/2 selected designs](./prd.md#ui-design-funnel-path-aware-navigation-screens);
       `path-card.tsx` exposes a `context` prop with `"hub"` and `"hero"` variants so one component serves
-      Screens 0 and 1 — command:
-      `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
-      exit 0; the hub renders a **2×2 grid of up to four** cards (populated from whatever manifests are
-      loaded — with only the fixtures present, the grid renders the fixture cards and no placeholder).
+      Screens 0 and 1, plus the category-grouped `CategorySection`/`ArcGroup` wrapper the hub uses (R6)
+      — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` —
+      acceptance: both exit 0; the hub renders a **Careers section grouped by arc, and a separate Skills
+      section** (populated from whatever manifests are loaded — with only the fixtures present, each
+      section renders its fixture cards and no placeholder).
 - [ ] [AI] **REFACTOR** — the landing's ordered list and the rail's ordered list share one ordering
       helper; no bespoke CSS where a `libs/web-ui` token exists — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both exit 0.
+
+### Cycle 3.1a — Empty path-list state (shared, R7)
+
+- [ ] [AI] **RED** — write a failing component test at `<FEAT>shell/empty-path-list-state.test.tsx`
+      _(New test)_ asserting the component renders a stated "being written, check back soon" message
+      plus a `<Link>` CTA to a named fallback category, and that it is **not** a bare empty `<div>` (has
+      real text content and a real landmark role) — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: the suite fails with `empty-path-list-state` module not found.
+
+  **Gherkin (binds) →** "A category landing with no populated manifest renders an explicit empty state"
+
+  ```gherkin
+  Scenario: A category landing with no populated manifest renders an explicit empty state
+    Given a structural category index exists with zero published path manifests
+    When a reader opens that category's landing page
+    Then the page renders a stated "being written, check back soon" message with a fallback link
+    And the page never renders a blank content area with no message
+  ```
+
+- [ ] [AI] **GREEN** — author `<FEAT>shell/empty-path-list-state.tsx` _(New file)_ per
+      [prd.md Screen 1a hi-fi spec](./prd.md#screen-1a-hi-fi--category-landing-enlearnpathscareers-enlearnpathsskills-option-a-arc-cards-with-member-role-preview)
+      — command: `npx nx run ayokoding-www:test:unit` — acceptance: exits 0.
+- [ ] [AI] **REFACTOR** — the component takes a `fallbackHref`/`fallbackLabel` prop pair, no hardcoded
+      "careers" string inside it (so `arc-landing.tsx` can reuse it verbatim with a different fallback)
+      — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance:
+      both exit 0.
+
+### Cycle 3.1b — Category landing (Screen 1a, R7)
+
+- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting: the careers-shaped
+      fixture's category landing at `/en/learn/paths/careers/` renders one `ArcCard` per arc with a
+      member-role preview (the `immediately-effective` fixture arc previewing two roles); and the
+      skills-shaped fixture's category landing at `/en/learn/paths/skills/` renders the fixed-arc ramp
+      statement with **no** arc-selection control present anywhere on the page — command:
+      `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails (no
+      `category-landing.tsx` exists yet).
+  - _Suggested executor: `swe-e2e-dev`_
+
+  **Gherkin (binds) →** "The careers category landing offers an arc chooser" AND "The skills category
+  landing states its fixed arc once, with no chooser"
+
+  ```gherkin
+  Scenario: The careers category landing offers an arc chooser
+    Given a fixture careers manifest set with three arcs is loaded
+    When a reader opens the careers category landing at /en/learn/paths/careers/
+    Then the page renders one arc card per arc with its member role(s) previewed
+    And the immediately-effective arc card previews exactly two member roles
+
+  Scenario: The skills category landing states its fixed arc once, with no chooser
+    Given a fixture skills manifest set is loaded
+    When a reader opens the skills category landing at /en/learn/paths/skills/
+    Then the page renders the ramp promise once as a statement, not a question
+    And no arc-selection control is present anywhere on the page
+  ```
+
+- [ ] [AI] **GREEN** — author `<FEAT>shell/category-landing.tsx` _(New file)_ per
+      [prd.md Screen 1a hi-fi spec](./prd.md#screen-1a-hi-fi--category-landing-enlearnpathscareers-enlearnpathsskills-option-a-arc-cards-with-member-role-preview):
+      **two separate render branches** (careers = `ArcCard` grid; skills = `path-card.tsx`
+      `context="hub"` grid + `RampMilestoneStrip`), never one grid driven by a boolean prop (R8) — falls
+      back to `empty-path-list-state.tsx` when the category's manifest set is empty — command:
+      `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
+      exit 0.
+- [ ] [AI] **REFACTOR** — confirm the two branches are structurally distinct (not a single JSX tree with
+      a chooser conditionally hidden) — command:
+      `grep -A5 -- "function CategoryLanding" <FEAT>shell/category-landing.tsx | grep -c "arc ===" || true`
+      then `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both
+      commands exit 0; a human/agent review confirms no shared chooser markup renders conditionally
+      hidden for the skills branch (checked at PR review, not asserted by a single grep).
+
+### Cycle 3.1c — Arc landing (Screen 1b, R7)
+
+- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting: a two-role fixture arc
+      (`immediately-effective`) renders both role cards side by side with no placeholder; and a
+      one-role fixture arc (`interview-ready`) renders exactly one role card with an inline first-phase
+      syllabus preview, and the layout never reserves or renders a visibly empty second card — command:
+      `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails (no `arc-landing.tsx`
+      exists yet).
+  - _Suggested executor: `swe-e2e-dev`_
+
+  **Gherkin (binds) →** "An arc landing with two paths renders both role cards without a placeholder"
+  AND "An arc landing with one path renders a full card, not a sparse stub"
+
+  ```gherkin
+  Scenario: An arc landing with two paths renders both role cards without a placeholder
+    Given the fixture immediately-effective arc manifest lists two roles
+    When a reader opens the arc landing at /en/learn/paths/careers/immediately-effective/
+    Then both role cards render side by side with their own course counts
+    And neither card is a placeholder or an empty grid cell
+
+  Scenario: An arc landing with one path renders a full card, not a sparse stub
+    Given a fixture arc manifest lists exactly one role
+    When a reader opens that arc's landing page
+    Then the single role card renders with an inline first-phase syllabus preview
+    And the layout does not reserve or render a visibly empty second card
+  ```
+
+- [ ] [AI] **GREEN** — author `<FEAT>shell/arc-landing.tsx` _(New file)_ per
+      [prd.md Screen 1b hi-fi spec](./prd.md#screen-1b-hi-fi--arc-landing-enlearnpathscareersarc-option-a-always-render-arc-header--role-cards-single-role-gets-a-syllabus-preview):
+      render **exactly as many** role cards as the arc has roles (never a fixed 2-slot grid); the
+      single-role state renders `SyllabusPreview` inline in that card — command:
+      `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
+      exit 0.
+- [ ] [AI] **REFACTOR** — the role grid and `SyllabusPreview` list share the same "number is order"
+      list-rendering helper `path-landing.tsx`'s syllabus uses (no duplicated ordered-list markup) —
+      command: `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance:
+      both exit 0.
 
 ### Cycle 3.2 — Landing hero (Screen 0)
 
 - [ ] [AI] **RED (Screen 0 hero)** — write a failing Playwright spec in `<E2E>` asserting the landing
       hero at `/en` renders a "Choose your path" eyebrow with a `PathCard` grid (populated from the same
       fixture manifests as the other `course-paths` specs) and a "Compare all paths" link to
-      `/en/c/learn/paths`, per
+      `/en/learn/paths`, per
       [prd.md Screen 0 hi-fi spec](./prd.md#screen-0-hi-fi--landing-hero-en-option-a-four-goal-cards-in-the-hero)
       — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the new spec fails (today's
       `<APPSHELL>hero.tsx` renders only the H1/tagline/Learn+Tools buttons — no "Choose your path"
@@ -795,14 +952,15 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     Given a first-time visitor opens the site landing page at /en
     When the hero section renders
     Then the hero shows a goal-labeled path card for each published path
-    And a "Compare all paths" link to /en/c/learn/paths is visible below the cards
+    And a "Compare all paths" link to /en/learn/paths is visible below the cards
   ```
 
 - [ ] [AI] **GREEN (Screen 0 hero)** — edit `<APPSHELL>hero.tsx` per the same hi-fi spec: add the
-      "Choose your path" eyebrow + a `PathCard` grid (`context="hero"` variant, 2×2 at `md+`, single
-      column below, sourced from the same loaded-manifest data as the paths hub) and the escape-hatch row
-      ("Not sure which fits? Compare all paths →" to `/en/c/learn/paths`, "Browse the full course
-      library →" to `/en/c/learn/courses`); move the existing Learn/Tools CTAs into the global nav —
+      "Choose your path" eyebrow + a `PathCard` grid (`context="hero"` variant, two columns at `md+`,
+      single column below, sourced from the same loaded-manifest data as the paths hub, still capped at
+      the four careers-arc cards per R1) plus the tertiary "Explore skills paths →" escape-hatch link and
+      the existing "Compare all paths →" (`/en/learn/paths`) / "Browse the full course library →"
+      (`/en/learn/courses`) row; move the existing Learn/Tools CTAs into the global nav —
       command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the Screen 0 hero spec passes,
       and the existing `<APPSHELL>landing.test.tsx` is extended rather than deleted (it still exits 0).
 - [ ] [AI] **REFACTOR** — the hero's `PathCard` grid is the **same component and the same
@@ -872,9 +1030,11 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] Path landing + 2×2-grid paths hub (up to four cards) + the landing-hero `PathCard` grid and
-      escape hatch all render from the **same** manifest data; prerequisite display verified; all
-      `course-paths` e2e specs green in `en`, including the Screen 0 hero spec and the a11y scenario.
+- [ ] [AI] Path landing + the category-grouped paths hub (Careers arc-grouped, up to four cards; Skills
+      section separate) + `category-landing.tsx` + `arc-landing.tsx` + `empty-path-list-state.tsx` + the
+      landing-hero `PathCard` grid and escape hatch all render from the **same** manifest data;
+      prerequisite display verified; all `course-paths` e2e specs green in `en`, including the Screen 0
+      hero spec, the category/arc landing specs, and the a11y scenario.
 - [ ] [AI] Exactly one `PathCard` implementation exists —
       `grep -ro -- "function PathCard" apps/ayokoding-www/src | wc -l` returns **1**.
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` + `:build` + `:lint` + `:specs:behavior:coverage`
@@ -924,6 +1084,16 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       Phase 0 snapshot; `grep -ro -- "SheetContent" apps/ayokoding-www/src/features | wc -l` matches the
       Phase 0 snapshot — acceptance: all three hold (each would change if a host were forked or a second
       overlay introduced).
+- [ ] [AI] **UI Quality Gate (R9 — this plan is the programme's only component-bearing plan, so it runs
+      the gate itself; see [tech-docs.md §UI-gate and API-gate posture](./tech-docs.md#ui-gate-and-api-gate-posture-r9))**
+      — invoke the [`ui-quality-gate` workflow](../../../repo-governance/workflows/ui/ui-quality-gate.md)
+      (`swe-ui-checker` → `swe-ui-fixer` loop, `mode=strict`) scoped to
+      `apps/ayokoding-www/src/features/course-paths/` plus the touched files under
+      `apps/ayokoding-www/src/features/app-shell/shell/` and
+      `apps/ayokoding-www/src/features/navigation/shell/` — acceptance: the workflow reports
+      `final-status: pass` (zero findings confirmed on two consecutive `swe-ui-checker` runs, per the
+      workflow's own termination condition); any HIGH/CRITICAL finding is fixed before this checkbox is
+      ticked, not deferred.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
 > (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
@@ -935,6 +1105,8 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 - [ ] [AI] Affected `typecheck/lint/test:quick/test:unit/test:e2e/specs:behavior:coverage` exit 0.
 - [ ] [AI] Build + link + heading + markdownlint green (all scoped to `<PLAN>` for the markdown checks).
 - [ ] [AI] Static/dynamic boundary unchanged from the Phase 0 snapshot; host-invariant sweep green.
+- [ ] [AI] `ui-quality-gate` (R9) reports `final-status: pass` — zero findings on two consecutive
+      `swe-ui-checker` runs; API gate exemption stands (no API surface — see tech-docs.md §R9).
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: the rendering layer passes every automated gate. Safe to stop. To resume: re-run the
@@ -961,11 +1133,16 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 - [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
 - [ ] [AI] For `en` × breakpoints (375 / 768 / 1280 px), via Playwright MCP (`browser_navigate` +
       `browser_resize` + `browser_snapshot`): open `/en` (hero grid + escape hatch), the paths hub
-      (2×2 grid), the fixture path landing, walk 2-3 courses via prev/next (confirm `?path=` persists +
+      (Careers arc-grouped section + Skills section), the careers category landing (arc chooser), the
+      skills category landing (fixed-arc ramp statement, no chooser), a two-role arc landing and a
+      one-role arc landing (confirm the single-role card renders its syllabus preview, not a placeholder
+      second card), the fixture path landing, walk 2-3 courses via prev/next (confirm `?path=` persists +
       order + breadcrumb), open a course and confirm its **prerequisite display**, deep-link a course
       without `?path=` (canonical view + "part of paths" affordance), and hit an invalid `?path=`
-      (canonical view). Verify `html[lang]` is `en` and `browser_console_messages` is clean —
-      acceptance: all behaviors correct; zero console errors at every breakpoint.
+      (canonical view). Also open a fixture category with zero populated manifests and confirm
+      `empty-path-list-state.tsx` renders its stated message + fallback link, never a blank area. Verify
+      `html[lang]` is `en` and `browser_console_messages` is clean — acceptance: all behaviors correct;
+      zero console errors at every breakpoint.
 - [ ] [AI] **Path-rail responsive contract (the selected Screen 3 Option B, DD-46)** — on a course in
       path context, verify each breakpoint against
       [prd.md §Screen 3 responsive specification](./prd.md#screen-3-responsive-specification-the-selected-option-b-breakpoint-by-breakpoint):
@@ -987,9 +1164,11 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       recorded in the Phase 0 snapshot.
 - [ ] [AI] Capture one screenshot per screen per breakpoint via `browser_take_screenshot` to
       `<PLAN>evidence/phase-5-<screen>-en-<breakpoint>px.png`, **including** the three rail states
-      (`rail-desktop`, `rail-tablet-truncated`, `rail-mobile-drawer-open`) — acceptance: files exist in
-      `<PLAN>evidence/`; `find <PLAN>evidence -name 'phase-5-*-en-*px.png' | wc -l` returns at least
-      **12** (4 screens × 3 breakpoints) plus the 3 rail-state captures.
+      (`rail-desktop`, `rail-tablet-truncated`, `rail-mobile-drawer-open`) and the empty-state capture
+      — acceptance: files exist in `<PLAN>evidence/`;
+      `find <PLAN>evidence -name 'phase-5-*-en-*px.png' | wc -l` returns at least **18** (6 screens × 3
+      breakpoints: hero, hub, category landing, arc landing, path landing, course) plus the 3 rail-state
+      captures plus the empty-state capture.
 - [ ] [AI] Document evidence in this checklist: reference each screenshot (`![alt](./evidence/...)`) and
       note console/network status per breakpoint — acceptance: every captured file is referenced; no
       "verified manually" claim stands without a committed artifact.
@@ -1021,8 +1200,9 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] All screens (hero + hub + landing + sample courses + prerequisite display) verified in `en`
-      across all three breakpoints; screenshots committed in `<PLAN>evidence/`; console clean.
+- [ ] [AI] All screens (hero + hub + category landing (both category shapes) + arc landing (both
+      role-count shapes) + path landing + sample courses + prerequisite display + empty-state) verified
+      in `en` across all three breakpoints; screenshots committed in `<PLAN>evidence/`; console clean.
 - [ ] [AI] Rail responsive contract, mobile drawer, and no-path regression sweep all verified with
       committed evidence.
 - [ ] [AI] All rule-15 EWT/UWT/DWT defect findings fixed (ticked) or explicitly permitted to defer.
@@ -1127,13 +1307,14 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       user permission (only when genuinely impossible); SG-###/USS-### may be triaged or deferred with
       rationale.
 - [ ] [AI] **Verify this plan's design-funnel artefacts are complete (DD-46 / DD-47)** —
-      `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **24** (4 screens × 2 options × 3
-      viewports); every one is embedded in `prd.md` with viewport-specific alt text; Screen 3's selection
-      reads **Option B — Left path rail** (`grep -o -- "Selected: Option B — Left path rail" <PLAN>prd.md | wc -l`
-      returns **1**); no "Selection: PENDING" remains.
-      **24 is the complete deliverable for this plan.** DD-47's total of 30 is a two-plan total: the
+      `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **36** (6 screens × 2 options × 3
+      viewports: hero, paths hub, category landing, arc landing, path landing, course path); every one
+      is embedded in `prd.md` with viewport-specific alt text; Screen 3's selection reads **Option B —
+      Left path rail** (`grep -o -- "Selected: Option B — Left path rail" <PLAN>prd.md | wc -l` returns
+      **1**); no "Selection: PENDING" remains.
+      **36 is the complete deliverable for this plan.** DD-47's total of 42 is a two-plan total: the
       remaining 6 (Screen 4) belong to `ayokoding-learning-path-01-url-restructure`. Do NOT copy that
-      plan's renders into this folder to make the number read 30 — a duplicated matrix drifts.
+      plan's renders into this folder to make the number read 42 — a duplicated matrix drifts.
 - [ ] [AI] Verify the no-path invariant one last time on production: a canonical course URL renders the
       generic sidebar with no path chrome — acceptance: confirmed with a committed screenshot.
 - [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-03-navigation-ui/
@@ -1149,8 +1330,8 @@ plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/` using today's 
 
 ### Phase 8 Gate
 
-- [ ] [AI] All 24 funnel renders present and embedded; Screen 3 recorded as Option B; the cross-plan
-      DD-47 note intact so 24 is not misread as under-delivery.
+- [ ] [AI] All 36 funnel renders present and embedded; Screen 3 recorded as Option B; the cross-plan
+      DD-47 note intact so 36 is not misread as under-delivery.
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/`; all
       READMEs updated; archival committed.
 - [ ] [AI] Draft PR opened (archival move); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;

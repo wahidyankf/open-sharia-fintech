@@ -110,16 +110,16 @@ subagents capped per the orchestration convention). The main thread self-promote
 constant vocabulary is byte-identical across all five split plans; entries this plan does not itself
 use are retained deliberately, not pruned):
 
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
-- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>`)
+- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/learn/paths/<path-id>`)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
 - `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror slash path ids — `<MANIFESTS><path-id>.yaml`)
-- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/c/learn/legacy/<domain>/…`)
+- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/learn/legacy/<domain>/…`)
 - `<REDIR>` = `apps/ayokoding-www/src/redirects/`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<NAVSPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/` (existing domain — the three-bucket Gherkin lands beside `content-namespace-redirects.feature`)
-- Path ids: `interview-ready/software-engineer`, `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`, `immediately-effective/software-engineer-to-ai-engineer` (fourth path, manifest at `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml`)
+- Path ids: `careers/interview-ready/software-engineer`, `careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`, `careers/immediately-effective/ai-engineer` (fourth path — id renamed from the dead `software-engineer-to-ai-engineer` 2026-07-21; no longer assumes a prior software-engineering role, so a role-transition-shaped id was factually wrong; manifest at `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`)
 
 ---
 
@@ -276,8 +276,8 @@ use are retained deliberately, not pruned):
       mirroring the existing `<REDIR>content-namespace.unit.test.ts` structure [Repo-grounded],
       asserting: (a) exactly **37** rules, one per slug in the Phase-0 re-home inventory; (b) every
       rule `permanent: true` with non-empty `source`/`destination`; (c) each rule's source is
-      `/en/c/learn/fundamentally-strong/software-engineer/<slug>` and its destination is
-      `/en/c/learn/courses/<slug>` for the **same** `<slug>`; (d) the rule set's slug list equals the
+      `/en/learn/fundamentally-strong/software-engineer/<slug>` and its destination is
+      `/en/learn/courses/<slug>` for the **same** `<slug>`; (d) the rule set's slug list equals the
       Phase-0 inventory exactly (no extra, no missing) — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: the suite fails with `course-rehome` module
       not found. Falsifiable both ways:
@@ -290,7 +290,7 @@ use are retained deliberately, not pruned):
   Scenario: A legacy fundamentally-strong URL redirects to the canonical course URL
     Given a re-homed course previously lived under the legacy fundamentally-strong/software-engineer content path
     When a reader requests the legacy URL
-    Then the app redirects to the course's canonical /en/c/learn/courses/<course-id> URL
+    Then the app redirects to the course's canonical /en/learn/courses/<course-id> URL
     And the redirect preserves any path context query parameter
   ```
 
@@ -302,7 +302,10 @@ use are retained deliberately, not pruned):
       acceptance: the new suite passes and no existing redirect test breaks.
 - [ ] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()` as
       `return [...learnReorgRedirects, ...courseRehomeRedirects, ...contentNamespaceRedirects];`
-      (Phase 3 inserts `learnThreeBucketRedirects` between `courseRehome` and `contentNamespace`) —
+      (a temporary intermediate order; `content-namespace.ts` is still forward-direction and last —
+      Phase 3.0 inverts it in place and moves it to the **front** of the array (DD-48), and Phase 3.1
+      inserts `learnThreeBucketRedirects` after `courseRehome`, giving the final order
+      `[...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects]`) —
       command: `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:build` — acceptance:
       both exit 0, and `grep -F "courseRehomeRedirects" apps/ayokoding-www/next.config.ts` prints
       exactly two lines (the import and the spread) — it prints nothing today, verified against the
@@ -373,11 +376,11 @@ use are retained deliberately, not pruned):
       _(This step deliberately names §2.1 above and not a sibling plan's phase — the redirect table is
       owned here.)_
 - [ ] [AI] Update `<COURSES>_index.md` (library landing) to list the re-homed catalog by course ID —
-      acceptance: every catalog entry links to `/en/c/learn/courses/<course-id>` and the link validator
+      acceptance: every catalog entry links to `/en/learn/courses/<course-id>` and the link validator
       below reports no broken link.
 - [ ] [AI] Sweep any intra-course cross-links that referenced the old
       `fundamentally-strong/software-engineer/<slug>` path and repoint them to
-      `/en/c/learn/courses/<course-id>` (Root Cause Orientation) — command:
+      `/en/learn/courses/<course-id>` (Root Cause Orientation) — command:
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ose-www/content`
       (the actual link-validation mechanism — **not** an `nx run` target; it also runs pre-commit via
       `lint-staged` for staged `.md` files). Note this form deliberately does **not** exclude
@@ -395,7 +398,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       asserting the legacy ordered browse resolves end-to-end: from
       `.../fundamentally-strong/software-engineer/_index.md` (and the `fundamentally-strong/_index.md`
       parent + each per-topic `_index.md`), every listed entry link resolves to live content (the
-      re-homed `/en/c/learn/courses/<course-id>` URL or a working redirect) — command:
+      re-homed `/en/learn/courses/<course-id>` URL or a working redirect) — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the legacy-browse nav spec fails (links
       still point at drained `<SE_OLD>` locations). **Do NOT target `ayokoding-www:test:e2e`** — that
       target is `echo 'no-op: target not applicable for this project'` and always exits 0
@@ -409,7 +412,7 @@ deleted), re-pointing each entry to wherever the content now lives.
   Scenario: The legacy section-index browse still resolves after re-homing
     Given the 33 shipped topics have been re-homed into the course library
     When a reader browses the legacy fundamentally-strong software-engineer section index the old way
-    Then every section-index entry links to live content at its /en/c/learn/courses/<course-id> URL or via a redirect
+    Then every section-index entry links to live content at its /en/learn/courses/<course-id> URL or via a redirect
     And no legacy section-index entry resolves to a drained or missing location
   ```
 
@@ -424,14 +427,14 @@ deleted), re-pointing each entry to wherever the content now lives.
 
   ```gherkin
   Scenario: The legacy section-index browse resolves to the canonical course body
-    Given a course now lives at its canonical /en/c/learn/courses/<course-id> URL
+    Given a course now lives at its canonical /en/learn/courses/<course-id> URL
     When a reader reaches it via the legacy section-index browse
     Then the browse resolves to that single canonical course body
     And no forked or duplicated body is served for the legacy route
   ```
 
   > **Split-time narrowing.** The source plan's scenario also asserted a
-  > `/en/c/learn/paths/<path-id>` path landing resolves to the same body. Path landings are authored by
+  > `/en/learn/paths/<path-id>` path landing resolves to the same body. Path landings are authored by
   > `ayokoding-learning-path-05-manifests` and do not exist when this plan runs, so that half was
   > unverifiable here and is carried by that plan instead. See
   > [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin).
@@ -441,7 +444,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       (`find apps/ayokoding-www/content/en/learn/fundamentally-strong -name _index.md` — esp.
       `.../software-engineer/_index.md`, each per-topic `_index.md`, and the
       `fundamentally-strong/_index.md` parent) and update each so every entry it lists is re-pointed to
-      the new `/en/c/learn/courses/<course-id>` URL (or resolves via the redirect) — the legacy
+      the new `/en/learn/courses/<course-id>` URL (or resolves via the redirect) — the legacy
       sections stay preserved and ordered, with no dead link and no orphaned section — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both e2e specs above now pass.
 - [ ] [AI] **REFACTOR** — run
@@ -480,7 +483,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       `md heading-hierarchy validate` report no error over the changed tree.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
-> **Pause Safety**: every shipped course lives at its canonical `/en/c/learn/courses/<id>` URL with a
+> **Pause Safety**: every shipped course lives at its canonical `/en/learn/courses/<id>` URL with a
 > working 308 and declared prerequisites, and the legacy `_index.md` section browse still resolves the
 > old way (additive). No manifest exists yet, so every course renders its canonical view. Production
 > serves a coherent site. Safe to stop indefinitely. To resume:
@@ -514,18 +517,144 @@ deleted), re-pointing each entry to wherever the content now lives.
 > into the path landing — handed forward by Phase 2),
 > [Q-F](./tech-docs.md#q-f--what-happens-to-enlearnoverviewmd) (keep `overview.md`, rewritten).
 
+### 3.0 · De-namespacing — retire the `/c/` content route (DD-48)
+
+> **Site-wide scope, distinct from DD-45.** This sub-phase covers every namespaced section — `en/learn`,
+> `en/rants`, `id/belajar`, `id/celoteh`, `id/konten-video` — not just `learn`. It does **not** extend
+> the three-bucket IA shape to `id` (DD-45 stays deferred); it only removes the `/c/` URL segment for
+> `id`'s existing sections. See
+> [tech-docs.md's De-namespacing section](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48)
+> for the full file inventory, the collision verdict, and the churn-sequencing reasoning. **This
+> sub-phase runs FIRST in Phase 3**, before §3.1, because §3.1's redirect-module wiring order assumes
+> `content-namespace.ts` already runs first (DD-48).
+
+- [ ] [AI] **RED (unit)** — invert the five assertions in
+      `<REDIR>content-namespace.unit.test.ts` in place: each currently asserts a bare source
+      (`/en/learn`, `/en/rants`, `/id/belajar`, `/id/celoteh`, `/id/konten-video`) redirects to its
+      `/c/`-prefixed destination; rewrite each to assert the **opposite** — a `/c/`-prefixed source
+      redirects to its bare destination — and add a sixth, negative assertion that no rule in the
+      module has a `/c/`-containing destination — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: the suite fails (the still-forward `content-namespace.ts` does not satisfy the
+      inverted assertions). Falsifiable both ways: the pre-inversion suite passes against today's
+      `content-namespace.ts` (verified in Phase 0), and fails the moment these assertions are rewritten.
+
+  **Gherkin (binds) →** every scenario in `content-namespace-redirects.feature` (filename kept; see
+  [Naming decisions](./tech-docs.md#naming-decisions-so-sibling-plans-are-not-silently-broken)) —
+  invert each scenario's Given/When/Then to assert a stale `/c/`-prefixed bookmark 308s to the bare
+  URL, not the reverse.
+
+- [ ] [AI] **RED (specs)** — invert the Gherkin content of `content-namespace-redirects.feature` in
+      place (filename kept) and update its paired `content-namespace.steps.ts` step definitions to
+      match — command: `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: fails (step
+      bindings still assert the old forward direction against the still-forward production code).
+  - _Suggested executor: `specs-maker`_
+
+- [ ] [AI] **GREEN** — invert `<REDIR>content-namespace.ts` in place: for all five rules
+      (`en/learn`, `en/rants`, `id/belajar`, `id/celoteh`, `id/konten-video`), swap `source` and
+      `destination` so the `/c/`-prefixed form becomes the source (the stale bookmark) and the bare form
+      becomes the destination (the canonical URL) — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: the inverted unit suite passes.
+
+- [ ] [AI] **GREEN** — delete the retired content-tree route:
+      `git rm "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx" "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.unit.test.ts"`
+      — acceptance: both `test -e` checks return non-zero (they returned 0 in Phase 0).
+
+- [ ] [AI] **GREEN** — relocate the browse index (no bare home to inherit — see
+      [tech-docs.md](./tech-docs.md#the-c-browse-index-has-no-bare-home-to-inherit)):
+      `git mv "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx" "apps/ayokoding-www/src/app/[locale]/(content)/browse/page.tsx"`,
+      then repoint its own internal canonical-URL string from `` `/${locale}/c` `` to
+      `` `/${locale}/browse` `` — acceptance: `test -f "apps/ayokoding-www/src/app/[locale]/(content)/browse/page.tsx"`
+      returns 0; `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx"` returns non-zero.
+
+- [ ] [AI] **GREEN** — widen `[...slug]/page.tsx` to serve both loose pages and the full content tree:
+      merge the deleted `c/[...slug]/page.tsx`'s content-tree lookup, `generateStaticParams`, and
+      `generateMetadata`/canonical-URL logic into the surviving bare `[...slug]/page.tsx`, and merge its
+      test file (`c/[...slug]/page.unit.test.ts`'s assertions, before its own deletion above, into
+      `[...slug]/page.unit.test.ts`) — command: `npx nx run ayokoding-www:test:unit` — acceptance: the
+      merged suite passes, covering both loose-page and content-tree slugs in one route.
+
+- [ ] [AI] **GREEN — collision negative check** — confirm the widened route introduces no routing
+      collision, per the verdict in
+      [tech-docs.md's Collision verdict](./tech-docs.md#collision-verdict--widening-slug-against-tools-and-the-locale-root):
+      `grep -E '"tools"|"browse"' apps/ayokoding-www/src/features/content/core/content-url.ts`
+      prints nothing (no `LOOSE_PAGE_ALLOWLIST` entry is `tools` or `browse`), AND
+      `find apps/ayokoding-www/content/en apps/ayokoding-www/content/id -maxdepth 1 -type d \( -name 'tools' -o -name 'browse' \)`
+      prints nothing (no top-level content directory is named `tools` or `browse`) — acceptance: both
+      checks print nothing, as they do today (verified in Phase 0); either printing a match would mean
+      the collision verdict no longer holds and this step must halt before proceeding.
+
+- [ ] [AI] **GREEN** — update `contentUrl()` in `features/content/core/content-url.ts`: delete the
+      `/c/`-prefix branch so it uniformly returns `/{locale}` for the root slug and
+      `/{locale}/{normalizeSlug(slug)}` otherwise — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: `content-url.test.ts` passes with the updated uniform-join assertions.
+- [ ] [AI] **GREEN — resolve the `LOOSE_PAGE_ALLOWLIST` open question (delivery-time verification, not
+      an assumed fact)** — read `generateStaticParams` in the merged `[...slug]/page.tsx` and the
+      content indexer it calls (`index.contentMap` construction) to determine whether the two loose
+      pages (`about-ayokoding`/`terms-and-conditions` for `en`, `tentang-ayokoding`/`syarat-dan-ketentuan`
+      for `id`) are already members of `index.contentMap` for their locale: if yes, remove
+      `LOOSE_PAGE_ALLOWLIST` and the now-fully-dead `isLoosePage()` entirely; if no, keep
+      `LOOSE_PAGE_ALLOWLIST` and union it into `generateStaticParams`, and still remove `isLoosePage()`
+      (dead regardless, per [tech-docs.md](./tech-docs.md#contenturl-and-loose_page_allowlist-after-the-merge))
+      — acceptance: the chosen outcome is recorded in a one-line code comment at
+      `LOOSE_PAGE_ALLOWLIST`'s declaration (or at its removal site, in the commit message) stating which
+      branch was taken and why; `npx nx run ayokoding-www:test:unit` passes either way.
+- [ ] [AI] **GREEN** — update `features/content/core/slug.ts` and
+      `features/content/core/content-link-rewrite.ts`'s `resolveContentHref()` doc comments and any
+      `/c/`-namespace-aware logic to reflect the uniform bare join — command:
+      `npx nx run ayokoding-www:test:unit` — acceptance: both files' test suites pass.
+- [ ] [AI] **GREEN** — collapse `breadcrumb.tsx`'s `contentHrefs` prop: `hrefFor` always resolves
+      through `contentUrl()`; remove the prop and its call-site plumbing in `sidebar-tree.tsx`,
+      `resizable-sidebar.tsx`, and `prev-next.tsx` (test fixtures `breadcrumb.test.tsx`,
+      `prev-next.test.tsx`, `sidebar-tree.test.tsx`, `resizable-sidebar.test.tsx` updated to match) —
+      command: `npx nx run ayokoding-www:test:unit` — acceptance: all four suites pass with the prop
+      removed.
+- [ ] [AI] **GREEN** — update `browse-index.tsx` to link to the relocated `browse/` route instead of
+      `/c`, and update its and `section-card.tsx`'s test fixtures (`browse-index.test.tsx`,
+      `section-card.test.tsx`) to bare URLs — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: both suites pass.
+- [ ] [AI] **GREEN** — update the four test-fixture-only files' expected URLs to the bare form —
+      `app/sitemap.unit.test.ts`, `app/feed.xml/route.unit.test.ts`,
+      `features/search/shell/search-dialog.test.tsx`, `features/app-shell/shell/landing.test.tsx` —
+      production `sitemap.ts`/`feed.xml/route.ts` already derive every URL from `contentUrl()` (DD-44),
+      so no production code changes here — command: `npx nx run ayokoding-www:test:unit` — acceptance:
+      all four suites pass, and the regenerated sitemap/feed now emit bare canonical URLs (verified by
+      the same test), avoiding a **second, avoidable** disagreement between the sitemap/feed and the
+      live URLs on top of the one-time `<guid>` churn already accounted for in
+      [prd.md's Product-Level Risks](./prd.md#product-level-risks).
+- [ ] [AI] **GREEN** — invert `ia-navigation-revamp.feature` and `learn-reorg-redirects.feature`'s
+      scenario content in place (filenames kept) and update their paired
+      `ia-navigation-revamp.steps.ts` / `landing.steps.ts` step definitions to match — command:
+      `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0, all three feature files'
+      scenarios pass against the now-inverted production code.
+- [ ] [AI] **GREEN** — reorder `apps/ayokoding-www/next.config.ts` `redirects()` to place
+      `contentNamespaceRedirects` **first**: `return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects];`
+      — this sub-step's own intermediate order (§3.1 below appends `learnThreeBucketRedirects` last) —
+      command: `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:build` — acceptance: both
+      exit 0.
+- [ ] [AI] **REFACTOR — loop-safety invariant, falsifiable both ways** —
+      `grep -rn '"/[a-z][a-z]/c/' apps/ayokoding-www/src/redirects/` — acceptance: empty (no currently-
+      wired module redirects a bare URL back into `/c/`). Falsifiable the other way: temporarily
+      restoring the pre-inversion `content-namespace.ts` makes this command print 5 matching lines
+      (verified in Phase 0 before this sub-phase started).
+- [ ] [AI] **REFACTOR** — run the full affected suite over everything touched this sub-phase:
+      `npx nx affected -t typecheck lint test:unit specs:behavior:coverage` — acceptance: all exit 0.
+
 ### 3.1 · Redirect module (TDD)
 
 - [ ] [AI] **RED** — write a failing unit test at `<REDIR>learn-three-bucket.unit.test.ts`
       _(New test)_, mirroring the existing `<REDIR>content-namespace.unit.test.ts` structure
-      [Repo-grounded], asserting all six properties: (a) exactly **12** rules — one pair per relocated
-      domain; (b) every rule `permanent: true` with non-empty `source`/`destination`; (c) each
-      destination equals its source with `legacy/` inserted at the bucket position; (d) **no** rule
-      whose source matches `/^\/en\/c?\/?learn\/:path\*$/` (the self-recursing blanket, DD-42); (e)
-      **no** rule whose first path segment after `learn/` is `courses`, `paths`, or
-      `fundamentally-strong` (DD-42/DD-43); (f) the six expected domain names are all covered —
-      command: `npx nx run ayokoding-www:test:unit` — acceptance: the suite fails with
-      `learn-three-bucket` module not found. Falsifiable both ways: the module does not exist today
+      [Repo-grounded], asserting all six properties: (a) exactly **6** rules, single tier — one per
+      relocated domain, not 12 (the `/c`-form tier is unreachable dead code once §3.0's
+      `content-namespace.ts` inversion always strips `/c/` first — see
+      [tech-docs.md's Module 2](./tech-docs.md#module-2--learn-three-bucketts-per-domain-dd-42-collapsed-to-one-tier-by-dd-48));
+      (b) every rule `permanent: true` with non-empty `source`/`destination`; (c) each destination
+      equals its source with `legacy/` inserted at the bucket position; (d) **no** rule whose source
+      matches `/^\/en\/learn\/:path\*$/` (the self-recursing blanket, DD-42); (e) **no** rule whose
+      first path segment after `learn/` is `courses`, `paths`, or `fundamentally-strong`
+      (DD-42/DD-43); (f) **no** rule's `source` or `destination` contains a `/c/` segment (loop-safety
+      invariant, DD-48); (g) the six expected domain names are all covered — command:
+      `npx nx run ayokoding-www:test:unit` — acceptance: the suite fails with `learn-three-bucket`
+      module not found. Falsifiable both ways: the module does not exist today
       (`test -f apps/ayokoding-www/src/redirects/learn-three-bucket.ts` returns non-zero, verified in
       Phase 0) and returns 0 after the GREEN step.
 
@@ -547,27 +676,33 @@ deleted), re-pointing each entry to wherever the content now lives.
   ```
 
 - [ ] [AI] **GREEN** — author `<REDIR>learn-three-bucket.ts` _(New file)_ exporting
-      `learnThreeBucketRedirects` with the 12 rules (per domain: a **tier-1** bare rule
-      `/en/learn/<domain>/:path*` → `/en/c/learn/legacy/<domain>/:path*` and a **tier-2** `/c` rule
-      `/en/c/learn/<domain>/:path*` → the same destination), each `permanent: true`, for
+      `learnThreeBucketRedirects` with **6** rules, single tier — one bare rule per domain,
+      `/en/learn/<domain>/:path*` → `/en/learn/legacy/<domain>/:path*`, each `permanent: true`, for
       `software-engineering`, `artificial-intelligence`, `information-security`,
-      `personal-development`, `it-governance`, `business`. Carry a header comment stating the blanket
-      ban and the ordering requirement, in the style of `content-namespace.ts` — command:
-      `npx nx run ayokoding-www:test:unit` — acceptance: the new suite passes; no existing redirect
-      test breaks.
-- [ ] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()` as
-      `return [...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects, ...contentNamespaceRedirects];`
-      — the order is load-bearing (DD-42): **after** `learnReorg` so historical within-`/en/learn/`
-      renames resolve to their canonical domain first, **after** `courseRehome` so the more specific
-      per-course rules win, and **before** `contentNamespace` so the tier-1 rules collapse a three-hop
-      chain to one hop — command:
-      `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:build` — acceptance: both exit 0,
-      and `grep -F "learnThreeBucketRedirects" apps/ayokoding-www/next.config.ts` prints exactly two
-      lines (the import and the spread) — it prints nothing before this step, verified.
-- [ ] [AI] **REFACTOR** — extract the six domain names into one exported `RELOCATED_DOMAINS` array that
-      both tiers map over, so a seventh domain cannot be added to one tier and forgotten in the other —
-      command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both
-      exit 0; the 12-rule assertion still passes.
+      `personal-development`, `it-governance`, `business`. No `/c`-form tier — it would be unreachable
+      dead code, since §3.0's inverted `content-namespace.ts` (wired first — see below) already strips
+      any `/c/`-prefixed request down to its bare form before this module ever runs. Carry a header
+      comment stating the blanket ban, the tier collapse and why (DD-48), and the ordering requirement,
+      in the style of `content-namespace.ts` — command: `npx nx run ayokoding-www:test:unit` —
+      acceptance: the new suite passes; no existing redirect test breaks.
+- [ ] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()`,
+      completing the array §3.0 started, as:
+      `return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects];`
+      — the order is load-bearing (DD-48, re-derived from first principles, not the pre-inversion
+      order): `contentNamespace` **first** so any stale `/c/`-prefixed request is stripped to its bare
+      form before any other rule evaluates (a rule positioned after it would never see a `/c/`-prefixed
+      URL, since bare-only rules can't match one) — omitting this would leave `/c/`-prefixed requests
+      for renamed/relocated domains unresolved, since none of the other three modules match a
+      `/c/`-prefixed source; `learnReorg` next so historical within-`/en/learn/` renames resolve to
+      their canonical domain; `courseRehome` before `learnThreeBucket` so the more specific per-course
+      rules win — command: `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:build` —
+      acceptance: both exit 0, and `grep -F "learnThreeBucketRedirects" apps/ayokoding-www/next.config.ts`
+      prints exactly two lines (the import and the spread) — it prints nothing before this step,
+      verified.
+- [ ] [AI] **REFACTOR** — extract the six domain names into one exported `RELOCATED_DOMAINS` array the
+      single tier maps over, so a seventh domain cannot be added and forgotten — command:
+      `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both exit 0;
+      the 6-rule assertion still passes.
 
 ### 3.2 · Relocate the six domains (pure `git mv`, DD-41)
 
@@ -623,7 +758,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       names the **three buckets** instead of the six domains (Q-F recommended answer A — keep it as the
       section hub page; do **not** move its prose into `_index.md`, which `generate-indexes`
       machine-rewrites and would clobber) — acceptance:
-      `grep -oE '/en/c/learn/(paths|courses|legacy)' apps/ayokoding-www/content/en/learn/overview.md | sort -u | wc -l`
+      `grep -oE '/en/learn/(paths|courses|legacy)' apps/ayokoding-www/content/en/learn/overview.md | sort -u | wc -l`
       returns **3**, AND
       `grep -oE '\(/en/learn/(software-engineering|artificial-intelligence|information-security|personal-development|it-governance|business)' apps/ayokoding-www/content/en/learn/overview.md | wc -l`
       returns **0**. Falsifiable both ways: today the first returns **0** and the second returns **6**
@@ -652,11 +787,19 @@ deleted), re-pointing each entry to wherever the content now lives.
     And no navigation source file required a hardcoded domain slug to be edited
   ```
 
-- [ ] [AI] **Prove DD-44's zero-code-change claim** — confirm no production navigation source file was
-      edited this phase:
+- [ ] [AI] **Prove DD-44's zero-code-change claim — scoped to the six-domain relocation (§3.2), not
+      the whole phase** — confirm this sub-step's own staged diff touches no production navigation
+      source file:
       `git diff --cached --name-only -- apps/ayokoding-www/src/features/navigation apps/ayokoding-www/src/features/content apps/ayokoding-www/src/app` —
-      acceptance: prints nothing. Falsifiable both ways: touching any of those files makes it print
-      that path. Only `apps/ayokoding-www/src/redirects/` and `next.config.ts` may change under `src/`.
+      acceptance: prints nothing at this point in the phase. Falsifiable both ways: touching any of
+      those files in this sub-step's own commit makes it print that path. **DD-44's claim is narrower
+      than "Phase 3 makes no production code changes"** — §3.0's DD-48 de-namespacing work legitimately
+      edits files under all three of these directories (`c/[...slug]/page.tsx` deletion,
+      `[...slug]/page.tsx` widening, `content-url.ts`, `breadcrumb.tsx`, and others per the
+      [tech-docs.md file inventory](./tech-docs.md#file-inventory-measured-do-not-re-derive-re-verify-what-an-acceptance-clause-cites)) in its **own**, earlier
+      commit(s); this check runs after that work is already committed (not staged), so it verifies only
+      that the relocation itself (§3.2) adds no further navigation-code edits on top of DD-48's
+      explicitly-scoped ones.
 
 ### 3.3 · Specs + e2e (Gherkin-bound)
 
@@ -667,12 +810,13 @@ deleted), re-pointing each entry to wherever the content now lives.
   - _Suggested executor: `specs-maker`_
 - [ ] [AI] **RED (e2e)** — write failing Playwright specs in the paired `ayokoding-www-fe-e2e` project
       asserting: one relocated URL per domain 308s to its `legacy/` address in **both** inbound forms
-      (bare `/en/learn/<domain>/…` and `/en/c/learn/<domain>/…`); the deep path
-      `/en/c/learn/software-engineering/programming-languages/python/by-example/advanced` lands at its
+      (bare `/en/learn/<domain>/…` in one hop, and a stale `/c`-bookmark `/en/c/learn/<domain>/…` in
+      two hops); the deep path
+      `/en/learn/software-engineering/programming-languages/python/by-example/advanced` lands at its
       `legacy/` twin with every segment below the domain unchanged; a historical `learn-reorg` source
-      (`/en/learn/human/…`) chains to `/en/c/learn/legacy/personal-development/…`; a `courses/` URL and
+      (`/en/learn/human/…`) chains to `/en/learn/legacy/personal-development/…`; a `courses/` URL and
       a `paths/` URL are **not** rewritten; and an old `fundamentally-strong` course URL still resolves
-      to `/en/c/learn/courses/<id>` (DD-43) — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` —
+      to `/en/learn/courses/<id>` (DD-43) — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: the new specs fail. **Do NOT target `ayokoding-www:test:e2e`** — that target is
       `echo 'no-op: target not applicable for this project'` and always exits 0
       [Repo-grounded — `apps/ayokoding-www/project.json`], so a RED clause pointed at it can never
@@ -769,7 +913,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       `find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l` — acceptance: returns **53**
       (its Phase-0 baseline). No `id` walk-through is fabricated for content that does not exist.
 - [ ] [AI] Start the dev server (`npx nx dev ayokoding-www`) and, via Playwright MCP at
-      375 / 768 / 1280 px, open `/en/c/learn`, `/en/c/learn/legacy`, one relocated page per domain, and
+      375 / 768 / 1280 px, open `/en/learn`, `/en/learn/legacy`, one relocated page per domain, and
       one deep relocated page; confirm the sidebar shows `learn` with exactly `paths`, `courses`,
       `legacy` (in that order); confirm the legacy page breadcrumb reads
       `Home / Browse / Learn / Legacy / <domain> / <title>` and — per the
@@ -779,6 +923,17 @@ deleted), re-pointing each entry to wherever the content now lives.
 - [ ] [AI] Capture one screenshot per screen per breakpoint to
       `evidence/phase-3-<screen>-en-<breakpoint>px.png` — acceptance: the files exist in `evidence/`
       and are referenced from this checklist by `![alt](./evidence/…)` links.
+- [ ] [AI] **De-namespacing sweep across every namespaced section, `en` and `id` alike (DD-48) — a
+      URL-layer check, distinct from DD-45's content-structure deferral below.** Via Playwright MCP,
+      open a bare URL under each of the five sections — `/en/learn/…`, `/en/rants/…`, `/id/belajar/…`,
+      `/id/celoteh/…`, `/id/konten-video/…` — and confirm each renders directly with no redirect, AND
+      request the equivalent stale `/c`-prefixed bookmark for each (`/en/c/learn/…`, `/en/c/rants/…`,
+      `/id/c/belajar/…`, `/id/c/celoteh/…`, `/id/c/konten-video/…`) and confirm each 308s to its bare
+      form — acceptance: all five bare URLs render with zero redirect, all five stale-`/c` URLs 308 to
+      their bare form, and no request loops. This confirms de-namespacing is site-wide, not
+      `en/learn`-only, and confirms `id`'s de-namespacing is live even though `id`'s three-bucket IA
+      shape stays deferred (DD-45, checked separately below — these are different axes, per
+      [tech-docs.md's scope note](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48)).
 - [ ] [AI] **Record the `id` deferral explicitly (DD-45 / Q-B)** — confirm
       `test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero and
       `test -e apps/ayokoding-www/content/id/belajar/kursus` returns non-zero; then write the deferral
@@ -804,13 +959,34 @@ deleted), re-pointing each entry to wherever the content now lives.
       Falsifiable both ways: it lists seven domain directories plus the two hub files today.
 - [ ] [AI] `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l` returns **1148**, and
       the relocation diff shows pure renames with no content-modifying hunk under `<LEGACY>` (DD-41).
-- [ ] [AI] `<REDIR>learn-three-bucket.ts` exports 12 rules from one `RELOCATED_DOMAINS` array;
-      `learn-three-bucket.unit.test.ts` is green **including** the negative assertions (no blanket
-      source; no `courses`/`paths`/`fundamentally-strong` source prefix).
-- [ ] [AI] `next.config.ts` spreads the module **between** `courseRehomeRedirects` and
-      `contentNamespaceRedirects`, with `learnReorgRedirects` still first (DD-42).
-- [ ] [AI] No production navigation source file was edited (DD-44) — the staged-name check under
-      `src/features/navigation`, `src/features/content`, and `src/app` prints nothing.
+- [ ] [AI] `<REDIR>learn-three-bucket.ts` exports **6** rules, single tier, from one
+      `RELOCATED_DOMAINS` array (DD-42, collapsed by DD-48); `learn-three-bucket.unit.test.ts` is green
+      **including** the negative assertions (no blanket source; no `courses`/`paths`/
+      `fundamentally-strong` source prefix; no rule's source or destination contains `/c/`).
+- [ ] [AI] `next.config.ts`'s `redirects()` array is, in order:
+      `[...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects]`
+      — `contentNamespaceRedirects` **first** (DD-48, re-derived order, not the pre-inversion order).
+- [ ] [AI] **DD-48's de-namespacing file inventory is complete** — every disposition in
+      [tech-docs.md's File inventory](./tech-docs.md#file-inventory-measured-do-not-re-derive-re-verify-what-an-acceptance-clause-cites) is applied:
+      `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx"` returns non-zero
+      (route deleted); `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx"` returns
+      non-zero AND `test -f "apps/ayokoding-www/src/app/[locale]/(content)/browse/page.tsx"` returns 0
+      (browse index relocated); `grep -F "/c/" apps/ayokoding-www/src/features/content/core/content-url.ts`
+      prints nothing (uniform bare join); `content-namespace.ts`'s five rules are inverted (`/c/`-prefixed
+      sources, bare destinations); the collision negative check from §3.0 still holds.
+- [ ] [AI] **Loop-safety invariant (DD-48), falsifiable both ways** —
+      `grep -rn '"/[a-z][a-z]/c/' apps/ayokoding-www/src/redirects/` is empty; reintroducing a forward
+      rule in any module makes it non-empty.
+- [ ] [AI] **DD-48 covers every namespaced section, not just `en/learn`** — `content-namespace.ts`'s
+      inverted rule set still names all five: `en/learn`, `en/rants`, `id/belajar`, `id/celoteh`,
+      `id/konten-video`; this is a **URL-layer** check, distinct from DD-45's content-structure deferral
+      check below.
+- [ ] [AI] No production navigation source file was edited **by the six-domain relocation itself**
+      (DD-44, scoped to §3.2 — see
+      [§3.2's scoped re-statement](#32--relocate-the-six-domains-pure-git-mv-dd-41)) — the staged-name
+      check under `src/features/navigation`, `src/features/content`, and `src/app`, run at that
+      sub-step, printed nothing; DD-48's own production-code edits (§3.0) are accounted for separately
+      and are not a DD-44 violation.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
       `:validate-indexes` + `:specs:behavior:coverage` **and**
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0. (`ayokoding-www:test:e2e` and
@@ -826,7 +1002,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       into this checklist (DD-45).
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
-> **Pause Safety**: `/en/c/learn/` is at its final three-bucket shape, every relocated URL 308s to its
+> **Pause Safety**: `/en/learn/` is at its final three-bucket shape, every relocated URL 308s to its
 > new address in both inbound forms, `courses/` and `paths/` are provably unaffected, and no page body
 > was edited. Production serves a coherent section. Safe to stop indefinitely. To resume:
 > `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
@@ -864,14 +1040,16 @@ deleted), re-pointing each entry to wherever the content now lives.
       no bucket directory (`test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero,
       DD-45) — acceptance: all four checks hold. Falsifiable both ways: before Phase 3 the `ls` lists
       seven domain directories and the `find` under `legacy/` fails outright.
-- [ ] [AI] **Redirect-order regression check (DD-42/DD-43)** — `apps/ayokoding-www/next.config.ts`
-      still spreads the four rule sets in the order
-      `learnReorgRedirects` → `courseRehomeRedirects` → `learnThreeBucketRedirects` →
-      `contentNamespaceRedirects`, and `npx nx run ayokoding-www:test:unit` passes both modules'
-      negative assertions (no blanket source; no `courses`/`paths`/`fundamentally-strong` source
-      prefix in the bucket module; the two rule sets' source prefixes are disjoint) — acceptance: both
-      hold. Falsifiable both ways: swapping any adjacent pair in the spread makes the deep-path or
-      historical-rename e2e assertion fail.
+- [ ] [AI] **Redirect-order regression check (DD-42/DD-43/DD-48)** —
+      `apps/ayokoding-www/next.config.ts` still spreads the four rule sets in the order
+      `contentNamespaceRedirects` → `learnReorgRedirects` → `courseRehomeRedirects` →
+      `learnThreeBucketRedirects` (DD-48's re-derived order — `contentNamespace` **first**, not last),
+      and `npx nx run ayokoding-www:test:unit` passes all modules' negative assertions (no blanket
+      source; no `courses`/`paths`/`fundamentally-strong` source prefix in the bucket module; no rule
+      anywhere has a `/c/`-containing destination; the rule sets' source prefixes are disjoint) —
+      acceptance: all hold. Falsifiable both ways: swapping any adjacent pair in the spread makes the
+      deep-path, historical-rename, or loop-safety e2e/unit assertion fail — in particular, moving
+      `contentNamespaceRedirects` off the front reintroduces the coexistence hazard DD-48 forbids.
 - [ ] [AI] **Re-home completeness re-check (DD-2)** —
       `ls apps/ayokoding-www/content/en/learn/courses | wc -l` returns **38** (37 course directories +
       `_index.md`), and every directory name appears in `REHOMED_COURSE_SLUGS` — acceptance: both hold.
@@ -892,6 +1070,15 @@ deleted), re-pointing each entry to wherever the content now lives.
       `.md`; `id/belajar` untouched at 53) and the four-way redirect ordering + both negative
       assertion sets still hold.
 - [ ] [AI] `courses/` holds 37 course directories + `_index.md`, all named in `REHOMED_COURSE_SLUGS`.
+- [ ] [AI] **UI Quality Gate (R9)** — run
+      [`ui-quality-gate`](../../../repo-governance/workflows/ui/ui-quality-gate.md) (`swe-ui-checker`
+      → `swe-ui-fixer`, `mode=strict`) over the component source DD-48 edits. This plan is **not**
+      UI-gate-exempt: DD-48 modifies `breadcrumb.tsx`, `browse-index.tsx`, and three route
+      `page.tsx` files, and `swe-ui-checker` audits `.tsx` source statically. — acceptance: the gate
+      reports 0 CRITICAL and 0 HIGH findings outstanding. Falsifiable both ways: the gate is capable
+      of reporting findings against these files (they exist and are `.tsx`), so a clean result is
+      evidence rather than a vacuous pass. Note this gate audits **source**; it is not a live-site
+      check and does not replace Phase 5's Playwright MCP verification or the Rule-15 retest.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: the whole URL/IA layer passes every automated gate on a clean tree. Safe to stop.
@@ -913,17 +1100,19 @@ deleted), re-pointing each entry to wherever the content now lives.
       — acceptance: exits 0 (the `en` bucket exists, the `id` one deliberately does not).
 - [ ] [AI] Start the dev server: `npx nx dev ayokoding-www` — acceptance: server up.
 - [ ] [AI] **Three-bucket learn-section walk** — at 375 / 768 / 1280 px via Playwright MCP, open
-      `/en/c/learn` (sidebar shows exactly `paths`, `courses`, `legacy`, in that weight order),
-      `/en/c/learn/legacy` (landing renders with the Q-D-ruled notice), one relocated page per domain,
-      and one deep relocated page; confirm both inbound forms of a relocated URL land in **one hop**
-      and that a `courses/` URL and a `paths/` URL are **not** rewritten — acceptance: all correct;
-      zero console errors; the legacy breadcrumb does not wrap to multiple lines at 375 px.
+      `/en/learn` (sidebar shows exactly `paths`, `courses`, `legacy`, in that weight order),
+      `/en/learn/legacy` (landing renders with the Q-D-ruled notice), one relocated page per domain,
+      and one deep relocated page; confirm the bare inbound form of a relocated URL lands in **one**
+      hop and a stale `/c`-bookmark form of the same URL lands in **two** hops (DD-48's inversion adds
+      one hop for the stale form, never a loop), and that a `courses/` URL and a `paths/` URL are
+      **not** rewritten — acceptance: all correct; zero console errors; the legacy breadcrumb does not
+      wrap to multiple lines at 375 px.
 - [ ] [AI] **Re-home walk** — at the same three breakpoints, open an old
       `fundamentally-strong/software-engineer/<slug>` URL and confirm it lands on
-      `/en/c/learn/courses/<id>`, that the same URL with a `?path=` query preserves that query through
+      `/en/learn/courses/<id>`, that the same URL with a `?path=` query preserves that query through
       the redirect, and that the course page renders its `prerequisites` metadata — acceptance: all
       three behaviors correct at every breakpoint.
-- [ ] [AI] **Old-way browse walk** — navigate from `/en/c/learn/legacy` and from the preserved
+- [ ] [AI] **Old-way browse walk** — navigate from `/en/learn/legacy` and from the preserved
       `fundamentally-strong` section index to a re-homed course entirely by clicking, with no typed
       URL — acceptance: every hop resolves; no dead link; the destination is the canonical course body.
 - [ ] [AI] Verify `html[lang]` is `en` on every page opened and `browser_console_messages` is clean —
@@ -933,7 +1122,7 @@ deleted), re-pointing each entry to wherever the content now lives.
       and each is referenced from this checklist by an `![alt](./evidence/…)` link.
 - [ ] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
       `web-exploratory-tester` + `web-usability-tester` + `web-design-tester`) against the running
-      three-bucket learn section — `/en/c/learn`, the `/en/c/learn/legacy` landing, a relocated legacy
+      three-bucket learn section — `/en/learn`, the `/en/learn/legacy` landing, a relocated legacy
       page carrying the Q-D-ruled banner, and a re-homed course page reached through a legacy URL
       (`en` content) — acceptance: EWT/UWT/DWT findings + spec gaps recorded.
 - [ ] [AI] Append each finding below as a new unchecked checkbox, source-attributed

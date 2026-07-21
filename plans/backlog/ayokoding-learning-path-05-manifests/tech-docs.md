@@ -9,40 +9,67 @@
 
 ## Overview
 
-This plan delivers the **composition layer** of the four-path shared-library product: four
-`PathManifest` YAML data files, their thin content landing anchors, the paths-hub card population,
-the per-path smoothness audits, and every manifest growth as backfill content lands.
+This plan delivers the **composition layer of the `careers/` category**: four `PathManifest` YAML
+data files, their thin content landing anchors, the `careers/` slice of the paths-hub card
+population, the per-path smoothness audits, and every manifest growth as backfill content lands.
+
+**Category scope (2026-07-21 path-category-split ruling).** The paths hub now serves **two**
+categories at different URL depths — `careers/<arc>/<role>` (3 segments, 4 paths, this plan) and
+`skills/<subject>` (2 segments, no arc level today, 2 paths,
+`ayokoding-learning-path-06-skills-paths`). This plan is **careers-only**; it does not create,
+touch, or assert anything about the `skills/` category. Every count and every mechanical check in
+this document is scoped to `careers/` for exactly that reason — see [DD-34](#design-decisions) for
+the full ruling record.
 
 It consumes three upstream layers and produces one:
 
-| Layer                     | Owner                                                    | This plan's relationship        |
-| ------------------------- | -------------------------------------------------------- | ------------------------------- |
-| URL / IA                  | `ayokoding-learning-path-01-url-restructure`             | consumes (`courses/`, `paths/`) |
-| Schema / core / integrity | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes (zod, gates, syllabus) |
-| Rendering / route wiring  | `ayokoding-learning-path-03-navigation-ui`               | consumes (components, `?path=`) |
-| Course bodies             | `ayokoding-learning-path-04-course-authoring`            | consumes (127 bundles)          |
-| **Manifests + landings**  | **this plan**                                            | **produces**                    |
+| Layer                                   | Owner                                                    | This plan's relationship           |
+| --------------------------------------- | -------------------------------------------------------- | ---------------------------------- |
+| URL / IA                                | `ayokoding-learning-path-01-url-restructure`             | consumes (`courses/`, `paths/`)    |
+| Schema / core / integrity               | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | consumes (zod, gates, syllabus)    |
+| Rendering / route wiring                | `ayokoding-learning-path-03-navigation-ui`               | consumes (components, `?path=`)    |
+| Course bodies                           | `ayokoding-learning-path-04-course-authoring`            | consumes (127 bundles)             |
+| **`careers/` manifests + landings**     | **this plan**                                            | **produces**                       |
+| `skills/` manifests + landings + corpus | `ayokoding-learning-path-06-skills-paths`                | sibling — out of this plan's scope |
 
-## The manifest ownership invariant
+## The manifest ownership invariant (now scoped per category)
 
-**This plan owns every file under `apps/ayokoding-www/src/features/course-paths/manifests/` and
-every step that creates, appends to, reorders, or re-verifies one.**
+**This plan owns every file under `apps/ayokoding-www/src/features/course-paths/manifests/careers/`
+and every step that creates, appends to, reorders, or re-verifies one of the four `careers/`
+manifests.** `ayokoding-learning-path-06-skills-paths` owns the sibling `.../manifests/skills/`
+subtree end-to-end (both skills manifests, their landings, and the full ERP + accounting corpus)
+under the identical invariant, scoped to its own category.
 `ayokoding-learning-path-04-course-authoring` owns course **bodies only** and **never edits a
-manifest**.
+manifest under either category**.
+
+Before the 2026-07-21 ruling this invariant named the whole `manifests/` directory as this plan's
+exclusive property. That is now **too broad**: `ayokoding-learning-path-06-skills-paths` writing
+`.yaml` files under the same directory's `skills/` subtree is not a boundary violation — it is the
+sibling half of the same invariant, applied to the other category. Every mechanical check below that
+used to assert "this plan owns the whole `manifests/` directory" is rescoped to assert "this plan
+owns exactly the `manifests/careers/` subtree" instead, so a skills-manifest landing never fails this
+plan's own gates.
+
+**Variable depth (R2, DD-34).** `<MANIFESTS>careers/<arc>/<role>.yaml` is 3 path segments deep;
+`<MANIFESTS>skills/<subject>.yaml` is 2. Nothing in this plan may assume manifest paths are uniformly
+3 segments deep — every glob and `find` below walks `<MANIFESTS>careers/` specifically, which
+sidesteps the depth question entirely rather than asserting a depth.
 
 ### What this plan writes
 
-| Path                                                                                      | Kind    | Note                                                                                     |
-| ----------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------- |
-| `apps/ayokoding-www/src/features/course-paths/manifests/**/*.yaml`                        | data    | all four manifests, exclusively                                                          |
-| `apps/ayokoding-www/src/features/course-paths/manifests/published-manifests.unit.test.ts` | test    | asserts every published manifest's shape, integrity, and growth state                    |
-| `apps/ayokoding-www/content/en/learn/paths/<path-id>/_index.md`                           | content | four thin landing anchors, prose/SEO only                                                |
-| `apps/ayokoding-www/content/en/learn/paths/_index.md`                                     | content | card population only — the file itself is `ayokoding-learning-path-01-url-restructure`'s |
+| Path                                                                                      | Kind    | Note                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/ayokoding-www/src/features/course-paths/manifests/careers/**/*.yaml`                | data    | all four `careers/` manifests, exclusively                                                                                                                                                     |
+| `apps/ayokoding-www/src/features/course-paths/manifests/published-manifests.unit.test.ts` | test    | asserts every published `careers/` manifest's shape, integrity, and growth state — this file itself is shared once `ayokoding-learning-path-06-skills-paths` adds its own assertions alongside |
+| `apps/ayokoding-www/content/en/learn/paths/careers/<arc>/<role>/_index.md`                | content | four thin landing anchors, prose/SEO only                                                                                                                                                      |
+| `apps/ayokoding-www/content/en/learn/paths/_index.md`                                     | content | `careers/` card population only — the file itself is `ayokoding-learning-path-01-url-restructure`'s; `skills/` cards are `ayokoding-learning-path-06-skills-paths`'s                           |
 
 ### What this plan never touches
 
 - Any file under `apps/ayokoding-www/content/en/learn/courses/` — course bodies are read (to verify a
   `courseOrder` ID resolves) and never written.
+- Any file under `apps/ayokoding-www/src/features/course-paths/manifests/skills/` — owned end-to-end
+  by `ayokoding-learning-path-06-skills-paths`, same invariant, other category.
 - Any file under `apps/ayokoding-www/src/features/course-paths/core/` or `.../shell/` — the pure
   modules and the rendering components are consumed, never modified.
 - Any redirect module, any `next.config.ts` entry, any `legacy/` content.
@@ -109,8 +136,8 @@ source of truth** for the path — it is NOT `courseOrder` frontmatter on any co
 path landing page renders _from_ this loaded manifest.
 
 ```yaml
-# apps/ayokoding-www/src/features/course-paths/manifests/interview-ready/software-engineer.yaml
-pathId: interview-ready/software-engineer
+# apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+pathId: careers/interview-ready/software-engineer
 title: "Interview-Ready Software Engineer"
 description: "Interview-first track for an experienced engineer re-entering the market."
 courseOrder:
@@ -122,8 +149,13 @@ courseOrder:
   # … ordered course IDs, prerequisite-consistent …
 ```
 
-The path ID's second segment names either a **role** (`software-engineer`) or a **role transition or
-subject** — `<role-transition-or-subject>` is the explicit convention for that segment (DD-23).
+The path ID is now three segments for every `careers/` path — `careers/<arc>/<role>` — after the
+2026-07-21 category-split ruling inserted the leading category segment (DD-34, amending DD-23's
+two-segment framing below). The **third** segment names a **role** (`software-engineer`, `ai-engineer`)
+— every `careers/` role name is a plain role today; DD-23's original `<role-transition-or-subject>`
+convention for that segment is retired for this plan's own fourth path by DD-35 (see
+[Design Decisions](#design-decisions)) but is left in place as a still-valid convention for a future
+role-transition path, should one be added later.
 
 Each `courseOrder` entry is a course ID string, optionally a mapping
 `{ id, framing?: { intro?, outro? } }` when the path adds a **lightweight per-course framing**
@@ -216,7 +248,7 @@ sequenceDiagram
     participant Core as path-nav / path-context
     participant Page as rendered course page
 
-    Reader->>Route: GET /en/c/learn/paths/interview-ready/software-engineer
+    Reader->>Route: GET /en/learn/paths/careers/interview-ready/software-engineer
     Route->>Repo: loadManifest(pathId)
     Repo->>Yaml: read + zod-validate + integrity-check
     Yaml-->>Repo: courseOrder (ordered course IDs)
@@ -268,19 +300,24 @@ The `band signal triggers growth` transition is the band-completion signal from
 
 Two of the four manifests enter through `SmokeTestScoped`:
 
-- `interview-ready/software-engineer` — published over the 33 re-homed topics + 4 existing capstones;
+- `careers/interview-ready/software-engineer` — published over the 33 re-homed topics + 4 existing capstones;
   the five Band-9 interview-technique courses are inserted when they land.
-- `immediately-effective/software-engineer-to-ai-engineer` — published over the six net-new AI courses;
-  grows to its full 15-course composition when the nine-course AI/harness cluster lands (DD-33).
+- `careers/immediately-effective/ai-engineer` — published at Phase 2 over its **included, already-existing**
+  SWE-fundamentals prerequisite courses (available immediately — no authoring wait, DD-35) at the head
+  of `courseOrder`, plus whichever of the six new AI-engineer-role and AI/harness-cluster courses
+  already exist by then; grows as the rest land. Its exact smoke-test-scoped subset and its full grown
+  composition are **not asserted here as fixed numbers** — see [DD-35](#design-decisions) for why, and
+  for what this plan can and cannot state before `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s
+  own Phase 1.4 lands the prerequisite-consistent ordering of the included set.
 
-The other two (`immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`)
+The other two (`careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`)
 are published over the currently-available library and grow through the ordinary Bands 1–8 growth
 step.
 
 ### Which manifest grows when a band lands
 
 The single highest-risk step in this plan is appending a course to the wrong manifest. Band 9 is the
-trap: `immediately-effective/software-engineer` **deliberately omits** the interview-technique band —
+trap: `careers/immediately-effective/software-engineer` **deliberately omits** the interview-technique band —
 its reader reaches those courses through their canonical pages, not through the manifest.
 
 ```mermaid
@@ -289,13 +326,13 @@ flowchart LR
     BAND{"Which band landed?"}:::decision
     B18["Bands 1-8"]:::band
     B9["Band 9<br/>interview technique"]:::band
-    B58["Band 5 + Band 8<br/>AI/harness cluster<br/>+ coding-agent capstone"]:::band
+    B58["AI-path bands<br/>own entry courses<br/>+ AI/harness cluster<br/>+ coding-agent capstone"]:::band
 
-    IR["interview-ready/<br/>software-engineer"]:::grow
-    IE["immediately-effective/<br/>software-engineer"]:::grow
-    FS["fundamentally-strong/<br/>software-engineer"]:::grow
-    AI["immediately-effective/<br/>software-engineer-<br/>to-ai-engineer"]:::grow
-    NOGROW["immediately-effective/<br/>software-engineer<br/>DOES NOT GROW"]:::nogrow
+    IR["careers/<br/>interview-ready/<br/>software-engineer"]:::grow
+    IE["careers/<br/>immediately-effective/<br/>software-engineer"]:::grow
+    FS["careers/<br/>fundamentally-strong/<br/>software-engineer"]:::grow
+    AI["careers/<br/>immediately-effective/<br/>ai-engineer"]:::grow
+    NOGROW["careers/<br/>immediately-effective/<br/>software-engineer<br/>DOES NOT GROW"]:::nogrow
 
     BAND --> B18
     BAND --> B9
@@ -327,7 +364,7 @@ no course precedes any of its listed prerequisites. The exhaustive per-course or
 [`syllabus/paths/` mirrors](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
 and are **authoritative** — this plan transcribes them into `courseOrder`, it does not re-derive them.
 
-### `interview-ready/software-engineer` (interview-first)
+### `careers/interview-ready/software-engineer` (interview-first)
 
 Experienced SWE re-entering the market. Arc: **interview/job prep first → production-effective →
 deeper.** Delivered **first**, as an architecture smoke test (DD-27). Per **DL-13** this is a curated
@@ -336,14 +373,14 @@ spine plus an optional "Go deeper" tail, not all-comprehensive. Published smoke-
 Mirror:
 [`manifest-interview-ready-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md).
 
-### `immediately-effective/software-engineer` (build-fast-first)
+### `careers/immediately-effective/software-engineer` (build-fast-first)
 
 Editor/tooling → one language end-to-end → **build a real app first** → then deepen. Adds no new
 course body; composes existing library courses. Grows through Bands 1–8 only — it **omits the
 interview-technique band by design**. Mirror:
 [`manifest-immediately-effective-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md).
 
-### `fundamentally-strong/software-engineer` (theory-first)
+### `careers/fundamentally-strong/software-engineer` (theory-first)
 
 University-style: CS foundations / computer architecture / paradigms / DS&A FIRST, then
 systems/architecture depth. Per **DL-13** this is the complete-mastery path over the
@@ -351,28 +388,42 @@ software-engineer-role catalog. Grows through Bands 1–8 and Band 9 (its own tr
 interview band). Mirror:
 [`manifest-fundamentally-strong-software-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md).
 
-### `immediately-effective/software-engineer-to-ai-engineer` (fourth path)
+### `careers/immediately-effective/ai-engineer` (fourth path, renamed and re-scoped 2026-07-21 — DD-35)
 
-Role-transition principle, not an arc over the software-engineer-role baseline. Assumes an
-**already-working software engineer** (DD-24) — the manifest is a short, AI-specific spine;
-prerequisite software-engineer-**fundamentals** courses it depends on are **linked** to their
-canonical pages from the landing narrative, not included in `courseOrder`. DD-24 scopes
-"linked, not included" to SWE-fundamentals **only** — the AI/harness cluster is **walked**, not
-linked (DD-33). Converges on a **distinct AI-engineer endpoint** (DD-22).
+A genuine **from-scratch** AI-engineering path, not a transition arc over the software-engineer-role
+baseline — it does **not** assume prior software-engineering competence. Per **DD-35** (which
+supersedes DD-24's linked-not-included framing for this path), its prerequisites are **included**
+directly in `courseOrder` rather than linked out from the landing narrative. This lengthens the
+manifest but creates **no new authoring work** — every included prerequisite is an **existing**
+library course (see the mirror citation below); the six net-new AI-engineer-role courses (DD-28) are
+the only bodies this path still needs authored. It still converges on a **distinct AI-engineer
+endpoint** (DD-22), never the shared software-engineering one.
 
-**Spine: 15 courses** — the nine-course AI/harness cluster walked, plus the six new AI-engineer-role
-courses. Settled order per the mirror
-[`manifest-immediately-effective-software-engineer-to-ai-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md),
-which is **already authoritative**: `creating-ai-powered-apps` → light eval gate
-(`evaluating-ai-output-essentials`) → `agentic-ai` → `browser-automation-with-cdp` → the harness
-cluster (`the-agent-loop` → `agent-tools-and-mcp` → `agent-context-and-memory` →
-`agent-permissions-and-sandboxing` → `agent-orchestration-subagents-and-observability`) →
-`capstone-build-your-own-coding-agent` → `statistics-for-evaluation` →
-`evaluating-ai-systems-in-depth` → `product-patterns-for-probabilistic-systems` →
-`inference-serving-and-model-deployment` → `fine-tuning-and-adaptation`.
+DD-21's scope (teaches **building** AI systems, not driving them) and DD-33's **walk, not link**
+treatment of the AI/harness cluster both continue to hold — DD-33 is amended in scope only (its own
+composition no longer starts from a linked-out SWE-fundamentals baseline), not reversed:
 
-Published smoke-test-scoped to the six new AI courses (the only spine members whose bodies exist when
-this plan's Phase 2 runs), grown to the full 15 in Phase 5.
+- **Mirror already renamed and corrected, prose brought into agreement (not this plan's rename).**
+  The syllabus mirror is now
+  [`manifest-immediately-effective-ai-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+  — `ayokoding-learning-path-02-schema-and-prerequisite-dag` has already performed both the rename
+  (from `manifest-immediately-effective-software-engineer-to-ai-engineer.md`) and the from-scratch,
+  prerequisites-included content correction, as a deliberate, reasoned exception to that plan's own
+  "no edits under `syllabus/`" custody rule. This plan's own custody rule (it never silently renames a
+  file it does not own) is unaffected — this section only updates its citation to agree with the
+  already-renamed file.
+- **Composition — the included prerequisite courses are now named; their final order and total are
+  not.** The corrected mirror names 11 existing SWE-fundamentals courses moving from "linked" to
+  "included": `just-enough-python`, `software-testing`, `cicd-and-release-engineering`,
+  `backend-at-scale`, `containers-and-orchestration`, `computer-architecture`,
+  `site-reliability-engineering`, `data-engineering`, `data-structures-and-algorithms-essentials`,
+  `software-product-engineering`, `frontend-essentials` — each of these also declares its own further
+  prerequisites, so the mirror itself notes the final included set is very likely larger than these 11. The mirror explicitly defers the **prerequisite-consistent stage-by-stage ordering** of this
+  full set to `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4 — not
+  this plan's. This plan's standing rule is still that `courseOrder` is **transcribed** from the
+  syllabus mirror, never re-derived: Phase 2 (below) is written against whatever
+  prerequisite-consistent ordering that plan's Phase 1.4 lands, and the resulting total course count
+  remains an open item, not a settled figure, until then — not fabricated here.
 
 ## Smoothness Architecture (per-path)
 
@@ -406,12 +457,13 @@ fabricated.
 
 ## Design Decisions
 
-Nine decisions land in this plan. Each is reproduced verbatim from the source plan, with its
-amendment annotations intact.
+Eleven decisions land in this plan: nine reproduced verbatim from the source plan (with their
+amendment annotations intact), plus **DD-34** and **DD-35**, added 2026-07-21 by the path-category-split
+ruling.
 
 - **DD-5 · Three software-engineer paths, one library, one converging endpoint (amended 2026-07-20 by
-  DD-22 — see below).** `interview-ready/software-engineer`, `immediately-effective/software-engineer`,
-  and `fundamentally-strong/software-engineer` differ only in entry point + ordering + emphasis; all
+  DD-22 — see below).** `careers/interview-ready/software-engineer`, `careers/immediately-effective/software-engineer`,
+  and `careers/fundamentally-strong/software-engineer` differ only in entry point + ordering + emphasis; all
   end at the same deep mastery. Serving one persona per path without forking any body is exactly what
   the shared library buys. **DD-22 amends the founding claim itself**: convergence is now a per-role
   property, not a single global endpoint — this DD-5 statement still holds for the three
@@ -434,7 +486,7 @@ amendment annotations intact.
   - **Resolved by DD-33**: it walks. The course **bodies** for this cluster are owned by
     `ayokoding-learning-path-04-course-authoring`; only their manifest placement is this plan's.
 - **DD-21 · Scope: the AI path teaches building AI systems, not driving them (D1).** The fourth path,
-  `immediately-effective/software-engineer-to-ai-engineer`, teaches learners to **build** AI systems.
+  `careers/immediately-effective/ai-engineer`, teaches learners to **build** AI systems.
   `agentic-coding` (the practice of using an AI agent to write code faster — the user's side of the
   agent relationship) stays exactly where it is in the library, unchanged, and is explicitly **not**
   the subject of this path — a separate, unrelated axis.
@@ -446,31 +498,44 @@ amendment annotations intact.
   separate AI-engineer endpoint. The library now serves **more than one endpoint**, and this axiom
   leaves room for future roles without requiring another founding-claim change.
 - **DD-23 · Path ID registered; second URL segment redefined from `<role>` to
-  `<role-transition-or-subject>` (D3).** The fourth path's ID is
-  `immediately-effective/software-engineer-to-ai-engineer`
-  (`/en/c/learn/paths/immediately-effective/software-engineer-to-ai-engineer`; manifest at
+  `<role-transition-or-subject>` (D3; amended 2026-07-21 by DD-34 for the category segment, and its
+  application to the fourth path retired 2026-07-21 by DD-35 — see below).** The fourth path's ID
+  **was** `immediately-effective/software-engineer-to-ai-engineer`
+  (`/en/learn/paths/immediately-effective/software-engineer-to-ai-engineer`; manifest at
   `apps/ayokoding-www/src/features/course-paths/manifests/immediately-effective/software-engineer-to-ai-engineer.yaml`).
   Registering a role-to-role transition ID surfaced that the second URL segment was never actually
-  `<role>` in general — it was `<role>` by accident because only one role existed. The convention is
-  now **stated explicitly**: `/en/c/learn/paths/<first-segment>/<role-or-role-transition>`, where the
-  first segment is the arc style (`interview-ready` / `immediately-effective` / `fundamentally-strong`)
-  and the second segment is either a role (`software-engineer`) or a role-to-role transition
+  `<role>` in general — it was `<role>` by accident because only one role existed. The convention was
+  **stated explicitly**: `/en/learn/paths/<first-segment>/<role-or-role-transition>`, where the first
+  segment is the arc style (`interview-ready` / `immediately-effective` / `fundamentally-strong`) and
+  the second segment is either a role (`software-engineer`) or a role-to-role transition
   (`software-engineer-to-ai-engineer`) that names the transition explicitly.
-- **DD-24 · Fourth path's entry point: linked, not included, prerequisites (D4).** The manifest assumes
-  an **already-working software engineer** and is a **short, AI-specific spine** — prerequisite
-  software-engineer courses are **linked** to their canonical pages from the path landing narrative,
-  never duplicated into `courseOrder`. This is what "immediately effective" means for a specialization:
-  fast because it assumes competence already exists, not because it skips depth.
-  - **Clarified by DD-33** (both in this plan, so the amendment pair is intact): the exclusion is
+  - **DD-34 adds a leading category segment** to every id (`careers/<first-segment>/<second-segment>`);
+    the fourth path's own second segment is **no longer a role-transition** at all — **DD-35** renames
+    it to the plain role `ai-engineer`, since the path is now from-scratch rather than a transition.
+    The `<role-transition-or-subject>` convention this DD registers is left in place as a still-valid
+    option for a future role-transition path; it simply has no living instance in this plan anymore.
+- **DD-24 · Fourth path's entry point: linked, not included, prerequisites (D4; superseded for the
+  fourth path 2026-07-21 by DD-35 — see below).** The manifest **assumed** an **already-working
+  software engineer** and was a **short, AI-specific spine** — prerequisite software-engineer courses
+  were **linked** to their canonical pages from the path landing narrative, never duplicated into
+  `courseOrder`. This was what "immediately effective" meant for a specialization: fast because it
+  assumed competence already existed, not because it skipped depth.
+  - **Clarified by DD-33** (both in this plan, so the amendment pair is intact): the exclusion was
     scoped to SWE-fundamentals only and never applied to the AI/harness cluster.
+  - **Superseded by DD-35**: the fourth path is no longer a transition path and no longer links its
+    prerequisites — it **includes** them in `courseOrder`. DD-24 is kept here, not deleted, because it
+    is cited by DD-33 and by the path's own history; DD-35 is the current, binding statement for this
+    path's entry-point model.
 - **DD-27 · Build order amended: the fourth path is authoring priority #1, behind an
   architecture-smoke-test-only MVP (D7, amends DD-15).** Locked order: **Group A** (architecture + UI,
   unchanged hard prerequisite) → **`interview-ready` MVP, narrowed to an architecture smoke test only**
   (ships against topics 1–33, already live on disk; proves routing, manifest loading, `?path` context,
   prev/next, breadcrumb, and prerequisite display against real content, in days not months —
   authoring the 4 NEW interview courses + `capstone-interview-loop` is **no longer bundled into this
-  MVP gate**) → **`software-engineer-to-ai-engineer`** (authoring priority #1 for all authoring effort)
-  → **`immediately-effective/software-engineer`** manifest → **`fundamentally-strong/software-engineer`**
+  MVP gate**) → **the fourth path** (at authoring, `software-engineer-to-ai-engineer`; renamed
+  `careers/immediately-effective/ai-engineer` by the 2026-07-21 ruling — see DD-35; authoring
+  priority #1 for all authoring effort either way) → **`careers/immediately-effective/software-engineer`**
+  manifest → **`careers/fundamentally-strong/software-engineer`**
   manifest → **backfill topics 34–94**. Rationale (preserved from the original build-order decision):
   nothing in the AI path exists on disk (~17 courses); making it literally first — ahead of even the
   MVP — would mean nothing ships until all 17 are authored, with the UI architecture unvalidated the
@@ -481,7 +546,7 @@ amendment annotations intact.
     most directly constrains. The text is nonetheless duplicated verbatim in all five split plans,
     per the cross-cutting-content rule.
 - **DD-33 · Fourth path's manifest WALKS the AI/harness cluster; spine is 15 courses, not 6 (D13,
-  resolves the DD-24/DD-27 open item).** DD-24 scopes "linked, not included" to the shared
+  resolves the DD-24/DD-27 open item; amended in scope 2026-07-21 by DD-35 — see below).** DD-24 scoped "linked, not included" to the shared
   **software-engineer-fundamentals** courses only (`just-enough-python`, `software-testing`,
   `cicd-and-release-engineering`, `backend-at-scale`, `containers-and-orchestration`,
   `computer-architecture`, `site-reliability-engineering`, `data-engineering`,
@@ -491,21 +556,81 @@ amendment annotations intact.
   `browser-automation-with-cdp`, `the-agent-loop`, `agent-tools-and-mcp`, `agent-context-and-memory`,
   `agent-permissions-and-sandboxing`, `agent-orchestration-subagents-and-observability`,
   `capstone-build-your-own-coding-agent`) **plus** the six new AI-engineer-role courses — **15 courses
-  total** — matching
-  `syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md` (already
-  authoritative) and `syllabus/paths/README.md`'s "15 courses" summary. **Rationale**: (a) the user
+  total** — matching what
+  `syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md` stated at the
+  time (that mirror has since been renamed to `manifest-immediately-effective-ai-engineer.md` and its
+  composition corrected by DD-35 — see below; this "15 courses" figure is DD-33's original math, kept
+  here as history) and `syllabus/paths/README.md`'s then-current "15 courses" summary. **Rationale**:
+  (a) the user
   explicitly required context- and harness-engineering to be **included** in this path — walking puts
   them in the reading order; linking hides them; (b) an AI-engineer onramp whose walk omits the
   agent-building courses would contradict DD-21's own scope (teach **building** AI systems, not just
   using an LLM in an app); (c) DD-24's own text only ever excluded SWE-fundamentals, never the
   AI/harness cluster — treating it as excluded was an overreach of DD-24, not a restatement of it.
   **Build-order consequence**: the 9 harness-cluster course bodies are authored by
-  `ayokoding-learning-path-04-course-authoring` **after** this plan's AI-path manifest phase. That
-  phase therefore ships the manifest **smoke-test-scoped** to the six new AI courses, and the manifest
-  **grows** to the full 15 in this plan's Phase 5 — mirroring the same partial-ship-then-grow pattern
-  the `interview-ready` manifest already uses for its own deferred interview-technique courses. This
-  does **not** delay the AI path's ship — DD-27's "authoring priority #1" stands; only the manifest's
-  _published_ subset differs from its long-run full composition until the cluster bodies land.
+  `ayokoding-learning-path-04-course-authoring` **after** this plan's AI-path manifest phase, and the
+  manifest ships partial and **grows** in this plan's Phase 5 — mirroring the same
+  partial-ship-then-grow pattern the `interview-ready` manifest already uses for its own deferred
+  interview-technique courses. This does **not** delay the AI path's ship — DD-27's "authoring
+  priority #1" stands. **The "six new AI courses" / "15 total" figures above are DD-33's original
+  math, superseded by DD-35's from-scratch, prerequisites-included model** (see below) — the manifest's
+  smoke-test-scoped subset and its fully-grown composition are no longer 6 and 15 specifically; only
+  the walk-the-cluster and partial-ship-then-grow mechanics survive unchanged.
+- **DD-34 · Category segment adopted: every path id now carries a leading `careers/` (2026-07-21
+  path-category-split ruling; amends DD-23's URL-segment framing above).** The paths hub and every
+  path id now carry a leading category segment — `careers/<arc>/<role>` (this plan's four paths,
+  3 segments) or `skills/<subject>` (`ayokoding-learning-path-06-skills-paths`'s two paths, 2
+  segments, no arc level today). `/en/learn/paths/` did not exist before
+  `ayokoding-learning-path-01-url-restructure`'s work, so inserting the category segment costs
+  **zero redirects** — there is no prior `/en/learn/paths/<arc>/...` URL to preserve. This plan's
+  manifest files move one level deeper to mirror it: `<MANIFESTS>careers/<arc>/<role>.yaml`, never
+  `<MANIFESTS><arc>/<role>.yaml`. **`pathId` is variable-depth by design** — no glob, enumeration, or
+  integrity check in this plan may assume every manifest sits at a fixed depth; every such check in
+  this plan instead scopes explicitly to `<MANIFESTS>careers/`, which is correct at any depth because
+  it never asserts one. See [The manifest ownership invariant](#the-manifest-ownership-invariant-now-scoped-per-category)
+  above for the companion ownership re-scoping.
+- **DD-35 · Fourth path renamed and re-scoped: from-scratch `careers/immediately-effective/ai-engineer`,
+  prerequisites included not linked (2026-07-21 ruling; supersedes DD-24 for this path, amends DD-33
+  in scope, retires DD-23's role-transition framing for this path's second segment).** The fourth
+  path's id changes from `immediately-effective/software-engineer-to-ai-engineer` to
+  `careers/immediately-effective/ai-engineer`. **This is a content change, not a rename alone** — the
+  path's entry-point model changes with it:
+  - It is a genuine **from-scratch** AI-engineering path — it no longer assumes prior
+    software-engineering competence.
+  - Its prerequisites are now **included** in `courseOrder`, not linked out from the landing
+    narrative — DD-24's "linked, not included" framing is superseded for this path.
+  - Every included prerequisite is an **existing** library course (2026-07-21 clarification) —
+    `courseOrder` lengthens, but **no new authoring work falls out of this**. The six net-new
+    AI-engineer-role courses (DD-28) remain the only bodies this path still needs authored.
+  - It still converges on a **distinct AI-engineering endpoint**, never the shared
+    software-engineering one — DD-22 continues to hold unchanged.
+  - **What does not change**: DD-21 (teaches building AI systems, not driving them) and DD-33's
+    walk-not-link treatment of the AI/harness cluster both continue to hold; DD-33 is amended only in
+    the starting composition its math assumed, not reversed.
+  - **Mirror already renamed and corrected; prose brought into agreement, not re-renamed here.** The
+    syllabus mirror is now
+    [`manifest-immediately-effective-ai-engineer.md`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+    (renamed from `manifest-immediately-effective-software-engineer-to-ai-engineer.md`).
+    `ayokoding-learning-path-02-schema-and-prerequisite-dag` has already performed both the rename and
+    the from-scratch, prerequisites-included content correction, as a deliberate, reasoned exception to
+    that plan's own "no edits under `syllabus/`" custody rule — this plan does not perform or repeat
+    that rename; it only updates its own citations to agree with the file as it now stands, matching
+    the same custody boundary this plan applies to every other cross-plan file it does not own.
+  - **Composition — the included courses are now named; their final order and total are not.** The
+    corrected mirror names 11 existing SWE-fundamentals courses moving from "linked" to "included":
+    `just-enough-python`, `software-testing`, `cicd-and-release-engineering`, `backend-at-scale`,
+    `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`,
+    `data-engineering`, `data-structures-and-algorithms-essentials`, `software-product-engineering`,
+    `frontend-essentials` — each also declares its own further prerequisites, so the mirror itself
+    notes the final included set is very likely larger than these 11. The mirror defers the
+    **prerequisite-consistent stage-by-stage ordering** of that full set to
+    `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4, not this plan's.
+    This plan's standing rule is still that `courseOrder` is **transcribed** from the syllabus mirror,
+    never re-derived: the resulting total course count remains an open item, not a settled figure,
+    until that plan's Phase 1.4 lands it — not fabricated here. Every site in this plan that previously
+    described this path's manifest as "short," as "linking" its prerequisites, or as a fixed "6 → 15
+    courses" has been corrected to this named-but-not-yet-ordered framing rather than to a fabricated
+    new total.
 
 ### The DD-7 and DD-28 amendment pair
 
@@ -531,9 +656,12 @@ mechanical, not stylistic:
    read "surgery permitted" as "forking permitted".
 
 The other amendment pairs this plan holds are **intact within it** and need no cross-plan treatment:
-DD-5 → DD-22 (both here), DD-24 → DD-33 (both here), DL-1 → DL-15 (both here). DD-15 → DD-27 needs no
-special handling either: both are cross-cutting and duplicated verbatim in all five plans, amendment
-chain intact.
+DD-5 → DD-22 (both here), DD-24 → DD-33 (both here), DL-1 → DL-15 (both here), and the two new pairs
+from the 2026-07-21 category-split ruling — DD-23 → DD-34 and DD-24/DD-33 → DD-35 (all four DDs here).
+DD-15 → DD-27 needs no special handling either: both are cross-cutting and duplicated verbatim in all
+five plans, amendment chain intact — DD-27's own text is updated in place for the fourth path's rename
+rather than amended by a separate entry, since it names the path only as a build-order label, not as
+a scoping decision.
 
 The one remaining split pair is **DL-6 → DL-15**: DL-6 lands in the course-authoring plan and DL-15
 lands here. It gets the same treatment as DD-7/DD-28 — see
@@ -546,6 +674,53 @@ reproduced verbatim in every one of the five split plans. DD-27 appears above in
 in full in [README §Build order (inherited)](./README.md#build-order-inherited), alongside DD-27 and
 DL-7, so a reader of the README alone gets the whole sequencing decision without opening a second
 file.
+
+## UI-gate and API-gate posture (R9)
+
+Both postures are declared explicitly. Per the
+[api-quality-gate workflow](../../../repo-governance/workflows/api/api-quality-gate.md)'s
+§Relationship to Other Gates, a plan bearing neither surface **is not thereby exempt** — exemption
+belongs only to a plan with no reachable behavioural delta at all, and it must be stated here.
+
+### UI gate — **exempt**, and here is the reasoning rather than the assertion
+
+`swe-ui-checker` validates component **source** — it globs for `.tsx` files. As established below in
+[UI-design-funnel exemption](#ui-design-funnel-exemption-recorded-explicitly), this plan writes **no
+`.tsx` file at all**: every rendering component the four landings and the hub use —
+`path-landing.tsx`, `path-card.tsx`, `path-rail.tsx`, `path-banner.tsx`, `path-course-links.tsx`,
+`prerequisite-list.tsx` — is built and owned by `ayokoding-learning-path-03-navigation-ui`. A checker
+run scoped to this plan's diff would scan zero component files and return zero findings — a vacuous
+pass, recorded here as an exemption rather than a claimed one.
+
+**The exemption is narrow.** It covers `ui-quality-gate` **only**. Because this plan ships four
+user-visible path landings and a hub that goes from zero to four populated cards, manual behavioural
+verification via Playwright MCP is **mandatory and performed** at 375/768/1280px across every landing
+and the hub, and the **Rule-15 three-tester retest is mandatory and performed** — both in
+[Phase 7](./delivery.md#phase-7-manual-ui-verification-and-rule-15-three-tester-retest), with every
+EWT/UWT/DWT defect finding fixed before archival. See
+[UI-design-funnel exemption §What the exemption does NOT cover](#ui-design-funnel-exemption-recorded-explicitly)
+for the full list.
+
+### API gate — **NOT exempt**
+
+This plan has a reachable behavioural delta: **manifest integrity is behaviour, scoped to
+`careers/`.** A malformed or prerequisite-inconsistent `careers/**/*.yaml` manifest changes what the
+application resolves, renders, and links, through code that fails closed — a manifest that does not
+validate is not loaded (see [A path walk, end to end](#a-path-walk-end-to-end)).
+
+**How it is exercised, named explicitly**: schema validation (zod), `checkManifestIntegrity`,
+prerequisite-consistency (topological), and the per-path smoothness audit — the four checks named in
+[Manifest lifecycle](#manifest-lifecycle) — run as unit assertions at every manifest publication and
+growth step; plus the path-walk e2e proving each `careers/<arc>/<role>` `pathId` resolves end-to-end.
+
+**What cannot run, and why** [Repo-grounded, re-verified 2026-07-21]: `api-quality-gate` requires a
+running service and an identified contract (OpenAPI 3.x or GraphQL SDL). `ayokoding-www` publishes
+**no OpenAPI 3.x document and no GraphQL SDL**; its only API route is
+`src/app/api/trpc/[trpc]/route.ts` (internal tRPC). **This plan therefore does not claim the gate was
+run and passed.** It records what it exercises instead.
+
+**Rule-16 API exploratory retest — not applicable.** No REST or GraphQL endpoint changes;
+`api-exploratory-tester` has nothing to exercise.
 
 ## UI-design-funnel exemption (recorded explicitly)
 
@@ -584,22 +759,22 @@ non-goal, not a code limitation — the navigation mechanism itself is locale-ne
 
 ## File Impact
 
-| Path                                                                                                                 | Change                                    | Phase      |
-| -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ---------- |
-| `apps/ayokoding-www/src/features/course-paths/manifests/published-manifests.unit.test.ts`                            | created (Phase 1), extended (2, 3, 4)     | 1-4        |
-| `apps/ayokoding-www/src/features/course-paths/manifests/interview-ready/software-engineer.yaml`                      | created                                   | 1          |
-| `apps/ayokoding-www/content/en/learn/paths/interview-ready/software-engineer/_index.md`                              | created                                   | 1          |
-| `apps/ayokoding-www/src/features/course-paths/manifests/immediately-effective/software-engineer-to-ai-engineer.yaml` | created                                   | 2          |
-| `apps/ayokoding-www/content/en/learn/paths/immediately-effective/software-engineer-to-ai-engineer/_index.md`         | created                                   | 2          |
-| `apps/ayokoding-www/src/features/course-paths/manifests/immediately-effective/software-engineer.yaml`                | created                                   | 3          |
-| `apps/ayokoding-www/content/en/learn/paths/immediately-effective/software-engineer/_index.md`                        | created                                   | 3          |
-| `apps/ayokoding-www/src/features/course-paths/manifests/fundamentally-strong/software-engineer.yaml`                 | created                                   | 4          |
-| `apps/ayokoding-www/content/en/learn/paths/fundamentally-strong/software-engineer/_index.md`                         | created                                   | 4          |
-| `apps/ayokoding-www/content/en/learn/paths/_index.md`                                                                | edited (card population, once per phase)  | 1, 2, 3, 4 |
-| All four manifest `.yaml` files                                                                                      | edited (growth)                           | 5          |
-| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-composition.feature`                          | created (Phase 1), extended (4)           | 1, 4       |
-| `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts`                                                          | extended (created by the navigation plan) | 1, 4       |
-| `plans/backlog/ayokoding-learning-path-05-manifests/evidence/`                                                       | created                                   | 7          |
+| Path                                                                                                          | Change                                    | Phase      |
+| ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ---------- |
+| `apps/ayokoding-www/src/features/course-paths/manifests/published-manifests.unit.test.ts`                     | created (Phase 1), extended (2, 3, 4)     | 1-4        |
+| `apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml`       | created                                   | 1          |
+| `apps/ayokoding-www/content/en/learn/paths/careers/interview-ready/software-engineer/_index.md`               | created                                   | 1          |
+| `apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml`       | created                                   | 2          |
+| `apps/ayokoding-www/content/en/learn/paths/careers/immediately-effective/ai-engineer/_index.md`               | created                                   | 2          |
+| `apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml` | created                                   | 3          |
+| `apps/ayokoding-www/content/en/learn/paths/careers/immediately-effective/software-engineer/_index.md`         | created                                   | 3          |
+| `apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml`  | created                                   | 4          |
+| `apps/ayokoding-www/content/en/learn/paths/careers/fundamentally-strong/software-engineer/_index.md`          | created                                   | 4          |
+| `apps/ayokoding-www/content/en/learn/paths/_index.md`                                                         | edited (card population, once per phase)  | 1, 2, 3, 4 |
+| All four manifest `.yaml` files                                                                               | edited (growth)                           | 5          |
+| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/path-composition.feature`                   | created (Phase 1), extended (4)           | 1, 4       |
+| `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts`                                                   | extended (created by the navigation plan) | 1, 4       |
+| `plans/backlog/ayokoding-learning-path-05-manifests/evidence/`                                                | created                                   | 7          |
 
 All paths are marked `_New file_` except `paths/_index.md`, which is created by
 `ayokoding-learning-path-01-url-restructure` and only **populated** here. None of the manifest paths

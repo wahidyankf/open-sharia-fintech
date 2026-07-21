@@ -9,10 +9,18 @@ This is **plan #2 of a five-way split** of the closed
 plan. It is **Wave 1** and has **no plan-level prerequisite** — it starts immediately, in parallel
 with `ayokoding-learning-path-01-url-restructure`.
 
-> **Custody notice.** The `syllabus/` folder in this plan is a **moved corpus, already correct**. It
-> is not authored, edited, or re-derived by this plan. Its consumers are two downstream plans (see
-> [Custody of `syllabus/`](#custody-of-syllabus--a-corpus-this-plan-never-reads)). Do not modify any
-> file under `syllabus/`.
+> **Custody notice.** The `syllabus/` folder in this plan is a **moved corpus**. Its curriculum
+> content — course specs, orderings, pedagogical framing — is not authored, edited, or re-derived by
+> this plan, **with exactly one recorded content exception**: the R3 custody exception (2026-07-21
+> ruling), which corrects the fourth path's manifest mirror from an SWE→AI transition framing to a
+> from-scratch framing. **Separately**, a mechanical, non-content `careers/`-prefix correction to
+> existing path-id strings (R1/R2) was applied across the four manifest mirrors and the two `syllabus/`
+> READMEs — a string substitution, not a curriculum decision, so it is not a second content exception
+> — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding) and
+> [delivery.md Phase 1.4](./delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3).
+> Its consumers are two downstream plans (see
+> [Custody of `syllabus/`](#custody-of-syllabus--a-corpus-this-plan-does-not-consume)). Do not make
+> any further content edit under `syllabus/`.
 
 ## Context
 
@@ -36,18 +44,31 @@ The architecture this data layer serves, in one paragraph — reproduced here be
 `syllabus/` corpus back-references it and because no reader can evaluate a manifest schema without
 knowing what a manifest composes.
 
+**This plan is careers-only (R4, 2026-07-21 ruling).** All four paths below sit under the `careers/`
+URL category (`<pathId>` = `careers/<arc>/<role>`). A sibling `skills/` category (2 manifests,
+`<pathId>` = `skills/<subject>`) exists in the wider programme but is owned end-to-end by a separate,
+not-yet-created plan — see
+[tech-docs §Ownership split](./tech-docs.md#ownership-split-careers-vs-skills--r4). This plan's schema
+and resolvers are category-agnostic by construction (R2) and do not hardcode either category's URL
+depth.
+
 Paths converge **within a role**, not globally — the library serves **more than one endpoint**. The
-three `software-engineer` paths (`interview-ready/software-engineer`,
-`immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`) end at the same
-software-engineering deep mastery; only their entry point, journey ordering, and teaching emphasis
-differ. The fourth path, `immediately-effective/software-engineer-to-ai-engineer`, converges on a
-distinct **AI-engineering** deep mastery — it assumes an already-working software engineer and does
-not aim at the other three paths' endpoint. Each path is a fresh, bespoke ordering authored over the
-one library and over the one prerequisite DAG the library forms.
+three `software-engineer` paths (`careers/interview-ready/software-engineer`,
+`careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`)
+end at the same software-engineering deep mastery; only their entry point, journey ordering, and
+teaching emphasis differ. The fourth path, `careers/immediately-effective/ai-engineer`, converges on
+a distinct **AI-engineering** deep mastery. **Corrected 2026-07-21 (R3, custody exception)**: it no
+longer assumes an already-working software engineer — it is a genuine **from-scratch** path whose
+previously-linked software-engineering prerequisites are now **included** in `courseOrder` (all
+existing library courses; no new course body is authored for this correction). It still does not aim
+at the other three paths' endpoint. Each path is a fresh, bespoke ordering authored over the one
+library and over the one prerequisite DAG the library forms.
 
 Every one of those four orderings is expressible **only** because order lives in the manifest rather
 than in the body (DD-1), and every one is checkable **only** because each course declares its
-prerequisites (DD-6). Those two decisions are this plan's.
+prerequisites (DD-6). Those two decisions are this plan's. Every manifest also carries an explicit
+`arc` field, independent of the URL grammar (R8) — see
+[tech-docs §Variable-depth `pathId`](./tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8).
 
 ## What this plan owns
 
@@ -55,7 +76,7 @@ prerequisites (DD-6). Those two decisions are this plan's.
 | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/ayokoding-www/src/features/course-paths/core/`                | Five pure modules — `schemas.ts`, `manifest.ts`, `path-nav.ts`, `path-context.ts`, `prerequisites.ts`, `manifest-integrity.ts`    |
 | `apps/ayokoding-www/src/features/course-paths/manifests/`           | The `<MANIFESTS>` directory and its `README.md` (empty of `.yaml` files — those belong to `ayokoding-learning-path-05-manifests`) |
-| `apps/ayokoding-www/src/features/content/core/content-url.ts`       | Extended with the optional `pathId` param and the canonical `/en/c/learn/courses/<course-id>` shape                               |
+| `apps/ayokoding-www/src/features/content/core/content-url.ts`       | Extended with the optional `pathId` param and the canonical `/en/learn/courses/<course-id>` shape                                 |
 | `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/` | The `course-paths` Gherkin companion (specs RED)                                                                                  |
 | The `prerequisites: [course-id, ...]` frontmatter contract          | **Canonical here.** `ayokoding-learning-path-01-url-restructure` writes the field; this plan defines its shape                    |
 | `syllabus/` (128 files)                                             | Custodied, not authored — see below                                                                                               |
@@ -65,11 +86,14 @@ prerequisites (DD-6). Those two decisions are this plan's.
 - The `<COURSES>_index.md` / `<PATHS>_index.md` content homes → `ayokoding-learning-path-01-url-restructure`.
 - The UI design funnel, every mockup render, and every `shell/` component →
   `ayokoding-learning-path-03-navigation-ui`.
-- Every `.yaml` manifest file and every step that creates, appends to, reorders, or re-verifies one →
-  `ayokoding-learning-path-05-manifests`.
+- Every **careers** `.yaml` manifest file and every step that creates, appends to, reorders, or
+  re-verifies one → `ayokoding-learning-path-05-manifests` (4 manifests, not 6 — R4).
 - Every course body under `<COURSES>` → `ayokoding-learning-path-04-course-authoring`.
+- The entire `skills/` URL category — both path landings, both manifests, and its course corpus → a
+  separate, not-yet-created plan (R4). This plan's `syllabus/` custody, schema, and resolvers never
+  reference it.
 
-## Custody of `syllabus/` — a corpus this plan never reads
+## Custody of `syllabus/` — a corpus this plan does not consume
 
 `syllabus/` lives here because it must exist, versioned and stable, **before** its consumers start —
 and because a single owner is the only structure that keeps 121 course specs and four path orderings
@@ -84,9 +108,15 @@ from forking. But this plan is **not** its consumer:
 - `syllabus/README.md`, `syllabus/courses/README.md`, `syllabus/paths/README.md` (3 files) are the
   navigation layer over both.
 
-So this plan is a **custodian**, not a reader. Its obligations are exactly three: keep the corpus
-byte-identical, keep it linkable from the other four plan folders, and — at archival — repoint every
-inbound cross-plan link in the same commit as the move (see
+So this plan is a **custodian**, not a reader, of the corpus's **curriculum content** — **with
+exactly one recorded content exception** (the R3 custody exception, 2026-07-21) plus a separate,
+non-content mechanical `careers/`-prefix string correction (R1/R2) across the manifest mirrors and
+the `syllabus/` READMEs, neither a content re-derivation. Its obligations are: keep the corpus's
+curriculum content byte-identical against `origin/main` (all files but the R3 exception), keep it
+linkable from the other four plan folders,
+complete the R3 exception's deferred Stage 0 ordering ([delivery.md Phase
+1.4](./delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3)), and — at
+archival — repoint every inbound cross-plan link in the same commit as the move (see
 [Archival is gated on downstream archival](#archival-is-gated-on-downstream-archival)).
 
 ```mermaid
@@ -100,7 +130,7 @@ flowchart LR
     P4["ayokoding-learning-path-<br/>04-course-authoring"]:::consumer
     P5["ayokoding-learning-path-<br/>05-manifests"]:::consumer
 
-    P2 -->|"custodies · never edits · never reads for content"| CORPUS
+    P2 -->|"custodies · one recorded R3 exception · never reads for content otherwise"| CORPUS
     CORPUS -.->|"syllabus/courses/&lt;id&gt;.md = authoring source of truth"| P4
     CORPUS -.->|"syllabus/paths/manifest-*.md = courseOrder source"| P5
 
@@ -302,6 +332,17 @@ citation purposes (its phase ordering is what DD-27 most directly constrains).
 half is `ayokoding-learning-path-01-url-restructure`. Everything from the MVP onward lives in
 `ayokoding-learning-path-05-manifests` and `ayokoding-learning-path-04-course-authoring`. Do not
 "optimize" the sequence — DD-27's rationale paragraph exists to prevent exactly that.
+
+**Naming note (2026-07-21, R3 — does not alter the quotations above or in DL-7 below).** Both the
+DD-15/DD-27 quotation above and the DL-7 restatement below name the fourth path
+`software-engineer-to-ai-engineer` / `immediately-effective/software-engineer-to-ai-engineer` and
+frame it as an SWE→AI transition path, because that is what the source plan's DD-15/DD-27 said when
+originally written (2026-07-20). Per R3 (2026-07-21), that framing and name are superseded: the
+fourth path is `careers/immediately-effective/ai-engineer`, a from-scratch path whose
+software-engineering prerequisites are **included** in `courseOrder`, not linked. The quotations are
+left verbatim per this plan's own established practice for historical decision text (see
+[the DD-34/35/39 numbering-gap handling](#the-dd-34--dd-35--dd-39-numbering-gap-is-deliberate)); the
+authoring-priority ordering they describe is unaffected by the rename.
 
 ## Decisions Locked
 

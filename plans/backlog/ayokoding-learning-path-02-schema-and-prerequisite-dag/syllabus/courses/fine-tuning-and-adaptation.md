@@ -409,7 +409,7 @@ example cites the `co-NN` it exercises. Concepts come before examples.
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: placed late and framed as a
+- `immediately-effective/ai-engineer` — **owning path**: placed late and framed as a
   decision skill, per the deliberate de-emphasis stated in the scope note.
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening
   tail — pending manifest re-verification (D8 four-path rule).

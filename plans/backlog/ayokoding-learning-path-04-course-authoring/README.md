@@ -127,15 +127,15 @@ band's gate:
 
 `GROW_MANIFESTS` is the load-bearing field. It is **not** "all four manifests" by default:
 
-- **Bands 1–8** → `<MANIFESTS>interview-ready/software-engineer.yaml`,
-  `<MANIFESTS>immediately-effective/software-engineer.yaml`,
-  `<MANIFESTS>fundamentally-strong/software-engineer.yaml`
+- **Bands 1–8** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml`,
+  `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`,
+  `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
 - **Band 5 and Band 8 additionally** →
-  `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml` (the nine harness-cluster
+  `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (the nine harness-cluster
   bodies that grow the fourth path from its 6-course spine to its full 15-course composition, DD-33)
-- **Band 9** → `<MANIFESTS>interview-ready/software-engineer.yaml` and
-  `<MANIFESTS>fundamentally-strong/software-engineer.yaml` **only** — the
-  `immediately-effective/software-engineer` path omits the interview-technique band from its
+- **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
+  `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` **only** — the
+  `careers/immediately-effective/software-engineer` path omits the interview-technique band from its
   `courseOrder` by design
 
 A signal that names manifests loosely, or omits `MERGED_COMMIT`, is incomplete and the receiving plan
@@ -244,8 +244,8 @@ phase ordering is what DD-27 most directly constrains).
   (ships against topics 1–33, already live on disk; proves routing, manifest loading, `?path` context,
   prev/next, breadcrumb, and prerequisite display against real content, in days not months —
   authoring the 4 NEW interview courses + `capstone-interview-loop` is **no longer bundled into this
-  MVP gate**) → **`software-engineer-to-ai-engineer`** (authoring priority #1 for all authoring effort)
-  → **`immediately-effective/software-engineer`** manifest → **`fundamentally-strong/software-engineer`**
+  MVP gate**) → **`careers/immediately-effective/ai-engineer`** (authoring priority #1 for all authoring effort)
+  → **`careers/immediately-effective/software-engineer`** manifest → **`careers/fundamentally-strong/software-engineer`**
   manifest → **backfill topics 34–94**. Rationale (preserved from the original build-order decision):
   nothing in the AI path exists on disk (~17 courses); making it literally first — ahead of even the
   MVP — would mean nothing ships until all 17 are authored, with the UI architecture unvalidated the
@@ -267,8 +267,8 @@ Two entries are **cross-cutting** and are reproduced verbatim in all five split 
 - **DL-7 · Build order — amended 2026-07-20, see DL-15 / tech-docs DD-27.** Deliver Group A
   (architecture + UI) first as a hard prerequisite; then an **interview-ready MVP that is an
   architecture smoke test only** (shipped against already-live topics 1–33, not the full interview
-  cluster); then `immediately-effective/software-engineer-to-ai-engineer` (authoring priority #1); then
-  the `immediately-effective/software-engineer` manifest; then the `fundamentally-strong/software-engineer`
+  cluster); then `careers/immediately-effective/ai-engineer` (authoring priority #1); then
+  the `careers/immediately-effective/software-engineer` manifest; then the `careers/fundamentally-strong/software-engineer`
   manifest; then backfill topics 34–94 native as the library fills. **Decided; amended 2026-07-20.**
 - **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each phase's PR
   automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this

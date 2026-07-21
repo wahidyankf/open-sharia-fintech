@@ -390,7 +390,7 @@ measurements so the analysis is reproducible offline. Contiguous `ex-01..ex-50`.
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: the infrastructure half of
+- `immediately-effective/ai-engineer` — **owning path**: the infrastructure half of
   the AI-engineer transition, placed after the model-application and agent material so the learner knows
   what they are serving.
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening

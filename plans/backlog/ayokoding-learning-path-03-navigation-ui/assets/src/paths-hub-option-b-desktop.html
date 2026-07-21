@@ -75,7 +75,7 @@
         justify-content: center;
       }
       .frame {
-        width: 900px;
+        width: 960px;
         background: var(--background);
       }
       .cap {
@@ -138,9 +138,9 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 600;
-        padding: 2px 9px;
+        padding: 2px 8px;
         border-radius: 999px;
         border: 1px solid var(--border);
         line-height: 1.6;
@@ -150,63 +150,50 @@
         color: var(--secondary-foreground);
         border-color: transparent;
       }
+      .badge.decode {
+        background: var(--warm-100);
+        color: var(--warm-700);
+        border-color: transparent;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        letter-spacing: 0;
+      }
 
-      .rows {
+      .grid {
         list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 18px;
         margin-top: 28px;
+      }
+      .pcard {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         border: 1px solid var(--border);
         border-radius: var(--radius-xl);
-        overflow: hidden;
-      }
-      .crow {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        padding: 20px 22px;
         background: var(--card);
+        box-shadow: var(--shadow-sm);
+        padding: 18px 18px 16px;
+        position: relative;
+        border-top: 3px solid var(--h);
       }
-      .crow + .crow {
-        border-top: 1px solid var(--border);
-      }
-      .cbar {
-        width: 4px;
-        align-self: stretch;
-        border-radius: 4px;
-        background: var(--h);
-      }
-      .cmain {
-        flex: 1;
-      }
-      .chead {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .cname {
-        font-size: 17px;
+      .ptitle {
+        font-size: 15.5px;
         font-weight: 700;
+        margin-top: 11px;
         letter-spacing: -0.01em;
       }
-      .badge.kind {
-        background: var(--w);
-        color: var(--i);
-        border-color: transparent;
-      }
-      .carc {
-        font-size: 13px;
-        color: var(--muted-foreground);
-        margin-top: 5px;
-      }
-      .cside {
+      .pfoot {
         display: flex;
         align-items: center;
-        gap: 14px;
+        justify-content: space-between;
+        margin-top: 16px;
       }
       .start {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        font-size: 13.5px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--primary);
       }
@@ -214,89 +201,145 @@
   </head>
   <body>
     <div class="frame">
-      <div class="cap">Screen 1 · Paths hub — <b>Option B: stacked comparison rows</b> · /en/c/learn/paths</div>
+      <div class="cap">
+        Screen 1 · Paths hub — <b>Option B: flat 6-card grid with category·arc badges</b> · /en/learn/paths
+      </div>
       <div class="win">
         <div class="bar">
           <span class="dot" style="background: var(--hue-terracotta)"></span>
           <span class="dot" style="background: var(--hue-honey)"></span>
           <span class="dot" style="background: var(--hue-sage)"></span>
-          <span class="url">ayokoding.com/en/c/learn/paths</span>
+          <span class="url">ayokoding.com/en/learn/paths</span>
         </div>
         <div class="body">
-          <h1>Four paths, one library</h1>
-          <p class="sub">Each path is an ordered route through the shared courses.</p>
-          <ul class="rows">
-            <li class="crow" style="--h: var(--hue-honey); --w: var(--hue-honey-wash); --i: var(--hue-honey-ink)">
-              <div class="cbar"></div>
-              <div class="cmain">
-                <div class="chead">
-                  <span class="cname">Interview-Ready Software Engineer</span>
-                  <span class="badge kind">interview-first</span>
+          <h1>Choose your path</h1>
+          <p class="sub">Six paths, one library — read the badge to see how each groups.</p>
+          <ul class="grid">
+            <li>
+              <a class="pcard" style="--h: var(--hue-honey)">
+                <span class="badge decode">careers · interview-ready</span>
+                <div class="ptitle">Software Engineer</div>
+                <div class="pfoot">
+                  <span class="badge sec">~119 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
                 </div>
-                <div class="carc">interview prep → production-effective → deeper</div>
-              </div>
-              <div class="cside">
-                <span class="badge sec">~119 courses</span>
-                <span class="start"
-                  >Start
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                ></span>
-              </div>
+              </a>
             </li>
-            <li class="crow" style="--h: var(--hue-teal); --w: var(--hue-teal-wash); --i: var(--hue-teal-ink)">
-              <div class="cbar"></div>
-              <div class="cmain">
-                <div class="chead">
-                  <span class="cname">Immediately-Effective Software Engineer</span>
-                  <span class="badge kind">build-app-first</span>
+            <li>
+              <a class="pcard" style="--h: var(--hue-teal)">
+                <span class="badge decode">careers · immediately-effective</span>
+                <div class="ptitle">Software Engineer</div>
+                <div class="pfoot">
+                  <span class="badge sec">~116 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
                 </div>
-                <div class="carc">editor → one language → build a real app → deepen</div>
-              </div>
-              <div class="cside">
-                <span class="badge sec">~116 courses</span>
-                <span class="start"
-                  >Start
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                ></span>
-              </div>
+              </a>
             </li>
-            <li class="crow" style="--h: var(--hue-sage); --w: var(--hue-sage-wash); --i: var(--hue-sage-ink)">
-              <div class="cbar"></div>
-              <div class="cmain">
-                <div class="chead">
-                  <span class="cname">Fundamentally Strong Software Engineer</span>
-                  <span class="badge kind">fundamentals-first</span>
+            <li>
+              <a class="pcard" style="--h: var(--hue-teal)">
+                <span class="badge decode">careers · immediately-effective</span>
+                <div class="ptitle">AI Engineer</div>
+                <div class="pfoot">
+                  <span class="badge sec">~132 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
                 </div>
-                <div class="carc">CS foundations → architecture → paradigms → DS&A → build</div>
-              </div>
-              <div class="cside">
-                <span class="badge sec">~121 courses</span>
-                <span class="start"
-                  >Start
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                ></span>
-              </div>
+              </a>
             </li>
-            <li class="crow" style="--h: var(--hue-plum); --w: var(--hue-plum-wash); --i: var(--hue-plum-ink)">
-              <div class="cbar"></div>
-              <div class="cmain">
-                <div class="chead">
-                  <span class="cname">Software Engineer → AI Engineer</span>
-                  <span class="badge kind">AI-transition-first</span>
+            <li>
+              <a class="pcard" style="--h: var(--hue-sage)">
+                <span class="badge decode">careers · fundamentally-strong</span>
+                <div class="ptitle">Software Engineer</div>
+                <div class="pfoot">
+                  <span class="badge sec">~121 courses</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
                 </div>
-                <div class="carc">already a SWE → build AI systems (models, agents, evals) fast</div>
-              </div>
-              <div class="cside">
-                <span class="badge sec">~15 courses</span>
-                <span class="start"
-                  >Start
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M13 6l6 6-6 6" /></svg
-                ></span>
-              </div>
+              </a>
+            </li>
+            <li>
+              <a class="pcard" style="--h: var(--hue-terracotta)">
+                <span class="badge decode">skills</span>
+                <div class="ptitle">Enterprise Resource Planning</div>
+                <div class="pfoot">
+                  <span class="badge sec">20 courses · useful by #4</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="pcard" style="--h: var(--hue-plum)">
+                <span class="badge decode">skills</span>
+                <div class="ptitle">Accounting</div>
+                <div class="pfoot">
+                  <span class="badge sec">20 courses · useful by #3</span>
+                  <span class="start"
+                    >Start
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" /></svg
+                  ></span>
+                </div>
+              </a>
             </li>
           </ul>
         </div>

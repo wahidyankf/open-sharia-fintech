@@ -281,7 +281,7 @@ All examples run against a local/mockable model so no paid key is required.
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: the light eval gate,
+- `immediately-effective/ai-engineer` — **owning path**: the light eval gate,
   placed immediately after the first working LLM call and before retrieval and agents (D5).
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening
   tail — pending manifest re-verification (D8 four-path rule).

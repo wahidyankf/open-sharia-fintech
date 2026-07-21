@@ -353,7 +353,7 @@ synthetic or committed label data — no model calls, no keys.
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: a hard prerequisite for
+- `immediately-effective/ai-engineer` — **owning path**: a hard prerequisite for
   [`evaluating-ai-systems-in-depth`](./evaluating-ai-systems-in-depth.md), placed immediately before it
   (D6).
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening

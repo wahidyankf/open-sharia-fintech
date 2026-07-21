@@ -7,8 +7,11 @@ component, no route, no rendered page, no manifest data file, and no course body
 has a named owner in [README.md](./README.md#what-this-plan-owns).
 
 It also **custodies** the `syllabus/` detail layer (128 files). **No step in this checklist edits any
-file under `syllabus/`.** The corpus arrived settled; this plan keeps it intact, keeps it linkable,
-and repoints its inbound cross-plan links at archival.
+file under `syllabus/`, with exactly one recorded exception**: step 1.4 completes the R3 custody
+exception (2026-07-21 ruling) by ordering the AI-engineer manifest mirror's Stage 0 — see
+[tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding). Otherwise the corpus arrived
+settled; this plan keeps it intact, keeps it linkable, and repoints its inbound cross-plan links at
+archival.
 
 > **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).
 > `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
@@ -114,16 +117,28 @@ subagents capped per the orchestration convention). The main thread self-promote
 Reproduced verbatim in all five split plans. A checklist whose `<FEAT>` placeholders cannot be
 expanded is not executable.
 
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
-- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>`)
+- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/learn/paths/<path-id>`)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
-- `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror slash path ids — `<MANIFESTS><path-id>.yaml`)
-- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/c/learn/legacy/<domain>/…`)
+- `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror the **variable-depth**
+  slash path id — `<MANIFESTS><path-id>.yaml`; a careers id nests 3 deep, e.g.
+  `<MANIFESTS>careers/interview-ready/software-engineer.yaml`; a skills id nests 2 deep, e.g.
+  `<MANIFESTS>skills/accounting.yaml` — this plan's schema/resolvers validate only the first segment
+  (`careers`/`skills`) and manifest resolvability, never depth — see
+  [tech-docs.md §Variable-depth `pathId`](./tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8), R2/R8)
+- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/learn/legacy/<domain>/…`)
 - `<REDIR>` = `apps/ayokoding-www/src/redirects/`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<NAVSPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/` (existing domain — the three-bucket Gherkin lands beside `content-namespace-redirects.feature`)
-- Path ids: `interview-ready/software-engineer`, `immediately-effective/software-engineer`, `fundamentally-strong/software-engineer`, `immediately-effective/software-engineer-to-ai-engineer` (fourth path, manifest at `<MANIFESTS>immediately-effective/software-engineer-to-ai-engineer.yaml`)
+- **This plan is careers-only (R4)**. Path ids: `careers/interview-ready/software-engineer`,
+  `careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`,
+  `careers/immediately-effective/ai-engineer` (fourth path, **corrected 2026-07-21 per R3** — a
+  from-scratch path, no longer a transition path; manifest at
+  `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`). The sibling `skills/` category
+  (2 path ids, e.g. `skills/accounting`) exists in the wider programme but is owned end-to-end by a
+  separate, not-yet-created plan — see
+  [tech-docs.md §Ownership split](./tech-docs.md#ownership-split-careers-vs-skills--r4).
 
 ## Phase provenance
 
@@ -240,30 +255,52 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
 ### 1.2 `PathManifest` zod schema — TDD cycle
 
-- [ ] [AI] **RED** — write a failing unit test in
+> **R2 / R8 scope note.** This schema must be **category-agnostic by construction**: it validates the
+> `pathId`'s first segment (`careers` | `skills`) and the presence of a required `arc` field —
+> **never** a specific segment count. See
+> [tech-docs §Variable-depth `pathId`](./tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8).
+
+- [ ] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/schemas.test.ts` _(new test)_ asserting that
-      `PathManifestSchema.safeParse(...)` **accepts** a manifest carrying `pathId`, `title`,
-      `description`, and a `courseOrder` mixing bare course-ID strings with
-      `{ id, framing: { intro, outro } }` objects, and **rejects** a manifest missing `courseOrder`
+      `PathManifestSchema.safeParse(...)`:
+      (a) **accepts** a manifest carrying `pathId`, `arc`, `title`, `description`, and a `courseOrder`
+      mixing bare course-ID strings with `{ id, framing: { intro, outro } }` objects;
+      (b) **accepts** a **3-segment careers fixture** (`pathId: "careers/interview-ready/software-engineer"`,
+      `arc: "interview-ready"`) **and** a **2-segment skills fixture**
+      (`pathId: "skills/accounting"`, `arc: "immediately-effective"`) — neither fixture asserts a
+      specific segment count, proving depth is not hardcoded either way;
+      (c) **rejects** a manifest whose `pathId`'s first segment is neither `careers` nor `skills`
+      (e.g. `"bogus/foo"`);
+      (d) **rejects** a manifest missing `arc` (present even on the 2-segment skills fixture, per R8 —
+      the URL grammar omitting the arc segment does not make the field optional);
+      (e) **rejects** a manifest missing `courseOrder`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails with a module-resolution error naming `./schemas` (the file does
-      not exist yet). Falsifiable both ways: once `schemas.ts` exists and is correct, this exact test
-      passes.
+      not exist yet). Falsifiable both ways: once `schemas.ts` exists and is correct, all five
+      assertions pass; reverting any one of the GREEN checks below makes its corresponding assertion
+      fail again.
 - [ ] [AI] **GREEN** — implement the `PathManifest` zod schema in
       `apps/ayokoding-www/src/features/course-paths/core/schemas.ts` _(new file)_ using **zod 4.3.6**
       [Repo-grounded — `apps/ayokoding-www/package.json`], per
       [tech-docs §The `PathManifest` zod schema](./tech-docs.md#the-pathmanifest-zod-schema): `pathId`
-      string, `title` string, `description` string, `courseOrder` array of (course-ID string) or
-      (object with `id` plus optional `framing` carrying optional `intro` / `outro`)
+      string with a `.refine()` validating only that its first `/`-segment is `careers` or `skills`
+      and that at least one further segment follows (never a fixed total segment count), `arc` string
+      (required, not enum-constrained — R8), `title` string, `description` string, `courseOrder`
+      array of (course-ID string) or (object with `id` plus optional `framing` carrying optional
+      `intro` / `outro`)
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
-      — acceptance: both exit 0; the new `schemas.test.ts` assertions pass and no previously-passing
-      test regresses.
+      — acceptance: both exit 0; all five new `schemas.test.ts` assertions pass and no
+      previously-passing test regresses.
 - [ ] [AI] **REFACTOR** — export the inferred `PathManifest` and `CourseRef` types from `schemas.ts`
-      so no downstream module re-declares them, and confirm the file imports nothing but `zod`
+      so no downstream module re-declares them, confirm the file imports nothing but `zod`, and
+      confirm no assertion in `schemas.test.ts` names a literal segment count (`grep -n "segments\?\s*===\|\.length\s*===\s*[23]" apps/ayokoding-www/src/features/course-paths/core/schemas.ts apps/ayokoding-www/src/features/course-paths/core/schemas.test.ts`
+      returns no output)
       — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint && grep -n "^import" apps/ayokoding-www/src/features/course-paths/core/schemas.ts`
-      — acceptance: the first two exit 0 and the `grep` prints exactly one line, importing from
-      `zod`. Falsifiable both ways: adding a second import makes the `grep` print two lines.
+      — acceptance: the first two exit 0, the `grep` prints exactly one line importing from `zod`, and
+      the depth-literal `grep` above returns no output. Falsifiable both ways: adding a second import
+      makes the import `grep` print two lines; adding a hardcoded `=== 3` (or `=== 2`) depth check
+      makes the depth-literal `grep` print a line.
 
 ### 1.3 `<MANIFESTS>` directory and its README
 
@@ -284,6 +321,57 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l`
       — acceptance: returns **0**. Falsifiable both ways: authoring any `.yaml` here (a boundary
       violation against the manifest-ownership invariant) makes it return a non-zero count.
+
+### 1.4 Syllabus custody exception — AI-engineer path correction (R3)
+
+> **This is the one recorded exception to "no delivery step edits `syllabus/`"** (custody rule 2,
+> [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding)). Two of its three parts —
+> the file rename and the top-matter/composition-framing correction — were already applied as a
+> **plan-authoring-time correction** (2026-07-21, alongside the rest of this plan's R2/R3/R4/R8
+> update) and are only re-verified below, not redone. The third part — ordering the newly-included
+> Stage 0 courses — was deliberately deferred at that time rather than invented under time pressure,
+> and is this step's real remaining work. **No new course body is authored by this step or by the
+> correction it completes** — every course named below is an existing library course; only the
+> manifest's `courseOrder` composition changed (2026-07-21 clarification to R3).
+
+- [ ] [AI] **Confirm the rename and framing correction already hold** —
+      `test -f plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
+      returns 0 AND
+      `test -f plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md`
+      returns non-zero AND
+      `grep -qF "from-scratch" plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
+      — acceptance: all three hold. Falsifiable both ways: reverting the rename or the framing
+      correction flips the corresponding check.
+- [ ] [AI] **Order Stage 0.** In
+      `syllabus/paths/manifest-immediately-effective-ai-engineer.md`'s
+      "## Stage 0 · Software-engineering foundation" section, replace the unordered, "not yet
+      ordered" list of 11 courses (`just-enough-python`, `software-testing`,
+      `cicd-and-release-engineering`, `backend-at-scale`, `containers-and-orchestration`,
+      `computer-architecture`, `site-reliability-engineering`, `data-engineering`,
+      `data-structures-and-algorithms-essentials`, `software-product-engineering`,
+      `frontend-essentials`) with a numbered, prerequisite-consistent order. For each of the 11, read
+      its declared prerequisites from `syllabus/courses/<course-id>.md`
+      (`grep -A3 "^## Prerequisites" plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/<course-id>.md`
+      for each course-id); where a prerequisite is **also** one of the 11, it must appear earlier in
+      the finalized order. A prerequisite **outside** the 11 stays out of scope for this correction —
+      the manifest's own callout documents that decision; do not add courses beyond the 11 to chase
+      full transitive closure
+      — acceptance: the finalized numbered list is committed, and for every pair (course,
+      prerequisite) where the prerequisite is one of the 11, the prerequisite's list position is
+      strictly lower than the course's. Falsifiable both ways: swapping any two entries whose
+      prerequisite relationship is satisfied only in the corrected order re-breaks the property the
+      unordered list could not yet claim.
+- [ ] [AI] Remove the "not yet ordered" / "PENDING" language from Stage 0 once it is genuinely
+      ordered —
+      `grep -c "not yet ordered\|PENDING" plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
+      — acceptance: returns **0**. Falsifiable both ways: the marker is present before this step and
+      absent after — but its absence alone does not certify correctness, which is why the previous
+      step's per-pair check is the substantive acceptance and this one only certifies that the
+      pending-work marker was not simply deleted without ordering.
+- [ ] [AI] Re-confirm the `syllabus/` file **count** is unaffected by this in-place content edit —
+      `find plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus -type f | wc -l`
+      — acceptance: returns **128** (unchanged — an edit to an existing file's content, not an
+      addition or removal).
 
 ### Local Quality Gates (Before Push)
 
@@ -312,7 +400,15 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       `ayokoding-learning-path-01-url-restructure` is recorded in
       `evidence/phase-1-contract-agreement.txt` with a SHA, and any divergence was corrected in
       favour of this plan.
-- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — the corpus was not touched.
+- [ ] [AI] The Stage 0 ordering (1.4) is complete: no "not yet ordered" / "PENDING" marker remains in
+      `syllabus/paths/manifest-immediately-effective-ai-engineer.md`, and the per-pair prerequisite
+      check from 1.4's second step is recorded.
+- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
+      baseline. This phase's only `syllabus/` touch is 1.4's **one recorded exception** (an in-place
+      content edit to the already-renamed AI-engineer manifest mirror, ordering Stage 0); the file
+      count is stable across both a rename and an in-place edit, so it is unaffected either by that
+      exception or by the earlier plan-authoring-time rename+framing correction already reflected in
+      the Phase 0 baseline — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding).
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: the manifest schema compiles and the empty `<MANIFESTS>` home exists; no resolver
@@ -454,7 +550,7 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
   ```gherkin
   Scenario: A course deep-linked without path context renders the canonical view
-    Given a reader opens a course URL /en/c/learn/courses/<course-id> with no path context query parameter
+    Given a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter
     When the course page renders
     Then the course body renders in full with the content-tree breadcrumb and its prerequisite list
     And a "this course is part of" affordance lists every path that includes the course
@@ -491,10 +587,10 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
 - [ ] [AI] **RED** — extend
       `apps/ayokoding-www/src/features/content/core/content-url.test.ts` _(existing test file,
-      Repo-grounded)_ with failing assertions that `contentUrl("en", "learn/courses/x", "interview-ready/software-engineer")`
-      appends `?path=interview-ready/software-engineer`, and that
+      Repo-grounded)_ with failing assertions that `contentUrl("en", "learn/courses/x", "careers/interview-ready/software-engineer")`
+      appends `?path=careers/interview-ready/software-engineer`, and that
       `contentUrl("en", "learn/courses/x")` (no third argument) still returns
-      `/en/c/learn/courses/x` unchanged
+      `/en/learn/courses/x` unchanged
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new `?path=` assertion **fails** (the parameter is not supported) while the
       no-argument assertion **passes** (existing behaviour). Falsifiable both ways: after GREEN both
@@ -507,8 +603,8 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
   ```gherkin
   Scenario: A path landing page lists its courses in manifest order
-    Given the interview-ready/software-engineer path manifest is published
-    When a reader opens the path landing page at /en/c/learn/paths/interview-ready/software-engineer
+    Given the careers/interview-ready/software-engineer path manifest is published
+    When a reader opens the path landing page at /en/learn/paths/careers/interview-ready/software-engineer
     Then the courses appear in the manifest's courseOrder
     And every course link carries the path context query parameter
 
@@ -516,19 +612,19 @@ to the source plan is recorded here so a reader auditing the split can trace eve
     Given a reader is on a course with an active path context
     When the breadcrumb renders
     Then it shows Home, Learn, the path title, and the course title
-    And the path crumb links to the path landing page /en/c/learn/paths/<path-id> with the path context preserved
+    And the path crumb links to the path landing page /en/learn/paths/<path-id> with the path context preserved
 
   Scenario: A legacy fundamentally-strong URL redirects to the canonical course URL
     Given a re-homed course previously lived under the legacy fundamentally-strong/software-engineer content path
     When a reader requests the legacy URL
-    Then the app redirects to the course's canonical /en/c/learn/courses/<course-id> URL
+    Then the app redirects to the course's canonical /en/learn/courses/<course-id> URL
     And the redirect preserves any path context query parameter
   ```
 
 - [ ] [AI] **GREEN** — extend `contentUrl` in
       `apps/ayokoding-www/src/features/content/core/content-url.ts` _(existing file, Repo-grounded)_
       with an **optional** third `pathId` parameter appending `?path=<path-id>`, preserving the
-      canonical `/en/c/learn/courses/<course-id>` shape when it is omitted
+      canonical `/en/learn/courses/<course-id>` shape when it is omitted
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
       — acceptance: both exit 0; the new assertion passes and **every** pre-existing `content-url`
       assertion recorded in `evidence/phase-0-baseline.txt` still passes (or is updated for the
@@ -575,6 +671,12 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
 ### 2.6 TDD cycle 6 — `checkPrerequisiteConsistency` (`prerequisites.ts`)
 
+> **OI-4 ruling (2026-07-21)**: link-don't-walk (a manifest including a course while omitting its
+> declared prerequisite) is **permitted by design** — this function's scope is ordering-only, never
+> completeness. See
+> [tech-docs.md §Link-don't-walk](./tech-docs.md#link-dont-walk-prerequisite-omission-is-permitted-oi-4-ruling-2026-07-21)
+> for the full ruling and reasoning.
+
 - [ ] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts` _(existing test file
       from cycle 2.5)_ for
@@ -583,12 +685,16 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       reports **zero** violations; a **deliberately-violating** fixture that places
       `advanced-algorithms` before its declared prerequisite
       `data-structures-and-algorithms-essentials` reports **exactly one** violation naming that
-      course; and a prerequisite that is declared but **omitted from the manifest** is **not**
-      reported
+      course; a prerequisite that is declared but **omitted from the manifest** is **not** reported as
+      a violation (OI-4 — link-don't-walk is permitted); and that same omitted-prerequisite fixture's
+      `linkedPrerequisites` output contains **exactly one** entry naming the omitted course and its
+      dependent
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails because `checkPrerequisiteConsistency` is undefined. Falsifiable
-      both ways: the clean and violating fixtures must produce **different** results after GREEN, so
-      an implementation that always returns zero violations fails the second assertion.
+      both ways: the clean and violating fixtures must produce **different** `violations` results
+      after GREEN, so an implementation that always returns zero violations fails the second
+      assertion; the omitted-prerequisite fixture's `linkedPrerequisites` must be non-empty after
+      GREEN, so an implementation that never populates it fails the fourth assertion.
 
   **Gherkin (binds) →** "A path manifest is a valid topological entry into the prerequisite DAG"
 
@@ -600,18 +706,38 @@ to the source plan is recorded here so a reader auditing the split can trace eve
     And every listed course ID resolves to an existing course in the library
   ```
 
+  **New scenario (OI-4 ruling)** — see the matching addition in
+  [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin):
+
+  ```gherkin
+  Scenario: A path may link a prerequisite it does not include, without failing integrity
+    Given a path manifest includes a course whose declared prerequisite is absent from that manifest
+    When the manifest-integrity check runs
+    Then the absent prerequisite is not reported as a violation
+    And the absent prerequisite appears in the check's informational linkedPrerequisites list
+  ```
+
 - [ ] [AI] **GREEN** — implement `checkPrerequisiteConsistency` in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts` _(existing file from cycle
       2.5)_: for each course in `courseOrder`, report every declared prerequisite that is present in
-      `libraryCourseIds` **and** in the manifest but appears at a later index
+      `libraryCourseIds` **and** in the manifest but appears at a later index as a `violations` entry;
+      separately, for each course in `courseOrder`, collect every declared prerequisite that is
+      present in `libraryCourseIds` **but absent** from the manifest into a `linkedPrerequisites`
+      entry (informational only — never a violation, never affects pass/fail)
       — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: exits 0; the clean fixture reports zero violations and the violating fixture
-      reports exactly one, naming `advanced-algorithms`.
-- [ ] [AI] **REFACTOR** — return a structured violation record (`{ courseId, missingPrerequisiteId,
-courseIndex, prerequisiteIndex }`) rather than a string, so a downstream gate can render a
-      precise message
+      — acceptance: exits 0; the clean fixture reports zero `violations` and empty
+      `linkedPrerequisites`; the violating fixture reports exactly one `violations` entry naming
+      `advanced-algorithms`; the omitted-prerequisite fixture reports zero `violations` and exactly
+      one `linkedPrerequisites` entry.
+- [ ] [AI] **REFACTOR** — return a structured result `{ violations: { courseId,
+missingPrerequisiteId, courseIndex, prerequisiteIndex }[], linkedPrerequisites: { courseId,
+missingPrerequisiteId }[] }` rather than a bare array or string, so a downstream gate can render
+      a precise message for a real violation and a reviewer-facing diagnostic list for linked
+      prerequisites without conflating the two
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
-      — acceptance: both exit 0 and the violating fixture's single record carries all four fields.
+      — acceptance: both exit 0, the violating fixture's single `violations` record carries all four
+      fields, and the omitted-prerequisite fixture's single `linkedPrerequisites` record carries both
+      fields.
 
 ### 2.7 TDD cycle 7 — `checkManifestIntegrity` (`manifest-integrity.ts`)
 
@@ -709,7 +835,10 @@ courseIndex, prerequisiteIndex }`) rather than a string, so a downstream gate ca
       `evidence/phase-2-specs-coverage-delta.txt` naming
       `ayokoding-learning-path-03-navigation-ui` as its closing plan.
 - [ ] [AI] `npx nx run ayokoding-www:typecheck` + `:lint` + `:build` exit 0.
-- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — the corpus was not touched.
+- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
+      baseline (no delivery step in this phase touches `syllabus/`; the file count is stable across a
+      rename, so it is unaffected by the one-time, plan-authoring-time R3 custody exception already
+      reflected in that baseline — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding)).
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: the pure ordering, context, prerequisite and integrity logic is implemented and
@@ -758,11 +887,15 @@ courseIndex, prerequisiteIndex }`) rather than a string, so a downstream gate ca
   ```
 
 - [ ] [AI] **Verify the plan's own boundary held** — confirm no manifest data file, no `shell/`
-      component, no course body and no `syllabus/` file was created or modified by this plan:
+      component, no course body, and no `syllabus/` file was created or modified by **any delivery
+      step in this phase or any before it** (the R3 custody exception is a single, recorded,
+      plan-authoring-time correction that predates Phase 0's baseline — see
+      [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding) — not a Phase-0-through-3
+      delivery-step edit):
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l` returns
       **0**; `test -d apps/ayokoding-www/src/features/course-paths/shell` returns **non-zero**;
       `find plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus -type f | wc -l`
-      returns **128**
+      returns **128** (unchanged from the Phase 0 baseline)
       — acceptance: all three hold. Falsifiable both ways: creating any one of those artefacts flips
       the corresponding check.
 
@@ -809,7 +942,7 @@ courseIndex, prerequisiteIndex }`) rather than a string, so a downstream gate ca
       port (3101 per the repo's Web Sites table).
 - [ ] [AI] For **each** locale (`en`, `id`) × **each** breakpoint (375 / 768 / 1280 px), via
       Playwright MCP `browser_navigate` + `browser_resize`: open the locale's learn section root
-      (`/en/c/learn` and `/id/c/belajar`), open one existing content page beneath it, and follow its
+      (`/en/learn` and `/id/belajar`), open one existing content page beneath it, and follow its
       prev/next and breadcrumb links one hop each
       — acceptance: every page renders; every followed link resolves (no 404); `html[lang]` matches
       the locale under test.
@@ -981,13 +1114,18 @@ courseIndex, prerequisiteIndex }`) rather than a string, so a downstream gate ca
       — acceptance: returns 0 and the file states both, with reasons. **There are no rule-15
       EWT/UWT/DWT findings to fix because the retest was exempted, not skipped** — the exemption is
       the artefact this check asserts.
-- [ ] [AI] Verify the `syllabus/` corpus is byte-intact —
+- [ ] [AI] Verify the `syllabus/` corpus is byte-intact relative to `origin/main` as of this plan's
+      start —
       `find plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus -type f | wc -l`
       returns **128** AND
       `git diff --stat origin/main -- plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus`
       prints nothing
-      — acceptance: both hold. Falsifiable both ways: any edit under `syllabus/` makes the `git diff`
-      print a stat line.
+      — acceptance: both hold. **Note (R3 custody exception)**: this check is unaffected by the
+      2026-07-21 R3 custody exception, because that rename+correction landed on `origin/main` as a
+      plan-authoring-time correction **before** this plan's Phase 0 ever branched — so `origin/main`
+      already carries the corrected corpus throughout Phases 0-7, and no delivery step in this
+      checklist introduces any further diff. Falsifiable both ways: any delivery-step edit under
+      `syllabus/` during execution makes the `git diff` print a stat line.
 - [ ] [AI] Verify the plan's ownership boundary held to the end —
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l` returns
       **0** and `test -d apps/ayokoding-www/src/features/course-paths/shell` returns non-zero

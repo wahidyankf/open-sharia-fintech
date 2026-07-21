@@ -2,21 +2,26 @@
 
 ## Business Goal
 
-Turn the shared course library into **four usable products** by authoring, publishing, growing, and
-verifying the four ordered path manifests that compose it. The library is the investment; the
+Turn the shared **software-engineering** course library into **four usable `careers/` products** by
+authoring, publishing, growing, and verifying the four ordered `careers/` path manifests that compose
+it. (A sibling category, `skills/`, adds two more products over a separate ERP + accounting corpus —
+owned end-to-end by the sibling plan `ayokoding-learning-path-06-skills-paths`, out of this plan's
+scope; see [tech-docs.md DD-34](./tech-docs.md#design-decisions).) The library is the investment; the
 manifests are what convert that single investment into four audience-fit reading arcs, each with a
 coherent, prerequisite-aware, path-aware journey:
 
-- an **`interview-ready/software-engineer`** path — the **interview/job-prep-first** arc for an
+- a **`careers/interview-ready/software-engineer`** path — the **interview/job-prep-first** arc for an
   experienced engineer re-entering the market: interview prep FIRST → production-effective → deeper;
-- an **`immediately-effective/software-engineer`** path — the **immediately-effective** principle:
+- a **`careers/immediately-effective/software-engineer`** path — the **immediately-effective** principle:
   set up the editor, learn one language end-to-end, **build a real app first**, then deepen;
-- a **`fundamentally-strong/software-engineer`** path — the **university-style, fundamentals-first**
+- a **`careers/fundamentally-strong/software-engineer`** path — the **university-style, fundamentals-first**
   arc: CS foundations / theory first → deeper; and
-- an **`immediately-effective/software-engineer-to-ai-engineer`** path — an already-working software
-  engineer transitioning to AI engineering: assumes SWE competence (prerequisite SWE-fundamentals
-  courses are **linked, not included**) and teaches **building** AI systems, fast because it assumes
-  competence, not because it skips depth.
+- a **`careers/immediately-effective/ai-engineer`** path — a **from-scratch** AI-engineering path
+  (renamed and re-scoped 2026-07-21; see [tech-docs.md DD-35](./tech-docs.md#design-decisions)): it no
+  longer assumes prior software-engineering competence and **includes** the **existing** shared
+  SWE-fundamentals courses at the head of `courseOrder` rather than linking out to them (no new
+  course body is authored for this — every included prerequisite is an existing library course), and
+  teaches **building** AI systems.
 
 The three `software-engineer` paths converge on the **same** software-engineering endpoint — only the
 **entry point**, the **journey ordering**, and the **teaching emphasis** differ. The fourth path
@@ -73,9 +78,9 @@ manifest model avoids that entirely:
 
 - The library exists but is unreadable as a journey: without a manifest, a reader lands on a flat
   catalog of 127 courses with no ordering, no entry point, and no signal about what to read first.
-- An experienced re-entrant, a productive-fast builder, a theory-first learner, and a
-  SWE-to-AI-engineer transitioner are all forced through the same order today, and none is optimally
-  served.
+- An experienced re-entrant, a productive-fast builder, a theory-first learner, and a from-scratch
+  AI-engineering aspirant (assuming no prior software-engineering competence) are all forced through
+  the same order today, and none is optimally served.
 - Without the composition layer, the whole upstream investment — the URL restructure, the schema, the
   navigation UI, the 127 authored bodies — has no user-visible product surface. All four upstream
   plans are enabling work whose payoff lands here.
@@ -88,8 +93,10 @@ manifest model avoids that entirely:
 - **Four audience-fit products from one content investment**, with no duplication and one maintenance
   surface.
 - **A reusable composition capability**: a future track (a security track, a data track) costs one
-  more manifest plus its landing anchor — proven out by the fourth, AI-engineering track added at
-  exactly that marginal cost.
+  more manifest plus its landing anchor — proven out by the fourth, AI-engineering track: even though
+  its from-scratch correction (2026-07-21) lengthened its `courseOrder` to include existing
+  SWE-fundamentals courses at the head, that inclusion is a manifest-composition change only, adding
+  no new authoring cost — the marginal-artifact claim (one manifest, one landing anchor) still holds.
 - **A checkable smoothness guarantee**: prerequisite-consistency turns "does this order read
   smoothly?" from an ad-hoc judgment into a machine-verified invariant, re-run at every gate.
 - **No silent truncation**: the growth phase closes the gap each smoke-test-scoped manifest
@@ -128,9 +135,11 @@ Every metric below is an **observable check**, not a projected number.
 - **interview-ready MVP proves the architecture first** (observable): the interview-first path's
   landing, manifest, and path-aware nav are live in production before the AI path and the other two
   manifests are composed.
-- **The AI path is assumes-competence-first** (observable): its manifest **links** rather than
-  includes SWE-fundamentals prerequisites, and **walks** the nine-course AI/harness cluster (DD-33);
-  authoring it has priority #1 over the immediately-effective and fundamentally-strong manifests.
+- **The AI path is from-scratch, assumes-nothing-first** (observable, inverted 2026-07-21 — see
+  tech-docs.md DD-35): its manifest **includes** the SWE-fundamentals prerequisites at the head of
+  `courseOrder` rather than linking them, so a reader with zero programming background can start at
+  `courseOrder[0]` and finish, and it **walks** the nine-course AI/harness cluster (DD-33); authoring
+  it has priority #1 over the immediately-effective and fundamentally-strong manifests.
 - **immediately-effective is build-app-first** (observable): its manifest places editor/tooling → one
   language end-to-end → build a real app ahead of CS-fundamentals/DS&A/algorithms/systems depth.
 - **fundamentally-strong is theory-first** (observable): its manifest places CS
@@ -138,7 +147,10 @@ Every metric below is an **observable check**, not a projected number.
 - **No manifest ships permanently truncated** (observable): after the growth phase, the interview-ready
   and fundamentally-strong manifests both carry all five Band-9 interview-technique courses, the
   immediately-effective manifest carries none of them by design, and the AI path has grown from its
-  six-course smoke-test spine to its full 15-course composition.
+  smoke-test-scoped starting composition (its included, already-existing SWE-fundamentals
+  prerequisites plus whatever new AI-engineer-role courses exist at that point) to its full,
+  prerequisite-consistent composition — an open item, not a fixed course count, per
+  [tech-docs.md DD-35](./tech-docs.md#design-decisions).
 - **The full catalog resolves** (observable): 127 course bundles resolve under
   `apps/ayokoding-www/content/en/learn/courses/` and all four manifests validate against them.
 - **Progression smoothness verified per path** (observable): each manifest passes its own smoothness
@@ -168,7 +180,10 @@ Every metric below is an **observable check**, not a projected number.
   state for this plan.
 - **Enumerating speculative course variants** — variants are authored on demand only, and by the
   course-authoring plan when they are.
-- **A fifth path.** The four-path composition is locked (DL-1 / DL-15); a fifth would be its own plan.
+- **A fifth `careers/` path.** The four-path `careers/` composition is locked (DL-1 / DL-15); a fifth
+  would be its own plan. (The sibling `skills/` category's two paths, owned end-to-end by
+  `ayokoding-learning-path-06-skills-paths`, are a separate category — not a fifth `careers/` path —
+  see [tech-docs.md DD-34](./tech-docs.md#design-decisions).)
 
 ## Business Risks and Mitigations
 

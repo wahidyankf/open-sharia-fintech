@@ -356,7 +356,7 @@ course.** Colocated under `product-patterns-for-probabilistic-systems/learning/a
 
 ## In which paths
 
-- `immediately-effective/software-engineer-to-ai-engineer` — **owning path**: placed after the light eval
+- `immediately-effective/ai-engineer` — **owning path**: placed after the light eval
   gate, so ship criteria can be written against a real measurement rather than a hope.
 - `interview-ready/software-engineer` — candidate placement in the AI & harness engineering deepening
   tail — pending manifest re-verification (D8 four-path rule).

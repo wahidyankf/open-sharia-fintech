@@ -230,9 +230,10 @@ path composes a short AI-specific spine (linked prerequisites, not included):
   — shipping-first order (build a real app first, then deepen).
 - **[fundamentally-strong/software-engineer](../paths/manifest-fundamentally-strong-software-engineer.md)**
   — fundamentals-first, university-style order.
-- **[immediately-effective/software-engineer-to-ai-engineer](../paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md)**
-  — AI-engineer transition spine (converges on the AI-engineer endpoint, per-role, not the
-  software-engineer one).
+- **[immediately-effective/ai-engineer](../paths/manifest-immediately-effective-ai-engineer.md)** —
+  from-scratch AI-engineer path (converges on the AI-engineer endpoint, per-role, not the
+  software-engineer one; renamed and corrected 2026-07-21, R3 — see the mirror file's own top-matter
+  callout for the mechanical link-repoint this rename required).
 
 Zero body duplication — every manifest references the same course IDs reordered.
 

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --hue-terracotta: oklch(65% 0.16 30);
+        --hue-honey: oklch(76% 0.15 75);
+        --hue-sage: oklch(70% 0.1 150);
+        --hue-teal: oklch(66% 0.1 200);
+        --hue-sky: oklch(68% 0.11 230);
+        --hue-plum: oklch(60% 0.12 305);
+        --hue-terracotta-ink: oklch(40% 0.13 30);
+        --hue-honey-ink: oklch(44% 0.12 75);
+        --hue-sage-ink: oklch(37% 0.09 150);
+        --hue-teal-ink: oklch(37% 0.09 200);
+        --hue-sky-ink: oklch(39% 0.1 230);
+        --hue-plum-ink: oklch(37% 0.1 305);
+        --warm-0: oklch(99% 0.006 85);
+        --warm-50: oklch(97% 0.009 85);
+        --warm-100: oklch(94% 0.012 85);
+        --warm-200: oklch(88% 0.014 85);
+        --warm-500: oklch(48% 0.018 80);
+        --warm-900: oklch(18% 0.016 70);
+        --background: var(--warm-0);
+        --foreground: var(--warm-900);
+        --card: #fff;
+        --primary: var(--hue-honey);
+        --muted-foreground: var(--warm-500);
+        --border: var(--warm-200);
+        --radius-lg: 1rem;
+        --radius-xl: 1.25rem;
+        --shadow-md: 0 4px 8px -2px oklch(20% 0.02 75/0.08), 0 2px 4px -2px oklch(20% 0.02 75/0.06);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--background);
+        color: var(--foreground);
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+      }
+      .frame {
+        width: 960px;
+      }
+      .cap {
+        font-size: 12px;
+        color: var(--muted-foreground);
+        margin-bottom: 14px;
+        letter-spacing: 0.02em;
+      }
+      .cap b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      .win {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--card);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+      }
+      .bar {
+        display: flex;
+        gap: 7px;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--warm-50);
+      }
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .url {
+        margin-left: 10px;
+        font-size: 11px;
+        color: var(--muted-foreground);
+        align-self: center;
+      }
+      .body {
+        padding: 32px 40px 40px;
+      }
+      .crumb {
+        font-size: 12.5px;
+        color: var(--muted-foreground);
+      }
+      .crumb b {
+        color: var(--foreground);
+        font-weight: 600;
+      }
+      h1 {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-top: 10px;
+      }
+      .sub {
+        margin-top: 8px;
+        color: var(--muted-foreground);
+        font-size: 14.5px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ol.plain {
+        list-style: none;
+        margin-top: 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      ol.plain li {
+        display: flex;
+        gap: 10px;
+        padding: 16px 18px;
+        background: var(--card);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      ol.plain li + li {
+        border-top: 1px solid var(--border);
+      }
+      .num {
+        font-weight: 700;
+        color: var(--h);
+      }
+      .arc {
+        font-weight: 700;
+      }
+      .roles {
+        color: var(--muted-foreground);
+      }
+      .go {
+        margin-left: auto;
+        color: var(--primary);
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="cap">
+        Screen 1a · Category landing — <b>Option B: arc list with inline description (no cards)</b> · careers instance ·
+        /en/learn/paths/careers/
+      </div>
+      <div class="win">
+        <div class="bar">
+          <span class="dot" style="background: var(--hue-terracotta)"></span>
+          <span class="dot" style="background: var(--hue-honey)"></span>
+          <span class="dot" style="background: var(--hue-sage)"></span>
+          <span class="url">ayokoding.com/en/learn/paths/careers</span>
+        </div>
+        <div class="body">
+          <div class="crumb"><b>Home</b> / Learn / Paths / Careers</div>
+          <h1>Careers</h1>
+          <p class="sub">Three arcs, one shared library.</p>
+          <ol class="plain">
+            <li style="--h: var(--hue-honey)">
+              <span class="num">1.</span>
+              <span
+                ><span class="arc">Interview-Ready</span> — pass a SWE interview soon.
+                <span class="roles">Software Engineer.</span></span
+              >
+              <span class="go">→</span>
+            </li>
+            <li style="--h: var(--hue-teal)">
+              <span class="num">2.</span>
+              <span
+                ><span class="arc">Immediately-Effective</span> — ship fast, deepen later.
+                <span class="roles">Software Engineer, AI Engineer.</span></span
+              >
+              <span class="go">→</span>
+            </li>
+            <li style="--h: var(--hue-sage)">
+              <span class="num">3.</span>
+              <span
+                ><span class="arc">Fundamentally Strong</span> — fundamentals first, then build.
+                <span class="roles">Software Engineer.</span></span
+              >
+              <span class="go">→</span>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

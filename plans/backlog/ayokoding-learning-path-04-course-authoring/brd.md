@@ -12,7 +12,7 @@ Concretely it authors:
 - **6 net-new AI-engineering courses** — the light eval gate, statistics for evals, deep evals,
   product patterns for probabilistic systems, inference serving and model deployment, and fine-tuning
   and adaptation — the spine of the fourth path
-  (`immediately-effective/software-engineer-to-ai-engineer`), and **authoring priority #1** under the
+  (`careers/immediately-effective/ai-engineer`), and **authoring priority #1** under the
   locked build order (DD-27).
 - **61 transferred topics** (FS-SE topics 34–94), authored **native** into `courses/` — no legacy
   home, therefore no re-home and no redirect.
