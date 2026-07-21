@@ -105,7 +105,7 @@ directly), nor to execute a plan (that is [`plan-execution`](./plan-execution.md
 - Resolve `push-target` (default `origin main`).
 - Confirm the working tree is clean per the repo's git-ops method (a bare sibling uses the
   [bare-repo git-ops method](../../development/workflow/bare-repo-landing-method.md); never
-  `git rev-parse --is-bare-repository` from a linked worktree).
+  `git rev-parse --is-bare-repository`, in any topology, to answer whether a repository is bare).
 
 **Output**: Resolved brief path, identifier, and push target.
 
