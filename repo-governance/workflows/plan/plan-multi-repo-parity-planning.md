@@ -152,7 +152,10 @@ anchor repo has no special authority over other repos' plans.
 
 Author plans directly in the `main` working tree of each repo. Commit and push to `origin main`
 of each repo. Use when worktrees are not needed and direct main-branch access is acceptable for
-all repos in the parity set.
+all repos in the parity set. **Unavailable for any bare-repo parity target** (`ose-primer`,
+`ose-infra` today) — a bare repo has no `main` working tree to author directly in. See
+[Note on bare-repo parity targets](#worktree-to-pr-default) below for the worktree-based
+alternative and the full rationale.
 
 ### `worktree-to-origin-main`
 
@@ -457,7 +460,12 @@ Provide a self-contained handoff prompt per repo covering:
    `main-to-origin-main`, `main-to-pr`) governing that plan's own future execution, resolved
    independently per repo through the standard three-tier precedence (invocation argument > plan
    field > default) and recorded as its own deviation-matrix row when it diverges from sibling
-   repos. A repo whose plan resolves to a `*-to-pr` mode additionally runs the
+   repos. For a bare-repo target (`ose-primer`, `ose-infra` today), the two `main-to-*` values are
+   unavailable — see
+   [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
+   for the authoritative restriction, which governs this field independently of the restriction
+   [Modes](#modes) above places on this workflow's own 3-value vocabulary. A repo whose plan
+   resolves to a `*-to-pr` mode additionally runs the
    [PR-Review Maker→Fixer Cycle](../pr/pr-review-quality-gate.md) during its own execution.
 
 Each plan MUST include:
