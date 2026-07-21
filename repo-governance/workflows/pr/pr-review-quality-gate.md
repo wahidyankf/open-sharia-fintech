@@ -232,7 +232,9 @@ A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of 
 Being **done** is necessary but not sufficient to merge. A PR merges only when **all five** of the
 following hold:
 
-- **(a)** It has passed the `pr-review-maker` → `pr-review-fixer` cycle for **3 cycles**.
+- **(a)** It has passed the `pr-review-maker` → `pr-review-fixer` cycle for **3 cycles**. The
+  configured count is a **floor, not a ceiling** — see
+  [Saturation, Not a Fixed Count](#saturation-not-a-fixed-count-loop-exit).
 - **(b)** **0 CRITICAL + 0 HIGH findings outstanding.**
 - **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
   bring it forward by a **non-destructive forward update** — `git fetch origin` then
