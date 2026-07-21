@@ -104,7 +104,7 @@ directly), nor to execute a plan (that is [`plan-execution`](./plan-execution.md
   `plans/backlog/<identifier>/` already exists (a name clash aborts here).
 - Resolve `push-target` (default `origin main`).
 - Confirm the working tree is clean per the repo's git-ops method (a bare sibling uses the
-  [bare-repo git-ops method](../../development/workflow/no-destructive-git-operations.md); never
+  [bare-repo git-ops method](../../development/workflow/bare-repo-landing-method.md); never
   `git rev-parse --is-bare-repository` from a linked worktree).
 
 **Output**: Resolved brief path, identifier, and push target.
