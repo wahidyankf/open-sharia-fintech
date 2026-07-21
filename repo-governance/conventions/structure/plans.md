@@ -689,10 +689,13 @@ authority**.
 
 A bare repository (`core.bare=true`) has no primary checkout, so `main-to-origin-main` and
 `main-to-pr` are unavailable there — a bare repo has nothing to check code out into directly, and
-every mutation flows through a linked worktree instead. The three-tier precedence resolver below
-must never select either primary-checkout mode for a bare-repo target. See the
+every mutation flows through a linked worktree instead. See the
 [Bare-Repo Base-Worktree Landing Method](../../development/workflow/bare-repo-landing-method.md) for
-the worktree-based procedure that lands changes there.
+the worktree-based procedure that lands changes there. Choosing one of these two modes for a
+bare-repo target is an authoring-time correctness error that the three-tier precedence resolver
+below does not itself catch — the resolver (and the invalid-value rule following it) validates only
+that a value is one of the four mode strings, not repo-topology compatibility, so this is a check
+the human or agent declaring the mode must make, not one the algorithm enforces on its own.
 
 `worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
 disposable worktree and routes it through review before it touches `main`, so it is the safest
