@@ -31,4 +31,20 @@ describe("SectionCard", () => {
     // Card primitive applies the rounded-xl border bg-card token surface.
     expect(container.querySelector('[data-slot="card"]')).not.toBeNull();
   });
+
+  it("renders the meta line with a decorative (aria-hidden) trailing arrow, locking in the current contract", () => {
+    // swe-ui audit b06d32 Finding 4 flagged the trailing ArrowRight icon as missing an
+    // explicit aria-hidden="true" prop (unlike hero.tsx/tools-teaser.tsx, which pass it
+    // explicitly for the identical icon). Re-validated as FALSE_POSITIVE: lucide-react's
+    // Icon primitive already defaults to aria-hidden="true" whenever no children/aria-*/
+    // role/title prop is supplied, so the rendered DOM is already correctly hidden from
+    // assistive tech. No source fix applied — this test locks in that already-correct
+    // behavior. Also fills a previously-uncovered code path: no prior test in this file
+    // rendered SectionCard with the `meta` prop supplied.
+    const { container } = render(<SectionCard href="/en/c/learn" title="Learn" description="x" meta="12 topics" />);
+    expect(screen.getByText("12 topics")).toBeTruthy();
+    const icon = container.querySelector("svg");
+    expect(icon).not.toBeNull();
+    expect(icon?.getAttribute("aria-hidden")).toBe("true");
+  });
 });

@@ -97,7 +97,21 @@ Never use `!important`. Use `@layer` ordering or Tailwind modifiers for specific
 }
 ```
 
-**Known violation**: `ayokoding-www/src/app/globals.css` contains 10 `!important` declarations in code block styles to override `@tailwindcss/typography` defaults. These are scheduled for removal by replacing them with rules placed outside `@layer base`.
+**Known violation (revisited 2026-07-22)**: `ayokoding-www/src/app/globals.css` contains 10
+`!important` declarations in code block styles. The rules are already placed outside `@layer base`
+(the fix this note originally called for), yet the `!important` on the
+`figure[data-rehype-pretty-code-figure] pre` background rules cannot be dropped by cascade-ordering
+alone: `rehype-pretty-code`'s `keepBackground: true` option
+(`apps/ayokoding-www/src/features/content/core/parser.ts`) writes an inline
+`style="--shiki-light-bg:#fff"` attribute on every code block, and an element's inline `style`
+attribute always outranks any external stylesheet rule regardless of `@layer`/source order — only
+`!important` (or removing the inline style at its source) can override it. Dropping the
+`!important` here was tried and reverted as a real regression (DWT-001, tracked in
+`plans/done/2026-07-16__web-ui-code-block-copy-button/learnings.md`): the light-theme code
+background rendered pure white instead of the intended `#f6f8fa`. Full removal requires reworking
+the `rehype-pretty-code` config (e.g. disabling `keepBackground`) — a design change, not a
+mechanical CSS edit — so this is tracked as deliberate, currently-necessary debt rather than
+"scheduled for removal" on any near-term timeline.
 
 ## No `@apply` Outside `@layer base`
 

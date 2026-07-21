@@ -13,9 +13,12 @@ const iconMap: Record<string, ReactNode> = {
   tip: <Lightbulb className="h-4 w-4" />,
 };
 
-const variantMap: Record<string, "default" | "destructive"> = {
-  warning: "destructive",
-  info: "default",
+// Full Alert variant union (default | destructive | success | warning | info), per
+// swe-ui audit b06d32 Finding 3: `warning` previously mapped to `variant="destructive"`
+// (3.05:1 contrast, fails WCAG AA), instead of the dedicated `warning` variant (6.90:1).
+const variantMap: Record<string, "default" | "destructive" | "success" | "warning" | "info"> = {
+  warning: "warning",
+  info: "info",
   tip: "default",
 };
 

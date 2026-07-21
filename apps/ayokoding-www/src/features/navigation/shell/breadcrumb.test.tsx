@@ -50,6 +50,23 @@ describe("Breadcrumb", () => {
     expect(container.querySelectorAll("svg").length).toBe(2);
     expect(container.textContent).not.toContain("/");
   });
+
+  it("ChevronRight separators are decorative (aria-hidden), locking in the current contract", () => {
+    // swe-ui audit b06d32 Finding 4 flagged the separator icon as missing an explicit
+    // aria-hidden="true" prop. Re-validated as FALSE_POSITIVE: lucide-react's Icon
+    // primitive already defaults to aria-hidden="true" whenever no children/aria-*/
+    // role/title prop is supplied, so the rendered DOM is already correctly hidden
+    // from assistive tech. No source fix applied — this test locks in that
+    // already-correct behavior.
+    const { container } = render(
+      <Breadcrumb locale="en" slug="tools/cost-of-living-calculator" segments={segments} showCurrent />,
+    );
+    const separators = container.querySelectorAll("svg");
+    expect(separators.length).toBeGreaterThan(0);
+    separators.forEach((svg) => {
+      expect(svg.getAttribute("aria-hidden")).toBe("true");
+    });
+  });
 });
 
 const contentSegments = [
