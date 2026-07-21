@@ -687,6 +687,13 @@ authority**.
 | `main-to-origin-main`          | Primary checkout (no worktree) | Direct push to `origin main`   | `[AI]` — pushes directly, per Trunk Based Development |
 | `main-to-pr`                   | Primary checkout (no worktree) | PR opened against `main`       | `[AI]` — merges once the preconditions hold           |
 
+A bare repository (`core.bare=true`) has no primary checkout, so `main-to-origin-main` and
+`main-to-pr` are unavailable there — a bare repo has nothing to check code out into directly, and
+every mutation flows through a linked worktree instead. The three-tier precedence resolver below
+must never select either primary-checkout mode for a bare-repo target. See the
+[Bare-Repo Base-Worktree Landing Method](../../development/workflow/bare-repo-landing-method.md) for
+the worktree-based procedure that lands changes there.
+
 `worktree-to-pr` is the **default** when no mode is otherwise specified: it isolates work in a
 disposable worktree and routes it through review before it touches `main`, so it is the safest
 choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the

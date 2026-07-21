@@ -195,14 +195,16 @@ happens before plans land on `main`, mirroring the same rationale for the siblin
 [Relationship to Each Repo's Own `## Delivery Mode`](#relationship-to-each-repos-own--delivery-mode)
 below).
 
-**Note on ose-primer**: When `ose-primer` is a parity target, propagation to it can be delivered
-EITHER as a draft PR OR as a direct push to `ose-primer:main`. The delivery mode is the caller's
-per-run choice, independent of this workflow's own `worktree-to-pr` default, so selecting
-`worktree-to-origin-main` for ose-primer is a first-class choice, not a deviation. `ose-primer` is
-a **bare** repository with no primary checkout, so the two `main-to-*` modes are unavailable there
-— every ose-primer mutation flows through a worktree. The grilling in Step 3
-MUST surface the delivery-mode choice explicitly and record the invoker's decision before
-proceeding.
+**Note on bare-repo parity targets (`ose-primer`, `ose-infra`)**: When a bare repo is a parity
+target, propagation to it can be delivered EITHER as a draft PR OR as a direct push to its `main`,
+both through a worktree. The delivery mode is the caller's per-run choice, independent of this
+workflow's own `worktree-to-pr` default, so selecting `worktree-to-origin-main` for a bare target is
+a first-class choice, not a deviation. `ose-primer` and `ose-infra` are both **bare** repositories
+with no primary checkout, so the two `main-to-*` modes (`main-to-origin-main`, `main-to-pr`) are
+unavailable for either — every mutation against a bare target flows through a worktree, per the
+[Bare-Repo Base-Worktree Landing Method](../../development/workflow/bare-repo-landing-method.md).
+The grilling in Step 3 MUST surface the delivery-mode choice explicitly and record the invoker's
+decision before proceeding.
 
 ### Relationship to Each Repo's Own `## Delivery Mode`
 
@@ -218,10 +220,11 @@ Because this workflow produces one independent plan document per repo, each repo
 `## Delivery Mode` is resolved independently, per that repo's own plan and its own
 `## Worktree`/`## Delivery Mode` declaration, using the standard three-tier precedence (invocation
 argument > plan field > `worktree-to-pr` default). Repos in the same parity set are free to diverge
-here — for example, `ose-infra` may resolve to a direct-push mode while `ose-public` resolves to
-`worktree-to-pr` — exactly like any other per-repo deviation this workflow grills and records in the
-deviation matrix (Step 2). See Step 6 item 8 below for how `plan-maker` receives this instruction
-per repo.
+here — for example, `ose-infra` may resolve to `worktree-to-origin-main` (the only direct-push mode
+a bare repo can use — `main-to-origin-main` needs a primary checkout `ose-infra` does not have)
+while `ose-public` resolves to `worktree-to-pr` — exactly like any other per-repo deviation this
+workflow grills and records in the deviation matrix (Step 2). See Step 6 item 8 below for how
+`plan-maker` receives this instruction per repo.
 
 ## Steps
 
@@ -338,12 +341,15 @@ as the research-needed flag (yes / no). This flag governs whether Step 4 runs or
 
 **Mandatory meta-questions** (surface these explicitly regardless of mode):
 
-1. If ose-primer is in the parity set: "The ose-primer sync convention allows EITHER a draft PR
-   OR a direct push to `ose-primer:main` for every mutation — that per-destination choice is not
-   settled by this workflow's own `worktree-to-pr` default, so it must be chosen explicitly. The selected parity mode implies
-   {draft PR | direct push to main}. Please confirm the delivery mode for ose-primer."
-   Options: (A) Direct push to `main` (`main-to-origin-main` / `worktree-to-origin-main`).
-   (B) Draft PR (`worktree-to-pr`). Record the chosen mode.
+1. If any bare repo with no primary checkout — currently `ose-primer` and `ose-infra` — is in the
+   parity set: "The bare-repo sync convention allows EITHER a draft PR OR a direct push to
+   `<repo>:main`, both delivered through a worktree since the target has no primary checkout to work
+   in directly — that per-destination choice is not settled by this workflow's own `worktree-to-pr`
+   default, so it must be chosen explicitly. The selected parity mode implies {draft PR | direct push
+   to main}. Please confirm the delivery mode for `<repo>`."
+   Options: (A) Direct push to `main` via a worktree (`worktree-to-origin-main`). (B) Draft PR
+   (`worktree-to-pr`). `main-to-origin-main` is never offered here — it requires a primary checkout
+   the bare target does not have. Record the chosen mode.
 2. Rationale doc location per repo (where does `<objective-slug>-parity-decisions.md` live in
    each repo?).
 3. Any repo-specific constraint flagged in Step 2 that forces a deviation.
@@ -538,7 +544,9 @@ docs(explanation): add <objective-slug> parity decisions rationale
 
 **Per mode**:
 
-- `main-to-origin-main`: Push each repo's commits to `origin main` directly.
+- `main-to-origin-main`: Push each repo's commits to `origin main` directly. Not available for any
+  bare repo in the set (`ose-primer`, `ose-infra` today) — a bare repo has no primary checkout to
+  push from directly; those targets deliver via `worktree-to-origin-main` instead.
 - `worktree-to-origin-main`: Push each repo's worktree commits to `origin main`. Remove worktrees
   after delivery: `git worktree remove worktrees/<objective-slug> && git worktree prune`.
 - `worktree-to-pr` (default): Push branch `plan/<objective-slug>` to each repo. Create or update a
