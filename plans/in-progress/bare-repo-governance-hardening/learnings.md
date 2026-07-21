@@ -298,3 +298,68 @@ the secret/sensitivity gate before it is ever written. Entry shape:
   used; the content had already merged through a fully-gated PR. Candidate `<C1>` fix: state that in
   a bare repo, remote-branch cleanup either happens **before** the worktree is removed (from inside
   it) or through the API path, and say plainly that `--no-verify` is **not** the sanctioned answer.
+
+## Learning: Phase 5 re-verified four suspect premises against `ose-infra` — three were false again
+
+- **Context**: executing Phase 5 (`ose-infra` propagation). The Phase 4 entries above flagged four
+  premises as expired or defective. Phase 5's brief required re-verifying each **live** rather than
+  inheriting Phase 4's finding, and reporting any clause that already passed before an edit.
+- **Observation**, premise by premise:
+  1. **`<MERGE>`-only propagation is insufficient — confirmed, and worse here than in `ose-primer`.**
+     `ose-infra` carried the pre-reversal wording plus **seven** live links to the deleted
+     `#saturation-not-a-fixed-count-loop-exit` section, across four files
+     (`pr-review-quality-gate.md` ×3, `pr-merge-protocol.md` ×2, `plans.md` ×1,
+     `plan-quality-gate.md` ×1) — `ose-primer` had three. An eighth site the checklist names nowhere,
+     `repo-governance/development/workflow/README.md`'s PR Merge Protocol index entry, stated the
+     floor rule in prose with no anchor link at all, so no link-based sweep would have found it.
+  2. **"Two-pager already absent" — false again, identically half-right.**
+     `plans/ideas/bare-repo-worktree-landing-hygiene.md` existed (landed by `2f9beaac0`) with its
+     index line; the second brief genuinely was absent. **New defect, distinct from Phase 4's**:
+     Phase 5's acceptance clause greps for the **second** slug
+     (`bare-repo-delivery-mode-governance-hardening`), which exits 1 vacuously, while its prose
+     asserts _both_ are absent. Phase 4's clause at least named the slug that was actually present.
+     So Phase 5's step was unfalsifiable in the exact direction it needed to be falsifiable.
+  3. **Sibling ahead of the source — confirmed.** `<PARITY>`'s `"any bare repo"` grep printed `1` and
+     **exited 0 before any edit**. `ose-infra` additionally carries a §Verifying Bareness (Method)
+     section that **neither** `ose-public` nor `ose-primer` has. Its `--is-bare-repository`
+     prohibition was the conditional form C6c ruled wrong, so the fix was to make it unconditional
+     in place — deleting the section would have broken four inbound `#verifying-bareness-method`
+     anchors and destroyed content better than the source repo's.
+  4. **`<PUBLIC>/<C1>` path form — did NOT reproduce.** The working-tree path existed this time,
+     because `ose-public`'s local `main` had since been fast-forwarded to `origin/main`
+     (`415c8f869`). The ref form was used anyway and both agreed at `b48153277`. Worth recording
+     because it shows the defect is **intermittent, not latent-but-dormant**: it presents only while
+     some other session's `main` is lagging, which is exactly when a reader is least likely to
+     suspect it.
+- **Why it might generalize**: the score across two siblings is 3-of-4 false, 1-of-4 intermittent.
+  A propagation premise measured once at authoring time should be treated as **expired by default**,
+  not as fact awaiting contradiction. And an acceptance clause that names a specific slug, file, or
+  count is only as good as the accuracy of that identifier — clause 2 above was well-formed,
+  falsifiable, and pointed at the wrong string, which is indistinguishable from passing.
+- **Terminal state**: pending — triage at Phase 6. Candidate route: `plan-multi-repo-parity-planning`
+  should require propagation steps to assert **post** state only, derive their file list from the
+  source PR's actual diff, and carry an explicit if-present branch for every "verified absent" claim.
+
+## Learning: the reading surfaces got the new rule; the writing surfaces did not
+
+- **Context**: PR-review cycle 1 on `ose-infra` PR #16, finding 2 (HIGH, confidence 90).
+- **Observation**: after C3/C4/C6 landed, `ose-infra`'s **reading** surfaces correctly stated that a
+  bare repo cannot use `main-to-origin-main` or `main-to-pr` — `plans.md`, the parity workflow, the
+  SDLC gate standard, `trunk-based-development.md` and its SKILL mirror. But the **writing**
+  surfaces, the ones that actually cause a delivery mode to be chosen and written into a plan, still
+  offered the full unqualified four-mode vocabulary: `plan-maker`'s Step 7 table, the
+  `plan-creating-project-plans` SKILL's §Delivery Mode, `git-push-default.md` Standard 3, and — found
+  only by sweeping, cited by no one — `plan-planning.md`'s Step 8 grill question and `plan-fixer`'s
+  Delivery Mode Fixes options. `plan-checker` validates only that the value is one of the four mode
+  strings, never repo-topology compatibility (by explicit design), so a `main-to-origin-main`
+  declaration emitted in a bare repo passes every gate and fails at Step 0 of execution.
+- **Why it might generalize**: this is a distinct failure shape from the propagation-under-coverage
+  entries above, and a sharper one. Stating a constraint on the documents that **describe** a
+  vocabulary does not constrain the agents that **emit** values from it. When a rule narrows a set of
+  legal values, the sweep has to cover producers and validators, not just prose — and if the
+  validator is deliberately structural (string membership only), the producers are the _only_ place
+  the constraint can live.
+- **Terminal state**: pending — triage at Phase 6. Candidate route: a general rule in
+  `repo-governance/development/pattern/maker-checker-fixer.md` or the plan conventions — when a
+  change restricts a declared enum, enumerate the maker/producer surfaces explicitly, since the
+  checker may be structurally unable to carry the restriction.

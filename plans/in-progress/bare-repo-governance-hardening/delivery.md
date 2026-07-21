@@ -1413,80 +1413,290 @@ heading-hierarchy validate` — all exit 0
 > back out of this phase into `ose-public` or `ose-primer`. As in Phase 4, this phase's copy of
 > `<C1>` is not the source of truth (**DD-8**) — **never** edit `<C1>` in place inside `<INFRA-WT>`;
 > record any friction in `learnings.md` for the Phase 6 sub-cycle instead.
+>
+> **Premise re-verification (Phase 5 executed 2026-07-21/22).** Phase 4 recorded four premises as
+> expired or defective. Phase 5's brief required re-verifying each **live** against `<INFRA>` rather
+> than inheriting Phase 4's finding. **Three were false again; the fourth did not reproduce.** Each is
+> recorded at its own step below and in `learnings.md`.
 
-- [ ] [AI] Verify topology — `git -C <INFRA> worktree list`
+- [x] [AI] Verify topology — `git -C <INFRA> worktree list`
       — acceptance: prints a line ending in `(bare)`
-- [ ] [AI] Fetch and record the starting divergence:
+      — **Result**: `/Users/wkf/ose-projects/ose-infra  (bare)`, exit 0.
+      `git rev-parse --is-bare-repository` was not used at any point in this phase
+- [x] [AI] Fetch and record the starting divergence:
       `git -C <INFRA> fetch origin && git -C <INFRA> rev-list --left-right --count origin/main...main`
       — acceptance: prints `0` and `0`
-- [ ] [AI] Provision a worktree at `origin/main`:
+      — **Result**: `0 0`, exit 0 — no reconcile needed. Both refs at
+      `f6ecdcc0b13137d99ad007ea49f5a2bb2eb6d9c5`. The `2 0` lag recorded in `tech-docs.md` had
+      already been cleared by Phase 0's reconcile
+- [x] [AI] Provision a worktree at `origin/main`:
       `git -C <INFRA> worktree add <INFRA-WT> -b bare-repo-governance-hardening origin/main`
       — acceptance: `git -C <INFRA> worktree list` lists `<INFRA-WT>`
-- [ ] [AI] Initialize the toolchain in that worktree: `npm install` then `npm run doctor -- --fix`
+      — **Result**: exit 0. No pre-existing branch or path collision (`branch --list 'bare-repo*'`
+      and `branch -r --list 'origin/bare-repo*'` both empty beforehand; `worktrees/` held only a
+      `.gitkeep`). `worktree list` then printed the bare line plus
+      `/Users/wkf/ose-projects/ose-infra/worktrees/bare-repo-governance-hardening  f6ecdcc0b [bare-repo-governance-hardening]`
+- [x] [AI] Initialize the toolchain in that worktree: `npm install` then `npm run doctor -- --fix`
       — acceptance: both exit 0
-- [ ] [AI] Copy `<C1>` verbatim from merged `ose-public` to the identical path
+      — **Result**: both exit 0. `doctor --fix` reported "16/16 tools OK, 0 warning, 0 missing" and
+      "Nothing to fix — all tools are installed", after creating 2 shared cargo target links
+      (`coralpolyp-be`, `rhino-cli`)
+- [x] [AI] Copy `<C1>` verbatim from merged `ose-public` to the identical path
       — acceptance: `diff <PUBLIC>/<C1> <INFRA-WT>/<C1>` reports no difference (exit 0, empty
       output). `<C1>` carries no repo-specific facts (**DD-10**), so any nonzero-exit output here is
       a defect in this copy step to fix, never a divergence to justify inline
-- [ ] [AI] **C2** — in `<INFRA-WT>/repo-governance/development/workflow/no-destructive-git-operations.md`,
+      — **Result**: `diff` exit 0, empty output; `shasum b48153277ea8c7eab18a9c992455553a81ff464b`
+      on both sides, and identical to `ose-primer`'s merged copy — all four copies agree.
+      **Premise 4 (`<PUBLIC>/<C1>` unresolvable) did NOT reproduce**: the working-tree path existed
+      this time, because `ose-public`'s local `main` had since been fast-forwarded to `origin/main`
+      (`415c8f869`). The ref form `git -C <PUBLIC> show origin/main:<C1>` was used as the copy source
+      anyway, and both forms agreed byte-for-byte. Worth recording as a **near miss rather than a
+      resolved defect**: the Phase 4 failure is intermittent, presenting only while some other
+      session's `main` lags, which is exactly when a reader is least likely to suspect it. The ref
+      form remains the correct instruction
+- [x] [AI] **C2** — in `<INFRA-WT>/repo-governance/development/workflow/no-destructive-git-operations.md`,
       add the same two cross-links to `<C1>`, mirroring the Phase 2 edit. Locate by content, not by
       line number — `<INFRA>`'s line numbers differ from both other repos
       — acceptance: `grep -Fc "bare-repo-landing-method.md" <INFRA-WT>/repo-governance/development/workflow/no-destructive-git-operations.md`
       prints exactly `2` (exits 1 before this step)
-- [ ] [AI] **C3** — in `<INFRA-WT>/repo-governance/conventions/structure/plans.md`, add the same
+      — **Result**: `0`/exit 1 before, exactly `2`/exit 0 after — **falsifiable in both directions,
+      measured in both directions**. Both anchors located by content (§Conventions
+      Implemented/Respected after the Worktree Toolchain Initialization bullet; §Related
+      Documentation after the same document's line). This file was otherwise byte-identical to
+      `ose-public`'s pre-PR version apart from one unrelated pre-existing wording difference
+- [x] [AI] **C3** — in `<INFRA-WT>/repo-governance/conventions/structure/plans.md`, add the same
       bare-repo note beneath the Delivery Mode table, mirroring the Phase 3 edit. Locate by content,
       not by line number — `<INFRA>`'s line numbers differ from both other repos
       — acceptance: `grep -Fc "bare repo" <INFRA-WT>/repo-governance/conventions/structure/plans.md`
       prints at least 1 (exits 1 before this step), and
       `grep -Fc "bare-repo-landing-method.md" <INFRA-WT>/repo-governance/conventions/structure/plans.md`
       prints at least 1 (exits 1 before this step)
-- [ ] [AI] **C4a** — in `<INFRA-WT>/<PARITY>`, rewrite meta-question #1's condition to bind to the
+      — **Result**: `"bare repo"` → `0`/exit 1 before, `2`/exit 0 after.
+      `"bare-repo-landing-method.md"` → `0`/exit 1 before, `1`/exit 0 after. Both falsifiable in both
+      directions, as written. The four-row table was located by content; this region of the file was
+      byte-identical to `ose-public`'s pre-PR version, so the note applied exactly as authored.
+      **This file also carried a C5-derivative site** the step does not name — its `[AI] merges by
+default` paragraph stated the pre-reversal "a floor, not a ceiling" rule and linked the deleted
+      `#saturation-not-a-fixed-count-loop-exit` anchor. Fixed here rather than left to contradict
+      `<MERGE>`; see the C5 step below for the full site list
+- [x] [AI] **C4a** — in `<INFRA-WT>/<PARITY>`, rewrite meta-question #1's condition to bind to the
       bare-repo **property** rather than the name, mirroring the Phase 3 edit. Locate by content, not
       by line number — `<INFRA>`'s line numbers differ from both other repos
       — acceptance: `grep -Fc "any bare repo" <INFRA-WT>/<PARITY>` prints at least 1 (exits 1 before
       this step)
-- [ ] [AI] **C4b** — in the same `<INFRA-WT>/<PARITY>` question's option list, strike
+      — **Result — PREMISE 3 CONFIRMED, the falsifiability clause failed**: this grep printed `1` and
+      **exited 0 before any edit**, not exit 1. As in `ose-primer`, `ose-infra`'s `<PARITY>` had
+      already been independently hardened by an earlier, unpropagated change: meta-question #1 was
+      already property-bound ("fires for any repo in the parity set with no primary checkout,
+      currently `ose-primer` and `ose-infra`"), carried a re-arm rule, and its `values:` frontmatter
+      already contained the literal phrase "any bare repo". **The clause was therefore not testing
+      anything**, and is reported as such rather than counted as a pass. `ose-infra` goes further
+      than `ose-primer` here: it carries a §Verifying Bareness (Method) section that **neither**
+      `ose-public` nor `ose-primer` has. What this phase actually contributed to the file was the
+      `<C1>` cross-link (0 → 3) and the class fix described under C4c
+- [x] [AI] **C4b** — in the same `<INFRA-WT>/<PARITY>` question's option list, strike
       `main-to-origin-main`, mirroring the Phase 3 edit. Locate by content, not by line number
       — acceptance: no delivery-mode option list in `<INFRA-WT>/<PARITY>` that applies to a bare
       target offers `main-to-origin-main` or `main-to-pr` (before this step, meta-question #1's
       option A does offer `main-to-origin-main`); record a per-list verdict in this checklist
-- [ ] [AI] **C4c** — sweep `<INFRA-WT>/<PARITY>` for every remaining bare-repo delivery-mode site,
+      — **Result**: acceptance holds. The parenthetical pre-state claim is **false for this repo**
+      (same root cause as C4a): meta-question #1 here never offered `main-to-origin-main` — it
+      already framed the mode as _unexecutable_ against a bare target and stated outright that
+      "there is no 'accept deviation' option here." Per-list verdict:
+
+  | Option list                                                            | Offers `main-to-origin-main`/`main-to-pr`?                                | Verdict                   |
+  | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------- |
+  | Meta-question #1, standalone-invocation options                        | No — (A) `worktree-to-origin-main`, (B) `worktree-to-pr`                  | Consistent (pre-existing) |
+  | Meta-question #1, nested-in-composite options                          | No — (A) `worktree-to-origin-main`, (B) terminate and re-run standalone   | Consistent (pre-existing) |
+  | Meta-question #2 (`ose-primer` sync-convention deviation, bare-scoped) | No — "accept deviation" / switch to `worktree-to-pr`, both worktree-based | Consistent (pre-existing) |
+
+- [x] [AI] **C4c** — sweep `<INFRA-WT>/<PARITY>` for every remaining bare-repo delivery-mode site,
       mirroring the Phase 3 sweep. Locate by content, not by line number
       — acceptance: a per-site verdict table is recorded in this checklist, one row per site, each
       marked consistent (before this step, at least the note paragraph and meta-question #1
       disagree, mirroring the self-contradiction C4a/C4b fixed in `ose-public`)
-- [ ] [AI] **C5** — in `<INFRA-WT>/<MERGE>`, append the hard-ceiling-not-floor qualifier at both
+      — **Result**: swept by re-deriving every raw occurrence rather than trusting the four sites the
+      step names — `grep -noE "main-to-origin-main|main-to-\*|main-to-pr"` returned **12** raw
+      occurrences across 12 lines before the sweep. Seven sites, one row each:
+
+  | Site                                           | Pre-sweep state                                                                                     | Action                                                                                                                             | Verdict                           |
+  | ---------------------------------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+  | The `mode` input's `values:` frontmatter list  | Already carries its own bare carve-out in the `description` field                                   | No edit — the exception is stated where the vocabulary is defined                                                                  | Consistent (unchanged, correctly) |
+  | §Verifying Bareness (Method)                   | Present and **ahead of both siblings**, but its `--is-bare-repository` ban was the conditional form | Kept the section; led with `git worktree list` as the primary check, made the ban **unconditional**, cross-linked `<C1>`           | Consistent (fixed this phase)     |
+  | The `### main-to-origin-main` mode definition  | Carve-out present, no `<C1>` link                                                                   | Kept the carve-out; added the `<C1>` cross-link naming the substitute procedure                                                    | Consistent (enhanced)             |
+  | The `**Note on ose-primer**:` paragraph        | Scoped to `ose-primer` alone though `ose-infra` is equally bare; no `<C1>` link                     | Retitled "Note on bare-repo parity targets (`ose-primer`, `ose-infra`)"; names both repos and both unavailable modes; links `<C1>` | Consistent (fixed this phase)     |
+  | §Relationship to Each Repo's Own Delivery Mode | Already named `worktree-to-origin-main` and said why `main-to-origin-main` does not apply           | No edit — already correct and equivalent to `ose-public`'s wording                                                                 | Consistent (unchanged, correctly) |
+  | The Step 6 item 8 `plan-maker` handoff         | Handed the full four-mode vocabulary with no bare restriction stated or cross-linked                | Added the `<PLANS>#delivery-mode` cross-link as the authoritative restriction for that field                                       | Consistent (fixed this phase)     |
+  | The Step 8 Part A "**Per mode**:" descriptions | `main-to-origin-main` bullet had no bare-repo carve-out at all                                      | Added the carve-out naming both bare targets and `worktree-to-origin-main` as their route                                          | Consistent (fixed this phase)     |
+
+  The step's parenthetical pre-state claim ("at least the note paragraph and meta-question #1
+  disagree") is **false for this repo** — as in `ose-primer`, those two already agreed. The genuine
+  disagreements were the three sites carrying no carve-out at all, plus the conditional
+  `--is-bare-repository` ban. **The `<PARITY>` section was NOT overwritten with `ose-public`'s
+  text**: `ose-infra`'s copy is a later, richer revision, and flattening it would have deleted a
+  section neither sibling has and broken four inbound `#verifying-bareness-method` anchors
+
+- [x] [AI] **C5** — in `<INFRA-WT>/<MERGE>`, append the hard-ceiling-not-floor qualifier at both
       precondition-(a) sites, mirroring the merged `ose-public` wording (corrected during PR-review
       cycle 3 — propagate the **post-reversal** text, not the pre-reversal "floor, not a ceiling"
       text this step originally named). Locate by content, not by line number
       — acceptance: `grep -Fc "hard ceiling" <INFRA-WT>/<MERGE>` prints exactly `2` (exits 1 before
       this step)
-- [ ] [AI] **C6a** — in `<INFRA-WT>/<SDLC>` §Worktree-Agnostic Execution, extend the existing
+      — **Result**: `0`/exit 1 before, exactly `2`/exit 0 after — falsifiable in both directions.
+      — **PREMISE 1 CONFIRMED, and the scope here is larger than in `ose-primer`.** `<MERGE>` alone
+      was again not a sufficient propagation unit: `ose-infra` carried the pre-reversal
+      "floor not a ceiling" text at both precondition-(a) sites plus **seven** live links to the
+      `#saturation-not-a-fixed-count-loop-exit` section `ose-public` deleted — `ose-primer` had
+      three. Full site list, derived by grepping the anchor repo-wide rather than from the
+      checklist's change-ID list:
+
+  | Site                                                     | Pre-state                                           | Action                                                                                 |
+  | -------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------- |
+  | `<GATE>` `termination:` frontmatter                      | "at least N ... AND saturation reached"             | Rewritten to the fixed-count hard-ceiling form                                         |
+  | `<GATE>` done-definition item 1                          | "default 3 minimum — but see Saturation"            | "default 3 — a **hard ceiling**, never extended past this count"                       |
+  | `<GATE>` precondition (a)                                | "a MINIMUM, not a sufficient stopping condition"    | Rewritten to the `ose-public` post-reversal wording                                    |
+  | `<GATE>` §Saturation, Not a Fixed Count                  | Full 39-line section present                        | **Removed entirely**                                                                   |
+  | `<GATE>` "No silent early exit" bullet                   | "`{input.cycles}` is a **floor**"                   | Replaced by "No early exit, no extension"                                              |
+  | `<GATE>` §Notes floor bullet                             | "N is a floor, saturation is the ceiling"           | "N is a **hard ceiling, not a floor**"                                                 |
+  | `<GATE>` §Notes                                          | No no-extension bullet at all                       | Added the "No extension past `{input.cycles}`, by design" bullet                       |
+  | `<MERGE>` §The Rule precondition (a)                     | Pre-reversal text + anchor link                     | Post-reversal hard-ceiling qualifier                                                   |
+  | `<MERGE>` §Agent Workflow → Before Merging               | Pre-reversal text + anchor link                     | Post-reversal hard-ceiling qualifier                                                   |
+  | `<PLANS>` `[AI] merges by default` paragraph             | "a floor, not a ceiling" + anchor link              | Post-reversal wording (site named by no checklist step)                                |
+  | `plan-quality-gate.md` hardened-preconditions sentence   | "a floor, not a ceiling" + anchor link              | Post-reversal wording (site named by no checklist step)                                |
+  | `development/workflow/README.md` PR Merge Protocol entry | "review cycles complete — a floor, not a ceiling —" | **Prose-only statement with no anchor link** — no link-based sweep would have found it |
+  | `.claude/agents/pr-review-maker.md`                      | "default 3 sequential cycles", no qualifier         | Added "a **hard ceiling, not a floor**"                                                |
+  | `.claude/agents/plan-execution-checker.md`               | "no documented early-exit reason" escape valve      | Rewritten to `ose-public`/`ose-primer` merged wording (completed in PR-review cycle 1) |
+  | `.claude/agents/plan-fixer.md`                           | "or a cycle with zero new findings" loop-exit       | Rewritten to the fixed-full-count form                                                 |
+  | three `.opencode/` mirrors                               | Matched their `.claude/` sources                    | Regenerated via `npm run generate:bindings`, never hand-edited                         |
+
+  `plan-execution.md` needed **no** counterpart edit here — like `ose-primer`'s, it cites the
+  preconditions by anchor instead of restating the count. Post-sweep,
+  `grep -rF "saturation-not-a-fixed-count"`, `grep -rF "floor not a ceiling"` and
+  `grep -rF "a floor, not a ceiling"` all return **zero** matches repo-wide.
+
+- [x] [AI] **C6a** — in `<INFRA-WT>/<SDLC>` §Worktree-Agnostic Execution, extend the existing
       paragraph with the bareness question and the ban on `git rev-parse --is-bare-repository`,
       mirroring the Phase 3 edit. Locate by content, not by line number — `<INFRA>`'s line numbers
       differ from both other repos
       — acceptance: `grep -Fc "is-bare-repository" <INFRA-WT>/<SDLC>` prints at least 1 (exits 1
       before this step), and `grep -Fc "bare-repo-landing-method.md" <INFRA-WT>/<SDLC>` prints at
       least 1 (exits 1 before this step)
-- [ ] [AI] **C6b** — in `<INFRA-WT>/<PROMO>`, re-point the `[bare-repo git-ops method]` link at
+      — **Result**: `"is-bare-repository"` → `0`/exit 1 before, `1`/exit 0 after.
+      `"bare-repo-landing-method.md"` → `0`/exit 1 before, `1`/exit 0 after. **Both falsifiable in
+      both directions here**, unlike in `ose-primer` where the first clause passed pre-edit — this
+      file had no bareness paragraph at all, so the edit was a genuine addition rather than a
+      correction. The unconditional `--is-bare-repository` prohibition (C6c's class fix) was written
+      in from the start
+- [x] [AI] **C6b** — in `<INFRA-WT>/<PROMO>`, re-point the `[bare-repo git-ops method]` link at
       `<C1>`, mirroring the Phase 3 edit. Locate by content, not by line number
       — acceptance: `grep -Fc "bare-repo-landing-method.md" <INFRA-WT>/<PROMO>` prints at least 1
       (exits 1 before this step)
-- [ ] [AI] Register `<C1>` in the sibling's `repo-governance/development/README.md` and
+      — **Result**: `0`/exit 1 before, `1`/exit 0 after. `<PROMO>` was the one file in this phase
+      byte-identical to `ose-public`'s pre-PR version, so the edit applied exactly as authored; its
+      trailing `--is-bare-repository` clause was widened to the unconditional form to match.
+      Post-edit this file is byte-identical to `ose-public`'s merged version (0-line diff)
+- [x] [AI] Register `<C1>` in the sibling's `repo-governance/development/README.md` and
       `repo-governance/development/workflow/README.md`
       — acceptance: `grep -Fc "bare-repo-landing-method.md"` prints at least 1 in each
-- [ ] [AI] **No brief deletion here** — neither two-pager exists in `<INFRA>` (verified: zero hits)
-      — acceptance: `grep -rF "bare-repo-delivery-mode-governance-hardening" <INFRA-WT>` exits 1
-- [ ] [AI] **No plan folder here either** — per **DD-10**, `<INFRA>` receives the C1-C7 changeset,
+      — **Result**: `0`/exit 1 before in each; `1`/exit 0 after in each. Both entries inserted
+      immediately after the No Destructive Git Operations entry, matching each index's own
+      descriptive style. The workflow index's neighbouring PR Merge Protocol entry was also
+      corrected — see the C5 site table above
+- [x] [AI] ~~**No brief deletion here** — neither two-pager exists in `<INFRA>` (verified: zero
+      hits)~~ **PREMISE 2 CONFIRMED FALSE. The step is executed as a deletion, not a confirmation.**
+      Verified live: `plans/ideas/bare-repo-worktree-landing-hygiene.md` **does** exist in `<INFRA>`,
+      together with its `plans/ideas/README.md` index line, landed by commit `2f9beaac0`. The second
+      brief (`bare-repo-delivery-mode-governance-hardening`) genuinely is absent — the identical
+      half-right shape Phase 4 found in `ose-primer`, so the "verified absent" survey was wrong about
+      the same brief in both siblings.
+      — **A second, distinct defect in this step, worse than Phase 4's**: the acceptance criterion
+      below greps for the **second** slug, the one that genuinely is absent, so it **exits 1
+      vacuously** and can never detect the condition the prose gets wrong. Phase 4's clause at least
+      named the slug that was present, and therefore failed loudly. Here the prose and the criterion
+      are both wrong, in mutually concealing directions
+      — acceptance (as written): `grep -rF "bare-repo-delivery-mode-governance-hardening" <INFRA-WT>`
+      exits 1
+      — **Result**: exit 1 both before and after — a vacuous pass, recorded as such.
+      **The check that actually mattered**, added here:
+      `grep -rF "bare-repo-worktree-landing-hygiene" <INFRA-WT>` exited **0** before (the file plus
+      its index line) and exits **1** after the retirement
+- [x] [AI] **No plan folder here either** — per **DD-10**, `<INFRA>` receives the C1-C7 changeset,
       not a mirrored plan. Do **not** scaffold `plans/*/bare-repo-governance-hardening/`, and do not
       add an entry to any of the sibling's `plans/` index READMEs
       — acceptance: `ls -d <INFRA-WT>/plans/*/bare-repo-governance-hardening` exits non-zero
       (it exits 0 if such a folder is scaffolded), and
       `grep -rF "bare-repo-governance-hardening" <INFRA-WT>/plans` exits 1
-- [ ] [AI] Run the local quality gates plus the markdown validators in the worktree
+      — **Result**: `ls -d` exits 1 (no matches); `grep -rF … <INFRA-WT>/plans` exits 1. No plan
+      folder scaffolded, no `plans/` index entry added. The only `plans/` change this phase made is
+      the brief retirement in the step above
+- [x] [AI] Run the local quality gates plus the markdown validators in the worktree
       — acceptance: all exit 0; fix every failure, including preexisting ones
-- [ ] [AI] Stage **explicit paths only**, commit thematically, push the branch
+      — **Result**: all exit 0.
+
+  | Gate (run from `<INFRA-WT>`)                                   | Result                                                                      |
+  | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+  | `md links validate` (pre-push exclude form)                    | `All links valid! No broken links found.`                                   |
+  | `md mermaid validate repo-governance docs .claude plans/ideas` | `0 violation(s), 0 warning(s)` in 99 files / 338 blocks                     |
+  | `md heading-hierarchy validate`                                | `PASSED`                                                                    |
+  | `npx markdownlint-cli2` over **all 20** changed markdown files | `0 error(s)`                                                                |
+  | `npm run generate:bindings`                                    | exit 0 — 45 agents converted, `✓ SUCCESS`; `.amazonq/` emitted with no diff |
+  | Pre-push hook (`harness bindings validate` et al.)             | `Total Checks: 67 / Passed: 67 / Failed: 0`                                 |
+  | `npx nx affected -t typecheck lint test:quick specs:coverage`  | exit 0 — `No tasks were run`                                                |
+
+  **The `nx affected` line is recorded as a VACUOUS pass, not a green one** — same reasoning as the
+  Phase 2 Gate. The changeset is markdown-only under `repo-governance/`, `docs/`, `.claude/` and
+  `plans/`, which maps to no Nx project, so the affected set is empty by construction. The markdown
+  validators and the 67-check pre-push hook are what actually exercised this content.
+
+  **Pre-existing mermaid violations — measured, then correctly scoped, and NOT a CI risk here.** An
+  unqualified repo-wide `md mermaid validate` reports **109** violations in `ose-infra`, all under
+  `plans/done/**` (29 files) and `apps/**` (4 files), zero in any file this changeset touches. But
+  running **CI's own exact command** —
+  `md mermaid validate --max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures` —
+  reports `0 violation(s) and 0 warning(s) in 122 file(s)`. Every one of the 109 lies inside CI's own
+  exclusion set, so none of them can gate anything.
+
+  **This is where `ose-infra` diverges from Phase 4's finding, and the divergence was verified rather
+  than assumed.** Phase 4 recorded `ose-primer`'s `main-ci` as already red on a schedule-only mermaid
+  gate. `ose-infra` has no such exposure: **both** its `pr-quality-gate.yml` (L268) and its
+  `main-ci.yml` (L176) invoke the **identical `--exclude`-qualified form**, and its last four
+  scheduled `main-ci` runs — including the two most recent against the pre-merge `origin/main`
+  `f6ecdcc0b` — all completed **success**. The `learnings.md` candidate route ("widen this plan's
+  local mermaid gate, or record its scope limit explicitly, before Phase 5 runs the same gate against
+  `ose-infra`") is therefore **discharged for this repo by measurement**: the local gate was widened
+  (to `repo-governance docs .claude plans/ideas`) _and_ CI's exact command was run directly, and the
+  two agree. The residual 109 remain a genuine cross-repo backlog item — tracked in `ose-public` as
+  `plans/ideas/ayokoding-mermaid-diagram-remediation.md`, and deliberately not patched here, since
+  patching one sibling would manufacture exactly the divergence DD-10 and the parity workflow exist
+  to prevent.
+
+- [x] [AI] Stage **explicit paths only**, commit thematically, push the branch
       — acceptance: exits 0
+      — **Result**: exit 0, `* [new branch]  bare-repo-governance-hardening`, with all 67 pre-push
+      checks green. Six thematic commits, every one staged by explicit path (never `git add -A` /
+      `git add .`); the worktree was freshly provisioned and `git status --porcelain` showed no
+      foreign WIP at any point. `apps/rhino-cli` and `specs/apps/rhino/**` untouched, so the
+      byte-identity boundary holds (`git diff main...HEAD -- apps/ specs/` is empty). Git identity
+      was verified before the first commit and **never modified**: no local `[user]` override
+      exists; identity resolved from the global `~/.gitconfig`.
+
+  | Commit      | Concern                                                                            |
+  | ----------- | ---------------------------------------------------------------------------------- |
+  | `855bb8f69` | C1 (new document, verbatim) + C2 cross-links + both index registrations            |
+  | `05b2ebf9b` | C3 + C4 — delivery-mode availability bound to bare-repo topology                   |
+  | `19f344519` | C5 + every derivative site — the 3-cycle hard-ceiling reversal                     |
+  | `6287a6fad` | C6 — the unconditional `--is-bare-repository` prohibition and the re-pointed link  |
+  | `20fa32c24` | The fourth-deviation carve-outs to `trunk-based-development.md` + its SKILL mirror |
+  | `d0514c420` | C7 parity — de-index the superseded two-pager                                      |
+
+  **Commit-hygiene note, identical to Phase 4's**: the brief's file deletion was already staged (by
+  `git rm`) when the first commit ran, so it landed in `855bb8f69` rather than in `d0514c420` where
+  its index-line removal sits. Recorded rather than repaired — the alternative is a history rewrite,
+  which the No Destructive Git Operations Convention discourages. **That this recurred after being
+  written down once is itself the finding**: the Phase 4 note described the outcome but not the
+  cause, so it did not prevent the repeat. The cause is that `git rm` stages immediately while the
+  rest of the phase stages at commit time, so any later `git commit` sweeps it up.
+
 - [ ] [AI] Open a **draft PR** in `ose-infra`, run the 3-cycle PR-Review Maker→Fixer Cycle, verify
       CI green, then `[AI]`-merge once the five hardened preconditions hold (tester gates:
       **exemption recorded**)

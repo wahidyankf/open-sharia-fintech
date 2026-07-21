@@ -28,6 +28,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [repo-rules-quality-gate-convergence](./repo-rules-quality-gate-convergence.md) — turn the repo-rules sweep into a bounded, count-diff convergence loop.
 - [rhino-cli-env-backup-scripts](./rhino-cli-env-backup-scripts.md) — scripted backup/restore of the gitignored rhino-cli `.env*` files.
 - [rust-crate-structural-checklist-promotion](./rust-crate-structural-checklist-promotion.md) — promote the Rust crate structural checklist to governance once a 2nd crate exists.
+- [web-ui-alert-destructive-dark-contrast](./web-ui-alert-destructive-dark-contrast.md) — shared `Alert variant="destructive"` renders at 1.99:1 in dark mode; the obvious token fix is unsafe.
 - [simplify-ayokoding-ose-cli](./simplify-ayokoding-ose-cli.md) — simplify `ayokoding-cli` / `ose-cli`; fold overlaps into rhino-cli.
 - [source-code-credential-scanning](./source-code-credential-scanning.md) — evaluate Betterleaks (gitleaks successor) for pre-commit + CI credential detection in source.
 - [standardize-cis](./standardize-cis.md) — audit for any CI-standardization residual left by the toolchain-parity work.
