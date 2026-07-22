@@ -82,6 +82,10 @@ Ask about (each as a structured multiple-choice question):
 - **For UI-bearing plans only** (the plan adds/changes user-facing screens or components under
   `apps/` or `libs/`): the **UI-design-funnel** questions — which low-fi alternatives, what prior
   art, which selection + why. See [UI-Bearing Plans — Mandatory Design Funnel](#ui-bearing-plans--mandatory-design-funnel-hard-rule).
+- **For learning-bearing plans only** (the plan's delivery checklist authors or restructures course,
+  tutorial, or curriculum content): the **syllabus-record** questions — which corpus disposition
+  (`archive-with-plan` / `promote-to:<path>` / `custodied-by:<plan-id>`), who is the Custodian. See
+  [Learning-Bearing Plans — Mandatory Syllabus Record](#learning-bearing-plans--mandatory-syllabus-record-hard-rule).
 
 Do NOT proceed to Step 2 until all open branches are resolved. Unresolved design decisions
 discovered during writing force expensive rewrites — resolve them now.
@@ -284,6 +288,12 @@ Cover (each as a structured multiple-choice question):
   ≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale,
   the R5 grounding note, and R7 prior-art citation — and that delivery steps produce them. See
   [UI-Bearing Plans — Mandatory Design Funnel](#ui-bearing-plans--mandatory-design-funnel-hard-rule).
+- **Syllabus-record completeness (learning-bearing plans only)**: If the plan's delivery checklist
+  authors or restructures course, tutorial, or curriculum content, confirm the syllabus artefacts are
+  all present — the `syllabus/README.md` + `courses/` + `paths/` layout, the template-derived
+  per-course shape, the `## Corpus Disposition` declaration in `tech-docs.md`, and the
+  `**Custodian**` line in `syllabus/README.md` — and that delivery steps produce them. See
+  [Learning-Bearing Plans — Mandatory Syllabus Record](#learning-bearing-plans--mandatory-syllabus-record-hard-rule).
 - **Knowledge Capture phase present**: Is a Knowledge Capture phase emitted as the FINAL substantive
   phase of `delivery.md` (immediately before Plan Archival), with the `learnings.md` scaffold created,
   the open-ended triage rubric encoded, the code-routing rule stated (code learnings ALWAYS filed as
@@ -366,6 +376,62 @@ exactly as the specs/Gherkin delivery section does for feature changes:
 `plan-checker` validates these artefacts via its **UI-design-funnel completeness** step (sibling to
 the specs/Gherkin Step 5j) and flags any missing artefact at HIGH; `plan-fixer` scaffolds the
 missing funnel sections.
+
+## Learning-Bearing Plans — Mandatory Syllabus Record (HARD RULE)
+
+A plan is **learning-bearing** when its delivery checklist **authors or restructures course,
+tutorial, or curriculum content** — the direct learning-side analogue of "UI-bearing." For a
+learning-bearing plan, plan-maker MUST enforce the **syllabus record** exactly as it already
+enforces the UI-design-funnel above — require the artefacts AND emit the delivery steps that produce
+them. Plans that only cite, link to, or lightly correct an existing corpus are exempt; state the
+exemption explicitly in `tech-docs.md`.
+
+This mirrors the **UI-Bearing Plans — Mandatory Design Funnel** binding: just as a UI-bearing plan
+never passes quality gates without its design funnel, a learning-bearing plan never passes quality
+gates without its syllabus record. The record is authored per the
+[Learning-Plan `syllabus/` Folder Convention](../../repo-governance/conventions/structure/learning-plan-syllabus.md).
+
+### Required Syllabus Artefacts (require all on a learning-bearing plan)
+
+For each new or restructured corpus, the plan MUST carry:
+
+1. **The required folder layout** — `syllabus/README.md`, `syllabus/courses/` (with its own
+   `README.md` for a new corpus), and `syllabus/paths/` (with its own `README.md` for a new corpus).
+   The per-subfolder READMEs are REQUIRED for a new corpus; a pre-existing corpus lacking them is
+   grandfathered per the convention's Grandfathered Format Cohort section.
+2. **The template-derived per-course shape** — every course file under `syllabus/courses/` carries
+   the REQUIRED section skeleton (`**Course ID**`, `## Why this exists`, `## Prerequisites`,
+   `## Accuracy notes`, `**Scope note**`, `## Concepts`, `## In which paths`) from the convention's
+   copy-paste template, plus the RECOMMENDED and OPTIONAL sections where the course genuinely has
+   that content.
+3. **A `## Corpus Disposition` declaration in `tech-docs.md`** — exactly one of `archive-with-plan`
+   (the default), `promote-to:<path>`, or `custodied-by:<plan-id>`.
+4. **A Custodian line in `syllabus/README.md`** — a `**Custodian**: <plan-id>` line naming the plan
+   that owns the corpus, echoed in every consumer plan's `tech-docs.md` as `custodied-by:<plan-id>`.
+
+### Delivery Steps to Emit (learning-bearing plans)
+
+Emit explicit, execution-grade delivery steps (in `delivery.md`) that produce the syllabus record,
+exactly as the UI-design-funnel delivery section does above for UI-bearing plans:
+
+```markdown
+### Syllabus Record Delivery
+
+- [ ] [AI] Scaffold the folder layout: `syllabus/README.md`, `syllabus/courses/README.md`,
+      `syllabus/paths/README.md` — acceptance: all three files exist and are indexed by
+      `rhino-cli md readme-index validate`
+- [ ] [AI] Author course files under `syllabus/courses/` following the copy-paste template's
+      REQUIRED skeleton — acceptance: `grep -l "## Why this exists" syllabus/courses/*.md` covers
+      every new course file
+- [ ] [AI] Declare `## Corpus Disposition: <value>` in `tech-docs.md`
+      — acceptance: `grep -c "## Corpus Disposition" tech-docs.md` ≥ 1
+- [ ] [AI] Name the `**Custodian**: <plan-id>` line in `syllabus/README.md`
+      — acceptance: `grep -c "\*\*Custodian\*\*" syllabus/README.md` ≥ 1
+```
+
+`plan-checker` validates these artefacts via its **Learning-Bearing Syllabus Completeness** step
+(Step 5n, sibling to the UI-design-funnel Step 5k) and flags any missing artefact at HIGH;
+`plan-fixer` scaffolds the missing syllabus-record sections.
 
 ## Plan Quality Standards
 

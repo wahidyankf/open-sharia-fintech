@@ -491,6 +491,62 @@ delivery step delegating the survey to `web-researcher` (prior art) and the
 net-new component. After scaffolding, re-run the checker's Step 5k mentally: every required artefact
 now has at least a placeholder section for the author to complete.
 
+## Learning-Bearing Syllabus-Record Scaffolding Fixes
+
+When plan-checker reports a missing syllabus artefact (Step 5n findings) on a **learning-bearing**
+plan (a plan whose delivery checklist authors or restructures course, tutorial, or curriculum
+content), remediate by **scaffolding the missing syllabus-record sections** so the author can fill
+them — never by inventing corpus content. Re-validate each finding before applying (confirm the plan
+is genuinely learning-bearing and the artefact is actually absent), and re-read the scaffolded
+section after editing. The artefacts and their shape are defined in the
+[Learning-Plan `syllabus/` Folder Convention](../../repo-governance/conventions/structure/learning-plan-syllabus.md).
+
+### Confidence Assessment for the Syllabus Record
+
+- **HIGH Confidence**: the plan is learning-bearing and the folder layout is completely absent —
+  scaffold `syllabus/README.md`, `syllabus/courses/README.md`, and `syllabus/paths/README.md` with
+  stub placeholders for the author to fill.
+- **HIGH Confidence**: the `## Corpus Disposition` section or the Custodian line is absent —
+  scaffold the missing declaration with a placeholder value for the author to choose.
+- **MEDIUM Confidence**: a course file exists but is missing a REQUIRED template section — add the
+  missing section header with a placeholder; do NOT fabricate the course's concepts or prose.
+- **FALSE_POSITIVE**: the plan only reads, links to, or lightly corrects an existing corpus — exempt;
+  report as FALSE_POSITIVE and apply nothing.
+
+### How to Scaffold the Missing Syllabus Sections
+
+Insert the folder-layout stubs directly under the plan's own `syllabus/` folder. Never invent corpus
+content — every placeholder is left for the author to complete.
+
+`syllabus/README.md`:
+
+```markdown
+# <Corpus Name> — Syllabus
+
+> _Scaffolded by plan-fixer — fill each placeholder. See the Learning-Plan `syllabus/` Folder
+> Convention._
+
+**Custodian**: `<plan-id>` <!-- author: name the owning plan -->
+
+<one-paragraph corpus overview — author to fill>
+```
+
+`tech-docs.md` — the Corpus Disposition declaration:
+
+```markdown
+## Corpus Disposition
+
+`<archive-with-plan|promote-to:<path>|custodied-by:<plan-id>>` <!-- author: choose exactly one -->
+```
+
+For a missing course file's REQUIRED skeleton, point the author at the copy-paste template in the
+[Learning-Plan `syllabus/` Folder Convention §Copy-Paste Course Template](../../repo-governance/conventions/structure/learning-plan-syllabus.md#copy-paste-course-template)
+rather than reproducing it inline — the template's REQUIRED sections are the source of truth and
+should not drift into a second copy inside this agent's own file.
+
+After scaffolding, re-run the checker's Step 5n mentally: every required artefact now has at least a
+placeholder for the author to complete.
+
 ## Diagram Format Fixes
 
 This section covers two finding types emitted by plan-checker's Diagram Format Check: (1) ASCII art that should be Mermaid, and (2) under-diagrammed plans missing a diagram for a diagram-warranting concern.

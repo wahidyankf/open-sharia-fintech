@@ -875,3 +875,56 @@ mode additionally fixes the integration target and merge authority.
 - Plan completion criteria conflating "done" with "merged" on a `*-to-pr` plan: **MEDIUM**
 - Missing or post-merge-deferred archival-in-PR step on an applicable `*-to-pr` plan: **HIGH**
 - Freshly-authored plan missing the `## Delivery Mode` declaration entirely: **LOW**
+
+### 20. Learning-Bearing Syllabus Completeness (Step 5n — CONDITIONAL)
+
+Enforces the
+[Learning-Plan `syllabus/` Folder Convention](../../repo-governance/conventions/structure/learning-plan-syllabus.md)
+for the plan path. This is the **learning-bearing syllabus completeness** check — the learning-side
+sibling of the UI-design-funnel Step 5k: just as a UI-bearing plan must carry the design funnel, a
+**learning-bearing** plan must carry the syllabus record. A plan is learning-bearing when its
+delivery checklist authors or restructures course, tutorial, or curriculum content — merely citing,
+linking to, or lightly correcting an existing corpus does not trigger it.
+
+#### What to Validate
+
+1. **Scope detection** — From the plan's Scope (`README.md` / `prd.md`), file-impact
+   (`tech-docs.md`), and delivery steps, determine whether the plan authors or restructures course,
+   tutorial, or curriculum content under a `syllabus/` folder. If not learning-bearing, skip this
+   step (no findings) but confirm the exemption is recorded explicitly.
+2. **Required folder layout** — A learning-bearing plan MUST carry `syllabus/README.md`,
+   `syllabus/courses/` (with its own `README.md` for a new corpus), and `syllabus/paths/` (with its
+   own `README.md` for a new corpus). Missing `syllabus/README.md`: **HIGH**. Missing a required
+   subfolder README for a new corpus: **HIGH** (a grandfathered pre-existing corpus lacking it is
+   exempt — see the convention's Grandfathered Format Cohort section).
+3. **Template-derived per-course shape** — Every new course file under `syllabus/courses/` MUST
+   carry the REQUIRED section skeleton from the convention's copy-paste template (`**Course ID**`,
+   `## Why this exists`, `## Prerequisites`, `## Accuracy notes`, `**Scope note**`, `## Concepts`,
+   `## In which paths`), with the documented capstone carve-out honored. A new course file missing a
+   REQUIRED section: **HIGH**.
+4. **`## Corpus Disposition` declaration** — The plan's `tech-docs.md` MUST carry a
+   `## Corpus Disposition` section with exactly one of `archive-with-plan`, `promote-to:<path>`, or
+   `custodied-by:<plan-id>`. Missing the declaration, or an invalid value: **HIGH**.
+5. **Custodian line** — The corpus's own `syllabus/README.md` MUST carry a
+   `**Custodian**: <plan-id>` line, echoed in every consumer plan's `tech-docs.md` as
+   `custodied-by:<plan-id>`. Missing the Custodian line on an owning plan, or a consumer plan
+   missing the echo: **HIGH**.
+6. **Delivery steps produce the artefacts** — `delivery.md` MUST carry explicit delivery steps that
+   scaffold the folder layout, author the course files, and declare the disposition and custodian —
+   not merely assume they will appear. A declared artefact with no corresponding delivery step:
+   **HIGH**.
+7. **Exemption** — Plans that only read, link to, or lightly correct an existing corpus (no new or
+   restructured course/path content) are **EXEMPT** (mirror the UI-design-funnel exemption). Verify
+   any claimed exemption is legitimate; an illegitimate exemption used to skip the syllabus record on
+   a genuinely learning-bearing plan is **HIGH**.
+
+#### Finding Severity
+
+- Learning-bearing plan missing `syllabus/README.md`, `syllabus/courses/`, or `syllabus/paths/`
+  (or, for a new corpus, either subfolder's `README.md`): **HIGH**
+- New course file missing a REQUIRED template section (capstone carve-out honored): **HIGH**
+- Missing or invalid `## Corpus Disposition` declaration in `tech-docs.md`: **HIGH**
+- Missing the Custodian line, or a consumer plan missing the `custodied-by:` echo: **HIGH**
+- Declared artefact with no corresponding delivery step: **HIGH**
+- Illegitimate "not learning-bearing" exemption used to skip the syllabus record: **HIGH**
+- Non-learning-bearing plan: **not flagged** (exempt; record the exemption explicitly)

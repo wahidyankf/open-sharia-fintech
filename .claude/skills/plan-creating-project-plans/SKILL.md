@@ -185,6 +185,24 @@ standing options — a free-form blank-state type and "chat about this"):
 See [Grilling-With-Options Convention](../../../repo-governance/development/workflow/grilling-with-options.md)
 for the authoritative multiple-choice format.
 
+## Learning-Bearing Plans — the Syllabus Record (HARD RULE)
+
+A plan is **learning-bearing** when its delivery checklist authors or restructures course, tutorial,
+or curriculum content — the direct learning-side analogue of "UI-bearing." Plans that only cite,
+link to, or lightly correct an existing corpus are exempt — exactly as with the specs/Gherkin and
+UI-design-funnel bindings above.
+
+Every learning-bearing plan MUST document its corpus through the required
+`syllabus/README.md` + `syllabus/courses/` + `syllabus/paths/` folder layout, the template-derived
+per-course shape, a `## Corpus Disposition` declaration in `tech-docs.md`, and a Custodian line in
+`syllabus/README.md`, authored per the
+[Learning-Plan `syllabus/` Folder Convention](../../../repo-governance/conventions/structure/learning-plan-syllabus.md).
+
+`plan-maker` requires these artefacts and emits delivery steps that produce them; `plan-checker`
+flags any missing artefact at HIGH criticality (its Learning-Bearing Syllabus Completeness step,
+Step 5n, sibling to the UI-design-funnel Step 5k); `plan-fixer` scaffolds the missing syllabus-record
+sections.
+
 ## Plan Structure
 
 ### Multi-File Structure (default — five documents)

@@ -112,7 +112,7 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
 
-**Validation scope** (per `plan-checker` Steps 0-7 + 5b/5c/5d/5e/5f/5g/5h/5i/5j/5k):
+**Validation scope** (per `plan-checker` Steps 0-7 + 5b/5c/5d/5e/5f/5g/5h/5i/5j/5k/5n):
 
 - Structure (folder name, file layout, mandatory sections)
 - Requirements (BRD + PRD content placement, Gherkin)
@@ -137,6 +137,14 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
   selection, a rationale, the grounding/prior-art note; pure-refactor / no-UI / governance-only
   plans are exempt). The gate fails when a UI-bearing plan skips the funnel. Per the
   [UI Mockups in Plan Docs convention](../../conventions/formatting/diagrams.md#ui-mockups-in-plan-docs)
+- **Learning-Bearing Syllabus Completeness** (Step 5n — conditional: fires only on
+  **learning-bearing** plans whose delivery checklist authors or restructures course, tutorial, or
+  curriculum content; FLAGS at HIGH any missing syllabus artefact — the required
+  `syllabus/README.md` + `courses/` + `paths/` layout, the template-derived per-course shape, the
+  `## Corpus Disposition` declaration, and the Custodian line; plans that only read or lightly
+  correct an existing corpus are exempt). The gate fails when a learning-bearing plan skips the
+  syllabus record. Per the
+  [Learning-Plan `syllabus/` Folder Convention](../../conventions/structure/learning-plan-syllabus.md)
 
 For external claims that are not already documented in the repo and require more than a
 single-shot URL fetch, `plan-checker` delegates research to
