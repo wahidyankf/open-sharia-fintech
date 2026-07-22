@@ -358,7 +358,7 @@ That coincidence is what identifies the 17 as a separate authoring cohort rather
 typos.
 
 Bullets are canonical: the repo-wide markdownlint configuration pins unordered list style to `dash`
-(the `MD004` setting), and both plan 06 and plan 07 use bullets uniformly (53 of 53 files). New course
+(the `MD004` setting), and both plan 06 and plan 07 use bullets uniformly (54 of 54 files). New course
 files MUST use bullets. The existing 17-file ordered-list cohort inside plan 02 is **grandfathered** —
 retrofitting it is explicitly out of scope for this convention, so it is named here as a known,
 accepted divergence rather than silently tolerated or mistaken for a defect discovered later.
