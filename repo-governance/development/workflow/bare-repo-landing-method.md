@@ -233,8 +233,8 @@ mean. **Always refresh the remote-tracking ref before measuring** — either wit
 `git fetch origin`, or by reading the count only after the reconcile command itself has run. (This
 transcript demonstrates the false-clean problem, not the claim below on its own: the plain
 `git fetch origin` shown above already refreshed `origin/main` before `git fetch origin main:main`
-ran, so the final `0 0` here is equally consistent with `main:main` having updated only `main`, which
-was already caught up.)
+ran, so the final `0 0` here is equally consistent with `main:main` having updated only `main` — the
+ref that was actually behind — and leaving the already-current `origin/main` untouched.)
 
 Separately, as a documented git behavior rather than something this transcript isolates:
 `git fetch origin main:main` does update both `main` and `refs/remotes/origin/main` — but the
@@ -242,8 +242,11 @@ Separately, as a documented git behavior rather than something this transcript i
 remote's standard `remote.origin.fetch` refspec is configured, as it is for every repository this
 document addresses. That update is not intrinsic to the `main:main` refspec itself: a bare repository
 cloned without that standard refspec (for example, a plain `git clone --bare`) has no `origin/main`
-ref at all, and the same command then fails loudly — `fatal: ambiguous argument 'origin/main...main'`
-— rather than silently. Treat any left-right count taken before a fetch as no evidence at all.
+ref at all. There, the fetch still **succeeds** — it updates `main` and prints an ordinary update
+line — and it is the measurement afterwards that fails loudly, with
+`fatal: ambiguous argument 'origin/main...main'`. That failure is the good case: it is the one shape
+of this problem that cannot pass silently. Treat any left-right count taken before a fetch as no
+evidence at all.
 
 ## Remote-Branch Cleanup in a Bare Repository
 
