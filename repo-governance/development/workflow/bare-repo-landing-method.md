@@ -115,9 +115,16 @@ question, not as a corroborating reference.
 5. **Run local quality gates** in the worktree — typecheck, lint, `test:quick`, `specs:coverage`, and
    the markdown gates where the change touches markdown.
 6. `git push origin HEAD:main` — push the worktree's branch tip directly onto the remote `main` ref.
+   This is the **direct-push** landing path. When the unit of work instead lands through a branch and
+   a pull request, this step becomes the PR's own push-and-merge, and step 7 needs the branch cleanup
+   below before it runs.
 7. `git worktree remove <path>` — remove the worktree non-destructively, never with `--force` and
    never `rm -rf`, per the
-   [No Destructive Git Operations Convention](./no-destructive-git-operations.md).
+   [No Destructive Git Operations Convention](./no-destructive-git-operations.md). If step 6 was a
+   branch-and-pull-request landing rather than a direct push, delete the merged remote branch
+   **before** running this step — see
+   [Remote-Branch Cleanup in a Bare Repository](#remote-branch-cleanup-in-a-bare-repository). This
+   step's worktree removal is exactly what triggers the ordering trap that section closes.
 8. **Reconcile local `main`** — the step most often missing in practice. See
    [Terminal Reconcile](#terminal-reconcile) for the exact command, keyed by topology.
 
@@ -223,9 +230,20 @@ $ git -C ose-infra rev-list --left-right --count origin/main...main
 
 The first reading and the last are byte-identical, and only one of them means what it appears to
 mean. **Always refresh the remote-tracking ref before measuring** — either with a preceding
-`git fetch origin`, or by reading the count only after the reconcile command itself has run, since
-`git fetch origin main:main` updates both refs. Treat any left-right count taken before a fetch as
-no evidence at all.
+`git fetch origin`, or by reading the count only after the reconcile command itself has run. (This
+transcript demonstrates the false-clean problem, not the claim below on its own: the plain
+`git fetch origin` shown above already refreshed `origin/main` before `git fetch origin main:main`
+ran, so the final `0 0` here is equally consistent with `main:main` having updated only `main`, which
+was already caught up.)
+
+Separately, as a documented git behavior rather than something this transcript isolates:
+`git fetch origin main:main` does update both `main` and `refs/remotes/origin/main` — but the
+`origin/main` half is git's **opportunistic remote-tracking update**, which fires only when the
+remote's standard `remote.origin.fetch` refspec is configured, as it is for every repository this
+document addresses. That update is not intrinsic to the `main:main` refspec itself: a bare repository
+cloned without that standard refspec (for example, a plain `git clone --bare`) has no `origin/main`
+ref at all, and the same command then fails loudly — `fatal: ambiguous argument 'origin/main...main'`
+— rather than silently. Treat any left-right count taken before a fetch as no evidence at all.
 
 ## Remote-Branch Cleanup in a Bare Repository
 
@@ -267,26 +285,40 @@ needs permission; both routes above avoid that.
 
 This method is frequently used to propagate a change across sibling repositories, which means
 reading a file out of one repository while standing in another. Address it by **git ref, never by
-working-tree path**:
+working-tree path**, and fetch immediately before the read:
 
 ```console
+git -C <other-repo> fetch origin
 git -C <other-repo> show origin/main:<path>
 ```
 
 A working-tree path such as `<other-repo>/<path>` resolves against whatever that checkout happens to
 contain right now. On a shared machine that is not a safe assumption: another session may have left
 its local `main` behind `origin/main` — the very defect this document exists to close — in which case
-the file may be stale, or may not exist at all. The ref form reads from the remote-tracking ref
-directly and is correct regardless of any checkout's sync state, including when the source repository
-is bare and has no working tree to path into.
+the file may be stale, or may not exist at all. The ref form fixes exactly that problem: it does not
+depend on a working tree being reconciled at all, and it is the only form that works when the source
+repository is bare and has no working tree to path into.
+
+What the ref form does **not** fix is staleness of the remote-tracking ref itself. `origin/main` —
+`refs/remotes/origin/main` — is a purely local ref, the same class of ref
+[Measure after fetching, never before](#measure-after-fetching-never-before) above warns about:
+`git show origin/main:<path>` performs no network access, so it returns whatever `<other-repo>` last
+fetched, silently, with no error if that content is stale or the change is entirely missing from it.
+The drift is not always the direction that section's example shows, either — it can just as easily be
+that another session pushed to the shared remote and `<other-repo>`'s own `origin/main` has not caught
+up yet, rather than `<other-repo>`'s local `main` lagging behind its own `origin/main`. Treat this read
+under the same discipline as that section's `rev-list` measurement: **always fetch in `<other-repo>`
+immediately before the `show`**, as the two-line recipe above does, never rely on a ref that was
+fetched at some earlier, unknown time. This is why the read across sibling repositories for a
+byte-identity check must be a fetch-then-show pair, not the `show` alone.
 
 ## One Landing Path Per Unit Of Work
 
-Choose exactly one landing path for a given unit of work: through the worktree described above, **or**
-through an already-reconciled local `main`. **Never both.** Applying the same delta through both paths
-produces a duplicate, stale-base commit — the second landing carries a parent that the first landing's
-push has already superseded, and the two histories then diverge instead of one simply following the
-other.
+Choose exactly one landing path for a given unit of work: through the worktree described above — step
+6's direct push, or its branch-and-pull-request variant — **or** through an already-reconciled local
+`main`. **Never both.** Applying the same delta through both paths produces a duplicate, stale-base
+commit — the second landing carries a parent that the first landing's push has already superseded, and
+the two histories then diverge instead of one simply following the other.
 
 The duplicate-commit failure is the sharper-edged sibling of the silent-lag defect the worked example
 above shows: that example left local `main` two commits behind with no divergence, because nothing
