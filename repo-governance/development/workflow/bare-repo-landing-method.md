@@ -198,6 +198,88 @@ No command failed and nothing warned during the original landings — the lag wa
 is exactly why step 8 is a fixed part of the numbered method rather than a step performed only when
 something looks wrong.
 
+### Measure after fetching, never before
+
+`git rev-list --left-right --count origin/main...main` compares two **local** refs: `main` and the
+remote-tracking ref `refs/remotes/origin/main`. It performs no network access. Run before any fetch,
+it therefore reports the relationship between two refs that may both be equally stale, and the
+answer it gives is `0 0` — indistinguishable from a genuinely reconciled repository.
+
+That false clean is not hypothetical. Immediately after a merge landed on the remote, this sequence
+was observed in a bare sibling:
+
+```console
+$ git -C ose-infra rev-list --left-right --count origin/main...main
+0 0
+
+$ git -C ose-infra fetch origin
+$ git -C ose-infra rev-list --left-right --count origin/main...main
+1 0
+
+$ git -C ose-infra fetch origin main:main
+$ git -C ose-infra rev-list --left-right --count origin/main...main
+0 0
+```
+
+The first reading and the last are byte-identical, and only one of them means what it appears to
+mean. **Always refresh the remote-tracking ref before measuring** — either with a preceding
+`git fetch origin`, or by reading the count only after the reconcile command itself has run, since
+`git fetch origin main:main` updates both refs. Treat any left-right count taken before a fetch as
+no evidence at all.
+
+## Remote-Branch Cleanup in a Bare Repository
+
+When a unit of work lands through a branch and a pull request rather than through this document's
+direct `git push origin HEAD:main`, the merged remote branch still has to be deleted. In a bare
+repository the obvious command does not work, and the reason has nothing to do with the branch:
+
+```console
+$ git -C ose-primer push origin --delete <branch>
+NX  Command failed: git diff --name-only --no-renames --relative HEAD .
+fatal: this operation must be run in a work tree
+husky - pre-push script failed (code 1)
+error: failed to push some refs
+```
+
+The `pre-push` hook runs `nx affected`, which shells out to a work-tree operation. A bare repository
+has none, so **every** push originating from it fails — including a pure ref deletion that carries
+no content and could not fail a quality gate even in principle.
+
+Two routes work. Either delete the branch **from inside the linked worktree, before removing it**,
+while a work tree still exists for the hook to run in; or delete the ref through the forge's API
+after the worktree is gone:
+
+```console
+gh api -X DELETE /repos/<owner>/<repo>/git/refs/heads/<branch>
+```
+
+That API call is the same path `gh pr merge --delete-branch` takes natively, so no hook is bypassed
+and nothing is force-pushed. Note the ordering trap: this document's own step order removes the
+worktree before cleanup would typically happen, which leaves the bare repository — the one actor
+that cannot push — as the only one remaining.
+
+**`--no-verify` is not the sanctioned answer here.** It is the obvious workaround, and the
+[Git Push Safety Convention](./git-push-safety.md) requires explicit per-instance user approval for
+it. A rule that is unexecutable as written pushes its reader toward exactly the escape hatch that
+needs permission; both routes above avoid that.
+
+## Reading a File From Another Repository
+
+This method is frequently used to propagate a change across sibling repositories, which means
+reading a file out of one repository while standing in another. Address it by **git ref, never by
+working-tree path**:
+
+```console
+git -C <other-repo> show origin/main:<path>
+```
+
+A working-tree path such as `<other-repo>/<path>` resolves against whatever that checkout happens to
+contain right now. On a shared machine that is not a safe assumption: another session may have left
+its local `main` behind `origin/main` — the very defect this document exists to close — in which case
+the file may be stale, or may not exist at all. The ref form reads from the remote-tracking ref
+directly and is correct regardless of any checkout's sync state, including when the source repository
+is bare and has no working tree to path into.
+
 ## One Landing Path Per Unit Of Work
 
 Choose exactly one landing path for a given unit of work: through the worktree described above, **or**
