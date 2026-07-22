@@ -363,6 +363,56 @@ files MUST use bullets. The existing 17-file ordered-list cohort inside plan 02 
 retrofitting it is explicitly out of scope for this convention, so it is named here as a known,
 accepted divergence rather than silently tolerated or mistaken for a defect discovered later.
 
+## Conformance Recipe
+
+Until a deterministic `rhino-cli` validator exists (deferred, and filed as a two-pager idea brief
+under `plans/ideas/`), an author or checker can detect a course file missing a REQUIRED section today
+with the loop below. It
+iterates the `*.md` files under a corpus's `syllabus/courses/`, skips `README.md` and `surgery.md`
+(the scope-contract register, not a course), and tests each file with `grep -q '<pattern>' "$file"`.
+
+The recipe deliberately avoids two `grep` traps specific to this repo's **ugrep**-backed `grep`:
+it never uses `grep -L` (files-**without**-match, which exits 0 when it finds one non-matching file
+and so cannot drive a pass/fail loop), and never uses space-separated `--glob VALUE` (which ugrep does
+not parse). It uses an explicit per-file loop instead.
+
+```bash
+# Report every course file missing any REQUIRED section, for one corpus.
+check_corpus () {
+  local dir="$1"                       # e.g. plans/backlog/<plan>/syllabus/courses
+  for file in "$dir"/*.md; do
+    base=$(basename "$file")
+    [ "$base" = "README.md" ] && continue
+    [ "$base" = "surgery.md" ] && continue
+    miss=""
+    grep -q '\*\*Course ID\*\*'   "$file" || miss="$miss Course-ID"
+    grep -q '^## Why this exists' "$file" || miss="$miss Why-this-exists"
+    grep -q '^## Prerequisites'   "$file" || miss="$miss Prerequisites"
+    grep -q '^## In which paths'  "$file" || miss="$miss In-which-paths"
+    grep -q '^## Accuracy notes'  "$file" || miss="$miss Accuracy-notes"
+    grep -q '\*\*Scope note\*\*'  "$file" || miss="$miss Scope-note"
+    grep -q '^## Concepts'        "$file" || miss="$miss Concepts"
+    [ -n "$miss" ] && echo "MISS $base:$miss"
+  done
+}
+check_corpus plans/backlog/<plan>/syllabus/courses
+```
+
+Run against the three existing corpora, the recipe reports exactly one file — a capstone, a
+legitimate structural variant covered by the capstone carve-out — and no other miss:
+
+```text
+=== ayokoding-learning-path-02-schema-and-prerequisite-dag ===
+MISS capstone-forge-ready.md: Scope-note Concepts
+=== ayokoding-learning-path-06-skills-accounting ===
+(no misses)
+=== ayokoding-learning-path-07-skills-erp ===
+(no misses)
+```
+
+Any other result means either the recipe or the census tiering drifted, and both must be re-derived
+before the convention is trusted.
+
 ## Related Documentation
 
 - [Plans Organization Convention](./plans.md) — the parent convention this one is cross-referenced
