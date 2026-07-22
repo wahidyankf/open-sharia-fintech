@@ -40,7 +40,7 @@ rules and **win on conflict**.
 
 ## Ground-truth inventory (measured 2026-07-21, re-verified at authoring)
 
-`en/learn/` holds **1,713** `.md` files across seven top-level domains, plus its own `_index.md` and
+`en/learn/` holds **1,712** `.md` files across seven top-level domains, plus its own `_index.md` and
 `overview.md` [Repo-grounded — `find apps/ayokoding-www/content/en/learn -name '*.md' | wc -l`].
 Content root is `apps/ayokoding-www/content/`; the route
 `src/app/[locale]/(content)/[...slug]/page.tsx` serves a content path `en/learn/X` at
@@ -308,7 +308,7 @@ apps/ayokoding-www/content/
 │   ├── about-ayokoding.md                                         ✓  loose page (not under /c)
 │   ├── terms-and-conditions.md                                    ✓  loose page (not under /c)
 │   ├── rants/                                                     ✓  sibling section — untouched
-│   └── learn/                                                     ✓  1,713 .md total
+│   └── learn/                                                     ✓  1,712 .md total
 │       ├── _index.md                                              ✓  machine-generated (generate-indexes)
 │       ├── overview.md                                            ✓  hand-authored; links all 6 domains
 │       ├── fundamentally-strong/                                  ✓  562 .md
@@ -1053,7 +1053,7 @@ and re-homes 37 course pages, all user-visible.
 
 This plan has a reachable behavioural delta: **the redirect table is behaviour.** A malformed or
 mis-ordered rule in `content-namespace.ts`, `course-rehome.ts`, or `learn-three-bucket.ts` changes
-what a caller's browser is sent to for any of the ~1,713 affected URLs — including the literal
+what a caller's browser is sent to for any of the ~1,712 affected URLs — including the literal
 infinite-308-loop hazard this plan exists to forbid (see
 [De-namespacing §Why the direction inverts, not supplements](#why-the-direction-inverts-not-supplements)).
 That the delta is exercised through Next.js `redirects()` config rather than a REST or GraphQL
@@ -1144,7 +1144,7 @@ by sibling plans are referenced by ID only and are not restated.
 - **DD-41 · The legacy move is a prefix relocation, not a rewrite.** Each of the six non-course
   domains moves via a single `git mv <domain>/ legacy/<domain>/`, preserving its existing sub-taxonomy
   **verbatim**: no file renamed, no body edited, no heading touched. **Why**: (a) it makes the redirect
-  a per-domain prefix rule rather than 1,713 per-file rules; (b) it keeps a 1,148-file move reviewable
+  a per-domain prefix rule rather than 1,712 per-file rules; (b) it keeps a 1,148-file move reviewable
   as a pure rename diff; (c) promoting a legacy page into a real course is genuinely different work
   with its own editorial judgment, and bundling it here would make the move unreviewable. Promotion is
   later work — see [Q-A](#q-a--is-legacy-a-staging-pen-or-a-permanent-archive).
@@ -1238,7 +1238,8 @@ by sibling plans are referenced by ID only and are not restated.
   is an orphan segment. **The consequence this plan designs for, not discovers**: every one of the
   five new files renders **empty** for the real, user-visible interval between this plan landing and
   whichever of plans 05/06/07 first publishes a manifest into it — this plan creates the files in a
-  state that renders **acceptably empty** (a title and a sentence, never a blank body); the
+  state that renders **acceptably empty** (a title and a `description` frontmatter sentence — not a
+  body sentence; see the [reconciliation](#structural-indexes-under-paths--ownership-and-the-empty-interval-dd-49)); the
   empty-state's actual **design** is `ayokoding-learning-path-03-navigation-ui`'s, named here only as
   a cross-reference, never authored in this plan. **The structural-index / path-landing boundary**
   (stated from the owning side; plans 06 and 07 state the identical rule from the consuming side): a

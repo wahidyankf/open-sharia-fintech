@@ -535,7 +535,7 @@ Scenario: The Indonesian locale is left unchanged and the deferral is recorded
 Scenario: Every structural index under paths renders before its subject is populated
   Given the six structural indexes under paths have been created and no subject manifest has published yet
   When a reader requests any of the paths, paths/careers, paths/careers/<arc>, or paths/skills URLs
-  Then each request serves a page carrying a title and at least one sentence, never a blank body
+  Then each request serves a page carrying a title and a `description` frontmatter sentence, with the machine-regenerated body itself empty until a manifest publishes
   And none of the six requests returns a 404
 ```
 
@@ -587,9 +587,9 @@ Scenario: The relocated tree builds and validates green
   `paths/_index.md` above is counted. Every URL segment under `<PATHS>` must render something (R7 —
   `ayokoding-learning-path-03-navigation-ui`'s 2026-07-21 category-split ruling), and this plan is
   the sole owner of every **bucket**; a **path landing** (the leaf `_index.md` a manifest-owning
-  plan populates) never is. Each of the five renders with a title, frontmatter, and one sentence
-  that reads sensibly while its category is unpopulated — the **empty-state design** itself belongs
-  to `ayokoding-learning-path-03-navigation-ui`.
+  plan populates) never is. Each of the five renders with a title and a `description` frontmatter
+  sentence that reads sensibly while its category is unpopulated — the **empty-state design** itself
+  belongs to `ayokoding-learning-path-03-navigation-ui`.
 - The **`legacy/` bucket**: prefix-relocating the six non-course `en/learn/` domains (1,148 `.md`) via
   a pure `git mv` per domain (DD-40/DD-41).
 - A new **per-domain 308 redirect module** `src/redirects/learn-three-bucket.ts` (6 rules, single tier:
@@ -664,10 +664,11 @@ Scenario: The relocated tree builds and validates green
   `ayokoding-learning-path-03-navigation-ui`'s renderers mount them; without an `_index.md` each one
   either 404s or falls back to a synthesized `weight: 0` node, exactly the `legacy/_index.md` failure
   mode above but five more times over. Mitigated by creating all five in the same Phase 1 step as
-  `paths/_index.md`, each rendering a title and a sentence of body — **acceptably empty**, not
-  blank — for the interval before `ayokoding-learning-path-05-manifests`,
+  `paths/_index.md`, each carrying a title and a `description` frontmatter sentence — not body
+  prose, which `generate-indexes` would overwrite in a childless section (DD-49) — so each renders a
+  titled page, never a 404, for the interval before `ayokoding-learning-path-05-manifests`,
   `-06-skills-accounting`, and `-07-skills-erp` publish their manifests. That interval is real and
-  user-visible, not a theoretical edge case (DD-49); the empty-state **design** for it belongs to
+  user-visible, not a theoretical edge case; the visible empty-state **design** for it belongs to
   `ayokoding-learning-path-03-navigation-ui`, not this plan.
 - **Legacy/course duplication confusion**: a reader finds both a legacy page and a canonical course on
   the same subject and cannot tell which is current. Under the ruled

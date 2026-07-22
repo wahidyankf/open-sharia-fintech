@@ -75,7 +75,7 @@ flowchart LR
 The relocation is a **prefix move, not a rewrite**: each domain keeps its sub-taxonomy verbatim, so
 the redirect is a **per-domain 308 prefix rule**, single tier — 6 rules for `en` (DD-42, collapsed
 from an original 12-rule/2-tier design by DD-48's `content-namespace.ts` inversion, which always
-strips a stale `/c/` prefix first) — never 1,713 per-file rules and never a blanket
+strips a stale `/c/` prefix first) — never 1,712 per-file rules and never a blanket
 `/en/learn/:path*` rule — which would swallow `courses/` and `paths/` and self-recurse (DD-41,
 DD-42). `fundamentally-strong/` does **not** appear in the bucket module: its 37 topic directories
 collapse into flat `courses/` bodies with **per-course** redirects, which this plan also owns
@@ -92,7 +92,7 @@ Condensed target tree (full BEFORE/AFTER trees, source tree, and URL-mapping tab
 `→` moved by `git mv`, `~` changed):
 
 ```text
-apps/ayokoding-www/content/en/learn/                ✓  1,713 .md today
+apps/ayokoding-www/content/en/learn/                ✓  1,712 .md today
 ├── _index.md                                       ~  machine-regenerated
 ├── overview.md                                     ~  hand-rewritten: 6 domains → 3 buckets
 ├── paths/                                          +  BUCKET 1
