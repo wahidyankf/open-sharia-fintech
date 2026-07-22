@@ -483,8 +483,9 @@ structural index, that index renders **empty**. That interval is not a theoretic
 spans the gap between this plan's Phase 1 and the earliest of three separate downstream plans'
 publication phases. This plan's obligation is narrower than designing the empty state — it is:
 create each of the five new files in a state that renders **acceptably empty** (frontmatter with a
-`title`, plus one sentence of body that reads sensibly with zero cards beneath it — never a blank
-page), and **explicitly name `ayokoding-learning-path-03-navigation-ui` as the owner of the
+`title`, plus a one-sentence `description` frontmatter field — **not a body sentence**; see the
+reconciliation below — so each renders a real titled page with breadcrumb and prev/next, never a 404
+or a synthesized `weight: 0` phantom node), and **explicitly name `ayokoding-learning-path-03-navigation-ui` as the owner of the
 empty-state's actual design** (the `EmptyPathListState` component and its copy — see that plan's own
 `prd.md`, §"Screen 1a · Category landing" — the "Skills instance — empty state" sub-section
 specifically). This cross-plan reference is deliberately **inline text, not a markdown link** — per
@@ -493,6 +494,21 @@ the "Cross-plan source of truth" note in [README.md](./README.md), a sibling pla
 would rot exactly while this plan still needs it. This plan adds **no
 mockup, no design funnel entry, and no component** for the empty state — Screen 4 (the legacy-bucket
 landing) remains this plan's only screen.
+
+**Reconciliation — the sentence lives in `description` frontmatter, not the body (RESOLVED 2026-07-23,
+during Phase 1 execution).** The mandated `generate-indexes` step rewrites every `isSection`
+`_index.md` **body** from that node's live children, and `validate-indexes` gates that each section
+file equals the generator's output — so a **markdown-body sentence cannot survive** in a childless
+section (four of the five structural indexes have zero children until a downstream manifest publishes).
+The original "one sentence of body prose" wording collided head-on with the "validate-indexes must
+pass" gate. The resolution keeps both: the sentence is authored as a **`description:` frontmatter
+field**, which `rebuildIndexFile` preserves verbatim across regeneration [Repo-grounded —
+`index-generator.ts` keeps the raw frontmatter and only regenerates the body]. Each structural index
+therefore renders a **real titled page** (`<h1>{title}</h1>` + breadcrumb + prev/next — verified: the
+build emits them as static pages, not 404s), which is exactly R7's "never a dead URL segment" concern.
+The `description` currently feeds `<meta>`/SEO only; making it (or a richer copy) a **visible** empty
+state is `ayokoding-learning-path-03-navigation-ui`'s render-layer work, consistent with the
+empty-state ownership stated just above.
 
 **The structural-index / path-landing boundary, stated from the owning side.** Plans 06 and 07 each
 state the identical rule from the consuming side — this is the same rule, not a parallel one:

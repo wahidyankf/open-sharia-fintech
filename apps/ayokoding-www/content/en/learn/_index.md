@@ -5,6 +5,10 @@ draft: false
 weight: 10
 ---
 
+- [Paths](/en/c/learn/paths)
+  - [Careers](/en/c/learn/paths/careers)
+  - [Skills](/en/c/learn/paths/skills)
+- [Courses](/en/c/learn/courses)
 - [Overview](/en/c/learn/overview)
 - [Software Engineering](/en/c/learn/software-engineering)
   - [Overview](/en/c/learn/software-engineering/overview)

@@ -55,5 +55,23 @@ Entry shape:
 - **Routing**: _(Phase 7 — likely discard-as-plan-specific, or fold into the anti-hallucination
   "repo-ground every count" guidance.)_
 
+## Learning: `generate-indexes` owns section bodies — persistent index prose must live in frontmatter
+
+- **Context**: Phase 1, authoring the five structural `paths/**/_index.md` indexes required by DD-49
+  to render "acceptably empty, never blank."
+- **Observation**: `index-generator.ts` (`rebuildIndexFile`) rewrites every `isSection` `_index.md`
+  **body** from its live children on `generate-indexes`, and `validate-indexes` gates equality — so a
+  childless section's hand-written body sentence is erased and cannot be reinstated without failing
+  the gate. The plan's "write a body sentence" step and its "validate-indexes must pass" step were
+  mutually exclusive for childless buckets. Fix: put the sentence in a `description:` **frontmatter**
+  field (preserved verbatim by the generator); the page still renders title + breadcrumb + prev/next
+  (not a 404). Visible empty-state deferred to the render-layer plan.
+- **Why it might generalize**: any plan that seeds a section index expecting persistent hand prose
+  must use frontmatter (or a generator-preserved region), never the body, in a repo whose index
+  generator regenerates section bodies. A plan step that mandates both "author body prose" and "run +
+  validate the index generator" is internally contradictory for childless sections.
+- **Routing**: _(Phase 7 — candidate durable home: a note in the content-authoring / index-generator
+  docs, or the plan-anti-hallucination guidance on internally-contradictory acceptance steps.)_
+
 If execution completes and nothing generalizable surfaced, replace the entries above with the explicit
 escape: `No generalizable learnings — <one-line reason>`. This file is never left silently empty.
