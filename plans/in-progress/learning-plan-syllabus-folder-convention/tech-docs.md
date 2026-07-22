@@ -180,7 +180,7 @@ re-measured, and names the exact commands used, so the numbers are reproducible 
 
 ### DD-06 — Bullets are canonical; the 17-file ordered-list cohort is grandfathered
 
-97 of 114 concept-bearing plan-02 files and 53 of 53 plan-06/07 files use bullets `[Repo-grounded]`;
+97 of 114 concept-bearing plan-02 files and 54 of 54 plan-06/07 files use bullets `[Repo-grounded]`;
 the repo-wide markdownlint config additionally pins unordered list style to `dash` — [Repo-grounded]
 via the `MD004` style setting in `.markdownlint-cli2.jsonc`. Bullets are therefore both the majority
 and the house style.
@@ -192,14 +192,17 @@ grandfathered rather than pretending conformance it does not have.
 
 **This is the first of the two questions promotion had to answer.**
 
-Every learning-bearing plan declares, in its `tech-docs.md`, a `## Corpus Disposition` section with
-exactly one value:
+Every learning-bearing plan that **owns** a corpus (its custodian — see DD-08) declares, in its
+`tech-docs.md`, a `## Corpus Disposition` section with exactly one value. A plan that only
+**consumes** another plan's corpus is not learning-bearing in its own right (per the convention's
+Learning-Bearing Trigger negative example 2) and never carries a `## Corpus Disposition` section —
+instead it carries the `custodied-by:<plan-id>` echo under its own `## Corpus Custody` heading, per
+DD-08:
 
-| Value                    | Meaning                                                                | Extra obligation                                                     |
-| ------------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `archive-with-plan`      | **Default.** The corpus moves to `plans/done/` with the plan folder    | None                                                                 |
-| `promote-to:<path>`      | The corpus has a consumer outside `plans/` and moves to a durable home | A delivery step performing the move and rewriting every inbound link |
-| `custodied-by:<plan-id>` | This plan **consumes** a corpus it does not own                        | The consumer obligations in DD-08                                    |
+| Value               | Meaning                                                                | Extra obligation                                                     |
+| ------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `archive-with-plan` | **Default.** The corpus moves to `plans/done/` with the plan folder    | None                                                                 |
+| `promote-to:<path>` | The corpus has a consumer outside `plans/` and moves to a durable home | A delivery step performing the move and rewriting every inbound link |
 
 ```mermaid
 %% Corpus lifecycle: the default path is the left spine; promotion is trigger-gated.
@@ -248,7 +251,8 @@ Rules:
 
 1. **Exactly one custodian per corpus.** The custodian is named in the corpus's own
    `syllabus/README.md` as a `**Custodian**: <plan-id>` line, and echoed in every consumer plan's
-   `tech-docs.md` as `custodied-by:<plan-id>`.
+   `tech-docs.md` under its own `## Corpus Custody` heading as `custodied-by:<plan-id>` — distinct from
+   the `## Corpus Disposition` section in DD-07, which only the owning (custodian) plan carries.
 2. **Consumers are read-only.** A consumer plan links into the corpus by relative path and MUST NOT
    edit, copy, or fork any file under it. A consumer's delivery checklist containing a step that
    writes to another plan's `syllabus/` is a defect.

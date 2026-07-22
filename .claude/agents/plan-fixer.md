@@ -499,8 +499,9 @@ section after editing. The artefacts and their shape are defined in the
 - **HIGH Confidence**: the plan is learning-bearing and the folder layout is completely absent —
   scaffold `syllabus/README.md`, `syllabus/courses/README.md`, and `syllabus/paths/README.md` with
   stub placeholders for the author to fill.
-- **HIGH Confidence**: the `## Corpus Disposition` section or the Custodian line is absent —
-  scaffold the missing declaration with a placeholder value for the author to choose.
+- **HIGH Confidence**: the owning plan's `## Corpus Disposition` section, a consumer plan's
+  `## Corpus Custody` echo, or the Custodian line is absent — scaffold the missing declaration with
+  a placeholder value for the author to choose.
 - **MEDIUM Confidence**: a course file exists but is missing a REQUIRED template section — add the
   missing section header with a placeholder; do NOT fabricate the course's concepts or prose.
 - **FALSE_POSITIVE**: the plan only reads, links to, or lightly corrects an existing corpus — exempt;
@@ -524,12 +525,21 @@ content — every placeholder is left for the author to complete.
 <one-paragraph corpus overview — author to fill>
 ```
 
-`tech-docs.md` — the Corpus Disposition declaration:
+`tech-docs.md` — the Corpus Disposition declaration (owning/custodian plan only):
 
 ```markdown
 ## Corpus Disposition
 
-`<archive-with-plan|promote-to:<path>|custodied-by:<plan-id>>` <!-- author: choose exactly one -->
+`<archive-with-plan|promote-to:<path>>` <!-- author: choose exactly one -->
+```
+
+`tech-docs.md` — the Corpus Custody echo (consumer plan only; never combined with the Corpus
+Disposition block above — a plan carries exactly one of the two):
+
+```markdown
+## Corpus Custody
+
+`custodied-by:<plan-id>` <!-- author: name the corpus's owning plan -->
 ```
 
 For a missing course file's REQUIRED skeleton, point the author at the copy-paste template in the

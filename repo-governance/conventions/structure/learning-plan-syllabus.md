@@ -62,10 +62,11 @@ that govern where a corpus lives and who may change it.
   their per-subfolder README requirements
 - **Section tiering** — the measured REQUIRED / RECOMMENDED / OPTIONAL derivation for a course file's
   sections, and the copy-paste template built from it
-- **Corpus Disposition** — the three-value declaration (`archive-with-plan`, `promote-to:<path>`,
-  `custodied-by:<plan-id>`) every learning-bearing plan's `tech-docs.md` carries
-- **Custody** — single-custodian ownership, read-only consumers, routed change requests, and the two
-  archival hand-off branches
+- **Corpus Disposition** — the two-value declaration (`archive-with-plan`, `promote-to:<path>`) every
+  learning-bearing plan that **owns** a corpus carries in its `tech-docs.md`
+- **Custody** — single-custodian ownership, read-only consumers, the `custodied-by:<plan-id>` echo a
+  **consumer** plan carries under its own `## Corpus Custody` heading, routed change requests, and the
+  two archival hand-off branches
 - **The grandfathered format cohort** — the pre-existing 17-file ordered-list divergence this
   convention does not retrofit
 
@@ -286,14 +287,17 @@ synthesis nor a real historical lineage should omit these rather than pad them:
 
 ### Corpus Disposition
 
-Every learning-bearing plan declares, in its `tech-docs.md`, a `## Corpus Disposition` section with
-exactly one of the following values:
+Every learning-bearing plan that **owns** a corpus (its **custodian** — see the Custody Rule below)
+declares, in its `tech-docs.md`, a `## Corpus Disposition` section with exactly one of the following
+values. A plan that only **consumes** another plan's corpus never carries a `## Corpus Disposition`
+section — it is not learning-bearing in its own right (see the Learning-Bearing Trigger's negative
+example 2) and instead carries the `custodied-by:<plan-id>` echo under its own `## Corpus Custody`
+heading, defined in the Custody Rule below.
 
-| Value                    | Meaning                                                                | Extra obligation                                                     |
-| ------------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `archive-with-plan`      | **Default.** The corpus moves to `plans/done/` with the plan folder    | None                                                                 |
-| `promote-to:<path>`      | The corpus has a consumer outside `plans/` and moves to a durable home | A delivery step performing the move and rewriting every inbound link |
-| `custodied-by:<plan-id>` | This plan **consumes** a corpus it does not own                        | The consumer obligations in the Custody Rule below                   |
+| Value               | Meaning                                                                | Extra obligation                                                     |
+| ------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `archive-with-plan` | **Default.** The corpus moves to `plans/done/` with the plan folder    | None                                                                 |
+| `promote-to:<path>` | The corpus has a consumer outside `plans/` and moves to a durable home | A delivery step performing the move and rewriting every inbound link |
 
 ```mermaid
 %% Corpus lifecycle: the default path is the left spine; promotion is trigger-gated.
@@ -326,7 +330,11 @@ plan's corpus is a **consumer**. Four rules govern the relationship:
 
 1. **Exactly one custodian per corpus.** The custodian is named in the corpus's own
    `syllabus/README.md` as a `**Custodian**: <plan-id>` line, and echoed in every consumer plan's
-   `tech-docs.md` as `custodied-by:<plan-id>`.
+   `tech-docs.md` under its own `## Corpus Custody` heading as `custodied-by:<plan-id>` — a distinct
+   declaration from `## Corpus Disposition` above, which only the owning (custodian) plan carries. A
+   consumer plan is not learning-bearing in its own right (see the Learning-Bearing Trigger's negative
+   example 2) and so never carries a `## Corpus Disposition` section, but it still carries this
+   `## Corpus Custody` echo regardless.
 2. **Consumers are read-only.** A consumer plan links into the corpus by relative path and MUST NOT
    edit, copy, or fork any file under it. A consumer's delivery checklist containing a step that
    writes to another plan's `syllabus/` is a defect.
@@ -380,6 +388,7 @@ not parse). It uses an explicit per-file loop instead.
 # Report every course file missing any REQUIRED section, for one corpus.
 check_corpus () {
   local dir="$1"                       # e.g. plans/backlog/<plan>/syllabus/courses
+  local any_miss=0
   for file in "$dir"/*.md; do
     base=$(basename "$file")
     [ "$base" = "README.md" ] && continue
@@ -392,10 +401,20 @@ check_corpus () {
     grep -q '^## Accuracy notes'  "$file" || miss="$miss Accuracy-notes"
     grep -q '\*\*Scope note\*\*'  "$file" || miss="$miss Scope-note"
     grep -q '^## Concepts'        "$file" || miss="$miss Concepts"
-    [ -n "$miss" ] && echo "MISS $base:$miss"
+    if [ -n "$miss" ]; then
+      echo "MISS $base:$miss"
+      any_miss=1
+    fi
   done
+  [ "$any_miss" -eq 0 ] && echo "(no misses)"
 }
-check_corpus plans/backlog/<plan>/syllabus/courses
+# Run against all three existing corpora, printing a header per corpus.
+for plan in ayokoding-learning-path-02-schema-and-prerequisite-dag \
+            ayokoding-learning-path-06-skills-accounting \
+            ayokoding-learning-path-07-skills-erp; do
+  echo "=== $plan ==="
+  check_corpus "plans/backlog/$plan/syllabus/courses"
+done
 ```
 
 Run against the three existing corpora, the recipe reports exactly one file — a capstone, a

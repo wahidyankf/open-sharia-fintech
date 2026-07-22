@@ -84,7 +84,8 @@ Ask about (each as a structured multiple-choice question):
   art, which selection + why. See [UI-Bearing Plans — Mandatory Design Funnel](#ui-bearing-plans--mandatory-design-funnel-hard-rule).
 - **For learning-bearing plans only** (the plan's delivery checklist authors or restructures course,
   tutorial, or curriculum content): the **syllabus-record** questions — which corpus disposition
-  (`archive-with-plan` / `promote-to:<path>` / `custodied-by:<plan-id>`), who is the Custodian. See
+  (`archive-with-plan` / `promote-to:<path>`, owning plans only — a pure consumer instead declares
+  `custodied-by:<plan-id>` under its own `## Corpus Custody` heading), who is the Custodian. See
   [Learning-Bearing Plans — Mandatory Syllabus Record](#learning-bearing-plans--mandatory-syllabus-record-hard-rule).
 
 Do NOT proceed to Step 2 until all open branches are resolved. Unresolved design decisions
@@ -405,9 +406,13 @@ For each new or restructured corpus, the plan MUST carry:
    copy-paste template, plus the RECOMMENDED and OPTIONAL sections where the course genuinely has
    that content.
 3. **A `## Corpus Disposition` declaration in `tech-docs.md`** — exactly one of `archive-with-plan`
-   (the default), `promote-to:<path>`, or `custodied-by:<plan-id>`.
+   (the default) or `promote-to:<path>`. This declaration belongs only to the owning (custodian)
+   plan; a pure consumer plan is not learning-bearing in its own right and never carries it (see
+   item 4).
 4. **A Custodian line in `syllabus/README.md`** — a `**Custodian**: <plan-id>` line naming the plan
-   that owns the corpus, echoed in every consumer plan's `tech-docs.md` as `custodied-by:<plan-id>`.
+   that owns the corpus, echoed in every consumer plan's `tech-docs.md` under its own
+   `## Corpus Custody` heading as `custodied-by:<plan-id>` — a distinct declaration from item 3's
+   `## Corpus Disposition`.
 
 ### Delivery Steps to Emit (learning-bearing plans)
 

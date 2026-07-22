@@ -902,13 +902,17 @@ linking to, or lightly correcting an existing corpus does not trigger it.
    `## Why this exists`, `## Prerequisites`, `## Accuracy notes`, `**Scope note**`, `## Concepts`,
    `## In which paths`), with the documented capstone carve-out honored. A new course file missing a
    REQUIRED section: **HIGH**.
-4. **`## Corpus Disposition` declaration** — The plan's `tech-docs.md` MUST carry a
-   `## Corpus Disposition` section with exactly one of `archive-with-plan`, `promote-to:<path>`, or
-   `custodied-by:<plan-id>`. Missing the declaration, or an invalid value: **HIGH**.
-5. **Custodian line** — The corpus's own `syllabus/README.md` MUST carry a
-   `**Custodian**: <plan-id>` line, echoed in every consumer plan's `tech-docs.md` as
-   `custodied-by:<plan-id>`. Missing the Custodian line on an owning plan, or a consumer plan
-   missing the echo: **HIGH**.
+4. **`## Corpus Disposition` declaration (owning plan only)** — The **owning** (custodian) plan's
+   `tech-docs.md` MUST carry a `## Corpus Disposition` section with exactly one of
+   `archive-with-plan` or `promote-to:<path>`. A pure consumer plan is not learning-bearing in its
+   own right and never carries this section (see item 5). Missing the declaration on an owning plan,
+   or an invalid value: **HIGH**.
+5. **Custodian line and consumer echo (distinct declarations)** — The corpus's own
+   `syllabus/README.md` MUST carry a `**Custodian**: <plan-id>` line, echoed in every consumer
+   plan's `tech-docs.md` under its own `## Corpus Custody` heading as `custodied-by:<plan-id>` — a
+   declaration distinct from item 4's `## Corpus Disposition`, which only the owning plan carries.
+   Missing the Custodian line on an owning plan, or a consumer plan missing the `## Corpus Custody`
+   echo: **HIGH**.
 6. **Delivery steps produce the artefacts** — `delivery.md` MUST carry explicit delivery steps that
    scaffold the folder layout, author the course files, and declare the disposition and custodian —
    not merely assume they will appear. A declared artefact with no corresponding delivery step:
@@ -923,8 +927,9 @@ linking to, or lightly correcting an existing corpus does not trigger it.
 - Learning-bearing plan missing `syllabus/README.md`, `syllabus/courses/`, or `syllabus/paths/`
   (or, for a new corpus, either subfolder's `README.md`): **HIGH**
 - New course file missing a REQUIRED template section (capstone carve-out honored): **HIGH**
-- Missing or invalid `## Corpus Disposition` declaration in `tech-docs.md`: **HIGH**
-- Missing the Custodian line, or a consumer plan missing the `custodied-by:` echo: **HIGH**
+- Missing or invalid `## Corpus Disposition` declaration on the owning plan's `tech-docs.md`: **HIGH**
+- Missing the Custodian line, or a consumer plan missing the `## Corpus Custody` /
+  `custodied-by:` echo: **HIGH**
 - Declared artefact with no corresponding delivery step: **HIGH**
 - Illegitimate "not learning-bearing" exemption used to skip the syllabus record: **HIGH**
 - Non-learning-bearing plan: **not flagged** (exempt; record the exemption explicitly)
