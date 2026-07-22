@@ -1,0 +1,151 @@
+Phase 0 Baseline Snapshot — ayokoding-learning-path-01-url-restructure
+Captured: 2026-07-23
+
+=== 1. Toolchain convergence ===
+npm install: exit 0, node_modules/ synchronized.
+npm run doctor -- --fix: exit 0. 16/16 tools OK, 0 warning, 0 missing.
+  git v2.39.5, volta v2.0.2, node v24.16.0 (required 24.16.0), npm v11.11.0 (required 11.11.0),
+  rust v1.94.0 (required >=1.88), cargo-llvm-cov v0.8.5, dotnet v10.0.300 (required >=10.0.204),
+  docker v29.5.3, jq v1.8.1, shellcheck v0.11.0, hadolint v2.14.0, actionlint v1.7.12,
+  playwright v1.60.0, shfmt v3.13.1, tofu v1.12.3, clang-format v22.1.8.
+  Target-share: 4 cargo target dirs re-linked (ayokoding-cli, ose-cli, rhino-cli, rust-commons) —
+  "4 created, 0 already correct, 1 plain dir(s) replaced". No unresolved drift.
+
+=== 2. Baseline test run ===
+npx nx run ayokoding-www:build          -> exit 0 (Next.js 16.2.6, Turbopack, 1854/1854 static pages)
+npx nx run ayokoding-www:test:unit      -> exit 0
+  Test Files: 85 passed (85)
+  Tests: 2619 passed | 6 skipped (2625 total)
+  Duration: 67.35s
+No preexisting failures found. No fix required.
+
+=== 3. Re-home source inventory (37-slug loop under <SE_OLD>) ===
+SE_OLD = apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/
+Loop executed over all 37 slugs (just-enough-nvim ... capstone-solid-core).
+Result: zero ABSENT lines — all 37 slugs present as directories under <SE_OLD>.
+
+=== 4. Source directory shape check ===
+ls apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer | wc -l
+=> 39  (matches expected: _index.md + overview.md + 37 course-shaped directories)
+
+=== 5. Existing behavior snapshot: content-url.ts / prev-next.tsx / breadcrumb.tsx / tree-builder.ts ===
+
+--- apps/ayokoding-www/src/features/content/core/content-url.ts ---
+Single source of truth for the content URL namespace. `contentUrl(locale, slug)` rules:
+  - empty / root / "_index" slug            -> `/{locale}`
+  - loose top-level page (LOOSE_PAGE_ALLOWLIST[locale]) -> `/{locale}/{slug}`
+    en: ["about-ayokoding", "terms-and-conditions"]
+    id: ["tentang-ayokoding", "syarat-dan-ketentuan"]
+  - everything else (content-tree slugs)     -> `/{locale}/c/{slug}`  (the "/c/" namespace)
+Pure function, no IO. Every URL emitter (content page, sidebar tree, breadcrumb, prev/next,
+search results, sitemap, feed) imports it.
+
+--- apps/ayokoding-www/src/features/navigation/shell/prev-next.tsx ---
+`PrevNext({ locale, prev, next })` renders a prev/next nav pair. Each Link href is built via
+`contentUrl(locale as Locale, prev.slug)` / `contentUrl(locale as Locale, next.slug)` — i.e. it
+defers 100% of URL-shaping to content-url.ts (no hardcoded path segments). Renders null when both
+prev and next are null.
+
+--- apps/ayokoding-www/src/features/navigation/shell/breadcrumb.tsx ---
+`Breadcrumb({ locale, segments, showCurrent=false, contentHrefs=false })`.
+`hrefFor(locale, segment, useContentUrl)`:
+  - segment.href present            -> use it verbatim
+  - empty segment.slug              -> `/{locale}`
+  - useContentUrl (contentHrefs=true) -> `contentUrl(locale as Locale, segment.slug)`
+  - else                            -> `/{locale}/{segment.slug}`  (legacy non-content shape)
+Default excludes the last segment (current page shown in h1); showCurrent=true renders it as a
+non-link aria-current="page" crumb instead.
+
+--- apps/ayokoding-www/src/features/content/core/tree-builder.ts ---
+Pure tree/prev-next builder over ContentMeta[], keyed by `slug` (POSIX path with "/" separators,
+no locale/namespace prefix baked in):
+  - buildTrees(allContent) / buildTreeForLocale(items): builds per-locale TreeNode[] from flat
+    ContentMeta[] by inferring ancestor sections from slug segments (getParentSlug splits on "/").
+  - computePrevNext(allContent): groups non-section items by parent slug, sorts siblings by
+    `weight`, and returns a Map<"{locale}:{slug}", {prev, next}> of PageLink pairs.
+  - findSubtree(nodes, slug): depth-first slug lookup.
+None of these four modules encode the "/c/" prefix or any bucket name themselves — that
+responsibility is fully centralized in content-url.ts's contentUrl().
+
+--- apps/ayokoding-www/next.config.ts — verbatim current redirects() ---
+  async redirects() {
+    return [...learnReorgRedirects, ...contentNamespaceRedirects];
+  },
+(imports: `import { learnReorgRedirects } from "./src/redirects/learn-reorg";` and
+ `import { contentNamespaceRedirects } from "./src/redirects/content-namespace";`)
+This is the exact current spread order the Phase 3 ordering check must diff against.
+
+=== 6. Legacy-bucket source inventory (DD-40) — per-domain .md counts under en/learn/ ===
+Command: for d in fundamentally-strong software-engineering artificial-intelligence
+  information-security personal-development it-governance business; do printf '%s %s\n' "$d"
+  "$(find apps/ayokoding-www/content/en/learn/$d -name '*.md' | wc -l)"; done
+
+fundamentally-strong      562   <-- DIVERGENCE: stated baseline in tech-docs.md is 563 (off by 1)
+software-engineering      979   (matches stated baseline)
+artificial-intelligence    55   (matches stated baseline)
+information-security       51   (matches stated baseline)
+personal-development       50   (matches stated baseline)
+it-governance                9   (matches stated baseline)
+business                     4   (matches stated baseline)
+
+Sum of the six RELOCATED domains (excludes fundamentally-strong):
+  979 + 55 + 51 + 50 + 9 + 4 = 1148   <-- matches expected 1,148 exactly.
+
+DIVERGENCE NOTE: fundamentally-strong measured 562 .md files, not the 563 recorded in
+tech-docs.md's "Ground-truth inventory (measured 2026-07-21, re-verified at authoring)" table
+(tech-docs.md lines 41-66). Re-measured twice (stable at 562); cross-checked via
+`git ls-files apps/ayokoding-www/content/en/learn/fundamentally-strong/ | grep -c '\.md$'` which
+also returns 562 (find and git ls-files agree — not a tooling artifact). `git log
+--diff-filter=DR -M --since=2026-07-20 -- apps/ayokoding-www/content/en/learn/fundamentally-strong/`
+and `git log --diff-filter=D --all` for the same path both return no deletions/renames, so this is
+NOT a regression introduced during Phase 0 — the tech-docs.md baseline was already stale by 1 file
+relative to the live tree at authoring time (2026-07-21) or the count was miscounted then. This is
+non-blocking per the Phase 0 checklist (the acceptance clause governing hard-stop-vs-reconcile
+covers the six-domain 1,148 sum, which DOES match); it must be reconciled in tech-docs.md before
+Phase 3 as instructed, since fundamentally-strong's own row (563) is stale and the "37 already-built
+course directories" narrative attached to it (tech-docs.md lines 60-66, does not itself depend on
+563) should be re-verified alongside the reconciliation. This is NOT the same set as the 37-slug
+re-home inventory (section 3 above), which is verified independently and is unaffected by this
+divergence.
+
+=== 7. Collision + id baseline check ===
+Command (single invocation):
+  test -e apps/ayokoding-www/content/en/learn/legacy && echo "EXISTS legacy";
+  test -e apps/ayokoding-www/content/en/learn/courses && echo "EXISTS courses";
+  test -e apps/ayokoding-www/content/en/learn/paths && echo "EXISTS paths";
+  test -e apps/ayokoding-www/src/redirects/learn-three-bucket.ts && echo "EXISTS bucket-module";
+  test -e apps/ayokoding-www/src/redirects/course-rehome.ts && echo "EXISTS rehome-module";
+  find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l
+
+Result: zero EXISTS lines printed (no legacy/, no courses/, no paths/, no
+learn-three-bucket.ts, no course-rehome.ts — all absent as expected pre-Phase-1/2/3).
+id/belajar .md count: 53  (matches expected baseline exactly).
+
+=== 8. Alert-primitive baseline (DD-44 no-net-new-component anchor) ===
+Command: git ls-files -- 'libs/web-ui/src/**/alert*.tsx' 'apps/ayokoding-www/src/**/alert*.tsx' | grep -c .
+Result: 4  (matches expected baseline exactly — all four under
+libs/web-ui/src/components/alert/: alert.tsx, alert.stories.tsx, alert.test.tsx, alert.steps.tsx;
+none under apps/ayokoding-www/src).
+
+=== Summary of divergences from stated expectations ===
+- fundamentally-strong domain .md count: measured 562, tech-docs.md states 563 (off by 1;
+  root-caused as pre-existing tech-docs.md staleness, not a Phase 0 regression; six-relocated-domain
+  1,148 sum is unaffected and matches exactly). Flagged for reconciliation before Phase 3 per the
+  checklist's own instruction.
+- All other measured values (37-slug inventory, 39-count, six-domain counts, 1148 sum,
+  id/belajar 53, zero-collision, alert-primitive 4) match their stated expectations exactly.
+
+=== 9. Environment hazard discovered during Phase 0 (new — not previously documented in this plan) ===
+`ls` is shell-aliased to `eza --icons --hyperlink` in this environment (`alias ls='eza --icons
+--hyperlink'`). Piping `eza`'s hyperlinked output through `xargs -n1 basename` (as used to freeze
+the 37 re-home slugs) corrupts the result: an initial attempt using the aliased `ls -d ... | xargs
+-n1 basename` collapsed 37 entries into 2 garbled lines containing embedded OSC-8 escape sequences
+(e.g. "version-control-and-gitversion-control-and-git" followed by a stray "]8;;"). Plain `ls | wc
+-l` (no xargs) is NOT affected — line counts remained correct (verified 39 under both the aliased
+`ls` and `/bin/ls`) — the corruption is specific to piping eza's hyperlinked output into a
+word-splitting consumer like `xargs`. Fix used here and recommended for every future `ls -d ... |
+xargs ...` pattern in this plan (e.g. any similar slug-freezing or move-loop enumeration in later
+phases): invoke `/bin/ls` explicitly to bypass the alias, exactly as this plan's existing `find`
+piping rule (section "bare-versus-piped") already requires for `find`. This is a distinct hazard
+from the documented RTK/`find` hazard — both are real, both are environment-specific, neither
+implies the other.

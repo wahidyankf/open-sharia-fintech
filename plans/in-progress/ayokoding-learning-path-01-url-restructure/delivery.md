@@ -138,16 +138,16 @@ use are retained deliberately, not pruned):
 > 61 transferred topics have no legacy home and are authored NATIVE by
 > `ayokoding-learning-path-04-course-authoring`.
 
-- [ ] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
+- [x] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] Establish baselines: `npx nx run ayokoding-www:build` and
+- [x] [AI] Establish baselines: `npx nx run ayokoding-www:build` and
       `npx nx run ayokoding-www:test:unit`
       — acceptance: both exit 0; record the pass state and any preexisting failure in
       `evidence/phase-0-snapshot.txt`. Resolve every preexisting failure before Phase 1 (Root Cause
       Orientation).
-- [ ] [AI] **Re-home source inventory (non-blocking snapshot)** — record the 33 shipped topics + 4
+- [x] [AI] **Re-home source inventory (non-blocking snapshot)** — record the 33 shipped topics + 4
       existing capstones present under `<SE_OLD>` to `evidence/phase-0-snapshot.txt` via:
       `for s in just-enough-nvim just-enough-lua extending-neovim just-enough-python just-enough-bash version-control-and-git data-structures-and-algorithms-essentials advanced-algorithms object-oriented-programming-essentials object-oriented-design-and-patterns sql-essentials technical-communication just-enough-typescript frontend-essentials backend-essentials networking-essentials computer-science-foundations computer-architecture programming-paradigms functional-programming concurrency-and-parallelism advanced-networking advanced-sql-and-query-performance data-access-orms-and-query-builders build-your-own-orm-and-query-builder software-engineering-practices agentic-coding security-essentials software-testing debugging-and-profiling software-product-engineering engineering-management project-management capstone-forge-ready capstone-first-working-software capstone-full-stack-app capstone-solid-core; do test -d "<SE_OLD>$s" || echo "ABSENT $s"; done`
       — acceptance: snapshot committed. Any `ABSENT` line is recorded (not a hard stop) and reconciled
@@ -155,36 +155,37 @@ use are retained deliberately, not pruned):
       before Phase 2. **This list is the authoritative re-home set** — the Phase 2 move loop and the
       `course-rehome.ts` rule table both derive from it, so a divergence discovered later is a
       correctness bug in both.
-- [ ] [AI] Confirm the source directory holds exactly the expected shape —
+- [x] [AI] Confirm the source directory holds exactly the expected shape —
       `ls apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer | wc -l`
       — acceptance: returns **39** (`_index.md` + `overview.md` + 37 course-shaped directories). A
       different number means the re-home set above is stale; reconcile before Phase 2. Falsifiable
       both ways: after Phase 2 the same command returns **2**.
-- [ ] [AI] **Freeze the re-home set as a machine-readable list** — write the reconciled 37 slugs, one
+- [x] [AI] **Freeze the re-home set as a machine-readable list** — write the reconciled 37 slugs, one
       per line, to `evidence/phase-0-rehome-slugs.txt` via
       `ls -d apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/*/ | xargs -n1 basename > evidence/phase-0-rehome-slugs.txt`
       — acceptance: `wc -l < evidence/phase-0-rehome-slugs.txt` returns **37**, and every line also
       appears in the inventory loop above. This file is what the Phase-2 move loop and
       `REHOMED_COURSE_SLUGS` are both checked against, so the two can never drift apart silently.
-- [ ] [AI] Snapshot the existing `content-url.ts` / `prev-next.tsx` / `breadcrumb.tsx` /
+- [x] [AI] Snapshot the existing `content-url.ts` / `prev-next.tsx` / `breadcrumb.tsx` /
       `tree-builder.ts` behavior and the current `next.config.ts` redirect spread order into
       `evidence/phase-0-snapshot.txt` — acceptance: snapshot committed, including the verbatim current
       `redirects()` return expression (the Phase 3 ordering check diffs against it).
-- [ ] [AI] **Legacy-bucket source inventory (DD-40)** — record the per-domain `.md` counts under
+- [x] [AI] **Legacy-bucket source inventory (DD-40)** — record the per-domain `.md` counts under
       `apps/ayokoding-www/content/en/learn/` to `evidence/phase-0-snapshot.txt` via:
       `for d in fundamentally-strong software-engineering artificial-intelligence information-security personal-development it-governance business; do printf '%s %s\n' "$d" "$(find apps/ayokoding-www/content/en/learn/$d -name '*.md' | wc -l)"; done`
-      — acceptance: snapshot committed and matches the stated baseline (563 / 979 / 55 / 51 / 50 / 9 /
-      4; the six relocated domains sum to **1,148**). A divergence is recorded and reconciled against
+      — acceptance: snapshot committed and matches the stated baseline (562 / 979 / 55 / 51 / 50 / 9 /
+      4; the six relocated domains sum to **1,148** — `fundamentally-strong`'s 562 is not part of that
+      sum; reconciled from a stale 563 at Phase 0, 2026-07-23). A divergence is recorded and reconciled against
       [tech-docs §Ground-truth inventory](./tech-docs.md#ground-truth-inventory-measured-2026-07-21-re-verified-at-authoring)
       before Phase 3 — it is not a hard stop here, but **every 1148 assertion downstream must be
       updated together** if the baseline moved.
-- [ ] [AI] **Collision + `id` baseline check** —
+- [x] [AI] **Collision + `id` baseline check** —
       `test -e apps/ayokoding-www/content/en/learn/legacy && echo "EXISTS legacy"; test -e apps/ayokoding-www/content/en/learn/courses && echo "EXISTS courses"; test -e apps/ayokoding-www/content/en/learn/paths && echo "EXISTS paths"; test -e apps/ayokoding-www/src/redirects/learn-three-bucket.ts && echo "EXISTS bucket-module"; test -e apps/ayokoding-www/src/redirects/course-rehome.ts && echo "EXISTS rehome-module"; find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l`
       — acceptance: zero `EXISTS` lines (no bucket, no content home, neither redirect module exists
       yet), and the `id/belajar` count (**53** today) is recorded so the `en`-only scoping (DD-45) is
       verifiable as unchanged at archival. Falsifiable both ways: after Phase 3 the first three
       `test -e` checks all print their `EXISTS` line.
-- [ ] [AI] **Alert-primitive baseline (DD-44 no-net-new-component anchor)** — record the count of
+- [x] [AI] **Alert-primitive baseline (DD-44 no-net-new-component anchor)** — record the count of
       component files matching `alert*.tsx` to `evidence/phase-0-snapshot.txt` — command (single line):
       `git ls-files -- 'libs/web-ui/src/**/alert*.tsx' 'apps/ayokoding-www/src/**/alert*.tsx' | grep -c .`
       — acceptance: returns **4** today [Repo-grounded — measured 2026-07-22: all four sit in
@@ -227,7 +228,7 @@ use are retained deliberately, not pruned):
       `grep -c` exits 1 on a zero count — read the printed number, never `&&`-chain it. Falsifiable both ways: a number other than 4 means the
       primitive set moved since authoring and §3.4's expected value must be updated with it, not
       silently re-baselined; **0** means the pattern stopped matching and the check has gone vacuous.
-- [ ] [AI] Confirm `learnings.md` scaffold exists in the plan folder — acceptance:
+- [x] [AI] Confirm `learnings.md` scaffold exists in the plan folder — acceptance:
       `test -f plans/in-progress/ayokoding-learning-path-01-url-restructure/learnings.md` returns 0 and
       the file opens with its H1.
 
@@ -235,15 +236,29 @@ use are retained deliberately, not pruned):
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] `npx nx run ayokoding-www:build` and `:test:unit` exit 0; every preexisting failure is
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] `npx nx run ayokoding-www:build` and `:test:unit` exit 0; every preexisting failure is
       resolved (zero unresolved).
-- [ ] [AI] `evidence/phase-0-snapshot.txt` is committed and carries: the 37-slug re-home inventory
+- [x] [AI] `evidence/phase-0-snapshot.txt` is committed and carries: the 37-slug re-home inventory
       (zero unreconciled `ABSENT` lines), the seven per-domain `.md` counts summing the six relocated
       domains to **1148**, the `id/belajar` count of **53**, the `alert*.tsx` primitive count of **4**
       (§3.4 check (c)'s comparison anchor), and the verbatim current `redirects()` spread order.
-- [ ] [AI] Zero collision lines: neither content home, neither redirect module, and no `legacy/`
+- [x] [AI] Zero collision lines: neither content home, neither redirect module, and no `legacy/`
       bucket exists yet.
+
+**Phase 0 execution notes (2026-07-23) — Status: PASS.** Executor: `repo-setup-manager` (background
+agent). Evidence written: `evidence/phase-0-snapshot.txt` (9 labelled sections),
+`evidence/phase-0-rehome-slugs.txt` (37 slugs, set-identical to the inventory loop). `npm install`
+exit 0; `doctor --fix` 16/16 tools OK; `nx build` (1854 static pages) + `test:unit` (2619 pass, 6
+skip, 0 fail) both exit 0 — **no preexisting failures**. Gate assertions all matched **except**
+`fundamentally-strong` `.md` = **562**, not the 563 in tech-docs' ground-truth table — verified as
+stale (git ls-files=562, no deletions in git log), **reconciled this session** (tech-docs table + tree
+
+- delivery baseline string). Independent facts: six-domain sum **1148** exact; `id/belajar` **53**;
+  alert primitives **4**; zero collisions; 37-slug rehome inventory 0 `ABSENT`. **Env hazard found:**
+  `ls` is aliased to `eza --icons --hyperlink` — piping it through `xargs` embeds OSC-8 escapes and
+  corrupts the output; later `ls … | xargs` steps must use `/bin/ls` (logged to `learnings.md`, distinct
+  from the plan's `find`/RTK hazard).
 
 > **Pause Safety**: only the toolchain was verified and the baseline recorded — no content moved, no
 > code written, no URL changed. Safe to stop indefinitely. To resume:

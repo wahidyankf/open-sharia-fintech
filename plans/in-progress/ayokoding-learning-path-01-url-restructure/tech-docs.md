@@ -48,7 +48,7 @@ Content root is `apps/ayokoding-www/content/`; the route
 
 | Domain under `en/learn/`  | `.md` files | Disposition                                   |
 | ------------------------- | ----------- | --------------------------------------------- |
-| `fundamentally-strong`    | 563         | → `courses/` (per-course re-home; DD-2/DD-43) |
+| `fundamentally-strong`    | 562         | → `courses/` (per-course re-home; DD-2/DD-43) |
 | `software-engineering`    | 979         | → `legacy/software-engineering`               |
 | `artificial-intelligence` | 55          | → `legacy/artificial-intelligence`            |
 | `information-security`    | 51          | → `legacy/information-security`               |
@@ -311,7 +311,7 @@ apps/ayokoding-www/content/
 │   └── learn/                                                     ✓  1,713 .md total
 │       ├── _index.md                                              ✓  machine-generated (generate-indexes)
 │       ├── overview.md                                            ✓  hand-authored; links all 6 domains
-│       ├── fundamentally-strong/                                  ✓  563 .md
+│       ├── fundamentally-strong/                                  ✓  562 .md
 │       │   ├── _index.md                                          ✓
 │       │   └── software-engineer/                                 ✓  39 entries = 2 files + 37 dirs
 │       │       ├── _index.md                                      ✓  spiral-ordered section index
