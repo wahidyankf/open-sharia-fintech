@@ -30,8 +30,8 @@ Plus the section's own two hub files (`_index.md`, machine-generated; `overview.
 which are the section's landing prose, not a fourth taxonomy bucket (DD-40, Q-F).
 
 The product change is **URL topology and information architecture**. It ships one user-facing screen
-of its own — **Screen 4**, the legacy-bucket landing and its per-page banner — which runs the full
-design funnel below. It ships **no** navigation feature code: the `course-paths` pure core, the path
+of its own — **Screen 4**, the legacy-bucket landing (`noindex`ed, no per-page banner, per the
+2026-07-23 Q-D Option-C ruling) — which runs the full design funnel below. It ships **no** navigation feature code: the `course-paths` pure core, the path
 rail, the path landings, and the manifests all belong to the four sibling plans named in
 [README §Depends-on](./README.md#depends-on).
 
@@ -112,22 +112,25 @@ and does not restate it.
 
 ## UI-Design-Funnel — Screen 4 · Legacy-bucket landing and page banner
 
-This plan is **UI-bearing**: it adds one user-facing screen (the `/en/learn/legacy` landing) and,
-under [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)'s recommended answer, a per-page
-**"legacy / superseded"** banner on relocated pages. Both run the full funnel below through a named
-Selection (Option A, Q-D's own recommended default — see [Selection and rationale](#selection-and-rationale))
-and a Justify record. The **hi-fi finalist renders** (Stage 2's binary `.png` mockups) are produced
-and embedded below — see [Hi-fi finalists](#hi-fi-finalists). The low-fi alternatives below map 1:1
-to Q-D's options.
+This plan is **UI-bearing**: it adds one user-facing screen (the `/en/learn/legacy` landing). Under
+the maintainer's 2026-07-23 ruling on [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy) the bucket is
+**`noindex`ed with no per-page banner and no landing notice** (Q-D Option C, overturning the recommended
+Option A). The full funnel below still runs through a named Selection (now **Option C** — see
+[Selection and rationale](#selection-and-rationale)) and a Justify record; the low-fi A/B/C alternatives
+and their hi-fi finalist renders are retained below as the funnel record. The **hi-fi finalist renders**
+(Stage 2's binary `.png` mockups) are produced and embedded below — see
+[Hi-fi finalists](#hi-fi-finalists). The low-fi alternatives below map 1:1 to Q-D's options.
 
 Screens 0, 1, 1a, 1b, 2, 3 (landing hero, paths hub, category landing, arc landing, path landing,
 course-in-path) belong to `ayokoding-learning-path-03-navigation-ui` — that plan carries their funnel
 record and their 36 renders (grown from 24 via the 2026-07-21 category-split amendment, DD-47 after
 the split). This plan carries Screen 4 and its 6.
 
-**R5 grounding note** — no net-new component is required. The banner is the existing composite
-`Alert` (`Alert` / `AlertTitle` / `AlertDescription` from `@open-sharia-enterprise/web-ui`, the same
-primitive the navigation plan's Screen 2 fast-path callout uses); the landing is an ordinary content
+**R5 grounding note** — no net-new component is required. Under the ruled **Option C** the treatment
+is route-metadata only (`robots: noindex` for `legacy/` slugs), so there is **no banner** to build at
+all — the DD-44 no-net-new-component invariant is satisfied trivially. (Had Option A shipped, the
+banner would have reused the existing composite `Alert` from `@open-sharia-enterprise/web-ui`; that
+mechanism is retained in the funnel record below but is not built.) The landing is an ordinary content
 `_index.md` rendered by the existing `[...slug]` content route with the existing `Breadcrumb` +
 `MarkdownRenderer` [Repo-grounded —
 `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`]. **Zero new components; zero
@@ -339,17 +342,20 @@ change.
 
 ### Selection and rationale
 
-**Selected: Option A — indexed, with a landing notice + a per-page banner** — Q-D's own recommended
-default (see [tech-docs.md Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)), adopted here as the
-named Selection at plan-quality-gate time. The rationale table records why each option would win or
-lose, so if execution surfaces information that overturns Q-D's recommendation, updating this line
-and the table is a bounded edit rather than a re-run of the funnel:
+**Selected: Option C — `noindex` the whole legacy bucket** — overturns Q-D's recommended default
+(Option A) at the maintainer grill gate on **2026-07-23** (see
+[tech-docs.md Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy) and the
+[resolution table](./tech-docs.md#open-questions--learn-section-scope-extension-resolved-2026-07-23)).
+Option C is Option B's landing **with a `robots: noindex` metadata change, and no per-page banner and
+no landing notice** — the treatment is route-metadata only (no `Alert`, no content-file edit). The
+rationale table records why each option would win or lose; switching back to A or B later is a bounded
+edit rather than a re-run of the funnel:
 
-| Design                                        | Why it would win / lose                                                                                                                                          |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A — indexed + landing notice + page banner ⭐ | Preserves ~1,148 pages of search surface **and** warns the reader per page; reuses `Alert`; reversible to C in one metadata change                               |
-| B — indexed, landing notice only              | Cheapest, but a search-landed reader never reaches the landing, so the one place the warning lives is the one place they never see                               |
-| C — `noindex` the bucket                      | Cleanest signal that the material is superseded, but discards the app's largest search surface **before** the 127-course catalog exists (~37 bodies built today) |
+| Design                                     | Why it would win / lose                                                                                                                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — indexed + landing notice + page banner | Preserves ~1,148 pages of search surface **and** warns the reader per page; reuses `Alert`; reversible to C in one metadata change                                              |
+| B — indexed, landing notice only           | Cheapest, but a search-landed reader never reaches the landing, so the one place the warning lives is the one place they never see                                              |
+| C — `noindex` the bucket ⭐                | Cleanest signal that the material is superseded; maintainer accepted surrendering the search surface ahead of the replacement catalog. Reversible to A/B in one metadata change |
 
 **A11y (all options)** — the notice and banner are semantic `Alert` regions with real text, never
 colour alone; "Legacy" is a text breadcrumb segment, not an icon; the "superseded by" link names the
@@ -592,7 +598,8 @@ Scenario: The relocated tree builds and validates green
 - The authored **`legacy/_index.md`** landing (DD-44) and the rewritten hand-authored
   `en/learn/overview.md` (DD-45/Q-F); regeneration of `en/learn/_index.md` and
   `generated/search-data.json`.
-- The **Screen 4 design funnel** for the legacy landing and per-page banner, with its 6 renders.
+- The **Screen 4 design funnel** for the legacy landing (ruled Option C — `noindex`, no banner), with
+  its 6 funnel-record renders.
 - A `specs/` Gherkin companion under the existing `navigation/` domain folder, plus e2e coverage of
   both bare and stale-`/c`-bookmark inbound forms and both negative cases.
 - **De-namespacing (DD-48, site-wide scope extension)**: inverting `content-namespace.ts` in place to
@@ -663,11 +670,14 @@ Scenario: The relocated tree builds and validates green
   user-visible, not a theoretical edge case (DD-49); the empty-state **design** for it belongs to
   `ayokoding-learning-path-03-navigation-ui`, not this plan.
 - **Legacy/course duplication confusion**: a reader finds both a legacy page and a canonical course on
-  the same subject and cannot tell which is current. Mitigated by
-  [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy)'s recommended per-page "superseded by" banner
-  (Screen 4); the residual risk is that the banner is only as good as the superseded-by mapping, which
-  is why [Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive) recommends
-  recording it in the surviving course's `overview.md` rather than in a separate ledger.
+  the same subject and cannot tell which is current. Under the ruled
+  [Q-D](./tech-docs.md#q-d--seo-treatment-of-legacy) Option C the legacy bucket is **`noindex`ed**, so
+  search — the main discovery path — surfaces the canonical course rather than the superseded page
+  (there is no per-page banner). The residual risk is that a reader already deep-linked into a legacy
+  page gets no inline signal, which is why
+  [Q-A](./tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive)'s staging-pen ruling still
+  records the supersession in the surviving course's `overview.md`, and the bucket is expected to
+  shrink as courses land.
 - **Feed churn, two sources now (DD-48)**: relocation churns ~1,148 legacy items' RSS `<guid>`s;
   de-namespacing separately churns every namespaced item's `<guid>` (all five sections, both locales)
   when its URL drops `/c/`. Both are accepted one-time costs — the 37 re-homed courses are the only

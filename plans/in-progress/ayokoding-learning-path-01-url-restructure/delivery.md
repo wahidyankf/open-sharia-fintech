@@ -503,6 +503,15 @@ legacy hand-curated, spiral-ordered `_index.md` section tree) IN ADDITION to the
 course pages, and later the path landings). Every impacted legacy section index is UPDATED (not
 deleted), re-pointing each entry to wherever the content now lives.
 
+> **Q-E=C exception (RESOLVED 2026-07-23).** The three `fundamentally-strong` browse **roots**
+> (`fundamentally-strong/_index.md`, `software-engineer/_index.md`, `software-engineer/overview.md`)
+> are the **one** deviation from "UPDATED, never deleted": the maintainer ruled they are **deleted and
+> their old URLs 308 to `/en/learn/courses`** (see the Q-E override step at the end of this section).
+> So the RED/GREEN e2e specs below assert, **for those three FS roots only**, that the old URL returns
+> a 308 to `/en/learn/courses` rather than resolving an updated index. Every other legacy `_index.md`
+> (the per-topic ones re-homed under `courses/`, and all six relocated `legacy/` domains) is still
+> UPDATED-not-deleted exactly as written.
+
 - [ ] [AI] **RED** — write a failing e2e nav check in the paired `ayokoding-www-fe-e2e` project
       asserting the legacy ordered browse resolves end-to-end: from
       `.../fundamentally-strong/software-engineer/_index.md` (and the `fundamentally-strong/_index.md`
@@ -566,14 +575,28 @@ deleted), re-pointing each entry to wherever the content now lives.
       already runs automatically pre-commit via `lint-staged` for every staged `.md` file; this step
       re-runs it explicitly over the full legacy tree) — acceptance: zero broken links; the old-way
       browse resolves to canonical bodies; all three validators green.
-- [ ] [AI] **Preserve Q-E's three residual index pages and their redirect targets** — do **not** delete
-      `fundamentally-strong/_index.md`, `software-engineer/_index.md`, or
-      `software-engineer/overview.md`; the ruled fold-in (Q-E recommended answer A) targets a path
-      landing authored by `ayokoding-learning-path-05-manifests`, so this plan hands the fold forward
-      — acceptance: all three files still exist
-      (`test -f apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/overview.md`
-      returns 0) and each carries a note naming the ruled destination. See
+- [ ] [AI] **Q-E override (RESOLVED 2026-07-23 = C): delete the three residual index pages and 308
+      their old URLs to `/en/learn/courses`.** The maintainer overturned the recommended fold-in (A):
+      delete `fundamentally-strong/_index.md`, `fundamentally-strong/software-engineer/_index.md`, and
+      `fundamentally-strong/software-engineer/overview.md` (`git rm`), then add three 308 redirect
+      rules — old URLs `/en/learn/fundamentally-strong`,
+      `/en/learn/fundamentally-strong/software-engineer`, and
+      `/en/learn/fundamentally-strong/software-engineer/overview` each → `/en/learn/courses` (the
+      successor library landing) — in `<REDIR>course-rehome.ts` (the same module that already carries
+      the 37 per-course rules), covered by a `course-rehome.unit.test.ts` assertion. **No bare 404**:
+      shipping dead URLs would fail the repo quality gates and this plan's redirects-hold-everything
+      thesis, so the delete is paired with the redirect. **DD-19 ripple (deliberate):** these three
+      files are the old-way FS browse roots; under this ruling the §2.5 old-way-browse e2e specs assert
+      the three FS roots **308 to `/en/learn/courses`** rather than resolve — a narrow, intended
+      override of DD-19's additive-browse model for the fundamentally-strong subtree only (every other
+      legacy `_index.md` in §2.5 is still UPDATED-not-deleted). The fold-in handoff to
+      `ayokoding-learning-path-05-manifests` is dropped; that plan authors its path-landing prose
+      fresh. — acceptance:
+      `test -e apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/overview.md`
+      returns non-zero (file gone); `course-rehome.unit.test.ts` asserts all three old URLs resolve to
+      a 308 with `destination: '/en/learn/courses'`; `md links validate` reports no dead link. See
       [tech-docs Q-E](./tech-docs.md#q-e--what-happens-to-fundamentally-strongs-three-residual-index-pages).
+  - _Suggested executor: `swe-typescript-dev`_ (redirect rules + unit test) _plus a `git rm` for the three files._
 
 ### Phase 2 Gate
 
@@ -590,7 +613,9 @@ deleted), re-pointing each entry to wherever the content now lives.
 - [ ] [AI] Every re-homed course declares `prerequisites`; the declared edge set is acyclic and
       self-reference-free.
 - [ ] [AI] Both e2e old-way-browse specs pass; every impacted legacy `_index.md` is updated, not
-      deleted; Q-E's three residual pages still exist with their ruled destination noted.
+      deleted — **except** Q-E's three residual `fundamentally-strong` roots, which are **deleted** and
+      whose old URLs **308 to `/en/learn/courses`** (Q-E=C override), asserted by
+      `course-rehome.unit.test.ts` and the §2.5 e2e specs.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
       `:validate-indexes` and `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0.
 - [ ] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
@@ -1230,39 +1255,34 @@ deleted), re-pointing each entry to wherever the content now lives.
       confirmation. If it IS overturned, update `prd.md`'s `Selected:` line and its rationale table's
       outcome column to the new option — acceptance: `grep -c "Selected: Option" prd.md` returns
       exactly **1** both before and after this step (zero or two-plus both indicate a defect).
-- [ ] [AI] Apply the ruled Q-D treatment, reusing the existing composite `Alert` primitive — **no
-      net-new component** (DD-44). Under **option A** the treatment has two parts that land in
-      different places: the bucket landing notice is authored into `<LEGACY>_index.md`, while the
-      **per-page banner is rendered from the route layout**
-      (`apps/ayokoding-www/src/app/[locale]/(content)/layout.tsx`, conditioned on the slug sitting
-      under `legacy/`) and **never** by editing the relocated pages. Under **option C** instead set
-      `robots: noindex` metadata for the bucket.
-      **Why the banner cannot be per-file**: option A's name ("a per-page banner") describes the
-      rendered result, not the mechanism. Writing a banner into each relocated page would edit content
-      files, which DD-41 forbids — `brd.md` fixes the edited-content set at exactly
-      `en/learn/overview.md` plus the new `legacy/_index.md` — and would falsify the binding scenario
-      "The relocation rewrites no page content" (`prd.md`, bound at §3.2). Rendering from the layout
-      satisfies the design intent and the move discipline at once.
-      Acceptance — four checks, all required. (a) `grep -cF "Alert" <LEGACY>_index.md` returns **1 or
-      more**. (b) The banner is wired in the layout —
-      `grep -cF "legacy" "apps/ayokoding-www/src/app/[locale]/(content)/layout.tsx"` returns **1 or
-      more** (quote the path: the brackets and parens are shell globbing characters). (c) **No
+- [ ] [AI] **Apply the ruled Q-D treatment — Option C (RESOLVED 2026-07-23 = `noindex`, no banner, no
+      landing notice).** The maintainer overturned the recommended Option A. Option C is "Option B's
+      landing **plus** a `robots` metadata change" (§3.4 intro), so there is **no per-page banner and no
+      `Alert` landing notice** — the ONLY treatment is `robots: noindex` for every page under the
+      `legacy/` bucket. Set it in the content route's metadata:
+      `generateMetadata` in `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx` (or the
+      `(content)` layout, whichever owns metadata — ground it before editing) returns
+      `robots: { index: false, follow: true }` when the resolved slug sits under `legacy/`. Do **not**
+      author an `Alert`/callout into `<LEGACY>_index.md` and do **not** wire a layout banner — those
+      were the Option-A mechanism and are now out of scope. This adds **no net-new component** (DD-44)
+      and edits **no relocated content file** (DD-41 preserved — the change is route-metadata only, so
+      "The relocation rewrites no page content" still holds). — _Suggested executor:
+      `swe-typescript-dev`_.
+      Acceptance — three checks, all required. (a) **noindex is wired for the bucket** — a unit/render
+      test asserts a `legacy/` slug's metadata carries `robots.index === false` while a `courses/` slug
+      does not (a boolean-both-ways check, not a grep), OR at minimum
+      `grep -n "index: false" apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`
+      returns a line guarded by a `legacy/` condition; a non-legacy page must stay indexable. (b) **No
       net-new component file was added** — command (single line, byte-identical to the Phase 0
       baseline step's; do not paraphrase it):
       `git ls-files -- 'libs/web-ui/src/**/alert*.tsx' 'apps/ayokoding-www/src/**/alert*.tsx' | grep -c .`
       returns **4**, unchanged from the Phase 0 Alert-primitive baseline recorded in
-      `evidence/phase-0-snapshot.txt` (the file Phase 0 actually writes — there is no
-      `phase-0-baseline.txt` in this plan, and no `<PLAN>` path constant either; both were dangling
-      references that made this check unmeasurable). Falsifiable both ways: authoring any net-new
-      `alert*.tsx` primitive raises the count to 5 and fails the check, while deleting one drops it to
-      3 and fails it too — only "reused the existing primitive, added nothing" reads 4. (d)
-      `npx nx run ayokoding-www:build` exits 0.
-      **The superseded form of this acceptance was a bare `grep -rF "Alert"` with no target path**,
-      which is vacuous: `Alert` already resolves in **2** files under `apps/ayokoding-www/src`
-      (`features/content/shell/callout.tsx` and its `callout.test.tsx`) and **5** under
-      `libs/web-ui/src` [Repo-grounded — measured 2026-07-22 by
-      `grep -rlF "Alert" <dir> | grep -c .` against each directory], so it passed before this plan ran
-      and could not distinguish "reused the primitive" from "did nothing at all".
+      `evidence/phase-0-snapshot.txt`. Falsifiable both ways: authoring any net-new `alert*.tsx`
+      primitive raises the count to 5 and fails, deleting one drops it to 3 and fails — only "added no
+      component" reads 4. (Under Option C this check is expected to pass trivially, since C touches no
+      component at all.) (c) `npx nx run ayokoding-www:build` exits 0.
+      **Q-D was Option A at authoring; the Alert-baseline check (b) is retained** because it still
+      guards the DD-44 no-net-new-component invariant regardless of which option ships.
 
 ### 3.5 · Manual verification (`en`, all breakpoints)
 
