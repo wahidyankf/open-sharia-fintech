@@ -461,19 +461,19 @@ flowchart TD
       (the plan folder has already moved to `in-progress/` by execution time)
       — acceptance: `gh pr list --head learning-plan-syllabus-folder-convention --json number` returns
       a non-empty array
-- [ ] [AI] Monitor the PR's check run, polling every 2 minutes with one
+- [x] [AI] Monitor the PR's check run, polling every 2 minutes with one
       `gh run view --json status,conclusion` per wakeup — never `gh run watch`, never a tight loop
       — acceptance: every check reports `conclusion: success`
-- [ ] [AI] If any CI check fails, fix the root cause and push a follow-up commit; repeat until every
+- [x] [AI] If any CI check fails, fix the root cause and push a follow-up commit; repeat until every
       check is green — acceptance: zero failing checks on the PR
 
 ### PR-Review Maker→Fixer Cycle
 
-- [ ] [AI] Cycle 1: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
+- [x] [AI] Cycle 1: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
       — acceptance: the cycle's findings are all addressed and CI is green before cycle 2 starts
-- [ ] [AI] Cycle 2: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
+- [x] [AI] Cycle 2: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
       — acceptance: as above
-- [ ] [AI] Cycle 3: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
+- [x] [AI] Cycle 3: run `pr-review-maker`, then `pr-review-fixer`, then wait for a green CI run
       — acceptance: 0 CRITICAL and 0 HIGH findings outstanding after this cycle, and the loop did not
       exit `escalated`
 
@@ -486,12 +486,12 @@ flowchart TD
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `gh pr view --json state` reports `OPEN` — the PR is reviewed and green but deliberately
+- [x] [AI] `gh pr view --json state` reports `OPEN` — the PR is reviewed and green but deliberately
       not yet merged
-- [ ] [AI] The PR's current head commit reports every check `conclusion: success`
-- [ ] [AI] Three review cycles are complete, every inline thread is answered, and 0 CRITICAL +
+- [x] [AI] The PR's current head commit reports every check `conclusion: success`
+- [x] [AI] Three review cycles are complete, every inline thread is answered, and 0 CRITICAL +
       0 HIGH findings remain outstanding
-- [ ] [AI] `git status --porcelain` prints no lines in the worktree
+- [x] [AI] `git status --porcelain` prints no lines in the worktree
 
 > **Pause Safety**: the PR carries the whole convention and its wiring, is fully reviewed, and CI is
 > green — but nothing is merged, so `main` is untouched and the branch can be abandoned without
