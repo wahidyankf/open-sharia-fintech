@@ -108,68 +108,81 @@ flowchart TD
 
 > _Executor: `repo-setup-manager`_
 
-- [ ] [AI] Promote the plan out of backlog (a pure move — neither stage carries a date prefix):
+- [x] [AI] Promote the plan out of backlog (a pure move — neither stage carries a date prefix):
       `git mv plans/backlog/learning-plan-syllabus-folder-convention plans/in-progress/learning-plan-syllabus-folder-convention`
       — acceptance: `test -d plans/in-progress/learning-plan-syllabus-folder-convention` exits 0 and
-      `test -d plans/backlog/learning-plan-syllabus-folder-convention` exits 1
-- [ ] [AI] Move the index line from `plans/backlog/README.md` to `plans/in-progress/README.md`
+      `test -d plans/backlog/learning-plan-syllabus-folder-convention` exits 1 - **Date**: 2026-07-22 · **Status**: done · done inside worktree on the PR branch; `git mv`
+      succeeded, in-progress present, backlog gone.
+- [x] [AI] Move the index line from `plans/backlog/README.md` to `plans/in-progress/README.md`
       — acceptance: `grep -c 'learning-plan-syllabus-folder-convention' plans/backlog/README.md`
       exits **1** (zero matches) while the same command against `plans/in-progress/README.md` exits 0,
       and `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       exits 0
-- [ ] [AI] Provision the worktree from the latest `origin/main`:
+- [x] [AI] Provision the worktree from the latest `origin/main`:
       `git fetch origin && git worktree add -b learning-plan-syllabus-folder-convention worktrees/learning-plan-syllabus-folder-convention origin/main`
       — acceptance: `git worktree list` prints a line containing
       `worktrees/learning-plan-syllabus-folder-convention`; before this step it does not
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
+- [x] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0 and `node_modules/` is present
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift reported
-- [ ] [AI] Record the markdown baseline: `npm run lint:md`
+- [x] [AI] Record the markdown baseline: `npm run lint:md`
       — acceptance: exits 0; if it exits non-zero, record every violation before changing anything
-- [ ] [AI] Record the link baseline:
+- [x] [AI] Record the link baseline:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       — acceptance: exits 0
-- [ ] [AI] Record the README-index baseline:
+- [x] [AI] Record the README-index baseline:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       — acceptance: exits 0
-- [ ] [AI] Resolve every preexisting failure recorded above before starting Phase 1
+- [x] [AI] Resolve every preexisting failure recorded above before starting Phase 1
       — acceptance: all three baseline commands exit 0 on a re-run
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm run lint:md` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
-- [ ] [AI] `git status --porcelain` prints no lines (the worktree is clean before work begins)
+- [x] [AI] `npm run lint:md` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
+- [x] [AI] `git status --porcelain` prints no lines (the worktree is clean before work begins)
 
 > **Pause Safety**: only the toolchain was verified and the baseline recorded — no convention work
 > exists yet. Safe to stop indefinitely. To resume: re-run the three baseline commands and confirm
 > they are still green.
 
+<!-- phase-0-notes -->
+
+> **Phase 0 execution notes** (2026-07-22): Worktree `worktrees/learning-plan-syllabus-folder-convention`
+> provisioned from `origin/main` @ `0a3a0defb`; `npm install` + `npm run doctor -- --fix` both exit 0.
+> Promote (`git mv backlog → in-progress`) done on the PR branch; index lines moved from
+> `plans/backlog/README.md` to `plans/in-progress/README.md`. Baselines: `lint:md` 0, `readme-index` 0;
+> `links validate` initially reported **8 broken links** caused by the promote (this plan's outbound
+> `../ayokoding-learning-path-*` links, plus inbound links from
+> `ayokoding-learning-path-02/syllabus/courses/README.md` and `plans/ideas/sibling-main-ci-never-runs-on-merge.md`).
+> All 8 repaired (`../` → `../../backlog/` outbound; inbound repointed to `in-progress/`); re-validation
+> clean. These inbound links will be repointed again to `plans/done/…` at Phase 8 archival.
+
 ## Phase 1: Convention Document and Course Template
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Create `repo-governance/conventions/structure/learning-plan-syllabus.md` (_New file_;
+- [x] [AI] Create `repo-governance/conventions/structure/learning-plan-syllabus.md` (_New file_;
       siblings: `plans.md`, `worktree-path.md`) with a single H1, a `## Principles Implemented/Respected`
       section, and `## Purpose` / `## Scope` sections matching the shape of
       `repo-governance/conventions/structure/worktree-path.md`
       — acceptance: `test -f repo-governance/conventions/structure/learning-plan-syllabus.md` exits 0;
       before this step it exits 1
-- [ ] [AI] Write the **learning-bearing trigger** section into that file per
+- [x] [AI] Write the **learning-bearing trigger** section into that file per
       [tech-docs DD-03](./tech-docs.md#dd-03--learning-bearing-is-defined-by-delivery-effect-mirroring-ui-bearing),
       including at least two positive and two negative worked examples
       — acceptance: `grep -c 'learning-bearing' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 3
-- [ ] [AI] Write the **required folder layout** section (`syllabus/README.md`, `syllabus/courses/`,
+- [x] [AI] Write the **required folder layout** section (`syllabus/README.md`, `syllabus/courses/`,
       `syllabus/paths/`, per-subfolder READMEs REQUIRED for new corpora) per
       [tech-docs DD-04](./tech-docs.md#dd-04--the-required-layout-is-syllabuscourses--syllabuspaths-both-with-a-readme)
       — acceptance: `grep -c 'syllabus/paths' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 1
-- [ ] [AI] **Re-measure the census before reproducing it.** The census in
+- [x] [AI] **Re-measure the census before reproducing it.** The census in
       [tech-docs §Section frequency](./tech-docs.md#section-frequency-the-tiering-evidence) is pinned
       to commit `e398b8d39`, but corpora 06 and 07 remain under active authorship, so the live counts
       may have drifted. Re-run the per-file measurement (iterate `*.md` under each corpus's
@@ -179,46 +192,46 @@ flowchart TD
       Total row and every per-plan column in the tech-docs §Section frequency table; if they differ,
       update the tech-docs table (and the derived Totals/percentages) first, then proceed. Tiers are
       re-derived from the fresh counts, not inherited
-- [ ] [AI] Write the **census + tiering** section reproducing the (reconciled) table in
+- [x] [AI] Write the **census + tiering** section reproducing the (reconciled) table in
       [tech-docs §Section frequency](./tech-docs.md#section-frequency-the-tiering-evidence), and state
       the derivation rule (REQUIRED ≥ 99%, RECOMMENDED ≥ 80%, OPTIONAL below) so the tiers can be
       re-measured rather than inherited
       — acceptance: `grep -c 'RECOMMENDED' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 2
-- [ ] [AI] Write the **copy-paste course template** as one fenced ` ```markdown ` block containing every
+- [x] [AI] Write the **copy-paste course template** as one fenced ` ```markdown ` block containing every
       REQUIRED section with placeholder content, followed by separately labelled RECOMMENDED and
       OPTIONAL blocks, per
       [tech-docs DD-02](./tech-docs.md#dd-02--the-template-ships-as-a-fenced-block-inside-the-convention-not-as-a-separate-file)
       — acceptance: `grep -c 'Course ID' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 1, **and** `grep -c '^## In which paths' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 (the template's last REQUIRED section is present verbatim)
-- [ ] [AI] Write the **`## Corpus Disposition`** rule (three values, the default, the
+- [x] [AI] Write the **`## Corpus Disposition`** rule (three values, the default, the
       name-the-non-plan-reader promotion trigger) per
       [tech-docs DD-07](./tech-docs.md#dd-07--corpus-disposition-the-corpus-stays-in-plans-by-default)
       — acceptance: `grep -c 'archive-with-plan' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 1, **and**
       `grep -c 'promote-to:' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 1
-- [ ] [AI] Write the **custody rule** (single custodian, read-only consumers, change requests routed to
+- [x] [AI] Write the **custody rule** (single custodian, read-only consumers, change requests routed to
       the custodian, the two archival hand-off branches, and the `md links validate` backstop) per
       [tech-docs DD-08](./tech-docs.md#dd-08--custody-one-custodian-read-only-consumers-routed-change-requests)
       — acceptance: `grep -c 'Custodian' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 2
-- [ ] [AI] Write the **grandfathering** paragraph naming the 17-file ordered-list cohort as
+- [x] [AI] Write the **grandfathering** paragraph naming the 17-file ordered-list cohort as
       pre-existing and out of scope for retrofit per
       [tech-docs DD-06](./tech-docs.md#dd-06--bullets-are-canonical-the-17-file-ordered-list-cohort-is-grandfathered)
       — acceptance: `grep -c 'grandfather' repo-governance/conventions/structure/learning-plan-syllabus.md`
       exits 0 printing a count ≥ 1
-- [ ] [AI] Add the index entry to `repo-governance/conventions/structure/README.md` in the
+- [x] [AI] Add the index entry to `repo-governance/conventions/structure/README.md` in the
       `## Documents` list, alphabetically between the `Instruction-File Size Budget` and
       `Per-Directory Licensing` entries
       — acceptance: `grep -c 'learning-plan-syllabus.md' repo-governance/conventions/structure/README.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Add the top-level index entry to `repo-governance/conventions/README.md` alongside the other
+- [x] [AI] Add the top-level index entry to `repo-governance/conventions/README.md` alongside the other
       structure conventions
       — acceptance: `grep -c 'learning-plan-syllabus' repo-governance/conventions/README.md` exits 0
       printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Add the cross-reference in `repo-governance/conventions/structure/plans.md` §Multi-File
+- [x] [AI] Add the cross-reference in `repo-governance/conventions/structure/plans.md` §Multi-File
       Structure, immediately after the existing sentence describing the UI-bearing `prd.md`
       requirement, without altering that sentence
       — acceptance: `grep -c 'learning-plan-syllabus' repo-governance/conventions/structure/plans.md`
@@ -229,11 +242,11 @@ flowchart TD
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `test -f repo-governance/conventions/structure/learning-plan-syllabus.md` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0 — proves the new convention is indexed, not orphaned
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
-- [ ] [AI] `npm run lint:md` exits 0
-- [ ] [AI] `git status --porcelain repo-governance/` lists exactly these four paths and no others:
+- [x] [AI] `test -f repo-governance/conventions/structure/learning-plan-syllabus.md` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0 — proves the new convention is indexed, not orphaned
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
+- [x] [AI] `npm run lint:md` exits 0
+- [x] [AI] `git status --porcelain repo-governance/` lists exactly these four paths and no others:
       `conventions/structure/learning-plan-syllabus.md`, `conventions/structure/README.md`,
       `conventions/README.md`, `conventions/structure/plans.md`
 

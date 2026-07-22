@@ -52,12 +52,12 @@ convention before reproducing it (see DD-05 and the Phase 1 census step in
 
 ### Corpus shapes
 
-| Corpus                                                                                                                                   | Course files | `courses/README.md` | Path manifests | `paths/README.md` |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | -----------: | ------------------- | -------------: | ----------------- |
-| [`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) |          120 | present             |              4 | present           |
-| [`ayokoding-learning-path-06-skills-accounting`](../ayokoding-learning-path-06-skills-accounting/README.md)                              |           24 | absent              |              2 | absent            |
-| [`ayokoding-learning-path-07-skills-erp`](../ayokoding-learning-path-07-skills-erp/README.md)                                            |           30 | absent              |              2 | absent            |
-| **Total**                                                                                                                                |      **174** | 1 of 3              |          **8** | 1 of 3            |
+| Corpus                                                                                                                                              | Course files | `courses/README.md` | Path manifests | `paths/README.md` |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -----------: | ------------------- | -------------: | ----------------- |
+| [`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) |          120 | present             |              4 | present           |
+| [`ayokoding-learning-path-06-skills-accounting`](../../backlog/ayokoding-learning-path-06-skills-accounting/README.md)                              |           24 | absent              |              2 | absent            |
+| [`ayokoding-learning-path-07-skills-erp`](../../backlog/ayokoding-learning-path-07-skills-erp/README.md)                                            |           30 | absent              |              2 | absent            |
+| **Total**                                                                                                                                           |      **174** | 1 of 3              |          **8** | 1 of 3            |
 
 Plan 02's 120 standalone course files plus 7 capstones embedded in host-topic files make the
 **127-course catalog** its `syllabus/courses/README.md` documents `[Repo-grounded]`.

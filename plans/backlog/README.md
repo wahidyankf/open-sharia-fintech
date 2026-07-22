@@ -32,12 +32,6 @@ README carries its scope, counts and gates.
   — **Wave 3, terminal for `skills/`.** The `conventional-erp` and `sharia-erp` paths, their corpus
   and their manifests.
 
-Standalone plans:
-
-- [learning-plan-syllabus-folder-convention](./learning-plan-syllabus-folder-convention/README.md)
-  — Governs the `syllabus/` folder three learning-path plans grew by imitation: a course template,
-  a corpus-disposition rule, and a custody rule for a shared corpus.
-
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
 

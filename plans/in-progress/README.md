@@ -4,7 +4,9 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-_None currently active._
+- [learning-plan-syllabus-folder-convention](./learning-plan-syllabus-folder-convention/README.md)
+  — Governs the `syllabus/` folder three learning-path plans grew by imitation: a course template,
+  a corpus-disposition rule, and a custody rule for a shared corpus.
 
 Other ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.

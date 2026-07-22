@@ -24,11 +24,11 @@ named choice), Justify (a rationale table). The rule is written in
 **Learning-bearing** plans have no equivalent rule, yet three of them have independently grown a
 `syllabus/` folder holding `courses/` and `paths/` `[Repo-grounded]`:
 
-| Plan (custodian)                                                                                                                         | `courses/` files | `courses/README.md` | `paths/` manifests |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------: | ------------------- | -----------------: |
-| [`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) |              120 | present             |                  4 |
-| [`ayokoding-learning-path-06-skills-accounting`](../ayokoding-learning-path-06-skills-accounting/README.md)                              |               24 | absent              |                  2 |
-| [`ayokoding-learning-path-07-skills-erp`](../ayokoding-learning-path-07-skills-erp/README.md)                                            |               30 | absent              |                  2 |
+| Plan (custodian)                                                                                                                                    | `courses/` files | `courses/README.md` | `paths/` manifests |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------: | ------------------- | -----------------: |
+| [`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) |              120 | present             |                  4 |
+| [`ayokoding-learning-path-06-skills-accounting`](../../backlog/ayokoding-learning-path-06-skills-accounting/README.md)                              |               24 | absent              |                  2 |
+| [`ayokoding-learning-path-07-skills-erp`](../../backlog/ayokoding-learning-path-07-skills-erp/README.md)                                            |               30 | absent              |                  2 |
 
 Plan 02's 120 standalone course files plus 7 capstones embedded in host-topic files make up the
 **127-course catalog** its `syllabus/courses/README.md` describes `[Repo-grounded]`. None of the
