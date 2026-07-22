@@ -429,13 +429,13 @@ flowchart TD
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] Run affected typecheck: `npx nx affected -t typecheck` — acceptance: exits 0
-- [ ] [AI] Run affected linting: `npx nx affected -t lint` — acceptance: exits 0
-- [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick` — acceptance: exits 0
-- [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — acceptance: exits 0
-- [ ] [AI] Run markdown linting: `npm run lint:md` — acceptance: exits 0
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by these changes
-- [ ] [AI] Re-run every failing check to confirm resolution — acceptance: all commands above exit 0
+- [x] [AI] Run affected typecheck: `npx nx affected -t typecheck` — acceptance: exits 0
+- [x] [AI] Run affected linting: `npx nx affected -t lint` — acceptance: exits 0
+- [x] [AI] Run affected quick tests: `npx nx affected -t test:quick` — acceptance: exits 0
+- [x] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — acceptance: exits 0
+- [x] [AI] Run markdown linting: `npm run lint:md` — acceptance: exits 0
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by these changes
+- [x] [AI] Re-run every failing check to confirm resolution — acceptance: all commands above exit 0
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows the root cause orientation principle — proactively fix preexisting errors encountered
@@ -443,20 +443,20 @@ flowchart TD
 
 ### Commit Guidelines
 
-- [ ] [AI] Commit thematically — the convention, the enforcement wiring, the corpus declarations, and
+- [x] [AI] Commit thematically — the convention, the enforcement wiring, the corpus declarations, and
       the two-pager are four separate concerns and get separate commits
-- [ ] [AI] Follow Conventional Commits: `docs(governance): add learning-plan syllabus convention`,
+- [x] [AI] Follow Conventional Commits: `docs(governance): add learning-plan syllabus convention`,
       `feat(agents): enforce learning-bearing syllabus record`, and so on
-- [ ] [AI] Keep any preexisting fix in its own commit, separate from plan work
+- [x] [AI] Keep any preexisting fix in its own commit, separate from plan work
       — acceptance: `git log --oneline origin/main..HEAD` shows one commit per concern with no
       bundled unrelated changes
 
 ### PR and Post-Push CI Verification
 
-- [ ] [AI] Commit and push to origin `learning-plan-syllabus-folder-convention`
+- [x] [AI] Commit and push to origin `learning-plan-syllabus-folder-convention`
       — acceptance: `git status --porcelain` prints no lines afterwards, and
       `git rev-parse HEAD` equals `git rev-parse origin/learning-plan-syllabus-folder-convention`
-- [ ] [AI] Open a draft PR against `main`:
+- [x] [AI] Open a draft PR against `main`:
       `gh pr create --draft --base main --title 'docs(governance): learning-plan syllabus folder convention' --body-file plans/in-progress/learning-plan-syllabus-folder-convention/README.md`
       (the plan folder has already moved to `in-progress/` by execution time)
       — acceptance: `gh pr list --head learning-plan-syllabus-folder-convention --json number` returns
