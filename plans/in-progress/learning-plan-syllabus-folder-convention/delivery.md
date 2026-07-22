@@ -258,38 +258,38 @@ flowchart TD
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Edit `.claude/agents/plan-maker.md`: add a section headed
+- [x] [AI] Edit `.claude/agents/plan-maker.md`: add a section headed
       "Learning-Bearing Plans — Mandatory Syllabus Record (HARD RULE)", modelled on the existing
       `## UI-Bearing Plans — Mandatory Design Funnel (HARD RULE)` section, requiring the folder
       layout, the template-derived course shape, the `## Corpus Disposition` declaration, and the
       custodian line, plus the delivery steps that produce them
       — acceptance: `grep -c 'learning-bearing' .claude/agents/plan-maker.md` exits 0 printing a count
       ≥ 2; before this step it exits 1
-- [ ] [AI] Edit `.claude/agents/plan-checker.md`: add an H3 numbered
+- [x] [AI] Edit `.claude/agents/plan-checker.md`: add an H3 numbered
       "20. Learning-Bearing Syllabus Completeness (Step 5n — CONDITIONAL)" after the existing
       Step 5m section, with `#### What to Validate` and
       `#### Finding Severity` subsections mirroring Step 5k's structure and HIGH severity
       — acceptance: `grep -c 'Step 5n' .claude/agents/plan-checker.md` exits 0 printing a count ≥ 1,
       **and** `grep -c 'Step 5m' .claude/agents/plan-checker.md` still exits 0 (the existing step is
       not displaced)
-- [ ] [AI] Edit `.claude/agents/plan-fixer.md`: add the scaffold action for a missing syllabus record,
+- [x] [AI] Edit `.claude/agents/plan-fixer.md`: add the scaffold action for a missing syllabus record,
       modelled on the existing Step 5k funnel-scaffold action
       — acceptance: `grep -c 'syllabus' .claude/agents/plan-fixer.md` exits 0 printing a count ≥ 1;
       before this step it exits 1
-- [ ] [AI] Edit `.claude/skills/plan-creating-project-plans/SKILL.md`: add a learning-bearing section
+- [x] [AI] Edit `.claude/skills/plan-creating-project-plans/SKILL.md`: add a learning-bearing section
       beside the existing `## UI Mockups in UI-Bearing Plans — the UI-design-funnel (HARD RULE)`
       section, pointing at the new convention
       — acceptance: `grep -c 'learning-bearing' .claude/skills/plan-creating-project-plans/SKILL.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Edit `repo-governance/workflows/plan/plan-quality-gate.md`: add a Step 5n bullet to the
+- [x] [AI] Edit `repo-governance/workflows/plan/plan-quality-gate.md`: add a Step 5n bullet to the
       **Validation scope** list in Step 1, immediately after the existing Step 5k bullet
       — acceptance: `grep -c '5n' repo-governance/workflows/plan/plan-quality-gate.md` exits 0 printing
       a count ≥ 1; before this step it exits 1
-- [ ] [AI] Verify the new prose is vendor-neutral: no vendor product name appears outside a
+- [x] [AI] Verify the new prose is vendor-neutral: no vendor product name appears outside a
       `Platform Binding Examples` heading in any edited `repo-governance/` file, per the
       [Governance Vendor-Independence Convention](../../../repo-governance/conventions/structure/governance-vendor-independence.md)
       — acceptance: the repo's vendor-audit check reports zero findings for the edited files
-- [ ] [AI] Regenerate the platform-binding mirrors: `npm run generate:bindings`
+- [x] [AI] Regenerate the platform-binding mirrors: `npm run generate:bindings`
       — acceptance: exits 0, **and** `git status --porcelain .opencode/agents/` lists the three
       regenerated mirror files; re-running the command a second time leaves
       `git status --porcelain .opencode/agents/` unchanged (the generator is idempotent)
@@ -298,12 +298,12 @@ flowchart TD
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `grep -c 'learning-bearing' .claude/agents/plan-maker.md` exits 0
-- [ ] [AI] `grep -c 'Step 5n' .claude/agents/plan-checker.md` exits 0
-- [ ] [AI] `grep -c 'learning-bearing' .opencode/agents/plan-checker.md` exits 0 — proves the mirror was regenerated, not skipped
-- [ ] [AI] `npm run generate:bindings` exits 0 and leaves `git status --porcelain .opencode/` unchanged on a second consecutive run
-- [ ] [AI] `npm run lint:md` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
+- [x] [AI] `grep -c 'learning-bearing' .claude/agents/plan-maker.md` exits 0
+- [x] [AI] `grep -c 'Step 5n' .claude/agents/plan-checker.md` exits 0
+- [x] [AI] `grep -c 'learning-bearing' .opencode/agents/plan-checker.md` exits 0 — proves the mirror was regenerated, not skipped
+- [x] [AI] `npm run generate:bindings` exits 0 and leaves `git status --porcelain .opencode/` unchanged on a second consecutive run
+- [x] [AI] `npm run lint:md` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
 
 > **Pause Safety**: the rule is written and the chain enforces it, but no existing corpus has been
 > annotated yet. A learning-bearing plan authored from this point forward is governed; existing plans
@@ -315,36 +315,36 @@ flowchart TD
 > agent holds those folders before editing — `git status --porcelain plans/backlog/` must be clean for
 > the target paths at the start of this phase.
 
-- [ ] [AI] Add a `**Custodian**: ayokoding-learning-path-02-schema-and-prerequisite-dag` line to
+- [x] [AI] Add a `**Custodian**: ayokoding-learning-path-02-schema-and-prerequisite-dag` line to
       `plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md`,
       directly beneath its H1
       — acceptance: `grep -c 'Custodian' plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Add a `## Corpus Disposition` section declaring `archive-with-plan` to
+- [x] [AI] Add a `## Corpus Disposition` section declaring `archive-with-plan` to
       `plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`, naming the
       absence of any non-plan reader as the justification
       — acceptance: `grep -c '## Corpus Disposition' plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Repeat both edits for `ayokoding-learning-path-06-skills-accounting` (its own
+- [x] [AI] Repeat both edits for `ayokoding-learning-path-06-skills-accounting` (its own
       `syllabus/README.md` and `tech-docs.md`)
       — acceptance: `grep -c 'Custodian' plans/backlog/ayokoding-learning-path-06-skills-accounting/syllabus/README.md`
       exits 0 **and** `grep -c '## Corpus Disposition' plans/backlog/ayokoding-learning-path-06-skills-accounting/tech-docs.md`
       exits 0
-- [ ] [AI] Repeat both edits for `ayokoding-learning-path-07-skills-erp`
+- [x] [AI] Repeat both edits for `ayokoding-learning-path-07-skills-erp`
       — acceptance: `grep -c 'Custodian' plans/backlog/ayokoding-learning-path-07-skills-erp/syllabus/README.md`
       exits 0 **and** `grep -c '## Corpus Disposition' plans/backlog/ayokoding-learning-path-07-skills-erp/tech-docs.md`
       exits 0
-- [ ] [AI] Add the consumer declaration
+- [x] [AI] Add the consumer declaration
       `custodied-by: ayokoding-learning-path-02-schema-and-prerequisite-dag` to
       `plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md`, with a one-line note
       that the plan reads but does not edit that corpus
       — acceptance: `grep -c 'custodied-by' plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Add the same consumer declaration to
+- [x] [AI] Add the same consumer declaration to
       `plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md`
       — acceptance: `grep -c 'custodied-by' plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md`
       exits 0 printing a count ≥ 1; before this step it exits 1
-- [ ] [AI] Verify no course or manifest **body** was modified by this phase
+- [x] [AI] Verify no course or manifest **body** was modified by this phase
       — acceptance: `git status --porcelain plans/backlog/*/syllabus/courses/ plans/backlog/*/syllabus/paths/`
       prints no lines; any printed line means a course or manifest body was touched and the
       no-retrofit rule (DD-11) was violated
@@ -353,12 +353,12 @@ flowchart TD
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] All three `syllabus/README.md` files contain a `**Custodian**` line — run
+- [x] [AI] All three `syllabus/README.md` files contain a `**Custodian**` line — run
       `grep -c 'Custodian' plans/backlog/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md plans/backlog/ayokoding-learning-path-06-skills-accounting/syllabus/README.md plans/backlog/ayokoding-learning-path-07-skills-erp/syllabus/README.md`
       and confirm it exits 0 printing a non-zero count for each of the three files
-- [ ] [AI] `git status --porcelain plans/backlog/*/syllabus/courses/ plans/backlog/*/syllabus/paths/` prints no lines — no course or manifest body was touched
-- [ ] [AI] `npm run lint:md` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
+- [x] [AI] `git status --porcelain plans/backlog/*/syllabus/courses/ plans/backlog/*/syllabus/paths/` prints no lines — no course or manifest body was touched
+- [x] [AI] `npm run lint:md` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
 
 > **Pause Safety**: every existing corpus now carries a written owner and a written end-of-life, and
 > no course body changed. Stopping here leaves the repo strictly better documented than before. To
@@ -366,7 +366,7 @@ flowchart TD
 
 ## Phase 4: Conformance Recipe and Validator Deferral
 
-- [ ] [AI] Add a `## Conformance Recipe` section to
+- [x] [AI] Add a `## Conformance Recipe` section to
       `repo-governance/conventions/structure/learning-plan-syllabus.md` whose commands iterate the
       `*.md` files under a corpus's `syllabus/courses/`, skip `README.md` and `surgery.md`, and test
       each file with `grep -q '<pattern>' "$file"` — the per-file loop described in
@@ -377,7 +377,7 @@ flowchart TD
       exits 0 printing a count ≥ 1, **and** no command line inside the recipe's fenced blocks contains
       the token `grep -L` or `--glob` (read the fenced blocks and confirm; a prose sentence
       explaining why those flags are banned is expected and does not violate this)
-- [ ] [AI] Run the recipe against all three existing corpora and paste its output into this checklist
+- [x] [AI] Run the recipe against all three existing corpora and paste its output into this checklist
       as a fenced block
       — acceptance: the output shows plan 02 reporting exactly one file,
       `syllabus/courses/capstone-forge-ready.md`, missing the REQUIRED `**Scope note**` and
@@ -386,12 +386,27 @@ flowchart TD
       result means the recipe or the census in
       [tech-docs §Section frequency](./tech-docs.md#section-frequency-the-tiering-evidence)
       is wrong and both must be re-derived before proceeding
-- [ ] [AI] Create `plans/ideas/syllabus-conformance-validator.md` (_New file_) as a two-pager per the
+
+  Recipe output (run 2026-07-22 against all three corpora):
+
+  ```text
+  === ayokoding-learning-path-02-schema-and-prerequisite-dag ===
+  MISS capstone-forge-ready.md: Scope-note Concepts
+  === ayokoding-learning-path-06-skills-accounting ===
+  (no misses)
+  === ayokoding-learning-path-07-skills-erp ===
+  (no misses)
+  ```
+
+  Matches acceptance exactly: plan 02 reports only the capstone variant missing `**Scope note**` +
+  `## Concepts`; plans 06 and 07 report zero REQUIRED-section misses.
+
+- [x] [AI] Create `plans/ideas/syllabus-conformance-validator.md` (_New file_) as a two-pager per the
       [Ideas Folder convention](../../../repo-governance/conventions/structure/plans.md#ideas-folder-two-pagers),
       covering all eight required sections and citing this plan as prior art
       — acceptance: `test -f plans/ideas/syllabus-conformance-validator.md` exits 0; before this step
       it exits 1
-- [ ] [AI] Add the two-pager's index line to `plans/ideas/README.md` in the `## Two-Pagers` list
+- [x] [AI] Add the two-pager's index line to `plans/ideas/README.md` in the `## Two-Pagers` list
       — acceptance: `grep -c 'syllabus-conformance-validator' plans/ideas/README.md` exits 0 printing
       a count ≥ 1, **and**
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
@@ -401,10 +416,10 @@ flowchart TD
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `grep -c 'Conformance Recipe' repo-governance/conventions/structure/learning-plan-syllabus.md` exits 0
-- [ ] [AI] `test -f plans/ideas/syllabus-conformance-validator.md` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
-- [ ] [AI] `npm run lint:md` exits 0
+- [x] [AI] `grep -c 'Conformance Recipe' repo-governance/conventions/structure/learning-plan-syllabus.md` exits 0
+- [x] [AI] `test -f plans/ideas/syllabus-conformance-validator.md` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
+- [x] [AI] `npm run lint:md` exits 0
 
 > **Pause Safety**: the convention is complete, applied, and carries a check an author can run today;
 > the deterministic validator is filed as an idea rather than half-built. Safe to stop. To resume:
