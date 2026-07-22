@@ -521,13 +521,13 @@ flowchart TD
 
 ### 6.1 — Confirm the propagation surface before copying anything
 
-- [ ] [AI] Enumerate the exact files this plan created or edited that are shared surfaces, from the
+- [x] [AI] Enumerate the exact files this plan created or edited that are shared surfaces, from the
       File Impact table in [tech-docs.md](./tech-docs.md) — acceptance: the list contains the
       convention document, the two index entries, the `plans.md` cross-reference, the three
       plan-agent definitions, and the `plan-quality-gate` workflow entry; it contains **no**
       `plans/backlog/ayokoding-learning-path-*` path and no `plans/` corpus file, because those are
       `ose-public` content that does not exist in a sibling.
-- [ ] [AI] For each sibling, confirm the target file either exists or is legitimately absent:
+- [x] [AI] For each sibling, confirm the target file either exists or is legitimately absent:
       `for r in ose-primer ose-infra; do for p in <each shared path>; do git -C "/Users/wkf/ose-projects/$r" cat-file -e "main:$p" 2>/dev/null || echo "ABSENT $r $p"; done; done`
       — acceptance: every `ABSENT` line is one you can justify in writing before proceeding. A silent
       empty result here is **not** a pass: run it once with a deliberately fake path appended to the
@@ -535,31 +535,31 @@ flowchart TD
 
 ### 6.2 — `ose-primer`: worktree, apply, PR
 
-- [ ] [AI] Create a worktree off `origin/main` per the bare-repo landing method — acceptance:
+- [x] [AI] Create a worktree off `origin/main` per the bare-repo landing method — acceptance:
       `git -C /Users/wkf/ose-projects/ose-primer worktree list` lists the new path
-- [ ] [AI] Run `npm install` **and** `npm run doctor -- --fix` in the new worktree, per
+- [x] [AI] Run `npm install` **and** `npm run doctor -- --fix` in the new worktree, per
       [Worktree Toolchain Initialization](../../../repo-governance/development/workflow/worktree-setup.md)
       — acceptance: both exit 0
-- [ ] [AI] Apply the convention document and every shared-surface edit, **adapted to that repo's own
+- [x] [AI] Apply the convention document and every shared-surface edit, **adapted to that repo's own
       existing text** — this is not a blind file copy. Where a sibling's `plan-checker.md` numbers its
       steps differently, the new step takes that repo's next free number, not `ose-public`'s
       — acceptance: the convention's normative content is identical; only numbering and surrounding
       prose differ
-- [ ] [AI] Regenerate platform bindings in the worktree: `npm run generate:bindings`
+- [x] [AI] Regenerate platform bindings in the worktree: `npm run generate:bindings`
       — acceptance: exits 0, and `git status --porcelain` shows the `.opencode/` and `.amazonq/`
       artifacts regenerated rather than hand-edited
-- [ ] [AI] Run the repo's own gates: `npm run lint:md`, plus `md links validate`,
+- [x] [AI] Run the repo's own gates: `npm run lint:md`, plus `md links validate`,
       `md heading-hierarchy validate` — acceptance: all exit 0
-- [ ] [AI] Open a draft PR — acceptance: `gh pr view --json state` reports `OPEN`
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle, **maximum 3 cycles** — acceptance: 0 CRITICAL +
+- [x] [AI] Open a draft PR — acceptance: `gh pr view --json state` reports `OPEN`
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle, **maximum 3 cycles** — acceptance: 0 CRITICAL +
       0 HIGH outstanding, every inline thread answered
-- [ ] [AI] **Do NOT merge.** The merge is ordered in Phase 8.
+- [x] [AI] **Do NOT merge.** The merge is ordered in Phase 8.
 
 ### 6.3 — `ose-infra`: worktree, apply, PR
 
-- [ ] [AI] Repeat every step of 6.2 against `/Users/wkf/ose-projects/ose-infra`
+- [x] [AI] Repeat every step of 6.2 against `/Users/wkf/ose-projects/ose-infra`
       — acceptance: same criteria, same 3-cycle review ceiling, same do-not-merge rule
-- [ ] [AI] Record any surface that legitimately differs in `ose-infra` (it is the private
+- [x] [AI] Record any surface that legitimately differs in `ose-infra` (it is the private
       infrastructure repo and does not participate in every parity loop) — acceptance: each
       difference is written down with a reason, not silently skipped
 
@@ -567,13 +567,13 @@ flowchart TD
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Both sibling PRs report `OPEN`, with every check `conclusion: success`
-- [ ] [AI] The convention's normative text is byte-identical across all three repos:
+- [x] [AI] Both sibling PRs report `OPEN`, with every check `conclusion: success`
+- [x] [AI] The convention's normative text is byte-identical across all three repos:
       `for r in ose-public ose-primer ose-infra; do git -C "/Users/wkf/ose-projects/$r" show "<branch>:repo-governance/conventions/structure/learning-plan-syllabus.md" | shasum; done`
       prints **one distinct hash**. Negative control: appending a single character to any one copy
       makes it print two — run that mutation once and confirm it does, then revert it.
-- [ ] [AI] No sibling worktree holds uncommitted work: `git status --porcelain` prints nothing in each
-- [ ] [AI] `ose-public`'s PR is still `OPEN` and unmerged — propagation must not have merged it early
+- [x] [AI] No sibling worktree holds uncommitted work: `git status --porcelain` prints nothing in each
+- [x] [AI] `ose-public`'s PR is still `OPEN` and unmerged — propagation must not have merged it early
 
 > **Pause Safety**: three PRs are open, reviewed and green; nothing is merged in any repo. Safe to
 > stop. To resume: re-read `learnings.md` and continue with Phase 7.
@@ -583,21 +583,21 @@ flowchart TD
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
       `ose-infra` only and is never cross-routed into `ose-public`/`ose-primer`
       — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
       — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large); code
       homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan and
       NEVER landed inline
       — acceptance: every `learnings.md` entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
       — acceptance: `learnings.md` is never silently empty
 
@@ -605,9 +605,9 @@ flowchart TD
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits or PR
+- [x] [AI] No code-homed learning landed inline in this plan's own commits or PR
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Safe to stop. To resume: re-read `learnings.md` and confirm
@@ -615,33 +615,33 @@ flowchart TD
 
 ## Phase 8: Plan Archival
 
-- [ ] [AI] Verify every delivery checklist item in Phases 0-6 is ticked
+- [x] [AI] Verify every delivery checklist item in Phases 0-6 is ticked
       — acceptance: reading `plans/in-progress/learning-plan-syllabus-folder-convention/delivery.md`
       from its top through the end of the Phase 7 Gate shows no `- [ ]` line; the only unticked boxes
       remaining are the ones in this Phase 8 section, which tick as they are performed
-- [ ] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
+- [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
       terminal state or the file records the explicit `No generalizable learnings — <reason>` escape,
       and both safety gates were applied
-- [ ] [AI] Verify ALL quality gates pass (local + CI)
-- [ ] [AI] Manual behavioral verification is **exempt** for this plan — no UI surface and no API
+- [x] [AI] Verify ALL quality gates pass (local + CI)
+- [x] [AI] Manual behavioral verification is **exempt** for this plan — no UI surface and no API
       endpoint is touched (see [tech-docs §Exemptions](./tech-docs.md#exemptions-declared))
-- [ ] [AI] Rule-15 three-tester retest and Rule-16 API exploratory retest are **exempt** for the same
+- [x] [AI] Rule-15 three-tester retest and Rule-16 API exploratory retest are **exempt** for the same
       reason — record the exemption rather than skipping it silently
-- [ ] [AI] Rename and move:
+- [x] [AI] Rename and move:
       `git mv plans/in-progress/learning-plan-syllabus-folder-convention plans/done/YYYY-MM-DD__learning-plan-syllabus-folder-convention`
       using the completion date, not the creation date
       — acceptance: `ls -d plans/done/*__learning-plan-syllabus-folder-convention` exits 0 printing
       exactly one path, and `test -d plans/in-progress/learning-plan-syllabus-folder-convention`
       exits 1
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
       — acceptance: `grep -c 'learning-plan-syllabus-folder-convention' plans/in-progress/README.md`
       exits **1**
-- [ ] [AI] Update `plans/done/README.md` — add the entry with the completion date
+- [x] [AI] Update `plans/done/README.md` — add the entry with the completion date
       — acceptance: `grep -c 'learning-plan-syllabus-folder-convention' plans/done/README.md` exits 0
-- [ ] [AI] Verify indexes are consistent:
+- [x] [AI] Verify indexes are consistent:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       — acceptance: exits 0
-- [ ] [AI] Commit the archival **on the PR branch** and push it, per the Archival-in-PR rule:
+- [x] [AI] Commit the archival **on the PR branch** and push it, per the Archival-in-PR rule:
       `git commit -m 'chore(plans): move learning-plan-syllabus-folder-convention to done'` then
       `git push origin learning-plan-syllabus-folder-convention`
       — acceptance: `gh pr view --json files` lists the `plans/done/…` paths, proving the archival
@@ -672,11 +672,11 @@ flowchart TD
 
 > The terminal gate. All checks below must pass for the plan to be considered delivered.
 
-- [ ] [AI] `gh pr view --json state` reports `MERGED`, and the merged PR's file list includes the `plans/done/…` archival paths
-- [ ] [AI] `test -d plans/in-progress/learning-plan-syllabus-folder-convention` exits 1 and `ls -d plans/done/*__learning-plan-syllabus-folder-convention` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
-- [ ] [AI] `git status --porcelain` prints no lines and nothing is unpushed
+- [x] [AI] `gh pr view --json state` reports `MERGED`, and the merged PR's file list includes the `plans/done/…` archival paths
+- [x] [AI] `test -d plans/in-progress/learning-plan-syllabus-folder-convention` exits 1 and `ls -d plans/done/*__learning-plan-syllabus-folder-convention` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate` exits 0
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content` exits 0
+- [x] [AI] `git status --porcelain` prints no lines and nothing is unpushed
 
 > **Pause Safety**: the plan is archived, indexed, and pushed; the worktree is removed. This is the
 > terminal state. To verify later: re-run the two rhino-cli validators above.

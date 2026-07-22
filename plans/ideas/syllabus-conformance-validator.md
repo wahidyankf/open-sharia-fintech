@@ -39,7 +39,7 @@ build is a deliberate trigger rather than a rediscovery.
 
 ## Prior art / precedents
 
-- The [`learning-plan-syllabus-folder-convention`](../in-progress/learning-plan-syllabus-folder-convention/README.md)
+- The [`learning-plan-syllabus-folder-convention`](../done/2026-07-22__learning-plan-syllabus-folder-convention/README.md)
   plan — this brief is its deferred deterministic-validator half, and the convention + recipe are its
   shipped output.
 - [`mermaid-validator-does-not-check-syntax`](./mermaid-validator-does-not-check-syntax.md) — a cautionary

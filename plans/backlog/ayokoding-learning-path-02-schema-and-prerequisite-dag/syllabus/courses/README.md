@@ -57,7 +57,7 @@ the other. The fork therefore runs along the **inherited-versus-newly-authored s
 already documents above (95 + 25 = 120), not along scattered typos.
 
 **Do not retrofit.** The
-[`learning-plan-syllabus-folder-convention`](../../../../in-progress/learning-plan-syllabus-folder-convention/tech-docs.md#dd-06--bullets-are-canonical-the-17-file-ordered-list-cohort-is-grandfathered)
+[`learning-plan-syllabus-folder-convention`](../../../../done/2026-07-22__learning-plan-syllabus-folder-convention/tech-docs.md#dd-06--bullets-are-canonical-the-17-file-ordered-list-cohort-is-grandfathered)
 plan owns this corpus's format convention. Its **DD-06** rules bullets canonical **and explicitly
 grandfathers the 17-file ordered-list cohort**, naming a retrofit out of scope. This section records
 the fork so it is a known deferred item with a named owner rather than an undocumented

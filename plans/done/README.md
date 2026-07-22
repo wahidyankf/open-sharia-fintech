@@ -4,6 +4,24 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-22: learning-plan-syllabus-folder-convention](./2026-07-22__learning-plan-syllabus-folder-convention/README.md) —
+  Authored the Learning-Plan Syllabus Convention
+  (`repo-governance/conventions/structure/learning-plan-syllabus.md`) — a learning-bearing trigger, a
+  required `syllabus/` folder layout, a REQUIRED/RECOMMENDED/OPTIONAL section tiering derived from a
+  frozen 174-course census (plan 02 = 120, plan 06 = 24, plan 07 = 30), a copy-paste course template,
+  a corpus-disposition rule, and a custody rule for a shared corpus — then wired its enforcement into
+  `plan-maker` / `plan-checker` (Step 5n) / `plan-fixer`, the `plan-creating-project-plans` skill, and
+  the `plan-quality-gate` workflow. Added `## Corpus Disposition` + `**Custodian**` declarations to the
+  three ayokoding learning-path corpora (plans 02/06/07) and `custodied-by:` consumer echoes to plans
+  04/05, and filed the deferred deterministic `rhino-cli md syllabus validate` check as
+  [`plans/ideas/syllabus-conformance-validator.md`](../ideas/syllabus-conformance-validator.md) — a
+  check follows a settled format, it does not precede it. Propagated the convention + enforcement
+  across ose-public/ose-primer/ose-infra, adapted to each repo's own step numbering; the convention
+  doc is **byte-identical** in all three (one `shasum`, `fa4882c36…`). Delivered via PR #82
+  (ose-public), #16 (ose-primer), #18 (ose-infra); three PR-review cycles on the home PR caught two
+  census off-by-ones (a "53 of 53" that should read 54) and a custody-vs-disposition framing error
+  fanned across four enforcement surfaces. Knowledge Capture routed both learnings inline to the
+  shipped convention. Delivery Mode: `worktree-to-pr`. Completed 2026-07-22.
 - [2026-07-22: bare-repo-governance-hardening](./2026-07-22__bare-repo-governance-hardening/README.md) —
   Authored the previously-undocumented base-worktree landing method as
   `repo-governance/development/workflow/bare-repo-landing-method.md`, fixed the
