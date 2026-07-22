@@ -1,5 +1,14 @@
 # Technical Documentation — Learning Path Schema and Prerequisite DAG
 
+## Corpus Disposition
+
+`archive-with-plan` — this plan custodies its `syllabus/` corpus and no consumer **outside `plans/`**
+reads it: no checker, agent, Nx target, build/generation step, or shipped content front-matter names a
+syllabus path (the consumers are the sibling `plans/` — plans 04 and 05 — which do not trigger
+promotion). The corpus therefore moves to `plans/done/` with the plan folder on archival; the
+promotion trigger (name a non-plan reader) is not met. See
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#corpus-disposition).
+
 ## Overview
 
 This plan creates the `course-paths` feature's **pure functional core** inside `ayokoding-www`, plus

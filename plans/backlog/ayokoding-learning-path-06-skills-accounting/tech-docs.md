@@ -1,5 +1,13 @@
 # Technical Documentation — Skills Paths: Accounting
 
+## Corpus Disposition
+
+`archive-with-plan` — this plan custodies its own `syllabus/` corpus and no consumer **outside
+`plans/`** reads it (no checker, agent, Nx target, build/generation step, or shipped content
+front-matter names a syllabus path). The corpus therefore moves to `plans/done/` with the plan folder
+on archival; the promotion trigger (name a non-plan reader) is not met. See
+[Learning-Plan Syllabus Convention §Corpus Disposition](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#corpus-disposition).
+
 ## Overview
 
 This plan delivers **two** `skills/` paths end-to-end (A10): a nineteen-course conventional spine

@@ -1,5 +1,7 @@
 # Syllabus Index — Enterprise Resource Planning
 
+**Custodian**: ayokoding-learning-path-07-skills-erp
+
 Per-course module/topic breakdowns for the 30-course ERP corpus (DD-31 in
 [`../tech-docs.md`](../tech-docs.md#syllabus-layer--custody-and-shape-dd-31)). Mirrors the folder
 convention `ayokoding-learning-path-02-schema-and-prerequisite-dag` established

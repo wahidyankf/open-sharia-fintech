@@ -1,5 +1,7 @@
 # Syllabus Layer — Skills Paths: Accounting
 
+**Custodian**: ayokoding-learning-path-06-skills-accounting
+
 This folder is this plan's own syllabus corpus, created by Phase 1 and never edited into
 `ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (that corpus is custody-frozen —
 see [tech-docs DD-603](../tech-docs.md#design-decisions)). It mirrors the folder convention plan 02

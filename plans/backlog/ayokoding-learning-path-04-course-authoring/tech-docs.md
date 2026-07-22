@@ -1,5 +1,12 @@
 # Technical Docs — Learning Path Course Authoring
 
+## Corpus Custody
+
+`custodied-by:ayokoding-learning-path-02-schema-and-prerequisite-dag` — this plan **reads** the shared
+course corpus custodied by plan 02 but never edits, copies, or forks any file under it. Any needed
+change to that corpus is routed to plan 02's own `delivery.md` as a change request, per the
+[Learning-Plan Syllabus Convention §Custody Rule](../../../repo-governance/conventions/structure/learning-plan-syllabus.md#custody-rule).
+
 ## Overview
 
 This plan produces **content artefacts only**: 90 page bundles under

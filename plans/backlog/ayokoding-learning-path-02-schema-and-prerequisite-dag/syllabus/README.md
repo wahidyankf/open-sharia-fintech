@@ -1,5 +1,7 @@
 # Syllabus — Fundamentally Strong Shared Course Library + Path Manifests
 
+**Custodian**: ayokoding-learning-path-02-schema-and-prerequisite-dag
+
 This `syllabus/` folder is the design surface for a **shared course library** and the **path manifests**
 built over it. It has three parts:
 
