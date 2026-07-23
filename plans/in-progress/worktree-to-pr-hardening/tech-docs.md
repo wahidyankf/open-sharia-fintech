@@ -511,9 +511,18 @@ research grounding for the deferred future-work item, not as a delivered decisio
 
 ## Research Grounding (citations)
 
-Access date for all web citations below: **2026-07-23**. External claims are drawn from the research
-brief supplied to this plan; each carries `[Web-cited]` and SHOULD be re-verified via `web-researcher`
-before execution per the [Plan Anti-Hallucination Convention](../../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
+Access date for all web citations below: **2026-07-23**. **Re-verification (via `web-researcher`,
+2026-07-23, Phase 0):** all seven `[Web-cited]` claims flagged for re-check were re-verified against
+primary sources and are **[Verified]** — each resolves to a real source whose content materially
+matches the claim (none `[Outdated]`/`[Error]`): BitsAI-CR (arXiv 2501.15134, "Outdated Rate"
+metric), CodeAgent (arXiv 2402.02172, EMNLP 2024), the two confidence-calibration papers (arXiv
+2603.06604, 2604.06723), Refute-or-Promote (arXiv 2604.19049), the repair-loop paper (arXiv
+2607.05197), and the Graphite/Ramp figure. Two advisory refinements were applied and are reflected
+below: the confidence-calibration papers are cited **by analogy** for general LLM
+confidence-vs-correctness calibration (not code-review-specific), and the Graphite "74% faster
+merges" figure is **per Graphite's own blog self-reporting Ramp Engineering** (vendor-published,
+~13 months old) — treated as directional, not an independently audited benchmark. See the
+[Plan Anti-Hallucination Convention](../../../repo-governance/development/quality/plan-anti-hallucination.md#web-research-delegation-lower-threshold-for-plans).
 
 ### Finding 1 — the split is production-proven but CONDITIONAL on a coordinator
 
@@ -568,8 +577,9 @@ before execution per the [Plan Anti-Hallucination Convention](../../../repo-gove
 ### Finding 3 — quality-gate mechanics
 
 - **Confidence calibration** — ECE 0.163 → 0.034 after calibration; "80%" true only ≈64–96%
-  ([arXiv 2603.06604](https://arxiv.org/abs/2603.06604);
-  [arXiv 2604.06723](https://arxiv.org/abs/2604.06723) Platt-scaling). [Web-cited]
+  ([arXiv 2603.06604](https://arxiv.org/abs/2603.06604) — general LLM confidence-vs-correctness
+  calibration, cited by analogy (not code-review-specific);
+  [arXiv 2604.06723](https://arxiv.org/abs/2604.06723) — Platt-scaling for code-revision confidence). [Verified 2026-07-23]
 - **Adversarial/critic** — Refute-or-Promote 79–83% kill-rate
   ([arXiv 2604.19049](https://arxiv.org/abs/2604.19049)); reserve for high-risk diffs; CRITICAL needs
   empirical reproduction (10 reviewers endorsed a non-existent bug); use cross-model diversity.
@@ -585,9 +595,10 @@ before execution per the [Plan Anti-Hallucination Convention](../../../repo-gove
 - **Merge-queue** — static "branch up to date" (precondition (c)) doesn't scale under concurrent
   merges; GitHub merge queue (speculative `merge_group` CI), **Graphite** stack-aware queue (CI once
   on stack head, binary-search isolation, each PR still an independent merge point — matches the strict
-  1-PR↔1-worktree model; Ramp 74% faster median merges), Aviator parallel queues. **NOT adopted in this
+  1-PR↔1-worktree model; Ramp 74% faster median merges, per Graphite's blog self-report — directional,
+  not independently audited), Aviator parallel queues. **NOT adopted in this
   plan (D7/D10)** — the repo's branch settings expose no merge-queue toggle, so it is deferred to a
-  separate backlog plan — see [Merge-Queue — Researched, NOT Adopted](#merge-queue--researched-not-adopted-deferred--d7d10) above. [Web-cited]
+  separate backlog plan — see [Merge-Queue — Researched, NOT Adopted](#merge-queue--researched-not-adopted-deferred--d7d10) above. [Verified 2026-07-23]
 
 ## Risks
 

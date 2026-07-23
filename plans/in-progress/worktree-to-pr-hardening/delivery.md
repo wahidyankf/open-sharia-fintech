@@ -132,19 +132,19 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > _Executor: repo-setup-manager_
 
-- [ ] [AI] Provision the worktree from latest `origin/main`: `git worktree add worktrees/worktree-to-pr-hardening origin/main`
+- [x] [AI] Provision the worktree from latest `origin/main`: `git worktree add worktrees/worktree-to-pr-hardening origin/main`
       — acceptance: `worktrees/worktree-to-pr-hardening/` exists and is on a fresh branch off `origin/main`
-- [ ] [AI] Install dependencies in the root worktree: `npm install`
+- [x] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift
-- [ ] [AI] Record the markdown/binding baseline: `npx nx affected -t lint` and `npm run lint:md:fix` (dry read)
+- [x] [AI] Record the markdown/binding baseline: `npx nx affected -t lint` and `npm run lint:md:fix` (dry read)
       — acceptance: baseline pass/fail recorded; any preexisting failures documented
-- [ ] [AI] Confirm the binding sync baseline is clean: run `npm run generate:bindings` then `git status --porcelain`
+- [x] [AI] Confirm the binding sync baseline is clean: run `npm run generate:bindings` then `git status --porcelain`
       — acceptance: no diff (bindings already in sync before any change)
-- [ ] [AI] Resolve all preexisting failures before proceeding
+- [x] [AI] Resolve all preexisting failures before proceeding
       — acceptance: no preexisting failures remain unresolved
-- [ ] [AI] Delegate to `web-researcher`: re-verify the remaining ~7 unverified `[Web-cited]` claims in
+- [x] [AI] Delegate to `web-researcher`: re-verify the remaining ~7 unverified `[Web-cited]` claims in
       [tech-docs.md §Research Grounding](./tech-docs.md#research-grounding-citations) — BitsAI-CR
       ([arXiv 2501.15134](https://arxiv.org/abs/2501.15134)), CodeAgent
       ([arXiv 2402.02172](https://arxiv.org/abs/2402.02172)), the two confidence-calibration papers
@@ -161,10 +161,10 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npm run generate:bindings` produces zero diff against a clean tree (baseline sync confirmed)
-- [ ] [AI] Markdown/lint baseline recorded and every preexisting failure resolved
-- [ ] [AI] All ~7 remaining `[Web-cited]` claims in `tech-docs.md` §Research Grounding are re-verified
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+- [x] [AI] `npm run generate:bindings` produces zero diff against a clean tree (baseline sync confirmed)
+- [x] [AI] Markdown/lint baseline recorded and every preexisting failure resolved
+- [x] [AI] All ~7 remaining `[Web-cited]` claims in `tech-docs.md` §Research Grounding are re-verified
       and labeled `[Verified]`/`[Outdated]`/`[Error]`; any inaccuracy is corrected
 
 > **Pause Safety**: only the local toolchain was verified and the baseline recorded — no plan work
