@@ -435,6 +435,20 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
 
 ### 2.1 · Per-course re-home redirects (TDD)
 
+> **Amendment (2026-07-23, maintainer decision) — sources broadened from exact-root to `:path*`.** The
+> original design below (steps (c) etc.) specified **exact** per-course sources
+> `/en/learn/fundamentally-strong/software-engineer/<slug>` → `/en/learn/courses/<slug>`. During the
+> Phase-2 PR (#84) cycle-1 review, the reviewer surfaced that the 37 courses carry ~520 deep sub-pages
+> (`learning/*`, `drilling/*`) whose old URLs would **404** under exact-root-only redirects — they fall
+> through to `contentNamespaceRedirects`' `/en/learn/:path*` catch-all and 308 into a now-drained `/c`
+> path. To prevent that production deep-link/SEO regression, the maintainer approved broadening the **37
+> per-course** rules to wildcards: `/en/learn/fundamentally-strong/software-engineer/<slug>/:path*` →
+> `/en/learn/courses/<slug>/:path*` (Next.js `:path*` is zero-or-more, so the bare course root stays
+> covered). The **three Q-E root rules stay exact** (they map three deleted pages to the `/en/learn/courses`
+> landing). Rule count stays **40** (37 wildcard + 3 Q-E exact). The unit test and Gherkin below are
+> updated accordingly (a deep-sub-page redirect example is added). This supersedes step (c)'s exact-source
+> wording; all other §2.1 assertions hold.
+
 - [x] [AI] **RED** — write a failing unit test at `<REDIR>course-rehome.unit.test.ts` _(New test)_,
       mirroring the existing `<REDIR>content-namespace.unit.test.ts` structure [Repo-grounded],
       asserting: (a) exactly **37** rules, one per slug in the Phase-0 re-home inventory; (b) every
