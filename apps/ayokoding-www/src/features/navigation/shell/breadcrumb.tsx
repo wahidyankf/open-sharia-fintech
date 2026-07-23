@@ -47,10 +47,14 @@ export function Breadcrumb({ locale, segments, showCurrent = false }: Breadcrumb
        * crumbs, the middle ones (`hidden sm:flex` below) drop out at mobile
        * widths and one collapsed ellipsis crumb (`sm:hidden` below) stands in
        * for them, keeping the first and last crumbs always visible. At `sm:`
-       * and up every crumb reappears and the ellipsis disappears — full
-       * desktop behaviour is unchanged.
+       * and up every crumb reappears and the ellipsis disappears (the desktop
+       * trail is otherwise unchanged apart from the removed `flex-wrap`). Because
+       * the row no longer wraps at any width, `overflow-x-auto` + `whitespace-nowrap`
+       * give a self-contained horizontal-scroll fallback so a very deep trail
+       * scrolls within its own box rather than overflowing the page in the
+       * tablet band (>=sm, where the mobile collapse is inactive).
        */}
-      <ol className="flex items-center gap-1">
+      <ol className="flex items-center gap-1 overflow-x-auto whitespace-nowrap">
         {visibleSegments.flatMap((segment, i) => {
           const isCurrent = showCurrent && i === lastIndex;
           const isMobileCollapsedMiddle = hasMobileCollapse && i > 0 && i < lastIndex;
