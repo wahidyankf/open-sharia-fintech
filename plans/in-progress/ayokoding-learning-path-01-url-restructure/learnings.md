@@ -98,5 +98,24 @@ Entry shape:
   - **Routing**: _(Phase 7 — candidate: plan-anti-hallucination guidance on internally-contradictory
     acceptance steps + a note on rename-proof pathspec scoping.)_
 
+- **Phase 4 — the parallel-load e2e flake set widened to 3 scenarios under heavier concurrent load.**
+  During Phase 4's full-suite `ayokoding-www-fe-e2e:test:e2e` run (while build/typecheck/lint/test:unit
+  had also just run on the same shared machine), **3** scenarios failed:
+  `course-rehome-redirects.feature` "resolves every re-homed course" (chromium),
+  `ia-navigation-revamp.feature` "RSS feed item links use bare content URLs" (firefox), and the
+  already-known `cost-of-living-calculator.feature` "minimum qualifying role" (firefox) — 575 passed /
+  139 skipped otherwise. Re-running exactly those three isolated (`playwright test -g …`) passed **9/9**
+  (3 scenarios × chromium/firefox/webkit). The committed tree is byte-identical to the `origin/main`
+  that passed CI green at the Phase-3 merge (`git diff origin/main HEAD` empty), so none is a Phase-4
+  regression — Phase 4 changed only `delivery.md`.
+  - **Why it might generalize**: the pre-existing cost-of-living flake is not the only load-flaky spec —
+    plan-relevant redirect/feed specs also flake under full-suite parallel-worker contention when the
+    machine is loaded. The aggregate e2e exit code is unreliable on this shared machine; distinguish
+    "isolated re-run passes" (flake) from a real regression before gating on it. Reinforces the Phase-2
+    entry: the whole `ayokoding-www-fe-e2e` suite, not just the calculator, is load-sensitive here.
+  - **Routing**: _(Phase 7 — same candidate test-infra plan as the Phase-2 flake entry: stabilise
+    `ayokoding-www-fe-e2e` under parallel-worker load / dev-server contention, or a known-flake retry
+    policy; broaden that plan's scope from the single calculator spec to the suite.)_
+
 If execution completes and nothing generalizable surfaced, replace the entries above with the explicit
 escape: `No generalizable learnings — <one-line reason>`. This file is never left silently empty.

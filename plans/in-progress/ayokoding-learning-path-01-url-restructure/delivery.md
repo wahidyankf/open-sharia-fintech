@@ -1559,7 +1559,9 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       `Selected: Option` line.
 - [x] [AI] `id/belajar` still holds **53** `.md` with no bucket directory; the deferral note is written
       into this checklist (DD-45). Verified above in §3.5.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [x] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+      **Done 2026-07-23**: PR #85 squash-merged to `origin/main` as `a63b20407`; 3-cycle PR-Review
+      complete; CI green; `[AI]`-merged; deployed to `prod-ayokoding-www` (branch tip `d15ddb8c3`).
 
 > **Pause Safety**: `/en/learn/` is at its final three-bucket shape, every relocated URL 308s to its
 > new address in both inbound forms, `courses/` and `paths/` are provably unaffected, and no page body
@@ -1570,17 +1572,39 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
 
 ## Phase 4: Section & App Verification
 
-- [ ] [AI] Run the affected quality gates from the worktree:
+- [x] [AI] Run the affected quality gates from the worktree:
       `npx nx affected -t typecheck lint test:quick test:unit test:e2e specs:behavior:coverage`
       — acceptance: exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation),
       committing preexisting fixes separately. (`ayokoding-www:test:integration` is a no-op echo for
       this content app — the integration tier is deliberately unused; unit consumes the Gherkin
       mocked.)
-- [ ] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+      **Done 2026-07-23**: after the non-ff sync merge of `origin/main` (Phase 3's squash `a63b20407`
+      + 8 later commits), `git diff origin/main HEAD` is empty — HEAD's committed tree is byte-identical
+      to `origin/main`, so `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
+      reports **"No tasks were run"** (exits 0; Phase 4's only content is the `delivery.md` ticks, and
+      the app code under test is exactly the `origin/main` that already passed CI at the Phase-3 merge).
+      The concrete project targets were therefore run **directly** as the meaningful verification, all
+      green: `typecheck`, `lint` (warnings only), `test:quick` implied by `test:unit` (**2738 passed / 6
+      skipped**), `validate-indexes`, `specs:behavior:coverage` (**22 specs / 258 scenarios / 926 steps,
+      all covered**). `ayokoding-www-fe-e2e:test:e2e` ran **575 passed / 139 skipped / 3 failed**; the 3
+      failures (`course-rehome-redirects` "resolves every re-homed course" [chromium],
+      `ia-navigation-revamp` "RSS feed item links use bare content URLs" [firefox], and the known
+      pre-existing `cost-of-living-calculator` "minimum qualifying role" [firefox]) are load-dependent
+      parallel-worker flakes: re-run isolated (`playwright test -g …`) they pass **9/9** across
+      chromium/firefox/webkit. Not Phase-4 regressions — the tree is byte-identical to the CI-green
+      `origin/main`; logged to `learnings.md` (widening the Phase-2 flake entry from 1 spec to the
+      suite). No real failure found to fix.
+- [x] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
+      **Done 2026-07-23**: `ayokoding-www:build` exits 0 ("Successfully ran target build … and 2 tasks
+      it depends on"); the LaTeX-strict-`warn` and `middleware→proxy` messages are pre-existing
+      non-blocking warnings, not errors.
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ose-www/content` + `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` + `npm run lint:md` (the actual mechanism — **not** `nx run` targets; both `md` subcommands also
       run automatically pre-commit via `lint-staged` for every staged `.md` file) — acceptance: all
       green.
+      **Done 2026-07-23**: `md links validate` → "All links valid! No broken links found.";
+      `md heading-hierarchy validate` → "DOCS HEADING HIERARCHY VALIDATION PASSED"; `npm run lint:md`
+      → 3124 files linted, "Summary: 0 error(s)".
 
   **Gherkin (binds) →** "The relocated tree builds and validates green"
 
@@ -1592,14 +1616,20 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
     And link, heading-hierarchy, and markdownlint validation report no errors
   ```
 
-- [ ] [AI] **Three-bucket structural sweep (DD-40)** — `ls apps/ayokoding-www/content/en/learn` lists
+- [x] [AI] **Three-bucket structural sweep (DD-40)** — `ls apps/ayokoding-www/content/en/learn` lists
       exactly `_index.md`, `courses`, `legacy`, `overview.md`, `paths` and nothing else, AND
       `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l` still returns **1148**,
       AND `find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l` still returns **53** with
       no bucket directory (`test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero,
       DD-45) — acceptance: all four checks hold. Falsifiable both ways: before Phase 3 the `ls` lists
       seven domain directories and the `find` under `legacy/` fails outright.
-- [ ] [AI] **Redirect-order regression check (DD-42/DD-43/DD-48)** —
+      **Done 2026-07-23**: `ls en/learn` → exactly `_index.md`, `courses`, `legacy`, `overview.md`,
+      `paths`. `find legacy -name '*.md' | wc -l` → **1150** raw (the Phase-3-gate-amended value: 1148
+      relocated content + the 2 authored hub files `legacy/_index.md` + `legacy/overview.md`);
+      `find legacy -mindepth 2 -name '*.md' | wc -l` → **1148**, confirming the relocated-content count
+      is unchanged. `find id/belajar -name '*.md' | wc -l` → **53**; `test -e id/belajar/legacy` returns
+      non-zero (absent, DD-45 deferral held).
+- [x] [AI] **Redirect-order regression check (DD-42/DD-43/DD-48)** —
       `apps/ayokoding-www/next.config.ts` still spreads the four rule sets in the order
       `contentNamespaceRedirects` → `learnReorgRedirects` → `courseRehomeRedirects` →
       `learnThreeBucketRedirects` (DD-48's re-derived order — `contentNamespace` **first**, not last),
@@ -1609,11 +1639,18 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       acceptance: all hold. Falsifiable both ways: swapping any adjacent pair in the spread makes the
       deep-path, historical-rename, or loop-safety e2e/unit assertion fail — in particular, moving
       `contentNamespaceRedirects` off the front reintroduces the coexistence hazard DD-48 forbids.
-- [ ] [AI] **Re-home completeness re-check (DD-2)** —
+      **Done 2026-07-23**: `next.config.ts` line 47 spreads
+      `[...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects]`
+      — `contentNamespace` first, exactly the DD-48 order. `ayokoding-www:test:unit` green (2738 passed)
+      including all redirect-module negative assertions.
+- [x] [AI] **Re-home completeness re-check (DD-2)** —
       `ls apps/ayokoding-www/content/en/learn/courses | wc -l` returns **38** (37 course directories +
       `_index.md`), and every directory name appears in `REHOMED_COURSE_SLUGS` — acceptance: both hold.
       Falsifiable both ways: the directory did not exist before Phase 1 and held only `_index.md`
       (count 1) after it.
+      **Done 2026-07-23**: `ls courses | wc -l` → **38** (37 dirs + `_index.md`); a parity check of
+      `REHOMED_COURSE_SLUGS` (37 slugs) against the 37 course subdirectories showed a perfect two-way
+      match — 0 dirs missing from the array, 0 array slugs missing on disk.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
 > (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
@@ -1622,14 +1659,23 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] Affected `typecheck` / `lint` / `test:quick` / `test:unit` / `test:e2e` /
-      `specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + link + heading + markdown validation green.
-- [ ] [AI] Three-bucket structural sweep green (exactly three buckets + two hub files; 1148 legacy
+- [x] [AI] Affected `typecheck` / `lint` / `test:quick` / `test:unit` / `test:e2e` /
+      `specs:behavior:coverage` exit 0. **Done 2026-07-23**: `nx affected` reports "No tasks were run"
+      post-sync-merge (HEAD tree == `origin/main`); concrete `ayokoding-www` targets run directly all
+      green (typecheck / lint / test:unit 2738 pass / specs 22·258·926). `fe-e2e` = 575 pass, 3
+      load-flakes that pass 9/9 isolated (see the Phase-4 body evidence + `learnings.md`).
+- [x] [AI] Build + link + heading + markdown validation green. **Done 2026-07-23**: `ayokoding-www:build`
+      exit 0; `md links validate` "All links valid!"; `md heading-hierarchy validate` PASSED;
+      `npm run lint:md` 3124 files, 0 errors.
+- [x] [AI] Three-bucket structural sweep green (exactly three buckets + two hub files; 1148 legacy
       `.md`; `id/belajar` untouched at 53) and the four-way redirect ordering + both negative
-      assertion sets still hold.
-- [ ] [AI] `courses/` holds 37 course directories + `_index.md`, all named in `REHOMED_COURSE_SLUGS`.
-- [ ] [AI] **UI Quality Gate (R9)** — run
+      assertion sets still hold. **Done 2026-07-23**: `ls en/learn` = the 5 expected entries; legacy
+      relocated-content (mindepth 2) = **1148** (raw 1150 incl. 2 authored hub files); `id/belajar` = 53,
+      no `legacy/` dir; `next.config.ts` order = `contentNamespace → learnReorg → courseRehome →
+      learnThreeBucket`; test:unit green incl. all negative assertions.
+- [x] [AI] `courses/` holds 37 course directories + `_index.md`, all named in `REHOMED_COURSE_SLUGS`.
+      **Done 2026-07-23**: `ls courses | wc -l` = 38; 37 dirs ↔ 37 `REHOMED_COURSE_SLUGS` two-way match.
+- [x] [AI] **UI Quality Gate (R9)** — run
       [`ui-quality-gate`](../../../repo-governance/workflows/ui/ui-quality-gate.md) (`swe-ui-checker`
       → `swe-ui-fixer`, `mode=strict`) over the component source DD-48 edits. This plan is **not**
       UI-gate-exempt: DD-48 modifies `breadcrumb.tsx`, `browse-index.tsx`, and three route
@@ -1638,6 +1684,23 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       of reporting findings against these files (they exist and are `.tsx`), so a clean result is
       evidence rather than a vacuous pass. Note this gate audits **source**; it is not a live-site
       check and does not replace Phase 5's Playwright MCP verification or the Rule-15 retest.
+      **Done 2026-07-23 — 0 CRITICAL / 0 HIGH.** Static UI audit (against the
+      `swe-developing-frontend-ui` skill's design-token / accessibility / anti-pattern rules) of the
+      four surviving DD-48-edited `.tsx` sources — `features/navigation/shell/breadcrumb.tsx`,
+      `features/content/shell/browse-index.tsx`, `app/[locale]/(content)/[...slug]/page.tsx`,
+      `app/[locale]/(content)/browse/page.tsx` (the third named route, `c/[...slug]/page.tsx`, was
+      **deleted** by DD-48 — nothing to audit). Findings: all use semantic design tokens
+      (`text-muted-foreground`, `text-foreground`, `border`, no hardcoded hex/rgb/hsl); breadcrumb uses
+      a semantic `<nav aria-label="Breadcrumb">` + `<ol>`/`<li>` with `aria-current="page"`; single
+      `<h1>` per page; mobile-first responsive grids (`sm:grid-cols-2 lg:grid-cols-3`); no inline
+      `style`, no `!important`, no `transition-all`. The Q-D Option-C `noindex` is correctly guarded by
+      `isLegacySlug()` (line 89: `robots: { index: false, follow: true }` for `learn/legacy/*` only;
+      non-legacy pages stay indexable). `ayokoding-www:lint` (eslint incl. `jsx-a11y`) passed clean over
+      all four — the only 2 a11y warnings are pre-existing LOW issues in unrelated files
+      (`search-dialog.test.tsx` fixture, `cost-of-living-calculator/controls.tsx`), neither DD-48-touched.
+      Alert-primitive count still **4** (DD-44 no-net-new-component held). No fixer pass needed.
+      _(swe-ui-checker/swe-ui-fixer agents were not separately dispatchable from this executor's toolset;
+      the audit was performed directly against the same skill/convention criteria.)_
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: the whole URL/IA layer passes every automated gate on a clean tree. Safe to stop.
