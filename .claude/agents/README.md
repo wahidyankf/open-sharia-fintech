@@ -32,6 +32,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[pr-review-performance-maker](pr-review-performance-maker.md)** - PR-review specialist scoped to performance only: concrete/likely regressions, hot-path changes, algorithmic-complexity growth, resource concerns
 - **[pr-review-docs-maker](pr-review-docs-maker.md)** - PR-review specialist scoped to documentation-quality only: substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility
 - **[pr-review-instruction-maker](pr-review-instruction-maker.md)** - PR-review specialist scoped to instruction-decay only: a framework/build-tool/package-manager/env-var/CI change not reflected in AGENTS.md/CLAUDE.md/.claude/, and instruction bloat
+- **[pr-review-synthesis-maker](pr-review-synthesis-maker.md)** - Mandatory coordinator (opus) atop the eight sonnet-tier specialists: classifies PR risk tier + specialist set, assembles the shared full-diff context once, reads prior-cycle human-dismissal status, then dedups/re-categorizes/reasonableness-filters/tool-verifies raw findings into exactly ONE consolidated review
 
 ### 🟩 Validation (Checkers)
 

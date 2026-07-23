@@ -321,14 +321,14 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 > above the `sonnet` specialists. Frontmatter `color: blue` (Maker role — the model tier does not
 > change the role-color mapping), matching the retired monolith's own `color: blue`.
 
-- [ ] [AI] Author `.claude/agents/pr-review-synthesis-maker.md` (name per D3) implementing the four
+- [x] [AI] Author `.claude/agents/pr-review-synthesis-maker.md` (name per D3) implementing the four
       coordination functions from [tech-docs.md §Coordinator Contract](./tech-docs.md#coordinator-contract-the-mandatory-synthesizer):
       dedup, re-categorize (owns architecture↔correctness), reasonableness-filter, tool-verify; emits
       exactly one consolidated review; top model tier justified in a Model Selection Justification block
       — acceptance: file present; frontmatter names the top tier (inherited opus); charter states it
       produces ONE consolidated review consumed by `pr-review-fixer`
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Give the coordinator the folded pre/post-fan-out duties (D12/D13): **classify the PR risk-tier**
+- [x] [AI] Give the coordinator the folded pre/post-fan-out duties (D12/D13): **classify the PR risk-tier**
       (trivial/lite/full, security paths force full) and select the specialist set accordingly; **assemble
       the shared-context brief once** (PR metadata + linked-plan/issue + the **full diff**, D13: no
       generated-file exclusion — reviewers see everything) rather than each specialist re-deriving it;
@@ -337,20 +337,20 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       — acceptance: charter names the risk-tier classification, the shared-context assembly, the
       **no-exclusion full-diff posture (D13)**, and the human-dismissal read; the review header format includes the tier
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Register the coordinator in `AGENTS.md` and `.claude/agents/README.md`
+- [x] [AI] Register the coordinator in `AGENTS.md` and `.claude/agents/README.md`
       — acceptance: coordinator listed in both registers
-- [ ] [AI] Regenerate + verify bindings: `npm run generate:bindings` then `git status --porcelain`
+- [x] [AI] Regenerate + verify bindings: `npm run generate:bindings` then `git status --porcelain`
       — acceptance: OpenCode + Amazon-Q mirrors created; sync-validation green with zero drift
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] Coordinator file passes the naming regex and carries a Model Selection Justification block;
+- [x] [AI] Coordinator file passes the naming regex and carries a Model Selection Justification block;
       frontmatter includes `color: blue` (Maker role)
-- [ ] [AI] `npm run generate:bindings` re-run produces zero additional diff
-- [ ] [AI] `npx nx affected -t lint` passes; registers list the coordinator
-- [ ] [AI] Commit created: `feat(agents): add pr-review-synthesis-maker coordinator` and pushed
+- [x] [AI] `npm run generate:bindings` re-run produces zero additional diff
+- [x] [AI] `npx nx affected -t lint` passes; registers list the coordinator
+- [x] [AI] Commit created: `feat(agents): add pr-review-synthesis-maker coordinator` and pushed
 
 > **Pause Safety**: all nine new agents (eight specialists + coordinator) exist and are registered but
 > still unwired — the live review gate remains the untouched monolith. Safe to stop. To resume: re-run

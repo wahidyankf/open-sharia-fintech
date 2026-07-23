@@ -324,7 +324,7 @@ pr-review-fixer
 `*-to-pr` Delivery Mode plans (see [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
 and [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)).
 
-**PR Review Specialists**: pr-review-architecture-maker, pr-review-logic-maker, pr-review-governance-maker, pr-review-security-maker, pr-review-integrity-maker, pr-review-performance-maker, pr-review-docs-maker, pr-review-instruction-maker (see
+**PR Review Specialists + Coordinator**: pr-review-architecture-maker, pr-review-logic-maker, pr-review-governance-maker, pr-review-security-maker, pr-review-integrity-maker, pr-review-performance-maker, pr-review-docs-maker, pr-review-instruction-maker, pr-review-synthesis-maker (see
 [PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md));
 inert until Phase 4 cutover.
 
