@@ -73,5 +73,30 @@ Entry shape:
 - **Routing**: _(Phase 7 — candidate durable home: a note in the content-authoring / index-generator
   docs, or the plan-anti-hallucination guidance on internally-contradictory acceptance steps.)_
 
+- **Phase 2 — pre-existing e2e flake in an unrelated tool surfaced under the full-suite parallel load.**
+  `ayokoding-www-fe-e2e:test:e2e`'s `tools/cost-of-living-calculator.feature` ("Minimum-role tab is dual
+  currency") fails intermittently under full-suite parallel-worker load (different browser combination each
+  run; 0 failures when the spec is run isolated). Verified pre-existing on `origin/main` and untouched by
+  the Phase 2 diff. It is NOT a Phase 2 regression, so it was not fixed here.
+  - **Why it might generalize**: a content/IA restructure that makes `ayokoding-www-fe-e2e` affected will
+    drag the whole e2e suite — including unrelated load-flaky tool specs — into its CI gate, so a green
+    Phase-2 deliverable can still show a red suite. Distinguish "my scenarios green + unrelated flake" from
+    a real regression before gating on the aggregate exit code.
+  - **Routing**: _(Phase 7 — candidate: a separate test-infra plan to stabilise the cost-of-living-calculator
+    e2e under parallel load, e.g. dev-server contention / worker isolation; or a known-flake quarantine list.)_
+- **Phase 2 — two delivery.md wording gaps for future plan-maker runs.** (1) The pure-rename proof step
+  wrote `git diff --cached --summary -M -- <destination path>`, but git cannot pair a rename when the
+  source side is excluded by a destination-only pathspec — the commit-level unscoped `git show --summary -M
+<sha>` is the form that actually proves renames. (2) The §2.5 "legacy section-index browse still resolves"
+  Gherkin assumed a standing legacy `_index.md` tree, but wholesale `git mv` of every child bundle + the
+  Q-E root deletions leave no such tree; the acceptance text and the implementation reality diverged and had
+  to be reconciled at execution time.
+  - **Why it might generalize**: acceptance commands that scope a rename/diff to only one side of a move, or
+    Gherkin that assumes a structure a later same-plan override removes, are internally inconsistent — the
+    same class as the DD-49 body/validate contradiction above. plan-maker/plan-checker should flag pathspec-
+    scoped rename proofs and cross-check later-resolved overrides against earlier acceptance prose.
+  - **Routing**: _(Phase 7 — candidate: plan-anti-hallucination guidance on internally-contradictory
+    acceptance steps + a note on rename-proof pathspec scoping.)_
+
 If execution completes and nothing generalizable surfaced, replace the entries above with the explicit
 escape: `No generalizable learnings — <one-line reason>`. This file is never left silently empty.

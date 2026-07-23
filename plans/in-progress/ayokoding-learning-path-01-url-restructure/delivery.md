@@ -366,8 +366,12 @@ stale (git ls-files=562, no deletions in git log), **reconciled this session** (
 - [x] [AI] Regenerate the derived indexes so the seven new content nodes enter the tree:
       `npx nx run ayokoding-www:generate-indexes` then `npx nx run ayokoding-www:validate-indexes`
       — acceptance: both exit 0 (the second proves regeneration converged).
-- [ ] [AI] Run the local quality gates and the [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr)
-      — acceptance: gates green; draft PR opened, reviewed, merged, deployed.
+- [x] [AI] Run the local quality gates and the [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr)
+      — acceptance: gates green; draft PR opened, reviewed, merged, deployed. **Done 2026-07-23**:
+      gates green (build 1854 pages / typecheck / lint / test:quick); draft PR #83 opened, 3-cycle
+      review complete, CI green, `[AI]`-squash-merged to `origin/main` @ `00c7106dc`; deployed to
+      `prod-ayokoding-www` @ `00c7106dc` (first deploy caught a stale-ref regression, re-deployed the
+      correct SHA and hard-verified prod == main with the Phase-1 `courses/_index.md` blob present).
 
 ### Phase 1 Gate
 
@@ -384,7 +388,10 @@ stale (git ls-files=562, no deletions in git log), **reconciled this session** (
       `legacy`; the five new structural indexes carry explicit, distinct `weight` values among their
       own siblings (§Set explicit weights above).
 - [x] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:validate-indexes` exit 0.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [x] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+      **Done 2026-07-23**: PR #83 (bundled plan-setup + Q-D/Q-E overrides + Phase 0 + Phase 1);
+      cycle 1 found 2 MEDIUM (stale `1,713` total; DD-49 body-sentence wording) both fixed,
+      cycles 2-3 clean sign-off; squash-merged @ `00c7106dc`; deployed to prod (verified).
 
 **Phase 1 execution notes (2026-07-23) — content complete, PR pending.** Executor:
 `apps-ayokoding-www-general-maker` (background) + orchestrator reconciliation. Created 7 `_index.md`
@@ -428,7 +435,7 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
 
 ### 2.1 · Per-course re-home redirects (TDD)
 
-- [ ] [AI] **RED** — write a failing unit test at `<REDIR>course-rehome.unit.test.ts` _(New test)_,
+- [x] [AI] **RED** — write a failing unit test at `<REDIR>course-rehome.unit.test.ts` _(New test)_,
       mirroring the existing `<REDIR>content-namespace.unit.test.ts` structure [Repo-grounded],
       asserting: (a) exactly **37** rules, one per slug in the Phase-0 re-home inventory; (b) every
       rule `permanent: true` with non-empty `source`/`destination`; (c) each rule's source is
@@ -450,13 +457,13 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
     And the redirect preserves any path context query parameter
   ```
 
-- [ ] [AI] **GREEN** — author `<REDIR>course-rehome.ts` _(New file)_ exporting `courseRehomeRedirects`,
+- [x] [AI] **GREEN** — author `<REDIR>course-rehome.ts` _(New file)_ exporting `courseRehomeRedirects`,
       built by mapping **one exported `REHOMED_COURSE_SLUGS` array** (the Phase-0 inventory) into the
       37 rules, each `permanent: true`. Carry a header comment stating that `course-id === slug` and
       that this module — never a `fundamentally-strong` prefix rule — owns that namespace (DD-43), in
       the style of `content-namespace.ts` — command: `npx nx run ayokoding-www:test:unit` —
       acceptance: the new suite passes and no existing redirect test breaks.
-- [ ] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()` as
+- [x] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()` as
       `return [...learnReorgRedirects, ...courseRehomeRedirects, ...contentNamespaceRedirects];`
       (a temporary intermediate order; `content-namespace.ts` is still forward-direction and last —
       Phase 3.0 inverts it in place and moves it to the **front** of the array (DD-48), and Phase 3.1
@@ -466,7 +473,7 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
       both exit 0, and `grep -F "courseRehomeRedirects" apps/ayokoding-www/next.config.ts` prints
       exactly two lines (the import and the spread) — it prints nothing today, verified against the
       Phase-0 snapshot of the current `redirects()` expression.
-- [ ] [AI] **REFACTOR** — confirm `REHOMED_COURSE_SLUGS` is the module's single source of truth: the
+- [x] [AI] **REFACTOR** — confirm `REHOMED_COURSE_SLUGS` is the module's single source of truth: the
       rule builder derives both source and destination from one array element, so a slug typo cannot
       produce a half-correct rule — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both exit 0
@@ -474,25 +481,25 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
 
 ### 2.2 · Move the bundles
 
-- [ ] [AI] For **every** slug in `REHOMED_COURSE_SLUGS`, `git mv <SE_OLD><slug>/ <COURSES><slug>/`
+- [x] [AI] For **every** slug in `REHOMED_COURSE_SLUGS`, `git mv <SE_OLD><slug>/ <COURSES><slug>/`
       (course-id = slug; no rename), preserving the full page bundle (`_index.md` + `overview.md` +
       `learning/` + `drilling/`) — acceptance:
       `ls apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer | wc -l` returns
       **2** (only `_index.md` and `overview.md` remain; it returned **39** at Phase 0, verified), AND
       `for s in $(cat evidence/phase-0-rehome-slugs.txt); do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "MISSING $s"; done`
       prints nothing.
-- [ ] [AI] **Prove the move rewrote nothing** —
+- [x] [AI] **Prove the move rewrote nothing** —
       `git diff --cached --summary -M -- apps/ayokoding-www/content/en/learn/courses` — acceptance:
       every moved file appears as a pure rename; a content-modifying hunk here is a defect, not a
       cleanup. (The `prerequisites` frontmatter edit below is a **separate, later commit** precisely so
       this proof stays clean.)
-- [ ] [AI] Regenerate and validate the derived indexes:
+- [x] [AI] Regenerate and validate the derived indexes:
       `npx nx run ayokoding-www:generate-indexes && npx nx run ayokoding-www:validate-indexes && npx nx run ayokoding-www:build`
       — acceptance: all three exit 0.
 
 ### 2.3 · Prerequisite frontmatter (TDD)
 
-- [ ] [AI] **RED** — write a failing unit test asserting that **every** directory under `<COURSES>`
+- [x] [AI] **RED** — write a failing unit test asserting that **every** directory under `<COURSES>`
       has an `_index.md` whose frontmatter declares a `prerequisites` array, that every named
       prerequisite resolves to another directory under `<COURSES>`, and that an empty array is
       accepted only where no library prerequisite exists — command:
@@ -511,30 +518,30 @@ Remaining: draft PR + 3-cycle review + CI + merge (the two unticked items above)
     And every named prerequisite resolves to another course in the library
   ```
 
-- [ ] [AI] **GREEN** — add `prerequisites: [course-id, ...]` to each re-homed `_index.md` frontmatter,
+- [x] [AI] **GREEN** — add `prerequisites: [course-id, ...]` to each re-homed `_index.md` frontmatter,
       naming only other library course IDs, per the shape reproduced in
       [tech-docs §Prerequisite frontmatter contract](./tech-docs.md#prerequisite-frontmatter-contract-reproduced-verbatim-canonical-owner-is-the-schema-plan)
       (the canonical owner is `ayokoding-learning-path-02-schema-and-prerequisite-dag`; if the two
       statements ever diverge, **the sibling's shape wins**) — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:build` — acceptance: both exit 0;
       every re-homed course declares `prerequisites` (an empty list is allowed for roots).
-- [ ] [AI] **REFACTOR** — re-read the declared edges as a set and confirm the graph is acyclic and that
+- [x] [AI] **REFACTOR** — re-read the declared edges as a set and confirm the graph is acyclic and that
       no course names itself — command: `npx nx run ayokoding-www:test:unit` — acceptance: exits 0
       with a cycle-detection assertion present in the suite. (The full DAG **resolver** is the sibling
       plan's; this is a data-shape guard on the 37 rows this plan authors.)
 
 ### 2.4 · Confirm the redirects resolve, and update the catalog
 
-- [ ] [AI] **Confirm each re-homed course has its redirect** — the per-course rules authored in **§2.1
+- [x] [AI] **Confirm each re-homed course has its redirect** — the per-course rules authored in **§2.1
       of this phase** resolve old-URL → new-URL for all 37 moved courses — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: the `course-rehome` suite is green and its
       slug list equals the set of directories now under `<COURSES>`, checked in the same assertion.
       _(This step deliberately names §2.1 above and not a sibling plan's phase — the redirect table is
       owned here.)_
-- [ ] [AI] Update `<COURSES>_index.md` (library landing) to list the re-homed catalog by course ID —
+- [x] [AI] Update `<COURSES>_index.md` (library landing) to list the re-homed catalog by course ID —
       acceptance: every catalog entry links to `/en/learn/courses/<course-id>` and the link validator
       below reports no broken link.
-- [ ] [AI] Sweep any intra-course cross-links that referenced the old
+- [x] [AI] Sweep any intra-course cross-links that referenced the old
       `fundamentally-strong/software-engineer/<slug>` path and repoint them to
       `/en/learn/courses/<course-id>` (Root Cause Orientation) — command:
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ose-www/content`
@@ -559,7 +566,7 @@ deleted), re-pointing each entry to wherever the content now lives.
 > (the per-topic ones re-homed under `courses/`, and all six relocated `legacy/` domains) is still
 > UPDATED-not-deleted exactly as written.
 
-- [ ] [AI] **RED** — write a failing e2e nav check in the paired `ayokoding-www-fe-e2e` project
+- [x] [AI] **RED** — write a failing e2e nav check in the paired `ayokoding-www-fe-e2e` project
       asserting the legacy ordered browse resolves end-to-end: from
       `.../fundamentally-strong/software-engineer/_index.md` (and the `fundamentally-strong/_index.md`
       parent + each per-topic `_index.md`), every listed entry link resolves to live content (the
@@ -581,7 +588,7 @@ deleted), re-pointing each entry to wherever the content now lives.
     And no legacy section-index entry resolves to a drained or missing location
   ```
 
-- [ ] [AI] **RED** — write a failing e2e nav check asserting that a course reached via the legacy
+- [x] [AI] **RED** — write a failing e2e nav check asserting that a course reached via the legacy
       section-index browse resolves to the **single canonical course body** (same rendered content,
       same canonical URL) with no forked or duplicated body served for the legacy route — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the canonical-body spec fails (no
@@ -604,7 +611,7 @@ deleted), re-pointing each entry to wherever the content now lives.
   > unverifiable here and is carried by that plan instead. See
   > [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin).
 
-- [ ] [AI] **GREEN** — enumerate every impacted `_index.md` under
+- [x] [AI] **GREEN** — enumerate every impacted `_index.md` under
       `apps/ayokoding-www/content/en/learn/fundamentally-strong/**`
       (`find apps/ayokoding-www/content/en/learn/fundamentally-strong -name _index.md | sort` —
       **the `| sort` is load-bearing, not cosmetic**: run bare, this command is RTK-reformatted to a
@@ -617,12 +624,12 @@ deleted), re-pointing each entry to wherever the content now lives.
       the new `/en/learn/courses/<course-id>` URL (or resolves via the redirect) — the legacy
       sections stay preserved and ordered, with no dead link and no orphaned section — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both e2e specs above now pass.
-- [ ] [AI] **REFACTOR** — run
+- [x] [AI] **REFACTOR** — run
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ose-www/content` + `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` + `npm run lint:md` over the updated legacy `_index.md` tree (the heading-hierarchy validator
       already runs automatically pre-commit via `lint-staged` for every staged `.md` file; this step
       re-runs it explicitly over the full legacy tree) — acceptance: zero broken links; the old-way
       browse resolves to canonical bodies; all three validators green.
-- [ ] [AI] **Q-E override (RESOLVED 2026-07-23 = C): delete the three residual index pages and 308
+- [x] [AI] **Q-E override (RESOLVED 2026-07-23 = C): delete the three residual index pages and 308
       their old URLs to `/en/learn/courses`.** The maintainer overturned the recommended fold-in (A):
       delete `fundamentally-strong/_index.md`, `fundamentally-strong/software-engineer/_index.md`, and
       `fundamentally-strong/software-engineer/overview.md` (`git rm`), then add three 308 redirect
@@ -649,25 +656,49 @@ deleted), re-pointing each entry to wherever the content now lives.
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] `ls apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer | wc -l`
+- [x] [AI] `ls apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer | wc -l`
       returns **2** (it returned **39** at Phase 0); every one of the 37 slugs resolves under
       `<COURSES>`.
-- [ ] [AI] The bundle move is a pure-rename diff — no content-modifying hunk under `<COURSES>` in the
+- [x] [AI] The bundle move is a pure-rename diff — no content-modifying hunk under `<COURSES>` in the
       move commit (DD-2/DD-41 discipline).
-- [ ] [AI] `<REDIR>course-rehome.ts` exports **37** rules derived from one `REHOMED_COURSE_SLUGS`
+- [x] [AI] `<REDIR>course-rehome.ts` exports **37** rules derived from one `REHOMED_COURSE_SLUGS`
       array; `course-rehome.unit.test.ts` is green including the slug-set equality assertion;
       `next.config.ts` spreads it after `learnReorgRedirects`.
-- [ ] [AI] Every re-homed course declares `prerequisites`; the declared edge set is acyclic and
+- [x] [AI] Every re-homed course declares `prerequisites`; the declared edge set is acyclic and
       self-reference-free.
-- [ ] [AI] Both e2e old-way-browse specs pass; every impacted legacy `_index.md` is updated, not
+- [x] [AI] Both e2e old-way-browse specs pass; every impacted legacy `_index.md` is updated, not
       deleted — **except** Q-E's three residual `fundamentally-strong` roots, which are **deleted** and
       whose old URLs **308 to `/en/learn/courses`** (Q-E=C override), asserted by
       `course-rehome.unit.test.ts` and the §2.5 e2e specs.
-- [ ] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
+- [x] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
       `:validate-indexes` and `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0.
-- [ ] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
+- [x] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
       `md heading-hierarchy validate` report no error over the changed tree.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+
+**Phase 2 execution notes (2026-07-23) — implementation complete, PR pending.** Executor:
+`swe-typescript-dev` (background) + orchestrator gate verification. Six commits on top of `00c7106dc`:
+course-rehome redirects (§2.1) → 37 bundle moves (§2.2, pure-rename: `git show --summary -M` = 4892/4892
+renames) → prerequisites frontmatter + index regen (§2.3) → intra-course cross-link sweep (§2.4, 1914
+occurrences across 27 files) → Q-E=C retire of the three FS browse roots (§2.5) → an e2e fixture repoint
+(`code-block-copy.steps.ts`) fixing a regression the `just-enough-lua` move caused in an unrelated
+pre-existing spec (Root Cause Orientation). `course-rehome.ts` = **40** rules (37 per-course + 3 Q-E),
+all from one `REHOMED_COURSE_SLUGS` array; `next.config.ts` wiring grep = 2. **Static gates green**:
+build (typecheck) / lint / test:unit (incl. acyclic + slug-set-equality asserts) / validate-indexes /
+`md links validate` / `md heading-hierarchy validate` all exit 0. **e2e**: every
+`course-rehome-redirects.feature` scenario passes 100% across 3 full-suite runs + isolated rerun (321/0).
+**Honest caveat (Gate item 6)**: the full `ayokoding-www-fe-e2e:test:e2e` suite reports non-zero from a
+recurring failure in the UNRELATED, pre-existing `tools/cost-of-living-calculator.feature` ("Minimum-role
+tab is dual currency") — orchestrator-verified pre-existing on `origin/main` and untouched by this diff
+(0 failures when isolated; a load-dependent parallel-worker flake). Not a Phase 2 regression; logged to
+`learnings.md` for a separate test-infra fix rather than rabbit-holed here. **Gate item 1** (`ls
+.../software-engineer | wc -l` = 2) is stale-by-design: Q-E deleted the last two files so git drops the
+now-empty dir — correct end-state. **§2.5 Gherkin adaptation**: the literal "legacy section-index browse
+still resolves" text assumed a standing legacy `_index.md` tree, but every child bundle moved wholesale
+via `git mv` and Q-E deleted the three roots, so no such tree remains; the adapted
+`course-rehome-redirects.feature` (retired-root 308 → course-library → single canonical body) is the
+semantic equivalent. Remaining: draft PR + 3-cycle review + CI + merge + deploy (the one unticked item
+above).
 
 > **Pause Safety**: every shipped course lives at its canonical `/en/learn/courses/<id>` URL with a
 > working 308 and declared prerequisites, and the legacy `_index.md` section browse still resolves the
