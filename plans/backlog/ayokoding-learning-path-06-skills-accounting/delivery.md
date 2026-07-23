@@ -51,7 +51,11 @@ PR, its own 3-cycle fan-out → `pr-review-synthesis-maker` → `pr-review-fixer
 1-PR-per-course, pipelined up to the in-force concurrency cap (N=3 unless the programme has since
 escalated it — check the latest `AGENTS.md` §Agent Workflow Orchestration value before starting).
 Manifest-growth TDD cycles and landing authoring are each their own PR too, sequenced after the
-courses each phase's manifest step depends on. See
+courses each phase's manifest step depends on. **Phase 0 is not a DAG leaf** — it is Environment
+Setup and Baseline, so it opens no PR, pushes no branch, runs no review cycle, and merges nothing;
+the earliest PR belongs to Phase 1
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+See
 [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 **Per-merge integration protocol.** After each `[AI]` merge above: confirm CI green on `origin/main`

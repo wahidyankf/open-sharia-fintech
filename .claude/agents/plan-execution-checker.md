@@ -622,10 +622,19 @@ require the PR to be merged.
 3. **For `worktree-to-origin-main` / `main-to-origin-main`**: confirm no PR-review-cycle evidence is
    expected (its absence is correct, not a finding) and that the final push landed directly on
    `origin main` with CI green — this reuses Step 5d/5e's existing plain-`main` checks unchanged.
+4. **No PR was opened for Phase 0** — under **every** mode, Phase 0 is Environment Setup and
+   Baseline and must not have produced a pull request. Enumerate the plan's PRs
+   (`gh pr list --search "<plan-identifier>" --state all --json number,title,headRefName`) and
+   confirm none of them corresponds to Phase 0 — no `…/phase-0` branch, no PR whose title or body
+   scopes it to Phase 0, and no PR whose diff contains only baseline evidence artifacts. A PR that
+   was actually opened for Phase 0: **HIGH**. Also confirm the plan's Phase 0 checklist has no
+   ticked PR/push/merge checkbox — a ticked one is the same finding with on-disk evidence. See
+   [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 #### Finding Severity
 
 - Actual execution path mismatches the plan's resolved Delivery Mode: **HIGH**
+- A PR was opened, reviewed, or merged for the plan's Phase 0 (any mode): **HIGH**
 - `*-to-pr` mode: PR missing: **CRITICAL**
 - `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
 - `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**

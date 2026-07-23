@@ -153,7 +153,8 @@ Both courses carry a self-check worked example verifying the boundary explicitly
 ## Delivery Mode
 
 `worktree-to-pr` — see [delivery.md](./delivery.md#delivery-mode-worktree-to-pr). No `[HUMAN]` merge
-gate is declared; `[AI]` merges every phase once the PR-Review Maker→Fixer Cycle and CI are green.
+gate is declared; `[AI]` merges every **delivery** phase once the PR-Review Maker→Fixer Cycle and CI
+are green. Phase 0 is setup and baseline: it opens no PR, so the earliest PR is Phase 1's.
 
 ## Related documents
 

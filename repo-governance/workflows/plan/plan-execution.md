@@ -119,9 +119,12 @@ first — and never silently self-promotes beyond the plan's declared N. See the
 independent. Independent nodes fan out up to N; dependent nodes serialize; **sequence is not
 dependency**. The DAG's independent-node width is the fan-out — N only caps it.
 
-**Delivery is 1-PR↔1-worktree**: each independent DAG node gets its own worktree, branch, and PR,
-merged per-phase as it completes rather than batched at plan end. Cleanup is the terminal DAG node,
-so a worktree is removed only once its own PR has landed and no in-flight node still needs it.
+**Delivery is 1-PR↔1-worktree**: each independent DAG node **that produces changes** gets its own
+worktree, branch, and PR, merged per-phase as it completes rather than batched at plan end. Cleanup
+is the terminal DAG node, so a worktree is removed only once its own PR has landed and no in-flight
+node still needs it. **Phase 0 is not a delivery node** — it is setup and baseline only, so it opens
+no PR under any delivery mode and the earliest PR belongs to Phase 1
+([§Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 **Git operations stay non-destructive and self-scoped**: assume other agents and engineers share
 this machine's disk, git object store, and worktrees. Never run an operation that discards a
@@ -325,6 +328,8 @@ Before implementing anything, ensure the development environment is ready.
 
 **Note**: The first phase of every delivery checklist must be **Phase 0: Environment Setup and Baseline**, executed by the `repo-setup-manager` agent. Phase 0 covers `npm install`, `npm run doctor -- --fix`, a baseline test run, and preexisting failure resolution. If the delivery checklist contains a Phase 0, delegate it to `repo-setup-manager` before proceeding to Step 2. The steps below are the orchestrator-level mirror of Phase 0 — they describe what must be true before any plan work begins.
 
+**Phase 0 opens no PR (HARD RULE)**: it ends at its own gate — a recorded clean baseline — and hands straight to Phase 1. No branch push, no `gh pr create`, no PR-Review Maker→Fixer Cycle, no merge, no CI run, under **any** delivery mode. The earliest phase that may open a PR is **Phase 1**; Phase 0's evidence artifacts ride that first PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
 **Orchestrator action**:
 
 - Run `npm install` to ensure dependencies are current
@@ -423,6 +428,8 @@ After completing all items in a delivery phase, verify the phase's authored gate
    - **`worktree-to-origin-main` / `main-to-origin-main`** (direct-push modes): push directly to `origin main`.
    - **`worktree-to-pr` / `main-to-pr`** (`*-to-pr` modes): push to the **PR branch of the DAG node being delivered**. Each independent node gets its own worktree, branch, and PR — a strict **one worktree → one branch → one PR → one node** mapping (see [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity)). If no PR exists yet for this branch, open one on its first push (`gh pr create --base main --head <branch> --title "<plan-identifier>: <node>" --body "<summary>"`, draft or non-draft per plan/user preference). Genuinely dependent phases that cannot be separated share one PR; independent ones do not. CI is monitored on the PR itself, not on `main` — see Step 2c.
 
+   **Phase 0 is exempt from this entire step — it pushes nothing and opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline. It installs dependencies, converges the toolchain, records the baseline, and resolves preexisting failures; it produces no reviewable change, so it is not a delivery DAG node and has no push target under **any** delivery mode. Do not push a Phase 0 branch, do not run `gh pr create` for Phase 0, do not run the PR-Review Maker→Fixer Cycle for it, and do not proceed to Step 2c after it — there is no CI run to verify. Any evidence file Phase 0 wrote (a baseline snapshot, a recorded path constant) stays on the plan branch and lands in the **first** PR the plan opens, which is the Phase 1 PR. The earliest phase that may open a PR is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
    **Per-phase merging (not batch merging)**: each phase PR is **opened and merged** as that phase completes, once the hardened merge preconditions hold. Do **not** hold phase PRs open for a batch merge at plan end — that re-serialises work the DAG declared independent and grows the divergence each PR must reconcile. The **merge actor** is `[AI]` by default; `[HUMAN]` applies only where the plan's own step declares that gate. Partial work reaches `main` **merged but dark** behind a feature flag rather than waiting on a long-lived branch.
 
    **The worktree is the unit of cleanup**: because the mapping is one worktree per PR, a node's worktree is removed when **its** PR lands — not deferred to plan end. Cleanup is the terminal node of the DAG and depends on every delivery node, so it can never remove a worktree an in-flight node still needs. See [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md).
@@ -434,6 +441,8 @@ After completing all items in a delivery phase, verify the phase's authored gate
 ### 2c. Post-Push CI Verification (Sequential, After Each Push)
 
 After every push, verify CI on the resolved delivery mode's target — `origin main` for the direct-push modes (`worktree-to-origin-main`, `main-to-origin-main`), the PR branch for the `*-to-pr` modes (`worktree-to-pr`, `main-to-pr`).
+
+**Phase 0 never reaches this step**: it pushes nothing (Step 2b), so it triggers no CI run and there is nothing to verify. Skip straight from the Phase 0 gate to Phase 1.
 
 **Monitoring tool**: The required default for standard CI jobs (10–35 min) is `ScheduleWakeup` + a single `gh run view` (direct-push modes) or `gh pr checks` (`*-to-pr` modes) call on wakeup (2 API calls total per run). Use `gh run watch <run-id>` (or tight polling of `gh pr checks`) only if the job is expected to complete in under 5 minutes — both poll every ~3 s and exhaust the GitHub API rate limit (5,000 req/hour) on any job longer than ~5 min. Manual tight-loop polling without a sleep interval is also **forbidden**. See [CI Monitoring Convention](../../development/workflow/ci-monitoring.md) for required tooling, minimum poll intervals, trigger discipline, and rate-limit recovery procedures.
 

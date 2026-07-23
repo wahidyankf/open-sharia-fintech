@@ -117,13 +117,23 @@ piece reaches `main`. These rules bind at authoring time, not merely at executio
 
 ### One Worktree, One Branch, One PR, One DAG Node (HARD RULE)
 
-Each applicable phase — more precisely, each independent node of the plan's dependency DAG — lands
-as **its own PR**. The mapping is strict and one-to-one: **one worktree → one branch → one PR → one
-node**. Never open two PRs from one worktree, and never drive one PR from two worktrees.
+Each applicable phase — more precisely, each independent node of the plan's dependency DAG **that
+produces changes** — lands as **its own PR**. The mapping is strict and one-to-one: **one worktree →
+one branch → one PR → one node**. Never open two PRs from one worktree, and never drive one PR from
+two worktrees.
 
 Genuinely dependent phases stay a single PR. The DAG governs, not the phase numbering: phases that
 merely appear in sequence are not thereby dependent, and splitting them into separate PRs is the
 default. Sequence is not dependency.
+
+**Phase 0 is not one of these nodes — the earliest PR is Phase 1 (HARD RULE)**. Phase 0 is
+Environment Setup and Baseline: it installs dependencies, converges the toolchain, records the
+baseline, and clears preexisting failures. It produces nothing reviewable, so it opens no PR, pushes
+no branch, runs no review cycle, and merges nothing — under **every** delivery mode, the default
+`worktree-to-pr` included. Author it as a local, gate-terminated phase whose evidence artifacts ride
+the Phase 1 PR. A Phase 0 that genuinely produces reviewable changes is mis-scoped: move that work
+into Phase 1. See
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 ### Per-Phase Merging, Not Batch Merging
 
@@ -396,9 +406,13 @@ Read the created plan files and verify structural completeness before the qualit
 3. Verify delivery checklist has at least one `- [ ]` checkbox
 4. Verify Gherkin acceptance criteria present in `prd.md` (multi-file) or condensed PRD
 5. Verify the worktree path in the plan matches `<identifier>` confirmed in Step 1, and that the
-   plan folder lives under the correct stage (`backlog/` with a `<YYYY-MM-DD>__` prefix, or
-   `in-progress/` with no date prefix) per the confirmed `target-stage`
-6. Verify delivery checklist starts with **Phase 0: Environment Setup and Baseline**
+   plan folder lives under the correct stage (`backlog/` and `in-progress/` both use a bare
+   `<identifier>/` with no date prefix; only `done/` carries the `<YYYY-MM-DD>__` prefix) per the
+   confirmed `target-stage`
+6. Verify delivery checklist starts with **Phase 0: Environment Setup and Baseline**, and that
+   Phase 0 contains **no** PR-creation, PR-review-cycle, push, or merge step — the earliest phase
+   that may open a PR is Phase 1
+   ([§Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
 7. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
 8. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
 9. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`

@@ -46,14 +46,17 @@ the worktree after the plan is archived and pushed.
 
 Every phase branches from the **latest `origin/main`** inside this one shared worktree
 (`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-05-manifests/<phase-slug>`),
-authors its work there, commits, pushes that branch, and opens **its own draft PR**.
+authors its work there, commits, pushes that branch, and opens **its own draft PR** — from
+**Phase 1 onward**. **Phase 0 is excluded**: it is setup and baseline, pushes no branch and opens no
+PR, and its evidence artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each phase works in the shared worktree on its **own branch**, opens a **draft PR** against `main`,
+Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in the shared worktree on
+its **own branch**, opens a **draft PR** against `main`,
 runs the **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential
 CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
 are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
@@ -73,7 +76,10 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
 > than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
-**Per-Phase Integration Protocol** (each phase's gate lists these as must-pass):
+**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
+must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
+branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the shared worktree to latest `origin/main` and branch:
    `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-05-manifests/<phase-slug>`.
@@ -255,15 +261,19 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       green in `evidence/phase-0-snapshot.txt`; zero preexisting failures unresolved.
 - [ ] [AI] Manifest inventory recorded as empty; hub card count recorded as **0**; the four syllabus
       mirrors reachable at their cross-plan path.
-- [ ] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
-      — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
-      command and acceptance criterion for each;
-      `ayokoding-www` deployed (no-op redeploy).
+- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Per-Phase Integration
+      Protocol applies from **Phase 1 onward** and explicitly excludes Phase 0. Read the printed
+      number from each (never `&&`-chained, since `grep -c` exits 1 on a zero count):
+      `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
+      `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
+      Falsifiable both ways: pushing this branch makes the first return **1**; opening a PR for it
+      makes the second return **1** — either fails the gate. The `evidence/phase-0-snapshot.txt`
+      baseline written here rides the **Phase 1** PR
+      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 > **Pause Safety**: only the toolchain was verified and the current state snapshotted — no manifest,
-> landing, or hub change exists. Safe to stop indefinitely. To resume: re-run the five precondition
-> checks and the three baselines.
+> landing, or hub change exists, nothing is pushed, and no PR exists. Safe to stop indefinitely. To
+> resume: re-run the five precondition checks and the three baselines.
 
 ---
 

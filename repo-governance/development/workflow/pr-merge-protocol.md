@@ -109,6 +109,7 @@ This protocol applies whenever a pull request exists as part of the development 
 This protocol does **not** apply to:
 
 - Direct commits under `worktree-to-origin-main` or `main-to-origin-main` (no PR exists to merge).
+- **A plan's Phase 0** (Environment Setup and Baseline) under any delivery mode -- it opens no PR, so there is nothing here to merge. The earliest phase that may open a PR, and therefore the earliest phase this protocol can govern, is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 - Environment branch deployments managed by CI (e.g., `prod-ayokoding-www`), which are governed by their own documented CI workflows.
 
 ## The `worktree-to-pr` Terminal Step

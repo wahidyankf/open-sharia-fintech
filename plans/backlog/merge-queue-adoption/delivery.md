@@ -49,7 +49,10 @@ See [Worktree Path Convention](../../../repo-governance/conventions/structure/wo
 Work in `worktrees/merge-queue-adoption/`; open a draft PR against `main`; run the **PR-Review
 Maker→Fixer Cycle** (3 sequential CI-gated cycles) before an `[AI]` merge once the five hardened
 preconditions hold. Git-mechanical steps are `[AI]`. This plan **dogfoods** the queue: its own
-downstream PRs merge through the queue once it is enabled.
+downstream PRs merge through the queue once it is enabled. **Phase 0 opens no PR** — it is setup,
+baseline, and availability investigation only, so it pushes no branch and merges nothing; the
+earliest PR belongs to Phase 1
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 ## Dependency DAG
 

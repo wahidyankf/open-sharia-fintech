@@ -281,6 +281,10 @@ Cover (each as a structured multiple-choice question):
   checklist emit the PR-Review Maker→Fixer Cycle steps before the merge?
 - Is Phase 0 (Environment Setup and Baseline) the first phase in `delivery.md`, with
   `repo-setup-manager` as the designated executor?
+- Is Phase 0 free of **every** PR/push/review/merge step — no `gh pr create`, no branch push, no
+  PR-Review Maker→Fixer Cycle, no merge, no `gh pr ready`, no post-push CI verification — under
+  whatever mode the plan declares, so that the earliest PR belongs to Phase 1? (If a
+  Per-Phase Integration Protocol block exists, does it state that it applies from Phase 1 onward?)
 - Does every phase (including Phase 0) end with a `### Phase N Gate` and a **Pause Safety** note,
   and is each phase a natural pause (cohesive, safe-to-stop, clean resume)?
 - Are execution markers correct — `[AI]` default, `[HUMAN]` only for genuinely human-only steps,
@@ -537,6 +541,19 @@ Emit PR steps according to the plan's declared Delivery Mode (Step 7 above):
 
 The error to avoid is no longer "an unsolicited PR step" but **a PR step that disagrees with the declared mode in either direction**. `plan-checker`'s PR Step Authorization Check flags both directions.
 
+**Phase 0 is exempt from the mode entirely — never emit a PR step there (HARD RULE)**. Whatever the declared Delivery Mode, **Phase 0 opens no PR**. Do not emit, inside Phase 0's steps or its gate, any of:
+
+- a PR-creation step (`Open a draft PR`, `gh pr create`, `Create PR`);
+- a branch-push step (`git push origin <branch>`, `Commit and push to origin <pr-branch>`);
+- a PR-Review Maker→Fixer Cycle step;
+- a merge step, a `gh pr ready` step, or a post-push CI-verification step.
+
+The earliest phase that may carry any of those is **Phase 1**. Phase 0 ends at its own gate — the recorded clean baseline — and hands directly to Phase 1. Any evidence file Phase 0 writes (`evidence/phase-0-snapshot.txt`, a slug register, a recorded path constant) is carried by the **first** PR the plan opens, which is the Phase 1 PR; say so explicitly in the Phase 1 steps rather than giving Phase 0 a PR to carry them.
+
+If the work you are about to put in Phase 0 genuinely produces reviewable changes, the Phase 0 is **mis-scoped** — move that work into Phase 1 and leave Phase 0 as setup and baseline only. Never resolve it by giving Phase 0 a PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
+When a plan uses a **Per-Phase Integration Protocol** block (branch → commit → push → draft PR → review cycle → merge, listed once and referenced by every phase gate), state in that block that it applies to **Phase 1 onward** and that Phase 0 is excluded.
+
 ## Reference Documentation
 
 **Project Guidance:**
@@ -683,12 +700,18 @@ These are non-negotiable.
 
 **1. Phase 0: Environment Setup and Baseline** (the FIRST phase of every delivery checklist,
 delegated to `repo-setup-manager`; note the per-checkbox `[AI]` tags and the closing gate +
-Pause Safety note — the same shape every phase must follow):
+Pause Safety note — the same shape every phase must follow). **Phase 0 opens no PR under any
+Delivery Mode** — no push step, no `gh pr create`, no review cycle, no merge, no CI-verification
+step. Emit it exactly in this shape:
 
 ```markdown
 ## Phase 0: Environment Setup and Baseline
 
 > _Executor: repo-setup-manager_
+>
+> **No PR for this phase.** Phase 0 is local setup and baseline only: it opens no PR, pushes no
+> branch, runs no PR-Review Maker→Fixer Cycle, and merges nothing — under every Delivery Mode. The
+> earliest phase that may open a PR is Phase 1; any evidence file written here rides that first PR.
 
 - [ ] [AI] Install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
@@ -707,10 +730,17 @@ Pause Safety note — the same shape every phase must follow):
 - [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
 - [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:coverage` baseline recorded and
       every preexisting failure resolved (zero unresolved)
+- [ ] [AI] Nothing was pushed and no PR exists for this branch — run both, reading the printed
+      number (never `&&`-chaining, since `grep -c` exits 1 on a zero count):
+      `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns `0`, and
+      `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns `0`.
+      Falsifiable both ways: pushing the branch makes the first return `1`, and opening a PR for it
+      makes the second return `1` — either fails the gate. Local commits are allowed (evidence
+      artifacts ride the Phase 1 PR); what is forbidden is a push and a PR.
 
 > **Pause Safety**: only the local toolchain was verified and the baseline recorded — no feature
-> work exists yet. Safe to stop indefinitely. To resume: re-run the baseline command and confirm
-> it is still clean.
+> work exists yet, nothing is pushed, and no PR exists. Safe to stop indefinitely. To resume:
+> re-run the baseline command and confirm it is still clean.
 ```
 
 **2. Local Quality Gates** (before any push step in each phase):
@@ -749,7 +779,8 @@ or deletes observable behavior in `apps/`, `libs/`, or `specs/`; see
 Pure refactors that preserve behavior, dependency bumps with no behavior change, and
 docs/governance-only plans are exempt — state the exemption explicitly in `tech-docs.md`.
 
-**3. Post-Push CI Verification** (after every push step):
+**3. Post-Push CI Verification** (after every push step — and therefore **never in Phase 0**, which
+pushes nothing):
 
 ```markdown
 ### Post-Push CI Verification

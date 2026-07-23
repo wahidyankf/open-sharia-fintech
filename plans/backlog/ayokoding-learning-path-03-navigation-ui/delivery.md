@@ -41,14 +41,16 @@ the worktree after the plan is archived and pushed.
 Every phase branches from the **latest `origin/main`** inside this one worktree
 (`git fetch origin && git checkout main && git pull && git checkout -b
 ayokoding-learning-path-03-navigation-ui/<phase-slug>`), authors its work there, commits, pushes that
-branch, and opens **its own draft PR**.
+branch, and opens **its own draft PR** — from **Phase 1 onward**. **Phase 0 is excluded**: it is
+setup and baseline, pushes no branch and opens no PR, and its evidence artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each phase works in this worktree on its **own branch**, opens a **draft PR** against `main`, runs the
+Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in this worktree on its
+**own branch**, opens a **draft PR** against `main`, runs the
 **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential CI-gated cycles),
 flips the PR to ready, and `[AI]` **merges it automatically once all quality gates are green** — then
 `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this plan ships to
@@ -68,7 +70,10 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
 > than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
-**Per-Phase Integration Protocol** (each phase's gate lists these as must-pass):
+**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
+must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
+branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the worktree to latest `origin/main` and branch:
    `git fetch origin && git checkout main && git pull && git checkout -b

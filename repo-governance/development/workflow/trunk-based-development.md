@@ -356,6 +356,12 @@ once the hardened preconditions hold -- `[AI]` by default, `[HUMAN]` only where 
 This applies to all routine development: features, bug fixes, refactors, documentation, governance
 changes, and work executed inside a git worktree -- the default is the same regardless of context.
 
+**Inside a plan, this sequence starts at Phase 1, never Phase 0.** A plan's Phase 0 is Environment
+Setup and Baseline -- dependency install, toolchain convergence, a recorded baseline, preexisting-failure
+resolution. It produces no reviewable change, so it pushes no branch and opens no PR under **any** of
+the four delivery modes; its evidence artifacts ride the Phase 1 PR instead. See
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
 ```bash
 # Default workflow -- worktree-to-pr (applies in worktrees, which is now the norm)
 git worktree add worktrees/<plan-id> -b <plan-id>

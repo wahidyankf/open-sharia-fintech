@@ -485,7 +485,7 @@ gates, link/heading validation), not by a Playwright step binding.
 ## Delivery Mode: worktree-to-pr
 
 `worktree-to-pr` (the repo default, inherited from the source plan as a tier-2 plan field): work in
-`worktrees/ayokoding-learning-path-05-manifests/`, open a draft PR per phase against `main`, run the
+`worktrees/ayokoding-learning-path-05-manifests/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none) against `main`, run the
 PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically once the
 review and all quality gates are green — a plan-scoped confirmation of the repo-default `[AI]` merge,
 which this plan does not opt out of (see **DN-11** above). `ayokoding-www` is deployed to

@@ -427,7 +427,16 @@ This workflow is the mandatory pre-merge gate for every `*-to-pr` delivery mode:
 
 It does **not** apply to the direct-push delivery modes (`worktree-to-origin-main`,
 `main-to-origin-main`), which push directly to `origin main` under `[AI]` authority and carry no PR
-to review. See
+to review.
+
+It also does **not** apply to a plan's **Phase 0** under any mode. Phase 0 is Environment Setup and
+Baseline — it opens no PR, so there is no PR for the fan-out to review, no threads for
+`pr-review-fixer` to resolve, and no CI run for the per-cycle gate. The earliest phase this workflow
+can run against is **Phase 1**. Dispatching the specialist fan-out against a Phase 0 is a defect, not
+a thoroughness choice: it spends a full N-cycle loop reviewing a diff that does not exist. See
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
+See
 [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
 for the full four-mode table, and
 [plan-execution.md Step 8](../plan/plan-execution.md#8-finalization-and-archival-sequential) for how

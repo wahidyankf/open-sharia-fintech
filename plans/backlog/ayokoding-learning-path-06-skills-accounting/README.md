@@ -373,8 +373,8 @@ fact. Full status ledger, with sources and access dates: [verification-log.md](.
 `worktree-to-pr` — the repo default, declared explicitly. Sequential phases work in the base
 worktree `worktrees/ayokoding-learning-path-06-skills-accounting/`; each parallel course-authoring
 leaf gets **its own** worktree (strict 1 PR ↔ 1 worktree — git allows one branch per worktree, so
-concurrent course PRs cannot share one). Open a draft PR per phase (and per course
-sub-phase) against `main`, run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then
+concurrent course PRs cannot share one). Open a draft PR per **delivery** phase (and per course
+sub-phase) against `main` — **Phase 1 onward**; Phase 0 is setup/baseline and opens none — run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then
 `[AI]` merges once every quality gate is green. `ayokoding-www` deploys to `prod-ayokoding-www` after
 each merge. See [delivery.md](./delivery.md#delivery-mode-worktree-to-pr) for the `## Worktree` and
 `## Delivery Mode` declarations and the per-phase integration protocol.

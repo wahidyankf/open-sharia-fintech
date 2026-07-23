@@ -575,7 +575,7 @@ Every phase in a delivery checklist MUST be designed as a **natural pause point*
 > Safe to stop. To resume: `<single command to re-verify>`.
 ```
 
-Order phases so each builds on a green predecessor. Phase 0 (Environment Setup and Baseline) already follows this shape — its gate is the recorded clean baseline.
+Order phases so each builds on a green predecessor. Phase 0 (Environment Setup and Baseline) already follows this shape — its gate is the recorded clean baseline, and that gate is the whole of it: Phase 0 opens no PR, per [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 **Enforcement**: `plan-checker` flags any phase lacking a `### Phase N Gate` as **HIGH**, and flags a gate lacking concrete verification commands or criteria, or a missing Pause Safety note, as **MEDIUM**. `plan-execution-checker` verifies each phase gate was satisfied before the next phase's work began (via git history). `plan-fixer` adds missing gates and Pause Safety notes.
 
@@ -607,13 +607,37 @@ shared branch, or an ordering constraint makes them dependent however separable 
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
 as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
 
-**Each independent DAG node lands as its own PR** — one worktree → one branch → one PR → one node,
+**Each independent DAG node that produces changes lands as its own PR** — one worktree → one branch → one PR → one node,
 opened and merged as that node completes rather than held for a batch merge at plan end. Partial
 work reaches `main` merged-but-dark behind a feature flag; dependent nodes that cannot be separated
 stay a single PR. The full planning-granularity rule — the strict 1-PR↔1-worktree mapping, per-phase
 merging, the feature-flag default with its unflagged escape and named removal step, and how the
 `worktree-to-pr` default binds as a design obligation at authoring time — is stated in the
 [plan-planning workflow §Planning Granularity](../../workflows/plan/plan-planning.md#planning-granularity).
+
+### Phase 0 Opens No PR — the Earliest PR Is Phase 1 (HARD RULE)
+
+**Phase 0 never opens a pull request. The earliest phase that may open one is Phase 1.**
+
+Phase 0 is [Environment Setup and Baseline](#phases-as-natural-pauses-with-clear-gates-hard-rule): it installs dependencies, converges the polyglot toolchain, records a baseline test run, and resolves preexisting failures. It changes nothing a reviewer can review — no source, no docs, no governance, no specs. Under **every** Delivery Mode, including the default `worktree-to-pr`, Phase 0 therefore:
+
+- opens **no** PR — `gh pr create` never appears in a Phase 0 step or gate;
+- pushes **no** branch to `origin`;
+- runs **no** PR-Review Maker→Fixer Cycle;
+- merges **nothing**; and
+- has **no** CI run of its own to monitor.
+
+Its gate is the recorded clean baseline, and nothing more.
+
+This is not an exception to [Delivery Checklists Express a DAG](#delivery-checklists-express-a-dag-hard-rule) — it follows from it. That rule binds each independent DAG node **that produces changes**. Phase 0 produces none, so it is not a delivery node at all; it is the precondition every delivery node depends on.
+
+**Baseline artifacts ride Phase 1's PR.** When Phase 0 writes evidence files — an `evidence/phase-0-snapshot.txt` baseline record, a slug register, a recorded path constant — those files land in the **first** PR the plan opens, which is the Phase 1 PR. A baseline artifact never justifies a PR of its own.
+
+**Why this is a hard rule**: a PR whose diff is empty, or holds only a baseline text file, still consumes a full review cycle — the discipline-specialist fan-out, the synthesis coordinator, a fixer pass, and three CI-gated cycles — to review nothing. It also converts a local, resumable, zero-risk setup step into an integration event carrying a branch, a merge, and a cleanup obligation. The cost is entirely overhead, and the review necessarily finds nothing, because there is nothing there. Worse, it trains executors to treat "phase complete" and "PR merged" as synonyms, which is exactly the conflation the [Delivery Mode](#delivery-mode) table exists to prevent.
+
+**A plan whose Phase 0 genuinely produces reviewable changes has a mis-scoped Phase 0**, not an exemption. Move that work into Phase 1 (or a later phase) and leave Phase 0 as setup and baseline only. Splitting the work is always available; opening a Phase 0 PR is not.
+
+**Enforcement**: `plan-maker` never emits a PR-creation, review-cycle, or merge step inside Phase 0. `plan-checker` flags any such step as **HIGH** regardless of the plan's declared Delivery Mode — the mode authorizes PR steps for delivery phases, never for Phase 0. `plan-fixer` removes the offending step and folds any Phase 0 evidence artifact into the Phase 1 PR. `plan-execution-checker` flags a PR that was actually opened for Phase 0 as **HIGH**. `repo-setup-manager`, the agent that executes Phase 0, carries no push and no PR step in its sequence.
 
 ### Applicability (Execution Markers + Phase Gates)
 
@@ -701,7 +725,9 @@ the human or agent declaring the mode must make, not one the algorithm enforces 
 disposable worktree and routes it through review before it touches `main`, so it is the safest
 choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
-the PR is considered done.
+the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps for the plan's
+**delivery** phases only — Phase 0 opens no PR under any mode, per
+[Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 **[AI] merges by default.** A `[HUMAN]` merge gate applies only where a plan's own step says so explicitly.
 The **preconditions are unchanged — only the actor is.** A PR still merges only when

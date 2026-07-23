@@ -73,14 +73,17 @@ the worktree after the plan is archived and pushed.
 
 Every phase branches from the **latest `origin/main`** inside this one shared worktree
 (`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`),
-authors its work there, commits, pushes that branch, and opens **its own draft PR**.
+authors its work there, commits, pushes that branch, and opens **its own draft PR** — from
+**Phase 1 onward**. **Phase 0 is excluded**: it is setup and baseline, pushes no branch and opens no
+PR, and its evidence artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each phase works in the shared worktree on its **own branch**, opens a **draft PR** against `main`,
+Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in the shared worktree on
+its **own branch**, opens a **draft PR** against `main`,
 runs the **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential
 CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
 are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
@@ -103,7 +106,10 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > **`DL-11` does not exist.** The slot is `DN-11`, a Delivery Note. The Decisions-Locked register runs
 > DL-1…DL-17 with **17** entries, not 25. Never renumber to close the apparent gap.
 
-**Per-Phase Integration Protocol** (each phase's gate lists these as must-pass):
+**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
+must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
+branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the worktree to latest `origin/main` and branch:
    `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`.
@@ -394,8 +400,8 @@ subagents capped per the orchestration convention). The main thread self-promote
   repo-wide as of 2026-07-22) — use this exact form.
 
 - [ ] [AI] **Confirm no manifest file changed in this phase** — this phase only writes
-      `evidence/` toolchain-baseline files, but it still opens and merges its own PR under the
-      Per-Phase Integration Protocol, so it gets the same individual gate as every other phase:
+      `evidence/` toolchain-baseline files, and it opens **no** PR (the Per-Phase Integration
+      Protocol applies from Phase 1 onward), but the manifest-isolation assertion still holds here:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
@@ -413,12 +419,19 @@ subagents capped per the orchestration convention). The main thread self-promote
       recorded in `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] Cross-plan link gate green (no line naming this plan's folder).
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
-      `ayokoding-www` deployed (no-op redeploy).
+- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Per-Phase Integration
+      Protocol applies from **Phase 1 onward** and explicitly excludes Phase 0. Read the printed
+      number from each (never `&&`-chained, since `grep -c` exits 1 on a zero count):
+      `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
+      `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
+      Falsifiable both ways: pushing this branch makes the first return **1**; opening a PR for it
+      makes the second return **1** — either fails the gate. The `evidence/` baseline and slug
+      register written here ride the **Phase 1** PR
+      ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 > **Pause Safety**: only the toolchain, the two upstream preconditions, and the slug register were
-> established — no course body exists yet. Safe to stop indefinitely. To resume: re-run the two
-> blocking-plan verification commands and the baseline build.
+> established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
+> indefinitely. To resume: re-run the two blocking-plan verification commands and the baseline build.
 
 ---
 

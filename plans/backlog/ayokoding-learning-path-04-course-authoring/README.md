@@ -153,7 +153,7 @@ must reject it rather than guess.
 ## Delivery Mode: worktree-to-pr
 
 `worktree-to-pr` (inherited from the source plan, tier-2 plan-field precedence): work in
-`worktrees/ayokoding-learning-path-04-course-authoring/`, open a draft PR per phase against `main`,
+`worktrees/ayokoding-learning-path-04-course-authoring/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none) against `main`,
 run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically
 once the review and all quality gates are green (see **DN-11** below). `ayokoding-www` is deployed to
 `prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree` and

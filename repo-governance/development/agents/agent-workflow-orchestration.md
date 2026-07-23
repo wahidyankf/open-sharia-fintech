@@ -151,6 +151,8 @@ A worktree isolates **edits** — two agents writing to the same file in the sam
 
 Concretely: **every DAG leaf that produces changes gets its own worktree and its own PR** — a strict one-node ↔ one-worktree ↔ one-PR mapping. The corollary matters as much as the rule: nodes that are genuinely _dependent_ stay in one PR. The DAG governs. Never force-split an inseparable chain just to produce more PRs, and never batch independent nodes into one PR just to produce fewer.
 
+The qualifier **"that produces changes"** is load-bearing, and a plan's **Phase 0** is where it bites: Environment Setup and Baseline produces no reviewable change, so it is not a DAG leaf and gets **no PR** under any delivery mode. The earliest phase that may open one is **Phase 1**. See [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
 Because the worktree is the unit that maps to a PR, it is also the unit that gets cleaned up when that PR lands.
 
 ### CI and GitHub Actions Monitoring Cadence

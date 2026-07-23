@@ -469,7 +469,7 @@ with that push.
 
 `worktree-to-pr` (the repo default, and the source plan's declared mode — inherited at tier-2 "plan
 field" precedence, not re-derived): work in
-`worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag/`, open a draft PR per phase
+`worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none)
 against `main`, run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
 merges automatically once the review and all quality gates are green (DN-11). See
 [delivery.md](./delivery.md) for the `## Worktree` and `## Delivery Mode` declarations and the

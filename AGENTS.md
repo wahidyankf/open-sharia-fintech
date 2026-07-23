@@ -107,14 +107,13 @@ repo-local `WorktreeCreate` hook.
 
 ### Delivery Mode
 
-Every plan declares exactly one of four Delivery Modes controlling where it's worked and how it
-lands: `worktree-to-pr` (worktree → draft PR — **the default**), `worktree-to-origin-main` (worktree
-→ direct push), `main-to-origin-main` (primary checkout → direct push), `main-to-pr` (primary
-checkout → draft PR). `*-to-pr` modes run the **PR-Review Maker→Fixer Cycle** (fan-out →
-`pr-review-synthesis-maker` → `pr-review-fixer`, default 3 sequential CI-gated cycles) before the
-merge. **`[AI]` merges by
-default** in every mode; a `[HUMAN]` merge gate applies only where a plan's own step says so
-explicitly, with identical preconditions — only the actor differs.
+Every plan declares one of four Delivery Modes — `worktree-to-pr` (**the default**),
+`worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr` — naming its work location (worktree
+or primary checkout) and integration target (draft PR or direct push). `*-to-pr` modes run the
+**PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, default
+3 sequential CI-gated cycles) before the merge. **`[AI]` merges by default** in every mode; a
+`[HUMAN]` merge gate applies only where a plan's own step says so explicitly, with identical
+preconditions — only the actor differs.
 
 **The PR is the independent merge point** — N parallel units become N PRs that review, gate, and
 merge independently, which is why `worktree-to-pr` is the default; each DAG leaf producing changes
@@ -122,9 +121,12 @@ gets its own worktree and PR (strict 1-PR ↔ 1-worktree), while genuinely depen
 A PR merges only when **all five hardened preconditions** hold — review cycles complete; 0 CRITICAL +
 0 HIGH outstanding; branch non-destructively up to date with `origin/main`; all quality gates green;
 tester gates run or exemption recorded. Normative lettering (a)-(e) in the PR Merge Protocol.
+**Phase 0 opens no PR under any mode** — setup/baseline is not a delivery node, so it pushes no
+branch and merges nothing; **the earliest PR is Phase 1**, and Phase 0's evidence rides it.
 
 **See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
-[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
+[Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
+and [§Phase 0 Opens No PR](./repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
 ## Git Hooks (Automated Quality)
@@ -250,12 +252,10 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example. **Hard iron rule
 committed files**: Never commit system secrets to any git-tracked file — history is permanent. Real
 values in uncommitted `.env*` (except `.env.example`). **Guardrail**: Agents must not
 read/write/edit/commit real `.env*` files — only `.env.example` is permitted; scripts under
-`apps/`/`libs/`/`scripts/` are exempt. **Git Identity Guardrail**: No AI agent sets or modifies
-git identity at any scope — `git config --local user.*`, bare `git config user.*`,
-`git config --global user.*`, `git config --system user.*`, or direct `.git/config [user]`
-edits are all forbidden. Identity comes from the developer's global `~/.gitconfig` (optionally
-`includeIf` for per-tree overrides). CI exemption: workflow YAML service-account identity
-(e.g. `github-actions[bot]`) is not an agent action.
+`apps/`/`libs/`/`scripts/` are exempt. **Git Identity Guardrail**: No AI agent sets or modifies git
+identity at **any** scope — `git config user.*` bare/`--local`/`--global`/`--system`, or direct
+`.git/config [user]` edits. Identity comes from the developer's `~/.gitconfig` (`includeIf` for
+per-tree overrides). CI service-account identity in workflow YAML is exempt.
 
 **See**: [repo-governance/development/workflow/reproducible-environments.md](./repo-governance/development/workflow/reproducible-environments.md),
 [Secrets and Env Standards](./repo-governance/conventions/security/secrets-and-env-standards.md)

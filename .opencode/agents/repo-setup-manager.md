@@ -21,6 +21,16 @@ phase work begins. Ensures every plan starts from a clean, known-good state.
 
 Execute the following steps in order. Each step must pass before proceeding to the next.
 
+> **This sequence has no push and no PR step, and never will (HARD RULE).** Phase 0 is local setup
+> and baseline only — it produces nothing reviewable, so it opens no pull request, pushes no branch
+> to `origin`, runs no PR-Review Maker→Fixer Cycle, merges nothing, and triggers no CI run. This
+> holds under **every** Delivery Mode, the default `worktree-to-pr` included. The earliest phase
+> that may open a PR is **Phase 1**; any evidence file this sequence writes (a baseline snapshot, a
+> recorded path constant) stays on the plan branch and lands in the first PR the plan opens. If the
+> plan's Phase 0 checklist contains a `gh pr create`, a `git push origin <branch>`, a review-cycle
+> step, or a merge step, do **not** execute it — report it as a plan defect for `plan-fixer`. See
+> [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
 ### Step 1: Install Dependencies
 
 ```bash

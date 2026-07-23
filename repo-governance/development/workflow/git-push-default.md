@@ -112,6 +112,15 @@ This is the correct behavior in all of the following situations, absent an expli
 - Agent definition updates under `.claude/agents/`.
 - Any other change not explicitly assigned a direct-push mode.
 
+**The one exception inside a plan: Phase 0 pushes nothing and opens no PR.** A plan's Phase 0 is
+Environment Setup and Baseline — `npm install`, `npm run doctor -- --fix`, a recorded baseline, and
+preexisting-failure resolution. It produces no reviewable change, so it has no integration target at
+all: no `git push origin <plan-id>`, no `gh pr create`, no review cycle, no merge. The sequence above
+begins at **Phase 1**, which is the earliest phase that may open a PR; any evidence file Phase 0 wrote
+rides that first PR. This is not a mode override — it holds under every one of the four delivery
+modes. See
+[Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
 ### Standard 2: Direct Push Modes Are Explicit Selections, Not Inferred
 
 `worktree-to-origin-main` and `main-to-origin-main` push directly to `origin main` with no PR. Either

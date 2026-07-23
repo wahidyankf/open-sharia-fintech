@@ -126,6 +126,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **Execution-grade clarity (HARD RULE)**: every checkbox MUST name explicit file path(s) (or maximum-possible-detail target when path is unknowable), verbatim shell command(s) when applicable, and a concrete acceptance criterion. Flag as **HIGH** any checkbox whose action is not unambiguously executable by a sonnet-tier agent without consulting additional context — bare "implement X", "set up Y", "configure Z", "add caching" are violations. See [Plans Organization Convention §Execution-Grade Clarity](../../repo-governance/conventions/structure/plans.md#execution-grade-clarity-hard-rule).
 - **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[AI+HUMAN]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
 - **Phase gate & natural pause (HARD RULE)**: every phase ends with a `### Phase N Gate` (must-pass checklist + Pause Safety note) and reaches a safe-to-stop state. Flag a phase missing its gate as **HIGH**; a non-pause phase that should be merged as **MEDIUM**. Validated in detail by Step 5i (rule 15).
+- **Phase 0 opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline — it carries no PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step, under **any** Delivery Mode; the earliest phase that may open a PR is **Phase 1**. Flag any such step inside Phase 0, and any unscoped Per-Phase Integration Protocol block, as **HIGH**. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 7). See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 - **Specs & Gherkin delivery (per Two Paths)**: a plan that creates, modifies, or deletes observable behavior in `apps/`, `libs/`, or `specs/` MUST include delivery steps that add/update the companion `specs/` Gherkin `.feature` files and run `specs:coverage`. Validated in detail by Step 5j (rule 16). See [Feature Change Completeness Convention §Two Paths](../../repo-governance/development/quality/feature-change-completeness.md).
 - **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior-implementing RED→GREEN→REFACTOR cycle MUST target **exactly one** Gherkin scenario — the RED step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embeds that scenario's complete `Given/When/Then` inline as a fenced ` ```gherkin ` block, verbatim-equal to the companion `.feature`. Flag as **HIGH**: a behavior RED step whose `binds` tag lists **more than one** scenario (must be split one-cycle-per-scenario), a behavior step missing its Gherkin tag, or a step whose inline `Given/When/Then` is absent or not verbatim-equal to the `.feature`. Two exceptions keep a multi-scenario `;`-list tag and are NOT split: pure-core (`**Gherkin (underpins) →**`) data/calc unit tests, and aggregate BDD binders (a feature-consuming unit test or `playwright-bdd` step-def file consuming the whole `.feature` for `specs:coverage`/E2E). Pure refactors, no-behavior-change bumps, and docs/governance-only steps are exempt. See [Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
 - **UI-design-funnel completeness (UI-bearing plans)**: a plan that adds/changes user-facing screens or components under `apps/` or `libs/` MUST carry the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale, a grounding/prior-art note, and a **responsive** strategy across mobile/tablet/desktop). Validated in detail by Step 5k (rule 17). Pure-refactor / no-UI / governance-only plans are exempt. See [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
@@ -150,6 +151,44 @@ corrected.
 
 Note: executing in a worktree context does not by itself select a mode either way — the resolved
 Delivery Mode (declared or defaulted) is the only authorizing signal, per Step 5m.
+
+**Phase 0 Never Opens a PR — mode-independent (HIGH)**
+
+Authoritative source: [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+
+Flag as **HIGH**, **regardless of the plan's resolved Delivery Mode**, any of the following appearing
+inside `## Phase 0` (its steps, its sub-bullets, or its `### Phase 0 Gate`):
+
+- a PR-creation step — `Open a draft PR`, `Create PR`, `gh pr create`;
+- a branch-push step — `git push origin <branch>`, `Commit and push to origin <pr-branch>`, or any
+  push to a target other than nothing;
+- a PR-Review Maker→Fixer Cycle step, or any reference to review cycles completing for Phase 0;
+- a merge step, a `gh pr ready` step, or a post-push CI-verification step for Phase 0.
+
+The declared mode does **not** authorize these: a `*-to-pr` mode authorizes PR steps for the plan's
+**delivery** phases only. Phase 0 is Environment Setup and Baseline and produces nothing reviewable,
+so the earliest phase that may open a PR is **Phase 1**.
+
+Also flag as **HIGH** a **Per-Phase Integration Protocol** block (a branch → commit → push → draft PR
+→ review → merge sequence stated once and referenced by every phase gate) that does **not** scope
+itself to Phase 1 onward — an unscoped block silently binds Phase 0.
+
+**Remediation to state in the finding**: delete the offending step; if Phase 0 wrote evidence
+artifacts, note that they ride the Phase 1 PR. If Phase 0 genuinely produces reviewable changes, the
+correct fix is to move that work into Phase 1 — flag the Phase 0 as mis-scoped rather than accepting
+a Phase 0 PR.
+
+**Detection command** (run from the plan folder; reports the Phase 0 slice only):
+
+```bash
+awk '/^## Phase 0/{f=1} /^## Phase 1/{f=0} f' delivery.md \
+  | grep -nEi 'gh pr create|gh pr ready|open (a )?(draft )?pr|create pr|git push|push to origin|PR-Review|review cycle|merge(d)? (the )?PR' \
+  | grep -c .
+```
+
+Acceptance: returns `0`. Falsifiable both ways: adding a `gh pr create --draft` line inside Phase 0
+makes it return `1`. Read the printed number rather than `&&`-chaining, since `grep -c` exits 1 on a
+zero count. For a single-file plan, substitute the plan's `README.md`.
 
 ### 5. Consistency Validation
 
@@ -871,6 +910,11 @@ mode additionally fixes the integration target and merge authority.
    deferred to after merge, on a `*-to-pr` plan whose folder is tracked in-repo: flag it. This item
    is N/A for repos where the plan folder isn't tracked (the three-repo nuance noted in the
    [PR Review Quality Gate workflow](../../repo-governance/workflows/pr/pr-review-quality-gate.md)).
+7. **Phase 0 carries no PR, push, review, or merge step** — run the Phase 0 detection command in
+   the [PR Step Authorization Check](#pr-step-authorization-check) and confirm it returns `0`. This
+   holds under **every** mode, including the direct-push ones (where Phase 0 must also not push).
+   A Per-Phase Integration Protocol block that does not scope itself to Phase 1 onward is the same
+   defect stated once instead of per-phase — flag it too.
 
 #### Finding Severity
 
@@ -881,6 +925,9 @@ mode additionally fixes the integration target and merge authority.
 - Plan completion criteria conflating "done" with "merged" on a `*-to-pr` plan: **MEDIUM**
 - Missing or post-merge-deferred archival-in-PR step on an applicable `*-to-pr` plan: **HIGH**
 - Freshly-authored plan missing the `## Delivery Mode` declaration entirely: **LOW**
+- Any PR-creation, branch-push, PR-review-cycle, merge, `gh pr ready`, or post-push CI-verification
+  step inside Phase 0 (any mode): **HIGH**
+- Per-Phase Integration Protocol block not scoped to Phase 1 onward: **HIGH**
 
 ### 20. Learning-Bearing Syllabus Completeness (Step 5n — CONDITIONAL)
 
