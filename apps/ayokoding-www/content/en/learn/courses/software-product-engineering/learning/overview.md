@@ -20,11 +20,11 @@ interview, a real company, or a real transcript.
 ## Prerequisites
 
 - **Prior topics**: no code prerequisites, but this topic assumes the reader has **built working
-  software** across Pass 1 -- [topic 11 Backend Essentials](/en/c/learn/fundamentally-strong/software-engineer/backend-essentials),
-  [topic 14 Frontend Essentials](/en/c/learn/fundamentally-strong/software-engineer/frontend-essentials),
-  and [topic 15 Software Testing](/en/c/learn/fundamentally-strong/software-engineer/software-testing)
+  software** across Pass 1 -- [topic 11 Backend Essentials](/en/c/learn/courses/backend-essentials),
+  [topic 14 Frontend Essentials](/en/c/learn/courses/frontend-essentials),
+  and [topic 15 Software Testing](/en/c/learn/courses/software-testing)
   -- so the trade-offs in this topic land against real building experience, not abstract theory.
-  This topic also pairs with [topic 9 Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management),
+  This topic also pairs with [topic 9 Project Management](/en/c/learn/courses/project-management),
   which covers how already-validated work gets scoped and tracked; this topic covers how a team
   decides which work is worth scoping and tracking in the first place.
 - **Tools & environment**: a macOS/Linux terminal and a Markdown editor for the written artifacts;
@@ -73,9 +73,9 @@ _validated learning_; Clayton Christensen's Jobs-to-be-Done reframed features as
 _hire_ a product to do; Teresa Torres's continuous discovery wove research into delivery instead
 of front-loading it into a single upfront phase. The durable idea underneath the framework churn
 is singular: _reduce the cost of being wrong._ That is why this topic pairs with
-[topic 9 Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
+[topic 9 Project Management](/en/c/learn/courses/project-management)
 (which delivers the validated thing) and matures into the strategic altitude of
-[topic 33 Engineering Management](/en/c/learn/fundamentally-strong/software-engineer/engineering-management).
+[topic 33 Engineering Management](/en/c/learn/courses/engineering-management).
 
 ## How verification works in this topic
 
@@ -508,42 +508,42 @@ under `learning/artifacts/`.
 
 ### Beginner (Scenarios 1-10)
 
-- [Worked Scenario 1: Outcome-vs-Output Rewrite](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-1-outcome-vs-output-rewrite)
-- [Worked Scenario 2: Problem Statement From a Request](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-2-problem-statement-from-a-request)
-- [Worked Scenario 3: JTBD Job Story](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-3-jtbd-job-story)
-- [Worked Scenario 4: Mom Test Interview Script](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-4-mom-test-interview-script)
-- [Worked Scenario 5: Mom Test Red-Flag Audit](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-5-mom-test-red-flag-audit)
-- [Worked Scenario 6: RICE Score for a Single Feature](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-6-rice-score-for-a-single-feature)
-- [Worked Scenario 7: MoSCoW Bucketing](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-7-moscow-bucketing)
-- [Worked Scenario 8: Impact-Effort Quadrant](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-8-impact-effort-quadrant)
-- [Worked Scenario 9: AARRR Funnel Map](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-9-aarrr-funnel-map)
-- [Worked Scenario 10: Vanity Metric Audit](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/beginner#worked-scenario-10-vanity-metric-audit)
+- [Worked Scenario 1: Outcome-vs-Output Rewrite](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-1-outcome-vs-output-rewrite)
+- [Worked Scenario 2: Problem Statement From a Request](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-2-problem-statement-from-a-request)
+- [Worked Scenario 3: JTBD Job Story](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-3-jtbd-job-story)
+- [Worked Scenario 4: Mom Test Interview Script](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-4-mom-test-interview-script)
+- [Worked Scenario 5: Mom Test Red-Flag Audit](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-5-mom-test-red-flag-audit)
+- [Worked Scenario 6: RICE Score for a Single Feature](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-6-rice-score-for-a-single-feature)
+- [Worked Scenario 7: MoSCoW Bucketing](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-7-moscow-bucketing)
+- [Worked Scenario 8: Impact-Effort Quadrant](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-8-impact-effort-quadrant)
+- [Worked Scenario 9: AARRR Funnel Map](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-9-aarrr-funnel-map)
+- [Worked Scenario 10: Vanity Metric Audit](/en/c/learn/courses/software-product-engineering/learning/beginner#worked-scenario-10-vanity-metric-audit)
 
 ### Intermediate (Scenarios 11-22)
 
-- [Worked Scenario 11: RICE Backlog Ranking](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-11-rice-backlog-ranking)
-- [Worked Scenario 12: RICE-vs-MoSCoW Reconciliation](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-12-rice-vs-moscow-reconciliation)
-- [Worked Scenario 13: Kano Classification](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-13-kano-classification)
-- [Worked Scenario 14: WSJF Sequencing](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-14-wsjf-sequencing)
-- [Worked Scenario 15: Riskiest-Assumption Triage](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-15-riskiest-assumption-triage)
-- [Worked Scenario 16: MVP Scope Cut With Engineering Input](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-16-mvp-scope-cut-with-engineering-input)
-- [Worked Scenario 17: Build-Measure-Learn, Pivot or Persevere](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-17-build-measure-learn-pivot-or-persevere)
-- [Worked Scenario 18: Release-Slicing Increments](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-18-release-slicing-increments)
-- [Worked Scenario 19: Opportunity-Solution Tree](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-19-opportunity-solution-tree)
-- [Worked Scenario 20: A/B Experiment Design](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-20-ab-experiment-design)
-- [Worked Scenario 21: Guardrail Metric Selection](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-21-guardrail-metric-selection)
-- [Worked Scenario 22: Feature-Flag Toggle Classification](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/intermediate#worked-scenario-22-feature-flag-toggle-classification)
+- [Worked Scenario 11: RICE Backlog Ranking](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-11-rice-backlog-ranking)
+- [Worked Scenario 12: RICE-vs-MoSCoW Reconciliation](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-12-rice-vs-moscow-reconciliation)
+- [Worked Scenario 13: Kano Classification](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-13-kano-classification)
+- [Worked Scenario 14: WSJF Sequencing](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-14-wsjf-sequencing)
+- [Worked Scenario 15: Riskiest-Assumption Triage](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-15-riskiest-assumption-triage)
+- [Worked Scenario 16: MVP Scope Cut With Engineering Input](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-16-mvp-scope-cut-with-engineering-input)
+- [Worked Scenario 17: Build-Measure-Learn, Pivot or Persevere](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-17-build-measure-learn-pivot-or-persevere)
+- [Worked Scenario 18: Release-Slicing Increments](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-18-release-slicing-increments)
+- [Worked Scenario 19: Opportunity-Solution Tree](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-19-opportunity-solution-tree)
+- [Worked Scenario 20: A/B Experiment Design](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-20-ab-experiment-design)
+- [Worked Scenario 21: Guardrail Metric Selection](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-21-guardrail-metric-selection)
+- [Worked Scenario 22: Feature-Flag Toggle Classification](/en/c/learn/courses/software-product-engineering/learning/intermediate#worked-scenario-22-feature-flag-toggle-classification)
 
 ### Advanced (Scenarios 23-30)
 
-- [Worked Scenario 23: North-Star and Input Metrics](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-23-north-star-and-input-metrics)
-- [Worked Scenario 24: HEART Goals-Signals-Metrics](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-24-heart-goals-signals-metrics)
-- [Worked Scenario 25: Activation Metric Definition](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-25-activation-metric-definition)
-- [Worked Scenario 26: Goodhart Guardrail Memo](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-26-goodhart-guardrail-memo)
-- [Worked Scenario 27: Discovery-vs-Delivery Balance](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-27-discovery-vs-delivery-balance)
-- [Worked Scenario 28: PR-FAQ, Working Backwards](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-28-pr-faq-working-backwards)
-- [Worked Scenario 29: Shape Up Pitch](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-29-shape-up-pitch)
-- [Worked Scenario 30: Full Product Brief Consistency](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/advanced#worked-scenario-30-full-product-brief-consistency)
+- [Worked Scenario 23: North-Star and Input Metrics](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-23-north-star-and-input-metrics)
+- [Worked Scenario 24: HEART Goals-Signals-Metrics](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-24-heart-goals-signals-metrics)
+- [Worked Scenario 25: Activation Metric Definition](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-25-activation-metric-definition)
+- [Worked Scenario 26: Goodhart Guardrail Memo](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-26-goodhart-guardrail-memo)
+- [Worked Scenario 27: Discovery-vs-Delivery Balance](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-27-discovery-vs-delivery-balance)
+- [Worked Scenario 28: PR-FAQ, Working Backwards](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-28-pr-faq-working-backwards)
+- [Worked Scenario 29: Shape Up Pitch](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-29-shape-up-pitch)
+- [Worked Scenario 30: Full Product Brief Consistency](/en/c/learn/courses/software-product-engineering/learning/advanced#worked-scenario-30-full-product-brief-consistency)
 
 ---
 

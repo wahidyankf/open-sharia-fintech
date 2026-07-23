@@ -19,11 +19,11 @@ real conversation.
 
 ## Prerequisites
 
-- **Prior topics**: [topic 30 Software Engineering Practices](/en/c/learn/fundamentally-strong/software-engineer/software-engineering-practices)
+- **Prior topics**: [topic 30 Software Engineering Practices](/en/c/learn/courses/software-engineering-practices)
   (the engineering practices a lead upholds and scales across a team), [topic 32 Software Product
-  Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
+  Engineering](/en/c/learn/courses/software-product-engineering)
   (strategy, prioritization, and product partnership), and [topic 9 Project
-  Management](/en/c/learn/fundamentally-strong/software-engineer/project-management) (planning,
+  Management](/en/c/learn/courses/project-management) (planning,
   delivery, and the team process a manager stewards). This topic assumes those are practiced and
   teaches _who owns, decides, unblocks, and grows_ -- not the delivery mechanics or product-strategy
   mechanics those topics already cover.
@@ -72,8 +72,8 @@ set clear direction with high trust, measure outcomes not activity, grow people 
 asset -- evidenced by DORA's research base and codified in Fournier's _The Manager's Path_ and
 Larson's systems view. Conway's Law made org design a technical concern (team boundaries become
 system boundaries), which is why this topic pairs with [topic 32 Software Product
-Engineering](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering)
-(what to build) and [topic 9 Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
+Engineering](/en/c/learn/courses/software-product-engineering)
+(what to build) and [topic 9 Project Management](/en/c/learn/courses/project-management)
 (deliver it).
 
 ## How verification works in this topic
@@ -409,39 +409,39 @@ artifact below also lives, standalone, under `learning/artifacts/`.
 
 ### Beginner (Scenarios 1-9)
 
-- [Worked Scenario 1: First 1:1 Agenda](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-1-first-1-1-agenda)
-- [Worked Scenario 2: SBI Feedback, Positive](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-2-sbi-feedback-positive)
-- [Worked Scenario 3: SBI Feedback, Corrective](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-3-sbi-feedback-corrective)
-- [Worked Scenario 4: Coaching Question vs Answer](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-4-coaching-question-vs-answer)
-- [Worked Scenario 5: Growth Plan Artifact](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-5-growth-plan-artifact)
-- [Worked Scenario 6: Ladder Behavior Mapping](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-6-ladder-behavior-mapping)
-- [Worked Scenario 7: Delegation Context Brief](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-7-delegation-context-brief)
-- [Worked Scenario 8: IC-to-Manager Mindset Memo](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-8-ic-to-manager-mindset-memo)
-- [Worked Scenario 9: Manager-vs-Maker Catch](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/beginner#worked-scenario-9-manager-vs-maker-catch)
+- [Worked Scenario 1: First 1:1 Agenda](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-1-first-1-1-agenda)
+- [Worked Scenario 2: SBI Feedback, Positive](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-2-sbi-feedback-positive)
+- [Worked Scenario 3: SBI Feedback, Corrective](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-3-sbi-feedback-corrective)
+- [Worked Scenario 4: Coaching Question vs Answer](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-4-coaching-question-vs-answer)
+- [Worked Scenario 5: Growth Plan Artifact](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-5-growth-plan-artifact)
+- [Worked Scenario 6: Ladder Behavior Mapping](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-6-ladder-behavior-mapping)
+- [Worked Scenario 7: Delegation Context Brief](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-7-delegation-context-brief)
+- [Worked Scenario 8: IC-to-Manager Mindset Memo](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-8-ic-to-manager-mindset-memo)
+- [Worked Scenario 9: Manager-vs-Maker Catch](/en/c/learn/courses/engineering-management/learning/beginner#worked-scenario-9-manager-vs-maker-catch)
 
 ### Intermediate (Scenarios 10-19)
 
-- [Worked Scenario 10: Prioritization Decision Record](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-10-prioritization-decision-record)
-- [Worked Scenario 11: DORA Diagnostic Memo](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-11-dora-diagnostic-memo)
-- [Worked Scenario 12: WIP Unblock Triage](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-12-wip-unblock-triage)
-- [Worked Scenario 13: Performance Calibration Note](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-13-performance-calibration-note)
-- [Worked Scenario 14: Difficult Feedback Conversation Script](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-14-difficult-feedback-conversation-script)
-- [Worked Scenario 15: Roadmap Trade-off Memo](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-15-roadmap-trade-off-memo)
-- [Worked Scenario 16: Psychological Safety Incident](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-16-psychological-safety-incident)
-- [Worked Scenario 17: Hiring Debrief, Structured](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-17-hiring-debrief-structured)
-- [Worked Scenario 18: Influence-Without-Authority Plan](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-18-influence-without-authority-plan)
-- [Worked Scenario 19: Team Culture Norm Change](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/intermediate#worked-scenario-19-team-culture-norm-change)
+- [Worked Scenario 10: Prioritization Decision Record](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-10-prioritization-decision-record)
+- [Worked Scenario 11: DORA Diagnostic Memo](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-11-dora-diagnostic-memo)
+- [Worked Scenario 12: WIP Unblock Triage](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-12-wip-unblock-triage)
+- [Worked Scenario 13: Performance Calibration Note](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-13-performance-calibration-note)
+- [Worked Scenario 14: Difficult Feedback Conversation Script](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-14-difficult-feedback-conversation-script)
+- [Worked Scenario 15: Roadmap Trade-off Memo](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-15-roadmap-trade-off-memo)
+- [Worked Scenario 16: Psychological Safety Incident](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-16-psychological-safety-incident)
+- [Worked Scenario 17: Hiring Debrief, Structured](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-17-hiring-debrief-structured)
+- [Worked Scenario 18: Influence-Without-Authority Plan](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-18-influence-without-authority-plan)
+- [Worked Scenario 19: Team Culture Norm Change](/en/c/learn/courses/engineering-management/learning/intermediate#worked-scenario-19-team-culture-norm-change)
 
 ### Advanced (Scenarios 20-27)
 
-- [Worked Scenario 20: Technical Strategy Doc](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-20-technical-strategy-doc)
-- [Worked Scenario 21: Conway's Law Reorg Memo](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-21-conways-law-reorg-memo)
-- [Worked Scenario 22: DORA-Goodhart Guardrail](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-22-dora-goodhart-guardrail)
-- [Worked Scenario 23: Autonomy-vs-Alignment Calibration](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-23-autonomy-vs-alignment-calibration)
-- [Worked Scenario 24: Delivery-vs-Growth Trade-off Memo](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-24-delivery-vs-growth-trade-off-memo)
-- [Worked Scenario 25: Learning-Norm Institutionalization](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-25-learning-norm-institutionalization)
-- [Worked Scenario 26: Succession-and-Delegation Plan](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-26-succession-and-delegation-plan)
-- [Worked Scenario 27: Full Leadership Decision Set](/en/c/learn/fundamentally-strong/software-engineer/engineering-management/learning/advanced#worked-scenario-27-full-leadership-decision-set)
+- [Worked Scenario 20: Technical Strategy Doc](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-20-technical-strategy-doc)
+- [Worked Scenario 21: Conway's Law Reorg Memo](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-21-conways-law-reorg-memo)
+- [Worked Scenario 22: DORA-Goodhart Guardrail](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-22-dora-goodhart-guardrail)
+- [Worked Scenario 23: Autonomy-vs-Alignment Calibration](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-23-autonomy-vs-alignment-calibration)
+- [Worked Scenario 24: Delivery-vs-Growth Trade-off Memo](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-24-delivery-vs-growth-trade-off-memo)
+- [Worked Scenario 25: Learning-Norm Institutionalization](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-25-learning-norm-institutionalization)
+- [Worked Scenario 26: Succession-and-Delegation Plan](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-26-succession-and-delegation-plan)
+- [Worked Scenario 27: Full Leadership Decision Set](/en/c/learn/courses/engineering-management/learning/advanced#worked-scenario-27-full-leadership-decision-set)
 
 ---
 

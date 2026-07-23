@@ -15,7 +15,7 @@ you can write about it clearly.
 
 ## Prerequisites
 
-- **Prior topics**: [topic 9 Project Management](/en/c/learn/fundamentally-strong/software-engineer/project-management)
+- **Prior topics**: [topic 9 Project Management](/en/c/learn/courses/project-management)
   -- that topic covers how work is scoped and tracked; this one covers how the decisions inside that
   work get written down so someone else can find, follow, and trust them.
 - **Tools & environment**: a plain-text/Markdown workflow in version control; an ADR/RFC template; a
@@ -383,37 +383,37 @@ internally consistent picture, the same way a real engineering team's documents 
 
 ### Beginner (Scenarios 1-8)
 
-- [Worked Scenario 1: BLUF Rewrite](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-1-bluf-rewrite)
-- [Worked Scenario 2: Inverted-Pyramid Restructure](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-2-inverted-pyramid-restructure)
-- [Worked Scenario 3: Thirty-Second Skim Test](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-3-thirty-second-skim-test)
-- [Worked Scenario 4: What-Why-Verify PR Description](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-4-what-why-verify-pr-description)
-- [Worked Scenario 5: Cut Hedging and Filler](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-5-cut-hedging-and-filler)
-- [Worked Scenario 6: RFC 2119 Keyword Precision](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-6-rfc-2119-keyword-precision)
-- [Worked Scenario 7: Audience Register Match](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-7-audience-register-match)
-- [Worked Scenario 8: Title and TL;DR First](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/beginner#worked-scenario-8-title-and-tldr-first)
+- [Worked Scenario 1: BLUF Rewrite](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-1-bluf-rewrite)
+- [Worked Scenario 2: Inverted-Pyramid Restructure](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-2-inverted-pyramid-restructure)
+- [Worked Scenario 3: Thirty-Second Skim Test](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-3-thirty-second-skim-test)
+- [Worked Scenario 4: What-Why-Verify PR Description](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-4-what-why-verify-pr-description)
+- [Worked Scenario 5: Cut Hedging and Filler](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-5-cut-hedging-and-filler)
+- [Worked Scenario 6: RFC 2119 Keyword Precision](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-6-rfc-2119-keyword-precision)
+- [Worked Scenario 7: Audience Register Match](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-7-audience-register-match)
+- [Worked Scenario 8: Title and TL;DR First](/en/c/learn/courses/technical-communication/learning/beginner#worked-scenario-8-title-and-tldr-first)
 
 ### Intermediate (Scenarios 9-18)
 
-- [Worked Scenario 9: One-Decision ADR](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-9-one-decision-adr)
-- [Worked Scenario 10: ADR Status Lifecycle](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-10-adr-status-lifecycle)
-- [Worked Scenario 11: Colocated, Immutable ADR](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-11-colocated-immutable-adr)
-- [Worked Scenario 12: RFC Options and Trade-off](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-12-rfc-options-and-trade-off)
-- [Worked Scenario 13: RFC Review Process](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-13-rfc-review-process)
-- [Worked Scenario 14: Design Doc Open Questions](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-14-design-doc-open-questions)
-- [Worked Scenario 15: Doc Proportionality](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-15-doc-proportionality)
-- [Worked Scenario 16: Review Guidance for a Large PR](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-16-review-guidance-for-a-large-pr)
-- [Worked Scenario 17: C4 Context Diagram](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-17-c4-context-diagram)
-- [Worked Scenario 18: C4 Container Diagram](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/intermediate#worked-scenario-18-c4-container-diagram)
+- [Worked Scenario 9: One-Decision ADR](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-9-one-decision-adr)
+- [Worked Scenario 10: ADR Status Lifecycle](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-10-adr-status-lifecycle)
+- [Worked Scenario 11: Colocated, Immutable ADR](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-11-colocated-immutable-adr)
+- [Worked Scenario 12: RFC Options and Trade-off](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-12-rfc-options-and-trade-off)
+- [Worked Scenario 13: RFC Review Process](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-13-rfc-review-process)
+- [Worked Scenario 14: Design Doc Open Questions](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-14-design-doc-open-questions)
+- [Worked Scenario 15: Doc Proportionality](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-15-doc-proportionality)
+- [Worked Scenario 16: Review Guidance for a Large PR](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-16-review-guidance-for-a-large-pr)
+- [Worked Scenario 17: C4 Context Diagram](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-17-c4-context-diagram)
+- [Worked Scenario 18: C4 Container Diagram](/en/c/learn/courses/technical-communication/learning/intermediate#worked-scenario-18-c4-container-diagram)
 
 ### Advanced (Scenarios 19-25)
 
-- [Worked Scenario 19: Blameless Postmortem Timeline](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-19-blameless-postmortem-timeline)
-- [Worked Scenario 20: Postmortem Root Cause and Follow-ups](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-20-postmortem-root-cause-and-follow-ups)
-- [Worked Scenario 21: Diagram Beats Prose](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-21-diagram-beats-prose)
-- [Worked Scenario 22: Diagram-Prose Consistency](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-22-diagram-prose-consistency)
-- [Worked Scenario 23: Doc Rot, Moved Close to Code](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-23-doc-rot-moved-close-to-code)
-- [Worked Scenario 24: RFC-to-ADR Distillation](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-24-rfc-to-adr-distillation)
-- [Worked Scenario 25: Reader-Review Rubric Pass](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/learning/advanced#worked-scenario-25-reader-review-rubric-pass)
+- [Worked Scenario 19: Blameless Postmortem Timeline](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-19-blameless-postmortem-timeline)
+- [Worked Scenario 20: Postmortem Root Cause and Follow-ups](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-20-postmortem-root-cause-and-follow-ups)
+- [Worked Scenario 21: Diagram Beats Prose](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-21-diagram-beats-prose)
+- [Worked Scenario 22: Diagram-Prose Consistency](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-22-diagram-prose-consistency)
+- [Worked Scenario 23: Doc Rot, Moved Close to Code](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-23-doc-rot-moved-close-to-code)
+- [Worked Scenario 24: RFC-to-ADR Distillation](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-24-rfc-to-adr-distillation)
+- [Worked Scenario 25: Reader-Review Rubric Pass](/en/c/learn/courses/technical-communication/learning/advanced#worked-scenario-25-reader-review-rubric-pass)
 
 ---
 

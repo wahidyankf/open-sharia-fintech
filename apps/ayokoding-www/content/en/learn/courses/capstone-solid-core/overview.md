@@ -2763,4 +2763,4 @@ current major versions as of this page's authoring.
 ---
 
 ← Previous: [33 · Engineering Management Drilling](../engineering-management/drilling/overview.md) ·
-Next: [34 · NoSQL Databases](../nosql-databases/learning/overview.md) →
+Next: 34 · NoSQL Databases (not yet published in the course library)
