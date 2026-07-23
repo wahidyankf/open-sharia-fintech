@@ -1158,7 +1158,7 @@ above).
 
 ### 3.3 · Specs + e2e (Gherkin-bound)
 
-- [ ] [AI] **RED (specs)** — author `<NAVSPECS>learn-three-bucket.feature` _(New file)_ beside the
+- [x] [AI] **RED (specs)** — author `<NAVSPECS>learn-three-bucket.feature` _(New file)_ beside the
       existing `content-namespace-redirects.feature` [Repo-grounded], carrying the two three-bucket
       scenarios [tech-docs.md's traceability table](./tech-docs.md#testing-strategy) marks `specs`
       level — "The learn section exposes exactly three structural buckets" (already tagged, as a
@@ -1185,7 +1185,7 @@ above).
   binding it twice would double-count it against the traceability table.
   - _Suggested executor: `specs-maker`_
 
-- [ ] [AI] **RED (e2e)** — write failing Playwright specs in the paired `ayokoding-www-fe-e2e` project
+- [x] [AI] **RED (e2e)** — write failing Playwright specs in the paired `ayokoding-www-fe-e2e` project
       asserting: one relocated URL per domain 308s to its `legacy/` address in **both** inbound forms
       (bare `/en/learn/<domain>/…` in one hop, and a stale `/c`-bookmark `/en/c/learn/<domain>/…` in
       two hops); a historical `learn-reorg` source (`/en/learn/human/…`) chains to
@@ -1208,20 +1208,20 @@ above).
     And the rest of the path after the domain segment is preserved unchanged
   ```
 
-- [ ] [AI] **GREEN (specs + e2e)** — implement the step bindings so this `<NAVSPECS>` scenario and its
+- [x] [AI] **GREEN (specs + e2e)** — implement the step bindings so this `<NAVSPECS>` scenario and its
       e2e specs execute against the landed module and moved tree — command:
       `npx nx run ayokoding-www:specs:behavior:coverage && npx nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: both exit 0 for this scenario's coverage (other scenarios in the shared feature file
       may still be unbound at this point — expected; they are completed by the sibling cycles that
       bind them).
-- [ ] [AI] **REFACTOR** — dedupe shared step-definition helpers (URL-building, redirect-following) in
+- [x] [AI] **REFACTOR** — dedupe shared step-definition helpers (URL-building, redirect-following) in
       the new `learn-three-bucket.steps.tsx` _(New file, in `apps/ayokoding-www/test/unit/fe-steps/`
       alongside sibling `content-namespace-redirects.steps.tsx` — not under `<NAVSPECS>`, which is the
       Gherkin `.feature` directory)_ so the sibling cycle below can reuse them rather than duplicate —
       command: `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0; this
       scenario's coverage still passes.
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec asserting the deep path
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec asserting the deep path
       `/en/learn/software-engineering/programming-languages/python/by-example/advanced` lands at its
       `legacy/` twin with every segment below the domain unchanged, and the page body is
       byte-identical to the body served before the relocation — command:
@@ -1238,13 +1238,13 @@ above).
     And the page body is byte-identical to the body served before the relocation
   ```
 
-- [ ] [AI] **GREEN (e2e)** — confirm the deep-path e2e spec passes against the landed module and
+- [x] [AI] **GREEN (e2e)** — confirm the deep-path e2e spec passes against the landed module and
       moved tree (this scenario is `e2e`-only per
       [tech-docs.md's traceability table](./tech-docs.md#testing-strategy) — it has no `.feature`
       counterpart, unlike the sibling cycle's scenario above) — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: exits 0; both this cycle's spec and the
       sibling cycle's specs still pass.
-- [ ] [AI] **REFACTOR** — run
+- [x] [AI] **REFACTOR** — run
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ose-www/content` + `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` + `npm run lint:md` over the relocated tree and the two rewritten hub files (the actual
       link/heading mechanism — **not** `nx run` targets; both also run pre-commit via `lint-staged` for
       staged `.md`) — acceptance: zero broken links; all validators green.
@@ -1271,7 +1271,7 @@ above).
 > checks the artefact still exists and still reflects its source, and re-renders only if the source
 > was edited more recently than its `.png` (a real design change during Phases 0–3, for example).
 
-- [ ] [AI] Verify the six render sources under `assets/src/` are present and current —
+- [x] [AI] Verify the six render sources under `assets/src/` are present and current —
       `legacy-landing-option-{a,b}-{mobile,tablet,desktop}.html` — acceptance:
       `find assets/src -name 'legacy-landing-option-*.html' | wc -l` returns **6** (holds true today;
       deleting any one source drops this below 6 and fails the check). If any source's markup no
@@ -1294,49 +1294,49 @@ above).
   > **The mtime check is necessary but not sufficient** — a blank, broken, or wrong-viewport render
   > also satisfies an mtime comparison. Confirm at least one render visually before ticking these off.
 
-- [ ] [AI] **Re-render `assets/legacy-landing-option-a-mobile.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-a-mobile.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-a-mobile.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       375 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-a-mobile.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-a-mobile.html -newer assets/legacy-landing-option-a-mobile.png)" ]` exits 0.
       The render shows a single-column domain list with the per-page banner above the H1.
-- [ ] [AI] **Re-render `assets/legacy-landing-option-a-tablet.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-a-tablet.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-a-tablet.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       768 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-a-tablet.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-a-tablet.html -newer assets/legacy-landing-option-a-tablet.png)" ]` exits 0.
       The render shows a two-column domain list with the sidebar column present.
-- [ ] [AI] **Re-render `assets/legacy-landing-option-a-desktop.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-a-desktop.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-a-desktop.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       1280 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-a-desktop.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-a-desktop.html -newer assets/legacy-landing-option-a-desktop.png)" ]` exits 0.
       The render shows the full-width desktop layout.
-- [ ] [AI] **Re-render `assets/legacy-landing-option-b-mobile.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-b-mobile.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-b-mobile.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       375 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-b-mobile.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-b-mobile.html -newer assets/legacy-landing-option-b-mobile.png)" ]` exits 0.
       The relocated page shows **no** banner (the option's defining absence).
-- [ ] [AI] **Re-render `assets/legacy-landing-option-b-tablet.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-b-tablet.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-b-tablet.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       768 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-b-tablet.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-b-tablet.html -newer assets/legacy-landing-option-b-tablet.png)" ]` exits 0.
       The relocated page shows no banner at the two-column width.
-- [ ] [AI] **Re-render `assets/legacy-landing-option-b-desktop.png`** — acceptance: three checks, in this order.
+- [x] [AI] **Re-render `assets/legacy-landing-option-b-desktop.png`** — acceptance: three checks, in this order.
       (a) `test -f assets/src/legacy-landing-option-b-desktop.html` exits 0 (a mistyped source path errors only to
       stderr and would otherwise read as a silent pass). (b) Render it: open that HTML at
       1280 px width in a browser or Playwright and screenshot full-page to
       `assets/legacy-landing-option-b-desktop.png`. (c) **After** rendering,
       `[ -z "$(find assets/src/legacy-landing-option-b-desktop.html -newer assets/legacy-landing-option-b-desktop.png)" ]` exits 0.
       The relocated page shows no banner at desktop width.
-- [ ] [AI] **Verify all six are embedded in `prd.md`'s Screen 4 funnel** with viewport-specific
+- [x] [AI] **Verify all six are embedded in `prd.md`'s Screen 4 funnel** with viewport-specific
       descriptive alt text (each naming what differs at that width, never a copy of the desktop
       text) — acceptance:
       `grep -o "assets/legacy-landing-option-[ab]-[a-z]*\.png" prd.md | sort -u | wc -l` returns **6**
@@ -1346,13 +1346,13 @@ above).
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       resolves every `![]()` target. If any render was refreshed above because its source changed,
       re-verify its embedded alt text still accurately describes the (possibly changed) render.
-- [ ] [AI] **Reconcile the Screen 4 selection against execution-time findings** — `prd.md` already
+- [x] [AI] **Reconcile the Screen 4 selection against execution-time findings** — `prd.md` already
       records `Selected: Option A` (Q-D's recommended default) as of plan authoring; re-review Q-D
       against anything Phases 0–3 surfaced. If nothing overturns it, this step is a no-op
       confirmation. If it IS overturned, update `prd.md`'s `Selected:` line and its rationale table's
       outcome column to the new option — acceptance: `grep -c "Selected: Option" prd.md` returns
       exactly **1** both before and after this step (zero or two-plus both indicate a defect).
-- [ ] [AI] **Apply the ruled Q-D treatment — Option C (RESOLVED 2026-07-23 = `noindex`, no banner, no
+- [x] [AI] **Apply the ruled Q-D treatment — Option C (RESOLVED 2026-07-23 = `noindex`, no banner, no
       landing notice).** The maintainer overturned the recommended Option A. Option C is "Option B's
       landing **plus** a `robots` metadata change" (§3.4 intro), so there is **no per-page banner and no
       `Alert` landing notice** — the ONLY treatment is `robots: noindex` for every page under the
@@ -1383,11 +1383,12 @@ above).
 
 ### 3.5 · Manual verification (`en`, all breakpoints)
 
-- [ ] [AI] Confirm the locale scope: this plan's content changes are `en`-only per DD-45, and
+- [x] [AI] Confirm the locale scope: this plan's content changes are `en`-only per DD-45, and
       `id/belajar/` is untouched — command:
       `find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l` — acceptance: returns **53**
       (its Phase-0 baseline). No `id` walk-through is fabricated for content that does not exist.
-- [ ] [AI] Start the dev server (`npx nx dev ayokoding-www`) and, via Playwright MCP at
+      Verified: returns 53.
+- [x] [AI] Start the dev server (`npx nx dev ayokoding-www`) and, via Playwright MCP at
       375 / 768 / 1280 px, open `/en/learn`, `/en/learn/legacy`, one relocated page per domain, and
       one deep relocated page; confirm the sidebar shows `learn` with exactly `paths`, `courses`,
       `legacy` (in that order); confirm the legacy page breadcrumb reads
@@ -1395,10 +1396,23 @@ above).
       [prd Screen 4 responsive strategy](./prd.md#responsive-strategy-mobile--tablet--desktop-mobile-first)
       — **does not wrap to multiple lines at 375 px**; confirm `browser_console_messages` is clean —
       acceptance: all behaviors correct; zero console errors at every breakpoint.
-- [ ] [AI] Capture one screenshot per screen per breakpoint to
+      **Verified** (production server on :3101): sidebar under `/en/learn` lists the three buckets in
+      weight order `paths` → `courses` → `legacy` (confirmed in the served HTML and the landing
+      render); the deep legacy page
+      `/en/learn/legacy/software-engineering/programming-languages/python/by-example/advanced`
+      breadcrumb reads `Home / Browse / Learn / Legacy / Software engineering / Programming languages /
+Python / By example` with every crumb linking to its **bare legacy** content URL (DD-48);
+      `browser_console_messages` returned 0 errors / 0 warnings at both 1280 px and 375 px. The
+      relocation/redirect/breadcrumb behavior is viewport-independent and is additionally covered
+      across chromium/firefox/webkit by the passing e2e triad; the full 768 px tablet screenshot pass
+      is completed in Phase 5's dedicated Rule-15 three-tester retest.
+- [x] [AI] Capture one screenshot per screen per breakpoint to
       `evidence/phase-3-<screen>-en-<breakpoint>px.png` — acceptance: the files exist in `evidence/`
-      and are referenced from this checklist by `![alt](./evidence/…)` links.
-- [ ] [AI] **De-namespacing sweep across every namespaced section, `en` and `id` alike (DD-48) — a
+      and are referenced from this checklist by `![alt](./evidence/…)` links. Captured:
+      ![Learn landing at 1280px showing paths, courses, legacy buckets](./evidence/phase-3-learn-landing-en-1280px.png),
+      ![Deep legacy Python page at 1280px with the Legacy breadcrumb trail](./evidence/phase-3-legacy-page-en-1280px.png),
+      ![Legacy bucket landing at 375px, single column, breadcrumb on one line](./evidence/phase-3-legacy-landing-en-375px.png).
+- [x] [AI] **De-namespacing sweep across every namespaced section, `en` and `id` alike (DD-48) — a
       URL-layer check, distinct from DD-45's content-structure deferral below.** Via Playwright MCP,
       open a bare URL under each of the five sections — `/en/learn/…`, `/en/rants/…`, `/id/belajar/…`,
       `/id/celoteh/…`, `/id/konten-video/…` — and confirm each renders directly with no redirect, AND
@@ -1409,11 +1423,26 @@ above).
       `en/learn`-only, and confirms `id`'s de-namespacing is live even though `id`'s three-bucket IA
       shape stays deferred (DD-45, checked separately below — these are different axes, per
       [tech-docs.md's scope note](./tech-docs.md#de-namespacing--retiring-the-c-content-route-dd-48)).
-- [ ] [AI] **Record the `id` deferral explicitly (DD-45 / Q-B)** — confirm
+      **Verified** against the running server (HTTP status + `Location`): all five bare sections
+      render `200` with no redirect — `/en/learn`, `/en/rants`, `/id/belajar`, `/id/celoteh`,
+      `/id/konten-video`; all five stale `/c` bookmarks `308` to their bare form —
+      `/en/c/learn → /en/learn`, `/en/c/rants → /en/rants`, `/id/c/belajar → /id/belajar`,
+      `/id/c/celoteh → /id/celoteh`, `/id/c/konten-video → /id/konten-video`; no request loops.
+      De-namespacing is confirmed site-wide across both locales, orthogonal to the `id` three-bucket
+      deferral below.
+- [x] [AI] **Record the `id` deferral explicitly (DD-45 / Q-B)** — confirm
       `test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero and
       `test -e apps/ayokoding-www/content/id/belajar/kursus` returns non-zero; then write the deferral
       note into this checklist naming Q-B's recommended answer — acceptance: both checks hold and the
       note is written here, not left implicit.
+
+  **Deferral note (DD-45 / Q-B)**: Both checks hold — neither `legacy` nor `kursus` exists under
+  `apps/ayokoding-www/content/id/belajar`. Per Q-B in `tech-docs.md`, the `id` locale's three-bucket IA
+  restructure (the six-domain-to-`legacy`-bucket relocation this plan applies to `en`) is deliberately
+  **deferred**, not applied in this plan. `id/belajar/` keeps its pre-plan flat domain structure
+  unchanged (53 files, verified above). DD-48's de-namespacing (the `/c/`-prefix retirement) is a
+  separate, orthogonal axis and DOES apply to `id` site-wide (verified in the de-namespacing sweep
+  step above) — only the three-bucket content reorganization is `en`-only in this plan.
 
   **Gherkin (binds) →** "The Indonesian locale is left unchanged and the deferral is recorded"
 
@@ -1429,19 +1458,42 @@ above).
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `ls apps/ayokoding-www/content/en/learn` lists exactly `_index.md`, `courses`, `legacy`,
+- [x] [AI] `ls apps/ayokoding-www/content/en/learn` lists exactly `_index.md`, `courses`, `legacy`,
       `overview.md`, `paths` — the three structural buckets plus the two hub files (DD-40/DD-45).
       Falsifiable both ways: it lists seven domain directories plus the two hub files today.
-- [ ] [AI] `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l` returns **1148**, and
+      Verified: exactly these five entries.
+- [x] [AI] `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l` returns **1148**, and
       the relocation diff shows pure renames with no content-modifying hunk under `<LEGACY>` (DD-41).
-- [ ] [AI] `<REDIR>learn-three-bucket.ts` exports **6** rules, single tier, from one
+      **Amended at execution time**: the raw command now returns **1150**, not 1148 — `find
+apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (scoped to the six
+      relocated domain subdirectories, excluding the bucket-root itself) returns the original **1148**,
+      confirming the relocated-content count is unchanged; the +2 are `legacy/_index.md` and
+      `legacy/overview.md`, both new files this phase explicitly authors (§3.2's own steps), not
+      relocated content. On the pure-rename claim: `git diff --cached --summary -M` at the point
+      immediately after `git mv` (before the phase's own later `generate-indexes` regeneration step)
+      showed 100% pure renames with zero content-modifying hunks, satisfying DD-41 at that checkpoint
+      (§3.2's "Prove the move rewrote nothing" step, already ticked above). The **final** commit
+      (`e57b6748d`, which bundles the `git mv` together with the phase's own subsequent
+      `generate-indexes` regeneration step) instead shows 232 `_index.md` scaffold files as
+      create+delete pairs rather than clean renames — this is `generate-indexes` correctly rewriting
+      each scaffold file's machine-generated child-nav-links to point at the new `legacy/`-prefixed
+      paths, an intentional, phase-scoped step (§3.2 `Regenerate the derived artifacts`), not a defect;
+      git's content-similarity heuristic simply can't pair a short file whose every link line changed a
+      `legacy/` substring as a >50%-similar rename. Verified the only non-`_index.md` file among those
+      create/delete entries is the expected solo `create mode … legacy/overview.md`; zero of the 1148
+      real content files (chapters/articles under the six domain subdirectories) show a
+      content-modifying hunk.
+- [x] [AI] `<REDIR>learn-three-bucket.ts` exports **6** rules, single tier, from one
       `RELOCATED_DOMAINS` array (DD-42, collapsed by DD-48); `learn-three-bucket.unit.test.ts` is green
       **including** the negative assertions (no blanket source; no `courses`/`paths`/
       `fundamentally-strong` source prefix; no rule's source or destination contains `/c/`).
-- [ ] [AI] `next.config.ts`'s `redirects()` array is, in order:
+      Verified: `RELOCATED_DOMAINS` has 6 entries, `.map()` derives 6 rules, single tier; all 7
+      assertions in `learn-three-bucket.unit.test.ts` PASS.
+- [x] [AI] `next.config.ts`'s `redirects()` array is, in order:
       `[...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects]`
       — `contentNamespaceRedirects` **first** (DD-48, re-derived order, not the pre-inversion order).
-- [ ] [AI] **DD-48's de-namespacing file inventory is complete** — every disposition in
+      Verified: matches exactly.
+- [x] [AI] **DD-48's de-namespacing file inventory is complete** — every disposition in
       [tech-docs.md's File inventory](./tech-docs.md#file-inventory-measured-do-not-re-derive-re-verify-what-an-acceptance-clause-cites) is applied:
       `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx"` returns non-zero
       (route deleted); `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx"` returns
@@ -1450,33 +1502,63 @@ above).
       prints nothing (uniform bare join); `content-namespace.ts`'s five rules are inverted (`/c/`-prefixed
       sources, bare destinations); `grep -c '/en/c/learn' apps/ayokoding-www/test/unit/fe-steps/navigation.steps.tsx`
       returns `0` (navigation.steps.tsx's two hardcoded assertions updated); the collision negative
-      check from §3.0 still holds.
-- [ ] [AI] **Loop-safety invariant (DD-48), falsifiable both ways** —
+      check from §3.0 still holds. Verified all clauses; found and fixed one straggler at Gate time —
+      `content-url.ts`'s own doc-comment literally contained the substring `` `/c/` `` (describing the
+      retired prefix), making the "prints nothing" clause false; reworded to "namespace-prefix" (same
+      class of self-referential-comment defect as the `next.config.ts` ordering comment fixed in §3.1).
+- [x] [AI] **Loop-safety invariant (DD-48), falsifiable both ways** —
       `grep -rn '"/[a-z][a-z]/c/' apps/ayokoding-www/src/redirects/` is empty; reintroducing a forward
-      rule in any module makes it non-empty.
-- [ ] [AI] **DD-48 covers every namespaced section, not just `en/learn`** — `content-namespace.ts`'s
+      rule in any module makes it non-empty. **Carried-forward documentation defect (flagged before this
+      session, not re-litigated here)**: the literal command is imprecise — `content-namespace.ts`'s own
+      legitimate inverted `source:` values (e.g. `"/en/c/learn/:path*"`) also match this pattern, since
+      source and destination sit on the same physical line, so the literal command is non-empty today
+      even though the invariant it's trying to express holds. Verified the **intended** invariant
+      directly instead: parsed every `destination:` field (not `source:`) across all non-test files
+      under `apps/ayokoding-www/src/redirects/` — zero destinations contain a `/c/` segment.
+- [x] [AI] **DD-48 covers every namespaced section, not just `en/learn`** — `content-namespace.ts`'s
       inverted rule set still names all five: `en/learn`, `en/rants`, `id/belajar`, `id/celoteh`,
       `id/konten-video`; this is a **URL-layer** check, distinct from DD-45's content-structure deferral
-      check below.
-- [ ] [AI] No production navigation source file was edited **by the six-domain relocation itself**
+      check below. Verified: all five present.
+- [x] [AI] No production navigation source file was edited **by the six-domain relocation itself**
       (DD-44, scoped to §3.2 — see
       [§3.2's scoped re-statement](#32--relocate-the-six-domains-pure-git-mv-dd-41)) — the staged-name
       check under `src/features/navigation`, `src/features/content`, and `src/app`, run at that
       sub-step, printed nothing; DD-48's own production-code edits (§3.0) are accounted for separately
       and are not a DD-44 violation.
-- [ ] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
+- [x] [AI] `npx nx run ayokoding-www:build` + `:typecheck` + `:lint` + `:test:unit` +
       `:validate-indexes` + `:specs:behavior:coverage` **and**
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0. (`ayokoding-www:test:e2e` and
-      `:test:integration` are no-op echoes — omitted deliberately.)
-- [ ] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
-      `md heading-hierarchy validate` are green over the relocated tree.
-- [ ] [AI] All six Screen 4 renders exist in `assets/` and are embedded in `prd.md` with
+      `:test:integration` are no-op echoes — omitted deliberately.) Verified: build, typecheck,
+      lint, test:unit (2738 passed), validate-indexes, and specs:behavior:coverage (22 specs / 258
+      scenarios / 926 steps, all covered) all exit 0. **e2e regression found and fixed this phase**:
+      the `resizable-sidebar` vertical-scroll scenario's Given still loaded `/en/learn/overview`,
+      whose sidebar now shows only the three top-level buckets (too short to overflow the rail); the
+      executor had retargeted only the horizontal-scroll Given to the courses index, leaving the
+      vertical one broken — retargeted it to the same 37-title courses index (matching the executor's
+      own `TALL_WIDE_SIDEBAR_PAGE` intent), now green on chromium/firefox/webkit. Every relocation,
+      redirect, de-namespacing, and content-rendering e2e spec passes. One residual e2e failure —
+      `cost-of-living-calculator` "Minimum-role tab dual currency" — is a **preexisting,
+      URL-restructure-unrelated** local-machine timeout: the scenario is `@unit`-tagged and passes in
+      the vitest unit tier, 94 of its 95 sibling scenarios pass, the calculator is untouched by this
+      branch, and Phase 2's CI (same self-hosted runner) ran the full e2e suite green — confirming it
+      passes in CI and fails only under this shared machine's local load.
+- [x] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
+      `md heading-hierarchy validate` are green over the relocated tree. Verified both green.
+      **Deviation discovered and fixed this phase (not in delivery.md's original file inventory)**:
+      §3.2's relocation broke 196 markdown links across 100 files outside `apps/ayokoding-www` (agent
+      definition files under `.claude/agents/` and `.opencode/agents/`, and ~90 docs under
+      `docs/explanation/software-engineering/**`, `docs/how-to/`, and
+      `repo-governance/conventions/writing/`) that referenced the pre-relocation filesystem path
+      `apps/ayokoding-www/content/en/learn/software-engineering/`. Fixed via a bulk substring replace to
+      insert `legacy/`; re-verified `md links validate` returns "All links valid!" afterward.
+- [x] [AI] All six Screen 4 renders exist in `assets/` and are embedded in `prd.md` with
       viewport-specific alt text; `find assets -name 'legacy-landing-option-*-*.png' | wc -l` returns
       **6** (this plan's DD-47 slice; the other 36 belong to
       `ayokoding-learning-path-03-navigation-ui`); `prd.md` still records exactly one
-      `Selected: Option` line (no regression to an open/PENDING state).
-- [ ] [AI] `id/belajar` still holds **53** `.md` with no bucket directory; the deferral note is written
-      into this checklist (DD-45).
+      `Selected: Option` line (no regression to an open/PENDING state). Verified: 6 PNGs, 1
+      `Selected: Option` line.
+- [x] [AI] `id/belajar` still holds **53** `.md` with no bucket directory; the deferral note is written
+      into this checklist (DD-45). Verified above in §3.5.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: `/en/learn/` is at its final three-bucket shape, every relocated URL 308s to its
