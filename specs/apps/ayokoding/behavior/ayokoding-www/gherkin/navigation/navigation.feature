@@ -22,7 +22,7 @@ Feature: Site Navigation
     And each breadcrumb segment should reflect an ancestor level of the URL hierarchy
     And the current page should not appear in the breadcrumb
     And all breadcrumb segments should be clickable links
-    And breadcrumb text should wrap naturally without horizontal truncation
+    And the breadcrumb should render on a single row without horizontally truncating link text
 
   @unit @e2e
   Scenario: Table of contents shows heading links for H2 to H4

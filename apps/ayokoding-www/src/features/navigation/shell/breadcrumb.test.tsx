@@ -140,7 +140,7 @@ describe("Breadcrumb mobile collapse (DWT-001)", () => {
     );
     const ellipses = container.querySelectorAll('[data-testid="breadcrumb-ellipsis"]');
     expect(ellipses.length).toBe(1);
-    expect(ellipses[0].className).toContain("sm:hidden");
+    expect(ellipses[0]?.className).toContain("sm:hidden");
   });
 
   it("hides the middle crumbs on mobile (hidden) and reveals them at sm: and up (sm:flex)", () => {

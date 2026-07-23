@@ -81,10 +81,12 @@ Then("all breadcrumb segments should be clickable links", async ({ page }) => {
 });
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
-Then("breadcrumb text should wrap naturally without horizontal truncation", async ({ page }) => {
+Then("the breadcrumb should render on a single row without horizontally truncating link text", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const ol = breadcrumb.locator("ol");
-  await expect(ol).toHaveCSS("flex-wrap", "wrap");
+  // DWT-001: the breadcrumb no longer wraps to multiple rows; middle crumbs collapse to a
+  // single ellipsis at mobile width instead (see prd.md Screen 4, "no multi-line wrap at 375px").
+  await expect(ol).toHaveCSS("flex-wrap", "nowrap");
 });
 
 When("a visitor opens a content page with multiple headings", async ({ page }) => {
