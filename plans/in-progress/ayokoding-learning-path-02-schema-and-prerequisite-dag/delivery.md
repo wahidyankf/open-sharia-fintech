@@ -643,13 +643,19 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 
 ### 1.1 Course-prerequisite metadata contract (canonical here)
 
-- [ ] [AI] Verify the canonical contract is stated in this plan's
+- [x] [AI] Verify the canonical contract is stated in this plan's
       `tech-docs.md` under `## The prerequisite frontmatter contract (canonical here)`, naming the
       key `prerequisites`, the YAML-sequence-of-course-ID-strings value, and the six binding rules
       — command:
       `grep -qF "The prerequisite frontmatter contract (canonical here)" <PLAN>/tech-docs.md`
       — acceptance: exits 0. Falsifiable both ways: renaming or deleting the heading makes it exit 1.
-- [ ] [AI] **Verify the shipped frontmatter conforms — the binding check now that `01` has merged.**
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — confirmed
+  `tech-docs.md:169` carries the heading verbatim, naming the `prerequisites` key, the
+  YAML-sequence-of-course-ID-strings value, and six binding rules (`tech-docs.md:186-200`); the
+  `grep -qF` command exits 0.
+
+- [x] [AI] **Verify the shipped frontmatter conforms — the binding check now that `01` has merged.**
       **Update (2026-07-23):** `01` merged first and wrote `prerequisites:` into its 37 re-homed
       `_index.md` files, so the binding proof of contract agreement is now those **shipped bytes**, not
       a prose comparison against a still-in-flight sibling. On the rebased base, confirm every re-homed
@@ -668,7 +674,15 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       omission) is ever found, record it in `learnings.md` and fix it in **this** plan's canonical
       statement, never in the archived copy. `test -f <PLAN01>/tech-docs.md` returning 0 confirms the
       reference copy is reachable at the resolved (archived) path.
-- [ ] [AI] Record in `<PLAN>/evidence/phase-1-contract-agreement.txt` the shipped-frontmatter
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — re-verified on
+  this rebased branch (`origin/main` already includes `01`'s merge): (a)
+  `grep -rl "^prerequisites:" <COURSES> | grep -c "_index.md"` prints `37`; (b)
+  `grep -rEn "^prerequisites:[^]]*,[^]]*$" <COURSES> | grep -c .` prints `0`. `test -f
+<PLAN01>/tech-docs.md` returns 0 (reachable, read-only, untouched). No genuine contradiction found
+  between `<PLAN01>/tech-docs.md`'s non-contradicting subset and this plan's canonical statement.
+
+- [x] [AI] Record in `<PLAN>/evidence/phase-1-contract-agreement.txt` the shipped-frontmatter
       conformance result (both counts from the step above: 37 and 0) and the archival commit SHA of the
       sibling plan folder — command (single line): `git log -1 --format=%H -- <PLAN01>`
       — acceptance: the file exists and the recorded value is a **non-empty 40-hex SHA**, asserted with
@@ -682,6 +696,12 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       itself wrote. Falsifiable both ways: the `grep -qE` exits 1 on empty or short output, and exits 0
       only on a real commit id. This is the audit trail for failure mode F-6, whose symptom (37 empty
       prerequisite lists, green build) is otherwise invisible until Wave 2.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/evidence/phase-1-contract-agreement.txt`
+  (new) — records both counts (37, 0) and the archival SHA
+  `8b57263a5f739bc44292d0913e6c06c81adab9af`. `git log -1 --format=%H -- <PLAN01> | grep -qE
+"^[0-9a-f]{40}$"` exits 0.
 
 ### 1.2 `PathManifest` zod schema — TDD cycle
 

@@ -1,0 +1,35 @@
+Phase 1.1 — prerequisite frontmatter contract agreement
+Recorded: 2026-07-24
+
+<PLAN> = plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag
+<PLAN01> = plans/done/2026-07-23__ayokoding-learning-path-01-url-restructure
+<COURSES> = apps/ayokoding-www/content/en/learn/courses/
+
+Canonical contract heading present in <PLAN>/tech-docs.md:
+  grep -qF "The prerequisite frontmatter contract (canonical here)" <PLAN>/tech-docs.md
+  -> exit 0
+
+Shipped-frontmatter conformance against 01's merged output (binding proof of contract agreement,
+now that 01 has merged into the rebased base):
+  (a) grep -rl "^prerequisites:" <COURSES> | grep -c "_index.md" = 37
+  (b) grep -rEn "^prerequisites:[^]]*,[^]]*$" <COURSES> | grep -c . = 0
+      (no value is a bare comma-separated string outside a [...] sequence)
+
+Both counts verified 2026-07-24 on this branch (rebased from origin/main, which already includes
+01's merged 37 re-homed _index.md files): (a) = 37, (b) = 0.
+
+Archival commit SHA of the sibling plan folder (single-line command):
+  git log -1 --format=%H -- <PLAN01>
+  -> 8b57263a5f739bc44292d0913e6c06c81adab9af
+
+Non-empty 40-hex assertion (load-bearing — a pathspec matching nothing prints no SHA and exits 0):
+  git log -1 --format=%H -- <PLAN01> | grep -qE "^[0-9a-f]{40}$"
+  -> exit 0
+
+<PLAN01>/tech-docs.md reachability (read-only reference copy, never edited by this plan):
+  test -f <PLAN01>/tech-docs.md
+  -> exit 0
+
+No contradiction found between this plan's canonical contract statement and <PLAN01>'s
+non-contradicting subset (4 of the 6 clauses; it names this plan the canonical owner and defers to
+it) — nothing recorded in learnings.md for this step.
