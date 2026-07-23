@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Capstone: Sensor-Averaging Kernel](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture/learning/capstone/explanation)
+- [Capstone: Sensor-Averaging Kernel](/en/c/learn/courses/computer-architecture/learning/capstone/explanation)

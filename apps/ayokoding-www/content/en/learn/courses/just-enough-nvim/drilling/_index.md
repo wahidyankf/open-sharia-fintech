@@ -5,4 +5,4 @@ draft: false
 weight: 201
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/drilling/overview)
+- [Overview](/en/c/learn/courses/just-enough-nvim/drilling/overview)

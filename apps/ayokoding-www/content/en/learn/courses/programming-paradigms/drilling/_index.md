@@ -5,4 +5,4 @@ draft: false
 weight: 222
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/programming-paradigms/drilling/overview)
+- [Overview](/en/c/learn/courses/programming-paradigms/drilling/overview)

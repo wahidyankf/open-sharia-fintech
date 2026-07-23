@@ -5,4 +5,4 @@ draft: false
 weight: 228
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/build-your-own-orm-and-query-builder/drilling/overview)
+- [Overview](/en/c/learn/courses/build-your-own-orm-and-query-builder/drilling/overview)

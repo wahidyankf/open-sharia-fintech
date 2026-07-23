@@ -5,4 +5,4 @@ draft: false
 weight: 227
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/data-access-orms-and-query-builders/drilling/overview)
+- [Overview](/en/c/learn/courses/data-access-orms-and-query-builders/drilling/overview)

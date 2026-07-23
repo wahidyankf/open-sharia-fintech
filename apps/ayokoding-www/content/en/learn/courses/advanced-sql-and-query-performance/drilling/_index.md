@@ -5,4 +5,4 @@ draft: false
 weight: 226
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/drilling/overview)
+- [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/drilling/overview)

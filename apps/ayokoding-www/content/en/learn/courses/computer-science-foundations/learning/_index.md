@@ -5,9 +5,9 @@ draft: false
 weight: 119
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/overview)
-- [Beginner Examples](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/beginner)
-- [Intermediate Examples](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/intermediate)
-- [Advanced Examples](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/advanced)
-- [Capstone](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/capstone)
-  - [Capstone](/en/c/learn/fundamentally-strong/software-engineer/computer-science-foundations/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/computer-science-foundations/learning/overview)
+- [Beginner Examples](/en/c/learn/courses/computer-science-foundations/learning/beginner)
+- [Intermediate Examples](/en/c/learn/courses/computer-science-foundations/learning/intermediate)
+- [Advanced Examples](/en/c/learn/courses/computer-science-foundations/learning/advanced)
+- [Capstone](/en/c/learn/courses/computer-science-foundations/learning/capstone)
+  - [Capstone](/en/c/learn/courses/computer-science-foundations/learning/capstone/overview)

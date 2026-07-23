@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/security-essentials/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/security-essentials/learning/capstone/overview)

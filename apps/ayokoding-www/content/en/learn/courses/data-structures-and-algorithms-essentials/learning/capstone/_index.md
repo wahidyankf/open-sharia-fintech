@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/data-structures-and-algorithms-essentials/learning/capstone/overview)

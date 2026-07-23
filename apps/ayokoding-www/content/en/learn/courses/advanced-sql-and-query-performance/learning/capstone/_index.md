@@ -5,5 +5,5 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/capstone/overview)
-- [Anomaly](/en/c/learn/fundamentally-strong/software-engineer/advanced-sql-and-query-performance/learning/capstone/anomaly)
+- [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone/overview)
+- [Anomaly](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone/anomaly)

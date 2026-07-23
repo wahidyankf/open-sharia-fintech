@@ -5,5 +5,5 @@ draft: false
 weight: 900
 ---
 
-- [Capstone](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/learning/capstone/overview)
-- [Capstone Analysis](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/learning/capstone/analysis)
+- [Capstone](/en/c/learn/courses/advanced-networking/learning/capstone/overview)
+- [Capstone Analysis](/en/c/learn/courses/advanced-networking/learning/capstone/analysis)

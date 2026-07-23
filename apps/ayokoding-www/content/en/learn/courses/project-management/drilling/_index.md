@@ -5,4 +5,4 @@ draft: false
 weight: 209
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/project-management/drilling/overview)
+- [Overview](/en/c/learn/courses/project-management/drilling/overview)

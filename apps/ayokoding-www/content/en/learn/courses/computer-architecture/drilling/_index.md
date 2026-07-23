@@ -5,4 +5,4 @@ draft: false
 weight: 220
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/computer-architecture/drilling/overview)
+- [Overview](/en/c/learn/courses/computer-architecture/drilling/overview)

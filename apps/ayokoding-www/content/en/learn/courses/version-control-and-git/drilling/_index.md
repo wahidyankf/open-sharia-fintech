@@ -5,4 +5,4 @@ draft: false
 weight: 206
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/version-control-and-git/drilling/overview)
+- [Overview](/en/c/learn/courses/version-control-and-git/drilling/overview)

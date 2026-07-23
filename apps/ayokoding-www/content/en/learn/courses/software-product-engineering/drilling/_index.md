@@ -5,4 +5,4 @@ draft: false
 weight: 232
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/drilling/overview)
+- [Overview](/en/c/learn/courses/software-product-engineering/drilling/overview)

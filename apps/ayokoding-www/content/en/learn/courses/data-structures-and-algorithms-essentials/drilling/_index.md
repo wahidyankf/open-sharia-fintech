@@ -5,4 +5,4 @@ draft: false
 weight: 207
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/data-structures-and-algorithms-essentials/drilling/overview)
+- [Overview](/en/c/learn/courses/data-structures-and-algorithms-essentials/drilling/overview)

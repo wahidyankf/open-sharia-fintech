@@ -5,5 +5,5 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/project-management/learning/capstone/overview)
-- [Capstone Delivery Plan: Nimbus Notification Service](/en/c/learn/fundamentally-strong/software-engineer/project-management/learning/capstone/plan)
+- [Overview](/en/c/learn/courses/project-management/learning/capstone/overview)
+- [Capstone Delivery Plan: Nimbus Notification Service](/en/c/learn/courses/project-management/learning/capstone/plan)

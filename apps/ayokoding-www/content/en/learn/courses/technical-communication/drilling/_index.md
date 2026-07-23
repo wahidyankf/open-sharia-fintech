@@ -5,4 +5,4 @@ draft: false
 weight: 218
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/technical-communication/drilling/overview)
+- [Overview](/en/c/learn/courses/technical-communication/drilling/overview)

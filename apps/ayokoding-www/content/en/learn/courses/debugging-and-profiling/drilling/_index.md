@@ -5,4 +5,4 @@ draft: false
 weight: 216
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/drilling/overview)
+- [Overview](/en/c/learn/courses/debugging-and-profiling/drilling/overview)

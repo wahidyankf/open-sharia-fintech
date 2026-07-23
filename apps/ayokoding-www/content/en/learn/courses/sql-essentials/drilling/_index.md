@@ -5,4 +5,4 @@ draft: false
 weight: 210
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/sql-essentials/drilling/overview)
+- [Overview](/en/c/learn/courses/sql-essentials/drilling/overview)

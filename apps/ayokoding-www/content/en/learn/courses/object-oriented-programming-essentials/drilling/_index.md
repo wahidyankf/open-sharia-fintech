@@ -5,4 +5,4 @@ draft: false
 weight: 208
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-programming-essentials/drilling/overview)
+- [Overview](/en/c/learn/courses/object-oriented-programming-essentials/drilling/overview)

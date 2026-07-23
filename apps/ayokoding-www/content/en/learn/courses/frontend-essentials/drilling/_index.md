@@ -5,4 +5,4 @@ draft: false
 weight: 214
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/frontend-essentials/drilling/overview)
+- [Overview](/en/c/learn/courses/frontend-essentials/drilling/overview)

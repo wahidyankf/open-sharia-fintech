@@ -5,4 +5,4 @@ draft: false
 weight: 229
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-networking/drilling/overview)
+- [Overview](/en/c/learn/courses/advanced-networking/drilling/overview)

@@ -5,4 +5,4 @@ draft: false
 weight: 212
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/networking-essentials/drilling/overview)
+- [Overview](/en/c/learn/courses/networking-essentials/drilling/overview)

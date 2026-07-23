@@ -5,4 +5,4 @@ draft: false
 weight: 204
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/just-enough-python/drilling/overview)
+- [Overview](/en/c/learn/courses/just-enough-python/drilling/overview)

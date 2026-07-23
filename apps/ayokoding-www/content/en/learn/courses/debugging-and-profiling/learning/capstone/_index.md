@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/debugging-and-profiling/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/debugging-and-profiling/learning/capstone/overview)

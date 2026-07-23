@@ -5,4 +5,4 @@ draft: false
 weight: 225
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/advanced-algorithms/drilling/overview)
+- [Overview](/en/c/learn/courses/advanced-algorithms/drilling/overview)

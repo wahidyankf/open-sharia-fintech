@@ -5,5 +5,5 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/capstone/overview)
-- [Product Brief: Auto-Reminder SMS for Upcoming Shifts](/en/c/learn/fundamentally-strong/software-engineer/software-product-engineering/learning/capstone/brief)
+- [Overview](/en/c/learn/courses/software-product-engineering/learning/capstone/overview)
+- [Product Brief: Auto-Reminder SMS for Upcoming Shifts](/en/c/learn/courses/software-product-engineering/learning/capstone/brief)

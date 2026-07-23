@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/software-testing/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/software-testing/learning/capstone/overview)

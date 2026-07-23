@@ -5,4 +5,4 @@ draft: false
 weight: 202
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/just-enough-lua/drilling/overview)
+- [Overview](/en/c/learn/courses/just-enough-lua/drilling/overview)

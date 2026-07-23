@@ -5,9 +5,9 @@ draft: false
 weight: 121
 ---
 
-- [Overview](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/overview)
-- [Beginner Examples](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/beginner)
-- [Intermediate Examples](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/intermediate)
-- [Advanced Examples](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/advanced)
-- [Capstone](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/capstone)
-  - [Overview](/en/c/learn/fundamentally-strong/software-engineer/object-oriented-design-and-patterns/learning/capstone/overview)
+- [Overview](/en/c/learn/courses/object-oriented-design-and-patterns/learning/overview)
+- [Beginner Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/beginner)
+- [Intermediate Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/intermediate)
+- [Advanced Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/advanced)
+- [Capstone](/en/c/learn/courses/object-oriented-design-and-patterns/learning/capstone)
+  - [Overview](/en/c/learn/courses/object-oriented-design-and-patterns/learning/capstone/overview)
