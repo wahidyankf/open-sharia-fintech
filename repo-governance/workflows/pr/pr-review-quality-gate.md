@@ -286,7 +286,8 @@ sole poster of record every cycle.
 
 A `*-to-pr` delivery (`worktree-to-pr` or `main-to-pr`) is **done** when ALL of the following hold:
 
-1. **N review cycles complete** (default 3 — a **hard ceiling**, never extended past this count).
+1. **N review cycles complete** (default 3 — a **hard ceiling**, never extended past this count) **and
+   the loop did not exit `escalated`** — an `escalated` exit blocks the done-definition on its own.
 2. **Every inline review comment is answered AND every accepted fix is COMMITTED AND PUSHED** —
    thread state is not fix state. A thread may be legitimately replied to and resolved while the
    corresponding fix sits uncommitted in the working tree; GitHub then reports zero unresolved
@@ -315,8 +316,10 @@ Being **done** is necessary but not sufficient to merge. A PR merges only when *
 following hold:
 
 - **(a)** It has passed the configured PR-review cycle (fan-out → `pr-review-synthesis-maker` →
-  `pr-review-fixer`) for **3 cycles**. The configured count is a **hard ceiling, not a floor** — a PR
-  merges once preconditions (b)-(e) also hold, never on additional cycles beyond this count.
+  `pr-review-fixer`) for **3 cycles** **and the loop did not exit `escalated`** — an `escalated` exit
+  blocks the merge on its own, for any merge actor. The configured count is a **hard ceiling, not a
+  floor** — a PR merges once preconditions (b)-(e) also hold, never on additional cycles beyond this
+  count.
 - **(b)** **0 CRITICAL + 0 HIGH findings outstanding.**
 - **(c)** The branch is **up-to-date with the latest `origin/main`** at merge time. If it is behind,
   bring it forward by a **non-destructive forward update** — `git fetch origin` then
