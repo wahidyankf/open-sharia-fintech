@@ -610,13 +610,20 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   `find <PLAN>/syllabus -type f | wc -l` returned `128`, matching the corpus count recorded at the
   earlier syllabus-intact body step.
 
-- [ ] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
+- [x] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
       **Grandfathered exception to [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)**:
       that hard rule landed on `main` (commit `1c24ed636`) while this phase's PR #90 was already open
       and mid-review. #90 had already completed all 3 review cycles and reached CI-green before the
       rule landed, so it merges as a one-time historical exception rather than being abandoned with
       completed review work discarded. Phase 1 onward follows the new rule normally — only this
       already-in-flight Phase 0 PR is exempt.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (this checkbox only). PR #90
+  completed all 3 review cycles (0 CRITICAL/HIGH across all cycles), resolved a merge conflict against
+  the newly-landed Phase-0-opens-no-PR rule by recording the grandfathered-exception note above,
+  passed all 17 CI checks (2 skipped: no affected .NET/Rust surfaces at push time), and was
+  `[AI]`-squash-merged to `origin/main` as commit `af9353055`. Phase 0 is complete; Phase 1 begins on
+  its own new branch per the now-effective no-PR-for-Phase-0 convention.
 
 > **Pause Safety**: only the toolchain was verified and the current state snapshotted — no code, no
 > schema, no spec exists yet, nothing is pushed, and no PR exists. Safe to stop indefinitely. To
