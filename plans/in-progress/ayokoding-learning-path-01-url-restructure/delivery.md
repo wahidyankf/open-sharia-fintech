@@ -771,7 +771,7 @@ above).
 > sub-phase runs FIRST in Phase 3**, before §3.1, because §3.1's redirect-module wiring order assumes
 > `content-namespace.ts` already runs first (DD-48).
 
-- [ ] [AI] **RED (unit)** — invert the five assertions in
+- [x] [AI] **RED (unit)** — invert the five assertions in
       `<REDIR>content-namespace.unit.test.ts` in place: each currently asserts a bare source
       (`/en/learn`, `/en/rants`, `/id/belajar`, `/id/celoteh`, `/id/konten-video`) redirects to its
       `/c/`-prefixed destination; rewrite each to assert the **opposite** — a `/c/`-prefixed source
@@ -796,31 +796,31 @@ above).
   > cycles. Invert each scenario's Given/When/Then to assert a stale `/c/`-prefixed bookmark 308s to
   > the bare URL, not the reverse.
 
-- [ ] [AI] **RED (specs)** — invert the Gherkin content of `content-namespace-redirects.feature` in
+- [x] [AI] **RED (specs)** — invert the Gherkin content of `content-namespace-redirects.feature` in
       place (filename kept) and update its paired `content-namespace-redirects.steps.tsx` step
       definitions to match — command: `npx nx run ayokoding-www:specs:behavior:coverage` —
       acceptance: fails (step bindings still assert the old forward direction against the
       still-forward production code).
   - _Suggested executor: `specs-maker`_
 
-- [ ] [AI] **GREEN** — invert `<REDIR>content-namespace.ts` in place: for all five rules
+- [x] [AI] **GREEN** — invert `<REDIR>content-namespace.ts` in place: for all five rules
       (`en/learn`, `en/rants`, `id/belajar`, `id/celoteh`, `id/konten-video`), swap `source` and
       `destination` so the `/c/`-prefixed form becomes the source (the stale bookmark) and the bare form
       becomes the destination (the canonical URL) — command: `npx nx run ayokoding-www:test:unit` —
       acceptance: the inverted unit suite passes.
 
-- [ ] [AI] **GREEN** — delete the retired content-tree route:
+- [x] [AI] **GREEN** — delete the retired content-tree route:
       `git rm "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.tsx" "apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.unit.test.ts"`
       — acceptance: both `test -e` checks return non-zero (they returned 0 in Phase 0).
 
-- [ ] [AI] **GREEN** — relocate the browse index (no bare home to inherit — see
+- [x] [AI] **GREEN** — relocate the browse index (no bare home to inherit — see
       [tech-docs.md](./tech-docs.md#the-c-browse-index-has-no-bare-home-to-inherit)):
       `git mv "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx" "apps/ayokoding-www/src/app/[locale]/(content)/browse/page.tsx"`,
       then repoint its own internal canonical-URL string from `` `/${locale}/c` `` to
       `` `/${locale}/browse` `` — acceptance: `test -f "apps/ayokoding-www/src/app/[locale]/(content)/browse/page.tsx"`
       returns 0; `test -e "apps/ayokoding-www/src/app/[locale]/(content)/c/page.tsx"` returns non-zero.
 
-- [ ] [AI] **GREEN** — widen `[...slug]/page.tsx` to serve both loose pages and the full content tree:
+- [x] [AI] **GREEN** — widen `[...slug]/page.tsx` to serve both loose pages and the full content tree:
       merge the deleted `c/[...slug]/page.tsx`'s content-tree lookup, `generateStaticParams`, and
       `generateMetadata`/canonical-URL logic into the surviving bare `[...slug]/page.tsx`, and create
       `[...slug]/page.unit.test.ts` _(New file)_ — carry over `c/[...slug]/page.unit.test.ts`'s
@@ -828,7 +828,7 @@ above).
       `npx nx run ayokoding-www:test:unit` — acceptance: the merged suite passes, covering both
       loose-page and content-tree slugs in one route.
 
-- [ ] [AI] **GREEN — collision negative check** — confirm the widened route introduces no routing
+- [x] [AI] **GREEN — collision negative check** — confirm the widened route introduces no routing
       collision, per the verdict in
       [tech-docs.md's Collision verdict](./tech-docs.md#collision-verdict--widening-slug-against-tools-and-the-locale-root):
       check (a) `grep -cE '"tools"|"browse"' apps/ayokoding-www/src/features/content/core/content-url.ts`
@@ -854,7 +854,7 @@ above).
       step; a `0` from check (b) whose control form also read `0` would mean the pathspec stopped
       matching and the check has gone vacuous.
 
-- [ ] [AI] **GREEN** — update `contentUrl()` in `features/content/core/content-url.ts`: delete the
+- [x] [AI] **GREEN** — update `contentUrl()` in `features/content/core/content-url.ts`: delete the
       `/c/`-prefix branch so it uniformly returns `/{locale}` for the root slug and
       `/{locale}/{normalizeSlug(slug)}` otherwise — command: `npx nx run ayokoding-www:test:unit` —
       acceptance: `content-url.test.ts` passes with the updated uniform-join assertions.
@@ -867,7 +867,7 @@ above).
       preserve its optional `pathId` parameter and its `?path=` assertion while deleting the `/c/`
       branch; do not revert it as unexpected. Of the seven `contentUrl` assertions, the four naming
       `/c/` in their titles are this step's to rewrite [Repo-grounded — measured 2026-07-22].
-- [ ] [AI] **GREEN — resolve the `LOOSE_PAGE_ALLOWLIST` open question (delivery-time verification, not
+- [x] [AI] **GREEN — resolve the `LOOSE_PAGE_ALLOWLIST` open question (delivery-time verification, not
       an assumed fact)** — read `generateStaticParams` in the merged `[...slug]/page.tsx` and the
       content indexer it calls (`index.contentMap` construction) to determine whether the two loose
       pages (`about-ayokoding`/`terms-and-conditions` for `en`, `tentang-ayokoding`/`syarat-dan-ketentuan`
@@ -878,17 +878,17 @@ above).
       — acceptance: the chosen outcome is recorded in a one-line code comment at
       `LOOSE_PAGE_ALLOWLIST`'s declaration (or at its removal site, in the commit message) stating which
       branch was taken and why; `npx nx run ayokoding-www:test:unit` passes either way.
-- [ ] [AI] **GREEN** — update `features/content/core/slug.ts` and
+- [x] [AI] **GREEN** — update `features/content/core/slug.ts` and
       `features/content/core/content-link-rewrite.ts`'s `resolveContentHref()` doc comments and any
       `/c/`-namespace-aware logic to reflect the uniform bare join — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: both files' test suites pass.
-- [ ] [AI] **GREEN** — collapse `breadcrumb.tsx`'s `contentHrefs` prop: `hrefFor` always resolves
+- [x] [AI] **GREEN** — collapse `breadcrumb.tsx`'s `contentHrefs` prop: `hrefFor` always resolves
       through `contentUrl()`; remove the prop and its call-site plumbing in `sidebar-tree.tsx`,
       `resizable-sidebar.tsx`, and `prev-next.tsx` (test fixtures `breadcrumb.test.tsx`,
       `prev-next.test.tsx`, `sidebar-tree.test.tsx`, `resizable-sidebar.test.tsx` updated to match) —
       command: `npx nx run ayokoding-www:test:unit` — acceptance: all four suites pass with the prop
       removed.
-- [ ] [AI] **GREEN** — update `apps/ayokoding-www/test/unit/fe-steps/navigation.steps.tsx`'s two
+- [x] [AI] **GREEN** — update `apps/ayokoding-www/test/unit/fe-steps/navigation.steps.tsx`'s two
       hardcoded `/c/`-prefixed href assertions (currently at line 188:
       `expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"')`
       and line 221:
@@ -900,11 +900,11 @@ above).
       (falsifiable: today it returns `2`, matching the two hardcoded assertions above) and the
       `unit-fe` vitest project (`apps/ayokoding-www/vitest.config.ts:82`, which globs
       `test/unit/fe-steps/**/*.steps.{ts,tsx}`) passes.
-- [ ] [AI] **GREEN** — update `browse-index.tsx` to link to the relocated `browse/` route instead of
+- [x] [AI] **GREEN** — update `browse-index.tsx` to link to the relocated `browse/` route instead of
       `/c`, and update its and `section-card.tsx`'s test fixtures (`browse-index.test.tsx`,
       `section-card.test.tsx`) to bare URLs — command: `npx nx run ayokoding-www:test:unit` —
       acceptance: both suites pass.
-- [ ] [AI] **GREEN** — update the four test-fixture-only files' expected URLs to the bare form —
+- [x] [AI] **GREEN** — update the four test-fixture-only files' expected URLs to the bare form —
       `app/sitemap.unit.test.ts`, `app/feed.xml/route.unit.test.ts`,
       `features/search/shell/search-dialog.test.tsx`, `features/app-shell/shell/landing.test.tsx` —
       production `sitemap.ts`/`feed.xml/route.ts` already derive every URL from `contentUrl()` (DD-44),
@@ -913,17 +913,17 @@ above).
       the same test), avoiding a **second, avoidable** disagreement between the sitemap/feed and the
       live URLs on top of the one-time `<guid>` churn already accounted for in
       [prd.md's Product-Level Risks](./prd.md#product-level-risks).
-- [ ] [AI] **GREEN** — invert `ia-navigation-revamp.feature` and `learn-reorg-redirects.feature`'s
+- [x] [AI] **GREEN** — invert `ia-navigation-revamp.feature` and `learn-reorg-redirects.feature`'s
       scenario content in place (filenames kept) and update their paired
       `ia-navigation-revamp.steps.tsx` / `learn-reorg-redirects.steps.tsx` step definitions to match —
       command: `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0, all three
       feature files' scenarios pass against the now-inverted production code.
-- [ ] [AI] **GREEN** — reorder `apps/ayokoding-www/next.config.ts` `redirects()` to place
+- [x] [AI] **GREEN** — reorder `apps/ayokoding-www/next.config.ts` `redirects()` to place
       `contentNamespaceRedirects` **first**: `return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects];`
       — this sub-step's own intermediate order (§3.1 below appends `learnThreeBucketRedirects` last) —
       command: `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:build` — acceptance: both
       exit 0.
-- [ ] [AI] **REFACTOR — loop-safety invariant, falsifiable both ways** —
+- [x] [AI] **REFACTOR — loop-safety invariant, falsifiable both ways** —
       `grep -rn '"/[a-z][a-z]/c/' apps/ayokoding-www/src/redirects/` — acceptance: empty (no currently-
       wired module redirects a bare URL back into `/c/`). Falsifiable the other way: temporarily
       restoring the pre-inversion `content-namespace.ts` makes this command print 5 matching lines
@@ -939,7 +939,7 @@ above).
     And no two rules combine to redirect any URL back to itself
   ```
 
-- [ ] [AI] **REFACTOR** — run the full affected suite over everything touched this sub-phase:
+- [x] [AI] **REFACTOR** — run the full affected suite over everything touched this sub-phase:
       `npx nx affected -t typecheck lint test:unit specs:behavior:coverage` — acceptance: all exit 0.
 
 ### 3.1 · Redirect module (TDD)
