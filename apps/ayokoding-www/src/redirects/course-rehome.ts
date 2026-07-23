@@ -13,6 +13,21 @@
  * `source` and `destination` are derived from the same array element, so a slug
  * typo cannot produce a half-correct rule (mismatched source/destination pair).
  *
+ * Each per-course rule is scoped with a `:path*` wildcard (maintainer decision,
+ * 2026-07-23, broadening delivery.md §2.1(c)'s original exact-source design):
+ * a bare exact-source rule only 308s the course's own root URL, leaving every
+ * deep sub-page (`.../learning/beginner`, `.../drilling/kata-01`, …) — roughly
+ * 520 pages across the 37 courses — to 404 after the `git mv`, a production
+ * deep-link/SEO regression. `:path*` is Next.js's path-to-regexp "zero or more
+ * segments" wildcard, so it matches BOTH the bare course root (`path` resolves
+ * to an empty segment list) AND any deep sub-path, exactly like the existing
+ * `contentNamespaceRedirects`' `/en/learn/:path*` rule already does for the
+ * whole `learn` section (empirically verified against this exact Next.js
+ * version: `curl -I http://localhost:3101/en/learn` — no trailing
+ * segment — still 308s via that `:path*` rule). One wildcard rule per course
+ * therefore fully replaces what would otherwise need two rules (an exact root
+ * rule plus a separate `:path*` rule) per course.
+ *
  * Next.js forwards the query string by default on a redirect, so a
  * `?path=`-carrying inbound link survives the move without extra code here.
  *
@@ -66,8 +81,8 @@ const perCourseRedirects: Array<{
   destination: string;
   permanent: boolean;
 }> = REHOMED_COURSE_SLUGS.map((slug) => ({
-  source: `/en/learn/fundamentally-strong/software-engineer/${slug}`,
-  destination: `/en/learn/courses/${slug}`,
+  source: `/en/learn/fundamentally-strong/software-engineer/${slug}/:path*`,
+  destination: `/en/learn/courses/${slug}/:path*`,
   permanent: true,
 }));
 

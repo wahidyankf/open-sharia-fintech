@@ -15,6 +15,14 @@ Feature: Course re-home redirects and prerequisites
     When a visitor navigates to "/en/learn/fundamentally-strong/software-engineer/just-enough-python"
     Then the current URL should contain "/en/c/learn/courses/just-enough-python"
 
+  # Maintainer decision (2026-07-23): the per-course redirect broadened from an exact-source rule
+  # to a /:path* wildcard so deep course sub-pages (learning/*, drilling/*) 308 to their canonical
+  # sub-page instead of 404ing after the move — this scenario proves that deep-path coverage.
+  @unit @e2e
+  Scenario: A legacy fundamentally-strong deep sub-page URL redirects to its canonical course sub-page
+    When a visitor navigates to "/en/learn/fundamentally-strong/software-engineer/just-enough-python/learning/beginner"
+    Then the current URL should contain "/en/c/learn/courses/just-enough-python/learning/beginner"
+
   @unit
   Scenario: Every re-homed course declares its prerequisites
     Given the thirty-seven shipped topics and existing capstones have been re-homed into the course library

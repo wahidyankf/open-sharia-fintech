@@ -68,18 +68,43 @@ describe("courseRehomeRedirects", () => {
     }
   });
 
-  it("each per-course rule's source is the legacy fundamentally-strong path and its destination is the courses path, for the same slug", () => {
+  it("no two rules share the same source (all 40 sources are unique)", () => {
+    const sources = courseRehomeRedirects.map((rule) => rule.source);
+    expect(new Set(sources).size).toBe(sources.length);
+  });
+
+  it("each per-course rule's source is the legacy fundamentally-strong path and its destination is the courses path, for the same slug, both wildcarded with :path*", () => {
     for (const rule of perCourseRules) {
-      const match = rule.source.match(/^\/en\/learn\/fundamentally-strong\/software-engineer\/([a-z0-9-]+)$/);
+      const match = rule.source.match(/^\/en\/learn\/fundamentally-strong\/software-engineer\/([a-z0-9-]+)\/:path\*$/);
       expect(match, `source not in expected shape: ${rule.source}`).not.toBeNull();
       const [, slug] = match as RegExpMatchArray;
-      expect(rule.destination).toBe(`/en/learn/courses/${slug}`);
+      expect(rule.destination).toBe(`/en/learn/courses/${slug}/:path*`);
+    }
+  });
+
+  // Maintainer decision (2026-07-23): broadened from an exact-source rule to :path* so the ~520
+  // deep course sub-pages (learning/*, drilling/*) 308 instead of 404ing after the git mv — a
+  // single wildcard rule covers both the bare course root (path resolves to an empty segment
+  // list) and any deep sub-page, verified empirically against this Next.js version's existing
+  // /en/learn/:path* rule (content-namespace.ts) which already 308s the bare /en/learn root.
+  it("every per-course source ends with /:path* and its destination mirrors :path* for the same slug (deep-path coverage)", () => {
+    for (const rule of perCourseRules) {
+      expect(rule.source.endsWith("/:path*"), `source missing /:path* wildcard: ${rule.source}`).toBe(true);
+      expect(rule.destination.endsWith("/:path*"), `destination missing /:path* wildcard: ${rule.destination}`).toBe(
+        true,
+      );
+      const sourceSlug = rule.source.match(
+        /^\/en\/learn\/fundamentally-strong\/software-engineer\/([a-z0-9-]+)\/:path\*$/,
+      )?.[1];
+      const destinationSlug = rule.destination.match(/^\/en\/learn\/courses\/([a-z0-9-]+)\/:path\*$/)?.[1];
+      expect(sourceSlug, `could not extract slug from source: ${rule.source}`).toBeTruthy();
+      expect(destinationSlug).toBe(sourceSlug);
     }
   });
 
   it("the per-course rule set's slug list equals the Phase-0 re-home inventory exactly (no extra, no missing)", () => {
     const actualSlugs = perCourseRules
-      .map((rule) => rule.source.match(/\/([a-z0-9-]+)$/)?.[1])
+      .map((rule) => rule.source.match(/\/([a-z0-9-]+)\/:path\*$/)?.[1])
       .filter((slug): slug is string => Boolean(slug))
       .sort();
     expect(actualSlugs).toEqual(EXPECTED_SLUGS);
