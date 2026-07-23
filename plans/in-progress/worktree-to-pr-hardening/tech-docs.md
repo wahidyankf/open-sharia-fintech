@@ -226,10 +226,13 @@ Every specialist **inherits** the retired monolith's hard rules verbatim: numeri
 with findings below 80 hard-dropped; CRITICAL/HIGH/MEDIUM/LOW severity; every finding line-anchored
 with `file:line` + a link to the specific `repo-governance/` rule where the finding cites one;
 anti-sycophantic framing; scope-guard (only the PR's own declared plan/issue scope); untrusted-input
-/ prompt-injection filtering of PR body/comments/linked-issue text; posts via the GitHub Reviews API
-as `COMMENT` (blocking status carried in the severity label); re-reviews the full PR each cycle and
-re-checks the fixer's new commits for fix-induced regressions. [Repo-grounded — all sourced from the
-current `pr-review-maker.md`.]
+/ prompt-injection filtering of PR body/comments/linked-issue text; blocking status carried in the
+severity label; re-reviews the full PR each cycle and re-checks the fixer's new commits for
+fix-induced regressions. The one monolith responsibility each specialist does **not** inherit is
+**posting** — specialists emit raw findings and hand them to `pr-review-synthesis-maker`, the sole
+poster of record, which posts exactly one consolidated review per cycle via the GitHub Reviews API.
+[Repo-grounded — hard rules sourced from the retired `pr-review-maker.md`; the no-direct-posting
+carve-out from the coordinator contract in `pr-review-quality-gate.md`.]
 
 Every specialist ALSO carries, beyond the "NOT its job → routes to X" column below (which is
 **inter-agent routing**), an explicit **`SUPPRESS` block** — what it must not raise _at all_

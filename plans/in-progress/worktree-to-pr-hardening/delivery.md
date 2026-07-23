@@ -607,10 +607,10 @@ affected` no-op noted in Phase 8)
 > `pr-review-synthesis-maker`, which posts the consolidated review that `pr-review-fixer` consumes. This
 > is the plan dogfooding its own reviewer redesign; record the dogfooding observation in `learnings.md`.
 
-- [ ] [AI] Cycle 1: run the reviewer (per the live workflow) → `pr-review-fixer` triages, fixes,
+- [x] [AI] Cycle 1: run the reviewer (per the live workflow) → `pr-review-fixer` triages, fixes,
       pushes, resolves → wait for CI green — acceptance: cycle 1 complete, CI green
-- [ ] [AI] Cycle 2: fresh reviewer pass (fed prior findings) → fixer → CI green — acceptance: cycle 2 complete
-- [ ] [AI] Cycle 3: fresh reviewer pass → fixer → CI green — acceptance: cycle 3 complete, no early exit
+- [x] [AI] Cycle 2: fresh reviewer pass (fed prior findings) → fixer → CI green — acceptance: cycle 2 complete
+- [x] [AI] Cycle 3: fresh reviewer pass → fixer → CI green — acceptance: cycle 3 complete, no early exit
 - [ ] [AI] Flip the PR to ready: `gh pr ready` once the done-definition holds — acceptance: PR is ready-for-review
 
 ### Merge (once the five hardened preconditions hold)
