@@ -1,0 +1,13 @@
+---
+title: "Tools"
+weight: 10000
+date: 2026-02-02T00:00:00+07:00
+draft: false
+---
+
+- [Overview](/en/learn/legacy/software-engineering/platforms/linux/tools/overview)
+- [Shell](/en/learn/legacy/software-engineering/platforms/linux/tools/shell)
+  - [By Example](/en/learn/legacy/software-engineering/platforms/linux/tools/shell/by-example)
+  - [Initial Setup](/en/learn/legacy/software-engineering/platforms/linux/tools/shell/initial-setup)
+  - [Overview](/en/learn/legacy/software-engineering/platforms/linux/tools/shell/overview)
+  - [Quick Start](/en/learn/legacy/software-engineering/platforms/linux/tools/shell/quick-start)

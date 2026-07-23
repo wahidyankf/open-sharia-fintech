@@ -1,0 +1,13 @@
+---
+title: "By Example"
+weight: 100003
+date: 2026-03-27T00:00:00+07:00
+draft: false
+description: "Learn Rust SQLx migrations through 85 annotated code examples covering database operations from beginner to advanced - ideal for experienced developers managing schema evolution"
+tags: ["rust-sqlx", "tutorial", "by-example", "sqlx", "database", "migrations", "code-first"]
+---
+
+- [Overview](/en/learn/legacy/software-engineering/data/tools/rust-sqlx/by-example/overview)
+- [Beginner](/en/learn/legacy/software-engineering/data/tools/rust-sqlx/by-example/beginner)
+- [Intermediate](/en/learn/legacy/software-engineering/data/tools/rust-sqlx/by-example/intermediate)
+- [Advanced](/en/learn/legacy/software-engineering/data/tools/rust-sqlx/by-example/advanced)

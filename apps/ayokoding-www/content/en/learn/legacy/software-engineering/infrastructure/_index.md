@@ -1,0 +1,21 @@
+---
+title: "Infrastructure"
+weight: 1400
+date: 2025-12-29T00:00:00+07:00
+draft: false
+type: docs
+layout: list
+---
+
+- [Infrastructure as Code](/en/learn/legacy/software-engineering/infrastructure/infrastructure-as-code)
+  - [By Example](/en/learn/legacy/software-engineering/infrastructure/infrastructure-as-code/by-example)
+  - [Overview](/en/learn/legacy/software-engineering/infrastructure/infrastructure-as-code/overview)
+- [Overview](/en/learn/legacy/software-engineering/infrastructure/overview)
+- [Tools](/en/learn/legacy/software-engineering/infrastructure/tools)
+  - [Overview](/en/learn/legacy/software-engineering/infrastructure/tools/overview)
+  - [Ansible](/en/learn/legacy/software-engineering/infrastructure/tools/ansible)
+  - [Terraform](/en/learn/legacy/software-engineering/infrastructure/tools/terraform)
+  - [Docker](/en/learn/legacy/software-engineering/infrastructure/tools/docker)
+  - [Kubernetes](/en/learn/legacy/software-engineering/infrastructure/tools/kubernetes)
+  - [K3s](/en/learn/legacy/software-engineering/infrastructure/tools/k3s)
+  - [Proxmox VE](/en/learn/legacy/software-engineering/infrastructure/tools/proxmox)

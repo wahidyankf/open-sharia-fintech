@@ -1,20 +1,18 @@
 ---
 title: Overview
 weight: 100
-date: 2025-12-12T00:00:00+07:00
+date: 2026-07-23T00:00:00+07:00
 draft: false
-description: Your complete learning hub for software engineering, AI, business, and personal development
+description: Your complete learning hub — courses, ordered paths through them, and older reference material
 ---
 
-Welcome to AyoKoding's learning center! Explore comprehensive tutorials, guides, and resources across multiple domains.
+Welcome to AyoKoding's learning center! The learn section has three buckets.
 
 ## What You'll Find
 
-- **[Software Engineering](/en/learn/software-engineering)** - Programming languages, platforms, data, infrastructure, networking, architecture, and engineering practices
-- **[Artificial Intelligence](/en/learn/artificial-intelligence)** - AI coding agents and tools for modern development
-- **[Information Security](/en/learn/information-security)** - Security concepts, red/blue team and CISO roles, and security tooling
-- **[IT Governance](/en/learn/it-governance)** - IT governance, risk, and compliance (IT-GRC)
-- **[Business](/en/learn/business)** - Business and finance fundamentals
-- **[Personal Development](/en/learn/personal-development)** - Tools and frameworks for personal growth
+- **[Courses](/en/learn/courses)** - The canonical, path-neutral course library. Browse the full catalog here.
+- **[Paths](/en/learn/paths)** - Ordered routes through the course library toward a goal, such as a career track or a skill.
+- **[Legacy](/en/learn/legacy)** - Older, subject-organized material kept for reference while the course library fills.
 
-Each section contains structured learning paths from beginner to advanced, practical how-to guides, reference documentation, and conceptual explanations.
+Start with Courses or Paths for the current learning experience; Legacy remains available for material
+not yet folded into a course.

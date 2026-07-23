@@ -1027,14 +1027,14 @@ above).
 
 ### 3.2 · Relocate the six domains (pure `git mv`, DD-41)
 
-- [ ] [AI] Create the bucket root and `git mv` each domain, preserving its sub-taxonomy verbatim:
+- [x] [AI] Create the bucket root and `git mv` each domain, preserving its sub-taxonomy verbatim:
       `mkdir -p apps/ayokoding-www/content/en/learn/legacy && for d in software-engineering artificial-intelligence information-security personal-development it-governance business; do git mv "apps/ayokoding-www/content/en/learn/$d" "apps/ayokoding-www/content/en/learn/legacy/$d"; done`
       — acceptance: `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l` returns
       **1148**, and
       `for d in software-engineering artificial-intelligence information-security personal-development it-governance business; do test -e "apps/ayokoding-www/content/en/learn/$d" && echo "STILL AT ROOT $d"; done`
       prints nothing. Falsifiable both ways: that second command prints all six lines today, and the
       `find` fails outright because the directory does not exist yet (verified in Phase 0).
-- [ ] [AI] **Prove the move rewrote nothing** —
+- [x] [AI] **Prove the move rewrote nothing** —
       `git diff --cached --stat -M --diff-filter=M -- apps/ayokoding-www/content/en/learn/legacy` —
       acceptance: **no** modified (`M`) content file under `<LEGACY>` other than files this phase
       explicitly authors; `git diff --cached --summary -M` shows the relocated files as pure renames
@@ -1050,7 +1050,7 @@ above).
     And the only edited content files are the section overview and the new legacy bucket index
   ```
 
-- [ ] [AI] Author `<LEGACY>_index.md` _(New file)_ — **required**, not optional: `generate-indexes`
+- [x] [AI] Author `<LEGACY>_index.md` _(New file)_ — **required**, not optional: `generate-indexes`
       only rewrites `_index.md` files that already exist
       [Repo-grounded — `processAllIndexFiles` filters `allContent.filter(c => c.isSection)` in
       `apps/ayokoding-www/src/features/content/shell/index-generator.ts`], and without it
@@ -1075,7 +1075,7 @@ above).
     And it links onward to the course library and to the paths hub
   ```
 
-- [ ] [AI] Rewrite the hand-authored `apps/ayokoding-www/content/en/learn/overview.md` so its inventory
+- [x] [AI] Rewrite the hand-authored `apps/ayokoding-www/content/en/learn/overview.md` so its inventory
       names the **three buckets** instead of the six domains (Q-F recommended answer A — keep it as the
       section hub page; do **not** move its prose into `_index.md`, which `generate-indexes`
       machine-rewrites and would clobber) — acceptance:
@@ -1084,7 +1084,7 @@ above).
       `grep -oE '\(/en/learn/(software-engineering|artificial-intelligence|information-security|personal-development|it-governance|business)' apps/ayokoding-www/content/en/learn/overview.md | wc -l`
       returns **0**. Falsifiable both ways: today the first returns **0** and the second returns **6**
       (the file links all six domains at their bare pre-`/c` URLs, verified).
-- [ ] [AI] Regenerate the derived artifacts: `npx nx run ayokoding-www:generate-indexes` then
+- [x] [AI] Regenerate the derived artifacts: `npx nx run ayokoding-www:generate-indexes` then
       `npx nx run ayokoding-www:generate-search-data` — acceptance: both exit 0;
       `npx nx run ayokoding-www:validate-indexes` exits 0 afterward (proving regeneration converged);
       `generated/search-data.json` is rewritten and every relocated doc's `slug` now begins
@@ -1120,7 +1120,7 @@ above).
     And no navigation source file required a hardcoded domain slug to be edited
   ```
 
-- [ ] [AI] **Prove DD-44's zero-code-change claim — scoped to the six-domain relocation (§3.2), not
+- [x] [AI] **Prove DD-44's zero-code-change claim — scoped to the six-domain relocation (§3.2), not
       the whole phase** — confirm this sub-step's own staged diff touches no production navigation
       source file:
       `git diff --cached --name-only -- apps/ayokoding-www/src/features/navigation apps/ayokoding-www/src/features/content apps/ayokoding-www/src/app` —

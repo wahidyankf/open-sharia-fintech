@@ -1,0 +1,52 @@
+---
+title: "Jvm Spring Boot"
+weight: 100003
+date: 2025-12-23T00:00:00+07:00
+draft: false
+type: docs
+layout: list
+---
+
+- [In the Field](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field)
+  - [Overview](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/overview)
+  - [Best Practices](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/best-practices)
+  - [Anti Patterns](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/anti-patterns)
+  - [Auto Configuration](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/auto-configuration)
+  - [Starter Dependencies](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/starter-dependencies)
+  - [Application Properties](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/application-properties)
+  - [Configuration Properties](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/configuration-properties)
+  - [Spring Boot Devtools](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/spring-boot-devtools)
+  - [Springbootapplication Annotation](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/springbootapplication-annotation)
+  - [Embedded Servers](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/embedded-servers)
+  - [Profiles Environments](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/profiles-environments)
+  - [Logging Configuration](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/logging-configuration)
+  - [Spring Boot Web](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/spring-boot-web)
+  - [REST API Development](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/rest-api-development)
+  - [Validation](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/validation)
+  - [Error Handling](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/error-handling)
+  - [Static Content](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/static-content)
+  - [Spring Data Jpa](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/spring-data-jpa)
+  - [Database Initialization](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/database-initialization)
+  - [Multiple Datasources](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/multiple-datasources)
+  - [Transaction Management](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/transaction-management)
+  - [Caching](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/caching)
+  - [Spring Boot Actuator](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/spring-boot-actuator)
+  - [Health Checks](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/health-checks)
+  - [Metrics Monitoring](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/metrics-monitoring)
+  - [Security](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/security)
+  - [Graceful Shutdown](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/graceful-shutdown)
+  - [External Configuration](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/external-configuration)
+  - [Spring Boot Test](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/spring-boot-test)
+  - [Test Slices](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/test-slices)
+  - [Testcontainers](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/testcontainers)
+  - [Mocking Dependencies](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/mocking-dependencies)
+  - [Packaging Deployment](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/packaging-deployment)
+  - [Docker Containerization](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/in-the-field/docker-containerization)
+- [Initial Setup](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/initial-setup)
+- [Overview](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/overview)
+- [Quick Start](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/quick-start)
+- [By Example](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/by-example)
+  - [Overview](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/by-example/overview)
+  - [Beginner](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/by-example/beginner)
+  - [Intermediate](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/by-example/intermediate)
+  - [Advanced](/en/learn/legacy/software-engineering/platforms/web/tools/jvm-spring-boot/by-example/advanced)

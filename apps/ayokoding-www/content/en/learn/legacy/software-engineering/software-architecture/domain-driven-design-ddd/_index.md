@@ -1,0 +1,24 @@
+---
+title: "Domain-Driven Design (DDD)"
+weight: 10000003
+date: 2026-01-30T00:00:00+07:00
+draft: false
+description: "Learn Domain-Driven Design through tactical and strategic patterns, from entities and aggregates to bounded contexts and microservices"
+---
+
+- [Overview](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/overview)
+- [DDD By Example in FP](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example)
+  - [Overview](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview)
+  - [Beginner](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/beginner)
+  - [Intermediate](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/intermediate)
+  - [Advanced](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/advanced)
+- [DDD By Example in OOP](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example)
+  - [Overview](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/overview)
+  - [Beginner](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/beginner)
+  - [Intermediate](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/intermediate)
+  - [Advanced](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-oop-by-example/advanced)
+- [DDD By Example in Procedural](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example)
+  - [Domain-Driven Design (DDD) in Procedural Languages — Advanced](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/advanced)
+  - [Overview](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/overview)
+  - [Beginner](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/beginner)
+  - [Intermediate](/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/intermediate)
