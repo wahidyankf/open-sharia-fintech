@@ -353,6 +353,87 @@ evidence-backed optimum — the convention explicitly disclaims any claim that t
 than two, or an early-exit rule) was derived from measuring this repository's review outcomes; it
 is a deliberate predictability trade-off, full stop.
 
+## Post-Cutover Monitoring & Rollback
+
+The eight-discipline split retired the single `pr-review-maker` monolith at cutover by deletion, not
+by a staged sunset gated on measurement. Everything in this section therefore watches the split
+**after** the monolith is already gone — it is **post-cutover monitoring**, not a pre-cutover
+evaluation gate the split had to clear before shipping. The
+[Quality-Gate Enhancements](#quality-gate-enhancements) above harden how an individual finding is
+trusted (confidence calibration, adversarial verification, CRITICAL reproduction, the fixed-cycle
+policy); this section hardens the split's health as a whole, measured continuously across many PRs
+after cutover.
+
+### Post-Cutover Monitoring Plan
+
+Five metric families run continuously against live post-cutover PRs:
+
+- **Precision** — consolidated-finding precision, the fraction of findings the coordinator posts
+  that `pr-review-fixer` confirms as real (confirmed-real / total-posted). This is the most direct
+  read on whether the eight-specialist fan-out produces trustworthy findings rather than noise.
+- **Per-discipline acceptance rate** — fixes divided by total findings, tracked separately per
+  discipline. Watch specifically the two lenses the discipline split newly added — `performance`
+  and `docs` — to confirm each earns its fan-out cost, and the catch-all disciplines — `governance`
+  and `logic` — whose broad owned scope makes them the most likely to over-report if a specialist's
+  charter drifts loose.
+- **Outdated Rate** (BitsAI-CR-style) — the share of posted findings that go stale or irrelevant by
+  the time `pr-review-fixer` reaches them, typically because an earlier cycle's fix already resolved
+  the diff the finding targeted. A rising outdated rate points at review cadence, not finding
+  quality, as the problem.
+- **Cost/latency per review, tracked per risk-tier** — measured separately for `trivial`, `lite`, and
+  `full` per the [risk-tier fan-out (D12)](#risk-tier-fan-out-d12), never as one blended average
+  across tiers. A **flat cost across risk-tiers is itself a finding** — it means the tier
+  classification is not actually changing which specialists run, and the primary cost lever the
+  fan-out relies on has silently stopped taking effect.
+- **Human-override rate** — the share of PRs where a human explicitly dismisses or overrides a
+  consolidated finding, the same dismissal the
+  [human-dismissal-respect re-review rule](#human-dismissal-respect-re-review-rule) already tracks
+  per-thread, rolled up across PRs. This is Cloudflare's **break-glass trust proxy**: a rising
+  override rate is a cheaper, earlier trust-erosion signal than precision, because a human reaches
+  for override before a measurable precision drop shows up in the fixer's triage data.
+
+None of these five families requires a pre-cutover monolith baseline — each is measured purely
+against the split's own post-cutover behavior over time. That property is what makes the rollback
+trigger below workable without a baseline to compare against.
+
+### Rollback Trigger (D6)
+
+The monitoring plan feeds exactly one decision: whether to roll the split back to the retired
+monolith. That decision uses a **fixed absolute-threshold bar**, not a comparison against the
+monolith's pre-cutover performance — the monolith was retired (deleted) at cutover and never ran
+side-by-side with the split, so no pre-cutover baseline exists to compare against. **The bar
+therefore needs no pre-cutover baseline**, which is what resolves the apparent contradiction between
+retiring the monolith immediately and gating rollback on a baseline immediate retirement never
+captures.
+
+The rollback fires when any one of the following trips, evaluated over a rolling monitoring window
+of the last **N post-cutover PRs** — N is maintainer-tunable at execution time, not fixed by this
+convention:
+
+- consolidated-finding **precision < 50%** over the window, OR
+- **human-override-rate > 5%** over the window, OR
+- any single **CRITICAL false-positive** reaches `pr-review-fixer` at all — this threshold carries no
+  window; one occurrence trips it (see
+  [CRITICAL-Requires-Reproduction](#critical-requires-reproduction) above for why a CRITICAL finding
+  without a reproduction should never have reached the fixer as CRITICAL in the first place).
+
+These three thresholds are proposed defaults, deliberately conservative and maintainer-tunable — they
+exist so a rollback decision is a documented lookup, not a fresh judgment call made under the
+pressure of a live incident.
+
+**Restore procedure** — on a trip, the monolith comes back through a **non-destructive forward
+operation**, never a history rewrite:
+
+1. `git revert` (or `git checkout` of the pre-deletion commit) the change that removed
+   `.claude/agents/pr-review-maker.md` and its register/catalog entries, reintroducing them as a new
+   commit on top of the current branch.
+2. Run `npm run generate:bindings` to resynchronize `.opencode/` and `.amazonq/` against the restored
+   `.claude/` source of truth.
+
+No force-push and no history rewrite happen at any step — restoring the monolith is a forward commit
+that reintroduces a previously deleted file, exactly like reverting any other change, per the
+[No Destructive Git Operations](../workflow/no-destructive-git-operations.md) practice.
+
 ## Examples
 
 ### PASS: Routing a naming-format finding to governance

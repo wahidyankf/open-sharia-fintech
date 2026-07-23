@@ -481,14 +481,14 @@ affected` no-op noted in Phase 8)
 > retired at cutover (Phase 4); this phase documents how the split is watched afterward and the fixed
 > thresholds that trip a rollback.
 
-- [ ] [AI] Author the post-cutover monitoring section in the convention: precision, per-discipline
+- [x] [AI] Author the post-cutover monitoring section in the convention: precision, per-discipline
       acceptance rate (watching the two added lenses `performance`/`docs` and the catch-all
       `governance`/`logic`), BitsAI-CR "Outdated Rate", cost/latency per review **tracked per risk-tier**
       (D12 — a flat cost across tiers means the tiering is not taking effect), and the **human-override
       rate** (Cloudflare's break-glass trust proxy, an early trust-erosion signal)
       — acceptance: `grep -ci "Outdated Rate\|acceptance rate\|precision\|override rate\|risk-tier" repo-governance/development/quality/pr-review-disciplines.md` ≥ 2; the section
       is framed as post-cutover monitoring, not a pre-cutover gate
-- [ ] [AI] Document the **rollback trigger** (D6 decided — absolute thresholds): the **fixed absolute
+- [x] [AI] Document the **rollback trigger** (D6 decided — absolute thresholds): the **fixed absolute
       bar** (proposed, maintainer-tunable: consolidated-finding precision < 50% over a rolling N-PR
       window, OR human-override-rate > 5%, OR any CRITICAL false-positive reaching the fixer — **no
       monolith baseline required**), the monitoring window N, and the exact restore procedure
@@ -503,10 +503,10 @@ affected` no-op noted in Phase 8)
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] The monitoring plan defines the metric families and is framed as post-cutover (not a gate)
-- [ ] [AI] The rollback trigger, bar, and non-destructive restore procedure are documented
-- [ ] [AI] `npx nx affected -t lint` + `rhino-cli md links validate` pass
-- [ ] [AI] Commit created: `docs(governance): add PR-review post-cutover monitoring + rollback trigger` and pushed
+- [x] [AI] The monitoring plan defines the metric families and is framed as post-cutover (not a gate)
+- [x] [AI] The rollback trigger, bar, and non-destructive restore procedure are documented
+- [x] [AI] `npx nx affected -t lint` + `rhino-cli md links validate` pass
+- [x] [AI] Commit created: `docs(governance): add PR-review post-cutover monitoring + rollback trigger` and pushed
 
 > **Pause Safety**: the monitoring plan and rollback path are documented; the split is the live reviewer
 > and the monolith stays recoverable from git history. Safe to stop. To resume: re-run the md link
