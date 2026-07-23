@@ -53,4 +53,20 @@ describe("generateMetadata", () => {
     });
     expect(meta.title).toBe("Not Found");
   });
+
+  // Option C (Screen-4 design funnel, §3.4): noindex the whole legacy bucket
+  // rather than adding an in-page landing-notice component.
+  it("noindexes a legacy-bucket slug, still allowing crawlers to follow its links", async () => {
+    const meta = await generateMetadata({
+      params: Promise.resolve({ locale: "en", slug: ["learn", "legacy", "software-engineering"] }),
+    });
+    expect(meta.robots).toEqual({ index: false, follow: true });
+  });
+
+  it("does not noindex a non-legacy slug (e.g. under learn/courses)", async () => {
+    const meta = await generateMetadata({
+      params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "some-course"] }),
+    });
+    expect(meta.robots).toBeUndefined();
+  });
 });

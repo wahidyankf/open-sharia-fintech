@@ -48,6 +48,18 @@ interface Props {
   params: Promise<{ locale: string; slug: string[] }>;
 }
 
+/**
+ * True when the slug's first segment under a locale's "learn" bucket is
+ * "legacy" — i.e. one of the six relocated subject domains (DD-42). Used to
+ * apply the Screen-4 design funnel's Option C treatment: noindex the whole
+ * legacy bucket rather than an in-page landing-notice component, so search
+ * engines stop ranking the older subject-organized material above the
+ * course library while still crawling its internal links (follow: true).
+ */
+function isLegacySlug(slug: string[]): boolean {
+  return slug[0] === "learn" && slug[1] === "legacy";
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const slugStr = slugFromSegments(slug);
@@ -74,6 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: "article",
         locale: locale === "id" ? "id_ID" : "en_US",
       },
+      ...(isLegacySlug(slug) ? { robots: { index: false, follow: true } } : {}),
     };
   } catch {
     return { title: "Not Found" };
