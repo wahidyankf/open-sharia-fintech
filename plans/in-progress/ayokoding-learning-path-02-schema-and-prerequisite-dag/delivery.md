@@ -503,8 +503,10 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only). Export:
   `export function contentUrl(locale: Locale, slug: string): string {` (single export, 2-arg — matches
   the plan's own note that `01` already removed the `/c/` segment and the third `pathId` arg does not
-  exist yet). Test names (8 total: 1 `describe("contentUrl", ...)` + 7 `it(...)`, none naming `/c/`
-  explicitly — consistent with `01`'s merged `R0` inversion): "uniformly joins en content-tree slugs bare (no
+  exist yet). Test names (8 total: 1 `describe("contentUrl", ...)` + 7 `it(...)`; 2 of the 7 titles
+  still contain the literal `/c/` substring — the `(no /c/, DD-48)` naming holdover from `01`'s
+  inversion, matching the plan's own preamble measurement of 2 `/c/`-named tests — though none of the 7
+  test bodies assert a `/c/`-prefixed output): "uniformly joins en content-tree slugs bare (no
   /c/, DD-48)"; "uniformly joins id content-tree slugs bare (no /c/, DD-48)"; "leaves en loose
   top-level pages bare too — no distinct branch remains"; "leaves id loose top-level pages bare too —
   no distinct branch remains"; "maps empty/root slug to the locale root"; "maps the \_index slug to the
