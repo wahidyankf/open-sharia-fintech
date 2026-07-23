@@ -944,7 +944,7 @@ above).
 
 ### 3.1 · Redirect module (TDD)
 
-- [ ] [AI] **RED** — write a failing unit test at `<REDIR>learn-three-bucket.unit.test.ts`
+- [x] [AI] **RED** — write a failing unit test at `<REDIR>learn-three-bucket.unit.test.ts`
       _(New test)_, mirroring the existing `<REDIR>content-namespace.unit.test.ts` structure
       [Repo-grounded], asserting the swallow-prevention properties: (a) exactly **6** rules, single
       tier — one per relocated domain, not 12 (the `/c`-form tier is unreachable dead code once
@@ -968,7 +968,7 @@ above).
     And no redirect rule declares a bucket-wide learn-section wildcard source
   ```
 
-- [ ] [AI] **GREEN** — author `<REDIR>learn-three-bucket.ts` _(New file)_ exporting
+- [x] [AI] **GREEN** — author `<REDIR>learn-three-bucket.ts` _(New file)_ exporting
       `learnThreeBucketRedirects`, deriving every rule from one exported `RELOCATED_DOMAINS` array
       naming the **6** real domains — `software-engineering`, `artificial-intelligence`,
       `information-security`, `personal-development`, `it-governance`, `business` — one bare rule
@@ -980,12 +980,12 @@ above).
       `/en/learn/:path*` rule, satisfying (a)-(d) at once — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: the new suite passes; no existing redirect
       test breaks.
-- [ ] [AI] **REFACTOR** — add a header comment on `<REDIR>learn-three-bucket.ts` stating the blanket
+- [x] [AI] **REFACTOR** — add a header comment on `<REDIR>learn-three-bucket.ts` stating the blanket
       ban, the tier collapse and why (DD-48), and the ordering requirement, in the style of
       `content-namespace.ts` — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint`
       — acceptance: both exit 0; the swallow-prevention assertions (a)-(d) still pass.
 
-- [ ] [AI] **RED** — extend `<REDIR>learn-three-bucket.unit.test.ts` with the
+- [x] [AI] **RED** — extend `<REDIR>learn-three-bucket.unit.test.ts` with the
       shadowing-prevention properties: (e) **no** rule whose first path segment after `learn/` is
       `courses`, `paths`, or `fundamentally-strong` (DD-42/DD-43); (f) **no** rule's `source` or
       `destination` contains a `/c/` segment (loop-safety invariant, DD-48); (g) `RELOCATED_DOMAINS`
@@ -1007,7 +1007,7 @@ above).
     And no legacy-bucket rule matches the fundamentally-strong prefix
   ```
 
-- [ ] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()`,
+- [x] [AI] **GREEN** — wire the module into `apps/ayokoding-www/next.config.ts` `redirects()`,
       completing the array §3.0 started, as:
       `return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects];`
       — the order is load-bearing (DD-48, re-derived from first principles, not the pre-inversion
@@ -1021,7 +1021,7 @@ above).
       acceptance: both exit 0, and `grep -F "learnThreeBucketRedirects" apps/ayokoding-www/next.config.ts`
       prints exactly two lines (the import and the spread) — it prints nothing before this step,
       verified.
-- [ ] [AI] **REFACTOR** — run the full affected suite over the module and its wiring:
+- [x] [AI] **REFACTOR** — run the full affected suite over the module and its wiring:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance: both exit 0;
       the 6-rule assertion and both regression guards (a)-(g) still pass.
 

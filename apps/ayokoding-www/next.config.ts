@@ -4,6 +4,7 @@ import path from "node:path";
 import { learnReorgRedirects } from "./src/redirects/learn-reorg";
 import { courseRehomeRedirects } from "./src/redirects/course-rehome";
 import { contentNamespaceRedirects } from "./src/redirects/content-namespace";
+import { learnThreeBucketRedirects } from "./src/redirects/learn-three-bucket";
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -41,9 +42,9 @@ const nextConfig: NextConfig = {
     // FIRST so any stale /c/-prefixed request is stripped to its bare form before any other rule
     // evaluates — a rule positioned after it would never see a /c/-prefixed URL, since bare-only
     // rules can't match one. learnReorgRedirects next so historical within-/en/learn/ renames
-    // resolve to their canonical domain. courseRehomeRedirects before learnThreeBucketRedirects so
-    // the more specific per-course rules win over the six-domain bucket rules.
-    return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects];
+    // resolve to their canonical domain. courseRehomeRedirects before the six-domain legacy-bucket
+    // module last, so its more specific per-course rules win over the broader per-domain wildcard.
+    return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects];
   },
 };
 
