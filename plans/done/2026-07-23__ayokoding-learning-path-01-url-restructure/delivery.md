@@ -2092,7 +2092,7 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
       **2 or more**, or a remaining file that is not plan 02's `delivery.md`, means a genuine
       stage-prefixed reference has crept in and must be repointed at the new `plans/done/YYYY-MM-DD__…`
       path. Note `grep -c` exits 1 on a zero count — read the printed number, never `&&`-chain it.
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-01-url-restructure to done`.
 - [ ] [AI] Remove the worktree once the archival PR is merged:
       `git worktree remove worktrees/ayokoding-learning-path-01-url-restructure` — acceptance:
@@ -2117,21 +2117,21 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits.
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Keep each `git mv` batch in its **own** commit, separate from any frontmatter or prose edit,
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits.
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Keep each `git mv` batch in its **own** commit, separate from any frontmatter or prose edit,
       so the pure-rename proof (`git diff --summary -M`) stays readable.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:e2e` for the phases that touch
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0 (add `test:e2e` for the phases that touch
       routing or content trees — Phases 2, 3, 4, 5).
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
