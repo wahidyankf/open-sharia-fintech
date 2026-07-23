@@ -88,8 +88,8 @@ OSE Platform Rust applications MUST use the following stack:
 
 **You MUST understand Rust fundamentals before using these standards:**
 
-- **[Rust Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/rust/)** - Complete language coverage
-- **[Rust By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - Annotated code examples from basic to advanced
+- **[Rust Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/)** - Complete language coverage
+- **[Rust By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/by-example/)** - Annotated code examples from basic to advanced
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Rust knowledge in THIS codebase.
 

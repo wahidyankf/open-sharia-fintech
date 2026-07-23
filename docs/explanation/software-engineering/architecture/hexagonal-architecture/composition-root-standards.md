@@ -234,5 +234,5 @@ A single, explicit composition root is the architectural guarantee that the hexa
 - **[Testing Standards](./testing-standards.md)** — Test composition root patterns and Nx target mapping
 - **[Hexagonal Architecture Overview](../README.md)** — Dependency direction rule and bounded context overview
 - **[Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md)** — Canonical target names and caching rules
-- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation: partial application as dependency injection
-- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation: constructor injection wiring
+- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation: partial application as dependency injection
+- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation: constructor injection wiring

@@ -20,7 +20,7 @@ OSE Platform standards for communication between DDD bounded contexts across hex
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md), [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md), and [Cases](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/overview.md) before applying these standards.
+**REQUIRED**: Complete [DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md), [Bounded Context Mapping Standards](./bounded-context-mapping-standards.md), and [Cases](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/overview.md) before applying these standards.
 
 ## Standard 1: Domain Events Are the Primary Cross-Context Integration Mechanism
 
@@ -43,7 +43,7 @@ OSE Platform standards for communication between DDD bounded contexts across hex
 | Invoicing           | `InvoiceMatched`        | `MatchInvoiceUseCase`         |
 | Payments            | `PaymentDisbursed`      | `AuthorizePaymentUseCase`     |
 
-**See**: [DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md) for immutability, naming, and publishing patterns. [DDD + Hexagonal F# Track — Advanced](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/advanced.md) for cross-context event wiring examples.
+**See**: [DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md) for immutability, naming, and publishing patterns. [DDD + Hexagonal F# Track — Advanced](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-fp/advanced.md) for cross-context event wiring examples.
 
 ## Standard 2: Domain Event Output Ports Own the Publishing Contract
 
@@ -195,7 +195,7 @@ com.organicleverbe.
 3. `InvoiceMatched` received → issue command to Payments via `AuthorizePaymentUseCase`
 4. `PaymentDisbursed` received → mark saga complete
 
-**See**: [Cases — In OOP Advanced](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/advanced.md) for saga implementation examples.
+**See**: [Cases — In OOP Advanced](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-oop/advanced.md) for saga implementation examples.
 
 ## Standard 6: Shared Kernel Types Live in `libs/`
 
@@ -211,7 +211,7 @@ com.organicleverbe.
 
 Cross-context integration is where DDD and Hexagonal Architecture decisions interact most visibly. Domain events crossing context boundaries must go through output ports to remain testable. ACL adapters must contain all translation to keep downstream domain models clean. Without these rules, context map decisions made in strategic design evaporate at implementation time — the hexagons collapse into a distributed monolith sharing domain models and bypassing port boundaries.
 
-**Educational counterpart**: [Cases](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/overview.md)
+**Educational counterpart**: [Cases](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/overview.md)
 
 ## Related Documentation
 
@@ -220,5 +220,5 @@ Cross-context integration is where DDD and Hexagonal Architecture decisions inte
 - **[Module Organization Standards](./module-organization-standards.md)** — Package placement for sagas, ACL adapters, and shared kernel types
 - **[DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md)** — Event naming, immutability, and publishing patterns
 - **[Adapter Standards](../hexagonal-architecture/adapter-standards.md)** — ACL adapter naming and package placement
-- **[Cases — In FP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/overview.md)** — F# cross-context wiring examples
-- **[Cases — In OOP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/overview.md)** — Java cross-context wiring examples
+- **[Cases — In FP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-fp/overview.md)** — F# cross-context wiring examples
+- **[Cases — In OOP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-oop/overview.md)** — Java cross-context wiring examples

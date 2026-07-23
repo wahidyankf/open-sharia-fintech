@@ -16,7 +16,7 @@ created: 2026-05-17
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md) before using these standards. These are **OSE Platform-specific port conventions**, not port concept tutorials.
+**REQUIRED**: Complete [Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/overview.md) before using these standards. These are **OSE Platform-specific port conventions**, not port concept tutorials.
 
 ## Purpose
 
@@ -217,5 +217,5 @@ Port ownership in the application layer is the decision that makes the hexagon w
 - **[Testing Standards](./testing-standards.md)** — Port contract tests and in-memory adapter swap patterns
 - **[Hexagonal Architecture Overview](../README.md)** — Index and dependency direction rule
 - **[DDD Aggregate Standards](../domain-driven-design-ddd/aggregate-standards.md)** — What domain objects flow through output ports
-- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation for F# port type aliases
-- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation for Java port interfaces
+- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation for F# port type aliases
+- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation for Java port interfaces

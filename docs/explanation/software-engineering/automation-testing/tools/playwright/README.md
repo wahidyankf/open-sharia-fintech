@@ -43,11 +43,11 @@ Playwright is written in TypeScript and provides first-class TypeScript support.
 
 **2. Learn Playwright Fundamentals**:
 
-You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/automation-testing/tools/playwright/) before using these standards.
+You MUST complete the [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/automation-testing/tools/playwright/) before using these standards.
 
-- [Playwright Initial Setup](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup.md) - Environment and tooling setup
-- [Playwright Overview](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/automation-testing/tools/playwright/overview.md) - Auto-waiting, cross-browser support, trace viewer
-- [Playwright By Example](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/automation-testing/tools/playwright/by-example/) (85+ annotated examples) - Hands-on code learning
+- [Playwright Initial Setup](../../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/automation-testing/tools/playwright/initial-setup.md) - Environment and tooling setup
+- [Playwright Overview](../../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/automation-testing/tools/playwright/overview.md) - Auto-waiting, cross-browser support, trace viewer
+- [Playwright By Example](../../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/automation-testing/tools/playwright/by-example/) (85+ annotated examples) - Hands-on code learning
 
 **Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../repo-governance/conventions/structure/programming-language-docs-separation.md).
 

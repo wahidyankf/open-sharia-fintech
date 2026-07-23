@@ -16,7 +16,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding FSM Frameworks](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/) before using these standards.
+**REQUIRED**: Complete [AyoKoding FSM Frameworks](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/) before using these standards.
 
 ## Spring State Machine (Java)
 

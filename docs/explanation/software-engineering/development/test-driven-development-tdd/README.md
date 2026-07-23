@@ -43,9 +43,9 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **You MUST understand TDD fundamentals before using these standards:**
 
-- **[Test-Driven Development Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/test-driven-development-tdd/)** - Educational foundation for TDD practices
-- **[Test-Driven Development Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/test-driven-development-tdd/overview.md)** - Core TDD concepts (Red-Green-Refactor, test types, FIRST principles)
-- **[Test-Driven Development By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/)** - Practical TDD examples
+- **[Test-Driven Development Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/)** - Educational foundation for TDD practices
+- **[Test-Driven Development Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/overview.md)** - Core TDD concepts (Red-Green-Refactor, test types, FIRST principles)
+- **[Test-Driven Development By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/by-example/)** - Practical TDD examples
 
 **What this documentation covers**: OSE Platform-specific TDD patterns, Islamic finance domain testing, Nx monorepo testing strategy, repository-specific test organization, integration with DDD patterns.
 

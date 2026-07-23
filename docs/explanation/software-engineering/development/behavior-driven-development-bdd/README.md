@@ -47,9 +47,9 @@ All acceptance criteria and stakeholder-facing specifications MUST follow the BD
 
 **You MUST understand BDD fundamentals before using these standards:**
 
-- **[Behavior-Driven Development Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/behavior-driven-development-bdd/)** - Educational foundation for BDD practices
-- **[Behavior-Driven Development Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/behavior-driven-development-bdd/overview.md)** - Core BDD concepts (Gherkin, Given-When-Then, Three Amigos, Example Mapping)
-- **[Behavior-Driven Development By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/)** - Practical BDD scenarios
+- **[Behavior-Driven Development Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/)** - Educational foundation for BDD practices
+- **[Behavior-Driven Development Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/overview.md)** - Core BDD concepts (Gherkin, Given-When-Then, Three Amigos, Example Mapping)
+- **[Behavior-Driven Development By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/by-example/)** - Practical BDD scenarios
 
 **What this documentation covers**: OSE Platform-specific BDD patterns, Islamic finance scenarios, Three Amigos with Shariah scholars, repository-specific feature organization, integration with DDD bounded contexts.
 

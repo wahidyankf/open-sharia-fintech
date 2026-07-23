@@ -19,7 +19,7 @@ OSE Platform standards for aligning DDD aggregates with hexagonal port/adapter b
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [DDD Aggregate Standards](../domain-driven-design-ddd/aggregate-standards.md), [Port Standards](../hexagonal-architecture/port-standards.md), and [Cases](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/overview.md) before applying these standards.
+**REQUIRED**: Complete [DDD Aggregate Standards](../domain-driven-design-ddd/aggregate-standards.md), [Port Standards](../hexagonal-architecture/port-standards.md), and [Cases](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/overview.md) before applying these standards.
 
 ## Standard 1: One Use Case — One Input Port
 
@@ -38,7 +38,7 @@ OSE Platform standards for aligning DDD aggregates with hexagonal port/adapter b
 
 **Rationale**: The input port is the use-case contract. Without it, the aggregate's business rules can only be invoked through one specific adapter (the controller), and testing requires standing up the HTTP layer.
 
-**See**: [Port Standards — Standard 1](../hexagonal-architecture/port-standards.md) for port ownership rules. [Cases — In OOP Beginner](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/beginner.md) for a worked example.
+**See**: [Port Standards — Standard 1](../hexagonal-architecture/port-standards.md) for port ownership rules. [Cases — In OOP Beginner](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-oop/beginner.md) for a worked example.
 
 ## Standard 2: One Aggregate Root — One Repository Output Port
 
@@ -190,7 +190,7 @@ Authoritative mapping of OrganicLever aggregates to their mandatory ports.
 
 The aggregate boundary and the port boundary must coincide or the hexagon fails its core promise. When an adapter enforces business rules, domain logic is scattered across layers and cannot be tested without infrastructure. When a repository port exposes a full CRUD surface, the use-case intent is invisible. These standards enforce the two clean-architecture invariants that DDD and Hexagonal Architecture share: the domain is a pure core, and every external dependency is an abstraction owned by the application layer.
 
-**Educational counterpart**: [Cases](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/overview.md)
+**Educational counterpart**: [Cases](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/overview.md)
 
 ## Related Documentation
 
@@ -200,5 +200,5 @@ The aggregate boundary and the port boundary must coincide or the hexagon fails 
 - **[DDD Aggregate Standards](../domain-driven-design-ddd/aggregate-standards.md)** — Aggregate invariant requirements for OrganicLever
 - **[Port Standards](../hexagonal-architecture/port-standards.md)** — Port naming, ownership, and granularity rules
 - **[Adapter Standards](../hexagonal-architecture/adapter-standards.md)** — Forbidden import rules enforcing the invariant boundary
-- **[Cases — In OOP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/overview.md)** — Production Java wiring of aggregates through ports
-- **[Cases — In FP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/overview.md)** — Production F# wiring of aggregates through ports
+- **[Cases — In OOP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-oop/overview.md)** — Production Java wiring of aggregates through ports
+- **[Cases — In FP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/by-example/cases/in-fp/overview.md)** — Production F# wiring of aggregates through ports

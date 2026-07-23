@@ -23,9 +23,9 @@ All hexagonal architecture implementations in OSE Platform MUST comply with the 
 
 **You MUST understand hexagonal architecture fundamentals before using these standards:**
 
-- **[Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md)** — Core concepts: ports, adapters, domain isolation, driving vs driven ports
-- **[Hexagonal Architecture By Example in FP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Ports as function type aliases, adapters as record literals, partial application DI
-- **[Hexagonal Architecture By Example in OOP](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Ports as interfaces, adapters as implementing classes, constructor DI
+- **[Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/overview.md)** — Core concepts: ports, adapters, domain isolation, driving vs driven ports
+- **[Hexagonal Architecture By Example in FP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Ports as function type aliases, adapters as record literals, partial application DI
+- **[Hexagonal Architecture By Example in OOP](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Ports as interfaces, adapters as implementing classes, constructor DI
 
 **What this documentation covers**: OSE Platform-specific port naming, adapter package placement, composition root wiring in F#/Giraffe, Nx target integration, OrganicLever bounded context wiring, and hexagonal-specific testing conventions.
 
@@ -111,4 +111,4 @@ Each bounded context hexagon corresponds to a C4 Container. Ports correspond to 
 - **[FSM Standards](../finite-state-machine-fsm/README.md)** — Entity lifecycle management within the domain core
 - **[C4 Architecture Model](../c4-architecture-model/README.md)** — Container and component visualization of hexagonal layers
 - **[Architecture Index](../README.md)** — All architecture pattern documentation
-- **[Hexagonal Architecture Tutorials](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/)** — Educational counterpart (conceptual foundation and worked examples)
+- **[Hexagonal Architecture Tutorials](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/)** — Educational counterpart (conceptual foundation and worked examples)

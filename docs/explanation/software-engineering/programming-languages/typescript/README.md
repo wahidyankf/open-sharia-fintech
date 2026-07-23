@@ -51,10 +51,10 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 **You MUST understand TypeScript fundamentals before using these standards:**
 
-- **[TypeScript Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
-- **[TypeScript By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[TypeScript In Practice](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
-- **[TypeScript Release Highlights](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/)** - TypeScript 4.x-5.x LTS feature guides
+- **[TypeScript Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
+- **[TypeScript By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[TypeScript In Practice](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
+- **[TypeScript Release Highlights](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/release-highlights/)** - TypeScript 4.x-5.x LTS feature guides
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
 
@@ -167,7 +167,7 @@ timeline
 - Improved error messages with actionable suggestions
 - Better JSDoc support for type inference
 
-**See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-www — TypeScript 5.x version feature guides.
+**See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-www — TypeScript 5.x version feature guides.
 
 ## Documentation Structure
 

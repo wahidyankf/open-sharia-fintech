@@ -54,9 +54,9 @@ OSE Platform FSM implementations MUST use the following frameworks:
 
 **You MUST understand FSM fundamentals before using these standards:**
 
-- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
-- **[Finite State Machine Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
-- **[Finite State Machine By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)** - Practical FSM implementation examples
+- **[Finite State Machine Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/)** - Educational foundation for FSM concepts
+- **[Finite State Machine Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/overview.md)** - Core FSM concepts (States, Transitions, Events, Guards, Actions)
+- **[Finite State Machine By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/)** - Practical FSM implementation examples
 
 **What this documentation covers**: OSE Platform-specific FSM patterns, Procure-to-Pay state machines (PurchaseOrder lifecycle, Invoice three-way matching, Supplier approval), framework choices (Spring State Machine, XState), integration with DDD aggregates, repository-specific FSM conventions.
 

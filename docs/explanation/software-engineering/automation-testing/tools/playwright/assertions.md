@@ -22,7 +22,7 @@ created: 2026-02-08
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Playwright fundamentals from [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-www/content/en/learn/software-engineering/automation-testing/tools/playwright/) before using these standards.
+**REQUIRED**: You MUST understand Playwright fundamentals from [AyoKoding Playwright Learning Path](../../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/automation-testing/tools/playwright/) before using these standards.
 
 **This document is OSE Platform-specific**, not a Playwright tutorial. We define HOW to write assertions in THIS codebase, not WHAT Playwright assertions are.
 

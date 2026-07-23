@@ -246,5 +246,5 @@ The port contract test pattern is the central hexagonal testing insight: the por
 - **[Composition Root Standards](./composition-root-standards.md)** — Test composition root that wires in-memory adapters for `test:unit`
 - **[Hexagonal Architecture Overview](../README.md)** — Dependency direction rule and bounded context overview
 - **[Nx Target Standards](../../../../../repo-governance/development/infra/nx-targets.md)** — Canonical target names, caching, and parallelism rules
-- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation: adapter swap for test isolation
-- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation: port contract tests with abstract base classes
+- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation: adapter swap for test isolation
+- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation: port contract tests with abstract base classes

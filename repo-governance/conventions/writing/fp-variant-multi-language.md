@@ -42,7 +42,7 @@ This convention exists to:
 
 ### What This Convention Covers
 
-- All FP-variant by-example tutorial files in `apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/*/in-fp-by-example/` — specifically `beginner.md`, `intermediate.md`, and `advanced.md` level pages.
+- All FP-variant by-example tutorial files in `apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/*/in-fp-by-example/` — specifically `beginner.md`, `intermediate.md`, and `advanced.md` level pages.
 - Overview pages (`overview.md`) under those paths, for any code snippets they contain.
 - Both English and Indonesian variants of those files when they exist.
 
@@ -324,10 +324,10 @@ The following checks determine whether an FP-variant by-example page complies wi
 
 **In-FP-by-example overview pages:**
 
-- [Architecture by-example: FP overview](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/overview.md)
-- [DDD: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview.md)
-- [Hexagonal Architecture: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)
-- [FSM: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/overview.md)
+- [Architecture by-example: FP overview](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/overview.md)
+- [DDD: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview.md)
+- [Hexagonal Architecture: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)
+- [FSM: FP by-example overview](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/in-fp-by-example/overview.md)
 
 **Repository Architecture:**
 

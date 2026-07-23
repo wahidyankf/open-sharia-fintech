@@ -84,8 +84,8 @@ OSE Platform C# applications MUST use the following stack:
 
 **You MUST understand C# fundamentals before using these standards:**
 
-- **[C# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
-- **[C# By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
+- **[C# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
+- **[C# By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply C# knowledge in THIS codebase.
 

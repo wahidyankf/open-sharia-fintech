@@ -51,9 +51,9 @@ OSE Platform Islamic finance systems MUST use the following DDD patterns:
 
 **You MUST understand DDD fundamentals before using these standards:**
 
-- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
-- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
-- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)** - Practical DDD implementation examples
+- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
+- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
+- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/)** - Practical DDD implementation examples
 
 **What this documentation covers**: OSE Platform-specific DDD patterns, Islamic finance domain modeling, aggregate boundaries, bounded context mapping in OSE Platform, integration with C4 and FSM, repository-specific tactical patterns.
 

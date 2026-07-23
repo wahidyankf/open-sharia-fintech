@@ -22,7 +22,7 @@ created: 2026-03-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand C# fundamentals from [AyoKoding C# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/c-sharp/_index.md) before using these standards.
+**REQUIRED**: You MUST understand C# fundamentals from [AyoKoding C# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/c-sharp/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a C# tutorial.
 

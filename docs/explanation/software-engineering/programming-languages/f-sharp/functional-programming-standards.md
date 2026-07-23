@@ -26,7 +26,7 @@ created: 2026-03-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand F# fundamentals from [AyoKoding F# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/f-sharp/_index.md) before using these standards.
+**REQUIRED**: You MUST understand F# fundamentals from [AyoKoding F# Learning Path](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/f-sharp/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an F# tutorial.
 

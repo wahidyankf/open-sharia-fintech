@@ -64,13 +64,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/f-sharp/)** - "How to code in F#" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/f-sharp/)** - "How to code in F#" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/f-sharp/)** - "How to code F# in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding F# learning path before using OSE standards:**
 
-1. **[F# Learning Path](../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/f-sharp/)** - Initial setup, overview (0-95% language coverage)
-2. **[F# By Example](../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/f-sharp/by-example/)** - 75+ annotated code examples
+1. **[F# Learning Path](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/f-sharp/)** - Initial setup, overview (0-95% language coverage)
+2. **[F# By Example](../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/f-sharp/by-example/)** - 75+ annotated code examples
 
 **See**: [Programming Language Documentation Separation](../../repo-governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

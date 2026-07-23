@@ -17,7 +17,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding BDD By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/) and [AyoKoding DDD By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/patterns-and-principles/) before using these standards.
+**REQUIRED**: Complete [AyoKoding BDD By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/by-example/) and [AyoKoding DDD By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/patterns-and-principles/) before using these standards.
 
 ## Purpose
 

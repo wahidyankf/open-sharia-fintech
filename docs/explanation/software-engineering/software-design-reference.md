@@ -34,11 +34,11 @@ This document establishes the separation between:
 **Prerequisite Knowledge**: All architecture documentation assumes completion of corresponding AyoKoding learning paths. These are OSE Platform-specific standards, not educational tutorials.
 
 - **[C4 Architecture Model](./architecture/c4-architecture-model/README.md)** - System visualization
-  - **Prerequisite**: [AyoKoding C4 Architecture Model](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/c4-model/)
+  - **Prerequisite**: [AyoKoding C4 Architecture Model](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/c4-model/)
 - **[Domain-Driven Design](./architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns
-  - **Prerequisite**: [AyoKoding Domain-Driven Design](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/)
+  - **Prerequisite**: [AyoKoding Domain-Driven Design](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/domain-driven-design-ddd/)
 - **[Finite State Machines](./architecture/finite-state-machine-fsm/README.md)** - State management
-  - **Prerequisite**: [AyoKoding Finite State Machines](../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/)
+  - **Prerequisite**: [AyoKoding Finite State Machines](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/finite-state-machine-fsm/)
 
 ### Development Practices
 
@@ -47,9 +47,9 @@ This document establishes the separation between:
 **Prerequisite Knowledge**: All development practice documentation assumes completion of corresponding AyoKoding learning paths. These are OSE Platform-specific standards, not educational tutorials.
 
 - **[Test-Driven Development](./development/test-driven-development-tdd/README.md)** - TDD methodology
-  - **Prerequisite**: [AyoKoding Test-Driven Development](../../../apps/ayokoding-www/content/en/learn/software-engineering/development/test-driven-development-tdd/)
+  - **Prerequisite**: [AyoKoding Test-Driven Development](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/)
 - **[Behavior-Driven Development](./development/behavior-driven-development-bdd/README.md)** - BDD with Gherkin
-  - **Prerequisite**: [AyoKoding Behavior-Driven Development](../../../apps/ayokoding-www/content/en/learn/software-engineering/development/behavior-driven-development-bdd/)
+  - **Prerequisite**: [AyoKoding Behavior-Driven Development](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/behavior-driven-development-bdd/)
 
 ### Language-Specific Coding Standards
 
@@ -124,9 +124,9 @@ Software design documentation in `docs/explanation/software-engineering/` contai
 
 The following `docs/explanation/` content assumes readers have completed the corresponding AyoKoding learning paths:
 
-| Advanced Reference (docs/explanation/)                       | Prerequisite Learning (ayokoding-www)                                                                                                                   |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [programming-languages/rust/](./programming-languages/rust/) | [learn/software-engineering/programming-languages/rust/](../../../apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/rust/) |
+| Advanced Reference (docs/explanation/)                       | Prerequisite Learning (ayokoding-www)                                                                                                                          |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [programming-languages/rust/](./programming-languages/rust/) | [learn/software-engineering/programming-languages/rust/](../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/rust/) |
 
 ### Content Types and Scope
 

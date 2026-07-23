@@ -16,7 +16,7 @@ created: 2026-05-17
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/overview.md) and [Port Standards](./port-standards.md) before using these standards. Adapters implement ports — you must understand port contracts first.
+**REQUIRED**: Complete [Hexagonal Architecture Overview](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/overview.md) and [Port Standards](./port-standards.md) before using these standards. Adapters implement ports — you must understand port contracts first.
 
 ## Purpose
 
@@ -246,5 +246,5 @@ Adapter naming by technology (`Jpa`, `Kafka`, `Postgres`, `InMemory`) makes the 
 - **[Testing Standards](./testing-standards.md)** — In-memory adapter swap and Nx target mapping
 - **[Hexagonal Architecture Overview](../README.md)** — Dependency direction rule and bounded context overview
 - **[DDD Domain Event Standards](../domain-driven-design-ddd/domain-event-standards.md)** — Domain events emitted through output port adapters
-- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation for F# adapter record literals
-- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation for Java adapter classes
+- **[Hexagonal Architecture FP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-fp-by-example/overview.md)** — Educational foundation for F# adapter record literals
+- **[Hexagonal Architecture OOP Tutorial](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview.md)** — Educational foundation for Java adapter classes

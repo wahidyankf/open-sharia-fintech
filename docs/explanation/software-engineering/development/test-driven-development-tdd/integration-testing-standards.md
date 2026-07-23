@@ -19,7 +19,7 @@ created: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding TDD By Example](../../../../../apps/ayokoding-www/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/) before using these standards.
+**REQUIRED**: Complete [AyoKoding TDD By Example](../../../../../apps/ayokoding-www/content/en/learn/legacy/software-engineering/development/test-driven-development-tdd/by-example/) before using these standards.
 
 **REQUIRED**: Read [Three-Tier Testing Model](./three-tier-testing.md) first. Integration tests are one of three distinct tiers. Understanding all three tiers before applying these standards is essential.
 
