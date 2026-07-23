@@ -443,8 +443,9 @@ that belongs in its own document rather than being folded into this convention's
 
 ### Bot Identity and the `REQUEST_CHANGES` Gap
 
-The eight specialists and `pr-review-synthesis-maker` post exclusively through the GitHub Reviews
-API, but they authenticate as the PR author's own identity, and GitHub rejects a `REQUEST_CHANGES`
+Only `pr-review-synthesis-maker` posts to the PR — through the GitHub Reviews API, as the sole poster
+of record; the eight specialists never post, they hand their raw findings to the coordinator. The
+coordinator authenticates as the PR author's own identity, and GitHub rejects a `REQUEST_CHANGES`
 review submitted against one's own pull request. Every blocking review — including one carrying a
 CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
 consumer that gates on STATE alone reads a blocked PR as unblocked while a CRITICAL finding sits open

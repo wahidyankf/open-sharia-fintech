@@ -70,7 +70,7 @@ Scenario: Specialist charters partition the review disciplines
 
 ```gherkin
 Scenario: The synthesizer consolidates specialist findings before the fixer sees them
-  Given the eight specialists have each posted their raw findings for one review cycle
+  Given the eight specialists have each emitted their raw findings for one review cycle
   When pr-review-synthesis-maker runs against those raw findings
   Then it deduplicates overlapping findings into one
   And it re-categorizes any misfiled finding to the correct discipline
