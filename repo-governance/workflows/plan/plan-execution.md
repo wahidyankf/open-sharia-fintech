@@ -733,11 +733,12 @@ archival additionally requires the
 against the plan's PR before any archival step below. This gate does not apply to the direct-push
 modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and no review cycle.
 
-- Run the workflow's strictly sequential N-cycle loop (default **N = 3**): each cycle, a fresh
-  `pr-review-maker` posts line-anchored findings against the PR's current head commit via the
-  GitHub Reviews API, a `pr-review-fixer` triages and resolves every unresolved thread, and CI on
-  the PR must be GREEN before the next cycle starts. See the linked workflow for the full Loop
-  Algorithm, posting mechanics, and escalation rules.
+- Run the workflow's strictly sequential N-cycle loop (default **N = 3**): each cycle, the eight
+  discipline specialists fan out and `pr-review-synthesis-maker` posts one consolidated set of
+  line-anchored findings against the PR's current head commit via the GitHub Reviews API, a
+  `pr-review-fixer` triages and resolves every unresolved thread, and CI on the PR must be GREEN
+  before the next cycle starts. See the linked workflow for the full Loop Algorithm, posting
+  mechanics, and escalation rules.
 - **Done-definition for `*-to-pr` modes** (all four items required):
   1. **N review cycles complete** (default 3 — a **hard ceiling**, never extended past this count)
      **and the review loop did not exit `escalated`** — an escalated exit blocks the merge on its
@@ -849,8 +850,8 @@ modes (`worktree-to-origin-main`, `main-to-origin-main`), which carry no PR and 
      ```
 
   7. **Run or complete the PR-Review Maker→Fixer Cycle** against the PR (see the gate above) — because
-     each cycle's `pr-review-maker` reviews the full current state of the PR, its final pass also
-     covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
+     each cycle's reviewer pipeline (eight specialists → `pr-review-synthesis-maker`) reviews the full
+     current state of the PR, its final pass also covers this archival commit. Confirm all four done-definition items are satisfied: N cycles
      complete, every comment answered, all gates GREEN (including CI on this last push), and the
      archival commit present on the PR branch.
   8. **Merge — `[AI]` by default**: once the done-definition is fully satisfied and the hardened

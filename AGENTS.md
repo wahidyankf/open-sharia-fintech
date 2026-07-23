@@ -110,8 +110,9 @@ repo-local `WorktreeCreate` hook.
 Every plan declares exactly one of four Delivery Modes controlling where it's worked and how it
 lands: `worktree-to-pr` (worktree → draft PR — **the default**), `worktree-to-origin-main` (worktree
 → direct push), `main-to-origin-main` (primary checkout → direct push), `main-to-pr` (primary
-checkout → draft PR). `*-to-pr` modes run the **PR-Review Maker→Fixer Cycle** (`pr-review-maker` /
-`pr-review-fixer`, default 3 sequential CI-gated cycles) before the merge. **`[AI]` merges by
+checkout → draft PR). `*-to-pr` modes run the **PR-Review Maker→Fixer Cycle** (fan-out →
+`pr-review-synthesis-maker` → `pr-review-fixer`, default 3 sequential CI-gated cycles) before the
+merge. **`[AI]` merges by
 default** in every mode; a `[HUMAN]` merge gate applies only where a plan's own step says so
 explicitly, with identical preconditions — only the actor differs.
 
@@ -307,8 +308,7 @@ immediately.
 ## AI Agents
 
 **Content Creation**: docs-{maker,tutorial-maker}, readme-maker, specs-maker,
-apps-ayokoding-www-{general,by-example,annotated-concept,primer,in-the-field}-maker, apps-ose-www-content-maker, swe-ui-maker,
-pr-review-maker
+apps-ayokoding-www-{general,by-example,annotated-concept,primer,in-the-field}-maker, apps-ose-www-content-maker, swe-ui-maker
 
 **Validation**: docs-{checker,tutorial-checker,link-checker,software-engineering-separation-checker},
 readme-checker, specs-checker, apps-ayokoding-www-{general,by-example,annotated-concept,primer,in-the-field,facts,link}-checker,
@@ -320,13 +320,11 @@ specs-fixer, apps-ayokoding-www-{general,by-example,annotated-concept,primer,in-
 apps-ose-www-content-fixer, swe-ui-fixer, ci-fixer, repo-{rules,workflow,harness-compatibility}-fixer,
 pr-review-fixer
 
-**PR Review Cycle**: pr-review-{maker,fixer} — GitHub-Reviews-API-driven maker→fixer cycle for
-`*-to-pr` Delivery Mode plans (see [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
-and [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)).
-
-**PR Review Specialists + Coordinator**: pr-review-architecture-maker, pr-review-logic-maker, pr-review-governance-maker, pr-review-security-maker, pr-review-integrity-maker, pr-review-performance-maker, pr-review-docs-maker, pr-review-instruction-maker, pr-review-synthesis-maker (see
-[PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md));
-inert until Phase 4 cutover.
+**PR Review Cycle**: fan-out (pr-review-{architecture,logic,governance,security,integrity,performance,docs,instruction}-maker)
+to pr-review-synthesis-maker (coordinator) to pr-review-fixer — GitHub-Reviews-API-driven review cycle
+for `*-to-pr` Delivery Mode plans (see [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode),
+[PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md), and
+[PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md)).
 
 **Testing**: web-{exploratory,usability,design}-tester (live-site triad: spec-aware / spec-blind /
 design-aware); api-exploratory-tester (live REST/GraphQL, HTTP/curl-driven). All non-destructive; output

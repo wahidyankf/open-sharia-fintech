@@ -23,7 +23,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[social-linkedin-post-maker](social-linkedin-post-maker.md)** - LinkedIn content creation
 - **[agent-maker](agent-maker.md)** - Agent definition creation
 - **[swe-ui-maker](swe-ui-maker.md)** - UI component creation
-- **[pr-review-maker](pr-review-maker.md)** - Posts adversarial code-review findings on a GitHub PR via the GitHub Reviews API (SHA-pinned, confidence-scored); the maker half of the PR-Review Maker→Fixer Cycle for `*-to-pr` delivery-mode plans
 - **[pr-review-architecture-maker](pr-review-architecture-maker.md)** - PR-review specialist scoped to architecture only: new tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, novel dependencies
 - **[pr-review-logic-maker](pr-review-logic-maker.md)** - PR-review specialist scoped to business-logic/correctness only: behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases
 - **[pr-review-governance-maker](pr-review-governance-maker.md)** - PR-review specialist scoped to governance/rules-conformance only: mechanical conformance to already-documented repo-governance/ conventions, naming/structure, ADRs, spec-file presence
@@ -84,7 +83,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[specs-fixer](specs-fixer.md)** - Fix specs structural and accuracy issues
 - **[swe-ui-fixer](swe-ui-fixer.md)** - Apply validated UI component fixes
 - **[ci-fixer](ci-fixer.md)** - Apply validated CI/CD standards fixes
-- **[pr-review-fixer](pr-review-fixer.md)** - Triages and resolves `pr-review-maker` findings on a GitHub PR (fix / reject-with-reason / defer-with-reason / clarify), replying to and resolving review threads; the fixer half of the PR-Review Maker→Fixer Cycle
+- **[pr-review-fixer](pr-review-fixer.md)** - Triages and resolves `pr-review-synthesis-maker`'s consolidated findings on a GitHub PR (fix / reject-with-reason / defer-with-reason / clarify), replying to and resolving review threads; the fixer half of the PR-Review Maker→Fixer Cycle
 
 ### 🔍 Research (Green)
 

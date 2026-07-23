@@ -364,16 +364,16 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 > coordinator become the live reviewer and the monolith is **retired immediately** (D2), in one
 > coherent phase.
 
-- [ ] [AI] Revise `repo-governance/workflows/pr/pr-review-quality-gate.md`: replace the single-maker
+- [x] [AI] Revise `repo-governance/workflows/pr/pr-review-quality-gate.md`: replace the single-maker
       per-cycle pass with **fan-out to the eight specialists → `pr-review-synthesis-maker` → one
       consolidated review → `pr-review-fixer`**; keep the 3-cycle hard ceiling, no-early-exit, and the
       CI-green gate between cycles verbatim
       — acceptance: `grep -c "pr-review-synthesis-maker" pr-review-quality-gate.md` ≥ 1; the Loop
       Algorithm block shows fan-out→synthesize→fixer; the "3, hard ceiling" wording is unchanged
-- [ ] [AI] Update the Participants + sequence diagram in that workflow to show the eight specialists +
+- [x] [AI] Update the Participants + sequence diagram in that workflow to show the eight specialists +
       coordinator (accessible Mermaid palette)
       — acceptance: `rhino-cli md mermaid validate` passes; diagram lists all nine agents
-- [ ] [AI] Update `repo-governance/development/workflow/pr-merge-protocol.md`: the **structural shape**
+- [x] [AI] Update `repo-governance/development/workflow/pr-merge-protocol.md`: the **structural shape**
       of the five hardened preconditions — five preconditions, same `(a)-(e)` lettering, same
       substantive gates — stays intact; **only the reviewer-agent name inside precondition (a)** is
       repointed from the retired `pr-review-maker` to the new pipeline (e.g. "the configured PR-review
@@ -384,35 +384,35 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       — acceptance: `grep -c "all five" pr-merge-protocol.md` unchanged; precondition lettering (a)-(e)
       intact (`grep -c "\*\*(a)\*\*\|\*\*(b)\*\*\|\*\*(c)\*\*\|\*\*(d)\*\*\|\*\*(e)\*\*" pr-merge-protocol.md` unchanged);
       precondition (a)'s text no longer names the retired `pr-review-maker` as the live reviewer
-- [ ] [AI] **Retire the monolith (D2)**: `git rm .claude/agents/pr-review-maker.md` and delete its
+- [x] [AI] **Retire the monolith (D2)**: `git rm .claude/agents/pr-review-maker.md` and delete its
       entries from `AGENTS.md` §AI Agents lists and `.claude/agents/README.md` catalog
       — acceptance: `test ! -f .claude/agents/pr-review-maker.md`; `grep -c "pr-review-maker\b" AGENTS.md`
       returns `0` (the specialist/coordinator names like `pr-review-synthesis-maker` do not match the
       bounded `pr-review-maker` pattern, so any non-zero count would flag a residual monolith reference)
-- [ ] [AI] Regenerate bindings so the monolith's mirrors are also removed: `npm run generate:bindings`
+- [x] [AI] Regenerate bindings so the monolith's mirrors are also removed: `npm run generate:bindings`
       — acceptance: `test ! -f .opencode/agents/pr-review-maker.md`; `git status --porcelain` shows the
       deletion and zero unexpected drift
-- [ ] [AI] Grep the repo for any dangling reference to the retired monolith and repoint it to the
+- [x] [AI] Grep the repo for any dangling reference to the retired monolith and repoint it to the
       synthesizer or the specialist set: `grep -rn "pr-review-maker" repo-governance/ .claude/ AGENTS.md CLAUDE.md`
       — acceptance: no reference points to the monolith as a live reviewer (workflow/name references now
       read `pr-review-synthesis-maker` + the specialists); `CLAUDE.md`'s "Delivery Mode default
       (Claude-Code binding)" note (which names `pr-review-maker` and `pr-review-fixer` explicitly) is
       updated to name the new coordinator/specialist set in place of the retired monolith
-- [ ] [AI] Edit `AGENTS.md`'s "PR Review Cycle" catalog line (the brace-notation
+- [x] [AI] Edit `AGENTS.md`'s "PR Review Cycle" catalog line (the brace-notation
       `pr-review-{maker,fixer}` line, currently ~line 327) specifically — the plain-substring grep above
       does not match it because the brace `{` breaks the literal `pr-review-maker` substring, so this
       line survives that sweep undetected. Update it to name the new coordinator + specialist set (e.g.
       `pr-review-synthesis-maker` + the eight `pr-review-*-maker` specialists)
       — acceptance: `grep -c "pr-review-{maker" AGENTS.md` returns `0`; the "PR Review Cycle" line names
       `pr-review-synthesis-maker` and/or the specialist set instead
-- [ ] [AI] Edit `.claude/agents/pr-review-fixer.md` — repoint all 8 references to the retired
+- [x] [AI] Edit `.claude/agents/pr-review-fixer.md` — repoint all 8 references to the retired
       `pr-review-maker` (frontmatter `description` + 7 body sites) to name `pr-review-synthesis-maker`
       and/or "the eight specialists" as contextually appropriate (e.g. the frontmatter `description`'s
       "posted by `pr-review-maker`" and line 175's "the same trust boundary `pr-review-maker`
       [establishes]" each need their own contextually-correct rewrite, not a single mechanical
       find-replace) — acceptance: `grep -c "pr-review-maker" .claude/agents/pr-review-fixer.md` returns
       `0`; the file's core triage contract (4-way triage) is otherwise unchanged
-- [ ] [AI] Cross-check every inbound reference to the workflow still resolves:
+- [x] [AI] Cross-check every inbound reference to the workflow still resolves:
       `rhino-cli md links validate repo-governance/workflows/pr/pr-review-quality-gate.md`
       — acceptance: exits 0, no broken links
 
@@ -420,21 +420,21 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] The workflow describes fan-out→synthesize→fixer and preserves the 3-cycle ceiling + CI gate
-- [ ] [AI] `pr-merge-protocol.md` preconditions (a)-(e) keep their structural shape — five
+- [x] [AI] The workflow describes fan-out→synthesize→fixer and preserves the 3-cycle ceiling + CI gate
+- [x] [AI] `pr-merge-protocol.md` preconditions (a)-(e) keep their structural shape — five
       preconditions, same lettering, same substantive gates — with only precondition (a)'s
       reviewer-agent name updated to the new pipeline; no other precondition's text changed
-- [ ] [AI] The monolith is gone: `test ! -f .claude/agents/pr-review-maker.md` and no register or
+- [x] [AI] The monolith is gone: `test ! -f .claude/agents/pr-review-maker.md` and no register or
       binding lists it; `npm run generate:bindings` produces zero additional diff
-- [ ] [AI] `rhino-cli md links validate` + `md mermaid validate` pass on all edited docs; no dangling
+- [x] [AI] `rhino-cli md links validate` + `md mermaid validate` pass on all edited docs; no dangling
       `pr-review-maker` reference remains anywhere in `repo-governance/`, `.claude/`, `AGENTS.md`, or
       `CLAUDE.md`
-- [ ] [AI] Invoke `repo-workflow-checker` against the revised
+- [x] [AI] Invoke `repo-workflow-checker` against the revised
       `repo-governance/workflows/pr/pr-review-quality-gate.md`
       — acceptance: audit report generated in `generated-reports/`; 0 CRITICAL/HIGH findings (the
       substantively meaningful gate for this phase's revised workflow doc, complementing the `nx
 affected` no-op noted in Phase 8)
-- [ ] [AI] Commit created: `refactor(workflow): cut over PR review to specialists + synthesizer, retire monolith` and pushed
+- [x] [AI] Commit created: `refactor(workflow): cut over PR review to specialists + synthesizer, retire monolith` and pushed
 
 > **Pause Safety**: cutover is complete and self-consistent — the eight specialists + coordinator are
 > the documented live reviewer, the monolith is deleted (recoverable from git history), and no dangling

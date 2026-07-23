@@ -91,8 +91,8 @@ agent via the Agent tool, using the **identical Agent Selection rules** defined 
 annotation → project/app → file extension → content type → framework → direct execution).
 
 The orchestrator invokes `plan-execution-checker` as a delegated agent for each plan's independent
-validation, and runs the `pr-review-maker`/`pr-review-fixer` cycle for each `*-to-pr` plan — again,
-unchanged from the single-plan workflow. The only thing this workflow adds is the **scheduling of
+validation, and runs the PR-review cycle (eight specialists → `pr-review-synthesis-maker` →
+`pr-review-fixer`) for each `*-to-pr` plan — again, unchanged from the single-plan workflow. The only thing this workflow adds is the **scheduling of
 those per-plan steps across plans**.
 
 ## Relationship to plan-execution.md (no duplication)

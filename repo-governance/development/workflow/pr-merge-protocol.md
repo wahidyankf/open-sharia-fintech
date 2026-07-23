@@ -44,8 +44,8 @@ This practice implements/respects the following conventions:
 
 A PR merges only when **all five** hold:
 
-- **(a)** the configured `pr-review-maker` → `pr-review-fixer` cycles are complete (default 3) **and
-  the review loop did not exit `escalated`** — see
+- **(a)** the configured PR-review cycle (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`)
+  is complete (default 3 cycles) **and the review loop did not exit `escalated`** — see
   [Loop-Exit and Escalation Rules](../../workflows/pr/pr-review-quality-gate.md#loop-exit-and-escalation-rules).
   An `escalated` exit blocks the merge on its own, for **any** merge actor, and no combination of the
   other four preconditions discharges it. The configured count is a **hard ceiling, not a floor** —

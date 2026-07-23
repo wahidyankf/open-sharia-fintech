@@ -71,8 +71,9 @@ termination gaps, binding regeneration, and tri-repo propagation.
 
 Out of scope (for now): the governance change that supplied the evidence (evidence, not a target);
 the sibling gates (`repo-harness-compatibility`, `repo-workflow`) with no evidence chain mined; the
-third PR-cycle gap (`pr-review-maker` cannot post `REQUEST_CHANGES` — an auth/tooling change, filed
-as a follow-up); and any relaxation of a check, threshold, or criticality level (forbidden).
+third PR-cycle gap (`pr-review-synthesis-maker` cannot post `REQUEST_CHANGES` — an auth/tooling
+change, filed as a follow-up); and any relaxation of a check, threshold, or criticality level
+(forbidden).
 
 ## Risks & open questions
 
