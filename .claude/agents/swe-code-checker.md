@@ -105,7 +105,7 @@ All Go project targets (`build`, `test:quick`, `test:unit`, `test:integration`, 
 
 ### Step 3: Go-Specific Standards
 
-**Reference**: AyoKoding Go educational content (`apps/ayokoding-www/content/en/learn/software-engineering/programming-languages/golang/`) and the downstream `ose-primer` Go style guides. (`ose-public` no longer ships a Go style-guide tree under `docs/explanation/`; ose-public itself has no Go projects, but this checker also runs against Go projects in `ose-primer`.)
+**Reference**: AyoKoding Go educational content (`apps/ayokoding-www/content/en/learn/legacy/software-engineering/programming-languages/golang/`) and the downstream `ose-primer` Go style guides. (`ose-public` no longer ships a Go style-guide tree under `docs/explanation/`; ose-public itself has no Go projects, but this checker also runs against Go projects in `ose-primer`.)
 
 For each Go project:
 
