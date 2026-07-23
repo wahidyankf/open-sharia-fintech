@@ -44,6 +44,21 @@ have failed**. The fifth instance sharpens this — a clause can pass while nami
 _cannot execute_ in the environment it was pointed at, because a filtering layer supplied a
 plausible answer on the failing command's behalf.
 
+**Related sub-class — self-contradictory acceptance steps** (further instances 2026-07-23,
+`ayokoding-learning-path-01-url-restructure` Phases 1-2): a step is not vacuous but internally
+inconsistent — it mandates X and, elsewhere in the same phase, mandates not-X, so no execution can
+discharge it as written. Three concrete cases: (a) DD-49 required a childless section index to carry
+a hand-written body sentence _and_ to pass `validate-indexes`, but the index generator rewrites every
+section `_index.md` body from its live children, erasing the sentence — mutually exclusive until the
+prose moved to a generator-preserved `description:` frontmatter field. (b) A pure-rename proof scoped
+`git diff --cached --summary -M` to the destination pathspec only, but git cannot pair a rename when
+the source side is excluded — the commit-level unscoped `git show --summary -M <sha>` is the form that
+proves it. (c) A Gherkin acceptance assumed a standing legacy `_index.md` tree that a later same-plan
+`git mv` + root-deletion step removes, so the acceptance prose and the implementation reality diverged.
+Same enforcement owner as the vacuity class (`plan-checker` at authoring time): a consistency check
+that cross-reads a phase's later overrides against its earlier acceptance prose, and flags a step
+whose own two halves cannot both hold.
+
 ## Why now
 
 These four were caught only because a PR-review cycle and a knowledge-capture phase happened to
