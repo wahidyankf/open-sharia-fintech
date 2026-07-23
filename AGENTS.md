@@ -269,23 +269,19 @@ fast-track and EPSS ≥ 0.5 escalate to Path C.
 
 ### Agent Workflow Orchestration
 
-Plan mode for non-trivial tasks (3+ steps or architecture decisions). **Parallel-by-default**: run
-independent sub-units in parallel under the **N+1 model** — `1 main thread + N background agents =
-N+1 total`, **default N=3** (4 total). N=3 bounds token/compute-budget burn; raise it per-plan only
-when independent work, machine capacity, and budget headroom all allow, lower it under pressure, and
-never self-promote beyond the declared N. **Subagent concurrency**: poll mtime every 3 min; if stale
-30 min, `TaskStop` and relaunch.
-**Same-machine assumption**: always assume other agents, engineers, and processes run simultaneously
-on the **same shared machine** — sharing its disk, git object store, worktrees, and CI runners — so
-every orchestration and git action must be safe under concurrent actors.
-**DAG-first**: every non-trivial task list and delivery checklist declares a dependency DAG
-(`blocks`/`blockedBy`); independent nodes fan out up to N, dependent nodes serialize, cleanup is the
-terminal node. DAG width is the fan-out — N only caps it.
-**Background-slot preference**: fill background slots up to N, keeping the main thread vacant and
-responsive (orchestrator, not worker) — never split dependent work to fill a slot.
-**Status cadence**: update the user every **3-5 minutes, not faster**, while items are active.
-**Task-list discipline**: maintain live task list for non-trivial work; mark in-progress before starting,
-completed after verifying; add discovered tasks immediately.
+Plan mode for non-trivial tasks (3+ steps or architecture decisions). **Parallel-by-default**: the
+**N+1 model** — `1 main thread + N background agents`, **default N=3** — bounds fan-out; raise/lower N
+per-plan by capacity and budget headroom, never self-promote beyond it. Poll subagent mtime every 3
+min; stale 30 min triggers `TaskStop` and relaunch.
+**Same-machine assumption**: other agents/engineers/processes run concurrently on the same shared
+disk, git object store, worktrees, and CI runners, so every orchestration and git action must be
+concurrency-safe.
+**DAG-first**: every task list/delivery checklist declares a dependency DAG (`blocks`/`blockedBy`);
+independent nodes fan out up to N, dependent nodes serialize, cleanup is the terminal node.
+**Background-slot preference**: fill background slots up to N, keeping the main thread the vacant
+orchestrator, never splitting dependent work to fill a slot. Update the user every 3-5 minutes while
+active; maintain a live task list, marking in-progress/completed and adding discovered tasks
+immediately.
 
 **See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md),
 [Subagent Orchestration Convention](./repo-governance/development/agents/subagent-orchestration.md),
@@ -327,6 +323,10 @@ pr-review-fixer
 **PR Review Cycle**: pr-review-{maker,fixer} — GitHub-Reviews-API-driven maker→fixer cycle for
 `*-to-pr` Delivery Mode plans (see [Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
 and [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)).
+
+**PR Review Specialists**: pr-review-architecture-maker, pr-review-logic-maker, pr-review-governance-maker, pr-review-security-maker, pr-review-integrity-maker, pr-review-performance-maker, pr-review-docs-maker, pr-review-instruction-maker (see
+[PR Reviewer-Discipline Convention](./repo-governance/development/quality/pr-review-disciplines.md));
+inert until Phase 4 cutover.
 
 **Testing**: web-{exploratory,usability,design}-tester (live-site triad: spec-aware / spec-blind /
 design-aware); api-exploratory-tester (live REST/GraphQL, HTTP/curl-driven). All non-destructive; output

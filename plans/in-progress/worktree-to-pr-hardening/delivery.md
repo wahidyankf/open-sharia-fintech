@@ -233,7 +233,7 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 > [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md) role-color mapping)
 > for all eight, matching the retired monolith's own `color: blue`.
 
-- [ ] [AI] Author `.claude/agents/pr-review-architecture-maker.md` (sibling reference
+- [x] [AI] Author `.claude/agents/pr-review-architecture-maker.md` (sibling reference
       `.claude/agents/pr-review-maker.md`) with the architecture charter from
       [tech-docs.md §Agent Charters](./tech-docs.md#agent-charters-non-overlapping), inheriting the
       monolith's hard rules verbatim (confidence ≥ 80, evidence, anti-sycophancy, scope-guard,
@@ -241,36 +241,36 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       — acceptance: file present; frontmatter `name: pr-review-architecture-maker`; suffix matches the
       naming regex `-(maker|checker|fixer|dev|deployer|manager|tester|researcher)$`
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-logic-maker.md` (business-logic/correctness incl. Gherkin
+- [x] [AI] Author `.claude/agents/pr-review-logic-maker.md` (business-logic/correctness incl. Gherkin
       acceptance-criteria conformance), same inheritance + charter
       — acceptance: file present; charter names logic/correctness as its sole discipline; NOT-its-job
       routes to governance + architecture per the charter table
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-governance-maker.md` (mechanical `repo-governance/`
+- [x] [AI] Author `.claude/agents/pr-review-governance-maker.md` (mechanical `repo-governance/`
       conformance, naming/structure, spec-file presence), same inheritance + charter — instruction-decay
       is **NOT** its job (D14 → B gave that its own eighth specialist; route it to `pr-review-instruction-maker`)
       — acceptance: file present; explicitly routes "should a new rule exist" to architecture,
       "scenario completeness" to logic, and instruction-decay to `pr-review-instruction-maker`
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-security-maker.md` (secrets, injection, untrusted-input,
+- [x] [AI] Author `.claude/agents/pr-review-security-maker.md` (secrets, injection, untrusted-input,
       git-fixture isolation, unsafe git/FS ops), same inheritance + charter
       — acceptance: file present; cites the git-fixture-isolation + no-secrets rules as in-charter
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-integrity-maker.md` (CI-gaming/test-integrity +
+- [x] [AI] Author `.claude/agents/pr-review-integrity-maker.md` (CI-gaming/test-integrity +
       regression-test-mandate), same inheritance + charter
       — acceptance: file present; cites the regression-test-mandate + ci-blocker-resolution rules
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-performance-maker.md` (concrete/likely perf regressions,
+- [x] [AI] Author `.claude/agents/pr-review-performance-maker.md` (concrete/likely perf regressions,
       hot paths, algorithmic complexity, resource use), same inheritance + charter
       — acceptance: file present; NOT-its-job routes a quality-attribute tradeoff to architecture per
       the charter table (performance↔architecture grey-zone)
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-docs-maker.md` (substantive doc quality/completeness,
+- [x] [AI] Author `.claude/agents/pr-review-docs-maker.md` (substantive doc quality/completeness,
       README/docs/Diátaxis fit, doc drift, doc alt-text/a11y), same inheritance + charter
       — acceptance: file present; NOT-its-job routes mechanical doc-convention conformance to governance
       per the charter table (docs↔governance grey-zone)
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Author `.claude/agents/pr-review-instruction-maker.md` (D14 → B: **instruction-decay** — a
+- [x] [AI] Author `.claude/agents/pr-review-instruction-maker.md` (D14 → B: **instruction-decay** — a
       framework/build-tool/package-manager/env-var/CI change in the diff not reflected in
       `AGENTS.md`/`CLAUDE.md`/`.claude/`; instruction bloat >200 lines / generic filler), same
       inheritance + charter + the `sonnet` specialist tier (D5)
@@ -278,21 +278,21 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       instruction-decay as its sole discipline; NOT-its-job routes mechanical convention conformance to
       governance and "should a new rule exist" to architecture per the charter table
   - _Suggested executor: `agent-maker`_
-- [ ] [AI] Give every specialist file an explicit **`SUPPRESS` block** (what it must NOT raise at all —
+- [x] [AI] Give every specialist file an explicit **`SUPPRESS` block** (what it must NOT raise at all —
       nitpicks, style already enforced by a mechanical gate, speculative "consider adding X" when X is
       present, defense-in-depth on adequately-defended paths), distinct from its NOT-its-job routing
       column, and inherit the two sharpened rules (re-review **does not re-raise a human-dismissed
       finding**; untrusted-input **strips user-supplied boundary tags** from PR body/comment/issue text)
       — acceptance: `grep -lc "SUPPRESS" .claude/agents/pr-review-*-maker.md` lists all eight specialist
       files; each also references the human-dismissal-respect and boundary-tag-strip rules
-- [ ] [AI] Register all eight in `AGENTS.md` §AI Agents lists and `.claude/agents/README.md` catalog
+- [x] [AI] Register all eight in `AGENTS.md` §AI Agents lists and `.claude/agents/README.md` catalog
       under the appropriate section
       — acceptance: `grep -o "pr-review-architecture-maker\|pr-review-logic-maker\|pr-review-governance-maker\|pr-review-security-maker\|pr-review-integrity-maker\|pr-review-performance-maker\|pr-review-docs-maker\|pr-review-instruction-maker" AGENTS.md | wc -l` = 8
       (occurrence-count via `grep -o` + `wc -l`, not `grep -c`, so multiple names on one register line
       are each counted — `grep -c` counts matching LINES, which would undercount if 2+ names share a line)
-- [ ] [AI] Regenerate bindings: `npm run generate:bindings`
+- [x] [AI] Regenerate bindings: `npm run generate:bindings`
       — acceptance: `.opencode/agents/pr-review-*-maker.md` and `.amazonq/` artifacts created; exits 0
-- [ ] [AI] Verify binding sync: `git status --porcelain` shows only intended new/edited files and the
+- [x] [AI] Verify binding sync: `git status --porcelain` shows only intended new/edited files and the
       sync-validation gate is green
       — acceptance: `npx nx run rhino-cli:instruction-size:validation` (if applicable) and the
       validate:sync check pass with zero drift
@@ -301,11 +301,11 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] All eight specialist files pass the agent-naming regex and carry valid frontmatter
+- [x] [AI] All eight specialist files pass the agent-naming regex and carry valid frontmatter
       (including `color: blue`, the Maker role)
-- [ ] [AI] `npm run generate:bindings` re-run produces zero _additional_ diff (bindings settled)
-- [ ] [AI] `npx nx affected -t lint` passes; registers list all eight agents
-- [ ] [AI] Commit created: `feat(agents): add eight specialist PR-review reviewer agents` and pushed
+- [x] [AI] `npm run generate:bindings` re-run produces zero _additional_ diff (bindings settled)
+- [x] [AI] `npx nx affected -t lint` passes; registers list all eight agents
+- [x] [AI] Commit created: `feat(agents): add eight specialist PR-review reviewer agents` and pushed
 
 > **Pause Safety**: the eight specialists exist and are registered but are not yet wired into any
 > workflow — they are inert until Phase 4 references them, and the monolith is still the live reviewer.

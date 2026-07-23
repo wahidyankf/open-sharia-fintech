@@ -24,6 +24,14 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **[agent-maker](agent-maker.md)** - Agent definition creation
 - **[swe-ui-maker](swe-ui-maker.md)** - UI component creation
 - **[pr-review-maker](pr-review-maker.md)** - Posts adversarial code-review findings on a GitHub PR via the GitHub Reviews API (SHA-pinned, confidence-scored); the maker half of the PR-Review Maker→Fixer Cycle for `*-to-pr` delivery-mode plans
+- **[pr-review-architecture-maker](pr-review-architecture-maker.md)** - PR-review specialist scoped to architecture only: new tradeoffs, module boundaries, reversibility, blast radius, quality-attribute effects, novel dependencies
+- **[pr-review-logic-maker](pr-review-logic-maker.md)** - PR-review specialist scoped to business-logic/correctness only: behavior vs. domain intent plus Gherkin acceptance-criteria conformance across edge/error cases
+- **[pr-review-governance-maker](pr-review-governance-maker.md)** - PR-review specialist scoped to governance/rules-conformance only: mechanical conformance to already-documented repo-governance/ conventions, naming/structure, ADRs, spec-file presence
+- **[pr-review-security-maker](pr-review-security-maker.md)** - PR-review specialist scoped to security only: secrets in diffs, injection, untrusted-input handling, git-fixture isolation, unsafe git/FS operations
+- **[pr-review-integrity-maker](pr-review-integrity-maker.md)** - PR-review specialist scoped to CI-gaming/test-integrity only: weakened/skipped/narrowed tests, coverage-gaming, missing regression tests
+- **[pr-review-performance-maker](pr-review-performance-maker.md)** - PR-review specialist scoped to performance only: concrete/likely regressions, hot-path changes, algorithmic-complexity growth, resource concerns
+- **[pr-review-docs-maker](pr-review-docs-maker.md)** - PR-review specialist scoped to documentation-quality only: substantive README/docs/Diátaxis fit, doc drift vs. code, clarity, doc alt-text/accessibility
+- **[pr-review-instruction-maker](pr-review-instruction-maker.md)** - PR-review specialist scoped to instruction-decay only: a framework/build-tool/package-manager/env-var/CI change not reflected in AGENTS.md/CLAUDE.md/.claude/, and instruction bloat
 
 ### 🟩 Validation (Checkers)
 
