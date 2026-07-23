@@ -103,15 +103,18 @@ it:
   folder's own PR could archive itself immediately on its own merge — see
   [§Single-folder adaptation](#repo-scope--propagation-three-repo-parity) above for why this plan chose
   the single-folder shape anyway.
-- **Accepted, documented carve-out (ratified, not a gap to re-flag)**: a strict reading of
+- **Maintainer-ratified as D15 (formal decision, not a self-declaration)**: a strict reading of
   archival-in-PR would ask for the `git mv` inside Phase 8's PR regardless of the two pending
-  downstream propagations. This plan explicitly declines that literal reading in favor of the DAG
-  pattern [AGENTS.md §Agent Workflow Orchestration](../../../AGENTS.md#agent-workflow-orchestration)
+  downstream propagations. This plan's author recommended declining that literal reading in favor of
+  the DAG pattern [AGENTS.md §Agent Workflow Orchestration](../../../AGENTS.md#agent-workflow-orchestration)
   already names for exactly this shape — **"cleanup is the terminal node"** — where Phases 9/10
   (the two independent downstream propagation branches) must both complete before the shared plan
-  folder's own archival cleanup can run truthfully. Deferring `git mv` to Phase 12 is that terminal
-  cleanup node, not a violation of archival-in-PR; a future checker re-flagging this line should treat
-  it as already resolved by this note, not as an open finding.
+  folder's own archival cleanup can run truthfully. The maintainer put this fork to the same grilling
+  ceremony as D1-D14 and ratified it as
+  [D15 — Archival timing under 3-repo-parity Archival-in-PR tension](#d15--archival-timing-under-3-repo-parity-archival-in-pr-tension):
+  deferring `git mv` to Phase 12 is that terminal cleanup node, not a violation of archival-in-PR, and a
+  future checker re-flagging this line should treat it as resolved by the D15 decision record, not as an
+  open finding.
 
 ## Architecture Overview
 
@@ -639,7 +642,7 @@ question (vs. a `-checker` framing, given its filter/verify function) is settled
 
 This plan was authored non-interactively, so the following forks were **not** grilled at authoring
 time. Each is a multiple-choice decision with a **recommended** option marked. The maintainer has since
-grilled the draft and **all decisions D1–D14 are now decided; none remain open** — each carries a
+grilled the draft and **all decisions D1–D15 are now decided; none remain open** — each carries a
 `**MAINTAINER DECISION**` line and the plan has been revised accordingly (D5 → sonnet specialists /
 opus coordinator; D6 → absolute-threshold rollback bar, resolving the D2×D6 baseline contradiction;
 D7/D10 → merge queue researched but **NOT adopted** (deferred to the separate `merge-queue-adoption`
@@ -647,8 +650,9 @@ plan; GitHub-native would be the mechanism if ever revisited); D1 → 7-speciali
 (D14 added the eighth); D3 → `pr-review-synthesis-maker`;
 D8 → `pr-review-disciplines.md`, 4-tier CRITICAL/HIGH/MEDIUM/LOW severity kept; D9 → keep one
 `pr-review-fixer`; D12 → 3-tier risk fan-out; D13 → **no** diff filtering / **no** generated-file
-exclusion; D14 → dedicated eighth specialist `pr-review-instruction-maker` for instruction-decay).
-Format follows the
+exclusion; D14 → dedicated eighth specialist `pr-review-instruction-maker` for instruction-decay;
+D15 → defer archival to Phase 12 as the DAG terminal cleanup node, ratifying the plan's own
+recommended path over splitting propagation into a separate follow-up plan). Format follows the
 [Grilling-With-Options Convention](../../../repo-governance/development/workflow/grilling-with-options.md).
 
 ### D1 — Exact specialist set & granularity
@@ -908,4 +912,34 @@ source.
   and one more file across all three repos + bindings.
 - **C** — Defer instruction-decay to future work. Trade-off: cheapest now; leaves a real,
   repo-specific defect class uncovered.
+- **Other — type your own.** | **Chat about this.**
+
+### D15 — Archival timing under 3-repo-parity Archival-in-PR tension
+
+> Raised by `plan-checker`'s F1 finding: the [PR Review Quality Gate workflow's Done-Definition](../../../repo-governance/workflows/pr/pr-review-quality-gate.md#done-definition-for--to-pr-modes)
+> item 4 requires Archival-in-PR inside the delivering PR; taken literally this applies to Phase 8's
+> `ose-public` PR, since `worktree-to-pr-hardening/` is tracked in `ose-public`. The plan's own
+> [§Archival Timing](#archival-timing--a-documented-exception-to-archival-in-pr) section had argued for
+> deferring archival to Phase 12 but self-declared that resolution rather than putting it to the
+> maintainer, exactly like D1-D14 received.
+>
+> **MAINTAINER DECISION 2026-07-23**: chose **A — ratify the defer to Phase 12** as the DAG terminal
+> cleanup node, matching the plan's own recommended path. Phase 8's `ose-public` PR merges **without**
+> the `git mv … plans/done/` archival move; the plan is not genuinely done until Phases 9 (`ose-primer`)
+> and 10 (`ose-infra`) also land, so archiving inside Phase 8 would falsely mark the shared folder
+> `done` while two of the three repos still carry the retired-monolith reviewer — worse than the defect
+> Archival-in-PR exists to prevent. Archival happens at Phase 12, landed as a direct, trailing commit to
+> `ose-public` `main` (no new PR, no new review cycle, since it carries no substantive change) — see
+> [§Archival Timing](#archival-timing--a-documented-exception-to-archival-in-pr) for the full mechanics.
+
+- **A (Recommended, chosen)** — Defer archival to Phase 12 (after Phases 9-11 complete), landed as a
+  direct trailing commit to `ose-public` `main`. Trade-off: the shared plan folder is never marked
+  `done` while any of the three repos still lags; costs a delayed archival relative to Phase 8's merge,
+  but keeps the folder's `done` state truthful and keeps one shared Grilling-Deferred decision record
+  and one set of Gherkin acceptance criteria for the whole deliverable.
+- **B** — Archive immediately inside Phase 8's PR (literal Archival-in-PR compliance), splitting the
+  downstream propagation (Phase 9/10) into a separate follow-up plan. Trade-off: satisfies the
+  Done-Definition's item 4 to the letter for Phase 8's own PR; but marks `worktree-to-pr-hardening`
+  `done` while two of three repos still run the retired monolith, and fragments the single
+  Grilling-Deferred decision record (D1-D15) and Gherkin acceptance criteria across two plan folders.
 - **Other — type your own.** | **Chat about this.**

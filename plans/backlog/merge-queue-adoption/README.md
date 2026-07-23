@@ -1,7 +1,7 @@
 # Merge-Queue Adoption — Harden Merge-Precondition (c) Under Concurrent Integration
 
 > **Status**: Backlog (not started). Split out of
-> [`worktree-to-pr-hardening`](../worktree-to-pr-hardening/README.md), where the merge queue was
+> [`worktree-to-pr-hardening`](../../in-progress/worktree-to-pr-hardening/README.md), where the merge queue was
 > researched (decisions **D7 / D10**) but **dropped from scope** because the maintainer could not
 > locate a merge-queue toggle in the repo's branch settings. This plan owns that deferred work: **first
 > confirm availability, then adopt where available.** Confirmed availability is currently **"nowhere"**

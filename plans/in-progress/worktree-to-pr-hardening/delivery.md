@@ -17,7 +17,7 @@ markdown plus register/binding updates.
 
 <!-- -->
 
-> **Execution prerequisite** — **all decisions D1–D14 are now decided**; this delivery.md reflects
+> **Execution prerequisite** — **all decisions D1–D15 are now decided**; this delivery.md reflects
 > every one. In particular: **D1** (7 specialists) + **D14** (an eighth specialist,
 > `pr-review-instruction-maker`, for instruction-decay) → **8 specialists + coordinator**; **D2** (retire
 > the monolith at cutover); **D3** (coordinator name `pr-review-synthesis-maker`); **D4** (adversarial
@@ -28,7 +28,8 @@ markdown plus register/binding updates.
 > (convention at `repo-governance/development/quality/pr-review-disciplines.md`, 4-tier severity kept);
 > **D9** (keep one `pr-review-fixer`); **D11** (parallel downstream propagation); **D12** (3-tier risk
 > fan-out); **D13** (**no** diff filtering / **no** generated-file exclusion — reviewers see the full
-> diff). See
+> diff); **D15** (archival deferred to Phase 12 as the DAG terminal cleanup node — ratifies the
+> Archival-in-PR carve-out for the `ose-public` PR under 3-repo-parity). See
 > [tech-docs.md §Grilling Deferred](./tech-docs.md#grilling-deferred--decisions-for-maintainer) for the
 > full decision record.
 >
@@ -143,6 +144,18 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       — acceptance: no diff (bindings already in sync before any change)
 - [ ] [AI] Resolve all preexisting failures before proceeding
       — acceptance: no preexisting failures remain unresolved
+- [ ] [AI] Delegate to `web-researcher`: re-verify the remaining ~7 unverified `[Web-cited]` claims in
+      [tech-docs.md §Research Grounding](./tech-docs.md#research-grounding-citations) — BitsAI-CR
+      ([arXiv 2501.15134](https://arxiv.org/abs/2501.15134)), CodeAgent
+      ([arXiv 2402.02172](https://arxiv.org/abs/2402.02172)), the two confidence-calibration papers
+      ([arXiv 2603.06604](https://arxiv.org/abs/2603.06604),
+      [arXiv 2604.06723](https://arxiv.org/abs/2604.06723)), Refute-or-Promote
+      ([arXiv 2604.19049](https://arxiv.org/abs/2604.19049)), the repair-loop paper
+      ([arXiv 2607.05197](https://arxiv.org/abs/2607.05197)), and the Graphite/Ramp 74%-faster-merges
+      claim (the Cloudflare blog post and SWR-Bench citations were already independently spot-verified
+      by `plan-checker` and do not need re-verification)
+      — acceptance: each claim's status in `tech-docs.md` is updated to `[Verified]`/`[Outdated]`/`[Error]`,
+      with any inaccuracy corrected, before Phase 1's substantive convention-authoring work begins
 
 ### Phase 0 Gate
 
@@ -151,6 +164,8 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 - [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
 - [ ] [AI] `npm run generate:bindings` produces zero diff against a clean tree (baseline sync confirmed)
 - [ ] [AI] Markdown/lint baseline recorded and every preexisting failure resolved
+- [ ] [AI] All ~7 remaining `[Web-cited]` claims in `tech-docs.md` §Research Grounding are re-verified
+      and labeled `[Verified]`/`[Outdated]`/`[Error]`; any inaccuracy is corrected
 
 > **Pause Safety**: only the local toolchain was verified and the baseline recorded — no plan work
 > exists yet. Safe to stop indefinitely. To resume: re-run `npm run generate:bindings && git status --porcelain`
@@ -214,7 +229,9 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > _Suggested executor: `agent-maker`_ — one checkbox each for the eight agents (D1 = 7 + D14
 > instruction-decay = 8). Model tier per D5 (decided): every specialist inherits **`sonnet`**; the
-> coordinator (Phase 3) inherits **opus**.
+> coordinator (Phase 3) inherits **opus**. Frontmatter `color: blue` (Maker role, per the
+> [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md) role-color mapping)
+> for all eight, matching the retired monolith's own `color: blue`.
 
 - [ ] [AI] Author `.claude/agents/pr-review-architecture-maker.md` (sibling reference
       `.claude/agents/pr-review-maker.md`) with the architecture charter from
@@ -285,6 +302,7 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 > All checks below must pass before starting Phase 3.
 
 - [ ] [AI] All eight specialist files pass the agent-naming regex and carry valid frontmatter
+      (including `color: blue`, the Maker role)
 - [ ] [AI] `npm run generate:bindings` re-run produces zero _additional_ diff (bindings settled)
 - [ ] [AI] `npx nx affected -t lint` passes; registers list all eight agents
 - [ ] [AI] Commit created: `feat(agents): add eight specialist PR-review reviewer agents` and pushed
@@ -300,7 +318,8 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > _Suggested executor: `agent-maker`_ — resolve **D3** (name; default `pr-review-synthesis-maker`).
 > Per D5 (decided) the coordinator inherits **opus** (top tier) — it is the single quality chokepoint
-> above the `sonnet` specialists.
+> above the `sonnet` specialists. Frontmatter `color: blue` (Maker role — the model tier does not
+> change the role-color mapping), matching the retired monolith's own `color: blue`.
 
 - [ ] [AI] Author `.claude/agents/pr-review-synthesis-maker.md` (name per D3) implementing the four
       coordination functions from [tech-docs.md §Coordinator Contract](./tech-docs.md#coordinator-contract-the-mandatory-synthesizer):
@@ -327,7 +346,8 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] Coordinator file passes the naming regex and carries a Model Selection Justification block
+- [ ] [AI] Coordinator file passes the naming regex and carries a Model Selection Justification block;
+      frontmatter includes `color: blue` (Maker role)
 - [ ] [AI] `npm run generate:bindings` re-run produces zero additional diff
 - [ ] [AI] `npx nx affected -t lint` passes; registers list the coordinator
 - [ ] [AI] Commit created: `feat(agents): add pr-review-synthesis-maker coordinator` and pushed
@@ -378,6 +398,20 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       read `pr-review-synthesis-maker` + the specialists); `CLAUDE.md`'s "Delivery Mode default
       (Claude-Code binding)" note (which names `pr-review-maker` and `pr-review-fixer` explicitly) is
       updated to name the new coordinator/specialist set in place of the retired monolith
+- [ ] [AI] Edit `AGENTS.md`'s "PR Review Cycle" catalog line (the brace-notation
+      `pr-review-{maker,fixer}` line, currently ~line 327) specifically — the plain-substring grep above
+      does not match it because the brace `{` breaks the literal `pr-review-maker` substring, so this
+      line survives that sweep undetected. Update it to name the new coordinator + specialist set (e.g.
+      `pr-review-synthesis-maker` + the eight `pr-review-*-maker` specialists)
+      — acceptance: `grep -c "pr-review-{maker" AGENTS.md` returns `0`; the "PR Review Cycle" line names
+      `pr-review-synthesis-maker` and/or the specialist set instead
+- [ ] [AI] Edit `.claude/agents/pr-review-fixer.md` — repoint all 8 references to the retired
+      `pr-review-maker` (frontmatter `description` + 7 body sites) to name `pr-review-synthesis-maker`
+      and/or "the eight specialists" as contextually appropriate (e.g. the frontmatter `description`'s
+      "posted by `pr-review-maker`" and line 175's "the same trust boundary `pr-review-maker`
+      [establishes]" each need their own contextually-correct rewrite, not a single mechanical
+      find-replace) — acceptance: `grep -c "pr-review-maker" .claude/agents/pr-review-fixer.md` returns
+      `0`; the file's core triage contract (4-way triage) is otherwise unchanged
 - [ ] [AI] Cross-check every inbound reference to the workflow still resolves:
       `rhino-cli md links validate repo-governance/workflows/pr/pr-review-quality-gate.md`
       — acceptance: exits 0, no broken links
@@ -497,7 +531,7 @@ affected` no-op noted in Phase 8)
 - [ ] [AI] Record the **deferred merge queue** (D7/D10): a merge queue was researched (GitHub-native vs
       Graphite) but **NOT adopted** — the repo's branch settings do not expose a merge-queue toggle, so
       precondition (c) stays the manual branch-up-to-date check. The deferred work is owned by the
-      standalone [`merge-queue-adoption`](../merge-queue-adoption/README.md) backlog plan; record this
+      standalone [`merge-queue-adoption`](../../backlog/merge-queue-adoption/README.md) backlog plan; record this
       inside the same `## Future Work` section of `repo-governance/development/quality/pr-review-disciplines.md`
       — acceptance: `grep -ci "merge queue" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; the note states it is deferred,
       not delivered, links `merge-queue-adoption`, and confirms precondition (c) is unchanged
@@ -522,6 +556,9 @@ affected` no-op noted in Phase 8)
 > This is the **blocking source-of-truth node**: the two downstream propagation phases (9 & 10)
 > cannot start until this PR merges to `ose-public` `main`. See
 > [tech-docs.md §Repo Scope & Propagation](./tech-docs.md#repo-scope--propagation-three-repo-parity).
+> Per [D15 — Archival timing under 3-repo-parity Archival-in-PR tension](./tech-docs.md#d15--archival-timing-under-3-repo-parity-archival-in-pr-tension)
+> (maintainer-ratified), this PR merges **without** the `git mv … plans/done/` archival move — that
+> move is deliberately deferred to Phase 12.
 
 ### Local Quality Gates (Before Push)
 
@@ -606,11 +643,9 @@ affected` no-op noted in Phase 8)
 
 ## Phase 9: Propagate to ose-primer (own worktree-to-pr)
 
-> _Suggested executor: `repo-harness-compatibility-fixer`_ (parity propagation — applies the
-> `ose-public`-validated change set to `ose-primer` as a parity-restoring fix). Depends on Phase 8
-> merge; **independent of Phase 10** — may run in parallel (D11). This is a **separate `worktree-to-pr`
-> delivery in the `ose-primer` repo** (its own worktree, PR, review cycle, and merge), delivered in the
-> spirit of the [multi-repo parity planning-and-execution workflow](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md)
+> Depends on Phase 8 merge; **independent of Phase 10** — may run in parallel (D11). This is a
+> **separate `worktree-to-pr` delivery in the `ose-primer` repo** (its own worktree, PR, review cycle,
+> and merge), delivered in the spirit of the [multi-repo parity planning-and-execution workflow](../../../repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md)
 > — see [tech-docs.md §Repo Scope & Propagation](./tech-docs.md#repo-scope--propagation-three-repo-parity)
 > for the single-folder adaptation rationale. **Re-verify the bare-repo topology at execution time** —
 > `ose-primer` is a BARE repo with worktrees; use the bare-repo git method (`-c core.bare=false
@@ -695,11 +730,10 @@ affected` no-op noted in Phase 8)
 
 ## Phase 10: Propagate to ose-infra (own worktree-to-pr, private)
 
-> _Suggested executor: `repo-harness-compatibility-fixer`_ (parity propagation — applies the
-> `ose-public`-validated change set to `ose-infra` as a parity-restoring fix). Depends on Phase 8
-> merge; **independent of Phase 9** — may run in parallel (D11). This is a **separate `worktree-to-pr`
-> delivery in the private `ose-infra` repo** (its own worktree, PR, review cycle, and merge). `ose-infra`
-> does **not** participate in the content-parity loop for infra-private material, but it **does** carry
+> Depends on Phase 8 merge; **independent of Phase 9** — may run in parallel (D11). This is a
+> **separate `worktree-to-pr` delivery in the private `ose-infra` repo** (its own worktree, PR, review
+> cycle, and merge). `ose-infra` does **not** participate in the content-parity loop for infra-private
+> material, but it **does** carry
 > the same `.claude/agents/`, `repo-governance/`, and binding scaffolding this plan changes, so it
 > receives the identical PR-review agent/governance/workflow artifacts. **Re-verify the bare-repo
 > topology at execution time** — `ose-infra` is a BARE repo with worktrees; use the bare-repo git method.
@@ -819,8 +853,10 @@ affected` no-op noted in Phase 8)
 
 > Archival is intentionally deferred to this final phase — Phases 9-11 must complete first so all
 > three repos carry the identical change set before the folder moves to `plans/done/`. This is a
-> documented exception to the Archival-in-PR default; the archival commit below lands as a **direct,
-> trailing push to `ose-public` `main`** (no new PR, no new review cycle). See
+> documented exception to the Archival-in-PR default, maintainer-ratified as
+> [tech-docs.md D15](./tech-docs.md#d15--archival-timing-under-3-repo-parity-archival-in-pr-tension);
+> the archival commit below lands as a **direct, trailing push to `ose-public` `main`** (no new PR, no
+> new review cycle). See
 > [tech-docs.md §Archival Timing](./tech-docs.md#archival-timing--a-documented-exception-to-archival-in-pr)
 > for the full rationale.
 

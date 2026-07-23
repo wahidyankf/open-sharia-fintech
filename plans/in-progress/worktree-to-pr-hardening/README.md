@@ -1,9 +1,10 @@
 # Worktree-to-PR Hardening — Decompose the Monolithic PR Reviewer
 
-> **Status**: Backlog (not started). Authored in a **non-interactive** session — all open design
-> decisions are collected in [tech-docs.md §Grilling Deferred — Decisions for Maintainer](./tech-docs.md#grilling-deferred--decisions-for-maintainer)
-> rather than resolved by grilling. Read that section before executing; several forks change the
-> shape of the delivery checklist.
+> **Status**: In Progress. Authored in a **non-interactive** session; all design decisions D1–D15 are
+> now resolved (see [tech-docs.md §Grilling Deferred — Decisions for Maintainer](./tech-docs.md#grilling-deferred--decisions-for-maintainer)).
+> The plan passed the strict plan-quality-gate before promotion. Delivery Mode `worktree-to-pr` —
+> delivered in a worktree through a draft PR, gated by the very Maker→Fixer Cycle whose reviewer half
+> it redesigns.
 
 ## Context
 
@@ -94,7 +95,7 @@ an afterthought.
 - A future-work workstream: the AI-attribution/bot-identity gap, cost/latency budgeting, and the
   **deferred merge queue** (D7/D10 — researched but NOT adopted here; the repo exposes no merge-queue
   branch setting, so it is split into its own backlog plan:
-  [`merge-queue-adoption`](../merge-queue-adoption/README.md)).
+  [`merge-queue-adoption`](../../backlog/merge-queue-adoption/README.md)).
 - Register/index/binding updates for every new agent (`AGENTS.md`, `.claude/agents/README.md`,
   `npm run generate:bindings`).
 

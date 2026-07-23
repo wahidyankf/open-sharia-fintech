@@ -3,7 +3,7 @@
 ## Provenance
 
 This plan carries forward the merge-queue research that was authored inside
-[`worktree-to-pr-hardening`](../worktree-to-pr-hardening/tech-docs.md) as decisions **D7** (adopt vs
+[`worktree-to-pr-hardening`](../../in-progress/worktree-to-pr-hardening/tech-docs.md) as decisions **D7** (adopt vs
 defer) and **D10** (mechanism), then **removed from that plan's scope** on 2026-07-23 when the
 maintainer reported no merge-queue toggle in the repo's branch settings. All web-cited claims below
 **SHOULD be re-verified via `web-researcher`** before execution, per the
