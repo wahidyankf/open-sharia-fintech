@@ -688,7 +688,12 @@ deleted), re-pointing each entry to wherever the content now lives.
       `:validate-indexes` and `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0.
 - [x] [AI] `md links validate` (excluding `plans/done` and `apps/ose-www/content`) and
       `md heading-hierarchy validate` report no error over the changed tree.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [x] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+      **Done 2026-07-23**: draft PR #84 opened on `ayokoding-learning-path-01-url-restructure`; 3
+      PR-Review cycles complete (cycles 1+2 clean, cycle 3 = 1 LOW fixed by `pr-review-fixer`
+      commit `50e3355f5`, thread resolved, 0 unresolved threads); 0 CRITICAL/0 HIGH; `pr-quality-gate` + `validate-env` green on head `50e3355f5`; PR `[AI]` squash-merged as `e1ccc152` (origin/main);
+      prod-ayokoding-www force-pushed to `e1ccc152` (hard-verified: remote SHA == merged SHA,
+      `courses/just-enough-python/_index.md` present), Vercel auto-build triggered.
 
 **Phase 2 execution notes (2026-07-23) — implementation complete, PR pending.** Executor:
 `swe-typescript-dev` (background) + orchestrator gate verification. Six commits on top of `00c7106dc`:
