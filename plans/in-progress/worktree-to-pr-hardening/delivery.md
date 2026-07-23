@@ -447,17 +447,17 @@ affected` no-op noted in Phase 8)
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Add the **confidence-calibration spot-check** procedure to the reviewer-discipline
+- [x] [AI] Add the **confidence-calibration spot-check** procedure to the reviewer-discipline
       convention (sample past findings, compare stated confidence vs. fixer triage outcome, recalibrate
       the ≥80 threshold)
       — acceptance: `grep -ci "calibration" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; procedure is a documented manual step
-- [ ] [AI] Add the **selective adversarial verification** rule scoped to high-risk diffs per **D4**
+- [x] [AI] Add the **selective adversarial verification** rule scoped to high-risk diffs per **D4**
       (auth/payments/migrations/security/public-API), including the cross-model-diversity note
       — acceptance: `grep -ci "adversarial\|high-risk" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; scope stated explicitly
-- [ ] [AI] Add the **CRITICAL-requires-reproduction** rule (CRITICAL findings carry a reproduction, not
+- [x] [AI] Add the **CRITICAL-requires-reproduction** rule (CRITICAL findings carry a reproduction, not
       agreement-counting)
       — acceptance: `grep -ci "reproduction" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1
-- [ ] [AI] Document the **3-cycle / no-early-exit rationale** explicitly as a predictability policy
+- [x] [AI] Document the **3-cycle / no-early-exit rationale** explicitly as a predictability policy
       choice, NOT research-derived
       — acceptance: `grep -ci "predictability" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; the note disclaims research-backing
 
@@ -465,9 +465,9 @@ affected` no-op noted in Phase 8)
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] All four enhancements present in the convention and internally cross-linked
-- [ ] [AI] `npx nx affected -t lint` + `rhino-cli md links validate` pass
-- [ ] [AI] Commit created: `docs(governance): add PR-review quality-gate enhancements` and pushed
+- [x] [AI] All four enhancements present in the convention and internally cross-linked
+- [x] [AI] `npx nx affected -t lint` + `rhino-cli md links validate` pass
+- [x] [AI] Commit created: `docs(governance): add PR-review quality-gate enhancements` and pushed
 
 > **Pause Safety**: the enhancements are additive documentation; nothing depends on them being wired
 > to code. Safe to stop. To resume: re-run the md link validator on the convention.

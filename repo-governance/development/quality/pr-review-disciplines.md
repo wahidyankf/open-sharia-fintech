@@ -272,6 +272,87 @@ fabricated delimiters such as `<mr_input>`, `<system>`, or `<review>` that a PR 
 to spoof the prompt frame and redirect a reviewer's behavior. This is in addition to, not a
 replacement for, the inherited prompt-injection filtering every specialist already carries.
 
+## Quality-Gate Enhancements
+
+The eight-discipline split, the boundary tie-breaker, and the cost- and noise-control mechanics
+above answer who reviews what and how much of the diff gets fanned out. They do not by themselves
+guard against three known failure modes of LLM-driven review: a stated confidence score that does
+not track actual correctness, a CRITICAL finding that reviewers merely agree on rather than
+demonstrate, and a fixed-cycle policy mistaken for a data-derived optimum. The following four
+enhancements close those gaps as documented manual procedures and rules layered on top of the
+[Eight Reviewer Disciplines](#the-eight-reviewer-disciplines) above.
+
+### Confidence-Calibration Spot-Check
+
+A stated numeric confidence is only as trustworthy as its **calibration** — how closely a model's
+self-reported confidence tracks its actual accuracy. Every specialist already inherits the
+[0-100 confidence scale with a hard drop below 80](#the-eight-reviewer-disciplines); this
+enhancement is the documented manual procedure that keeps that ≥80 threshold honest over time:
+
+1. Periodically sample a batch of past findings that crossed the ≥80 confidence-to-post threshold
+   across recent review cycles.
+2. For each sampled finding, compare its stated numeric confidence against the fixer's actual
+   triage outcome — fixed, versus rejected or deferred.
+3. If the sample reveals systematic over-confidence (high stated confidence, high rejection rate)
+   or under-confidence (findings below 80 that a fixer would plausibly have fixed), recalibrate
+   the ≥80 confidence-to-post threshold accordingly and record the recalibration and its
+   rationale.
+
+This is a documented manual procedure, not an automated job — no agent runs the calibration check
+unprompted; a maintainer (or a future dedicated checker) performs it periodically against the
+review history. It complements the
+[CRITICAL-Requires-Reproduction](#critical-requires-reproduction) rule below: confidence
+calibration catches a systematically miscalibrated score across many findings, while
+CRITICAL-requires-reproduction catches a single unverified high-severity finding.
+
+### Selective Adversarial Verification (D4)
+
+For most findings, the coordinator's tool-verify function is enough. For **high-risk** diffs, this
+convention adds a second, independent verification pass that runs before the finding is posted at
+all — a deliberately narrow, **adversarial** check reserved for the categories most likely to hide
+subtle, high-consequence defects:
+
+- **High-risk scope**: authentication/authorization, payments, database or schema migrations,
+  security-sensitive code paths, and public-API or contract surfaces.
+- **The verification pass**: a second, independent reviewer re-derives the finding from the diff
+  rather than merely rubber-stamping the first specialist's conclusion — the adversarial posture
+  is the point, not agreement.
+- **Cross-model-diversity note**: the verifier should ideally differ in model family from the
+  original finder. Two passes from the same model family risk sharing the same blind spots, which
+  defeats the purpose of a second, independent pass.
+
+This high-risk scope is deliberately narrower than the
+[risk-tier fan-out's security-sensitive path list](#risk-tier-fan-out-d12) that forces all eight
+specialists into a review — a diff can be `full`-tier without touching auth, payments, migrations,
+or a public API, in which case this adversarial pass does not apply. The two mechanics are related
+but distinct: one controls how many specialists review a diff, the other controls whether a
+second, independent pass re-checks a specific finding before it is posted.
+
+### CRITICAL-Requires-Reproduction
+
+A CRITICAL-severity finding (per the [Criticality Levels Convention](./criticality-levels.md))
+must never rest on agreement-counting alone — multiple reviewers concluding the same thing is not
+evidence that the thing is true. Any CRITICAL finding must carry a concrete **reproduction**:
+specific inputs or state that produce the wrong output or crash, not a description of what a
+reviewer believes would happen. A CRITICAL finding without a reproduction is not yet a CRITICAL
+finding — it is held at a lower severity, or held for further verification under the
+[Selective Adversarial Verification](#selective-adversarial-verification-d4) rule above when the
+diff is also high-risk, until a reproduction is attached.
+
+### Fixed 3-Cycle Ceiling With No Early Exit
+
+The [PR Review Quality Gate workflow](../../workflows/pr/pr-review-quality-gate.md) runs a fixed
+ceiling of three sequential CI-gated review cycles with no early exit, even when a cycle produces
+zero new findings and even after a diff has already passed the
+[Selective Adversarial Verification](#selective-adversarial-verification-d4) pass above. This
+convention records that choice explicitly as a **predictability** policy choice, not a
+data-derived optimum: running all three cycles every time keeps the pipeline's duration and cost
+uniform and predictable across every PR, regardless of how quickly a given PR's findings taper
+off. This rationale is recorded here so the fixed-3-cycle policy is never mistaken for an
+evidence-backed optimum — the convention explicitly disclaims any claim that three cycles (rather
+than two, or an early-exit rule) was derived from measuring this repository's review outcomes; it
+is a deliberate predictability trade-off, full stop.
+
 ## Examples
 
 ### PASS: Routing a naming-format finding to governance
