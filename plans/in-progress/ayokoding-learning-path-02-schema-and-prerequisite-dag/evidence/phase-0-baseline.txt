@@ -25,7 +25,7 @@ content-url.ts baseline snapshot:
   export: export function contentUrl(locale: Locale, slug: string): string {
   (single export, 2-arg — the /c/ segment is already removed by plan 01's merged R0 inversion;
    the third `pathId` arg does not exist yet)
-  test names (content-url.test.ts, describe + 6 it, none naming /c/ explicitly):
+  test names (content-url.test.ts, 8 total: 1 describe + 7 it, none naming /c/ explicitly):
     describe("contentUrl", ...)
     it("uniformly joins en content-tree slugs bare (no /c/, DD-48)")
     it("uniformly joins id content-tree slugs bare (no /c/, DD-48)")
