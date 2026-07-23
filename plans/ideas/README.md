@@ -13,6 +13,7 @@ ideas/ (two-pagers) → backlog/ (full 5-doc plans) → in-progress/ → done/
 - [acceptance-clause-vacuity](./acceptance-clause-vacuity.md) — acceptance clauses that cannot fail certify nothing; require falsifiability in both directions.
 - [agents-md-progressive-disclosure](./agents-md-progressive-disclosure.md) — `AGENTS.md` sits under 20 B beneath its 30,000 B ceiling; restore headroom via progressive disclosure.
 - [ayokoding-content-checker-coverage](./ayokoding-content-checker-coverage.md) — enforce the canonical topic-tree shape in the content checkers; add a by-concept checker.
+- [ayokoding-i18n-nav-hardening](./ayokoding-i18n-nav-hardening.md) — pre-existing id-locale, language-switcher-404, and sidebar-clip defects surfaced by the url-restructure Phase-5 retest.
 - [ayokoding-mermaid-diagram-remediation](./ayokoding-mermaid-diagram-remediation.md) — 636 mermaid violations exposed by the `detect_kind` fix; remediate and drop the temporary CI exclude.
 - [ayokoding-www-e2e-coverage-gaps](./ayokoding-www-e2e-coverage-gaps.md) — implement the ~104 + 83 missing Playwright step defs so e2e can revert to `fail-on-gen`.
 - [bare-repo-landing-method-step-count-drift](./bare-repo-landing-method-step-count-drift.md) — the landing method numbers eight steps but is summarized as "seven-step" in nine sites across three repos.

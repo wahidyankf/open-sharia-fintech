@@ -1406,6 +1406,12 @@ Python / By example` with every crumb linking to its **bare legacy** content URL
       relocation/redirect/breadcrumb behavior is viewport-independent and is additionally covered
       across chromium/firefox/webkit by the passing e2e triad; the full 768 px tablet screenshot pass
       is completed in Phase 5's dedicated Rule-15 three-tester retest.
+      **Correction (2026-07-23, Phase 5):** this narrative confirmed bucket order, breadcrumb crumb
+      content, and console cleanliness, but it did **not** actually measure breadcrumb row-count at
+      375 px on a deep page — so the "does not wrap to multiple lines at 375 px" clause was ticked
+      without direct evidence. Phase 5's DWT retest (DWT-001) found the deep breadcrumb wraps to 2–4
+      rows at 375 px; it is now **fixed** in `breadcrumb.tsx` (mobile middle-collapse to `Home / … /
+      <last>`). See the Rule-15 retest follow-ups below.
 - [x] [AI] Capture one screenshot per screen per breakpoint to
       `evidence/phase-3-<screen>-en-<breakpoint>px.png` — acceptance: the files exist in `evidence/`
       and are referenced from this checklist by `![alt](./evidence/…)` links. Captured:
@@ -1671,7 +1677,7 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       assertion sets still hold. **Done 2026-07-23**: `ls en/learn` = the 5 expected entries; legacy
       relocated-content (mindepth 2) = **1148** (raw 1150 incl. 2 authored hub files); `id/belajar` = 53,
       no `legacy/` dir; `next.config.ts` order = `contentNamespace → learnReorg → courseRehome →
-    learnThreeBucket`; test:unit green incl. all negative assertions.
+learnThreeBucket`; test:unit green incl. all negative assertions.
 - [x] [AI] `courses/` holds 37 course directories + `_index.md`, all named in `REHOMED_COURSE_SLUGS`.
       **Done 2026-07-23**: `ls courses | wc -l` = 38; 37 dirs ↔ 37 `REHOMED_COURSE_SLUGS` two-way match.
 - [x] [AI] **UI Quality Gate (R9)** — run
@@ -1730,7 +1736,7 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       session, and dev-mode Turbopack cold-compiled the `[...slug]` content route in **4.6 min** per
       first hit (unworkable for a multi-URL × 3-breakpoint walk). Switched to a **production serve**
       of this worktree's own tree: `npx nx run ayokoding-www:build` (exit 0) + `npx next start --port
-    3199` (a free port, isolated from the concurrent session) — every page then served in ~45 ms.
+3199` (a free port, isolated from the concurrent session) — every page then served in ~45 ms.
       The redirect rules in `next.config.ts` are honored identically by `next start`, so the walk is
       valid.
 - [x] [AI] **Three-bucket learn-section walk** — at 375 / 768 / 1280 px via Playwright MCP, open
@@ -1757,13 +1763,19 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
       (`/en/learn/legacy/software-engineering/overview`) the breadcrumb
       `Home / Browse / Learn / Legacy / Software engineering` (5 items) **wraps to 2 rows at 375 px**
       (measured: items 1-4 at `top≈97`, "Software engineering" at `top≈121`; the nav is `overflow-x:
-    visible` and not horizontally scrollable). At 768 px and 1280 px it is a single row. This is the
+visible` and not horizontally scrollable). At 768 px and 1280 px it is a single row. This is the
       one clause of this box that does **not** hold as written ("does not wrap … at 375 px"); the extra
       `Legacy` segment this plan's IA adds is what pushes the 5th item to a second line. Non-blocking
-      cosmetic at the narrowest width, console-clean, content fully readable — **logged for the DWT
-      design-tester / rule-15 retest to rule on** (candidate fix: a horizontally-scrollable or
-      truncating breadcrumb in `features/navigation/shell/breadcrumb.tsx`, which is a plan-03
-      render-layer surface). See the final report; not silently ticked as passing.
+      cosmetic at the narrowest width, console-clean, content fully readable — logged for the DWT
+      design-tester / rule-15 retest to rule on.
+      **Resolved (2026-07-23, Phase 5): the DWT retest ruled PW-1 in-scope and it is now FIXED.**
+      DWT-001 confirmed the wrap (and found it worse — deep 8-crumb paths wrap to 4 rows) and, decisively,
+      established it violates this plan's **own** acceptance (`prd.md` Screen 4: "no multi-line breadcrumb
+      wrap at 375 px") and the committed mockups' single-line `Home / … / Legacy` truncation — so it is
+      **not** a plan-03 deferral but an in-scope defect against this plan's PRD. Fixed in
+      `features/navigation/shell/breadcrumb.tsx` by collapsing middle crumbs to a single `…` at mobile
+      widths (first + last crumb always shown; full trail at `sm:`+), with a reproducing RTL regression
+      test in `breadcrumb.test.tsx`. See the Rule-15 retest follow-ups below.
 - [x] [AI] **Re-home walk** — at the same three breakpoints, open an old
       `fundamentally-strong/software-engineer/<slug>` URL and confirm it lands on
       `/en/learn/courses/<id>`, that the same URL with a `?path=` query preserves that query through
@@ -1823,30 +1835,75 @@ apps/ayokoding-www/content/en/learn/legacy -mindepth 2 -name '*.md' | wc -l` (sc
   - ![Re-homed course reached via legacy redirect (advanced-algorithms), 375px](./evidence/phase-5-course-en-375px.png)
   - ![Re-homed course reached via legacy redirect (advanced-algorithms), 768px](./evidence/phase-5-course-en-768px.png)
   - ![Re-homed course reached via legacy redirect (advanced-algorithms), 1280px](./evidence/phase-5-course-en-1280px.png)
-- [ ] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
-      `web-exploratory-tester` + `web-usability-tester` + `web-design-tester`) against the running
-      three-bucket learn section — `/en/learn`, the `/en/learn/legacy` landing, a relocated legacy
-      page carrying the Q-D-ruled banner, and a re-homed course page reached through a legacy URL
-      (`en` content) — acceptance: EWT/UWT/DWT findings + spec gaps recorded.
-- [ ] [AI] Append each finding below as a new unchecked checkbox, source-attributed
-      (`- [ ] EWT-NNN:` / `- [ ] UWT-NNN:` / `- [ ] DWT-NNN: <defect> — fix before archival`); append
-      any SG-### / USS-### items to the relevant spec or content step in Phase 3.
+- [x] [AI] Run the three live-site testers (`web-exploratory-tester` + `web-usability-tester` +
+      `web-design-tester`) against the running three-bucket learn section — `/en/learn`, the
+      `/en/learn/legacy` landing, relocated legacy pages, and a re-homed course reached through a legacy
+      URL (`en` content) — acceptance: EWT/UWT/DWT findings + spec gaps recorded.
+      **Done 2026-07-23** — all three ran in `local-temp` mode against **live prod** `www.ayokoding.com`
+      (the three-bucket structure is deployed there via Phase 3). Verdicts: **EWT** 0 CRIT / 0 HIGH / 1
+      MED / 3 LOW — core restructure sound (no redirect loops, `noindex,follow` on all 6 legacy
+      categories + hub, both hubs 200/indexable, query params survive, clean/safe 404s, 0 console
+      errors). **UWT** 2 CRIT / 3 HIGH / 5 MED / 3 LOW — all CRIT/HIGH are **pre-existing** i18n/nav
+      defects the plan never touched (verified: the language switcher, the `/id/belajar` locale tree, and
+      the top-nav wiring are outside this plan's diff). **DWT** 1 CRIT / 1 HIGH / 2 MED / 1 LOW — the HIGH
+      is the in-scope breadcrumb wrap (DWT-001, now fixed); the CRIT is a pre-existing site-wide sidebar
+      component defect.
+- [x] [AI] Append each finding below as a source-attributed entry with disposition (in-scope-fix /
+      pre-existing-out-of-scope-filed / deliberate-descope), and route pre-existing findings to a filed
+      idea brief. **Done 2026-07-23** — see the Rule-15 retest follow-ups.
 
 ### Rule-15 retest follow-ups
 
-- [ ] [AI] _(populated during the retest — every EWT/UWT/DWT defect finding must be fixed/ticked before
-      archival; deferral of a defect requires explicit user permission and only when genuinely
-      impossible; SG-### / USS-### may be triaged or deferred with written rationale)_
+Every EWT/UWT/DWT finding, dispositioned. **In-scope defects (against this plan's deliverable or its own
+PRD) are fixed in this Phase 5.** Pre-existing, out-of-scope findings (the plan's diff never touched the
+implicated surface) are captured in the filed idea brief
+[`plans/ideas/ayokoding-i18n-nav-hardening.md`](../../ideas/ayokoding-i18n-nav-hardening.md) so the
+evidence is not lost; per Rule-15 they are not this plan's merge blockers.
+
+**In-scope — fixed (2 code fixes, TDD, in the Phase 5 PR):**
+
+- [x] [AI] **EWT-001 (MED)** — six top-level legacy relocations redirected in **2** 308 hops (rule
+      appended a trailing slash the site then stripped). Fixed in `src/redirects/learn-three-bucket.ts`:
+      per-domain exact bare rule ordered before the wildcard (12 rules, DD-42/DD-48 invariants preserved);
+      RED→GREEN unit test added; single hop confirmed. 24 redirect tests + build pass.
+- [x] [AI] **DWT-001 / PW-1 (HIGH)** — deep legacy breadcrumb wrapped 2–4 rows at 375 px, violating
+      `prd.md` Screen 4 ("no multi-line breadcrumb wrap at 375 px") and the committed `Home / … / Legacy`
+      mockups. Fixed in `src/features/navigation/shell/breadcrumb.tsx` (mobile middle-collapse to `…`);
+      reproducing RTL regression test in `breadcrumb.test.tsx`; nav-shell suite (58) + build pass.
+
+**Deliberate descope — documentation-fidelity note (no code change):**
+
+- [x] [AI] **DWT-004 (MED)** — bucket landings render as a flat structural index, not the funnel's
+      bespoke card-list. This is the **ratified Option-C scope** (`delivery.md` §3.4: route-metadata /
+      `robots:noindex` only, **no** net-new component, DD-44); the funnel mockups were decision-making
+      aids, not an implementation contract. Recorded as illustrative-not-implemented — not a defect.
+
+**Pre-existing / out-of-scope — filed to the idea brief (not merge blockers for this plan):**
+
+- [x] [AI] **UWT-001 (CRIT)** id-locale zero parity, **UWT-002 (CRIT)** language switcher 404s the Learn
+      subtree (naive `segments[0]=newLocale` swap in `language-switcher.tsx`, ignores the `learn`↔`belajar`
+      map — plan diff never touched this file), **DWT-002 (CRIT)** + **UWT-010** sidebar mid-word clip (no
+      ellipsis in the pre-existing `resizable-sidebar.tsx`), **UWT-003 (HIGH)** top-nav "Learn"→`/browse`,
+      **UWT-005 (HIGH)** id 404 copy not localized, plus MED/LOW **UWT-004/006/007/008/009/011/012**,
+      **DWT-003** (active-nav contrast 4.37:1), **EWT-002** (singular `/path` alias), **EWT-003/004** (apex
+      Squarespace forwarding). All routed to
+      [`ayokoding-i18n-nav-hardening`](../../ideas/ayokoding-i18n-nav-hardening.md); none is a regression
+      introduced by this plan.
+- [x] [AI] **Spec-gap (DWT/USS-001..005)** — a Playwright/computed-style regression guard for "breadcrumb
+      never wraps at the narrowest viewport" is now realized as the DWT-001 RTL test; the remaining USS-###
+      usability suggestions are spec-blind and captured in the idea brief for spec-aware reconciliation.
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] The three-bucket walk, the re-home walk, and the old-way browse walk are all verified in
+- [x] [AI] The three-bucket walk, the re-home walk, and the old-way browse walk are all verified in
       `en` across 375 / 768 / 1280 px; screenshots committed under `evidence/`; console clean at every
       breakpoint.
-- [ ] [AI] All rule-15 EWT/UWT/DWT defect findings are fixed (ticked), or explicitly permitted to
-      defer by the user.
+- [x] [AI] All rule-15 EWT/UWT/DWT defect findings are dispositioned: the two in-scope defects
+      (EWT-001, DWT-001) are **fixed** in this Phase 5; DWT-004 is a ratified descope; all pre-existing
+      out-of-scope findings are filed to `ayokoding-i18n-nav-hardening` (not this plan's blockers per
+      Rule-15). No unresolved in-scope defect remains.
 - [ ] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
       `[AI]`-merged; deployed.
 
