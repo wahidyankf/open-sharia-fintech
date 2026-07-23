@@ -715,7 +715,7 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 > `careers/a/b/c` must validate. See
 > [tech-docs §Variable-depth `pathId`](./tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8).
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/schemas.test.ts` _(new test)_ asserting that
       `PathManifestSchema.safeParse(...)`:
       (a) **accepts** a manifest carrying `pathId`, `arc`, `title`, `description`, and a `courseOrder`
@@ -738,6 +738,13 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       not exist yet). Falsifiable both ways: once `schemas.ts` exists and is correct, all six
       assertion groups pass; reverting any one of the GREEN checks below makes its corresponding
       assertion fail again.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/schemas.test.ts` (new) — six `it()` blocks
+  (a)-(f) inside one `describe("PathManifestSchema", ...)`. `npx nx run ayokoding-www:test:unit`
+  fails with `Failed to resolve import "./schemas" from
+"src/features/course-paths/core/schemas.test.ts"`; 89 other test files still pass (2746 passed / 6
+  skipped), confirming no regression from the new failing suite.
 
   **Gherkin (underpins) →** the `pathId` and `courseOrder` shape asserted by "A path manifest is a
   valid topological entry into the prerequisite DAG" and "Every manifest course reference resolves to
@@ -762,7 +769,7 @@ to the source plan is recorded here so a reader auditing the split can trace eve
     And no course ID appears more than once in the manifest
   ```
 
-- [ ] [AI] **GREEN** — implement the `PathManifest` zod schema in
+- [x] [AI] **GREEN** — implement the `PathManifest` zod schema in
       `apps/ayokoding-www/src/features/course-paths/core/schemas.ts` _(new file)_ using **zod 4.3.6**
       [Repo-grounded — `apps/ayokoding-www/package.json`], per
       [tech-docs §The `PathManifest` zod schema](./tech-docs.md#the-pathmanifest-zod-schema): `pathId`
@@ -781,7 +788,15 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
       — acceptance: both exit 0; all six new `schemas.test.ts` assertion groups pass and no
       previously-passing test regresses.
-- [ ] [AI] **REFACTOR** — export the inferred `PathManifest` and `CourseRef` types from `schemas.ts`
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/schemas.ts` (new) — `PathManifestSchema` with
+  the `pathId` minimum-arity `.refine()`, required `arc`, `title`, `description`, and a
+  `courseOrder` array of course-ID string or `{ id, framing? }`. `npx nx run ayokoding-www:test:unit`
+  exits 0 (90 test files passed, 2752 passed / 6 skipped — all six `schemas.test.ts` groups pass,
+  no regression); `npx nx run ayokoding-www:typecheck` exits 0.
+
+- [x] [AI] **REFACTOR** — export the inferred `PathManifest` and `CourseRef` types from `schemas.ts`
       so no downstream module re-declares them, confirm the file imports nothing but `zod`, and
       confirm neither `schemas.ts` nor `schemas.test.ts` asserts a **fixed** segment count. The
       fixed-depth guard (broadened 2026-07-21 — the old `=== 2|3`-only pattern could not catch
@@ -798,6 +813,13 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       `zod`. Falsifiable both ways: adding a second import makes the import `grep` print two lines;
       adding a hardcoded `=== 3`, `<= 3` or `> 3` depth check makes the depth guard print a line
       **and** breaks the 4-segment fixture.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/schemas.ts` — `PathManifest` and `CourseRef`
+  types exported via `z.infer`. The depth guard `grep -nE ...` prints no output and exits 1; `npx nx
+run ayokoding-www:test:unit` and `npx nx run ayokoding-www:lint` both exit 0; `grep -n "^import"
+apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one line
+  (`import { z } from "zod";`).
 
 ### 1.3 `<MANIFESTS>` directory and its README
 
