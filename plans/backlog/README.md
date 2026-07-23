@@ -33,6 +33,19 @@ this backlog.
   — **Wave 3, terminal for `skills/`.** The `conventional-erp` and `sharia-erp` paths, their corpus
   and their manifests.
 
+### Standalone plans
+
+- [worktree-to-pr-hardening](./worktree-to-pr-hardening/README.md)
+  — Hardens the `worktree-to-pr` delivery workflow by decomposing the monolithic `pr-review-maker`
+  into seven specialist reviewer agents plus a mandatory `pr-review-synthesis-maker` coordinator, with
+  a reviewer-discipline convention, workflow revision (retiring the monolith at cutover), quality-gate
+  enhancements, post-cutover monitoring + rollback trigger, and merge-queue adoption. Scoped as a
+  **three-repo parity deliverable** (`ose-public` source of truth → `ose-primer` + `ose-infra`
+  downstream, each propagated via its own `worktree-to-pr` cycle). Authored non-interactively; the
+  maintainer has since decided D1/D2/D4/D7 (recorded in the plan). The open forks remain in the
+  **[Grilling Deferred — Decisions for Maintainer](./worktree-to-pr-hardening/tech-docs.md#grilling-deferred--decisions-for-maintainer)**
+  section to resolve before execution.
+
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
 
