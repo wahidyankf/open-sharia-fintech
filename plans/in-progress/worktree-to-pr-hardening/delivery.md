@@ -177,18 +177,18 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Create the reviewer-discipline convention (D8 → `repo-governance/development/quality/pr-review-disciplines.md`,
+- [x] [AI] Create the reviewer-discipline convention (D8 → `repo-governance/development/quality/pr-review-disciplines.md`,
       sibling reference `repo-governance/development/quality/ci-blocker-resolution.md`) defining the
       eight disciplines, each discipline's owned/not-owned scope, and the **boundary tie-breaker rule**
       (documented rule → governance; new tradeoff → architecture; domain-intent → correctness)
       — acceptance: file exists; `grep -c "tie-breaker" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1; the architecture↔correctness
       boundary is named as the coordinator's re-categorization responsibility
-- [ ] [AI] Embed the six grey-zone rulings verbatim (four core: new cross-module dependency; naming
+- [x] [AI] Embed the six grey-zone rulings verbatim (four core: new cross-module dependency; naming
       format vs. should-this-boundary-exist; error-handling shape vs. domain error scenarios; spec-file
       presence vs. scenario completeness — plus the two D1-added: performance↔architecture and
       docs↔governance)
       — acceptance: all six rulings present; `grep -c "→" repo-governance/development/quality/pr-review-disciplines.md` ≥ 6
-- [ ] [AI] Document the **Cloudflare-folded cost/noise mechanics** in the convention, mirroring
+- [x] [AI] Document the **Cloudflare-folded cost/noise mechanics** in the convention, mirroring
       [tech-docs.md §Cost-Control & Noise-Control Mechanics](./tech-docs.md#cost-control--noise-control-mechanics-cloudflare-production-learnings--folded-2026-07-23):
       the **risk-tier fan-out** (D12: trivial → coordinator-only, lite → 4 specialists, full → all 8
       specialists; security-sensitive paths force full), the
@@ -199,10 +199,10 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
       — acceptance: `grep -cE "risk-tier|SUPPRESS|instruction-decay|shared-context" repo-governance/development/quality/pr-review-disciplines.md` ≥ 4; the
       convention states D13 chose no generated-file exclusion (reviewers see the full diff) and CI runs
       over everything regardless
-- [ ] [AI] Add the accessible Mermaid boundary-decision flowchart (color-blind palette) mirroring
+- [x] [AI] Add the accessible Mermaid boundary-decision flowchart (color-blind palette) mirroring
       [tech-docs.md](./tech-docs.md#boundary-decision-the-tie-breaker-as-a-flowchart)
       — acceptance: `npx rhino-cli md mermaid validate repo-governance/development/quality/pr-review-disciplines.md` (or repo md-mermaid gate) exits 0
-- [ ] [AI] Cross-link the new convention from `repo-governance/development/README.md` index if the repo
+- [x] [AI] Cross-link the new convention from `repo-governance/development/README.md` index if the repo
       indexes conventions there (verify with `grep -rn "ci-blocker-resolution" repo-governance/development/README.md`)
       — acceptance: new convention linked, or its absence confirmed as not-indexed with a note
   - _Suggested executor: `repo-rules-maker`_
@@ -211,13 +211,13 @@ and Phase 11-12 are single-threaded by construction (each is one worktree, one P
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `npx nx affected -t lint` (or `npm run lint:md:fix` + markdownlint) passes on the new convention
-- [ ] [AI] `rhino-cli md links validate` and `md mermaid validate` pass for the new file
-- [ ] [AI] Invoke `repo-rules-checker` against `repo-governance/development/quality/pr-review-disciplines.md`
+- [x] [AI] `npx nx affected -t lint` (or `npm run lint:md:fix` + markdownlint) passes on the new convention
+- [x] [AI] `rhino-cli md links validate` and `md mermaid validate` pass for the new file
+- [x] [AI] Invoke `repo-rules-checker` against `repo-governance/development/quality/pr-review-disciplines.md`
       — acceptance: audit report generated in `generated-reports/`; 0 CRITICAL/HIGH findings (this is
       the substantively meaningful gate for this plan's own new governance artifact — the `nx affected`
       checks above are expected to report zero affected projects for a `repo-governance/`-only diff)
-- [ ] [AI] Commit created: `docs(governance): add PR reviewer-discipline convention + tie-breaker` and pushed to the plan branch
+- [x] [AI] Commit created: `docs(governance): add PR reviewer-discipline convention + tie-breaker` and pushed to the plan branch
 
 > **Pause Safety**: the convention is a standalone governance doc with no dangling references; the repo
 > is coherent with it present. Safe to stop. To resume: re-run the md link/mermaid validators on the
