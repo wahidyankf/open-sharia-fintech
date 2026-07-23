@@ -1,0 +1,49 @@
+Phase 0 baseline — ayokoding-learning-path-02-schema-and-prerequisite-dag
+Recorded: 2026-07-24
+
+<PLAN> = plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag
+<PLAN01> = plans/done/2026-07-23__ayokoding-learning-path-01-url-restructure
+<BASELINE_SHA> = c9445c3164c90cf8f1ad83618ee373b0cfa61fe6
+  (a) 40-hex SHA: pass
+  (b) git ls-tree -r --name-only <BASELINE_SHA> -- <PLAN>/syllabus | wc -l = 128
+  (c) git diff --name-only <BASELINE_SHA> -- <PLAN>/syllabus | grep -c . = 0
+
+npm install: exit 0, 1572 packages added.
+npm run doctor -- --fix: 16/16 tools OK, target-share fixed for 4 Rust crates, no unresolved drift.
+
+Baselines:
+  npx nx run ayokoding-www:build -> exit 0 (1856 static pages, Next.js 16.2.6 Turbopack)
+  npx nx run ayokoding-www:test:unit -> exit 0 (89 test files, 2746 passed / 6 skipped of 2752)
+  npx nx run ayokoding-www:specs:behavior:coverage -> exit 0
+    "Spec coverage valid! 22 specs, 258 scenarios, 926 steps — all covered."
+  Zero preexisting failures found.
+
+Start precondition — course-paths feature absent:
+  find apps/ayokoding-www/src/features/course-paths -type f 2>/dev/null | wc -l = 0
+
+content-url.ts baseline snapshot:
+  export: export function contentUrl(locale: Locale, slug: string): string {
+  (single export, 2-arg — the /c/ segment is already removed by plan 01's merged R0 inversion;
+   the third `pathId` arg does not exist yet)
+  test names (content-url.test.ts, describe + 6 it, none naming /c/ explicitly):
+    describe("contentUrl", ...)
+    it("uniformly joins en content-tree slugs bare (no /c/, DD-48)")
+    it("uniformly joins id content-tree slugs bare (no /c/, DD-48)")
+    it("leaves en loose top-level pages bare too — no distinct branch remains")
+    it("leaves id loose top-level pages bare too — no distinct branch remains")
+    it("maps empty/root slug to the locale root")
+    it("maps the _index slug to the locale root")
+    it("normalizes leading and trailing slashes on content slugs")
+
+syllabus/ corpus intact:
+  find <PLAN>/syllabus -type f | wc -l = 128
+
+<SPECS> domain folder empty:
+  find specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths -type f 2>/dev/null | wc -l = 0
+
+learnings.md: test -f <PLAN>/learnings.md = 0. H1 present as first substantive content line
+  (first two lines are HTML comments). One plan-authoring-time entry already present, marked
+  "pending triage at Phase 6" (test:integration/test:e2e no-op stubs) — carried forward, not
+  re-litigated at Phase 0.
+
+evidence/ folder: created (this file).

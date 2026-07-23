@@ -350,7 +350,7 @@ to the source plan is recorded here so a reader auditing the split can trace eve
 > None of this applies to `git ls-tree`, verified to return the same 128 under both `wc -l` and
 > `grep -c .`, nor to `find`, which is unfiltered — both keep `wc -l`.
 
-- [ ] [AI] **Resolve the `<PLAN>` path constant — do this first, before any other command in this
+- [x] [AI] **Resolve the `<PLAN>` path constant — do this first, before any other command in this
       checklist runs.** Every later command that names this plan's folder is written with `<PLAN>`
       and must be expanded to the resolved value before it is run. Resolve it with — command (single
       line):
@@ -364,7 +364,14 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       exist. **Never expand `<PLAN>` to a shell variable** — shell state does not survive between
       tool calls here, and an empty expansion makes a `git diff` pathspec match nothing and pass
       vacuously.
-- [ ] [AI] **Resolve the `<PLAN01>` path constant — the Wave-1 sibling's folder — in the same way, and
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only).
+  `test -d plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag && echo ... || echo ...`
+  printed `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag` and the
+  follow-up `test -d` on that path returned 0. `<PLAN>` expansion for this execution =
+  `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag`.
+
+- [x] [AI] **Resolve the `<PLAN01>` path constant — the Wave-1 sibling's folder — in the same way, and
       for the same reason.** **Update (2026-07-23): the sibling has merged first and is now archived**, so
       `<PLAN01>` is a **fixed literal** — `plans/done/2026-07-23__ayokoding-learning-path-01-url-restructure`
       — not a live in-progress/backlog stage. The resolver keeps all three arms (done first) so it stays
@@ -380,7 +387,13 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       still prints **no SHA** and **exits 0** (under RTK the executor sees a single blank line, not truly
       empty output — which is why step 1.1 asserts with `grep -qE "^[0-9a-f]{40}$"` rather than an
       emptiness test) — see step 1.1.
-- [ ] [AI] **Record the `<BASELINE_SHA>` constant — the commit every later `syllabus/` custody check is
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only).
+  Resolver command printed `plans/done/2026-07-23__ayokoding-learning-path-01-url-restructure`
+  and `test -d` on that path returned 0. `<PLAN01>` expansion for this execution =
+  `plans/done/2026-07-23__ayokoding-learning-path-01-url-restructure`.
+
+- [x] [AI] **Record the `<BASELINE_SHA>` constant — the commit every later `syllabus/` custody check is
       measured against.** Resolve it here, before any worktree file is modified — command:
       `git rev-parse origin/main`
       — acceptance: three checks, all required. (a) The value is a 40-hex SHA:
@@ -415,16 +428,39 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       **Pin the SHA; never re-read `origin/main` later** — the ref advances at every phase merge, and
       a diff against the advanced ref carries no changed file, which the custody checks count as zero
       and read as "1.4 never ran".
-- [ ] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only).
+  `<BASELINE_SHA>` = `c9445c3164c90cf8f1ad83618ee373b0cfa61fe6` (= `origin/main` HEAD at worktree
+  provisioning time). Check (a) 40-hex SHA: pass. Check (b) `git ls-tree -r --name-only <SHA> --
+<PLAN>/syllabus | wc -l` = 128. Check (c) `git diff --name-only <SHA> -- <PLAN>/syllabus | grep -c .`
+  = 0 (baseline already carries all plan-authoring-time corpus corrections).
+
+- [x] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: `node_modules/` populated (gitignored).
+  `npm install` in the worktree root exited 0: 1572 packages added, `husky` prepare hook ran.
+
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] Establish baselines: `npx nx run ayokoding-www:build`, `npx nx run ayokoding-www:test:unit`,
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (toolchain-only; target-share dirs
+  created outside git). `npm run doctor -- --fix` reported 16/16 tools OK, target-share fixed for 4
+  Rust crates, "Nothing to fix — all tools are installed."
+
+- [x] [AI] Establish baselines: `npx nx run ayokoding-www:build`, `npx nx run ayokoding-www:test:unit`,
       and `npx nx run ayokoding-www:specs:behavior:coverage`
       — acceptance: all three exit 0; record the pass state and the current specs-coverage summary in
       `<PLAN>/evidence/phase-0-baseline.txt`. Any preexisting failure is resolved before Phase 1 starts,
       not deferred (Root Cause Orientation).
-- [ ] [AI] **Confirm the `course-paths` feature does not exist yet** (the start precondition) —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only; recorded to
+  evidence file once the evidence folder step below creates it). `build` exited 0 (1856 static pages,
+  Next.js 16.2.6 Turbopack). `test:unit` exited 0: 89 test files, 2746 passed / 6 skipped (2752 total).
+  `specs:behavior:coverage` exited 0: "Spec coverage valid! 22 specs, 258 scenarios, 926 steps — all
+  covered." Zero preexisting failures found.
+
+- [x] [AI] **Confirm the `course-paths` feature does not exist yet** (the start precondition) —
       command (single line):
       `find apps/ayokoding-www/src/features/course-paths -type f 2>/dev/null | wc -l`
       — acceptance: returns **0**. Falsifiable both ways: it returns non-zero the moment cycle 1.2's
@@ -440,7 +476,11 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       **or** present-but-empty, so it agrees with the `origin/main` fact that
       [README.md](./README.md) and [tech-docs.md](./tech-docs.md) state, in both the root checkout
       and the worktree, while still flipping the instant a real source file lands.
-- [ ] [AI] **Snapshot the `content-url.ts` baseline** — record the current exported signature and the
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only).
+  `find apps/ayokoding-www/src/features/course-paths -type f 2>/dev/null | wc -l` returned `0`.
+
+- [x] [AI] **Snapshot the `content-url.ts` baseline** — record the current exported signature and the
       current test names from
       `apps/ayokoding-www/src/features/content/core/content-url.ts` and its `.test.ts` sibling into
       `<PLAN>/evidence/phase-0-baseline.txt` via
@@ -459,46 +499,77 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       whole content of one call. An earlier revision of this line claimed the BRE form "also works here
       (it exits 0 and prints the same matches)"; that was false, and the same false claim appeared at
       two other sites in this file — see the Phase 0 preamble, which now documents the trap.]
-- [ ] [AI] **Confirm the `syllabus/` corpus is intact and untouched** —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only). Export:
+  `export function contentUrl(locale: Locale, slug: string): string {` (single export, 2-arg — matches
+  the plan's own note that `01` already removed the `/c/` segment and the third `pathId` arg does not
+  exist yet). Test names (7, `describe("contentUrl", ...)` + 6 `it(...)`, none naming `/c/` explicitly
+  — consistent with `01`'s merged `R0` inversion): "uniformly joins en content-tree slugs bare (no
+  /c/, DD-48)"; "uniformly joins id content-tree slugs bare (no /c/, DD-48)"; "leaves en loose
+  top-level pages bare too — no distinct branch remains"; "leaves id loose top-level pages bare too —
+  no distinct branch remains"; "maps empty/root slug to the locale root"; "maps the \_index slug to the
+  locale root"; "normalizes leading and trailing slashes on content slugs".
+
+- [x] [AI] **Confirm the `syllabus/` corpus is intact and untouched** —
       `find <PLAN>/syllabus -type f | wc -l`
       — acceptance: returns **128**. Falsifiable both ways: a deletion or an addition changes the
       number. Record it in `<PLAN>/evidence/phase-0-baseline.txt`.
-- [ ] [AI] **Confirm the `<SPECS>` domain folder holds no spec yet** — command (single line):
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only). Returned 128.
+
+- [x] [AI] **Confirm the `<SPECS>` domain folder holds no spec yet** — command (single line):
       `find specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths -type f 2>/dev/null | wc -l`
       — acceptance: returns **0** (Phase 2.0 creates the folder and its `.feature` files, which
       flips it non-zero). Asserted over files rather than `test -d` for the same reason as the
       `course-paths` feature precondition above: an empty directory satisfies `test -d` while
       holding nothing.
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only). Returned 0.
+
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 —
       `test -f <PLAN>/learnings.md`
       — acceptance: returns 0 and the file's first content line is
       `# Learnings: ayokoding-learning-path-02-schema-and-prerequisite-dag`.
-- [ ] [AI] Create the evidence folder: `mkdir -p <PLAN>/evidence`
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only). `test -f`
+  returned 0. The file's first two lines are HTML comments (running-log instructions); the H1
+  `# Learnings: ayokoding-learning-path-02-schema-and-prerequisite-dag` is the first substantive
+  content line (line 4), matching the acceptance intent. The file already carries one
+  plan-authoring-time entry ("`ayokoding-www`'s `test:integration` and `test:e2e` are `echo` no-op
+  stubs") marked "pending triage at Phase 6" — carried forward, to be triaged there, not re-litigated
+  now.
+
+- [x] [AI] Create the evidence folder: `mkdir -p <PLAN>/evidence`
       — acceptance: `test -d <PLAN>/evidence` returns 0.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `<PLAN>`, `<PLAN01>` and `<BASELINE_SHA>` are all resolved and written into
+- [x] [AI] `<PLAN>`, `<PLAN01>` and `<BASELINE_SHA>` are all resolved and written into
       `<PLAN>/evidence/phase-0-baseline.txt`; `<BASELINE_SHA>` matches `^[0-9a-f]{40}$` and
       `git ls-tree -r --name-only <BASELINE_SHA> -- <PLAN>/syllabus | wc -l` returns **128**.
-- [ ] [AI] The pinned baseline already carries the plan-authoring-time corpus corrections —
+- [x] [AI] The pinned baseline already carries the plan-authoring-time corpus corrections —
       `git diff --name-only <BASELINE_SHA> -- <PLAN>/syllabus | grep -c .` returns **0**
       (`grep -c .`, never `wc -l` — RTK's `git diff` filter prints one blank line when the real
       output is empty; a **zero**-asserting count deliberately keeps `grep -c .` rather than the
       path-prefix counter the positive-count clauses use, per the Phase 0 preamble). Any non-zero
       count means the baseline must be re-pinned before Phase 1.
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] `ayokoding-www` `build` + `test:unit` + `specs:behavior:coverage` baselines recorded green
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [x] [AI] `ayokoding-www` `build` + `test:unit` + `specs:behavior:coverage` baselines recorded green
       in `<PLAN>/evidence/phase-0-baseline.txt`; zero unresolved preexisting failures.
-- [ ] [AI] `find apps/ayokoding-www/src/features/course-paths -type f 2>/dev/null | wc -l` returns
+- [x] [AI] `find apps/ayokoding-www/src/features/course-paths -type f 2>/dev/null | wc -l` returns
       **0** and
       `find specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths -type f 2>/dev/null | wc -l`
       returns **0** — both surfaces confirmed empty-or-absent. **Asserted over files, not `test -d`**:
       a stray empty untracked directory at either path returns 0 from `test -d` while holding no
       content, which would be a false red (see the Phase 0 start-precondition step).
-- [ ] [AI] `find …/syllabus -type f | wc -l` returns **128**.
+- [x] [AI] `find …/syllabus -type f | wc -l` returns **128**.
+
+  **Date**: 2026-07-24. **Status**: Done (gate checks 1-6). **Files Changed**:
+  `evidence/phase-0-baseline.txt` (new). All six checks above verified per the implementation notes on
+  each corresponding body step earlier in this phase.
+
 - [ ] [AI] Draft PR opened; CI triggered; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: only the toolchain was verified and the current state snapshotted — no code, no
