@@ -570,13 +570,13 @@ affected` no-op noted in Phase 8)
 > this plan's own governance/agent artifacts are the markdown gate below plus the `repo-rules-checker`
 > (Phase 1 Gate) and `repo-workflow-checker` (Phase 4 Gate) invocations.
 
-- [ ] [AI] Run affected typecheck: `npx nx affected -t typecheck` — exits 0 (zero affected projects expected)
-- [ ] [AI] Run affected linting: `npx nx affected -t lint` — exits 0 (zero affected projects expected)
-- [ ] [AI] Run affected quick tests: `npx nx affected -t test:quick` — exits 0 (zero affected projects expected)
-- [ ] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — exits 0 (docs/agents plan;
+- [x] [AI] Run affected typecheck: `npx nx affected -t typecheck` — exits 0 (zero affected projects expected)
+- [x] [AI] Run affected linting: `npx nx affected -t lint` — exits 0 (zero affected projects expected)
+- [x] [AI] Run affected quick tests: `npx nx affected -t test:quick` — exits 0 (zero affected projects expected)
+- [x] [AI] Run affected spec coverage: `npx nx affected -t specs:coverage` — exits 0 (docs/agents plan;
       confirm no `specs/` regression)
-- [ ] [AI] Run the full markdown gate: `npm run lint:md:fix` then markdownlint — zero violations
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by this plan — then re-run to confirm
+- [x] [AI] Run the full markdown gate: `npm run lint:md:fix` then markdownlint — zero violations
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by this plan — then re-run to confirm
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows the root cause orientation principle — proactively fix preexisting errors encountered
@@ -584,20 +584,20 @@ affected` no-op noted in Phase 8)
 
 ### Commit Guidelines
 
-- [ ] [AI] Commit changes thematically (convention doc, specialist agents, coordinator, workflow
+- [x] [AI] Commit changes thematically (convention doc, specialist agents, coordinator, workflow
       cutover + monolith retirement, enhancements, monitoring/rollback, future-work as separate
       cohesive commits)
-- [ ] [AI] Follow Conventional Commits `<type>(<scope>): <description>`
-- [ ] [AI] Keep any preexisting fixes in their own commits, separate from plan work
+- [x] [AI] Follow Conventional Commits `<type>(<scope>): <description>`
+- [x] [AI] Keep any preexisting fixes in their own commits, separate from plan work
 
 ### Open Draft PR + Post-Push CI Verification
 
-- [ ] [AI] Open a draft PR against `main`: `gh pr create --draft --base main`
+- [x] [AI] Open a draft PR against `main`: `gh pr create --draft --base main`
       — acceptance: draft PR exists; its diff carries all nine new agents, the monolith deletion, and
       the governance/workflow edits
-- [ ] [AI] Monitor ALL GitHub Actions workflows on the PR (poll every 2 min per `ci-monitoring`)
+- [x] [AI] Monitor ALL GitHub Actions workflows on the PR (poll every 2 min per `ci-monitoring`)
       — acceptance: all CI checks green; no exceptions
-- [ ] [AI] If any CI check fails, fix at root cause and push a follow-up commit; repeat until green
+- [x] [AI] If any CI check fails, fix at root cause and push a follow-up commit; repeat until green
 
 ### PR-Review Maker→Fixer Cycle (mandatory for `worktree-to-pr`)
 
