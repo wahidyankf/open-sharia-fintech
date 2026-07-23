@@ -328,6 +328,16 @@ Then("navigation is available through the mobile drawer", async ({ page }) => {
 /** The tree container `sidebar-tree.tsx` wraps its depth-0 `<ul>` in, so long labels scroll. */
 const SCROLL_CONTAINER_SELECTOR = `aside:has(${PANEL_SELECTOR}) .overflow-x-auto`;
 
+/**
+ * The courses index — a stable (not subject to this plan's learn-section relocation, DD-42)
+ * page whose sidebar shows all 37 course titles at once, several long enough (e.g. "21 ·
+ * Object-Oriented Design & Patterns") to force horizontal scroll, and numerous enough to force
+ * vertical scroll even at a full-height viewport — unlike `DOCS_PAGE` (`/en/learn/overview`),
+ * whose own sidebar now shows only the three top-level learn buckets (DD-40) plus itself, too
+ * short/narrow for these two overflow scenarios after the six-domain relocation (DD-41/DD-42).
+ */
+const TALL_WIDE_SIDEBAR_PAGE = "/en/learn/courses";
+
 Given(
   "a docs sidebar narrowed to {int} pixels containing a nav label wider than {int} pixels",
   async ({ page }, widthPx: number, _minLabelWidthPx: number) => {
@@ -340,7 +350,7 @@ Given(
     // "resizable panel rendered at N pixels with a M to K pixel band" step above.
     const viewportWidth = Math.round(widthPx / (MIN_WIDTH_PCT / 100));
     await page.setViewportSize({ width: viewportWidth, height: 800 });
-    await page.goto(DOCS_PAGE);
+    await page.goto(TALL_WIDE_SIDEBAR_PAGE);
     await setPersistedSidebarWidth(page, widthPx);
     await page.reload();
 
@@ -372,12 +382,14 @@ Then("the label is not clipped or wrapped", async ({ page }) => {
 const VERTICAL_SCROLL_CONTAINER_SELECTOR = `aside:has(${PANEL_SELECTOR}) [data-slot="resizable-panel-content"] > div`;
 
 Given("a docs sidebar whose nav tree is taller than the visible rail height", async ({ page }) => {
-  // Rather than fabricating tall content, shrink the viewport height enough that the docs
-  // page's real nav tree exceeds the rail's `h-[calc(100vh-4rem)]` height — mirroring the
-  // "narrowed to N pixels" technique above, which shrinks width instead for the horizontal
-  // scenario.
+  // Rather than fabricating tall content, shrink the viewport height enough that a real page's
+  // nav tree exceeds the rail's `h-[calc(100vh-4rem)]` height — mirroring the "narrowed to N
+  // pixels" technique above, which shrinks width instead for the horizontal scenario. Uses
+  // `TALL_WIDE_SIDEBAR_PAGE` (the courses index, 37 titles) rather than `DOCS_PAGE`: after the
+  // six-domain relocation (DD-40/DD-41) the `/en/learn/overview` sidebar shows only the three
+  // top-level learn buckets plus itself, too short to overflow the rail even at a 300px viewport.
   await page.setViewportSize({ width: 1280, height: 300 });
-  await page.goto(DOCS_PAGE);
+  await page.goto(TALL_WIDE_SIDEBAR_PAGE);
 });
 
 Then("the sidebar content area is vertically scrollable", async ({ page }) => {

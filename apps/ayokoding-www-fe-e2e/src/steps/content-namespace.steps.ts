@@ -66,10 +66,10 @@ Then("the current URL should not contain {string}", async ({ page }, fragment: s
 });
 
 // ---------------------------------------------------------------------------
-// /c namespace navigation assertions
+// Bare content-URL navigation assertions (DD-48 de-namespacing)
 // ---------------------------------------------------------------------------
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves under the /c namespace
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
 Then("a breadcrumb nav should be present", async ({ page }) => {
   await expect(page.getByRole("navigation", { name: /breadcrumb/i })).toBeVisible();
 });
@@ -77,13 +77,14 @@ Then("a breadcrumb nav should be present", async ({ page }) => {
 Then("the browse index should show a section card for {string}", async ({ page }, sectionSlug: string) => {
   // SectionCard renders as an <a class="group block ..."> link inside a grid.
   // Sidebar links lack the "group" class — scope with it to avoid strict-mode
-  // ambiguity when both the sidebar and the section card share the same /c/ href.
+  // ambiguity when both the sidebar and the section card share the same href.
+  // Bare href (DD-48 de-namespacing) — the /c/ content route was retired.
   const main = page.getByRole("main");
-  const link = main.locator(`a.group[href*="/c/${sectionSlug}"]`);
+  const link = main.locator(`a.group[href*="/${sectionSlug}"]`);
   await expect(link).toBeVisible();
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The /c browse index lists all content sections
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
 Then("the breadcrumb should start with a Home link", async ({ page }) => {
   const breadcrumb = page.getByRole("navigation", { name: /breadcrumb/i });
   const homeLink = breadcrumb.getByRole("link").first();

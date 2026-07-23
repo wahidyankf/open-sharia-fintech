@@ -9,7 +9,8 @@ Then(
   async ({ page }) => {
     await page.waitForLoadState("networkidle");
     const main = page.getByRole("main");
-    const links = main.locator("a[href*='/c/learn/courses/']");
+    // Bare href (DD-48 de-namespacing) — the /c/ content route was retired.
+    const links = main.locator("a[href*='/learn/courses/']");
     const count = await links.count();
     expect(count).toBeGreaterThan(0);
 

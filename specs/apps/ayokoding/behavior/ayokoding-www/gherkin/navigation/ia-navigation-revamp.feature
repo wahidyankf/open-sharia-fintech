@@ -9,7 +9,7 @@ Feature: IA navigation revamp
 
   @unit @e2e
   Scenario: English content resolves at its bare URL
-    When a visitor navigates to "/en/learn/software-engineering"
+    When a visitor navigates to "/en/learn/legacy/software-engineering"
     Then the page should respond with HTTP 200
     And a breadcrumb nav should be present
 
@@ -64,7 +64,7 @@ Feature: IA navigation revamp
 
   @unit @e2e
   Scenario: Breadcrumb segments link to their bare content URLs
-    Given a visitor is on "/en/learn/software-engineering/data"
+    Given a visitor is on "/en/learn/legacy/software-engineering/data"
     When the breadcrumb renders its ancestor segments
     Then each ancestor crumb links to its bare content URL
 
@@ -90,7 +90,7 @@ Feature: IA navigation revamp
 
   @unit @e2e
   Scenario: Canonical link for moved content points to its bare URL
-    Given the content page at "/en/learn/software-engineering"
+    Given the content page at "/en/learn/legacy/software-engineering"
     When its metadata is generated
-    Then the canonical alternate is "/en/learn/software-engineering"
+    Then the canonical alternate is "/en/learn/legacy/software-engineering"
     And the language alternates include en and x-default

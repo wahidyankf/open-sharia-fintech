@@ -60,7 +60,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("English content resolves at its bare URL", ({ When, Then, And }) => {
-    When('a visitor navigates to "/en/learn/software-engineering"', () => {
+    When('a visitor navigates to "/en/learn/legacy/software-engineering"', () => {
       // Widened content route: app/[locale]/(content)/[...slug]/page.tsx (DD-48).
       expect(true).toBe(true);
     });
@@ -272,17 +272,17 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("Breadcrumb segments link to their bare content URLs", ({ Given, When, Then }) => {
     const contentSegments = [
       { label: "Learn", slug: "learn" },
-      { label: "Software Engineering", slug: "learn/software-engineering" },
-      { label: "Data", slug: "learn/software-engineering/data" },
+      { label: "Software Engineering", slug: "learn/legacy/software-engineering" },
+      { label: "Data", slug: "learn/legacy/software-engineering/data" },
     ];
 
-    Given('a visitor is on "/en/learn/software-engineering/data"', () => {
+    Given('a visitor is on "/en/learn/legacy/software-engineering/data"', () => {
       cleanup();
     });
 
     When("the breadcrumb renders its ancestor segments", () => {
       render(
-        <Breadcrumb locale="en" slug="learn/software-engineering/data" segments={contentSegments} showCurrent />,
+        <Breadcrumb locale="en" slug="learn/legacy/software-engineering/data" segments={contentSegments} showCurrent />,
       );
     });
 
@@ -291,7 +291,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       const learnLink = screen.getByRole("link", { name: "Learn" });
       expect(learnLink.getAttribute("href")).toBe("/en/learn");
       const seLink = screen.getByRole("link", { name: "Software Engineering" });
-      expect(seLink.getAttribute("href")).toBe("/en/learn/software-engineering");
+      expect(seLink.getAttribute("href")).toBe("/en/learn/legacy/software-engineering");
       // Current page rendered as non-link span
       const current = screen.getByText("Data");
       expect(current.getAttribute("aria-current")).toBe("page");
@@ -370,7 +370,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Canonical link for moved content points to its bare URL", ({ Given, When, Then, And }) => {
-    Given('the content page at "/en/learn/software-engineering"', () => {
+    Given('the content page at "/en/learn/legacy/software-engineering"', () => {
       // Covered by apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.unit.test.ts
       expect(true).toBe(true);
     });
@@ -379,9 +379,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    Then('the canonical alternate is "/en/learn/software-engineering"', () => {
+    Then('the canonical alternate is "/en/learn/legacy/software-engineering"', () => {
       // generateMetadata sets alternates.canonical via contentUrl — asserted in page.unit.test.ts
-      expect(contentUrl("en", "learn/software-engineering")).toBe("/en/learn/software-engineering");
+      expect(contentUrl("en", "learn/legacy/software-engineering")).toBe("/en/learn/legacy/software-engineering");
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
