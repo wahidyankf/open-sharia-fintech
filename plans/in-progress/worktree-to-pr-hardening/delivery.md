@@ -518,17 +518,17 @@ affected` no-op noted in Phase 8)
 
 > _Suggested executor: `repo-rules-maker`_
 
-- [ ] [AI] Add a `## Future Work` section to `repo-governance/development/quality/pr-review-disciplines.md`
+- [x] [AI] Add a `## Future Work` section to `repo-governance/development/quality/pr-review-disciplines.md`
       (the convention created in Phase 1) and cross-reference the existing bot-identity two-pager
       [`plans/ideas/pr-review-bot-identity.md`](../../ideas/pr-review-bot-identity.md) as the owner of
       the AI-attribution / `REQUEST_CHANGES` gap
       — acceptance: `grep -c "## Future Work" repo-governance/development/quality/pr-review-disciplines.md` = 1;
       `test -f plans/ideas/pr-review-bot-identity.md` passes and the `## Future Work` section links it
-- [ ] [AI] Add the **cost/latency budgeting** note (≈$1 × 8 specialists × 3 cycles, bounded by the
+- [x] [AI] Add the **cost/latency budgeting** note (≈$1 × 8 specialists × 3 cycles, bounded by the
       D12 risk-tier fan-out; monitor per-PR review cost) referencing the Cloudflare median, inside the
       `## Future Work` section of `repo-governance/development/quality/pr-review-disciplines.md`
       — acceptance: `grep -ci "cost\|budget" repo-governance/development/quality/pr-review-disciplines.md` ≥ 1
-- [ ] [AI] Record the **deferred merge queue** (D7/D10): a merge queue was researched (GitHub-native vs
+- [x] [AI] Record the **deferred merge queue** (D7/D10): a merge queue was researched (GitHub-native vs
       Graphite) but **NOT adopted** — the repo's branch settings do not expose a merge-queue toggle, so
       precondition (c) stays the manual branch-up-to-date check. The deferred work is owned by the
       standalone [`merge-queue-adoption`](../../backlog/merge-queue-adoption/README.md) backlog plan; record this
@@ -540,10 +540,10 @@ affected` no-op noted in Phase 8)
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] Future-work section covers the bot-identity cross-ref, cost budgeting, and the deferred
+- [x] [AI] Future-work section covers the bot-identity cross-ref, cost budgeting, and the deferred
       merge queue (researched, not adopted — no branch-protection merge-queue setting available)
-- [ ] [AI] `rhino-cli md links validate` passes (bot-identity link resolves); `npx nx affected -t lint` passes
-- [ ] [AI] Commit created: `docs(governance): add worktree-to-PR future-work workstream` and pushed
+- [x] [AI] `rhino-cli md links validate` passes (bot-identity link resolves); `npx nx affected -t lint` passes
+- [x] [AI] Commit created: `docs(governance): add worktree-to-PR future-work workstream` and pushed
 
 > **Pause Safety**: all substantive content is authored and committed to the plan branch; the draft PR
 > (if already open) reflects the full change set. Safe to stop. To resume: re-run the md link validator

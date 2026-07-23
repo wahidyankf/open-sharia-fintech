@@ -434,6 +434,53 @@ No force-push and no history rewrite happen at any step — restoring the monoli
 that reintroduces a previously deleted file, exactly like reverting any other change, per the
 [No Destructive Git Operations](../workflow/no-destructive-git-operations.md) practice.
 
+## Future Work
+
+The discipline split, the cost- and noise-control mechanics, and the post-cutover monitoring plan
+above describe the pipeline as it stands today. Three items remain deliberately outside this
+convention's own scope — each depends on a decision, an infrastructure fact, or ongoing measurement
+that belongs in its own document rather than being folded into this convention's normative rules.
+
+### Bot Identity and the `REQUEST_CHANGES` Gap
+
+The eight specialists and `pr-review-synthesis-maker` post exclusively through the GitHub Reviews
+API, but they authenticate as the PR author's own identity, and GitHub rejects a `REQUEST_CHANGES`
+review submitted against one's own pull request. Every blocking review — including one carrying a
+CRITICAL finding — therefore lands with review STATE `COMMENT` instead of `REQUEST_CHANGES`, so a
+consumer that gates on STATE alone reads a blocked PR as unblocked while a CRITICAL finding sits open
+on it. This convention does not own closing that gap: provisioning a scope-minimal GitHub App or
+CI-scoped bot identity and rewiring the coordinator to authenticate as it is tracked in the
+[PR-review bot identity idea](../../../plans/ideas/pr-review-bot-identity.md), which owns the
+AI-attribution and formal `REQUEST_CHANGES` question until an org-level identity becomes available.
+
+### Cost and Latency Budgeting
+
+Cloudflare's own production system — the one this convention's fan-out/coordinator shape is modeled
+on (see [Cost-Control & Noise-Control Mechanics](#cost-control--noise-control-mechanics)) — reports a
+median cost of ≈$1 per review. Applied to this repo's shape, a `full`-tier PR fanning out to all
+eight specialists across the fixed three-cycle ceiling costs roughly ≈$1 × 8 specialists × 3 cycles
+per PR, bounded downward by the [risk-tier fan-out (D12)](#risk-tier-fan-out-d12): a `trivial` PR
+runs the coordinator alone and a `lite` PR fans out to only four specialists, so its actual per-PR
+cost sits well under that ceiling. This convention does not yet mandate a specific budget or alert
+threshold. It recommends that whoever owns the
+[Post-Cutover Monitoring Plan](#post-cutover-monitoring-plan)'s cost/latency-per-review metric also
+track the absolute per-PR dollar figure over time, not only the per-tier trend, so a repo-wide cost
+creep is visible before it grows into a rollback-trigger-level concern.
+
+### Deferred Merge Queue (D7/D10)
+
+A merge queue was researched during this convention's own drafting — GitHub-native versus
+Graphite/Aviator — as a way to close a gap in
+[PR Merge Protocol](../workflow/pr-merge-protocol.md) precondition (c): a static, per-PR
+branch-up-to-date check cannot guarantee the branch stays non-destructively current when two PRs
+merge at overlapping times. **That adoption was researched but NOT delivered.** The repo's branch
+settings expose no merge-queue toggle to enable, because GitHub merge queue requires organization
+ownership and the repos in scope are personal-account-owned. Precondition (c) therefore remains the
+manual branch-up-to-date check, unchanged. The deferred investigation, availability matrix, and
+adoption path are owned by the standalone
+[merge-queue-adoption backlog plan](../../../plans/backlog/merge-queue-adoption/README.md), not by
+this convention.
+
 ## Examples
 
 ### PASS: Routing a naming-format finding to governance
