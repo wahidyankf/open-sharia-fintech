@@ -16,18 +16,18 @@ afterEach(cleanup);
 
 describe("SectionCard", () => {
   it("renders the section title as a link to its content URL", () => {
-    render(<SectionCard href="/en/c/learn" title="Software Engineering" description="Languages, architecture." />);
+    render(<SectionCard href="/en/learn" title="Software Engineering" description="Languages, architecture." />);
     const link = screen.getByRole("link", { name: /Software Engineering/ });
-    expect(link.getAttribute("href")).toBe("/en/c/learn");
+    expect(link.getAttribute("href")).toBe("/en/learn");
   });
 
   it("renders the description blurb", () => {
-    render(<SectionCard href="/en/c/learn" title="Software Engineering" description="Languages, architecture." />);
+    render(<SectionCard href="/en/learn" title="Software Engineering" description="Languages, architecture." />);
     expect(screen.getByText("Languages, architecture.")).toBeTruthy();
   });
 
   it("reuses the shared Card token surface (rounded border)", () => {
-    const { container } = render(<SectionCard href="/en/c/learn" title="Learn" description="x" />);
+    const { container } = render(<SectionCard href="/en/learn" title="Learn" description="x" />);
     // Card primitive applies the rounded-xl border bg-card token surface.
     expect(container.querySelector('[data-slot="card"]')).not.toBeNull();
   });
@@ -41,7 +41,7 @@ describe("SectionCard", () => {
     // assistive tech. No source fix applied — this test locks in that already-correct
     // behavior. Also fills a previously-uncovered code path: no prior test in this file
     // rendered SectionCard with the `meta` prop supplied.
-    const { container } = render(<SectionCard href="/en/c/learn" title="Learn" description="x" meta="12 topics" />);
+    const { container } = render(<SectionCard href="/en/learn" title="Learn" description="x" meta="12 topics" />);
     expect(screen.getByText("12 topics")).toBeTruthy();
     const icon = container.querySelector("svg");
     expect(icon).not.toBeNull();

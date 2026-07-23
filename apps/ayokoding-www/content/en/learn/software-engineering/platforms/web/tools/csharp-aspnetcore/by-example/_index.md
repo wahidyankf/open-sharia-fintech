@@ -7,7 +7,7 @@ description: "Learn ASP.NET Core 8 through 80 heavily annotated code examples co
 tags: ["aspnetcore", "csharp", "dotnet", "web-framework", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/csharp-aspnetcore/by-example/advanced)

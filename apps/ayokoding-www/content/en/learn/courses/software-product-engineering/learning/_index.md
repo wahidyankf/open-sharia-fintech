@@ -5,10 +5,10 @@ draft: false
 weight: 132
 ---
 
-- [Overview](/en/c/learn/courses/software-product-engineering/learning/overview)
-- [Beginner Scenarios](/en/c/learn/courses/software-product-engineering/learning/beginner)
-- [Intermediate Scenarios](/en/c/learn/courses/software-product-engineering/learning/intermediate)
-- [Advanced Scenarios](/en/c/learn/courses/software-product-engineering/learning/advanced)
-- [Capstone](/en/c/learn/courses/software-product-engineering/learning/capstone)
-  - [Overview](/en/c/learn/courses/software-product-engineering/learning/capstone/overview)
-  - [Product Brief: Auto-Reminder SMS for Upcoming Shifts](/en/c/learn/courses/software-product-engineering/learning/capstone/brief)
+- [Overview](/en/learn/courses/software-product-engineering/learning/overview)
+- [Beginner Scenarios](/en/learn/courses/software-product-engineering/learning/beginner)
+- [Intermediate Scenarios](/en/learn/courses/software-product-engineering/learning/intermediate)
+- [Advanced Scenarios](/en/learn/courses/software-product-engineering/learning/advanced)
+- [Capstone](/en/learn/courses/software-product-engineering/learning/capstone)
+  - [Overview](/en/learn/courses/software-product-engineering/learning/capstone/overview)
+  - [Product Brief: Auto-Reminder SMS for Upcoming Shifts](/en/learn/courses/software-product-engineering/learning/capstone/brief)

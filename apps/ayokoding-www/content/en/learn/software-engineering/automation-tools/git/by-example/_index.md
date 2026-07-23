@@ -8,7 +8,7 @@ layout: list
 description: "Learn Git through 88 heavily annotated examples covering branching, merging, rebasing, cherry-picking, bisect, hooks, worktrees, and advanced workflows (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/software-engineering/automation-tools/git/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/automation-tools/git/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/automation-tools/git/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/automation-tools/git/by-example/advanced)
+- [Overview](/en/learn/software-engineering/automation-tools/git/by-example/overview)
+- [Beginner](/en/learn/software-engineering/automation-tools/git/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/automation-tools/git/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/automation-tools/git/by-example/advanced)

@@ -3,25 +3,45 @@ import type { Metadata } from "next";
 import { serverCaller } from "@/lib/trpc/server";
 import { isValidLocale, type Locale } from "@/features/i18n/core/config";
 import { t } from "@/features/i18n/core/translations";
-import { LOOSE_PAGE_ALLOWLIST } from "@/features/content/core/content-url";
+import { contentUrl } from "@/features/content/core/content-url";
 import { slugFromSegments } from "@/features/content/core/slug";
 import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
 import { TableOfContents } from "@/features/navigation/shell/toc";
 import { PrevNext } from "@/features/navigation/shell/prev-next";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 import { TRPCError } from "@trpc/server";
+import { createTRPCContext } from "@/features/app-shell/shell/trpc-init";
 
 export const dynamicParams = false;
 
-export function generateStaticParams({ params }: { params: { locale: string } }) {
-  // Narrowed (DD-2): this catch-all now resolves ONLY the per-locale loose
-  // top-level pages (about/terms). Content-tree slugs are statically generated
-  // by the sibling c/[...slug] route; old bare content paths fall through to the
-  // content-namespace 308 redirects. (The locale root "" / "_index" is served by
-  // app/[locale]/page.tsx, not this catch-all.)
+export async function generateStaticParams({ params }: { params: { locale: string } }) {
+  // Widened (DD-48 de-namespacing): this catch-all now serves the ENTIRE
+  // content tree, not just the per-locale loose top-level pages — the merged
+  // route absorbed this generateStaticParams from the retired c/[...slug]
+  // route. Every content-tree slug, including the two loose pages
+  // (about-ayokoding/terms-and-conditions for en, tentang-ayokoding/
+  // syarat-dan-ketentuan for id), is already a member of index.contentMap
+  // (readAllContent globs every .md under the locale's content dir with no
+  // loose-page exclusion — verified at delivery time, apps/ayokoding-www/src/
+  // features/content/shell/reader.ts + service.ts's buildContentIndex), so
+  // one enumeration covers both without a separate LOOSE_PAGE_ALLOWLIST
+  // union. LOOSE_PAGE_ALLOWLIST and isLoosePage() are therefore removed
+  // entirely (content-url.ts) rather than kept for this call site.
+  // (The locale root "" / "_index" is served by app/[locale]/page.tsx, not
+  // this catch-all.)
   if (!isValidLocale(params.locale)) return [];
 
-  return LOOSE_PAGE_ALLOWLIST[params.locale].map((slug) => ({ slug: slug.split("/") }));
+  const { contentService } = createTRPCContext();
+  const index = await contentService.getIndex();
+  const slugs: { slug: string[] }[] = [];
+
+  for (const [key, meta] of index.contentMap) {
+    if (!key.startsWith(`${params.locale}:`)) continue;
+    if (meta.slug === "") continue;
+    slugs.push({ slug: meta.slug.split("/") });
+  }
+
+  return slugs;
 }
 
 interface Props {
@@ -42,7 +62,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: page.title,
       description: page.description ?? undefined,
       alternates: {
-        canonical: `/${locale}/${slugStr}`,
+        canonical: contentUrl(locale as Locale, slugStr),
+        languages: {
+          en: contentUrl("en", slugStr),
+          "x-default": contentUrl("en", slugStr),
+        },
       },
       openGraph: {
         title: page.title,
@@ -73,7 +97,7 @@ export default async function ContentPage({ params }: Props) {
     throw err;
   }
 
-  const breadcrumbSegments = buildBreadcrumbs(slugStr, page.title);
+  const breadcrumbSegments = buildBreadcrumbs(locale, slugStr, page.title);
 
   return (
     <>
@@ -107,9 +131,19 @@ export default async function ContentPage({ params }: Props) {
   );
 }
 
-function buildBreadcrumbs(slug: string, currentTitle: string): { label: string; slug: string }[] {
+function buildBreadcrumbs(
+  locale: string,
+  slug: string,
+  currentTitle: string,
+): { label: string; slug: string; href?: string }[] {
   const parts = slug.split("/");
-  const segments: { label: string; slug: string }[] = [];
+  // Home -> /{locale}; Browse -> /{locale}/browse. The "Browse" segment,
+  // carried over from the retired c/[...slug] route (DD-48), used to point
+  // at /{locale}/c; it now points at the relocated browse/ route.
+  const segments: { label: string; slug: string; href?: string }[] = [
+    { label: t(locale as Locale, "breadcrumbHome"), slug: "" },
+    { label: t(locale as Locale, "browseTitle"), slug: "browse", href: `/${locale}/browse` },
+  ];
 
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i];

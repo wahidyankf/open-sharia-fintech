@@ -7,7 +7,7 @@ description: "Learn Rust CLI development through 80 annotated code examples - fr
 tags: ["rust", "cli", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/advanced)

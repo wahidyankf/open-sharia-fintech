@@ -8,10 +8,10 @@ layout: list
 description: "Learn system design through 85 heavily annotated examples covering scalability, availability, consistency, caching, load balancing, microservices, and more (95% coverage)"
 ---
 
-- [Cases](/en/c/learn/software-engineering/system-design/by-example/cases)
-  - [AI Personal Finance Advisor](/en/c/learn/software-engineering/system-design/by-example/cases/ai-personal-finance-advisor)
-  - [Overview](/en/c/learn/software-engineering/system-design/by-example/cases/overview)
-- [Overview](/en/c/learn/software-engineering/system-design/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/system-design/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/system-design/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/system-design/by-example/advanced)
+- [Cases](/en/learn/software-engineering/system-design/by-example/cases)
+  - [AI Personal Finance Advisor](/en/learn/software-engineering/system-design/by-example/cases/ai-personal-finance-advisor)
+  - [Overview](/en/learn/software-engineering/system-design/by-example/cases/overview)
+- [Overview](/en/learn/software-engineering/system-design/by-example/overview)
+- [Beginner](/en/learn/software-engineering/system-design/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/system-design/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/system-design/by-example/advanced)

@@ -7,11 +7,11 @@ type: docs
 layout: list
 ---
 
-- [By Example](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example)
-  - [Overview](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/advanced)
-- [Initial Setup](/en/c/learn/software-engineering/platforms/linux/tools/shell/initial-setup)
-- [Overview](/en/c/learn/software-engineering/platforms/linux/tools/shell/overview)
-- [Quick Start](/en/c/learn/software-engineering/platforms/linux/tools/shell/quick-start)
+- [By Example](/en/learn/software-engineering/platforms/linux/tools/shell/by-example)
+  - [Overview](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/advanced)
+- [Initial Setup](/en/learn/software-engineering/platforms/linux/tools/shell/initial-setup)
+- [Overview](/en/learn/software-engineering/platforms/linux/tools/shell/overview)
+- [Quick Start](/en/learn/software-engineering/platforms/linux/tools/shell/quick-start)

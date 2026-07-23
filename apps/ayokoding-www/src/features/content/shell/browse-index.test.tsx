@@ -28,10 +28,10 @@ describe("BrowseIndex", () => {
     expect(screen.getByRole("link", { name: /Rants/ })).toBeTruthy();
   });
 
-  it("links each section card through contentUrl (/c/ prefix)", () => {
+  it("links each section card through contentUrl (bare join, DD-48)", () => {
     render(<BrowseIndex locale="en" sections={sections} />);
-    expect(screen.getByRole("link", { name: /Software Engineering/ }).getAttribute("href")).toBe("/en/c/learn");
-    expect(screen.getByRole("link", { name: /Rants/ }).getAttribute("href")).toBe("/en/c/rants");
+    expect(screen.getByRole("link", { name: /Software Engineering/ }).getAttribute("href")).toBe("/en/learn");
+    expect(screen.getByRole("link", { name: /Rants/ }).getAttribute("href")).toBe("/en/rants");
   });
 
   it("renders a Home > Browse breadcrumb starting at Home", () => {
@@ -51,7 +51,7 @@ describe("BrowseIndex", () => {
   it("uses id slugs and labels for the id locale", () => {
     const idSections = [section("belajar", "Belajar"), section("celoteh", "Celoteh")];
     render(<BrowseIndex locale="id" sections={idSections} />);
-    expect(screen.getByRole("link", { name: /Belajar/ }).getAttribute("href")).toBe("/id/c/belajar");
+    expect(screen.getByRole("link", { name: /Belajar/ }).getAttribute("href")).toBe("/id/belajar");
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Jelajahi");
   });
 });

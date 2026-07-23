@@ -5,7 +5,7 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/courses/engineering-management/learning/capstone/overview)
-- [Growth Plan: Noor Rahman](/en/c/learn/courses/engineering-management/learning/capstone/growth-plan)
-- [Prioritization Decision Record: Platform Team Q3](/en/c/learn/courses/engineering-management/learning/capstone/prioritization)
-- [Technical Strategy: Everline Platform Team](/en/c/learn/courses/engineering-management/learning/capstone/strategy)
+- [Overview](/en/learn/courses/engineering-management/learning/capstone/overview)
+- [Growth Plan: Noor Rahman](/en/learn/courses/engineering-management/learning/capstone/growth-plan)
+- [Prioritization Decision Record: Platform Team Q3](/en/learn/courses/engineering-management/learning/capstone/prioritization)
+- [Technical Strategy: Everline Platform Team](/en/learn/courses/engineering-management/learning/capstone/strategy)

@@ -7,7 +7,7 @@ description: "Learn F# through 85 heavily annotated code examples achieving 95% 
 tags: ["f-sharp", "fsharp", "dotnet", "tutorial", "by-example", "code-first", "functional", "programming"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/f-sharp/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/f-sharp/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/f-sharp/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/f-sharp/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/f-sharp/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/f-sharp/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/f-sharp/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/f-sharp/by-example/advanced)

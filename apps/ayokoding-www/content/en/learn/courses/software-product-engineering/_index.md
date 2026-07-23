@@ -6,11 +6,11 @@ weight: 420
 prerequisites: ["agentic-coding"]
 ---
 
-- [Learning](/en/c/learn/courses/software-product-engineering/learning)
-  - [Overview](/en/c/learn/courses/software-product-engineering/learning/overview)
-  - [Beginner Scenarios](/en/c/learn/courses/software-product-engineering/learning/beginner)
-  - [Intermediate Scenarios](/en/c/learn/courses/software-product-engineering/learning/intermediate)
-  - [Advanced Scenarios](/en/c/learn/courses/software-product-engineering/learning/advanced)
-  - [Capstone](/en/c/learn/courses/software-product-engineering/learning/capstone)
-- [Drilling](/en/c/learn/courses/software-product-engineering/drilling)
-  - [Overview](/en/c/learn/courses/software-product-engineering/drilling/overview)
+- [Learning](/en/learn/courses/software-product-engineering/learning)
+  - [Overview](/en/learn/courses/software-product-engineering/learning/overview)
+  - [Beginner Scenarios](/en/learn/courses/software-product-engineering/learning/beginner)
+  - [Intermediate Scenarios](/en/learn/courses/software-product-engineering/learning/intermediate)
+  - [Advanced Scenarios](/en/learn/courses/software-product-engineering/learning/advanced)
+  - [Capstone](/en/learn/courses/software-product-engineering/learning/capstone)
+- [Drilling](/en/learn/courses/software-product-engineering/drilling)
+  - [Overview](/en/learn/courses/software-product-engineering/drilling/overview)

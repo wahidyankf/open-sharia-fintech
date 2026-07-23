@@ -7,8 +7,8 @@ description: "Proxmox Virtual Environment - open-source hypervisor platform for 
 tags: ["proxmox", "virtualization", "infrastructure", "kvm", "lxc"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/infrastructure/tools/proxmox/by-example)
-  - [Overview](/en/c/learn/software-engineering/infrastructure/tools/proxmox/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/infrastructure/tools/proxmox/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/infrastructure/tools/proxmox/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/infrastructure/tools/proxmox/by-example/advanced)
+- [By Example](/en/learn/software-engineering/infrastructure/tools/proxmox/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/tools/proxmox/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/infrastructure/tools/proxmox/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/infrastructure/tools/proxmox/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/infrastructure/tools/proxmox/by-example/advanced)

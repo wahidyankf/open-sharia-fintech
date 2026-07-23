@@ -6,11 +6,11 @@ weight: 160
 prerequisites: ["just-enough-bash"]
 ---
 
-- [Learning](/en/c/learn/courses/version-control-and-git/learning)
-  - [Overview](/en/c/learn/courses/version-control-and-git/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/version-control-and-git/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/version-control-and-git/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/version-control-and-git/learning/advanced)
-  - [Capstone](/en/c/learn/courses/version-control-and-git/learning/capstone)
-- [Drilling](/en/c/learn/courses/version-control-and-git/drilling)
-  - [Overview](/en/c/learn/courses/version-control-and-git/drilling/overview)
+- [Learning](/en/learn/courses/version-control-and-git/learning)
+  - [Overview](/en/learn/courses/version-control-and-git/learning/overview)
+  - [Beginner Examples](/en/learn/courses/version-control-and-git/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/version-control-and-git/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/version-control-and-git/learning/advanced)
+  - [Capstone](/en/learn/courses/version-control-and-git/learning/capstone)
+- [Drilling](/en/learn/courses/version-control-and-git/drilling)
+  - [Overview](/en/learn/courses/version-control-and-git/drilling/overview)

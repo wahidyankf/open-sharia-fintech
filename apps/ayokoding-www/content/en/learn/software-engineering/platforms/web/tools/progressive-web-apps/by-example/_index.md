@@ -7,7 +7,7 @@ description: "Learn Progressive Web Apps through 85 heavily annotated examples c
 tags: ["pwa", "progressive-web-apps", "service-worker", "workbox", "offline", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/advanced)

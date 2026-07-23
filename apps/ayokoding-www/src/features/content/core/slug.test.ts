@@ -25,7 +25,7 @@ describe("slugFromSegments", () => {
     expect(slugFromSegments([])).toBe("");
   });
 
-  it("does NOT strip a c/ prefix — segments under /c/ are already bare", () => {
+  it("joins segments as-is — no namespace prefix to strip (DD-48)", () => {
     expect(slugFromSegments(["belajar", "ikhtisar"])).toBe("belajar/ikhtisar");
   });
 });

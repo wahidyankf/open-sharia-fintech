@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/courses/debugging-and-profiling/learning/capstone/overview)
+- [Overview](/en/learn/courses/debugging-and-profiling/learning/capstone/overview)

@@ -5,7 +5,7 @@ draft: false
 weight: 106
 ---
 
-- [Overview](/en/c/learn/personal-development/overview)
-- [Tools](/en/c/learn/personal-development/tools)
-  - [CliftonStrengths](/en/c/learn/personal-development/tools/cliftonstrengths)
-  - [Overview](/en/c/learn/personal-development/tools/overview)
+- [Overview](/en/learn/personal-development/overview)
+- [Tools](/en/learn/personal-development/tools)
+  - [CliftonStrengths](/en/learn/personal-development/tools/cliftonstrengths)
+  - [Overview](/en/learn/personal-development/tools/overview)

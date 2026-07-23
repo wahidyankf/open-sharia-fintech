@@ -5,8 +5,8 @@ draft: false
 weight: 20
 ---
 
-- [2023](/id/c/celoteh/2023)
-  - [04](/id/c/celoteh/2023/04)
-  - [05](/id/c/celoteh/2023/05)
-  - [06](/id/c/celoteh/2023/06)
-  - [07](/id/c/celoteh/2023/07)
+- [2023](/id/celoteh/2023)
+  - [04](/id/celoteh/2023/04)
+  - [05](/id/celoteh/2023/05)
+  - [06](/id/celoteh/2023/06)
+  - [07](/id/celoteh/2023/07)

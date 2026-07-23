@@ -5,10 +5,10 @@ draft: false
 weight: 115
 ---
 
-- [Overview](/en/c/learn/courses/software-testing/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/software-testing/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/software-testing/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/software-testing/learning/advanced)
-- [BDD & Executable Specifications](/en/c/learn/courses/software-testing/learning/bdd)
-- [Capstone](/en/c/learn/courses/software-testing/learning/capstone)
-  - [Overview](/en/c/learn/courses/software-testing/learning/capstone/overview)
+- [Overview](/en/learn/courses/software-testing/learning/overview)
+- [Beginner Examples](/en/learn/courses/software-testing/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/software-testing/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/software-testing/learning/advanced)
+- [BDD & Executable Specifications](/en/learn/courses/software-testing/learning/bdd)
+- [Capstone](/en/learn/courses/software-testing/learning/capstone)
+  - [Overview](/en/learn/courses/software-testing/learning/capstone/overview)

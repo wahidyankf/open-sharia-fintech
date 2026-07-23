@@ -6,12 +6,12 @@ weight: 270
 prerequisites: ["debugging-and-profiling"]
 ---
 
-- [Overview](/en/c/learn/courses/security-essentials/overview)
-- [Learning](/en/c/learn/courses/security-essentials/learning)
-  - [Overview](/en/c/learn/courses/security-essentials/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/security-essentials/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/security-essentials/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/security-essentials/learning/advanced)
-  - [Capstone](/en/c/learn/courses/security-essentials/learning/capstone)
-- [Drilling](/en/c/learn/courses/security-essentials/drilling)
-  - [Overview](/en/c/learn/courses/security-essentials/drilling/overview)
+- [Overview](/en/learn/courses/security-essentials/overview)
+- [Learning](/en/learn/courses/security-essentials/learning)
+  - [Overview](/en/learn/courses/security-essentials/learning/overview)
+  - [Beginner Examples](/en/learn/courses/security-essentials/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/security-essentials/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/security-essentials/learning/advanced)
+  - [Capstone](/en/learn/courses/security-essentials/learning/capstone)
+- [Drilling](/en/learn/courses/security-essentials/drilling)
+  - [Overview](/en/learn/courses/security-essentials/drilling/overview)

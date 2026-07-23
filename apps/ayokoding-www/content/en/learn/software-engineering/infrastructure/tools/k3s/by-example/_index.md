@@ -7,7 +7,7 @@ description: "Learn K3s through 85 heavily annotated examples covering installat
 tags: ["k3s", "kubernetes", "infrastructure", "by-example", "containers", "devops"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/advanced)
+- [Overview](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/overview)
+- [Beginner](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/advanced)

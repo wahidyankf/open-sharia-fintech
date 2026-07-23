@@ -181,7 +181,7 @@ describe("ContentService", () => {
     const service = createService(baseItems, baseFiles);
     const result = await service.getBySlug("en", "learn/linked");
     expect(result).not.toBeNull();
-    expect(result?.html).toContain('href="/en/c/learn/advanced"');
+    expect(result?.html).toContain('href="/en/learn/advanced"');
     expect(result?.html).not.toContain(".md");
   });
 
@@ -191,8 +191,8 @@ describe("ContentService", () => {
     expect(result).not.toBeNull();
     expect(result?.isSection).toBe(true);
     // If meta.isSection were dropped on its way into parseMarkdown, this would incorrectly
-    // resolve against dirname("learn/guides") == "learn" and produce "/en/c/learn/tips".
-    expect(result?.html).toContain('href="/en/c/learn/guides/tips"');
+    // resolve against dirname("learn/guides") == "learn" and produce "/en/learn/tips".
+    expect(result?.html).toContain('href="/en/learn/guides/tips"');
     expect(result?.html).not.toContain(".md");
   });
 

@@ -8,7 +8,7 @@ layout: list
 description: "Procedural variant of Hexagonal Architecture — Go (canonical; arguably the strongest hexagonal-fit language) and Rust with ownership-driven port design"
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-procedural-by-example/advanced)

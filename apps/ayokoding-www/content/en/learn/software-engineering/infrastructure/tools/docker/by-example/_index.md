@@ -7,7 +7,7 @@ description: "Learn Docker containerization through 84 heavily annotated, runnab
 tags: ["docker", "tutorial", "by-example", "containers", "devops"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/infrastructure/tools/docker/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/infrastructure/tools/docker/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/infrastructure/tools/docker/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/infrastructure/tools/docker/by-example/advanced)
+- [Overview](/en/learn/software-engineering/infrastructure/tools/docker/by-example/overview)
+- [Beginner](/en/learn/software-engineering/infrastructure/tools/docker/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/infrastructure/tools/docker/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/infrastructure/tools/docker/by-example/advanced)

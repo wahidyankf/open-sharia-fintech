@@ -5,4 +5,4 @@ draft: false
 weight: 230
 ---
 
-- [Overview](/en/c/learn/courses/software-engineering-practices/drilling/overview)
+- [Overview](/en/learn/courses/software-engineering-practices/drilling/overview)

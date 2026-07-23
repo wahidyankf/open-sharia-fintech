@@ -6,7 +6,7 @@ draft: false
 description: "Learn Finite State Machines through 85 annotated code examples covering states, transitions, guards, hierarchical states, parallel regions, and distributed patterns"
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-oop-by-example/advanced)

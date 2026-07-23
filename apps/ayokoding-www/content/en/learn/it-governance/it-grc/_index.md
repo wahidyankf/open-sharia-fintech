@@ -8,9 +8,9 @@ layout: list
 description: "IT Governance, Risk and Compliance learning path — annotated frameworks, risk registers, audit artifacts, and governance decisions"
 ---
 
-- [By Example](/en/c/learn/it-governance/it-grc/by-example)
-  - [Overview](/en/c/learn/it-governance/it-grc/by-example/overview)
-  - [Beginner](/en/c/learn/it-governance/it-grc/by-example/beginner)
-  - [Intermediate](/en/c/learn/it-governance/it-grc/by-example/intermediate)
-  - [Advanced](/en/c/learn/it-governance/it-grc/by-example/advanced)
-- [Overview](/en/c/learn/it-governance/it-grc/overview)
+- [By Example](/en/learn/it-governance/it-grc/by-example)
+  - [Overview](/en/learn/it-governance/it-grc/by-example/overview)
+  - [Beginner](/en/learn/it-governance/it-grc/by-example/beginner)
+  - [Intermediate](/en/learn/it-governance/it-grc/by-example/intermediate)
+  - [Advanced](/en/learn/it-governance/it-grc/by-example/advanced)
+- [Overview](/en/learn/it-governance/it-grc/overview)

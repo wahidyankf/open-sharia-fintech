@@ -8,7 +8,7 @@ layout: list
 description: "Learn OpenClaw through 80 heavily annotated examples: CLI basics, configuration, skills, channels, Lobster workflows, plugins, and production patterns (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/openclaw/by-example/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/openclaw/by-example/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/openclaw/by-example/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/openclaw/by-example/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/openclaw/by-example/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/openclaw/by-example/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/openclaw/by-example/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/openclaw/by-example/advanced)

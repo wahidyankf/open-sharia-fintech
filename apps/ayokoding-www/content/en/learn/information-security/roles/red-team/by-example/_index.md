@@ -8,7 +8,7 @@ layout: list
 description: "Learn offensive security through annotated examples covering reconnaissance, exploitation, post-exploitation, and adversary simulation"
 ---
 
-- [Overview](/en/c/learn/information-security/roles/red-team/by-example/overview)
-- [Beginner](/en/c/learn/information-security/roles/red-team/by-example/beginner)
-- [Intermediate](/en/c/learn/information-security/roles/red-team/by-example/intermediate)
-- [Advanced](/en/c/learn/information-security/roles/red-team/by-example/advanced)
+- [Overview](/en/learn/information-security/roles/red-team/by-example/overview)
+- [Beginner](/en/learn/information-security/roles/red-team/by-example/beginner)
+- [Intermediate](/en/learn/information-security/roles/red-team/by-example/intermediate)
+- [Advanced](/en/learn/information-security/roles/red-team/by-example/advanced)

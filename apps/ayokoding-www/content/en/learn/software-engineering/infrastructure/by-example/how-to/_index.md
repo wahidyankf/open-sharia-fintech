@@ -6,5 +6,5 @@ draft: false
 description: Practical guides for cloud platform tasks
 ---
 
-- [Overview](/en/c/learn/software-engineering/infrastructure/by-example/how-to/overview)
-- [Setup and Secure Vm for Development](/en/c/learn/software-engineering/infrastructure/by-example/how-to/setup-and-secure-vm-for-development)
+- [Overview](/en/learn/software-engineering/infrastructure/by-example/how-to/overview)
+- [Setup and Secure Vm for Development](/en/learn/software-engineering/infrastructure/by-example/how-to/setup-and-secure-vm-for-development)

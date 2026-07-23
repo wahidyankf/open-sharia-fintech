@@ -7,7 +7,7 @@ description: "Learn to build AI-powered apps through 85 heavily annotated exampl
 tags: ["ai", "llm", "vercel-ai-sdk", "rag", "agents", "by-example", "typescript"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/advanced)

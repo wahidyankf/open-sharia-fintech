@@ -5,4 +5,4 @@ draft: false
 weight: 213
 ---
 
-- [Overview](/en/c/learn/courses/just-enough-typescript/drilling/overview)
+- [Overview](/en/learn/courses/just-enough-typescript/drilling/overview)

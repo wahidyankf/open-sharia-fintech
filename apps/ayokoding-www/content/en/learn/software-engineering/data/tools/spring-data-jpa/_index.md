@@ -7,11 +7,11 @@ type: docs
 layout: list
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/spring-data-jpa/overview)
-- [Initial Setup](/en/c/learn/software-engineering/data/tools/spring-data-jpa/initial-setup)
-- [Quick Start](/en/c/learn/software-engineering/data/tools/spring-data-jpa/quick-start)
-- [By Example](/en/c/learn/software-engineering/data/tools/spring-data-jpa/by-example)
-  - [Overview](/en/c/learn/software-engineering/data/tools/spring-data-jpa/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/data/tools/spring-data-jpa/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/data/tools/spring-data-jpa/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/data/tools/spring-data-jpa/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/overview)
+- [Initial Setup](/en/learn/software-engineering/data/tools/spring-data-jpa/initial-setup)
+- [Quick Start](/en/learn/software-engineering/data/tools/spring-data-jpa/quick-start)
+- [By Example](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example)
+  - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/advanced)

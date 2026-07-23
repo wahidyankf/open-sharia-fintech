@@ -7,7 +7,7 @@ description: "Learn TanStack Start (TypeScript full-stack framework) through 80 
 tags: ["tanstack-start", "tanstack-router", "typescript", "fullstack", "by-example", "tutorial"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/fe-tanstack-start/by-example/advanced)

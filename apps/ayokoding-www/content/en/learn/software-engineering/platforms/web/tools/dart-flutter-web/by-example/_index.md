@@ -7,7 +7,7 @@ description: "Learn Flutter Web through 80 heavily annotated code examples cover
 tags: ["flutter", "dart", "flutter-web", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/dart-flutter-web/by-example/advanced)

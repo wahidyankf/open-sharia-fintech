@@ -14,17 +14,17 @@ interface BrowseIndexProps {
  * Presentational browse index — renders one {@link SectionCard} per top-level
  * content section plus a `Home > Browse` breadcrumb. Pure view: it takes the
  * already-fetched `sections` and renders; all IO stays in the server component
- * (`app/[locale]/(content)/c/page.tsx`).
+ * (`app/[locale]/(content)/browse/page.tsx`).
  */
 export function BrowseIndex({ locale, sections }: BrowseIndexProps) {
   const breadcrumbSegments = [
     { label: t(locale, "breadcrumbHome"), slug: "" },
-    { label: t(locale, "browseTitle"), slug: "c" },
+    { label: t(locale, "browseTitle"), slug: "browse" },
   ];
 
   return (
     <div className="min-w-0 flex-1 px-6 py-8 lg:px-8">
-      <Breadcrumb locale={locale} slug="c" segments={breadcrumbSegments} showCurrent />
+      <Breadcrumb locale={locale} slug="browse" segments={breadcrumbSegments} showCurrent />
 
       <h1 className="mb-2 text-4xl font-extrabold tracking-tight">{t(locale, "browseTitle")}</h1>
       <p className="mb-8 text-muted-foreground">{t(locale, "browseIntro")}</p>

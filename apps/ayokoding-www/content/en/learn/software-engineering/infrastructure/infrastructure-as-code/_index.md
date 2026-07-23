@@ -7,9 +7,9 @@ type: docs
 layout: list
 ---
 
-- [By Example](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/by-example)
-  - [Overview](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/advanced)
-- [Overview](/en/c/learn/software-engineering/infrastructure/infrastructure-as-code/overview)
+- [By Example](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example/advanced)
+- [Overview](/en/learn/software-engineering/infrastructure/infrastructure-as-code/overview)

@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/courses/build-your-own-orm-and-query-builder/learning/capstone/overview)
+- [Overview](/en/learn/courses/build-your-own-orm-and-query-builder/learning/capstone/overview)

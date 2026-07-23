@@ -72,7 +72,7 @@ describe("Phase 9O — mobile nav drawer", () => {
 
 // Phase 3 — mobile nav drawer shows primary Learn/Tools links (chrome-375 open drawer)
 describe("Phase 3 — mobile nav primary links", () => {
-  it("shows Learn link to /en/c and Tools link to /en/tools", async () => {
+  it("shows Learn link to /en/browse and Tools link to /en/tools", async () => {
     render(
       await (async () => {
         const { MobileNav } = await import("./mobile-nav");
@@ -84,7 +84,7 @@ describe("Phase 3 — mobile nav primary links", () => {
       await new Promise((r) => setTimeout(r, 0));
     });
 
-    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/c");
+    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/browse");
     expect(screen.getByRole("link", { name: "Tools" }).getAttribute("href")).toBe("/en/tools");
   });
 
@@ -100,7 +100,7 @@ describe("Phase 3 — mobile nav primary links", () => {
       await new Promise((r) => setTimeout(r, 0));
     });
 
-    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/c");
+    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/browse");
     expect(screen.getByRole("link", { name: "Alat" }).getAttribute("href")).toBe("/id/tools");
   });
 });

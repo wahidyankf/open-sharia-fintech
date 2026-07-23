@@ -7,7 +7,7 @@ description: "Learn PostgreSQL through 85 annotated SQL examples covering 95% of
 tags: ["postgresql", "database", "tutorial", "by-example", "sql", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/databases/postgresql/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/databases/postgresql/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/databases/postgresql/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/databases/postgresql/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/databases/postgresql/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/databases/postgresql/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/databases/postgresql/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/databases/postgresql/by-example/advanced)

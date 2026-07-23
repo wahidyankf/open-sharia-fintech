@@ -7,7 +7,7 @@ description: "Learn TypeScript Effect SQL through 80 annotated code examples cov
 tags: ["typescript", "effect", "effect-sql", "tutorial", "by-example", "database", "migrations", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/typescript-effect-sql/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/typescript-effect-sql/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/typescript-effect-sql/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/typescript-effect-sql/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/typescript-effect-sql/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/typescript-effect-sql/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/typescript-effect-sql/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/typescript-effect-sql/by-example/advanced)

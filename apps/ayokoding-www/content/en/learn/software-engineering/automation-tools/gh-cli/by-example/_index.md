@@ -8,7 +8,7 @@ layout: list
 description: "Learn GitHub CLI through 85 heavily annotated examples covering authentication, repositories, issues, pull requests, releases, gists, actions, API calls, extensions, and automation (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/advanced)
+- [Overview](/en/learn/software-engineering/automation-tools/gh-cli/by-example/overview)
+- [Beginner](/en/learn/software-engineering/automation-tools/gh-cli/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/automation-tools/gh-cli/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/automation-tools/gh-cli/by-example/advanced)

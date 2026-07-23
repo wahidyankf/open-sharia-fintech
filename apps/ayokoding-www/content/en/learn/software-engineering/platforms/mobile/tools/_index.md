@@ -7,5 +7,5 @@ description: "Mobile development tools and frameworks"
 tags: ["mobile", "tools", "react-native"]
 ---
 
-- [React Native](/en/c/learn/software-engineering/platforms/mobile/tools/react-native)
-  - [By Example](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example)
+- [React Native](/en/learn/software-engineering/platforms/mobile/tools/react-native)
+  - [By Example](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example)

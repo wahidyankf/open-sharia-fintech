@@ -5,9 +5,9 @@ draft: false
 weight: 125
 ---
 
-- [Overview](/en/c/learn/courses/advanced-algorithms/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/advanced-algorithms/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/advanced-algorithms/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/advanced-algorithms/learning/advanced)
-- [Capstone](/en/c/learn/courses/advanced-algorithms/learning/capstone)
-  - [Overview](/en/c/learn/courses/advanced-algorithms/learning/capstone/overview)
+- [Overview](/en/learn/courses/advanced-algorithms/learning/overview)
+- [Beginner Examples](/en/learn/courses/advanced-algorithms/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/advanced-algorithms/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/advanced-algorithms/learning/advanced)
+- [Capstone](/en/learn/courses/advanced-algorithms/learning/capstone)
+  - [Overview](/en/learn/courses/advanced-algorithms/learning/capstone/overview)

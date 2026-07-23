@@ -5,4 +5,4 @@ draft: false
 weight: 203
 ---
 
-- [Overview](/en/c/learn/courses/extending-neovim/drilling/overview)
+- [Overview](/en/learn/courses/extending-neovim/drilling/overview)

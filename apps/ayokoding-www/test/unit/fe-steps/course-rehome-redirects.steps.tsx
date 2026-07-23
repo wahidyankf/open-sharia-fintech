@@ -46,7 +46,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong URL redirects to the canonical course URL
-    Then('the current URL should contain "/en/c/learn/courses/just-enough-python"', () => {
+    Then('the current URL should contain "/en/learn/courses/just-enough-python"', () => {
       expect(true).toBe(true);
     });
   });
@@ -66,7 +66,7 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       );
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A legacy fundamentally-strong deep sub-page URL redirects to its canonical course sub-page
-      Then('the current URL should contain "/en/c/learn/courses/just-enough-python/learning/beginner"', () => {
+      Then('the current URL should contain "/en/learn/courses/just-enough-python/learning/beginner"', () => {
         expect(true).toBe(true);
       });
     },

@@ -5,4 +5,4 @@ draft: false
 weight: 205
 ---
 
-- [Overview](/en/c/learn/courses/just-enough-bash/drilling/overview)
+- [Overview](/en/learn/courses/just-enough-bash/drilling/overview)

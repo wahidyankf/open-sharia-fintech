@@ -22,7 +22,7 @@ tags:
   ]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-fp/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-fp/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-fp/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-fp/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/by-example/cases/in-fp/advanced)

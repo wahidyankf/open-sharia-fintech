@@ -5,9 +5,9 @@ draft: false
 weight: 130
 ---
 
-- [Overview](/en/c/learn/courses/software-engineering-practices/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/software-engineering-practices/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/software-engineering-practices/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/software-engineering-practices/learning/advanced)
-- [Capstone](/en/c/learn/courses/software-engineering-practices/learning/capstone)
-  - [Capstone](/en/c/learn/courses/software-engineering-practices/learning/capstone/overview)
+- [Overview](/en/learn/courses/software-engineering-practices/learning/overview)
+- [Beginner Examples](/en/learn/courses/software-engineering-practices/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/software-engineering-practices/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/software-engineering-practices/learning/advanced)
+- [Capstone](/en/learn/courses/software-engineering-practices/learning/capstone)
+  - [Capstone](/en/learn/courses/software-engineering-practices/learning/capstone/overview)

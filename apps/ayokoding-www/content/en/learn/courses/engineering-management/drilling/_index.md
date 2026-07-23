@@ -5,4 +5,4 @@ draft: false
 weight: 233
 ---
 
-- [Overview](/en/c/learn/courses/engineering-management/drilling/overview)
+- [Overview](/en/learn/courses/engineering-management/drilling/overview)

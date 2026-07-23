@@ -7,7 +7,7 @@ description: "Learn Rust through 85 annotated code examples covering 95% of the 
 tags: ["rust", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/rust/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/rust/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/rust/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/rust/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/rust/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/rust/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/rust/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/rust/by-example/advanced)

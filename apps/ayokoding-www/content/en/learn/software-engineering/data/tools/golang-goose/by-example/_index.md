@@ -7,7 +7,7 @@ description: "Learn Go Goose through 85 annotated code examples covering 95% of 
 tags: ["golang", "goose", "tutorial", "by-example", "database", "migrations", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/golang-goose/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/golang-goose/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/golang-goose/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/golang-goose/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/golang-goose/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/golang-goose/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/golang-goose/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/golang-goose/by-example/advanced)

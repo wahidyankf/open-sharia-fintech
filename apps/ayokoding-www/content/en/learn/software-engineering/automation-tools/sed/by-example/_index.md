@@ -8,7 +8,7 @@ layout: list
 description: "Learn sed through 85 heavily annotated examples covering substitution, deletion, insertion, addressing, regular expressions, hold space, branching, and real-world text processing (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/software-engineering/automation-tools/sed/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/automation-tools/sed/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/automation-tools/sed/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/automation-tools/sed/by-example/advanced)
+- [Overview](/en/learn/software-engineering/automation-tools/sed/by-example/overview)
+- [Beginner](/en/learn/software-engineering/automation-tools/sed/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/automation-tools/sed/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/automation-tools/sed/by-example/advanced)

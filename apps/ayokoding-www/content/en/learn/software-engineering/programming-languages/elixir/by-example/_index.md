@@ -7,7 +7,7 @@ description: "Learn Elixir through 85 annotated code examples covering 95% of th
 tags: ["elixir", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/elixir/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/elixir/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/elixir/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/elixir/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/elixir/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/elixir/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/elixir/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/elixir/by-example/advanced)

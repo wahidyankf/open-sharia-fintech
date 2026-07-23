@@ -6,4 +6,4 @@ weight: 435
 prerequisites: ["engineering-management"]
 ---
 
-- [Overview](/en/c/learn/courses/capstone-solid-core/overview)
+- [Overview](/en/learn/courses/capstone-solid-core/overview)

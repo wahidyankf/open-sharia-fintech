@@ -7,8 +7,8 @@ description: "Progressive Web Apps (PWA) - web apps with native-like capabilitie
 tags: ["pwa", "progressive-web-apps", "service-worker", "workbox", "offline"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example)
-  - [Overview](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/advanced)
+- [By Example](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example)
+  - [Overview](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/platforms/web/tools/progressive-web-apps/by-example/advanced)

@@ -8,7 +8,7 @@ layout: list
 description: "Learn security foundations through annotated examples covering network security, system hardening, cryptography, vulnerability assessment, and incident response"
 ---
 
-- [Overview](/en/c/learn/information-security/by-example/foundations/overview)
-- [Beginner](/en/c/learn/information-security/by-example/foundations/beginner)
-- [Intermediate](/en/c/learn/information-security/by-example/foundations/intermediate)
-- [Advanced](/en/c/learn/information-security/by-example/foundations/advanced)
+- [Overview](/en/learn/information-security/by-example/foundations/overview)
+- [Beginner](/en/learn/information-security/by-example/foundations/beginner)
+- [Intermediate](/en/learn/information-security/by-example/foundations/intermediate)
+- [Advanced](/en/learn/information-security/by-example/foundations/advanced)

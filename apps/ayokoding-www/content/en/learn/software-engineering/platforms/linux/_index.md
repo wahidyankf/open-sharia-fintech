@@ -7,7 +7,7 @@ type: docs
 layout: list
 ---
 
-- [Tools](/en/c/learn/software-engineering/platforms/linux/tools)
-  - [Overview](/en/c/learn/software-engineering/platforms/linux/tools/overview)
-  - [Shell](/en/c/learn/software-engineering/platforms/linux/tools/shell)
-- [Overview](/en/c/learn/software-engineering/platforms/linux/overview)
+- [Tools](/en/learn/software-engineering/platforms/linux/tools)
+  - [Overview](/en/learn/software-engineering/platforms/linux/tools/overview)
+  - [Shell](/en/learn/software-engineering/platforms/linux/tools/shell)
+- [Overview](/en/learn/software-engineering/platforms/linux/overview)

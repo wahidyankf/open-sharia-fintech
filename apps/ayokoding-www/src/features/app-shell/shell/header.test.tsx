@@ -30,12 +30,12 @@ afterEach(cleanup);
 
 // Phase 3 — header primary nav (Learn / Tools) matching chrome-1280 mockup
 describe("Phase 3 — Header primary nav", () => {
-  it("renders a Learn link pointing to /en/c", async () => {
+  it("renders a Learn link pointing to /en/browse", async () => {
     const { Header } = await import("./header");
     render(<Header locale="en" />);
 
     const learn = screen.getByRole("link", { name: "Learn" });
-    expect(learn.getAttribute("href")).toBe("/en/c");
+    expect(learn.getAttribute("href")).toBe("/en/browse");
   });
 
   it("renders a Tools link pointing to /en/tools", async () => {
@@ -50,7 +50,7 @@ describe("Phase 3 — Header primary nav", () => {
     const { Header } = await import("./header");
     render(<Header locale="id" />);
 
-    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/c");
+    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/browse");
     expect(screen.getByRole("link", { name: "Alat" }).getAttribute("href")).toBe("/id/tools");
   });
 });

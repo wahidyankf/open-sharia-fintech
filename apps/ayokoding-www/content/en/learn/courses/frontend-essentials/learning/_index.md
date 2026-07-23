@@ -5,9 +5,9 @@ draft: false
 weight: 114
 ---
 
-- [Overview](/en/c/learn/courses/frontend-essentials/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/frontend-essentials/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/frontend-essentials/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/frontend-essentials/learning/advanced)
-- [Capstone](/en/c/learn/courses/frontend-essentials/learning/capstone)
-  - [Overview](/en/c/learn/courses/frontend-essentials/learning/capstone/overview)
+- [Overview](/en/learn/courses/frontend-essentials/learning/overview)
+- [Beginner Examples](/en/learn/courses/frontend-essentials/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/frontend-essentials/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/frontend-essentials/learning/advanced)
+- [Capstone](/en/learn/courses/frontend-essentials/learning/capstone)
+  - [Overview](/en/learn/courses/frontend-essentials/learning/capstone/overview)

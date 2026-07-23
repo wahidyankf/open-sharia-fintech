@@ -7,7 +7,7 @@ description: "Learn Rust SQLx migrations through 85 annotated code examples cove
 tags: ["rust-sqlx", "tutorial", "by-example", "sqlx", "database", "migrations", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/rust-sqlx/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/rust-sqlx/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/rust-sqlx/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/rust-sqlx/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/rust-sqlx/by-example/advanced)

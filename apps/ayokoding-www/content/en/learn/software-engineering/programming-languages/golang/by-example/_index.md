@@ -7,7 +7,7 @@ description: "Learn Golang through 85 heavily annotated code examples achieving 
 tags: ["golang", "go", "tutorial", "by-example", "code-first", "programming"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/golang/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/golang/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/golang/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/golang/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/golang/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/golang/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/golang/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/golang/by-example/advanced)

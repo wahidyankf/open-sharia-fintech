@@ -5,4 +5,4 @@ draft: false
 weight: 218
 ---
 
-- [Overview](/en/c/learn/courses/technical-communication/drilling/overview)
+- [Overview](/en/learn/courses/technical-communication/drilling/overview)

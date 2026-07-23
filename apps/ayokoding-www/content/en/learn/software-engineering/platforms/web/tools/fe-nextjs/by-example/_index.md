@@ -7,7 +7,7 @@ description: "Learn Next.js + TypeScript through 75-90 heavily annotated code ex
 tags: ["nextjs", "react", "typescript", "by-example", "tutorial"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/fe-nextjs/by-example/advanced)

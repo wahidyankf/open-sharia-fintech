@@ -7,7 +7,7 @@ description: "Learn BDD through 85 annotated code examples covering Gherkin synt
 tags: ["bdd", "tutorial", "by-example", "gherkin", "cucumber"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/development/behavior-driven-development-bdd/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/development/behavior-driven-development-bdd/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/development/behavior-driven-development-bdd/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/development/behavior-driven-development-bdd/by-example/advanced)
+- [Overview](/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/overview)
+- [Beginner](/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/development/behavior-driven-development-bdd/by-example/advanced)

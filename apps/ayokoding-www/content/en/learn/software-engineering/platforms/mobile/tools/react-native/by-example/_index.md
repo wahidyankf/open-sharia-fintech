@@ -7,7 +7,7 @@ description: "Learn React Native through 85 heavily annotated examples covering 
 tags: ["react-native", "expo", "mobile", "ios", "android", "by-example", "typescript"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/advanced)

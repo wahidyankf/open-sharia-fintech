@@ -31,12 +31,12 @@ describe("Phase 3 — Footer multi-column nav", () => {
     expect(screen.getByText("Tentang")).toBeTruthy();
   });
 
-  it("Learn column links to /en/c and Tools column links directly to the calculator", async () => {
+  it("Learn column links to /en/browse and Tools column links directly to the calculator", async () => {
     const { Footer } = await import("./footer");
     render(<Footer locale="en" />);
 
     const hrefs = Array.from(document.querySelectorAll("a")).map((a) => a.getAttribute("href"));
-    expect(hrefs).toContain("/en/c");
+    expect(hrefs).toContain("/en/browse");
     // EWT-001 fix: footer Tools sub-link points directly to the calculator, not the index
     expect(hrefs).toContain("/en/tools/cost-of-living-calculator");
   });

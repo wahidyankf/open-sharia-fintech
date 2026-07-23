@@ -11,18 +11,19 @@ interface BreadcrumbProps {
   // aria-current="page" crumb instead of being dropped. Callers that already
   // surface the current page in an <h1> leave this absent (default behaviour).
   showCurrent?: boolean;
-  // When true, segment hrefs are built via contentUrl (→ /c/ namespace).
-  // Default false for backward compatibility with non-content breadcrumbs.
-  contentHrefs?: boolean;
 }
 
-function hrefFor(locale: string, segment: { slug: string; href?: string }, useContentUrl: boolean): string {
+// Always resolves through contentUrl() — once contentUrl() is a uniform bare
+// join (DD-48 de-namespacing removed its /c/-prefix branch), this is
+// identical to a plain `/{locale}/{slug}` join for every content href, so
+// there is no longer a distinct "content" vs "non-content" href mode.
+function hrefFor(locale: string, segment: { slug: string; href?: string }): string {
   if (segment.href !== undefined) return segment.href;
   if (!segment.slug) return `/${locale}`;
-  return useContentUrl ? contentUrl(locale as Locale, segment.slug) : `/${locale}/${segment.slug}`;
+  return contentUrl(locale as Locale, segment.slug);
 }
 
-export function Breadcrumb({ locale, segments, showCurrent = false, contentHrefs = false }: BreadcrumbProps) {
+export function Breadcrumb({ locale, segments, showCurrent = false }: BreadcrumbProps) {
   // Default: exclude the last segment — the current page title is shown in the h1.
   // showCurrent: keep every segment; render the last one as a non-link crumb.
   const visibleSegments = showCurrent ? segments : segments.slice(0, -1);
@@ -43,7 +44,7 @@ export function Breadcrumb({ locale, segments, showCurrent = false, contentHrefs
                   {segment.label}
                 </span>
               ) : (
-                <Link href={hrefFor(locale, segment, contentHrefs)} className="hover:text-foreground">
+                <Link href={hrefFor(locale, segment)} className="hover:text-foreground">
                   {segment.label}
                 </Link>
               )}

@@ -5,12 +5,12 @@ draft: false
 weight: 131
 ---
 
-- [Overview](/en/c/learn/courses/agentic-coding/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/agentic-coding/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/agentic-coding/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/agentic-coding/learning/advanced)
-- [Capstone](/en/c/learn/courses/agentic-coding/learning/capstone)
-  - [Capstone](/en/c/learn/courses/agentic-coding/learning/capstone/overview)
-  - [Capstone: The Prompt](/en/c/learn/courses/agentic-coding/learning/capstone/prompt)
-  - [Session](/en/c/learn/courses/agentic-coding/learning/capstone/session)
-  - [Capstone: Trust/Verify Log](/en/c/learn/courses/agentic-coding/learning/capstone/trust-verify-log)
+- [Overview](/en/learn/courses/agentic-coding/learning/overview)
+- [Beginner Examples](/en/learn/courses/agentic-coding/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/agentic-coding/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/agentic-coding/learning/advanced)
+- [Capstone](/en/learn/courses/agentic-coding/learning/capstone)
+  - [Capstone](/en/learn/courses/agentic-coding/learning/capstone/overview)
+  - [Capstone: The Prompt](/en/learn/courses/agentic-coding/learning/capstone/prompt)
+  - [Session](/en/learn/courses/agentic-coding/learning/capstone/session)
+  - [Capstone: Trust/Verify Log](/en/learn/courses/agentic-coding/learning/capstone/trust-verify-log)

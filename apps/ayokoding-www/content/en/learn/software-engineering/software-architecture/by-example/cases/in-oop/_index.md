@@ -7,7 +7,7 @@ description: "Object-oriented case combining C4, DDD, Hexagonal Architecture, an
 tags: ["cases", "in-oop", "c4-model", "ddd", "hexagonal-architecture", "finite-state-machine", "java", "spring-boot"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-oop/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-oop/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-oop/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/by-example/cases/in-oop/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/by-example/cases/in-oop/advanced)

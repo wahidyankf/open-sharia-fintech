@@ -7,7 +7,7 @@ description: "Learn Domain-Driven Design with Functional Programming through 80 
 tags: ["ddd", "f#", "clojure", "typescript", "haskell", "functional-programming", "domain-modeling", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-fp-by-example/advanced)

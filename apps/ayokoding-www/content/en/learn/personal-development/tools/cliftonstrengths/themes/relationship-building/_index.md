@@ -5,13 +5,13 @@ draft: false
 weight: 1000000
 ---
 
-- [Overview](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/overview)
-- [Relator](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/relator)
-- [Harmony](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/harmony)
-- [Connectedness](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/connectedness)
-- [Developer](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/developer)
-- [Adaptability](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/adaptability)
-- [Positivity](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/positivity)
-- [Empathy](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/empathy)
-- [Individualization](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/individualization)
-- [Includer](/en/c/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/includer)
+- [Overview](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/overview)
+- [Relator](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/relator)
+- [Harmony](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/harmony)
+- [Connectedness](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/connectedness)
+- [Developer](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/developer)
+- [Adaptability](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/adaptability)
+- [Positivity](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/positivity)
+- [Empathy](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/empathy)
+- [Individualization](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/individualization)
+- [Includer](/en/learn/personal-development/tools/cliftonstrengths/themes/relationship-building/includer)

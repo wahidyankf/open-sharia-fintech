@@ -8,7 +8,7 @@ layout: list
 description: "Learn security leadership through annotated examples covering risk management, security governance, compliance frameworks, and strategic decision-making"
 ---
 
-- [Overview](/en/c/learn/information-security/roles/ciso/by-example/overview)
-- [Beginner](/en/c/learn/information-security/roles/ciso/by-example/beginner)
-- [Intermediate](/en/c/learn/information-security/roles/ciso/by-example/intermediate)
-- [Advanced](/en/c/learn/information-security/roles/ciso/by-example/advanced)
+- [Overview](/en/learn/information-security/roles/ciso/by-example/overview)
+- [Beginner](/en/learn/information-security/roles/ciso/by-example/beginner)
+- [Intermediate](/en/learn/information-security/roles/ciso/by-example/intermediate)
+- [Advanced](/en/learn/information-security/roles/ciso/by-example/advanced)

@@ -7,8 +7,8 @@ description: "Data analytics with Python - pandas, numpy, scikit-learn, visualiz
 tags: ["data-analytics", "pandas", "numpy", "python", "scikit-learn"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/data/analytics/by-example)
-  - [Overview](/en/c/learn/software-engineering/data/analytics/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/data/analytics/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/data/analytics/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/data/analytics/by-example/advanced)
+- [By Example](/en/learn/software-engineering/data/analytics/by-example)
+  - [Overview](/en/learn/software-engineering/data/analytics/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/data/analytics/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/analytics/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/analytics/by-example/advanced)

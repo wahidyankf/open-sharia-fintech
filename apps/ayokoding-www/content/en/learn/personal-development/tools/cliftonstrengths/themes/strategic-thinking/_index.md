@@ -5,12 +5,12 @@ draft: false
 weight: 1000000
 ---
 
-- [Overview](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/overview)
-- [Strategic](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/strategic)
-- [Input](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/input)
-- [Context](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/context)
-- [Learner](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/learner)
-- [Intellection](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/intellection)
-- [Ideation](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/ideation)
-- [Analytical](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/analytical)
-- [Futuristic](/en/c/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/futuristic)
+- [Overview](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/overview)
+- [Strategic](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/strategic)
+- [Input](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/input)
+- [Context](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/context)
+- [Learner](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/learner)
+- [Intellection](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/intellection)
+- [Ideation](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/ideation)
+- [Analytical](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/analytical)
+- [Futuristic](/en/learn/personal-development/tools/cliftonstrengths/themes/strategic-thinking/futuristic)

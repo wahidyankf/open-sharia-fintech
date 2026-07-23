@@ -17,10 +17,11 @@ export interface NavLink {
 /**
  * Primary site navigation — Learn and Tools. Pure data (core): no JSX, no IO.
  *
- * Learn points at the locale's content root (`/{locale}/c`); Tools points at
- * the tools index (`/{locale}/tools`).
+ * Learn points at the browse index (`/{locale}/browse`, relocated from the
+ * retired `/{locale}/c` content namespace, DD-48); Tools points at the tools
+ * index (`/{locale}/tools`).
  */
 export const PRIMARY_NAV_LINKS: readonly NavLink[] = [
-  { labelKey: "navLearn", hrefFor: (locale) => `/${locale}/c` },
+  { labelKey: "navLearn", hrefFor: (locale) => `/${locale}/browse` },
   { labelKey: "navTools", hrefFor: (locale) => `/${locale}/tools` },
 ];

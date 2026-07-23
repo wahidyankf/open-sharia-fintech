@@ -13,7 +13,7 @@ Feature: Course re-home redirects and prerequisites
   @unit @e2e
   Scenario: A legacy fundamentally-strong URL redirects to the canonical course URL
     When a visitor navigates to "/en/learn/fundamentally-strong/software-engineer/just-enough-python"
-    Then the current URL should contain "/en/c/learn/courses/just-enough-python"
+    Then the current URL should contain "/en/learn/courses/just-enough-python"
 
   # Maintainer decision (2026-07-23): the per-course redirect broadened from an exact-source rule
   # to a /:path* wildcard so deep course sub-pages (learning/*, drilling/*) 308 to their canonical
@@ -21,7 +21,7 @@ Feature: Course re-home redirects and prerequisites
   @unit @e2e
   Scenario: A legacy fundamentally-strong deep sub-page URL redirects to its canonical course sub-page
     When a visitor navigates to "/en/learn/fundamentally-strong/software-engineer/just-enough-python/learning/beginner"
-    Then the current URL should contain "/en/c/learn/courses/just-enough-python/learning/beginner"
+    Then the current URL should contain "/en/learn/courses/just-enough-python/learning/beginner"
 
   @unit
   Scenario: Every re-homed course declares its prerequisites

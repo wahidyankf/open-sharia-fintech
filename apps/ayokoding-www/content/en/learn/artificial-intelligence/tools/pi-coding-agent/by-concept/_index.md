@@ -8,7 +8,7 @@ layout: list
 description: "Pi by concept — 40 narrative-driven sections covering primitive tools, extension system, context engineering, sessions, and self-extensibility"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-concept/advanced)

@@ -6,11 +6,11 @@ weight: 320
 prerequisites: ["object-oriented-design-and-patterns"]
 ---
 
-- [Learning](/en/c/learn/courses/programming-paradigms/learning)
-  - [Overview](/en/c/learn/courses/programming-paradigms/learning/overview)
-  - [Beginner](/en/c/learn/courses/programming-paradigms/learning/beginner)
-  - [Intermediate](/en/c/learn/courses/programming-paradigms/learning/intermediate)
-  - [Advanced](/en/c/learn/courses/programming-paradigms/learning/advanced)
-  - [Capstone](/en/c/learn/courses/programming-paradigms/learning/capstone)
-- [Drilling](/en/c/learn/courses/programming-paradigms/drilling)
-  - [Overview](/en/c/learn/courses/programming-paradigms/drilling/overview)
+- [Learning](/en/learn/courses/programming-paradigms/learning)
+  - [Overview](/en/learn/courses/programming-paradigms/learning/overview)
+  - [Beginner](/en/learn/courses/programming-paradigms/learning/beginner)
+  - [Intermediate](/en/learn/courses/programming-paradigms/learning/intermediate)
+  - [Advanced](/en/learn/courses/programming-paradigms/learning/advanced)
+  - [Capstone](/en/learn/courses/programming-paradigms/learning/capstone)
+- [Drilling](/en/learn/courses/programming-paradigms/drilling)
+  - [Overview](/en/learn/courses/programming-paradigms/drilling/overview)

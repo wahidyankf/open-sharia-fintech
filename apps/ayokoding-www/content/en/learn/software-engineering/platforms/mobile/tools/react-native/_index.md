@@ -7,8 +7,8 @@ description: "React Native - cross-platform mobile development with JavaScript a
 tags: ["react-native", "mobile", "ios", "android", "expo"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example)
-  - [Overview](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/platforms/mobile/tools/react-native/by-example/advanced)
+- [By Example](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example)
+  - [Overview](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/platforms/mobile/tools/react-native/by-example/advanced)

@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: t(locale as Locale, "browseTitle"),
     description: t(locale as Locale, "browseIntro"),
     alternates: {
-      canonical: `/${locale}/c`,
+      canonical: `/${locale}/browse`,
     },
   };
 }

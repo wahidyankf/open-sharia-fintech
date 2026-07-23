@@ -7,7 +7,7 @@ description: "Learn Eclipse Vert.x through 80 heavily annotated code examples co
 tags: ["vertx", "java", "reactive", "web-framework", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/jvm-vertx/by-example/advanced)

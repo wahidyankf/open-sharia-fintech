@@ -8,7 +8,7 @@ layout: list
 description: "Learn Claude Code CLI through 85 heavily annotated examples: interactive mode, print mode, npm scripts, git hooks, CI/CD integration, and custom agents (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/claude-code/by-example/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/claude-code/by-example/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/claude-code/by-example/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/claude-code/by-example/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/claude-code/by-example/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/claude-code/by-example/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/claude-code/by-example/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/claude-code/by-example/advanced)

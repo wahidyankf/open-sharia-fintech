@@ -5,7 +5,7 @@ draft: false
 weight: 104
 ---
 
-- [IT-GRC](/en/c/learn/it-governance/it-grc)
-  - [By Example](/en/c/learn/it-governance/it-grc/by-example)
-  - [Overview](/en/c/learn/it-governance/it-grc/overview)
-- [Overview](/en/c/learn/it-governance/overview)
+- [IT-GRC](/en/learn/it-governance/it-grc)
+  - [By Example](/en/learn/it-governance/it-grc/by-example)
+  - [Overview](/en/learn/it-governance/it-grc/overview)
+- [Overview](/en/learn/it-governance/overview)

@@ -6,12 +6,12 @@ weight: 220
 prerequisites: ["backend-essentials"]
 ---
 
-- [Overview](/en/c/learn/courses/networking-essentials/overview)
-- [Learning](/en/c/learn/courses/networking-essentials/learning)
-  - [Overview](/en/c/learn/courses/networking-essentials/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/networking-essentials/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/networking-essentials/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/networking-essentials/learning/advanced)
-  - [Capstone](/en/c/learn/courses/networking-essentials/learning/capstone)
-- [Drilling](/en/c/learn/courses/networking-essentials/drilling)
-  - [Overview](/en/c/learn/courses/networking-essentials/drilling/overview)
+- [Overview](/en/learn/courses/networking-essentials/overview)
+- [Learning](/en/learn/courses/networking-essentials/learning)
+  - [Overview](/en/learn/courses/networking-essentials/learning/overview)
+  - [Beginner Examples](/en/learn/courses/networking-essentials/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/networking-essentials/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/networking-essentials/learning/advanced)
+  - [Capstone](/en/learn/courses/networking-essentials/learning/capstone)
+- [Drilling](/en/learn/courses/networking-essentials/drilling)
+  - [Overview](/en/learn/courses/networking-essentials/drilling/overview)

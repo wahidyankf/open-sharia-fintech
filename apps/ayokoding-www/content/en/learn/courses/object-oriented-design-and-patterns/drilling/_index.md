@@ -5,4 +5,4 @@ draft: false
 weight: 221
 ---
 
-- [Overview](/en/c/learn/courses/object-oriented-design-and-patterns/drilling/overview)
+- [Overview](/en/learn/courses/object-oriented-design-and-patterns/drilling/overview)

@@ -7,7 +7,7 @@ description: "Learn the TypeScript Effect library through 80 heavily annotated c
 tags: ["effect", "typescript", "functional-programming", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/ts-effect/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/ts-effect/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/ts-effect/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/ts-effect/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/ts-effect/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/ts-effect/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/ts-effect/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/ts-effect/by-example/advanced)

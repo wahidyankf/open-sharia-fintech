@@ -78,8 +78,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
     // @covers specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin/index-generation/index-generation.feature:Nested sections render with indentation
     Then('the tools _index.md should show "overview" indented under "react"', async () => {
       const content = await fs.readFile(path.join(tmpDir, "en/tools/_index.md"), "utf-8");
-      expect(content).toContain("- [React](/en/c/tools/react)");
-      expect(content).toContain("  - [Overview](/en/c/tools/react/overview)");
+      expect(content).toContain("- [React](/en/tools/react)");
+      expect(content).toContain("  - [Overview](/en/tools/react/overview)");
     });
   });
 

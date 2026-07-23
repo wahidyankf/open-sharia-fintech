@@ -7,7 +7,7 @@ description: "Learn Python Alembic through 85 annotated code examples covering 9
 tags: ["python-alembic", "tutorial", "by-example", "alembic", "database", "migrations", "sqlalchemy", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/python-alembic/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/python-alembic/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/python-alembic/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/python-alembic/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/python-alembic/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/python-alembic/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/python-alembic/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/python-alembic/by-example/advanced)

@@ -5,9 +5,9 @@ draft: false
 weight: 108
 ---
 
-- [Overview](/en/c/learn/courses/object-oriented-programming-essentials/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/object-oriented-programming-essentials/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/object-oriented-programming-essentials/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/object-oriented-programming-essentials/learning/advanced)
-- [Capstone](/en/c/learn/courses/object-oriented-programming-essentials/learning/capstone)
-  - [Overview](/en/c/learn/courses/object-oriented-programming-essentials/learning/capstone/overview)
+- [Overview](/en/learn/courses/object-oriented-programming-essentials/learning/overview)
+- [Beginner Examples](/en/learn/courses/object-oriented-programming-essentials/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/object-oriented-programming-essentials/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/object-oriented-programming-essentials/learning/advanced)
+- [Capstone](/en/learn/courses/object-oriented-programming-essentials/learning/capstone)
+  - [Overview](/en/learn/courses/object-oriented-programming-essentials/learning/capstone/overview)

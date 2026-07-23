@@ -5,8 +5,8 @@ draft: false
 weight: 10
 ---
 
-- [Ikhtisar](/id/c/belajar/ikhtisar)
-- [Manusia](/id/c/belajar/manusia)
-  - [Ikhtisar](/id/c/belajar/manusia/ikhtisar)
-  - [Peralatan](/id/c/belajar/manusia/peralatan)
-- [Perkenalan](/id/c/belajar/perkenalan)
+- [Ikhtisar](/id/belajar/ikhtisar)
+- [Manusia](/id/belajar/manusia)
+  - [Ikhtisar](/id/belajar/manusia/ikhtisar)
+  - [Peralatan](/id/belajar/manusia/peralatan)
+- [Perkenalan](/id/belajar/perkenalan)

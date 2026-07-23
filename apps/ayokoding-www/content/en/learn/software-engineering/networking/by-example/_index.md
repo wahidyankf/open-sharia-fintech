@@ -7,7 +7,7 @@ description: "Learn computer networking through 83 heavily annotated Python exam
 tags: ["networking", "python", "tutorial", "by-example", "code-first", "sockets", "tcp", "udp", "http", "tls"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/networking/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/networking/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/networking/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/networking/by-example/advanced)
+- [Overview](/en/learn/software-engineering/networking/by-example/overview)
+- [Beginner](/en/learn/software-engineering/networking/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/networking/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/networking/by-example/advanced)

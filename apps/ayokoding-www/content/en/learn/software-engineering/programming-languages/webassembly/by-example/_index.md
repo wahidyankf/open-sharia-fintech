@@ -7,7 +7,7 @@ description: "Learn WebAssembly through 85 heavily annotated examples covering W
 tags: ["webassembly", "wasm", "rust", "emscripten", "wasi", "by-example", "low-level"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/webassembly/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/webassembly/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/webassembly/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/webassembly/by-example/advanced)

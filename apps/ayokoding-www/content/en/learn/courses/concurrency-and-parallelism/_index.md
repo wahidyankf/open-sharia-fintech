@@ -6,11 +6,11 @@ weight: 340
 prerequisites: ["functional-programming"]
 ---
 
-- [Learning](/en/c/learn/courses/concurrency-and-parallelism/learning)
-  - [Overview](/en/c/learn/courses/concurrency-and-parallelism/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/concurrency-and-parallelism/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/concurrency-and-parallelism/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/concurrency-and-parallelism/learning/advanced)
-  - [Capstone](/en/c/learn/courses/concurrency-and-parallelism/learning/capstone)
-- [Drilling](/en/c/learn/courses/concurrency-and-parallelism/drilling)
-  - [Overview](/en/c/learn/courses/concurrency-and-parallelism/drilling/overview)
+- [Learning](/en/learn/courses/concurrency-and-parallelism/learning)
+  - [Overview](/en/learn/courses/concurrency-and-parallelism/learning/overview)
+  - [Beginner Examples](/en/learn/courses/concurrency-and-parallelism/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/concurrency-and-parallelism/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/concurrency-and-parallelism/learning/advanced)
+  - [Capstone](/en/learn/courses/concurrency-and-parallelism/learning/capstone)
+- [Drilling](/en/learn/courses/concurrency-and-parallelism/drilling)
+  - [Overview](/en/learn/courses/concurrency-and-parallelism/drilling/overview)

@@ -6,11 +6,11 @@ weight: 280
 prerequisites: ["capstone-full-stack-app"]
 ---
 
-- [Learning](/en/c/learn/courses/technical-communication/learning)
-  - [Overview](/en/c/learn/courses/technical-communication/learning/overview)
-  - [Beginner Scenarios](/en/c/learn/courses/technical-communication/learning/beginner)
-  - [Intermediate Scenarios](/en/c/learn/courses/technical-communication/learning/intermediate)
-  - [Advanced Scenarios](/en/c/learn/courses/technical-communication/learning/advanced)
-  - [Capstone](/en/c/learn/courses/technical-communication/learning/capstone)
-- [Drilling](/en/c/learn/courses/technical-communication/drilling)
-  - [Overview](/en/c/learn/courses/technical-communication/drilling/overview)
+- [Learning](/en/learn/courses/technical-communication/learning)
+  - [Overview](/en/learn/courses/technical-communication/learning/overview)
+  - [Beginner Scenarios](/en/learn/courses/technical-communication/learning/beginner)
+  - [Intermediate Scenarios](/en/learn/courses/technical-communication/learning/intermediate)
+  - [Advanced Scenarios](/en/learn/courses/technical-communication/learning/advanced)
+  - [Capstone](/en/learn/courses/technical-communication/learning/capstone)
+- [Drilling](/en/learn/courses/technical-communication/drilling)
+  - [Overview](/en/learn/courses/technical-communication/drilling/overview)

@@ -6,4 +6,4 @@ weight: 275
 prerequisites: ["security-essentials"]
 ---
 
-- [Overview](/en/c/learn/courses/capstone-first-working-software/overview)
+- [Overview](/en/learn/courses/capstone-first-working-software/overview)

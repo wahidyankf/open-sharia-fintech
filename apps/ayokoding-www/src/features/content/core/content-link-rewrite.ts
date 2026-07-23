@@ -6,7 +6,7 @@ import { contentUrl } from "./content-url";
  * Content-tree-relative links authored in markdown bodies (e.g. `../../overview.md`,
  * `./beginner.md`, `../_index.md`) mirror the on-disk file tree per the repo's Linking
  * convention (relative paths with a literal `.md` extension). The rendered site uses a
- * different, clean-URL namespace (`/{locale}/c/{slug}`, no `.md`), so these links must be
+ * different, clean-URL namespace (`/{locale}/{slug}`, no `.md`), so these links must be
  * resolved against the *current page's slug* and remapped through {@link contentUrl} before
  * they reach the browser — otherwise they ship as literal `href="../../overview.md"` and
  * 404 on click.

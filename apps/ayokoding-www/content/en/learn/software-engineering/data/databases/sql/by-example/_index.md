@@ -7,7 +7,7 @@ description: "Learn SQL through 85 annotated examples covering 95% of standard S
 tags: ["sql", "database", "tutorial", "by-example", "standard-sql", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/databases/sql/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/databases/sql/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/databases/sql/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/databases/sql/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/databases/sql/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/databases/sql/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/databases/sql/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/databases/sql/by-example/advanced)

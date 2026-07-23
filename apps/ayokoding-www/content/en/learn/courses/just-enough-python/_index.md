@@ -6,11 +6,11 @@ weight: 140
 prerequisites: ["capstone-forge-ready"]
 ---
 
-- [Learning](/en/c/learn/courses/just-enough-python/learning)
-  - [Overview](/en/c/learn/courses/just-enough-python/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/just-enough-python/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/just-enough-python/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/just-enough-python/learning/advanced)
-  - [Capstone](/en/c/learn/courses/just-enough-python/learning/capstone)
-- [Drilling](/en/c/learn/courses/just-enough-python/drilling)
-  - [Overview](/en/c/learn/courses/just-enough-python/drilling/overview)
+- [Learning](/en/learn/courses/just-enough-python/learning)
+  - [Overview](/en/learn/courses/just-enough-python/learning/overview)
+  - [Beginner Examples](/en/learn/courses/just-enough-python/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/just-enough-python/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/just-enough-python/learning/advanced)
+  - [Capstone](/en/learn/courses/just-enough-python/learning/capstone)
+- [Drilling](/en/learn/courses/just-enough-python/drilling)
+  - [Overview](/en/learn/courses/just-enough-python/drilling/overview)

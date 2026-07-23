@@ -5,10 +5,10 @@ draft: false
 weight: 126
 ---
 
-- [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/advanced)
-- [Capstone](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone)
-  - [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone/overview)
-  - [Anomaly](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone/anomaly)
+- [Overview](/en/learn/courses/advanced-sql-and-query-performance/learning/overview)
+- [Beginner Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/advanced)
+- [Capstone](/en/learn/courses/advanced-sql-and-query-performance/learning/capstone)
+  - [Overview](/en/learn/courses/advanced-sql-and-query-performance/learning/capstone/overview)
+  - [Anomaly](/en/learn/courses/advanced-sql-and-query-performance/learning/capstone/anomaly)

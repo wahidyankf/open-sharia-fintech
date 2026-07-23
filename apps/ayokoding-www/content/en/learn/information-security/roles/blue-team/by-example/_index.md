@@ -8,7 +8,7 @@ layout: list
 description: "Learn defensive security through annotated examples covering threat detection, incident response, SIEM queries, and security hardening"
 ---
 
-- [Overview](/en/c/learn/information-security/roles/blue-team/by-example/overview)
-- [Beginner](/en/c/learn/information-security/roles/blue-team/by-example/beginner)
-- [Intermediate](/en/c/learn/information-security/roles/blue-team/by-example/intermediate)
-- [Advanced](/en/c/learn/information-security/roles/blue-team/by-example/advanced)
+- [Overview](/en/learn/information-security/roles/blue-team/by-example/overview)
+- [Beginner](/en/learn/information-security/roles/blue-team/by-example/beginner)
+- [Intermediate](/en/learn/information-security/roles/blue-team/by-example/intermediate)
+- [Advanced](/en/learn/information-security/roles/blue-team/by-example/advanced)

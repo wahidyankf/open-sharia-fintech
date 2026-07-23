@@ -8,7 +8,7 @@ layout: list
 description: "Learn awk through 85 heavily annotated examples covering field processing, pattern matching, built-in variables, arrays, functions, and real-world text analysis (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/software-engineering/automation-tools/awk/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/automation-tools/awk/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/automation-tools/awk/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/automation-tools/awk/by-example/advanced)
+- [Overview](/en/learn/software-engineering/automation-tools/awk/by-example/overview)
+- [Beginner](/en/learn/software-engineering/automation-tools/awk/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/automation-tools/awk/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/automation-tools/awk/by-example/advanced)

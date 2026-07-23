@@ -8,7 +8,7 @@ layout: list
 description: "Procedural variant of DDD — Go (canonical, with Boyle 2022 and Three Dots Labs as reference) and Rust where ownership reshapes aggregate modelling"
 ---
 
-- [Domain-Driven Design (DDD) in Procedural Languages — Advanced](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/advanced)
-- [Overview](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/intermediate)
+- [Domain-Driven Design (DDD) in Procedural Languages — Advanced](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/domain-driven-design-ddd/in-procedural-by-example/intermediate)

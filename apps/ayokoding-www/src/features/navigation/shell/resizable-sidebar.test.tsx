@@ -12,7 +12,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/en/c/learn",
+  usePathname: () => "/en/learn",
 }));
 
 vi.mock("@/lib/trpc/client", () => ({

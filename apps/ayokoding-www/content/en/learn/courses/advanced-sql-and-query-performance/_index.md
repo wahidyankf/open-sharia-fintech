@@ -6,11 +6,11 @@ weight: 360
 prerequisites: ["advanced-algorithms"]
 ---
 
-- [Learning](/en/c/learn/courses/advanced-sql-and-query-performance/learning)
-  - [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/advanced-sql-and-query-performance/learning/advanced)
-  - [Capstone](/en/c/learn/courses/advanced-sql-and-query-performance/learning/capstone)
-- [Drilling](/en/c/learn/courses/advanced-sql-and-query-performance/drilling)
-  - [Overview](/en/c/learn/courses/advanced-sql-and-query-performance/drilling/overview)
+- [Learning](/en/learn/courses/advanced-sql-and-query-performance/learning)
+  - [Overview](/en/learn/courses/advanced-sql-and-query-performance/learning/overview)
+  - [Beginner Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/advanced-sql-and-query-performance/learning/advanced)
+  - [Capstone](/en/learn/courses/advanced-sql-and-query-performance/learning/capstone)
+- [Drilling](/en/learn/courses/advanced-sql-and-query-performance/drilling)
+  - [Overview](/en/learn/courses/advanced-sql-and-query-performance/drilling/overview)

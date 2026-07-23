@@ -79,30 +79,29 @@ describe("Breadcrumb with explicit href override", () => {
   it("when segment has href field, uses that href instead of computed one — UWT-002 fix", () => {
     const segments = [
       { label: "Home", slug: "" },
-      { label: "Browse", slug: "c", href: "/en/c" },
+      { label: "Browse", slug: "browse", href: "/en/browse" },
       { label: "Learn", slug: "learn" },
     ];
-    render(<Breadcrumb locale="en" slug="learn" segments={segments} contentHrefs showCurrent />);
-    expect(screen.getByRole("link", { name: "Browse" }).getAttribute("href")).toBe("/en/c");
+    render(<Breadcrumb locale="en" slug="learn" segments={segments} showCurrent />);
+    expect(screen.getByRole("link", { name: "Browse" }).getAttribute("href")).toBe("/en/browse");
     expect(screen.getByRole("link", { name: "Home" }).getAttribute("href")).toBe("/en");
   });
 });
 
-describe("Breadcrumb with contentHrefs", () => {
-  it("when contentHrefs=true emits /c/ prefixed hrefs for content ancestor segments", () => {
+describe("Breadcrumb content hrefs", () => {
+  it("resolves content ancestor segments through contentUrl (uniform bare join, DD-48)", () => {
     render(
       <Breadcrumb
         locale="en"
         slug="learn/software-engineering/data-structures"
         segments={contentSegments}
-        contentHrefs
         showCurrent
       />,
     );
-    // Ancestor links point into the /c/ namespace.
-    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/c/learn");
+    // contentUrl() is a uniform bare join post-de-namespacing — no /c/ prefix.
+    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/learn");
     expect(screen.getByRole("link", { name: "Software Engineering" }).getAttribute("href")).toBe(
-      "/en/c/learn/software-engineering",
+      "/en/learn/software-engineering",
     );
     // Final segment is non-link aria-current.
     const current = screen.getByText("Data Structures");
@@ -110,7 +109,7 @@ describe("Breadcrumb with contentHrefs", () => {
     expect(current.closest("a")).toBeNull();
   });
 
-  it("when contentHrefs is absent still emits bare hrefs (backward compat)", () => {
+  it("emits bare hrefs for non-content segments too", () => {
     render(<Breadcrumb locale="en" slug="tools" segments={segments} showCurrent />);
     expect(screen.getByRole("link", { name: "Tools" }).getAttribute("href")).toBe("/en/tools");
   });

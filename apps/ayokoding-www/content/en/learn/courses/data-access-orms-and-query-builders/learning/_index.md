@@ -5,9 +5,9 @@ draft: false
 weight: 127
 ---
 
-- [Overview](/en/c/learn/courses/data-access-orms-and-query-builders/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/data-access-orms-and-query-builders/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/data-access-orms-and-query-builders/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/data-access-orms-and-query-builders/learning/advanced)
-- [Capstone](/en/c/learn/courses/data-access-orms-and-query-builders/learning/capstone)
-  - [Overview](/en/c/learn/courses/data-access-orms-and-query-builders/learning/capstone/overview)
+- [Overview](/en/learn/courses/data-access-orms-and-query-builders/learning/overview)
+- [Beginner Examples](/en/learn/courses/data-access-orms-and-query-builders/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/data-access-orms-and-query-builders/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/data-access-orms-and-query-builders/learning/advanced)
+- [Capstone](/en/learn/courses/data-access-orms-and-query-builders/learning/capstone)
+  - [Overview](/en/learn/courses/data-access-orms-and-query-builders/learning/capstone/overview)

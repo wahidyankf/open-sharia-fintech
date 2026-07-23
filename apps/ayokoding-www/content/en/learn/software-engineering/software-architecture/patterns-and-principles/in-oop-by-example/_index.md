@@ -9,7 +9,7 @@ description: "OOP variant — learn software architecture through 93 heavily ann
 tags: ["software-architecture", "tutorial", "by-example", "oop"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-oop-by-example/advanced)

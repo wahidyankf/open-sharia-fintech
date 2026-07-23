@@ -31,10 +31,10 @@
  * Next.js forwards the query string by default on a redirect, so a
  * `?path=`-carrying inbound link survives the move without extra code here.
  *
- * Spread into `next.config.ts` `redirects()` AFTER `learnReorgRedirects` and
- * BEFORE `contentNamespaceRedirects` — a temporary intermediate order; see the
- * ordering comment in `next.config.ts` for the full rationale and the order
- * Phase 3 converges to.
+ * Spread into `next.config.ts` `redirects()` AFTER `contentNamespaceRedirects`
+ * and `learnReorgRedirects`, and BEFORE `learnThreeBucketRedirects` — the
+ * final converged order (DD-48); see the ordering comment in
+ * `next.config.ts` for the full rationale.
  */
 export const REHOMED_COURSE_SLUGS = [
   "advanced-algorithms",

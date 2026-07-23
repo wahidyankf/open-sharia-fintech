@@ -6,11 +6,11 @@ weight: 120
 prerequisites: ["just-enough-nvim"]
 ---
 
-- [Learning](/en/c/learn/courses/just-enough-lua/learning)
-  - [Overview](/en/c/learn/courses/just-enough-lua/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/just-enough-lua/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/just-enough-lua/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/just-enough-lua/learning/advanced)
-  - [Capstone](/en/c/learn/courses/just-enough-lua/learning/capstone)
-- [Drilling](/en/c/learn/courses/just-enough-lua/drilling)
-  - [Overview](/en/c/learn/courses/just-enough-lua/drilling/overview)
+- [Learning](/en/learn/courses/just-enough-lua/learning)
+  - [Overview](/en/learn/courses/just-enough-lua/learning/overview)
+  - [Beginner Examples](/en/learn/courses/just-enough-lua/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/just-enough-lua/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/just-enough-lua/learning/advanced)
+  - [Capstone](/en/learn/courses/just-enough-lua/learning/capstone)
+- [Drilling](/en/learn/courses/just-enough-lua/drilling)
+  - [Overview](/en/learn/courses/just-enough-lua/drilling/overview)

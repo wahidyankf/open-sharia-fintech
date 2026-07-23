@@ -7,8 +7,8 @@ description: "WebAssembly (Wasm) - portable binary instruction format for near-n
 tags: ["webassembly", "wasm", "rust", "emscripten", "wasi"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/programming-languages/webassembly/by-example)
-  - [Overview](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/programming-languages/webassembly/by-example/advanced)
+- [By Example](/en/learn/software-engineering/programming-languages/webassembly/by-example)
+  - [Overview](/en/learn/software-engineering/programming-languages/webassembly/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/programming-languages/webassembly/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-languages/webassembly/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-languages/webassembly/by-example/advanced)

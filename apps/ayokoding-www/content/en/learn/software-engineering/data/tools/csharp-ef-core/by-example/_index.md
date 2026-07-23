@@ -7,7 +7,7 @@ description: "Learn C# EF Core Migrations through 30 annotated code examples cov
 tags: ["csharp", "ef-core", "entity-framework", "migrations", "tutorial", "by-example", "database", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/advanced)

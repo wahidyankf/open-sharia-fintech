@@ -37,17 +37,17 @@ describe("Landing", () => {
     ).toBeTruthy();
   });
 
-  it("renders the two hero CTAs linking to the content root and tools index", () => {
+  it("renders the two hero CTAs linking to the browse index and tools index", () => {
     render(<Landing locale="en" sections={enSections} />);
-    expect(screen.getByRole("link", { name: "Start learning" }).getAttribute("href")).toBe("/en/c");
+    expect(screen.getByRole("link", { name: "Start learning" }).getAttribute("href")).toBe("/en/browse");
     expect(screen.getByRole("link", { name: "Explore tools" }).getAttribute("href")).toBe("/en/tools");
   });
 
-  it("renders a section card per descriptor, linking through contentUrl (/c/ prefix)", () => {
+  it("renders a section card per descriptor, linking through contentUrl (bare join, DD-48)", () => {
     render(<Landing locale="en" sections={enSections} />);
-    expect(screen.getByRole("link", { name: /Learn/ }).getAttribute("href")).toBe("/en/c/learn");
+    expect(screen.getByRole("link", { name: /Learn/ }).getAttribute("href")).toBe("/en/learn");
     const rants = screen.getByRole("link", { name: /Rants/ });
-    expect(rants.getAttribute("href")).toBe("/en/c/rants");
+    expect(rants.getAttribute("href")).toBe("/en/rants");
     expect(rants.textContent).toContain("Opinionated takes");
   });
 
@@ -81,7 +81,7 @@ describe("Landing", () => {
       "Belajar membangun perangkat lunak, dengan cara yang jelas.",
     );
     const celoteh = screen.getByRole("link", { name: /Celoteh/ });
-    expect(celoteh.getAttribute("href")).toBe("/id/c/celoteh");
+    expect(celoteh.getAttribute("href")).toBe("/id/celoteh");
     expect(screen.getByRole("link", { name: "Buka kalkulator" }).getAttribute("href")).toBe(
       "/id/tools/cost-of-living-calculator",
     );

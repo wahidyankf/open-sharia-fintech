@@ -78,7 +78,7 @@ describe("parseMarkdown", () => {
       const md = "[Overview (section)](../../overview.md)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/overview"');
       expect(html).not.toContain(".md");
     });
 
@@ -87,7 +87,7 @@ describe("parseMarkdown", () => {
       const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
 
       expect(html).toContain(
-        'href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/beginner"',
+        'href="/en/learn/fundamentally-strong/software-engineer/just-enough-nvim/learning/beginner"',
       );
       expect(html).not.toContain(".md");
     });
@@ -96,14 +96,14 @@ describe("parseMarkdown", () => {
       const md = "[Section](../_index.md)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/just-enough-nvim"');
     });
 
     it("leaves already-absolute /en/ links untouched", async () => {
-      const md = "[Home](/en/c/learn/fundamentally-strong)";
+      const md = "[Home](/en/learn/fundamentally-strong)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: currentSlug });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong"');
     });
 
     it("leaves external, mailto, and in-page anchor links untouched", async () => {
@@ -128,7 +128,7 @@ describe("parseMarkdown", () => {
 
       expect(html).toContain('href="./slides.pdf"');
       expect(html).toContain('href="../assets/diagram.svg"');
-      expect(html).not.toContain("/en/c/");
+      expect(html).not.toContain('href="/en/');
     });
   });
 
@@ -141,7 +141,7 @@ describe("parseMarkdown", () => {
       const md = "[Sibling Topic](./sibling.md)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: true });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
       expect(html).not.toContain(".md");
     });
 
@@ -149,7 +149,7 @@ describe("parseMarkdown", () => {
       const md = "[Parent Topic](../overview.md)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: true });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/overview"');
       expect(html).not.toContain(".md");
     });
 
@@ -157,7 +157,7 @@ describe("parseMarkdown", () => {
       const md = "[Sibling Topic](./sibling.md)";
       const { html } = await parseMarkdown(md, { locale: "en", slug: sectionSlug, isSection: false });
 
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/sibling"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/sibling"');
     });
   });
 });

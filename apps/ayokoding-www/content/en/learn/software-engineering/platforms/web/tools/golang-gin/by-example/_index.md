@@ -7,7 +7,7 @@ description: "Learn Go Gin web framework through 80 heavily annotated code examp
 tags: ["gin", "golang", "web-framework", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/golang-gin/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/golang-gin/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/golang-gin/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/golang-gin/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/golang-gin/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/golang-gin/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/golang-gin/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/golang-gin/by-example/advanced)

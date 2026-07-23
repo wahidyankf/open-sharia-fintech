@@ -7,8 +7,8 @@ description: "K3s - lightweight Kubernetes distribution for production, edge, an
 tags: ["k3s", "kubernetes", "infrastructure", "containers"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example)
-  - [Overview](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/infrastructure/tools/k3s/by-example/advanced)
+- [By Example](/en/learn/software-engineering/infrastructure/tools/k3s/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/infrastructure/tools/k3s/by-example/advanced)

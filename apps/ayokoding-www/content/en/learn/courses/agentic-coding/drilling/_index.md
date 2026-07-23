@@ -5,4 +5,4 @@ draft: false
 weight: 231
 ---
 
-- [Overview](/en/c/learn/courses/agentic-coding/drilling/overview)
+- [Overview](/en/learn/courses/agentic-coding/drilling/overview)

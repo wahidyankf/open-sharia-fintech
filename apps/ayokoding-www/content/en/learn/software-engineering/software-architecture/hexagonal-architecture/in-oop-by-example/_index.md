@@ -7,7 +7,7 @@ description: "Learn Hexagonal Architecture tactical and strategic patterns throu
 tags: ["hexagonal-architecture", "ports-and-adapters", "tutorial", "by-example", "oop", "java"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/hexagonal-architecture/in-oop-by-example/advanced)

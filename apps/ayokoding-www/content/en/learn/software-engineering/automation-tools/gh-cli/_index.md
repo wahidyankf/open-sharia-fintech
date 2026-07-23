@@ -7,9 +7,9 @@ type: docs
 layout: list
 ---
 
-- [By Example](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example)
-  - [Overview](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/automation-tools/gh-cli/by-example/advanced)
-- [Overview](/en/c/learn/software-engineering/automation-tools/gh-cli/overview)
+- [By Example](/en/learn/software-engineering/automation-tools/gh-cli/by-example)
+  - [Overview](/en/learn/software-engineering/automation-tools/gh-cli/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/automation-tools/gh-cli/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/automation-tools/gh-cli/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/automation-tools/gh-cli/by-example/advanced)
+- [Overview](/en/learn/software-engineering/automation-tools/gh-cli/overview)

@@ -7,8 +7,8 @@ description: "Creating AI-powered applications with Vercel AI SDK, LangChain, RA
 tags: ["ai", "llm", "vercel-ai-sdk", "rag", "agents", "typescript"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example)
-  - [Overview](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/advanced)
+- [By Example](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example)
+  - [Overview](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/platforms/web/tools/ai-powered-apps/by-example/advanced)

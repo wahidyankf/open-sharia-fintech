@@ -8,6 +8,6 @@ Feature: Learn-tree reorganization redirects
     Given the app is running
 
   @unit @e2e
-  Scenario: platform-web redirects to platforms/web under the /c namespace
+  Scenario: platform-web redirects to platforms/web under its legacy bucket address
     When a visitor navigates to "/en/learn/software-engineering/platform-web"
-    Then the current URL should contain "/en/c/learn/software-engineering/platforms/web"
+    Then the current URL should contain "/en/learn/legacy/software-engineering/platforms/web"

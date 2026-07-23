@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/courses/just-enough-nvim/learning/capstone/overview)
+- [Overview](/en/learn/courses/just-enough-nvim/learning/capstone/overview)

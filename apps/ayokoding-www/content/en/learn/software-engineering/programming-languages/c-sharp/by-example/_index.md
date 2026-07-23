@@ -7,7 +7,7 @@ description: "Learn C# through 85 heavily annotated code examples achieving 95% 
 tags: ["c-sharp", "csharp", "dotnet", "tutorial", "by-example", "code-first", "programming"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/c-sharp/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/c-sharp/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/c-sharp/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/c-sharp/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/c-sharp/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/c-sharp/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/c-sharp/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/c-sharp/by-example/advanced)

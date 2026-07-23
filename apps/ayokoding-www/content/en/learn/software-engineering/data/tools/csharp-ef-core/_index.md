@@ -7,8 +7,8 @@ type: docs
 layout: list
 ---
 
-- [By Example](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example)
-  - [Overview](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/data/tools/csharp-ef-core/by-example/advanced)
+- [By Example](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example)
+  - [Overview](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/csharp-ef-core/by-example/advanced)

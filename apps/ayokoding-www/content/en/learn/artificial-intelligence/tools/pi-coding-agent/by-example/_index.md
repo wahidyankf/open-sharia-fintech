@@ -8,7 +8,7 @@ layout: list
 description: "Learn Pi Coding Agent through 80 heavily annotated examples: CLI basics, provider configuration, skills, extensions, multi-mode usage, and production patterns (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-example/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-example/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-example/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/pi-coding-agent/by-example/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-example/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-example/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-example/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/pi-coding-agent/by-example/advanced)

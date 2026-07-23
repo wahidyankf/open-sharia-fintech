@@ -185,7 +185,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     Then("the rendered link's href should be the linked page's real site URL", () => {
-      expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/overview"');
+      expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/overview"');
     });
 
     And('the href should not contain a literal ".md" extension', () => {
@@ -218,7 +218,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
 
       Then("the rendered link's href should be resolved relative to the section's own directory", () => {
-        expect(html).toContain('href="/en/c/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
+        expect(html).toContain('href="/en/learn/fundamentally-strong/software-engineer/just-enough-nvim/sibling"');
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:In-body relative markdown links authored from a section index page resolve to real site routes

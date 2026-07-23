@@ -8,11 +8,11 @@ describe("PRIMARY_NAV_LINKS", () => {
 
   it("builds locale-aware hrefs for en", () => {
     const hrefs = PRIMARY_NAV_LINKS.map((l) => l.hrefFor("en"));
-    expect(hrefs).toEqual(["/en/c", "/en/tools"]);
+    expect(hrefs).toEqual(["/en/browse", "/en/tools"]);
   });
 
   it("builds locale-aware hrefs for id", () => {
     const hrefs = PRIMARY_NAV_LINKS.map((l) => l.hrefFor("id"));
-    expect(hrefs).toEqual(["/id/c", "/id/tools"]);
+    expect(hrefs).toEqual(["/id/browse", "/id/tools"]);
   });
 });

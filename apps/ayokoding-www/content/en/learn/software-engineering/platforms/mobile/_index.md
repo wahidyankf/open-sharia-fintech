@@ -7,5 +7,5 @@ description: "Mobile application development with React Native, Expo, and native
 tags: ["mobile", "react-native", "expo", "ios", "android"]
 ---
 
-- [Tools](/en/c/learn/software-engineering/platforms/mobile/tools)
-  - [React Native](/en/c/learn/software-engineering/platforms/mobile/tools/react-native)
+- [Tools](/en/learn/software-engineering/platforms/mobile/tools)
+  - [React Native](/en/learn/software-engineering/platforms/mobile/tools/react-native)

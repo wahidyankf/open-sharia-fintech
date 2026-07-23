@@ -6,4 +6,4 @@ weight: 276
 prerequisites: ["capstone-first-working-software"]
 ---
 
-- [Overview](/en/c/learn/courses/capstone-full-stack-app/overview)
+- [Overview](/en/learn/courses/capstone-full-stack-app/overview)

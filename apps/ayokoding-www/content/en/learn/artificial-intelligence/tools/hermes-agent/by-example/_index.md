@@ -8,7 +8,7 @@ layout: list
 description: "Learn Hermes Agent through 80 heavily annotated examples: CLI basics, YAML configuration, memory, skills, messaging, delegation, security, and production patterns (95% coverage)"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/hermes-agent/by-example/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/hermes-agent/by-example/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/hermes-agent/by-example/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/hermes-agent/by-example/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/hermes-agent/by-example/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/hermes-agent/by-example/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/hermes-agent/by-example/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/hermes-agent/by-example/advanced)

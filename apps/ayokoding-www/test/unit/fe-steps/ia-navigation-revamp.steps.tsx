@@ -59,9 +59,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
     Given("the app is running", () => {});
   });
 
-  Scenario("English content resolves under the /c namespace", ({ When, Then, And }) => {
-    When('a visitor navigates to "/en/c/learn/software-engineering"', () => {
-      // Content route handled by app/[locale]/(content)/c/[...slug]/page.tsx
+  Scenario("English content resolves at its bare URL", ({ When, Then, And }) => {
+    When('a visitor navigates to "/en/learn/software-engineering"', () => {
+      // Widened content route: app/[locale]/(content)/[...slug]/page.tsx (DD-48).
       expect(true).toBe(true);
     });
 
@@ -69,14 +69,14 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves under the /c namespace
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:English content resolves at its bare URL
     And("a breadcrumb nav should be present", () => {
       expect(true).toBe(true);
     });
   });
 
-  Scenario("The /c browse index lists all content sections", ({ When, Then, And }) => {
-    When('a visitor navigates to "/en/c"', () => {
+  Scenario("The browse index lists all content sections", ({ When, Then, And }) => {
+    When('a visitor navigates to "/en/browse"', () => {
       render(<BrowseIndex locale="en" sections={[learnSection, rantsSection]} />);
     });
 
@@ -99,7 +99,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(nav).toBeTruthy();
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The /c browse index lists all content sections
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:The browse index lists all content sections
     And("the breadcrumb should start with a Home link", () => {
       const links = document.querySelectorAll("nav[aria-label] a");
       expect(links.length).toBeGreaterThan(0);
@@ -109,7 +109,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Scenario("Header shows primary nav links on desktop", ({ Given, When, Then, And }) => {
     Given("the viewport is set to desktop width", () => {
       // Viewport sizing is E2E-only — unit mirror confirms the data contract:
-      // PRIMARY_NAV_LINKS always has Learn → /{locale}/c and Tools → /{locale}/tools.
+      // PRIMARY_NAV_LINKS always has Learn → /{locale}/browse and Tools → /{locale}/tools.
       expect(true).toBe(true);
     });
 
@@ -118,7 +118,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    Then('the header primary nav should contain a link to "/en/c" labelled "Learn"', () => {
+    Then('the header primary nav should contain a link to "/en/browse" labelled "Learn"', () => {
       // The data source (PRIMARY_NAV_LINKS) is unit-tested in nav-links.test.ts.
       // Full rendering with aria-label="Primary" is covered by header.test.tsx.
       expect(true).toBe(true);
@@ -145,7 +145,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    Then('the mobile nav should contain a link to "/en/c" labelled "Learn"', () => {
+    Then('the mobile nav should contain a link to "/en/browse" labelled "Learn"', () => {
       expect(true).toBe(true);
     });
 
@@ -222,9 +222,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect((para?.textContent ?? "").length).toBeGreaterThan(0);
     });
 
-    And('the landing section grid should include a card linking to "/en/c/rants"', () => {
+    And('the landing section grid should include a card linking to "/en/rants"', () => {
       // SectionCard renders as an <a> with href = contentUrl(locale, slug).
-      const link = document.querySelector('a[href="/en/c/rants"]');
+      const link = document.querySelector('a[href="/en/rants"]');
       expect(link).toBeTruthy();
     });
 
@@ -257,8 +257,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect((para?.textContent ?? "").length).toBeGreaterThan(0);
     });
 
-    And('the landing section grid should include a card linking to "/id/c/celoteh"', () => {
-      const link = document.querySelector('a[href="/id/c/celoteh"]');
+    And('the landing section grid should include a card linking to "/id/celoteh"', () => {
+      const link = document.querySelector('a[href="/id/celoteh"]');
       expect(link).toBeTruthy();
     });
 
@@ -269,35 +269,29 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
-  Scenario("Breadcrumb segments link to /c URLs", ({ Given, When, Then }) => {
+  Scenario("Breadcrumb segments link to their bare content URLs", ({ Given, When, Then }) => {
     const contentSegments = [
       { label: "Learn", slug: "learn" },
       { label: "Software Engineering", slug: "learn/software-engineering" },
       { label: "Data", slug: "learn/software-engineering/data" },
     ];
 
-    Given('a visitor is on "/en/c/learn/software-engineering/data"', () => {
+    Given('a visitor is on "/en/learn/software-engineering/data"', () => {
       cleanup();
     });
 
     When("the breadcrumb renders its ancestor segments", () => {
       render(
-        <Breadcrumb
-          locale="en"
-          slug="learn/software-engineering/data"
-          segments={contentSegments}
-          contentHrefs
-          showCurrent
-        />,
+        <Breadcrumb locale="en" slug="learn/software-engineering/data" segments={contentSegments} showCurrent />,
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to /c URLs
-    Then('each ancestor crumb links to a "/c/" prefixed URL', () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Breadcrumb segments link to their bare content URLs
+    Then("each ancestor crumb links to its bare content URL", () => {
       const learnLink = screen.getByRole("link", { name: "Learn" });
-      expect(learnLink.getAttribute("href")).toBe("/en/c/learn");
+      expect(learnLink.getAttribute("href")).toBe("/en/learn");
       const seLink = screen.getByRole("link", { name: "Software Engineering" });
-      expect(seLink.getAttribute("href")).toBe("/en/c/learn/software-engineering");
+      expect(seLink.getAttribute("href")).toBe("/en/learn/software-engineering");
       // Current page rendered as non-link span
       const current = screen.getByText("Data");
       expect(current.getAttribute("aria-current")).toBe("page");
@@ -306,7 +300,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario(
-    "Internal content links emit /c URLs directly without relying on redirects",
+    "Internal content links emit bare URLs directly without relying on redirects",
     ({ Given, When, Then, And }) => {
       Given("the sidebar tree, breadcrumb, prev-next, and search results render content links", () => {
         // contentUrl is the central helper consumed by all four components.
@@ -314,28 +308,28 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
 
       When("their hrefs are computed via the central content URL helper", () => {
-        // Unit-level verification: contentUrl produces /c/ URLs for content slugs.
+        // Unit-level verification: contentUrl produces bare URLs for content slugs (DD-48).
         expect(true).toBe(true);
       });
 
-      Then('every content link resolves directly to a "/c/" URL with status 200', () => {
-        // contentUrl("en", "learn/software-engineering") → "/en/c/learn/software-engineering"
-        expect(contentUrl("en", "learn/software-engineering")).toBe("/en/c/learn/software-engineering");
-        expect(contentUrl("en", "rants")).toBe("/en/c/rants");
-        expect(contentUrl("id", "belajar")).toBe("/id/c/belajar");
+      Then("every content link resolves directly to its bare URL with status 200", () => {
+        // contentUrl("en", "learn/software-engineering") → "/en/learn/software-engineering"
+        expect(contentUrl("en", "learn/software-engineering")).toBe("/en/learn/software-engineering");
+        expect(contentUrl("en", "rants")).toBe("/en/rants");
+        expect(contentUrl("id", "belajar")).toBe("/id/belajar");
       });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Internal content links emit /c URLs directly without relying on redirects
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Internal content links emit bare URLs directly without relying on redirects
       And("no internal content link resolves through a 308 redirect", () => {
         // Verified structurally: all link emitters call contentUrl directly,
-        // which produces canonical /c/ paths — no redirect intermediaries.
+        // which produces canonical bare paths — no redirect intermediaries.
         // Full HTTP 200 verification is covered by E2E breadcrumb/sidebar tests.
-        expect(contentUrl("en", "learn")).toContain("/c/");
+        expect(contentUrl("en", "learn")).not.toContain("/c/");
       });
     },
   );
 
-  Scenario("Sitemap lists only the new /c content URLs", ({ Given, When, Then, But }) => {
+  Scenario("Sitemap lists every content URL bare, with no distinct content namespace", ({ Given, When, Then, But }) => {
     Given("the sitemap is generated from the content index", () => {
       // Covered by apps/ayokoding-www/src/app/sitemap.unit.test.ts
       expect(true).toBe(true);
@@ -345,20 +339,20 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    Then('every moved-content entry uses a "/c/" prefixed URL', () => {
-      // contentUrl produces /c/ for content slugs — asserted in sitemap.unit.test.ts
-      expect(contentUrl("en", "learn/software-engineering")).toContain("/c/");
+    Then("every moved-content entry uses a bare URL", () => {
+      // contentUrl produces a bare join for content slugs (DD-48) — asserted in sitemap.unit.test.ts
+      expect(contentUrl("en", "learn/software-engineering")).not.toContain("/c/");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Sitemap lists only the new /c content URLs
-    But('top-level pages (about, terms, tools) are not prefixed with "/c/"', () => {
-      // Loose pages bypass /c/ — asserted in sitemap.unit.test.ts
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Sitemap lists every content URL bare, with no distinct content namespace
+    But("top-level pages (about, terms, tools) use that same bare form — no longer namespace-distinct", () => {
+      // Loose pages and content pages now share the same uniform bare join — asserted in sitemap.unit.test.ts
       expect(contentUrl("en", "about-ayokoding")).not.toContain("/c/");
       expect(contentUrl("id", "tentang-ayokoding")).not.toContain("/c/");
     });
   });
 
-  Scenario("RSS feed item links use the new /c content URLs", ({ Given, When, Then }) => {
+  Scenario("RSS feed item links use bare content URLs", ({ Given, When, Then }) => {
     Given("the feed is generated from the content index", () => {
       // Covered by apps/ayokoding-www/src/app/feed.xml/route.unit.test.ts
       expect(true).toBe(true);
@@ -368,16 +362,16 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:RSS feed item links use the new /c content URLs
-    Then('every content item link uses a "/c/" prefixed URL', () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:RSS feed item links use bare content URLs
+    Then("every content item link uses a bare URL", () => {
       // contentUrl drives feed URL generation — asserted in route.unit.test.ts
-      expect(contentUrl("en", "rants/my-post")).toBe("/en/c/rants/my-post");
+      expect(contentUrl("en", "rants/my-post")).toBe("/en/rants/my-post");
     });
   });
 
-  Scenario("Canonical link for moved content points to the /c URL", ({ Given, When, Then, And }) => {
-    Given('the content page at "/en/c/learn/software-engineering"', () => {
-      // Covered by apps/ayokoding-www/src/app/[locale]/(content)/c/[...slug]/page.unit.test.ts
+  Scenario("Canonical link for moved content points to its bare URL", ({ Given, When, Then, And }) => {
+    Given('the content page at "/en/learn/software-engineering"', () => {
+      // Covered by apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.unit.test.ts
       expect(true).toBe(true);
     });
 
@@ -385,12 +379,12 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
 
-    Then('the canonical alternate is "/en/c/learn/software-engineering"', () => {
+    Then('the canonical alternate is "/en/learn/software-engineering"', () => {
       // generateMetadata sets alternates.canonical via contentUrl — asserted in page.unit.test.ts
-      expect(contentUrl("en", "learn/software-engineering")).toBe("/en/c/learn/software-engineering");
+      expect(contentUrl("en", "learn/software-engineering")).toBe("/en/learn/software-engineering");
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to the /c URL
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/ia-navigation-revamp.feature:Canonical link for moved content points to its bare URL
     And("the language alternates include en and x-default", () => {
       // alternates.languages populated with en + x-default — asserted in page.unit.test.ts
       expect(true).toBe(true);

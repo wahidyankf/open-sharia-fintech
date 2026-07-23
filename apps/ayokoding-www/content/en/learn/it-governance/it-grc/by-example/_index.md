@@ -8,7 +8,7 @@ layout: list
 description: "IT-GRC by example — 85 annotated governance scenarios covering frameworks, risk registers, audit artifacts, and compliance decisions"
 ---
 
-- [Overview](/en/c/learn/it-governance/it-grc/by-example/overview)
-- [Beginner](/en/c/learn/it-governance/it-grc/by-example/beginner)
-- [Intermediate](/en/c/learn/it-governance/it-grc/by-example/intermediate)
-- [Advanced](/en/c/learn/it-governance/it-grc/by-example/advanced)
+- [Overview](/en/learn/it-governance/it-grc/by-example/overview)
+- [Beginner](/en/learn/it-governance/it-grc/by-example/beginner)
+- [Intermediate](/en/learn/it-governance/it-grc/by-example/intermediate)
+- [Advanced](/en/learn/it-governance/it-grc/by-example/advanced)

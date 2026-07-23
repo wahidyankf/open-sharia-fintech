@@ -5,4 +5,4 @@ draft: false
 weight: 900
 ---
 
-- [Overview](/en/c/learn/courses/data-access-orms-and-query-builders/learning/capstone/overview)
+- [Overview](/en/learn/courses/data-access-orms-and-query-builders/learning/capstone/overview)

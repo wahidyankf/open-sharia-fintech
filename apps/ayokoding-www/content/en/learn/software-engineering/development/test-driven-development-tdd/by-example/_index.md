@@ -7,7 +7,7 @@ description: "Learn TDD through 85 annotated code examples covering Red-Green-Re
 tags: ["tdd", "test-driven-development", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/development/test-driven-development-tdd/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/development/test-driven-development-tdd/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/development/test-driven-development-tdd/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/development/test-driven-development-tdd/by-example/advanced)
+- [Overview](/en/learn/software-engineering/development/test-driven-development-tdd/by-example/overview)
+- [Beginner](/en/learn/software-engineering/development/test-driven-development-tdd/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/development/test-driven-development-tdd/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/development/test-driven-development-tdd/by-example/advanced)

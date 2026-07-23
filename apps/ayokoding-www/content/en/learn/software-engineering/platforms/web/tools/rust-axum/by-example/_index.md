@@ -7,7 +7,7 @@ description: "Learn Rust Axum through 74 heavily annotated code examples coverin
 tags: ["axum", "rust", "web-framework", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/rust-axum/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/rust-axum/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/rust-axum/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/rust-axum/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/rust-axum/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/rust-axum/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/rust-axum/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/rust-axum/by-example/advanced)

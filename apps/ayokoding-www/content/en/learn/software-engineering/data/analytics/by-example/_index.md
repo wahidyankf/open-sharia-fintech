@@ -7,7 +7,7 @@ description: "Learn data analytics through 85 heavily annotated examples coverin
 tags: ["data-analytics", "pandas", "numpy", "scikit-learn", "polars", "python", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/analytics/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/analytics/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/analytics/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/analytics/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/analytics/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/analytics/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/analytics/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/analytics/by-example/advanced)

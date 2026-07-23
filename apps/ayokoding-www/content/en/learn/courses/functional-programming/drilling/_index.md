@@ -5,4 +5,4 @@ draft: false
 weight: 223
 ---
 
-- [Overview](/en/c/learn/courses/functional-programming/drilling/overview)
+- [Overview](/en/learn/courses/functional-programming/drilling/overview)

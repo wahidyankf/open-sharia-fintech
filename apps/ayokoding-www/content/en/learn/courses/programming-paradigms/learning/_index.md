@@ -5,9 +5,9 @@ draft: false
 weight: 122
 ---
 
-- [Overview](/en/c/learn/courses/programming-paradigms/learning/overview)
-- [Beginner](/en/c/learn/courses/programming-paradigms/learning/beginner)
-- [Intermediate](/en/c/learn/courses/programming-paradigms/learning/intermediate)
-- [Advanced](/en/c/learn/courses/programming-paradigms/learning/advanced)
-- [Capstone](/en/c/learn/courses/programming-paradigms/learning/capstone)
-  - [Overview](/en/c/learn/courses/programming-paradigms/learning/capstone/overview)
+- [Overview](/en/learn/courses/programming-paradigms/learning/overview)
+- [Beginner](/en/learn/courses/programming-paradigms/learning/beginner)
+- [Intermediate](/en/learn/courses/programming-paradigms/learning/intermediate)
+- [Advanced](/en/learn/courses/programming-paradigms/learning/advanced)
+- [Capstone](/en/learn/courses/programming-paradigms/learning/capstone)
+  - [Overview](/en/learn/courses/programming-paradigms/learning/capstone/overview)

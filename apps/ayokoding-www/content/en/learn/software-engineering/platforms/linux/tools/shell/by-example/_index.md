@@ -7,7 +7,7 @@ description: "80 examples covering shell scripting from basics to production-gra
 tags: ["linux", "shell", "bash", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/linux/tools/shell/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/linux/tools/shell/by-example/advanced)

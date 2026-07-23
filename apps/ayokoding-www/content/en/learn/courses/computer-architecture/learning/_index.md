@@ -5,9 +5,9 @@ draft: false
 weight: 120
 ---
 
-- [Overview](/en/c/learn/courses/computer-architecture/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/computer-architecture/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/computer-architecture/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/computer-architecture/learning/advanced)
-- [Capstone](/en/c/learn/courses/computer-architecture/learning/capstone)
-  - [Capstone: Sensor-Averaging Kernel](/en/c/learn/courses/computer-architecture/learning/capstone/explanation)
+- [Overview](/en/learn/courses/computer-architecture/learning/overview)
+- [Beginner Examples](/en/learn/courses/computer-architecture/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/computer-architecture/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/computer-architecture/learning/advanced)
+- [Capstone](/en/learn/courses/computer-architecture/learning/capstone)
+  - [Capstone: Sensor-Averaging Kernel](/en/learn/courses/computer-architecture/learning/capstone/explanation)

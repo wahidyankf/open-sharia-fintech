@@ -7,7 +7,7 @@ description: "Learn Tailwind CSS through 80 heavily annotated code examples cove
 tags: ["tailwindcss", "css", "frontend", "styling", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/fe-tailwindcss/by-example/advanced)

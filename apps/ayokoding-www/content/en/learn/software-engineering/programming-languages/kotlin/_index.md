@@ -8,11 +8,11 @@ type: docs
 layout: list
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/kotlin/overview)
-- [Initial Setup](/en/c/learn/software-engineering/programming-languages/kotlin/initial-setup)
-- [Quick Start](/en/c/learn/software-engineering/programming-languages/kotlin/quick-start)
-- [By Example](/en/c/learn/software-engineering/programming-languages/kotlin/by-example)
-  - [Overview](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/kotlin/overview)
+- [Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/initial-setup)
+- [Quick Start](/en/learn/software-engineering/programming-languages/kotlin/quick-start)
+- [By Example](/en/learn/software-engineering/programming-languages/kotlin/by-example)
+  - [Overview](/en/learn/software-engineering/programming-languages/kotlin/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-example/advanced)

@@ -7,7 +7,7 @@ description: "Code-first Java learning through 90 heavily annotated examples cov
 tags: ["java", "by-example", "tutorial", "code-first", "examples"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/java/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/java/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/java/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/java/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/java/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/java/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/java/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/java/by-example/advanced)

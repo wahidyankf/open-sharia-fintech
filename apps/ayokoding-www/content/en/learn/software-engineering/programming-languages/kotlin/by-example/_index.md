@@ -7,7 +7,7 @@ description: "Learn Kotlin through 81 annotated code examples - code-first tutor
 tags: ["kotlin", "tutorial", "by-example", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/programming-languages/kotlin/by-example/advanced)
+- [Overview](/en/learn/software-engineering/programming-languages/kotlin/by-example/overview)
+- [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-example/advanced)

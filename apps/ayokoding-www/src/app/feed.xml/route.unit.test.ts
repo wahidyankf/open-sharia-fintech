@@ -37,10 +37,11 @@ vi.mock("@/features/app-shell/shell/trpc-init", () => ({
 import { GET } from "./route";
 
 describe("feed GET", () => {
-  it("emits /c/ prefixed URL for English content items", async () => {
+  it("emits a bare URL for English content items (DD-48 — no /c/ namespace)", async () => {
     const response = await GET();
     const text = await response.text();
-    expect(text).toContain("/c/learn/software-engineering");
+    expect(text).toContain("/en/learn/software-engineering");
+    expect(text).not.toContain("/c/learn/software-engineering");
   });
 
   it("does not include non-English entries", async () => {

@@ -5,9 +5,9 @@ draft: false
 weight: 113
 ---
 
-- [Overview](/en/c/learn/courses/just-enough-typescript/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/just-enough-typescript/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/just-enough-typescript/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/just-enough-typescript/learning/advanced)
-- [Capstone](/en/c/learn/courses/just-enough-typescript/learning/capstone)
-  - [Overview](/en/c/learn/courses/just-enough-typescript/learning/capstone/overview)
+- [Overview](/en/learn/courses/just-enough-typescript/learning/overview)
+- [Beginner Examples](/en/learn/courses/just-enough-typescript/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/just-enough-typescript/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/just-enough-typescript/learning/advanced)
+- [Capstone](/en/learn/courses/just-enough-typescript/learning/capstone)
+  - [Overview](/en/learn/courses/just-enough-typescript/learning/capstone/overview)

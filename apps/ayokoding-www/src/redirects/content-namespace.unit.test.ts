@@ -15,31 +15,37 @@ describe("contentNamespaceRedirects", () => {
     }
   });
 
-  it("each rule keeps the section and only swaps in the /c/ namespace", () => {
+  it("each rule strips a stale /c/-prefixed bookmark back to its bare destination", () => {
     for (const rule of contentNamespaceRedirects) {
-      // source: /{locale}/{section}/:path*  ->  destination: /{locale}/c/{section}/:path*
-      const match = rule.source.match(/^\/(en|id)\/([^/]+)\/:path\*$/);
+      // source: /{locale}/c/{section}/:path*  ->  destination: /{locale}/{section}/:path*
+      const match = rule.source.match(/^\/(en|id)\/c\/([^/]+)\/:path\*$/);
       expect(match, `source not in expected shape: ${rule.source}`).not.toBeNull();
       const [, locale, section] = match as RegExpMatchArray;
-      expect(rule.destination).toBe(`/${locale}/c/${section}/:path*`);
+      expect(rule.destination).toBe(`/${locale}/${section}/:path*`);
     }
   });
 
   it("covers the expected en sections", () => {
-    const enSources = contentNamespaceRedirects.filter((r) => r.source.startsWith("/en/")).map((r) => r.source);
-    expect(enSources).toContain("/en/learn/:path*");
-    expect(enSources).toContain("/en/rants/:path*");
+    const enSources = contentNamespaceRedirects.filter((r) => r.source.startsWith("/en/c/")).map((r) => r.source);
+    expect(enSources).toContain("/en/c/learn/:path*");
+    expect(enSources).toContain("/en/c/rants/:path*");
   });
 
   it("covers the expected id sections", () => {
-    const idSources = contentNamespaceRedirects.filter((r) => r.source.startsWith("/id/")).map((r) => r.source);
-    expect(idSources).toContain("/id/belajar/:path*");
-    expect(idSources).toContain("/id/celoteh/:path*");
-    expect(idSources).toContain("/id/konten-video/:path*");
+    const idSources = contentNamespaceRedirects.filter((r) => r.source.startsWith("/id/c/")).map((r) => r.source);
+    expect(idSources).toContain("/id/c/belajar/:path*");
+    expect(idSources).toContain("/id/c/celoteh/:path*");
+    expect(idSources).toContain("/id/c/konten-video/:path*");
   });
 
   it("does NOT use a blanket /{locale}/:path* rule that would swallow about/terms/tools", () => {
     const blanket = contentNamespaceRedirects.find((r) => /^\/(en|id)\/:path\*$/.test(r.source));
     expect(blanket).toBeUndefined();
+  });
+
+  it("no rule in the module has a /c/-containing destination (loop-safety invariant, DD-48)", () => {
+    for (const rule of contentNamespaceRedirects) {
+      expect(rule.destination).not.toContain("/c/");
+    }
   });
 });

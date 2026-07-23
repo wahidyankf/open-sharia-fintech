@@ -6,13 +6,13 @@ weight: 260
 prerequisites: ["software-testing"]
 ---
 
-- [Overview](/en/c/learn/courses/debugging-and-profiling/overview)
-- [Learning](/en/c/learn/courses/debugging-and-profiling/learning)
-  - [Overview](/en/c/learn/courses/debugging-and-profiling/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/debugging-and-profiling/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/debugging-and-profiling/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/debugging-and-profiling/learning/advanced)
-  - [Native & Systems Examples](/en/c/learn/courses/debugging-and-profiling/learning/native-and-systems)
-  - [Capstone](/en/c/learn/courses/debugging-and-profiling/learning/capstone)
-- [Drilling](/en/c/learn/courses/debugging-and-profiling/drilling)
-  - [Overview](/en/c/learn/courses/debugging-and-profiling/drilling/overview)
+- [Overview](/en/learn/courses/debugging-and-profiling/overview)
+- [Learning](/en/learn/courses/debugging-and-profiling/learning)
+  - [Overview](/en/learn/courses/debugging-and-profiling/learning/overview)
+  - [Beginner Examples](/en/learn/courses/debugging-and-profiling/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/debugging-and-profiling/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/debugging-and-profiling/learning/advanced)
+  - [Native & Systems Examples](/en/learn/courses/debugging-and-profiling/learning/native-and-systems)
+  - [Capstone](/en/learn/courses/debugging-and-profiling/learning/capstone)
+- [Drilling](/en/learn/courses/debugging-and-profiling/drilling)
+  - [Overview](/en/learn/courses/debugging-and-profiling/drilling/overview)

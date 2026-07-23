@@ -57,7 +57,7 @@ afterEach(() => {
 });
 
 describe("SearchDialog", () => {
-  it("navigates to /c/ prefixed URL when a search result is selected", async () => {
+  it("navigates to the bare content URL when a search result is selected (DD-48)", async () => {
     render(<SearchDialog />);
 
     // Trigger debounced search
@@ -73,6 +73,6 @@ describe("SearchDialog", () => {
     const btn = screen.getByRole("button", { name: /Software Engineering/i });
     fireEvent.click(btn);
 
-    expect(mockPush).toHaveBeenCalledWith("/en/c/learn/software-engineering");
+    expect(mockPush).toHaveBeenCalledWith("/en/learn/software-engineering");
   });
 });

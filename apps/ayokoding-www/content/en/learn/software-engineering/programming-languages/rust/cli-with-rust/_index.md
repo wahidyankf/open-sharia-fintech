@@ -7,8 +7,8 @@ description: "Build production Rust CLI tools - from ownership fundamentals thro
 tags: ["rust", "cli", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-- [By Example](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example)
-  - [Overview](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/overview)
-  - [Beginner](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/beginner)
-  - [Intermediate](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/intermediate)
-  - [Advanced](/en/c/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/advanced)
+- [By Example](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example)
+  - [Overview](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/programming-languages/rust/cli-with-rust/by-example/advanced)

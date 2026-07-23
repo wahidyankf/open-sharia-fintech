@@ -7,7 +7,7 @@ description: "Learn tRPC through 80 heavily annotated code examples covering typ
 tags: ["trpc", "typescript", "api", "tutorial", "by-example"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/ts-trpc/by-example/advanced)

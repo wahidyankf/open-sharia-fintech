@@ -5,4 +5,4 @@ draft: false
 weight: 215
 ---
 
-- [Overview](/en/c/learn/courses/software-testing/drilling/overview)
+- [Overview](/en/learn/courses/software-testing/drilling/overview)

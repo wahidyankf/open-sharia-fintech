@@ -7,7 +7,7 @@ description: "Learn Elixir Ecto through 85 annotated code examples covering 95% 
 tags: ["elixir-ecto", "tutorial", "by-example", "ecto", "database", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/elixir-ecto/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/elixir-ecto/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/elixir-ecto/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/elixir-ecto/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/advanced)

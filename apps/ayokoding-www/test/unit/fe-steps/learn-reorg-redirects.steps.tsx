@@ -15,13 +15,13 @@ describeFeature(feature, ({ Scenario, Background }) => {
     Given("the app is running", () => {});
   });
 
-  Scenario("platform-web redirects to platforms/web under the /c namespace", ({ When, Then }) => {
+  Scenario("platform-web redirects to platforms/web under its legacy bucket address", ({ When, Then }) => {
     When('a visitor navigates to "/en/learn/software-engineering/platform-web"', () => {
       expect(true).toBe(true);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-reorg-redirects.feature:platform-web redirects to platforms/web under the /c namespace
-    Then('the current URL should contain "/en/c/learn/software-engineering/platforms/web"', () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/learn-reorg-redirects.feature:platform-web redirects to platforms/web under its legacy bucket address
+    Then('the current URL should contain "/en/learn/legacy/software-engineering/platforms/web"', () => {
       expect(true).toBe(true);
     });
   });

@@ -8,7 +8,7 @@ layout: list
 description: "OpenClaw by concept — 42 narrative-driven sections covering agent architecture, Skills system, channels, memory, and production deployment"
 ---
 
-- [Overview](/en/c/learn/artificial-intelligence/tools/openclaw/by-concept/overview)
-- [Beginner](/en/c/learn/artificial-intelligence/tools/openclaw/by-concept/beginner)
-- [Intermediate](/en/c/learn/artificial-intelligence/tools/openclaw/by-concept/intermediate)
-- [Advanced](/en/c/learn/artificial-intelligence/tools/openclaw/by-concept/advanced)
+- [Overview](/en/learn/artificial-intelligence/tools/openclaw/by-concept/overview)
+- [Beginner](/en/learn/artificial-intelligence/tools/openclaw/by-concept/beginner)
+- [Intermediate](/en/learn/artificial-intelligence/tools/openclaw/by-concept/intermediate)
+- [Advanced](/en/learn/artificial-intelligence/tools/openclaw/by-concept/advanced)

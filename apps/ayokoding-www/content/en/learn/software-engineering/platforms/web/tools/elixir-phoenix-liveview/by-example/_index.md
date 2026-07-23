@@ -7,7 +7,7 @@ description: "Learn Phoenix LiveView through 85 annotated code examples covering
 tags: ["phoenix", "liveview", "tutorial", "by-example", "real-time", "elixir"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/advanced)
+- [Overview](/en/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/overview)
+- [Beginner](/en/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/platforms/web/tools/elixir-phoenix-liveview/by-example/advanced)

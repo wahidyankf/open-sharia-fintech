@@ -5,4 +5,4 @@ draft: false
 weight: 219
 ---
 
-- [Overview](/en/c/learn/courses/computer-science-foundations/drilling/overview)
+- [Overview](/en/learn/courses/computer-science-foundations/drilling/overview)

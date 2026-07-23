@@ -1,7 +1,14 @@
 /**
- * Permanent (308) redirects that move the old bare content URLs
- * (`/{locale}/{section}/...`) into the `/c/` content namespace
- * (`/{locale}/c/{section}/...`).
+ * Permanent (308) redirects that strip the retired `/c/` content namespace
+ * (`/{locale}/c/{section}/...`) back to the bare content URLs
+ * (`/{locale}/{section}/...`) — de-namespacing (DD-48).
+ *
+ * INVERTED from this module's original direction: before DD-48 this module
+ * moved bare URLs INTO `/c/`. Now it strips a stale `/c/`-prefixed bookmark
+ * back to the bare form. **No rule below may ever gain a `/c/`-containing
+ * destination** — doing so alongside this module's own source pattern would
+ * recreate the exact infinite-308-loop hazard this inversion exists to
+ * retire (`/en/learn/x` → `/en/c/learn/x` → `/en/learn/x`).
  *
  * One rule per locale + moved section, scoped with a `:path*` wildcard so that
  * loose top-level pages (`about-ayokoding`, `terms-and-conditions`, …), the
@@ -12,10 +19,10 @@
  * `learn`); see the Locale Slug Asymmetry table in the plan tech-docs.
  *
  * `permanent: true` yields a method-preserving 308 that clients and search
- * engines cache. Spread into `next.config.ts` `redirects()` AFTER
- * `learnReorgRedirects` — the learn-reorg renames stay within `/en/learn/...`
- * and 308 first; this rule then 308s the result into `/c`. That chain is
- * acceptable and there is no exact-source duplication between the two modules.
+ * engines cache. Spread into `next.config.ts` `redirects()` FIRST — every
+ * other redirect module's rules pattern-match bare URLs only, so a
+ * `/c`-prefixed request must be normalized by this module before any
+ * downstream module gets a chance to see it.
  */
 export const contentNamespaceRedirects: Array<{
   source: string;
@@ -23,10 +30,10 @@ export const contentNamespaceRedirects: Array<{
   permanent: boolean;
 }> = [
   // en — moved sections: learn, rants
-  { source: "/en/learn/:path*", destination: "/en/c/learn/:path*", permanent: true },
-  { source: "/en/rants/:path*", destination: "/en/c/rants/:path*", permanent: true },
+  { source: "/en/c/learn/:path*", destination: "/en/learn/:path*", permanent: true },
+  { source: "/en/c/rants/:path*", destination: "/en/rants/:path*", permanent: true },
   // id — moved sections: belajar, celoteh, konten-video
-  { source: "/id/belajar/:path*", destination: "/id/c/belajar/:path*", permanent: true },
-  { source: "/id/celoteh/:path*", destination: "/id/c/celoteh/:path*", permanent: true },
-  { source: "/id/konten-video/:path*", destination: "/id/c/konten-video/:path*", permanent: true },
+  { source: "/id/c/belajar/:path*", destination: "/id/belajar/:path*", permanent: true },
+  { source: "/id/c/celoteh/:path*", destination: "/id/celoteh/:path*", permanent: true },
+  { source: "/id/c/konten-video/:path*", destination: "/id/konten-video/:path*", permanent: true },
 ];

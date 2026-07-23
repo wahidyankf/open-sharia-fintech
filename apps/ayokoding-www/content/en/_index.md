@@ -12,6 +12,6 @@ breadcrumbs: false
 
 - [English Content](/en)
   - [About AyoKoding](/en/about-ayokoding)
-  - [Learn](/en/c/learn)
+  - [Learn](/en/learn)
   - [Terms and Conditions](/en/terms-and-conditions)
-  - [Rants](/en/c/rants)
+  - [Rants](/en/rants)

@@ -10,7 +10,7 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/en/c/learn",
+  usePathname: () => "/en/learn",
 }));
 
 // eslint-disable-next-line import/first
@@ -24,19 +24,19 @@ const nodes = [
 ];
 
 describe("SidebarTree", () => {
-  it("emits /c/ prefixed hrefs for content nodes", () => {
+  it("emits bare hrefs for content nodes (contentUrl uniform join, DD-48)", () => {
     render(<SidebarTree nodes={nodes} locale="en" />);
-    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/c/learn");
-    expect(screen.getByRole("link", { name: "Rants" }).getAttribute("href")).toBe("/en/c/rants");
+    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/learn");
+    expect(screen.getByRole("link", { name: "Rants" }).getAttribute("href")).toBe("/en/rants");
   });
 
-  it("emits /c/ prefixed hrefs for Indonesian locale", () => {
+  it("emits bare hrefs for Indonesian locale", () => {
     render(
       <SidebarTree
         nodes={[{ slug: "belajar", title: "Belajar", weight: 0, isSection: true, children: [] }]}
         locale="id"
       />,
     );
-    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/c/belajar");
+    expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/belajar");
   });
 });

@@ -24,11 +24,12 @@ vi.mock("@/features/app-shell/shell/trpc-init", () => ({
 import sitemap from "./sitemap";
 
 describe("sitemap", () => {
-  it("emits /c/ prefixed URL for content pages", async () => {
+  it("emits a bare URL for content pages (DD-48 — no /c/ namespace)", async () => {
     const entries = await sitemap();
     const contentEntry = entries.find((e) => e.url.includes("learn/software-engineering"));
     expect(contentEntry).toBeDefined();
-    expect(contentEntry?.url).toContain("/c/learn/software-engineering");
+    expect(contentEntry?.url).toContain("/en/learn/software-engineering");
+    expect(contentEntry?.url).not.toContain("/c/");
   });
 
   it("emits bare URL for loose pages (about-ayokoding)", async () => {

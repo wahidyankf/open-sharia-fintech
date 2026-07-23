@@ -5,4 +5,4 @@ draft: false
 weight: 224
 ---
 
-- [Overview](/en/c/learn/courses/concurrency-and-parallelism/drilling/overview)
+- [Overview](/en/learn/courses/concurrency-and-parallelism/drilling/overview)

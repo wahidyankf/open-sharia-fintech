@@ -5,9 +5,9 @@ draft: false
 weight: 121
 ---
 
-- [Overview](/en/c/learn/courses/object-oriented-design-and-patterns/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/object-oriented-design-and-patterns/learning/advanced)
-- [Capstone](/en/c/learn/courses/object-oriented-design-and-patterns/learning/capstone)
-  - [Overview](/en/c/learn/courses/object-oriented-design-and-patterns/learning/capstone/overview)
+- [Overview](/en/learn/courses/object-oriented-design-and-patterns/learning/overview)
+- [Beginner Examples](/en/learn/courses/object-oriented-design-and-patterns/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/object-oriented-design-and-patterns/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/object-oriented-design-and-patterns/learning/advanced)
+- [Capstone](/en/learn/courses/object-oriented-design-and-patterns/learning/capstone)
+  - [Overview](/en/learn/courses/object-oriented-design-and-patterns/learning/capstone/overview)

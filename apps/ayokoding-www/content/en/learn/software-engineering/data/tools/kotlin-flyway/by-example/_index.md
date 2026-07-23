@@ -7,7 +7,7 @@ description: "Learn Kotlin Flyway through 80 annotated code examples covering 95
 tags: ["kotlin-flyway", "tutorial", "by-example", "flyway", "database", "migrations", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/kotlin-flyway/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/kotlin-flyway/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/kotlin-flyway/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/kotlin-flyway/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/kotlin-flyway/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/kotlin-flyway/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/kotlin-flyway/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/kotlin-flyway/by-example/advanced)

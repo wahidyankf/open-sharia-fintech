@@ -8,7 +8,7 @@ layout: list
 description: "Procedural variant of Finite State Machines — Rust typestate (compile-time-enforced), Go looplab/fsm (runtime + declarative), C function-pointer table (Samek hierarchical statecharts)"
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/finite-state-machine-fsm/in-procedural-by-example/advanced)

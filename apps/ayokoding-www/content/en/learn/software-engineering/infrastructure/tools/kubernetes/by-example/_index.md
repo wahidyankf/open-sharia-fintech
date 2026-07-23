@@ -7,7 +7,7 @@ description: "Learn Kubernetes through 85 heavily annotated, self-contained YAML
 tags: ["kubernetes", "by-example", "tutorial", "containers", "orchestration"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/infrastructure/tools/kubernetes/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/infrastructure/tools/kubernetes/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/infrastructure/tools/kubernetes/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/infrastructure/tools/kubernetes/by-example/advanced)
+- [Overview](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/overview)
+- [Beginner](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/advanced)

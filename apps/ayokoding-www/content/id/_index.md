@@ -11,8 +11,8 @@ breadcrumbs: false
 ---
 
 - [Konten Bahasa Indonesia](/id)
-  - [Belajar](/id/c/belajar)
+  - [Belajar](/id/belajar)
   - [Syarat dan Ketentuan](/id/syarat-dan-ketentuan)
-  - [Celoteh](/id/c/celoteh)
-  - [Konten Video](/id/c/konten-video)
+  - [Celoteh](/id/celoteh)
+  - [Konten Video](/id/konten-video)
   - [Tentang AyoKoding](/id/tentang-ayokoding)

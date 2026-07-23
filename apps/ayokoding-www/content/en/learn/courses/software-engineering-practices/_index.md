@@ -6,12 +6,12 @@ weight: 400
 prerequisites: ["advanced-networking"]
 ---
 
-- [Overview](/en/c/learn/courses/software-engineering-practices/overview)
-- [Learning](/en/c/learn/courses/software-engineering-practices/learning)
-  - [Overview](/en/c/learn/courses/software-engineering-practices/learning/overview)
-  - [Beginner Examples](/en/c/learn/courses/software-engineering-practices/learning/beginner)
-  - [Intermediate Examples](/en/c/learn/courses/software-engineering-practices/learning/intermediate)
-  - [Advanced Examples](/en/c/learn/courses/software-engineering-practices/learning/advanced)
-  - [Capstone](/en/c/learn/courses/software-engineering-practices/learning/capstone)
-- [Drilling](/en/c/learn/courses/software-engineering-practices/drilling)
-  - [Overview](/en/c/learn/courses/software-engineering-practices/drilling/overview)
+- [Overview](/en/learn/courses/software-engineering-practices/overview)
+- [Learning](/en/learn/courses/software-engineering-practices/learning)
+  - [Overview](/en/learn/courses/software-engineering-practices/learning/overview)
+  - [Beginner Examples](/en/learn/courses/software-engineering-practices/learning/beginner)
+  - [Intermediate Examples](/en/learn/courses/software-engineering-practices/learning/intermediate)
+  - [Advanced Examples](/en/learn/courses/software-engineering-practices/learning/advanced)
+  - [Capstone](/en/learn/courses/software-engineering-practices/learning/capstone)
+- [Drilling](/en/learn/courses/software-engineering-practices/drilling)
+  - [Overview](/en/learn/courses/software-engineering-practices/drilling/overview)

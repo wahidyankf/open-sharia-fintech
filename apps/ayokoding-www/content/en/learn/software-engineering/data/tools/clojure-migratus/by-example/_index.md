@@ -7,7 +7,7 @@ description: "Learn Clojure Migratus through 85 annotated examples covering 95% 
 tags: ["clojure-migratus", "tutorial", "by-example", "migratus", "database", "migrations", "code-first"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/data/tools/clojure-migratus/by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/data/tools/clojure-migratus/by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/data/tools/clojure-migratus/by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/data/tools/clojure-migratus/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/tools/clojure-migratus/by-example/overview)
+- [Beginner](/en/learn/software-engineering/data/tools/clojure-migratus/by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/data/tools/clojure-migratus/by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/data/tools/clojure-migratus/by-example/advanced)

@@ -6,4 +6,4 @@ weight: 135
 prerequisites: ["extending-neovim"]
 ---
 
-- [Overview](/en/c/learn/courses/capstone-forge-ready/overview)
+- [Overview](/en/learn/courses/capstone-forge-ready/overview)

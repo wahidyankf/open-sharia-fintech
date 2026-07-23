@@ -6,8 +6,8 @@ draft: false
 weight: 90
 ---
 
-- [Careers](/en/c/learn/paths/careers)
-  - [Interview-Ready](/en/c/learn/paths/careers/interview-ready)
-  - [Immediately-Effective](/en/c/learn/paths/careers/immediately-effective)
-  - [Fundamentally Strong](/en/c/learn/paths/careers/fundamentally-strong)
-- [Skills](/en/c/learn/paths/skills)
+- [Careers](/en/learn/paths/careers)
+  - [Interview-Ready](/en/learn/paths/careers/interview-ready)
+  - [Immediately-Effective](/en/learn/paths/careers/immediately-effective)
+  - [Fundamentally Strong](/en/learn/paths/careers/fundamentally-strong)
+- [Skills](/en/learn/paths/skills)

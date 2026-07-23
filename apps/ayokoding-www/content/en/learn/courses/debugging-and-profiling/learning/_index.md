@@ -5,10 +5,10 @@ draft: false
 weight: 116
 ---
 
-- [Overview](/en/c/learn/courses/debugging-and-profiling/learning/overview)
-- [Beginner Examples](/en/c/learn/courses/debugging-and-profiling/learning/beginner)
-- [Intermediate Examples](/en/c/learn/courses/debugging-and-profiling/learning/intermediate)
-- [Advanced Examples](/en/c/learn/courses/debugging-and-profiling/learning/advanced)
-- [Native & Systems Examples](/en/c/learn/courses/debugging-and-profiling/learning/native-and-systems)
-- [Capstone](/en/c/learn/courses/debugging-and-profiling/learning/capstone)
-  - [Overview](/en/c/learn/courses/debugging-and-profiling/learning/capstone/overview)
+- [Overview](/en/learn/courses/debugging-and-profiling/learning/overview)
+- [Beginner Examples](/en/learn/courses/debugging-and-profiling/learning/beginner)
+- [Intermediate Examples](/en/learn/courses/debugging-and-profiling/learning/intermediate)
+- [Advanced Examples](/en/learn/courses/debugging-and-profiling/learning/advanced)
+- [Native & Systems Examples](/en/learn/courses/debugging-and-profiling/learning/native-and-systems)
+- [Capstone](/en/learn/courses/debugging-and-profiling/learning/capstone)
+  - [Overview](/en/learn/courses/debugging-and-profiling/learning/capstone/overview)

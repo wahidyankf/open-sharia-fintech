@@ -5,4 +5,4 @@ draft: false
 weight: 216
 ---
 
-- [Overview](/en/c/learn/courses/debugging-and-profiling/drilling/overview)
+- [Overview](/en/learn/courses/debugging-and-profiling/drilling/overview)

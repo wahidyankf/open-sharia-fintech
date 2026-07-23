@@ -9,7 +9,7 @@ description: "FP variant — learn software architecture through 93 heavily anno
 tags: ["software-architecture", "tutorial", "by-example", "fp", "fsharp", "clojure", "typescript", "haskell"]
 ---
 
-- [Overview](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/overview)
-- [Beginner](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/beginner)
-- [Intermediate](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/intermediate)
-- [Advanced](/en/c/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced)
+- [Overview](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/overview)
+- [Beginner](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/beginner)
+- [Intermediate](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/intermediate)
+- [Advanced](/en/learn/software-engineering/software-architecture/patterns-and-principles/in-fp-by-example/advanced)

@@ -16,8 +16,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Old English learn URL permanently redirects to the /c namespace", ({ When, Then, And }) => {
-    When('a raw HTTP GET is made to "/en/learn/software-engineering" with redirects disabled', () => {
-      // Redirect config in next.config.ts: contentNamespaceRedirects
+    When('a raw HTTP GET is made to "/en/c/learn/software-engineering" with redirects disabled', () => {
+      // Redirect config in next.config.ts: contentNamespaceRedirects (inverted, DD-48)
       expect(true).toBe(true);
     });
 
@@ -26,14 +26,14 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old English learn URL permanently redirects to the /c namespace
-    And('the response Location header should equal "/en/c/learn/software-engineering"', () => {
+    And('the response Location header should equal "/en/learn/software-engineering"', () => {
       expect(true).toBe(true);
     });
   });
 
   Scenario("Old Indonesian belajar URL permanently redirects to the /c namespace", ({ When, Then, And }) => {
-    When('a raw HTTP GET is made to "/id/belajar/ikhtisar" with redirects disabled', () => {
-      // Redirect config in next.config.ts: contentNamespaceRedirects
+    When('a raw HTTP GET is made to "/id/c/belajar/ikhtisar" with redirects disabled', () => {
+      // Redirect config in next.config.ts: contentNamespaceRedirects (inverted, DD-48)
       expect(true).toBe(true);
     });
 
@@ -42,7 +42,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature:Old Indonesian belajar URL permanently redirects to the /c namespace
-    And('the response Location header should equal "/id/c/belajar/ikhtisar"', () => {
+    And('the response Location header should equal "/id/belajar/ikhtisar"', () => {
       expect(true).toBe(true);
     });
   });
