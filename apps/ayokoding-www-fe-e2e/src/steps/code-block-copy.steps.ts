@@ -10,9 +10,10 @@ const { Given, When, Then } = createBdd();
  * and success-confirmation scenarios below (source:
  * `content/en/learn/courses/just-enough-lua/learning/advanced.md` — re-homed from
  * `fundamentally-strong/software-engineer/just-enough-lua/` by
- * `ayokoding-learning-path-01-url-restructure` Phase 2; `course-rehome.ts` only redirects the bundle
- * ROOT `.../fundamentally-strong/software-engineer/just-enough-lua`, not this nested subpage, so this
- * fixture must reference the canonical path directly).
+ * `ayokoding-learning-path-01-url-restructure` Phase 2; the bundle — root AND every nested
+ * sub-page, via `course-rehome.ts`'s `:path*` per-course redirect — now lives at this re-homed
+ * `courses/<slug>` path, so this fixture references the canonical path directly rather than the
+ * old `fundamentally-strong/software-engineer/<slug>/...` path that 308s here).
  */
 const ANNOTATED_LUA_PAGE = "/en/learn/courses/just-enough-lua/learning/advanced";
 
