@@ -30,14 +30,39 @@ export function Breadcrumb({ locale, segments, showCurrent = false }: Breadcrumb
   if (visibleSegments.length === 0) return null;
 
   const lastIndex = visibleSegments.length - 1;
+  // DWT-001: beyond 3 crumbs, the middle ones collapse behind one ellipsis at
+  // mobile widths — see the mobile-collapse doc comment above the <ol> below.
+  const hasMobileCollapse = visibleSegments.length > 3;
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4 text-sm text-muted-foreground">
-      <ol className="flex flex-wrap items-center gap-1">
-        {visibleSegments.map((segment, i) => {
+      {/*
+       * DWT-001: the base class is non-wrapping (no bare `flex-wrap`) so a deep
+       * breadcrumb never wraps to multiple rows at 375px — prd.md's Screen 4
+       * acceptance requires "no multi-line breadcrumb wrap at 375 px", and the
+       * committed legacy-landing mobile mockups (`plans/in-progress/
+       * ayokoding-learning-path-01-url-restructure/assets/
+       * legacy-landing-option-{a,b}-mobile.png`) show a single-line, middle-
+       * truncated `Home / … / Legacy`. When there are more than 3 visible
+       * crumbs, the middle ones (`hidden sm:flex` below) drop out at mobile
+       * widths and one collapsed ellipsis crumb (`sm:hidden` below) stands in
+       * for them, keeping the first and last crumbs always visible. At `sm:`
+       * and up every crumb reappears and the ellipsis disappears (the desktop
+       * trail is otherwise unchanged apart from the removed `flex-wrap`). Because
+       * the row no longer wraps at any width, `overflow-x-auto` + `whitespace-nowrap`
+       * give a self-contained horizontal-scroll fallback so a very deep trail
+       * scrolls within its own box rather than overflowing the page in the
+       * tablet band (>=sm, where the mobile collapse is inactive).
+       */}
+      <ol className="flex items-center gap-1 overflow-x-auto whitespace-nowrap">
+        {visibleSegments.flatMap((segment, i) => {
           const isCurrent = showCurrent && i === lastIndex;
-          return (
-            <li key={segment.slug} className="flex items-center gap-1">
+          const isMobileCollapsedMiddle = hasMobileCollapse && i > 0 && i < lastIndex;
+          const crumb = (
+            <li
+              key={segment.slug}
+              className={isMobileCollapsedMiddle ? "hidden items-center gap-1 sm:flex" : "flex items-center gap-1"}
+            >
               {i > 0 && <ChevronRight className="h-3 w-3 shrink-0" />}
               {isCurrent ? (
                 <span aria-current="page" className="font-medium text-foreground">
@@ -50,6 +75,24 @@ export function Breadcrumb({ locale, segments, showCurrent = false }: Breadcrumb
               )}
             </li>
           );
+
+          // Insert the collapsed ellipsis crumb right after the first crumb —
+          // it stands in for the mobile-hidden middle crumbs above, mobile-only.
+          if (hasMobileCollapse && i === 0) {
+            return [
+              crumb,
+              <li
+                key="breadcrumb-ellipsis"
+                data-testid="breadcrumb-ellipsis"
+                className="flex items-center gap-1 sm:hidden"
+              >
+                <ChevronRight className="h-3 w-3 shrink-0" />
+                <span aria-hidden="true">…</span>
+                <span className="sr-only">More breadcrumb items</span>
+              </li>,
+            ];
+          }
+          return [crumb];
         })}
       </ol>
     </nav>

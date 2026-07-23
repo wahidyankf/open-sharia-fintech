@@ -79,10 +79,14 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/navigation.feature:Breadcrumb shows ancestor path hierarchy without current page
-    And("breadcrumb text should wrap naturally without horizontal truncation", () => {
+    And("the breadcrumb should render on a single row without horizontally truncating link text", () => {
       const nav = screen.getByLabelText("Breadcrumb");
       const ol = nav.querySelector("ol");
-      expect(ol?.className).toContain("flex-wrap");
+      // DWT-001: the breadcrumb no longer wraps to multiple rows (bare `flex-wrap` removed);
+      // deep breadcrumbs instead collapse middle crumbs to a single ellipsis at mobile width
+      // (covered by breadcrumb.test.tsx). It must still never horizontally truncate link text.
+      expect(ol?.className).toContain("flex");
+      expect(ol?.className).not.toContain("flex-wrap");
       // Ensure no truncate class is used on any link
       const allLinks = nav.querySelectorAll("a");
       for (const link of allLinks) {

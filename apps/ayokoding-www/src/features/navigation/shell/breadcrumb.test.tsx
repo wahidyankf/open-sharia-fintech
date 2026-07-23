@@ -114,3 +114,101 @@ describe("Breadcrumb content hrefs", () => {
     expect(screen.getByRole("link", { name: "Tools" }).getAttribute("href")).toBe("/en/tools");
   });
 });
+
+// DWT-001: at mobile widths (375px) the breadcrumb must render on a single row by
+// collapsing middle crumbs behind one ellipsis, per prd.md's "no multi-line breadcrumb
+// wrap at 375 px" acceptance and the committed legacy-landing mobile mockups
+// (`plans/in-progress/ayokoding-learning-path-01-url-restructure/assets/
+// legacy-landing-option-{a,b}-mobile.png`), which show `Home / … / Legacy`.
+const manySegments = [
+  { label: "Home", slug: "" },
+  { label: "Learn", slug: "learn" },
+  { label: "Software Engineering", slug: "learn/software-engineering" },
+  { label: "Legacy", slug: "learn/legacy/software-engineering" },
+  { label: "Data Structures", slug: "learn/legacy/software-engineering/data-structures" },
+];
+
+describe("Breadcrumb mobile collapse (DWT-001)", () => {
+  it("renders exactly one collapsed ellipsis element, hidden at sm: and up, for a >3-segment breadcrumb", () => {
+    const { container } = render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/legacy/software-engineering/data-structures"
+        segments={manySegments}
+        showCurrent
+      />,
+    );
+    const ellipses = container.querySelectorAll('[data-testid="breadcrumb-ellipsis"]');
+    expect(ellipses.length).toBe(1);
+    expect(ellipses[0]?.className).toContain("sm:hidden");
+  });
+
+  it("hides the middle crumbs on mobile (hidden) and reveals them at sm: and up (sm:flex)", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/legacy/software-engineering/data-structures"
+        segments={manySegments}
+        showCurrent
+      />,
+    );
+    // Middle segments of the 5 visible crumbs: "Learn", "Software Engineering", "Legacy".
+    for (const label of ["Learn", "Software Engineering", "Legacy"]) {
+      const li = screen.getByText(label).closest("li");
+      expect(li, `missing <li> for ${label}`).not.toBeNull();
+      expect(li?.className).toContain("hidden");
+      expect(li?.className).toContain("sm:flex");
+    }
+  });
+
+  it("always shows the first crumb and the last visible crumb — never mobile-hidden", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/legacy/software-engineering/data-structures"
+        segments={manySegments}
+        showCurrent
+      />,
+    );
+    const home = screen.getByText("Home").closest("li");
+    const last = screen.getByText("Data Structures").closest("li");
+    expect(home?.className).not.toContain("hidden");
+    expect(last?.className).not.toContain("hidden");
+    // Terminal crumb keeps its aria-current="page" contract even when collapsed.
+    expect(screen.getByText("Data Structures").getAttribute("aria-current")).toBe("page");
+  });
+
+  it("base <ol> class no longer wraps unconditionally at mobile — flex-wrap absent or scoped to sm:", () => {
+    const { container } = render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/legacy/software-engineering/data-structures"
+        segments={manySegments}
+        showCurrent
+      />,
+    );
+    const ol = container.querySelector("ol");
+    const classes = (ol?.className ?? "").split(/\s+/);
+    expect(classes.includes("flex-wrap")).toBe(false);
+  });
+
+  it("the ellipsis glyph is aria-hidden with an sr-only accessible label", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/legacy/software-engineering/data-structures"
+        segments={manySegments}
+        showCurrent
+      />,
+    );
+    expect(screen.getByText("…").getAttribute("aria-hidden")).toBe("true");
+    expect(screen.getByText(/more breadcrumb items/i)).toBeTruthy();
+  });
+
+  it("does NOT render an ellipsis for a <=3-segment breadcrumb (already fits on one row)", () => {
+    const { container } = render(
+      <Breadcrumb locale="en" slug="tools/cost-of-living-calculator" segments={segments} showCurrent />,
+    );
+    expect(container.querySelectorAll('[data-testid="breadcrumb-ellipsis"]').length).toBe(0);
+  });
+});

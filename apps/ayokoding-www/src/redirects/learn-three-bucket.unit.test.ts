@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { learnThreeBucketRedirects, RELOCATED_DOMAINS } from "./learn-three-bucket";
 
 describe("learnThreeBucketRedirects", () => {
-  it("declares exactly 6 rules, one per relocated domain, single tier (DD-48 collapse of DD-42)", () => {
-    expect(learnThreeBucketRedirects.length).toBe(6);
+  it("declares exactly 12 rules, two per relocated domain — an exact bare rule plus a wildcard rule (single-hop fix, EWT-001)", () => {
+    expect(learnThreeBucketRedirects.length).toBe(12);
   });
 
   it("every rule is a permanent (308) redirect with non-empty source/destination", () => {
@@ -14,13 +14,36 @@ describe("learnThreeBucketRedirects", () => {
     }
   });
 
-  it("each destination equals its source with legacy/ inserted at the bucket position", () => {
-    for (const rule of learnThreeBucketRedirects) {
+  it("each wildcard rule's destination equals its source with legacy/ inserted at the bucket position", () => {
+    const wildcardRules = learnThreeBucketRedirects.filter((r) => r.source.endsWith("/:path*"));
+    expect(wildcardRules.length).toBe(RELOCATED_DOMAINS.length);
+    for (const rule of wildcardRules) {
       // source: /en/learn/{domain}/:path*  ->  destination: /en/learn/legacy/{domain}/:path*
       const match = rule.source.match(/^\/en\/learn\/([^/]+)\/:path\*$/);
       expect(match, `source not in expected shape: ${rule.source}`).not.toBeNull();
       const [, domain] = match as RegExpMatchArray;
       expect(rule.destination).toBe(`/en/learn/legacy/${domain}/:path*`);
+    }
+  });
+
+  it("each domain has an exact bare rule with no :path* and no trailing slash, redirecting in a single hop (EWT-001)", () => {
+    for (const domain of RELOCATED_DOMAINS) {
+      const bareRule = learnThreeBucketRedirects.find((r) => r.source === `/en/learn/${domain}`);
+      expect(bareRule, `missing exact bare rule for domain: ${domain}`).toBeDefined();
+      expect(bareRule?.source).not.toContain(":path*");
+      expect(bareRule?.destination).toBe(`/en/learn/legacy/${domain}`);
+      expect(bareRule?.destination.endsWith("/")).toBe(false);
+      expect(bareRule?.permanent).toBe(true);
+    }
+  });
+
+  it("each domain's exact bare rule is ordered before its wildcard rule (first-match-wins single-hop)", () => {
+    for (const domain of RELOCATED_DOMAINS) {
+      const bareIndex = learnThreeBucketRedirects.findIndex((r) => r.source === `/en/learn/${domain}`);
+      const wildcardIndex = learnThreeBucketRedirects.findIndex((r) => r.source === `/en/learn/${domain}/:path*`);
+      expect(bareIndex, `bare rule not found for domain: ${domain}`).toBeGreaterThanOrEqual(0);
+      expect(wildcardIndex, `wildcard rule not found for domain: ${domain}`).toBeGreaterThanOrEqual(0);
+      expect(bareIndex).toBeLessThan(wildcardIndex);
     }
   });
 

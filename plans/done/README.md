@@ -4,6 +4,25 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-23: ayokoding-learning-path-01-url-restructure](./2026-07-23__ayokoding-learning-path-01-url-restructure/README.md) —
+  **Wave 1** of the ayokoding learning-path programme. Removed the `/c/` namespace and resolved
+  everything under `/en/learn` into a three-bucket IA (`paths/`, `courses/`, `legacy/`): relocated the
+  six legacy top-level domains (1148 content `.md`) under `legacy/`, re-homed 37 course bundles into a
+  flat `courses/` namespace with `courses/_index.md`, and seeded the five DD-49 structural `paths/**`
+  indexes. Shipped the per-domain and per-course redirect tables in
+  `apps/ayokoding-www/src/redirects/` with DD-42/DD-48 invariants (exact-bare rule before wildcard, no
+  double-hop). Ran the near-end rule-15 live-site tester triad (EWT/UWT/DWT): fixed the two in-scope
+  defects TDD — EWT-001 (per-domain legacy redirect double-308-hop, `.map`→`.flatMap` emitting an
+  exact bare rule before the wildcard) and DWT-001 (breadcrumb mobile overflow, `sm:hidden` ellipsis
+  collapse + `overflow-x-auto whitespace-nowrap` single-row contract) — with regression tests and
+  Gherkin realignment across unit/e2e; filed every pre-existing out-of-scope finding to idea briefs
+  (`ayokoding-i18n-nav-hardening`, `ayokoding-www-e2e-parallel-load-flake`) and folded the
+  self-contradictory-acceptance-step learnings into `acceptance-clause-vacuity`. `id` locale untouched
+  per DD-45 (53 `.md`, no `id/belajar/legacy`). Delivered via PR #87 (Phase 5) then a final archival
+  PR, each PR-Review-cycled and CI-gated; deployed to `prod-ayokoding-www` (bare-path legacy redirects
+  confirmed single-hop live). Delivery Mode: `worktree-to-pr`. This plan owns 6 of DD-47's 42-render
+  design matrix (Screen 4 × 2 options × 3 viewports); the remaining 36 belong to
+  `ayokoding-learning-path-03-navigation-ui`. Completed 2026-07-23.
 - [2026-07-22: learning-plan-syllabus-folder-convention](./2026-07-22__learning-plan-syllabus-folder-convention/README.md) —
   Authored the Learning-Plan Syllabus Convention
   (`repo-governance/conventions/structure/learning-plan-syllabus.md`) — a learning-bearing trigger, a
