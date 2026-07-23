@@ -308,7 +308,7 @@ The source plan's `## Decisions Locked` list holds **17** entries (`DL-1`…`DL-
   - _Amendment split across plans_: DL-6 is amended by **DL-15**, which lands in
     [`ayokoding-learning-path-05-manifests`](../ayokoding-learning-path-05-manifests/README.md).
     The re-home half of DL-6 is executed by
-    [`ayokoding-learning-path-01-url-restructure`](../ayokoding-learning-path-01-url-restructure/README.md);
+    [`ayokoding-learning-path-01-url-restructure`](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md);
     the native-authoring half is executed here.
 - **DL-9 · detection-engineering kept distinct + topic-60 label fix.**
   `detection-engineering-and-siem-operations` stays distinct from `defensive-security` (60);
@@ -343,7 +343,7 @@ The source plan's `## Decisions Locked` list holds **17** entries (`DL-1`…`DL-
 ## Blocked-on: Open Question Q-A
 
 All six open questions **Q-A … Q-F** are owned verbatim by
-[`ayokoding-learning-path-01-url-restructure`](../ayokoding-learning-path-01-url-restructure/README.md).
+[`ayokoding-learning-path-01-url-restructure`](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md).
 This plan is blocked on exactly one of them:
 
 > **Q-A — Is `legacy/` a staging pen or a permanent archive?** Its ruling determines whether each
@@ -406,7 +406,7 @@ forbidden.
   ·
   [`syllabus/paths/` manifests](../ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
   · [manifest plan](../ayokoding-learning-path-05-manifests/README.md)
-  · [URL-restructure plan](../ayokoding-learning-path-01-url-restructure/README.md)
+  · [URL-restructure plan](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
   · [navigation-UI plan](../ayokoding-learning-path-03-navigation-ui/README.md)
   · [schema plan](../ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
 

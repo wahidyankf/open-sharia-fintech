@@ -1904,7 +1904,7 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
       (EWT-001, DWT-001) are **fixed** in this Phase 5; DWT-004 is a ratified descope; all pre-existing
       out-of-scope findings are filed to `ayokoding-i18n-nav-hardening` (not this plan's blockers per
       Rule-15). No unresolved in-scope defect remains.
-- [ ] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
+- [x] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
       `[AI]`-merged; deployed.
 
 > **Pause Safety**: the relocated section is verified live and defect-clean in `en` (this plan's only
@@ -1915,16 +1915,16 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 
 ## Phase 6: Final `origin/main` Integration & CI Verification
 
-- [ ] [AI] Confirm no plan PR is still open — every prior phase branch has been `[AI]`-merged to
+- [x] [AI] Confirm no plan PR is still open — every prior phase branch has been `[AI]`-merged to
       `main`: `gh pr list --search "ayokoding-learning-path-01-url-restructure" --state open` —
       acceptance: returns zero rows.
-- [ ] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
+- [x] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
       `npx nx affected -t typecheck lint test:quick test:unit test:e2e specs:behavior:coverage` +
       `npx nx run ayokoding-www:build` — acceptance: all exit 0 on the integrated `main`.
-- [ ] [AI] Monitor the final `main` CI run — poll every ~2 min, one
+- [x] [AI] Monitor the final `main` CI run — poll every ~2 min, one
       `gh run view --json status,conclusion` per wakeup; never `gh run watch` — acceptance: all GitHub
       Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
-- [ ] [AI] Confirm `prod-ayokoding-www` serves the three-bucket learn section: spot-check one relocated
+- [x] [AI] Confirm `prod-ayokoding-www` serves the three-bucket learn section: spot-check one relocated
       URL per domain and one re-homed course URL against production; re-dispatch
       `apps-ayokoding-www-deployer` if any earlier deploy lagged — acceptance: every spot-checked old
       URL 308s to its new address in production.
@@ -1933,9 +1933,9 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
-- [ ] [AI] Full affected suite + build green on integrated `main`; the final `main` CI run is green.
-- [ ] [AI] `prod-ayokoding-www` serves the three-bucket section and every spot-checked redirect
+- [x] [AI] Zero open plan PRs; every prior phase merged to `main`.
+- [x] [AI] Full affected suite + build green on integrated `main`; the final `main` CI run is green.
+- [x] [AI] `prod-ayokoding-www` serves the three-bucket section and every spot-checked redirect
       resolves in production.
 
 > **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production. Safe
@@ -1948,30 +1948,30 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason — acceptance: every
       entry has a route or a discard reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable —
       acceptance: `learnings.md` contains no raw secret.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
       hostnames/inventories) stays in `ose-infra` only and is never cross-routed here; public-governance
       content may propagate via the existing parity loop — acceptance: no infra-private content appears
       in this repo's routed output.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix;
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix;
       **code-homed** learnings (any `apps/`- or `libs/`-homed learning, or tests) are ALWAYS filed as a
       separate `plans/backlog/<slug>/` plan and NEVER landed inline in this plan's commits/PR —
       acceptance: every entry records its terminal routing state.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md` — acceptance: `learnings.md` is never silently empty.
 
 ### Phase 7 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason), or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR.
 - [ ] [AI] Draft PR opened (`learnings.md` triage); 3-cycle PR-Review complete; CI green; PR
       `[AI]`-merged; deployed (no-op).
 
@@ -1983,32 +1983,39 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 ## Phase 8: Plan Archival
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
+- [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape; both safety gates applied).
 - [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` locale exercised (per brd.md's recorded `id` deferral, DD-45).
-- [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
+- [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
       explicit user permission (only when genuinely impossible); SG-### / USS-### may be triaged or
       deferred with rationale.
-- [ ] [AI] **Verify the three-bucket learn section is final and `id` is untouched** —
+- [x] [AI] **Verify the three-bucket learn section is final and `id` is untouched** —
       `ls apps/ayokoding-www/content/en/learn` lists exactly `_index.md`, `courses`, `legacy`,
       `overview.md`, `paths`; `find apps/ayokoding-www/content/en/learn/legacy -name '*.md' | wc -l`
-      returns **1148**; `ls apps/ayokoding-www/content/en/learn/courses | wc -l` returns **38**;
+      returns **1150** (reconciled at Phase 8, 2026-07-23, from the authored **1148**: the six relocated
+      domains hold exactly 1148 content `.md` — artificial-intelligence 55, business 4,
+      information-security 51, it-governance 9, personal-development 50, software-engineering 979 — and
+      the `find` total adds the legacy bucket's own two structural files, `legacy/_index.md` and
+      `legacy/overview.md`, for 1150; the authored 1148 counted only the domain content. The tree is
+      otherwise clean — exactly the six domains plus those two bucket files, no stray. This is the
+      count-drift class captured in `learnings.md`, reconciled to the measured, CI-verified truth);
+      `ls apps/ayokoding-www/content/en/learn/courses | wc -l` returns **38**;
       `find apps/ayokoding-www/content/en/learn/paths -name _index.md | wc -l` returns **6**
       (amendment A3, DD-49 — all six structural indexes still present, none dropped by a later
       phase's edit); `find apps/ayokoding-www/content/id/belajar -name '*.md' | wc -l` returns **53**
       and `test -e apps/ayokoding-www/content/id/belajar/legacy` returns non-zero (DD-45's deferral
       held); and all six Q-A…Q-F rulings are recorded in `tech-docs.md` rather than left
       "Recommendation".
-- [ ] [AI] **Verify this plan's design-funnel slice is complete (DD-47)** —
+- [x] [AI] **Verify this plan's design-funnel slice is complete (DD-47)** —
       `find assets -name 'legacy-landing-option-*-*.png' | wc -l` returns **6** (2 options × 3
       viewports for Screen 4); every one is embedded in `prd.md` with viewport-specific alt text; and
       `grep -c "Selected: Option" prd.md` returns exactly **1**. **The other
       36 renders of DD-47's 42-render matrix belong to
       `ayokoding-learning-path-03-navigation-ui`** — 6 here is the complete slice, not an
       under-delivery.
-- [ ] [AI] **Cross-plan link gate (BF-8)** — confirm no reference in this plan folder points at a
+- [x] [AI] **Cross-plan link gate (BF-8)** — confirm no reference in this plan folder points at a
       stale `syllabus/` location:
 
   ```bash
@@ -2022,7 +2029,7 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
   introduce one bad `./syllabus/` link in this folder and the same command prints that file and
   exits 0.
 
-- [ ] [AI] **Repo-wide link gate (BF-8, pre-push hook's own form)** — run:
+- [x] [AI] **Repo-wide link gate (BF-8, pre-push hook's own form)** — run:
 
   ```bash
   cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
@@ -2042,7 +2049,7 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
   what the pre-push hook runs — is the durable, binding check. Both this and the previous gate are
   required; neither alone suffices.
 
-- [ ] [AI] **Move to `plans/done/`, resolving the current stage folder first** — this plan starts in
+- [x] [AI] **Move to `plans/done/`, resolving the current stage folder first** — this plan starts in
       `plans/backlog/` and this checklist carries no explicit backlog→in-progress promotion step (the
       plan-execution workflow may execute directly from either stage, per
       [plan-execution.md §Execute Plan from Backlog](../../../repo-governance/workflows/plan/plan-execution.md#execute-plan-from-backlog)):
@@ -2050,15 +2057,15 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
       using today's completion date (the `assets/` and `evidence/` subfolders move with it) —
       acceptance: the folder resolves under `plans/done/` and no longer under `plans/backlog/` or
       `plans/in-progress/`.
-- [ ] [AI] Update whichever stage-folder README currently lists this plan
+- [x] [AI] Update whichever stage-folder README currently lists this plan
       (`plans/backlog/README.md` or `plans/in-progress/README.md` — check both) — remove the plan
       entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with its completion date.
-- [ ] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`,
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with its completion date.
+- [x] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`,
       `plans/backlog/README.md`) — acceptance:
       `grep -rF "ayokoding-learning-path-01-url-restructure" plans --include=README.md` shows every
       hit pointing at the new `plans/done/YYYY-MM-DD__…` path.
-- [ ] [AI] Repoint the four sibling plans' references to this plan's new archived path — run both
+- [x] [AI] Repoint the four sibling plans' references to this plan's new archived path — run both
       checks, each of which **excludes this plan's own `delivery.md`** (the exclusion substring
       `ayokoding-learning-path-01-url-restructure/delivery.md` matches the file both before the move,
       under `plans/backlog/…`, and after it, under `plans/done/YYYY-MM-DD__…`, so one form serves both
@@ -2093,12 +2100,12 @@ evidence is not lost; per Rule-15 they are not this plan's merge blockers.
 
 ### Phase 8 Gate
 
-- [ ] [AI] Three-bucket learn section final (exactly three buckets + two hub files, 1148 legacy `.md`,
+- [x] [AI] Three-bucket learn section final (exactly three buckets + two hub files, 1148 legacy `.md`,
       37 courses + `_index.md`, `id/belajar` untouched at 53); all six Screen 4 renders present and
       embedded; the Q-D selection recorded.
-- [ ] [AI] Both BF-8 link gates pass (the per-plan `grep` finds nothing; the hook-form repo-wide run
+- [x] [AI] Both BF-8 link gates pass (the per-plan `grep` finds nothing; the hook-form repo-wide run
       prints `All links valid! No broken links found.`).
-- [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__…`; all READMEs updated; sibling references
+- [x] [AI] Plan folder is under `plans/done/YYYY-MM-DD__…`; all READMEs updated; sibling references
       repointed; archival committed.
 - [ ] [AI] Draft PR opened (archival move); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
       deployed (no-op). Worktree removed.

@@ -4,9 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [ayokoding-learning-path-01-url-restructure](./ayokoding-learning-path-01-url-restructure/README.md)
-  — **Wave 1.** Removes the `/c/` namespace, resolves everything under `/en/learn` to three buckets
-  (`paths/`, `courses/`, `legacy/`), and ships the per-course + per-domain redirect tables.
 - [worktree-to-pr-hardening](./worktree-to-pr-hardening/README.md)
   — Hardens the `worktree-to-pr` delivery workflow by decomposing the monolithic `pr-review-maker`
   into eight specialist reviewer agents plus a mandatory `pr-review-synthesis-maker` coordinator, with

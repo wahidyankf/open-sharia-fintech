@@ -39,8 +39,9 @@ Entry shape:
 - **Why it might generalize**: distinct from the plan's already-documented `find`/RTK hazard — this is
   an `ls`-alias hazard. Any later step (or any plan) that pipes `ls` into `xargs`/`while read`/`wc`
   must use `/bin/ls` (or `command ls`). Phases 1–3 of this plan use `ls`-based enumeration.
-- **Routing**: _(Phase 7 — candidate durable home: an env/tooling hazards note alongside the RTK
-  `find` hazard, since both are "a bare builtin is silently transformed before your command sees it".)_
+- **Routing**: **Routed** to a durable operator-memory reference (`reference_ls_is_eza_xargs_hazard`),
+  filed alongside the existing `grep`-is-ripgrep and RTK-`find` hazards — a cross-session environment
+  hazard, not repo code. Terminal.
 
 ## Learning: tech-docs ground-truth counts drift; re-measure at Phase 0, don't trust the authored table
 
@@ -52,8 +53,10 @@ Entry shape:
 - **Why it might generalize**: any plan that hard-codes a repo-measured count in its docs should have
   a Phase-0 step that re-measures and reconciles before a later phase asserts on it — the count the
   author wrote can be stale by the time the plan runs.
-- **Routing**: _(Phase 7 — likely discard-as-plan-specific, or fold into the anti-hallucination
-  "repo-ground every count" guidance.)_
+- **Routing**: **Discarded** — plan-specific. The generalizable form ("re-measure repo-grounded counts
+  at Phase 0, don't trust the authored table") is already embodied in this plan's Phase-0 re-measure
+  steps and in the repo's existing anti-hallucination "repo-ground every count" guidance; no new durable
+  surface would catch it that does not already exist. Terminal.
 
 ## Learning: `generate-indexes` owns section bodies — persistent index prose must live in frontmatter
 
@@ -70,8 +73,10 @@ Entry shape:
   must use frontmatter (or a generator-preserved region), never the body, in a repo whose index
   generator regenerates section bodies. A plan step that mandates both "author body prose" and "run +
   validate the index generator" is internally contradictory for childless sections.
-- **Routing**: _(Phase 7 — candidate durable home: a note in the content-authoring / index-generator
-  docs, or the plan-anti-hallucination guidance on internally-contradictory acceptance steps.)_
+- **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md)
+  as instance (a) of its new "self-contradictory acceptance steps" sub-class — a phase that mandates a
+  hand-written index body AND `validate-indexes` passing is internally inconsistent because the generator
+  regenerates section bodies. Terminal.
 
 - **Phase 2 — pre-existing e2e flake in an unrelated tool surfaced under the full-suite parallel load.**
   `ayokoding-www-fe-e2e:test:e2e`'s `tools/cost-of-living-calculator.feature` ("Minimum-role tab is dual
@@ -82,8 +87,9 @@ Entry shape:
     drag the whole e2e suite — including unrelated load-flaky tool specs — into its CI gate, so a green
     Phase-2 deliverable can still show a red suite. Distinguish "my scenarios green + unrelated flake" from
     a real regression before gating on the aggregate exit code.
-  - **Routing**: _(Phase 7 — candidate: a separate test-infra plan to stabilise the cost-of-living-calculator
-    e2e under parallel load, e.g. dev-server contention / worker isolation; or a known-flake quarantine list.)_
+  - **Routing**: **Filed** as a new idea brief
+    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/ayokoding-www-e2e-parallel-load-flake.md)
+    (code-homed test-infra ⇒ separate plan, never inline per the code-routing rule). Terminal.
 - **Phase 2 — two delivery.md wording gaps for future plan-maker runs.** (1) The pure-rename proof step
   wrote `git diff --cached --summary -M -- <destination path>`, but git cannot pair a rename when the
   source side is excluded by a destination-only pathspec — the commit-level unscoped `git show --summary -M
@@ -95,8 +101,9 @@ Entry shape:
     Gherkin that assumes a structure a later same-plan override removes, are internally inconsistent — the
     same class as the DD-49 body/validate contradiction above. plan-maker/plan-checker should flag pathspec-
     scoped rename proofs and cross-check later-resolved overrides against earlier acceptance prose.
-  - **Routing**: _(Phase 7 — candidate: plan-anti-hallucination guidance on internally-contradictory
-    acceptance steps + a note on rename-proof pathspec scoping.)_
+  - **Routing**: **Folded** into [`plans/ideas/acceptance-clause-vacuity.md`](../../ideas/acceptance-clause-vacuity.md)
+    as instances (b) rename-proof pathspec scoping and (c) later-override-vs-earlier-acceptance divergence
+    of the "self-contradictory acceptance steps" sub-class. Terminal.
 
 - **Phase 4 — the parallel-load e2e flake set widened to 3 scenarios under heavier concurrent load.**
   During Phase 4's full-suite `ayokoding-www-fe-e2e:test:e2e` run (while build/typecheck/lint/test:unit
@@ -113,9 +120,10 @@ Entry shape:
     machine is loaded. The aggregate e2e exit code is unreliable on this shared machine; distinguish
     "isolated re-run passes" (flake) from a real regression before gating on it. Reinforces the Phase-2
     entry: the whole `ayokoding-www-fe-e2e` suite, not just the calculator, is load-sensitive here.
-  - **Routing**: _(Phase 7 — same candidate test-infra plan as the Phase-2 flake entry: stabilise
-    `ayokoding-www-fe-e2e` under parallel-worker load / dev-server contention, or a known-flake retry
-    policy; broaden that plan's scope from the single calculator spec to the suite.)_
+  - **Routing**: **Filed** into the same idea brief as the Phase-2 flake entry —
+    [`plans/ideas/ayokoding-www-e2e-parallel-load-flake.md`](../../ideas/ayokoding-www-e2e-parallel-load-flake.md),
+    whose scope covers the whole suite (all three identified load-flaky scenarios), not just the
+    calculator spec. Terminal.
 
 If execution completes and nothing generalizable surfaced, replace the entries above with the explicit
 escape: `No generalizable learnings — <one-line reason>`. This file is never left silently empty.

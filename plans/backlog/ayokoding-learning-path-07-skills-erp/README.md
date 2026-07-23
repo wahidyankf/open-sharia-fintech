@@ -49,7 +49,7 @@ course teaches vendor evaluation, selection, or implementation methodology. See
 
 **Out of scope (ownership)**: this plan never edits an accounting file, a careers manifest, a
 component, a design asset, or a structural `_index.md` (owned by
-[`ayokoding-learning-path-01-url-restructure`](../ayokoding-learning-path-01-url-restructure/README.md)
+[`ayokoding-learning-path-01-url-restructure`](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
 per `A3`).
 
 ## Why two paths, one corpus (A10/A11)
