@@ -61,7 +61,7 @@ export const REHOMED_COURSE_SLUGS = [
   "version-control-and-git",
 ] as const;
 
-export const courseRehomeRedirects: Array<{
+const perCourseRedirects: Array<{
   source: string;
   destination: string;
   permanent: boolean;
@@ -70,3 +70,31 @@ export const courseRehomeRedirects: Array<{
   destination: `/en/learn/courses/${slug}`,
   permanent: true,
 }));
+
+/**
+ * Q-E=C override (RESOLVED 2026-07-23): the three `fundamentally-strong` browse
+ * roots are deleted (`git rm`) rather than updated in place — the one deviation
+ * from this plan's "legacy `_index.md` UPDATED, never deleted" default (DD-19).
+ * Their old URLs 308 to the course library landing so no URL goes bare-404.
+ */
+export const RETIRED_FUNDAMENTALLY_STRONG_ROOTS = [
+  "/en/learn/fundamentally-strong",
+  "/en/learn/fundamentally-strong/software-engineer",
+  "/en/learn/fundamentally-strong/software-engineer/overview",
+] as const;
+
+const fundamentallyStrongRootRedirects: Array<{
+  source: string;
+  destination: string;
+  permanent: boolean;
+}> = RETIRED_FUNDAMENTALLY_STRONG_ROOTS.map((source) => ({
+  source,
+  destination: "/en/learn/courses",
+  permanent: true,
+}));
+
+export const courseRehomeRedirects: Array<{
+  source: string;
+  destination: string;
+  permanent: boolean;
+}> = [...perCourseRedirects, ...fundamentallyStrongRootRedirects];

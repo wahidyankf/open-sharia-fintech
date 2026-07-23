@@ -81,5 +81,3 @@ weight: 10
 - [Personal Development](/en/c/learn/personal-development)
   - [Overview](/en/c/learn/personal-development/overview)
   - [Tools](/en/c/learn/personal-development/tools)
-- [Fundamentally Strong](/en/c/learn/fundamentally-strong)
-  - [The Fundamentally Strong Software Engineer](/en/c/learn/fundamentally-strong/software-engineer)
