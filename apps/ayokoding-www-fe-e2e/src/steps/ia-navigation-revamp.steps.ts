@@ -126,8 +126,14 @@ Then("every moved-content entry uses a bare URL", async ({ page }) => {
   expect(body).not.toContain("/c/");
 });
 
+// Escape the parentheses: playwright-bdd parses step text as a Cucumber
+// Expression, where `(...)` denotes an OPTIONAL group. Unescaped, this def
+// would only match "top-level pages  use ..." and never the feature's literal
+// "(about, terms, tools)", leaving the scenario unbound (test.fixme). `\(` / `\)`
+// force a literal-parenthesis match. (The unit tier's vitest-cucumber matches
+// the same text literally, so its def keeps the bare parentheses.)
 Then(
-  "top-level pages (about, terms, tools) use that same bare form — no longer namespace-distinct",
+  "top-level pages \\(about, terms, tools\\) use that same bare form — no longer namespace-distinct",
   async ({ page }) => {
     const body = await page.content();
     // about-ayokoding and terms-and-conditions must resolve at the SAME bare
