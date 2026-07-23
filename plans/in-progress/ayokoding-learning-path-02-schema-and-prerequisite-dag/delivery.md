@@ -823,11 +823,16 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
 
 ### 1.3 `<MANIFESTS>` directory and its README
 
-- [ ] [AI] Create the manifest data-file home:
+- [x] [AI] Create the manifest data-file home:
       `mkdir -p apps/ayokoding-www/src/features/course-paths/manifests`
       — acceptance: `test -d apps/ayokoding-www/src/features/course-paths/manifests` returns 0
       (returns non-zero before this step).
-- [ ] [AI] Author `apps/ayokoding-www/src/features/course-paths/manifests/README.md` _(new file)_
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (directory creation only) —
+  `test -d apps/ayokoding-www/src/features/course-paths/manifests` returned non-zero before this
+  step and returns 0 after it.
+
+- [x] [AI] Author `apps/ayokoding-www/src/features/course-paths/manifests/README.md` _(new file)_
       stating: (a) that nested `<path-id>.yaml` data files land here, one per path, with a slash in
       a path ID becoming a nested directory; (b) that **every** `.yaml` file in this directory is
       owned by `ayokoding-learning-path-05-manifests` and by no other plan; (c) that this plan
@@ -836,10 +841,19 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
       `test -f apps/ayokoding-www/src/features/course-paths/manifests/README.md && grep -qF "ayokoding-learning-path-05-manifests" apps/ayokoding-www/src/features/course-paths/manifests/README.md`
       — acceptance: exits 0. Falsifiable both ways: omitting the ownership sentence makes the `grep`
       exit 1.
-- [ ] [AI] Confirm the directory ships **empty of manifest data files** —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/manifests/README.md` (new) — states the nested
+  `<path-id>.yaml` layout, the `ayokoding-learning-path-05-manifests` ownership of every `.yaml`
+  file here, and that this plan creates only the directory. The command exits 0.
+
+- [x] [AI] Confirm the directory ships **empty of manifest data files** —
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l`
       — acceptance: returns **0**. Falsifiable both ways: authoring any `.yaml` here (a boundary
       violation against the manifest-ownership invariant) makes it return a non-zero count.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — the command
+  returns `0`.
 
 ### 1.4 Syllabus custody exception — AI-engineer path correction (R3)
 
