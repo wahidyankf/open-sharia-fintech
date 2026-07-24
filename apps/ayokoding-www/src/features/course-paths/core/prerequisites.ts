@@ -17,16 +17,23 @@ function declaredPrerequisiteIds(courseId: string, prerequisitesByCourse: Prereq
 }
 
 /**
- * Resolve the declared prerequisite course IDs for `courseId`, in declaration order.
+ * Resolve the declared prerequisite course IDs for `courseId`, in declaration order, filtered to
+ * only the IDs that resolve to a real course in `libraryCourseIds`.
  *
  * Pure — no IO, never throws. A course absent from `prerequisitesByCourse` and a course
  * declaring `[]` are indistinguishable from the caller's perspective: both yield `[]`.
+ *
+ * tech-docs.md rule 6: a referenced ID not in the library is a **resolver miss, not a crash** —
+ * this function returns only the IDs it can resolve; {@link checkPrerequisiteConsistency}'s
+ * `unresolvedPrerequisiteIds` reports the rest.
  */
 export function resolvePrerequisites(
   courseId: string,
   prerequisitesByCourse: PrerequisitesByCourse,
+  libraryCourseIds: readonly string[],
 ): readonly string[] {
-  return declaredPrerequisiteIds(courseId, prerequisitesByCourse);
+  const knownCourseIds = new Set(libraryCourseIds);
+  return declaredPrerequisiteIds(courseId, prerequisitesByCourse).filter((id) => knownCourseIds.has(id));
 }
 
 /** One course placed before a declared, in-manifest prerequisite — an ordering violation. */
@@ -52,6 +59,12 @@ export interface PrerequisiteConsistencyResult {
   violations: readonly PrerequisiteOrderingViolation[];
   /** Declared, in-library prerequisites the manifest links but does not include. Never a violation. */
   linkedPrerequisites: readonly LinkedPrerequisite[];
+  /**
+   * Declared prerequisite IDs that do not resolve to a real course in `libraryCourseIds` —
+   * tech-docs.md rule 6's "resolver miss, not a crash" (mirrors `checkManifestIntegrity`'s
+   * `unresolvedIds` shape/naming). Deduplicated; never a violation, never affects pass/fail.
+   */
+  unresolvedPrerequisiteIds: readonly string[];
 }
 
 /**
@@ -85,10 +98,14 @@ export function checkPrerequisiteConsistency(
 
   const violations: PrerequisiteOrderingViolation[] = [];
   const linkedPrerequisites: LinkedPrerequisite[] = [];
+  const unresolvedPrerequisiteIds = new Set<string>();
 
   orderedIds.forEach((courseId, courseIndex) => {
     for (const prerequisiteId of declaredPrerequisiteIds(courseId, prerequisitesByCourse)) {
       if (!knownCourseIds.has(prerequisiteId)) {
+        // tech-docs.md rule 6: a referenced ID not in the library is a resolver miss, not a
+        // crash — report it (deduplicated) rather than silently dropping it.
+        unresolvedPrerequisiteIds.add(prerequisiteId);
         continue;
       }
 
@@ -112,5 +129,5 @@ export function checkPrerequisiteConsistency(
     }
   });
 
-  return { violations, linkedPrerequisites };
+  return { violations, linkedPrerequisites, unresolvedPrerequisiteIds: [...unresolvedPrerequisiteIds] };
 }

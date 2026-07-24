@@ -48,22 +48,39 @@ const violatingManifest: PathManifest = {
 
 describe("resolvePrerequisites", () => {
   it("returns both declared prerequisites in declaration order", () => {
-    const result = resolvePrerequisites("advanced-algorithms", prerequisitesByCourse);
+    const result = resolvePrerequisites("advanced-algorithms", prerequisitesByCourse, libraryCourseIds);
 
     expect(result).toEqual(["data-structures-and-algorithms-essentials", "discrete-math-foundations"]);
   });
 
   it("returns an empty array for a course declaring no prerequisites", () => {
-    const result = resolvePrerequisites("just-enough-python", prerequisitesByCourse);
+    const result = resolvePrerequisites("just-enough-python", prerequisitesByCourse, libraryCourseIds);
 
     expect(result).toEqual([]);
   });
 
   it("returns an empty array (not undefined, not a throw) for a course absent from the index", () => {
-    const result = resolvePrerequisites("not-in-the-index", prerequisitesByCourse);
+    const result = resolvePrerequisites("not-in-the-index", prerequisitesByCourse, libraryCourseIds);
 
     expect(result).toEqual([]);
     expect(result).not.toBeUndefined();
+  });
+
+  // RED (PR review finding #3, pr-review-synthesis-maker review 4770318960, cycle 2): pre-fix,
+  // `resolvePrerequisites` took no `libraryCourseIds` param at all and returned every declared ID
+  // unconditionally, resolvable or not — contradicting tech-docs.md rule 6 ("a referenced ID not
+  // in the library is a resolver miss, not a crash: resolvePrerequisites returns only the IDs it
+  // can resolve"). Falsifiable both ways: the in-library prerequisite must still be returned, so
+  // an implementation that filters everything out fails the first assertion.
+  it("filters out a declared prerequisite ID that does not resolve to a real library course (tech-docs.md rule 6)", () => {
+    const prerequisitesWithADanglingId: Record<string, readonly string[]> = {
+      "advanced-algorithms": ["data-structures-and-algorithms-essentials", "renamed-or-deleted-course"],
+    };
+
+    const result = resolvePrerequisites("advanced-algorithms", prerequisitesWithADanglingId, libraryCourseIds);
+
+    expect(result).toEqual(["data-structures-and-algorithms-essentials"]);
+    expect(result).not.toContain("renamed-or-deleted-course");
   });
 });
 
@@ -73,6 +90,7 @@ describe("checkPrerequisiteConsistency", () => {
 
     expect(result.violations).toEqual([]);
     expect(result.linkedPrerequisites).toEqual([]);
+    expect(result.unresolvedPrerequisiteIds).toEqual([]);
   });
 
   it("reports zero violations and one linked prerequisite for a manifest that omits a declared, in-library prerequisite (OI-4)", () => {
@@ -84,6 +102,7 @@ describe("checkPrerequisiteConsistency", () => {
       courseId: "advanced-algorithms",
       missingPrerequisiteId: "discrete-math-foundations",
     });
+    expect(result.unresolvedPrerequisiteIds).toEqual([]);
   });
 
   it("reports exactly one violation naming the course placed before its declared prerequisite", () => {
@@ -96,6 +115,27 @@ describe("checkPrerequisiteConsistency", () => {
       courseIndex: 0,
       prerequisiteIndex: 1,
     });
+    expect(result.unresolvedPrerequisiteIds).toEqual([]);
+  });
+
+  // RED (PR review finding #3, pr-review-synthesis-maker review 4770318960, cycle 2): pre-fix,
+  // a prerequisite ID absent from `libraryCourseIds` was silently `continue`d past — reported
+  // nowhere, contradicting tech-docs.md rule 6 ("checkPrerequisiteConsistency reports the rest").
+  // Mirrors `checkManifestIntegrity.unresolvedIds`'s shape/naming (manifest-integrity.ts:18-25).
+  // Falsifiable both ways: the clean fixture's zero violations/linkedPrerequisites must be
+  // unaffected, and the unresolved ID must be reported exactly once even though two different
+  // courses in the manifest both declare it.
+  it("reports a declared prerequisite ID that does not resolve to a real library course as unresolvedPrerequisiteIds, deduplicated, never as a violation", () => {
+    const danglingPrerequisitesByCourse: Record<string, readonly string[]> = {
+      "data-structures-and-algorithms-essentials": ["renamed-or-deleted-course"],
+      "advanced-algorithms": ["data-structures-and-algorithms-essentials", "renamed-or-deleted-course"],
+    };
+
+    const result = checkPrerequisiteConsistency(cleanManifest, danglingPrerequisitesByCourse, libraryCourseIds);
+
+    expect(result.violations).toEqual([]);
+    expect(result.linkedPrerequisites).toEqual([]);
+    expect(result.unresolvedPrerequisiteIds).toEqual(["renamed-or-deleted-course"]);
   });
 
   // RED: `indexById` was built with `new Map(orderedIds.map((id, index) => [id, index]))`, which
