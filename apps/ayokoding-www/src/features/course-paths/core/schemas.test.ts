@@ -123,4 +123,33 @@ describe("PathManifestSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  // RED (PR review finding #1, pr-review-synthesis-maker review 4770318960, cycle 2): the
+  // pre-fix schema forbade only `\`, `\0`, `.`, and `..` — a pathId containing `&`, `=`, `#`, `%`,
+  // or whitespace passed `safeParse` even though `contentUrl` interpolates it unencoded into a
+  // `?path=` query string, corrupting or truncating it on the `URLSearchParams` round-trip in
+  // `parsePathContext`.
+  it("(k) rejects a pathId containing query-string-hazard characters ('&', '=', '#', '%', whitespace)", () => {
+    const ampersand = { ...careersManifest, pathId: "careers/soft&ware=engineer" };
+    const hash = { ...careersManifest, pathId: "careers/soft#ware" };
+    const percent = { ...careersManifest, pathId: "careers/soft%20ware" };
+    const whitespace = { ...careersManifest, pathId: "careers/soft ware" };
+
+    expect(PathManifestSchema.safeParse(ampersand).success).toBe(false);
+    expect(PathManifestSchema.safeParse(hash).success).toBe(false);
+    expect(PathManifestSchema.safeParse(percent).success).toBe(false);
+    expect(PathManifestSchema.safeParse(whitespace).success).toBe(false);
+  });
+
+  // RED (PR review finding #2, pr-review-synthesis-maker review 4770318960, cycle 2): the pre-fix
+  // arity floor counted segments AFTER `.split("/").filter(Boolean)` dropped empty tokens, so a
+  // trailing slash or a doubled slash on an otherwise-valid, multi-segment pathId validated
+  // identically to its clean form — two "equal" paths that differ by string.
+  it("(l) rejects an otherwise-valid pathId carrying a trailing slash or a doubled internal slash", () => {
+    const trailingSlash = { ...careersManifest, pathId: "careers/interview-ready/software-engineer/" };
+    const doubledSlash = { ...careersManifest, pathId: "careers//interview-ready" };
+
+    expect(PathManifestSchema.safeParse(trailingSlash).success).toBe(false);
+    expect(PathManifestSchema.safeParse(doubledSlash).success).toBe(false);
+  });
 });
