@@ -67,6 +67,9 @@ Given(
     await page.getByRole("tab", { name: tabName }).click();
     await page.locator("#target-amount-input").fill("2000");
     await page.keyboard.press("Tab");
+    // Let the baseline recalculation settle before selecting a display currency — selecting
+    // it too early races the ranking table's re-render and leaves it perpetually empty.
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("Display currency").selectOption("EUR");
     await page.waitForLoadState("networkidle");
   },
