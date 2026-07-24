@@ -400,10 +400,11 @@ publication time:
   already exist by then; grows as the rest land — this is the AI path's own **harness walk** (DD-33):
   the manifest **walks** (includes in `courseOrder`), never links, the nine-course AI/harness cluster
   as it lands. Its exact smoke-test-scoped subset and its full grown composition are **not asserted
-  here as fixed numbers** — see [DD-35](#design-decisions) for why, and for what this plan can and
-  cannot state before `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own Phase 1.4 lands
-  the prerequisite-consistent ordering of the included set. Band-9 growth does not apply to this
-  path — it is scoped to the three software-engineer manifests only.
+  here as fixed numbers** — see [DD-35](#design-decisions) for why, and for what this plan can state
+  now that `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own Phase 1.4 has landed the
+  prerequisite-consistent ordering of the included set (that plan is archived under `plans/done/`).
+  Band-9 growth does not apply to this path — it is scoped to the three software-engineer manifests
+  only.
 
 The other two (`careers/immediately-effective/software-engineer`, `careers/fundamentally-strong/software-engineer`)
 enter through `Band9TailDeferred`, not `SmokeTestScoped`: unlike interview-ready and the AI path, they
@@ -513,18 +514,20 @@ composition no longer starts from a linked-out SWE-fundamentals baseline), not r
   "no edits under `syllabus/`" custody rule. This plan's own custody rule (it never silently renames a
   file it does not own) is unaffected — this section only updates its citation to agree with the
   already-renamed file.
-- **Composition — the included prerequisite courses are now named; their final order and total are
-  not.** The corrected mirror names 11 existing SWE-fundamentals courses moving from "linked" to
-  "included": `just-enough-python`, `software-testing`, `cicd-and-release-engineering`,
-  `backend-at-scale`, `containers-and-orchestration`, `computer-architecture`,
-  `site-reliability-engineering`, `data-engineering`, `data-structures-and-algorithms-essentials`,
-  `software-product-engineering`, `frontend-essentials` — each of these also declares its own further
-  prerequisites, so the mirror itself notes the final included set is very likely larger than these 11. The mirror explicitly defers the **prerequisite-consistent stage-by-stage ordering** of this
-  full set to `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4 — not
-  this plan's. This plan's standing rule is still that `courseOrder` is **transcribed** from the
-  syllabus mirror, never re-derived: Phase 2 (below) is written against whatever
-  prerequisite-consistent ordering that plan's Phase 1.4 lands, and the resulting total course count
-  remains an open item, not a settled figure, until then — not fabricated here.
+- **Composition — the included prerequisite courses are now named, and their prerequisite-consistent
+  order is now landed too.** The corrected mirror names 11 existing SWE-fundamentals courses moving
+  from "linked" to "included": `just-enough-python`, `software-testing`,
+  `cicd-and-release-engineering`, `backend-at-scale`, `containers-and-orchestration`,
+  `computer-architecture`, `site-reliability-engineering`, `data-engineering`,
+  `data-structures-and-algorithms-essentials`, `software-product-engineering`, `frontend-essentials` —
+  each of these also declares its own further prerequisites, so the mirror itself notes the final
+  included set is very likely larger than these 11. The mirror's **prerequisite-consistent
+  stage-by-stage ordering** of this named set was landed at
+  `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4 — not authored by
+  this plan; that plan is now archived under `plans/done/`. This plan's standing rule is still that
+  `courseOrder` is **transcribed** from the syllabus mirror, never re-derived: Phase 2 (below) is
+  written against the prerequisite-consistent ordering that plan's Phase 1.4 landed, and the
+  resulting total course count is transcribed from what Phase 1.4 landed, not fabricated here.
 
 ## Smoothness Architecture (per-path)
 
@@ -730,21 +733,21 @@ ruling.
     that plan's own "no edits under `syllabus/`" custody rule — this plan does not perform or repeat
     that rename; it only updates its own citations to agree with the file as it now stands, matching
     the same custody boundary this plan applies to every other cross-plan file it does not own.
-  - **Composition — the included courses are now named; their final order and total are not.** The
+  - **Composition — the included courses are now named, and their order is now landed too.** The
     corrected mirror names 11 existing SWE-fundamentals courses moving from "linked" to "included":
     `just-enough-python`, `software-testing`, `cicd-and-release-engineering`, `backend-at-scale`,
     `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`,
     `data-engineering`, `data-structures-and-algorithms-essentials`, `software-product-engineering`,
     `frontend-essentials` — each also declares its own further prerequisites, so the mirror itself
-    notes the final included set is very likely larger than these 11. The mirror defers the
-    **prerequisite-consistent stage-by-stage ordering** of that full set to
-    `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4, not this plan's.
-    This plan's standing rule is still that `courseOrder` is **transcribed** from the syllabus mirror,
-    never re-derived: the resulting total course count remains an open item, not a settled figure,
-    until that plan's Phase 1.4 lands it — not fabricated here. Every site in this plan that previously
-    described this path's manifest as "short," as "linking" its prerequisites, or as a fixed "6 → 15
-    courses" has been corrected to this named-but-not-yet-ordered framing rather than to a fabricated
-    new total.
+    notes the final included set is very likely larger than these 11. The mirror's
+    **prerequisite-consistent stage-by-stage ordering** of that full set was landed at
+    `ayokoding-learning-path-02-schema-and-prerequisite-dag`'s own delivery Phase 1.4, not this plan's
+    — that plan is now archived under `plans/done/`. This plan's standing rule is still that
+    `courseOrder` is **transcribed** from the syllabus mirror, never re-derived: the resulting total
+    course count is transcribed from what that plan's Phase 1.4 landed — not fabricated here. Every
+    site in this plan that previously described this path's manifest as "short," as "linking" its
+    prerequisites, or as a fixed "6 → 15 courses" has been corrected to this named-and-now-ordered
+    framing rather than to a fabricated new total.
 
 ### The DD-7 and DD-28 amendment pair
 

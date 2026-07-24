@@ -23,7 +23,8 @@ Introduce a small shared helper, e.g. `checkLinksResolve(page, hrefs, opts)` in 
 `apps/ayokoding-www-fe-e2e/src/steps/support/check-links-resolve.ts` (or co-located with existing
 step support, matching this project's current file layout), that:
 
-1. **Bounds concurrency** — process `hrefs` in fixed-size batches (e.g. 8 in flight at a time)
+1. **Bounds concurrency** — process `hrefs` in fixed-size batches (e.g. 20 in flight at a time — see
+   [Open Decisions](#open-decisions-resolve-at-execution) for the arithmetic behind this number)
    instead of firing all of them simultaneously. No new dependency is required — a small
    `for` loop with `Array.prototype.slice` batches plus `Promise.all` per batch is sufficient; avoid
    pulling in an external concurrency-limiter library for this narrow a need.
@@ -60,17 +61,23 @@ proving the fix's actual mechanism.
 
 - **Batch size**: start at 20 (not 8 — `ceil(37/8)=5` batches × 10s = 50s already exceeds the 30s
   constraint below for the course-catalog call site; `batchSize ≥ 19` is the minimum that clears it,
-  so 20 is used as the starting value with a small margin); tune against three constraints
+  so 20 clears the **course-catalog call site's** ~37 hrefs with a small margin — see the caveat
+  below before assuming the same margin holds for the nav call site); tune against three constraints
   together — the largest observed `hrefs.length` across both call sites (`ayokoding-www`'s nav has
-  dozens of internal links; the course catalog has ~37 course bundles per the sibling
-  `ayokoding-learning-path-02` plan's own corpus count), the existing 10s per-request timeout, and
-  Playwright's own default 30000ms per-test timeout (`apps/ayokoding-www-fe-e2e/playwright.config.ts`
-  sets no test-level override, so the default applies) — the batch size should be small enough to
-  meaningfully bound concurrency but not so small it reintroduces the sequential-timeout problem
-  `c61084bca` originally fixed, **and** its worst-case sequential total
-  (`ceil(hrefs.length / batchSize) * 10s`) must stay under the effective per-test timeout, or the
-  per-test timeout must be raised in the same change with the tradeoff stated. If the timeout-raise
-  fallback is ever invoked instead, the preferred scope is a Playwright per-test `timeout` override
-  (e.g. `test.setTimeout()`) scoped to the affected scenarios in the two step files, not a
-  project-wide `defineConfig` default — a global raise would silently loosen tolerance for the
-  ~104+ other, unrelated scenarios in that same Playwright project.
+  only an **unbounded** "dozens of internal links" estimate, with no measured upper bound; the course
+  catalog has ~37 course bundles per the sibling `ayokoding-learning-path-02` plan's own corpus
+  count — 20 is arithmetically proven sufficient only for this latter, bounded call site), the
+  existing 10s per-request timeout, and Playwright's own default 30000ms per-test timeout
+  (`apps/ayokoding-www-fe-e2e/playwright.config.ts` sets no test-level override, so the default
+  applies) — the batch size should be small enough to meaningfully bound concurrency but not so small
+  it reintroduces the sequential-timeout problem `c61084bca` originally fixed, **and** its worst-case
+  sequential total (`ceil(hrefs.length / batchSize) * 10s`) must stay under the effective per-test
+  timeout, or the per-test timeout must be raised in the same change with the tradeoff stated.
+  **Before execution relies on 20 for the nav call site too, re-run this same formula against the
+  nav call site's own actual measured `hrefs.length`** (not yet measured as of this writing) — if it
+  exceeds ~19 hrefs at the same 10s/request cost, 20 no longer clears the 30s timeout there, and
+  either the batch size or the per-test timeout needs revisiting for that call site specifically. If
+  the timeout-raise fallback is ever invoked instead, the preferred scope is a Playwright per-test
+  `timeout` override (e.g. `test.setTimeout()`) scoped to the affected scenarios in the two step
+  files, not a project-wide `defineConfig` default — a global raise would silently loosen tolerance
+  for the ~104+ other, unrelated scenarios in that same Playwright project.

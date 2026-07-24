@@ -289,16 +289,23 @@ back to the source plan; do not renumber to "close the gaps".
       prints nothing (falsifiable the other way: it prints `EXISTS shell` once Phase 2 has run).
 - [ ] [AI] **Upstream precondition 1** — confirm `ayokoding-learning-path-01-url-restructure` has
       merged: `test -d apps/ayokoding-www/content/en/learn/paths && test -d apps/ayokoding-www/content/en/learn/courses`
-      — acceptance: both exit 0 (both fail today; the directories are that plan's deliverable).
+      — acceptance: both exit 0 (both already pass as of 2026-07-24, now that
+      `ayokoding-learning-path-01-url-restructure` is archived and its deliverable directories exist;
+      if either ever fails again, that plan's directories are missing and it has not merged).
 - [ ] [AI] **Upstream precondition 2** — confirm
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` has merged:
       `for f in schemas manifest path-nav path-context prerequisites manifest-integrity; do test -f "<FEAT>core/$f.ts" || echo "MISSING $f"; done`
-      — acceptance: prints nothing (prints all six lines today).
+      — acceptance: prints nothing (already prints nothing as of 2026-07-24, now that
+      `ayokoding-learning-path-02-schema-and-prerequisite-dag` is archived and all six core module
+      files exist; if it ever prints a `MISSING` line again, that module has not landed).
 - [ ] [AI] Confirm the two upstream plans are archived rather than merely branch-merged:
       `test -d plans/done && ls plans/done | grep -o -- "ayokoding-learning-path-01-url-restructure" | wc -l`
       returns **1**, and the same form for
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` returns **1** — acceptance: both return
-      1 (both return 0 today).
+      1 (both already return 1 as of 2026-07-24, since both upstream plans are archived under
+      `plans/done/`; if either ever returns 0, that plan has not yet been archived — verify with
+      `/bin/ls` rather than an aliased `ls`, since some interactive-shell aliases such as `eza` inject
+      OSC-8 hyperlinks that corrupt a piped count).
 
 ### Phase 0 Gate
 

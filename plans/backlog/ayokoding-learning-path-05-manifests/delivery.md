@@ -488,9 +488,9 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 > superseded for this path). Per **DD-33** (still holding in scope) this path's `courseOrder` also
 > **walks**, never links, the existing nine-course AI/harness cluster, plus the six new
 > AI-engineer-role courses. The path's **full** composition is therefore no longer a fixed "15
-> courses" figure — it is the (still-being-ordered) included SWE-fundamentals set **plus** the
-> walked AI/harness cluster **plus** the six new AI-engineer-role courses; see DD-35 for why this
-> plan does not fabricate a total.
+> courses" figure — it is the (now-ordered, at plan 02's Phase 1.4) included SWE-fundamentals set
+> **plus** the walked AI/harness cluster **plus** the six new AI-engineer-role courses; see DD-35 for
+> why this plan does not fabricate a total.
 >
 > **Cross-plan dependency (new, 2026-07-21):** the prerequisite-consistent stage-by-stage ordering of
 > the included SWE-fundamentals set is authored by
@@ -538,7 +538,8 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       `courseOrder` whose **head** is the prerequisite-consistent ordering of the included
       SWE-fundamentals set — transcribed verbatim (never re-derived) from
       [`../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)'s
-      Stage 0 once that plan's own Phase 1.4 lands it — at minimum the 11 named courses
+      Stage 0, now that that plan's own Phase 1.4 has landed it (that plan is archived) — at minimum
+      the 11 named courses
       `just-enough-python`, `software-testing`, `cicd-and-release-engineering`, `backend-at-scale`,
       `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`,
       `data-engineering`, `data-structures-and-algorithms-essentials`, `software-product-engineering`,
