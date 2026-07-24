@@ -2377,7 +2377,7 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       `ayokoding-learning-path-03-navigation-ui` and
       `ayokoding-learning-path-04-course-authoring` check before they start.
       **Result**: `test -f .../schemas.ts` → exit 0 (file present). `npx nx run
-    ayokoding-www:typecheck` → exit 0. Both hold.
+ayokoding-www:typecheck` → exit 0. Both hold.
 
 ### Phase 5 Gate
 
@@ -2407,18 +2407,28 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+      **Result**: two entries. (1) The `test:e2e`/`test:integration` no-op-stub entry — litmus
+      re-examined and found the premise incomplete (real E2E coverage already exists via the
+      dedicated `ayokoding-www-fe-e2e` project, the documented pattern); resolved, no code gap, no
+      route needed beyond the already-landed doc fix. (2) The `ayokoding-www-fe-e2e` bulk-link-check
+      flakiness entry (newly captured this phase) — passes the litmus (a bounded-concurrency/retry
+      fix would durably prevent recurrence).
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content
+      **Result**: no secrets, credentials, tokens, or private hostnames in either entry — both
+      describe public Nx target names, public step-file paths, and observed CI error text only.
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content
       (Terraform, k3s, Proxmox, real hostnames/inventories) stays in `ose-infra` only and is NEVER
       cross-routed into `ose-public`/`ose-primer`; public-governance content may propagate via the
       existing parity loop
       — acceptance: no infra-private content appears in this repo's routed output.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+      **Result**: both entries are `ose-public`-native (an `ayokoding-www` app-tier concern); no
+      infra-private content involved.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix — non-code homes (`repo-governance/`, `docs/`, `.claude/agents/`, `.claude/skills/`, a
       post-mortem, or any other durable surface) may land inline for a small edit or as a
       `plans/backlog/` follow-up for a large one; **code homes (`apps/`, `libs/`, tests) are ALWAYS
@@ -2426,18 +2436,25 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       commits or PR. The sole carve-out is a blocker genuinely required to finish this plan's own
       scope, which is fixed inline as ordinary Root Cause Orientation work
       — acceptance: every `learnings.md` entry records its terminal routing state.
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+      **Result**: entry (1) resolved with no code gap — no route needed. Entry (2) is a code home
+      (test step files under `apps/`) — filed as
+      `plans/backlog/harden-ayokoding-www-fe-e2e-bulk-link-concurrency/` (README, brd, prd,
+      tech-docs, delivery, learnings scaffold all authored); NOT landed inline in this plan's PR.
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
       — acceptance: `learnings.md` is never silently empty.
+      **Result**: not applicable — two entries surfaced and both reached a terminal state; no
+      "none" escape needed.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as a
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as a
       `plans/backlog/` plan, or discarded with a reason), or the file records the explicit "none"
       escape.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits or PR.
+- [x] [AI] No code-homed learning landed inline in this plan's own commits or PR — the bulk-link-
+      concurrency fix is a new `plans/backlog/` folder only (plan docs, no `apps/` code change).
 - [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 6+7 form one natural delivery stop point
       (both are docs-only closing work), so this phase's `learnings.md` triage commit stays on the
       same branch and continues directly into Phase 7 — the draft PR opens, runs its 3-cycle
