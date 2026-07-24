@@ -1119,10 +1119,19 @@ validate` command prints `All links valid! No broken links found.`
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — returns
   `128`.
 
-- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 1+2 form one natural delivery stop point,
+- [x] [AI] **No PR opens at this gate (`DN-14`)**: Phases 1+2 form one natural delivery stop point,
       so this phase's commits stay on the same branch and continue directly into Phase 2 — the
       draft PR opens, runs its 3-cycle PR-Review, and merges at the **Phase 2 Gate** below, covering
       both phases' commits together.
+
+  **Date**: 2026-07-24. **Status**: Done — confirmed true, not a merge event. PR #91
+  (`ayokoding-learning-path-02-schema-and-prerequisite-dag/phase-1-schema-foundation`) is open in
+  draft; its cycle-1 review fan-out ran against Phase-1-only content and surfaced two confirmed
+  documentation findings (manifests README ownership overreach; Phase 0 CI-count miscount), both
+  fixed directly in a follow-up commit rather than posted through `pr-review-synthesis-maker` — no
+  synthesis/merge happens at this gate per `DN-14`. The actual 3-cycle review + merge runs once
+  against the combined Phase 1+2 diff at the Phase 2 Gate. **Files Changed**: none (gate
+  confirmation only).
 
 > **Pause Safety**: the manifest schema compiles and the empty `<MANIFESTS>` home exists; no resolver
 > consumes them yet and no rendered behaviour changed anywhere. Safe to stop indefinitely. To resume:
