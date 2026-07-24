@@ -144,7 +144,7 @@ partials, returns, period close, stock concurrency, and the EAV-vs-JSONB-vs-gene
 extensibility axis).
 
 `(SWE)` = an existing library course [Repo-grounded — all ten verified present under
-`plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/`].
+`plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/`].
 `(Acct)` = a course owned by `ayokoding-learning-path-06-skills-accounting` — the seven ids below are
 as currently named in that plan's own in-flight rewrite (its README, read 2026-07-22); see
 [§Cross-plan coordination risk](#cross-plan-coordination-risk-accounting-course-id-stability).

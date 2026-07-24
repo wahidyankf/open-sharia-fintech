@@ -160,11 +160,11 @@ verified accessible palette per the
 ## Cross-plan `syllabus/` reference rule (binding)
 
 The 128-file `syllabus/` detail layer lives **only** in
-[`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md).
+[`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md).
 This plan is its single largest consumer and **never copies it**.
 
 - Every reference uses the **full cross-plan relative path**:
-  `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/<rest>`. The source plan's
+  `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/<rest>`. The source plan's
   `./syllabus/...` form resolves to nothing after the split.
 - **Copying is forbidden.** A copy forks the source of truth for 121 course specs and four manifest
   orderings, so a later spec correction lands in one copy only — and this plan's authoring passes read
@@ -192,7 +192,7 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md link
 ```
 
 Acceptance: the `grep` finds **no** matching line (exits 1). Falsifiable the other way too —
-introduce one bad `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` link and the
+introduce one bad `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` link and the
 same command prints that file and exits 0.
 
 ## Authoring architecture
@@ -299,7 +299,7 @@ prerequisites: [course-id, course-id, ...]
 ```
 
 The canonical statement of this field's shape is owned by
-[`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md).
+[`ayokoding-learning-path-02-schema-and-prerequisite-dag`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md).
 This plan **consumes** it. If this document and the schema plan's ever disagree, **the schema plan's
 wins**. The list's contents are transcribed from the course's own spec file, never re-derived — an
 invented edge adds a false edge to the library DAG whose failure surfaces far downstream in the
@@ -708,7 +708,7 @@ here). **Order is NOT a catalog property** — it lives in the four path manifes
 point). Variants are added **on demand** and are not enumerated here.
 
 Full per-course detail is the cross-plan
-[`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
+[`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
 
 ### Editor & tooling foundations
 
@@ -1091,7 +1091,7 @@ asserted):
 - `<PATHS>` (`apps/ayokoding-www/content/en/learn/paths/`) and `<SE_OLD>`
   (`apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/`) — read-only
   reference paths this plan reads (for collision checks and cross-links) but never writes
-- `<SYLLABUS>` (`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`) — the
+- `<SYLLABUS>` (`../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`) — the
   cross-plan authoring source; consumed, never copied or edited
 
 **No package-manifest changes**: this plan adds no entry to `package.json`, `go.mod`, `Cargo.toml`,

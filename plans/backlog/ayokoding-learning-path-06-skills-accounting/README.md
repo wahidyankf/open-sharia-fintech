@@ -56,7 +56,7 @@ and that every manifest references course bodies **by ID** — never by copy:
 
 > Citations anchor on the **quoted phrase**, not a line number — plan 02 is unmerged and under active
 > edit, so any line number cited here goes stale without warning. `grep -F` each quoted string against
-> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md` to locate it.
+> `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md` to locate it.
 
 - _"No course ID appears twice **within one manifest**"_ [Repo-grounded —
   `ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`, locate via

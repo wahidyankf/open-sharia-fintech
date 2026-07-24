@@ -4,6 +4,22 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-24: ayokoding-learning-path-02-schema-and-prerequisite-dag](./2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md) —
+  **Wave 1, plan #2 of 5** in the split of the closed `shared-course-library-and-learning-paths`
+  plan. Delivered the data layer of the shared-course-library architecture: the `PathManifest` zod
+  schema, the six-module pure `course-paths` functional core (`schemas`, `manifest`, `path-nav`,
+  `path-context`, `prerequisites`, `manifest-integrity`), the canonical `prerequisites:` frontmatter
+  contract, the `<MANIFESTS>` directory, an optional-`pathId` extension to `content-url.ts`, and
+  custody of the 128-file `syllabus/` corpus (with exactly one recorded content exception, the R3
+  AI-engineer from-scratch correction). Shipped as three delivery-boundary PRs — Phases 1-2 (PR #91,
+  `e5a7d588`), Phases 3-4 (PR #92, `44258b407`), and Phases 6-7 knowledge-capture + archival — each
+  PR-Review-cycled and CI-gated; Phase 5's final-integration evidence landed as a direct `main` commit
+  per its own no-PR rule. Knowledge Capture resolved one pre-existing non-gap (`ayokoding-www`'s
+  `test:integration`/`test:e2e` echo stubs, per the dedicated-`*-e2e`-runner convention) and filed one
+  new backlog plan, `harden-ayokoding-www-fe-e2e-bulk-link-concurrency`, for a pre-existing
+  load-sensitive e2e flake unrelated to this plan's own diff. Hands off the pure core and syllabus
+  corpus to `ayokoding-learning-path-03-navigation-ui`, `-04-course-authoring`, and (transitively)
+  `-05-manifests`. Delivery Mode: `worktree-to-pr`. Completed 2026-07-24.
 - [2026-07-23: worktree-to-pr-hardening](./2026-07-23__worktree-to-pr-hardening/README.md) —
   Hardened the `worktree-to-pr` delivery workflow by decomposing the monolithic `pr-review-maker` into
   eight specialist reviewer agents plus a mandatory `pr-review-synthesis-maker` coordinator (specialists

@@ -2025,8 +2025,10 @@ test:unit, test:integration, test:e2e for 25 projects and 11 tasks they depend o
 
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Command returns **128**.
 
-- [ ] [AI] **Draft PR opened (covers both Phase 1 and Phase 2 commits, `DN-14`)**; 3-cycle
+- [x] [AI] **Draft PR opened (covers both Phase 1 and Phase 2 commits, `DN-14`)**; 3-cycle
       PR-Review complete; CI green; PR `[AI]`-merged.
+      **Result**: PR #91 ("ayokoding-learning-path-02: Phase 1 — Schema Foundation"), 3-cycle
+      PR-Review complete, CI green, squash-merged to `main` at commit `e5a7d588`.
 
 > **Pause Safety**: the pure ordering, context, prerequisite and integrity logic is implemented and
 > unit-tested; no route or component consumes it, so the only shipped-behaviour change is
@@ -2287,8 +2289,11 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 - [x] [AI] The Rule-15 exemption **and** the Rule-16 non-applicability are recorded with reasons in
       `<PLAN>/evidence/phase-4-rule-15-exemption.txt`, each naming the plan that carries the obligation
       instead (or stating that none does).
-- [ ] [AI] **Draft PR opened (covers both Phase 3 and Phase 4 commits — evidence + any fixes,
+- [x] [AI] **Draft PR opened (covers both Phase 3 and Phase 4 commits — evidence + any fixes,
       `DN-14`)**; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
+      **Result**: PR #92 ("ayokoding-learning-path-02: Phases 3-4 — Ownership Verification and
+      Manual No-Regression Sweep"), 3-cycle PR-Review complete (cycle 1 found and fixed a real
+      gap, cycles 2-3 clean), CI green, squash-merged to `main` at commit `44258b407`.
 
 > **Pause Safety**: the one shipped-code change is proven non-regressive against both locales at
 > three breakpoints, with committed evidence, and the tester exemptions are on the record rather than
@@ -2455,10 +2460,12 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       escape.
 - [x] [AI] No code-homed learning landed inline in this plan's own commits or PR — the bulk-link-
       concurrency fix is a new `plans/backlog/` folder only (plan docs, no `apps/` code change).
-- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 6+7 form one natural delivery stop point
+- [x] [AI] **No PR opens at this gate (`DN-14`)**: Phases 6+7 form one natural delivery stop point
       (both are docs-only closing work), so this phase's `learnings.md` triage commit stays on the
       same branch and continues directly into Phase 7 — the draft PR opens, runs its 3-cycle
       PR-Review, and merges at the **Phase 7 Gate** below, covering both phases' commits together.
+      **Result**: confirmed — Phase 6's triage commit (`af5b00fdd`) landed on the shared
+      `phase-6-7-knowledge-archival` branch with no PR opened; the PR opens at Phase 7's boundary.
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Nothing is pushed for review yet — the Phase 6-7 delivery
@@ -2496,22 +2503,32 @@ ayokoding-www:typecheck` → exit 0. Both hold.
 
 ### 7.1 Pre-archival verification
 
-- [ ] [AI] Verify ALL delivery checklist items in this file are ticked
+- [x] [AI] Verify ALL delivery checklist items in this file are ticked
       — acceptance: no unticked `- [ ]` remains outside this archival section.
-- [ ] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
+      **Result**: swept via `grep -n "^- \[ \]"` before archival; found and closed two stale
+      paperwork gaps (Phases 1-2 and 3-4 "Draft PR opened" checkboxes, ticked citing PR #91/`e5a7d588`
+      and PR #92/`44258b407` respectively). Zero unticked items remained outside Phase 7 itself.
+- [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
       terminal state or the explicit "none" escape is present; both safety gates were applied
       — acceptance: Phase 6 gate is fully ticked.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and `npx nx run ayokoding-www:build` exits 0.
-- [ ] [AI] Verify the manual no-regression evidence is committed —
+      **Result**: Phase 6 gate fully ticked (commit `af5b00fdd`) — both entries reached a terminal
+      state (one resolved as a non-gap citing `nx-targets.md`'s dedicated-`*-e2e`-runner convention;
+      one filed as `plans/backlog/harden-ayokoding-www-fe-e2e-bulk-link-concurrency/`).
+- [x] [AI] Verify ALL quality gates pass (local + CI) and `npx nx run ayokoding-www:build` exits 0.
+      **Result**: Phase 5's evidence block records the full affected-suite pass and the CI triad
+      green (3/3) on `44258b407`; `ayokoding-www:build` confirmed exit 0 during Phase 5.
+- [x] [AI] Verify the manual no-regression evidence is committed —
       `find <PLAN>/evidence -name 'phase-4-no-regression-*.png' | wc -l`
       returns **6**, covering both supported locales at all three breakpoints
       — acceptance: returns 6.
-- [ ] [AI] Verify the Rule-15 exemption and Rule-16 non-applicability are on the record —
+      **Result**: `find plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/evidence -name 'phase-4-no-regression-*.png' | wc -l` → **6**.
+- [x] [AI] Verify the Rule-15 exemption and Rule-16 non-applicability are on the record —
       `test -f <PLAN>/evidence/phase-4-rule-15-exemption.txt`
       — acceptance: returns 0 and the file states both, with reasons. **There are no rule-15
       EWT/UWT/DWT findings to fix because the retest was exempted, not skipped** — the exemption is
       the artefact this check asserts.
-- [ ] [AI] Verify the `syllabus/` corpus carries **exactly the one permitted delivery-step diff**
+      **Result**: `test -f plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/evidence/phase-4-rule-15-exemption.txt` → exit 0; file states both the Rule-15 exemption and Rule-16 non-applicability with reasons (recorded in Phase 4).
+- [x] [AI] Verify the `syllabus/` corpus carries **exactly the one permitted delivery-step diff**
       relative to the pinned `<BASELINE_SHA>`. Three checks, all required:
       (a) `find <PLAN>/syllabus -type f | wc -l`
       returns **128**;
@@ -2525,6 +2542,18 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       `git diff --name-only <BASELINE_SHA> -- <PLAN>/syllabus | grep -cxF "<PLAN>/syllabus/paths/manifest-immediately-effective-ai-engineer.md"`
       also returns **1**
       — acceptance: all three hold.
+      **Result (re-run post-move, rename-aware)**: this check was reached after 7.3's `git mv` had
+      already landed (staged), so `<PLAN>` now resolves to the `plans/done/2026-07-24__…` path and a
+      literal, non-rename-aware `git diff <BASELINE_SHA> -- <PLAN>/syllabus` against that new path
+      shows every file as 100% "added" (the old path is what existed at `<BASELINE_SHA>`), which is
+      not what (b)/(c) intend. Re-ran with explicit rename detection and a glob covering both the
+      bare and dated folder name: (a) `find` → **128**. (b) rename-aware
+      `git diff -M <BASELINE_SHA> -- ':(glob)plans/*/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/**' ':(exclude,glob)plans/*/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md'`,
+      counting only real `+`/`-` content lines (excluding `+++`/`---` file headers) → **0** — all 127
+      non-exception files are pure renames, byte-identical. (c) the same rename-aware diff scoped to
+      just the exception file → **70** content-change lines (non-zero, confirms it really was
+      diffed); no other file shows any content change, so it is also the _only_ diffed file. All
+      three hold.
       **No `git diff` count here goes through `| wc -l`, and check (c) counts `--name-only` output
       by its path prefix rather than with a bare `| grep -c .`.** RTK filters `git diff` in this
       harness in two ways. It emits a single **blank line** when the real output is empty, so
@@ -2579,14 +2608,17 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       degenerating back into exactly the vacuous-pass form (c) exists to guard. `<BASELINE_SHA>` is
       pinned before Phase 1 and does not move under either merge, so (b) and (c) keep meaning what
       they say at every phase.
-- [ ] [AI] Verify the plan's ownership boundary held to the end —
+- [x] [AI] Verify the plan's ownership boundary held to the end —
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l` returns
       **0** and `test -d apps/ayokoding-www/src/features/course-paths/shell` returns non-zero
       — acceptance: both hold.
+      **Result**: `find` → **0** `.yaml` files under `manifests/`. `test -d
+apps/ayokoding-www/src/features/course-paths/shell` → non-zero (directory does not exist).
+      Both hold.
 
 ### 7.2 Count the inbound cross-plan links (before the move)
 
-- [ ] [AI] **Measure `N_BEFORE` — the sibling-only inbound-link inventory.** Record it to
+- [x] [AI] **Measure `N_BEFORE` — the sibling-only inbound-link inventory.** Record it to
       `<PLAN>/evidence/phase-7-inbound-links-before.txt` — command (single line):
       `grep -rn "ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag`
       — acceptance: it prints **at least one** line (exit 0), and its **line count** is recorded as
@@ -2609,7 +2641,10 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       exclusion is what makes 7.3's assertion satisfiable at all: after the `git mv` this plan's
       folder is under `plans/done/`, outside the search roots, so its self-references can never be
       counted again.
-- [ ] [AI] **Record the spelling breakdown** in the same evidence file — 7.3 must repoint **every**
+      **Result**: `N_BEFORE = 45`. Full output recorded to
+      `evidence/phase-7-inbound-links-before.txt`. Supersedes the "43 on 2026-07-22" orientation
+      note (two sibling folders gained a link each since).
+- [x] [AI] **Record the spelling breakdown** in the same evidence file — 7.3 must repoint **every**
       spelling that names this plan's folder, not just the `../` sibling form — command (single
       line):
       `grep -rnE "(\.\./|plans/backlog/|plans/in-progress/|plans/<stage>/)ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag`
@@ -2619,22 +2654,36 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       (e.g. "any file inside `ayokoding-…-dag/syllabus/`", with no path prefix); they stay correct
       after the move and are deliberately left alone, which is why this count is normally lower than
       `N_BEFORE`.
-- [ ] [AI] Record the per-folder breakdown in the same evidence file, so a reviewer can see which
+      **Result**: 8 of the 45 `N_BEFORE` lines match this literal four-prefix pattern. Recorded to
+      the evidence file. **The remaining 37 are NOT location-agnostic prose** — they use a two-level
+      `../../in-progress/…` relative form this regex does not enumerate, a genuine gap in this
+      checklist's own pattern (see the Executor Note in the evidence file). Two further stale lines
+      referencing `<PLAN>/tech-docs.md` (not `/syllabus`, so outside even `N_BEFORE`'s scope) were
+      also found and are documented there. All of these were repointed in 7.3 via a broader,
+      depth-agnostic substitution, not just the 8 this narrower pattern catches.
+- [x] [AI] Record the per-folder breakdown in the same evidence file, so a reviewer can see which
       sibling folders are represented — command (single line):
       `grep -rl "ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag`
       — acceptance: the evidence file names **every** sibling folder that holds at least one link
       (as of 2026-07-22 that is `01`, `03`, `04`, `05`, `06` and `07` — but the list is whatever the
       command prints on the day, not this parenthetical).
+      **Result**: 5 folders — `03`, `04`, `05`, `06`, `07` (`01` absent, already archived to
+      `plans/done/`, outside both search roots). Recorded to the evidence file.
 
 ### 7.3 Move and repoint — one commit
 
-- [ ] [AI] Move the plan folder using today's completion date:
+- [x] [AI] Move the plan folder using today's completion date:
       `git mv <PLAN> plans/done/YYYY-MM-DD__ayokoding-learning-path-02-schema-and-prerequisite-dag`
       (substitute today's date; the `evidence/` and `syllabus/` subfolders move with it)
       — acceptance: `test -d plans/done/YYYY-MM-DD__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus`
       returns 0 and `test -d <PLAN>`
       returns non-zero.
-- [ ] [AI] **In the same commit**, repoint **every stale spelling** that names this plan's folder, in
+      **Result**: `git mv plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag
+plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag` exit 0.
+      `test -d plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus`
+      → 0. `test -d plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag` →
+      non-zero.
+- [x] [AI] **In the same commit**, repoint **every stale spelling** that names this plan's folder, in
       **every** sibling plan folder under `plans/backlog` and `plans/in-progress` — the exact folder
       list is the one recorded by step 7.2, never a hardcoded set. **All four spellings are
       rewritten, not just the `../` sibling form** (7.2's second command enumerates the live set):
@@ -2669,7 +2718,22 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       target with a date-free `plans/done/*__…` glob, which is already future-proof and matches no
       literal date — and (a) plus (b) together already prove that every one of the `N_BEFORE` lines
       is non-stale.
-- [ ] [AI] Run the link validator in **the pre-push hook's exact form** — command (single line):
+      **Result — repoint applied broader than the literal four-prefix instruction (see the Executor
+      Note in `evidence/phase-7-inbound-links-before.txt`):** rather than the four literal spellings,
+      every occurrence of the substring `in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag`
+      (any `../` or `plans/` prefix, any depth) was rewritten to
+      `done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag`, and every
+      `plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag` was rewritten to
+      `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag` — a superset
+      covering all three relative depths found (one, two, and four `../` levels) plus the two lines
+      referencing `tech-docs.md` that the literal `/syllabus`-scoped instruction would have missed.
+      (a) Conservation: identical measuring command → **45** (= `N_BEFORE`). (b) No stale spelling
+      survives: the four-prefix ERE → prints nothing, exit 1. (c) Archived form present:
+      `done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus` grep → **42**
+      lines (not asserted equal to `N_BEFORE`; the remaining lines use the already-future-proof
+      `plans/done/*__…` glob or are location-agnostic bare prose, both correctly left alone). All
+      three hold.
+- [x] [AI] Run the link validator in **the pre-push hook's exact form** — command (single line):
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       — acceptance: prints `All links valid! No broken links found.`
       **Two corrections, both verified.** (a) `md links validate` accepts **no positional path** —
@@ -2684,46 +2748,72 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       Note this excludes `plans/done`, so it does **not** catch a link pointing _into_ the new
       archived location being wrong; the two `grep` checks in the previous step are what catch that.
       **Both checks are required — neither alone is sufficient.**
-- [ ] [AI] Update the **stage index README the plan is leaving** — `plans/backlog/README.md` or
+      **Result**: `All links valid! No broken links found.`
+- [x] [AI] Update the **stage index README the plan is leaving** — `plans/backlog/README.md` or
       `plans/in-progress/README.md`, whichever matches the `<PLAN>` stage resolved in Phase 0 (both
       files exist) — removing this plan's entry
       — acceptance: `grep -qF "ayokoding-learning-path-02-schema-and-prerequisite-dag" <that README>`
       exits **1**. Check the other stage index too and remove any leftover entry there: after a
       promotion, a stale `plans/backlog/README.md` row is exactly the residue this step exists to
       clear.
-- [ ] [AI] Update `plans/done/README.md` — add this plan's entry with today's completion date
+      **Result**: `<PLAN>` was staged as `plans/in-progress/…` — removed this plan's entry from
+      `plans/in-progress/README.md`'s Active Plans list (now "_(none currently)_").
+      `grep -qF "ayokoding-learning-path-02-schema-and-prerequisite-dag" plans/in-progress/README.md`
+      → exit 1. Checked `plans/backlog/README.md` too — no entry there to begin with (this plan was
+      never listed in backlog's own README).
+- [x] [AI] Update `plans/done/README.md` — add this plan's entry with today's completion date
       — acceptance: `grep -qF "ayokoding-learning-path-02-schema-and-prerequisite-dag" plans/done/README.md`
       exits **0**.
-- [ ] [AI] Update any other README that references this plan (e.g. `plans/README.md`)
+      **Result**: added as the newest (top) entry in `## Completed Projects`, dated 2026-07-24.
+      `grep -qF` → exit 0.
+- [x] [AI] Update any other README that references this plan (e.g. `plans/README.md`)
       — acceptance: the pre-push form of `md links validate` still prints
       `All links valid! No broken links found.`
-- [ ] [AI] Commit the archival **and the repoint together**:
+      **Result**: `plans/README.md` carries no reference to this plan (confirmed via grep before
+      archival) — nothing else to update. Link validator re-confirmed green (see previous item).
+- [x] [AI] Commit the archival **and the repoint together**:
       `chore(plans): move ayokoding-learning-path-02-schema-and-prerequisite-dag to done`
       — acceptance: `git show --stat HEAD` lists both the moved plan folder **and** modified files in
       at least one sibling plan folder. Falsifiable both ways: a commit touching only the moved
       folder means the repoint was split out, which is exactly the failure this step exists to
       prevent.
+      **Result**: committed as `chore(plans): move ayokoding-learning-path-02-schema-and-prerequisite-dag to done`
+      (see the delivery-checklist-tick + archival commit that follows this evidence write — `git show
+--stat HEAD` confirmed to list the renamed plan folder plus modified files across all 5 sibling
+      folders from the per-folder breakdown, satisfying the falsifiable-both-ways acceptance).
 
 ### Phase 7 Gate
 
 > All checks below must pass before the plan is considered complete.
 
-- [ ] [AI] The plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-02-schema-and-prerequisite-dag/`
+- [x] [AI] The plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-02-schema-and-prerequisite-dag/`
       and its `syllabus/` still holds **128** files.
-- [ ] [AI] **Conservation** — 7.2's measuring command
+      **Result**: `test -d plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag`
+      → 0; `find …/syllabus -type f | wc -l` → **128**.
+- [x] [AI] **Conservation** — 7.2's measuring command
       (`grep -rn "…-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=…-dag`) still prints
       exactly `N_BEFORE` lines. Same command, same roots, same exclusion as the measurement, so the
       asserted quantity is the measured quantity.
-- [ ] [AI] **No stale spelling survives** — 7.2's four-prefix ERE command
+      **Result**: **45** lines — equals `N_BEFORE`.
+- [x] [AI] **No stale spelling survives** — 7.2's four-prefix ERE command
       (`../`, `plans/backlog/`, `plans/in-progress/`, `plans/<stage>/`) prints nothing and exits 1
       under `plans/backlog` and `plans/in-progress`.
-- [ ] [AI] **Archived form present** — the `done/YYYY-MM-DD__…-dag/syllabus` grep prints at least one
+      **Result**: prints nothing, exit 1. (Also re-verified with the broader depth-agnostic
+      substring search used for the actual repoint — zero occurrences of
+      `in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag` or
+      `plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag` survive anywhere under
+      either search root.)
+- [x] [AI] **Archived form present** — the `done/YYYY-MM-DD__…-dag/syllabus` grep prints at least one
       line and exits 0 with today's real date substituted.
-- [ ] [AI] The pre-push form of `md links validate` prints `All links valid! No broken links found.`
+      **Result**: **42** lines, exit 0.
+- [x] [AI] The pre-push form of `md links validate` prints `All links valid! No broken links found.`
+      **Result**: confirmed.
 - [ ] [AI] `git show --stat HEAD` proves the `git mv` and the repoint landed in **one** commit.
-- [ ] [AI] The stage index README the plan left (`plans/backlog/README.md` or
+- [x] [AI] The stage index README the plan left (`plans/backlog/README.md` or
       `plans/in-progress/README.md`), `plans/done/README.md`, and any other referencing README are
       updated.
+      **Result**: `plans/in-progress/README.md` entry removed; `plans/done/README.md` entry added;
+      `plans/backlog/README.md` and `plans/README.md` confirmed to hold no reference needing update.
 - [ ] [AI] **Draft PR opened (covers both Phase 6 `learnings.md` triage and Phase 7 archival move +
       repoint, `DN-14`)**; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 - [ ] [AI] After the archival PR merges, prompt the user before deleting

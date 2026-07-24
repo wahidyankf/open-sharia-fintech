@@ -52,7 +52,7 @@ paper over it, does not create a placeholder index, and does not treat it as a d
 
 > Citations below anchor on the **quoted phrase**, not a line number. Plan 02 is unmerged and under
 > active edit, so any line number cited here goes stale without warning; `grep -F` the quoted string
-> against `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md` to
+> against `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md` to
 > locate each.
 
 - _"No course ID appears twice **within one manifest**"_ [Repo-grounded —

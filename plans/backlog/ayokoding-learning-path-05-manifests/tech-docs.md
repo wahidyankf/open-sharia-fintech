@@ -12,10 +12,10 @@ change to that corpus is routed to plan 02's own `delivery.md` as a change reque
 > plan is self-contained.
 >
 > **Cross-plan source of truth**: the authoritative per-course and per-path specs live in
-> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+> `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
 > them; do not author from any other source. In particular, each manifest's `courseOrder` is
 > **transcribed** from its
-> [`syllabus/paths/manifest-*.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+> [`syllabus/paths/manifest-*.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
 > mirror, never re-derived.
 
 ## Programme decisions
@@ -418,7 +418,7 @@ GREEN, and the Phase 3/4 Gates) and a matching presence check after Phase 5.2's 
 
 The single highest-risk step in this plan is appending a course to the wrong manifest. Band 9 is a
 special case: per the mirrors' own
-["Optional tail" note](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses),
+["Optional tail" note](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses),
 its five interview-technique courses land as a deferred **optional tail** in **all three**
 software-engineer manifests — `interview-ready`, `immediately-effective`, **and**
 `fundamentally-strong` — one canonical body, three orderings.
@@ -462,7 +462,7 @@ detect a wrongly-scoped append that silently skips one of the other two.
 Each manifest is the **authoritative order** for one path: a curated, prerequisite-consistent subset
 ordering over the catalog. Every ordering is a **valid topological walk** over the prerequisite DAG:
 no course precedes any of its listed prerequisites. The exhaustive per-course orderings live in the
-[`syllabus/paths/` mirrors](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+[`syllabus/paths/` mirrors](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
 and are **authoritative** — this plan transcribes them into `courseOrder`, it does not re-derive them.
 
 ### `careers/interview-ready/software-engineer` (interview-first)
@@ -472,14 +472,14 @@ deeper.** Delivered **first**, as an architecture smoke test (DD-27). Per **DL-1
 spine plus an optional "Go deeper" tail, not all-comprehensive. Published smoke-test-scoped over the
 33 re-homed topics + 4 existing capstones; grows with Band 9's five interview-technique courses.
 Mirror:
-[`manifest-interview-ready-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md).
+[`manifest-interview-ready-software-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md).
 
 ### `careers/immediately-effective/software-engineer` (build-fast-first)
 
 Editor/tooling → one language end-to-end → **build a real app first** → then deepen. Adds no new
 course body; composes existing library courses. Grows through Bands 1–8 and Band 9 (its own trailing
 optional job-hunt tail, mirroring `fundamentally-strong`'s treatment). Mirror:
-[`manifest-immediately-effective-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md).
+[`manifest-immediately-effective-software-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md).
 
 ### `careers/fundamentally-strong/software-engineer` (theory-first)
 
@@ -487,7 +487,7 @@ University-style: CS foundations / computer architecture / paradigms / DS&A FIRS
 systems/architecture depth. Per **DL-13** this is the complete-mastery path over the
 software-engineer-role catalog. Grows through Bands 1–8 and Band 9 (its own trailing optional
 interview band). Mirror:
-[`manifest-fundamentally-strong-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md).
+[`manifest-fundamentally-strong-software-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md).
 
 ### `careers/immediately-effective/ai-engineer` (fourth path, renamed and re-scoped 2026-07-21 — DD-35)
 
@@ -506,7 +506,7 @@ composition no longer starts from a linked-out SWE-fundamentals baseline), not r
 
 - **Mirror already renamed and corrected, prose brought into agreement (not this plan's rename).**
   The syllabus mirror is now
-  [`manifest-immediately-effective-ai-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+  [`manifest-immediately-effective-ai-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
   — `ayokoding-learning-path-02-schema-and-prerequisite-dag` has already performed both the rename
   (from `manifest-immediately-effective-software-engineer-to-ai-engineer.md`) and the from-scratch,
   prerequisites-included content correction, as a deliberate, reasoned exception to that plan's own
@@ -530,7 +530,7 @@ composition no longer starts from a linked-out SWE-fundamentals baseline), not r
 
 Smoothness is a per-manifest property (each path has its own order), underwritten by the machine
 invariant of DD-6/DD-16. **DD-6 and DD-16 live in a different plan.** Read them at
-[`ayokoding-learning-path-02-schema-and-prerequisite-dag` §Design Decisions](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
+[`ayokoding-learning-path-02-schema-and-prerequisite-dag` §Design Decisions](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
 — DD-6 is "every course declares `prerequisites`", DD-16 is "prerequisite-consistency is the audited
 smoothness property". Neither is among this plan's own eleven decisions; the four levers' substance is
 restated inline below so this section stands alone. Each manifest must satisfy four levers:
@@ -723,7 +723,7 @@ ruling.
     the starting composition its math assumed, not reversed.
   - **Mirror already renamed and corrected; prose brought into agreement, not re-renamed here.** The
     syllabus mirror is now
-    [`manifest-immediately-effective-ai-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+    [`manifest-immediately-effective-ai-engineer.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
     (renamed from `manifest-immediately-effective-software-engineer-to-ai-engineer.md`).
     `ayokoding-learning-path-02-schema-and-prerequisite-dag` has already performed both the rename and
     the from-scratch, prerequisites-included content correction, as a deliberate, reasoned exception to
@@ -934,7 +934,7 @@ count to a file and asserts an exact numeric delta, which is falsifiable in both
 completeness invariant** — the five interview-technique IDs belong in **all three**
 software-engineer manifests (`interview-ready`, `immediately-effective`, `fundamentally-strong`),
 per the
-[mirrors' own "Optional tail" note](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses).
+[mirrors' own "Optional tail" note](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses).
 That is a new behaviour, not more of the same data: a wrongly-scoped append that lands the five IDs
 in only one or two of the three manifests passes the integrity, prerequisite-consistency, and
 no-forked-body checks alike, so the generic suite cannot catch it. Verifying it only with an

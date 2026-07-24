@@ -1,0 +1,141 @@
+Phase 7.2 — inbound cross-plan link inventory, measured BEFORE the git mv.
+Measured 2026-07-24, immediately before archival to plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/.
+
+=== N_BEFORE ===
+
+Command:
+grep -rn "ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag
+
+N_BEFORE = 45
+
+(Supersedes the doc's own "43 on 2026-07-22" orientation parenthetical, which the doc itself says
+not to assert — two sibling folders, 06-skills-accounting and 07-skills-erp, gained a link each
+since that measurement.)
+
+Full 45-line output:
+
+plans/backlog/ayokoding-learning-path-04-course-authoring/prd.md:275:[`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)**
+plans/backlog/ayokoding-learning-path-04-course-authoring/prd.md:354:[`syllabus/courses/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:23:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:25:> [`syllabus/courses/<course-id>.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:209:4. `test -f plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:406:  [`syllabus/` source of truth](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:408:  [`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:410:  [`syllabus/paths/` manifests](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md:167:  `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/<rest>`. The source plan's
+plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md:195:introduce one bad `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` link and the
+plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md:711:[`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
+plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md:1094:- `<SYLLABUS>` (`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`) — the
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:19:> [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md).
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:179:- `<SYLLABUS>` = `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (cross-plan authoring source of truth — **never copied**)
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:259:      `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md' 'plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:447:  bad `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/nope.md` link makes the
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:495:> [`syllabus/courses/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md) —
+plans/backlog/ayokoding-learning-path-06-skills-accounting/tech-docs.md:1036:`ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`; any component, schema, or
+plans/backlog/ayokoding-learning-path-06-skills-accounting/syllabus/README.md:6:`ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (that corpus is custody-frozen —
+plans/backlog/ayokoding-learning-path-05-manifests/README.md:4:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-05-manifests/README.md:514:- [Syllabus (cross-plan, read-only)](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) —
+plans/backlog/ayokoding-learning-path-05-manifests/README.md:517:  [`paths/` manifest mirrors](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:22:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:281:      `ls ../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-*.md | wc -l`
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:363:      [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md),
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:540:      [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)'s
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:672:> [mirror's own "Optional tail" note](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses),
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:702:      [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md),
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:815:      [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md),
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:1068:      [manifest mirror](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:15:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:18:> [`syllabus/paths/manifest-*.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:421:["Optional tail" note](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses),
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:465:[`syllabus/paths/` mirrors](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:475:[`manifest-interview-ready-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-interview-ready-software-engineer.md).
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:482:[`manifest-immediately-effective-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md).
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:490:[`manifest-fundamentally-strong-software-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-fundamentally-strong-software-engineer.md).
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:509:  [`manifest-immediately-effective-ai-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:726:    [`manifest-immediately-effective-ai-engineer.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md)
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:937:[mirrors' own "Optional tail" note](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-software-engineer.md#optional-tail--ready-to-job-hunt-bridge-into-the-interview-courses).
+plans/backlog/ayokoding-learning-path-07-skills-erp/tech-docs.md:147:`plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/`].
+plans/backlog/ayokoding-learning-path-07-skills-erp/README.md:121:[`syllabus/README.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+plans/backlog/ayokoding-learning-path-03-navigation-ui/README.md:17:> `plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-03-navigation-ui/README.md:360:- [Syllabus (cross-plan)](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+plans/backlog/ayokoding-learning-path-03-navigation-ui/delivery.md:1526:      This is the check that catches a stale `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/…`
+
+=== Spelling breakdown ===
+
+Command:
+grep -rnE "(\.\./|plans/backlog/|plans/in-progress/|plans/<stage>/)ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag
+
+8 of the 45 N_BEFORE lines match this narrower four-prefix pattern literally (the other 37 use a
+"../../" two-level relative form — see the Executor Note below, which broadens the actual repoint
+beyond this literal check).
+
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:23:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-04-course-authoring/README.md:209:4. `test -f plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`
+plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:259:      `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md' 'plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
+plans/backlog/ayokoding-learning-path-05-manifests/tech-docs.md:15:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-05-manifests/README.md:4:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-05-manifests/delivery.md:22:> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+plans/backlog/ayokoding-learning-path-07-skills-erp/tech-docs.md:147:`plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/`].
+plans/backlog/ayokoding-learning-path-03-navigation-ui/README.md:17:> `plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+
+Lines that match N_BEFORE's looser pattern but not this four-prefix ERE (37 lines, all of the form
+"../../in-progress/ayokoding-…-dag/syllabus/…") are NOT location-agnostic prose — they are a real,
+dominant relative-link form this doc's own four-prefix regex does not enumerate. See the Executor
+Note below.
+
+=== Per-folder breakdown ===
+
+Command:
+grep -rl "ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus" plans/backlog plans/in-progress --exclude-dir=ayokoding-learning-path-02-schema-and-prerequisite-dag
+
+Folders holding at least one link (5 total; `01` is absent because it is already archived to
+plans/done/, outside both search roots):
+
+plans/backlog/ayokoding-learning-path-03-navigation-ui
+plans/backlog/ayokoding-learning-path-04-course-authoring
+plans/backlog/ayokoding-learning-path-05-manifests
+plans/backlog/ayokoding-learning-path-06-skills-accounting
+plans/backlog/ayokoding-learning-path-07-skills-erp
+
+=== Executor Note: this doc's four-prefix regex has a coverage gap (found and corrected) ===
+
+The doc's own "spelling breakdown" step (7.2, second bullet) and its "no stale spelling survives"
+check (7.3, check (b)) both use a four-prefix ERE: `(\.\./|plans/backlog/|plans/in-progress/|plans/<stage>/)`.
+Categorizing all 45 N_BEFORE lines by their actual matched prefix form shows this regex covers only
+8 of them. The other 37 use `../../in-progress/ayokoding-…-dag/syllabus/…` — a TWO-level relative
+form (present because sibling plans live one level under `plans/`, e.g.
+`plans/backlog/ayokoding-learning-path-04-course-authoring/`, so a same-depth sibling reference is
+`../../in-progress/...`, not the doc's assumed one-level `../...`). This is real staleness in the
+doc's own checklist, not location-agnostic prose: every one of the 37 lines breaks after the `git mv`
+exactly like the 8 the doc's regex does catch.
+
+Two additional stale lines were found that don't even reference `/syllabus` (so neither N_BEFORE nor
+either grep above ever counted them) — both link to `<PLAN>/tech-docs.md` instead:
+- plans/backlog/ayokoding-learning-path-06-skills-accounting/README.md:59
+- plans/backlog/ayokoding-learning-path-07-skills-erp/syllabus/paths/manifest-skills-sharia-erp.md:14
+  (this one uses a THIRD relative depth, `../../../../in-progress/...` — four levels up, since the
+  citing file sits inside its own plan's `syllabus/paths/` subfolder.)
+
+Root cause: the doc's four-prefix regex was written assuming only a one-level `../` sibling form
+existed (true while this plan itself lived in `plans/backlog/`); once promoted to `plans/in-progress/`,
+new/updated sibling links correctly switched to the deeper relative form, but the checklist's own
+regex was never updated to match.
+
+Resolution applied (broader than the doc's literal check, to actually prevent broken links): rather
+than enumerate every possible relative depth, every occurrence of the substring
+`in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag` (regardless of what `../` or
+`plans/` prefix precedes it) was rewritten to
+`done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag`, and every occurrence of
+`plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag` was rewritten to
+`plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag`. This is a superset
+of the doc's own four-prefix rewrite and catches all three relative depths plus both target files
+(`syllabus/...` and `tech-docs.md`). Verified zero occurrences of either stale substring remain
+anywhere under plans/backlog or plans/in-progress after the rewrite (see Phase 7.3 evidence in
+delivery.md for the exact post-move re-run of commands (a)/(b)/(c)).
+
+Bare, location-agnostic forms (2 lines: `ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md:467,474,736`
+in plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md and its `:467`-only
+sibling occurrence) and the already-future-proof `plans/done/*ayokoding-…-dag/syllabus/…` glob line
+(plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:259, second alternative
+removed as redundant with the glob rather than repointed to a literal date) were correctly left
+alone, per the doc's own stated rule for location-agnostic prose.

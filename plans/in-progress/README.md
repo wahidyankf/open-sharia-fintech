@@ -4,10 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [ayokoding-learning-path-02-schema-and-prerequisite-dag](./ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
-  — **Wave 1** of the `ayokoding-learning-path-*` programme. The data layer: the `PathManifest` zod
-  schema, the pure `course-paths` core, the course-prerequisite frontmatter contract, and custody of
-  the `syllabus/` corpus.
+_(none currently)_
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.

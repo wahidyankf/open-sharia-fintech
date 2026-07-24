@@ -20,9 +20,9 @@ most importantly, **no manifest**.
 > (same wave, no dependency edge in either direction).
 >
 > **Cross-plan source of truth** — the authoritative per-course and per-path specs live in
-> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+> `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
 > them; do not author from any other source. Every course body in this plan is authored **from** its
-> [`syllabus/courses/<course-id>.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
+> [`syllabus/courses/<course-id>.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
 > spec file — never from a fresh judgment call.
 
 ## The manifest ownership invariant (binding — read before anything else)
@@ -206,7 +206,7 @@ step here that appends a course ID to a `.yaml` is a boundary violation, not a c
 2. PR for `ayokoding-learning-path-02-schema-and-prerequisite-dag` is **merged to `origin/main`**.
 3. `test -d apps/ayokoding-www/content/en/learn/courses` returns 0 and the directory holds the
    **37** re-homed bundles.
-4. `test -f plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`
+4. `test -f plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`
    returns 0 (substitute the schema plan's current stage folder).
 
 ### Downstream — what this plan hands off, and to whom
@@ -403,15 +403,15 @@ forbidden.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased, executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
 - **Cross-plan**:
-  [`syllabus/` source of truth](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+  [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
-  [`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
+  [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   ·
-  [`syllabus/paths/` manifests](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+  [`syllabus/paths/` manifests](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
   · [manifest plan](../ayokoding-learning-path-05-manifests/README.md)
   · [URL-restructure plan](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
   · [navigation-UI plan](../ayokoding-learning-path-03-navigation-ui/README.md)
-  · [schema plan](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
+  · [schema plan](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
 
 ## Provenance
 

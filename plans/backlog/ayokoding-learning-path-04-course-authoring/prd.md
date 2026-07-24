@@ -272,7 +272,7 @@ runnable `code/`; exhaustive `co-NN`/`ex-NN` enumeration; `prerequisites` metada
 Every course declares its `prerequisites` so it takes its place in the library's prerequisite DAG.
 
 **Full per-course concept / example / capstone detail lives in the cross-plan
-[`syllabus/courses/` catalog](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)**
+[`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)**
 (one file per course ID) — the specs below fix each course's purpose, register, and acceptance shape.
 The catalog is the source of truth for authoring; these specs are not a substitute for it.
 
@@ -351,7 +351,7 @@ principles) and **dated accuracy-note sidebars** (volatile SDK/model/pricing/fra
 matching the pattern the existing AI-band courses already use (DD-28). **These six courses' specs are
 now settled** — full concept (`co-NN`), worked-example (`ex-NN`), prerequisite-chain, and capstone
 specs exist at
-[`syllabus/courses/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+[`syllabus/courses/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
 (one 295-425-line file per course); the format/language/prerequisite summaries below are drawn from
 those settled files, not first-pass guesses. Author each course body **from** its
 `syllabus/courses/<id>.md` spec (per DD-27's build order, this is authoring priority #1 behind the

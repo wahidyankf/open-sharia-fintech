@@ -1,7 +1,7 @@
 # Learning Path Manifests — author, publish, grow, and verify the four careers path manifests
 
 > **Cross-plan source of truth**: the authoritative per-course and per-path specs live in
-> `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+> `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
 > them; do not author from any other source.
 
 This plan is **Wave 3** — the terminal plan — of the five-way split of the closed
@@ -511,10 +511,10 @@ which this plan does not opt out of (see **DN-11** above). `ayokoding-www` is de
   UI-design-funnel exemption record.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
-- [Syllabus (cross-plan, read-only)](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) —
+- [Syllabus (cross-plan, read-only)](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md) —
   the per-course and per-path detail layer, owned by
   `ayokoding-learning-path-02-schema-and-prerequisite-dag`. The four `careers/`
-  [`paths/` manifest mirrors](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
+  [`paths/` manifest mirrors](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
   are the authoritative orderings this plan transcribes into `courseOrder` (the fourth path's mirror
   has already been renamed to `manifest-immediately-effective-ai-engineer.md` and corrected to the
   from-scratch, prerequisites-included model by that plan; the prerequisite-consistent stage-by-stage

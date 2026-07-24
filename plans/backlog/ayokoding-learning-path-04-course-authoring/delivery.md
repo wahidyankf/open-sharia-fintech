@@ -16,7 +16,7 @@ construction rather than as a retrofit.
 > [tech-docs §The manifest ownership invariant](./tech-docs.md#the-manifest-ownership-invariant-binding).
 >
 > **Cross-plan source of truth** — the 128-file `syllabus/` detail layer lives in
-> [`../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md).
+> [`../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md).
 > Every course body is authored **from** its `syllabus/courses/<course-id>.md` spec. **Never copy
 > those files into this plan** — a copy forks the source of truth for 121 course specs.
 >
@@ -176,7 +176,7 @@ subagents capped per the orchestration convention). The main thread self-promote
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones — **read-only here**; the re-home is the URL-restructure plan's work)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/` (**never written here**)
 - `<MANIFESTS>` = `<FEAT>manifests/` (**never written here** — manifest-plan property; read-only reference only)
-- `<SYLLABUS>` = `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (cross-plan authoring source of truth — **never copied**)
+- `<SYLLABUS>` = `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (cross-plan authoring source of truth — **never copied**)
 
 ### Delivery Boundaries
 
@@ -256,7 +256,7 @@ and therefore always a boundary.
       means the re-home is incomplete and this plan must not start.
 - [ ] [AI] **Verify blocking plan #2 merged** — the cross-plan syllabus layer is on `origin/main`.
       Locate it with a command that neither zsh nor RTK can distort — command (single line):
-      `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md' 'plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
+      `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: three checks, all required. (a) It prints **exactly one** path — pipe it to
       `grep -c .` and read **1**. Its directory is `<SYLLABUS_ROOT>`. (b) `test -d "<SYLLABUS_ROOT>"`
       exits 0. (c) `git ls-files -- '<SYLLABUS_ROOT>/*.md' | grep -c .` returns **122**. Record the printed path
@@ -444,7 +444,7 @@ and therefore always a boundary.
   ```
 
   — acceptance: the `grep` finds **no** matching line (exits 1). Falsifiable both ways: adding one
-  bad `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/nope.md` link makes the
+  bad `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/nope.md` link makes the
   same command print that file and exit 0. `md links validate` accepts **no positional path**
   (passing one errors out) and the bare repo-wide form is unsatisfiable (a pre-existing, non-zero
   backlog of broken links, nearly all under `plans/done/`, unrelated to this work — 137 of 138
@@ -492,7 +492,7 @@ and therefore always a boundary.
 > content-independent (each writes only its own subtree) and **pipeline concurrently** through review
 > (bounded by the cap). Per-course concept/example/prerequisite/capstone detail is **already settled**
 > in the cross-plan
-> [`syllabus/courses/`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md) —
+> [`syllabus/courses/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md) —
 > each of the six has a complete 295–425-line spec file with concrete `co-NN` concept enumeration,
 > `ex-NN` worked examples, a concrete prerequisite chain, and a capstone spec. **Author each course
 > body from its `$SYLLABUS_ROOT/<id>.md` spec, not from a fresh judgment call.**

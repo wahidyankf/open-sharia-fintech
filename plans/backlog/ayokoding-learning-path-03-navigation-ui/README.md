@@ -14,7 +14,7 @@ It builds nothing that stores order (that is the schema plan's), moves no conten
 URL-restructure plan's), authors no course body, and writes no path manifest.
 
 > **Cross-plan source of truth** — the authoritative per-course and per-path specs live in
-> `plans/<stage>/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
+> `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`. Do not copy
 > them; do not author from any other source.
 >
 > **Programme decisions** — this plan cites the shared `R*`/`A*` decision ids (`R1`, `R6`, `A5`, `A10`,
@@ -357,7 +357,7 @@ See [prd.md §Personas](./prd.md#personas-one-per-path) for the authoritative co
   `?path=` propagation, prev/next and breadcrumb resolution, the path rail's two hosts, the
   accessibility contract, design decisions, file impact, and the testing strategy.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased executable checklist.
-- [Syllabus (cross-plan)](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+- [Syllabus (cross-plan)](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   — the per-course and per-path detail layer, owned by
   `ayokoding-learning-path-02-schema-and-prerequisite-dag`. Read-only from here; never copied.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.

@@ -1523,7 +1523,7 @@ the first time here, at the e2e level, rather than via its own dedicated unit-le
 - [ ] [AI] **Cross-plan link gate (BF-8)** — run **both** commands 1 and 2 in
       [Markdown validation commands](#markdown-validation-commands) — acceptance: command 1 prints
       `All links valid! No broken links found.` AND command 2's `grep` finds no matching line (exit 1).
-      This is the check that catches a stale `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/…`
+      This is the check that catches a stale `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/…`
       link after that plan archives into `plans/done/YYYY-MM-DD__…` — command 1 alone cannot see it,
       because it excludes `plans/done`.
 - [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in

@@ -57,7 +57,7 @@ per `A3`).
 `sharia-erp` is not an add-on assuming the conventional path — it covers the same 27-course foundation
 `conventional-erp` does, plus 3 Sharia-exclusive courses. Per `A11` — the schema's own existing rule,
 cited directly rather than reinvented (see
-[`ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
+[`ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
 lines 467, 474, 736 as of 2026-07-22 — plan 02 is an active, unarchived plan, so re-verify via `grep -n`
 against the live file before relying on exact line numbers) — a course id's uniqueness is per-manifest, not library-wide, and no manifest may
 copy a course body; every manifest references by id. The 27 shared course bodies are therefore
@@ -118,7 +118,7 @@ before Phase 3/4).
 Every course carries a syllabus with an explicit module/topic breakdown, mirroring the **format**
 (not just the folder shape) `ayokoding-learning-path-02-schema-and-prerequisite-dag` already
 established — verified against that plan's own
-[`syllabus/README.md`](../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
+[`syllabus/README.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
 and two of its course files before authoring began; no stronger precedent was found. See
 [`syllabus/README.md`](./syllabus/README.md) (this plan's own index) and
 [tech-docs.md §Syllabus layer](./tech-docs.md#syllabus-layer--custody-and-shape-dd-31).
