@@ -8,12 +8,9 @@
 > path. Its previously-**linked** software-engineer prerequisites are now **included** in `courseOrder`.
 > **No new course body is authored for this correction** — every included prerequisite is an existing
 > library course; the growth is a manifest-composition change only (2026-07-21 clarification to R3). The
-> corrected top-matter and composition rules below are final; the **detailed stage-by-stage insertion**
-> of the newly-included prerequisite courses (including their own transitive prerequisites) is
-> **pending** and tracked as
-> [delivery.md Phase 1.4](../../delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3)
-> — deferred rather than invented here, because a prerequisite-consistent placement of a dozen-plus
-> courses is manifest-authoring work, not a mechanical custody fix.
+> corrected top-matter and composition rules below are final, and Stage 0's detailed stage-by-stage
+> ordering was completed at
+> [delivery.md Phase 1.4](../../delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3).
 
 The **ordered manifest** for the from-scratch AI-engineer path: a **curated, prerequisite-consistent**
 ordered list of **course IDs** over the [shared course library](../courses/README.md). This is the
@@ -52,7 +49,7 @@ prior framing — only the entry assumption and the linked-vs-included treatment
   `data-engineering`, `data-structures-and-algorithms-essentials`, `software-product-engineering`,
   `frontend-essentials` — must now be **present** in `courseOrder`, ordered prerequisite-consistently
   (each of these also declares its own further prerequisites, so the final included set is very likely
-  larger than these 11 — see [Stage 0](#stage-0--software-engineering-foundation-from-scratch-entry--pending-detailed-ordering-r3)
+  larger than these 11 — see [Stage 0](#stage-0--software-engineering-foundation-from-scratch-entry-r3)
   below). **No new course body is authored**: every one of these is an existing library course.
 - **Scope — AI as material, not AI-assisted coding (D1, unchanged)**: this path teaches **building AI
   systems**. `agentic-coding` (driving AI coding agents — the engineer's own side) is deliberately
@@ -72,37 +69,48 @@ prior framing — only the entry assumption and the linked-vs-included treatment
   - No DD-20 inter-topic capstones — those belong to the whole-library `careers/*` software-engineer
     paths.
   - `software-engineering-practices` — previously treated as a linked prerequisite; under the R3
-    correction it is a **candidate for inclusion**, like the 11 courses named above, pending the same
-    delivery-time re-composition.
+    correction it remains a **candidate for a future inclusion pass** — it is a transitive prerequisite
+    of several of the 11 (see the Stage 0 callout below) but stays out of this correction's scope, per
+    delivery.md 1.4's deliberate decision not to chase the 11's full transitive closure.
 - **Created bodies**: none — by this manifest or by this correction. Every included course, old and new
   to `courseOrder`, is an existing library course; this manifest only orders existing course IDs.
-  **Prerequisite-consistent** ordering for the newly-included set is pending — see
-  [Stage 0](#stage-0--software-engineering-foundation-from-scratch-entry--pending-detailed-ordering-r3)
+  **Prerequisite-consistent** ordering for the newly-included set is complete — see
+  [Stage 0](#stage-0--software-engineering-foundation-from-scratch-entry-r3)
   and the Smoothness notes.
 - **Convergence (D2, unchanged)**: this path converges on the **AI-engineer endpoint** — a defensible
   evaluation discipline, a probabilistic feature shipped as a product, and self-hosted / adapted models —
   **not** the `careers/*` software-engineer paths' shared endpoint. Paths converge **per role, not
   globally**.
 
-## Stage 0 · Software-engineering foundation (from-scratch entry — PENDING detailed ordering, R3)
+## Stage 0 · Software-engineering foundation (from-scratch entry, R3)
 
-> **Not yet ordered.** This stage records which courses must be included, not yet the
-> prerequisite-consistent sequence they must appear in. See the pending-work callout at the top of this
-> file and
-> [delivery.md Phase 1.4](../../delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3).
-> A deliberate scope decision made while correcting this file: the fixer that performed this rename did
-> **not** chase the transitive prerequisite closure of the 11 courses below (several of them — e.g.
-> `backend-at-scale`, `cicd-and-release-engineering` — themselves declare further prerequisites such as
+> **Ordered at** [delivery.md Phase 1.4](../../delivery.md#14-syllabus-custody-exception--ai-engineer-path-correction-r3).
+> This stage's prerequisite-consistent sequence is derived from each of the 11 courses' own declared
+> `## Prerequisites` section in [`syllabus/courses/`](../courses/README.md): where a prerequisite is also
+> one of the 11, that prerequisite appears earlier in the numbered list below. A deliberate scope
+> decision, carried forward unchanged from the file's rename: this correction does **not** chase the
+> transitive prerequisite closure of the 11 courses below (several of them — e.g. `backend-at-scale`,
+> `cicd-and-release-engineering` — themselves declare further prerequisites such as
 > `backend-essentials`, `sql-essentials`, `security-essentials`, `version-control-and-git`,
-> `software-engineering-practices`, `cloud-and-iac`). Computing the full closure and a
-> prerequisite-consistent order over it is manifest-authoring work, not a mechanical custody fix, and is
-> left for the delivery step below.
+> `software-engineering-practices`, `cloud-and-iac`, none of which is one of the 11). Computing the full
+> closure and a prerequisite-consistent order over it is a **separate, future** manifest-authoring
+> effort, out of scope for this correction.
 
-- `just-enough-python`, `data-structures-and-algorithms-essentials`, `frontend-essentials`,
-  `software-product-engineering`, `software-testing`, `cicd-and-release-engineering`,
-  `containers-and-orchestration`, `computer-architecture`, `backend-at-scale`,
-  `site-reliability-engineering`, `data-engineering` — the 11 courses previously marked "linked, not
-  included" in the retired transition framing; every one must now appear in `courseOrder`.
+1. `just-enough-python` — no in-scope prerequisite (item 1, the foundation every other item chains from).
+2. `data-structures-and-algorithms-essentials` — prereq `just-enough-python` (item 1).
+3. `computer-architecture` — prereq `just-enough-python` (item 1).
+4. `software-testing` — prereq `just-enough-python` (item 1).
+5. `containers-and-orchestration` — no in-scope prerequisite.
+6. `data-engineering` — prereq `just-enough-python` (item 1).
+7. `frontend-essentials` — prereq `software-testing` (item 4 — its own `## Prerequisites` cross-refs the
+   applied-testing material).
+8. `backend-at-scale` — prereq `software-testing` (item 4).
+9. `cicd-and-release-engineering` — prereqs `software-testing` (item 4) and `containers-and-orchestration`
+   (item 5).
+10. `site-reliability-engineering` — prereqs `backend-at-scale` (item 8) and `containers-and-orchestration`
+    (item 5).
+11. `software-product-engineering` — prereqs `frontend-essentials` (item 7) and `software-testing`
+    (item 4) — the capstone of this stage, assuming built-software experience across the set.
 
 ## Stage 1 · From one model call to a gated feature
 
@@ -149,8 +157,8 @@ prior framing — only the entry assumption and the linked-vs-included treatment
 ## Smoothness notes (RD-16)
 
 - **From-scratch, not fast-because-competent (corrected, was D4)**: the software-engineer prerequisites
-  are now **included**, not linked, and their prerequisite-consistent placement (Stage 0) is pending —
-  see the callout above. This replaces the retired framing, which described the path as fast because it
+  are now **included**, not linked, and their prerequisite-consistent placement (Stage 0) is complete —
+  see Stage 0 above. This replaces the retired framing, which described the path as fast because it
   assumed competence.
 - **Light gate early, deep evals after agents (D5)**: `evaluating-ai-output-essentials` sits right after
   the first working model call and before agents, answering "how will you know this works?";
@@ -161,9 +169,8 @@ prior framing — only the entry assumption and the linked-vs-included treatment
   prerequisites): light gate after `creating-ai-powered-apps`; statistics after the light gate; deep
   evals after statistics, `agentic-ai`, and `agent-orchestration-subagents-and-observability`;
   `fine-tuning-and-adaptation` after `evaluating-ai-systems-in-depth`, `statistics-for-evaluation`, and
-  `inference-serving-and-model-deployment` (all hard prerequisites it declares). **Stage 0 is not yet
-  ordered** (see above), so prerequisite-consistency for the whole manifest is not yet verified
-  end-to-end.
+  `inference-serving-and-model-deployment` (all hard prerequisites it declares). **Stage 0 is now
+  ordered** (see above), so prerequisite-consistency holds for the whole manifest, end-to-end.
 - **Two ordering choices within Stages 1-5 are judgment calls, not prerequisites**:
   `product-patterns-for-probabilistic-systems` is placed after the eval-depth stage for narrative flow
   even though its hard prerequisites are satisfied as early as Stage 1; and `product-patterns` precedes

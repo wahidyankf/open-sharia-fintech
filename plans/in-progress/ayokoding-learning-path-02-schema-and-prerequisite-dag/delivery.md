@@ -867,7 +867,7 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
 > correction it completes** — every course named below is an existing library course; only the
 > manifest's `courseOrder` composition changed (2026-07-21 clarification to R3).
 
-- [ ] [AI] **Confirm the rename and framing correction already hold** —
+- [x] [AI] **Confirm the rename and framing correction already hold** —
       `test -f <PLAN>/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
       returns 0 AND
       `test -f <PLAN>/syllabus/paths/manifest-immediately-effective-software-engineer-to-ai-engineer.md`
@@ -875,7 +875,11 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
       `grep -qF "from-scratch" <PLAN>/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
       — acceptance: all three hold. Falsifiable both ways: reverting the rename or the framing
       correction flips the corresponding check.
-- [ ] [AI] **Order Stage 0.** In
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — all three
+  checks hold: the renamed file exists, the old filename does not, and `from-scratch` is present.
+
+- [x] [AI] **Order Stage 0.** In
       `syllabus/paths/manifest-immediately-effective-ai-engineer.md`'s
       "## Stage 0 · Software-engineering foundation" section, replace the unordered, "not yet
       ordered" list of 11 courses (`just-enough-python`, `software-testing`,
@@ -894,7 +898,23 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
       strictly lower than the course's. Falsifiable both ways: swapping any two entries whose
       prerequisite relationship is satisfied only in the corrected order re-breaks the property the
       unordered list could not yet claim.
-- [ ] [AI] **Remove every pending marker in the file**, not just the Stage 0 heading token, once
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
+  — Stage 0's 11 courses replaced with a numbered, prerequisite-consistent order: (1)
+  `just-enough-python`, (2) `data-structures-and-algorithms-essentials`, (3)
+  `computer-architecture`, (4) `software-testing`, (5) `containers-and-orchestration`, (6)
+  `data-engineering`, (7) `frontend-essentials`, (8) `backend-at-scale`, (9)
+  `cicd-and-release-engineering`, (10) `site-reliability-engineering`, (11)
+  `software-product-engineering`. Read via `grep -A3 "^## Prerequisites"` per course-id; every
+  in-11 prerequisite (`just-enough-python` → software-testing/computer-architecture/data-engineering/
+  data-structures-and-algorithms-essentials; `software-testing` → cicd-and-release-engineering/
+  backend-at-scale/frontend-essentials/software-product-engineering; `containers-and-orchestration` →
+  cicd-and-release-engineering/site-reliability-engineering; `backend-at-scale` →
+  site-reliability-engineering; `frontend-essentials` → software-product-engineering) appears at a
+  strictly lower list position than its dependent.
+
+- [x] [AI] **Remove every pending marker in the file**, not just the Stage 0 heading token, once
       Stage 0 is genuinely ordered. As of 2026-07-21 the file carries **nine** such lines and they
       are spread across the whole document, in mixed case: the top-of-file pending callout (line 13),
       the two intra-file anchor links that spell `pending` inside the Stage 0 slug (lines 55, 80),
@@ -914,7 +934,15 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
       Marker absence alone does not certify correctness, which is why the previous step's per-pair
       check is the substantive acceptance and this one only certifies the pending-work markers were
       not deleted without the ordering being done.
-- [ ] [AI] **Repoint the two intra-file anchors the retitle breaks — in the same edit.** Lines 55 and
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `plans/in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
+  — all nine occurrences reworded (top-of-file callout, both intra-file anchors, the
+  "candidate for inclusion" note, the "ordering ... is complete" statement, the Stage 0 heading, the
+  blockquote, and the closing composition note). `grep -ci "not yet ordered\|pending"` on the file
+  prints `0`.
+
+- [x] [AI] **Repoint the two intra-file anchors the retitle breaks — in the same edit.** Lines 55 and
       80 both link to `#stage-0--software-engineering-foundation-from-scratch-entry--pending-detailed-ordering-r3`,
       the github-slugger slug of the Stage 0 heading **as it reads today**. Removing `PENDING` from
       that heading changes the slug and breaks both links, and `md links validate` **does** validate
@@ -928,16 +956,31 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       — acceptance: prints `All links valid! No broken links found.` Falsifiable both ways:
       retitling without repointing makes it report two `broken-anchor` findings in this file.
-- [ ] [AI] Re-confirm the `syllabus/` file **count** is unaffected by this in-place content edit —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: same file as above — heading retitled
+  to `## Stage 0 · Software-engineering foundation (from-scratch entry, R3)`; both intra-file anchors
+  rewritten to `#stage-0--software-engineering-foundation-from-scratch-entry-r3`, computed via
+  `node -e 'console.log(require("github-slugger").slug("Stage 0 · Software-engineering foundation
+(from-scratch entry, R3)"))'` against the repo-local `node_modules/github-slugger`. The `md links
+validate` command prints `All links valid! No broken links found.`
+
+- [x] [AI] Re-confirm the `syllabus/` file **count** is unaffected by this in-place content edit —
       `find <PLAN>/syllabus -type f | wc -l`
       — acceptance: returns **128** (unchanged — an edit to an existing file's content, not an
       addition or removal).
-- [ ] [AI] **Licensing check (programme [`A8`](./tech-docs.md#programme-decisions)) — this step orders existing courses, it does not author new content**, so confirm no new course was introduced by the Stage 0 ordering —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — the command
+  returns `128`.
+
+- [x] [AI] **Licensing check (programme [`A8`](./tech-docs.md#programme-decisions)) — this step orders existing courses, it does not author new content**, so confirm no new course was introduced by the Stage 0 ordering —
       `for c in just-enough-python software-testing cicd-and-release-engineering backend-at-scale containers-and-orchestration computer-architecture site-reliability-engineering data-engineering data-structures-and-algorithms-essentials software-product-engineering frontend-essentials; do test -f <PLAN>/syllabus/courses/$c.md || echo "MISSING: $c"; done`
       — acceptance: prints nothing (every one of the 11 resolves to a pre-existing, already-authored
       spec file; A8 does not apply to this step because it introduces no new prose, code example, or
       figure — only a `courseOrder` position). Falsifiable both ways: renaming one of the 11 to a
       non-existent id makes the loop print a `MISSING:` line.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — the loop
+  prints nothing; every one of the 11 course IDs resolves to a pre-existing spec file.
 
 ### Local Quality Gates (Before Push)
 
