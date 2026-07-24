@@ -134,8 +134,8 @@ anywhere under plans/backlog or plans/in-progress after the rewrite (see Phase 7
 delivery.md for the exact post-move re-run of commands (a)/(b)/(c)).
 
 Bare, location-agnostic forms (2 lines: `ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md:467,474,736`
-in plans/backlog/ayokoding-learning-path-04-course-authoring/tech-docs.md and its `:467`-only
-sibling occurrence) and the already-future-proof `plans/done/*ayokoding-…-dag/syllabus/…` glob line
+in plans/backlog/ayokoding-learning-path-07-skills-erp/tech-docs.md:118 and its `:467`-only
+sibling occurrence at tech-docs.md:967) and the already-future-proof `plans/done/*ayokoding-…-dag/syllabus/…` glob line
 (plans/backlog/ayokoding-learning-path-04-course-authoring/delivery.md:259, second alternative
 removed as redundant with the glob rather than repointed to a literal date) were correctly left
 alone, per the doc's own stated rule for location-agnostic prose.

@@ -12,8 +12,8 @@ This file is the **human-readable mirror** of the manifest. The **machine-consum
 the standalone data file `apps/ayokoding-www/src/features/course-paths/manifests/skills/sharia-erp.yaml`.
 Per `A11` — cited directly from
 [`ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md:467,474,736`](../../../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
-(current as of 2026-07-22; plan 02 is an active, unarchived plan — re-verify via `grep -n` against the
-live file before relying on exact line numbers) — every shared id below **references** the same course body `skills/conventional-erp` teaches; **no
+(current as of 2026-07-22; plan 02 is now archived under `plans/done/`, so these line numbers should
+stay stable — re-verify via `grep -n` against the archived file if in doubt) — every shared id below **references** the same course body `skills/conventional-erp` teaches; **no
 body is duplicated**. The manifest carries an explicit `arc: immediately-effective` field (R8). Path
 landing served at `/en/learn/paths/skills/sharia-erp`.
 

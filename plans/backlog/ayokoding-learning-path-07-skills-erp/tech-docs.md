@@ -111,8 +111,8 @@ basics** — `sharia-erp` is never an add-on module assuming the conventional pa
 cold gets full grounding, because its `courseOrder` **includes** all 27 shared ids.
 
 **A11 is the existing schema rule, not a new mechanism** — cited directly rather than re-derived
-(line numbers current as of 2026-07-22; plan 02 is an active, unarchived plan, so re-verify via
-`grep -n` against the live file before relying on exact line numbers):
+(line numbers current as of 2026-07-22; plan 02 is now archived under `plans/done/`, so these should
+stay stable, but re-verify via `grep -n` against the archived file if in doubt):
 
 - _"No course ID appears twice **within one manifest**"_ [Repo-grounded —
   `ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md:467`]. Uniqueness is
@@ -964,8 +964,8 @@ transcribing its outline is not.
 - **DD-27 · A9 depth expansion: 20 → 30 courses.** The count is an output of covering the cross-cutting
   spine, the module map, the subledger-to-GL crux, and the hard parts — not a target. **Decided.**
 - **DD-28 · A10/A11: two paths, shared-course-by-reference architecture.** Cites plan 02's existing
-  schema rule directly (`tech-docs.md:467`, `:474`, `:736` as of 2026-07-22 — re-verify via `grep -n`
-  against the live file, as plan 02 is active and unarchived) rather than proposing a schema change; 27
+  schema rule directly (`tech-docs.md:467`, `:474`, `:736` as of 2026-07-22 — plan 02 is now archived
+  under `plans/done/`; re-verify via `grep -n` against the archived file if in doubt) rather than proposing a schema change; 27
   shared courses authored once, referenced by both manifests; 3 Sharia-exclusive courses referenced
   only by `<SHARMAN>`. **Decided.**
 - **DD-29 · The ramp-boundary promise is re-grounded from "operate a real ERP" to "read, reason about,

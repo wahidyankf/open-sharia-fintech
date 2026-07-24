@@ -50,8 +50,9 @@ paper over it, does not create a placeholder index, and does not treat it as a d
 **A11 is the schema's existing rule, not a new mechanism this plan invents.** Plan 02's own
 `tech-docs.md` already establishes exactly the invariants this design needs:
 
-> Citations below anchor on the **quoted phrase**, not a line number. Plan 02 is unmerged and under
-> active edit, so any line number cited here goes stale without warning; `grep -F` the quoted string
+> Citations below anchor on the **quoted phrase**, not a line number. Plan 02 is now archived under
+> `plans/done/`; quoted-phrase anchoring stays the safer choice regardless, since it survives any
+> future edit to the archived file. `grep -F` the quoted string
 > against `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md` to
 > locate each.
 

@@ -58,12 +58,13 @@ proving the fix's actual mechanism.
 
 ## Open Decisions (resolve at execution)
 
-- **Batch size**: start at 8 (an arbitrary, moderate value); tune based on the largest observed
-  `hrefs.length` across both call sites (`ayokoding-www`'s nav has dozens of internal links; the
-  course catalog has ~37 course bundles per the sibling `ayokoding-learning-path-02` plan's own
-  corpus count) — the batch size should be small enough to meaningfully bound concurrency but not so
-  small it reintroduces the sequential-timeout problem `c61084bca` originally fixed.
-- **Retry backoff**: immediate retry vs. a short fixed delay (e.g. 250ms) before retrying — decide
-  based on whether immediate retry alone resolves the observed failure modes in practice once
-  concurrency is bounded (it may turn out concurrency-bounding alone is sufficient and no retry is
-  needed at all — verify empirically before adding retry complexity).
+- **Batch size**: start at 8 (an arbitrary, moderate value); tune against three constraints
+  together — the largest observed `hrefs.length` across both call sites (`ayokoding-www`'s nav has
+  dozens of internal links; the course catalog has ~37 course bundles per the sibling
+  `ayokoding-learning-path-02` plan's own corpus count), the existing 10s per-request timeout, and
+  Playwright's own default 30000ms per-test timeout (`apps/ayokoding-www-fe-e2e/playwright.config.ts`
+  sets no test-level override, so the default applies) — the batch size should be small enough to
+  meaningfully bound concurrency but not so small it reintroduces the sequential-timeout problem
+  `c61084bca` originally fixed, **and** its worst-case sequential total
+  (`ceil(hrefs.length / batchSize) * 10s`) must stay under the effective per-test timeout, or the
+  per-test timeout must be raised in the same change with the tradeoff stated.

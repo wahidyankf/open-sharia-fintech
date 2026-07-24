@@ -2551,9 +2551,9 @@ ayokoding-www:typecheck` → exit 0. Both hold.
       `git diff -M <BASELINE_SHA> -- ':(glob)plans/*/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/**' ':(exclude,glob)plans/*/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/manifest-immediately-effective-ai-engineer.md'`,
       counting only real `+`/`-` content lines (excluding `+++`/`---` file headers) → **0** — all 127
       non-exception files are pure renames, byte-identical. (c) the same rename-aware diff scoped to
-      just the exception file → **70** content-change lines (non-zero, confirms it really was
-      diffed); no other file shows any content change, so it is also the _only_ diffed file. All
-      three hold.
+      just the exception file → **73** content-change lines (40 insertions + 33 deletions, non-zero,
+      confirms it really was diffed); no other file shows any content change, so it is also the
+      _only_ diffed file. All three hold.
       **No `git diff` count here goes through `| wc -l`, and check (c) counts `--name-only` output
       by its path prefix rather than with a bare `| grep -c .`.** RTK filters `git diff` in this
       harness in two ways. It emits a single **blank line** when the real output is empty, so

@@ -58,8 +58,8 @@ per `A3`).
 `conventional-erp` does, plus 3 Sharia-exclusive courses. Per `A11` — the schema's own existing rule,
 cited directly rather than reinvented (see
 [`ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/tech-docs.md#design-decisions)
-lines 467, 474, 736 as of 2026-07-22 — plan 02 is an active, unarchived plan, so re-verify via `grep -n`
-against the live file before relying on exact line numbers) — a course id's uniqueness is per-manifest, not library-wide, and no manifest may
+lines 467, 474, 736 as of 2026-07-22 — plan 02 is now archived under `plans/done/`, so these line
+numbers should stay stable, but re-verify via `grep -n` against the archived file if in doubt) — a course id's uniqueness is per-manifest, not library-wide, and no manifest may
 copy a course body; every manifest references by id. The 27 shared course bodies are therefore
 authored **once**; `<SHARMAN>`'s `courseOrder` interleaves them with the 3 Sharia-exclusive ids rather
 than duplicating any file. Duplicating would desync silently — an edit to one copy never propagated
