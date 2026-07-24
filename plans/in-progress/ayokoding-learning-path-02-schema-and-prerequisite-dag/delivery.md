@@ -1814,20 +1814,58 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t lint` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit test:integration test:e2e` — acceptance: exits 0.
+- [x] [AI] `npx nx affected -t typecheck` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Exit 0 for 25 affected projects
+  and 6 dependency tasks (re-confirmed after the two `next.config.ts` fixes below).
+
+- [x] [AI] `npx nx affected -t lint` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Exit 0 for 25 affected projects.
+  Only preexisting warnings remain (content-file `no-unused-vars`, one `jsx-a11y` warning each in
+  `cost-of-living-calculator/shell/controls.tsx` and `search/shell/search-dialog.test.tsx`, plus
+  auto-generated `.features-gen` `no-empty-pattern` warnings for the `ose` platform-web suite) — none
+  introduced by this phase.
+
+- [x] [AI] `npx nx affected -t test:quick test:unit test:integration test:e2e` — acceptance: exits 0.
       **`test:integration` and `test:e2e` prove nothing here and are not cited as evidence anywhere
       in this plan**: for `ayokoding-www` both targets are `echo` no-op stubs that always exit 0
       [Repo-grounded — `apps/ayokoding-www/project.json`: `echo 'no-op: integration tier not used for
       this content app'` and `echo 'no-op: target not applicable for this project'`]. They are listed
       for completeness only. The regression evidence for the `content-url.ts` change is
       `content-url.test.ts` (under `test:unit`) plus the Phase 4 Playwright sweep.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — acceptance: **exits 0**. Every
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: `apps/organiclever-app-web/next.config.ts`,
+  `apps/ose-app-web/next.config.ts` (pinned `outputFileTracingRoot` — preexisting worktree
+  ambiguous-lockfile-root bug),
+  `apps/ayokoding-www-fe-e2e/src/steps/cost-of-living-calculator.steps.ts` (added missing
+  `waitForLoadState` — preexisting race condition). `NX Successfully ran targets test:quick,
+test:unit, test:integration, test:e2e for 25 projects and 11 tasks they depend on`, exit 0. All 25
+  `test:e2e` projects passed (78/39/42/2/2/29/18/12/1/1/578 across projects, plus the smaller
+  suites), after root-causing and fixing: a stale leftover `ayokoding-www` production server holding
+  a broken build; five apps in this worktree (`organiclever-app-web`, `ose-app-web`,
+  `organiclever-www`, `wahidyankf-www`, `ose-www`) never having been built; `ose-www-be-e2e`/
+  `ose-www-fe-e2e` needing a manually-started `ose-www` server; a resource-contention flake in
+  `ayokoding-www-be-e2e` under `--parallel=3` (confirmed non-code via isolated rerun); the
+  `outputFileTracingRoot` ambiguity for `organiclever-app-web`/`ose-app-web`; and the
+  cost-of-living-calculator race condition (reproduced deterministically before the fix, passed
+  deterministically 3x plus a full 578/578 suite rerun after).
+
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — acceptance: **exits 0**. Every
       `course-paths` scenario ships `@wip` (see 2.0), which the validator treats as a full coverage
       exemption, so there is no delta to tolerate and no hedge in this clause. Falsifiable both ways:
       dropping `@wip` from one scenario makes this exit non-zero.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by this phase's changes.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Exit 0 for all 25 affected
+  projects; `ayokoding-www`: "Spec coverage valid! 30 specs, 272 scenarios, 983 steps — all covered."
+
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by this phase's changes.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: `apps/organiclever-app-web/next.config.ts`
+  (commit `ac5e335d5`), `apps/ose-app-web/next.config.ts` (commit `7d29f8737`),
+  `apps/ayokoding-www-fe-e2e/src/steps/cost-of-living-calculator.steps.ts` (commit `2ea23fcd1`),
+  plus the earlier rhino-cli `@wip` shared-steps-checker fix (commit `c406935d4`). All eight
+  originally-failing `test:e2e` projects root-caused and fixed; none deferred.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows Root Cause Orientation. Commit preexisting fixes separately with appropriate
@@ -1835,44 +1873,100 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 ### Commit Guidelines
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits
       (one per TDD cycle is the natural grain here).
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
-- [ ] [AI] Keep the `content-url.ts` change (cycle 2.4) in its **own** commit — it is the only shipped-code
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. One commit per TDD cycle:
+  `f0afa7bab` (2.5 `resolvePrerequisites`), `c6db0ba5b` (2.6a ordering violations), `d106df1a9`
+  (2.6b link-don't-walk), `e95f16ca2` (2.7 `checkManifestIntegrity`), `aa66e64c4` (2.8 purity-guard
+  docs), plus `ac5e335d5`/`7d29f8737`/`2ea23fcd1` for the three preexisting fixes.
+
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period).
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. All commits use
+  `feat(ayokoding-www): ...`, `fix(<app>): ...`, or `docs(plans): ...`, imperative mood, no period.
+
+- [x] [AI] Keep the `content-url.ts` change (cycle 2.4) in its **own** commit — it is the only shipped-code
       change in the plan and must be revertable in isolation.
-- [ ] [AI] Preexisting fixes get their own commits, separate from plan work.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Landed in its own commit
+  `39606c066` (`feat(ayokoding-www): add optional pathId param to contentUrl`), before this segment.
+
+- [x] [AI] Preexisting fixes get their own commits, separate from plan work.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. `ac5e335d5`, `7d29f8737`,
+  `2ea23fcd1` (this segment) and `c406935d4` (rhino-cli `@wip` fix, earlier in Phase 2) are each
+  separate `fix(...)` commits, none bundled with plan TDD-cycle commits.
+
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Verified via `git status`
+  before each commit — only the intended file(s) staged per commit; the two auto-generated
+  `next-env.d.ts` build-mode diffs (dev-vs-build tracing-root toggling) were reverted rather than
+  committed, since they are not meaningful source changes.
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] All six core modules exist:
+- [x] [AI] All six core modules exist:
       `test -f` returns 0 for each of `schemas.ts`, `manifest.ts`, `path-nav.ts`, `path-context.ts`,
       `prerequisites.ts`, `manifest-integrity.ts` under
       `apps/ayokoding-www/src/features/course-paths/core/`.
-- [ ] [AI] `resolvePathNav`, `parsePathContext`, `resolvePrerequisites`,
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. All six `test -f` checks return 0.
+
+- [x] [AI] `resolvePathNav`, `parsePathContext`, `resolvePrerequisites`,
       `checkPrerequisiteConsistency`, `checkManifestIntegrity`, `normalizeCourseRef` and
       `contentUrl(locale, slug, pathId)` are all implemented with green unit tests —
       `npx nx run ayokoding-www:test:unit` exits 0.
-- [ ] [AI] Both integrity checks are falsifiable in both directions: the clean fixture reports zero
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. All seven functions implemented;
+  `test:unit` exit 0 (94 files / 2774 passed / 6 skipped).
+
+- [x] [AI] Both integrity checks are falsifiable in both directions: the clean fixture reports zero
       findings AND the deliberately-violating fixture reports exactly the expected finding, for
       `checkPrerequisiteConsistency` **and** `checkManifestIntegrity`.
-- [ ] [AI] The purity guard prints nothing:
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. `checkPrerequisiteConsistency`:
+  `cleanManifest` → zero violations/zero linked; `violatingManifest` → exactly one structured
+  violation; `omittedPrerequisiteManifest` → zero violations/exactly one `linkedPrerequisites`
+  entry. `checkManifestIntegrity`: clean fixture → zero unresolved/zero duplicate; unresolved
+  fixture → exactly the one absent ID; duplicate fixture → exactly the one repeated ID.
+
+- [x] [AI] The purity guard prints nothing:
       `grep -rnE "from ['\"](node:)?(fs|path)['\"]|from ['\"]react['\"]" apps/ayokoding-www/src/features/course-paths/core`
       exits 1.
-- [ ] [AI] `course-paths` Gherkin authored under `<SPECS>` with **one `@wip` tag per scenario**
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Command prints nothing, exit 1.
+
+- [x] [AI] `course-paths` Gherkin authored under `<SPECS>` with **one `@wip` tag per scenario**
       (per-file `Scenario:` and `@wip` counts equal and non-zero);
       `npx nx run ayokoding-www:specs:behavior:coverage` **exits 0**; the
       `specs gherkin-cardinality validate` audit exits 0; the deferred obligation is
       recorded in `<PLAN>/evidence/phase-2-specs-coverage-delta.txt` naming
       `ayokoding-learning-path-03-navigation-ui` as the plan that removes the `@wip` tags and adds
       the `@covers` markers.
-- [ ] [AI] `npx nx run ayokoding-www:typecheck` + `:lint` + `:build` exit 0.
-- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none new (all recorded earlier in
+  Phase 2). Evidence in `evidence/phase-2-specs-coverage-delta.txt`, re-verified this segment:
+  `specs:behavior:coverage` exits 0 ("Spec coverage valid! 30 specs, 272 scenarios, 983 steps — all
+  covered"); per-file `Scenario:`/`@wip` counts equal and non-zero across all 8 files (14 scenarios
+  total); `gherkin-cardinality validate` passes; deferred obligation correctly names
+  `ayokoding-learning-path-03-navigation-ui`.
+
+- [x] [AI] `npx nx run ayokoding-www:typecheck` + `:lint` + `:build` exit 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. All three exit 0. `build`
+  regenerated 1856 static pages; only preexisting content-lint and LaTeX-strict-mode warnings.
+
+- [x] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
       baseline (no delivery step in this phase touches `syllabus/`; the file count is stable across a
       rename, so it is unaffected by the one-time, plan-authoring-time R3 custody exception already
       reflected in that baseline — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding)).
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Command returns **128**.
+
 - [ ] [AI] **Draft PR opened (covers both Phase 1 and Phase 2 commits, `DN-14`)**; 3-cycle
       PR-Review complete; CI green; PR `[AI]`-merged.
 
