@@ -160,14 +160,23 @@ subagents capped per the orchestration convention). The main thread self-promote
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                               | Worktree / branch                                                                     | PR opens         |
-| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------- |
-| 0        | — (setup and baseline)                                      | —                                                                                     | no               |
-| 1-2      | Data layer — prerequisite schema + `course-paths` pure core | `worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag` / `.../data-layer` | yes — at Phase 2 |
-| 3-4      | Verification and no-regression evidence                     | same worktree / `.../verification-evidence`                                           | yes — at Phase 4 |
-| 5        | — (final `origin/main` integration check)                   | —                                                                                     | no               |
-| 6-7      | Knowledge capture and plan archival                         | same worktree / `.../archival`                                                        | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                                                                                                                          | PR opens         |
+| -------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 0        | — (setup and baseline)                                      | —                                                                                                                                                                          | no               |
+| 1-2      | Data layer — prerequisite schema + `course-paths` pure core | `worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag` / `.../<stop-point-slug>` (`DN-14`; this stop point's actual branch is `.../phase-1-schema-foundation`) | yes — at Phase 2 |
+| 3-4      | Verification and no-regression evidence                     | same worktree / `.../<stop-point-slug>` (`DN-14`; resolved once that stop point's first phase begins)                                                                      | yes — at Phase 4 |
+| 5        | — (final `origin/main` integration check)                   | —                                                                                                                                                                          | no               |
+| 6-7      | Knowledge capture and plan archival                         | same worktree / `.../<stop-point-slug>` (`DN-14`; resolved once that stop point's first phase begins)                                                                      | yes — at Phase 7 |
 
+**Branch column note**: each `<stop-point-slug>` is a per-stop-point placeholder — see the
+[Worktree](#worktree) section and `DN-14` above — resolved to a concrete branch name once that stop
+point's first phase runs, not fixed in advance. This table previously named stale pre-`DN-14` slugs
+(`.../data-layer`, `.../verification-evidence`, `.../archival`); `DN-14` (2026-07-24) superseded that
+one-PR-per-phase-implied naming with the stop-point grouping below, and this table now uses the same
+`<stop-point-slug>` vocabulary the rest of this document uses.
+
+The per-delivery-unit reasoning below is the boundary-test justification underlying `DN-14`'s own
+Phases-1+2/3+4/6+7 stop-point grouping above — restated here per row rather than per stop point.
 Phase 1 fails the boundary test alone — it is the schema Phase 2's pure core is written against, and
 the Parallelization Model above already treats it as intermediate — so it cannot be its own unit;
 Phase 2 completes the entire data-layer deliverable this plan exists to ship and is the plan's own
@@ -268,8 +277,8 @@ expanded is not executable.
   custody checks would read as "1.4 never ran", blocking the Phase 3 gate and, at 7.1 (c), blocking
   archival permanently. A SHA pinned **before** Phase 1 does not move under those merges, so the same
   three checks stay falsifiable in both directions at every phase that runs them.
-- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
-- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/learn/courses/<course-id>` — no `/c/`, DD-48)
+- `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/learn/paths/<path-id>` — no `/c/`, DD-48)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/`
 - `<MANIFESTS>` = `<FEAT>manifests/` (standalone YAML data files, nested to mirror the **variable-depth**
@@ -278,7 +287,7 @@ expanded is not executable.
   `<MANIFESTS>skills/conventional-accounting.yaml` — this plan's schema/resolvers validate only the first segment
   (`careers`/`skills`) and manifest resolvability, never depth — see
   [tech-docs.md §Variable-depth `pathId`](./tech-docs.md#variable-depth-pathid-careers-vs-skills--r2-r8), R2/R8)
-- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/c/learn/legacy/<domain>/…`)
+- `<LEGACY>` = `apps/ayokoding-www/content/en/learn/legacy/` (**new bucket**, scope extension; served at `/en/learn/legacy/<domain>/…` — no `/c/`, DD-48)
 - `<REDIR>` = `apps/ayokoding-www/src/redirects/`
 - `<SPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/`
 - `<NAVSPECS>` = `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/` (existing domain — the three-bucket Gherkin lands beside `content-namespace-redirects.feature`)
@@ -1531,8 +1540,19 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
   **Gherkin (underpins) →** "A path landing page lists its courses in manifest order"; "The
   breadcrumb reflects the active path"; "A legacy fundamentally-strong URL redirects to the canonical
-  course URL". **The first two are owned by `ayokoding-learning-path-03-navigation-ui`; the third by
-  `ayokoding-learning-path-01-url-restructure`.** Reproduced here for the RED signal.
+  course URL". **The first two are owned by `ayokoding-learning-path-03-navigation-ui`.** The third
+  splits in two: its **base redirect** (a re-homed course's legacy URL 308s to the canonical course
+  URL) is already shipped and step-bound by the archived
+  `ayokoding-learning-path-01-url-restructure` (`@unit @e2e`,
+  `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature`)
+  — no further Gherkin needed there. Its **"redirect preserves any path context query parameter"**
+  clause is a distinct, currently-**unowned** assertion: no test anywhere binds it specifically (it
+  rides on Next.js's default query-string-forwarding behavior, documented but never asserted with
+  its own step); `ayokoding-learning-path-01-url-restructure` is closed and will not reopen to bind
+  it, and `ayokoding-learning-path-03-navigation-ui`'s own `prd.md` explicitly disclaims owning the
+  scenario (it asserts the redirect only as an e2e regression guard). This gap needs routing to a
+  plan owner before it can be bound — flagged here rather than silently reproducing the earlier
+  blanket ownership claim. Reproduced here for the RED signal.
 
   ```gherkin
   Scenario: A path landing page lists its courses in manifest order

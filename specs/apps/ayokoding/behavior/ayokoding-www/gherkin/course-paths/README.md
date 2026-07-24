@@ -7,8 +7,14 @@ mechanism built by `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 this plan ships (`resolvePathNav`, `parsePathContext`, `resolvePrerequisites`,
 `checkPrerequisiteConsistency`, `checkManifestIntegrity`) are the mechanism behind these scenarios,
 but the step bindings that make them executable belong to a downstream plan —
-`ayokoding-learning-path-03-navigation-ui`, for every scenario including the legacy-redirect
-scenario in [breadcrumb.feature](./breadcrumb.feature). `@wip` is the behavior-coverage validator's own
+`ayokoding-learning-path-03-navigation-ui` — for every scenario in this domain **except** the
+legacy-redirect scenario in [breadcrumb.feature](./breadcrumb.feature): its **base redirect** is
+already shipped and step-bound by the archived `ayokoding-learning-path-01-url-restructure`
+(`specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature`,
+`@unit @e2e`). Only its **"redirect preserves any path context query parameter"** clause remains
+unbound and is currently **unowned** — that plan is closed and will not reopen, and
+`ayokoding-learning-path-03-navigation-ui`'s own `prd.md` disclaims owning the scenario itself
+(only an e2e regression guard). `@wip` is the behavior-coverage validator's own
 step-binding-deferral exemption: `apps/rhino-cli/src/application/behavior_coverage/validator.rs`
 documents and implements "`@wip` scenarios are fully exempt". See
 `<PLAN>/evidence/phase-2-specs-coverage-delta.txt` for the recorded deferral and its closing plan.
