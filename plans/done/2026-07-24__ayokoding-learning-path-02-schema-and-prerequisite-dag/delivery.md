@@ -2808,7 +2808,12 @@ plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag` e
       **Result**: **42** lines, exit 0.
 - [x] [AI] The pre-push form of `md links validate` prints `All links valid! No broken links found.`
       **Result**: confirmed.
-- [ ] [AI] `git show --stat HEAD` proves the `git mv` and the repoint landed in **one** commit.
+- [x] [AI] `git show --stat HEAD` proves the `git mv` and the repoint landed in **one** commit.
+      **Result**: commit `8b954cea9` (`chore(plans): move ayokoding-learning-path-02-schema-and-prerequisite-dag to done`).
+      `git show --name-only HEAD` lists 145 files under the moved
+      `plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/` folder plus
+      modified files in all 5 sibling folders (`03`, `04`, `05`, `06`, `07`) and both
+      `plans/done/README.md` / `plans/in-progress/README.md`. One commit, both halves present.
 - [x] [AI] The stage index README the plan left (`plans/backlog/README.md` or
       `plans/in-progress/README.md`), `plans/done/README.md`, and any other referencing README are
       updated.
