@@ -1792,16 +1792,25 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 ### 2.8 Closing REFACTOR — the purity guard
 
-- [ ] [AI] **REFACTOR** — extract any shared course-ref type still declared in more than one module
+- [x] [AI] **REFACTOR** — extract any shared course-ref type still declared in more than one module
       into `manifest.ts`, and confirm the core is IO-free
       — command:
       `grep -rnE "from ['\"](node:)?(fs|path)['\"]|from ['\"]react['\"]" apps/ayokoding-www/src/features/course-paths/core`
       — acceptance: the command prints **nothing** and exits 1. Falsifiable both ways: adding a
       single `import fs from "fs"` to any file under `core/` makes it print that line and exit 0.
-- [ ] [AI] Confirm the whole core still passes after the extraction —
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none — `CourseRef` is already declared
+  exactly once (in `schemas.ts`) and re-exported by `manifest.ts`; no other module redeclares it, so
+  nothing to extract. The purity-guard grep printed nothing and exited 1, confirmed.
+
+- [x] [AI] Confirm the whole core still passes after the extraction —
       command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:lint`
       — acceptance: all three exit 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. `test:unit`: 94 files / 2774
+  passed / 6 skipped, exit 0. `typecheck`: exit 0. `lint`: exit 0 (preexisting unrelated content/
+  warnings only).
 
 ### Local Quality Gates (Before Push)
 
