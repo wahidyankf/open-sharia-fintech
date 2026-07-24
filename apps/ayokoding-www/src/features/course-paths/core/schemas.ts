@@ -3,20 +3,35 @@ import { z } from "zod";
 // pathId is variable-depth by design (R2, R8): `careers/<arc>/<role>` (3 segments) or
 // `skills/<subject>` (2 segments), and no depth beyond the category segment is ever fixed —
 // a future `skills/<arc>/<subject>` (3 segments) or any deeper careers id must keep validating.
-// The refine below therefore checks exactly two things: the literal category segment, and a
-// minimum-arity floor (never a ceiling, never an equality) counted after empty tokens are
-// dropped, so "careers/" ("careers", "") is rejected by the same floor as the bare "careers".
+// The refine below therefore checks: the literal category segment, a minimum-arity floor (never
+// a ceiling, never an equality) counted after empty tokens are dropped (so "careers/"
+// ("careers", "") is rejected by the same floor as the bare "careers"), and — defense-in-depth
+// for `manifests/README.md`'s documented segment-by-segment directory mapping
+// (`careers/interview-ready/software-engineer` -> `manifests/careers/interview-ready/software-engineer.yaml`)
+// — that no segment is a `.`/`..` traversal token and no raw backslash or null byte appears
+// anywhere in the id, since either could otherwise walk that mapping outside `manifests/`.
 const PATH_ID_CATEGORIES = ["careers", "skills"] as const;
+
+const hasForbiddenCharacters = (pathId: string): boolean => pathId.includes("\\") || pathId.includes("\0");
 
 const pathIdSchema = z.string().refine(
   (pathId) => {
+    if (hasForbiddenCharacters(pathId)) {
+      return false;
+    }
+
     const segments = pathId.split("/").filter(Boolean);
     const [category] = segments;
 
-    return segments.length >= 2 && (PATH_ID_CATEGORIES as readonly string[]).includes(category ?? "");
+    return (
+      segments.length >= 2 &&
+      (PATH_ID_CATEGORIES as readonly string[]).includes(category ?? "") &&
+      segments.every((segment) => segment !== "." && segment !== "..")
+    );
   },
   {
-    message: "pathId must start with 'careers/' or 'skills/' and carry at least one further non-empty segment",
+    message:
+      "pathId must start with 'careers/' or 'skills/', carry at least one further non-empty segment, and contain no '.'/'..' traversal segments or backslash/null-byte characters",
   },
 );
 

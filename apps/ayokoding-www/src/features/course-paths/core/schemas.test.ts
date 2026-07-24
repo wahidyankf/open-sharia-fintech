@@ -91,4 +91,36 @@ describe("PathManifestSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("(g) rejects a pathId carrying a '..' path-traversal segment even though it otherwise satisfies the category-prefix and minimum-arity checks", () => {
+    const manifest = { ...careersManifest, pathId: "careers/../../../etc/passwd" };
+
+    const result = PathManifestSchema.safeParse(manifest);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("(h) rejects a pathId carrying a bare '.' segment", () => {
+    const manifest = { ...careersManifest, pathId: "careers/./software-engineer" };
+
+    const result = PathManifestSchema.safeParse(manifest);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("(i) rejects a pathId containing a backslash", () => {
+    const manifest = { ...careersManifest, pathId: "careers\\interview-ready\\software-engineer" };
+
+    const result = PathManifestSchema.safeParse(manifest);
+
+    expect(result.success).toBe(false);
+  });
+
+  it("(j) rejects a pathId containing a null byte", () => {
+    const manifest = { ...careersManifest, pathId: "careers/interview-ready\0" };
+
+    const result = PathManifestSchema.safeParse(manifest);
+
+    expect(result.success).toBe(false);
+  });
 });
