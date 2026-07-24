@@ -122,6 +122,14 @@ fn parse_feature_file_inner(
             continue;
         }
 
+        // A `#`-comment line is invisible to real Gherkin's tag-to-scenario association (see
+        // `behavior_coverage::extract::extract_scenario_specs`'s identical branch) — skip it
+        // without touching `pending_wip` so a comment between `@wip` and the scenario line it
+        // tags does not silently discard the exemption.
+        if line.starts_with('#') {
+            continue;
+        }
+
         if line.starts_with("Background:") {
             in_examples = false;
             ex_headers = None;
@@ -417,6 +425,23 @@ mod tests {
         assert!(
             !scenarios[0].is_wip,
             "a Feature-level tag must not leak onto the first scenario"
+        );
+    }
+
+    // RED: before the fix, a `#`-comment line between `@wip` and its `Scenario:` line fell
+    // through to the stray-content-line branch and reset `pending_wip = false`, silently
+    // dropping the exemption — mirroring
+    // `extract::extract_scenario_specs_tag_survives_a_comment_line_before_the_scenario`, which
+    // this doc comment on `is_wip` claims to match.
+    #[test]
+    fn wip_tag_survives_a_comment_line_before_the_scenario() {
+        let (_tmp, p) =
+            write_feature("@wip\n# some comment\nScenario: tagged\n  Given a precondition\n");
+        let scenarios = parse_feature_file(&p).unwrap();
+        assert_eq!(scenarios.len(), 1);
+        assert!(
+            scenarios[0].is_wip,
+            "@wip must survive an intervening `#`-comment line before the Scenario: line"
         );
     }
 }
