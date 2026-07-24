@@ -698,39 +698,42 @@ png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o
       `test -f <PLAN>assets/course-path-option-a-mobile.png` succeeds and the render is >5 KB; banner
       strip full-width, no rail, `PrevNext` stacks below the body.
 
-  **Date**: 2026-07-25. **Status**: Done. 89167 bytes (>5 KB). Visually confirmed: "On path:
+  **Date**: 2026-07-25. **Status**: Done. 89197 bytes (>5 KB). Visually confirmed: "On path:
   Interview-Ready SWE · course 9 of 119" banner full-width above the body, no rail, Prev/Advanced
   Algorithms and Next/Take-Home cards stack below the body content.
 
-- [x] [AI] Render `<PLAN>assets/course-path-option-b-mobile.png` **showing the left path rail stacked
-      full-width above the article body** (the selected design's responsive mobile form) from
-      `<PLAN>assets/src/course-path-option-b-desktop.html` at 375 px — acceptance:
-      `test -f <PLAN>assets/course-path-option-b-mobile.png` succeeds and the render is >5 KB; the
-      `.layout` flex reflows to a column and the `.rail` becomes full-width (right border swaps to a
-      bottom border), so the rail's ordered course list sits above the article body with both visible.
+- [x] [AI] Render `<PLAN>assets/course-path-option-b-mobile.png` **showing the left rail hidden
+      entirely below the 768 px breakpoint, replaced by a compact on-path banner** (the selected
+      design's responsive mobile form) from `<PLAN>assets/src/course-path-option-b-desktop.html` at
+      375 px — acceptance: `test -f <PLAN>assets/course-path-option-b-mobile.png` succeeds and the
+      render is >5 KB; the `.rail` is `display: none` and the `.mobile-banner` (course-position
+      readout plus a "Path courses" disclosure trigger standing in for the already-shipped left Sheet
+      drawer) sits above the unchanged article body instead.
 
-  **Date**: 2026-07-25. **Status**: Done. 73900 bytes (>5 KB). Visually confirmed earlier in this
-  phase: the "INTERVIEW-READY SWE" rail (numbered ordered course list, current item highlighted)
-  renders full-width, stacked above the article body — both visible in one column, matching the
-  selected Option B responsive mobile form exactly.
+  **Date**: 2026-07-25. **Status**: Done. 76425 bytes (>5 KB). Visually confirmed: no rail is
+  rendered; a compact "▸ On path: Interview-Ready SWE · course 9 of 119" banner plus a "Path
+  courses" disclosure button sits above the unchanged article body, matching prd.md:1514.
 
 - [x] [AI] Render `<PLAN>assets/course-path-option-a-tablet.png` from
       `<PLAN>assets/src/course-path-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/course-path-option-a-tablet.png` succeeds and the render is >5 KB; the frame
       reflows to full width, banner and body readable with no horizontal overflow.
 
-  **Date**: 2026-07-25. **Status**: Done. 94026 bytes (>5 KB). Same verified pipeline, 768px
+  **Date**: 2026-07-25. **Status**: Done. 94020 bytes (>5 KB). Same verified pipeline, 768px
   viewport.
 
 - [x] [AI] Render `<PLAN>assets/course-path-option-b-tablet.png` from
       `<PLAN>assets/src/course-path-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/course-path-option-b-tablet.png` succeeds and the render is >5 KB; the
-      `.rail` remains beside the article body at this width (the rail stacks only below the 480 px
-      breakpoint), the whole frame reflowed to full width with no horizontal overflow.
+      `.rail` remains beside the article body at this width, gated at the documented
+      `@media (min-width: 768px) and (max-width: 1023px)` boundary (not any 480 px breakpoint),
+      narrowed to ~132px with ellipsis-truncated course titles, the whole frame reflowed to full width
+      with no horizontal overflow.
 
-  **Date**: 2026-07-25. **Status**: Done. 79278 bytes (>5 KB). Visually confirmed: at 768px the
-  rail renders as a left column beside the article body (side-by-side, not stacked) — confirms the
-  rail only stacks below the 480px breakpoint, not at tablet width.
+  **Date**: 2026-07-25. **Status**: Done. 83392 bytes (>5 KB). Visually confirmed: at 768px the
+  narrowed "INTERVIEW-READY SWE" rail renders as a left column beside the article body (side-by-side,
+  not stacked), its course titles ellipsis-truncated per the documented 15%-35% resizable-panel width
+  band — confirms the 768px/1023px tablet gate, not a 480px breakpoint, matching prd.md:1516.
 
 - [x] [AI] **Embed all 24 new (mobile + tablet) renders in `prd.md`** under their screen's "Hi-fi
       finalists" block, each with viewport-specific descriptive alt text that names what differs **at
