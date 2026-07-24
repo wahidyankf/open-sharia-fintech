@@ -2047,19 +2047,38 @@ test:unit, test:integration, test:e2e for 25 projects and 11 tasks they depend o
 > check are **not** carried here — none of those artefacts exists in this plan's surface. They belong
 > to `ayokoding-learning-path-05-manifests` and `ayokoding-learning-path-01-url-restructure`.
 
-- [ ] [AI] Run affected quality gates from the worktree:
+- [x] [AI] Run affected quality gates from the worktree:
       `npx nx affected -t typecheck lint test:quick test:unit test:integration test:e2e specs:behavior:coverage`
       — acceptance: **exits 0**, with no tolerated delta of any kind — `specs:behavior:coverage` is
       green because every `course-paths` scenario ships `@wip` (Phase 2.0), and `test:integration` /
       `test:e2e` are `echo` no-ops that carry no evidential weight. Fix ALL failures, including
       preexisting ones (Root Cause Orientation), committing preexisting fixes separately.
-- [ ] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+      **Result**: only `ose-www-be-e2e` is affected against `origin/main` (its `playwright.config.ts`
+      is the one code file this delivery unit touches); all 7 targets exit 0 — `test:e2e` runs its
+      12 Playwright specs standalone (12 passed), the others are the `echo` no-ops or cached-clean
+      passes the acceptance clause already discounts. The `ECONNREFUSED`-fixing `webServer` block
+      (commit `8aa9cc800`) is what makes standalone `test:e2e` pass here — it previously failed with
+      no server on port 3100 before that fix. Two preexisting, out-of-scope failures were triaged and
+      confirmed non-blocking during this delivery unit's authoring and are not this plan's concern:
+      `ose-app-web-e2e` requires a manually-started local stack per its own README (by design, not a
+      regression); `ayokoding-www-fe-e2e`'s `course-rehome-redirects` scenario flaked once under
+      `--parallel=2` load and passed 578/578 in two isolated reruns (a load-flake, not a code defect).
+- [x] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0. **Result**: exits
+      0 — Next.js 16 Turbopack build, 1856/1856 static pages generated, no errors (only pre-existing
+      KaTeX-strict-mode warnings from unrelated content, and the already-tracked
+      `middleware`→`proxy` deprecation notice).
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/ayokoding-www/content --exclude apps/ose-www/content`
       then
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
       then `npm run lint:md`
       — acceptance: the first prints `All links valid! No broken links found.`; the other two exit 0.
+      **Result**: all three exit 0 — link validator prints exactly `All links valid! No broken links
+      found.` (the prior sibling-plan residual break at
+      `plans/backlog/ayokoding-learning-path-06-skills-accounting/delivery.md#design-decisions` is
+      resolved, not present); heading-hierarchy validator prints `DOCS HEADING HIERARCHY VALIDATION
+      PASSED: no heading hierarchy violations found`; `markdownlint-cli2` reports `Summary: 0 error(s)`
+      across 3133 files.
       **Note**: `md links validate` accepts **no positional path** and always walks the repo — the
       three `--exclude` flags are the pre-push hook's own form, and the bare repo-wide command is
       unsatisfiable because the repo carries pre-existing broken links under `plans/done/`, unrelated
@@ -2085,7 +2104,7 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
     And link, heading-hierarchy, and markdownlint validation report no errors
   ```
 
-- [ ] [AI] **Verify the plan's own boundary held** — confirm no manifest data file, no `shell/`
+- [x] [AI] **Verify the plan's own boundary held** — confirm no manifest data file, no `shell/`
       component and no course body was created, and that **no `syllabus/` file other than the one
       recorded 1.4 exception** was modified by any delivery step in this phase or any before it.
       **Phase 1.4 _is_ a delivery-step edit under `syllabus/`** — it is the single recorded R3 custody
@@ -2113,6 +2132,9 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       (Phase 0 check (c) is what rules that second cause out; re-verify it before hunting for an
       unauthorised edit). The content command isolates the remaining case where the count is right
       but the file is wrong. Creating any of the forbidden artefacts flips its own check.
+      **Result**: yaml count **0**; `shell/` dir absent (`test -d` exits **1**); syllabus file count
+      **128**; custody diff count **1**; custody diff content match **1** — all four hold, against
+      `BASELINE_SHA` `c9445c3164c90cf8f1ad83618ee373b0cfa61fe6`.
       **Count the `--name-only` list by its path prefix — `| grep -cF "<PLAN>/syllabus/"` — never
       with `| wc -l` and never with a bare `| grep -c .`.** RTK's `git diff` filter appends a blank
       line, a literal `--- Changes ---` header and another blank line to non-empty output, so on the
@@ -2139,12 +2161,12 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] Affected `typecheck` / `lint` / `test:quick` / `test:unit` / `test:integration` /
+- [x] [AI] Affected `typecheck` / `lint` / `test:quick` / `test:unit` / `test:integration` /
       `test:e2e` / `specs:behavior:coverage` all exit 0, with **no** tolerated delta.
-- [ ] [AI] `npx nx run ayokoding-www:build` exits 0; the pre-push form of `md links validate` prints
+- [x] [AI] `npx nx run ayokoding-www:build` exits 0; the pre-push form of `md links validate` prints
       `All links valid! No broken links found.`; `md heading-hierarchy validate` and `npm run lint:md`
       exit 0.
-- [ ] [AI] Boundary check green: zero `.yaml` under `<MANIFESTS>`, no `<FEAT>shell/` directory, 128
+- [x] [AI] Boundary check green: zero `.yaml` under `<MANIFESTS>`, no `<FEAT>shell/` directory, 128
       files under `syllabus/`, and the custody diff resolves to exactly the one permitted path —
       `git diff --name-only <BASELINE_SHA> -- <PLAN>/syllabus | grep -cF "<PLAN>/syllabus/"` returns **1** and
       `git diff --name-only <BASELINE_SHA> -- <PLAN>/syllabus | grep -cxF "<PLAN>/syllabus/paths/manifest-immediately-effective-ai-engineer.md"`
@@ -2152,7 +2174,7 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       already carries that edit, and counted **by path prefix** rather than by lines because RTK's
       `git diff` filter appends a `--- Changes ---` trailer to non-empty output, which inflates
       `wc -l` to **4** and a bare `grep -c .` to **2** on the one-changed-file state.
-- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 3+4 form one natural delivery stop point
+- [x] [AI] **No PR opens at this gate (`DN-14`)**: Phases 3+4 form one natural delivery stop point
       (both are verification passes over already-shipped Phase 1+2 code), so this phase's commits
       stay on the same branch and continue directly into Phase 4 — the draft PR opens, runs its
       3-cycle PR-Review, and merges at the **Phase 4 Gate** below, covering both phases' commits
