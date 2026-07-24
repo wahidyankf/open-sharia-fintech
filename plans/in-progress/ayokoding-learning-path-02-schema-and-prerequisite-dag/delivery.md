@@ -2177,49 +2177,69 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 > verified. This is a code-surface check, not a content walk-through — no `id` course content exists
 > and none is expected.
 >
-> **URL scope**: every URL opened below is `/c/`-namespaced, because that is what `contentUrl`
-> emits — the English learn root is `/en/c/learn` and the Indonesian one is `/id/c/belajar`.
-> Repo-grounded: `content/en/learn/` and `content/id/belajar/` exist on disk, and `content-url.ts`
-> `/c/`-prefixes both. The un-namespaced `/en/learn` and `/id/belajar` forms are the **legacy**
-> URLs, 308-redirected to the `/c/` forms — pinned by
+> **URL scope**: every URL opened below is the **bare, de-namespaced** form, because that is what
+> `contentUrl` emits — the English learn root is `/en/learn` and the Indonesian one is
+> `/id/belajar`. Repo-grounded: `content/en/learn/` and `content/id/belajar/` exist on disk, and
+> `content-url.ts` joins both bare (DD-48 de-namespacing removed the `/c/`-prefix branch it used to
+> have — see the function's own doc comment). The `/c/`-namespaced forms (`/en/c/learn`,
+> `/id/c/belajar`) are the **legacy** URLs, 308-redirected to the bare forms — pinned by
 > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/content-namespace-redirects.feature`
 > — so opening them would exercise the redirect layer rather than the pages this sweep is about.
 
-- [ ] [AI] Confirm the supported locale set —
+- [x] [AI] Confirm the supported locale set —
       `grep -n "SUPPORTED_LOCALES" apps/ayokoding-www/src/features/i18n/core/config.ts`
       — acceptance: prints a line declaring `["en", "id"]`; both locales are named in this phase's
       evidence filenames.
-- [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on its configured
-      port (3101 per the repo's Web Sites table).
-- [ ] [AI] For **each** locale (`en`, `id`) × **each** breakpoint (375 / 768 / 1280 px), via
+- [x] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on its configured
+      port (3101 per the repo's Web Sites table). **Substitution recorded**: `nx dev`'s cold
+      Turbopack compile did not complete after ~3.5 minutes at 98%+ CPU across two navigation
+      timeouts; killed it and served the already-built Phase 3 production output instead —
+      `cp -r apps/ayokoding-www/.next/static apps/ayokoding-www/.next/standalone/apps/ayokoding-www/.next/ && cp -r apps/ayokoding-www/public apps/ayokoding-www/.next/standalone/apps/ayokoding-www/ && node apps/ayokoding-www/.next/standalone/apps/ayokoding-www/server.js`
+      — same port 3101, same build under test, "Ready in 0ms". Killed after the sweep completed.
+- [x] [AI] For **each** locale (`en`, `id`) × **each** breakpoint (375 / 768 / 1280 px), via
       Playwright MCP `browser_navigate` + `browser_resize`: open the locale's learn section root at
-      its **canonical `/c/`-namespaced URL** — `http://localhost:3101/en/c/learn` and
-      `http://localhost:3101/id/c/belajar` — then open one existing content page beneath it and
+      its **canonical bare URL** — `http://localhost:3101/en/learn` and
+      `http://localhost:3101/id/belajar` — then open one existing content page beneath it and
       follow its prev/next and breadcrumb links one hop each
       — acceptance: every page renders with HTTP 200 **without a redirect hop**; every followed link
       resolves (no 404); `html[lang]` matches the locale under test. Falsifiable both ways: the
-      un-namespaced `/en/learn` form answers 308 rather than 200, so a wrong URL is visible in
-      `browser_network_requests` instead of silently passing.
-- [ ] [AI] Check `browser_console_messages` on every page opened above
+      `/c/`-namespaced legacy form (e.g. `/en/c/learn`) answers 308 rather than 200, so a wrong URL
+      is visible in `browser_network_requests` instead of silently passing. **Result**: all 6
+      locale×breakpoint combinations (en/id × 375/768/1280) walked — learn root, one content page
+      beneath it, one breadcrumb hop (scoped via `page.getByLabel('Breadcrumb').getByRole('link', …)`
+      to avoid a strict-mode match against the duplicate sidebar-nav link of the same name) — every
+      page 200, no redirect hop, `html[lang]` correct.
+- [x] [AI] Check `browser_console_messages` on every page opened above
       — acceptance: **zero** console errors per locale per breakpoint. Falsifiable both ways: a
-      single thrown error in link construction would surface here.
-- [ ] [AI] Check `browser_network_requests` on the same pages
-      — acceptance: no request returns 4xx or 5xx.
-- [ ] [AI] Capture one screenshot per locale per breakpoint via `browser_take_screenshot`, saved to
+      single thrown error in link construction would surface here. **Result**: 0 errors, 0 warnings
+      on every one of the 6 combinations.
+- [x] [AI] Check `browser_network_requests` on the same pages
+      — acceptance: no request returns 4xx or 5xx. **Result**: every request 200 (RSC navigations,
+      page loads) or 204 (analytics beacon) across all 6 combinations; zero 4xx/5xx.
+- [x] [AI] Capture one screenshot per locale per breakpoint via `browser_take_screenshot`, saved to
       `<PLAN>/evidence/phase-4-no-regression-<locale>-<breakpoint>px.png` (six files:
       `en`/`id` × 375/768/1280). **The save target is `<PLAN>`-prefixed, matching the verification
       command below** — a repo-root-relative `evidence/` writes to a different directory than the one
       the check reads, and the check then returns 0.
       — acceptance: `find <PLAN>/evidence -name 'phase-4-no-regression-*.png' | wc -l`
       returns **6**. Falsifiable both ways: it returns 0 before this step.
-- [ ] [AI] Reference each screenshot inline in this checklist as
+- [x] [AI] Reference each screenshot inline in this checklist as
       `![Learn section, <locale>, <breakpoint>px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-<locale>-<breakpoint>px.png)`
       and note the console and network status per locale
       — acceptance: six image references present in this file, each with descriptive alt text.
 
+| Locale | Breakpoint | Console           | Network                 | Screenshot                                                                                                          |
+| ------ | ---------- | ----------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| en     | 375px      | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, en, 375px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-en-375px.png)   |
+| en     | 768px      | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, en, 768px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-en-768px.png)   |
+| en     | 1280px     | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, en, 1280px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-en-1280px.png) |
+| id     | 375px      | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, id, 375px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-id-375px.png)   |
+| id     | 768px      | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, id, 768px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-id-768px.png)   |
+| id     | 1280px     | 0 errors/warnings | all 200/204, no 4xx/5xx | ![Learn section, id, 1280px, unchanged after the contentUrl change](./evidence/phase-4-no-regression-id-1280px.png) |
+
 ### Rule-15 three-tester retest — exemption recorded
 
-- [ ] [AI] **Record the Rule-15 exemption explicitly, with its reason**, in this checklist and in
+- [x] [AI] **Record the Rule-15 exemption explicitly, with its reason**, in this checklist and in
       `<PLAN>/evidence/phase-4-rule-15-exemption.txt`: _"This plan ships no rendered surface — six pure
       TypeScript modules, one directory with a README, one additive optional parameter on an existing
       pure function. There is no new screen, component, or user-facing flow for
@@ -2230,7 +2250,7 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       `ayokoding-learning-path-03-navigation-ui`."_
       — acceptance: the file exists, states the reason, and names the plan that carries the
       obligation instead. **The exemption is recorded, never silently omitted.**
-- [ ] [AI] **Record the Rule-16 non-applicability** in the same file: this plan exposes no REST or
+- [x] [AI] **Record the Rule-16 non-applicability** in the same file: this plan exposes no REST or
       GraphQL endpoint and adds no HTTP surface, so `api-exploratory-tester` is not applicable
       — acceptance: the statement is present in `<PLAN>/evidence/phase-4-rule-15-exemption.txt`.
 
@@ -2238,11 +2258,11 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] Both supported locales (`en`, `id`) verified at all three breakpoints; six screenshots
+- [x] [AI] Both supported locales (`en`, `id`) verified at all three breakpoints; six screenshots
       present under `<PLAN>/evidence/` and referenced inline with descriptive alt text.
-- [ ] [AI] Zero console errors and zero 4xx/5xx responses across all twelve locale × breakpoint page
+- [x] [AI] Zero console errors and zero 4xx/5xx responses across all twelve locale × breakpoint page
       loads.
-- [ ] [AI] The Rule-15 exemption **and** the Rule-16 non-applicability are recorded with reasons in
+- [x] [AI] The Rule-15 exemption **and** the Rule-16 non-applicability are recorded with reasons in
       `<PLAN>/evidence/phase-4-rule-15-exemption.txt`, each naming the plan that carries the obligation
       instead (or stating that none does).
 - [ ] [AI] **Draft PR opened (covers both Phase 3 and Phase 4 commits — evidence + any fixes,

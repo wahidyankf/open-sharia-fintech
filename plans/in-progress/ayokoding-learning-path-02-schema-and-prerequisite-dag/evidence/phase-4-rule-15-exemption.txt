@@ -1,0 +1,7 @@
+Rule-15 (three-tester retest) exemption:
+
+This plan ships no rendered surface — six pure TypeScript modules, one directory with a README, one additive optional parameter on an existing pure function. There is no new screen, component, or user-facing flow for web-exploratory-tester, web-usability-tester or web-design-tester to explore. The three-tester retest is therefore not run. The no-regression sweep above is run instead and is not offered as a substitute for a retest of a surface this plan does not ship. The retest obligation for the path-aware navigation UI belongs to ayokoding-learning-path-03-navigation-ui.
+
+Rule-16 (API exploratory-tester) non-applicability:
+
+This plan exposes no REST or GraphQL endpoint and adds no HTTP surface, so api-exploratory-tester is not applicable.
