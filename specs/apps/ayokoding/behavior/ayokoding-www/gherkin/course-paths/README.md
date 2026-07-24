@@ -7,9 +7,8 @@ mechanism built by `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 this plan ships (`resolvePathNav`, `parsePathContext`, `resolvePrerequisites`,
 `checkPrerequisiteConsistency`, `checkManifestIntegrity`) are the mechanism behind these scenarios,
 but the step bindings that make them executable belong to a downstream plan —
-`ayokoding-learning-path-03-navigation-ui` for most scenarios, and
-`ayokoding-learning-path-01-url-restructure` for the legacy-redirect scenario in
-[breadcrumb.feature](./breadcrumb.feature). `@wip` is the behavior-coverage validator's own
+`ayokoding-learning-path-03-navigation-ui`, for every scenario including the legacy-redirect
+scenario in [breadcrumb.feature](./breadcrumb.feature). `@wip` is the behavior-coverage validator's own
 step-binding-deferral exemption: `apps/rhino-cli/src/application/behavior_coverage/validator.rs`
 documents and implements "`@wip` scenarios are fully exempt". See
 `<PLAN>/evidence/phase-2-specs-coverage-delta.txt` for the recorded deferral and its closing plan.
