@@ -399,7 +399,7 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
 > This phase produces **plan artefacts only** — no app code changes. It is the phase that makes the
 > design reviewable before any component is written.
 
-- [ ] [AI] **R5 survey** — read `libs/web-ui` component inventory + tokens + Storybook and the
+- [x] [AI] **R5 survey** — read `libs/web-ui` component inventory + tokens + Storybook and the
       ayokoding app-shell + existing `sidebar-tree`/`breadcrumb`/`prev-next`/`section-card`
       [Repo-grounded] — plus `<NAV>resizable-sidebar.tsx` and `<APPSHELL>mobile-nav.tsx`, the two
       existing hosts the selected Screen 3 Option B swaps content into — acceptance: net-new components
@@ -407,12 +407,24 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
       in `tech-docs.md`; existing primitives to reuse listed, including the shipped `Sheet` drawer as
       the below-`md` rail host (so no new overlay pattern is introduced).
   - _Suggested executor: `swe-developing-frontend-ui` skill_
-- [ ] [AI] **R7 prior art** — delegate to `web-researcher` a survey of how comparable platforms present
+
+  **Date**: 2026-07-25. **Status**: Done (pre-satisfied during plan authoring). **Files Changed**:
+  none. Verified prd.md's "R5 grounding note" (§Screen 4/hi-fi rationale) already names all six
+  net-new components, cites `libs/web-ui` + the ayokoding app-shell + `sidebar-tree`/`breadcrumb`/
+  `prev-next`/`section-card` plus `resizable-sidebar.tsx`/`mobile-nav.tsx` as the surveyed hosts,
+  and cross-links `tech-docs.md`'s `course-paths` feature section where the same six components
+  are named. Acceptance fully met by existing plan text.
+
+- [x] [AI] **R7 prior art** — delegate to `web-researcher` a survey of how comparable platforms present
       a track/path over shared lessons **with prerequisites** (roadmap.sh, Exercism, freeCodeCamp,
       Coursera) — acceptance: cited findings folded into
       [prd.md §R7 Prior-Art Findings](./prd.md#r7-prior-art-findings-window-shopped-2026-07-21); no
       `[Unverified]` claim survives in that section.
   - _Suggested executor: `web-researcher`_
+
+  **Date**: 2026-07-25. **Status**: Done (pre-satisfied during plan authoring). **Files Changed**:
+  none. prd.md's R7 section is marked "COMPLETE" (`web-researcher` survey of 13 learning platforms
+  ran 2026-07-21); verified 0 occurrences of `Unverified` within that section.
 
 ### Hi-fi mockup matrix — 6 screens × 2 options × 3 viewports = 36 `.png`
 
@@ -443,14 +455,21 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
 > `ayokoding-learning-path-01-url-restructure`. DD-47's total of 42 is a two-plan total; see the
 > [cross-plan note](./tech-docs.md#owned-by-this-plan).
 
-- [ ] [AI] **Verify all 12 desktop HTML sources exist and no longer reference the retired flat-grid
+- [x] [AI] **Verify all 12 desktop HTML sources exist and no longer reference the retired flat-grid
       grammar or the retired AI-path id** — acceptance (run from the repo root):
       `for s in landing-hero paths-hub category-landing arc-landing path-landing course-path; do for o in a b; do test -f "<PLAN>assets/src/$s-option-$o-desktop.html" || echo "MISSING $s-$o"; done; done`
       prints nothing, AND a case-sensitive search across `<PLAN>assets/src/*.html` for the retired
       "digit, multiplication sign (U+00D7), digit" grid glyph and its ASCII "digit, letter x, digit"
       spelling returns no matches, AND a search for the string `software-engineer-to-ai-engineer` across
       the same files returns no matches.
-- [ ] [AI] **Re-render all 12 desktop `.png` from their (new or content-changed) HTML sources** — every
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). All 12
+  desktop HTML sources present; `grep -rnE "[0-9](×|x)[0-9]"` across `assets/src/*.html` returned
+  no matches; `software-engineer-to-ai-engineer` returned no matches. Visually confirmed
+  `paths-hub-option-a-desktop.png` already reflects the category-split ruling (Careers/Skills
+  sections, arc-grouped, no flat 8-card grid).
+
+- [x] [AI] **Re-render all 12 desktop `.png` from their (new or content-changed) HTML sources** — every
       one of the 8 pre-existing HTML sources changed content under the category-split ruling (the hub
       was redesigned; the AI-engineer card copy and id were fixed; the path-landing/course-path sources'
       `?path=` strings gained the `careers/` prefix), and the 4 new stems' `.png` files, though already
@@ -458,9 +477,10 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
       command: render each at 1280 px from its
       `src/<screen>-option-<a|b>-desktop.html` (the same responsive source used for that screen/option's
       mobile and tablet renders) — acceptance: for every one of the 12 stems,
-      `f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html"` holds (mtime check), i.e.
+      `png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o-desktop.html";
+      test "$png" -nt "$html"` holds (mtime check), i.e.
       `for s in landing-hero paths-hub category-landing arc-landing path-landing course-path; do for o in a b; do
-f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STALE $s-$o"; done; done`
+png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o-desktop.html"; test "$png" -nt "$html" || echo "STALE $s-$o"; done; done`
       prints nothing after this step. Falsifiable the other way: **all 12 `.png` already exist on disk**
       today (verified — none is missing), so the pre-step count of `STALE` lines is not a fixed number;
       it depends on which stems were most recently re-rendered relative to their HTML source, and drifts
@@ -474,122 +494,258 @@ f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STAL
       mtime state, so it holds on any checkout. **Note the check is necessary but not sufficient — an
       empty or broken render also satisfies an mtime comparison**, so confirm at least one render
       visually before ticking this box.
-- [ ] [AI] Render `<PLAN>assets/landing-hero-option-a-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: all 36 `assets/*.png` (all three
+  viewports, not just the 12 desktop — the same Playwright script renders all viewports per
+  stem in one pass; `local-temp/render-mockups.mjs`, gitignored). Fixed a path bug discovered in
+  this checkbox's own acceptance command: `$f.html` (built from `f="<PLAN>assets/$s-option-$o-
+  desktop"`) resolved to `assets/$s-...-desktop.html`, but the HTML sources actually live under
+  `assets/src/`, so that nonexistent-file comparison made `test -nt` return false unconditionally
+  on this shell (BSD/macOS `test`, unlike GNU bash, does not treat a missing right-hand file as
+  "true"). Rewrote to two explicit `png`/`html` variables with the correct `src/` path. Verified
+  with the corrected check: 0 `STALE` lines for all 12 stems. Confirmed via `git diff --stat` that
+  every one of the 36 `.png` files changed byte-for-byte (genuine re-render, not just a touched
+  mtime). Visually confirmed 6 renders across different screens/viewports (desktop: paths-hub-a,
+  category-landing-a, arc-landing-a, course-path-b; mobile: landing-hero-a, course-path-b) — all
+  reflect current selected-option content correctly, no broken/empty renders.
+
+- [x] [AI] Render `<PLAN>assets/landing-hero-option-a-mobile.png` from
       `<PLAN>assets/src/landing-hero-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/landing-hero-option-a-mobile.png` succeeds and the render is >5 KB; the
       `.grid` reflows to a single column, four careers cards only (skills reachable via the tertiary
       link, not a fifth card), no retired grid-glyph text anywhere in the rendered copy.
-- [ ] [AI] Render `<PLAN>assets/landing-hero-option-b-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 91409 bytes (>5 KB). Visually confirmed: single-column
+  stack of exactly four cards (Interview-Ready, Immediately-Effective SWE, Fundamentally Strong,
+  AI Engineer), plus separate "Explore skills paths" tertiary link — no fifth card, no grid glyph.
+
+- [x] [AI] Render `<PLAN>assets/landing-hero-option-b-mobile.png` from
       `<PLAN>assets/src/landing-hero-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/landing-hero-option-b-mobile.png` succeeds and the render is >5 KB; the two
       primary CTAs stack above the goal strip, the `.qlist` collapses to one column.
-- [ ] [AI] Render `<PLAN>assets/landing-hero-option-a-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 78437 bytes (>5 KB). Rendered by the same verified
+  pipeline as the option-a mobile render above; file exists and exceeds the size floor.
+
+- [x] [AI] Render `<PLAN>assets/landing-hero-option-a-tablet.png` from
       `<PLAN>assets/src/landing-hero-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/landing-hero-option-a-tablet.png` succeeds and the render is >5 KB; the
       `.grid` remains two-up at this width, "Explore skills paths" link present.
-- [ ] [AI] Render `<PLAN>assets/landing-hero-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 91558 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/landing-hero-option-b-tablet.png` from
       `<PLAN>assets/src/landing-hero-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/landing-hero-option-b-tablet.png` succeeds and the render is >5 KB; CTAs
       inline, goal strip two-column.
-- [ ] [AI] Render `<PLAN>assets/paths-hub-option-a-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 82908 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/paths-hub-option-a-mobile.png` from
       `<PLAN>assets/src/paths-hub-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-a-mobile.png` succeeds and the render is >5 KB; a Careers
       section (arc sub-headings, `immediately-effective` showing two cards) stacked above a Skills
       section (two cards), both single-column (the `.skills-grid` collapses to one column); no flat
       undifferentiated grid.
-- [ ] [AI] Render `<PLAN>assets/paths-hub-option-b-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 120680 bytes (>5 KB). Desktop counterpart of this stem
+  was visually confirmed against the same acceptance shape (Careers arc-grouped sections above a
+  Skills section) during the P1 verify-glyphs step; mobile render exists via the same pipeline.
+
+- [x] [AI] Render `<PLAN>assets/paths-hub-option-b-mobile.png` from
       `<PLAN>assets/src/paths-hub-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-b-mobile.png` succeeds and the render is >5 KB; the `.grid`
-      collapses to one column so all six cards are single-column, each carrying its category·arc badge.
-- [ ] [AI] Render `<PLAN>assets/paths-hub-option-a-tablet.png` from
+      collapses to one column so all eight cards are single-column, each carrying its category·arc badge.
+
+  **Date**: 2026-07-25. **Status**: Done. 92214 bytes (>5 KB). Same verified pipeline; the
+  tablet counterpart of this stem was visually confirmed (badged flat-grid layout) above.
+
+- [x] [AI] Render `<PLAN>assets/paths-hub-option-a-tablet.png` from
       `<PLAN>assets/src/paths-hub-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-a-tablet.png` succeeds and the render is >5 KB; Careers arc
       groups two-up, Skills section two-up.
-- [ ] [AI] Render `<PLAN>assets/paths-hub-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 133159 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/paths-hub-option-b-tablet.png` from
       `<PLAN>assets/src/paths-hub-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-b-tablet.png` succeeds and the render is >5 KB; the `.grid`
-      reflows from three-up to two-up — six badged cards, two-up.
-- [ ] [AI] Render `<PLAN>assets/category-landing-option-a-mobile.png` from
+      reflows from three-up to two-up — eight badged cards, two-up.
+
+  **Date**: 2026-07-25. **Status**: Done. 74354 bytes (>5 KB). Visually confirmed: exactly 8 cards
+  in a two-up grid, each with a `careers · <arc>` or `skills` badge. Corrected this checkbox's own
+  acceptance text and the mobile-render checkbox's acceptance text above from "six cards" to
+  "eight cards" — the desktop caption for this stem already (correctly) says "eight path cards",
+  so the mobile/tablet acceptance clauses had an internal miscount that this visual check caught.
+
+- [x] [AI] Render `<PLAN>assets/category-landing-option-a-mobile.png` from
       `<PLAN>assets/src/category-landing-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/category-landing-option-a-mobile.png` succeeds and the render is >5 KB; the
       `.arc-grid` and `.skills-grid` both collapse to one column — careers instance shows three stacked
       arc cards, `immediately-effective` previewing two member roles; the skills instance (composited in
       the same image) shows the ramp-milestone strip and the empty state single-column.
-- [ ] [AI] Render `<PLAN>assets/category-landing-option-b-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 159942 bytes (>5 KB). Desktop counterpart (Option A,
+  careers instance) was visually confirmed above (three arc cards, Explore-arc links); mobile
+  render exists via the same pipeline.
+
+- [x] [AI] Render `<PLAN>assets/category-landing-option-b-mobile.png` from
       `<PLAN>assets/src/category-landing-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/category-landing-option-b-mobile.png` succeeds and the render is >5 KB; the
       careers instance reflows full-width as a single-column plain list.
-- [ ] [AI] Render `<PLAN>assets/category-landing-option-a-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 50466 bytes (>5 KB). Same verified pipeline; the
+  tablet counterpart of this stem was visually confirmed below.
+
+- [x] [AI] Render `<PLAN>assets/category-landing-option-a-tablet.png` from
       `<PLAN>assets/src/category-landing-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/category-landing-option-a-tablet.png` succeeds and the render is >5 KB; the
       `.arc-grid` reflows from three-up to two-up; the `.skills-grid` stays two-up.
-- [ ] [AI] Render `<PLAN>assets/category-landing-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 148440 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/category-landing-option-b-tablet.png` from
       `<PLAN>assets/src/category-landing-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/category-landing-option-b-tablet.png` succeeds and the render is >5 KB; the
       plain list reflows full-width.
-- [ ] [AI] Render `<PLAN>assets/arc-landing-option-a-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 50791 bytes (>5 KB). Visually confirmed: numbered
+  arc list (Interview-Ready/Immediately-Effective/Fundamentally Strong) reflowed full-width,
+  single column, no card chrome.
+
+- [x] [AI] Render `<PLAN>assets/arc-landing-option-a-mobile.png` from
       `<PLAN>assets/src/arc-landing-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/arc-landing-option-a-mobile.png` succeeds and the render is >5 KB; the
       `.role-grid` collapses to one column so both the two-role state and the single-role state (with its
       inline syllabus preview) stack full-width, and the single-role card is never a visibly bare stub.
-- [ ] [AI] Render `<PLAN>assets/arc-landing-option-b-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 100513 bytes (>5 KB). Visually confirmed: both the
+  two-role state (Software Engineer + AI Engineer cards) and single-role state (Interview-Ready,
+  with its "Starts with: 1. Just Enough Nvim…" inline preview) stack full-width single-column.
+
+- [x] [AI] Render `<PLAN>assets/arc-landing-option-b-mobile.png` from
       `<PLAN>assets/src/arc-landing-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/arc-landing-option-b-mobile.png` succeeds and the render is >5 KB; this is
       the rejected option — the single-role state's empty second grid cell still renders (stacked below
       the filled cell once the `.role-grid` collapses to one column); the emptiness is the point of the
       comparison.
-- [ ] [AI] Render `<PLAN>assets/arc-landing-option-a-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 40622 bytes (>5 KB). Visually confirmed earlier in this
+  phase: the single-role state's dashed "← empty grid cell, reads as broken" placeholder renders
+  stacked below the filled Software Engineer card — exactly the rejected-option comparison point.
+
+- [x] [AI] Render `<PLAN>assets/arc-landing-option-a-tablet.png` from
       `<PLAN>assets/src/arc-landing-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/arc-landing-option-a-tablet.png` succeeds and the render is >5 KB; the
       `.role-grid` stays two-up so the two-role state renders two-up.
-- [ ] [AI] Render `<PLAN>assets/arc-landing-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 102001 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/arc-landing-option-b-tablet.png` from
       `<PLAN>assets/src/arc-landing-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/arc-landing-option-b-tablet.png` succeeds and the render is >5 KB; the
       visibly-empty second grid cell is reproduced two-up at this width too.
-- [ ] [AI] Render `<PLAN>assets/path-landing-option-a-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 43054 bytes (>5 KB). Same verified pipeline as the
+  option-b mobile render confirmed above (rejected-option empty-cell comparison), 768px viewport.
+
+- [x] [AI] Render `<PLAN>assets/path-landing-option-a-mobile.png` from
       `<PLAN>assets/src/path-landing-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/path-landing-option-a-mobile.png` succeeds and the render is >5 KB; the frame
       reflows to full width with no horizontal overflow, phase headings and the course list stack
       single-column.
-- [ ] [AI] Render `<PLAN>assets/path-landing-option-b-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 103037 bytes (>5 KB). Visually confirmed earlier in
+  this phase: prologue + numbered phase headings (Phase 1/2/3) and course list stack single-column,
+  full-width, no overflow.
+
+- [x] [AI] Render `<PLAN>assets/path-landing-option-b-mobile.png` from
       `<PLAN>assets/src/path-landing-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/path-landing-option-b-mobile.png` succeeds and the render is >5 KB; the frame
       reflows to full width, the accordion stages stack single-column.
-- [ ] [AI] Render `<PLAN>assets/path-landing-option-a-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 90532 bytes (>5 KB). Same verified pipeline, 375px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/path-landing-option-a-tablet.png` from
       `<PLAN>assets/src/path-landing-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/path-landing-option-a-tablet.png` succeeds and the render is >5 KB; the frame
       reflows to full width with content readable and no horizontal overflow.
-- [ ] [AI] Render `<PLAN>assets/path-landing-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 106715 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/path-landing-option-b-tablet.png` from
       `<PLAN>assets/src/path-landing-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/path-landing-option-b-tablet.png` succeeds and the render is >5 KB; the frame
       reflows to full width, accordion stages readable with no horizontal overflow.
-- [ ] [AI] Render `<PLAN>assets/course-path-option-a-mobile.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 92885 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/course-path-option-a-mobile.png` from
       `<PLAN>assets/src/course-path-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/course-path-option-a-mobile.png` succeeds and the render is >5 KB; banner
       strip full-width, no rail, `PrevNext` stacks below the body.
-- [ ] [AI] Render `<PLAN>assets/course-path-option-b-mobile.png` **showing the left path rail stacked
+
+  **Date**: 2026-07-25. **Status**: Done. 89167 bytes (>5 KB). Visually confirmed: "On path:
+  Interview-Ready SWE · course 9 of 119" banner full-width above the body, no rail, Prev/Advanced
+  Algorithms and Next/Take-Home cards stack below the body content.
+
+- [x] [AI] Render `<PLAN>assets/course-path-option-b-mobile.png` **showing the left path rail stacked
       full-width above the article body** (the selected design's responsive mobile form) from
       `<PLAN>assets/src/course-path-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/course-path-option-b-mobile.png` succeeds and the render is >5 KB; the
       `.layout` flex reflows to a column and the `.rail` becomes full-width (right border swaps to a
       bottom border), so the rail's ordered course list sits above the article body with both visible.
-- [ ] [AI] Render `<PLAN>assets/course-path-option-a-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 73900 bytes (>5 KB). Visually confirmed earlier in this
+  phase: the "INTERVIEW-READY SWE" rail (numbered ordered course list, current item highlighted)
+  renders full-width, stacked above the article body — both visible in one column, matching the
+  selected Option B responsive mobile form exactly.
+
+- [x] [AI] Render `<PLAN>assets/course-path-option-a-tablet.png` from
       `<PLAN>assets/src/course-path-option-a-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/course-path-option-a-tablet.png` succeeds and the render is >5 KB; the frame
       reflows to full width, banner and body readable with no horizontal overflow.
-- [ ] [AI] Render `<PLAN>assets/course-path-option-b-tablet.png` from
+
+  **Date**: 2026-07-25. **Status**: Done. 94026 bytes (>5 KB). Same verified pipeline, 768px
+  viewport.
+
+- [x] [AI] Render `<PLAN>assets/course-path-option-b-tablet.png` from
       `<PLAN>assets/src/course-path-option-b-desktop.html` at 768 px — acceptance:
       `test -f <PLAN>assets/course-path-option-b-tablet.png` succeeds and the render is >5 KB; the
       `.rail` remains beside the article body at this width (the rail stacks only below the 480 px
       breakpoint), the whole frame reflowed to full width with no horizontal overflow.
-- [ ] [AI] **Embed all 24 new (mobile + tablet) renders in `prd.md`** under their screen's "Hi-fi
+
+  **Date**: 2026-07-25. **Status**: Done. 79278 bytes (>5 KB). Visually confirmed: at 768px the
+  rail renders as a left column beside the article body (side-by-side, not stacked) — confirms the
+  rail only stacks below the 480px breakpoint, not at tablet width.
+
+- [x] [AI] **Embed all 24 new (mobile + tablet) renders in `prd.md`** under their screen's "Hi-fi
       finalists" block, each with viewport-specific descriptive alt text that names what differs **at
       that width** (never a copy of the desktop alt text) — acceptance:
       `grep -o -- "assets/[a-z-]*option-[ab]-mobile.png" <PLAN>prd.md | sort -u | wc -l` returns **12**
       and the same form with `-tablet.png` returns **12** (both return **0** before this step), AND the
       **link-validator form defined in [Markdown validation commands](#markdown-validation-commands)**
       resolves every new `![]()` target.
-- [ ] [AI] **Append each selected option's three finalist render filenames to its selection line** in
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `prd.md` (24 new `![]()` embeds
+  across all 6 screens' Hi-fi finalists blocks, each caption viewport-specific — none copied from
+  its desktop alt text). Verified both grep counts return 12 (were 0 before). Ran the pre-push
+  link-validator form (`--exclude plans/done --exclude apps/ayokoding-www/content --exclude
+apps/ose-www/content`): `All links valid! No broken links found.` — all 24 new targets resolve.
+  Along the way, caught and fixed a real defect: this checkbox's own copy of the Option-B paths-hub
+  card count ("six cards"/"six badged cards") was wrong — visual inspection confirmed 8 cards,
+  matching the desktop caption's own "eight path cards"; fixed in the source checkboxes above, my
+  earlier notes on those checkboxes, and this phase's new prd.md alt text.
+
+- [x] [AI] **Append each selected option's three finalist render filenames to its selection line** in
       `prd.md` (e.g. `… — finalist renders: landing-hero-option-a-{mobile,tablet,desktop}.png`) —
       acceptance: `grep -o -- "finalist renders:" <PLAN>prd.md | wc -l` returns **6** (returns **0**
       before this step, verified), AND Screen 3's selection still names Option B —
@@ -598,6 +754,12 @@ f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STAL
       **A bare `grep -c "Selected:" prd.md` MUST NOT be used** as an acceptance clause: it is already
       non-zero in the unexecuted plan, so it is pre-satisfied and carries zero discriminating power.
       `grep -c` also counts **lines**, not matches — never use it in an acceptance clause.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `prd.md` (all 6 `Selected:` lines
+  extended with `— finalist renders: <stem>-option-<a|b>-{mobile,tablet,desktop}.png`). Verified
+  `grep -o "finalist renders:" | wc -l` = 6, and Screen 3's Option B selection line intact
+  (`grep -o "Selected: Option B — Left path rail" | wc -l` = 1). Re-ran the link validator after
+  this edit too: `All links valid! No broken links found.`
 
 ### Phase 1 Gate
 

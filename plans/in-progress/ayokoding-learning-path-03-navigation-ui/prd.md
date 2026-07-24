@@ -507,9 +507,18 @@ weight class those two already occupy, rather than hero-card real estate.
 
 ![Landing hero, Option A — the AyoKoding landing page with the brand headline and tagline, then a "Choose your path" label above a two-column grid of four goal-led careers cards (Pass a SWE interview soon, Get productive and ship fast, Build durable fundamentals, Become an AI engineer), each hue-coded with the formal path name and course count and a Start action, and a subordinate row of "Compare all paths", "Explore skills paths", and "Browse the full course library" links](./assets/landing-hero-option-a-desktop.png)
 
+![Landing hero, Option A at mobile width — the two-column card grid collapses to a single stacked column of exactly four careers cards, with "Explore skills paths" surfaced as a separate tertiary link rather than a fifth card](./assets/landing-hero-option-a-mobile.png)
+
+![Landing hero, Option A at tablet width — the card grid holds at two-up, with the "Explore skills paths" link still present in the subordinate link row](./assets/landing-hero-option-a-tablet.png)
+
 ![Landing hero, Option B — the landing page with a single "Start learning" primary CTA and an "Explore tools" secondary button, and below a divider a "What brings you here today?" strip of four goal options each with a hue dot, following the Coursera goal-question pattern](./assets/landing-hero-option-b-desktop.png)
 
-**Selected: Option A — four goal cards in the hero.**
+![Landing hero, Option B at mobile width — the two primary CTAs stack vertically above the goal-question strip, whose four options collapse to a single column](./assets/landing-hero-option-b-mobile.png)
+
+![Landing hero, Option B at tablet width — the two CTAs sit inline side by side, and the goal-question strip reflows to a two-column layout](./assets/landing-hero-option-b-tablet.png)
+
+**Selected: Option A — four goal cards in the hero — finalist renders:
+landing-hero-option-a-{mobile,tablet,desktop}.png.**
 
 | Design                      | Why it won / lost                                                                                                                                               |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -741,9 +750,18 @@ so this is a **content change**, covered by the same generic mtime-based re-rend
 
 ![Paths hub, Option A — a Careers section with three labelled arc sub-groups (Interview-Ready, Immediately-Effective showing two path cards, Fundamentally Strong) each containing hue-coded path cards with role name, course count, and a Start action, followed by a Skills section with four subject cards (Conventional Accounting, Sharia Accounting, Conventional ERP, Sharia ERP) under a "get up and running fast, then go deeper" strap-line](./assets/paths-hub-option-a-desktop.png)
 
+![Paths hub, Option A at mobile width — the Careers section (arc sub-headings, Immediately-Effective still showing its two cards) stacks single-column above the Skills section, also single-column, with no flat undifferentiated grid](./assets/paths-hub-option-a-mobile.png)
+
+![Paths hub, Option A at tablet width — the Careers arc groups reflow two-up, and the Skills section holds two-up as well](./assets/paths-hub-option-a-tablet.png)
+
 ![Paths hub, Option B — a uniform 3×3 grid (last row partial) of eight path cards with no section headings, each distinguished only by a small category·arc badge above the role or subject name](./assets/paths-hub-option-b-desktop.png)
 
-**Selected: Option A — Category sections, arc-grouped within Careers.**
+![Paths hub, Option B at mobile width — the flat grid collapses to a single column, all eight cards stacked, each still carrying its category·arc badge](./assets/paths-hub-option-b-mobile.png)
+
+![Paths hub, Option B at tablet width — the flat grid reflows from three-up to two-up, all eight badged cards in two columns](./assets/paths-hub-option-b-tablet.png)
+
+**Selected: Option A — Category sections, arc-grouped within Careers — finalist renders:
+paths-hub-option-a-{mobile,tablet,desktop}.png.**
 
 | Design                                | Why it won / lost                                                                                                                                                                                                                                 |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -966,9 +984,18 @@ lost):
 
 ![Category landing, Option A — three stacked browser-chrome frames: the Careers instance with three arc cards side by side (Immediately-Effective visibly showing two member roles, Software Engineer and AI Engineer, where the other two arcs show one), the Skills instance with four subject cards (Conventional Accounting, Sharia Accounting, Conventional ERP, Sharia ERP) each carrying a dangerous/comfortable/confident milestone strip, and the Skills empty state showing a friendly "being written, check back soon" message with a fallback link to Careers](./assets/category-landing-option-a-desktop.png)
 
+![Category landing, Option A at mobile width — both the `.arc-grid` and `.skills-grid` collapse to a single column: the Careers instance stacks its three arc cards (Immediately-Effective still previewing two member roles), and the Skills instance stacks its four subject cards above the empty-state message, all full-width](./assets/category-landing-option-a-mobile.png)
+
+![Category landing, Option A at tablet width — the `.arc-grid` reflows from three-up to two-up, and the `.skills-grid` holds at two-up](./assets/category-landing-option-a-tablet.png)
+
 ![Category landing, Option B — a plain numbered list of the three careers arcs with inline description text instead of cards](./assets/category-landing-option-b-desktop.png)
 
-**Selected: Option A — Arc cards with member-role preview.**
+![Category landing, Option B at mobile width — the numbered arc list reflows full-width as a single-column plain list, no card chrome](./assets/category-landing-option-b-mobile.png)
+
+![Category landing, Option B at tablet width — the plain numbered list still reflows full-width, unchanged in structure from mobile](./assets/category-landing-option-b-tablet.png)
+
+**Selected: Option A — Arc cards with member-role preview — finalist renders:
+category-landing-option-a-{mobile,tablet,desktop}.png.**
 
 | Design                           | Why it won / lost                                                                                                                                                                                                                              |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1127,9 +1154,18 @@ pattern already used for Screen 3's rail states):
 
 ![Arc landing, Option A — two stacked browser-chrome frames: the Immediately-Effective arc showing two role cards side by side (Software Engineer, AI Engineer), and the Interview-Ready arc showing one prominent role card with an inline first-phase syllabus preview so a single-role arc never reads as a stub](./assets/arc-landing-option-a-desktop.png)
 
+![Arc landing, Option A at mobile width — the `.role-grid` collapses to one column: both the two-role state and the single-role state (with its inline syllabus preview) stack full-width, the single-role card never reading as a bare stub](./assets/arc-landing-option-a-mobile.png)
+
+![Arc landing, Option A at tablet width — the `.role-grid` holds at two-up, so the two-role state still renders two cards side by side](./assets/arc-landing-option-a-tablet.png)
+
 ![Arc landing, Option B — the Interview-Ready arc rendered with the same bare card template the two-role state uses, leaving a visibly empty second grid cell](./assets/arc-landing-option-b-desktop.png)
 
-**Selected: Option A — Always-render arc header + role card(s), single role gets a syllabus preview.**
+![Arc landing, Option B at mobile width — the rejected option: once the `.role-grid` collapses to one column, the single-role state's empty second grid cell still renders, stacked below the filled card, reading as visibly broken](./assets/arc-landing-option-b-mobile.png)
+
+![Arc landing, Option B at tablet width — the visibly-empty second grid cell is reproduced two-up at this width too, the same broken-looking gap as at mobile width](./assets/arc-landing-option-b-tablet.png)
+
+**Selected: Option A — Always-render arc header + role card(s), single role gets a syllabus
+preview — finalist renders: arc-landing-option-a-{mobile,tablet,desktop}.png.**
 
 | Design                            | Why it won / lost                                                                                                                                                                      |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1244,9 +1280,18 @@ Option B's accordion collapses all but the first stage on mobile to keep the lis
 
 ![Path landing, Option A — a hue strip header with the path title and arc, an info callout to skip the prologue, then phase-grouped sections each rendering a numbered ordered list of course rows where the number is the path order, with capstone markers](./assets/path-landing-option-a-desktop.png)
 
+![Path landing, Option A at mobile width — the frame reflows to full width with no horizontal overflow; phase headings and the numbered course list stack single-column](./assets/path-landing-option-a-mobile.png)
+
+![Path landing, Option A at tablet width — the frame reflows to full width, content remains readable with no horizontal overflow](./assets/path-landing-option-a-tablet.png)
+
 ![Path landing, Option B — the syllabus as collapsible phase accordions, the first two stages expanded to show course rows and the remaining stages collapsed with course counts](./assets/path-landing-option-b-desktop.png)
 
-**Selected: Option A — Phase-grouped numbered syllabus.**
+![Path landing, Option B at mobile width — the frame reflows to full width, the accordion stages stack single-column](./assets/path-landing-option-b-mobile.png)
+
+![Path landing, Option B at tablet width — the frame reflows to full width, accordion stages remain readable with no horizontal overflow](./assets/path-landing-option-b-tablet.png)
+
+**Selected: Option A — Phase-grouped numbered syllabus — finalist renders:
+path-landing-option-a-{mobile,tablet,desktop}.png.**
 
 | Design                   | Why it won / lost                                                                   |
 | ------------------------ | ----------------------------------------------------------------------------------- |
@@ -1460,9 +1505,18 @@ announced with a meaningful label.
 
 ![Course in path, Option A at desktop width — a hue-washed top path banner reading On path with course position and a view-full-path link, a path breadcrumb, an inline prerequisites line with linked prerequisites, the unchanged course body, and a manifest-driven prev/next pair that keeps the path query parameter](./assets/course-path-option-a-desktop.png)
 
+![Course in path, Option A at mobile width — the banner strip stays full-width above the body, no rail is rendered, and the prev/next pair stacks below the article body](./assets/course-path-option-a-mobile.png)
+
+![Course in path, Option A at tablet width — the frame reflows to full width, banner and body remain readable with no horizontal overflow](./assets/course-path-option-a-tablet.png)
+
 ![Course in path, Option B at desktop width — a left path rail in the resizable sidebar slot listing the path's ordered courses grouped by phase, the current course marked with a triangle and a filled row, alongside the course body, breadcrumb, prerequisites, and prev/next](./assets/course-path-option-b-desktop.png)
 
-**Selected: Option B — Left path rail replacing the sidebar.**
+![Course in path, Option B at mobile width — the selected responsive form: the layout flex reflows to a column and the rail becomes full-width (its right border swaps to a bottom border), so the ordered course list sits stacked above the article body with both visible](./assets/course-path-option-b-mobile.png)
+
+![Course in path, Option B at tablet width — the rail remains beside the article body at this width rather than stacking (it only stacks below the 480 px breakpoint), the whole frame reflowed to full width with no horizontal overflow](./assets/course-path-option-b-tablet.png)
+
+**Selected: Option B — Left path rail replacing the sidebar — finalist renders:
+course-path-option-b-{mobile,tablet,desktop}.png.**
 
 The earlier draft of this plan selected Option A and rejected B on mobile-first grounds, in these words:
 _"Option B's left rail is desktop-only and would need to collapse into a top sheet on mobile — extra
