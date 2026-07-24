@@ -27,10 +27,14 @@ construction rather than as a retrofit.
 > no `[HUMAN]` step.**
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
-> `> **Pause Safety**:` note (safe-to-stop state + resume command). Each gate covers the phase's
-> **content correctness** (checkers, build, lint) and its **integration** (draft PR opened, 3-cycle
-> PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed). A phase is not complete until every
-> gate check is green.
+> `> **Pause Safety**:` note (safe-to-stop state + resume command). Every gate covers the phase's
+> **content correctness** (checkers, build, lint). A gate in a phase named as a delivery boundary in
+> the [`### Delivery Boundaries`](#delivery-boundaries) table additionally covers **integration**
+> (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
+> **intermediate** phase instead confirms the work is committed to its delivery unit's branch with
+> nothing pushed for review yet — see [Plans Organization Convention §PRs Open at Delivery
+> Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+> A phase is not complete until every gate check is green.
 >
 > **Executor environment note — RTK-wrapped commands emit an empty-output marker, not true
 > emptiness**: this repo routes `git` (and other commands) through RTK via a Claude Code hook (see
@@ -72,22 +76,28 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 the worktree after the plan is archived and pushed.
 
 Every phase branches from the **latest `origin/main`** inside this one shared worktree
-(`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`),
-authors its work there, commits, pushes that branch, and opens **its own draft PR** — from
-**Phase 1 onward**. **Phase 0 is excluded**: it is setup and baseline, pushes no branch and opens no
-PR, and its evidence artifacts ride the Phase 1 PR.
+(`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`)
+and authors its work there, committing as it goes. Only the phase(s) named as a **delivery boundary**
+in the [`### Delivery Boundaries`](#delivery-boundaries) table push that branch and open **their own
+draft PR**; an **intermediate** phase commits (and may push the branch for durability) without opening
+one, per [Plans Organization Convention §PRs Open at Delivery
+Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+**Phase 0 is excluded from opening a PR under any circumstance**: it is setup and baseline, pushes no
+branch and opens no PR, and its evidence artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in the shared worktree on
-its **own branch**, opens a **draft PR** against `main`,
+Each **delivery boundary** named in the [`### Delivery Boundaries`](#delivery-boundaries) table —
+**Phase 1 onward**; Phase 0 opens none — works in the shared worktree on its **own branch**, opens a
+**draft PR** against `main`,
 runs the **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential
 CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
 are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
-plan ships to ayokoding.com). See
+plan ships to ayokoding.com). An **intermediate** phase inside a delivery unit instead commits (and may
+push for durability) to that unit's branch without opening a PR of its own. See
 [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
@@ -106,9 +116,14 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > **`DL-11` does not exist.** The slot is `DN-11`, a Delivery Note. The Decisions-Locked register runs
 > DL-1…DL-17 with **17** entries, not 25. Never renumber to close the apparent gap.
 
-**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
-must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
-branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+**Delivery-Boundary Integration Protocol** (each delivery boundary's gate lists these as must-pass —
+see the [`### Delivery Boundaries`](#delivery-boundaries) table, in `## Parallelization Model` below,
+for which phase(s) land in each boundary; these steps fire once per **delivery boundary**, not once
+per phase — an intermediate phase inside a unit commits without running them, and a band phase's
+course-level sub-phases each run this same five-step protocol at their own narrower per-course
+granularity, per the NEW-course authoring convention). **Phase 0 is excluded**: it is Environment
+Setup and Baseline, opens no PR, pushes no branch, runs no review cycle, and merges nothing; its
+evidence artifacts ride the Phase 1 PR
 ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the worktree to latest `origin/main` and branch:
@@ -162,6 +177,42 @@ subagents capped per the orchestration convention). The main thread self-promote
 - `<FEAT>` = `apps/ayokoding-www/src/features/course-paths/` (**never written here**)
 - `<MANIFESTS>` = `<FEAT>manifests/` (**never written here** — manifest-plan property; read-only reference only)
 - `<SYLLABUS>` = `../../in-progress/ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (cross-plan authoring source of truth — **never copied**)
+
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                                                                                | Worktree / branch                                                                                                                                                     | PR opens                                  |
+| -------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| 0        | — (setup and baseline)                                                                                       | —                                                                                                                                                                     | no                                        |
+| 1        | AI-engineering courses (6 bodies)                                                                            | shared worktree; one branch + draft PR per course (6 independent DAG-leaf PRs; see NEW-course authoring convention)                                                   | yes — per course, as each of the 6 lands  |
+| 2, 7     | Band 5 — Architecture, distributed & AI/harness (+ Phase 2 surgery-contract lock, 15 bodies)                 | shared worktree; one branch + draft PR per course (15 independent DAG-leaf PRs); Phase 2's contract text rides the first Band-5 course's PR (`software-architecture`) | yes — per course, as each of the 15 lands |
+| 3        | Band 1 — Data depth (5 bodies)                                                                               | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 5 lands  |
+| 4        | Band 2 — Web, backend & platform productivity (10 bodies)                                                    | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 10 lands |
+| 5        | Band 3 — Mobile & desktop platforms (10 bodies)                                                              | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 10 lands |
+| 6        | Band 4 — Concurrency languages (4 bodies)                                                                    | shared worktree; one branch + draft PR per course (4 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 4 lands  |
+| 8        | Band 6 — Low-level systems, JVM & languages, internals builds (16 bodies)                                    | shared worktree; one branch + draft PR per course (16 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 16 lands |
+| 9        | Band 7 — Security, ops, quality & delivery (11 bodies)                                                       | shared worktree; one branch + draft PR per course (11 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 11 lands |
+| 10       | Band 8 — Remaining capstones (8 bodies)                                                                      | shared worktree; one branch + draft PR per course (8 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 8 lands  |
+| 11       | Band 9 — Interview-technique courses (5 bodies)                                                              | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 5 lands  |
+| 12       | Final content-correctness sweep (structural verification + supersession sweep)                               | `ayokoding-learning-path-04-course-authoring/phase-12-verification`                                                                                                   | yes — at Phase 12                         |
+| 13-16    | Plan closeout (manual verification evidence, final `main`/CI integration check, Knowledge Capture, archival) | `ayokoding-learning-path-04-course-authoring/phase-16-closeout`                                                                                                       | yes — at Phase 16                         |
+
+Every band (Phases 1, 3–11) is already a genuine boundary at the **course-level** granularity the
+NEW-course authoring convention uses: each course is a content-independent DAG leaf, so "one PR per
+course" is the sanctioned DAG-leaf-per-PR pattern
+([AGENTS.md §Delivery Mode](../../../AGENTS.md#delivery-mode): "each change-producing DAG leaf gets
+its own worktree and PR (strict 1-PR ↔ 1-worktree)"), not a phase-wide PR — no band needed to change.
+**Phase 2 is intermediate**:
+it locks the evals/D9/D11 contracts into this checklist's own text so Band 5 (Phase 7) applies them
+**by construction**, and ships no content of its own, so its edits ride the first Band-5 course PR
+rather than opening a standalone PR. **Phase 12 stays its own boundary**: unlike Phases 13–15, it lands
+a real content fix (the supersession sweep) plus the plan-wide structural/build/link verification, and
+already passes all four boundary-test criteria standalone — deferring it into the closeout unit would
+defer an already-reached boundary, which the convention forbids. **Phases 13, 14, and 15 are
+intermediate**: Phase 13's screenshots and Phase 15's `learnings.md` triage are evidence the Phase 16
+archival gate itself reads and verifies as a precondition (the textbook "a later phase consumes it"
+signature of scaffolding), and Phase 14 makes no routine change at all (verification/CI-monitoring
+only) — all three fold into the Phase 16 closeout PR, which is the plan's last change-producing phase
+and therefore always a boundary.
 
 ---
 
@@ -400,7 +451,7 @@ subagents capped per the orchestration convention). The main thread self-promote
   repo-wide as of 2026-07-22) — use this exact form.
 
 - [ ] [AI] **Confirm no manifest file changed in this phase** — this phase only writes
-      `evidence/` toolchain-baseline files, and it opens **no** PR (the Per-Phase Integration
+      `evidence/` toolchain-baseline files, and it opens **no** PR (the Delivery-Boundary Integration
       Protocol applies from Phase 1 onward), but the manifest-isolation assertion still holds here:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
@@ -419,7 +470,7 @@ subagents capped per the orchestration convention). The main thread self-promote
       recorded in `evidence/phase-0-snapshot.txt`.
 - [ ] [AI] Cross-plan link gate green (no line naming this plan's folder).
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Per-Phase Integration
+- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Delivery-Boundary Integration
       Protocol applies from **Phase 1 onward** and explicitly excludes Phase 0. Read the printed
       number from each (never `&&`-chained, since `grep -c` exits 1 on a zero count):
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
@@ -695,8 +746,11 @@ deploy), applying the convention:
 - [ ] [AI] "Harness engineering" is cited, not adopted as structure — no course renamed (D9); the
       unverified OpenAI attribution is excluded.
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] Draft PR opened (this phase's PR touches only this delivery checklist's own text — no app
-      content changes); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed (no-op).
+- [ ] [AI] **No PR opens for this phase** — Phase 2 is intermediate (see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table): the contract-lock edits are committed
+      on the shared worktree, this phase's own gate above is green, and nothing is pushed for review
+      yet — the edits ride the first Band-5 course PR (`software-architecture`, Phase 7) rather than
+      opening a standalone PR of their own.
 
 > **Pause Safety**: the evals/D9/D11 contracts are locked and will be enforced when Band 5 and Band 8
 > author their target courses; no app content changed. Safe to stop. To resume: re-read this phase's
@@ -1453,9 +1507,10 @@ rows as part of "convention complete".
   ```
 
 - [ ] [AI] **Verify zero manifest files were touched by this entire plan** — every phase before this
-      one that opens/merges its own PR carries the identical individual check on its own diff before
-      that phase merges (Phase 0's check, Phase 1's check, Phase 2's check, and every "per-band closing
-      steps" step 3, Phases 3–11); each of the **90 individual course sub-phases** nested inside Phase 1
+      one, whether or not it opens its own PR, carries the identical individual check on its own diff
+      before that phase merges or folds into its delivery unit's PR (Phase 0's check, Phase 1's check,
+      Phase 2's check, and every "per-band closing steps" step 3, Phases 3–11); each of the **90
+      individual course sub-phases** nested inside Phase 1
       and Bands 1–9 additionally carries its own instance of this check as **convention step 8** (see the
       "NEW-course authoring convention"), asserted on that course's own branch before it merges — the
       closing-steps checks alone branch fresh from `origin/main` after every course in that band has
@@ -1505,7 +1560,9 @@ rows as part of "convention complete".
       `learn/courses/` failure.
 - [ ] [AI] Zero manifest files touched across the whole plan's history; all ten band signals complete
       with resolvable `MERGED_COMMIT` SHAs.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] Draft PR opened at Phase 12 — this unit's own boundary (see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
+      PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: the authored library passes every automated gate. Safe to stop. To resume: re-run
 > the affected quality gates + build.
@@ -1561,9 +1618,10 @@ rows as part of "convention complete".
 - [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad — acceptance: the exemption entry is present, so
       the archival gate can verify it was recorded rather than forgotten.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase opens and merges its own PR
-      (verification evidence) under the Per-Phase Integration Protocol exactly like every other phase,
-      so it gets the same individual gate:
+- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 13 is intermediate (see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table): its evidence commits fold into the
+      Phase 16 closeout PR rather than opening one of their own, so this phase still needs its own
+      individual gate on this phase's own diff before that PR opens:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
@@ -1576,8 +1634,10 @@ rows as part of "convention complete".
 - [ ] [AI] The rule-15 exemption is recorded with reasons (not silently omitted); the triad itself is
       **not** run here.
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] Draft PR opened (verification evidence); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged; deployed.
+- [ ] [AI] **No PR opens for this phase** (intermediate — see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table): the evidence commits are on the shared
+      worktree, this phase's own gate above is green, and nothing is pushed for review yet — the
+      closeout PR for Phases 13–16 opens at Phase 16.
 
 > **Pause Safety**: the authored library is verified live and defect-clean in `en`. Safe to stop. To
 > resume: restart the dev server and re-open one sampled course per band.
@@ -1661,10 +1721,11 @@ rows as part of "convention complete".
       records its terminal routing state.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md` — acceptance: `learnings.md` is never silently empty.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase commits the
-      `learnings.md` triage and any inline non-code fixes, and opens/merges its own PR under the
-      Per-Phase Integration Protocol like every other phase, so it gets the same individual gate
-      (the code-routing rule above already forbids landing a manifest-touching fix inline; this
+- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 15 is intermediate (see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table): it commits the `learnings.md` triage
+      and any inline non-code fixes on the shared closeout branch and folds into the Phase 16 PR
+      rather than opening one of its own, so this phase still gets the same individual gate on its own
+      diff (the code-routing rule above already forbids landing a manifest-touching fix inline; this
       re-asserts it mechanically rather than trusting the routing rule alone):
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
@@ -1676,8 +1737,10 @@ rows as part of "convention complete".
       reason) or the explicit "none" escape is present.
 - [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] Draft PR opened (`learnings.md` triage); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged; deployed (no-op).
+- [ ] [AI] **No PR opens for this phase** (intermediate — see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table): the `learnings.md` triage is committed
+      on the shared closeout branch, this phase's own gate above is green, and nothing is pushed for
+      review yet — the closeout PR for Phases 13–16 opens at Phase 16.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
@@ -1745,8 +1808,10 @@ rows as part of "convention complete".
 - [ ] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
       all READMEs updated; archival committed.
-- [ ] [AI] Draft PR opened (archival move); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
-      deployed (no-op).
+- [ ] [AI] Draft PR opened for the Phase 13–16 closeout unit (manual verification evidence,
+      `learnings.md` triage, and the archival move — this unit's own boundary; see the
+      [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
+      PR `[AI]`-merged; deployed (no-op).
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
 > resume: nothing — the plan is complete.

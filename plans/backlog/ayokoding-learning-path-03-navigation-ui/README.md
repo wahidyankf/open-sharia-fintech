@@ -279,7 +279,7 @@ same verbatim-ownership reason.
   cluster); then `immediately-effective/software-engineer-to-ai-engineer` (authoring priority #1); then
   the `immediately-effective/software-engineer` manifest; then the `fundamentally-strong/software-engineer`
   manifest; then backfill topics 34–94 native as the library fills. **Decided; amended 2026-07-20.**
-- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each phase's PR
+- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each delivery unit's PR
   automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this
   plan declares no `[HUMAN]` merge gate. When DN-11 was first recorded, `pr-merge-protocol.md` still
   defaulted to a `[HUMAN]` merge, so the maintainer authorized AI-auto-merge for **this plan**
@@ -365,7 +365,9 @@ See [prd.md §Personas](./prd.md#personas-one-per-path) for the authoritative co
 ## Delivery Mode: worktree-to-pr
 
 `worktree-to-pr` (the repo default, inherited from the source plan as a tier-2 plan-field value): work
-in `worktrees/ayokoding-learning-path-03-navigation-ui/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none) against `main`,
+in `worktrees/ayokoding-learning-path-03-navigation-ui/`, open a draft PR at each **delivery boundary**
+(see [delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries) — Phase 1; Phases 2-5;
+Phases 7-8; Phase 0 opens none) against `main`,
 run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges once the review
 and all quality gates are green — a plan-scoped confirmation of the repo-default `[AI]` merge, which
 this plan does not opt out of (see **DN-11 DECIDED** above). `ayokoding-www` is deployed to

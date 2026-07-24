@@ -46,16 +46,18 @@ claude --worktree ayokoding-learning-path-06-skills-accounting-unit-<unit-id>
 
 ## Delivery Mode: worktree-to-pr
 
-Each course-authoring sub-phase (Phase 2, 3, 5) is its own **DAG leaf**: its own branch, its own draft
-PR, its own 3-cycle fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review, its own `[AI]` merge — strict
-1-PR-per-course, pipelined up to the in-force concurrency cap (N=3 unless the programme has since
-escalated it — check the latest `AGENTS.md` §Agent Workflow Orchestration value before starting).
-Manifest-growth TDD cycles and landing authoring are each their own PR too, sequenced after the
-courses each phase's manifest step depends on. **Phase 0 is not a DAG leaf** — it is Environment
-Setup and Baseline, so it opens no PR, pushes no branch, runs no review cycle, and merges nothing;
-the earliest PR belongs to Phase 1
+Each course-authoring sub-phase (Phase 2, 3, 5) is its own **delivery unit**: its own branch, its own
+draft PR, its own 3-cycle fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review, its own
+`[AI]` merge — strict 1-PR-per-course, pipelined up to the in-force concurrency cap (N=3 unless the
+programme has since escalated it — check the latest `AGENTS.md` §Agent Workflow Orchestration value
+before starting). Manifest-growth TDD cycles and landing authoring are each their own PR too,
+sequenced after the courses each phase's manifest step depends on. **Phase 0 is not a delivery unit**
+— it is Environment Setup and Baseline, so it opens no PR, pushes no branch, runs no review cycle, and
+merges nothing; the earliest PR belongs to Phase 1
 ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
-See
+Phases 1, 4, 6 and 7 are likewise not delivery units on their own — they are intermediate phases that
+commit to the base worktree's branch and fold forward into the plan's one final-integration delivery
+unit; see [§Delivery Boundaries](#delivery-boundaries) for the full phase-to-PR mapping. See
 [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
 **Per-merge integration protocol.** After each `[AI]` merge above: confirm CI green on `origin/main`
@@ -103,6 +105,29 @@ topological ordering this parallelization respects.
 
 **Each parallel unit runs in its own worktree** (see [§Worktree](#worktree)) — the fan-out is bounded
 by the concurrency cap, and the number of live per-unit worktrees never exceeds it.
+
+### Delivery Boundaries
+
+| Phase(s)   | Delivery unit                                                                                                                                                                                                                                                                                                                      | Worktree / branch                                                                               | PR opens                                                                                                           |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 0          | — (setup and baseline)                                                                                                                                                                                                                                                                                                             | —                                                                                               | no                                                                                                                 |
+| 2          | Stage 1, repeating per-unit: one delivery unit per course (#1–#3, §2.1), one for the 3-entry manifest-publish TDD cycle (§2.2), one for both landings plus their companion path-walk e2e TDD cycle (§2.3–§2.4)                                                                                                                     | `worktrees/…-unit-<course-id\|manifest-conventional\|manifest-sharia>/` — one worktree per unit | yes — one PR per unit, pipelined up to the concurrency cap                                                         |
+| 3          | Stage 2, repeating per-unit: one delivery unit per course (#4–#19, §3.1), one for the 19-entry manifest-growth TDD cycle (§3.2), one for the `conventional-accounting`-completion landing update plus its companion 19-course e2e-walk extension (§3.3, §3.5)                                                                      | same per-unit pattern as Phase 2                                                                | yes — one PR per unit, pipelined up to the concurrency cap                                                         |
+| 5          | Stage 3, repeating per-unit: one delivery unit per course (#20–#24, §5.1), one for the 24-entry `sharia-accounting`-only manifest-growth TDD cycle (§5.2), one for the `sharia-accounting` landing update plus its companion 24-course e2e-walk extension (§5.3, §5.4)                                                             | same per-unit pattern as Phases 2/3                                                             | yes — one PR per unit, pipelined up to the concurrency cap                                                         |
+| 1, 4, 6-10 | Final-integration delivery unit: syllabus corpus (Phase 1), carried verification-debt resolution (Phase 4), corpus-wide verification/licensing/citation sweep (Phase 6), manual UI verification + Rule-15 retest (Phase 7), final `origin/main` integration and CI (Phase 8), Knowledge Capture (Phase 9), and archival (Phase 10) | `worktrees/ayokoding-learning-path-06-skills-accounting/` (base)                                | yes — pushed and opened at Phase 8; stays open through Phases 9-10; `[AI]` merges as the terminal step of Phase 10 |
+
+Phases 1 and 4 fail the boundary test's **(a) coherent** prong — each produces a scaffold (the
+syllabus corpus) or a verification-debt note that the next authoring phase consumes or gates on, not
+an independently meaningful increment. Phases 6 and 7 also fail **(a) coherent** — their edits
+(citation links, licensing fixes, tester-driven fixes) harden content that Phases 2, 3 and 5 already
+shipped on their own PRs, so neither carries new capability to review on its own. All four sit in the
+base worktree per [§Worktree](#worktree) with no push/PR/merge step of their own, so their work
+accumulates on that branch until Phase 8 pushes it and opens the plan's one final PR, which Phases
+9-10 commit into and Phase 10 merges as its terminal step — exactly as the base-worktree grouping, the
+Phase 8 Gate note, and Phase 10's steps already state. The per-course, per-manifest-cycle, and
+per-landing units inside Phases 2, 3 and 5 remain independent DAG nodes and stay separate delivery
+units per [rule 5](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+— this table does not fold them together to shrink the PR count.
 
 ## Path constants
 

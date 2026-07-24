@@ -19,10 +19,12 @@ starts. See [README §Depends-on](./README.md#depends-on) for the checkable star
 > Git-mechanical steps (worktree create/remove, branch, push, merge) are `[AI]`.
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
-> `> **Pause Safety**:` note (safe-to-stop state + resume command). Each gate covers the phase's
-> **code correctness** (tests, checkers, build) and its **integration** (draft PR opened, 3-cycle
-> PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed). A phase is not complete until every
-> gate check is green.
+> `> **Pause Safety**:` note (safe-to-stop state + resume command). Every gate covers the phase's
+> **code correctness** (tests, checkers, build); only the gate of a phase that is a **delivery
+> boundary** (see [Delivery Boundaries](#delivery-boundaries) below) additionally covers
+> **integration** (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www`
+> deployed) — intermediate phases commit to their delivery unit's branch and stay unopened for review
+> until that boundary. A phase is not complete until every gate check is green.
 
 ## Worktree
 
@@ -38,19 +40,22 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
 the worktree after the plan is archived and pushed.
 
-Every phase branches from the **latest `origin/main`** inside this one worktree
+Each delivery unit branches from the **latest `origin/main`** inside this one worktree
 (`git fetch origin && git checkout main && git pull && git checkout -b
-ayokoding-learning-path-03-navigation-ui/<phase-slug>`), authors its work there, commits, pushes that
-branch, and opens **its own draft PR** — from **Phase 1 onward**. **Phase 0 is excluded**: it is
-setup and baseline, pushes no branch and opens no PR, and its evidence artifacts ride the Phase 1 PR.
+ayokoding-learning-path-03-navigation-ui/<phase-slug>`), authors every phase in that unit on the same
+branch, commits per phase, pushes that branch, and opens **its own draft PR at the unit's delivery
+boundary** — see [Delivery Boundaries](#delivery-boundaries) below for which phases share a unit.
+**Phase 0 is excluded**: it is setup and baseline, pushes no branch and opens no PR, and its evidence
+artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in this worktree on its
-**own branch**, opens a **draft PR** against `main`, runs the
+Each **delivery unit** — the contiguous phase ranges named in
+[Delivery Boundaries](#delivery-boundaries) below; Phase 0 opens none — works in this worktree on its
+**own branch**, opens a **draft PR** against `main` at the unit's boundary phase, runs the
 **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential CI-gated cycles),
 flips the PR to ready, and `[AI]` **merges it automatically once all quality gates are green** — then
 `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this plan ships to
@@ -70,9 +75,12 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
 > than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
-**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
-must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
-branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+**Delivery-Boundary Integration Protocol** (fires once per **delivery boundary** named in
+[Delivery Boundaries](#delivery-boundaries) below — the boundary phase's gate lists these as
+must-pass — not once per phase; a delivery unit's intermediate phases commit to that unit's branch
+and pass their own `### Phase N Gate`, but do not run this protocol). **Phase 0 is excluded**: it is
+Environment Setup and Baseline, opens no PR, pushes no branch, runs no review cycle, and merges
+nothing; its evidence artifacts ride the Phase 1 PR
 ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the worktree to latest `origin/main` and branch:
@@ -132,6 +140,32 @@ flowchart TB
 **Accessibility note.** Phase kind is carried by node **shape** (hexagon = setup/verify, rectangle =
 feature code, stadium = terminal) and by each node's own label; every edge carries a text condition, so
 nothing depends on distinguishing the fills.
+
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                                                                                                                                                                                              | Worktree / branch                                                                 | PR opens         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------- |
+| 0        | — (setup and baseline)                                                                                                                                                                                                     | —                                                                                 | no               |
+| 1        | UI design funnel (Screens 0, 1, 1a, 1b, 2, 3) — plan artefacts only, no app code                                                                                                                                           | `worktrees/ayokoding-learning-path-03-navigation-ui/`, branch `.../design-funnel` | yes — at Phase 1 |
+| 2-5      | Path-aware navigation feature: shell + route wiring + rail (2); path landing + paths hub + landing hero + e2e (3); feature verification + R9 UI Quality Gate (4); manual UI verification + rule-15 three-tester retest (5) | same worktree, branch `.../feature`                                               | yes — at Phase 5 |
+| 6        | — (post-merge `origin/main` integration confirmation; produces no diff)                                                                                                                                                    | same worktree, checked out on `main` (no phase branch of its own)                 | no               |
+| 7-8      | Knowledge capture (7) + plan archival (8)                                                                                                                                                                                  | same worktree, branch `.../archival`                                              | yes — at Phase 8 |
+
+Every change-producing phase appears in exactly one row. Phase 1 stands alone: it is a design record —
+complete, green, and reviewable with no app code in existence yet — so it independently satisfies all
+four boundary criteria and grouping it with the code phases would only conflate a design review with a
+code review. Phases 2-4 each fail the boundary test on their own — Phase 2 wires manifest loading,
+routing, and the path rail into the site with no reachable entry point (the landing pages, hub, and
+hero that make it discoverable are Phase 3's job, so it is a helper the next phase consumes); Phase 3
+ships that discoverable UI but is not yet "green standalone" against this plan's own definition of
+done, since the accessibility contract and the R9 UI Quality Gate that certify the whole feature run
+only in Phase 4; Phase 4 verifies and hardens the feature Phase 3 already built rather than shipping a
+new unit of meaning, and its UI Quality Gate is explicitly scoped across both Phases 2 and 3's code —
+so the three only become one coherent, green, reviewable increment together, at Phase 5, once the
+feature is built, quality-gated, and verified live and defect-clean. Phase 6 produces no diff at all
+(confirmation only) and so cannot be a "shippable increment" by definition. Phase 7 is bookkeeping in
+service of Phase 8's archival move, not a capability of its own, and per the archival-in-PR convention
+its `learnings.md` edits ride the same final PR as Phase 8's `git mv`.
 
 **Path constants** (referenced throughout):
 
@@ -833,14 +867,12 @@ f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STAL
 - [ ] [AI] Fix ALL failures — including preexisting issues not caused by these changes.
 - [ ] [AI] Re-run failing checks to confirm resolution; verify zero failures before pushing.
 
-### Post-Push CI Verification
+### Push for Durability (No PR Yet)
 
-- [ ] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/<phase-slug>` (the PR
-      branch — this plan's Delivery Mode is `worktree-to-pr`).
-- [ ] [AI] Monitor the PR's check run (poll every ~2 min; one
-      `gh run view --json status,conclusion` per wakeup; never `gh run watch`).
-- [ ] [AI] Verify ALL CI checks pass — no exceptions; fix root causes and push follow-up commits until
-      green. Do NOT proceed to Phase 3 until CI is fully green.
+- [ ] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/feature` (this delivery
+      unit's branch, Phases 2-5, per [Delivery Boundaries](#delivery-boundaries)) — durability only; no
+      PR is open yet, so there is no CI check run to monitor. Do NOT proceed to Phase 3 until this
+      Phase 2 Gate below is fully green.
 
 ### Phase 2 Gate
 
@@ -856,7 +888,10 @@ f="<PLAN>assets/$s-option-$o-desktop"; test "$f.png" -nt "$f.html" || echo "STAL
       the retained navigation specs still pass.
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` + `:build` + `:typecheck` + `:lint` exit 0.
       (`:test:integration` is a no-op echo — omitted deliberately, not overlooked.)
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] All Phase 2 work is committed to `ayokoding-learning-path-03-navigation-ui/feature` (this
+      delivery unit's branch, Phases 2-5); every check above in this Phase 2 Gate is green; nothing has
+      been pushed for review yet — the unit's PR opens at Phase 5 per
+      [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: the feature resolves a manifest + path context + prerequisites end-to-end against
 > the fixture, and the rail renders in both hosts. **No real manifest is published, so production still
@@ -1196,11 +1231,11 @@ the first time here, at the e2e level, rather than via its own dedicated unit-le
 - [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0.
 - [ ] [AI] Fix ALL failures — including preexisting issues not caused by these changes.
 
-### Post-Push CI Verification
+### Push for Durability (No PR Yet)
 
-- [ ] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/<phase-slug>`.
-- [ ] [AI] Monitor the PR's check run (poll every ~2 min) until every check is green; fix root causes
-      and push follow-ups. Do NOT proceed to Phase 4 until CI is fully green.
+- [ ] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/feature` (this delivery
+      unit's branch, Phases 2-5) — durability only; no PR is open yet, so there is no CI check run to
+      monitor. Do NOT proceed to Phase 4 until this Phase 3 Gate below is fully green.
 
 ### Phase 3 Gate
 
@@ -1217,7 +1252,10 @@ the first time here, at the e2e level, rather than via its own dedicated unit-le
       **and** `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0. (`ayokoding-www:test:e2e` and
       `:test:integration` are both no-op echoes — e2e lives in the paired `ayokoding-www-fe-e2e`
       project, and the integration tier is deliberately unused for content apps.)
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] All Phase 3 work is committed to `ayokoding-learning-path-03-navigation-ui/feature` (this
+      delivery unit's branch, Phases 2-5); every check above in this Phase 3 Gate is green; nothing has
+      been pushed for review yet — the unit's PR opens at Phase 5 per
+      [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: the full path-aware navigation UI is implemented, tested (unit + e2e + specs), and
 > live — but **no real path manifests are published yet**, so production still shows the canonical
@@ -1283,7 +1321,10 @@ the first time here, at the e2e level, rather than via its own dedicated unit-le
 - [ ] [AI] Static/dynamic boundary unchanged from the Phase 0 snapshot; host-invariant sweep green.
 - [ ] [AI] `ui-quality-gate` (R9) reports `final-status: pass` — zero findings on two consecutive
       `swe-ui-checker` runs; API gate exemption stands (no API surface — see tech-docs.md §R9).
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] All Phase 4 work (including any `swe-ui-fixer` corrections from the R9 gate) is committed to
+      `ayokoding-learning-path-03-navigation-ui/feature` (this delivery unit's branch, Phases 2-5);
+      every check above in this Phase 4 Gate is green; nothing has been pushed for review yet — the
+      unit's PR opens at Phase 5 per [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: the rendering layer passes every automated gate. Safe to stop. To resume: re-run the
 > affected quality gates + build.
@@ -1461,8 +1502,10 @@ the first time here, at the e2e level, rather than via its own dedicated unit-le
 - [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape.
 - [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR.
-- [ ] [AI] Draft PR opened (`learnings.md` triage); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged; deployed (no-op).
+- [ ] [AI] `learnings.md` triage is committed to `ayokoding-learning-path-03-navigation-ui/archival`
+      (this delivery unit's branch, Phases 7-8); every check above in this Phase 7 Gate is green;
+      nothing has been pushed for review yet — the unit's PR opens at Phase 8 per
+      [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future process
 > depends on querying it later. Safe to stop. To resume: re-read `learnings.md` and confirm every entry
@@ -1517,8 +1560,8 @@ plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/` using today's 
       DD-47 note intact so 36 is not misread as under-delivery.
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/`; all
       READMEs updated; archival committed.
-- [ ] [AI] Draft PR opened (archival move); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
-      deployed (no-op).
+- [ ] [AI] Draft PR opened (`learnings.md` triage + archival move — this delivery unit's Phase 7-8
+      PR); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed (no-op).
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
 > resume: nothing — the plan is complete.

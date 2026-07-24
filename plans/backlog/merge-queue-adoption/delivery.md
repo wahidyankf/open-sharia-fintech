@@ -84,6 +84,26 @@ the review cycle + merge once; Phase 4 is the post-merge `[HUMAN]` enablement (t
 independent of each other — they may run in parallel. Enablement in each is **conditional** on the
 Phase 0 matrix. Knowledge Capture (Phase 7) and Archival (Phase 8) run once, after all repos are done.
 
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                                                                                              | Worktree / branch                                  | PR opens         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ---------------- |
+| 0        | — (setup, baseline, availability matrix)                                                                                   | `worktrees/merge-queue-adoption/`                  | no               |
+| 1-3      | `ose-public` source of truth: `merge_group` CI trigger (1), precondition-(c) reword + operations doc (2), finalization (3) | `worktrees/merge-queue-adoption/`, one branch      | yes — at Phase 3 |
+| 4        | — (post-merge `[HUMAN]` queue enablement, or the recorded MQ-1 deferral; repo-settings change, no repo diff)               | —                                                  | no               |
+| 5        | `ose-primer` propagation                                                                                                   | own `ose-primer` worktree                          | yes — at Phase 5 |
+| 6        | `ose-infra` propagation (conditional on the Phase 0 matrix)                                                                | own `ose-infra` worktree                           | yes — at Phase 6 |
+| 7-8      | Knowledge capture (7) + plan archival (8)                                                                                  | `worktrees/merge-queue-adoption/`, archival branch | yes — at Phase 8 |
+
+Phases 1-3 group because Phases 1 and 2 are scaffolding the `ose-public` unit needs before it is
+coherent: the `merge_group` trigger alone changes CI behaviour with no documented contract, and the
+reword alone documents a queue no workflow yet honours. Only at Phase 3 is the increment coherent,
+green standalone, defensible on `main`, and reviewable whole. **Phases 5 and 6 stay separate
+delivery units** — they target different repositories, so they are independent DAG nodes and rule 5
+forbids folding them together to reduce PR count. Phase 4 changes repository settings rather than
+repository content, so it produces no diff to review. Phases 7-8 are the closing unit, whose
+deferred archival is the documented carve-out recorded in Phase 8.
+
 ## Commit Guidelines
 
 Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose-infra`):

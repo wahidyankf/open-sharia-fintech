@@ -55,7 +55,7 @@ On a shared machine, uncleaned artifacts are not a tidiness issue — they accum
 everyone is using.
 
 - **Disk.** Each worktree is a full checkout. A multi-phase plan under the 1-PR ↔ 1-worktree mapping
-  creates one per phase per repo; several such plans in flight fill a disk that CI runners, builds,
+  creates one per **delivery unit** per repo; several such plans in flight fill a disk that CI runners, builds,
   and every other agent share.
 - **The ref namespace.** Removing a worktree leaves its branch behind. A plan that cleans worktrees but
   not refs still leaves stale local and remote branches on every repo it touched, and those
@@ -143,7 +143,7 @@ and was correctly left in place.
 ## Branch Cleanup
 
 Removing a worktree leaves its branch behind. Under the 1-PR ↔ 1-worktree mapping, a multi-phase plan
-accumulates one branch per phase per repo — so a plan that cleans worktrees but not refs still leaves
+accumulates one branch per **delivery unit** per repo — so a plan that cleans worktrees but not refs still leaves
 stale local and remote branches on every repo it touched. Run this after each worktree removal.
 
 **Delete only branches this plan created**, and only after the branch's PR is confirmed MERGED by the

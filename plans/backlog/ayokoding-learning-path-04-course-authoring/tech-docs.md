@@ -358,7 +358,7 @@ sequenceDiagram
 
     CA->>CA: Author every body in Band N from its syllabus spec
     CA->>CA: Run content checkers, apply fixers, re-verify
-    CA->>Main: Push band branch, open draft PR, 3-cycle review, [AI] merge
+    CA->>Main: Each course lands via its own draft PR, 3-cycle review, [AI] merge (per-course DAG-leaf PRs)
     CA->>CA: Record five-field band-completion signal in delivery.md
     Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (full paths), MERGED_COMMIT
     CA->>MF: Hand off the signal (via this plan's merged delivery.md)

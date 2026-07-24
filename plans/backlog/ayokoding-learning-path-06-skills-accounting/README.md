@@ -373,11 +373,18 @@ fact. Full status ledger, with sources and access dates: [verification-log.md](.
 `worktree-to-pr` — the repo default, declared explicitly. Sequential phases work in the base
 worktree `worktrees/ayokoding-learning-path-06-skills-accounting/`; each parallel course-authoring
 leaf gets **its own** worktree (strict 1 PR ↔ 1 worktree — git allows one branch per worktree, so
-concurrent course PRs cannot share one). Open a draft PR per **delivery** phase (and per course
-sub-phase) against `main` — **Phase 1 onward**; Phase 0 is setup/baseline and opens none — run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then
-`[AI]` merges once every quality gate is green. `ayokoding-www` deploys to `prod-ayokoding-www` after
-each merge. See [delivery.md](./delivery.md#delivery-mode-worktree-to-pr) for the `## Worktree` and
-`## Delivery Mode` declarations and the per-phase integration protocol.
+concurrent course PRs cannot share one). PRs open at **delivery boundaries**, not every phase: each
+course (Phases 2, 3, 5), each manifest-growth TDD cycle, and each landing-authoring sub-phase is its
+own delivery unit with its own draft PR against `main`. Phases 1, 4, 6 and 7 are intermediate — they
+commit to the base worktree's branch without opening a PR of their own — and fold forward into the
+plan's one final-integration delivery unit, which Phase 8 pushes and opens as a draft PR, Phases 9-10
+commit into, and Phase 10's `[AI]` merge closes. Phase 0 is setup/baseline and opens none. Every
+delivery-unit PR runs the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles) before its
+`[AI]` merge, once every quality gate is green. `ayokoding-www` deploys to `prod-ayokoding-www` after
+each merge that lands app content. See [delivery.md](./delivery.md#delivery-mode-worktree-to-pr) for
+the `## Worktree` and `## Delivery Mode` declarations,
+[delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries) for the full phase-to-PR
+mapping, and the per-merge integration protocol.
 
 ## Navigation
 

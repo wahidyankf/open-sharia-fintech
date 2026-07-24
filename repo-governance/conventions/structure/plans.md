@@ -575,7 +575,7 @@ Every phase in a delivery checklist MUST be designed as a **natural pause point*
 > Safe to stop. To resume: `<single command to re-verify>`.
 ```
 
-Order phases so each builds on a green predecessor. Phase 0 (Environment Setup and Baseline) already follows this shape — its gate is the recorded clean baseline, and that gate is the whole of it: Phase 0 opens no PR, per [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+Order phases so each builds on a green predecessor. Phase 0 (Environment Setup and Baseline) already follows this shape — its gate is the recorded clean baseline, and that gate is the whole of it: Phase 0 opens no PR, per [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule). A gate marks the end of a **phase**; it does not by itself mark a PR. Only the phases named as delivery boundaries carry integration steps, per [PRs Open at Delivery Boundaries](#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 **Enforcement**: `plan-checker` flags any phase lacking a `### Phase N Gate` as **HIGH**, and flags a gate lacking concrete verification commands or criteria, or a missing Pause Safety note, as **MEDIUM**. `plan-execution-checker` verifies each phase gate was satisfied before the next phase's work began (via git history). `plan-fixer` adds missing gates and Pause Safety notes.
 
@@ -607,12 +607,16 @@ shared branch, or an ordering constraint makes them dependent however separable 
 **Enforcement**: `plan-checker` flags a non-trivial plan lacking a `## Parallelization Model` section
 as **MEDIUM**, and flags a declared-parallel node set with a genuine write conflict as **HIGH**.
 
-**Each independent DAG node that produces changes lands as its own PR** — one worktree → one branch → one PR → one node,
-opened and merged as that node completes rather than held for a batch merge at plan end. Partial
-work reaches `main` merged-but-dark behind a feature flag; dependent nodes that cannot be separated
-stay a single PR. The full planning-granularity rule — the strict 1-PR↔1-worktree mapping, per-phase
-merging, the feature-flag default with its unflagged escape and named removal step, and how the
-`worktree-to-pr` default binds as a design obligation at authoring time — is stated in the
+**Each independent DAG node that produces changes lands as its own delivery unit and PR** — one
+worktree → one branch → one PR → one delivery unit, opened and merged when that unit's delivery
+boundary is reached rather than held for a batch merge at plan end. Partial work reaches `main`
+merged-but-dark behind a feature flag; dependent nodes that cannot be separated stay a single
+delivery unit. Exactly how a plan's phases map onto delivery units and PRs — including which phase
+inside a unit is the boundary that actually opens one — is stated in
+[PRs Open at Delivery Boundaries, Not Every Phase](#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+below. The remaining planning-granularity rules — the strict 1-PR↔1-worktree mapping, the
+feature-flag default with its unflagged escape and named removal step, and how the `worktree-to-pr`
+default binds as a design obligation at authoring time — are stated in the
 [plan-planning workflow §Planning Granularity](../../workflows/plan/plan-planning.md#planning-granularity).
 
 ### Phase 0 Opens No PR — the Earliest PR Is Phase 1 (HARD RULE)
@@ -638,6 +642,94 @@ This is not an exception to [Delivery Checklists Express a DAG](#delivery-checkl
 **A plan whose Phase 0 genuinely produces reviewable changes has a mis-scoped Phase 0**, not an exemption. Move that work into Phase 1 (or a later phase) and leave Phase 0 as setup and baseline only. Splitting the work is always available; opening a Phase 0 PR is not.
 
 **Enforcement**: `plan-maker` never emits a PR-creation, review-cycle, or merge step inside Phase 0. `plan-checker` flags any such step as **HIGH** regardless of the plan's declared Delivery Mode — the mode authorizes PR steps for delivery phases, never for Phase 0. `plan-fixer` removes the offending step and folds any Phase 0 evidence artifact into the Phase 1 PR. `plan-execution-checker` flags a PR that was actually opened for Phase 0 as **HIGH**. `repo-setup-manager`, the agent that executes Phase 0, carries no push and no PR step in its sequence.
+
+### PRs Open at Delivery Boundaries, Not Every Phase (HARD RULE)
+
+**A PR opens only at a delivery boundary — never at every phase.** A **delivery boundary** is a
+phase after which the accumulated work is an independently shippable increment. A **delivery unit**
+is the contiguous run of phases ending at a delivery boundary — the unit, not the individual phase,
+is what maps to a PR.
+
+The mapping from [Delivery Checklists Express a DAG](#delivery-checklists-express-a-dag-hard-rule)
+above sharpens: **one worktree → one branch → one PR → one delivery unit**, not one worktree → one
+branch → one PR → one phase.
+
+1. **A PR opens only at a delivery boundary.** Phases inside a delivery unit that are not its
+   boundary commit to the unit's branch and must still pass their own `### Phase N Gate`, but they
+   open no PR, run no PR-Review Maker→Fixer Cycle, and merge nothing. Pushing the branch to `origin`
+   for durability is permitted and opens nothing.
+2. **Every plan declares its delivery boundaries explicitly** — see the required declaration format
+   below.
+3. **The last change-producing phase is always a delivery boundary.** Otherwise the plan's final
+   work never merges.
+4. **Phase 0 is never a delivery boundary** — it produces nothing shippable. This is consistent with
+   [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule) above, which
+   remains the sole authority on Phase 0 itself.
+5. **Independent parallel DAG nodes still deliver separately.** Grouping phases into one delivery
+   unit is permitted only along a dependency chain. Merging two independent nodes into one PR to
+   reduce PR count is forbidden — it re-serialises work the DAG declared independent. This clause
+   protects the parallelization rationale behind the `worktree-to-pr` default.
+6. **A shippable increment may not be deferred merely to batch it.** If the work standing at phase N
+   already satisfies the boundary test below, phase N is a boundary — a plan does not get to carry
+   it forward to make a bigger PR.
+7. **An opened PR is never held.** It is opened and merged when its boundary is reached; PRs never
+   queue for a plan-end merge train. Grouping dependent phases into one delivery unit is not
+   batching — holding independent, already-open PRs is exactly what this prohibition targets. Nor
+   does this bar a **GitHub merge queue**, which serialises already-approved merges for CI
+   correctness and holds nothing back: the prohibition is on a plan deferring its own merges, not on
+   the platform ordering them.
+
+This rule governs **PRs**, so it binds the `*-to-pr` delivery modes only. Under
+`worktree-to-origin-main` or `main-to-origin-main` a plan opens no PR at all, and a **per-phase
+commit-and-push checkpoint cadence there is correct and unaffected** — commits are not PRs, and
+nothing in this section asks a direct-push plan to batch them.
+
+**The boundary test** — a phase is a delivery boundary when all four hold:
+
+- **(a) Coherent** — the accumulated increment is a complete unit of meaning (a capability, a
+  migration step, a governance rule), not half a refactor.
+- **(b) Green standalone** — every quality gate passes on the increment alone.
+- **(c) Defensible on `main`** — if the plan stopped forever right here, `main` is in a state the
+  team would accept: working, or complete-and-inert behind a feature flag.
+- **(d) Reviewable whole** — a reviewer can judge it without reading phases that do not exist yet.
+
+A phase that fails any of these is an **intermediate phase**, not a boundary. Typical intermediate
+phases: scaffolding a schema nothing reads yet, extracting a helper the next phase consumes, writing
+a fixture the next phase asserts on.
+
+**Why this is a hard rule**: a PR per phase spends a full discipline-specialist fan-out, a synthesis
+pass, a fixer pass, and up to three CI-gated cycles reviewing scaffolding that the very next phase
+rewrites — and the review cannot judge the work's intent, because the intent only becomes visible two
+phases later. Grouping to the natural boundary makes each review see one complete thought.
+
+The counterweight is rule 6 above: the same instinct, over-applied, produces one end-of-plan mega-PR
+that no reviewer can hold in their head and that diverges from `main` for the plan's whole lifetime.
+Delivery boundaries are the calibration point between those two failure modes.
+
+**Required declaration format**: every plan carries a `### Delivery Boundaries` subsection inside its
+`## Parallelization Model` section, mapping every phase to its delivery unit:
+
+```markdown
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit          | Worktree / branch      | PR opens         |
+| -------- | ---------------------- | ---------------------- | ---------------- |
+| 0        | — (setup and baseline) | —                      | no               |
+| 1-3      | Schema and loader      | `worktrees/foo-schema` | yes — at Phase 3 |
+| 4-5      | Navigation UI          | `worktrees/foo-nav`    | yes — at Phase 5 |
+```
+
+Every change-producing phase must appear in exactly one row. A phase absent from the table is a
+defect: its work has no declared route to `main`.
+
+**Enforcement**: `plan-maker` emits the `### Delivery Boundaries` table and places PR/push/review/
+merge steps only in boundary phases. `plan-checker` flags as **HIGH** a PR-creation, review-cycle, or
+merge step inside a non-boundary phase; a change-producing phase absent from the table; or a final
+change-producing phase that is not a boundary. It flags as **MEDIUM** a missing
+`### Delivery Boundaries` table on a non-trivial plan, and a plan declaring a single end-of-plan
+boundary while its `## Parallelization Model` declares independent parallel nodes. `plan-fixer` adds
+the table and relocates misplaced PR steps to the boundary phase. `plan-execution-checker` flags a PR
+actually opened for a non-boundary phase, and a delivery unit whose PR never merged.
 
 ### Applicability (Execution Markers + Phase Gates)
 
@@ -725,8 +817,10 @@ the human or agent declaring the mode must make, not one the algorithm enforces 
 disposable worktree and routes it through review before it touches `main`, so it is the safest
 choice absent a reason to pick another mode. The `*-to-pr` modes additionally run the
 PR-Review Maker→Fixer Cycle (`repo-governance/workflows/pr/pr-review-quality-gate.md`) before
-the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps for the plan's
-**delivery** phases only — Phase 0 opens no PR under any mode, per
+the PR is considered done. Selecting a `*-to-pr` mode authorizes PR steps at the plan's
+**delivery boundaries** only — never at every phase, per
+[PRs Open at Delivery Boundaries](#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), and
+never at Phase 0 under any mode, per
 [Phase 0 Opens No PR](#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
 **[AI] merges by default.** A `[HUMAN]` merge gate applies only where a plan's own step says so explicitly.

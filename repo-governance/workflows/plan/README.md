@@ -59,8 +59,9 @@ Every workflow in this directory fans out under the **N+1 model** — `1 main th
 agents = N+1 total`, default **N=3**, with the main thread kept vacant as orchestrator. Ordering is
 **DAG-first**: a plan's `## Parallelization Model` declares which nodes are independent, independent
 nodes fan out up to N, and dependent nodes serialize — sequence is not dependency. Delivery is
-**1-PR↔1-worktree**: each independent node gets its own worktree, branch, and PR, merged per-phase
-rather than batched at plan end, with cleanup as the DAG's terminal node.
+**1-PR↔1-worktree↔1-delivery-unit**: each independent node gets its own worktree, branch, and PR,
+opened and merged at that unit's **delivery boundary** rather than at every phase or batched at plan
+end, with cleanup as the DAG's terminal node.
 
 ## Related Documentation
 

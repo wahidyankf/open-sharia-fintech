@@ -436,6 +436,13 @@ can run against is **Phase 1**. Dispatching the specialist fan-out against a Pha
 a thoroughness choice: it spends a full N-cycle loop reviewing a diff that does not exist. See
 [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
+Nor does it run once per phase. This workflow binds to a **PR**, and a PR opens at a **delivery
+boundary** — the phase after which the accumulated work is independently shippable. Phases inside a
+delivery unit that are not its boundary open no PR and therefore run no review cycle; the cycle runs
+once, at the boundary, against the unit's complete diff. That is deliberate: reviewing scaffolding
+the next phase rewrites spends a full loop on work whose intent is not yet visible. See
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+
 See
 [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode)
 for the full four-mode table, and

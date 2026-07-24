@@ -129,8 +129,9 @@ rules win for that plan's internal work; this document governs only cross-plan s
 - **Status cadence**: while nodes are in flight, update the user every **3-5 minutes — not faster**,
   anchored to meaningful state changes (a node completing, a gate flipping, a plan quarantining)
   rather than to a timer alone.
-- **Delivery is 1-PR↔1-worktree**: each independent node gets its own worktree, branch, and PR,
-  merged per-phase as it completes rather than batched at the end of the run.
+- **Delivery is 1-PR↔1-worktree↔1-delivery-unit**: each independent node gets its own worktree,
+  branch, and PR, opened and merged as that unit's **delivery boundary** completes — not at every
+  phase, and not batched at the end of the run.
 
 ## Steps
 

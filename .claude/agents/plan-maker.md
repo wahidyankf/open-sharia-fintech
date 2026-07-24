@@ -278,6 +278,9 @@ Cover (each as a structured multiple-choice question):
   PR-Review Maker→Fixer Cycle, no merge, no `gh pr ready`, no post-push CI verification — under
   whatever mode the plan declares, so that the earliest PR belongs to Phase 1? (If a
   Per-Phase Integration Protocol block exists, does it state that it applies from Phase 1 onward?)
+- Does the `## Parallelization Model` carry a `### Delivery Boundaries` table mapping **every**
+  change-producing phase to a delivery unit, is the last change-producing phase a boundary, and do
+  PR-creation/review-cycle/merge steps appear **only** in boundary phases (never one PR per phase)?
 - Does every phase (including Phase 0) end with a `### Phase N Gate` and a **Pause Safety** note,
   and is each phase a natural pause (cohesive, safe-to-stop, clean resume)?
 - Are execution markers correct — `[AI]` default, `[HUMAN]` only for genuinely human-only steps,
@@ -529,7 +532,7 @@ When plan content (any of `README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `deli
 
 Emit PR steps according to the plan's declared Delivery Mode (Step 7 above):
 
-- **`worktree-to-pr` / `main-to-pr`** (the default is `worktree-to-pr`) — a `- [ ] [AI] Open a draft PR against main` step is **expected and correct**. Follow it with the PR-Review Maker→Fixer Cycle steps and then the merge step, tagged `[AI]` by default.
+- **`worktree-to-pr` / `main-to-pr`** (the default is `worktree-to-pr`) — a `- [ ] [AI] Open a draft PR against main` step is **expected and correct**, but only in a phase the plan names as a **delivery boundary**. Follow it with the PR-Review Maker→Fixer Cycle steps and then the merge step, tagged `[AI]` by default. Intermediate phases inside the same delivery unit carry no PR step at all.
 - **`worktree-to-origin-main` / `main-to-origin-main`** — do NOT emit PR creation steps. These modes push straight to `main`; a PR step there contradicts the declared mode.
 
 The error to avoid is no longer "an unsolicited PR step" but **a PR step that disagrees with the declared mode in either direction**. `plan-checker`'s PR Step Authorization Check flags both directions.
@@ -545,7 +548,19 @@ The earliest phase that may carry any of those is **Phase 1**. Phase 0 ends at i
 
 If the work you are about to put in Phase 0 genuinely produces reviewable changes, the Phase 0 is **mis-scoped** — move that work into Phase 1 and leave Phase 0 as setup and baseline only. Never resolve it by giving Phase 0 a PR. See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-When a plan uses a **Per-Phase Integration Protocol** block (branch → commit → push → draft PR → review cycle → merge, listed once and referenced by every phase gate), state in that block that it applies to **Phase 1 onward** and that Phase 0 is excluded.
+When a plan uses a **Per-Phase Integration Protocol** block (branch → commit → push → draft PR → review cycle → merge, listed once and referenced by every phase gate), state in that block that it applies to **Phase 1 onward**, that Phase 0 is excluded, and that its PR-opening, review-cycle, and merge steps fire **only at a delivery boundary** — an intermediate phase runs the branch-and-commit part and stops there. Prefer titling such a block **Delivery-Boundary Integration Protocol**, since it no longer runs once per phase.
+
+#### Delivery Boundaries Authoring Rule (HARD RULE)
+
+**A plan does not open a PR at every phase.** It opens one at each **delivery boundary** — the phase after which the accumulated work is an independently shippable increment. That may be a single boundary at the very end of the plan, or several across it. The contiguous run of phases ending at a boundary is a **delivery unit**, and the delivery unit — not the individual phase — is what maps to one worktree, one branch, and one PR.
+
+Decide boundaries at authoring time using the four-part boundary test (coherent / green standalone / defensible on `main` / reviewable whole) in [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule), then:
+
+- **Emit a `### Delivery Boundaries` table** inside the plan's `## Parallelization Model`, with one row per delivery unit, mapping **every** change-producing phase to a unit, its worktree/branch, and the phase at which its PR opens. A change-producing phase absent from the table has no declared route to `main` and is a defect.
+- **Make the last change-producing phase a boundary**, always — otherwise the plan's final work never merges.
+- **Place PR-creation, PR-Review-Cycle, `gh pr ready`, merge, and post-push CI-verification steps only in boundary phases.** An intermediate phase still ends with its own `### Phase N Gate` and Pause Safety note; it just integrates nothing.
+- **Never fold two independent DAG nodes into one delivery unit** to reduce PR count — that re-serialises work the DAG declared independent. Grouping is permitted only along a dependency chain.
+- **Never defer a boundary you have already reached.** If the work standing at phase N passes the boundary test, phase N is a boundary; carrying it forward to build a bigger PR is the failure mode this rule's counterweight exists to prevent.
 
 ## Reference Documentation
 

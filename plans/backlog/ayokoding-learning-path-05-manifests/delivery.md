@@ -10,8 +10,10 @@
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
 > `> **Pause Safety**:` note (safe-to-stop state + resume command). Each gate covers the phase's
-> **content/data correctness** (tests, checkers, build) and its **integration** (draft PR opened,
-> 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed). A phase is not complete until
+> **content/data correctness** (tests, checkers, build); a **boundary** phase's gate additionally
+> covers its unit's **integration** (draft PR opened, 3-cycle PR-Review, CI green, `[AI]` merge,
+> `ayokoding-www` deployed) — see [Delivery Boundaries](#delivery-boundaries) for which phases are
+> boundaries and which commit to a unit's branch without opening a PR. A phase is not complete until
 > every gate check is green.
 
 Two standing constraints govern every step below.
@@ -44,23 +46,26 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
 the worktree after the plan is archived and pushed.
 
-Every phase branches from the **latest `origin/main`** inside this one shared worktree
+Each delivery unit branches from the **latest `origin/main`** inside this one shared worktree
 (`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-05-manifests/<phase-slug>`),
-authors its work there, commits, pushes that branch, and opens **its own draft PR** — from
-**Phase 1 onward**. **Phase 0 is excluded**: it is setup and baseline, pushes no branch and opens no
-PR, and its evidence artifacts ride the Phase 1 PR.
+authors its work there across the unit's phases, commits, pushes that branch, and opens **its own
+draft PR** at its **delivery boundary** — see [Delivery Boundaries](#delivery-boundaries) for which
+phases open a PR and which commit to the unit's branch without one. **Phase 0 is excluded**: it is
+setup and baseline, pushes no branch and opens no PR, and its evidence artifacts ride the Phase 1 PR.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in the shared worktree on
-its **own branch**, opens a **draft PR** against `main`,
+Each **delivery unit** — the phase groupings named in [Delivery Boundaries](#delivery-boundaries)
+below; Phase 0 opens none — works in the shared worktree on its **own branch**, opens a **draft PR**
+against `main` at its boundary phase,
 runs the **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential
 CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
 are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
-plan ships to ayokoding.com). See
+plan ships to ayokoding.com). Phases inside a unit that are not its boundary commit to the same
+branch but open no PR of their own. See
 [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
@@ -76,9 +81,12 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
 > than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
-**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
-must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
-branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
+**Delivery-Boundary Integration Protocol** (these five steps fire once per **delivery boundary**
+named in the [Delivery Boundaries](#delivery-boundaries) table below — not once per phase; a
+boundary phase's gate lists them as must-pass, while a phase that is not itself a boundary commits
+to its unit's branch and runs none of them). **Phase 0 is excluded**: it is Environment Setup and
+Baseline, opens no PR, pushes no branch, runs no review cycle, and merges nothing; its evidence
+artifacts ride the Phase 1 PR
 ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
 
 1. [AI] Sync the shared worktree to latest `origin/main` and branch:
@@ -138,6 +146,35 @@ subagents capped per the orchestration convention). The main thread self-promote
 **DAG width inside this plan is 1.** There is no fan-out here: every phase mutates or re-verifies the
 same four data files. The parallelism the five-way split bought is _between_ plans, not within this
 one.
+
+### Delivery Boundaries
+
+All branches below live inside the single shared worktree
+`worktrees/ayokoding-learning-path-05-manifests/` declared above, per
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+
+| Phase(s) | Delivery unit                                                                    | Worktree / branch                                                                | PR opens          |
+| -------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------- |
+| 0        | — (setup and baseline)                                                           | —                                                                                | no                |
+| 1        | Interview-ready manifest + landing + hub card (architecture smoke test)          | `ayokoding-learning-path-05-manifests/phase-1-interview-ready`                   | yes — at Phase 1  |
+| 2        | AI-engineer manifest + landing + hub card                                        | `ayokoding-learning-path-05-manifests/phase-2-ai-engineer`                       | yes — at Phase 2  |
+| 3        | Immediately-effective manifest + landing + hub card                              | `ayokoding-learning-path-05-manifests/phase-3-immediately-effective`             | yes — at Phase 3  |
+| 4        | Fundamentally-strong manifest + landing + hub completion + cross-manifest checks | `ayokoding-learning-path-05-manifests/phase-4-fundamentally-strong`              | yes — at Phase 4  |
+| 5        | Manifest growth to full 127-course composition (Bands 1-9)                       | `ayokoding-learning-path-05-manifests/phase-5-manifest-growth`                   | yes — at Phase 5  |
+| 6-7      | Automated verification sweep + manual UI verification and Rule-15 retest         | `ayokoding-learning-path-05-manifests/phase-6-7-verify-and-retest`               | yes — at Phase 7  |
+| 8-10     | Final `main`/CI confirmation + Knowledge Capture + Plan Archival                 | `ayokoding-learning-path-05-manifests/phase-8-10-final-integration-and-archival` | yes — at Phase 10 |
+
+Phases 1-5 each independently satisfy the boundary test — every manifest they publish is complete,
+live, and CI-green the moment its own gate closes, never half-populated — so each is its own boundary
+rather than being batched forward with the next. Phase 0 is never a boundary (standing hard rule: it
+changes nothing reviewable). Phase 6 fails the coherence test on its own — a pure automated
+re-verification sweep over content Phase 5's gate already proved green, ordinarily producing no
+diff — so it shares Phase 7's branch, with the PR opening only once Phase 7 adds the actual
+reviewable evidence (screenshots, retest fixes). Phase 8 fails the same way: a post-merge checkpoint
+confirming `main` is green, shipping nothing of its own (any CI fix it finds gets its own separate ad
+hoc PR). Phase 9's `learnings.md` triage is real but small, and Phase 10 re-verifies Phase 9's own
+gate as a precondition of archival, so the two are one dependency-chain closing unit, not two trivial
+PRs.
 
 ## Path constants
 
@@ -261,7 +298,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       green in `evidence/phase-0-snapshot.txt`; zero preexisting failures unresolved.
 - [ ] [AI] Manifest inventory recorded as empty; hub card count recorded as **0**; the four syllabus
       mirrors reachable at their cross-plan path.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Per-Phase Integration
+- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Delivery-Boundary Integration
       Protocol applies from **Phase 1 onward** and explicitly excludes Phase 0. Read the printed
       number from each (never `&&`-chained, since `grep -c` exits 1 on a zero count):
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
@@ -429,7 +466,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       written into this checklist.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
       command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: the `careers/interview-ready/software-engineer` path is live end-to-end in production over
@@ -613,7 +650,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 - [ ] [AI] The build-order assertion is recorded in writing, with its non-executability stated.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
       command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: the AI path is live end-to-end in production over its smoke-test-scoped starting
@@ -729,7 +766,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 - [ ] [AI] Hub card count returns **3**; a shared course's prev/next provably differs by active path.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
       command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: three of the four paths are live over one shared library with zero body
@@ -895,7 +932,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 - [ ] [AI] Hub card count returns **4** — the `careers/` group of the category-grouped hub is complete.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
       command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: all four paths are live over one shared library — zero body duplication among the
@@ -1075,7 +1112,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 - [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 across all four grown paths.
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
       command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: all four manifests are at their **full** composition over the complete 127-course
@@ -1159,10 +1196,10 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 - [ ] [AI] The ownership boundary check returns exactly **4** manifest files, matching the four
       declared path IDs.
 - [ ] [AI] The scoped cross-plan link check finds no line naming this plan's folder.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
-      — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
-      command and acceptance criterion for each; deployed.
+- [ ] [AI] Work committed to this delivery unit's branch
+      (`ayokoding-learning-path-05-manifests/phase-6-7-verify-and-retest`); this phase's gate checks
+      above are green; nothing pushed for review yet — the unit's PR opens only at its Phase 7
+      boundary, per [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: the whole four-path composition passes every automated gate. Safe to stop
 > indefinitely. To resume: re-run the affected quality gates and the build.
@@ -1237,10 +1274,11 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       referenced from this checklist.
 - [ ] [AI] Every rule-15 EWT/UWT/DWT defect finding is fixed and ticked, or explicitly permitted to
       defer by the user.
-- [ ] [AI] Draft PR opened (retest evidence and any fixes); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
+- [ ] [AI] Draft PR opened for this delivery unit (Phase 6's verification sweep plus Phase 7's
+      retest evidence and any fixes); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
       — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
-      command and acceptance criterion for each; deployed.
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the
+      explicit command and acceptance criterion for each; deployed.
 
 > **Pause Safety**: the four-path UI is verified live and defect-clean in `en`, with committed
 > evidence. Safe to stop indefinitely. To resume: re-run the three testers against the running app.
@@ -1251,7 +1289,7 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 
 - [ ] [AI] Confirm no plan PR is still open:
       `gh pr list --search "ayokoding-learning-path-05-manifests" --state open --json number --jq 'length'`
-      — acceptance: returns **0**; every prior phase branch has been `[AI]`-merged to `main`.
+      — acceptance: returns **0**; every prior delivery unit's PR has been `[AI]`-merged to `main`.
 - [ ] [AI] Sync the shared worktree to the latest `origin/main` and run the full affected suite:
       `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
       `npx nx run ayokoding-www-fe-e2e:test:e2e` + `npx nx run ayokoding-www:build`
@@ -1268,10 +1306,14 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
 
 > All checks below must pass before starting Phase 9.
 
-- [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
+- [ ] [AI] Zero open plan PRs; every prior delivery unit merged to `main`.
 - [ ] [AI] Full affected suite + e2e + build green on the integrated `main`; the final `main` CI run
       is green.
 - [ ] [AI] `prod-ayokoding-www` serves all four paths and the complete `careers/` group of the hub.
+- [ ] [AI] Work committed to this delivery unit's branch
+      (`ayokoding-learning-path-05-manifests/phase-8-10-final-integration-and-archival`); nothing
+      pushed for review yet — the unit's PR opens only at its Phase 10 boundary, per
+      [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production. Safe
 > to stop indefinitely. To resume: re-run the affected suite on `main` and check CI and prod status.
@@ -1311,10 +1353,10 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       discarded with a reason), or the file records the explicit "none" escape.
 - [ ] [AI] No code-homed learning landed inline in this plan's own commits or PR — every code-routed
       learning has a corresponding `plans/backlog/` folder.
-- [ ] [AI] Draft PR opened (`learnings.md` triage); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
-      — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
-      command and acceptance criterion for each; deployed (no-op).
+- [ ] [AI] Work committed to this delivery unit's branch
+      (`ayokoding-learning-path-05-manifests/phase-8-10-final-integration-and-archival`); this
+      phase's gate checks above are green; nothing pushed for review yet — the unit's PR opens only
+      at its Phase 10 boundary, per [Delivery Boundaries](#delivery-boundaries).
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Safe to stop. To resume: re-read `learnings.md` and confirm
@@ -1377,10 +1419,11 @@ See [tech-docs.md's File Impact table](./tech-docs.md#file-impact).
       validator prints `All links valid! No broken links found.`
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-05-manifests`; every
       referencing README is updated; the archival is committed.
-- [ ] [AI] Draft PR opened (archival move); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged
-      — each of these five steps run verbatim per the
-      [Per-Phase Integration Protocol](#delivery-mode-worktree-to-pr), which carries the explicit
-      command and acceptance criterion for each;
+- [ ] [AI] Draft PR opened for this delivery unit (Phase 8's final-integration confirmation, Phase
+      9's `learnings.md` triage, and Phase 10's archival move); 3-cycle PR-Review complete; CI green;
+      PR `[AI]`-merged — each of these five steps run verbatim per the
+      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr), which carries the
+      explicit command and acceptance criterion for each;
       deployed (no-op).
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state — and

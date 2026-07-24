@@ -110,23 +110,23 @@ repo-local `WorktreeCreate` hook.
 Every plan declares one of four Delivery Modes — `worktree-to-pr` (**the default**),
 `worktree-to-origin-main`, `main-to-origin-main`, `main-to-pr` — naming its work location (worktree
 or primary checkout) and integration target (draft PR or direct push). `*-to-pr` modes run the
-**PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, default
-3 sequential CI-gated cycles) before the merge. **`[AI]` merges by default** in every mode; a
+**PR-Review Maker→Fixer Cycle** (default 3 sequential CI-gated cycles) before the merge. **`[AI]` merges by default** in every mode; a
 `[HUMAN]` merge gate applies only where a plan's own step says so explicitly, with identical
 preconditions — only the actor differs.
 
-**The PR is the independent merge point** — N parallel units become N PRs that review, gate, and
-merge independently, which is why `worktree-to-pr` is the default; each DAG leaf producing changes
-gets its own worktree and PR (strict 1-PR ↔ 1-worktree), while genuinely dependent nodes stay one PR.
-A PR merges only when **all five hardened preconditions** hold — review cycles complete; 0 CRITICAL +
-0 HIGH outstanding; branch non-destructively up to date with `origin/main`; all quality gates green;
-tester gates run or exemption recorded. Normative lettering (a)-(e) in the PR Merge Protocol.
-**Phase 0 opens no PR under any mode** — setup/baseline is not a delivery node, so it pushes no
-branch and merges nothing; **the earliest PR is Phase 1**, and Phase 0's evidence rides it.
+**The PR is the independent merge point** — N parallel units become N PRs reviewed, gated, and
+merged independently, which is why `worktree-to-pr` is the default; each change-producing DAG leaf
+gets its own worktree and PR (strict 1-PR ↔ 1-worktree), dependent nodes staying one PR.
+A PR merges only when **all five hardened preconditions** (a)-(e) hold — see the PR Merge Protocol.
+**PRs open at delivery boundaries, not every phase** — a PR covers a **delivery unit**, the
+contiguous phases ending where work becomes independently shippable, so a plan opens one once at the
+end or several times through; folding independent nodes together to cut PR count stays forbidden.
+**Phase 0 opens none under any mode** — the earliest PR is Phase 1, and Phase 0's evidence rides it.
 
 **See**: [PR Merge Protocol](./repo-governance/development/workflow/pr-merge-protocol.md),
 [Plans Organization Convention §Delivery Mode](./repo-governance/conventions/structure/plans.md#delivery-mode)
-and [§Phase 0 Opens No PR](./repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule),
+and [§Phase 0 Opens No PR](./repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)
+and [§PRs Open at Delivery Boundaries](./repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule),
 [PR Review Quality Gate workflow](./repo-governance/workflows/pr/pr-review-quality-gate.md)
 
 ## Git Hooks (Automated Quality)

@@ -1069,7 +1069,9 @@ used everywhere else in the programme (DD-37, conforming to plan 06's DD-602) �
 
 ## Rollback
 
-Every phase is a separate PR, so rollback is per phase:
+Every delivery unit is a separate PR (see
+[delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries) — several verification/retest
+phases share one PR rather than opening their own), so rollback is per delivery unit:
 
 - **Phase 1** (syllabus specs) — plan-folder-only; reverting removes the specs and nothing user-visible
   changes.

@@ -153,7 +153,9 @@ must reject it rather than guess.
 ## Delivery Mode: worktree-to-pr
 
 `worktree-to-pr` (inherited from the source plan, tier-2 plan-field precedence): work in
-`worktrees/ayokoding-learning-path-04-course-authoring/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none) against `main`,
+`worktrees/ayokoding-learning-path-04-course-authoring/`, open a draft PR at each **delivery boundary**
+named in [delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against
+`main` (Phase 0 opens none; intermediate phases commit to their unit's branch without opening one),
 run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically
 once the review and all quality gates are green (see **DN-11** below). `ayokoding-www` is deployed to
 `prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree` and
@@ -279,7 +281,8 @@ Two entries are **cross-cutting** and are reproduced verbatim in all five split 
   cluster); then `careers/immediately-effective/ai-engineer` (authoring priority #1); then
   the `careers/immediately-effective/software-engineer` manifest; then the `careers/fundamentally-strong/software-engineer`
   manifest; then backfill topics 34–94 native as the library fills. **Decided; amended 2026-07-20.**
-- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each phase's PR
+- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each delivery boundary's
+  PR (see [delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries))
   automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this
   plan declares no `[HUMAN]` merge gate. When DN-11 was first recorded, `pr-merge-protocol.md` still
   defaulted to a `[HUMAN]` merge, so the maintainer authorized AI-auto-merge for **this plan**

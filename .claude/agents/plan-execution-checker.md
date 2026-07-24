@@ -630,11 +630,22 @@ require the PR to be merged.
    was actually opened for Phase 0: **HIGH**. Also confirm the plan's Phase 0 checklist has no
    ticked PR/push/merge checkbox — a ticked one is the same finding with on-disk evidence. See
    [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+5. **PRs match the declared delivery boundaries** — a PR opens at a **delivery boundary**, not at
+   every phase. Read the plan's `### Delivery Boundaries` table, then enumerate the PRs actually
+   opened (`gh pr list --search "<plan-identifier>" --state all --json number,title,headRefName`).
+   Confirm: (a) each PR corresponds to a declared delivery unit — a PR scoped to an intermediate
+   phase is **HIGH**; (b) every declared delivery unit has a PR that **merged** — an unmerged unit
+   is **HIGH**, since that unit's work never reached `main`; and (c) the count of PRs does not
+   exceed the count of declared boundaries. If the plan predates this rule and carries no table,
+   record that as a grandfathering note rather than a finding, and check only that no work was left
+   unmerged. See
+   [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 
 #### Finding Severity
 
-- Actual execution path mismatches the plan's resolved Delivery Mode: **HIGH**
 - A PR was opened, reviewed, or merged for the plan's Phase 0 (any mode): **HIGH**
+- A PR was opened for a phase the plan does not declare a delivery boundary: **HIGH**
+- A declared delivery unit whose PR never merged: **HIGH**
 - `*-to-pr` mode: PR missing: **CRITICAL**
 - `*-to-pr` mode: PR's CI gates not green: **CRITICAL**
 - `*-to-pr` mode: no review-loop evidence at all: **CRITICAL**

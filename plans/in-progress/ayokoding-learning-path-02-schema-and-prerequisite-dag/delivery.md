@@ -158,6 +158,32 @@ subagents capped per the orchestration convention). The main thread self-promote
 - **This plan runs in parallel with `ayokoding-learning-path-01-url-restructure`** (the other Wave-1
   plan). Do not serialize them for convenience — the split exists to buy that parallelism.
 
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                                     | PR opens         |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------- |
+| 0        | — (setup and baseline)                                      | —                                                                                     | no               |
+| 1-2      | Data layer — prerequisite schema + `course-paths` pure core | `worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag` / `.../data-layer` | yes — at Phase 2 |
+| 3-4      | Verification and no-regression evidence                     | same worktree / `.../verification-evidence`                                           | yes — at Phase 4 |
+| 5        | — (final `origin/main` integration check)                   | —                                                                                     | no               |
+| 6-7      | Knowledge capture and plan archival                         | same worktree / `.../archival`                                                        | yes — at Phase 7 |
+
+Phase 1 fails the boundary test alone — it is the schema Phase 2's pure core is written against, and
+the Parallelization Model above already treats it as intermediate — so it cannot be its own unit;
+Phase 2 completes the entire data-layer deliverable this plan exists to ship and is the plan's own
+documented downstream handoff point, so it cannot be deferred past (the "never defer a boundary
+already reached" rule). Phase 3 fails alone too: it re-runs and extends automated checks over work
+Phase 1-2 already shipped (site build, link/heading/markdown validation, ownership-boundary audit)
+without adding new capability, so it is assurance in service of the prior unit, not a shippable
+increment; Phase 4 supplies the actual reviewable artifact — the mandated manual no-regression
+evidence and Rule-15/16 exemption record — so the unit's boundary sits there. Phase 5 opens no PR: in
+the ordinary case it produces zero diff (confirms no open PRs, reruns the full suite on integrated
+`main`, watches CI, checks the downstream handoff signal), and any corrective push it triggers already
+carries its own ad hoc PR outside this table. Phase 6 fails alone in the typical case — a learnings
+triage that surfaces nothing generalizable is a single "none" line, closing housekeeping rather than
+an independent capability, migration, or governance rule — so it folds forward into Phase 7, which is
+definitionally this plan's last change-producing phase and therefore always a boundary.
+
 ## Path constants
 
 Reproduced verbatim in all five split plans. A checklist whose `<FEAT>` placeholders cannot be
@@ -654,9 +680,16 @@ to the source plan is recorded here so a reader auditing the split can trace eve
       **Grandfathered exception to [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)**:
       that hard rule landed on `main` (commit `1c24ed636`) while this phase's PR #90 was already open
       and mid-review. #90 had already completed all 3 review cycles and reached CI-green before the
-      rule landed, so it merges as a one-time historical exception rather than being abandoned with
+      rule landed, so it merged as a one-time historical exception rather than being abandoned with
       completed review work discarded. Phase 1 onward follows the new rule normally — only this
-      already-in-flight Phase 0 PR is exempt.
+      already-in-flight Phase 0 PR was exempt.
+
+  **Date**: 2026-07-23. **Status**: Done (historical exception — closed, not repeatable). **Files
+  Changed**: none beyond this phase's own evidence. PR #90 ("ayokoding-learning-path-02: Phase 0 —
+  environment setup and baseline") merged at `2026-07-23T23:47:38Z`. This is the **last** Phase 0 PR
+  in this repo: both [§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)
+  and [§PRs Open at Delivery Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule)
+  now bind, and the `### Delivery Boundaries` table above records Phase 0 as opening no PR.
 
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (this checkbox only). PR #90
   completed all 3 review cycles (0 CRITICAL/HIGH across all cycles), resolved a merge conflict against
@@ -667,7 +700,8 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   its own new branch per the now-effective no-PR-for-Phase-0 convention.
 
 > **Pause Safety**: only the toolchain was verified and the current state snapshotted — no code, no
-> schema, no spec exists yet, nothing is pushed, and no PR exists. Safe to stop indefinitely. To
+> schema, no spec exists yet. PR #90 carried this phase's evidence to `main` and is merged and closed,
+> so nothing is left open or in flight. Safe to stop indefinitely. To
 > resume: re-run
 > `npx nx run ayokoding-www:build && npx nx run ayokoding-www:test:unit` and confirm both still exit 0.
 
@@ -1134,8 +1168,9 @@ validate` command prints `All links valid! No broken links found.`
   confirmation only).
 
 > **Pause Safety**: the manifest schema compiles and the empty `<MANIFESTS>` home exists; no resolver
-> consumes them yet and no rendered behaviour changed anywhere. Safe to stop indefinitely. To resume:
-> `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:test:unit`.
+> consumes them yet and no rendered behaviour changed anywhere. Nothing is pushed for review yet — the
+> Phase 1-2 delivery unit's branch carries only local commits until Phase 2's boundary. Safe to stop
+> indefinitely. To resume: `npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:test:unit`.
 
 ---
 
@@ -1975,7 +2010,7 @@ test:unit, test:integration, test:e2e for 25 projects and 11 tasks they depend o
 > `contentUrl`'s optional parameter, which is additive and covered by its existing tests. Safe to
 > stop indefinitely. To resume: `npx nx run ayokoding-www:test:unit`.
 >
-> **This is the handoff point.** Once this phase's PR is merged, both Wave-2 plans
+> **This is the handoff point.** Once the Phase 1-2 delivery unit's PR is merged, both Wave-2 plans
 > (`ayokoding-learning-path-03-navigation-ui` and
 > `ayokoding-learning-path-04-course-authoring`) have their start precondition from this plan
 > satisfied.
@@ -2199,9 +2234,16 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 
 ## Phase 5: Final `origin/main` Integration and CI Verification
 
+> **This phase opens no PR of its own** — per the `### Delivery Boundaries` table under
+> `## Parallelization Model`, it is pure confirmation that the two delivery units merged so far
+> (Phases 1-2 and 3-4) are fully integrated on `main` and CI-green. In the ordinary case it produces
+> no diff at all; if it does surface a red check, the fix ships as its own ad hoc PR (own PR → 3-cycle
+> review → `[AI]` merge — see the CI-monitoring step below), not as a step in this table.
+
 - [ ] [AI] Confirm no plan PR is still open —
       `gh pr list --search "ayokoding-learning-path-02-schema-and-prerequisite-dag" --state open`
-      — acceptance: returns zero rows; every prior phase branch has been `[AI]`-merged to `main`.
+      — acceptance: returns zero rows; every prior delivery unit's branch (Phases 1-2, Phases 3-4) has
+      been `[AI]`-merged to `main`.
 - [ ] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
       `git fetch origin && git checkout main && git pull` then
       `npx nx affected -t typecheck lint test:quick test:unit test:integration test:e2e specs:behavior:coverage`
@@ -2222,11 +2264,13 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
+- [ ] [AI] Zero open plan PRs; every prior delivery unit (Phases 1-2, Phases 3-4) merged to `main`.
 - [ ] [AI] Full affected suite + `ayokoding-www:build` green on integrated `main`; final `main` CI run
       green.
 - [ ] [AI] The downstream handoff signal (`schemas.ts` present AND `typecheck` exits 0) holds on
       `main`.
+- [ ] [AI] **No PR at this gate** — confirmed by the check above; this phase belongs to no delivery
+      unit's branch, it runs directly against integrated `main` inside the shared worktree.
 
 > **Pause Safety**: the whole data layer is integrated on `main` and green in CI, and the two Wave-2
 > plans' start preconditions are satisfied. Safe to stop indefinitely. To resume: re-run the affected
@@ -2276,8 +2320,9 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       PR-Review, and merges at the **Phase 7 Gate** below, covering both phases' commits together.
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
-> process depends on querying it later. Safe to stop indefinitely. To resume: re-read `learnings.md`
-> and confirm every entry is terminal.
+> process depends on querying it later. Nothing is pushed for review yet — the Phase 6-7 delivery
+> unit's branch carries only local commits until Phase 7's boundary. Safe to stop indefinitely. To
+> resume: re-read `learnings.md` and confirm every entry is terminal.
 
 ---
 
@@ -2384,13 +2429,15 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       of (c)'s commands print `0` and (c) fails loudly rather than passing on a technicality.
       **Why `<BASELINE_SHA>` and not `origin/main`.** The same principle that keeps the earlier
       plan-authoring-time rename and framing correction out of all three checks — they landed on
-      `origin/main` **before** Phase 0 ever branched — applies to 1.4's own edit the moment Phase 1's
-      PR is merged. By this point six phase merges have advanced `origin/main`, and Phase 5 explicitly
-      re-syncs to it (`git fetch origin && git checkout main && git pull`), so a diff against the live
-      ref counts **zero** lines: (c) would read that as "1.4 never ran" and block archival forever,
-      and (b)'s scoped pathspec would count zero for a second, unrelated reason — degenerating back
-      into exactly the vacuous-pass form (c) exists to guard. `<BASELINE_SHA>` is pinned before Phase 1
-      and does not move under any merge, so (b) and (c) keep meaning what they say at every phase.
+      `origin/main` **before** Phase 0 ever branched — applies to 1.4's own edit the moment the
+      Phase 1-2 delivery unit's PR is merged. By this point two delivery-unit merges (Phases 1-2 at
+      Phase 2's boundary, Phases 3-4 at Phase 4's boundary) have advanced `origin/main`, and Phase 5
+      explicitly re-syncs to it (`git fetch origin && git checkout main && git pull`), so a diff
+      against the live ref counts **zero** lines: (c) would read that as "1.4 never ran" and block
+      archival forever, and (b)'s scoped pathspec would count zero for a second, unrelated reason —
+      degenerating back into exactly the vacuous-pass form (c) exists to guard. `<BASELINE_SHA>` is
+      pinned before Phase 1 and does not move under either merge, so (b) and (c) keep meaning what
+      they say at every phase.
 - [ ] [AI] Verify the plan's ownership boundary held to the end —
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l` returns
       **0** and `test -d apps/ayokoding-www/src/features/course-paths/shell` returns non-zero

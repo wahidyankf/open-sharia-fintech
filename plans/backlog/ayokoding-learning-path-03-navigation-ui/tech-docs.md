@@ -723,8 +723,11 @@ always names the paired `ayokoding-www-fe-e2e` project, never the same-project n
 
 ## Rollback
 
-- **Whole-plan rollback**: Delivery Mode is `worktree-to-pr` with a PR per phase, so
-  `git revert <merge-commit-sha>` undoes one phase without touching the others.
+- **Whole-plan rollback**: Delivery Mode is `worktree-to-pr` with a PR per **delivery boundary** —
+  Phase 1 (design funnel); Phases 2-5 (the navigation feature); Phases 7-8 (knowledge capture +
+  archival) — see
+  [delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries). `git revert <merge-commit-sha>`
+  undoes one delivery unit (all of its phases together) without touching the others.
 - **Feature revert**: the `course-paths` shell is additive; reverting it restores weight-based nav (the
   canonical view) with no content loss, because **no course body and no content file is edited by this
   plan**.

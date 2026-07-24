@@ -115,16 +115,24 @@ User: "Establish a plan to [describe desired change]"
 How a plan is cut into phases determines how much of it can proceed in parallel and how early each
 piece reaches `main`. These rules bind at authoring time, not merely at execution time.
 
-### One Worktree, One Branch, One PR, One DAG Node (HARD RULE)
+### One Worktree, One Branch, One PR, One Delivery Unit (HARD RULE)
 
-Each applicable phase — more precisely, each independent node of the plan's dependency DAG **that
-produces changes** — lands as **its own PR**. The mapping is strict and one-to-one: **one worktree →
-one branch → one PR → one node**. Never open two PRs from one worktree, and never drive one PR from
-two worktrees.
+Each independent node of the plan's dependency DAG **that produces changes** lands as **its own
+PR**. The mapping is strict and one-to-one: **one worktree → one branch → one PR → one delivery
+unit**. Never open two PRs from one worktree, and never drive one PR from two worktrees.
 
-Genuinely dependent phases stay a single PR. The DAG governs, not the phase numbering: phases that
-merely appear in sequence are not thereby dependent, and splitting them into separate PRs is the
-default. Sequence is not dependency.
+A **delivery unit** is the contiguous run of phases ending at a **delivery boundary** — the phase
+after which the accumulated work is independently shippable. The unit, not the individual phase, is
+what maps to a PR: a plan opens a PR at its natural delivery points, which may be once at the very
+end or several times through the plan. Phases inside a unit that are not its boundary still pass
+their own `### Phase N Gate`, but open no PR and merge nothing. The boundary test, the required
+`### Delivery Boundaries` declaration table, and the anti-batching counterweight are stated in
+[Plans Organization Convention §PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+
+Genuinely dependent phases stay a single delivery unit. The DAG governs, not the phase numbering:
+phases that merely appear in sequence are not thereby dependent, and splitting **independent** work
+into separate delivery units is the default. Sequence is not dependency — and neither is it a
+licence to fold independent nodes together to reduce PR count.
 
 **Phase 0 is not one of these nodes — the earliest PR is Phase 1 (HARD RULE)**. Phase 0 is
 Environment Setup and Baseline: it installs dependencies, converges the toolchain, records the
@@ -135,11 +143,19 @@ the Phase 1 PR. A Phase 0 that genuinely produces reviewable changes is mis-scop
 into Phase 1. See
 [Plans Organization Convention §Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
 
-### Per-Phase Merging, Not Batch Merging
+### Merge at Delivery Boundaries — Not Every Phase, and Not One Batch
 
-Each phase PR is **opened and merged** as that phase completes. It is **not** held open for a
-**batch merge** at plan end. Holding phase PRs for a batch merge serialises work that the DAG
-already declared independent, and it grows the divergence each PR must reconcile against `main`.
+Each delivery unit's PR is **opened and merged** as that unit's **delivery boundary** is reached. It
+is neither opened early at every intermediate phase, nor held open for a **batch merge** at plan end.
+
+Both failure modes cost something different. Opening a PR per phase spends a full review cycle on
+scaffolding the next phase rewrites, and the review cannot judge intent that only lands two phases
+later. Holding PRs for a batch merge serialises work the DAG already declared independent, and grows
+the divergence each PR must reconcile against `main`.
+
+Grouping **dependent** phases into one delivery unit is not batching. The prohibition targets
+holding **independent, already-open** PRs — never the decision to review a dependent chain as one
+complete thought.
 
 The **merge actor** follows the inverted default in
 [Plans Organization Convention §Delivery Mode](../../conventions/structure/plans.md#delivery-mode):
@@ -162,11 +178,12 @@ long-lived branch. Flagging is the **default**.
 The default binds differently depending on what is being done:
 
 - **Creating or updating a plan** binds it as a **design obligation**. The authoring edit itself may
-  push direct to `main`, but the plan's phases MUST be authored so they are **independently
-  PR-able**. A plan that genuinely cannot be decomposed that way records **why** in its
-  `tech-docs.md` — the constraint is documented, not silently absorbed.
-- **Executing a plan** binds it as the actual delivery route: worktree → PR, per the phase-to-PR
-  mapping above.
+  push direct to `main`, but the plan's phases MUST be authored so they group into **independently
+  PR-able delivery units**, with each unit's boundary named in the `### Delivery Boundaries` table.
+  A plan that genuinely cannot be decomposed that way records **why** in its `tech-docs.md` — the
+  constraint is documented, not silently absorbed.
+- **Executing a plan** binds it as the actual delivery route: worktree → PR, per the
+  delivery-unit-to-PR mapping above.
 
 ### Surface-Conditional Tester Gates
 
@@ -413,9 +430,14 @@ Read the created plan files and verify structural completeness before the qualit
    Phase 0 contains **no** PR-creation, PR-review-cycle, push, or merge step — the earliest phase
    that may open a PR is Phase 1
    ([§Phase 0 Opens No PR](../../conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule))
-7. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
-8. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
-9. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`
+7. Verify the `## Parallelization Model` carries a `### Delivery Boundaries` table mapping **every**
+   change-producing phase to a delivery unit, that the last change-producing phase is a boundary,
+   and that PR-creation, review-cycle, and merge steps appear **only** in boundary phases — a PR per
+   phase is a defect
+   ([§PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
+8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
+9. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
+10. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`
 
 **Output**: Plan structurally complete. Ready for quality gate.
 

@@ -195,6 +195,11 @@ per-phase gate that closes each one:
 | 9     | —                                                 | every `learnings.md` entry terminal              |
 | 10    | —                                                 | archived; the five-way split is complete         |
 
+**Stage groupings above describe verification, not delivery boundaries.** Phases 1-5 each open their
+own PR; Phases 6-10 collapse into two PR-bearing delivery units (6-7, then 8-10) — see
+[delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries) for the authoritative mapping
+of phases to delivery units, branches, and PRs.
+
 ### Phase provenance against the source plan
 
 | This plan | Source plan phase  | Note                                                                        |
@@ -485,12 +490,14 @@ gates, link/heading validation), not by a Playwright step binding.
 ## Delivery Mode: worktree-to-pr
 
 `worktree-to-pr` (the repo default, inherited from the source plan as a tier-2 plan field): work in
-`worktrees/ayokoding-learning-path-05-manifests/`, open a draft PR per delivery phase (Phase 1 onward; Phase 0 opens none) against `main`, run the
+`worktrees/ayokoding-learning-path-05-manifests/`, open a draft PR per **delivery boundary** — not
+every phase; Phase 0 opens none, and Phases 6, 8, and 9 commit to their unit's branch without opening
+their own PR — against `main`, run the
 PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically once the
 review and all quality gates are green — a plan-scoped confirmation of the repo-default `[AI]` merge,
 which this plan does not opt out of (see **DN-11** above). `ayokoding-www` is deployed to
-`prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree` and
-`## Delivery Mode` declarations and the PR-review-cycle steps.
+`prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree`,
+`## Delivery Mode`, and `### Delivery Boundaries` declarations and the PR-review-cycle steps.
 
 ## Navigation
 

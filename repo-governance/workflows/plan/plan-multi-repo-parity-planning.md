@@ -118,13 +118,13 @@ plans touching it propagate one repo at a time rather than concurrently.
 
 ### Delivery Shape Per Repo
 
-Each repo's plan is authored to the `worktree-to-pr` default, and each independent phase lands as
-its **own PR** — a strict **one worktree → one branch → one PR → one node** mapping, merged
-per-phase rather than batched at the end. Partial work reaches `main` merged-but-dark behind a
+Each repo's plan is authored to the `worktree-to-pr` default, and each independent node lands as
+its **own PR** — a strict **one worktree → one branch → one PR → one delivery unit** mapping, opened
+and merged at that unit's **delivery boundary** rather than at every phase or batched at the end. Partial work reaches `main` merged-but-dark behind a
 **feature flag**; a phase lands unflagged only when it ships no user-reachable behaviour change and
 the step names that exemption. See
 [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity) for the full rule,
-including per-phase PR granularity and the named flag-removal step.
+including delivery-boundary PR granularity and the named flag-removal step.
 
 ### Shared-Machine Safety
 

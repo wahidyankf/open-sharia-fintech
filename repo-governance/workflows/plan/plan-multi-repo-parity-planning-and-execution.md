@@ -282,9 +282,10 @@ Two constraints override that fan-out and force strict serialization:
 - **Any node writing what another node reads** — the general DAG independence test. Sequence is not
   dependency, but a shared write target is.
 
-**Per-repo delivery shape**: each repo's phases land as **per-phase PRs** under the strict
-**one worktree → one branch → one PR → one node** mapping, merged as each phase completes rather
-than batched at composite end, with partial work merged-but-dark behind a **feature flag**. See
+**Per-repo delivery shape**: each repo's phases group into **delivery units** under the strict
+**one worktree → one branch → one PR → one delivery unit** mapping, each unit's PR opened and merged
+at its **delivery boundary** rather than at every phase or batched at composite end, with partial
+work merged-but-dark behind a **feature flag**. See
 [plan-planning §Planning Granularity](./plan-planning.md#planning-granularity).
 
 **Shared-machine safety**: all three repos share one machine's disk and git object store, and two of

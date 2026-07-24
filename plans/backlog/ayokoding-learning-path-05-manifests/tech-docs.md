@@ -959,14 +959,19 @@ names `ayokoding-www-fe-e2e:test:e2e`, never the no-op.
 
 ## Rollback
 
-Each phase is its own branch and PR, so rollback is per-phase and non-destructive:
+Each **delivery unit** — not each phase — is its own branch and PR, per
+[delivery.md §Delivery Boundaries](./delivery.md#delivery-boundaries), so rollback is per-unit and
+non-destructive:
 
-- **A manifest phase (1–4)**: `git revert` the phase's merge commit. The manifest file and its landing
-  disappear; the hub card count drops by one; every other path keeps working, because manifests are
-  independent data files with no cross-references between them.
-- **The growth phase (5)**: `git revert` returns each manifest to its smoke-test-scoped or Bands-1-8
-  state. Integrity still passes at the smaller scope — which is precisely why the terminal full-arc
-  gate exists rather than relying on integrity alone.
+- **A manifest unit (Phases 1–4, one PR each)**: `git revert` the unit's merge commit. The manifest
+  file and its landing disappear; the hub card count drops by one; every other path keeps working,
+  because manifests are independent data files with no cross-references between them.
+- **The growth unit (Phase 5)**: `git revert` returns each manifest to its smoke-test-scoped or
+  Bands-1-8 state. Integrity still passes at the smaller scope — which is precisely why the terminal
+  full-arc gate exists rather than relying on integrity alone.
+- **The verification/retest unit (Phases 6-7) and the final-integration/archival unit (Phases 8-10)**
+  touch no manifest data — reverting either removes committed evidence, retest fixes, the
+  `learnings.md` triage, or the archival move, never a manifest or landing.
 - **No content or component rollback is ever required**, because this plan writes neither. That is a
   direct benefit of the ownership invariant: the blast radius of reverting this plan is four YAML
   files, four landing anchors, and one hub file.

@@ -127,6 +127,7 @@ Audit all plan files (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery
 - **Executor tagging (HARD RULE)**: every checkbox declares `[AI]` / `[HUMAN]` / `[AI+HUMAN]` (unmarked = `[AI]`), with a legend at the top of the checklist. Flag any untagged or `[AI]`-tagged human-only step (physical acts, hardware/BIOS, external auth) as **HIGH**. Validated in detail by Step 5h (rule 14).
 - **Phase gate & natural pause (HARD RULE)**: every phase ends with a `### Phase N Gate` (must-pass checklist + Pause Safety note) and reaches a safe-to-stop state. Flag a phase missing its gate as **HIGH**; a non-pause phase that should be merged as **MEDIUM**. Validated in detail by Step 5i (rule 15).
 - **Phase 0 opens no PR (HARD RULE)**: Phase 0 is Environment Setup and Baseline — it carries no PR-creation, branch-push, PR-Review-Cycle, merge, `gh pr ready`, or post-push CI-verification step, under **any** Delivery Mode; the earliest phase that may open a PR is **Phase 1**. Flag any such step inside Phase 0, and any unscoped Per-Phase Integration Protocol block, as **HIGH**. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 7). See [Plans Organization Convention §Phase 0 Opens No PR](../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule).
+- **PRs open at delivery boundaries, not every phase (HARD RULE)**: a plan opens a PR at each **delivery boundary** — the phase after which the accumulated work is independently shippable — not once per phase. The contiguous phases ending at a boundary form a **delivery unit**, and the unit maps to one worktree, one branch, one PR. Flag as **HIGH** a PR-creation, PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does **not** name as a boundary; a change-producing phase absent from the `### Delivery Boundaries` table; or a final change-producing phase that is not a boundary. Flag as **MEDIUM** a missing `### Delivery Boundaries` table on a non-trivial plan, and a single end-of-plan boundary on a plan whose `## Parallelization Model` declares independent parallel nodes. Validated in detail by the [PR Step Authorization Check](#pr-step-authorization-check) and Step 5m (rule 19, item 8). See [Plans Organization Convention §PRs Open at Delivery Boundaries](../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
 - **Specs & Gherkin delivery (per Two Paths)**: a plan that creates, modifies, or deletes observable behavior in `apps/`, `libs/`, or `specs/` MUST include delivery steps that add/update the companion `specs/` Gherkin `.feature` files and run `specs:coverage`. Validated in detail by Step 5j (rule 16). See [Feature Change Completeness Convention §Two Paths](../../repo-governance/development/quality/feature-change-completeness.md).
 - **Gherkin-tagged TDD steps (one scenario per cycle)**: every behavior-implementing RED→GREEN→REFACTOR cycle MUST target **exactly one** Gherkin scenario — the RED step carries a single-scenario `**Gherkin (binds) →** "<title>"` tag and embeds that scenario's complete `Given/When/Then` inline as a fenced ` ```gherkin ` block, verbatim-equal to the companion `.feature`. Flag as **HIGH**: a behavior RED step whose `binds` tag lists **more than one** scenario (must be split one-cycle-per-scenario), a behavior step missing its Gherkin tag, or a step whose inline `Given/When/Then` is absent or not verbatim-equal to the `.feature`. Two exceptions keep a multi-scenario `;`-list tag and are NOT split: pure-core (`**Gherkin (underpins) →**`) data/calc unit tests, and aggregate BDD binders (a feature-consuming unit test or `playwright-bdd` step-def file consuming the whole `.feature` for `specs:coverage`/E2E). Pure refactors, no-behavior-change bumps, and docs/governance-only steps are exempt. See [Gherkin-Tagged Delivery Steps](../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps).
 - **UI-design-funnel completeness (UI-bearing plans)**: a plan that adds/changes user-facing screens or components under `apps/` or `libs/` MUST carry the design-funnel artefacts (≥2 named low-fi alternatives, 2 hi-fi `.excalidraw.png` finalists, a named selection, a rationale, a grounding/prior-art note, and a **responsive** strategy across mobile/tablet/desktop). Validated in detail by Step 5k (rule 17). Pure-refactor / no-UI / governance-only plans are exempt. See [UI Mockups in Plan Docs convention](../../repo-governance/conventions/formatting/diagrams.md#ui-mockups-in-plan-docs).
@@ -165,9 +166,10 @@ inside `## Phase 0` (its steps, its sub-bullets, or its `### Phase 0 Gate`):
 - a PR-Review Maker→Fixer Cycle step, or any reference to review cycles completing for Phase 0;
 - a merge step, a `gh pr ready` step, or a post-push CI-verification step for Phase 0.
 
-The declared mode does **not** authorize these: a `*-to-pr` mode authorizes PR steps for the plan's
-**delivery** phases only. Phase 0 is Environment Setup and Baseline and produces nothing reviewable,
-so the earliest phase that may open a PR is **Phase 1**.
+The declared mode does **not** authorize these: a `*-to-pr` mode authorizes PR steps at the plan's
+**delivery boundaries** only. Phase 0 is Environment Setup and Baseline and produces nothing
+reviewable, so the earliest phase that may open a PR is **Phase 1** — and even then, only if
+Phase 1 is a declared boundary.
 
 Also flag as **HIGH** a **Per-Phase Integration Protocol** block (a branch → commit → push → draft PR
 → review → merge sequence stated once and referenced by every phase gate) that does **not** scope
@@ -189,6 +191,69 @@ awk '/^## Phase 0/{f=1} /^## Phase 1/{f=0} f' delivery.md \
 Acceptance: returns `0`. Falsifiable both ways: adding a `gh pr create --draft` line inside Phase 0
 makes it return `1`. Read the printed number rather than `&&`-chaining, since `grep -c` exits 1 on a
 zero count. For a single-file plan, substitute the plan's `README.md`.
+
+#### No PR Outside a Declared Delivery Boundary (HIGH)
+
+A PR opens at a **delivery boundary**, not at every phase. Flag as **HIGH** any PR-creation,
+PR-Review-Cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase the plan does
+not declare as a boundary in its `### Delivery Boundaries` table.
+
+**Detection commands** (run from the plan folder; compare the two number sets):
+
+```bash
+# (1) phases the plan DECLARES as delivery boundaries
+grep -oE 'yes[^|]*Phase [0-9]+' delivery.md | grep -oE '[0-9]+$' | sort -un | tr '\n' ' '
+
+# (2) phases that ACTUALLY carry an integration step
+awk '
+  /^## Phase [0-9]+/ { n=$3; sub(/[^0-9].*$/,"",n) }
+  /^ *- \[ \]/       { if (buf) print buf; buf = n "\t" $0; next }
+  /^ *- \[x\]/ || /^ *$/ || /^#/ { if (buf) print buf; buf = ""; next }
+  buf                { buf = buf " " $0 }
+  END                { if (buf) print buf }
+' delivery.md \
+  | grep -viE 'gh pr list|no PR (here|at this gate)' \
+  | grep -Ei 'gh pr create|gh pr ready|open (a )?(draft )?pr|draft pr opened|PR-Review|review cycle|\[AI\]`?-merged|auto-merge' \
+  | cut -f1 | sort -un | tr '\n' ' '
+```
+
+Command (2) restricts itself to **unticked** `- [ ]` checklist lines, and both halves of that
+restriction are deliberate. _Checklist_ excludes prose: an integration step is always a checkbox,
+while a sentence inside a phase ("…false-negatives on every merged PR") is not, and an unrestricted
+match reports that prose as a violation. _Unticked_ excludes history: a `- [x]` integration step is a
+merge that already happened, so reporting it is unactionable — the plan cannot un-merge it — and on a
+part-executed plan it would fire forever. Judge executed phases by whether their record is honest,
+not by this command; the rule binds the PRs a plan has **yet** to open.
+
+The awk accumulates each checklist **item** — its `- [ ]` line plus every wrapped continuation line
+under it — and only then matches. This is load-bearing, not tidiness: a boundary step typically reads
+`- [ ] [AI] **Delivery boundary …PR opens.** Draft PR` with `opened…; 3-cycle PR-Review complete; CI
+green; PR [AI]-merged.` on the _following_ indented lines. Matching line-by-line puts every keyword
+out of reach and reports **zero** integration steps on a plan that has three — a silent pass, the
+worst failure mode for a checker. The `grep -viE 'gh pr list|no PR (here|at this gate)'` pre-filter
+drops steps that _query_ integration rather than cause it: a `gh pr list --state open` step asserting
+no PR is still open matches `[AI]-merged` in its own acceptance clause otherwise.
+
+Sanity-check the command on a plan you already trust before believing a zero: if a plan with a
+populated `### Delivery Boundaries` table reports no integration steps at all, suspect the command,
+not the plan.
+
+Acceptance: every number printed by (2) also appears in (1) — set (2) is a subset of set (1).
+Falsifiable both ways: adding `gh pr create` to an intermediate phase makes that phase number
+appear in (2) but not (1) (fails); promoting it to a boundary row in the table makes it appear in
+both (passes). A number in (1) absent from (2) is the separate defect of a declared boundary with
+no integration step — report it too.
+
+Also flag: a change-producing phase that appears in **no** table row (**HIGH** — its work has no
+declared route to `main`); a final change-producing phase that is not a boundary (**HIGH** — that
+work would never merge); a missing `### Delivery Boundaries` table on a non-trivial plan
+(**MEDIUM**, `grep -c '^### Delivery Boundaries' delivery.md` returns `0`); and a plan declaring a
+single end-of-plan boundary while its `## Parallelization Model` declares independent parallel
+nodes (**MEDIUM** — the grouping re-serialises the DAG).
+
+**Remediation to state in the finding**: move the integration steps to the delivery unit's boundary
+phase, or — if the intermediate phase genuinely satisfies the four-part boundary test — promote it
+to a boundary and add its table row. Never resolve it by deleting the work's route to `main`.
 
 ### 5. Consistency Validation
 
@@ -915,6 +980,11 @@ mode additionally fixes the integration target and merge authority.
    holds under **every** mode, including the direct-push ones (where Phase 0 must also not push).
    A Per-Phase Integration Protocol block that does not scope itself to Phase 1 onward is the same
    defect stated once instead of per-phase — flag it too.
+8. **PR steps appear only in declared delivery boundaries** — run the two detection commands in
+   [No PR Outside a Declared Delivery Boundary](#no-pr-outside-a-declared-delivery-boundary-high)
+   and confirm the phases carrying integration steps are a subset of the phases the
+   `### Delivery Boundaries` table declares. Also confirm every change-producing phase appears in
+   exactly one table row and that the last change-producing phase is a boundary.
 
 #### Finding Severity
 
@@ -928,6 +998,12 @@ mode additionally fixes the integration target and merge authority.
 - Any PR-creation, branch-push, PR-review-cycle, merge, `gh pr ready`, or post-push CI-verification
   step inside Phase 0 (any mode): **HIGH**
 - Per-Phase Integration Protocol block not scoped to Phase 1 onward: **HIGH**
+- PR-creation, PR-review-cycle, `gh pr ready`, merge, or post-push CI-verification step in a phase
+  not declared a delivery boundary: **HIGH**
+- Change-producing phase absent from the `### Delivery Boundaries` table: **HIGH**
+- Final change-producing phase that is not a delivery boundary: **HIGH**
+- Missing `### Delivery Boundaries` table on a non-trivial plan: **MEDIUM**
+- Single end-of-plan boundary on a plan declaring independent parallel nodes: **MEDIUM**
 
 ### 20. Learning-Bearing Syllabus Completeness (Step 5n — CONDITIONAL)
 
