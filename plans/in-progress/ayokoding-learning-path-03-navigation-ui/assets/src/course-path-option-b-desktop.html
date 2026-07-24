@@ -268,8 +268,34 @@
       .pn .next {
         text-align: right;
       }
-      /* responsive breakpoints */
-      @media (max-width: 768px) {
+      .mobile-banner {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: var(--hue-honey-wash);
+        color: var(--hue-honey-ink);
+        border-radius: var(--radius-md);
+        padding: 11px 16px;
+        font-size: 13.5px;
+        margin-bottom: 16px;
+      }
+      .mobile-banner .on {
+        font-weight: 600;
+      }
+      .mobile-banner button {
+        border: none;
+        background: var(--card);
+        color: var(--hue-honey-ink);
+        font-weight: 600;
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+      }
+      /* responsive breakpoints — gated at the documented 768px (md) boundary [prd.md Screen 3
+         responsive spec], not an ungrounded 480px */
+      @media (max-width: 1023px) {
         body {
           padding: 24px;
         }
@@ -280,21 +306,35 @@
           padding: 24px 24px 32px;
         }
       }
-      @media (max-width: 480px) {
+      /* Tablet 768-1023px: the rail stays beside the body (never stacks below it) but narrows and
+         its course titles truncate with an ellipsis, per the 15%-35% resizable-panel width band */
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .rail {
+          width: 132px;
+          padding: 16px 8px;
+        }
+        .ract span:not(.rnum):not(.rdot) {
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+      /* Mobile <768px: no rail at all — it collapses into the existing left Sheet drawer; the
+         banner becomes the always-visible course-position readout and gains the disclosure trigger */
+      @media (max-width: 767px) {
         body {
           padding: 12px;
         }
         .body {
           padding: 18px 16px 24px;
         }
-        .layout {
-          flex-direction: column;
-        }
         .rail {
-          width: 100%;
-          flex: none;
-          border-right: none;
-          border-bottom: 1px solid var(--border);
+          display: none;
+        }
+        .mobile-banner {
+          display: flex;
         }
       }
     </style>
@@ -302,7 +342,8 @@
   <body>
     <div class="frame">
       <div class="cap">
-        Screen 3 · Course in path — <b>Option B: left path rail</b> · ?path=careers/interview-ready/software-engineer
+        Screen 3 · Course in path — <b>Option B: left path rail (Selected)</b> ·
+        ?path=careers/interview-ready/software-engineer
       </div>
       <div class="win">
         <div class="bar">
@@ -314,6 +355,12 @@
           >
         </div>
         <div class="body">
+          <div class="mobile-banner">
+            <span class="on">▸ On path: Interview-Ready SWE · course 9 of 119</span>
+            <button aria-expanded="false" aria-label="Open path course list — Interview-Ready SWE, course 9 of 119">
+              ☰ Path courses
+            </button>
+          </div>
           <div class="layout">
             <aside class="rail">
               <div class="railh">Interview-Ready SWE</div>
@@ -331,7 +378,8 @@
               <h1>Coding Interview</h1>
               <p class="para">
                 The left rail replaces the generic sidebar with the active path's ordered courses, the current one
-                marked. Rich, but desktop-only — it needs a mobile sheet, which is why Option A won.
+                marked. Below the 768px breakpoint it collapses into the already-shipped left Sheet drawer as a content
+                swap, not new overlay machinery, which is why Option B won despite costing more to build than Option A.
               </p>
               <p class="para">
                 Body content is identical to the canonical view; only the surrounding navigation changes.

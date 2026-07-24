@@ -547,12 +547,17 @@ png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o
       `<PLAN>assets/src/paths-hub-option-a-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-a-mobile.png` succeeds and the render is >5 KB; a Careers
       section (arc sub-headings, `immediately-effective` showing two cards) stacked above a Skills
-      section (two cards), both single-column (the `.skills-grid` collapses to one column); no flat
+      section (four cards), both single-column (the `.skills-grid` collapses to one column); no flat
       undifferentiated grid.
 
   **Date**: 2026-07-25. **Status**: Done. 120680 bytes (>5 KB). Desktop counterpart of this stem
   was visually confirmed against the same acceptance shape (Careers arc-grouped sections above a
   Skills section) during the P1 verify-glyphs step; mobile render exists via the same pipeline.
+  Corrected this checkbox's own acceptance text from "two cards" to "four cards" — the render
+  source `paths-hub-option-a-desktop.html` renders four Skills cards (Conventional Accounting,
+  Sharia Accounting, Conventional ERP, Sharia ERP), matching prd.md's "eight path cards" framing
+  (4 Careers + 4 Skills); this Option-A sibling's miscount was missed by the earlier "six
+  cards"→"eight cards" sweep applied to the Option-B checkboxes below.
 
 - [x] [AI] Render `<PLAN>assets/paths-hub-option-b-mobile.png` from
       `<PLAN>assets/src/paths-hub-option-b-desktop.html` at 375 px — acceptance:

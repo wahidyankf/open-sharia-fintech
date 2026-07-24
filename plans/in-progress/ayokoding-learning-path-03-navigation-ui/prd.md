@@ -1282,13 +1282,13 @@ Option B's accordion collapses all but the first stage on mobile to keep the lis
 
 ![Path landing, Option A at mobile width — the frame reflows to full width with no horizontal overflow; phase headings and the numbered course list stack single-column](./assets/path-landing-option-a-mobile.png)
 
-![Path landing, Option A at tablet width — the frame reflows to full width, content remains readable with no horizontal overflow](./assets/path-landing-option-a-tablet.png)
+![Path landing, Option A at tablet width — the same single reading column (skip-prologue callout, phase headings, numbered course rows, capstone markers) as mobile/desktop, just reflowed to the 768 px frame with no horizontal overflow](./assets/path-landing-option-a-tablet.png)
 
 ![Path landing, Option B — the syllabus as collapsible phase accordions, the first two stages expanded to show course rows and the remaining stages collapsed with course counts](./assets/path-landing-option-b-desktop.png)
 
 ![Path landing, Option B at mobile width — the frame reflows to full width, the accordion stages stack single-column](./assets/path-landing-option-b-mobile.png)
 
-![Path landing, Option B at tablet width — the frame reflows to full width, accordion stages remain readable with no horizontal overflow](./assets/path-landing-option-b-tablet.png)
+![Path landing, Option B at tablet width — Stage 1 and Stage 2 stay expanded with their course rows and "… N more" lines, Stage 3 and Stage 4 stay collapsed to just their header and course-count badge, unchanged from mobile except for the wider 768 px frame](./assets/path-landing-option-b-tablet.png)
 
 **Selected: Option A — Phase-grouped numbered syllabus — finalist renders:
 path-landing-option-a-{mobile,tablet,desktop}.png.**
@@ -1507,13 +1507,13 @@ announced with a meaningful label.
 
 ![Course in path, Option A at mobile width — the banner strip stays full-width above the body, no rail is rendered, and the prev/next pair stacks below the article body](./assets/course-path-option-a-mobile.png)
 
-![Course in path, Option A at tablet width — the frame reflows to full width, banner and body remain readable with no horizontal overflow](./assets/course-path-option-a-tablet.png)
+![Course in path, Option A at tablet width — the on-path banner, breadcrumb, prerequisites line, course body, and full-width prev/next pair stay in the same single-column stack as mobile, just reflowed to the 768 px frame with no horizontal overflow](./assets/course-path-option-a-tablet.png)
 
 ![Course in path, Option B at desktop width — a left path rail in the resizable sidebar slot listing the path's ordered courses grouped by phase, the current course marked with a triangle and a filled row, alongside the course body, breadcrumb, prerequisites, and prev/next](./assets/course-path-option-b-desktop.png)
 
-![Course in path, Option B at mobile width — the selected responsive form: the layout flex reflows to a column and the rail becomes full-width (its right border swaps to a bottom border), so the ordered course list sits stacked above the article body with both visible](./assets/course-path-option-b-mobile.png)
+![Course in path, Option B at mobile width — below the 768 px breakpoint the left rail is hidden entirely; a compact on-path banner (course-position readout plus a "Path courses" disclosure trigger standing in for the already-shipped left Sheet drawer) sits above the unchanged article body instead](./assets/course-path-option-b-mobile.png)
 
-![Course in path, Option B at tablet width — the rail remains beside the article body at this width rather than stacking (it only stacks below the 480 px breakpoint), the whole frame reflowed to full width with no horizontal overflow](./assets/course-path-option-b-tablet.png)
+![Course in path, Option B at tablet width — the rail stays beside the article body at 768 px rather than stacking, narrowed and with its course titles truncated by an ellipsis (matching the documented 15%-35% resizable-panel width band), the whole frame reflowed to full width with no horizontal overflow](./assets/course-path-option-b-tablet.png)
 
 **Selected: Option B — Left path rail replacing the sidebar — finalist renders:
 course-path-option-b-{mobile,tablet,desktop}.png.**
