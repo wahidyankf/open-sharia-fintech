@@ -1240,7 +1240,7 @@ most once` and exited 0.
 
 ### 2.1 TDD cycle 1 — course-ref normalization (`manifest.ts`)
 
-- [ ] [AI] **RED** — write a failing unit test in
+- [x] [AI] **RED** — write a failing unit test in
       `apps/ayokoding-www/src/features/course-paths/core/manifest.test.ts` _(new test)_ for
       `normalizeCourseRef(ref)`: a bare string `"just-enough-python"` normalizes to
       `{ id: "just-enough-python" }` with no framing; an object
@@ -1248,6 +1248,14 @@ most once` and exited 0.
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails because `normalizeCourseRef` is undefined. Falsifiable both ways:
       after the GREEN step this exact test passes.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest.test.ts` (new). Ran via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/manifest.test.ts`
+  (nx's cached `test:unit` target does not surface a single-file RED signal usefully, so the
+  underlying vitest invocation was used directly for this step): failed with `Failed to resolve
+import "./manifest" from "src/features/course-paths/core/manifest.test.ts". Does the file
+exist?` — correct failure reason (module does not exist yet).
 
   **Gherkin (underpins) →** the `courseOrder` element shape asserted by "A path manifest is a valid
   topological entry into the prerequisite DAG" and "Every manifest course reference resolves to a
@@ -1270,16 +1278,29 @@ most once` and exited 0.
     And no course ID appears more than once in the manifest
   ```
 
-- [ ] [AI] **GREEN** — implement `normalizeCourseRef` and re-export the `PathManifest` /
+- [x] [AI] **GREEN** — implement `normalizeCourseRef` and re-export the `PathManifest` /
       `CourseRef` types in `apps/ayokoding-www/src/features/course-paths/core/manifest.ts`
       _(new file)_, importing the types from `./schemas`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; the two new assertions pass and no previously-passing test regresses.
-- [ ] [AI] **REFACTOR** — make `normalizeCourseRef` total (never throws on a well-typed input) and
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest.ts` (new). `npx nx run
+ayokoding-www:test:unit` exited 0: 91 test files, 2754 passed / 6 skipped — both new assertions
+  pass, no regression.
+
+- [x] [AI] **REFACTOR** — make `normalizeCourseRef` total (never throws on a well-typed input) and
       confirm `manifest.ts` imports only from `./schemas` and `zod`
       — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint && grep -n "^import" apps/ayokoding-www/src/features/course-paths/core/manifest.ts`
       — acceptance: the first two exit 0 and every printed import line names `./schemas` or `zod`.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest.ts` (added a `NormalizedCourseRef`
+  type alias so the return type is a clean object shape rather than a degenerate
+  `CourseRef & { id: string }` intersection). `test:unit` and `lint` both exit 0; the only printed
+  import line is `import type { CourseRef } from "./schemas";` — names `./schemas`, no `zod` import
+  needed since the file references no zod symbol directly.
 
 ### 2.2 TDD cycle 2 — `resolvePathNav` (`path-nav.ts`)
 
