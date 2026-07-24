@@ -984,11 +984,37 @@ validate` command prints `All links valid! No broken links found.`
 
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t lint` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` — acceptance: exits 0.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — acceptance: exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by this phase's changes.
+- [x] [AI] `npx nx affected -t typecheck` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) —
+  `npx nx affected -t typecheck --base=origin/main` exits 0 for `ayokoding-www` and
+  `ayokoding-www-fe-e2e`.
+
+- [x] [AI] `npx nx affected -t lint` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) —
+  `npx nx affected -t lint --base=origin/main` exits 0 for both affected projects; the only warnings
+  printed are preexisting, unrelated to this phase (unused-var/jsx-a11y warnings in existing content
+  and features code).
+
+- [x] [AI] `npx nx affected -t test:quick test:unit` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) —
+  `npx nx affected -t test:quick test:unit --base=origin/main` exits 0 (90 test files passed, 2752
+  passed / 6 skipped, spec coverage valid). Nx flagged `ayokoding-www:test:quick` as flaky (a known
+  warm-cache re-run artifact, not a test failure — every printed run shows 90/90 passing) but the
+  overall command still exited 0.
+
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — acceptance: exits 0.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) —
+  `npx nx affected -t specs:behavior:coverage --base=origin/main` exits 0
+  ("Spec coverage valid! 22 specs, 258 scenarios, 926 steps — all covered.").
+
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by this phase's changes.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none — no failures found by any of the
+  four gates above; nothing to fix.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows Root Cause Orientation — proactively fix preexisting errors encountered during work.
@@ -998,28 +1024,52 @@ validate` command prints `All links valid! No broken links found.`
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] `test -f apps/ayokoding-www/src/features/course-paths/core/schemas.ts` returns 0 and
+- [x] [AI] `test -f apps/ayokoding-www/src/features/course-paths/core/schemas.ts` returns 0 and
       `npx nx run ayokoding-www:typecheck` exits 0.
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0 with the new `schemas.test.ts` accept-case and
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — both hold.
+
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0 with the new `schemas.test.ts` accept-case and
       reject-case both passing.
-- [ ] [AI] `test -d apps/ayokoding-www/src/features/course-paths/manifests` returns 0,
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — exits 0; all
+  six `schemas.test.ts` groups (a)-(f) pass.
+
+- [x] [AI] `test -d apps/ayokoding-www/src/features/course-paths/manifests` returns 0,
       `test -f …/manifests/README.md` returns 0, and
       `find …/manifests -name '*.yaml' | wc -l` returns **0**.
-- [ ] [AI] The shipped-frontmatter conformance check against `01`'s merged output (counts 37 and 0)
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — all three
+  hold.
+
+- [x] [AI] The shipped-frontmatter conformance check against `01`'s merged output (counts 37 and 0)
       is recorded in `<PLAN>/evidence/phase-1-contract-agreement.txt` with a non-empty 40-hex archival
       SHA; `01`'s archived copy was treated as read-only (no `plans/done/` edit) and any genuine
       contradiction was corrected in **this** plan's canonical statement.
-- [ ] [AI] The Stage 0 ordering (1.4) is complete:
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — recorded in
+  `evidence/phase-1-contract-agreement.txt` (see 1.1 above); no contradiction found.
+
+- [x] [AI] The Stage 0 ordering (1.4) is complete:
       `grep -ci "not yet ordered\|pending" <PLAN>/syllabus/paths/manifest-immediately-effective-ai-engineer.md`
       prints **`0`** (it prints `9` before 1.4 runs; note `grep -c` exits 1 on a zero count, so do
       not chain it with `&&`), the two intra-file Stage 0 anchors were repointed to the retitled
       heading's slug, and the per-pair prerequisite check from 1.4's second step is recorded.
-- [ ] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — the command
+  prints `0`; both anchors repointed; the per-pair prerequisite check is recorded in 1.4's "Order
+  Stage 0" note above.
+
+- [x] [AI] `find …/syllabus -type f | wc -l` still returns **128** — unchanged from the Phase 0
       baseline. This phase's only `syllabus/` touch is 1.4's **one recorded exception** (an in-place
       content edit to the already-renamed AI-engineer manifest mirror, ordering Stage 0); the file
       count is stable across both a rename and an in-place edit, so it is unaffected either by that
       exception or by the earlier plan-authoring-time rename+framing correction already reflected in
       the Phase 0 baseline — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding).
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — returns
+  `128`.
+
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: the manifest schema compiles and the empty `<MANIFESTS>` home exists; no resolver
