@@ -58,7 +58,9 @@ proving the fix's actual mechanism.
 
 ## Open Decisions (resolve at execution)
 
-- **Batch size**: start at 8 (an arbitrary, moderate value); tune against three constraints
+- **Batch size**: start at 20 (not 8 — `ceil(37/8)=5` batches × 10s = 50s already exceeds the 30s
+  constraint below for the course-catalog call site; `batchSize ≥ 19` is the minimum that clears it,
+  so 20 is used as the starting value with a small margin); tune against three constraints
   together — the largest observed `hrefs.length` across both call sites (`ayokoding-www`'s nav has
   dozens of internal links; the course catalog has ~37 course bundles per the sibling
   `ayokoding-learning-path-02` plan's own corpus count), the existing 10s per-request timeout, and
@@ -67,4 +69,8 @@ proving the fix's actual mechanism.
   meaningfully bound concurrency but not so small it reintroduces the sequential-timeout problem
   `c61084bca` originally fixed, **and** its worst-case sequential total
   (`ceil(hrefs.length / batchSize) * 10s`) must stay under the effective per-test timeout, or the
-  per-test timeout must be raised in the same change with the tradeoff stated.
+  per-test timeout must be raised in the same change with the tradeoff stated. If the timeout-raise
+  fallback is ever invoked instead, the preferred scope is a Playwright per-test `timeout` override
+  (e.g. `test.setTimeout()`) scoped to the affected scenarios in the two step files, not a
+  project-wide `defineConfig` default — a global raise would silently loosen tolerance for the
+  ~104+ other, unrelated scenarios in that same Playwright project.

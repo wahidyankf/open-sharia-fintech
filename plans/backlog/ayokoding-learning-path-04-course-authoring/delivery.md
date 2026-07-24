@@ -263,10 +263,12 @@ and therefore always a boundary.
       to `evidence/phase-0-snapshot.txt` as `SYLLABUS_ROOT=<path>` — every later authoring step reads
       from that recorded root, never from a copy.
       **Do not write this as `test -d plans/done/*__…/syllabus/courses || test -d plans/in-progress/…`.**
-      This harness runs **zsh**, where an unmatched glob is a fatal error rather than a literal: while
-      plan 02 is still `in-progress` the `plans/done/*__…` pattern matches nothing, zsh aborts the whole
-      command line with `no matches found`, and the `||` fallback **never runs** — a false red in the
-      single most likely state. Were the glob instead to match two archived copies, `test -d` would
+      This harness runs **zsh**, where an unmatched glob is a fatal error rather than a literal:
+      whenever the referenced plan is still in-progress (as plan 02 was when this check was
+      authored; it is now archived), the `plans/done/*__…` pattern matches nothing, zsh aborts the
+      whole command line with `no matches found`, and the `||` fallback **never runs** — a false red
+      in the single most likely state at authoring time. Were the glob instead to match two archived
+      copies, `test -d` would
       receive two arguments and exit **2** (`too many arguments`). Both measured on this machine
       2026-07-22. **`find` is also the wrong instrument for this particular check** — not because a
       piped `find … | wc -l` miscounts (it does not; see the bare-versus-piped rule in the previous

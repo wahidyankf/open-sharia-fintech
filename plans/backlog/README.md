@@ -14,7 +14,8 @@ prerequisite); **Wave 2** — `03`, `04`, `06` (need both Wave 1 plans merged; `
 hard-depends on `03`'s renderer); **Wave 3** — `05`, `07` (each needs its own Wave 2 predecessor
 merged). **Both Wave-1 plans have left this backlog**: `01-url-restructure` is
 [complete](../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md) and
-`02-schema-and-prerequisite-dag` is [in progress](../in-progress/README.md).
+`02-schema-and-prerequisite-dag` is
+[complete](../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md).
 
 - [ayokoding-learning-path-03-navigation-ui](./ayokoding-learning-path-03-navigation-ui/README.md)
   — **Wave 2.** The design funnel and every rendered surface: path landings, cards, and the
@@ -30,6 +31,12 @@ merged). **Both Wave-1 plans have left this backlog**: `01-url-restructure` is
 - [ayokoding-learning-path-07-skills-erp](./ayokoding-learning-path-07-skills-erp/README.md)
   — **Wave 3, terminal for `skills/`.** The `conventional-erp` and `sharia-erp` paths, their corpus
   and their manifests.
+
+Standalone plan (outside the `ayokoding-learning-path-*` programme):
+
+- [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md)
+  — Bounds concurrency (and retries transient failures) in `ayokoding-www-fe-e2e`'s bulk-link-check
+  helper, which currently fires every collected `href` at once.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
