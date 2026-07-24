@@ -1453,8 +1453,21 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 > **additive only**: it appends a query string and touches no URL segment. Removing or relocating the
 > `/c/` segment would be a breaking URL migration with its own redirect coverage, and is **not**
 > this plan's scope in any form.
+>
+> **Correction (2026-07-24, execution time) — the `/c/` premise above is stale.**
+> `ayokoding-learning-path-01-url-restructure` (archived 2026-07-23, DD-48 "de-namespacing")
+> already inverted `content-url.ts` in place and removed the `/c/` segment site-wide **before**
+> this plan's Phase 2 ran — this plan's own Phase 0 evidence
+> (`evidence/phase-0-baseline.txt`) already caught and recorded the real 2-arg, no-`/c/` shape, but
+> the paragraph above (and the Gherkin blocks reproduced below, and the "content-tree case
+> `/{locale}/c/{slug}`" phrase in the GREEN step) were never updated to match. The canonical course
+> URL today is `/en/learn/courses/<course-id>`, not `/en/c/learn/courses/<course-id>`. This cycle's
+> actual RED/GREEN/REFACTOR work below is written against the **real** current shape; the `/c/`
+> literals in the untouched paragraphs above and the reproduced downstream Gherkin text are left as
+> historical record of the stale premise (the Gherkin scenarios themselves belong to a downstream
+> plan's `prd.md` and are reproduced verbatim, not corrected here).
 
-- [ ] [AI] **RED** — extend
+- [x] [AI] **RED** — extend
       `apps/ayokoding-www/src/features/content/core/content-url.test.ts` _(existing test file,
       Repo-grounded)_ with (a) a **failing** assertion that
       `contentUrl("en", "learn/courses/x", "careers/interview-ready/software-engineer")` returns
@@ -1468,6 +1481,18 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       ways: after GREEN both pass; reverting GREEN makes only (a) fail again; and if (b) fails at any
       point, the `/c/` namespace has been broken and the cycle must stop rather than "fix" the
       expectation.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/content/core/content-url.test.ts` (2 new assertions appended,
+  zero pre-existing lines touched — verified via `git diff --unified=0`, which shows 20 insertions
+  and 0 deletions). **Adapted per the Correction note above**: assertion (a) expects
+  `/en/learn/courses/x?path=careers/interview-ready/software-engineer` and assertion (b) expects
+  `/en/learn/courses/x` (no `/c/`, matching the real current shape, not the stale `/c/`-prefixed
+  literals this step's own acceptance text still quotes). Ran via `rtk proxy npx vitest run
+--project unit-fe src/features/content/core/content-url.test.ts`: 9 tests, 1 failed exactly as
+  expected — `expected '/en/learn/courses/x' to be '/en/learn/courses/x?path=careers/inte…'` (wrong
+  value, third arg silently ignored) — and the characterization assertion (b) plus all 7
+  pre-existing assertions passed unchanged (8 passed, 1 failed).
 
   **Gherkin (underpins) →** "A path landing page lists its courses in manifest order"; "The
   breadcrumb reflects the active path"; "A legacy fundamentally-strong URL redirects to the canonical
@@ -1494,7 +1519,7 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
     And the redirect preserves any path context query parameter
   ```
 
-- [ ] [AI] **GREEN** — extend `contentUrl` in
+- [x] [AI] **GREEN** — extend `contentUrl` in
       `apps/ayokoding-www/src/features/content/core/content-url.ts` _(existing file, Repo-grounded)_
       with an **optional** third `pathId` parameter that appends `?path=<path-id>` to the string the
       function already returns. **Every existing return path is left byte-identical** — the
@@ -1507,7 +1532,15 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       No pre-existing assertion may be edited by this cycle — needing to edit one means the URL shape
       moved, which is out of scope. Falsifiable both ways: dropping or relocating the `/c/` segment
       makes the seven pre-existing `contentUrl` assertions fail.
-- [ ] [AI] **REFACTOR** — ensure the parameter is genuinely optional at the type level (no call site
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/content/core/content-url.ts` (added optional third `pathId`
+  param; the "content-tree case `/{locale}/c/{slug}`" phrasing in this step's own text is stale
+  per the Correction note — the real untouched case is `/{locale}/{slug}`). `test:unit` (93 files,
+  2764 passed / 6 skipped) and `typecheck` both exit 0; the new `?path=` assertion passes and all 7
+  pre-existing `content-url` assertions (per `evidence/phase-0-baseline.txt`) pass unchanged.
+
+- [x] [AI] **REFACTOR** — ensure the parameter is genuinely optional at the type level (no call site
       elsewhere in the app needs updating) and that the query string is built once, not concatenated
       ad hoc
       — command:
@@ -1515,6 +1548,12 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       — acceptance: all three exit 0 with **no** change required to any existing `contentUrl` call
       site. Falsifiable both ways: making the parameter required breaks `typecheck` at existing call
       sites.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (the GREEN implementation already
+  declares `pathId?: string` — genuinely optional — and builds the base URL once, then the query
+  suffix once via a single ternary, no ad-hoc concatenation). `typecheck`, `test:unit`, and `lint`
+  all exit 0; confirmed 23 existing `contentUrl(` call sites under `src/` (excluding `.test.` files)
+  needed zero changes.
 
 ### 2.5 TDD cycle 5 — `resolvePrerequisites` (`prerequisites.ts`)
 

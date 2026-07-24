@@ -10,6 +10,10 @@ import { normalizeSlug } from "./slug";
  * - empty / root / `_index` slug → `/{locale}` (the locale home)
  * - everything else → `/{locale}/{normalizeSlug(slug)}`
  *
+ * An optional `pathId` (course-paths plan, cycle 2.4) appends `?path=<path-id>` to whichever of
+ * the above the first two arguments already produce — additive only, every existing return shape
+ * is unchanged when `pathId` is omitted.
+ *
  * Pure function — no IO. Every URL emitter (content page, sidebar tree,
  * breadcrumb, prev/next, search results, sitemap, feed) imports it so the rule
  * lives in exactly one place.
@@ -17,13 +21,13 @@ import { normalizeSlug } from "./slug";
  * @example contentUrl("en", "learn/software-engineering") // "/en/learn/software-engineering"
  * @example contentUrl("en", "about-ayokoding")            // "/en/about-ayokoding"
  * @example contentUrl("en", "")                            // "/en"
+ * @example contentUrl("en", "learn/courses/x", "careers/interview-ready/software-engineer")
+ *          // "/en/learn/courses/x?path=careers/interview-ready/software-engineer"
  */
-export function contentUrl(locale: Locale, slug: string): string {
+export function contentUrl(locale: Locale, slug: string, pathId?: string): string {
   const normalized = normalizeSlug(slug);
 
-  if (normalized === "" || normalized === "_index") {
-    return `/${locale}`;
-  }
+  const base = normalized === "" || normalized === "_index" ? `/${locale}` : `/${locale}/${normalized}`;
 
-  return `/${locale}/${normalized}`;
+  return pathId === undefined ? base : `${base}?path=${pathId}`;
 }

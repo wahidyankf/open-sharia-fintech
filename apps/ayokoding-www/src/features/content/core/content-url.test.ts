@@ -33,4 +33,24 @@ describe("contentUrl", () => {
   it("normalizes leading and trailing slashes on content slugs", () => {
     expect(contentUrl("en", "/learn/software-engineering/")).toBe("/en/learn/software-engineering");
   });
+
+  // Cycle 2.4 (course-paths plan): contentUrl gains an optional third `pathId` param that
+  // appends `?path=<path-id>` to whatever URL contentUrl already returns for the first two
+  // arguments — additive only, no existing return path changes shape.
+  //
+  // NOTE: DD-48 ("de-namespacing", ayokoding-learning-path-01-url-restructure, archived
+  // 2026-07-23) already removed the `/c/` content-tree segment before this cycle runs — every
+  // content-tree URL contentUrl emits today is the bare `/{locale}/{slug}` form asserted by the
+  // tests above, not the `/{locale}/c/{slug}` form an earlier draft of this plan's own delivery.md
+  // describes. The two assertions below are written against the REAL current shape (re-verified
+  // 2026-07-24, matching this plan's own Phase 0 baseline snapshot), not that stale draft text.
+  it("appends the path context query param when a third pathId argument is given", () => {
+    expect(contentUrl("en", "learn/courses/x", "careers/interview-ready/software-engineer")).toBe(
+      "/en/learn/courses/x?path=careers/interview-ready/software-engineer",
+    );
+  });
+
+  it("characterizes today's shipped no-pathId behaviour unchanged (no third argument)", () => {
+    expect(contentUrl("en", "learn/courses/x")).toBe("/en/learn/courses/x");
+  });
 });
