@@ -19,10 +19,13 @@ archival.
 > Git-mechanical steps (worktree create/remove, branch, push, merge) are `[AI]`.
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
-> `> **Pause Safety**:` note (safe-to-stop state + resume command). Each gate covers the phase's
-> **code correctness** (tests, checkers, build) and its **integration** (draft PR opened, 3-cycle
-> PR-Review, CI green, `[AI]` merge). A phase is not complete until every gate check is green, and
-> phase N+1 does not start while any phase N gate check is failing.
+> `> **Pause Safety**:` note (safe-to-stop state + resume command). Every gate covers the phase's
+> **code correctness** (tests, checkers, build). Only the gate that **closes a natural delivery stop
+> point** (`DN-14` — Phases 1+2, 3+4, and 6+7; not every phase) also covers **integration** (draft PR
+> opened, 3-cycle PR-Review, CI green, `[AI]` merge); an earlier phase inside the same stop point
+> instead notes that its work continues on the same branch into the next phase. A phase is not
+> complete until every gate check is green, and phase N+1 does not start while any phase N gate check
+> is failing.
 
 ## Worktree
 
@@ -38,23 +41,51 @@ The plan-execution Step 0 gate enters this worktree by default: it auto-provisio
 `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
 the worktree after the plan is archived and pushed.
 
-Every phase branches from the **latest `origin/main`** inside this one worktree
-(`git fetch origin && git checkout main && git pull && git checkout -b
-ayokoding-learning-path-02-schema-and-prerequisite-dag/<phase-slug>`), authors its work there,
-commits, pushes that branch, and opens **its own draft PR** — from **Phase 1 onward**. **Phase 0 is
-excluded**: it is setup and baseline, pushes no branch and opens no PR, and its evidence artifacts
-ride the Phase 1 PR.
+Each **natural delivery stop point** branches from the **latest `origin/main`** inside this one
+worktree (`git fetch origin && git checkout main && git pull && git checkout -b
+ayokoding-learning-path-02-schema-and-prerequisite-dag/<stop-point-slug>`), authors every phase in
+that stop point on the SAME branch, commits, pushes that branch, and opens **its own draft PR** —
+**one PR per stop point, not one PR per phase** (`DN-14`, see below). **Phase 0 is excluded**: it is
+setup and baseline, pushes no branch and opens no PR, and its evidence artifacts ride the first
+stop point's PR.
+
+> **DN-14 DECIDED — one PR per natural delivery stop point, not one PR per phase** (2026-07-24,
+> maintainer directive, in-session): a phase is a checkpoint inside the plan's own checklist, not
+> automatically an independent, reviewable, mergeable unit — opening a full 3-cycle PR-review gate
+> for every phase, including phases that are serially dependent on the one before them or that ship
+> no independently-reviewable diff, multiplies review-cycle overhead without a matching increase in
+> reviewability. This plan's four stop points, applying the "genuinely dependent nodes stay one PR"
+> clause of [Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
+> to this plan's own already-documented [Parallelization Model](#parallelization-model):
+>
+> 1. **Phases 1 + 2** — one PR, merging at the Phase 2 Gate. Phase 2's every RED step imports from
+>    what Phase 1 created (Parallelization Model), so Phase 1 alone is not independently reviewable
+>    against its own final shape; the pair is this plan's core "data layer" handoff point.
+> 2. **Phases 3 + 4** — one PR, merging at the Phase 4 Gate. Both are verification passes over the
+>    already-shipped Phase 1+2 code (automated quality gates, then a manual no-regression sweep) —
+>    no new schema or core logic ships in either.
+> 3. **Phase 5** — no PR of its own. It is a **gate-only** verification phase confirming the prior
+>    stop point's PR is merged and integrated (`Zero open plan PRs; every prior phase merged to
+main`, Phase 5 Gate) — it ships no diff to review.
+> 4. **Phases 6 + 7** — one PR, merging at the Phase 7 Gate. `learnings.md` triage (6) and the
+>    archival move + link repoint (7) are both docs-only, serially dependent (7 checks that 6 is
+>    fully triaged first), and together form the plan's closing stop point.
+>
+> Net effect: **4 PRs across Phases 0-7** (Phase 0's PR #90, already merged — see its own
+> grandfathered-exception note below — plus the three stop points above) instead of the
+> one-PR-per-phase default this section previously declared.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
 [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery** phase — **Phase 1 onward**; Phase 0 opens none — works in the worktree on its
-**own branch**, opens a **draft PR** against `main`, runs the
-**PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential CI-gated
-cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates are
-green**. Mode inherited from the source plan at tier-2 ("plan field") precedence — not re-derived.
+Each **natural delivery stop point** — Phases 1+2, Phases 3+4, and Phases 6+7 (Phase 0's PR #90
+already merged; Phase 5 opens none — see `DN-14` above) — works in the worktree on its **own
+branch**, opens a **draft PR** against `main`, runs the **PR-Review Maker→Fixer Cycle** (fan-out →
+`pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential CI-gated cycles), flips the PR to
+ready, and `[AI]` **merges it automatically once all quality gates are green**. Mode inherited from
+the source plan at tier-2 ("plan field") precedence — not re-derived.
 See
 [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
@@ -71,16 +102,21 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
 > than deviating from it. The preconditions are unchanged either way — only the actor differs.
 
-**Per-Phase Integration Protocol — Phase 1 onward** (each delivery phase's gate lists these as
-must-pass). **Phase 0 is excluded**: it is Environment Setup and Baseline, opens no PR, pushes no
-branch, runs no review cycle, and merges nothing; its evidence artifacts ride the Phase 1 PR
-([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+**Per-Stop-Point Integration Protocol** (each stop point's closing gate lists these as must-pass;
+per `DN-14` this runs once per stop point, not once per phase). **Phase 0 is excluded**: it already
+completed this protocol as a one-time grandfathered exception (PR #90, merged — see its own note
+under the Phase 0 Gate). **Phase 5 is excluded**: it opens no PR of its own (gate-only verification
+that the prior stop point's PR merged) — see `DN-14` above.
 
-1. [AI] Sync the worktree to latest `origin/main` and branch:
+1. [AI] **At the start of a stop point's first phase only**: sync the worktree to latest
+   `origin/main` and branch:
    `git fetch origin && git checkout main && git pull && git checkout -b
-ayokoding-learning-path-02-schema-and-prerequisite-dag/<phase-slug>`.
-2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically (Conventional Commits, imperative, no period), push the branch, open a **draft PR**
+ayokoding-learning-path-02-schema-and-prerequisite-dag/<stop-point-slug>`. Every later phase inside
+   the same stop point continues committing to this SAME branch — no new branch, no new PR, until
+   the stop point's closing phase.
+2. [AI] Stage only the current phase's paths (`git add <explicit paths>` — never `git add -A`),
+   commit thematically per phase (Conventional Commits, imperative, no period), push the branch
+   after each phase's commits. **Only at the stop point's closing phase**: open a **draft PR**
    against `main` (`gh pr create --draft --base main ...`) — CI runs on the PR.
 3. [AI] Run the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), resolve every finding,
    then `gh pr ready`.
@@ -108,14 +144,17 @@ deploy would be a pure no-op. The first split plan to change a rendered surface 
 subagents capped per the orchestration convention). The main thread self-promotes nothing.
 
 - **Phases 0 → 1 → 2 are serial.** Phase 1 defines the schema Phase 2's core is written against;
-  Phase 2's every RED step imports from what Phase 1 created.
+  Phase 2's every RED step imports from what Phase 1 created. **Per `DN-14`, Phases 1+2 are one
+  stop point and one PR** — Phase 1 alone has no independently-reviewable final shape.
 - **Inside Phase 2, the eight TDD cycles (2.1-2.5, 2.6a, 2.6b, 2.7) are serial by convention, not by
   necessity.** Cycles 2.2 (`path-nav`), 2.3 (`path-context`), 2.4 (`content-url`) and 2.5
   (`resolvePrerequisites`) touch disjoint files and could pipeline through review under the cap;
   2.6a, 2.6b and 2.7 depend on cycle 2.1's normalized course-ref shape, and **2.6b depends on 2.6a**
   (same function, same result object). Keep them serial unless the cap has genuine headroom — the
-  phase is one PR either way.
-- **Phases 3 → 4 → 5 → 6 → 7 are serial.**
+  phase is one PR either way (and, per `DN-14`, so is the Phase 1+2 pair around it).
+- **Phases 3 → 4 → 5 → 6 → 7 are serial.** Per `DN-14`: **Phases 3+4 are one stop point/one PR**
+  (both are verification passes over already-shipped code); **Phase 5 opens no PR** (gate-only,
+  confirms the prior PR merged); **Phases 6+7 are one stop point/one PR** (docs-only closing pair).
 - **This plan runs in parallel with `ayokoding-learning-path-01-url-restructure`** (the other Wave-1
   plan). Do not serialize them for convenience — the split exists to buy that parallelism.
 
@@ -196,12 +235,13 @@ expanded is not executable.
   first. See [Parallelization model](#parallelization-model).
 - `<BASELINE_SHA>` = the 40-hex commit SHA this execution's `syllabus/` custody checks are measured
   **against**, resolved once by Phase 0 and expanded textually everywhere — **never** the live
-  `origin/main` ref. The ref moves: the **Per-Phase Integration Protocol** declared above under
-  `## Delivery Mode` merges every phase's PR to `main` before the next phase starts, so from Phase 2 onward `origin/main`
-  already contains step 1.4's edit and a diff against it prints **zero** lines — which the custody
-  checks would read as "1.4 never ran", blocking the Phase 3 gate and, at 7.1 (c), blocking archival
-  permanently. A SHA pinned **before** Phase 1 does not move under those merges, so the same three
-  checks stay falsifiable in both directions at every phase that runs them.
+  `origin/main` ref. The ref moves: the **Per-Stop-Point Integration Protocol** declared above under
+  `## Delivery Mode` merges the Phase 1+2 stop point's one PR to `main` at the Phase 2 Gate (`DN-14`
+  — not one PR per phase), so from Phase 3 onward `origin/main` already contains step 1.4's edit
+  (authored in Phase 1, merged with Phase 2) and a diff against it prints **zero** lines — which the
+  custody checks would read as "1.4 never ran", blocking the Phase 3 gate and, at 7.1 (c), blocking
+  archival permanently. A SHA pinned **before** Phase 1 does not move under those merges, so the same
+  three checks stay falsifiable in both directions at every phase that runs them.
 - `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/` (course bundles; served at `/en/c/learn/courses/<course-id>`)
 - `<PATHS>` = `apps/ayokoding-www/content/en/learn/paths/` (thin path-landing anchors; served at `/en/c/learn/paths/<path-id>`)
 - `<SE_OLD>` = `apps/ayokoding-www/content/en/learn/fundamentally-strong/software-engineer/` (legacy home of the 33 shipped topics + 4 existing capstones, incl. `capstone-solid-core` — the re-home source)
@@ -1070,7 +1110,10 @@ validate` command prints `All links valid! No broken links found.`
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (verification only) — returns
   `128`.
 
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
+- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 1+2 form one natural delivery stop point,
+      so this phase's commits stay on the same branch and continue directly into Phase 2 — the
+      draft PR opens, runs its 3-cycle PR-Review, and merges at the **Phase 2 Gate** below, covering
+      both phases' commits together.
 
 > **Pause Safety**: the manifest schema compiles and the empty `<MANIFESTS>` home exists; no resolver
 > consumes them yet and no rendered behaviour changed anywhere. Safe to stop indefinitely. To resume:
@@ -1613,7 +1656,8 @@ validate` command prints `All links valid! No broken links found.`
       baseline (no delivery step in this phase touches `syllabus/`; the file count is stable across a
       rename, so it is unaffected by the one-time, plan-authoring-time R3 custody exception already
       reflected in that baseline — see [tech-docs.md §Custody rules](./tech-docs.md#custody-rules-binding)).
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
+- [ ] [AI] **Draft PR opened (covers both Phase 1 and Phase 2 commits, `DN-14`)**; 3-cycle
+      PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: the pure ordering, context, prerequisite and integrity logic is implemented and
 > unit-tested; no route or component consumes it, so the only shipped-behaviour change is
@@ -1713,11 +1757,11 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       output reaches `wc -l` raw. (Only a **bare** `find` is rewritten to `rtk find` and reformatted;
       see the Phase 0 preamble.)
       **The comparison is against `<BASELINE_SHA>`, the SHA Phase 0 pinned — never the live
-      `origin/main` ref.** Phase 1's PR is merged to `main` before this phase starts (Per-Phase
-      Integration Protocol), so `origin/main` already contains 1.4's edit by now and a diff against it
-      would print **zero** lines, which this very clause reads as "1.4 never ran" — a false red that
-      blocks the gate. The pinned SHA predates that merge, so both directions stay meaningful here and
-      at every later phase.
+      `origin/main` ref.** The Phase 1+2 stop point's one PR (`DN-14`) is merged to `main` before this
+      phase starts (Per-Stop-Point Integration Protocol), so `origin/main` already contains 1.4's edit
+      by now and a diff against it would print **zero** lines, which this very clause reads as "1.4
+      never ran" — a false red that blocks the gate. The pinned SHA predates that merge, so both
+      directions stay meaningful here and at every later phase.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
 > (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
@@ -1739,7 +1783,11 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       already carries that edit, and counted **by path prefix** rather than by lines because RTK's
       `git diff` filter appends a `--- Changes ---` trailer to non-empty output, which inflates
       `wc -l` to **4** and a bare `grep -c .` to **2** on the one-changed-file state.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
+- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 3+4 form one natural delivery stop point
+      (both are verification passes over already-shipped Phase 1+2 code), so this phase's commits
+      stay on the same branch and continue directly into Phase 4 — the draft PR opens, runs its
+      3-cycle PR-Review, and merges at the **Phase 4 Gate** below, covering both phases' commits
+      together.
 
 > **Pause Safety**: the whole data layer passes every automated gate and the plan's ownership
 > boundary is proven intact. Safe to stop indefinitely. To resume: re-run the affected quality gates
@@ -1828,8 +1876,8 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 - [ ] [AI] The Rule-15 exemption **and** the Rule-16 non-applicability are recorded with reasons in
       `<PLAN>/evidence/phase-4-rule-15-exemption.txt`, each naming the plan that carries the obligation
       instead (or stating that none does).
-- [ ] [AI] Draft PR opened (evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged.
+- [ ] [AI] **Draft PR opened (covers both Phase 3 and Phase 4 commits — evidence + any fixes,
+      `DN-14`)**; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 
 > **Pause Safety**: the one shipped-code change is proven non-regressive against both locales at
 > three breakpoints, with committed evidence, and the tester exemptions are on the record rather than
@@ -1911,8 +1959,10 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
       `plans/backlog/` plan, or discarded with a reason), or the file records the explicit "none"
       escape.
 - [ ] [AI] No code-homed learning landed inline in this plan's own commits or PR.
-- [ ] [AI] Draft PR opened (`learnings.md` triage); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged.
+- [ ] [AI] **No PR opens at this gate (`DN-14`)**: Phases 6+7 form one natural delivery stop point
+      (both are docs-only closing work), so this phase's `learnings.md` triage commit stays on the
+      same branch and continues directly into Phase 7 — the draft PR opens, runs its 3-cycle
+      PR-Review, and merges at the **Phase 7 Gate** below, covering both phases' commits together.
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Safe to stop indefinitely. To resume: re-read `learnings.md`
@@ -2175,8 +2225,8 @@ found.` precisely so that a non-zero residue must be explained rather than exclu
 - [ ] [AI] The stage index README the plan left (`plans/backlog/README.md` or
       `plans/in-progress/README.md`), `plans/done/README.md`, and any other referencing README are
       updated.
-- [ ] [AI] Draft PR opened (archival move + repoint); 3-cycle PR-Review complete; CI green; PR
-      `[AI]`-merged.
+- [ ] [AI] **Draft PR opened (covers both Phase 6 `learnings.md` triage and Phase 7 archival move +
+      repoint, `DN-14`)**; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged.
 - [ ] [AI] After the archival PR merges, prompt the user before deleting
       `worktrees/ayokoding-learning-path-02-schema-and-prerequisite-dag/`.
 
