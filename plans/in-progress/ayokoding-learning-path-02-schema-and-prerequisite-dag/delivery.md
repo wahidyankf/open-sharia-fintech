@@ -1743,7 +1743,7 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 ### 2.7 TDD cycle 7 — `checkManifestIntegrity` (`manifest-integrity.ts`)
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.test.ts` _(new test)_ for
       `checkManifestIntegrity(manifest, libraryCourseIds)`: a **clean** fixture reports no unresolved
       and no duplicate IDs; a fixture whose `courseOrder` names a course absent from
@@ -1753,6 +1753,11 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       — acceptance: the run fails because `checkManifestIntegrity` is undefined. Falsifiable both
       ways: an implementation returning empty sets unconditionally fails the second and third
       assertions.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.test.ts`. Confirmed via
+  `rtk proxy npx vitest run --project unit-fe .../manifest-integrity.test.ts`:
+  `Failed to resolve import "./manifest-integrity"` — correct RED reason.
 
   **Gherkin (binds) →** "Every manifest course reference resolves to a real course"
 
@@ -1764,16 +1769,26 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
     And no course ID appears more than once in the manifest
   ```
 
-- [ ] [AI] **GREEN** — implement `checkManifestIntegrity(manifest, libraryCourseIds)` in
+- [x] [AI] **GREEN** — implement `checkManifestIntegrity(manifest, libraryCourseIds)` in
       `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.ts` _(new file)_, pure,
       returning the unresolved-ID set and the duplicate-ID set
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; all three assertions pass.
-- [ ] [AI] **REFACTOR** — normalize each `courseOrder` entry through `normalizeCourseRef` (cycle 2.1)
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.ts`. Verified via
+  `rtk proxy npx vitest run --project unit-fe .../manifest-integrity.test.ts`: 3 passed.
+
+- [x] [AI] **REFACTOR** — normalize each `courseOrder` entry through `normalizeCourseRef` (cycle 2.1)
       instead of branching on the string-or-object shape inline
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
       — acceptance: both exit 0; the object-form `courseOrder` fixture is handled identically to the
       string form.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.ts`,
+  `apps/ayokoding-www/src/features/course-paths/core/manifest-integrity.test.ts` (added
+  object-form fixture test). `test:unit` (project file): 4 passed; `typecheck`: exit 0.
 
 ### 2.8 Closing REFACTOR — the purity guard
 
