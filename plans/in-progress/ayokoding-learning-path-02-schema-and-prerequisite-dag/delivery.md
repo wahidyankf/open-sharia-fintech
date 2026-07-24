@@ -1922,7 +1922,10 @@ test:unit, test:integration, test:e2e for 25 projects and 11 tasks they depend o
   `feat(ayokoding-www): ...`, `fix(<app>): ...`, or `docs(plans): ...`, imperative mood, no period.
 
 - [x] [AI] Keep the `content-url.ts` change (cycle 2.4) in its **own** commit — it is the only shipped-code
-      change in the plan and must be revertable in isolation.
+      change in the plan and must be reviewable and revertable in isolation before the PR merges (this
+      repo squash-merges every PR — see `worktree-and-artifact-cleanup.md`'s Test-1 note — so the
+      isolation benefit is scoped to PR review and pre-merge revert, not post-merge; after merge only
+      the whole squashed PR is revertible as one commit).
 
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none. Landed in its own commit
   `39606c066` (`feat(ayokoding-www): add optional pathId param to contentUrl`), before this segment.
