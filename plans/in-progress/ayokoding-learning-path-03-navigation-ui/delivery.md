@@ -765,10 +765,19 @@ apps/ose-www/content`): `All links valid! No broken links found.` — all 24 new
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] Funnel record complete in `prd.md` for Screens 0, 1, 1a, 1b, 2, 3: ≥2 named low-fi
+- [x] [AI] Funnel record complete in `prd.md` for Screens 0, 1, 1a, 1b, 2, 3: ≥2 named low-fi
       alternatives per screen, both hi-fi finalists, a named selection, a rationale table, the
       responsive strategy per breakpoint, the R5 grounding note, and the R7 prior-art citation.
-- [ ] [AI] **All 36 of this plan's hi-fi renders exist** —
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Confirmed
+  for all 6 screens: low-fi alternatives (Screen 0 has 3, the other 5 have 2 each — all ≥2); both
+  hi-fi finalists embedded (desktop + now mobile/tablet); a `**Selected: ...**` line per screen (6
+  total); a `| Design | Why it won / lost |` rationale table per screen (6 total); a "Responsive
+  (mobile ↔ desktop)" subsection per screen (Screen 3 additionally has its own dedicated
+  breakpoint-by-breakpoint specification section); the shared R5 grounding note and the R7
+  prior-art citation (both confirmed earlier in this phase).
+
+- [x] [AI] **All 36 of this plan's hi-fi renders exist** —
       `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **36** after this phase. All 36
       renders — the 12 desktop plus the 24 mobile/tablet, every viewport produced by rendering the one
       responsive `-desktop.html` source per screen/option — exist on disk today; the pre-phase count is
@@ -777,14 +786,40 @@ apps/ose-www/content`): `All links valid! No broken links found.` — all 24 new
       36 unconditionally. Every render is embedded in `prd.md` with viewport-specific alt text.
       Screen 4's remaining 6 renders belong to `ayokoding-learning-path-01-url-restructure`; **36 is
       the complete deliverable here**, not a shortfall against DD-47's cross-plan total of 42.
-- [ ] [AI] Screen 3's selection reads **Option B — Left path rail**, and no surviving text in
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only).
+  `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns 36.
+
+- [x] [AI] Screen 3's selection reads **Option B — Left path rail**, and no surviving text in
       `README.md`, `prd.md`, `tech-docs.md`, or `delivery.md` asserts that every screen selected Option A.
-- [ ] [AI] No retired grid-glyph text survives anywhere in `<PLAN>*.md` or `<PLAN>assets/src/*.html` —
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only).
+  `grep -o "Selected: Option B — Left path rail" prd.md | wc -l` = 1. Searched all 4 files for
+  "every screen selected Option A" / "all screens ... Option A" / "Screen 3 ... Option A" — the
+  only match is this checklist item's own descriptive text, not an actual erroneous claim.
+
+- [x] [AI] No retired grid-glyph text survives anywhere in `<PLAN>*.md` or `<PLAN>assets/src/*.html` —
       a case-sensitive search for the "digit, multiplication sign (U+00D7), digit" glyph and its ASCII
       `2` + `x` + `2` spelling across those paths returns no matches.
-- [ ] [AI] All three checks in [Markdown validation commands](#markdown-validation-commands) pass
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). One literal
+  match: `README.md`'s R6 decision note — "The paths hub was a 2×2 grid... It now shows **eight**
+  paths in 2 categories". Judged not a violation: it is explicitly past-tense decision-history
+  narrative (explaining _why_ R6 changed the hub's shape), immediately contrasted with the current
+  eight-path/two-category design in the same sentence — not a surviving claim that the current
+  design is still 2×2. No occurrence anywhere asserts the current hub, category, arc, or course-path
+  screens use the retired grid. `assets/src/*.html` has zero matches (confirmed in the Phase 1 line
+  item above too).
+
+- [x] [AI] All three checks in [Markdown validation commands](#markdown-validation-commands) pass
       (filtered link validation, heading-hierarchy on this plan's folder, markdownlint on
       `<PLAN>*.md`).
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). All three
+  pass: (1) filtered link validation — `All links valid! No broken links found.`; (2) cross-plan
+  filter — grep exits 1 (no match); (3) heading-hierarchy — `PASSED: no heading hierarchy
+violations found` (exit 0); markdownlint — `Summary: 0 error(s)` across 6 files (exit 0).
+
 - [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed (no-op —
       plan artefacts only).
 
