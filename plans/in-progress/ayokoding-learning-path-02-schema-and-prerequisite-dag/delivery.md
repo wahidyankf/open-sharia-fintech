@@ -1619,7 +1619,7 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 #### 2.6a — ordering violations (binds the topological scenario)
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts` _(existing test file
       from cycle 2.5)_ for
       `checkPrerequisiteConsistency(manifest, prerequisitesByCourse, libraryCourseIds)`: a **clean**
@@ -1633,6 +1633,12 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       both ways: the clean and violating fixtures must produce **different** `violations` results
       after GREEN, so an implementation that always returns zero violations fails the second
       assertion.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`. Confirmed via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/prerequisites.test.ts`:
+  `TypeError: checkPrerequisiteConsistency is not a function` — correct RED reason; the 3 prior
+  `resolvePrerequisites` tests still pass.
 
   **Gherkin (binds) →** "A path manifest is a valid topological entry into the prerequisite DAG"
 
@@ -1649,19 +1655,30 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
   > used to trail this scenario lives in cycle 2.7's scenario, where it is actually implemented and
   > tested; see [prd.md §Acceptance Criteria](./prd.md#acceptance-criteria-gherkin).
 
-- [ ] [AI] **GREEN** — implement the ordering half of `checkPrerequisiteConsistency` in
+- [x] [AI] **GREEN** — implement the ordering half of `checkPrerequisiteConsistency` in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts` _(existing file from cycle
       2.5)_: for each course in `courseOrder`, report every declared prerequisite that is present in
       `libraryCourseIds` **and** in the manifest but appears at a later index as a `violations` entry
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; the clean fixture reports zero `violations` and the violating fixture
       reports exactly one `violations` entry naming `advanced-algorithms`.
-- [ ] [AI] **REFACTOR** — return each violation as a structured record
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`. Verified via
+  `rtk proxy npx vitest run --project unit-fe .../prerequisites.test.ts`: 5 passed.
+
+- [x] [AI] **REFACTOR** — return each violation as a structured record
       `{ courseId, missingPrerequisiteId, courseIndex, prerequisiteIndex }` rather than a bare string,
       so a downstream gate can render a precise message
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck`
       — acceptance: both exit 0 and the violating fixture's single `violations` record carries all
       four fields.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`,
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`. `test:unit` (project
+  file): 5 passed; `typecheck`: exit 0. Violating fixture's single record:
+  `{ courseId: "advanced-algorithms", missingPrerequisiteId: "data-structures-and-algorithms-essentials", courseIndex: 0, prerequisiteIndex: 1 }`.
 
 #### 2.6b — link-don't-walk `linkedPrerequisites` (binds the OI-4 scenario)
 

@@ -1,9 +1,38 @@
 import { describe, expect, it } from "vitest";
-import { resolvePrerequisites } from "./prerequisites";
+import { checkPrerequisiteConsistency, resolvePrerequisites } from "./prerequisites";
+import type { PathManifest } from "./schemas";
 
 const prerequisitesByCourse: Record<string, readonly string[]> = {
   "advanced-algorithms": ["data-structures-and-algorithms-essentials", "discrete-math-foundations"],
   "just-enough-python": [],
+};
+
+const libraryCourseIds: readonly string[] = [
+  "just-enough-python",
+  "data-structures-and-algorithms-essentials",
+  "discrete-math-foundations",
+  "advanced-algorithms",
+];
+
+// Clean: every in-manifest prerequisite of advanced-algorithms precedes it.
+const cleanManifest: PathManifest = {
+  pathId: "skills/algorithms",
+  arc: "algorithms",
+  title: "Algorithms",
+  description: "Algorithms path",
+  courseOrder: ["data-structures-and-algorithms-essentials", "discrete-math-foundations", "advanced-algorithms"],
+};
+
+// Violating: advanced-algorithms precedes its declared prerequisite
+// data-structures-and-algorithms-essentials. discrete-math-foundations is deliberately absent
+// from this manifest so it can never count toward the violation total (only in-manifest
+// prerequisites are checked) — keeping the violation count at exactly one.
+const violatingManifest: PathManifest = {
+  pathId: "skills/algorithms",
+  arc: "algorithms",
+  title: "Algorithms",
+  description: "Algorithms path",
+  courseOrder: ["advanced-algorithms", "data-structures-and-algorithms-essentials"],
 };
 
 describe("resolvePrerequisites", () => {
@@ -24,5 +53,25 @@ describe("resolvePrerequisites", () => {
 
     expect(result).toEqual([]);
     expect(result).not.toBeUndefined();
+  });
+});
+
+describe("checkPrerequisiteConsistency", () => {
+  it("reports zero violations for a manifest whose courseOrder respects every in-manifest prerequisite", () => {
+    const result = checkPrerequisiteConsistency(cleanManifest, prerequisitesByCourse, libraryCourseIds);
+
+    expect(result.violations).toEqual([]);
+  });
+
+  it("reports exactly one violation naming the course placed before its declared prerequisite", () => {
+    const result = checkPrerequisiteConsistency(violatingManifest, prerequisitesByCourse, libraryCourseIds);
+
+    expect(result.violations).toHaveLength(1);
+    expect(result.violations[0]).toEqual({
+      courseId: "advanced-algorithms",
+      missingPrerequisiteId: "data-structures-and-algorithms-essentials",
+      courseIndex: 0,
+      prerequisiteIndex: 1,
+    });
   });
 });
