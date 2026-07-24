@@ -203,6 +203,13 @@ fn check_shared_steps(opts: &ScanOptions) -> std::result::Result<CheckResult, Er
             total_scenarios += 1;
             for step in &sc.steps {
                 total_steps += 1;
+                // `@wip` scenarios are fully exempt from step-coverage checking (the same rule
+                // `behavior_coverage::validator` documents for its own `@covers`-marker check) —
+                // still counted in `total_scenarios`/`total_steps` as a physical inventory, but
+                // their steps never become step gaps and never count toward orphan-impl matching.
+                if sc.is_wip {
+                    continue;
+                }
                 all_gherkin_steps.push(step.text.clone());
                 all_gherkin_steps.extend(step.variants.iter().cloned());
                 if !step_covered(&all_step_texts, step) {
@@ -285,16 +292,24 @@ fn check_one_to_one(opts: &ScanOptions) -> std::result::Result<CheckResult, Erro
 
         for sc in &scenarios {
             total_scenarios += 1;
-            let normalized = normalize_ws(&sc.title);
-            if !scenario_titles.contains(&normalized) {
-                scenario_gaps.push(ScenarioGap {
-                    spec_file: rel_spec.clone(),
-                    scenario_title: sc.title.clone(),
-                });
+            // `@wip` scenarios are fully exempt from both scenario-gap and step-gap checking here
+            // too (see the matching comment in `check_shared_steps`) — still counted in
+            // `total_scenarios`/`total_steps`, never reported as a gap.
+            if !sc.is_wip {
+                let normalized = normalize_ws(&sc.title);
+                if !scenario_titles.contains(&normalized) {
+                    scenario_gaps.push(ScenarioGap {
+                        spec_file: rel_spec.clone(),
+                        scenario_title: sc.title.clone(),
+                    });
+                }
             }
 
             for step in &sc.steps {
                 total_steps += 1;
+                if sc.is_wip {
+                    continue;
+                }
                 all_gherkin_steps.push(step.text.clone());
                 all_gherkin_steps.extend(step.variants.iter().cloned());
                 if !step_covered(&all_step_texts, step) {
@@ -1097,6 +1112,99 @@ mod tests {
             1,
             "step impl was excluded from the source walk, so the step is uncovered"
         );
+    }
+
+    // RED: a `@wip`-tagged scenario with a wholly uncovered step must be exempt from step-gap
+    // reporting in shared-steps mode — the same "`@wip` scenarios are fully exempt" rule
+    // `behavior_coverage::validator` documents, extended to this checker (it previously had no
+    // `@wip` awareness at all, since `ParsedScenario` didn't track the tag). Falsifiable both ways:
+    // the untagged sibling scenario's identical uncovered step must still produce a gap, so an
+    // implementation that swallowed every step gap (rather than only `@wip` ones) would fail the
+    // second assertion below.
+    #[test]
+    fn wip_tagged_scenario_step_is_exempt_from_step_gap_shared_steps() {
+        let tmp = TempDir::new().unwrap();
+        let specs = tmp.path().join("specs");
+        let app = tmp.path().join("app");
+        std::fs::create_dir_all(&specs).unwrap();
+        std::fs::create_dir_all(&app).unwrap();
+        std::fs::write(
+            specs.join("foo.feature"),
+            "Feature: x\n\nScenario: untagged\n  Given an uncovered untagged step\n\n@wip\nScenario: tagged\n  Given an uncovered wip step\n",
+        )
+        .unwrap();
+        // No step implementation anywhere — both steps are uncovered on paper.
+        let opts = ScanOptions {
+            repo_root: tmp.path().to_path_buf(),
+            specs_dir: specs.clone(),
+            specs_dirs: vec![],
+            app_dir: app.clone(),
+            verbose: false,
+            quiet: false,
+            shared_steps: true,
+            exclude_dirs: vec![],
+            exclude_source_dirs: vec![],
+        };
+        let r = check_all(&opts).unwrap();
+        assert_eq!(r.total_scenarios, 2, "both scenarios are still counted");
+        assert_eq!(
+            r.step_gaps.len(),
+            1,
+            "only the untagged scenario's step should surface as a gap; the @wip scenario's step \
+             must be exempt — expected exactly 1 gap, got: {:?}",
+            r.step_gaps
+        );
+        assert_eq!(r.step_gaps[0].scenario_title, "untagged");
+    }
+
+    // RED: same exemption, one-to-one mode — a `@wip` scenario missing from the matching test
+    // file's scenario titles must not surface as a `ScenarioGap`, and its step must not surface as
+    // a `StepGap` either.
+    #[test]
+    fn wip_tagged_scenario_is_exempt_from_scenario_and_step_gaps_one_to_one() {
+        let tmp = TempDir::new().unwrap();
+        let specs = tmp.path().join("specs");
+        let app = tmp.path().join("app");
+        std::fs::create_dir_all(&specs).unwrap();
+        std::fs::create_dir_all(&app).unwrap();
+        std::fs::write(
+            specs.join("foo.feature"),
+            "Feature: x\n\nScenario: untagged\n  Given an uncovered untagged step\n\n@wip\nScenario: tagged\n  Given an uncovered wip step\n",
+        )
+        .unwrap();
+        // A matching test file exists (satisfies the file-level gap), but implements neither
+        // scenario title nor either step.
+        std::fs::write(app.join("foo.test.ts"), "// no scenarios implemented yet\n").unwrap();
+        let opts = ScanOptions {
+            repo_root: tmp.path().to_path_buf(),
+            specs_dir: specs.clone(),
+            specs_dirs: vec![],
+            app_dir: app.clone(),
+            verbose: false,
+            quiet: false,
+            shared_steps: false,
+            exclude_dirs: vec![],
+            exclude_source_dirs: vec![],
+        };
+        let r = check_all(&opts).unwrap();
+        assert!(
+            r.gaps.is_empty(),
+            "a matching test file exists, no file-level gap"
+        );
+        assert_eq!(
+            r.scenario_gaps.len(),
+            1,
+            "only the untagged scenario should surface as a scenario gap, got: {:?}",
+            r.scenario_gaps
+        );
+        assert_eq!(r.scenario_gaps[0].scenario_title, "untagged");
+        assert_eq!(
+            r.step_gaps.len(),
+            1,
+            "only the untagged scenario's step should surface as a step gap, got: {:?}",
+            r.step_gaps
+        );
+        assert_eq!(r.step_gaps[0].scenario_title, "untagged");
     }
 
     #[test]

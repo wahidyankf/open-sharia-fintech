@@ -36,6 +36,13 @@ pub struct ParsedScenario {
     pub title: String,
     /// Ordered list of steps belonging to this scenario.
     pub steps: Vec<ParsedStep>,
+    /// `true` if a `@wip` tag line immediately precedes this scenario (allowing
+    /// intervening blank lines and `#`-comments, matching the Gherkin tag-attachment rule
+    /// `behavior_coverage::extract` already applies for the marker-existence checker).
+    /// Step-coverage checkers in this module use this to exempt the scenario from step-gap
+    /// (and, in one-to-one mode, scenario-gap) reporting — the same "`@wip` scenarios are
+    /// fully exempt" rule `behavior_coverage::validator` documents for its own coverage check.
+    pub is_wip: bool,
 }
 
 /// Gherkin step keywords recognised by the parser (each includes a trailing space).
@@ -93,9 +100,27 @@ fn parse_feature_file_inner(
     let mut in_examples = false;
     let mut ex_headers: Option<Vec<String>> = None;
 
+    // `true` once a `@wip` tag line has been seen and not yet consumed by (or discarded before)
+    // the next `Scenario:`/`Scenario Outline:` line — mirrors the tag-attachment rule
+    // `behavior_coverage::extract::extract_scenario_specs` already applies: a tag line attaches
+    // to the next scenario line, surviving intervening blank lines, but is discarded by any other
+    // non-blank content line (e.g. a `Feature:`-level tag must never leak onto the first scenario).
+    let mut pending_wip = false;
+
     for raw in BufReader::new(file).lines() {
         let Ok(line_owned) = raw else { continue };
         let line = line_owned.trim();
+
+        if line.is_empty() {
+            continue;
+        }
+
+        if line.starts_with('@') {
+            if line.split_whitespace().any(|tag| tag == "@wip") {
+                pending_wip = true;
+            }
+            continue;
+        }
 
         if line.starts_with("Background:") {
             in_examples = false;
@@ -103,6 +128,7 @@ fn parse_feature_file_inner(
             pending_outline_indices = None;
             in_background = true;
             current_idx = None;
+            pending_wip = false;
             continue;
         }
 
@@ -113,9 +139,11 @@ fn parse_feature_file_inner(
             scenarios.push(ParsedScenario {
                 title: rest.trim().to_string(),
                 steps: Vec::new(),
+                is_wip: pending_wip,
             });
             current_idx = Some(scenarios.len() - 1);
             pending_outline_indices = Some(Vec::new());
+            pending_wip = false;
             continue;
         }
         if let Some(rest) = line.strip_prefix("Scenario:") {
@@ -125,9 +153,11 @@ fn parse_feature_file_inner(
             scenarios.push(ParsedScenario {
                 title: rest.trim().to_string(),
                 steps: Vec::new(),
+                is_wip: pending_wip,
             });
             current_idx = Some(scenarios.len() - 1);
             pending_outline_indices = None;
+            pending_wip = false;
             continue;
         }
 
@@ -138,54 +168,114 @@ fn parse_feature_file_inner(
         }
 
         if in_examples && line.starts_with('|') {
-            let row = parse_row(line);
-            if ex_headers.is_none() {
-                ex_headers = Some(row);
-                continue;
-            }
-            if let (Some(idxs), Some(idx)) = (pending_outline_indices.as_ref(), current_idx) {
-                let headers = ex_headers
-                    .as_ref()
-                    .expect("ex_headers is Some — is_none() branch above continues");
-                for &step_idx in idxs {
-                    let text = scenarios[idx].steps[step_idx].text.clone();
-                    let exp = expand_step(&text, headers, &row);
-                    scenarios[idx].steps[step_idx].variants.push(exp.clone());
-                    expanded_steps.push(exp);
-                }
-            }
+            handle_examples_row(
+                line,
+                &mut ex_headers,
+                pending_outline_indices.as_ref(),
+                current_idx,
+                &mut scenarios,
+                &mut expanded_steps,
+            );
             continue;
         }
 
-        for kw in STEP_KEYWORDS {
-            if let Some(rest) = line.strip_prefix(kw) {
-                let step = ParsedStep {
-                    keyword: kw.trim().to_string(),
-                    text: rest.trim().to_string(),
-                    variants: Vec::new(),
-                };
-                if in_background {
-                    bg_steps.push(step);
-                } else if let Some(idx) = current_idx {
-                    scenarios[idx].steps.push(step);
-                    if let Some(idxs) = pending_outline_indices.as_mut() {
-                        idxs.push(scenarios[idx].steps.len() - 1);
-                    }
-                }
-                break;
-            }
+        if try_push_step_line(
+            line,
+            in_background,
+            current_idx,
+            &mut pending_outline_indices,
+            &mut scenarios,
+            &mut bg_steps,
+        ) {
+            continue;
         }
+
+        // A stray non-keyword content line — discard any tag that never attached to a scenario
+        // (e.g. a `Feature:`-level tag), mirroring `extract::extract_scenario_specs`.
+        pending_wip = false;
     }
 
     if !bg_steps.is_empty() {
         let bg = ParsedScenario {
             title: "(Background)".to_string(),
             steps: bg_steps,
+            is_wip: false,
         };
         scenarios.insert(0, bg);
     }
 
     Ok((scenarios, expanded_steps, ()))
+}
+
+/// Handles a single `Examples:` table row line: the first row seen is captured as the header row
+/// into `ex_headers`; every later row expands pending `Scenario Outline:` step placeholders via
+/// [`expand_step`], pushing each expansion onto the matching step's `variants` and onto
+/// `expanded_steps`.
+///
+/// Extracted out of [`parse_feature_file_inner`] purely to keep that function's line count within
+/// the repo's clippy `too_many_lines` budget; behavior is unchanged from the original inline block.
+fn handle_examples_row(
+    line: &str,
+    ex_headers: &mut Option<Vec<String>>,
+    pending_outline_indices: Option<&Vec<usize>>,
+    current_idx: Option<usize>,
+    scenarios: &mut [ParsedScenario],
+    expanded_steps: &mut Vec<String>,
+) {
+    let row = parse_row(line);
+    if ex_headers.is_none() {
+        *ex_headers = Some(row);
+        return;
+    }
+    let (Some(idxs), Some(idx)) = (pending_outline_indices, current_idx) else {
+        return;
+    };
+    let headers = ex_headers
+        .as_ref()
+        .expect("ex_headers is Some — is_none() branch above returns");
+    for &step_idx in idxs {
+        let text = scenarios[idx].steps[step_idx].text.clone();
+        let exp = expand_step(&text, headers, &row);
+        scenarios[idx].steps[step_idx].variants.push(exp.clone());
+        expanded_steps.push(exp);
+    }
+}
+
+/// Attempts to match `line` against a Gherkin step keyword (see [`STEP_KEYWORDS`]) and, on a
+/// match, appends the parsed step to `bg_steps` (inside a `Background:` block) or to the current
+/// scenario's step list (indexed by `current_idx`), recording its index in
+/// `pending_outline_indices` when inside a `Scenario Outline:` block.
+///
+/// Returns `true` if a step keyword matched, `false` otherwise — extracted out of
+/// [`parse_feature_file_inner`] purely to keep that function's line count within the repo's
+/// clippy `too_many_lines` budget; behavior is unchanged from the original inline loop.
+fn try_push_step_line(
+    line: &str,
+    in_background: bool,
+    current_idx: Option<usize>,
+    pending_outline_indices: &mut Option<Vec<usize>>,
+    scenarios: &mut [ParsedScenario],
+    bg_steps: &mut Vec<ParsedStep>,
+) -> bool {
+    for kw in STEP_KEYWORDS {
+        if let Some(rest) = line.strip_prefix(kw) {
+            let step = ParsedStep {
+                keyword: kw.trim().to_string(),
+                text: rest.trim().to_string(),
+                variants: Vec::new(),
+            };
+            if in_background {
+                bg_steps.push(step);
+            } else if let Some(idx) = current_idx {
+                scenarios[idx].steps.push(step);
+                if let Some(idxs) = pending_outline_indices.as_mut() {
+                    idxs.push(scenarios[idx].steps.len() - 1);
+                }
+            }
+            return true;
+        }
+    }
+    false
 }
 
 /// Splits a Gherkin table row into its cell values, trimming whitespace.
@@ -276,5 +366,57 @@ mod tests {
     fn missing_file_returns_error() {
         let err = parse_feature_file(Path::new("/nonexistent/foo.feature")).unwrap_err();
         assert!(!err.to_string().is_empty());
+    }
+
+    // RED: `ParsedScenario` did not track the `@wip` tag at all — every scenario parsed as
+    // `is_wip: false` regardless of its tag line, so a step-coverage checker built on this parser
+    // (checker.rs's `check_shared_steps`/`check_one_to_one`) had no way to exempt a `@wip` scenario
+    // from step-gap reporting, even though `behavior_coverage::validator` documents "`@wip` scenarios
+    // are fully exempt" as the repo-wide rule. This test is falsifiable both ways: a parser that
+    // ignores tags entirely fails the first assertion (untagged scenario) trivially (both would read
+    // `false`) but fails the second (tagged scenario) because it can never read `true`.
+    #[test]
+    fn wip_tagged_scenario_is_flagged_is_wip() {
+        let (_tmp, p) = write_feature(
+            "Feature: foo\n\nScenario: untagged\n  Given a precondition\n\n@wip\nScenario: tagged\n  Given another precondition\n",
+        );
+        let scenarios = parse_feature_file(&p).unwrap();
+        assert_eq!(scenarios.len(), 2);
+        assert_eq!(scenarios[0].title, "untagged");
+        assert!(
+            !scenarios[0].is_wip,
+            "untagged scenario must not be flagged wip"
+        );
+        assert_eq!(scenarios[1].title, "tagged");
+        assert!(
+            scenarios[1].is_wip,
+            "@wip-tagged scenario must be flagged wip"
+        );
+    }
+
+    // RED: a tag line stacked above `Scenario Outline:` must also flag `is_wip` — the exemption
+    // must not silently apply only to plain `Scenario:` blocks.
+    #[test]
+    fn wip_tag_applies_to_scenario_outline_too() {
+        let (_tmp, p) = write_feature(
+            "Feature: foo\n\n@wip\nScenario Outline: bar\n  Given <state>\n\nExamples:\n  | state |\n  | A     |\n",
+        );
+        let scenarios = parse_feature_file(&p).unwrap();
+        assert_eq!(scenarios.len(), 1);
+        assert!(scenarios[0].is_wip);
+    }
+
+    // RED: a `Feature:`-level tag (or any other stray tag line not immediately followed by a
+    // scenario line) must never leak onto the next real scenario it happens to precede.
+    #[test]
+    fn wip_tag_does_not_leak_across_an_intervening_content_line() {
+        let (_tmp, p) =
+            write_feature("@wip\nFeature: foo\n\nScenario: untagged\n  Given a precondition\n");
+        let scenarios = parse_feature_file(&p).unwrap();
+        assert_eq!(scenarios.len(), 1);
+        assert!(
+            !scenarios[0].is_wip,
+            "a Feature-level tag must not leak onto the first scenario"
+        );
     }
 }
