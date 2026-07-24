@@ -661,7 +661,8 @@ to the source plan is recorded here so a reader auditing the split can trace eve
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (this checkbox only). PR #90
   completed all 3 review cycles (0 CRITICAL/HIGH across all cycles), resolved a merge conflict against
   the newly-landed Phase-0-opens-no-PR rule by recording the grandfathered-exception note above,
-  passed all 17 CI checks (2 skipped: no affected .NET/Rust surfaces at push time), and was
+  passed all 20 CI checks (17 success, 3 skipped: no affected TypeScript/.NET/Rust surfaces since PR
+  #90 touched only plan-doc and evidence files), and was
   `[AI]`-squash-merged to `origin/main` as commit `af9353055`. Phase 0 is complete; Phase 1 begins on
   its own new branch per the now-effective no-PR-for-Phase-0 convention.
 
@@ -874,9 +875,12 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
 
 - [x] [AI] Author `apps/ayokoding-www/src/features/course-paths/manifests/README.md` _(new file)_
       stating: (a) that nested `<path-id>.yaml` data files land here, one per path, with a slash in
-      a path ID becoming a nested directory; (b) that **every** `.yaml` file in this directory is
-      owned by `ayokoding-learning-path-05-manifests` and by no other plan; (c) that this plan
-      creates the directory and nothing else in it
+      a path ID becoming a nested directory; (b) that ownership is split per category per the
+      already-ruled amendment A10, not directory-wide — `ayokoding-learning-path-05-manifests` owns
+      every `.yaml` under `careers/`, `ayokoding-learning-path-06-skills-accounting` and
+      `ayokoding-learning-path-07-skills-erp` together own the sibling `skills/` subtree, deferring to
+      `ayokoding-learning-path-05-manifests`'s own README as the authoritative ruling; (c) that this
+      plan creates the directory and nothing else in it
       — command:
       `test -f apps/ayokoding-www/src/features/course-paths/manifests/README.md && grep -qF "ayokoding-learning-path-05-manifests" apps/ayokoding-www/src/features/course-paths/manifests/README.md`
       — acceptance: exits 0. Falsifiable both ways: omitting the ownership sentence makes the `grep`
@@ -884,8 +888,13 @@ apps/ayokoding-www/src/features/course-paths/core/schemas.ts` prints exactly one
 
   **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
   `apps/ayokoding-www/src/features/course-paths/manifests/README.md` (new) — states the nested
-  `<path-id>.yaml` layout, the `ayokoding-learning-path-05-manifests` ownership of every `.yaml`
-  file here, and that this plan creates only the directory. The command exits 0.
+  `<path-id>.yaml` layout and the per-category ownership split (`05-manifests` owns `careers/`;
+  `06-skills-accounting`/`07-skills-erp` together own `skills/`, per amendment A10), correcting an
+  initial draft that had reinstated the pre-A10 whole-directory-ownership framing (caught during the
+  Phase 1+2 review's cycle-1 fan-out — both `pr-review-architecture-maker` and `pr-review-docs-maker`
+  independently flagged the same contradiction against `ayokoding-learning-path-05-manifests`'s own
+  README). The command still exits 0 (the `05-manifests` substring remains present, now correctly
+  scoped).
 
 - [x] [AI] Confirm the directory ships **empty of manifest data files** —
       `find apps/ayokoding-www/src/features/course-paths/manifests -name '*.yaml' | wc -l`
