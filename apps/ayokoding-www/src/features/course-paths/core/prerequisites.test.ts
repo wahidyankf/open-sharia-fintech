@@ -97,4 +97,26 @@ describe("checkPrerequisiteConsistency", () => {
       prerequisiteIndex: 1,
     });
   });
+
+  // RED: `indexById` was built with `new Map(orderedIds.map((id, index) => [id, index]))`, which
+  // keeps the LAST index for a duplicated course ID (a later entry overwrites an earlier one with
+  // the same key). `just-enough-python` genuinely precedes `advanced-algorithms` at index 0, but
+  // its duplicate re-listing at index 2 overwrote the index used for the lookup, producing a
+  // false-positive ordering violation (2 > 1) for a manifest that is, in fact, correctly ordered.
+  it("does not report a false-positive violation when a duplicated course ID's first (correctly-ordered) occurrence precedes the dependent course", () => {
+    const duplicatePrerequisitesByCourse: Record<string, readonly string[]> = {
+      "advanced-algorithms": ["just-enough-python"],
+    };
+    const duplicateManifest: PathManifest = {
+      pathId: "skills/algorithms",
+      arc: "algorithms",
+      title: "Algorithms",
+      description: "Algorithms path",
+      courseOrder: ["just-enough-python", "advanced-algorithms", "just-enough-python"],
+    };
+
+    const result = checkPrerequisiteConsistency(duplicateManifest, duplicatePrerequisitesByCourse, libraryCourseIds);
+
+    expect(result.violations).toEqual([]);
+  });
 });

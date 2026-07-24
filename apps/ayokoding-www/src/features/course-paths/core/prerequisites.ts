@@ -72,7 +72,16 @@ export function checkPrerequisiteConsistency(
 ): PrerequisiteConsistencyResult {
   const knownCourseIds = new Set(libraryCourseIds);
   const orderedIds = manifest.courseOrder.map((ref) => normalizeCourseRef(ref).id);
-  const indexById = new Map(orderedIds.map((id, index) => [id, index]));
+  // Keep the FIRST index for a duplicated course ID — `new Map(orderedIds.map(...))` would keep
+  // the last (a later entry overwrites an earlier one under the same key), which reports a
+  // false-positive ordering violation whenever a duplicated ID's first (correctly-ordered)
+  // occurrence precedes a course that declares it as a prerequisite.
+  const indexById = new Map<string, number>();
+  orderedIds.forEach((id, index) => {
+    if (!indexById.has(id)) {
+      indexById.set(id, index);
+    }
+  });
 
   const violations: PrerequisiteOrderingViolation[] = [];
   const linkedPrerequisites: LinkedPrerequisite[] = [];
