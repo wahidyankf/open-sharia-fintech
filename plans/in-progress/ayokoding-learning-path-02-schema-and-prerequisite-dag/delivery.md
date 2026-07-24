@@ -1377,13 +1377,21 @@ vitest run --project unit-fe src/features/course-paths/core/path-nav.test.ts`: 1
 
 ### 2.3 TDD cycle 3 — `parsePathContext` (`path-context.ts`)
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/path-context.test.ts` _(new test)_ for
       `parsePathContext(searchParams, manifests)`: a `path` param naming a loaded manifest returns
       that `pathId`; a `path` param naming **no** loaded manifest returns `null`; an **absent** `path`
       param returns `null`; and none of the three throws
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails because `parsePathContext` is undefined.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/path-context.test.ts` (new). Ran via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts`:
+  failed with `Failed to resolve import "./path-context" from
+"src/features/course-paths/core/path-context.test.ts". Does the file exist?` — correct failure
+  reason. Signature chosen: `parsePathContext(searchParams: URLSearchParams, manifests: readonly
+PathManifest[]): string | null`.
 
   **Gherkin (underpins) →** "A course deep-linked without path context renders the canonical view";
   "An invalid path context falls back to the canonical view"; "A course opened without path context
@@ -1410,17 +1418,27 @@ vitest run --project unit-fe src/features/course-paths/core/path-nav.test.ts`: 1
     And no path rail, path readout, or path breadcrumb segment appears
   ```
 
-- [ ] [AI] **GREEN** — implement `parsePathContext(searchParams, manifests)` in
+- [x] [AI] **GREEN** — implement `parsePathContext(searchParams, manifests)` in
       `apps/ayokoding-www/src/features/course-paths/core/path-context.ts` _(new file)_: read the
       `path` search param, return the matching `pathId` **only** when it names a loaded manifest,
       else `null`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; all four assertions pass.
-- [ ] [AI] **REFACTOR** — make the validation gate explicit (a single membership test against the
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/path-context.ts` (new). Ran via `rtk proxy npx
+vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts`: 1 file, 4
+  passed.
+
+- [x] [AI] **REFACTOR** — make the validation gate explicit (a single membership test against the
       loaded manifest IDs) and confirm no code path throws
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint`
       — acceptance: both exit 0; the "never throws" assertion still passes for all three input
       shapes.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (the GREEN implementation
+  already builds a single `Set` of loaded `pathId`s and performs one `.has()` membership test — no
+  further extraction needed). `test:unit` (93 files, 2762 passed / 6 skipped) and `lint` both exit 0.
 
 ### 2.4 TDD cycle 4 — `contentUrl` gains path context (`content-url.ts`)
 
