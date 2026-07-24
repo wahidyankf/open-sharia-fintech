@@ -264,41 +264,87 @@ back to the source plan; do not renumber to "close the gaps".
 > Phase 1 begins; Phase 0 itself is safe to run at any time, and its last two checks are the gate that
 > proves the upstreams landed.
 
-- [ ] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
+- [x] [AI] Enter/provision the worktree and install dependencies in the root worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (dependency install only).
+  `npm install` ran clean; `node_modules/` present and synchronized in the worktree.
+
+- [x] [AI] Converge the toolchain in the root worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] Establish baselines: `npx nx run ayokoding-www:build` and
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (toolchain only; 4 rust
+  crate target-share symlinks created in `apps/ayokoding-cli`, `apps/ose-cli`, `apps/rhino-cli`,
+  `libs/rust-commons`, gitignored). 16/16 tools OK, 0 warnings, 0 missing.
+
+- [x] [AI] Establish baselines: `npx nx run ayokoding-www:build` and
       `npx nx run ayokoding-www:test:unit` and `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: all exit 0; record the pass/fail counts in `evidence/phase-0-snapshot.txt`. Any
       preexisting failure is resolved before Phase 1 (Root Cause Orientation), not deferred.
-- [ ] [AI] **Extension-point snapshot** — record the current behaviour and public shape of the four
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**:
+  `evidence/phase-0-snapshot.txt` (new). All three baselines green: build exit 0; test:unit
+  95 files/2783 passed/6 skipped; e2e 578 passed/181 skipped. Zero preexisting failures found.
+
+- [x] [AI] **Extension-point snapshot** — record the current behaviour and public shape of the four
       files this plan extends into `evidence/phase-0-snapshot.txt`:
       `apps/ayokoding-www/src/features/content/core/content-url.ts`, `<NAV>prev-next.tsx`,
       `<NAV>breadcrumb.tsx`, and `apps/ayokoding-www/src/features/content/core/tree-builder.ts`
       (specifically `computePrevNext`'s weight-based grouping, which the manifest ordering supersedes
       only inside path context) — acceptance: snapshot committed; each file's exported signature quoted
       verbatim so a later diff shows exactly what this plan changed.
-- [ ] [AI] **Host snapshot (Screen 3)** — record the current `<NAV>resizable-sidebar.tsx` and
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt`
+  (extended). Recorded exported signatures for `content-url.ts` (`contentUrl(locale, slug,
+pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.tsx`
+  (`PrevNextProps`/`PrevNext`, no pathId passed today), `breadcrumb.tsx` (`BreadcrumbProps`/
+  `Breadcrumb`/private `hrefFor`, DWT-001 mobile-collapse noted), and `tree-builder.ts` (6
+  exports; `computePrevNext` groups siblings by parent-slug and weight, never crossing a parent
+  boundary — this is the exact behaviour path-context prev/next must supersede only when a
+  `pathId` is present).
+
+- [x] [AI] **Host snapshot (Screen 3)** — record the current `<NAV>resizable-sidebar.tsx` and
       `<APPSHELL>mobile-nav.tsx` contracts into `evidence/phase-0-snapshot.txt`: the `<aside>` class
       list including the `hidden … md:block` gate, the `ResizablePanel` min/max percentages, the
       `localStorage` width key name, and the `Sheet`/`SheetContent side="left"` usage — acceptance:
       snapshot committed. These are the invariants Phase 2 must leave untouched.
-- [ ] [AI] Confirm the `course-paths` feature directory does **not** yet exist:
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt`
+  (extended). Recorded `resizable-sidebar.tsx` (`hidden … md:block` gate, `storageKey
+="ayokoding-sidebar-width"`, `minPct=15`/`maxPct=35`) and `mobile-nav.tsx` (single
+  `Sheet`/`SheetContent side="left"`, preset-width storage key
+  `"ayokoding-mobilenav-width"`, `SidebarTree` as the swap target). Also captured
+  host-invariant baseline grep counts (`function ResizableSidebar`=1,
+  `ayokoding-sidebar-width`=3, `SheetContent`=3) for re-check at the Phase 4 sweep.
+
+- [x] [AI] Confirm the `course-paths` feature directory does **not** yet exist:
       `test -e apps/ayokoding-www/src/features/course-paths/shell && echo "EXISTS shell"` — acceptance:
       prints nothing (falsifiable the other way: it prints `EXISTS shell` once Phase 2 has run).
-- [ ] [AI] **Upstream precondition 1** — confirm `ayokoding-learning-path-01-url-restructure` has
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Command
+  printed nothing — directory confirmed absent, as expected pre-Phase-2.
+
+- [x] [AI] **Upstream precondition 1** — confirm `ayokoding-learning-path-01-url-restructure` has
       merged: `test -d apps/ayokoding-www/content/en/learn/paths && test -d apps/ayokoding-www/content/en/learn/courses`
       — acceptance: both exit 0 (both already pass as of 2026-07-24, now that
       `ayokoding-learning-path-01-url-restructure` is archived and its deliverable directories exist;
       if either ever fails again, that plan's directories are missing and it has not merged).
-- [ ] [AI] **Upstream precondition 2** — confirm
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Both
+  directories exist in the worktree — precondition holds.
+
+- [x] [AI] **Upstream precondition 2** — confirm
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` has merged:
       `for f in schemas manifest path-nav path-context prerequisites manifest-integrity; do test -f "<FEAT>core/$f.ts" || echo "MISSING $f"; done`
       — acceptance: prints nothing (already prints nothing as of 2026-07-24, now that
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` is archived and all six core module
       files exist; if it ever prints a `MISSING` line again, that module has not landed).
-- [ ] [AI] Confirm the two upstream plans are archived rather than merely branch-merged:
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Command
+  printed nothing — all 6 core modules present under
+  `apps/ayokoding-www/src/features/course-paths/core/`.
+
+- [x] [AI] Confirm the two upstream plans are archived rather than merely branch-merged:
       `test -d plans/done && ls plans/done | grep -o -- "ayokoding-learning-path-01-url-restructure" | wc -l`
       returns **1**, and the same form for
       `ayokoding-learning-path-02-schema-and-prerequisite-dag` returns **1** — acceptance: both return
@@ -307,16 +353,37 @@ back to the source plan; do not renumber to "close the gaps".
       `/bin/ls` rather than an aliased `ls`, since some interactive-shell aliases such as `eza` inject
       OSC-8 hyperlinks that corrupt a piped count).
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Used
+  `/bin/ls` per the aliased-`ls`/OSC-8 hazard note. Both greps returned exactly 1 —
+  `ayokoding-learning-path-01-url-restructure` and
+  `ayokoding-learning-path-02-schema-and-prerequisite-dag` are both archived under `plans/done/`.
+
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] `npx nx run ayokoding-www:build`, `:test:unit`, and `npx nx run ayokoding-www-fe-e2e:test:e2e`
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+
+  **Date**: 2026-07-25. **Status**: Done. Confirmed by the two Phase 0 line items above (16/16
+  tools OK, 0 warnings, 0 missing).
+
+- [x] [AI] `npx nx run ayokoding-www:build`, `:test:unit`, and `npx nx run ayokoding-www-fe-e2e:test:e2e`
       all exit 0; every preexisting failure resolved (zero unresolved).
-- [ ] [AI] `evidence/phase-0-snapshot.txt` committed, holding the extension-point and host snapshots.
-- [ ] [AI] Both upstream preconditions hold: the `paths/` and `courses/` content homes exist, and all
+
+  **Date**: 2026-07-25. **Status**: Done. Confirmed by the baseline line item above (build PASS;
+  test:unit 2783 passed/6 skipped; e2e 578 passed/181 skipped; zero preexisting failures).
+
+- [x] [AI] `evidence/phase-0-snapshot.txt` committed, holding the extension-point and host snapshots.
+
+  **Date**: 2026-07-25. **Status**: Done. File holds baseline results, extension-point snapshot
+  (4 files), and host snapshot (2 files + invariant grep counts). Will be committed with the rest
+  of Phase 0's evidence.
+
+- [x] [AI] Both upstream preconditions hold: the `paths/` and `courses/` content homes exist, and all
       six `<FEAT>core/` modules exist.
+
+  **Date**: 2026-07-25. **Status**: Done. Confirmed by the two upstream-precondition line items
+  above — both pass.
 
 > **Pause Safety**: only the local toolchain was verified, the baseline recorded, and the upstream
 > preconditions checked — no feature work exists yet. Safe to stop indefinitely. To resume: re-run

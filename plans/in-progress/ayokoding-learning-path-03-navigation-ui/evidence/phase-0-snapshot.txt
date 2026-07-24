@@ -1,0 +1,110 @@
+Phase 0 Baseline Snapshot — ayokoding-learning-path-03-navigation-ui
+Recorded: 2026-07-25
+Worktree: worktrees/ayokoding-learning-path-03-navigation-ui @ 15ca44ace (origin/main)
+
+=== Baseline test/build results ===
+npx nx run ayokoding-www:build            — PASS (exit 0)
+npx nx run ayokoding-www:test:unit        — PASS: 95 test files, 2783 passed, 6 skipped (2789 total)
+npx nx run ayokoding-www-fe-e2e:test:e2e  — PASS: 578 passed, 181 skipped
+
+No preexisting failures found. No fixes needed before Phase 1.
+
+=== Extension-point snapshot ===
+
+--- apps/ayokoding-www/src/features/content/core/content-url.ts ---
+export function contentUrl(locale: Locale, slug: string, pathId?: string): string
+
+Behaviour: pure function, no IO. Uniform bare join (DD-48 removed the old
+namespace-prefix branch): empty/root/`_index` slug -> `/{locale}`; otherwise
+`/{locale}/{normalizeSlug(slug)}`. Optional third arg `pathId` (course-paths
+plan, cycle 2.4 — ALREADY LANDED by url-restructure, not new in this plan)
+appends `?path=<path-id>` to whichever of the above the first two args
+produce. Every existing 2-arg call site is unchanged when `pathId` is
+omitted — additive only.
+
+--- apps/ayokoding-www/src/features/navigation/shell/prev-next.tsx ---
+interface PrevNextProps { locale: string; prev: PageLink | null; next: PageLink | null }
+export function PrevNext({ locale, prev, next }: PrevNextProps): JSX.Element | null
+
+Behaviour: returns null when both prev and next are null. Renders a <nav
+aria-label="Page navigation"> with two Link entries built via
+contentUrl(locale, slug) — NO pathId passed today, so links carry no
+`?path=` query. This plan's path-context wiring is the first caller to pass
+a pathId through PrevNextProps into contentUrl.
+
+--- apps/ayokoding-www/src/features/navigation/shell/breadcrumb.tsx ---
+interface BreadcrumbProps {
+  locale: string;
+  slug: string;
+  segments: { label: string; slug: string; href?: string }[];
+  showCurrent?: boolean;
+}
+export function Breadcrumb({ locale, segments, showCurrent = false }: BreadcrumbProps): JSX.Element | null
+function hrefFor(locale: string, segment: { slug: string; href?: string }): string  (module-private)
+
+Behaviour: default excludes the last segment (current page shown via <h1>
+elsewhere); showCurrent=true keeps every segment and renders the last as a
+non-link aria-current="page" crumb. hrefFor() resolves through contentUrl()
+today with NO pathId argument — every breadcrumb href is path-id-less as of
+this snapshot. DWT-001 mobile-collapse: >3 visible segments hides the
+middle ones (`hidden sm:flex`) behind one `sm:hidden` ellipsis crumb
+(`data-testid="breadcrumb-ellipsis"`) at mobile widths; row does not wrap
+(no `flex-wrap`) and has `overflow-x-auto whitespace-nowrap` as a
+tablet-width scroll fallback.
+
+--- apps/ayokoding-www/src/features/content/core/tree-builder.ts ---
+export function buildTrees(allContent: ContentMeta[]): Record<string, TreeNode[]>
+export function buildTreeForLocale(items: ContentMeta[]): TreeNode[]
+export function getParentSlug(slug: string): string | null
+export function sortTreeByWeight(nodes: TreeNode[]): void
+export function computePrevNext(allContent: ContentMeta[]): Map<string, { prev: PageLink | null; next: PageLink | null }>
+export function findSubtree(nodes: TreeNode[], slug: string): TreeNode | null
+
+computePrevNext behaviour (the extension point): groups all non-section
+items per locale by their PARENT slug (`getParentSlug(item.slug) ?? ""`),
+sorts each sibling group by `weight` ascending, then for each item in a
+group sets prev/next to its immediate weight-order neighbours within that
+SAME parent group only — prev/next never cross a parent-slug boundary today.
+Map key is `${locale}:${item.slug}`. This weight-based, parent-scoped
+grouping is what this plan's path-context prev/next must supersede ONLY
+when a `pathId` is present (path-ordered siblings can cross the tree's
+parent-slug boundaries); with no `pathId`, this exact function/output is
+unchanged — additive-only extension, no signature change expected to this
+file's existing five other exports.
+
+=== Host snapshot (Screen 3) ===
+
+--- apps/ayokoding-www/src/features/navigation/shell/resizable-sidebar.tsx ---
+interface ResizableSidebarProps { locale: Locale; children: React.ReactNode }
+export function ResizableSidebar({ locale, children }: ResizableSidebarProps): JSX.Element
+
+Contract: `<aside className="sticky top-16 hidden h-[calc(100vh-4rem)] shrink-0 md:block">`
+— the `hidden … md:block` gate is the desktop-only visibility rule this plan's
+Screen 3 Option B rail must respect (content-swap only, no second `<aside>`).
+`ResizablePanel` (from `@open-sharia-enterprise/web-ui/primitives`) is nested
+inside, given `storageKey={SIDEBAR_STORAGE_KEY}` where
+`SIDEBAR_STORAGE_KEY = "ayokoding-sidebar-width"` (the ONE localStorage width
+key), `minPct=15` / `maxPct=35` (prd.md's 15%-35% band), and
+`handleAriaLabel`. `<aside>` itself owns no border/overflow — width and the
+drag/keyboard handle live entirely in `ResizablePanel`; the plan's PathRail
+swaps into this component's `children` prop, it does not fork the component.
+
+--- apps/ayokoding-www/src/features/app-shell/shell/mobile-nav.tsx ---
+interface MobileNavProps { locale: string; open: boolean; onOpenChange: (open: boolean) => void }
+export function MobileNav({ locale, open, onOpenChange }: MobileNavProps): JSX.Element
+
+Contract: `<Sheet open={open} onOpenChange={onOpenChange}>` wrapping exactly
+one `<SheetContent side="left" className="overflow-y-auto p-4" style={{
+width: \`${widthPx}px\` }}>` — the ONE Sheet/overlay this drawer uses. Width
+is a fixed-preset system (DD-7, NOT free drag): `MOBILE_NAV_WIDTH_PRESETS =
+[{id:"default",widthPx:280},{id:"wide",widthPx:360}]`, persisted under
+`MOBILE_NAV_WIDTH_STORAGE_KEY = "ayokoding-mobilenav-width"` (a DIFFERENT key
+from the desktop rail's). Inside `SheetContent`, current body renders
+`PRIMARY_NAV_LINKS` then `<SidebarTree nodes={tree} locale={locale} />`. This
+plan's PathBanner + drawer swap the `SidebarTree` call for path content —
+same `Sheet`/`SheetContent`, no second overlay, no new drawer component.
+
+--- Host-invariant baseline grep counts (re-check at Phase 4 sweep) ---
+grep -rn "function ResizableSidebar" apps/ayokoding-www/src | wc -l   -> 1
+grep -rn "ayokoding-sidebar-width"   apps/ayokoding-www/src | wc -l   -> 3
+grep -rn "SheetContent"              apps/ayokoding-www/src | wc -l   -> 3
