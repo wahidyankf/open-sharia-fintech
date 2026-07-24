@@ -22,4 +22,16 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
+  webServer: {
+    command:
+      "cp -r apps/ose-www/.next/static apps/ose-www/.next/standalone/apps/ose-www/.next/ && cp -r apps/ose-www/public apps/ose-www/.next/standalone/apps/ose-www/ && node apps/ose-www/.next/standalone/apps/ose-www/server.js",
+    url: "http://localhost:3100",
+    reuseExistingServer: true,
+    timeout: 120000,
+    cwd: workspaceRoot,
+    env: {
+      PORT: "3100",
+      NODE_ENV: "production",
+    },
+  },
 });
