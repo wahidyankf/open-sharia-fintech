@@ -37,10 +37,21 @@ export interface PrerequisiteOrderingViolation {
   prerequisiteIndex: number;
 }
 
+/**
+ * One declared, in-library prerequisite the manifest omits entirely (OI-4: link-don't-walk).
+ * Informational only — never a violation, never affects pass/fail.
+ */
+export interface LinkedPrerequisite {
+  courseId: string;
+  missingPrerequisiteId: string;
+}
+
 /** Result of {@link checkPrerequisiteConsistency} — ordering-only (OI-4: never completeness). */
 export interface PrerequisiteConsistencyResult {
   /** Ordering violations only — never reports a prerequisite the manifest omits entirely. */
   violations: readonly PrerequisiteOrderingViolation[];
+  /** Declared, in-library prerequisites the manifest links but does not include. Never a violation. */
+  linkedPrerequisites: readonly LinkedPrerequisite[];
 }
 
 /**
@@ -64,6 +75,7 @@ export function checkPrerequisiteConsistency(
   const indexById = new Map(orderedIds.map((id, index) => [id, index]));
 
   const violations: PrerequisiteOrderingViolation[] = [];
+  const linkedPrerequisites: LinkedPrerequisite[] = [];
 
   orderedIds.forEach((courseId, courseIndex) => {
     for (const prerequisiteId of declaredPrerequisiteIds(courseId, prerequisitesByCourse)) {
@@ -73,7 +85,14 @@ export function checkPrerequisiteConsistency(
 
       const prerequisiteIndex = indexById.get(prerequisiteId);
 
-      if (prerequisiteIndex !== undefined && prerequisiteIndex > courseIndex) {
+      if (prerequisiteIndex === undefined) {
+        // OI-4, link-don't-walk: declared and in-library, but the manifest omits it entirely.
+        // Permitted by design — informational only, never a violation.
+        linkedPrerequisites.push({ courseId, missingPrerequisiteId: prerequisiteId });
+        continue;
+      }
+
+      if (prerequisiteIndex > courseIndex) {
         violations.push({
           courseId,
           missingPrerequisiteId: prerequisiteId,
@@ -84,5 +103,5 @@ export function checkPrerequisiteConsistency(
     }
   });
 
-  return { violations };
+  return { violations, linkedPrerequisites };
 }

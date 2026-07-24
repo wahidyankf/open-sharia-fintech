@@ -27,6 +27,17 @@ const cleanManifest: PathManifest = {
 // data-structures-and-algorithms-essentials. discrete-math-foundations is deliberately absent
 // from this manifest so it can never count toward the violation total (only in-manifest
 // prerequisites are checked) — keeping the violation count at exactly one.
+// Link-don't-walk (OI-4): advanced-algorithms is included but its declared, in-library
+// prerequisite discrete-math-foundations is omitted from the manifest entirely — permitted by
+// design, never an ordering violation, only informational.
+const omittedPrerequisiteManifest: PathManifest = {
+  pathId: "skills/algorithms",
+  arc: "algorithms",
+  title: "Algorithms",
+  description: "Algorithms path",
+  courseOrder: ["data-structures-and-algorithms-essentials", "advanced-algorithms"],
+};
+
 const violatingManifest: PathManifest = {
   pathId: "skills/algorithms",
   arc: "algorithms",
@@ -61,6 +72,18 @@ describe("checkPrerequisiteConsistency", () => {
     const result = checkPrerequisiteConsistency(cleanManifest, prerequisitesByCourse, libraryCourseIds);
 
     expect(result.violations).toEqual([]);
+    expect(result.linkedPrerequisites).toEqual([]);
+  });
+
+  it("reports zero violations and one linked prerequisite for a manifest that omits a declared, in-library prerequisite (OI-4)", () => {
+    const result = checkPrerequisiteConsistency(omittedPrerequisiteManifest, prerequisitesByCourse, libraryCourseIds);
+
+    expect(result.violations).toEqual([]);
+    expect(result.linkedPrerequisites).toHaveLength(1);
+    expect(result.linkedPrerequisites[0]).toEqual({
+      courseId: "advanced-algorithms",
+      missingPrerequisiteId: "discrete-math-foundations",
+    });
   });
 
   it("reports exactly one violation naming the course placed before its declared prerequisite", () => {

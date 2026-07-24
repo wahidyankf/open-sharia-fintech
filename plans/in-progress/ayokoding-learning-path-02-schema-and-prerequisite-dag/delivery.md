@@ -1682,7 +1682,7 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 #### 2.6b — link-don't-walk `linkedPrerequisites` (binds the OI-4 scenario)
 
-- [ ] [AI] **RED** — add failing unit tests to the same
+- [x] [AI] **RED** — add failing unit tests to the same
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts` for the **second**
       output of `checkPrerequisiteConsistency`: a fixture whose manifest includes a course while
       **omitting** its declared, in-library prerequisite reports **zero** `violations` (OI-4 —
@@ -1694,6 +1694,12 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       Falsifiable both ways: an implementation that never populates the list fails the
       exactly-one assertion, and one that reports the omission as a violation fails the
       zero-`violations` assertion.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`. Confirmed via
+  `rtk proxy npx vitest run --project unit-fe .../prerequisites.test.ts`:
+  `AssertionError: expected undefined to deeply equal []` on `result.linkedPrerequisites` —
+  correct RED reason; the 4 prior tests still pass.
 
   **Gherkin (binds) →** "A path may link a prerequisite it does not include, without failing
   integrity" — see the matching scenario in
@@ -1707,7 +1713,7 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
     And the absent prerequisite appears in the check's informational linkedPrerequisites list
   ```
 
-- [ ] [AI] **GREEN** — implement the `linkedPrerequisites` half in the same
+- [x] [AI] **GREEN** — implement the `linkedPrerequisites` half in the same
       `prerequisites.ts`: for each course in `courseOrder`, collect every declared prerequisite that
       is present in `libraryCourseIds` **but absent** from the manifest (informational only — never a
       violation, never affects pass/fail)
@@ -1715,7 +1721,13 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       — acceptance: exits 0; the omitted-prerequisite fixture reports zero `violations` and exactly
       one `linkedPrerequisites` entry, and 2.6a's two fixtures still report exactly what they did
       before.
-- [ ] [AI] **REFACTOR** — return one structured result
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`. Verified via
+  `rtk proxy npx vitest run --project unit-fe .../prerequisites.test.ts`: 6 passed (all 2.6a
+  fixtures unchanged).
+
+- [x] [AI] **REFACTOR** — return one structured result
       `{ violations: { courseId, missingPrerequisiteId, courseIndex, prerequisiteIndex }[], linkedPrerequisites: { courseId, missingPrerequisiteId }[] }`
       so a downstream gate can render a precise message for a real violation and a reviewer-facing
       diagnostic list for linked prerequisites without conflating the two
@@ -1723,6 +1735,11 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
       — acceptance: both exit 0, the violating fixture's single `violations` record carries all four
       fields, and the omitted-prerequisite fixture's single `linkedPrerequisites` record carries both
       fields.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts` (the GREEN step already
+  produced this exact structured shape — no further change needed). `test:unit` (project file): 6
+  passed; `typecheck`: exit 0.
 
 ### 2.7 TDD cycle 7 — `checkManifestIntegrity` (`manifest-integrity.ts`)
 
