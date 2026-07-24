@@ -1304,7 +1304,7 @@ ayokoding-www:test:unit` exited 0: 91 test files, 2754 passed / 6 skipped — bo
 
 ### 2.2 TDD cycle 2 — `resolvePathNav` (`path-nav.ts`)
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/path-nav.test.ts` _(new test)_ for
       `resolvePathNav(manifest, courseId)`: middle course returns both neighbours; **first** course
       returns `prev: null`; **last** course returns `next: null`; a course absent from `courseOrder`
@@ -1312,6 +1312,13 @@ ayokoding-www:test:unit` exited 0: 91 test files, 2754 passed / 6 skipped — bo
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails because `resolvePathNav` is undefined. Falsifiable both ways: after
       GREEN all four assertions pass.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/path-nav.test.ts` (new). Ran via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/path-nav.test.ts`:
+  failed with `Failed to resolve import "./path-nav" from
+"src/features/course-paths/core/path-nav.test.ts". Does the file exist?` — correct failure
+  reason.
 
   **Gherkin (underpins) →** "Prev and next follow the active path's order"; "A course omitted from a
   path shows no path nav for that path"; "The path rail shows the whole ordered arc beside a course
@@ -1346,17 +1353,27 @@ ayokoding-www:test:unit` exited 0: 91 test files, 2754 passed / 6 skipped — bo
     And focus moves into the drawer and returns to the control when the drawer is dismissed
   ```
 
-- [ ] [AI] **GREEN** — implement `resolvePathNav(manifest, courseId)` in
+- [x] [AI] **GREEN** — implement `resolvePathNav(manifest, courseId)` in
       `apps/ayokoding-www/src/features/course-paths/core/path-nav.ts` _(new file)_: locate `courseId`
       in the normalized `courseOrder`, return the neighbouring refs, return nulls at both boundaries
       and for an absent course
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; all four assertions pass and no previously-passing test regresses.
-- [ ] [AI] **REFACTOR** — replace any repeated linear scan with a single index lookup and confirm
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/path-nav.ts` (new). Ran via `rtk proxy npx
+vitest run --project unit-fe src/features/course-paths/core/path-nav.test.ts`: 1 file, 4 passed.
+
+- [x] [AI] **REFACTOR** — replace any repeated linear scan with a single index lookup and confirm
       `path-nav.ts` performs no IO
       — command:
       `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:typecheck && npx nx run ayokoding-www:lint`
       — acceptance: all three exit 0 and the four assertions still pass.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**: none (the GREEN implementation
+  already normalizes `courseOrder` once via a single `.map` and locates the index via a single
+  `findIndex` call — no repeated scan to remove). `test:unit` (92 files, 2758 passed / 6 skipped),
+  `typecheck`, and `lint` all exit 0.
 
 ### 2.3 TDD cycle 3 — `parsePathContext` (`path-context.ts`)
 
