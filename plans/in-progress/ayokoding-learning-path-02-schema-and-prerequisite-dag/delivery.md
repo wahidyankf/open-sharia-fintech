@@ -1557,13 +1557,18 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
 
 ### 2.5 TDD cycle 5 — `resolvePrerequisites` (`prerequisites.ts`)
 
-- [ ] [AI] **RED** — write failing unit tests in
+- [x] [AI] **RED** — write failing unit tests in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts` _(new test)_ for
       `resolvePrerequisites(courseId, prerequisitesByCourse)`: a course with two declared
       prerequisites returns both IDs in declaration order; a course declaring `[]` returns an empty
       array; a course **absent** from the index returns an empty array (not `undefined`, not a throw)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the run fails because `resolvePrerequisites` is undefined.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.test.ts`. Confirmed via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/prerequisites.test.ts`:
+  `Failed to resolve import "./prerequisites"` — correct RED reason.
 
   **Gherkin (underpins) →** "A course page surfaces its declared prerequisites". **Owned by
   `ayokoding-learning-path-03-navigation-ui`'s `prd.md`**; reproduced here for the RED signal.
@@ -1576,15 +1581,26 @@ vitest run --project unit-fe src/features/course-paths/core/path-context.test.ts
     And the prerequisite list renders even in the canonical no-path view
   ```
 
-- [ ] [AI] **GREEN** — implement `resolvePrerequisites(courseId, prerequisitesByCourse)` in
+- [x] [AI] **GREEN** — implement `resolvePrerequisites(courseId, prerequisitesByCourse)` in
       `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts` _(new file)_, pure and
       IO-free, treating an absent entry and an empty declaration identically
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0; all three assertions pass.
-- [ ] [AI] **REFACTOR** — extract the "declared prerequisite IDs for a course" lookup so cycle 2.6
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts`. Verified via
+  `rtk proxy npx vitest run --project unit-fe src/features/course-paths/core/prerequisites.test.ts`:
+  3 passed.
+
+- [x] [AI] **REFACTOR** — extract the "declared prerequisite IDs for a course" lookup so cycle 2.6
       reuses it rather than re-implementing the traversal
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint`
       — acceptance: both exit 0 and the three assertions still pass.
+
+  **Date**: 2026-07-24. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/core/prerequisites.ts` (extracted private
+  `declaredPrerequisiteIds` helper for cycle 2.6 reuse). `test:unit`: 94 files / 2767 passed / 6
+  skipped, exit 0. `lint`: exit 0 (preexisting unrelated warnings only).
 
 ### 2.6 TDD cycle 6 — `checkPrerequisiteConsistency` (`prerequisites.ts`)
 
