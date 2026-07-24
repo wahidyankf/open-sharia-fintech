@@ -1444,7 +1444,7 @@ PathManifest[]): string | null`.
 
   ```gherkin
   Scenario: A course deep-linked without path context renders the canonical view
-    Given a reader opens a course URL /en/c/learn/courses/<course-id> with no path context query parameter
+    Given a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter
     When the course page renders
     Then the course body renders in full with the content-tree breadcrumb and its prerequisite list
     And a "this course is part of" affordance lists every path that includes the course
