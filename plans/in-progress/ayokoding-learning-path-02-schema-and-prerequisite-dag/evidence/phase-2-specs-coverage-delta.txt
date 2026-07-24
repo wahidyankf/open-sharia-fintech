@@ -1,0 +1,35 @@
+every `course-paths` scenario ships `@wip` (validator-sanctioned step-binding deferral), so
+`specs:behavior:coverage` is green throughout this plan. `ayokoding-learning-path-03-navigation-ui`
+authors the step bindings, removes the `@wip` tags, adds the real level tags and the matching
+`@covers` markers. The obligation closes there, not here.
+
+Verification (2026-07-24):
+- `npx nx run ayokoding-www:specs:behavior:coverage` → "Spec coverage valid! 30 specs, 272
+  scenarios, 983 steps — all covered." (exit 0)
+- Per-file `grep -c "^ *Scenario:"` and `grep -c "^ *@wip"` counts under
+  specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/*.feature are equal and
+  non-zero for every one of the 8 files (14 scenarios total).
+- `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs
+  gherkin-cardinality validate` → "GHERKIN KEYWORD CARDINALITY AUDIT PASSED: every scenario uses
+  each primary keyword at most once" (exit 0).
+
+Preexisting-issue note: `ayokoding-www`'s `specs:behavior:coverage` Nx target runs
+`specs behavior-coverage validate --shared-steps` (single-dir/shared-steps mode,
+`apps/rhino-cli/src/application/speccoverage/checker.rs`), a *different* code path from the
+`@covers`-marker-existence checker in `apps/rhino-cli/src/application/behavior_coverage/validator.rs`
+that this plan's own text cites as the ground for "`@wip` scenarios are fully exempt". Before this
+phase's fix, the shared-steps checker's parser
+(`apps/rhino-cli/src/application/speccoverage/parser.rs`) did not track scenario tags at all, so
+`@wip` had no effect there — adding the 14 new `@wip`-tagged, unbound scenarios would have failed
+`specs:behavior:coverage` with 54 step gaps (confirmed by running the pre-fix binary), which would
+have red the pre-push hook for every push in this plan. Root Cause Orientation fix applied in this
+phase (not deferred): `parser.rs` now tracks a per-scenario `is_wip` flag (new unit tests
+`wip_tagged_scenario_is_flagged_is_wip`, `wip_tag_applies_to_scenario_outline_too`,
+`wip_tag_does_not_leak_across_an_intervening_content_line`), and `checker.rs`'s
+`check_shared_steps`/`check_one_to_one` now skip step-gap (and, in one-to-one mode, scenario-gap)
+reporting for `@wip`-tagged scenarios (new unit tests
+`wip_tagged_scenario_step_is_exempt_from_step_gap_shared_steps`,
+`wip_tagged_scenario_is_exempt_from_scenario_and_step_gaps_one_to_one`), unifying the "`@wip`
+scenarios are fully exempt" rule across both of rhino-cli's coverage-checking code paths. Full
+rhino-cli test suite re-verified green after the fix (1244 passed, 1 pre-existing ignored,
+unrelated to this change).
