@@ -259,6 +259,41 @@ fn given_wrapped_title(w: &mut SpecWorld) {
     );
 }
 
+// PR review finding #6 (pr-review-synthesis-maker review 4770318960, cycle 2): the `@wip`
+// step-gap exemption (`c406935d4`) and the `#`-comment tag-survival fix (`05f84039d`) shipped
+// with Rust unit coverage only — no companion Gherkin scenario existed anywhere in
+// `specs/apps/rhino/behavior/rhino-cli/gherkin/**`. The two `given_` fns below drive the real
+// compiled binary end to end (black-box, not a `checker.rs`-internal unit test) and are
+// falsifiable both ways: the untagged sibling scenario's identical-shaped step must still
+// surface as a gap (proves the exemption is `@wip`-scoped, not blanket-swallowing), while the
+// `@wip` sibling's step must never appear (proves the exemption itself, and — for the second
+// scenario — that it survives an intervening `#`-comment line).
+#[given(
+    "a specs directory with an untagged scenario and a sibling @wip scenario, each with its own uncovered step"
+)]
+fn given_wip_sibling_shared_steps(w: &mut SpecWorld) {
+    w.shared_steps = true;
+    w.write(
+        "specs/wip-sibling.feature",
+        "Feature: WipSibling\n\nScenario: Untagged\n  Given an uncovered untagged step\n\n@wip\nScenario: Tagged\n  Given an uncovered wip step\n",
+    );
+    // No step implementation anywhere in app/ for either step — both are uncovered on paper;
+    // only the untagged one may legitimately surface as a gap.
+    w.write("app/unrelated.ts", "const x = 1;\n");
+}
+
+#[given(
+    "a specs directory with an untagged scenario and a sibling @wip scenario separated from its Scenario line by a #-comment, each with its own uncovered step"
+)]
+fn given_wip_comment_sibling_shared_steps(w: &mut SpecWorld) {
+    w.shared_steps = true;
+    w.write(
+        "specs/wip-comment-sibling.feature",
+        "Feature: WipCommentSibling\n\nScenario: Untagged\n  Given an uncovered untagged step\n\n@wip\n# a stray comment between the tag and the Scenario: line\nScenario: Tagged\n  Given an uncovered wip step\n",
+    );
+    w.write("app/unrelated.ts", "const x = 1;\n");
+}
+
 // --- When steps ---
 
 #[when("the developer runs spec-coverage validate on the specs and app directories")]
@@ -363,6 +398,21 @@ fn then_marked_failed(w: &mut SpecWorld) {
 fn then_wrapped_title_covered(w: &mut SpecWorld) {
     let out = w.stdout();
     assert!(!out.contains("Wrapped title covers"), "got: {out}");
+}
+
+#[then(
+    "the output reports only the untagged scenario's step as undefined, not the @wip scenario's step"
+)]
+fn then_only_untagged_step_undefined(w: &mut SpecWorld) {
+    let out = w.stdout();
+    assert!(
+        out.contains("an uncovered untagged step"),
+        "expected the untagged scenario's step to surface as a gap — got: {out}"
+    );
+    assert!(
+        !out.contains("an uncovered wip step"),
+        "the @wip scenario's step must be exempt from step-gap reporting — got: {out}"
+    );
 }
 
 #[tokio::main]

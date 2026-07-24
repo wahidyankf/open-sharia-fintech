@@ -62,3 +62,15 @@ Feature: BDD Spec-to-Test Coverage Validation
     When the developer runs spec-coverage validate on the specs and app directories
     Then the command exits successfully
     And the output does not report the wrapped-title scenario as an unimplemented scenario
+
+  Scenario: A @wip-tagged scenario is exempt from step-gap reporting in shared-steps mode
+    Given a specs directory with an untagged scenario and a sibling @wip scenario, each with its own uncovered step
+    When the developer runs spec-coverage validate with shared-steps flag
+    Then the command exits with a failure code
+    And the output reports only the untagged scenario's step as undefined, not the @wip scenario's step
+
+  Scenario: A @wip tag survives an intervening #-comment line before its Scenario line
+    Given a specs directory with an untagged scenario and a sibling @wip scenario separated from its Scenario line by a #-comment, each with its own uncovered step
+    When the developer runs spec-coverage validate with shared-steps flag
+    Then the command exits with a failure code
+    And the output reports only the untagged scenario's step as undefined, not the @wip scenario's step
