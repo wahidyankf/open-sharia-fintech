@@ -11,5 +11,3 @@ weight: 90
   - [Immediately-Effective](/en/learn/paths/careers/immediately-effective)
   - [Fundamentally Strong](/en/learn/paths/careers/fundamentally-strong)
 - [Skills](/en/learn/paths/skills)
-  - [E2E Fixture Alpha Skills Path](/en/learn/paths/skills/e2e-fixture-alpha)
-  - [E2E Fixture Beta Skills Path](/en/learn/paths/skills/e2e-fixture-beta)

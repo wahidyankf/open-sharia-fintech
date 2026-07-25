@@ -74,6 +74,12 @@ export default defineConfig({
       // set instead of the real, still-unpopulated `manifests/` directory — see
       // `apps/ayokoding-www-fe-e2e/fixtures/manifests/README.md`.
       AYOKODING_WEB_MANIFESTS_DIR: path.join(workspaceRoot, "apps/ayokoding-www-fe-e2e/fixtures/manifests"),
+      // course-paths plan (Phase 3, PR-review fix): the `skills/e2e-fixture-{alpha,beta}` content
+      // pages (`apps/ayokoding-www/content/en/learn/paths/skills/e2e-fixture-{alpha,beta}/`) are
+      // authored `draft: true` so they never render on prod-ayokoding-www — this reader-level flag
+      // (`content/shell/repository-fs.ts`) is what makes them visible to the e2e run that actually
+      // needs their authored body content (skills-path-landing-body.feature).
+      AYOKODING_WEB_SHOW_DRAFTS: "true",
     },
   },
   projects: process.env.CI

@@ -2,7 +2,7 @@
 title: "E2E Fixture Alpha Skills Path"
 description: "E2E fixture: a skills path whose landing page renders its own authored runway-justification body content."
 date: 2026-07-25T00:00:00+07:00
-draft: false
+draft: true
 weight: 90
 ---
 

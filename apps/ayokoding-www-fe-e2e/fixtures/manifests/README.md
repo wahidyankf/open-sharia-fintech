@@ -24,7 +24,14 @@ that needs a populated hub/category/arc/path landing points its server at this d
 
 The `skills/e2e-fixture-{alpha,beta}` manifests each have a matching real content page under
 `apps/ayokoding-www/content/en/learn/paths/skills/e2e-fixture-{alpha,beta}/_index.md` supplying the
-authored runway-justification body the skills path-landing-body scenario asserts on.
+authored runway-justification body the skills path-landing-body scenario asserts on. There is no
+`AYOKODING_WEB_CONTENT_DIR`-style content-fixture override for e2e (unlike the manifests directory
+above): the content repository's directory override is global to the whole site, so redirecting it
+to a fixture-only tree would also replace every other real content page other e2e scenarios depend
+on (e.g. `just-enough-python`, `sql-essentials`). These two pages are therefore authored `draft:
+true` in the real content tree instead, so they never render on prod-ayokoding-www; both
+`playwright.config.ts`'s `webServer.env` (local) and `docker-compose.yml`'s `environment` (CI) set
+`AYOKODING_WEB_SHOW_DRAFTS=true` so the e2e server still renders them.
 
 The category-landing/arc-landing **empty**-state scenario is deliberately NOT covered by adding a
 "zero-manifest" fixture: `resolvePathsRoute`/`manifestsForArc` already render the empty state for

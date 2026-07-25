@@ -2,7 +2,7 @@
 title: "E2E Fixture Beta Skills Path"
 description: "E2E fixture: the second of two skills paths used to prove authored runway-justification bodies never leak across paths."
 date: 2026-07-25T00:00:00+07:00
-draft: false
+draft: true
 weight: 91
 ---
 
