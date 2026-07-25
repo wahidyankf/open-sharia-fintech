@@ -75,7 +75,11 @@ Then("the page renders one arc card per arc with its member role\\(s\\) previewe
 
 Then("the immediately-effective arc card previews exactly two member roles", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Careers arcs" });
-  const arcCard = nav.getByRole("link", { name: /Explore the immediately-effective arc/ });
+  // Case-insensitive (`i` flag): the arc card's accessible name renders the arc's humanized/
+  // authored title (UWT-001 fix, phase-5 rule-15 retest — `category-landing.tsx`'s `ArcCard`
+  // builds its `aria-label` from `arcTitle`, not the raw `arc` slug), e.g. "Explore the
+  // Immediately-Effective arc — …", not the raw kebab-case slug this regex originally matched.
+  const arcCard = nav.getByRole("link", { name: /Explore the immediately-effective arc/i });
   await expect(arcCard).toBeVisible();
   const roleBadges = arcCard.getByRole("listitem");
   await expect(roleBadges).toHaveCount(2);
@@ -389,10 +393,11 @@ Then("the hub renders a Careers section grouped by arc and a separate Skills sec
   await expect(careersHeading).toBeVisible();
   await expect(skillsHeading).toBeVisible();
   // `exact: true` disambiguates the arc-group's own `<h3>` (its full accessible name is exactly
-  // the arc slug) from a `PathCard`'s `<h3 data-slot="card-title">` whose title text merely
-  // contains the arc name as a substring (e.g. "Backend Track (Interview-Ready)").
-  await expect(page.getByRole("heading", { level: 3, name: "interview-ready", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 3, name: "immediately-effective", exact: true })).toBeVisible();
+  // the arc's humanized/authored title — UWT-001 fix, phase-5 rule-15 retest — never the raw arc
+  // slug) from a `PathCard`'s `<h3 data-slot="card-title">` whose title text merely contains the
+  // arc name as a substring (e.g. "Backend Track (Interview-Ready)").
+  await expect(page.getByRole("heading", { level: 3, name: "Interview-Ready", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 3, name: "Immediately-Effective", exact: true })).toBeVisible();
 });
 
 Then("no path card from either category is rendered outside its category's section", async ({ page }) => {
