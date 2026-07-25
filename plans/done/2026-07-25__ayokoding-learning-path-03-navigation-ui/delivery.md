@@ -3940,22 +3940,33 @@ Option B — Left path rail" <PLAN>prd.md | wc -l` → `1`. `grep -c "Selection:
       (no `?path=`) on production — final URL unchanged (no redirect), title `1 · Just Enough Nvim |
 AyoKoding`. Screenshot committed:
       ![Production canonical course URL with no `?path=` renders the generic sidebar with no path chrome](./evidence/phase-8-prod-no-path-invariant-en-1280px.png)
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-03-navigation-ui/
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-03-navigation-ui/
 plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/` using today's completion date (the
       `evidence/` and `assets/` subfolders move with it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`,
+      **Evidence**: `git mv` to `plans/done/2026-07-25__ayokoding-learning-path-03-navigation-ui/` — 169
+      files renamed (README/brd/prd/tech-docs/delivery/learnings + `assets/` + `evidence/`).
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+      **Evidence**: "Active Plans" section now reads "No plans currently in progress."
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+      **Evidence**: entry added at the top of "Completed Projects", dated 2026-07-25.
+- [x] [AI] Update any other READMEs that reference this plan (e.g. `plans/README.md`,
       `plans/backlog/README.md`), and the four sibling split plans' `Depends-on` sections if they name
       this plan's location.
-- [ ] [AI] Commit the archival:
+      **Evidence**: rewrote the stale `in-progress/` link path in `plans/backlog/README.md` (1 site) and
+      `plans/backlog/ayokoding-learning-path-04-course-authoring/{README,prd,tech-docs,delivery,learnings}.md`
+      (6 sites) to the new `plans/done/2026-07-25__…` location; `plans/05-manifests`,
+      `-06-skills-accounting`, `-07-skills-erp` reference this plan only by plain-text slug in
+      Depends-on tables (no markdown links), so nothing there needed a path fix. A repo-wide grep for
+      `in-progress/ayokoding-learning-path-03-navigation-ui` outside `plans/done/` returns no matches.
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-03-navigation-ui to done`.
+      **Evidence**: commit `903f88acc`.
 
 ### Phase 8 Gate
 
-- [ ] [AI] All 36 funnel renders present and embedded; Screen 3 recorded as Option B; the cross-plan
+- [x] [AI] All 36 funnel renders present and embedded; Screen 3 recorded as Option B; the cross-plan
       DD-47 note intact so 36 is not misread as under-delivery.
-- [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/`; all
+- [x] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/`; all
       READMEs updated; archival committed.
 - [ ] [AI] Draft PR opened (`learnings.md` triage + archival move — this delivery unit's Phase 7-8
       PR); 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed (no-op).
