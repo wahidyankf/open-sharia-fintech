@@ -13,6 +13,12 @@ export const frontmatterSchema = z.object({
   breadcrumbs: z.boolean().optional(),
   bookCollapseSection: z.boolean().optional(),
   bookFlatSection: z.boolean().optional(),
+  // Declared course prerequisites (course-paths plan, cycle 2.4) — already authored on every
+  // real course `_index.md` by the upstream schema-and-prerequisite-dag plan; this schema is the
+  // first place that PARSES the field rather than silently dropping it. Resolved against the
+  // library and rendered by `course-paths/shell/prerequisite-list.tsx` in both the canonical and
+  // path-aware views.
+  prerequisites: z.array(z.string()).default([]),
 });
 
 export type Frontmatter = z.infer<typeof frontmatterSchema>;

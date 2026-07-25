@@ -212,3 +212,96 @@ describe("Breadcrumb mobile collapse (DWT-001)", () => {
     expect(container.querySelectorAll('[data-testid="breadcrumb-ellipsis"]').length).toBe(0);
   });
 });
+
+// Cycle 2.3 (course-paths plan): with an active fixture path context, the trail collapses to
+// Home / Learn / <Path Title> / <Course Title> — a documented departure from the plain
+// content-tree trail, justified in tech-docs.md §Breadcrumb because the active path is explicit
+// and shareable in the URL.
+const courseSegments = [
+  { label: "Home", slug: "" },
+  { label: "Browse", slug: "browse", href: "/en/browse" },
+  { label: "Learn", slug: "learn" },
+  { label: "Courses", slug: "learn/courses" },
+  { label: "Just Enough Python", slug: "learn/courses/just-enough-python" },
+];
+
+const pathContext = {
+  pathId: "skills/python-fundamentals",
+  pathTitle: "Python Fundamentals",
+  learnLabel: "Learn",
+  learnHref: "/en/browse",
+};
+
+describe("Breadcrumb with an active path context (Cycle 2.3)", () => {
+  it("shows Home, Learn, the path title, and the course title", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/courses/just-enough-python"
+        segments={courseSegments}
+        showCurrent
+        pathContext={pathContext}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Home" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Learn" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Python Fundamentals" })).toBeTruthy();
+    const current = screen.getByText("Just Enough Python");
+    expect(current.getAttribute("aria-current")).toBe("page");
+    expect(current.closest("a")).toBeNull();
+  });
+
+  it("drops the content-tree ancestor segments (Browse, Courses) the canonical trail carries", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/courses/just-enough-python"
+        segments={courseSegments}
+        showCurrent
+        pathContext={pathContext}
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: "Browse" })).toBeNull();
+    expect(screen.queryByText("Courses")).toBeNull();
+  });
+
+  it("the path crumb links to the path landing page with the path context preserved", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/courses/just-enough-python"
+        segments={courseSegments}
+        showCurrent
+        pathContext={pathContext}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Python Fundamentals" }).getAttribute("href")).toBe(
+      "/en/learn/paths/skills/python-fundamentals?path=skills/python-fundamentals",
+    );
+  });
+
+  it("the Learn crumb uses the supplied label/href, matching the header's own Learn nav link", () => {
+    render(
+      <Breadcrumb
+        locale="en"
+        slug="learn/courses/just-enough-python"
+        segments={courseSegments}
+        showCurrent
+        pathContext={pathContext}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Learn" }).getAttribute("href")).toBe("/en/browse");
+  });
+
+  it("without a pathContext, the trail is the plain content-tree segments, unchanged", () => {
+    render(<Breadcrumb locale="en" slug="learn/courses/just-enough-python" segments={courseSegments} showCurrent />);
+
+    expect(screen.getByRole("link", { name: "Browse" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Courses" })).toBeTruthy();
+    expect(screen.queryByText("Python Fundamentals")).toBeNull();
+  });
+});

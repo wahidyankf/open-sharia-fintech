@@ -9,9 +9,16 @@ interface PrevNextProps {
   locale: string;
   prev: PageLink | null;
   next: PageLink | null;
+  /**
+   * The active path context (course-paths plan, cycle 2.2). When present, carried through to
+   * both links via {@link contentUrl}'s optional third argument, so a reader following prev/next
+   * inside a path never falls out of that path's context. Omitted entirely (not just `undefined`)
+   * for the no-path case — markup is otherwise byte-identical, only the href construction differs.
+   */
+  pathId?: string;
 }
 
-export function PrevNext({ locale, prev, next }: PrevNextProps) {
+export function PrevNext({ locale, prev, next, pathId }: PrevNextProps) {
   if (!prev && !next) return null;
 
   return (
@@ -21,7 +28,7 @@ export function PrevNext({ locale, prev, next }: PrevNextProps) {
     >
       {prev ? (
         <Link
-          href={contentUrl(locale as Locale, prev.slug)}
+          href={contentUrl(locale as Locale, prev.slug, pathId)}
           className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -35,7 +42,7 @@ export function PrevNext({ locale, prev, next }: PrevNextProps) {
       )}
       {next ? (
         <Link
-          href={contentUrl(locale as Locale, next.slug)}
+          href={contentUrl(locale as Locale, next.slug, pathId)}
           className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground sm:text-right"
         >
           <div>

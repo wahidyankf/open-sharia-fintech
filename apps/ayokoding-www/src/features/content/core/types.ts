@@ -9,6 +9,13 @@ export interface ContentMeta {
   draft: boolean;
   isSection: boolean;
   filePath: string;
+  /**
+   * Declared course prerequisites (course-paths plan, cycle 2.4) — course IDs this page names as
+   * "take first". Optional (not every `ContentMeta` producer sets it, and every pre-existing
+   * caller omits it) so the field is additive-only; consumers that resolve prerequisites treat an
+   * absent field identically to an empty array.
+   */
+  prerequisites?: string[];
 }
 
 export interface ContentPage extends ContentMeta {

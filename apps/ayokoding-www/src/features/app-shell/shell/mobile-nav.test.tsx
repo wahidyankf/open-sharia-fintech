@@ -21,8 +21,12 @@ vi.mock("@/lib/trpc/client", () => ({
   },
 }));
 
+let mockPathname = "/en";
+let mockSearchParams = new URLSearchParams();
+
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/en",
+  usePathname: () => mockPathname,
+  useSearchParams: () => mockSearchParams,
 }));
 
 vi.mock("next/link", () => ({
@@ -33,7 +37,11 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  mockPathname = "/en";
+  mockSearchParams = new URLSearchParams();
+});
 
 // Phase 9 Cluster O — mobile nav drawer shows site nav without raw root node
 describe("Phase 9O — mobile nav drawer", () => {
@@ -102,5 +110,57 @@ describe("Phase 3 — mobile nav primary links", () => {
 
     expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/browse");
     expect(screen.getByRole("link", { name: "Alat" }).getAttribute("href")).toBe("/id/tools");
+  });
+});
+
+// Cycle 2.9 (course-paths plan) — the rail collapses into this shipped drawer on a phone.
+describe("Cycle 2.9 — MobileNav swaps SidebarTree for PathRail when a path context is active", () => {
+  const manifest = {
+    pathId: "skills/python-fundamentals",
+    arc: "python-fundamentals",
+    title: "Python Fundamentals",
+    description: "Learn Python from the ground up.",
+    courseOrder: ["just-enough-python"],
+  };
+
+  it("renders the generic SidebarTree, unchanged, with no manifests/no active path (Cycle 2.10 direction 1)", async () => {
+    const { MobileNav } = await import("./mobile-nav");
+    render(<MobileNav locale="en" open={true} onOpenChange={() => {}} manifests={[manifest]} courseTitles={{}} />);
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+
+    expect(screen.getByText("By Example")).toBeTruthy();
+    expect(screen.queryByRole("navigation", { name: /course list/i })).toBeNull();
+  });
+
+  it("renders PathRail instead of SidebarTree, and sets SheetTitle to the path name, when the URL has an active path context", async () => {
+    mockPathname = "/en/learn/courses/just-enough-python";
+    mockSearchParams = new URLSearchParams({ path: manifest.pathId });
+
+    const { MobileNav } = await import("./mobile-nav");
+    render(
+      <MobileNav
+        locale="en"
+        open={true}
+        onOpenChange={() => {}}
+        manifests={[manifest]}
+        courseTitles={{ "just-enough-python": "Just Enough Python" }}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "Python Fundamentals" })).toBeTruthy();
+    expect(screen.getByRole("navigation", { name: "Python Fundamentals course list" })).toBeTruthy();
+    expect(screen.queryByText("By Example")).toBeNull();
+  });
+
+  it("the drawer's content element carries the id PathBanner's aria-controls references (single sheet, not a second overlay)", async () => {
+    const { MobileNav } = await import("./mobile-nav");
+    render(<MobileNav locale="en" open={true} onOpenChange={() => {}} manifests={[manifest]} courseTitles={{}} />);
+
+    // Radix Dialog content renders into a Portal appended to document.body, outside RTL's
+    // returned `container` — query the document, matching Radix's own portal behaviour.
+    expect(document.body.querySelector("#mobile-nav-drawer")).not.toBeNull();
   });
 });

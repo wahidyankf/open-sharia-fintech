@@ -12,6 +12,7 @@ vi.mock("@/lib/trpc/client", () => ({
 vi.mock("next/navigation", () => ({
   usePathname: () => "/en",
   useRouter: () => ({ push: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("next-themes", () => ({

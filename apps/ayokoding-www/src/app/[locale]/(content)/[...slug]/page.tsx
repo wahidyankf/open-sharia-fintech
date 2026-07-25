@@ -11,6 +11,15 @@ import { PrevNext } from "@/features/navigation/shell/prev-next";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 import { TRPCError } from "@trpc/server";
 import { createTRPCContext } from "@/features/app-shell/shell/trpc-init";
+import {
+  courseIdFromSlug,
+  resolveCoursePathRenderData,
+  coursePositionInManifest,
+} from "@/features/course-paths/shell/course-path-nav";
+import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
+import { PrerequisiteList } from "@/features/course-paths/shell/prerequisite-list";
+import { PathCourseLinks } from "@/features/course-paths/shell/path-course-links";
+import { PathBanner } from "@/features/course-paths/shell/path-banner";
 
 export const dynamicParams = false;
 
@@ -46,6 +55,25 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 interface Props {
   params: Promise<{ locale: string; slug: string[] }>;
+  // Only `page.tsx` receives `searchParams` in the App Router (never `layout.tsx`, at any nesting
+  // depth) — course-paths plan, Cycle 2.2. `generateMetadata` below does not use it.
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+/**
+ * Adapt Next.js's `searchParams` object shape (a value can be absent, a single string, or a
+ * string[] for a repeated key) to the plain `URLSearchParams` the upstream `parsePathContext`
+ * expects. Repeated keys append in order; `undefined` values are skipped.
+ */
+function urlSearchParamsFrom(raw: { [key: string]: string | string[] | undefined }): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(raw)) {
+    if (value === undefined) continue;
+    for (const v of Array.isArray(value) ? value : [value]) {
+      params.append(key, v);
+    }
+  }
+  return params;
 }
 
 /**
@@ -60,7 +88,7 @@ function isLegacySlug(slug: string[]): boolean {
   return slug[0] === "learn" && slug[1] === "legacy";
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Props["params"] }): Promise<Metadata> {
   const { locale, slug } = await params;
   const slugStr = slugFromSegments(slug);
 
@@ -93,7 +121,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ContentPage({ params }: Props) {
+export default async function ContentPage({ params, searchParams }: Props) {
   const { locale, slug } = await params;
   const slugStr = slugFromSegments(slug);
 
@@ -110,16 +138,72 @@ export default async function ContentPage({ params }: Props) {
     throw err;
   }
 
+  // Path context only ever applies to course pages (courseIdFromSlug returns null for every
+  // other content page) — this is the one place ROUTE decides path-aware vs. canonical
+  // (Cycle 2.6's REFACTOR note); invalid, missing, and omitted-course contexts all converge on
+  // resolveCoursePathRenderData's single `activeContext === null` branch below.
+  const courseId = courseIdFromSlug(slugStr);
+  let prev = page.prev;
+  let next = page.next;
+  let prerequisiteLinks: readonly { title: string; slug: string }[] = [];
+  let pathBadges: readonly { pathId: string; title: string }[] = [];
+  let activePathId: string | undefined;
+  let activePathTitle: string | undefined;
+  let activeCoursePosition: { index: number; total: number } | undefined;
+
+  if (courseId !== null) {
+    const pathData = await loadRoutePathData(locale);
+    const usp = urlSearchParamsFrom(await searchParams);
+    const renderData = resolveCoursePathRenderData(usp, pathData, courseId, locale, page.prev, page.next);
+
+    prev = renderData.prev;
+    next = renderData.next;
+    prerequisiteLinks = renderData.prerequisiteLinks;
+    pathBadges = renderData.pathBadges;
+    activePathId = renderData.activeContext?.pathId;
+    activePathTitle = renderData.activeContext?.manifest.title;
+    if (renderData.activeContext) {
+      activeCoursePosition = coursePositionInManifest(renderData.activeContext.manifest, courseId);
+    }
+  }
+
   const breadcrumbSegments = buildBreadcrumbs(locale, slugStr, page.title);
+  const pathContext =
+    activePathId !== undefined && activePathTitle !== undefined
+      ? {
+          pathId: activePathId,
+          pathTitle: activePathTitle,
+          learnLabel: t(locale as Locale, "navLearn"),
+          learnHref: `/${locale}/browse`,
+        }
+      : undefined;
 
   return (
     <>
       <article className="min-w-0 flex-1 px-6 py-8 lg:px-8">
-        <Breadcrumb locale={locale} slug={slugStr} segments={breadcrumbSegments} />
+        <Breadcrumb
+          locale={locale}
+          slug={slugStr}
+          segments={breadcrumbSegments}
+          showCurrent={Boolean(pathContext)}
+          pathContext={pathContext}
+        />
 
         <h1 className="mb-6 text-4xl font-extrabold tracking-tight">{page.title}</h1>
 
         <MarkdownRenderer html={page.html} locale={locale} />
+
+        <PrerequisiteList locale={locale} prerequisites={prerequisiteLinks} pathId={activePathId} />
+
+        {pathContext === undefined && <PathCourseLinks locale={locale} paths={pathBadges} />}
+
+        {pathContext !== undefined && activeCoursePosition !== undefined && (
+          <PathBanner
+            pathTitle={pathContext.pathTitle}
+            courseIndex={activeCoursePosition.index}
+            totalCourses={activeCoursePosition.total}
+          />
+        )}
 
         {page.date && (
           <p className="mt-8 text-sm text-muted-foreground">
@@ -132,7 +216,7 @@ export default async function ContentPage({ params }: Props) {
           </p>
         )}
 
-        <PrevNext locale={locale} prev={page.prev} next={page.next} />
+        <PrevNext locale={locale} prev={prev} next={next} pathId={activePathId} />
       </article>
 
       <aside className="hidden w-[200px] shrink-0 xl:block">

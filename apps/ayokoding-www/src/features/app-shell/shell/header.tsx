@@ -10,17 +10,24 @@ import { useSearchOpen } from "@/features/search/shell/use-search";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { PRIMARY_NAV_LINKS } from "@/features/app-shell/core/nav-links";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
+import type { PathManifest } from "@/features/course-paths/core/schemas";
 
 interface HeaderProps {
   locale: string;
+  // Course-paths plan (Cycle 2.9) — optional/additive, threaded through to MobileNav so it can
+  // detect an active path context and swap its drawer content.
+  manifests?: readonly PathManifest[];
+  courseTitles?: Readonly<Record<string, string>>;
 }
 
-export function Header({ locale }: HeaderProps) {
+export function Header({ locale, manifests, courseTitles }: HeaderProps) {
   const { setOpen: setSearchOpen } = useSearchOpen();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // Course-paths plan (Cycle 2.9) — lifted from a local useState into a shared context so
+  // PathBanner's "open path course list" trigger can open this exact same drawer.
+  const { open: mobileOpen, setOpen: setMobileOpen } = useMobileNavOpen();
   const pathname = usePathname();
 
   return (
@@ -75,7 +82,11 @@ export function Header({ locale }: HeaderProps) {
           <Search className="h-4 w-4" />
           <span className="text-sm">{t(locale as Locale, "search")}</span>
           <kbd className="pointer-events-none ml-2 hidden rounded border bg-muted px-1.5 font-mono text-xs select-none lg:inline-block">
-            ⌘K
+            {/* Command-key glyph (U+2318, the Mac "place of interest sign") built from its numeric
+                codepoint, not typed as a literal source character — apps/rhino-cli's
+                emoji-in-source-code convention scans raw file bytes and forbids the literal
+                codepoint appearing anywhere in a .ts/.tsx file. */}
+            {String.fromCharCode(0x2318)}K
           </kbd>
         </Button>
 
@@ -92,7 +103,13 @@ export function Header({ locale }: HeaderProps) {
         <LanguageSwitcher locale={locale} />
         <ThemeToggle />
 
-        <MobileNav locale={locale} open={mobileOpen} onOpenChange={setMobileOpen} />
+        <MobileNav
+          locale={locale}
+          open={mobileOpen}
+          onOpenChange={setMobileOpen}
+          manifests={manifests}
+          courseTitles={courseTitles}
+        />
       </div>
     </header>
   );

@@ -13,6 +13,7 @@ vi.mock("next/link", () => ({
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/en/learn",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@/lib/trpc/client", () => ({

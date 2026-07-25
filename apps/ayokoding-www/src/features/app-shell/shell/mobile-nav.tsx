@@ -11,16 +11,25 @@ import {
 } from "@open-sharia-enterprise/web-ui/primitives";
 import { SidebarTree } from "@/features/navigation/shell/sidebar-tree";
 import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { TreeNode } from "@/features/content/core/types";
 import { trpcClient } from "@/lib/trpc/client";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { PRIMARY_NAV_LINKS } from "@/features/app-shell/core/nav-links";
+import { resolveActiveCourseFromLocation } from "@/features/course-paths/shell/course-path-nav";
+import { PathRail } from "@/features/course-paths/shell/path-rail";
+import { MOBILE_NAV_DRAWER_ID } from "@/features/course-paths/shell/path-banner";
+import type { PathManifest } from "@/features/course-paths/core/schemas";
 
 interface MobileNavProps {
   locale: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // Course-paths plan (Cycle 2.9) — optional/additive so every pre-existing call site (that
+  // renders no path chrome) stays valid unchanged.
+  manifests?: readonly PathManifest[];
+  courseTitles?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -39,9 +48,17 @@ const MOBILE_NAV_WIDTH_PRESETS = [
   { id: "wide", labelKey: "mobileNavWidthWide", widthPx: 360 },
 ] as const;
 
-export function MobileNav({ locale, open, onOpenChange }: MobileNavProps) {
+export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTitles = {} }: MobileNavProps) {
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [widthPx, setWidthPx] = useState<number>(MOBILE_NAV_WIDTH_PRESETS[0].widthPx);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // A layout receives neither `searchParams` nor a descendant route's `[...slug]` params, so
+  // MobileNav (hosted from `[locale]/layout.tsx` via `Header`, structurally disconnected from
+  // `<ROUTE>`) detects the active path context itself — the same client-side pattern
+  // `SidebarHost` uses for the desktop rail (Cycle 2.8).
+  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, manifests);
 
   // Mount-effect read of the persisted preset width — mirrors the pattern
   // `useResizableWidth` (libs/web-ui) uses for the desktop rail. Only one of
@@ -73,9 +90,16 @@ export function MobileNav({ locale, open, onOpenChange }: MobileNavProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="overflow-y-auto p-4" style={{ width: `${widthPx}px` }}>
+      <SheetContent
+        id={MOBILE_NAV_DRAWER_ID}
+        side="left"
+        className="overflow-y-auto p-4"
+        style={{ width: `${widthPx}px` }}
+      >
         <SheetHeader>
-          <SheetTitle className="text-left text-lg font-bold">AyoKoding</SheetTitle>
+          <SheetTitle className="text-left text-lg font-bold">
+            {active ? active.context.manifest.title : "AyoKoding"}
+          </SheetTitle>
           <fieldset className="m-0 mb-2 border-0 p-0">
             <legend className="mb-1 block text-xs font-medium text-muted-foreground">
               {t(locale as Locale, "mobileNavWidthLabel")}
@@ -96,23 +120,32 @@ export function MobileNav({ locale, open, onOpenChange }: MobileNavProps) {
             </div>
           </fieldset>
         </SheetHeader>
-        <nav className="mt-4" aria-label="Mobile navigation">
-          <p className="px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Menu</p>
-          <ul className="mt-2 mb-4 space-y-1">
-            {PRIMARY_NAV_LINKS.map((link) => (
-              <li key={link.labelKey}>
-                <Link
-                  href={link.hrefFor(locale as Locale)}
-                  onClick={() => onOpenChange(false)}
-                  className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-                >
-                  {t(locale as Locale, link.labelKey)}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <SidebarTree nodes={tree} locale={locale} />
-        </nav>
+        {active ? (
+          <PathRail
+            locale={locale}
+            manifest={active.context.manifest}
+            currentCourseId={active.courseId}
+            courseTitles={courseTitles}
+          />
+        ) : (
+          <nav className="mt-4" aria-label="Mobile navigation">
+            <p className="px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Menu</p>
+            <ul className="mt-2 mb-4 space-y-1">
+              {PRIMARY_NAV_LINKS.map((link) => (
+                <li key={link.labelKey}>
+                  <Link
+                    href={link.hrefFor(locale as Locale)}
+                    onClick={() => onOpenChange(false)}
+                    className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  >
+                    {t(locale as Locale, link.labelKey)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <SidebarTree nodes={tree} locale={locale} />
+          </nav>
+        )}
       </SheetContent>
     </Sheet>
   );

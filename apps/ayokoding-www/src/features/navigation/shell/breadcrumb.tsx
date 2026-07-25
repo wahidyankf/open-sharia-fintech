@@ -3,6 +3,20 @@ import { ChevronRight } from "lucide-react";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
 
+/**
+ * The active fixture path context (course-paths plan, Cycle 2.3) — when present, the trail
+ * collapses to `Home / <learnLabel> / <pathTitle> / <current>`, replacing the plain
+ * content-tree ancestor segments. `learnLabel`/`learnHref` are supplied by the caller (rather
+ * than hardcoded here) so `Breadcrumb` stays presentation-only, with no i18n-key or routing-
+ * convention knowledge of its own.
+ */
+export interface BreadcrumbPathContext {
+  pathId: string;
+  pathTitle: string;
+  learnLabel: string;
+  learnHref: string;
+}
+
 interface BreadcrumbProps {
   locale: string;
   slug: string;
@@ -11,6 +25,37 @@ interface BreadcrumbProps {
   // aria-current="page" crumb instead of being dropped. Callers that already
   // surface the current page in an <h1> leave this absent (default behaviour).
   showCurrent?: boolean;
+  // Course-paths plan (Cycle 2.3) — when set, collapses the trail to the path-aware shape
+  // documented on {@link BreadcrumbPathContext} instead of the plain `segments` array.
+  pathContext?: BreadcrumbPathContext;
+}
+
+/**
+ * Build the effective segments array to render — the plain `segments` as-is when no
+ * `pathContext` is active, or the collapsed `Home / Learn / <Path Title> / <current>` trail when
+ * one is (Cycle 2.3). Keeping this the single place that chooses between the two trails is the
+ * cycle's own REFACTOR note: canonical and path-aware rendering can never drift apart because
+ * they share every downstream line (`showCurrent`, `aria-current`, mobile collapse) below.
+ */
+function resolveEffectiveSegments(
+  locale: string,
+  segments: { label: string; slug: string; href?: string }[],
+  pathContext: BreadcrumbPathContext | undefined,
+): { label: string; slug: string; href?: string }[] {
+  if (!pathContext || segments.length === 0) {
+    return segments;
+  }
+
+  const home = segments[0]!;
+  const current = segments[segments.length - 1]!;
+  const pathSlug = `learn/paths/${pathContext.pathId}`;
+
+  return [
+    home,
+    { label: pathContext.learnLabel, slug: "learn", href: pathContext.learnHref },
+    { label: pathContext.pathTitle, slug: pathSlug, href: contentUrl(locale as Locale, pathSlug, pathContext.pathId) },
+    current,
+  ];
 }
 
 // Always resolves through contentUrl() — once contentUrl() is a uniform bare
@@ -23,10 +68,11 @@ function hrefFor(locale: string, segment: { slug: string; href?: string }): stri
   return contentUrl(locale as Locale, segment.slug);
 }
 
-export function Breadcrumb({ locale, segments, showCurrent = false }: BreadcrumbProps) {
+export function Breadcrumb({ locale, segments, showCurrent = false, pathContext }: BreadcrumbProps) {
+  const effectiveSegments = resolveEffectiveSegments(locale, segments, pathContext);
   // Default: exclude the last segment — the current page title is shown in the h1.
   // showCurrent: keep every segment; render the last one as a non-link crumb.
-  const visibleSegments = showCurrent ? segments : segments.slice(0, -1);
+  const visibleSegments = showCurrent ? effectiveSegments : effectiveSegments.slice(0, -1);
   if (visibleSegments.length === 0) return null;
 
   const lastIndex = visibleSegments.length - 1;
