@@ -166,8 +166,17 @@ export async function generateMetadata({ params }: { params: Props["params"] }):
       // must not read as an error; mirror the page body's own `resolution.arc` fallback (Cycle
       // 3.1a's `<h1>{seoPage?.title ?? resolution.arc}</h1>`) rather than falling through to a bare
       // "Not Found" (a real defect found live via Playwright MCP at phase-5 manual verification).
+      // A bogus arc segment (no real `_index.md`, hence this catch, and no loaded manifest) must
+      // not get a synthesized title — falls through to the shared "Not Found" below instead. A real
+      // arc always has an `_index.md` (see the three `careers/<arc>/_index.md` content files), so
+      // `getBySlug` succeeds in the `try` above and this branch is reached only for a bogus arc, or
+      // (in principle) a genuine arc whose `_index.md` was removed but its manifests remain — the
+      // `arcManifests.length > 0` check still recovers a title in that edge case.
       if (resolution.kind === "arc") {
-        return { title: resolution.arc };
+        const arcManifests = manifestsForArc(pathData.manifests, resolution.arc);
+        if (arcManifests.length > 0) {
+          return { title: resolution.arc };
+        }
       }
     }
     return { title: "Not Found" };
@@ -177,8 +186,10 @@ export async function generateMetadata({ params }: { params: Props["params"] }):
 /**
  * The `learn/paths/**` namespace's render dispatch (course-paths plan, Phase 3) — hub (Screen 1),
  * category landing (Screen 1a), arc landing (Screen 1b, careers-only), or terminal path landing
- * (Screen 2). Returns `null` for `{ kind: "not-found" }` so the caller falls through to the
- * standard canonical content-page render (which itself 404s for a genuinely nonexistent slug).
+ * (Screen 2). Returns `null` for `{ kind: "not-found" }`, and also for a `{ kind: "arc" }`
+ * resolution that names no real arc (no matching manifest AND no real `_index.md`), so the caller
+ * falls through to the standard canonical content-page render (which itself 404s for a genuinely
+ * nonexistent slug).
  */
 async function renderPathsRoute(locale: string, slugStr: string) {
   const pathData = await loadRoutePathData(locale);
@@ -284,6 +295,16 @@ async function renderPathsRoute(locale: string, slugStr: string) {
 
   if (resolution.kind === "arc") {
     const arcManifests = manifestsForArc(pathData.manifests, resolution.arc);
+    // Reject an arc segment that is neither a real content page (`seoPage === null`, i.e. no
+    // `careers/<arc>/_index.md`) nor a published manifest grouping (`arcManifests.length === 0`) —
+    // an arbitrary string like `careers/asdkjhasdkjh` would otherwise fall into this branch (see
+    // `resolvePathsRoute`'s doc comment: it is pure/no-IO and cannot itself validate the arc) and
+    // render a fake 200 with a synthesized `<h1>` and an empty-state body. The three real arcs each
+    // have a real `_index.md`, so `seoPage` is non-null for them and this check never rejects a
+    // genuine arc, including the deliberate "no manifests published yet" empty state.
+    if (arcManifests.length === 0 && seoPage === null) {
+      return null;
+    }
     return (
       <section className="mx-auto max-w-6xl flex-1 px-6 py-8 lg:px-8">
         <h1 className="text-4xl font-extrabold tracking-tight">{seoPage?.title ?? resolution.arc}</h1>

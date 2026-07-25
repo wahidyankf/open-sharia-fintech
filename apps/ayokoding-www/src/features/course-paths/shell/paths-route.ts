@@ -55,6 +55,14 @@ export type PathsRouteResolution =
  * standard canonical content-page render for all three, matching Cycle 2.6's graceful-fallback
  * precedent (invalid/missing context is never an error).
  *
+ * A 2-segment `careers/<arc>` slug that names no loaded manifest is always resolved as
+ * `{ kind: "arc", arc: <segment> }`, **regardless of whether `<segment>` is one of the three real
+ * arcs** — this function is pure/no-IO and cannot check whether a real `_index.md` or any manifest
+ * actually exists for an arbitrary arc string. Rejecting a bogus arc (falling back to not-found)
+ * therefore happens in the IO-aware consumer instead: `page.tsx`'s `renderPathsRoute` and
+ * `generateMetadata`, which reject `kind: "arc"` when both `manifestsForArc(...)` is empty and no
+ * real `_index.md` page exists for that slug.
+ *
  * Pure — no IO, never throws.
  */
 export function resolvePathsRoute(slug: string, manifests: readonly PathManifest[]): PathsRouteResolution {

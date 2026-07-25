@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { TRPCError } from "@trpc/server";
 
 vi.mock("@/lib/trpc/server", () => ({
   serverCaller: {
@@ -22,8 +23,15 @@ vi.mock("@/features/app-shell/shell/trpc-init", () => ({
   }),
 }));
 
+// Real `manifests/` is empty today, but this mock keeps the arc-rejection tests below hermetic
+// against that real (and eventually populated) directory's state, rather than relying on it.
+vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
+  loadManifests: vi.fn().mockResolvedValue([]),
+  defaultManifestsDir: () => "unused-in-test",
+}));
+
 // eslint-disable-next-line import/first
-import { generateMetadata } from "./page";
+import ContentPage, { generateMetadata } from "./page";
 
 // Carried over from the retired c/[...slug]/page.unit.test.ts (DD-48 route
 // merge) — same assertions, updated for the uniform bare join (no /c/).
@@ -70,16 +78,72 @@ describe("generateMetadata", () => {
     expect(meta.robots).toBeUndefined();
   });
 
-  it("titles a careers arc route (even a zero-manifest/empty-state one) with the arc slug, not a bare 'Not Found' (phase-5 EWT finding)", async () => {
-    // `learn/paths/careers/<arc>` has no `_index.md` of its own (the arc is a synthetic grouping,
-    // not a real content page), so `getBySlug` always rejects for it — live at
-    // http://localhost:3101/en/learn/paths/careers/no-fixture-arc this fell through to a bare
-    // "Not Found" tab title even though the page renders a 200 empty-state, not an error.
+  it("titles a bogus careers arc (no real _index.md, zero manifests) 'Not Found', not the raw arc slug (PR #95 cycle-3 review — supersedes the phase-5 EWT finding below)", async () => {
+    // Phase 5 (EWT finding) originally titled ANY unrecognized `careers/<arc>` segment with the raw
+    // arc slug, treating it as a legitimate "no manifests published yet" empty state. PR #95's
+    // cycle-3 review found this let an arbitrary string (e.g. `careers/asdkjhasdkjh`) render a fake
+    // HTTP 200 — reproduced live — instead of the 404 every other invalid segment shape correctly
+    // returns. The fix (`page.tsx`'s `generateMetadata` arc branch) now titles a bogus arc
+    // "Not Found" whenever it has both zero matching manifests AND no real `_index.md`
+    // (`getBySlug` rejecting is exactly that "no real `_index.md`" signal). A genuine arc (one of
+    // the three real arcs, see the sibling "recovers a title" test below) is unaffected — each has a
+    // real `_index.md`, so `getBySlug` never rejects for it and this catch branch is never reached.
     const { serverCaller } = await import("@/lib/trpc/server");
     vi.mocked(serverCaller.content.getBySlug).mockRejectedValueOnce(new Error("not found"));
     const meta = await generateMetadata({
       params: Promise.resolve({ locale: "en", slug: ["learn", "paths", "careers", "no-fixture-arc"] }),
     });
-    expect(meta.title).toBe("no-fixture-arc");
+    expect(meta.title).toBe("Not Found");
+  });
+
+  it("still recovers an arc title from generateMetadata's catch when the arc has published manifests but (hypothetically) no _index.md", async () => {
+    // Edge case carved out by the fix: an arc whose `_index.md` is missing/rejected but which DOES
+    // have at least one loaded manifest still gets a real title, not "Not Found" — the fix's guard
+    // is `arcManifests.length > 0`, not "getBySlug succeeded".
+    const { serverCaller } = await import("@/lib/trpc/server");
+    const { loadManifests } = await import("@/features/course-paths/shell/manifest-repository");
+    vi.mocked(serverCaller.content.getBySlug).mockRejectedValueOnce(new Error("not found"));
+    vi.mocked(loadManifests).mockResolvedValueOnce([
+      {
+        pathId: "careers/interview-ready/some-role",
+        arc: "interview-ready",
+        title: "Some Role",
+        description: "desc",
+        courseOrder: [],
+      },
+    ]);
+    const meta = await generateMetadata({
+      params: Promise.resolve({ locale: "en", slug: ["learn", "paths", "careers", "interview-ready"] }),
+    });
+    expect(meta.title).toBe("interview-ready");
+  });
+});
+
+describe("ContentPage — bogus careers arc 404s instead of rendering a fake 200 (PR #95 cycle-3 review)", () => {
+  // Regression test: `resolvePathsRoute` is pure/no-IO and cannot itself validate an arc segment
+  // against the real 3-member arc set, so `renderPathsRoute` (the IO-aware consumer) must reject an
+  // arc resolution with zero matching manifests and no real `_index.md`, falling through to the
+  // standard content-page fetch — which then correctly calls Next.js's `notFound()`. Before the fix,
+  // this exact scenario rendered a normal 200 page with a synthesized `<h1>` and an empty-state body
+  // (reproduced live at `/en/learn/paths/careers/asdkjhasdkjh`); after the fix, `ContentPage` throws
+  // the same `notFound()` digest error every other invalid segment shape already produces.
+  it("rejects an arbitrary careers/<arc> segment and calls notFound(), matching every other invalid segment shape", async () => {
+    const { serverCaller } = await import("@/lib/trpc/server");
+    const { loadManifests } = await import("@/features/course-paths/shell/manifest-repository");
+    vi.mocked(loadManifests).mockResolvedValue([]);
+    // Called twice: once inside `renderPathsRoute`'s own `seoPage` fetch (rejects, so the "arc"
+    // branch's `seoPage === null` check holds), once more by `ContentPage`'s standard fallback fetch
+    // after `renderPathsRoute` returns `null` — both must reject NOT_FOUND for the real `notFound()`
+    // call at the end of that fallback to fire.
+    vi.mocked(serverCaller.content.getBySlug)
+      .mockRejectedValueOnce(new TRPCError({ code: "NOT_FOUND" }))
+      .mockRejectedValueOnce(new TRPCError({ code: "NOT_FOUND" }));
+
+    await expect(
+      ContentPage({
+        params: Promise.resolve({ locale: "en", slug: ["learn", "paths", "careers", "asdkjhasdkjh"] }),
+        searchParams: Promise.resolve({}),
+      }),
+    ).rejects.toMatchObject({ digest: expect.stringContaining("NEXT_HTTP_ERROR_FALLBACK;404") });
   });
 });
