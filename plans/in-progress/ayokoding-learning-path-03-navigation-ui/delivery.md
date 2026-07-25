@@ -2419,11 +2419,24 @@ HEAD`), but `rhino-cli`'s `specs:**` glob (repo-wide by design, needed for its o
 
 ### Manual UI Verification (Playwright MCP)
 
-- [ ] [AI] Confirm `en` is the content locale for the course library — command:
+- [x] [AI] Confirm `en` is the content locale for the course library — command:
       `test -d apps/ayokoding-www/content/en/learn/courses` — acceptance: exits 0; no sibling
       `id/learn/courses` directory is expected or required.
-- [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] For `en` × breakpoints (375 / 768 / 1280 px), via Playwright MCP (`browser_navigate` +
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). Command
+  exited 0; no `id/learn/courses` sibling exists (none expected — locale scope is `en`-only per
+  brd.md).
+
+- [x] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none. Server started with
+  `AYOKODING_WEB_MANIFESTS_DIR` pointed at
+  `apps/ayokoding-www-fe-e2e/fixtures/manifests` (the same fixture set `playwright.config.ts`'s
+  `webServer.env` uses) so the still-unpopulated real `manifests/` directory would not force every
+  hub/category/arc/path screen into its empty state; `curl -sf http://localhost:3101/en` returned
+  `200` within 1s.
+
+- [x] [AI] For `en` × breakpoints (375 / 768 / 1280 px), via Playwright MCP (`browser_navigate` +
       `browser_resize` + `browser_snapshot`): open `/en` (hero grid + escape hatch), the paths hub
       (Careers arc-grouped section + Skills section), the careers category landing (arc chooser), the
       skills category landing (fixed-arc ramp statement, no chooser), a two-role arc landing and a
@@ -2435,7 +2448,38 @@ HEAD`), but `rhino-cli`'s `specs:**` glob (repo-wide by design, needed for its o
       `empty-path-list-state.tsx` renders its stated message + fallback link, never a blank area. Verify
       `html[lang]` is `en` and `browser_console_messages` is clean — acceptance: all behaviors correct;
       zero console errors at every breakpoint.
-- [ ] [AI] **Path-rail responsive contract (the selected Screen 3 Option B, DD-46)** — on a course in
+
+  **Date**: 2026-07-25. **Status**: Done, with two defects found live and fixed before archival (both
+  pre-existing gaps in the Phase 2-4 delivery, not regressions introduced by this verification pass).
+  **Files Changed**:
+  - `apps/ayokoding-www/src/features/course-paths/shell/syllabus-preview.tsx`,
+    `apps/ayokoding-www/src/features/course-paths/shell/syllabus-preview.test.tsx` — the one-role arc
+    landing's inline syllabus preview nested a block-level `<ol>` inside a `<p>` (invalid HTML per the
+    phrasing-content rule), which the browser silently repaired by closing the `<p>` early, diverging
+    SSR output from the hydrated client tree. Live at
+    `http://localhost:3101/en/learn/paths/careers/interview-ready` this threw 3 console errors
+    ("cannot be a descendant", a script-tag-in-React warning, and a hydration-mismatch error). Fixed
+    by swapping the wrapper to a `<div>` (RED: added a regression test asserting the `<ol>` is never a
+    `<p>` descendant, confirmed it failed against the pre-fix markup; GREEN: the one-element swap;
+    both `syllabus-preview.test.tsx` and `arc-landing.test.tsx` pass, and the live page now renders
+    with 0 console errors at all three breakpoints).
+  - `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`,
+    `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.unit.test.ts` — a careers arc route
+    (`learn/paths/careers/<arc>`) has no `_index.md` of its own (arcs are a synthetic grouping derived
+    from manifest data), so `generateMetadata`'s `getBySlug` call always rejects for it; the catch
+    block only special-cased `resolution.kind === "path"`, so every arc route — including the
+    deliberately-empty "no manifests published yet" state exercised at
+    `http://localhost:3101/en/learn/paths/careers/no-fixture-arc` — fell through to a bare
+    `{ title: "Not Found" }`, even though the page renders a normal 200 empty-state (not an error).
+    Fixed by adding a `resolution.kind === "arc"` branch that titles the page with `resolution.arc`,
+    mirroring the page body's own existing fallback (`<h1>{seoPage?.title ?? resolution.arc}</h1>`).
+    Re-verified live: the tab title now reads `no-fixture-arc | AyoKoding` instead of
+    `Not Found | AyoKoding`.
+
+  All screens verified correct at all three breakpoints with 0 console errors after both fixes;
+  `html[lang]` confirmed `"en"` via `document.documentElement.lang`. See the embedded evidence below.
+
+- [x] [AI] **Path-rail responsive contract (the selected Screen 3 Option B, DD-46)** — on a course in
       path context, verify each breakpoint against
       [prd.md §Screen 3 responsive specification](./prd.md#screen-3-responsive-specification-the-selected-option-b-breakpoint-by-breakpoint):
       at **1280 px** the rail shows full course titles with labelled phase separators, `course k of N`,
@@ -2444,17 +2488,77 @@ HEAD`), but `rhino-cli`'s `specs:**` glob (repo-wide by design, needed for its o
       rules); at **375 px** there is **no** rail and the banner readout carries the disclosure button —
       acceptance: all three states match; the rail never appears below `md` and never disappears at or
       above `md`.
-- [ ] [AI] **Path-rail mobile drawer** — at 375 px activate the banner's "Open path course list" control
+
+  **Date**: 2026-07-25. **Status**: Done, with one item fixed and one item recorded as a
+  structural, out-of-plan-scope gap (flagged to the user, not silently deferred). **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/path-rail.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-rail.test.tsx`.
+  - **Fixed** — `course k of N` was entirely absent from the desktop/tablet rail as shipped in Cycle
+    2.8 (only `PathBanner`'s `md:hidden` mobile readout had it). Added a
+    `Course {index} of {total}` header line above the ordered list, computed from the already-pure
+    `coursePositionInManifest` helper — no schema change, no new data. RED: a test asserting the text
+    exists failed against the pre-fix component; GREEN: the one-line addition. Re-verified live at
+    1280 px and 768 px — the rail now reads `Course 1 of 2` / `Course 2 of 2` etc. as the reader
+    steps through a path.
+  - **Not fixed — flagged, not deferred**: "labelled phase-group separators." `PathManifestSchema`
+    (`apps/ayokoding-www/src/features/course-paths/core/schemas.ts`, owned by the already-archived
+    `ayokoding-learning-path-02-schema-and-prerequisite-dag` plan, which this plan does not edit) has
+    **no phase field at all** — `courseOrder` is a flat array with zero phase-boundary data. This is
+    not a rail-specific gap: `PathLanding` (Screen 2, `path-landing.tsx`) also renders a single flat
+    numbered list with no phase headings, sticky or otherwise, despite prd.md's Screen 2 hi-fi mockups
+    depicting "Prologue"/"Phase 1"/"Phase 2" sections — confirmed by reading `path-order-nav.feature`'s
+    actual Gherkin (the executable acceptance criteria Cycle 2.8 was built against), which asserts only
+    the ordered list, current-course marker, and escape links, never phase grouping. This is therefore
+    a pre-existing spec-vs-implementation gap dating to Phase 1-3's own scope narrowing (the prd's hi-fi
+    responsive-spec table describes a richer vision than the shipped, schema-backed data model
+    supports), not a defect introduced by or fixable within this Phase 5 verification pass. Inventing an
+    arbitrary grouping (e.g., chunking every N courses into a fake "Phase") without real authored phase
+    data would fabricate structure not grounded in content, which risks misleading readers more than the
+    current flat list. Implementing it for real requires a schema-ownership decision (adding a phase
+    field crosses into the archived `ayokoding-learning-path-02` plan's boundary) and downstream manifest
+    content authoring (owned by the not-yet-executed `ayokoding-learning-path-05-manifests` /
+    `-06-skills-accounting` / `-07-skills-erp` plans) — genuinely outside this plan's fixable scope.
+    **Flagged to the user in this execution's final report rather than silently left unmentioned.**
+
+- [x] [AI] **Path-rail mobile drawer** — at 375 px activate the banner's "Open path course list" control
       via `browser_click`, confirm the **same** left drawer the header `☰` opens now lists the path's
       ordered courses, that `Esc` and the scrim both dismiss it, and that focus enters the drawer on open
       and returns to the trigger on close — acceptance: all four behaviors correct; no second overlay
       appears (only one dialog in the accessibility tree at a time).
-- [ ] [AI] **No-path regression sweep** — at all three breakpoints, open a canonical course URL with no
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). All four
+  behaviors confirmed live at 375 px on
+  `http://localhost:3101/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`: the
+  trigger opens the same `#mobile-nav-drawer` `Sheet` the header `☰` opens, titled
+  "E2E Fixture Alpha Skills Path", listing both fixture courses in order with the current course
+  marked; `document.querySelectorAll('[role="dialog"]').length === 1` throughout; focus entered the
+  dialog on open (`document.activeElement` inside `[role="dialog"]`); `Esc` closed it and returned
+  focus to the trigger button (`document.activeElement.textContent === "View path"`); a synthetic
+  pointer-event sequence dispatched at a point in the visible scrim strip (outside the drawer panel's
+  bounding rect) also closed it. One pre-existing, out-of-scope observation: Radix logs
+  `Missing 'Description' or aria-describedby={undefined} for {DialogContent}` on this drawer — but the
+  identical warning fires on the plain, non-path generic drawer too (confirmed by opening the header
+  `☰` on a no-`?path=` page), so it predates this plan and is shared `mobile-nav.tsx`/`Sheet`
+  app-shell infrastructure, not a course-paths regression; not fixed here (a warning, not an error, and
+  outside this plan's own changed-files boundary).
+
+- [x] [AI] **No-path regression sweep** — at all three breakpoints, open a canonical course URL with no
       `?path=` and confirm the generic content-tree sidebar (desktop/tablet) and generic drawer (mobile)
       render exactly as on any other content page, with no rail, no readout, and no path breadcrumb
       segment — acceptance: the no-path experience is indistinguishable from the pre-plan behaviour
       recorded in the Phase 0 snapshot.
-- [ ] [AI] Capture one screenshot per screen per breakpoint via `browser_take_screenshot` to
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification only). At 1280/768 px,
+  `/en/learn/courses/just-enough-python` (no `?path=`) rendered the generic `Sidebar navigation` tree
+  in the resizable `<aside>`, no rail, no banner, and a breadcrumb with no path segment (Home → Browse
+  → Learn → Courses); it additionally showed the "This course is part of" badges (2 paths), the
+  canonical-view affordance. At 375 px the header `☰` opened the generic drawer (`aria-label`
+  `"Mobile navigation"`, heading "AyoKoding", body "Menu") with no `PathRail` content — confirmed by
+  inspecting the dialog subtree directly. An invalid `?path=careers/nonexistent-path` on the same
+  course also fell back to this identical canonical render (generic sidebar, no rail, "part of paths"
+  badges) at 1280 px, matching Cycle 2.6's documented fallback rule.
+
+- [x] [AI] Capture one screenshot per screen per breakpoint via `browser_take_screenshot` to
       `<PLAN>evidence/phase-5-<screen>-en-<breakpoint>px.png`, **including** the three rail states
       (`rail-desktop`, `rail-tablet-truncated`, `rail-mobile-drawer-open`) and the empty-state capture
       — acceptance, **both clauses must hold**. (a) Count:
@@ -2468,43 +2572,1186 @@ HEAD`), but `rhino-cli`'s `specs:**` glob (repo-wide by design, needed for its o
       below 22. An earlier revision asserted only a floor of 18 while its own parenthetical summed to
       22, which a literal executor could have satisfied with the base grid while skipping all four
       named captures the same sentence calls mandatory.
-- [ ] [AI] Document evidence in this checklist: reference each screenshot (`![alt](./evidence/...)`) and
+
+  **Date**: 2026-07-25. **Status**: Done, with 9 additional captures beyond the required 22 (both
+  category shapes, both arc-landing role-counts, and dedicated prerequisite/no-path/invalid-path
+  course captures — see the evidence list below). **Files Changed**: 31 files under
+  `plans/in-progress/ayokoding-learning-path-03-navigation-ui/evidence/`. (a)
+  `find <PLAN>evidence -name 'phase-5-*-en-*px.png' | wc -l` → **31** (≥ 22). (b) the named-capture
+  check → **0** (all four present).
+
+- [x] [AI] Document evidence in this checklist: reference each screenshot (`![alt](./evidence/...)`) and
       note console/network status per breakpoint — acceptance: every captured file is referenced; no
       "verified manually" claim stands without a committed artifact.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: this file (evidence embedded below).
+  Every one of the 31 captured files is referenced. Console status per breakpoint: **1280px** — 0
+  errors throughout (3 errors surfaced transiently on the one-role arc landing before the
+  syllabus-preview fix landed; 0 after). **768px** — 0 errors throughout. **375px** — 0 errors
+  throughout, including through the mobile-drawer open/close cycle (2 pre-existing `Missing
+Description` Radix warnings noted above, not errors). No failed network requests observed at any
+  breakpoint (all navigations returned `200`, confirmed via `curl` for the landing route and via
+  Playwright's own navigation success for every other route).
+
+  **Evidence — 1280px (desktop)**
+
+  ![Landing hero at 1280px showing the four-card "choose your path" grid and the compare/browse/explore-skills escape hatch links, zero console errors](./evidence/phase-5-hero-en-1280px.png)
+  ![Paths hub at 1280px showing the Careers section grouped into three arc subsections and a separate flat Skills section below it](./evidence/phase-5-hub-en-1280px.png)
+  ![Careers category landing at 1280px showing the three-arc chooser grid](./evidence/phase-5-category-landing-careers-en-1280px.png)
+  ![Skills category landing at 1280px showing the fixed-arc ramp statement paragraph with no arc chooser](./evidence/phase-5-category-landing-skills-en-1280px.png)
+  ![Immediately-Effective arc landing at 1280px showing both role cards (backend and frontend tracks) side by side, neither a placeholder](./evidence/phase-5-arc-landing-two-role-en-1280px.png)
+  ![Interview-Ready arc landing at 1280px showing the single role card with its inline "Starts with" syllabus preview, not a blank second card, after the hydration-error fix](./evidence/phase-5-arc-landing-one-role-en-1280px.png)
+  ![E2E Fixture Alpha skills path landing at 1280px showing the authored runway-justification body and the two-course numbered syllabus with ?path= links](./evidence/phase-5-path-landing-en-1280px.png)
+  ![A course in path context at 1280px showing the left path rail with the new "Course 1 of 2" header, the ordered course list, and the two escape links](./evidence/phase-5-course-en-1280px.png)
+  ![The same desktop path rail, captured as the dedicated rail-desktop evidence file](./evidence/phase-5-rail-desktop-en-1280px.png)
+  ![A course's prerequisite display in path context at 1280px, showing the linked "Version Control & Git" prerequisite above the prev/next pair](./evidence/phase-5-course-prerequisite-en-1280px.png)
+  ![A course deep-linked with no ?path= at 1280px, showing the generic sidebar and the "This course is part of" badges for its two paths](./evidence/phase-5-course-no-path-en-1280px.png)
+  ![A course opened with an invalid ?path= at 1280px, falling back to the identical canonical view as the no-path case](./evidence/phase-5-course-invalid-path-en-1280px.png)
+  ![A careers arc with zero fixture manifests at 1280px, showing empty-path-list-state.tsx's "New paths are being written — check back soon" message and its Careers fallback link, never a blank area, with the corrected non-"Not Found" tab title](./evidence/phase-5-empty-state-en-1280px.png)
+
+  **Evidence — 768px (tablet)**
+
+  ![Landing hero at 768px, reflowed to the tablet frame with no horizontal overflow](./evidence/phase-5-hero-en-768px.png)
+  ![Paths hub at 768px, single-column reflow of the arc-grouped Careers section and the Skills section](./evidence/phase-5-hub-en-768px.png)
+  ![Careers category landing at 768px showing the arc chooser reflowed to two/one columns](./evidence/phase-5-category-landing-careers-en-768px.png)
+  ![Skills category landing at 768px showing the same fixed-arc ramp statement, no chooser, reflowed to the tablet frame](./evidence/phase-5-category-landing-skills-en-768px.png)
+  ![Immediately-Effective arc landing at 768px showing both role cards stacked for the narrower frame](./evidence/phase-5-arc-landing-two-role-en-768px.png)
+  ![Interview-Ready arc landing at 768px showing the single role card with its inline syllabus preview at the tablet width](./evidence/phase-5-arc-landing-one-role-en-768px.png)
+  ![E2E Fixture Alpha skills path landing at 768px](./evidence/phase-5-path-landing-en-768px.png)
+  ![A course in path context at 768px showing the same rail, present but narrower — this is also the dedicated rail-tablet-truncated evidence file, with full titles in each link's aria-label even though these particular fixture titles are short enough not to visually ellipsis at 768px](./evidence/phase-5-course-en-768px.png)
+  ![The tablet path rail, captured as the dedicated rail-tablet-truncated evidence file — 250px wide (~32.5% of viewport, inside the documented 15%-35% resizable-panel band)](./evidence/phase-5-rail-tablet-truncated-en-768px.png)
+
+  **Evidence — 375px (mobile)**
+
+  ![Landing hero at 375px, single-column reflow with no horizontal overflow](./evidence/phase-5-hero-en-375px.png)
+  ![Paths hub at 375px, single-column reflow of both sections](./evidence/phase-5-hub-en-375px.png)
+  ![Careers category landing at 375px showing the arc chooser stacked single-column](./evidence/phase-5-category-landing-careers-en-375px.png)
+  ![Skills category landing at 375px showing the same fixed-arc ramp statement stacked single-column](./evidence/phase-5-category-landing-skills-en-375px.png)
+  ![Immediately-Effective arc landing at 375px showing both role cards stacked single-column](./evidence/phase-5-arc-landing-two-role-en-375px.png)
+  ![Interview-Ready arc landing at 375px showing the single role card with its inline syllabus preview stacked for mobile](./evidence/phase-5-arc-landing-one-role-en-375px.png)
+  ![E2E Fixture Alpha skills path landing at 375px, single-column reflow](./evidence/phase-5-path-landing-en-375px.png)
+  ![A course in path context at 375px showing no rail and the compact "on path · course 1 of 2" banner readout with its "View path" disclosure trigger](./evidence/phase-5-course-en-375px.png)
+  ![The path-scoped left drawer open at 375px after activating the banner's "View path" trigger — the same Sheet the header ☰ opens, titled with the path name and listing its ordered courses, with only one dialog in the accessibility tree](./evidence/phase-5-rail-mobile-drawer-open-en-375px.png)
 
 > **Manual API verification is not applicable** — this plan adds no API endpoint. Recorded explicitly so
 > the omission reads as a decision rather than an oversight.
 
 ### Rule-15 Three-Tester Retest (before archival)
 
-- [ ] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
+- [x] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
       `web-exploratory-tester` + `web-usability-tester` + `web-design-tester`) against the running
       landing hero, paths hub, fixture path landing, and sample courses **in path context (the
       `PathRail` at all three breakpoints, including the mobile drawer)**, in `en` — acceptance:
       EWT/UWT/DWT findings + spec-gaps recorded.
-- [ ] [AI] Append each finding below as a new unchecked checkbox, source-attributed
+- [x] [AI] Append each finding below as a new unchecked checkbox, source-attributed
       (`- [ ] EWT-NNN:` / `- [ ] UWT-NNN:` / `- [ ] DWT-NNN: <defect> — fix before archival`); append
       any SG-###/USS-### items to the Specs & Gherkin Delivery steps in Phase 2.
-- [ ] [AI] Fix every rule-15 EWT/UWT/DWT defect finding before archival — deferral requires explicit user
+- [x] [AI] Fix every rule-15 EWT/UWT/DWT defect finding before archival — deferral requires explicit user
       permission (only when genuinely impossible) for defect findings; SG-### spec-gap proposals and
       USS-### spec-suggestions may be triaged or deferred with written rationale.
 
 #### Rule-15 retest follow-ups
 
-- [ ] [AI] _(populated during the retest — every EWT/UWT/DWT defect finding must be fixed/ticked before
-      archival; deferral of a defect requires explicit user permission and only when genuinely
-      impossible; SG-###/USS-### may be triaged or deferred with rationale)_
+> Retest run by `web-exploratory-tester` (`output-mode: delivery`) on 2026-07-25 against the live dev
+> server at `http://localhost:3101`, `en` locale, all three breakpoints, via `curl` baselines +
+> Playwright (headless Chromium). Re-verified the three items already fixed earlier in this Phase 5
+> pass (one-role syllabus-preview hydration error, arc-route "Not Found" tab title, desktop/tablet
+> rail "Course k of N" readout) — all three confirmed clean/present live; no regression. Ran the three
+> mandatory systematic sweeps (shared-control × surface matrix, per-control URL/state round-trip,
+> declared-invariant conformance) — results folded into the findings and spec-gaps below. Zero console
+> errors/page errors/failed first-party requests across all 13 target URLs × 3 breakpoints; every page
+> carries exactly one `<h1>`; `html[lang]` is `en` throughout; muted-foreground text measured at
+> 6.36:1 contrast (comfortably above the 4.5:1 AA threshold); the URL/state round-trip (rail-link
+> click → address bar update → reload → fresh-tab open) and the keyboard/mobile-drawer flows
+> (Tab-reachable rail, single dialog, `Esc` closes + returns focus) all passed on independent
+> re-verification.
+
+- [x] [AI] **EWT-001**: `PathCard`'s accessible name (`aria-label`) diverges from its own visible
+      content, and diverges **inconsistently** between the two surfaces that share the component —
+      Major severity (WCAG-relevant accessible-name/content-consistency defect), proposed priority
+      Medium.
+  - **Area/Component**: `apps/ayokoding-www/src/features/course-paths/shell/path-card.tsx`
+    (`PathCard`, shared by Screen 0 hero and Screen 1 hub per its own docstring).
+  - **Environment**: `http://localhost:3101/en` and `http://localhost:3101/en/learn/paths`, Chromium
+    (Playwright 1.60.0, headless), 1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open `/en` and inspect any hero path card's `aria-label` (e.g. via
+    `document.querySelector('a[href*="generalist-track"]').getAttribute('aria-label')`). (2) Open
+    `/en/learn/paths` and inspect the same manifest's card on the hub. (3) Compare each card's visible
+    `CardDescription` text against its own `aria-label`.
+  - **Expected**: the same `PathCard` component should expose a consistent, concise accessible name
+    that does not silently diverge from the sighted visual experience on either surface (Nielsen
+    Heuristic 4 / WCAG 3.2.4 Consistent Identification — same-function control, consistent behaviour).
+  - **Actual**: on the **hero** (`context="hero"`), the visible `CardDescription` shows `manifest.arc`
+    (e.g. `"fundamentally-strong"`) but the `aria-label` is
+    `` `Start the ${title} path — ${manifest.description}, ~${courseCount} courses` `` — the full
+    manifest description (a multi-clause sentence, and in the current fixture data literally
+    QA-authoring commentary such as _"E2E fixture: the third fixture arc — proves the careers category
+    landing's arc chooser renders one arc card per arc..."_) is read aloud to screen-reader users but
+    never shown on screen. On the **hub** (`context="hub"`), the visible `CardDescription` shows
+    `manifest.description` (the real text) but the `aria-label` is only
+    `` `Start the ${title} path — ${courseCount} courses` `` — the visible description is never
+    announced. The two renderings of the identical component diverge from each other AND each diverges
+    from its own visible text, in opposite directions. Source:
+    `path-card.tsx` lines ~30-32
+    (``const label = context === "hero" ? `Start the ${manifest.title} path — ${manifest.description}, ~${courseCount} courses` : `Start the ${manifest.title} path — ${courseCount} courses`;``).
+  - **Evidence**:
+    `./evidence/phase-5-rule15-ewt001-hero-card-grid-en-1280px.png` (visible hero grid showing only the
+    short arc-slug description); DOM excerpt captured live: hero card aria-label =
+    `"Start the Generalist Track (Fundamentally-Strong) path — E2E fixture: the third fixture arc — proves the careers category landing's arc chooser renders one arc card per arc (three total) rather than assuming exactly two., ~2 courses"`
+    vs. hub card aria-label for the same manifest =
+    `"Start the Generalist Track (Fundamentally-Strong) path — 2 courses"`.
+  - **Reproducibility**: Always (every hero/hub card pair, confirmed across all 6 fixture manifests).
+  - **Defect type**: Accessibility / Behavioural consistency.
+  - **Suggested fix locus** (hypothesis): `path-card.tsx`'s `label` construction — use one consistent,
+    concise accessible-name pattern on both variants (e.g. `` `Start the ${title} path, ~${courseCount} courses` `` everywhere), and if the longer `manifest.description` should be announced at all, expose
+    it via `aria-describedby` pointing at the already-rendered `CardDescription` node rather than
+    concatenating it into `aria-label`.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.test.tsx`. RED: added a test
+  comparing the hero and hub `aria-label` for the same manifest and asserting neither contains
+  `manifest.description` nor `manifest.arc`; confirmed it failed against the pre-fix component.
+  GREEN: unified the `label` to one consistent
+  `` `Start the ${manifest.title} path — ${courseCount} courses` `` for both `context` variants —
+  neither `manifest.description` nor `manifest.arc` is announced (the visible `CardDescription`
+  already carries that text for sighted users). `npx nx run ayokoding-www:test:unit` and
+  `typecheck` both green. Re-verified live: `/en`'s hero cards and `/en/learn/paths`'s hub cards now
+  read `"Start the Generalist Track (Fundamentally-Strong) path — 2 courses"` identically on both
+  surfaces (previously the hero card announced the full QA-authoring `manifest.description`
+  sentence instead).
+
+- [x] [AI] **EWT-002**: A course's prerequisite links unconditionally carry the current `?path=`
+      context even when the referenced prerequisite is **not** part of that path's manifest —
+      contradicts `prerequisite-display.feature`'s "canonical URL" acceptance criterion — Minor
+      severity (masked by the existing omitted-course fallback, so no visible breakage), proposed
+      priority Low.
+  - **Area/Component**: `apps/ayokoding-www/src/features/course-paths/shell/prerequisite-list.tsx`
+    (`PrerequisiteList`).
+  - **Environment**:
+    `http://localhost:3101/en/learn/courses/data-structures-and-algorithms-essentials?path=careers/interview-ready/backend-track`,
+    Chromium (Playwright 1.60.0, headless) + `curl`, 1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Confirm the fixture manifest
+    `apps/ayokoding-www-fe-e2e/fixtures/manifests/careers/interview-ready/backend-track.json` has
+    `courseOrder: ["just-enough-python", "data-structures-and-algorithms-essentials"]` — it does **not**
+    include `version-control-and-git`. (2) Confirm the real course content
+    `apps/ayokoding-www/content/en/learn/courses/data-structures-and-algorithms-essentials/_index.md`
+    declares `prerequisites: ["version-control-and-git"]`. (3) Open the course URL above and inspect
+    the "Prerequisites" nav's link href.
+  - **Expected**: per
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/prerequisite-display.feature`
+    ("the page lists each prerequisite course with a link to its canonical URL"), the prerequisite link
+    should be the course's plain canonical URL — and per `core/prerequisites.ts`'s own documented OI-4
+    "link-don't-walk" principle, a prerequisite absent from the active manifest is an explicitly
+    supported case, so its link should not falsely imply active membership in that manifest.
+  - **Actual**: the rendered link is
+    `/en/learn/courses/version-control-and-git?path=careers/interview-ready/backend-track` — the
+    active path's query parameter is appended even though `version-control-and-git` is not in that
+    manifest's `courseOrder`. Following the link does render correctly (the existing
+    `omitted-course.feature` fallback discards the inert query param and shows the canonical view with
+    no rail/banner/path breadcrumb segment — verified live, no visible breakage), but the address bar
+    itself carries a misleading path-membership claim for a course that isn't in the path, and the
+    literal "canonical URL" wording of `prerequisite-display.feature` is not met. Source:
+    `prerequisite-list.tsx`'s `<Link href={contentUrl(locale, prerequisite.slug, pathId)}>` passes the
+    active `pathId` to every prerequisite link unconditionally, regardless of manifest membership.
+  - **Evidence**: `./evidence/phase-5-rule15-ewt002-prerequisite-link-en-1280px.png`; live HTML excerpt:
+    `<nav aria-label="Prerequisites">…<a href="/en/learn/courses/version-control-and-git?path=careers/interview-ready/backend-track">6 · Version Control &amp; Git</a>…</nav>`.
+  - **Reproducibility**: Always (any prerequisite not present in the active manifest's `courseOrder`).
+  - **Defect type**: Functional / Consistency (URL quality).
+  - **Suggested fix locus** (hypothesis): `prerequisite-list.tsx` — only pass `pathId` through to a
+    given prerequisite's link when that prerequisite's course ID is present in the active manifest's
+    `courseOrder`; otherwise render the plain canonical URL (`contentUrl(locale, prerequisite.slug)`
+    with no `pathId`).
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.ts`,
+  `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.test.ts`,
+  `apps/ayokoding-www/src/features/course-paths/shell/prerequisite-list.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/prerequisite-list.test.tsx`,
+  `apps/ayokoding-www/test/unit/fe-steps/prerequisite-display.steps.tsx`,
+  `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`. RED: added a test in
+  `course-path-nav.test.ts` asserting a prerequisite that is itself a member of the active manifest's
+  `courseOrder` gets `pathId` attached while a declared-but-omitted prerequisite (the capstone course,
+  OI-4's link-don't-walk case) gets `pathId: undefined`; confirmed it failed against the pre-fix
+  blanket-`pathId` logic. GREEN: introduced a `PrerequisiteLink extends PageLink { pathId?: string }`
+  type carrying the decision **per item** rather than as one blanket prop; `resolveCoursePathRenderData`
+  now computes a `Set` of the active manifest's course IDs and only attaches `activeContext.pathId` to
+  a prerequisite link whose own course ID is in that set. `PrerequisiteList` and its two existing
+  tests (`prerequisite-list.test.tsx`, the Gherkin step binding
+  `prerequisite-display.steps.tsx`) updated to pass `pathId` per-item instead of as a component-level
+  prop; both existing tests (which asserted the old blanket-prop behaviour) updated to match the new,
+  correct per-item contract rather than weakened or deleted. `page.tsx`'s `<PrerequisiteList>` call
+  site no longer passes a top-level `pathId`. `npx nx run ayokoding-www:test:unit` (125 files,
+  2379 passed) and `typecheck` both green. Re-verified live, both branches: (1)
+  `/en/learn/courses/data-structures-and-algorithms-essentials?path=careers/interview-ready/backend-track`
+  — the "Version Control & Git" prerequisite (declared but **not** in that manifest's `courseOrder`)
+  now links to the plain canonical URL with no `?path=`, matching `prerequisite-display.feature`'s
+  "canonical URL" wording; (2)
+  `/en/learn/courses/backend-essentials?path=skills/e2e-fixture-beta` — the "SQL Essentials"
+  prerequisite (which **is** a member of that manifest's `courseOrder`) still correctly links with
+  `?path=skills/e2e-fixture-beta` appended, confirming the fix is a narrowing, not a regression, of
+  the existing path-preservation behaviour. Zero console errors on either page.
+
+- [x] [AI] **SG-001** (spec-gap proposal): path context is deliberately, and correctly, scoped to a
+      course's own top-level page only — never its content sub-pages — but no existing Gherkin
+      scenario protects this boundary.
+  - **Observed behaviour**: `courseIdFromSlug(slugStr)` (in
+    `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`, comment: _"Path context only
+    ever applies to course pages"_) returns `null` for every course sub-page
+    (`/learning`, `/learning/overview`, `/learning/beginner`, `/drilling`, `/drilling/overview`, etc.),
+    so the path rail, the mobile banner, and the path breadcrumb segment never render there — confirmed
+    live even when `?path=` is manually appended to a sub-page URL
+    (`/en/learn/courses/just-enough-bash/learning?path=skills/e2e-fixture-alpha` renders the identical
+    generic canonical view as the same URL with no `?path=` at all). This is intentional, documented
+    design, not an oversight, and it held universally across every sub-page tested.
+  - **Where observed**: `/en/learn/courses/just-enough-bash/learning{,/overview,/beginner}` and
+    `/en/learn/courses/data-structures-and-algorithms-essentials{/overview,/learning,/drilling}`, with
+    and without `?path=`, 2026-07-25.
+  - **Why spec-worthy**: this is the feature's own applicability boundary — if a future refactor
+    accidentally widened or narrowed `courseIdFromSlug`'s matching, no scenario today would catch the
+    regression in either direction.
+  - **Proposed Gherkin** (target file: extend
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/canonical-fallback.feature` with
+    a new scenario):
+
+    ```gherkin
+    Scenario: A course's own sub-pages never inherit path context from their parent course
+      Given a reader is on a course's sub-page such as its Learning or Drilling overview
+      When the sub-page renders, whether or not a path context query parameter is present in the URL
+      Then the sub-page renders the identical generic canonical view every content sub-page renders
+      And no path rail, path banner, or path breadcrumb segment appears on any course sub-page
+    ```
+
+  **Date**: 2026-07-25. **Status**: Triaged — deferred to backlog, not implemented in this phase.
+  **Rationale**: this proposal protects an already-correct boundary (`courseIdFromSlug` returning
+  `null` for every course sub-page) that no code in this plan's Phase 5 pass touched or regressed —
+  confirmed live across every sub-page tested, with and without `?path=`. Adding the Gherkin scenario
+  and its step binding is a net-new coverage expansion for pre-existing, unrelated-to-this-pass
+  behaviour, not a fix for anything broken; the task's own instructions permit triaging SG items with
+  written rationale rather than mandating implementation. Recommended follow-up: fold this scenario
+  into `canonical-fallback.feature` as its own small, independent backlog item (or as part of whichever
+  future plan next touches `courseIdFromSlug`/`page.tsx`'s path-applicability boundary), so its
+  step-binding cost is paid by a change that actually needs it, rather than inflating this plan's
+  already-large Phase 5 diff with pure coverage-only additions.
+
+- [x] [AI] **SG-002** (spec-gap proposal): an arc route with no structural `_index.md` at all (not
+      merely zero published manifests) still renders a safe 200 empty-state, distinct from
+      `category-landing-empty-state.feature`'s assumption that a structural index exists.
+  - **Observed behaviour**: `/en/learn/paths/careers/no-fixture-arc` has **no**
+    `apps/ayokoding-www/content/en/learn/paths/careers/no-fixture-arc/_index.md` at all (confirmed via
+    `find`), unlike every real arc (`fundamentally-strong`, `immediately-effective`, `interview-ready`),
+    each of which has an authored `_index.md` with a real `title:` frontmatter. Despite the total
+    absence of structural content, the route still resolves `resolution.kind === "arc"`, renders
+    `empty-path-list-state.tsx`'s "New paths are being written — check back soon." message with a
+    working fallback link to `/en/learn/paths/careers`, and (after this Phase 5 pass's own fix) titles
+    the tab correctly rather than "Not Found." The page's `<h1>` falls back to the raw slug
+    (`no-fixture-arc`) in this specific no-structural-content case — acceptable degraded behaviour given
+    there is genuinely no authored title anywhere to draw from, but worth protecting explicitly since
+    every real arc always ships an `_index.md` before being linked to.
+  - **Where observed**: `http://localhost:3101/en/learn/paths/careers/no-fixture-arc`, 2026-07-25.
+  - **Why spec-worthy**: `category-landing-empty-state.feature`'s existing scenario is worded "Given a
+    **structural category index exists** with zero published path manifests" — it does not cover the
+    stronger case of an arc segment with no structural index whatsoever, which this plan's own Phase 5
+    fix (arc-route metadata title) specifically had to handle.
+  - **Proposed Gherkin** (target file: extend
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-empty-state.feature`
+    with a new scenario):
+
+    ```gherkin
+    Scenario: An arc segment with no structural index at all still renders a safe empty state
+      Given an arc route segment has no _index.md and zero published path manifests
+      When a reader opens that arc's landing page
+      Then the page renders 200 with the same "being written, check back soon" empty state
+      And the browser tab title names the arc segment rather than reading "Not Found"
+    ```
+
+  **Date**: 2026-07-25. **Status**: Triaged — substance already covered, formal Gherkin scenario
+  deferred to backlog. **Rationale**: this proposal directly documents DEFECT 3, which this Phase 5
+  pass already fixed and already covered with a companion regression test
+  (`page.unit.test.ts`'s "titles a careers arc route (even a zero-manifest/empty-state one) with the
+  arc slug, not a bare 'Not Found'" — RED-confirmed against the pre-fix code, GREEN after). That test
+  asserts the exact behaviour SG-002 describes (200 status implied by the render path, correct tab
+  title instead of "Not Found") at the unit level. Adding the fuller Gherkin-level scenario (plus a new
+  `@amiceli/vitest-cucumber` step binding) is additional coverage of the same already-fixed,
+  already-tested behaviour, not a fix for anything still broken, so per the task's own instructions
+  permitting SG triage-with-rationale, it is deferred to backlog as a follow-up to
+  `category-landing-empty-state.feature` rather than implemented in this already-large Phase 5 diff.
+
+- [x] [AI] _(this concludes the 2026-07-25 `web-exploratory-tester` retest pass — 2 defect findings
+      (EWT-001, EWT-002) and 2 spec-gap proposals (SG-001, SG-002) recorded above; all must be
+      fixed/ticked (defects) or explicitly triaged (spec-gaps) before archival per the Rule-15 gate
+      above; SG-001/SG-002 fold into Phase 2's Specs & Gherkin Delivery steps once accepted)_
+
+> Retest run by `web-usability-tester` (`output-mode: delivery`) on 2026-07-25 against the same live
+> dev server at `http://localhost:3101`, `en` locale (the corpus is `en`-only, no `id` mirror exists),
+> all three breakpoints (375/768/1280px), via Playwright 1.60.0 (headless Chromium) + `curl`. This pass
+> is spec-blind by design — no `specs/**`, source, or plan docs were read to learn intended behaviour;
+> every finding below is grounded only in what a first-time visitor can perceive (rendered text, DOM,
+> computed styles, live interaction), judged against Nielsen's heuristics, the four cognitive-walkthrough
+> questions, and named UX laws/WCAG 3.2 criteria. Walked the hero (`/en`), the paths hub
+> (`/en/learn/paths`), both category landings (`careers`, `skills`), two arc landings
+> (`immediately-effective`, `interview-ready`), the `e2e-fixture-alpha` skills-path landing, a course in
+> path context (`just-enough-bash?path=skills/e2e-fixture-alpha`), a course with a deliberately-invalid
+> `?path=` value, and the `no-fixture-arc` empty-state arc. Ran all four Mandatory Systematic Probes
+> (conditional/hidden-control discoverability, per-label jargon scan, cross-view information-redundancy,
+> input unit/currency consistency — the last is not applicable, this surface has no numeric/currency
+> input controls). Confirmed clean: the invalid-`?path=` fallback silently and correctly renders the
+> plain canonical course view with no error state (graceful, matches the goal's expectation); the
+> `no-fixture-arc` empty state renders the "New paths are being written — check back soon." message with
+> a working way back (its raw-slug `<h1>` is already covered by the exploratory pass's SG-002, not
+> re-filed here); tablet (768px) correctly uses the same persistent rail as desktop, not the mobile
+> banner+drawer, matching the goal's own stated responsive contract; zero console errors across all 9
+> URLs × 3 breakpoints. Seven usability findings and three spec-blind suggestions follow.
+
+- [x] [AI] **UWT-001**: The same arc identifier renders as a properly humanized Title-Case label in one
+      part of a page and as a raw, un-humanized kebab-case slug in another part of the **same page** —
+      Major severity (Nielsen Heuristic 2: Match Between System and the Real World; Heuristic 4:
+      Consistency and Standards; Mandatory Systematic Probe B — per-label jargon scan), proposed priority
+      Medium-High.
+  - **Area/Component**: the category-landing arc-card grid (`/en/learn/paths/{category}`) and the hero
+    (`/en`) / hub (`/en/learn/paths`) path-card grids.
+  - **Environment**: `http://localhost:3101/en/learn/paths/careers`, Chromium (Playwright 1.60.0,
+    headless), 375/768/1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open `/en/learn/paths/careers`. (2) Compare the left rail's expanded
+    "Careers" children — "Interview-Ready", "Immediately-Effective", "Fundamentally Strong" (Title Case,
+    hyphenated where compound) — against the three arc cards rendered in the main content column on the
+    identical page — titled `interview-ready`, `immediately-effective`, `fundamentally-strong` (all
+    lowercase, raw kebab-case). (3) Separately, open `/en` (hero) and read the description line under
+    each path-card title (e.g. under "Generalist Track (Fundamentally-Strong)" the description reads the
+    raw slug `fundamentally-strong`, not a sentence). (4) On the same category page, the role-name badges
+    inside each arc card ("GENERALIST-TRACK", "BACKEND-TRACK", "FRONTEND-TRACK") are also raw kebab-case
+    identifiers, only uppercased, not spaced/humanized ("Generalist Track" vs `GENERALIST-TRACK`).
+  - **Expected**: a first-time visitor scanning a single screen should see one consistent, plain-language
+    name for the same real-world concept (an arc). Since a humanization path visibly exists in the
+    product (the rail, the arc-landing `<h1>`, and the card _titles_ like "Backend Track
+    (Immediately-Effective)" all render Title Case), every other rendering of the identical arc/role
+    identifier on the same screen should use it too (Heuristic 4's internal-consistency clause).
+  - **Actual**: on `/en/learn/paths/careers`, the rail (left) reads "Interview-Ready",
+    "Immediately-Effective", "Fundamentally Strong" while the arc cards immediately to its right (same
+    viewport, same page, same data) read `interview-ready`, `immediately-effective`,
+    `fundamentally-strong` — an internal-consistency break visible without scrolling or navigating
+    anywhere. The hero's card descriptions and the category page's role badges show the same
+    un-humanized-identifier pattern. Confirmed identical at 375/768/1280px.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt-category-careers-en-1280px.png` (rail vs. card-title
+    side-by-side on one screen); `./evidence/phase-5-rule15-uwt-category-careers-en-375px.png` (mobile,
+    same divergence plus the raw badge labels); `./evidence/phase-5-rule15-uwt-hero-en-375px.png` (hero
+    card descriptions reading `fundamentally-strong` / `immediately-effective` / `interview-ready`).
+  - **Reproducibility**: Always (every arc/role card on hero, hub, and both category landings; every
+    breakpoint tested).
+  - **Suggested clarification** (hypothesis): route every user-facing rendering of an arc/role identifier
+    through the same humanization/title-resolution step already used for the rail and the arc-landing
+    `<h1>`, so a raw slug is never the thing a sighted user reads on any surface.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.ts` (new pure
+  `humanizeKebabSlug`/`buildArcTitleIndex` helpers),
+  `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.test.ts`,
+  `apps/ayokoding-www/src/features/course-paths/shell/category-landing.tsx` (arc-card titles and role
+  badges now humanized via `contentMap`-backed title lookup, falling back to the humanizer when no
+  authored title exists),
+  `apps/ayokoding-www/src/features/course-paths/shell/category-landing.test.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.tsx` (hero-context description now
+  shows the humanized `arcTitle` instead of the raw `manifest.arc`),
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.test.tsx`,
+  `apps/ayokoding-www/src/features/app-shell/shell/hero.tsx` and
+  `apps/ayokoding-www/src/features/app-shell/shell/landing.tsx` (thread `contentMap` down to the hero
+  grid), `apps/ayokoding-www/src/app/[locale]/page.tsx` (passes the loaded `contentMap` through),
+  `apps/ayokoding-www/test/unit/fe-steps/category-landing-arc-chooser.steps.tsx` (stale raw-slug
+  regex updated to match the new humanized text). RED: added tests asserting `humanizeKebabSlug`/
+  `buildArcTitleIndex` output and that arc cards/hero descriptions render Title Case text with no raw
+  kebab-case slug visible; confirmed failing pre-fix. GREEN: every caller defaults to an empty
+  `contentMap` (backward compatible) and falls back to the humanizer when no authored `_index.md`
+  title is found, so the rail's already-correct humanization and the cards/badges now agree.
+  `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
+  `/en/learn/paths/careers` and `/en`: the rail, arc cards, role badges, and hero descriptions all
+  show consistent Title Case labels ("Interview-Ready", "Immediately-Effective",
+  "Fundamentally Strong") with zero raw kebab-case slugs visible, at 375/768/1280px, zero new
+  console errors.
+
+- [x] [AI] **UWT-002**: The desktop/tablet path rail truncates long arc/path labels mid-word with a hard
+      visual clip and no ellipsis, tooltip, or `title`-attribute fallback — Minor severity (ISO 9241-110
+      §2 Self-Descriptiveness; Heuristic 4: Consistency — the same feature's own breadcrumb solves
+      identical-shaped truncation correctly one click away), proposed priority Low-Medium.
+  - **Area/Component**: the path/category rail's nested nav list (`/en/learn/paths/careers`,
+    `/en/learn/paths/skills`).
+  - **Environment**: `http://localhost:3101/en/learn/paths/careers`, Chromium (Playwright 1.60.0,
+    headless), 1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open `/en/learn/paths/careers` at 1280px. (2) Expand the "Careers" rail
+    item (expanded by default on this route) and read its third child, the arc labelled
+    "Immediately-Effective". (3) Observe the rendered glyphs stop mid-word ("Immediately-Effectiv"),
+    with no "…" character and no `title` attribute exposing the full text on hover. (4) Repeat on
+    `/en/learn/paths/skills`, where the rail child "E2E Fixture Alpha Skills Path" is cut the same way.
+    (5) For contrast, open a course-in-path page and note the breadcrumb correctly collapses a long
+    trail to `Home > … > 5 · Just Enough Bash` with a real ellipsis — the same feature already has a
+    working pattern for this exact problem, just not applied here.
+  - **Expected**: a first-time user should either see the complete label, or see an explicit truncation
+    affordance (ellipsis and/or a hover tooltip) so they know text is hidden and can still learn what it
+    says (ISO 9241-110 self-descriptiveness: the interface should make its own state — including "this
+    label is incomplete" — perceivable).
+  - **Actual**: measured live via computed styles, the rail item box (`getBoundingClientRect().width` =
+    157.6px) is narrower than the label's rendered text, `white-space: nowrap` is set, and `title` is
+    `null` — the trailing letters are simply not painted, with no ellipsis and no alternate way for a
+    sighted mouse user to recover the full label short of clicking through or widening the viewport.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt002-rail-truncation-en-1280px.png` (crop showing
+    "Immediately-Effectiv" and "Fundamentally Strong" both cut at the rail's right edge).
+  - **Reproducibility**: Always, for any arc/path label long enough to exceed the rail's ~158px item
+    width (confirmed for 2 of the 6 current fixture labels).
+  - **Suggested clarification** (hypothesis): apply `truncate` (Tailwind's `overflow-hidden
+text-ellipsis whitespace-nowrap` combination) instead of bare `whitespace-nowrap`, and add a `title`
+    attribute mirroring the full label so a hover reveals the complete text.
+
+  **Date**: 2026-07-25. **Status**: Fixed (with a deliberate deviation from the suggested-clarification
+  hypothesis). **Files Changed**:
+  `apps/ayokoding-www/src/features/navigation/shell/sidebar-tree.tsx`,
+  `apps/ayokoding-www/src/features/navigation/shell/sidebar-tree.test.tsx`. Before applying the
+  suggested `truncate` class, cross-checked
+  `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/resizable-sidebar.feature`'s
+  "Scroll the sidebar horizontally when a label overflows" scenario ("the label is not clipped or
+  wrapped") and its existing step binding
+  (`apps/ayokoding-www/src/features/navigation/shell/resizable-sidebar.test.tsx`, which asserts
+  `not.toContain("truncate")` / `toContain("whitespace-nowrap")`) — this is a pre-existing,
+  deliberate, spec-backed contract: the rail is meant to scroll horizontally to reveal the full
+  label, not clip it. Applying `truncate` would have broken that already-shipped feature. RED: added
+  a test asserting the rail link carries a `title` attribute equal to the node's full label; confirmed
+  failing pre-fix. GREEN: added `title={node.title}` to the rail `<Link>` (kept `whitespace-nowrap`
+  unchanged, no `truncate`) — this satisfies the finding's "Expected" clause via its
+  hover-tooltip option rather than its ellipsis option. Additionally reduced `ScrollableTree`'s
+  fade-mask gradient from `calc(100% - 24px)` to `calc(100% - 10px)` (both `maskImage` and
+  `WebkitMaskImage`), since the prior 24px fade was disproportionate to the actual overflow (as
+  little as 7px for "Immediately-Effective"), fading 2+ legible characters unnecessarily; this
+  change is not covered by any existing assertion (which only checks `data-overflowing`), so it adds
+  no regression risk. `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all green, including
+  the pre-existing `resizable-sidebar.test.tsx` suite (unchanged, still passing). Re-verified live at
+  1280px: hovering the truncated "Immediately-Effective" rail label now shows the full text via the
+  native `title` tooltip, and the horizontal-scroll-with-fade contract still functions exactly as
+  before, with the fade now visibly less aggressive.
+
+- [x] [AI] **UWT-003**: Path-context secondary-navigation links (the syllabus list on a path landing
+      page; "View full path" / "Browse all courses" in the course-in-path rail) render as plain,
+      muted, non-underlined text visually indistinguishable from static prose, while the same page's own
+      content table-of-contents links use blue, underlined text — Minor severity (Heuristic 4:
+      Consistency and Standards; Affordance/clickability — Fitts's Law; first-click/information-scent),
+      proposed priority Medium.
+  - **Area/Component**: the path-landing syllabus list (`/en/learn/paths/skills/e2e-fixture-alpha`) and
+    the course-in-path rail (`/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`).
+  - **Environment**: both URLs above, Chromium (Playwright 1.60.0, headless), 1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open the path-landing URL and look at the "SYLLABUS" list — "5 · Just
+    Enough Bash", "6 · Version Control & Git" render in plain black/gray text with no underline. (2)
+    Inspect the DOM — both are real `<a href="...">` elements
+    (confirmed live: `<a class="rounded-md px-2 py-1 text-sm hover:bg-accent hover:text-foreground"
+href="/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha">5 · Just Enough Bash</a>`) —
+    the only affordance is a background-color change on `:hover`, invisible to touch users and to any
+    sighted user who hasn't already moved a mouse over the row. (3) On the same page's/course's content
+    body, compare the "Learning / Overview / Beginner Examples / …" table-of-contents links, which
+    render blue and underlined by default, no hover required. (4) On the course-in-path rail, "View full
+    path" and "Browse all courses" share the same plain, non-underlined, `text-muted-foreground` styling
+    as the syllabus items.
+  - **Expected**: within one page, one visual convention for "this is a link you can click" — Heuristic 4
+    calls for internal consistency, and Krug's "don't make me think" scanning principle means a user
+    should recognize a navigational item as clickable without hovering or clicking to test it.
+  - **Actual**: two different, unlabelled conventions coexist on the identical page/feature: blue+
+    underline for in-page content links, plain gray hover-only for path/course navigational links — a
+    user who has learned "blue underline = link" from the same page's body content has no visual reason
+    to expect the syllabus rows or "View full path"/"Browse all courses" are clickable at all.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt-path-landing-fixture-alpha-en-1280px.png` (syllabus list,
+    no link styling visible); `./evidence/phase-5-rule15-uwt-course-in-path-en-1280px.png` ("View full
+    path" / "Browse all courses" in the rail, same plain-text treatment).
+  - **Reproducibility**: Always (every path landing and every course-in-path rail).
+  - **Suggested clarification** (hypothesis): give path/course navigational links at least one always-on
+    affordance cue (underline, an accent color, or a leading icon) instead of relying solely on
+    `:hover` background-color, matching the treatment already used for in-page content links.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/path-landing.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-landing.test.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-rail.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-rail.test.tsx`. RED: added tests
+  asserting the syllabus links and the rail's "View full path"/"Browse all courses" footer links
+  carry `underline underline-offset-2` in their `className`; confirmed failing pre-fix. GREEN: added
+  `underline underline-offset-2` to the path-landing syllabus `<Link>` className and to
+  `path-rail.tsx`'s shared `FOOTER_LINK_CLASS` constant, matching the always-on underline convention
+  already used by in-page content links. `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all
+  green. Re-verified live at 1280px on both the path-landing syllabus and the course-in-path rail:
+  every path/course navigational link now shows a visible underline with no hover required, matching
+  the content links' convention.
+
+- [x] [AI] **UWT-004**: On mobile, the "you are on a path" status banner renders far down the page —
+      after the syllabus and Prerequisites sections — instead of near the top, so a first-time mobile
+      visitor must scroll well past the fold before learning they are viewing a course inside path
+      context at all; desktop/tablet show the equivalent rail immediately, with no scrolling — Major
+      severity (Heuristic 1: Visibility of System Status; responsive-usability content-parity dimension),
+      proposed priority Medium.
+  - **Area/Component**: the mobile course-in-path banner
+    (`/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`, 375px).
+  - **Environment**: the URL above, Chromium (Playwright 1.60.0, headless), 375px viewport (800px tall),
+    `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open the URL above at a 375×800 viewport (a common phone size). (2)
+    Without scrolling, observe the initial viewport: masthead, breadcrumb, `<h1>`, and the start of the
+    syllabus list are visible — no path-context indicator anywhere on screen. (3) Measure the "on path ·
+    course 1 of 2 [View path]" banner's position live —
+    `getBoundingClientRect()` reports `top: 646px` — meaning on an 800px-tall viewport the user must
+    scroll roughly 646px (past the entire syllabus and the Prerequisites block) before the banner enters
+    view. (4) Confirm the banner is not `position: sticky`/`fixed` (computed `position` is static through
+    its ancestor chain), so it never appears earlier regardless of scroll direction. (5) Compare with
+    1280/768px, where the equivalent "COURSE 1 OF 2" rail is visible in the very first paint, to the left
+    of the `<h1>`, with zero scrolling.
+  - **Expected**: the same system status ("you're inside a path, course X of Y") should become knowable
+    to the user at roughly the same moment regardless of viewport — Heuristic 1 calls for timely,
+    perceivable feedback about system status, and this plan's own goal names path-awareness (banner on
+    mobile, rail on desktop/tablet) as the core comprehension question under test.
+  - **Actual**: mobile users only discover path context after scrolling past the full syllabus and
+    Prerequisites — for a first course encountered fresh, several page-heights of content are read
+    before the "you're on a path" cue ever appears, while desktop/tablet users see it instantly.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt-course-in-path-en-375px.png` (full-page capture; banner
+    visible only near the bottom, well after the syllabus/Prerequisites); live measurement
+    `getBoundingClientRect().top = 646` on an 800px viewport, `position: static` confirmed on every
+    ancestor.
+  - **Reproducibility**: Always, on every course-in-path page at mobile width.
+  - **Suggested clarification** (hypothesis): move the mobile path-context banner to render immediately
+    below the `<h1>` (above the syllabus), or make it `position: sticky` at the top of the viewport, so
+    its visibility no longer depends on scroll position.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`. RED: manually reproduced the
+  646px scroll-offset live before the fix. GREEN: moved the `<PathBanner>` JSX block (which is what
+  renders the mobile "on path · course X of Y" status) from its previous position (after
+  `<PrerequisiteList>`, before `<PrevNext>`) to immediately after the `<h1>` and before
+  `<MarkdownRenderer>`. The banner is conditional on mobile-context rendering already, so this is a
+  pure reordering with no new markup. `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all
+  green (no existing test asserted DOM order, so none broke). Re-verified live at 375px: the "on path
+  · course 1 of 2 [View path]" banner now renders in the very first viewport, directly below the
+  `<h1>`, with `getBoundingClientRect().top` measured well within the fold (no scrolling past the
+  syllabus/Prerequisites required), matching the desktop/tablet rail's zero-scroll visibility.
+
+- [x] [AI] **UWT-005**: The mobile path drawer exposes a "Drawer width: Default / Wide" control with no
+      explanation of its purpose, unrelated to the user's task of navigating their course path — Minor
+      severity (Heuristic 2: Match Between System and the Real World; Heuristic 8: Aesthetic and
+      Minimalist Design / Hick's Law added decision cost), proposed priority Low.
+  - **Area/Component**: the mobile path drawer (`mobile-nav-drawer`), opened via the "View path" trigger
+    on a course-in-path page.
+  - **Environment**: `http://localhost:3101/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`,
+    Chromium (Playwright 1.60.0, headless), 375px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open the URL above at 375px. (2) Tap the "View path" button (confirmed
+    live: `<button aria-expanded="false" aria-controls="mobile-nav-drawer"
+aria-label="View path: Open path course list — E2E Fixture Alpha Skills Path, course 1 of 2">`). (3)
+    In the opened drawer, observe a "Drawer width" label above two toggle buttons, "Default" and "Wide",
+    positioned above the actual path/course list content. (4) Tap "Wide" — the drawer panel's measured
+    width live-changes from 280px to 360px (`getBoundingClientRect().width`), with no other visible
+    change to the course-list content inside it.
+  - **Expected**: every control inside a task-focused drawer should serve the user's task (finding/
+    navigating their course path); a first-time visitor has no way to know what "Drawer width" means
+    or why they would want it, since it maps to no real-world concept they came here for (Heuristic 2),
+    and it competes for attention with the actual navigational content the drawer exists to show
+    (Heuristic 8).
+  - **Actual**: the control is real and functional (280px → 360px), but unlabelled beyond "Drawer width"/
+    "Default"/"Wide" with no tooltip, help text, or visible benefit tied to the reader's task — it reads
+    like a leftover internal/QA affordance rather than an end-user feature.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt005-drawer-width-default-en-375px.png` (drawer open,
+    "Default" selected); `./evidence/phase-5-rule15-uwt005-drawer-width-wide-en-375px.png` ("Wide"
+    selected, drawer visibly widened).
+  - **Reproducibility**: Always (every time the mobile path drawer is opened).
+  - **Suggested clarification** (hypothesis): remove the control from the end-user-facing drawer (move
+    it behind a dev/QA-only flag) or, if it is intentionally end-user-facing, replace the label with
+    plain language tied to a real benefit (e.g. "Show more of the path list" ) and/or gate its visibility
+    to power users rather than showing it to every first-time visitor by default.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/i18n/core/translations.ts` (new `mobileNavWidthHint` key, both
+  `en` and `id` locale blocks), `apps/ayokoding-www/src/features/app-shell/shell/mobile-nav.tsx`.
+  Chose the "explain it in plain language" branch of the suggested clarification over removing the
+  control, since the width toggle is not a QA leftover — it is a deliberate, spec-backed feature
+  (DD-7, two preset widths 280px/360px) covered by `resizable-sidebar.feature`'s own scenarios;
+  removing it would have contradicted an already-shipped, tested design decision. RED: manually
+  confirmed the drawer showed no explanatory copy pre-fix. GREEN: added
+  `<p className="mb-1 text-xs text-muted-foreground">` rendering the new `mobileNavWidthHint`
+  translation ("Widen the drawer to read long path or course titles in full") between the
+  `<legend>` and the preset-button row. `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all
+  green. Re-verified live at 375px: the drawer now shows the hint text immediately above the
+  Default/Wide buttons, tying the control to a concrete reader benefit.
+
+- [x] [AI] **UWT-006**: Path-card descriptions on the hero and hub grids have no length constraint
+      (no truncation/line-clamp), so cards in the same visual row/grid vary sharply in height depending
+      on description length — Minor severity (Heuristic 8: Aesthetic and Minimalist Design; Law of
+      Proximity / Miller's Law chunking), proposed priority Low.
+  - **Area/Component**: the hero (`/en`) and hub (`/en/learn/paths`) path-card grids.
+  - **Environment**: `http://localhost:3101/en/learn/paths`, Chromium (Playwright 1.60.0, headless),
+    1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open `/en/learn/paths` at 1280px. (2) Compare the "IMMEDIATELY-EFFECTIVE"
+    row's two side-by-side cards — "Backend Track" (a 5-line description) beside "Frontend Track" (a
+    3-line description) — and note the visible height mismatch between two cards a user is meant to
+    compare directly. (3) Note the description text has no `line-clamp`/`max-height`/`overflow` styling
+    constraining it, so any sufficiently long description (fixture or real) produces the same effect.
+  - **Expected**: cards intended to be scanned and compared side by side should present a predictable,
+    evenly-chunked visual rhythm (Law of Proximity; Miller's Law) so the reader's eye can compare them
+    without the grid's shape being at the mercy of arbitrary text length.
+  - **Actual**: card heights in the same grid row differ by roughly 80-100px depending on description
+    length, with no clamp; the effect is content-length-driven, not content-identity-driven, so it will
+    recur with any long real-world description, not only the current fixture text.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt-hub-en-1280px.png` (uneven card heights visible in the
+    "IMMEDIATELY-EFFECTIVE" row).
+  - **Reproducibility**: Always, whenever sibling cards in a row have descriptions of different lengths.
+  - **Suggested clarification** (hypothesis): apply a `line-clamp` (e.g. 2-3 lines) to `CardDescription`
+    with a consistent card min-height, so grid rows stay visually even regardless of copy length.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.tsx`,
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.test.tsx`. RED: added a test
+  asserting `CardDescription`'s `className` contains `line-clamp-3`; confirmed failing pre-fix.
+  GREEN: added the Tailwind `line-clamp-3` class to `CardDescription` in both hero and hub contexts.
+  `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
+  `/en/learn/paths` (1280px): the "Immediately-Effective" row's "Backend Track"/"Frontend Track" card
+  pair now clamps to a consistent 3-line description height, eliminating the previous 80-100px
+  row-height mismatch.
+
+- [x] [AI] **UWT-007**: Three adjacent inline links on the hero page ("Compare all paths", "Explore
+      skills paths", "Browse the full course library") render in three different, unexplained colors —
+      amber/orange, blue, and near-neutral gray — none underlined, with the gray one carrying no visible
+      link affordance at all — Minor severity (Heuristic 4: Consistency and Standards; Affordance/
+      clickability), proposed priority Low-Medium.
+  - **Area/Component**: the hero page's path-discovery link row (`/en`, directly below the path-card
+    grid).
+  - **Environment**: `http://localhost:3101/en`, Chromium (Playwright 1.60.0, headless), 1280px, `en`,
+    2026-07-25.
+  - **Steps to reproduce**: (1) Open `/en` at 1280px and locate the row reading "Compare all paths →  
+    Explore skills paths → Browse the full course library →" directly under the four path cards. (2)
+    Read live computed `color` for each: "Compare all paths" = `lab(34.8 17.97 64.95)` (amber/orange),
+    "Explore skills paths" = `lab(29.37 -15.13 -27.53)` (blue), "Browse the full course library" =
+    `lab(39.72 1.19 6.89)` (near-neutral gray, close to the page's own body-text color). All three have
+    `text-decoration: none`.
+  - **Expected**: three peer links serving the same kind of action (discover more paths/courses) should
+    either share one visual link convention, or their color differences should map to a real, learnable
+    distinction (e.g. primary vs. secondary action) — Heuristic 4 requires consistent treatment of
+    equivalent controls, and every link needs at least one non-hover affordance (color or underline)
+    distinguishing it from static text.
+  - **Actual**: the three colors appear arbitrary (no stated primary/secondary hierarchy is visible to a
+    user), and the third link's near-neutral gray is close enough to ordinary body text that, absent a
+    cursor hover, it is not recognizable as a link at all.
+  - **Evidence**: `./evidence/phase-5-rule15-uwt-hero-en-1280px.png` (all three links visible in one row,
+    directly below the path-card grid).
+  - **Reproducibility**: Always (every visit to `/en`).
+  - **Suggested clarification** (hypothesis): pick one consistent link treatment (e.g. all three in the
+    same accent color with an underline, or a real primary/secondary distinction with a stated rationale)
+    so all three read as clickable and their relative importance, if any, is legible.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/app-shell/shell/hero.tsx`,
+  `apps/ayokoding-www/src/features/app-shell/shell/landing.test.tsx` (no dedicated `hero.test.tsx`
+  exists — `landing.test.tsx` is the existing coverage for `Hero`'s rendered output). RED: added a
+  test asserting all three escape-hatch links' `className` are identical to each other and each
+  contains `underline`; confirmed failing pre-fix (three distinct `text-[var(--hue-*-ink)]` colors,
+  no underline). GREEN: unified all three links to one
+  `text-sm font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground`
+  className, removing the ad hoc `--hue-honey-ink`/`--hue-sky-ink` CSS-variable colors (confirmed via
+  repo-wide search that no other file references either variable, so removal is safe).
+  `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at `/en`
+  (1280px): all three links now render in one consistent muted color with an always-visible
+  underline, with no unexplained color hierarchy.
+
+- [x] [AI] **USS-001** (spec-blind suggestion, pairs with UWT-001): a first-time visitor comparing path
+      cards should get a plain-language sense of what each arc category means, not just its (even if
+      correctly humanized) name.
+  - **Violated principle**: Heuristic 2 (Match Between System and the Real World) — "Interview-Ready",
+    "Immediately-Effective", and "Fundamentally-Strong" are internal product taxonomy terms with no
+    obvious real-world meaning to someone who has never seen this site before.
+  - **Proposed Gherkin**:
+
+    ```gherkin
+    Scenario: A first-time visitor can tell what an arc category means without leaving the page
+      Given a reader is viewing a category landing page listing its arcs
+      When the page renders each arc's card
+      Then each arc card shows a short plain-language explanation of what that arc is for
+      And the explanation is visible without hovering, clicking, or navigating away
+    ```
+
+  - **Spec-blind caveat**: this agent did not read `specs/**`; a spec-aware reviewer must confirm this
+    behaviour is not already covered before adding it (e.g. `category-landing-*.feature` may already
+    define arc-card content requirements this satisfies).
+
+  **Date**: 2026-07-25. **Status**: Triaged — deferred to backlog. **Rationale**: UWT-001's fix
+  (humanizing the arc/role identifier itself) is code-only and complete; the plain-language
+  explanation this suggestion asks for is a content-authoring scope expansion (new copy per arc,
+  likely inside each arc's `_index.md`), not a code defect this phase's UI work can fix. Deferring to
+  backlog for a content pass, same pattern as SG-001/SG-002 above.
+
+- [x] [AI] **USS-002** (spec-blind suggestion, pairs with UWT-002): a rail label that visually cannot fit
+      should still let a sighted, non-touch user recover its full text without leaving the page.
+  - **Violated principle**: ISO 9241-110 §2 (Self-Descriptiveness) — an interface should make its own
+    truncation state (that text is hidden) perceivable and recoverable.
+  - **Proposed Gherkin**:
+
+    ```gherkin
+    Scenario: A truncated rail label reveals its full text on hover
+      Given a path or arc rail label is too long to fit its allotted rail width
+      When a mouse user hovers over the truncated label
+      Then a tooltip or native title attribute shows the label's complete, untruncated text
+      And the visible label itself ends with a truncation indicator rather than an unmarked hard cut
+    ```
+
+  - **Spec-blind caveat**: this agent did not read `specs/**`; a spec-aware reviewer must confirm this
+    behaviour is not already covered before adding it.
+
+  **Date**: 2026-07-25. **Status**: Accepted — already satisfied by the UWT-002 fix. **Rationale**:
+  UWT-002's fix added a native `title` attribute to the rail link, which is exactly this suggestion's
+  proposed Gherkin behaviour (a mouse user hovering a truncated label sees its complete text via a
+  tooltip). No further change needed.
+
+- [x] [AI] **USS-003** (spec-blind suggestion, pairs with UWT-004): a mobile visitor should learn they
+      are inside path context at the same moment a desktop/tablet visitor would, not after scrolling past
+      unrelated content.
+  - **Violated principle**: Heuristic 1 (Visibility of System Status) — status information should be
+    communicated without a delay the user must discover by accident.
+  - **Proposed Gherkin**:
+
+    ```gherkin
+    Scenario: A mobile reader sees path context immediately, without scrolling
+      Given a reader opens a course page in path context on a mobile-width viewport
+      When the page finishes its initial render, before any user scrolling
+      Then the "on path · course X of Y" status is visible within the first viewport
+      And the reader does not need to scroll past the syllabus or prerequisites to see it
+    ```
+
+  - **Spec-blind caveat**: this agent did not read `specs/**`; a spec-aware reviewer must confirm this
+    behaviour is not already covered before adding it.
+
+  **Date**: 2026-07-25. **Status**: Accepted — already satisfied by the UWT-004 fix. **Rationale**:
+  UWT-004's fix moved the mobile path-context banner to render immediately below the `<h1>`, before
+  the syllabus/Prerequisites — exactly this suggestion's proposed Gherkin behaviour (status visible
+  in the first viewport, no scrolling past unrelated content required). No further change needed.
+
+- [x] [AI] _(this concludes the 2026-07-25 `web-usability-tester` retest pass — 7 usability findings
+      (UWT-001 through UWT-007) and 3 spec-blind suggestions (USS-001 through USS-003) recorded above;
+      all UWT defect findings must be fixed/ticked before archival per the Rule-15 gate above — deferral
+      requires explicit user permission, only when genuinely impossible; USS-001/002/003 may be triaged
+      or deferred with written rationale, same as SG-001/SG-002 above)_
+
+> Retest run by `web-design-tester` (`output-mode: delivery`) on 2026-07-25 against the same live dev
+> server at `http://localhost:3101`, via Playwright 1.60.0 (headless Chromium). Ground truth used (the
+> Five Ground-Truth Sources): (1) this plan's own committed hi-fi mockups in `../assets/`
+> (`landing-hero-option-a-desktop.png`, `paths-hub-option-a-desktop.png`,
+> `category-landing-option-a-desktop.png`, `arc-landing-option-a-desktop.png`,
+> `path-landing-option-a-desktop.png` — every one the Selected finalist per `prd.md`'s funnel record,
+> the only committed design source for this feature — no external Figma link was supplied at
+> invocation); (2) this app's runtime design tokens (`apps/ayokoding-www/src/app/globals.css`,
+> `libs/web-ui-token/src/ayokoding.css`), read via **computed styles** on the live page, never jsdom;
+> (3) the shared `libs/web-ui` primitive library (`Card`, `Badge`, `Button`, `Sheet`); (4) no external
+> design source was provided at invocation — skipped, its absence is not itself a finding; (5) Nielsen
+> Heuristic 4 (Consistency and Standards) for the two Mandatory Systematic Checks. Covered **all three
+> breakpoints (375/768/1280px) in `en`, light mode**, across all 8 screens (hero, hub, both category
+> shapes, both arc-landing role-counts, path landing, course-in-path); **1280px and 375px in `en`, dark
+> mode**, across the same 8 screens plus the mobile drawer open state; and **1280px, `id`, light mode**
+> for the 4 screens that resolve `200` in `id` (hero, hub, careers category landing, the
+> `e2e-fixture-alpha` path landing — `id/learn/courses/...` 404s, as expected, since course content is
+> declared `en`-only per `brd.md`'s non-goal). 40 screenshots captured to `../evidence/` (named
+> `phase-5-rule15-dwt-<screen>[-dark]-<locale>-<breakpoint>px.png`) plus 1 targeted crop
+> (`phase-5-rule15-dwt005-sidebar-active-highlight-en-1280px.png`), 41 total. Zero console
+> errors/page errors across every capture. Re-verified EWT-001/002, UWT-001 through UWT-007 are all
+> still visually correct live (sanity pass only — not re-filed, per this retest's own instructions).
+> Ran both Mandatory Systematic Checks: the raw/unstyled native-element audit found **zero** native
+> `select`/`input`/`textarea`/checkbox/radio elements anywhere in the course-paths or navigation feature
+> surface (the mobile drawer's width toggle uses the `libs/web-ui` `Button` primitive, not a raw
+> `<button>` styling gap) — nothing to report under Check A. The intra-form/cross-surface
+> styling-consistency matrix (Check B) is what surfaced DWT-005 below. One capture artefact corrected
+> before filing: an initial blunt `.dark` class toggle produced a false-positive washed-out-gray card
+> read on every `Card`-based surface — traced to Tailwind's `transition-colors` mid-fade, not a real
+> bug; the script was fixed to disable transitions before the dark-mode screenshot pass, and all dark
+> captures were redone and re-verified clean. Also note: every screenshot shows a small floating "N"
+> badge bottom-left — confirmed via `document.querySelector('nextjs-portal')` to be Next.js's own
+> dev-mode indicator (a `<nextjs-portal>` custom element), not shipped app UI; it does not render in
+> production and is not filed as a finding. Five design findings follow; no design-specific spec-gap
+> proposals are filed this pass — every finding below is a corrective defect (something already built
+> that diverges from its own committed mockup/token/consistency ground truth), not an already-correct
+> behaviour lacking protective Gherkin coverage, so there is nothing here that fits the SG-### shape.
+> **Disambiguation**: this plan's own DWT numbering starts fresh at `DWT-001` below. The unrelated
+> `DWT-001` cited earlier in this file (Phase 0's breadcrumb snapshot note, `tech-docs.md`, and
+> `prd.md`) is a **different plan's** finding — `ayokoding-learning-path-01-url-restructure`'s own
+> Rule-15 retest, about `breadcrumb.tsx`'s mobile-collapse behaviour — cited here only as historical
+> background on a shared component this plan did not itself change. The two `DWT-001`s are unrelated;
+> do not conflate them.
+
+- [x] [AI] **DWT-001**: The per-arc/per-category colour-coding visual language depicted in **every one**
+      of this plan's five committed, Selected hi-fi mockups is entirely absent from the shipped
+      hero/hub/category-landing/arc-landing screens, and survives only as a single, non-varying,
+      wrong-variant remnant on the path-landing screen — Critical severity (a primary, pervasively
+      mocked-up design element is missing across the whole feature's card surfaces, though layout/copy/
+      structure otherwise remain faithful), proposed priority Medium-High.
+  - **Area/Component**: `PathCard` (hero + hub contexts), `ArcCard` (careers category landing), the
+    arc-landing role-card grid (reuses `PathCard`), and the path-landing decorative bar — collectively
+    `apps/ayokoding-www/src/features/course-paths/shell/{path-card,category-landing,arc-landing,path-landing}.tsx`.
+  - **Environment**: `http://localhost:3101/en`, `/en/learn/paths`, `/en/learn/paths/careers`,
+    `/en/learn/paths/careers/immediately-effective`, `/en/learn/paths/skills/e2e-fixture-alpha`,
+    Chromium (Playwright 1.60.0, headless), 375/768/1280px, light + dark, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open `../assets/landing-hero-option-a-desktop.png` (Screen 0, Option A,
+    **Selected**) — each of the four hero cards carries a colour-coded left-border stripe (amber for
+    Interview-Ready, teal for Immediately-Effective ×2, green for Fundamentally-Strong) AND its
+    "~N courses" badge itself renders in that arc's hue-wash background, not a neutral gray badge. (2)
+    Open the live `/en` hero at 1280px (`./evidence/phase-5-rule15-dwt-hero-en-1280px.png`) — all four
+    cards are plain white/card-background with an identical neutral 1px border and an identical neutral
+    gray `~N courses` badge; zero colour differentiation between arcs. (3) Open
+    `../assets/paths-hub-option-a-desktop.png` (Screen 1, Option A, **Selected**) — every card additionally
+    carries a small coloured "tag" pill above its title (e.g. "Interview-Ready" in an amber wash,
+    "Skill path" in a red or purple wash distinguishing Conventional from Sharia-compliant tracks) plus a
+    coloured top border. (4) Open the live `/en/learn/paths` hub
+    (`./evidence/phase-5-rule15-dwt-hub-en-1280px.png`) — no tag pill, no coloured border, on any card.
+    (5) Open `../assets/category-landing-option-a-desktop.png` (Screen 1a, Option A, **Selected**) — the
+    careers `ArcCard`s each show a full, vivid, arc-specific coloured border on all four sides; the
+    skills cards show a red-vs-purple bordered distinction between "Conventional" and "Sharia" variants.
+    (6) Open the live `/en/learn/paths/careers` category landing
+    (`./evidence/phase-5-rule15-dwt-category-careers-en-1280px.png`) and inspect the computed style of an
+    `ArcCard` via `getComputedStyle` — `border-left-color` and `border-top-color` are **identical**
+    (`lab(86.1348 0.424385 5.35419)`, the plain neutral `--color-border` token) even though the
+    className carries `border-l-4` (a 4px-wide left edge that is exactly the same colour as the 1px top/
+    right/bottom edges, i.e. a wider stripe of nothing). (7) Open
+    `../assets/arc-landing-option-a-desktop.png` (Screen 1b, Option A, **Selected**) — each role card
+    ("Software Engineer", "AI Engineer") carries a coloured **top**-border stripe in the arc's hue
+    (teal/amber). (8) Open the live arc-landing pages
+    (`./evidence/phase-5-rule15-dwt-arc-landing-two-role-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-arc-landing-one-role-en-1280px.png`) — the reused `PathCard` has no
+    border-colour class at all (confirmed via computed style: `border-color` uniformly neutral, no
+    `border-l-4`/top-accent class present in the rendered `className`). (9) Open
+    `../assets/path-landing-option-a-desktop.png` (Screen 2, Option A, **Selected**) — the H1 sits inside
+    a coloured wash-background bordered header banner (amber wash for the Interview-Ready example,
+    matching that path's hub-card hue). (10) Open the live path landing
+    (`./evidence/phase-5-rule15-dwt-path-landing-en-1280px.png`) — there is no banner box; only a bare
+    `h-1.5 w-16 rounded-full bg-[var(--hue-honey)]` bar sits above the H1, always the vivid honey hue
+    regardless of which path/arc is being viewed (source:
+    `apps/ayokoding-www/src/features/course-paths/shell/path-landing.tsx` line 34).
+  - **Expected**: per `prd.md`'s own Screen 1a hi-fi spec ("Each `ArcCard` = `Card` (arc hue
+    `border-l-4`)") and Screen 2 hi-fi spec ("framed by a hue strip (`bg-[var(--hue-<h>-wash)]`) matching
+    the path's hub card"), plus all five committed, Selected mockup PNGs cited above: every card
+    representing an arc/category/path should carry a hue-coded border and/or tag treatment that (a)
+    varies per arc/category (not a single fixed colour), (b) uses the token system's pastel `-wash`
+    variant for large fills (not the vivid base hue), and (c) is consistent between a path's hub-card
+    treatment and its own landing-page accent, so the arc/category identity is visually scannable at a
+    glance — a real, load-bearing part of this design (the Conventional-vs-Sharia red/purple distinction
+    on the skills category page is not decorative, it flags a genuinely different compliance track).
+  - **Actual**: no card anywhere in the shipped hero, hub, category-landing, or arc-landing carries any
+    colour-coding at all — every `PathCard`/`ArcCard` renders with the identical neutral `--color-border`
+    edge and the identical neutral-gray secondary `Badge`, regardless of which arc/category/path it
+    represents. The one surviving trace of the mockups' hue system — path-landing's decorative bar — is
+    hardcoded to a single, non-varying `--hue-honey` (the vivid base variant, not the documented `-wash`
+    variant) for every skills path, and has no hub-card hue counterpart to "match" (since the hub card
+    itself carries none).
+  - **Evidence**: `../assets/landing-hero-option-a-desktop.png`, `../assets/paths-hub-option-a-desktop.png`,
+    `../assets/category-landing-option-a-desktop.png`, `../assets/arc-landing-option-a-desktop.png`,
+    `../assets/path-landing-option-a-desktop.png` (the five committed mockups);
+    `./evidence/phase-5-rule15-dwt-hero-en-1280px.png`, `./evidence/phase-5-rule15-dwt-hub-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-category-careers-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-arc-landing-two-role-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-path-landing-en-1280px.png` (the live renders); computed-style
+    excerpt: `{ borderLeftWidth: "4px", borderLeftColor: "lab(86.1348 0.424385 5.35419)", borderTopWidth:
+"1px", borderTopColor: "lab(86.1348 0.424385 5.35419)" }` on the `immediately-effective` `ArcCard`.
+  - **Reproducibility**: Always (every card on every affected screen, all breakpoints, both colour
+    schemes — confirmed identical in dark mode; this is a static, code-level omission, not a display
+    artefact).
+  - **Defect type**: Mockup-fidelity / Colour / Hierarchy.
+  - **Suggested fix locus** (hypothesis): thread a per-arc/per-category hue token (the same `--hue-*`
+    family `path-landing.tsx` already imports one member of) through `PathCard`/`ArcCard`'s props,
+    applied as a border-colour utility (not just `border-l-4`'s width) and a hue-wash `Badge`/tag variant;
+    resolve path-landing's bar to the same per-path hue instead of the hardcoded `--hue-honey`, and swap
+    it to the `-wash` variant per `prd.md`'s own documented spec.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**: new
+  `apps/ayokoding-www/src/features/course-paths/core/path-hue.ts` (pure `hueForManifest`/
+  `hueForCareersArc`/`hueCssVars` resolving the DD-50 arc/subject-to-hue map, plus the
+  `--hue-current*` generic CSS-variable indirection needed to keep every hue combination statically
+  visible to Tailwind's JIT scanner) and `path-hue.test.ts` (9 tests);
+  `apps/ayokoding-www/src/features/course-paths/shell/path-card.tsx` (hue border + hue-wash
+  course-count badge via `style`+`className`, plus the proactive `ArcGroup` heading-humanization fix)
+  and `path-card.test.tsx`; `category-landing.tsx` (`ArcCard` hue border) and
+  `category-landing.test.tsx`; `path-landing.tsx` (hue-wash strip replacing the hardcoded
+  `--hue-honey` bar, neutral fallback for unmapped arcs) and `path-landing.test.tsx`;
+  `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx` (wires `buildArcTitleIndex`
+  through to the hub's `ArcGroup` headings). RED: added tests asserting the hue border/style/badge
+  classes and the hue-wash-vs-neutral-fallback bar before the fix existed; confirmed failing. GREEN:
+  minimal `hueCssVars`-based `style`+`className` wiring at each of the three call sites (never
+  interpolating the hue name directly into a Tailwind arbitrary-value class — the indirection this
+  module documents was adopted specifically because a first attempt using a doc-comment-quoted
+  interpolated class crashed the entire dev server via Tailwind's JIT scanning literal source text,
+  including comments, for bracket-shaped class candidates; see the module's own doc comment and the
+  Errors/fixes note in this plan's execution history). `npx nx run
+  ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at `/en/learn/paths/careers`
+  (`./evidence/phase-5-rule15-dwt-fix-category-careers-en-1280px.png` — sage/teal/honey borders
+  matching each arc), `/en/learn/paths` (`./evidence/phase-5-rule15-dwt-fix-hub-en-1280px.png` — hue
+  borders, hue-wash course-count badges, and humanized `ArcGroup` headings all correct), and `/en`
+  hero in both light and dark mode
+  (`./evidence/phase-5-rule15-dwt-fix-hero-en-1280px.png`,
+  `./evidence/phase-5-rule15-dwt-fix-hero-dark-en-1280px.png`) — zero console errors/warnings on every
+  capture.
+
+- [x] [AI] **DWT-002**: The one-role arc-landing's inline `SyllabusPreview` renders a confusing
+      double-numbered line — its own manually-rendered list index collides with the course title's
+      already-embedded catalog number — Major severity (a clear, visible divergence on a primary content
+      element, and a typography/legibility defect that reads as a rendering glitch), proposed priority
+      Medium.
+  - **Area/Component**: `apps/ayokoding-www/src/features/course-paths/shell/syllabus-preview.tsx`
+    (`SyllabusPreview`, rendered inline on the single-role arc-landing state).
+  - **Environment**: `http://localhost:3101/en/learn/paths/careers/interview-ready`, Chromium (Playwright
+    1.60.0, headless), 1280px, light + dark, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open the URL above (the `interview-ready` arc, a single-role state). (2)
+    Read the line below the "Backend Track (Interview-Ready)" card: it renders
+    `Starts with: 1. 4 · Just Enough Python · 2. 7 · Data Structures & Algorithms Essentials →`. (3)
+    Compare against `prd.md`'s own Screen 1b hi-fi mockup text for this exact component
+    (`../assets/arc-landing-option-a-desktop.png`'s single-role panel): `"Starts with: 1. Just Enough
+Nvim · 2. Just Enough Lua · 3. Extending Neovim → ..."` — a clean single index per item, because the
+    mockup's course titles carry no embedded number of their own. (4) Compare against the structurally
+    analogous full syllabus on `path-landing.tsx` (Screen 2) for the SAME two courses
+    (`./evidence/phase-5-rule15-dwt-path-landing-en-1280px.png`, `/en/learn/paths/skills/e2e-fixture-alpha`)
+    — it renders `5 · Just Enough Bash` / `6 · Version Control & Git` with **no** added list-index
+    prefix (its `<ol>` has no visible marker; the course's own embedded number is the only number shown),
+    confirming the two sibling "syllabus" components use two incompatible numbering conventions.
+  - **Expected**: per `prd.md`'s own documented format for this component ("Starts with: 1. … · 2. … · 3. … →") and Nielsen Heuristic 4 (internal consistency — one feature, one numbering convention), the
+    syllabus preview should show exactly one number per course, matching how `path-landing.tsx`'s own
+    syllabus (the structurally identical Screen 2 component this component is explicitly modelled on,
+    per its own docstring: "sharing the same 'number is order' list semantics `path-landing.tsx`'s own
+    syllabus uses") numbers its rows.
+  - **Actual**: live text captured verbatim via `element.textContent`:
+    `"Starts with: 1. 4 · Just Enough Python · 2. 7 · Data Structures & Algorithms Essentials →"` — the
+    component's own `{index + 1}.` prefix (`syllabus-preview.tsx` line 33) is concatenated directly in
+    front of a course title that already begins with its own catalog number ("4 · Just Enough Python"),
+    producing a nonsensical-looking `"1. 4 ·"` double-number every reader will misread as a typo.
+  - **Evidence**: `./evidence/phase-5-rule15-dwt-arc-landing-one-role-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-arc-landing-one-role-dark-en-1280px.png` (identical text in dark
+    mode); live text excerpt above; `../assets/arc-landing-option-a-desktop.png` (mockup ground truth).
+  - **Reproducibility**: Always, for any single-role arc whose course titles already carry an embedded
+    catalog number (confirmed for both current single-role fixture arcs, `interview-ready` and
+    `fundamentally-strong`).
+  - **Defect type**: Typography / Mockup-fidelity.
+  - **Suggested fix locus** (hypothesis): `syllabus-preview.tsx` — drop the manually-rendered
+    `{index + 1}.` prefix entirely and rely solely on the course title's own embedded number, mirroring
+    `path-landing.tsx`'s syllabus exactly (no added index), or — if an explicit local order marker is
+    still wanted for titles that carry no embedded number — detect whether the title already starts with
+    a `\d+\s*·` pattern before deciding whether to prepend one.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/syllabus-preview.tsx` (dropped the
+  manually-rendered `{index + 1}.` prefix; each `<li>` now renders only the course's own embedded
+  catalog-numbered title, matching `path-landing.tsx`'s sibling syllabus exactly) and
+  `syllabus-preview.test.tsx` (new regression test asserting exact `textContent` per item, with no
+  `"1. 4 ·"` double-number artefact). RED: added the regression test against the old implementation;
+  confirmed failing (`"1. 4 · Just Enough Python"`). GREEN: removed the added-index prefix. `npx nx
+  run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
+  `/en/learn/paths/careers/interview-ready`
+  (`./evidence/phase-5-rule15-dwt-fix-arc-interview-ready-en-1280px.png`): the preview now reads
+  `"Starts with: 4 · Just Enough Python · 7 · Data Structures & Algorithms Essentials →"` — a single
+  number per course, zero console errors/warnings.
+
+- [x] [AI] **DWT-003**: Nearly every static UI-chrome string the course-paths feature introduces is
+      hardcoded English and never localizes on `/id`, even though the same page's header, footer, and
+      hero heading/intro correctly render in Indonesian — Major severity (a pervasive, always-visible
+      mixed-language screen on a fully-supported locale, contradicting this plan's own documented
+      "locale-neutral" nav-UI intent), proposed priority Medium-High.
+  - **Area/Component**: `PathCard`/`Hero` ("Start", "CHOOSE YOUR PATH" / "Choose your path", "Compare all
+    paths →" / "Explore skills paths →" / "Browse the full course library →"), `ArcCard`/
+    `CategoryLanding` ("Explore arc", "Explore this arc's roles"), `PathLanding` ("SYLLABUS"),
+    `PrerequisiteList` ("Prerequisites"), `PathRail`/`PathBanner` ("Course {n} of {total}", "View full
+    path", "Browse all courses", "on path · course k of N", "View path") — collectively every
+    `apps/ayokoding-www/src/features/course-paths/shell/*.tsx` and
+    `apps/ayokoding-www/src/features/app-shell/shell/hero.tsx` file.
+  - **Environment**: `http://localhost:3101/id`, `/id/learn/paths`, `/id/learn/paths/careers`,
+    `/id/learn/paths/skills/e2e-fixture-alpha`, Chromium (Playwright 1.60.0, headless), 1280px, `id`,
+    2026-07-25.
+  - **Steps to reproduce**: (1) Open `/id` (`./evidence/phase-5-rule15-dwt-hero-id-1280px.png`) — the
+    masthead ("Belajar"/"Alat"), the H1 ("Belajar membangun perangkat lunak, dengan cara yang jelas."),
+    the intro paragraph, the "Explore" section ("Jelajahi"), and the Tools card are all correctly
+    Indonesian. (2) In the same viewport, read the path-card grid: "CHOOSE YOUR PATH" (English), every
+    card's "Start →" CTA (English), and the escape-hatch row "Compare all paths → Explore skills paths
+    → Browse the full course library →" (all English) — a jarring mixed-language block sitting directly
+    beneath correctly-translated copy. (3) Open `/id/learn/paths/careers`
+    (`./evidence/phase-5-rule15-dwt-category-careers-id-1280px.png`) — "Explore this arc's roles" and
+    "Explore arc →" render in English on every card, on an otherwise-Indonesian page (masthead "Belajar"/
+    "Alat" still correct). (4) Open `/id/learn/paths/skills/e2e-fixture-alpha`
+    (`./evidence/phase-5-rule15-dwt-path-landing-id-1280px.png`) — the "SYLLABUS" heading is English. (5)
+    Confirm the i18n mechanism itself is present and actively used elsewhere in this exact codebase:
+    `apps/ayokoding-www/src/features/i18n/core/translations.ts` carries both an `en` and an `id` block
+    for `heroHeading`/`heroIntro`/`sectionExploreHeading`, and — added in **this same Phase 5 retest
+    pass**, by the UWT-005 fix — `mobileNavWidthLabel`/`mobileNavWidthHint`/`mobileNavWidthDefault`/
+    `mobileNavWidthWide` are already translated to Indonesian ("Lebar drawer", "Standar", "Lebar"),
+    proving the `t(locale, key)` convention is live, current, and trivially extensible — the course-paths
+    feature's own strings simply never route through it.
+  - **Expected**: per `brd.md`'s own Business-Scope Non-Goal ("the path-aware nav UI itself remains
+    locale-neutral — it renders whatever locale-specific content exists"), the UI **chrome** (labels,
+    CTAs, headings) should render in the active locale regardless of whether the underlying manifest
+    **content** is `en`-only — the non-goal defers translating path/course _data_, not the feature's own
+    static interface strings.
+  - **Actual**: the feature's static strings are literal JSX text, not `t(locale, "...")` calls (confirmed
+    by reading `path-card.tsx`, `category-landing.tsx`, `path-landing.tsx`, `arc-landing.tsx`,
+    `path-rail.tsx`, `path-banner.tsx`, `hero.tsx` — none call `t()` for these strings, while `hero.tsx`
+    calls `t(locale, "heroHeading")`/`t(locale, "heroIntro")` for its other two strings two lines above
+    the hardcoded "Choose your path" literal), so they render identically regardless of `locale`.
+  - **Evidence**: `./evidence/phase-5-rule15-dwt-hero-id-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-hub-id-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-category-careers-id-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-path-landing-id-1280px.png`; `document.documentElement.lang` confirmed
+    `"id"` on every capture (the mismatch is content-language, not the `lang` attribute).
+  - **Reproducibility**: Always, on every course-paths screen visited under `/id`.
+  - **Defect type**: Consistency / Mockup-fidelity (i18n scope).
+  - **Suggested fix locus** (hypothesis): add the missing keys to
+    `apps/ayokoding-www/src/features/i18n/core/translations.ts`'s `en`/`id` blocks (mirroring the
+    `mobileNavWidth*` precedent from this same retest pass) and route every hardcoded string identified
+    above through `t(locale, key)`.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/i18n/core/translations.ts` (~18 new keys added to both the `en` and
+  `id` blocks — `pathsChooseYourPath`, `pathsCompareAllPaths`, `pathsExploreSkillsPaths`,
+  `pathsBrowseCourseLibrary`, `pathsStart`, `pathsExploreArc`, `pathsExploreArcRoles`,
+  `pathsSyllabus`, `pathsPrerequisites`, `pathsCourseWordCapital`, `pathsCourseWordLower`,
+  `pathsOfWord`, `pathsOnPathPrefix`, `pathsViewPath`, `pathsViewFullPath`, `pathsBrowseAllCourses` —
+  `en` values verbatim-identical to the prior hardcoded strings so existing `en` assertions keep
+  passing unchanged); `path-card.tsx`/`path-card.test.tsx` ("Start"), `category-landing.tsx`/
+  `category-landing.test.tsx` ("Explore arc", "Explore this arc's roles"), `path-landing.tsx`/
+  `path-landing.test.tsx` ("Syllabus"), `prerequisite-list.tsx`/`prerequisite-list.test.tsx`
+  ("Prerequisites", nav landmark label), `path-rail.tsx`/`path-rail.test.tsx` ("Course N of M", "View
+  full path", "Browse all courses"), `path-banner.tsx`/`path-banner.test.tsx` (added a required
+  `locale` prop; "on path · course k of N", "View path" — plus every existing PathBanner call site
+  updated with `locale="en"`: `mobile-nav.test.tsx`, `path-order-nav.steps.tsx`,
+  `[...slug]/page.tsx`), `hero.tsx`/`landing.test.tsx` ("Choose your path" eyebrow, and — reconciled
+  together with the DWT-001 hue fix and this plan's own earlier UWT-007 fix — the three
+  escape-hatch links, which now carry both an always-visible underline (the genuine UWT-007 gap) AND
+  their individually documented per-link hue colour (honey-ink/sky-ink/muted-foreground per `prd.md`'s
+  Screen 0 hi-fi spec) rather than the flattened single colour my earlier UWT-007 pass had mistakenly
+  applied before this design-tester pass surfaced the mockup's real, differentiated intent — see the
+  reconciliation doc comment in `hero.tsx` itself). RED: added an `id`-locale test per touched
+  component asserting the Indonesian string renders; confirmed failing pre-fix (English string
+  rendered instead). GREEN: routed every identified hardcoded string through `t(locale, key)`. `npx nx
+run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live: `/id`
+  (`./evidence/phase-5-rule15-dwt-fix-hero-en-1280px.png` — en control; id captured via unit tests, no
+  further live `id` screenshot needed since every touched surface's `id` assertion is unit-tested
+  directly), `/id/learn/paths/skills/e2e-fixture-alpha`
+  (`./evidence/phase-5-rule15-dwt-fix-path-landing-id-fallback-1280px.png` — "Silabus" heading
+  confirmed Indonesian live), zero console errors/warnings.
+
+- [x] [AI] **DWT-004**: On `/id`, when a course has no Indonesian-locale content to resolve a title from,
+      the fallback silently renders the raw, un-humanized course-id slug instead of at least the
+      humanization helper this same plan already introduced for arc/role identifiers — Minor severity (a
+      narrow edge case — only triggers where `id` content is already known to be absent per this plan's
+      own non-goal — but a regression of the exact "raw slug leaks to the reader" class UWT-001 fixed
+      elsewhere), proposed priority Low-Medium.
+  - **Area/Component**:
+    `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.ts` (`buildCourseTitleIndex`),
+    consumed by `path-landing.tsx` and `path-rail.tsx`.
+  - **Environment**: `http://localhost:3101/id/learn/paths/skills/e2e-fixture-alpha`, Chromium
+    (Playwright 1.60.0, headless), 1280px, `id`, 2026-07-25.
+  - **Steps to reproduce**: (1) Confirm `apps/ayokoding-www/content/id/` has no `learn/courses/`
+    subdirectory at all (`find apps/ayokoding-www/content/id -maxdepth 2 -type d` — no `learn` entry),
+    i.e. every course in this manifest genuinely has zero `id`-locale content. (2) Open the URL above
+    (`./evidence/phase-5-rule15-dwt-path-landing-id-1280px.png`) and read the "SYLLABUS" list: it shows
+    `just-enough-bash` and `version-control-and-git` — the literal, raw, kebab-case course IDs. (3)
+    Compare against the same path's `en` rendering
+    (`./evidence/phase-5-rule15-dwt-path-landing-en-1280px.png`), which correctly shows
+    `5 · Just Enough Bash` / `6 · Version Control & Git`. (4) Trace the source:
+    `buildCourseTitleIndex` (`course-path-nav.ts`) only populates `titles[id]` when
+    `pageLinkForCourseId(contentMap, locale, id)` resolves a real, locale-specific content link; when it
+    does not (as for every course here under `id`), the id is simply absent from the returned record, so
+    `path-landing.tsx`/`path-rail.tsx`'s own `courseTitles[course.id] ?? course.id` fallback renders the
+    bare id verbatim — with no call to the `humanizeKebabSlug` helper this same plan's UWT-001 fix
+    already introduced (in this same file) for exactly this "no authored title available" situation on
+    arc/role identifiers.
+  - **Expected**: per this plan's own UWT-001 precedent (arc/role identifiers fall back to
+    `humanizeKebabSlug(slug)`, never the raw slug, when no authored title resolves), a course title that
+    fails to resolve for the active locale should degrade to at least a humanized form
+    ("Just Enough Bash", "Version Control And Git") rather than the completely raw, un-spaced,
+    un-capitalized identifier.
+  - **Actual**: `just-enough-bash` and `version-control-and-git` render verbatim, with no humanization
+    fallback of any kind — the same class of defect UWT-001 fixed for arc/role identifiers, but via a
+    different code path (`buildCourseTitleIndex`'s content-lookup fallback) that fix did not touch.
+  - **Evidence**: `./evidence/phase-5-rule15-dwt-path-landing-id-1280px.png` (raw slugs visible);
+    `./evidence/phase-5-rule15-dwt-path-landing-en-1280px.png` (the same path's correct `en` rendering,
+    for contrast).
+  - **Reproducibility**: Always, for any course whose active-locale content does not exist (currently:
+    every course, under `id`, since course content is `en`-only per `brd.md`'s non-goal).
+  - **Defect type**: Consistency / Typography.
+  - **Suggested fix locus** (hypothesis): `buildCourseTitleIndex` — when `pageLinkForCourseId` returns no
+    link for a given course id, fall back to `humanizeKebabSlug(id)` instead of omitting the id from the
+    returned record entirely, mirroring `buildArcTitleIndex`'s own already-shipped fallback behaviour.
+
+  **Date**: 2026-07-25. **Status**: Fixed. **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/course-path-nav.ts` (`buildCourseTitleIndex` now
+  always populates every course id — `titles[id] = link ? link.title : humanizeKebabSlug(id)` —
+  instead of omitting unresolvable ids) and `course-path-nav.test.ts` (updated the "omits a course ID
+  with no resolvable content page" test to assert the humanized fallback instead of omission). RED:
+  updated the test to assert `{ "does-not-exist": "Does Not Exist" }` instead of the key being absent;
+  confirmed failing pre-fix. GREEN: one-line fallback change. `npx nx run
+ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
+  `/id/learn/paths/skills/e2e-fixture-alpha`
+  (`./evidence/phase-5-rule15-dwt-fix-path-landing-id-fallback-1280px.png`): the syllabus now shows
+  "Just Enough Bash" / "Version Control And Git" (humanized) instead of the raw
+  `just-enough-bash`/`version-control-and-git` slugs, zero console errors/warnings.
+
+- [x] [AI] **DWT-005**: The "you are here" active-item indicator uses two visually incompatible
+      treatments across two sibling left-navigation components in the same app — Major severity (a clear,
+      always-reproducible internal-consistency break in the primary navigation chrome), proposed priority
+      Medium.
+  - **Area/Component**: `SidebarTree`
+    (`apps/ayokoding-www/src/features/navigation/shell/sidebar-tree.tsx`) vs. `PathRail`
+    (`apps/ayokoding-www/src/features/course-paths/shell/path-rail.tsx`).
+  - **Environment**: `http://localhost:3101/en/learn/courses/just-enough-bash/learning` (generic sidebar,
+    no path) and `http://localhost:3101/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`
+    (path rail), Chromium (Playwright 1.60.0, headless), 1280px, `en`, 2026-07-25.
+  - **Steps to reproduce**: (1) Open the generic-sidebar URL above and read the computed style of the
+    active "Learning" row via `getComputedStyle`:
+    `{ color: "rgb(37, 99, 235)", fontWeight: "500", borderRadius: "12px" }` — a blue-text, rounded,
+    light-blue-pill (`bg-primary/10`) highlight (`./evidence/phase-5-rule15-dwt005-sidebar-active-highlight-en-1280px.png`).
+    (2) Open the path-rail URL above and read the computed style of the current-course row
+    (`[aria-current="page"]`):
+    `{ color: "lab(5.26078 1.68304 3.85763)", fontWeight: "600", borderRadius: "0px" }` — near-black
+    bold text, **no** background pill at all
+    (`./evidence/phase-5-rule15-dwt-course-in-path-en-1280px.png`). (3) Both rows serve the identical
+    function — "this is the item the reader is currently on, within this left navigation list" — yet
+    render with unrelated colour, weight, and background treatments.
+  - **Expected**: per Nielsen Heuristic 4 (Consistency and Standards) and this agent's own Mandatory
+    Systematic Check B (cross-surface styling-consistency matrix for a recurring control kind), the same
+    "current item in the left nav" affordance should look the same wherever it recurs in the app, so a
+    reader who has learned one "you are here" visual language recognizes it in the other navigation
+    surface without relearning it.
+  - **Actual**: `sidebar-tree.tsx`'s active-link className is
+    `"bg-primary/10 font-medium text-primary"`; `path-rail.tsx`'s current-course className is
+    `"font-semibold text-foreground"` (no background utility at all) — two independently-authored,
+    unrelated treatments for the same semantic state.
+  - **Evidence**: `./evidence/phase-5-rule15-dwt005-sidebar-active-highlight-en-1280px.png`,
+    `./evidence/phase-5-rule15-dwt-course-in-path-en-1280px.png`; computed-style excerpts above.
+  - **Reproducibility**: Always (every active/current row on both components, confirmed at 1280px; the
+    underlying classNames are static, so this is breakpoint- and colour-scheme-independent).
+  - **Defect type**: Consistency.
+  - **Suggested fix locus** (hypothesis): give `path-rail.tsx`'s current-course `<Link>` the same
+    `bg-primary/10 text-primary` treatment `sidebar-tree.tsx` already uses for its active row (dropping
+    or keeping the `▸` marker as a secondary cue), so "you are here" reads identically in both
+    navigation surfaces.
+
+  **Date**: 2026-07-25. **Status**: Fixed (deliberate deviation from the suggested-fix hypothesis —
+  see rationale below). **Files Changed**:
+  `apps/ayokoding-www/src/features/course-paths/shell/path-rail.tsx` (current-course row className
+  gained `bg-accent`, alongside its existing `font-semibold text-foreground` and `▸` marker) and
+  `path-rail.test.tsx` (new test asserting `bg-accent` on the current row). Deviation rationale: the
+  finding's own suggested fix hypothesized copying `sidebar-tree.tsx`'s `bg-primary/10 text-primary`
+  treatment verbatim, but `prd.md`'s own literal Screen 3 hi-fi spec for **this** component
+  ("Current row: `aria-current="page"` + a ▸ marker + `font-semibold` + `bg-accent` — never hue
+  alone") already documents a specific, different treatment for `PathRail` — so the ground-truth-
+  correct fix is `bg-accent` (matching `prd.md`'s own spec for this exact surface), not borrowing an
+  unrelated pre-existing component's styling that `prd.md` never specifies for `PathRail`; RED:
+  added the `bg-accent` assertion against the old className; confirmed failing pre-fix. GREEN: added
+  the single class. `npx nx run ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified
+  live at `/en/learn/courses/just-enough-bash?path=skills/e2e-fixture-alpha`
+  (`./evidence/phase-5-rule15-dwt-fix-course-in-path-en-1280px.png`,
+  `./evidence/phase-5-rule15-dwt-fix-course-in-path-mobile-en-390px.png`): the current row now shows
+  a visible `bg-accent` highlight alongside the bold text and `▸` marker, on both desktop and mobile
+  (`PathBanner`'s "on path · course 1 of 2" / "View path" text also reconfirmed live here, DWT-003),
+  zero console errors/warnings.
+
+- [x] [AI] _(this concludes the 2026-07-25 `web-design-tester` retest pass — 5 design findings (DWT-001
+      through DWT-005) recorded above; all must be fixed/ticked before archival per the Rule-15 gate
+      above — deferral requires explicit user permission, only when genuinely impossible; no design-
+      specific spec-gap proposals were filed this pass)_
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] All screens (hero + hub + category landing (both category shapes) + arc landing (both
+- [x] [AI] All screens (hero + hub + category landing (both category shapes) + arc landing (both
       role-count shapes) + path landing + sample courses + prerequisite display + empty-state) verified
       in `en` across all three breakpoints; screenshots committed in `<PLAN>evidence/`; console clean.
-- [ ] [AI] Rail responsive contract, mobile drawer, and no-path regression sweep all verified with
+- [x] [AI] Rail responsive contract, mobile drawer, and no-path regression sweep all verified with
       committed evidence.
-- [ ] [AI] All rule-15 EWT/UWT/DWT defect findings fixed (ticked) or explicitly permitted to defer.
+- [x] [AI] All rule-15 EWT/UWT/DWT defect findings fixed (ticked) or explicitly permitted to defer.
 - [ ] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
       `[AI]`-merged; deployed.
 
