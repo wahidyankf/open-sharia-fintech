@@ -1874,7 +1874,7 @@ getBySlug` for the resolved path's slug (best-effort, silent no-op on `NOT_FOUND
 
 ### Cycle 3.2 — Landing hero (Screen 0)
 
-- [ ] [AI] **RED (Screen 0 hero)** — write a failing Playwright spec in `<E2E>` asserting the landing
+- [x] [AI] **RED (Screen 0 hero)** — write a failing Playwright spec in `<E2E>` asserting the landing
       hero at `/en` renders a "Choose your path" eyebrow with a `PathCard` grid (populated from the same
       fixture manifests as the other `course-paths` specs) and a "Compare all paths" link to
       `/en/learn/paths`, per
@@ -1929,7 +1929,7 @@ app-shell/shell/hero.tsx` (adds the "Choose your path" eyebrow + `HERO_CAREERS_C
 
 ### Cycle 3.3 — Accessibility
 
-- [ ] [AI] **RED (a11y)** — this suite is **playwright-bdd**, so the a11y scenario is authored as Gherkin
+- [x] [AI] **RED (a11y)** — this suite is **playwright-bdd**, so the a11y scenario is authored as Gherkin
       under `<SPECS>` and bound by a step definition at `<E2E>src/steps/course-paths-a11y.steps.ts`
       _(New file; follow the existing `accessibility.steps.ts` pattern — Repo-grounded)_. The steps
       assert, on a course rendered in path context: the path rail, path banner, path breadcrumb,
@@ -3752,8 +3752,10 @@ ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
 - [x] [AI] Rail responsive contract, mobile drawer, and no-path regression sweep all verified with
       committed evidence.
 - [x] [AI] All rule-15 EWT/UWT/DWT defect findings fixed (ticked) or explicitly permitted to defer.
-- [ ] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
+- [x] [AI] Draft PR opened (retest evidence + any fixes); 3-cycle PR-Review complete; CI green; PR
       `[AI]`-merged; deployed.
+      Evidence: PR #95, 3 review cycles complete (all findings fixed/deferred-with-reason), CI green
+      (run `30162860098`), `[AI]`-merged (squash, commit `0834ac1b7`), deployed to `prod-ayokoding-www`.
 
 > **Pause Safety**: the navigation UI is verified live and defect-clean in `en`. Safe to stop. To
 > resume: re-run the three testers against the running app.
@@ -3881,24 +3883,46 @@ plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so 
 
 ## Phase 8: Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a terminal
+- [x] [AI] Verify ALL delivery checklist items are ticked.
+      **Evidence**: `grep -n "^- \[ \]" delivery.md` shows only Phase 8's own in-progress items (this
+      phase) and the standing cross-cutting "Commit Guidelines" / "Local Quality Gates" sections
+      (continuously-applied practices, not one-time deliverables). Phases 0-7 are fully ticked; 3 gaps
+      found during this sweep (2 Phase 3 RED-step ticks, 1 Phase 5 Gate PR-merge/deploy tick — each
+      genuinely done, just never ticked) were fixed.
+- [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a terminal
       state or the file records the explicit "none" escape; both the secret/sensitivity gate and the
       repo-relevance gate were applied to every surviving entry.
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] **Cross-plan link gate (BF-8)** — run **both** commands 1 and 2 in
+      **Evidence**: `learnings.md` has 4 `## Learning:` + 1 `## Discarded:` entries, 5 `Terminal state`
+      lines — every entry terminal (4 routed inline, 1 discarded); both gates applied per Phase 7.
+- [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
+      **Evidence**: `nx show projects --affected` (base `0834ac1b7` merge-base → head) returns zero
+      projects — this branch's diff is docs-only (delivery.md/learnings.md/agent-md/workflow-md), so
+      `nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` reports "No tasks
+      were run", exit 0. CI on `main`'s tip (`0834ac1b7`, this branch's base) is green (run
+      `30163586230` and 2 sibling jobs, all `conclusion: success`) — same evidence already recorded in
+      Phase 6.
+- [x] [AI] **Cross-plan link gate (BF-8)** — run **both** commands 1 and 2 in
       [Markdown validation commands](#markdown-validation-commands) — acceptance: command 1 prints
       `All links valid! No broken links found.` AND command 2's `grep` finds no matching line (exit 1).
       This is the check that catches a stale `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/…`
       link after that plan archives into `plans/done/YYYY-MM-DD__…` — command 1 alone cannot see it,
       because it excludes `plans/done`.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in
+      **Evidence**: command 1 → `All links valid! No broken links found.` Command 2 → `grep -F
+"ayokoding-learning-path-03-navigation-ui"` on command-1's output, exit 1 (no match). Command 3
+      (`md heading-hierarchy validate` + `markdownlint-cli2`, scoped to `<PLAN>`) → both exit 0, 6 files
+      linted, 0 errors.
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in
       `<PLAN>evidence/`; the `en` content locale exercised (per brd.md's Indonesian-mirror-deferred
       non-goal). Manual API verification is not applicable — this plan adds no endpoint.
-- [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires explicit
+      **Evidence**: `<PLAN>evidence/` has 114 files (screenshots + notes from Phase 5's full 3-breakpoint
+      walk across all screens, `en` locale) — already committed in Phase 5, re-confirmed present here.
+- [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires explicit
       user permission (only when genuinely impossible); SG-###/USS-### may be triaged or deferred with
       rationale.
-- [ ] [AI] **Verify this plan's design-funnel artefacts are complete (DD-46 / DD-47)** —
+      **Evidence**: 18 EWT/UWT/DWT finding checkboxes in Phase 5, all ticked `[x]`; the one remaining
+      `- [ ]` grep match is the section's own template-example line (`EWT-NNN:` placeholder text), not a
+      real finding.
+- [x] [AI] **Verify this plan's design-funnel artefacts are complete (DD-46 / DD-47)** —
       `find <PLAN>assets -name '*-option-*-*.png' | wc -l` returns **36** (6 screens × 2 options × 3
       viewports: hero, paths hub, category landing, arc landing, path landing, course path); every one
       is embedded in `prd.md` with viewport-specific alt text; Screen 3's selection reads **Option B —
@@ -3907,8 +3931,15 @@ plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so 
       **36 is the complete deliverable for this plan.** DD-47's total of 42 is a two-plan total: the
       remaining 6 (Screen 4) belong to `ayokoding-learning-path-01-url-restructure`. Do NOT copy that
       plan's renders into this folder to make the number read 42 — a duplicated matrix drifts.
-- [ ] [AI] Verify the no-path invariant one last time on production: a canonical course URL renders the
+      **Evidence**: `find <PLAN>assets -name '*-option-*-*.png' | wc -l` → `36`. `grep -o -- "Selected:
+Option B — Left path rail" <PLAN>prd.md | wc -l` → `1`. `grep -c "Selection: PENDING" <PLAN>prd.md`
+      → `0`.
+- [x] [AI] Verify the no-path invariant one last time on production: a canonical course URL renders the
       generic sidebar with no path chrome — acceptance: confirmed with a committed screenshot.
+      **Evidence**: Playwright MCP navigated to `https://www.ayokoding.com/en/learn/courses/just-enough-nvim`
+      (no `?path=`) on production — final URL unchanged (no redirect), title `1 · Just Enough Nvim |
+AyoKoding`. Screenshot committed:
+      ![Production canonical course URL with no `?path=` renders the generic sidebar with no path chrome](./evidence/phase-8-prod-no-path-invariant-en-1280px.png)
 - [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-03-navigation-ui/
 plans/done/YYYY-MM-DD__ayokoding-learning-path-03-navigation-ui/` using today's completion date (the
       `evidence/` and `assets/` subfolders move with it).
