@@ -4,8 +4,13 @@ import type { PathManifest } from "../core/schemas";
  * The two path categories this plan's URL grammar recognizes. Duplicated from (not imported from)
  * `core/schemas.ts`'s own `PATH_ID_CATEGORIES` — `course-paths/core` is owned by the archived
  * `ayokoding-learning-path-02-schema-and-prerequisite-dag` and this plan does not edit it.
+ *
+ * Exported (rather than kept module-private) solely so `paths-route.test.ts`'s drift-guard test
+ * can compare this list against `core/schemas.ts`'s own (unexported) `PATH_ID_CATEGORIES` — see
+ * that test for why a source-text comparison, not a runtime import, is how the guard works without
+ * this plan importing from or editing `core/schemas.ts`.
  */
-const PATH_CATEGORIES = ["careers", "skills"] as const;
+export const PATH_CATEGORIES = ["careers", "skills"] as const;
 type PathCategory = (typeof PATH_CATEGORIES)[number];
 
 function isPathCategory(value: string): value is PathCategory {
