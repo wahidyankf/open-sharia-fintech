@@ -3,75 +3,70 @@
 Behaviour scenarios for the learning-path schema, prerequisite DAG, and path-aware navigation
 mechanism built by `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 
-`ayokoding-learning-path-03-navigation-ui` Phase 2 step-bound and un-`@wip`'d 9 of the 11 scenarios
-across the 8 pre-existing feature files below (all now `@unit` — step-bound at the unit level only;
-`@e2e` is intentionally withheld until a Playwright binding exists, per Phase 3's own "+ e2e" scope
-in `delivery.md`) — the ones whose UI it actually built (route wiring, prev/next, breadcrumb path
-context, prerequisite display, canonical fallback, invalid-path fallback, omitted-course fallback,
-and the path rail at desktop and phone widths). Two pre-existing scenarios and 10 newly authored
-feature files stay `@wip`:
+`ayokoding-learning-path-03-navigation-ui` (Phases 2-5) step-bound every scenario in this domain
+whose owning UI now exists: 19 of the 24 scenarios below, across 14 of the 18 feature files —
+`@unit` for every one of them, plus `@e2e` for those Phase 3's Playwright step file
+(`apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts`) also binds. 5 scenarios across 4
+feature files remain genuinely `@wip`:
 
-- **[breadcrumb.feature](./breadcrumb.feature)**'s "A path landing page lists its courses in manifest
-  order" — deferred to this plan's own Phase 3 Cycle 3.1 (the path landing page itself doesn't exist
-  yet).
+- **[build-green.feature](./build-green.feature)** — the full path-navigation feature set's
+  build-green composite check doesn't exist yet.
+- **[manifest-integrity.feature](./manifest-integrity.feature)** — deferred to the downstream
+  manifests plan that will publish real manifest data (`manifests/` stays empty until then, so
+  there is no real manifest set to check integrity against yet).
+- **[prerequisite-consistent-ordering.feature](./prerequisite-consistent-ordering.feature)**'s two
+  scenarios — same downstream-manifests dependency as above.
 - **[breadcrumb.feature](./breadcrumb.feature)**'s "A legacy fundamentally-strong URL redirects to
   the canonical course URL" — its base redirect is already shipped and step-bound by the archived
   `ayokoding-learning-path-01-url-restructure`
   (`specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature`,
   `@unit @e2e`); only the "redirect preserves path context" clause is unowned — that plan is closed
   and will not reopen, and this plan's `prd.md` disclaims owning the scenario itself.
-- The 10 new files listed below (landing hero, skills-path landing body, accessibility,
-  build-green, paths-hub category grouping, category-landing arc chooser, skills fixed-arc
-  statement, category-landing empty state, arc-landing two-role, arc-landing one-role) — authored
-  verbatim from `prd.md`'s Acceptance Criteria now, but their underlying Phase 3/4 UI (path-landing
-  pages, category/arc landings, hero, a11y sweep, build-green composite) doesn't exist within Phase
-  2's bounded scope.
 
 `@wip` is the behavior-coverage validator's own step-binding-deferral exemption:
 `apps/rhino-cli/src/application/behavior_coverage/validator.rs` documents and implements "`@wip`
-scenarios are fully exempt". See `<PLAN>/evidence/phase-2-specs-coverage-delta.txt` for the recorded
-deferral reasoning.
+scenarios are fully exempt". See `<PLAN>/evidence/phase-2-specs-coverage-delta.txt` for the Phase 2
+deferral reasoning that originally applied to every scenario this PR has since un-`@wip`'d.
 
 ## Feature Files
 
 - **[path-order-nav.feature](./path-order-nav.feature)** — Prev/next and the path rail follow the
-  active path's manifest order, at desktop and phone widths (3 scenarios, `@unit`)
+  active path's manifest order, at desktop and phone widths (3 scenarios: 1 `@unit`, 2 `@unit @e2e`)
 - **[omitted-course.feature](./omitted-course.feature)** — A course a path's manifest omits renders
-  its canonical view instead of that path's nav (1 scenario, `@unit`)
+  its canonical view instead of that path's nav (1 scenario, `@unit @e2e`)
 - **[canonical-fallback.feature](./canonical-fallback.feature)** — A course renders its full
-  canonical view whenever no path context applies (2 scenarios, `@unit`)
+  canonical view whenever no path context applies (2 scenarios, `@unit @e2e`)
 - **[invalid-path-fallback.feature](./invalid-path-fallback.feature)** — An unrecognized path
-  context falls back to the canonical view without an error (1 scenario, `@unit`)
+  context falls back to the canonical view without an error (1 scenario, `@unit @e2e`)
 - **[breadcrumb.feature](./breadcrumb.feature)** — The path landing page, breadcrumb, and legacy
-  URL redirect all carry and honour path context (3 scenarios: 1 `@unit`, 2 `@wip`)
+  URL redirect all carry and honour path context (3 scenarios: 1 `@unit @e2e`, 1 `@unit`, 1 `@wip`)
 - **[manifest-integrity.feature](./manifest-integrity.feature)** — Every manifest course reference
-  resolves to a real, unique course (1 scenario)
+  resolves to a real, unique course (1 scenario, `@wip`)
 - **[prerequisite-display.feature](./prerequisite-display.feature)** — A course page lists its
   declared prerequisites regardless of path context (1 scenario, `@unit`)
 - **[prerequisite-consistent-ordering.feature](./prerequisite-consistent-ordering.feature)** —
   Prerequisite ordering is enforced without requiring prerequisite completeness (OI-4 link-don't-walk
-  ruling) (2 scenarios)
+  ruling) (2 scenarios, `@wip`)
 - **[landing-hero.feature](./landing-hero.feature)** — The path landing hero states the path's
-  promise above the fold (1 scenario, `@wip` — Phase 3)
+  promise above the fold (1 scenario, `@unit @e2e`)
 - **[skills-path-landing-body.feature](./skills-path-landing-body.feature)** — A skills path landing
-  renders its ramp body content (1 scenario, `@wip` — Phase 3)
+  renders its ramp body content (1 scenario, `@unit @e2e`)
 - **[accessibility.feature](./accessibility.feature)** — Path navigation affordances meet the
-  platform's accessibility bar (1 scenario, `@wip` — Phase 4)
+  platform's accessibility bar (1 scenario, `@unit @e2e`)
 - **[build-green.feature](./build-green.feature)** — The full path navigation feature set builds and
-  tests green together (1 scenario, `@wip` — Phase 4)
+  tests green together (1 scenario, `@wip`)
 - **[paths-hub-category-grouping.feature](./paths-hub-category-grouping.feature)** — The paths hub
-  groups paths by category instead of a flat grid (1 scenario, `@wip` — Phase 3)
+  groups paths by category instead of a flat grid (1 scenario, `@unit @e2e`)
 - **[category-landing-arc-chooser.feature](./category-landing-arc-chooser.feature)** — The careers
-  category landing offers an arc chooser (1 scenario, `@wip` — Phase 3)
+  category landing offers an arc chooser (1 scenario, `@unit @e2e`)
 - **[skills-fixed-arc-statement.feature](./skills-fixed-arc-statement.feature)** — The skills
-  category landing states its one fixed arc with no chooser (1 scenario, `@wip` — Phase 3)
+  category landing states its one fixed arc with no chooser (1 scenario, `@unit @e2e`)
 - **[category-landing-empty-state.feature](./category-landing-empty-state.feature)** — A category or
-  arc landing with no published manifests renders an explicit empty state (1 scenario, `@wip` —
-  Phase 3)
+  arc landing with no published manifests renders an explicit empty state (1 scenario, `@unit`)
 - **[arc-landing-two-role.feature](./arc-landing-two-role.feature)** — An arc landing with two roles
-  renders both cards fully, without a placeholder (1 scenario, `@wip` — Phase 3)
+  renders both cards fully, without a placeholder (1 scenario, `@unit @e2e`)
 - **[arc-landing-one-role.feature](./arc-landing-one-role.feature)** — An arc landing with one role
-  renders a full card, not a sparse stub (1 scenario, `@wip` — Phase 3)
+  renders a full card, not a sparse stub (1 scenario, `@unit @e2e`)
 
 ## Conventions
 
