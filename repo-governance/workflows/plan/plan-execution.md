@@ -430,6 +430,13 @@ After completing all items in a delivery phase, verify the phase's authored gate
    npx nx affected -t test:e2e
    ```
 
+   **Transient contention flakes on a many-project affected run**: when `test:e2e` (or `build`) runs
+   across a large affected set on one shared local machine, expect occasional non-deterministic
+   failures unrelated to the plan's own diff — an evicted/stale build artifact under concurrent
+   `--parallel` builds, or a request timing out in a test that fires many concurrent HTTP calls. Before
+   treating any such failure as a regression, rebuild the affected project fresh and re-run just that
+   failing target in isolation; a clean pass there confirms contention, not a real defect.
+
 3. **Fix ALL failures** — including preexisting ones (Iron Rule 3)
 4. Re-run failing checks to confirm resolution
 5. Commit thematically (Iron Rule 7) — separate plan work from preexisting fixes
