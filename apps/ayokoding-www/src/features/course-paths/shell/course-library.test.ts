@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCourseLibrary } from "./course-library";
+import { buildCourseLibrary, deriveAllCourseIds } from "./course-library";
 import type { ContentMeta } from "@/features/content/core/types";
 
 function meta(overrides: Partial<ContentMeta> & { slug: string }): ContentMeta {
@@ -53,5 +53,43 @@ describe("buildCourseLibrary", () => {
     const { prerequisitesByCourse } = buildCourseLibrary(contentMap, "en");
 
     expect(prerequisitesByCourse["just-enough-python"]).toEqual([]);
+  });
+});
+
+/**
+ * Regression: the course-paths plan's Phase 3 e2e run surfaced a real, previously-undetected bug.
+ * `loadRoutePathData` used the locale-scoped `libraryCourseIds` to validate every loaded manifest's
+ * `courseOrder` (via `checkManifestIntegrity`) — but a manifest is locale-independent navigational
+ * metadata, while a course's translation into any one locale routinely lags behind its English
+ * original. The moment any manifest referenced a course not yet translated into the locale currently
+ * being rendered, `loadManifests` threw for every single page render in that locale — not just pages
+ * related to that course or that path — because `<ROUTE>`'s content layout calls `loadRoutePathData`
+ * unconditionally for every content page. `deriveAllCourseIds` gives manifest-integrity checking a
+ * locale-independent view of "does this course exist anywhere in the catalog", decoupled from
+ * `libraryCourseIds`, which stays locale-scoped for prerequisite-link rendering (unaffected).
+ */
+describe("deriveAllCourseIds", () => {
+  it("collects course IDs across every locale, not just one", () => {
+    const contentMap = new Map<string, ContentMeta>([
+      ["en:learn/courses/only-in-english", meta({ slug: "learn/courses/only-in-english", locale: "en" })],
+      ["id:learn/courses/only-in-indonesian", meta({ slug: "learn/courses/only-in-indonesian", locale: "id" })],
+      // Non-course page — must still be excluded.
+      ["en:learn/paths", meta({ slug: "learn/paths", isSection: true })],
+    ]);
+
+    const allCourseIds = deriveAllCourseIds(contentMap);
+
+    expect([...allCourseIds].sort()).toEqual(["only-in-english", "only-in-indonesian"]);
+  });
+
+  it("deduplicates a course ID that exists in more than one locale", () => {
+    const contentMap = new Map<string, ContentMeta>([
+      ["en:learn/courses/translated-course", meta({ slug: "learn/courses/translated-course", locale: "en" })],
+      ["id:learn/courses/translated-course", meta({ slug: "learn/courses/translated-course", locale: "id" })],
+    ]);
+
+    const allCourseIds = deriveAllCourseIds(contentMap);
+
+    expect(allCourseIds).toEqual(["translated-course"]);
   });
 });

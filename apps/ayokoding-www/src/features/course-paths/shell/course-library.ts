@@ -33,3 +33,28 @@ export function buildCourseLibrary(contentMap: ReadonlyMap<string, ContentMeta>,
 
   return { libraryCourseIds, prerequisitesByCourse };
 }
+
+/**
+ * Derive every course ID known to the content index across **all** locales, deduplicated.
+ *
+ * Pure — no IO. A `PathManifest`'s `courseOrder` is locale-independent navigational metadata, but a
+ * course's translation into any one locale routinely lags behind its English original —
+ * `buildCourseLibrary`'s `libraryCourseIds` is deliberately scoped to one locale (for
+ * prerequisite-link rendering, where a link must only appear when the target page truly exists in
+ * the locale being rendered) and must stay that way; this function exists so manifest-integrity
+ * checking (`loadManifests`) can ask "does this course exist anywhere in the catalog" without that
+ * locale scoping — otherwise a manifest naming a not-yet-translated course would make every content
+ * page in that locale fail to render, not just pages related to that course or path.
+ */
+export function deriveAllCourseIds(contentMap: ReadonlyMap<string, ContentMeta>): string[] {
+  const allCourseIds = new Set<string>();
+
+  for (const meta of contentMap.values()) {
+    const courseId = courseIdFromSlug(meta.slug);
+    if (courseId === null) continue;
+
+    allCourseIds.add(courseId);
+  }
+
+  return [...allCourseIds];
+}

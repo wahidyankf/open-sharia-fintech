@@ -57,3 +57,30 @@ describe("loadRoutePathData", () => {
     expect(loadManifests).toHaveBeenCalledWith("unused-in-test", ["just-enough-python"]);
   });
 });
+
+/**
+ * Regression: `loadRoutePathData` used to pass the locale-scoped `libraryCourseIds` to
+ * `loadManifests`, so a manifest naming a course not yet translated into the locale being rendered
+ * threw for every page in that locale. It must pass a locale-independent course-ID list instead
+ * (`deriveAllCourseIds`) — see `course-library.test.ts` for the underlying derivation's own tests.
+ */
+describe("loadRoutePathData — manifest-integrity course IDs are locale-independent", () => {
+  it("passes loadManifests a course ID present only in a different locale than the one being rendered", async () => {
+    contentMap.set("id:learn/courses/only-in-indonesian", {
+      title: "Hanya Dalam Bahasa Indonesia",
+      slug: "learn/courses/only-in-indonesian",
+      locale: "id",
+      weight: 0,
+      tags: [],
+      draft: false,
+      isSection: false,
+      filePath: "/tmp/y.md",
+    });
+
+    await loadRoutePathData("en");
+
+    const [, passedCourseIds] = vi.mocked(loadManifests).mock.calls.at(-1) ?? [];
+    expect(passedCourseIds).toContain("only-in-indonesian");
+    expect(passedCourseIds).toContain("just-enough-python");
+  });
+});
