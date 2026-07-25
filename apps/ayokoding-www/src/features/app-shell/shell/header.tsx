@@ -37,7 +37,7 @@ export function Header({ locale, manifests, courseTitles }: HeaderProps) {
           variant="ghost"
           size="icon"
           className="md:hidden"
-          onClick={() => setMobileOpen(true)}
+          onClick={(event) => setMobileOpen(true, event.currentTarget)}
           aria-label="Open navigation menu"
         >
           <Menu className="h-5 w-5" />

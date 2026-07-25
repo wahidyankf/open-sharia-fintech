@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
 
 /** Must match the `id` the shipped drawer's content element renders (`mobile-nav.tsx`). */
@@ -26,9 +26,12 @@ export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerP
   const { setOpen } = useMobileNavOpen();
   const [expanded, setExpanded] = useState(false);
 
-  function handleActivate() {
+  function handleActivate(event: MouseEvent<HTMLButtonElement>) {
     setExpanded((prev) => !prev);
-    setOpen(true);
+    // Pass the trigger explicitly — WebKit does not focus a clicked `<button>` by default, unlike
+    // Chromium/Firefox, so `document.activeElement` alone is not a reliable stand-in here (see
+    // `use-mobile-nav-open.ts`).
+    setOpen(true, event.currentTarget);
   }
 
   return (

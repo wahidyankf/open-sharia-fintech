@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const getTreeMock = vi.fn().mockResolvedValue([
@@ -162,5 +162,101 @@ describe("Cycle 2.9 — MobileNav swaps SidebarTree for PathRail when a path con
     // Radix Dialog content renders into a Portal appended to document.body, outside RTL's
     // returned `container` — query the document, matching Radix's own portal behaviour.
     expect(document.body.querySelector("#mobile-nav-drawer")).not.toBeNull();
+  });
+});
+
+// Phase 3, Cycle 3.4 — regression: Radix's `Dialog` restores focus on close to its own
+// `Dialog.Trigger` ref by default, but this drawer is opened from more than one plain,
+// context-driven control (the header's menu button, `PathBanner`'s "View path" button) — neither
+// wraps a `Dialog.Trigger` — so Radix's built-in restoration never fires and focus silently falls
+// through to `<body>` when the drawer is dismissed (found via the course-paths e2e
+// `path-order-nav.feature` phone-drawer scenario).
+describe("Cycle 3.4 — focus returns to the control that opened the drawer when it is dismissed", () => {
+  it("restores focus to PathBanner's trigger button after Escape closes the drawer", async () => {
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+
+    const { MobileNavOpenProvider } = await import("./mobile-nav-open-provider");
+    const { useMobileNavOpen } = await import("./use-mobile-nav-open");
+    const { MobileNav } = await import("./mobile-nav");
+    const { PathBanner } = await import("@/features/course-paths/shell/path-banner");
+
+    function Harness() {
+      const { open, setOpen } = useMobileNavOpen();
+      return (
+        <>
+          <PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
+          <MobileNav locale="en" open={open} onOpenChange={setOpen} />
+        </>
+      );
+    }
+
+    render(
+      <MobileNavOpenProvider>
+        <Harness />
+      </MobileNavOpenProvider>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Open path course list/i });
+    await user.click(trigger);
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(document.body.querySelector("#mobile-nav-drawer")).not.toBeNull();
+
+    await user.keyboard("{Escape}");
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(document.activeElement).toBe(trigger);
+  });
+
+  /**
+   * Regression: the e2e `path-order-nav.feature` phone-drawer scenario still failed in the
+   * `webkit` Playwright project after the fix above. WebKit (Safari) does not focus a `<button>`
+   * on mouse click by default — unlike Chromium/Firefox — so `document.activeElement` at the
+   * moment `setOpen(true)` runs is NOT the clicked trigger there, and the earlier fix's reliance on
+   * ambient `document.activeElement` silently fails for that click. `fireEvent.click` (unlike
+   * `userEvent.click`, used above) does not simulate focus-on-click either, reproducing the same
+   * gap in jsdom.
+   */
+  it("still restores focus to the trigger when the click that opened the drawer did not itself focus it (WebKit)", async () => {
+    const { MobileNavOpenProvider } = await import("./mobile-nav-open-provider");
+    const { useMobileNavOpen } = await import("./use-mobile-nav-open");
+    const { MobileNav } = await import("./mobile-nav");
+    const { PathBanner } = await import("@/features/course-paths/shell/path-banner");
+
+    function Harness() {
+      const { open, setOpen } = useMobileNavOpen();
+      return (
+        <>
+          <PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
+          <MobileNav locale="en" open={open} onOpenChange={setOpen} />
+        </>
+      );
+    }
+
+    render(
+      <MobileNavOpenProvider>
+        <Harness />
+      </MobileNavOpenProvider>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Open path course list/i });
+    fireEvent.click(trigger);
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(document.body.querySelector("#mobile-nav-drawer")).not.toBeNull();
+
+    fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(document.activeElement).toBe(trigger);
   });
 });

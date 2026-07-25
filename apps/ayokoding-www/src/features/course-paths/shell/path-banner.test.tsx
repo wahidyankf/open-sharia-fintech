@@ -40,9 +40,13 @@ describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer o
     const user = userEvent.setup();
 
     render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
-    await user.click(screen.getByRole("button", { name: /Open path course list/i }));
+    const trigger = screen.getByRole("button", { name: /Open path course list/i });
+    await user.click(trigger);
 
-    expect(setOpenMock).toHaveBeenCalledWith(true);
+    // Passes the trigger element explicitly (Cycle 3.4 regression fix) — WebKit does not focus a
+    // clicked <button> by default, so `document.activeElement` alone is not a reliable stand-in for
+    // "the element the reader just activated" (see `use-mobile-nav-open.ts`).
+    expect(setOpenMock).toHaveBeenCalledWith(true, trigger);
   });
 
   it("renders the compact 'on path · course k of N' readout", () => {

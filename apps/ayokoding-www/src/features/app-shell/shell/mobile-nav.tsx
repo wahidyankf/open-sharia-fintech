@@ -21,6 +21,7 @@ import { resolveActiveCourseFromLocation } from "@/features/course-paths/shell/c
 import { PathRail } from "@/features/course-paths/shell/path-rail";
 import { MOBILE_NAV_DRAWER_ID } from "@/features/course-paths/shell/path-banner";
 import type { PathManifest } from "@/features/course-paths/core/schemas";
+import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
 
 interface MobileNavProps {
   locale: string;
@@ -53,6 +54,10 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
   const [widthPx, setWidthPx] = useState<number>(MOBILE_NAV_WIDTH_PRESETS[0].widthPx);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // Cycle 3.4 — the control that opened this drawer (header menu button or `PathBanner`'s "View
+  // path" button) is a plain, context-driven trigger, not a `Dialog.Trigger`, so Radix's own
+  // close-focus restoration never applies (see `use-mobile-nav-open.ts`). Restore it ourselves.
+  const { lastTriggerRef } = useMobileNavOpen();
 
   // A layout receives neither `searchParams` nor a descendant route's `[...slug]` params, so
   // MobileNav (hosted from `[locale]/layout.tsx` via `Header`, structurally disconnected from
@@ -95,6 +100,10 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
         side="left"
         className="overflow-y-auto p-4"
         style={{ width: `${widthPx}px` }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          lastTriggerRef.current?.focus();
+        }}
       >
         <SheetHeader>
           <SheetTitle className="text-left text-lg font-bold">
