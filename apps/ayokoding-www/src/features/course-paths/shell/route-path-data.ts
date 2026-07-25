@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createTRPCContext } from "@/features/app-shell/shell/trpc-init";
 import { buildCourseLibrary, deriveAllCourseIds } from "./course-library";
 import { defaultManifestsDir, loadManifests } from "./manifest-repository";
@@ -18,8 +19,16 @@ import type { CoursePathData } from "./course-path-nav";
  * shipped yet must not make every content page in `locale` fail to render. `libraryCourseIds` stays
  * locale-scoped for prerequisite-link rendering, which must only link to a page that truly exists in
  * `locale`.
+ *
+ * Wrapped in `React.cache()` (request-scoped memoization keyed on `locale`) — this is called from
+ * 4+ independent RSC boundaries per request (root layout, content layout, `[...slug]/page.tsx`
+ * up to twice, home page), and without memoization each boundary would re-glob + re-validate every
+ * manifest under `manifests/` independently. `React.cache()` is a plain pass-through outside the
+ * `react-server` bundling condition (see `react/cjs/react.development.js`), so this is a no-op in
+ * Vitest/Node — this file's own unit tests still observe one `loadManifests` call per
+ * `loadRoutePathData` call, unaffected.
  */
-export async function loadRoutePathData(locale: string): Promise<CoursePathData> {
+export const loadRoutePathData = cache(async function loadRoutePathData(locale: string): Promise<CoursePathData> {
   const { contentService } = createTRPCContext();
   const index = await contentService.getIndex();
   const { libraryCourseIds, prerequisitesByCourse } = buildCourseLibrary(index.contentMap, locale);
@@ -27,4 +36,4 @@ export async function loadRoutePathData(locale: string): Promise<CoursePathData>
   const manifests = await loadManifests(defaultManifestsDir(), allCourseIds);
 
   return { contentMap: index.contentMap, manifests, prerequisitesByCourse, libraryCourseIds };
-}
+});
