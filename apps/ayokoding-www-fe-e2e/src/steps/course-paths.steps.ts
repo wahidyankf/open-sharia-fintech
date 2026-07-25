@@ -75,11 +75,14 @@ Then("the page renders one arc card per arc with its member role\\(s\\) previewe
 
 Then("the immediately-effective arc card previews exactly two member roles", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Careers arcs" });
-  // Case-insensitive (`i` flag): the arc card's accessible name renders the arc's humanized/
-  // authored title (UWT-001 fix, phase-5 rule-15 retest — `category-landing.tsx`'s `ArcCard`
-  // builds its `aria-label` from `arcTitle`, not the raw `arc` slug), e.g. "Explore the
-  // Immediately-Effective arc — …", not the raw kebab-case slug this regex originally matched.
-  const arcCard = nav.getByRole("link", { name: /Explore the immediately-effective arc/i });
+  // Exact humanized casing (no `i` flag): the arc card's accessible name renders the arc's
+  // humanized/authored title (UWT-001 fix, phase-5 rule-15 retest — `category-landing.tsx`'s
+  // `ArcCard` builds its `aria-label` from `arcTitle`, not the raw `arc` slug), e.g. "Explore the
+  // Immediately-Effective arc — …", never the raw kebab-case slug this regex originally matched.
+  // A case-insensitive flag here would pass identically for either the pre-fix raw slug or the
+  // post-fix humanized title (they differ only in case), so it must stay case-sensitive to detect
+  // a regression back to the raw-slug defect this assertion exists to catch.
+  const arcCard = nav.getByRole("link", { name: /Explore the Immediately-Effective arc/ });
   await expect(arcCard).toBeVisible();
   const roleBadges = arcCard.getByRole("listitem");
   await expect(roleBadges).toHaveCount(2);
