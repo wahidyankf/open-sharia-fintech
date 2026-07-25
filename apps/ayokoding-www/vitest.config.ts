@@ -80,7 +80,15 @@ export default defineConfig({
         test: {
           name: "unit-fe",
           include: ["test/unit/fe-steps/**/*.steps.{ts,tsx}", "src/features/**/*.test.{ts,tsx}"],
-          exclude: ["node_modules"],
+          // `*.test.{ts,tsx}` is a suffix match, so `*` also swallows a `.unit.test.ts` file's
+          // `.unit` segment (e.g. `service.unit.test.ts` matches this glob too) — excluded here so
+          // every `.unit.test.ts`/`.unit.test.tsx` file runs exactly once, under the "unit" (node)
+          // project above, never doubly under jsdom too (course-paths plan, Phase 3 — found via
+          // `service.unit.test.ts` and `index-generator.unit.test.ts`, the first files placed under
+          // `src/features/**` using this naming convention; every pre-existing `.unit.test.ts` file
+          // lives outside `src/features/**`, which is why this double-match was never triggered
+          // before).
+          exclude: ["node_modules", "**/*.unit.test.{ts,tsx}"],
           environment: "jsdom",
           setupFiles: ["./src/test/setup.ts"],
           testTimeout: 30000,
