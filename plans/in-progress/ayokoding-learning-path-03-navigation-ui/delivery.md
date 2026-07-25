@@ -441,8 +441,14 @@ pathId?)`, pathId already landed by url-restructure, additive-only), `prev-next.
 > HTML source per screen/option — the responsive `<PLAN>assets/src/<screen>-option-<a|b>-desktop.html`
 > file, which carries `@media (max-width: 768px)` and `@media (max-width: 480px)` breakpoints that
 > reflow the layout (multi-column grids stack, the frame drops to full width, padding shrinks) so the
-> same file renders cleanly at all three viewports. There are **no** separate `-mobile.html` /
-> `-tablet.html` sources — the mobile and tablet `.png` files are produced by rendering the one
+> same file renders cleanly at all three viewports. **One documented carve-out**:
+> `course-path-option-b-desktop.html` uses a bespoke `@media (max-width: 1023px)` /
+> `@media (min-width: 768px) and (max-width: 1023px)` / `@media (max-width: 767px)` breakpoint set
+> instead, matching the real app's `md`/`lg` (768px/1024px) rail boundaries from
+> [prd.md §Screen 3 responsive specification](./prd.md#screen-3-responsive-specification-the-selected-option-b-breakpoint-by-breakpoint)
+> — every other one of the 12 sources still uses the 768px/480px pair. There are **no** separate
+> `-mobile.html` / `-tablet.html` sources — the mobile and tablet `.png` files are produced by rendering
+> the one
 > `-desktop.html` source at 375 px and 768 px respectively. Naming scheme, render widths, and alt-text
 > rules: [prd.md §Hi-fi asset matrix](./prd.md#hi-fi-asset-matrix-screen--option--viewport). Every
 > output file is `<PLAN>assets/<screen>-option-<a|b>-<mobile|tablet|desktop>.png`, rendered from
@@ -559,6 +565,19 @@ png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o
   (4 Careers + 4 Skills); this Option-A sibling's miscount was missed by the earlier "six
   cards"→"eight cards" sweep applied to the Option-B checkboxes below.
 
+  **Cycle-2 review correction (2026-07-25)**: this render's earlier "visually confirmed" note above
+  was wrong — `paths-hub-option-a-desktop.html`'s `.arc-row`/`.arc-group` rules had no `flex-wrap` and
+  no responsive override at all, so the mobile render actually showed the three Careers arc groups
+  still forced onto one flex row (`flex: 1`/`flex: 2`, unconstrained), squeezed and overlapping rather
+  than stacked. Root-caused and fixed: added `.arc-row { flex-wrap: wrap; }`,
+  `.arc-group, .arc-group.wide { flex: 1 1 100%; }`, and `.arc-cards { flex-direction: column; }` inside
+  the existing `@media (max-width: 480px)` block. Re-rendered via a scoped
+  `local-temp/render-paths-hub-a.mjs` script (gitignored, same Playwright pattern as
+  `local-temp/render-mockups.mjs`); new file is 141314 bytes. Visually confirmed: Interview-Ready,
+  Immediately-Effective (both its cards, stacked), and Fundamentally Strong now stack single-column
+  above the already-correct single-column Skills section — matches this checkbox's acceptance text
+  and prd.md:753 verbatim.
+
 - [x] [AI] Render `<PLAN>assets/paths-hub-option-b-mobile.png` from
       `<PLAN>assets/src/paths-hub-option-b-desktop.html` at 375 px — acceptance:
       `test -f <PLAN>assets/paths-hub-option-b-mobile.png` succeeds and the render is >5 KB; the `.grid`
@@ -574,6 +593,16 @@ png="<PLAN>assets/$s-option-$o-desktop.png"; html="<PLAN>assets/src/$s-option-$o
 
   **Date**: 2026-07-25. **Status**: Done. 133159 bytes (>5 KB). Same verified pipeline, 768px
   viewport.
+
+  **Cycle-2 review correction (2026-07-25)**: same root cause and fix as the mobile checkbox above —
+  `.arc-row` had no `flex-wrap`, so at 768px the three Careers arc groups were still crushed onto one
+  row instead of reflowing two-up. The fix's `@media (max-width: 768px)` additions
+  (`.arc-row { flex-wrap: wrap; }`, `.arc-group, .arc-group.wide { flex: 1 1 calc(50% - 9px); }`,
+  `.arc-cards { flex-direction: column; }`) apply here; re-rendered via the same scoped
+  `local-temp/render-paths-hub-a.mjs` script — new file is 133938 bytes. Visually confirmed:
+  Interview-Ready + Immediately-Effective (its two cards now stacked within the column) sit two-up on
+  row one, Fundamentally Strong wraps alone to row two, and the Skills section stays two-up — matches
+  this checkbox's acceptance text and prd.md:755 verbatim.
 
 - [x] [AI] Render `<PLAN>assets/paths-hub-option-b-tablet.png` from
       `<PLAN>assets/src/paths-hub-option-b-desktop.html` at 768 px — acceptance:

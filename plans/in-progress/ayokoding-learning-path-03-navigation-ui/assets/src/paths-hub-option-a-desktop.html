@@ -261,6 +261,16 @@
         .body {
           padding: 24px 24px 32px;
         }
+        .arc-row {
+          flex-wrap: wrap;
+        }
+        .arc-group,
+        .arc-group.wide {
+          flex: 1 1 calc(50% - 9px);
+        }
+        .arc-cards {
+          flex-direction: column;
+        }
       }
       @media (max-width: 480px) {
         body {
@@ -271,6 +281,10 @@
         }
         .skills-grid {
           grid-template-columns: 1fr;
+        }
+        .arc-group,
+        .arc-group.wide {
+          flex: 1 1 100%;
         }
       }
     </style>

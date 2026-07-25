@@ -1576,7 +1576,12 @@ the widths this plan's Playwright verification steps resize to.
 (the original 8, plus the 4 new stems for Screens 1a/1b) is **one responsive file** carrying
 `@media (max-width: 768px)` and `@media (max-width: 480px)` breakpoints: multi-column grids collapse
 (three-up → two-up at tablet → one column at mobile), the fixed-width frame drops to full width, and
-padding shrinks, so the single `-desktop.html` source reflows cleanly at all three viewports. Mobile
+padding shrinks, so the single `-desktop.html` source reflows cleanly at all three viewports. **One
+documented carve-out**: `course-path-option-b-desktop.html` uses a bespoke `@media (max-width: 1023px)`
+/ `@media (min-width: 768px) and (max-width: 1023px)` / `@media (max-width: 767px)` breakpoint set
+instead of the 768px/480px pair, matching the real app's `md`/`lg` (768px/1024px) rail boundaries from
+the [Screen 3 responsive specification](#screen-3-responsive-specification-the-selected-option-b-breakpoint-by-breakpoint)
+above — every other one of the 12 sources still uses the shared pair. Mobile
 and tablet `.png` files are produced by rendering that one source at 375 px and 768 px — mobile/tablet
 renders for every screen (including the redesigned hub and the two new screen types) are **explicitly
 in scope** and now exist on disk (all 36 `.png` are rendered). This is a deliberate **yes**, not a
