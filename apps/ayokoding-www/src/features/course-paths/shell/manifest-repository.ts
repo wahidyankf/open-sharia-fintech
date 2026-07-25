@@ -26,15 +26,19 @@ export function defaultManifestsDir(): string {
  * parses each `.json` file, and validates it through the upstream `PathManifestSchema` — **this
  * repository defines no validation of its own**: a manifest that would not load in production
  * cannot load in a test either. After schema validation, every `courseOrder` entry is checked
- * against `libraryCourseIds` via the upstream, pure `checkManifestIntegrity`; a manifest naming an
- * unresolvable course ID throws rather than loading silently.
+ * against `libraryCourseIds` via the upstream, pure `checkManifestIntegrity`.
+ *
+ * Per-file isolation (no batch-wide throw): `loadRoutePathData` calls this from the **root**
+ * `[locale]` layout, which sits above the only `error.tsx` in the tree
+ * (`app/[locale]/(content)/error.tsx`) — Next.js error boundaries cannot catch a throw from an
+ * *ancestor* layout, so a throw here would 500 the entire site, not just the offending manifest's
+ * page. A malformed manifest file (bad JSON, a `PathManifestSchema` violation, or an unresolvable
+ * `courseOrder` reference) is therefore **skipped with a logged warning** rather than aborting the
+ * whole batch — every other, valid manifest file still loads.
  *
  * Returns an empty array when `manifestsDir` does not exist yet (today's real state: the directory
  * is created by the upstream schema plan but populated only once a downstream manifests plan ships
  * real data) or contains no manifest files — never an error for the "no manifests yet" case.
- *
- * @throws {Error} when a manifest's `courseOrder` names a course ID absent from `libraryCourseIds`.
- * @throws {import("zod").ZodError} when a manifest file's shape fails `PathManifestSchema`.
  */
 export async function loadManifests(
   manifestsDir: string,
@@ -44,18 +48,23 @@ export async function loadManifests(
   const manifests: PathManifest[] = [];
 
   for (const filePath of files) {
-    const raw = await fs.readFile(filePath, "utf-8");
-    const manifest = PathManifestSchema.parse(JSON.parse(raw));
+    try {
+      const raw = await fs.readFile(filePath, "utf-8");
+      const manifest = PathManifestSchema.parse(JSON.parse(raw));
 
-    const integrity = checkManifestIntegrity(manifest, libraryCourseIds);
-    if (integrity.unresolvedIds.length > 0) {
-      throw new Error(
-        `Manifest "${manifest.pathId}" (${filePath}) references unresolvable course ID(s): ` +
-          integrity.unresolvedIds.join(", "),
-      );
+      const integrity = checkManifestIntegrity(manifest, libraryCourseIds);
+      if (integrity.unresolvedIds.length > 0) {
+        throw new Error(
+          `Manifest "${manifest.pathId}" (${filePath}) references unresolvable course ID(s): ` +
+            integrity.unresolvedIds.join(", "),
+        );
+      }
+
+      manifests.push(manifest);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[course-paths] Skipping malformed manifest file "${filePath}": ${message}`);
     }
-
-    manifests.push(manifest);
   }
 
   return manifests;

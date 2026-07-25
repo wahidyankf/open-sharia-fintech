@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -52,7 +52,9 @@ describe("loadManifests", () => {
     expect(manifests[0]?.pathId).toBe("skills/conventional-accounting");
   });
 
-  it("throws when a manifest's courseOrder names an unresolvable course ID", async () => {
+  it("skips (with a logged warning) a manifest whose courseOrder names an unresolvable course ID, rather than aborting the whole batch", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
     await writeManifest("careers/interview-ready/software-engineer.json", {
       pathId: "careers/interview-ready/software-engineer",
       arc: "interview-ready",
@@ -61,13 +63,46 @@ describe("loadManifests", () => {
       courseOrder: ["just-enough-python", "does-not-exist-anywhere"],
     });
 
-    await expect(loadManifests(tmpDir, ["just-enough-python"])).rejects.toThrow(/does-not-exist-anywhere/);
+    const manifests = await loadManifests(tmpDir, ["just-enough-python"]);
+
+    expect(manifests).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("does-not-exist-anywhere"));
+
+    warnSpy.mockRestore();
   });
 
-  it("throws when a manifest fails the upstream zod schema (no validation of its own)", async () => {
+  it("skips (with a logged warning) a manifest that fails the upstream zod schema, rather than aborting the whole batch", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
     await writeManifest("skills/broken.json", { pathId: "skills/broken" });
 
-    await expect(loadManifests(tmpDir, [])).rejects.toThrow();
+    const manifests = await loadManifests(tmpDir, []);
+
+    expect(manifests).toEqual([]);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("skills/broken.json"));
+
+    warnSpy.mockRestore();
+  });
+
+  it("still loads every other valid manifest when one sibling manifest file is malformed (per-file isolation)", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    await writeManifest("skills/broken.json", { pathId: "skills/broken" });
+    await writeManifest("careers/interview-ready/software-engineer.json", {
+      pathId: "careers/interview-ready/software-engineer",
+      arc: "interview-ready",
+      title: "Interview-Ready Software Engineer",
+      description: "desc",
+      courseOrder: ["just-enough-python"],
+    });
+
+    const manifests = await loadManifests(tmpDir, ["just-enough-python"]);
+
+    expect(manifests).toHaveLength(1);
+    expect(manifests[0]?.pathId).toBe("careers/interview-ready/software-engineer");
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
   });
 
   it("returns an empty array for a directory with no manifest files (today's real, unpopulated dir)", async () => {
