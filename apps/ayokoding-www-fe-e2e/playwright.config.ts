@@ -69,6 +69,11 @@ export default defineConfig({
     env: {
       PORT: "3101",
       NODE_ENV: "production",
+      // course-paths plan (Phase 3): points the standalone server's manifest loader
+      // (`defaultManifestsDir()`, `AYOKODING_WEB_MANIFESTS_DIR`) at this app's own fixture manifest
+      // set instead of the real, still-unpopulated `manifests/` directory — see
+      // `apps/ayokoding-www-fe-e2e/fixtures/manifests/README.md`.
+      AYOKODING_WEB_MANIFESTS_DIR: path.join(workspaceRoot, "apps/ayokoding-www-fe-e2e/fixtures/manifests"),
     },
   },
   projects: process.env.CI

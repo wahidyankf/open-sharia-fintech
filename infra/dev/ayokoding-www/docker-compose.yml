@@ -9,6 +9,10 @@ services:
       - CONTENT_DIR=/app/apps/ayokoding-www/content
       - PORT=3101
       - HOSTNAME=0.0.0.0
+      # course-paths plan (Phase 3): points the container's manifest loader at the e2e fixture
+      # manifest set baked into the image (see the Dockerfile's fixtures COPY step) instead of the
+      # real, still-unpopulated manifests/ directory.
+      - AYOKODING_WEB_MANIFESTS_DIR=/app/apps/ayokoding-www-fe-e2e/fixtures/manifests
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3101/api/trpc/meta.health"]
       interval: 10s

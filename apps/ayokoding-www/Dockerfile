@@ -45,6 +45,10 @@ COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ayokoding-www/.next/st
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ayokoding-www/public ./apps/ayokoding-www/public
 # Copy content files (for runtime fs.readFile — not included in .next/standalone)
 COPY --from=builder --chown=nextjs:nodejs /workspace/apps/ayokoding-www/content ./apps/ayokoding-www/content
+# course-paths plan (Phase 3): the e2e fixture manifest set this docker-compose flow points
+# AYOKODING_WEB_MANIFESTS_DIR at (infra/dev/ayokoding-www/docker-compose.yml) — copied straight from
+# the build context (not the `builder` stage) since it is never part of the Next.js build itself.
+COPY --chown=nextjs:nodejs apps/ayokoding-www-fe-e2e/fixtures/manifests ./apps/ayokoding-www-fe-e2e/fixtures/manifests
 
 USER nextjs
 EXPOSE 3101

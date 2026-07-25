@@ -4,13 +4,14 @@ Feature: Path-aware breadcrumb and URL context
   I want the breadcrumb, path landing page, and legacy URLs to carry and honour path context
   So that a path stays coherent from its landing page through every course and legacy link
 
-  # Stays @wip through this plan's Phase 2 — the path landing page itself
-  # (/en/learn/paths/<path-id>) is Phase 3's own Cycle 3.1, not yet built.
-  @wip
+  # Bound Phase 3, Cycle 3.1 — unit (path-landing.test.tsx, route-paths-hub.test.tsx) and e2e
+  # (course-paths.steps.ts). Rewritten to the fixture-generic wording delivery.md's Cycle 3.1
+  # canonically binds (the earlier draft above named a specific not-yet-existing manifest).
+  @unit @e2e
   Scenario: A path landing page lists its courses in manifest order
-    Given the careers/interview-ready/software-engineer path manifest is published
-    When a reader opens the path landing page at /en/learn/paths/careers/interview-ready/software-engineer
-    Then the courses appear in the manifest's courseOrder
+    Given a fixture path manifest is loaded by the manifest repository
+    When a reader opens that fixture path's landing page under /en/learn/paths/
+    Then the courses appear in the fixture manifest's courseOrder
     And every course link carries the path context query parameter
 
   @unit

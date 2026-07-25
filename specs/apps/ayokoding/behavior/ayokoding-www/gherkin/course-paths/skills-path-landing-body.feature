@@ -4,9 +4,8 @@ Feature: Skills path landing-body content
   I want that path's landing page to show its own authored runway-justification content
   So that I understand why this specific skills path starts where it does, not a generic pitch
 
-  # Stays @wip — the path landing renderer (path-landing.tsx) is this plan's Phase 3 work.
-  # Authored here verbatim from prd.md now, per evidence/phase-2-specs-coverage-delta.txt.
-  @wip
+  # Bound Phase 3, Cycle 3.1d — unit (path-landing.test.tsx) and e2e (course-paths.steps.ts).
+  @unit @e2e
   Scenario: A skills path's authored runway-justification content renders on its own landing
     Given two fixture skills paths whose landing bodies declare different runway-justification paragraphs for their differing first boundaries
     When a reader opens either skills path's landing page

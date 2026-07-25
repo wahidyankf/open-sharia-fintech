@@ -4,9 +4,8 @@ Feature: Arc landing with two roles
   I want both role cards to render fully, side by side
   So that comparing the two roles never shows a placeholder standing in for real content
 
-  # Stays @wip — arc-landing.tsx is Phase 3's category-split work (R6/R7/R8), not yet built.
-  # Authored here verbatim from prd.md now, per evidence/phase-2-specs-coverage-delta.txt.
-  @wip
+  # Bound Phase 3, Cycle 3.1c-i — unit (arc-landing.test.tsx) and e2e (course-paths.steps.ts).
+  @unit @e2e
   Scenario: An arc landing with two paths renders both role cards without a placeholder
     Given the fixture immediately-effective arc manifest lists two roles
     When a reader opens the arc landing at /en/learn/paths/careers/immediately-effective/

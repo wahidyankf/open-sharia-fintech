@@ -1,0 +1,7 @@
+{
+  "pathId": "careers/fundamentally-strong/generalist-track",
+  "arc": "fundamentally-strong",
+  "title": "Generalist Track (Fundamentally-Strong)",
+  "description": "E2E fixture: the third fixture arc — proves the careers category landing's arc chooser renders one arc card per arc (three total) rather than assuming exactly two.",
+  "courseOrder": ["computer-science-foundations", "software-engineering-practices"]
+}

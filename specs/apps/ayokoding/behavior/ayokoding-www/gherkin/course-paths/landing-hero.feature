@@ -4,10 +4,8 @@ Feature: Landing hero surfaces goal paths
   I want the site landing page's hero to show the goal-labeled paths directly
   So that I can pick a learning path without hunting through a generic menu first
 
-  # Stays @wip — Screen 0's hero (apps/ayokoding-www/src/features/app-shell/shell/hero.tsx
-  # extension) is this plan's Phase 3/4 work, not yet built. Authored here verbatim from
-  # prd.md now, per evidence/phase-2-specs-coverage-delta.txt.
-  @wip
+  # Bound Phase 3, Cycle 3.2 — unit (landing.test.tsx) and e2e (course-paths.steps.ts).
+  @unit @e2e
   Scenario: The landing hero surfaces the four goal paths directly
     Given a first-time visitor opens the site landing page at /en
     When the hero section renders

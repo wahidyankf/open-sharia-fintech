@@ -41,9 +41,14 @@ const feature = await loadFeature(
   ),
 );
 
-// Two of this file's three scenarios stay @wip (see specs README.md) — excludeTags (passed to
+// This file binds exactly one of this feature's three scenarios. The other two stay unbound here:
+// "A legacy fundamentally-strong URL redirects..." is @wip (see specs README.md), and "A path
+// landing page lists its courses in manifest order" (@unit @e2e) is bound elsewhere per its own
+// inline comment above (`path-landing.test.tsx`, `route-paths-hub.test.tsx`, and e2e's
+// `course-paths.steps.ts`) — not by this breadcrumb-only unit binder. excludeTags (passed to
 // describeFeature itself, not loadFeature) keeps vitest-cucumber from demanding a Scenario() call
-// for either of them.
+// for either: "wip" excludes the legacy-redirect scenario, and "e2e" excludes the path-landing one
+// (the scenario this file does bind carries only @unit, never @e2e).
 describeFeature(
   feature,
   ({ Scenario }) => {
@@ -84,5 +89,5 @@ describeFeature(
       );
     });
   },
-  { excludeTags: ["wip"] },
+  { excludeTags: ["wip", "e2e"] },
 );

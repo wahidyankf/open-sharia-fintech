@@ -4,9 +4,8 @@ Feature: Arc landing with one role
   I want that role's card to render full detail
   So that I never see a sparse stub or an empty placeholder card next to it
 
-  # Stays @wip — arc-landing.tsx is Phase 3's category-split work (R6/R7/R8), not yet built.
-  # Authored here verbatim from prd.md now, per evidence/phase-2-specs-coverage-delta.txt.
-  @wip
+  # Bound Phase 3, Cycle 3.1c-ii — unit (arc-landing.test.tsx) and e2e (course-paths.steps.ts).
+  @unit @e2e
   Scenario: An arc landing with one path renders a full card, not a sparse stub
     Given a fixture arc manifest lists exactly one role
     When a reader opens that arc's landing page
