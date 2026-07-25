@@ -120,6 +120,7 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
                   type="button"
                   variant={widthPx === preset.widthPx ? "secondary" : "outline"}
                   size="xs"
+                  className="min-h-11 min-w-11"
                   aria-pressed={widthPx === preset.widthPx}
                   onClick={() => selectPreset(preset.widthPx)}
                 >
@@ -145,7 +146,7 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
                   <Link
                     href={link.hrefFor(locale as Locale)}
                     onClick={() => onOpenChange(false)}
-                    className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                    className="flex min-h-11 items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   >
                     {t(locale as Locale, link.labelKey)}
                   </Link>

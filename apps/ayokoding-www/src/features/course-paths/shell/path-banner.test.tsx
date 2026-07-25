@@ -2,36 +2,48 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const setOpenMock = vi.fn();
+let mockOpen = false;
 
 vi.mock("@/features/app-shell/shell/use-mobile-nav-open", () => ({
-  useMobileNavOpen: () => ({ open: false, setOpen: setOpenMock }),
+  useMobileNavOpen: () => ({ open: mockOpen, setOpen: setOpenMock }),
 }));
 
 // eslint-disable-next-line import/first
 import { PathBanner } from "./path-banner";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  mockOpen = false;
+});
 
 describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer on a phone)", () => {
-  it("has an accessible name 'Open path course list — {Path}, course {k} of {N}'", () => {
+  it("has an accessible name 'View path: Open path course list — {Path}, course {k} of {N}' (contains the visible 'View path' label per WCAG 2.5.3 Label in Name)", () => {
     render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     expect(
-      screen.getByRole("button", { name: "Open path course list — Python Fundamentals, course 2 of 5" }),
+      screen.getByRole("button", {
+        name: "View path: Open path course list — Python Fundamentals, course 2 of 5",
+      }),
     ).toBeTruthy();
   });
 
-  it("carries aria-expanded and aria-controls, and flips aria-expanded on activation", async () => {
-    const { default: userEvent } = await import("@testing-library/user-event");
-    const user = userEvent.setup();
-
+  it("carries aria-expanded (mirroring the shared drawer's open state) and aria-controls", () => {
     render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     const button = screen.getByRole("button", { name: /Open path course list/i });
     expect(button.getAttribute("aria-expanded")).toBe("false");
     expect(button.hasAttribute("aria-controls")).toBe(true);
+  });
 
-    await user.click(button);
+  // Cycle 4 regression fix — `aria-expanded` used to be a locally-toggled `useState`, which could
+  // desync from the shared drawer's real `open` state (closing the drawer by any means other than
+  // this control left the local flag stale). It is now derived directly from `useMobileNavOpen()`'s
+  // `open`, so it always mirrors the drawer's actual visibility.
+  it("aria-expanded mirrors the shared drawer's open state, not a locally-toggled value", () => {
+    mockOpen = true;
+    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+
+    const button = screen.getByRole("button", { name: /Open path course list/i });
     expect(button.getAttribute("aria-expanded")).toBe("true");
   });
 

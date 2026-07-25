@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
 
 /** Must match the `id` the shipped drawer's content element renders (`mobile-nav.tsx`). */
@@ -23,11 +23,9 @@ export interface PathBannerProps {
  * rather than a second overlay — `aria-controls` names that drawer's content element.
  */
 export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerProps) {
-  const { setOpen } = useMobileNavOpen();
-  const [expanded, setExpanded] = useState(false);
+  const { open, setOpen } = useMobileNavOpen();
 
   function handleActivate(event: MouseEvent<HTMLButtonElement>) {
-    setExpanded((prev) => !prev);
     // Pass the trigger explicitly — WebKit does not focus a clicked `<button>` by default, unlike
     // Chromium/Firefox, so `document.activeElement` alone is not a reliable stand-in here (see
     // `use-mobile-nav-open.ts`).
@@ -41,11 +39,11 @@ export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerP
       </span>
       <button
         type="button"
-        aria-expanded={expanded}
+        aria-expanded={open}
         aria-controls={MOBILE_NAV_DRAWER_ID}
-        aria-label={`Open path course list — ${pathTitle}, course ${courseIndex} of ${totalCourses}`}
+        aria-label={`View path: Open path course list — ${pathTitle}, course ${courseIndex} of ${totalCourses}`}
         onClick={handleActivate}
-        className="font-medium underline underline-offset-2"
+        className="flex min-h-11 items-center px-2 font-medium underline underline-offset-2 hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
         View path
       </button>
