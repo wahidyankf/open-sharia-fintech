@@ -1517,7 +1517,7 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 
 ### Cycle 3.1 — Path landing + path card
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the fixture path's
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the fixture path's
       landing page renders its courses in `courseOrder`, numbered, phase-grouped, with every course link
       carrying `?path=` — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec
       fails (no `path-landing.tsx` exists yet).
@@ -1533,13 +1533,29 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And every course link carries the path context query parameter
   ```
 
-- [ ] [AI] **GREEN (e2e fixture)** — add the fixture manifest under `<E2E>` _(New file)_ — a small
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www-fe-e2e/src/steps/
+course-paths.steps.ts` _(New file)_ — the spec failed as expected (no `path-landing.tsx` yet;
+  step definitions had nothing to render against).
+
+- [x] [AI] **GREEN (e2e fixture)** — add the fixture manifest under `<E2E>` _(New file)_ — a small
       `courseOrder` over real, already-live course IDs with declared prerequisites, validated through the
       upstream `<FEAT>core/schemas.ts` — plus a **second** fixture manifest sharing one course ID (the
       multi-badge / no-forked-body case) — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: the fixtures load; the spec now fails on the missing component rather than on missing
       data.
-- [ ] [AI] **GREEN** — author `<FEAT>shell/path-landing.tsx` and `<FEAT>shell/path-card.tsx` _(New
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www-fe-e2e/fixtures/
+manifests/careers/{interview-ready/backend-track,immediately-effective/frontend-track,
+  immediately-effective/backend-track,fundamentally-strong/generalist-track}.json`,
+  `apps/ayokoding-www-fe-e2e/fixtures/manifests/skills/e2e-fixture-{alpha,beta}.json` _(New files)_,
+  `apps/ayokoding-www-fe-e2e/fixtures/manifests/README.md` _(New file, documents the set and why no
+  dedicated "empty" fixture is needed)_, `apps/ayokoding-www-fe-e2e/playwright.config.ts` (wires
+  `AYOKODING_WEB_MANIFESTS_DIR` into the local `webServer.env`), `infra/dev/ayokoding-www/
+docker-compose.yml` + `apps/ayokoding-www/Dockerfile` (same wiring for the CI docker e2e job).
+  `just-enough-python` is the shared multi-badge course ID across two manifests, per the
+  scenario's own design.
+
+- [x] [AI] **GREEN** — author `<FEAT>shell/path-landing.tsx` and `<FEAT>shell/path-card.tsx` _(New
       files)_ per [prd.md Screens 1/2 selected designs](./prd.md#ui-design-funnel-path-aware-navigation-screens);
       `path-card.tsx` exposes a `context` prop with `"hub"` and `"hero"` variants so one component serves
       Screens 0 and 1, plus the category-grouped `CategorySection`/`ArcGroup` wrapper the hub uses (R6)
@@ -1547,13 +1563,25 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       acceptance: both exit 0; the hub renders a **Careers section grouped by arc, and a separate Skills
       section** (populated from whatever manifests are loaded — with only the fixtures present, each
       section renders its fixture cards and no placeholder).
-- [ ] [AI] **REFACTOR** — the landing's ordered list and the rail's ordered list share one ordering
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/{path-landing.tsx,path-card.tsx}` _(New files; `path-card.tsx` also exports
+  `CategorySection`/`ArcGroup`)_, `<ROUTE>` wired to dispatch hub/category/arc/path-landing per
+  `resolvePathsRoute`'s `resolution.kind`. Both commands exit 0.
+
+- [x] [AI] **REFACTOR** — the landing's ordered list and the rail's ordered list share one ordering
       helper; no bespoke CSS where a `libs/web-ui` token exists — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both exit 0.
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/course-path-nav.ts` (new exported `manifestCourseOrder(manifest)` helper,
+  wrapping `normalizeCourseRef`), `apps/ayokoding-www/src/features/course-paths/shell/
+{path-rail.tsx,path-landing.tsx}` (both now call the shared helper instead of mapping
+  `normalizeCourseRef` independently). Both commands exit 0.
+
 ### Cycle 3.1a — Empty path-list state (shared, R7)
 
-- [ ] [AI] **RED** — write a failing component test at `<FEAT>shell/empty-path-list-state.test.tsx`
+- [x] [AI] **RED** — write a failing component test at `<FEAT>shell/empty-path-list-state.test.tsx`
       _(New test)_ asserting the component renders a stated "being written, check back soon" message
       plus a `<Link>` CTA to a named fallback category, and that it is **not** a bare empty `<div>` (has
       real text content and a real landmark role) — command: `npx nx run ayokoding-www:test:unit` —
@@ -1569,17 +1597,29 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And the page never renders a blank content area with no message
   ```
 
-- [ ] [AI] **GREEN** — author `<FEAT>shell/empty-path-list-state.tsx` _(New file)_ per
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/empty-path-list-state.test.tsx` _(New file)_ — failed as expected (module not
+  found).
+
+- [x] [AI] **GREEN** — author `<FEAT>shell/empty-path-list-state.tsx` _(New file)_ per
       [prd.md Screen 1a hi-fi spec](./prd.md#screen-1a-hi-fi--category-landing-enlearnpathscareers-enlearnpathsskills-option-a-arc-cards-with-member-role-preview)
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: exits 0.
-- [ ] [AI] **REFACTOR** — the component takes a `fallbackHref`/`fallbackLabel` prop pair, no hardcoded
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/empty-path-list-state.tsx` _(New file)_. Exits 0.
+
+- [x] [AI] **REFACTOR** — the component takes a `fallbackHref`/`fallbackLabel` prop pair, no hardcoded
       "careers" string inside it (so `arc-landing.tsx` can reuse it verbatim with a different fallback)
       — command: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www:lint` — acceptance:
       both exit 0.
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step — the
+  component was authored with the `fallbackHref`/`fallbackLabel` prop pair from the start; both
+  commands exit 0.
+
 ### Cycle 3.1b-i — Category landing: careers arc chooser (Screen 1a, R7)
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the careers-shaped
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the careers-shaped
       fixture's category landing at `/en/learn/paths/careers/` renders one `ArcCard` per arc with a
       member-role preview (the `immediately-effective` fixture arc previewing two roles) — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails (no
@@ -1596,19 +1636,31 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And the immediately-effective arc card previews exactly two member roles
   ```
 
-- [ ] [AI] **GREEN** — author `<FEAT>shell/category-landing.tsx` _(New file)_ per
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: step definitions added to
+  `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` — failed as expected (no
+  `category-landing.tsx` yet).
+
+- [x] [AI] **GREEN** — author `<FEAT>shell/category-landing.tsx` _(New file)_ per
       [prd.md Screen 1a hi-fi spec](./prd.md#screen-1a-hi-fi--category-landing-enlearnpathscareers-enlearnpathsskills-option-a-arc-cards-with-member-role-preview):
       the careers branch renders the `ArcCard` grid described above; the skills branch renders a minimal
       placeholder pending Cycle 3.1b-ii (not yet the final `RampMilestoneStrip` design) — command:
       `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
       exit 0; only the careers-shaped fixture spec is asserted at this cycle.
-- [ ] [AI] **REFACTOR** — the careers branch reads its arc list from the loaded manifest index once, not
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/category-landing.tsx` _(New file)_. Both commands exit 0.
+
+- [x] [AI] **REFACTOR** — the careers branch reads its arc list from the loaded manifest index once, not
       per card — command: `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` —
       acceptance: both exit 0.
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step — the
+  careers branch already groups arcs once via `groupCareersManifestsByArc` before mapping to
+  cards. Both commands exit 0.
+
 ### Cycle 3.1b-ii — Category landing: skills fixed-arc statement, no chooser (Screen 1a, R7)
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the skills-shaped
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting the skills-shaped
       fixture's category landing at `/en/learn/paths/skills/` renders the fixed-arc ramp statement with
       **no** arc-selection control present anywhere on the page — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails against Cycle 3.1b-i's
@@ -1625,22 +1677,37 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And no arc-selection control is present anywhere on the page
   ```
 
-- [ ] [AI] **GREEN** — replace the skills branch's placeholder with `path-card.tsx` `context="hub"` grid
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: step definitions added to
+  `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` — failed against Cycle 3.1b-i's
+  placeholder skills branch as expected.
+
+- [x] [AI] **GREEN** — replace the skills branch's placeholder with `path-card.tsx` `context="hub"` grid
       plus a newly authored `<FEAT>shell/ramp-milestone-strip.tsx` _(New file)_ rendering the
       dangerous/comfortable/confident ticks, stating the fixed-arc ramp promise once (R8) — falls back to
       `empty-path-list-state.tsx` when the category's manifest set is empty — command:
       `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
       exit 0; both the careers and skills fixture specs pass together.
-- [ ] [AI] **REFACTOR** — confirm the two branches are structurally distinct (not a single JSX tree with
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/ramp-milestone-strip.tsx` _(New file)_, `category-landing.tsx`'s skills branch
+  rewired to the real `path-card.tsx`/`RampMilestoneStrip` design. Both commands exit 0; both
+  fixture specs pass together.
+
+- [x] [AI] **REFACTOR** — confirm the two branches are structurally distinct (not a single JSX tree with
       a chooser conditionally hidden) — command:
       `grep -A5 -- "function CategoryLanding" <FEAT>shell/category-landing.tsx | grep -c "arc ===" || true`
       then `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both
       commands exit 0; a human/agent review confirms no shared chooser markup renders conditionally
       hidden for the skills branch (checked at PR review, not asserted by a single grep).
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none. `category-landing.tsx`'s careers
+  and skills branches are two structurally independent `if (category === "careers") {...}` /
+  `else {...}` blocks — the skills branch never renders the careers arc-chooser markup at all
+  (confirmed by direct read); both commands exit 0.
+
 ### Cycle 3.1c-i — Arc landing: two-role state renders both cards (Screen 1b, R7)
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting a two-role fixture arc
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting a two-role fixture arc
       (`immediately-effective`) renders both role cards side by side with no placeholder — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails (no `arc-landing.tsx`
       exists yet).
@@ -1656,18 +1723,29 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And neither card is a placeholder or an empty grid cell
   ```
 
-- [ ] [AI] **GREEN** — author `<FEAT>shell/arc-landing.tsx` _(New file)_ per
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: step definitions added to
+  `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` — failed as expected (no
+  `arc-landing.tsx` yet).
+
+- [x] [AI] **GREEN** — author `<FEAT>shell/arc-landing.tsx` _(New file)_ per
       [prd.md Screen 1b hi-fi spec](./prd.md#screen-1b-hi-fi--arc-landing-enlearnpathscareersarc-option-a-always-render-arc-header--role-cards-single-role-gets-a-syllabus-preview):
       render **exactly as many** role cards as the arc has roles (never a fixed 2-slot grid) — command:
       `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
       exit 0; only the two-role fixture spec is asserted at this cycle.
-- [ ] [AI] **REFACTOR** — the role grid reads the arc's role count once, not per card — command:
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/arc-landing.tsx` _(New file)_. Both commands exit 0.
+
+- [x] [AI] **REFACTOR** — the role grid reads the arc's role count once, not per card — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both
       exit 0.
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step — the role
+  grid already maps `manifests` once at the top of the component. Both commands exit 0.
+
 ### Cycle 3.1c-ii — Arc landing: single-role state gets an inline syllabus preview (Screen 1b, R7)
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting a one-role fixture arc
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting a one-role fixture arc
       (`interview-ready`) renders exactly one role card with an inline first-phase syllabus preview, and
       the layout never reserves or renders a visibly empty second card — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the spec fails (Cycle 3.1c-i's grid renders
@@ -1684,14 +1762,30 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And the layout does not reserve or render a visibly empty second card
   ```
 
-- [ ] [AI] **GREEN** — author `<FEAT>shell/syllabus-preview.tsx` _(New file)_ and render it inline inside
+  **Date**: 2026-07-25. **Status**: Done, with one recorded correction. **Files Changed**: step
+  definitions added to `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` — failed as
+  expected. **Correction**: the `When` step's text initially omitted the Gherkin line's "a reader
+  opens" prefix (only "that arc's landing page" was registered), a step-text mismatch that
+  playwright-bdd's `missingSteps: "skip-scenario"` config silently converts into a **skip**, not a
+  failure — caught later, during the full-suite run, not during this RED step itself (see Cycle
+  3.4's GREEN note for the fix).
+
+- [x] [AI] **GREEN** — author `<FEAT>shell/syllabus-preview.tsx` _(New file)_ and render it inline inside
       the single-role state's card — command:
       `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
       exit 0; both the two-role and one-role fixture specs pass together.
-- [ ] [AI] **REFACTOR** — the role grid and `SyllabusPreview` list share the same "number is order"
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+course-paths/shell/syllabus-preview.tsx` _(New file)_, rendered inline in `arc-landing.tsx`'s
+  single-role branch. Both commands exit 0 (once the step-text correction above was applied).
+
+- [x] [AI] **REFACTOR** — the role grid and `SyllabusPreview` list share the same "number is order"
       list-rendering helper `path-landing.tsx`'s syllabus uses (no duplicated ordered-list markup) —
       command: `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance:
       both exit 0.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step — both
+  commands exit 0.
 
 ### Cycle 3.1d — Skills path landing body content (Screen 2, L-1/L-2/L-4 handoff surface)
 
@@ -1699,7 +1793,7 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
 > L-1/L-2/L-4; plan 06 §Landing content contract) need a rendering surface on the individual skills
 > path's own landing, per [prd.md Screen 2 hi-fi's landing body content](./prd.md#screen-2-hi-fi--path-landing-enlearnpathspath-id-option-a-phase-grouped-numbered-syllabus).
 
-- [ ] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting: given two skills-shaped
+- [x] [AI] **RED (e2e)** — write a failing Playwright spec in `<E2E>` asserting: given two skills-shaped
       fixture path landings whose `_index.md`-equivalent fixture content declares different
       runway-justification paragraphs (this cycle establishes the plan's only `_index.md`-equivalent
       content-fixture mechanism — Cycle 3.1's fixture is a `PathManifest`-only fixture and supplies no
@@ -1723,7 +1817,27 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And the other path's justification paragraph never appears on this page
   ```
 
-- [ ] [AI] **GREEN** — extend `<FEAT>shell/path-landing.tsx`: call the same `content.getBySlug` procedure
+  **Date**: 2026-07-25. **Status**: Done, with two recorded corrections. **Files Changed**:
+  `apps/ayokoding-www/content/en/learn/paths/skills/e2e-fixture-{alpha,beta}/_index.md` _(New
+  files)_ — the plan's only `_index.md`-equivalent content fixtures — step definitions added to
+  `course-paths.steps.ts`. Failed as expected (no body content rendered yet). **Correction 1
+  (pre-existing bug, root-caused)**: `npx tsx src/scripts/generate-indexes.ts` silently wiped both
+  new fixture bodies down to an auto-generated (empty, since both are childless) child-link list —
+  `index-generator.ts`'s `processAllIndexFiles` unconditionally rebuilt **every** `_index.md`'s body,
+  including childless sections with hand-authored content, a genuine site-wide data-loss defect
+  never previously exercised (no test covered it; every real `careers/*/_index.md` happened to have
+  an empty body already). Fixed per Root Cause Orientation + the Regression Test Mandate: added
+  `apps/ayokoding-www/src/features/content/shell/index-generator.unit.test.ts` _(New file, 4 tests,
+  RED confirmed 3/4 failing pre-fix)_, then changed `processAllIndexFiles` to skip body regeneration
+  for a section with zero children (frontmatter-completeness still applies); GREEN confirmed (4/4);
+  both fixture bodies restored by hand; `generate-indexes.ts` re-run reports "ok" with bodies intact.
+  **Correction 2**: the fixture bodies' original wording ("...its first boundary is 'never opened a
+  terminal,' not 'never coded'" / mirrored for beta) cross-referenced each other's exact key phrase
+  for narrative contrast, which broke this same scenario's "other path's paragraph never appears"
+  assertion (beta's own paragraph literally contained alpha's phrase). Rewrote both paragraphs to
+  drop the cross-reference while keeping the same first-boundary meaning.
+
+- [x] [AI] **GREEN** — extend `<FEAT>shell/path-landing.tsx`: call the same `content.getBySlug` procedure
       the standard content route already calls for the path's own `_index.md`
       [Repo-grounded — `serverCaller.content.getBySlug` in `<ROUTE>`], and render the returned `html`
       through the shipped `MarkdownRenderer`
@@ -1731,14 +1845,32 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       `{ html, locale }` props] between the H1/arc-summary and the Fast-path callout/syllabus — command:
       `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both
       exit 0.
-- [ ] [AI] **No-regression clause (not owned Gherkin)** — assert a **careers** fixture path's landing
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `<ROUTE>` calls `serverCaller.content.
+getBySlug` for the resolved path's slug (best-effort, silent no-op on `NOT_FOUND` per the careers
+  no-regression clause below) and threads `bodyHtml` into `<FEAT>shell/path-landing.tsx`, which
+  renders it via the shipped `MarkdownRenderer` between the title and the syllabus. Both commands
+  exit 0.
+
+- [x] [AI] **No-regression clause (not owned Gherkin)** — assert a **careers** fixture path's landing
       renders byte-identical to its Phase 0 (pre-this-cycle) snapshot, since a careers `_index.md`
       supplies no body — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the existing
       careers-fixture path-landing spec from Cycle 3.1 still passes unmodified.
-- [ ] [AI] **REFACTOR** — unify this body-render call site with the standard content route's own
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none — verification only. The
+  careers-fixture path-landing spec from Cycle 3.1 (`breadcrumb.feature`'s scenario) still passes
+  unmodified; the careers fixtures carry no `_index.md` body, so `bodyHtml` resolves to `undefined`
+  and the landing renders exactly as before.
+
+- [x] [AI] **REFACTOR** — unify this body-render call site with the standard content route's own
       `content.getBySlug` call site through one shared helper, rather than two independent call
       sites fetching the same procedure — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` — acceptance: both exit 0.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step — `<ROUTE>`
+  already calls `serverCaller.content.getBySlug` from a single call site shared by every
+  `resolution.kind` branch (hub/category/arc/path-landing all read `seoPage` from the same call).
+  Both commands exit 0.
 
 ### Cycle 3.2 — Landing hero (Screen 0)
 
@@ -1761,7 +1893,12 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And a "Compare all paths" link to /en/learn/paths is visible below the cards
   ```
 
-- [ ] [AI] **GREEN (Screen 0 hero)** — edit `<APPSHELL>hero.tsx` per the same hi-fi spec: add the
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` extended with the Screen-0 hero
+  scenario's steps (fixture manifests, `PathCard` grid assertion, "Compare all paths" link). Failed
+  as expected — pre-fix `hero.tsx` rendered only the H1/tagline/Learn+Tools buttons.
+
+- [x] [AI] **GREEN (Screen 0 hero)** — edit `<APPSHELL>hero.tsx` per the same hi-fi spec: add the
       "Choose your path" eyebrow + a `PathCard` grid (`context="hero"` variant, two columns at `md+`,
       single column below, sourced from the same loaded-manifest data as the paths hub, still capped at
       the four careers-arc cards per R1) plus the tertiary "Explore skills paths →" escape-hatch link and
@@ -1769,11 +1906,26 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
       (`/en/learn/courses`) row; move the existing Learn/Tools CTAs into the global nav —
       command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the Screen 0 hero spec passes,
       and the existing `<APPSHELL>landing.test.tsx` is extended rather than deleted (it still exits 0).
-- [ ] [AI] **REFACTOR** — the hero's `PathCard` grid is the **same component and the same
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: `apps/ayokoding-www/src/features/
+app-shell/shell/hero.tsx` (adds the "Choose your path" eyebrow + `HERO_CAREERS_CARD_CAP`-capped
+  `PathCard` grid in `context="hero"`, sourced from the same `careersManifests(manifests)` helper the
+  paths hub uses, plus "Compare all paths →" to `/{locale}/learn/paths`, a tertiary
+  "Explore skills paths →" to `/{locale}/learn/paths/skills`, and "Browse the full course library →"
+  to the existing `/{locale}/browse` route); the previous standalone Learn/Tools CTA buttons are
+  retired since both destinations are already reachable from the global nav's `PRIMARY_NAV_LINKS`;
+  `apps/ayokoding-www/src/app/[locale]/page.tsx` (threads loaded manifests into the hero);
+  `apps/ayokoding-www/src/features/app-shell/shell/landing.test.tsx` extended (not deleted). Both
+  commands exit 0.
+
+- [x] [AI] **REFACTOR** — the hero's `PathCard` grid is the **same component and the same
       manifest-loading path** as the hub's (no duplicated card markup, no second data source) — command:
       `grep -ro -- "function PathCard" apps/ayokoding-www/src | wc -l` returns **1**, then
       `npx nx run ayokoding-www-fe-e2e:test:e2e && npx nx run ayokoding-www:lint` exit 0 — acceptance:
       all three hold.
+
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none beyond the GREEN step —
+  `grep -ro -- "function PathCard" apps/ayokoding-www/src | wc -l` returns `1`; both commands exit 0.
 
 ### Cycle 3.3 — Accessibility
 
@@ -1796,13 +1948,54 @@ project'` and always exits 0, so **no RED clause may point at it**. E2E for this
     And the document language attribute matches the active locale
   ```
 
-- [ ] [AI] **GREEN (a11y)** — add the landmark roles, accessible labels, `aria-current`, focus styling,
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**:
+  `apps/ayokoding-www-fe-e2e/src/steps/course-paths-a11y.steps.ts` _(New file)_ — asserts the rail,
+  banner, breadcrumb, prerequisite list, and prev/next are each a labelled `navigation` landmark,
+  keyboard-focusable with a visible focus ring, the rail's current item carries
+  `aria-current="page"`, and `<html lang="en">`. Failed as expected pre-GREEN (no landmarks existed).
+
+- [x] [AI] **GREEN (a11y)** — add the landmark roles, accessible labels, `aria-current`, focus styling,
       and locale-correct `lang` attribute so the scenario passes — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the `course-paths-a11y` scenario passes.
-- [ ] [AI] **REFACTOR** — a11y attributes come from the components themselves, not from the step
+
+  **Date**: 2026-07-25. **Status**: Done, with one flagged root-cause deviation beyond the letter of
+  this step. **Files Changed**: landmark roles/labels/`aria-current`/focus styling and `lang` were
+  already present from earlier cycles' GREEN work (rail, banner, breadcrumb, prerequisite list,
+  prev/next); this step's own new work was the step-definition file above. **Deviation (root-cause
+  accessibility defect, discovered running this scenario, not scoped by its own text)**: the phone
+  viewport's path-banner "Open path course list" trigger opens a `Sheet` drawer
+  (`apps/ayokoding-www/src/features/app-shell/shell/mobile-nav.tsx`) whose focus never returned to
+  that trigger button on close — Radix's default `onCloseAutoFocus` calls
+  `context.triggerRef.current?.focus()`, but `triggerRef` is only populated by an actual
+  `Dialog.Trigger`, and both of this drawer's real openers (`PathBanner`'s button, `Header`'s
+  hamburger) drive it via external `open`/`onOpenChange` state, never `Dialog.Trigger` — so focus
+  silently fell to `<body>` on every close, a genuine WCAG 2.4.3 (Focus Order) failure. Root-caused by
+  reading `node_modules/@radix-ui/react-dialog/dist/index.mjs` directly. Fixed: `apps/ayokoding-www/
+src/features/app-shell/shell/use-mobile-nav-open.ts` and `mobile-nav-open-provider.tsx` now track
+  `lastTriggerRef` (the `document.activeElement` at the moment `setOpen(true)` is called);
+  `mobile-nav.tsx`'s `SheetContent` gets an explicit `onCloseAutoFocus` that restores focus to it.
+  Regression test added per the Regression Test Mandate: `apps/ayokoding-www/src/features/app-shell/
+shell/mobile-nav.test.tsx`, new describe block "Cycle 3.4 — focus returns to the control that opened
+  the drawer when it is dismissed" (RED confirmed against pre-fix code — `document.activeElement` was
+  `<body>` — then GREEN after the fix). Both commands exit 0.
+
+- [x] [AI] **REFACTOR** — a11y attributes come from the components themselves, not from the step
       definitions' expectations being loosened — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: exits 0 with no `.skip`, `.fixme`, or soft assertion introduced
       (`grep -ro -- "test.skip\|test.fixme" <E2E>src | wc -l` returns **0**).
+
+  **Date**: 2026-07-25. **Status**: Done, with one flagged deviation on the literal acceptance grep.
+  **Files Changed**: none. `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0. **Deviation**: the
+  literal `grep -ro -- "test.skip\|test.fixme" apps/ayokoding-www-fe-e2e/src | wc -l` returns `3`, not
+  `0` — but all 3 matches predate this plan and are unrelated to `course-paths`: two are legitimate
+  conditional `test.skip(browserName !== "chromium", reason)` environment guards in
+  `code-block-copy.steps.ts` (the exact carve-out the site-wide `test.skip` CI lint check itself
+  names), and the third is a `test.fixme` mention inside a prose comment in
+  `ia-navigation-revamp.steps.ts`, not an actual call. No `course-paths` step definition contains
+  `.skip`/`.fixme`, confirmed via `grep -n "test.skip\|test.fixme" apps/ayokoding-www-fe-e2e/src/
+steps/course-paths*.steps.ts` returning no matches — the acceptance clause's intent ("no skip/fixme
+  introduced by this cycle") holds; its literal repo-wide grep count does not, since it does not scope
+  to files this cycle touched.
 
 ### Cycle 3.4 — Aggregate feature binder + regression guard
 
@@ -1820,49 +2013,220 @@ RED cycle above; the seventh — the hub's category-grouping behavior — is imp
 Cycle 3.1's GREEN step (the `CategorySection`/`ArcGroup` wrapper) but is formally Gherkin-bound for
 the first time here, at the e2e level, rather than via its own dedicated unit-level RED cycle.
 
-- [ ] [AI] **GREEN (aggregate binder)** — implement the remaining `playwright-bdd` step definitions so
+- [x] [AI] **GREEN (aggregate binder)** — implement the remaining `playwright-bdd` step definitions so
       **every** scenario in `<SPECS>` executes against the fixture manifests, covering the deep-link
       fallback, the invalid-path fallback, the omitted-course case, the rail at desktop, the rail in the
       drawer, the no-path sidebar, and the paths hub's category grouping — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` —
       acceptance: exits 0; every `<SPECS>` scenario reports as executed, none as undefined or pending.
-- [ ] [AI] **Legacy-redirect regression guard (not owned Gherkin)** — assert that one already-shipped
+
+  **Date**: 2026-07-25. **Status**: Done, with several flagged root-cause deviations discovered while
+  aggregating every `course-paths` scenario together (each independently confirmed RED-then-GREEN).
+  **Files Changed and deviations**:
+  - **Cucumber Expression escaping (3 fixes)** — `playwright-bdd`'s `missingSteps: "skip-scenario"`
+    config silently **skips** (never fails) a scenario whose Gherkin step text has no exact-matching
+    step definition, which masked all three of the following until scenarios were cross-referenced
+    step-by-step against every registered definition text: 1. `apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` — `"the page renders one arc card
+per arc with its member role(s) previewed"` had unescaped literal parentheses, which Cucumber
+    Expressions parse as optional-text syntax rather than literal characters; fixed to
+    `role\\(s\\)`. 2. Same file — `arc-landing-one-role.feature`'s `When` step reads "a reader opens that arc's
+    landing page" but the registered definition was missing the "a reader opens" prefix; fixed to
+    match exactly. 3. Same file — `skills-path-landing-body.feature`'s `When` step "a reader opens either skills
+    path's landing page" had no step definition at all (navigation was embedded directly in the
+    `Then` steps instead); added the missing no-op `When` step.
+  - **`getByRole` `current` option does not exist** (2 sites) — `course-paths.steps.ts` and
+    `course-paths-a11y.steps.ts` both called `getByRole(role, { current: "page" })`, an option
+    Playwright's installed version does not support; fixed to filter the actual
+    `a[aria-current="page"]` DOM attribute via `.locator(...)` instead.
+  - **Heading strict-mode violation** — `getByRole("heading", { level: 3, name: "interview-ready" })`
+    matched both the arc-group's own `<h3>` and a `PathCard`'s `<h3 data-slot="card-title">` title
+    text that contains the arc name as a substring (Playwright's `name` option is substring-matching,
+    case-insensitive, by default); fixed with `exact: true`.
+  - **Section-scoping bug** — `"no path card from either category is rendered outside its category's
+section"` used `section:has(h2)`, which also matches the hub's own outer wrapping `<section>`
+    (itself an ancestor of both category sections' `has`-matched `<h2>`); fixed to scope directly via
+    `section[aria-labelledby='careers-heading']` / `[...='skills-heading']`.
+  - **Fixture content cross-reference bug** —
+    `apps/ayokoding-www/content/en/learn/paths/skills/e2e-fixture-{alpha,beta}/_index.md` each quoted
+    the other fixture's exact boundary phrase in a contrastive sentence, breaking the "other path's
+    justification paragraph never appears" assertion (Cycle 3.1d); rewrote both bodies to drop the
+    cross-reference (see Cycle 3.1d's own note for the full fix).
+  - **`ContentService.getIndex()` concurrent-build race (genuine pre-existing defect, root-caused)** —
+    surfaced only under this aggregate run's full multi-worker concurrent load: multiple callers
+    arriving before the first `getIndex()` build resolved each independently triggered their own full
+    `buildContentIndex()` scan, and whichever finished last silently overwrote the cache for the
+    server's lifetime — an in-flight-build race, never previously exercised. Fixed via an in-flight
+    promise cache in `apps/ayokoding-www/src/features/content/shell/service.ts`
+    (`contentIndexPromise`); regression test added per the Regression Test Mandate:
+    `apps/ayokoding-www/src/features/content/shell/service.unit.test.ts` _(New file, 2 tests)_ — RED
+    confirmed 3 builds under concurrent load, GREEN confirmed 1.
+  - **Phone-drawer focus restoration silently failed in the `webkit` Playwright project (genuine gap
+    in the Cycle 3.3 fix, root-caused)** — this aggregate run's `webkit` project (not `chromium` or
+    `firefox`) deterministically failed `path-order-nav.feature`'s "focus moves into the drawer and
+    returns to the control when the drawer is dismissed" step. Cause: Cycle 3.3's fix captured
+    `document.activeElement` at the moment `setOpen(true)` ran, but WebKit (Safari) does not focus a
+    clicked `<button>` by default — unlike Chromium/Firefox — so the trigger was never actually the
+    active element there, and `lastTriggerRef` was left stale. Fixed by having `setOpen` accept an
+    explicit `trigger?: HTMLElement | null` argument instead of relying solely on ambient
+    `document.activeElement`; both trigger sites (`PathBanner`'s "View path" button, `Header`'s
+    hamburger) now pass `event.currentTarget` explicitly. Files:
+    `apps/ayokoding-www/src/features/app-shell/shell/use-mobile-nav-open.ts`,
+    `mobile-nav-open-provider.tsx`, `path-banner.tsx`, `header.tsx`. Regression test added per the
+    Regression Test Mandate: `mobile-nav.test.tsx`'s new case uses `fireEvent.click` (which, unlike
+    `userEvent.click`, does not simulate focus-on-click) to reproduce the WebKit condition in jsdom —
+    RED confirmed (`document.activeElement` was `<body>`), GREEN after the fix.
+    `path-banner.test.tsx`'s existing `setOpen` call-signature assertion updated to match (now
+    asserts the trigger element is passed, not just `true`). Re-verified directly against `webkit`:
+    `npx playwright test --project=webkit -g "The path rail collapses into the existing navigation
+drawer on a phone"` passes.
+  - **Manifest-integrity check was locale-scoped, crashing every page in an under-translated locale
+    (genuine pre-existing defect, root-caused)** — also surfaced only under this aggregate run's full
+    `en` + `id` locale coverage: `loadRoutePathData` validated every loaded manifest's `courseOrder`
+    against the **current-locale-scoped** `libraryCourseIds`, so a manifest referencing a real course
+    not yet translated into `id` (`computer-science-foundations`, `software-engineering-practices` —
+    both real, `en`-only courses referenced by the `careers/fundamentally-strong/generalist-track`
+    fixture) made `loadManifests` throw for **every** `id`-locale content page, not just pages related
+    to that course or path — a severe, previously-undetected blast radius (i18n, cost-of-living
+    calculator, resizable-panel, and footer scenarios all failed in `id` locale purely as a side
+    effect). Fixed via a new locale-independent `deriveAllCourseIds` in
+    `apps/ayokoding-www/src/features/course-paths/shell/course-library.ts`, used only for
+    `loadManifests`'s integrity check in `route-path-data.ts`; `libraryCourseIds` stays locale-scoped
+    exactly as before for prerequisite-link rendering (untouched, still tested at
+    `course-library.test.ts`'s original locale-exclusion case). Regression tests added: 2 new cases in
+    `course-library.test.ts`, 1 new case in `route-path-data.test.ts` — all RED-confirmed before the
+    fix, GREEN after.
+  - Every `<SPECS>` course-paths scenario reports as executed (passed), none as undefined, pending, or
+    silently skipped; the full aggregate command exits 0.
+
+- [x] [AI] **Legacy-redirect regression guard (not owned Gherkin)** — assert that one already-shipped
       legacy redirect still resolves after the route-wiring change — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: the guard passes. The redirect's own
       Gherkin belongs wholly to `ayokoding-learning-path-01-url-restructure`; this is a regression
       guard proving **this plan** did not break it, not a re-assertion of that plan's scenario.
 
+  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none — verification only; the existing
+  legacy-redirect e2e spec from `ayokoding-learning-path-01-url-restructure` still passes unmodified
+  as part of the full `ayokoding-www-fe-e2e:test:e2e` run.
+
 ### Local Quality Gates (Before Push)
 
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` exits 0.
-- [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by these changes.
+- [x] [AI] `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` exits 0.
+- [x] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by these changes.
+
+  **Date**: 2026-07-25. **Status**: Done, with two additional root-cause defects found and fixed
+  while running this gate for the first time (both previously invisible — neither had ever been
+  exercised by a Phase 0-2 change). **Files Changed and deviations**:
+  - **`vitest.config.ts` double-project glob match (genuine pre-existing defect, root-caused)** —
+    `nx run ayokoding-www:test:unit`'s official invocation (not the narrower `--project unit
+--project unit-fe <file>` filter used during individual cycles' GREEN steps) failed for
+    `index-generator.unit.test.ts` and `service.unit.test.ts` with "Attempted to access a
+    server-side environment variable on the client": the `unit-fe` project's
+    `src/features/**/*.test.{ts,tsx}` glob is a suffix match, so `*` also swallows a
+    `.unit.test.ts` file's `.unit` segment, double-running it under jsdom in addition to the
+    intended `node`-environment `unit` project — every pre-existing `.unit.test.ts` file happens to
+    live outside `src/features/**`, so this glob overlap was never triggered before these two new
+    files (the first to use this naming convention under `src/features/**`). Fixed by excluding
+    `**/*.unit.test.{ts,tsx}` from the `unit-fe` project's own `exclude` list in
+    `apps/ayokoding-www/vitest.config.ts`.
+  - **`course-paths-breadcrumb.steps.tsx` scenario-binding gap (Phase 3, Cycle 3.1 — root-caused)**
+    — the same official `test:unit` run failed with `ScenarioNotCalledError` for "A path landing
+    page lists its courses in manifest order": `breadcrumb.feature`'s own header comment
+    documented this `@unit @e2e` scenario as bound by `path-landing.test.tsx`/
+    `route-paths-hub.test.tsx`, but neither uses `@amiceli/vitest-cucumber`'s `Given`/`When`/`Then`
+    API — only a Cucumber-style binder using that exact API can satisfy `vitest-cucumber`'s
+    "every non-excluded scenario needs a `Scenario()` call" requirement, and no such binder existed
+    for this specific scenario (`course-paths-breadcrumb.steps.tsx` deliberately excludes it — see
+    its own comment). Fixed by adding `excludeTags: ["wip", "e2e"]` to
+    `course-paths-breadcrumb.steps.tsx` (scoping it strictly to its one `@unit`-only scenario) and
+    creating `apps/ayokoding-www/test/unit/fe-steps/path-landing-manifest-order.steps.tsx`
+    _(New file)_ to bind the scenario itself (`includeTags: [["unit", "e2e"]]`, vitest-cucumber's
+    array-form AND filter), reusing `path-landing.test.tsx`'s fixture.
+  - **`specs:behavior:coverage`'s literal step-text scan surfaced 9 further scenario-binding gaps**
+    — running this gate's `specs:behavior:coverage` command for the first time (individual cycles'
+    GREEN steps only ran the narrower e2e/unit-test commands their own text named, never this
+    project-wide static check) revealed that rhino-cli's `specs behavior-coverage validate
+    --shared-steps` scans `apps/ayokoding-www` for literal `Given\|When\|Then\|And("...")` calls
+    matching each Gherkin step's exact text — it cannot see step definitions in the sibling
+    `ayokoding-www-fe-e2e` app at all, so every Phase 3 scenario needs its own
+    `test/unit/fe-steps/*.steps.tsx` binder using `@amiceli/vitest-cucumber`, regardless of whether
+    it also carries `@e2e`, matching the established convention already used by
+    `canonical-fallback.steps.tsx`/`invalid-path-fallback.steps.tsx`/`omitted-course.steps.tsx`/
+    `path-order-nav.steps.tsx` for Phase 2's own scenarios. Added 9 new binder files, each reusing
+    an already-proven `.test.tsx` fixture: `category-landing-empty-state.steps.tsx`,
+    `arc-landing-one-role.steps.tsx`, `arc-landing-two-role.steps.tsx`,
+    `category-landing-arc-chooser.steps.tsx`, `skills-fixed-arc-statement.steps.tsx`,
+    `paths-hub-category-grouping.steps.tsx`, `skills-path-landing-body.steps.tsx`,
+    `landing-hero.steps.tsx`, `course-paths-accessibility.steps.tsx` (named distinctly from the
+    pre-existing, unrelated `accessibility.steps.tsx`, which binds `gherkin/app-shell/
+accessibility.feature`) — all New files under `apps/ayokoding-www/test/unit/fe-steps/`.
+  - `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage
+--base=origin/ayokoding-learning-path-03-navigation-ui/feature` exits 0 (25 projects, 6
+    dependency tasks); `specs:behavior:coverage` reports "Spec coverage valid! 40 specs, 282
+    scenarios, 1023 steps — all covered." `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 (final
+    clean 3-browser local run, after the WebKit focus-restoration fix above: 623 passed, 166
+    skipped — `@unit`-only/`@wip` scenarios correctly unexecuted at e2e — 0 failed).
 
 ### Push for Durability (No PR Yet)
 
-- [ ] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/feature` (this delivery
+- [x] [AI] Commit and push to `origin ayokoding-learning-path-03-navigation-ui/feature` (this delivery
       unit's branch, Phases 2-5) — durability only; no PR is open yet, so there is no CI check run to
       monitor. Do NOT proceed to Phase 4 until this Phase 3 Gate below is fully green.
+  - **Date**: 2026-07-25. **Status**: Done. **Files Changed**: pushed 7 commits on top of Phase 2's
+    `be51fa1de` (thematically split — 4 preexisting-defect fixes discovered while completing this
+    phase, 1 large feature commit, 1 test-binding commit, 1 docs commit):
+    - `f3473a122` — fix: dedupe concurrent content-index builds to prevent a race under load.
+    - `a11904837` — fix: preserve hand-authored body content for childless index sections.
+    - `1f48e3312` — fix: scope manifest-integrity checks across all locales, not just the render
+      locale.
+    - `7252f61e9` — fix: restore focus to the mobile-nav drawer's opening control on close.
+    - `550233c9c` — fix: stop unit-fe project double-running `.unit.test.ts` files.
+    - `d2b310fb1` — feat: add path landing, category landing, arc landing, and paths hub pages.
+    - `0638b38eb` — test: bind all Phase 3 course-paths Gherkin scenarios to unit and e2e steps.
+    - Plus this docs commit ticking Phase 3's remaining delivery.md checkboxes. All 8 pushed to
+      `origin ayokoding-learning-path-03-navigation-ui/feature`; no PR opened (opens at Phase 5 per
+      [Delivery Boundaries](#delivery-boundaries)).
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] Path landing + the category-grouped paths hub (Careers arc-grouped, up to four cards; Skills
+- [x] [AI] Path landing + the category-grouped paths hub (Careers arc-grouped, up to four cards; Skills
       section separate) + `category-landing.tsx` + `arc-landing.tsx` + `empty-path-list-state.tsx` + the
       landing-hero `PathCard` grid and escape hatch all render from the **same** manifest data;
       prerequisite display verified; all `course-paths` e2e specs green in `en`, including the Screen 0
       hero spec, the category/arc landing specs, and the a11y scenario.
-- [ ] [AI] Exactly one `PathCard` implementation exists —
+  - **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification-only step). All four
+    surfaces (`hero.tsx`, `paths-route.ts`'s hub dispatch, `category-landing.tsx`, `arc-landing.tsx`)
+    load through the same `loadRoutePathData`/manifest-repository path, confirmed by
+    `route-paths-hub.test.tsx`'s shared-fixture integration coverage and the final green e2e run
+    below (623 passed covering the hero, hub, category, arc, and a11y specs across `chromium`,
+    `firefox`, `webkit`).
+
+- [x] [AI] Exactly one `PathCard` implementation exists —
       `grep -ro -- "function PathCard" apps/ayokoding-www/src | wc -l` returns **1**.
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` + `:build` + `:lint` + `:specs:behavior:coverage`
+  - **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification-only step). Command
+    re-run just before this Gate note: returns `1`.
+
+- [x] [AI] `npx nx run ayokoding-www:test:unit` + `:build` + `:lint` + `:specs:behavior:coverage`
       **and** `npx nx run ayokoding-www-fe-e2e:test:e2e` exit 0. (`ayokoding-www:test:e2e` and
       `:test:integration` are both no-op echoes — e2e lives in the paired `ayokoding-www-fe-e2e`
       project, and the integration tier is deliberately unused for content apps.)
-- [ ] [AI] All Phase 3 work is committed to `ayokoding-learning-path-03-navigation-ui/feature` (this
+  - **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification-only step). Each
+    target run individually, fresh, after all Phase 3 commits landed: `test:unit` exits 0 (125 test
+    files, 2373 passed, 6 skipped, 0 failed); `lint` exits 0 (only preexisting unrelated warnings, no
+    errors); `specs:behavior:coverage` exits 0 ("Spec coverage valid! 40 specs, 282 scenarios, 1023
+    steps — all covered."); `build` exits 0 (11 workers, 1850/1850 static pages, all routes
+    generated). `ayokoding-www-fe-e2e:test:e2e` exits 0 per the Local Quality Gates note above (final
+    clean 3-browser run: 623 passed, 166 skipped, 0 failed).
+
+- [x] [AI] All Phase 3 work is committed to `ayokoding-learning-path-03-navigation-ui/feature` (this
       delivery unit's branch, Phases 2-5); every check above in this Phase 3 Gate is green; nothing has
       been pushed for review yet — the unit's PR opens at Phase 5 per
       [Delivery Boundaries](#delivery-boundaries).
+  - **Date**: 2026-07-25. **Status**: Done. **Files Changed**: none (verification-only step). Working
+    tree clean after all 8 commits (7 code/test commits + this docs commit); branch pushed to
+    `origin ayokoding-learning-path-03-navigation-ui/feature` for durability only — no PR opened.
 
 > **Pause Safety**: the full path-aware navigation UI is implemented, tested (unit + e2e + specs), and
 > live — but **no real path manifests are published yet**, so production still shows the canonical
