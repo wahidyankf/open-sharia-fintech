@@ -19,6 +19,13 @@ export class ContentService {
   private readonly repository: ContentRepository;
   private readonly searchDataPath: string | null;
   private contentIndex: ContentIndex | null = null;
+  // Course-paths plan, Phase 3 — regression fix: `getIndex()`'s lazy-build guard used to be a
+  // synchronous-check / asynchronous-fill (`if (!this.contentIndex) { this.contentIndex = await
+  // ... }`), so every caller that arrived before the very first build resolved independently
+  // triggered its own full `buildContentIndex()` scan, and whichever finished last silently
+  // overwrote the cache for the process's lifetime. Tracking the in-flight build promise itself
+  // means every concurrent caller awaits the exact same build (see `service.unit.test.ts`).
+  private contentIndexPromise: Promise<ContentIndex> | null = null;
   private searchIndexes = new Map<string, FlexSearch.Document<SearchDoc, true>>();
   private docStore = new Map<string, SearchDoc>();
 
@@ -28,10 +35,23 @@ export class ContentService {
   }
 
   async getIndex(): Promise<ContentIndex> {
-    if (!this.contentIndex) {
-      this.contentIndex = await this.buildContentIndex();
+    if (this.contentIndex) {
+      return this.contentIndex;
     }
-    return this.contentIndex;
+    if (!this.contentIndexPromise) {
+      this.contentIndexPromise = this.buildContentIndex()
+        .then((index) => {
+          this.contentIndex = index;
+          return index;
+        })
+        .catch((error: unknown) => {
+          // Let a failed build be retried by the next caller instead of permanently caching a
+          // rejection.
+          this.contentIndexPromise = null;
+          throw error;
+        });
+    }
+    return this.contentIndexPromise;
   }
 
   async getBySlug(
