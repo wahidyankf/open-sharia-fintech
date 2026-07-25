@@ -133,6 +133,30 @@ describe("Cycle 2.2 — route wiring: prev/next follow the active path's order",
   });
 });
 
+// UWT-004 fix (phase-5 rule-15 usability retest) — regression: `PathBanner` used to render after
+// the syllabus/prerequisites, so a mobile reader scrolled past the entire course body before
+// learning they were even inside a path. It must render immediately below the `<h1>`, above both
+// the body and the prerequisite list — asserted here via DOM tree order so a future refactor that
+// silently moves it back down fails this test instead of shipping unnoticed (no existing test
+// asserted this order before this fix).
+describe("Cycle 2.9/UWT-004 — the mobile path banner renders above the body and prerequisites", () => {
+  it("places PathBanner's DOM node before the course body and before the prerequisite list", async () => {
+    const jsx = await renderCoursePage(["learn", "courses", "just-enough-python"], {
+      path: fixtureManifest.pathId,
+    });
+    render(jsx);
+
+    const banner = screen.getByRole("button", { name: /View path/i });
+    const body = screen.getByText("Just Enough Python content");
+    const prerequisites = screen.getByRole("navigation", { name: "Prerequisites" });
+
+    // `compareDocumentPosition` bit 4 (DOCUMENT_POSITION_FOLLOWING) set on the result means the
+    // argument follows `banner` in tree order — i.e. `banner` precedes it.
+    expect(banner.compareDocumentPosition(body) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(banner.compareDocumentPosition(prerequisites) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});
+
 describe("Cycle 2.6 — an invalid path context falls back to the canonical view", () => {
   it("renders the canonical view with no error when ?path= names no loaded manifest", async () => {
     const jsx = await renderCoursePage(["learn", "courses", "just-enough-python"], {

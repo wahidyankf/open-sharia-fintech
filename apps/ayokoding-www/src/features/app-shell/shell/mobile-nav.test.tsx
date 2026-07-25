@@ -165,6 +165,35 @@ describe("Cycle 2.9 — MobileNav swaps SidebarTree for PathRail when a path con
   });
 });
 
+// UWT-005 fix (phase-5 rule-15 usability retest) — regression: the width-preset control used to
+// carry no stated reason to widen the drawer at all; it must render a concrete-benefit hint, in
+// both locales, so a future refactor that drops the hint fails a test instead of shipping silently.
+describe("UWT-005 — mobile drawer states a concrete reason to widen it", () => {
+  it("renders the English width hint text", async () => {
+    const { MobileNav } = await import("./mobile-nav");
+    render(<MobileNav locale="en" open={true} onOpenChange={() => {}} />);
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+
+    expect(screen.getByText("Widen the drawer to read long path or course titles in full")).toBeTruthy();
+  });
+
+  it("renders the Indonesian width hint text for locale=id", async () => {
+    const { MobileNav } = await import("./mobile-nav");
+    render(<MobileNav locale="id" open={true} onOpenChange={() => {}} />);
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+
+    expect(
+      screen.getByText("Perlebar drawer untuk membaca judul jalur atau kursus yang panjang secara utuh"),
+    ).toBeTruthy();
+  });
+});
+
 // Phase 3, Cycle 3.4 — regression: Radix's `Dialog` restores focus on close to its own
 // `Dialog.Trigger` ref by default, but this drawer is opened from more than one plain,
 // context-driven control (the header's menu button, `PathBanner`'s "View path" button) — neither
