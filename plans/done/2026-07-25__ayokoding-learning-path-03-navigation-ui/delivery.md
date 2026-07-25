@@ -3914,8 +3914,10 @@ plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so 
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in
       `<PLAN>evidence/`; the `en` content locale exercised (per brd.md's Indonesian-mirror-deferred
       non-goal). Manual API verification is not applicable — this plan adds no endpoint.
-      **Evidence**: `<PLAN>evidence/` has 114 files (screenshots + notes from Phase 5's full 3-breakpoint
-      walk across all screens, `en` locale) — already committed in Phase 5, re-confirmed present here.
+      **Evidence**: `<PLAN>evidence/` has 115 files — 112 screenshots from Phase 5's full 3-breakpoint
+      walk across all screens (`en` locale), plus `phase-0-snapshot.txt`, `phase-2-specs-coverage-delta.txt`,
+      and the Phase 8 no-path-invariant production screenshot (`phase-8-prod-no-path-invariant-en-1280px.png`)
+      — committed across Phases 0/2/5/8, re-confirmed present here.
 - [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires explicit
       user permission (only when genuinely impossible); SG-###/USS-### may be triaged or deferred with
       rationale.
