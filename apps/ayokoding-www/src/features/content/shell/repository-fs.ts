@@ -77,9 +77,25 @@ export class FileSystemContentRepository implements ContentRepository {
     return { locale, slug, isSection };
   }
 
+  /**
+   * Recursively collect every `.md` file under `dir`.
+   *
+   * Returns `[]` when `dir` does not exist (or any directory-level `readdir` fails mid-walk) rather
+   * than throwing — mirrors `course-paths/shell/manifest-repository.ts`'s `globManifestFiles`. This
+   * repository has no error boundary above it (`loadRoutePathData` calls `getIndex()`, which calls
+   * this, from the **root** `[locale]/layout.tsx`, above the only `error.tsx` in the tree), so an
+   * unguarded `readdir` throw here (e.g. a misconfigured `AYOKODING_WEB_CONTENT_DIR` pointing at an
+   * absent path) would 500 the entire site rather than degrading to an empty content index.
+   */
   private async globMarkdownFiles(dir: string): Promise<string[]> {
+    let entries: import("node:fs").Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return [];
+    }
+
     const files: string[] = [];
-    const entries = await fs.readdir(dir, { withFileTypes: true });
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
