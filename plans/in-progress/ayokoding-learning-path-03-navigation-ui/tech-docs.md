@@ -597,6 +597,29 @@ Four rules make the fixtures trustworthy rather than a self-fulfilling stub:
   [prd.md's Shared design legend accent-hue entry](./prd.md#shared-design-legend-all-six-screens)
   for the resulting map and this plan's `assets/src/*.html` mockups for the corrected cards.
 
+- **DD-51 · The `mobile-nav.tsx` ⇄ `path-banner.tsx` two-way import is a deliberate, scoped
+  exception to one-directional feature coupling, flagged by PR #95's cycle-3 review (2026-07-25) and
+  recorded here rather than restructured.** Two edges exist between `app-shell` and `course-paths` at
+  this head SHA: `course-paths` → `app-shell` (`path-banner.tsx` imports `useMobileNavOpen` from
+  `@/features/app-shell/shell/use-mobile-nav-open`) and `app-shell` → `course-paths`
+  (`mobile-nav.tsx` imports `PathRail`, `resolveActiveCourseFromLocation`, a `PathManifest` type, and
+  — closing the cycle specifically with `path-banner.tsx` — `MOBILE_NAV_DRAWER_ID`). `header.tsx` and
+  `hero.tsx` also import from `course-paths`, but those are one-directional (no course-paths import
+  flows back into either), so the cycle is exactly the `mobile-nav.tsx` ⇄ `path-banner.tsx` pair.
+  **Why it exists**: DD-46 established that `PathBanner`'s mobile disclosure trigger opens the
+  **same** `Sheet` the header's hamburger button opens, not a second overlay — so `PathBanner`
+  (`course-paths`) needs the shared `open`/`setOpen` state `MobileNav` (`app-shell`) owns, and
+  `MobileNav` needs the exact drawer-content `id` (`MOBILE_NAV_DRAWER_ID`) `PathBanner`'s
+  `aria-controls` references, so the two literally must agree on one constant. **Alternative
+  considered and deferred, not rejected**: hoisting `useMobileNavOpen`'s context provider and
+  `MOBILE_NAV_DRAWER_ID` out of both features into a neutral shared home (e.g. `navigation`, which
+  both features already depend on one-directionally) would collapse this to two one-way edges with
+  zero behavior change — a mechanical, low-risk move. Deferred rather than done in this pass because
+  this plan is at Phase 5 (post-manual-verification, near-archival) with an already-large delivery
+  diff; reopening closed phases for a purely structural refactor with no functional payoff is
+  disproportionate here. Recorded as a standing, intentional exception — not silently left
+  undocumented — and a good first task for whichever future plan next touches either file.
+
 ### Inherited verbatim (build order — no single plan owns it)
 
 Reproduced verbatim because Group A alone spans three of the five split plans.
