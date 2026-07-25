@@ -1448,10 +1448,15 @@ course-paths/shell/course-library.test.ts` (preexisting typecheck bug found duri
       PR is open yet, so there is no CI check run to monitor. Do NOT proceed to Phase 3 until this
       Phase 2 Gate below is fully green.
 
-  **Date**: 2026-07-25. **Status**: Done. **Files Changed**: 3 commits on
-  `ayokoding-learning-path-03-navigation-ui/feature` — `f577553a0` (feat: path-aware course
-  navigation shell), `2100709f0` (test: course-paths Gherkin bindings), and this delivery.md commit
-  — pushed to `origin` for durability. No PR opened.
+  **Date**: 2026-07-25. **Status**: Done, with one caught-and-fixed pre-push regression. **Files
+  Changed**: 4 commits pushed to `ayokoding-learning-path-03-navigation-ui/feature` —
+  `f577553a0` (feat: path-aware course navigation shell), `2100709f0` (test: course-paths Gherkin
+  bindings), `2829835a3` (docs: this delivery.md's Phase 2 checkbox update), and
+  `e11ec2cc6` (docs: `apps/ayokoding-www/.env.example` declares `AYOKODING_WEB_MANIFESTS_DIR`).
+  The first `git push` attempt was rejected by the pre-push hook's `env validate` gate
+  ("DRIFT read-but-undeclared AYOKODING_WEB_MANIFESTS_DIR") — `env.ts`'s schema declared the var
+  (Cycle 2.1) but `.env.example` never documented it; fixed per Root Cause Orientation, then
+  `env validate` and the push both succeeded.
 
 ### Phase 2 Gate
 
