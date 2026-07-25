@@ -3786,7 +3786,7 @@ ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
       `TypeScript quality gate` job's `nx affected` invocation excludes `test:e2e` entirely — see CI job
       command in the Phase 6 CI evidence below). Routed to Phase 7 Knowledge Capture as a
       `plans/backlog/` candidate rather than fixed inline (out of this plan's scope). `nx run
-  ayokoding-www:build` — exit 0.
+ayokoding-www:build` — exit 0.
 - [x] [AI] Monitor the final `main` CI run (poll every ~2 min; one
       `gh run view --json status,conclusion` per wakeup; never `gh run watch`) — acceptance: all GitHub
       Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
@@ -3800,7 +3800,7 @@ ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
       rendering layer with no regression for no-path readers.
       Evidence: `apps-ayokoding-www-deployer` force-pushed `main`@`0834ac1b7` to `prod-ayokoding-www`
       (`a103eb8b5..0834ac1b7`). Direct verification: `https://www.ayokoding.com/en` → 200, `.../en
-  /learn/paths` → 200 (`<title>Paths | AyoKoding</title>`), `.../en/learn/courses/just-enough-nvim`
+/learn/paths` → 200 (`<title>Paths | AyoKoding</title>`), `.../en/learn/courses/just-enough-nvim`
       (no `?path=`) → 200, final URL unchanged (no redirect to a `?path=`-bearing URL),
       `<title>1 · Just Enough Nvim | AyoKoding</title>`.
 - [x] [AI] Fast-forward local `main` after the last side-worktree push (`git checkout main && git pull
@@ -3827,33 +3827,48 @@ ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason — acceptance: every
       entry has either a route or a discard reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+      Evidence: 4 entries triaged — 3 survive (gh `-f`/`-F`, zsh 1-indexed arrays, parallel-affected-run
+      contention flakes), 1 discarded (`ose-app-web-e2e` "failure" — already documented in its own
+      README, litmus fails since nothing new would be caught).
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable —
       acceptance: `learnings.md` contains no raw secret.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
+      Evidence: none of the 3 surviving entries reference any secret, credential, token, or hostname —
+      all are shell/tooling/environment behavior notes.
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
       hostnames/inventories) stays in `ose-infra` only and is NEVER cross-routed into
       `ose-public`/`ose-primer`; public-governance content may propagate via the existing parity loop —
       acceptance: no infra-private content appears in this repo's routed output.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix —
+      Evidence: none of the 3 surviving entries reference `ose-infra`-private content (no Terraform,
+      k3s, Proxmox, or real inventory data) — all are generic shell/CI/agent-instruction behavior.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix —
       non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large); **code
       homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan and
       NEVER landed inline** in this plan's commits or PR — acceptance: every `learnings.md` entry records
       its terminal routing state.
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+      Evidence: all 3 surviving entries are non-code (`.claude/agents/`, workflow docs) and small —
+      routed inline: 2 to `.claude/agents/pr-review-fixer.md`, 1 to `repo-governance/workflows/plan/
+plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so no new
+      `plans/backlog/` filing was needed — the one candidate that would have been code-homed
+      (`course-rehome-redirects.feature` concurrency) is already tracked by the existing backlog plan
+      `harden-ayokoding-www-fe-e2e-bulk-link-concurrency`.
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>` — acceptance: `learnings.md` is never silently
       empty.
+      N/A — 3 generalizable learnings did surface and are recorded above with terminal routing states;
+      `learnings.md` is not empty.
 
 ### Phase 7 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR.
-- [ ] [AI] `learnings.md` triage is committed to `ayokoding-learning-path-03-navigation-ui/archival`
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR.
+- [x] [AI] `learnings.md` triage is committed to `ayokoding-learning-path-03-navigation-ui/archival`
       (this delivery unit's branch, Phases 7-8); every check above in this Phase 7 Gate is green;
       nothing has been pushed for review yet — the unit's PR opens at Phase 8 per
       [Delivery Boundaries](#delivery-boundaries).
