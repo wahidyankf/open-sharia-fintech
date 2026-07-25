@@ -1,4 +1,4 @@
-import { normalizeCourseRef } from "../core/manifest";
+import { normalizeCourseRef, type NormalizedCourseRef } from "../core/manifest";
 import { parsePathContext } from "../core/path-context";
 import { resolvePathNav, type PathNav } from "../core/path-nav";
 import { resolvePrerequisites, type PrerequisitesByCourse } from "../core/prerequisites";
@@ -21,6 +21,17 @@ export function courseIdFromSlug(slug: string): string | null {
 /** The canonical content slug for a course ID — the inverse of {@link courseIdFromSlug}. */
 export function slugForCourseId(courseId: string): string {
   return `${COURSE_SLUG_PREFIX}${courseId}`;
+}
+
+/**
+ * Normalize `manifest.courseOrder` to its object shape, in original order — the one ordering
+ * helper `PathRail` and `PathLanding` (Cycle 3.1's REFACTOR note) both render from, so a manifest's
+ * course sequence is never independently re-derived per renderer.
+ *
+ * Pure — no IO.
+ */
+export function manifestCourseOrder(manifest: PathManifest): NormalizedCourseRef[] {
+  return manifest.courseOrder.map(normalizeCourseRef);
 }
 
 /** The resolved path context for a course page: which path, its manifest, and prev/next. */

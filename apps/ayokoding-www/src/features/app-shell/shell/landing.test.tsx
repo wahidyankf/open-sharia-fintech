@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { LandingSectionDescriptor } from "@/features/content/core/landing-sections";
+import type { PathManifest } from "@/features/course-paths/core/schemas";
 
 vi.mock("next/link", () => ({
   default: ({ href, children, ...rest }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
@@ -19,14 +20,24 @@ function descriptor(slug: string, title: string, blurb: string): LandingSectionD
   return { slug, title, blurb, icon: undefined };
 }
 
+function manifest(pathId: string, arc: string, title: string): PathManifest {
+  return { pathId, arc, title, description: `${title} description`, courseOrder: ["just-enough-python"] };
+}
+
 const enSections: LandingSectionDescriptor[] = [
   descriptor("learn", "Learn", "Languages, architecture, system design — by example."),
   descriptor("rants", "Rants", "Opinionated takes — a first-class section."),
 ];
 
+const heroManifests: PathManifest[] = [
+  manifest("careers/interview-ready/backend-track", "interview-ready", "Backend Track"),
+  manifest("careers/immediately-effective/frontend-track", "immediately-effective", "Frontend Track"),
+  manifest("skills/example-subject", "example-track", "Example Subject"),
+];
+
 describe("Landing", () => {
   it("renders the hero heading as the single H1 and the intro copy", () => {
-    render(<Landing locale="en" sections={enSections} />);
+    render(<Landing locale="en" sections={enSections} manifests={heroManifests} />);
     const h1s = screen.getAllByRole("heading", { level: 1 });
     expect(h1s).toHaveLength(1);
     expect(h1s[0]?.textContent).toBe("Learn to build software, the clear way.");
@@ -37,10 +48,28 @@ describe("Landing", () => {
     ).toBeTruthy();
   });
 
-  it("renders the two hero CTAs linking to the browse index and tools index", () => {
-    render(<Landing locale="en" sections={enSections} />);
-    expect(screen.getByRole("link", { name: "Start learning" }).getAttribute("href")).toBe("/en/browse");
-    expect(screen.getByRole("link", { name: "Explore tools" }).getAttribute("href")).toBe("/en/tools");
+  it("renders a 'Choose your path' eyebrow with a PathCard per careers manifest, capped at four, plus the escape-hatch row", () => {
+    render(<Landing locale="en" sections={enSections} manifests={heroManifests} />);
+
+    expect(screen.getByText("Choose your path")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Start the Backend Track path/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Start the Frontend Track path/ })).toBeTruthy();
+    // The skills fixture is excluded from the hero grid (careers paths only, R1/prd.md Screen 0).
+    expect(screen.queryByRole("link", { name: /Start the Example Subject path/ })).toBeNull();
+
+    expect(screen.getByRole("link", { name: "Compare all paths →" }).getAttribute("href")).toBe("/en/learn/paths");
+    expect(screen.getByRole("link", { name: "Explore skills paths →" }).getAttribute("href")).toBe(
+      "/en/learn/paths/skills",
+    );
+    expect(screen.getByRole("link", { name: "Browse the full course library →" }).getAttribute("href")).toBe(
+      "/en/browse",
+    );
+  });
+
+  it("no longer renders the old standalone Learn/Tools hero CTA buttons (moved into the global nav)", () => {
+    render(<Landing locale="en" sections={enSections} manifests={heroManifests} />);
+    expect(screen.queryByRole("link", { name: "Start learning" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Explore tools" })).toBeNull();
   });
 
   it("renders a section card per descriptor, linking through contentUrl (bare join, DD-48)", () => {

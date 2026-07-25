@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
-import { normalizeCourseRef } from "../core/manifest";
 import type { PathManifest } from "../core/schemas";
-import { slugForCourseId } from "./course-path-nav";
+import { manifestCourseOrder, slugForCourseId } from "./course-path-nav";
 
 export interface PathRailProps {
   locale: string;
@@ -22,7 +21,7 @@ export interface PathRailProps {
  * where `resizable-sidebar.tsx` already defines them (tech-docs.md §Screen 3).
  */
 export function PathRail({ locale, manifest, currentCourseId, courseTitles }: PathRailProps) {
-  const courses = manifest.courseOrder.map(normalizeCourseRef);
+  const courses = manifestCourseOrder(manifest);
 
   return (
     <nav aria-label={`${manifest.title} course list`} className="flex flex-col gap-3 text-sm">

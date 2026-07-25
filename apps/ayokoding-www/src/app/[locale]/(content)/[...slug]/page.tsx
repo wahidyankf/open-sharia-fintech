@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { serverCaller } from "@/lib/trpc/server";
 import { isValidLocale, type Locale } from "@/features/i18n/core/config";
@@ -15,13 +16,39 @@ import {
   courseIdFromSlug,
   resolveCoursePathRenderData,
   coursePositionInManifest,
+  buildCourseTitleIndex,
 } from "@/features/course-paths/shell/course-path-nav";
 import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
 import { PrerequisiteList } from "@/features/course-paths/shell/prerequisite-list";
 import { PathCourseLinks } from "@/features/course-paths/shell/path-course-links";
 import { PathBanner } from "@/features/course-paths/shell/path-banner";
+import {
+  isLearnPathsSlug,
+  resolvePathsRoute,
+  groupCareersManifestsByArc,
+  skillsManifests,
+  manifestsForArc,
+  LEARN_PATHS_PREFIX,
+} from "@/features/course-paths/shell/paths-route";
+import { PathCard, CategorySection, ArcGroup } from "@/features/course-paths/shell/path-card";
+import { CategoryLanding } from "@/features/course-paths/shell/category-landing";
+import { ArcLanding } from "@/features/course-paths/shell/arc-landing";
+import { PathLanding } from "@/features/course-paths/shell/path-landing";
+import { EmptyPathListState } from "@/features/course-paths/shell/empty-path-list-state";
 
-export const dynamicParams = false;
+/**
+ * Widened from `false` (Phase 3, course-paths plan) — the `learn/paths/**` namespace (hub,
+ * category, arc, and terminal path landings) is deliberately **excluded** from
+ * `generateStaticParams` below and rendered on demand instead, because its render depends on
+ * `manifest-repository.ts`'s `AYOKODING_WEB_MANIFESTS_DIR`-driven data, which must be read **fresh
+ * per request** rather than baked in once at build time (the e2e suite proves this against a
+ * fixture manifest set without a second, specially-configured production build). Every
+ * already-enumerated content slug (every course, every loose page) is completely unaffected: it
+ * stays exactly as static as before — `dynamicParams` only changes what happens for a slug
+ * `generateStaticParams` does NOT return, which previously hard-404'd and now renders on demand
+ * (still 404ing correctly when nothing resolves, e.g. a truly nonexistent course URL).
+ */
+export const dynamicParams = true;
 
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
   // Widened (DD-48 de-namespacing): this catch-all now serves the ENTIRE
@@ -47,6 +74,11 @@ export async function generateStaticParams({ params }: { params: { locale: strin
   for (const [key, meta] of index.contentMap) {
     if (!key.startsWith(`${params.locale}:`)) continue;
     if (meta.slug === "") continue;
+    // Course-paths plan (Phase 3): the `learn/paths/**` namespace is rendered on demand (see this
+    // file's `dynamicParams` doc comment above), never statically enumerated — even though real
+    // `_index.md` structural files already exist for the hub/category/arc roots, their render
+    // depends on freshly-loaded manifest data that a one-time static build cannot keep current.
+    if (isLearnPathsSlug(meta.slug)) continue;
     slugs.push({ slug: meta.slug.split("/") });
   }
 
@@ -117,13 +149,144 @@ export async function generateMetadata({ params }: { params: Props["params"] }):
       ...(isLegacySlug(slug) ? { robots: { index: false, follow: true } } : {}),
     };
   } catch {
+    // A terminal path landing (e.g. `careers/<arc>/<role>`) has no `_index.md` of its own — its
+    // title comes from the loaded manifest instead, best-effort, rather than a bare "Not Found".
+    if (isLearnPathsSlug(slugStr)) {
+      const pathData = await loadRoutePathData(locale);
+      const resolution = resolvePathsRoute(slugStr, pathData.manifests);
+      if (resolution.kind === "path") {
+        return { title: resolution.manifest.title, description: resolution.manifest.description };
+      }
+    }
     return { title: "Not Found" };
   }
+}
+
+/**
+ * The `learn/paths/**` namespace's render dispatch (course-paths plan, Phase 3) — hub (Screen 1),
+ * category landing (Screen 1a), arc landing (Screen 1b, careers-only), or terminal path landing
+ * (Screen 2). Returns `null` for `{ kind: "not-found" }` so the caller falls through to the
+ * standard canonical content-page render (which itself 404s for a genuinely nonexistent slug).
+ */
+async function renderPathsRoute(locale: string, slugStr: string) {
+  const pathData = await loadRoutePathData(locale);
+  const resolution = resolvePathsRoute(slugStr, pathData.manifests);
+
+  if (resolution.kind === "not-found") {
+    return null;
+  }
+
+  const courseTitles = buildCourseTitleIndex(pathData.contentMap, locale, pathData.manifests);
+
+  // Best-effort SEO/body content from this route's own `_index.md`, when one exists — every
+  // careers `_index.md` (hub/category/arc roots) already exists; a terminal path's `_index.md` may
+  // not (Cycle 3.1d's careers no-regression clause: silent no-op when absent).
+  let seoPage: { title: string; description?: string | null; html: string } | null = null;
+  try {
+    seoPage = await serverCaller.content.getBySlug({ locale: locale as Locale, slug: slugStr });
+  } catch (err) {
+    if (!(err instanceof TRPCError && err.code === "NOT_FOUND")) {
+      throw err;
+    }
+  }
+
+  if (resolution.kind === "hub") {
+    const careersArcGroups = groupCareersManifestsByArc(pathData.manifests);
+    const skills = skillsManifests(pathData.manifests);
+
+    return (
+      <section className="mx-auto max-w-6xl flex-1 px-6 py-8 lg:px-8">
+        <h1 className="text-4xl font-extrabold tracking-tight">{seoPage?.title ?? "Paths"}</h1>
+        <p className="mt-2 text-muted-foreground">{seoPage?.description ?? "Choose your path."}</p>
+
+        <CategorySection id="careers" heading="Careers" strapline="Converging within your role">
+          {careersArcGroups.length === 0 ? (
+            <EmptyPathListState
+              fallbackHref={contentUrl(locale as Locale, `${LEARN_PATHS_PREFIX}/skills`)}
+              fallbackLabel="Skills"
+            />
+          ) : (
+            careersArcGroups.map(({ arc, manifests: arcManifests }) => (
+              <ArcGroup key={arc} arc={arc}>
+                {arcManifests.map((manifest) => (
+                  <li key={manifest.pathId}>
+                    <PathCard locale={locale} manifest={manifest} context="hub" />
+                  </li>
+                ))}
+              </ArcGroup>
+            ))
+          )}
+        </CategorySection>
+
+        <CategorySection id="skills" heading="Skills" strapline="Up and running fast, then deeper and deeper">
+          {skills.length === 0 ? (
+            <EmptyPathListState
+              fallbackHref={contentUrl(locale as Locale, `${LEARN_PATHS_PREFIX}/careers`)}
+              fallbackLabel="Careers"
+            />
+          ) : (
+            <ul className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+              {skills.map((manifest) => (
+                <li key={manifest.pathId}>
+                  <PathCard locale={locale} manifest={manifest} context="hub" showCourseCount={false} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </CategorySection>
+
+        <Link
+          href={`/${locale}/browse`}
+          className="mt-6 inline-flex text-sm text-muted-foreground hover:text-foreground"
+        >
+          Browse the full course library →
+        </Link>
+      </section>
+    );
+  }
+
+  if (resolution.kind === "category") {
+    return (
+      <section className="mx-auto max-w-6xl flex-1 px-6 py-8 lg:px-8">
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          {seoPage?.title ?? (resolution.category === "careers" ? "Careers" : "Skills")}
+        </h1>
+        <p className="mt-2 text-muted-foreground">{seoPage?.description ?? ""}</p>
+        <CategoryLanding locale={locale} category={resolution.category} manifests={pathData.manifests} />
+      </section>
+    );
+  }
+
+  if (resolution.kind === "arc") {
+    const arcManifests = manifestsForArc(pathData.manifests, resolution.arc);
+    return (
+      <section className="mx-auto max-w-6xl flex-1 px-6 py-8 lg:px-8">
+        <h1 className="text-4xl font-extrabold tracking-tight">{seoPage?.title ?? resolution.arc}</h1>
+        <p className="mt-2 text-muted-foreground">{seoPage?.description ?? ""}</p>
+        <ArcLanding locale={locale} arc={resolution.arc} manifests={arcManifests} courseTitles={courseTitles} />
+      </section>
+    );
+  }
+
+  return (
+    <PathLanding locale={locale} manifest={resolution.manifest} courseTitles={courseTitles} bodyHtml={seoPage?.html} />
+  );
 }
 
 export default async function ContentPage({ params, searchParams }: Props) {
   const { locale, slug } = await params;
   const slugStr = slugFromSegments(slug);
+
+  // The `learn/paths/**` namespace (hub, category, arc, terminal path landings) dispatches to its
+  // own renderers before the standard content-page fetch below — `renderPathsRoute` returns `null`
+  // for `{ kind: "not-found" }` (an unrecognized segment, or a terminal segment naming no loaded
+  // manifest), in which case this falls through to the standard render unchanged.
+  if (isLearnPathsSlug(slugStr)) {
+    const rendered = await renderPathsRoute(locale, slugStr);
+    if (rendered !== null) {
+      return rendered;
+    }
+  }
 
   let page;
   try {
