@@ -86,6 +86,17 @@ endpoint for a single review comment genuinely is
 `repos/{owner}/{repo}/pulls/comments/{comment_id}`, with no pull number; only the reply sub-resource
 is nested under the pull.
 
+**Posting a reply body from a file — use `-F`, not `-f`**: when a reply is drafted to a temp file and
+posted with `gh api ... -f body=@/path/to/file`, `gh` treats `@/path/to/file` as the **literal string
+value**, not a file reference — only the capitalized `-F body=@/path/to/file` triggers `gh`'s
+`@file`-read behavior. The lowercase form silently posts the literal `@/path/to/file` text as the
+comment body.
+
+**Multi-reply loops in this environment's shell (zsh) are 1-indexed**: a bash-style
+`${threads[$i-1]}` off-by-one compensation in a loop that posts one reply per thread targets the
+wrong array element here, silently misposting each reply to the wrong thread. Verify by re-reading
+posted comment bodies via GraphQL after any multi-item posting loop, not just by checking exit codes.
+
 **[Unverified] spot-check reminder**: the precise GraphQL field casing for `reviewThreads` filtering
 and for the `resolveReviewThread` mutation (see below) should be spot-checked against live GitHub
 API docs at execution time — delegate to `web-researcher` if more than a single doc fetch is
