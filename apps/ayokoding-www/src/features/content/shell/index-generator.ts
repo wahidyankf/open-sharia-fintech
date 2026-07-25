@@ -84,6 +84,24 @@ export async function processAllIndexFiles(contentDir: string, mode: "generate" 
 
       const rawContent = await fs.readFile(section.filePath, "utf-8");
       const withFields = ensureFrontmatterFields(rawContent);
+
+      // A childless section (e.g. a course-paths plan path-landing `_index.md` carrying its own
+      // hand-authored runway-justification body, or a not-yet-populated arc/category root) has no
+      // child list to generate. Regenerating its body unconditionally — as this loop used to do —
+      // would silently discard any hand-authored content it already carries (discovered via the
+      // course-paths plan's Cycle 3.1d skills-fixture `_index.md` files losing their authored
+      // paragraph on every `generate-indexes` run). Only the frontmatter-completeness pass above
+      // applies here; the body is left untouched.
+      if (children.length === 0) {
+        if (rawContent !== withFields) {
+          changed.push(section.filePath);
+          if (mode === "generate") {
+            await fs.writeFile(section.filePath, withFields, "utf-8");
+          }
+        }
+        continue;
+      }
+
       const childList = generateChildList(section.locale, children, knownSlugs);
       const expected = rebuildIndexFile(withFields, childList);
 
