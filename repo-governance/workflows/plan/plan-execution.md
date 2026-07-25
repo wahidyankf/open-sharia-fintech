@@ -136,8 +136,11 @@ concurrent actor's uncommitted work, and never remove a worktree or branch you d
 [No Destructive Git Operations](../../development/workflow/no-destructive-git-operations.md) and
 [Worktree and Artifact Cleanup](../../development/workflow/worktree-and-artifact-cleanup.md).
 
-**Status cadence**: while checklist items are active, update the user every **3-5 minutes — not
-faster**, anchored to meaningful state changes rather than a timer.
+**Status cadence**: while checklist items are active or background agents are in flight, update the
+user every **5 minutes** for generic work and every **3 minutes** for GitHub-CI-related work (mixed
+batches take the tighter 3-minute cadence), anchored to meaningful state changes rather than a timer.
+This is a reporting cadence and does not change the 2-minute CI-polling floor. See
+[Task List Discipline §Standard 6](../../development/practice/task-list-discipline.md).
 
 ### Surface-Conditional Tester Gates
 

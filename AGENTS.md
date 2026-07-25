@@ -280,9 +280,8 @@ concurrency-safe.
 **DAG-first**: every task list/delivery checklist declares a dependency DAG (`blocks`/`blockedBy`);
 independent nodes fan out up to N, dependent nodes serialize, cleanup is the terminal node.
 **Background-slot preference**: fill background slots up to N, keeping the main thread the vacant
-orchestrator, never splitting dependent work to fill a slot. Update the user every 3-5 minutes while
-active; maintain a live task list, marking in-progress/completed and adding discovered tasks
-immediately.
+orchestrator, never splitting dependent work to fill a slot. Report every 5 min generic, 3 min CI;
+maintain a live task list, marking in-progress/completed and adding discovered tasks immediately.
 
 **See**: [repo-governance/development/agents/agent-workflow-orchestration.md](./repo-governance/development/agents/agent-workflow-orchestration.md),
 [Subagent Orchestration Convention](./repo-governance/development/agents/subagent-orchestration.md),

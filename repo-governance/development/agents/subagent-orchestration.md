@@ -166,6 +166,51 @@ Task-notification messages from the harness signal completion (or kill). These a
 
 `TaskList` does NOT show spawned Agent IDs. The only source of an Agent ID is the response from the Agent-tool spawn call. The main agent must preserve these IDs in local tracking state (e.g., `local-temp/todo.md`) for the duration of the batch.
 
+### Standard 5 — Status-Update Cadence While Background Agents Run
+
+While one or more background agents are in flight, or while task-list items are active, the main agent MUST post a visible status update to the user in the main thread. The interval between updates is determined by the **kind** of work being awaited, not by a single fixed number:
+
+| Kind of Work      | Examples                                                              | Reporting Interval  |
+| ----------------- | --------------------------------------------------------------------- | ------------------- |
+| GitHub CI-related | Actions runs, PR checks, workflow conclusions, post-push verification | Every **3 minutes** |
+| Generic           | Subagent batches, refactors, doc sweeps, test runs — everything else  | Every **5 minutes** |
+
+#### Mixed Batches Take the Tighter Cadence
+
+When a batch contains both CI-related and generic in-flight items, the whole batch reports at the tighter **3-minute** cadence. Rationale: the CI item is the one that can go red and block delivery, so it sets the pace for the batch even when most items in flight are generic.
+
+#### Reporting Cadence Is Not Polling Cadence
+
+This is the most important distinction in this Standard. Standard 5 governs how often the main agent **speaks to the user** — it changes nothing about how often the main agent **checks** anything. Two existing polling rules stay exactly as they were:
+
+- The CI/GitHub-Actions polling floor of never faster than once every 2 minutes (see [CI Monitoring Convention](../workflow/ci-monitoring.md)) is unchanged.
+- Standard 2's 3-minute stuck-detection mtime poll (above) is unchanged.
+
+The normal consequence: for CI work, the main agent polls every 2 minutes but reports every 3, so not every poll produces a user-visible message. For generic work, the main agent polls for stalls every 3 minutes (Standard 2) but reports every 5, so not every stall-detection poll produces a user-visible message either.
+
+#### Floor and Ceiling
+
+The interval is both a **floor on chattiness** and a **ceiling on silence**. Updating more often than the interval is noise — it buries the signal the user actually needs under status chatter. Letting more than one interval elapse while work is in flight reads to the user as a stall, even when the work is healthy.
+
+#### Rationale for the Split
+
+CI state changes fast and a failure blocks delivery immediately, so it earns the tighter 3-minute cadence — the user needs to know quickly if a check goes red. Generic background work (subagent batches, refactors, doc sweeps) moves more slowly and rarely turns urgent between one poll and the next, so a more frequent update would be pure noise.
+
+#### Refines, Does Not Replace, the Prior Guidance
+
+This Standard replaces the previously vague "every 3-5 minutes, not faster" guidance by **assigning** the two ends of that range to specific kinds of work — 3 minutes for CI-related batches, 5 minutes for generic batches — rather than leaving the choice open to judgment call. It is a refinement, not a contradiction: both values sit inside the old range.
+
+#### Examples
+
+```
+PASS: CI-related batch → report at 3-min intervals while polling CI status every 2 min
+PASS: Generic subagent batch (no CI items) → report at 5-min intervals
+PASS: Mixed batch (one CI item, three generic items) → report at 3-min intervals
+FAIL: Agents in flight for 20 minutes with no status update to the user
+FAIL: Main agent posts a status update every 30 seconds → excessive chatter
+FAIL: Mixed CI+generic batch reported at 5-min intervals → CI item's tighter cadence ignored
+```
+
 ## Anti-Patterns
 
 ### Launching a Full Batch Without Waiting
@@ -239,6 +284,14 @@ external poll cycles — CI still green, PR review count and `headRefOid` unchan
 before concluding the agent silently stopped and taking over its remaining step (e.g., running the
 mechanical `gh pr ready` yourself). Resuming on the first green reading risks duplicating or racing
 work the agent is about to do on its own next tick.
+
+### Going Silent While Background Agents Run
+
+**Problem**: The main agent launches a background batch and posts no status update to the user until the batch completes, regardless of how long that takes.
+
+**Why it fails**: A batch running longer than the applicable interval (3 minutes for CI-related work, 5 minutes for generic work) with no visible update looks identical to the main agent stalling. The user has no way to distinguish "still working" from "stuck" without asking.
+
+**Fix**: Post a status update at the interval matched to the kind of work in flight — every 3 minutes when any CI-related item is in flight (mixed batches take the tighter cadence), every 5 minutes for purely generic work (see Standard 5).
 
 ## Tooling Reference
 

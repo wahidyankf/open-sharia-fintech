@@ -126,9 +126,12 @@ rules win for that plan's internal work; this document governs only cross-plan s
   Sequence is not dependency.
 - Parallelism is a **ceiling, not a target** — the scheduler runs fewer nodes when the ready set is
   smaller or when resource conflicts force serialization.
-- **Status cadence**: while nodes are in flight, update the user every **3-5 minutes — not faster**,
-  anchored to meaningful state changes (a node completing, a gate flipping, a plan quarantining)
-  rather than to a timer alone.
+- **Status cadence**: while nodes are in flight, update the user every **5 minutes** for generic work
+  and every **3 minutes** for GitHub-CI-related work (mixed batches take the tighter 3-minute
+  cadence), anchored to meaningful state changes (a node completing, a gate flipping, a plan
+  quarantining) rather than to a timer alone. This is a reporting cadence and leaves the 2-minute
+  CI-polling floor untouched. See
+  [Task List Discipline §Standard 6](../../development/practice/task-list-discipline.md).
 - **Delivery is 1-PR↔1-worktree↔1-delivery-unit**: each independent node gets its own worktree,
   branch, and PR, opened and merged as that unit's **delivery boundary** completes — not at every
   phase, and not batched at the end of the run.
