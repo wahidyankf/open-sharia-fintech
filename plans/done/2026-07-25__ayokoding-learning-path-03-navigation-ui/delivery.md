@@ -3792,7 +3792,7 @@ ayokoding-www:build` — exit 0.
 - [x] [AI] Monitor the final `main` CI run (poll every ~2 min; one
       `gh run view --json status,conclusion` per wakeup; never `gh run watch`) — acceptance: all GitHub
       Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
-      Evidence: PR #95 pre-merge CI run `30162860098` — all 20 jobs green (TypeScript quality gate took
+      Evidence: PR #95 pre-merge CI run `30162860098` — all 19 jobs green (TypeScript quality gate took
       16m42s, the heaviest job). Post-merge `pr-quality-gate` run on `main` at commit `0834ac1b7`
       (`30163586230`) — all 19 jobs green, `conclusion: success`. `validate-env` and `publish-images`
       workflows on the same commit — both `success`.
@@ -3892,8 +3892,8 @@ plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so 
 - [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a terminal
       state or the file records the explicit "none" escape; both the secret/sensitivity gate and the
       repo-relevance gate were applied to every surviving entry.
-      **Evidence**: `learnings.md` has 4 `## Learning:` + 1 `## Discarded:` entries, 5 `Terminal state`
-      lines — every entry terminal (4 routed inline, 1 discarded); both gates applied per Phase 7.
+      **Evidence**: `learnings.md` has 3 `## Learning:` + 1 `## Discarded:` entries, 4 `Terminal state`
+      lines — every entry terminal (3 routed inline, 1 discarded); both gates applied per Phase 7.
 - [x] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
       **Evidence**: `nx show projects --affected` (base `0834ac1b7` merge-base → head) returns zero
       projects — this branch's diff is docs-only (delivery.md/learnings.md/agent-md/workflow-md), so
@@ -3919,7 +3919,7 @@ plan-execution.md`. No code-homed (`apps/`/`libs/`/tests) learning surfaced, so 
 - [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires explicit
       user permission (only when genuinely impossible); SG-###/USS-### may be triaged or deferred with
       rationale.
-      **Evidence**: 18 EWT/UWT/DWT finding checkboxes in Phase 5, all ticked `[x]`; the one remaining
+      **Evidence**: 14 EWT/UWT/DWT finding checkboxes in Phase 5, all ticked `[x]`; the one remaining
       `- [ ]` grep match is the section's own template-example line (`EWT-NNN:` placeholder text), not a
       real finding.
 - [x] [AI] **Verify this plan's design-funnel artefacts are complete (DD-46 / DD-47)** —
