@@ -1583,7 +1583,7 @@ rows as part of "convention complete".
 > (`web-exploratory-tester` / `web-usability-tester` / `web-design-tester`) are **exempt for this
 > plan**, for three reasons: (1) it ships no screen or component — every artefact is a markdown page
 > bundle rendered by components owned by
-> [`ayokoding-learning-path-03-navigation-ui`](../../in-progress/ayokoding-learning-path-03-navigation-ui/README.md);
+> [`ayokoding-learning-path-03-navigation-ui`](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md);
 > (2) its output surface is already covered by the ayokoding content checkers, which are
 > content-specific where the triad is UI-specific; (3) running the triad here would test the other
 > plan's navigation surface and file its defects against the wrong plan. See

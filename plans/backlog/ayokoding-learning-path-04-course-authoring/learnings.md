@@ -11,7 +11,7 @@ private hostname, or inventory detail with a `<placeholder>` token.
 **Code learnings never land inline.** A learning whose home is `apps/`, `libs/`, or tests is ALWAYS
 filed as a separate `plans/backlog/<slug>/` plan, never fixed inside this plan's own commits or PR.
 This plan authors content only; a defect found in the `course-paths` feature code belongs to
-[`ayokoding-learning-path-03-navigation-ui`](../../in-progress/ayokoding-learning-path-03-navigation-ui/README.md)
+[`ayokoding-learning-path-03-navigation-ui`](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md)
 or to a new backlog plan — not here.
 
 **Never empty.** If no generalizable learning surfaced, record the explicit escape below:

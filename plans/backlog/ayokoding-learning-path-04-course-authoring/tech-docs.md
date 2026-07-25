@@ -1006,7 +1006,7 @@ A plan is UI-bearing when it **adds or changes user-facing screens or components
 `apps/ayokoding-www/content/`, rendered by components this plan does not touch. The complete
 UI-design-funnel for Screens 0–3 (low-fi alternatives, hi-fi `.excalidraw.png` finalists, named
 selections, rationale records, responsive strategies) is owned by
-[`ayokoding-learning-path-03-navigation-ui`](../../in-progress/ayokoding-learning-path-03-navigation-ui/prd.md);
+[`ayokoding-learning-path-03-navigation-ui`](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/prd.md);
 Screen 4's funnel is owned by
 [`ayokoding-learning-path-01-url-restructure`](../ayokoding-learning-path-01-url-restructure/prd.md).
 **This plan carries no `assets/` folder and produces no render.**

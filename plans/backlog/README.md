@@ -16,8 +16,8 @@ merged). **Both Wave-1 plans have left this backlog**: `01-url-restructure` is
 [complete](../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md) and
 `02-schema-and-prerequisite-dag` is
 [complete](../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md).
-`03-navigation-ui` has been promoted to
-[`../in-progress/`](../in-progress/ayokoding-learning-path-03-navigation-ui/README.md).
+`03-navigation-ui` is
+[complete](../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md).
 
 - [ayokoding-learning-path-04-course-authoring](./ayokoding-learning-path-04-course-authoring/README.md)
   — **Wave 2.** Authors the `careers/` course bodies band by band, each from its `syllabus/` spec.

@@ -410,7 +410,7 @@ forbidden.
   [`syllabus/paths/` manifests](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
   · [manifest plan](../ayokoding-learning-path-05-manifests/README.md)
   · [URL-restructure plan](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
-  · [navigation-UI plan](../../in-progress/ayokoding-learning-path-03-navigation-ui/README.md)
+  · [navigation-UI plan](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md)
   · [schema plan](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)
 
 ## Provenance

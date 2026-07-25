@@ -4,6 +4,26 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-25: ayokoding-learning-path-03-navigation-ui](./2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md) —
+  **Wave 2, plan #3 of 5** in the split of the closed `shared-course-library-and-learning-paths`
+  plan. Delivered the path-aware navigation UI atop plan 02's `course-paths` data layer: a 36-render
+  design funnel (6 screens × 2 options × 3 viewports — Option B "Left path rail" won Screen 3),
+  path-aware `PrevNext`/breadcrumb/prerequisite-list wiring, the `PathRail` (desktop) and
+  `PathBanner`-triggered drawer (mobile) components as a pure content swap into the existing host
+  shells, and the `path-landing`/`category-landing`/`arc-landing`/`course-path` rendering surfaces
+  consuming the shared manifest. The no-path invariant (canonical course URLs render the generic
+  sidebar with zero path chrome) verified at every phase boundary and re-confirmed on production with
+  a committed screenshot at archival. Ran the near-end rule-15 live-site tester triad; every finding
+  fixed before archival. Shipped as three delivery-boundary PRs — Phase 0-1 design funnel (PR #94,
+  `e740ec998`), Phases 2-5 implementation (PR #95, `0834ac1b7`, admin-merged past a deliberately
+  deferred MEDIUM finding under `required_conversation_resolution`), and this Phase 7-8
+  knowledge-capture + archival unit — each PR-Review-cycled and CI-gated; deployed to
+  `prod-ayokoding-www` after every merge. Knowledge Capture routed 3 learnings inline (`gh -f`/`-F`
+  file-posting gotcha and zsh 1-indexed-array gotcha to `pr-review-fixer.md`; many-project
+  `test:e2e`/`build` contention-flake heuristic to `plan-execution.md`) and discarded one
+  already-documented non-gap (`ose-app-web-e2e`'s manual-prestep requirement). This plan owns 36 of
+  DD-47's 42-render design matrix; the remaining 6 (Screen 4) belong to
+  `ayokoding-learning-path-01-url-restructure`. Delivery Mode: `worktree-to-pr`. Completed 2026-07-25.
 - [2026-07-24: ayokoding-learning-path-02-schema-and-prerequisite-dag](./2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md) —
   **Wave 1, plan #2 of 5** in the split of the closed `shared-course-library-and-learning-paths`
   plan. Delivered the data layer of the shared-course-library architecture: the `PathManifest` zod

@@ -36,7 +36,7 @@ and are explicitly **not** authored here:
 
 The library body is **content**, exempt from `specs:coverage`; the navigation feature that renders it
 is app code and carries its `specs/` Gherkin companion in
-[`ayokoding-learning-path-03-navigation-ui`](../../in-progress/ayokoding-learning-path-03-navigation-ui/README.md).
+[`ayokoding-learning-path-03-navigation-ui`](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md).
 The acceptance criteria below are therefore **content-level** criteria, verified by the ayokoding
 content checkers and by grep-checkable assertions on the authored bodies, not by application tests.
 
@@ -77,7 +77,7 @@ plan's bodies serve most directly — every authored course is reached by reader
 
 > The end-to-end **Learner Journey** walk-through is not duplicated here. It belongs to the two plans
 > that build and populate that journey — see the
-> [navigation-UI plan](../../in-progress/ayokoding-learning-path-03-navigation-ui/prd.md) and the
+> [navigation-UI plan](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/prd.md) and the
 > [manifest plan](../ayokoding-learning-path-05-manifests/prd.md).
 
 ## User Stories
