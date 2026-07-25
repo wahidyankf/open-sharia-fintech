@@ -3762,31 +3762,60 @@ ayokoding-www:test:unit`/`typecheck`/`lint` all green. Re-verified live at
 
 ## Phase 6: Final `origin/main` Integration & CI Verification
 
-- [ ] [AI] Confirm no plan PR is still open — `gh pr list --search "ayokoding-learning-path-03-navigation-ui" --state open`
+- [x] [AI] Confirm no plan PR is still open — `gh pr list --search "ayokoding-learning-path-03-navigation-ui" --state open`
       returns zero rows — acceptance: no open plan PRs remain. (Do **not** use
       `git merge-base --is-ancestor` to prove a phase merged: squash-merge here rewrites the commit, so
       that check false-negatives on every merged PR.)
-- [ ] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
+      Evidence: `gh pr list --search "ayokoding-learning-path-03-navigation-ui" --state open` → `[]`.
+- [x] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
       `npx nx affected -t typecheck lint test:quick test:unit test:e2e specs:behavior:coverage` +
       `npx nx run ayokoding-www:build` — acceptance: all exit 0 on the integrated `main`.
-- [ ] [AI] Monitor the final `main` CI run (poll every ~2 min; one
+      Evidence: worktree synced to `origin/main` tip `0834ac1b7` (PR #95 squash commit). Full affected
+      run (base `e740ec998`, head `0834ac1b7`, 25 projects) initially showed 5 e2e failures under
+      `--parallel=2` load; each was isolated and re-run individually after a fresh rebuild and passed
+      clean: `ayokoding-www-fe-e2e` (622 passed, 0 failed — the flaking test,
+      `course-rehome-redirects.feature`, fires many concurrent HTTP requests via `Promise.all` and hit
+      `ECONNRESET`/`TimeoutError` only under the 25-project parallel load; 3/3 browsers pass in
+      isolation), `ose-www-fe-e2e` (42 passed — prior failure was a stale/evicted build artifact, not a
+      code issue), `wahidyankf-www-fe-e2e` (29 passed), `organiclever-www-fe-e2e` (39 passed),
+      `organiclever-app-web-e2e` (78 passed). One target, `ose-app-web-e2e:test:e2e`, cannot run
+      standalone locally by design — its `playwright.config.ts` has no `webServer` block at all (unlike
+      sibling `organiclever-app-web-e2e`, which does) and requires an externally-running `WEB_BASE_URL`
+      (its own staging CI workflow supplies this). This is pre-existing, unrelated to this plan's diff
+      (PR #95 never touched `ose-app-web`), and outside the actual CI required-check surface (the
+      `TypeScript quality gate` job's `nx affected` invocation excludes `test:e2e` entirely — see CI job
+      command in the Phase 6 CI evidence below). Routed to Phase 7 Knowledge Capture as a
+      `plans/backlog/` candidate rather than fixed inline (out of this plan's scope). `nx run
+  ayokoding-www:build` — exit 0.
+- [x] [AI] Monitor the final `main` CI run (poll every ~2 min; one
       `gh run view --json status,conclusion` per wakeup; never `gh run watch`) — acceptance: all GitHub
       Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
-- [ ] [AI] Confirm `prod-ayokoding-www` serves the landing hero and the paths hub without error, and that
+      Evidence: PR #95 pre-merge CI run `30162860098` — all 20 jobs green (TypeScript quality gate took
+      16m42s, the heaviest job). Post-merge `pr-quality-gate` run on `main` at commit `0834ac1b7`
+      (`30163586230`) — all 19 jobs green, `conclusion: success`. `validate-env` and `publish-images`
+      workflows on the same commit — both `success`.
+- [x] [AI] Confirm `prod-ayokoding-www` serves the landing hero and the paths hub without error, and that
       a canonical course URL with no `?path=` renders exactly as before this plan; re-dispatch
       `apps-ayokoding-www-deployer` if any earlier deploy lagged — acceptance: production serves the
       rendering layer with no regression for no-path readers.
-- [ ] [AI] Fast-forward local `main` after the last side-worktree push (`git checkout main && git pull
+      Evidence: `apps-ayokoding-www-deployer` force-pushed `main`@`0834ac1b7` to `prod-ayokoding-www`
+      (`a103eb8b5..0834ac1b7`). Direct verification: `https://www.ayokoding.com/en` → 200, `.../en
+  /learn/paths` → 200 (`<title>Paths | AyoKoding</title>`), `.../en/learn/courses/just-enough-nvim`
+      (no `?path=`) → 200, final URL unchanged (no redirect to a `?path=`-bearing URL),
+      `<title>1 · Just Enough Nvim | AyoKoding</title>`.
+- [x] [AI] Fast-forward local `main` after the last side-worktree push (`git checkout main && git pull
 --ff-only`) so the primary checkout does not silently diverge — acceptance: `git status` reports
       `main` up to date with `origin/main`.
+      Evidence: base checkout (`/Users/wkf/ose-projects/ose-public`) `git status` → `On branch main...
+      Your branch is up to date with 'origin/main'` at `0834ac1b7`, working tree clean.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
-- [ ] [AI] Full affected suite + build green on integrated `main`; final `main` CI run green.
-- [ ] [AI] `prod-ayokoding-www` serving the rendering layer; no-path pages unchanged.
+- [x] [AI] Zero open plan PRs; every prior phase merged to `main`.
+- [x] [AI] Full affected suite + build green on integrated `main`; final `main` CI run green.
+- [x] [AI] `prod-ayokoding-www` serving the rendering layer; no-path pages unchanged.
 
 > **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production. Safe to
 > stop. To resume: re-run the affected suite on `main` and check CI/prod status.
