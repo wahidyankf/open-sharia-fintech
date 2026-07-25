@@ -39,4 +39,18 @@ describe("SidebarTree", () => {
     );
     expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/belajar");
   });
+
+  it("carries a title attribute with the node's full label, so a long, visually clipped label is always recoverable on hover (UWT-002 fix, phase-5 rule-15 retest)", () => {
+    render(
+      <SidebarTree
+        nodes={[
+          { slug: "immediately-effective", title: "Immediately-Effective", weight: 0, isSection: true, children: [] },
+        ]}
+        locale="en"
+      />,
+    );
+    expect(screen.getByRole("link", { name: "Immediately-Effective" }).getAttribute("title")).toBe(
+      "Immediately-Effective",
+    );
+  });
 });

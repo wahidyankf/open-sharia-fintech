@@ -2,11 +2,14 @@
 
 import type { MouseEvent } from "react";
 import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
+import type { Locale } from "@/features/i18n/core/config";
+import { t } from "@/features/i18n/core/translations";
 
 /** Must match the `id` the shipped drawer's content element renders (`mobile-nav.tsx`). */
 export const MOBILE_NAV_DRAWER_ID = "mobile-nav-drawer";
 
 export interface PathBannerProps {
+  locale: string;
   pathTitle: string;
   /** 1-based position of the current course within the path. */
   courseIndex: number;
@@ -22,7 +25,7 @@ export interface PathBannerProps {
  * `Sheet`, opened via the same shared `open` state the header's hamburger-menu button controls)
  * rather than a second overlay — `aria-controls` names that drawer's content element.
  */
-export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerProps) {
+export function PathBanner({ locale, pathTitle, courseIndex, totalCourses }: PathBannerProps) {
   const { open, setOpen } = useMobileNavOpen();
 
   function handleActivate(event: MouseEvent<HTMLButtonElement>) {
@@ -35,7 +38,8 @@ export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerP
   return (
     <div className="mt-4 flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm md:hidden">
       <span>
-        on path · course {courseIndex} of {totalCourses}
+        {t(locale as Locale, "pathsOnPathPrefix")} · {t(locale as Locale, "pathsCourseWordLower")} {courseIndex}{" "}
+        {t(locale as Locale, "pathsOfWord")} {totalCourses}
       </span>
       <button
         type="button"
@@ -45,7 +49,7 @@ export function PathBanner({ pathTitle, courseIndex, totalCourses }: PathBannerP
         onClick={handleActivate}
         className="flex min-h-11 items-center px-2 font-medium underline underline-offset-2 hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       >
-        View path
+        {t(locale as Locale, "pathsViewPath")}
       </button>
     </div>
   );

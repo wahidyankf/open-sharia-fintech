@@ -1,8 +1,11 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
+import { t } from "@/features/i18n/core/translations";
 import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 import type { PathManifest } from "../core/schemas";
+import { hueCssVars, hueForManifest } from "../core/path-hue";
 import { manifestCourseOrder, slugForCourseId } from "./course-path-nav";
 
 export interface PathLandingProps {
@@ -28,10 +31,21 @@ export interface PathLandingProps {
  */
 export function PathLanding({ locale, manifest, courseTitles, bodyHtml }: PathLandingProps) {
   const courses = manifestCourseOrder(manifest);
+  // DWT-001 fix (phase-5 rule-15 design-tester retest): prd.md's own Screen 2 hi-fi spec calls for
+  // this bar to be framed by a hue-wash strip colour matching the path's hub card — the shipped
+  // bar was hardcoded to a single, non-varying `--hue-honey` (the vivid base variant, not the
+  // documented wash variant) for every path regardless of its actual arc/subject. `hue` is
+  // `undefined` for any arc/subject not yet named in the DD-50 map, in which case the bar falls
+  // back to the plain neutral `--color-border` token — never a guessed hue.
+  const hue = hueForManifest(manifest);
+  const barStyle = hue ? (hueCssVars(hue) as CSSProperties) : undefined;
+  const barClassName = hue
+    ? "mb-4 h-1.5 w-16 rounded-full bg-[var(--hue-current-wash)]"
+    : "mb-4 h-1.5 w-16 rounded-full bg-border";
 
   return (
     <div className="mx-auto max-w-3xl flex-1 px-6 py-8 lg:px-8">
-      <div aria-hidden="true" className="mb-4 h-1.5 w-16 rounded-full bg-[var(--hue-honey)]" />
+      <div aria-hidden="true" style={barStyle} className={barClassName} />
       <h1 className="text-4xl font-extrabold tracking-tight">{manifest.title}</h1>
       <p className="mt-2 text-muted-foreground">{manifest.description}</p>
 
@@ -39,7 +53,9 @@ export function PathLanding({ locale, manifest, courseTitles, bodyHtml }: PathLa
 
       <nav aria-label={`${manifest.title} syllabus`}>
         <section>
-          <h2 className="mt-8 text-sm font-semibold tracking-wide text-muted-foreground uppercase">Syllabus</h2>
+          <h2 className="mt-8 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+            {t(locale as Locale, "pathsSyllabus")}
+          </h2>
           <ol className="mt-3 space-y-1">
             {courses.map((course) => {
               const title = courseTitles[course.id] ?? course.id;
@@ -48,7 +64,11 @@ export function PathLanding({ locale, manifest, courseTitles, bodyHtml }: PathLa
                 <li key={course.id}>
                   <Link
                     href={contentUrl(locale as Locale, slugForCourseId(course.id), manifest.pathId)}
-                    className="rounded-md px-2 py-1 text-sm hover:bg-accent hover:text-foreground"
+                    // `underline underline-offset-2` (UWT-003 fix, phase-5 rule-15 retest): the
+                    // prior `hover:bg-accent`-only styling gave no always-visible signal this
+                    // syllabus row is a link — a reader who has not yet moved a mouse over it had
+                    // no way to recognize it as clickable (Heuristic 4 / Fitts's Law).
+                    className="rounded-md px-2 py-1 text-sm underline underline-offset-2 hover:bg-accent hover:text-foreground"
                   >
                     {title}
                   </Link>

@@ -32,8 +32,10 @@ export default async function LocaleHomePage({ params }: Props) {
   );
 
   // Cycle 3.2 — the hero's "Choose your path" PathCard grid reads from the same loaded-manifest
-  // data as the paths hub (never a second, hard-coded list).
-  const { manifests } = await loadRoutePathData(typedLocale);
+  // data as the paths hub (never a second, hard-coded list). `contentMap` is threaded through too
+  // (UWT-001 fix, phase-5 rule-15 retest) so each hero card's arc description resolves the arc's
+  // humanized/authored title instead of rendering the raw arc slug.
+  const { manifests, contentMap } = await loadRoutePathData(typedLocale);
 
-  return <Landing locale={typedLocale} sections={sections} manifests={manifests} />;
+  return <Landing locale={typedLocale} sections={sections} manifests={manifests} contentMap={contentMap} />;
 }

@@ -66,6 +66,27 @@ describe("Landing", () => {
     );
   });
 
+  it("gives all three hero escape-hatch links an always-visible underline affordance, while keeping prd.md's own documented per-link hue distinction (UWT-007 fix, reconciled with DWT-001's mockup-fidelity ground truth)", () => {
+    // An earlier pass of this same UWT-007 fix (before this plan's DWT-001 design-tester retest
+    // cross-checked prd.md) mistakenly unified all three links to one flat colour, having missed
+    // that prd.md's own Screen 0 hi-fi spec documents three DIFFERENT treatments on purpose (the
+    // first two tied to real hue tokens, the third deliberately subordinate). The genuine defect
+    // UWT-007 found — none had an always-visible underline, so the third read as plain text — is
+    // fixed here without erasing the documented hue distinction.
+    render(<Landing locale="en" sections={enSections} manifests={heroManifests} />);
+
+    const compare = screen.getByRole("link", { name: "Compare all paths →" });
+    const skills = screen.getByRole("link", { name: "Explore skills paths →" });
+    const browse = screen.getByRole("link", { name: "Browse the full course library →" });
+
+    expect(compare.className).toContain("underline");
+    expect(skills.className).toContain("underline");
+    expect(browse.className).toContain("underline");
+    expect(compare.className).toContain("--hue-honey-ink");
+    expect(skills.className).toContain("--hue-sky-ink");
+    expect(browse.className).toContain("text-muted-foreground");
+  });
+
   it("no longer renders the old standalone Learn/Tools hero CTA buttons (moved into the global nav)", () => {
     render(<Landing locale="en" sections={enSections} manifests={heroManifests} />);
     expect(screen.queryByRole("link", { name: "Start learning" })).toBeNull();
@@ -98,6 +119,15 @@ describe("Landing", () => {
     render(<Landing locale="id" sections={idSections} />);
     const h2 = screen.getByRole("heading", { level: 2, name: "Jelajahi" });
     expect(h2).toBeTruthy();
+  });
+
+  it("localizes the hero's 'Choose your path' eyebrow and escape-hatch links on the id locale (this plan's own DWT-003 fix, phase-5 rule-15 design-tester retest — course-paths feature chrome, distinct from the url-restructure plan's identically-numbered section-band finding above)", () => {
+    render(<Landing locale="id" sections={enSections} manifests={heroManifests} />);
+
+    expect(screen.getByText("Pilih jalur Anda")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Bandingkan semua jalur/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Jelajahi jalur keterampilan/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Jelajahi seluruh pustaka kursus/ })).toBeTruthy();
   });
 
   it("renders id-locale chrome and an id section card (Celoteh)", () => {

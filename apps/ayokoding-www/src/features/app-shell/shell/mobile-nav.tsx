@@ -113,6 +113,9 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
             <legend className="mb-1 block text-xs font-medium text-muted-foreground">
               {t(locale as Locale, "mobileNavWidthLabel")}
             </legend>
+            {/* UWT-005 fix (phase-5 rule-15 retest): ties this control to a concrete, real
+                benefit — a first-time reader had no way to know why they'd want a wider drawer. */}
+            <p className="mb-1 text-xs text-muted-foreground">{t(locale as Locale, "mobileNavWidthHint")}</p>
             <div className="flex items-center gap-1">
               {MOBILE_NAV_WIDTH_PRESETS.map((preset) => (
                 <Button

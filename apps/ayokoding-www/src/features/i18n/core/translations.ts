@@ -229,8 +229,33 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Mobile nav drawer — preset width control
     mobileNavWidthLabel: "Drawer width",
+    // UWT-005 fix (phase-5 rule-15 retest): ties the control to the real, concrete benefit a
+    // first-time reader gets from it, rather than leaving "Drawer width" to speak for itself.
+    mobileNavWidthHint: "Widen the drawer to read long path or course titles in full",
     mobileNavWidthDefault: "Default",
     mobileNavWidthWide: "Wide",
+
+    // Course-paths feature chrome (DWT-003 fix, phase-5 rule-15 design-tester retest): these
+    // static UI strings previously rendered as hardcoded English literals, never routing through
+    // `t()`, so they stayed English even when the surrounding page (masthead, hero H1, section
+    // headings) correctly rendered `id`. `brd.md`'s own non-goal only defers translating path/
+    // course *data* — the feature's own interface chrome was always meant to localize.
+    pathsChooseYourPath: "Choose your path",
+    pathsCompareAllPaths: "Compare all paths",
+    pathsExploreSkillsPaths: "Explore skills paths",
+    pathsBrowseCourseLibrary: "Browse the full course library",
+    pathsStart: "Start",
+    pathsExploreArc: "Explore arc",
+    pathsExploreArcRoles: "Explore this arc's roles",
+    pathsSyllabus: "Syllabus",
+    pathsPrerequisites: "Prerequisites",
+    pathsCourseWordCapital: "Course",
+    pathsCourseWordLower: "course",
+    pathsOfWord: "of",
+    pathsOnPathPrefix: "on path",
+    pathsViewPath: "View path",
+    pathsViewFullPath: "View full path",
+    pathsBrowseAllCourses: "Browse all courses",
 
     // Resizable docs sidebar — drag/keyboard handle accessible name
     resizableSidebarHandleLabel: "Resize panel",
@@ -474,8 +499,27 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Mobile nav drawer — preset width control
     mobileNavWidthLabel: "Lebar drawer",
+    mobileNavWidthHint: "Perlebar drawer untuk membaca judul jalur atau kursus yang panjang secara utuh",
     mobileNavWidthDefault: "Standar",
     mobileNavWidthWide: "Lebar",
+
+    // Course-paths feature chrome (DWT-003 fix, phase-5 rule-15 design-tester retest)
+    pathsChooseYourPath: "Pilih jalur Anda",
+    pathsCompareAllPaths: "Bandingkan semua jalur",
+    pathsExploreSkillsPaths: "Jelajahi jalur keterampilan",
+    pathsBrowseCourseLibrary: "Jelajahi seluruh pustaka kursus",
+    pathsStart: "Mulai",
+    pathsExploreArc: "Jelajahi arc",
+    pathsExploreArcRoles: "Jelajahi peran arc ini",
+    pathsSyllabus: "Silabus",
+    pathsPrerequisites: "Prasyarat",
+    pathsCourseWordCapital: "Kursus",
+    pathsCourseWordLower: "kursus",
+    pathsOfWord: "dari",
+    pathsOnPathPrefix: "pada jalur",
+    pathsViewPath: "Lihat jalur",
+    pathsViewFullPath: "Lihat jalur lengkap",
+    pathsBrowseAllCourses: "Jelajahi semua kursus",
 
     // Resizable docs sidebar — drag/keyboard handle accessible name
     resizableSidebarHandleLabel: "Ubah ukuran panel",

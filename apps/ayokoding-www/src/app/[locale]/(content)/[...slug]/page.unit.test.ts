@@ -69,4 +69,17 @@ describe("generateMetadata", () => {
     });
     expect(meta.robots).toBeUndefined();
   });
+
+  it("titles a careers arc route (even a zero-manifest/empty-state one) with the arc slug, not a bare 'Not Found' (phase-5 EWT finding)", async () => {
+    // `learn/paths/careers/<arc>` has no `_index.md` of its own (the arc is a synthetic grouping,
+    // not a real content page), so `getBySlug` always rejects for it — live at
+    // http://localhost:3101/en/learn/paths/careers/no-fixture-arc this fell through to a bare
+    // "Not Found" tab title even though the page renders a 200 empty-state, not an error.
+    const { serverCaller } = await import("@/lib/trpc/server");
+    vi.mocked(serverCaller.content.getBySlug).mockRejectedValueOnce(new Error("not found"));
+    const meta = await generateMetadata({
+      params: Promise.resolve({ locale: "en", slug: ["learn", "paths", "careers", "no-fixture-arc"] }),
+    });
+    expect(meta.title).toBe("no-fixture-arc");
+  });
 });

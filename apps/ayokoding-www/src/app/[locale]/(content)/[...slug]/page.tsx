@@ -17,6 +17,8 @@ import {
   resolveCoursePathRenderData,
   coursePositionInManifest,
   buildCourseTitleIndex,
+  buildArcTitleIndex,
+  type PrerequisiteLink,
 } from "@/features/course-paths/shell/course-path-nav";
 import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
 import { PrerequisiteList } from "@/features/course-paths/shell/prerequisite-list";
@@ -157,6 +159,16 @@ export async function generateMetadata({ params }: { params: Props["params"] }):
       if (resolution.kind === "path") {
         return { title: resolution.manifest.title, description: resolution.manifest.description };
       }
+      // A careers arc (`learn/paths/careers/<arc>`) has no `_index.md` of its own — it is a
+      // synthetic grouping derived from manifest data, not a real content page — so `getBySlug`
+      // always rejects for it, including the deliberately-empty "no manifests published yet" arc
+      // state. That render is a normal 200 page (`ArcLanding`'s empty-state branch), so its title
+      // must not read as an error; mirror the page body's own `resolution.arc` fallback (Cycle
+      // 3.1a's `<h1>{seoPage?.title ?? resolution.arc}</h1>`) rather than falling through to a bare
+      // "Not Found" (a real defect found live via Playwright MCP at phase-5 manual verification).
+      if (resolution.kind === "arc") {
+        return { title: resolution.arc };
+      }
     }
     return { title: "Not Found" };
   }
@@ -193,6 +205,14 @@ async function renderPathsRoute(locale: string, slugStr: string) {
   if (resolution.kind === "hub") {
     const careersArcGroups = groupCareersManifestsByArc(pathData.manifests);
     const skills = skillsManifests(pathData.manifests);
+    // Reuses the same humanized-arc-title resolution the careers category landing already uses
+    // (UWT-001 fix) — closes the adjacent gap where this hub's own `<h3>` arc sub-heading still
+    // rendered the raw kebab-case `arc` slug (e.g. `"immediately-effective"`) verbatim.
+    const arcTitles = buildArcTitleIndex(
+      pathData.contentMap,
+      locale,
+      careersArcGroups.map(({ arc }) => arc),
+    );
 
     return (
       <section className="mx-auto max-w-6xl flex-1 px-6 py-8 lg:px-8">
@@ -207,7 +227,7 @@ async function renderPathsRoute(locale: string, slugStr: string) {
             />
           ) : (
             careersArcGroups.map(({ arc, manifests: arcManifests }) => (
-              <ArcGroup key={arc} arc={arc}>
+              <ArcGroup key={arc} arc={arc} arcTitle={arcTitles[arc]}>
                 {arcManifests.map((manifest) => (
                   <li key={manifest.pathId}>
                     <PathCard locale={locale} manifest={manifest} context="hub" />
@@ -239,7 +259,7 @@ async function renderPathsRoute(locale: string, slugStr: string) {
           href={`/${locale}/browse`}
           className="mt-6 inline-flex text-sm text-muted-foreground hover:text-foreground"
         >
-          Browse the full course library →
+          {t(locale as Locale, "pathsBrowseCourseLibrary")} →
         </Link>
       </section>
     );
@@ -252,7 +272,12 @@ async function renderPathsRoute(locale: string, slugStr: string) {
           {seoPage?.title ?? (resolution.category === "careers" ? "Careers" : "Skills")}
         </h1>
         <p className="mt-2 text-muted-foreground">{seoPage?.description ?? ""}</p>
-        <CategoryLanding locale={locale} category={resolution.category} manifests={pathData.manifests} />
+        <CategoryLanding
+          locale={locale}
+          category={resolution.category}
+          manifests={pathData.manifests}
+          contentMap={pathData.contentMap}
+        />
       </section>
     );
   }
@@ -308,7 +333,7 @@ export default async function ContentPage({ params, searchParams }: Props) {
   const courseId = courseIdFromSlug(slugStr);
   let prev = page.prev;
   let next = page.next;
-  let prerequisiteLinks: readonly { title: string; slug: string }[] = [];
+  let prerequisiteLinks: readonly PrerequisiteLink[] = [];
   let pathBadges: readonly { pathId: string; title: string }[] = [];
   let activePathId: string | undefined;
   let activePathTitle: string | undefined;
@@ -354,19 +379,25 @@ export default async function ContentPage({ params, searchParams }: Props) {
 
         <h1 className="mb-6 text-4xl font-extrabold tracking-tight">{page.title}</h1>
 
-        <MarkdownRenderer html={page.html} locale={locale} />
-
-        <PrerequisiteList locale={locale} prerequisites={prerequisiteLinks} pathId={activePathId} />
-
-        {pathContext === undefined && <PathCourseLinks locale={locale} paths={pathBadges} />}
-
+        {/* Rendered immediately below the H1, above the body/syllabus (UWT-004 fix, phase-5
+            rule-15 retest) — the prior position (after the prerequisites, near the bottom) meant a
+            mobile reader had to scroll past the entire course body before learning they were even
+            inside a path, several page-heights after desktop/tablet readers see the equivalent
+            rail in the very first paint (Heuristic 1: Visibility of System Status). */}
         {pathContext !== undefined && activeCoursePosition !== undefined && (
           <PathBanner
+            locale={locale}
             pathTitle={pathContext.pathTitle}
             courseIndex={activeCoursePosition.index}
             totalCourses={activeCoursePosition.total}
           />
         )}
+
+        <MarkdownRenderer html={page.html} locale={locale} />
+
+        <PrerequisiteList locale={locale} prerequisites={prerequisiteLinks} />
+
+        {pathContext === undefined && <PathCourseLinks locale={locale} paths={pathBadges} />}
 
         {page.date && (
           <p className="mt-8 text-sm text-muted-foreground">

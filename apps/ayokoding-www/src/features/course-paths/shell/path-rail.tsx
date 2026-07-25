@@ -2,8 +2,9 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
+import { t } from "@/features/i18n/core/translations";
 import type { PathManifest } from "../core/schemas";
-import { manifestCourseOrder, slugForCourseId } from "./course-path-nav";
+import { coursePositionInManifest, manifestCourseOrder, slugForCourseId } from "./course-path-nav";
 
 /**
  * Shared base classes for the ordered course-row `Link`s — factored out (rather than duplicated
@@ -15,9 +16,13 @@ import { manifestCourseOrder, slugForCourseId } from "./course-path-nav";
 const COURSE_LINK_BASE =
   "flex min-h-11 items-center gap-1 truncate px-2 py-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
-/** Shared, unconditional classes for both footer escape links — identical for each, so no `cn()` branching is needed. */
+/**
+ * Shared, unconditional classes for both footer escape links — identical for each, so no `cn()`
+ * branching is needed. `underline underline-offset-2` (UWT-003 fix, phase-5 rule-15 retest): the
+ * prior styling gave no always-visible signal these rows are links, only a `:hover` color change.
+ */
 const FOOTER_LINK_CLASS =
-  "flex min-h-11 items-center px-2 text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
+  "flex min-h-11 items-center px-2 text-muted-foreground underline underline-offset-2 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none";
 
 export interface PathRailProps {
   locale: string;
@@ -37,9 +42,15 @@ export interface PathRailProps {
  */
 export function PathRail({ locale, manifest, currentCourseId, courseTitles }: PathRailProps) {
   const courses = manifestCourseOrder(manifest);
+  const { index, total } = coursePositionInManifest(manifest, currentCourseId);
 
   return (
     <nav aria-label={`${manifest.title} course list`} className="flex flex-col gap-3 text-sm">
+      {/* prd.md's Screen 3 responsive spec requires this readout at md+ widths (phase-5 EWT
+          finding — the desktop/tablet rail shipped in Cycle 2.8 omitted it). */}
+      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+        {t(locale as Locale, "pathsCourseWordCapital")} {index} {t(locale as Locale, "pathsOfWord")} {total}
+      </p>
       <ol className="flex flex-col gap-1">
         {courses.map((course) => {
           const isCurrent = course.id === currentCourseId;
@@ -53,7 +64,18 @@ export function PathRail({ locale, manifest, currentCourseId, courseTitles }: Pa
                 aria-current={isCurrent ? "page" : undefined}
                 className={cn(
                   COURSE_LINK_BASE,
-                  isCurrent ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground",
+                  // `bg-accent` (DWT-005 fix, phase-5 rule-15 design-tester retest): prd.md's own
+                  // Screen 3 hi-fi spec for this exact row states "Current row: aria-current="page"
+                  // plus a ▸ marker plus font-semibold plus bg-accent — never hue alone" — the
+                  // shipped row carried the marker and font-weight but never the background, so it
+                  // read as plain bold text with no highlight, unlike this app's other left-nav
+                  // component (`sidebar-tree.tsx`), which does give its own active row a
+                  // background pill. Restoring `bg-accent` here (rather than borrowing
+                  // `sidebar-tree.tsx`'s unrelated `bg-primary/10` treatment, which prd.md never
+                  // specifies for this component) is the ground-truth-backed fix: it makes THIS
+                  // component match its own documented spec, closing the "one row has zero
+                  // background, one has a pill" gap DWT-005 identified.
+                  isCurrent ? "bg-accent font-semibold text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {isCurrent && <span aria-hidden="true">▸</span>}
@@ -69,10 +91,10 @@ export function PathRail({ locale, manifest, currentCourseId, courseTitles }: Pa
           href={contentUrl(locale as Locale, `learn/paths/${manifest.pathId}`, manifest.pathId)}
           className={FOOTER_LINK_CLASS}
         >
-          View full path
+          {t(locale as Locale, "pathsViewFullPath")}
         </Link>
         <Link href={`/${locale}/browse`} className={FOOTER_LINK_CLASS}>
-          Browse all courses
+          {t(locale as Locale, "pathsBrowseAllCourses")}
         </Link>
       </div>
     </nav>

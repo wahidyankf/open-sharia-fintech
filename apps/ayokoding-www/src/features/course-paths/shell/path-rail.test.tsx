@@ -75,6 +75,14 @@ describe("PathRail (Cycle 2.8 — Screen 3 Option B)", () => {
     expect(link.getAttribute("aria-label")).toBe("Data Structures & Algorithms");
   });
 
+  it("shows a 'course k of N' readout above the list — prd.md's Screen 3 responsive spec requires it at md+ widths (phase-5 EWT finding)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByText("Course 2 of 3")).toBeTruthy();
+  });
+
   it("the footer offers 'view full path' and 'browse all courses' escape links", () => {
     render(
       <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
@@ -87,5 +95,33 @@ describe("PathRail (Cycle 2.8 — Screen 3 Option B)", () => {
 
     const browseAll = screen.getByRole("link", { name: /browse all courses/i });
     expect(browseAll.getAttribute("href")).toBe("/en/browse");
+  });
+
+  it("gives both footer escape links an always-visible underline affordance, not only a :hover cue (UWT-003 fix)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByRole("link", { name: /view full path/i }).className).toContain("underline");
+    expect(screen.getByRole("link", { name: /browse all courses/i }).className).toContain("underline");
+  });
+
+  it("gives the current row a background highlight, matching prd.md's own documented spec for this row (DWT-005 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(
+      <PathRail locale="en" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    const current = screen.getByRole("link", { name: /Just Enough Python/i });
+    expect(current.className).toContain("bg-accent");
+  });
+
+  it("localizes 'course k of N' and the footer escape links on the id locale (DWT-003 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(
+      <PathRail locale="id" manifest={manifest} currentCourseId="just-enough-python" courseTitles={courseTitles} />,
+    );
+
+    expect(screen.getByText("Kursus 2 dari 3")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /lihat jalur lengkap/i })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /jelajahi semua kursus/i })).toBeTruthy();
   });
 });

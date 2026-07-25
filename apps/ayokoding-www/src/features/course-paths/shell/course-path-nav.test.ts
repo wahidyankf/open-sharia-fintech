@@ -7,6 +7,8 @@ import {
   derivePathBadges,
   resolveCoursePathRenderData,
   buildCourseTitleIndex,
+  humanizeKebabSlug,
+  buildArcTitleIndex,
   slugFromPathname,
   resolveActiveCourseFromLocation,
   coursePositionInManifest,
@@ -244,6 +246,38 @@ describe("resolveCoursePathRenderData", () => {
     expect(result.prerequisiteLinks).toEqual([{ title: "Git", slug: "learn/courses/version-control-and-git" }]);
   });
 
+  it("attaches the active pathId only to a prerequisite link that is ITSELF a member of the active manifest — a prerequisite the manifest omits gets a plain canonical link, never a misleading ?path= (EWT-002 fix)", () => {
+    const searchParams = new URLSearchParams({ path: manifest.pathId });
+    const contentMapWithCapstone = new Map(contentMap).set(
+      "en:learn/courses/capstone-forge-ready",
+      courseMeta("learn/courses/capstone-forge-ready", "Capstone: Forge Ready"),
+    );
+
+    const result = resolveCoursePathRenderData(
+      searchParams,
+      {
+        contentMap: contentMapWithCapstone,
+        manifests: [manifest],
+        // "data-structures-and-algorithms-essentials" declares two prerequisites: one IS a member
+        // of `manifest.courseOrder` ("version-control-and-git"), one is NOT ("capstone-forge-ready"
+        // — OI-4's link-don't-walk case).
+        prerequisitesByCourse: {
+          "data-structures-and-algorithms-essentials": ["version-control-and-git", "capstone-forge-ready"],
+        },
+        libraryCourseIds: ["version-control-and-git", "capstone-forge-ready"],
+      },
+      "data-structures-and-algorithms-essentials",
+      "en",
+      fallbackPrev,
+      fallbackNext,
+    );
+
+    expect(result.prerequisiteLinks).toEqual([
+      { title: "Git", slug: "learn/courses/version-control-and-git", pathId: manifest.pathId },
+      { title: "Capstone: Forge Ready", slug: "learn/courses/capstone-forge-ready", pathId: undefined },
+    ]);
+  });
+
   it("derives path badges only when there is no active context (canonical branch only)", () => {
     const withoutContext = resolveCoursePathRenderData(
       new URLSearchParams(),
@@ -309,12 +343,45 @@ describe("buildCourseTitleIndex", () => {
     });
   });
 
-  it("omits a course ID with no resolvable content page", () => {
+  it("falls back to a humanized slug — never omits, never the raw slug — for a course ID with no resolvable content page (DWT-004 fix, phase-5 rule-15 design-tester retest)", () => {
     const index = buildCourseTitleIndex(contentMap, "en", [
       { ...manifest, courseOrder: ["version-control-and-git", "does-not-exist"] },
     ]);
 
-    expect(index).toEqual({ "version-control-and-git": "Git" });
+    expect(index).toEqual({ "version-control-and-git": "Git", "does-not-exist": "Does Not Exist" });
+  });
+});
+
+describe("humanizeKebabSlug (UWT-001 fix)", () => {
+  it("title-cases each hyphen-separated word and joins with a space", () => {
+    expect(humanizeKebabSlug("generalist-track")).toBe("Generalist Track");
+    expect(humanizeKebabSlug("immediately-effective")).toBe("Immediately Effective");
+  });
+
+  it("handles a single-word slug", () => {
+    expect(humanizeKebabSlug("careers")).toBe("Careers");
+  });
+});
+
+describe("buildArcTitleIndex (UWT-001 fix)", () => {
+  function arcMeta(slug: string, title: string): ContentMeta {
+    return courseMeta(slug, title);
+  }
+
+  it("resolves an arc's title from its own _index.md content entry", () => {
+    const contentMap = new Map<string, ContentMeta>([
+      ["en:learn/paths/careers/interview-ready", arcMeta("learn/paths/careers/interview-ready", "Interview-Ready")],
+    ]);
+
+    const index = buildArcTitleIndex(contentMap, "en", ["interview-ready"]);
+
+    expect(index).toEqual({ "interview-ready": "Interview-Ready" });
+  });
+
+  it("falls back to a humanized slug when the arc has no _index.md content entry", () => {
+    const index = buildArcTitleIndex(new Map(), "en", ["generalist-track"]);
+
+    expect(index).toEqual({ "generalist-track": "Generalist Track" });
   });
 });
 

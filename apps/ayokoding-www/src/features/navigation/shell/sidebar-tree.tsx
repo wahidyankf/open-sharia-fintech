@@ -69,8 +69,8 @@ function ScrollableTree({ children }: { children: React.ReactNode }) {
       style={
         isOverflowing
           ? {
-              maskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
-              WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent)",
+              maskImage: "linear-gradient(to right, black calc(100% - 10px), transparent)",
+              WebkitMaskImage: "linear-gradient(to right, black calc(100% - 10px), transparent)",
             }
           : undefined
       }
@@ -94,6 +94,14 @@ function SidebarNode({ node, locale, depth }: { node: TreeNode; locale: string; 
       <div className="flex items-center">
         <Link
           href={href}
+          // `title` (UWT-002 fix, phase-5 rule-15 retest): a second, independent, unconditional
+          // recovery path for a label the visible rail is currently too narrow to show in full —
+          // a sighted mouse user can always hover to read the complete text, regardless of scroll
+          // position. Deliberately keeps `whitespace-nowrap` (never `truncate`/ellipsis) — this
+          // component's own contract (`resizable-sidebar.feature`'s "the label is not clipped or
+          // wrapped") is that an overflowing label is always fully recoverable via the tree's
+          // horizontal scroll + fade cue, never silently clipped with an ellipsis instead.
+          title={node.title}
           className={cn(
             "flex-1 rounded-md px-2 py-1.5 text-sm whitespace-nowrap transition-colors",
             isActive

@@ -60,7 +60,9 @@ describeFeature(feature, ({ Scenario }) => {
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/category-landing-arc-chooser.feature:The careers category landing offers an arc chooser
     And("the immediately-effective arc card previews exactly two member roles", () => {
-      const card = screen.getByRole("link", { name: /immediately-effective/i });
+      // No `contentMap` is passed, so the arc title falls back to `humanizeKebabSlug` (UWT-001
+      // fix) — "Immediately Effective", not the raw "immediately-effective" slug.
+      const card = screen.getByRole("link", { name: /immediately effective/i });
       expect(within(card).getAllByRole("listitem").length).toBe(2);
     });
   });

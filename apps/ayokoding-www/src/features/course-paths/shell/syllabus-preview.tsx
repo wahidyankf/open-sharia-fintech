@@ -15,22 +15,34 @@ export interface SyllabusPreviewProps {
  * `PathManifest` has no explicit phase-boundary field, so "first phase" is approximated as the
  * first {@link FIRST_PHASE_PREVIEW_COUNT} courses in `courseOrder` — a documented simplification,
  * not a hidden one.
+ *
+ * No manually-rendered `{index + 1}.` prefix (DWT-002 fix, phase-5 rule-15 design-tester retest):
+ * this component previously prepended its own local list index in front of each course title, but
+ * every real course title already embeds its own catalog number (e.g. `"4 · Just Enough Python"`),
+ * so the two numbers collided into a nonsensical-looking `"1. 4 · Just Enough Python"`. The `<ol>`
+ * itself already carries the "number is order" semantics (matching `path-landing.tsx`'s sibling
+ * syllabus, which renders no added index either) — the visible number readers see is the course's
+ * own embedded catalog number, never a second, redundant one.
  */
 export function SyllabusPreview({ courseTitles }: SyllabusPreviewProps) {
   const preview = courseTitles.slice(0, FIRST_PHASE_PREVIEW_COUNT);
 
   return (
-    <p className="mt-2 text-xs text-muted-foreground">
+    // A <div>, not a <p>: <p> only permits phrasing content, and the block-level <ol> below is
+    // invalid as a <p> descendant — browsers silently close the <p> early to recover, which
+    // diverges SSR output from the hydrated client tree (a real hydration-mismatch defect found
+    // live via Playwright MCP, see this file's regression test).
+    <div className="mt-2 text-xs text-muted-foreground">
       <span className="font-medium text-foreground">Starts with:</span>{" "}
       <ol className="inline">
         {preview.map((title, index) => (
           <li key={title} className="inline">
             {index > 0 && " · "}
-            {index + 1}. {title}
+            {title}
           </li>
         ))}
       </ol>
       {" →"}
-    </p>
+    </div>
   );
 }

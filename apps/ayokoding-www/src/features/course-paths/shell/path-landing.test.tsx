@@ -64,6 +64,13 @@ describe("PathLanding (Cycle 3.1 — Screen 2)", () => {
     expect(container.querySelector(".prose")).toBeNull();
   });
 
+  it("gives every syllabus link an always-visible underline affordance, not only a :hover cue (UWT-003 fix)", () => {
+    render(<PathLanding locale="en" manifest={manifest} courseTitles={courseTitles} />);
+
+    const link = screen.getByRole("link", { name: "Just Enough Python" });
+    expect(link.className).toContain("underline");
+  });
+
   it("renders the supplied body html between the title and the syllabus (Cycle 3.1d)", () => {
     render(
       <PathLanding
@@ -75,5 +82,29 @@ describe("PathLanding (Cycle 3.1 — Screen 2)", () => {
     );
 
     expect(screen.getByText("A distinct runway-justification paragraph.")).toBeTruthy();
+  });
+
+  it("frames the H1 with a hue-wash strip matching the manifest's documented arc hue, not a hardcoded honey bar (DWT-001 fix, phase-5 rule-15 design-tester retest)", () => {
+    const { container } = render(<PathLanding locale="en" manifest={manifest} courseTitles={courseTitles} />);
+
+    const bar = container.querySelector('[aria-hidden="true"]');
+    expect(bar).not.toBeNull();
+    expect(bar!.className).toContain("bg-[var(--hue-current-wash)]");
+    expect(bar!.getAttribute("style")).toContain("--hue-current-wash: var(--hue-honey-wash)");
+  });
+
+  it("falls back to a plain neutral bar for a manifest whose arc is not in the documented DD-50 hue map", () => {
+    const unmapped: PathManifest = { ...manifest, pathId: "skills/e2e-fixture-alpha", arc: "e2e-fixture-alpha-track" };
+    const { container } = render(<PathLanding locale="en" manifest={unmapped} courseTitles={courseTitles} />);
+
+    const bar = container.querySelector('[aria-hidden="true"]');
+    expect(bar!.className).toContain("bg-border");
+    expect(bar!.className).not.toContain("hue");
+  });
+
+  it("localizes the 'Syllabus' heading on the id locale (DWT-003 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(<PathLanding locale="id" manifest={manifest} courseTitles={courseTitles} />);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Silabus" })).toBeTruthy();
   });
 });

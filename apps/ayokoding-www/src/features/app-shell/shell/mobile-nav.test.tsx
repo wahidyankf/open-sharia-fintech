@@ -185,7 +185,7 @@ describe("Cycle 3.4 — focus returns to the control that opened the drawer when
       const { open, setOpen } = useMobileNavOpen();
       return (
         <>
-          <PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
+          <PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
           <MobileNav locale="en" open={open} onOpenChange={setOpen} />
         </>
       );
@@ -232,7 +232,7 @@ describe("Cycle 3.4 — focus returns to the control that opened the drawer when
       const { open, setOpen } = useMobileNavOpen();
       return (
         <>
-          <PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
+          <PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />
           <MobileNav locale="en" open={open} onOpenChange={setOpen} />
         </>
       );

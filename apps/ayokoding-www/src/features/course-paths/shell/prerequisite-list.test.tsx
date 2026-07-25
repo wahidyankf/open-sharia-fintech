@@ -26,7 +26,16 @@ describe("PrerequisiteList", () => {
   });
 
   it("renders each declared prerequisite as a link to its canonical URL — path-aware view, preserving the path context", () => {
-    render(<PrerequisiteList locale="en" prerequisites={prerequisites} pathId="skills/python-fundamentals" />);
+    // EWT-002 fix: `pathId` is now carried per-item (set only when that prerequisite is itself a
+    // member of the active manifest) rather than as a blanket prop applied to every prerequisite.
+    const pathAwarePrerequisites = [
+      {
+        title: "Version Control and Git",
+        slug: "learn/courses/version-control-and-git",
+        pathId: "skills/python-fundamentals",
+      },
+    ];
+    render(<PrerequisiteList locale="en" prerequisites={pathAwarePrerequisites} />);
 
     expect(screen.getByRole("link", { name: "Version Control and Git" }).getAttribute("href")).toBe(
       "/en/learn/courses/version-control-and-git?path=skills/python-fundamentals",
@@ -48,5 +57,12 @@ describe("PrerequisiteList", () => {
 
     const links = screen.getAllByRole("link");
     expect(links.map((l) => l.textContent)).toEqual(["Version Control and Git", "Just Enough Python"]);
+  });
+
+  it("localizes the 'Prerequisites' heading and landmark label on the id locale (DWT-003 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(<PrerequisiteList locale="id" prerequisites={prerequisites} />);
+
+    expect(screen.getByRole("heading", { level: 2, name: "Prasyarat" })).toBeTruthy();
+    expect(screen.getByRole("navigation", { name: "Prasyarat" })).toBeTruthy();
   });
 });

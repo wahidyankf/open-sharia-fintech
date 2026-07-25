@@ -239,7 +239,7 @@ describeFeature(feature, ({ Scenario }) => {
       cleanup();
       render(
         <MobileNavOpenProvider>
-          <PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={3} />
+          <PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={3} />
           <MobileNavConsumer />
         </MobileNavOpenProvider>,
       );

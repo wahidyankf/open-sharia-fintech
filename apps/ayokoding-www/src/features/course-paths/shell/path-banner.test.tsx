@@ -18,7 +18,7 @@ afterEach(() => {
 
 describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer on a phone)", () => {
   it("has an accessible name 'View path: Open path course list — {Path}, course {k} of {N}' (contains the visible 'View path' label per WCAG 2.5.3 Label in Name)", () => {
-    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    render(<PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     expect(
       screen.getByRole("button", {
@@ -28,7 +28,7 @@ describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer o
   });
 
   it("carries aria-expanded (mirroring the shared drawer's open state) and aria-controls", () => {
-    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    render(<PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     const button = screen.getByRole("button", { name: /Open path course list/i });
     expect(button.getAttribute("aria-expanded")).toBe("false");
@@ -41,7 +41,7 @@ describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer o
   // `open`, so it always mirrors the drawer's actual visibility.
   it("aria-expanded mirrors the shared drawer's open state, not a locally-toggled value", () => {
     mockOpen = true;
-    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    render(<PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     const button = screen.getByRole("button", { name: /Open path course list/i });
     expect(button.getAttribute("aria-expanded")).toBe("true");
@@ -51,7 +51,7 @@ describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer o
     const { default: userEvent } = await import("@testing-library/user-event");
     const user = userEvent.setup();
 
-    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    render(<PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
     const trigger = screen.getByRole("button", { name: /Open path course list/i });
     await user.click(trigger);
 
@@ -62,14 +62,23 @@ describe("PathBanner (Cycle 2.9 — collapses the rail into the shipped drawer o
   });
 
   it("renders the compact 'on path · course k of N' readout", () => {
-    render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    render(<PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
 
     expect(screen.getByText(/on path/i).textContent).toMatch(/2 of 5/);
   });
 
   it("is hidden at md: and up (md:hidden) — the rail itself covers that breakpoint", () => {
-    const { container } = render(<PathBanner pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+    const { container } = render(
+      <PathBanner locale="en" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />,
+    );
 
     expect(container.firstElementChild?.className).toContain("md:hidden");
+  });
+
+  it("localizes the 'on path · course k of N' readout and the 'View path' trigger text on the id locale (DWT-003 fix, phase-5 rule-15 design-tester retest)", () => {
+    render(<PathBanner locale="id" pathTitle="Python Fundamentals" courseIndex={2} totalCourses={5} />);
+
+    expect(screen.getByText(/pada jalur/i).textContent).toMatch(/2 dari 5/);
+    expect(screen.getByRole("button", { name: /Open path course list/i }).textContent).toBe("Lihat jalur");
   });
 });

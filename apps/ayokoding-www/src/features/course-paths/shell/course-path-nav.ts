@@ -4,6 +4,7 @@ import { resolvePathNav, type PathNav } from "../core/path-nav";
 import { resolvePrerequisites, type PrerequisitesByCourse } from "../core/prerequisites";
 import type { PathManifest } from "../core/schemas";
 import type { ContentMeta, PageLink } from "@/features/content/core/types";
+import { LEARN_PATHS_PREFIX } from "./paths-route";
 
 /** The content-slug prefix every course lives under — the one canonical course URL shape. */
 const COURSE_SLUG_PREFIX = "learn/courses/";
@@ -93,6 +94,20 @@ export function pageLinkForCourseId(
   return meta ? { title: meta.title, slug: meta.slug } : null;
 }
 
+/**
+ * One prerequisite link — a plain {@link PageLink} that additionally carries the active `pathId`
+ * only when the prerequisite's own course is a member of that active manifest's `courseOrder`
+ * (EWT-002 fix, phase-5 rule-15 retest). Before this fix, every prerequisite link unconditionally
+ * inherited the active `?path=`, even a declared-but-omitted prerequisite (OI-4's explicitly
+ * supported "link-don't-walk" case) — misleading path-membership in the address bar for a course
+ * that was never actually in that path, contradicting `prerequisite-display.feature`'s "canonical
+ * URL" wording. `pathId` is `undefined` (never a falsy placeholder string) for a prerequisite
+ * outside the active manifest, or when there is no active path context at all.
+ */
+export interface PrerequisiteLink extends PageLink {
+  pathId?: string;
+}
+
 /** One path a course belongs to, as a renderable badge (Cycle 2.5's "part of paths" affordance). */
 export interface PathBadge {
   pathId: string;
@@ -125,7 +140,7 @@ export interface CoursePathData {
 /** Everything `<ROUTE>` needs to render a course page's path-aware chrome, resolved in one call. */
 export interface CoursePathRenderData {
   activeContext: ActiveCoursePathContext | null;
-  prerequisiteLinks: readonly PageLink[];
+  prerequisiteLinks: readonly PrerequisiteLink[];
   pathBadges: readonly PathBadge[];
   prev: PageLink | null;
   next: PageLink | null;
@@ -153,9 +168,24 @@ export function resolveCoursePathRenderData(
 ): CoursePathRenderData {
   const activeContext = resolveActiveCoursePathContext(searchParams, data.manifests, courseId);
 
-  const prerequisiteLinks = resolvePrerequisites(courseId, data.prerequisitesByCourse, data.libraryCourseIds)
-    .map((id) => pageLinkForCourseId(data.contentMap, locale, id))
-    .filter((link): link is PageLink => link !== null);
+  // EWT-002 fix: a prerequisite only inherits the active `?path=` when the prerequisite's own
+  // course is ITSELF a member of that manifest's `courseOrder` — a declared-but-omitted
+  // prerequisite (OI-4's link-don't-walk case) gets its plain canonical link instead, so the
+  // address bar never claims path membership a course doesn't actually have.
+  const activeManifestCourseIds = activeContext
+    ? new Set(activeContext.manifest.courseOrder.map((ref) => normalizeCourseRef(ref).id))
+    : null;
+
+  const prerequisiteLinks: PrerequisiteLink[] = resolvePrerequisites(
+    courseId,
+    data.prerequisitesByCourse,
+    data.libraryCourseIds,
+  ).flatMap((id) => {
+    const link = pageLinkForCourseId(data.contentMap, locale, id);
+    if (!link) return [];
+    const pathId = activeContext && activeManifestCourseIds?.has(id) ? activeContext.pathId : undefined;
+    return [{ ...link, pathId }];
+  });
 
   const pathBadges = activeContext === null ? derivePathBadges(data.manifests, courseId) : [];
 
@@ -176,7 +206,14 @@ export function resolveCoursePathRenderData(
 
 /**
  * Build a plain `courseId -> title` record covering every course ID that appears in any of
- * `manifests`' `courseOrder` — a course ID with no resolvable content page is omitted.
+ * `manifests`' `courseOrder`. A course ID with no resolvable content page for `locale` (e.g. every
+ * course under `id`, since course content is `en`-only per `brd.md`'s non-goal) still gets an
+ * entry — {@link humanizeKebabSlug}`(id)` — rather than being omitted (DWT-004 fix, phase-5
+ * rule-15 design-tester retest): before this fix, an unresolvable ID was silently absent from the
+ * returned record, so callers' own `courseTitles[id] ?? id` fallback rendered the completely raw,
+ * un-humanized slug (`"just-enough-bash"`) — the same defect class UWT-001 already fixed for arc/
+ * role identifiers via this same humanization helper, just reached through a different fallback
+ * path this function's own lookup didn't touch.
  *
  * Pure — no IO. Deliberately a plain `Record`, not a `Map`: `<APPSHELL>` server layouts pass this
  * to the client-side `SidebarHost`/`MobileNav` (Cycles 2.8/2.9), and a `Map` is not a safe RSC
@@ -197,9 +234,50 @@ export function buildCourseTitleIndex(
   const titles: Record<string, string> = {};
   for (const id of ids) {
     const link = pageLinkForCourseId(contentMap, locale, id);
-    if (link) {
-      titles[id] = link.title;
-    }
+    titles[id] = link ? link.title : humanizeKebabSlug(id);
+  }
+  return titles;
+}
+
+/**
+ * Humanize a raw kebab-case slug segment (e.g. `"generalist-track"`) into a plain-language,
+ * space-separated Title Case label (`"Generalist Track"`) — the last-resort fallback this plan's
+ * arc/role identifiers use when no authored content title exists for them.
+ *
+ * Pure — no IO. UWT-001 fix (phase-5 rule-15 usability retest): before this, a raw arc/role slug
+ * was rendered directly to readers in several places (the careers category-landing arc-card grid,
+ * the hero path-card description, the arc-card role badges) even though a humanized rendering of
+ * the identical identifier already existed elsewhere on the same screen (the content sidebar, the
+ * arc-landing `<h1>`) — an internal-consistency break visible without navigating anywhere.
+ */
+export function humanizeKebabSlug(slug: string): string {
+  return slug
+    .split("-")
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/**
+ * Build a plain `arc -> title` record for every careers arc slug in `arcs`, resolved from that
+ * arc's own `_index.md` content title (the same authored title the content sidebar and the
+ * arc-landing `<h1>` already render) — falling back to {@link humanizeKebabSlug} only when no
+ * `_index.md` exists for that arc (every currently-shipped arc has one; this fallback exists so a
+ * future arc added without its structural index page first still reads as plain language, never a
+ * raw slug).
+ *
+ * Pure — no IO. UWT-001 fix (phase-5 rule-15 usability retest) — see {@link humanizeKebabSlug}'s
+ * doc comment for the defect this closes.
+ */
+export function buildArcTitleIndex(
+  contentMap: ReadonlyMap<string, ContentMeta>,
+  locale: string,
+  arcs: readonly string[],
+): Record<string, string> {
+  const titles: Record<string, string> = {};
+  for (const arc of arcs) {
+    const meta = contentMap.get(`${locale}:${LEARN_PATHS_PREFIX}/careers/${arc}`);
+    titles[arc] = meta ? meta.title : humanizeKebabSlug(arc);
   }
   return titles;
 }

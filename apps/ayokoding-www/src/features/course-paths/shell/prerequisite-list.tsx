@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { contentUrl } from "@/features/content/core/content-url";
 import type { Locale } from "@/features/i18n/core/config";
-import type { PageLink } from "@/features/content/core/types";
+import { t } from "@/features/i18n/core/translations";
+import type { PrerequisiteLink } from "./course-path-nav";
 
 export interface PrerequisiteListProps {
   locale: string;
-  /** Already-resolved prerequisite links (Cycle 2.4's REFACTOR note — no lookup of its own). */
-  prerequisites: readonly PageLink[];
-  /** When set, every prerequisite link preserves the path context so the reader stays in-path. */
-  pathId?: string;
+  /**
+   * Already-resolved prerequisite links (Cycle 2.4's REFACTOR note — no lookup of its own). Each
+   * link carries its own optional `pathId` (EWT-002 fix) — set only when that specific
+   * prerequisite is itself a member of the active manifest, never a single blanket value applied
+   * to every prerequisite regardless of manifest membership.
+   */
+  prerequisites: readonly PrerequisiteLink[];
 }
 
 /**
@@ -19,22 +23,24 @@ export interface PrerequisiteListProps {
  * display). Renders nothing at all (not an empty "Prerequisites" heading) when there are no
  * declared prerequisites — advisory, never gated: no lock, no quiz-wall.
  *
- * Functional core / imperative shell: this component takes already-resolved `PageLink`s and
- * performs no lookup of its own.
+ * Functional core / imperative shell: this component takes already-resolved `PrerequisiteLink`s
+ * (each already carrying its own per-item `pathId` decision) and performs no lookup of its own.
  */
-export function PrerequisiteList({ locale, prerequisites, pathId }: PrerequisiteListProps) {
+export function PrerequisiteList({ locale, prerequisites }: PrerequisiteListProps) {
   if (prerequisites.length === 0) {
     return null;
   }
 
+  const label = t(locale as Locale, "pathsPrerequisites");
+
   return (
-    <nav aria-label="Prerequisites" className="mt-8 text-sm">
-      <h2 className="mb-2 font-semibold text-muted-foreground">Prerequisites</h2>
+    <nav aria-label={label} className="mt-8 text-sm">
+      <h2 className="mb-2 font-semibold text-muted-foreground">{label}</h2>
       <ul className="flex flex-col gap-1">
         {prerequisites.map((prerequisite) => (
           <li key={prerequisite.slug}>
             <Link
-              href={contentUrl(locale as Locale, prerequisite.slug, pathId)}
+              href={contentUrl(locale as Locale, prerequisite.slug, prerequisite.pathId)}
               className="underline hover:text-foreground"
             >
               {prerequisite.title}

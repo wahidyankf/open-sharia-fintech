@@ -2,6 +2,7 @@ import type { Locale } from "@/features/i18n/core/config";
 import { t } from "@/features/i18n/core/translations";
 import type { LandingSectionDescriptor } from "@/features/content/core/landing-sections";
 import { contentUrl } from "@/features/content/core/content-url";
+import type { ContentMeta } from "@/features/content/core/types";
 import { SectionCard } from "@/features/content/shell/section-card";
 import type { PathManifest } from "@/features/course-paths/core/schemas";
 import { Hero } from "./hero";
@@ -13,6 +14,8 @@ interface LandingProps {
   sections: LandingSectionDescriptor[];
   /** Threaded straight through to {@link Hero}'s `PathCard` grid (Cycle 3.2) — see its own doc comment. */
   manifests?: readonly PathManifest[];
+  /** Threaded straight through to {@link Hero}'s arc-title resolution (UWT-001 fix) — see its own doc comment. */
+  contentMap?: ReadonlyMap<string, ContentMeta>;
 }
 
 /**
@@ -25,10 +28,10 @@ interface LandingProps {
  * landmark. Single-column stack on mobile, multi-column grid on desktop, per
  * the Option-A `landing-*.png` mockups.
  */
-export function Landing({ locale, sections, manifests }: LandingProps) {
+export function Landing({ locale, sections, manifests, contentMap }: LandingProps) {
   return (
     <div>
-      <Hero locale={locale} manifests={manifests} />
+      <Hero locale={locale} manifests={manifests} contentMap={contentMap} />
 
       <section aria-labelledby="explore-heading" className="px-6 py-4 lg:px-8">
         <div className="mx-auto max-w-6xl">
