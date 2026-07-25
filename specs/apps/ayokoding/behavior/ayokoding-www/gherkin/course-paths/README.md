@@ -4,7 +4,7 @@ Behaviour scenarios for the learning-path schema, prerequisite DAG, and path-awa
 mechanism built by `ayokoding-learning-path-02-schema-and-prerequisite-dag`.
 
 `ayokoding-learning-path-03-navigation-ui` (Phases 2-5) step-bound every scenario in this domain
-whose owning UI now exists: 19 of the 24 scenarios below, across 14 of the 18 feature files —
+whose owning UI now exists: 19 of the 24 scenarios below, across 15 of the 18 feature files —
 `@unit` for every one of them, plus `@e2e` for whichever of Phase 3's two Playwright step files
 (`apps/ayokoding-www-fe-e2e/src/steps/course-paths.steps.ts` for 14 scenarios;
 `apps/ayokoding-www-fe-e2e/src/steps/course-paths-a11y.steps.ts` for the accessibility scenario)
