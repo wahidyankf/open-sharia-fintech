@@ -4,14 +4,14 @@ Feature: Canonical fallback rendering
   I want a course to render its full canonical view whenever no path context applies
   So that graceful fallback is the default rendering, not an error path bolted on afterward
 
-  @wip
+  @unit
   Scenario: A course deep-linked without path context renders the canonical view
     Given a reader opens a course URL /en/learn/courses/<course-id> with no path context query parameter
     When the course page renders
     Then the course body renders in full with the content-tree breadcrumb and its prerequisite list
     And a "this course is part of" affordance lists every path that includes the course
 
-  @wip
+  @unit
   Scenario: A course opened without path context renders the generic sidebar unchanged
     Given a reader opens a canonical course URL with no path context query parameter
     When the page renders

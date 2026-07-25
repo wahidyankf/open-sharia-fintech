@@ -1,0 +1,55 @@
+Phase 2 specs coverage delta — ayokoding-learning-path-03-navigation-ui
+Recorded: 2026-07-25
+
+Scope
+-----
+Of the 20 scenarios in-scope for this plan (prd.md §Acceptance Criteria), Phase 2 un-@wip's the 9
+scenarios whose underlying UI Phase 2's ten TDD cycles actually build, across the 6 pre-existing
+`course-paths/` feature files (path-order-nav.feature x3, omitted-course.feature x1,
+canonical-fallback.feature x2, invalid-path-fallback.feature x1, breadcrumb.feature x1,
+prerequisite-display.feature x1). Both @covers markers and @amiceli/vitest-cucumber step bindings
+exist for all 9; `npx nx run ayokoding-www:specs:behavior:coverage` exits 0.
+
+Two scenarios in the 6 pre-existing files stay @wip through Phase 2 (deliberately, not overlooked):
+
+1. "A path landing page lists its courses in manifest order" (breadcrumb.feature) — the path
+   landing page itself (/en/learn/paths/<path-id>) is this plan's own Phase 3, Cycle 3.1. Un-wip
+   and step-bind there, not here.
+
+2. "A legacy fundamentally-strong URL redirects to the canonical course URL" (breadcrumb.feature)
+   — partial ownership gap, not a Phase 2 gap. Its base redirect is already shipped and step-bound
+   by the archived `ayokoding-learning-path-01-url-restructure`
+   (specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature,
+   @unit @e2e). Only the "redirect preserves any path context query parameter" clause is unowned:
+   that source plan is closed and will not reopen, and this plan's own prd.md disclaims owning the
+   scenario itself (only an e2e regression guard, tracked separately). This scenario is not this
+   plan's TDD backlog item and remains @wip pending a future plan (or a Phase 4/5 pickup) that
+   claims it explicitly.
+
+Ten new feature files (Screen 0/1/1a/1b/2 acceptance groups: landing hero, skills-path landing-body
+content, a11y, build-green, paths-hub category grouping, category-landing arc-chooser, skills
+fixed-arc statement, category-landing empty-state, arc-landing two-role, arc-landing one-role) are
+authored verbatim from prd.md in this phase but stay @wip — their underlying UI (landing pages,
+category grouping, arc-chooser) is Phase 3/4 work, not yet built. `@wip` is deliberately used here
+as this plan's own TDD-sequencing marker for these ten files (a documented, judgment-based
+deviation from the delivery.md instruction that `@wip` is reserved only for cross-plan deferral —
+recorded here rather than silently reinterpreted; see the Phase 2 knowledge-capture note for the
+same plan's future readers). Un-wip and step-bind each as its own phase implements the scenario's
+UI.
+
+manifest-integrity.feature and prerequisite-consistent-ordering.feature are untouched — plan-02-
+owned pure-core scenarios, out of scope for this plan.
+
+Correction (2026-07-25): tag level is @unit only, not @unit @e2e
+--------------------------------------------------------------
+The 9 un-@wip'd scenarios were initially tagged `@unit @e2e`, mirroring the existing
+resizable-sidebar.feature precedent. That precedent's `@e2e` tag is backed by real Playwright step
+bindings at `apps/ayokoding-www-fe-e2e/src/steps/resizable-sidebar.steps.ts`; these 9 scenarios have
+none yet. `apps/rhino-cli/src/application/e2e_coverage/parser.rs` filters its gap detector to
+`@e2e`-tagged scenarios only (`.filter(|s| s.level_tags.contains(&TestLevel::E2e))`), so tagging a
+scenario `@e2e` before its Playwright binding exists trips
+`nx run ayokoding-www-fe-e2e:specs:e2e:coverage` ("9 new unbound scenario(s) found") — caught by the
+Local Quality Gates' `npx nx affected -t test:quick` run. Corrected by retagging all 9 to `@unit`
+only. Phase 3 (delivery.md's own title: "Phase 3: Path landing + paths hub + landing hero + e2e")
+is where this plan's E2E work belongs; that phase adds `@e2e` back alongside the Playwright step
+bindings that justify it, not before.
