@@ -240,7 +240,9 @@ Airflow's own scheduler follows.
 **Why It Matters**: understanding topological order as the mechanism, not magic, is what lets an
 engineer correctly reason about a more complex DAG with branches and diamonds, and correctly debug
 why a task is stuck "waiting" -- it's waiting on a specific, nameable dependency, not an opaque
-scheduler decision.
+scheduler decision. This mental model also transfers directly to reading a real Airflow UI's graph
+view: every arrow is exactly this same dependency edge, and "why hasn't this task run" always
+reduces to "which upstream task hasn't finished yet."
 
 ---
 
@@ -319,7 +321,9 @@ propagates as a real, DAG-run-failing error.
 **Why It Matters**: transient failures -- a brief network blip, a momentarily-overloaded upstream
 API -- are common enough in real pipelines that a retry policy is the default expectation, not an
 edge case; without it, every transient blip would fail the entire DAG run and require manual
-intervention.
+intervention. A well-tuned retry policy also needs a backoff between attempts in a real deployment --
+retrying instantly against an already-overloaded upstream can make the transient failure worse
+instead of giving it time to resolve.
 
 ---
 
@@ -530,7 +534,9 @@ than an accidental full rebuild.
 **Why It Matters**: this explicit-range scoping is only safe because the underlying transform is
 idempotent (co-05) -- reprocessing `2026-07-03` through `2026-07-05` again produces the identical
 result each time, which is exactly what makes a targeted backfill a routine, low-risk operation
-rather than a destructive one.
+rather than a destructive one. This is the same guarantee ex-11 demonstrated at the transform level,
+now applied through the DAG's own scheduling mechanism -- an operator can trigger this exact backfill
+from Airflow's UI with the same confidence a manual script would need to earn from scratch.
 
 #### The orchestration DAG this band builds toward
 
@@ -634,7 +640,9 @@ children.
 
 **Why It Matters**: table-level lineage is what lets an engineer answer "if I change this table's
 schema, what breaks" before making the change, rather than discovering the blast radius one broken
-downstream report at a time.
+downstream report at a time. This BFS-based traversal is also exactly what a real lineage tool like
+OpenLineage or dbt's own `dbt docs` graph computes under the hood -- the algorithm here is the same
+one powering a production lineage UI's impact-analysis view.
 
 ---
 
@@ -672,8 +680,8 @@ if __name__ == "__main__":  # => co-19: entry point -- runs only when this file 
     print(f"Inputs feeding {target_output!r}: {feeding_inputs}")  # => co-19: prints exactly which input column(s) and transform(s)
 
     same_input_multiple_outputs = [  # => co-19: the SAME input column, silver_orders.amount, feeds TWO different output columns
-        out
-        for inp, out, _ in COLUMN_LINEAGE_EDGES
+        out  # => co-19: the output column name projected for each matching edge
+        for inp, out, _ in COLUMN_LINEAGE_EDGES  # => co-19: iterate every edge, unpacking (input, output, transform) -- transform discarded via _
         if inp == "silver_orders.amount"  # => co-19: filters to edges STARTING at this exact input column, discarding the transform label
     ]  # => co-19: shows column-level lineage's extra precision over table-level -- WHICH column, not just WHICH table
     print(f"Output columns fed by silver_orders.amount: {sorted(same_input_multiple_outputs)}")  # => co-19: prints both dependents
@@ -704,7 +712,10 @@ which transform.
 
 **Why It Matters**: column-level lineage is what lets an engineer answer "if I rename this ONE
 column, which specific downstream reports break" with precision, rather than the coarser
-table-level answer of "something in this whole downstream table might be affected."
+table-level answer of "something in this whole downstream table might be affected." That precision
+matters most in a wide table with dozens of columns feeding many different downstream reports --
+table-level lineage would flag every one of them as at-risk, while column-level lineage narrows the
+blast radius to only the reports that actually read the changed column.
 
 ---
 
@@ -770,7 +781,9 @@ time" -- a row that's simply gone produces no signal at all, because polling has
 
 **Why It Matters**: a pipeline relying on query-based polling for change detection silently loses
 every delete, and any row that was both inserted and deleted between two polls entirely -- this is
-the specific, structural gap log-based CDC (ex-49) exists to close.
+the specific, structural gap log-based CDC (ex-49) exists to close. This gap is easy to miss in
+testing, because a delete produces no error and no exception -- the pipeline simply keeps running,
+quietly serving a downstream table that still contains rows the source system considers long gone.
 
 ---
 
@@ -847,7 +860,9 @@ point-in-time snapshots.
 **Why It Matters**: log-based CDC is why real-world CDC tools (Debezium reading MySQL's binlog or
 Postgres' logical replication) exist at all -- the transaction log a database already maintains for
 its own durability is a free, complete, ordered feed of exactly the changes query-based polling can
-never fully reconstruct.
+never fully reconstruct. Reading a log a database already writes for its own crash recovery also
+means log-based CDC adds negligible extra load to the source system, unlike polling, which must
+re-query the entire table on every cycle.
 
 ---
 
@@ -920,7 +935,9 @@ a retry doubles the row.
 **Why It Matters**: this is exactly the gap Google Cloud Dataflow's own docs warn about --
 "exactly-once" is frequently misunderstood as an end-to-end guarantee, when it actually describes
 only the engine's internal processing; the sink write is the pipeline author's own responsibility to
-make idempotent.
+make idempotent. Teams that assume "the engine says exactly-once" covers the whole pipeline
+routinely discover this gap the hard way -- during an incident retro, after a sink retry has already
+produced duplicate rows a dashboard silently summed twice.
 
 ---
 
@@ -992,7 +1009,9 @@ fix as co-05's `MERGE`, applied at the sink boundary specifically.
 **Why It Matters**: comparing ex-50 and ex-51 side by side proves the entire lesson of co-21 with
 one changed detail -- the identical engine, the identical retry, the identical record, and only the
 sink's own write semantics (append vs. merge) decides whether the pipeline's end-to-end guarantee is
-actually exactly-once.
+actually exactly-once. This is precisely why a production pipeline's exactly-once claim has to be
+verified at the sink, not just the engine's own documentation -- the same MERGE-on-key pattern co-05
+and co-09 already established elsewhere in this course.
 
 ---
 

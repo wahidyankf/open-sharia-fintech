@@ -128,7 +128,9 @@ genuinely new rows still land) in one SQL statement.
 **Why It Matters**: this is the exact foundation every later capstone step builds on -- if bronze
 ingest weren't idempotent, every retry, every operator rerun, and every scheduler-triggered re-run
 of `pipeline.py`'s DAG (Step 4) would risk corrupting the whole pipeline's totals with duplicated
-order lines.
+order lines. Getting this step right first is what lets every later step -- transform, serve, the
+orchestrated DAG -- assume bronze is trustworthy, rather than each one needing its own separate
+defense against the same duplication risk.
 
 ---
 
@@ -279,7 +281,7 @@ if __name__ == "__main__":  # => co-04: entry point -- runs only when this file 
     print(f"North: hand {hand_computed_north} vs served {served_north}")  # => co-10: prints the third region's comparison
 
     all_match = (  # => co-10: the capstone's own acceptance criterion -- a serving query matches a hand-computed expected total
-        served_east == hand_computed_east and served_west == hand_computed_west and served_north == hand_computed_north
+        served_east == hand_computed_east and served_west == hand_computed_west and served_north == hand_computed_north  # => co-10: all three regions must agree with their hand-computed totals
     )  # => co-10: every region's served total must equal its hand-computed value
     assert all_match, "gold's served totals must match every region's hand-computed value"  # => co-10: the claim
     print(f"MATCH: all {len(gold)} regions' served totals equal their hand-computed sums")  # => co-10
@@ -297,10 +299,10 @@ going through Python at all:
 -- serve.py runs this exact statement as GOLD_REGION_TOTALS_SQL; this file exists
 -- as the plain-SQL artifact a BI tool or a reviewer could run directly against
 -- the star schema built by transform.py, without going through Python at all.
-CREATE OR REPLACE TABLE gold_region_totals AS
-SELECT region, SUM(amount) AS total_revenue, COUNT(*) AS line_count
-FROM fact_order_line
-GROUP BY region;
+CREATE OR REPLACE TABLE gold_region_totals AS  -- => co-04: GOLD -- Databricks docs: "consumption-ready, de-normalized, read-optimized"
+SELECT region, SUM(amount) AS total_revenue, COUNT(*) AS line_count  -- => co-10: revenue is additive -- sums correctly across the region dimension
+FROM fact_order_line  -- => co-04: reads from the star schema's fact table, built by transform.py
+GROUP BY region;  -- => co-04: one served row PER region -- exactly the shape a dashboard would query directly
 ```
 
 **Run**: `python3 serve.py`

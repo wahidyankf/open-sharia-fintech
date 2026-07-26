@@ -145,7 +145,10 @@ any time.
 
 **Why It Matters**: Type 2 is what lets an analyst ask "what city was this customer in on
 2026-03-15" and get a correct historical answer -- a question Type 1's overwrite structurally cannot
-answer, because the prior value is already gone.
+answer, because the prior value is already gone. This is why Type 2 is the default choice whenever a
+dimension attribute feeds an "as it was at the time" report -- a sales rep's territory at the moment
+of a deal, a product's category at the moment of a sale -- questions a point-in-time join against
+Type 2's effective-date range answers correctly, and Type 1 cannot answer at all.
 
 ---
 
@@ -282,7 +285,9 @@ depending on which column a query groups by.
 **Why It Matters**: Type 6 answers a genuinely common reporting need -- "show me historical sales
 attributed to a rep's CURRENT territory" vs. "show me historical sales attributed to whatever
 territory was true AT THE TIME" -- both from the same table, without maintaining two separate
-dimensions.
+dimensions. That single-table design is also why Type 6 shows up often in sales-attribution and
+commission-calculation pipelines, where both questions get asked side by side in the same
+reporting cycle.
 
 ---
 
@@ -369,7 +374,10 @@ contract -- no offset is shared across partitions.
 
 **Why It Matters**: understanding that offsets are per-partition, not global, is the prerequisite
 for correctly reasoning about ordering (ex-25) and consumer-group assignment (ex-24) -- a common
-beginner mistake is assuming a single, topic-wide sequence number exists at all.
+beginner mistake is assuming a single, topic-wide sequence number exists at all. Getting this wrong
+in production usually shows up as a debugging dead end: an engineer searches for "offset 42" across
+an entire topic, not realizing that offset belongs to a specific partition and several other
+partitions have their own, unrelated offset 42.
 
 ---
 
@@ -437,7 +445,10 @@ beyond the assignment itself.
 
 **Why It Matters**: this exactly-one-owner property is the mechanism that makes Kafka's
 parallel-consumption model safe -- two members can never read the same partition simultaneously, so
-there's no race to reason about within a single partition's processing.
+there's no race to reason about within a single partition's processing. It also explains a common
+operational limit: a consumer group can never usefully have more members than the topic has
+partitions, since any member beyond that count would simply sit idle with nothing assigned to
+consume.
 
 ---
 
@@ -505,7 +516,9 @@ interleaved arrival order exists, with no meaningful global sequence.
 
 **Why It Matters**: this is exactly why a producer keys related records (e.g., every event for one
 order) to the same partition -- it's the only way to guarantee those specific records are consumed
-in the order they were produced.
+in the order they were produced. Choosing a key with too little variety concentrates load onto too
+few partitions, while choosing one with no relationship between related records loses ordering
+entirely -- key selection is a genuine design decision, not an afterthought.
 
 ---
 
@@ -578,7 +591,10 @@ causes the consumer to resume from before the crashed record, redelivering and r
 
 **Why It Matters**: at-least-once's trade -- never losing a record, at the cost of occasional
 duplicates -- is safe only if the downstream processing is itself idempotent (co-05, co-21);
-otherwise this exact redelivery pattern silently double-counts or double-writes.
+otherwise this exact redelivery pattern silently double-counts or double-writes. Most production
+Kafka consumers default to at-least-once specifically because losing data is almost always worse
+than occasionally reprocessing it, which is why idempotent downstream writes are treated as a
+baseline requirement, not an optional hardening step.
 
 ---
 
@@ -649,7 +665,9 @@ discarded rather than reprocessed.
 **Why It Matters**: this is the KIP-98 mechanism real Kafka's `enable.idempotence=true` producer
 setting implements -- understanding it as "dedup by (producer_id, sequence)" demystifies why
 exactly-once requires opting into a specific producer configuration rather than being Kafka's
-automatic behavior.
+automatic behavior. This also clarifies exactly-once's scope: it guarantees a single producer's
+writes land exactly once at the broker, which is necessary but not sufficient for end-to-end
+exactly-once semantics spanning the whole pipeline.
 
 ---
 
@@ -723,7 +741,9 @@ each event's timestamp -- no event can ever fall into two tumbling windows at on
 
 **Why It Matters**: tumbling windows are the simplest possible bounded-aggregation shape over an
 unbounded stream, and the baseline every other window type (hopping, session) is defined as a
-variation of.
+variation of. Because every timestamp belongs to exactly one tumbling window, a dashboard built on
+tumbling-window aggregates never double-counts an event across two reporting periods -- a property
+hopping windows deliberately trade away for smoother, more frequent updates.
 
 ---
 
@@ -788,8 +808,10 @@ by 5 seconds.
 
 **Why It Matters**: hopping windows compute a smoother, more frequently-updating aggregate than
 tumbling windows (a new result every hop, not just every window-size interval) at the cost of doing
-more total aggregation work, since most events now contribute to multiple windows'
-computations.
+more total aggregation work, since most events now contribute to multiple windows' computations.
+This makes hopping windows a deliberate trade of compute cost for update frequency -- appropriate
+for a dashboard that needs to feel responsive, wasteful for a batch report that only needs one
+number per day.
 
 ---
 
@@ -859,7 +881,10 @@ session and opens a new one.
 
 **Why It Matters**: session windows are the right shape for genuinely bursty activity (a user's
 browsing session, a device's active period) where a fixed-clock window would either split one
-continuous burst of activity across multiple windows or lump together unrelated bursts.
+continuous burst of activity across multiple windows or lump together unrelated bursts. Choosing a
+session gap that's too short fragments one real session into several; choosing one that's too long
+merges genuinely separate visits into a single session -- the gap threshold itself is a business
+decision, not a purely technical one.
 
 #### Three stream-window shapes, side by side
 
@@ -973,6 +998,9 @@ give genuinely different answers.
 **Why It Matters**: choosing event-time windowing (the correct choice for most analytical use cases)
 means the pipeline must be able to handle events arriving out of order and after their window has
 closed -- exactly what watermarks (ex-32) and late-data handling (ex-33) exist to manage.
+Processing-time windowing is simpler to implement because it never has to wait or reconcile late
+arrivals, but that simplicity comes at the cost of an answer that depends on network and processing
+delays rather than on when the events actually happened.
 
 ---
 
@@ -1038,7 +1066,9 @@ how much event-time has genuinely elapsed.
 
 **Why It Matters**: this watermark mechanism is what lets a stream processor correctly handle
 out-of-order arrivals within a bounded tolerance -- the window simply waits until the watermark says
-"no more data for this range is coming" before committing to a final result.
+"no more data for this range is coming" before committing to a final result. Setting the watermark's
+own delay too short causes genuinely late-but-valid events to be excluded before they arrive; setting
+it too long delays every window's result, trading correctness for latency in both directions.
 
 ---
 
@@ -1114,7 +1144,10 @@ output, and none are silently discarded.
 
 **Why It Matters**: silently dropping late data is a genuine data-loss bug in a streaming pipeline --
 routing it to a side output instead means an operator can investigate why data arrived late, and
-even reprocess it into the correct window if the business need justifies the extra complexity.
+even reprocess it into the correct window if the business need justifies the extra complexity. A
+side output also turns a silent failure into an observable one: an operator monitoring the side
+output's volume can detect a systemically late upstream source long before anyone notices missing
+numbers in a downstream report.
 
 ---
 
@@ -1179,7 +1212,9 @@ cheapest of all six data-quality dimensions to implement and run.
 **Why It Matters**: completeness is usually the first data-quality dimension a pipeline checks,
 because a missing required value is often also the root cause of a downstream join failure or a
 silently-dropped row -- catching it here, before the batch proceeds, is cheaper than debugging its
-symptoms three tables downstream.
+symptoms three tables downstream. A completeness gate placed early in a pipeline also keeps a bad
+batch from ever reaching gold, where a dashboard or ML feature store would otherwise silently serve
+the missing-value symptom instead of the root cause.
 
 ---
 
@@ -1310,7 +1345,10 @@ correctly typed as an integer, and still be nonsensical for what it represents (
 
 **Why It Matters**: validity checks catch the class of bug that completeness and uniqueness checks
 structurally cannot -- a value that exists, has the right type, and belongs to a key that's
-perfectly unique, but is simply wrong for its declared business domain.
+perfectly unique, but is simply wrong for its declared business domain. This is precisely why
+validity rules have to be declared explicitly, column by column, rather than inferred automatically
+-- a database's own type system can enforce "this is an integer" but has no way to know that a
+5-star rating scale should never contain a 9.
 
 ---
 
@@ -1375,7 +1413,10 @@ external clock needed.
 
 **Why It Matters**: a stale batch can pass every other data-quality dimension -- complete, unique,
 valid, consistent -- and still be dangerously wrong to serve, because the data it describes is
-simply out of date; timeliness is what catches a pipeline that's silently stopped updating.
+simply out of date; timeliness is what catches a pipeline that's silently stopped updating. A
+dashboard reading from a stale gold table looks identical to one reading fresh data -- nothing about
+the query result itself signals staleness, which is exactly why timeliness needs its own explicit
+check rather than being inferred from the other five dimensions.
 
 ---
 

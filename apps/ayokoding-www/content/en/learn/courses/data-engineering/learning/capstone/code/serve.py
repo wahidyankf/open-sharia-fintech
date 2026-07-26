@@ -47,7 +47,7 @@ if __name__ == "__main__":  # => co-04: entry point -- runs only when this file 
     print(f"North: hand {hand_computed_north} vs served {served_north}")  # => co-10: prints the third region's comparison
 
     all_match = (  # => co-10: the capstone's own acceptance criterion -- a serving query matches a hand-computed expected total
-        served_east == hand_computed_east and served_west == hand_computed_west and served_north == hand_computed_north
+        served_east == hand_computed_east and served_west == hand_computed_west and served_north == hand_computed_north  # => co-10: all three regions must agree with their hand-computed totals
     )  # => co-10: every region's served total must equal its hand-computed value
     assert all_match, "gold's served totals must match every region's hand-computed value"  # => co-10: the claim
     print(f"MATCH: all {len(gold)} regions' served totals equal their hand-computed sums")  # => co-10

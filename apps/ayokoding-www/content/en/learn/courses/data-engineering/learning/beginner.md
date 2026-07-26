@@ -415,7 +415,11 @@ as it arrived, blemishes and all, with only a load-time metadata column added.
 
 **Why It Matters**: keeping bronze untouched is what makes a later cleaning-rule change safe to
 replay -- if silver's cleaning logic turns out to be wrong, bronze still has the original, faithful
-copy to re-derive silver from, rather than having already discarded the evidence.
+copy to re-derive silver from, rather than having already discarded the evidence. Production
+sources rarely keep their own history forever: a source database row gets overwritten, an API's
+pagination window expires, a Kafka topic ages past its retention period. Bronze becomes the
+pipeline's own durable record of what actually arrived, on the day it arrived -- the only copy still
+trustworthy once the original source has moved on.
 
 ---
 
@@ -486,7 +490,10 @@ everything silver needs to clean from.
 
 **Why It Matters**: doing all the cleaning once, in silver, is what lets gold (ex-07) and every
 downstream consumer skip re-deriving the same cleaning logic -- a rename, a dedup rule, or a type
-fix only ever needs to be made in one place.
+fix only ever needs to be made in one place. Without that single cleaning layer, every downstream
+query or job would need to reimplement the same dedup and cast logic independently, and the moment
+one of those copies drifts from the others, two dashboards built from the "same" data start
+reporting two different numbers for what should be an identical metric.
 
 ---
 
@@ -557,7 +564,10 @@ hard cleaning work -- gold's only job is shaping an aggregate for direct consump
 
 **Why It Matters**: a dashboard or ML feature store reads gold, never bronze or silver directly --
 that boundary is what lets the bronze and silver layers evolve their cleaning logic without ever
-breaking a downstream consumer's query shape.
+breaking a downstream consumer's query shape. A gold table is also where an engineer can safely
+apply business-specific shaping -- renaming columns to match what an analyst expects, pre-aggregating
+to the exact grain a dashboard queries -- without forcing every other gold table built from the same
+silver layer to inherit those same choices.
 
 #### The medallion flow, bronze to silver to gold
 
@@ -593,7 +603,9 @@ silver reads bronze, and a cleaning-rule change in silver never has to reach bac
 **Why It Matters**: drawing the layers as a strict left-to-right flow makes an easy mistake visible
 before it happens -- a dashboard querying bronze directly, or a transform writing gold straight from
 raw source data, both break this diagram's one-way shape and reintroduce exactly the "raw data leaks
-into what gets served" problem the medallion pattern exists to prevent.
+into what gets served" problem the medallion pattern exists to prevent. This is also why medallion
+architecture reviews often start by tracing a query backward: any consumer that resolves to bronze
+or silver instead of gold is a signal the boundary has already been violated somewhere upstream.
 
 ---
 
@@ -663,7 +675,10 @@ works for any load step.
 
 **Why It Matters**: a pipeline that isn't idempotent turns every operator-triggered rerun, every
 scheduler retry, and every accidental double-trigger into a data-corruption risk. Idempotency is
-what turns "just rerun it" from a risky decision into a safe, boring one.
+what turns "just rerun it" from a risky decision into a safe, boring one. Without it, an engineer
+debugging a failed job at 2am has to first reconstruct exactly which rows already landed before
+deciding whether a rerun is even safe -- with it, that question never has to be asked, because
+rerunning always converges on the same correct result.
 
 ---
 
@@ -727,7 +742,10 @@ rows update, unmatched rows insert, and a key can never end up duplicated.
 
 **Why It Matters**: `MERGE` is the production-grade version of ex-08's hand-written
 check-before-insert loop -- the same idempotency guarantee, expressed declaratively and executed by
-the warehouse's own query planner rather than row-by-row Python.
+the warehouse's own query planner rather than row-by-row Python. Expressing the logic as one
+declarative statement also lets the warehouse optimize the match-and-update as a single operation
+instead of one round-trip per row, which is what makes `MERGE` the pattern real production
+pipelines reach for once the row counts involved grow past what a Python loop can process quickly.
 
 ---
 
@@ -801,7 +819,10 @@ are selected.
 
 **Why It Matters**: processing only the delta since the last watermark is what keeps a routine
 pipeline run cheap as the source table grows -- reprocessing the entire history every run would
-scale the pipeline's cost with the table's total size instead of with the day's new data.
+scale the pipeline's cost with the table's total size instead of with the day's new data. A
+watermark-filtered pipeline that runs against a billion-row source table costs roughly the same as
+one running against a thousand-row table, as long as the day's new rows stay small -- that
+size-independence is exactly what a full-refresh-every-run pipeline gives up.
 
 ---
 
@@ -871,7 +892,10 @@ answer, or one of the two is wrong.
 
 **Why It Matters**: backfill is the tool an engineer reaches for when a transform's logic changed
 and history needs to be recomputed under the new logic -- it only works as a safe operation because
-idempotency (co-05) guarantees rerunning it doesn't corrupt anything already correct.
+idempotency (co-05) guarantees rerunning it doesn't corrupt anything already correct. A pipeline
+without idempotent transforms cannot backfill safely at all: reprocessing old dates would risk
+double-counting or duplicating rows that a routine incremental run had already landed, forcing a
+much riskier manual cleanup before the backfill could even begin.
 
 ---
 
@@ -940,7 +964,10 @@ subdirectory per distinct column value, encoding the value directly in the direc
 
 **Why It Matters**: a directory path that itself communicates a column's value is what ex-13's
 partition pruning exploits -- a query can decide which files to read from the path alone, without
-opening a single one of them.
+opening a single one of them. This is also what makes partition layout a genuine design decision,
+not an implementation detail: choosing the wrong partition column (one with too many distinct
+values, or one queries rarely filter on) produces a directory tree that never gets pruned, silencing
+the exact benefit partitioning exists to provide.
 
 ---
 
@@ -1012,7 +1039,10 @@ them.
 
 **Why It Matters**: partition pruning turns "scan every file" into "scan only the files that could
 possibly match" -- for a real warehouse with years of daily partitions, filtering on a date range can
-be the difference between scanning gigabytes and scanning kilobytes.
+be the difference between scanning gigabytes and scanning kilobytes. That difference shows up
+directly in both query latency and compute cost, since most cloud warehouses bill by bytes scanned --
+a query that prunes 364 of 365 daily partitions can cost roughly a year's worth less than the same
+query run against an unpartitioned table.
 
 ---
 
@@ -1096,7 +1126,10 @@ across many rows into a single row a rename only has to touch once.
 
 **Why It Matters**: this split is dimensional modeling's foundational move -- every later worked
 example in this band (star schema, grain, additivity, SCDs) builds directly on the fact/dimension
-distinction this example establishes first.
+distinction this example establishes first. Getting this split right early also has a real
+operational payoff: once a customer's name lives in exactly one `dim_customer` row, correcting a
+typo or updating an address is a single-row `UPDATE`, instead of a bulk rewrite across every flat
+table row that customer ever appeared in.
 
 ---
 
@@ -1164,7 +1197,10 @@ was deliberately chosen to match it.
 
 **Why It Matters**: knowing a fact table's grain is what tells every later query writer whether a
 `SUM` is even meaningful -- summing `quantity` across `fact_order_line` answers "total units
-ordered," but only because the grain guarantees no order line is double-counted or missing.
+ordered," but only because the grain guarantees no order line is double-counted or missing. Get the
+grain wrong -- say, by accidentally joining in a dimension that fans out the fact rows -- and that
+same `SUM` silently inflates, producing a number that looks plausible but is actually counting some
+order lines multiple times.
 
 #### A star schema's shape
 
@@ -1202,7 +1238,9 @@ one-hop join rather than a multi-table chain.
 **Why It Matters**: recognizing the star shape at a glance is what lets an engineer immediately spot
 a schema that has drifted into a snowflake (a dimension pointing to another dimension) -- a valid
 but more complex design this course does not cover, and one worth naming explicitly as "not what we
-just built" the first time a learner encounters it.
+just built" the first time a learner encounters it. A star schema's flat, one-hop shape is also what
+keeps query plans simple and predictable -- every join is fact-to-dimension, so a query planner never
+has to reason about a multi-level dimension chain.
 
 ---
 
@@ -1266,7 +1304,10 @@ always produces the correct total -- there is no dimension along which summing i
 
 **Why It Matters**: additivity is the safe default assumption for a numeric measure -- knowing which
 measures are NOT additive (ex-17, ex-18) is exactly the knowledge that prevents a query from silently
-producing a nonsensical number.
+producing a nonsensical number. An additive measure like revenue can be handed to any BI tool's
+generic `SUM` aggregation with confidence, which is precisely why dashboard builders default to
+treating every numeric column as additive -- and precisely why the semi-additive and non-additive
+measures in the next two examples deserve deliberate, careful handling instead.
 
 ---
 
@@ -1341,7 +1382,10 @@ the same underlying money multiple times over.
 
 **Why It Matters**: naively applying `SUM` to any numeric column without first asking "is this
 additive across every dimension it's being summed over" is exactly how a semi-additive measure like
-a balance produces a confidently wrong, meaningless total in a dashboard.
+a balance produces a confidently wrong, meaningless total in a dashboard. Account balances,
+inventory levels, and headcount snapshots all share this same semi-additive shape -- summable across
+every dimension except time -- so recognizing the pattern here transfers directly to spotting it in
+any of those other common business metrics later.
 
 ---
 
@@ -1408,7 +1452,9 @@ precomputed, stored rate can never be aggregated correctly across rows.
 **Why It Matters**: this is Simpson's-paradox-adjacent territory -- `campaign-B`'s tiny 20-visit
 sample produces an extreme 50% rate that, averaged naively, drags the overall figure far from the
 volume-weighted truth. Storing components instead of precomputed rates is the general fix for every
-non-additive measure a data model will ever need, not just conversion rates.
+non-additive measure a data model will ever need, not just conversion rates. Click-through rates,
+error rates, and margin percentages all share this same shape -- store the numerator and denominator
+separately, and divide only at query time, never before.
 
 ---
 
