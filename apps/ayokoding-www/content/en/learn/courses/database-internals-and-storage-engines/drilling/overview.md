@@ -41,7 +41,7 @@ toward each other.
 A header, a slot array growing forward from right after the header, and tuple data growing backward
 from the end of the page, with free space between the slot array and the tuple data. The slot array
 and tuple data are the two regions that grow toward each other; the page is full exactly when they
-meet (Examples 2, 3, 4, 6, 7).
+meet (Examples 2, 3, 4, 6).
 
 </details>
 
@@ -54,7 +54,7 @@ not byte offset, matter for in-page compaction?
 A byte offset changes whenever a compaction moves a record, which would invalidate any external
 reference that stored the old offset. A slot index stays stable across a compaction because only the
 slot array's own entry gets rewritten to point at the record's new location -- external references
-never need to change (Examples 5, 8).
+never need to change (Examples 5, 7, 8).
 
 </details>
 
@@ -66,7 +66,7 @@ bookkeeping does each frame carry?
 
 The page table maps page-id to frame. Each frame carries a pin count (how many callers currently
 depend on this page staying resident) and a dirty bit (whether the page has been modified since it
-was loaded) (Examples 10, 13, 14).
+was loaded) (Examples 10, 13).
 
 </details>
 
@@ -104,7 +104,7 @@ B+-tree, and which do most SQL "btree" indexes actually implement?
 
 A B-tree stores values at every node; a B+-tree keeps values only in leaves, with the leaves linked
 as siblings. Most SQL "btree" indexes (Postgres nbtree, InnoDB) are actually B+-trees, even though
-their public API calls them "btree" (Examples 17, 18, 22).
+their public API calls them "btree" (Examples 17, 22).
 
 </details>
 
@@ -424,7 +424,7 @@ nodes should store actual row values or only routing keys.
 
 This is the B-tree-vs-B+-tree decision (co-07) -- keeping values only in leaves (a B+-tree) makes
 internal nodes smaller and more cacheable, and the leaf-sibling links this enables are what make
-range scans fast; most production SQL "btree" indexes make this choice (Examples 17, 18, 22).
+range scans fast; most production SQL "btree" indexes make this choice (Examples 17, 22).
 
 </details>
 

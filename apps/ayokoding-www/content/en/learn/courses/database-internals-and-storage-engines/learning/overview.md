@@ -104,9 +104,8 @@ free space between.
 space on a fixed-size slot -- the slot array and the tuple data grow toward each other, and the page
 is genuinely full only when the two boundaries meet.
 
-**Verify it**: Examples 2, 3, 4, 6, and 7 pack and unpack a page header, append a slot, insert a
-fixed-size record from the back, guard against insufficient free space, and store variable-length
-records by slot.
+**Verify it**: Examples 2, 3, 4, and 6 pack and unpack a page header, append a slot, insert a
+fixed-size record from the back, and guard against insufficient free space.
 
 ### co-03 &middot; Variable-Length-Record Addressing
 
@@ -117,8 +116,9 @@ without invalidating references.
 slot index is stable across a compaction precisely because the slot array's own entry is what gets
 rewritten, not every external pointer to that record.
 
-**Verify it**: Examples 5 and 8 read a record by slot index and then run an in-page compaction after
-a delete, confirming every surviving slot's index stays valid.
+**Verify it**: Examples 5, 7, and 8 read a record by slot index, pack two variable-length records
+addressed by slot, and run an in-page compaction after a delete, confirming every surviving slot's
+index stays valid.
 
 ### co-04 &middot; Buffer Pool
 
@@ -129,8 +129,8 @@ and a dirty bit.
 what makes a database's actual working set (usually a small hot fraction of the total data) fast to
 serve, while the full dataset stays durable on disk.
 
-**Verify it**: Examples 10, 13, and 14 look up a page in the page table, show a pin count guarding
-against eviction, and flush a dirty page before it is evicted.
+**Verify it**: Examples 10 and 13 look up a page in the page table and show a pin count guarding
+against eviction.
 
 ### co-05 &middot; Page Eviction Policies
 
@@ -142,8 +142,9 @@ soon; CLOCK approximates LRU far more cheaply (one reference bit, not a full rec
 LRU-K specifically defeats a one-time sequential scan from evicting genuinely hot pages, which plain
 LRU cannot.
 
-**Verify it**: Examples 15 and 16 implement LRU and CLOCK eviction directly, and Example 41 measures
-LRU-K against plain LRU on a scan-then-hot access pattern.
+**Verify it**: Example 14 flushes a dirty page before it is evicted, Examples 15 and 16 implement LRU
+and CLOCK eviction directly, and Example 41 measures LRU-K against plain LRU on a scan-then-hot
+access pattern.
 
 ### co-06 &middot; Read-Path Buffer Hit/Miss
 
@@ -165,8 +166,8 @@ most SQL "btree" indexes (Postgres nbtree, InnoDB) are B+-trees.
 routing structure -- smaller, more cacheable, and uniform -- and the sibling links between leaves are
 what make a range scan fast without ever re-descending from the root.
 
-**Verify it**: Examples 17, 18, and 22 build a B-tree leaf with a sorted insert, run a point lookup,
-and confirm a B+-tree's values live only in its leaves.
+**Verify it**: Examples 17 and 22 build a B-tree leaf with a sorted insert and confirm a B+-tree's
+values live only in its leaves.
 
 ### co-08 &middot; B-Tree Search and Fanout
 
@@ -177,8 +178,10 @@ few pages.
 costs -- a B-tree with fanout in the hundreds stays only 3-4 levels deep even at a billion keys, which
 is exactly why B-trees are the default on-disk index structure.
 
-**Verify it**: Example 19 computes B-tree height from an illustrative fanout figure and cross-checks
-it against a direct calculation.
+**Verify it**: Example 18 runs a point lookup that finds a present key and returns `None` for an
+absent one, Example 19 computes B-tree height from an illustrative fanout figure and cross-checks it
+against a direct calculation, and Example 43 bulk-loads sorted keys bottom-up and verifies the tree
+answers the same lookups as inserting one by one.
 
 ### co-09 &middot; B-Tree Insert and Split
 

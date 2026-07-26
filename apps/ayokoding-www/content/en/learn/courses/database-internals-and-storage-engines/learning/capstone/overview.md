@@ -13,8 +13,9 @@ index choice sets the read/write trade-off. Four small modules build on each oth
 `pages.py` (slotted pages + a buffer pool), `index.py` (a B+-tree-style index over page ids), `wal.py`
 (write-ahead logging across a simulated crash), and `mvcc.py` (a snapshot read layered on top) --
 every mechanism combined here was already taught individually somewhere in this topic's Beginner,
-Intermediate, or Advanced tiers (Example 1's page anatomy, Example 4's buffer pool, Examples 43-45's
-B-tree, Examples 29-33's WAL and Example 67's end-to-end recovery, Examples 37-40's MVCC).
+Intermediate, or Advanced tiers (Example 1's page anatomy, Examples 10 and 13's buffer pool,
+Examples 43-45's B-tree, Examples 29-33's WAL and Example 67's end-to-end recovery, Examples 37-40's
+MVCC).
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
@@ -61,11 +62,12 @@ truncated or paraphrased.
 
 _exercises co-02, co-03, co-04, co-06_
 
-`new_page` builds Example 1's header-plus-slot-array-plus-tuple-data layout -- the slot array grows
-forward from the header, tuple data grows backward from the end of the page, and free space sits
-between the two. `insert_record` and `read_record` are Example 2's pack/unpack routines, generalized
-into reusable functions; `BufferPool` is Example 4's buffer pool, extended with `unpin` and a
-dirty-victim-flushing `_evict`, matching Example 5's pin-count discipline.
+`new_page` builds Examples 2 and 3's header-plus-slot-array-plus-tuple-data layout -- the slot array
+grows forward from the header, tuple data grows backward from the end of the page, and free space
+sits between the two. `insert_record` and `read_record` are Examples 4 and 5's insert-and-read
+routines, generalized into reusable functions; `BufferPool` is Example 10's page table plus Example
+13's pin-count guard, extended with `unpin` and a dirty-victim-flushing `_evict` that implements
+Example 14's dirty-flush-before-evict discipline.
 
 **`learning/capstone/code/pages.py`** (complete file)
 
@@ -273,7 +275,7 @@ _exercises co-07_
 `BTreeIndex` is Examples 43-45's B-tree, generalized into a reusable class: `insert` places a
 `(key, page_id)` pair into a sorted leaf and splits on overflow (Example 44's root-split logic,
 simplified to a flat leaf chain since this capstone never needs more than one level of splitting to
-demonstrate the mechanism); `lookup` and `range_scan` are Example 42's and Example 46's read paths,
+demonstrate the mechanism); `lookup` and `range_scan` are Example 18's and Example 21's read paths,
 generalized over the leaf chain instead of one hand-built leaf list.
 
 **`learning/capstone/code/index.py`** (complete file)
