@@ -20,11 +20,32 @@ const feature = await loadFeature(
 // rewrite superseded it).
 const COURSES_DIR = resolve(process.cwd(), "content/en/learn/courses");
 
+// The full planned course-ID catalog (ayokoding-learning-path-02-schema-and-prerequisite-dag's
+// syllabus), used ONLY to accept a prerequisite that names a course not yet authored into
+// COURSES_DIR. ayokoding-learning-path-04-course-authoring lands ~90 courses incrementally, and a
+// syllabus-declared prerequisite legitimately crosses band boundaries (e.g.
+// evaluating-ai-output-essentials -> creating-ai-powered-apps, authored in a later phase) — the
+// live site already renders this safely (course-path-nav.ts's resolveCoursePathRenderData omits an
+// unresolved prerequisite link rather than 404ing), so this is purely a typo/invalid-ID guard, not
+// a same-directory membership requirement.
+const SYLLABUS_COURSES_DIR = resolve(
+  process.cwd(),
+  "../../plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses",
+);
+
 function courseSlugs(): string[] {
   return readdirSync(COURSES_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
+}
+
+function plannedCourseIds(): Set<string> {
+  return new Set(
+    readdirSync(SYLLABUS_COURSES_DIR, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "README.md")
+      .map((entry) => entry.name.slice(0, -".md".length)),
+  );
 }
 
 function readPrerequisites(slug: string): unknown {
@@ -74,7 +95,9 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
 
   Scenario("Every re-homed course declares its prerequisites", ({ Given, When, Then, And }) => {
     Given("the thirty-seven shipped topics and existing capstones have been re-homed into the course library", () => {
-      expect(courseSlugs().length).toBe(37);
+      // >= not ===: ayokoding-learning-path-04-course-authoring adds courses on top of this
+      // re-homed baseline over time, so the library only ever grows from here.
+      expect(courseSlugs().length).toBeGreaterThanOrEqual(37);
     });
 
     When("each re-homed course's canonical metadata is inspected", () => {
@@ -96,7 +119,11 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:Every re-homed course declares its prerequisites
     And("every named prerequisite resolves to another course in the library", () => {
       const slugs = courseSlugs();
-      const slugSet = new Set(slugs);
+      // Union, not courseSlugs() alone: a prerequisite is valid if it is either already authored
+      // (COURSES_DIR) or a real course on the syllabus roadmap not yet authored (SYLLABUS_COURSES_DIR)
+      // — the union is required because at least one legacy course (capstone-solid-core) exists in
+      // COURSES_DIR without a syllabus entry, so the syllabus set alone is not a superset.
+      const slugSet = new Set([...slugs, ...plannedCourseIds()]);
       const unresolved: string[] = [];
       const selfRefs: string[] = [];
       for (const slug of slugs) {
