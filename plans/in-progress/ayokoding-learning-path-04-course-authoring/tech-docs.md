@@ -824,19 +824,22 @@ Full per-course detail is the cross-plan
 
 Authored in Phase 1 from their settled cross-plan spec files (295–425 lines each).
 
-| Course ID                                    | Origin | Format                     | Primary language | Prerequisites                                             | One-line scope                                                             |
-| -------------------------------------------- | ------ | -------------------------- | ---------------- | --------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `evaluating-ai-output-essentials`            | N      | Annotated-concept          | Python           | per its settled spec                                      | Light eval gate: "how will you know this works?" before RAG/agents (DD-25) |
-| `statistics-for-evaluation`                  | N      | Annotated-concept (code)   | Python           | per its settled spec                                      | Judge concordance + significance testing for evals only (DD-26)            |
-| `evaluating-ai-systems-in-depth`             | N      | By Example                 | Python           | `statistics-for-evaluation` (hard), plus its settled spec | Deep evals: error analysis, LLM-as-judge, CI gating (DD-25)                |
-| `product-patterns-for-probabilistic-systems` | N      | Annotated-concept, no code | none             | per its settled spec                                      | Product patterns for probabilistic, not deterministic, outputs (DD-28)     |
-| `inference-serving-and-model-deployment`     | N      | By Example                 | Python           | per its settled spec                                      | vLLM/TGI, KV-cache, batching, GPU considerations (DD-28)                   |
-| `fine-tuning-and-adaptation`                 | N      | By Example                 | Python           | per its settled spec                                      | Fine-tuning / LoRA / PEFT versus RAG as a foil (DD-28)                     |
+| Course ID                                    | Origin | Format                     | Primary language | Prerequisites                                                                                                                                                                              | One-line scope                                                             |
+| -------------------------------------------- | ------ | -------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `evaluating-ai-output-essentials`            | N      | Annotated-concept          | Python           | `creating-ai-powered-apps`, `software-testing`, `just-enough-python`                                                                                                                       | Light eval gate: "how will you know this works?" before RAG/agents (DD-25) |
+| `statistics-for-evaluation`                  | N      | Annotated-concept (code)   | Python           | `evaluating-ai-output-essentials`, `just-enough-python`, `data-structures-and-algorithms-essentials`                                                                                       | Judge concordance + significance testing for evals only (DD-26)            |
+| `evaluating-ai-systems-in-depth`             | N      | By Example                 | Python           | `evaluating-ai-output-essentials`, `statistics-for-evaluation` (hard), `agentic-ai`, `agent-orchestration-subagents-and-observability`, `cicd-and-release-engineering`, `software-testing` | Deep evals: error analysis, LLM-as-judge, CI gating (DD-25)                |
+| `product-patterns-for-probabilistic-systems` | N      | Annotated-concept, no code | none             | `creating-ai-powered-apps`, `evaluating-ai-output-essentials`, `software-product-engineering`, `frontend-essentials`                                                                       | Product patterns for probabilistic, not deterministic, outputs (DD-28)     |
+| `inference-serving-and-model-deployment`     | N      | By Example                 | Python           | `creating-ai-powered-apps`, `backend-at-scale`, `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`, `just-enough-python`                              | vLLM/TGI, KV-cache, batching, GPU considerations (DD-28)                   |
+| `fine-tuning-and-adaptation`                 | N      | By Example                 | Python           | `creating-ai-powered-apps`, `evaluating-ai-systems-in-depth`, `statistics-for-evaluation`, `inference-serving-and-model-deployment`, `data-engineering`, `just-enough-python`              | Fine-tuning / LoRA / PEFT versus RAG as a foil (DD-28)                     |
 
-Each row's `prerequisites` cell reads "per its settled spec" deliberately: the exact chain is declared
-in that course's `syllabus/courses/<id>.md` file and is transcribed at authoring time, not restated
-here where it could drift. The Phase 1 catalog-rows step replaces each cell with the transcribed
-chain.
+Each row's `prerequisites` cell is transcribed verbatim from that course's `_index.md` frontmatter
+(landed in Phase 1) — see `<COURSES><id>/_index.md` for the authoritative, machine-readable source.
+Several cells forward-reference courses not yet authored anywhere in this plan (`agentic-ai`,
+`agent-orchestration-subagents-and-observability`, `cicd-and-release-engineering`,
+`creating-ai-powered-apps`, `backend-at-scale`, `data-engineering`) — this is by design (DD-28) and
+matches the course-library resolver's own tolerance for an unresolved prerequisite ID (a lookup miss,
+never a build failure).
 
 ### Low-level systems, JVM & languages, internals builds
 

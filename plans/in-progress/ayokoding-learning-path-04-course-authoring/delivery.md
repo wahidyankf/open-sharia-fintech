@@ -685,14 +685,14 @@ deploy), applying the convention:
       a foil (DD-28) — acceptance: all 9 convention steps complete; checkers report zero
       CRITICAL/HIGH/MEDIUM.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] **Add catalog rows** — replace the "per its settled spec" prerequisite cells in
+- [x] [AI] **Add catalog rows** — replace the "per its settled spec" prerequisite cells in
       [tech-docs §AI-engineering specialization](./tech-docs.md#ai-engineering-specialization-the-fourth-paths-six-net-new-courses)
       with the chains transcribed from each course's `_index.md`, and add all six course IDs to
       `<COURSES>_index.md` — acceptance:
       `for s in evaluating-ai-output-essentials evaluating-ai-systems-in-depth statistics-for-evaluation product-patterns-for-probabilistic-systems inference-serving-and-model-deployment fine-tuning-and-adaptation; do grep -F -q "$s" apps/ayokoding-www/content/en/learn/courses/_index.md || echo "MISSING $s"; done | wc -l`
       returns **0** (returns 6 before this step); `apps-ayokoding-www-link-checker` green on
       `<COURSES>_index.md`.
-- [ ] [AI] **Record the band-completion signal** for the AI-engineering set in this file (see
+- [x] [AI] **Record the band-completion signal** for the AI-engineering set in this file (see
       [README §Band-completion signal contract](./README.md#band-completion-signal-contract)) — all
       five fields present: `BAND`, `PLAN`, `LANDED_COURSE_IDS` (the six IDs), `GROW_MANIFESTS`
       (`<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` — the AI path only),
@@ -700,7 +700,7 @@ deploy), applying the convention:
       populated and `MERGED_COMMIT` a real 40-char SHA on `origin/main`
       (`git cat-file -e <sha>^{commit}` exits 0). Falsifiable both ways: a placeholder SHA fails
       `git cat-file -e`.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase authors six course bodies
+- [x] [AI] **Confirm no manifest file changed in this phase** — this phase authors six course bodies
       via the same mechanism Bands 1–9 use, so it gets the identical individual gate every band
       already carries via its own "per-band closing steps" step 3:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
@@ -709,21 +709,35 @@ deploy), applying the convention:
 
 ### Phase 1 Gate
 
-- [ ] [AI] All six AI courses live under `<COURSES>` with declared prerequisites; each passed its
+- [x] [AI] All six AI courses live under `<COURSES>` with declared prerequisites; each passed its
       checker + facts + link checkers; each states its scope boundary against any course it could be
       confused with.
-- [ ] [AI] Every course's volatile facts sit in dated accuracy-note sidebars, not the stable spine
+- [x] [AI] Every course's volatile facts sit in dated accuracy-note sidebars, not the stable spine
       (DD-28 durability constraint) — verified by `apps-ayokoding-www-facts-checker`.
-- [ ] [AI] `evaluating-ai-systems-in-depth/_index.md` declares `statistics-for-evaluation` as a
+- [x] [AI] `evaluating-ai-systems-in-depth/_index.md` declares `statistics-for-evaluation` as a
       prerequisite (`grep -F -q` exits 0).
-- [ ] [AI] Six catalog rows completed in `tech-docs.md`; `<COURSES>_index.md` lists all six
+- [x] [AI] Six catalog rows completed in `tech-docs.md`; `<COURSES>_index.md` lists all six
       (the MISSING loop returns 0).
-- [ ] [AI] `npx nx run ayokoding-www:build` + `npm run lint:md` +
+- [x] [AI] `npx nx run ayokoding-www:build` + `npm run lint:md` +
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
       all exit 0.
-- [ ] [AI] Band-completion signal recorded with all five fields; `MERGED_COMMIT` verified real.
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
+- [x] [AI] Band-completion signal recorded with all five fields; `MERGED_COMMIT` verified real.
+- [x] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
 - [ ] [AI] Every course sub-phase PR is `[AI]`-merged and deployed.
+
+```text
+BAND: Phase 1 — AI-engineering specialization (six net-new courses)
+PLAN: ayokoding-learning-path-04-course-authoring
+LANDED_COURSE_IDS:
+  evaluating-ai-output-essentials
+  statistics-for-evaluation
+  evaluating-ai-systems-in-depth
+  product-patterns-for-probabilistic-systems
+  inference-serving-and-model-deployment
+  fine-tuning-and-adaptation
+GROW_MANIFESTS: apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml
+MERGED_COMMIT: be07b257cd86155a6a10bf3f7b476c8135cbb73c
+```
 
 > **Pause Safety**: the library holds the 37 re-homed bundles plus six new AI courses, all at canonical
 > URLs and all rendering. No manifest references them yet, so nothing downstream can break. Safe to
