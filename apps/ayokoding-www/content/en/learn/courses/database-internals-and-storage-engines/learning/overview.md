@@ -412,9 +412,10 @@ storage, group commit amortizes that cost across many transactions, and full-pag
 are what let recovery repair a torn page rather than merely detect it.
 
 **Verify it**: Example 9 computes a CRC checksum over a page and verifies flipping one byte changes
-it -- the exact detector the next four examples rely on. Examples 60, 61, 62, and 63 demonstrate
-fsync as a durability barrier, group commit batching multiple commits into one fsync, a torn-page
-simulation detected by that checksum, and full-page-write recovery repairing that torn page.
+it -- the same detector Examples 62 and 63 use to detect and repair a torn page. Examples 60, 61,
+62, and 63 demonstrate fsync as a durability barrier, group commit batching multiple commits into
+one fsync, a torn-page simulation detected by that checksum, and full-page-write recovery repairing
+that torn page.
 
 ### co-27 &middot; Clustered vs Heap
 

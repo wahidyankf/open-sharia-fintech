@@ -1,8 +1,12 @@
 """Capstone Step 4: an MVCC snapshot read, layered on wal.py -- the full pipeline, end to end.
 
-Time/space complexity (n = versions of one key):
+Time/space complexity (n = versions of one key, m = total WAL log records):
 
-- ``write`` / ``commit``: O(1) -- appends one version, or flips one commit flag.
+- ``write``: O(1) -- appends one version to this key's chain (plus wal.py's
+  O(1) ``append``).
+- ``commit``: O(m) -- delegates to ``wal.py``'s ``commit``, which scans the
+  ENTIRE WAL log, not just this key's n versions; see wal.py's own docstring
+  for why that scan is O(m), not O(1).
 - ``snapshot_read``: O(n) worst case -- walks one key's version chain newest to
   oldest, exactly like Example 37's visibility rule, generalized here to sit
   on top of ``wal.py``'s durable, crash-recoverable storage instead of a bare
@@ -55,7 +59,7 @@ class MVCCEngine:  # => co-01, co-07, co-16, co-21 wired together into one small
     ) -> None:  # => co-16 + co-19: durability AND visibility, together
         self.wal.commit(
             txn_id
-        )  # => co-19: materializes this txn's writes into real pages via the WAL
+        )  # => co-19: materializes this txn's writes into real pages via the WAL -- O(m) since wal.py's commit scans the whole log (see wal.py's docstring)
         self.commit_order[txn_id] = len(
             self.commit_order
         )  # => co-22: this txn's position in commit order

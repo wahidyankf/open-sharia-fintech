@@ -266,10 +266,11 @@ def test_eviction_flushes_a_dirty_victim_before_reuse() -> None:
 offset, only a slot index -- which is exactly what lets `insert_record` grow the slot array and the
 tuple data toward each other without any existing caller's reference becoming invalid.
 
-**Why it matters**: the buffer pool's `disk_reads` counter is the same instrument Example 41 used to
-compare eviction policies -- here it proves a much simpler claim: that `get_page` genuinely checks
-memory before disk, which is the single invariant every later step (`index.py`, `wal.py`, `mvcc.py`)
-depends on without re-verifying it themselves.
+**Why it matters**: the buffer pool's `disk_reads` counter is the same instrument Example 12
+introduced to prove a hit never touches disk -- here it verifies that exact invariant again, now
+inside a fuller buffer pool with pinning, eviction, and dirty-page flushing: that `get_page`
+genuinely checks memory before disk, which is the single invariant every later step (`index.py`,
+`wal.py`, `mvcc.py`) depends on without re-verifying it themselves.
 
 ## Step 2: `index.py` -- a B+-tree-style index over pages.py's page ids
 
@@ -471,7 +472,13 @@ materialized in the first place.
 
 Time/space complexity (n = log records since the last checkpoint-equivalent):
 
-- ``append`` / ``commit``: O(1) -- appends one record or flips one flag.
+- ``append``: O(1) -- appends one record to the log.
+- ``commit``: O(n) -- scans the WHOLE log to find this transaction's
+  records, not just the records it appended; this capstone never
+  truncates/checkpoints the log, so the scan is a genuine O(n), not O(1).
+  A production WAL indexes open transactions instead of rescanning; this
+  capstone keeps the simpler scan on purpose, to avoid touching tests and
+  documented output for no learner benefit.
 - ``crash_and_recover``: O(n) -- a single forward pass replays every logged
   write into a fresh ``BufferPool`` + ``BTreeIndex``, exactly like Example 67's
   end-to-end recovery, generalized to write through pages.py's real page
@@ -507,7 +514,7 @@ class WriteAheadLog:  # => co-16: the log is the source of truth a crash can alw
         self.log.append(WalRecord(lsn=lsn, txn_id=txn_id, key=key, value=value))  # => durable, uncommitted
 
     def commit(self, txn_id: int) -> None:  # => marks every of this txn's records committed + materializes
-        for record in self.log:  # => co-19: commit applies to every record this transaction ever appended
+        for record in self.log:  # => co-19: O(n) -- scans the WHOLE log for this txn's records (never truncated here); a real WAL indexes open txns instead of rescanning
             if record.txn_id == txn_id and not record.committed:  # => an un-committed record of this txn
                 record.committed = True  # => now durable AND eligible for redo on any future recovery
                 self._materialize(record)  # => write it into a real page right now, not just the log
@@ -653,9 +660,13 @@ writer and a writer never blocks a reader, because neither ever takes a lock on 
 ```python
 """Capstone Step 4: an MVCC snapshot read, layered on wal.py -- the full pipeline, end to end.
 
-Time/space complexity (n = versions of one key):
+Time/space complexity (n = versions of one key, m = total WAL log records):
 
-- ``write`` / ``commit``: O(1) -- appends one version, or flips one commit flag.
+- ``write``: O(1) -- appends one version to this key's chain (plus wal.py's
+  O(1) ``append``).
+- ``commit``: O(m) -- delegates to ``wal.py``'s ``commit``, which scans the
+  ENTIRE WAL log, not just this key's n versions; see wal.py's own docstring
+  for why that scan is O(m), not O(1).
 - ``snapshot_read``: O(n) worst case -- walks one key's version chain newest to
   oldest, exactly like Example 37's visibility rule, generalized here to sit
   on top of ``wal.py``'s durable, crash-recoverable storage instead of a bare
@@ -688,7 +699,7 @@ class MVCCEngine:  # => co-01, co-07, co-16, co-21 wired together into one small
         chain.append(RowVersion(value=value, xmin=txn_id))  # => co-21: append a NEW version, never overwrite
 
     def commit(self, txn_id: int) -> None:  # => co-16 + co-19: durability AND visibility, together
-        self.wal.commit(txn_id)  # => co-19: materializes this txn's writes into real pages via the WAL
+        self.wal.commit(txn_id)  # => co-19: materializes this txn's writes into real pages via the WAL -- O(m) since wal.py's commit scans the whole log (see wal.py's docstring)
         self.commit_order[txn_id] = len(self.commit_order)  # => co-22: this txn's position in commit order
 
     def snapshot_read(self, key: int, snapshot_at: int) -> bytes | None:  # => co-22: Example 37's rule, reused
@@ -837,15 +848,16 @@ realistic storage-engine correctness bug was actually found and fixed.
 
 ## Complexity summary
 
-| Routine                           | Time            | Space | Why                                                             |
-| --------------------------------- | --------------- | ----- | --------------------------------------------------------------- |
-| `insert_record` / `read_record`   | O(record size)  | O(1)  | a fixed-size slot lookup plus a direct byte-range copy          |
-| `BufferPool.get_page`             | O(1) amortized  | O(n)  | a dict lookup on hit; at most one eviction on miss              |
-| `BTreeIndex.insert`               | O(n / L)        | O(n)  | a linear leaf-chain scan plus an O(L) sorted insert in one leaf |
-| `BTreeIndex.lookup`               | O(n / L)        | O(1)  | worst case, one linear pass over the leaf chain                 |
-| `WriteAheadLog.append`/`commit`   | O(1)            | O(n)  | appends one record, or flips one commit flag                    |
-| `WriteAheadLog.crash_and_recover` | O(n)            | O(n)  | one forward replay of every committed log record                |
-| `MVCCEngine.snapshot_read`        | O(n) worst case | O(1)  | walks one key's version chain newest-to-oldest                  |
+| Routine                           | Time            | Space | Why                                                               |
+| --------------------------------- | --------------- | ----- | ----------------------------------------------------------------- |
+| `insert_record` / `read_record`   | O(record size)  | O(1)  | a fixed-size slot lookup plus a direct byte-range copy            |
+| `BufferPool.get_page`             | O(1) amortized  | O(n)  | a dict lookup on hit; at most one eviction on miss                |
+| `BTreeIndex.insert`               | O(n / L)        | O(n)  | a linear leaf-chain scan plus an O(L) sorted insert in one leaf   |
+| `BTreeIndex.lookup`               | O(n / L)        | O(1)  | worst case, one linear pass over the leaf chain                   |
+| `WriteAheadLog.append`            | O(1)            | O(n)  | appends one record to the log                                     |
+| `WriteAheadLog.commit`            | O(n)            | O(1)  | scans the whole log (never truncated here) for this txn's records |
+| `WriteAheadLog.crash_and_recover` | O(n)            | O(n)  | one forward replay of every committed log record                  |
+| `MVCCEngine.snapshot_read`        | O(n) worst case | O(1)  | walks one key's version chain newest-to-oldest                    |
 
 (`n` = number of keys or log records, `L` = `LEAF_CAPACITY`, a small constant.)
 

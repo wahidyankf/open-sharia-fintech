@@ -753,8 +753,10 @@ deploy), applying the convention:
 - [x] [AI] All six AI courses live under `<COURSES>` with declared prerequisites; each passed its
       checker + facts + link checkers; each states its scope boundary against any course it could be
       confused with.
-- [x] [AI] Every course's volatile facts sit in dated accuracy-note sidebars, not the stable spine
-      (DD-28 durability constraint) — verified by `apps-ayokoding-www-facts-checker`.
+- [x] [AI] Every Phase 1 course's volatile facts sit in dated accuracy-note sidebars, not the stable
+      spine (DD-28 durability constraint) — verified by `apps-ayokoding-www-facts-checker`. (Scoped
+      explicitly to Phase 1's six courses — later phases carry the identical gate on their own
+      per-phase closing steps, so this bullet is not a plan-wide claim.)
 - [x] [AI] `evaluating-ai-systems-in-depth/_index.md` declares `statistics-for-evaluation` as a
       prerequisite (`grep -F -q` exits 0).
 - [x] [AI] Six catalog rows completed in `tech-docs.md`; `<COURSES>_index.md` lists all six

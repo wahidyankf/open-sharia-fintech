@@ -2,7 +2,13 @@
 
 Time/space complexity (n = log records since the last checkpoint-equivalent):
 
-- ``append`` / ``commit``: O(1) -- appends one record or flips one flag.
+- ``append``: O(1) -- appends one record to the log.
+- ``commit``: O(n) -- scans the WHOLE log to find this transaction's
+  records, not just the records it appended; this capstone never
+  truncates/checkpoints the log, so the scan is a genuine O(n), not O(1).
+  A production WAL indexes open transactions instead of rescanning; this
+  capstone keeps the simpler scan on purpose, to avoid touching tests and
+  documented output for no learner benefit.
 - ``crash_and_recover``: O(n) -- a single forward pass replays every logged
   write into a fresh ``BufferPool`` + ``BTreeIndex``, exactly like Example 67's
   end-to-end recovery, generalized to write through pages.py's real page
@@ -52,9 +58,7 @@ class WriteAheadLog:  # => co-16: the log is the source of truth a crash can alw
     def commit(
         self, txn_id: int
     ) -> None:  # => marks every of this txn's records committed + materializes
-        for record in (
-            self.log
-        ):  # => co-19: commit applies to every record this transaction ever appended
+        for record in self.log:  # => co-19: O(n) -- scans the WHOLE log for this txn's records (never truncated here); a real WAL indexes open txns instead of rescanning
             if (
                 record.txn_id == txn_id and not record.committed
             ):  # => an un-committed record of this txn
