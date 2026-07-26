@@ -179,6 +179,21 @@ function knownCourseIdSet(): Set<string> {
   return new Set([...courseSlugs(), ...plannedCourseIds()]);
 }
 
+// Picks a syllabus-declared course ID that is not yet authored into COURSES_DIR, for the "still
+// resolves" scenario below. Deliberately dynamic rather than a hardcoded literal: pinning a specific
+// real ID (e.g. "creating-ai-powered-apps") would make this scenario's Given precondition fail the
+// moment ayokoding-learning-path-04-course-authoring authors that course, red-CI-ing an unrelated
+// future PR with no explanation — precisely the class of defect this PR exists to remove. Recomputing
+// independently in each step (rather than sharing state across Given/Then/And) is safe because
+// courseSlugs() reads a stable directory listing for the duration of one test run, so
+// SYLLABUS_COURSE_IDS.find(...) is deterministic and yields the same ID every call.
+function pickNotYetAuthoredSyllabusId(): string {
+  const authored = courseSlugs();
+  const candidate = SYLLABUS_COURSE_IDS.find((id) => !authored.includes(id));
+  expect(candidate, "no unauthored syllabus course remains — this scenario is obsolete, retire it").toBeDefined();
+  return candidate as string;
+}
+
 function readPrerequisites(slug: string): unknown {
   const raw = readFileSync(resolve(COURSES_DIR, slug, "_index.md"), "utf-8");
   return matter(raw).data.prerequisites;
@@ -295,18 +310,17 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
   Scenario(
     "A prerequisite naming a syllabus-declared but not-yet-authored course still resolves",
     ({ Given, Then, And }) => {
-      Given(
-        '"creating-ai-powered-apps" is declared on the syllabus roadmap but not yet authored into the course library',
-        () => {
-          expect(SYLLABUS_COURSE_IDS).toContain("creating-ai-powered-apps");
-          expect(courseSlugs()).not.toContain("creating-ai-powered-apps");
-        },
-      );
+      Given("a course is declared on the syllabus roadmap but not yet authored into the course library", () => {
+        const id = pickNotYetAuthoredSyllabusId();
+        expect(SYLLABUS_COURSE_IDS).toContain(id);
+        expect(courseSlugs()).not.toContain(id);
+      });
 
       Then(
-        'a prerequisite naming "creating-ai-powered-apps" resolves against the union of the course library and the syllabus roadmap',
+        "a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap",
         () => {
-          expect(knownCourseIdSet().has("creating-ai-powered-apps")).toBe(true);
+          const id = pickNotYetAuthoredSyllabusId();
+          expect(knownCourseIdSet().has(id)).toBe(true);
         },
       );
 
