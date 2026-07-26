@@ -796,7 +796,7 @@ Full per-course detail is the cross-plan
 | `graph-databases`                        | T(35)  | By Example        | Cypher + Python  | `sql-essentials`                                              | Modeling/querying connected data     |
 | `database-internals-and-storage-engines` | T(36)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials` | B-trees, LSM-trees, WAL              |
 | `data-engineering`                       | T(37)  | Annotated-concept | Python           | `sql-essentials`, `backend-essentials`                        | Pipelines, batch/stream, warehousing |
-| `search-and-information-retrieval`       | T(38)  | By Example        | Python           | `data-structures-and-algorithms-essentials`                   | Inverted indexes, ranking            |
+| `search-and-information-retrieval`       | T(38)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials` | Inverted indexes, ranking            |
 
 ### Architecture, distributed & AI / harness
 
