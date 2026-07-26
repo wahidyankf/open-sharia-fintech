@@ -1,0 +1,5 @@
+SYLLABUS_ROOT=plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses
+Phase 0 baseline (2026-07-26):
+  ayokoding-www:build — exit 0, PASS (1850/1850 static pages generated)
+  ayokoding-www:test:unit — exit 0, PASS (126 test files, 2424 passed, 6 skipped, 0 failed)
+Authored-body baseline (2026-07-26): ABSENT count = 90 of 90 slugs (none authored yet, as expected pre-Phase-1)

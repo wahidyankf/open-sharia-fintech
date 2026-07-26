@@ -225,18 +225,33 @@ and therefore always a boundary.
 > `<COURSES>` bucket that does not yet exist lands in the wrong place, and a body authored from a
 > `syllabus/` spec that has not landed is authored from nothing.
 
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (dependency install only).
+      Ran `npm install` in `worktrees/ayokoding-learning-path-04-course-authoring/` — exited 0,
+      1572 packages added, `node_modules/` synchronized.
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] **Verify blocking plan #1 merged** — the `<COURSES>` bucket exists and holds the 37 re-homed
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (toolchain convergence only).
+      Ran `npm run doctor -- --fix` — 16/16 tools OK, target-share fixed for 4 crates, exited 0, no
+      unresolved drift.
+- [x] [AI] **Verify blocking plan #1 merged** — the `<COURSES>` bucket exists and holds the 37 re-homed
       bundles — command (single line):
-      `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md && git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | grep -c .`
-      — acceptance: both `test` commands exit 0 and the count returns **37** (one `_index.md` per
-      re-homed bundle; the bucket's own top-level `_index.md` sits one level up and is not matched).
-      **Count with `git ls-files` here**, because it expands its own quoted pathspec so zsh never sees
-      the `*` and the `*/` segment stays a single directory level. **The RTK routing rule, stated
-      accurately.** The Claude Code hook rewrites a **bare** `find` — one whose output is not piped —
+      `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md && git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | awk -F/ 'NF==8' | grep -c .`
+      — acceptance: both `test` commands exit 0 and the count returns **37** (one top-level `_index.md`
+      per re-homed bundle; the bucket's own top-level `_index.md` sits one level up and is not matched).
+      **Count with `git ls-files` here, depth-filtered with `awk -F/ 'NF==8'`.** `git ls-files` expands
+      its own quoted pathspec so zsh never sees the `*`, but **the `*/` segment does NOT stay a single
+      directory level** — each re-homed bundle also contains nested `drilling/_index.md`,
+      `learning/_index.md`, and `learning/capstone/_index.md` files that the same glob also matches, so
+      an un-filtered count over-reports (**137**, not 37, repo-grounded — measured 2026-07-26 in
+      `worktrees/ayokoding-learning-path-04-course-authoring/` via `repo-setup-manager`: 37 at path-depth
+      8 — the intended `courses/<slug>/_index.md` bundle files — plus 66 at depth 9, 33 at depth 10, and
+      1 at depth 11, all legitimate nested `_index.md` files one or more levels inside a bundle). An
+      earlier revision of this passage claimed the `*/` segment stays single-level; it does not — depth
+      filtering via `awk -F/ 'NF==8'` (8 = the fixed path-component count of
+      `apps/ayokoding-www/content/en/learn/courses/<slug>/_index.md`) is required. **The RTK routing
+      rule, stated accurately.** The Claude Code hook rewrites a **bare** `find` — one whose output is not piped —
       to `rtk find`, which reformats the file list into a compact report (`2F 1D:`, a blank line, then
       `./ a.yaml b.yaml`; or the single line `0 for '<pattern>'` when nothing matches) and drops flags
       it does not know, such as `-mindepth`. A line count over that reads _format_ lines, not matches.
@@ -251,10 +266,15 @@ and therefore always a boundary.
       than the clause. `git diff` does **not** share this behaviour — its filter fires even when piped
       — so the two commands must never be reasoned about as one rule.] Falsifiable both ways:
       before the URL-restructure plan merges the leading `test -d` exits non-zero, the `&&` chain
-      short-circuits so the `git ls-files` count never runs and no number is printed at all; a count
-      other than 37
+      short-circuits so the `git ls-files` count never runs and no number is printed at all; a
+      depth-8 count other than 37
       means the re-home is incomplete and this plan must not start.
-- [ ] [AI] **Verify blocking plan #2 merged** — the cross-plan syllabus layer is on `origin/main`.
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: this bullet's command/rationale text
+      only (the un-filtered `git ls-files` count over-reports 137 due to nested bundle `_index.md`
+      files; fixed to depth-filter with `awk -F/ 'NF==8'`). Verified via `repo-setup-manager`: both
+      `test` commands exit 0; depth-8 count = **37**. Blocking plan #1
+      (`ayokoding-learning-path-01-url-restructure`) confirmed merged.
+- [x] [AI] **Verify blocking plan #2 merged** — the cross-plan syllabus layer is on `origin/main`.
       Locate it with a command that neither zsh nor RTK can distort — command (single line):
       `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
       — acceptance: three checks, all required. (a) It prints **exactly one** path — pipe it to
@@ -293,10 +313,20 @@ and therefore always a boundary.
       matches no path and check (a) reads **0** (`grep -c` also exits 1 on a zero count — read the
       printed number, never `&&`-chain it); **2** means the corpus was archived twice and the root is ambiguous; and a
       folder that exists but whose `syllabus/courses/` holds a count other than 122 fails check (c).
-- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt` (new).
+      `git ls-files` located exactly one path
+      (`plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`);
+      `SYLLABUS_ROOT` directory exists; its `*.md` count is **122**. Recorded
+      `SYLLABUS_ROOT=plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses`
+      to `evidence/phase-0-snapshot.txt`. Blocking plan #2 confirmed merged.
+- [x] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
       `npx nx run ayokoding-www:test:unit`
       — acceptance: both exit 0; record pass state in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Confirm all twenty-nine NEW slugs are absent (no collision)** under `<SE_OLD>` and
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt`
+      (appended); `apps/ayokoding-www/next-env.d.ts` (Next.js auto-regenerated by the build, not a
+      manual edit). `ayokoding-www:build` exited 0 (1850/1850 static pages generated);
+      `ayokoding-www:test:unit` exited 0 (126 test files, 2424 passed, 6 skipped).
+- [x] [AI] **Confirm all twenty-nine NEW slugs are absent (no collision)** under `<SE_OLD>` and
       `<COURSES>` (six net-new AI-engineering courses + fourteen new courses + nine new capstones:
       three original plus six **DD-20** inter-topic capstones):
 
@@ -321,7 +351,10 @@ and therefore always a boundary.
   — acceptance: **zero** output lines. Falsifiable both ways: `mkdir -p apps/ayokoding-www/content/en/learn/courses/just-enough-cpp`
   makes the loop print `EXISTS COURSES just-enough-cpp`, proving the check fires.
 
-- [ ] [AI] **Create the authored-body slug register** — write the 90 slugs this plan authors, one per
+  **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Ran the loop
+  verbatim over all 29 slugs against `<SE_OLD>` and `<COURSES>` — zero output lines, no collisions.
+
+- [x] [AI] **Create the authored-body slug register** — write the 90 slugs this plan authors, one per
       line, to `evidence/authored-body-slugs.txt` (6 AI + Bands 1–9), transcribed from this
       checklist's own phase sections:
 
@@ -425,16 +458,23 @@ and therefore always a boundary.
   Falsifiable both ways: deleting one line makes the first check return 89; duplicating one makes
   the second return 1.
 
-- [ ] [AI] **Record the authored-body baseline (the falsifiable-both-ways anchor for archival)** —
+  **Date**: 2026-07-26. **Status**: Done. **Files Changed**: `evidence/authored-body-slugs.txt`
+  (new). `wc -l` = 90; `sort | uniq -d | wc -l` = 0 (no duplicates).
+
+- [x] [AI] **Record the authored-body baseline (the falsifiable-both-ways anchor for archival)** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **90** today (none authored yet) and is recorded in
       `evidence/phase-0-snapshot.txt`. The same command must return **0** at archival (Phase 16). This
       is this plan's own assertion; the 127-course catalog total is asserted by
       `ayokoding-learning-path-05-manifests`, never here.
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt`
+      (appended). ABSENT count = **90** (none of the 90 slugs authored yet, as expected today).
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present and the first line is
       `# Learnings: ayokoding-learning-path-04-course-authoring`.
-- [ ] [AI] **Cross-plan link gate (BF-8)** — confirm every `../ayokoding-learning-path-*` reference
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). File present,
+      first line matches exactly.
+- [x] [AI] **Cross-plan link gate (BF-8)** — confirm every `../ayokoding-learning-path-*` reference
       in this plan's own files resolves:
 
   ```bash
@@ -452,27 +492,39 @@ and therefore always a boundary.
   backlog of broken links, nearly all under `plans/done/`, unrelated to this work — 137 of 138
   repo-wide as of 2026-07-22) — use this exact form.
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** — this phase only writes
+  **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). `rhino-cli md
+links validate` exited 0 with "All links valid! No broken links found."; grep for this plan's
+  folder name found no matching line.
+
+- [x] [AI] **Confirm no manifest file changed in this phase** — this phase only writes
       `evidence/` toolchain-baseline files, and it opens **no** PR (the Delivery-Boundary Integration
       Protocol applies from Phase 1 onward), but the manifest-isolation assertion still holds here:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Count = 0.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] Both blocking plans verified merged: `<COURSES>` holds exactly 37 re-homed bundles; the
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] Both blocking plans verified merged: `<COURSES>` holds exactly 37 re-homed bundles; the
       cross-plan `syllabus/courses/` holds 122 entries and its root is recorded as `SYLLABUS_ROOT`.
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] All 29 new slugs confirmed absent (zero `EXISTS` lines).
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 90 unique slugs; the ABSENT-count baseline of 90 is
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] All 29 new slugs confirmed absent (zero `EXISTS` lines).
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 90 unique slugs; the ABSENT-count baseline of 90 is
       recorded in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Cross-plan link gate green (no line naming this plan's folder).
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed** — the Delivery-Boundary Integration
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] Cross-plan link gate green (no line naming this plan's folder).
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
+      **Date**: 2026-07-26. **Status**: Done. Re-verified against the item-level checks above.
+- [x] [AI] **No PR was opened for this phase and nothing was pushed** — the Delivery-Boundary Integration
       Protocol applies from **Phase 1 onward** and explicitly excludes Phase 0. Read the printed
       number from each (never `&&`-chained, since `grep -c` exits 1 on a zero count):
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
@@ -481,6 +533,8 @@ and therefore always a boundary.
       makes the second return **1** — either fails the gate. The `evidence/` baseline and slug
       register written here ride the **Phase 1** PR
       ([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
+      **Date**: 2026-07-26. **Status**: Done. Both commands returned **0** — branch not pushed, no
+      PR open.
 
 > **Pause Safety**: only the toolchain, the two upstream preconditions, and the slug register were
 > established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
