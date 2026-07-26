@@ -1310,7 +1310,7 @@ Band 9, DD-27):
    author from that spec, not a fresh judgment call — acceptance: the course's own `overview.md` states
    its scope boundary against any sibling AI-band course it could be confused with (deep evals vs.
    light eval gate; statistics-for-evals vs. `analytics-and-experimentation`).
-4. [AI] **Author drilling track** — `drilling/<course-id>.md` + `drilling/overview.md` in the fixed
+4. [AI] **Author drilling track** — `drilling/_index.md` + `drilling/overview.md` in the fixed
    five-section order — acceptance: all five sections present.
 5. [AI] **Run content checkers** — run the matching learning checker, `apps-ayokoding-www-facts-checker`,
    and `apps-ayokoding-www-link-checker` (plus `apps-ayokoding-www-general-checker` on
