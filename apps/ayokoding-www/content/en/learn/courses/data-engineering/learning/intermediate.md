@@ -678,7 +678,7 @@ def tumbling_window_for(event_time_seconds: int) -> tuple[int, int]:  # => co-14
 
 
 if __name__ == "__main__":  # => co-14: entry point -- runs only when this file executes directly, not on import
-    events = [2, 9, 10, 15, 23, 29, 30]  # => co-14: seven event timestamps, in seconds, spanning three tumbling windows
+    events = [2, 9, 10, 15, 23, 29, 30]  # => co-14: seven event timestamps, in seconds, spanning four tumbling windows
     assignments = {event: tumbling_window_for(event) for event in events}  # => co-14: one window assignment PER event
     for event, window in assignments.items():  # => co-14: one line per event, showing which window it landed in
         print(f"  event at t={event}s -> window {window}")  # => co-14: prints the (start, end) window each event fell into
@@ -686,7 +686,8 @@ if __name__ == "__main__":  # => co-14: entry point -- runs only when this file 
     distinct_windows = sorted(set(assignments.values()))  # => co-14: how many DISTINCT windows were actually touched
     print(f"Distinct windows touched: {distinct_windows}")  # => co-14: prints the window boundaries -- [0,10), [10,20), [20,30), [30,40)
     windows_are_adjacent = all(  # => co-14: consecutive windows must share a boundary with NO gap and NO overlap
-        distinct_windows[i][1] == distinct_windows[i + 1][0] for i in range(len(distinct_windows) - 1)
+        distinct_windows[i][1] == distinct_windows[i + 1][0]
+        for i in range(len(distinct_windows) - 1)  # => co-14: compares every adjacent pair of the four distinct windows
     )  # => co-14: each window's end EXACTLY equals the next window's start
     each_event_in_exactly_one_window = len(assignments) == len(events)  # => co-14: a dict comprehension already guarantees this, made explicit
     print(f"Windows adjacent, no gaps or overlaps: {windows_are_adjacent} | Every event in exactly one window: {each_event_in_exactly_one_window}")  # => co-14
@@ -886,10 +887,12 @@ _Figure: the three window shapes ex-28 through ex-30 built, side by side. Tumbli
 timeline with no gaps or overlaps; hopping windows deliberately overlap; session windows have no
 fixed size at all, bounded only by an inactivity gap._
 
-**Verify**: the tumbling subgraph's three windows share boundaries with no gap, matching ex-28's
-`(0,10)`/`(10,20)`/`(20,30)` sequence; the hopping subgraph's `[0,10)` and `[5,15)` deliberately
-overlap, matching ex-29's two-window result for `t=12`; the session subgraph shows a gap closing one
-burst and opening the next, matching ex-30's `[0,5,12]` and `[50,55]` session boundaries.
+**Verify**: the tumbling subgraph illustrates the fixed, no-gap-no-overlap tumbling shape -- ex-28's
+actual run produced **four** such adjacent windows, `(0,10)`/`(10,20)`/`(20,30)`/`(30,40)`, one more
+than the three drawn here since the diagram is a shape illustration, not a literal transcript; the
+hopping subgraph's `[5,15)` and `[10,20)` deliberately overlap, matching ex-29's actual two-window
+result for `t=12`; the session subgraph shows a gap closing one burst and opening the next, matching
+ex-30's `[0,5,12]` and `[50,55]` session boundaries.
 
 **Key takeaway**: the fundamental difference across all three shapes is what decides a window's
 boundary -- a fixed clock (tumbling), a fixed clock with deliberate overlap (hopping), or the data's
@@ -1003,7 +1006,7 @@ if __name__ == "__main__":  # => co-15: entry point -- runs only when this file 
         print(f"  watermark={watermark}s -> window [0,{WINDOW_END_SECONDS}) has emitted: {emission_status[watermark]}")  # => co-15
 
     emits_only_after_pass = (  # => co-15: the claim -- emission stays False right up until the watermark reaches the window's end
-        emission_status[9] is False and emission_status[10] is True
+        emission_status[9] is False and emission_status[10] is True  # => co-15: the two boundary watermark values -- one tick before the window ends, and exactly at it
     )  # => co-15: watermark=9 (before window end) must NOT have emitted; watermark=10 (at window end) MUST have emitted
     print(f"Window emits only once watermark reaches its end (not before): {emits_only_after_pass}")  # => co-15
     assert emits_only_after_pass, "a window must emit only once the watermark passes its end, never earlier"  # => co-15: the claim ex-32 makes
@@ -1269,7 +1272,7 @@ if __name__ == "__main__":  # => co-16: entry point -- runs only when this file 
     con.executemany("INSERT INTO ratings VALUES (?, ?)", [(1, 5), (2, 3), (3, 9), (4, 1)])  # => co-16: review 3's stars=9 is out of the valid [1,5] range
 
     out_of_range = con.sql(  # => co-16: the validity check itself -- which rows fall outside the declared valid range?
-        "SELECT review_id, stars FROM ratings WHERE stars NOT BETWEEN 1 AND 5"
+        "SELECT review_id, stars FROM ratings WHERE stars NOT BETWEEN 1 AND 5"  # => co-16: stars outside [1,5] is the out-of-range condition being tested
     ).df()  # => co-16: every row that violates the [1,5] validity constraint
     validity_passed = len(out_of_range) == 0  # => co-16: the batch passes ONLY if every value is within its declared valid range
     print(f"Out-of-range rows:\n{out_of_range}\nValidity check passed: {validity_passed}")  # => co-16

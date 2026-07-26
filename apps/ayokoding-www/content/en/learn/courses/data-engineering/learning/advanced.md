@@ -672,7 +672,9 @@ if __name__ == "__main__":  # => co-19: entry point -- runs only when this file 
     print(f"Inputs feeding {target_output!r}: {feeding_inputs}")  # => co-19: prints exactly which input column(s) and transform(s)
 
     same_input_multiple_outputs = [  # => co-19: the SAME input column, silver_orders.amount, feeds TWO different output columns
-        out for inp, out, _ in COLUMN_LINEAGE_EDGES if inp == "silver_orders.amount"
+        out
+        for inp, out, _ in COLUMN_LINEAGE_EDGES
+        if inp == "silver_orders.amount"  # => co-19: filters to edges STARTING at this exact input column, discarding the transform label
     ]  # => co-19: shows column-level lineage's extra precision over table-level -- WHICH column, not just WHICH table
     print(f"Output columns fed by silver_orders.amount: {sorted(same_input_multiple_outputs)}")  # => co-19: prints both dependents
 

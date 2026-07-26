@@ -977,7 +977,7 @@ if __name__ == "__main__":  # => co-07: entry point -- runs only when this file 
 
         glob_pattern = str(output_dir / "*" / "*.parquet")  # => co-07: matches all THREE partition files
         plan_text = con.sql(  # => co-07: EXPLAIN, not EXPLAIN ANALYZE -- shows the planned file pruning without running it
-            f"EXPLAIN SELECT * FROM read_parquet('{glob_pattern}', hive_partitioning=true) WHERE region = 'east'"
+            f"EXPLAIN SELECT * FROM read_parquet('{glob_pattern}', hive_partitioning=true) WHERE region = 'east'"  # => co-07: filters on region -- the same column encoded in the partition directory path
         ).fetchone()[1]  # => co-07: the plan's text -- DuckDB prints "Scanning Files: N/M" when a filter prunes candidates
         pruning_line = [line for line in plan_text.splitlines() if "Scanning Files" in line][0].strip()  # => co-07: isolate the one relevant plan line
         print(f"Query plan pruning line: {pruning_line!r}")  # => co-07: prints exactly what the planner decided

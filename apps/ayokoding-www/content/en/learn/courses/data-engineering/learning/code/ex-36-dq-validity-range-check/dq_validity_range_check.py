@@ -10,7 +10,7 @@ if __name__ == "__main__":  # => co-16: entry point -- runs only when this file 
     con.executemany("INSERT INTO ratings VALUES (?, ?)", [(1, 5), (2, 3), (3, 9), (4, 1)])  # => co-16: review 3's stars=9 is out of the valid [1,5] range
 
     out_of_range = con.sql(  # => co-16: the validity check itself -- which rows fall outside the declared valid range?
-        "SELECT review_id, stars FROM ratings WHERE stars NOT BETWEEN 1 AND 5"
+        "SELECT review_id, stars FROM ratings WHERE stars NOT BETWEEN 1 AND 5"  # => co-16: stars outside [1,5] is the out-of-range condition being tested
     ).df()  # => co-16: every row that violates the [1,5] validity constraint
     validity_passed = len(out_of_range) == 0  # => co-16: the batch passes ONLY if every value is within its declared valid range
     print(f"Out-of-range rows:\n{out_of_range}\nValidity check passed: {validity_passed}")  # => co-16

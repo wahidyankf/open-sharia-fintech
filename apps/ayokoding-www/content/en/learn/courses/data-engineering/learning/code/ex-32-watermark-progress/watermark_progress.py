@@ -18,7 +18,7 @@ if __name__ == "__main__":  # => co-15: entry point -- runs only when this file 
         print(f"  watermark={watermark}s -> window [0,{WINDOW_END_SECONDS}) has emitted: {emission_status[watermark]}")  # => co-15
 
     emits_only_after_pass = (  # => co-15: the claim -- emission stays False right up until the watermark reaches the window's end
-        emission_status[9] is False and emission_status[10] is True
+        emission_status[9] is False and emission_status[10] is True  # => co-15: the two boundary watermark values -- one tick before the window ends, and exactly at it
     )  # => co-15: watermark=9 (before window end) must NOT have emitted; watermark=10 (at window end) MUST have emitted
     print(f"Window emits only once watermark reaches its end (not before): {emits_only_after_pass}")  # => co-15
     assert emits_only_after_pass, "a window must emit only once the watermark passes its end, never earlier"  # => co-15: the claim ex-32 makes
