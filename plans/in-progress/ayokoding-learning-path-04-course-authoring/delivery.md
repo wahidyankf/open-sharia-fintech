@@ -638,8 +638,8 @@ deploy), applying the convention:
       Authored via `apps-ayokoding-www-annotated-concept-maker`, checker/fixer cycle clean (zero
       CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/statistics-for-evaluation`,
       draft PR [#100](https://github.com/wahidyankf/ose-public/pull/100), 3-cycle PR review completed
-      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
-      `prod-ayokoding-www`. Acceptance clause verified post-merge:
+      (0 CRITICAL/HIGH outstanding at merge), merged to `main` via merge commit (`6fbe1bf17`) and
+      deployed to `prod-ayokoding-www`. Acceptance clause verified post-merge:
       `grep -F -q 'analytics-and-experimentation' "<COURSES>statistics-for-evaluation/overview.md"`
       exits 0.
 
@@ -669,8 +669,8 @@ deploy), applying the convention:
       Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
       CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/evaluating-ai-systems-in-depth`,
       draft PR [#103](https://github.com/wahidyankf/ose-public/pull/103), 3-cycle PR review completed
-      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` (`be07b257c`) and deployed to
-      `prod-ayokoding-www`. Acceptance clauses verified post-merge:
+      (0 CRITICAL/HIGH outstanding at merge), merged to `main` via merge commit (`be07b257c`) and
+      deployed to `prod-ayokoding-www`. Acceptance clauses verified post-merge:
       `grep -F -q 'statistics-for-evaluation' "<COURSES>evaluating-ai-systems-in-depth/_index.md"`
       exits 0 **and**
       `grep -F -q 'evaluating-ai-output-essentials' "<COURSES>evaluating-ai-systems-in-depth/overview.md"`
@@ -698,8 +698,8 @@ deploy), applying the convention:
       Authored via `apps-ayokoding-www-annotated-concept-maker`, checker/fixer cycle clean (zero
       CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/product-patterns-for-probabilistic-systems`,
       draft PR [#99](https://github.com/wahidyankf/ose-public/pull/99), 3-cycle PR review completed
-      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
-      `prod-ayokoding-www`.
+      (0 CRITICAL/HIGH outstanding at merge), merged to `main` via merge commit (`2c6ebcc6a`) and
+      deployed to `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [x] [AI] Inference serving and model deployment (`inference-serving-and-model-deployment` — By
       Example, Python, settled per `$SYLLABUS_ROOT/inference-serving-and-model-deployment.md`, 405
@@ -711,8 +711,8 @@ deploy), applying the convention:
       Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
       CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/inference-serving-and-model-deployment`,
       draft PR [#101](https://github.com/wahidyankf/ose-public/pull/101), 3-cycle PR review completed
-      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
-      `prod-ayokoding-www`.
+      (0 CRITICAL/HIGH outstanding at merge), merged to `main` via merge commit (`cdc8a0b26`) and
+      deployed to `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [x] [AI] Fine-tuning and adaptation (`fine-tuning-and-adaptation` — By Example, Python, settled per
       `$SYLLABUS_ROOT/fine-tuning-and-adaptation.md`, 423 lines) — fine-tuning/LoRA/PEFT versus RAG as
@@ -723,8 +723,8 @@ deploy), applying the convention:
       Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
       CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/fine-tuning-and-adaptation`,
       draft PR [#102](https://github.com/wahidyankf/ose-public/pull/102), 3-cycle PR review completed
-      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
-      `prod-ayokoding-www`.
+      (0 CRITICAL/HIGH outstanding at merge), merged to `main` via merge commit (`2cd85dc30`) and
+      deployed to `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [x] [AI] **Add catalog rows** — replace the "per its settled spec" prerequisite cells in
       [tech-docs §AI-engineering specialization](./tech-docs.md#ai-engineering-specialization-the-fourth-paths-six-net-new-courses)
@@ -764,7 +764,7 @@ deploy), applying the convention:
       all exit 0.
 - [x] [AI] Band-completion signal recorded with all five fields; `MERGED_COMMIT` verified real.
 - [x] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] Every course sub-phase PR is `[AI]`-merged and deployed.
+- [x] [AI] Every course sub-phase PR is `[AI]`-merged and deployed.
 
 ```text
 BAND: Phase 1 — AI-engineering specialization (six net-new courses)
