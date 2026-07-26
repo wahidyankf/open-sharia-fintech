@@ -148,3 +148,7 @@ weight: 95
   - [Overview](/en/learn/courses/fine-tuning-and-adaptation/overview)
   - [Learning](/en/learn/courses/fine-tuning-and-adaptation/learning)
   - [Drilling](/en/learn/courses/fine-tuning-and-adaptation/drilling)
+- [Database Internals and Storage Engines](/en/learn/courses/database-internals-and-storage-engines)
+  - [Overview](/en/learn/courses/database-internals-and-storage-engines/overview)
+  - [Learning](/en/learn/courses/database-internals-and-storage-engines/learning)
+  - [Drilling](/en/learn/courses/database-internals-and-storage-engines/drilling)
