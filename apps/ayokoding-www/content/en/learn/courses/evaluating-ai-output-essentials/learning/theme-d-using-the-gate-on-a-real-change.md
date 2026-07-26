@@ -591,7 +591,7 @@ course this one hands off to.
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
-graph TD
+graph LR
     M["First Working Model Call<br/>creating-ai-powered-apps"]:::brown
     G["Light Eval Gate<br/>this course, co-09"]:::blue
     P["Prompt Changes<br/>measured against the gate"]:::orange
