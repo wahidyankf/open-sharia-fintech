@@ -37,6 +37,11 @@ Feature: Course re-home redirects and prerequisites
     Then a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap
     And a prerequisite naming an unrecognized course ID still does not resolve
 
+  @unit
+  Scenario: A prerequisite naming an authored course absent from the syllabus roadmap still resolves
+    Given a course is authored into the course library but not declared on the syllabus roadmap
+    Then a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap
+
   # Q-E=C override (RESOLVED 2026-07-23): the three fundamentally-strong browse roots are
   # deleted and their old URLs 308 to the course library landing, a narrow exception to the
   # rest of the legacy `_index.md` tree's "updated, never deleted" rule.

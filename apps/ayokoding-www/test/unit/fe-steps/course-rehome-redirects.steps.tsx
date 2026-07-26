@@ -170,11 +170,13 @@ function plannedCourseIds(): Set<string> {
 }
 
 // Shared membership predicate: a prerequisite resolves if it is authored (COURSES_DIR) or declared
-// on the syllabus roadmap (SYLLABUS_COURSE_IDS) — the union is required because at least one legacy
-// course (capstone-solid-core) exists in COURSES_DIR without a syllabus entry, so the syllabus set
-// alone is not a superset. Extracted so both the data-driven prerequisite scenario below and the
-// fixture-driven oracle scenario exercise the identical union — a future simplification back to
-// courseSlugs()-only breaks both, not just one.
+// on the syllabus roadmap (SYLLABUS_COURSE_IDS). Both arms of this union are pinned by dedicated
+// scenarios below, not merely asserted in this comment: "A prerequisite naming a syllabus-declared
+// but not-yet-authored course still resolves" exercises the syllabus-only arm, and "A prerequisite
+// naming an authored course absent from the syllabus roadmap still resolves" exercises the
+// authored-only arm (currently satisfied by capstone-solid-core, the sole authored course with no
+// syllabus entry) — so a future simplification back to courseSlugs()-only or SYLLABUS_COURSE_IDS-only
+// fails one of the two scenarios instead of passing silently.
 function knownCourseIdSet(): Set<string> {
   return new Set([...courseSlugs(), ...plannedCourseIds()]);
 }
@@ -191,6 +193,23 @@ function pickNotYetAuthoredSyllabusId(): string {
   const authored = courseSlugs();
   const candidate = SYLLABUS_COURSE_IDS.find((id) => !authored.includes(id));
   expect(candidate, "no unauthored syllabus course remains — this scenario is obsolete, retire it").toBeDefined();
+  return candidate as string;
+}
+
+// Picks an authored course ID that is NOT declared on the syllabus roadmap, for the "legacy course
+// still resolves" scenario below — this pins the union's other arm. Deliberately dynamic, mirroring
+// pickNotYetAuthoredSyllabusId() above, rather than hardcoding a specific ID (e.g.
+// "capstone-solid-core"): pinning a literal would silently stop exercising this arm the moment that
+// course is ever back-filled onto the syllabus roadmap, instead of failing loud and telling a future
+// reader what to do. Currently exactly one authored course (capstone-solid-core) is off the syllabus
+// roadmap, but this stays correct for however many exist.
+function pickAuthoredNonSyllabusId(): string {
+  const planned = plannedCourseIds();
+  const candidate = courseSlugs().find((id) => !planned.has(id));
+  expect(
+    candidate,
+    "every authored course is now on the syllabus roadmap — this scenario is obsolete, retire it",
+  ).toBeDefined();
   return candidate as string;
 }
 
@@ -328,6 +347,26 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
       And("a prerequisite naming an unrecognized course ID still does not resolve", () => {
         expect(knownCourseIdSet().has("not-a-real-course-id-xyz")).toBe(false);
       });
+    },
+  );
+
+  Scenario(
+    "A prerequisite naming an authored course absent from the syllabus roadmap still resolves",
+    ({ Given, Then }) => {
+      Given("a course is authored into the course library but not declared on the syllabus roadmap", () => {
+        const id = pickAuthoredNonSyllabusId();
+        expect(courseSlugs()).toContain(id);
+        expect(plannedCourseIds().has(id)).toBe(false);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A prerequisite naming an authored course absent from the syllabus roadmap still resolves
+      Then(
+        "a prerequisite naming that course resolves against the union of the course library and the syllabus roadmap",
+        () => {
+          const id = pickAuthoredNonSyllabusId();
+          expect(knownCourseIdSet().has(id)).toBe(true);
+        },
+      );
     },
   );
 
