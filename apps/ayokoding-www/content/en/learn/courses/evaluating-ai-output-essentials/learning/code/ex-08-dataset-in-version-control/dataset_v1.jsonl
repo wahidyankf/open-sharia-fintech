@@ -1,0 +1,3 @@
+{"id": "case-01", "fact_id": "storage-free", "input": "How much free storage does a new Nimbus account get?", "expected": "15 GB", "scorer": "substring"}
+{"id": "case-02", "fact_id": "storage-pro", "input": "How much storage does Nimbus Pro include?", "expected": "200 GB", "scorer": "substring"}
+{"id": "case-03", "fact_id": "security-2fa", "input": "Does Nimbus support two-factor authentication?", "expected": "two-factor", "scorer": "substring"}

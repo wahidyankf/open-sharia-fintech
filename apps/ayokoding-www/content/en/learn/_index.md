@@ -46,6 +46,7 @@ weight: 10
   - [32 · Software Product Engineering](/en/learn/courses/software-product-engineering)
   - [33 · Engineering Management](/en/learn/courses/engineering-management)
   - [Pass 2 Capstone · SOLID Core](/en/learn/courses/capstone-solid-core)
+  - [Evaluating AI Output — Essentials](/en/learn/courses/evaluating-ai-output-essentials)
 - [Legacy](/en/learn/legacy)
   - [Overview](/en/learn/legacy/overview)
   - [Software Engineering](/en/learn/legacy/software-engineering)

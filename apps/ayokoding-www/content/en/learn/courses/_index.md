@@ -124,3 +124,7 @@ weight: 95
   - [Drilling](/en/learn/courses/engineering-management/drilling)
 - [Pass 2 Capstone · SOLID Core](/en/learn/courses/capstone-solid-core)
   - [Overview](/en/learn/courses/capstone-solid-core/overview)
+- [Evaluating AI Output — Essentials](/en/learn/courses/evaluating-ai-output-essentials)
+  - [Overview](/en/learn/courses/evaluating-ai-output-essentials/overview)
+  - [Learning](/en/learn/courses/evaluating-ai-output-essentials/learning)
+  - [Drilling](/en/learn/courses/evaluating-ai-output-essentials/drilling)

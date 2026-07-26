@@ -1,0 +1,10 @@
+{"id": "case-01", "fact_id": "storage-free", "input": "How much free storage does a new Nimbus account get?", "expected": "15 GB", "scorer": "substring"}
+{"id": "case-02", "fact_id": "storage-pro", "input": "How much storage does Nimbus Pro include?", "expected": "200 GB", "scorer": "substring"}
+{"id": "case-03", "fact_id": "security-2fa", "input": "Does Nimbus support two-factor authentication?", "expected": "two-factor", "scorer": "substring"}
+{"id": "case-04", "fact_id": "platforms", "input": "Which mobile platform does the Nimbus app ship on first?", "expected": "iOS", "scorer": "substring"}
+{"id": "case-05", "fact_id": "file-size-free", "input": "What is the largest single file the Free plan accepts, in GB?", "expected": "5", "scorer": "numeric_tolerance"}
+{"id": "case-06", "fact_id": "file-size-pro", "input": "What is the largest single file the Pro plan accepts, in GB?", "expected": "50", "scorer": "numeric_tolerance"}
+{"id": "case-07", "fact_id": "share-link-expiry", "input": "After how many days does a default Nimbus share link expire?", "expected": "30", "scorer": "numeric_tolerance"}
+{"id": "case-08", "fact_id": "support-response", "input": "What is the first-response time target for Free-plan email support?", "expected": "24-hour", "scorer": "regex"}
+{"id": "case-09", "fact_id": "trash-retention", "input": "How many days does Nimbus keep a deleted file in trash?", "expected": "30", "scorer": "numeric_tolerance"}
+{"id": "case-10", "fact_id": "offline-sync", "input": "Which plan supports offline sync, Free or Pro?", "expected": "pro only", "scorer": "exact_match"}

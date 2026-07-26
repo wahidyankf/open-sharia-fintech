@@ -1,0 +1,8 @@
+{
+  "cases": {
+    "case-01": "PASS",
+    "case-11": "FAIL"
+  },
+  "pass_rate": 0.9167,
+  "run_id": "prompt-v1-baseline"
+}

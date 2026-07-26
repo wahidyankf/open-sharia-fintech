@@ -1,0 +1,24 @@
+{
+  "flaky_cases": ["case-08"],
+  "p95_latency_ms": 581.5,
+  "pass_rate": 0.8571428571428571,
+  "run_id": "prompt-v1-baseline",
+  "total_cost_usd": 0.001226,
+  "total_tokens": 613,
+  "verdicts": {
+    "case-01": true,
+    "case-02": true,
+    "case-03": true,
+    "case-04": true,
+    "case-05": true,
+    "case-06": true,
+    "case-07": true,
+    "case-08": false,
+    "case-09": true,
+    "case-10": true,
+    "case-11": true,
+    "case-12": true,
+    "case-13": false,
+    "case-14": true
+  }
+}

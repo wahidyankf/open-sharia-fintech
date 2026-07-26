@@ -1,0 +1,5 @@
+{"id": "case-01", "fact_id": "storage-free", "input": "How much free storage does a new Nimbus account get?", "expected": "15 GB", "scorer": "substring"}
+{"id": "case-02", "fact_id": "storage-pro", "input": "How much storage does Nimbus Pro include?", "expected": "200 GB", "scorer": "substring"}
+{"id": "case-03", "fact_id": "security-2fa", "input": "Does Nimbus support two-factor authentication?", "expected": "two-factor", "scorer": "substring"}
+{"id": "case-04", "fact_id": "encryption", "input": "What encryption does Nimbus use for files at rest?", "expected": "AES-256", "scorer": "regex"}
+{"id": "case-13", "fact_id": "trash-retention", "input": "How many days does Nimbus keep a deleted file in trash?", "expected": "30", "scorer": "numeric_tolerance"}

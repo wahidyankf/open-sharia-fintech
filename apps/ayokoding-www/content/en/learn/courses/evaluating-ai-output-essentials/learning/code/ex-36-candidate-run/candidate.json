@@ -1,0 +1,18 @@
+{
+  "pass_rate": 1.0,
+  "run_id": "prompt-v2",
+  "verdicts": {
+    "case-01": true,
+    "case-02": true,
+    "case-03": true,
+    "case-04": true,
+    "case-05": true,
+    "case-06": true,
+    "case-07": true,
+    "case-08": true,
+    "case-09": true,
+    "case-10": true,
+    "case-11": true,
+    "case-12": true
+  }
+}
