@@ -11,4 +11,4 @@ weight: 100
 - [Theme C: The Runner and the Number](/en/learn/courses/evaluating-ai-output-essentials/learning/theme-c-the-runner-and-the-number)
 - [Theme D: Using the Gate on a Real Change](/en/learn/courses/evaluating-ai-output-essentials/learning/theme-d-using-the-gate-on-a-real-change)
 - [Capstone](/en/learn/courses/evaluating-ai-output-essentials/learning/capstone)
-  - [Capstone](/en/learn/courses/evaluating-ai-output-essentials/learning/capstone/overview)
+  - [Overview](/en/learn/courses/evaluating-ai-output-essentials/learning/capstone/overview)

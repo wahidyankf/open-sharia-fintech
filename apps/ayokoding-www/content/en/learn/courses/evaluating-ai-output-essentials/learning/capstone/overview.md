@@ -466,4 +466,5 @@ merge gate.
 
 ---
 
-Next: [Drilling](../../drilling/overview.md) →
+← Previous: [Theme D: Using the Gate on a Real Change](../theme-d-using-the-gate-on-a-real-change.md)
+&middot; Next: [Drilling](../../drilling/overview.md) →
