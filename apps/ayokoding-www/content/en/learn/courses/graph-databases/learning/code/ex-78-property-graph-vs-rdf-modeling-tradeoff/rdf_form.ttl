@@ -1,0 +1,13 @@
+@prefix ex: <http://example.org/> .
+# Example 78b: the SAME facts, as RDF triples. (co-24)
+ex:Ada ex:worksAt ex:AnalyticalLabs .
+# => the WORKS_AT fact, as its own standalone triple
+ex:AnalyticalLabs ex:focusesOn ex:GraphDatabases .
+# => the FOCUSES_ON fact, as its own standalone triple
+ex:Ada a ex:Person .
+# => "a" is RDF shorthand for rdf:type -- Ada's TYPE is now its own explicit fact
+ex:AnalyticalLabs a ex:Organization .
+# => AnalyticalLabs's type, likewise its own standalone triple
+ex:GraphDatabases a ex:Topic .
+# => the SAME 3 entities and 2 relationships, but "type" (Person/Organization/Topic) is now
+# its OWN explicit triple per entity, rather than a label bundled onto a node object

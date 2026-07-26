@@ -1,0 +1,13 @@
+@prefix ex: <http://example.org/> .
+# Example 25: A Basic RDF Triple. (co-24, co-02)
+# Every line below is ONE triple: subject, predicate, object, terminated by a period.
+
+ex:Ada ex:knows ex:Charles .
+# => subject: ex:Ada -- predicate: ex:knows -- object: ex:Charles (one fact, three parts)
+
+ex:Ada a ex:Person .
+# => "a" is Turtle shorthand for rdf:type -- Ada IS-A Person, expressed as its own triple
+
+ex:Ada ex:born "1815" .
+# => a LITERAL object ("1815") rather than another resource -- properties are triples too,
+# unlike the property graph, where a property lives INSIDE a node rather than as its own edge
