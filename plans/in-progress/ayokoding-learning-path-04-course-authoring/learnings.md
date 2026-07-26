@@ -57,3 +57,32 @@ ayokoding-learning-path-04-course-authoring/evaluating-ai-output-essentials` —
   worktree-setup convention should name the initial branch outside the `<plan-id>/*` namespace (e.g.
   `<plan-id>-base` or provision directly onto a throwaway/detached ref) so it never collides with the
   first real phase branch.
+
+## Learning: `database-internals-and-storage-engines` ships without a course-scoped `ruff.toml`
+
+- **Context**: PR #107's cycle-1 review (F5) flagged that this course ships 184 `.py` files across
+  `learning/code/`, `learning/capstone/code/`, and `drilling/code/` but, unlike the 5 other
+  already-merged code-bearing courses authored under this plan
+  (`evaluating-ai-output-essentials`, `evaluating-ai-systems-in-depth`, `fine-tuning-and-adaptation`,
+  `inference-serving-and-model-deployment`, `statistics-for-evaluation`, all of which added a
+  course-scoped `ruff.toml` on 2026-07-26), it has no `ruff.toml` of its own. Cycle-2's review
+  (comment
+  [3653567349](https://github.com/wahidyankf/ose-public/pull/107#discussion_r3653567349)) confirmed
+  the gap is real but rated it MEDIUM — preventive consistency, not a live break — and ruled it
+  deferred rather than fixed in this PR (Anti-Pattern-3 "Passive Mentioning" closure: this entry is
+  the paperwork half of that ruling, not the reformat itself).
+- **Observation**: `ruff format --diff` against this course is currently a clean no-op (exit 0, zero
+  divergence) — nothing is broken today. The risk is latent: 78 of 184 files (42%) exceed ruff's
+  88-character default line length (longest 131 chars, in
+  `learning/code/ex-43-btree-bulk-load/example.py`), long because of trailing `# => ...` annotations
+  that `ruff format` never reflows on its own. A future edit that lengthens the _code_ portion of any
+  of those lines could trigger a statement-splitting reflow that silently pushes annotation density
+  below the 1.0-per-code-line floor the sibling `ruff.toml` files exist specifically to guard against.
+  The `ruff.toml` fix itself (`line-length = 240` + the sibling explanatory header, extended to cover
+  `drilling/code/**` since this course is drilling-bearing) stays **deferred** — not applied by this
+  fixer pass.
+- **Why it might generalize**: every remaining code-bearing course this plan still has to author
+  should add a course-scoped `ruff.toml` at authoring time, matching the sibling pattern, rather than
+  picking it up as a post-hoc PR-review finding. Worth confirming whether the per-course
+  course-authoring checklist/template actually mandates adding `ruff.toml` whenever a course ships
+  `.py` code, so this exact gap does not recur across the remaining courses.
