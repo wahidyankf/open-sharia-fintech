@@ -21,17 +21,142 @@ const feature = await loadFeature(
 const COURSES_DIR = resolve(process.cwd(), "content/en/learn/courses");
 
 // The full planned course-ID catalog (ayokoding-learning-path-02-schema-and-prerequisite-dag's
-// syllabus), used ONLY to accept a prerequisite that names a course not yet authored into
-// COURSES_DIR. ayokoding-learning-path-04-course-authoring lands ~90 courses incrementally, and a
+// syllabus), frozen here so this suite never depends on a `plans/` path that gets archived to
+// `plans/done/` once the plan closes — mirroring
+// apps/ayokoding-www/src/redirects/course-rehome.unit.test.ts's EXPECTED_SLUGS precedent verbatim.
+// Regenerate ONLY if the (closed) syllabus plan's corpus itself changes, by listing *.md basenames
+// (excluding README.md), sorted, under
+// plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/.
+// Used ONLY to accept a prerequisite that names a course not yet authored into COURSES_DIR.
+// ayokoding-learning-path-04-course-authoring lands ~90 courses incrementally, and a
 // syllabus-declared prerequisite legitimately crosses band boundaries (e.g.
 // evaluating-ai-output-essentials -> creating-ai-powered-apps, authored in a later phase) — the
 // live site already renders this safely (course-path-nav.ts's resolveCoursePathRenderData omits an
 // unresolved prerequisite link rather than 404ing), so this is purely a typo/invalid-ID guard, not
 // a same-directory membership requirement.
-const SYLLABUS_COURSES_DIR = resolve(
-  process.cwd(),
-  "../../plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses",
-);
+const SYLLABUS_COURSE_IDS: readonly string[] = [
+  "actor-model-concurrency",
+  "advanced-algorithms",
+  "advanced-frontend",
+  "advanced-networking",
+  "advanced-sql-and-query-performance",
+  "agent-context-and-memory",
+  "agent-orchestration-subagents-and-observability",
+  "agent-permissions-and-sandboxing",
+  "agent-tools-and-mcp",
+  "agentic-ai",
+  "agentic-coding",
+  "analytics-and-experimentation",
+  "android-app-development",
+  "api-design",
+  "async-python-and-fastapi-services",
+  "backend-at-scale",
+  "backend-essentials",
+  "bare-metal-virtualization",
+  "behavioral-and-leadership-interviews",
+  "browser-automation-with-cdp",
+  "build-automation-and-task-runners",
+  "build-your-own-database",
+  "build-your-own-git",
+  "build-your-own-orm-and-query-builder",
+  "build-your-own-raft",
+  "build-your-own-reactive-ui",
+  "build-your-own-web-framework",
+  "building-production-cli-tools",
+  "capstone-build-your-own-coding-agent",
+  "capstone-build-your-own-pentest-engine",
+  "capstone-first-working-software",
+  "capstone-forge-ready",
+  "capstone-full-stack-app",
+  "capstone-interview-loop",
+  "cicd-and-release-engineering",
+  "cloud-and-iac",
+  "coding-interview",
+  "compilers-parsers-and-transpilers",
+  "computer-architecture",
+  "computer-science-foundations",
+  "concurrency-and-parallelism",
+  "containers-and-orchestration",
+  "creating-ai-powered-apps",
+  "csp-style-concurrency",
+  "data-access-orms-and-query-builders",
+  "data-engineering",
+  "data-structures-and-algorithms-essentials",
+  "database-internals-and-storage-engines",
+  "debugging-and-profiling",
+  "defensive-security",
+  "detection-engineering-and-siem-operations",
+  "distributed-systems",
+  "domain-driven-design",
+  "engineering-management",
+  "enterprise-java-and-the-jvm",
+  "evaluating-ai-output-essentials",
+  "evaluating-ai-systems-in-depth",
+  "event-driven-architecture",
+  "extending-neovim",
+  "fine-tuning-and-adaptation",
+  "frontend-essentials",
+  "functional-programming",
+  "graph-databases",
+  "hybrid-app-development",
+  "inference-serving-and-model-deployment",
+  "information-architecture-and-seo",
+  "ios-app-development",
+  "it-and-application-security",
+  "it-governance-grc",
+  "just-enough-bash",
+  "just-enough-c",
+  "just-enough-cpp",
+  "just-enough-csharp",
+  "just-enough-dart",
+  "just-enough-elixir",
+  "just-enough-fsharp",
+  "just-enough-go",
+  "just-enough-java",
+  "just-enough-kotlin",
+  "just-enough-lua",
+  "just-enough-nvim",
+  "just-enough-python",
+  "just-enough-rust",
+  "just-enough-swift",
+  "just-enough-typescript",
+  "linux-app-development",
+  "linux-os",
+  "lisp",
+  "modern-system-programming",
+  "networking-essentials",
+  "nosql-databases",
+  "object-oriented-design-and-patterns",
+  "object-oriented-programming-essentials",
+  "offensive-security",
+  "platform-engineering-and-devex",
+  "product-patterns-for-probabilistic-systems",
+  "programming-paradigms",
+  "project-management",
+  "search-and-information-retrieval",
+  "security-essentials",
+  "self-hosting-essentials",
+  "self-managed-kubernetes-and-gitops",
+  "site-reliability-engineering",
+  "software-architecture",
+  "software-engineering-practices",
+  "software-product-engineering",
+  "software-testing",
+  "sql-essentials",
+  "statistics-for-evaluation",
+  "surgery",
+  "system-design",
+  "system-design-interview",
+  "system-programming",
+  "take-home-and-live-coding",
+  "technical-communication",
+  "the-agent-loop",
+  "type-systems",
+  "version-control-and-git",
+  "vulnerability-management-and-assessment",
+  "windows-app-development",
+  "windows-os",
+];
 
 function courseSlugs(): string[] {
   return readdirSync(COURSES_DIR, { withFileTypes: true })
@@ -41,11 +166,17 @@ function courseSlugs(): string[] {
 }
 
 function plannedCourseIds(): Set<string> {
-  return new Set(
-    readdirSync(SYLLABUS_COURSES_DIR, { withFileTypes: true })
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".md") && entry.name !== "README.md")
-      .map((entry) => entry.name.slice(0, -".md".length)),
-  );
+  return new Set(SYLLABUS_COURSE_IDS);
+}
+
+// Shared membership predicate: a prerequisite resolves if it is authored (COURSES_DIR) or declared
+// on the syllabus roadmap (SYLLABUS_COURSE_IDS) — the union is required because at least one legacy
+// course (capstone-solid-core) exists in COURSES_DIR without a syllabus entry, so the syllabus set
+// alone is not a superset. Extracted so both the data-driven prerequisite scenario below and the
+// fixture-driven oracle scenario exercise the identical union — a future simplification back to
+// courseSlugs()-only breaks both, not just one.
+function knownCourseIdSet(): Set<string> {
+  return new Set([...courseSlugs(), ...plannedCourseIds()]);
 }
 
 function readPrerequisites(slug: string): unknown {
@@ -117,50 +248,74 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, Background }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:Every re-homed course declares its prerequisites
-    And("every named prerequisite resolves to another course in the library", () => {
-      const slugs = courseSlugs();
-      // Union, not courseSlugs() alone: a prerequisite is valid if it is either already authored
-      // (COURSES_DIR) or a real course on the syllabus roadmap not yet authored (SYLLABUS_COURSES_DIR)
-      // — the union is required because at least one legacy course (capstone-solid-core) exists in
-      // COURSES_DIR without a syllabus entry, so the syllabus set alone is not a superset.
-      const slugSet = new Set([...slugs, ...plannedCourseIds()]);
-      const unresolved: string[] = [];
-      const selfRefs: string[] = [];
-      for (const slug of slugs) {
-        const prereqs = readPrerequisites(slug) as string[];
-        if (prereqs.includes(slug)) selfRefs.push(slug);
-        for (const prereq of prereqs) {
-          if (!slugSet.has(prereq)) unresolved.push(`${slug} -> ${prereq}`);
+    And(
+      "every named prerequisite resolves to another course already in the library or declared on the syllabus roadmap",
+      () => {
+        const slugs = courseSlugs();
+        const slugSet = knownCourseIdSet();
+        const unresolved: string[] = [];
+        const selfRefs: string[] = [];
+        for (const slug of slugs) {
+          const prereqs = readPrerequisites(slug) as string[];
+          if (prereqs.includes(slug)) selfRefs.push(slug);
+          for (const prereq of prereqs) {
+            if (!slugSet.has(prereq)) unresolved.push(`${slug} -> ${prereq}`);
+          }
         }
-      }
-      expect(unresolved, `unresolved prerequisites: ${unresolved.join(", ")}`).toEqual([]);
-      expect(selfRefs, `self-referencing courses: ${selfRefs.join(", ")}`).toEqual([]);
+        expect(unresolved, `unresolved prerequisites: ${unresolved.join(", ")}`).toEqual([]);
+        expect(selfRefs, `self-referencing courses: ${selfRefs.join(", ")}`).toEqual([]);
 
-      // REFACTOR (delivery.md §2.3): the declared edges must also form an acyclic graph — a
-      // data-shape guard on these 37 rows, not the full DAG resolver (that belongs to the sibling
-      // ayokoding-learning-path-02-schema-and-prerequisite-dag plan).
-      const edges = new Map<string, string[]>(slugs.map((s) => [s, readPrerequisites(s) as string[]]));
-      const visiting = new Set<string>();
-      const visited = new Set<string>();
-      let cyclePath: string[] = [];
-      function hasCycle(node: string, path: string[]): boolean {
-        if (visited.has(node)) return false;
-        if (visiting.has(node)) {
-          cyclePath = [...path, node];
-          return true;
+        // REFACTOR (delivery.md §2.3): the declared edges must also form an acyclic graph — a
+        // data-shape guard on these 37 rows, not the full DAG resolver (that belongs to the sibling
+        // ayokoding-learning-path-02-schema-and-prerequisite-dag plan).
+        const edges = new Map<string, string[]>(slugs.map((s) => [s, readPrerequisites(s) as string[]]));
+        const visiting = new Set<string>();
+        const visited = new Set<string>();
+        let cyclePath: string[] = [];
+        function hasCycle(node: string, path: string[]): boolean {
+          if (visited.has(node)) return false;
+          if (visiting.has(node)) {
+            cyclePath = [...path, node];
+            return true;
+          }
+          visiting.add(node);
+          for (const dep of edges.get(node) ?? []) {
+            if (hasCycle(dep, [...path, node])) return true;
+          }
+          visiting.delete(node);
+          visited.add(node);
+          return false;
         }
-        visiting.add(node);
-        for (const dep of edges.get(node) ?? []) {
-          if (hasCycle(dep, [...path, node])) return true;
-        }
-        visiting.delete(node);
-        visited.add(node);
-        return false;
-      }
-      const cyclic = slugs.some((slug) => hasCycle(slug, []));
-      expect(cyclic, `cycle detected: ${cyclePath.join(" -> ")}`).toBe(false);
-    });
+        const cyclic = slugs.some((slug) => hasCycle(slug, []));
+        expect(cyclic, `cycle detected: ${cyclePath.join(" -> ")}`).toBe(false);
+      },
+    );
   });
+
+  Scenario(
+    "A prerequisite naming a syllabus-declared but not-yet-authored course still resolves",
+    ({ Given, Then, And }) => {
+      Given(
+        '"creating-ai-powered-apps" is declared on the syllabus roadmap but not yet authored into the course library',
+        () => {
+          expect(SYLLABUS_COURSE_IDS).toContain("creating-ai-powered-apps");
+          expect(courseSlugs()).not.toContain("creating-ai-powered-apps");
+        },
+      );
+
+      Then(
+        'a prerequisite naming "creating-ai-powered-apps" resolves against the union of the course library and the syllabus roadmap',
+        () => {
+          expect(knownCourseIdSet().has("creating-ai-powered-apps")).toBe(true);
+        },
+      );
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/navigation/course-rehome-redirects.feature:A prerequisite naming a syllabus-declared but not-yet-authored course still resolves
+      And("a prerequisite naming an unrecognized course ID still does not resolve", () => {
+        expect(knownCourseIdSet().has("not-a-real-course-id-xyz")).toBe(false);
+      });
+    },
+  );
 
   ScenarioOutline(
     "The retired fundamentally-strong browse roots permanently redirect to the course library",
