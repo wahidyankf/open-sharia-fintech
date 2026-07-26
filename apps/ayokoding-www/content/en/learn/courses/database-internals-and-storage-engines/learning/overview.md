@@ -194,7 +194,8 @@ root (growing the tree's height by exactly one level) is what guarantees the tre
 an unbalanced shape.
 
 **Verify it**: Examples 20 and 44 split a B-tree leaf with separator-key promotion, and force splits
-that propagate all the way up to the root.
+that propagate all the way up to the root. Example 45 is the mirror image: deleting keys until a leaf
+underflows, verifying a merge or borrow keeps the tree valid.
 
 ### co-10 &middot; B-Tree Range Scan
 
@@ -254,7 +255,10 @@ precisely why the B-tree-vs-LSM choice is a genuine engineering decision, not a 
 one correct answer.
 
 **Verify it**: Examples 50, 51, and 52 count write amplification, count read amplification, and
-measure space amplification directly, on the same compaction strategies from co-13.
+measure space amplification directly, on the same compaction strategies from co-13. Examples 77, 78,
+and 79 then measure that same trade-off end to end on a real B-tree and LSM tree: write throughput
+under random inserts, point-read latency under a read-heavy load, and a workload-driven chooser
+picking LSM then B-tree respectively.
 
 ### co-15 &middot; Bloom Filter
 
@@ -380,7 +384,8 @@ permits write skew) is the difference between correctly reasoning about a concur
 surprised by one in production.
 
 **Verify it**: Examples 72, 73, 74, and 75 reproduce a dirty read, a non-repeatable read, a phantom
-read, and write skew, each under the specific isolation level that permits it.
+read, and write skew, each under the specific isolation level that permits it. Example 76 then runs
+the same write-skew pair under serializable, verifying it aborts one transaction to prevent the skew.
 
 ### co-25 &middot; Concurrency Control -- 2PL and OCC
 
@@ -406,9 +411,10 @@ is neither the old nor the new version -- fsync is what forces a write to genuin
 storage, group commit amortizes that cost across many transactions, and full-page-writes/doublewrite
 are what let recovery repair a torn page rather than merely detect it.
 
-**Verify it**: Examples 60, 61, 62, and 63 demonstrate fsync as a durability barrier, group commit
-batching multiple commits into one fsync, a torn-page simulation detected by checksum, and full-page-
-write recovery repairing that torn page.
+**Verify it**: Example 9 computes a CRC checksum over a page and verifies flipping one byte changes
+it -- the exact detector the next four examples rely on. Examples 60, 61, 62, and 63 demonstrate
+fsync as a durability barrier, group commit batching multiple commits into one fsync, a torn-page
+simulation detected by that checksum, and full-page-write recovery repairing that torn page.
 
 ### co-27 &middot; Clustered vs Heap
 

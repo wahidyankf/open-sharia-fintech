@@ -79,7 +79,9 @@ does LRU-K specifically defeat that plain LRU cannot?
 CLOCK approximates LRU cheaply via one reference bit per frame instead of maintaining a full recency
 ordering. LRU-K tracks the last K references (not just the most recent one), which is what lets it
 tell a genuinely hot page apart from a page touched only once during a sequential scan -- plain LRU
-cannot make that distinction and will evict hot pages during a scan (Examples 15, 16, 41).
+cannot make that distinction and will evict hot pages during a scan. Whichever policy picks the
+victim, eviction itself must still write back a dirty page before the frame is reused, which is
+exactly what Example 14 verifies (Examples 14, 15, 16, 41).
 
 </details>
 
@@ -117,7 +119,9 @@ a lookup touches?
 Tree height is approximately `log_fanout(N)` -- a higher fanout means each level can route among more
 children, so the tree stays shallow even as N grows into the billions. A fanout in the hundreds keeps
 a B-tree only 3-4 levels deep at realistic scale, which is why B-trees are the default on-disk index
-structure (Example 19).
+structure. Example 18 confirms a lookup actually benefits from that shallow depth, and Example 43
+shows bulk-loading sorted keys bottom-up builds the identical shape a one-by-one insert would (Examples
+18, 19, 43).
 
 </details>
 
@@ -129,8 +133,9 @@ effect propagate?
 
 An overflowing leaf splits in two and promotes a separator key upward into its parent; if the parent
 also overflows from that promotion, the split propagates further up, potentially all the way to the
-root -- which is exactly how a B-tree grows one level taller while staying balanced (Examples 20,
-44).
+root -- which is exactly how a B-tree grows one level taller while staying balanced. Deletion is the
+mirror image: Example 45 shows a leaf underflow triggering a merge or borrow instead of a split
+(Examples 20, 44, 45).
 
 </details>
 
@@ -192,7 +197,10 @@ does it make "B-tree or LSM" a genuine engineering decision rather than a solved
 The RUM conjecture claims no single design can simultaneously minimize read, write, and space
 amplification all at once -- improving one tends to cost one of the others. That's precisely why
 choosing between a B-tree and an LSM tree is a real trade-off decided by the actual workload, not a
-question with one universally correct answer (Examples 50, 51, 52).
+question with one universally correct answer. Examples 77, 78, and 79 measure that trade-off directly
+on real engines: the LSM sustains higher write throughput, the B-tree answers point reads in fewer
+page reads, and a workload-driven chooser picks the LSM for write-heavy load and the B-tree for
+read-heavy load (Examples 50, 51, 52, 77, 78, 79).
 
 </details>
 
@@ -258,7 +266,8 @@ A no-force policy (a committed page need not reach disk at commit time) makes re
 committed change might still only exist in the log after a crash. A steal policy (an uncommitted
 page CAN be written to disk before commit, e.g. under memory pressure) makes undo necessary, since an
 uncommitted change might already be on disk. Real engines use steal + no-force for buffer-pool
-flexibility, which is exactly why both redo and undo are needed together (Examples 33, 34).
+flexibility, which is exactly why both redo and undo are needed together -- Example 67 combines both
+in one end-to-end recovery over a crashed log (Examples 33, 34, 67).
 
 </details>
 
@@ -324,7 +333,9 @@ Read-uncommitted permits dirty reads; read-committed stops dirty reads but permi
 reads; repeatable-read stops non-repeatable reads but (in the classical definition) permits phantom
 reads; serializable stops all of the above. PostgreSQL's `REPEATABLE READ` is actually snapshot
 isolation, and snapshot isolation still permits write skew even though it blocks the classical
-phantom-read pattern -- only true serializable (SSI) catches write skew (Examples 72, 73, 74, 75).
+phantom-read pattern -- only true serializable (SSI) catches write skew. Example 76 runs that same
+write-skew pair under serializable and confirms one transaction aborts instead (Examples 72, 73, 74,
+75, 76).
 
 </details>
 
@@ -349,10 +360,11 @@ and name the two named mitigations this topic covers.
 <summary>Answer</summary>
 
 A page write can be physically interrupted mid-write by a crash, leaving a "torn" page that is
-neither the old version nor the fully-written new one. PostgreSQL's full-page-writes and InnoDB's
-doublewrite buffer are both mitigations that let recovery repair a torn page rather than merely
-detect that it happened; fsync is what forces a write to genuinely reach stable storage in the first
-place, and group commit amortizes that fsync cost across many transactions (Examples 60, 61, 62, 63).
+neither the old version nor the fully-written new one -- Example 9's per-page checksum is what lets
+recovery even detect that tearing happened. PostgreSQL's full-page-writes and InnoDB's doublewrite
+buffer are both mitigations that let recovery repair a torn page rather than merely detect that it
+happened; fsync is what forces a write to genuinely reach stable storage in the first place, and
+group commit amortizes that fsync cost across many transactions (Examples 9, 60, 61, 62, 63).
 
 </details>
 
@@ -815,7 +827,7 @@ True
 
 ### Kata 3 -- B-Tree Leaf Insert: appending instead of sorting breaks a range scan's ordering guarantee
 
-_relates to co-09, co-10, Examples 17, 20, 21_
+_relates to co-07, co-10, Examples 17, 21_
 
 **Task.** A B-tree leaf's `range_scan()` should always return results in sorted key order. The
 version below is broken: `insert()` always appends, so the leaf is never actually kept sorted.

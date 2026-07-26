@@ -9,11 +9,12 @@ weight: 1
 
 Model the core of a storage engine: a paged B+-tree index, a write-ahead log with crash recovery,
 and an MVCC snapshot read -- proving you understand how a database achieves durability and how the
-index choice sets the read/write trade-off. Four small modules build on each other in strict order --
-`pages.py` (slotted pages + a buffer pool), `index.py` (a B+-tree-style index over page ids), `wal.py`
-(write-ahead logging across a simulated crash), and `mvcc.py` (a snapshot read layered on top) --
-every mechanism combined here was already taught individually somewhere in this topic's Beginner,
-Intermediate, or Advanced tiers (Example 1's page anatomy, Examples 10 and 13's buffer pool,
+index choice sets the read/write trade-off. Four small modules combine here: `pages.py` (slotted
+pages + a buffer pool) and `index.py` (a B+-tree-style index over page ids) are independent leaves --
+neither imports the other -- that `wal.py` (write-ahead logging across a simulated crash) integrates
+into one durable read/write path, and `mvcc.py` (a snapshot read layered on top) builds on `wal.py`
+alone -- every mechanism combined here was already taught individually somewhere in this topic's
+Beginner, Intermediate, or Advanced tiers (Example 1's page anatomy, Examples 10 and 13's buffer pool,
 Examples 43-45's B-tree, Examples 29-33's WAL and Example 67's end-to-end recovery, Examples 37-40's
 MVCC).
 
@@ -24,7 +25,9 @@ flowchart LR
     B["index.py<br/>B+-tree-style index<br/>co-07"]:::orange
     C["wal.py<br/>WAL + crash recovery<br/>co-16, co-17, co-18, co-19"]:::teal
     D["mvcc.py<br/>snapshot read<br/>co-21, co-22"]:::purple
-    A --> B --> C --> D
+    A --> C
+    B --> C
+    C --> D
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -450,8 +453,10 @@ entry per key, and only a real integration test exposed the gap.
 
 _exercises co-16, co-17, co-18, co-19_
 
-`WriteAheadLog.append` is Example 29's log-before-page rule: a write becomes durable in `self.log`
-before anything else happens to it. `commit` is Example 33's commit semantics, and `_materialize` is
+`WriteAheadLog.append` is Examples 29 and 30's log-before-page rule: a write becomes durable in
+`self.log` before anything else happens to it, the same append-order guarantee Example 29 verifies,
+structurally enforcing the ordering Example 30's `WalOrderingError` guard checks explicitly.
+`commit` is Example 33's commit semantics, and `_materialize` is
 where a committed record actually becomes a real page via `pages.py`'s `insert_record` plus an
 `index.py` entry. `crash_and_recover` is Example 67's end-to-end recovery, generalized to replay
 through the real page format instead of a bare dict -- every committed record is redone, in log order,
