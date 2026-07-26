@@ -210,7 +210,7 @@ if __name__ == "__main__":  # => co-02: entry point -- runs only when this file 
     con = duckdb.connect()  # => co-02: the warehouse stand-in -- BOTH load and transform happen inside it
     con.sql("CREATE TABLE raw_orders (order_id VARCHAR, amount VARCHAR)")  # => co-02: RAW schema -- everything stays TEXT
     con.executemany("INSERT INTO raw_orders VALUES (?, ?)", RAW_ROWS)  # => co-02: LOAD first -- untouched, untyped, unfiltered
-    raw_loaded = con.sql("SELECT * FROM raw_orders").df()  # => co-02: read back the raw landing table
+    raw_loaded = con.sql("SELECT amount, order_id FROM raw_orders").df()  # => co-02: read back the raw landing table -- amount first so its blank cell never lands as invisible trailing whitespace when printed
     print(f"Raw landing table after LOAD ({len(raw_loaded)} rows, untouched):")  # => co-02
     print(raw_loaded)  # => co-02: prints the raw table -- still text, still has the duplicate and the blank
 
@@ -234,11 +234,11 @@ if __name__ == "__main__":  # => co-02: entry point -- runs only when this file 
 
 ```text
 Raw landing table after LOAD (4 rows, untouched):
-  order_id  amount
-0     1001  129.50
-1     1002   40.00
-2     1002   40.00
-3     1003
+   amount order_id
+0  129.50     1001
+1   40.00     1002
+2   40.00     1002
+3             1003
 Transformed in-warehouse (2 rows):
    order_id  amount
 0      1001   129.5
@@ -619,7 +619,7 @@ SOURCE_ROWS = [(6001, "alice", 42.0), (6002, "bob", 17.5), (6003, "carol", 90.0)
 def run_etl_step(con: duckdb.DuckDBPyConnection) -> None:  # => co-05: the step under test -- must be safe to run more than once
     """Insert every source row, but only if its natural key isn't already present -- an idempotent load."""  # => co-05: documents run_etl_step's contract -- no runtime output, just sets its __doc__
     for order_id, customer, amount in SOURCE_ROWS:  # => co-05: one source row at a time
-        already_present = con.sql(f"SELECT COUNT(*) FROM orders WHERE order_id = {order_id}").fetchone()[0] > 0  # => co-05: check the natural key FIRST
+        already_present = con.sql("SELECT COUNT(*) FROM orders WHERE order_id = ?", params=[order_id]).fetchone()[0] > 0  # => co-05: check the natural key FIRST -- parameterized, matching the INSERT two lines below
         if not already_present:  # => co-05: only insert a row this run has not already seen
             con.execute("INSERT INTO orders VALUES (?, ?, ?)", (order_id, customer, amount))  # => co-05: insert exactly once, ever
 
@@ -765,7 +765,7 @@ if __name__ == "__main__":  # => co-06: entry point -- runs only when this file 
     con.sql("CREATE TABLE source_events (event_id INTEGER, event_date DATE)")  # => co-06: the upstream source, unfiltered
     con.executemany("INSERT INTO source_events VALUES (?, ?)", SOURCE_ROWS)  # => co-06: land every source row
 
-    new_rows = con.sql(f"SELECT * FROM source_events WHERE event_date > DATE '{LAST_WATERMARK}' ORDER BY event_id").df()  # => co-06: STRICTLY after the watermark
+    new_rows = con.sql("SELECT * FROM source_events WHERE event_date > ? ORDER BY event_id", params=[LAST_WATERMARK]).df()  # => co-06: STRICTLY after the watermark -- parameterized instead of f-string interpolation
     print(f"Watermark: {LAST_WATERMARK} | New rows found: {len(new_rows)}")  # => co-06: prints the watermark and the count
     print(new_rows)  # => co-06: prints exactly the rows this incremental run will process
 

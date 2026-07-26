@@ -213,9 +213,8 @@ sibling bundle shape already on disk:
 │   ├── code/                 colocated runnable examples (code-bearing courses only)
 │   └── capstone/             the course's own intra-course capstone
 └── drilling/
-    ├── _index.md
-    ├── overview.md
-    └── <course-id>.md        the fixed five-section drilling order
+    ├── _index.md              lists the drilling sections, links to `overview.md`
+    └── overview.md            the fixed five-section drilling order
 ```
 
 The `course-id` slug, the prerequisite chain, the concept-coverage floor, and the worked-example

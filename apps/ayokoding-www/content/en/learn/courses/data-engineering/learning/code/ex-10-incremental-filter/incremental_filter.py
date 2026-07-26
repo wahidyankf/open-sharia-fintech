@@ -22,7 +22,7 @@ if __name__ == "__main__":  # => co-06: entry point -- runs only when this file 
     con.sql("CREATE TABLE source_events (event_id INTEGER, event_date DATE)")  # => co-06: the upstream source, unfiltered
     con.executemany("INSERT INTO source_events VALUES (?, ?)", SOURCE_ROWS)  # => co-06: land every source row
 
-    new_rows = con.sql(f"SELECT * FROM source_events WHERE event_date > DATE '{LAST_WATERMARK}' ORDER BY event_id").df()  # => co-06: STRICTLY after the watermark
+    new_rows = con.sql("SELECT * FROM source_events WHERE event_date > ? ORDER BY event_id", params=[LAST_WATERMARK]).df()  # => co-06: STRICTLY after the watermark -- parameterized instead of f-string interpolation
     print(f"Watermark: {LAST_WATERMARK} | New rows found: {len(new_rows)}")  # => co-06: prints the watermark and the count
     print(new_rows)  # => co-06: prints exactly the rows this incremental run will process
 

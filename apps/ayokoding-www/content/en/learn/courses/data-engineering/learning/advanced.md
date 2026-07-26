@@ -611,7 +611,7 @@ if __name__ == "__main__":  # => co-19: entry point -- runs only when this file 
     print(f"Discovered set matches expected transitive downstream: {affected == expected_affected}")  # => co-19: prints the exact-match check
     assert affected == expected_affected, "table-level lineage must discover EVERY transitively downstream dataset"  # => co-19: the claim
     print(f"MATCH: {changed_table!r}'s change reaches {len(affected)} downstream datasets, two hops away included")  # => co-19
-    # => co-19: table-level lineage answers "does X feed Y" -- it says nothing about WHICH columns, which co-47 covers next
+    # => co-19: table-level lineage answers "does X feed Y" -- it says nothing about WHICH columns, which ex-47 covers next
 ```
 
 **Run**: `python3 table_level_lineage.py`

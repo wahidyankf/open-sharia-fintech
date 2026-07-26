@@ -215,13 +215,20 @@ capstone's four files are the sole exception, importing from one another as one 
   alternative dataframe library worth knowing about, but this course does not use it -- every
   worked example's data volume is small enough that `pandas` plus DuckDB's own native execution is
   simpler and sufficient.
-- 2026-07-27 -- `[Unverified]`, **volatile**: Airflow 3 (generally available before this course's
-  authoring) renamed the DAG kwarg `schedule_interval` to `schedule` and flipped `catchup`'s
-  default from `True` to `False`. This course's orchestration worked examples (ex-41 through ex-45)
-  simulate a DAG's dependency/retry/schedule/catchup/backfill semantics in pure Python -- no live
-  Airflow install, matching this course's no-network, no-live-service discipline -- so no example
-  cites a specific Airflow kwarg name; this note exists only so a reader connecting these examples
-  to a real Airflow DAG does not carry over the pre-3.0 kwarg name.
+- 2026-07-27 -- **Airflow scheduling kwargs, volatile**: `schedule_interval` was deprecated in favor
+  of the unified `schedule` kwarg back in Airflow **2.4.0** (2022-09-19), not Airflow 3
+  (`[Web-cited: Apache Airflow 2.4.0 Release Notes -- https://airflow.apache.org/docs/apache-airflow/2.4.0/release_notes.html ; accessed 2026-07-27]`);
+  Airflow **3.0** then removed the legacy `schedule_interval` (and `timetable`) parameters entirely,
+  making `schedule` the only option
+  (`[Web-cited: Apache Airflow RELEASE_NOTES.rst, "Unified Scheduling Field" -- https://raw.githubusercontent.com/apache/airflow/main/RELEASE_NOTES.rst ; accessed 2026-07-27]`).
+  Airflow 3.0 separately flipped `catchup`'s default from `True` to `False`
+  (`[Web-cited: Apache Airflow -- Upgrading to Airflow 3 -- https://airflow.apache.org/docs/apache-airflow/stable/installation/upgrading_to_airflow3.html ; accessed 2026-07-27]`).
+  This course's orchestration worked examples (ex-41 through ex-45) simulate a DAG's
+  dependency/retry/schedule/catchup/backfill semantics in pure Python -- no live Airflow install,
+  matching this course's no-network, no-live-service discipline -- so no example cites a specific
+  Airflow kwarg name; this note exists only so a reader connecting these examples to a real Airflow
+  DAG does not carry over the pre-2.4 `schedule_interval` name or assume `catchup` still defaults to
+  `True`.
 
 ---
 

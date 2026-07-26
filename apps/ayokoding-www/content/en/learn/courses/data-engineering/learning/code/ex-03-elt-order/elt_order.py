@@ -16,7 +16,7 @@ if __name__ == "__main__":  # => co-02: entry point -- runs only when this file 
     con = duckdb.connect()  # => co-02: the warehouse stand-in -- BOTH load and transform happen inside it
     con.sql("CREATE TABLE raw_orders (order_id VARCHAR, amount VARCHAR)")  # => co-02: RAW schema -- everything stays TEXT
     con.executemany("INSERT INTO raw_orders VALUES (?, ?)", RAW_ROWS)  # => co-02: LOAD first -- untouched, untyped, unfiltered
-    raw_loaded = con.sql("SELECT * FROM raw_orders").df()  # => co-02: read back the raw landing table
+    raw_loaded = con.sql("SELECT amount, order_id FROM raw_orders").df()  # => co-02: read back the raw landing table -- amount first so its blank cell never lands as invisible trailing whitespace when printed
     print(f"Raw landing table after LOAD ({len(raw_loaded)} rows, untouched):")  # => co-02
     print(raw_loaded)  # => co-02: prints the raw table -- still text, still has the duplicate and the blank
 

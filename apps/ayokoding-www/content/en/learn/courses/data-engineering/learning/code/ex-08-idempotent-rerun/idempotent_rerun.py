@@ -10,7 +10,7 @@ SOURCE_ROWS = [(6001, "alice", 42.0), (6002, "bob", 17.5), (6003, "carol", 90.0)
 def run_etl_step(con: duckdb.DuckDBPyConnection) -> None:  # => co-05: the step under test -- must be safe to run more than once
     """Insert every source row, but only if its natural key isn't already present -- an idempotent load."""  # => co-05: documents run_etl_step's contract -- no runtime output, just sets its __doc__
     for order_id, customer, amount in SOURCE_ROWS:  # => co-05: one source row at a time
-        already_present = con.sql(f"SELECT COUNT(*) FROM orders WHERE order_id = {order_id}").fetchone()[0] > 0  # => co-05: check the natural key FIRST
+        already_present = con.sql("SELECT COUNT(*) FROM orders WHERE order_id = ?", params=[order_id]).fetchone()[0] > 0  # => co-05: check the natural key FIRST -- parameterized, matching the INSERT two lines below
         if not already_present:  # => co-05: only insert a row this run has not already seen
             con.execute("INSERT INTO orders VALUES (?, ?, ?)", (order_id, customer, amount))  # => co-05: insert exactly once, ever
 
