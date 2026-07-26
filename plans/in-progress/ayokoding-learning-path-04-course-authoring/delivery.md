@@ -625,7 +625,7 @@ deploy), applying the convention:
       post-merge: `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>evaluating-ai-output-essentials/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Statistics for evals (`statistics-for-evaluation` — Annotated-concept, code-bearing, Python,
+- [x] [AI] Statistics for evals (`statistics-for-evaluation` — Annotated-concept, code-bearing, Python,
       settled per `$SYLLABUS_ROOT/statistics-for-evaluation.md`, 368 lines) — scoped tightly to what
       evals demand (judge concordance, significance testing), not a general statistics survey (DD-26);
       it is a **hard prerequisite** of `evaluating-ai-systems-in-depth`, so it is authored before (or
@@ -633,6 +633,15 @@ deploy), applying the convention:
       checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'analytics-and-experimentation' "<COURSES>statistics-for-evaluation/overview.md"`
       exits 0 (the scope boundary against classical A/B testing is stated).
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 99 files under
+      `apps/ayokoding-www/content/en/learn/courses/statistics-for-evaluation/`.
+      Authored via `apps-ayokoding-www-annotated-concept-maker`, checker/fixer cycle clean (zero
+      CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/statistics-for-evaluation`,
+      draft PR [#100](https://github.com/wahidyankf/ose-public/pull/100), 3-cycle PR review completed
+      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
+      `prod-ayokoding-www`. Acceptance clause verified post-merge:
+      `grep -F -q 'analytics-and-experimentation' "<COURSES>statistics-for-evaluation/overview.md"`
+      exits 0.
 
   **Gherkin (binds) →** "The statistics-for-evals course stays scoped to what evals demand"
 
@@ -646,7 +655,7 @@ deploy), applying the convention:
 
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 
-- [ ] [AI] Deep evals (`evaluating-ai-systems-in-depth` — By Example, Python, settled per
+- [x] [AI] Deep evals (`evaluating-ai-systems-in-depth` — By Example, Python, settled per
       `$SYLLABUS_ROOT/evaluating-ai-systems-in-depth.md`, 384 lines) — sits after agents; error
       analysis, task-specific criteria, LLM-as-judge with measured human agreement, CI gating,
       judge-scope reliability (DD-25); declares `statistics-for-evaluation` a **hard prerequisite** —
@@ -655,6 +664,17 @@ deploy), applying the convention:
       exits 0 (the hard prerequisite is declared) **and**
       `grep -F -q 'evaluating-ai-output-essentials' "<COURSES>evaluating-ai-systems-in-depth/overview.md"`
       exits 0 (the scope boundary against the light gate is stated).
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 101 files under
+      `apps/ayokoding-www/content/en/learn/courses/evaluating-ai-systems-in-depth/`.
+      Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
+      CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/evaluating-ai-systems-in-depth`,
+      draft PR [#103](https://github.com/wahidyankf/ose-public/pull/103), 3-cycle PR review completed
+      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` (`be07b257c`) and deployed to
+      `prod-ayokoding-www`. Acceptance clauses verified post-merge:
+      `grep -F -q 'statistics-for-evaluation' "<COURSES>evaluating-ai-systems-in-depth/_index.md"`
+      exits 0 **and**
+      `grep -F -q 'evaluating-ai-output-essentials' "<COURSES>evaluating-ai-systems-in-depth/overview.md"`
+      exits 0.
 
   **Gherkin (binds) →** "The light eval gate and deep evals course do not overlap"
 
@@ -668,22 +688,43 @@ deploy), applying the convention:
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-- [ ] [AI] Product patterns for probabilistic systems (`product-patterns-for-probabilistic-systems` —
+- [x] [AI] Product patterns for probabilistic systems (`product-patterns-for-probabilistic-systems` —
       Annotated-concept, no code, settled per
       `$SYLLABUS_ROOT/product-patterns-for-probabilistic-systems.md`, 370 lines) — product design
       patterns for probabilistic (not deterministic) outputs; no course owns this today (DD-28) —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM.
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 20 files under
+      `apps/ayokoding-www/content/en/learn/courses/product-patterns-for-probabilistic-systems/`.
+      Authored via `apps-ayokoding-www-annotated-concept-maker`, checker/fixer cycle clean (zero
+      CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/product-patterns-for-probabilistic-systems`,
+      draft PR [#99](https://github.com/wahidyankf/ose-public/pull/99), 3-cycle PR review completed
+      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
+      `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Inference serving and model deployment (`inference-serving-and-model-deployment` — By
+- [x] [AI] Inference serving and model deployment (`inference-serving-and-model-deployment` — By
       Example, Python, settled per `$SYLLABUS_ROOT/inference-serving-and-model-deployment.md`, 405
       lines) — vLLM/TGI, KV-cache, batching, GPU considerations; entirely absent from the library today
       (DD-28) — acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       every vLLM/TGI version claim sits in a dated accuracy-note sidebar, verified by the facts checker.
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 99 files under
+      `apps/ayokoding-www/content/en/learn/courses/inference-serving-and-model-deployment/`.
+      Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
+      CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/inference-serving-and-model-deployment`,
+      draft PR [#101](https://github.com/wahidyankf/ose-public/pull/101), 3-cycle PR review completed
+      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
+      `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Fine-tuning and adaptation (`fine-tuning-and-adaptation` — By Example, Python, settled per
+- [x] [AI] Fine-tuning and adaptation (`fine-tuning-and-adaptation` — By Example, Python, settled per
       `$SYLLABUS_ROOT/fine-tuning-and-adaptation.md`, 423 lines) — fine-tuning/LoRA/PEFT versus RAG as
       a foil (DD-28) — acceptance: all 9 convention steps complete; checkers report zero
       CRITICAL/HIGH/MEDIUM.
+      **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 97 files under
+      `apps/ayokoding-www/content/en/learn/courses/fine-tuning-and-adaptation/`.
+      Authored via `apps-ayokoding-www-by-example-maker`, checker/fixer cycle clean (zero
+      CRITICAL/HIGH/MEDIUM). Own branch `ayokoding-learning-path-04-course-authoring/fine-tuning-and-adaptation`,
+      draft PR [#102](https://github.com/wahidyankf/ose-public/pull/102), 3-cycle PR review completed
+      (0 CRITICAL/HIGH outstanding at merge), squash-merged to `main` and deployed to
+      `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [x] [AI] **Add catalog rows** — replace the "per its settled spec" prerequisite cells in
       [tech-docs §AI-engineering specialization](./tech-docs.md#ai-engineering-specialization-the-fourth-paths-six-net-new-courses)

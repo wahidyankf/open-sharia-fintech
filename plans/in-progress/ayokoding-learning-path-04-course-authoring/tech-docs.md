@@ -833,11 +833,14 @@ Authored in Phase 1 from their settled cross-plan spec files (295–425 lines ea
 | `inference-serving-and-model-deployment`     | N      | By Example                 | Python           | `creating-ai-powered-apps`, `backend-at-scale`, `containers-and-orchestration`, `computer-architecture`, `site-reliability-engineering`, `just-enough-python`                              | vLLM/TGI, KV-cache, batching, GPU considerations (DD-28)                   |
 | `fine-tuning-and-adaptation`                 | N      | By Example                 | Python           | `creating-ai-powered-apps`, `evaluating-ai-systems-in-depth`, `statistics-for-evaluation`, `inference-serving-and-model-deployment`, `data-engineering`, `just-enough-python`              | Fine-tuning / LoRA / PEFT versus RAG as a foil (DD-28)                     |
 
-Each row's `prerequisites` cell is transcribed verbatim from that course's `_index.md` frontmatter
-(landed in Phase 1) — see `<COURSES><id>/_index.md` for the authoritative, machine-readable source.
-Several cells forward-reference courses not yet authored anywhere in this plan (`agentic-ai`,
-`agent-orchestration-subagents-and-observability`, `cicd-and-release-engineering`,
-`creating-ai-powered-apps`, `backend-at-scale`, `data-engineering`) — this is by design (DD-28) and
+Each row's `prerequisites` cell is transcribed from that course's `_index.md` frontmatter (landed in
+Phase 1), with the plan's `(hard)` hard-prerequisite annotation preserved where the plan text itself
+declares one (see `delivery.md`'s `statistics-for-evaluation` and `evaluating-ai-systems-in-depth`
+checklist items) — see `<COURSES><course-id>/_index.md` for the authoritative, machine-readable
+source. Several cells forward-reference courses not yet authored
+anywhere in this plan (`agentic-ai`, `agent-orchestration-subagents-and-observability`,
+`cicd-and-release-engineering`, `creating-ai-powered-apps`, `backend-at-scale`, `data-engineering`,
+`containers-and-orchestration`, `site-reliability-engineering`) — this is by design (DD-28) and
 matches the course-library resolver's own tolerance for an unresolved prerequisite ID (a lookup miss,
 never a build failure).
 
