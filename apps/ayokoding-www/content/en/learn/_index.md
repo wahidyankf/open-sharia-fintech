@@ -42,6 +42,7 @@ weight: 10
   - [28 · Build Your Own ORM & Query Builder](/en/learn/courses/build-your-own-orm-and-query-builder)
   - [29 · Advanced Networking](/en/learn/courses/advanced-networking)
   - [Data Engineering](/en/learn/courses/data-engineering)
+  - [Search and Information Retrieval](/en/learn/courses/search-and-information-retrieval)
   - [30 · Software Engineering Practices](/en/learn/courses/software-engineering-practices)
   - [31 · Agentic Coding](/en/learn/courses/agentic-coding)
   - [32 · Software Product Engineering](/en/learn/courses/software-product-engineering)
