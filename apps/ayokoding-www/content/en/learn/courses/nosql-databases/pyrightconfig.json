@@ -2,6 +2,33 @@
   "typeCheckingMode": "strict",
   "pythonVersion": "3.13",
   "include": ["learning/code", "learning/capstone/code"],
+  // Why these four categories are off, measured against learning/code/requirements.txt's
+  // exact pins (redis==8.0.1, pymongo==4.17.0, cassandra-driver==3.30.1, boto3==1.43.56,
+  // psycopg[binary]==3.3.4, duckdb==1.5.5, pyarrow==25.0.0):
+  //
+  // Re-enabling all four with nothing else changed produces 384 strict-mode errors across
+  // 53 of this topic's 86 Python files (verified 2026-07-27, pyright 1.1.411). That total
+  // is NOT explained by "cassandra-driver/boto3/pyarrow ship zero type stubs" alone --
+  // those three account for only 17 of the 53 affected files (plus 7 more mixed with a
+  // typed library). The other 29 files split two ways:
+  //   - 22 files import ONLY redis and/or pymongo (both DO ship py.typed) but still error,
+  //     because their own upstream stubs leave several return/parameter types partially
+  //     unknown -- e.g. redis.Redis.pipeline() resolves shard_hint as `Unknown | None`,
+  //     and pymongo.MongoClient resolves as the unparameterized `MongoClient[Unknown]`.
+  //     This is imprecision in the upstream stub, not a missing stub.
+  //   - 7 files import no NoSQL driver at all; pyright's own strict-mode inference flags
+  //     unannotated empty containers (e.g. `inbox = []`) as reportUnknownVariableType with
+  //     no third-party library involved.
+  // Because a majority of this topic's files are affected for reasons that have nothing to
+  // do with cassandra-driver/boto3/pyarrow specifically, scoping the suppression only to
+  // those three libraries' call sites (the ex-88/ex-89 narrow-disclosed-# pyright: ignore
+  // pattern) would still leave most of the 384 errors unaddressed; scoping via
+  // `executionEnvironments` would need to include roughly 53 of 86 files, which is no
+  // narrower than this topic-wide suppression in practice. This suppression stays global
+  // to `learning/code` and `learning/capstone/code`, touches only the four `reportUnknown*`
+  // / `reportMissingTypeStubs` categories, and leaves every other strict-mode category
+  // (including reportUnknownParameterType, used by the ex-88/ex-89 narrow ignores) fully
+  // enforced.
   "reportMissingTypeStubs": false,
   "reportUnknownMemberType": false,
   "reportUnknownVariableType": false,

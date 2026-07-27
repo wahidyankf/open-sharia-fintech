@@ -2,10 +2,11 @@
 
 from __future__ import annotations  # => hygiene: postpones annotation evaluation, interpreter-version-agnostic
 
-# co-28, deliberate exception: this is the ONLY example in this course that opens a live network
-# socket. Every other example in this course runs against a LOCAL Docker service; a license check is
-# inherently about reading an EXTERNAL, authoritative source, so a live fetch is the honest way to
-# "verify the citation matches the official page" rather than embedding a frozen, unverifiable string.
+# co-28, deliberate exception: this is one of three examples in this course (25-27) that open a live
+# network socket. Every other example in this course runs against a LOCAL Docker service; a license
+# check is inherently about reading an EXTERNAL, authoritative source, so a live fetch is the honest
+# way to "verify the citation matches the official page" rather than embedding a frozen, unverifiable
+# string.
 import urllib.error  # => co-28: distinguishes "network unreachable" from "citation actually wrong"
 import urllib.request  # => co-28: stdlib only -- no new pinned dependency added for one network call
 
@@ -33,7 +34,7 @@ CHECKS = [  # => co-28: exactly 2 checks -- Redis (tri-licensed) and Valkey, its
 ]  # => closes CHECKS -- exactly 2 entries, one per store this example set out to verify
 
 
-def fetch_license_text(url: str) -> str:  # => co-28: the ONE function in this course that opens a socket
+def fetch_license_text(url: str) -> str:  # => co-28: one of three identical functions in this course (25-27, one per license-check example) that opens a socket
     """Fetch a vendor's raw license file text, timing out rather than hanging forever."""  # => documents contract
     with urllib.request.urlopen(url, timeout=10) as response:  # => co-28: 10s timeout -- fail fast, don't hang
         return response.read().decode("utf-8")  # => co-28: raw file bytes decoded to text for a substring check

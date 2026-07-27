@@ -92,7 +92,8 @@ def main() -> None:  # => entry point -- runs only when this file executes direc
 
     assert mongo_txn > mongo_plain  # => co-27: MongoDB's session+transaction framing adds MEASURABLE overhead over a plain insert
     assert cassandra_txn > cassandra_plain  # => co-27: Cassandra's Paxos-backed LWT adds MEASURABLE overhead over a plain insert
-    print("Every transactional primitive measured here adds overhead over its own non-transactional baseline -- the exact MS varies by run and machine, but the direction is consistent")  # => Output line
+    redis_slower = redis_txn > redis_plain  # => co-27: whether THIS run's Redis MULTI/EXEC measured slower than its own baseline -- NOT asserted, see below
+    print(f"MongoDB and Cassandra both measured slower with their transactional primitive. Redis MULTI/EXEC: {'slower too' if redis_slower else 'FASTER'} this run")  # => Output line -- reports only what's measured
     # => co-27: Redis's MULTI/EXEC overhead is the smallest of the three (no distributed coordination,
     # => just command queuing) -- this example does not assert redis_txn > redis_plain because that
     # => specific gap is small enough to occasionally invert under local, single-process timing noise;

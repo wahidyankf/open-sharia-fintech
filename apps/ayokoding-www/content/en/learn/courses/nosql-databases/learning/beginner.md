@@ -9,9 +9,10 @@ Examples 1-27 cover Redis/Valkey's core data structures and TTL, MongoDB's docum
 first index, and the conceptual foundations every later example leans on: the NoSQL family taxonomy,
 when to reach for NoSQL at all, CAP, PACELC, BASE vs. ACID, eventual consistency, partitioning,
 consistent hashing, leader-follower replication, access-pattern-first modeling, and the first three
-license checks. Redis/Valkey examples are captured against a real local instance (`valkey-cli
---no-raw` output, or `redis-py`); MongoDB examples are captured against a real local instance via
-`pymongo`. The nine pure-Python conceptual/simulation examples (15-24) have no external dependency at
+license checks. Redis/Valkey examples show representative output, run against a real local instance
+(`valkey-cli --no-raw` output, or `redis-py`); MongoDB examples show representative output, run against
+a real local instance via `pymongo`. The ten pure-Python conceptual/simulation examples (15-24) have no
+external dependency at
 all and are genuinely deterministic -- run them exactly as shown, anywhere Python 3.13 is installed.
 
 ---
@@ -42,7 +43,7 @@ redis-cli --no-raw DEL session:42  # => co-20: removes the key and frees the mem
 redis-cli --no-raw GET session:42  # => confirms the delete actually took effect
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -108,7 +109,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -153,7 +154,7 @@ redis-cli --no-raw HDEL user:7 active  # => co-20: HDEL removes one field, leavi
 redis-cli --no-raw HGETALL user:7  # => confirms only the deleted field is gone
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -209,7 +210,7 @@ redis-cli --no-raw LPOP queue:jobs  # => co-20: LPOP removes and returns the LEF
 redis-cli --no-raw LRANGE queue:jobs 0 -1  # => confirms job-1 is gone, job-2/job-3 remain in order
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -259,7 +260,7 @@ redis-cli --no-raw SMEMBERS post:88:tags  # => co-20: SMEMBERS returns every mem
 redis-cli --no-raw SCARD post:88:tags  # => co-20: SCARD is the set's cardinality (member count), O(1)
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -320,7 +321,7 @@ redis-cli --no-raw ZREVRANGE leaderboard:weekly 0 0 WITHSCORES  # => co-20: ZREV
 redis-cli --no-raw ZSCORE leaderboard:weekly "alice"  # => co-20: ZSCORE reads one member's score directly, O(1)
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -374,7 +375,7 @@ redis-cli --no-raw GET session:auth  # => the key should now be gone
 redis-cli --no-raw TTL session:auth  # => co-24: TTL on a NEVER-EXISTED or EXPIRED key returns -2
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -422,7 +423,7 @@ redis-cli --no-raw TTL session:persist  # => co-24: TTL on a key that exists wit
 redis-cli --no-raw GET session:persist  # => the value itself is untouched by PERSIST -- only the expiry changed
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -495,7 +496,7 @@ redis-cli --no-raw GET store:user:1:balance  # => present now, AND backed by the
 # => store:user:1:balance to exactly "1000" -- durable, unlike the cache-mode key above
 ```
 
-**Run**: `bash example.sh` (captured against a local Valkey 8 Docker container)
+**Run**: `bash example.sh` (representative output, run against a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -566,7 +567,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 container)
 
 **Output**:
@@ -575,9 +576,9 @@ container)
 Inserted document with generated _id: 6a66630aef5cc5522f3e15d7
 ```
 
-**Key takeaway**: An `ObjectId` is genuinely captured output from a real run, not a placeholder --
-every run against a fresh database produces a different 24-hex-character id; the exact digits are
-never something application code should hardcode.
+**Key takeaway**: An `ObjectId` is a realistic 24-hex-character value in the exact format MongoDB
+actually generates, not a placeholder -- every run against a fresh database produces a different id;
+the exact digits are never something application code should hardcode.
 
 **Why it matters**: `insert_one` with no schema declaration is the entire "no `CREATE TABLE`" story in
 one call -- the collection came into existence the moment the first document landed in it. That speed
@@ -641,7 +642,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 container)
 
 **Output**:
@@ -790,7 +791,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
 the application itself issues a second query and stitches the results together (`$lookup`, Example 32,
 moves that stitching into the server).
 
-**Run**: `python3 embedded.py` then `python3 referenced.py` (captured against `pymongo==4.17.0` and a
+**Run**: `python3 embedded.py` then `python3 referenced.py` (representative output, run against `pymongo==4.17.0` and a
 local MongoDB 8.2.12 Docker container)
 
 **Output**:
@@ -872,7 +873,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 container)
 
 **Output**:
@@ -947,7 +948,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 container)
 
 **Output**:
@@ -1845,10 +1846,11 @@ without warning, which is why co-28 treats this as a recurring check, not a one-
 """Example 25: License Check: Redis vs. Valkey."""  # => co-28: this file's own purpose, doubling as its module __doc__
 from __future__ import annotations  # => hygiene: postpones annotation evaluation, interpreter-version-agnostic
 
-# co-28, deliberate exception: this is the ONLY example in this course that opens a live network
-# socket. Every other example in this course runs against a LOCAL Docker service; a license check is
-# inherently about reading an EXTERNAL, authoritative source, so a live fetch is the honest way to
-# "verify the citation matches the official page" rather than embedding a frozen, unverifiable string.
+# co-28, deliberate exception: this is one of three examples in this course (25-27) that open a live
+# network socket. Every other example in this course runs against a LOCAL Docker service; a license
+# check is inherently about reading an EXTERNAL, authoritative source, so a live fetch is the honest
+# way to "verify the citation matches the official page" rather than embedding a frozen, unverifiable
+# string.
 import urllib.error  # => co-28: distinguishes "network unreachable" from "citation actually wrong"
 import urllib.request  # => co-28: stdlib only -- no new pinned dependency added for one network call
 
@@ -1876,7 +1878,7 @@ CHECKS = [  # => co-28: exactly 2 checks -- Redis (tri-licensed) and Valkey, its
 ]  # => closes CHECKS -- exactly 2 entries, one per store this example set out to verify
 
 
-def fetch_license_text(url: str) -> str:  # => co-28: the ONE function in this course that opens a socket
+def fetch_license_text(url: str) -> str:  # => co-28: one of three identical functions in this course (25-27, one per license-check example) that opens a socket
     """Fetch a vendor's raw license file text, timing out rather than hanging forever."""  # => documents contract
     with urllib.request.urlopen(url, timeout=10) as response:  # => co-28: 10s timeout -- fail fast, don't hang
         return response.read().decode("utf-8")  # => co-28: raw file bytes decoded to text for a substring check
@@ -1980,7 +1982,7 @@ CHECKS = [  # => co-28: exactly 1 check -- MongoDB's Server Side Public License 
 ]  # => closes CHECKS -- exactly 1 entry, matching this example's single-store scope
 
 
-def fetch_license_text(url: str) -> str:  # => co-28: the ONE function in this course that opens a socket
+def fetch_license_text(url: str) -> str:  # => co-28: one of three identical functions in this course (25-27, one per license-check example) that opens a socket
     """Fetch a vendor's raw license file text, timing out rather than hanging forever."""  # => documents contract
     with urllib.request.urlopen(url, timeout=10) as response:  # => co-28: 10s timeout -- fail fast, don't hang
         return response.read().decode("utf-8")  # => co-28: raw file bytes decoded to text for a substring check
@@ -2082,7 +2084,7 @@ CHECKS = [  # => co-28: exactly 1 check -- Apache Cassandra's Apache License 2.0
 ]  # => closes CHECKS -- exactly 1 entry, matching this example's single-store scope
 
 
-def fetch_license_text(url: str) -> str:  # => co-28: the ONE function in this course that opens a socket
+def fetch_license_text(url: str) -> str:  # => co-28: one of three identical functions in this course (25-27, one per license-check example) that opens a socket
     """Fetch a vendor's raw license file text, timing out rather than hanging forever."""  # => documents contract
     with urllib.request.urlopen(url, timeout=10) as response:  # => co-28: 10s timeout -- fail fast, don't hang
         return response.read().decode("utf-8")  # => co-28: raw file bytes decoded to text for a substring check

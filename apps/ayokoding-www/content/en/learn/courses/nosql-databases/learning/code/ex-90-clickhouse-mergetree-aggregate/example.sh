@@ -9,7 +9,13 @@ set -euo pipefail # => stop on the first failing command
 # `docker exec`, rather than a host-installed binary -- the host macOS cask build of
 # clickhouse is Gatekeeper-blocked non-interactively on this machine, so `docker exec`
 # is the reliable, reproducible invocation of the SAME official clickhouse-client tool.
-CH="docker exec nosqldb-clickhouse clickhouse-client --user default --password nosqldb" # => co-32: the official ClickHouse CLI, run inside the container
+# The container is discovered by image name rather than a fixed --name, so this runs
+# against any local `clickhouse/clickhouse-server:latest` container regardless of what
+# the reader named it when starting it (`docker run -d clickhouse/clickhouse-server:latest`,
+# per this topic's overview.md). No --password flag: the default image's `default` user
+# has no password unless the reader set CLICKHOUSE_PASSWORD themselves at container start.
+CH_CONTAINER="$(docker ps --filter ancestor=clickhouse/clickhouse-server:latest --format '{{.Names}}' | head -n1)" # => co-32: discover the running container by image, not a hardcoded name
+CH="docker exec ${CH_CONTAINER} clickhouse-client --user default"                                                  # => co-32: the official ClickHouse CLI, run inside the discovered container
 
 $CH --multiquery --query "
 DROP TABLE IF EXISTS sales;
@@ -30,8 +36,8 @@ INSERT INTO sales VALUES
 # => Output: (no output -- a successful INSERT prints nothing)
 
 $CH --query "SELECT category, sum(amount) FROM sales GROUP BY category ORDER BY category" # => co-32: the partitioned GROUP BY aggregation itself
-# => Output (clickhouse-client's real TSV output uses a tab between columns; shown here as a single
-# => space since this comment's own whitespace is normalized by this repo's markdown formatting pipeline):
+# => Output (clickhouse-client's real TSV output separates columns with a tab, ClickHouse's own
+# => convention; shown here with a single space instead, for readability in this comment):
 # => books 125
 # => electronics 300
 

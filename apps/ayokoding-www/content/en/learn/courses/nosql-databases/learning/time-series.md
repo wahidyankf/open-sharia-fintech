@@ -92,7 +92,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4` and a local
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4` and a local
 `timescale/timescaledb:2.28.3-pg16` Docker container, TimescaleDB 2.28.3)
 
 **Output**:
@@ -185,7 +185,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4` and a local
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4` and a local
 `timescale/timescaledb:2.28.3-pg16` Docker container, TimescaleDB 2.28.3)
 
 **Output**:
@@ -295,7 +295,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4` and a local
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4` and a local
 `timescale/timescaledb:2.28.3-pg16` Docker container, TimescaleDB 2.28.3)
 
 **Output**:
@@ -420,7 +420,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4` and a local
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4` and a local
 `timescale/timescaledb:2.28.3-pg16` Docker container, TimescaleDB 2.28.3)
 
 **Output**:
@@ -536,7 +536,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4`, `cassandra-driver==3.30.1`,
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4`, `cassandra-driver==3.30.1`,
 a local `timescale/timescaledb:2.28.3-pg16` Docker container, and the same local Cassandra 5.0.8
 Docker container prior examples used)
 

@@ -102,7 +102,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `duckdb==1.5.5`, entirely in-process -- no Docker
+**Run**: `python3 example.py` (representative output, run against `duckdb==1.5.5`, entirely in-process -- no Docker
 container needed)
 
 **Output**:
@@ -220,7 +220,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `psycopg[binary]==3.3.4`, `duckdb==1.5.5`, and the same
+**Run**: `python3 example.py` (representative output, run against `psycopg[binary]==3.3.4`, `duckdb==1.5.5`, and the same
 local `timescale/timescaledb:2.28.3-pg16` Docker container Examples 81-85 used, here as a plain Postgres
 row store)
 
@@ -311,7 +311,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pyarrow==25.0.0`, entirely in-process -- no Docker
+**Run**: `python3 example.py` (representative output, run against `pyarrow==25.0.0`, entirely in-process -- no Docker
 container needed)
 
 **Output**:
@@ -393,7 +393,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `duckdb==1.5.5` and `pyarrow==25.0.0`, entirely
+**Run**: `python3 example.py` (representative output, run against `duckdb==1.5.5` and `pyarrow==25.0.0`, entirely
 in-process -- no Docker container needed)
 
 **Output**:
@@ -454,7 +454,13 @@ set -euo pipefail  # => stop on the first failing command
 # `docker exec`, rather than a host-installed binary -- the host macOS cask build of
 # clickhouse is Gatekeeper-blocked non-interactively on this machine, so `docker exec`
 # is the reliable, reproducible invocation of the SAME official clickhouse-client tool.
-CH="docker exec nosqldb-clickhouse clickhouse-client --user default --password nosqldb"  # => co-32: the official ClickHouse CLI, run inside the container
+# The container is discovered by image name rather than a fixed --name, so this runs
+# against any local `clickhouse/clickhouse-server:latest` container regardless of what
+# the reader named it when starting it (`docker run -d clickhouse/clickhouse-server:latest`,
+# per this topic's overview.md). No --password flag: the default image's `default` user
+# has no password unless the reader set CLICKHOUSE_PASSWORD themselves at container start.
+CH_CONTAINER="$(docker ps --filter ancestor=clickhouse/clickhouse-server:latest --format '{{.Names}}' | head -n1)"  # => co-32: discover the running container by image, not a hardcoded name
+CH="docker exec ${CH_CONTAINER} clickhouse-client --user default"  # => co-32: the official ClickHouse CLI, run inside the discovered container
 
 $CH --multiquery --query "
 DROP TABLE IF EXISTS sales;
@@ -475,8 +481,8 @@ INSERT INTO sales VALUES
 # => Output: (no output -- a successful INSERT prints nothing)
 
 $CH --query "SELECT category, sum(amount) FROM sales GROUP BY category ORDER BY category"  # => co-32: the partitioned GROUP BY aggregation itself
-# => Output (clickhouse-client's real TSV output uses a tab between columns; shown here as a single
-# => space since this comment's own whitespace is normalized by this repo's markdown formatting pipeline):
+# => Output (clickhouse-client's real TSV output separates columns with a tab, ClickHouse's own
+# => convention; shown here with a single space instead, for readability in this comment):
 # => books 125
 # => electronics 300
 
@@ -493,12 +499,12 @@ $CH --query "EXPLAIN indexes=1 SELECT sum(amount) FROM sales WHERE order_date >=
 # => row within them was read, because the query's own date range never touches them
 ```
 
-**Run**: `bash example.sh` (captured against a local `clickhouse/clickhouse-server:latest` Docker
+**Run**: `bash example.sh` (representative output, run against a local `clickhouse/clickhouse-server:latest` Docker
 container, `clickhouse-client` invoked via `docker exec`)
 
 **Output** (the real terminal run separates `category` and `sum(amount)` with a tab, ClickHouse's own
-TSV convention; shown below with a single space, since this page's own markdown formatting pipeline
-normalizes raw tab characters inside fenced code blocks to a single space):
+TSV convention; shown below with a single space instead of ClickHouse's real tab separator, for
+readability in this page's prose):
 
 ```text
 books 125
@@ -670,7 +676,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1`, `duckdb==1.5.5`, and the
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1`, `duckdb==1.5.5`, and the
 same local Cassandra 5.0 Docker container prior examples used)
 
 **Output**:

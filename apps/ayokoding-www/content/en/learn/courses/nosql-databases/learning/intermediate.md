@@ -68,7 +68,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -238,7 +238,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -319,7 +319,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 replica-set container)
 
 **Output**:
@@ -421,7 +421,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 replica-set container)
 
 **Output**:
@@ -520,7 +520,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 replica-set container)
 
 **Output**:
@@ -598,7 +598,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 **single-node replica set**, since multi-document transactions require one -- a standalone `mongod`
 rejects `start_transaction()` outright)
 
@@ -685,7 +685,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 single-node replica set)
 
 **Output**:
@@ -766,7 +766,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 instance)
 
 **Output**:
@@ -842,7 +842,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2.12 Docker
 instance)
 
 **Output**:
@@ -1030,7 +1030,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -1575,7 +1575,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -1661,7 +1661,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -1751,7 +1751,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -1826,7 +1826,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -1912,7 +1912,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -2003,7 +2003,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -2103,7 +2103,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -2215,7 +2215,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -2323,7 +2323,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:

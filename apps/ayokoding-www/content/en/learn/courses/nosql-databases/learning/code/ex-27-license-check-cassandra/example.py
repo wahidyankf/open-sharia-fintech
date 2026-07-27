@@ -27,7 +27,7 @@ CHECKS = [  # => co-28: exactly 1 check -- Apache Cassandra's Apache License 2.0
 ]  # => closes CHECKS -- exactly 1 entry, matching this example's single-store scope
 
 
-def fetch_license_text(url: str) -> str:  # => co-28: the ONE function in this course that opens a socket
+def fetch_license_text(url: str) -> str:  # => co-28: one of three identical functions in this course (25-27, one per license-check example) that opens a socket
     """Fetch a vendor's raw license file text, timing out rather than hanging forever."""  # => documents contract
     with urllib.request.urlopen(url, timeout=10) as response:  # => co-28: 10s timeout -- fail fast, don't hang
         return response.read().decode("utf-8")  # => co-28: raw file bytes decoded to text for a substring check

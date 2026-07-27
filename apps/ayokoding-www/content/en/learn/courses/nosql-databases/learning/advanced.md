@@ -407,7 +407,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -523,7 +523,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
@@ -635,7 +635,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1`, `pymongo==4.17.0`,
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1`, `pymongo==4.17.0`,
 `cassandra-driver==3.30.1`, and 3 local Docker containers: Valkey 8, MongoDB 8.2 replica set, Cassandra
 5.0.8)
 
@@ -746,7 +746,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -876,7 +876,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -989,7 +989,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -1073,7 +1073,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -1167,7 +1167,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -1252,7 +1252,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -1461,7 +1461,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -1577,7 +1577,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -1697,7 +1697,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `boto3==1.43.56` and the official
+**Run**: `python3 example.py` (representative output, run against `boto3==1.43.56` and the official
 `amazon/dynamodb-local` Docker image)
 
 **Output**:
@@ -1823,7 +1823,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1`, `pymongo==4.17.0`, and 2
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1`, `pymongo==4.17.0`, and 2
 local Docker containers: Cassandra 5.0.8, MongoDB 8.2 replica set)
 
 **Output**:
@@ -1954,7 +1954,8 @@ def main() -> None:  # => entry point -- runs only when this file executes direc
 
     assert mongo_txn > mongo_plain  # => co-27: MongoDB's session+transaction framing adds MEASURABLE overhead over a plain insert
     assert cassandra_txn > cassandra_plain  # => co-27: Cassandra's Paxos-backed LWT adds MEASURABLE overhead over a plain insert
-    print("Every transactional primitive measured here adds overhead over its own non-transactional baseline -- the exact MS varies by run and machine, but the direction is consistent")  # => Output line
+    redis_slower = redis_txn > redis_plain  # => co-27: whether THIS run's Redis MULTI/EXEC measured slower than its own baseline -- NOT asserted, see below
+    print(f"MongoDB and Cassandra both measured slower with their transactional primitive. Redis MULTI/EXEC: {'slower too' if redis_slower else 'FASTER'} this run")  # => Output line -- reports only what's measured
     # => co-27: Redis's MULTI/EXEC overhead is the smallest of the three (no distributed coordination,
     # => just command queuing) -- this example does not assert redis_txn > redis_plain because that
     # => specific gap is small enough to occasionally invert under local, single-process timing noise;
@@ -1970,7 +1971,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1`, `pymongo==4.17.0`,
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1`, `pymongo==4.17.0`,
 `cassandra-driver==3.30.1`, and 3 local Docker containers: Valkey 8, MongoDB 8.2 replica set, Cassandra
 5.0.8)
 
@@ -1980,13 +1981,14 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
 Redis:     plain=0.21ms, MULTI/EXEC=0.34ms
 MongoDB:   plain=1.12ms, transaction=3.94ms
 Cassandra: plain=2.18ms, LWT=6.52ms
-Every transactional primitive measured here adds overhead over its own non-transactional baseline -- the exact MS varies by run and machine, but the direction is consistent
+MongoDB and Cassandra both measured slower with their transactional primitive. Redis MULTI/EXEC: slower too this run
 ```
 
-**Key takeaway**: every measured transactional primitive costs measurably more than its own
-non-transactional baseline, and the size of that overhead tracks the coordination mechanism directly --
-Redis's command-queuing MULTI/EXEC is cheapest, MongoDB's session/transaction machinery costs more, and
-Cassandra's Paxos-backed LWT costs the most of the three.
+**Key takeaway**: MongoDB's session/transaction machinery and Cassandra's Paxos-backed LWT both cost
+measurably more than their own non-transactional baseline, and that overhead is what this example
+actually asserts. Redis's MULTI/EXEC overhead is real but the smallest of the three -- small enough that
+it is reported per run rather than asserted, since it can occasionally invert under local, single-process
+timing noise.
 
 **Why it matters**: this is the direct, measured answer to "how much does a transaction cost in each
 store" -- a question every prior single-store transaction example (28, 34, 58) could only answer
@@ -2451,7 +2453,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0`, `cassandra-driver==3.30.1`,
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0`, `cassandra-driver==3.30.1`,
 `boto3==1.43.56`, and 3 local Docker services: MongoDB 8.2 replica set, Cassandra 5.0.8,
 `amazon/dynamodb-local`)
 
@@ -2535,7 +2537,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `redis==8.0.1` and a local Valkey 8 Docker container)
+**Run**: `python3 example.py` (representative output, run against `redis==8.0.1` and a local Valkey 8 Docker container)
 
 **Output**:
 
@@ -2638,7 +2640,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
+**Run**: `python3 example.py` (representative output, run against `pymongo==4.17.0` and a local MongoDB 8.2 replica-set
 Docker container)
 
 **Output**:
@@ -2732,7 +2734,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
     main()  # => runs everything above when executed as a script
 ```
 
-**Run**: `python3 example.py` (captured against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
+**Run**: `python3 example.py` (representative output, run against `cassandra-driver==3.30.1` and a local Cassandra 5.0.8
 Docker container)
 
 **Output**:
