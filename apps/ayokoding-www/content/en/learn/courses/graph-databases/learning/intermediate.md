@@ -826,7 +826,7 @@ CREATE (other)-[:BOUGHT]->(:Item {name: 'Mousepad'});
 // => Ada and Bob BOTH bought Keyboard; Bob ALSO bought Mousepad -- Ada has not
 
 MATCH (u:User {name: 'Ada'})-[:BOUGHT]->(:Item)<-[:BOUGHT]-(other)-[:BOUGHT]->(rec:Item)
-// => 4-hop walk: Ada's item -> co-buyer -> co-buyer's OTHER purchase, bound as rec
+// => 3-hop walk: Ada's item -> co-buyer -> co-buyer's OTHER purchase, bound as rec
 WHERE NOT (u)-[:BOUGHT]->(rec)
 // => the exclusion filter -- rec must NOT already be one of Ada's own purchases
 RETURN rec.name, count(*) AS score
@@ -852,7 +852,7 @@ recommendation from suggesting something the user already has -- without it, `Ke
 incorrectly recommend itself.
 
 **Why it matters**: This is the entire mechanism behind "customers who bought this also bought"
-recommendation widgets (co-15) -- a 4-hop pattern-matching traversal (co-08), no machine-learning
+recommendation widgets (co-15) -- a 3-hop pattern-matching traversal (co-08), no machine-learning
 model required. Example 40 refines it with a minimum-overlap threshold, and Example 62 later
 replaces the co-occurrence signal with a proper GDS similarity score.
 

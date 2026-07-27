@@ -67,7 +67,7 @@ FROM
   -- => walks from the co-buyer to EVERYTHING they ever bought, not just the shared item
   JOIN item rec ON rec.id = b3.item_id -- join 5: resolve item id to name
   -- => the final hop -- rec.name is the ONLY column this whole query ultimately returns
-  -- => 5 JOINs to reach a name that is 4 relationship-hops away from the starting user
+  -- => 5 JOINs to reach a name that is 3 relationship-hops away from the starting user
 WHERE
   u.name = 'Ada'
   -- => filters down to the single starting user, matching Example 70's $name parameter
@@ -92,7 +92,7 @@ WHERE
 
 -- => Mousepad passes: Ada never bought it. Keyboard would fail this NOT EXISTS check
 -- => the exclusion filter, matching Cypher's WHERE NOT (u)-[:BOUGHT]->(rec)
--- => 5 explicit JOINs (plus a correlated subquery) for the SAME 4-hop pattern Example 70 expressed
+-- => 5 explicit JOINs (plus a correlated subquery) for the SAME 3-hop pattern Example 70 expressed
 -- as one MATCH -- this is the "exact join count and query text" the capstone's contrast documents
 -- => a 6th recommendation source would mean a 6th JOIN, hand-written, not a bigger traversal bound
 -- => output: "Mousepad" -- the one item Bob owns that Ada does not, surfaced through 5 JOINs

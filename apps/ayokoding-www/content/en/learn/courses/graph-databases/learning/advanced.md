@@ -1223,7 +1223,7 @@ FROM
   -- => walks from the co-buyer to EVERYTHING they ever bought, not just the shared item
   JOIN item rec ON rec.id = b3.item_id -- join 5: resolve item id to name
   -- => the final hop -- rec.name is the ONLY column this whole query ultimately returns
-  -- => 5 JOINs to reach a name that is 4 relationship-hops away from the starting user
+  -- => 5 JOINs to reach a name that is 3 relationship-hops away from the starting user
 WHERE
   u.name = 'Ada'
   -- => filters down to the single starting user, matching Example 70's $name parameter
@@ -1248,7 +1248,7 @@ WHERE
 
 -- => Mousepad passes: Ada never bought it. Keyboard would fail this NOT EXISTS check
 -- => the exclusion filter, matching Cypher's WHERE NOT (u)-[:BOUGHT]->(rec)
--- => 5 explicit JOINs (plus a correlated subquery) for the SAME 4-hop pattern Example 70 expressed
+-- => 5 explicit JOINs (plus a correlated subquery) for the SAME 3-hop pattern Example 70 expressed
 -- as one MATCH -- this is the "exact join count and query text" the capstone's contrast documents
 -- => a 6th recommendation source would mean a 6th JOIN, hand-written, not a bigger traversal bound
 -- => output: "Mousepad" -- the one item Bob owns that Ada does not, surfaced through 5 JOINs
@@ -1304,8 +1304,12 @@ graph LR
 
 ```cypher
 // Example 72a: BEFORE -- every verified account points DIRECTLY at one shared label node.
-CREATE (verified:Status {label: 'verified'});
+CREATE (verified:Status {label: 'verified'})
 // => the single shared node every account below will connect to
+WITH verified
+// => keep "verified" bound into the UNWIND+CREATE below -- ONE statement, NO semicolon after the
+// first CREATE; a semicolon there would end the statement and "verified" would go out of scope,
+// silently minting a fresh blank node per row instead of sharing one (see Example 43)
 UNWIND range(1, 5) AS i
 // => 5 accounts, deliberately small here -- the same shape scales to 100,000 in production
 CREATE (:Account {name: 'Acc' + toString(i)})-[:HAS_STATUS]->(verified);
@@ -1318,11 +1322,17 @@ CREATE (:Account {name: 'Acc' + toString(i)})-[:HAS_STATUS]->(verified);
 
 ```cypher
 // Example 72b: AFTER -- accounts are bucketed through intermediate GROUP nodes first. (co-17, co-11)
+CREATE CONSTRAINT verified_group_bucket FOR (g:VerifiedGroup) REQUIRE g.bucket IS UNIQUE;
+// => co-22: without this, the MERGE below falls back to a full label scan on every write instead
+// of an indexed unique-node lookup -- see Example 20 for the same constraint-before-MERGE pattern
+
 UNWIND range(1, 5) AS i
 // => the SAME 5 accounts as the "before" form, for a direct comparison
-MERGE (g:VerifiedGroup {bucket: toInteger(i / 3)})
-// => reuses the SAME bucket node when multiple accounts land in the same bucket -- CREATE here
-// would mint a fresh bucket every iteration instead of sharing one
+MERGE (g:VerifiedGroup {bucket: i % 4})
+// => a FIXED bucket COUNT (4 via modulo), NOT a fixed bucket size -- bucket count, and therefore
+// this node's degree, stays capped at 4 no matter how large account count grows; reuses the SAME
+// bucket node when multiple accounts land in the same bucket -- CREATE here would mint a fresh
+// bucket every iteration instead of sharing one
 MERGE (s:Status {label: 'verified'})
 // => the ONE shared status node, reused across every bucket -- never duplicated
 MERGE (g)-[:HAS_STATUS]->(s)
@@ -1334,7 +1344,8 @@ CREATE (:Account {name: 'Acc' + toString(i)})-[:IN_GROUP]->(g);
 MATCH (s:Status {label: 'verified'})
 // => the SAME shared node the "before" form measured, for a like-for-like comparison
 RETURN COUNT { (s)--() } AS status_degree;
-// => status_degree stays SMALL and roughly constant as account count grows -- unlike the "before" form
+// => status_degree is bounded by the FIXED bucket count (4) -- genuinely O(1) as account count
+// grows, unlike the "before" form's unbounded 1-to-1 growth
 ```
 
 **Run**: `cypher-shell < before.cypher` then `cypher-shell < after.cypher`
@@ -1343,12 +1354,16 @@ RETURN COUNT { (s)--() } AS status_degree;
 
 ```text
 before.cypher -> "verified" node degree grows 1-to-1 with account count (unbounded)
-after.cypher  -> status_degree stays bounded by bucket count, not account count
+after.cypher  -> status_degree stays bounded by the FIXED bucket count (4), genuinely independent
+                 of account count
 ```
 
 **Key takeaway**: Introducing an intermediate grouping tier bounds a shared node's direct degree by
 the NUMBER OF GROUPS, not the number of entities pointing at it -- the same property-to-node
-promotion pattern from Example 54, deliberately aimed at Example 44's cost problem.
+promotion pattern from Example 54, deliberately aimed at Example 44's cost problem. The bucket count
+must itself be FIXED via modulo (`bucket: i % 4`), not derived from a fixed bucket size
+(`toInteger(i / bucketSize)`) -- dividing by a size still yields a bucket count that grows with
+account count, only more slowly.
 
 **Why it matters**: This is the standard, structural mitigation for co-17's supernode problem: rather
 than accepting an ever-growing degree on a shared node, insert a layer that caps fan-out at each
@@ -1375,13 +1390,14 @@ NODES: list[int] = list(range(1, 11))
 EDGES: list[tuple[int, int]] = [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1), (6, 7), (7, 8), (8, 9), (9, 10), (10, 6), (5, 6)]
 # => TWO dense 5-node rings (1-5 and 6-10), joined by exactly ONE bridging edge: (5, 6)
 
-# Naive shard: split purely by id, 1-5 vs 6-10 -- coincidentally matches the community here,
-# but a naive split is not GUARANTEED to -- Example 45's own split cut 2 edges on a different shape.
-naive_shard = {n: ("A" if n <= 5 else "B") for n in NODES}
+# Naive shard: split by id into three contiguous ranges, 1-3 and 8-10 vs 4-7 -- an ID-range split
+# that does NOT line up with the graph's two 5-node ring communities, cutting across BOTH rings.
+naive_shard = {n: ("A" if (n <= 3 or n >= 8) else "B") for n in NODES}
 
 # Community-aware shard: as if Louvain had ALREADY identified the two rings as separate communities,
-# and the shard boundary is drawn to match that community structure exactly.
-community_shard = {n: ("A" if n <= 5 else "B") for n in NODES}  # => identical here BY DESIGN
+# and the shard boundary is drawn to match that community structure exactly -- genuinely DIFFERENT
+# from naive_shard above, not a relabeling of the same partition.
+community_shard = {n: ("A" if n <= 5 else "B") for n in NODES}
 
 def crossing_edges(shard_of: dict[int, str]) -> list[tuple[int, int]]:  # => shared by both shards
     return [e for e in EDGES if shard_of[e[0]] != shard_of[e[1]]]  # => an edge "crosses" iff shards differ
@@ -1398,22 +1414,20 @@ print(f"community-aware shard crossing edges: {len(community_cross)} -> {communi
 **Output**:
 
 ```text
-naive shard crossing edges: 1 -> [(5, 6)]
+naive shard crossing edges: 4 -> [(3, 4), (5, 1), (7, 8), (10, 6)]
 community-aware shard crossing edges: 1 -> [(5, 6)]
 ```
 
-**Verify** (hand-reasoned qualitative outcome, not a fabricated general-case number): on THIS
-graph, the naive ID-range split happens to line up with the two Louvain-identified communities, so
-both cut exactly the single true bridging edge. The qualitative claim co-18/co-26 make is general,
-not tied to this coincidence: on a graph whose natural clusters do NOT line up with node-id order
-(unlike this deliberately-ordered fixture), a naive ID-range split would cut many more edges than a
-community-aware split drawn along the graph's actual dense/sparse boundaries -- Example 45's own
-ring, split down the middle by id, is exactly such a case.
+**Verify**: the community-aware split cuts exactly ONE edge -- the true bridging edge `(5, 6)`
+between the two rings -- while the naive id-range split (1-3 and 8-10 vs 4-7) cuts across BOTH
+rings, severing four edges a community-aligned boundary never touches. The community-aware shard
+measurably wins on this graph, demonstrating co-18/co-26's claim directly rather than arguing it by
+hand: an ID-range split has no guarantee of lining up with a graph's actual dense clusters, and when
+it does not, it pays for that misalignment in extra cross-shard edges.
 
 **Key takeaway**: A shard boundary drawn along a graph's own community structure cuts only the
 edges that were already sparse BETWEEN communities -- a naive id-range split has no such guarantee,
-and only avoided extra cuts here because the fixture's ids happened to already align with its
-communities.
+and here it visibly pays for that gap: 4 crossing edges against the community-aware split's 1.
 
 **Why it matters**: This is why real distributed graph databases invest in community-aware or
 locality-aware partitioning rather than a naive range split: minimizing the edge cut (co-18) directly

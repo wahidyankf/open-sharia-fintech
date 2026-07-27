@@ -17,15 +17,14 @@ EDGES: list[tuple[int, int]] = [
 ]
 # => TWO dense 5-node rings (1-5 and 6-10), joined by exactly ONE bridging edge: (5, 6)
 
-# Naive shard: split purely by id, 1-5 vs 6-10 -- coincidentally matches the community here,
-# but a naive split is not GUARANTEED to -- Example 45's own split cut 2 edges on a different shape.
-naive_shard = {n: ("A" if n <= 5 else "B") for n in NODES}
+# Naive shard: split by id into three contiguous ranges, 1-3 and 8-10 vs 4-7 -- an ID-range split
+# that does NOT line up with the graph's two 5-node ring communities, cutting across BOTH rings.
+naive_shard = {n: ("A" if (n <= 3 or n >= 8) else "B") for n in NODES}
 
 # Community-aware shard: as if Louvain had ALREADY identified the two rings as separate communities,
-# and the shard boundary is drawn to match that community structure exactly.
-community_shard = {
-    n: ("A" if n <= 5 else "B") for n in NODES
-}  # => identical here BY DESIGN
+# and the shard boundary is drawn to match that community structure exactly -- genuinely DIFFERENT
+# from naive_shard above, not a relabeling of the same partition.
+community_shard = {n: ("A" if n <= 5 else "B") for n in NODES}
 
 
 def crossing_edges(

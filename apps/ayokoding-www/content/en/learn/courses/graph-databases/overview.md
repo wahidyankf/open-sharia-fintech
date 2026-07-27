@@ -50,10 +50,11 @@ independent rows.
 > **one specific member of that family in depth**: the property-graph model, Cypher as its query
 > language, and the specific problem classes (recommendations, fraud detection, knowledge graphs,
 > variable-depth traversal) where a graph genuinely outperforms every other option, including the
-> other NoSQL families. `database-internals-and-storage-engines` -- `[Unverified]` not yet present in
-> the AyoKoding course library on disk, so no link is given here -- would own the **storage-engine
-> mechanics** beneath any database, relational or not: B-trees, LSM-trees, write-ahead logs, page
-> layouts, and how a query planner turns a logical plan into physical disk I/O. This course treats
+> other NoSQL families.
+> [36 · Database Internals and Storage Engines](../database-internals-and-storage-engines/learning/overview.md)
+> owns the **storage-engine mechanics** beneath any database, relational or not: B-trees, LSM-trees,
+> write-ahead logs, page layouts, and how a query planner turns a logical plan into physical disk
+> I/O. This course treats
 > index-free adjacency (co-04) as an observable behavior -- a hop's cost stays proportional to the
 > traversed node's own degree, not the graph's total size -- without re-deriving how a storage
 > engine implements that guarantee underneath. Neither course re-teaches the other's material.
