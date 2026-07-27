@@ -8,7 +8,7 @@ from dataclasses import dataclass, field  # => co-12: a typed follower -- its ow
 @dataclass  # => intentionally MUTABLE -- a follower's log genuinely grows as it replicates
 class Follower:  # => co-12: one follower node, receiving writes from the leader in order
     name: str  # => a human-readable label, e.g. "follower-A"
-    log: list[str] = field(default_factory=list)  # => co-12: this follower's OWN copy of the write log, in arrival order
+    log: list[str] = field(default_factory=list[str])  # => co-12: this follower's OWN copy of the write log, in arrival order
 
 
 class Leader:  # => co-12: the single node that decides the ORDER every write is applied in

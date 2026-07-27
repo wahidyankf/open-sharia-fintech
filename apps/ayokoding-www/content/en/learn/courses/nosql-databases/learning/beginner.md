@@ -1402,7 +1402,7 @@ from dataclasses import dataclass, field  # => co-06: a typed replica -- its own
 class Replica:  # => co-06: one node's own view of a single key's value
     name: str  # => a human-readable label, e.g. "replica-A"
     value: str  # => this replica's CURRENT view -- may lag behind the true latest write
-    inbox: list[str] = field(default_factory=list)  # => co-06: writes that have not yet been applied to this replica
+    inbox: list[str] = field(default_factory=list[str])  # => co-06: writes that have not yet been applied to this replica
 
 
 def write_to_leader(replicas: list[Replica], new_value: str) -> None:  # => co-06: the write lands on replica[0] immediately
@@ -1672,7 +1672,7 @@ from dataclasses import dataclass, field  # => co-12: a typed follower -- its ow
 @dataclass  # => intentionally MUTABLE -- a follower's log genuinely grows as it replicates
 class Follower:  # => co-12: one follower node, receiving writes from the leader in order
     name: str  # => a human-readable label, e.g. "follower-A"
-    log: list[str] = field(default_factory=list)  # => co-12: this follower's OWN copy of the write log, in arrival order
+    log: list[str] = field(default_factory=list[str])  # => co-12: this follower's OWN copy of the write log, in arrival order
 
 
 class Leader:  # => co-12: the single node that decides the ORDER every write is applied in

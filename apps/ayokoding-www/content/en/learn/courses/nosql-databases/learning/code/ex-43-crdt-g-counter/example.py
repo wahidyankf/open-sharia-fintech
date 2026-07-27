@@ -8,7 +8,7 @@ from dataclasses import dataclass, field  # => co-16: a typed G-Counter -- one s
 @dataclass  # => intentionally MUTABLE -- a replica's own counter grows as it counts local increments
 class GCounter:  # => co-16: a Conflict-free Replicated Data Type -- grow-only, never decrements
     replica_id: str  # => this counter's OWN identity -- the slot it is allowed to increment
-    counts: dict[str, int] = field(default_factory=dict)  # => co-16: replica_id -> that replica's own local count
+    counts: dict[str, int] = field(default_factory=dict[str, int])  # => co-16: replica_id -> that replica's own local count
 
     def increment(self) -> None:  # => co-16: a replica may ONLY increment its OWN slot, never another's
         self.counts[self.replica_id] = self.counts.get(self.replica_id, 0) + 1  # => co-16: bumps this replica's own counter by 1

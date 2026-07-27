@@ -17,7 +17,7 @@ def write_and_wait_for_w_acks(replica_count: int, w: int) -> float:  # => co-07:
     start = time.perf_counter()  # => marks the start of the timed write
     for i in range(w):  # => co-07: the write BLOCKS until exactly W replicas have acked -- the W-th ack determines total latency
         time.sleep(latencies[i])  # => co-07: waits for THIS replica's own simulated ack latency
-    return time.perf_counter() - start  # => co-07: total elapsed wall-clock time until the W-th (slowest-of-the-required) ack arrived
+    return time.perf_counter() - start  # => co-07: total elapsed wall-clock time -- the SUM of each required replica's ack latency, waited in sequence
 
 
 def main() -> None:  # => entry point -- runs only when this file executes directly, not on import
@@ -32,7 +32,7 @@ def main() -> None:  # => entry point -- runs only when this file executes direc
     print(f"W=ALL:     {latency_all * 1000:.1f}ms")  # => Output line -- waits for the SLOWEST replica's ack
 
     assert latency_w1 < latency_quorum < latency_all  # => co-07: latency STRICTLY increases as W increases -- exactly the tradeoff co-07 names
-    print("Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- the write must wait for its slowest required replica")  # => Output line
+    print("Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- each additional required replica adds its own ack latency in sequence")  # => Output line
     # => co-07: this is the exact mechanism behind the abstract W+R>N math from Example 38 -- a HIGHER W
     # => buys stronger durability guarantees at the direct cost of waiting for a SLOWER replica's ack
     # => on every single write

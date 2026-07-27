@@ -9,7 +9,7 @@ from dataclasses import dataclass, field  # => co-06: a typed replica -- its own
 class Replica:  # => co-06: one node's own view of a single key's value
     name: str  # => a human-readable label, e.g. "replica-A"
     value: str  # => this replica's CURRENT view -- may lag behind the true latest write
-    inbox: list[str] = field(default_factory=list)  # => co-06: writes that have not yet been applied to this replica
+    inbox: list[str] = field(default_factory=list[str])  # => co-06: writes that have not yet been applied to this replica
 
 
 def write_to_leader(replicas: list[Replica], new_value: str) -> None:  # => co-06: the write lands on replica[0] immediately

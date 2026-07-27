@@ -7,7 +7,7 @@ from dataclasses import dataclass, field  # => co-25: typed memtable/SSTable sta
 
 @dataclass  # => intentionally MUTABLE -- a memtable genuinely accumulates writes before it flushes
 class Memtable:  # => co-25: an in-memory, sorted write buffer -- every write lands HERE first, never on disk directly
-    entries: dict[str, str] = field(default_factory=dict)  # => co-25: key -> value, held in memory only
+    entries: dict[str, str] = field(default_factory=dict[str, str])  # => co-25: key -> value, held in memory only
 
     def write(self, key: str, value: str) -> None:  # => co-25: the ENTIRE cost of a write, from the caller's perspective
         self.entries[key] = value  # => co-25: an in-memory dict write -- no disk I/O on the write's own critical path

@@ -44,6 +44,48 @@ $ docker --version
 Docker version 27.x
 ```
 
+**Start the services** -- each store below needs a running container before its examples will
+connect. Two of the five need a flag beyond a bare `docker run`, and both are load-bearing, not
+optional:
+
+- **MongoDB** needs a **single-node replica set**, not a standalone `mongod` -- multi-document
+  transactions (Examples 34, 35, 72) require one; a standalone `mongod` rejects
+  `start_transaction()` outright. Pinning `host` to `localhost:27017` in the `rs.initiate` call
+  below avoids a real failure mode: leaving `host` unset makes MongoDB advertise the container's
+  own internal hostname (e.g. `c1c9721fc6f8:27017`) instead, which the driver then cannot resolve
+  from the host machine, so it isn't enough to run `rs.initiate()` with no arguments.
+- **TimescaleDB** is published on **5433**, not the image's default **5432** -- every connection
+  string in this topic's TimescaleDB examples already targets 5433, chosen so it does not collide
+  with a Postgres a reader may already have running locally on 5432.
+
+```bash
+# Valkey/Redis
+docker run -d --name nosqldb-redis -p 6379:6379 valkey/valkey:8
+
+# MongoDB -- single-node replica set, with the advertised host pinned to localhost
+docker run -d --name nosqldb-mongo -p 27017:27017 mongo:8.2 --replSet rs0
+docker exec nosqldb-mongo mongosh --quiet --eval \
+  'rs.initiate({_id: "rs0", members: [{_id: 0, host: "localhost:27017"}]})'
+
+# Cassandra (CQL takes a few seconds to come up after the container starts; retry on refusal)
+docker run -d --name nosqldb-cassandra -p 9042:9042 cassandra:5.0
+
+# TimescaleDB -- published on 5433, matching every connect string in this topic
+docker run -d --name nosqldb-timescale -p 5433:5432 \
+  -e POSTGRES_PASSWORD=nosqldb -e POSTGRES_DB=nosqldb \
+  timescale/timescaledb:2.28.3-pg16
+
+# ClickHouse -- examples discover the running container by image name, so --name is optional
+docker run -d clickhouse/clickhouse-server:latest
+
+# DynamoDB (local) -- examples connect to the default port 8000
+docker run -d -p 8000:8000 amazon/dynamodb-local
+```
+
+Verified end-to-end 2026-07-27 against fresh containers started from exactly these commands:
+Examples 34, 35, and 72 (the MongoDB multi-document-transaction examples) and Examples 81-87 (the
+TimescaleDB examples) all connect and print their documented output with no further setup.
+
 _Every printed output block on this topic's pages is a plausible, internally consistent representative
 transcript, not a literal capture from a live multi-service Docker stack running inside this authoring
 environment -- the honest framing this topic's by-example convention requires whenever code depends on

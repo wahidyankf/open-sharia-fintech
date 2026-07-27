@@ -53,7 +53,7 @@ from dataclasses import dataclass, field  # => co-25: typed memtable/SSTable sta
 
 @dataclass  # => intentionally MUTABLE -- a memtable genuinely accumulates writes before it flushes
 class Memtable:  # => co-25: an in-memory, sorted write buffer -- every write lands HERE first, never on disk directly
-    entries: dict[str, str] = field(default_factory=dict)  # => co-25: key -> value, held in memory only
+    entries: dict[str, str] = field(default_factory=dict[str, str])  # => co-25: key -> value, held in memory only
 
     def write(self, key: str, value: str) -> None:  # => co-25: the ENTIRE cost of a write, from the caller's perspective
         self.entries[key] = value  # => co-25: an in-memory dict write -- no disk I/O on the write's own critical path
@@ -250,7 +250,7 @@ from dataclasses import dataclass, field  # => co-25: typed memtable/SSTable sta
 
 @dataclass  # => intentionally MUTABLE -- the memtable accumulates writes before it flushes
 class Memtable:  # => co-25: the same in-memory write buffer Example 55 modeled
-    entries: dict[str, str] = field(default_factory=dict)  # => key -> value, held in memory only
+    entries: dict[str, str] = field(default_factory=dict[str, str])  # => key -> value, held in memory only
 
 
 @dataclass(frozen=True)  # => frozen -- an SSTable is immutable once flushed
@@ -1852,6 +1852,10 @@ day one.
 
 _ex-72 &middot; exercises co-27_
 
+**Setup**: like Examples 34 and 35, this example needs the single-node MongoDB replica set from
+[Confirm your toolchain](./overview.md#confirm-your-toolchain) -- a standalone `mongod` rejects
+`start_transaction()` outright.
+
 **Context**: the SAME logical write, measured with and without each store's own transactional
 primitive -- Redis's `MULTI`/`EXEC`, MongoDB's session-scoped transaction, and Cassandra's
 Paxos-backed lightweight transaction -- using a median of 7 warmed-up runs to avoid cold-connection
@@ -2032,7 +2036,7 @@ from dataclasses import dataclass, field  # => co-16: a typed G-Counter, reused 
 @dataclass  # => intentionally MUTABLE -- a replica's own counter grows as it counts local increments
 class GCounter:  # => co-16: the SAME grow-only counter CRDT from Example 43
     replica_id: str  # => this counter's own identity
-    counts: dict[str, int] = field(default_factory=dict)  # => replica_id -> that replica's own local count
+    counts: dict[str, int] = field(default_factory=dict[str, int])  # => replica_id -> that replica's own local count
 
     def increment(self) -> None:  # => co-16: a replica may only increment its own slot
         self.counts[self.replica_id] = self.counts.get(self.replica_id, 0) + 1  # => bumps this replica's own counter by 1
@@ -2161,7 +2165,7 @@ from dataclasses import dataclass, field  # => co-12: a typed follower, extended
 @dataclass  # => intentionally MUTABLE -- a follower's log genuinely grows as it replicates
 class Node:  # => co-12: any node can be EITHER a leader or a follower, depending on cluster state
     name: str  # => a human-readable label, e.g. "node-A"
-    log: list[str] = field(default_factory=list)  # => this node's own copy of the write log, in arrival order
+    log: list[str] = field(default_factory=list[str])  # => this node's own copy of the write log, in arrival order
     is_leader: bool = False  # => co-12: exactly ONE node in the cluster should be True at any given time
 
 
@@ -2251,9 +2255,10 @@ window as an acceptable fixed cost.
 
 _ex-75 &middot; exercises co-07_
 
-**Context**: a write that blocks until `W` replicas acknowledge pays latency equal to the SLOWEST of
-those `W` required acknowledgments -- this example measures that directly across `W=1`, `W=QUORUM`,
-and `W=ALL` against 5 simulated replicas with deterministic, increasing ack latencies.
+**Context**: a write that blocks until `W` replicas acknowledge pays latency that rises with `W` --
+this example measures that directly by waiting for each required replica's ack in sequence, across
+`W=1`, `W=QUORUM`, and `W=ALL` against 5 simulated replicas with deterministic, increasing ack
+latencies.
 
 **`learning/code/ex-75-tunable-consistency-latency-tradeoff-measured/example.py`**
 
@@ -2276,7 +2281,7 @@ def write_and_wait_for_w_acks(replica_count: int, w: int) -> float:  # => co-07:
     start = time.perf_counter()  # => marks the start of the timed write
     for i in range(w):  # => co-07: the write BLOCKS until exactly W replicas have acked -- the W-th ack determines total latency
         time.sleep(latencies[i])  # => co-07: waits for THIS replica's own simulated ack latency
-    return time.perf_counter() - start  # => co-07: total elapsed wall-clock time until the W-th (slowest-of-the-required) ack arrived
+    return time.perf_counter() - start  # => co-07: total elapsed wall-clock time -- the SUM of each required replica's ack latency, waited in sequence
 
 
 def main() -> None:  # => entry point -- runs only when this file executes directly, not on import
@@ -2291,7 +2296,7 @@ def main() -> None:  # => entry point -- runs only when this file executes direc
     print(f"W=ALL:     {latency_all * 1000:.1f}ms")  # => Output line -- waits for the SLOWEST replica's ack
 
     assert latency_w1 < latency_quorum < latency_all  # => co-07: latency STRICTLY increases as W increases -- exactly the tradeoff co-07 names
-    print("Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- the write must wait for its slowest required replica")  # => Output line
+    print("Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- each additional required replica adds its own ack latency in sequence")  # => Output line
     # => co-07: this is the exact mechanism behind the abstract W+R>N math from Example 38 -- a HIGHER W
     # => buys stronger durability guarantees at the direct cost of waiting for a SLOWER replica's ack
     # => on every single write
@@ -2309,7 +2314,7 @@ if __name__ == "__main__":  # => guards against running main() on `import exampl
 W=1:       20.1ms
 W=QUORUM:  90.2ms
 W=ALL:     200.3ms
-Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- the write must wait for its slowest required replica
+Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- each additional required replica adds its own ack latency in sequence
 ```
 
 **Key takeaway**: because the code waits for each required replica's ack IN SEQUENCE (not the maximum

@@ -8,7 +8,7 @@ from dataclasses import dataclass, field  # => co-12: a typed follower, extended
 @dataclass  # => intentionally MUTABLE -- a follower's log genuinely grows as it replicates
 class Node:  # => co-12: any node can be EITHER a leader or a follower, depending on cluster state
     name: str  # => a human-readable label, e.g. "node-A"
-    log: list[str] = field(default_factory=list)  # => this node's own copy of the write log, in arrival order
+    log: list[str] = field(default_factory=list[str])  # => this node's own copy of the write log, in arrival order
     is_leader: bool = False  # => co-12: exactly ONE node in the cluster should be True at any given time
 
 

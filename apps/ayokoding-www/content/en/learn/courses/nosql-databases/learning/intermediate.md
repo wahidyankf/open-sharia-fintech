@@ -547,6 +547,10 @@ biggest lever for keeping a production aggregation pipeline fast as the underlyi
 
 _ex-34 &middot; exercises co-27_
 
+**Setup**: this example (and Examples 35 and 72) needs the single-node MongoDB replica set from
+[Confirm your toolchain](./overview.md#confirm-your-toolchain) -- a standalone `mongod` rejects
+`start_transaction()` outright.
+
 A session-scoped transaction moves a value between two documents atomically -- both updates commit
 together or the whole transaction never becomes visible, MongoDB's ACID-style answer to co-27.
 
@@ -1353,7 +1357,7 @@ from dataclasses import dataclass, field  # => co-16: a typed G-Counter -- one s
 @dataclass  # => intentionally MUTABLE -- a replica's own counter grows as it counts local increments
 class GCounter:  # => co-16: a Conflict-free Replicated Data Type -- grow-only, never decrements
     replica_id: str  # => this counter's OWN identity -- the slot it is allowed to increment
-    counts: dict[str, int] = field(default_factory=dict)  # => co-16: replica_id -> that replica's own local count
+    counts: dict[str, int] = field(default_factory=dict[str, int])  # => co-16: replica_id -> that replica's own local count
 
     def increment(self) -> None:  # => co-16: a replica may ONLY increment its OWN slot, never another's
         self.counts[self.replica_id] = self.counts.get(self.replica_id, 0) + 1  # => co-16: bumps this replica's own counter by 1

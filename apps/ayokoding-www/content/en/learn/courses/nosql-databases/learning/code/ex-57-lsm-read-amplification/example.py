@@ -7,7 +7,7 @@ from dataclasses import dataclass, field  # => co-25: typed memtable/SSTable sta
 
 @dataclass  # => intentionally MUTABLE -- the memtable accumulates writes before it flushes
 class Memtable:  # => co-25: the same in-memory write buffer Example 55 modeled
-    entries: dict[str, str] = field(default_factory=dict)  # => key -> value, held in memory only
+    entries: dict[str, str] = field(default_factory=dict[str, str])  # => key -> value, held in memory only
 
 
 @dataclass(frozen=True)  # => frozen -- an SSTable is immutable once flushed

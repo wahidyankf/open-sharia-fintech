@@ -17,10 +17,14 @@ weight: 1
   first.
 - **Tools & environment**: a macOS/Linux terminal; **Python 3.13** with pinned, CVE-clean-at-authoring
   drivers (`redis`, `pymongo`, `cassandra-driver`, `boto3`, `psycopg`, `duckdb`, `pyarrow`); local
-  Docker instances of **Valkey** (BSD-3-Clause) or Redis, **MongoDB** (note the SSPLv1 license),
-  **Cassandra** (Apache-2.0), **TimescaleDB** (Apache-2.0 core / TSL for the enterprise features this
-  topic uses), and **ClickHouse** (Apache-2.0); **DynamoDB Local** via the official
-  `amazon/dynamodb-local` image; **DuckDB** runs in-process, no container needed. Each product's
+  Docker instances of **Valkey** (BSD-3-Clause) or Redis, **MongoDB** (note the SSPLv1 license,
+  and started as a **single-node replica set**, not a standalone `mongod` -- the multi-document
+  transaction examples require one), **Cassandra** (Apache-2.0), **TimescaleDB** (Apache-2.0 core /
+  TSL for the enterprise features this topic uses, published on a **non-default port** to avoid
+  colliding with a locally installed Postgres), and **ClickHouse** (Apache-2.0); **DynamoDB Local**
+  via the official `amazon/dynamodb-local` image; **DuckDB** runs in-process, no container needed.
+  The exact provisioning commands for every service live in the learning tier's own
+  [Confirm your toolchain](./learning/overview.md#confirm-your-toolchain) section. Each product's
   **license** is checked and recorded before use -- this topic treats that as a real engineering step
   (co-28, DD-15), not paperwork. One narrow exception to the local-only rule: the three license-check
   examples (25-27) make a live outbound HTTPS request to fetch each vendor's official license file
@@ -46,18 +50,20 @@ complexity).
 ## Scope boundary -- what this topic is not
 
 This topic sits beside two other courses in the same catalog that could, on the surface, look like
-they cover the same ground. Both are **forthcoming, not yet present in the AyoKoding course library on
-disk** -- named here by description, without a working link, the same way this topic's own syllabus
-source names its own sibling cross-references.
+they cover the same ground.
 
 - **`graph-databases`** (Cypher + Python; modeling and querying connected data) is explicitly **out of
-  scope here**. This topic's own scope note says it plainly: "Graph databases are their own topic."
-  Nothing in this topic teaches a graph query language, a graph traversal engine, or graph-shaped
-  modeling (nodes, edges, and relationship properties as first-class citizens) -- the moment a problem
-  is really about traversing relationships (friend-of-a-friend, shortest path through a social graph,
-  recommendation-by-connection), that is `graph-databases`' subject, not this one.
-- **`database-internals-and-storage-engines`** (Python; B-trees, LSM-trees, and write-ahead-log
-  internals) is **not** duplicated here either, but the boundary is subtler than with graph databases
+  scope here**, and remains **forthcoming, not yet present in the AyoKoding course library on disk**
+  -- named here by description, without a working link, the same way this topic's own syllabus source
+  names its own sibling cross-references. This topic's own scope note says it plainly: "Graph
+  databases are their own topic." Nothing in this topic teaches a graph query language, a graph
+  traversal engine, or graph-shaped modeling (nodes, edges, and relationship properties as first-class
+  citizens) -- the moment a problem is really about traversing relationships (friend-of-a-friend,
+  shortest path through a social graph, recommendation-by-connection), that is `graph-databases`'
+  subject, not this one.
+- **[`database-internals-and-storage-engines`](../database-internals-and-storage-engines/learning/overview.md)**
+  (Python; B-trees, LSM-trees, and write-ahead-log internals) **is** present in the AyoKoding course
+  library on disk. It is **not** duplicated here either, but the boundary is subtler than with graph databases
   because this topic does **touch** LSM-tree-vs-B-tree at a conceptual, comparative level (co-25,
   ex-55 through ex-57). That touch exists for one reason: understanding why Cassandra and other
   wide-column stores accept higher write and read amplification in exchange for write throughput is
@@ -231,7 +237,7 @@ source names its own sibling cross-references.
 - **2026-07-27 spot-check**: MongoDB's current default/stable line is **8.3.7** (with 8.2.12 and
   8.0.28 as still-live parallel lines -- MongoDB dropped the old odd/even stable-vs-rapid convention
   at 8.2, so minors are pinned explicitly rather than inferred from parity). This topic's worked
-  examples are captured against the 8.2.x line (**MongoDB 8.2.12**), one of the still-live parallel
+  examples are representative output, run against the 8.2.x line (**MongoDB 8.2.12**), one of the still-live parallel
   lines, not the newer 8.3.x line. License unchanged: SSPLv1.
 - **2026-07-27 spot-check**: TimescaleDB's current point release is **2.28.3** (2026-07-16), a patch
   bump from the 2026-07-12 sweep's 2.28.2. The Apache-2.0/TSL license split and the Tiger Data
