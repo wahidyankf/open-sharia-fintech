@@ -55,6 +55,7 @@ weight: 10
   - [Inference Serving & Model Deployment](/en/learn/courses/inference-serving-and-model-deployment)
   - [Fine-Tuning & Adaptation](/en/learn/courses/fine-tuning-and-adaptation)
   - [Graph Databases](/en/learn/courses/graph-databases)
+  - [NoSQL Databases](/en/learn/courses/nosql-databases)
   - [Database Internals and Storage Engines](/en/learn/courses/database-internals-and-storage-engines)
 - [Legacy](/en/learn/legacy)
   - [Overview](/en/learn/legacy/overview)
