@@ -148,3 +148,7 @@ weight: 95
   - [Overview](/en/learn/courses/fine-tuning-and-adaptation/overview)
   - [Learning](/en/learn/courses/fine-tuning-and-adaptation/learning)
   - [Drilling](/en/learn/courses/fine-tuning-and-adaptation/drilling)
+- [NoSQL Databases](/en/learn/courses/nosql-databases)
+  - [Overview](/en/learn/courses/nosql-databases/overview)
+  - [Learning](/en/learn/courses/nosql-databases/learning)
+  - [Drilling](/en/learn/courses/nosql-databases/drilling)
