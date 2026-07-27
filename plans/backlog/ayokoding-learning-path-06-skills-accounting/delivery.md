@@ -388,7 +388,7 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 3. [AI] **Author learning track** from the spec's `## Concepts` and `## Worked examples`, plus
    `learning/synthesis/` from `## Applied synthesis (no build — A6)` — **never** a `learning/capstone/`
    directory (A6).
-4. [AI] **Author drilling track** — `drilling/<course-id>.md` + `drilling/overview.md`.
+4. [AI] **Author drilling track** — `drilling/_index.md` + `drilling/overview.md`.
 5. [AI] **Run content checkers** — `apps-ayokoding-www-by-example-checker`,
    `apps-ayokoding-www-facts-checker`, `apps-ayokoding-www-link-checker`.
 6. [AI] **Apply content fixers** — every CRITICAL/HIGH/MEDIUM finding addressed.
