@@ -573,8 +573,8 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
    `code/` where code-bearing, and `learning/capstone/`; the concept-coverage floor and example volume
    are **settled** in the spec's `co-NN`/`ex-NN` enumeration — acceptance: the course's own
    `overview.md` states its scope boundary against any sibling course it could be confused with.
-4. [AI] **Author drilling track** — `drilling/<course-id>.md` + `drilling/overview.md` in the fixed
-   five-section order — acceptance: all five sections present.
+4. [AI] **Author drilling track** — `drilling/overview.md` in the fixed five-section order —
+   acceptance: all five sections present.
 5. [AI] **Run content checkers** — the matching learning checker, `apps-ayokoding-www-facts-checker`,
    and `apps-ayokoding-www-link-checker` (plus `apps-ayokoding-www-general-checker` on
    `drilling/overview.md`) — acceptance: findings recorded. _(Content authoring is a
@@ -753,8 +753,10 @@ deploy), applying the convention:
 - [x] [AI] All six AI courses live under `<COURSES>` with declared prerequisites; each passed its
       checker + facts + link checkers; each states its scope boundary against any course it could be
       confused with.
-- [x] [AI] Every course's volatile facts sit in dated accuracy-note sidebars, not the stable spine
-      (DD-28 durability constraint) — verified by `apps-ayokoding-www-facts-checker`.
+- [x] [AI] Every Phase 1 course's volatile facts sit in dated accuracy-note sidebars, not the stable
+      spine (DD-28 durability constraint) — verified by `apps-ayokoding-www-facts-checker`. (Scoped
+      explicitly to Phase 1's six courses — later phases carry the identical gate on their own
+      per-phase closing steps, so this bullet is not a plan-wide claim.)
 - [x] [AI] `evaluating-ai-systems-in-depth/_index.md` declares `statistics-for-evaluation` as a
       prerequisite (`grep -F -q` exits 0).
 - [x] [AI] Six catalog rows completed in `tech-docs.md`; `<COURSES>_index.md` lists all six
@@ -1723,7 +1725,7 @@ rows as part of "convention complete".
       `evaluating-ai-systems-in-depth`, which declares `statistics-for-evaluation`), confirm the
       prerequisite is displayed and its link resolves to the prerequisite's canonical page —
       acceptance: the link target returns 200 and the landed page is the named prerequisite.
-- [ ] [AI] **Verify a drilling track renders** — open one authored `drilling/<course-id>.md` page and
+- [ ] [AI] **Verify a drilling track renders** — open one authored `drilling/overview.md` page and
       confirm all five fixed sections are present in the rendered output — acceptance: five section
       headings visible in `browser_snapshot`.
 - [ ] [AI] Capture one screenshot per sampled course per breakpoint to

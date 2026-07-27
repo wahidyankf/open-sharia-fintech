@@ -213,9 +213,8 @@ sibling bundle shape already on disk:
 │   ├── code/                 colocated runnable examples (code-bearing courses only)
 │   └── capstone/             the course's own intra-course capstone
 └── drilling/
-    ├── _index.md
-    ├── overview.md
-    └── <course-id>.md        the fixed five-section drilling order
+    ├── _index.md              lists the drilling sections, links to `overview.md`
+    └── overview.md            the fixed five-section drilling order
 ```
 
 The `course-id` slug, the prerequisite chain, the concept-coverage floor, and the worked-example
@@ -786,17 +785,17 @@ Full per-course detail is the cross-plan
 
 ### Data depth
 
-| Course ID                                | Origin | Format            | Primary language | Prerequisites                                                 | One-line scope                       |
-| ---------------------------------------- | ------ | ----------------- | ---------------- | ------------------------------------------------------------- | ------------------------------------ |
-| `advanced-networking`                    | E(29)  | Annotated-concept | Python           | `networking-essentials`                                       | Load balancing, proxies, TLS         |
-| `advanced-sql-and-query-performance`     | E(26)  | By Example        | SQL + Python     | `sql-essentials`                                              | Query plans, indexing, tuning        |
-| `data-access-orms-and-query-builders`    | E(27)  | By Example        | Python           | `sql-essentials`, `object-oriented-programming-essentials`    | Using ORMs/query builders safely     |
-| `build-your-own-orm-and-query-builder`   | E(28)  | By Example        | Python           | `data-access-orms-and-query-builders`                         | Implementing a small ORM             |
-| `nosql-databases`                        | T(34)  | By Example        | Python           | `sql-essentials`                                              | Document, KV, column stores          |
-| `graph-databases`                        | T(35)  | By Example        | Cypher + Python  | `sql-essentials`                                              | Modeling/querying connected data     |
-| `database-internals-and-storage-engines` | T(36)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials` | B-trees, LSM-trees, WAL              |
-| `data-engineering`                       | T(37)  | Annotated-concept | Python           | `sql-essentials`, `backend-essentials`                        | Pipelines, batch/stream, warehousing |
-| `search-and-information-retrieval`       | T(38)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials` | Inverted indexes, ranking            |
+| Course ID                                | Origin | Format            | Primary language | Prerequisites                                                                | One-line scope                       |
+| ---------------------------------------- | ------ | ----------------- | ---------------- | ---------------------------------------------------------------------------- | ------------------------------------ |
+| `advanced-networking`                    | E(29)  | Annotated-concept | Python           | `networking-essentials`                                                      | Load balancing, proxies, TLS         |
+| `advanced-sql-and-query-performance`     | E(26)  | By Example        | SQL + Python     | `sql-essentials`                                                             | Query plans, indexing, tuning        |
+| `data-access-orms-and-query-builders`    | E(27)  | By Example        | Python           | `sql-essentials`, `object-oriented-programming-essentials`                   | Using ORMs/query builders safely     |
+| `build-your-own-orm-and-query-builder`   | E(28)  | By Example        | Python           | `data-access-orms-and-query-builders`                                        | Implementing a small ORM             |
+| `nosql-databases`                        | T(34)  | By Example        | Python           | `sql-essentials`                                                             | Document, KV, column stores          |
+| `graph-databases`                        | T(35)  | By Example        | Cypher + Python  | `sql-essentials`                                                             | Modeling/querying connected data     |
+| `database-internals-and-storage-engines` | T(36)  | By Example        | Python           | `sql-essentials`, `advanced-sql-and-query-performance`                       | B-trees, LSM-trees, WAL              |
+| `data-engineering`                       | T(37)  | Annotated-concept | Python           | `sql-essentials`, `advanced-sql-and-query-performance`, `just-enough-python` | Pipelines, batch/stream, warehousing |
+| `search-and-information-retrieval`       | T(38)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials`                | Inverted indexes, ranking            |
 
 ### Architecture, distributed & AI / harness
 
