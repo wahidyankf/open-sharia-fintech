@@ -36,14 +36,14 @@ score costs CPU, a fresher index costs write throughput.
 
 > **Scope guard -- this is not a data pipeline course.** Getting documents INTO a corpus in the first
 > place -- extraction from source systems, batch/stream ingestion, and orchestrating the pipelines
-> that land raw records somewhere indexable -- belongs to `data-engineering` -- `[Unverified]` not yet
-> present in the AyoKoding course library on disk, so no link is given here -- which is a sibling
-> course, not a substitute: it answers "how does a document arrive in a store I can index," while this
-> topic answers "once documents exist, how do I make them findable and rank them well." This topic
-> starts from documents already in hand (an in-repo corpus, a docs folder) and never covers ETL/ELT,
-> ingestion scheduling, or data-warehouse modeling. An engineer who needs a pipeline that feeds a
-> search index from upstream systems should read `data-engineering` first; an engineer who already has
-> documents and wants them findable should start here.
+> that land raw records somewhere indexable -- belongs to
+> [`data-engineering`](/en/learn/courses/data-engineering/overview), which is a sibling course, not a
+> substitute: it answers "how does a document arrive in a store I can index," while this topic answers
+> "once documents exist, how do I make them findable and rank them well." This topic starts from
+> documents already in hand (an in-repo corpus, a docs folder) and never covers ETL/ELT, ingestion
+> scheduling, or data-warehouse modeling. An engineer who needs a pipeline that feeds a search index
+> from upstream systems should read `data-engineering` first; an engineer who already has documents and
+> wants them findable should start here.
 
 This topic teaches search in three tiers -- a raw inverted index by hand, then a real engine's
 mechanics (tokenization, TF-IDF/BM25, ranking, evaluation), then building a small index yourself --
@@ -82,35 +82,38 @@ live dependency on the real engine.
 ## The 36 concepts this topic covers
 
 - **co-01 · inverted-index** -- a `term -> documents` map built once so a query is a cheap lookup, not
-  a per-query scan of every document. Examples 4, 58, 80, and the capstone.
-- **co-02 · posting-list** -- the per-term list of doc-ids the index stores under each term. Example 5.
+  a per-query scan of every document. Examples 4, 10, 58, 80, and the capstone.
+- **co-02 · posting-list** -- the per-term list of doc-ids the index stores under each term. Examples
+  5, 21.
 - **co-03 · boolean-retrieval** -- AND, OR, and NOT as set intersection, union, and difference over
   posting lists. Examples 6, 7, 8.
 - **co-04 · posting-list-merge** -- the linear two-pointer walk that intersects (or unions) two sorted
-  posting lists in one pass. Example 9.
+  posting lists in one pass. Examples 6, 7, 9, 22.
 - **co-05 · skip-pointers** -- √P evenly-spaced shortcuts that skip non-matching stretches during an
   AND intersection. Examples 23, 24.
-- **co-06 · tokenization** -- splitting raw text into indexable terms. Examples 1, 2.
-- **co-07 · case-folding** -- lowercasing tokens so `The` and `the` conflate to one index term. Example 3.
-- **co-08 · stop-words** -- dropping high-frequency low-signal terms to shrink the index. Examples 15, 16.
+- **co-06 · tokenization** -- splitting raw text into indexable terms. Examples 1, 2, 28.
+- **co-07 · case-folding** -- lowercasing tokens so `The` and `the` conflate to one index term. Examples
+  3, 28.
+- **co-08 · stop-words** -- dropping high-frequency low-signal terms to shrink the index. Examples 15,
+  16, 28.
 - **co-09 · stemming** -- Porter suffix-stripping conflates word-form variants to one stem. Examples
-  17, 18, 19, 20.
+  17, 18, 28.
 - **co-10 · lemmatization** -- dictionary-based reduction to a lemma. Example 19.
 - **co-11 · normalization-recall-tradeoff** -- aggressive normalization raises recall but can lower
-  precision. Example 20.
-- **co-12 · term-frequency** -- `tf`, the raw count of a term in a document. Example 11.
+  precision. Examples 16, 18, 20.
+- **co-12 · term-frequency** -- `tf`, the raw count of a term in a document. Examples 11, 21.
 - **co-13 · inverse-document-frequency** -- `idf = log(N / df)`, up-weighting rare terms. Examples 12, 13.
-- **co-14 · tf-idf** -- `tf x idf` weighting, the classic ranking baseline. Examples 14, 25, 32.
+- **co-14 · tf-idf** -- `tf x idf` weighting, the classic ranking baseline. Examples 14, 25.
 - **co-15 · vector-space-cosine** -- documents and queries as term-weight vectors, ranked by cosine
   similarity. Examples 26, 27.
 - **co-16 · bm25** -- the Okapi BM25 ranking function: saturating tf, RSJ idf, and length
-  normalization combined. Examples 29, 30, 37, and the capstone.
+  normalization combined. Examples 29, 30, 37, 80, and the capstone.
 - **co-17 · bm25-saturation** -- the `k1` term caps a single term's contribution. Examples 31, 32, 35.
 - **co-18 · bm25-length-normalization** -- the `b` term normalizes by `dl/avgdl`. Examples 33, 34, 64.
 - **co-19 · bm25-defaults** -- `k1=1.2, b=0.75` are the software defaults, distinct from the paper's
   own recommended range. Example 36.
 - **co-20 · top-k-ranking** -- a size-k min-heap returns the k highest-scoring documents without a
-  full sort. Examples 38, 39.
+  full sort. Examples 38, 39, 80.
 - **co-21 · precision-recall** -- precision (over retrieved) and recall (over relevant); F1 their
   harmonic mean. Examples 40, 41, 42.
 - **co-22 · precision-at-k** -- precision measured over the top-k results. Examples 43, 45, 79.
@@ -119,7 +122,7 @@ live dependency on the real engine.
 - **co-24 · evaluation-map-ndcg** -- Average Precision, MAP, and nDCG for scoring ranked results.
   Examples 46, 47, 48.
 - **co-25 · analyzer-pipeline** -- char filters, one tokenizer, then token filters, in order. Examples
-  28, 49, 50, 80.
+  49, 50, 80.
 - **co-26 · query-dsl** -- a structured must/should/must_not query language, parsed and executed.
   Examples 51, 52.
 - **co-27 · segments-and-merge** -- immutable segments merged over time; a refresh gives near-real-time
@@ -177,9 +180,9 @@ the default.
 - 2026-07-12 -- **verified (gap noted at authoring)**: the practical/advanced tier names the
   Lucene/Elasticsearch/OpenSearch family generically on purpose -- the licensing split (Elastic vs the
   OpenSearch fork) and default analyzers shift between releases. The Beginner and Advanced tiers'
-  build-your-own code is engine-independent and stable; every example that discusses a Lucene-family
-  engine remains a pure-Python model of its behavior, never a live dependency (Examples 25, 49, 51,
-  56, 57, 70).
+  build-your-own code is engine-independent and stable; several examples (e.g. 49, 51, 56, 57, 70)
+  discuss how a Lucene-family engine's real behavior compares, always as a pure-Python model, never a
+  live dependency.
 - 2026-07-12 -- **BM25 exact formula and defaults**: Robertson & Zaragoza (2009), "The Probabilistic
   Relevance Framework: BM25 and Beyond." Term weight `B = (1 - b) + b*(dl/avgdl)`;
   `score = tf/(k1*B + tf) * idf_RSJ`, RSJ idf `log((N - n_i + 0.5)/(n_i + 0.5))`. `k1=1.2, b=0.75` are
