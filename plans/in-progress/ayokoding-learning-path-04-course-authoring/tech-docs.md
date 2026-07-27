@@ -791,7 +791,7 @@ Full per-course detail is the cross-plan
 | `advanced-sql-and-query-performance`     | E(26)  | By Example        | SQL + Python     | `sql-essentials`                                                             | Query plans, indexing, tuning        |
 | `data-access-orms-and-query-builders`    | E(27)  | By Example        | Python           | `sql-essentials`, `object-oriented-programming-essentials`                   | Using ORMs/query builders safely     |
 | `build-your-own-orm-and-query-builder`   | E(28)  | By Example        | Python           | `data-access-orms-and-query-builders`                                        | Implementing a small ORM             |
-| `nosql-databases`                        | T(34)  | By Example        | Python           | `sql-essentials`                                                             | Document, KV, column stores          |
+| `nosql-databases`                        | T(34)  | By Example        | Python           | `sql-essentials`, `just-enough-python`                                       | Document, KV, column stores          |
 | `graph-databases`                        | T(35)  | By Example        | Cypher + Python  | `sql-essentials`                                                             | Modeling/querying connected data     |
 | `database-internals-and-storage-engines` | T(36)  | By Example        | Python           | `sql-essentials`, `advanced-sql-and-query-performance`                       | B-trees, LSM-trees, WAL              |
 | `data-engineering`                       | T(37)  | Annotated-concept | Python           | `sql-essentials`, `advanced-sql-and-query-performance`, `just-enough-python` | Pipelines, batch/stream, warehousing |

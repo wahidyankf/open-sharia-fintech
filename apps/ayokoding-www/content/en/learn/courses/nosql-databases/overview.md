@@ -197,7 +197,7 @@ they cover the same ground.
   (`graph-databases`), and the implementation internals of the storage engines this topic only reasons
   about from the outside (`database-internals-and-storage-engines`).
 
-## Accuracy notes (web-verified)
+## Accuracy notes
 
 > Verified in the pre-authoring `web-researcher` sweep (2026-07-12, DD-28), with a follow-up
 > spot-check sweep on 2026-07-27.

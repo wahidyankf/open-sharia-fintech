@@ -28,8 +28,8 @@ def main() -> None:  # => entry point -- runs only when this file executes direc
     latency_all = write_and_wait_for_w_acks(replica_count, w=5)  # => co-07: W=ALL -- every one of the 5 replicas must ack
 
     print(f"W=1:       {latency_w1 * 1000:.1f}ms")  # => Output line -- the fastest of the three, waits for only 1 ack
-    print(f"W=QUORUM:  {latency_quorum * 1000:.1f}ms")  # => Output line -- waits for the 3rd-fastest ack
-    print(f"W=ALL:     {latency_all * 1000:.1f}ms")  # => Output line -- waits for the SLOWEST replica's ack
+    print(f"W=QUORUM:  {latency_quorum * 1000:.1f}ms")  # => Output line -- sums the 3 fastest acks, waited in sequence
+    print(f"W=ALL:     {latency_all * 1000:.1f}ms")  # => Output line -- sums all 5 acks, waited in sequence
 
     assert latency_w1 < latency_quorum < latency_all  # => co-07: latency STRICTLY increases as W increases -- exactly the tradeoff co-07 names
     print("Latency increases monotonically as W increases: W=1 fastest, W=ALL slowest -- each additional required replica adds its own ack latency in sequence")  # => Output line

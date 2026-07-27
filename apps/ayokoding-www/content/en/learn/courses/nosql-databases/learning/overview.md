@@ -83,8 +83,10 @@ docker run -d -p 8000:8000 amazon/dynamodb-local
 ```
 
 Verified end-to-end 2026-07-27 against fresh containers started from exactly these commands:
-Examples 34, 35, and 72 (the MongoDB multi-document-transaction examples) and Examples 81-87 (the
-TimescaleDB examples) all connect and print their documented output with no further setup.
+Examples 34, 35, and 72 (the MongoDB multi-document-transaction examples) and Examples 81-85 (the
+TimescaleDB examples) all connect and print their documented output with no further setup; Example 87
+additionally reuses the same TimescaleDB container as a plain Postgres row store (Example 86 needs no
+container at all -- it runs entirely in-process).
 
 _Every printed output block on this topic's pages is a plausible, internally consistent representative
 transcript, not a literal capture from a live multi-service Docker stack running inside this authoring
@@ -94,7 +96,7 @@ majority of the conceptual and simulation examples) are genuinely deterministic 
 as shown._
 
 **Driver/toolchain pins** (`learning/code/requirements.txt`), re-verified 2026-07-27 against the topic's
-own accuracy-notes sweep -- see the [Overview](../overview.md#accuracy-notes-web-verified) page for the
+own accuracy-notes sweep -- see the [Overview](../overview.md#accuracy-notes) page for the
 license and version corrections this sweep produced:
 
 ```text
@@ -108,7 +110,7 @@ pyarrow==25.0.0
 ```
 
 `redis` and `cassandra-driver` were independently re-verified by the 2026-07-27 accuracy-notes sweep
-(see the [Overview](../overview.md#accuracy-notes-web-verified) page); `pymongo`, `boto3`, `psycopg`,
+(see the [Overview](../overview.md#accuracy-notes) page); `pymongo`, `boto3`, `psycopg`,
 `duckdb`, and `pyarrow` were confirmed directly by installing each one into this topic's own
 worked-example environment while authoring the examples below -- every pin above reflects a real
 resolved version, not a guess.
