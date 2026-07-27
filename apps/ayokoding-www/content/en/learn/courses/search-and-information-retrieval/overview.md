@@ -83,8 +83,7 @@ live dependency on the real engine.
 
 - **co-01 · inverted-index** -- a `term -> documents` map built once so a query is a cheap lookup, not
   a per-query scan of every document. Examples 4, 58, 80, and the capstone.
-- **co-02 · posting-list** -- the per-term list of doc-ids the index stores under each term. Examples
-  4, 5.
+- **co-02 · posting-list** -- the per-term list of doc-ids the index stores under each term. Example 5.
 - **co-03 · boolean-retrieval** -- AND, OR, and NOT as set intersection, union, and difference over
   posting lists. Examples 6, 7, 8.
 - **co-04 · posting-list-merge** -- the linear two-pointer walk that intersects (or unions) two sorted

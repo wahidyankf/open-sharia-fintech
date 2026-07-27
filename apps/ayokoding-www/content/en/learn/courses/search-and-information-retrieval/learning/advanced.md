@@ -1436,6 +1436,8 @@ from __future__ import annotations  # => hygiene: postpones annotation evaluatio
 
 import math  # => stdlib math -- log/sqrt for idf, cosine, and skip-pointer spacing
 import random  # => stdlib PRNG -- reproducible synthetic fixtures and trials
+import time  # => stdlib timer -- wall-clock measurement, not a benchmark micro-op
+from typing import Callable  # => from typing: Callable
 
 
 def cosine_similarity(a: list[float], b: list[float]) -> float:  # => defines cosine similarity
@@ -1473,10 +1475,25 @@ def main() -> None:  # => defines main
     print(f"toy ANN top-5 (sampled 20/200): {ann_top5}")  # => shows toy ANN top-5 (sampled 20/200)
     print(f"overlap with ground truth: {len(overlap)}/5")  # => shows overlap with ground truth
 
-    assert len(overlap) <= 5, "the ANN result can recover AT MOST all 5 of the exact top-5 (a basic sanity bound)"  # => the ANN result can recover AT MOST all 5 of the exact top-5 (a basic sanity bound)
+    assert 0 < len(overlap) < 5, "at this fixed seed the toy ANN must recover SOME but not ALL of the exact top-5 (a falsifiable recall bound, not a set-cardinality tautology)"  # => co-35: this fails if recall COLLAPSES to 0 or the sample ACCIDENTALLY matches perfectly -- both are real, checkable outcomes
+
+    exact_time: float = min(_time_call(lambda: exact_knn(query, vectors, k=5)) for _ in range(3))  # => co-35: best of 3 runs -- exact_knn scores ALL 200 vectors
+    ann_time: float = min(_time_call(lambda: toy_ann(query, vectors, k=5, sample_size=20, seed=3)) for _ in range(3))  # => co-35: best of 3 runs -- toy_ann scores only the sampled 20
+    print(f"speed: exact={exact_time * 1000:.3f}ms  toy_ann={ann_time * 1000:.3f}ms  ratio={exact_time / ann_time:.1f}x")  # => shows the wall-clock trade-off the recall bound above does NOT capture
+
+    assert ann_time < exact_time, "the toy ANN must be FASTER than exact search -- it scores 20 candidates, not 200"  # => the toy ANN must be FASTER than exact search -- it scores 20 candidates, not 200
     # NOTE: production systems use HNSW (Hierarchical Navigable Small World graphs), not random sampling --
     # this toy is built ONLY to demonstrate the recall/speed trade-off in isolation, in pure Python.
-    print(f"MATCH: the toy ANN recovered {len(overlap)}/5 of the true nearest neighbors from a 10x-smaller candidate pool")  # => shows MATCH: the toy ANN recovered
+    if overlap:  # => gate the MATCH banner on the REAL recall bound above, not an unconditional print
+        print(f"MATCH: the toy ANN recovered {len(overlap)}/5 of the true nearest neighbors from a 10x-smaller candidate pool, {exact_time / ann_time:.1f}x faster")  # => shows MATCH: the toy ANN recovered
+    else:
+        print("NO MATCH: the toy ANN recovered 0/5 of the true nearest neighbors -- recall collapsed at this sample size")  # => shows NO MATCH: recall collapsed at this sample size
+
+
+def _time_call(fn: Callable[[], object]) -> float:  # => defines _time_call
+    start: float = time.perf_counter()  # => start = time.perf_counter()
+    fn()  # => part of this step's computation, continued from the line above
+    return time.perf_counter() - start  # => returns time.perf_counter() - start
 
 
 if __name__ == "__main__":  # => entry point -- runs only when this file executes directly, not on import
@@ -1491,10 +1508,11 @@ if __name__ == "__main__":  # => entry point -- runs only when this file execute
 exact top-5: [137, 160, 61, 22, 154]
 toy ANN top-5 (sampled 20/200): [160, 154, 49, 148, 151]
 overlap with ground truth: 2/5
-MATCH: the toy ANN recovered 2/5 of the true nearest neighbors from a 10x-smaller candidate pool
+speed: exact=0.164ms  toy_ann=0.028ms  ratio=6.0x
+MATCH: the toy ANN recovered 2/5 of the true nearest neighbors from a 10x-smaller candidate pool, 6.0x faster
 ```
 
-**Key takeaway**: Real approximate nearest-neighbor search uses graph-based structures like HNSW, not random sampling -- but the trade-off this toy demonstrates is the genuine one: ANN methods buy speed by accepting a chance of missing a true neighbor.
+**Key takeaway**: Real approximate nearest-neighbor search uses graph-based structures like HNSW, not random sampling -- but the trade-off this toy demonstrates is the genuine one: ANN methods buy speed by accepting a chance of missing a true neighbor, in exchange for scoring a fraction of the candidates.
 
 **Why It Matters**: Approximate nearest-neighbor search is what every production vector database, and Elasticsearch's own ANN-backed `dense_vector` search, actually runs at scale, because exact brute-force kNN over millions of embeddings is too slow for interactive search -- real systems use graph-based structures like HNSW, not random sampling, but the recall/speed trade-off this example demonstrates is the genuine one production engineers navigate. Accepting some chance of missing a true nearest neighbor for dramatically lower query latency is a deliberate, tunable trade every ANN-backed system makes.
 

@@ -955,7 +955,7 @@ MATCH: the size-5 min-heap returns exactly the same top-5 as a full sort over al
 
 **Key takeaway**: A size-k heap never needs to hold more than k items at once -- it answers "what are the best k" without ever fully sorting the candidate pool.
 
-**Why It Matters**: A size-k min-heap is the actual data structure production search engines use to avoid fully sorting every scored candidate document -- Lucene's top-score collector maintains exactly this bounded structure internally rather than materializing and sorting the whole result set. Discarding a candidate immediately once it is worse than the heap's current minimum keeps memory and comparison work proportional to k, not the corpus size. This is the algorithm behind every "show top 10 results" search box, which never actually ranks the entire corpus.
+**Why It Matters**: A size-k min-heap is the actual data structure production search engines use to avoid fully sorting every scored candidate document -- Lucene's top-score collector maintains exactly this bounded structure internally rather than materializing and sorting the whole result set. Every candidate is still examined once, but discarding it immediately once it is worse than the heap's current minimum keeps **memory** proportional to k rather than the corpus size, and shrinks the per-candidate update cost from `log N` to `log k`. This is the algorithm behind every "show top 10 results" search box, which never actually ranks the entire corpus.
 
 ---
 
