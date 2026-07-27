@@ -44,7 +44,7 @@ persisted mini search engine.
   combined with BM25, and a final mini search engine assembling the whole pipeline.
 - **[Capstone](./capstone/overview.md)** -- a typed inverted index, BM25 top-k ranking, precision@k
   evaluation across two analyzer configs, and incremental indexing, assembled behind one small library
-  over a real 9-document text corpus.
+  over a real 8-document text corpus.
 
 Every code example is real, runnable, fully type-annotated, colocated under
 `learning/code/ex-NN-<slug>/`, actually executed to capture its documented output -- every printed

@@ -1293,7 +1293,7 @@ def execute_or_query(index: dict[str, set[int]], terms: set[str]) -> set[int]:  
     """Boolean OR over an arbitrary set of terms -- any document matching any term qualifies."""
     hits: set[int] = set()  # => hits = set()
     for term in terms:  # => iterates one item at a time
-        hits |= index.get(term, set())  # => co-07: co-07's own boolean OR merge
+        hits |= index.get(term, set())  # => co-03: boolean OR merge across query terms
     return hits  # => returns hits
 
 

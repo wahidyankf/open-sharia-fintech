@@ -1,6 +1,6 @@
 # pyright: strict
 """Capstone Step 1: index.py -- a typed inverted index with tokenization and persisted
-postings, over a small real text corpus (co-01, co-02, co-03, co-04, co-06, co-07).
+postings, over a small real text corpus (co-01, co-02, co-03, co-06, co-07).
 
 Verify: a boolean query returns the correct document set and `pyright` is clean.
 """
@@ -75,16 +75,16 @@ class InvertedIndex:  # => part of this step's computation, continued from the l
         self, terms: list[str]
     ) -> set[
         int
-    ]:  # => co-06: boolean AND -- every term must be present in the returned documents
-        """co-06: boolean AND -- every term must be present in the returned documents."""
+    ]:  # => co-03: boolean AND -- every term must be present in the returned documents
+        """co-03: boolean AND -- every term must be present in the returned documents."""
         if not terms:  # => true when not terms
             return set()  # => returns set()
         result: set[int] = set(
             self.postings.get(terms[0], {}).keys()
-        )  # => co-06: starts with the FIRST term's docs
+        )  # => co-03: starts with the FIRST term's docs
         for term in terms[
             1:
-        ]:  # => co-06: narrows the result with EVERY subsequent term
+        ]:  # => co-03: narrows the result with EVERY subsequent term
             result &= set(
                 self.postings.get(term, {}).keys()
             )  # => part of this step's computation, continued from the line above
@@ -92,11 +92,11 @@ class InvertedIndex:  # => part of this step's computation, continued from the l
 
     def query_or(
         self, terms: list[str]
-    ) -> set[int]:  # => co-07: boolean OR -- any one of the terms is enough to match
-        """co-07: boolean OR -- any one of the terms is enough to match."""
+    ) -> set[int]:  # => co-03: boolean OR -- any one of the terms is enough to match
+        """co-03: boolean OR -- any one of the terms is enough to match."""
         result: set[int] = (
             set()
-        )  # => co-07: starts empty, grows with every matching term
+        )  # => co-03: starts empty, grows with every matching term
         for term in terms:  # => iterates one item at a time
             result |= set(
                 self.postings.get(term, {}).keys()
@@ -163,10 +163,10 @@ def main() -> None:  # => defines main
 
     and_hits: set[int] = index.query_and(
         ["search", "engine"]
-    )  # => co-06: docs containing BOTH terms
+    )  # => co-03: docs containing BOTH terms
     or_hits: set[int] = index.query_or(
         ["cooking", "gardener"]
-    )  # => co-07: docs containing EITHER term
+    )  # => co-03: docs containing EITHER term
     print(
         f"AND('search', 'engine'): {sorted(and_hits)}"
     )  # => shows AND('search', 'engine')

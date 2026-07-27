@@ -44,7 +44,7 @@ under each step is genuine, not fabricated.
 
 ## Step 1: `index.py` -- a typed inverted index with tokenization and persisted postings
 
-_exercises co-01, co-02, co-03, co-04, co-06, co-07_
+_exercises co-01, co-02, co-03, co-06, co-07_
 
 A small, real, 8-document in-repo text corpus (`CORPUS`), an `analyze()` function (lowercase, strip
 punctuation, tokenize), and a typed `InvertedIndex` dataclass with `add`, `query_and`, `query_or`,
@@ -56,7 +56,7 @@ from this file.
 ```python
 # pyright: strict
 """Capstone Step 1: index.py -- a typed inverted index with tokenization and persisted
-postings, over a small real text corpus (co-01, co-02, co-03, co-04, co-06, co-07).
+postings, over a small real text corpus (co-01, co-02, co-03, co-06, co-07).
 
 Verify: a boolean query returns the correct document set and `pyright` is clean.
 """
@@ -106,17 +106,17 @@ class InvertedIndex:
         self.doc_lengths[doc_id] = len(tokens)
 
     def query_and(self, terms: list[str]) -> set[int]:
-        """co-06: boolean AND -- every term must be present in the returned documents."""
+        """co-03: boolean AND -- every term must be present in the returned documents."""
         if not terms:
             return set()
-        result: set[int] = set(self.postings.get(terms[0], {}).keys())  # => co-06: starts with the FIRST term's docs
-        for term in terms[1:]:  # => co-06: narrows the result with EVERY subsequent term
+        result: set[int] = set(self.postings.get(terms[0], {}).keys())  # => co-03: starts with the FIRST term's docs
+        for term in terms[1:]:  # => co-03: narrows the result with EVERY subsequent term
             result &= set(self.postings.get(term, {}).keys())
         return result
 
     def query_or(self, terms: list[str]) -> set[int]:
-        """co-07: boolean OR -- any one of the terms is enough to match."""
-        result: set[int] = set()  # => co-07: starts empty, grows with every matching term
+        """co-03: boolean OR -- any one of the terms is enough to match."""
+        result: set[int] = set()  # => co-03: starts empty, grows with every matching term
         for term in terms:
             result |= set(self.postings.get(term, {}).keys())
         return result
@@ -151,8 +151,8 @@ def main() -> None:
     index: InvertedIndex = build_index(CORPUS)  # => co-01: the full 8-document capstone index
     print(f"indexed {len(CORPUS)} documents, {len(index.postings)} distinct terms")
 
-    and_hits: set[int] = index.query_and(["search", "engine"])  # => co-06: docs containing BOTH terms
-    or_hits: set[int] = index.query_or(["cooking", "gardener"])  # => co-07: docs containing EITHER term
+    and_hits: set[int] = index.query_and(["search", "engine"])  # => co-03: docs containing BOTH terms
+    or_hits: set[int] = index.query_or(["cooking", "gardener"])  # => co-03: docs containing EITHER term
     print(f"AND('search', 'engine'): {sorted(and_hits)}")
     print(f"OR('cooking', 'gardener'): {sorted(or_hits)}")
 
