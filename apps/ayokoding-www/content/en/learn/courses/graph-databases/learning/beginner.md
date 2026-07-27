@@ -923,8 +923,11 @@ def build_star_graph(tx, center_label: str, n: int) -> None:
     # A "star": one center node with n outgoing edges -- n controls total graph size,
     # while the center node's OWN degree also grows with n (a deliberately worst-case shape).
     tx.run(
-        # a fresh center node, then n leaves each connected directly to it
-        f"UNWIND range(1, $n) AS i CREATE (:{center_label})-[:LINK]->(:Leaf {{i: i}})",
+        # ONE center node, bound via WITH so every UNWIND row reuses it -- exactly like Example 43's
+        # fix; without WITH center, CREATE (:{center_label}) would fire once per row instead of once
+        f"CREATE (center:{center_label}) "
+        f"WITH center UNWIND range(1, $n) AS i "
+        f"CREATE (center)-[:LINK]->(:Leaf {{i: i}})",
         n=n,  # => bound parameter -- never string-interpolated into the query text
     )  # => n new leaves and n new LINK edges, all hanging off ONE freshly created center per call
 

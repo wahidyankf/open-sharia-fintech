@@ -12,6 +12,8 @@ g.addV('person').property('name', 'Ada').as('a').    // => vertex 1: Ada, aliase
 
 g.V().has('name', 'Ada').                             // => starts the traversal at Ada specifically
   repeat(out('knows').simplePath()).until(has('name', 'Zoe')).  // => walks until it reaches Zoe
-  path()                                               // => returns the full vertex path found
+  path().by('name')                                    // => returns the walked path, name-projected
 // => .simplePath() forbids revisiting a vertex ALREADY on the current path -- without it, the
 // planted cycle above could loop the traversal indefinitely around Ada -> Bob -> Zoe -> Ada -> ...
+// => .by('name') projects EVERY vertex on the path through its `name` property -- without it,
+// .path() emits raw Vertex objects, which TinkerGraph renders as v[<numeric-id>], never as a name

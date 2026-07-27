@@ -10,6 +10,14 @@ def build_fixture(tx) -> None:
     # Builds TWO separate subgraphs: an ordinary degree-1 node and a deliberately extreme
     # degree-50,000 supernode -- the two shapes this example's timing compares.
     tx.run(
+        "CREATE CONSTRAINT person_name_unique IF NOT EXISTS "
+        "FOR (p:Person) REQUIRE p.name IS UNIQUE"
+    )
+    # => an index-backed uniqueness constraint on Person.name, created BEFORE any Person node exists
+    # -- without it, time_expand's MATCH (p:Person {name: $name}) pays an unindexed label scan across
+    # every Person node (50,003 of them once the fixture below finishes), which swamps the
+    # degree-driven expand cost this example is trying to isolate
+    tx.run(
         "CREATE (:Person {name: 'Ordinary'})-[:KNOWS]->(:Person {name: 'OneFriend'})"
     )
     # => degree-1 node: exactly ONE relationship to expand through
@@ -38,7 +46,9 @@ def time_expand(tx, name: str) -> float:
 
 
 with driver.session() as session:
-    session.execute_write(build_fixture)  # => runs BOTH CREATE statements above, once
+    session.execute_write(
+        build_fixture
+    )  # => runs the constraint + both CREATE statements above, once
     ordinary_t = session.execute_read(time_expand, "Ordinary")  # => degree-1 expansion
     hub_t = session.execute_read(time_expand, "Hub")  # => degree-50,000 expansion
     print(f"ordinary (degree 1):    {ordinary_t:.4f}s")

@@ -1017,13 +1017,23 @@ RETURN [n IN nodes(p) | n.name] AS ring;
 | ring                      |
 +---------------------------+
 | ["A", "B", "C", "A"]      |
+| ["B", "C", "A", "B"]      |
+| ["C", "A", "B", "C"]      |
 +---------------------------+
-1 row
+3 rows
 ```
+
+The pattern's start node `a` is bound only by the `:Account` label, not by any specific identity --
+so the planner tries EVERY `:Account` node as a candidate start, and each one produces its own
+rotation of the same 3-node ring. Three rows, one per starting node, is the correct output for this
+un-anchored cycle match against a 3-cycle fixture, not the single row a reader might expect from "the
+cycle."
 
 **Key takeaway**: Binding both ends of the pattern to the SAME variable (`(a)...->(a)`) is what
 turns a plain variable-length path into a cycle detector -- a non-circular chain of the same length
-would simply not match at all.
+would simply not match at all. Leaving the start node unanchored (as here) means the detector reports
+one row per node ON the ring, not one row per ring -- anchoring `a` to a specific account (e.g. `MATCH
+p = (a:Account {name: 'A'})-[:SENT*3..5]->(a)`) is how to collapse that back to a single row.
 
 **Why it matters**: A circular-payment ring is a structural fraud pattern that only becomes visible
 once you can express "does this path return to where it started" -- exactly the kind of question a
@@ -1126,6 +1136,14 @@ driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"
 def build_fixture(tx) -> None:
     # Builds TWO separate subgraphs: an ordinary degree-1 node and a deliberately extreme
     # degree-50,000 supernode -- the two shapes this example's timing compares.
+    tx.run(
+        "CREATE CONSTRAINT person_name_unique IF NOT EXISTS "
+        "FOR (p:Person) REQUIRE p.name IS UNIQUE"
+    )
+    # => an index-backed uniqueness constraint on Person.name, created BEFORE any Person node exists
+    # -- without it, time_expand's MATCH (p:Person {name: $name}) pays an unindexed label scan across
+    # every Person node (50,003 of them once the fixture below finishes), which swamps the
+    # degree-driven expand cost this example is trying to isolate
     tx.run("CREATE (:Person {name: 'Ordinary'})-[:KNOWS]->(:Person {name: 'OneFriend'})")
     # => degree-1 node: exactly ONE relationship to expand through
     tx.run(
@@ -1147,7 +1165,7 @@ def time_expand(tx, name: str) -> float:
 
 
 with driver.session() as session:
-    session.execute_write(build_fixture)  # => runs BOTH CREATE statements above, once
+    session.execute_write(build_fixture)  # => runs the constraint + both CREATE statements above, once
     ordinary_t = session.execute_read(time_expand, "Ordinary")  # => degree-1 expansion
     hub_t = session.execute_read(time_expand, "Hub")  # => degree-50,000 expansion
     print(f"ordinary (degree 1):    {ordinary_t:.4f}s")
@@ -1345,10 +1363,12 @@ g.addV('person').property('name', 'Ada').as('a').
 // => a 2-hop chain: Ada -> Bob -> Cid, identical shape to Example 14's Cypher fixture
 // => .iterate() actually EXECUTES the traversal -- Gremlin traversals are lazy until iterated
 
-g.V().has('name', 'Ada').repeat(out('knows')).times(2).path()
+g.V().has('name', 'Ada').repeat(out('knows')).times(2).path().by('name')
 // => repeat(out('knows')) is the STEP to repeat -- one knows-hop, per repetition
 // => .times(2) bounds the repeat to EXACTLY 2 repetitions
 // => .path() returns the full route walked, not just the final vertex
+// => .by('name') projects EVERY vertex on the path through its `name` property -- without it,
+// .path() emits raw Vertex objects, which TinkerGraph renders as v[<numeric-id>], never as a name
 ```
 
 **Run**: Gremlin Console, `:load example.groovy`
@@ -1356,12 +1376,15 @@ g.V().has('name', 'Ada').repeat(out('knows')).times(2).path()
 **Output**:
 
 ```text
-gremlin> g.V().has('name', 'Ada').repeat(out('knows')).times(2).path()
-==>[v[Ada], v[Bob], v[Cid]]
+gremlin> g.V().has('name', 'Ada').repeat(out('knows')).times(2).path().by('name')
+==>[Ada, Bob, Cid]
 ```
 
 **Key takeaway**: The returned path has exactly 3 vertices for a `.times(2)` repeat -- the starting
-vertex plus one per repeated hop -- matching a hand-traced 2-hop walk exactly.
+vertex plus one per repeated hop -- matching a hand-traced 2-hop walk exactly. `.path()` alone would
+have printed raw `v[<id>]` vertex references (TinkerGraph's `StringFactory` never substitutes a
+property for a vertex's string form); `.by('name')` is what turns that into the name-labeled route
+shown here.
 
 **Why it matters**: `repeat().times(n)` is a fixed-depth traversal; `repeat().until(...)` (Example 77) is Gremlin's variable-depth equivalent, closer to Cypher's `*1..n` -- both express the same
 "walk N hops" idea Cypher's pattern syntax expresses inline, just via an explicit step chain

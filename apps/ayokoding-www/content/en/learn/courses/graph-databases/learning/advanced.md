@@ -1656,9 +1656,11 @@ g.addV('person').property('name', 'Ada').as('a').    // => vertex 1: Ada, aliase
 
 g.V().has('name', 'Ada').                             // => starts the traversal at Ada specifically
   repeat(out('knows').simplePath()).until(has('name', 'Zoe')).  // => walks until it reaches Zoe
-  path()                                               // => returns the full vertex path found
+  path().by('name')                                    // => returns the walked path, name-projected
 // => .simplePath() forbids revisiting a vertex ALREADY on the current path -- without it, the
 // planted cycle above could loop the traversal indefinitely around Ada -> Bob -> Zoe -> Ada -> ...
+// => .by('name') projects EVERY vertex on the path through its `name` property -- without it,
+// .path() emits raw Vertex objects, which TinkerGraph renders as v[<numeric-id>], never as a name
 ```
 
 **Run**: Gremlin Console, `:load example.groovy`
@@ -1666,13 +1668,15 @@ g.V().has('name', 'Ada').                             // => starts the traversal
 **Output**:
 
 ```text
-gremlin> g.V().has('name', 'Ada').repeat(out('knows').simplePath()).until(has('name', 'Zoe')).path()
-==>[v[Ada], v[Bob], v[Zoe]]
+gremlin> g.V().has('name', 'Ada').repeat(out('knows').simplePath()).until(has('name', 'Zoe')).path().by('name')
+==>[Ada, Bob, Zoe]
 ```
 
 **Key takeaway**: `.simplePath()` filters out any traversal branch that would revisit a vertex
 already on its own current path -- the returned 3-vertex path terminates cleanly at Zoe, even though
-a raw cycle exists in the underlying graph.
+a raw cycle exists in the underlying graph. `.path()` alone would have printed raw `v[<id>]` vertex
+references (TinkerGraph's `StringFactory` never substitutes a property for a vertex's string form);
+`.by('name')` is what turns that into the name-labeled route shown here.
 
 **Why it matters**: `repeat().until()` (variable-depth, condition-driven) is Gremlin's closer
 analogue to Cypher's unbounded `*` pattern (Example 35) than `repeat().times(n)` (Example 48, fixed
