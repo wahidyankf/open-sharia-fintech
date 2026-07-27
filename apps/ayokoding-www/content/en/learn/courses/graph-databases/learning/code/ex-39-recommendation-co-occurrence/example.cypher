@@ -1,8 +1,9 @@
 // Example 39: Recommendation by Co-Occurrence. (co-15, co-08)
-CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada bought exactly one item
-CREATE (other:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob bought the SAME item as Ada -- the shared signal the pattern below finds
+CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(shared:Item {name: 'Keyboard'})
+// => Ada bought exactly one item, shared aliased for reuse below
+CREATE (other:User {name: 'Bob'})-[:BOUGHT]->(shared)
+// => Bob bought the SAME Keyboard node as Ada -- bound once and reused, not a second CREATE
+// with a matching name, which would mint a structurally distinct node
 CREATE (other)-[:BOUGHT]->(:Item {name: 'Mousepad'});
 // => Ada and Bob BOTH bought Keyboard; Bob ALSO bought Mousepad -- Ada has not
 

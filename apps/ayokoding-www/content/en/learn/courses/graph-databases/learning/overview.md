@@ -14,8 +14,9 @@ weight: 1
   -- its absence does not block this topic, since every example here is self-contained against a
   seeded Neo4j fixture rather than assuming a wider NoSQL survey has already been read;
   [4 · Just Enough Python](../../just-enough-python/learning/overview.md) -- every Python driver
-  example in the Intermediate and Advanced tiers (Examples 22, 44, 66-70, 73, 74) assumes basic
-  Python syntax and function definitions are already familiar.
+  example across all three tiers (Examples 22, 44, 66-70, 74) assumes basic Python syntax and
+  function definitions are already familiar. Example 73 is Python but not driver-based -- a pure
+  simulation with no Neo4j connection -- so it is excluded from this list, like Example 45.
 - **Tools & environment**: a macOS/Linux terminal; a local **Neo4j** instance (Docker works fine;
   check the edition license -- Community Edition is GPLv3, Enterprise Edition is AGPLv3) with the
   **Graph Data Science (GDS)** plugin installed for the Advanced tier's Examples 55-63 and 73; the
@@ -62,7 +63,7 @@ itself.
 - **Advanced** (Examples 55-80) -- the Neo4j Graph Data Science library: projecting an in-memory
   graph, PageRank, betweenness centrality, Louvain community detection, node similarity, and both
   forms of weighted Dijkstra shortest path; knowledge-graph modeling contrasted against a
-  4-table relational join; six worked previews of the capstone's own domain from Python (load,
+  5-table relational join; six worked previews of the capstone's own domain from Python (load,
   neighborhood, friends-of-friends, shortest path, recommendation, relational contrast); the
   standard supernode-mitigation and community-aware sharding patterns; a concurrent-write conflict
   and a constraint-violating bulk import, both demonstrating a real failure mode deliberately;
@@ -144,10 +145,11 @@ relational join chain.
 **Why it matters**: a graph database is not a universal replacement for a relational store -- this
 concept names exactly the shape of question where switching pays off.
 
-**Verify it**: Example 19 runs the same 4-hop question as SQL self-joins versus one Cypher pattern;
+**Verify it**: Example 19 runs the same 3-hop question as SQL self-joins versus one Cypher pattern;
 Example 33 and Example 38 repeat the contrast for many-to-many and bill-of-materials modeling;
-Example 65 and Example 71 repeat it for the capstone's own knowledge-graph and recommendation
-domains; Example 80 names the same trade-off across all three query languages.
+Example 65 repeats it for a standalone knowledge-graph fixture, and Example 71 repeats it for the
+capstone's own recommendation domain; Example 80 names the same trade-off across all three query
+languages.
 
 ### co-04 · Index-Free Adjacency
 
@@ -353,8 +355,10 @@ path's own constraint-checking gap.
 
 ### co-21 · Neo4j Versioning and Editions
 
-Neo4j's calendar versioning (2025.x/2026.x) ships two parallel Cypher language versions, frozen
-Cypher 5 and evolving Cypher 25, selectable per query.
+Neo4j's calendar versioning ships two parallel Cypher language dialects, one frozen and one
+evolving, selectable per query -- see the course overview's dated
+[Accuracy notes](../overview.md#accuracy-notes) for the current dialect names and the calendar
+version at which the evolving one became the default.
 
 **Why it matters**: an example written for one dialect's syntax may not run unchanged under the
 other -- knowing which dialect a query targets avoids a confusing runtime surprise.
@@ -507,7 +511,7 @@ applies community detection to a sharding decision.
 - [Example 62: Recommendation Powered by GDS Similarity](/en/learn/courses/graph-databases/learning/advanced#example-62-recommendation-powered-by-gds-similarity)
 - [Example 63: Fraud Ring via Community Detection](/en/learn/courses/graph-databases/learning/advanced#example-63-fraud-ring-via-community-detection)
 - [Example 64: Model a Small Knowledge Graph](/en/learn/courses/graph-databases/learning/advanced#example-64-model-a-small-knowledge-graph)
-- [Example 65: Knowledge Graph vs. a 4-Table Relational Join](/en/learn/courses/graph-databases/learning/advanced#example-65-knowledge-graph-vs-a-4-table-relational-join)
+- [Example 65: Knowledge Graph vs. a 5-Table Relational Join](/en/learn/courses/graph-databases/learning/advanced#example-65-knowledge-graph-vs-a-5-table-relational-join)
 - [Example 66: Preview: Load the Capstone Domain](/en/learn/courses/graph-databases/learning/advanced#example-66-preview-load-the-capstone-domain)
 - [Example 67: Preview: a Neighborhood Query from Python](/en/learn/courses/graph-databases/learning/advanced#example-67-preview-a-neighborhood-query-from-python)
 - [Example 68: Preview: Friends-of-Friends from Python](/en/learn/courses/graph-databases/learning/advanced#example-68-preview-friends-of-friends-from-python)

@@ -1,16 +1,16 @@
 // Example 40: Recommendation with a Minimum-Overlap Threshold. (co-15, co-23)
-CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first item, u aliased for reuse
-CREATE (u)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second item
-CREATE (strong:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob shares item #1 with Ada
-CREATE (strong)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob shares item #2 with Ada too -- overlap = 2
+CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first item, u and kb both aliased for reuse below
+CREATE (u)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second item, mon aliased for reuse below
+CREATE (strong:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob shares the SAME Keyboard node as Ada -- bound once and reused, not re-CREATEd
+CREATE (strong)-[:BOUGHT]->(mon)
+// => Bob shares the SAME Monitor node as Ada too -- overlap = 2 shared nodes, not 2 coincidences
 CREATE (strong)-[:BOUGHT]->(:Item {name: 'Mousepad'})
 // => Bob's OWN extra item, the eventual recommendation candidate
-CREATE (weak:User {name: 'Cid'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Cid shares only ONE item with Ada -- overlap = 1
+CREATE (weak:User {name: 'Cid'})-[:BOUGHT]->(kb)
+// => Cid shares the SAME Keyboard node with Ada -- overlap = 1
 CREATE (weak)-[:BOUGHT]->(:Item {name: 'Headset'});
 // => Bob shares 2 items with Ada (strong overlap); Cid shares only 1 (weak overlap)
 

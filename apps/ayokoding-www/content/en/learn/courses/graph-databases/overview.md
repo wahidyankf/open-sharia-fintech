@@ -29,12 +29,12 @@ weight: 1
 
 **The problem before the solution**: when the relationships between entities are the actual
 question being asked -- who knows whom, what is the shortest path, what should this person see
-next -- a relational store answers with a chain of joins that gets exponentially slower with every
-additional hop, because each hop is a full table scan plus an index lookup, not a direct pointer
-follow. **The one idea worth keeping if you forget everything else**: when connections between
-things are first-class data, model them as first-class data -- a property graph makes a k-hop
-traversal cost roughly proportional to k, where the equivalent relational query multiplies its join
-count with every hop instead.
+next -- a relational store answers with a chain of joins whose join count grows steadily with every
+additional hop -- two more joins per hop, each one a full table scan plus an index lookup, not a
+direct pointer follow. **The one idea worth keeping if you forget everything else**: when connections
+between things are first-class data, model them as first-class data -- a property graph makes a
+k-hop traversal cost roughly proportional to k, where the equivalent relational query adds two more
+joins for every hop instead.
 
 **Cross-cutting big ideas, taught here and reused throughout this course**:
 `consistency-latency-throughput` -- deep-traversal performance, not raw storage volume, is the
@@ -81,15 +81,31 @@ independent rows.
   problems, self-contained code katas, a self-check checklist, and elaborative-interrogation
   prompts.
 
-**A note on Cypher versions**: Neo4j ships two parallel Cypher dialects -- **Cypher 5** (frozen,
-bug-fixes only) and **Cypher 25** (evolving, the default for new databases from Neo4j 2026.02
-onward). Most examples in this course run unchanged under either dialect. Where the dialect
-genuinely matters, the example says so explicitly: Example 15 (quantified relationship paths) and
-Example 79 (the `SHORTEST` path selector) target **Cypher 25 / GQL-conformant mode** specifically,
-since their syntax is new in Cypher 25; Examples 52 and 53 exist specifically to demonstrate pinning
-a query to one dialect or the other with the `CYPHER 5`/`CYPHER 25` prefix; and Examples 14, 16, and
-17 use the classic `*1..3`/`shortestPath()`/`allShortestPaths()` syntax, which remains valid and
-runs unchanged under **both Cypher 5 and Cypher 25** (not GQL-conformant, but not removed either).
+**A note on Cypher versions**: Neo4j ships two parallel Cypher dialects, one frozen and one evolving
+-- see [Accuracy notes](#accuracy-notes) below for the current dialect names and the calendar
+version at which the evolving dialect became the default. Most examples in this course run unchanged
+under either dialect. Where the dialect genuinely matters, the example says so explicitly: Example 15
+(quantified relationship paths) and Example 79 (the `SHORTEST` path selector) target the evolving
+dialect / GQL-conformant mode specifically, since their syntax is new there; Examples 52 and 53 exist
+specifically to demonstrate pinning a query to one dialect or the other with the `CYPHER 5`/
+`CYPHER 25` prefix; and Examples 14, 16, and 17 use the classic `*1..3`/`shortestPath()`/
+`allShortestPaths()` syntax, which remains valid and runs unchanged under both dialects (not
+GQL-conformant, but not removed either).
+
+## Accuracy notes
+
+> Dated per this topic's own accuracy-note discipline: every volatile, version-pinned, or
+> calendar-dependent fact below is flagged or dated here rather than stated unqualified in the
+> stable spine above.
+
+- 2026-07-27 -- **volatile, calendar-versioned**: at the time this course was authored, Neo4j ships
+  two parallel Cypher dialects -- **Cypher 5** (frozen, bug-fixes only) and **Cypher 25** (evolving,
+  and the default dialect for newly created databases from Neo4j 2026.02 onward). Both the specific
+  dialect names and the version at which the default last changed are calendar-versioning specifics
+  that will keep moving release to release -- re-verify against Neo4j's own version-support
+  documentation before relying on either claim in a later reading of this course. This same fact is
+  cross-referenced, not restated, from `drilling/overview.md` (Q21, E6), `learning/overview.md`
+  (co-21), `learning/beginner.md` (Example 15), and `learning/advanced.md` (Example 79).
 
 ---
 

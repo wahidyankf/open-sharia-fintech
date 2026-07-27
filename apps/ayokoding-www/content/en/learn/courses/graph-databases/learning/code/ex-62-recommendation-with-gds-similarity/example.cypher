@@ -1,12 +1,12 @@
 // Example 62: Recommendation Powered by GDS Similarity. (co-26, co-15)
-CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first purchase
-CREATE (u1)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second purchase -- Ada's set is {Keyboard, Monitor}
-CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob's first purchase, overlapping with Ada
-CREATE (u2)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob's second purchase, ALSO overlapping with Ada -- so far identical to Example 59's fixture
+CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first purchase, kb aliased for reuse below
+CREATE (u1)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second purchase -- Ada's set is {Keyboard, Monitor}, mon aliased for reuse below
+CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob's first purchase -- the SAME Keyboard node as Ada's, not a namesake
+CREATE (u2)-[:BOUGHT]->(mon)
+// => Bob's second purchase -- the SAME Monitor node too, so far identical to Example 59's fixture
 CREATE (u2)-[:BOUGHT]->(:Item {name: 'Mousepad'});
 // => same overlap shape as Example 59, PLUS Bob has one item (Mousepad) Ada does not
 

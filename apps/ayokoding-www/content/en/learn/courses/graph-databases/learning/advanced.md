@@ -311,14 +311,14 @@ graph LR
 
 ```cypher
 // Example 59: GDS: Node Similarity. (co-26, co-15)
-CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first purchase
-CREATE (u1)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second purchase -- her full purchased set is now {Keyboard, Monitor}
-CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob's first purchase -- overlaps with Ada's Keyboard
-CREATE (u2)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob's second purchase -- his set {Keyboard, Monitor} matches Ada's EXACTLY
+CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first purchase, kb aliased for reuse below
+CREATE (u1)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second purchase -- her full purchased set is now {Keyboard, Monitor}, mon aliased for reuse
+CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob's first purchase -- the SAME Keyboard node as Ada's, not a namesake
+CREATE (u2)-[:BOUGHT]->(mon)
+// => Bob's second purchase -- the SAME Monitor node too, so his set matches Ada's EXACTLY
 CREATE (u3:User {name: 'Cid'})-[:BOUGHT]->(:Item {name: 'Headset'});
 // => Ada and Bob overlap on BOTH items; Cid overlaps with neither -- purposely maximal contrast
 
@@ -517,14 +517,14 @@ graph LR
 
 ```cypher
 // Example 62: Recommendation Powered by GDS Similarity. (co-26, co-15)
-CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first purchase
-CREATE (u1)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second purchase -- Ada's set is {Keyboard, Monitor}
-CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob's first purchase, overlapping with Ada
-CREATE (u2)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob's second purchase, ALSO overlapping with Ada -- so far identical to Example 59's fixture
+CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first purchase, kb aliased for reuse below
+CREATE (u1)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second purchase -- Ada's set is {Keyboard, Monitor}, mon aliased for reuse below
+CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob's first purchase -- the SAME Keyboard node as Ada's, not a namesake
+CREATE (u2)-[:BOUGHT]->(mon)
+// => Bob's second purchase -- the SAME Monitor node too, so far identical to Example 59's fixture
 CREATE (u2)-[:BOUGHT]->(:Item {name: 'Mousepad'});
 // => same overlap shape as Example 59, PLUS Bob has one item (Mousepad) Ada does not
 
@@ -699,20 +699,20 @@ equivalent.
 
 ---
 
-### Example 65: Knowledge Graph vs. a 4-Table Relational Join
+### Example 65: Knowledge Graph vs. a 5-Table Relational Join
 
 _ex-65 &middot; exercises co-03, co-08_
 
-The same knowledge-graph question from Example 64, against a normalized 4-table relational schema
--- the join count grows with the number of entity hops, exactly like Example 19's contrast.
+The same knowledge-graph question from Example 64, against a normalized 5-table relational schema
+(3 entity tables plus 2 junction tables) -- the join count grows with the number of entity hops,
+exactly like Example 19's contrast.
 
-**Relational form (SQLite, 4 normalized tables)**:
+**Relational form (SQLite, 5 normalized tables: 3 entity + 2 junction)**:
 
 **`learning/code/ex-65-knowledge-graph-vs-relational-contrast/relational.sql`**
 
 ```sql
--- Example 65a: the SAME knowledge-graph question, 4 normalized tables (co-03).
--- => "4 normalized tables" undercounts it -- 3 entity tables PLUS 2 junction tables is really 5
+-- Example 65a: the SAME knowledge-graph question, 5 normalized tables (co-03).
 CREATE TABLE person (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
 
 -- => entity table 1 of 3 -- one row per Person node in Example 64's graph
@@ -1101,7 +1101,8 @@ def seed(tx) -> None:  # => plants Ada's one purchase, plus Bob's overlapping + 
         "CREATE (:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})"  # => Ada's only buy
     )  # => end of call 1
     tx.run(  # => call 2: Bob's two purchases, in a SEPARATE transaction call
-        "CREATE (o:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'}) "  # => shares Keyboard
+        "MATCH (i:Item {name: 'Keyboard'}) "  # => finds the SAME Keyboard node call 1 just created
+        "CREATE (o:User {name: 'Bob'})-[:BOUGHT]->(i) "  # => shares that SAME node, not a namesake
         "CREATE (o)-[:BOUGHT]->(:Item {name: 'Mousepad'})"  # => Bob's EXTRA purchase, the candidate
     )  # => same co-occurrence shape as Example 39 -- Bob shares Keyboard, ALSO bought Mousepad
 
@@ -1319,16 +1320,20 @@ CREATE (:Account {name: 'Acc' + toString(i)})-[:HAS_STATUS]->(verified);
 // Example 72b: AFTER -- accounts are bucketed through intermediate GROUP nodes first. (co-17, co-11)
 UNWIND range(1, 5) AS i
 // => the SAME 5 accounts as the "before" form, for a direct comparison
-CREATE (:Account {name: 'Acc' + toString(i)})
-      -[:IN_GROUP]->(:VerifiedGroup {bucket: toInteger(i / 3)})
-      // => each account joins a SMALL bucket first, instead of the shared node directly
-      -[:HAS_STATUS]->(:Status {label: 'verified'});
-// => each Account connects to a SMALL bucket node first -- the shared "verified" node's direct
-// degree is now bounded by the NUMBER OF BUCKETS, not the number of accounts
+MERGE (g:VerifiedGroup {bucket: toInteger(i / 3)})
+// => reuses the SAME bucket node when multiple accounts land in the same bucket -- CREATE here
+// would mint a fresh bucket every iteration instead of sharing one
+MERGE (s:Status {label: 'verified'})
+// => the ONE shared status node, reused across every bucket -- never duplicated
+MERGE (g)-[:HAS_STATUS]->(s)
+// => the bucket-to-status edge exists ONCE per bucket, not once per account
+CREATE (:Account {name: 'Acc' + toString(i)})-[:IN_GROUP]->(g);
+// => each account still gets its OWN fresh IN_GROUP edge into its bucket -- only the shared
+// group/status nodes and the edge between them are merged, not the accounts themselves
 
 MATCH (s:Status {label: 'verified'})
 // => the SAME shared node the "before" form measured, for a like-for-like comparison
-RETURN size((s)--()) AS status_degree;
+RETURN COUNT { (s)--() } AS status_degree;
 // => status_degree stays SMALL and roughly constant as account count grows -- unlike the "before" form
 ```
 
@@ -1504,9 +1509,10 @@ surfaced, not silently resolved by whichever write happened to land last.
 
 _ex-75 &middot; exercises co-22, co-20_
 
-Attempting `neo4j-admin database import` with duplicate unique-constrained keys makes the import
-TOOL itself report the violation -- it does not silently load both duplicate rows the way an
-unconstrained load might.
+Attempting `neo4j-admin database import` with a duplicate business-key VALUE (not a duplicate `:ID`)
+does NOT make the import tool itself report anything -- the tool's own check covers only structural
+node-id uniqueness; catching a duplicate like two rows both named "Ada" needs a real property-level
+uniqueness constraint, applied once the imported database starts.
 
 **`learning/code/ex-75-constraint-enforced-on-bulk-import/nodes_person.csv`**
 
@@ -1778,7 +1784,8 @@ drop-in semantic replacement, not a different algorithm.
 to eventually replace `shortestPath()`/`allShortestPaths()` (Example 16, Example 17) going forward,
 the same way Example 15's quantified relationships replace classic `*1..3` -- new Cypher 25 code
 should reach for this syntax, while existing Cypher 5 code using the legacy functions continues to
-work unchanged (co-21).
+work unchanged (co-21). (Cypher 5/Cypher 25 are the current dialect names at the time this course was
+written -- see the course overview's dated [Accuracy notes](../overview.md#accuracy-notes).)
 
 ---
 

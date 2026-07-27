@@ -3,7 +3,8 @@ CREATE (allstaff:Group {name: 'AllStaff'})
 WITH allstaff
 UNWIND range(1, 18) AS i
 CREATE (:Person {name: 'Emp' + toString(i)})-[:MEMBER_OF]->(allstaff)
-WITH allstaff
+WITH allstaff, count(*) AS _
+// => an AGGREGATING WITH -- collapses the 18 UNWIND rows back to 1, same fix as the "before" form
 CREATE (ada:Person {name: 'Ada'})-[:MEMBER_OF]->(allstaff)
 CREATE (bob:Person {name: 'Bob'})-[:MEMBER_OF]->(allstaff)
 WITH ada, bob

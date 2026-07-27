@@ -152,7 +152,3 @@ weight: 95
   - [Overview](/en/learn/courses/graph-databases/overview)
   - [Learning](/en/learn/courses/graph-databases/learning)
   - [Drilling](/en/learn/courses/graph-databases/drilling)
-- [Graph Databases](/en/learn/courses/graph-databases)
-  - [Overview](/en/learn/courses/graph-databases/overview)
-  - [Learning](/en/learn/courses/graph-databases/learning)
-  - [Drilling](/en/learn/courses/graph-databases/drilling)

@@ -12,7 +12,8 @@ def seed(
         "CREATE (:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})"  # => Ada's only buy
     )  # => end of call 1
     tx.run(  # => call 2: Bob's two purchases, in a SEPARATE transaction call
-        "CREATE (o:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'}) "  # => shares Keyboard
+        "MATCH (i:Item {name: 'Keyboard'}) "  # => finds the SAME Keyboard node call 1 just created
+        "CREATE (o:User {name: 'Bob'})-[:BOUGHT]->(i) "  # => shares that SAME node, not a namesake
         "CREATE (o)-[:BOUGHT]->(:Item {name: 'Mousepad'})"  # => Bob's EXTRA purchase, the candidate
     )  # => same co-occurrence shape as Example 39 -- Bob shares Keyboard, ALSO bought Mousepad
 

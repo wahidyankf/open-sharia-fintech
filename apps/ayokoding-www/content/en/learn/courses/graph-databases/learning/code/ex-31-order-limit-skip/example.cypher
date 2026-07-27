@@ -15,7 +15,8 @@ RETURN p.name
 // => projects just the name -- born is used for sorting only, not returned
 ORDER BY p.born DESC
 // => sorts the 5 rows newest-born first
-LIMIT 3
-// => keeps only the top 3 of that sorted order
-SKIP 0;
-// => the 3 MOST RECENTLY BORN people, most recent first -- SKIP 0 means "start from the very top"
+SKIP 0
+// => SKIP 0 means "start from the very top" -- must precede LIMIT (Cypher clause order is
+// ORDER BY, then SKIP, then LIMIT)
+LIMIT 3;
+// => the 3 MOST RECENTLY BORN people, most recent first

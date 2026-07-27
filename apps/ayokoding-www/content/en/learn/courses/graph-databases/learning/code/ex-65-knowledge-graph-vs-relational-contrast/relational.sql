@@ -1,5 +1,4 @@
--- Example 65a: the SAME knowledge-graph question, 4 normalized tables (co-03).
--- => "4 normalized tables" undercounts it -- 3 entity tables PLUS 2 junction tables is really 5
+-- Example 65a: the SAME knowledge-graph question, 5 normalized tables (co-03).
 CREATE TABLE person (id INTEGER PRIMARY KEY, name TEXT NOT NULL);
 
 -- => entity table 1 of 3 -- one row per Person node in Example 64's graph

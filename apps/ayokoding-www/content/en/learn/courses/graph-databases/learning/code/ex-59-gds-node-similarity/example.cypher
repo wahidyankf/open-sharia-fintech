@@ -1,12 +1,12 @@
 // Example 59: GDS: Node Similarity. (co-26, co-15)
-CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first purchase
-CREATE (u1)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second purchase -- her full purchased set is now {Keyboard, Monitor}
-CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob's first purchase -- overlaps with Ada's Keyboard
-CREATE (u2)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob's second purchase -- his set {Keyboard, Monitor} matches Ada's EXACTLY
+CREATE (u1:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first purchase, kb aliased for reuse below
+CREATE (u1)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second purchase -- her full purchased set is now {Keyboard, Monitor}, mon aliased for reuse
+CREATE (u2:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob's first purchase -- the SAME Keyboard node as Ada's, not a namesake
+CREATE (u2)-[:BOUGHT]->(mon)
+// => Bob's second purchase -- the SAME Monitor node too, so his set matches Ada's EXACTLY
 CREATE (u3:User {name: 'Cid'})-[:BOUGHT]->(:Item {name: 'Headset'});
 // => Ada and Bob overlap on BOTH items; Cid overlaps with neither -- purposely maximal contrast
 

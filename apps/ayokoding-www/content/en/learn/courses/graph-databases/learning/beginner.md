@@ -10,11 +10,13 @@ relationships; the `MATCH`/`WHERE`/`RETURN` read pipeline and the `CREATE`/`MERG
 variable-length and shortest-path traversal (classic and GQL-conformant syntax side by side); why
 index-free adjacency keeps a hop cheap regardless of graph size; constraints and indexes; ACID
 transactions from Python; the two bulk-loading paths (`LOAD CSV` and `neo4j-admin` offline import);
-and a first look at the RDF/SPARQL alternative to the property graph. Every example is fully
-self-contained -- it creates its own nodes and relationships (or its own RDF triples), so none of
-them depend on state left behind by an earlier example. Run each `.cypher` example with
-`cypher-shell < example.cypher` from a clean database; run each `.py` example with
-`python3 example.py`.
+and a first look at the RDF/SPARQL alternative to the property graph. Every example except Example
+22 is fully self-contained -- it creates its own nodes and relationships (or its own RDF triples), so
+none of them depend on state left behind by an earlier example. Example 22 is the one exception: it
+deliberately reuses the `person_name` uniqueness constraint Example 20 creates, so run Example 20
+first (or otherwise ensure that constraint already exists) before running Example 22. Run each
+`.cypher` example with `cypher-shell < example.cypher` from a clean database; run each `.py` example
+with `python3 example.py`.
 
 ---
 
@@ -768,12 +770,12 @@ prefixed with `CYPHER 25`, per Example 53)
 `*1..3` (Example 14) going forward -- same traversal result on an equivalent fixture, standardized
 syntax.
 
-**Why it matters**: Neo4j ships two parallel Cypher versions since it moved to calendar versioning
-(2025.x/2026.x): **Cypher 5** (frozen, bug-fixes only) and **Cypher 25** (evolving, default for new
-databases from Neo4j 2026.02 onward). New code should reach for the quantified form here, not the
-classic `*1..3` from Example 14, even though both still work today -- this pair of examples exists
-specifically so both are visible side by side rather than teaching only one and hiding the
-migration path.
+**Why it matters**: Neo4j ships two parallel Cypher versions, one frozen and one evolving (see the
+course overview's dated [Accuracy notes](../overview.md#accuracy-notes) for the current dialect
+names and the calendar version at which the evolving one became the default). New code should reach
+for the quantified form here, not the classic `*1..3` from Example 14, even though both still work
+today -- this pair of examples exists specifically so both are visible side by side rather than
+teaching only one and hiding the migration path.
 
 ---
 

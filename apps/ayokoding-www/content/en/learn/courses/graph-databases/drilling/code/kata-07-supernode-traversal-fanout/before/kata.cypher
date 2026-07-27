@@ -7,7 +7,9 @@ WITH allstaff
 UNWIND range(1, 18) AS i
 CREATE (:Person {name: 'Emp' + toString(i)})-[:MEMBER_OF]->(allstaff)
 // => 18 unrelated employees, ALL connected to the SAME AllStaff node
-WITH allstaff
+WITH allstaff, count(*) AS _
+// => an AGGREGATING WITH -- collapses the 18 UNWIND rows back to 1. A bare `WITH allstaff`
+// here would still carry 18 rows, so every write below would fire 18 times, not once.
 CREATE (ada:Person {name: 'Ada'})-[:MEMBER_OF]->(allstaff)
 CREATE (bob:Person {name: 'Bob'})-[:MEMBER_OF]->(allstaff)
 // => Ada and Bob also belong to AllStaff, like everyone else -- AllStaff's degree is now 20

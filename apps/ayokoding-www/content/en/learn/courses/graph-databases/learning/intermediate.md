@@ -216,7 +216,7 @@ list view usually wants, and the same building block Example 39's recommendation
 
 _ex-31 &middot; exercises co-23_
 
-`ORDER BY` sorts the result set; `LIMIT` caps it; `SKIP` offsets it -- together, the standard paging
+`ORDER BY` sorts the result set; `SKIP` offsets it; `LIMIT` caps it -- together, the standard paging
 triple, evaluated in that order after everything else in the query has already run.
 
 **`learning/code/ex-31-order-limit-skip/example.cypher`**
@@ -239,10 +239,11 @@ RETURN p.name
 // => projects just the name -- born is used for sorting only, not returned
 ORDER BY p.born DESC
 // => sorts the 5 rows newest-born first
-LIMIT 3
-// => keeps only the top 3 of that sorted order
-SKIP 0;
-// => the 3 MOST RECENTLY BORN people, most recent first -- SKIP 0 means "start from the very top"
+SKIP 0
+// => SKIP 0 means "start from the very top" -- must precede LIMIT (Cypher clause order is
+// ORDER BY, then SKIP, then LIMIT)
+LIMIT 3;
+// => the 3 MOST RECENTLY BORN people, most recent first
 ```
 
 **Run**: `cypher-shell < example.cypher`
@@ -816,10 +817,11 @@ graph LR
 
 ```cypher
 // Example 39: Recommendation by Co-Occurrence. (co-15, co-08)
-CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada bought exactly one item
-CREATE (other:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob bought the SAME item as Ada -- the shared signal the pattern below finds
+CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(shared:Item {name: 'Keyboard'})
+// => Ada bought exactly one item, shared aliased for reuse below
+CREATE (other:User {name: 'Bob'})-[:BOUGHT]->(shared)
+// => Bob bought the SAME Keyboard node as Ada -- bound once and reused, not a second CREATE
+// with a matching name, which would mint a structurally distinct node
 CREATE (other)-[:BOUGHT]->(:Item {name: 'Mousepad'});
 // => Ada and Bob BOTH bought Keyboard; Bob ALSO bought Mousepad -- Ada has not
 
@@ -867,18 +869,18 @@ recommendation filters out low-signal, coincidental overlaps.
 
 ```cypher
 // Example 40: Recommendation with a Minimum-Overlap Threshold. (co-15, co-23)
-CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Ada's first item, u aliased for reuse
-CREATE (u)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Ada's second item
-CREATE (strong:User {name: 'Bob'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Bob shares item #1 with Ada
-CREATE (strong)-[:BOUGHT]->(:Item {name: 'Monitor'})
-// => Bob shares item #2 with Ada too -- overlap = 2
+CREATE (u:User {name: 'Ada'})-[:BOUGHT]->(kb:Item {name: 'Keyboard'})
+// => Ada's first item, u and kb both aliased for reuse below
+CREATE (u)-[:BOUGHT]->(mon:Item {name: 'Monitor'})
+// => Ada's second item, mon aliased for reuse below
+CREATE (strong:User {name: 'Bob'})-[:BOUGHT]->(kb)
+// => Bob shares the SAME Keyboard node as Ada -- bound once and reused, not re-CREATEd
+CREATE (strong)-[:BOUGHT]->(mon)
+// => Bob shares the SAME Monitor node as Ada too -- overlap = 2 shared nodes, not 2 coincidences
 CREATE (strong)-[:BOUGHT]->(:Item {name: 'Mousepad'})
 // => Bob's OWN extra item, the eventual recommendation candidate
-CREATE (weak:User {name: 'Cid'})-[:BOUGHT]->(:Item {name: 'Keyboard'})
-// => Cid shares only ONE item with Ada -- overlap = 1
+CREATE (weak:User {name: 'Cid'})-[:BOUGHT]->(kb)
+// => Cid shares the SAME Keyboard node with Ada -- overlap = 1
 CREATE (weak)-[:BOUGHT]->(:Item {name: 'Headset'});
 // => Bob shares 2 items with Ada (strong overlap); Cid shares only 1 (weak overlap)
 
@@ -1034,7 +1036,7 @@ directly as this single pattern does.
 
 _ex-43 &middot; exercises co-17_
 
-`size((n)--())` counts a node's total relationships (its degree) -- the direct way to find the
+`COUNT { (n)--() }` counts a node's total relationships (its degree) -- the direct way to find the
 handful of unusually well-connected nodes in an otherwise ordinary graph.
 
 ```mermaid
@@ -1066,7 +1068,7 @@ CREATE (:Person {name: 'Ordinary'})-[:KNOWS]->(:Person {name: 'Friend'});
 
 MATCH (n)
 // => every node in the database, Hub, its 20 leaves, and the ordinary pair
-RETURN n.name, size((n)--()) AS degree
+RETURN n.name, COUNT { (n)--() } AS degree
 // => undirected degree count, per node
 ORDER BY degree DESC
 // => highest-degree node sorts first
@@ -1091,7 +1093,7 @@ LIMIT 5;
 5 rows
 ```
 
-**Key takeaway**: `size((n)--())` (undirected, from Example 9) counts every relationship touching
+**Key takeaway**: `COUNT { (n)--() }` (undirected, from Example 9) counts every relationship touching
 `n` regardless of direction -- the top-degree node in the output is the synthetic supernode planted
 in this fixture, exactly as expected.
 
@@ -1582,10 +1584,11 @@ CYPHER 5 MATCH (n:Order) RETURN n;
 whatever default dialect the database itself is configured for, for exactly the one statement it
 prefixes.
 
-**Why it matters**: Neo4j's calendar-versioned releases (2025.x, 2026.x) ship two parallel Cypher
-dialects side by side -- Cypher 5, frozen and bug-fixes-only, exists specifically so existing queries
-and application code keep behaving identically even as Cypher 25 (Example 53) continues evolving
-underneath it (co-21).
+**Why it matters**: Neo4j's calendar-versioned releases ship two parallel Cypher dialects side by
+side -- Cypher 5, frozen and bug-fixes-only, exists specifically so existing queries and application
+code keep behaving identically even as Cypher 25 (Example 53) continues evolving underneath it
+(co-21). See the course overview's dated [Accuracy notes](../overview.md#accuracy-notes) for the
+current release-version specifics.
 
 ---
 
@@ -1594,7 +1597,9 @@ underneath it (co-21).
 _ex-53 &middot; exercises co-21 &middot; targets Cypher 25 explicitly_
 
 The `CYPHER 25` prefix pins a query to the evolving dialect -- the default for new databases created
-on Neo4j 2026.02 and later -- returning the identical result to Example 52 on identical data.
+from the calendar version stated in the course overview's dated
+[Accuracy notes](../overview.md#accuracy-notes) onward -- returning the identical result to
+Example 52 on identical data.
 
 **`learning/code/ex-53-cypher-version-pin-cypher25/example.cypher`**
 

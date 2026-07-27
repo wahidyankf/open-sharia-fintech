@@ -13,7 +13,7 @@ CREATE (:Person {name: 'Ordinary'})-[:KNOWS]->(:Person {name: 'Friend'});
 
 MATCH (n)
 // => every node in the database, Hub, its 20 leaves, and the ordinary pair
-RETURN n.name, size((n)--()) AS degree
+RETURN n.name, COUNT { (n)--() } AS degree
 // => undirected degree count, per node
 ORDER BY degree DESC
 // => highest-degree node sorts first
