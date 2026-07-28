@@ -69,10 +69,12 @@ grey communicates more effectively than another saturated hue.
 | light   | oklch(0.96 0.01 85) | oklch(0.20 0.012 70) | 4.05:1 | ✗     |
 | unrated | oklch(0.96 0.01 85) | oklch(0.20 0.012 70) | 4.05:1 | ✗     |
 
-**Known gap**: dark-theme contrast is 4.05:1, below the 4.5:1 AA threshold. The dark `--warm-0`
-(OKLCH L=0.20, the darkest available existing token) yields sRGB relative luminance ≈ 0.197.
-Against the dark `--warm-900` (OKLCH L=0.96, luminance ≈ 0.93), the contrast is (0.93+0.05)/
-(0.197+0.05) = 3.97:1. No existing token in the dark palette is darker than `--warm-0` at L=0.20.
+**Known gap**: dark-theme contrast is 4.05:1 (precise OKLCH→sRGB conversion, per the table
+above), below the 4.5:1 AA threshold. The dark `--warm-0` (OKLCH L=0.20, the darkest available
+existing token) yields sRGB relative luminance ≈ 0.197; against the dark `--warm-900` (OKLCH
+L=0.96, luminance ≈ 0.93), the rounded-luminance approximation gives (0.93+0.05)/(0.197+0.05)
+≈ 3.97:1 — consistent with the table's precise 4.05:1 within rounding. No existing token in the
+dark palette is darker than `--warm-0` at L=0.20.
 
 **Remediation path**: Phase 9's live-page AC-38 assertion ("Band colours meet contrast in both
 themes") will catch this. The fix is either (a) lowering the dark `--warm-0` OKLCH lightness
@@ -101,7 +103,7 @@ for Phase 9 action, not resolved in Phase 1.
 | light   | 0.82   | 0.96  | 0.20   | 0.76         |
 | unrated | 0.58   | 0.96  | 0.20   | 0.76         |
 
-### Resolved hex approximations
+## Resolved hex approximations
 
 ```text
 #cccbdd
