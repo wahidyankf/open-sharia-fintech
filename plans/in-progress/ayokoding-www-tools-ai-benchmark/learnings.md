@@ -1,7 +1,7 @@
+# Learnings: ayokoding-www-tools-ai-benchmark
+
 <!-- Knowledge Capture running log — append entries during execution. -->
 <!-- Triage every entry (or record the explicit "none" escape) before archival. -->
-
-# Learnings: ayokoding-www-tools-ai-benchmark
 
 Append one entry per generalizable learning **as it surfaces** — not reconstructed from memory at the
 end. Sanitize per the secret/sensitivity gate before writing anything down.

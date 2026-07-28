@@ -1,0 +1,239 @@
+# Phase 0 Baseline — 2026-07-28T06:19:56Z
+
+## nx run ayokoding-www:test:quick
+
+> nx run ayokoding-www:"test:quick"
+
+> npx nx run ayokoding-www:typecheck
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:typecheck
+
+[2m> [22mtsc --noEmit
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtypecheck[22m for project ayokoding-www[39m
+
+
+> npx nx run ayokoding-www:lint
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:lint
+
+[2m> [22mnpx oxlint@latest --jsx-a11y-plugin .
+
+npm warn exec The following package was not found and will be installed: oxlint@1.76.0
+content/en/learn/courses/just-enough-typescript/learning/code/ex-77-eslint-clean/bad.ts:3:9: warning eslint(no-unused-vars): Variable 'unused' is declared but never used. Unused variables should start with a '_'. help: Consider removing this declaration.
+content/en/learn/courses/just-enough-typescript/drilling/code/kata-07-import-type-runtime-value/before/main.ts:3:15: warning eslint(no-unused-vars): Type 'ApiError' is imported but never used. help: Consider removing this import.
+src/features/search/shell/search-dialog.test.tsx:32:17: warning jsx-a11y(prefer-tag-over-role): Prefer `dialog` over `role` attribute `dialog`. help: Replace HTML elements with `role` attribute `dialog` to corresponding semantic HTML tag `dialog`.
+content/en/learn/courses/frontend-essentials/learning/code/ex-79-responsive-grid-component/verify.mjs:11:16: warning eslint(no-unused-vars): Function 'columnCount' is declared but never used. help: Consider removing this declaration.
+content/en/learn/courses/frontend-essentials/learning/code/ex-68-discriminated-union-exhaustive/example.ts:10:10: warning eslint(no-unused-vars): Function 'render' is declared but never used. help: Consider removing this declaration.
+src/features/cost-of-living-calculator/shell/controls.tsx:58:13: warning jsx-a11y(prefer-tag-over-role): Prefer `input` over `role` attribute `radio`. help: Replace HTML elements with `role` attribute `radio` to corresponding semantic HTML tag `input`.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mlint[22m for project ayokoding-www[39m
+
+
+> npx nx run ayokoding-www:test:unit
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:"test:unit"
+
+[2m> [22mif grep -rn -E --include='*.ts' --include='*.tsx' --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=dist --exclude-dir=coverage --exclude-dir=storybook-static '\b(it|test|describe)\.(skip|only|todo)\(' .; then echo 'ERROR: .skip()/.only()/.todo() found in test files above - remove before merging'; exit 1; fi && npx vitest run --project unit --project unit-fe --testTimeout=60000
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens/apps/ayokoding-www[39m
+
+
+[2m Test Files [22m [1m[32m126 passed[39m[22m[90m (126)[39m
+[2m      Tests [22m [1m[32m2431 passed[39m[22m[2m | [22m[33m6 skipped[39m[90m (2437)[39m
+[2m   Start at [22m 13:20:11
+[2m   Duration [22m 85.85s[2m (transform 19.11s, setup 6.41s, import 67.96s, tests 179.45s, environment 76.34s)[22m
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:unit[22m for project ayokoding-www[39m
+
+
+> npx nx run ayokoding-www:test:coverage
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:"test:coverage"
+
+[2m> [22mnpx vitest run --project unit --project unit-fe --coverage --coverage.thresholds.lines=82 --testTimeout=60000
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90m/Users/wkf/ose-projects/ose-public/worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens/apps/ayokoding-www[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+
+[2m Test Files [22m [1m[32m126 passed[39m[22m[90m (126)[39m
+[2m      Tests [22m [1m[32m2431 passed[39m[22m[2m | [22m[33m6 skipped[39m[90m (2437)[39m
+[2m   Start at [22m 13:21:39
+[2m   Duration [22m 119.52s[2m (transform 21.06s, setup 7.57s, import 71.76s, tests 241.66s, environment 76.18s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+[32;1mAll files         [0m | [32;1m  95.75[0m | [32;1m   87.38[0m | [32;1m  96.93[0m | [32;1m  97.38[0m | [31;1m                 [0m 
+[32;1m src              [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  env.ts          [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...app-shell/core[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  nav-links.ts    [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...pp-shell/shell[0m | [32;1m   90.9[0m | [32;1m     100[0m | [31;1m  33.33[0m | [32;1m   90.9[0m | [31;1m                 [0m 
+[32;1m  trpc-init.ts    [0m | [32;1m  85.71[0m | [32;1m     100[0m | [31;1m      0[0m | [32;1m  85.71[0m | [31;1m15               [0m 
+[32;1m  ...e-nav-open.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [33;1m     50[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...s/content/core[0m | [32;1m   98.4[0m | [32;1m    90.9[0m | [32;1m    100[0m | [32;1m  99.06[0m | [31;1m                 [0m 
+[32;1m  ...nk-rewrite.ts[0m | [32;1m  93.75[0m | [32;1m   83.33[0m | [32;1m    100[0m | [32;1m  93.33[0m | [31;1m62               [0m 
+[32;1m  content-url.ts  [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...g-sections.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  schemas.ts      [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  shortcodes.ts   [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  slug.ts         [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  tree-builder.ts [0m | [32;1m   98.7[0m | [32;1m   88.88[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m34,53,94,104     [0m 
+[32;1m .../content/shell[0m | [32;1m  81.74[0m | [33;1m   79.31[0m | [32;1m   82.6[0m | [32;1m  85.45[0m | [31;1m                 [0m 
+[32;1m  ...ory-memory.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  service.ts      [0m | [32;1m  80.67[0m | [33;1m   78.57[0m | [32;1m     80[0m | [32;1m  84.46[0m | [31;1m...60,168-192,254[0m 
+[32;1m ...alculator/core[0m | [32;1m  95.89[0m | [32;1m   84.23[0m | [32;1m    100[0m | [32;1m  97.74[0m | [31;1m                 [0m 
+[32;1m  calc.ts         [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  format.ts       [0m | [32;1m  88.88[0m | [33;1m   66.66[0m | [32;1m    100[0m | [32;1m  85.71[0m | [31;1m26               [0m 
+[32;1m  geo-filter.ts   [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  role-lookup.ts  [0m | [32;1m   92.3[0m | [33;1m   69.09[0m | [32;1m    100[0m | [32;1m  98.73[0m | [31;1m135              [0m 
+[32;1m  url-state.ts    [0m | [32;1m  96.59[0m | [32;1m    87.5[0m | [32;1m    100[0m | [32;1m  96.87[0m | [31;1m...42,413,419,428[0m 
+[32;1m ...ator/core/data[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  cities.ts       [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  fx.ts           [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  roles.ts        [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...lculator/shell[0m | [32;1m  96.29[0m | [32;1m      89[0m | [32;1m  96.03[0m | [32;1m  98.92[0m | [31;1m                 [0m 
+[32;1m  ...readcrumb.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  city-detail.tsx [0m | [32;1m   90.9[0m | [33;1m   78.57[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m62,69-72,100-101 [0m 
+[32;1m  controls.tsx    [0m | [32;1m    100[0m | [32;1m   88.23[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m116-117,263-266  [0m 
+[32;1m  ...of-living.tsx[0m | [32;1m  94.44[0m | [32;1m   85.71[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m40,151-170,257   [0m 
+[32;1m  ...hool-flag.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  geo-filters.tsx [0m | [32;1m    100[0m | [32;1m      88[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m52,143,160       [0m 
+[32;1m  min-role.tsx    [0m | [32;1m  96.42[0m | [32;1m   92.23[0m | [32;1m  94.59[0m | [32;1m  97.82[0m | [31;1m40,173           [0m 
+[32;1m  savings.tsx     [0m | [32;1m  92.85[0m | [32;1m   90.19[0m | [32;1m   87.5[0m | [32;1m     98[0m | [31;1m293              [0m 
+[32;1m  ...nced-field.ts[0m | [32;1m    100[0m | [32;1m   91.66[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m79               [0m 
+[32;1m ...rse-paths/core[0m | [32;1m  98.61[0m | [32;1m   88.23[0m | [32;1m    100[0m | [32;1m  98.46[0m | [31;1m                 [0m 
+[32;1m  ...-integrity.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  manifest.ts     [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  path-context.ts [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  path-hue.ts     [0m | [32;1m   90.9[0m | [33;1m   66.66[0m | [32;1m    100[0m | [32;1m   90.9[0m | [31;1m63               [0m 
+[32;1m  path-nav.ts     [0m | [32;1m    100[0m | [32;1m      80[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m26-27            [0m 
+[32;1m  prerequisites.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  schemas.ts      [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...se-paths/shell[0m | [32;1m  98.76[0m | [32;1m   90.78[0m | [32;1m  98.61[0m | [32;1m  99.12[0m | [31;1m                 [0m 
+[32;1m  arc-landing.tsx [0m | [32;1m    100[0m | [32;1m   83.33[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m46               [0m 
+[32;1m  ...y-landing.tsx[0m | [32;1m    100[0m | [32;1m      80[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m35,84-111        [0m 
+[32;1m  ...se-library.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...e-path-nav.ts[0m | [32;1m  97.14[0m | [32;1m   95.23[0m | [32;1m    100[0m | [32;1m  98.46[0m | [31;1m70               [0m 
+[32;1m  ...ist-state.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...repository.ts[0m | [32;1m     96[0m | [33;1m      60[0m | [33;1m  66.66[0m | [32;1m     96[0m | [31;1m18               [0m 
+[32;1m  path-banner.tsx [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  path-card.tsx   [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...rse-links.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  path-landing.tsx[0m | [32;1m    100[0m | [32;1m    87.5[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m61               [0m 
+[32;1m  path-rail.tsx   [0m | [32;1m    100[0m | [32;1m    87.5[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m57               [0m 
+[32;1m  paths-route.ts  [0m | [32;1m    100[0m | [32;1m   93.75[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m80,96            [0m 
+[32;1m  ...site-list.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...one-strip.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...-path-data.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  sidebar-host.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...s-preview.tsx[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...ures/i18n/core[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  config.ts       [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  html-lang.ts    [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  schemas.ts      [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  translations.ts [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m ...es/search/core[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  schemas.ts      [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m src/lib          [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  utils.ts        [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m src/redirects    [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...-namespace.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  course-rehome.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  learn-reorg.ts  [0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+[32;1m  ...ree-bucket.ts[0m | [32;1m    100[0m | [32;1m     100[0m | [32;1m    100[0m | [32;1m    100[0m | [33;1m                 [0m 
+-------------------|---------|----------|---------|---------|-------------------
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:coverage[22m for project ayokoding-www[39m
+
+
+> npx nx run ayokoding-www:test:specs
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:"test:specs"
+
+[2m> [22mnpx nx run ayokoding-www:specs:structure-validation
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:"specs:structure-validation"
+
+[2m> [22mcargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate
+
+specs structure validate: 0 finding(s) for "ayokoding"
+specs structure validate: 0 finding(s) for "crane"
+specs structure validate: 0 finding(s) for "organiclever"
+specs structure validate: 0 finding(s) for "ose"
+specs structure validate: 0 finding(s) for "rhino"
+specs structure validate: 0 finding(s) for "wahidyankf"
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:structure-validation[22m for project ayokoding-www[39m
+
+
+[2m> [22mnpx nx run ayokoding-www:specs:behavior:coverage
+
+
+[2m> [22m[2mnx run[22m ayokoding-www:"specs:behavior:coverage"
+
+[2m> [22mcargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/behavior/ayokoding-www/gherkin specs/apps/ayokoding/behavior/ayokoding-be/gherkin specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin apps/ayokoding-www
+
+Spec coverage valid! 40 specs, 284 scenarios, 1028 steps — all covered.
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mspecs:behavior:coverage[22m for project ayokoding-www[39m
+
+
+
+[2m[32m[39m[22m
+
+[7m[1m[32m NX [39m[22m[27m  [32mSuccessfully ran target [1mtest:specs[22m for project ayokoding-www[39m
+
+
+
+
+
+ NX   Successfully ran target test:quick for project ayokoding-www
+
+
+
+## nx run ayokoding-www:specs:behavior:coverage
+
+> nx run ayokoding-www:"specs:behavior:coverage"  [existing outputs match the cache, left as is]
+
+[2m> [22mcargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs behavior-coverage validate --shared-steps --exclude-source-dir content specs/apps/ayokoding/behavior/ayokoding-www/gherkin specs/apps/ayokoding/behavior/ayokoding-be/gherkin specs/apps/ayokoding/behavior/ayokoding-build-tools/gherkin apps/ayokoding-www
+
+Spec coverage valid! 40 specs, 284 scenarios, 1028 steps — all covered.
+
+
+
+ NX   Successfully ran target specs:behavior:coverage for project ayokoding-www
+
+Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
+

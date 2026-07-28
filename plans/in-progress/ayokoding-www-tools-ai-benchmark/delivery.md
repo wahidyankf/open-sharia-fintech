@@ -277,48 +277,87 @@ Runs after every push — and therefore **never in Phase 0**, which pushes nothi
 > branch, runs no PR-Review Maker→Fixer Cycle, and merges nothing — under every Delivery Mode. The
 > earliest phase that may open a PR is Phase 1; any evidence file written here rides the Phase 1 PR.
 
-- [ ] [AI] Provision **unit 1's** worktree from the latest `origin/main` — Phase 0 has no worktree of
+- [x] [AI] Provision **unit 1's** worktree from the latest `origin/main` — Phase 0 has no worktree of
       its own (see [Worktree](#worktree)):
       `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens origin/main`
       — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens
 rev-parse --show-toplevel` prints the worktree path
-- [ ] [AI] Install dependencies in the **root** worktree: `npm install`
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: new worktree `worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens/` on branch `ayokoding-www-tools-ai-benchmark/phase-1-design-and-tokens` provisioned from `origin/main` (HEAD `20e925c5d`)
+  - **Notes**: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens rev-parse --show-toplevel` prints `/Users/wkf/ose-projects/ose-public/worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens` — acceptance met.
+- [x] [AI] Install dependencies in the **root** worktree: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized
-- [ ] [AI] Converge the full polyglot toolchain in the **root** worktree: `npm run doctor -- --fix`
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: `node_modules/` populated in the worktree
+  - **Notes**: `npm install` exited 0 in `worktrees/ayokoding-www-tools-ai-benchmark-phase-1-design-and-tokens/`.
+- [x] [AI] Converge the full polyglot toolchain in the **root** worktree: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift
-- [ ] [AI] Install the e2e project's own dependencies:
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: 4 rust target-share dirs created (`apps/ayokoding-cli`, `apps/ose-cli`, `apps/rhino-cli`, `libs/rust-commons`)
+  - **Notes**: `npm run doctor -- --fix` → `16/16 tools OK, 0 warning, 0 missing`; nothing to fix.
+- [x] [AI] Install the e2e project's own dependencies:
       `npx nx run ayokoding-www-fe-e2e:install` — acceptance: exits 0
-- [ ] [AI] Verify the dev server starts: `npx nx dev ayokoding-www` and request
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: `apps/ayokoding-www-fe-e2e/node_modules/` populated
+  - **Notes**: `npx nx run ayokoding-www-fe-e2e:install` → `NX Successfully ran target install for project ayokoding-www-fe-e2e`; 9 audit advisories (2 low, 5 moderate, 2 high) noted but install exited 0.
+- [x] [AI] Verify the dev server starts: `npx nx dev ayokoding-www` and request
       `curl -s -o /dev/null -w '%{http_code}' http://localhost:3101/en/tools` — acceptance: prints
       `200`; stop the server afterwards
-- [ ] [AI] Record the baseline: `npx nx run ayokoding-www:test:quick` and
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: none (ephemeral dev server run)
+  - **Notes**: `npx nx dev ayokoding-www` started; `curl -s -o /dev/null -w '%{http_code}' http://localhost:3101/en/tools` → `200` after 6s; server stopped (PID 6026 killed).
+- [x] [AI] Record the baseline: `npx nx run ayokoding-www:test:quick` and
       `npx nx run ayokoding-www:specs:behavior:coverage`, writing combined output to
       `<EV>phase-0-baseline.txt` — acceptance: the file exists and records the pass/fail count of
       each target
-- [ ] [AI] Record the current `<REF>` state for the Phase 3 diff:
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: `evidence/phase-0-baseline.txt` (239 lines)
+  - **Notes**: Both targets succeeded — `test:quick` → `NX Successfully ran target test:quick for project ayokoding-www`; `specs:behavior:coverage` → `Spec coverage valid! 40 specs, 284 scenarios, 1028 steps — all covered`. Zero unresolved failures recorded.
+- [x] [AI] Record the current `<REF>` state for the Phase 3 diff:
       `git log -1 --format=%H -- docs/reference/ai-model-benchmarks.md > <EV>phase-0-reference-head.txt`
       — acceptance: the file contains a 40-character commit hash
-- [ ] [AI] Resolve every preexisting failure found in the baseline before proceeding
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: `evidence/phase-0-reference-head.txt`
+  - **Notes**: contents `e159aa2ca2346e11b7888e20c4a188d3583b5b9b` (40 hex chars) — commit head of `docs/reference/ai-model-benchmarks.md` at baseline.
+- [x] [AI] Resolve every preexisting failure found in the baseline before proceeding
       — acceptance: `<EV>phase-0-baseline.txt` records zero unresolved failures, or names each
       resolved one with its fix commit
-- [ ] [AI] Create the Knowledge Capture running log at `<PLAN>learnings.md` if the plan folder does
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: none
+  - **Notes**: `evidence/phase-0-baseline.txt` records zero failures — `test:quick` and `specs:behavior:coverage` both exited 0 cleanly. Nothing to resolve.
+- [x] [AI] Create the Knowledge Capture running log at `<PLAN>learnings.md` if the plan folder does
       not already carry one — acceptance: the file exists and its first content line is the H1
       `# Learnings: ayokoding-www-tools-ai-benchmark`
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files Changed**: `learnings.md` (H1 moved to line 1 to satisfy the "first content line is the H1" acceptance; pre-existing body preserved)
+  - **Notes**: `learnings.md` already existed in the plan folder; reordered so the H1 `# Learnings: ayokoding-www-tools-ai-benchmark` is the first content line (previously preceded by two HTML-comment lines).
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` baseline recorded in
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift
+- [x] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` baseline recorded in
       `<EV>phase-0-baseline.txt` and every preexisting failure resolved (zero unresolved)
-- [ ] [AI] Nothing was pushed and no PR exists for this branch — run both, reading the printed number
+- [x] [AI] Nothing was pushed and no PR exists for this branch — run both, reading the printed number
       (never `&&`-chaining, since `grep -c` exits 1 on a zero count):
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns `0`, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns `0`.
       Falsifiable both ways: pushing the branch makes the first return `1`, and opening a PR for it
       makes the second return `1` — either fails the gate. Local commits are allowed (evidence
       artifacts ride the Phase 1 PR); what is forbidden is a push and a PR.
+  - **Date**: 2026-07-28
+  - **Status**: gate passed
+  - **Notes**: (1) `npm install` exited 0; `npm run doctor -- --fix` → `16/16 tools OK, 0 warning, 0 missing`. (2) `evidence/phase-0-baseline.txt` records both `test:quick` and `specs:behavior:coverage` succeeding with zero unresolved failures. (3) `git ls-remote --heads origin "ayokoding-www-tools-ai-benchmark/phase-1-design-and-tokens" | grep -c .` → `0`; `gh pr list --head "ayokoding-www-tools-ai-benchmark/phase-1-design-and-tokens" --json number --jq 'length'` → `0`. Zero pushes, zero PRs — Phase 0 honors the no-PR rule under `worktree-to-pr`; evidence rides the Phase 1 PR.
 
 > **Pause Safety**: only the local toolchain was verified and the baseline recorded — no feature work
 > exists yet, nothing is pushed, and no PR exists. Safe to stop indefinitely. To resume: re-run
