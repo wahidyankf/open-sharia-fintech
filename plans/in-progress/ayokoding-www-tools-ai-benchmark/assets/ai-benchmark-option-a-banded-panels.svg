@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1780" font-family="Arial, Helvetica, sans-serif">
   <!-- Hi-fi finalist — Option A: Banded Stacked Panels (desktop, lg >= 1024px) -->
-  <!-- Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080 -->
+  <!-- Palette: Blue #0173B2, Orange #e8e0c7, Teal #ced6dc, Purple #cccbdd, Brown #CA9161, Gray #cfcecb -->
   <!-- Band colours are always paired with a text label — never colour alone. -->
 
   <rect x="0" y="0" width="1240" height="1780" fill="#FFFFFF" />
@@ -39,55 +39,55 @@
   <text x="272" y="342" font-size="13" fill="#000000">(100 = best score in this snapshot)</text>
 
   <!-- band: OPUS -->
-  <rect x="20" y="356" width="1200" height="4" fill="#CC78BC" />
-  <text x="28" y="378" font-size="14" font-weight="bold" fill="#CC78BC">OPUS &#8212; class label: index &#8805; 99.4</text>
+  <rect x="20" y="356" width="1200" height="4" fill="#cccbdd" />
+  <text x="28" y="378" font-size="14" font-weight="bold" fill="#cccbdd">OPUS &#8212; class label: index &#8805; 99.4</text>
 
   <text x="28" y="406" font-size="13" fill="#000000">GPT-5.6 Sol</text>
-  <rect x="230" y="392" width="699" height="20" fill="#CC78BC" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="392" width="699" height="20" fill="#cccbdd" stroke="#000000" stroke-width="1" />
   <text x="936" y="406" font-size="13" fill="#000000">99.9</text>
   <text x="966" y="406" font-size="12" fill="#000000">&#9888; coverage 50%</text>
 
   <text x="28" y="436" font-size="13" fill="#000000">Claude Opus 5</text>
-  <rect x="230" y="422" width="696" height="20" fill="#CC78BC" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="422" width="696" height="20" fill="#cccbdd" stroke="#000000" stroke-width="1" />
   <text x="933" y="436" font-size="13" fill="#000000">99.4</text>
   <text x="963" y="436" font-size="12" fill="#000000">&#8592; opus anchor</text>
 
   <!-- band: SONNET -->
-  <rect x="20" y="460" width="1200" height="4" fill="#029E73" />
-  <text x="28" y="482" font-size="14" font-weight="bold" fill="#029E73">SONNET &#8212; class label: 85.7 &#8804; index &lt; 99.4</text>
+  <rect x="20" y="460" width="1200" height="4" fill="#ced6dc" />
+  <text x="28" y="482" font-size="14" font-weight="bold" fill="#ced6dc">SONNET &#8212; class label: 85.7 &#8804; index &lt; 99.4</text>
 
   <text x="28" y="510" font-size="13" fill="#000000">Claude Fable 5</text>
-  <rect x="230" y="496" width="687" height="20" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="496" width="687" height="20" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="924" y="510" font-size="13" fill="#000000">98.2</text>
 
   <text x="28" y="540" font-size="13" fill="#000000">Kimi K3</text>
-  <rect x="230" y="526" width="650" height="20" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="526" width="650" height="20" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="887" y="540" font-size="13" fill="#000000">92.8</text>
 
   <text x="28" y="570" font-size="13" fill="#000000">GLM-5.2</text>
-  <rect x="230" y="556" width="625" height="20" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="556" width="625" height="20" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="862" y="570" font-size="13" fill="#000000">89.3</text>
 
   <text x="28" y="600" font-size="13" fill="#000000">Claude Sonnet 5</text>
-  <rect x="230" y="586" width="600" height="20" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="586" width="600" height="20" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="837" y="600" font-size="13" fill="#000000">85.7</text>
   <text x="867" y="600" font-size="12" fill="#000000">&#8592; sonnet anchor</text>
 
   <!-- band: LIGHT -->
-  <rect x="20" y="624" width="1200" height="4" fill="#DE8F05" />
-  <text x="28" y="646" font-size="14" font-weight="bold" fill="#DE8F05">LIGHT &#8212; class label: index &lt; 85.7</text>
+  <rect x="20" y="624" width="1200" height="4" fill="#e8e0c7" />
+  <text x="28" y="646" font-size="14" font-weight="bold" fill="#e8e0c7">LIGHT &#8212; class label: index &lt; 85.7</text>
 
   <text x="28" y="674" font-size="13" fill="#000000">MiniMax M3</text>
-  <rect x="230" y="660" width="542" height="20" fill="#DE8F05" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="660" width="542" height="20" fill="#e8e0c7" stroke="#000000" stroke-width="1" />
   <text x="779" y="674" font-size="13" fill="#000000">77.4</text>
 
   <text x="28" y="704" font-size="13" fill="#000000">Claude Haiku 4.5</text>
-  <rect x="230" y="690" width="481" height="20" fill="#DE8F05" stroke="#000000" stroke-width="1" />
+  <rect x="230" y="690" width="481" height="20" fill="#e8e0c7" stroke="#000000" stroke-width="1" />
   <text x="718" y="704" font-size="13" fill="#000000">68.7</text>
 
   <!-- band: UNRATED -->
-  <rect x="20" y="728" width="1200" height="4" fill="#808080" />
-  <text x="28" y="750" font-size="14" font-weight="bold" fill="#808080">UNRATED &#8212; no published score on any composite benchmark</text>
+  <rect x="20" y="728" width="1200" height="4" fill="#cfcecb" />
+  <text x="28" y="750" font-size="14" font-weight="bold" fill="#cfcecb">UNRATED &#8212; no published score on any composite benchmark</text>
   <text x="28" y="774" font-size="13" fill="#000000">MiMo v2.5 Pro &#183; grok-build-0.1 &#183; Gemini 3.5 Flash Lite (text list, not zero-length bars)</text>
 
   <!-- axis -->
@@ -102,53 +102,53 @@
   <text x="28" y="864" font-size="20" font-weight="bold" fill="#000000">## Token price</text>
   <text x="222" y="864" font-size="13" fill="#000000">USD per 1M tokens &#183; lowest available harness rate</text>
 
-  <rect x="20" y="878" width="1200" height="4" fill="#CC78BC" />
-  <text x="28" y="900" font-size="14" font-weight="bold" fill="#CC78BC">OPUS</text>
+  <rect x="20" y="878" width="1200" height="4" fill="#cccbdd" />
+  <text x="28" y="900" font-size="14" font-weight="bold" fill="#cccbdd">OPUS</text>
 
   <text x="28" y="926" font-size="13" fill="#000000">GPT-5.6 Sol</text>
   <text x="230" y="926" font-size="12" fill="#000000">in</text>
-  <rect x="252" y="912" width="50" height="18" fill="#CC78BC" stroke="#000000" stroke-width="1" />
+  <rect x="252" y="912" width="50" height="18" fill="#cccbdd" stroke="#000000" stroke-width="1" />
   <text x="308" y="926" font-size="12" fill="#000000">$5.00</text>
   <text x="360" y="926" font-size="12" fill="#000000">out</text>
-  <rect x="390" y="912" width="300" height="18" fill="#CC78BC" stroke="#000000" stroke-width="1" opacity="0.55" />
+  <rect x="390" y="912" width="300" height="18" fill="#cccbdd" stroke="#000000" stroke-width="1" opacity="0.55" />
   <text x="696" y="926" font-size="12" fill="#000000">$30.00</text>
 
   <text x="28" y="956" font-size="13" fill="#000000">Claude Opus 5</text>
   <text x="230" y="956" font-size="12" fill="#000000">in</text>
-  <rect x="252" y="942" width="50" height="18" fill="#CC78BC" stroke="#000000" stroke-width="1" />
+  <rect x="252" y="942" width="50" height="18" fill="#cccbdd" stroke="#000000" stroke-width="1" />
   <text x="308" y="956" font-size="12" fill="#000000">$5.00</text>
   <text x="360" y="956" font-size="12" fill="#000000">out</text>
-  <rect x="390" y="942" width="250" height="18" fill="#CC78BC" stroke="#000000" stroke-width="1" opacity="0.55" />
+  <rect x="390" y="942" width="250" height="18" fill="#cccbdd" stroke="#000000" stroke-width="1" opacity="0.55" />
   <text x="646" y="956" font-size="12" fill="#000000">$25.00</text>
 
-  <rect x="20" y="980" width="1200" height="4" fill="#029E73" />
-  <text x="28" y="1002" font-size="14" font-weight="bold" fill="#029E73">SONNET</text>
+  <rect x="20" y="980" width="1200" height="4" fill="#ced6dc" />
+  <text x="28" y="1002" font-size="14" font-weight="bold" fill="#ced6dc">SONNET</text>
 
   <text x="28" y="1028" font-size="13" fill="#000000">Claude Fable 5</text>
   <text x="230" y="1028" font-size="12" fill="#000000">in</text>
-  <rect x="252" y="1014" width="100" height="18" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="252" y="1014" width="100" height="18" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="358" y="1028" font-size="12" fill="#000000">$10.00</text>
   <text x="410" y="1028" font-size="12" fill="#000000">out</text>
-  <rect x="440" y="1014" width="500" height="18" fill="#029E73" stroke="#000000" stroke-width="1" opacity="0.55" />
+  <rect x="440" y="1014" width="500" height="18" fill="#ced6dc" stroke="#000000" stroke-width="1" opacity="0.55" />
   <text x="946" y="1028" font-size="12" fill="#000000">$50.00</text>
 
   <text x="28" y="1058" font-size="13" fill="#000000">Claude Sonnet 5</text>
   <text x="230" y="1058" font-size="12" fill="#000000">in</text>
-  <rect x="252" y="1044" width="30" height="18" fill="#029E73" stroke="#000000" stroke-width="1" />
+  <rect x="252" y="1044" width="30" height="18" fill="#ced6dc" stroke="#000000" stroke-width="1" />
   <text x="288" y="1058" font-size="12" fill="#000000">$3.00</text>
   <text x="340" y="1058" font-size="12" fill="#000000">out</text>
-  <rect x="370" y="1044" width="150" height="18" fill="#029E73" stroke="#000000" stroke-width="1" opacity="0.55" />
+  <rect x="370" y="1044" width="150" height="18" fill="#ced6dc" stroke="#000000" stroke-width="1" opacity="0.55" />
   <text x="526" y="1058" font-size="12" fill="#000000">$15.00</text>
 
-  <rect x="20" y="1082" width="1200" height="4" fill="#DE8F05" />
-  <text x="28" y="1104" font-size="14" font-weight="bold" fill="#DE8F05">LIGHT</text>
+  <rect x="20" y="1082" width="1200" height="4" fill="#e8e0c7" />
+  <text x="28" y="1104" font-size="14" font-weight="bold" fill="#e8e0c7">LIGHT</text>
 
   <text x="28" y="1130" font-size="13" fill="#000000">Claude Haiku 4.5</text>
   <text x="230" y="1130" font-size="12" fill="#000000">in</text>
-  <rect x="252" y="1116" width="10" height="18" fill="#DE8F05" stroke="#000000" stroke-width="1" />
+  <rect x="252" y="1116" width="10" height="18" fill="#e8e0c7" stroke="#000000" stroke-width="1" />
   <text x="268" y="1130" font-size="12" fill="#000000">$1.00</text>
   <text x="320" y="1130" font-size="12" fill="#000000">out</text>
-  <rect x="350" y="1116" width="50" height="18" fill="#DE8F05" stroke="#000000" stroke-width="1" opacity="0.55" />
+  <rect x="350" y="1116" width="50" height="18" fill="#e8e0c7" stroke="#000000" stroke-width="1" opacity="0.55" />
   <text x="406" y="1130" font-size="12" fill="#000000">$5.00</text>
 
   <rect x="20" y="1154" width="1200" height="4" fill="#CA9161" />
@@ -173,7 +173,7 @@
   <line x1="20" y1="1332" x2="1220" y2="1332" stroke="#CCCCCC" stroke-width="1" />
   <text x="36" y="1320" font-size="12" fill="#000000">Claude Opus 5</text>
   <text x="290" y="1320" font-size="12" fill="#000000">CC &#183; CU &#183; ZEN</text>
-  <text x="430" y="1320" font-size="12" fill="#CC78BC" font-weight="bold">opus</text>
+  <text x="430" y="1320" font-size="12" fill="#cccbdd" font-weight="bold">opus</text>
   <text x="520" y="1320" font-size="12" fill="#000000">96.0 &#7523;</text>
   <text x="610" y="1320" font-size="12" fill="#000000">&#8212;</text>
   <text x="720" y="1320" font-size="12" fill="#000000">&#8212;</text>
@@ -185,7 +185,7 @@
   <line x1="20" y1="1380" x2="1220" y2="1380" stroke="#CCCCCC" stroke-width="1" />
   <text x="36" y="1368" font-size="12" fill="#000000">Claude Sonnet 5</text>
   <text x="290" y="1368" font-size="12" fill="#000000">CC &#183; CU &#183; ZEN</text>
-  <text x="430" y="1368" font-size="12" fill="#029E73" font-weight="bold">sonnet</text>
+  <text x="430" y="1368" font-size="12" fill="#ced6dc" font-weight="bold">sonnet</text>
   <text x="520" y="1368" font-size="12" fill="#000000">72.1 &#7523;</text>
   <text x="610" y="1368" font-size="12" fill="#000000">&#8212;</text>
   <text x="720" y="1368" font-size="12" fill="#000000">&#8212;</text>
@@ -197,7 +197,7 @@
   <line x1="20" y1="1428" x2="1220" y2="1428" stroke="#CCCCCC" stroke-width="1" />
   <text x="36" y="1416" font-size="12" fill="#000000">MiMo v2.5 Pro</text>
   <text x="290" y="1416" font-size="12" fill="#000000">GO</text>
-  <text x="430" y="1416" font-size="12" fill="#808080" font-weight="bold">unrated</text>
+  <text x="430" y="1416" font-size="12" fill="#cfcecb" font-weight="bold">unrated</text>
   <text x="520" y="1416" font-size="12" fill="#000000">not published</text>
   <text x="610" y="1416" font-size="12" fill="#000000">&#8212;</text>
   <text x="720" y="1416" font-size="12" fill="#000000">&#8212;</text>
