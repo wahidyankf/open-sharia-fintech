@@ -77,6 +77,20 @@
   --shadow-sm: 0 1px 3px 0 oklch(20% 0.02 75 / 0.08), 0 1px 2px -1px oklch(20% 0.02 75 / 0.06);
   --shadow-md: 0 4px 8px -2px oklch(20% 0.02 75 / 0.08), 0 2px 4px -2px oklch(20% 0.02 75 / 0.06);
   --shadow-lg: 0 12px 24px -6px oklch(20% 0.02 75 / 0.12), 0 4px 8px -4px oklch(20% 0.02 75 / 0.08);
+
+  /* ── Chart band tokens ── */
+  --chart-band-opus: var(--hue-plum);
+  --chart-band-sonnet: var(--hue-teal);
+  --chart-band-light: var(--hue-honey);
+  --chart-band-unrated: var(--warm-400);
+  --chart-band-opus-ink: var(--warm-900);
+  --chart-band-sonnet-ink: var(--warm-900);
+  --chart-band-light-ink: var(--warm-900);
+  --chart-band-unrated-ink: var(--warm-900);
+  --chart-band-opus-wash: var(--warm-0);
+  --chart-band-sonnet-wash: var(--warm-0);
+  --chart-band-light-wash: var(--warm-0);
+  --chart-band-unrated-wash: var(--warm-0);
 }
 
 /* ── Dark mode overrides ─────────────────────────────────────────────────── */
@@ -121,4 +135,18 @@
   /* Semantic tokens that cannot auto-resolve (hardcoded in @theme) */
   --color-card: var(--warm-50); /* was #ffffff — must override in dark */
   --color-popover: var(--warm-50); /* was #ffffff — must override in dark */
+
+  /* ── Chart band tokens ── */
+  --chart-band-opus: var(--hue-plum);
+  --chart-band-sonnet: var(--hue-teal);
+  --chart-band-light: var(--hue-honey);
+  --chart-band-unrated: var(--warm-400);
+  --chart-band-opus-ink: var(--warm-900);
+  --chart-band-sonnet-ink: var(--warm-900);
+  --chart-band-light-ink: var(--warm-900);
+  --chart-band-unrated-ink: var(--warm-900);
+  --chart-band-opus-wash: var(--warm-0);
+  --chart-band-sonnet-wash: var(--warm-0);
+  --chart-band-light-wash: var(--warm-0);
+  --chart-band-unrated-wash: var(--warm-0);
 }
