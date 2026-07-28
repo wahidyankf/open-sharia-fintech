@@ -15,7 +15,10 @@ afterEach(cleanup);
 // rows that re-render on each keystroke of `userEvent.type`; under coverage instrumentation a few
 // of these brush past the 5s default. Give the suite headroom — production debounces the URL commit
 // so it never re-renders per keystroke, but these tests drive the uncontrolled (delay-0) path.
-vi.setConfig({ testTimeout: 20000 });
+// The full 128-file unit suite runs concurrently, starving these slow component tests of CPU; under
+// that contention individual tests reach ~40s, so 20s was too tight and made the suite flaky. 120s
+// keeps each test well clear of the limit without masking a genuine hang.
+vi.setConfig({ testTimeout: 120000 });
 
 describe("MinRoleTable", () => {
   const defaultProps = {
