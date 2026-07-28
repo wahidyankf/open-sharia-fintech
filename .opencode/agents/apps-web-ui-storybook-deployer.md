@@ -1,6 +1,6 @@
 ---
 description: Deploys web-ui Storybook to Vercel via force-push to prod-web-ui
-model: opencode-go/minimax-m3
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   grep: allow

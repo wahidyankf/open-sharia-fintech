@@ -1,6 +1,6 @@
 ---
 description: Creates In-the-Field production implementation guides for ayokoding-web with 20-40 guides following standard library first principle. Ensures production-ready code with framework integration.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

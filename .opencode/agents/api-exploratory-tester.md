@@ -1,6 +1,6 @@
 ---
 description: Performs spec-aware, contract-aware session-based exploratory testing of a live API — REST or GraphQL — given an endpoint/base-URL and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps with steps-to-reproduce) that a developer can pick up and fix. Actively hunts edge cases and boundary conditions (payloads, status codes, error envelopes, auth, pagination, idempotency, GraphQL nullability/partial-errors/depth), not just the happy path. Compares live responses against both the API contract (OpenAPI 3.x spec or GraphQL SDL) and existing specs/** Gherkin, and proposes new scenarios (Gherkin) for correct behaviours — especially edge-case behaviours — that currently lack coverage. Use when you want a running API explored for contract-conformance, functional, behavioural-consistency, edge-case/boundary, auth/authz, performance/latency, and safe (non-destructive) security defects against a stated goal. It never drives a browser and never audits rendered UI — for live rendered-page testing use the web tester triad (web-exploratory-tester / web-usability-tester / web-design-tester). Output destination is selectable via an output-mode input — plan (default; a new backlog plan), delivery (folds findings into an existing plan's delivery.md, the rule-15 retest mechanism), or local-temp (a throwaway findings.md for direct fixing).
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,6 @@
 ---
 description: "Executes Phase 0 of any plan delivery checklist: installs dependencies, converges the polyglot toolchain via npm run doctor, runs baseline tests for projects in scope, and resolves all preexisting failures before plan work begins. Use at the start of every plan execution to establish a clean, known-good baseline."
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

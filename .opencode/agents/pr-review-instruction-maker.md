@@ -1,6 +1,6 @@
 ---
 description: Execution-grade PR reviewer scoped to the instruction-decay discipline only — a framework/build-tool/package-manager/env-var/CI change in the diff not reflected in AGENTS.md/CLAUDE.md/.claude/, and instruction bloat (>200 lines / generic filler). One of eight discipline-scoped specialists defined by the PR Reviewer-Discipline Convention that will feed the pr-review-synthesis-maker coordinator once wired into the PR Review Quality Gate workflow; inherits pr-review-maker's hard rules verbatim, scoped to its own charter and SUPPRESS block.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

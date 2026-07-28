@@ -1,6 +1,6 @@
 ---
 description: Performs spec-blind, heuristic usability evaluation of a live website given URL(s) and a usability goal, then files the findings as a new backlog plan (README + brd + prd + findings + walkthrough + spec-suggestions with severity-rated heuristic violations and steps-to-reproduce) that a developer can pick up and fix. Deliberately ignores specs, source, and mockups — it judges only what a first-time user perceives, against established usability principles (Nielsen's 10 heuristics, cognitive walkthrough, information scent, WCAG Understandable, UX laws). Evaluates predictability, internal/external consistency, information scent, information flow, cognitive load, edge-case UX states (empty/zero-result/loading/error), responsive usability (mobile/tablet/desktop), and URL/IA naturalness. When a first-time user would expect a behaviour the page lacks, it suggests that behaviour in Gherkin format as a candidate specs/ addition (spec-blind — flagged for spec-aware reconciliation, never deduplicated against existing specs). Distinct from web-exploratory-tester, which is spec-aware and hunts functional/correctness defects. Output destination is selectable via an output-mode input — plan (default; a new backlog plan), delivery (folds findings into an existing plan's delivery.md, the rule-15 retest mechanism), or local-temp (a throwaway findings.md for direct fixing).
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

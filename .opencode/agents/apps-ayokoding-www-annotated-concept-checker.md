@@ -1,6 +1,6 @@
 ---
 description: Validates Annotated-concept tutorial quality including worked-example/scenario count (45-60 standard mode, 20-30 no-code sub-mode), annotation density (1.0-2.25 per code/pseudocode block), worked-example structure, diagram accessibility, and ayokoding-web compliance. Use when reviewing Annotated-concept content.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

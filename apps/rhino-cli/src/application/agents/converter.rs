@@ -371,25 +371,18 @@ pub fn convert_permission(claude_tools: &[String]) -> BTreeMap<String, String> {
 
 /// Converts a Claude model alias to the corresponding `OpenCode` model ID.
 ///
-/// Three-tier mapping (as of 2026-07): `opus` (thinking tier) and `sonnet`/omitted (execution
-/// tier) both resolve to `opencode-go/glm-5.2` — the strongest model in the opencode-go roster,
-/// but one that does not clear Claude Opus 4.8's SWE-bench Pro bar (69.2%; glm-5.2 scores 62.1%).
-/// No roster model clears the Opus-4.8 bar separately, so the thinking tier collapses onto the
-/// execution tier per explicit user direction (2026-07-05: "okay to use same model on multiple
-/// tiers if no other options exist"). `haiku` (fast tier) resolves to `opencode-go/minimax-m3` —
-/// the closest model to Claude Sonnet 5's tier without exceeding it (SWE-bench Pro 59.0%, −4.2pp).
-/// See docs/reference/ai-model-benchmarks.md for the full comparison.
-// `opus` and the default branch are intentionally identical — see tech-docs.md Decision 1 in the
-// upgrade-opencode-go-models plan: no opencode-go roster model clears Opus 4.8 separately.
+/// All tiers (`opus`, `sonnet`/omitted, `haiku`) resolve to `zai-coding-plan/glm-5.2` via the
+/// GLM Coding Plan primary provider. The `opencode-go` provider remains configured for `/models`
+/// access but is not used in agent tier mapping.
 #[allow(clippy::if_same_then_else)]
 pub fn convert_model(claude_model: &str) -> String {
     let m = claude_model.trim();
     if m == "haiku" {
-        "opencode-go/minimax-m3".to_string()
+        "zai-coding-plan/glm-5.2".to_string()
     } else if m == "opus" {
-        "opencode-go/glm-5.2".to_string()
+        "zai-coding-plan/glm-5.2".to_string()
     } else {
-        "opencode-go/glm-5.2".to_string()
+        "zai-coding-plan/glm-5.2".to_string()
     }
 }
 
@@ -498,7 +491,7 @@ mod tests {
         let content = std::fs::read_to_string(&output).unwrap();
         assert!(content.starts_with("---\n"));
         assert!(content.contains("description: desc"));
-        assert!(content.contains("model: opencode-go/glm-5.2"));
+        assert!(content.contains("model: zai-coding-plan/glm-5.2"));
         assert!(content.contains("permission:"));
         assert!(content.contains("read: allow"));
         assert!(content.contains("write: allow"));
@@ -590,19 +583,19 @@ mod tests {
 
     #[test]
     fn convert_model_haiku() {
-        assert_eq!(convert_model("haiku"), "opencode-go/minimax-m3");
+        assert_eq!(convert_model("haiku"), "zai-coding-plan/glm-5.2");
     }
 
     #[test]
     fn convert_model_opus() {
-        assert_eq!(convert_model("opus"), "opencode-go/glm-5.2");
+        assert_eq!(convert_model("opus"), "zai-coding-plan/glm-5.2");
     }
 
     #[test]
     fn convert_model_sonnet_and_default() {
-        assert_eq!(convert_model("sonnet"), "opencode-go/glm-5.2");
-        assert_eq!(convert_model(""), "opencode-go/glm-5.2");
-        assert_eq!(convert_model("inherit"), "opencode-go/glm-5.2");
+        assert_eq!(convert_model("sonnet"), "zai-coding-plan/glm-5.2");
+        assert_eq!(convert_model(""), "zai-coding-plan/glm-5.2");
+        assert_eq!(convert_model("inherit"), "zai-coding-plan/glm-5.2");
     }
 
     #[test]
@@ -620,7 +613,7 @@ mod tests {
     fn encode_emits_permission_block_not_tools() {
         let agent = OpenCodeAgent {
             description: "desc".to_string(),
-            model: "opencode-go/glm-5.2".to_string(),
+            model: "zai-coding-plan/glm-5.2".to_string(),
             permission: convert_permission(&["Read".to_string()]),
             ..Default::default()
         };

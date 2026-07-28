@@ -1,6 +1,6 @@
 ---
 description: Validates general ayokoding-web content quality including bilingual completeness and content quality.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

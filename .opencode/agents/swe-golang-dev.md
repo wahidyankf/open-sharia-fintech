@@ -1,6 +1,6 @@
 ---
 description: Develops Go applications following simplicity principles, concurrency patterns, and platform coding standards. Use when implementing Go code for OSE Platform.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -230,7 +230,7 @@ fn then_opencode_has_config(w: &mut AgentsWorld) {
     assert!(p.exists(), "expected {} to exist", p.display());
     let content = std::fs::read_to_string(&p).expect("read converted agent");
     assert!(
-        content.contains("model: opencode-go/glm-5.2"),
+        content.contains("model: zai-coding-plan/glm-5.2"),
         "got: {content}"
     );
     assert!(
@@ -263,12 +263,12 @@ fn then_only_agents_written(w: &mut AgentsWorld) {
     assert!(!w.work.path().join(".opencode/skill").exists());
 }
 
-#[then(r#"the corresponding .opencode/ agent uses the "opencode-go/glm-5.2" model identifier"#)]
+#[then(r#"the corresponding .opencode/ agent uses the "zai-coding-plan/glm-5.2" model identifier"#)]
 fn then_opencode_model_minimax(w: &mut AgentsWorld) {
     let content =
         std::fs::read_to_string(w.work.path().join(".opencode/agents/foo-maker.md")).expect("read");
     assert!(
-        content.contains("model: opencode-go/glm-5.2"),
+        content.contains("model: zai-coding-plan/glm-5.2"),
         "got: {content}"
     );
 }
@@ -283,7 +283,7 @@ fn write_synced_pair(w: &AgentsWorld, name: &str) {
     w.write(
         &format!(".opencode/agents/{name}.md"),
         &format!(
-            "---\ndescription: Agent {name}.\nmodel: opencode-go/glm-5.2\npermission:\n  read: allow\n  write: allow\n---\n# Body\n"
+            "---\ndescription: Agent {name}.\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n  write: allow\n---\n# Body\n"
         ),
     );
 }
@@ -300,7 +300,7 @@ fn given_description_mismatch(w: &mut AgentsWorld) {
     // Overwrite the opencode side with a different description.
     w.write(
         ".opencode/agents/foo-maker.md",
-        "---\ndescription: A totally different description.\nmodel: opencode-go/glm-5.2\npermission:\n  read: allow\n  write: allow\n---\n# Body\n",
+        "---\ndescription: A totally different description.\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n  write: allow\n---\n# Body\n",
     );
 }
 
@@ -452,7 +452,7 @@ fn write_named_pair(w: &AgentsWorld, name: &str) {
     );
     w.write(
         &format!(".opencode/agents/{name}.md"),
-        "---\ndescription: d\nmodel: opencode-go/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
+        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
     );
 }
 
@@ -474,7 +474,7 @@ fn given_naming_bad_suffix(w: &mut AgentsWorld) {
     );
     w.write(
         ".opencode/agents/foo-widget.md",
-        "---\ndescription: d\nmodel: opencode-go/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
+        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
     );
 }
 
@@ -490,7 +490,7 @@ fn given_naming_frontmatter_mismatch(w: &mut AgentsWorld) {
     );
     w.write(
         ".opencode/agents/baz-checker.md",
-        "---\ndescription: d\nmodel: opencode-go/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
+        "---\ndescription: d\nmodel: zai-coding-plan/glm-5.2\npermission:\n  read: allow\n---\n# Body\n",
     );
 }
 

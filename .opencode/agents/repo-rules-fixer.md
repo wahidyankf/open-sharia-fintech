@@ -1,6 +1,6 @@
 ---
 description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies).
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,6 @@
 ---
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

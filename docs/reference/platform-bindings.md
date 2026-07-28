@@ -222,11 +222,11 @@ planning-grade inheritance. OpenCode uses Zhipu AI GLM model IDs.
 - **Policy**: [Model Selection Convention](../../repo-governance/development/agents/model-selection.md)
   ("Platform Binding Examples" section)
 
-| Claude Code alias       | OpenCode model ID        | Capability tier                     |
-| ----------------------- | ------------------------ | ----------------------------------- |
-| `opus`                  | `opencode-go/glm-5.2`    | Thinking (collapsed onto execution) |
-| `sonnet`/omit (inherit) | `opencode-go/glm-5.2`    | Execution                           |
-| `haiku`                 | `opencode-go/minimax-m3` | Fast                                |
+| Claude Code alias       | OpenCode model ID         | Capability tier                     |
+| ----------------------- | ------------------------- | ----------------------------------- |
+| `opus`                  | `zai-coding-plan/glm-5.2` | Thinking (collapsed onto execution) |
+| `sonnet`/omit (inherit) | `zai-coding-plan/glm-5.2` | Execution                           |
+| `haiku`                 | `zai-coding-plan/glm-5.2` | Fast (collapsed onto execution)     |
 
 ### Model ID Translation (Claude Code → Cursor)
 

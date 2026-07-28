@@ -1,6 +1,6 @@
 ---
 description: Performs spec-aware session-based exploratory testing of a live website given URL(s) and a testing goal, then files the findings as a new backlog plan (README + brd + prd + findings + spec-gaps with steps-to-reproduce) that a developer can pick up and fix. Actively hunts edge cases and boundary conditions, not just the happy path. Compares live behaviour against existing specs/** Gherkin and proposes new scenarios (in Gherkin) for correct behaviours — especially edge-case behaviours — that currently lack spec coverage. Use when you want a running site explored for functional, behavioural-consistency, edge-case/boundary, UI/UX, responsive, accessibility, performance, URL/IA quality, and safe (non-destructive) security defects against a stated goal. For spec-blind first-time-user usability evaluation (predictability, confusion, information scent) use web-usability-tester instead. Output destination is selectable via an output-mode input — plan (default; a new backlog plan), delivery (folds findings into an existing plan's delivery.md, the rule-15 retest mechanism), or local-temp (a throwaway findings.md for direct fixing).
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

@@ -1,6 +1,6 @@
 ---
 description: Creates LinkedIn posts in generated-socials/linkedin/ from project updates across the ose-public/ose-primer/ose-infra sibling repos. Enforces the 3,000-character LinkedIn body limit (measured from the "OPEN SHARIA ENTERPRISE" line down). Optimizes for engagement and professional tone. Use every time a LinkedIn post is created in generated-socials/linkedin/.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow

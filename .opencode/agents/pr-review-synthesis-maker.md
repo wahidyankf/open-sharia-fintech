@@ -1,6 +1,6 @@
 ---
 description: Planning-grade PR-review coordinator — the ninth pr-review-*-maker agent and the mandatory synthesizer atop the eight sonnet-tier discipline specialists. Classifies each PR's risk tier and selects the specialist set, assembles the shared PR/plan/full-diff context brief once, reads prior-cycle thread-resolution status (including human dismissals), then deduplicates, re-categorizes (owning the architecture-versus-correctness boundary), reasonableness-filters, and tool-verifies the specialists' raw findings before posting exactly ONE consolidated review via the GitHub Reviews API for pr-review-fixer to consume.
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   glob: allow

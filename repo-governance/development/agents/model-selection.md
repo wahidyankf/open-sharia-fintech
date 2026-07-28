@@ -15,7 +15,7 @@ created: 2026-04-03
 
 This document defines the standards for selecting the appropriate model tier when creating or updating AI agents. The governing principle is **match model capability to task complexity** -- use the most capable model only when the task demands it, and use lighter models for structured or mechanical work.
 
-> **Note on terminology**: "planning-grade", "execution-grade", and "fast" are **internal repo vocabulary**, not an externally-recognized cross-vendor standard. Web research (2026-05-03) found no community usage of these tier names outside this repository. They serve as a vendor-neutral capability axis used by `repo-governance/` prose; concrete vendor model IDs (e.g., `claude-opus-4-7`, `opencode-go/glm-5.2`) live in platform-binding agent frontmatter and in the [AI Model Benchmarks Reference](../../../docs/reference/ai-model-benchmarks.md).
+> **Note on terminology**: "planning-grade", "execution-grade", and "fast" are **internal repo vocabulary**, not an externally-recognized cross-vendor standard. Web research (2026-05-03) found no community usage of these tier names outside this repository. They serve as a vendor-neutral capability axis used by `repo-governance/` prose; concrete vendor model IDs (e.g., `claude-opus-4-7`, `zai-coding-plan/glm-5.2`) live in platform-binding agent frontmatter and in the [AI Model Benchmarks Reference](../../../docs/reference/ai-model-benchmarks.md).
 
 ## Principles Implemented/Respected
 
@@ -278,47 +278,37 @@ secondary binding model IDs.
 
 ### Model ID Mapping
 
-| Primary binding                                | Secondary binding        | Capability notes                                                                                                                                    |
-| ------------------------------------------------ | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `model: opus` (thinking-grade)                  | `opencode-go/glm-5.2`    | Zhipu GLM; SWE-bench Pro 62.1%, ~7.1pp below Claude Opus 4.8 (69.2%) — closest available, does not clear the thinking-tier bar                        |
-| omit (execution-grade inherit) / `model: sonnet` | `opencode-go/glm-5.2`    | Same model as thinking-grade (intentional — see Tier Collapse below); SWE-bench Pro 62.1%, at/slightly above Claude Sonnet 5's 63.2% (within noise)   |
-| `model: haiku` (fast)                            | `opencode-go/minimax-m3` | SWE-bench Pro 59.0%, −4.2pp vs. Claude Sonnet 5 — closest available model to Sonnet-5 tier without exceeding it, cheaper per-token than glm-5.2       |
+| Primary binding                                  | Secondary binding         | Capability notes                                                                   |
+| ------------------------------------------------ | ------------------------- | ---------------------------------------------------------------------------------- |
+| `model: opus` (thinking-grade)                   | `zai-coding-plan/glm-5.2` | Zhipu GLM via GLM Coding Plan primary provider; all tiers map to the same model ID |
+| omit (execution-grade inherit) / `model: sonnet` | `zai-coding-plan/glm-5.2` | Same model as thinking-grade (intentional full-tier collapse)                      |
+| `model: haiku` (fast)                            | `zai-coding-plan/glm-5.2` | Fast tier also collapses onto glm-5.2 via the primary provider                     |
 
 ### Tier Collapse
 
 The primary binding has three tiers (planning-grade/thinking > execution-grade > fast). The secondary
-binding's `convert_model()` implements all three as explicit branches (`haiku` / `opus` / else), but
-the thinking and execution branches currently return the identical model ID: no model in the
-secondary binding's roster separately clears Claude Opus 4.8's benchmark tier, so thinking-grade
-collapses onto execution-grade's target rather than being held to a bar nothing in the roster meets.
-This is an accepted platform-level constraint, not an oversight — if a future roster model clears the
-Opus-4.8 bar without also being the execution-grade pick, only the `opus` branch's literal needs to
-change.
+binding's `convert_model()` maps all three tiers to `zai-coding-plan/glm-5.2` via the GLM Coding Plan
+primary provider. The `opencode-go` provider remains configured in `.opencode/opencode.json` for
+`/models` roster access but is not used in agent tier mapping.
 
 Tier assignments govern behavior in primary binding sessions (the primary runtime, where `opus`
-genuinely resolves to a stronger model than `sonnet`). The secondary binding uses the strongest
-available roster model for both non-fast tiers, and the closest-without-exceeding model for fast.
+genuinely resolves to a stronger model than `sonnet`). The secondary binding collapses every tier
+onto the same GLM Coding Plan model.
 
-### Why glm-5.2 and minimax-m3 as the Defaults
+### Why glm-5.2 as the Default
 
-`opencode-go/glm-5.2` is the strongest model in the secondary binding's roster on every published
-benchmark checked (SWE-bench Pro 62.1%, Terminal-Bench 2.1 81.0%) — at/above Claude Sonnet 5's tier,
-though still below Claude Opus 4.8's. `opencode-go/minimax-m3` is the closest roster model to Sonnet-5
-tier without exceeding it (SWE-bench Pro 59.0%), chosen over collapsing every tier onto `glm-5.2` so
-the fast tier stays genuinely lighter and cheaper (see
-[AI Model Benchmarks Reference](../../../docs/reference/ai-model-benchmarks.md) for the full
-comparison, including a standard per-token pricing table and a frontier/big-brand model reference for
-context). Both are available via the flat-rate secondary binding subscription; no per-token billing
-for the subscriber. If the roster's rankings change, update only `convert_model()` in
-`apps/rhino-cli/src/application/agents/converter.rs` and re-run `npm run generate:bindings`.
+`zai-coding-plan/glm-5.2` is the GLM Coding Plan primary provider model for all agent tiers.
+The `opencode-go` provider remains available for `/models` roster access. If the primary provider
+or model changes, update `convert_model()` in `apps/rhino-cli/src/application/agents/converter.rs`
+and re-run `npm run generate:bindings`.
 
 ### Model ID Mapping (Claude Code → Cursor)
 
-| Primary binding                                | Cursor binding | Capability notes                                                                                                                          |
-| ---------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `model: opus` (thinking-grade)                 | `composer-2.5` | Full tier collapse — thinking collapses onto execution                                                                                    |
-| omit (execution-grade inherit) / `model: sonnet` | `composer-2.5` | Same pin as thinking-grade (intentional full-tier collapse)                                                                               |
-| `model: haiku` (fast)                          | `composer-2.5` | Fast tier also collapses — avoids the 6× `composer-2.5-fast` toggle                                                                     |
+| Primary binding                                  | Cursor binding | Capability notes                                                    |
+| ------------------------------------------------ | -------------- | ------------------------------------------------------------------- |
+| `model: opus` (thinking-grade)                   | `composer-2.5` | Full tier collapse — thinking collapses onto execution              |
+| omit (execution-grade inherit) / `model: sonnet` | `composer-2.5` | Same pin as thinking-grade (intentional full-tier collapse)         |
+| `model: haiku` (fast)                            | `composer-2.5` | Fast tier also collapses — avoids the 6× `composer-2.5-fast` toggle |
 
 **Prohibition**: `rhino-cli` must never emit `composer-2.5-fast` into `.cursor/agents/`. That slug
 is the priced-fast inference toggle this binding exists to avoid.

@@ -1,6 +1,6 @@
 ---
 description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Grills the user before and after plan creation using multiple-choice options (2-4 options per question via AskUserQuestion tool or markdown format). Structures plans for systematic execution via the plan-execution workflow (orchestrated by the calling context).
-model: opencode-go/glm-5.2
+model: zai-coding-plan/glm-5.2
 permission:
   bash: allow
   edit: allow
