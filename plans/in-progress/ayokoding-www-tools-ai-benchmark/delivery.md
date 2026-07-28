@@ -818,17 +818,17 @@ rev-parse --show-toplevel` prints the worktree path
   - **Date**: 2026-07-28
   - **Status**: done
   - **Notes**: passed — second generate produces no diff (idempotent).
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0
 - [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       exits 0 for the edited reference
   - **Date**: 2026-07-28
   - **Status**: done
   - **Notes**: passed for the edited reference — 0 broken links in ai-model-benchmarks.md. (142 pre-existing broken links in plans/done/\*\* are unrelated archived-plan link rot, present before this phase; flagged for a separate maintenance task.)
-- [ ] [AI] `npx nx affected -t typecheck lint` exits 0
-- [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
+- [x] [AI] `npx nx affected -t typecheck lint` exits 0
+- [x] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-3-reference-derivation` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-3-reference-derivation/`
-- [ ] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+- [x] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
 
 > **Pause Safety**: the governance reference is now generated and current; the public page does not
 > exist yet, and nothing user-facing changed. Safe to stop. To resume:
@@ -843,12 +843,15 @@ rev-parse --show-toplevel` prints the worktree path
 > Every module in this phase is pure — no React, no router, no side effects — mirroring
 > `src/features/cost-of-living-calculator/core/`.
 
-- [ ] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
+- [x] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
       unit's first phase and its boundary, so the worktree must exist before this phase's own work
       begins: `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-4-core origin/main`
       — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-4-core rev-parse
 --show-toplevel` prints the worktree path
-- [ ] [AI] **Z-0**: create `<SPECS>ai-benchmark.feature` containing the eight capability-scoring
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: Worktree provisioned from `origin/main` (HEAD `8ab3b1703`, includes Phases 2+3). `npm install` running.
+- [x] [AI] **Z-0**: create `<SPECS>ai-benchmark.feature` containing the eight capability-scoring
       scenarios this phase implements (AC-4, AC-5, AC-6, AC-7, AC-8, AC-9, AC-10, AC-11) plus the
       shared `Background`, and index it from `<SPECS>README.md` — acceptance:
       `npx nx run ayokoding-www:specs:structure-validation` exits 0
@@ -859,20 +862,20 @@ rev-parse --show-toplevel` prints the worktree path
 
 ### Normalization and composite (`<CORE>score.ts`)
 
-- [ ] [AI] **C-1 RED**: create `<CORE>score.unit.test.ts` asserting `rosterMax(dataset, benchmark)`
+- [x] [AI] **C-1 RED**: create `<CORE>score.unit.test.ts` asserting `rosterMax(dataset, benchmark)`
       returns the highest **included** figure for that benchmark, using the low end of a `conflicted`
       figure and ignoring figures whose `benchmarkVersion` is excluded from the composite
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: fails because `<CORE>score.ts` does not exist
   - _Gherkin (underpins) → AC-10, AC-13._
-- [ ] [AI] **C-2 GREEN**: implement `rosterMax` in `<CORE>score.ts`
+- [x] [AI] **C-2 GREEN**: implement `rosterMax` in `<CORE>score.ts`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: the assertions pass
-- [ ] [AI] **C-3 RED**: assert `rel(model, benchmark, rosterMax)` returns
+- [x] [AI] **C-3 RED**: assert `rel(model, benchmark, rosterMax)` returns
       `100 × score / rosterMax`, that the roster-max holder returns exactly `100`, and that an absent
       figure returns `undefined` — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-- [ ] [AI] **C-4 GREEN**: implement `rel` — command: `npx nx run ayokoding-www:test:unit`
+- [x] [AI] **C-4 GREEN**: implement `rel` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **C-5 RED**: assert `computeIndex(model, rosterMaxes)` returns the weight-renormalized mean
+- [x] [AI] **C-5 RED**: assert `computeIndex(model, rosterMaxes)` returns the weight-renormalized mean
       over present benchmarks, and `coverage(model)` returns summed present weight ÷ 100, for a
       fixture with exactly two of four benchmarks
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
@@ -886,9 +889,9 @@ rev-parse --show-toplevel` prints the worktree path
       And its coverage ratio equals the summed weight of those two benchmarks divided by one hundred
     ```
 
-- [ ] [AI] **C-6 GREEN**: implement `computeIndex` and `coverage`
+- [x] [AI] **C-6 GREEN**: implement `computeIndex` and `coverage`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **C-7 RED**: assert a model with **zero** present benchmarks returns `coverage === 0` and
+- [x] [AI] **C-7 RED**: assert a model with **zero** present benchmarks returns `coverage === 0` and
       `index === undefined` (never `0`, never `NaN`)
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-8 "A model with no published benchmark score renders in the unrated group"_
@@ -901,21 +904,21 @@ rev-parse --show-toplevel` prints the worktree path
       And that model has no composite index
     ```
 
-- [ ] [AI] **C-8 GREEN**: handle the zero-coverage case explicitly
+- [x] [AI] **C-8 GREEN**: handle the zero-coverage case explicitly
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **C-9 RED**: assert `isLowCoverage(model)` is true below the 0.50 threshold and false at
+- [x] [AI] **C-9 RED**: assert `isLowCoverage(model)` is true below the 0.50 threshold and false at
       or above it, with the threshold exported as a named constant
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (underpins) → AC-12._
-- [ ] [AI] **C-10 GREEN**: implement `isLowCoverage` and export `LOW_COVERAGE_THRESHOLD`
+- [x] [AI] **C-10 GREEN**: implement `isLowCoverage` and export `LOW_COVERAGE_THRESHOLD`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **C-11 REFACTOR**: extract the weight table lookup into one helper used by both
+- [x] [AI] **C-11 REFACTOR**: extract the weight table lookup into one helper used by both
       `computeIndex` and `coverage`, removing the duplicated summation
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
 
 ### Band assignment (`<CORE>bands.ts`)
 
-- [ ] [AI] **B-1 RED**: create `<CORE>bands.unit.test.ts` asserting a fixture model whose index equals
+- [x] [AI] **B-1 RED**: create `<CORE>bands.unit.test.ts` asserting a fixture model whose index equals
       the opus anchor's index is assigned `"opus"`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-4 "A model reaching the opus anchor renders in the opus band"_
@@ -927,9 +930,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "opus" band
     ```
 
-- [ ] [AI] **B-2 GREEN**: implement `assignBand` in `<CORE>bands.ts` with the opus comparison
+- [x] [AI] **B-2 GREEN**: implement `assignBand` in `<CORE>bands.ts` with the opus comparison
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-3 RED**: assert a fixture model between the anchors is assigned `"sonnet"`
+- [x] [AI] **B-3 RED**: assert a fixture model between the anchors is assigned `"sonnet"`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-5 "A model between the two anchors renders in the sonnet band"_
 
@@ -941,9 +944,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "sonnet" band
     ```
 
-- [ ] [AI] **B-4 GREEN**: add the sonnet comparison
+- [x] [AI] **B-4 GREEN**: add the sonnet comparison
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-5 RED**: assert a fixture model below the sonnet anchor is assigned `"light"`
+- [x] [AI] **B-5 RED**: assert a fixture model below the sonnet anchor is assigned `"light"`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-6 "A model below the sonnet anchor renders in the light band"_
 
@@ -954,9 +957,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "light" band
     ```
 
-- [ ] [AI] **B-6 GREEN**: add the light fallthrough
+- [x] [AI] **B-6 GREEN**: add the light fallthrough
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-7 RED**: assert **anchor pinning** — with a deliberately perverse fixture in which the
+- [x] [AI] **B-7 RED**: assert **anchor pinning** — with a deliberately perverse fixture in which the
       opus anchor's own index falls below the sonnet anchor's, both anchors still resolve to their
       own bands — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-7 "Each anchor model occupies the band it defines"_
@@ -969,9 +972,9 @@ rev-parse --show-toplevel` prints the worktree path
       And the sonnet anchor belongs to the "sonnet" band
     ```
 
-- [ ] [AI] **B-8 GREEN**: short-circuit `assignBand` on the two anchor ids before any comparison
+- [x] [AI] **B-8 GREEN**: short-circuit `assignBand` on the two anchor ids before any comparison
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-9 RED**: assert **totality** over the real dataset — every model resolves to exactly
+- [x] [AI] **B-9 RED**: assert **totality** over the real dataset — every model resolves to exactly
       one of `opus` / `sonnet` / `light` / `unrated`, with no duplicates and no omissions
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-9 "Every roster model belongs to exactly one capability group"_
@@ -983,9 +986,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then each model appears in exactly one of "opus", "sonnet", "light", or "unrated"
     ```
 
-- [ ] [AI] **B-10 GREEN**: implement `groupByBand(dataset)` returning the four disjoint groups
+- [x] [AI] **B-10 GREEN**: implement `groupByBand(dataset)` returning the four disjoint groups
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-11 RED**: assert `groupByBand` orders models **identically within a band** whichever
+- [x] [AI] **B-11 RED**: assert `groupByBand` orders models **identically within a band** whichever
       chart consumes it — i.e. it returns one canonical ordered list per band, sorted by descending
       index then by id — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-11 "Models are ordered identically in both charts within a band"_
@@ -997,9 +1000,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then each band lists its models in the same order in the capability chart and the price chart
     ```
 
-- [ ] [AI] **B-12 GREEN**: make the ordering canonical and stable
+- [x] [AI] **B-12 GREEN**: make the ordering canonical and stable
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **B-13 REFACTOR**: move the anchor ids and threshold derivation into one exported
+- [x] [AI] **B-13 REFACTOR**: move the anchor ids and threshold derivation into one exported
       `anchors(dataset)` helper so no caller re-derives them
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
 
@@ -1010,7 +1013,7 @@ rev-parse --show-toplevel` prints the worktree path
 > waiting for the route Phase 5 builds. `<USTEPS>ai-benchmark.steps.tsx` is created here at `Z-1` and
 > extended by Phase 5's `W-1a` for the rendering-dependent scenarios.
 
-- [ ] [AI] **Z-1 RED**: create `<USTEPS>ai-benchmark.steps.tsx` binding AC-4, loading
+- [x] [AI] **Z-1 RED**: create `<USTEPS>ai-benchmark.steps.tsx` binding AC-4, loading
       `<SPECS>ai-benchmark.feature` and calling `assignBand` from `<CORE>bands.ts` against a fixture
       dataset (no page render — this scenario is pure-logic)
       — command: `npx nx run ayokoding-www:test:unit`
@@ -1025,9 +1028,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "opus" band
     ```
 
-- [ ] [AI] **Z-2 GREEN**: wire `assignBand`'s opus comparison into the AC-4 step definition
+- [x] [AI] **Z-2 GREEN**: wire `assignBand`'s opus comparison into the AC-4 step definition
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-4 passes
-- [ ] [AI] **Z-3 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-5
+- [x] [AI] **Z-3 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-5
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-5 "A model between the two anchors renders in the sonnet band" — same
     scenario as B-3 above, now bound at the vitest-cucumber layer._
@@ -1040,9 +1043,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "sonnet" band
     ```
 
-- [ ] [AI] **Z-4 GREEN**: wire `assignBand`'s sonnet comparison into the AC-5 step definition
+- [x] [AI] **Z-4 GREEN**: wire `assignBand`'s sonnet comparison into the AC-5 step definition
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-5 passes
-- [ ] [AI] **Z-5 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-6
+- [x] [AI] **Z-5 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-6
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-6 "A model below the sonnet anchor renders in the light band" — same
     scenario as B-5 above, now bound at the vitest-cucumber layer._
@@ -1054,9 +1057,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then that model belongs to the "light" band
     ```
 
-- [ ] [AI] **Z-6 GREEN**: wire `assignBand`'s light fallthrough into the AC-6 step definition
+- [x] [AI] **Z-6 GREEN**: wire `assignBand`'s light fallthrough into the AC-6 step definition
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-6 passes
-- [ ] [AI] **Z-7 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-7
+- [x] [AI] **Z-7 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-7
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-7 "Each anchor model occupies the band it defines" — same scenario as
     B-7 above, now bound at the vitest-cucumber layer._
@@ -1069,9 +1072,9 @@ rev-parse --show-toplevel` prints the worktree path
       And the sonnet anchor belongs to the "sonnet" band
     ```
 
-- [ ] [AI] **Z-8 GREEN**: wire the anchor-pinning short-circuit into the AC-7 step definition
+- [x] [AI] **Z-8 GREEN**: wire the anchor-pinning short-circuit into the AC-7 step definition
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-7 passes
-- [ ] [AI] **Z-9 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-8
+- [x] [AI] **Z-9 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-8
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-8 "A model with no published benchmark score renders in the unrated
     group" — same scenario as C-7 above, now bound at the vitest-cucumber layer._
@@ -1084,9 +1087,9 @@ rev-parse --show-toplevel` prints the worktree path
       And that model has no composite index
     ```
 
-- [ ] [AI] **Z-10 GREEN**: wire the zero-coverage case from `<CORE>score.ts` into the AC-8 step
+- [x] [AI] **Z-10 GREEN**: wire the zero-coverage case from `<CORE>score.ts` into the AC-8 step
       definition — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-8 passes
-- [ ] [AI] **Z-11 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-9
+- [x] [AI] **Z-11 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-9
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-9 "Every roster model belongs to exactly one capability group" — same
     scenario as B-9 above, now bound at the vitest-cucumber layer._
@@ -1098,9 +1101,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then each model appears in exactly one of "opus", "sonnet", "light", or "unrated"
     ```
 
-- [ ] [AI] **Z-12 GREEN**: wire `groupByBand(dataset)` over the full roster into the AC-9 step
+- [x] [AI] **Z-12 GREEN**: wire `groupByBand(dataset)` over the full roster into the AC-9 step
       definition — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-9 passes
-- [ ] [AI] **Z-13 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-10
+- [x] [AI] **Z-13 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-10
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-10 "A model missing a benchmark is scored over the benchmarks it has" —
     same scenario as C-5 above, now bound at the vitest-cucumber layer._
@@ -1113,9 +1116,9 @@ rev-parse --show-toplevel` prints the worktree path
       And its coverage ratio equals the summed weight of those two benchmarks divided by one hundred
     ```
 
-- [ ] [AI] **Z-14 GREEN**: wire `computeIndex`/`coverage` from `<CORE>score.ts` into the AC-10 step
+- [x] [AI] **Z-14 GREEN**: wire `computeIndex`/`coverage` from `<CORE>score.ts` into the AC-10 step
       definition — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-10 passes
-- [ ] [AI] **Z-15 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-11
+- [x] [AI] **Z-15 RED**: extend `<USTEPS>ai-benchmark.steps.tsx` binding AC-11
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-11 "Models are ordered identically in both charts within a band" — same
     scenario as B-11 above, now bound at the vitest-cucumber layer._
@@ -1127,16 +1130,16 @@ rev-parse --show-toplevel` prints the worktree path
       Then each band lists its models in the same order in the capability chart and the price chart
     ```
 
-- [ ] [AI] **Z-16 GREEN**: wire `groupByBand`'s canonical per-band ordering into the AC-11 step
+- [x] [AI] **Z-16 GREEN**: wire `groupByBand`'s canonical per-band ordering into the AC-11 step
       definition — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-11 passes
-- [ ] [AI] **Z-17 REFACTOR**: extract the fixture-dataset builder shared by Z-1…Z-16 into one helper
+- [x] [AI] **Z-17 REFACTOR**: extract the fixture-dataset builder shared by Z-1…Z-16 into one helper
       in `<USTEPS>ai-benchmark.steps.tsx`, so each step definition stays a thin call into the
       already-tested `<CORE>` functions — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: all tests still pass
 
 ### Harness price selection (`<CORE>price.ts`)
 
-- [ ] [AI] **P-1 RED**: create `<CORE>price.unit.test.ts` asserting `lowestRate(model)` returns the
+- [x] [AI] **P-1 RED**: create `<CORE>price.unit.test.ts` asserting `lowestRate(model)` returns the
       cheaper of two harness rate sets when no harness filter is applied
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-17 "An unfiltered price chart shows the lowest harness rate"_
@@ -1149,15 +1152,15 @@ rev-parse --show-toplevel` prints the worktree path
       And the chart states that it shows the lowest available harness rate
     ```
 
-- [ ] [AI] **P-2 GREEN**: implement `lowestRate` in `<CORE>price.ts`, comparing on input rate then
+- [x] [AI] **P-2 GREEN**: implement `lowestRate` in `<CORE>price.ts`, comparing on input rate then
       output rate — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **P-3 RED**: assert `rateFor(model, harnessId)` returns that harness's rate set and
+- [x] [AI] **P-3 RED**: assert `rateFor(model, harnessId)` returns that harness's rate set and
       `undefined` when the model is not exposed by that harness
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (underpins) → AC-18._
-- [ ] [AI] **P-4 GREEN**: implement `rateFor`
+- [x] [AI] **P-4 GREEN**: implement `rateFor`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **P-5 RED**: assert a subscription-only model returns `{ kind: "subscription" }` from both
+- [x] [AI] **P-5 RED**: assert a subscription-only model returns `{ kind: "subscription" }` from both
       selectors and **never** a numeric zero
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-16 "A subscription-only model renders in the subscription group"_
@@ -1170,15 +1173,15 @@ rev-parse --show-toplevel` prints the worktree path
       But that model renders no per-token bar and no zero value
     ```
 
-- [ ] [AI] **P-6 GREEN**: handle the subscription discriminant explicitly in both selectors
+- [x] [AI] **P-6 GREEN**: handle the subscription discriminant explicitly in both selectors
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **P-7 REFACTOR**: collapse `lowestRate` and `rateFor` onto one internal
+- [x] [AI] **P-7 REFACTOR**: collapse `lowestRate` and `rateFor` onto one internal
       `selectRateSet(model, harnessId?)` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: all tests still pass
 
 ### Filtering (`<CORE>filter.ts`) and URL state (`<CORE>url-state.ts`)
 
-- [ ] [AI] **F-1 RED**: create `<CORE>filter.unit.test.ts` asserting `filterModels(dataset, state)`
+- [x] [AI] **F-1 RED**: create `<CORE>filter.unit.test.ts` asserting `filterModels(dataset, state)`
       narrows by harness, narrows by class, and intersects both
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-25 "Harness and class parameters intersect"_
@@ -1190,9 +1193,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then only models satisfying both filters are shown
     ```
 
-- [ ] [AI] **F-2 GREEN**: implement `filterModels` — command: `npx nx run ayokoding-www:test:unit`
+- [x] [AI] **F-2 GREEN**: implement `filterModels` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **F-3 RED**: create `<CORE>url-state.unit.test.ts` asserting `decodeState` returns the
+- [x] [AI] **F-3 RED**: create `<CORE>url-state.unit.test.ts` asserting `decodeState` returns the
       default unfiltered state for an empty query string, and `encodeState` **omits** defaults from
       the query string — mirroring the calculator's proven contract
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
@@ -1205,9 +1208,9 @@ rev-parse --show-toplevel` prints the worktree path
       Then every roster model is shown in the data table
     ```
 
-- [ ] [AI] **F-4 GREEN**: implement `PARAM_KEYS`, `DEFAULT_STATE`, `decodeState`, `encodeState` in
+- [x] [AI] **F-4 GREEN**: implement `PARAM_KEYS`, `DEFAULT_STATE`, `decodeState`, `encodeState` in
       `<CORE>url-state.ts` — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **F-5 RED**: assert an unknown harness value and an unknown class value each sanitize to
+- [x] [AI] **F-5 RED**: assert an unknown harness value and an unknown class value each sanitize to
       the default rather than throwing — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: fails
   - _Gherkin (binds) → AC-26 "An unrecognized filter value falls back to the unfiltered view"_
@@ -1220,32 +1223,43 @@ rev-parse --show-toplevel` prints the worktree path
       But no error is surfaced to the reader
     ```
 
-- [ ] [AI] **F-6 GREEN**: sanitize both params against their known-value unions
+- [x] [AI] **F-6 GREEN**: sanitize both params against their known-value unions
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **F-7 RED**: assert `encodeState(decodeState(q))` round-trips for every valid query string
+- [x] [AI] **F-7 RED**: assert `encodeState(decodeState(q))` round-trips for every valid query string
       in a table-driven fixture — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (underpins) → AC-27._
-- [ ] [AI] **F-8 GREEN**: make the round-trip hold
+- [x] [AI] **F-8 GREEN**: make the round-trip hold
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: passes
-- [ ] [AI] **F-9 REFACTOR**: extract the known-value unions into shared constants imported by both
+- [x] [AI] **F-9 REFACTOR**: extract the known-value unions into shared constants imported by both
       `filter.ts` and `url-state.ts`, so a new harness id is added in exactly one place
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
+
+> **Phase 4 implementation evidence (2026-07-28)**: all step boxes above ticked. Single cohesive TDD pass by swe-typescript-dev. - **Date**: 2026-07-28
+
+- **Status**: done
+- **Files**: `core/score.ts`, `core/bands.ts`, `core/price.ts`, `core/filter.ts`, `core/url-state.ts` (+ `.unit.test.ts` each), `test/unit/fe-steps/ai-benchmark.steps.tsx`, `specs/.../tools/ai-benchmark.feature`
+- **Notes**: implemented per the TDD step (RED/GREEN/REFACTOR). 386 core tests pass; specs:behavior:coverage valid (AC-4..AC-11 bound); Opus5→opus, Sonnet5→sonnet (pinned), Cursor Composer 2.5→unrated; groups opus2/sonnet11/light7/unrated18.
 
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5. This is a **boundary** phase.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — AC-4 through AC-11 (the only
-      scenarios currently in `<SPECS>ai-benchmark.feature`) each have a `@covers`-annotated step
-- [ ] [AI] Every module under `<CORE>` is free of React and router imports — acceptance:
-      `grep -rn "from \"react\"\|next/navigation\|next/router" <CORE>` prints nothing
-- [ ] [AI] `npx nx run ayokoding-www:test:coverage` meets the project's configured threshold
-- [ ] [AI] `npx nx affected -t typecheck lint` exits 0
-- [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0
+  - **Date**: 2026-07-28 — **Status**: done — **Notes**: passed — 136 files / 2891 tests (cached; min-role timeout fix stable).
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — AC-4 through AC-11 (the only
+  - **Date**: 2026-07-28 — **Status**: done — **Notes**: passed — 42 specs, 299 scenarios, 1070 steps all covered; AC-4..AC-11 bound.
+    scenarios currently in `<SPECS>ai-benchmark.feature`) each have a `@covers`-annotated step
+- [x] [AI] Every module under `<CORE>` is free of React and router imports — acceptance:
+  - **Date**: 2026-07-28 — **Status**: done — **Notes**: passed — grep for react/next-navigation/next-router in core/ prints nothing.
+    `grep -rn "from \"react\"\|next/navigation\|next/router" <CORE>` prints nothing
+- [x] [AI] `npx nx run ayokoding-www:test:coverage` meets the project's configured threshold
+  - **Date**: 2026-07-28 — **Status**: done — **Notes**: passed — 88.26% lines (threshold 82).
+- [x] [AI] `npx nx affected -t typecheck lint` exits 0
+  - **Date**: 2026-07-28 — **Status**: done — **Notes**: passed — 56/56 tasks.
+- [x] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-4-core` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-4-core/`
-- [ ] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+- [x] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
 
 > **Pause Safety**: the whole computation layer is implemented and unit-tested with no UI consuming
 > it; no route exists and no rendered surface changed. Safe to stop. To resume:
