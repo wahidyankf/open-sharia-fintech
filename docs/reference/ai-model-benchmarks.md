@@ -11,7 +11,7 @@ created: 2026-04-19
 
 # AI Model Benchmarks Reference
 
-Canonical benchmark reference for all AI models used in this project. Last updated: 2026-07-05.
+Canonical benchmark reference for all AI models used in this project. Last updated: 2026-07-28 (generated tables — roster, pricing, frontier, capability-summary); hand-curated model-by-model prose was last refreshed 2026-07-05 — see the snapshot captions inside each generated block for the authoritative date.
 
 > **Derived data tables.** The data tables in this reference are generated from
 > [`apps/ayokoding-www/src/features/ai-benchmark/core/data/models.ts`](../../apps/ayokoding-www/src/features/ai-benchmark/core/data/models.ts)
@@ -164,7 +164,11 @@ tier **above** Opus on 2026-06-09 — **Claude Fable 5** (GA, SWE-bench Pro ~80.
 [Vellum](https://www.vellum.ai/blog/claude-fable-5-and-mythos-5-benchmarks-explained)) and **Claude
 Mythos 5** (gated to Project Glasswing, not generally available) — neither is what the `opus` alias
 resolves to; Fable 5/Mythos 5 are noted here for completeness only, not tracked as a tier in this
-document.
+document. **Claude Opus 5 shipped 2026-07-24** (after this table's 2026-07-05 refresh) and is the
+dataset's current `opus` anchor for benchmark bands in the generated tables below — but the
+hand-written `opus` alias in this table and in the Model Selection Mapping below still points at
+`claude-opus-4-8`; repointing the alias is a separate governance decision (see the "opus anchor vs.
+opus alias" note under Model Selection Mapping).
 
 ---
 
@@ -315,10 +319,7 @@ models — the `opencode-go/` models are only active in the OpenCode runtime (an
 window) serve as the effective capability signal — lower limit = heavier/more capable model,
 higher limit = lighter/faster model.
 
-**Current roster**: 13 models as of 2026-07-05 (independently re-confirmed via the `opencode models`
-CLI, v1.14.49 — a live client check, not docs-only). The roster changes without a fixed cadence —
-observed twice in the ~2 months between the prior `adopt-opencode-go` plan (2026-05-03) and this
-refresh. Check the live model list in the OpenCode TUI or at [opencode.ai/docs/go](https://opencode.ai/docs/go/).
+**Current roster**: 15 models as of the 2026-07-28 generated snapshot (see the roster table below) — 13 models at the prior 2026-07-05 refresh (independently re-confirmed via the `opencode models` CLI, v1.14.49 — a live client check, not docs-only). The roster changes without a fixed cadence — observed twice in the ~2 months between the prior `adopt-opencode-go` plan (2026-05-03) and the 2026-07-05 refresh, and again between that refresh and the 2026-07-28 snapshot. Check the live model list in the OpenCode TUI or at [opencode.ai/docs/go](https://opencode.ai/docs/go/).
 
 **Source**: [OpenCode Go Docs](https://opencode.ai/docs/go/), live `opencode models` CLI output
 (both accessed 2026-07-05)
@@ -343,7 +344,9 @@ it still anchors the roster comparison below. Anthropic's tier _above_ Opus, shi
 
 **No `opencode-go` roster model clears Opus 4.8's 69.2% SWE-bench Pro bar** — at the time of that
 decision, `glm-5.2` at 62.1% was the strongest confirmed roster model and the closest to the bar,
-~7.1pp below. The thinking tier therefore
+~7.1pp below (the 2026-07-28 roster snapshot in the generated table below now leads with `grok-4.5`
+at 64.7% SWE-bench Pro `[Self-reported]`, ~4.5pp below the bar — still under it, so the
+thinking-tier collapse rationale still holds, just with a narrower gap). The thinking tier therefore
 collapses onto the execution tier's target (`glm-5.2`) rather than being held to a bar nothing in
 the roster meets — an explicit, accepted tradeoff, not an oversight. See Decision 1 in the
 `upgrade-opencode-go-models` plan's `tech-docs.md` for the full rationale and decision-branch diagram.
@@ -405,8 +408,7 @@ without-fixed-cadence drift risk noted above.
 
 **Pricing**: $1.40 / $4.40 per 1M tokens (in/out) — [Z.ai Pricing](https://docs.z.ai/guides/overview/pricing), retrieved 2026-07-05.
 
-**Rate limit**: 880 req/5h — tied for the tightest in the 13-model roster, confirming it is priced
-and throttled as the flagship, not a light/fast option.
+**Rate limit**: 880 req/5h — tied for the tightest in the 13-model roster at the 2026-07-05 refresh (the 2026-07-28 snapshot's 15-model roster is in the generated table below; req/5h figures for the two newly-added models, `grok-4.5` and `kimi-k3`, were not re-confirmed this pass), confirming `glm-5.2` is priced and throttled as the flagship, not a light/fast option.
 
 **Role in this repo**: strongest model in the roster on every published benchmark checked — used as
 both the thinking-tier (`opus`) and execution-tier (`sonnet`/omitted) target in `convert_model()`,
@@ -666,7 +668,7 @@ for the current agent frontmatter aliases.
 | `sonnet`/omit (execution) | `claude-sonnet-5`           | $2→$3 / $10→$15       | 85.2% `[Verified]` | `opencode-go/glm-5.2`    |
 | `haiku` (fast)            | `claude-haiku-4-5-20251001` | $1 / $5               | 73.3% `[Verified]` | `opencode-go/minimax-m3` |
 
-**Note on OpenCode Go mapping**: The full opencode-go roster has 13 models as of 2026-07-05. The
+**Note on OpenCode Go mapping**: The opencode-go roster has 15 models as of the 2026-07-28 generated snapshot (13 at the prior 2026-07-05 refresh — see the roster table above for the authoritative current count). The
 thinking and execution tiers both map to `glm-5.2` — an explicit, intentional collapse (Decision 1,
 `upgrade-opencode-go-models` plan `tech-docs.md`): no roster model separately clears Claude Opus
 4.8's tier. The fast tier maps to `minimax-m3`, superseding the retired `glm-5` (unsuffixed) mapping.
@@ -674,13 +676,27 @@ This reflects the 3-branch structure encoded in `apps/rhino-cli/src/application/
 at time of last sync. As the OpenCode Go roster evolves, the converter may be updated to point to
 higher-capability models. See `model-selection.md` for the authoritative mapping rationale.
 
+**`opus` anchor vs. `opus` alias — a deliberate distinction**: the dataset's `opus` anchor for the
+benchmark bands in this doc is `claude-opus-5` (the current Opus generation, shipped 2026-07-24 — see
+the tier-design prose and the generated frontier/capability-summary tables), but the repo's
+`convert_model()` alias shown in the table above still resolves `opus` to `claude-opus-4-8` (the
+prior Opus generation). The two are intentionally decoupled: the benchmark bands track the latest
+shipped Opus, while the alias mapping is a separate governance decision not changed by a data
+refresh. Do not read the `claude-opus-5` rows in the generated tables as a statement that the alias
+has been repointed.
+
 ---
 
-## Standard API Pricing (Non-Subscription, Per-Token)
+## Per-Harness Standard-Tier Pricing
 
-Retrieved 2026-07-05 for the `upgrade-opencode-go-models` plan. These are each model's own
-provider's direct pay-as-you-go rate — not the flat-rate `opencode-go` subscription price paid by
-this repo's actual subscribers.
+Per-harness standard-tier rates for every model in the dataset (generated, snapshot 2026-07-28 — see
+the block below). Metered harnesses (`claude-code`, `codex-cli`, `cursor`, `opencode-zen`) bill per
+1M tokens at each model's own provider's direct pay-as-you-go rate; the `opencode-go` rows are the
+flat-rate subscription ($5 first month, then $10/month) shown as `$10/mo sub` — not a per-token
+rate — and are listed alongside the metered rows for direct cost comparison. The per-model prose
+pricing notes higher up (e.g. `glm-5.2` $1.40/$4.40, `minimax-m3` $0.30/$1.20) were last
+hand-researched 2026-07-05 and may lag the generated table — where the two disagree, the generated
+block below is authoritative.
 
 <!-- BEGIN GENERATED: pricing -->
 
@@ -772,21 +788,13 @@ this repo's actual subscribers.
 
 <!-- END GENERATED: pricing -->
 
-Notes: (a) GLM-5.1/5.2 show identical official rates on Z.ai's own pricing page — some aggregators
-list a lower third-party-hosted GLM-5.1 rate; that is reseller pricing, not Z.ai's. (b)
-MiniMax-M2.7/M3 show identical standard-tier rates on MiniMax's own pricing page — unusual for two
-model generations, worth a spot-check on next refresh. (c) DeepSeek's live official page shows no
-expiry note on this rate, but a secondary source claims it is a promotion that may revert to
-$1.74/$3.48 — re-verify before relying on it long-term. (d) Xiaomi MiMo publishes only CNY pricing;
-USD figures converted at the CNY/USD spot rate as of 2026-07-04, not an official USD list price. (e)
-Alibaba Cloud Model Studio prices by region; Singapore/International rates shown as the
-globally-reachable rate — China-mainland pricing is substantially lower.
+Notes: (a) GLM-5.1/5.2 show identical official rates on Z.ai's own pricing page — some aggregators list a lower third-party-hosted GLM-5.1 rate; that is reseller pricing, not Z.ai's. (b) MiniMax-M2.7/M3 show identical standard-tier rates on MiniMax's own pricing page — unusual for two model generations, worth a spot-check on next refresh. (c) DeepSeek V4 Pro's $1.74/$3.48 opencode-zen rate (above) — DeepSeek's live official page shows no expiry note, but a secondary source flags it as a promotional rate that may revert to a higher list price; re-verify before relying on it long-term. (d) Alibaba Cloud Model Studio prices by region; Singapore/International rates shown as the globally-reachable rate — China-mainland pricing is substantially lower. (Xiaomi MiMo has no metered row in this table — it is opencode-go subscription-only as of this snapshot, so the prior CNY→USD conversion note no longer applies.)
 
 ---
 
 ## Frontier/Big-Brand Model Reference (Informational Only — Not Available via `opencode-go`)
 
-Current Anthropic/OpenAI/Google flagship pricing and benchmarks, retrieved 2026-07-05, purely for
+Current Anthropic/OpenAI/Google/xAI flagship pricing and benchmarks (generated table snapshots 2026-07-28; per-model prose above was last hand-researched 2026-07-05), purely for
 cost/capability contrast — **none of these are, or will be, routed to by this repo's `convert_model()`
 or Pi's model pin** (see Decision 0, `upgrade-opencode-go-models` plan `tech-docs.md`: BYOM harnesses
 in this repo must not route to Anthropic, OpenAI, Google, or other frontier/big-brand providers).
@@ -820,18 +828,7 @@ in this repo must not route to Anthropic, OpenAI, Google, or other frontier/big-
 
 <!-- END GENERATED: frontier -->
 
-Notes: (a) introductory rate through 2026-08-31, then standard rate. (b) third-party transcription
-of an image-embedded table on Anthropic's own announcement page — treat as directionally correct,
-not exact. (c) quoted consistently across independent outlets citing OpenAI's own announcement; the
-primary page returned HTTP 403 on every direct fetch attempt. (d) OpenAI has publicly stopped
-reporting SWE-bench Verified for current-generation models (training-data contamination/reward-
-hacking concerns); recommends SWE-bench Pro instead. Last officially-reported Verified figure was
-GPT-5.2 Thinking at 80% (2026-12-11), two generations behind current. (e) Scale AI's independent
-SWE-bench Pro leaderboard, xHigh reasoning setting — not vendor-self-reported. (f) Google's own
-model card self-reports 54.2%; the independent Scale AI leaderboard scores the same model at
-46.10% ± 3.60% — a real self-reported-vs-independent gap, both cited rather than silently picking
-one. (g) a 78% figure circulates across secondary sources but could not be confirmed on Google's own
-model card.
+Notes: (a) introductory rate through 2026-08-31, then standard rate. (b) third-party transcription of an image-embedded table on Anthropic's own announcement page — treat as directionally correct, not exact. (c) quoted consistently across independent outlets citing OpenAI's own announcement; the primary page returned HTTP 403 on every direct fetch attempt. (d) OpenAI has publicly stopped reporting SWE-bench Verified for current-generation models (training-data contamination/reward-hacking concerns); recommends SWE-bench Pro instead. Last officially-reported Verified figure was GPT-5.2 Thinking at 80% (2026-12-11), two generations behind current. (e) Scale AI's independent SWE-bench Pro leaderboard, xHigh reasoning setting — not vendor-self-reported. (f) a 78% figure circulates across secondary sources for Gemini 3 Flash but could not be confirmed on Google's own model card.
 
 **Not shown**: Gemini 3.5 Pro (still limited enterprise preview, not GA/priced as of 2026-07-05).
 Claude Mythos 5 (gated to Project Glasswing, not generally accessible).
@@ -889,9 +886,7 @@ Claude Mythos 5 (gated to Project Glasswing, not generally accessible).
 
 (a) vs. older Opus 4.6, not Opus 4.8 — generation mismatch flagged in the original source.
 
-**OC = OpenCode Go subscription (flat-rate, no per-token billing)**. Retired since the 2026-05-07
-refresh (no longer in the live 13-model roster as of 2026-07-05): unsuffixed GLM-5, Kimi K2.5,
-MiniMax M2.5, Qwen3.5 Plus.
+Retired since the 2026-05-07 refresh — no longer in the live roster (13 models at the 2026-07-05 refresh; 15 as of the 2026-07-28 snapshot — see the roster table above): unsuffixed GLM-5, Kimi K2.5, MiniMax M2.5, Qwen3.5 Plus.
 
 ---
 
@@ -913,15 +908,15 @@ MiniMax M2.5, Qwen3.5 Plus.
 
 8. **CursorBench has no public leaderboard**: not re-researched for Opus 4.8/Sonnet 5 in this refresh; the historical 70% figure for Opus 4.7 (now in the Legacy Models table) was partner-reported via Anthropic's launch post and cannot be independently reproduced.
 
-9. **OpenCode Go roster changes without fixed cadence**: The 13-model roster above reflects 2026-07-05, independently re-confirmed via the live `opencode models` CLI (not docs-only). The roster has changed twice in the ~2 months since the prior refresh (2026-05-07) — 4 models retired (unsuffixed GLM-5, Kimi K2.5, MiniMax M2.5, Qwen3.5 Plus), 5 added (GLM-5.2, Kimi K2.7-code, MiniMax M3, Qwen3.7 Max, Qwen3.7 Plus). Check the live list in the OpenCode TUI for the current roster before relying on this table.
+9. **OpenCode Go roster changes without fixed cadence**: The roster table above reflects the 2026-07-28 generated snapshot (15 models); the prior 2026-07-05 refresh independently re-confirmed 13 models via the live `opencode models` CLI (not docs-only). The roster has changed three times in the ~3 months since the 2026-05-07 refresh — 4 models retired (unsuffixed GLM-5, Kimi K2.5, MiniMax M2.5, Qwen3.5 Plus), 5 added by 2026-07-05 (GLM-5.2, Kimi K2.7 Code, MiniMax M3, Qwen3.7 Max, Qwen3.7 Plus), and 2 further additions by 2026-07-28 (Grok 4.5, Kimi K3). Check the live list in the OpenCode TUI for the current roster before relying on this table.
 
 10. **AIME 2026 ≠ AIME 2025**: the retired GLM-5 and its GLM-5.1 successor reported AIME 2026 scores in the prior refresh. These are NOT directly comparable to Claude Sonnet 4.6's (now-legacy) AIME 2025 score of 95.6%.
 
 11. **Prices and context windows** are as of the access date shown. Check official API docs for current values before making cost comparisons.
 
-12. **Accuracy as of**: 2026-07-05. Model versions, scores, pricing, and OpenCode Go roster change frequently. Re-verify when making tier assignment decisions more than 3 months from this date.
+12. **Accuracy as of**: 2026-07-28 for the generated tables (roster, pricing, frontier, capability-summary); 2026-07-05 for the hand-curated model-by-model prose. Model versions, scores, pricing, and OpenCode Go roster change frequently. Re-verify when making tier assignment decisions more than 3 months from these dates.
 
-13. **Standard API pricing vs. `opencode-go` subscription pricing**: the "Standard API Pricing" table above reflects each model's own provider's direct pay-as-you-go rate, not the flat-rate `opencode-go` subscription price this repo's actual OpenCode/Pi configuration pays. The two are not interchangeable for cost planning.
+13. **Per-harness pricing vs. `opencode-go` subscription pricing**: the "Per-Harness Standard-Tier Pricing" table above mixes both — metered harnesses (`claude-code`, `codex-cli`, `cursor`, `opencode-zen`) at each model's own provider's direct pay-as-you-go rate, and `opencode-go` rows showing the flat-rate subscription this repo's actual OpenCode/Pi configuration pays. The two pricing models are not interchangeable for cost planning.
 
 ---
 
