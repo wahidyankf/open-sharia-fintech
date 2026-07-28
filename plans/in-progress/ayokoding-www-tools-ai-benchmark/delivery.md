@@ -508,8 +508,14 @@ rev-parse --show-toplevel` prints the worktree path
 - [ ] [AI] Both `.png` finalists (rendered from their `.svg` sources) exist under `<ASSETS>`, are
       embedded in `prd.md`, and their band colours reconcile with the real `--chart-band-*` tokens
       defined above (D-1/D-2)
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
-- [ ] [AI] `npx nx affected -t typecheck lint` exits 0
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: passed (cached; min-role timeout fix from Phase 2 in effect).
+- [x] [AI] `npx nx affected -t typecheck lint` exits 0
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: passed — ayokoding-www + ayokoding-www-fe-e2e clean.
 - [ ] [AI] `<EV>phase-1-band-contrast.md` records a passing contrast ratio and hue separation for
       every band in both themes
 - [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
@@ -702,70 +708,122 @@ rev-parse --show-toplevel` prints the worktree path
 > DD-18: `<REF>` stops being hand-maintained data and becomes generated from `<DATA>models.ts`, with
 > its hand-written prose preserved. This phase is DAG-independent of Phases 4–8.
 
-- [ ] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
+- [x] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
       unit's first phase and its boundary, so the worktree must exist before this phase's own work
       begins:
       `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-3-reference-derivation
 origin/main` — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-3-reference-derivation
 rev-parse --show-toplevel` prints the worktree path
-- [ ] [AI] **G-1 RED**: create `apps/ayokoding-www/src/scripts/generate-benchmark-reference.unit.test.ts`
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: Worktree provisioned from `origin/main` (HEAD `a81ec0071`, includes Phase 2). `models.ts` confirmed present. `npm install` complete.
+- [x] [AI] **G-1 RED**: create `apps/ayokoding-www/src/scripts/generate-benchmark-reference.unit.test.ts`
       asserting that the generator (a) replaces only the text between a
       `<!-- BEGIN GENERATED: <name> -->` / `<!-- END GENERATED: <name> -->` pair, (b) leaves every
       byte outside the markers untouched, and (c) **throws** when a `BEGIN` marker has no matching
       `END` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the test fails because `<GEN>` does not exist
-- [ ] [AI] **G-2 GREEN**: create `<GEN>` implementing marker-delimited replacement. It MUST locate the
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: RED: generate-benchmark-reference.unit.test.ts asserts marker-only replacement, outside-bytes untouched, and missing-END throw.
+- [x] [AI] **G-2 GREEN**: create `<GEN>` implementing marker-delimited replacement. It MUST locate the
       `BEGIN`/`END` pair **before** any substitution and fail loudly when one is missing — never
       falling back to inserting at an anchor, because an insert-style substitution duplicates content
       on every re-run — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: all three assertions pass, including the missing-`END` throw
-- [ ] [AI] **G-3 RED**: extend the generator test asserting **idempotence** — running the generator
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: generate-benchmark-reference.ts created: marker-first guard, substitutes only between pairs, throws on missing END.
+- [x] [AI] **G-3 RED**: extend the generator test asserting **idempotence** — running the generator
       twice over the same input produces byte-identical output
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: the new assertion fails or passes
       on first run; if it passes trivially, corrupt the marker handling once to confirm it can fail,
       then restore
-- [ ] [AI] **G-4 GREEN**: make the generator idempotent — command:
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: Idempotence assertion added to the test suite.
+- [x] [AI] **G-4 GREEN**: make the generator idempotent — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: running it twice yields no diff
-- [ ] [AI] **G-5 REFACTOR**: split `<GEN>` into a pure `renderTables(dataset)` function and a thin
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: Generator confirmed idempotent (re-generate → no diff).
+- [x] [AI] **G-5 REFACTOR**: split `<GEN>` into a pure `renderTables(dataset)` function and a thin
       file-I/O shell, so the table rendering is unit-testable without touching disk
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
-- [ ] [AI] **G-6**: insert `BEGIN GENERATED` / `END GENERATED` marker pairs into `<REF>` around
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: Split into pure renderTables(dataset) + substituteMarkers + thin I/O shell with --validate.
+- [x] [AI] **G-6**: insert `BEGIN GENERATED` / `END GENERATED` marker pairs into `<REF>` around
       exactly the sections whose content is data — the quick-reference benchmark table, the
       OpenCode Go roster overview, the Standard API Pricing table, and the Frontier/Big-Brand Model
       Reference table — leaving benchmark **definitions**, tier-rationale prose, and the
       limitations-and-caveats narrative outside every marker
       — acceptance: `grep -c "BEGIN GENERATED" <REF>` and `grep -c "END GENERATED" <REF>` print the
       same number, and that number is at least `4`
-- [ ] [AI] **G-7**: add the two Nx targets to `<PROJ>` — `generate-benchmark-reference` (writes) and
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: 5 marker pairs inserted (roster, pricing, frontier, capability-summary + 1) — balanced; definitions/prose outside markers.
+- [x] [AI] **G-7**: add the two Nx targets to `<PROJ>` — `generate-benchmark-reference` (writes) and
       `validate-benchmark-reference` (regenerates to a temp file and diffs, exiting non-zero on
       drift), following the shape of the project's existing `generate-indexes` / `validate-indexes`
       pair — acceptance:
       `node -e "const t=require('./apps/ayokoding-www/project.json').targets; process.exit(t['generate-benchmark-reference']&&t['validate-benchmark-reference']?0:1)"`
       exits 0
-- [ ] [AI] **G-8**: run `npx nx run ayokoding-www:generate-benchmark-reference` and review the diff
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: generate-benchmark-reference + validate-benchmark-reference Nx targets added to project.json, mirroring generate-indexes.
+- [x] [AI] **G-8**: run `npx nx run ayokoding-www:generate-benchmark-reference` and review the diff
       — acceptance: `npx nx run ayokoding-www:validate-benchmark-reference` exits 0, and re-running
       the generate target produces no further diff (idempotence proven on the real file)
-- [ ] [AI] **G-9**: reconcile every piece of `<REF>` prose the regenerated tables now contradict —
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: generate ran; validate exits 0; second generate produces no diff (idempotence proven on the real file).
+- [x] [AI] **G-9**: reconcile every piece of `<REF>` prose the regenerated tables now contradict —
       specifically the section asserting Claude Opus 5 does not exist and the surrounding
       tier-design narrative, which was written when Opus 4.8 was the current Opus generation
       — acceptance: `grep -ci "opus 5.*does not exist\|no such model as.*opus 5" <REF>` prints `0`,
       and the reconciled prose names Opus 5's 2026-07-24 ship date with its source
   - _Suggested executor: `docs-fixer`_
-- [ ] [AI] **G-10**: state the derivation contract at the top of `<REF>` — that its data tables are
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: Opus-5 prose reconciled — 'does not exist' sections rewritten to name the 2026-07-24 ship date; contradiction grep = 0.
+- [x] [AI] **G-10**: state the derivation contract at the top of `<REF>` — that its data tables are
       generated from `<DATA>models.ts`, that hand-edits inside marker pairs are overwritten, and how
       to refresh — acceptance: `grep -c "generated from" <REF>` prints at least `1`
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Files**: `src/scripts/generate-benchmark-reference.ts`, `…unit.test.ts`, `project.json`, `docs/reference/ai-model-benchmarks.md`
+  - **Notes**: Derivation-contract note added at top of REF ('generated from' present).
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4. This is a **boundary** phase.
 
-- [ ] [AI] `npx nx run ayokoding-www:validate-benchmark-reference` exits 0
-- [ ] [AI] Running `npx nx run ayokoding-www:generate-benchmark-reference` twice leaves the working
+- [x] [AI] `npx nx run ayokoding-www:validate-benchmark-reference` exits 0
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: passed — validate target exits 0.
+- [x] [AI] Running `npx nx run ayokoding-www:generate-benchmark-reference` twice leaves the working
       tree clean the second time — acceptance: `git status --porcelain -- docs/reference/ai-model-benchmarks.md`
       prints nothing after the second run
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: passed — second generate produces no diff (idempotent).
 - [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
-- [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
+- [x] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       exits 0 for the edited reference
+  - **Date**: 2026-07-28
+  - **Status**: done
+  - **Notes**: passed for the edited reference — 0 broken links in ai-model-benchmarks.md. (142 pre-existing broken links in plans/done/\*\* are unrelated archived-plan link rot, present before this phase; flagged for a separate maintenance task.)
 - [ ] [AI] `npx nx affected -t typecheck lint` exits 0
 - [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-3-reference-derivation` in worktree
