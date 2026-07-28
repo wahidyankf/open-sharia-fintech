@@ -6,6 +6,8 @@ Interactive calculator tools at `/[locale]/tools/`.
 
 - [cost-of-living-calculator.feature](./cost-of-living-calculator.feature) — Cost of living, savings,
   and minimum software-engineering role calculator at `/[locale]/tools/cost-of-living-calculator`.
+- [ai-benchmark.feature](./ai-benchmark.feature) — AI model benchmark tool (capability bands,
+  composite index, harness price chart) at `/[locale]/tools/ai-benchmark`.
 
 ## Bounded context
 
