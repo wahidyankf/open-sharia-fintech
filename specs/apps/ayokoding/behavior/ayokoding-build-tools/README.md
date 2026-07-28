@@ -1,6 +1,6 @@
 # ayokoding-build-tools — Behavior Surface
 
-Gherkin scenarios for AyoKoding build-time tooling (index generation scripts).
+Gherkin scenarios for AyoKoding build-time tooling (index generation and benchmark reference generation scripts).
 
 ## Contents
 
