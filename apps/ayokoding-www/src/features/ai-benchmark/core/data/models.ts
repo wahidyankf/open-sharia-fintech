@@ -318,7 +318,7 @@ export const dataset: Dataset = {
       harnesses: ["claude-code", "cursor", "opencode-zen"],
       figures: [
         fig("swe-bench-verified", 73.3, "verified", URL.anthropicModels, { benchmarkVersion: "Verified" }),
-        fig("swe-bench-pro", 39.5, "secondary", URL.sweVerified, { benchmarkVersion: "Pro" }),
+        fig("swe-bench-pro", 39.5, "secondary", URL.swePro, { benchmarkVersion: "Pro" }),
         // GPQA conflicted: 74.1% and 67.2% both circulate. LOW (67.2) enters.
         cf("gpqa-diamond", 67.2, 74.1, URL.anthropicModels, {
           benchmarkVersion: "Diamond",
