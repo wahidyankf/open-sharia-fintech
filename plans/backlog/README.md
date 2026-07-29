@@ -42,6 +42,14 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   — Runtime-and-hosting cost reduction for `apps/ayokoding-www`: Pagefind migration, build-time
   Mermaid, `html-react-parser` removal, calculator lazy-load, Docker/trace narrowing, and a
   dependency modernization sweep bound to the repo's bump policy.
+- [audit-e2e-reuse-existing-server-config](./audit-e2e-reuse-existing-server-config/README.md)
+  — Audits whether `reuseExistingServer: true` (hardcoded unconditionally in six `*-e2e`
+  `playwright.config.ts` files) risks silently reusing a stale, unrelated server, and applies a
+  CI-conditional gate, doc caveat, or automated check depending on runner persistence.
+- [vitest-glob-coverage-guard](./vitest-glob-coverage-guard/README.md)
+  — Designs a durable, automated guard against test files landing outside every configured Vitest
+  project's `include` glob, after an `ayokoding-www` regression test silently executed zero times
+  due to exactly this gap.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
