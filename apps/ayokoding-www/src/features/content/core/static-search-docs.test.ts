@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { t } from "@/features/i18n/core/translations";
 import { staticSearchDocs } from "./static-search-docs";
@@ -45,5 +47,35 @@ describe("staticSearchDocs", () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids).toContain("en:tools/ai-benchmark");
     expect(ids).toContain("id:tools/ai-benchmark");
+  });
+});
+
+// ── Parity regression: TOOL_ENTRIES must stay in sync with the tools index page's own nav links
+// (pr-review-synthesis-maker MEDIUM finding, PR #122 cycle 1) ──────────────────────────────────
+//
+// `TOOL_ENTRIES` is a hand-maintained mirror of `tools/page.tsx`'s `<Link>` list, with no enforced
+// parity — a new tool linked from the nav but never added here would reproduce UWT-001 (a tool
+// prominently linked but unfindable in search), and the four-doc-count test above is
+// self-referential (it names both current tools explicitly, so it cannot catch a third). This test
+// reads `tools/page.tsx` as TEXT (no JSX parser, mirroring `band-tokens.unit.test.ts`'s own
+// text-based approach for the same reason: resilient to formatting churn) and extracts every
+// `href="./tools/<slug>"` link, then asserts each one has a matching `TOOL_ENTRIES` slug — NOT the
+// reverse (a TOOL_ENTRIES-only entry with no nav link yet is not this test's concern).
+describe("TOOL_ENTRIES parity with the tools index page's nav links", () => {
+  // Nx's `test:unit` target sets `cwd = {projectRoot}` (apps/ayokoding-www) — see
+  // `band-tokens.unit.test.ts` for the same convention and its rationale.
+  const toolsIndexPagePath = join(process.cwd(), "src", "app", "[locale]", "tools", "page.tsx");
+  const toolsIndexSource = readFileSync(toolsIndexPagePath, "utf8");
+
+  const navSlugs = Array.from(toolsIndexSource.matchAll(/href="\.\/(tools\/[a-z0-9-]+)"/g)).map((m) => m[1]);
+
+  it("sanity: the tools index page's source links at least one tools/* route", () => {
+    expect(navSlugs.length).toBeGreaterThan(0);
+  });
+
+  it.each(navSlugs)("every tools/page.tsx nav link (%s) has a matching TOOL_ENTRIES slug", (slug) => {
+    const docs = staticSearchDocs();
+    const matches = docs.some((d) => d.slug === slug);
+    expect(matches, `no staticSearchDocs entry has slug "${slug}" — TOOL_ENTRIES is missing it`).toBe(true);
   });
 });

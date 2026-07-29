@@ -529,14 +529,28 @@ override block. Defining band tokens in `apps/ayokoding-www/src/app/globals.css`
 duplicating that dark block for chart colours alone. `globals.css` already imports `ayokoding.css`,
 so the tokens resolve with no wiring change.
 
-The bands **alias existing hues** rather than introducing new hex values (R5 reuse):
+The bands mostly **alias existing hues** rather than introducing new hex values (R5 reuse) — with
+one exception in the light theme, below:
 
-| Band      | Light + dark token     | Aliases                               | Hue angle | Colour-blind separation                                 |
-| --------- | ---------------------- | ------------------------------------- | --------- | ------------------------------------------------------- |
-| `opus`    | `--chart-band-opus`    | `var(--hue-plum)` + `-ink` / `-wash`  | 305       | Far from both others in hue and in lightness            |
-| `sonnet`  | `--chart-band-sonnet`  | `var(--hue-teal)` + `-ink` / `-wash`  | 200       | ~105° from opus, ~125° from light                       |
-| `light`   | `--chart-band-light`   | `var(--hue-honey)` + `-ink` / `-wash` | 75        | ~125° from sonnet                                       |
-| `unrated` | `--chart-band-unrated` | `var(--warm-400)`                     | neutral   | Desaturated by design — reads as "no data", not a class |
+| Band      | Light theme token                                           | Dark theme token                      | Hue angle | Colour-blind separation                                 |
+| --------- | ----------------------------------------------------------- | ------------------------------------- | --------- | ------------------------------------------------------- |
+| `opus`    | `var(--hue-plum)` + `-ink` / `-wash`                        | `var(--hue-plum)` + `-ink` / `-wash`  | 305       | Far from both others in hue and in lightness            |
+| `sonnet`  | **literal** `oklch(56% 0.1 200)` + aliased `-ink` / `-wash` | `var(--hue-teal)` + `-ink` / `-wash`  | 200       | ~105° from opus, ~125° from light                       |
+| `light`   | **literal** `oklch(60% 0.15 75)` + aliased `-ink` / `-wash` | `var(--hue-honey)` + `-ink` / `-wash` | 75        | ~125° from sonnet                                       |
+| `unrated` | `var(--warm-400)`                                           | `var(--warm-400)`                     | neutral   | Desaturated by design — reads as "no data", not a class |
+
+`sonnet`/`light` pin **literal OKLCH values in the light theme only** (Rule-15 M-14 fix,
+`libs/web-ui-token/src/ayokoding.css:107-108`) rather than aliasing the shared `--hue-teal`/
+`--hue-honey` tokens the way `opus` aliases `--hue-plum`: at `--hue-teal`'s/`--hue-honey`'s own
+light-theme lightness (66%/76%), the bar `fill` colour measured only ~2.90:1/~2.13:1 against
+`--color-background` — both failing WCAG 1.4.11's 3:1 non-text minimum for a bar, a meaningful
+graphical object. Darkening the SHARED `--hue-teal`/`--hue-honey` tokens would ripple into every
+other feature already using them at their current lightness, so each affected band instead pins its
+own literal value at the SAME hue angle (200°/75°, preserving the ≥105° colour-blind-safe
+separation), darker lightness only — re-measured at 4.28:1/3.91:1, comfortably clearing 3:1. The
+dark theme still aliases `--hue-teal`/`--hue-honey` unchanged: at dark theme's own lightness
+(70%/82% against a ~20%-lightness background) those aliases measure 7.14:1/10.00:1, well clear of
+3:1 with no literal pin needed.
 
 The three hues are ≥105° apart in OKLCH hue and differ in lightness, which preserves separability
 under deuteranopia and protanopia. **Colour is never the sole encoding** regardless: every band
@@ -545,7 +559,10 @@ carries its class name as text (AC-37), so the tokens are a reinforcement, not t
 Contrast is verified two ways: a unit test asserting the token declarations exist in both the light
 and dark blocks, and an e2e assertion reading **computed styles from the live page** (AC-38) — jsdom
 cannot resolve `oklch()` custom properties through a cascade, so a jsdom-only contrast test would be
-vacuous.
+vacuous. The e2e assertion checks TWO token pairs per band, not one: the `-ink`/`-wash` pair (WCAG
+AA text contrast, 4.5:1) AND the base/bar-fill token against `--color-background` (WCAG 1.4.11
+non-text contrast, 3:1) for the three rated bands — the latter is the pair the M-14 fix above
+actually protects.
 
 ### Feature gating
 

@@ -1,9 +1,22 @@
 import * as React from "react";
 import { cn } from "../../utils/cn";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+type TableProps = React.ComponentProps<"table"> & {
+  /**
+   * Extra classes merged onto the `data-slot="table-wrapper"` div (the actual `overflow-x-auto`
+   * scroll container), NOT the `<table>` element `className` reaches. A consumer that needs a
+   * `position: sticky` element inside the table (e.g. a sticky `<thead>` or sticky first column)
+   * to stop being a scroll container at some breakpoint — `overflow-x: auto` forces `overflow-y`
+   * to compute to `auto` too (MDN `overflow-x`), making this wrapper a scroll container in BOTH
+   * axes, and `position: sticky` resolves against its nearest scroll-container ancestor — needs
+   * this prop to override the wrapper's `overflow` (e.g. `wrapperClassName="lg:overflow-visible"`).
+   */
+  wrapperClassName?: string;
+};
+
+function Table({ className, wrapperClassName, ...props }: TableProps) {
   return (
-    <div data-slot="table-wrapper" className="relative w-full overflow-x-auto">
+    <div data-slot="table-wrapper" className={cn("relative w-full overflow-x-auto", wrapperClassName)}>
       <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   );

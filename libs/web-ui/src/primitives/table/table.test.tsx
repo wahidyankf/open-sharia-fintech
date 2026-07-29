@@ -126,4 +126,26 @@ describe("Table primitive", () => {
     expect(container.querySelector(".custom-body")).toBeTruthy();
     expect(container.querySelector(".custom-cell")).toBeTruthy();
   });
+
+  // Regression: DWT-003's migration of `model-table.tsx` onto this primitive silently dropped the
+  // bespoke table's `lg:overflow-visible` override, disabling `position: sticky` on its `<thead>`
+  // at `lg`+ (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1) — `overflow-x-auto` forces
+  // `overflow-y` to compute to `auto` too, making the wrapper a scroll container in both axes with
+  // no way for a consumer to override it. `wrapperClassName` is the fix.
+  it("merges wrapperClassName onto the table-wrapper div, not the <table> element", () => {
+    const { container } = render(
+      <Table wrapperClassName="lg:overflow-visible" className="custom-table">
+        <TableBody>
+          <TableRow>
+            <TableCell>data</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>,
+    );
+    const wrapper = container.querySelector('[data-slot="table-wrapper"]');
+    expect(wrapper?.className).toContain("lg:overflow-visible");
+    expect(wrapper?.className).toContain("overflow-x-auto");
+    expect(wrapper?.className).not.toContain("custom-table");
+    expect(container.querySelector("table")?.className).not.toContain("lg:overflow-visible");
+  });
 });

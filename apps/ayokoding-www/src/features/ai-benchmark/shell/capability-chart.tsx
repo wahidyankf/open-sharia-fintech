@@ -20,7 +20,7 @@
 
 import { useId } from "react";
 import { t } from "@/features/i18n/core/translations";
-import type { Locale } from "@/features/i18n/core/config";
+import { SUPPORTED_LOCALES, type Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
 import { BANDS } from "../core/filter";
@@ -42,16 +42,40 @@ const SLOT = "capability-chart";
 
 // ─── Layout constants (display-only — never a benchmark score, price, or threshold) ───────────
 //
-// `SVG_WIDTH`'s right margin (currently `SVG_WIDTH - (PLOT_X + PLOT_WIDTH)` = 300 units) must stay
-// wide enough for the longest localized low-coverage marker string (Rule-15 DWT-001 fix — was 60
-// units, clipping "low coverage (20%)"/"cakupan rendah (20%)" for any bar long enough to leave
-// under ~140 units of remaining width). This SVG scales via `viewBox` + `w-full`, but its text uses
-// a fixed CSS pixel size (`text-[9px]`, NOT an SVG-unit `font-size`), so the real-pixel space this
-// margin buys shrinks as the container narrows — 300 units was sized against the narrowest tested
-// viewport (375px) with both locales' longest marker string, verified via live-page screenshots.
-const SVG_WIDTH = 840;
+// `SVG_WIDTH` stays at its ORIGINAL value (Rule-15 DWT-001 re-review). Per SVG 1.1 §Coordinate
+// Systems, CSS `px` inside an SVG IS a user unit, so the `viewBox` transform scales EVERY
+// user-unit quantity uniformly — the marker `<text>`'s `text-[9px]` included. The ratio of
+// available margin to font size is therefore invariant to `SVG_WIDTH`: widening it does not
+// change how much room the marker text has relative to its own font size, it only downscales the
+// WHOLE chart (bars, labels, ticks) by the same factor. An earlier attempt at this fix widened
+// `SVG_WIDTH` 600→840, which happened to also shrink the marker text ~29% and stop it from
+// clipping — but that was a side effect of shrinking the entire chart at every breakpoint, not a
+// targeted margin gain, and its own rationale comment (CSS `px` allegedly NOT scaling with the
+// `viewBox`) was factually backwards. Corrected here: the margin needed for the marker text is
+// reserved from `PLOT_WIDTH` instead, leaving every other element at its original scale.
+//
+// `MARKER_MIN_MARGIN` is a documented, generous estimate of the SVG user-unit width the longest
+// localized low-coverage marker string (`aiBenchCoverageLow` + a worst-case "(100%)" percentage —
+// wider than any real dataset value, used only as a safe upper bound) needs at `text-[9px]`,
+// computed across every supported locale so none of them clips. `MARKER_CHAR_WIDTH_RATIO` is a
+// conservative average glyph-advance-width-to-font-size ratio for a proportional sans-serif font;
+// `MARKER_SAFETY_BUFFER` cushions the estimate above the ~140-unit clip threshold this defect's
+// live investigation found (delivery.md's DWT-001 finding). The fix was verified live via
+// Playwright at 375px, 768px, and 1280px in every supported locale — see delivery.md's DWT-001
+// resolution.
+const SVG_WIDTH = 600;
 const PLOT_X = 160; // left gutter reserved for the md/lg left-gutter label
-const PLOT_WIDTH = 380;
+const MARKER_FONT_SIZE = 9; // matches the marker `<text>`'s `text-[9px]`
+const MARKER_GAP = 6; // matches `x={PLOT_X + barWidth + 6}` below — the gap before the marker text
+const MARKER_CHAR_WIDTH_RATIO = 0.62;
+const MARKER_SAFETY_BUFFER = 40;
+const WORST_CASE_MARKER_LENGTH = Math.max(
+  ...SUPPORTED_LOCALES.map((locale) => `${t(locale, "aiBenchCoverageLow")} (${formatCoverage(1, locale)})`.length),
+);
+export const MARKER_MIN_MARGIN =
+  MARKER_GAP + Math.ceil(WORST_CASE_MARKER_LENGTH * MARKER_FONT_SIZE * MARKER_CHAR_WIDTH_RATIO) + MARKER_SAFETY_BUFFER;
+const PLOT_WIDTH = SVG_WIDTH - PLOT_X - MARKER_MIN_MARGIN;
+export { SVG_WIDTH, PLOT_X, PLOT_WIDTH };
 const ROW_HEIGHT = 30; // room for both the mobile "label above bar" line and the bar itself
 const BAR_HEIGHT = 16;
 const BAND_HEADER_HEIGHT = 22;

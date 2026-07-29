@@ -259,9 +259,14 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
           already uses, rather than a bespoke hand-rolled `<table>`. Sticky header/first-column and
           `scope="row"` are preserved via className overrides on top of the shared primitives; the
           row-hover intensity is now the primitive's own `hover:bg-muted/50` (previously a bespoke,
-          inconsistent `hover:bg-muted/40`). ────────────────────────────────────────────────────── */}
+          inconsistent `hover:bg-muted/40`). `wrapperClassName="lg:overflow-visible"` restores the
+          bespoke table's original override (pr-review-synthesis-maker HIGH finding, PR #122 cycle
+          1): the primitive's wrapper hardcodes `overflow-x-auto`, which forces `overflow-y` to
+          compute to `auto` too, making it a scroll container in BOTH axes at every breakpoint —
+          `position: sticky` on `<thead>` resolves against that ancestor and never sticks during a
+          page scroll unless this override restores non-scrolling behaviour at `lg`+. ───────────── */}
       <div data-testid="model-table-desktop" className="hidden md:block">
-        <Table className="w-max min-w-full border-collapse lg:w-full">
+        <Table wrapperClassName="lg:overflow-visible" className="w-max min-w-full border-collapse lg:w-full">
           <TableCaption className="sr-only">{t(locale, "aiBenchTableCaption")}</TableCaption>
           <TableHeader className="sticky top-0 z-10 bg-background">
             <TableRow>

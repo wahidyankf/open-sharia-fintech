@@ -21,7 +21,7 @@ import {
   type Model,
 } from "../core/data/models";
 import { computeGroups } from "../core/bands";
-import { CapabilityChart } from "./capability-chart";
+import { CapabilityChart, MARKER_MIN_MARGIN, PLOT_WIDTH, PLOT_X, SVG_WIDTH } from "./capability-chart";
 
 function fig(benchmark: BenchmarkId, value: number): Figure {
   return { benchmark, value, grade: "verified", source: "https://example.test/source" };
@@ -152,5 +152,27 @@ describe("CapabilityChart — fullDataset keeps a harness-filtered survivor in i
     }
     expect(collapsedById.get(survivor!.id)).toBe("light");
     expect(fullRosterBand.get(survivor!.id)).not.toBe("light");
+  });
+});
+
+// ─── Regression: DWT-001's right-margin fix (pr-review-synthesis-maker HIGH finding, PR #122
+// cycle 1) had zero automated coverage — verification was live-screenshot-only. This is a pure
+// computed-geometry assertion (no browser needed): the right margin the low-coverage marker text
+// renders into (`SVG_WIDTH - (PLOT_X + PLOT_WIDTH)`) must stay at least `MARKER_MIN_MARGIN` — the
+// documented, locale-derived minimum the marker needs at `text-[9px]` to avoid the SVG clipping it
+// past its own `viewBox`. This would have failed against the pre-fix geometry (`SVG_WIDTH=600`,
+// `PLOT_WIDTH=380`, margin=60 — nowhere near the ~140-unit clip threshold `delivery.md`'s DWT-001
+// finding measured) and passes against the corrected geometry.
+describe("CapabilityChart — DWT-001 right-margin regression", () => {
+  it("reserves at least the documented minimum margin for the longest localized low-coverage marker", () => {
+    const actualMargin = SVG_WIDTH - (PLOT_X + PLOT_WIDTH);
+    expect(actualMargin).toBeGreaterThanOrEqual(MARKER_MIN_MARGIN);
+  });
+
+  it("keeps SVG_WIDTH at its pre-regression value — the margin comes from PLOT_WIDTH, not an SVG_WIDTH inflation that would downscale the whole chart", () => {
+    // Locks in the root-cause-correct fix: widening SVG_WIDTH scales EVERY user-unit quantity
+    // uniformly (SVG 1.1 §Coordinate Systems — CSS `px` inside an SVG is a user unit), so it is
+    // not a valid way to buy margin without also shrinking bars/labels/ticks by the same factor.
+    expect(SVG_WIDTH).toBe(600);
   });
 });

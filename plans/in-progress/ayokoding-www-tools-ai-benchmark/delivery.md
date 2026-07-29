@@ -2927,6 +2927,16 @@ rev-parse --show-toplevel` prints the worktree path
       sibling primitive in the same files — added `data-slot="filter-select"` and
       `data-slot="chart-tick-row"` respectively. Verified via `grep -L "data-slot" *.tsx` (excluding
       test files) returning zero files.
+    - **Round 4** (2026-07-30, PR #122 cycle 1 re-review, integrity finding): AC-38's e2e assertion
+      (`ai-benchmark.steps.ts`) only ever compared each band's `-ink` against its own `-wash` value —
+      identical near-black-on-near-white for all four bands in both themes — so it never read the
+      base/bar-fill token this Round 1a fix actually changed, and could not have failed even at the
+      pre-fix ~2.90:1/~2.13:1 values. Extended the same step binding to ALSO resolve
+      `--chart-band-<band>` against `--color-background` for the three rated bands and assert
+      `>= 3.0` (WCAG 1.4.11), added a companion `And` step + Gherkin line, and re-verified live via
+      Playwright against the production build: passes in both light and dark theme (dark, still
+      aliasing `--hue-teal`/`--hue-honey` unchanged, measures 7.14:1/10.00:1 — comfortably clear, no
+      literal pin needed there).
 
 ### Phase 9 Gate
 
@@ -3152,20 +3162,32 @@ apps/ayokoding-www/src/features/app-shell/shell/footer.tsx` →
   - **Evidence**: `./evidence/phase-10-dwt-capability-chart-overflow-en-768px.png`,
     `./evidence/phase-10-dwt-capability-chart-overflow-en-375px.png`,
     `./evidence/phase-10-dwt-capability-chart-overflow-id-1280px-dark.png`,
-    `./evidence/dwt-hero-filters-chart-en-1280px.png`.
+    `./evidence/phase-10-dwt-hero-filters-chart-en-1280px.png`.
   - **Reproducibility**: Always (every locale × every breakpoint × both themes tested).
   - **Defect type**: Typography / Spacing-density (overflow).
   - **Suggested fix locus**: `<FEAT>shell/capability-chart.tsx` — increase `SVG_WIDTH` (or reduce
     `PLOT_WIDTH`) to reserve enough right-margin for the longest localized low-coverage string in
     both `en` and `id`, or right-align/wrap the marker text within the reserved space.
     _Suggested executor: `swe-typescript-dev`_
-  - **Resolution (2026-07-29)**: widened `SVG_WIDTH` from `600` to `840` in
-    `<FEAT>shell/capability-chart.tsx`, reserving enough right-margin for the longest localized
-    low-coverage marker string in both `en` and `id` at the existing `PLOT_X`/`PLOT_WIDTH` geometry.
-    Verified live via Playwright at 375px, 768px, and 1280px in both `en` and `id`: every
-    low-coverage marker now renders with comfortable negative "overflow" margin relative to the
-    widened viewBox (worst case −299.8px of slack at 1280px), confirming no clipping at any tested
-    breakpoint/locale.
+  - **Resolution (2026-07-29)**: **superseded (2026-07-30, PR #122 cycle 1 re-review)** — the
+    original `SVG_WIDTH` 600→840 widening is REVERTED. Per SVG 1.1 §Coordinate Systems, CSS `px`
+    inside an SVG IS a user unit, so widening `SVG_WIDTH` scales EVERY user-unit quantity uniformly
+    (bars, labels, ticks, the marker text itself) — it does not change the marker's available margin
+    relative to its own font size, it only downscaled the whole chart ~29% at every breakpoint as a
+    side effect. This session's original rationale comment (claiming CSS `px` does NOT scale with
+    the `viewBox`) was factually backwards. The corrected fix keeps `SVG_WIDTH` at its original `600`
+    and instead reserves the needed margin from `PLOT_WIDTH` (380→276, freeing a 164-unit
+    `MARKER_MIN_MARGIN` derived from the longest localized low-coverage marker string across every
+    supported locale, generously buffered above the ~140-unit clip threshold this defect's live
+    investigation found), leaving every other chart element at its original scale. A pure
+    computed-geometry
+    regression test (`capability-chart.test.tsx`) now asserts `SVG_WIDTH − (PLOT_X + PLOT_WIDTH) ≥
+MARKER_MIN_MARGIN` and that `SVG_WIDTH` stays `600` — this would have failed against the
+    original 60-unit margin and passes against the corrected geometry. Re-verified live via
+    Playwright at 375px, 768px, and 1280px in both `en` and `id`, light and dark theme: every
+    low-coverage marker renders in full with no clipping, and the chart's overall scale/density
+    matches its pre-DWT-001 appearance (bars/labels/ticks unchanged in size) — see
+    `./evidence/phase-10-dwt-001-fix-capability-chart-en-375px.png` (the after-fix screenshot).
 
 - [x] [AI] **DWT-002** (Major): the evidence-grade dot (`<FEAT>shell/evidence-badge.tsx`) and the
       low-coverage/integrity-note text markers (`<FEAT>shell/model-table.tsx`) use raw Tailwind
@@ -3199,7 +3221,7 @@ apps/ayokoding-www/src/features/ai-benchmark --include="*.tsx"` returns 6 hits, 
   - **Actual result**: the badge dots and two text markers hardcode Tailwind's default palette,
     decoupled from the theme — a future theme retune or dark-mode adjustment will not reach them,
     and their hues (emerald/sky/rose) have no corresponding token in `<TOKENS>` at all.
-  - **Evidence**: `./evidence/dwt-evidence-badge-closeup-en-1280px.png` (close-up of the dots and
+  - **Evidence**: `./evidence/phase-10-dwt-evidence-badge-closeup-en-1280px.png` (close-up of the dots and
     text markers as rendered); source excerpt above.
   - **Reproducibility**: Always.
   - **Defect type**: Token / Colour.
@@ -3250,7 +3272,7 @@ TableHeader, TableRow } from "@open-sharia-enterprise/web-ui"`). `model-table.ts
     across every tabular surface in the app.
   - **Actual result**: two different, hand-diverged implementations of "a data table" exist side by
     side in the same app — one on the shared primitive, one bespoke.
-  - **Evidence**: `./evidence/dwt-ai-benchmark-en-1280px.png` (table region); source excerpts above.
+  - **Evidence**: `./evidence/phase-10-dwt-ai-benchmark-en-1280px.png` (table region); source excerpts above.
   - **Reproducibility**: Always.
   - **Defect type**: Primitive-reuse / Consistency.
   - **Suggested fix locus**: rebuild `model-table.tsx`'s desktop `<table>` on
@@ -3266,6 +3288,20 @@ TableHeader, TableRow } from "@open-sharia-enterprise/web-ui"`). `model-table.ts
     matching the Cost of Living Calculator's `min-role.tsx` table. Verified via
     `npx nx run ayokoding-www:test:unit` (model-table's existing test suite passes unchanged against
     the new markup) and `npx nx run ayokoding-www:typecheck`.
+  - **Follow-up fix (2026-07-30, PR #122 cycle 1 re-review)**: this migration had silently disabled
+    the sticky table header at `lg`+ — the primitive's `Table` wrapper hardcodes `overflow-x-auto`,
+    which forces `overflow-y` to compute to `auto` too (MDN's `overflow-x` computed-value rule),
+    making the wrapper a scroll container in both axes at every breakpoint; `position: sticky` on
+    `<thead>` resolved against that non-scrolling-vertically ancestor and never stuck during a page
+    scroll — a regression jsdom's unit-test coverage could not observe (jsdom applies no CSS).
+    Fixed by adding an optional `wrapperClassName` prop to `libs/web-ui`'s `Table` primitive (merged
+    onto the wrapper div, not the `<table>` element the existing `className` prop reaches) and
+    passing `wrapperClassName="lg:overflow-visible"` here, restoring the original bespoke table's
+    override. Regression tests added at both the primitive level (`table.test.tsx`) and this
+    component's level (`model-table.test.tsx`), asserting the class reaches the wrapper div, not the
+    `<table>`. Verified live via Playwright against the production build: scrolling the page 6000px
+    pins the `<thead>` at `y=0` (viewport top) instead of scrolling away with the table body, and its
+    wrapper's computed `overflow-y` is `visible` at `lg` (1280px), not `auto`.
 
 > `web-exploratory-tester` ran a `standard`-depth, spec-aware pass (`output-mode: delivery`) against
 > `http://localhost:3101`, entering exclusively via `/en` and `/id` → the Tools index page
@@ -3279,9 +3315,11 @@ TableHeader, TableRow } from "@open-sharia-enterprise/web-ui"`). `model-table.ts
 > the single source of truth for the active filters" comment. Ground truth: `<SPECS>ai-benchmark.feature`
 > and `<SPECS>tools-index.feature` (AC-1..AC-38, AC-3). Visual/breakpoint screenshot coverage
 > (375/768/1280 × en/id) was already captured at Phase 9 (M-8/M-9) and by `web-design-tester` above —
-> this pass is functional/interaction-focused. Non-destructive throughout: every input was a
-> `<select>` choice or a well-formed query-string value, no injection/fuzzing/destructive action
-> attempted.
+> this pass is functional/interaction-focused. Charter (4)'s theme-toggle leg was captured at 1280px
+> in both locales: `./evidence/phase-10-ewt-ai-benchmark-en-1280px-dark-via-toggle.png`,
+> `./evidence/phase-10-ewt-ai-benchmark-id-1280px-dark-via-toggle.png`. Non-destructive throughout:
+> every input was a `<select>` choice or a well-formed query-string value, no
+> injection/fuzzing/destructive action attempted.
 
 - [x] [AI] **EWT-001** (Major, Accessibility, `structure`/`robust`): the page-level `<main>` on both
       retest surfaces nests inside the app shell's own `<main id="main-content">`, producing two
@@ -3329,7 +3367,7 @@ class="flex-1 outline-none">` (from `layout.tsx`) containing a second, nested
       site language via the header's language switcher while a harness/class filter is active silently
       drops both filter query parameters, resetting the AI Benchmark page to the unfiltered view —
       violating `<ROUTE>benchmark-content.tsx`'s own documented invariant ("The URL is the single
-      source of truth for the active filters", line 21) which reload and fresh-tab correctly honor.
+      source of truth for the active filters") which reload and fresh-tab correctly honor.
   - **Area/Component**: `apps/ayokoding-www/src/features/i18n/shell/language-switcher.tsx`
     (`switchLocale`) interacting with `<ROUTE>benchmark-content.tsx`'s URL-driven `filterState`.
   - **Environment**: `http://localhost:3101/en/tools/ai-benchmark?harness=claude-code&class=opus`,
@@ -3478,7 +3516,12 @@ ayokoding-www:specs:behavior:coverage` exits 0 with the new scenario covered.
 > `specs/**`, source, or mockups were read to judge intent; every finding cites a Nielsen heuristic,
 > a cognitive-walkthrough question, a UX law, or a WCAG 3.x criterion. The capability-chart
 > low-coverage-marker clipping independently rediscovered by this pass is the same underlying defect
-> `web-design-tester` already filed as **DWT-001** above — not re-filed here to avoid duplication.
+> `web-design-tester` already filed as **DWT-001** above — not re-filed here to avoid duplication;
+> see `./evidence/phase-10-uwt-capability-chart-clipping-en-375px.png` for this pass's own
+> screenshot of the rediscovery. Other general-context screenshots from this pass's breakpoint/theme
+> sweep: `./evidence/phase-10-uwt-dark-theme-menu-en-1280px.png` (dark-theme toggle menu) and
+> `./evidence/phase-10-uwt-how-to-read-disclosure-en-375px.png` (the "How to read this benchmark"
+> disclosure at the narrowest tested breakpoint).
 
 - [x] [AI] **UWT-001** (Major, Heuristic 6 — Recognition Rather than Recall; information scent,
       Pirolli & Card): the site's global command-palette search (`⌘K` / the header "Search..."
@@ -3558,12 +3601,18 @@ ayokoding-www:specs:behavior:coverage` exits 0 with the new scenario covered.
   - **Evidence**: `./evidence/phase-10-uwt-benchmark-en-1280px.png` (Class filter options + chart
     section headers visible together); confirmed via DOM extraction that no `Legend`/glossary text
     node exists anywhere in the rendered page (`grep`-equivalent scan of the full rendered HTML for
-    "Class rating"/"capability band"/"Legend" returned no match).
+    "Class rating"/"capability band"/"Legend" returned no match). Reproducibility confirmed across
+    every other tested breakpoint/locale combination: `./evidence/phase-10-uwt-benchmark-en-375px.png`,
+    `./evidence/phase-10-uwt-benchmark-en-768px.png`, `./evidence/phase-10-uwt-benchmark-id-375px.png`,
+    `./evidence/phase-10-uwt-benchmark-id-768px.png`, `./evidence/phase-10-uwt-benchmark-id-1280px.png`.
   - **Reproducibility**: Always (both locales).
   - **Suggested clarification**: rename the classes to self-explanatory, vendor-neutral labels (e.g.
     "Top tier" / "Mid tier" / "Light tier" / "Unrated"), or keep the current labels but add a
     one-line definition to the "How to read this benchmark" disclosure explaining exactly how a
     model's class is assigned. _Suggested executor: `swe-typescript-dev`_
+  - **Resolution (2026-07-29)**: combined with UWT-003 and UWT-005 into the same comprehensive,
+    always-visible legend section — see UWT-003's own resolution note below for the full
+    implementation (the `dl` of the 4 class definitions this finding asked for lives there).
 
 - [x] [AI] **UWT-003** (Minor, Heuristic 2 — Match Between System and the Real World; Heuristic 6 —
       Recognition Rather than Recall; per-label jargon probe): the four evidence-grade values —
@@ -3696,7 +3745,10 @@ ayokoding-www:specs:behavior:coverage` exits 0 with the new scenario covered.
     nothing and could read as "the table is broken" to a user who scans past the text message.
   - **Actual behaviour**: both the explicit empty-state message and the bare table header render
     together, which is not incorrect but is mildly redundant/aesthetically noisy.
-  - **Evidence**: `./evidence/phase-10-uwt-empty-state-message-en-1280px.png`.
+  - **Evidence**: `./evidence/phase-10-uwt-empty-state-message-en-1280px.png`; per-combination
+    confirmation: `./evidence/phase-10-uwt-empty-state-claude-code-unrated-en-1280px.png`,
+    `./evidence/phase-10-uwt-empty-state-codex-cli-light-en-1280px.png`,
+    `./evidence/phase-10-uwt-empty-state-opencode-go-opus-en-1280px.png`.
   - **Reproducibility**: Always (confirmed for all 3 genuinely-empty harness × class combinations on
     this roster: Claude Code + Unrated, Codex CLI + Light, OpenCode Go + Opus).
   - **Suggested clarification**: hide the table (and its header) entirely when the filtered roster is

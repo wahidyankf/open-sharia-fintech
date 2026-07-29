@@ -298,13 +298,13 @@ Feature: AI model benchmark tool
     Then the filter uses the first of the two values
     And every roster model matching that harness is shown
 
-  # AC-28
+  # AC-28 (charts) + Rule-15 UWT-006 fix (data table, folded into the same scenario)
   @unit
   Scenario: A filter combination matching no model renders an explicit empty state
     Given the URL carries a filter combination that matches no model
     When the page renders
     Then an explicit empty-state message is shown
-    But neither chart renders an empty plot area
+    But neither chart nor the data table renders in the empty state
 
   # AC-27
   @unit @e2e
@@ -326,6 +326,7 @@ Feature: AI model benchmark tool
     Given the page is rendered in the "<theme>" theme
     When the computed styles of the band tokens are read from the live page
     Then every band token meets the WCAG AA contrast ratio against its background
+    And every rated band's bar fill meets the WCAG non-text contrast ratio against the page background
 
     Examples:
       | theme |

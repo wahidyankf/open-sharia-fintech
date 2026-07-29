@@ -69,3 +69,35 @@ escape line: `No generalizable learnings — <one-line reason>`.
   `apps/ayokoding-www/src/features/search/shell/search-dialog.tsx` this session (`value` now
   includes the title). No further backlog needed; noting here as the generalizable pattern per
   Phase 11's routing step.
+
+## Learning: Tailwind v4's `@theme {}` compiler silently drops some custom-property declarations from its compiled `:root`
+
+- **Context**: fixing the M-14 band-contrast defect required adding four new
+  `--chart-band-*-wash` custom properties to `libs/web-ui-token/src/ayokoding.css`, alongside the
+  pre-existing `-ink` declarations in the same `@theme {}` block.
+- **Observation**: the four `-wash` declarations, added inside `@theme {}` in the exact same shape
+  as the already-working `-ink` declarations right next to them, were silently absent from the
+  compiled stylesheet — confirmed via a live browser's
+  `getComputedStyle(document.documentElement).getPropertyValue("--chart-band-sonnet-wash")`
+  returning an empty string for all four, while the identically-shaped `-ink` declarations in the
+  SAME block resolved fine. No build error, no warning — the properties simply did not reach
+  `:root`. The workaround: moving the four `-wash` declarations out of `@theme {}` into a plain
+  `:root {}` block (declared earlier in the same file) made them resolve correctly with no other
+  change.
+- **Why it might generalize**: Tailwind v4's `@theme {}` directive is not a transparent pass-through
+  to `:root` — it runs through Tailwind's own theme-token compiler (Lightning CSS), which appears to
+  drop some custom-property declarations under conditions this session did not fully isolate (the
+  four dropped properties and the working `-ink` properties differ only in name suffix and value
+  reference target, both alias `var(--warm-0)` no differently in kind than other resolving
+  declarations). Any future custom-property addition inside this repo's `@theme {}` blocks
+  (`libs/web-ui-token/src/*.css`) should be verified via `getComputedStyle` on a live page before
+  being trusted, not assumed to "just work" the way the many pre-existing `@theme` declarations do.
+  Standing guidance in
+  [`repo-governance/development/frontend/design-tokens.md`](../../../repo-governance/development/frontend/design-tokens.md)
+  and the `swe-developing-frontend-ui` skill's own `reference/design-tokens.md` currently state
+  uncaveated that "bare variables belong in `:root`/`.dark`, Tailwind aliases belong in `@theme`" —
+  neither currently warns that `@theme` can silently drop a declaration.
+- **Terminal state**: recorded here per this session's own routing step; whether this generalizes
+  into a caveat on the two `design-tokens.md` surfaces above (and whether the drop condition can be
+  further isolated — e.g. via a minimal Tailwind v4 reproduction) is Phase 11's triage call, not this
+  PR's — Phase 11 has not yet run at the time this entry was written.

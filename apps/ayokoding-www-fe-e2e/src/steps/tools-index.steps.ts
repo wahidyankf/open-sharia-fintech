@@ -55,3 +55,15 @@ Then("the AI benchmark entry shows a description distinct from its link text", a
   expect(descText.length).toBeGreaterThan(0);
   expect(descText).not.toBe(linkText);
 });
+
+// ── EWT-001 regression: exactly one <main> landmark per page ───────────────────
+
+Given("I navigate to {string}", async ({ page }, path: string) => {
+  await page.goto(path);
+  await page.waitForLoadState("networkidle");
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature:Exactly one main landmark renders on the Tools pages
+Then("exactly one main landmark is present", async ({ page }) => {
+  await expect(page.locator("main")).toHaveCount(1);
+});

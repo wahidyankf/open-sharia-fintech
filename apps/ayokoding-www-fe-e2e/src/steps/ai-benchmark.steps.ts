@@ -168,6 +168,15 @@ Then("the same filtered set of models is shown", async ({ page }) => {
 
 const BAND_IDS = ["opus", "sonnet", "light", "unrated"] as const;
 
+// The three bands that actually render as a bar (`capability-chart.tsx` never plots `unrated` as
+// a bar — it is a plain text list) — the base/bar-fill token `--chart-band-<band>` against
+// `--color-background` (the page background a bar renders directly onto) is the pair the M-14 fix
+// (delivery.md, Phase 9 Round 1a) actually changed and the one WCAG 1.4.11's 3:1 non-text minimum
+// applies to; `unrated`'s base token was never implicated (it aliases the neutral `--warm-400`).
+const RATED_BAND_IDS = ["opus", "sonnet", "light"] as const;
+
+const WCAG_NON_TEXT_MIN_CONTRAST = 3.0;
+
 type Rgb = readonly [number, number, number];
 
 /** WCAG relative luminance (https://www.w3.org/TR/WCAG21/#dfn-relative-luminance). */
@@ -198,6 +207,16 @@ let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
   unrated: 0,
 };
 
+// Populated alongside `bandContrastRatios` — the base/bar-fill token vs `--color-background` pair
+// the M-14 fix actually protects (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1: the
+// `-ink`/`-wash` assertion above never reads this pair, so it could not have caught the real
+// regression this session found and fixed).
+let bandBaseContrastRatios: Record<(typeof RATED_BAND_IDS)[number], number> = {
+  opus: 0,
+  sonnet: 0,
+  light: 0,
+};
+
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 Given("the page is rendered in the {string} theme", async ({ page }, theme: string) => {
   await page.goto(`/${scenarioLocale}/tools/ai-benchmark`);
@@ -222,42 +241,59 @@ When("the computed styles of the band tokens are read from the live page", async
   // `getComputedStyle` itself reports. The WCAG relative-luminance/contrast MATH that follows is
   // plain arithmetic over those bytes, so it runs here in Node instead of being re-serialized into
   // the page — one browser round-trip per theme, not four.
-  const rgbByBand = await page.evaluate((bands: readonly string[]) => {
-    function resolvedRgb(colorValue: string): [number, number, number] {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1;
-      canvas.height = 1;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("2D canvas context unavailable");
-      ctx.fillStyle = colorValue;
-      ctx.fillRect(0, 0, 1, 1);
-      const data = ctx.getImageData(0, 0, 1, 1).data;
-      return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0];
-    }
-    const out: Record<string, { ink: [number, number, number]; wash: [number, number, number] }> = {};
-    for (const band of bands) {
-      const probeInk = document.createElement("div");
-      probeInk.style.color = `var(--chart-band-${band}-ink)`;
-      const probeWash = document.createElement("div");
-      probeWash.style.color = `var(--chart-band-${band}-wash)`;
-      document.body.appendChild(probeInk);
-      document.body.appendChild(probeWash);
-      const inkColor = getComputedStyle(probeInk).color;
-      const washColor = getComputedStyle(probeWash).color;
-      document.body.removeChild(probeInk);
-      document.body.removeChild(probeWash);
-      out[band] = { ink: resolvedRgb(inkColor), wash: resolvedRgb(washColor) };
-    }
-    return out;
-  }, BAND_IDS);
+  const rgbByBand = await page.evaluate(
+    (args: { bands: readonly string[]; ratedBands: readonly string[] }) => {
+      function resolvedRgb(colorValue: string): [number, number, number] {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("2D canvas context unavailable");
+        ctx.fillStyle = colorValue;
+        ctx.fillRect(0, 0, 1, 1);
+        const data = ctx.getImageData(0, 0, 1, 1).data;
+        return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0];
+      }
+      function resolvedVarRgb(varExpr: string): [number, number, number] {
+        const probe = document.createElement("div");
+        probe.style.color = varExpr;
+        document.body.appendChild(probe);
+        const resolved = getComputedStyle(probe).color;
+        document.body.removeChild(probe);
+        return resolvedRgb(resolved);
+      }
+      const out: Record<string, { ink: [number, number, number]; wash: [number, number, number] }> = {};
+      for (const band of args.bands) {
+        out[band] = {
+          ink: resolvedVarRgb(`var(--chart-band-${band}-ink)`),
+          wash: resolvedVarRgb(`var(--chart-band-${band}-wash)`),
+        };
+      }
+      const background = resolvedVarRgb("var(--color-background)");
+      const baseByBand: Record<string, [number, number, number]> = {};
+      for (const band of args.ratedBands) {
+        baseByBand[band] = resolvedVarRgb(`var(--chart-band-${band})`);
+      }
+      return { pairs: out, background, baseByBand };
+    },
+    { bands: BAND_IDS, ratedBands: RATED_BAND_IDS },
+  );
 
   const next = { ...bandContrastRatios };
   for (const band of BAND_IDS) {
-    const entry = rgbByBand[band];
+    const entry = rgbByBand.pairs[band];
     if (!entry) throw new Error(`No resolved RGB pair for band "${band}"`);
     next[band] = contrastRatio(entry.ink, entry.wash);
   }
   bandContrastRatios = next;
+
+  const nextBase = { ...bandBaseContrastRatios };
+  for (const band of RATED_BAND_IDS) {
+    const baseRgb = rgbByBand.baseByBand[band];
+    if (!baseRgb) throw new Error(`No resolved base RGB for band "${band}"`);
+    nextBase[band] = contrastRatio(baseRgb, rgbByBand.background);
+  }
+  bandBaseContrastRatios = nextBase;
 });
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
@@ -267,5 +303,23 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
       bandContrastRatios[band],
       `--chart-band-${band}-ink vs --chart-band-${band}-wash contrast ratio`,
     ).toBeGreaterThanOrEqual(WCAG_AA_MIN_CONTRAST);
+  }
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+//
+// The assertion the M-14 fix (Phase 9 Round 1a) actually needs: the base/bar-fill token
+// (`--chart-band-<band>`) is what a bar's `fill` colour resolves to (`chart-primitives.tsx`'s
+// `barFillClass`), rendered directly against the page background — a meaningful, non-text
+// graphical object under WCAG 1.4.11, whose minimum is 3:1, not the 4.5:1 text minimum the
+// `-ink`/`-wash` assertion above checks. `sonnet`/`light` measured ~2.90:1/~2.13:1 before the fix
+// pinned literal OKLCH values (`ayokoding.css:107-108`); this would have failed against those
+// pre-fix alias values and passes against the pinned literals.
+Then("every rated band's bar fill meets the WCAG non-text contrast ratio against the page background", async ({}) => {
+  for (const band of RATED_BAND_IDS) {
+    expect(
+      bandBaseContrastRatios[band],
+      `--chart-band-${band} vs --color-background contrast ratio`,
+    ).toBeGreaterThanOrEqual(WCAG_NON_TEXT_MIN_CONTRAST);
   }
 });

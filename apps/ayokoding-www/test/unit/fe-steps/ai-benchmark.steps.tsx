@@ -1454,9 +1454,16 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect((empty.textContent ?? "").length).toBeGreaterThan(0);
     });
 
-    But("neither chart renders an empty plot area", () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
+    But("neither chart nor the data table renders in the empty state", () => {
       expect(screen.queryByTestId("capability-chart-svg")).toBeNull();
       expect(screen.queryByTestId("price-chart-svg")).toBeNull();
+      // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
+      // the empty-state message must not be followed by an empty, redundant table skeleton either
+      // — <ModelTable> moved inside the `!isEmpty` branch alongside the two charts. AC-28 itself
+      // constrains only the charts, but reverting the table's move would leave every OTHER
+      // assertion in this scenario passing, so this is the assertion that actually protects it.
+      expect(screen.queryByTestId("model-table")).toBeNull();
     });
   });
 
@@ -1492,7 +1499,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   // established pattern `course-rehome-redirects.steps.tsx`'s raw-HTTP-redirect scenario already
   // uses for its own jsdom-incapable assertions (`expect(true).toBe(true)` placeholders with a
   // comment pointing at the real check).
-  ScenarioOutline("Band colours meet contrast in both themes", ({ Given, When, Then }) => {
+  ScenarioOutline("Band colours meet contrast in both themes", ({ Given, When, Then, And }) => {
     Given('the page is rendered in the "<theme>" theme', () => {
       expect(true).toBe(true);
     });
@@ -1503,6 +1510,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
     Then("every band token meets the WCAG AA contrast ratio against its background", () => {
+      expect(true).toBe(true);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+    And("every rated band's bar fill meets the WCAG non-text contrast ratio against the page background", () => {
       expect(true).toBe(true);
     });
   });
