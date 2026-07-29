@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Example 64: A Pre-Commit Hook That Blocks Secrets. (co-13)
+#
+# The LAST line of defense against a committed secret: a git pre-commit hook
+# that scans the staged diff for high-entropy / known-secret patterns and
+# REJECTS the commit before it is ever created. This complements Example 16's
+# repo-wide scan with a just-in-time gate. Save as .git/hooks/pre-commit (chmod +x).
+
+set -euo pipefail  # => fail fast; the hook must abort the commit on any hit
+
+# --- 1. Inspect ONLY the staged diff (fast, and on-point) --------------------
+# git diff --cached shows what THIS commit would add; -I restricts to additions.
+DIFF="$(git diff --cached --diff-filter=AM -U0 --name-only)"  # => the files staged for this commit
+[ -z "${DIFF}" ] && exit 0  # => nothing staged -> nothing to scan -> allow the commit
+
+# --- 2. Scan the staged additions for secret-shaped patterns -----------------
+# A short, readable blocklist of the most common accidental-commit shapes.
+if git diff --cached -U0 | grep -nE '(sk-live-[a-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|xoxb-[0-9]{10,})' ; then
+  echo "[pre-commit] BLOCKED: a secret-looking string is staged for commit." >&2  # => co-13 gate
+  echo "              Remove it, or move the value to an out-of-band env file (Example 16)." >&2
+  exit 1  # => a non-zero exit ABORTS the commit -- the secret never enters history
+fi
+
+# --- 3. (Optional) also refuse to stage the secret files themselves ----------
+if git diff --cached --name-only | grep -qE '(^|/)(secrets\.env|\.env)$'; then  # => the forbidden filenames
+  echo "[pre-commit] BLOCKED: a secret file (.env / secrets.env) is staged." >&2  # => co-13
+  exit 1
+fi
+exit 0  # => clean -> commit proceeds
+# [verify] stage a fake 'AKIA...' string and try to commit; the hook rejects it (co-13 proof).

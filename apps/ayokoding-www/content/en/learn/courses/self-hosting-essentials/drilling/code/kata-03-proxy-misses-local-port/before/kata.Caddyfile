@@ -1,0 +1,8 @@
+# kata-03 (before): a Caddyfile proxying to the WRONG local port.
+# The app (Example 6) binds 127.0.0.1:8000. This proxy forwards to 127.0.0.1:8001.
+myapp.example.com {
+  # THE BUG: the upstream port (8001) does not match the app's port (8000).
+  # Caddy will return 502 Bad Gateway on every request -- the proxy is healthy
+  # and the app is healthy, but they disagree on the port, so nothing connects.
+  reverse_proxy 127.0.0.1:8001
+}

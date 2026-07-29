@@ -1,0 +1,17 @@
+# kata-01 (before): a service unit that does NOT restart on crash.
+[Unit]
+Description=MyApp service (kata 1 -- buggy)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/myapp
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py
+# THE BUG: there is NO Restart= directive here, so the default ('no') applies.
+# When the process crashes, systemd leaves it 'inactive (dead)' forever -- the
+# whole point of co-15 (resilience) is missing from this unit.
+
+[Install]
+WantedBy=multi-user.target

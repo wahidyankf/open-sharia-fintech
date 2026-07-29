@@ -1,0 +1,30 @@
+# Example 47: A systemd Timer Replacing a Cron Job. (co-08)
+#
+# The cron line `* * * * * /opt/myapp/backup.sh` works, but a systemd TIMER
+# does the same job with three advantages: it logs to the journal, it survives
+# a reboot cleanly, and it can run a "missed" tick after downtime. This is the
+# backup (Example 34) scheduled by a timer instead of cron.
+# Save as /etc/systemd/system/myapp-backup.timer (+ a myapp-backup.service oneshot).
+
+[Unit]
+Description=Run the MyApp backup daily  # => co-08/co-19: scheduled, journaled backups
+
+[Timer]
+OnCalendar=*-*-* 03:00:00  # => every day at 03:00 (off-peak); cron's `0 3 * * *` equivalent
+RandomizedDelaySec=10m  # => jitter up to 10min so two timers don't fire on the same instant
+Persistent=true  # => if the box was off at 03:00, run the backup on next boot (cron cannot do this)
+
+[Install]
+WantedBy=timers.target  # => enabled at boot alongside all other timers
+
+# --- The companion oneshot service (myapp-backup.service) --------------------
+#   [Service]
+#   Type=oneshot
+#   ExecStart=/opt/myapp/backup.sh        # => Example 34's script
+# --- Why a timer beats cron (co-08) ------------------------------------------
+#   - failures land in the journal ('journalctl -u myapp-backup'), not a lost mail
+#   - no cron environment surprises (systemd sets a clean env)
+#   - Persistent=true recovers missed runs after an outage
+# --- Verify ------------------------------------------------------------------
+#   systemctl list-timers myapp-backup.timer   # => next/last fire + the unit it triggers
+# [verify] a journaled, reboot-safe daily backup with no cron line anywhere (co-08).

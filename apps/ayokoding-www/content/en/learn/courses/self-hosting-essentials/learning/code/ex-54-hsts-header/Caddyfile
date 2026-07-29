@@ -1,0 +1,27 @@
+# Example 54: The Strict-Transport-Security (HSTS) Header. (co-10)
+#
+# HSTS tells browsers "always use HTTPS for this host, for N seconds, period" --
+# so a browser that has seen the header once will REFUSE plain HTTP for that
+# window, defeating downgrade attacks the 301 redirect (Example 53) cannot fully
+# prevent. This Caddyfile adds the full HSTS header. Save as /etc/caddy/Caddyfile.
+
+myapp.example.com {
+  reverse_proxy 127.0.0.1:8000  # => forward to the app
+
+  header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"  # => co-10: full HSTS
+  # max-age=31536000      => remember "HTTPS only" for 1 year (31536000 seconds)
+  # includeSubDomains     => apply to EVERY subdomain too (api., blog., ...)
+  # preload               => opt INTO the browser HSTS preload list (built-in HTTPS-only)
+}
+
+# --- The two-layer defense (co-10) -------------------------------------------
+#   1. Example 53's redirect: upgrades an HTTP request that ALREADY arrived.
+#   2. This HSTS header: stops the browser from even ATTEMPTING HTTP next time.
+# The redirect is reactive; HSTS is preventive. You want both.
+# --- A preload caveat --------------------------------------------------------
+# 'preload' is a one-way door: once your domain is on the browsers' built-in
+# preload list, serving HTTP becomes impossible for all users. Only add it once
+# you are CERTAIN every subdomain will be HTTPS forever.
+# --- Verify ------------------------------------------------------------------
+#   curl -sI https://myapp.example.com/ | grep -i strict-transport-security
+# [verify] the header reads 'max-age=31536000; includeSubDomains; preload' (co-10).

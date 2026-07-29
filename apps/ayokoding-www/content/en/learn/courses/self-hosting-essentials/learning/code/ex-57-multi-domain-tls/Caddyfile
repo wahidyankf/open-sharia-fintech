@@ -1,0 +1,30 @@
+# Example 57: Multiple Domains and TLS on One Proxy. (co-10, co-11)
+#
+# One box, one proxy, MANY domains -- each gets its OWN cert automatically.
+# Caddy issues one cert per site name; this Caddyfile serves two domains with
+# two independent certificates from one process. Save as /etc/caddy/Caddyfile.
+
+api.example.com {  # => co-11: domain A -> its own cert (Example 37's service A)
+  reverse_proxy 127.0.0.1:8000  # => service A
+}
+
+www.example.com {  # => co-11: domain B -> a separate cert
+  reverse_proxy 127.0.0.1:8001  # => service B
+}
+
+# --- Wildcard alternative (one cert covers *.example.com) --------------------
+# *.example.com {                           # => a SINGLE cert for every subdomain
+#   reverse_proxy 127.0.0.1:8000            # => (route by Host inside, if desired)
+# }
+# A wildcard needs DNS-01 (not HTTP-01) -- Caddy handles it with an API plugin.
+# Use per-domain (above) when you have a few known names; wildcard when you have
+# many dynamic subdomains and a DNS provider with an API.
+# --- Prerequisite (co-11) ----------------------------------------------------
+# Each domain MUST have a DNS record resolving to this box (Example 13), or ACME
+# cannot prove control and no cert is issued.
+# --- Verify ------------------------------------------------------------------
+#   echo | openssl s_client -connect api.example.com:443 -servername api.example.com 2>/dev/null \
+#     | openssl x509 -noout -subject   # => subject: CN=api.example.com (its OWN cert)
+#   echo | openssl s_client -connect www.example.com:443 -servername www.example.com 2>/dev/null \
+#     | openssl x509 -noout -subject   # => subject: CN=www.example.com (a DIFFERENT cert)
+# [verify] two domains, two independent certs, one proxy (co-10/co-11).

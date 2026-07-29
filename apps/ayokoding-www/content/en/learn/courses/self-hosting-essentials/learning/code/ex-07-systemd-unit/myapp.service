@@ -1,0 +1,25 @@
+# Example 7: Write a systemd Unit for the Service. (co-07)
+#
+# This unit turns "a process I launched by hand" (Example 6) into "a managed
+# service the OS owns." systemd starts it on demand, restarts it on failure,
+# and starts it on boot -- the difference between a process and a SERVICE.
+#
+# Install as /etc/systemd/system/myapp.service, then:
+#   systemctl daemon-reload && systemctl start myapp
+# (See Example 8 for enable-on-boot.)
+
+[Unit]  # => describes the service, for humans and for ordering
+Description=MyApp self-hosted service  # => human label shown in systemctl status
+After=network-online.target  # => do not start until networking is up (the app binds a port)
+Wants=network-online.target  # => pull the network-online target into this boot transaction
+
+[Service]  # => HOW systemd runs and supervises the process
+Type=simple  # => the process stays in the foreground (no forking); systemd tracks it directly
+User=deploy  # => run as the unprivileged user from Example 3, NOT root (co-04)
+WorkingDirectory=/opt/myapp  # => the app's home; relative paths resolve here
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py  # => the EXACT command systemd runs (absolute paths)
+Restart=on-failure  # => restart only if the process exits non-zero (Example 10 widens this)
+RestartSec=3  # => wait 3s between a crash and the restart (avoids a tight crash loop)
+
+[Install]  # => WHERE this unit plugs in when 'systemctl enable' runs (Example 8)
+WantedBy=multi-user.target  # => the normal multi-user boot target; enabling makes it start on boot

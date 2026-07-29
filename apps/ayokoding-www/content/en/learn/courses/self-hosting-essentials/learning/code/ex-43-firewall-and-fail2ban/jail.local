@@ -1,0 +1,26 @@
+# Example 43: fail2ban Brute-Force Protection for SSH. (co-04, co-05)
+#
+# Key-only SSH (Example 2) already stops password guessing, but bots still
+# hammer port 22 looking for a way in, polluting your logs. fail2ban watches
+# the auth log and TEMPORARILY BANS an IP after N failed attempts -- defense in
+# depth (co-04) layered on the firewall (co-05). Save as /etc/fail2ban/jail.local.
+
+[DEFAULT]  # => settings applied to every jail unless overridden
+bantime = 1h  # => how long a banned IP is blocked (1 hour)
+findtime = 10m  # => the window in which 'maxretry' failures trigger a ban
+maxretry = 5  # => 5 failures within 10m -> ban (co-04: shrink the attack surface over time)
+backend = systemd  # => read failures from the journal (systemd), not a legacy syslog file
+banaction = ufw  # => insert the ban as a ufw deny rule (integrates with Example 4's firewall)
+
+[sshd]  # => the SSH jail: watches sshd failures specifically
+enabled = true  # => turn this jail ON
+port = ssh  # => the SSH port (22 from Example 4); fail2ban maps 'ssh' to the right port
+
+# --- Install + verify --------------------------------------------------------
+#   apt-get install -y fail2ban
+#   systemctl enable --now fail2ban
+#   fail2ban-client status sshd          # => shows currently banned IPs + total
+# --- Force a few failures from a test IP, then re-check ----------------------
+#   (deliberately fail SSH 5+ times from another host)
+#   fail2ban-client status sshd          # => the test IP now appears under 'Banned IP list'
+# [verify] the repeat offender is banned and 'ufw status' shows a deny rule for it (co-04).

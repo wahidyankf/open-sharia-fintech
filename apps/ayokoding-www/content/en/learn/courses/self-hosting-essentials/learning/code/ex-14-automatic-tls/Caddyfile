@@ -1,0 +1,25 @@
+# Example 14: Automatic TLS with ACME. (co-10)
+#
+# Replace Example 12's ':80' block with a REAL domain. Caddy then automatically
+# obtains a Let's Encrypt certificate via ACME on first request, serves it on
+# :443, redirects :80 -> :443, and renews it before expiry -- all with zero
+# openssl and zero cron. (DNS from Example 13 must already resolve here.)
+#
+# Install as /etc/caddy/Caddyfile, then: systemctl reload caddy
+# First hit https://myapp.example.com to trigger the ACME order.
+
+myapp.example.com {  # => co-10/co-11: a real domain -- Caddy issues a cert for THIS name
+  reverse_proxy 127.0.0.1:8000  # => same forward as Example 12, now over TLS
+}  # => Caddy auto-manages the cert, the redirect, and renewals from this one line
+
+# --- What Caddy does automatically (no config needed) ------------------------
+# 1. On first HTTPS request, runs an ACME HTTP-01 challenge against Let's Encrypt.
+# 2. Obtains a certificate, stores it under /var/lib/caddy/.local/share/caddy.
+# 3. Serves HTTPS on :443 AND redirects :80 -> :443 (so plain HTTP callers upgrade).
+# 4. Renews the cert before it expires (ACME certs are 90-day; Caddy renews ~30d out).
+#
+# --- Verify (run on the box, after DNS from Example 13 resolves) -------------
+#   curl -sI https://myapp.example.com/health        # => expect: HTTP/2 200
+#   echo | openssl s_client -connect myapp.example.com:443 -servername myapp.example.com 2>/dev/null \
+#     | openssl x509 -noout -issuer                  # => expect: issuer includes 'Let's Encrypt'
+# [verify] a real CA-issued cert on a real domain -- HTTPS with no manual openssl.

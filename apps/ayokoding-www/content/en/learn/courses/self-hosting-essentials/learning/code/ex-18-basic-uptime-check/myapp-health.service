@@ -1,0 +1,18 @@
+# Example 18: A Basic Uptime Check on a Timer. (co-14)
+#
+# A health endpoint (Example 17) only helps if SOMETHING hits it regularly.
+# This is a systemd TIMER + SERVICE pair that curls /health every minute and
+# logs failures to the journal -- the lightest possible uptime monitor. (A
+# cron job would work too; a timer integrates with journalctl and boots cleanly.)
+#
+# Install BOTH files, then: systemctl enable --now myapp-health.timer
+
+# --- uptime-check.service: the ONESHOT job that runs each tick ----------------
+# (save as /etc/systemd/system/myapp-health.service)
+[Unit]
+Description=MyApp uptime check  # => co-14: a one-shot probe, not a long-running daemon
+
+[Service]
+Type=oneshot  # => runs once per activation, exits, then the timer re-arms it
+ExecStart=/usr/bin/curl -fsS --max-time 5 https://myapp.example.com/health  # => -f fails on non-2xx -> journald logs it
+# ^ a non-zero exit becomes a journal entry -- 'journalctl -u myapp-health' surfaces outages.

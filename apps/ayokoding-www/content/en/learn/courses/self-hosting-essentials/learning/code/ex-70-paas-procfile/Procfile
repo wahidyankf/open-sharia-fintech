@@ -1,0 +1,24 @@
+web: gunicorn app:app --bind 0.0.0.0:${PORT:-5000}
+worker: python worker.py --queue ${QUEUE:-default}
+# Example 70: A Procfile Declaring Process Types. (co-16)
+#
+# A Procfile declares EVERY process type the app needs and how to start each.
+# The PaaS runs each as its own supervised process set, scaling them
+# independently (Example 72). This Procfile declares TWO types: a 'web' (HTTP)
+# and a 'worker' (background jobs) -- one push, two runtimes. Save as ./Procfile.
+
+# --- Line anatomy (each line: <type>: <command>) -----------------------------
+# web     => the HTTP process type. The PaaS routes inbound HTTP to THIS type.
+#            gunicorn serves the WSGI app; $PORT is injected by the PaaS.
+# worker  => a NON-HTTP process type. The PaaS runs it but routes no traffic to
+#            it -- it pulls jobs from a queue (here, $QUEUE, also PaaS-injected).
+#
+# --- Why multiple process types matter (co-16) -------------------------------
+# A real app is rarely JUST a web server: it also has background workers,
+# schedulers, etc. The Procfile names each one so the PaaS can run + scale them
+# INDEPENDENTLY (scale web to 3, worker to 1) from a single deploy.
+#
+# --- Verify ------------------------------------------------------------------
+#   ssh dokku@<box> ps:report myapp    # => lists 'web' AND 'worker', each running
+#   ssh dokku@<box> ps:scale myapp web=2 worker=1   # => Example 72 scales them apart
+# [verify] both process types are declared and runnable from one push (co-16 proof).

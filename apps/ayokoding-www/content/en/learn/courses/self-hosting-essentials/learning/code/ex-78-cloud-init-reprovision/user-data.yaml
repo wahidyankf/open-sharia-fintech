@@ -1,0 +1,53 @@
+#cloud-config
+# Example 78: A cloud-init User-Data for First-Boot Setup. (co-21)
+#
+# cloud-init is the canonical way to make a NEW VM converge to a known state on
+# its FIRST boot, unattended. This user-data does what Example 20's setup.sh
+# does, but run by the cloud provider's first-boot agent -- so a freshly created
+# VM is fully provisioned before you ever SSH in. This is co-21 at its strongest:
+# the box is REPRODUCIBLE from a committed file. Paste as the VM's user-data.
+
+# cloud-config header (line 1 above) tells cloud-init this is a YAML config.
+
+# --- 1. Install packages (runtime + firewall + proxy + sqlite for backups) ---
+packages:
+  - python3.12
+  - python3.12-venv
+  - ufw
+  - caddy
+  - sqlite3
+  - curl
+  - ca-certificates
+package_update: true  # => apt-get update before installing
+
+# --- 2. Create the deploy user (co-04) ---------------------------------------
+users:
+  - name: deploy
+    sudo: ALL=(ALL) NOPASSWD:ALL  # => first-boot convenience; NARROW this after setup
+    shell: /bin/bash
+    ssh_authorized_keys:  # => YOUR public key (paste it here) -- key-only from first boot
+      - ssh-ed25519 AAAA... replace-with-your-public-key
+
+# --- 3. Run the same setup steps as Example 20 on first boot -----------------
+runcmd:
+  # firewall (co-05)
+  - [ ufw, --force, reset ]
+  - [ ufw, default, deny, incoming ]
+  - [ ufw, default, allow, outgoing ]
+  - [ ufw, allow, 22/tcp ]
+  - [ ufw, allow, 80/tcp ]
+  - [ ufw, allow, 443/tcp ]
+  - [ ufw, --force, enable ]
+  # app + venv + service (co-06/co-07)
+  - [ install, -d, -o, deploy, -g, deploy, -m, 755, /opt/myapp ]
+  - [ sudo, -u, deploy, python3.12, -m, venv, /opt/myapp/venv ]
+  - [ systemctl, enable, --now, myapp ]
+  - [ systemctl, enable, --now, caddy ]  # => proxy + auto-TLS on first boot (co-09/co-10)
+
+# --- Why this is co-21's peak ------------------------------------------------
+# A brand-new VM, created with THIS user-data, boots into the SAME baseline as
+# Example 20's setup.sh -- no manual SSH setup step. Disaster rebuild (Example
+# 42) becomes "create a VM with the same user-data + restore the backup."
+# --- Verify ------------------------------------------------------------------
+# [verify] create a fresh VM with this user-data; on first SSH it already has
+# the service running and HTTPS answering -- no manual steps (co-21 proof).

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Example 65: Structured JSON Logging. (co-14)
+#
+# Unstructured logs ("started thing") are easy to read and hard to query.
+# STRUCTURED logs (one JSON object per line, with a timestamp + level + fields)
+# are machine-parseable: filter, count, and alert on fields, not grep on prose.
+# This Caddyfile switches the proxy log to JSON and shows the app-side shape.
+
+# --- Proxy side: Caddy logs every request as one JSON line -------------------
+# Save as /etc/caddy/Caddyfile (extends Example 12's log block).
+myapp.example.com {
+  reverse_proxy 127.0.0.1:8000
+  log {
+    output file /var/log/caddy/access.log
+    format json  # => co-14: one JSON object per request (was 'console' in Example 12)
+  }
+}
+
+# --- App side: the app should log JSON too (Python example) ------------------
+# In the app, emit one JSON line per event:
+#   import json, time, sys
+#   def log(level, msg, **fields):
+#       sys.stdout.write(json.dumps({"ts": time.time(), "level": level, "msg": msg, **fields}) + "\n")
+#   log("info", "request", path="/items", status=200, ms=12)
+# => co-14: now 'journalctl -u myapp' AND the proxy log both speak JSON
+# --- Why JSON (co-14) --------------------------------------------------------
+# A query like "count of 5xx in the last hour" is a jq filter on JSON, not a
+# fragile grep on free text -- and a log shipper (Example 66) can index the
+# fields directly.
+# --- Verify ------------------------------------------------------------------
+#   tail -n 1 /var/log/caddy/access.log | jq .   # => a parsed JSON object, one request
+# [verify] the log line is valid JSON with named fields (co-14 proof).

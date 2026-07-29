@@ -24,6 +24,7 @@ weight: 10
   - [Async Python & FastAPI Services](/en/learn/courses/async-python-and-fastapi-services)
   - [12 · Networking Essentials](/en/learn/courses/networking-essentials)
   - [13 · Just Enough TypeScript](/en/learn/courses/just-enough-typescript)
+  - [Self-Hosting Essentials](/en/learn/courses/self-hosting-essentials)
   - [14 · Frontend Essentials](/en/learn/courses/frontend-essentials)
   - [Advanced Frontend](/en/learn/courses/advanced-frontend)
   - [15 · Software Testing](/en/learn/courses/software-testing)

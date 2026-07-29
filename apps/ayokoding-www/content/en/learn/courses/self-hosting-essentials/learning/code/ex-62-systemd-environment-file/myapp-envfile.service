@@ -1,0 +1,37 @@
+# Example 62: The systemd EnvironmentFile Directive. (co-12)
+#
+# Example 15 wrote an env file; Example 61 templated one. THIS unit shows how
+# the service actually READS it: the EnvironmentFile= directive loads every
+# KEY=value line into the service's environment at start. One directive, no app
+# code changes. Save as /etc/systemd/system/myapp.service (or a drop-in).
+
+[Unit]
+Description=MyApp reading config from an EnvironmentFile  # => co-12: config lives in a file, not code
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/myapp
+EnvironmentFile=/opt/myapp/app.env  # => co-12: loads every KEY=value from this file into the process env
+EnvironmentFile=-/opt/myapp/secrets.env  # => the leading '-' = optional (missing file is not fatal); secrets
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py  # => the app reads os.environ, already populated
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+
+# --- How it flows (co-12) ----------------------------------------------------
+# 1. Example 15/61 produces /opt/myapp/app.env (APP_PORT=8000, etc.)
+# 2. This unit's EnvironmentFile= injects those into the service's environment.
+# 3. The app reads os.environ["APP_PORT"] -- no config parsing code of its own.
+# --- The two-file split (co-12 + co-13) --------------------------------------
+# app.env      => non-secret tunables (safe to read, lives next to the repo)
+# secrets.env  => secrets only (mode 0600, gitignored; the '-' makes it optional)
+# --- Verify ------------------------------------------------------------------
+#   systemctl cat myapp | grep EnvironmentFile            # => both lines present
+#   systemctl show myapp -p Environment                  # => the merged env systemd will set
+#   systemctl restart myapp && journalctl -u myapp -n 3  # => app starts, reading the env values
+# [verify] the app sees APP_PORT etc. from the file, with no hardcoded value in code (co-12).

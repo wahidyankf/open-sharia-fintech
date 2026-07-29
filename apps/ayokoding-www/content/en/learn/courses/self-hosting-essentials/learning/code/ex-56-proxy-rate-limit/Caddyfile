@@ -1,0 +1,30 @@
+# Example 56: Rate Limiting at the Proxy. (co-09)
+#
+# A misbehaving client (or a bot) should not be able to hammer the app into the
+# ground. Rate limiting at the PROXY caps requests-per-second before they reach
+# the app -- defense at the chokepoint (co-09). Caddy syntax shown; Nginx's
+# limit_req is the equivalent. Save as /etc/caddy/Caddyfile.
+
+myapp.example.com {
+  rate_limit {  # => co-09: cap requests at the proxy, not the app
+    zone dynamic  # => one leaky-bucket per distinct key (defaults to remote IP)
+    events 20  # => allow a burst of 20 requests
+    window 1s  # => ... per 1 second -> 20 r/s per client
+  }  # => over the limit, Caddy returns 429 (Too Many Requests)
+
+  reverse_proxy 127.0.0.1:8000  # => forward the requests that PASSED the limit
+}
+
+# --- Nginx equivalent (for contrast) -----------------------------------------
+#   limit_req_zone $binary_remote_addr zone=myapp:10m rate=20r/s;  # => in http{} block
+#   location / {
+#       limit_req zone=myapp burst=20 nodelay;   # => apply the cap per location
+#       proxy_pass http://127.0.0.1:8000;
+#   }
+# --- Why at the proxy (co-09) ------------------------------------------------
+# The proxy sees ALL traffic before the app does; capping here means the app
+# never has to implement (or re-implement) rate limiting, and the cap survives
+# an app restart because the proxy's state is separate.
+# --- Verify ------------------------------------------------------------------
+#   for i in $(seq 1 30); do curl -s -o /dev/null -w "%{http_code}\n" https://myapp.example.com/; done
+# => expect a mix of 200s then 429s once the burst is exceeded (co-09 proof)
