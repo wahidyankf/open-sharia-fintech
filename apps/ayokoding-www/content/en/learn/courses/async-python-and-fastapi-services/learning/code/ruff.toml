@@ -1,0 +1,18 @@
+# Scoped ruff config for this By Example topic's runnable code
+# (learning/code/**, learning/capstone/code/**, drilling/code/**).
+#
+# Why this file exists: every example in this topic carries a dense trailing
+# `# => ...` educational annotation on nearly every code line (the by-example
+# convention's annotation-density requirement). There is no root-level ruff
+# config, so `ruff format` would otherwise use its default line-length of 88,
+# wrapping many of these single-line statements across 2-5 physical lines and
+# adding a "magic trailing comma" -- once added, that comma makes the
+# multi-line form sticky even at a wider line-length (ruff/Black never
+# re-collapses a line with an explicit trailing comma). The extra unannotated
+# physical lines silently pull annotation density below the required
+# 1.0-per-code-line floor without changing any logic, which is exactly the
+# failure mode this file prevents.
+#
+# 240 covers the longest annotated line in this topic with headroom for future
+# edits, so `ruff format` stays a no-op here.
+line-length = 240

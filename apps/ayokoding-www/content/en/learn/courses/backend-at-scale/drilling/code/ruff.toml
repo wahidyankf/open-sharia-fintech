@@ -1,0 +1,5 @@
+# Scoped ruff config for this topic's drilling katas (drilling/code/**).
+# See ../learning/code/ruff.toml for the rationale: the same dense `# =>`
+# annotation density applies here, so line-length is raised to 240 to keep
+# `ruff format` a no-op on annotated lines.
+line-length = 240

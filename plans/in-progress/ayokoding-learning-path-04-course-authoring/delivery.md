@@ -996,8 +996,15 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     clean. PR [#119](https://github.com/wahidyankf/ose-public/pull/119), 3-cycle PR review (cycle 1
     clean; cycle 2 — 1 MEDIUM false positive resolved + `<details>` typo fixed; cycle 3 clean),
     squash-merged `57c2377bc` into `main`; deployed to `prod-ayokoding-www`._
-- [ ] [AI] `backend-at-scale` (By Example · Python) — convention complete; checkers clean.
+- [x] [AI] `backend-at-scale` (By Example · Python) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+  - _Implementation note: authored via `apps-ayokoding-www-by-example-maker` in
+    `worktrees/ayokoding-course-backend-at-scale` on branch
+    `ayokoding-learning-path-04-course-authoring/backend-at-scale`; 110 files (40 concepts, 80 worked
+    examples + capstone). Build green, markdownlint clean, pyright --strict clean. PR
+    [#120](https://github.com/wahidyankf/ose-public/pull/120), 3-cycle PR review (cycle 1: 1 LOW f-string
+    fix; cycle 2: 1 MEDIUM capstone checklist fix; cycle 3 clean), squash-merged `7818b8272` into `main`;
+    deployed to `prod-ayokoding-www`._
 - [ ] [AI] `async-python-and-fastapi-services` (By Example · Python) — convention complete; checkers
       clean; **framework-concrete scope note applied**: async concepts deferred to
       `concurrency-and-parallelism`, framework internals to `build-your-own-web-framework`, both

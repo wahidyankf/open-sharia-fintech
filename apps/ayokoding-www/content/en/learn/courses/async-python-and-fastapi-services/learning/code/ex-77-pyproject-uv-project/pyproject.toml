@@ -1,0 +1,18 @@
+[project]
+# Example 77: A uv project declared from a manifest (pyproject.toml).
+# `uv sync` reads this file, creates the venv, and installs the exact pins below -- one reproducible command.
+name = "async-fastapi-service"
+version = "0.1.0"
+description = "A uv-managed async FastAPI service (co-07)."
+requires-python = ">=3.13"
+dependencies = [
+    # => exact pins only -- the dependency-bump policy's Path A (co-07)
+    "fastapi==0.139.0",
+    "uvicorn==0.51.0",
+    "pydantic==2.11.0",
+    "aiosqlite==0.20.0",
+]
+
+[project.scripts]
+# => `uv run serve` boots the ASGI server (co-07)
+serve = "uvicorn:run"
