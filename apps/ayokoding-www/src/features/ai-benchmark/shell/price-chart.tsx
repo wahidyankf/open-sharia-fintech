@@ -136,6 +136,14 @@ function axisMaxOf(bands: BandLayout[]): number {
 
 export type PriceChartProps = {
   dataset?: Dataset;
+  /**
+   * The full unfiltered roster. Band thresholds (the anchor indices) and the roster-max map are
+   * ALWAYS derived from this dataset, never from `dataset` — `dataset` may be a harness/class
+   * filtered subset that excludes both anchor models, and re-deriving thresholds from it would
+   * silently collapse every rated model to `light` (DD-5a: bands are roster-relative to the FULL
+   * population; filtering governs display only). Defaults to `dataset` itself when omitted.
+   */
+  fullDataset?: Dataset;
   locale: Locale;
   /**
    * The active harness filter (Phase 8, AC-18). When set, every bar shows THAT harness's own rate
@@ -146,11 +154,11 @@ export type PriceChartProps = {
   harness?: HarnessId;
 };
 
-export function PriceChart({ dataset = defaultDataset, locale, harness }: PriceChartProps) {
+export function PriceChart({ dataset = defaultDataset, fullDataset, locale, harness }: PriceChartProps) {
   const titleId = useId();
   const subscriptionHeadingId = useId();
 
-  const groups = computeGroups(dataset);
+  const groups = computeGroups(dataset, fullDataset ?? dataset);
   const { bands, subscriptions, plotHeight } = computeLayout(groups, locale, harness);
   const axisMax = axisMaxOf(bands);
   const scale = scaleLinear(axisMax, PLOT_WIDTH);

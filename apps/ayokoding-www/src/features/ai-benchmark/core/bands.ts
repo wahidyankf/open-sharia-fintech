@@ -122,15 +122,24 @@ function compareForOrder(a: ModelScore, b: ModelScore): number {
 }
 
 /**
- * Score every model in the roster and group it into one of the four disjoint, canonically ordered
- * capability bands (B-9..B-12). The four groups are disjoint and together cover the whole roster
- * exactly once.
+ * Score every model in `dataset` and group it into one of the four disjoint, canonically ordered
+ * capability bands (B-9..B-12). The four groups are disjoint and together cover exactly the models
+ * in `dataset` — but the roster-max map and the two anchor threshold indices are ALWAYS derived
+ * from `fullDataset` (defaulting to `dataset` itself when omitted), never from `dataset` alone.
+ *
+ * This matters whenever a caller passes an already-filtered subset as `dataset` (e.g. a harness
+ * filter): a model's band is a property of the FULL roster (DD-5a — the composite index and the
+ * anchor thresholds are roster-relative), so filtering must only govern which models are
+ * displayed, never which models define the band boundaries. Passing the harness-filtered subset
+ * as BOTH `dataset` and (implicitly) `fullDataset` reproduces the anchor-collapse bug: when the
+ * filter excludes both `claude-opus-5` and `claude-sonnet-5`, the thresholds silently become
+ * `undefined` and every surviving rated model falls through to `light`.
  */
-export function computeGroups(dataset: Dataset): BandGroups {
-  const maxes = computeRosterMaxes(dataset);
-  const anchorIdx = anchorIndices(dataset, maxes);
+export function computeGroups(dataset: Dataset, fullDataset: Dataset = dataset): BandGroups {
+  const maxes = computeRosterMaxes(fullDataset);
+  const anchorIdx = anchorIndices(fullDataset, maxes);
   const indices: IndexMap = {};
-  for (const m of dataset.models) {
+  for (const m of fullDataset.models) {
     indices[m.id] = computeIndex(m, maxes);
   }
   const scored: ModelScore[] = dataset.models.map((m) => ({

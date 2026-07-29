@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { OPUS_ANCHOR_ID, SONNET_ANCHOR_ID, dataset, type Model } from "./data/models";
+import { OPUS_ANCHOR_ID, SONNET_ANCHOR_ID, dataset, type Dataset, type HarnessId, type Model } from "./data/models";
 import {
   type AnchorIndices,
   type Band,
@@ -201,5 +201,85 @@ describe("anchors — single helper deriving the anchor ids + threshold indices"
     const a = anchors(dataset);
     expect(Number.isFinite(a.opus)).toBe(true);
     expect(Number.isFinite(a.sonnet)).toBe(true);
+  });
+});
+
+// ─── Regression: a harness filter excluding both anchors must not collapse rated models to `light`
+// (pr-review-synthesis-maker CRITICAL finding on PR #118, benchmark-content.tsx:28) ───────────────
+//
+// `codex-cli` and `opencode-go` are the two harnesses that expose neither `claude-opus-5` nor
+// `claude-sonnet-5` (see `core/data/models.ts`). Before this fix, `computeGroups` re-derived the
+// anchor thresholds from whatever `dataset` it was handed — so a harness-filtered `Dataset` with
+// both anchors excluded made `anchorIndices.opus`/`.sonnet` both `undefined`, and every surviving
+// rated model silently fell through to `light`. The fix is the `fullDataset` parameter: thresholds
+// are ALWAYS derived from it (defaulting to `dataset` itself), independent of what subset is being
+// displayed.
+
+function bandById(groups: BandGroups): Map<string, Band> {
+  const byId = new Map<string, Band>();
+  for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+    for (const s of list) {
+      byId.set(s.model.id, s.band);
+    }
+  }
+  return byId;
+}
+
+describe("computeGroups — a harness filter that excludes both anchors keeps every rated model's full-roster band", () => {
+  const fullRosterBand = bandById(computeGroups(dataset));
+
+  function assertHarnessPreservesRatedBands(harness: HarnessId) {
+    const filteredModels = dataset.models.filter((m) => m.harnesses.includes(harness));
+
+    // Sanity: this harness really does reproduce the bug's precondition — it excludes BOTH
+    // anchors, which is exactly what made the pre-fix `anchorIndices` collapse to `undefined`.
+    expect(
+      filteredModels.some((m) => m.id === OPUS_ANCHOR_ID),
+      `${harness} must exclude the opus anchor`,
+    ).toBe(false);
+    expect(
+      filteredModels.some((m) => m.id === SONNET_ANCHOR_ID),
+      `${harness} must exclude the sonnet anchor`,
+    ).toBe(false);
+
+    const ratedSurvivors = filteredModels.filter(
+      (m) => fullRosterBand.get(m.id) === "opus" || fullRosterBand.get(m.id) === "sonnet",
+    );
+    expect(ratedSurvivors.length, `${harness} must still expose at least one opus/sonnet model`).toBeGreaterThan(0);
+
+    const filteredDataset: Dataset = { ...dataset, models: filteredModels };
+    // THE FIX: pass the full unfiltered dataset as the second argument so thresholds never shift.
+    const filteredBand = bandById(computeGroups(filteredDataset, dataset));
+
+    for (const m of ratedSurvivors) {
+      expect(
+        filteredBand.get(m.id),
+        `${m.id} must keep its full-roster band ("${fullRosterBand.get(m.id)}") under the ${harness} filter`,
+      ).toBe(fullRosterBand.get(m.id));
+    }
+  }
+
+  it("codex-cli: gpt-5.6-sol/terra/luna keep their opus/sonnet bands instead of collapsing to light", () => {
+    assertHarnessPreservesRatedBands("codex-cli");
+  });
+
+  it("opencode-go: the harness's rated survivors keep their opus/sonnet bands instead of collapsing to light", () => {
+    assertHarnessPreservesRatedBands("opencode-go");
+  });
+
+  it("WITHOUT the fullDataset override, the bug reproduces — the same rated models collapse to light", () => {
+    const filteredModels = dataset.models.filter((m) => m.harnesses.includes("codex-cli"));
+    const filteredDataset: Dataset = { ...dataset, models: filteredModels };
+    // No second argument — the pre-fix call shape. Documents the bug this fix closes; must stay
+    // red if a future change reintroduces a same-dataset default that silently "fixes" this
+    // assertion instead of the real call sites.
+    const collapsedBand = bandById(computeGroups(filteredDataset));
+    const ratedSurvivorIds = filteredModels
+      .map((m) => m.id)
+      .filter((id) => fullRosterBand.get(id) === "opus" || fullRosterBand.get(id) === "sonnet");
+    expect(ratedSurvivorIds.length).toBeGreaterThan(0);
+    for (const id of ratedSurvivorIds) {
+      expect(collapsedBand.get(id), `${id} collapses to light when no fullDataset is supplied`).toBe("light");
+    }
   });
 });

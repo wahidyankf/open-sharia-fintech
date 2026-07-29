@@ -40,9 +40,15 @@ type ScoreView = {
   coverage: number;
 };
 
-/** Build the roster-relative index/coverage/band for every model in one scoring pass. */
-function computeScoreViews(dataset: Dataset): Map<string, ScoreView> {
-  const groups = computeGroups(dataset);
+/**
+ * Build the roster-relative index/coverage/band for every model in one scoring pass. `fullDataset`
+ * (defaulting to `dataset` itself) is ALWAYS the source for the anchor thresholds and roster-max
+ * map — `dataset` may be a harness/class-filtered subset, and re-deriving thresholds from it would
+ * silently collapse every rated model to `light` when the filter excludes both anchor models
+ * (DD-5a: bands are roster-relative to the FULL population; filtering governs display only).
+ */
+function computeScoreViews(dataset: Dataset, fullDataset: Dataset = dataset): Map<string, ScoreView> {
+  const groups = computeGroups(dataset, fullDataset);
   const byId = new Map<string, ScoreView>();
   for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
     for (const s of list) {
@@ -196,11 +202,19 @@ function integrityNotes(model: Model, locale: Locale): ReactNode {
 
 export type ModelTableProps = {
   dataset?: Dataset;
+  /**
+   * The full unfiltered roster. Band thresholds (the anchor indices) and the roster-max map are
+   * ALWAYS derived from this dataset, never from `dataset` — `dataset` may be a harness/class
+   * filtered subset that excludes both anchor models, and re-deriving thresholds from it would
+   * silently collapse every rated model to `light` (DD-5a: bands are roster-relative to the FULL
+   * population; filtering governs display only). Defaults to `dataset` itself when omitted.
+   */
+  fullDataset?: Dataset;
   locale: Locale;
 };
 
-export function ModelTable({ dataset = defaultDataset, locale }: ModelTableProps) {
-  const views = computeScoreViews(dataset);
+export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: ModelTableProps) {
+  const views = computeScoreViews(dataset, fullDataset ?? dataset);
   const models = dataset.models;
 
   // Shared per-model figure set so the table and the card render identical figures (W-26).

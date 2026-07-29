@@ -20,9 +20,11 @@ export function BenchmarkContent() {
 
   // The URL is the single source of truth for the active filters (F-3..F-9, Phase 4). One
   // `filterModels` call narrows the roster over BOTH axes at once (DD-11) — the resulting
-  // `filteredDataset` is the ONE dataset every consumer below reads, so the capability chart, the
-  // price chart, and the data table always agree, and each chart's own `computeGroups` call
-  // re-scores/re-bands relative to whatever survives the filter, not the full roster.
+  // `filteredDataset` is the ONE dataset every consumer below reads for MEMBERSHIP/DISPLAY. Band
+  // thresholds must stay roster-relative to the FULL population (DD-5a), so every consumer below
+  // is ALSO given `dataset` (the unfiltered full roster) as its `fullDataset` — never re-deriving
+  // anchor thresholds from `filteredDataset`, which can exclude both anchor models entirely and
+  // would otherwise silently collapse every rated model to `light`.
   const filterState: FilterState = decodeState(searchParams);
   const filteredModels = filterModels(dataset, filterState);
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };
@@ -30,7 +32,11 @@ export function BenchmarkContent() {
 
   function handleFilterChange(next: FilterState) {
     const qs = encodeState(next).toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
+    // `scroll: false` is mandatory: this is in-page filter/view state, not a page change, so the
+    // default Next.js navigation behaviour (scroll to top of document) would yank the reader back
+    // to the page header on every filter change — mirrors
+    // `cost-of-living-calculator/calculator-content.tsx`'s in-page filter navigations.
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
   return (
@@ -64,12 +70,12 @@ export function BenchmarkContent() {
         </p>
       ) : (
         <>
-          <CapabilityChart dataset={filteredDataset} locale={locale} />
-          <PriceChart dataset={filteredDataset} locale={locale} harness={filterState.harness} />
+          <CapabilityChart dataset={filteredDataset} fullDataset={dataset} locale={locale} />
+          <PriceChart dataset={filteredDataset} fullDataset={dataset} locale={locale} harness={filterState.harness} />
         </>
       )}
 
-      <ModelTable dataset={filteredDataset} locale={locale} />
+      <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
     </main>
   );
 }
