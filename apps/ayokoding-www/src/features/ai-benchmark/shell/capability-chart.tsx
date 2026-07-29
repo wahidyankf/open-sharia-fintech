@@ -122,7 +122,7 @@ export function CapabilityChart({ dataset = defaultDataset, locale }: Capability
             testId={`${SLOT}-band-${bandLayout.band}`}
           >
             {bandLayout.rows.map(({ score, rowTop }) => {
-              const index = score.index ?? 0; // unreachable: rated bands always carry a defined index
+              const index = score.index ?? 0; // an anchor pinned by id can lack an index (bands.ts:56-58); 0 keeps the bar total
               const barY = rowTop + 12;
               const barWidth = scale(index);
               const valueText = formatIndex(index, locale);

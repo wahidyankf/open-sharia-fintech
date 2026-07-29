@@ -1,8 +1,9 @@
 // AI BENCHMARK — shared chart primitives (Phase 6, A-2; refactored A-17; reused by Phase 7).
 //
 // The capability chart and the price chart share ONE set of SVG building blocks so neither chart
-// re-derives its own scale, axis, bar, band-header, or legend rendering (Y-11 proves this by
-// hoisting anything the two charts still duplicate back here). Every colour reference resolves
+// re-derives its own scale, axis, bar, or band-header rendering (Y-11 proves this by hoisting
+// anything the two charts still duplicate back here). `Legend` also lives here but is currently
+// used by the capability chart only — see its own docstring below. Every colour reference resolves
 // through the `--chart-band-*` design tokens declared in `<TOKENS>` (Phase 1) — no component in
 // this file (or any file that imports it) may name a hue directly (A-17).
 //
@@ -14,31 +15,22 @@ import type { ReactNode } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { BAND_LABEL_KEYS } from "../core/data/benchmarks";
-
-/** The four capability classes a bar or band header can be coloured by (mirrors `core/bands.ts`'s `Band`). */
-export type ChartBand = "opus" | "sonnet" | "light" | "unrated";
+import type { Band as ChartBand } from "../core/bands";
 
 /**
- * The single place a `ChartBand` resolves to its `--chart-band-*` CSS custom property name
- * (A-17 refactor target: every colour-bearing primitive below reads through this map, so a band's
- * colour can never drift between the bar fill, the band-header text, and the legend swatch).
+ * The four capability classes a bar or band header can be coloured by — re-exported from
+ * `core/bands.ts`'s `Band` rather than redeclared, so a future band added there is a compile
+ * error here (every `Record<ChartBand, …>` map below becomes exhaustively unsatisfied) instead of
+ * a silently dropped band.
  */
-const BAND_TOKEN: Record<ChartBand, string> = {
-  opus: "--chart-band-opus",
-  sonnet: "--chart-band-sonnet",
-  light: "--chart-band-light",
-  unrated: "--chart-band-unrated",
-};
-
-/** The `--chart-band-*` CSS custom property that colours a given capability band. */
-export function bandColorVar(band: ChartBand): string {
-  return BAND_TOKEN[band];
-}
+export type { ChartBand };
 
 // Tailwind's class scanner reads literal, unbroken strings out of the source text — a template
-// literal built from `bandColorVar()` at render time would never be found by the scanner and the
-// utility would silently fail to generate. These maps hold one COMPLETE static class string per
-// band so every band's colour is still Tailwind-generated, never an inline `style` object.
+// literal built from a shared `band → token name` lookup would never be found by the scanner, so
+// there is deliberately no single token-name registry these maps "read through". Each of the three
+// maps below independently hardcodes its own complete, static class string per band and must be
+// kept consistent with the others by hand — colour CAN drift if a future edit updates one map
+// without the others.
 const BAR_FILL_CLASS: Record<ChartBand, string> = {
   opus: "fill-[var(--chart-band-opus)]",
   sonnet: "fill-[var(--chart-band-sonnet)]",
@@ -194,8 +186,11 @@ export type LegendProps = {
 };
 
 /**
- * A compact swatch + text legend shared by both charts. The swatch is `aria-hidden` decoration —
- * the label text beside it is what actually carries the band's identity (never colour alone).
+ * A compact swatch + text legend, currently used by the capability chart only (`price-chart.tsx`
+ * does not render one — each of its band groups already carries a text header via `BandGroup`, so
+ * AC-37's "class is never colour-only" holds there without a legend). The swatch is `aria-hidden`
+ * decoration — the label text beside it is what actually carries the band's identity (never colour
+ * alone).
  */
 export function Legend({ items }: LegendProps) {
   return (
