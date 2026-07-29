@@ -20,8 +20,12 @@ import type { Band as ChartBand } from "../core/bands";
 /**
  * The four capability classes a bar or band header can be coloured by — re-exported from
  * `core/bands.ts`'s `Band` rather than redeclared, so a future band added there is a compile
- * error here (every `Record<ChartBand, …>` map below becomes exhaustively unsatisfied) instead of
- * a silently dropped band.
+ * error here for every `Record<ChartBand, …>` map below (each becomes exhaustively unsatisfied).
+ * That guarantee covers only this colour-token layer — it does NOT reach a chart's own
+ * array-literal band list (e.g. `price-chart.tsx`'s `ALL_BANDS`, `capability-chart.tsx`'s
+ * `RATED_BANDS`), which can still silently omit a new band from rendering unless it too is
+ * derived from `core/filter.ts`'s `BANDS` (the single source of truth, F-9) rather than
+ * hand-written.
  */
 export type { ChartBand };
 

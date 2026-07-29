@@ -23,6 +23,7 @@ import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
+import { BANDS } from "../core/filter";
 import { COMPOSITE_INDEX_MAX, LOW_COVERAGE_THRESHOLD } from "../core/score";
 import { formatCoverage, formatIndex } from "./format";
 import {
@@ -51,7 +52,10 @@ const TOP_MARGIN = 24; // room for the always-visible axis-maximum label
 const BOTTOM_MARGIN = 20; // room for the lg-only tick row
 const TICK_COUNT = 5; // chart display granularity (0/20/40/60/80/100 over COMPOSITE_INDEX_MAX), not dataset data (A-16)
 
-const RATED_BANDS: readonly ChartBand[] = ["opus", "sonnet", "light"];
+// Derived from `core/filter.ts`'s `BANDS` — the single source of truth for the full band list
+// (F-9) — rather than re-declared here, so a new rated band is still added in exactly one place;
+// only `unrated` is excluded by name, since it is the one band this chart never plots as a bar.
+const RATED_BANDS: readonly ChartBand[] = BANDS.filter((band) => band !== "unrated");
 
 type BandLayout = {
   band: ChartBand;

@@ -24,6 +24,7 @@ import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
+import { BANDS } from "../core/filter";
 import { lowestRate } from "../core/price";
 import { formatPriceUsd } from "./format";
 import { Axis, Bar, BandGroup, TickRow, bandLabel, evenTicks, scaleLinear, type ChartBand } from "./chart-primitives";
@@ -45,8 +46,10 @@ const TICK_COUNT = 4; // the lg-only tick row renders TICK_COUNT + 1 evenly spac
 
 // All four bands are candidates for a price section — unlike the capability chart, a model with
 // no composite index can still carry a real price, so `unrated` renders bars here (never a
-// text-only placeholder) whenever at least one unrated model has a metered rate.
-const ALL_BANDS: readonly ChartBand[] = ["opus", "sonnet", "light", "unrated"];
+// text-only placeholder) whenever at least one unrated model has a metered rate. `BANDS` is
+// `core/filter.ts`'s single source of truth for the full four-band list (F-9) — imported rather
+// than re-declared here, so a new band is still added in exactly one place.
+const ALL_BANDS: readonly ChartBand[] = BANDS;
 
 type MeteredRow = {
   score: ModelScore;
