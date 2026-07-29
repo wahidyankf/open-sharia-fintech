@@ -28,6 +28,7 @@ Google's AIP-185 recommends "v1", not "v1.0", with the version baked directly in
 own path.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[Client Request] --> B{Versioning strategy}
     B -->|Example 29: URI path| C["/v1/articles vs /v2/articles"]
@@ -778,6 +779,7 @@ caller how long to wait before trying again -- a simple fixed-budget counter is 
 demonstrate the contract.
 
 ```mermaid
+%% Color Palette: Orange #DE8F05, Teal #029E73, Brown #CA9161
 graph LR
     A["Budget: 3"] -->|calls 1-3: 200 OK| D["Budget: 0"]
     D -->|call 4| E["429 + Retry-After: 60"]
@@ -1219,6 +1221,7 @@ token -- a request with NO token is rejected with `401 Unauthorized`, distinct f
 scope-based `403`.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[Authorization header] --> B{present?}
     B -->|no| C["401: missing header"]
@@ -1450,6 +1453,7 @@ Auth (Examples 46-48) belongs in the CONTRACT, not just the handler code -- Open
 scheme(s) it requires.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[components.securitySchemes] --> B["bearerAuth: http/bearer"]
     A --> C["apiKeyAuth: apiKey/header"]

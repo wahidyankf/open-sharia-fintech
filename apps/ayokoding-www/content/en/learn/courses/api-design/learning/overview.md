@@ -55,8 +55,9 @@ gRPC are all throughput-and-latency decisions wearing an API-style costume.
   response.
 - **Advanced** (Examples 57-80) -- the non-REST contrasts and a full contract-first assembly:
   GraphQL's schema, client-driven field selection, the N+1 resolver problem and DataLoader batching,
-  a GraphQL mutation; gRPC's `.proto` service definitions and all four RPC kinds (unary,
-  server-streaming, client-streaming, bidirectional); REST/GraphQL/gRPC contrasted on caching and on
+  a GraphQL mutation; gRPC's `.proto` service definitions and three of the four RPC kinds worked
+  directly (unary, server-streaming, bidirectional), with client-streaming covered conceptually in
+  the drilling track; REST/GraphQL/gRPC contrasted on caching and on
   how each evolves a field, plus a scenario-driven style-selection matrix; writing an OpenAPI spec
   BEFORE any code, implementing handlers that conform to it, and asserting live conformance;
   evolving `v1` to `v2` with a real deprecation window; combining idempotency with rate limiting on

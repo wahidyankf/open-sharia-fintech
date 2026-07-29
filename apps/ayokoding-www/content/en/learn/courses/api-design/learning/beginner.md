@@ -120,9 +120,9 @@ RESOURCE_STYLE = ("GET", "/articles/1")  # => the path is a pure noun; GET alone
 # => RESOURCE_STYLE is ("GET", "/articles/1") (type: tuple[str, str])
 
 for method, path in (RPC_STYLE, RESOURCE_STYLE):  # => run the classifier over both forms
-    label = classify(method, path)  # => co-05: resource-style is verb-free, RPC-style is not
-    # => label is "RPC-style (verb in path)" on the first pass, "resource-style (noun in path)" on the second
-    print(f"{method} {path!r} -> {label}")  # => Output: two lines, contrasting labels
+    label = classify(method, path)  # => co-05: RPC_STYLE SHOULD be flagged, but the regex misses it (see below)
+    # => label is "resource-style (noun in path)" on BOTH passes -- \bget\b never matches "getArticle"
+    print(f"{method} {path!r} -> {label}")  # => Output: two lines, the SAME label -- not a contrast
 ```
 
 **Run**: `python3 example.py`
@@ -153,6 +153,7 @@ semantics. This example builds that map explicitly, once, so every later example
 status codes) can rely on the same vocabulary instead of re-deriving it per endpoint.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05
 graph LR
     A[Create] -->|maps to| B[POST]
     C[Read] -->|maps to| D[GET]
@@ -577,6 +578,7 @@ The RMM ladder -- L0 POX, L1 resources, L2 HTTP verbs+status, L3 hypermedia -- g
 the ladder's own criteria.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Brown #CA9161
 graph LR
     L0["L0: POX<br/>one RPC endpoint"] --> L1["L1: Resources<br/>+ resource URIs"]
     L1 --> L2["L2: HTTP Verbs+Status<br/>+ verbs/status codes"]
@@ -1047,6 +1049,7 @@ An OpenAPI document is the machine-readable contract: `openapi` (the spec versio
 example builds the smallest valid skeleton and checks it against that requirement in code.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A[OpenAPI Spec] --> B["openapi: spec version"]
     A --> C["info: title + version"]
@@ -1644,6 +1647,7 @@ implement, but every request re-fetches and discards the skipped rows -- the cos
 makes visible with a counted "fetch."
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Teal #029E73, Brown #CA9161
 graph LR
     subgraph "Offset pagination (Example 23)"
         A1["skip 3<br/>(discarded reads)"] --> A2["take 3<br/>(returned)"]
@@ -1933,6 +1937,7 @@ example serves the identical article data as either JSON or CSV depending purely
 request's `Accept` header requests.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["GET /articles/1<br/>Accept: ?"] --> B{Accept header value}
     B -->|application/json| C[Serve JSON representation]

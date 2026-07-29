@@ -31,6 +31,7 @@ distinct from OpenAPI's per-operation paths (Example 12), a GraphQL schema descr
 and every operation later queries a subset of them.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 graph LR
     Q[Query] -->|article id: ID!| A[Article]
     A -->|id: ID!| S1[Scalar]
@@ -190,6 +191,7 @@ needs; the SAME underlying data via GraphQL (Example 58) returns only the reques
 example puts both side by side against the identical record.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph LR
     subgraph REST
         R1[GET /articles/1] --> R2["ALL 4 fields<br/>(fixed shape)"]
@@ -343,11 +345,14 @@ identical `resolve_field` dispatch mechanism.
 
 _ex-61 &middot; exercises co-25_
 
-Resolving each article's author with its OWN separate lookup means N articles cost N+1 queries (1
-for articles, N for authors) -- batching all N author lookups into ONE call (the DataLoader
-pattern) collapses that back down to 2 queries total, regardless of N.
+Resolving each article's author with its OWN separate lookup means N articles cost N+1 queries
+overall (1 for articles, N for authors) -- batching all N author lookups into ONE call (the
+DataLoader pattern) collapses that back down to 2 queries total, regardless of N. The diagram below
+counts that root articles query; the runnable example's `QUERY_COUNT` below does not, so it
+measures the author lookups alone and reads N -> 1 rather than (N+1) -> 2.
 
 ```mermaid
+%% Color Palette: Teal #029E73, Brown #CA9161
 graph LR
     subgraph "Naive (N+1)"
         A1[3 articles] --> Q1[query articles: 1]
@@ -373,9 +378,11 @@ graph LR
 """Example 61: An N+1 Resolver, Then a DataLoader Batch. (co-25)
 
 Resolving each article's author with its OWN separate lookup means N
-articles cost N+1 queries (1 for articles, N for authors) -- batching all
-N author lookups into ONE call (the DataLoader pattern) collapses that back
-down to 2 queries total, regardless of N.
+articles cost N+1 queries overall (1 for articles, N for authors) -- batching
+all N author lookups into ONE call (the DataLoader pattern) collapses that
+back down to 2 queries total, regardless of N. QUERY_COUNT below tracks ONLY
+the author lookups (the "+N" and the "+1"), not the initial articles query,
+so the counter this example prints reads N -> 1, not (N+1) -> 2.
 """
 
 ARTICLES = [  # => co-25: 3 articles, each referencing an author by id
@@ -385,7 +392,9 @@ ARTICLES = [  # => co-25: 3 articles, each referencing an author by id
 ]  # => end of ARTICLES
 AUTHORS = {"a1": "Ada", "a2": "Grace"}  # => co-25: the underlying author store
 
-QUERY_COUNT = [0]  # => a mutable counter cell -- counts every simulated "database" call
+QUERY_COUNT = [0]  # => a mutable counter cell -- counts author lookups only, NOT the root articles query
+# => that's why this counter reads 3 -> 1 below, while the diagram's totals (which also count the
+# => root articles query) read 4 -> 2 -- both numbers are correct, they're just counting different things
 
 
 def fetch_author_naive(author_id: str) -> str:  # => co-25: the N+1 resolver -- one call PER article
@@ -583,6 +592,7 @@ response message out, matching Example 63's `GetArticle` service definition, sim
 plain in-process call rather than an actual network round trip.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph LR
     subgraph "Example 64: Unary"
         A1[1 request] --> A2[1 response]
@@ -1083,6 +1093,7 @@ handler is written -- the spec becomes the design decision itself, and Example 7
 later WRITTEN TO MATCH it, not the other way around.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph LR
     A["Example 70:<br/>Write spec FIRST"] --> B["Example 71:<br/>Write handler TO MATCH"]
     B --> C["Example 72:<br/>Assert live response conforms"]
@@ -1549,6 +1560,7 @@ cursor idea, Example 8) as `edges` (each wrapping a `node` plus its own `cursor`
 object naming whether more pages exist -- a fixed, reusable shape every paginated field can share.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph TD
     A[Connection] --> B["edges: [Edge]"]
     B --> C["node: Article"]
@@ -1637,6 +1649,7 @@ NAVIGATES purely by reading `_links` out of each HAL response (Example 56), the 
 links in a browser instead of typing every URL from memory.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 graph LR
     A["/ (hardcoded root)"] -->|follow _links.articles| B["/articles/1"]
     B -->|follow _links.author| C["/authors/7"]
@@ -1874,6 +1887,7 @@ versioned path (co-13), cursor pagination (co-17), an idempotent write (co-18), 
 whole thing conforms to its own spec (co-09), end to end.
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
     A["/v1/articles (co-13)"] --> B["list: cursor page (co-17)"]
     A --> C["create: idempotent (co-18)"]

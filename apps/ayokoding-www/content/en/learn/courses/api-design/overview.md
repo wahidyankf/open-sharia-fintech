@@ -50,8 +50,8 @@ throughput-and-latency decisions dressed up as an API-style preference.
 > how the server internally survives a traffic spike. `software-architecture` -- `[Unverified]` not
 > yet present in the AyoKoding course library on disk, so no link is given here -- would own how
 > services are decomposed and how they communicate with EACH OTHER at a system level; this course
-> stops at the shape of ONE API's own contract, the stable interface topic 42 would build service
-> boundaries on top of.
+> stops at the shape of ONE API's own contract, the stable interface a `software-architecture`
+> course would build service boundaries on top of.
 
 ## How this topic is organized
 
@@ -63,7 +63,8 @@ throughput-and-latency decisions dressed up as an API-style preference.
   sunset headers, idempotency-key handling, rate limiting with structured headers, HTTP caching and
   optimistic concurrency, bearer/API-key auth with scope checks, partial responses, batch/bulk
   endpoints, webhooks with HMAC signing, and HAL hypermedia), and Advanced (Examples 57-80: GraphQL's
-  schema, resolvers, the N+1 problem and DataLoader batching, gRPC's four RPC kinds over Protobuf,
+  schema, resolvers, the N+1 problem and DataLoader batching, three of gRPC's four RPC kinds over
+  Protobuf (client-streaming covered conceptually in the drilling track),
   REST/GraphQL/gRPC contrasted on caching and evolution, contract-first design driving a live
   implementation, versioned migration with a deprecation window, idempotency combined with rate
   limiting, and a closing example assembling every prior idea into one versioned API) -- plus a

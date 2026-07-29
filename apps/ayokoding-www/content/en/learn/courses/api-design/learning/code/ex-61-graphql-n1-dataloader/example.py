@@ -2,9 +2,11 @@
 """Example 61: An N+1 Resolver, Then a DataLoader Batch. (co-25)
 
 Resolving each article's author with its OWN separate lookup means N
-articles cost N+1 queries (1 for articles, N for authors) -- batching all
-N author lookups into ONE call (the DataLoader pattern) collapses that back
-down to 2 queries total, regardless of N.
+articles cost N+1 queries overall (1 for articles, N for authors) -- batching
+all N author lookups into ONE call (the DataLoader pattern) collapses that
+back down to 2 queries total, regardless of N. QUERY_COUNT below tracks ONLY
+the author lookups (the "+N" and the "+1"), not the initial articles query,
+so the counter this example prints reads N -> 1, not (N+1) -> 2.
 """
 
 ARTICLES = [  # => co-25: 3 articles, each referencing an author by id
@@ -14,7 +16,9 @@ ARTICLES = [  # => co-25: 3 articles, each referencing an author by id
 ]  # => end of ARTICLES
 AUTHORS = {"a1": "Ada", "a2": "Grace"}  # => co-25: the underlying author store
 
-QUERY_COUNT = [0]  # => a mutable counter cell -- counts every simulated "database" call
+QUERY_COUNT = [0]  # => a mutable counter cell -- counts author lookups only, NOT the root articles query
+# => that's why this counter reads 3 -> 1 below, while the diagram's totals (which also count the
+# => root articles query) read 4 -> 2 -- both numbers are correct, they're just counting different things
 
 
 def fetch_author_naive(author_id: str) -> str:  # => co-25: the N+1 resolver -- one call PER article

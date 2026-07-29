@@ -26,6 +26,6 @@ RESOURCE_STYLE = ("GET", "/articles/1")  # => the path is a pure noun; GET alone
 # => RESOURCE_STYLE is ("GET", "/articles/1") (type: tuple[str, str])
 
 for method, path in (RPC_STYLE, RESOURCE_STYLE):  # => run the classifier over both forms
-    label = classify(method, path)  # => co-05: resource-style is verb-free, RPC-style is not
-    # => label is "RPC-style (verb in path)" on the first pass, "resource-style (noun in path)" on the second
-    print(f"{method} {path!r} -> {label}")  # => Output: two lines, contrasting labels
+    label = classify(method, path)  # => co-05: RPC_STYLE SHOULD be flagged, but the regex misses it (see below)
+    # => label is "resource-style (noun in path)" on BOTH passes -- \bget\b never matches "getArticle"
+    print(f"{method} {path!r} -> {label}")  # => Output: two lines, the SAME label -- not a contrast
