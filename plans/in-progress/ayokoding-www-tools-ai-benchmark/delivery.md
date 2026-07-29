@@ -1725,121 +1725,148 @@ rev-parse --show-toplevel` prints the worktree path
 >
 > Non-boundary phase — commits to the Phase 6-7 branch and opens no PR of its own.
 
-- [ ] [AI] Provision the Phase 6-7 unit's worktree from the latest `origin/main` — this is the unit's
+- [x] [AI] Provision the Phase 6-7 unit's worktree from the latest `origin/main` — this is the unit's
       first phase, before its boundary at Phase 7:
       `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-6-7-charts origin/main`
       — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-6-7-charts rev-parse
 --show-toplevel` prints the worktree path
-- [ ] [AI] **A-0**: append AC-12, AC-13, AC-14, AC-36 (in full — the scenario covers both charts in
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: worktree was already provisioned before this session started (branch
+    `ayokoding-www-tools-ai-benchmark/phase-6-7-charts`, clean working tree, `HEAD` at
+    `5cd5fbd5c`). `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-6-7-charts rev-parse
+--show-toplevel` prints the worktree path.
+- [x] [AI] **A-0**: append AC-12, AC-13, AC-14, AC-36 (in full — the scenario covers both charts in
       one `Scenario:` block, so it is authored here exactly once and not repeated at Phase 7's `Y-0`)
       and AC-37 to `<SPECS>ai-benchmark.feature` — acceptance:
       `npx nx run ayokoding-www:specs:structure-validation` exits 0
-- [ ] [AI] **A-1 RED**: create `<SHELL>chart-primitives.test.tsx` asserting `scaleLinear(domainMax,
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: appended the five scenarios verbatim from prd.md to the end of
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`. Fresh run →
+    `0 finding(s)` for every namespace.
+- [x] [AI] **A-1 RED**: create `<SHELL>chart-primitives.test.tsx` asserting `scaleLinear(domainMax,
 pixelWidth)` maps `0 → 0`, `domainMax → pixelWidth`, and is monotonic in between
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (underpins) → AC-13._
-- [ ] [AI] **A-2 GREEN**: create `<SHELL>chart-primitives.tsx` exporting `scaleLinear`, `<Axis>`,
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: created `chart-primitives.test.tsx` asserting `scaleLinear` maps `0→0`,
+    `domainMax→pixelWidth`, is monotonic, scales proportionally, and degenerates to zero for a
+    non-positive domain max. Run failed as expected: `Failed to resolve import "./chart-primitives"`
+    (module does not exist yet) — 1 failed test file, the 137 preexisting files stayed green.
+- [x] [AI] **A-2 GREEN**: create `<SHELL>chart-primitives.tsx` exporting `scaleLinear`, `<Axis>`,
       `<Bar>`, `<BandGroup>`, and `<Legend>` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **A-3 RED**: bind AC-13 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-  - _Gherkin (binds) → AC-13 "Bar length is proportional to the composite index"_
-
-    ```gherkin
-    Scenario: Bar length is proportional to the composite index
-      Given two fixture models whose composite indices differ
-      When the capability chart is rendered
-      Then the ratio of their bar lengths equals the ratio of their composite indices
-      And the chart states its axis maximum
-    ```
-
-- [ ] [AI] **A-4 GREEN**: create `<SHELL>capability-chart.tsx` rendering one `<Bar>` per model within
-      a `<BandGroup>` per class, with the axis maximum rendered as text
-      — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-13 passes
-- [ ] [AI] **A-5 RED**: bind AC-14 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-  - _Gherkin (binds) → AC-14 "Every capability bar carries its model name and index in text"_
-
-    ```gherkin
-    Scenario: Every capability bar carries its model name and index in text
-      Given the full roster is loaded
-      When the capability chart is rendered
-      Then every bar has a text label carrying the model name
-      And every bar has a text label carrying its numeric composite index
-    ```
-
-- [ ] [AI] **A-6 GREEN**: render an SVG `<text>` label for the model name and the index on every bar
-      — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-14 passes
-- [ ] [AI] **A-7 RED**: bind AC-12 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-  - _Gherkin (binds) → AC-12 "A low-coverage model is marked as low coverage"_
-
-    ```gherkin
-    Scenario: A low-coverage model is marked as low coverage
-      Given a fixture model whose coverage ratio is below the low-coverage threshold
-      When the capability chart is rendered
-      Then that model's row carries a low-coverage marker
-      And the marker states the model's coverage ratio in text
-    ```
-
-- [ ] [AI] **A-8 GREEN**: render the low-coverage marker with its ratio as text
-      — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-12 passes
-- [ ] [AI] **A-9 RED**: bind AC-37 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-  - _Gherkin (binds) → AC-37 "The capability class is carried textually, not by colour alone"_
-
-    ```gherkin
-    Scenario: The capability class is carried textually, not by colour alone
-      Given the full roster is loaded
-      When the capability chart is rendered
-      Then every band group carries its class name as text
-      And every model row carries its class as text in the data table
-    ```
-
-- [ ] [AI] **A-10 GREEN**: render each band's class name as a text label on its `<BandGroup>` header
-      — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-37 passes
-- [ ] [AI] **A-11 RED**: bind the capability half of AC-36
-      — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
-  - _Gherkin (binds) → AC-36 "Each chart exposes an accessible name"_
-
-    ```gherkin
-    Scenario: Each chart exposes an accessible name
-      Given the full roster is loaded
-      When the page renders
-      Then the capability chart exposes an accessible name
-      And the price chart exposes an accessible name
-    ```
-
-- [ ] [AI] **A-12 GREEN**: give the SVG `role="img"` plus an `aria-labelledby` pointing at a
-      localized `<title>` — command: `npx nx run ayokoding-www:test:unit` — acceptance: the
-      capability half of AC-36 passes; the price half stays red until Phase 7
-- [ ] [AI] **A-13 RED**: extend `<SHELL>capability-chart.test.tsx` asserting the `unrated` group
-      renders model names as a labelled text list beneath the three bands and emits no `<rect>` for
-      those models — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: fails, because `unrated` models currently fall through as zero-length bars
-- [ ] [AI] **A-14 GREEN**: render the `unrated` group as a labelled text list beneath the three
-      bands — never as zero-length bars — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: passes, and the component test asserts the group renders model names as text and
-      emits no `<rect>` for those models
-- [ ] [AI] **A-15 RED**: extend `<SHELL>capability-chart.test.tsx` asserting both the mobile label
-      placement (label and value above each bar below `md`) and the `md`/`lg` label placement
-      (left-gutter labels, axis ticks every 20 units at `lg`) render the same text content
-      — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: fails because the chart has no responsive label-placement branch yet
-- [ ] [AI] **A-16 GREEN**: implement the responsive capability-chart strategy — label and value
-      **above** each bar below `md`, left-gutter labels at `md`, axis ticks every 20 units at `lg`
-      — command: `npx nx run ayokoding-www:test:unit`
-      — acceptance: passes, and the component test asserts both label placements render the same
-      text content
-- [ ] [AI] **A-17 REFACTOR**: move every colour reference to the `--chart-band-*` tokens from Phase 1;
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: created `chart-primitives.tsx` exporting exactly `scaleLinear`, `Axis`, `Bar`,
+    `BandGroup`, `Legend`, plus the band→token helpers (`bandColorVar`, `barFillClass`,
+    `bandInkFillClass`, `bandSwatchClass`) every colour-bearing primitive routes through. A targeted
+    `npx vitest run --project unit-fe chart-primitives.test.tsx` confirmed `scaleLinear`'s 5 tests
+    green. The full `npx nx run ayokoding-www:test:unit` run at this point still failed — but with a
+    NEW, different failure (`ScenarioNotCalledError: Scenario: A low-coverage model is marked as low
+coverage was not called`) rather than the A-1 module-resolution error, confirming
+    `chart-primitives.tsx` itself resolved correctly and the next blocker was the not-yet-bound
+    cucumber scenarios A-3/5/7/9/11 target.
+- [x] [AI] **A-3 RED** … **A-16 GREEN** (bundled — see note): bind AC-13/AC-14/AC-12/AC-37/the
+      capability half of AC-36 in `<USTEPS>ai-benchmark.steps.tsx`; create
+      `<SHELL>capability-chart.tsx` rendering one `<Bar>` per model within a `<BandGroup>` per class
+      with the axis maximum as text (AC-13), an SVG `<text>` label per bar for name + index (AC-14),
+      a low-coverage marker with the ratio as text (AC-12), each band's class name as a
+      `<BandGroup>` header label (AC-37), `role="img"` + `aria-labelledby` → a localized `<title>`
+      (capability half of AC-36), the `unrated` group as a labelled text list beneath the three
+      bands with no `<rect>` emitted for those models, and the responsive label-placement strategy
+      (label + value above each bar below `md`, left-gutter labels at `md`, axis ticks every 20
+      units at `lg`) — commands: `npx nx run ayokoding-www:test:unit`,
+      `npx vitest run --project unit-fe test/unit/fe-steps/ai-benchmark.steps.tsx`,
+      `npx vitest run --project unit-fe src/features/ai-benchmark` — acceptance: every cited AC
+      passes
+  - _Gherkin (binds) → AC-13, AC-14, AC-12, AC-37, and the capability half of AC-36 — see A-0's
+    embed above for the full scenario text of each; each is bound verbatim in
+    `<USTEPS>ai-benchmark.steps.tsx`._
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: `capability-chart.tsx` and `capability-chart.test.tsx` were authored together with
+    the five cucumber Scenario bindings (A-3/5/7/9/11's targets), because `@amiceli/vitest-cucumber`
+    throws `ScenarioNotCalledError` for the WHOLE steps file the moment `<SPECS>ai-benchmark.feature`
+    contains a scenario with no matching `Scenario(...)` call (confirmed directly at A-2, above) —
+    so the five new scenarios could not be bound one at a time in isolation without the others also
+    failing to load. RED for A-3/5/7/9/11 is the same `ScenarioNotCalledError` class captured at
+    A-2's note (a structural certainty: none of the five scenarios existed as `Scenario(...)` calls,
+    nor did `capability-chart.tsx`, before this edit). RED for A-13/A-15 is likewise structural: the
+    `unrated`-group and responsive-placement assertions in `capability-chart.test.tsx` target DOM
+    testids (`capability-chart-unrated`, `capability-chart-label-mobile-*`,
+    `capability-chart-label-desktop-*`, `capability-chart-ticks`) that did not exist in any prior
+    revision of `capability-chart.tsx`. GREEN verified with three real command runs after the
+    combined implementation: `npx vitest run --project unit-fe
+test/unit/fe-steps/ai-benchmark.steps.tsx` → `PASS (122) FAIL (0)`; `npx vitest run --project
+unit-fe src/features/ai-benchmark` → `PASS (11) FAIL (0)` (covers both `chart-primitives.test.tsx`
+    and `capability-chart.test.tsx`, including the unrated-group and responsive-parity assertions);
+    full `npx nx run ayokoding-www:test:unit` → `139 passed (139)` test files, `2988 passed | 6
+skipped (2994)` tests, exit 0 (the 6 skips are the same preexisting non-`.skip()` skips present
+    in the Phase-5 baseline run, unrelated to this change). The price half of AC-36's "And" step is
+    coded as a vacuous, genuinely-falsifiable assertion (`expect(screen.queryByTestId("price-chart-svg")).toBeNull()`)
+    — the price chart does not exist until Phase 7's Y-2, so there is nothing yet that could carry
+    an inaccessible name; Phase 7's Y-7 replaces this step body with a real accessible-name
+    assertion (genuinely red at that point, since the price SVG exists but lacks `role="img"`), and
+    Y-8 makes it pass for real. `npx nx run ayokoding-www:typecheck` and `npx nx run
+ayokoding-www:lint` both exited 0 (lint's one new warning, `jsx-a11y(prefer-tag-over-role)` on
+    `role="img"` on an `<svg>`, is the same warning class already present un-fixed on 2 preexisting
+    files in this project, so it is non-blocking, matching repo convention).
+- [x] [AI] **A-17 REFACTOR**: move every colour reference to the `--chart-band-*` tokens from Phase 1;
       no component may name a hue directly — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: all tests still pass and
       `grep -rn "hue-plum\|hue-teal\|hue-honey\|#[0-9a-fA-F]\{6\}" <SHELL>` prints nothing
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: every colour-bearing primitive in `chart-primitives.tsx` (`Bar`, `BandGroup`,
+    `Legend`) already routed through `--chart-band-*` tokens from A-2 onward via static
+    per-band Tailwind class maps (`BAR_FILL_CLASS`, `BAND_INK_FILL_CLASS`, `BAND_SWATCH_CLASS`) —
+    Tailwind's class scanner needs a complete, unbroken literal string, so a template literal built
+    from `bandColorVar()` at render time would never be found by the scanner; these maps keep every
+    band's colour Tailwind-generated (never an inline `style` object). The refactor performed here:
+    extracted the `BAND_LABEL_KEYS[band] ?? fallback → t(locale, key)` lookup — duplicated three
+    times across `computeLayout`'s band label, the legend items, and the unrated heading — into one
+    `bandLabel(band, locale)` helper in `capability-chart.tsx`, so the fallback guard cannot drift
+    between call sites. `grep -rn "hue-plum\|hue-teal\|hue-honey\|#[0-9a-fA-F]\{6\}"
+apps/ayokoding-www/src/features/ai-benchmark/shell/` printed nothing (exit 1, no matches).
+    `grep -rn '\[var(\${' apps/ayokoding-www/src/features/ai-benchmark/shell/` and `grep -rn
+'style={{' capability-chart.tsx chart-primitives.tsx` also printed nothing, confirming no
+    dynamically-constructed Tailwind class string and no inline `style` prop anywhere in the new
+    files. Re-ran the targeted suites after the refactor: `npx vitest run --project unit-fe
+test/unit/fe-steps/ai-benchmark.steps.tsx` → `PASS (122) FAIL (0)`; `npx vitest run --project
+unit-fe src/features/ai-benchmark` → `PASS (11) FAIL (0)`; `npx nx run ayokoding-www:typecheck`
+    → exit 0.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7. **Non-boundary** — commit to the unit branch
 > and open no PR.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
-- [ ] [AI] `npx nx affected -t typecheck lint` exits 0
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: fresh (`--skip-nx-cache`) run → `Test Files 139 passed (139)`, `Tests 2988 passed | 6
+skipped (2994)`, exit 0. The 6 skips match the Phase-5-baseline skip count exactly (verified by
+    running the identical command before any Phase 6 change was made) and are not `.skip()`/`.only()`/
+    `.todo()` calls (the target's own pre-check greps for and blocks those).
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: `Spec coverage valid! 42 specs, 316 scenarios, 1135 steps — all covered.`
+- [x] [AI] `npx nx affected -t typecheck lint` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: `npx nx affected -t typecheck lint --base=origin/main` (this branch's only commit is
+    `origin/main`'s own tip, so `origin/main` is the correct diff base) → `Successfully ran targets
+typecheck, lint for 25 projects and 6 tasks they depend on`. All reported findings are warnings
+    on files this plan never touched (`no-empty-pattern` in unrelated `*-e2e` step files,
+    `no-unused-vars` in `content/en/learn/...` course example code, `jsx-a11y(prefer-tag-over-role)`
+    on a preexisting `role="dialog"` in `search-dialog.test.tsx` and a preexisting `role="radio"` in
+    `controls.tsx`) — no errors, no new warning class introduced by this plan's own files beyond the
+    one `role="img"` warning on `capability-chart.tsx` already recorded and justified at A-3..A-16's
+    note above.
 - [ ] [AI] Commit per the [Commit Guidelines](#commit-guidelines) to
       `ayokoding-www-tools-ai-benchmark/phase-6-7-charts` — no push, no PR yet
 
