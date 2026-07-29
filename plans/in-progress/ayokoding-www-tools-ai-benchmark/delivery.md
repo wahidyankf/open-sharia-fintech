@@ -2025,9 +2025,10 @@ ayokoding-www:test:unit` failed as expected: `Failed to resolve import
     (recorded during PR review, cycle 1)**: this note previously cited Phase 6's A-3..A-16 as a
     "bundling precedent" — dropped, because that framing was itself the governance violation the
     reviewer flagged (self-justifying a second bundling from a first one that was already
-    non-compliant). This bundling is governed by the single documented exception recorded at
-    A-3..A-16's own checklist item, not by a precedent chain — see that item's "Governance exception"
-    note for the reasoning and its explicit scope limit.
+    non-compliant). This bundling is governed by the same recorded, unremediated process deviation
+    documented at A-3..A-16's checklist item (not a plan-granted exception), not by a precedent
+    chain — see that item's "Recorded process deviation" note for the reasoning and its explicit
+    scope limit.
 - [x] [AI] **Y-3 RED**: bind AC-16 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-16 "A subscription-only model renders in the subscription group"_
 
@@ -2051,8 +2052,9 @@ ayokoding-www:test:unit` run.
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: bundled with Y-2/Y-6 (see Y-6's note). **Correction (recorded during PR review,
-    cycle 1)**: governed by the single documented exception at A-3..A-16, not a reusable
-    "precedent" — see that item's "Governance exception" note.
+    cycle 1)**: governed by the same recorded, unremediated process deviation documented at
+    A-3..A-16's checklist item (not a plan-granted exception), not a reusable "precedent" — see
+    that item's "Recorded process deviation" note.
 - [x] [AI] **Y-5 RED**: bind AC-17 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-17 "An unfiltered price chart shows the lowest harness rate"_
 
@@ -2080,8 +2082,9 @@ ayokoding-www:test:unit` run.
     bound in one edit; `@amiceli/vitest-cucumber` fails the whole steps file for any
     unbound/unresolvable scenario). **Correction (recorded during PR review, cycle 1)**: this note
     previously called A-3..A-16 a "bundling precedent" — dropped, since that framing was the
-    self-justifying-chain problem the reviewer flagged; this bundling is covered by the single
-    documented exception recorded at A-3..A-16's checklist item, not by precedent. The chart groups models into the
+    self-justifying-chain problem the reviewer flagged; this bundling is covered by the same
+    recorded, unremediated process deviation documented at A-3..A-16's checklist item (not a
+    plan-granted exception), not by precedent. The chart groups models into the
     same four bands `computeGroups` produces (opus/sonnet/light/unrated — reusing `BandGroup`,
     `Bar`, `Axis`, `scaleLinear` from `chart-primitives.tsx`, no new primitive per Y-2's
     instruction); per band, a model with a metered `lowestRate` renders two labelled `<Bar>`s

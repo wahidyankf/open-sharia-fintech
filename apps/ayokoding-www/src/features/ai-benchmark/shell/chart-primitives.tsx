@@ -22,10 +22,12 @@ import type { Band as ChartBand } from "../core/bands";
  * `core/bands.ts`'s `Band` rather than redeclared, so a future band added there is a compile
  * error here for every `Record<ChartBand, …>` map below (each becomes exhaustively unsatisfied).
  * That guarantee covers only this colour-token layer — it does NOT reach a chart's own
- * array-literal band list (e.g. `price-chart.tsx`'s `ALL_BANDS`, `capability-chart.tsx`'s
- * `RATED_BANDS`), which can still silently omit a new band from rendering unless it too is
- * derived from `core/filter.ts`'s `BANDS` (the single source of truth, F-9) rather than
- * hand-written.
+ * array-literal band list. `price-chart.tsx`'s `ALL_BANDS` and `capability-chart.tsx`'s
+ * `RATED_BANDS` are current positive examples: both already derive from `core/filter.ts`'s
+ * `BANDS` (the single source of truth, F-9) rather than hand-writing their own band array, so
+ * neither is at risk today. The caveat this docstring records is a general one for any future
+ * chart-owned band list: a hand-written array-literal band list (one that does not derive from
+ * `BANDS`) can still silently omit a new band from rendering.
  */
 export type { ChartBand };
 
