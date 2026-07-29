@@ -39,6 +39,9 @@ export function Footer({ locale }: FooterProps) {
             <Link href={`/${locale}/tools/cost-of-living-calculator`} className={columnLink}>
               {t(loc, "footerCalculator")}
             </Link>
+            <Link href={`/${locale}/tools/ai-benchmark`} className={columnLink}>
+              {t(loc, "footerAiBenchmark")}
+            </Link>
           </div>
 
           <div>

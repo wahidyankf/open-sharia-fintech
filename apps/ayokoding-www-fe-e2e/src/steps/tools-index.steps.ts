@@ -31,3 +31,27 @@ Then("the calculator entry shows a description distinct from its link text", asy
   expect(descText.length).toBeGreaterThan(0);
   expect(descText).not.toBe(linkText);
 });
+
+// ── AC-3: Phase 10 reveal — tools index AI benchmark entry ─────────────────────
+
+When("the AI benchmark entry renders", async ({ page }) => {
+  await page.waitForLoadState("networkidle");
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/tools-index.feature:The AI benchmark entry shows a description distinct from its link text
+Then("the AI benchmark entry shows a description distinct from its link text", async ({ page }) => {
+  // Scope to the main content area to avoid matching the footer Tools column
+  // which will also link to the AI benchmark tool once R-3 wires it up.
+  const main = page.locator("#main-content");
+  const benchLink = main.getByRole("link", { name: /ai (model )?benchmark/i });
+  await expect(benchLink).toBeVisible();
+  const linkText = (await benchLink.textContent())?.trim() ?? "";
+
+  const descEl = page.locator("[data-testid='tool-desc-ai-benchmark']");
+  await expect(descEl).toBeVisible();
+  const descText = (await descEl.textContent())?.trim() ?? "";
+
+  // The description must be non-empty and differ from the link text
+  expect(descText.length).toBeGreaterThan(0);
+  expect(descText).not.toBe(linkText);
+});
