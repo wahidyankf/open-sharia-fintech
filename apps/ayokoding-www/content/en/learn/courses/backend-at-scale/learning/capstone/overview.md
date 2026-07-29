@@ -19,9 +19,10 @@ idempotent writes, OAuth2/OIDC + RBAC auth, structured logging + rate limiting +
 background-job queue consumer with idempotency -- verified by an integration + contract test suite.
 
 **Concepts exercised**: [x] versioned/paginated REST + idempotency keys (co-03, co-05, co-06) [x]
-OAuth2/OIDC + RBAC (co-15, co-17) [x] repository/unit-of-work persistence (co-09, co-10) [x] structured
+OAuth2/OIDC + RBAC (co-15, co-17) [ ] repository/unit-of-work persistence (co-09, co-10) — exercised
+in the standalone examples (ex-18 through ex-22) rather than re-assembled in the capstone [x] structured
 logging + rate limit + cache (co-25, co-20, co-21) [x] a queue consumer with idempotent processing
-(co-28, co-29) [x] integration + contract tests (co-35, co-36).
+(co-28, co-29) [x] contract tests (co-35).
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
