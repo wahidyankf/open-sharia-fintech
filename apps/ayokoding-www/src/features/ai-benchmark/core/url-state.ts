@@ -8,7 +8,7 @@
 // The known-value unions live in `filter.ts` (F-9) so a new harness id or band is added in exactly
 // one place; this module imports them.
 
-import { BANDS, HARNESS_IDS, isKnownBand, isKnownHarness, type FilterState } from "./filter";
+import { isKnownBand, isKnownHarness, type FilterState } from "./filter";
 
 /** Query-string parameter keys. */
 export const PARAM_KEYS = {
@@ -24,9 +24,8 @@ export const DEFAULT_STATE: FilterState = {
 
 /**
  * Sanitize a (possibly untrusted) filter state to a valid one: drop any harness value that is not
- * one of {@link HARNESS_IDS} and any class value that is not one of {@link BANDS}. Idempotent and
- * total — never throws. This is the "unknown filter value falls back to the unfiltered view"
- * guarantee (AC-26).
+ * a known harness id and any class value that is not a known band. Idempotent and total — never
+ * throws. This is the "unknown filter value falls back to the unfiltered view" guarantee (AC-26).
  */
 export function sanitizeState(state: Partial<FilterState>): FilterState {
   const harness = state.harness !== undefined && isKnownHarness(state.harness) ? state.harness : undefined;

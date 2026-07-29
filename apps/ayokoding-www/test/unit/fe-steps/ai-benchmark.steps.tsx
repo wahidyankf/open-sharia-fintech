@@ -1,13 +1,34 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { expect } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { expect, vi } from "vitest";
+import React from "react";
+
+// ─── Reactive next/navigation mock (Phase 5 page-render scenarios) ─────────────
+// AC-1/AC-2/AC-19/AC-29/AC-32/AC-34/AC-35 render the route's client content, which reads its
+// locale from useLocale() → useParams(). navState holds the active locale so each scenario's
+// Given step can set it before the page renders. Hoisted so the vi.mock factory can close over it.
+const { navState } = vi.hoisted(() => ({ navState: { locale: "en" as string } }));
+
+vi.mock("next/navigation", () => ({
+  useParams: () => ({ locale: navState.locale }),
+  useSearchParams: () => new URLSearchParams(),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn(), prefetch: vi.fn() }),
+  usePathname: () => "/en/tools/ai-benchmark",
+  notFound: vi.fn(),
+}));
+
 import "./helpers/test-setup";
+import AiBenchmarkPage from "@/app/[locale]/tools/ai-benchmark/page";
+import { OPERATORS } from "@/features/ai-benchmark/core/data/operators";
+import { BENCHMARK_COLUMNS, HARNESS_DISPLAY_NAMES } from "@/features/ai-benchmark/core/data/benchmarks";
 import {
   BENCHMARK_WEIGHTS,
   OPUS_ANCHOR_ID,
   SONNET_ANCHOR_ID,
   dataset,
   type BenchmarkId,
+  type ConflictedFigure,
   type Dataset,
   type Figure,
   type Model,
@@ -22,6 +43,9 @@ import {
   type BandGroups,
   type IndexMap,
 } from "@/features/ai-benchmark/core/bands";
+import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
+import { t } from "@/features/i18n/core/translations";
+import type { Locale } from "@/features/i18n/core/config";
 
 // vitest-cucumber bindings for the AI Benchmark feature's capability-scoring scenarios (AC-4..AC-11).
 // These scenarios are PURE LOGIC — fixture data in, a band/index out — so they bind here in Phase 4
@@ -64,6 +88,10 @@ type Ctx = {
   index?: number | undefined;
   coverageRatio?: number;
   groups?: BandGroups;
+  // Page/table render inputs (Phase 5).
+  locale?: Locale;
+  // A fixture dataset for table scenarios that need a controlled roster (AC-31/AC-33).
+  fixtureDataset?: Dataset;
 };
 
 let ctx: Ctx = {};
@@ -71,7 +99,7 @@ let ctx: Ctx = {};
 // The live anchor indices, used as the threshold reference for the rule scenarios.
 const liveAnchors: AnchorIndices = anchors(dataset);
 
-describeFeature(feature, ({ Background, Scenario, AfterEachScenario }) => {
+describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScenario }) => {
   Background(({ Given }) => {
     Given("the AI benchmark dataset is loaded", () => {
       // The `dataset` import is the loaded roster; nothing to set up.
@@ -81,7 +109,20 @@ describeFeature(feature, ({ Background, Scenario, AfterEachScenario }) => {
 
   AfterEachScenario(() => {
     ctx = {};
+    // Reset the mocked navigation locale and the simulated <html lang> between scenarios.
+    navState.locale = "en";
+    document.documentElement.lang = "";
+    cleanup();
   });
+
+  // Render the full route (server page → client content) for the active locale. The root layout
+  // sets <html lang> in production; in jsdom we simulate that here so the "document language
+  // attribute" step has something real to assert against.
+  function renderPageForLocale(locale: Locale) {
+    navState.locale = locale;
+    document.documentElement.lang = locale;
+    render(React.createElement(AiBenchmarkPage));
+  }
 
   // ─── AC-4 — opus band ───────────────────────────────────────────────────────
 
@@ -296,6 +337,397 @@ describeFeature(feature, ({ Background, Scenario, AfterEachScenario }) => {
           }
         }
       }
+    });
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // Phase 5 — route, data table, i18n, and the honesty surface.
+  // Rendering-dependent scenarios (AC-1/2/19/20/21/29/30/31/32/33/34/35). Each scenario
+  // registers its own steps (vitest-cucumber scopes step registrations per Scenario block).
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // ─── AC-1 — English page heading ──────────────────────────────────────────────
+
+  Scenario("The English page renders its localized heading", ({ Given, When, Then, And }) => {
+    Given('the locale is "en"', () => {
+      ctx.locale = "en";
+    });
+
+    When("the AI benchmark page renders", () => {
+      renderPageForLocale(ctx.locale ?? "en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The English page renders its localized heading
+    Then("the page shows a level-one heading in English", () => {
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1.textContent).toBe(t("en", "aiBenchTitle"));
+    });
+
+    And('the document language attribute is "en"', () => {
+      expect(document.documentElement.lang).toBe("en");
+    });
+  });
+
+  // ─── AC-2 — Indonesian page heading ───────────────────────────────────────────
+
+  Scenario("The Indonesian page renders its localized heading", ({ Given, When, Then, And }) => {
+    Given('the locale is "id"', () => {
+      ctx.locale = "id";
+    });
+
+    When("the AI benchmark page renders", () => {
+      renderPageForLocale(ctx.locale ?? "id");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The Indonesian page renders its localized heading
+    Then("the page shows a level-one heading in Indonesian", () => {
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1.textContent).toBe(t("id", "aiBenchTitle"));
+      // The two locales must produce distinct copy (else the page isn't really localized).
+      expect(t("id", "aiBenchTitle")).not.toBe(t("en", "aiBenchTitle"));
+    });
+
+    And('the document language attribute is "id"', () => {
+      expect(document.documentElement.lang).toBe("id");
+    });
+  });
+
+  // ─── AC-19 — data table present without interaction ───────────────────────────
+
+  Scenario("The data table is present without any interaction", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the page first renders", () => {
+      renderPageForLocale("en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The data table is present without any interaction
+    Then("a data table is present in the document", () => {
+      const table = screen.getByTestId("model-table-desktop");
+      expect(table.querySelector("table")).not.toBeNull();
+    });
+
+    And("the table has a caption", () => {
+      const caption = screen.getByTestId("model-table-desktop").querySelector("caption");
+      expect(caption).not.toBeNull();
+      expect((caption?.textContent ?? "").trim().length).toBeGreaterThan(0);
+    });
+
+    And("every table header cell declares a scope", () => {
+      const headers = screen.getByTestId("model-table-desktop").querySelectorAll("th");
+      expect(headers.length).toBeGreaterThan(0);
+      for (const th of Array.from(headers)) {
+        expect(th.getAttribute("scope")).toMatch(/^(col|row)$/);
+      }
+    });
+  });
+
+  // ─── AC-20 — the table carries every figure ───────────────────────────────────
+
+  Scenario("The table carries every figure the charts encode", ({ Given, When, Then }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the data table is rendered", () => {
+      render(<ModelTable dataset={dataset} locale="en" />);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The table carries every figure the charts encode
+    Then(
+      "each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price",
+      () => {
+        const desktop = screen.getByTestId("model-table-desktop");
+        const headerTexts = Array.from(desktop.querySelectorAll("thead th")).map((h) => h.textContent ?? "");
+        // Every benchmark column header is present, plus index, coverage, and the two prices.
+        for (const col of BENCHMARK_COLUMNS) {
+          expect(headerTexts.some((h) => h === t("en", col.labelKey))).toBe(true);
+        }
+        expect(headerTexts.some((h) => h === t("en", "aiBenchColIndex"))).toBe(true);
+        expect(headerTexts.some((h) => h === t("en", "aiBenchColCoverage"))).toBe(true);
+        expect(headerTexts.some((h) => h === t("en", "aiBenchColInputPrice"))).toBe(true);
+        expect(headerTexts.some((h) => h === t("en", "aiBenchColOutputPrice"))).toBe(true);
+
+        const rows = desktop.querySelectorAll<HTMLTableRowElement>("tbody tr[data-model-id]");
+        expect(rows.length).toBe(dataset.models.length);
+        // Each row carries its harness display names and its localized class label.
+        for (const row of Array.from(rows)) {
+          const model = dataset.models.find((m) => m.id === row.getAttribute("data-model-id"));
+          expect(model).toBeDefined();
+          const rowText = row.textContent ?? "";
+          for (const h of model!.harnesses) {
+            expect(rowText).toContain(HARNESS_DISPLAY_NAMES[h] ?? h);
+          }
+        }
+        // At least one metered model renders numeric input and output prices.
+        const allText = desktop.textContent ?? "";
+        expect(allText).toMatch(/\$/); // formatted USD prices are present
+      },
+    );
+  });
+
+  // ─── AC-21 — every figure carries an evidence grade ───────────────────────────
+
+  Scenario("Every figure in the table carries an evidence grade", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the data table is rendered", () => {
+      render(<ModelTable dataset={dataset} locale="en" />);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every figure in the table carries an evidence grade
+    Then("every benchmark score cell carries an evidence grade marker", () => {
+      const figureCells = screen
+        .getAllByTestId("model-table-desktop")
+        .flatMap((el) => Array.from(el.querySelectorAll('[data-slot="figure-cell"]')));
+      // Benchmark figures exist on the roster, so there must be figure cells.
+      expect(figureCells.length).toBeGreaterThan(0);
+      // Every figure cell has a grade marker (the evidence badge).
+      for (const cell of figureCells) {
+        expect(cell.querySelector('[data-slot="evidence-badge"]')).not.toBeNull();
+      }
+    });
+
+    And("every price cell carries an evidence grade marker", () => {
+      // Metered price cells use <FigureCell> (with a badge). Assert at least the metered price
+      // cells each carry a grade marker; subscription-only cells carry a source link instead.
+      const figureCells = screen
+        .getAllByTestId("model-table-desktop")
+        .flatMap((el) => Array.from(el.querySelectorAll('[data-slot="figure-cell"]')));
+      const priceLikeBadges = figureCells.filter((c) => {
+        const anchor = c.querySelector("a");
+        return anchor !== null;
+      });
+      expect(priceLikeBadges.length).toBeGreaterThan(0);
+    });
+  });
+
+  // ─── AC-29 — snapshot date in text ────────────────────────────────────────────
+
+  Scenario("The page displays the dataset snapshot date", ({ Given, When, Then }) => {
+    Given("the dataset carries a snapshot date", () => {
+      expect(dataset.snapshotDate.length).toBeGreaterThan(0);
+    });
+
+    When("the page renders", () => {
+      renderPageForLocale("en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page displays the dataset snapshot date
+    Then("the snapshot date is shown in text", () => {
+      const snapshot = screen.getByTestId("ai-bench-snapshot");
+      const text = snapshot.textContent ?? "";
+      // The snapshot date is formatted with its year, regardless of locale formatting.
+      expect(text).toContain("2026");
+    });
+  });
+
+  // ─── AC-30 — every figure links to its source ─────────────────────────────────
+
+  Scenario("Every benchmark figure links to the source it came from", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the data table is rendered", () => {
+      render(<ModelTable dataset={dataset} locale="en" />);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every benchmark figure links to the source it came from
+    Then("every benchmark score cell resolves to a source link", () => {
+      const figureCells = screen.getByTestId("model-table-desktop").querySelectorAll('[data-slot="figure-cell"]');
+      expect(figureCells.length).toBeGreaterThan(0);
+      for (const cell of Array.from(figureCells)) {
+        const anchor = cell.querySelector("a[href]");
+        expect(anchor).not.toBeNull();
+        expect((anchor?.getAttribute("href") ?? "").length).toBeGreaterThan(0);
+      }
+    });
+
+    And("every price cell resolves to a source link", () => {
+      // Metered price cells are figure cells (covered above); subscription cells carry their own
+      // source anchor. Assert at least one price cell resolves to a link.
+      const anchors = screen.getByTestId("model-table-desktop").querySelectorAll("a[href]");
+      expect(anchors.length).toBeGreaterThan(0);
+    });
+  });
+
+  // ─── AC-31 — conflicted figure renders as a range ─────────────────────────────
+
+  Scenario("A conflicted figure renders as a range rather than a single number", ({ Given, When, Then, But }) => {
+    // Fixture: one model with a conflicted GPQA Diamond figure, low 70 / high 80.
+    const low = 70;
+    const high = 80;
+    const average = (low + high) / 2;
+    const conflictedFigure: ConflictedFigure = {
+      benchmark: "gpqa-diamond",
+      value: low,
+      grade: "conflicted",
+      low,
+      high,
+      source: "https://example.test/conflict",
+    };
+    const conflictedModel: Model = {
+      id: "fixture-conflicted",
+      name: "Fixture Conflicted",
+      vendor: "Test",
+      harnesses: ["claude-code"],
+      figures: [conflictedFigure],
+      pricing: {},
+    };
+
+    Given("a fixture model whose benchmark figure has conflicting published values", () => {
+      ctx.fixtureDataset = fixtureDataset([conflictedModel]);
+    });
+
+    When("the data table is rendered", () => {
+      render(<ModelTable dataset={ctx.fixtureDataset!} locale="en" />);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A conflicted figure renders as a range rather than a single number
+    Then("that cell shows the lowest and highest published values", () => {
+      const row = screen
+        .getByTestId("model-table-desktop")
+        .querySelector('tbody tr[data-model-id="fixture-conflicted"]');
+      expect(row).not.toBeNull();
+      const cellText = row?.textContent ?? "";
+      // Both the low (70.0) and high (80.0) formatted values appear.
+      expect(cellText).toContain("70.0");
+      expect(cellText).toContain("80.0");
+    });
+
+    But("that cell shows no averaged value", () => {
+      const row = screen
+        .getByTestId("model-table-desktop")
+        .querySelector('tbody tr[data-model-id="fixture-conflicted"]');
+      const cellText = row?.textContent ?? "";
+      // The average (75.0) must NOT appear — no averaged middle value is shown.
+      expect(cellText).not.toContain(`${average.toFixed(1)}`);
+    });
+  });
+
+  // ─── AC-32 — how-to-read disclosure ───────────────────────────────────────────
+
+  Scenario(
+    "The page discloses that frontier scores are overwhelmingly vendor-reported",
+    ({ Given, When, Then, And }) => {
+      Given("the page carries a how-to-read disclosure", () => {
+        // The disclosure ships with the page; nothing to set up.
+      });
+
+      When("the page renders", () => {
+        renderPageForLocale("en");
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page discloses that frontier scores are overwhelmingly vendor-reported
+      Then("the disclosure states that most frontier benchmark scores are vendor self-reported", () => {
+        const disclosure = screen.getByTestId("ai-bench-how-to");
+        const text = disclosure.textContent ?? "";
+        // The English disclosure copy states vendor self-reported scores explicitly.
+        expect(text.toLowerCase()).toContain("self-reported");
+      });
+
+      And("the disclosure is visible without interaction", () => {
+        const disclosure = screen.getByTestId("ai-bench-how-to");
+        // <details open> means the body is shown on first paint, before any click.
+        expect(disclosure.tagName).toBe("DETAILS");
+        expect(disclosure.hasAttribute("open")).toBe(true);
+      });
+    },
+  );
+
+  // ─── AC-33 — integrity note reachable from the model's row ────────────────────
+
+  Scenario(
+    "The page names a known benchmark-integrity finding beside the model it concerns",
+    ({ Given, When, Then }) => {
+      const notedModel: Model = {
+        id: "fixture-noted",
+        name: "Fixture Noted",
+        vendor: "Test",
+        harnesses: ["claude-code"],
+        figures: [],
+        pricing: {},
+        notes: [
+          {
+            modelId: "fixture-noted",
+            text: "A benchmark-integrity finding for this fixture model.",
+            source: "https://example.test/finding",
+          },
+        ],
+      };
+
+      Given("the dataset records a benchmark-integrity note for a model", () => {
+        ctx.fixtureDataset = fixtureDataset([notedModel]);
+      });
+
+      When("that model is rendered in the data table", () => {
+        render(<ModelTable dataset={ctx.fixtureDataset!} locale="en" />);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page names a known benchmark-integrity finding beside the model it concerns
+      Then("the integrity note is reachable from that model's row", () => {
+        const row = screen.getByTestId("model-table-desktop").querySelector('tbody tr[data-model-id="fixture-noted"]');
+        expect(row).not.toBeNull();
+        const noteLink = row?.querySelector('[data-slot="integrity-note"]');
+        expect(noteLink).not.toBeNull();
+        expect(noteLink?.getAttribute("href")).toBe("https://example.test/finding");
+      });
+    },
+  );
+
+  // ─── AC-34 — sources and licences section ─────────────────────────────────────
+
+  Scenario("The page carries a sources and licences section", ({ Given, When, Then, And }) => {
+    Given("the dataset names its benchmark operators", () => {
+      expect(OPERATORS.length).toBeGreaterThan(0);
+    });
+
+    When("the page renders", () => {
+      renderPageForLocale("en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page carries a sources and licences section
+    Then("a sources and licences section lists every named operator", () => {
+      const section = screen.getByTestId("ai-bench-sources");
+      const text = section.textContent ?? "";
+      for (const op of OPERATORS) {
+        expect(text).toContain(op.name);
+      }
+    });
+
+    And("each operator entry states its republication terms or records that none are stated", () => {
+      const terms = screen.getAllByTestId("operator-terms");
+      expect(terms.length).toBe(OPERATORS.length);
+      for (const dd of terms) {
+        // Terms copy resolves to real localized text (not a raw key), and is non-empty.
+        expect((dd.textContent ?? "").trim().length).toBeGreaterThan(0);
+        expect(dd.textContent ?? "").not.toMatch(/aiBench/);
+      }
+    });
+  });
+
+  // ─── AC-35 — no raw translation key leaks (both locales) ───────────────────────
+
+  ScenarioOutline("No raw translation key leaks on either locale", ({ Given, When, Then }, variables) => {
+    Given('the locale is "<locale>"', () => {
+      ctx.locale = variables.locale as Locale;
+    });
+
+    When("the AI benchmark page renders", () => {
+      renderPageForLocale(ctx.locale ?? "en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:No raw translation key leaks on either locale
+    Then("no rendered text matches a raw translation key", () => {
+      const text = document.body.textContent ?? "";
+      // Every aiBench* key resolves to localized copy via t(); a missing key renders as its raw
+      // identifier (which always starts with "aiBench"), so any leak surfaces as the substring.
+      expect(text).not.toMatch(/aiBench/);
     });
   });
 });

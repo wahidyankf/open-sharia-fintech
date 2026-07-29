@@ -62,3 +62,101 @@ Feature: AI model benchmark tool
     Given the full roster is loaded
     When both charts are rendered
     Then each band lists its models in the same order in the capability chart and the price chart
+
+  # AC-1
+  @unit @e2e
+  Scenario: The English page renders its localized heading
+    Given the locale is "en"
+    When the AI benchmark page renders
+    Then the page shows a level-one heading in English
+    And the document language attribute is "en"
+
+  # AC-2
+  @unit @e2e
+  Scenario: The Indonesian page renders its localized heading
+    Given the locale is "id"
+    When the AI benchmark page renders
+    Then the page shows a level-one heading in Indonesian
+    And the document language attribute is "id"
+
+  # AC-19
+  @unit @e2e
+  Scenario: The data table is present without any interaction
+    Given the full roster is loaded
+    When the page first renders
+    Then a data table is present in the document
+    And the table has a caption
+    And every table header cell declares a scope
+
+  # AC-20
+  @unit
+  Scenario: The table carries every figure the charts encode
+    Given the full roster is loaded
+    When the data table is rendered
+    Then each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price
+
+  # AC-21
+  @unit
+  Scenario: Every figure in the table carries an evidence grade
+    Given the full roster is loaded
+    When the data table is rendered
+    Then every benchmark score cell carries an evidence grade marker
+    And every price cell carries an evidence grade marker
+
+  # AC-29
+  @unit @e2e
+  Scenario: The page displays the dataset snapshot date
+    Given the dataset carries a snapshot date
+    When the page renders
+    Then the snapshot date is shown in text
+
+  # AC-30
+  @unit
+  Scenario: Every benchmark figure links to the source it came from
+    Given the full roster is loaded
+    When the data table is rendered
+    Then every benchmark score cell resolves to a source link
+    And every price cell resolves to a source link
+
+  # AC-31
+  @unit
+  Scenario: A conflicted figure renders as a range rather than a single number
+    Given a fixture model whose benchmark figure has conflicting published values
+    When the data table is rendered
+    Then that cell shows the lowest and highest published values
+    But that cell shows no averaged value
+
+  # AC-32
+  @unit @e2e
+  Scenario: The page discloses that frontier scores are overwhelmingly vendor-reported
+    Given the page carries a how-to-read disclosure
+    When the page renders
+    Then the disclosure states that most frontier benchmark scores are vendor self-reported
+    And the disclosure is visible without interaction
+
+  # AC-33
+  @unit
+  Scenario: The page names a known benchmark-integrity finding beside the model it concerns
+    Given the dataset records a benchmark-integrity note for a model
+    When that model is rendered in the data table
+    Then the integrity note is reachable from that model's row
+
+  # AC-34
+  @unit
+  Scenario: The page carries a sources and licences section
+    Given the dataset names its benchmark operators
+    When the page renders
+    Then a sources and licences section lists every named operator
+    And each operator entry states its republication terms or records that none are stated
+
+  # AC-35
+  @unit @e2e
+  Scenario Outline: No raw translation key leaks on either locale
+    Given the locale is "<locale>"
+    When the AI benchmark page renders
+    Then no rendered text matches a raw translation key
+
+    Examples:
+      | locale |
+      | en     |
+      | id     |
