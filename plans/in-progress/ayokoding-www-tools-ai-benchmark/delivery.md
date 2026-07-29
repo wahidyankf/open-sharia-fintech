@@ -1867,8 +1867,21 @@ typecheck, lint for 25 projects and 6 tasks they depend on`. All reported findin
     `controls.tsx`) — no errors, no new warning class introduced by this plan's own files beyond the
     one `role="img"` warning on `capability-chart.tsx` already recorded and justified at A-3..A-16's
     note above.
-- [ ] [AI] Commit per the [Commit Guidelines](#commit-guidelines) to
+- [x] [AI] Commit per the [Commit Guidelines](#commit-guidelines) to
       `ayokoding-www-tools-ai-benchmark/phase-6-7-charts` — no push, no PR yet
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: two thematic commits on `ayokoding-www-tools-ai-benchmark/phase-6-7-charts`, no
+    push: `d2b91aaa0` — `feat(ayokoding-www): phase 6 — shared chart primitives and capability
+chart` (the 9 app/spec files: `chart-primitives.tsx`/`.test.tsx`, `capability-chart.tsx`/
+    `.test.tsx`, the `score.ts` `COMPOSITE_INDEX_MAX` constant, `benchmark-content.tsx` wiring,
+    `translations.ts` keys, `ai-benchmark.steps.tsx` Gherkin bindings, and the `.feature` scenario
+    text); `275421ffb` — `docs(plans): tick phase 6 delivery checklist with verification evidence`
+    (this file only). No preexisting-fix commit was needed — `typecheck`/`lint` were already clean
+    before this phase's changes (no preexisting failures encountered to fix separately). Two
+    unrelated, un-staged local files (`next-env.d.ts`, a Next.js–regenerated artifact, and a
+    content `_index.md` sidebar-link drift) surfaced in the worktree during this session but were
+    deliberately left out of both commits — outside this phase's scope, not this plan's concern.
 
 > **Pause Safety**: the capability chart renders on the still-unlinked page and every test is green;
 > the price chart is absent, which is a coherent intermediate state because the data table already
