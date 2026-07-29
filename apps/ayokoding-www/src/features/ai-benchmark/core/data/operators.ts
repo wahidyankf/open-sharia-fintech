@@ -40,8 +40,8 @@ export const OPERATORS: readonly BenchmarkOperator[] = [
     url: "https://www.tbench.ai",
   },
   {
-    name: "ARC Prize (GPQA)",
-    termsKey: "aiBenchOpTermsArcprize",
+    name: "GPQA",
+    termsKey: "aiBenchOpTermsGpqa",
     url: "https://github.com/idavidrein/gpqa",
   },
 ];

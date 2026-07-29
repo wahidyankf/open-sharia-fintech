@@ -80,7 +80,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsSwebench:
       "Benchmark code and dataset are MIT-licensed; the leaderboard page itself is marked all rights reserved.",
     aiBenchOpTermsTerminalbench: "No republication terms stated by the operator.",
-    aiBenchOpTermsArcprize: "No republication terms stated by the operator.",
+    aiBenchOpTermsGpqa: "The GPQA benchmark repository is MIT-licensed.",
     aiBenchOpTermsNone: "No republication terms stated by the operator.",
 
     // Calculator — page
@@ -405,7 +405,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsSwebench:
       "Kode dan dataset tolok ukur berlisensi MIT; halaman leaderboard itu sendiri bertanda semua hak dilindungi.",
     aiBenchOpTermsTerminalbench: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
-    aiBenchOpTermsArcprize: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
+    aiBenchOpTermsGpqa: "Repositori tolok ukur GPQA berlisensi MIT.",
     aiBenchOpTermsNone: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
 
     // Calculator — page

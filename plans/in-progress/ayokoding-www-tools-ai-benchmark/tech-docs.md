@@ -453,10 +453,32 @@ names each operator and its terms. No operator's compiled table is reproduced wh
 | SWE-bench           | Benchmark code and dataset MIT; the leaderboard page itself marked all rights reserved                                     |
 | LMArena             | The released `lmarena-ai/leaderboard-dataset` on Hugging Face is CC-BY-4.0; the live site's ToU are separately restrictive |
 | Terminal-Bench      | No republication terms stated by the operator                                                                              |
-| ARC Prize           | No republication terms stated by the operator                                                                              |
+| GPQA                | The benchmark repository is MIT-licensed (amended by DD-23; formerly a bogus `ARC Prize` row)                              |
 | Artificial Analysis | ToU restrict copying the site — **not used as a data source for this page**                                                |
 
 Where an operator states no terms, the page records that explicitly rather than implying permission.
+
+### DD-23 — GPQA replaces the ARC Prize row; the ARC Prize entry is dropped (amends DD-21)
+
+**Recorded during PR review, cycle 3 (finding F8).** The shipped operator row named
+`"ARC Prize (GPQA)"` (`operators.ts:43-46` at review time) conflated two unrelated entities: GPQA
+(David Rein et al., `github.com/idavidrein/gpqa`) has no relationship to the ARC Prize Foundation
+(Mike Knoop / François Chollet), and the DD-21 table above never listed GPQA as an operator despite
+`gpqa-diamond` carrying **weight 30** — the second-highest of the four composite benchmarks — and
+`URL.gpqa` being cited as a figure source across the roster. Meanwhile no ARC Prize figure appears
+in the roster at all: ARC-AGI-2 and ARC-AGI-3 were both rejected (`tech-docs.md` §Benchmarks
+examined and rejected), so the ARC Prize row named an operator whose figures never appear here,
+contrary to `aiBenchSourcesIntro`'s own scoping to "operators whose figures appear here."
+
+**Decision**: the DD-21 table above drops the `ARC Prize` row and adds `GPQA`, with terms "The GPQA
+benchmark repository is MIT-licensed" — verified directly against the cited repo, which states an
+MIT licence, not "no terms stated" as the removed `ARC Prize` row's shared text had implied. The
+shipped `operators.ts` entry now reads `name: "GPQA"`, `url:
+"https://github.com/idavidrein/gpqa"`, `termsKey: "aiBenchOpTermsGpqa"`; the now-unused
+`aiBenchOpTermsArcprize` i18n key is retired from both locale blocks in `translations.ts`. K-8
+(`tech-docs.md` §Known-unknowns and `evidence/phase-2-known-unknowns.md:21`) is reconciled to name
+GPQA in place of ARC Prize, since GPQA does state terms (MIT) and was never the operator the "no
+terms stated" disclosure applied to.
 
 ### DD-22 — AC-19/29/32/35 are permanently unit-only, not e2e-deferred (amends the Testing strategy)
 
@@ -632,7 +654,7 @@ transcribed with grade `unavailable` or `conflicted` — never guessed.
 | K-5 | LMArena current Elo — board unsettled                                                      | No impact; LMArena is not in the composite                                                 |
 | K-6 | Kimi K2.7 Code pricing — official page did not return content                              | Price grade `unavailable`; the model still appears with its benchmark data                 |
 | K-7 | Artificial Analysis ToU exact republication clause — PDF not text-extractable              | No impact; Artificial Analysis is not used as a data source, only cited as prior art       |
-| K-8 | Terminal-Bench and ARC Prize republication terms — not stated by either                    | The Sources and Licences section records "no terms stated" rather than implying permission |
+| K-8 | Terminal-Bench republication terms — not stated by the operator (amended by DD-23 above)   | The Sources and Licences section records "no terms stated" rather than implying permission |
 
 Two further transcription hazards, found in the research and encoded as dataset invariants 9 above:
 

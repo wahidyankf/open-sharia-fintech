@@ -760,6 +760,31 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       for (const op of OPERATORS) {
         expect(text).toContain(op.name);
       }
+
+      // Regression guard for F8: each operator's rendered link must point at the URL declared
+      // for that operator's own name — no entry may bundle an unrelated organization's name onto
+      // another operator's URL (or vice versa), which is exactly how a prior entry conflated the
+      // unrelated "ARC Prize" and "GPQA" operators into a single row.
+      const containers = screen.getAllByTestId("source-operator");
+      expect(containers.length).toBe(OPERATORS.length);
+      OPERATORS.forEach((op, index) => {
+        const link = containers[index]?.querySelector("a[href]");
+        if (op.url) {
+          expect(link).not.toBeNull();
+          expect(link?.getAttribute("href")).toBe(op.url);
+          expect(link?.textContent).toBe(op.name);
+        } else {
+          expect(link).toBeNull();
+        }
+      });
+
+      // GPQA contributes a weight-30 composite figure (URL.gpqa, cited across the roster) and
+      // must be named as its own operator — never merged with the unrelated ARC Prize
+      // Foundation, whose figures do not appear in this roster (see DD-23 in tech-docs.md).
+      const gpqa = OPERATORS.find((op) => op.url === "https://github.com/idavidrein/gpqa");
+      expect(gpqa).toBeDefined();
+      expect(gpqa?.name).toBe("GPQA");
+      expect(OPERATORS.some((op) => op.name.includes("ARC Prize"))).toBe(false);
     });
 
     And("each operator entry states its republication terms or records that none are stated", () => {
@@ -770,6 +795,23 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         expect((dd.textContent ?? "").trim().length).toBeGreaterThan(0);
         expect(dd.textContent ?? "").not.toMatch(/aiBench/);
       }
+
+      // Regression guard for F8: every operator's termsKey must be distinct, unless it
+      // deliberately shares the generic "no terms stated" key — a copy-pasted or merged entry
+      // silently reusing another operator's dedicated termsKey must fail here.
+      const seenTermsKeys = new Set<string>();
+      for (const op of OPERATORS) {
+        if (op.termsKey !== "aiBenchOpTermsNone") {
+          expect(seenTermsKeys.has(op.termsKey)).toBe(false);
+        }
+        seenTermsKeys.add(op.termsKey);
+      }
+
+      // GPQA's stated terms must reflect the benchmark repository's actual MIT licence, not the
+      // generic "no terms stated" text used for operators that genuinely publish none.
+      const gpqaIndex = OPERATORS.findIndex((op) => op.url === "https://github.com/idavidrein/gpqa");
+      expect(gpqaIndex).toBeGreaterThanOrEqual(0);
+      expect(terms[gpqaIndex]?.textContent ?? "").toMatch(/MIT/i);
     });
   });
 
