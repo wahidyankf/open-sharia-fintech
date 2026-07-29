@@ -1643,7 +1643,7 @@ rev-parse --show-toplevel` prints the worktree path
       `<I18N>` — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-35 passes for both
   - **Date**: 2026-07-29 (reconciled)
   - **Status**: done
-  - **Notes**: 56 `aiBench*` keys confirmed present in both `en` (translations.ts:30-85) and `id` (translations.ts:355-410) blocks — identical key sets, no gaps. `test:unit` green.
+  - **Notes**: 46 `aiBench*` keys confirmed present in both `en` (translations.ts:30-85) and `id` (translations.ts:355-410) blocks — identical key sets, no gaps. (**Correction, recorded during PR review, cycle 1**: an earlier version of this note miscounted 56 keys by recording the line-span width — 85 − 30 + 1 = 56 — instead of the actual unique key count; `grep -o "^\s*aiBench[A-Za-z0-9]*:" translations.ts | tr -d ' :' | sort -u | wc -l` prints 46.) `test:unit` green.
 - [x] [AI] **W-25 REFACTOR**: group the `aiBench*` keys under a comment block in each locale, matching
       the file's existing `toolsPage*` grouping
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
@@ -1707,7 +1707,7 @@ rev-parse --show-toplevel` prints the worktree path
 - [x] [AI] `npx nx affected -t typecheck lint` exits 0
   - **Date**: 2026-07-29
   - **Status**: done
-  - **Notes**: fresh (`--skip-nx-cache`) run — `Successfully ran targets typecheck, lint for 25 projects and 6 tasks they depend on`. Fixed 2 preexisting unused-import lint warnings in `core/url-state.ts` (`BANDS`, `HARNESS_IDS` imported but only referenced in JSDoc `{@link}` tags) as part of this gate — committed separately per Iron Rule 3/7.
+  - **Notes**: fresh (`--skip-nx-cache`) run — `Successfully ran targets typecheck, lint for 25 projects and 6 tasks they depend on`. Fixed 2 preexisting unused-import lint warnings in `core/url-state.ts` (`BANDS`, `HARNESS_IDS` imported but only referenced in JSDoc `{@link}` tags) as part of this gate. **Correction (recorded during PR review, cycle 1)**: this fix was NOT committed separately as the repo's own separate-commit rule (`delivery.md:206-209` and `AGENTS.md` §Git Workflow's "Split by domain/concern") requires — it shipped bundled inside commit `84318e982` together with all 14 new Phase-5 feature files. That commit is already published, and rewriting a published commit is forbidden by [No Destructive Git Operations](../../../repo-governance/development/workflow/no-destructive-git-operations.md), so the bundling itself stands as a recorded process miss rather than being corrected retroactively. The original note's "Iron Rule 3/7" citation does not correspond to any rule defined in this plan and has been dropped.
 - [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-5-page-and-table` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-5-page-and-table/`

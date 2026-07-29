@@ -458,6 +458,25 @@ names each operator and its terms. No operator's compiled table is reproduced wh
 
 Where an operator states no terms, the page records that explicitly rather than implying permission.
 
+### DD-22 — AC-19/29/32/35 are permanently unit-only, not e2e-deferred (amends the Testing strategy)
+
+**Recorded during PR review, cycle 1 (finding F5).** Commit `ca69c47c6` narrowed the shipped
+`.feature` file's tags for AC-19/29/32/35 (data table presence, snapshot date, how-to-read
+disclosure, bilingual completeness) from `@unit @e2e` to `@unit`, but `prd.md` — the plan's own
+canonical acceptance-criteria source (§Testing strategy) — still carried the old `@unit @e2e` tags
+for all four, leaving the two documents in unresolved disagreement.
+
+**Decision**: these four scenarios are permanently unit-only for this plan, not merely deferred to
+a later phase pending an e2e binding. `prd.md:572/659/682/709` are corrected to `@unit` to match the
+shipped `.feature` file. This is a permanent scoping decision, not a temporary gap, because no
+remaining phase in `delivery.md` (Phase 6: chart primitives, Phase 7: price chart, Phase 8: filters,
+Phase 9: manual verification, Phase 10: reveal/retest) revisits the data table or honesty surface
+with new Playwright e2e coverage — only AC-1/AC-2 (the two locale-heading scenarios) get e2e
+binding in this plan, in `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`. If a future
+plan phase does add e2e coverage for these four scenarios, both `prd.md` and the `.feature` file
+must be updated together at that time — this decision does not preclude that, it only records that
+none is currently scheduled.
+
 ### Band design tokens
 
 Three band tokens plus an `unrated` neutral, defined in **`libs/web-ui-token/src/ayokoding.css`**

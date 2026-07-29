@@ -569,7 +569,7 @@ Feature: AI model benchmark tool
 
 ```gherkin
   # AC-19
-  @unit @e2e
+  @unit
   Scenario: The data table is present without any interaction
     Given the full roster is loaded
     When the page first renders
@@ -656,7 +656,7 @@ Feature: AI model benchmark tool
 
 ```gherkin
   # AC-29
-  @unit @e2e
+  @unit
   Scenario: The page displays the dataset snapshot date
     Given the dataset carries a snapshot date
     When the page renders
@@ -679,7 +679,7 @@ Feature: AI model benchmark tool
     But that cell shows no averaged value
 
   # AC-32
-  @unit @e2e
+  @unit
   Scenario: The page discloses that frontier scores are overwhelmingly vendor-reported
     Given the page carries a how-to-read disclosure
     When the page renders
@@ -706,7 +706,7 @@ Feature: AI model benchmark tool
 
 ```gherkin
   # AC-35
-  @unit @e2e
+  @unit
   Scenario Outline: No raw translation key leaks on either locale
     Given the locale is "<locale>"
     When the AI benchmark page renders
