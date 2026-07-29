@@ -8,7 +8,12 @@
 
 set -euo pipefail  # => fail fast; a half-applied hardening is worse than none
 
-DOMAIN="myapp.example.com"; APP_DIR="/opt/myapp"; PYTHON_VERSION="3.12"  # => constants for the whole capstone
+# Constants for the whole capstone (referenced by later steps)
+# shellcheck disable=SC2034
+DOMAIN="myapp.example.com"
+# shellcheck disable=SC2034
+APP_DIR="/opt/myapp"
+PYTHON_VERSION="3.12"  # => the runtime version to install
 
 echo "=== [1/4] packages + runtime (co-06) ==="
 apt-get update && apt-get install -y curl ca-certificates ufw fail2ban \

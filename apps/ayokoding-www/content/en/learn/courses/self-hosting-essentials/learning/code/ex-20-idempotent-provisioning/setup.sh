@@ -9,6 +9,7 @@
 
 set -euo pipefail  # => fail fast; idempotence does not mean ignoring errors
 
+# shellcheck disable=SC2034  # => DOMAIN referenced by later steps; declared for reproducibility
 DOMAIN="myapp.example.com"; APP_DIR="/opt/myapp"; PYTHON_VERSION="3.12"  # => same constants as Example 19
 
 # --- helper: run a step only if its postcondition is NOT already met ---------

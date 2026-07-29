@@ -8,6 +8,7 @@
 
 set -euo pipefail  # => fail fast; but note this script ends by rebooting the box
 
+# shellcheck disable=SC2034  # => DOMAIN referenced by the verify section; declared for readability
 DOMAIN="myapp.example.com"  # => the public HTTPS endpoint (proxy + TLS + app, all must return)
 UNIT="myapp"  # => the service (Examples 7-10)
 
