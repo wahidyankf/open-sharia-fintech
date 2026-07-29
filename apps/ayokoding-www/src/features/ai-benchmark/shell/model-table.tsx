@@ -146,31 +146,29 @@ function priceCells(model: Model, locale: Locale): { input: ReactNode; output: R
       ),
     };
   }
-  // Subscription-only (or no pricing): show the subscription marker; the source link still resolves.
-  const subSource = rate && rate.kind === "subscription" ? rate.source : defaultSourceForIndex();
-  const subText =
-    rate && rate.kind === "subscription"
-      ? `${t(locale, "aiBenchSubscription")} (${formatPriceUsd(rate.planCostUsd, locale)})`
-      : t(locale, "aiBenchNoFigure");
-  const subNode = (
-    <span data-slot="subscription-cell" className="inline-flex flex-col items-start gap-0.5 leading-tight">
-      <span data-slot="figure-cell-value">{subText}</span>
-      <a
-        data-slot="evidence-badge"
-        href={subSource}
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        className="text-xs text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-foreground"
-      >
-        {t(locale, "aiBenchSourceLabel")}
-      </a>
-    </span>
-  );
-  return {
-    input: subNode,
-    output: <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>,
-    isSubscription: true,
-  };
+  if (rate && rate.kind === "subscription") {
+    // A flat-rate subscription is one price covering both directions — there is no separate
+    // input/output split to report, so both cells show the same graded, sourced figure via the
+    // shared FigureCell (grade marker for AC-21, source link for AC-30), never a bespoke unmarked
+    // link.
+    const subCell = (
+      <FigureCell
+        value={`${t(locale, "aiBenchSubscription")} (${formatPriceUsd(rate.planCostUsd, locale)})`}
+        grade={rate.grade}
+        source={rate.source}
+        locale={locale}
+      />
+    );
+    return { isSubscription: true, input: subCell, output: subCell };
+  }
+  // No price exists for this model at all (metered or subscription) — render exactly like an
+  // absent benchmark figure: a plain "not reported" span, never a grade marker and never a source
+  // link. A price that was never published must not resolve to a link (previously this fabricated
+  // a self-referential citation via `defaultSourceForIndex()`, which was wrong — that helper is for
+  // the composite index, whose source genuinely IS this page's own methodology, not for a missing
+  // price).
+  const notReported = <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
+  return { input: notReported, output: notReported, isSubscription: false };
 }
 
 /** A model's integrity-note links, rendered beside its name (AC-33). */

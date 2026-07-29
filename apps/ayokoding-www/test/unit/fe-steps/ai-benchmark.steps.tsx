@@ -76,6 +76,16 @@ function fixtureDataset(models: Model[]): Dataset {
   return { snapshotDate: "2026-07-28", anchorIds: { opus: OPUS_ANCHOR_ID, sonnet: SONNET_ANCHOR_ID }, models };
 }
 
+/**
+ * The desktop table's two rightmost price `<td>`s for one model row — input price then output
+ * price, per the column order in `model-table.tsx` (F1b: AC-21/AC-30 must check every price cell,
+ * not just "some anchor exists somewhere in the table").
+ */
+function priceCellsOf(row: HTMLTableRowElement): HTMLTableCellElement[] {
+  const cells = Array.from(row.querySelectorAll<HTMLTableCellElement>(":scope > td"));
+  return cells.slice(-2);
+}
+
 // ─── Per-scenario context ──────────────────────────────────────────────────────
 
 type Ctx = {
@@ -493,16 +503,26 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("every price cell carries an evidence grade marker", () => {
-      // Metered price cells use <FigureCell> (with a badge). Assert at least the metered price
-      // cells each carry a grade marker; subscription-only cells carry a source link instead.
-      const figureCells = screen
-        .getAllByTestId("model-table-desktop")
-        .flatMap((el) => Array.from(el.querySelectorAll('[data-slot="figure-cell"]')));
-      const priceLikeBadges = figureCells.filter((c) => {
-        const anchor = c.querySelector("a");
-        return anchor !== null;
-      });
-      expect(priceLikeBadges.length).toBeGreaterThan(0);
+      // Enumerate EVERY model row's two price cells (input, then output — the last two <td>s) and
+      // check each one individually, rather than asserting "some anchor exists somewhere in the
+      // table" (which could pass with zero correctly-rendered price cells; see F1b). A price cell
+      // either reports a real price — in which case it MUST carry a proper `<FigureCell>` grade
+      // marker — or it reports no price at all, in which case it must read as "not reported" and
+      // carry no link (never a fabricated/unmarked citation; see F1a).
+      const rows = screen
+        .getByTestId("model-table-desktop")
+        .querySelectorAll<HTMLTableRowElement>("tbody tr[data-model-id]");
+      expect(rows.length).toBe(dataset.models.length);
+      for (const row of Array.from(rows)) {
+        for (const cell of priceCellsOf(row)) {
+          const anchor = cell.querySelector("a[href]");
+          if (anchor === null) {
+            expect(cell.textContent).toContain(t("en", "aiBenchNoFigure"));
+            continue;
+          }
+          expect(cell.querySelector('[data-slot="figure-cell"] [data-slot="evidence-badge"]')).not.toBeNull();
+        }
+      }
     });
   });
 
@@ -549,10 +569,26 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("every price cell resolves to a source link", () => {
-      // Metered price cells are figure cells (covered above); subscription cells carry their own
-      // source anchor. Assert at least one price cell resolves to a link.
-      const anchors = screen.getByTestId("model-table-desktop").querySelectorAll("a[href]");
-      expect(anchors.length).toBeGreaterThan(0);
+      // Same per-cell enumeration as AC-21 above (F1b): a price cell that reports a figure must
+      // resolve to a non-empty source href; a price cell with genuinely no data must carry no link
+      // at all (never a fabricated citation pointing at this page itself; see F1a).
+      const rows = screen
+        .getByTestId("model-table-desktop")
+        .querySelectorAll<HTMLTableRowElement>("tbody tr[data-model-id]");
+      expect(rows.length).toBe(dataset.models.length);
+      for (const row of Array.from(rows)) {
+        for (const cell of priceCellsOf(row)) {
+          const anchor = cell.querySelector("a[href]");
+          if (anchor === null) {
+            expect(cell.textContent).toContain(t("en", "aiBenchNoFigure"));
+            continue;
+          }
+          expect((anchor.getAttribute("href") ?? "").length).toBeGreaterThan(0);
+          // The anchor must be a genuine `<FigureCell>` source link, not an ad-hoc/fabricated one
+          // (F1a: the old subscription-cell markup carried a "source" link outside any figure-cell).
+          expect(cell.querySelector('[data-slot="figure-cell"]')).not.toBeNull();
+        }
+      }
     });
   });
 

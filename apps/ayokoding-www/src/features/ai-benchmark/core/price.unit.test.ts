@@ -15,7 +15,7 @@ function met(input: number, output: number, conditions?: string): MeteredPrice {
 }
 
 function sub(planCostUsd = 10): SubscriptionPrice {
-  return { kind: "subscription", planCostUsd, source: SRC };
+  return { kind: "subscription", planCostUsd, grade: "verified", source: SRC };
 }
 
 function modelWith(id: string, pricing: Model["pricing"]): Model {

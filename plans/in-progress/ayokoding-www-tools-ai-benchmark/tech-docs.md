@@ -387,6 +387,27 @@ results"]`. Every other citation of this figure in this plan (`brd.md` Business 
 §R7 prior-art table, `tech-docs.md` §Appendix A.3) points back to this citation rather than restating
 the URL.
 
+### DD-19a — Subscription prices carry an evidence grade (amends DD-19)
+
+**Recorded during PR review, cycle 1 (finding F1a).** `SubscriptionPrice` (`core/data/models.ts`)
+originally carried no `grade` field at all, which made AC-21 ("every price cell carries an evidence
+grade marker") unsatisfiable by construction for every subscription-only roster row (`mimo-v2.5`,
+`mimo-v2.5-pro`) — not merely uncovered by a test, but structurally impossible to satisfy. A
+separate, compounding bug in the same code path fabricated a self-referential source link
+(`defaultSourceForIndex()`, meant only for the composite index's own methodology citation) for
+models with genuinely no pricing data at all (`gemini-3.1-pro`, `gemini-3-flash`), which is a
+provenance-honesty violation on a page whose stated purpose is honesty about sourcing.
+
+**Decision**: `SubscriptionPrice` now carries `grade: EvidenceGrade`, populated `"verified"` for
+every `goSubscription()` entry — the OpenCode Go plan cost and caps are read directly from
+OpenCode's own official docs (`URL.opencodeGo`), the same grade this dataset already uses elsewhere
+for a harness's own official pricing page (e.g. the OpenCode Zen passthrough `met()` rows). A
+subscription price is one flat rate covering both directions, so `priceCells()` renders the
+identical graded, sourced `<FigureCell>` in both the input and output columns rather than
+inventing an artificial input/output split. A model with **no** price at all (metered or
+subscription) now renders exactly like a missing benchmark figure — a plain "not reported" span,
+never a grade marker and never a link — instead of a fabricated citation.
+
 ### DD-18 — Deriving the governance reference
 
 `docs/reference/ai-model-benchmarks.md` currently maintains, by hand, tables that duplicate this
