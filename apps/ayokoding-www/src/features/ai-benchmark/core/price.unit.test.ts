@@ -6,7 +6,7 @@ import { lowestRate, rateForHarness } from "./price";
 // a single rate per model: the selected harness's rate, or — with no harness filter — the lowest
 // available harness rate (compare input, then output). A subscription-only model is never shown as
 // a numeric zero; it carries its subscription kind. See
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/prd.md` AC-16/AC-17/AC-18.
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/prd.md` AC-16/AC-17/AC-18.
 
 const SRC = "https://example.test/pricing";
 

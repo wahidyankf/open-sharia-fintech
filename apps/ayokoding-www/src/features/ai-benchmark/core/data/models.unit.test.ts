@@ -14,7 +14,7 @@ import {
 
 // Dataset invariant tests for the AI Benchmark feature — the honesty surface that makes the
 // dataset enforceable rather than aspirational. The ten invariants are reproduced verbatim from
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Dataset invariant tests".
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Dataset invariant tests".
 // Each failure message MUST name the offending model id and field so a broken figure is locatable
 // without re-reading the whole dataset.
 

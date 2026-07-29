@@ -7,7 +7,7 @@ import { filterModels, type FilterState } from "./filter";
 // models a harness exposes; the class filter keeps only models in a capability band; together they
 // intersect. A model's band is a property of the FULL roster (roster-relative normalization), so
 // the class filter is computed over the whole dataset, not the already-filtered subset. See
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/prd.md` AC-23/AC-24/AC-25.
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/prd.md` AC-23/AC-24/AC-25.
 
 // ─── Fixture builders ──────────────────────────────────────────────────────────
 

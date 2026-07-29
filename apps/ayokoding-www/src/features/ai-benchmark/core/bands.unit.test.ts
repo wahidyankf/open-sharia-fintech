@@ -12,7 +12,7 @@ import {
 } from "./bands";
 
 // Pure-function tests for band assignment (Phase 4 steps B-1..B-13). Band rules are specified by
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Band assignment" (the
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Band assignment" (the
 // state diagram with anchor pinning) and §"DD-20a". Fixtures give known indices so the rule —
 // not the dataset — is what is asserted (a data refresh must not red the suite).
 

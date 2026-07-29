@@ -2,7 +2,7 @@
 //
 // The price chart shows ONE rate per model: the selected harness's rate, or — with no harness
 // filter — the lowest available harness rate. This module is the pure selector; it owns no UI.
-// See `plans/in-progress/ayokoding-www-tools-ai-benchmark/prd.md` AC-16/AC-17/AC-18.
+// See `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/prd.md` AC-16/AC-17/AC-18.
 //
 // Rules:
 //   - With no harness filter, the lowest METERED rate wins (compare input, then output).

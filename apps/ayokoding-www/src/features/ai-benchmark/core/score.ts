@@ -1,7 +1,7 @@
 // AI BENCHMARK — pure scoring core (Phase 4, steps C-1..C-11).
 //
 // Implements the composite-capability index from
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Scoring pipeline" and
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Scoring pipeline" and
 // §"DD-5a" / §"DD-6". No React, no router, no side effects — every function is pure over the
 // dataset, mirroring `src/features/cost-of-living-calculator/core/`.
 //

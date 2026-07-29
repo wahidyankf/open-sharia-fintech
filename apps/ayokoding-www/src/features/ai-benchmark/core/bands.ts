@@ -1,7 +1,7 @@
 // AI BENCHMARK — band assignment core (Phase 4, steps B-1..B-13).
 //
 // Implements the class-band decision from
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Band assignment" (the
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Band assignment" (the
 // state diagram with anchor pinning) and §"DD-20a". No React, no router, no side effects.
 //
 // Bands: `opus` | `sonnet` | `light` | `unrated`. The two anchors (Claude Opus 5, Claude Sonnet 5)

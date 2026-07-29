@@ -21,7 +21,7 @@ import {
 
 // Pure-function tests for the AI Benchmark scoring core (Phase 4 steps C-1..C-11).
 // Arithmetic is specified verbatim by
-// `plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Scoring pipeline" and
+// `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Scoring pipeline" and
 // §"DD-5a" / §"DD-6". Fixture datasets give known inputs so the assertions are exact.
 
 // ─── Fixture builders ──────────────────────────────────────────────────────────
