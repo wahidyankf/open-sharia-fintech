@@ -1,0 +1,8 @@
+---
+title: "Capstone"
+date: 2026-07-29T00:00:00+07:00
+draft: false
+weight: 50
+---
+
+- [Overview](/en/learn/courses/advanced-frontend/learning/capstone/overview)
