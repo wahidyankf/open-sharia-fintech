@@ -1,7 +1,7 @@
 # pyright: strict
 """Example 75: GraphQL Partial Errors vs REST problem+json. (co-30, co-08)
 
-REST signals failure via the STATUS CODE (Example 6's `problem+json`, a
+REST signals failure via the STATUS CODE (Example 12's `problem+json`, a
 non-2xx status); GraphQL signals failure via an `errors` ARRAY alongside a
 `data` object that may be PARTIALLY populated -- the HTTP status stays 200
 even when part of the query failed.
@@ -12,7 +12,7 @@ from typing import Any  # => both error shapes are arbitrary nested JSON
 
 def rest_error_response(article_id: int) -> tuple[int, dict[str, Any]]:  # => co-08: REST's own error shape
     status = 404  # => co-08: the FAILURE is communicated via the status code itself
-    body = {  # => RFC 9457's application/problem+json envelope (Example 6)
+    body = {  # => RFC 9457's application/problem+json envelope (Example 12)
         "type": "https://example.com/probs/not-found",  # => a URI identifying this problem TYPE
         "title": "Article Not Found",  # => a short, human-readable summary
         "status": status,  # => co-08: the SAME status, echoed inside the body too
