@@ -510,7 +510,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the data table is rendered", () => {
-      render(<ModelTable dataset={dataset} locale="en" />);
+      render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The table carries every figure the charts encode
@@ -554,7 +554,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the data table is rendered", () => {
-      render(<ModelTable dataset={dataset} locale="en" />);
+      render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every figure in the table carries an evidence grade
@@ -648,7 +648,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the data table is rendered", () => {
-      render(<ModelTable dataset={dataset} locale="en" />);
+      render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every benchmark figure links to the source it came from
@@ -715,7 +715,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the data table is rendered", () => {
-      render(<ModelTable dataset={ctx.fixtureDataset!} locale="en" />);
+      render(<ModelTable dataset={ctx.fixtureDataset!} fullDataset={ctx.fixtureDataset!} locale="en" />);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A conflicted figure renders as a range rather than a single number
@@ -796,7 +796,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       });
 
       When("that model is rendered in the data table", () => {
-        render(<ModelTable dataset={ctx.fixtureDataset!} locale="en" />);
+        render(<ModelTable dataset={ctx.fixtureDataset!} fullDataset={ctx.fixtureDataset!} locale="en" />);
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page names a known benchmark-integrity finding beside the model it concerns
@@ -925,7 +925,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+      render(
+        React.createElement(CapabilityChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Bar length is proportional to the composite index
@@ -961,7 +967,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset, locale: "en" }));
+      render(React.createElement(CapabilityChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every capability bar carries its model name and index in text
@@ -998,7 +1004,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+      render(
+        React.createElement(CapabilityChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A low-coverage model is marked as low coverage
@@ -1021,7 +1033,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset, locale: "en" }));
+      render(React.createElement(CapabilityChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The capability class is carried textually, not by colour alone
@@ -1035,7 +1047,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     And("every model row carries its class as text in the data table", () => {
       cleanup();
-      render(React.createElement(ModelTable, { dataset, locale: "en" }));
+      render(React.createElement(ModelTable, { dataset, fullDataset: dataset, locale: "en" }));
       const groups = computeGroups(dataset);
       for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
         for (const s of list) {
@@ -1065,7 +1077,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the price chart is rendered", () => {
-      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+      render(
+        React.createElement(PriceChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A metered model shows separate labelled input and output bars
@@ -1105,7 +1123,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the price chart is rendered", () => {
-      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+      render(
+        React.createElement(PriceChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A subscription-only model renders in the subscription group
@@ -1142,7 +1166,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the price chart is rendered without a harness filter", () => {
-      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+      render(
+        React.createElement(PriceChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered price chart shows the lowest harness rate
@@ -1306,7 +1336,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the harness filter selects the more expensive harness", () => {
-      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en", harness: "opencode-go" }));
+      render(
+        React.createElement(PriceChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+          harness: "opencode-go",
+        }),
+      );
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate

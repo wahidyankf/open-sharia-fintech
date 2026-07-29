@@ -64,9 +64,9 @@ flowchart LR
   style FL fill:#0072B2,color:#FFFFFF
 ```
 
-`filter.ts` narrows the `models.ts` roster before `score.ts` and `bands.ts` run over it, so the class
-bands re-scale to whatever survives the filter (DD-11). `capability-chart.tsx` reads `bands.ts`;
-`price-chart.tsx` reads `price.ts`.
+`filter.ts` narrows the `models.ts` roster for MEMBERSHIP and DISPLAY only — `score.ts` and
+`bands.ts` always run over the full unfiltered roster, so band thresholds never re-scale under any
+filter (DD-24). `capability-chart.tsx` reads `bands.ts`; `price-chart.tsx` reads `price.ts`.
 
 **The FCIS boundary is a hard rule for this feature**: no file under `shell/` may contain a literal
 benchmark score, price, model name, or threshold. A dataset refresh must touch `core/data/models.ts`
@@ -93,8 +93,9 @@ sequenceDiagram
   BC->>C: decodeState(searchParams)
   C-->>BC: sanitized BenchmarkState
   BC->>C: filterModels(dataset, state)
-  C-->>BC: filtered roster
-  BC->>C: computeIndices(filtered) · assignBands(...)
+  C-->>BC: filtered roster (membership/display only)
+  BC->>C: computeGroups(filtered, dataset)
+  Note over C: thresholds always derive from the FULL dataset (DD-24)
   C-->>BC: banded, scored rows
   BC-->>R: charts + table (all data in DOM)
 
@@ -333,6 +334,24 @@ low-coverage marker exist to surface, and the how-to-read disclosure states it p
 
 > A model scored on fewer benchmarks has a less trustworthy index. Coverage is shown for every model,
 > and models below 50% coverage are marked.
+
+### DD-24 — Band thresholds always derive from the full roster, never re-scale under a filter
+
+An earlier draft of this document said `filter.ts` narrows the roster before `bands.ts` runs, so
+band thresholds "re-scale to whatever survives the filter" — informally cited as `(DD-11)`, a label
+this document never actually defined anywhere. That statement described exactly the anchor-collapse
+defect fixed in this plan's Phase 8 unit (commit `b2d8bd281`): a harness filter excluding both
+`claude-opus-5` and `claude-sonnet-5` (e.g. `codex-cli`) re-derived the two anchor thresholds from
+the filtered subset, silently collapsing every rated model to `light`.
+
+**DD-24**: band thresholds (the two anchor indices, DD-20a) and the roster-max map (DD-5a) are
+ALWAYS derived from the full, unfiltered roster — `core/bands.ts`'s `computeGroups(dataset,
+fullDataset)` computes both from `fullDataset`, never from `dataset` alone. Filtering governs
+**membership and display only**: which models appear in a chart or the data table, never which
+models define the band boundaries. This is deliberately broader than the bug strictly required —
+only the anchor-exclusion edge case needed fixing — but it is the only rule stable under a roster
+refresh, since thresholds anchored to two named models by id do not depend on which harness happens
+to expose them.
 
 ### DD-7 + DD-7a — Roster rule
 

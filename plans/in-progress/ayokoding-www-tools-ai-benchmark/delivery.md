@@ -2363,8 +2363,9 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       Then only models satisfying both filters are shown
     ```
 
-- [ ] [AI] **N-8 GREEN**: intersect both filters over one filtered dataset, so the bands re-scale to
-      what remains (DD-11) — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-25 passes
+- [ ] [AI] **N-8 GREEN**: intersect both filters over one filtered dataset for membership/display,
+      while band thresholds keep deriving from the full unfiltered roster (DD-24) — command:
+      `npx nx run ayokoding-www:test:unit` — acceptance: AC-25 passes
 - [ ] [AI] **N-9 RED**: bind AC-18 in both the unit and e2e step files
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-18 "A harness filter switches the price chart to that harness's rate"_

@@ -63,11 +63,11 @@ describe("Chart band-order parity (AC-11 gate check)", () => {
   });
 
   it("renders the light band's models in the same order in the capability chart and the price chart", () => {
-    render(<CapabilityChart dataset={dataset} locale="en" />);
+    render(<CapabilityChart dataset={dataset} fullDataset={dataset} locale="en" />);
     const capabilityOrder = rowOrderWithin("capability-chart-band-light", "capability-chart-row-");
     cleanup();
 
-    render(<PriceChart dataset={dataset} locale="en" />);
+    render(<PriceChart dataset={dataset} fullDataset={dataset} locale="en" />);
     const priceOrder = rowOrderWithin("price-chart-band-light", "price-chart-row-");
 
     // All three fixture models carry a metered price, so both charts render all three — the

@@ -33,7 +33,7 @@ describe("ModelTable responsive parity", () => {
   });
 
   it("renders a stacked-card mobile variant and a semantic table desktop variant", () => {
-    render(<ModelTable dataset={dataset} locale="en" />);
+    render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     const desktop = screen.getByTestId("model-table-desktop");
     const mobile = screen.getByTestId("model-table-mobile");
 
@@ -48,7 +48,7 @@ describe("ModelTable responsive parity", () => {
   });
 
   it("renders the same figures in the mobile card and the desktop table for every model", () => {
-    render(<ModelTable dataset={dataset} locale="en" />);
+    render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     const desktop = screen.getByTestId("model-table-desktop");
     const mobile = screen.getByTestId("model-table-mobile");
 
@@ -64,7 +64,7 @@ describe("ModelTable responsive parity", () => {
 
   it("renders the identical figure set in both locales for a model with a conflicted figure", () => {
     // Localized formatting could in principle diverge between variants; assert it does not, for id too.
-    render(<ModelTable dataset={dataset} locale="id" />);
+    render(<ModelTable dataset={dataset} fullDataset={dataset} locale="id" />);
     const desktop = screen.getByTestId("model-table-desktop");
     const mobile = screen.getByTestId("model-table-mobile");
     const desktopRow = desktop.querySelector('tbody tr[data-model-id="claude-opus-5"]');
@@ -82,7 +82,10 @@ describe("ModelTable responsive parity", () => {
 // codex-cli-filtered dataset as `<ModelTable dataset={filtered} locale="en" />` (no `fullDataset`)
 // re-derived the anchor thresholds from the filtered subset — collapsing `gpt-5.6-sol` (opus on
 // the full roster) to `light`. The fix threads a `fullDataset` prop so thresholds always come from
-// the unfiltered roster while `dataset` still governs which models are displayed.
+// the unfiltered roster while `dataset` still governs which models are displayed. `fullDataset` is
+// now a REQUIRED prop (pr-review-synthesis-maker Finding 3, PR #118 cycle 2), so the "omitted"
+// half of this regression is a compile-time `TS2741` error rather than a runtime test — a strictly
+// stronger guard than the runtime assertion this file used to carry.
 describe("ModelTable — fullDataset keeps a harness-filtered model's full-roster class label", () => {
   afterEach(() => {
     cleanup();
@@ -101,11 +104,5 @@ describe("ModelTable — fullDataset keeps a harness-filtered model's full-roste
     render(<ModelTable dataset={codexCliDataset} fullDataset={dataset} locale="en" />);
     const desktop = screen.getByTestId("model-table-desktop");
     expect(classCellText(desktop, "gpt-5.6-sol")).toBe("Opus");
-  });
-
-  it("reproduces the bug when fullDataset is omitted — the model collapses to Light", () => {
-    render(<ModelTable dataset={codexCliDataset} locale="en" />);
-    const desktop = screen.getByTestId("model-table-desktop");
-    expect(classCellText(desktop, "gpt-5.6-sol")).toBe("Light");
   });
 });

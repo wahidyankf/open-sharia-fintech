@@ -11,13 +11,16 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import {
+  dataset as fullRosterDataset,
   OPUS_ANCHOR_ID,
   SONNET_ANCHOR_ID,
   type BenchmarkId,
   type Dataset,
   type Figure,
+  type HarnessId,
   type Model,
 } from "../core/data/models";
+import { computeGroups } from "../core/bands";
 import { CapabilityChart } from "./capability-chart";
 
 function fig(benchmark: BenchmarkId, value: number): Figure {
@@ -45,7 +48,8 @@ describe("CapabilityChart — unrated group", () => {
       fig("swe-bench-pro", 80),
       fig("terminal-bench-2-1", 80),
     ]);
-    render(<CapabilityChart dataset={fixtureDataset([noFigureModel, ratedModel])} locale="en" />);
+    const ds = fixtureDataset([noFigureModel, ratedModel]);
+    render(<CapabilityChart dataset={ds} fullDataset={ds} locale="en" />);
 
     const unratedSection = screen.getByTestId("capability-chart-unrated");
     expect(unratedSection.textContent).toContain("no-figures-model");
@@ -76,7 +80,8 @@ describe("CapabilityChart — responsive label placement", () => {
       fig("swe-bench-pro", 80),
       fig("terminal-bench-2-1", 80),
     ]);
-    render(<CapabilityChart dataset={fixtureDataset([ratedModel])} locale="en" />);
+    const ds = fixtureDataset([ratedModel]);
+    render(<CapabilityChart dataset={ds} fullDataset={ds} locale="en" />);
 
     const mobileLabel = screen.getByTestId("capability-chart-label-mobile-rated-model");
     const desktopLabel = screen.getByTestId("capability-chart-label-desktop-rated-model");
@@ -88,10 +93,64 @@ describe("CapabilityChart — responsive label placement", () => {
 
   it("renders an lg-only axis tick row with the same numeric ticks regardless of viewport", () => {
     const ratedModel = fixtureModel("rated-model", [fig("swe-bench-verified", 80)]);
-    render(<CapabilityChart dataset={fixtureDataset([ratedModel])} locale="en" />);
+    const ds = fixtureDataset([ratedModel]);
+    render(<CapabilityChart dataset={ds} fullDataset={ds} locale="en" />);
 
     const ticks = screen.getByTestId("capability-chart-ticks");
     expect(ticks.querySelectorAll("text").length).toBeGreaterThan(0);
     expect(screen.getByTestId("capability-chart-tick-0")).not.toBeNull();
+  });
+});
+
+// ─── Regression: THIS component's own `fullDataset` wiring must not collapse a harness-filtered
+// rated model to `light` (pr-review-synthesis-maker HIGH finding, PR #118 cycle 2). `bands.ts` and
+// `model-table.tsx` already carry this proof — this component did not, and reverting its fix alone
+// passed the whole suite. Derives the filtered roster and the surviving model from the REAL
+// dataset, mirroring `bands.unit.test.ts`'s pattern, rather than hardcoding an id.
+describe("CapabilityChart — fullDataset keeps a harness-filtered survivor in its full-roster band", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  const harness: HarnessId = "codex-cli";
+
+  const fullRosterBand = (() => {
+    const groups = computeGroups(fullRosterDataset);
+    const byId = new Map<string, string>();
+    for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+      for (const s of list) byId.set(s.model.id, s.band);
+    }
+    return byId;
+  })();
+
+  const filteredModels = fullRosterDataset.models.filter((m) => m.harnesses.includes(harness));
+  const filteredDataset: Dataset = { ...fullRosterDataset, models: filteredModels };
+  const survivor = filteredModels.find(
+    (m) => fullRosterBand.get(m.id) === "opus" || fullRosterBand.get(m.id) === "sonnet",
+  );
+
+  it(`sanity: ${harness} excludes both anchor models but still exposes an opus/sonnet survivor`, () => {
+    expect(filteredModels.some((m) => m.id === OPUS_ANCHOR_ID)).toBe(false);
+    expect(filteredModels.some((m) => m.id === SONNET_ANCHOR_ID)).toBe(false);
+    expect(survivor, `${harness} must expose at least one opus/sonnet survivor`).toBeDefined();
+  });
+
+  it("renders the surviving model under its correct full-roster band when fullDataset is passed", () => {
+    render(<CapabilityChart dataset={filteredDataset} fullDataset={fullRosterDataset} locale="en" />);
+    const expectedBand = fullRosterBand.get(survivor!.id);
+    const bandGroup = screen.getByTestId(`capability-chart-band-${expectedBand}`);
+    expect(bandGroup.querySelector(`[data-testid="capability-chart-row-${survivor!.id}"]`)).not.toBeNull();
+  });
+
+  it("WITHOUT fullDataset, the bug would reproduce — the survivor's own band collapses to light", () => {
+    // Proves the assertion above is not vacuous: the same survivor, scored against ONLY the
+    // filtered subset (no full-roster anchors), no longer lands in its full-roster band.
+    const collapsedGroups = computeGroups(filteredDataset);
+    const collapsedById = new Map<string, string>();
+    for (const list of [collapsedGroups.opus, collapsedGroups.sonnet, collapsedGroups.light, collapsedGroups.unrated]) {
+      for (const s of list) collapsedById.set(s.model.id, s.band);
+    }
+    expect(collapsedById.get(survivor!.id)).toBe("light");
+    expect(fullRosterBand.get(survivor!.id)).not.toBe("light");
   });
 });

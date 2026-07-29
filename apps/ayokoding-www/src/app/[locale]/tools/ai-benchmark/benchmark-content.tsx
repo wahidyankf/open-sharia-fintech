@@ -19,7 +19,8 @@ export function BenchmarkContent() {
   const pathname = usePathname();
 
   // The URL is the single source of truth for the active filters (F-3..F-9, Phase 4). One
-  // `filterModels` call narrows the roster over BOTH axes at once (DD-11) — the resulting
+  // `filterModels` call narrows the roster over BOTH axes at once, for membership/display only
+  // (DD-24) — the resulting
   // `filteredDataset` is the ONE dataset every consumer below reads for MEMBERSHIP/DISPLAY. Band
   // thresholds must stay roster-relative to the FULL population (DD-5a), so every consumer below
   // is ALSO given `dataset` (the unfiltered full roster) as its `fullDataset` — never re-deriving

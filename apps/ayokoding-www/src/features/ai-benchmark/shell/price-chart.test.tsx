@@ -10,13 +10,17 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import {
+  dataset as fullRosterDataset,
   OPUS_ANCHOR_ID,
   SONNET_ANCHOR_ID,
   type Dataset,
+  type HarnessId,
   type MeteredPrice,
   type Model,
   type SubscriptionPrice,
 } from "../core/data/models";
+import { computeGroups } from "../core/bands";
+import { lowestRate } from "../core/price";
 import { formatPriceUsd } from "./format";
 import { PriceChart } from "./price-chart";
 
@@ -56,7 +60,8 @@ describe("PriceChart — subscription group", () => {
       figures: [],
       pricing: { "claude-code": metered(3, 15) },
     };
-    render(<PriceChart dataset={fixtureDataset([subOnlyModel, meteredModel])} locale="en" />);
+    const ds1 = fixtureDataset([subOnlyModel, meteredModel]);
+    render(<PriceChart dataset={ds1} fullDataset={ds1} locale="en" />);
 
     const subscriptionSection = screen.getByTestId("price-chart-subscription");
     expect(subscriptionSection.textContent).toContain("sub-only-model");
@@ -86,7 +91,8 @@ describe("PriceChart — subscription group", () => {
       figures: [],
       pricing: { "opencode-go": subscription(10, "Usage caps: $12/5hr.") },
     };
-    render(<PriceChart dataset={fixtureDataset([subOnlyModel])} locale="en" />);
+    const ds2 = fixtureDataset([subOnlyModel]);
+    render(<PriceChart dataset={ds2} fullDataset={ds2} locale="en" />);
 
     const entry = screen.getByTestId("price-chart-subscription-sub-caps-model");
     expect(entry.textContent ?? "").toContain(formatPriceUsd(10, "en"));
@@ -108,7 +114,8 @@ describe("PriceChart — responsive label placement", () => {
       figures: [],
       pricing: { "claude-code": metered(3, 15) },
     };
-    render(<PriceChart dataset={fixtureDataset([meteredModel])} locale="en" />);
+    const ds3 = fixtureDataset([meteredModel]);
+    render(<PriceChart dataset={ds3} fullDataset={ds3} locale="en" />);
 
     const mobileIn = screen.getByTestId("price-chart-mobile-in-responsive-model");
     const mobileOut = screen.getByTestId("price-chart-mobile-out-responsive-model");
@@ -135,10 +142,68 @@ describe("PriceChart — responsive label placement", () => {
       figures: [],
       pricing: { "claude-code": metered(4, 20) },
     };
-    render(<PriceChart dataset={fixtureDataset([meteredModel])} locale="en" />);
+    const ds4 = fixtureDataset([meteredModel]);
+    render(<PriceChart dataset={ds4} fullDataset={ds4} locale="en" />);
 
     const ticks = screen.getByTestId("price-chart-ticks");
     expect(ticks.querySelectorAll("text").length).toBeGreaterThan(0);
     expect(screen.getByTestId("price-chart-tick-0")).not.toBeNull();
+  });
+});
+
+// ─── Regression: THIS component's own `fullDataset` wiring must not collapse a harness-filtered
+// rated model to `light` (pr-review-synthesis-maker HIGH finding, PR #118 cycle 2). `bands.ts` and
+// `model-table.tsx` already carry this proof — this component did not, and reverting its fix alone
+// passed the whole suite. Derives the filtered roster and the surviving model from the REAL
+// dataset, mirroring `bands.unit.test.ts`'s pattern, rather than hardcoding an id — the survivor
+// must also carry a METERED rate under the filtering harness, or it renders no bar at all
+// (subscription-only models never render as bars — see the "subscription group" describe above).
+describe("PriceChart — fullDataset keeps a harness-filtered survivor in its full-roster band", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  const harness: HarnessId = "codex-cli";
+
+  const fullRosterBand = (() => {
+    const groups = computeGroups(fullRosterDataset);
+    const byId = new Map<string, string>();
+    for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+      for (const s of list) byId.set(s.model.id, s.band);
+    }
+    return byId;
+  })();
+
+  const filteredModels = fullRosterDataset.models.filter((m) => m.harnesses.includes(harness));
+  const filteredDataset: Dataset = { ...fullRosterDataset, models: filteredModels };
+  const survivor = filteredModels.find(
+    (m) =>
+      (fullRosterBand.get(m.id) === "opus" || fullRosterBand.get(m.id) === "sonnet") &&
+      lowestRate(m)?.kind === "metered",
+  );
+
+  it(`sanity: ${harness} excludes both anchor models but still exposes a metered opus/sonnet survivor`, () => {
+    expect(filteredModels.some((m) => m.id === OPUS_ANCHOR_ID)).toBe(false);
+    expect(filteredModels.some((m) => m.id === SONNET_ANCHOR_ID)).toBe(false);
+    expect(survivor, `${harness} must expose at least one metered opus/sonnet survivor`).toBeDefined();
+  });
+
+  it("renders the surviving model's bars under its correct full-roster band when fullDataset is passed", () => {
+    render(<PriceChart dataset={filteredDataset} fullDataset={fullRosterDataset} locale="en" harness={harness} />);
+    const expectedBand = fullRosterBand.get(survivor!.id);
+    const bandGroup = screen.getByTestId(`price-chart-band-${expectedBand}`);
+    expect(bandGroup.querySelector(`[data-testid="price-chart-row-${survivor!.id}"]`)).not.toBeNull();
+  });
+
+  it("WITHOUT fullDataset, the bug would reproduce — the survivor's own band collapses to light", () => {
+    // Proves the assertion above is not vacuous: the same survivor, scored against ONLY the
+    // filtered subset (no full-roster anchors), no longer lands in its full-roster band.
+    const collapsedGroups = computeGroups(filteredDataset);
+    const collapsedById = new Map<string, string>();
+    for (const list of [collapsedGroups.opus, collapsedGroups.sonnet, collapsedGroups.light, collapsedGroups.unrated]) {
+      for (const s of list) collapsedById.set(s.model.id, s.band);
+    }
+    expect(collapsedById.get(survivor!.id)).toBe("light");
+    expect(fullRosterBand.get(survivor!.id)).not.toBe("light");
   });
 });

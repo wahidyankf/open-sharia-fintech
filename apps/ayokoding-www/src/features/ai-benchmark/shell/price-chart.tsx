@@ -141,9 +141,11 @@ export type PriceChartProps = {
    * ALWAYS derived from this dataset, never from `dataset` — `dataset` may be a harness/class
    * filtered subset that excludes both anchor models, and re-deriving thresholds from it would
    * silently collapse every rated model to `light` (DD-5a: bands are roster-relative to the FULL
-   * population; filtering governs display only). Defaults to `dataset` itself when omitted.
+   * population; filtering governs display only). REQUIRED, not optional: an omitted `fullDataset`
+   * reproduces the identical bug with identical silence, so this is a compile-time guard rather
+   * than a silent self-fallback.
    */
-  fullDataset?: Dataset;
+  fullDataset: Dataset;
   locale: Locale;
   /**
    * The active harness filter (Phase 8, AC-18). When set, every bar shows THAT harness's own rate
@@ -158,7 +160,7 @@ export function PriceChart({ dataset = defaultDataset, fullDataset, locale, harn
   const titleId = useId();
   const subscriptionHeadingId = useId();
 
-  const groups = computeGroups(dataset, fullDataset ?? dataset);
+  const groups = computeGroups(dataset, fullDataset);
   const { bands, subscriptions, plotHeight } = computeLayout(groups, locale, harness);
   const axisMax = axisMaxOf(bands);
   const scale = scaleLinear(axisMax, PLOT_WIDTH);
