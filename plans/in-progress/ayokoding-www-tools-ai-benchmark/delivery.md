@@ -1840,29 +1840,37 @@ coverage was not called`) rather than the A-1 module-resolution error, confirmin
       And the price chart exposes an accessible name
     ```
 
-  - **Governance exception (recorded during PR review, cycle 1)**: this step bundles five scenarios
-    into one RED/GREEN cycle, which the
+  - **Recorded process deviation (governance review, cycles 1-2)**: this step bundles five
+    scenarios into one RED/GREEN cycle, which the
     [TDD Convention §Gherkin-Tagged Delivery Steps](../../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps)
     hard-rules against. The reviewer correctly identified the violation and correctly rebutted this
     step's original "the tool forces it" justification — `<USTEPS>ai-benchmark.steps.tsx` bound
     single scenarios one at a time earlier in this same plan (`W-1a`, `Z-1..Z-17`) against the
-    identical `@amiceli/vitest-cucumber` `ScenarioNotCalledError` constraint. **Full remediation
-    (re-executing A-3..A-16 as five independent RED→GREEN cycles) is not applied here** because doing
-    so would require rewriting the already-pushed commit `d2b91aaa0`, which forbids it under
+    identical `@amiceli/vitest-cucumber` `ScenarioNotCalledError` constraint. Neither of the TDD
+    Convention's two documented exceptions (pure-core `underpins` steps; aggregate BDD binders)
+    applies to this step, and nothing in that convention lets a plan self-grant a third exception —
+    this note therefore records an **unremediated deviation**, not a plan-granted exception; no
+    reviewer asked for or authorized this as a fallback remedy. **Full remediation (re-executing
+    A-3..A-16 as five independent RED→GREEN cycles) is not applied here.** The
     [No Destructive Git Operations](../../../repo-governance/development/workflow/no-destructive-git-operations.md)
-    — the same reasoning already accepted for the analogous published-commit bundling recorded at
-    this file's `npx nx affected -t typecheck lint` correction above. This paragraph is the
-    documented, plan-specific exception the reviewer asked for as the fallback remedy: the five
-    individually-embedded Gherkin blocks above (previously only named, not embedded) are now
-    restored per the convention's own requirement, and the underlying execution-order violation
-    stands as a recorded process miss for this one step rather than being corrected retroactively.
-    This same exception (and the same already-pushed-commit reasoning) also covers `Y-2`/`Y-4`/`Y-6`
-    below, the second, already-executed occurrence of this pattern in this Phase 6-7 unit — see
-    those steps' own corrected Notes, which now point back here instead of citing this step as a
-    reusable "precedent". Any future step in THIS PLAN beyond the already-committed Phase 6-7 unit
-    that hits the same tooling constraint must still split into per-scenario cycles as
-    `W-1a`/`Z-1..Z-17` demonstrate is possible — this exception does not
-    extend past this step.
+    convention's own alternatives table names the additive path for exactly this case — a revert
+    commit (via `git revert`) undoing the already-pushed commit `d2b91aaa0` — a new inverse commit,
+    not a rewrite of published history — followed by re-landing the five scenarios as separate
+    scenario-scoped commits, and that convention states "additive over destructive … take the one
+    that leaves a trail." That path was considered and **declined**, not forbidden by the
+    convention: a
+    mechanical revert-and-re-land of code that is already green and already reviewed would
+    manufacture a per-scenario commit trail for cycles whose outcomes are already known, which
+    produces a more flattering record rather than a more honest one — the maintainer judgment here
+    is that doing so would not restore the RED→GREEN discipline the rule protects. The five
+    individually-embedded Gherkin blocks above (previously only named, not embedded) are restored
+    per the convention's own requirement regardless of that decision. This same recorded deviation
+    (and the same reasoning) also covers `Y-2`/`Y-4`/`Y-6` below, the second, already-executed
+    occurrence of this pattern in this Phase 6-7 unit — see those steps' own corrected Notes, which
+    now point back here instead of citing this step as a reusable "precedent". Any future step in
+    THIS PLAN beyond the already-committed Phase 6-7 unit that hits the same tooling constraint
+    must still split into per-scenario cycles as `W-1a`/`Z-1..Z-17` demonstrate is possible — this
+    record does not extend past this step.
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: `capability-chart.tsx` and `capability-chart.test.tsx` were authored together with
