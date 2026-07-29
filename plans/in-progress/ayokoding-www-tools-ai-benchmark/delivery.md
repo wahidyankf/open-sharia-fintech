@@ -3180,14 +3180,18 @@ apps/ayokoding-www/src/features/app-shell/shell/footer.tsx` →
     `MARKER_MIN_MARGIN` derived from the longest localized low-coverage marker string across every
     supported locale, generously buffered above the ~140-unit clip threshold this defect's live
     investigation found), leaving every other chart element at its original scale. A pure
-    computed-geometry
-    regression test (`capability-chart.test.tsx`) now asserts `SVG_WIDTH − (PLOT_X + PLOT_WIDTH) ≥
-MARKER_MIN_MARGIN` and that `SVG_WIDTH` stays `600` — this would have failed against the
-    original 60-unit margin and passes against the corrected geometry. Re-verified live via
+    computed-geometry regression test (`capability-chart.test.tsx`) now asserts `MARKER_MIN_MARGIN`
+    against a fixed literal (`164`) and independently floors it above the ~140-unit clip threshold
+    (`toBeGreaterThanOrEqual(140)`), rather than comparing the derived margin back to itself — the
+    latter form is a mathematical tautology that can never fail, since `PLOT_WIDTH` is defined as
+    `SVG_WIDTH − PLOT_X − MARKER_MIN_MARGIN` (PR #122 cycle 2 re-review). Re-verified live via
     Playwright at 375px, 768px, and 1280px in both `en` and `id`, light and dark theme: every
-    low-coverage marker renders in full with no clipping, and the chart's overall scale/density
-    matches its pre-DWT-001 appearance (bars/labels/ticks unchanged in size) — see
-    `./evidence/phase-10-dwt-001-fix-capability-chart-en-375px.png` (the after-fix screenshot).
+    low-coverage marker renders in full with no clipping. Font size, `ROW_HEIGHT`, and `SVG_WIDTH`
+    are unchanged — there is no uniform SVG-wide downscale of the kind the rejected `SVG_WIDTH`
+    600→840 attempt would have caused. The plot area itself is intentionally ~27% narrower
+    (`PLOT_WIDTH` 380→276) to reserve the marker margin, so bar lengths and tick spacing are
+    correspondingly compressed relative to the pre-DWT-001 baseline (PR #122 cycle 2 re-review) —
+    see `./evidence/phase-10-dwt-001-fix-capability-chart-en-375px.png` (the after-fix screenshot).
 
 - [x] [AI] **DWT-002** (Major): the evidence-grade dot (`<FEAT>shell/evidence-badge.tsx`) and the
       low-coverage/integrity-note text markers (`<FEAT>shell/model-table.tsx`) use raw Tailwind
@@ -3756,8 +3760,10 @@ ayokoding-www:specs:behavior:coverage` exits 0 with the new scenario covered.
   - **Resolution (2026-07-29)**: moved `<ModelTable>` (both the desktop table and mobile card list)
     inside the `!isEmpty` branch in `<ROUTE>benchmark-content.tsx`, alongside the two charts, so it is
     hidden entirely (not just its rows) when the filtered roster is empty — confirmed non-conflicting
-    with AC-28's actual Gherkin scope, which constrains only the CHARTS' empty behaviour ("neither
-    chart renders an empty plot area"), not the table.
+    with AC-28, whose Gherkin scenario was widened in this same fix to fold in the UWT-006 table
+    behaviour (PR #122 cycle 2 re-review): its `But` step now asserts that neither chart nor the data
+    table renders in the empty state, matching the annotation comment on the scenario itself
+    (`specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:301-307`).
 
 **Spec-blind usability suggestions** (desired behaviour a first-time user would expect but the page
 does not provide, proposed for `<SPECS>ai-benchmark.feature`; this agent did not read `specs/**` — a

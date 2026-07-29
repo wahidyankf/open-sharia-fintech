@@ -737,12 +737,20 @@ Feature: AI model benchmark tool
     Then every band group carries its class name as text
     And every model row carries its class as text in the data table
 
-  # AC-38
+  # AC-38 — jsdom cannot resolve `oklch()` custom properties through a cascade (see tech-docs.md
+  # §Band design tokens), so the REAL WCAG contrast assertion runs only at the e2e layer
+  # (apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts). The unit-layer binding
+  # (test/unit/fe-steps/ai-benchmark.steps.tsx) uses the same `expect(true).toBe(true)` placeholder
+  # convention `course-rehome-redirects.steps.tsx`'s raw-HTTP-redirect scenario already uses for its
+  # own jsdom-incapable assertions — present only so `specs:behavior:coverage` (which scans
+  # `apps/ayokoding-www` but not the sibling `ayokoding-www-fe-e2e` project) finds a `@covers`
+  # annotation for this scenario.
   @e2e
   Scenario Outline: Band colours meet contrast in both themes
     Given the page is rendered in the "<theme>" theme
     When the computed styles of the band tokens are read from the live page
     Then every band token meets the WCAG AA contrast ratio against its background
+    And every rated band's bar fill meets the WCAG non-text contrast ratio against the page background
 
     Examples:
       | theme |
