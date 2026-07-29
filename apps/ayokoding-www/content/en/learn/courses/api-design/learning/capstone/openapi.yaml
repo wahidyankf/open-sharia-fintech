@@ -1,0 +1,168 @@
+# Capstone Step 1: the contract for a versioned Articles resource.
+# co-09 (contract-first) + co-13 (versioning) + co-17 (cursor pagination) + co-08/co-30 (error envelope)
+#
+# This file is the CONTRACT -- authored and read as a human/tool-facing OpenAPI 3.1 document, the
+# same way a real team would author and review it before any handler exists. `code/validate_spec.py`
+# independently re-encodes this exact structure as a Python dict (the same pattern Examples 70-72
+# use) and asserts it, rather than parsing this YAML file with a third-party library -- this course's
+# licensing posture and self-containment rule mean every runnable script uses ONLY the Python
+# standard library, and no `pyyaml`-equivalent ships in the standard library.
+openapi: "3.1.0"
+info:
+  title: "Capstone Articles API"
+  version: "1.0.0"
+  description: >
+    A small, versioned, paginated, idempotent-write REST API for one resource (Article),
+    contract-first from this document -- the same five concerns Advanced-tier Example 80 combined,
+    now assembled as the course's own closing capstone.
+
+paths:
+  /v1/articles:
+    get:
+      summary: "List articles, cursor-paginated."
+      description: >
+        co-17: cursor pagination via `after`/`limit` query parameters. Returns a Relay-style
+        connection envelope (`edges`/`pageInfo`), matching Example 76's and Example 80's own shape.
+      parameters:
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "The cursor of the last item seen on the previous page, or omitted for page 1."
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: "A page of articles."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: ["edges", "pageInfo"]
+                properties:
+                  edges:
+                    type: array
+                    items:
+                      type: object
+                      required: ["node", "cursor"]
+                      properties:
+                        node:
+                          type: object
+                          required: ["id", "title"]
+                          properties:
+                            id: { type: integer }
+                            title: { type: string }
+                        cursor: { type: string }
+                  pageInfo:
+                    type: object
+                    required: ["hasNextPage"]
+                    properties:
+                      hasNextPage: { type: boolean }
+                      endCursor: { type: ["string", "null"] }
+        "429":
+          description: "Rate limit exceeded (co-19)."
+          headers:
+            Retry-After:
+              schema: { type: integer }
+    post:
+      summary: "Create an article, idempotently."
+      description: >
+        co-18: an `Idempotency-Key` header lets this write be safely retried -- a replayed key
+        returns the ORIGINAL response instead of creating a second article.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["title"]
+              properties:
+                title: { type: string }
+      responses:
+        "201":
+          description: "A new article was created."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: ["id", "title"]
+                properties:
+                  id: { type: integer }
+                  title: { type: string }
+        "200":
+          description: "co-18: a replay of an already-used Idempotency-Key -- the ORIGINAL response."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: ["id", "title"]
+                properties:
+                  id: { type: integer }
+                  title: { type: string }
+        "429":
+          description: "Rate limit exceeded (co-19)."
+          headers:
+            Retry-After:
+              schema: { type: integer }
+
+  /v1/articles/{id}:
+    get:
+      summary: "Fetch one article by id."
+      description: "co-08/co-30: a missing article returns a consistent problem+json error envelope."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "The article was found."
+          content:
+            application/json:
+              schema:
+                type: object
+                required: ["id", "title"]
+                properties:
+                  id: { type: integer }
+                  title: { type: string }
+        "404":
+          description: "co-30: RFC 9457's application/problem+json envelope."
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                required: ["type", "title", "status", "detail"]
+                properties:
+                  type: { type: string }
+                  title: { type: string }
+                  status: { type: integer }
+                  detail: { type: string }
+
+components:
+  schemas:
+    Article:
+      type: object
+      required: ["id", "title"]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+    Problem:
+      type: object
+      required: ["type", "title", "status", "detail"]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
