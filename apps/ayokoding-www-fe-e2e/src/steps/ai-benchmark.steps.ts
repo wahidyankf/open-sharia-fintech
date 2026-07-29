@@ -3,9 +3,10 @@ import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
-// AI Benchmark e2e step bindings (Phase 5). AC-1 and AC-2 are bound here at the e2e layer; the
-// other Phase 5 scenarios are unit-bound this phase and become `test.fixme` under this project's
-// `missingSteps: "skip-scenario"` config until later phases bind them.
+// AI Benchmark e2e step bindings (Phase 5). AC-1 and AC-2 are the only scenarios bound at the e2e
+// layer in this plan; the other Phase 5 scenarios are permanently unit-only (see DD-22 in
+// tech-docs.md) and render as `test.fixme` under this project's `missingSteps: "skip-scenario"`
+// config — they are not deferred pending a later e2e binding.
 
 // The active locale for the scenario — set by "Given the locale is …" and read by the navigation
 // step. Module-scoped because playwright-bdd step functions are stateless over the fixture context.
