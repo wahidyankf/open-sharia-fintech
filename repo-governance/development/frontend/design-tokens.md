@@ -130,6 +130,15 @@ The monorepo uses two token levels for Tailwind v4 integration.
 
 The `--color-{name}` form is what Tailwind v4 resolves to utility classes like `bg-primary` and `text-primary-foreground`. The bare `--{name}` variable is the overridable value. Keep these two levels strictly separated — bare variables belong in `:root`/`.dark`, Tailwind aliases belong in `@theme`.
 
+> **Caveat — `@theme` can silently drop a declaration**: Tailwind v4's `@theme {}` directive routes
+> through Lightning CSS's theme-token compiler rather than passing custom properties straight to
+> `:root`, and that compiler has been observed to silently drop a newly added custom-property
+> declaration — no build error, no warning, the property just never reaches the compiled
+> stylesheet — even when its shape is identical to other declarations in the same block that do
+> resolve correctly. Before trusting a new custom property added inside `@theme {}`, verify it
+> resolves via `getComputedStyle(document.documentElement).getPropertyValue("--your-token")` on a
+> live page rather than assuming parity with existing declarations.
+
 ## Token Format: Two Current Approaches
 
 The monorepo currently has two formatting approaches in production apps.

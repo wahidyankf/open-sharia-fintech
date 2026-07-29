@@ -93,3 +93,10 @@ The monorepo uses a two-tier token system:
 ```
 
 **Recommended for shared lib**: Direct value approach (ayokoding-web pattern) — simpler, no intermediate variable. Per-app overrides use CSS cascade in their own `@theme` block.
+
+> **Caveat — `@theme` can silently drop a declaration**: Tailwind v4's `@theme {}` block is not a
+> transparent pass-through to `:root` — it runs through Lightning CSS's theme-token compiler, which
+> has been observed to silently drop a newly added custom-property declaration (no build error, no
+> warning) even when it is shaped identically to neighboring declarations that resolve fine. Verify
+> any new `@theme` custom property via `getComputedStyle(document.documentElement).getPropertyValue("--your-token")`
+> on a live page before trusting it.
