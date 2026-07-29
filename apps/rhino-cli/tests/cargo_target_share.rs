@@ -24,7 +24,7 @@
 //!
 //! - **"the doctor change is byte-identical across the three repos"**: the
 //!   real invariant is a pairwise `diff -rq` across three *separate git
-//!   repositories* (`ose-public`/`ose-primer`/`ose-infra`), which is Phase 6
+//!   repositories* (`ose-public`/`ose-primer`/`ose-private`), which is Phase 6
 //!   of `plans/in-progress/rust-cargo-target-dir-sharing/delivery.md`, not
 //!   something one compiled binary running against one synthetic repo can
 //!   exercise. What this suite *can* prove, and what actually makes
@@ -32,7 +32,7 @@
 //!   named repos, is that the mechanism is genuinely parameterized by the
 //!   repo name (not hardcoded): running `doctor --fix` against three
 //!   identically-shaped synthetic repos named `ose-public`, `ose-primer`,
-//!   and `ose-infra` produces three resulting symlink targets that differ
+//!   and `ose-private` produces three resulting symlink targets that differ
 //!   in *only* the repo-name path segment.
 //! - **"Nx build caching is unaffected for crates that emit only dist"**:
 //!   actual Nx cache-hit verification (`nx run ayokoding-cli:build` twice,
@@ -440,7 +440,7 @@ fn given_target_is_symlink(w: &mut TargetShareWorld) {
     );
 }
 
-#[given("the doctor target-share change is delivered to ose-public, ose-primer, and ose-infra")]
+#[given("the doctor target-share change is delivered to ose-public, ose-primer, and ose-private")]
 fn given_delivered_to_three_repos(_w: &mut TargetShareWorld) {
     // Deviation — see the module doc comment: the real invariant (a
     // three-repository `diff -rq`) is out of this single-suite's reach.
@@ -617,11 +617,11 @@ fn when_build_and_test_through_nx(w: &mut TargetShareWorld) {
 fn when_diffed_pairwise(w: &mut TargetShareWorld) {
     // Deviation — see the module doc comment: proxy — run `doctor --fix`
     // against three identically-shaped synthetic repos literally named
-    // `ose-public`, `ose-primer`, `ose-infra`, sharing one cache root, and
+    // `ose-public`, `ose-primer`, `ose-private`, sharing one cache root, and
     // record each resulting symlink target.
     let parent = TempDir::new().expect("temp parent for repo trio");
     let mut results = Vec::new();
-    for name in ["ose-public", "ose-primer", "ose-infra"] {
+    for name in ["ose-public", "ose-primer", "ose-private"] {
         let repo_dir = parent.path().join(name);
         std::fs::create_dir_all(&repo_dir).expect("mkdir repo dir");
         build_throwaway_repo(&repo_dir);

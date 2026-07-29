@@ -24,6 +24,65 @@ const translations: Record<Locale, Record<string, string>> = {
     breadcrumbHome: "Home",
     breadcrumbCalculator: "Calculator",
 
+    // AI benchmark — page shell, data table, honesty surface, and provenance.
+    // Every aiBench* key MUST exist in both locales (AC-35): a missing key renders as its
+    // raw identifier, and the page test asserts no "aiBench" token leaks into rendered text.
+    aiBenchTitle: "AI Model Benchmark",
+    aiBenchSubtitle: "A roster-relative index of coding-agent models across five harnesses, with every figure sourced.",
+    aiBenchSnapshotLabel: "Data snapshot",
+    aiBenchTableCaption:
+      "Coding-agent model roster: capability figures, composite index, coverage, and per-harness prices.",
+    aiBenchColModel: "Model",
+    aiBenchColVendor: "Vendor",
+    aiBenchColHarnesses: "Harnesses",
+    aiBenchColClass: "Class",
+    aiBenchBenchSweVerified: "SWE-bench Verified",
+    aiBenchBenchSwePro: "SWE-bench Pro",
+    aiBenchBenchTerminalBench: "Terminal-Bench 2.1",
+    aiBenchBenchGpqa: "GPQA Diamond",
+    aiBenchColIndex: "Composite index",
+    aiBenchColCoverage: "Coverage",
+    aiBenchColInputPrice: "Input price",
+    aiBenchColOutputPrice: "Output price",
+    aiBenchBandOpus: "Opus",
+    aiBenchBandSonnet: "Sonnet",
+    aiBenchBandLight: "Light",
+    aiBenchBandUnrated: "Unrated",
+    aiBenchNoFigure: "Not reported",
+    aiBenchSubscription: "Subscription",
+    aiBenchCoverageLow: "low coverage",
+    aiBenchGradeVerified: "verified",
+    aiBenchGradeSelfReported: "self-reported",
+    aiBenchGradeSecondary: "secondary",
+    aiBenchGradeConflicted: "conflicted",
+    aiBenchGradeUnavailable: "unavailable",
+    aiBenchEvidenceLabel: "Evidence grade",
+    aiBenchSourceLabel: "Source",
+    aiBenchRangeSeparator: "to",
+    aiBenchPriceUnit: "per 1M tokens",
+    aiBenchIntegrityLabel: "Integrity note",
+    aiBenchHowToSummary: "How to read this benchmark (please read before comparing models)",
+    aiBenchHowToVendorReported:
+      "Most frontier benchmark scores are vendor self-reported. On SWE-bench Verified, independent reproduction (METR) confirmed 0 of 104 vendor-claimed tasks — treat unverified scores as upper bounds, not measured facts.",
+    aiBenchHowToIndexRelative:
+      "The composite index is roster-relative: each score is normalized to the strongest model on this roster, not to an absolute standard. The per-benchmark weights are our judgement, not a property of the benchmarks.",
+    aiBenchHowToCoverage:
+      "Coverage varies. A model scored on one of the four benchmarks rests on far less evidence than one scored on all four; low-coverage models are marked so the index is not mistaken for equal-confidence.",
+    aiBenchHowToBestConfig:
+      "Every figure reflects the vendor's best published configuration (effort setting, prompt, and harness). A model's everyday performance may be lower; the figure is a ceiling, not a typical.",
+    aiBenchHowToArcConflict:
+      "Why provenance matters: ARC-AGI-2 / GPQA Diamond scores for the same model disagree across sources. Where published values conflict we show the full range and the low end enters the index — never an averaged middle value.",
+    aiBenchHowToPriceGap:
+      "Why prices are per-harness: DeepSeek V4 Pro costs about one quarter as much direct from DeepSeek as through a gateway that marks the rate up. Each price names the harness that charges it; there is no single 'the price'.",
+    aiBenchSourcesHeading: "Sources and licences",
+    aiBenchSourcesIntro:
+      "Every figure links to the leaderboard or vendor page it came from. These are the benchmark operators whose figures appear here, with their republication terms.",
+    aiBenchOpTermsSwebench:
+      "Benchmark code and dataset are MIT-licensed; the leaderboard page itself is marked all rights reserved.",
+    aiBenchOpTermsTerminalbench: "No republication terms stated by the operator.",
+    aiBenchOpTermsGpqa: "The GPQA benchmark repository is MIT-licensed.",
+    aiBenchOpTermsNone: "No republication terms stated by the operator.",
+
     // Calculator — page
     calcTitle: "Cost of Living Calculator",
     calcSubtitle: "Compare cost of living and salary savings across cities",
@@ -288,6 +347,66 @@ const translations: Record<Locale, Record<string, string>> = {
       "Bandingkan biaya hidup bulanan, tabungan, dan jabatan minimum yang dibutuhkan di berbagai kota.",
     breadcrumbHome: "Beranda",
     breadcrumbCalculator: "Kalkulator",
+
+    // AI benchmark — page shell, data table, honesty surface, and provenance.
+    // Setiap kunci aiBench* HARUS ada di kedua bahasa (AC-35): kunci yang hilang muncul sebagai
+    // ID mentahnya, dan tes halaman memastikan tidak ada token "aiBench" yang bocor ke teks.
+    aiBenchTitle: "Tolok Ukur Model AI",
+    aiBenchSubtitle:
+      "Indeks relatif terhadap roster model coding-agent di lima harness, dengan setiap angka disertai sumber.",
+    aiBenchSnapshotLabel: "Cuplikan data",
+    aiBenchTableCaption:
+      "Roster model coding-agent: angka kapabilitas, indeks komposit, cakupan, dan harga per-harness.",
+    aiBenchColModel: "Model",
+    aiBenchColVendor: "Vendor",
+    aiBenchColHarnesses: "Harness",
+    aiBenchColClass: "Kelas",
+    aiBenchBenchSweVerified: "SWE-bench Verified",
+    aiBenchBenchSwePro: "SWE-bench Pro",
+    aiBenchBenchTerminalBench: "Terminal-Bench 2.1",
+    aiBenchBenchGpqa: "GPQA Diamond",
+    aiBenchColIndex: "Indeks komposit",
+    aiBenchColCoverage: "Cakupan",
+    aiBenchColInputPrice: "Harga input",
+    aiBenchColOutputPrice: "Harga output",
+    aiBenchBandOpus: "Opus",
+    aiBenchBandSonnet: "Sonnet",
+    aiBenchBandLight: "Ringan",
+    aiBenchBandUnrated: "Belum dinilai",
+    aiBenchNoFigure: "Tidak dilaporkan",
+    aiBenchSubscription: "Langganan",
+    aiBenchCoverageLow: "cakupan rendah",
+    aiBenchGradeVerified: "terverifikasi",
+    aiBenchGradeSelfReported: "dilaporkan sendiri",
+    aiBenchGradeSecondary: "sekunder",
+    aiBenchGradeConflicted: "berkonflik",
+    aiBenchGradeUnavailable: "tidak tersedia",
+    aiBenchEvidenceLabel: "Tingkat bukti",
+    aiBenchSourceLabel: "Sumber",
+    aiBenchRangeSeparator: "hingga",
+    aiBenchPriceUnit: "per 1 juta token",
+    aiBenchIntegrityLabel: "Catatan integritas",
+    aiBenchHowToSummary: "Cara membaca tolok ukur ini (harap dibaca sebelum membandingkan model)",
+    aiBenchHowToVendorReported:
+      "Sebagian besar angka tolok ukur frontier dilaporkan sendiri oleh vendor. Pada SWE-bench Verified, reproduksi independen (METR) mengonfirmasi 0 dari 104 tugas yang diklaim vendor — anggap angka yang belum diverifikasi sebagai batas atas, bukan fakta terukur.",
+    aiBenchHowToIndexRelative:
+      "Indeks komposit bersifat relatif terhadap roster: setiap angka dinormalisasi terhadap model terkuat di roster ini, bukan terhadap standar mutlak. Bobot per-tolok-ukur adalah penilaian kami, bukan sifat dari tolok ukurnya.",
+    aiBenchHowToCoverage:
+      "Cakupan bervariasi. Model yang dinilai pada satu dari empat tolok ukur bertumpu pada jauh lebih sedikit bukti daripada yang dinilai pada keempatnya; model dengan cakupan rendah ditandai agar indeks tidak disangka setara-kepercayaan.",
+    aiBenchHowToBestConfig:
+      "Setiap angka mencerminkan konfigurasi publik terbaik vendor (pengaturan effort, prompt, dan harness). Performa harian model bisa lebih rendah; angka tersebut adalah batas langit, bukan kondisi tipikal.",
+    aiBenchHowToArcConflict:
+      "Mengapa provenans penting: angka ARC-AGI-2 / GPQA Diamond untuk model yang sama berbeda antar sumber. Saat nilai yang dipublikasikan berkonflik, kami menampilkan rentang lengkapnya dan ujung rendah masuk ke indeks — tidak pernah nilai rata-rata di tengah.",
+    aiBenchHowToPriceGap:
+      "Mengapa harga per-harness: DeepSeek V4 Pro berharga sekitar seperempat langsung dari DeepSeek dibandingkan melalui gateway yang menaikkan tarifnya. Setiap harga menyebut harness yang menagihnya; tidak ada 'harga tunggal'.",
+    aiBenchSourcesHeading: "Sumber dan lisensi",
+    aiBenchSourcesIntro:
+      "Setiap angka menaut ke halaman leaderboard atau vendor asalnya. Berikut operator tolok ukur yang angkanya muncul di sini, beserta ketentuan republikasinya.",
+    aiBenchOpTermsSwebench:
+      "Kode dan dataset tolok ukur berlisensi MIT; halaman leaderboard itu sendiri bertanda semua hak dilindungi.",
+    aiBenchOpTermsTerminalbench: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
+    aiBenchOpTermsGpqa: "Repositori tolok ukur GPQA berlisensi MIT.",
+    aiBenchOpTermsNone: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
 
     // Calculator — page
     calcTitle: "Kalkulator Biaya Hidup",

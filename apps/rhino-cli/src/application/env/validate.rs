@@ -4,7 +4,7 @@
 //! (`.env.example` vs Rust/TypeScript/F# code reads), `terraform`
 //! (`terraform.tfvars.example` vs `variable` blocks), and `ansible` (playbook
 //! env lookups vs `.env.example`). The terraform/ansible validators were ported
-//! from `ose-infra` so the canonical source is byte-identical across repos; a
+//! from `ose-private` so the canonical source is byte-identical across repos; a
 //! repo that declares no `terraform`/`ansible` surfaces simply never runs them —
 //! the no-op is data-driven (declared surfaces), not a source stub.
 //!
@@ -424,7 +424,7 @@ pub fn validate_all(repo_root: &Path, contract: &Contract) -> Result<Vec<Finding
 
 /// Aggregated drift for a Terraform or Ansible surface.
 ///
-/// Ported (with its unit-test modules) from `ose-infra`'s
+/// Ported (with its unit-test modules) from `ose-private`'s
 /// `application/env/validate.rs`. App-surface drift is reported through
 /// [`Finding`]/[`DriftKind`]; this struct backs the `IaC` validators and is
 /// converted into [`Finding`]s by [`result_to_findings`] for uniform reporting.
@@ -485,7 +485,7 @@ fn result_to_findings(surface_root: &str, result: &ValidationResult) -> Vec<Find
 }
 
 // ---------------------------------------------------------------------------
-// Terraform validator (ported from ose-infra)
+// Terraform validator (ported from ose-private)
 // ---------------------------------------------------------------------------
 
 /// Validate a Terraform surface.
@@ -596,7 +596,7 @@ fn parse_tfvars_example(root: &Path) -> Result<HashSet<String>, Error> {
 }
 
 // ---------------------------------------------------------------------------
-// Ansible validator (ported from ose-infra)
+// Ansible validator (ported from ose-private)
 // ---------------------------------------------------------------------------
 
 /// Validate an Ansible surface.
@@ -1019,7 +1019,7 @@ pub struct Config {
         );
     }
 
-    // ── terraform_validator (ported from ose-infra) ──────────────────────────
+    // ── terraform_validator (ported from ose-private) ──────────────────────────
 
     #[allow(clippy::unwrap_used, clippy::panic)]
     mod terraform_validator {
@@ -1100,7 +1100,7 @@ pub struct Config {
         }
     }
 
-    // ── ansible_validator (ported from ose-infra) ────────────────────────────
+    // ── ansible_validator (ported from ose-private) ────────────────────────────
 
     #[allow(clippy::unwrap_used, clippy::panic)]
     mod ansible_validator {

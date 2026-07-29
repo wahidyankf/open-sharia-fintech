@@ -387,6 +387,27 @@ results"]`. Every other citation of this figure in this plan (`brd.md` Business 
 §R7 prior-art table, `tech-docs.md` §Appendix A.3) points back to this citation rather than restating
 the URL.
 
+### DD-19a — Subscription prices carry an evidence grade (amends DD-19)
+
+**Recorded during PR review, cycle 1 (finding F1a).** `SubscriptionPrice` (`core/data/models.ts`)
+originally carried no `grade` field at all, which made AC-21 ("every price cell carries an evidence
+grade marker") unsatisfiable by construction for every subscription-only roster row (`mimo-v2.5`,
+`mimo-v2.5-pro`) — not merely uncovered by a test, but structurally impossible to satisfy. A
+separate, compounding bug in the same code path fabricated a self-referential source link
+(`defaultSourceForIndex()`, meant only for the composite index's own methodology citation) for
+models with genuinely no pricing data at all (`gemini-3.1-pro`, `gemini-3-flash`), which is a
+provenance-honesty violation on a page whose stated purpose is honesty about sourcing.
+
+**Decision**: `SubscriptionPrice` now carries `grade: EvidenceGrade`, populated `"verified"` for
+every `goSubscription()` entry — the OpenCode Go plan cost and caps are read directly from
+OpenCode's own official docs (`URL.opencodeGo`), the same grade this dataset already uses elsewhere
+for a harness's own official pricing page (e.g. the OpenCode Zen passthrough `met()` rows). A
+subscription price is one flat rate covering both directions, so `priceCells()` renders the
+identical graded, sourced `<FigureCell>` in both the input and output columns rather than
+inventing an artificial input/output split. A model with **no** price at all (metered or
+subscription) now renders exactly like a missing benchmark figure — a plain "not reported" span,
+never a grade marker and never a link — instead of a fabricated citation.
+
 ### DD-18 — Deriving the governance reference
 
 `docs/reference/ai-model-benchmarks.md` currently maintains, by hand, tables that duplicate this
@@ -432,10 +453,51 @@ names each operator and its terms. No operator's compiled table is reproduced wh
 | SWE-bench           | Benchmark code and dataset MIT; the leaderboard page itself marked all rights reserved                                     |
 | LMArena             | The released `lmarena-ai/leaderboard-dataset` on Hugging Face is CC-BY-4.0; the live site's ToU are separately restrictive |
 | Terminal-Bench      | No republication terms stated by the operator                                                                              |
-| ARC Prize           | No republication terms stated by the operator                                                                              |
+| GPQA                | The benchmark repository is MIT-licensed (amended by DD-23; formerly a bogus `ARC Prize` row)                              |
 | Artificial Analysis | ToU restrict copying the site — **not used as a data source for this page**                                                |
 
 Where an operator states no terms, the page records that explicitly rather than implying permission.
+
+### DD-23 — GPQA replaces the ARC Prize row; the ARC Prize entry is dropped (amends DD-21)
+
+**Recorded during PR review, cycle 3 (finding F8).** The shipped operator row named
+`"ARC Prize (GPQA)"` (`operators.ts:43-46` at review time) conflated two unrelated entities: GPQA
+(David Rein et al., `github.com/idavidrein/gpqa`) has no relationship to the ARC Prize Foundation
+(Mike Knoop / François Chollet), and the DD-21 table above never listed GPQA as an operator despite
+`gpqa-diamond` carrying **weight 30** — the second-highest of the four composite benchmarks — and
+`URL.gpqa` being cited as a figure source across the roster. Meanwhile no ARC Prize figure appears
+in the roster at all: ARC-AGI-2 and ARC-AGI-3 were both rejected (`tech-docs.md` §Benchmarks
+examined and rejected), so the ARC Prize row named an operator whose figures never appear here,
+contrary to `aiBenchSourcesIntro`'s own scoping to "operators whose figures appear here."
+
+**Decision**: the DD-21 table above drops the `ARC Prize` row and adds `GPQA`, with terms "The GPQA
+benchmark repository is MIT-licensed" — verified directly against the cited repo, which states an
+MIT licence, not "no terms stated" as the removed `ARC Prize` row's shared text had implied. The
+shipped `operators.ts` entry now reads `name: "GPQA"`, `url:
+"https://github.com/idavidrein/gpqa"`, `termsKey: "aiBenchOpTermsGpqa"`; the now-unused
+`aiBenchOpTermsArcprize` i18n key is retired from both locale blocks in `translations.ts`. K-8
+(`tech-docs.md` §Known-unknowns and `evidence/phase-2-known-unknowns.md:21`) is reconciled to name
+GPQA in place of ARC Prize, since GPQA does state terms (MIT) and was never the operator the "no
+terms stated" disclosure applied to.
+
+### DD-22 — AC-19/29/32/35 are permanently unit-only, not e2e-deferred (amends the Testing strategy)
+
+**Recorded during PR review, cycle 1 (finding F5).** Commit `ca69c47c6` narrowed the shipped
+`.feature` file's tags for AC-19/29/32/35 (data table presence, snapshot date, how-to-read
+disclosure, bilingual completeness) from `@unit @e2e` to `@unit`, but `prd.md` — the plan's own
+canonical acceptance-criteria source (§Testing strategy) — still carried the old `@unit @e2e` tags
+for all four, leaving the two documents in unresolved disagreement.
+
+**Decision**: these four scenarios are permanently unit-only for this plan, not merely deferred to
+a later phase pending an e2e binding. `prd.md:572/659/682/709` are corrected to `@unit` to match the
+shipped `.feature` file. This is a permanent scoping decision, not a temporary gap, because no
+remaining phase in `delivery.md` (Phase 6: chart primitives, Phase 7: price chart, Phase 8: filters,
+Phase 9: manual verification, Phase 10: reveal/retest) revisits the data table or honesty surface
+with new Playwright e2e coverage — only AC-1/AC-2 (the two locale-heading scenarios) get e2e
+binding in this plan, in `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`. If a future
+plan phase does add e2e coverage for these four scenarios, both `prd.md` and the `.feature` file
+must be updated together at that time — this decision does not preclude that, it only records that
+none is currently scheduled.
 
 ### Band design tokens
 
@@ -592,7 +654,7 @@ transcribed with grade `unavailable` or `conflicted` — never guessed.
 | K-5 | LMArena current Elo — board unsettled                                                      | No impact; LMArena is not in the composite                                                 |
 | K-6 | Kimi K2.7 Code pricing — official page did not return content                              | Price grade `unavailable`; the model still appears with its benchmark data                 |
 | K-7 | Artificial Analysis ToU exact republication clause — PDF not text-extractable              | No impact; Artificial Analysis is not used as a data source, only cited as prior art       |
-| K-8 | Terminal-Bench and ARC Prize republication terms — not stated by either                    | The Sources and Licences section records "no terms stated" rather than implying permission |
+| K-8 | Terminal-Bench republication terms — not stated by the operator (amended by DD-23 above)   | The Sources and Licences section records "no terms stated" rather than implying permission |
 
 Two further transcription hazards, found in the research and encoded as dataset invariants 9 above:
 

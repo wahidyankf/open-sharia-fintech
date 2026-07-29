@@ -58,7 +58,7 @@ fn run_env_validate(root: &Path) -> Vec<String> {
     keys
 }
 
-#[given("ose-infra declares terraform and ansible surfaces in repo-config.yml")]
+#[given("ose-private declares terraform and ansible surfaces in repo-config.yml")]
 fn given_iac_surfaces(w: &mut EnvContractWorld) {
     let root = w.iac_repo.path();
     // repo-config.yml declares one terraform and one ansible surface.

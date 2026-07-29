@@ -2,7 +2,7 @@
 //!
 //! Parses the top-level sections relevant to rhino-cli's spec coverage and
 //! structure validators. The file lives at the repo root and its section schema
-//! is byte-identical across all three repos (ose-public, ose-primer, ose-infra);
+//! is byte-identical across all three repos (ose-public, ose-primer, ose-private);
 //! only the per-repo values differ.
 
 use std::fs;

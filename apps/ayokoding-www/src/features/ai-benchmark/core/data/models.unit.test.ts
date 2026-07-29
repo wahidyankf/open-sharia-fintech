@@ -189,12 +189,18 @@ describe("invariant 9 — no model carries a Terminal-Bench 2.0 or SWE-bench Mul
 
 // ─── Invariant 10 — subscription prices carry a plan cost and omit per-token rates ────────
 
-describe("invariant 10 — every subscription-kind price carries a plan cost and omits per-token rates", () => {
+describe("invariant 10 — every subscription-kind price carries a plan cost, a known evidence grade, and omits per-token rates", () => {
   it.each(subscriptionPriceRows)(
-    "$modelId pricing[$harness] (subscription) has planCostUsd and no per-token rate",
+    "$modelId pricing[$harness] (subscription) has planCostUsd, a valid grade, and no per-token rate",
     ({ modelId, harness, price }) => {
       expect(typeof price.planCostUsd, `${modelId}: pricing.${harness}.planCostUsd must be a number`).toBe("number");
       expect(price.planCostUsd, `${modelId}: pricing.${harness}.planCostUsd must be > 0`).toBeGreaterThan(0);
+      // AC-21 requires every price cell to carry an evidence grade marker — a subscription price
+      // is unsatisfiable-by-construction if its type carries no grade at all (F1a).
+      expect(
+        VALID_GRADES,
+        `${modelId}: pricing.${harness} (subscription) grade "${price.grade}" is not one of ${VALID_GRADES.join(" | ")}`,
+      ).toContain(price.grade);
       // A subscription must NEVER carry per-token rates — structural guard against a wrongly-
       // shaped entry that smuggles in input/output fields.
       const stray = price as unknown as Record<string, unknown>;

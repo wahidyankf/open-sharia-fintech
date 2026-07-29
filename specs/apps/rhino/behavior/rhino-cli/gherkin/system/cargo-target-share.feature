@@ -52,7 +52,7 @@ Feature: Shared Cargo Target Directories via Doctor
     And the tests pass without reference to a per-worktree target directory
 
   Scenario: the doctor change is byte-identical across the three repos
-    Given the doctor target-share change is delivered to ose-public, ose-primer, and ose-infra
+    Given the doctor target-share change is delivered to ose-public, ose-primer, and ose-private
     When the rhino-cli source and its Gherkin specs are diffed pairwise across the three repos
     Then the diff is empty for every apps/rhino-cli source file and every specs/apps/rhino feature file
 

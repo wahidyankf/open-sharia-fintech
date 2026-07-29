@@ -79,11 +79,14 @@ export type MeteredPrice = {
 
 /**
  * A flat-rate subscription price. Carries a plan cost and usage caps and NEVER a per-token rate
- * (invariant 10). Used for every OpenCode Go entry ($10/mo after first month).
+ * (invariant 10). Used for every OpenCode Go entry ($10/mo after first month). Carries a `grade`
+ * like every other priced/figured entry (DD-19a) so AC-21 ("every price cell carries an evidence
+ * grade marker") is satisfiable for subscription-only rows, not unsatisfiable by construction.
  */
 export type SubscriptionPrice = {
   kind: "subscription";
   planCostUsd: number;
+  grade: EvidenceGrade;
   caps?: string;
   source: string;
 };
@@ -174,11 +177,17 @@ function met(input: number, output: number, grade: EvidenceGrade, source: string
   return { kind: "metered", input, output, grade, source, conditions };
 }
 
-/** OpenCode Go flat-rate subscription: $5 first month then $10/mo, with usage caps. */
+/**
+ * OpenCode Go flat-rate subscription: $5 first month then $10/mo, with usage caps. Graded
+ * "verified" — the plan cost and caps are OpenCode's own official published docs, the same grade
+ * used elsewhere in this dataset for a harness's own official pricing page (e.g. the OpenCode Zen
+ * passthrough rates, `met(..., V, URL...)` below).
+ */
 function goSubscription(): SubscriptionPrice {
   return {
     kind: "subscription",
     planCostUsd: 10,
+    grade: "verified",
     caps: "First month $5, then $10/month. Usage caps: $12/5hr · $30/week · $60/month.",
     source: URL.opencodeGo,
   };
