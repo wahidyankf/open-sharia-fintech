@@ -85,9 +85,11 @@ OpenAPI path in this course (Examples 15-22) is written as a resource noun for e
 
 _ex-02 &middot; exercises co-05_
 
-Contrasts an RPC-flavored endpoint (`/getArticle?id=1`, a verb baked into the path) against the
-resource-oriented equivalent (`GET /articles/1`, a noun in the path with the verb carried by the
-HTTP method instead).
+Runs the Example 1 verb-in-path regex classifier against an RPC-flavored endpoint
+(`/getArticle?id=1`, a verb glued into the path) and its resource-oriented equivalent
+(`GET /articles/1`, a noun in the path with the verb carried by the HTTP method instead) -- and
+shows the classifier mislabels BOTH the same way, because `\bget\b` needs a word boundary that
+camelCase `getArticle` never supplies.
 
 **`learning/code/ex-02-rpc-vs-resource-contrast/example.py`**
 
@@ -95,9 +97,12 @@ HTTP method instead).
 # pyright: strict
 """Example 2: RPC-Style vs. Resource-Style URIs. (co-05)
 
-Contrasts an RPC-flavored endpoint (`/getArticle?id=1`, a verb baked into the
-path) against the resource-oriented equivalent (`GET /articles/1`, a noun in
-the path with the verb carried by the HTTP method instead).
+Runs the Example 1 verb-in-path regex classifier against an RPC-flavored
+endpoint (`/getArticle?id=1`, a verb glued into the path) and its resource-
+oriented equivalent (`GET /articles/1`, a noun in the path with the verb
+carried by the HTTP method instead) -- and shows the classifier mislabels
+BOTH the same way, because `\bget\b` needs a word boundary that camelCase
+`getArticle` never supplies.
 """
 
 import re  # => reuse the same verb-detection idea as Example 1
@@ -134,9 +139,12 @@ GET '/getArticle?id=1' -> resource-style (noun in path)
 GET '/articles/1' -> resource-style (noun in path)
 ```
 
-**Key takeaway**: The `?id=1` query-string form of `/getArticle` hides its own verb from this
-regex-based check the way a real reviewer would not -- illustrating exactly why resource-naming
-review is a human judgment call, not something a mechanical check alone can fully automate.
+**Key takeaway**: The classifier misses `/getArticle` not because of the `?id=1` query string, but
+because `\bget\b` requires a word boundary on both sides of "get" -- and the camelCase-glued
+`getArticle` never supplies one (no boundary between `t` and `A`). A verb glued straight onto a
+noun defeats this mechanical check the way a real reviewer would not, which is exactly why
+resource-naming review stays a human judgment call rather than something a regex can fully
+automate.
 
 **Why it matters**: RPC-style paths (`/getX`, `/createY`, `/deleteZ`) are the single most common
 REST-naming mistake, because they duplicate the verb HTTP methods already carry (Example 3) --
@@ -161,16 +169,10 @@ graph LR
     G["Update (partial)"] -->|maps to| H[PATCH]
     I[Delete] -->|maps to| J[DELETE]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#0173B2,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#0173B2,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#0173B2,stroke:#000,color:#fff
-    style H fill:#DE8F05,stroke:#000,color:#000
-    style I fill:#0173B2,stroke:#000,color:#fff
-    style J fill:#DE8F05,stroke:#000,color:#000
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    class A,C,E,G,I blue
+    class B,D,F,H,J orange
 ```
 
 **`learning/code/ex-03-method-semantics-map/example.py`**
@@ -584,10 +586,14 @@ graph LR
     L1 --> L2["L2: HTTP Verbs+Status<br/>+ verbs/status codes"]
     L2 --> L3["L3: Hypermedia<br/>+ _links"]
 
-    style L0 fill:#CA9161,stroke:#000,color:#fff
-    style L1 fill:#0173B2,stroke:#000,color:#fff
-    style L2 fill:#DE8F05,stroke:#000,color:#000
-    style L3 fill:#029E73,stroke:#000,color:#fff
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class L0 brown
+    class L1 blue
+    class L2 orange
+    class L3 teal
 ```
 
 **`learning/code/ex-09-richardson-level-classify/example.py`**
@@ -1058,13 +1064,16 @@ graph TD
     E --> F[Example 21: mock server]
     F --> G[Example 22: client codegen]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#029E73,stroke:#000,color:#fff
-    style F fill:#CC78BC,stroke:#000,color:#000
-    style G fill:#CA9161,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B,C,D orange
+    class E teal
+    class F purple
+    class G brown
 ```
 
 **`learning/code/ex-15-openapi-skeleton/example.py`**
@@ -1656,10 +1665,12 @@ graph LR
         B1["seek directly<br/>to cursor"] --> B2["take next N<br/>(returned)"]
     end
 
-    style A1 fill:#CA9161,stroke:#000,color:#fff
-    style A2 fill:#0173B2,stroke:#000,color:#fff
-    style B1 fill:#029E73,stroke:#000,color:#fff
-    style B2 fill:#0173B2,stroke:#000,color:#fff
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A1 brown
+    class A2,B2 blue
+    class B1 teal
 ```
 
 **`learning/code/ex-23-offset-page-endpoint/example.py`**
@@ -1945,11 +1956,16 @@ graph TD
     C --> E[Same underlying ARTICLE data]
     D --> E
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class C teal
+    class D purple
+    class E brown
 ```
 
 **`learning/code/ex-27-accept-negotiation/example.py`**

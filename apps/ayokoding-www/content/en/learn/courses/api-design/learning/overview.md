@@ -161,8 +161,9 @@ instead of RPC-style endpoints (`/getArticle?id=1`).
 **Why it matters**: this decision is what lets the HTTP method itself carry the verb, which is a
 precondition for the uniform interface constraint (co-03) to make any sense at all.
 
-**Verify it**: Example 1 models a resource collection and item; Example 2 contrasts the resource form
-against its RPC-style equivalent directly.
+**Verify it**: Example 1 models a resource collection and item; Example 2 runs the Example 1
+verb-in-path classifier against an RPC-style path and its resource-style equivalent, showing the
+classifier mislabels both identically.
 
 ### co-06 · HTTP Method Semantics
 

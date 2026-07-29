@@ -35,11 +35,16 @@ graph TD
     B -->|Example 30: header| D["Stripe-Version: 2026-01-01"]
     B -->|Example 31: query param| E["?api-version=2026-01-01"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class C teal
+    class D purple
+    class E brown
 ```
 
 **`learning/code/ex-29-version-uri-path/example.py`**
@@ -784,9 +789,12 @@ graph LR
     A["Budget: 3"] -->|calls 1-3: 200 OK| D["Budget: 0"]
     D -->|call 4| E["429 + Retry-After: 60"]
 
-    style A fill:#029E73,stroke:#000,color:#fff
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#fff
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A teal
+    class D orange
+    class E brown
 ```
 
 **`learning/code/ex-40-rate-limit-429/example.py`**
@@ -1233,16 +1241,16 @@ graph TD
     H -->|no, Example 48| I["403: missing scope"]
     H -->|yes| J["200 OK"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style D fill:#DE8F05,stroke:#000,color:#000
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style H fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#CA9161,stroke:#000,color:#fff
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style G fill:#CA9161,stroke:#000,color:#fff
-    style I fill:#CC78BC,stroke:#000,color:#000
-    style J fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B,D,F,H orange
+    class C,E,G brown
+    class I purple
+    class J teal
 ```
 
 **`learning/code/ex-46-bearer-token-auth/example.py`**
@@ -1460,11 +1468,16 @@ graph TD
     D["DELETE /articles/{id}.security"] -->|references| B
     D -->|requires scope| E["articles:write"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class C teal
+    class D purple
+    class E brown
 ```
 
 **`learning/code/ex-49-openapi-security-scheme/example.py`**

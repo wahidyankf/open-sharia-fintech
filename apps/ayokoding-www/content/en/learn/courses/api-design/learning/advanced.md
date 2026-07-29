@@ -40,13 +40,14 @@ graph LR
     B -->|id: ID!| S3[Scalar]
     B -->|name: String!| S4[Scalar]
 
-    style Q fill:#0173B2,stroke:#000,color:#fff
-    style A fill:#DE8F05,stroke:#000,color:#000
-    style B fill:#029E73,stroke:#000,color:#fff
-    style S1 fill:#CC78BC,stroke:#000,color:#000
-    style S2 fill:#CC78BC,stroke:#000,color:#000
-    style S3 fill:#CC78BC,stroke:#000,color:#000
-    style S4 fill:#CC78BC,stroke:#000,color:#000
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    class Q blue
+    class A orange
+    class B teal
+    class S1,S2,S3,S4 purple
 ```
 
 **`learning/code/ex-57-graphql-schema-def/example.py`**
@@ -201,11 +202,16 @@ graph LR
     end
     R2 -.->|2 fields wasted| W[Over-fetched: body, views]
 
-    style R1 fill:#0173B2,stroke:#000,color:#fff
-    style R2 fill:#CA9161,stroke:#000,color:#fff
-    style G1 fill:#029E73,stroke:#000,color:#fff
-    style G2 fill:#DE8F05,stroke:#000,color:#000
-    style W fill:#CC78BC,stroke:#000,color:#000
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    class R1 blue
+    class R2 brown
+    class G1 teal
+    class G2 orange
+    class W purple
 ```
 
 **`learning/code/ex-59-graphql-overfetch-contrast/example.py`**
@@ -367,8 +373,10 @@ graph LR
         Q5 & Q6 --> T2["2 queries total"]
     end
 
-    style T1 fill:#CA9161,stroke:#000,color:#fff
-    style T2 fill:#029E73,stroke:#000,color:#fff
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class T1 brown
+    class T2 teal
 ```
 
 **`learning/code/ex-61-graphql-n1-dataloader/example.py`**
@@ -604,12 +612,12 @@ graph LR
         C1[N requests] --> C2[N responses, interleaved]
     end
 
-    style A1 fill:#0173B2,stroke:#000,color:#fff
-    style A2 fill:#0173B2,stroke:#000,color:#fff
-    style B1 fill:#DE8F05,stroke:#000,color:#000
-    style B2 fill:#DE8F05,stroke:#000,color:#000
-    style C1 fill:#029E73,stroke:#000,color:#fff
-    style C2 fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A1,A2 blue
+    class B1,B2 orange
+    class C1,C2 teal
 ```
 
 **`learning/code/ex-64-grpc-unary/example.py`**
@@ -1098,9 +1106,12 @@ graph LR
     A["Example 70:<br/>Write spec FIRST"] --> B["Example 71:<br/>Write handler TO MATCH"]
     B --> C["Example 72:<br/>Assert live response conforms"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class C teal
 ```
 
 **`learning/code/ex-70-contract-first-openapi/example.py`**
@@ -1569,9 +1580,12 @@ graph TD
     E --> F["hasNextPage: Boolean"]
     E --> G["endCursor: String"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style E fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class E teal
 ```
 
 **`learning/code/ex-76-pagination-graphql-connections/example.py`**
@@ -1654,9 +1668,12 @@ graph LR
     A["/ (hardcoded root)"] -->|follow _links.articles| B["/articles/1"]
     B -->|follow _links.author| C["/authors/7"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B orange
+    class C teal
 ```
 
 **`learning/code/ex-77-hateoas-driven-client/example.py`**
@@ -1896,13 +1913,16 @@ graph TD
     E --> F["GraphQL/gRPC facade (co-27)"]
     F --> G["e2e conformance (co-09)"]
 
-    style A fill:#0173B2,stroke:#000,color:#fff
-    style B fill:#DE8F05,stroke:#000,color:#000
-    style C fill:#029E73,stroke:#000,color:#fff
-    style D fill:#CC78BC,stroke:#000,color:#000
-    style E fill:#CA9161,stroke:#000,color:#fff
-    style F fill:#DE8F05,stroke:#000,color:#000
-    style G fill:#029E73,stroke:#000,color:#fff
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    class A blue
+    class B,F orange
+    class C,G teal
+    class D purple
+    class E brown
 ```
 
 **`learning/code/ex-80-contract-first-api/example.py`**

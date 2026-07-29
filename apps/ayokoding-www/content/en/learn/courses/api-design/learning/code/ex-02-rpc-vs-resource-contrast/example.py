@@ -1,9 +1,12 @@
 # pyright: strict
 """Example 2: RPC-Style vs. Resource-Style URIs. (co-05)
 
-Contrasts an RPC-flavored endpoint (`/getArticle?id=1`, a verb baked into the
-path) against the resource-oriented equivalent (`GET /articles/1`, a noun in
-the path with the verb carried by the HTTP method instead).
+Runs the Example 1 verb-in-path regex classifier against an RPC-flavored
+endpoint (`/getArticle?id=1`, a verb glued into the path) and its resource-
+oriented equivalent (`GET /articles/1`, a noun in the path with the verb
+carried by the HTTP method instead) -- and shows the classifier mislabels
+BOTH the same way, because `\bget\b` needs a word boundary that camelCase
+`getArticle` never supplies.
 """
 
 import re  # => reuse the same verb-detection idea as Example 1

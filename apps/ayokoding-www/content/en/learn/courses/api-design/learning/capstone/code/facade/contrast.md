@@ -10,8 +10,8 @@ caller's own query names (Example 58's own rule) -- both against the SAME underl
 ## What stays identical between the two facades
 
 - **The data itself.** `graphql_facade.py`'s `STORE` is populated with the exact same values
-  `rest.py` produced -- `data_matches` in that script asserts this explicitly, and the assertion
-  passes.
+  `rest.py` produced -- `data_matches` in that script is `True`, confirming the REST and GraphQL
+  responses agree on the same underlying data.
 - **The resource's identity.** Both facades address the article by the SAME id (`2`) -- neither
   facade invents a parallel identifier scheme for the same underlying entity.
 
