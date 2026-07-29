@@ -17,4 +17,4 @@ first = page_starting_after(None, 3)
 second = page_starting_after(3, 3)  # intent: resume after id 3 -> [4, 5, 6]
 print(f"page 1: {first}")  # OK: [1, 2, 3]
 print(f"page 2 (starting_after=3): {second}")  # BUG: [4, 5, 6] only by accident here -- see offset semantics
-print(f"page 2 intent was [4, 5, 6]; cursor-as-offset breaks when ids are non-contiguous")
+print("page 2 intent was [4, 5, 6]; cursor-as-offset breaks when ids are non-contiguous")

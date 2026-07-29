@@ -53,4 +53,4 @@ print(f"header=2:               version={route(v2_req).body['version']}")  # => 
 
 # Same URL, two versions: a cache keyed only on /tasks would conflate them -- the header-versioning trade-off.
 assert route(v1_req).body["version"] == 1 and route(v2_req).body["version"] == 2  # => co-03
-print(f"same path '/tasks' served versions 1 and 2 by header")  # => Output: header routing confirmed
+print("same path '/tasks' served versions 1 and 2 by header")  # => Output: header routing confirmed

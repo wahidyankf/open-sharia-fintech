@@ -39,7 +39,7 @@ ws.client_send(Frame("ping"))  # => client -> server
 ws.server_echo()  # => co-33: server echoes back over the same connection
 echoed = ws.client_recv()  # => server -> client
 assert echoed is not None  # => type-narrow
-print(f"client sent:    'ping'")  # => Output: the sent frame
+print("client sent:    'ping'")  # => Output: the sent frame
 print(f"server echoed:  {echoed.payload!r}")  # => Output: the echoed frame (bidirectional round-trip)
 
 assert echoed.payload == "ping"  # => co-33: a bidirectional round-trip over one connection
