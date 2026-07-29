@@ -9,6 +9,21 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-30: ayokoding-www-tools-ai-benchmark](./2026-07-30__ayokoding-www-tools-ai-benchmark/README.md) —
+  Built a public `/tools/ai-benchmark` page comparing AI coding-tool capability and token pricing
+  across Codex, Claude Code, Cursor, OpenCode Go, and OpenCode Zen models, banded into `opus` /
+  `sonnet` / `light` classes. Delivered across 8 delivery-boundary PRs — #110 (design tokens), #112
+  (typed dataset), #113 (governance-reference generator), #114 (pure functional core), #115 (route +
+  table + i18n), #117 (capability + price charts), #118 (harness/class filters), and #122 (manual
+  verification, reveal, Rule-15 retest) — plus this Phase 11-12 Knowledge Capture and archival unit.
+  A live band-contrast defect (M-14) traced to Tailwind v4's `@theme` compiler silently dropping four
+  custom-property declarations was fixed by moving them to a plain `:root` block; jsdom's inability
+  to resolve `oklch()` through the cascade moved the corresponding contrast assertion to e2e. The
+  near-end Rule-15 three-tester retest (web-design/exploratory/usability) filed 3 DWT, 4 EWT, 6 UWT,
+  and 2 USS findings, every one fixed before archival. Knowledge Capture routed two backlog plans
+  (`audit-e2e-reuse-existing-server-config`, `vitest-glob-coverage-guard`), one inline doc fix (a
+  Tailwind `@theme` caveat on both `design-tokens.md` surfaces), and confirmed one already-inline fix
+  (cmdk search `value` superset) as terminal. Delivery Mode: `worktree-to-pr`. Completed 2026-07-30.
 - [2026-07-28: adopt-cursor-platform-binding](./2026-07-28__adopt-cursor-platform-binding/README.md) —
   Landed generated `.cursor/agents/` mirrors across all three repositories via `rhino-cli` Cursor
   converter with full tier collapse to `composer-2.5` (never `composer-2.5-fast`). Delivered as three

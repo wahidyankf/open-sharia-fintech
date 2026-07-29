@@ -29,9 +29,9 @@ The plan cuts four cost lines the app currently spends:
 Solo-maintainer polyglot Nx monorepo (see [AGENTS.md](../../../AGENTS.md)). The repo already runs one
 hand-curated static-data tool — `cost-of-living-calculator` — and is mid-way through an active
 content programme ([`ayokoding-learning-path-04`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md))
-that is shipping roughly one course per week, plus a backlog plan
-[`ayokoding-www-tools-ai-benchmark`](../../in-progress/ayokoding-www-tools-ai-benchmark/README.md) waiting on the
-same calculator-style surface. **Concurrent sessions are likely** during plan execution, so every
+that is shipping roughly one course per week, plus the now-completed
+[`ayokoding-www-tools-ai-benchmark`](../../done/2026-07-30__ayokoding-www-tools-ai-benchmark/README.md), which
+shipped the same calculator-style surface. **Concurrent sessions are likely** during plan execution, so every
 unit binds one worktree → one branch → one PR per the `worktree-to-pr` default.
 
 Research cited in [`tech-docs.md`](./tech-docs.md) §Appendix A was gathered by `web-researcher` on
@@ -153,9 +153,8 @@ Phases 3, 4, or 5. The full `### Delivery Boundaries` table and the per-phase wo
 
 - [Dependency Bump Stability & Safety Policy](../../../repo-governance/development/workflow/dependency-bump-policy.md)
   — Path A / Path B / Path C decision tree the dep-modernization phase binds to.
-- [`ayokoding-www-tools-ai-benchmark`](../../in-progress/ayokoding-www-tools-ai-benchmark/README.md) — the sibling
-  plan that copies the `cost-of-living-calculator` FCIS pattern; their file-impact surfaces
-  overlap on `libs/web-ui-token/src/ayokoding.css` only, so concurrent execution is safe under the
-  one-worktree-per-unit rule.
+- [`ayokoding-www-tools-ai-benchmark`](../../done/2026-07-30__ayokoding-www-tools-ai-benchmark/README.md) — the
+  now-completed sibling plan that copied the `cost-of-living-calculator` FCIS pattern; their
+  file-impact surfaces overlapped on `libs/web-ui-token/src/ayokoding.css` only.
 - [`apps/ayokoding-www/README.md`](../../../apps/ayokoding-www/README.md) — the app README whose
   feature table this plan fixes (Phase 1) and whose source-layout convention this plan preserves.

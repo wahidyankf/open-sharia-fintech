@@ -58,9 +58,9 @@ The app has accreted real cost across four lines, every one measured against the
 ### Why this repo, and why now
 
 - The repo is mid-programme on `apps/ayokoding-www`: [`ayokoding-learning-path-04`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
-  is shipping roughly one course per week, and the backlog plan
-  [`ayokoding-www-tools-ai-benchmark`](../../in-progress/ayokoding-www-tools-ai-benchmark/README.md) copies the
-  `cost-of-living-calculator`'s FCIS layout. Every additional course the programme ships **multiplies
+  is shipping roughly one course per week, and the now-completed
+  [`ayokoding-www-tools-ai-benchmark`](../../done/2026-07-30__ayokoding-www-tools-ai-benchmark/README.md) copied
+  the `cost-of-living-calculator`'s FCIS layout. Every additional course the programme ships **multiplies
   the build-minute and `generate-search-data` cost** — the 3 MB FlexSearch index scales with the
   recent course-shipping velocity. Deferring the cost pass means every weekly course ships against a
   larger, costlier, more brittle runtime.

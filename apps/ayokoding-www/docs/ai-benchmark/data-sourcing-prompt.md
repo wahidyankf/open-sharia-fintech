@@ -183,7 +183,7 @@ retrievable, mark it unavailable rather than guessing.
    beside the data module enforces the ten invariants), then `nx run ayokoding-www:typecheck` and
    `nx run ayokoding-www:lint`.
 5. Record any unresolved gap in
-   [`plans/in-progress/ayokoding-www-tools-ai-benchmark/evidence/`](../../../../plans/in-progress/ayokoding-www-tools-ai-benchmark/evidence/)
+   [`plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/evidence/`](../../../../plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/evidence/)
    with the same `K-N` style the research snapshot uses.
 
 ## See also
@@ -191,6 +191,6 @@ retrievable, mark it unavailable rather than guessing.
 - Schema source of truth: the `type` definitions at the top of
   [`models.ts`](../../src/features/ai-benchmark/core/data/models.ts).
 - Design decisions (composite, coverage, roster, pricing, evidence grades):
-  [`tech-docs.md`](../../../../plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md).
+  [`tech-docs.md`](../../../../plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md).
 - Verified research snapshot (the transcription source):
-  [`tech-docs.md` §Appendix A](../../../../plans/in-progress/ayokoding-www-tools-ai-benchmark/tech-docs.md#appendix-a--verified-research-snapshot-2026-07-28).
+  [`tech-docs.md` §Appendix A](../../../../plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md#appendix-a--verified-research-snapshot-2026-07-28).
