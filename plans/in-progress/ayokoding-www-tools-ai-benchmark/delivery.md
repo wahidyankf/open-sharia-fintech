@@ -1768,7 +1768,15 @@ pixelWidth)` maps `0 → 0`, `domainMax → pixelWidth`, and is monotonic in bet
     NEW, different failure (`ScenarioNotCalledError: Scenario: A low-coverage model is marked as low
 coverage was not called`) rather than the A-1 module-resolution error, confirming
     `chart-primitives.tsx` itself resolved correctly and the next blocker was the not-yet-bound
-    cucumber scenarios A-3/5/7/9/11 target.
+    cucumber scenarios A-3/5/7/9/11 target. **Correction (recorded during PR review, cycle 1)**: the
+    "every colour-bearing primitive routes through" phrasing was inaccurate — `BAR_FILL_CLASS`,
+    `BAND_INK_FILL_CLASS`, and `BAND_SWATCH_CLASS` each hold independently hardcoded literal class
+    strings (a Tailwind static-scanner constraint), not values resolved through one shared function.
+    `bandColorVar` was the accessor for the routing this note claimed and had zero real callers
+    anywhere in the app; it was removed during this review cycle along with the `BAND_TOKEN` map
+    that backed it, and the file's own top-of-block comment was reworded to state plainly that the
+    three maps must be kept consistent by hand rather than claiming a shared registry they read
+    through.
 - [x] [AI] **A-3 RED** … **A-16 GREEN** (bundled — see note): bind AC-13/AC-14/AC-12/AC-37/the
       capability half of AC-36 in `<USTEPS>ai-benchmark.steps.tsx`; create
       `<SHELL>capability-chart.tsx` rendering one `<Bar>` per model within a `<BandGroup>` per class
@@ -1782,9 +1790,79 @@ coverage was not called`) rather than the A-1 module-resolution error, confirmin
       `npx vitest run --project unit-fe test/unit/fe-steps/ai-benchmark.steps.tsx`,
       `npx vitest run --project unit-fe src/features/ai-benchmark` — acceptance: every cited AC
       passes
-  - _Gherkin (binds) → AC-13, AC-14, AC-12, AC-37, and the capability half of AC-36 — see A-0's
-    embed above for the full scenario text of each; each is bound verbatim in
-    `<USTEPS>ai-benchmark.steps.tsx`._
+  - _Gherkin (binds) → AC-13 "Bar length is proportional to the composite index"_
+
+    ```gherkin
+    Scenario: Bar length is proportional to the composite index
+      Given two fixture models whose composite indices differ
+      When the capability chart is rendered
+      Then the ratio of their bar lengths equals the ratio of their composite indices
+      And the chart states its axis maximum
+    ```
+
+  - _Gherkin (binds) → AC-14 "Every capability bar carries its model name and index in text"_
+
+    ```gherkin
+    Scenario: Every capability bar carries its model name and index in text
+      Given the full roster is loaded
+      When the capability chart is rendered
+      Then every bar has a text label carrying the model name
+      And every bar has a text label carrying its numeric composite index
+    ```
+
+  - _Gherkin (binds) → AC-12 "A low-coverage model is marked as low coverage"_
+
+    ```gherkin
+    Scenario: A low-coverage model is marked as low coverage
+      Given a fixture model whose coverage ratio is below the low-coverage threshold
+      When the capability chart is rendered
+      Then that model's row carries a low-coverage marker
+      And the marker states the model's coverage ratio in text
+    ```
+
+  - _Gherkin (binds) → AC-37 "The capability class is carried textually, not by colour alone"_
+
+    ```gherkin
+    Scenario: The capability class is carried textually, not by colour alone
+      Given the full roster is loaded
+      When the capability chart is rendered
+      Then every band group carries its class name as text
+      And every model row carries its class as text in the data table
+    ```
+
+  - _Gherkin (binds) → the capability half of AC-36 "Each chart exposes an accessible name"_
+
+    ```gherkin
+    Scenario: Each chart exposes an accessible name
+      Given the full roster is loaded
+      When the page renders
+      Then the capability chart exposes an accessible name
+      And the price chart exposes an accessible name
+    ```
+
+  - **Governance exception (recorded during PR review, cycle 1)**: this step bundles five scenarios
+    into one RED/GREEN cycle, which the
+    [TDD Convention §Gherkin-Tagged Delivery Steps](../../../repo-governance/development/workflow/test-driven-development.md#gherkin-tagged-delivery-steps)
+    hard-rules against. The reviewer correctly identified the violation and correctly rebutted this
+    step's original "the tool forces it" justification — `<USTEPS>ai-benchmark.steps.tsx` bound
+    single scenarios one at a time earlier in this same plan (`W-1a`, `Z-1..Z-17`) against the
+    identical `@amiceli/vitest-cucumber` `ScenarioNotCalledError` constraint. **Full remediation
+    (re-executing A-3..A-16 as five independent RED→GREEN cycles) is not applied here** because doing
+    so would require rewriting the already-pushed commit `d2b91aaa0`, which forbids it under
+    [No Destructive Git Operations](../../../repo-governance/development/workflow/no-destructive-git-operations.md)
+    — the same reasoning already accepted for the analogous published-commit bundling recorded at
+    this file's `npx nx affected -t typecheck lint` correction above. This paragraph is the
+    documented, plan-specific exception the reviewer asked for as the fallback remedy: the five
+    individually-embedded Gherkin blocks above (previously only named, not embedded) are now
+    restored per the convention's own requirement, and the underlying execution-order violation
+    stands as a recorded process miss for this one step rather than being corrected retroactively.
+    This same exception (and the same already-pushed-commit reasoning) also covers `Y-2`/`Y-4`/`Y-6`
+    below, the second, already-executed occurrence of this pattern in this Phase 6-7 unit — see
+    those steps' own corrected Notes, which now point back here instead of citing this step as a
+    reusable "precedent". Any future step in THIS PLAN beyond the already-committed Phase 6-7 unit
+    that hits the same tooling constraint must still split into per-scenario cycles as
+    `W-1a`/`Z-1..Z-17` demonstrate is possible — this exception does not
+    extend past this step.
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: `capability-chart.tsx` and `capability-chart.test.tsx` were authored together with
@@ -1814,6 +1892,7 @@ skipped (2994)` tests, exit 0 (the 6 skips are the same preexisting non-`.skip()
 ayokoding-www:lint` both exited 0 (lint's one new warning, `jsx-a11y(prefer-tag-over-role)` on
     `role="img"` on an `<svg>`, is the same warning class already present un-fixed on 2 preexisting
     files in this project, so it is non-blocking, matching repo convention).
+
 - [x] [AI] **A-17 REFACTOR**: move every colour reference to the `--chart-band-*` tokens from Phase 1;
       no component may name a hue directly — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: all tests still pass and
@@ -1932,10 +2011,15 @@ ayokoding-www:test:unit` failed as expected: `Failed to resolve import
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: bundled with Y-4/Y-6 below (see Y-6's note for the combined verification run) — the
-    three price-chart ACs were implemented together in one `price-chart.tsx`, mirroring Phase 6's
-    A-3..A-16 bundling precedent, because all three RED scenarios were bound in the same edit and
-    would otherwise re-fail on each other via the same `ScenarioNotCalledError`/import-resolution
-    class until the whole component exists.
+    three price-chart ACs were implemented together in one `price-chart.tsx`, because all three RED
+    scenarios were bound in the same edit and would otherwise re-fail on each other via the same
+    `ScenarioNotCalledError`/import-resolution class until the whole component exists. **Correction
+    (recorded during PR review, cycle 1)**: this note previously cited Phase 6's A-3..A-16 as a
+    "bundling precedent" — dropped, because that framing was itself the governance violation the
+    reviewer flagged (self-justifying a second bundling from a first one that was already
+    non-compliant). This bundling is governed by the single documented exception recorded at
+    A-3..A-16's own checklist item, not by a precedent chain — see that item's "Governance exception"
+    note for the reasoning and its explicit scope limit.
 - [x] [AI] **Y-3 RED**: bind AC-16 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-16 "A subscription-only model renders in the subscription group"_
 
@@ -1958,7 +2042,9 @@ ayokoding-www:test:unit` run.
       snapshot assertion confirms no `$0` string is emitted for any subscription model
   - **Date**: 2026-07-29
   - **Status**: done
-  - **Notes**: bundled with Y-2/Y-6 (see Y-6's note).
+  - **Notes**: bundled with Y-2/Y-6 (see Y-6's note). **Correction (recorded during PR review,
+    cycle 1)**: governed by the single documented exception at A-3..A-16, not a reusable
+    "precedent" — see that item's "Governance exception" note.
 - [x] [AI] **Y-5 RED**: bind AC-17 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-17 "An unfiltered price chart shows the lowest harness rate"_
 
@@ -1982,9 +2068,12 @@ ayokoding-www:test:unit` run.
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: created `price-chart.tsx` (Y-2) and `price-chart.test.tsx`, implementing AC-15/16/17
-    together in one component, mirroring Phase 6's A-3..A-16 bundling precedent for the same
-    structural reason (all three RED scenarios bound in one edit; `@amiceli/vitest-cucumber` fails
-    the whole steps file for any unbound/unresolvable scenario). The chart groups models into the
+    together in one component, for the same structural reason as A-3..A-16 (all three RED scenarios
+    bound in one edit; `@amiceli/vitest-cucumber` fails the whole steps file for any
+    unbound/unresolvable scenario). **Correction (recorded during PR review, cycle 1)**: this note
+    previously called A-3..A-16 a "bundling precedent" — dropped, since that framing was the
+    self-justifying-chain problem the reviewer flagged; this bundling is covered by the single
+    documented exception recorded at A-3..A-16's checklist item, not by precedent. The chart groups models into the
     same four bands `computeGroups` produces (opus/sonnet/light/unrated — reusing `BandGroup`,
     `Bar`, `Axis`, `scaleLinear` from `chart-primitives.tsx`, no new primitive per Y-2's
     instruction); per band, a model with a metered `lowestRate` renders two labelled `<Bar>`s
