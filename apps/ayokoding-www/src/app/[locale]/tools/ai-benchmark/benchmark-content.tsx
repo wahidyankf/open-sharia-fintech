@@ -1,15 +1,38 @@
 "use client";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLocale } from "@/features/i18n/shell/use-locale";
 import { t } from "@/features/i18n/core/translations";
-import { dataset } from "@/features/ai-benchmark/core/data/models";
+import { dataset, type Dataset } from "@/features/ai-benchmark/core/data/models";
+import { decodeState, encodeState } from "@/features/ai-benchmark/core/url-state";
+import { filterModels, type FilterState } from "@/features/ai-benchmark/core/filter";
 import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
 import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
+import { BenchmarkFilters } from "@/features/ai-benchmark/shell/benchmark-filters";
 
 export function BenchmarkContent() {
   const locale = useLocale();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // The URL is the single source of truth for the active filters (F-3..F-9, Phase 4). One
+  // `filterModels` call narrows the roster over BOTH axes at once (DD-11) — the resulting
+  // `filteredDataset` is the ONE dataset every consumer below reads, so the capability chart, the
+  // price chart, and the data table always agree, and each chart's own `computeGroups` call
+  // re-scores/re-bands relative to whatever survives the filter, not the full roster.
+  const filterState: FilterState = decodeState(searchParams);
+  const filteredModels = filterModels(dataset, filterState);
+  const filteredDataset: Dataset = { ...dataset, models: filteredModels };
+  const isEmpty = filteredModels.length === 0;
+
+  function handleFilterChange(next: FilterState) {
+    const qs = encodeState(next).toString();
+    router.push(qs ? `${pathname}?${qs}` : pathname);
+  }
+
   return (
     <main data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
       <header className="space-y-1">
@@ -21,11 +44,32 @@ export function BenchmarkContent() {
 
       <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
 
-      <CapabilityChart dataset={dataset} locale={locale} />
+      <BenchmarkFilters
+        state={filterState}
+        resultCount={filteredModels.length}
+        locale={locale}
+        onChange={handleFilterChange}
+      />
 
-      <PriceChart dataset={dataset} locale={locale} />
+      {isEmpty ? (
+        // AC-28: an explicit empty-state message replaces both charts (never an empty plot area) —
+        // the data table still renders below (a header with zero body rows is not "empty" in the
+        // AC's sense; every model's figures already read as "not reported" the same way elsewhere).
+        <p
+          data-testid="ai-bench-empty-state"
+          className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground"
+        >
+          <span className="mb-1 block font-medium text-foreground">{t(locale, "aiBenchEmptyStateTitle")}</span>
+          {t(locale, "aiBenchEmptyStateMessage")}
+        </p>
+      ) : (
+        <>
+          <CapabilityChart dataset={filteredDataset} locale={locale} />
+          <PriceChart dataset={filteredDataset} locale={locale} harness={filterState.harness} />
+        </>
+      )}
 
-      <ModelTable dataset={dataset} locale={locale} />
+      <ModelTable dataset={filteredDataset} locale={locale} />
     </main>
   );
 }

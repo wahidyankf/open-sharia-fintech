@@ -22,10 +22,10 @@
 import { useId } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
-import { dataset as defaultDataset, type Dataset } from "../core/data/models";
+import { dataset as defaultDataset, type Dataset, type HarnessId } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
 import { BANDS } from "../core/filter";
-import { lowestRate } from "../core/price";
+import { lowestRate, rateForHarness } from "../core/price";
 import { formatPriceUsd } from "./format";
 import { Axis, Bar, BandGroup, TickRow, bandLabel, evenTicks, scaleLinear, type ChartBand } from "./chart-primitives";
 
@@ -63,16 +63,22 @@ type SubscriptionRow = {
   caps?: string;
 };
 
-/** Splits one band's models into those with a metered lowest rate and those on a subscription. */
+/**
+ * Splits one band's models into those with a metered rate and those on a subscription. With no
+ * `harness` filter, each model's rate is its lowest available harness rate (AC-17); with one, every
+ * model's rate is THAT harness's own rate set — or nothing, when that harness does not expose the
+ * model at all (AC-18).
+ */
 function splitByRate(
   groups: Record<ChartBand, ModelScore[]>,
   band: ChartBand,
+  harness?: HarnessId,
 ): { metered: MeteredRow[]; subscriptions: SubscriptionRow[] } {
   const metered: MeteredRow[] = [];
   const subscriptions: SubscriptionRow[] = [];
   for (const score of groups[band]) {
-    const rate = lowestRate(score.model);
-    if (rate === undefined) continue; // no price at all — nothing to plot or list
+    const rate = harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model);
+    if (rate === undefined) continue; // no price at all (or not exposed by the selected harness)
     if (rate.kind === "metered") {
       metered.push({ score, input: rate.input, output: rate.output });
     } else {
@@ -98,12 +104,13 @@ type BandLayout = {
 function computeLayout(
   groups: Record<ChartBand, ModelScore[]>,
   locale: Locale,
+  harness?: HarnessId,
 ): { bands: BandLayout[]; subscriptions: SubscriptionRow[]; plotHeight: number } {
   let cursor = TOP_MARGIN;
   const bands: BandLayout[] = [];
   const subscriptions: SubscriptionRow[] = [];
   for (const band of ALL_BANDS) {
-    const split = splitByRate(groups, band);
+    const split = splitByRate(groups, band, harness);
     subscriptions.push(...split.subscriptions);
     if (split.metered.length === 0) continue;
     const headerY = cursor + BAND_HEADER_HEIGHT - 8;
@@ -130,14 +137,21 @@ function axisMaxOf(bands: BandLayout[]): number {
 export type PriceChartProps = {
   dataset?: Dataset;
   locale: Locale;
+  /**
+   * The active harness filter (Phase 8, AC-18). When set, every bar shows THAT harness's own rate
+   * (via `core/price.ts`'s `rateForHarness`) instead of each model's lowest available harness rate
+   * — the chart's "lowest rate" subtitle is misleading once a specific harness is selected, so it
+   * is suppressed in that case (see the subtitle render below).
+   */
+  harness?: HarnessId;
 };
 
-export function PriceChart({ dataset = defaultDataset, locale }: PriceChartProps) {
+export function PriceChart({ dataset = defaultDataset, locale, harness }: PriceChartProps) {
   const titleId = useId();
   const subscriptionHeadingId = useId();
 
   const groups = computeGroups(dataset);
-  const { bands, subscriptions, plotHeight } = computeLayout(groups, locale);
+  const { bands, subscriptions, plotHeight } = computeLayout(groups, locale, harness);
   const axisMax = axisMaxOf(bands);
   const scale = scaleLinear(axisMax, PLOT_WIDTH);
   const axisLabel = t(locale, "aiBenchChartAxisMaxLabel");
@@ -149,9 +163,14 @@ export function PriceChart({ dataset = defaultDataset, locale }: PriceChartProps
       <h2 data-testid={`${SLOT}-heading`} className="mb-1 text-lg font-semibold">
         {t(locale, "aiBenchPriceChartTitle")}
       </h2>
-      <p data-testid={`${SLOT}-subtitle`} className="mb-2 text-xs text-muted-foreground">
-        {t(locale, "aiBenchPriceLowestSubtitle")}
-      </p>
+      {/* AC-18: once a specific harness is selected, every bar shows THAT harness's own rate, not
+          the lowest across harnesses — the "lowest rate" subtitle would misstate that, so it only
+          renders when no harness filter is active. */}
+      {harness === undefined ? (
+        <p data-testid={`${SLOT}-subtitle`} className="mb-2 text-xs text-muted-foreground">
+          {t(locale, "aiBenchPriceLowestSubtitle")}
+        </p>
+      ) : null}
 
       <svg
         data-testid={`${SLOT}-svg`}

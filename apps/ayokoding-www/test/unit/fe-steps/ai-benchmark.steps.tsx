@@ -8,11 +8,11 @@ import React from "react";
 // AC-1/AC-2/AC-19/AC-29/AC-32/AC-34/AC-35 render the route's client content, which reads its
 // locale from useLocale() → useParams(). navState holds the active locale so each scenario's
 // Given step can set it before the page renders. Hoisted so the vi.mock factory can close over it.
-const { navState } = vi.hoisted(() => ({ navState: { locale: "en" as string } }));
+const { navState } = vi.hoisted(() => ({ navState: { locale: "en" as string, search: "" as string } }));
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ locale: navState.locale }),
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(navState.search),
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn(), prefetch: vi.fn() }),
   usePathname: () => "/en/tools/ai-benchmark",
   notFound: vi.fn(),
@@ -60,6 +60,7 @@ import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
 import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
 import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
+import { filterModels } from "@/features/ai-benchmark/core/filter";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 
@@ -118,6 +119,8 @@ type Ctx = {
   locale?: Locale;
   // A fixture dataset for table scenarios that need a controlled roster (AC-31/AC-33).
   fixtureDataset?: Dataset;
+  // The URL query string a Phase 8 filter scenario sets up before rendering (e.g. "harness=cursor").
+  search?: string;
 };
 
 let ctx: Ctx = {};
@@ -135,8 +138,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   AfterEachScenario(() => {
     ctx = {};
-    // Reset the mocked navigation locale and the simulated <html lang> between scenarios.
+    // Reset the mocked navigation locale/search and the simulated <html lang> between scenarios.
     navState.locale = "en";
+    navState.search = "";
     document.documentElement.lang = "";
     cleanup();
   });
@@ -149,6 +153,54 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     document.documentElement.lang = locale;
     render(React.createElement(AiBenchmarkPage));
   }
+
+  // ─── Phase 8 helpers — render the page against a mocked URL query string ──────
+  // The mocked `useSearchParams()` reads `navState.search`; setting it before render + calling
+  // `renderPageWithSearch` is the unit-level equivalent of "the URL carries …" (AC-22..AC-28).
+  function renderPageWithSearch(search: string, locale: Locale = "en") {
+    navState.locale = locale;
+    navState.search = search;
+    document.documentElement.lang = locale;
+    render(React.createElement(AiBenchmarkPage));
+  }
+
+  /** Every model id rendered ANYWHERE in the capability chart (rated bars + the unrated list). */
+  function capabilityChartModelIds(): string[] {
+    const container = screen.getByTestId("capability-chart");
+    const barRows = Array.from(container.querySelectorAll('[data-testid^="capability-chart-row-"]'));
+    const unratedItems = Array.from(container.querySelectorAll('[data-testid^="capability-chart-unrated-model-"]'));
+    return [
+      ...barRows.map((el) => el.getAttribute("data-testid")!.replace("capability-chart-row-", "")),
+      ...unratedItems.map((el) => el.getAttribute("data-testid")!.replace("capability-chart-unrated-model-", "")),
+    ];
+  }
+
+  /**
+   * Every model id rendered ANYWHERE in the price chart (metered bars + the subscription list).
+   * This is a SUBSET of the filtered roster, not necessarily the whole thing — a model with no
+   * price at all (neither metered nor subscription) is never plotted or listed here (AC-16/17
+   * semantics, Phase 7), so callers assert subset containment, not exact-set equality.
+   */
+  function priceChartModelIds(): string[] {
+    const container = screen.getByTestId("price-chart");
+    const barRows = Array.from(container.querySelectorAll('[data-testid^="price-chart-row-"]'));
+    const subItems = Array.from(container.querySelectorAll('[data-testid^="price-chart-subscription-"]'));
+    return [
+      ...barRows.map((el) => el.getAttribute("data-testid")!.replace("price-chart-row-", "")),
+      ...subItems.map((el) => el.getAttribute("data-testid")!.replace("price-chart-subscription-", "")),
+    ];
+  }
+
+  /** Every model id rendered as a row in the (desktop) data table. */
+  function tableModelIds(): string[] {
+    const rows = screen
+      .getByTestId("model-table-desktop")
+      .querySelectorAll<HTMLTableRowElement>("tbody tr[data-model-id]");
+    return Array.from(rows).map((r) => r.getAttribute("data-model-id")!);
+  }
+
+  const sorted = (ids: readonly string[]): string[] => [...ids].sort();
+  const idsOf = (models: readonly Model[]): string[] => models.map((m) => m.id);
 
   // ─── AC-4 — opus band ───────────────────────────────────────────────────────
 
@@ -1129,6 +1181,213 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // the page (Y-7/Y-8).
       const chart = screen.getByRole("img", { name: t("en", "aiBenchPriceChartTitle") });
       expect(chart).not.toBeNull();
+    });
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // Phase 8 — harness and class filters (AC-18, AC-22..AC-28).
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // ─── AC-22 — no query parameters shows the whole roster ───────────────────────
+
+  Scenario("The page with no query parameters shows the whole roster", ({ Given, When, Then }) => {
+    Given("the URL carries no query parameters", () => {
+      ctx.search = "";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search ?? "");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page with no query parameters shows the whole roster
+    Then("every roster model is shown in the data table", () => {
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(dataset.models)));
+    });
+  });
+
+  // ─── AC-23 — a harness parameter narrows both charts and the table ────────────
+
+  Scenario("A harness parameter narrows both charts and the table", ({ Given, When, Then, And }) => {
+    // "cursor" genuinely narrows the live roster — at least one model (e.g. grok-build-0.1) is
+    // opencode-zen-only and is not exposed by cursor.
+    Given("the URL carries a harness parameter naming a known harness", () => {
+      ctx.search = "harness=cursor";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search!);
+    });
+
+    const expected = () => filterModels(dataset, { harness: "cursor" });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness parameter narrows both charts and the table
+    Then("only models that harness exposes are shown in the capability chart", () => {
+      expect(sorted(capabilityChartModelIds())).toEqual(sorted(idsOf(expected())));
+    });
+
+    And("only models that harness exposes are shown in the price chart", () => {
+      // The price chart may under-represent (a priceless model is never plotted or listed at all —
+      // AC-16/17), so this is a subset check, never over-representing an excluded model.
+      const allowed = new Set(idsOf(expected()));
+      for (const id of priceChartModelIds()) {
+        expect(allowed.has(id), `${id} must be in the harness-filtered set`).toBe(true);
+      }
+    });
+
+    And("only models that harness exposes are shown in the data table", () => {
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected())));
+    });
+  });
+
+  // ─── AC-24 — a class parameter narrows both charts and the table ──────────────
+
+  Scenario("A class parameter narrows both charts and the table", ({ Given, When, Then, And }) => {
+    Given("the URL carries a class parameter naming a known band", () => {
+      ctx.search = "class=opus";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search!);
+    });
+
+    const expected = () => filterModels(dataset, { class: "opus" });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A class parameter narrows both charts and the table
+    Then("only models in that band are shown in the capability chart", () => {
+      expect(sorted(capabilityChartModelIds())).toEqual(sorted(idsOf(expected())));
+    });
+
+    And("only models in that band are shown in the price chart", () => {
+      const allowed = new Set(idsOf(expected()));
+      for (const id of priceChartModelIds()) {
+        expect(allowed.has(id), `${id} must be in the "opus" band`).toBe(true);
+      }
+    });
+
+    And("only models in that band are shown in the data table", () => {
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected())));
+    });
+  });
+
+  // ─── AC-25 — harness and class parameters intersect ───────────────────────────
+
+  Scenario("Harness and class parameters intersect", ({ Given, When, Then }) => {
+    Given("the URL carries both a harness parameter and a class parameter", () => {
+      ctx.search = "harness=cursor&class=opus";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search!);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Harness and class parameters intersect
+    Then("only models satisfying both filters are shown", () => {
+      const expected = filterModels(dataset, { harness: "cursor", class: "opus" });
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected)));
+    });
+  });
+
+  // ─── AC-18 — a harness filter switches the price chart to that harness's rate ─
+
+  Scenario("A harness filter switches the price chart to that harness's rate", ({ Given, When, Then }) => {
+    Given("a fixture model priced differently by two harnesses", () => {
+      const m: Model = {
+        id: "price-harness-switch",
+        name: "price-harness-switch",
+        vendor: "Test",
+        harnesses: ["cursor", "opencode-go"],
+        figures: [],
+        pricing: {
+          cursor: { kind: "metered", input: 2, output: 6, grade: "verified", source: SRC },
+          "opencode-go": { kind: "metered", input: 5, output: 20, grade: "verified", source: SRC },
+        },
+      };
+      ctx.fixtureDataset = fixtureDataset([m]);
+    });
+
+    When("the harness filter selects the more expensive harness", () => {
+      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en", harness: "opencode-go" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
+    Then("that model's bars use that harness's rate", () => {
+      const inLabel = screen.getByTestId("price-chart-label-in-price-harness-switch");
+      expect(inLabel.textContent ?? "").toContain(formatPriceUsd(5, "en"));
+      const outLabel = screen.getByTestId("price-chart-label-out-price-harness-switch");
+      expect(outLabel.textContent ?? "").toContain(formatPriceUsd(20, "en"));
+      // Never the OTHER harness's (cheaper) rate.
+      expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(2, "en"));
+    });
+  });
+
+  // ─── AC-26 — an unrecognized filter value falls back to the unfiltered view ───
+
+  Scenario("An unrecognized filter value falls back to the unfiltered view", ({ Given, When, Then, But }) => {
+    Given("the URL carries a harness parameter with an unknown value", () => {
+      ctx.search = "harness=not-a-real-harness";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search!);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unrecognized filter value falls back to the unfiltered view
+    Then("every roster model is shown", () => {
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(dataset.models)));
+    });
+
+    But("no error is surfaced to the reader", () => {
+      // The render above completed without throwing (an error would have failed the `When` step),
+      // the page shows its normal heading, and no empty-state fallback is shown in its place.
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect((h1.textContent ?? "").length).toBeGreaterThan(0);
+      expect(screen.queryByTestId("ai-bench-empty-state")).toBeNull();
+    });
+  });
+
+  // ─── AC-28 — a filter combination matching no model renders an explicit empty state ─
+
+  Scenario("A filter combination matching no model renders an explicit empty state", ({ Given, When, Then, But }) => {
+    // opencode-go carries no opus-band model in the live roster (filter.unit.test.ts pins this).
+    Given("the URL carries a filter combination that matches no model", () => {
+      ctx.search = "harness=opencode-go&class=opus";
+    });
+
+    When("the page renders", () => {
+      renderPageWithSearch(ctx.search!);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
+    Then("an explicit empty-state message is shown", () => {
+      const empty = screen.getByTestId("ai-bench-empty-state");
+      expect((empty.textContent ?? "").length).toBeGreaterThan(0);
+    });
+
+    But("neither chart renders an empty plot area", () => {
+      expect(screen.queryByTestId("capability-chart-svg")).toBeNull();
+      expect(screen.queryByTestId("price-chart-svg")).toBeNull();
+    });
+  });
+
+  // ─── AC-27 — a reloaded filtered URL reproduces the same view ─────────────────
+
+  Scenario("A reloaded filtered URL reproduces the same view", ({ Given, When, Then }) => {
+    Given("the reader has applied a harness filter and a class filter", () => {
+      ctx.search = "harness=cursor&class=opus";
+      renderPageWithSearch(ctx.search);
+    });
+
+    When("the reader reloads the resulting URL", () => {
+      // Unit-level equivalent of a real browser reload (see the e2e binding for the real
+      // navigation-level round-trip, AC-27): tear down and re-render fresh against the SAME URL.
+      cleanup();
+      renderPageWithSearch(ctx.search!);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
+    Then("the same filtered set of models is shown", () => {
+      const expected = filterModels(dataset, { harness: "cursor", class: "opus" });
+      expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected)));
     });
   });
 });

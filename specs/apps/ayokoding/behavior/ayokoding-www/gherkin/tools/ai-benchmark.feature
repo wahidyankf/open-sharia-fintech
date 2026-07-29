@@ -224,3 +224,69 @@ Feature: AI model benchmark tool
     When the capability chart is rendered
     Then every band group carries its class name as text
     And every model row carries its class as text in the data table
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # Phase 8 — harness and class filters (AC-18, AC-22..AC-28).
+  # ══════════════════════════════════════════════════════════════════════════
+
+  # AC-22
+  @unit @e2e
+  Scenario: The page with no query parameters shows the whole roster
+    Given the URL carries no query parameters
+    When the page renders
+    Then every roster model is shown in the data table
+
+  # AC-23
+  @unit
+  Scenario: A harness parameter narrows both charts and the table
+    Given the URL carries a harness parameter naming a known harness
+    When the page renders
+    Then only models that harness exposes are shown in the capability chart
+    And only models that harness exposes are shown in the price chart
+    And only models that harness exposes are shown in the data table
+
+  # AC-24
+  @unit
+  Scenario: A class parameter narrows both charts and the table
+    Given the URL carries a class parameter naming a known band
+    When the page renders
+    Then only models in that band are shown in the capability chart
+    And only models in that band are shown in the price chart
+    And only models in that band are shown in the data table
+
+  # AC-25
+  @unit
+  Scenario: Harness and class parameters intersect
+    Given the URL carries both a harness parameter and a class parameter
+    When the page renders
+    Then only models satisfying both filters are shown
+
+  # AC-18
+  @unit @e2e
+  Scenario: A harness filter switches the price chart to that harness's rate
+    Given a fixture model priced differently by two harnesses
+    When the harness filter selects the more expensive harness
+    Then that model's bars use that harness's rate
+
+  # AC-26
+  @unit
+  Scenario: An unrecognized filter value falls back to the unfiltered view
+    Given the URL carries a harness parameter with an unknown value
+    When the page renders
+    Then every roster model is shown
+    But no error is surfaced to the reader
+
+  # AC-28
+  @unit
+  Scenario: A filter combination matching no model renders an explicit empty state
+    Given the URL carries a filter combination that matches no model
+    When the page renders
+    Then an explicit empty-state message is shown
+    But neither chart renders an empty plot area
+
+  # AC-27
+  @unit @e2e
+  Scenario: A reloaded filtered URL reproduces the same view
+    Given the reader has applied a harness filter and a class filter
+    When the reader reloads the resulting URL
+    Then the same filtered set of models is shown

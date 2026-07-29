@@ -90,6 +90,17 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchPriceLowestSubtitle: "Showing the lowest available rate across harnesses for each model",
     aiBenchPriceSubscriptionHeading: "Subscription-only models",
 
+    // AI benchmark — harness/class filters (Phase 8).
+    aiBenchFilterSummary: "Filters",
+    aiBenchFilterHarnessLabel: "Harness",
+    aiBenchFilterClassLabel: "Class",
+    aiBenchFilterAllHarnesses: "All harnesses",
+    aiBenchFilterAllClasses: "All classes",
+    aiBenchFilterResultCountLabel: "Models shown",
+    aiBenchFilterActiveCountLabel: "active",
+    aiBenchEmptyStateTitle: "No models match these filters",
+    aiBenchEmptyStateMessage: "Try a different harness or class filter.",
+
     // Calculator — page
     calcTitle: "Cost of Living Calculator",
     calcSubtitle: "Compare cost of living and salary savings across cities",
@@ -421,6 +432,17 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchPriceChartTitle: "Harga per model",
     aiBenchPriceLowestSubtitle: "Menampilkan tarif harness terendah yang tersedia untuk setiap model",
     aiBenchPriceSubscriptionHeading: "Model khusus langganan",
+
+    // AI benchmark — filter harness/kelas (Fase 8).
+    aiBenchFilterSummary: "Filter",
+    aiBenchFilterHarnessLabel: "Harness",
+    aiBenchFilterClassLabel: "Kelas",
+    aiBenchFilterAllHarnesses: "Semua harness",
+    aiBenchFilterAllClasses: "Semua kelas",
+    aiBenchFilterResultCountLabel: "Model ditampilkan",
+    aiBenchFilterActiveCountLabel: "aktif",
+    aiBenchEmptyStateTitle: "Tidak ada model yang cocok dengan filter ini",
+    aiBenchEmptyStateMessage: "Coba filter harness atau kelas yang berbeda.",
 
     // Calculator — page
     calcTitle: "Kalkulator Biaya Hidup",
