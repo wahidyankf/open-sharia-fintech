@@ -44,9 +44,13 @@ escape line: `No generalizable learnings — <one-line reason>`.
   configured `webServer.command` (and its env vars) was skipped. Worth a repo-wide check that CI
   always sets `reuseExistingServer: false` (or that CI runners never have a stray process on the
   port) — a local dev habit of leaving `next dev` running can silently invalidate local e2e runs.
-- **Terminal state**: not yet triaged — candidate for `plans/backlog/` if a repo-wide audit of
-  `reuseExistingServer` usage across e2e projects is warranted; noted here per Phase 11's own
-  routing step.
+- **Terminal state**: filed as
+  [`plans/backlog/audit-e2e-reuse-existing-server-config/`](../../backlog/audit-e2e-reuse-existing-server-config/README.md) —
+  a repo-wide grep confirmed six `*-e2e` Playwright configs hardcode `reuseExistingServer: true`
+  unconditionally (not gated on `!process.env.CI`), while `organiclever-app-web-e2e` already gates
+  it correctly. Code/tooling-homed (spans multiple `apps/*-e2e` configs), so filed as a separate
+  backlog plan per the code-homed-learnings-are-never-landed-inline rule rather than fixed inline
+  here.
 
 ## Learning: cmdk's `CommandItem value` re-filters already server-filtered results
 
@@ -67,8 +71,8 @@ escape line: `No generalizable learnings — <one-line reason>`.
   the client filter doesn't see.
 - **Terminal state**: routed inline — fixed directly in
   `apps/ayokoding-www/src/features/search/shell/search-dialog.tsx` this session (`value` now
-  includes the title). No further backlog needed; noting here as the generalizable pattern per
-  Phase 11's routing step.
+  includes the title). Confirmed terminal at Phase 11: no further backlog needed, the fix is already
+  merged to `main`.
 
 ## Learning: Tailwind v4's `@theme {}` compiler silently drops some custom-property declarations from its compiled `:root`
 
@@ -97,7 +101,61 @@ escape line: `No generalizable learnings — <one-line reason>`.
   and the `swe-developing-frontend-ui` skill's own `reference/design-tokens.md` currently state
   uncaveated that "bare variables belong in `:root`/`.dark`, Tailwind aliases belong in `@theme`" —
   neither currently warns that `@theme` can silently drop a declaration.
-- **Terminal state**: recorded here per this session's own routing step; whether this generalizes
-  into a caveat on the two `design-tokens.md` surfaces above (and whether the drop condition can be
-  further isolated — e.g. via a minimal Tailwind v4 reproduction) is Phase 11's triage call, not this
-  PR's — Phase 11 has not yet run at the time this entry was written.
+- **Terminal state**: routed inline — non-code doc home, landed as a small caveat callout on both
+  [`repo-governance/development/frontend/design-tokens.md`](../../../repo-governance/development/frontend/design-tokens.md)
+  (after the "Naming Convention" section) and the `swe-developing-frontend-ui` skill's
+  [`reference/design-tokens.md`](../../../.claude/skills/swe-developing-frontend-ui/reference/design-tokens.md)
+  (end of "Token Format Differences") during Phase 11. Both now warn that a new `@theme` custom
+  property should be verified via `getComputedStyle` on a live page before being trusted. Further
+  isolating the exact drop condition is out of scope for this plan — noted as a caveat, not solved.
+
+## Learning: a test file placed outside every `vitest.config.ts` project glob silently never runs
+
+- **Context**: PR #122 cycle-3 review of this plan. The EWT-003 regression test
+  (`benchmark-content.test.tsx`) was added under
+  `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/`, a directory that matched neither of
+  `vitest.config.ts`'s two test-project globs (`unit`'s `test/unit/be-steps/**/*.steps.ts` +
+  `**/*.unit.{test,spec}.{ts,tsx}`, nor `unit-fe`'s original
+  `test/unit/fe-steps/**/*.steps.{ts,tsx}` + `src/features/**/*.test.{ts,tsx}`).
+- **Observation**: `pr-review-integrity-maker` proved this empirically by reverting the actual
+  EWT-003 code fix and re-running the full suite — it still passed 144/144 test files with the bug
+  fully reintroduced, because the regression test meant to catch it matched no configured project
+  glob and therefore never executed (silent zero-execution, not a failure — `passWithNoTests: true`
+  compounds the silence). The fix (already merged in PR #122, commit `d44d316c6`'s companion
+  changes) widened `unit-fe`'s `include` to also cover `src/app/**/*.test.{ts,tsx}`, with a
+  same-config comment recording why renaming the file to `*.unit.test.tsx` instead would be wrong
+  (it would route to the `unit` project's Node environment, which lacks `@testing-library/react`'s
+  jsdom setup) and why the pre-existing `**/*.unit.test.{ts,tsx}` exclusion in `unit-fe` was
+  re-verified not to double-run any `.unit.test.ts` file.
+- **Why it might generalize**: this is a config/glob-path-mismatch defect class distinct from a
+  test's own logical correctness — a test can be well-written and 100% correct in its assertions and
+  still provide zero protection if it lives outside every configured test-project's `include` glob.
+  Nothing short of an explicit glob-coverage check catches this automatically; it can recur anywhere
+  in the repo a new test file is added under a new directory shape without checking it matches an
+  existing vitest/jest/other test-runner's globs.
+- **Terminal state**: filed as
+  [`plans/backlog/vitest-glob-coverage-guard/`](../../backlog/vitest-glob-coverage-guard/README.md) —
+  the immediate `ayokoding-www` glob fix already landed in PR #122, but the durable guard (an
+  automated check that a new test file matches at least one configured project's glob) is
+  code/tooling-homed and repo-wide in potential scope, so it is filed as a separate backlog plan per
+  the code-homed-learnings-are-never-landed-inline rule rather than built inline here.
+
+## Considered-and-already-handled: three anticipated method learnings
+
+Per Phase 11's checklist, the three method learnings this plan was most likely to surface were
+specifically checked against `tech-docs.md` and `delivery.md`:
+
+- **DD-5a normalization** (coverage renormalization plus identity normalization systematically
+  rewards narrow reporting) — already an anticipated, documented design decision from Phase 3-4, see
+  `tech-docs.md` §"DD-5 + DD-5a — The composite index" (line 240 onward). Not a new surprise
+  surfaced during execution; no fresh Phase 11 routing needed.
+- **DD-20a anchor-subset degeneracy** — likewise already documented as an amendment in `tech-docs.md`
+  §"DD-20a — Anchor comparison (amends DD-20)" (line 302 onward), baked into the design from Phase
+  3-4. No fresh routing needed.
+- **Marker-first idempotence guard** — already implemented in
+  `apps/ayokoding-www/src/scripts/generate-benchmark-reference.ts` (see its "Marker-first guard:
+  throws if any BEGIN has no matching END" comment and the BEGIN/END marker-pair scanner). Built into
+  the generator from the start, not a learning that surfaced mid-execution requiring new routing.
+
+All three were considered per the checklist's explicit instruction and found to be already-handled
+by design — not new generalizable learnings needing Phase 11 routing action.

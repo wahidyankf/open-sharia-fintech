@@ -3901,10 +3901,30 @@ apps/ayokoding-www/src/features/app-shell/shell/footer.tsx` returns 2 hits (one 
   - **Notes**: `npx nx affected -t typecheck lint test:quick specs:behavior:coverage --base=origin/main
 --parallel=3` → `Successfully ran targets typecheck, lint, test:quick, specs:behavior:coverage
 for 27 projects and 6 tasks they depend on` (70/114 tasks served from cache, rest ran fresh).
-- [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
+- [x] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-9-10-verify-reveal-retest` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-9-10-verify-reveal-retest/`
-- [ ] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: PR #122 opened as draft, ran 3 sequential CI-gated PR-Review Maker→Fixer cycles;
+    cycle-1 fixes in `bf06c5592`/`5c152615b`, cycle-2 fixes in `d44d316c6` (DWT-001 tautological
+    assertion fix, delivery.md/prd.md doc-drift corrections). Cycle 3 completed clean. Merged via
+    squash — `gh pr view 122 --json state,mergedAt,mergeCommit --repo wahidyankf/ose-public` →
+    `state: MERGED`, `mergedAt: 2026-07-29T22:08:09Z`, merge commit
+    `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`. `git rev-parse main origin/main` (immediately after
+    the merge) both printed `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d` (identical; `main` has since
+    advanced further with unrelated concurrent `ayokoding-learning-path-04` work, expected under the
+    same-machine assumption). Worktree removed at merge time:
+    `git worktree list | grep -c ayokoding-www-tools-ai-benchmark-phase-9-10-verify-reveal-retest` →
+    `0`.
+- [x] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: all 3 post-merge GitHub Actions workflow runs on `main` for merge commit
+    `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d` concluded `success`: `validate-env` (run
+    `30495026484`), `publish-images` (run `30495026486`), `pr-quality-gate` (run `30495026765`) —
+    confirmed via `gh run list --commit b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d --json
+databaseId,name,status,conclusion`.
 
 > **Pause Safety**: the page is public, linked from both navigation surfaces, verified across every
 > locale and breakpoint, and clean under all three live-site testers. Safe to stop. To resume:
@@ -3919,45 +3939,111 @@ for 27 projects and 6 tasks they depend on` (70/114 tasks served from cache, res
 >
 > Non-boundary phase — commits to the Phase 11-12 branch and opens no PR of its own.
 
-- [ ] [AI] Provision the Phase 11-12 unit's worktree from the latest `origin/main` — this is the
+- [x] [AI] Provision the Phase 11-12 unit's worktree from the latest `origin/main` — this is the
       unit's first phase, before its boundary at Phase 12:
       `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-11-12-capture-archival origin/main`
       — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-11-12-capture-archival
 rev-parse --show-toplevel` prints the worktree path
-- [ ] [AI] Apply the litmus test to every `<PLAN>learnings.md` entry — keep only if a durable surface
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-11-12-capture-archival
+origin/main -b ayokoding-www-tools-ai-benchmark/phase-11-12-capture-archival` → created at
+    `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d` (origin/main HEAD at provisioning time).
+    `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-11-12-capture-archival rev-parse
+--show-toplevel` → prints the worktree path.
+- [x] [AI] Apply the litmus test to every `<PLAN>learnings.md` entry — keep only if a durable surface
       would catch this automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: all 4 entries (the 3 pre-existing plus the `vitest.config.ts` glob-coverage learning
+    added this phase) pass the litmus test — each names a durable surface (a backlog plan, an
+    inline doc caveat, or an already-shipped code fix) that would catch the same issue automatically
+    next time. None discarded outright; all 4 have a route.
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `<PLAN>learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: re-verified all 4 entries — no secret, credential, token, or hostname of any kind
+    appears (port numbers 3101/3200 and public URLs are not secrets); `grep -niE
+"password|api[_-]?key|secret|token|-----BEGIN"
+    plans/in-progress/ayokoding-www-tools-ai-benchmark/learnings.md` → no match.
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content
       (Terraform, k3s, Proxmox, real hostnames or inventories) stays in `ose-private` only and is NEVER
       cross-routed into `ose-public`/`ose-primer`; public-governance content may propagate via the
       existing parity loop — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: all 4 entries are `ayokoding-www` app-level content (Playwright config, cmdk search,
+    Tailwind design tokens, Vitest config) — none references Terraform, k3s, Proxmox, or any
+    `ose-private` infrastructure. N/A confirmed, no cross-routing violation possible.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large);
       code homes (`apps/`, `libs/`, tests) are **ALWAYS** filed as a separate `plans/backlog/<slug>/`
       plan and **NEVER** landed inline
       — acceptance: every `<PLAN>learnings.md` entry records its terminal routing state
-- [ ] [AI] Specifically consider routing the three method learnings this plan is most likely to
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: (1) `reuseExistingServer` → code-homed, filed as
+    `plans/backlog/audit-e2e-reuse-existing-server-config/`. (2) cmdk `value` → already routed
+    inline in `search-dialog.tsx`, terminal state confirmed, no new action. (3) Tailwind `@theme`
+    drop → non-code doc home, landed inline as a caveat on both
+    `repo-governance/development/frontend/design-tokens.md` and the `swe-developing-frontend-ui`
+    skill's `reference/design-tokens.md`. (4) `vitest.config.ts` glob-mismatch → code/tooling-homed,
+    filed as `plans/backlog/vitest-glob-coverage-guard/`. All 4 entries in `learnings.md` now record
+    their terminal state.
+- [x] [AI] Specifically consider routing the three method learnings this plan is most likely to
       surface, if they held during execution: the DD-5a normalization defect (coverage
       renormalization plus identity normalization systematically rewards narrow reporting), the
       DD-20a anchor-subset degeneracy, and the marker-first idempotence guard in `<GEN>`
       — acceptance: each is either routed with a named home or discarded with a reason
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `<PLAN>learnings.md`:
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: all 3 were already anticipated, documented design decisions from Phase 3-4, not new
+    surprises requiring fresh routing — DD-5a and DD-20a documented in `tech-docs.md` (lines 240 and
+    302 respectively), marker-first guard already implemented in
+    `apps/ayokoding-www/src/scripts/generate-benchmark-reference.ts` (its BEGIN/END marker-pair
+    scanner throws if any BEGIN lacks a matching END). Recorded in `learnings.md`'s
+    "Considered-and-already-handled" section as already-handled-by-design, not new learnings.
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `<PLAN>learnings.md`:
       `No generalizable learnings — <one-line reason>` — acceptance: `learnings.md` is never silently
       empty
+  - **Date**: 2026-07-30
+  - **Status**: done — **not applicable**, escape not needed
+  - **Notes**: this plan DID surface 4 generalizable learnings, all triaged to a terminal state above;
+    `learnings.md` is not empty and the "none" escape line does not apply. Recording the exemption
+    here per the acceptance clause's own instruction not to leave the check silently absent.
 
 ### Phase 11 Gate
 
 > All checks below must pass before Plan Archival. **Non-boundary** — commit to the unit branch and
 > open no PR.
 
-- [ ] [AI] Every `<PLAN>learnings.md` entry is in a terminal state (routed inline, filed as backlog,
+- [x] [AI] Every `<PLAN>learnings.md` entry is in a terminal state (routed inline, filed as backlog,
       or discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits or PR
-- [ ] [AI] Commit per the [Commit Guidelines](#commit-guidelines) to
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: all 4 entries carry a "Terminal state" line — 2 filed as `plans/backlog/` plans
+    (`audit-e2e-reuse-existing-server-config`, `vitest-glob-coverage-guard`), 2 routed inline
+    (cmdk `value` fix already merged; Tailwind `@theme` caveat added to both `design-tokens.md`
+    surfaces this phase).
+- [x] [AI] No code-homed learning landed inline in this plan's own commits or PR
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: the two code-homed learnings (`reuseExistingServer` config audit,
+    `vitest.config.ts` glob-coverage guard) were both filed as separate `plans/backlog/<slug>/`
+    plans, never landed inline in this plan's own commits — verified by `git status --short`
+    showing no `apps/*-e2e/playwright.config.ts` or `vitest.config.ts` changes staged in this
+    unit's own diff (the `unit-fe` glob widening was already merged in PR #122, prior to this
+    unit).
+- [x] [AI] Commit per the [Commit Guidelines](#commit-guidelines) to
       `ayokoding-www-tools-ai-benchmark/phase-11-12-capture-archival` — no push, no PR yet
+  - **Date**: 2026-07-30
+  - **Status**: done
+  - **Notes**: committed as `docs(ayokoding-www-tools-ai-benchmark): triage Knowledge Capture
+    learnings for Phase 11` — see commit hash recorded in the worktree's local git log; not pushed,
+    no PR opened yet per this phase's non-boundary rule.
 
 > **Pause Safety**: `learnings.md` is fully triaged (or explicitly recorded as empty); no future
 > process depends on querying it later. Safe to stop. To resume: re-read `<PLAN>learnings.md` and
