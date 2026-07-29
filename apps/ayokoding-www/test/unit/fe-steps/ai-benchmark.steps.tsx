@@ -21,7 +21,11 @@ vi.mock("next/navigation", () => ({
 import "./helpers/test-setup";
 import AiBenchmarkPage from "@/app/[locale]/tools/ai-benchmark/page";
 import { OPERATORS } from "@/features/ai-benchmark/core/data/operators";
-import { BENCHMARK_COLUMNS, HARNESS_DISPLAY_NAMES } from "@/features/ai-benchmark/core/data/benchmarks";
+import {
+  BAND_LABEL_KEYS,
+  BENCHMARK_COLUMNS,
+  HARNESS_DISPLAY_NAMES,
+} from "@/features/ai-benchmark/core/data/benchmarks";
 import {
   BENCHMARK_WEIGHTS,
   OPUS_ANCHOR_ID,
@@ -33,7 +37,13 @@ import {
   type Figure,
   type Model,
 } from "@/features/ai-benchmark/core/data/models";
-import { computeIndex, computeRosterMaxes, coverage } from "@/features/ai-benchmark/core/score";
+import {
+  COMPOSITE_INDEX_MAX,
+  LOW_COVERAGE_THRESHOLD,
+  computeIndex,
+  computeRosterMaxes,
+  coverage,
+} from "@/features/ai-benchmark/core/score";
 import {
   anchors,
   assignBand,
@@ -44,6 +54,8 @@ import {
   type IndexMap,
 } from "@/features/ai-benchmark/core/bands";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
+import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
+import { formatCoverage, formatIndex } from "@/features/ai-benchmark/shell/format";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 
@@ -832,6 +844,179 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // Every aiBench* key resolves to localized copy via t(); a missing key renders as its raw
       // identifier (which always starts with "aiBench"), so any leak surfaces as the substring.
       expect(text).not.toMatch(/aiBench/);
+    });
+  });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // Phase 6 — shared chart primitives and the capability chart (AC-12/13/14/36/37).
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // The three RATED bands, in the same canonical order `computeGroups` produces them.
+  const RATED_BAND_KEYS = ["opus", "sonnet", "light"] as const;
+
+  // ─── AC-13 — bar length proportional to the composite index ────────────────────
+
+  Scenario("Bar length is proportional to the composite index", ({ Given, When, Then, And }) => {
+    Given("two fixture models whose composite indices differ", () => {
+      const low = fixtureModel("cap-low", [fig("swe-bench-verified", 40)]);
+      const high = fixtureModel("cap-high", [
+        fig("swe-bench-verified", 80),
+        fig("swe-bench-pro", 80),
+        fig("terminal-bench-2-1", 80),
+        fig("gpqa-diamond", 80),
+      ]);
+      ctx.fixtureDataset = fixtureDataset([low, high]);
+    });
+
+    When("the capability chart is rendered", () => {
+      render(React.createElement(CapabilityChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Bar length is proportional to the composite index
+    Then("the ratio of their bar lengths equals the ratio of their composite indices", () => {
+      const groups = computeGroups(ctx.fixtureDataset!);
+      const all = [...groups.opus, ...groups.sonnet, ...groups.light];
+      const lowScore = all.find((s) => s.model.id === "cap-low");
+      const highScore = all.find((s) => s.model.id === "cap-high");
+      expect(lowScore?.index).toBeDefined();
+      expect(highScore?.index).toBeDefined();
+
+      const lowBar = screen.getByTestId("capability-chart-bar-cap-low");
+      const highBar = screen.getByTestId("capability-chart-bar-cap-high");
+      const lowWidth = Number(lowBar.getAttribute("width"));
+      const highWidth = Number(highBar.getAttribute("width"));
+
+      const expectedRatio = (lowScore!.index ?? 0) / (highScore!.index ?? 1);
+      const actualRatio = lowWidth / highWidth;
+      expect(actualRatio).toBeCloseTo(expectedRatio, 5);
+    });
+
+    And("the chart states its axis maximum", () => {
+      const axisMax = screen.getByTestId("chart-axis-max");
+      expect(axisMax.textContent ?? "").toContain(formatIndex(COMPOSITE_INDEX_MAX, "en"));
+    });
+  });
+
+  // ─── AC-14 — every bar carries its model name and index in text ────────────────
+
+  Scenario("Every capability bar carries its model name and index in text", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the capability chart is rendered", () => {
+      render(React.createElement(CapabilityChart, { dataset, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every capability bar carries its model name and index in text
+    Then("every bar has a text label carrying the model name", () => {
+      const groups = computeGroups(dataset);
+      for (const key of RATED_BAND_KEYS) {
+        for (const s of groups[key]) {
+          const label = screen.getByTestId(`capability-chart-label-mobile-${s.model.id}`);
+          expect(label.textContent ?? "").toContain(s.model.name);
+        }
+      }
+    });
+
+    And("every bar has a text label carrying its numeric composite index", () => {
+      const groups = computeGroups(dataset);
+      for (const key of RATED_BAND_KEYS) {
+        for (const s of groups[key]) {
+          const label = screen.getByTestId(`capability-chart-label-mobile-${s.model.id}`);
+          expect(label.textContent ?? "").toContain(formatIndex(s.index ?? 0, "en"));
+        }
+      }
+    });
+  });
+
+  // ─── AC-12 — a low-coverage model is marked as low coverage ────────────────────
+
+  Scenario("A low-coverage model is marked as low coverage", ({ Given, When, Then, And }) => {
+    Given("a fixture model whose coverage ratio is below the low-coverage threshold", () => {
+      // swe-bench-verified alone carries weight 25 → coverage 0.25, below the 0.5 threshold.
+      const lowCoverage = fixtureModel("cap-low-coverage", [fig("swe-bench-verified", 50)]);
+      ctx.fixtureDataset = fixtureDataset([lowCoverage]);
+      const [score] = computeGroups(ctx.fixtureDataset).light;
+      expect(score?.coverage).toBeLessThan(LOW_COVERAGE_THRESHOLD);
+    });
+
+    When("the capability chart is rendered", () => {
+      render(React.createElement(CapabilityChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A low-coverage model is marked as low coverage
+    Then("that model's row carries a low-coverage marker", () => {
+      expect(screen.getByTestId("capability-chart-low-coverage-cap-low-coverage")).not.toBeNull();
+    });
+
+    And("the marker states the model's coverage ratio in text", () => {
+      const marker = screen.getByTestId("capability-chart-low-coverage-cap-low-coverage");
+      const [score] = computeGroups(ctx.fixtureDataset!).light;
+      expect(marker.textContent ?? "").toContain(formatCoverage(score!.coverage, "en"));
+    });
+  });
+
+  // ─── AC-37 — capability class is carried textually, not by colour alone ────────
+
+  Scenario("The capability class is carried textually, not by colour alone", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the capability chart is rendered", () => {
+      render(React.createElement(CapabilityChart, { dataset, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The capability class is carried textually, not by colour alone
+    Then("every band group carries its class name as text", () => {
+      for (const band of RATED_BAND_KEYS) {
+        const header = screen.getByTestId(`capability-chart-band-${band}-label`);
+        const key = BAND_LABEL_KEYS[band];
+        expect(header.textContent).toBe(key ? t("en", key) : band);
+      }
+    });
+
+    And("every model row carries its class as text in the data table", () => {
+      cleanup();
+      render(React.createElement(ModelTable, { dataset, locale: "en" }));
+      const groups = computeGroups(dataset);
+      for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+        for (const s of list) {
+          const row = document.querySelector(`tbody tr[data-model-id="${s.model.id}"]`);
+          expect(row, `row for ${s.model.id}`).not.toBeNull();
+          const key = BAND_LABEL_KEYS[s.band];
+          expect(row!.textContent ?? "").toContain(key ? t("en", key) : s.band);
+        }
+      }
+    });
+  });
+
+  // ─── AC-36 (capability half) — the capability chart exposes an accessible name ─
+
+  Scenario("Each chart exposes an accessible name", ({ Given, When, Then, And }) => {
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the page renders", () => {
+      renderPageForLocale("en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Each chart exposes an accessible name
+    Then("the capability chart exposes an accessible name", () => {
+      const chart = screen.getByRole("img", { name: t("en", "aiBenchCapabilityChartTitle") });
+      expect(chart).not.toBeNull();
+    });
+
+    And("the price chart exposes an accessible name", () => {
+      // Phase 6 only wires the capability chart onto the page — the price chart does not exist
+      // until Phase 7 (`price-chart.tsx` is created at Y-2). There is nothing on the page yet that
+      // COULD carry an inaccessible name, so this half is vacuously satisfied here: the assertion
+      // is that no price-chart node exists at all. Phase 7's Y-7 REPLACES this step body with a
+      // real accessible-name assertion once the price chart is wired onto the page (still red at
+      // Y-7, since the price SVG has no `role="img"`/`<title>` yet); Y-8 makes it pass for real.
+      expect(screen.queryByTestId("price-chart-svg")).toBeNull();
     });
   });
 });

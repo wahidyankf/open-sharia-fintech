@@ -83,6 +83,10 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsGpqa: "The GPQA benchmark repository is MIT-licensed.",
     aiBenchOpTermsNone: "No republication terms stated by the operator.",
 
+    // AI benchmark — charts (Phase 6/7).
+    aiBenchCapabilityChartTitle: "Capability index by model",
+    aiBenchChartAxisMaxLabel: "Axis maximum",
+
     // Calculator — page
     calcTitle: "Cost of Living Calculator",
     calcSubtitle: "Compare cost of living and salary savings across cities",
@@ -407,6 +411,10 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsTerminalbench: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
     aiBenchOpTermsGpqa: "Repositori tolok ukur GPQA berlisensi MIT.",
     aiBenchOpTermsNone: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
+
+    // AI benchmark — bagan (Fase 6/7).
+    aiBenchCapabilityChartTitle: "Indeks kemampuan per model",
+    aiBenchChartAxisMaxLabel: "Nilai maksimum sumbu",
 
     // Calculator — page
     calcTitle: "Kalkulator Biaya Hidup",

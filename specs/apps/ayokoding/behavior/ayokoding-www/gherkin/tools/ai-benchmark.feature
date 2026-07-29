@@ -160,3 +160,43 @@ Feature: AI model benchmark tool
       | locale |
       | en     |
       | id     |
+
+  # AC-12
+  @unit
+  Scenario: A low-coverage model is marked as low coverage
+    Given a fixture model whose coverage ratio is below the low-coverage threshold
+    When the capability chart is rendered
+    Then that model's row carries a low-coverage marker
+    And the marker states the model's coverage ratio in text
+
+  # AC-13
+  @unit
+  Scenario: Bar length is proportional to the composite index
+    Given two fixture models whose composite indices differ
+    When the capability chart is rendered
+    Then the ratio of their bar lengths equals the ratio of their composite indices
+    And the chart states its axis maximum
+
+  # AC-14
+  @unit
+  Scenario: Every capability bar carries its model name and index in text
+    Given the full roster is loaded
+    When the capability chart is rendered
+    Then every bar has a text label carrying the model name
+    And every bar has a text label carrying its numeric composite index
+
+  # AC-36
+  @unit @e2e
+  Scenario: Each chart exposes an accessible name
+    Given the full roster is loaded
+    When the page renders
+    Then the capability chart exposes an accessible name
+    And the price chart exposes an accessible name
+
+  # AC-37
+  @unit
+  Scenario: The capability class is carried textually, not by colour alone
+    Given the full roster is loaded
+    When the capability chart is rendered
+    Then every band group carries its class name as text
+    And every model row carries its class as text in the data table

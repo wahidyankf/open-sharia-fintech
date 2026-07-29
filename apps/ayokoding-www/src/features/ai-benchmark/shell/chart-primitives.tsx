@@ -1,0 +1,197 @@
+// AI BENCHMARK — shared chart primitives (Phase 6, A-2; refactored A-17; reused by Phase 7).
+//
+// The capability chart and the price chart share ONE set of SVG building blocks so neither chart
+// re-derives its own scale, axis, bar, band-header, or legend rendering (Y-11 proves this by
+// hoisting anything the two charts still duplicate back here). Every colour reference resolves
+// through the `--chart-band-*` design tokens declared in `<TOKENS>` (Phase 1) — no component in
+// this file (or any file that imports it) may name a hue directly (A-17).
+//
+// FCIS boundary: this module holds NO literal benchmark score, price, model name, or class
+// threshold — `ChartBand` is a closed four-value union (the same one `core/bands.ts` produces),
+// and every numeric value a caller passes in comes from the dataset via `core/`.
+
+import type { ReactNode } from "react";
+
+/** The four capability classes a bar or band header can be coloured by (mirrors `core/bands.ts`'s `Band`). */
+export type ChartBand = "opus" | "sonnet" | "light" | "unrated";
+
+/**
+ * The single place a `ChartBand` resolves to its `--chart-band-*` CSS custom property name
+ * (A-17 refactor target: every colour-bearing primitive below reads through this map, so a band's
+ * colour can never drift between the bar fill, the band-header text, and the legend swatch).
+ */
+const BAND_TOKEN: Record<ChartBand, string> = {
+  opus: "--chart-band-opus",
+  sonnet: "--chart-band-sonnet",
+  light: "--chart-band-light",
+  unrated: "--chart-band-unrated",
+};
+
+/** The `--chart-band-*` CSS custom property that colours a given capability band. */
+export function bandColorVar(band: ChartBand): string {
+  return BAND_TOKEN[band];
+}
+
+// Tailwind's class scanner reads literal, unbroken strings out of the source text — a template
+// literal built from `bandColorVar()` at render time would never be found by the scanner and the
+// utility would silently fail to generate. These maps hold one COMPLETE static class string per
+// band so every band's colour is still Tailwind-generated, never an inline `style` object.
+const BAR_FILL_CLASS: Record<ChartBand, string> = {
+  opus: "fill-[var(--chart-band-opus)]",
+  sonnet: "fill-[var(--chart-band-sonnet)]",
+  light: "fill-[var(--chart-band-light)]",
+  unrated: "fill-[var(--chart-band-unrated)]",
+};
+
+const BAND_INK_FILL_CLASS: Record<ChartBand, string> = {
+  opus: "fill-[var(--chart-band-opus-ink)]",
+  sonnet: "fill-[var(--chart-band-sonnet-ink)]",
+  light: "fill-[var(--chart-band-light-ink)]",
+  unrated: "fill-[var(--chart-band-unrated-ink)]",
+};
+
+const BAND_SWATCH_CLASS: Record<ChartBand, string> = {
+  opus: "bg-[var(--chart-band-opus)]",
+  sonnet: "bg-[var(--chart-band-sonnet)]",
+  light: "bg-[var(--chart-band-light)]",
+  unrated: "bg-[var(--chart-band-unrated)]",
+};
+
+/** The Tailwind class that fills an SVG shape with a band's colour token. */
+export function barFillClass(band: ChartBand): string {
+  return BAR_FILL_CLASS[band];
+}
+
+/** The Tailwind class that colours SVG text with a band's "ink" (on-wash-background) token. */
+export function bandInkFillClass(band: ChartBand): string {
+  return BAND_INK_FILL_CLASS[band];
+}
+
+/** The Tailwind class that colours a small swatch (e.g. a legend dot) with a band's colour token. */
+export function bandSwatchClass(band: ChartBand): string {
+  return BAND_SWATCH_CLASS[band];
+}
+
+/**
+ * Maps a value on `[0, domainMax]` to a pixel offset on `[0, pixelWidth]` — the one place either
+ * chart converts a domain value (a composite index, a price) into a bar length. Monotonic: a
+ * larger domain value always yields an offset ≥ a smaller one's. A non-positive `domainMax`
+ * degenerates to always-zero rather than dividing by zero or producing `NaN`.
+ */
+export function scaleLinear(domainMax: number, pixelWidth: number): (value: number) => number {
+  if (!(domainMax > 0)) {
+    return () => 0;
+  }
+  return (value: number) => (value / domainMax) * pixelWidth;
+}
+
+export type AxisProps = {
+  /** The domain maximum this axis represents — always rendered as text (AC-13). */
+  max: number;
+  /** Right edge of the plot area, in pixels — the axis-maximum label right-aligns to this. */
+  width: number;
+  /** A localized label placed before the number (e.g. "Axis maximum"). */
+  label: string;
+  /** The already-localized, formatted number to render (the caller owns number formatting). */
+  formattedMax: string;
+  y?: number;
+};
+
+/**
+ * Renders the axis maximum as text — always visible, regardless of viewport — so the chart states
+ * its scale in a form a screen reader or a search-in-page can find (AC-13).
+ */
+export function Axis({ width, label, formattedMax, y = 0 }: AxisProps) {
+  return (
+    <text
+      data-slot="chart-axis-max"
+      data-testid="chart-axis-max"
+      x={width}
+      y={y}
+      textAnchor="end"
+      className="fill-muted-foreground text-[10px]"
+    >
+      {label}: {formattedMax}
+    </text>
+  );
+}
+
+export type BarProps = {
+  x: number;
+  y: number;
+  /** Bar length in pixels — already scaled by the caller via {@link scaleLinear}. */
+  width: number;
+  height: number;
+  band: ChartBand;
+  testId?: string;
+};
+
+/** A single bar rect, filled from the shared band token — the only place a `<rect>` is emitted. */
+export function Bar({ x, y, width, height, band, testId }: BarProps) {
+  return (
+    <rect
+      data-slot="chart-bar"
+      data-testid={testId}
+      x={x}
+      y={y}
+      width={Math.max(width, 0)}
+      height={height}
+      rx={2}
+      className={barFillClass(band)}
+    />
+  );
+}
+
+export type BandGroupProps = {
+  band: ChartBand;
+  /** The band's localized class name — rendered as text so class is never colour-only (AC-37). */
+  label: string;
+  x?: number;
+  y: number;
+  testId?: string;
+  children?: ReactNode;
+};
+
+/** One capability/price band section: a text header naming the band, then its children (bars). */
+export function BandGroup({ band, label, x = 0, y, testId, children }: BandGroupProps) {
+  return (
+    <g data-slot="chart-band-group" data-band={band} data-testid={testId}>
+      <text
+        data-slot="chart-band-group-label"
+        data-testid={testId ? `${testId}-label` : undefined}
+        x={x}
+        y={y}
+        className={`text-xs font-semibold ${bandInkFillClass(band)}`}
+      >
+        {label}
+      </text>
+      {children}
+    </g>
+  );
+}
+
+export type LegendItem = {
+  band: ChartBand;
+  label: string;
+};
+
+export type LegendProps = {
+  items: readonly LegendItem[];
+};
+
+/**
+ * A compact swatch + text legend shared by both charts. The swatch is `aria-hidden` decoration —
+ * the label text beside it is what actually carries the band's identity (never colour alone).
+ */
+export function Legend({ items }: LegendProps) {
+  return (
+    <ul data-slot="chart-legend" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+      {items.map((item) => (
+        <li key={item.band} data-slot="chart-legend-item" className="flex items-center gap-1.5">
+          <span aria-hidden="true" className={`inline-block h-2.5 w-2.5 rounded-full ${bandSwatchClass(item.band)}`} />
+          <span data-slot="chart-legend-label">{item.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}

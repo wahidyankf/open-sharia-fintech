@@ -32,6 +32,15 @@ export type RosterMaxes = Record<BenchmarkId, number | undefined>;
 export const LOW_COVERAGE_THRESHOLD = 0.5;
 
 /**
+ * The composite index's fixed scale ceiling (Phase 6). `computeIndex` is a weight-renormalized
+ * mean of `rel` values that are each themselves bounded to `[0, 100]` (the roster-max holder for
+ * a benchmark always scores exactly 100 on that benchmark), so the composite index can never
+ * exceed 100. The capability chart's axis reads this constant rather than hardcoding `100` in a
+ * `shell/` file (the FCIS boundary forbids a literal threshold there).
+ */
+export const COMPOSITE_INDEX_MAX = 100;
+
+/**
  * May a figure enter the composite? This is the defensive mirror of dataset invariant 9: a
  * Terminal-Bench 2.0 figure must never enter a `terminal-bench-2-1` slot, and a SWE-bench
  * Multilingual figure must never enter a `swe-bench-verified` slot. Such figures are recorded

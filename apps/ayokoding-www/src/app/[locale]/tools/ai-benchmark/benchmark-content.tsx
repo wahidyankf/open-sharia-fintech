@@ -5,6 +5,7 @@ import { t } from "@/features/i18n/core/translations";
 import { dataset } from "@/features/ai-benchmark/core/data/models";
 import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
+import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
 
 export function BenchmarkContent() {
   const locale = useLocale();
@@ -18,6 +19,8 @@ export function BenchmarkContent() {
       </header>
 
       <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
+
+      <CapabilityChart dataset={dataset} locale={locale} />
 
       <ModelTable dataset={dataset} locale={locale} />
     </main>
