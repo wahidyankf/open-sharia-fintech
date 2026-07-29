@@ -4105,18 +4105,21 @@ learnings for Phase 11` — see commit hash recorded in the worktree's local git
 - [x] [AI] Verify ALL delivery checklist items above are ticked
   - **Date**: 2026-07-30
   - **Status**: done
-  - **Notes**: full-file sweep found two gaps, both fixed during this verification pass rather than
-    silently accepted: (1) `evidence/phase-1-band-contrast.md`'s Phase 1-gate checkbox was unticked
-    despite the evidence file being complete — now ticked with cited content; (2) Phase 9-10's
-    Delivery-Boundary Integration Protocol and Post-Push CI Verification checkboxes were unticked
-    despite PR #122 having actually merged — now ticked with the real merge commit
-    (`b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`) and CI run evidence. One item remains deliberately
-    unticked with full written rationale: line ~2644's `ayokoding-www-fe-e2e:test:e2e` Phase-8-gate
-    check, explicitly marked "NOT done — left unticked deliberately, do not bulk-tick" — a
-    documented, pre-existing, unrelated environmental flake (confirmed not touching this plan's
-    diff, confirmed CI doesn't run `test:e2e` for this gate) that was later superseded by clean runs
-    recorded at Phase 9/10 (lines ~2960, ~3871). This is an accepted, adjudicated historical
-    exception, not a live gap.
+  - **Notes**: full-file sweep found one live gap, fixed during this verification pass: (1)
+    `evidence/phase-1-band-contrast.md`'s Phase 1-gate checkbox was unticked despite the evidence
+    file being complete — now ticked with cited content. (2) Phase 9-10's Delivery-Boundary
+    Integration Protocol and Post-Push CI Verification checkboxes were found already ticked on this
+    branch — **not by this pass**: `git show 3b5ea260e` (`docs(plans): tick
+async-python-and-fastapi-services in lp-04 delivery checklist`) shows an out-of-band commit,
+    pushed directly to `main` and later merged into this branch, silently flipped both checkboxes
+    while reconciling an unrelated plan (`lp-04`). This pass **verified** the underlying facts
+    (merge commit `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`, PR #122 merged, CI green) rather than
+    applying the ticks. One item remains deliberately unticked with full written rationale: line
+    ~2644's `ayokoding-www-fe-e2e:test:e2e` Phase-8-gate check, explicitly marked "NOT done — left
+    unticked deliberately, do not bulk-tick" — a documented, pre-existing, unrelated environmental
+    flake (confirmed not touching this plan's diff, confirmed CI doesn't run `test:e2e` for this
+    gate) that was later superseded by clean runs recorded at Phase 9/10 (lines ~2960, ~3871). This
+    is an accepted, adjudicated historical exception, not a live gap.
 - [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
       terminal state (routed inline, filed as a `plans/backlog/` plan, or discarded with reason) or
       the file records the explicit `No generalizable learnings — <reason>` escape; both the
@@ -4190,7 +4193,7 @@ plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark` — folder now exists u
   - **Status**: done
   - **Notes**: added a new bullet at the top of "## Completed Projects" (before the
     `2026-07-28: adopt-cursor-platform-binding` entry), summarizing the 8 delivery-boundary PRs
-    (#110, #112, #113, #114, #115, #117, #118, #122), the M-14 band-contrast fix, the Rule-15
+    (#110, #112, #113, #114, #115, #117, #118, #122), the M-12 band-contrast fix, the Rule-15
     three-tester retest, and Knowledge Capture routing — completion date 2026-07-30.
 - [x] [AI] Update any other README that references this plan — acceptance:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
@@ -4200,10 +4203,11 @@ plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark` — folder now exists u
   - **Date**: 2026-07-30
   - **Status**: done (with a documented pre-existing exception)
   - **Notes**: `md readme-index validate` → `README INDEX AUDIT PASSED: no orphan or ghost
-references found`, exit 0. `md links validate` found and fixed 4 links this move broke —
-    3 in `apps/ayokoding-www/docs/ai-benchmark/data-sourcing-prompt.md` and 1 in
-    `plans/backlog/ayokoding-www-cost-reduction/brd.md` (plus its `README.md`, found during the same
-    sweep) — all repointed from `plans/in-progress/ayokoding-www-tools-ai-benchmark/` to
+references found`, exit 0. `md links validate` found and fixed 6 link occurrences across 3
+    files this move broke — 3 in `apps/ayokoding-www/docs/ai-benchmark/data-sourcing-prompt.md`,
+    2 in `plans/backlog/ayokoding-www-cost-reduction/README.md`, and 1 in
+    `plans/backlog/ayokoding-www-cost-reduction/brd.md` — all repointed from
+    `plans/in-progress/ayokoding-www-tools-ai-benchmark/` to
     `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/`. After those fixes, `md links
 validate` still reports `found 144 broken links`, but a `grep -n "ai-benchmark"` on its full
     report is empty — zero of the 144 relate to this plan. Confirmed via the SAME command run
@@ -4222,7 +4226,12 @@ validate` still reports `found 144 broken links`, but a `grep -n "ai-benchmark"`
 > All checks below must pass before the plan is considered complete.
 
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
-      exits 0 — no link anywhere in the repo points at the old `plans/in-progress/` path
+      exits 0 — no **markdown** link points at the old `plans/in-progress/` path
+- [ ] [AI] `git grep -n "plans/in-progress/ayokoding-www-tools-ai-benchmark" -- ':(exclude)plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/delivery.md'`
+      prints nothing — a plain-text repo-wide sweep covering non-markdown files (`.ts` source
+      comments, etc.) that `md links validate` cannot see; `delivery.md`'s own historical narrative
+      hits (quoted `git mv` commands, the `<PLAN>` placeholder definition) are the sole deliberate
+      exclusion
 - [ ] [AI] `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       exits 0
 - [ ] [AI] `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` exits 0
