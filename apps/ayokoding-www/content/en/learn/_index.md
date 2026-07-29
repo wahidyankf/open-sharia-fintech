@@ -49,6 +49,7 @@ weight: 10
   - [32 · Software Product Engineering](/en/learn/courses/software-product-engineering)
   - [33 · Engineering Management](/en/learn/courses/engineering-management)
   - [Pass 2 Capstone · SOLID Core](/en/learn/courses/capstone-solid-core)
+  - [39 · Backend at Scale](/en/learn/courses/backend-at-scale)
   - [Evaluating AI Output — Essentials](/en/learn/courses/evaluating-ai-output-essentials)
   - [Statistics for Evaluation](/en/learn/courses/statistics-for-evaluation)
   - [Evaluating AI Systems In Depth](/en/learn/courses/evaluating-ai-systems-in-depth)
