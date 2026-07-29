@@ -75,4 +75,22 @@ describe("SearchDialog", () => {
 
     expect(mockPush).toHaveBeenCalledWith("/en/learn/software-engineering");
   });
+
+  // Rule-15 e2e regression (surfaced by USS-001): cmdk's own client-side fuzzy filter matches
+  // against `CommandItem`'s `value` prop. When `value` carried only the slug, a query matching a
+  // result's title but not its slug (e.g. "AI Model Benchmark" vs. slug `tools/ai-benchmark`) got
+  // hidden by cmdk even though the server already returned it as a match.
+  it("gives each result a value that includes its title, so cmdk's own filter agrees with the server's", async () => {
+    render(<SearchDialog />);
+
+    fireEvent.change(screen.getByTestId("search-input"), { target: { value: "soft" } });
+
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+      await Promise.resolve();
+    });
+
+    const btn = screen.getByRole("button", { name: /Software Engineering/i });
+    expect(btn.getAttribute("data-value")).toBe("Software Engineering learn/software-engineering");
+  });
 });

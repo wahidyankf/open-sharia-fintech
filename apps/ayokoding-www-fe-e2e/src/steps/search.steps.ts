@@ -126,3 +126,21 @@ Then("each result should display a text excerpt showing the matching content", a
   const firstOption = searchDialog.getByRole("option").first();
   await expect(firstOption).toBeVisible();
 });
+
+// USS-001 (Rule-15 fix): the search index used to be built entirely from markdown `content/`
+// files, structurally excluding the Tools section; `staticSearchDocs()` now merges the two tool
+// pages into the index for both locales.
+When("the visitor types a query naming the AI Model Benchmark tool", async ({ page }) => {
+  const searchDialog = page.getByRole("dialog");
+  const searchInput = searchDialog.getByRole("combobox");
+  await searchInput.fill("AI Model Benchmark");
+  const results = searchDialog.getByRole("listbox");
+  await expect(results.getByRole("option").first()).toBeVisible({ timeout: 15000 });
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Global search surfaces the Tools pages
+Then("a result linking to the AI Model Benchmark tool page is shown", async ({ page }) => {
+  const searchDialog = page.getByRole("dialog");
+  const benchmarkResult = searchDialog.getByRole("option", { name: /AI Model Benchmark/i });
+  await expect(benchmarkResult).toBeVisible({ timeout: 15000 });
+});

@@ -42,3 +42,14 @@ Feature: Search
     Then each result should display the page title
     And each result should display the section path indicating where the page lives
     And each result should display a text excerpt showing the matching content
+
+  # USS-001 — Rule-15 web-usability-tester spec-blind suggestion (paired with UWT-001): the search
+  # index used to be built entirely from markdown `content/` files, structurally excluding the
+  # Tools section (`/tools/ai-benchmark`, `/tools/cost-of-living-calculator`); a first-time visitor
+  # searching "AI Model Benchmark" got zero results. Fixed via `staticSearchDocs()`
+  # (`content/core/static-search-docs.ts`), merged into the index alongside the markdown docs.
+  @unit @e2e
+  Scenario: Global search surfaces the Tools pages
+    Given the search dialog is open
+    When the visitor types a query naming the AI Model Benchmark tool
+    Then a result linking to the AI Model Benchmark tool page is shown

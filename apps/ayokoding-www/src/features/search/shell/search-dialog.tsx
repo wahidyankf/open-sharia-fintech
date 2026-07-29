@@ -97,7 +97,14 @@ export function SearchDialog() {
             {results.map((result) => (
               <CommandItem
                 key={result.slug}
-                value={result.slug}
+                // Rule-15 e2e regression fix (surfaced by USS-001): cmdk's own client-side fuzzy
+                // filter re-filters items against this `value` string. Results are already
+                // server-filtered (ContentService.search), so re-filtering here is redundant AND
+                // harmful whenever a query matches the title but not the slug — e.g. "AI Model
+                // Benchmark" matches the title but not the slug `tools/ai-benchmark` (no "model"),
+                // so cmdk hid an already-correct result. Including the title keeps `value` unique
+                // per item (slug is unique) while making cmdk's filter agree with the server's.
+                value={`${result.title} ${result.slug}`}
                 onSelect={() => handleSelect(result.slug)}
                 className="cursor-pointer"
               >

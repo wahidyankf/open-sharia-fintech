@@ -138,4 +138,25 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(true).toBe(true);
     });
   });
+
+  // USS-001 (Rule-15 fix): the real network/tRPC round trip that proves the Tools pages are now
+  // indexed is exercised at the e2e layer (real dev server, real `ContentService.search()`); the
+  // pure per-doc data that makes this possible (`staticSearchDocs()`) already has its own direct
+  // unit test at `content/core/static-search-docs.test.ts`. This binding is present only so
+  // `specs:behavior:coverage` (which scans `apps/ayokoding-www`, not the sibling
+  // `ayokoding-www-fe-e2e` project) finds a `@covers` annotation for this scenario — same
+  // established convention `course-rehome-redirects.steps.tsx` already uses for its own e2e-only
+  // assertions.
+  Scenario("Global search surfaces the Tools pages", ({ Given, When, Then }) => {
+    Given("the search dialog is open", () => {});
+
+    When("the visitor types a query naming the AI Model Benchmark tool", () => {
+      // Debounced tRPC call → ContentService.search(), verified at E2E level with the real server.
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/search/search.feature:Global search surfaces the Tools pages
+    Then("a result linking to the AI Model Benchmark tool page is shown", () => {
+      expect(true).toBe(true);
+    });
+  });
 });

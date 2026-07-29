@@ -6,6 +6,7 @@ import type { ContentIndex, ContentMeta, TreeNode, PageLink, SearchResult, Headi
 import { parseMarkdown } from "../core/parser";
 import { stripMarkdown } from "./reader";
 import { buildTrees, getParentSlug, findSubtree, computePrevNext } from "../core/tree-builder";
+import { staticSearchDocs } from "../core/static-search-docs";
 
 export interface SearchDoc {
   id: string;
@@ -156,8 +157,12 @@ export class ContentService {
 
     const preBuiltDocs = await this.tryLoadPreBuiltSearchData();
 
+    // Rule-15 UWT-001 fix: `staticSearchDocs()` covers app-route pages (the Tools section) that
+    // carry no markdown file, so neither the pre-built index nor the file-scan fallback would ever
+    // find them on its own — merged in here so BOTH paths (prod pre-built JSON, dev file-scan)
+    // surface the same tool pages.
     if (preBuiltDocs) {
-      this.buildSearchIndexFromDocs(preBuiltDocs);
+      this.buildSearchIndexFromDocs([...preBuiltDocs, ...staticSearchDocs()]);
     } else {
       await this.buildSearchIndexFromFiles();
     }
@@ -197,6 +202,9 @@ export class ContentService {
     const contentIndex = await this.getIndex();
     const items = [...contentIndex.contentMap.values()];
     const locales = [...new Set(items.map((i) => i.locale))];
+    // Rule-15 UWT-001 fix: see the comment in `ensureSearchIndex` — merged into this dev-mode
+    // file-scan path too, so the Tools pages are searchable with or without a pre-built index.
+    const statics = staticSearchDocs();
 
     for (const loc of locales) {
       if (this.searchIndexes.has(loc)) continue;
@@ -224,6 +232,11 @@ export class ContentService {
         } catch {
           // Skip files that can't be read
         }
+      }
+
+      for (const doc of statics.filter((d) => d.locale === loc)) {
+        index.add(doc);
+        this.docStore.set(doc.id, doc);
       }
 
       this.searchIndexes.set(loc, index);
