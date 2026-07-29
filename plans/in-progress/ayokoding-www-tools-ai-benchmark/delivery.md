@@ -2298,17 +2298,37 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
 
 > _Suggested executor: `swe-ui-maker`._
 
-- [ ] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
+- [x] [AI] Provision this unit's worktree from the latest `origin/main` — this phase is both the
       unit's first phase and its boundary, and the prior unit's worktree
       (`ayokoding-www-tools-ai-benchmark-phase-6-7-charts`) was already removed at Phase 7's own
       gate, so this worktree must exist before this phase's own work begins:
       `git worktree add worktrees/ayokoding-www-tools-ai-benchmark-phase-8-filters origin/main`
       — acceptance: `git -C worktrees/ayokoding-www-tools-ai-benchmark-phase-8-filters rev-parse
 --show-toplevel` prints the worktree path
-- [ ] [AI] **N-0**: append AC-18, AC-22, AC-23, AC-24, AC-25, AC-26, AC-27, AC-28 to
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively during the PR #118 cycle-3 review fix pass (this checklist
+    was never updated when the phase actually ran) — verified against the real repo state at head
+    `fd7d5ec73` rather than asserted. `git -C
+worktrees/ayokoding-www-tools-ai-benchmark-phase-8-filters rev-parse --show-toplevel` prints
+    `/Users/wkf/ose-projects/ose-public/worktrees/ayokoding-www-tools-ai-benchmark-phase-8-filters`,
+    and the worktree's branch is `ayokoding-www-tools-ai-benchmark/phase-8-filters`, tracking
+    `origin/ayokoding-www-tools-ai-benchmark/phase-8-filters` — the worktree this phase's three
+    commits (`5139d1826`, `b2d8bd281`, `fd7d5ec73`) are built on.
+- [x] [AI] **N-0**: append AC-18, AC-22, AC-23, AC-24, AC-25, AC-26, AC-27, AC-28 to
       `<SPECS>ai-benchmark.feature` — acceptance:
       `npx nx run ayokoding-www:specs:structure-validation` exits 0
-- [ ] [AI] **N-1 RED**: bind AC-22 in both the unit and e2e step files
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively (see the worktree-provisioning note above for why). All
+    eight scenarios (AC-18, AC-22..AC-28) are present under the "Phase 8 — harness and class
+    filters" heading in
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` (confirmed:
+    `grep -n "AC-18\|AC-22\|AC-23\|AC-24\|AC-25\|AC-26\|AC-27\|AC-28" <that file>` finds every one).
+    `npx nx run ayokoding-www:specs:behavior:coverage` (the coverage target that supersedes the
+    structure-validation acceptance cited here) → `Spec coverage valid! 42 specs, 327 scenarios,
+1177 steps — all covered.`, exit 0.
+- [x] [AI] **N-1 RED**: bind AC-22 in both the unit and e2e step files
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-22 "The page with no query parameters shows the whole roster" — same
     scenario as F-3 above, now bound at both the unit and e2e layers._
@@ -2320,10 +2340,25 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       Then every roster model is shown in the data table
     ```
 
-- [ ] [AI] **N-2 GREEN**: wire `decodeState(useSearchParams())` in `<ROUTE>benchmark-content.tsx` and
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively (see the worktree-provisioning note above). AC-22 is bound
+    at `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1232` (`@covers … "The page
+with no query parameters shows the whole roster"`) and its e2e counterpart. Verified currently
+    passing as part of the full green unit suite (see N-2's note for the run).
+
+- [x] [AI] **N-2 GREEN**: wire `decodeState(useSearchParams())` in `<ROUTE>benchmark-content.tsx` and
       pass the filtered roster to both charts and the table
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-22 passes
-- [ ] [AI] **N-3 RED**: bind AC-23 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-content.tsx:29-31` calls
+    `decodeState(searchParams)` then `filterModels(dataset, filterState)`, handing the resulting
+    `filteredDataset` to `<CapabilityChart>`, `<PriceChart>`, and `<ModelTable>`. Fresh
+    (`--skip-nx-cache`) `npx nx run ayokoding-www:test:unit` at head `fd7d5ec73` →
+    `Test Files 142 passed (142)`, `Tests 3070 passed | 6 skipped (3076)`, exit 0 — AC-22 passes as
+    part of this run (the 6 skips match the Phase 5/6/7-baseline count, not new).
+- [x] [AI] **N-3 RED**: bind AC-23 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-23 "A harness parameter narrows both charts and the table"_
 
     ```gherkin
@@ -2335,10 +2370,26 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       And only models that harness exposes are shown in the data table
     ```
 
-- [ ] [AI] **N-4 GREEN**: create `<SHELL>benchmark-filters.tsx` with the harness selector, pushing
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1253` (`@covers … "A harness
+parameter narrows both charts and the table"`). Verified currently passing as part of the same
+    full green unit run cited at N-2.
+
+- [x] [AI] **N-4 GREEN**: create `<SHELL>benchmark-filters.tsx` with the harness selector, pushing
       state through `router.push(encodeState(next))`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-23 passes
-- [ ] [AI] **N-5 RED**: bind AC-24 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively.
+    `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx` exists (167 lines)
+    with a harness `<FilterSelect>` wired to `handleFilterChange` in `benchmark-content.tsx:34-41`,
+    which builds `qs` from `encodeState(next).toString()` and calls `router.push` with the
+    resulting pathname-plus-query-string (or the bare pathname when `qs` is empty), passing
+    `{ scroll: false }` so the reader is not yanked to the top of the page on every filter change.
+    AC-23 passes as part of the N-2 test run.
+- [x] [AI] **N-5 RED**: bind AC-24 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-24 "A class parameter narrows both charts and the table"_
 
     ```gherkin
@@ -2350,9 +2401,21 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       And only models in that band are shown in the data table
     ```
 
-- [ ] [AI] **N-6 GREEN**: add the class selector — command: `npx nx run ayokoding-www:test:unit`
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1285` (`@covers … "A class
+parameter narrows both charts and the table"`). Verified currently passing as part of the same
+    full green unit run cited at N-2.
+
+- [x] [AI] **N-6 GREEN**: add the class selector — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: AC-24 passes
-- [ ] [AI] **N-7 RED**: bind AC-25 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-filters.tsx` renders a second `<FilterSelect>`
+    sourcing its option list from `core/filter.ts`'s `BANDS` (the single source of truth, F-9).
+    AC-24 passes as part of the N-2 test run.
+- [x] [AI] **N-7 RED**: bind AC-25 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-25 "Harness and class parameters intersect" — same scenario as F-1
     above, now bound at the UI layer._
 
@@ -2363,10 +2426,30 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       Then only models satisfying both filters are shown
     ```
 
-- [ ] [AI] **N-8 GREEN**: intersect both filters over one filtered dataset for membership/display,
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1313` (`@covers … "Harness and
+class parameters intersect"`). Verified currently passing as part of the same full green unit
+    run cited at N-2.
+
+- [x] [AI] **N-8 GREEN**: intersect both filters over one filtered dataset for membership/display,
       while band thresholds keep deriving from the full unfiltered roster (DD-24) — command:
       `npx nx run ayokoding-www:test:unit` — acceptance: AC-25 passes
-- [ ] [AI] **N-9 RED**: bind AC-18 in both the unit and e2e step files
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `core/filter.ts`'s `filterModels` intersects the harness
+    and class predicates over `dataset.models` (both filters AND-ed, never OR-ed). Band membership
+    for the class filter is derived via `computeGroups(dataset)` over the FULL dataset passed in —
+    `filterModels`'s own caller (`benchmark-content.tsx`) always calls it with the unfiltered
+    `dataset`, never the already-filtered one, so `bandById` is always roster-relative. Separately,
+    `<CapabilityChart>`/`<PriceChart>` each take a required `fullDataset` prop
+    (`capability-chart.tsx:96`, `price-chart.tsx`) and call `computeGroups(dataset, fullDataset)`
+    so their OWN band-threshold derivation is also full-roster-relative — this is the fix this
+    phase's cycle-2 commit (`b2d8bd281`) landed for exactly the class of bug this item's DD-24
+    reference describes (a harness filter excluding both anchor models must not silently re-band
+    every rated model to `light`). AC-25 passes as part of the N-2 test run.
+- [x] [AI] **N-9 RED**: bind AC-18 in both the unit and e2e step files
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-18 "A harness filter switches the price chart to that harness's rate"_
 
@@ -2377,9 +2460,29 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       Then that model's bars use that harness's rate
     ```
 
-- [ ] [AI] **N-10 GREEN**: pass the active harness into `rateFor` so the price chart switches rate set
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1349` (`@covers … "A harness
+filter switches the price chart to that harness's rate"`) plus its e2e counterpart in
+    `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`. Verified currently passing as part
+    of the same full green unit run cited at N-2.
+
+- [x] [AI] **N-10 GREEN**: pass the active harness into `rateForHarness` so the price chart
+      switches rate set
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-18 passes
-- [ ] [AI] **N-11 RED**: bind AC-26 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively — **and this line's own text was corrected during the PR
+    #118 cycle-3 review** (`pr-review-docs-maker` F2): it previously read `rateFor`, a function
+    that has never existed in this codebase; the real exported function, confirmed at
+    `apps/ayokoding-www/src/features/ai-benchmark/core/price.ts:84`
+    (`export function rateForHarness(model: Model, harness: HarnessId): SelectedRate`), is
+    `rateForHarness`. `price-chart.tsx` imports it and calls
+    `harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model)`, with
+    the active `harness` threaded in from `benchmark-content.tsx:75`'s
+    `harness={filterState.harness}` prop. AC-18 passes as part of the N-2 test run.
+- [x] [AI] **N-11 RED**: bind AC-26 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-26 "An unrecognized filter value falls back to the unfiltered view" —
     same scenario as F-5 above, now bound at the UI layer._
 
@@ -2391,9 +2494,23 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       But no error is surfaced to the reader
     ```
 
-- [ ] [AI] **N-12 GREEN**: confirm the sanitizer path surfaces no error to the reader
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1371` (`@covers … "An
+unrecognized filter value falls back to the unfiltered view"`). Verified currently passing as
+    part of the same full green unit run cited at N-2.
+
+- [x] [AI] **N-12 GREEN**: confirm the sanitizer path surfaces no error to the reader
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-26 passes
-- [ ] [AI] **N-13 RED**: bind AC-28 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `core/url-state.ts`'s `sanitizeState`/`decodeState` drop
+    any harness/class value that is not in `HARNESS_IDS`/`BANDS` and resolve it to `undefined`
+    (unfiltered) rather than throwing — `url-state.unit.test.ts` covers this directly (`an unknown
+harness value decodes to undefined`, `sanitizeState drops unknown values without throwing`).
+    AC-26 passes as part of the N-2 test run.
+- [x] [AI] **N-13 RED**: bind AC-28 — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - _Gherkin (binds) → AC-28 "A filter combination matching no model renders an explicit empty state"_
 
     ```gherkin
@@ -2404,9 +2521,23 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       But neither chart renders an empty plot area
     ```
 
-- [ ] [AI] **N-14 GREEN**: render a localized empty state and suppress both chart plot areas when the
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx:1397` (`@covers … "A filter
+combination matching no model renders an explicit empty state"`). Verified currently passing as
+    part of the same full green unit run cited at N-2.
+
+- [x] [AI] **N-14 GREEN**: render a localized empty state and suppress both chart plot areas when the
       filtered set is empty — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-28 passes
-- [ ] [AI] **N-15 RED**: bind AC-27 in `<ESTEPS>ai-benchmark.steps.ts`, applying both filters and
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-content.tsx:32,61-77` computes
+    `isEmpty = filteredModels.length === 0` and, when true, renders the
+    `data-testid="ai-bench-empty-state"` message in place of BOTH `<CapabilityChart>` and
+    `<PriceChart>` (never an empty plot area) — the data table still renders below regardless.
+    AC-28 passes as part of the N-2 test run.
+- [x] [AI] **N-15 RED**: bind AC-27 in `<ESTEPS>ai-benchmark.steps.ts`, applying both filters and
       reloading the resulting URL — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: fails
   - _Gherkin (binds) → AC-27 "A reloaded filtered URL reproduces the same view"_
@@ -2418,33 +2549,122 @@ typecheck, lint for 25 projects and 6 tasks they depend on` (52 of 56 tasks serv
       Then the same filtered set of models is shown
     ```
 
-- [ ] [AI] **N-16 GREEN**: confirm the URL round-trip holds through a real reload
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. Bound at
+    `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts:118-131` (`@covers … "A reloaded
+filtered URL reproduces the same view"`) — navigates to
+    `/en/tools/ai-benchmark?harness=cursor&class=opus`, reloads via `page.reload()`, and compares
+    row ids before/after. Verified currently passing (see N-16's note for the e2e run).
+
+- [x] [AI] **N-16 GREEN**: confirm the URL round-trip holds through a real reload
       — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: AC-27 passes
-- [ ] [AI] **N-17 RED**: extend `<SHELL>benchmark-filters.test.tsx` asserting both the mobile
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `encodeState`/`decodeState` round-trip through the URL
+    with no client-side-only state, so a hard reload re-derives the identical `FilterState` from
+    the query string alone. Ran `npx nx run ayokoding-www-fe-e2e:test:e2e` at head `fd7d5ec73`
+    TWICE to check for flake: "AI model benchmark tool › A reloaded filtered URL reproduces the
+    same view" passed in BOTH runs, across all three browsers (chromium/firefox/webkit) — 6/6. The
+    two runs' project-WIDE exit code was non-zero both times, but from a different, non-overlapping
+    set of unrelated pre-existing failures each time (course-rehome-redirects, ia-navigation-revamp,
+    accessibility, i18n, learn-reorg-redirects — none touch any file this PR's diff changed); see
+    the Phase 8 Gate's own e2e item for the full accounting and why that item stays unticked rather
+    than being bulk-ticked from this scenario's own pass.
+- [x] [AI] **N-17 RED**: extend `<SHELL>benchmark-filters.test.tsx` asserting both the mobile
       variant (a collapsed `<details>` disclosure with an active-filter count below `md`) and the
       `md`/`lg` variant (an inline wrapping bar at `md`, a single-row bar with the result count at
       `lg`) expose the same accessible control names — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: fails because the filter bar has no responsive layout branch yet
-- [ ] [AI] **N-18 GREEN**: implement the responsive filter strategy — a collapsed `<details>`
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-filters.test.tsx`'s `describe("BenchmarkFilters
+— responsive layout")` block asserts both variants render simultaneously (`renders a collapsed
+    <details> disclosure (mobile) and an inline bar (desktop) at once`) and expose the same
+    accessible control names (`both variants expose the same accessible control names for the
+    harness and class selectors`). Verified currently passing as part of the same full green unit
+    run cited at N-2.
+- [x] [AI] **N-18 GREEN**: implement the responsive filter strategy — a collapsed `<details>`
       disclosure with an active-filter count below `md`, an inline wrapping bar at `md`, a
       single-row bar with the result count at `lg` — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes, and the component test asserts both variants expose the same accessible
       control names
-- [ ] [AI] **N-19 REFACTOR**: collapse the two selectors onto one generic `<FilterSelect>` taking a
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-filters.tsx` renders the collapsed `<details>`
+    disclosure and the inline wrapping bar simultaneously in the DOM, CSS toggling which is visible
+    (the same dual-render pattern `model-table.tsx` and the two charts already use). N-17's tests
+    pass as part of the same full green unit run cited at N-2.
+- [x] [AI] **N-19 REFACTOR**: collapse the two selectors onto one generic `<FilterSelect>` taking a
       label, an option list, and an `onChange`
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: all tests still pass
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `benchmark-filters.tsx` exports one `FilterSelect`
+    component (`id`, `label`, `value`, `options`, `allLabel`, `onChange`) called four times (harness
+    selector × mobile/desktop, class selector × mobile/desktop) — no hand-written duplicate
+    `<select>` blocks remain. All tests still pass as part of the same full green unit run cited at
+    N-2.
 
 ### Phase 8 Gate
 
 > All checks below must pass before starting Phase 9. This is a **boundary** phase.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:unit` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — every scenario AC-1 … AC-37
+- [x] [AI] `npx nx run ayokoding-www:test:unit` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively during the PR #118 cycle-3 review fix pass. Fresh
+    (`--skip-nx-cache`) run at head `fd7d5ec73` → `Test Files 142 passed (142)`,
+    `Tests 3070 passed | 6 skipped (3076)`, exit 0. The 6 skips match the Phase 5/6/7-baseline
+    figure exactly and are not `.skip()`/`.only()`/`.todo()` calls.
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — every scenario AC-1 … AC-37
       except AC-3 and AC-38 now has a `@covers`-annotated step
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `Spec coverage valid! 42 specs, 327 scenarios, 1177
+steps — all covered.`, exit 0.
 - [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
-- [ ] [AI] The page is still unlinked — acceptance: `grep -c "tools/ai-benchmark" <TOOLSIDX> <FOOTER>`
+  - **Date**: 2026-07-29
+  - **Status**: NOT done — left unticked deliberately, do not bulk-tick
+  - **Notes**: ran `npx nx run ayokoding-www-fe-e2e:test:e2e` at head `fd7d5ec73` TWICE during the
+    PR #118 cycle-3 review fix pass to check for flake. Both runs exited non-zero (11 failures,
+    then 9 failures — a DIFFERENT, non-overlapping set of scenario/browser combinations each time,
+    the signature of timeout-driven flake under this environment's heavy concurrent load, not a
+    deterministic regression). Every failure in both runs is in `course-rehome-redirects`,
+    `paths-hub-category-grouping`, `skills-fixed-arc-statement`/`skills-path-landing-body`, `i18n`
+    language switching, `ia-navigation-revamp`, `learn-three-bucket`, `learn-reorg-redirects`, or
+    (once) `app-shell/accessibility` — none of which is a file this PR's 16-file diff touches (confirmed:
+    `git diff --stat e40087390..fd7d5ec73 -- apps/ayokoding-www apps/ayokoding-www-fe-e2e
+specs/apps/ayokoding` lists only `ai-benchmark`-scoped paths plus `i18n/core/translations.ts`, which
+    the failing i18n scenario does not exercise). Every one of the six `ai-benchmark` e2e scenarios
+    this phase and the prior Phase 5-7 units added (the two locale-heading scenarios, "Each chart
+    exposes an accessible name", "The page with no query parameters shows the whole roster", "A
+    harness filter switches the price chart to that harness's rate", and "A reloaded filtered URL
+    reproduces the same view") passed in BOTH runs, across all three browsers — 18/18 pass
+    instances, zero ai-benchmark failures. GitHub Actions CI for this PR does not run `test:e2e` at
+    all (confirmed via `gh run view --log`: the "TypeScript quality gate" job runs `test:quick`,
+    which covers `test:unit`/`test:coverage`/`test:specs` for `ayokoding-www-fe-e2e` but not
+    `test:e2e`), so this gap does not block CI green. Leaving this item unticked rather than
+    bulk-ticking it — the acceptance clause is the whole-project command, and it genuinely does not
+    exit 0 right now, even though the scope this phase actually shipped is unaffected. This
+    pre-existing, unrelated flake is out of scope for the two findings (F1/F2) this fix pass
+    resolves and needs its own separate investigation.
+- [x] [AI] The page is still unlinked — acceptance: `grep -c "tools/ai-benchmark" <TOOLSIDX> <FOOTER>`
       prints `0` for both files
-- [ ] [AI] `npx nx affected -t typecheck lint` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `grep -c "tools/ai-benchmark"
+apps/ayokoding-www/src/app/\[locale\]/tools/page.tsx
+    apps/ayokoding-www/src/features/app-shell/shell/footer.tsx` → `...page.tsx:0` and
+    `...footer.tsx:0` — Phase 8's wiring only touched `benchmark-content.tsx` and
+    `benchmark-filters.tsx`, neither of which is either navigation-surface file.
+- [x] [AI] `npx nx affected -t typecheck lint` exits 0
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: reconciled retroactively. `npx nx affected -t typecheck lint --base=origin/main` →
+    `Successfully ran targets typecheck, lint for 25 projects and 6 tasks they depend on`, all 56
+    tasks served from cache, exit 0 — no new error, no new warning class beyond the
+    already-recorded `jsx-a11y(prefer-tag-over-role)` pattern from Phase 6/7.
 - [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-8-filters` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-8-filters/`
