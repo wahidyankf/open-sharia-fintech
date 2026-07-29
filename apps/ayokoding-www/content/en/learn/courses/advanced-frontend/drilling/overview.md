@@ -302,7 +302,7 @@ escape to the background page (Examples 45-46).
 **Q25 (co-25 -- controlled-vs-uncontrolled).** What makes an input controlled vs uncontrolled, and
 what is forbidden?
 
-<detailS>
+<details>
 <summary>Answer</summary>
 
 Controlled: state owns the `value`. Uncontrolled: the DOM owns it, read via a ref. An input cannot
