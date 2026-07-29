@@ -76,7 +76,11 @@ describe("BenchmarkFilters — responsive layout", () => {
     expect(mobileClass).not.toBe(desktopClass);
   });
 
-  it("changing the harness select calls onChange with the harness merged into the current state", () => {
+  // Rule-15 EWT-003 fix: `onChange` now reports only the changed axis as a PATCH — the caller
+  // (`benchmark-content.tsx`) owns merging it onto its own always-current state, rather than this
+  // component pre-merging against its (potentially stale, across rapid successive changes) `state`
+  // prop. See that file's own regression test for the actual race this prevents.
+  it("changing the harness select calls onChange with only the harness patch", () => {
     const onChange = vi.fn();
     render(<BenchmarkFilters state={{ class: "opus" }} resultCount={2} locale="en" onChange={onChange} />);
 
@@ -84,10 +88,10 @@ describe("BenchmarkFilters — responsive layout", () => {
     (select as HTMLSelectElement).value = "cursor";
     select.dispatchEvent(new Event("change", { bubbles: true }));
 
-    expect(onChange).toHaveBeenCalledWith({ class: "opus", harness: "cursor" });
+    expect(onChange).toHaveBeenCalledWith({ harness: "cursor" });
   });
 
-  it("changing the class select calls onChange with the class merged into the current state", () => {
+  it("changing the class select calls onChange with only the class patch", () => {
     const onChange = vi.fn();
     render(<BenchmarkFilters state={{ harness: "cursor" }} resultCount={5} locale="en" onChange={onChange} />);
 
@@ -95,6 +99,6 @@ describe("BenchmarkFilters — responsive layout", () => {
     (select as HTMLSelectElement).value = "sonnet";
     select.dispatchEvent(new Event("change", { bubbles: true }));
 
-    expect(onChange).toHaveBeenCalledWith({ harness: "cursor", class: "sonnet" });
+    expect(onChange).toHaveBeenCalledWith({ class: "sonnet" });
   });
 });

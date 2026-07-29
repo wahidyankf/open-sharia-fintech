@@ -249,7 +249,7 @@ export type TickRowProps = {
  */
 export function TickRow({ testId, tickTestId, values, x, y, format }: TickRowProps) {
   return (
-    <g data-testid={testId} className="hidden lg:block">
+    <g data-slot="chart-tick-row" data-testid={testId} className="hidden lg:block">
       {values.map((v) => (
         <text
           key={v}

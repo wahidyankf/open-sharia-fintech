@@ -18,6 +18,15 @@ import type { ReactNode } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@open-sharia-enterprise/web-ui";
+import {
   dataset as defaultDataset,
   isConflictedFigure,
   type Dataset,
@@ -113,11 +122,16 @@ function isLowCoverageView(view: ScoreView): boolean {
 function coverageCell(view: ScoreView, locale: Locale): ReactNode {
   const text = formatCoverage(view.coverage, locale);
   const low = isLowCoverageView(view);
+  // Routes through the AyoKoding `--evidence-self-reported` token (an alias onto `--hue-honey-ink`,
+  // `libs/web-ui-token/src/ayokoding.css`) rather than raw `text-amber-700 dark:text-amber-400`
+  // (Rule-15 DWT-002 fix) — `--hue-honey-ink` already clears WCAG AA's 4.5:1 text minimum in both
+  // themes (it is the same tone `hero.tsx` already uses for its own links), and resolves
+  // automatically per-theme from the one class, no `dark:` variant needed.
   return (
     <span data-slot="coverage-cell" className="inline-flex flex-col items-start gap-0.5 leading-tight">
       <span data-slot="figure-cell-value">{text}</span>
       {low ? (
-        <span className="text-xs text-amber-600 dark:text-amber-400">{t(locale, "aiBenchCoverageLow")}</span>
+        <span className="text-xs text-[var(--evidence-self-reported)]">{t(locale, "aiBenchCoverageLow")}</span>
       ) : null}
     </span>
   );
@@ -189,7 +203,8 @@ function integrityNotes(model: Model, locale: Locale): ReactNode {
           href={note.source}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          className="text-xs font-medium text-amber-600 underline decoration-dotted underline-offset-2 dark:text-amber-400"
+          // Same `--evidence-self-reported` token as the coverage marker above (Rule-15 DWT-002 fix).
+          className="text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2"
           aria-label={`${t(locale, "aiBenchIntegrityLabel")}: ${note.text}`}
           title={note.text}
         >
@@ -238,73 +253,74 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
 
   return (
     <section data-slot={SLOT} data-testid="model-table" className="space-y-4" aria-label={t(locale, "aiBenchTitle")}>
-      {/* ── Desktop / tablet: semantic <table> (md and up) ───────────────────────────── */}
+      {/* ── Desktop / tablet: semantic <table> (md and up), on the shared `libs/web-ui` table
+          primitives (Rule-15 DWT-003 fix) — the same `Table`/`TableHeader`/`TableBody`/`TableRow`/
+          `TableHead`/`TableCell`/`TableCaption` set `cost-of-living-calculator/shell/min-role.tsx`
+          already uses, rather than a bespoke hand-rolled `<table>`. Sticky header/first-column and
+          `scope="row"` are preserved via className overrides on top of the shared primitives; the
+          row-hover intensity is now the primitive's own `hover:bg-muted/50` (previously a bespoke,
+          inconsistent `hover:bg-muted/40`). ────────────────────────────────────────────────────── */}
       <div data-testid="model-table-desktop" className="hidden md:block">
-        <div className="overflow-x-auto lg:overflow-visible">
-          <table data-slot={`${SLOT}-grid`} className="w-max min-w-full border-collapse text-sm lg:w-full">
-            <caption className="sr-only">{t(locale, "aiBenchTableCaption")}</caption>
-            <thead className="sticky top-0 z-10 bg-background">
-              <tr>
-                <th scope="col" className="sticky left-0 border-b bg-background px-3 py-2 text-left font-semibold">
-                  {t(locale, "aiBenchColModel")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-left font-semibold">
-                  {t(locale, "aiBenchColVendor")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-left font-semibold">
-                  {t(locale, "aiBenchColHarnesses")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-left font-semibold">
-                  {t(locale, "aiBenchColClass")}
-                </th>
-                {BENCHMARK_COLUMNS.map((col) => (
-                  <th key={col.id} scope="col" className="border-b px-3 py-2 text-right font-semibold">
-                    {t(locale, col.labelKey)}
-                  </th>
-                ))}
-                <th scope="col" className="border-b px-3 py-2 text-right font-semibold">
-                  {t(locale, "aiBenchColIndex")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-right font-semibold">
-                  {t(locale, "aiBenchColCoverage")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-right font-semibold">
-                  {t(locale, "aiBenchColInputPrice")}
-                </th>
-                <th scope="col" className="border-b px-3 py-2 text-right font-semibold">
-                  {t(locale, "aiBenchColOutputPrice")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {models.map((model) => {
-                const view = views.get(model.id) ?? { band: "unrated" as const, index: undefined, coverage: 0 };
-                const prices = priceCells(model, locale);
-                const harnessNames = model.harnesses.map((h) => HARNESS_DISPLAY_NAMES[h] ?? h).join(", ");
-                return (
-                  <tr key={model.id} data-model-id={model.id} className="align-top hover:bg-muted/40">
-                    <th scope="row" className="sticky left-0 border-b bg-background px-3 py-2 text-left font-medium">
-                      <span data-slot="model-name">{model.name}</span>
-                      {integrityNotes(model, locale)}
-                    </th>
-                    <td className="border-b px-3 py-2">{model.vendor}</td>
-                    <td className="border-b px-3 py-2 text-muted-foreground">{harnessNames}</td>
-                    <td className="border-b px-3 py-2">{classLabel(view.band, locale)}</td>
-                    {BENCHMARK_COLUMNS.map((col) => (
-                      <td key={col.id} className="border-b px-3 py-2 text-right">
-                        {benchmarkCell(model, col.id, locale)}
-                      </td>
-                    ))}
-                    <td className="border-b px-3 py-2 text-right">{indexCell(view, locale)}</td>
-                    <td className="border-b px-3 py-2 text-right">{coverageCell(view, locale)}</td>
-                    <td className="border-b px-3 py-2 text-right">{prices.input}</td>
-                    <td className="border-b px-3 py-2 text-right">{prices.output}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <Table className="w-max min-w-full border-collapse lg:w-full">
+          <TableCaption className="sr-only">{t(locale, "aiBenchTableCaption")}</TableCaption>
+          <TableHeader className="sticky top-0 z-10 bg-background">
+            <TableRow>
+              <TableHead scope="col" className="sticky left-0 bg-background text-foreground">
+                {t(locale, "aiBenchColModel")}
+              </TableHead>
+              <TableHead scope="col">{t(locale, "aiBenchColVendor")}</TableHead>
+              <TableHead scope="col">{t(locale, "aiBenchColHarnesses")}</TableHead>
+              <TableHead scope="col">{t(locale, "aiBenchColClass")}</TableHead>
+              {BENCHMARK_COLUMNS.map((col) => (
+                <TableHead key={col.id} scope="col" className="text-right">
+                  {t(locale, col.labelKey)}
+                </TableHead>
+              ))}
+              <TableHead scope="col" className="text-right">
+                {t(locale, "aiBenchColIndex")}
+              </TableHead>
+              <TableHead scope="col" className="text-right">
+                {t(locale, "aiBenchColCoverage")}
+              </TableHead>
+              <TableHead scope="col" className="text-right">
+                {t(locale, "aiBenchColInputPrice")}
+              </TableHead>
+              <TableHead scope="col" className="text-right">
+                {t(locale, "aiBenchColOutputPrice")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {models.map((model) => {
+              const view = views.get(model.id) ?? { band: "unrated" as const, index: undefined, coverage: 0 };
+              const prices = priceCells(model, locale);
+              const harnessNames = model.harnesses.map((h) => HARNESS_DISPLAY_NAMES[h] ?? h).join(", ");
+              return (
+                <TableRow key={model.id} data-model-id={model.id} className="align-top">
+                  <TableHead
+                    scope="row"
+                    className="sticky left-0 bg-background text-left whitespace-normal text-foreground"
+                  >
+                    <span data-slot="model-name">{model.name}</span>
+                    {integrityNotes(model, locale)}
+                  </TableHead>
+                  <TableCell>{model.vendor}</TableCell>
+                  <TableCell className="text-muted-foreground">{harnessNames}</TableCell>
+                  <TableCell>{classLabel(view.band, locale)}</TableCell>
+                  {BENCHMARK_COLUMNS.map((col) => (
+                    <TableCell key={col.id} className="text-right">
+                      {benchmarkCell(model, col.id, locale)}
+                    </TableCell>
+                  ))}
+                  <TableCell className="text-right">{indexCell(view, locale)}</TableCell>
+                  <TableCell className="text-right">{coverageCell(view, locale)}</TableCell>
+                  <TableCell className="text-right">{prices.input}</TableCell>
+                  <TableCell className="text-right">{prices.output}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
 
       {/* ── Mobile: stacked definition cards (below md) ─────────────────────────────── */}

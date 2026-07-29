@@ -53,7 +53,7 @@ export type FilterSelectProps = {
  */
 export function FilterSelect({ id, label, value, options, allLabel, onChange }: FilterSelectProps) {
   return (
-    <div className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto">
+    <div data-slot="filter-select" className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto">
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
@@ -85,7 +85,16 @@ export type BenchmarkFiltersProps = {
   state: FilterState;
   resultCount: number;
   locale: Locale;
-  onChange: (next: FilterState) => void;
+  /**
+   * Reports a PATCH (only the axis that changed), not a pre-merged full `FilterState` — the caller
+   * (`benchmark-content.tsx`) owns merging it onto its own always-current ref-tracked state. This
+   * component previously spread its own `state` PROP into the merge (`{...state, harness}`), which
+   * is correct in isolation but becomes a stale-closure race once the caller's `state` prop lags
+   * behind an in-flight `router.push` (Rule-15 EWT-003 fix): change the harness select then the
+   * class select in rapid succession, and the second call's `state` prop still reflected the
+   * pre-harness-change URL, so its merge silently dropped the harness change.
+   */
+  onChange: (patch: Partial<FilterState>) => void;
 };
 
 export function BenchmarkFilters({ state, resultCount, locale, onChange }: BenchmarkFiltersProps) {
@@ -104,12 +113,12 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
 
   function handleHarnessChange(raw: string) {
     const harness = raw === "" ? undefined : (raw as HarnessId);
-    onChange({ ...state, harness });
+    onChange({ harness });
   }
 
   function handleClassChange(raw: string) {
     const bandClass = raw === "" ? undefined : (raw as Band);
-    onChange({ ...state, class: bandClass });
+    onChange({ class: bandClass });
   }
 
   return (
@@ -158,7 +167,11 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
           allLabel={allClassesLabel}
           onChange={handleClassChange}
         />
-        <span data-testid={`${SLOT}-result-count`} className="text-sm text-muted-foreground">
+        {/* `role="status"` (implicit `aria-live="polite"`) — WCAG 4.1.3 Status Messages: a filter
+            change never moves focus or scrolls (`scroll: false` above is intentional), so the
+            narrowed/widened result count must announce itself to assistive tech instead
+            (Rule-15 EWT-004 fix). */}
+        <span data-testid={`${SLOT}-result-count`} role="status" className="text-sm text-muted-foreground">
           {t(locale, "aiBenchFilterResultCountLabel")}: {resultCount}
         </span>
       </div>

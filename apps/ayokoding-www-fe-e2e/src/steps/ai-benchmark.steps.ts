@@ -149,3 +149,123 @@ Then("the same filtered set of models is shown", async ({ page }) => {
   expect(idsAfterReload.length).toBeGreaterThan(0);
   expect(idsAfterReload.length).toBeLessThan(38);
 });
+
+// ── AC-38 — live-page band-token contrast (Phase 9, M-11/M-12) ────────────────
+//
+// jsdom cannot resolve `oklch()` custom properties through a cascade (see
+// `shell/band-tokens.unit.test.ts`'s own docstring and tech-docs.md §Band design tokens), so this
+// assertion reads the tokens' ACTUAL resolved colours from a real browser and computes the WCAG
+// contrast ratio itself — there is no third-party a11y-audit dependency in this repo to lean on.
+//
+// The four band tokens all share ONE `-ink` value and ONE `-wash` value per theme (see
+// `libs/web-ui-token/src/ayokoding.css`) — only the BASE (`--chart-band-<band>`) hue differs
+// per band, and neither chart currently renders `-wash` as an actual background (see
+// `tech-docs.md`'s "Feature gating" is unrelated; the relevant note is in the Band design tokens
+// section: "-ink/-wash pair provides the text-on-background contrast" — a token-level contract,
+// not tied to any one component's current usage). Reading the CSS custom properties directly,
+// exactly as declared, is therefore the correct level to assert this at — not by locating one
+// particular rendered DOM element.
+
+const BAND_IDS = ["opus", "sonnet", "light", "unrated"] as const;
+
+type Rgb = readonly [number, number, number];
+
+/** WCAG relative luminance (https://www.w3.org/TR/WCAG21/#dfn-relative-luminance). */
+function relativeLuminance([r, g, b]: Rgb): number {
+  const toLinear = (c: number): number => {
+    const s = c / 255;
+    return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+/** WCAG contrast ratio (https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio) — always ≥ 1. */
+function contrastRatio(a: Rgb, b: Rgb): number {
+  const l1 = relativeLuminance(a);
+  const l2 = relativeLuminance(b);
+  const [lighter, darker] = l1 > l2 ? [l1, l2] : [l2, l1];
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+const WCAG_AA_MIN_CONTRAST = 4.5;
+
+// Populated by the "the computed styles of the band tokens are read" step, read by the assertion
+// step — module-scoped for the same reason `scenarioLocale` is above (stateless step functions).
+let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
+  opus: 0,
+  sonnet: 0,
+  light: 0,
+  unrated: 0,
+};
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+Given("the page is rendered in the {string} theme", async ({ page }, theme: string) => {
+  await page.goto(`/${scenarioLocale}/tools/ai-benchmark`);
+  await page.waitForLoadState("networkidle");
+  // next-themes applies dark mode as a `class="dark"` on `<html>` (see
+  // `apps/ayokoding-www/src/app/[locale]/layout.tsx`'s `<ThemeProvider attribute="class" ...>`),
+  // which is exactly the selector `libs/web-ui-token/src/ayokoding.css`'s dark override block
+  // matches (`[data-theme="dark"], .dark`). Setting the class directly is deterministic and avoids
+  // coupling this token-contrast assertion to the theme-toggle dropdown's own interaction path.
+  if (theme === "dark") {
+    await page.evaluate(() => document.documentElement.classList.add("dark"));
+  } else {
+    await page.evaluate(() => document.documentElement.classList.remove("dark"));
+  }
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+When("the computed styles of the band tokens are read from the live page", async ({ page }) => {
+  // The colour-SYNTAX resolution (`oklch()`/`lab()`/nested `var()` → concrete sRGB bytes) can only
+  // happen inside the browser — a `<canvas>` 2D context is the one API guaranteed to fully
+  // rasterize any CSS colour a browser accepts, regardless of which serialization
+  // `getComputedStyle` itself reports. The WCAG relative-luminance/contrast MATH that follows is
+  // plain arithmetic over those bytes, so it runs here in Node instead of being re-serialized into
+  // the page — one browser round-trip per theme, not four.
+  const rgbByBand = await page.evaluate((bands: readonly string[]) => {
+    function resolvedRgb(colorValue: string): [number, number, number] {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("2D canvas context unavailable");
+      ctx.fillStyle = colorValue;
+      ctx.fillRect(0, 0, 1, 1);
+      const data = ctx.getImageData(0, 0, 1, 1).data;
+      return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0];
+    }
+    const out: Record<string, { ink: [number, number, number]; wash: [number, number, number] }> = {};
+    for (const band of bands) {
+      const probeInk = document.createElement("div");
+      probeInk.style.color = `var(--chart-band-${band}-ink)`;
+      const probeWash = document.createElement("div");
+      probeWash.style.color = `var(--chart-band-${band}-wash)`;
+      document.body.appendChild(probeInk);
+      document.body.appendChild(probeWash);
+      const inkColor = getComputedStyle(probeInk).color;
+      const washColor = getComputedStyle(probeWash).color;
+      document.body.removeChild(probeInk);
+      document.body.removeChild(probeWash);
+      out[band] = { ink: resolvedRgb(inkColor), wash: resolvedRgb(washColor) };
+    }
+    return out;
+  }, BAND_IDS);
+
+  const next = { ...bandContrastRatios };
+  for (const band of BAND_IDS) {
+    const entry = rgbByBand[band];
+    if (!entry) throw new Error(`No resolved RGB pair for band "${band}"`);
+    next[band] = contrastRatio(entry.ink, entry.wash);
+  }
+  bandContrastRatios = next;
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
+Then("every band token meets the WCAG AA contrast ratio against its background", async ({}) => {
+  for (const band of BAND_IDS) {
+    expect(
+      bandContrastRatios[band],
+      `--chart-band-${band}-ink vs --chart-band-${band}-wash contrast ratio`,
+    ).toBeGreaterThanOrEqual(WCAG_AA_MIN_CONTRAST);
+  }
+});

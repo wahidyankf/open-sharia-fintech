@@ -134,6 +134,17 @@ Feature: AI model benchmark tool
     Then the disclosure states that most frontier benchmark scores are vendor self-reported
     And the disclosure is visible without interaction
 
+  # USS-002 — Rule-15 web-usability-tester spec-blind suggestion (paired with UWT-002/UWT-003): the
+  # four capability classes and five evidence grades appeared throughout the page with no on-page
+  # definition, forcing a first-time user to infer their meaning from context. Fixed via an
+  # always-visible legend section in `shell/how-to-read.tsx` (not inside the collapsible
+  # `<details>`, so it stays visible even if that disclosure is closed).
+  @unit
+  Scenario: A legend defines the capability classes and evidence grades
+    Given I am on the AI Model Benchmark page
+    When I look for an explanation of the "Class" and evidence-grade labels
+    Then a visible legend defines each of the four classes and each of the five evidence grades
+
   # AC-33
   @unit
   Scenario: The page names a known benchmark-integrity finding beside the model it concerns
@@ -276,6 +287,17 @@ Feature: AI model benchmark tool
     Then every roster model is shown
     But no error is surfaced to the reader
 
+  # SG-001 — Rule-15 web-exploratory-tester spec gap: a duplicated `harness` query parameter
+  # resolves to the FIRST value, matching `URLSearchParams.get()`'s documented first-match
+  # semantics (`decodeState` in `core/url-state.ts` reads via `.get()`, never `.getAll()`) —
+  # deterministic and correct pre-existing behaviour, previously unprotected by any scenario.
+  @unit
+  Scenario: A duplicated query parameter resolves to its first value
+    Given the URL carries the harness parameter twice with two different known harness values
+    When the page renders
+    Then the filter uses the first of the two values
+    And every roster model matching that harness is shown
+
   # AC-28
   @unit
   Scenario: A filter combination matching no model renders an explicit empty state
@@ -290,3 +312,22 @@ Feature: AI model benchmark tool
     Given the reader has applied a harness filter and a class filter
     When the reader reloads the resulting URL
     Then the same filtered set of models is shown
+
+  # AC-38 — jsdom cannot resolve `oklch()` custom properties through a cascade (see tech-docs.md
+  # §Band design tokens), so the REAL WCAG contrast assertion runs only at the e2e layer
+  # (apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts). The unit-layer binding
+  # (test/unit/fe-steps/ai-benchmark.steps.tsx) uses the same `expect(true).toBe(true)` placeholder
+  # convention `course-rehome-redirects.steps.tsx`'s raw-HTTP-redirect scenario already uses for its
+  # own jsdom-incapable assertions — present only so `specs:behavior:coverage` (which scans
+  # `apps/ayokoding-www` but not the sibling `ayokoding-www-fe-e2e` project) finds a `@covers`
+  # annotation for this scenario.
+  @e2e
+  Scenario Outline: Band colours meet contrast in both themes
+    Given the page is rendered in the "<theme>" theme
+    When the computed styles of the band tokens are read from the live page
+    Then every band token meets the WCAG AA contrast ratio against its background
+
+    Examples:
+      | theme |
+      | light |
+      | dark  |

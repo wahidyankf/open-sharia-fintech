@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLocale } from "@/features/i18n/shell/use-locale";
 import { t } from "@/features/i18n/core/translations";
@@ -31,7 +32,20 @@ export function BenchmarkContent() {
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };
   const isEmpty = filteredModels.length === 0;
 
-  function handleFilterChange(next: FilterState) {
+  // Rule-15 EWT-003 fix: `router.push` is asynchronous, so two rapid filter changes (e.g. harness
+  // then class) can both fire before Next.js commits the first navigation and re-renders this
+  // component with updated `searchParams` — both handlers would otherwise merge against the SAME
+  // stale `filterState`, and the second `router.push` would silently overwrite the first change.
+  // `latestFilterStateRef` is updated synchronously inside `handleFilterChange` itself (not only on
+  // render), so a rapid second call always merges onto the just-applied first change rather than a
+  // stale render's `filterState`. Kept in sync with the URL-derived value on every render too, so
+  // browser back/forward navigation (which does not go through `handleFilterChange`) is reflected.
+  const latestFilterStateRef = useRef<FilterState>(filterState);
+  latestFilterStateRef.current = filterState;
+
+  function handleFilterChange(patch: Partial<FilterState>) {
+    const next: FilterState = { ...latestFilterStateRef.current, ...patch };
+    latestFilterStateRef.current = next;
     const qs = encodeState(next).toString();
     // `scroll: false` is mandatory: this is in-page filter/view state, not a page change, so the
     // default Next.js navigation behaviour (scroll to top of document) would yank the reader back
@@ -41,7 +55,10 @@ export function BenchmarkContent() {
   }
 
   return (
-    <main data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+    // A plain `<div>`, not `<main>` — `layout.tsx`'s `<main id="main-content">` is already the
+    // page's one landmark; a second nested `<main>` here produced two `role="main"` landmarks on
+    // this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect (Rule-15 EWT-001 fix).
+    <div data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">{t(locale, "aiBenchTitle")}</h1>
         <p data-testid="ai-bench-subtitle" className="text-sm text-muted-foreground">
@@ -59,11 +76,16 @@ export function BenchmarkContent() {
       />
 
       {isEmpty ? (
-        // AC-28: an explicit empty-state message replaces both charts (never an empty plot area) —
-        // the data table still renders below (a header with zero body rows is not "empty" in the
-        // AC's sense; every model's figures already read as "not reported" the same way elsewhere).
+        // AC-28: an explicit empty-state message replaces both charts (never an empty plot area).
+        // The data table is ALSO hidden below (Rule-15 UWT-006 fix) — an already-unambiguous empty
+        // -state message directly followed by a full, empty table header row read as redundant/
+        // aesthetically noisy (Heuristic 8) and could be misread as "the table is broken"; AC-28
+        // itself only constrains the charts, not the table, so hiding it here does not narrow that
+        // AC. `role="status"` — a filter change never moves focus or scrolls, so an emptied roster
+        // must announce itself to assistive tech (WCAG 4.1.3, Rule-15 EWT-004 fix).
         <p
           data-testid="ai-bench-empty-state"
+          role="status"
           className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground"
         >
           <span className="mb-1 block font-medium text-foreground">{t(locale, "aiBenchEmptyStateTitle")}</span>
@@ -73,10 +95,9 @@ export function BenchmarkContent() {
         <>
           <CapabilityChart dataset={filteredDataset} fullDataset={dataset} locale={locale} />
           <PriceChart dataset={filteredDataset} fullDataset={dataset} locale={locale} harness={filterState.harness} />
+          <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
         </>
       )}
-
-      <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
-    </main>
+    </div>
   );
 }

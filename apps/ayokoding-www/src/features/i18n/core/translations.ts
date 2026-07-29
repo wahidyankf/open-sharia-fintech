@@ -21,6 +21,9 @@ const translations: Record<Locale, Record<string, string>> = {
     toolsPageTitle: "Tools",
     toolsPageCalcLink: "Cost of Living Calculator",
     toolsPageCalcDesc: "Compare monthly living costs, savings, and the minimum role needed across cities.",
+    toolsPageAiBenchLink: "AI Model Benchmark",
+    toolsPageAiBenchDesc:
+      "Compare coding-agent models by capability, class, and per-token price, every figure sourced.",
     breadcrumbHome: "Home",
     breadcrumbCalculator: "Calculator",
 
@@ -82,6 +85,25 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsTerminalbench: "No republication terms stated by the operator.",
     aiBenchOpTermsGpqa: "The GPQA benchmark repository is MIT-licensed.",
     aiBenchOpTermsNone: "No republication terms stated by the operator.",
+
+    // AI benchmark — legend (Rule-15 UWT-002/UWT-003/UWT-005/USS-002 fix): a visible, always
+    // -available definition of the class taxonomy and evidence grades, plus the coverage formula.
+    aiBenchLegendHeading: "Class and evidence-grade legend",
+    aiBenchLegendClassIntro:
+      "The four capability classes are anchor-relative composite-index tiers, not vendor brand names — a model of any vendor can land in any class:",
+    aiBenchLegendClassOpus: "at or above Claude Opus 5's own composite index (the tier's defining anchor).",
+    aiBenchLegendClassSonnet: "at or above Claude Sonnet 5's own composite index, below the Opus anchor.",
+    aiBenchLegendClassLight: "below the Sonnet anchor.",
+    aiBenchLegendClassUnrated: "no figure on any of the four composite benchmarks.",
+    aiBenchLegendGradeIntro: "The five evidence grades describe how each figure was sourced:",
+    aiBenchLegendGradeVerified: "scored by an independent verifier (e.g. Scale AI SEAL) or an official model card.",
+    aiBenchLegendGradeSelfReported: "published by the vendor about its own model.",
+    aiBenchLegendGradeSecondary: "quoted by an aggregator; no primary source retrieved.",
+    aiBenchLegendGradeConflicted:
+      "multiple irreconcilable published values — the cell shows the range, never an average.",
+    aiBenchLegendGradeUnavailable: "the vendor publishes no figure for this benchmark.",
+    aiBenchLegendCoverageFormula:
+      "Coverage is the weighted share of the composite a model's reported benchmarks cover (SWE-bench Verified 25% + SWE-bench Pro 25% + Terminal-Bench 2.1 20% + GPQA Diamond 30% = 100%), not a simple count of benchmarks reported.",
 
     // AI benchmark — charts (Phase 6/7).
     aiBenchCapabilityChartTitle: "Capability index by model",
@@ -299,6 +321,7 @@ const translations: Record<Locale, Record<string, string>> = {
     footerAbout: "About",
     footerBrowseAll: "Browse all",
     footerCalculator: "Cost of Living Calculator",
+    footerAiBenchmark: "AI Model Benchmark",
     footerAboutAyokoding: "About AyoKoding",
     footerTerms: "Terms & Conditions",
     footerProject: "Project",
@@ -363,6 +386,9 @@ const translations: Record<Locale, Record<string, string>> = {
     toolsPageCalcLink: "Kalkulator Biaya Hidup",
     toolsPageCalcDesc:
       "Bandingkan biaya hidup bulanan, tabungan, dan jabatan minimum yang dibutuhkan di berbagai kota.",
+    toolsPageAiBenchLink: "Tolok Ukur Model AI",
+    toolsPageAiBenchDesc:
+      "Bandingkan model agen-koding berdasarkan kemampuan, kelas, dan harga per-token, setiap angka bersumber.",
     breadcrumbHome: "Beranda",
     breadcrumbCalculator: "Kalkulator",
 
@@ -425,6 +451,26 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchOpTermsTerminalbench: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
     aiBenchOpTermsGpqa: "Repositori tolok ukur GPQA berlisensi MIT.",
     aiBenchOpTermsNone: "Tidak ada ketentuan republikasi yang dinyatakan oleh operator.",
+
+    // AI benchmark — legenda (perbaikan Rule-15 UWT-002/UWT-003/UWT-005/USS-002): definisi yang
+    // selalu terlihat untuk taksonomi kelas dan tingkat bukti, plus rumus cakupan.
+    aiBenchLegendHeading: "Legenda kelas dan tingkat bukti",
+    aiBenchLegendClassIntro:
+      "Keempat kelas kemampuan adalah tingkatan indeks komposit relatif terhadap jangkar, bukan nama merek vendor — model dari vendor mana pun dapat masuk ke kelas mana pun:",
+    aiBenchLegendClassOpus:
+      "setara atau di atas indeks komposit Claude Opus 5 sendiri (jangkar yang menentukan tingkatan ini).",
+    aiBenchLegendClassSonnet: "setara atau di atas indeks komposit Claude Sonnet 5 sendiri, di bawah jangkar Opus.",
+    aiBenchLegendClassLight: "di bawah jangkar Sonnet.",
+    aiBenchLegendClassUnrated: "tidak ada angka pada satu pun dari empat tolok ukur komposit.",
+    aiBenchLegendGradeIntro: "Kelima tingkat bukti menjelaskan bagaimana setiap angka bersumber:",
+    aiBenchLegendGradeVerified: "dinilai oleh verifikator independen (mis. Scale AI SEAL) atau kartu model resmi.",
+    aiBenchLegendGradeSelfReported: "dipublikasikan oleh vendor tentang modelnya sendiri.",
+    aiBenchLegendGradeSecondary: "dikutip oleh agregator; tidak ada sumber utama yang ditemukan.",
+    aiBenchLegendGradeConflicted:
+      "beberapa nilai terpublikasi yang tidak dapat direkonsiliasi — sel menampilkan rentang, tidak pernah rata-rata.",
+    aiBenchLegendGradeUnavailable: "vendor tidak mempublikasikan angka untuk tolok ukur ini.",
+    aiBenchLegendCoverageFormula:
+      "Cakupan adalah porsi berbobot dari komposit yang dicakup oleh tolok ukur yang dilaporkan model (SWE-bench Verified 25% + SWE-bench Pro 25% + Terminal-Bench 2.1 20% + GPQA Diamond 30% = 100%), bukan sekadar jumlah tolok ukur yang dilaporkan.",
 
     // AI benchmark — bagan (Fase 6/7).
     aiBenchCapabilityChartTitle: "Indeks kemampuan per model",
@@ -647,6 +693,7 @@ const translations: Record<Locale, Record<string, string>> = {
     footerAbout: "Tentang",
     footerBrowseAll: "Jelajahi semua",
     footerCalculator: "Kalkulator Biaya Hidup",
+    footerAiBenchmark: "Tolok Ukur Model AI",
     footerAboutAyokoding: "Tentang AyoKoding",
     footerTerms: "Syarat & Ketentuan",
     footerProject: "Proyek",

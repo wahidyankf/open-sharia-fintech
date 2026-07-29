@@ -63,6 +63,67 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
         </ul>
       </details>
 
+      {/* Rule-15 UWT-002/UWT-003/UWT-005/USS-002 fix — a visible, always-available legend (not
+          inside the collapsible `<details>` above, so it stays visible even if the reader closes
+          that disclosure) defining the four capability classes, the five evidence grades, and the
+          coverage formula. Reuses the SAME label words the page already shows (`aiBenchBand*`,
+          `aiBenchGrade*`) so the legend and the live page never drift into two vocabularies. */}
+      <section
+        data-slot="ai-bench-legend"
+        data-testid="ai-bench-legend"
+        className="space-y-3 rounded-md border p-3 text-sm"
+        aria-labelledby="ai-bench-legend-heading"
+      >
+        <h3 id="ai-bench-legend-heading" className="font-semibold">
+          {t(locale, "aiBenchLegendHeading")}
+        </h3>
+
+        <div>
+          <p className="text-muted-foreground">{t(locale, "aiBenchLegendClassIntro")}</p>
+          <dl data-testid="ai-bench-legend-classes" className="mt-1 space-y-1">
+            {(
+              [
+                ["opus", "aiBenchBandOpus", "aiBenchLegendClassOpus"],
+                ["sonnet", "aiBenchBandSonnet", "aiBenchLegendClassSonnet"],
+                ["light", "aiBenchBandLight", "aiBenchLegendClassLight"],
+                ["unrated", "aiBenchBandUnrated", "aiBenchLegendClassUnrated"],
+              ] as const
+            ).map(([band, labelKey, defKey]) => (
+              <div key={band} data-testid={`ai-bench-legend-class-${band}`}>
+                <dt className="inline font-medium">{t(locale, labelKey)}: </dt>
+                <dd className="inline text-muted-foreground">{t(locale, defKey)}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div>
+          <p className="text-muted-foreground">{t(locale, "aiBenchLegendGradeIntro")}</p>
+          <dl data-testid="ai-bench-legend-grades" className="mt-1 space-y-1">
+            {(
+              [
+                ["verified", "aiBenchGradeVerified", "aiBenchLegendGradeVerified"],
+                ["self-reported", "aiBenchGradeSelfReported", "aiBenchLegendGradeSelfReported"],
+                ["secondary", "aiBenchGradeSecondary", "aiBenchLegendGradeSecondary"],
+                ["conflicted", "aiBenchGradeConflicted", "aiBenchLegendGradeConflicted"],
+                ["unavailable", "aiBenchGradeUnavailable", "aiBenchLegendGradeUnavailable"],
+              ] as const
+            ).map(([grade, labelKey, defKey]) => (
+              <div key={grade} data-testid={`ai-bench-legend-grade-${grade}`}>
+                <dt className="inline font-medium">{t(locale, labelKey)}: </dt>
+                <dd className="inline text-muted-foreground">{t(locale, defKey)}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {/* UWT-005 — the bare "Coverage" percentage carries no visible unit/derivation; this states
+            the exact weighted formula (mirrors `core/score.ts`'s `coverage()` / `BENCHMARK_WEIGHTS`). */}
+        <p data-testid="ai-bench-legend-coverage" className="text-muted-foreground">
+          {t(locale, "aiBenchLegendCoverageFormula")}
+        </p>
+      </section>
+
       {/* AC-34 — Sources and Licences, rendered from the OPERATORS dataset list. */}
       <section data-testid="ai-bench-sources" className="space-y-2 text-sm" aria-labelledby="ai-bench-sources-heading">
         <h3 id="ai-bench-sources-heading" className="font-semibold">

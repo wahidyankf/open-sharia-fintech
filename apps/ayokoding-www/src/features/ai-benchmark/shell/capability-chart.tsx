@@ -41,7 +41,15 @@ import {
 const SLOT = "capability-chart";
 
 // ─── Layout constants (display-only — never a benchmark score, price, or threshold) ───────────
-const SVG_WIDTH = 600;
+//
+// `SVG_WIDTH`'s right margin (currently `SVG_WIDTH - (PLOT_X + PLOT_WIDTH)` = 300 units) must stay
+// wide enough for the longest localized low-coverage marker string (Rule-15 DWT-001 fix — was 60
+// units, clipping "low coverage (20%)"/"cakupan rendah (20%)" for any bar long enough to leave
+// under ~140 units of remaining width). This SVG scales via `viewBox` + `w-full`, but its text uses
+// a fixed CSS pixel size (`text-[9px]`, NOT an SVG-unit `font-size`), so the real-pixel space this
+// margin buys shrinks as the container narrows — 300 units was sized against the narrowest tested
+// viewport (375px) with both locales' longest marker string, verified via live-page screenshots.
+const SVG_WIDTH = 840;
 const PLOT_X = 160; // left gutter reserved for the md/lg left-gutter label
 const PLOT_WIDTH = 380;
 const ROW_HEIGHT = 30; // room for both the mobile "label above bar" line and the bar itself
