@@ -3916,27 +3916,60 @@ for 27 projects and 6 tasks they depend on` (70/114 tasks served from cache, res
 - [x] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-9-10-verify-reveal-retest` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-9-10-verify-reveal-retest/`
-  - **Date**: 2026-07-29
+  - **Date**: 2026-07-30
   - **Status**: done
-  - **Notes**: PR #122 opened as draft, ran 3 sequential CI-gated PR-Review Maker→Fixer cycles;
-    cycle-1 fixes in `bf06c5592`/`5c152615b`, cycle-2 fixes in `d44d316c6` (DWT-001 tautological
-    assertion fix, delivery.md/prd.md doc-drift corrections). Cycle 3 completed clean. Merged via
-    squash — `gh pr view 122 --json state,mergedAt,mergeCommit --repo wahidyankf/ose-public` →
-    `state: MERGED`, `mergedAt: 2026-07-29T22:08:09Z`, merge commit
-    `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`. `git rev-parse main origin/main` (immediately after
-    the merge) both printed `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d` (identical; `main` has since
-    advanced further with unrelated concurrent `ayokoding-learning-path-04` work, expected under the
-    same-machine assumption). Worktree removed at merge time:
-    `git worktree list | grep -c ayokoding-www-tools-ai-benchmark-phase-9-10-verify-reveal-retest` →
-    `0`.
+  - **Notes**: PR #122 opened as draft, ran **3 sequential CI-gated PR-Review Maker→Fixer cycles**
+    (all 8 discipline specialists each cycle) per this protocol's mandate. Cycle 1 surfaced 12
+    findings (7 HIGH, 4 MEDIUM, 1 LOW) — all fixed, 0 deferred, commits `bf06c5592` and
+    `5c152615b`. Notable root-cause corrections: DWT-001's `SVG_WIDTH` 600→840 widening was reverted
+    (SVG px scales uniformly with `viewBox`, so widening it downscales the whole chart, not just the
+    margin) in favor of recomputing `PLOT_WIDTH` from a derived marker-margin constant; DWT-003's
+    sticky-header regression (shared `Table` primitive's `overflow-x-auto` breaking
+    `position: sticky` per the CSS `overflow` computed-value rule) was fixed via a new
+    `wrapperClassName` escape-hatch prop; AC-38's structurally-vacuous contrast test (compared each
+    band's own `-ink` vs `-wash`, identical across all bands) was rewritten to assert the real
+    base-token-vs-background pair. CI green (20/20) on `5c152615b99525c6d54859123116fd0dfe90a4e2`.
+    Cycle 2 surfaced 4 findings (3 HIGH, 1 MEDIUM) — all fixed, commit
+    `d44d316c68c5635d284e66004d3da5987f38255e`. Found and fixed a tautological regression test in
+    `capability-chart.test.tsx` (the DWT-001 margin assertion algebraically reduced to comparing
+    `MARKER_MIN_MARGIN` to itself, since `PLOT_WIDTH` is now derived from it — empirically proven by
+    `pr-review-integrity-maker` via constant-tampering), plus two `delivery.md` doc-accuracy
+    corrections and a `prd.md` Gherkin-snippet sync. CI green (20/20). Cycle 3 (final) surfaced 5
+    findings (1 HIGH, 4 MEDIUM) — all fixed, commit `ac912d0f27573378049e0d8e63a7476cece0a34e`. The
+    gating HIGH: the EWT-003 regression test (`benchmark-content.test.tsx`) lived under
+    `src/app/[locale]/tools/ai-benchmark/`, which matched neither of `vitest.config.ts`'s two
+    test-project globs (`unit`/`unit-fe`), so it silently never ran under
+    `nx run ayokoding-www:test:unit` — empirically proven by `pr-review-integrity-maker` reverting
+    the actual EWT-003 fix and showing the suite still passed 144/144 files with the bug fully
+    reintroduced. Fixed by widening `vitest.config.ts`'s `unit-fe` project glob to also cover
+    `src/app/**/*.test.{ts,tsx}` (confirmed this does not double-run sibling `*.unit.test.ts` files,
+    and that renaming the file instead would have been a trap routing it into the Node-environment
+    `unit` project). The 4 MEDIUM findings: a chart `<Axis>` width mismatch (axis-maximum label no
+    longer aligned with the plot's actual right edge after DWT-001's margin fix — fixed by passing
+    `width={PLOT_X + PLOT_WIDTH}`), two `delivery.md` resolution notes whose cited verification greps
+    didn't reproduce as literally claimed (explanatory code comments inflating the hit count), and a
+    stale in-source AC-28-scope comment matching a claim already corrected in `delivery.md`. CI green
+    (20/20) on `ac912d0f27573378049e0d8e63a7476cece0a34e`. **Acceptance criterion met**: cycle 3
+    completed with the synthesis review (review #4812887872) reporting the sole HIGH fixed and zero
+    unresolved CRITICAL/HIGH findings. Branch fell **BEHIND** `main` after cycle 3 (unrelated commits
+    landed on `main` meanwhile); updated via `gh api pulls/122/update-branch -X PUT`, creating merge
+    commit `2798179b0c180cd3bf52d4ad124827db03f94031`; CI green on it (20/20 checks,
+    `mergeStateStatus: CLEAN`). Flipped to ready (`gh pr ready 122`), merged via
+    `gh pr merge 122 --squash` — `gh pr view 122 --json state,mergedAt,mergeCommit` →
+    `"state":"MERGED"`, `"mergedAt":"2026-07-29T22:08:09Z"`, merge commit
+    `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`. Fast-forwarded local `main` to `origin/main` at that
+    commit (`git rev-parse main origin/main` → both `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d`) and
+    removed the worktree: `git worktree list | grep -c
+ayokoding-www-tools-ai-benchmark-phase-9-10-verify-reveal-retest` → `0`.
+
 - [x] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
   - **Date**: 2026-07-29
   - **Status**: done
-  - **Notes**: all 3 post-merge GitHub Actions workflow runs on `main` for merge commit
+  - **Notes**: All 3 post-merge GitHub Actions workflow runs on `main` for merge commit
     `b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d` concluded `success`: `validate-env` (run
-    `30495026484`), `publish-images` (run `30495026486`), `pr-quality-gate` (run `30495026765`) —
-    confirmed via `gh run list --commit b705280b6ea3bb9ec8f44206ded1ab836a7c6c0d --json
-databaseId,name,status,conclusion`.
+    `30495026484`), `publish-images` (run `30495026486`), `pr-quality-gate` (run `30495026765`).
+    `gh run view 30495026765 --json status,conclusion` → `"status":"completed"`,
+    `"conclusion":"success"`.
 
 > **Pause Safety**: the page is public, linked from both navigation surfaces, verified across every
 > locale and breakpoint, and clean under all three live-site testers. Safe to stop. To resume:

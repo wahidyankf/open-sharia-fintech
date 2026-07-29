@@ -1005,7 +1005,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     [#120](https://github.com/wahidyankf/ose-public/pull/120), 3-cycle PR review (cycle 1: 1 LOW f-string
     fix; cycle 2: 1 MEDIUM capstone checklist fix; cycle 3 clean), squash-merged `7818b8272` into `main`;
     deployed to `prod-ayokoding-www`._
-- [ ] [AI] `async-python-and-fastapi-services` (By Example · Python) — convention complete; checkers
+- [x] [AI] `async-python-and-fastapi-services` (By Example · Python) — convention complete; checkers
       clean; **framework-concrete scope note applied**: async concepts deferred to
       `concurrency-and-parallelism`, framework internals to `build-your-own-web-framework`, both
       cross-linked — acceptance:
@@ -1014,6 +1014,14 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       `grep -F -q 'build-your-own-web-framework' "<COURSES>async-python-and-fastapi-services/overview.md"`
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+  - _Implementation note: authored via `apps-ayokoding-www-by-example-maker` in
+    `worktrees/ayokoding-course-async-fastapi` on branch
+    `ayokoding-learning-path-04-course-authoring/async-python-and-fastapi-services`; 113 files (24
+    concepts, 78 worked examples + capstone). Framework-concrete scope: both cross-links verified in
+    overview.md. Build green, markdownlint clean, pyright clean. PR
+    [#121](https://github.com/wahidyankf/ose-public/pull/121), 3-cycle PR review (cycle 1: 1 HIGH test
+    fixture lifespan fix + hadolint dir-rename; cycle 2: 1 HIGH pytest_asyncio.fixture fix; cycle 3
+    clean), squash-merged `d64df3995` into `main`; deployed to `prod-ayokoding-www`._
 - [ ] [AI] `self-hosting-essentials` (By Example · ops/config) — convention complete; checkers clean —
       scope-boundary acceptance: the course teaches running one box, containerizing a service, a
       reverse proxy, and PaaS git-push deploy; its `overview.md` **explicitly excludes** clusters,
