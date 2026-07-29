@@ -16,7 +16,7 @@ Archived plans and completed project planning documents.
   (typed dataset), #113 (governance-reference generator), #114 (pure functional core), #115 (route +
   table + i18n), #117 (capability + price charts), #118 (harness/class filters), and #122 (manual
   verification, reveal, Rule-15 retest) — plus this Phase 11-12 Knowledge Capture and archival unit.
-  A live band-contrast defect (M-14) traced to Tailwind v4's `@theme` compiler silently dropping four
+  A live band-contrast defect (M-12) traced to Tailwind v4's `@theme` compiler silently dropping four
   custom-property declarations was fixed by moving them to a plain `:root` block; jsdom's inability
   to resolve `oklch()` through the cascade moved the corresponding contrast assertion to e2e. The
   near-end Rule-15 three-tester retest (web-design/exploratory/usability) filed 3 DWT, 4 EWT, 6 UWT,

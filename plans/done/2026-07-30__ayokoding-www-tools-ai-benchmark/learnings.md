@@ -76,7 +76,7 @@ escape line: `No generalizable learnings — <one-line reason>`.
 
 ## Learning: Tailwind v4's `@theme {}` compiler silently drops some custom-property declarations from its compiled `:root`
 
-- **Context**: fixing the M-14 band-contrast defect required adding four new
+- **Context**: fixing the M-12 band-contrast defect required adding four new
   `--chart-band-*-wash` custom properties to `libs/web-ui-token/src/ayokoding.css`, alongside the
   pre-existing `-ink` declarations in the same `@theme {}` block.
 - **Observation**: the four `-wash` declarations, added inside `@theme {}` in the exact same shape
