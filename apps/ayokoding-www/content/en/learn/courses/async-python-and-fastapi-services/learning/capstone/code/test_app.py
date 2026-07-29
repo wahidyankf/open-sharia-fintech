@@ -7,6 +7,7 @@ from pathlib import Path
 
 import httpx  # => the async client (co-21)
 import pytest
+import pytest_asyncio  # => async fixtures need the asyncio decorator (co-21)
 from httpx import ASGITransport
 
 from app import main  # => the app under test (co-21)
@@ -14,7 +15,7 @@ from app.main import app  # => the ASGI application
 from app.repository import init_db  # => explicit schema init (co-16)
 
 
-@pytest.fixture()
+@pytest_asyncio.fixture()
 async def client(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> httpx.AsyncClient:  # => a client per test
