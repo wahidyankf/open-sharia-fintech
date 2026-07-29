@@ -24,9 +24,18 @@ import type { Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
 import { COMPOSITE_INDEX_MAX, LOW_COVERAGE_THRESHOLD } from "../core/score";
-import { BAND_LABEL_KEYS } from "../core/data/benchmarks";
 import { formatCoverage, formatIndex } from "./format";
-import { Axis, Bar, BandGroup, Legend, scaleLinear, type ChartBand } from "./chart-primitives";
+import {
+  Axis,
+  Bar,
+  BandGroup,
+  Legend,
+  TickRow,
+  bandLabel,
+  evenTicks,
+  scaleLinear,
+  type ChartBand,
+} from "./chart-primitives";
 
 const SLOT = "capability-chart";
 
@@ -40,19 +49,9 @@ const BAND_HEADER_HEIGHT = 22;
 const BAND_GAP = 12;
 const TOP_MARGIN = 24; // room for the always-visible axis-maximum label
 const BOTTOM_MARGIN = 20; // room for the lg-only tick row
-const TICK_INTERVAL = 20; // chart display granularity, not dataset data (A-16)
+const TICK_COUNT = 5; // chart display granularity (0/20/40/60/80/100 over COMPOSITE_INDEX_MAX), not dataset data (A-16)
 
 const RATED_BANDS: readonly ChartBand[] = ["opus", "sonnet", "light"];
-
-/**
- * A band's localized class-name label — the single place `BAND_LABEL_KEYS` is looked up (A-17
- * refactor: the band header, the legend, and the unrated heading all read through this, so the
- * fallback-to-band-id guard cannot drift between the three call sites).
- */
-function bandLabel(band: ChartBand, locale: Locale): string {
-  const key = BAND_LABEL_KEYS[band];
-  return key ? t(locale, key) : band;
-}
 
 type BandLayout = {
   band: ChartBand;
@@ -77,15 +76,6 @@ function computeLayout(
     cursor = rowsTop + scores.length * ROW_HEIGHT + BAND_GAP;
   }
   return { bands, plotHeight: cursor + BOTTOM_MARGIN };
-}
-
-/** The tick values a lg-only axis row renders — every {@link TICK_INTERVAL} units up to the max. */
-function tickValues(max: number): number[] {
-  const out: number[] = [];
-  for (let v = 0; v <= max; v += TICK_INTERVAL) {
-    out.push(v);
-  }
-  return out;
 }
 
 export type CapabilityChartProps = {
@@ -186,22 +176,15 @@ export function CapabilityChart({ dataset = defaultDataset, locale }: Capability
           </BandGroup>
         ))}
 
-        {/* `lg`-only tick row, every {@link TICK_INTERVAL} units — same values as the axis maximum's scale. */}
-        <g data-testid={`${SLOT}-ticks`} className="hidden lg:block">
-          {tickValues(COMPOSITE_INDEX_MAX).map((v) => (
-            <text
-              key={v}
-              data-slot="chart-axis-tick"
-              data-testid={`${SLOT}-tick-${v}`}
-              x={PLOT_X + scale(v)}
-              y={tickRowY}
-              textAnchor="middle"
-              className="fill-muted-foreground text-[9px]"
-            >
-              {formatIndex(v, locale)}
-            </text>
-          ))}
-        </g>
+        {/* `lg`-only tick row — {@link TICK_COUNT} + 1 evenly spaced values over the axis max. */}
+        <TickRow
+          testId={`${SLOT}-ticks`}
+          tickTestId={`${SLOT}-tick`}
+          values={evenTicks(COMPOSITE_INDEX_MAX, TICK_COUNT)}
+          x={(v) => PLOT_X + scale(v)}
+          y={tickRowY}
+          format={(v) => formatIndex(v, locale)}
+        />
       </svg>
 
       <Legend items={legendItems} />

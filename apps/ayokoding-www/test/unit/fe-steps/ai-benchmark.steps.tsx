@@ -35,7 +35,10 @@ import {
   type ConflictedFigure,
   type Dataset,
   type Figure,
+  type HarnessId,
+  type MeteredPrice,
   type Model,
+  type SubscriptionPrice,
 } from "@/features/ai-benchmark/core/data/models";
 import {
   COMPOSITE_INDEX_MAX,
@@ -55,7 +58,8 @@ import {
 } from "@/features/ai-benchmark/core/bands";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
-import { formatCoverage, formatIndex } from "@/features/ai-benchmark/shell/format";
+import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
+import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 
@@ -992,6 +996,116 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
+  // ════════════════════════════════════════════════════════════════════════════
+  // Phase 7 — price chart (AC-15/16/17).
+  // ════════════════════════════════════════════════════════════════════════════
+
+  function meteredFixture(id: string, input: number, output: number, harness: HarnessId = "claude-code"): Model {
+    const rate: MeteredPrice = { kind: "metered", input, output, grade: "verified", source: SRC };
+    return { id, name: id, vendor: "Test", harnesses: [harness], figures: [], pricing: { [harness]: rate } };
+  }
+
+  // ─── AC-15 — a metered model shows separate labelled input and output bars ────
+
+  Scenario("A metered model shows separate labelled input and output bars", ({ Given, When, Then, And }) => {
+    Given("a fixture model with a per-token input rate and output rate", () => {
+      ctx.fixtureDataset = fixtureDataset([meteredFixture("price-metered", 3, 15)]);
+    });
+
+    When("the price chart is rendered", () => {
+      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A metered model shows separate labelled input and output bars
+    Then("that model has one bar labelled as the input rate", () => {
+      expect(screen.getByTestId("price-chart-bar-in-price-metered")).not.toBeNull();
+      const label = screen.getByTestId("price-chart-label-in-price-metered");
+      expect(label.textContent ?? "").toContain(formatPriceUsd(3, "en"));
+    });
+
+    And("that model has one bar labelled as the output rate", () => {
+      expect(screen.getByTestId("price-chart-bar-out-price-metered")).not.toBeNull();
+      const label = screen.getByTestId("price-chart-label-out-price-metered");
+      expect(label.textContent ?? "").toContain(formatPriceUsd(15, "en"));
+    });
+  });
+
+  // ─── AC-16 — a subscription-only model renders in the subscription group ──────
+
+  Scenario("A subscription-only model renders in the subscription group", ({ Given, When, Then, But }) => {
+    Given("a fixture model available only under a flat-rate subscription", () => {
+      const rate: SubscriptionPrice = {
+        kind: "subscription",
+        planCostUsd: 10,
+        grade: "verified",
+        source: SRC,
+        caps: "First month $5, then $10/month.",
+      };
+      const m: Model = {
+        id: "price-sub-only",
+        name: "price-sub-only",
+        vendor: "Test",
+        harnesses: ["opencode-go"],
+        figures: [],
+        pricing: { "opencode-go": rate },
+      };
+      ctx.fixtureDataset = fixtureDataset([m]);
+    });
+
+    When("the price chart is rendered", () => {
+      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A subscription-only model renders in the subscription group
+    Then("that model appears in the subscription group", () => {
+      const group = screen.getByTestId("price-chart-subscription");
+      expect(group.textContent ?? "").toContain("price-sub-only");
+    });
+
+    But("that model renders no per-token bar and no zero value", () => {
+      expect(screen.queryByTestId("price-chart-bar-in-price-sub-only")).toBeNull();
+      expect(screen.queryByTestId("price-chart-bar-out-price-sub-only")).toBeNull();
+      const group = screen.getByTestId("price-chart-subscription");
+      expect(group.textContent ?? "").not.toContain("$0.00");
+      expect(group.textContent ?? "").not.toMatch(/\$0\b/);
+    });
+  });
+
+  // ─── AC-17 — an unfiltered price chart shows the lowest harness rate ──────────
+
+  Scenario("An unfiltered price chart shows the lowest harness rate", ({ Given, When, Then, And }) => {
+    Given("a fixture model priced differently by two harnesses", () => {
+      const m: Model = {
+        id: "price-two-harness",
+        name: "price-two-harness",
+        vendor: "Test",
+        harnesses: ["claude-code", "cursor"],
+        figures: [],
+        pricing: {
+          "claude-code": { kind: "metered", input: 5, output: 25, grade: "verified", source: SRC },
+          cursor: { kind: "metered", input: 3, output: 15, grade: "verified", source: SRC },
+        },
+      };
+      ctx.fixtureDataset = fixtureDataset([m]);
+    });
+
+    When("the price chart is rendered without a harness filter", () => {
+      render(React.createElement(PriceChart, { dataset: ctx.fixtureDataset!, locale: "en" }));
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered price chart shows the lowest harness rate
+    Then("that model's bars use the lower of the two harness rates", () => {
+      const inLabel = screen.getByTestId("price-chart-label-in-price-two-harness");
+      expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
+      expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(5, "en"));
+    });
+
+    And("the chart states that it shows the lowest available harness rate", () => {
+      const subtitle = screen.getByTestId("price-chart-subtitle");
+      expect(subtitle.textContent).toBe(t("en", "aiBenchPriceLowestSubtitle"));
+    });
+  });
+
   // ─── AC-36 (capability half) — the capability chart exposes an accessible name ─
 
   Scenario("Each chart exposes an accessible name", ({ Given, When, Then, And }) => {
@@ -1010,13 +1124,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("the price chart exposes an accessible name", () => {
-      // Phase 6 only wires the capability chart onto the page — the price chart does not exist
-      // until Phase 7 (`price-chart.tsx` is created at Y-2). There is nothing on the page yet that
-      // COULD carry an inaccessible name, so this half is vacuously satisfied here: the assertion
-      // is that no price-chart node exists at all. Phase 7's Y-7 REPLACES this step body with a
-      // real accessible-name assertion once the price chart is wired onto the page (still red at
-      // Y-7, since the price SVG has no `role="img"`/`<title>` yet); Y-8 makes it pass for real.
-      expect(screen.queryByTestId("price-chart-svg")).toBeNull();
+      // Phase 7's Y-7 replaces the Phase-6 vacuous stub (which merely asserted no price-chart node
+      // existed yet) with a real accessible-name assertion now that `price-chart.tsx` is wired onto
+      // the page (Y-7/Y-8).
+      const chart = screen.getByRole("img", { name: t("en", "aiBenchPriceChartTitle") });
+      expect(chart).not.toBeNull();
     });
   });
 });

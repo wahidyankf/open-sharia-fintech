@@ -6,6 +6,7 @@ import { dataset } from "@/features/ai-benchmark/core/data/models";
 import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
+import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
 
 export function BenchmarkContent() {
   const locale = useLocale();
@@ -21,6 +22,8 @@ export function BenchmarkContent() {
       <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
 
       <CapabilityChart dataset={dataset} locale={locale} />
+
+      <PriceChart dataset={dataset} locale={locale} />
 
       <ModelTable dataset={dataset} locale={locale} />
     </main>

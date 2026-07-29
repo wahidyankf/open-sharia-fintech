@@ -86,6 +86,9 @@ const translations: Record<Locale, Record<string, string>> = {
     // AI benchmark — charts (Phase 6/7).
     aiBenchCapabilityChartTitle: "Capability index by model",
     aiBenchChartAxisMaxLabel: "Axis maximum",
+    aiBenchPriceChartTitle: "Price by model",
+    aiBenchPriceLowestSubtitle: "Showing the lowest available rate across harnesses for each model",
+    aiBenchPriceSubscriptionHeading: "Subscription-only models",
 
     // Calculator — page
     calcTitle: "Cost of Living Calculator",
@@ -415,6 +418,9 @@ const translations: Record<Locale, Record<string, string>> = {
     // AI benchmark — bagan (Fase 6/7).
     aiBenchCapabilityChartTitle: "Indeks kemampuan per model",
     aiBenchChartAxisMaxLabel: "Nilai maksimum sumbu",
+    aiBenchPriceChartTitle: "Harga per model",
+    aiBenchPriceLowestSubtitle: "Menampilkan tarif harness terendah yang tersedia untuk setiap model",
+    aiBenchPriceSubscriptionHeading: "Model khusus langganan",
 
     // Calculator — page
     calcTitle: "Kalkulator Biaya Hidup",

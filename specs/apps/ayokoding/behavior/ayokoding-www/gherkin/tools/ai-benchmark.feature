@@ -185,6 +185,30 @@ Feature: AI model benchmark tool
     Then every bar has a text label carrying the model name
     And every bar has a text label carrying its numeric composite index
 
+  # AC-15
+  @unit
+  Scenario: A metered model shows separate labelled input and output bars
+    Given a fixture model with a per-token input rate and output rate
+    When the price chart is rendered
+    Then that model has one bar labelled as the input rate
+    And that model has one bar labelled as the output rate
+
+  # AC-16
+  @unit
+  Scenario: A subscription-only model renders in the subscription group
+    Given a fixture model available only under a flat-rate subscription
+    When the price chart is rendered
+    Then that model appears in the subscription group
+    But that model renders no per-token bar and no zero value
+
+  # AC-17
+  @unit
+  Scenario: An unfiltered price chart shows the lowest harness rate
+    Given a fixture model priced differently by two harnesses
+    When the price chart is rendered without a harness filter
+    Then that model's bars use the lower of the two harness rates
+    And the chart states that it shows the lowest available harness rate
+
   # AC-36
   @unit @e2e
   Scenario: Each chart exposes an accessible name

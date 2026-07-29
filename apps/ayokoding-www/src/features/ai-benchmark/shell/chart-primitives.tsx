@@ -11,6 +11,9 @@
 // and every numeric value a caller passes in comes from the dataset via `core/`.
 
 import type { ReactNode } from "react";
+import { t } from "@/features/i18n/core/translations";
+import type { Locale } from "@/features/i18n/core/config";
+import { BAND_LABEL_KEYS } from "../core/data/benchmarks";
 
 /** The four capability classes a bar or band header can be coloured by (mirrors `core/bands.ts`'s `Band`). */
 export type ChartBand = "opus" | "sonnet" | "light" | "unrated";
@@ -70,6 +73,17 @@ export function bandInkFillClass(band: ChartBand): string {
 /** The Tailwind class that colours a small swatch (e.g. a legend dot) with a band's colour token. */
 export function bandSwatchClass(band: ChartBand): string {
   return BAND_SWATCH_CLASS[band];
+}
+
+/**
+ * A band's localized class-name label — the single place either chart looks up
+ * `BAND_LABEL_KEYS[band] → t(locale, key)` (Y-11 refactor: `capability-chart.tsx` and
+ * `price-chart.tsx` each carried their own identical copy of this lookup; the fallback-to-band-id
+ * guard can no longer drift between the two charts now that it lives here once).
+ */
+export function bandLabel(band: ChartBand, locale: Locale): string {
+  const key = BAND_LABEL_KEYS[band];
+  return key ? t(locale, key) : band;
 }
 
 /**
@@ -193,5 +207,61 @@ export function Legend({ items }: LegendProps) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * `count + 1` evenly spaced values from `0` to `max`, inclusive — the domain values an lg-only
+ * tick row renders (Y-11 refactor target: both charts built their own near-identical
+ * "even ticks up to a max" generator; `capability-chart.tsx`'s fixed-20-unit-interval ticks over
+ * `COMPOSITE_INDEX_MAX` (100) are exactly `evenTicks(100, 5)`, so no chart's tick VALUES change,
+ * only where the generator lives). A non-positive `max` or non-positive `count` degenerates to a
+ * single `[0]` tick rather than dividing by zero or looping forever.
+ */
+export function evenTicks(max: number, count: number): number[] {
+  if (!(max > 0) || count <= 0) return [0];
+  const out: number[] = [];
+  for (let i = 0; i <= count; i++) {
+    out.push((max * i) / count);
+  }
+  return out;
+}
+
+export type TickRowProps = {
+  /** The outer `<g>`'s `data-testid` (the whole row, e.g. `"capability-chart-ticks"`). */
+  testId: string;
+  /** Each individual tick's `data-testid` prefix — the tick's own testid is `${tickTestId}-${value}`. */
+  tickTestId: string;
+  values: readonly number[];
+  /** Maps a domain value to its pixel x-offset (typically the chart's own {@link scaleLinear} plus the plot's left gutter). */
+  x: (value: number) => number;
+  y: number;
+  /** The already-localized, formatted string for one tick value (the caller owns number formatting). */
+  format: (value: number) => string;
+};
+
+/**
+ * An lg-only row of axis ticks — always visible ABOVE `lg` in the DOM (jsdom applies no CSS, so a
+ * test can assert its content regardless of viewport), only visually shown at `lg` via the
+ * `hidden lg:block` class. The one place either chart renders its tick-value `<text>` row (Y-11
+ * refactor target: both charts previously carried their own copy of this exact markup).
+ */
+export function TickRow({ testId, tickTestId, values, x, y, format }: TickRowProps) {
+  return (
+    <g data-testid={testId} className="hidden lg:block">
+      {values.map((v) => (
+        <text
+          key={v}
+          data-slot="chart-axis-tick"
+          data-testid={`${tickTestId}-${v}`}
+          x={x(v)}
+          y={y}
+          textAnchor="middle"
+          className="fill-muted-foreground text-[9px]"
+        >
+          {format(v)}
+        </text>
+      ))}
+    </g>
   );
 }
