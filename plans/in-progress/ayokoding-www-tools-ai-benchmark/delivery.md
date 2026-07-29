@@ -1619,7 +1619,7 @@ rev-parse --show-toplevel` prints the worktree path
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: AC-34 passes
   - **Date**: 2026-07-29 (reconciled)
   - **Status**: done
-  - **Notes**: `core/data/operators.ts` exports `OPERATORS` (SWE-bench, Terminal-Bench, ARC Prize/GPQA); `how-to-read.tsx` maps over it with no hardcoded operator name in the component.
+  - **Notes**: `core/data/operators.ts` exports `OPERATORS` (SWE-bench, Terminal-Bench, GPQA — see DD-23 in `tech-docs.md`, which replaced an originally-shipped, misattributed "ARC Prize/GPQA" merged entry); `how-to-read.tsx` maps over it with no hardcoded operator name in the component.
 - [x] [AI] **W-23 RED**: bind AC-35 for both locales
       — command: `npx nx run ayokoding-www:test:unit` — acceptance: fails
   - **Date**: 2026-07-29 (reconciled)
