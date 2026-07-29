@@ -979,8 +979,14 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ## Phase 4: Band 2 — Web, backend & platform productivity (10 bodies)
 
-- [ ] [AI] `api-design` (By Example · Python) — convention complete; checkers clean.
+- [x] [AI] `api-design` (By Example · Python) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+  - _Implementation note: authored in `worktrees/ayokoding-course-api-design` on branch
+    `ayokoding-learning-path-04-course-authoring/api-design`; 111 files across `_index.md`,
+    `overview.md`, `learning/` (5-part By Example structure, 80 examples + capstone), `drilling/`
+    (6 katas). PR #116 went through 3 full PR-Review Maker→Fixer cycles (8-specialist fan-out ×3);
+    merged squash commit `8c99f2d857dd2b778e444945374f55f752d2b7a8` into `main`; deployed to
+    `prod-ayokoding-www`._
 - [ ] [AI] `advanced-frontend` (By Example · TypeScript) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [ ] [AI] `backend-at-scale` (By Example · Python) — convention complete; checkers clean.
@@ -1858,7 +1864,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable —
       acceptance: `learnings.md` contains no raw secret.
 - [ ] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
-      hostnames/inventories) stays in `ose-infra` only and is NEVER cross-routed into
+      hostnames/inventories) stays in `ose-private` only and is NEVER cross-routed into
       `ose-public`/`ose-primer`; public-governance content may propagate via the existing parity loop —
       acceptance: no infra-private content appears in this repo's routed output.
 - [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix

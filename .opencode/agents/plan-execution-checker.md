@@ -572,7 +572,7 @@ confirmed satisfied.
    `Bash test -d` for backlog folders, `git log`/`git diff` for inline commits.
 3. Run `Grep` for secret-shaped patterns across `learnings.md`.
 4. Run `Grep` for infra-private terms (Terraform, k3s, Proxmox, `coralpolyp`, real hostnames) across
-   any non-`ose-infra` routed destination named in the entries.
+   any non-`ose-private` routed destination named in the entries.
 5. File findings per the severity table below; a single unresolved entry is sufficient to BLOCK
    archival regardless of how many other entries passed.
 
@@ -618,7 +618,7 @@ require the PR to be merged.
      updates) is part of the delivering PR's own commit history (`gh pr view <PR> --json commits` or
      `git log <branch>`), not deferred to a separate post-merge commit. This item is **N/A** for
      repos where the plan folder is not tracked (the three-repo nuance: e.g. a plan folder that
-     lives only in `ose-public` while the same plan also touches `ose-primer`/`ose-infra`). Missing
+     lives only in `ose-public` while the same plan also touches `ose-primer`/`ose-private`). Missing
      or post-merge-deferred archival on an applicable repo: **HIGH**.
    - **Completion does not require merge** — do NOT file a finding solely because the PR is still
      open/unmerged; a green, fully-reviewed, archival-committed PR awaiting its merge is the correct

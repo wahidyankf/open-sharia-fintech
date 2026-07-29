@@ -61,7 +61,7 @@ See also: [`no-secrets-in-committed-files.md`](./no-secrets-in-committed-files.m
 ### Cross-repo doc canonicalization
 
 The cross-repo canonical name for this rule is `no-secrets-in-committed-files.md` (aligned with the
-ose-infra sibling). This repository previously used `no-secrets-in-git.md`; the file was renamed by
+ose-private sibling). This repository previously used `no-secrets-in-git.md`; the file was renamed by
 the `standardize-secrets-and-env` plan to match the canonical name.
 
 ## 2. Environment Variable Naming Standard
@@ -205,7 +205,7 @@ Backup coverage = hardcoded floor ∪ `backup_globs` from the `env-contract:` se
 | Generated inventories        | commented forward-scaffold — activate when IaC is added |
 
 The default backup target is `~/<repo-root-basename>-env-backup/` (e.g. `~/ose-public-env-backup/`).
-This is the canonical per-repo backup directory aligned across the ose-public/ose-primer/ose-infra
+This is the canonical per-repo backup directory aligned across the ose-public/ose-primer/ose-private
 sibling repos.
 
 ### `env-contract:` section and drift validation
@@ -274,15 +274,15 @@ reads it in the reusable workflow.
 
 The table below maps each app type and stage to its injection platform and value owner:
 
-| App type         | Stage      | Platform / target                               | Injection home                                                          | Values owned by                                |
-| ---------------- | ---------- | ----------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------- |
-| www / app-web    | local      | dev machine                                     | `apps/<app>/.env.local` (gitignored), auto-loaded by Next.js            | developer                                      |
-| www / app-web    | local (CI) | GitHub Actions + docker-compose                 | `infra/dev/<stack>/` compose env, sourced from app `.env.example` keys  | this plan (refs only) / committed placeholders |
-| www              | production | Vercel Production target (`prod-*-www` branch)  | Vercel project env, keys from `.env.example`                            | wire-vercel `[HUMAN]`                          |
-| app-web          | staging    | Vercel Preview target (`stag-*-app-web` branch) | Vercel project env (Preview scope)                                      | wire-vercel `[HUMAN]`                          |
-| app-web e2e gate | staging    | GitHub Env `{group}-app-staging`                | `vars.WEB_BASE_URL`, `secrets.VERCEL_AUTOMATION_BYPASS_SECRET`          | wire-vercel `[HUMAN]`                          |
-| be (F#)          | local (CI) | GitHub Actions + docker-compose                 | `infra/dev/<group>/` compose env, sourced from app `.env.example` keys  | this plan (refs only) / committed placeholders |
-| be (F#)          | staging    | k3s via ose-infra `coralpolyp`                  | container env from the ose-infra secret store, keys from `.env.example` | ose-infra (cross-repo)                         |
+| App type         | Stage      | Platform / target                               | Injection home                                                            | Values owned by                                |
+| ---------------- | ---------- | ----------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------- |
+| www / app-web    | local      | dev machine                                     | `apps/<app>/.env.local` (gitignored), auto-loaded by Next.js              | developer                                      |
+| www / app-web    | local (CI) | GitHub Actions + docker-compose                 | `infra/dev/<stack>/` compose env, sourced from app `.env.example` keys    | this plan (refs only) / committed placeholders |
+| www              | production | Vercel Production target (`prod-*-www` branch)  | Vercel project env, keys from `.env.example`                              | wire-vercel `[HUMAN]`                          |
+| app-web          | staging    | Vercel Preview target (`stag-*-app-web` branch) | Vercel project env (Preview scope)                                        | wire-vercel `[HUMAN]`                          |
+| app-web e2e gate | staging    | GitHub Env `{group}-app-staging`                | `vars.WEB_BASE_URL`, `secrets.VERCEL_AUTOMATION_BYPASS_SECRET`            | wire-vercel `[HUMAN]`                          |
+| be (F#)          | local (CI) | GitHub Actions + docker-compose                 | `infra/dev/<group>/` compose env, sourced from app `.env.example` keys    | this plan (refs only) / committed placeholders |
+| be (F#)          | staging    | k3s via ose-private `coralpolyp`                | container env from the ose-private secret store, keys from `.env.example` | ose-private (cross-repo)                       |
 
 Two load-bearing boundaries follow from the matrix:
 
@@ -290,8 +290,8 @@ Two load-bearing boundaries follow from the matrix:
   the compose env wiring sourced from committed placeholders, and the value-less `env-injection:`
   manifest (in `repo-config.yml`). It creates no real values.
 - **`wire-vercel` populates the values** — GitHub Environment secrets/vars and Vercel project env
-  at each target. **coralpolyp (ose-infra)** owns the backend k3s secret values. The contract (key
-  set) is defined here; the cutover plan and ose-infra fill it in.
+  at each target. **coralpolyp (ose-private)** owns the backend k3s secret values. The contract (key
+  set) is defined here; the cutover plan and ose-private fill it in.
 
 ### `infra/dev/<stack>` compose env — no duplicate templates
 
@@ -351,7 +351,7 @@ env-injection:
 and `.env.example` are the same conceptual surface (the env contract), and `env validate` is already
 wired into `.husky/pre-push` and `validate-env.yml`, so extending it adds the check with no
 new target wiring. The check remains static and value-free. Actual presence of secret values in
-GitHub, Vercel, or k3s is not machine-checkable from this repo and stays a wire-vercel / ose-infra
+GitHub, Vercel, or k3s is not machine-checkable from this repo and stays a wire-vercel / ose-private
 `[HUMAN]` responsibility — the manifest is what they verify against.
 
 ## 8. Secret-Surface Census
@@ -365,7 +365,7 @@ GitHub, Vercel, or k3s is not machine-checkable from this repo and stays a wire-
 | Ansible inventory         | `infra/ansible/**/inventory`                | Ansible            | Commented scaffold | Commented scaffold                               |
 | GitHub Environment secret | `{group}-app-staging` / `{group}-app-local` | GitHub Actions Env | No (platform)      | Manifest (`env-injection:` in `repo-config.yml`) |
 | Vercel project env        | Vercel project settings (per target)        | Vercel dashboard   | No (platform)      | Manifest (`env-injection:` in `repo-config.yml`) |
-| k3s / coralpolyp secret   | ose-infra secret store                      | k3s + coralpolyp   | No (ose-infra)     | ose-infra cross-repo                             |
+| k3s / coralpolyp secret   | ose-private secret store                    | k3s + coralpolyp   | No (ose-private)   | ose-private cross-repo                           |
 
 Template files (`*.env.example`) are tracked in git — they are not secrets. Real gitignored files are
 the backup target. Injection-target rows (GitHub / Vercel / k3s) hold real values outside this repo;

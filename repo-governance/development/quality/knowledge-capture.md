@@ -236,7 +236,7 @@ contain a secret, credential, token, API key, private IP/hostname, or insecure i
 A learning routes **only** to the repo(s) it actually pertains to:
 
 - **Infra-private content** (Terraform, k3s, Proxmox, `coralpolyp`, on-prem infrastructure, real
-  hostnames or inventories) MUST stay in `ose-infra` **only** and MUST NEVER cross-route into the
+  hostnames or inventories) MUST stay in `ose-private` **only** and MUST NEVER cross-route into the
   public `ose-public` / `ose-primer` repos.
 - **Public-governance content** MAY propagate `ose-public` → `ose-primer` via the existing parity
   loop (see the
@@ -422,7 +422,7 @@ documented here.
 ```
 
 Fails the repo-relevance gate: infra-specific content (a real k3s node/hostname) must stay in
-`ose-infra` only, never in `ose-public` or `ose-primer`.
+`ose-private` only, never in `ose-public` or `ose-primer`.
 
 ## Related Documentation
 

@@ -194,7 +194,7 @@ set — **safety-first: uncertain nodes are treated as conflicting, never as dis
    concurrently — the scheduler serializes them (the later-scheduled one waits). Nodes with disjoint
    resource-sets are **parallelizable**. Two plans that both touch `apps/rhino-cli/**` are always
    serialized at least at their overlapping nodes, because byte-identical propagation across
-   `ose-public`/`ose-primer`/`ose-infra` cannot tolerate two concurrent divergent edits.
+   `ose-public`/`ose-primer`/`ose-private` cannot tolerate two concurrent divergent edits.
 3. **Cycle check.** If explicit `Depends-on` declarations form a cycle, stop and report — a cyclic
    plan graph is a planning error, not something to schedule around.
 
@@ -298,7 +298,7 @@ execute all `[AI]` items → validation via `plan-execution-checker` → iterate
 scheduling changes _when_ these steps run relative to other plans, never _whether_ they run.
 
 **D2. Byte-identity plans propagate as a unit.** A plan whose changes fall under the `apps/rhino-cli`
-byte-identity boundary lands byte-identically across `ose-public`/`ose-primer`/`ose-infra`. Two such
+byte-identity boundary lands byte-identically across `ose-public`/`ose-primer`/`ose-private`. Two such
 plans are always serialized (A6.2) so their propagations never race.
 
 **D3. Failure isolation (quarantine).** If a node fails and cannot be fixed (per Iron Rule 3, fix ALL

@@ -66,7 +66,7 @@ pre-commit guard that prevents commits entirely when an override is present.
 ### Standard 1: No `[user]` Section in Any Sibling Repo `.git/config`
 
 The `[user]` section MUST NOT appear in `.git/config` for any repository in the
-ecosystem (`ose-public`, `ose-infra`, `ose-primer`).
+ecosystem (`ose-public`, `ose-private`, `ose-primer`).
 
 **Violation:**
 
@@ -270,7 +270,7 @@ Then retry the commit. The global `~/.gitconfig` takes effect immediately.
 ## Future Work: Sibling Repos
 
 The enforcement described above is **currently active in `ose-public` only**. The two sibling
-repositories — `ose-infra` and `ose-primer` — are
+repositories — `ose-private` and `ose-primer` — are
 expected to adopt identical guards as a future plan:
 
 - Copy `scripts/git-identity-check.sh` into each sibling subrepo.
@@ -278,11 +278,11 @@ expected to adopt identical guards as a future plan:
   `.husky/pre-commit`.
 - Audit and remove any existing `[user]` block from each sibling's `.git/config`.
 
-Until that plan executes, developers working in `ose-infra` or `ose-primer` must manually
+Until that plan executes, developers working in `ose-private` or `ose-primer` must manually
 verify that no `[user]` section exists in those repos' `.git/config` files:
 
 ```bash
-git -C /path/to/ose-infra config --local --list | grep "^user\." || echo "clean"
+git -C /path/to/ose-private config --local --list | grep "^user\." || echo "clean"
 git -C /path/to/ose-primer config --local --list | grep "^user\." || echo "clean"
 ```
 

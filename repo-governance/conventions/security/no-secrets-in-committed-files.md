@@ -21,6 +21,6 @@ files (except `.env.example`), `.secrets/`, or `secrets.json`. Git history is pe
 is the only reliable remediation after a leak.
 
 **Cross-repo canonical identifier**: `no-secrets-in-committed-files` (previously `no-secrets-in-git`
-in this repository; renamed by the `standardize-secrets-and-env` plan for alignment with ose-infra).
+in this repository; renamed by the `standardize-secrets-and-env` plan for alignment with ose-private).
 
 See: [`secrets-and-env-standards.md`](./secrets-and-env-standards.md)

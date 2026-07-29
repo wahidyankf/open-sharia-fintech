@@ -36,7 +36,7 @@ before the phase started**, failing `Mermaid diagram validation (all .md)` with 
 archived `plans/done/` file — and nobody had seen it. Two reasons compounded. The workflow is
 **schedule**-triggered rather than push-triggered, so it did not run on the merge at all; and the
 local gate scopes mermaid validation to `repo-governance docs`, which cannot reach `plans/done/`.
-`ose-infra` has **no** such exposure — both its workflows use an `--exclude`-qualified form and its
+`ose-private` has **no** such exposure — both its workflows use an `--exclude`-qualified form and its
 scheduled runs were green.
 
 The generalizable half is worth carrying into this brief's scope: a **repo-wide** CI validator paired
@@ -50,18 +50,18 @@ The account above named the local-gate scope as the cause. That is a real contri
 **not** why `ose-primer` alone is red. Measured directly, the three repos invoke the same validator
 with three different flag sets in `.github/workflows/main-ci.yml`:
 
-| Repo         | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
-| ------------ | --------------------------------------------------------------------------------------------------- | ------------------- |
-| `ose-public` | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
-| `ose-infra`  | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
-| `ose-primer` | `--exclude apps/rhino-cli/tests/fixtures`                                                           | **red**             |
+| Repo          | `md mermaid validate` flags                                                                         | `main-ci` on `main` |
+| ------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
+| `ose-public`  | `--exclude apps/rhino-cli/tests/fixtures --exclude plans/done --exclude apps/ayokoding-www/content` | green               |
+| `ose-private` | `--max-depth=4 --exclude plans/done --exclude apps/rhino-cli/tests/fixtures`                        | green               |
+| `ose-primer`  | `--exclude apps/rhino-cli/tests/fixtures`                                                           | **red**             |
 
 `ose-primer` is the only one missing `--exclude plans/done`. The file it fails on,
 `plans/done/2026-07-03__unify-rhino-cli-sdlc-parity/tech-docs.md`, is **byte-identical** in
 `ose-public` and `ose-primer` (`diff` of both `origin/main` blobs reports no difference), and
-`ose-infra` carries 423 files under `plans/done/` of its own. So identical content passes in two
+`ose-private` carries 423 files under `plans/done/` of its own. So identical content passes in two
 repos and fails in the third purely on a flag. `--max-depth=4` is a second divergence, present only
-in `ose-infra`.
+in `ose-private`.
 
 This reframes the fix. Editing the three violations in an archived plan document treats the symptom
 and leaves the divergence in place; the root-cause fix is deciding which flag set is correct and

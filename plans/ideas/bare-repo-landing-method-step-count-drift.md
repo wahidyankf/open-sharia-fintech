@@ -6,7 +6,7 @@ three repos — so the summary a reader meets first understates the procedure by
 document exists to add.
 
 > Surfaced 2026-07-22 during `bare-repo-governance-hardening` Phase 6, by `pr-review-maker` on
-> `ose-infra` PR #17. Flagged there as "upstream — do not fix here", correctly: the file is under a
+> `ose-private` PR #17. Flagged there as "upstream — do not fix here", correctly: the file is under a
 > byte-identity invariant, so editing it in a sibling would manufacture the drift that PR closed.
 
 ## Problem / context
@@ -24,7 +24,7 @@ Three surfaces describe that sequence as seven-step:
 | `repo-governance/development/README.md`                 | "the seven-step base-worktree landing sequence" |
 | `repo-governance/development/workflow/README.md`        | "the seven-step base-worktree landing sequence" |
 
-All three exist in **each** of `ose-public`, `ose-primer`, and `ose-infra` — nine sites, verified by
+All three exist in **each** of `ose-public`, `ose-primer`, and `ose-private` — nine sites, verified by
 `grep -c "seven-step"` against each repo's `origin/main` blobs. The count is wrong everywhere,
 consistently, because the indexes were written from the frontmatter and the frontmatter was written
 before the reconcile step was promoted into the numbered list.
@@ -33,13 +33,13 @@ Two secondary observations from the same read, worth folding into whatever fixes
 filing separately:
 
 - Both index entries say the method applies to repositories with no primary checkout "**today
-  `ose-primer` and `ose-infra`**". That is name-bound phrasing in the index for a document whose
+  `ose-primer` and `ose-private`**". That is name-bound phrasing in the index for a document whose
   central rule is that carve-outs must key on the **property** (`core.bare=true`, "no primary
   checkout"), never on repo names, because all three repos are templates. The word "today" hedges it,
   but the hedge is doing a lot of work.
-- The `ose-infra` PR body's verification line quotes
+- The `ose-private` PR body's verification line quotes
   `--exclude apps/ayokoding-www/content --exclude apps/ose-www/content`. Neither path exists in
-  `ose-infra`. Harmless no-ops, but they are vestigial excludes copy-pasted from the `ose-public`
+  `ose-private`. Harmless no-ops, but they are vestigial excludes copy-pasted from the `ose-public`
   invocation, and they will keep propagating unless someone stops quoting them.
 
 ## Why now
@@ -84,7 +84,7 @@ that a "N-step" claim matches the number of numbered steps in the thing it descr
    meaning with no number to maintain. If a number is genuinely useful to the reader, it belongs in
    the document body next to the list, not in three summaries maintained by hand.
 3. **Property-bind the index entries** while they are being edited — replace "today `ose-primer` and
-   `ose-infra`" with the property, matching what the document itself already requires.
+   `ose-private`" with the property, matching what the document itself already requires.
 4. **Consider a mechanical check.** A validator asserting that any "N-step" claim about a document
    matches that document's numbered-list length is narrow, cheap, and would have caught this at
    authoring time. Worth scoping before committing to it — the pattern may be too rare to justify.

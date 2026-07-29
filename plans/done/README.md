@@ -2,6 +2,11 @@
 
 Archived plans and completed project planning documents.
 
+> **2026-07-29: Sibling repository renamed from `ose-infra` to `ose-private`.** Archived plan
+> bodies below deliberately retain the old `ose-infra` name — they are a historical record of what
+> was true when each plan executed, not live documentation. GitHub's permanent redirect from the
+> old repository name keeps every existing link, clone URL, and bookmark working.
+
 ## Completed Projects
 
 - [2026-07-28: adopt-cursor-platform-binding](./2026-07-28__adopt-cursor-platform-binding/README.md) —

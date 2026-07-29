@@ -12,7 +12,7 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 | `_reusable-www-test-local-deploy.yml`      | Full local-stack test pipeline (lint, unit, integration, E2E) then force-push to a `prod-*-www` branch.  |
 | `_reusable-app-test-local-deploy-stag.yml` | App-group local-stack pipeline; on pass force-pushes BOTH the `stag-*-app-web` and `stag-*-be` branches. |
 | `_reusable-app-test-stag.yml`              | FE E2E gate against the deployed staging URL (Vercel bypass secret). Stops on pass — no promote.         |
-| `_reusable-be-build-deploy.yml`            | Build a backend image and push it to GHCR (rolled out by ose-infra `coralpolyp`).                        |
+| `_reusable-be-build-deploy.yml`            | Build a backend image and push it to GHCR (rolled out by ose-private `coralpolyp`).                      |
 
 ## PR and repo-wide gates
 
@@ -43,11 +43,11 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 
 ## Backend images and CLIs
 
-| Workflow                                | Role                                                                                                                        |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `publish-images.yml`                    | Build and push `organiclever-be` / `ose-be` images to GHCR (deployed by the ose-infra k3s plans, not Vercel) — transitional |
-| `organiclever-be-build-deploy-stag.yml` | Build the `organiclever-be` image and push it to GHCR; triggered on `stag-organiclever-be` push                             |
-| `ose-be-build-deploy-stag.yml`          | Build the `ose-be` image and push it to GHCR; triggered on `stag-ose-be` push                                               |
+| Workflow                                | Role                                                                                                                          |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `publish-images.yml`                    | Build and push `organiclever-be` / `ose-be` images to GHCR (deployed by the ose-private k3s plans, not Vercel) — transitional |
+| `organiclever-be-build-deploy-stag.yml` | Build the `organiclever-be` image and push it to GHCR; triggered on `stag-organiclever-be` push                               |
+| `ose-be-build-deploy-stag.yml`          | Build the `ose-be` image and push it to GHCR; triggered on `stag-ose-be` push                                                 |
 
 ## web-ui — Storybook (scheduled deploy)
 

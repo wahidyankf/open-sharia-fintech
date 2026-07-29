@@ -872,7 +872,7 @@ Plan Archival):
 - [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to
       `<placeholder>` tokens or discard if the entry cannot be sanitized without losing its meaning.
 - [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
-      in `ose-infra` only; public-governance content may route to `ose-public`/`ose-primer`; never
+      in `ose-private` only; public-governance content may route to `ose-public`/`ose-primer`; never
       cross-route private content into a public repo.
 - [ ] [AI] Route each surviving entry to exactly one durable home. The rubric is open-ended —
       route to whichever surface owns that kind of knowledge (`repo-governance/`, `docs/`,

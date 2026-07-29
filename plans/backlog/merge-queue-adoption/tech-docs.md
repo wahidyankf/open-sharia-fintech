@@ -69,11 +69,11 @@ owned by personal user accounts, regardless of plan tier
 ([GitHub Community Discussion #51483](https://github.com/orgs/community/discussions/51483)
 [Web-cited, accessed 2026-07-23]).
 
-| Repo         | Owner type (verified)                                            | Availability (verified)                  | Verify at execution                                                                    |
-| ------------ | ---------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| `ose-public` | `User` (`gh api repos/wahidyankf/ose-public --jq '.owner.type'`) | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; re-check only if ownership migrates to an org          |
-| `ose-primer` | `User` (`gh api repos/wahidyankf/ose-primer --jq '.owner.type'`) | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; re-check only if ownership migrates to an org          |
-| `ose-infra`  | `User` (`gh api repos/wahidyankf/ose-infra --jq '.owner.type'`)  | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; private visibility is **not** the limiting factor here |
+| Repo          | Owner type (verified)                                             | Availability (verified)                  | Verify at execution                                                                    |
+| ------------- | ----------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ose-public`  | `User` (`gh api repos/wahidyankf/ose-public --jq '.owner.type'`)  | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; re-check only if ownership migrates to an org          |
+| `ose-primer`  | `User` (`gh api repos/wahidyankf/ose-primer --jq '.owner.type'`)  | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; re-check only if ownership migrates to an org          |
+| `ose-private` | `User` (`gh api repos/wahidyankf/ose-private --jq '.owner.type'`) | **Unavailable — personal-account-owned** | Re-run the `.owner.type` probe; private visibility is **not** the limiting factor here |
 
 [Repo-grounded — verified 2026-07-23, all three `gh api` calls returned `User`]
 
@@ -168,7 +168,7 @@ adds the PR to the queue and lets GitHub merge it once the speculative CI passes
 `cli/cli#5653`, "`gh pr merge --auto` does not work with merge queues") suggest this behavior is not
 uniformly reliable across `gh` CLI versions/configurations]. The operations doc must make this the
 documented `[AI]` path so automation does not fight the queue, and Phase 4 includes a smoke-check of
-this exact behavior before relying on it. This plan **dogfoods** it: its own `ose-primer`/`ose-infra`
+this exact behavior before relying on it. This plan **dogfoods** it: its own `ose-primer`/`ose-private`
 propagation PRs merge through the queue once enabled — **conditional on MQ-1 unlocking a queue at
 all** (see [§Open Decisions — MQ-1](#mq-1--github-merge-queue-is-unavailable-for-all-three-repos-today-organization-ownership-gate)).
 
@@ -177,12 +177,12 @@ all** (see [§Open Decisions — MQ-1](#mq-1--github-merge-queue-is-unavailable-
 This plan touches **no `apps/rhino-cli` code and none of its specs** — only `.github/workflows/` CI
 config and `repo-governance/` docs. The [SDLC Gate Standard's rhino-cli byte-identity boundary](../../../docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary)
 is therefore **not engaged**. Note that `.github/workflows/` content **legitimately differs per repo**
-(e.g. `ose-infra` carries the self-hosted runner stack), so the `merge_group` trigger is added
+(e.g. `ose-private` carries the self-hosted runner stack), so the `merge_group` trigger is added
 **per-repo**, not byte-copied.
 
 ## Bare-repo topology caveat (re-verify at execution time)
 
-`ose-primer` and `ose-infra` have historically been **BARE repos with worktrees**
+`ose-primer` and `ose-private` have historically been **BARE repos with worktrees**
 [Unverified — re-verify via `git -C <repo> rev-parse --is-bare-repository` at execution], while
 `ose-public` is a normal working tree. This topology **changes over time and MUST be re-verified** (`git -C <repo> rev-parse --is-bare-repository`) before any git op in those repos; use the
 bare-repo method (`-c core.bare=false --work-tree=…`, or `GIT_DIR`/`GIT_WORK_TREE` for tooling) when it
@@ -256,9 +256,9 @@ specific to this plan and are **surfaced for confirmation at execution**, not pr
 
 ### MQ-1 — GitHub merge queue is unavailable for all three repos today (organization-ownership gate)
 
-This decision **supersedes the original MQ-1 framing** ("`ose-infra` if unavailable"). Live
+This decision **supersedes the original MQ-1 framing** ("`ose-private` if unavailable"). Live
 verification shows the gate is **owner type**, not per-repo visibility/plan, so the fork applies to
-**all three repos identically**, not just `ose-infra`. **This is the fork the maintainer must resolve
+**all three repos identically**, not just `ose-private`. **This is the fork the maintainer must resolve
 before any enablement work proceeds** — Phases 0-3 (investigation + scaffolding) can still land
 regardless of the outcome; Phase 4 onward (enablement) cannot.
 

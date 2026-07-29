@@ -209,6 +209,6 @@ jobs:
       - name: Deploy web to staging branch
         run: git push origin HEAD:${{ inputs.stag-web-branch }} --force
       # Force-push the staging be branch: triggers {product}-be-build-deploy-stag.yml
-      # which builds + pushes the GHCR image consumed by ose-infra coralpolyp.
+      # which builds + pushes the GHCR image consumed by ose-private coralpolyp.
       - name: Deploy be to staging branch
         run: git push origin HEAD:${{ inputs.stag-be-branch }} --force

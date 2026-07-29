@@ -503,7 +503,7 @@ Track across executions:
   the strength of "we ran more cycles," only on the strength of an actually-empty CRITICAL/HIGH list.
 - **Byte-identity-boundary sibling PRs are a moving target until the source PR converges**: when a
   plan opens a source PR (e.g. `ose-public`) alongside byte-identical mirror PRs in sibling repos
-  (e.g. `ose-primer`, `ose-infra`), running all repos' review-cycle loops concurrently from the start
+  (e.g. `ose-primer`, `ose-private`), running all repos' review-cycle loops concurrently from the start
   means every fixer commit on the source PR immediately makes the siblings stale again, and each
   sibling's next cycle re-discovers "stale vs. upstream" as its top finding instead of surfacing new
   issues — a self-correcting but wasteful pattern observed to cost an extra cycle per sibling in

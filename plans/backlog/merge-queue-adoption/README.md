@@ -49,7 +49,7 @@ the three repos in this plan's scope confirms all three are personal-account-own
 ```text
 gh api repos/wahidyankf/ose-public --jq '.owner.type'   → User
 gh api repos/wahidyankf/ose-primer --jq '.owner.type'   → User
-gh api repos/wahidyankf/ose-infra  --jq '.owner.type'   → User
+gh api repos/wahidyankf/ose-private  --jq '.owner.type'   → User
 ```
 
 [Repo-grounded — verified 2026-07-23]
@@ -95,7 +95,7 @@ reworded precondition (c) keeps its manual fallback — but
 - **Mechanism** — **GitHub-native merge queue** (decision carried from `worktree-to-pr-hardening` D10;
   lowest friction given the existing `gh` toolchain). Graphite/Aviator recorded as alternatives only.
 - **Three-repo parity** (conditional) — the shared CI-trigger + protocol/doc scaffolding is held in
-  parity across `ose-public` → `ose-primer` → `ose-infra`, with **enablement conditional per repo** on
+  parity across `ose-public` → `ose-primer` → `ose-private`, with **enablement conditional per repo** on
   the availability matrix and, under today's facts, on **MQ-1** resolving for all three.
 
 **Out of scope**:

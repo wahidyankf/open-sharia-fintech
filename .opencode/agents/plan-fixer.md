@@ -1080,7 +1080,7 @@ Checklist), immediately before the Plan Archival section:
       would catch this automatically next time; discard the rest with a one-line reason
 - [ ] [AI] Apply the secret/sensitivity gate — sanitize any secret, credential, token, or private
       hostname to a `<placeholder>` token, or discard if unsanitizable
-- [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-infra` only and is
+- [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-private` only and is
       NEVER cross-routed into `ose-public`/`ose-primer`
 - [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix; code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate

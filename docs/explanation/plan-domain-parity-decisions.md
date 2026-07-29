@@ -20,7 +20,7 @@ created: 2026-06-06
 
 This document records every decision made during the `plan-domain-parity` effort
 (2026-06-06). The effort aligned the planning-system files across three sibling
-repositories — ose-public, ose-primer, and ose-infra — covering fourteen
+repositories — ose-public, ose-primer, and ose-private — covering fourteen
 governance markdown files, four AI agent definitions, three AI skills, and the
 multi-harness binding surface. All 26 deviation-matrix rows were resolved in a
 grilled session with the invoker on 2026-06-06 before any implementation began.
@@ -45,9 +45,9 @@ The survey (empirical, 2026-06-06) established these facts before any decisions:
 - `plan-quality-gate.md` is byte-identical in all three repos — no action needed.
 - `plan-multi-repo-parity-planning.md` exists only in ose-public.
 - The primer copy of `plan-planning.md` lacks the `target-stage`
-  input field that ose-public and ose-infra carry.
+  input field that ose-public and ose-private carry.
 - The grilling convention exists as `grilling-with-options.md` in ose-public,
-  `grilling.md` (different name, broader wording) in ose-infra, and not at all in
+  `grilling.md` (different name, broader wording) in ose-private, and not at all in
   primer.
 - The OpenCode emitter in rhino-cli still emits the deprecated boolean `tools`
   flags format (e.g., `tools: { read: true }`).
@@ -55,7 +55,7 @@ The survey (empirical, 2026-06-06) established these facts before any decisions:
   the official path is `config.toml` `agents.<name>` sub-tables.
 - Primer carries an in-progress plan (`planning-system-overhaul`) that overlaps
   this objective.
-- Infra CI runs on self-hosted runners `[self-hosted, linux, ose-infra-runner]`;
+- Infra CI runs on self-hosted runners `[self-hosted, linux, ose-self-hosted]`;
   it cannot use `ubuntu-latest`.
 
 Research findings from web-researcher (2026-06-06) are cited per decision
@@ -97,7 +97,7 @@ removed with `git worktree remove`.
 **Rationale**: the invoker directed both the worktree default and the push
 mechanics (HEAD pushed to the confirmed push target, defaulting to
 `origin main`). The `target-stage` field is retained because ose-public and
-ose-infra already use it; dropping it would be a regression. The
+ose-private already use it; dropping it would be a regression. The
 [Worktree Toolchain Initialization](../../repo-governance/development/workflow/worktree-setup.md)
 convention covers the initialization sequence.
 

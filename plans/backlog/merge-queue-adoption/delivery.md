@@ -24,7 +24,7 @@
 > [tech-docs.md §MQ-1](./tech-docs.md#mq-1--github-merge-queue-is-unavailable-for-all-three-repos-today-organization-ownership-gate).
 >
 > **Three-repo parity scope** — Phases 0–4 deliver + enable in `ose-public` (the **source of truth**).
-> Phases 5 (`ose-primer`) and 6 (`ose-infra`) propagate the identical scaffolding, **each as its own
+> Phases 5 (`ose-primer`) and 6 (`ose-private`) propagate the identical scaffolding, **each as its own
 > `worktree-to-pr` delivery**, with **enablement conditional per repo** on the Phase 0 availability
 > matrix and, under today's facts, on MQ-1 resolving per repo. The two downstream phases are
 > independent of each other.
@@ -65,7 +65,7 @@ flowchart TD
   P2 --> P3["Phase 3 — SOURCE OF TRUTH<br/>ose-public finalize<br/>(PR cycle + merge)"]:::orange
   P3 --> P4["Phase 4<br/>[HUMAN] enable queue<br/>+ [AI] verify (ose-public)"]:::orange
   P4 --> P5["Phase 5<br/>propagate to ose-primer<br/>(own worktree-to-pr)"]:::teal
-  P4 --> P6["Phase 6<br/>propagate to ose-infra<br/>(private, conditional)"]:::purple
+  P4 --> P6["Phase 6<br/>propagate to ose-private<br/>(private, conditional)"]:::purple
   P5 --> P7["Phase 7<br/>knowledge capture"]:::orange
   P6 --> P7
   P7 --> P8["Phase 8<br/>archival"]:::orange
@@ -80,7 +80,7 @@ flowchart TD
 the review cycle + merge once; Phase 4 is the post-merge `[HUMAN]` enablement (the CI trigger must be on
 `main` before the queue is enabled).
 
-**Propagation (downstream)**: Phases 5 (`ose-primer`) and 6 (`ose-infra`) depend on Phase 4 and are
+**Propagation (downstream)**: Phases 5 (`ose-primer`) and 6 (`ose-private`) depend on Phase 4 and are
 independent of each other — they may run in parallel. Enablement in each is **conditional** on the
 Phase 0 matrix. Knowledge Capture (Phase 7) and Archival (Phase 8) run once, after all repos are done.
 
@@ -92,7 +92,7 @@ Phase 0 matrix. Knowledge Capture (Phase 7) and Archival (Phase 8) run once, aft
 | 1-3      | `ose-public` source of truth: `merge_group` CI trigger (1), precondition-(c) reword + operations doc (2), finalization (3) | `worktrees/merge-queue-adoption/`, one branch      | yes — at Phase 3 |
 | 4        | — (post-merge `[HUMAN]` queue enablement, or the recorded MQ-1 deferral; repo-settings change, no repo diff)               | —                                                  | no               |
 | 5        | `ose-primer` propagation                                                                                                   | own `ose-primer` worktree                          | yes — at Phase 5 |
-| 6        | `ose-infra` propagation (conditional on the Phase 0 matrix)                                                                | own `ose-infra` worktree                           | yes — at Phase 6 |
+| 6        | `ose-private` propagation (conditional on the Phase 0 matrix)                                                              | own `ose-private` worktree                         | yes — at Phase 6 |
 | 7-8      | Knowledge capture (7) + plan archival (8)                                                                                  | `worktrees/merge-queue-adoption/`, archival branch | yes — at Phase 8 |
 
 Phases 1-3 group because Phases 1 and 2 are scaffolding the `ose-public` unit needs before it is
@@ -106,7 +106,7 @@ deferred archival is the documented carve-out recorded in Phase 8.
 
 ## Commit Guidelines
 
-Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose-infra`):
+Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose-private`):
 
 - [ ] Commit changes thematically — group related changes into logically cohesive commits
 - [ ] Follow Conventional Commits format: `<type>(<scope>): <description>`
@@ -134,7 +134,7 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
       found, not just those this plan would introduce (root cause orientation)
 - [ ] [AI] Probe repository owner type first, per repo — the **primary** availability check:
       `gh api repos/<owner>/<repo> --jq '.owner.type'` (run for `ose-public`, `ose-primer`, and
-      `ose-infra`) — acceptance: each returns `Organization` or `User`, recorded verbatim
+      `ose-private`) — acceptance: each returns `Organization` or `User`, recorded verbatim
 - [ ] [AI] Investigate merge-queue availability via `web-researcher` (GitHub docs: merge queue
       availability by **owner type** — organization vs personal account, not visibility or plan) to
       corroborate the owner-type probe — acceptance: a cited answer confirming the owner-type gate
@@ -381,40 +381,40 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
 
 ---
 
-## Phase 6: Propagate to ose-infra (own worktree-to-pr, private — conditional enablement)
+## Phase 6: Propagate to ose-private (own worktree-to-pr, private — conditional enablement)
 
 > Depends on Phase 4; **independent of Phase 5**. A **separate `worktree-to-pr` delivery in the private
-> `ose-infra` repo**. `ose-infra` carries the shared governance/CI scaffolding but never cross-routes
+> `ose-private` repo**. `ose-private` carries the shared governance/CI scaffolding but never cross-routes
 > infra-private content. **Re-verify the bare-repo topology at execution time.** The scaffolding
 > sub-steps land regardless of MQ-1; the enablement sub-steps branch on MQ-1 exactly as Phase 4 does —
-> `ose-infra`'s blocker is now the **same** organization-ownership gate as `ose-public`/`ose-primer`,
+> `ose-private`'s blocker is now the **same** organization-ownership gate as `ose-public`/`ose-primer`,
 > not a separate private-repo plan-tier limitation.
 
-- [ ] [AI] Re-verify `ose-infra` topology and select the matching git method — acceptance: confirmed
+- [ ] [AI] Re-verify `ose-private` topology and select the matching git method — acceptance: confirmed
 - [ ] [AI] Provision a worktree from `origin/main`; `npm install` then `npm run doctor -- --fix`
       — acceptance: both exit 0
-- [ ] [AI] Port the identical scaffolding (trigger + (c) reword + operations doc) into `ose-infra`,
+- [ ] [AI] Port the identical scaffolding (trigger + (c) reword + operations doc) into `ose-private`,
       keeping all infra-private content untouched and never cross-routed — acceptance: doc diff matches
       `ose-public`; no infra-private material altered; no rhino-cli files touched
 - [ ] [AI] Run local gates: `npx nx affected -t typecheck lint test:quick specs:coverage` +
       `npm run lint:md` + `actionlint` on the modified workflow — acceptance: all green; fix ALL
       failures found, not just those caused by this plan's changes
-- [ ] [AI] Open a draft PR against `ose-infra` `main`: `gh pr create --draft --base main` — acceptance:
+- [ ] [AI] Open a draft PR against `ose-private` `main`: `gh pr create --draft --base main` — acceptance:
       PR exists, CI triggered
-- [ ] [AI] Monitor `ose-infra`'s own gating workflow (the one just ported/modified above), including its
+- [ ] [AI] Monitor `ose-private`'s own gating workflow (the one just ported/modified above), including its
       self-hosted-runner jobs, for this PR's CI run — acceptance: the named workflow's run is visible
       via `gh pr checks <PR>` and reaches a conclusion
 - [ ] [AI] Run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles) — acceptance: 3 cycles
       complete; 0 CRITICAL + 0 HIGH outstanding
 - [ ] [AI] Merge the PR once the five preconditions hold (`[AI]` default actor) — acceptance:
-      `ose-infra` PR merged to its `main`; CI green
-- [ ] [AI] **Branch on MQ-1's resolution**: if MQ-1 resolved to a state where `ose-infra` has an
+      `ose-private` PR merged to its `main`; CI green
+- [ ] [AI] **Branch on MQ-1's resolution**: if MQ-1 resolved to a state where `ose-private` has an
       enablable queue (Option A org migration complete, or Option B vendor confirmed), prepare the
       enablement runbook; **otherwise** (Option C, Option D, or unresolved) write the **conditional
-      deferral** into `ose-infra`'s operations doc naming MQ-1 as the resume condition — acceptance:
+      deferral** into `ose-private`'s operations doc naming MQ-1 as the resume condition — acceptance:
       exactly one of {runbook prepared, deferral recorded} is present
-- [ ] [HUMAN] _(only if MQ-1 unblocked this repo)_ Enable the queue in `ose-infra` settings per the
-      runbook — **resume signal**: the human confirms "ose-infra merge queue enabled"
+- [ ] [HUMAN] _(only if MQ-1 unblocked this repo)_ Enable the queue in `ose-private` settings per the
+      runbook — **resume signal**: the human confirms "ose-private merge queue enabled"
 - [ ] [AI] _(only if MQ-1 unblocked this repo)_ Verify via `gh api`; **else** confirm the deferral names
       MQ-1 as the limitation and the resume condition — acceptance: queue confirmed enabled, **or** a
       complete deferral is recorded
@@ -423,13 +423,13 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
 
 > All checks below must pass before starting Phase 7 (jointly with Phase 5).
 
-- [ ] [AI] `ose-infra` carries the identical scaffolding (no rhino-cli boundary crossed; no
+- [ ] [AI] `ose-private` carries the identical scaffolding (no rhino-cli boundary crossed; no
       infra-private content altered)
-- [ ] [AI] `ose-infra` PR merged; queue **either** confirmed enabled via `gh api` **or** a written
+- [ ] [AI] `ose-private` PR merged; queue **either** confirmed enabled via `gh api` **or** a written
       conditional deferral naming MQ-1 is present
 
-> **Pause Safety**: `ose-infra` is propagated-and-(enabled|deferred) or green-and-ready on its PR;
-> `ose-public`/`ose-primer` unaffected. Safe to stop. To resume: re-check the `ose-infra` PR /
+> **Pause Safety**: `ose-private` is propagated-and-(enabled|deferred) or green-and-ready on its PR;
+> `ose-public`/`ose-primer` unaffected. Safe to stop. To resume: re-check the `ose-private` PR /
 > deferral state.
 
 ---
@@ -444,7 +444,7 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
       entry has a route or a discard reason
 - [ ] [AI] Apply the **secret/sensitivity gate** — sanitize any secret/token/private hostname to a
       `<placeholder>`, or discard if unsanitizable — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-infra` only; never
+- [ ] [AI] Apply the **repo-relevance gate** — infra-private content stays in `ose-private` only; never
       cross-route it here — acceptance: no infra-private content in routed output
 - [ ] [AI] Route each surviving learning to exactly one durable home (non-code homes inline or as a
       `plans/backlog/` follow-up; code homes ALWAYS a separate backlog plan) — acceptance: every entry
@@ -483,7 +483,7 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
 - [ ] [AI] Verify ALL delivery checklist items are ticked (conditional Phase 4/5/6 enablement counts as
       done when a deferral naming MQ-1 is recorded instead)
 - [ ] [AI] Verify all three repos delivered: `ose-public` (Phase 3), `ose-primer` (Phase 5), and
-      `ose-infra` (Phase 6) each merged the identical scaffolding to their respective `main`; enablement
+      `ose-private` (Phase 6) each merged the identical scaffolding to their respective `main`; enablement
       recorded (enabled or deferred-pending-MQ-1) for all three
 - [ ] [AI] Verify the Knowledge Capture phase is complete (every `learnings.md` entry terminal or the
       "none" escape present; both safety gates applied)
@@ -503,7 +503,7 @@ Applies to every phase's commits in every repo (`ose-public`, `ose-primer`, `ose
 
 - [ ] [AI] Every delivery checklist item across all nine phases (Phase 0 through Phase 8) is ticked, with
       each of Phases 4/5/6 recorded as either enabled or carrying an explicit MQ-1 deferral
-- [ ] [AI] All three repos (`ose-public`, `ose-primer`, `ose-infra`) merged the identical CI-trigger +
+- [ ] [AI] All three repos (`ose-public`, `ose-primer`, `ose-private`) merged the identical CI-trigger +
       protocol/doc scaffolding to their respective `main`
 - [ ] [AI] Knowledge Capture (Phase 7) is complete — every `learnings.md` entry terminal or the explicit
       "none" escape recorded

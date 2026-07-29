@@ -94,7 +94,7 @@ execute:
 | `test-stag`         | Run e2e tests against the **deployed staging** environment (no docker-compose).                                                                                              |
 | `deploy-stag`       | Force-push to the `stag-*` branch. That branch push is the deploy trigger: Vercel builds web apps from it; backends trigger a `{product}-be-build-deploy-stag.yml` workflow. |
 | `deploy-prod`       | Force-push to the `prod-*` branch. Same mechanism as `deploy-stag` for the production target.                                                                                |
-| `build-deploy-stag` | For non-Vercel backends: build the container image, push it to GHCR, and hand the cluster rollout to ose-infra `coralpolyp`. Triggered on push to the `stag-*-be` branch.    |
+| `build-deploy-stag` | For non-Vercel backends: build the container image, push it to GHCR, and hand the cluster rollout to ose-private `coralpolyp`. Triggered on push to the `stag-*-be` branch.  |
 | `build-deploy-prod` | Same as `build-deploy-stag` for the production target (deferred — see [deploy model](#deploy-model)).                                                                        |
 | `quality-gate`      | The PR quality gate: `typecheck`, `lint`, `test:quick`, `specs:coverage`, and cross-language lint jobs. No integration or e2e tests.                                         |
 | `validate`          | A repo-wide validation job (markdown, links, heading hierarchy, Mermaid).                                                                                                    |
@@ -140,7 +140,7 @@ flowchart TD
     A -->|force-push| B[stag-*-be branch]
     W -->|Vercel builds| VS[Vercel staging URL]
     B -->|triggers| BD[be-build-deploy-stag workflow]
-    BD -->|GHCR image| CP[ose-infra coralpolyp<br/>cluster rollout]
+    BD -->|GHCR image| CP[ose-private coralpolyp<br/>cluster rollout]
     A2[app-test-stag<br/>e2e vs staging] -->|on pass: STOP| X[prod CD = separate plan]
 
     style A fill:#DE8F05,stroke:#000,color:#000
@@ -156,7 +156,7 @@ flowchart TD
   branches and builds from them. Workflows push the branch; Vercel does the rest.
 - **Backend (non-Vercel)**: The app-tier deploy force-pushes the `stag-*-be` branch. A separate
   `{product}-be-build-deploy-stag.yml` (triggered on push to that branch) builds and pushes the
-  GHCR image. The actual k3s rollout runs in ose-infra via `coralpolyp` — out of this repo.
+  GHCR image. The actual k3s rollout runs in ose-private via `coralpolyp` — out of this repo.
 - **Prod CD**: Production deployment for app-tier workflows is deferred to a separate follow-on
   plan. Because no prod deploy happens yet, the app-tier staging gate ends at the `test-stag` verb —
   it is named `{group}-app-test-stag.yml` (it runs e2e against the deployed staging URL and stops on

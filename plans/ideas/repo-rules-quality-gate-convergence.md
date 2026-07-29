@@ -31,7 +31,7 @@ discover the one class its own shape lets it see, so 15 classes cost roughly 15 
 new finding — **enumeration-based guards fail open on the member nobody listed** — generalizes
 directly into a first-class mechanism, and it composes with the tri-repo byte-identity constraint on
 `apps/rhino-cli`, meaning every fix landed here also has to land cleanly in `ose-primer` and
-`ose-infra`. Building this alongside the sibling `plan-quality-gate-convergence` plan shares the
+`ose-private`. Building this alongside the sibling `plan-quality-gate-convergence` plan shares the
 substrate cost.
 
 ## Prior art / precedents

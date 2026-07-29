@@ -1380,7 +1380,7 @@ Scenario: Both accounting paths build and validate green
       catch this automatically next time; discard the rest with a one-line reason.
 - [ ] [AI] Apply the secret/sensitivity gate — sanitize any secret, credential, token, or private
       hostname, or discard if unsanitizable.
-- [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-infra` only.
+- [ ] [AI] Apply the repo-relevance gate — infra-private content stays in `ose-private` only.
 - [ ] [AI] Route each surviving learning to exactly one durable home; code-homed learnings are filed as
       a separate `plans/backlog/<slug>/` plan, never landed inline.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in

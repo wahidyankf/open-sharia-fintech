@@ -1,6 +1,6 @@
 # `main-ci` never runs on a sibling merge commit
 
-One-line summary: `ose-primer` and `ose-infra` have no post-merge CI signal on `main`, because the
+One-line summary: `ose-primer` and `ose-private` have no post-merge CI signal on `main`, because the
 only workflow that would provide one is schedule-triggered — so a merge to `main` in either sibling
 is verified by its PR checks and then never re-verified in its merged state.
 
@@ -15,7 +15,7 @@ The bare-repo governance plan's terminal gate asked for "CI green on `main` in a
 `ose-public` satisfied it. Both siblings did not, and the reason is narrower and more interesting than
 "CI was red":
 
-- On `ose-primer` at merge commit `cedabb2f1` and `ose-infra` at `1d64990bb`, **`pr-quality-gate` and
+- On `ose-primer` at merge commit `cedabb2f1` and `ose-private` at `1d64990bb`, **`pr-quality-gate` and
   `validate-env` both ran and both passed.** The merges were not unverified.
 - **`main-ci` did not run at all**, in either repo, because that workflow is schedule-triggered rather
   than push-triggered.
@@ -83,7 +83,7 @@ concurrency flake, which has its own brief.
 - **What does `main-ci` check that `pr-quality-gate` does not?** If the answer is "nothing material",
   this brief closes as a documentation fix rather than a CI change. Measuring that overlap is the
   cheapest way to size the whole thing. (open)
-- Does `ose-infra`, being private and not part of every parity loop, want this at all? It is
+- Does `ose-private`, being private and not part of every parity loop, want this at all? It is
   explicitly exempted from the content-parity workflow, and this may fall under the same exemption.
   (open)
 - A push-triggered run on `main` in a bare-repo workflow may interact with how those repos are pushed

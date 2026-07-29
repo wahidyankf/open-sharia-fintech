@@ -11,13 +11,13 @@ should gain an explicit provision for that shape.
 ## Problem / context
 
 `bare-repo-governance-hardening`'s delivery spans **three PRs across three repositories** — the
-`ose-public` PR (Phase 3), the `ose-primer` PR (Phase 4), and the `ose-infra` PR (Phase 5, the
+`ose-public` PR (Phase 3), the `ose-primer` PR (Phase 4), and the `ose-private` PR (Phase 5, the
 third and last to merge). The plan folder itself is tracked in `ose-public` only; neither sibling
 repo receives a mirrored folder. `plan-execution.md` §8's Archival-in-PR rule requires the archival
 `git mv` land "inside the delivering PR itself... not as a separate commit landed on `main` after
 merge," with no carve-out for this shape. This plan has no single PR that is both the delivering
 (last-to-merge) PR and the folder-holding PR: `ose-public`'s PR holds the folder but merges first,
-before Phases 4 and 5 even begin; `ose-infra`'s PR merges last but holds no plan folder to move. §8
+before Phases 4 and 5 even begin; `ose-private`'s PR merges last but holds no plan folder to move. §8
 silently assumes one plan → one repo → one delivering PR — this plan is a live, structural
 counterexample, not a case of careless authoring.
 
@@ -55,7 +55,7 @@ already anticipated this exact situation arriving.
 
 - **Option A — explicit multi-repo carve-out in §8**: name the plan-folder-owning repo's own
   delivering PR as the archival-in-PR target regardless of whether other repos' PRs merge later, so
-  a plan like this one archives inside its `ose-public` PR even though `ose-infra`'s PR merges
+  a plan like this one archives inside its `ose-public` PR even though `ose-private`'s PR merges
   after.
 - **Option B — permit a dedicated archival-only PR**: let §8 allow a small, review-cycle-gated PR
   in the folder-owning repo, opened after the last sibling PR merges, whose sole content is the

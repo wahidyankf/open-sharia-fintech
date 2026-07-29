@@ -1708,10 +1708,26 @@ rev-parse --show-toplevel` prints the worktree path
   - **Date**: 2026-07-29
   - **Status**: done
   - **Notes**: fresh (`--skip-nx-cache`) run — `Successfully ran targets typecheck, lint for 25 projects and 6 tasks they depend on`. Fixed 2 preexisting unused-import lint warnings in `core/url-state.ts` (`BANDS`, `HARNESS_IDS` imported but only referenced in JSDoc `{@link}` tags) as part of this gate. **Correction (recorded during PR review, cycle 1)**: this fix was NOT committed separately as the repo's own separate-commit rule (`delivery.md:206-209` and `AGENTS.md` §Git Workflow's "Split by domain/concern") requires — it shipped bundled inside commit `84318e982` together with all 14 new Phase-5 feature files. That commit is already published, and rewriting a published commit is forbidden by [No Destructive Git Operations](../../../repo-governance/development/workflow/no-destructive-git-operations.md), so the bundling itself stands as a recorded process miss rather than being corrected retroactively. The original note's "Iron Rule 3/7" citation does not correspond to any rule defined in this plan and has been dropped.
-- [ ] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
+- [x] [AI] Run the [Delivery-Boundary Integration Protocol](#delivery-boundary-integration-protocol)
       for branch `ayokoding-www-tools-ai-benchmark/phase-5-page-and-table` in worktree
       `worktrees/ayokoding-www-tools-ai-benchmark-phase-5-page-and-table/`
-- [ ] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: opened PR #115 (draft), ran the PR-Review Maker→Fixer Cycle for 3 sequential
+    CI-gated cycles (cycle 1: 7 findings across governance/logic/docs/performance, all fixed;
+    cycle 2: 1 docs finding, fixed; cycle 3: 1 logic finding — GPQA/ARC Prize operator
+    misattribution — fixed), flipped the PR to ready, and merged via squash
+    (`gh pr merge 115 --squash`, merge commit `f8b3c211654edfb2ba602332c9d8c154427a3b05`).
+    Fast-forwarded local `main` (`290b94b63..f8b3c2116`, confirmed no overlap with unrelated
+    uncommitted rhino-cli WIP in the primary checkout before merging). Removed the worktree
+    (`git worktree remove worktrees/ayokoding-www-tools-ai-benchmark-phase-5-page-and-table`);
+    remote branch was auto-deleted by GitHub on merge.
+- [x] [AI] Run [Post-Push CI Verification](#post-push-ci-verification)
+  - **Date**: 2026-07-29
+  - **Status**: done
+  - **Notes**: all 3 CI runs triggered on `main` for merge commit `f8b3c2116` (`pr-quality-gate`,
+    `validate-env`, `publish-images`) completed with 0 failures, confirmed via
+    `gh run list --branch main`.
 
 > **Pause Safety**: a complete, bilingual, accessible, fully-sourced page exists at a direct URL and
 > is linked from nowhere — a reader following any site navigation sees exactly what they saw before.
@@ -2643,7 +2659,7 @@ rev-parse --show-toplevel` prints the worktree path
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `<PLAN>learnings.md` contains no raw secret
 - [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content
-      (Terraform, k3s, Proxmox, real hostnames or inventories) stays in `ose-infra` only and is NEVER
+      (Terraform, k3s, Proxmox, real hostnames or inventories) stays in `ose-private` only and is NEVER
       cross-routed into `ose-public`/`ose-primer`; public-governance content may propagate via the
       existing parity loop — acceptance: no infra-private content appears in this repo's routed output
 - [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing

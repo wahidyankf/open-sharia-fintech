@@ -100,13 +100,13 @@ Do not spawn a delegated agent for simple reads or lookups that take one or two 
 
 ## Operating Budgets
 
-These budgets bound how agents spend two scarce resources — external API rate limits and token burn — and how repository rules themselves are created and kept in sync. They apply to every agent and to the main conversation, across all three OSE repositories (`ose-infra`, `ose-public`, `ose-primer`).
+These budgets bound how agents spend two scarce resources — external API rate limits and token burn — and how repository rules themselves are created and kept in sync. They apply to every agent and to the main conversation, across all three OSE repositories (`ose-private`, `ose-public`, `ose-primer`).
 
 ### Authoring and Propagating Repository Rules
 
 Repository rules and conventions are authored, maintained, and propagated using the `repo-rules-maker` agent. `repo-rules-maker` is the canonical maker for `repo-governance/` content; `repo-rules-checker` validates it and `repo-rules-fixer` applies validated fixes.
 
-A rule that should hold everywhere is created with `repo-rules-maker` in one repo and then carried across the OSE repositories on the bidirectional `ose-primer` sync, so the same rule text lands in `ose-infra`, `ose-public`, and `ose-primer` rather than being retyped by hand per repo.
+A rule that should hold everywhere is created with `repo-rules-maker` in one repo and then carried across the OSE repositories on the bidirectional `ose-primer` sync, so the same rule text lands in `ose-private`, `ose-public`, and `ose-primer` rather than being retyped by hand per repo.
 
 ### Parallelism Budget
 

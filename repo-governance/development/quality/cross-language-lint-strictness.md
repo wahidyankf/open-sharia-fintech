@@ -68,7 +68,7 @@ gates ride the existing Nx `lint`/`typecheck`/`test:quick` targets, which the
 ## Rationale and history
 
 The strictness set was equalized across the three sibling repositories
-(ose-public, ose-primer, ose-infra) in the 2026-06-12 `lint-safety-parity` effort.
+(ose-public, ose-primer, ose-private) in the 2026-06-12 `lint-safety-parity` effort.
 The full decision log — including which rules are fixed vs. waived and why — lives
 in [Lint & Safety Parity — Decisions](../../../docs/explanation/lint-safety-parity-decisions.md).
 

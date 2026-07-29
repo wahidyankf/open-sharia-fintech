@@ -12,7 +12,7 @@ inputs:
     type: string
     description: "Comma-separated target repository names or absolute paths in the parity set"
     required: false
-    default: "ose-public, ose-primer, ose-infra"
+    default: "ose-public, ose-primer, ose-private"
   - name: mode
     type: enum
     values: [main-to-origin-main, worktree-to-origin-main]
@@ -270,7 +270,7 @@ Every plan-execution rule applies unchanged, including:
 repo N is explicitly recorded as `partial`/`fail` and the invoker's policy says continue.
 
 **Parallel propagation shape (when the invoker opts out of strict sequencing)**: the repos form a
-fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` / `ose-infra` are
+fan-out, not a chain — `ose-public` is the source of truth, and `ose-primer` / `ose-private` are
 **independent downstream nodes** that read from it without reading each other. Once `ose-public`
 reaches `pass`, the two downstream repos may run as concurrent DAG nodes under the N+1 model
 (`1 main thread + N background agents`, default **N=3**) rather than serialized behind one another.
@@ -369,7 +369,7 @@ didn't discuss it" is a workflow failure at every gate.
 
 ```
 User: "Run plan-multi-repo-parity-planning-and-execution for objective: standardize markdown
-       gates across ose-public, ose-primer, and ose-infra"
+       gates across ose-public, ose-primer, and ose-private"
 ```
 
 The orchestrator surveys the three repos, builds and grills the deviation matrix, researches and
@@ -382,7 +382,7 @@ before each worktree deletion.
 
 ```
 User: "Run plan-multi-repo-parity-planning-and-execution for objective: align agent catalogs
-       repos: ose-public, ose-infra"
+       repos: ose-public, ose-private"
 ```
 
 Plans and executes only the two listed repos; the pre-execution grill confirms which runs first.

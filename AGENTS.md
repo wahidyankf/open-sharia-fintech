@@ -428,12 +428,12 @@ Three independent sibling repositories (no parent coordination repo):
   scaffolding. MIT licensed.
 - [`ose-primer`](https://github.com/wahidyankf/ose-primer) — downstream public template (scaffolding
   layer: governance, AI agents, skills, conventions, CI harness, polyglot demo apps). MIT licensed.
-- [`ose-infra`](https://github.com/wahidyankf/ose-infra) — private infrastructure repo (GitHub Actions
+- [`ose-private`](https://github.com/wahidyankf/ose-private) — private infrastructure repo (GitHub Actions
   runner stack, `coralpolyp` app). Proprietary; not publicly accessible.
 
 Content parity between `ose-public` and `ose-primer` maintained via
 [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
-workflow. `ose-infra` does not participate in the parity loop.
+workflow. `ose-private` does not participate in the parity loop.
 
 `apps/rhino-cli` must be byte-identical (zero carve-outs) across all three repos, including its
 Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the

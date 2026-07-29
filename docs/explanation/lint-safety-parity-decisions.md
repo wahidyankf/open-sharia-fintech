@@ -20,7 +20,7 @@ created: 2026-06-12
 This document records the ose-public decisions in the cross-repo
 `lint-safety-parity` effort (2026-06-12). The effort brings linting strictness
 and unsafe-code posture to an **equal** standard across three sibling
-repositories — ose-public (this repo), ose-primer, and ose-infra — so the shared
+repositories — ose-public (this repo), ose-primer, and ose-private — so the shared
 scaffolding layer stops drifting. The full per-row deviation matrix lives in the
 plan's
 [`tech-docs.md`](../../plans/done/2026-06-12__lint-safety-parity/tech-docs.md).
@@ -30,7 +30,7 @@ Sibling plans:
 - `ose-primer`: `plans/in-progress/lint-safety-parity/` (public template repo) —
   covers D1 (Rust `forbid(unsafe_code)`), D3 (C#), D4 (Python), D6/D7/D8; keeps
   golangci (active Go); primer is the **F# reference** (no D2 work).
-- `ose-infra`: `plans/in-progress/lint-safety-parity/` (private repo) — covers
+- `ose-private`: `plans/in-progress/lint-safety-parity/` (private repo) — covers
   D1 + D1b, D6/D7/D8, D9 (Terraform + Ansible + yamllint), D10.
 
 ## Background

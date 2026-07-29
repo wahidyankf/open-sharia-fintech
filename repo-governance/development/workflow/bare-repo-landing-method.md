@@ -16,9 +16,11 @@ created: 2026-07-21
 
 This document defines the **bare-repo git-ops method**: the procedure for landing changes into a
 repository that has no primary checkout, and for closing the silent lag that a landing performed from
-a side worktree can leave behind in local `main`. Two repositories in this project's ecosystem —
-`ose-primer` and `ose-infra` — are bare (`core.bare=true`) today; any repository that later adopts the
-same shape needs the identical procedure.
+a side worktree can leave behind in local `main`. Any of the three repositories in this project's
+ecosystem may be bare (`core.bare=true`) at a given time — bareness is a per-invocation property of a
+specific clone, not a fixed attribute of a repository's name; verify with `git worktree list` (look
+for the `(bare)` marker) rather than assuming from this document which repos are bare today. Any
+repository with this shape needs the identical procedure.
 
 ## Principles Implemented/Respected
 
@@ -53,9 +55,10 @@ This procedure implements/respects the following conventions:
 
 Use this method whenever either condition holds:
 
-- The target repository has **no primary checkout** — a bare repository (`core.bare=true`), which
-  today means `ose-primer` or `ose-infra`. Every mutation there must flow through a linked worktree,
-  because there is no other tree to work in.
+- The target repository has **no primary checkout** — a bare repository (`core.bare=true`). Bareness
+  is a per-invocation property of a specific clone, not fixed to a repository's name; verify with
+  `git worktree list` rather than assuming which repos are bare from this document. Every mutation
+  there must flow through a linked worktree, because there is no other tree to work in.
 - A landing is performed **from a side worktree rather than from the branch's own checkout**, even in
   a non-bare repository such as `ose-public`. The side worktree's push reaches the remote branch, but
   nothing about that push touches the local `main` sitting in the repository's own primary checkout —

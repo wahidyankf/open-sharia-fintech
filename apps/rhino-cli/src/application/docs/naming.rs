@@ -113,22 +113,29 @@ fn walk_naming_path(root: &str, exempt_globs: &[String]) -> Vec<DocsNamingFindin
 
 /// Returns `true` when `basename` should be skipped during naming validation.
 ///
-/// `README.md`, `SKILL.md`, `AGENTS.md`, and `CLAUDE.md` are always exempt (all are fixed
-/// filenames dictated by an external convention — GitHub-style directory indexes, the Claude
-/// Code Agent Skills spec, the agents.md standard, and the Claude Code root-instruction shim,
-/// respectively — not a naming choice this repo's kebab-case rule governs; the rule's own stated
-/// scope is "files in `docs/`, `repo-governance/`, and similar repository locations", not
-/// ecosystem-standard root files). `_index.md` is likewise always exempt: Hugo (used by every
-/// `apps/*-www` app in this repo) reserves `_index.md` as the structurally-required filename for
-/// a content section's list/branch page, not a naming choice either. This repo's Hugo content
-/// trees localize by directory (`content/en/`, `content/id/`), each still using the plain
-/// `_index.md` basename, so the filename-suffix variant (`_index.<lang>.md`) does not appear
-/// anywhere in this repo and is intentionally left unexempted. Additional exemptions are matched
-/// via `exempt_globs`.
+/// `README.md`, `SKILL.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, and `LICENSING-NOTICE.md`
+/// are always exempt (all are fixed filenames dictated by an external convention — GitHub-style
+/// directory indexes, the Claude Code Agent Skills spec, the agents.md standard, the Claude Code
+/// root-instruction shim, GitHub's contributing-guide convention, and this repo's own
+/// licensing-notice convention, respectively — not a naming choice this repo's kebab-case rule
+/// governs; the rule's own stated scope is "files in `docs/`, `repo-governance/`, and similar
+/// repository locations", not ecosystem-standard root files). `_index.md` is likewise always
+/// exempt: Hugo (used by every `apps/*-www` app in this repo) reserves `_index.md` as the
+/// structurally-required filename for a content section's list/branch page, not a naming choice
+/// either. This repo's Hugo content trees localize by directory (`content/en/`, `content/id/`),
+/// each still using the plain `_index.md` basename, so the filename-suffix variant
+/// (`_index.<lang>.md`) does not appear anywhere in this repo and is intentionally left
+/// unexempted. Additional exemptions are matched via `exempt_globs`.
 fn is_naming_exempt(basename: &str, exempt_globs: &[String]) -> bool {
     if matches!(
         basename,
-        "README.md" | "SKILL.md" | "AGENTS.md" | "CLAUDE.md" | "_index.md"
+        "README.md"
+            | "SKILL.md"
+            | "AGENTS.md"
+            | "CLAUDE.md"
+            | "_index.md"
+            | "CONTRIBUTING.md"
+            | "LICENSING-NOTICE.md"
     ) {
         return true;
     }
@@ -226,6 +233,20 @@ mod tests {
         let section_dir = tmp.path().join("some-section");
         fs::create_dir_all(&section_dir).unwrap();
         fs::write(section_dir.join("_index.md"), "x").unwrap();
+        let findings =
+            validate_docs_naming(&[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
+        assert!(findings.is_empty());
+    }
+
+    /// Regression: `CONTRIBUTING.md` and `LICENSING-NOTICE.md` at repo root must be exempt,
+    /// matching `README.md`/`AGENTS.md`/`CLAUDE.md` — both are ecosystem-standard root filenames
+    /// dictated by external convention (GitHub's contributing-guide convention and this repo's own
+    /// licensing-notice convention), not a naming choice the kebab-case rule governs.
+    #[test]
+    fn contributing_and_licensing_notice_always_exempt() {
+        let tmp = TempDir::new().unwrap();
+        fs::write(tmp.path().join("CONTRIBUTING.md"), "x").unwrap();
+        fs::write(tmp.path().join("LICENSING-NOTICE.md"), "x").unwrap();
         let findings =
             validate_docs_naming(&[tmp.path().to_string_lossy().to_string()], &[]).unwrap();
         assert!(findings.is_empty());

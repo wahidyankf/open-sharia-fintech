@@ -12,7 +12,7 @@ security settings.
 
 The merge-queue CI trigger and the `pr-merge-protocol.md` reword are **shared scaffolding** (governance
 
-- CI harness) that normally stays in parity across `ose-public`, `ose-primer`, and `ose-infra`, the
+- CI harness) that normally stays in parity across `ose-public`, `ose-primer`, and `ose-private`, the
   same posture as the prior `standardize-repo-toolchain-parity` and `lint-safety-parity` 3-repo plans
   [Repo-grounded — AGENTS.md §Related Repositories]. **Enablement**, however, is gated on **repository
   owner type** — organization vs personal (User) account — which is the actual GitHub-documented
@@ -26,7 +26,7 @@ The merge-queue CI trigger and the `pr-merge-protocol.md` reword are **shared sc
 - **`ose-public`** — personal (User)-owned; **queue unavailable today**; source of truth; scaffolding
   authored and validated here first regardless.
 - **`ose-primer`** — personal (User)-owned; **queue unavailable today**; receives identical scaffolding.
-- **`ose-infra`** — personal (User)-owned, private; **queue unavailable today** — and, unlike the
+- **`ose-private`** — personal (User)-owned, private; **queue unavailable today** — and, unlike the
   original premise, this is **not** a plan-tier gap fixable by a billing upgrade; it is the same
   organization-ownership gate as the two public repos.
 

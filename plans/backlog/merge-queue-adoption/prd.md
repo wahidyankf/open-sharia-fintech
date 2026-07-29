@@ -119,7 +119,7 @@ Scenario: Automerge adds the PR to the queue instead of merging directly
 ```gherkin
 Scenario: Shared scaffolding propagates while enablement respects availability
   Given the merge_group trigger and the precondition-(c) reword have merged to ose-public main
-  When the propagation phases deliver the identical scaffolding to ose-primer and ose-infra, each via its own worktree-to-pr cycle
+  When the propagation phases deliver the identical scaffolding to ose-primer and ose-private, each via its own worktree-to-pr cycle
   Then all three repos carry the shared CI-trigger and protocol/doc scaffolding
   And the queue is enabled in every repo where the availability matrix says it is available
   But any repo where the queue is unavailable carries a written conditional deferral with a resume signal

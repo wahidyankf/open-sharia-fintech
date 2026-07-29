@@ -16,6 +16,11 @@ updated: 2026-07-27
 
 **Generated LinkedIn posts** for Open Sharia Enterprise platform updates, milestones, and weekly progress reports.
 
+> **2026-07-29: Sibling repository renamed from `ose-infra` to `ose-private`.** Published posts
+> below deliberately retain the old `ose-infra` name — they are already live on LinkedIn, and
+> rewriting published content would falsify the historical record. GitHub's permanent redirect from
+> the old repository name keeps every existing link, clone URL, and bookmark working.
+
 ## Overview
 
 This directory contains **auto-generated and curated LinkedIn posts** that communicate platform progress, technical achievements, and project milestones to the professional community. Posts follow a consistent format optimized for LinkedIn's character limits and engagement patterns.

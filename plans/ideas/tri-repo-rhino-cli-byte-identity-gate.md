@@ -7,7 +7,7 @@ repos so silent drift is caught the moment it lands, not by chance during unrela
 
 ## Problem / context
 
-`apps/rhino-cli` must be byte-identical across `ose-public`, `ose-primer`, and `ose-infra`, but nothing
+`apps/rhino-cli` must be byte-identical across `ose-public`, `ose-primer`, and `ose-private`, but nothing
 enforces it continuously — identity is only checked when someone runs a manual `diff -rq`. This plan
 found **4 drifted files** entirely by accident while researching something unrelated; the drift had
 been sitting there silently since it was introduced.
@@ -43,11 +43,11 @@ should join the boundary (a separate open idea); any change to the boundary's ow
 
 ## Risks & open questions
 
-- Where does the gate run, given `ose-infra` is private and both siblings are bare repos — one repo's
+- Where does the gate run, given `ose-private` is private and both siblings are bare repos — one repo's
   CI checking out the other two, or a scheduled job with cross-repo read access? (open)
 - Cadence: per-PR (catches drift at introduction, but needs cross-repo checkout on every PR) vs.
   nightly (cheaper, but drift lives up to a day)? (open)
-- Auth model for a public-repo CI job reading the private `ose-infra`. (open)
+- Auth model for a public-repo CI job reading the private `ose-private`. (open)
 
 ## What success looks like + promotion signal
 

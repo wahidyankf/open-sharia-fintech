@@ -6,7 +6,7 @@ subcategory: ecosystem
 tags:
   - reference
   - ose-primer
-  - ose-infra
+  - ose-private
   - ecosystem
   - cross-repo
 created: 2026-04-18
@@ -18,11 +18,11 @@ This reference documents the external repositories that exist in the `open-shari
 
 The ecosystem consists of three independent sibling repositories. No parent coordination repository exists.
 
-| Repository                                               | Visibility | License     | Purpose                                                    |
-| -------------------------------------------------------- | ---------- | ----------- | ---------------------------------------------------------- |
-| [`ose-public`](https://github.com/wahidyankf/ose-public) | Public     | MIT         | Enterprise platform — upstream source of truth (this repo) |
-| [`ose-primer`](https://github.com/wahidyankf/ose-primer) | Public     | MIT         | Scaffolding template derived from `ose-public`             |
-| [`ose-infra`](https://github.com/wahidyankf/ose-infra)   | Private    | Proprietary | Infrastructure — self-hosted CI runner, `coralpolyp` app   |
+| Repository                                                 | Visibility | License     | Purpose                                                    |
+| ---------------------------------------------------------- | ---------- | ----------- | ---------------------------------------------------------- |
+| [`ose-public`](https://github.com/wahidyankf/ose-public)   | Public     | MIT         | Enterprise platform — upstream source of truth (this repo) |
+| [`ose-primer`](https://github.com/wahidyankf/ose-primer)   | Public     | MIT         | Scaffolding template derived from `ose-public`             |
+| [`ose-private`](https://github.com/wahidyankf/ose-private) | Private    | Proprietary | Infrastructure — self-hosted CI runner, `coralpolyp` app   |
 
 ## `ose-primer`
 
@@ -53,20 +53,20 @@ Both directions — propagation (upstream → downstream) and adoption (downstre
 - [plan-multi-repo-parity-planning](../../repo-governance/workflows/plan/plan-multi-repo-parity-planning.md) — the planning workflow that surveys sibling repos and authors aligned parity plans.
 - [ose-primer on GitHub](https://github.com/wahidyankf/ose-primer) — downstream template repository.
 
-## `ose-infra`
+## `ose-private`
 
-`ose-infra` ([github.com/wahidyankf/ose-infra](https://github.com/wahidyankf/ose-infra)) is a **private, proprietary** repository hosting the operational infrastructure for the OSE Platform ecosystem. It is not publicly accessible.
+`ose-private` ([github.com/wahidyankf/ose-private](https://github.com/wahidyankf/ose-private)) is a **private, proprietary** repository hosting the operational infrastructure for the OSE Platform ecosystem. It is not publicly accessible.
 
-### What lives in `ose-infra`
+### What lives in `ose-private`
 
-- **Self-hosted GitHub Actions runner** — multi-arch Docker image with `launchd` supervisor, per-container resource caps, and stale-runner cleanup. Serves `ose-infra`'s own CI exclusively; `ose-public` uses GitHub-hosted `ubuntu-latest`.
+- **Self-hosted GitHub Actions runner** — multi-arch Docker image with `launchd` supervisor, per-container resource caps, and stale-runner cleanup. Serves `ose-private`'s own CI exclusively; `ose-public` uses GitHub-hosted `ubuntu-latest`.
 - **`coralpolyp`** — infrastructure orchestrator app (Rust/Axum backend, Next.js + Effect TS frontend). Purpose is proprietary and not described in public documentation.
 - Infrastructure-only governance and conventions that diverge from `ose-public` norms.
 
 ### Relationship to `ose-public`
 
-`ose-infra` shares its root commit with `ose-public` (forked from the same origin). It has since diverged in stack and conventions. There is **no classifier-driven content sync** between `ose-public` and `ose-infra` — neither propagation nor adoption flows apply. Any cross-repo work between them is performed manually on a case-by-case basis.
+`ose-private` shares its root commit with `ose-public` (forked from the same origin). It has since diverged in stack and conventions. There is **no classifier-driven content sync** between `ose-public` and `ose-private` — neither propagation nor adoption flows apply. Any cross-repo work between them is performed manually on a case-by-case basis.
 
 ### Licensing
 
-`ose-infra` is **proprietary** (not MIT). It is listed here for ecosystem awareness; contributors to `ose-public` are not expected to have access.
+`ose-private` is **proprietary** (not MIT). It is listed here for ecosystem awareness; contributors to `ose-public` are not expected to have access.
