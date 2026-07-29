@@ -156,7 +156,13 @@ export function CapabilityChart({ dataset = defaultDataset, fullDataset, locale 
       >
         <title id={titleId}>{t(locale, "aiBenchCapabilityChartTitle")}</title>
 
-        <Axis max={COMPOSITE_INDEX_MAX} width={SVG_WIDTH} label={axisLabel} formattedMax={formattedMax} y={14} />
+        <Axis
+          max={COMPOSITE_INDEX_MAX}
+          width={PLOT_X + PLOT_WIDTH}
+          label={axisLabel}
+          formattedMax={formattedMax}
+          y={14}
+        />
 
         {bands.map((bandLayout) => (
           <BandGroup

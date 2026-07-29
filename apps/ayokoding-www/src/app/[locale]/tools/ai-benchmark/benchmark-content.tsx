@@ -79,9 +79,12 @@ export function BenchmarkContent() {
         // AC-28: an explicit empty-state message replaces both charts (never an empty plot area).
         // The data table is ALSO hidden below (Rule-15 UWT-006 fix) — an already-unambiguous empty
         // -state message directly followed by a full, empty table header row read as redundant/
-        // aesthetically noisy (Heuristic 8) and could be misread as "the table is broken"; AC-28
-        // itself only constrains the charts, not the table, so hiding it here does not narrow that
-        // AC. `role="status"` — a filter change never moves focus or scrolls, so an emptied roster
+        // aesthetically noisy (Heuristic 8) and could be misread as "the table is broken". AC-28's
+        // Gherkin scenario was WIDENED in this same fix to fold in this table behaviour — its `But`
+        // step now asserts neither chart nor the data table renders in the empty state (see
+        // `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`), so
+        // hiding the table here is the AC's own requirement, not an unconstrained extra.
+        // `role="status"` — a filter change never moves focus or scrolls, so an emptied roster
         // must announce itself to assistive tech (WCAG 4.1.3, Rule-15 EWT-004 fix).
         <p
           data-testid="ai-bench-empty-state"

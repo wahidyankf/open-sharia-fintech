@@ -3244,7 +3244,9 @@ apps/ayokoding-www/src/features/ai-benchmark --include="*.tsx"` returns 6 hits, 
     `bg-[var(--evidence-*)]`/`text-[var(--evidence-*)]` Tailwind v4 arbitrary-value classes,
     dropping every `bg-emerald-*`/`bg-amber-*`/`bg-sky-*`/`bg-rose-*`/`text-amber-*` literal.
     Verified: `grep -rn "bg-emerald-\|bg-amber-\|bg-sky-\|bg-rose-\|text-amber-"
-apps/ayokoding-www/src/features/ai-benchmark --include="*.tsx"` now returns zero hits.
+apps/ayokoding-www/src/features/ai-benchmark --include="*.tsx"` now returns a single hit — an
+    explanatory code comment at `model-table.tsx:126` describing the removed pattern — and no live
+    violation.
 
 - [x] [AI] **DWT-003** (Major): `model-table.tsx` reinvents a bespoke `<table>` instead of reusing
       `libs/web-ui`'s existing `Table`/`TableHeader`/`TableBody`/`TableRow`/`TableHead`/`TableCell`/
@@ -3456,6 +3458,18 @@ http://localhost:3101/en/tools/ai-benchmark?harness=claude-code` (class dropped)
     FINAL URL carries both filters. Verified live in a real (unmocked) browser using native-setter
     dispatchEvent to simulate genuinely rapid changes: URL now reads `?harness=cursor&class=sonnet`
     (both preserved) instead of dropping one.
+  - **Resolution addendum (2026-07-30, PR #122 cycle 3)**: `benchmark-content.test.tsx` lives under
+    `src/app/**`, which neither `vitest.config.ts` project (`unit`'s `**/*.unit.{test,spec}.{ts,tsx}`
+    nor `unit-fe`'s `src/features/**`-scoped glob) matched — so this test was silently never
+    discovered or run by `nx run ayokoding-www:test:unit` (`vitest list` showed zero matches; running
+    it under a probe config passed, confirming the test itself was always correct). Reverting the
+    `latestFilterStateRef` fix left the full suite green with the reintroduced bug. Fixed by widening
+    `unit-fe`'s `include` to also cover `src/app/**/*.test.{ts,tsx}`
+    (`apps/ayokoding-www/vitest.config.ts`) rather than renaming the file — renaming to
+    `*.unit.test.tsx` would route it to the `unit` project's `environment: "node"` (no `setupFiles`),
+    which cannot run this `@testing-library/react` `render()`/`screen` test. Re-ran
+    `npx nx run ayokoding-www:test:unit --skip-nx-cache`: both test names above now appear in the
+    output and pass, providing the regression protection this note originally claimed.
 
 - [x] [AI] **EWT-004** (Minor, Accessibility, WCAG 4.1.3 Status Messages): neither the filter
       result-count text ("Models shown: N") nor the empty-state message announces itself to assistive
@@ -3482,7 +3496,10 @@ http://localhost:3101/en/tools/ai-benchmark?harness=claude-code` (class dropped)
   - **Resolution (2026-07-29)**: added `role="status"` to the result-count
     `<span data-testid={`${SLOT}-result-count`}>` in `benchmark-filters.tsx` and to the empty-state
     `<p data-testid="ai-bench-empty-state">` in `benchmark-content.tsx` — one-line additions in each
-    file. Verified: `grep -c "role=\"status\""` now returns `1` in each file.
+    file. Verified: `grep -c "role=\"status\""` now returns `2` in each file — one for the real JSX
+    attribute and one for an explanatory comment quoting the same string (`benchmark-filters.tsx`
+    lines 170 + 174; `benchmark-content.tsx` lines 84 + 88), since `grep -c` counts matching lines,
+    not occurrences. Exactly one live `role="status"` attribute exists per file.
 
 **Spec-gap proposal** (behaviour observed, correct and reproducible, not defective — proposed for
 `<SPECS>ai-benchmark.feature`, not a defect finding):

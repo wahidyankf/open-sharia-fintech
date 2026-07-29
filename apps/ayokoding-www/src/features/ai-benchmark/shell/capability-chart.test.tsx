@@ -194,3 +194,28 @@ describe("CapabilityChart — DWT-001 right-margin regression", () => {
     expect(SVG_WIDTH).toBe(600);
   });
 });
+
+// ─── Regression: the axis-maximum label must right-align to the plot's TRUE right edge
+// (`PLOT_X + PLOT_WIDTH`), not to `SVG_WIDTH` (pr-review-synthesis-maker MEDIUM finding F1, PR
+// #122 cycle 3). `chart-primitives.tsx`'s own `AxisProps.width` JSDoc documents it as "Right edge
+// of the plot area, in pixels — the axis-maximum label right-aligns to this." `TickRow`'s own
+// rightmost tick lands at `PLOT_X + scale(COMPOSITE_INDEX_MAX)` = `PLOT_X + PLOT_WIDTH`, so
+// passing `SVG_WIDTH` instead detaches the always-visible label from where the chart's own scale
+// terminates — reverting `capability-chart.tsx:159` back to `width={SVG_WIDTH}` fails this test.
+describe("CapabilityChart — axis-maximum label right-alignment", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("right-aligns the axis-maximum label to the plot's true right edge (PLOT_X + PLOT_WIDTH), not SVG_WIDTH", () => {
+    const ratedModel = fixtureModel("rated-model", [fig("swe-bench-verified", 80)]);
+    const ds = fixtureDataset([ratedModel]);
+    render(<CapabilityChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const axisMax = screen.getByTestId("chart-axis-max");
+    expect(axisMax.getAttribute("x")).toBe(String(PLOT_X + PLOT_WIDTH));
+    // Sanity: this is NOT the same value as SVG_WIDTH, so the assertion above cannot be
+    // accidentally satisfied by the pre-fix (defective) call site.
+    expect(PLOT_X + PLOT_WIDTH).not.toBe(SVG_WIDTH);
+  });
+});
