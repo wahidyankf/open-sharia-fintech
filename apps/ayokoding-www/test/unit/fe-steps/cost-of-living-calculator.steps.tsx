@@ -2031,8 +2031,12 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       render(jsx);
     });
 
+    // Rule-15 EWT-001 fix: the page's own wrapper is a plain `<div>`, not `<main>` — the app
+    // shell's `<main id="main-content">` (outside what this isolated unit render includes) is the
+    // page's sole landmark, so asserting `getByRole("main")` here would always fail post-fix.
+    // Asserting the level-one heading renders instead confirms the page content mounted.
     When("the page renders", () => {
-      expect(screen.getByRole("main")).toBeTruthy();
+      expect(screen.getByRole("heading", { level: 1 })).toBeTruthy();
     });
 
     Then("the page heading and the calculator link display readable English labels", () => {
@@ -2052,8 +2056,10 @@ describeFeature(feature, ({ Scenario, ScenarioOutline, AfterEachScenario }) => {
       render(jsx);
     });
 
+    // Rule-15 EWT-001 fix: see the comment on the English scenario above — the page's own wrapper
+    // is a plain `<div>`, not `<main>`, so this asserts the heading instead of a landmark role.
     When("the page renders", () => {
-      expect(screen.getByRole("main")).toBeTruthy();
+      expect(screen.getByRole("heading", { level: 1 })).toBeTruthy();
     });
 
     Then("the heading and link labels are in Indonesian", () => {
