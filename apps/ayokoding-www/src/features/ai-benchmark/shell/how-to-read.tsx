@@ -22,10 +22,16 @@ export type HowToReadProps = {
 };
 
 export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
+  // `snapshotDate` (e.g. "2026-07-28") parses per ECMA-262 as UTC midnight. `timeZone: "UTC"` is
+  // pinned so the rendered date is always the dataset's UTC date — never reformatted into a
+  // visitor's local zone (which renders one day early for every UTC-negative zone) — and so the
+  // server render (UTC on the deploy target) and the client render agree, avoiding a hydration
+  // mismatch (F2).
   const dateText = new Intl.DateTimeFormat(locale === "id" ? "id-ID" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   }).format(new Date(snapshotDate));
 
   return (

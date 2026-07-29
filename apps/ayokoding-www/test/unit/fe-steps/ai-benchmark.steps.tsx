@@ -543,6 +543,32 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       const text = snapshot.textContent ?? "";
       // The snapshot date is formatted with its year, regardless of locale formatting.
       expect(text).toContain("2026");
+
+      // Regression pin (F2): `new Date(dataset.snapshotDate)` parses as UTC midnight, so the
+      // formatter MUST pin `timeZone: "UTC"` — otherwise the runtime's local zone reformats it and
+      // every visitor west of UTC sees the day before the dataset's actual snapshot date. Assert
+      // this directly against the real `Intl.DateTimeFormat` call the component makes, rather than
+      // depending on the test runner's own host timezone (which may itself be UTC).
+      const NativeDateTimeFormat = Intl.DateTimeFormat;
+      const optionsSeen: Intl.DateTimeFormatOptions[] = [];
+      const spy = vi.spyOn(Intl, "DateTimeFormat").mockImplementation(function (
+        this: unknown,
+        locale?: string | string[],
+        options?: Intl.DateTimeFormatOptions,
+      ) {
+        if (options) optionsSeen.push(options);
+        return new NativeDateTimeFormat(locale, options);
+      } as unknown as typeof Intl.DateTimeFormat);
+      try {
+        cleanup();
+        renderPageForLocale("en");
+      } finally {
+        spy.mockRestore();
+      }
+      const snapshotDateCall = optionsSeen.find(
+        (o) => o.year === "numeric" && o.month === "long" && o.day === "numeric",
+      );
+      expect(snapshotDateCall?.timeZone).toBe("UTC");
     });
   });
 
