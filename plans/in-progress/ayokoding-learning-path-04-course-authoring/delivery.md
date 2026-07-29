@@ -987,8 +987,15 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     (6 katas). PR #116 went through 3 full PR-Review Maker→Fixer cycles (8-specialist fan-out ×3);
     merged squash commit `8c99f2d857dd2b778e444945374f55f752d2b7a8` into `main`; deployed to
     `prod-ayokoding-www`._
-- [ ] [AI] `advanced-frontend` (By Example · TypeScript) — convention complete; checkers clean.
+- [x] [AI] `advanced-frontend` (By Example · TypeScript) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+  - _Implementation note: authored via `apps-ayokoding-www-by-example-maker` in
+    `worktrees/ayokoding-course-advanced-frontend` on branch
+    `ayokoding-learning-path-04-course-authoring/advanced-frontend`; 111 files (37 concepts, 80
+    worked examples + capstone). Build green (2015 pages), markdownlint clean, heading hierarchy
+    clean. PR [#119](https://github.com/wahidyankf/ose-public/pull/119), 3-cycle PR review (cycle 1
+    clean; cycle 2 — 1 MEDIUM false positive resolved + `<details>` typo fixed; cycle 3 clean),
+    squash-merged `57c2377bc` into `main`; deployed to `prod-ayokoding-www`._
 - [ ] [AI] `backend-at-scale` (By Example · Python) — convention complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [ ] [AI] `async-python-and-fastapi-services` (By Example · Python) — convention complete; checkers
