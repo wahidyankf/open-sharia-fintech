@@ -2563,7 +2563,7 @@ _ex-78 &middot; exercises co-24_
 A slim Dockerfile that builds the app into a reproducible image and runs `uvicorn` with multiple workers -- one
 ASGI process per core, behind one port -- the production deploy shape.
 
-**`learning/code/ex-78-dockerfile-asgi-deploy/Dockerfile`**
+**`learning/code/ex-78-docker-asgi-deploy/Dockerfile`**
 
 ```dockerfile
 # Example 78: A Dockerfile for Multi-Worker ASGI Deploy
@@ -2594,7 +2594,7 @@ EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
 ```
 
-**`learning/code/ex-78-dockerfile-asgi-deploy/main.py`**
+**`learning/code/ex-78-docker-asgi-deploy/main.py`**
 
 ```python
 """Example 78: A Dockerfile for Multi-Worker ASGI Deploy -- the runnable app.
