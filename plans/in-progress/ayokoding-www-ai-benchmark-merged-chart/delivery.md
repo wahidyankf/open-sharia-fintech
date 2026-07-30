@@ -1381,6 +1381,22 @@ metered per-token rate"` in the DD-1 `describe` block, confirmed failing pre-fix
   > benchmark-filters.tsx, translations.ts, how-to-read.tsx, plus test/spec/step files) — see the
   > Phase 7 push/CI-reverify record below for the commit hash and CI run confirmation.
 
+> **Phase 7 push/CI-reverify record** (2026-07-30). Commit `7d1fd9da0` ("fix(ayokoding-www): resolve
+> rule-15 EWT/UWT/DWT retest findings for AI benchmark chart") pushed to PR #125's branch
+> (`ayokoding-www-ai-benchmark-merged-chart`), advancing it from the prior cycle-3 fixer commit
+> `47d9d00c1`. Pre-push local battery (`test:unit`, `typecheck`, `lint`,
+> `specs:behavior:coverage`) confirmed green before pushing. CI run
+> [30548513998](https://github.com/wahidyankf/ose-public/actions/runs/30548513998) triggered on
+> push: 20/20 checks ultimately passed (`gh pr checks 125` confirms `Passed: 20, Failed: 0`). One
+> incident during the run — the "Detect affected languages" job's `setup-node` step stalled
+> indefinitely (~10 min with zero progress, vs. seconds for every sibling job's equivalent step) on
+> the self-hosted runner, cascading 4 dependent jobs ("Markdown quality gate", ".NET quality gate",
+> "Rust quality gate", "TypeScript quality gate") to `cancelled` once the run was cancelled via
+> `gh run cancel 30548513998`. Rerun via `gh run rerun 30548513998 --failed` restarted only those 5
+> jobs (the other ~10 already-passed jobs kept their `success` conclusion); the rerun's `setup-node`
+> step completed cleanly in ~2m12s and all 5 jobs subsequently passed. PR #125 confirmed `OPEN` /
+> `MERGEABLE` after CI went green.
+
 **`web-design-tester` retest** (2026-07-30, output-mode: delivery) — PR #125, both
 `/en/tools/ai-benchmark` and `/id/tools/ai-benchmark`, local dev server (`localhost:3101`),
 375/768/1280 px, light and dark (via the in-page theme toggle — `next-themes` defaults to explicit
@@ -1482,14 +1498,40 @@ behavior, and `how-to-read.tsx` are unchanged by this plan and were not re-audit
 
 ### Phase 7 Gate
 
-- [ ] [AI] `gh pr checks ayokoding-www-ai-benchmark-merged-chart --json` (or the equivalent status
+- [x] [AI] `gh pr checks ayokoding-www-ai-benchmark-merged-chart --json` (or the equivalent status
       query) shows every CI check passing
-- [ ] [AI] `pr-review-synthesis-maker`'s final consolidated review (cycle 3) shows zero open
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > `gh pr checks 125` re-confirms `Passed: 20, Failed: 0` after the rerun described in the Phase 7
+  > push/CI-reverify record above (run
+  > [30548513998](https://github.com/wahidyankf/ose-public/actions/runs/30548513998)).
+
+- [x] [AI] `pr-review-synthesis-maker`'s final consolidated review (cycle 3) shows zero open
       blocking findings
-- [ ] [AI] Every rule-15 EWT/UWT/DWT defect finding above is ticked, or explicitly deferred with
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > cycle 3's consolidated review (posted earlier in Phase 7, tracked by the already-completed
+  > PR-Review Maker→Fixer Cycle tasks) shows zero open blocking findings; `pr-review-fixer` resolved
+  > every actionable thread and the remaining rule-15 EWT/UWT/DWT findings are the ones ticked below,
+  > not open review-cycle blockers.
+
+- [x] [AI] Every rule-15 EWT/UWT/DWT defect finding above is ticked, or explicitly deferred with
       written user-granted permission
-- [ ] [AI] The PR is NOT YET merged: `gh pr view ayokoding-www-ai-benchmark-merged-chart --json state --jq .state`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > all 9 rule-15 findings above (EWT-001, UWT-001..UWT-005, the two `[AI]` meta-items, DWT-004) are
+  > ticked `[x]` with Atomic Sync Ritual evidence; UWT-001 and UWT-002 carry the user-selected
+  > dispositions from `AskUserQuestion` (partial price-info fix; 3 per-band SVGs), no finding
+  > deferred without disposition.
+
+- [x] [AI] The PR is NOT YET merged: `gh pr view ayokoding-www-ai-benchmark-merged-chart --json state --jq .state`
       returns `OPEN`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > `gh pr view 125 --json state,mergeable,mergeStateStatus` returns
+  > `{"mergeStateStatus":"BEHIND","mergeable":"MERGEABLE","state":"OPEN"}` — open, mergeable, not yet
+  > merged. `BEHIND` reflects `main` having advanced since branch-off; no conflict, merge proceeds in
+  > Phase 9.
 
 > **Pause Safety**: the PR is open, CI-green, fully reviewed, and rule-15-clean, but deliberately
 > not yet merged — the worktree and branch are both still intact. Safe to stop. To resume:
@@ -1502,33 +1544,82 @@ behavior, and `how-to-read.tsx` are unchanged by this plan and were not re-audit
 > **Non-boundary phase** — this phase's commit lands on the SAME PR branch above; it opens no new
 > PR and does not push on its own (Phase 9 pushes it together with the archival commit).
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
       would catch this automatically next time; discard the rest with a one-line reason —
       acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/learnings.md`. **Notes**: 3 candidate
+  > learnings surfaced (stuck-runner diagnostic gap, DWT-004 shared-constant root cause,
+  > AskUserQuestion-for-design-conflict pattern); litmus applied to each — 1 kept (stuck-runner
+  > gap, no durable surface documented it), 2 discarded (already covered by existing principles/
+  > Rule 15 wording, no gap found).
+
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if
       unsanitizable — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — this is a public-repo-only
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > no entry references a secret, credential, token, or hostname; gate trivially passes.
+
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — this is a public-repo-only
       plan (no infra-private content is possible here), so this gate trivially passes but is still
       checked — acceptance: confirmed
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > confirmed — all 3 entries concern public `ose-public` CI/UI/process knowledge, no
+  > infra-private content.
+
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing
       matrix — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up
       (large); code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan and NEVER landed inline — acceptance: every `learnings.md` entry
       records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `repo-governance/development/workflow/ci-monitoring.md` (new "Diagnosing a Stuck Self-Hosted
+  > Runner Job" subsection, routed inline — small non-code edit),
+  > `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/learnings.md`. **Notes**: the
+  > surviving learning routed inline to `ci-monitoring.md`; the 2 discarded learnings record their
+  > one-line discard reasons in `learnings.md` — no code-homed learning surfaced, so no
+  > `plans/backlog/` follow-up was required.
+
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>` — acceptance: `learnings.md` is never
       silently empty
-- [ ] [AI] Commit the triaged `learnings.md` (and any inline-routed learning) locally in the
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (not applicable — 1
+  > generalizable learning did surface and was routed, so the "none" escape does not apply).
+  > **Notes**: `learnings.md` is non-empty with 3 triaged entries; the mandatory-non-silence
+  > requirement is satisfied by the routed/discarded entries themselves.
+
+- [x] [AI] Commit the triaged `learnings.md` (and any inline-routed learning) locally in the
       worktree: `git commit -am "docs(plans): triage learnings for ayokoding-www-ai-benchmark-merged-chart"`
       — acceptance: `git log -1 --oneline` shows the commit; NOT pushed yet (Phase 9 pushes it
       together with the archival commit below)
 
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/learnings.md`,
+  > `repo-governance/development/workflow/ci-monitoring.md`,
+  > `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/delivery.md`. **Notes**: committed
+  > locally, not yet pushed — Phase 9 pushes this together with the archival commit (see commit
+  > hash recorded in the Phase 9 push record below).
+
 ### Phase 8 Gate
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > all 3 entries reach a terminal state — 1 routed inline (`ci-monitoring.md`), 2 discarded with
+  > one-line reasons; none left open.
+
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > zero learnings routed to `apps/`, `libs/`, or tests — the one surviving learning routed to a
+  > non-code governance doc (`ci-monitoring.md`), landed inline per the non-code-small-edit rule;
+  > no `plans/backlog/` filing was required.
 
 > **Pause Safety**: `learnings.md` is fully triaged and committed locally, not yet pushed. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal, then continue to
