@@ -1,0 +1,28 @@
+# Example 24: Log Rotation for the Service. (co-14)
+#
+# A service that logs forever will eventually fill the disk -- and a full disk
+# is an outage that looks like every other outage. logrotate keeps logs bounded:
+# rotate weekly, keep N weeks, compress the old ones. Two cases: (a) Caddy's
+# access log (a real file) and (b) the systemd journal (rotated by journald,
+# but with a cap you should set). Save as /etc/logrotate.d/myapp.
+
+/var/log/caddy/*.log {  # => co-14: every file Caddy writes under its log dir
+  weekly  # => rotate once a week
+  rotate 8  # => keep 8 old weeks (~2 months of history), then delete
+  compress  # => gzip the rotated files (saves disk)
+  delaycompress  # => compress one rotation LATE, so the just-rotated file is still readable for a day
+  missingok  # => no error if the log file does not exist yet
+  notifempty  # => do not rotate a zero-byte file
+  postrotate  # => after rotating, tell Caddy to reopen its log file
+    systemctl reload caddy >/dev/null 2>&1 || true  # => reload, not restart, so no dropped requests
+  endscript  # => end postrotate
+}
+
+# --- Journal cap (set separately, on the box) --------------------------------
+#   # /etc/systemd/journald.conf -> [Journal] SystemMaxUse=500M  (then: systemctl restart systemd-journald)
+# This bounds the journal itself so co-14's log stream cannot grow without limit.
+
+# --- Verify (run on the box after a week, or force a rotation) ---------------
+#   logrotate -dv /etc/logrotate.d/myapp   # => -d dry-run, -v verbose: shows what WOULD rotate
+#   logrotate -fv /etc/logrotate.d/myapp   # => -f FORCE a rotation now, to confirm it works
+# [verify] the access log is renamed to access.log.1 and a fresh access.log appears (co-14 proof).

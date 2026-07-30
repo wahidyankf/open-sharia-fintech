@@ -1,0 +1,38 @@
+# Example 66: Log Shipping and Rotation. (co-14)
+#
+# Logs on the box are only useful while the box is up. SHIPPING them to a
+# separate store (a file on a volume, or a remote collector) survives a box
+# loss -- which is exactly when you most need them. This rsyslog conf ships the
+# service's journald stream to a file under a shipped-logs volume, and logrotate
+# keeps BOTH the local and shipped logs bounded. Save as /etc/rsyslog.d/myapp.conf.
+
+# --- 1. Ship the app's journal lines to a file on a separate volume ----------
+# Imjournal reads from the systemd journal; omfile writes the output.
+module(load="imjournal" StateFile="imjournal.state" IgnorePreviousMessages="on")  # => read the journal
+
+if $programname == 'myapp' then {  # => only the lines tagged with our service's unit name
+  action(type="omfile" file="/srv/logs/myapp.log" fileOwner="deploy" fileGroup="deploy" fileCreateMode="0640")  # => co-14: shipped
+  stop  # => do not also process these lines through the default rules
+}
+
+# --- 2. Rotate the SHIPPED log (bounds the volume, keeps N weeks) ------------
+# Add to /etc/logrotate.d/myapp (alongside Example 24's Caddy entry):
+#   /srv/logs/myapp.log {
+#       weekly
+#       rotate 12            # => keep ~3 months of shipped history
+#       compress
+#       delaycompress
+#       missingok
+#       notifempty
+#       postrotate
+#           systemctl reload rsyslog >/dev/null 2>&1 || true   # => reopen the file after rotation
+#       endscript
+#   }
+# --- Why ship + rotate (co-14) -----------------------------------------------
+# A shipped log survives a box rebuild (Example 42); rotation keeps it from
+# filling the volume that survives. Together they make logs as durable as the
+# data, not as ephemeral as the process.
+# --- Verify ------------------------------------------------------------------
+#   journalctl -u myapp -n 1                    # => a recent line
+#   tail -n 1 /srv/logs/myapp.log               # => the SAME line, shipped
+# [verify] the shipped file mirrors the journal (co-14 proof).

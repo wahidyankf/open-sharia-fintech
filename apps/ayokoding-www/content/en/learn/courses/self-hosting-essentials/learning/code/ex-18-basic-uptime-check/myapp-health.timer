@@ -1,0 +1,25 @@
+# Example 18 (companion): the TIMER that fires the uptime-check service. (co-14)
+#
+# Save as /etc/systemd/system/myapp-health.timer, then:
+#   systemctl daemon-reload
+#   systemctl enable --now myapp-health.timer
+# A timer activates its same-named .service on a schedule -- the systemd-native
+# replacement for a cron line, with the bonus of full journald integration.
+
+[Unit]
+Description=Run the MyApp uptime check every minute  # => co-14: scheduled liveness probing
+
+[Timer]
+OnBootSec=30s  # => first probe 30s after the box boots (give the stack time to come up)
+OnUnitActiveSec=1min  # => then re-probe 1min after each completed run -> ~once a minute forever
+AccuracySec=1s  # => tight schedule (default 1min would coarsen the probe to ~every 2min)
+Persistent=true  # => if the box was off, run a "missed" probe on next boot (catches overnight outages)
+
+[Install]
+WantedBy=timers.target  # => the boot target that enables all timers
+
+# --- Verify (run on the box) --------------------------------------------------
+#   systemctl list-timers myapp-health.timer   # => shows the next/last fire time
+#   # force an outage: systemctl stop myapp, wait 1 min, then:
+#   journalctl -u myapp-health.service -n 5 --no-pager  # => expect a curl failure line
+# [verify] the timer fired and logged the failure during the forced outage (co-14 proof).

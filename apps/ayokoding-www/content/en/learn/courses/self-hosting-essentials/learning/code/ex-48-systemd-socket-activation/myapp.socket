@@ -1,0 +1,34 @@
+# Example 48: Socket Activation for Lazy Startup. (co-07)
+#
+# Normally systemd starts the service on boot and KEEPS it running. With SOCKET
+# activation, systemd holds the listening socket and starts the service ONLY on
+# the first connection -- lazy startup, zero idle memory, and no dropped
+# connection across a restart (systemd holds the socket during the gap).
+# Requires a .socket unit + a service that inherits the socket fd. Save as
+# /etc/systemd/system/myapp.socket.
+
+[Unit]
+Description=MyApp socket (socket-activated)  # => co-07: the socket systemd holds on the app's behalf
+
+[Socket]
+ListenStream=127.0.0.1:8000  # => the local port the proxy (Example 12) forwards to
+Accept=no  # => one long-running service instance per socket (not one per connection)
+
+[Install]
+WantedBy=sockets.target  # => the socket is created at boot; the SERVICE starts on first connect
+
+# --- The service becomes socket-activated when its [Unit] declares: ----------
+#   [Unit]
+#   Requires=myapp.socket
+#   After=myapp.socket
+#   [Service]
+#   ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py
+#   ... and the app binds the fd systemd passes (e.g. gunicorn --bind fd://0)
+# --- Why it matters (co-07) --------------------------------------------------
+#   - the box spends zero memory on an idle service until traffic arrives
+#   - a service restart hands the socket to systemd, so no connection is refused
+# --- Verify ------------------------------------------------------------------
+#   systemctl start myapp.socket       # => socket exists, service NOT yet running
+#   curl http://127.0.0.1:8000/health  # => service starts NOW, on demand, and answers
+#   systemctl is-active myapp          # => 'active' only after the first connection
+# [verify] lazy startup + no refused connection across restarts (co-07 proof).

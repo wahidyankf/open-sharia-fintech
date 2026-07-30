@@ -1,0 +1,32 @@
+# Example 33: A Data-Backed Service with a Persistent Volume. (co-06, co-19)
+#
+# A stateless service (Example 6) loses its data on restart. A DATA-BACKED
+# service persists to a volume that survives the process. This unit adds a
+# data directory owned by the app, so writes live longer than the process.
+# Save as /etc/systemd/system/myapp-data.service, then enable it.
+
+[Unit]
+Description=MyApp data-backed service (persistent volume)  # => co-06 + co-19: state that survives
+After=network-online.target  # => wait for networking
+Wants=network-online.target
+
+[Service]
+Type=simple  # => foreground process systemd tracks directly
+User=deploy  # => unprivileged (co-04)
+WorkingDirectory=/opt/myapp
+Environment=APP_DB_PATH=/opt/myapp/data/app.db  # => co-19: the app writes its SQLite DB to THIS path
+ExecStartPre=/usr/bin/install -d -o deploy -g deploy -m 750 /opt/myapp/data  # => ensure the volume dir exists + owned before start
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py  # => the service; reads APP_DB_PATH from the env
+Restart=on-failure  # => restart on crash; the data file is untouched (outlives the process)
+RestartSec=3  # => brief pause before revival
+
+[Install]
+WantedBy=multi-user.target  # => boot hook
+
+# --- Why a volume matters (co-19) --------------------------------------------
+# The process is ephemeral; /opt/myapp/data is NOT. A restart (Example 10) or a
+# reboot (Example 36) kills and revives the process, but the DB file persists --
+# which is exactly what makes it the thing Example 34 backs up.
+# --- Verify ------------------------------------------------------------------
+#   curl -X POST ... (write a row), then: systemctl restart myapp-data
+#   curl ... (read it back)  # => the row survived the restart (co-19 proof)

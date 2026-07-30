@@ -1,0 +1,25 @@
+# Example 53: Force HTTP to HTTPS at the Proxy. (co-10)
+#
+# A certificate is useless if callers can still reach plain HTTP and accept a
+# silent downgrade. This Caddyfile block serves ONLY HTTPS and redirects every
+# HTTP request to its HTTPS equivalent -- the co-10 guarantee that no traffic
+# ever crosses the wire unencrypted. Save as /etc/caddy/Caddyfile.
+
+# --- HTTP block: redirect ONLY, never serve content ---------------------------
+http://myapp.example.com, :80 {  # => matches plain HTTP for this host AND bare :80
+  redir https://{host}{uri} permanent  # => 301 to the exact same URL over HTTPS
+}  # => no 'reverse_proxy' here -- nothing is ever served over HTTP
+
+# --- HTTPS block: the real service -------------------------------------------
+myapp.example.com {  # => Caddy auto-obtains the cert (Example 14)
+  reverse_proxy 127.0.0.1:8000  # => the app, served ONLY over TLS
+}
+
+# --- Why a redirect is not enough on its own (co-10) -------------------------
+# A 301 still lets the FIRST request cross in plain text before the redirect.
+# HSTS (Example 54) is the header that tells browsers NEVER to try plain HTTP
+# for this host in the first place -- redirect + HSTS together close the gap.
+# --- Verify ------------------------------------------------------------------
+#   curl -sI http://myapp.example.com/         # => 301, Location: https://...
+#   curl -sI https://myapp.example.com/        # => HTTP/2 200 (the real service)
+# [verify] no path serves content over HTTP; every HTTP request upgrades (co-10).

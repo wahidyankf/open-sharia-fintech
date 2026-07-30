@@ -1,0 +1,26 @@
+# Example 37: Two Services on One Box Behind One Proxy. (co-09, co-11)
+#
+# The reverse proxy's superpower: one box, one :443, MANY services, each on its
+# own subdomain. This Caddyfile routes api.example.com -> app A and
+# blog.example.com -> app B, each forwarding to a different local port. One
+# proxy, one cert set, two distinct services. Save as /etc/caddy/Caddyfile.
+
+api.example.com {  # => co-11: a distinct subdomain for service A
+  reverse_proxy 127.0.0.1:8000  # => service A (the app from Example 6)
+}
+
+blog.example.com {  # => co-11: a distinct subdomain for service B
+  reverse_proxy 127.0.0.1:8001  # => service B (a second app on a second local port)
+}
+
+# --- Why this works (co-09) --------------------------------------------------
+# The proxy reads the TLS SNI / Host header on each request and routes by NAME.
+# Both services share :443 from the caller's view but are isolated behind it --
+# the proxy is the single public face that multiplexes them.
+# --- Prerequisites -----------------------------------------------------------
+#   - DNS A records for BOTH api.example.com and blog.example.com -> the box (co-11)
+#   - both apps running on their local ports (8000 and 8001)
+# --- Verify ------------------------------------------------------------------
+#   curl -s https://api.example.com/health   # => service A answers
+#   curl -s https://blog.example.com/        # => service B answers
+# [verify] two services, one box, one :443 -- both reachable by name (co-09).

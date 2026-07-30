@@ -1,0 +1,31 @@
+# Example 60: Subdomain Routing to Multiple Services. (co-09, co-11)
+#
+# Extend Example 37: route by SUBDOMAIN, where each subdomain maps to a
+# different backend service behind the one proxy. Three subdomains, three
+# services, one :443, three automatic certs. Save as /etc/caddy/Caddyfile.
+
+api.example.com {  # => co-11: subdomain A -> the JSON API
+  reverse_proxy 127.0.0.1:8000  # => service A (the main app)
+}
+
+www.example.com {  # => co-11: subdomain B -> the marketing site
+  reverse_proxy 127.0.0.1:8001  # => service B (a static site server)
+}
+
+admin.example.com {  # => co-11: subdomain C -> an internal admin UI
+  reverse_proxy 127.0.0.1:8002  # => service C (an admin app)
+  # (Layer an IP allowlist or auth here -- an admin UI must not be public-open.)
+  import restrict-admin  # => a shared snippet gating /admin to known IPs (see Caddy 'import')
+}
+
+# --- How the routing works (co-09) -------------------------------------------
+# The proxy inspects the TLS SNI + HTTP Host header on every request and routes
+# to the backend whose block matches that NAME. From the caller's view there are
+# three independent sites; from the box's view there is one proxy + three local
+# ports. Add a service by adding a block -- no new public port, no new cert chore.
+# --- Prerequisite (co-11) ----------------------------------------------------
+# Each subdomain needs its OWN A record (or a wildcard *.example.com) resolving
+# to this box. Without the DNS record, Caddy cannot obtain that subdomain's cert.
+# --- Verify ------------------------------------------------------------------
+#   for h in api www admin; do curl -sI https://$h.example.com/ | head -1; done
+# => three 200s (or 301s), one per service, all on :443 (co-09 proof)

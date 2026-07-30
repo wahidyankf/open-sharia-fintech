@@ -1,0 +1,30 @@
+# Example 12: Proxy Public Traffic to the App. (co-09)
+#
+# The Caddyfile: tell the proxy to listen on :80 and reverse_proxy every
+# request to the app's LOCAL port (127.0.0.1:8000 from Example 6). One file,
+# two lines of effect -- the app is now reachable through the proxy on the
+# public HTTP port rather than directly on 8000.
+#
+# Install as /etc/caddy/Caddyfile, then: systemctl reload caddy
+# (TLS is added in Example 14; this example serves HTTP first to isolate the
+# proxying mechanic from the TLS mechanic.)
+
+# Listen on the public HTTP port and forward everything to the local app.
+:80 {  # => co-09: the proxy's public listen address (port 80, all interfaces)
+  reverse_proxy 127.0.0.1:8000 {  # => forward to the app's loopback port from Example 6
+    header_up X-Forwarded-Proto {scheme}  # => tell the app whether the upstream was http/https
+    header_up X-Forwarded-Host {host}  # => preserve the original Host the caller asked for
+  }  # => end reverse_proxy block
+
+  # A tiny access log so you can SEE traffic flowing through the proxy.
+  log {  # => co-09/co-14: every proxied request becomes a structured log line
+    output file /var/log/caddy/access.log  # => where Caddy writes it
+    format console  # => human-readable; switch to 'json' in Example 65
+  }  # => end log block
+}
+
+# --- Verify (run on the box after `systemctl reload caddy`) -------------------
+#   curl -s http://127.0.0.1/        # => expect: hello  (proxied to the app, not Caddy's page)
+#   curl -s http://127.0.0.1/health  # => expect: ok
+#   tail -n 1 /var/log/caddy/access.log  # => the request you just made, logged
+# [verify] the body is the APP's response ("hello"/"ok"), proving the proxy forwards.

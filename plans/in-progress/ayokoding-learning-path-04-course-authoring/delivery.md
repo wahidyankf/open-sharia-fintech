@@ -1022,7 +1022,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     [#121](https://github.com/wahidyankf/ose-public/pull/121), 3-cycle PR review (cycle 1: 1 HIGH test
     fixture lifespan fix + hadolint dir-rename; cycle 2: 1 HIGH pytest_asyncio.fixture fix; cycle 3
     clean), squash-merged `d64df3995` into `main`; deployed to `prod-ayokoding-www`._
-- [ ] [AI] `self-hosting-essentials` (By Example · ops/config) — convention complete; checkers clean —
+- [x] [AI] `self-hosting-essentials` (By Example · ops/config) — convention complete; checkers clean —
       scope-boundary acceptance: the course teaches running one box, containerizing a service, a
       reverse proxy, and PaaS git-push deploy; its `overview.md` **explicitly excludes** clusters,
       Terraform/Packer/Ansible IaC, and Proxmox. Verify each exclusion is **stated** (not merely
@@ -1043,6 +1043,14 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
   ```
 
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+  - _Implementation note: authored via `apps-ayokoding-www-by-example-maker` in
+    `worktrees/ayokoding-course-self-hosting` on branch
+    `ayokoding-learning-path-04-course-authoring/self-hosting-essentials`; 102 files (22 concepts, 78
+    worked examples + capstone). Scope exclusions verified (all 5 words present). Build green,
+    markdownlint clean, heading hierarchy clean. PR
+    [#124](https://github.com/wahidyankf/ose-public/pull/124), 3-cycle PR review (cycle 1: 4 CRITICAL
+    hadolint + shellcheck fixes; cycles 2-3 clean), squash-merged `32896383b` into `main`; deployed to
+    `prod-ayokoding-www`._
 
 - [ ] [AI] `containers-and-orchestration` (By Example · YAML/CLI) — convention complete; checkers
       clean.

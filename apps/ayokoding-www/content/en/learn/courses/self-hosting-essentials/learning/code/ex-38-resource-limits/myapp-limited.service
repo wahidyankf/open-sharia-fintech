@@ -1,0 +1,35 @@
+# Example 38: systemd Resource Limits on a Service. (co-07, co-08)
+#
+# An unbounded service can eat the whole box (a memory leak starves every other
+# service). systemd lets you CAP a service's resources so a runaway is contained
+# before it takes the box down. Save as /etc/systemd/system/myapp.service (or a
+# drop-in, Example 49), then: systemctl daemon-reload && systemctl restart myapp.
+
+[Unit]
+Description=MyApp with resource limits  # => co-07/co-08: a contained service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/myapp
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py
+
+# --- the co-07 resource caps --------------------------------------------------
+MemoryMax=256M  # => hard ceiling: systemd kills the service if it exceeds 256MB
+MemoryHigh=200M  # => soft ceiling: systemd throttles memory reclaim above 200MB
+CPUQuota=50%  # => at most half of one CPU (100% = one full core; 150% = 1.5 cores)
+TasksMax=64  # => cap on processes/threads this unit may spawn (stops a fork bomb)
+
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+
+# --- Verify the cap is enforced ----------------------------------------------
+#   systemctl daemon-reload && systemctl restart myapp
+#   systemctl show myapp -p MemoryMax -p CPUQuotaPerSecUSec  # => prints the limits in effect
+#   # run a load test that tries to exceed 256M -> the service is OOM-killed + restarted
+#   journalctl -u myapp -n 5  # => shows the kill + the restart (co-07 enforcement proof)

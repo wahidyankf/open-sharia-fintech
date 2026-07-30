@@ -1,0 +1,21 @@
+# kata-01 (after): the SAME unit, with Restart=always + a start-limit (co-07, co-15).
+[Unit]
+Description=MyApp service (kata 1 -- fixed)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/myapp
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py
+# THE FIX: Restart=always means systemd revives the process on ANY exit (co-15).
+# RestartSec=3 paces the revivals; StartLimitBurst caps them so a hopeless crash
+# loop eventually trips into 'failed' instead of burning the box forever.
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

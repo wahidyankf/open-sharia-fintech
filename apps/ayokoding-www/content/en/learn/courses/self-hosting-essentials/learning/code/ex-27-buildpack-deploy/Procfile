@@ -1,0 +1,23 @@
+web: gunicorn app:app --bind 0.0.0.0:${PORT:-5000}
+# Example 27: Buildpack Deploy Without a Dockerfile. (co-17)
+#
+# A Procfile declares your process TYPES and their start commands. A buildpack
+# reads it, DETECTS your language (Python, here, from requirements.txt), and
+# supplies the runtime -- zero image authoring required. This is the
+# "convenience" half of co-17's trade-off. Save as ./Procfile in the repo and
+# `git push` (Example 26's flow); the PaaS uses it instead of a Dockerfile.
+
+# --- Line anatomy: <type>: <command> -----------------------------------------
+# web          => a PROCESS TYPE named 'web' (the PaaS routes HTTP to this type)
+# gunicorn ... => the exact start command the buildpack-installed gunicorn runs
+# ${PORT:-5000} => the PaaS injects $PORT at runtime; default 5000 if unset
+# 0.0.0.0      => bind ALL interfaces INSIDE the container; the PaaS proxy maps it out
+
+# (Optional) a second process type for a background worker, demonstrating that
+# one push can declare MANY process types (co-16/co-17). Uncomment to use:
+# worker: python worker.py
+
+# --- Verify (after `git push`) ------------------------------------------------
+#   ssh dokku@<box> ps:report myapp   # => shows the 'web' process type, running
+#   curl http://<box>/<app-url>       # => the buildpack-built app answers
+# [verify] a reproducible build with NO Dockerfile in the repo (co-17's buildpack half).

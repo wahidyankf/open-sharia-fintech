@@ -1,0 +1,37 @@
+# Example 10: Restart on Crash. (co-15)
+#
+# Drop-in replacement for Example 7's unit, widening Restart from 'on-failure'
+# to 'always'. The result: if the process dies for ANY reason, systemd brings
+# it back -- the property that turns a crash from an incident into a non-event.
+#
+# Install as /etc/systemd/system/myapp.service (overwrite Example 7's), then:
+#   systemctl daemon-reload && systemctl restart myapp
+# Then kill the process and watch systemd revive it.
+
+[Unit]
+Description=MyApp self-hosted service (restart-on-crash)  # => co-15: resilience hardened
+After=network-online.target  # => wait for networking before starting
+Wants=network-online.target
+
+[Service]
+Type=simple  # => foreground process; systemd tracks the main PID directly
+User=deploy  # => unprivileged (co-04)
+WorkingDirectory=/opt/myapp
+ExecStart=/opt/myapp/venv/bin/python /opt/myapp/app.py  # => the exact start command
+
+# --- the co-15 resilience knobs -----------------------------------------------
+Restart=always  # => restart on ANY exit (crash, OOM, even a clean exit) -- widest possible
+RestartSec=3  # => 3s pause between death and revival (avoids a hot crash loop)
+StartLimitIntervalSec=60  # => over a 60s window ...
+StartLimitBurst=5  # => ... allow at most 5 restarts before giving up (stops an infinite crash loop)
+
+[Install]
+WantedBy=multi-user.target  # => boot hook for Example 8
+
+# --- Verify (run separately on the box) ---------------------------------------
+#   systemctl daemon-reload && systemctl restart myapp
+#   PID=$(systemctl show -p MainPID --value myapp)   # => grab the live process id
+#   kill -9 "$PID"                                   # => simulate a crash
+#   sleep 5
+#   systemctl is-active myapp                        # => expect: active (revived by Restart=always)
+#   journalctl -u myapp -n 5 --no-pager              # => shows the death + the restart

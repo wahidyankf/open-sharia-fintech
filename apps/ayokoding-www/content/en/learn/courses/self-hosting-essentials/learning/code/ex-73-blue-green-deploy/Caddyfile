@@ -1,0 +1,30 @@
+# Example 73: A Blue-Green Deploy via the Proxy. (co-18)
+#
+# Two identical environments -- BLUE (live) and GREEN (idle). Deploy to GREEN,
+# warm it up, health-check it, then FLIP the proxy from blue -> green. The flip
+# is atomic (one proxy reload) and instantly reversible (reload back). This is
+# the co-18 zero-downtime pattern done at the ENVIRONMENT level, not the process
+# level (Example 32). Save as /etc/caddy/Caddyfile (the flip is a config change).
+
+# --- BLUE is live right now (green is idle, being deployed to) ----------------
+myapp.example.com {
+  reverse_proxy 127.0.0.1:8000  # => BLUE: the currently-live instance (port 8000)
+}
+
+# --- After deploying + health-checking GREEN (port 8001), FLIP in one edit: ---
+# myapp.example.com {
+#   reverse_proxy 127.0.0.1:8001  # => GREEN now live; BLUE becomes the idle rollback target
+# }
+# then: systemctl reload caddy   # => atomic cutover; no request sees a half-state
+
+# --- Why blue-green beats in-place restart (co-18) --------------------------
+# Example 32 restarts the SAME instance (a brief gap is possible). Blue-green
+# keeps the OLD instance answering until the NEW one is PROVEN healthy, then
+# swaps in one proxy reload -- zero gap, and an instant revert (reload back to
+# blue) if green misbehaves. The cost: twice the running instances.
+# --- The flip ritual ---------------------------------------------------------
+#   1. Deploy to GREEN; warm it; health-check until 200 (Example 17).
+#   2. Edit the Caddyfile: green's port replaces blue's.
+#   3. systemctl reload caddy   # => atomic; green is live, blue is idle.
+#   4. If green is bad: revert the edit + reload -> back on blue in seconds.
+# [verify] a traffic loop (Example 32) sees no drops across the reload (co-18).

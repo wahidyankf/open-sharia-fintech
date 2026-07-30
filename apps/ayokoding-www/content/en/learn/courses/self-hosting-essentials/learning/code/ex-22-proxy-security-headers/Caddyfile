@@ -1,0 +1,25 @@
+# Example 22: Security Headers at the Proxy. (co-09, co-04)
+#
+# The reverse proxy is a single chokepoint to add defensive HTTP headers that
+# the app itself never has to know about: HSTS, a restrictive CORS policy,
+# X-Content-Type-Options, a frame-buster. Defense in depth (co-04) at the
+# transport edge.
+#
+# Install as /etc/caddy/Caddyfile (extends Example 14), then: systemctl reload caddy
+
+myapp.example.com {  # => the TLS-terminated domain from Example 14
+  reverse_proxy 127.0.0.1:8000  # => forward to the app as before
+
+  header {  # => co-09/co-04: security headers ADDED at the proxy, not the app
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"  # => co-10: insist on HTTPS for 1y (full HSTS in Ex 54)
+    X-Content-Type-Options "nosniff"  # => stop browsers MIME-sniffing a JSON response as HTML
+    X-Frame-Options "DENY"  # => stop this site being framed (clickjacking)
+    Referrer-Policy "no-referrer"  # => do not leak the URL to linked third parties
+    Permissions-Policy "geolocation=(), camera=()"  # => this app needs no device permissions
+    -Server  # => strip Caddy's version banner (no free recon for attackers)
+  }  # => end header block
+}
+
+# --- Verify (run on the box after reload) -------------------------------------
+#   curl -sI https://myapp.example.com/ | grep -iE 'strict-transport|x-content-type|x-frame'
+# [verify] each of the five headers above is present in the response (co-04 proof).

@@ -1,0 +1,8 @@
+# kata-03 (after): the proxy forwards to the CORRECT local port (co-09).
+# The app (Example 6) binds 127.0.0.1:8000; the proxy now matches it.
+myapp.example.com {
+  # THE FIX: the upstream port (8000) now matches the app's bind address.
+  # 'curl https://myapp.example.com/health' returns 200 (the app's 'ok'),
+  # proving the proxy and the app agree on where to meet (co-09).
+  reverse_proxy 127.0.0.1:8000
+}

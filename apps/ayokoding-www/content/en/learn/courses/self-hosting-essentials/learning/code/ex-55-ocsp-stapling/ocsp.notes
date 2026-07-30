@@ -1,0 +1,27 @@
+# Example 55: OCSP Stapling at the Proxy. (co-10)
+#
+# When a browser gets your cert, it may phone the CA (OCSP) to check the cert
+# has not been revoked -- a slow, privacy-leaking extra round trip. OCSP
+# STAPLING makes the PROXY fetch that "still valid" proof and attach ("staple")
+# it to the handshake, so the browser trusts the cert without calling the CA.
+# Caddy does this by default; here is how to confirm it, and the Nginx knobs.
+
+# --- Caddy: OCSP stapling is ON by default -- just VERIFY it ------------------
+# (No Caddyfile change needed; this block documents the verification.)
+# Test with openssl: a 'OCSP Response Status: successful' line means it is stapled.
+#   echo | openssl s_client -connect myapp.example.com:443 -status 2>/dev/null \
+#     | grep -A2 'OCSP Response Status'
+# => expect: 'OCSP Response Status: successful'
+
+# --- Nginx: turn it ON explicitly (if using Nginx, Example 52) ----------------
+# Inside the 'server { listen 443 ssl; ... }' block:
+#   ssl_stapling on;                         # => enable OCSP stapling
+#   ssl_stapling_verify on;                  # => verify the CA's response before stapling
+#   resolver 1.1.1.1 valid=300s;            # => how Nginx reaches the OCSP responder
+#   resolver_timeout 5s;                     # => do not block the handshake on a slow resolver
+
+# --- Why it matters (co-10) --------------------------------------------------
+# Without stapling, every new client MAY make an extra call to the CA -- adding
+# latency and leaking (to the CA) which site the client visited. Stapling moves
+# that call to the proxy, done once and reused, for a faster, more private TLS.
+# [verify] 'OCSP Response Status: successful' from the openssl probe (co-10 proof).
