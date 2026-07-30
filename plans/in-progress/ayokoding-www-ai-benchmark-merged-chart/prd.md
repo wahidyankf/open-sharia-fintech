@@ -5,7 +5,11 @@
 Replace the AI Benchmark tool's two stacked charts (capability index, token price) with one merged
 chart: one row per rated model, carrying a capability bar and two price bars (input, output)
 together, grouped into the same four bands (opus/sonnet/light/unrated) the page already uses, each
-band independently sortable.
+RATED band (opus/sonnet/light) independently sortable. **Correction (pr-review-synthesis-maker
+MEDIUM finding, PR #125 fixer cycle):** the `unrated` band is never sortable — it has no composite
+index to order by, renders as a plain text list, and never had a sort dropdown. An earlier
+`sortUnrated` URL parameter round-tripped despite this and has been removed as dead code rather than
+wired up; see `tech-docs.md`'s corrected DD-4.
 
 ## Personas
 
@@ -224,16 +228,16 @@ finishing touch — it is the specific property that avoids the prior plan's Opt
 
 ### In scope
 
-| #    | Feature                                                                                                               |
-| ---- | --------------------------------------------------------------------------------------------------------------------- |
-| PS-1 | One merged chart component replacing `capability-chart.tsx` + `price-chart.tsx`                                       |
-| PS-2 | Three bars per rated model row: capability, price-in, price-out                                                       |
-| PS-3 | Per-band sort control (Capability default / Price low→high / Price high→low), sorted by output rate (input tie-break) |
-| PS-4 | URL-encoded per-band sort state (`sortOpus`/`sortSonnet`/`sortLight`/`sortUnrated`)                                   |
-| PS-5 | New `core/sort.ts` pure comparator module                                                                             |
-| PS-6 | DD-1: rated + subscription-only model renders inline `Subscription ($cost)` text in place of price bars               |
-| PS-7 | Rewritten + extended Gherkin in the existing `ai-benchmark.feature`                                                   |
-| PS-8 | DD-8: harness-specific price display (AC-17/AC-18) carries over unchanged via a `harness` prop on the merged chart    |
+| #    | Feature                                                                                                                                                 |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PS-1 | One merged chart component replacing `capability-chart.tsx` + `price-chart.tsx`                                                                         |
+| PS-2 | Three bars per rated model row: capability, price-in, price-out                                                                                         |
+| PS-3 | Per-band sort control (Capability default / Price low→high / Price high→low), sorted by output rate (input tie-break)                                   |
+| PS-4 | URL-encoded per-band sort state for the three RATED bands (`sortOpus`/`sortSonnet`/`sortLight` — `unrated` is never sortable, see the correction above) |
+| PS-5 | New `core/sort.ts` pure comparator module                                                                                                               |
+| PS-6 | DD-1: rated + subscription-only model renders inline `Subscription ($cost)` text in place of price bars                                                 |
+| PS-7 | Rewritten + extended Gherkin in the existing `ai-benchmark.feature`                                                                                     |
+| PS-8 | DD-8: harness-specific price display (AC-17/AC-18) carries over unchanged via a `harness` prop on the merged chart                                      |
 
 ### Out of scope
 

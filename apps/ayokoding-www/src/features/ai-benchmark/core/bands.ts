@@ -25,7 +25,7 @@ export type AnchorIndices = {
   sonnet: number | undefined;
 };
 
-/** A model scored and placed in a band — the unit both charts consume. */
+/** A model scored and placed in a band — the unit the chart shell (`benchmark-chart.tsx`) consumes. */
 export type ModelScore = {
   model: Model;
   /** Composite index; `undefined` for an unrated (zero-coverage) model. */
@@ -107,8 +107,10 @@ function anchorIndices(dataset: Dataset, maxes: RosterMaxes): AnchorIndices {
 
 /**
  * Canonical within-band ordering: descending composite index (undefined last), then ascending id.
- * Both charts consume the SAME per-band list produced here, so each band lists its models in the
- * same order in the capability chart and the price chart (AC-11).
+ * The merged chart consumes this SAME per-band list, so each band's rows render in one stable,
+ * canonical order (AC-11) — historically (pre-merge) this same list guaranteed order-parity
+ * between the separate, now-retired capability and price charts; today it is simply the merged
+ * chart's own canonical order.
  */
 function compareForOrder(a: ModelScore, b: ModelScore): number {
   const ai = a.index ?? -Infinity;

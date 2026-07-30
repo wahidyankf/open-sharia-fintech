@@ -140,8 +140,8 @@ describe("computeGroups — every roster model belongs to exactly one capability
 describe("computeGroups — models are ordered identically within a band (descending index, then id)", () => {
   const groups: BandGroups = computeGroups(dataset);
 
-  // The canonical comparator: descending index (undefined last), then ascending id. Both charts
-  // consume the same per-band list, so this property IS the "identical order" guarantee (AC-11).
+  // The canonical comparator: descending index (undefined last), then ascending id. The merged
+  // chart consumes this same per-band list, so this property IS the "canonical order" guarantee (AC-11).
   function assertCanonical(band: ModelScore[], allowUndefinedIndex: boolean) {
     for (let i = 1; i < band.length; i++) {
       const prev = band[i - 1];

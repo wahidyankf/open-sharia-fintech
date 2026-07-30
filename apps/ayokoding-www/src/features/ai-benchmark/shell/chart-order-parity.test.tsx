@@ -86,7 +86,7 @@ describe("BenchmarkChart per-band sort order (AC-11 / DD-4 gate check)", () => {
         dataset={dataset}
         fullDataset={dataset}
         locale="en"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-asc", unrated: "capability" }}
+        sortState={{ opus: "capability", sonnet: "capability", light: "price-asc" }}
       />,
     );
     const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
@@ -100,7 +100,7 @@ describe("BenchmarkChart per-band sort order (AC-11 / DD-4 gate check)", () => {
         dataset={dataset}
         fullDataset={dataset}
         locale="en"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-desc", unrated: "capability" }}
+        sortState={{ opus: "capability", sonnet: "capability", light: "price-desc" }}
       />,
     );
     const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");

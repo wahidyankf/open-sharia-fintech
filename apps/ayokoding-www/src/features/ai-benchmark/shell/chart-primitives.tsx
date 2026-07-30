@@ -1,11 +1,14 @@
 // AI BENCHMARK — shared chart primitives (Phase 6, A-2; refactored A-17; reused by Phase 7).
 //
-// The capability chart and the price chart share ONE set of SVG building blocks so neither chart
-// re-derives its own scale, axis, bar, or band-header rendering (Y-11 proves this by hoisting
-// anything the two charts still duplicate back here). `Legend` also lives here but is currently
-// used by the capability chart only — see its own docstring below. Every colour reference resolves
-// through the `--chart-band-*` design tokens declared in `<TOKENS>` (Phase 1) — no component in
-// this file (or any file that imports it) may name a hue directly (A-17).
+// `benchmark-chart.tsx` (the merged chart, Phase 2) is the sole consumer of this shared set of SVG
+// building blocks today — it never re-derives its own scale, axis, bar, or band-header rendering.
+// This module predates the merge: the retired `capability-chart.tsx` and `price-chart.tsx`
+// (deleted, Phase 3c — see git history) used to share it (Y-11 hoisted anything they duplicated
+// back here), which is why the primitives still live in their own module rather than being folded
+// into `benchmark-chart.tsx` directly. `Legend` also lives here but is currently used by
+// `how-to-read.tsx` only — see its own docstring below. Every colour reference resolves through the
+// `--chart-band-*` design tokens declared in `<TOKENS>` (Phase 1) — no component in this file (or
+// any file that imports it) may name a hue directly (A-17).
 //
 // FCIS boundary: this module holds NO literal benchmark score, price, model name, or class
 // threshold — `ChartBand` is a closed four-value union (the same one `core/bands.ts` produces),
@@ -74,10 +77,10 @@ export function bandSwatchClass(band: ChartBand): string {
 }
 
 /**
- * A band's localized class-name label — the single place either chart looks up
- * `BAND_LABEL_KEYS[band] → t(locale, key)` (Y-11 refactor: the two retired charts each carried
- * their own identical copy of this lookup; the fallback-to-band-id
- * guard can no longer drift between the two charts now that it lives here once).
+ * A band's localized class-name label — the single place the chart looks up
+ * `BAND_LABEL_KEYS[band] → t(locale, key)` (Y-11 refactor: the two now-retired charts each used to
+ * carry their own identical copy of this lookup; the fallback-to-band-id guard cannot drift
+ * between duplicate copies now that it lives here once).
  */
 export function bandLabel(band: ChartBand, locale: Locale): string {
   const key = BAND_LABEL_KEYS[band];

@@ -82,3 +82,42 @@ describe("byPriceAsc / byPriceDesc — ordered by output rate, input rate as tie
     expect(sorted.map((s) => s.model.id)).toEqual(["priced", "sub-only"]);
   });
 });
+
+// ─── Regression (pr-review-synthesis-maker HIGH finding): the comparators used `lowestRate`
+// unconditionally, ignoring an active harness filter, while the chart plots `rateForHarness` under
+// one — so an ascending price sort could render a costlier row above a cheaper one whenever a
+// model's cheapest harness was not the selected one. `harness`, when passed, must sort by THAT
+// harness's own rate instead.
+describe("byPriceAsc / byPriceDesc — an optional `harness` sorts by that harness's own rate, not the lowest", () => {
+  it("byPriceAsc sorts by the SELECTED harness's rate: a model whose lowest rate overall is cheaper can still sort AFTER one whose lowest is pricier, once the harness filter picks its costlier rate", () => {
+    // Both models are exposed by codex-cli (the fixture's filtered harness) — "dual" ALSO exposes
+    // a cheaper claude-code rate (10), which is its lowestRate() but must NOT drive the sort here.
+    const dualHarness = score("dual", 50, { "claude-code": met(1, 10), "codex-cli": met(2, 25) });
+    const flatPriced = score("flat", 60, { "codex-cli": met(1, 15) });
+    // Sorting by lowestRate (10 vs 15) would put "dual" first; sorting by codex-cli's own rate
+    // (25 vs 15) must put "flat" first instead.
+    const sorted = [dualHarness, flatPriced].sort((a, b) => byPriceAsc(a, b, "codex-cli"));
+    expect(sorted.map((s) => s.model.id)).toEqual(["flat", "dual"]);
+  });
+
+  it("byPriceDesc sorts by the SELECTED harness's rate the same way, reversed", () => {
+    const dualHarness = score("dual", 50, { "claude-code": met(1, 10), "codex-cli": met(2, 25) });
+    const flatPriced = score("flat", 60, { "codex-cli": met(1, 15) });
+    const sorted = [flatPriced, dualHarness].sort((a, b) => byPriceDesc(a, b, "codex-cli"));
+    expect(sorted.map((s) => s.model.id)).toEqual(["dual", "flat"]);
+  });
+
+  it("a model not exposed by the selected harness at all sorts last, never as cheapest, under byPriceAsc", () => {
+    const exposedElsewhereOnly = score("elsewhere-only", 50, { "claude-code": met(1, 5) });
+    const exposedHere = score("exposed-here", 60, { "codex-cli": met(1, 15) });
+    const sorted = [exposedElsewhereOnly, exposedHere].sort((a, b) => byPriceAsc(a, b, "codex-cli"));
+    expect(sorted.map((s) => s.model.id)).toEqual(["exposed-here", "elsewhere-only"]);
+  });
+
+  it("with no harness argument, behaviour is unchanged from the existing lowestRate-based sort", () => {
+    const cheap = score("cheap", 50, { cursor: met(1, 5) });
+    const pricey = score("pricey", 60, { cursor: met(1, 20) });
+    const sorted = [pricey, cheap].sort((a, b) => byPriceAsc(a, b));
+    expect(sorted.map((s) => s.model.id)).toEqual(["cheap", "pricey"]);
+  });
+});

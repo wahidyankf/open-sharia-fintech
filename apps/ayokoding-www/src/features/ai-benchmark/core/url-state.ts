@@ -18,23 +18,27 @@ export const PARAM_KEYS = {
 } as const;
 
 /**
- * The four per-band sort query-string parameter keys (DD-4). Kept as their own map, distinct from
- * {@link PARAM_KEYS}, so `SORT_PARAM_KEYS` can be iterated over uniformly (all four bands share
- * the same shape) without mixing in the two unrelated filter keys.
+ * The three per-band sort query-string parameter keys (DD-4) — one per RATED band; `unrated` never
+ * had one (pr-review-synthesis-maker MEDIUM finding: a since-removed `sortUnrated` param used to
+ * round-trip here despite having no rendering effect — the `unrated` band excludes itself from
+ * `RATED_BANDS` in `benchmark-chart.tsx`, is never sorted by `computeLayout`, and never had a
+ * dropdown, so the param was dead on arrival; see `prd.md`/`tech-docs.md` for the corrected DD-4/
+ * PS-4 claims). Kept as their own map, distinct from {@link PARAM_KEYS}, so `SORT_PARAM_KEYS` can
+ * be iterated over uniformly (all three bands share the same shape) without mixing in the two
+ * unrelated filter keys.
  */
 export const SORT_PARAM_KEYS = {
   opus: "sortOpus",
   sonnet: "sortSonnet",
   light: "sortLight",
-  unrated: "sortUnrated",
 } as const;
 
-/** One {@link SortMode} per capability band — the per-band sort choice (DD-4). */
+/** One {@link SortMode} per RATED capability band — the per-band sort choice (DD-4). The `unrated`
+ * band has no sort state: it is never sorted (see {@link SORT_PARAM_KEYS}'s docstring). */
 export type SortState = {
   opus: SortMode;
   sonnet: SortMode;
   light: SortMode;
-  unrated: SortMode;
 };
 
 /** The default sort mode for every band: capability (composite index), matching the band's own canonical order. */
@@ -45,7 +49,6 @@ export const DEFAULT_SORT_STATE: SortState = {
   opus: DEFAULT_SORT_MODE,
   sonnet: DEFAULT_SORT_MODE,
   light: DEFAULT_SORT_MODE,
-  unrated: DEFAULT_SORT_MODE,
 };
 
 /** The unfiltered state — what an empty or unrecognized query resolves to. */
@@ -59,7 +62,7 @@ export const DEFAULT_STATE: FilterState & SortState = {
  * An untrusted, possibly-raw-string per-band sort state — what a URL param actually hands
  * {@link sanitizeState} before validation narrows it to {@link SortMode}.
  */
-type UntrustedSortState = { opus?: string; sonnet?: string; light?: string; unrated?: string };
+type UntrustedSortState = { opus?: string; sonnet?: string; light?: string };
 
 /**
  * Sanitize a (possibly untrusted) filter + sort state to a valid one: drop any harness value that
@@ -77,7 +80,6 @@ export function sanitizeState(state: Partial<FilterState> & UntrustedSortState):
     opus: sanitizeSortMode(state.opus),
     sonnet: sanitizeSortMode(state.sonnet),
     light: sanitizeSortMode(state.light),
-    unrated: sanitizeSortMode(state.unrated),
   };
 }
 
@@ -104,7 +106,6 @@ export function decodeState(params: URLSearchParams): FilterState & SortState {
     opus: params.get(SORT_PARAM_KEYS.opus) ?? undefined,
     sonnet: params.get(SORT_PARAM_KEYS.sonnet) ?? undefined,
     light: params.get(SORT_PARAM_KEYS.light) ?? undefined,
-    unrated: params.get(SORT_PARAM_KEYS.unrated) ?? undefined,
   });
 }
 
@@ -136,7 +137,6 @@ export function encodeState(state: FilterState & Partial<SortState>): URLSearchP
   const opus = state.opus ?? DEFAULT_SORT_MODE;
   const sonnet = state.sonnet ?? DEFAULT_SORT_MODE;
   const light = state.light ?? DEFAULT_SORT_MODE;
-  const unrated = state.unrated ?? DEFAULT_SORT_MODE;
   if (opus !== DEFAULT_SORT_MODE) {
     params.set(SORT_PARAM_KEYS.opus, opus);
   }
@@ -145,9 +145,6 @@ export function encodeState(state: FilterState & Partial<SortState>): URLSearchP
   }
   if (light !== DEFAULT_SORT_MODE) {
     params.set(SORT_PARAM_KEYS.light, light);
-  }
-  if (unrated !== DEFAULT_SORT_MODE) {
-    params.set(SORT_PARAM_KEYS.unrated, unrated);
   }
   return params;
 }

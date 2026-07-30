@@ -8,8 +8,8 @@
 // `md` a collapsed `<details>` disclosure names the active-filter count in its summary; at `md`
 // and `lg` an inline, wrapping bar names the result count instead — both variants render the SAME
 // two `<select>` controls (same accessible names via matching `aria-label`s), simultaneously in the
-// DOM, with CSS toggling which is visible (the same dual-render pattern `model-table.tsx` and the
-// two charts already use for their own mobile/desktop split).
+// DOM, with CSS toggling which is visible (the same dual-render pattern `model-table.tsx` already
+// uses for its own mobile/desktop split).
 //
 // N-19 refactor: both selectors are one generic `<FilterSelect>` (label, option list, onChange)
 // rather than two hand-written `<select>` blocks, so a third filter axis would cost one call, not
@@ -42,14 +42,22 @@ export type FilterSelectProps = {
   label: string;
   value: string;
   options: readonly FilterOption[];
-  allLabel: string;
+  /**
+   * The "no filter on this axis" empty option's label. OPTIONAL: omit it entirely for a control
+   * that has no such state (e.g. the sort dropdowns in `benchmark-chart.tsx`, which always have
+   * an active `SortMode` — there is no "no sort"). Passing it renders `<option value="">` as the
+   * first option; omitting it renders no empty option at all, so `onChange` only ever receives one
+   * of `options`' own values.
+   */
+  allLabel?: string;
   onChange: (value: string) => void;
 };
 
 /**
  * One generic labelled `<select>` — the harness selector and the class selector are both a single
  * call to this component (N-19), differing only in id/label/options/onChange. The empty option
- * (`value=""`) is always "no filter on this axis" (rendered with the caller's localized `allLabel`).
+ * (`value=""`) is always "no filter on this axis" (rendered with the caller's localized `allLabel`)
+ * — and is omitted entirely when the caller passes no `allLabel` (see its doc above).
  */
 export function FilterSelect({ id, label, value, options, allLabel, onChange }: FilterSelectProps) {
   return (
@@ -65,7 +73,7 @@ export function FilterSelect({ id, label, value, options, allLabel, onChange }: 
           onChange={(e) => onChange(e.target.value)}
           className={SELECT_CLASS}
         >
-          <option value="">{allLabel}</option>
+          {allLabel !== undefined ? <option value="">{allLabel}</option> : null}
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}

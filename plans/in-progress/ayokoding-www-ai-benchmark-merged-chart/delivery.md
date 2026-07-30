@@ -269,6 +269,17 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
 > **Pause Safety**: `core/sort.ts` and the extended `core/url-state.ts` are complete, tested, and
 > pushed; no UI yet consumes them, so the page still renders exactly as before this plan started.
 > Safe to stop. To resume: `cd worktrees/ayokoding-www-ai-benchmark-merged-chart && npx nx run ayokoding-www:test:unit -- ai-benchmark`.
+>
+> **Post-hoc correction (PR #125 review-cycle 1, `pr-review-fixer`):** the `sortUnrated` param added
+> above in Phase 1's GREEN steps was found to be dead code — a public URL parameter that fully
+> round-tripped through `sanitizeState`/`decodeState`/`encodeState` despite the `unrated` band never
+> being sorted (`RATED_BANDS` in `benchmark-chart.tsx` excludes it, and it never had a sort
+> dropdown). Removed from `SORT_PARAM_KEYS`, `SortState`, and the sanitize/decode/encode paths
+> rather than wired up, since implementing real per-band sorting for the unrated list would be a new
+> feature requiring its own product/design decision, not a fix to this defect. `prd.md`/`tech-docs.md`
+> corrected accordingly (PS-4/DD-4). See `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.ts`,
+> `url-state.unit.test.ts`, `benchmark-chart.tsx`, `benchmark-chart.test.tsx`,
+> `chart-order-parity.test.tsx`, and `benchmark-content.tsx`.
 
 ## Phase 2: Merged chart component — `shell/benchmark-chart.tsx`
 
@@ -917,6 +928,25 @@ translations.ts` → `2`.
   > ![AI benchmark merged chart, id locale, 375px](./evidence/phase-6-benchmark-chart-id-375px.png)
   > ![AI benchmark merged chart, id locale, 768px](./evidence/phase-6-benchmark-chart-id-768px.png)
   > ![AI benchmark merged chart, id locale, 1280px](./evidence/phase-6-benchmark-chart-id-1280px.png)
+  >
+  > **Regenerated (PR #125 review-cycle 1, `pr-review-fixer`, 2026-07-30):** the original 6
+  > screenshots above documented a live CRITICAL defect (pr-review-synthesis-maker finding) — the
+  > `id`/1280px capture showed `GPT-5.6 Terra — 95,1`'s low-coverage marker clipped to
+  > `cakupan rendah (20` with its trailing `%)` cut off the SVG's right edge, caused by
+  > `benchmark-chart.tsx` hardcoding `PLOT_WIDTH = 380` (right margin 80, under the 140-unit clip
+  > floor) instead of deriving it from a reserved `MARKER_MIN_MARGIN` the way the retired
+  > `capability-chart.tsx` did. Fixed by restoring the derived relationship
+  > (`PLOT_WIDTH = SVG_WIDTH - PLOT_X - MARKER_MIN_MARGIN`, margin locked to 164 by a new regression
+  > guard in `benchmark-chart.test.tsx`'s "DWT-001 right-margin regression" block) and re-verified
+  > live: dev server (`npx nx dev ayokoding-www`, port 3101) driven headlessly via the `playwright`
+  > package (Playwright MCP unavailable in this invocation; same navigate/resize/screenshot/console
+  > checks as the original Phase 6 pass) across all 6 locale × breakpoint combinations. Every
+  > low-coverage marker's own computed bounding-box right edge (`getBBox()`) was asserted `<=` the
+  > SVG's own `viewBox` width — 0 markers clipped across all 6 renders (7 low-coverage markers
+  > checked per render), and 0 console errors/warnings per render. All 6 PNGs above were
+  > overwritten in place with the corrected renders (same 6 filenames, no new files). The `id`/1280px
+  > capture now shows `GPT-5.6 Terra — 95,1` rendering the complete
+  > `cakupan rendah (20%)` marker, matching every other low-coverage marker in the same image.
 
 ### Phase 6 Gate
 

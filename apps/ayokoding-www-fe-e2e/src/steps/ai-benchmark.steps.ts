@@ -154,7 +154,7 @@ Then("the same filtered set of models is shown", async ({ page }) => {
 //
 // The four band tokens all share ONE `-ink` value and ONE `-wash` value per theme (see
 // `libs/web-ui-token/src/ayokoding.css`) — only the BASE (`--chart-band-<band>`) hue differs
-// per band, and neither chart currently renders `-wash` as an actual background (see
+// per band, and the chart currently renders no `-wash` as an actual background (see
 // `tech-docs.md`'s "Feature gating" is unrelated; the relevant note is in the Band design tokens
 // section: "-ink/-wash pair provides the text-on-background contrast" — a token-level contract,
 // not tied to any one component's current usage). Reading the CSS custom properties directly,
@@ -163,7 +163,7 @@ Then("the same filtered set of models is shown", async ({ page }) => {
 
 const BAND_IDS = ["opus", "sonnet", "light", "unrated"] as const;
 
-// The three bands that actually render as a bar (`capability-chart.tsx` never plots `unrated` as
+// The three bands that actually render as a bar (`benchmark-chart.tsx` never plots `unrated` as
 // a bar — it is a plain text list) — the base/bar-fill token `--chart-band-<band>` against
 // `--color-background` (the page background a bar renders directly onto) is the pair the M-14 fix
 // (delivery.md, Phase 9 Round 1a) actually changed and the one WCAG 1.4.11's 3:1 non-text minimum

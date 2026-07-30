@@ -117,31 +117,40 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
 // ─── Sort params (Phase 1) — round-trip the four per-band sort choices ─────────
 
 describe("encodeState / decodeState — round-trip the four per-band sort params", () => {
-  it("round-trips a non-default sort mode for each of the four bands", () => {
+  it("round-trips a non-default sort mode for each of the three rated bands", () => {
     const state = {
       harness: undefined,
       class: undefined,
       opus: "price-asc" as const,
       sonnet: "price-desc" as const,
       light: "price-asc" as const,
-      unrated: "price-desc" as const,
     };
     const encoded = encodeState(state);
     expect(encoded.get("sortOpus")).toBe("price-asc");
     expect(encoded.get("sortSonnet")).toBe("price-desc");
     expect(encoded.get("sortLight")).toBe("price-asc");
-    expect(encoded.get("sortUnrated")).toBe("price-desc");
     expect(decodeState(encoded)).toEqual(state);
+  });
+
+  // Regression (pr-review-synthesis-maker MEDIUM finding): a `sortUnrated` param used to exist and
+  // fully round-trip here despite having zero rendering effect — the `unrated` band is never
+  // sorted (`benchmark-chart.tsx`'s `RATED_BANDS` excludes it) and never had a dropdown. Removed
+  // rather than wired up (see `SORT_PARAM_KEYS`'s docstring); this asserts the URL no longer
+  // recognizes it at all, so a stale bookmarked `sortUnrated=...` link is silently ignored, never
+  // resurrected.
+  it("ignores an unrecognized sortUnrated query param entirely — it is not a known param key", () => {
+    const decoded = decodeState(new URLSearchParams("sortUnrated=price-desc"));
+    expect(decoded).toEqual(DEFAULT_STATE);
+    expect(encodeState(decoded).toString()).toBe("");
   });
 
   it("an unrecognized sortSonnet value in the URL sanitizes to the default (capability), never throwing", () => {
     expect(() => decodeState(new URLSearchParams("sortSonnet=not-a-real-value"))).not.toThrow();
     const decoded = decodeState(new URLSearchParams("sortSonnet=not-a-real-value"));
     expect(decoded.sonnet).toBe("capability");
-    // The other three bands are unaffected by the one unrecognized value.
+    // The other two bands are unaffected by the one unrecognized value.
     expect(decoded.opus).toBe("capability");
     expect(decoded.light).toBe("capability");
-    expect(decoded.unrated).toBe("capability");
   });
 });
 

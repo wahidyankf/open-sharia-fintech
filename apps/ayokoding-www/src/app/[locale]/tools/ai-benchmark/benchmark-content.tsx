@@ -30,7 +30,7 @@ export function BenchmarkContent() {
   // would otherwise silently collapse every rated model to `light`.
   // `decodeState` returns ONE flat object carrying both the filter and sort keys — picked apart
   // into two disjoint-key objects here (not just re-typed) so `latestFilterStateRef` never carries
-  // an own `opus`/`sonnet`/`light`/`unrated` key and `latestSortStateRef` never carries an own
+  // an own `opus`/`sonnet`/`light` key and `latestSortStateRef` never carries an own
   // `harness`/`class` key. Without this, `{ ...next, ...latestSortStateRef.current }` below would
   // spread `latestSortStateRef.current`'s own (implicitly `undefined`) `harness`/`class` keys
   // OVER `next`'s real values, silently dropping whichever filter had just changed.
@@ -40,7 +40,6 @@ export function BenchmarkContent() {
     opus: decoded.opus,
     sonnet: decoded.sonnet,
     light: decoded.light,
-    unrated: decoded.unrated,
   };
   const filteredModels = filterModels(dataset, filterState);
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };
@@ -102,12 +101,12 @@ export function BenchmarkContent() {
       />
 
       {isEmpty ? (
-        // AC-28: an explicit empty-state message replaces both charts (never an empty plot area).
+        // AC-28: an explicit empty-state message replaces the chart (never an empty plot area).
         // The data table is ALSO hidden below (Rule-15 UWT-006 fix) — an already-unambiguous empty
         // -state message directly followed by a full, empty table header row read as redundant/
         // aesthetically noisy (Heuristic 8) and could be misread as "the table is broken". AC-28's
         // Gherkin scenario was WIDENED in this same fix to fold in this table behaviour — its `But`
-        // step now asserts neither chart nor the data table renders in the empty state (see
+        // step now asserts the chart and the data table do not render in the empty state (see
         // `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`), so
         // hiding the table here is the AC's own requirement, not an unconstrained extra.
         // `role="status"` — a filter change never moves focus or scrolls, so an emptied roster

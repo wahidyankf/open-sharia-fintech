@@ -1523,12 +1523,12 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
-    But("neither chart nor the data table renders in the empty state", () => {
+    But("the chart and the data table do not render in the empty state", () => {
       expect(screen.queryByTestId("benchmark-chart-svg")).toBeNull();
       // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
       // the empty-state message must not be followed by an empty, redundant table skeleton either
-      // — <ModelTable> moved inside the `!isEmpty` branch alongside the two charts. AC-28 itself
-      // constrains only the charts, but reverting the table's move would leave every OTHER
+      // — <ModelTable> moved inside the `!isEmpty` branch alongside the chart. AC-28 itself
+      // constrains only the chart, but reverting the table's move would leave every OTHER
       // assertion in this scenario passing, so this is the assertion that actually protects it.
       expect(screen.queryByTestId("model-table")).toBeNull();
     });
@@ -1642,13 +1642,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(targetWidth / referenceWidth).toBeCloseTo(85.7 / 100, 5);
     });
 
-    And("the price-out bar's length is proportional to $15.00 over that band's price axis max", () => {
+    And("the price-out bar's length is proportional to $15.00 over the chart's shared price axis max", () => {
       const targetWidth = Number(screen.getByTestId("benchmark-chart-bar-price-out-ac40-target").getAttribute("width"));
       const referenceWidth = Number(
         screen.getByTestId("benchmark-chart-bar-price-out-ac40-reference-max").getAttribute("width"),
       );
       // The reference model's own output rate (30) is the highest metered rate in the fixture, so
-      // it IS the price axis max — the ruler for "$15.00 over that band's price axis max".
+      // it IS the price axis max — the ruler for "$15.00 over the chart's shared price axis max".
       expect(targetWidth / referenceWidth).toBeCloseTo(15 / 30, 5);
     });
   });
@@ -1907,6 +1907,50 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // never from `window.innerWidth` — so bar widths are identical across the three renders too,
       // which this equality (rather than a literal cross-viewport pixel diff) documents.
       expect(ctx.widthSignatures![0]).toEqual(ctx.widthSignatures![1]);
+    });
+  });
+
+  // ─── AC-48 — a rated model with no reported price shows a not-reported placeholder ───
+  //
+  // Added post-merge (pr-review-synthesis-maker MEDIUM finding): the retired `price-chart.tsx`
+  // used to omit a model with no metered rate and no subscription from the plot entirely, so
+  // nothing rendered for it; the merged chart instead renders `aiBenchNoFigure` inline
+  // (`benchmark-chart.tsx`'s `not-reported` branch), which had no owning scenario until now.
+
+  Scenario("A rated model with no reported price shows a not-reported placeholder", ({ Given, When, Then, And }) => {
+    Given("a model in the light band with no metered rate and no subscription rate", () => {
+      const m: Model = {
+        id: "ac48-no-price-rated",
+        name: "ac48-no-price-rated",
+        vendor: "Test",
+        harnesses: ["claude-code"],
+        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> light band
+        pricing: {}, // no metered rate anywhere AND no subscription — genuinely no reported price
+      };
+      ctx.fixtureDataset = fixtureDataset([m]);
+    });
+
+    When("the merged chart renders that model's row", () => {
+      render(
+        React.createElement(BenchmarkChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A rated model with no reported price shows a not-reported placeholder
+    Then("the row shows its capability bar as normal", () => {
+      expect(screen.getByTestId("benchmark-chart-bar-capability-ac48-no-price-rated")).not.toBeNull();
+    });
+
+    And('the price-bar area of that row shows a "not reported" placeholder instead of two bars', () => {
+      expect(screen.queryByTestId("benchmark-chart-bar-price-in-ac48-no-price-rated")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-bar-price-out-ac48-no-price-rated")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-subscription-ac48-no-price-rated")).toBeNull();
+      const notReported = screen.getByTestId("benchmark-chart-not-reported-ac48-no-price-rated");
+      expect(notReported.textContent).toBe(t("en", "aiBenchNoFigure"));
     });
   });
 

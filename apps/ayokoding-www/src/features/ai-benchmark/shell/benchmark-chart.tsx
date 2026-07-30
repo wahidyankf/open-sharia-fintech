@@ -13,14 +13,14 @@
 
 import { useId } from "react";
 import { t } from "@/features/i18n/core/translations";
-import type { Locale } from "@/features/i18n/core/config";
+import { SUPPORTED_LOCALES, type Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset, type HarnessId } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
 import { BANDS } from "../core/filter";
 import { COMPOSITE_INDEX_MAX, LOW_COVERAGE_THRESHOLD } from "../core/score";
 import { lowestRate, rateForHarness } from "../core/price";
-import { byCapabilityDesc, byPriceAsc, byPriceDesc, SORT_MODES, type SortMode } from "../core/sort";
-import type { SortState } from "../core/url-state";
+import { byCapabilityDesc, byPriceAsc, byPriceDesc, isKnownSortMode, SORT_MODES, type SortMode } from "../core/sort";
+import { DEFAULT_SORT_STATE, type SortState } from "../core/url-state";
 import { formatCoverage, formatIndex, formatPriceUsd } from "./format";
 import { Axis, Bar, BandGroup, bandLabel, scaleLinear, type ChartBand } from "./chart-primitives";
 import { FilterSelect, type FilterOption } from "./benchmark-filters";
@@ -28,9 +28,34 @@ import { FilterSelect, type FilterOption } from "./benchmark-filters";
 const SLOT = "benchmark-chart";
 
 // ─── Layout constants (display-only — never a benchmark score, price, or threshold) ───────────
+//
+// PLOT_WIDTH is DERIVED from a reserved right margin, never hardcoded — this is the DWT-001 fix
+// (originally found and fixed in the retired `capability-chart.tsx`, then REGRESSED here when this
+// file replaced it with a hardcoded `PLOT_WIDTH = 380`, which let the right margin fall out to 80
+// — under the 140-unit clip floor this defect's live investigation found — and clipped the
+// low-coverage marker text off the SVG's right edge for any sufficiently long capability bar).
+// `MARKER_MIN_MARGIN` is a documented, generous estimate of the SVG user-unit width the longest
+// localized low-coverage marker string (`aiBenchCoverageLow` + a worst-case "(100%)" percentage —
+// wider than any real dataset value, used only as a safe upper bound) needs at `text-[9px]`,
+// computed across every supported locale so none of them clips. `MARKER_CHAR_WIDTH_RATIO` is a
+// conservative average glyph-advance-width-to-font-size ratio for a proportional sans-serif font;
+// `MARKER_SAFETY_BUFFER` cushions the estimate above that ~140-unit clip threshold. See
+// `benchmark-chart.test.tsx`'s "DWT-001 right-margin regression" block for the regression guard
+// this margin is locked by, and delivery.md's Phase 6 evidence section for the live Playwright
+// re-verification this fix required (screenshots regenerated after this change).
 const SVG_WIDTH = 640;
 const PLOT_X = 180; // left gutter reserved for the md/lg left-gutter label
-const PLOT_WIDTH = 380;
+const MARKER_FONT_SIZE = 9; // matches the marker `<text>`'s `text-[9px]`
+const MARKER_GAP = 6; // matches `x={PLOT_X + capWidth + 6}` below — the gap before the marker text
+const MARKER_CHAR_WIDTH_RATIO = 0.62;
+const MARKER_SAFETY_BUFFER = 40;
+const WORST_CASE_MARKER_LENGTH = Math.max(
+  ...SUPPORTED_LOCALES.map((locale) => `${t(locale, "aiBenchCoverageLow")} (${formatCoverage(1, locale)})`.length),
+);
+export const MARKER_MIN_MARGIN =
+  MARKER_GAP + Math.ceil(WORST_CASE_MARKER_LENGTH * MARKER_FONT_SIZE * MARKER_CHAR_WIDTH_RATIO) + MARKER_SAFETY_BUFFER;
+const PLOT_WIDTH = SVG_WIDTH - PLOT_X - MARKER_MIN_MARGIN;
+export { SVG_WIDTH, PLOT_X, PLOT_WIDTH };
 const ROW_HEIGHT = 56; // room for the capability bar + two stacked price bars within one row
 const BAR_HEIGHT = 12;
 const BAR_GAP = 3;
@@ -40,11 +65,28 @@ const TOP_MARGIN = 24; // room for the always-visible axis-maximum label
 
 // Only rated bands render rows (a row needs a capability bar) — mirrors the retired capability chart's
 // `RATED_BANDS`, derived from `core/filter.ts`'s `BANDS` (F-9) rather than re-declared here.
-const RATED_BANDS: readonly ChartBand[] = BANDS.filter((band) => band !== "unrated");
+//
+// `RatedBand` (excludes `"unrated"` at the TYPE level, not just at runtime) is what lets
+// `sortState[band]` below type-check against {@link SortState}, which has no `unrated` key — the
+// `unrated` band has no sort state to index (it is never sorted; see `SORT_PARAM_KEYS`'s docstring
+// in `core/url-state.ts`).
+type RatedBand = Exclude<ChartBand, "unrated">;
+const RATED_BANDS: readonly RatedBand[] = BANDS.filter((band): band is RatedBand => band !== "unrated");
 
-/** Applies a band's chosen {@link SortMode} to its `computeGroups()` array — DD-4. */
-function sortBand(scores: ModelScore[], mode: SortMode): ModelScore[] {
-  const comparator = mode === "price-asc" ? byPriceAsc : mode === "price-desc" ? byPriceDesc : byCapabilityDesc;
+/**
+ * Applies a band's chosen {@link SortMode} to its `computeGroups()` array — DD-4. `harness`
+ * (DD-8/AC-18) is threaded through to the price comparators so an active harness filter sorts by
+ * THAT harness's own rate, matching the same rate `rate={harness !== undefined ? rateForHarness(...)
+ * : lowestRate(...)}` plots per row below — otherwise sort order and displayed price can diverge
+ * (pr-review-synthesis-maker HIGH finding).
+ */
+function sortBand(scores: ModelScore[], mode: SortMode, harness?: HarnessId): ModelScore[] {
+  const comparator =
+    mode === "price-asc"
+      ? (a: ModelScore, b: ModelScore) => byPriceAsc(a, b, harness)
+      : mode === "price-desc"
+        ? (a: ModelScore, b: ModelScore) => byPriceDesc(a, b, harness)
+        : byCapabilityDesc;
   return [...scores].sort(comparator);
 }
 
@@ -54,7 +96,7 @@ type RowLayout = {
 };
 
 type BandLayout = {
-  band: ChartBand;
+  band: RatedBand;
   label: string;
   headerY: number;
   rows: RowLayout[];
@@ -64,11 +106,12 @@ function computeLayout(
   groups: Record<ChartBand, ModelScore[]>,
   sortState: SortState,
   locale: Locale,
+  harness?: HarnessId,
 ): { bands: BandLayout[]; plotHeight: number } {
   let cursor = TOP_MARGIN;
   const bands: BandLayout[] = [];
   for (const band of RATED_BANDS) {
-    const scores = sortBand(groups[band], sortState[band]);
+    const scores = sortBand(groups[band], sortState[band], harness);
     const headerY = cursor + BAND_HEADER_HEIGHT - 8;
     const rowsTop = cursor + BAND_HEADER_HEIGHT;
     const rows = scores.map((score, i) => ({ score, rowTop: rowsTop + i * ROW_HEIGHT }));
@@ -230,13 +273,6 @@ export type BenchmarkChartProps = {
   onSortChange?: (band: ChartBand, mode: SortMode) => void;
 };
 
-const DEFAULT_SORT_STATE: SortState = {
-  opus: "capability",
-  sonnet: "capability",
-  light: "capability",
-  unrated: "capability",
-};
-
 /** A sort mode's localized dropdown label (DD-4's three known modes — mirrors `bandLabel`'s pattern). */
 function sortModeLabel(mode: SortMode, locale: Locale): string {
   const key =
@@ -259,7 +295,7 @@ export function BenchmarkChart({
   const titleId = useId();
 
   const groups = computeGroups(dataset, fullDataset);
-  const { bands, plotHeight } = computeLayout(groups, sortState, locale);
+  const { bands, plotHeight } = computeLayout(groups, sortState, locale, harness);
   const priceAxisMax = priceAxisMaxOf(bands, harness);
   const capabilityScale = scaleLinear(COMPOSITE_INDEX_MAX, PLOT_WIDTH);
   const priceScale = scaleLinear(priceAxisMax, PLOT_WIDTH);
@@ -292,8 +328,13 @@ export function BenchmarkChart({
               label={`${sortLabelPrefix} — ${bandLayout.label}`}
               value={sortState[bandLayout.band]}
               options={sortOptions}
-              allLabel={sortModeLabel("capability", locale)}
-              onChange={(value) => onSortChange(bandLayout.band, value as SortMode)}
+              // No `allLabel` here (deliberately): sort has no "no sort" state, unlike a filter's
+              // legitimate "no filter on this axis" empty option — passing one produced a
+              // duplicate "Capability" option and an invalid `"" as SortMode` cast on change
+              // (pr-review-synthesis-maker HIGH finding). `isKnownSortMode` narrows instead.
+              onChange={(value) => {
+                if (isKnownSortMode(value)) onSortChange(bandLayout.band, value);
+              }}
             />
           ))}
         </div>

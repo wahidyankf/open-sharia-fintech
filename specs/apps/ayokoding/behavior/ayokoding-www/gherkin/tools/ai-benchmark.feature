@@ -256,13 +256,17 @@ Feature: AI model benchmark tool
     Then the row shows one capability bar, one price-in bar, and one price-out bar
     And all three bars appear stacked within that single row, not in separate chart sections
 
-  # AC-40
+  # AC-40 — reworded (pr-review-synthesis-maker MEDIUM finding): the price axis is deliberately
+  # SHARED across every rated band (delivery.md's Phase 6 GREEN note: "one over a shared price axis
+  # max across all rated bands ... ported as priceAxisMaxOf"), not per-band — a per-band axis would
+  # make a $5 bar in one band render the same width as a $50 bar in another, defeating cross-band
+  # price comparison. The scenario text was the stale part, not the code.
   @unit
   Scenario: Bar length is proportional to its own value
     Given a model with a composite index of 85.7 and an output rate of $15.00
     When the merged chart renders that model's row
     Then the capability bar's length is proportional to 85.7 over the composite index max
-    And the price-out bar's length is proportional to $15.00 over that band's price axis max
+    And the price-out bar's length is proportional to $15.00 over the chart's shared price axis max
 
   # AC-41
   @unit
@@ -319,6 +323,18 @@ Feature: AI model benchmark tool
     When the DOM structure at each width is inspected
     Then the same set of elements renders at all three widths
     And only the pixel width of each bar changes between the three renders
+
+  # AC-48 — added post-merge (pr-review-synthesis-maker MEDIUM finding): a rated model with no
+  # reported price at all (no metered rate, no subscription, under any harness) is genuinely new
+  # rendering behaviour the retired `price-chart.tsx` never had — it used to omit such models from
+  # the plot entirely, so nothing rendered for them; the merged chart instead renders an inline
+  # "not reported" placeholder, which had no owning scenario until now.
+  @unit
+  Scenario: A rated model with no reported price shows a not-reported placeholder
+    Given a model in the light band with no metered rate and no subscription rate
+    When the merged chart renders that model's row
+    Then the row shows its capability bar as normal
+    And the price-bar area of that row shows a "not reported" placeholder instead of two bars
 
   # ══════════════════════════════════════════════════════════════════════════
   # Phase 8 — harness and class filters (AC-18, AC-22..AC-28).
@@ -381,13 +397,13 @@ Feature: AI model benchmark tool
     Then the filter uses the first of the two values
     And every roster model matching that harness is shown
 
-  # AC-28 (charts) + Rule-15 UWT-006 fix (data table, folded into the same scenario)
+  # AC-28 (chart) + Rule-15 UWT-006 fix (data table, folded into the same scenario)
   @unit
   Scenario: A filter combination matching no model renders an explicit empty state
     Given the URL carries a filter combination that matches no model
     When the page renders
     Then an explicit empty-state message is shown
-    But neither chart nor the data table renders in the empty state
+    But the chart and the data table do not render in the empty state
 
   # AC-27
   @unit @e2e
