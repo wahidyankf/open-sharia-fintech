@@ -112,6 +112,13 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchPriceLowestSubtitle: "Showing the lowest available rate across harnesses for each model",
     aiBenchPriceSubscriptionHeading: "Subscription-only models",
 
+    // AI benchmark — merged chart (Phase 2).
+    aiBenchMergedChartTitle: "Capability and price by model",
+    aiBenchSortLabel: "Sort",
+    aiBenchSortCapability: "Capability (high to low)",
+    aiBenchSortPriceAsc: "Price: Low to High",
+    aiBenchSortPriceDesc: "Price: High to Low",
+
     // AI benchmark — harness/class filters (Phase 8).
     aiBenchFilterSummary: "Filters",
     aiBenchFilterHarnessLabel: "Harness",
@@ -478,6 +485,13 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchPriceChartTitle: "Harga per model",
     aiBenchPriceLowestSubtitle: "Menampilkan tarif harness terendah yang tersedia untuk setiap model",
     aiBenchPriceSubscriptionHeading: "Model khusus langganan",
+
+    // AI benchmark — bagan gabungan (Fase 2).
+    aiBenchMergedChartTitle: "Kemampuan dan harga per model",
+    aiBenchSortLabel: "Urutkan",
+    aiBenchSortCapability: "Kemampuan (tinggi ke rendah)",
+    aiBenchSortPriceAsc: "Harga: Rendah ke Tinggi",
+    aiBenchSortPriceDesc: "Harga: Tinggi ke Rendah",
 
     // AI benchmark — filter harness/kelas (Fase 8).
     aiBenchFilterSummary: "Filter",
