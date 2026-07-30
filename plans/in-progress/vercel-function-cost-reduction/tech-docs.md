@@ -1,0 +1,416 @@
+# Technical Documentation — Vercel Function Cost Reduction
+
+## Evidence: why nothing is cached
+
+Every claim below was verified against the committed build output and against live production on
+**2026-07-30**. Nothing here is inferred from reading source alone.
+
+### Build output proves zero prerendered pages
+
+`apps/ayokoding-www/.next/prerender-manifest.json` (BUILD_ID `FHQcNd6t8H3HTYFAhxlh2`, built
+2026-07-27) contains exactly **4** entries, none of which is a page:
+
+```text
+routes:        ["/_global-error", "/feed.xml", "/robots.txt", "/sitemap.xml"]
+dynamicRoutes: 0
+```
+
+`.next/routes-manifest.json` classifies every page as a dynamic route. `find .next/server/app -name
+"*.html"` returns **1** file (`_global-error.html`).
+
+### Live production confirms it
+
+The same course-lesson URL, requested three times consecutively:
+
+```text
+GET /en/learn/courses/debugging-and-profiling/learning
+run1  ttfb=0.547s  x-vercel-cache: MISS
+run2  ttfb=0.613s  x-vercel-cache: MISS
+run3  ttfb=0.712s  x-vercel-cache: MISS
+cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+```
+
+`/en` and `/en/browse` return the same headers. Nothing is ever cached at the edge.
+
+### Cause A — `headers()` in the root layout
+
+`apps/ayokoding-www/src/app/layout.tsx:3,24-25`:
+
+```ts
+import { headers } from "next/headers";
+// ...
+const headersList = await headers();
+const pathname = headersList.get("x-pathname") ?? headersList.get("x-url") ?? "";
+```
+
+Its only purpose is line 30's `htmlLang(locale)` — computing the `lang` attribute. Roughly four
+lines of code forfeit static generation for ~2,068 pages.
+
+### Cause B — `searchParams` in the content catch-all
+
+`apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx:94,365`:
+
+```ts
+searchParams: Promise;
+// ...
+const usp = urlSearchParamsFrom(await searchParams); // line 365
+```
+
+Used only to read an optional `?path=` course-path context.
+
+`generateStaticParams` at `[...slug]/page.tsx:55-88` already enumerates the whole content tree. It
+is complete and correct — Causes A and B simply prevent it from ever materialising.
+
+### The circular middleware
+
+`apps/ayokoding-www/src/middleware.ts` matcher:
+`["/((?!_next/static|_next/image|favicon.ico|favicon.png).*)"]`.
+
+`src/features/i18n/shell/middleware.ts` does exactly five things; on the hot path for a real page
+request only step 5 executes — `NextResponse.next()` plus
+`response.headers.set("x-pathname", pathname)` (lines 44-47). **That header exists solely to feed
+Cause A.** The middleware runs on 89% of all requests to produce the value that makes the site
+dynamic. Removing Cause A makes the middleware purposeless.
+
+The other four steps are: an early `next()` for `/api/`, `/_next/`, favicons, `robots.txt`,
+`sitemap.xml`, `feed.xml` (lines 9-18); the `/` → `/en` 307 (lines 21-23); the uppercase-locale 308
+(lines 30-34); and a no-op branch (lines 37-42). Only the two redirects need a new home.
+
+### Supporting cost drivers
+
+| Driver                                                                                               | Evidence                                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full content index read per cold start: 2,068 files / 70.46 MiB, `readFile` + gray-matter + Zod each | `src/features/content/shell/repository-fs.ts:18-58`, `service.ts:246-256`, module singleton at `src/features/app-shell/shell/trpc-init.ts:12`                               |
+| Per-request markdown parse with Shiki dual themes                                                    | `src/features/content/core/parser.ts:33-61` (`rehypePrettyCode`, `github-dark` + `github-light`)                                                                            |
+| `getBySlug` called **twice per request** for the same slug                                           | `[...slug]/page.tsx:130` (`generateMetadata`) and `:339` (page body)                                                                                                        |
+| 7,515 content files traced into **every** function bundle                                            | `next.config.ts:25-27` `outputFileTracingIncludes: { "/**": [...] }`; confirmed in four separate `.nft.json` trace files, including `api/trpc`. `.next/standalone` = 165 MB |
+| Whole content tree in every page's RSC flight payload                                                | `src/features/navigation/shell/sidebar.tsx:10` → `sidebar-tree.tsx:1` (`"use client"`); 1,938 `"slug"` occurrences in one 425,996-byte live response                        |
+
+### wahidyankf-www
+
+Build route table shows `ƒ /`, `ƒ /cv`, `ƒ /personal-projects`, `○ /_not-found`. Each dynamic route
+is dynamic for one reason: `await searchParams` for `?search=`, at `src/app/page.tsx:3-4`,
+`src/app/cv/page.tsx:10-11`, `src/app/personal-projects/page.tsx:10-11`.
+
+All three consumers are **already** `"use client"` and use the value only to seed `useState`
+(`HomeContent.tsx:29-31`, `CvContent.tsx:477-484`, `PersonalProjectsContent.tsx:21-27`), so the fix
+is a prop removal, not a rewrite. `grep useSearchParams` currently returns no hits in this app.
+
+Live: `x-vercel-cache: MISS`, `cache-control: private, no-cache, no-store`, `/cv` renders 178,411 B
+per invocation. There is no `robots.ts` and no `sitemap.ts`, while `src/app/layout.tsx:54-64` sets
+maximally crawl-inviting robots metadata. `layout.tsx:39,51` reference an `og-image.jpg` that 404s.
+
+### Ruled out — do not re-litigate
+
+| Candidate                                                      | Verdict                                                                                                                                                                           |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The 74 `next.config.ts` redirect rules                         | **Not a cost factor.** Compiled to regexes in `routes-manifest.json` and evaluated in Vercel's edge routing layer _before_ middleware — zero function invocation. Wrong tree.     |
+| Image Optimization                                             | **Zero cost.** `images: { unoptimized: true }` in all five `next.config.ts`; `isNextImageImported: false`.                                                                        |
+| Crons / scheduled invocations                                  | **None.** No `crons` key in any `vercel.json`; there is no root `vercel.json`.                                                                                                    |
+| ISR background regeneration                                    | **None.** No `revalidate` export anywhere; all four prerendered routes have `initialRevalidateSeconds: false`.                                                                    |
+| `ose-www`, `organiclever-www`, `ose-app-web`, web-ui Storybook | **Provably cached.** All return `x-vercel-cache: HIT` with `x-nextjs-prerender: 1` and ages of 13–45 days.                                                                        |
+| `next/link` prefetch amplification                             | **Refuted.** A dynamic route is not prefetched without a `loading.js` boundary, and zero `loading.*` files exist in either app. An earlier hypothesis; corrected before planning. |
+
+## Verified platform facts
+
+### The team is on legacy pre-Fluid-Compute billing
+
+A line item named **"Function Duration" measured in GB-Hrs**, plus a **standalone priced "Edge
+Middleware Invocations"** line, do not exist in the current Fluid Compute billing vocabulary. The
+current model bills three distinct resources: Active CPU ($0.128/CPU-hr in `iad1`), Provisioned
+Memory ($0.0106/GB-hr), and Invocations ($0.60/M).
+
+- [Fluid compute pricing](https://vercel.com/docs/functions/usage-and-pricing) — updated 2026-06-16
+- [Legacy usage & pricing for Functions](https://vercel.com/docs/functions/usage-and-pricing/legacy-pricing) — updated 2026-06-25
+- [Routing Middleware](https://vercel.com/docs/routing-middleware) — updated 2026-07-01
+
+The legacy docs state the model bills wall-clock time and recommend migrating: "Enable Fluid compute
+for more cost-effective billing that separates active CPU time from provisioned memory time."
+
+The $0.18/GB-Hr legacy rate is not published in a current table, but appears in Vercel's own blog
+([Introducing Active CPU pricing for Fluid compute](https://vercel.com/blog/introducing-active-cpu-pricing-for-fluid-compute),
+2025-06-25) as the comparison baseline. The observed rate is $0.1801 — an exact match.
+
+**Why Fluid Compute matters here**: it pauses billing during I/O wait, and one warm instance serving
+N concurrent requests bills Provisioned Memory once for the instance-hour regardless of request
+count. Content rendering is I/O-heavy (reading 70 MB of markdown), so most of the current billed
+wall-clock time is exactly what Active CPU billing excludes.
+
+### Pro credit mechanics — the budget target
+
+[Vercel Pro plan](https://vercel.com/docs/plans/pro-plan) (updated 2026-07-15): "$20/month Pro
+platform fee — 1 deploying team seat included — $20/month in usage credit", and "Vercel will charge
+usage against your monthly credit before switching to on-demand billing." The credit resets monthly
+and unused portions expire.
+
+Therefore the $7.43 "Infrastructure Subtotal" is **pre-credit gross usage**, not an additive charge.
+Keeping gross monthly usage under $20 yields an invoice of exactly $20.00 with no on-demand line.
+
+**Open risk carried forward**: Vercel's docs are internally inconsistent about whether the credit
+covers **Observability Plus** — the Pro plan page lists it under "Paid add-ons" while the pricing
+page lists Observability under "Managed Infrastructure". Disabling Observability Plus (DD-1) removes
+the ambiguity rather than betting on either reading.
+
+### Spend Management is not a hard cap
+
+[Spend Management](https://vercel.com/docs/spend-management) (updated 2026-06-26):
+
+- Location: **Team → Settings → Billing → Spend Management**. Requires Owner or Billing role.
+- "Setting a spend amount does not automatically stop usage. If you want to pause all your projects
+  at a certain amount, you must enable the option." The pause action is **off by default** and
+  requires typing the team name to confirm.
+- Checks run "every few minutes", so spend can overshoot. Vercel's own guidance: set the threshold
+  below the true ceiling.
+- The threshold covers **metered usage only** — not the seat fee, not add-ons, not Marketplace.
+- Notifications fire at 50%, 75%, 100%. Unpausing is manual and per-project.
+
+### Free firewall rulesets block before the meter
+
+[WAF managed rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets)
+(updated 2026-07-09) and
+[WAF usage & pricing](https://vercel.com/docs/vercel-firewall/vercel-waf/usage-and-pricing)
+(updated 2026-06-16):
+
+- **Bot Protection** is inactive by default (dashboard label "Off"). **AI Bots** is inactive by
+  default (label "Allow"). Both are **free**; only rate limiting and the OWASP Core Ruleset are
+  priced (rate limiting $0.50/M _allowed_ requests in `iad1`).
+- Verbatim: "WAF deny, challenge, or rate-limit mitigated traffic does not incur CDN Requests or
+  Fast Data Transfer (FDT)."
+- WAF executes ahead of Functions and Middleware in the documented rule-execution order, so a
+  blocked request never becomes a billed invocation.
+
+**Open risk carried forward**: primary documentation does **not** confirm that Bot Protection
+auto-allowlists verified crawlers such as Googlebot. This is why DD-2 mandates an indexability
+smoke-test and a documented rollback.
+
+### Observability Plus
+
+[Observability Plus](https://vercel.com/docs/observability/observability-plus) (updated 2026-07-06):
+$1.20/M events (observed: $1.204/M — matches). Base Observability is free on all plans. Excluding a
+project stops its metered events entirely. **No per-event sampling control exists** — the only
+levers are the team-level toggle and per-project exclusion. Toggles live at Team Settings → Billing
+→ Observability Plus, or per-project via "Exclude Project from Plus".
+
+Note: it is **enabled by default** for teams created or upgraded to Paid Pro on or after 2026-04-03,
+which likely explains why this charge appeared without a deliberate opt-in.
+
+### Fast Origin Transfer can be billed twice per request
+
+Verbatim from [CDN pricing and usage](https://vercel.com/docs/manage-cdn-usage) (updated
+2026-06-23): "If using Middleware, it is possible to accrue Fast Origin Transfer twice for a single
+Function request. To prevent this, you want to only run Middleware when necessary." This is an
+additional, independent reason to eliminate the middleware.
+
+## Verified framework facts
+
+### Promoting the root layout is Next.js's documented i18n pattern
+
+A root layout is required, but it need **not** be `app/layout.tsx`:
+
+> "Omitting `app/layout.js` — layouts in subdirectories like `app/dashboard/layout.js` each become
+> root layouts." … "The root layout can be under a dynamic segment, for example when implementing
+> internationalization with `app/[lang]/layout.js`."
+
+- [`layout.js` file convention](https://nextjs.org/docs/app/api-reference/file-conventions/layout) — updated 2026-03-05
+- [Internationalization guide](https://nextjs.org/docs/app/guides/internationalization) — updated 2025-12-09
+
+The official pattern:
+
+```tsx
+// app/[locale]/layout.tsx — this IS the root layout once app/layout.tsx is deleted
+export default async function RootLayout({ children, params }) {
+  return (
+    <html lang={(await params).locale}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+**Critical constraint**: `app/layout.tsx` must be **deleted entirely**. If it remains, it stays the
+root layout, `app/[locale]/layout.tsx` remains merely nested, and nested layouts are forbidden from
+rendering `<html>` / `<body>`. Both files exist today, so this is a move-and-delete.
+
+`headers()` forces dynamic rendering — "Using it will opt a route into dynamic rendering"
+([`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers), updated 2026-03-03).
+There is no static-compatible alternative that keeps the read: `cookies()` is equally dynamic.
+
+### `searchParams` → `useSearchParams()` restores prerendering
+
+[`useSearchParams`](https://nextjs.org/docs/app/api-reference/functions/use-search-params) (updated
+2026-07-22): "If a route is prerendered, calling `useSearchParams` will cause the Client Component
+tree up to the closest `Suspense` boundary to be client-side rendered."
+
+The `<Suspense>` wrapper is **mandatory**, and dev mode hides its absence: "During production
+builds, a static page that calls `useSearchParams` from a Client Component must be wrapped in a
+`Suspense` boundary, otherwise the build fails." Every such change therefore needs a real
+`next build` in its acceptance criteria — a dev-server check is not evidence.
+
+**This app already implements the pattern in three places**, which is the strongest available
+de-risking:
+
+- `src/app/[locale]/tools/ai-benchmark/page.tsx` — static server component, `<Suspense>`, client
+  `useSearchParams()` in `benchmark-content.tsx:18`.
+- `src/app/[locale]/tools/cost-of-living-calculator/page.tsx` — same, `calculator-content.tsx:31`.
+- `src/features/course-paths/shell/sidebar-host.tsx:36` — **already** resolves `?path=` client-side.
+
+That last one matters most: the client-side `?path=` resolution Cause B duplicates server-side
+**already ships and works**.
+
+### Routing order confirms config redirects replace middleware redirects
+
+[`proxy.js` file convention](https://nextjs.org/docs/app/api-reference/file-conventions/proxy)
+(updated 2026-05-13) documents the order: `headers` from config → **`redirects` from config** →
+Proxy/middleware → `beforeFiles` rewrites → filesystem routes → dynamic routes → `fallback`
+rewrites. Config redirects fire **before** middleware, so moving both redirects there eliminates
+those middleware invocations outright.
+
+**Caveat**: `path-to-regexp` is case-**sensitive** and cannot lowercase a captured parameter in the
+destination ([discussion #43495](https://github.com/vercel/next.js/discussions/43495)). With two
+locales the variant set is finite, so enumerate literally rather than attempting generic case-folding.
+
+### Blocking unresolved risk — does `middleware.ts` still execute on 16.2.6?
+
+Next.js 16 deprecated `middleware.ts` in favour of `proxy.ts`
+([Renaming Middleware to Proxy](https://nextjs.org/docs/messages/middleware-to-proxy); codemod
+`npx @next/codemod@canary middleware-to-proxy .`). Secondary sources **conflict** on runtime
+behaviour in 16.2.x: some report a warning-but-works, others report that since 16.2.4 Next "no
+longer looks for the file by default" — meaning it compiles and typechecks cleanly but **silently
+no-ops**.
+
+This app runs 16.2.6 and depends on middleware for the `/` → `/en` redirect today. A silent no-op is
+far worse than a build error, so Phase 0 resolves this **empirically** on the deployed app before
+any code depends on the answer.
+
+### `outputFileTracingIncludes` must be keyed per route
+
+[`output` reference](https://nextjs.org/docs/app/api-reference/config/next-config-js/output)
+(updated 2025-10-08): "Keep patterns as narrow as possible to avoid oversized traces (avoid `**/*`
+at the repo root)." The option applies only to **server** traces, so once content pages are static
+they stop needing content traced at all — Phase 1–2 shrink this problem before Phase 4 addresses it.
+
+`output: "standalone"` is dead configuration on Vercel (neutral, not harmful) but **is required by
+this app's Dockerfile**. Do not delete it blindly; verify the Docker path still builds.
+
+### `React.cache()` scope
+
+[React `cache()`](https://react.dev/reference/react/cache): "React will invalidate the cache for all
+memoized functions for each server request." It dedupes **within** one render pass only — exactly
+right for the double `getBySlug`, and nothing more. Its stakes drop sharply once pages are static,
+since "per request" becomes "per build".
+
+## Design decisions
+
+### DD-1 — Disable Observability Plus entirely, team-wide
+
+Removes ~$10/month (17% of gross spend) at a measured, certain rate. There is no sampling control,
+so the only alternatives were per-project exclusion or full disablement. Full disablement also
+sidesteps the unresolved question of whether the Pro credit covers this charge at all. Accepted
+tradeoff: shorter retention and no Query access; base Observability remains free and available.
+
+### DD-2 — Enable Bot Protection and set AI Bots to deny
+
+Both are free, both are currently off, and mitigation happens **before** the billing meter. Given
+341K invocations across four days for sites of this size, crawler traffic is a material share.
+Accepted risk: Googlebot allowlisting is unverified, so this carries a mandatory indexability
+smoke-test and a single-toggle rollback.
+
+### DD-3 — Migrate to Fluid Compute in Phase 0, before any code change
+
+Banks a large win immediately (Vercel's own comparison: ~$0.149/hr vs ~$0.318/hr equivalent, and
+more for I/O-bound work) and de-risks the plan by reducing exposure before touching code. The
+alternative — migrating after the static conversion, when few functions remain to bill — leaves
+money on the table for the entire duration of the code work for no benefit.
+
+### DD-4 — Fix Cause A by promoting the locale layout, not by patching the header read
+
+Rejected alternatives: reading `cookies()` instead (equally dynamic); passing the locale down some
+other server channel (no such channel exists that is not itself a dynamic API); keeping the root
+layout and accepting dynamic rendering (this is the entire problem). The locale is **already** a
+route segment, so `params` is the natural, documented, zero-cost source.
+
+### DD-5 — Do not adopt `cacheComponents` / PPR
+
+Three independent reasons:
+
+1. **It cannot fix Cause A.** `<html lang={...}>` needs its value synchronously to emit the element;
+   an attribute cannot be deferred behind a `<Suspense>` boundary the way child content can.
+2. **It could make things worse.** Enabling it means "all dynamic code in any page, layout, or API
+   route is executed at request time by default" ([Next.js 16](https://nextjs.org/blog/next-16),
+   2025-10-21) — inverting fetch-caching defaults across 2,068 pages risks re-introducing the exact
+   problem being fixed, absent an exhaustive `use cache` audit.
+3. **It is not declared stable.** Next.js labelled Turbopack and React Compiler "stable" in the same
+   release post and never applied that word to Cache Components
+   ([`cacheComponents`](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents),
+   updated 2026-05-13).
+
+Orthogonal, higher-risk, and unnecessary for the win. Explicitly out of scope.
+
+### DD-6 — Include wahidyankf-www, exclude the four already-cached projects
+
+wahidyankf-www is the only other project with genuinely dynamic routes, and its fix is a prop
+removal against already-client consumers. `ose-www`, `organiclever-www`, `ose-app-web`, and the
+Storybook are provably CDN-cached and are excluded to keep the change surface honest.
+
+### DD-7 — Take the per-project baseline before disabling Observability
+
+Aggregate billing figures cannot be split per project from repo evidence. The middleware-count
+≈ function-count equality points hard at ayokoding-www as the dominant consumer, but that is
+inference. Since DD-1 disables the tool that can answer the question, the snapshot must be taken
+first — otherwise the plan's savings attribution is unfalsifiable.
+
+## File impact
+
+| Path                                                                    | Change                                                             |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `apps/ayokoding-www/src/app/layout.tsx`                                 | **Deleted**; contents merged into the locale layout                |
+| `apps/ayokoding-www/src/app/[locale]/layout.tsx`                        | Becomes the root layout; renders `<html lang={params.locale}>`     |
+| `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`      | `searchParams` prop removed; `?path=` resolution moves client-side |
+| `apps/ayokoding-www/src/middleware.ts`                                  | **Deleted** (redirects move to config)                             |
+| `apps/ayokoding-www/src/features/i18n/shell/middleware.ts`              | **Deleted** or reduced to the pure redirect helpers it still needs |
+| `apps/ayokoding-www/next.config.ts`                                     | Two redirects added; `outputFileTracingIncludes` scoped per route  |
+| `apps/ayokoding-www/src/features/content/shell/service.ts`              | `getBySlug` wrapped in `React.cache()`                             |
+| `apps/wahidyankf-www/src/app/{page,cv/page,personal-projects/page}.tsx` | `searchParams` prop removed                                        |
+| `apps/wahidyankf-www/src/features/*/shell/*Content.tsx`                 | Read `useSearchParams()` behind `<Suspense>`                       |
+| `apps/wahidyankf-www/src/app/{robots,sitemap}.ts`                       | **New**                                                            |
+| `apps/wahidyankf-www/src/app/layout.tsx`                                | Fix the 404 `og-image.jpg` reference                               |
+| `apps/organiclever-app-web/src/app/app/**/{layout,page}.tsx`            | Remove 9 inert `force-dynamic` directives                          |
+| `apps/organiclever-app-web/src/app/system/status/be/page.tsx`           | Add `robots: { index: false }`                                     |
+| `.github/workflows/web-ui-build-deploy-prod.yml`                        | Gate the daily force-push on a `libs/web-ui/` diff                 |
+| `libs/web-ui/vercel.json`                                               | Add an `ignoreCommand`                                             |
+| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**`                | New/updated feature files per the PRD                              |
+
+## Testing strategy
+
+Machine-checkable criteria only, each falsifiable in both directions:
+
+| Check                                                                  | Before      | After                   |
+| ---------------------------------------------------------------------- | ----------- | ----------------------- |
+| `jq '.routes \| length' .next/prerender-manifest.json` (ayokoding-www) | `4`         | `>= 2000`               |
+| `next build` route table, content catch-all                            | `ƒ`         | `●` or `○`              |
+| `next build` route table, wahidyankf `/`, `/cv`, `/personal-projects`  | `ƒ` ×3      | `○` ×3                  |
+| `curl -I` repeat request, `x-vercel-cache`                             | `MISS`      | `HIT`                   |
+| `curl -I` `/` with redirects disabled                                  | 307 → `/en` | 307 → `/en` (unchanged) |
+
+Two repo-specific traps to avoid when writing acceptance commands:
+
+- `grep` here is a shell function routing to **UGREP**. Never use `-L` (it means
+  files-without-match and exits 0). Use `--exclude-dir`, not `--glob`.
+- `apps/ayokoding-www`'s `test:e2e` and `test:integration` Nx targets are **no-op echo stubs**. They
+  must never be cited as evidence that anything passed.
+
+Unit coverage follows the repo's three-level standard; the Gherkin in [prd.md](./prd.md) binds to
+feature files under `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/`. The wahidyankf-www spec
+path must be located in the existing tree, not invented.
+
+## Rollback
+
+| Change                          | Rollback                                                                                                                                      |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bot Protection / AI Bots        | Single dashboard toggle back to "Off" / "Allow". No deploy needed. Fastest rollback here.                                                     |
+| Fluid Compute                   | Dashboard toggle off, then redeploy. Reverts to legacy billing.                                                                               |
+| Observability Plus              | Re-enable in Team Settings → Billing. Historical events are not recovered.                                                                    |
+| Spend Management pause          | Disable the pause action; unpause each project manually (per-project, does not auto-resume).                                                  |
+| Root layout promotion (Cause A) | Single revert commit restoring `app/layout.tsx`. Highest-blast-radius code change, so it is isolated in its own phase with a full build gate. |
+| `searchParams` removals         | Single revert commit per app; independent of the layout change.                                                                               |
+| Middleware deletion             | Single revert commit restoring `src/middleware.ts`; the config redirects are additive and can stay.                                           |
