@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_STATE, PARAM_KEYS, decodeState, encodeState, sanitizeState } from "./url-state";
+import { DEFAULT_SORT_STATE, DEFAULT_STATE, PARAM_KEYS, decodeState, encodeState, sanitizeState } from "./url-state";
 import type { FilterState } from "./filter";
 
 // Pure-function tests for URL state encode/decode/sanitize (Phase 4 steps F-3..F-9), mirroring the
@@ -70,12 +70,16 @@ describe("decodeState / sanitizeState — unknown values fall back to unfiltered
   });
 
   it("a known harness and known class survive sanitizeState", () => {
-    expect(sanitizeState({ harness: "cursor", class: "light" })).toEqual({ harness: "cursor", class: "light" });
+    expect(sanitizeState({ harness: "cursor", class: "light" })).toEqual({
+      harness: "cursor",
+      class: "light",
+      ...DEFAULT_SORT_STATE,
+    });
   });
 
   it("sanitizeState is idempotent", () => {
     const s: FilterState = { harness: "cursor", class: "opus" };
-    expect(sanitizeState(sanitizeState(s))).toEqual(s);
+    expect(sanitizeState(sanitizeState(s))).toEqual({ ...s, ...DEFAULT_SORT_STATE });
   });
 });
 
@@ -105,8 +109,39 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
 
   it("a query with extra unknown params decodes (ignoring them) and round-trips cleanly", () => {
     const decoded = decodeState(new URLSearchParams("harness=cursor&garbage=x&class=opus"));
-    expect(decoded).toEqual({ harness: "cursor", class: "opus" });
+    expect(decoded).toEqual({ harness: "cursor", class: "opus", ...DEFAULT_SORT_STATE });
     expect(encodeState(decoded).toString()).toBe("harness=cursor&class=opus");
+  });
+});
+
+// ─── Sort params (Phase 1) — round-trip the four per-band sort choices ─────────
+
+describe("encodeState / decodeState — round-trip the four per-band sort params", () => {
+  it("round-trips a non-default sort mode for each of the four bands", () => {
+    const state = {
+      harness: undefined,
+      class: undefined,
+      opus: "price-asc" as const,
+      sonnet: "price-desc" as const,
+      light: "price-asc" as const,
+      unrated: "price-desc" as const,
+    };
+    const encoded = encodeState(state);
+    expect(encoded.get("sortOpus")).toBe("price-asc");
+    expect(encoded.get("sortSonnet")).toBe("price-desc");
+    expect(encoded.get("sortLight")).toBe("price-asc");
+    expect(encoded.get("sortUnrated")).toBe("price-desc");
+    expect(decodeState(encoded)).toEqual(state);
+  });
+
+  it("an unrecognized sortSonnet value in the URL sanitizes to the default (capability), never throwing", () => {
+    expect(() => decodeState(new URLSearchParams("sortSonnet=not-a-real-value"))).not.toThrow();
+    const decoded = decodeState(new URLSearchParams("sortSonnet=not-a-real-value"));
+    expect(decoded.sonnet).toBe("capability");
+    // The other three bands are unaffected by the one unrecognized value.
+    expect(decoded.opus).toBe("capability");
+    expect(decoded.light).toBe("capability");
+    expect(decoded.unrated).toBe("capability");
   });
 });
 
