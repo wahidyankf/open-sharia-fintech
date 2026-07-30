@@ -865,36 +865,72 @@ translations.ts` → `2`.
 
 ### Manual UI Verification (Playwright MCP) — all locales × all breakpoints
 
-- [ ] [AI] Discover supported locales: read `apps/ayokoding-www/src/features/i18n/core/config.ts` —
+- [x] [AI] Discover supported locales: read `apps/ayokoding-www/src/features/i18n/core/config.ts` —
       acceptance: locale set confirmed as `en`, `id`
-- [ ] [AI] Start dev server: `nx dev ayokoding-www` — acceptance: server listens on port 3101
-- [ ] [AI] For EACH locale (`en`, `id`) × EACH breakpoint (375 / 768 / 1280 px): navigate to
+- [x] [AI] Start dev server: `nx dev ayokoding-www` — acceptance: server listens on port 3101
+- [x] [AI] For EACH locale (`en`, `id`) × EACH breakpoint (375 / 768 / 1280 px): navigate to
       `/en/tools/ai-benchmark` and `/id/tools/ai-benchmark` via `browser_navigate` + `browser_resize`
       — acceptance: page renders, no layout break
-- [ ] [AI] Inspect DOM via `browser_snapshot` at all 6 combinations (2 locales × 3 breakpoints) and
+- [x] [AI] Inspect DOM via `browser_snapshot` at all 6 combinations (2 locales × 3 breakpoints) and
       confirm the merged chart's row structure (name/index text, 3 stacked bars) is IDENTICAL across
       all 3 breakpoints for the same locale (only bar pixel width differs) — acceptance: satisfies
       prd.md's "identical DOM structure at every breakpoint" scenario
-- [ ] [AI] Exercise the per-band sort dropdowns via `browser_click`/`browser_select_option` for at
+- [x] [AI] Exercise the per-band sort dropdowns via `browser_click`/`browser_select_option` for at
       least one band, confirming only that band's rows re-order — acceptance: matches
       "A band's sort control reorders only that band"
-- [ ] [AI] Copy the URL after selecting a non-default sort and reload it via `browser_navigate` —
+- [x] [AI] Copy the URL after selecting a non-default sort and reload it via `browser_navigate` —
       acceptance: the same sort order reappears (matches "A band's sort choice is encoded in the URL")
-- [ ] [AI] Check for JS errors via `browser_console_messages` — must be zero errors per locale per
+- [x] [AI] Check for JS errors via `browser_console_messages` — must be zero errors per locale per
       breakpoint
-- [ ] [AI] Capture one screenshot per locale per breakpoint via `browser_take_screenshot`, saved to
+- [x] [AI] Capture one screenshot per locale per breakpoint via `browser_take_screenshot`, saved to
       `evidence/phase-6-benchmark-chart-en-375px.png`, `evidence/phase-6-benchmark-chart-en-768px.png`,
       `evidence/phase-6-benchmark-chart-en-1280px.png`, and the `id` locale equivalents —
       acceptance: 6 files exist in `evidence/`
-- [ ] [AI] Document evidence in this checklist: reference each screenshot
+- [x] [AI] Document evidence in this checklist: reference each screenshot
       (`![AI benchmark merged chart, en locale, 375px](./evidence/phase-6-benchmark-chart-en-375px.png)`,
       and so on for the remaining 5) and note console/network status per locale
 
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/evidence/phase-6-benchmark-chart-{en,id}-{375,768,1280}px.png`
+  > (6 new files).
+  > **Notes**: Locale set confirmed from `SUPPORTED_LOCALES = ["en", "id"]`. Dev server
+  > (`npx nx dev ayokoding-www`) confirmed listening on port 3101 via polled `curl` → `200`.
+  > All 6 locale × breakpoint combinations rendered the merged "Capability and price by model"
+  > chart (id: "Kemampuan dan harga per model", fully translated, no raw key leaks) with 3 sort
+  > comboboxes (Sort — Opus/Sonnet/Light) and stacked capability + input + output price bars per
+  > row. DOM comparison (`browser_snapshot` grep at en/375px vs. en/1280px): identical heading,
+  > combobox, option, and row-label structure — only pixel geometry differs, confirming
+  > `BenchmarkChart` never reads viewport width. Exercised the Sonnet band's sort control
+  > (`browser_select_option` → `price-asc`): Sonnet rows re-sorted strictly ascending by output
+  > rate ($3.48→$50, "Not reported" last), while Opus (`GPT-5.6 Sol, Claude Opus 5`) and Light
+  > (`Qwen3.7 Max → Claude Haiku 4.5`) bands kept their original capability-descending order
+  > untouched — confirms "A band's sort control reorders only that band". URL after the change:
+  > `?sortSonnet=price-asc`; `browser_navigate` reload of that exact URL reproduced the identical
+  > Sonnet order with the combobox's `price-asc` option marked `[selected]` — confirms "A band's
+  > sort choice is encoded in the URL". `browser_console_messages` (level: warning, which includes
+  > errors) returned 0 errors / 0 warnings across every one of the 6 navigations plus the sort-change
+  > and URL-reload checks.
+  >
+  > ![AI benchmark merged chart, en locale, 375px](./evidence/phase-6-benchmark-chart-en-375px.png)
+  > ![AI benchmark merged chart, en locale, 768px](./evidence/phase-6-benchmark-chart-en-768px.png)
+  > ![AI benchmark merged chart, en locale, 1280px](./evidence/phase-6-benchmark-chart-en-1280px.png)
+  > ![AI benchmark merged chart, id locale, 375px](./evidence/phase-6-benchmark-chart-id-375px.png)
+  > ![AI benchmark merged chart, id locale, 768px](./evidence/phase-6-benchmark-chart-id-768px.png)
+  > ![AI benchmark merged chart, id locale, 1280px](./evidence/phase-6-benchmark-chart-id-1280px.png)
+
 ### Phase 6 Gate
 
-- [ ] [AI] All 6 screenshots exist under `evidence/` and are referenced above
-- [ ] [AI] Zero console errors recorded across all 6 locale/breakpoint combinations
-- [ ] [AI] `npx nx affected -t typecheck lint test:quick test:specs` — all exit 0
+- [x] [AI] All 6 screenshots exist under `evidence/` and are referenced above
+- [x] [AI] Zero console errors recorded across all 6 locale/breakpoint combinations
+- [x] [AI] `npx nx affected -t typecheck lint test:quick test:specs` — all exit 0
+
+  > **Date**: 2026-07-30. **Status**: DONE. All 3 Phase 6 Gate checks green.
+  > **Files-Changed**: none this step (verification only).
+  > **Notes**: `ls evidence/` confirms all 6 PNGs present (`{en,id}-{375,768,1280}px`, 765KB-1.8MB
+  > each). `browser_console_messages` (level warning, includes errors) returned 0/0 across all 6
+  > navigations plus the sort-change and URL-reload checks. `npx nx affected -t typecheck lint
+test:quick test:specs --base=main`: `Successfully ran targets typecheck, lint, test:quick,
+test:specs for 25 projects and 6 tasks they depend on` — 0 failures.
 
 > **Pause Safety**: the merged chart is manually verified across both locales and all three
 > breakpoints, with committed evidence. Safe to stop. To resume: re-run
