@@ -776,20 +776,37 @@ price chart is rendered` / `the capability chart` / `the price chart` as their s
 
 ## Phase 5: Translations
 
-- [ ] [AI] Edit `apps/ayokoding-www/src/features/i18n/core/translations.ts`: add
+- [x] [AI] Edit `apps/ayokoding-www/src/features/i18n/core/translations.ts`: add
       `aiBenchMergedChartTitle`, `aiBenchSortLabel`, `aiBenchSortCapability`,
       `aiBenchSortPriceAsc`, `aiBenchSortPriceDesc` to BOTH the `en` and `id` locale blocks —
       acceptance: `npx nx run ayokoding-www:test:unit -- translations` (or the
       existing no-raw-key-leak test referenced by prd.md's "No raw translation key leaks" scenario)
       passes for both locales
-- [ ] [AI] Run `npx nx run ayokoding-www:test:unit -- ai-benchmark` — acceptance:
+
+  > **Date**: 2026-07-30. **Status**: DONE (already satisfied — added in Phase 1/2).
+  > **Files-Changed**: none this step; verified `apps/ayokoding-www/src/features/i18n/core/translations.ts`
+  > already carries all 5 keys in both the `en` (lines 113-117) and `id` (lines 484-488) blocks,
+  > added while wiring `BenchmarkChart`'s sort controls in earlier phases.
+  > **Notes**: `npx nx run ayokoding-www:test:unit -- translations`: 1 file / 6 tests pass.
+
+- [x] [AI] Run `npx nx run ayokoding-www:test:unit -- ai-benchmark` — acceptance:
       exits 0, no "aiBench" token leaks into rendered text in either locale
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: none.
+  > **Notes**: 15 files / 690 tests pass, including AC-35's "No raw translation key leaks on either
+  > locale" outline (en + id).
 
 ### Phase 5 Gate
 
-- [ ] [AI] `npx nx run ayokoding-www:test:unit -- ai-benchmark` — exits 0
-- [ ] [AI] `grep -c "aiBenchSortLabel" apps/ayokoding-www/src/features/i18n/core/translations.ts`
+- [x] [AI] `npx nx run ayokoding-www:test:unit -- ai-benchmark` — exits 0
+- [x] [AI] `grep -c "aiBenchSortLabel" apps/ayokoding-www/src/features/i18n/core/translations.ts`
       returns `2` (once per locale)
+
+  > **Date**: 2026-07-30. **Status**: DONE. Both Phase 5 Gate checks green.
+  > **Files-Changed**: none.
+  > **Notes**: `test:unit -- ai-benchmark`: 15/15 files, 690/690 tests. `grep -c "aiBenchSortLabel"
+translations.ts` → `2`.
 
 > **Pause Safety**: every new UI string is translated in both `en` and `id`. Safe to stop. To
 > resume: `npx nx run ayokoding-www:test:unit -- ai-benchmark`.
