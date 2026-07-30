@@ -15,8 +15,10 @@ provides zero protection.
 
 ## Product Scope
 
-Covers every `apps/*`/`libs/*` project with a `vitest.config.ts` (or other test-runner config
-exposing named `include` globs); does not cover test **content** correctness, only path-to-glob
+**Candidate scope, pending the Phase 1 scope confirmation** (see `tech-docs.md` and `delivery.md`'s
+Phase 1): every `apps/*`/`libs/*` project with a `vitest.config.ts` (or other test-runner config
+exposing named `include` globs); Phase 1 may narrow this to `ayokoding-www` first and expand once
+proven. Either way, this plan does not cover test **content** correctness, only path-to-glob
 coverage.
 
 ## Acceptance Criteria (Gherkin)

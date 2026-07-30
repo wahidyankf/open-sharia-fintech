@@ -50,3 +50,25 @@ The plan is complete when the guard exists, is wired into an Nx target or checke
 against the current repo (zero uncovered test files), and demonstrably fails against a
 reintroduced glob-coverage gap (verified by the synthetic-reintroduction check in the Phase 1
 Gate above).
+
+## Phase 2: Knowledge Capture and Plan Archival
+
+- [ ] [AI] Triage `learnings.md` per the
+      [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)
+      — route or discard every entry, or record the explicit "none" escape
+- [ ] [AI] Move the plan folder to `plans/done/YYYY-MM-DD__vitest-glob-coverage-guard/` per the
+      Plans Organization Convention's `done/` prefix
+- [ ] [AI] Update the moved `README.md`'s Status line to "done — archived YYYY-MM-DD"
+
+### Phase 2 Gate
+
+- [ ] [AI] Every `learnings.md` entry reaches a terminal state (routed inline, filed as backlog, or
+      discarded) — or the plan carries the explicit `No generalizable learnings — <reason>` escape
+- [ ] [AI] Plan folder moved to `plans/done/YYYY-MM-DD__vitest-glob-coverage-guard/`
+- [ ] [AI] Draft PR opened (covers Phases 1-2 commits), 3-cycle PR-Review Maker→Fixer loop run, all
+      5 hardened merge preconditions hold, `[AI]`-merged to `main`
+
+> **Pause Safety**: `learnings.md` is fully triaged and the plan folder is moved to `plans/done/`.
+> Safe to stop indefinitely before the PR opens — nothing else depends on this plan. To resume (if
+> interrupted after the PR opened but before it merged): check the PR's review-cycle and CI status,
+> then finish the merge.
