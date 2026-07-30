@@ -9,6 +9,20 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-07-30: ayokoding-www-ai-benchmark-merged-chart](./2026-07-30__ayokoding-www-ai-benchmark-merged-chart/README.md) —
+  Merged the AI Benchmark tool's separate capability and price charts into one per-model row with a
+  per-band sort control, replacing `capability-chart.tsx` + `price-chart.tsx` with a single
+  `benchmark-chart.tsx`. Delivered across Phases 1-9 in one delivery-boundary PR (#125): sort
+  utilities + URL-state round-trip, the merged accessible chart component, wiring/dangling-reference
+  cleanup, Gherkin scenario rewrite, i18n keys, manual Playwright verification (en/id × 3
+  breakpoints), a 3-cycle PR-review gate, and a near-end Rule-15 three-tester retest that filed 7
+  findings (1 EWT, 5 UWT, 1 DWT) — all fixed before archival, with UWT-001 and UWT-002 resolved via
+  explicit `AskUserQuestion` dispositions where the obvious full fix would have reopened an
+  already-reviewed design decision. One CI incident — a stuck self-hosted-runner `setup-node` step —
+  diagnosed via step-level timestamp comparison and remediated via `gh run cancel` + `gh run rerun
+--failed`; the diagnostic routed inline to the
+  [CI Monitoring Convention](../../repo-governance/development/workflow/ci-monitoring.md). Delivery
+  Mode: `worktree-to-pr`. Completed 2026-07-30.
 - [2026-07-30: ayokoding-www-tools-ai-benchmark](./2026-07-30__ayokoding-www-tools-ai-benchmark/README.md) —
   Built a public `/tools/ai-benchmark` page comparing AI coding-tool capability and token pricing
   across Codex, Claude Code, Cursor, OpenCode Go, and OpenCode Zen models, banded into `opus` /

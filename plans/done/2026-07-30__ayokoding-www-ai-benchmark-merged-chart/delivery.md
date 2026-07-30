@@ -1683,25 +1683,81 @@ behavior, and `how-to-read.tsx` are unchanged by this plan and were not re-audit
 
 ### Plan Archival
 
-- [ ] [AI] Verify ALL delivery checklist items above are ticked
-- [ ] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
+- [x] [AI] Verify ALL delivery checklist items above are ticked
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > `awk '/^## Phase 9/{exit} {print}' delivery.md | grep -c '\[ \]'` returns 0 — every checklist
+  > item in Phases 0-8 is ticked, including the Phase 7 Post-Push CI Verification and PR-Review
+  > Maker→Fixer Cycle items backfilled earlier in this phase.
+
+- [x] [AI] Verify the Knowledge Capture phase is complete — every `learnings.md` entry reached a
       terminal state or the file records the explicit "none" escape; both safety gates were applied
-- [ ] [AI] Verify ALL quality gates pass locally: `npx nx affected -t typecheck lint test:quick test:specs`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > all 3 `learnings.md` entries reached a terminal state (1 routed inline, 2 discarded with
+  > reason); both safety gates applied and recorded in Phase 8's evidence blocks above.
+
+- [x] [AI] Verify ALL quality gates pass locally: `npx nx affected -t typecheck lint test:quick test:specs`
       exits 0
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`
-- [ ] [AI] Verify ALL supported locales (`en`, `id`) were exercised in UI verification
-- [ ] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > `npx nx affected -t typecheck lint test:quick specs:behavior:coverage --base=origin/main`
+  > completed successfully for 25 projects (104/106 tasks cache-hit); zero failures.
+
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > Phase 6's 6 screenshots plus the Rule-15 retest's screenshots are committed under this plan's
+  > `evidence/` subfolder (moved with the `git mv` below); all manual assertions from Phase 6 and
+  > the Rule-15 fixes passed.
+
+- [x] [AI] Verify ALL supported locales (`en`, `id`) were exercised in UI verification
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > Phase 6 exercised both `en` and `id` at 375/768/1280px; the Rule-15 retest also covered both
+  > locales per its evidence blocks above.
+
+- [x] [AI] Verify every rule-15 EWT/UWT/DWT defect finding is fixed (ticked) — deferral requires
       explicit user permission (only when genuinely impossible) for defect findings; SG-###/USS-###
       may be triaged or deferred
-- [ ] [AI] Rename and move: `git mv plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/ plans/done/YYYY-MM-DD__ayokoding-www-ai-benchmark-merged-chart/`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > all 7 defect findings (EWT-001, UWT-001..UWT-005, DWT-004) ticked with evidence; none deferred.
+
+- [x] [AI] Rename and move: `git mv plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/ plans/done/YYYY-MM-DD__ayokoding-www-ai-benchmark-merged-chart/`
       using today's date as the completion date (NOT the creation date) — acceptance: the folder
       exists under `plans/done/` and the `evidence/`/`assets/` subfolders moved with it
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date
-- [ ] [AI] Update `plans/README.md` if it references this plan
-- [ ] [AI] Commit the archival locally in the worktree (the `evidence/`/`assets/` subfolders move
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: whole plan folder moved (via
+  > `git mv`) from `plans/in-progress/ayokoding-www-ai-benchmark-merged-chart/` to
+  > `plans/done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/`. **Notes**: `evidence/` and
+  > `assets/` subfolders moved with the rest of the plan folder in the same `git mv`.
+
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: `plans/in-progress/README.md`.
+  > **Notes**: removed the `ayokoding-www-ai-benchmark-merged-chart` bullet from the Active Plans
+  > list.
+
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: `plans/done/README.md`. **Notes**:
+  > added a `2026-07-30: ayokoding-www-ai-benchmark-merged-chart` bullet to Completed Projects,
+  > summarizing the merge, the Rule-15 retest outcome, and the stuck-runner incident.
+
+- [x] [AI] Update `plans/README.md` if it references this plan
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none. **Notes**:
+  > `grep -n "ai-benchmark-merged-chart" plans/README.md` returns no match — `plans/README.md` does
+  > not reference this plan, no update needed.
+
+- [x] [AI] Commit the archival locally in the worktree (the `evidence/`/`assets/` subfolders move
       with the plan): `git commit -am "chore(plans): move ayokoding-www-ai-benchmark-merged-chart to done"`
       — acceptance: `git log -1 --oneline` shows the commit
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: the moved plan folder,
+  > `plans/in-progress/README.md`, `plans/done/README.md`. **Notes**: committed locally; commit
+  > hash recorded in the Final Push and Merge section below once pushed.
 
 ### Final Push and Merge
 
