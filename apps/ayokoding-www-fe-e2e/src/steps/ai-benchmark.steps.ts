@@ -63,16 +63,11 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
   await expect(page.locator("html")).toHaveAttribute("lang", expectedLang);
 });
 
-// ── Chart accessible-name assertions (AC-36) ──────────────────────────────────
+// ── Chart accessible-name assertion (AC-36) ───────────────────────────────────
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Each chart exposes an accessible name
-Then("the capability chart exposes an accessible name", async ({ page }) => {
-  await expect(page.getByTestId("capability-chart-svg")).toHaveAccessibleName(/.+/);
-});
-
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Each chart exposes an accessible name
-Then("the price chart exposes an accessible name", async ({ page }) => {
-  await expect(page.getByTestId("price-chart-svg")).toHaveAccessibleName(/.+/);
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
+Then("the merged chart exposes an accessible name", async ({ page }) => {
+  await expect(page.getByTestId("benchmark-chart-svg")).toHaveAccessibleName(/.+/);
 });
 
 // ── Phase 8 — harness and class filters (AC-18, AC-22, AC-27) ─────────────────
@@ -94,25 +89,25 @@ Then("every roster model is shown in the data table", async ({ page }) => {
   await expect(page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]')).toHaveCount(38);
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
 Given("a fixture model priced differently by two harnesses", async ({}) => {
   // The e2e layer exercises the REAL roster (no fixture injection over HTTP) — Grok 4.5
   // (core/data/models.ts) is genuinely priced differently by two harnesses: cursor/opencode-zen at
   // a metered $2/$6 rate, opencode-go at a flat-rate subscription instead.
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
-When("the harness filter selects the more expensive harness", async ({ page }) => {
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+When("the merged chart renders with that harness selected", async ({ page }) => {
   await page.goto("/en/tools/ai-benchmark?harness=opencode-go");
   await page.waitForLoadState("networkidle");
 });
 
-// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
-Then("that model's bars use that harness's rate", async ({ page }) => {
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+Then("that model's price bars use that harness's own rate, not its lowest available rate", async ({ page }) => {
   // opencode-go carries Grok 4.5 as a flat-rate subscription, not a per-token rate — selecting it
-  // must remove Grok 4.5's metered bar and list it in the subscription group instead.
-  await expect(page.getByTestId("price-chart-bar-in-grok-4.5")).toHaveCount(0);
-  await expect(page.getByTestId("price-chart-subscription-grok-4.5")).toBeVisible();
+  // must remove Grok 4.5's metered bar and show its inline subscription text instead (DD-1).
+  await expect(page.getByTestId("benchmark-chart-bar-price-in-grok-4.5")).toHaveCount(0);
+  await expect(page.getByTestId("benchmark-chart-subscription-grok-4.5")).toBeVisible();
 });
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A reloaded filtered URL reproduces the same view
