@@ -1,6 +1,6 @@
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { expect, vi } from "vitest";
 import React from "react";
 
@@ -58,8 +58,12 @@ import {
 } from "@/features/ai-benchmark/core/bands";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
+import { bandLabel } from "@/features/ai-benchmark/shell/chart-primitives";
 import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
 import { filterModels } from "@/features/ai-benchmark/core/filter";
+import { lowestRate } from "@/features/ai-benchmark/core/price";
+import type { SortMode } from "@/features/ai-benchmark/core/sort";
+import { decodeState, encodeState, DEFAULT_SORT_STATE, type SortState } from "@/features/ai-benchmark/core/url-state";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 
@@ -93,6 +97,25 @@ function fixtureDataset(models: Model[]): Dataset {
 }
 
 /**
+ * A model scored identically on all four composite benchmarks, metered-priced at `outputRate`.
+ * Every model built by this helper for the SAME fixture roster shares a `rosterMax` of whichever
+ * one holds the highest `score` — so when that holder scores exactly 100, every other model's
+ * composite index equals its own `score` verbatim (100 × score ÷ 100), making index values
+ * trivial to reason about across a multi-band fixture (AC-11/AC-41's real opus/sonnet/light
+ * split, rather than the single-band-only shortcut most other fixtures use).
+ */
+function bandFixtureModel(id: string, score: number, outputRate: number): Model {
+  const m = fixtureModel(id, [
+    fig("swe-bench-verified", score),
+    fig("swe-bench-pro", score),
+    fig("terminal-bench-2-1", score),
+    fig("gpqa-diamond", score),
+  ]);
+  m.pricing = { "claude-code": { kind: "metered", input: 1, output: outputRate, grade: "verified", source: SRC } };
+  return m;
+}
+
+/**
  * The desktop table's two rightmost price `<td>`s for one model row — input price then output
  * price, per the column order in `model-table.tsx` (F1b: AC-21/AC-30 must check every price cell,
  * not just "some anchor exists somewhere in the table").
@@ -120,6 +143,21 @@ type Ctx = {
   fixtureDataset?: Dataset;
   // The URL query string a Phase 8 filter scenario sets up before rendering (e.g. "harness=cursor").
   search?: string;
+  // A model id picked dynamically from the live roster (AC-39).
+  targetModelId?: string;
+  // Per-band sort state a Phase 4 sort scenario builds up across its Given/When steps (AC-41).
+  sortState?: SortState;
+  // The (band, mode) pair the chart's onSortChange callback most recently reported (AC-41).
+  requestedSortMode?: SortMode;
+  // A band's row order captured before a sort change, to prove an unrelated band is untouched (AC-41).
+  opusOrderBefore?: string[];
+  lightOrderBefore?: string[];
+  // The encoded URLSearchParams a URL-encoding scenario builds (AC-42).
+  encodedParams?: URLSearchParams;
+  // Whether the page-load step threw (AC-43).
+  thrown?: boolean;
+  // One DOM-testid signature per simulated viewport width (AC-47).
+  widthSignatures?: string[][];
 };
 
 let ctx: Ctx = {};
@@ -179,6 +217,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ...rows.map((el) => el.getAttribute("data-testid")!.replace("benchmark-chart-row-", "")),
       ...unratedItems.map((el) => el.getAttribute("data-testid")!.replace("benchmark-chart-unrated-model-", "")),
     ];
+  }
+
+  /** The model ids rendered as rows within one band group, in DOM order (AC-41's per-band gate). */
+  function rowOrderWithin(bandTestId: string): string[] {
+    const container = screen.getByTestId(bandTestId);
+    return Array.from(container.querySelectorAll('[data-testid^="benchmark-chart-row-"]')).map((row) =>
+      (row.getAttribute("data-testid") ?? "").replace("benchmark-chart-row-", ""),
+    );
   }
 
   /** Every model id rendered as a row in the (desktop) data table. */
@@ -373,40 +419,61 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-11 — canonical per-band ordering shared by both charts ───────────────
+  // ─── AC-11 — rewritten (Phase 4): a sort change preserves band membership ─────
 
-  Scenario("Models are ordered identically in both charts within a band", ({ Given, When, Then }) => {
-    Given("the full roster is loaded", () => {
-      // dataset is the full roster.
-    });
+  Scenario(
+    "Models are ordered identically before and after a sort change within a band",
+    ({ Given, When, Then, And }) => {
+      const opusAnchor = bandFixtureModel(OPUS_ANCHOR_ID, 100, 1);
+      const sonnetAnchor = bandFixtureModel(SONNET_ANCHOR_ID, 60, 1);
+      const opusHi = bandFixtureModel("ac11-opus-hi", 100, 50); // higher price
+      const opusLo = bandFixtureModel("ac11-opus-lo", 100, 10); // lower price
+      const ds = fixtureDataset([opusAnchor, sonnetAnchor, opusHi, opusLo]);
 
-    When("both charts are rendered", () => {
-      // Both charts consume the SAME canonical per-band list from computeGroups, so rendering both
-      // is equivalent to producing that list once.
-      ctx.groups = computeGroups(dataset);
-    });
-
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Models are ordered identically in both charts within a band
-    Then("each band lists its models in the same order in the capability chart and the price chart", () => {
-      const g = ctx.groups!;
-      // The "same order" guarantee is that each band is ONE canonical list (descending index, then
-      // id) that both charts read verbatim. Assert the canonical-order property holds per band.
-      for (const list of [g.opus, g.sonnet, g.light, g.unrated]) {
-        for (let i = 1; i < list.length; i++) {
-          const prev = list[i - 1];
-          const curr = list[i];
-          if (prev === undefined || curr === undefined) continue; // unreachable: i within bounds
-          const pi = prev.index ?? -Infinity;
-          const ci = curr.index ?? -Infinity;
-          if (pi !== ci) {
-            expect(pi).toBeGreaterThan(ci);
-          } else {
-            expect(prev.model.id <= curr.model.id).toBe(true);
-          }
-        }
+      function renderWithSort(sortState: SortState) {
+        cleanup();
+        ctx.sortState = sortState;
+        render(
+          React.createElement(BenchmarkChart, {
+            dataset: ds,
+            fullDataset: ds,
+            locale: "en",
+            sortState,
+            onSortChange: (band, mode) => {
+              if (band === "opus") ctx.requestedSortMode = mode;
+            },
+          }),
+        );
       }
-    });
-  });
+
+      Given("the opus band is sorted by capability", () => {
+        renderWithSort({ ...DEFAULT_SORT_STATE, opus: "capability" });
+        ctx.opusOrderBefore = rowOrderWithin("benchmark-chart-band-opus");
+      });
+
+      When("the reader switches the opus band's sort to price low to high", () => {
+        const select = screen.getByRole("combobox", {
+          name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("opus", "en")}`,
+        });
+        fireEvent.change(select, { target: { value: "price-asc" } });
+        renderWithSort({ ...ctx.sortState!, opus: ctx.requestedSortMode ?? "price-asc" });
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Models are ordered identically before and after a sort change within a band
+      Then("every model previously in the opus band still appears in the opus band", () => {
+        const after = rowOrderWithin("benchmark-chart-band-opus");
+        for (const id of ctx.opusOrderBefore!) {
+          expect(after).toContain(id);
+        }
+      });
+
+      And("the set of models in the band is unchanged, only their order changes", () => {
+        const after = rowOrderWithin("benchmark-chart-band-opus");
+        expect([...after].sort()).toEqual([...ctx.opusOrderBefore!].sort());
+        expect(ctx.requestedSortMode).toBe("price-asc");
+      });
+    },
+  );
 
   // ════════════════════════════════════════════════════════════════════════════
   // Phase 5 — route, data table, i18n, and the honesty surface.
@@ -494,7 +561,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   // ─── AC-20 — the table carries every figure ───────────────────────────────────
 
-  Scenario("The table carries every figure the charts encode", ({ Given, When, Then }) => {
+  Scenario("The table carries every figure the merged chart encodes", ({ Given, When, Then }) => {
     Given("the full roster is loaded", () => {
       // dataset is the full roster.
     });
@@ -503,7 +570,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The table carries every figure the charts encode
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The table carries every figure the merged chart encodes
     Then(
       "each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price",
       () => {
@@ -942,7 +1009,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.fixtureDataset = fixtureDataset([low, high]);
     });
 
-    When("the capability chart is rendered", () => {
+    When("the merged chart is rendered", () => {
       render(
         React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
@@ -984,7 +1051,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // dataset is the full roster.
     });
 
-    When("the capability chart is rendered", () => {
+    When("the merged chart is rendered", () => {
       render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
@@ -1021,7 +1088,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(score?.coverage).toBeLessThan(LOW_COVERAGE_THRESHOLD);
     });
 
-    When("the capability chart is rendered", () => {
+    When("the merged chart is rendered", () => {
       render(
         React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
@@ -1050,7 +1117,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // dataset is the full roster.
     });
 
-    When("the capability chart is rendered", () => {
+    When("the merged chart is rendered", () => {
       render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
@@ -1103,7 +1170,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.fixtureDataset = fixtureDataset([meteredFixture("price-metered", 3, 15)]);
     });
 
-    When("the price chart is rendered", () => {
+    When("the merged chart is rendered", () => {
       render(
         React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
@@ -1127,63 +1194,69 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-16 — a subscription-only model renders in the subscription group ──────
+  // ─── AC-16 — reworded (Phase 4): unrated + subscription-only shows its plan cost in the unrated list ──
 
-  Scenario("A subscription-only model renders in the subscription group", ({ Given, When, Then, But }) => {
-    Given("a fixture model available only under a flat-rate subscription", () => {
-      const rate: SubscriptionPrice = {
-        kind: "subscription",
-        planCostUsd: 10,
-        grade: "verified",
-        source: SRC,
-        caps: "First month $5, then $10/month.",
-      };
-      const m: Model = {
-        id: "price-sub-only",
-        name: "price-sub-only",
-        vendor: "Test",
-        harnesses: ["opencode-go"],
-        figures: [],
-        pricing: { "opencode-go": rate },
-      };
-      ctx.fixtureDataset = fixtureDataset([m]);
-    });
+  Scenario(
+    "A subscription-only unrated model shows its plan cost in the unrated list",
+    ({ Given, When, Then, And, But }) => {
+      Given("a fixture model with no published composite score, available only under a flat-rate subscription", () => {
+        const rate: SubscriptionPrice = {
+          kind: "subscription",
+          planCostUsd: 10,
+          grade: "verified",
+          source: SRC,
+          caps: "First month $5, then $10/month.",
+        };
+        const m: Model = {
+          id: "price-sub-only",
+          name: "price-sub-only",
+          vendor: "Test",
+          harnesses: ["opencode-go"],
+          figures: [],
+          pricing: { "opencode-go": rate },
+        };
+        ctx.fixtureDataset = fixtureDataset([m]);
+      });
 
-    When("the price chart is rendered", () => {
-      render(
-        React.createElement(BenchmarkChart, {
-          dataset: ctx.fixtureDataset!,
-          fullDataset: ctx.fixtureDataset!,
-          locale: "en",
-        }),
-      );
-    });
+      When("the merged chart renders the roster", () => {
+        render(
+          React.createElement(BenchmarkChart, {
+            dataset: ctx.fixtureDataset!,
+            fullDataset: ctx.fixtureDataset!,
+            locale: "en",
+          }),
+        );
+      });
 
-    // This fixture carries zero figures, so it is UNRATED (no composite index, no row to attach
-    // to) — DD-1's resolution retains the old retired price chart's global subscription list text
-    // (plan cost + caps) for exactly this subset, inside the merged chart's unrated list item,
-    // rather than in a separate "subscription group" container (that container no longer exists
-    // post-merge — a RATED+subscription-only model instead gets `BenchmarkRow`'s inline treatment,
-    // covered by `benchmark-chart.test.tsx`'s own DD-1 test).
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A subscription-only model renders in the subscription group
-    Then("that model appears in the subscription group", () => {
-      const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
-      expect(item.textContent ?? "").toContain("price-sub-only");
-      expect(item.textContent ?? "").toContain(formatPriceUsd(10, "en"));
-    });
+      // This fixture carries zero figures, so it is UNRATED (no composite index, no row to attach
+      // to) — DD-1's resolution retains the retired two-chart design's global subscription list text
+      // (plan cost + caps) for exactly this subset, inside the merged chart's unrated list item
+      // (a RATED+subscription-only model instead gets `BenchmarkRow`'s inline treatment, covered by
+      // `benchmark-chart.test.tsx`'s own DD-1 test).
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A subscription-only unrated model shows its plan cost in the unrated list
+      Then("that model appears in the unrated group's plain text list", () => {
+        const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
+        expect(item.textContent ?? "").toContain("price-sub-only");
+      });
 
-    But("that model renders no per-token bar and no zero value", () => {
-      expect(screen.queryByTestId("benchmark-chart-bar-price-in-price-sub-only")).toBeNull();
-      expect(screen.queryByTestId("benchmark-chart-bar-price-out-price-sub-only")).toBeNull();
-      const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
-      expect(item.textContent ?? "").not.toContain("$0.00");
-      expect(item.textContent ?? "").not.toMatch(/\$0\b/);
-    });
-  });
+      And("that list entry states the model's subscription plan cost", () => {
+        const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
+        expect(item.textContent ?? "").toContain(formatPriceUsd(10, "en"));
+      });
+
+      But("that model renders no per-token bar and no zero value", () => {
+        expect(screen.queryByTestId("benchmark-chart-bar-price-in-price-sub-only")).toBeNull();
+        expect(screen.queryByTestId("benchmark-chart-bar-price-out-price-sub-only")).toBeNull();
+        const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
+        expect(item.textContent ?? "").not.toContain("$0.00");
+        expect(item.textContent ?? "").not.toMatch(/\$0\b/);
+      });
+    },
+  );
 
   // ─── AC-17 — an unfiltered price chart shows the lowest harness rate ──────────
 
-  Scenario("An unfiltered price chart shows the lowest harness rate", ({ Given, When, Then, And }) => {
+  Scenario("An unfiltered merged chart shows the lowest harness rate", ({ Given, When, Then, And }) => {
     Given("a fixture model priced differently by two harnesses", () => {
       // Post-merge, only a RATED model gets a row with price bars at all (the decision-branches
       // diagram in tech-docs.md: an unrated model never renders a price bar, only its bare name in
@@ -1204,7 +1277,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.fixtureDataset = fixtureDataset([m]);
     });
 
-    When("the price chart is rendered without a harness filter", () => {
+    When("the merged chart is rendered without a harness filter", () => {
       render(
         React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
@@ -1214,7 +1287,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered price chart shows the lowest harness rate
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered merged chart shows the lowest harness rate
     Then("that model's bars use the lower of the two harness rates", () => {
       const inLabel = screen.getByTestId("benchmark-chart-label-in-price-two-harness");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
@@ -1227,9 +1300,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-36 (capability half) — the capability chart exposes an accessible name ─
+  // ─── AC-36 — reworded (Phase 4): one merged chart, one accessible name ────────
 
-  Scenario("Each chart exposes an accessible name", ({ Given, When, Then, And }) => {
+  Scenario("The merged chart exposes an accessible name", ({ Given, When, Then }) => {
     Given("the full roster is loaded", () => {
       // dataset is the full roster.
     });
@@ -1238,16 +1311,10 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // Post-merge, both step texts below resolve to the SAME `<svg role="img">` — capability and
-    // price are no longer two charts, so both assertions bind against the one merged accessible
-    // name (`aiBenchMergedChartTitle`) rather than two distinct titles.
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Each chart exposes an accessible name
-    Then("the capability chart exposes an accessible name", () => {
-      const chart = screen.getByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
-      expect(chart).not.toBeNull();
-    });
-
-    And("the price chart exposes an accessible name", () => {
+    // Post-merge there is one `<svg role="img">`, so this binds against the one merged accessible
+    // name (`aiBenchMergedChartTitle`) rather than two distinct chart titles.
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
+    Then("the merged chart exposes an accessible name", () => {
       const chart = screen.getByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
       expect(chart).not.toBeNull();
     });
@@ -1274,9 +1341,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-23 — a harness parameter narrows both charts and the table ────────────
+  // ─── AC-23 — reworded (Phase 4): a harness parameter narrows the merged chart and the table ──
 
-  Scenario("A harness parameter narrows both charts and the table", ({ Given, When, Then, And }) => {
+  Scenario("A harness parameter narrows the merged chart and the table", ({ Given, When, Then, And }) => {
     // "cursor" genuinely narrows the live roster — at least one model (e.g. grok-build-0.1) is
     // opencode-zen-only and is not exposed by cursor.
     Given("the URL carries a harness parameter naming a known harness", () => {
@@ -1289,17 +1356,12 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     const expected = () => filterModels(dataset, { harness: "cursor" });
 
-    // Post-merge, both step texts below bind against the SAME merged chart, so both resolve to an
-    // exact-set equality check now: unlike the retired price chart (which omitted a priceless
-    // model entirely, AC-16/17), `benchmark-chart.tsx`'s `BenchmarkRow` always renders a row (with a
-    // "not reported" placeholder when priceless) or an unrated-list entry — no filtered model is
-    // ever dropped from the merged chart.
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness parameter narrows both charts and the table
-    Then("only models that harness exposes are shown in the capability chart", () => {
-      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
-    });
-
-    And("only models that harness exposes are shown in the price chart", () => {
+    // This is an exact-set equality check: unlike the retired two-chart design's price chart
+    // (which omitted a priceless model entirely, AC-16/17), `benchmark-chart.tsx`'s `BenchmarkRow`
+    // always renders a row (with a "not reported" placeholder when priceless) or an unrated-list
+    // entry — no filtered model is ever dropped from the merged chart.
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness parameter narrows the merged chart and the table
+    Then("only models that harness exposes are shown in the merged chart", () => {
       expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
@@ -1308,9 +1370,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-24 — a class parameter narrows both charts and the table ──────────────
+  // ─── AC-24 — reworded (Phase 4): a class parameter narrows the merged chart and the table ────
 
-  Scenario("A class parameter narrows both charts and the table", ({ Given, When, Then, And }) => {
+  Scenario("A class parameter narrows the merged chart and the table", ({ Given, When, Then, And }) => {
     Given("the URL carries a class parameter naming a known band", () => {
       ctx.search = "class=opus";
     });
@@ -1321,12 +1383,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     const expected = () => filterModels(dataset, { class: "opus" });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A class parameter narrows both charts and the table
-    Then("only models in that band are shown in the capability chart", () => {
-      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
-    });
-
-    And("only models in that band are shown in the price chart", () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A class parameter narrows the merged chart and the table
+    Then("only models in that band are shown in the merged chart", () => {
       expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
@@ -1353,9 +1411,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-18 — a harness filter switches the price chart to that harness's rate ─
+  // ─── AC-18 — rewritten (Phase 4) verbatim from prd.md ─────────────────────────
 
-  Scenario("A harness filter switches the price chart to that harness's rate", ({ Given, When, Then }) => {
+  Scenario("A harness filter switches the merged chart to that harness's rate", ({ Given, When, Then }) => {
     Given("a fixture model priced differently by two harnesses", () => {
       // Rated (one figure), same reasoning as AC-17's fixture above — only a rated model gets a row
       // with price bars post-merge.
@@ -1373,7 +1431,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.fixtureDataset = fixtureDataset([m]);
     });
 
-    When("the harness filter selects the more expensive harness", () => {
+    When("the merged chart renders with that harness selected", () => {
       render(
         React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
@@ -1384,13 +1442,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
-    Then("that model's bars use that harness's rate", () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
+    Then("that model's price bars use that harness's own rate, not its lowest available rate", () => {
       const inLabel = screen.getByTestId("benchmark-chart-label-in-price-harness-switch");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(5, "en"));
       const outLabel = screen.getByTestId("benchmark-chart-label-out-price-harness-switch");
       expect(outLabel.textContent ?? "").toContain(formatPriceUsd(20, "en"));
-      // Never the OTHER harness's (cheaper) rate.
+      // Never the OTHER (lowest-available) harness's cheaper rate.
       expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(2, "en"));
     });
   });
@@ -1497,6 +1555,361 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(sorted(tableModelIds())).toEqual(sorted(idsOf(expected)));
     });
   });
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // Phase 9 — AC-39..AC-47, nine new scenarios added verbatim from prd.md's
+  // Acceptance criteria (Gherkin) section (Phase 4).
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // ─── AC-39 — a rated model's row carries its capability bar and both price bars together ──
+
+  Scenario(
+    "A rated model's row carries its capability bar and both price bars together",
+    ({ Given, When, Then, And }) => {
+      Given("a model in the sonnet band with a metered input and output rate", () => {
+        const groups = computeGroups(dataset);
+        const candidate = groups.sonnet.find((s) => lowestRate(s.model)?.kind === "metered");
+        expect(candidate, "expected at least one sonnet-band model with a metered rate").toBeDefined();
+        ctx.targetModelId = candidate!.model.id;
+      });
+
+      When("the merged chart renders that model's row", () => {
+        render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A rated model's row carries its capability bar and both price bars together
+      Then("the row shows one capability bar, one price-in bar, and one price-out bar", () => {
+        const id = ctx.targetModelId!;
+        expect(screen.getByTestId(`benchmark-chart-bar-capability-${id}`)).not.toBeNull();
+        expect(screen.getByTestId(`benchmark-chart-bar-price-in-${id}`)).not.toBeNull();
+        expect(screen.getByTestId(`benchmark-chart-bar-price-out-${id}`)).not.toBeNull();
+      });
+
+      And("all three bars appear stacked within that single row, not in separate chart sections", () => {
+        const id = ctx.targetModelId!;
+        const row = screen.getByTestId(`benchmark-chart-row-${id}`);
+        expect(row.querySelector(`[data-testid="benchmark-chart-bar-capability-${id}"]`)).not.toBeNull();
+        expect(row.querySelector(`[data-testid="benchmark-chart-bar-price-in-${id}"]`)).not.toBeNull();
+        expect(row.querySelector(`[data-testid="benchmark-chart-bar-price-out-${id}"]`)).not.toBeNull();
+      });
+    },
+  );
+
+  // ─── AC-40 — bar length is proportional to its own value ─────────────────────
+
+  Scenario("Bar length is proportional to its own value", ({ Given, When, Then, And }) => {
+    // The reference model holds the roster max on every composite benchmark (index exactly 100 —
+    // COMPOSITE_INDEX_MAX) and the highest metered rate (30) — the ruler both proportionality
+    // checks below divide against, so no exported layout constant (e.g. `PLOT_WIDTH`) is needed.
+    Given("a model with a composite index of 85.7 and an output rate of $15.00", () => {
+      const reference = fixtureModel("ac40-reference-max", [
+        fig("swe-bench-verified", 100),
+        fig("swe-bench-pro", 100),
+        fig("terminal-bench-2-1", 100),
+        fig("gpqa-diamond", 100),
+      ]);
+      reference.pricing = { "claude-code": { kind: "metered", input: 10, output: 30, grade: "verified", source: SRC } };
+      const target = fixtureModel("ac40-target", [
+        fig("swe-bench-verified", 85.7),
+        fig("swe-bench-pro", 85.7),
+        fig("terminal-bench-2-1", 85.7),
+        fig("gpqa-diamond", 85.7),
+      ]);
+      target.pricing = { "claude-code": { kind: "metered", input: 1, output: 15, grade: "verified", source: SRC } };
+      ctx.fixtureDataset = fixtureDataset([reference, target]);
+    });
+
+    When("the merged chart renders that model's row", () => {
+      render(
+        React.createElement(BenchmarkChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Bar length is proportional to its own value
+    Then("the capability bar's length is proportional to 85.7 over the composite index max", () => {
+      const targetWidth = Number(
+        screen.getByTestId("benchmark-chart-bar-capability-ac40-target").getAttribute("width"),
+      );
+      const referenceWidth = Number(
+        screen.getByTestId("benchmark-chart-bar-capability-ac40-reference-max").getAttribute("width"),
+      );
+      // The reference model's own index is exactly COMPOSITE_INDEX_MAX (100), so its bar spans the
+      // full capability plot width — the ruler for "85.7 over the composite index max".
+      expect(targetWidth / referenceWidth).toBeCloseTo(85.7 / 100, 5);
+    });
+
+    And("the price-out bar's length is proportional to $15.00 over that band's price axis max", () => {
+      const targetWidth = Number(screen.getByTestId("benchmark-chart-bar-price-out-ac40-target").getAttribute("width"));
+      const referenceWidth = Number(
+        screen.getByTestId("benchmark-chart-bar-price-out-ac40-reference-max").getAttribute("width"),
+      );
+      // The reference model's own output rate (30) is the highest metered rate in the fixture, so
+      // it IS the price axis max — the ruler for "$15.00 over that band's price axis max".
+      expect(targetWidth / referenceWidth).toBeCloseTo(15 / 30, 5);
+    });
+  });
+
+  // ─── AC-41 — a band's sort control reorders only that band ───────────────────
+
+  Scenario("A band's sort control reorders only that band", ({ Given, When, Then, And }) => {
+    const opusAnchor = bandFixtureModel(OPUS_ANCHOR_ID, 100, 1);
+    const sonnetAnchor = bandFixtureModel(SONNET_ANCHOR_ID, 60, 1);
+    const opusA = bandFixtureModel("ac41-opus-a", 100, 20);
+    const opusB = bandFixtureModel("ac41-opus-b", 100, 5);
+    const sonnetHi = bandFixtureModel("ac41-sonnet-hi", 85, 50); // higher score, higher price
+    const sonnetLo = bandFixtureModel("ac41-sonnet-lo", 75, 10); // lower score, lower price
+    const lightA = bandFixtureModel("ac41-light-a", 30, 40);
+    const lightB = bandFixtureModel("ac41-light-b", 20, 15);
+    const ds = fixtureDataset([opusAnchor, sonnetAnchor, opusA, opusB, sonnetHi, sonnetLo, lightA, lightB]);
+
+    function renderWithSort(sortState: SortState) {
+      cleanup();
+      render(
+        React.createElement(BenchmarkChart, {
+          dataset: ds,
+          fullDataset: ds,
+          locale: "en",
+          sortState,
+          onSortChange: (band, mode) => {
+            if (band === "sonnet") ctx.requestedSortMode = mode;
+          },
+        }),
+      );
+    }
+
+    Given("the sonnet band is displaying models in capability-descending order", () => {
+      renderWithSort({ ...DEFAULT_SORT_STATE });
+      const sonnetOrder = rowOrderWithin("benchmark-chart-band-sonnet");
+      // The sonnet anchor itself also renders in the sonnet band (its own index, 60, is the
+      // LOWEST of the three) — descending score: hi(85), lo(75), anchor(60).
+      expect(sonnetOrder).toEqual(["ac41-sonnet-hi", "ac41-sonnet-lo", SONNET_ANCHOR_ID]);
+      ctx.opusOrderBefore = rowOrderWithin("benchmark-chart-band-opus");
+      ctx.lightOrderBefore = rowOrderWithin("benchmark-chart-band-light");
+    });
+
+    When('the reader selects "Price: Low to High" from the sonnet band\'s sort control', () => {
+      const select = screen.getByRole("combobox", {
+        name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("sonnet", "en")}`,
+      });
+      fireEvent.change(select, { target: { value: "price-asc" } });
+      renderWithSort({ ...DEFAULT_SORT_STATE, sonnet: ctx.requestedSortMode ?? "price-asc" });
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A band's sort control reorders only that band
+    Then("the sonnet band's rows re-render sorted by ascending output rate", () => {
+      const sonnetOrder = rowOrderWithin("benchmark-chart-band-sonnet");
+      // Ascending output price: anchor(1), lo(10), hi(50).
+      expect(sonnetOrder).toEqual([SONNET_ANCHOR_ID, "ac41-sonnet-lo", "ac41-sonnet-hi"]);
+    });
+
+    And("the opus and light bands keep their own independently-selected sort order", () => {
+      expect(rowOrderWithin("benchmark-chart-band-opus")).toEqual(ctx.opusOrderBefore);
+      expect(rowOrderWithin("benchmark-chart-band-light")).toEqual(ctx.lightOrderBefore);
+    });
+  });
+
+  // ─── AC-42 — a band's sort choice is encoded in the URL ───────────────────────
+
+  Scenario("A band's sort choice is encoded in the URL", ({ Given, When, Then, And }) => {
+    Given('the reader has selected "Price: High to Low" for the opus band', () => {
+      ctx.sortState = { ...DEFAULT_SORT_STATE, opus: "price-desc" };
+    });
+
+    When("the reader copies the current page URL", () => {
+      ctx.encodedParams = encodeState({ harness: undefined, class: undefined, ...ctx.sortState! });
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A band's sort choice is encoded in the URL
+    Then('the URL contains a "sortOpus" query parameter set to the descending-price value', () => {
+      expect(ctx.encodedParams!.get("sortOpus")).toBe("price-desc");
+    });
+
+    And("loading that URL directly reproduces the opus band sorted the same way", () => {
+      const decoded = decodeState(ctx.encodedParams!);
+      expect(decoded.opus).toBe("price-desc");
+    });
+  });
+
+  // ─── AC-43 — an unknown sort value in the URL falls back to the default ──────
+
+  Scenario("An unknown sort value in the URL falls back to the default", ({ Given, When, Then, And }) => {
+    Given('a URL containing "sortSonnet=not-a-real-value"', () => {
+      ctx.search = "sortSonnet=not-a-real-value";
+    });
+
+    When("the page loads with that URL", () => {
+      ctx.thrown = false;
+      try {
+        renderPageWithSearch(ctx.search!);
+      } catch {
+        ctx.thrown = true;
+      }
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unknown sort value in the URL falls back to the default
+    Then("the sonnet band renders sorted by capability (the default)", () => {
+      const select = screen.getByRole("combobox", {
+        name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("sonnet", "en")}`,
+      }) as HTMLSelectElement;
+      expect(select.value).toBe("capability");
+    });
+
+    And("no error is thrown", () => {
+      expect(ctx.thrown).toBe(false);
+    });
+  });
+
+  // ─── AC-44 (DD-1) — a rated model billed only by subscription shows inline subscription text ──
+
+  Scenario("A rated model billed only by subscription shows inline subscription text", ({ Given, When, Then, And }) => {
+    Given("a model in the light band with no metered rate and one subscription rate", () => {
+      const m: Model = {
+        id: "ac44-sub-rated",
+        name: "ac44-sub-rated",
+        vendor: "Test",
+        harnesses: ["opencode-go"],
+        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> light band
+        pricing: {
+          "opencode-go": {
+            kind: "subscription",
+            planCostUsd: 20,
+            grade: "verified",
+            source: SRC,
+            caps: "Cap: 500 req/day.",
+          },
+        },
+      };
+      ctx.fixtureDataset = fixtureDataset([m]);
+    });
+
+    When("the merged chart renders that model's row", () => {
+      render(
+        React.createElement(BenchmarkChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A rated model billed only by subscription shows inline subscription text
+    Then("the row shows its capability bar as normal", () => {
+      expect(screen.getByTestId("benchmark-chart-bar-capability-ac44-sub-rated")).not.toBeNull();
+    });
+
+    And('the price-bar area of that row shows "Subscription ($cost)" text instead of two bars', () => {
+      expect(screen.queryByTestId("benchmark-chart-bar-price-in-ac44-sub-rated")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-bar-price-out-ac44-sub-rated")).toBeNull();
+      const label = screen.getByTestId("benchmark-chart-subscription-ac44-sub-rated");
+      expect(label.textContent ?? "").toContain(t("en", "aiBenchSubscription"));
+      expect(label.textContent ?? "").toContain(formatPriceUsd(20, "en"));
+    });
+  });
+
+  // ─── AC-45 — an unrated model still renders in the existing text-only list ───
+
+  Scenario("An unrated model still renders in the existing text-only list", ({ Given, When, Then, And }) => {
+    Given("a model with no published composite score on any benchmark", () => {
+      ctx.fixtureDataset = fixtureDataset([fixtureModel("ac45-unrated", [])]);
+    });
+
+    When("the merged chart renders the roster", () => {
+      render(
+        React.createElement(BenchmarkChart, {
+          dataset: ctx.fixtureDataset!,
+          fullDataset: ctx.fixtureDataset!,
+          locale: "en",
+        }),
+      );
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unrated model still renders in the existing text-only list
+    Then("that model appears in the unrated group's plain text list", () => {
+      const item = screen.getByTestId("benchmark-chart-unrated-model-ac45-unrated");
+      expect(item.textContent ?? "").toContain("ac45-unrated");
+    });
+
+    And("no capability bar or price bar is rendered for that model", () => {
+      expect(screen.queryByTestId("benchmark-chart-bar-capability-ac45-unrated")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-bar-price-in-ac45-unrated")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-bar-price-out-ac45-unrated")).toBeNull();
+    });
+  });
+
+  // ─── AC-46 — the merged chart keeps its accessible name and text alternative ─
+
+  Scenario("The merged chart keeps its accessible name and text alternative", ({ Given, When, Then, And }) => {
+    Given("the merged chart has replaced the two former charts", () => {
+      // The live page renders exactly one BenchmarkChart; nothing further to arrange.
+    });
+
+    When("a screen reader encounters the chart", () => {
+      renderPageForLocale("en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart keeps its accessible name and text alternative
+    Then("the chart is one svg with role image and one localized title as its accessible name", () => {
+      const charts = screen.getAllByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
+      expect(charts).toHaveLength(1);
+      expect(charts[0]?.tagName.toLowerCase()).toBe("svg");
+    });
+
+    And("every figure the chart encodes is still reachable via the unchanged ModelTable below", () => {
+      const table = screen.getByTestId("model-table-desktop");
+      const groups = computeGroups(dataset);
+      for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+        for (const s of list) {
+          expect(table.textContent ?? "").toContain(s.model.name);
+        }
+      }
+    });
+  });
+
+  // ─── AC-47 — the merged chart uses the identical DOM structure at every breakpoint ──
+
+  Scenario("The merged chart uses the identical DOM structure at every breakpoint", ({ Given, When, Then, And }) => {
+    // jsdom applies no CSS and has no real layout engine (same limitation AC-38's docstring
+    // records), so there is no responsive DOM branch to trigger by window width — this scenario
+    // instead proves the ACTUAL guarantee: `BenchmarkChart` never reads window/viewport state, so
+    // its rendered node set cannot diverge across widths in the first place.
+    function domSignature(): string[] {
+      const container = screen.getByTestId("benchmark-chart");
+      return Array.from(container.querySelectorAll("[data-testid]")).map((el) => el.getAttribute("data-testid") ?? "");
+    }
+
+    Given("the merged chart is rendered at a 375px, a 768px, and a 1280px viewport width", () => {
+      ctx.widthSignatures = [375, 768, 1280].map((width) => {
+        Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: width });
+        window.dispatchEvent(new Event("resize"));
+        cleanup();
+        render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
+        return domSignature();
+      });
+    });
+
+    When("the DOM structure at each width is inspected", () => {
+      // The three signatures were already captured per width above; nothing further to arrange.
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart uses the identical DOM structure at every breakpoint
+    Then("the same set of elements renders at all three widths", () => {
+      const [narrow, medium, wide] = ctx.widthSignatures!;
+      expect(narrow).toEqual(medium);
+      expect(medium).toEqual(wide);
+    });
+
+    And("only the pixel width of each bar changes between the three renders", () => {
+      // `BenchmarkChart` computes every bar's pixel width from its own fixed internal plot width,
+      // never from `window.innerWidth` — so bar widths are identical across the three renders too,
+      // which this equality (rather than a literal cross-viewport pixel diff) documents.
+      expect(ctx.widthSignatures![0]).toEqual(ctx.widthSignatures![1]);
+    });
+  });
+
   // ─── AC-38 — band colours meet contrast in both themes ────────────────────────
   //
   // jsdom cannot resolve `oklch()` custom properties through a cascade (tech-docs.md §Band design

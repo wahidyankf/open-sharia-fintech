@@ -56,12 +56,15 @@ Feature: AI model benchmark tool
     Then the index equals the weight-renormalized mean of those two normalized scores
     And its coverage ratio equals the summed weight of those two benchmarks divided by one hundred
 
-  # AC-11
+  # AC-11 — rewritten (Phase 4) per prd.md's Acceptance criteria (Gherkin) section: post-merge, the
+  # invariant a sort change must preserve is band membership, not cross-chart order (the two-chart
+  # comparison this scenario originally encoded no longer applies once there is only one chart).
   @unit
-  Scenario: Models are ordered identically in both charts within a band
-    Given the full roster is loaded
-    When both charts are rendered
-    Then each band lists its models in the same order in the capability chart and the price chart
+  Scenario: Models are ordered identically before and after a sort change within a band
+    Given the opus band is sorted by capability
+    When the reader switches the opus band's sort to price low to high
+    Then every model previously in the opus band still appears in the opus band
+    And the set of models in the band is unchanged, only their order changes
 
   # AC-1
   @unit @e2e
@@ -90,7 +93,7 @@ Feature: AI model benchmark tool
 
   # AC-20
   @unit
-  Scenario: The table carries every figure the charts encode
+  Scenario: The table carries every figure the merged chart encodes
     Given the full roster is loaded
     When the data table is rendered
     Then each model row lists its harnesses, class, every benchmark score, composite index, coverage ratio, input price, and output price
@@ -176,7 +179,7 @@ Feature: AI model benchmark tool
   @unit
   Scenario: A low-coverage model is marked as low coverage
     Given a fixture model whose coverage ratio is below the low-coverage threshold
-    When the capability chart is rendered
+    When the merged chart is rendered
     Then that model's row carries a low-coverage marker
     And the marker states the model's coverage ratio in text
 
@@ -184,7 +187,7 @@ Feature: AI model benchmark tool
   @unit
   Scenario: Bar length is proportional to the composite index
     Given two fixture models whose composite indices differ
-    When the capability chart is rendered
+    When the merged chart is rendered
     Then the ratio of their bar lengths equals the ratio of their composite indices
     And the chart states its axis maximum
 
@@ -192,7 +195,7 @@ Feature: AI model benchmark tool
   @unit
   Scenario: Every capability bar carries its model name and index in text
     Given the full roster is loaded
-    When the capability chart is rendered
+    When the merged chart is rendered
     Then every bar has a text label carrying the model name
     And every bar has a text label carrying its numeric composite index
 
@@ -200,41 +203,122 @@ Feature: AI model benchmark tool
   @unit
   Scenario: A metered model shows separate labelled input and output bars
     Given a fixture model with a per-token input rate and output rate
-    When the price chart is rendered
+    When the merged chart is rendered
     Then that model has one bar labelled as the input rate
     And that model has one bar labelled as the output rate
 
-  # AC-16
+  # AC-16 — reworded (Phase 4): the retired two-chart design's separate "subscription group" section
+  # no longer exists post-merge; DD-1 folds an unrated+subscription-only model into the unrated
+  # group's own text list, now stating its plan cost inline instead of a bare name (distinct from a
+  # RATED subscription-only model, which gets its own row with inline text — see the new scenario "A
+  # rated model billed only by subscription shows inline subscription text").
   @unit
-  Scenario: A subscription-only model renders in the subscription group
-    Given a fixture model available only under a flat-rate subscription
-    When the price chart is rendered
-    Then that model appears in the subscription group
+  Scenario: A subscription-only unrated model shows its plan cost in the unrated list
+    Given a fixture model with no published composite score, available only under a flat-rate subscription
+    When the merged chart renders the roster
+    Then that model appears in the unrated group's plain text list
+    And that list entry states the model's subscription plan cost
     But that model renders no per-token bar and no zero value
 
   # AC-17
   @unit
-  Scenario: An unfiltered price chart shows the lowest harness rate
+  Scenario: An unfiltered merged chart shows the lowest harness rate
     Given a fixture model priced differently by two harnesses
-    When the price chart is rendered without a harness filter
+    When the merged chart is rendered without a harness filter
     Then that model's bars use the lower of the two harness rates
     And the chart states that it shows the lowest available harness rate
 
   # AC-36
   @unit @e2e
-  Scenario: Each chart exposes an accessible name
+  Scenario: The merged chart exposes an accessible name
     Given the full roster is loaded
     When the page renders
-    Then the capability chart exposes an accessible name
-    And the price chart exposes an accessible name
+    Then the merged chart exposes an accessible name
 
   # AC-37
   @unit
   Scenario: The capability class is carried textually, not by colour alone
     Given the full roster is loaded
-    When the capability chart is rendered
+    When the merged chart is rendered
     Then every band group carries its class name as text
     And every model row carries its class as text in the data table
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # AC-39..AC-47 — nine new scenarios from prd.md's Acceptance criteria (Gherkin) section, added
+  # verbatim (title and body) in Phase 4 alongside the AC-11/AC-18 in-place rewrites above.
+  # ══════════════════════════════════════════════════════════════════════════
+
+  # AC-39
+  @unit
+  Scenario: A rated model's row carries its capability bar and both price bars together
+    Given a model in the sonnet band with a metered input and output rate
+    When the merged chart renders that model's row
+    Then the row shows one capability bar, one price-in bar, and one price-out bar
+    And all three bars appear stacked within that single row, not in separate chart sections
+
+  # AC-40
+  @unit
+  Scenario: Bar length is proportional to its own value
+    Given a model with a composite index of 85.7 and an output rate of $15.00
+    When the merged chart renders that model's row
+    Then the capability bar's length is proportional to 85.7 over the composite index max
+    And the price-out bar's length is proportional to $15.00 over that band's price axis max
+
+  # AC-41
+  @unit
+  Scenario: A band's sort control reorders only that band
+    Given the sonnet band is displaying models in capability-descending order
+    When the reader selects "Price: Low to High" from the sonnet band's sort control
+    Then the sonnet band's rows re-render sorted by ascending output rate
+    And the opus and light bands keep their own independently-selected sort order
+
+  # AC-42
+  @unit
+  Scenario: A band's sort choice is encoded in the URL
+    Given the reader has selected "Price: High to Low" for the opus band
+    When the reader copies the current page URL
+    Then the URL contains a "sortOpus" query parameter set to the descending-price value
+    And loading that URL directly reproduces the opus band sorted the same way
+
+  # AC-43
+  @unit
+  Scenario: An unknown sort value in the URL falls back to the default
+    Given a URL containing "sortSonnet=not-a-real-value"
+    When the page loads with that URL
+    Then the sonnet band renders sorted by capability (the default)
+    And no error is thrown
+
+  # AC-44 — DD-1
+  @unit
+  Scenario: A rated model billed only by subscription shows inline subscription text
+    Given a model in the light band with no metered rate and one subscription rate
+    When the merged chart renders that model's row
+    Then the row shows its capability bar as normal
+    And the price-bar area of that row shows "Subscription ($cost)" text instead of two bars
+
+  # AC-45
+  @unit
+  Scenario: An unrated model still renders in the existing text-only list
+    Given a model with no published composite score on any benchmark
+    When the merged chart renders the roster
+    Then that model appears in the unrated group's plain text list
+    And no capability bar or price bar is rendered for that model
+
+  # AC-46
+  @unit
+  Scenario: The merged chart keeps its accessible name and text alternative
+    Given the merged chart has replaced the two former charts
+    When a screen reader encounters the chart
+    Then the chart is one svg with role image and one localized title as its accessible name
+    And every figure the chart encodes is still reachable via the unchanged ModelTable below
+
+  # AC-47
+  @unit
+  Scenario: The merged chart uses the identical DOM structure at every breakpoint
+    Given the merged chart is rendered at a 375px, a 768px, and a 1280px viewport width
+    When the DOM structure at each width is inspected
+    Then the same set of elements renders at all three widths
+    And only the pixel width of each bar changes between the three renders
 
   # ══════════════════════════════════════════════════════════════════════════
   # Phase 8 — harness and class filters (AC-18, AC-22..AC-28).
@@ -249,20 +333,18 @@ Feature: AI model benchmark tool
 
   # AC-23
   @unit
-  Scenario: A harness parameter narrows both charts and the table
+  Scenario: A harness parameter narrows the merged chart and the table
     Given the URL carries a harness parameter naming a known harness
     When the page renders
-    Then only models that harness exposes are shown in the capability chart
-    And only models that harness exposes are shown in the price chart
+    Then only models that harness exposes are shown in the merged chart
     And only models that harness exposes are shown in the data table
 
   # AC-24
   @unit
-  Scenario: A class parameter narrows both charts and the table
+  Scenario: A class parameter narrows the merged chart and the table
     Given the URL carries a class parameter naming a known band
     When the page renders
-    Then only models in that band are shown in the capability chart
-    And only models in that band are shown in the price chart
+    Then only models in that band are shown in the merged chart
     And only models in that band are shown in the data table
 
   # AC-25
@@ -272,12 +354,13 @@ Feature: AI model benchmark tool
     When the page renders
     Then only models satisfying both filters are shown
 
-  # AC-18
+  # AC-18 — rewritten (Phase 4) verbatim from prd.md's Acceptance criteria (Gherkin) section; the
+  # Phase 2 RED step already binds to this exact title and body via its `Gherkin (binds)` tag.
   @unit @e2e
-  Scenario: A harness filter switches the price chart to that harness's rate
+  Scenario: A harness filter switches the merged chart to that harness's rate
     Given a fixture model priced differently by two harnesses
-    When the harness filter selects the more expensive harness
-    Then that model's bars use that harness's rate
+    When the merged chart renders with that harness selected
+    Then that model's price bars use that harness's own rate, not its lowest available rate
 
   # AC-26
   @unit

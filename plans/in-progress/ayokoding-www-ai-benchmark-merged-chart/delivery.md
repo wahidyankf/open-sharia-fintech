@@ -681,7 +681,7 @@ lint --base=main`: both exit 0 for `ayokoding-www` and `ayokoding-www-fe-e2e` (w
 
 ## Phase 4: Gherkin — rewrite and extend `ai-benchmark.feature`
 
-- [ ] [AI] Edit `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`:
+- [x] [AI] Edit `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`:
       rewrite the scenario "Models are ordered identically in both charts within a band" (AC-11) to
       "Models are ordered identically before and after a sort change within a band" (per prd.md), AND
       separately rewrite AC-18 ("A harness filter switches the price chart to that harness's rate")
@@ -699,7 +699,18 @@ price chart is rendered` / `the capability chart` / `the price chart` as their s
       where the underlying assertion is now redundant across the two former components, per
       `brd.md`'s own success metric that none be left describing removed UI — acceptance: the
       widened grep below (not a narrower one scoped to "both charts" alone) returns `0`
-- [ ] [AI] Add the 9 new scenarios from `prd.md`'s Acceptance Criteria section (merged row, bar
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`.
+  > **Notes**: AC-11 and AC-18 rewritten verbatim from prd.md. AC-12/13/14/15/17/36/37 and AC-23/AC-24
+  > reworded to "the merged chart" (AC-36 and AC-23/AC-24 each collapsed two `Then`/`And` chart
+  > assertions into one, since there is only one chart to assert against post-merge). AC-16 reworded
+  > from "renders in the subscription group" (a container that no longer exists post-merge) to "shows
+  > its plan cost in the unrated list", matching DD-1's actual resolution for an unrated+
+  > subscription-only model. AC-20's title ("...every figure the charts encode") also singularized.
+  > `grep -cE "both charts|capability chart|price chart" ai-benchmark.feature` → `0`.
+
+- [x] [AI] Add the 9 new scenarios from `prd.md`'s Acceptance Criteria section (merged row, bar
       proportionality, per-band sort, URL sort encoding, unknown sort fallback, DD-1 subscription
       text, unrated text list, accessible name, identical breakpoint structure) to the feature file
       — acceptance: `grep -c "^  Scenario" specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
@@ -707,23 +718,57 @@ price chart is rendered` / `the capability chart` / `the price chart` as their s
       AC-18 — net zero change to the count — plus 9 genuinely new scenarios from `prd.md`'s
       11-scenario Acceptance criteria section, of which 2 are the in-place rewrite targets counted
       above (AC-11, AC-18) and 9 are additions: 39 + 9 = 48)
-- [ ] [AI] Implement or extend the corresponding step definitions in
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `ai-benchmark.feature`.
+  > **Notes**: 9 new scenarios (AC-39..AC-47) added verbatim from prd.md, inserted after AC-37.
+  > `grep -c "^  Scenario" ai-benchmark.feature` → `48`.
+
+- [x] [AI] Implement or extend the corresponding step definitions in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (search for the file first:
       `find apps/ayokoding-www -iname "*ai-benchmark*.steps.*"`) so every new scenario has a passing
       step implementation, building on Phase 3's rewrite of the `CapabilityChart`/`PriceChart`
       bindings — acceptance: `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
-- [ ] [AI] Update `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/README.md` if it lists
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`.
+  > **Notes**: renamed 19 step-text strings + 8 Scenario titles to match the reworded/rewritten
+  > Gherkin exactly (0 orphans). Added a `bandFixtureModel` helper (models scored so index equals
+  > `score` directly, via a shared roster-max holder) and a `rowOrderWithin` helper, then implemented
+  > full Given/When/Then/And bindings for all 9 new scenarios (AC-39..AC-47), including a genuine
+  > multi-band (opus/sonnet/light) fixture for AC-41's per-band sort isolation check — discovered and
+  > fixed a real test bug where the sonnet/opus anchor models themselves also render as rows in their
+  > own bands (their ids must appear in the expected order arrays, not just the two purpose-built
+  > fixture models). `npx nx run ayokoding-www:test:unit -- fe-steps`: 32 files / 1252 passed, 6
+  > skipped (pre-existing, unrelated). `npx nx run ayokoding-www:specs:behavior:coverage`: valid, 42
+  > specs / 342 scenarios / 1231 steps, all covered.
+
+- [x] [AI] Update `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/README.md` if it lists
       per-feature scenario counts or a C4 diagram referencing the two-chart architecture —
       acceptance: no remaining reference to "capability chart" and "price chart" as two separate
       diagrams in that README
 
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/README.md`.
+  > **Notes**: no C4 diagram present; the one-line feature description ("...harness price chart")
+  > reworded to "one merged chart per band showing capability bands, composite index, and
+  > per-harness price together".
+
 ### Phase 4 Gate
 
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` — exits 0
-- [ ] [AI] `grep -cE "both charts|capability chart|price chart" specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` — exits 0
+- [x] [AI] `grep -cE "both charts|capability chart|price chart" specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       returns `0` — this widened check (not `grep -c "both charts"` alone) is the safety net that
       catches every scenario naming a retired chart component, not just the one scenario explicitly
       named in the first checklist item above
+
+  > **Date**: 2026-07-30. **Status**: DONE. Both Phase 4 Gate checks green.
+  > **Files-Changed**: none beyond what the phase's own items already record.
+  > **Notes**: `specs:behavior:coverage`: "Spec coverage valid! 42 specs, 342 scenarios, 1231 steps —
+  > all covered." Widened grep: no output (exit 1 / count 0). Also re-ran
+  > `npx nx run ayokoding-www:test:unit -- ai-benchmark` (15 files/690 tests),
+  > `npx nx run ayokoding-www:typecheck` (exits 0), and `npx nx run ayokoding-www:lint` (exits 0,
+  > warnings only, pre-existing patterns) to confirm the phase leaves no regression.
 
 > **Pause Safety**: the feature file and its step definitions fully describe the merged-chart
 > behavior; `specs:behavior:coverage` is green. Safe to stop. To resume:
