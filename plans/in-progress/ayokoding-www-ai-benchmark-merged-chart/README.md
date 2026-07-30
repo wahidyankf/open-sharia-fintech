@@ -51,7 +51,9 @@ breakpoint (mobile, tablet, desktop) with no layout switch, avoiding Option C's 
 **Out of scope**
 
 - `model-table.tsx` (the accessible full-data table) — untouched.
-- `benchmark-filters.tsx` (harness/class filter bar) — untouched.
+- `benchmark-filters.tsx` (harness/class filter bar) — no behavioral change to its own filter
+  bar, other than the backward-compatible `allLabel?` widening of the shared `FilterSelect`
+  required by the PR #125 cycle-1 sort-dropdown fix.
 - Any new benchmark, price, or model data — the dataset (`core/data/models.ts`) is unchanged.
 - Any runtime data fetch — the dataset stays static, per the prior plan's own scope.
 - A backend, API, or database.
@@ -67,7 +69,7 @@ flowchart TB
   S --> C["shell/benchmark-chart.tsx<br/>(NEW) cap + 2 price bars/row"]
   P --> C
   CP["shell/chart-primitives.tsx<br/>reused (Bar, Axis, etc.)"] --> C
-  U["core/url-state.ts<br/>+4 sort query params"] --> C
+  U["core/url-state.ts<br/>+3 sort query params"] --> C
   C --> Page["/tools/ai-benchmark<br/>merged chart + ModelTable"]
 
   style C fill:#0072B2,color:#FFFFFF

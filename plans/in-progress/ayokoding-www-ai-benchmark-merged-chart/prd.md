@@ -241,12 +241,12 @@ finishing touch — it is the specific property that avoids the prior plan's Opt
 
 ### Out of scope
 
-| #     | Feature                                                           |
-| ----- | ----------------------------------------------------------------- |
-| OOS-1 | Any change to `model-table.tsx` or `benchmark-filters.tsx`        |
-| OOS-2 | Any new benchmark, price, or model entering `core/data/models.ts` |
-| OOS-3 | Any runtime data fetch, backend, API, or database                 |
-| OOS-4 | Any change to the harness/class URL params (`harness`, `class`)   |
+| #     | Feature                                                                                                                                                                                                                                   |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OOS-1 | Any change to `model-table.tsx`; no behavioral change to `benchmark-filters.tsx`'s own filter bar, other than the backward-compatible `allLabel?` widening of the shared `FilterSelect` required by the PR #125 cycle-1 sort-dropdown fix |
+| OOS-2 | Any new benchmark, price, or model entering `core/data/models.ts`                                                                                                                                                                         |
+| OOS-3 | Any runtime data fetch, backend, API, or database                                                                                                                                                                                         |
+| OOS-4 | Any change to the harness/class URL params (`harness`, `class`)                                                                                                                                                                           |
 
 ### Product-level risks
 
@@ -296,6 +296,17 @@ Feature: AI model benchmark tool — merged capability/price chart
     When the merged chart renders that model's row
     Then the row shows its capability bar as normal
     And the price-bar area of that row shows "Subscription ($cost)" text instead of two bars
+
+  # AC-48 — added post-merge (pr-review-synthesis-maker MEDIUM finding): a rated model with no
+  # reported price at all (no metered rate, no subscription, under any harness) is genuinely new
+  # rendering behaviour the retired `price-chart.tsx` never had — it used to omit such models from
+  # the plot entirely, so nothing rendered for them; the merged chart instead renders an inline
+  # "not reported" placeholder, which had no owning scenario until now.
+  Scenario: A rated model with no reported price shows a not-reported placeholder
+    Given a model in the light band with no metered rate and no subscription rate
+    When the merged chart renders that model's row
+    Then the row shows its capability bar as normal
+    And the price-bar area of that row shows a "not reported" placeholder instead of two bars
 
   Scenario: An unrated model still renders in the existing text-only list
     Given a model with no published composite score on any benchmark

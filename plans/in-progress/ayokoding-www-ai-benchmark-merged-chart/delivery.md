@@ -758,11 +758,14 @@ price chart is rendered` / `the capability chart` / `the price chart` as their s
   > "BenchmarkChart — AC-48 rated model with no reported price" describe block asserting the
   > `benchmark-chart-not-reported-{id}` placeholder renders and both price bars are absent),
   > `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (new Given/When/Then/And step
-  > bindings for the scenario above). **Notes**: this scenario, its unit test, and its step
-  > bindings were all added directly in cycle 1's fixer commit resolving a MEDIUM spec-coverage
-  > finding, but the addition was never reflected back into this delivery checklist at the time —
-  > this entry is the missing traceability record, added while resolving review-cycle 2's HIGH
-  > governance finding on the same gap. `grep -c "^  Scenario" ai-benchmark.feature` → `49`.
+  > bindings for the scenario above), `prd.md` (AC-48 scenario backfilled verbatim into the
+  > "Acceptance criteria (Gherkin)" enumeration, added by review-cycle 3's `pr-review-fixer`
+  > resolving the same-class HIGH finding on that remaining site). **Notes**: this scenario, its
+  > unit test, and its step bindings were all added directly in cycle 1's fixer commit resolving a
+  > MEDIUM spec-coverage finding, but the addition was never reflected back into this delivery
+  > checklist at the time — this entry is the missing traceability record, added while resolving
+  > review-cycle 2's HIGH governance finding on the same gap; `prd.md` itself was still missing the
+  > scenario until review-cycle 3's fix. `grep -c "^  Scenario" ai-benchmark.feature` → `49`.
 
 - [x] [AI] Implement or extend the corresponding step definitions in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (search for the file first:
