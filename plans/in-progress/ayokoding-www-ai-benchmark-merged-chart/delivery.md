@@ -1016,27 +1016,75 @@ test:specs for 25 projects and 6 tasks they depend on` — 0 failures.
 
 ### Post-Push CI Verification
 
-- [ ] [AI] Push changes to the PR branch: `git push origin ayokoding-www-ai-benchmark-merged-chart`
-- [ ] [AI] Monitor the PR's GitHub Actions check run: `gh pr checks ayokoding-www-ai-benchmark-merged-chart --watch=false`
+- [x] [AI] Push changes to the PR branch: `git push origin ayokoding-www-ai-benchmark-merged-chart`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (git operation). **Notes**:
+  > PR #125's `ayokoding-www-ai-benchmark-merged-chart` branch pushed with the full Phases 1-6
+  > implementation history; further Rule-15 fix and Knowledge Capture commits pushed later in this
+  > same phase and Phase 9 respectively (see the Phase 7 push/CI-reverify record further down this
+  > section).
+
+- [x] [AI] Monitor the PR's GitHub Actions check run: `gh pr checks ayokoding-www-ai-benchmark-merged-chart --watch=false`
       polled every 2 minutes (never tight-loop, never `gh run watch`) per
       [CI Monitoring Convention](../../../repo-governance/development/workflow/ci-monitoring.md)
-- [ ] [AI] Verify ALL CI checks pass — no exceptions
-- [ ] [AI] If any CI check fails, fix immediately and push a follow-up commit; repeat until green
-- [ ] [AI] Mark the PR ready for review: `gh pr ready ayokoding-www-ai-benchmark-merged-chart`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > monitored via `ScheduleWakeup`-paced polling (2-4 min intervals) per the CI Monitoring
+  > Convention; one stuck-self-hosted-runner incident diagnosed and remediated (`gh run cancel` +
+  > `gh run rerun --failed`) — see the Phase 7 push/CI-reverify record below and the routed
+  > `ci-monitoring.md` learning from Phase 8.
+
+- [x] [AI] Verify ALL CI checks pass — no exceptions
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > `gh pr checks 125` confirms `Passed: 20, Failed: 0` — all checks green, no exceptions.
+
+- [x] [AI] If any CI check fails, fix immediately and push a follow-up commit; repeat until green
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none this cycle — N/A, no CI check
+  > failure occurred (the stuck-runner incident was operational/infra, not a code-quality failure;
+  > remediated via cancel+rerun, not a code fix).
+
+- [x] [AI] Mark the PR ready for review: `gh pr ready ayokoding-www-ai-benchmark-merged-chart`
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (git operation). **Notes**:
+  > PR #125 marked ready for review ahead of the PR-Review Maker→Fixer Cycle below.
 
 ### PR-Review Maker→Fixer Cycle
 
-- [ ] [AI] Cycle 1: fan out the eight discipline specialists
+- [x] [AI] Cycle 1: fan out the eight discipline specialists
       (`pr-review-architecture-maker`, `pr-review-logic-maker`, `pr-review-governance-maker`,
       `pr-review-security-maker`, `pr-review-integrity-maker`, `pr-review-performance-maker`,
       `pr-review-docs-maker`, `pr-review-instruction-maker`) against the PR, consolidate via
       `pr-review-synthesis-maker` (the sole poster of record via the GitHub Reviews API), resolve
       all findings via `pr-review-fixer`, push fixes, re-verify CI green — acceptance: CI green
       after cycle 1's fixes
-- [ ] [AI] Cycle 2: repeat the same fan-out → synthesis → fixer → CI-green sequence
-- [ ] [AI] Cycle 3: repeat the same fan-out → synthesis → fixer → CI-green sequence
-- [ ] [AI] Confirm no unresolved HIGH/CRITICAL finding remains after cycle 3 — acceptance:
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: per `pr-review-fixer`'s cycle-1
+  > commits to PR #125's branch. **Notes**: 8 specialists fanned out, `pr-review-synthesis-maker`
+  > posted the sole consolidated review, `pr-review-fixer` resolved all actionable threads and
+  > pushed fixes; CI re-verified green after cycle 1.
+
+- [x] [AI] Cycle 2: repeat the same fan-out → synthesis → fixer → CI-green sequence
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: per `pr-review-fixer`'s cycle-2
+  > commits to PR #125's branch. **Notes**: same fan-out → synthesis → fixer → CI-green sequence
+  > repeated; CI re-verified green after cycle 2.
+
+- [x] [AI] Cycle 3: repeat the same fan-out → synthesis → fixer → CI-green sequence
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: per `pr-review-fixer`'s cycle-3
+  > commits to PR #125's branch (advancing HEAD to `47d9d00c1`, the base the Rule-15 fixes in this
+  > phase built on). **Notes**: same fan-out → synthesis → fixer → CI-green sequence repeated for
+  > the final cycle; CI re-verified green after cycle 3.
+
+- [x] [AI] Confirm no unresolved HIGH/CRITICAL finding remains after cycle 3 — acceptance:
       `pr-review-synthesis-maker`'s final consolidated review shows zero open blocking findings
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**: none (verification step). **Notes**:
+  > cycle 3's consolidated review shows zero open HIGH/CRITICAL findings; the only remaining
+  > pre-archival work was the Rule-15 EWT/UWT/DWT retest (separate discipline, tracked in the
+  > section immediately below), not an unresolved review-cycle finding.
 
 ### Rule-15 Three-Tester Retest (before archival)
 
