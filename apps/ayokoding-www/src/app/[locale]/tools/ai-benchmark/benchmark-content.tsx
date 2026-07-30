@@ -5,12 +5,13 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useLocale } from "@/features/i18n/shell/use-locale";
 import { t } from "@/features/i18n/core/translations";
 import { dataset, type Dataset } from "@/features/ai-benchmark/core/data/models";
-import { decodeState, encodeState } from "@/features/ai-benchmark/core/url-state";
+import { decodeState, encodeState, type SortState } from "@/features/ai-benchmark/core/url-state";
 import { filterModels, type FilterState } from "@/features/ai-benchmark/core/filter";
+import type { ChartBand } from "@/features/ai-benchmark/shell/chart-primitives";
+import type { SortMode } from "@/features/ai-benchmark/core/sort";
 import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
-import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
-import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
+import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
 import { BenchmarkFilters } from "@/features/ai-benchmark/shell/benchmark-filters";
 
 export function BenchmarkContent() {
@@ -27,7 +28,20 @@ export function BenchmarkContent() {
   // is ALSO given `dataset` (the unfiltered full roster) as its `fullDataset` — never re-deriving
   // anchor thresholds from `filteredDataset`, which can exclude both anchor models entirely and
   // would otherwise silently collapse every rated model to `light`.
-  const filterState: FilterState = decodeState(searchParams);
+  // `decodeState` returns ONE flat object carrying both the filter and sort keys — picked apart
+  // into two disjoint-key objects here (not just re-typed) so `latestFilterStateRef` never carries
+  // an own `opus`/`sonnet`/`light`/`unrated` key and `latestSortStateRef` never carries an own
+  // `harness`/`class` key. Without this, `{ ...next, ...latestSortStateRef.current }` below would
+  // spread `latestSortStateRef.current`'s own (implicitly `undefined`) `harness`/`class` keys
+  // OVER `next`'s real values, silently dropping whichever filter had just changed.
+  const decoded = decodeState(searchParams);
+  const filterState: FilterState = { harness: decoded.harness, class: decoded.class };
+  const sortState: SortState = {
+    opus: decoded.opus,
+    sonnet: decoded.sonnet,
+    light: decoded.light,
+    unrated: decoded.unrated,
+  };
   const filteredModels = filterModels(dataset, filterState);
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };
   const isEmpty = filteredModels.length === 0;
@@ -42,15 +56,27 @@ export function BenchmarkContent() {
   // browser back/forward navigation (which does not go through `handleFilterChange`) is reflected.
   const latestFilterStateRef = useRef<FilterState>(filterState);
   latestFilterStateRef.current = filterState;
+  // Same race-guard as `latestFilterStateRef` above (Rule-15 EWT-003) — a rapid second sort change
+  // (e.g. two different bands' dropdowns in quick succession) must merge onto the just-applied
+  // first change, not a stale render's `sortState`.
+  const latestSortStateRef = useRef<SortState>(sortState);
+  latestSortStateRef.current = sortState;
 
   function handleFilterChange(patch: Partial<FilterState>) {
     const next: FilterState = { ...latestFilterStateRef.current, ...patch };
     latestFilterStateRef.current = next;
-    const qs = encodeState(next).toString();
+    const qs = encodeState({ ...next, ...latestSortStateRef.current }).toString();
     // `scroll: false` is mandatory: this is in-page filter/view state, not a page change, so the
     // default Next.js navigation behaviour (scroll to top of document) would yank the reader back
     // to the page header on every filter change — mirrors
     // `cost-of-living-calculator/calculator-content.tsx`'s in-page filter navigations.
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }
+
+  function handleSortChange(band: ChartBand, mode: SortMode) {
+    const next: SortState = { ...latestSortStateRef.current, [band]: mode };
+    latestSortStateRef.current = next;
+    const qs = encodeState({ ...latestFilterStateRef.current, ...next }).toString();
     router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
 
@@ -96,8 +122,14 @@ export function BenchmarkContent() {
         </p>
       ) : (
         <>
-          <CapabilityChart dataset={filteredDataset} fullDataset={dataset} locale={locale} />
-          <PriceChart dataset={filteredDataset} fullDataset={dataset} locale={locale} harness={filterState.harness} />
+          <BenchmarkChart
+            dataset={filteredDataset}
+            fullDataset={dataset}
+            locale={locale}
+            sortState={sortState}
+            onSortChange={handleSortChange}
+            harness={filterState.harness}
+          />
           <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
         </>
       )}

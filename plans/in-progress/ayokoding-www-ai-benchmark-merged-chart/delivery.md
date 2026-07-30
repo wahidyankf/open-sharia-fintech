@@ -504,7 +504,7 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
 
 ## Phase 3: Wire in the merged chart, delete the old charts
 
-- [ ] [AI] Edit `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx`:
+- [x] [AI] Edit `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx`:
       replace the `<CapabilityChart .../>` and `<PriceChart .../>` calls with one
       `<BenchmarkChart dataset={filteredDataset} fullDataset={dataset} locale={locale} sortState={sortState} onSortChange={handleSortChange} harness={filterState.harness} />`
       — the `harness` prop is REQUIRED here, not optional-and-omitted: `price-chart.tsx` currently
@@ -513,9 +513,44 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
       `sortState` from `decodeState(searchParams)` and a new `handleSortChange` that mirrors the
       existing `handleFilterChange`'s `latestFilterStateRef` race-guard pattern — acceptance:
       `npx nx run ayokoding-www:test:unit -- benchmark-content` passes with updated assertions
-- [ ] [AI] Edit `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.test.tsx`:
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx`.
+  > **Notes**: Wired `<BenchmarkChart>` in with `sortState` derived from `decodeState(searchParams)`
+  > and a new `handleSortChange` mirroring `handleFilterChange`'s race-guard pattern. Found and fixed
+  > a real regression along the way: `filterState` and `sortState` were both built by re-typing the
+  > SAME `decoded` object returned by `decodeState()` (which carries all 6 keys). That left
+  > `latestSortStateRef.current` holding its own explicit `harness: undefined`/`class: undefined`
+  > keys, so `{ ...next, ...latestSortStateRef.current }` in `handleFilterChange` let those
+  > `undefined`s clobber `next`'s real filter values on every filter change — silently emptying the
+  > query string. Confirmed via `git stash`/`git stash pop` that the two pre-existing Rule-15
+  > EWT-003 regression tests in `benchmark-content.test.tsx` passed before this wiring and failed
+  > after, isolating the cause to the wiring rather than a pre-existing bug. Fixed by picking
+  > disjoint key sets explicitly (`filterState`/`sortState` each built from named `decoded.*` fields)
+  > instead of aliasing both to `decoded`. Re-ran
+  > `npx nx run ayokoding-www:test:unit -- benchmark-content` after the fix: 2/2 tests pass.
+
+- [x] [AI] Edit `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.test.tsx`:
       update render assertions to query for `benchmark-chart` slots instead of `capability-chart`/
       `price-chart` — acceptance: test file compiles and passes
+
+  > **Date**: 2026-07-30. **Status**: DONE (no-op, already satisfied).
+  > **Files-Changed**: none.
+  > **Notes**: `benchmark-content.test.tsx` only covers the Rule-15 EWT-003 filter-URL race (via
+  > `BenchmarkFilters`' harness/class selects) — it never queried `capability-chart`/`price-chart`
+  > slots to begin with, and `grep -n "capability-chart\|price-chart\|CapabilityChart\|PriceChart"`
+  > against this file returns no output. Nothing to rewrite. The actual dangling references to the
+  > old chart components live in `test/unit/fe-steps/ai-benchmark.steps.tsx`, handled by the next
+  > checklist item. Re-ran `npx nx run ayokoding-www:test:unit -- benchmark-content`: 2/2 pass.
+
+> **Unplanned fix discovered while preparing the steps rewrite below**: Phase 2's `benchmark-chart.tsx`
+> silently dropped AC-12 (a low-coverage model must carry a text marker stating its coverage ratio) —
+> `capability-chart.tsx` renders this marker; `BenchmarkRow` did not. Root-cause fixed via RED/GREEN
+> in `benchmark-chart.test.tsx`/`benchmark-chart.tsx` (two new tests: marker present + correct text
+> when coverage is below `LOW_COVERAGE_THRESHOLD`, absent when at/above it) before proceeding, since
+> AC-12's Gherkin binding below must bind against `<BenchmarkChart>` and needs the marker to exist.
+> `npx nx run ayokoding-www:test:unit -- benchmark-chart`: 10/10 pass (was 8/10 before this fix).
+
 - [ ] [AI] Rewrite `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`'s
       `CapabilityChart`/`PriceChart`-dependent step bindings to target `BenchmarkChart` instead —
       this is a hard prerequisite for the next two deletion steps, not optional cleanup: the file's

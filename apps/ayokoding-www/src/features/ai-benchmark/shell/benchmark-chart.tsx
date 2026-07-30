@@ -17,11 +17,11 @@ import type { Locale } from "@/features/i18n/core/config";
 import { dataset as defaultDataset, type Dataset, type HarnessId } from "../core/data/models";
 import { computeGroups, type ModelScore } from "../core/bands";
 import { BANDS } from "../core/filter";
-import { COMPOSITE_INDEX_MAX } from "../core/score";
+import { COMPOSITE_INDEX_MAX, LOW_COVERAGE_THRESHOLD } from "../core/score";
 import { lowestRate, rateForHarness } from "../core/price";
 import { byCapabilityDesc, byPriceAsc, byPriceDesc, SORT_MODES, type SortMode } from "../core/sort";
 import type { SortState } from "../core/url-state";
-import { formatIndex, formatPriceUsd } from "./format";
+import { formatCoverage, formatIndex, formatPriceUsd } from "./format";
 import { Axis, Bar, BandGroup, bandLabel, scaleLinear, type ChartBand } from "./chart-primitives";
 import { FilterSelect, type FilterOption } from "./benchmark-filters";
 
@@ -100,6 +100,7 @@ function BenchmarkRow({ score, rowTop, band, locale, capabilityScale, priceScale
   const priceInY = capBarY + BAR_HEIGHT + BAR_GAP;
   const priceOutY = priceInY + BAR_HEIGHT + BAR_GAP;
   const capWidth = capabilityScale(index);
+  const isLowCoverage = score.coverage > 0 && score.coverage < LOW_COVERAGE_THRESHOLD;
 
   return (
     <g data-testid={`${SLOT}-row-${id}`}>
@@ -120,6 +121,17 @@ function BenchmarkRow({ score, rowTop, band, locale, capabilityScale, priceScale
         band={band}
         testId={`${SLOT}-bar-capability-${id}`}
       />
+      {isLowCoverage ? (
+        <text
+          data-slot="chart-low-coverage-marker"
+          data-testid={`${SLOT}-low-coverage-${id}`}
+          x={PLOT_X + capWidth + 6}
+          y={capBarY + BAR_HEIGHT - 4}
+          className="fill-muted-foreground text-[9px]"
+        >
+          {t(locale, "aiBenchCoverageLow")} ({formatCoverage(score.coverage, locale)})
+        </text>
+      ) : null}
       {rate?.kind === "metered" ? (
         <>
           <Bar

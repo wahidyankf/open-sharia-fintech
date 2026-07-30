@@ -218,6 +218,46 @@ describe("BenchmarkChart — DD-1 rated + subscription-only rendering", () => {
   });
 });
 
+describe("BenchmarkChart — AC-12 low-coverage marker", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("marks a rated model whose coverage is below the low-coverage threshold, stating its coverage ratio in text", () => {
+    // swe-bench-verified alone carries weight 25 → coverage 0.25, below the 0.5 threshold —
+    // mirrors `capability-chart.test.tsx`'s AC-12 fixture exactly.
+    const lowCoverageModel: Model = {
+      id: "low-coverage-model",
+      name: "low-coverage-model",
+      vendor: "Test",
+      harnesses: ["claude-code"],
+      figures: [{ benchmark: "swe-bench-verified", value: 50, grade: "verified", source: SRC }],
+      pricing: { "claude-code": metered(2, 10) },
+    };
+    const ds = fixtureDataset([lowCoverageModel]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const marker = screen.getByTestId("benchmark-chart-low-coverage-low-coverage-model");
+    // 25/100 = 0.25 coverage ratio, formatted as a percentage in the marker text.
+    expect(marker.textContent ?? "").toMatch(/25/);
+  });
+
+  it("shows no low-coverage marker for a fully-covered rated model", () => {
+    const model = ratedMeteredModel("full-coverage-model", 2, 10);
+    // ratedMeteredModel's single figure alone is below threshold too, so use a model whose
+    // coverage sits at/above the threshold by scoring on enough benchmarks.
+    model.figures = [
+      { benchmark: "swe-bench-verified", value: 70, grade: "verified", source: SRC },
+      { benchmark: "swe-bench-pro", value: 70, grade: "verified", source: SRC },
+      { benchmark: "terminal-bench-2-1", value: 70, grade: "verified", source: SRC },
+    ];
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    expect(screen.queryByTestId("benchmark-chart-low-coverage-full-coverage-model")).toBeNull();
+  });
+});
+
 describe("BenchmarkChart — unrated models", () => {
   afterEach(() => {
     cleanup();
