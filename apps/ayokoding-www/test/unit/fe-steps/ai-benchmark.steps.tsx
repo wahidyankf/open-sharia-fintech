@@ -57,8 +57,7 @@ import {
   type IndexMap,
 } from "@/features/ai-benchmark/core/bands";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
-import { CapabilityChart } from "@/features/ai-benchmark/shell/capability-chart";
-import { PriceChart } from "@/features/ai-benchmark/shell/price-chart";
+import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
 import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
 import { filterModels } from "@/features/ai-benchmark/core/filter";
 import { t } from "@/features/i18n/core/translations";
@@ -164,30 +163,21 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     render(React.createElement(AiBenchmarkPage));
   }
 
-  /** Every model id rendered ANYWHERE in the capability chart (rated bars + the unrated list). */
-  function capabilityChartModelIds(): string[] {
-    const container = screen.getByTestId("capability-chart");
-    const barRows = Array.from(container.querySelectorAll('[data-testid^="capability-chart-row-"]'));
-    const unratedItems = Array.from(container.querySelectorAll('[data-testid^="capability-chart-unrated-model-"]'));
-    return [
-      ...barRows.map((el) => el.getAttribute("data-testid")!.replace("capability-chart-row-", "")),
-      ...unratedItems.map((el) => el.getAttribute("data-testid")!.replace("capability-chart-unrated-model-", "")),
-    ];
-  }
-
   /**
-   * Every model id rendered ANYWHERE in the price chart (metered bars + the subscription list).
-   * This is a SUBSET of the filtered roster, not necessarily the whole thing — a model with no
-   * price at all (neither metered nor subscription) is never plotted or listed here (AC-16/17
-   * semantics, Phase 7), so callers assert subset containment, not exact-set equality.
+   * Every model id rendered ANYWHERE in the merged chart (rated rows + the unrated list). Since
+   * the merge (Phase 3), one rated row always carries BOTH the capability bar and some price
+   * representation (bars, subscription text, or "not reported" text — `benchmark-chart.tsx`'s
+   * `BenchmarkRow`, unlike the old `price-chart.tsx`, never omits a priceless model's row), so this
+   * one helper now serves what `capabilityChartModelIds()`/`priceChartModelIds()` used to split
+   * into two — both resolve to the exact same DOM node set post-merge.
    */
-  function priceChartModelIds(): string[] {
-    const container = screen.getByTestId("price-chart");
-    const barRows = Array.from(container.querySelectorAll('[data-testid^="price-chart-row-"]'));
-    const subItems = Array.from(container.querySelectorAll('[data-testid^="price-chart-subscription-"]'));
+  function benchmarkChartModelIds(): string[] {
+    const container = screen.getByTestId("benchmark-chart");
+    const rows = Array.from(container.querySelectorAll('[data-testid^="benchmark-chart-row-"]'));
+    const unratedItems = Array.from(container.querySelectorAll('[data-testid^="benchmark-chart-unrated-model-"]'));
     return [
-      ...barRows.map((el) => el.getAttribute("data-testid")!.replace("price-chart-row-", "")),
-      ...subItems.map((el) => el.getAttribute("data-testid")!.replace("price-chart-subscription-", "")),
+      ...rows.map((el) => el.getAttribute("data-testid")!.replace("benchmark-chart-row-", "")),
+      ...unratedItems.map((el) => el.getAttribute("data-testid")!.replace("benchmark-chart-unrated-model-", "")),
     ];
   }
 
@@ -954,7 +944,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the capability chart is rendered", () => {
       render(
-        React.createElement(CapabilityChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -971,8 +961,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(lowScore?.index).toBeDefined();
       expect(highScore?.index).toBeDefined();
 
-      const lowBar = screen.getByTestId("capability-chart-bar-cap-low");
-      const highBar = screen.getByTestId("capability-chart-bar-cap-high");
+      const lowBar = screen.getByTestId("benchmark-chart-bar-capability-cap-low");
+      const highBar = screen.getByTestId("benchmark-chart-bar-capability-cap-high");
       const lowWidth = Number(lowBar.getAttribute("width"));
       const highWidth = Number(highBar.getAttribute("width"));
 
@@ -995,7 +985,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset, fullDataset: dataset, locale: "en" }));
+      render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every capability bar carries its model name and index in text
@@ -1003,7 +993,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       const groups = computeGroups(dataset);
       for (const key of RATED_BAND_KEYS) {
         for (const s of groups[key]) {
-          const label = screen.getByTestId(`capability-chart-label-mobile-${s.model.id}`);
+          const label = screen.getByTestId(`benchmark-chart-label-${s.model.id}`);
           expect(label.textContent ?? "").toContain(s.model.name);
         }
       }
@@ -1013,7 +1003,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       const groups = computeGroups(dataset);
       for (const key of RATED_BAND_KEYS) {
         for (const s of groups[key]) {
-          const label = screen.getByTestId(`capability-chart-label-mobile-${s.model.id}`);
+          const label = screen.getByTestId(`benchmark-chart-label-${s.model.id}`);
           expect(label.textContent ?? "").toContain(formatIndex(s.index ?? 0, "en"));
         }
       }
@@ -1033,7 +1023,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the capability chart is rendered", () => {
       render(
-        React.createElement(CapabilityChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -1043,11 +1033,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A low-coverage model is marked as low coverage
     Then("that model's row carries a low-coverage marker", () => {
-      expect(screen.getByTestId("capability-chart-low-coverage-cap-low-coverage")).not.toBeNull();
+      expect(screen.getByTestId("benchmark-chart-low-coverage-cap-low-coverage")).not.toBeNull();
     });
 
     And("the marker states the model's coverage ratio in text", () => {
-      const marker = screen.getByTestId("capability-chart-low-coverage-cap-low-coverage");
+      const marker = screen.getByTestId("benchmark-chart-low-coverage-cap-low-coverage");
       const [score] = computeGroups(ctx.fixtureDataset!).light;
       expect(marker.textContent ?? "").toContain(formatCoverage(score!.coverage, "en"));
     });
@@ -1061,13 +1051,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     When("the capability chart is rendered", () => {
-      render(React.createElement(CapabilityChart, { dataset, fullDataset: dataset, locale: "en" }));
+      render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The capability class is carried textually, not by colour alone
     Then("every band group carries its class name as text", () => {
       for (const band of RATED_BAND_KEYS) {
-        const header = screen.getByTestId(`capability-chart-band-${band}-label`);
+        const header = screen.getByTestId(`benchmark-chart-band-${band}-label`);
         const key = BAND_LABEL_KEYS[band];
         expect(header.textContent).toBe(key ? t("en", key) : band);
       }
@@ -1092,9 +1082,18 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   // Phase 7 — price chart (AC-15/16/17).
   // ════════════════════════════════════════════════════════════════════════════
 
+  // Rated (one figure) — post-merge, only a rated model gets a row with price bars at all (an
+  // unrated model renders in the plain text list, no capability or price bar).
   function meteredFixture(id: string, input: number, output: number, harness: HarnessId = "claude-code"): Model {
     const rate: MeteredPrice = { kind: "metered", input, output, grade: "verified", source: SRC };
-    return { id, name: id, vendor: "Test", harnesses: [harness], figures: [], pricing: { [harness]: rate } };
+    return {
+      id,
+      name: id,
+      vendor: "Test",
+      harnesses: [harness],
+      figures: [fig("swe-bench-verified", 50)],
+      pricing: { [harness]: rate },
+    };
   }
 
   // ─── AC-15 — a metered model shows separate labelled input and output bars ────
@@ -1106,7 +1105,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the price chart is rendered", () => {
       render(
-        React.createElement(PriceChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -1116,14 +1115,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A metered model shows separate labelled input and output bars
     Then("that model has one bar labelled as the input rate", () => {
-      expect(screen.getByTestId("price-chart-bar-in-price-metered")).not.toBeNull();
-      const label = screen.getByTestId("price-chart-label-in-price-metered");
+      expect(screen.getByTestId("benchmark-chart-bar-price-in-price-metered")).not.toBeNull();
+      const label = screen.getByTestId("benchmark-chart-label-in-price-metered");
       expect(label.textContent ?? "").toContain(formatPriceUsd(3, "en"));
     });
 
     And("that model has one bar labelled as the output rate", () => {
-      expect(screen.getByTestId("price-chart-bar-out-price-metered")).not.toBeNull();
-      const label = screen.getByTestId("price-chart-label-out-price-metered");
+      expect(screen.getByTestId("benchmark-chart-bar-price-out-price-metered")).not.toBeNull();
+      const label = screen.getByTestId("benchmark-chart-label-out-price-metered");
       expect(label.textContent ?? "").toContain(formatPriceUsd(15, "en"));
     });
   });
@@ -1152,7 +1151,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the price chart is rendered", () => {
       render(
-        React.createElement(PriceChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -1160,18 +1159,25 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
     });
 
+    // This fixture carries zero figures, so it is UNRATED (no composite index, no row to attach
+    // to) — DD-1's resolution retains the old `price-chart.tsx` global subscription list's text
+    // (plan cost + caps) for exactly this subset, inside the merged chart's unrated list item,
+    // rather than in a separate "subscription group" container (that container no longer exists
+    // post-merge — a RATED+subscription-only model instead gets `BenchmarkRow`'s inline treatment,
+    // covered by `benchmark-chart.test.tsx`'s own DD-1 test).
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A subscription-only model renders in the subscription group
     Then("that model appears in the subscription group", () => {
-      const group = screen.getByTestId("price-chart-subscription");
-      expect(group.textContent ?? "").toContain("price-sub-only");
+      const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
+      expect(item.textContent ?? "").toContain("price-sub-only");
+      expect(item.textContent ?? "").toContain(formatPriceUsd(10, "en"));
     });
 
     But("that model renders no per-token bar and no zero value", () => {
-      expect(screen.queryByTestId("price-chart-bar-in-price-sub-only")).toBeNull();
-      expect(screen.queryByTestId("price-chart-bar-out-price-sub-only")).toBeNull();
-      const group = screen.getByTestId("price-chart-subscription");
-      expect(group.textContent ?? "").not.toContain("$0.00");
-      expect(group.textContent ?? "").not.toMatch(/\$0\b/);
+      expect(screen.queryByTestId("benchmark-chart-bar-price-in-price-sub-only")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-bar-price-out-price-sub-only")).toBeNull();
+      const item = screen.getByTestId("benchmark-chart-unrated-model-price-sub-only");
+      expect(item.textContent ?? "").not.toContain("$0.00");
+      expect(item.textContent ?? "").not.toMatch(/\$0\b/);
     });
   });
 
@@ -1179,12 +1185,17 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("An unfiltered price chart shows the lowest harness rate", ({ Given, When, Then, And }) => {
     Given("a fixture model priced differently by two harnesses", () => {
+      // Post-merge, only a RATED model gets a row with price bars at all (the decision-branches
+      // diagram in tech-docs.md: an unrated model never renders a price bar, only its bare name in
+      // the unrated list) — this fixture carries one figure so it lands in a rated band, unlike the
+      // pre-merge fixture, which relied on `price-chart.tsx`'s now-removed "unrated models still get
+      // metered bars" behavior.
       const m: Model = {
         id: "price-two-harness",
         name: "price-two-harness",
         vendor: "Test",
         harnesses: ["claude-code", "cursor"],
-        figures: [],
+        figures: [fig("swe-bench-verified", 50)],
         pricing: {
           "claude-code": { kind: "metered", input: 5, output: 25, grade: "verified", source: SRC },
           cursor: { kind: "metered", input: 3, output: 15, grade: "verified", source: SRC },
@@ -1195,7 +1206,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the price chart is rendered without a harness filter", () => {
       render(
-        React.createElement(PriceChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -1205,13 +1216,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered price chart shows the lowest harness rate
     Then("that model's bars use the lower of the two harness rates", () => {
-      const inLabel = screen.getByTestId("price-chart-label-in-price-two-harness");
+      const inLabel = screen.getByTestId("benchmark-chart-label-in-price-two-harness");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
       expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(5, "en"));
     });
 
     And("the chart states that it shows the lowest available harness rate", () => {
-      const subtitle = screen.getByTestId("price-chart-subtitle");
+      const subtitle = screen.getByTestId("benchmark-chart-subtitle");
       expect(subtitle.textContent).toBe(t("en", "aiBenchPriceLowestSubtitle"));
     });
   });
@@ -1227,17 +1238,17 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
+    // Post-merge, both step texts below resolve to the SAME `<svg role="img">` — capability and
+    // price are no longer two charts, so both assertions bind against the one merged accessible
+    // name (`aiBenchMergedChartTitle`) rather than two distinct titles.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Each chart exposes an accessible name
     Then("the capability chart exposes an accessible name", () => {
-      const chart = screen.getByRole("img", { name: t("en", "aiBenchCapabilityChartTitle") });
+      const chart = screen.getByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
       expect(chart).not.toBeNull();
     });
 
     And("the price chart exposes an accessible name", () => {
-      // Phase 7's Y-7 replaces the Phase-6 vacuous stub (which merely asserted no price-chart node
-      // existed yet) with a real accessible-name assertion now that `price-chart.tsx` is wired onto
-      // the page (Y-7/Y-8).
-      const chart = screen.getByRole("img", { name: t("en", "aiBenchPriceChartTitle") });
+      const chart = screen.getByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
       expect(chart).not.toBeNull();
     });
   });
@@ -1278,18 +1289,18 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     const expected = () => filterModels(dataset, { harness: "cursor" });
 
+    // Post-merge, both step texts below bind against the SAME merged chart, so both resolve to an
+    // exact-set equality check now: unlike the retired `price-chart.tsx` (which omitted a priceless
+    // model entirely, AC-16/17), `benchmark-chart.tsx`'s `BenchmarkRow` always renders a row (with a
+    // "not reported" placeholder when priceless) or an unrated-list entry — no filtered model is
+    // ever dropped from the merged chart.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness parameter narrows both charts and the table
     Then("only models that harness exposes are shown in the capability chart", () => {
-      expect(sorted(capabilityChartModelIds())).toEqual(sorted(idsOf(expected())));
+      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
     And("only models that harness exposes are shown in the price chart", () => {
-      // The price chart may under-represent (a priceless model is never plotted or listed at all —
-      // AC-16/17), so this is a subset check, never over-representing an excluded model.
-      const allowed = new Set(idsOf(expected()));
-      for (const id of priceChartModelIds()) {
-        expect(allowed.has(id), `${id} must be in the harness-filtered set`).toBe(true);
-      }
+      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
     And("only models that harness exposes are shown in the data table", () => {
@@ -1312,14 +1323,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A class parameter narrows both charts and the table
     Then("only models in that band are shown in the capability chart", () => {
-      expect(sorted(capabilityChartModelIds())).toEqual(sorted(idsOf(expected())));
+      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
     And("only models in that band are shown in the price chart", () => {
-      const allowed = new Set(idsOf(expected()));
-      for (const id of priceChartModelIds()) {
-        expect(allowed.has(id), `${id} must be in the "opus" band`).toBe(true);
-      }
+      expect(sorted(benchmarkChartModelIds())).toEqual(sorted(idsOf(expected())));
     });
 
     And("only models in that band are shown in the data table", () => {
@@ -1349,12 +1357,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
   Scenario("A harness filter switches the price chart to that harness's rate", ({ Given, When, Then }) => {
     Given("a fixture model priced differently by two harnesses", () => {
+      // Rated (one figure), same reasoning as AC-17's fixture above — only a rated model gets a row
+      // with price bars post-merge.
       const m: Model = {
         id: "price-harness-switch",
         name: "price-harness-switch",
         vendor: "Test",
         harnesses: ["cursor", "opencode-go"],
-        figures: [],
+        figures: [fig("swe-bench-verified", 50)],
         pricing: {
           cursor: { kind: "metered", input: 2, output: 6, grade: "verified", source: SRC },
           "opencode-go": { kind: "metered", input: 5, output: 20, grade: "verified", source: SRC },
@@ -1365,7 +1375,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     When("the harness filter selects the more expensive harness", () => {
       render(
-        React.createElement(PriceChart, {
+        React.createElement(BenchmarkChart, {
           dataset: ctx.fixtureDataset!,
           fullDataset: ctx.fixtureDataset!,
           locale: "en",
@@ -1376,9 +1386,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the price chart to that harness's rate
     Then("that model's bars use that harness's rate", () => {
-      const inLabel = screen.getByTestId("price-chart-label-in-price-harness-switch");
+      const inLabel = screen.getByTestId("benchmark-chart-label-in-price-harness-switch");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(5, "en"));
-      const outLabel = screen.getByTestId("price-chart-label-out-price-harness-switch");
+      const outLabel = screen.getByTestId("benchmark-chart-label-out-price-harness-switch");
       expect(outLabel.textContent ?? "").toContain(formatPriceUsd(20, "en"));
       // Never the OTHER harness's (cheaper) rate.
       expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(2, "en"));
@@ -1456,8 +1466,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     But("neither chart nor the data table renders in the empty state", () => {
-      expect(screen.queryByTestId("capability-chart-svg")).toBeNull();
-      expect(screen.queryByTestId("price-chart-svg")).toBeNull();
+      expect(screen.queryByTestId("benchmark-chart-svg")).toBeNull();
       // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
       // the empty-state message must not be followed by an empty, redundant table skeleton either
       // — <ModelTable> moved inside the `!isEmpty` branch alongside the two charts. AC-28 itself

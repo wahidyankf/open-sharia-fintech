@@ -134,6 +134,16 @@ function BenchmarkRow({ score, rowTop, band, locale, capabilityScale, priceScale
       ) : null}
       {rate?.kind === "metered" ? (
         <>
+          <text
+            data-slot="chart-bar-label"
+            data-testid={`${SLOT}-label-in-${id}`}
+            x={PLOT_X - 8}
+            y={priceInY + BAR_HEIGHT - 2}
+            textAnchor="end"
+            className="fill-muted-foreground text-[9px]"
+          >
+            {t(locale, "aiBenchColInputPrice")}: {formatPriceUsd(rate.input, locale)}
+          </text>
           <Bar
             x={PLOT_X}
             y={priceInY}
@@ -142,6 +152,16 @@ function BenchmarkRow({ score, rowTop, band, locale, capabilityScale, priceScale
             band={band}
             testId={`${SLOT}-bar-price-in-${id}`}
           />
+          <text
+            data-slot="chart-bar-label"
+            data-testid={`${SLOT}-label-out-${id}`}
+            x={PLOT_X - 8}
+            y={priceOutY + BAR_HEIGHT - 2}
+            textAnchor="end"
+            className="fill-muted-foreground text-[9px]"
+          >
+            {t(locale, "aiBenchColOutputPrice")}: {formatPriceUsd(rate.output, locale)}
+          </text>
           <Bar
             x={PLOT_X}
             y={priceOutY}
@@ -254,6 +274,15 @@ export function BenchmarkChart({
         {t(locale, "aiBenchMergedChartTitle")}
       </h2>
 
+      {/* AC-18: once a specific harness is selected, every row shows THAT harness's own rate, not
+          the lowest across harnesses — the "lowest rate" subtitle would misstate that, so it only
+          renders when no harness filter is active (mirrors `price-chart.tsx`'s AC-17 subtitle). */}
+      {harness === undefined ? (
+        <p data-testid={`${SLOT}-subtitle`} className="mb-2 text-xs text-muted-foreground">
+          {t(locale, "aiBenchPriceLowestSubtitle")}
+        </p>
+      ) : null}
+
       {onSortChange ? (
         <div data-testid={`${SLOT}-sort-controls`} className="mb-3 flex flex-wrap gap-3">
           {bands.map((bandLayout) => (
@@ -318,11 +347,26 @@ export function BenchmarkChart({
             {bandLabel("unrated", locale)}
           </h3>
           <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
-            {groups.unrated.map((score) => (
-              <li key={score.model.id} data-testid={`${SLOT}-unrated-model-${score.model.id}`}>
-                {score.model.name}
-              </li>
-            ))}
+            {groups.unrated.map((score) => {
+              // DD-1: an unrated model has no row to attach inline subscription text to, so the
+              // retired `price-chart.tsx` global subscription list's per-item text is preserved
+              // here for exactly this subset (a rated+subscription-only model instead gets the
+              // inline `BenchmarkRow` treatment above — never both).
+              const rate = harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model);
+              return (
+                <li key={score.model.id} data-testid={`${SLOT}-unrated-model-${score.model.id}`}>
+                  {rate?.kind === "subscription" ? (
+                    <>
+                      {score.model.name} — {t(locale, "aiBenchSubscription")}:{" "}
+                      {formatPriceUsd(rate.planCostUsd, locale)}
+                      {rate.caps ? ` (${rate.caps})` : ""}
+                    </>
+                  ) : (
+                    score.model.name
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       ) : null}

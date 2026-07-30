@@ -68,6 +68,23 @@ describe("BenchmarkChart — merged row structure", () => {
   });
 });
 
+describe("BenchmarkChart — DD-2 price bar text labels", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("labels the input and output price bars with their formatted USD rate, preserving price-chart.tsx's full detail (DD-2)", () => {
+    const model = ratedMeteredModel("labelled-model", 3, 15);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const inLabel = screen.getByTestId("benchmark-chart-label-in-labelled-model");
+    expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
+    const outLabel = screen.getByTestId("benchmark-chart-label-out-labelled-model");
+    expect(outLabel.textContent ?? "").toContain(formatPriceUsd(15, "en"));
+  });
+});
+
 describe("BenchmarkChart — bar length proportional to value", () => {
   afterEach(() => {
     cleanup();
@@ -90,6 +107,29 @@ describe("BenchmarkChart — bar length proportional to value", () => {
     // (output 15) spans exactly half of it — proportional, not merely "wider than".
     expect(higherWidth).toBeGreaterThan(0);
     expect(lowerWidth).toBeCloseTo(higherWidth / 2, 1);
+  });
+});
+
+describe("BenchmarkChart — AC-17 lowest-rate subtitle (suppressed once a harness filter is active, AC-18)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("states that it shows the lowest available harness rate when no harness filter is active", () => {
+    const model = ratedMeteredModel("subtitle-model", 3, 15);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const subtitle = screen.getByTestId("benchmark-chart-subtitle");
+    expect(subtitle.textContent).toBe(t("en", "aiBenchPriceLowestSubtitle"));
+  });
+
+  it("suppresses the subtitle once a specific harness filter is active", () => {
+    const model = ratedMeteredModel("subtitle-model-2", 3, 15);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" harness="claude-code" />);
+
+    expect(screen.queryByTestId("benchmark-chart-subtitle")).toBeNull();
   });
 });
 
@@ -282,6 +322,45 @@ describe("BenchmarkChart — unrated models", () => {
     expect(screen.queryByTestId("benchmark-chart-bar-capability-unrated-model")).toBeNull();
     expect(screen.queryByTestId("benchmark-chart-bar-price-in-unrated-model")).toBeNull();
     expect(screen.queryByTestId("benchmark-chart-bar-price-out-unrated-model")).toBeNull();
+  });
+});
+
+describe("BenchmarkChart — DD-1 retained global list for unrated + subscription-only models", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("states the plan cost and caps for an unrated model priced only under a subscription, mirroring price-chart.tsx's retired global subscription list", () => {
+    const unratedSubOnly: Model = {
+      id: "unrated-sub-only",
+      name: "unrated-sub-only",
+      vendor: "Test",
+      harnesses: ["opencode-go"],
+      figures: [], // zero coverage → no composite index → unrated
+      pricing: { "opencode-go": subscription(10, "First month $5, then $10/month.") },
+    };
+    const ds = fixtureDataset([unratedSubOnly]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const item = screen.getByTestId("benchmark-chart-unrated-model-unrated-sub-only");
+    expect(item.textContent ?? "").toContain(formatPriceUsd(10, "en"));
+    expect(item.textContent ?? "").toContain("First month $5, then $10/month.");
+  });
+
+  it("shows only the model name for a genuinely priceless unrated model", () => {
+    const unratedNoPrice: Model = {
+      id: "unrated-no-price",
+      name: "unrated-no-price",
+      vendor: "Test",
+      harnesses: ["claude-code"],
+      figures: [],
+      pricing: {},
+    };
+    const ds = fixtureDataset([unratedNoPrice]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const item = screen.getByTestId("benchmark-chart-unrated-model-unrated-no-price");
+    expect(item.textContent).toBe("unrated-no-price");
   });
 });
 

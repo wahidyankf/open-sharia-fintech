@@ -551,7 +551,7 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
 > AC-12's Gherkin binding below must bind against `<BenchmarkChart>` and needs the marker to exist.
 > `npx nx run ayokoding-www:test:unit -- benchmark-chart`: 10/10 pass (was 8/10 before this fix).
 
-- [ ] [AI] Rewrite `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`'s
+- [x] [AI] Rewrite `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`'s
       `CapabilityChart`/`PriceChart`-dependent step bindings to target `BenchmarkChart` instead —
       this is a hard prerequisite for the next two deletion steps, not optional cleanup: the file's
       `unit-fe` Vitest project glob (`test/unit/fe-steps/**/*.steps.{ts,tsx}`) still imports both
@@ -564,7 +564,48 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
       passes with zero references to `CapabilityChart`/`PriceChart` remaining in the file
       (`grep -c "CapabilityChart\|PriceChart" apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`
       returns `0`)
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx`.
+  > **Notes**: Replaced the `CapabilityChart`/`PriceChart` imports with `BenchmarkChart`; collapsed
+  > `capabilityChartModelIds()`/`priceChartModelIds()` into one `benchmarkChartModelIds()` helper
+  > (post-merge, both resolve to the same DOM node set, since `BenchmarkRow` always renders a row —
+  > never omitting a priceless model the way the old `price-chart.tsx` did). Re-pointed every
+  > direct-render scenario (AC-12/13/14/15/16/17/18/36/37) at `BenchmarkChart` and its
+  > `benchmark-chart-*` test ids. `grep -c "CapabilityChart\|PriceChart" ...ai-benchmark.steps.tsx`
+  > returns `0`.
+  >
+  > Three more real gaps surfaced (and fixed via RED/GREEN in `benchmark-chart.test.tsx`/
+  > `benchmark-chart.tsx`) while making these scenarios pass, beyond task #121's AC-12 fix already
+  > recorded above:
+  >
+  > 1. **DD-2 price labels missing**: `BenchmarkRow`'s price-in/price-out bars carried no formatted-
+  >    price text label at all (AC-15 requires one); added `benchmark-chart-label-in-{id}`/
+  >    `-label-out-{id}` text, mirroring `price-chart.tsx`'s left-gutter layout.
+  > 2. **AC-17 lowest-rate subtitle missing**: `price-chart.tsx`'s "shows the lowest available
+  >    harness rate" subtitle (suppressed once a harness filter is active, AC-18) had no equivalent
+  >    in `BenchmarkChart`; added `benchmark-chart-subtitle`.
+  > 3. **DD-1's retained global list for unrated+subscription-only models**: `tech-docs.md`'s DD-1
+  >    explicitly requires the OLD `price-chart.tsx` cross-band subscription list's per-item text
+  >    (plan cost + caps) to be retained for models that are BOTH unrated AND subscription-only
+  >    (they have no row to attach inline text to) — `BenchmarkChart`'s unrated list rendered only
+  >    the bare model name, dropping this. Added the plan-cost/caps text to the unrated list item
+  >    when that model's rate is a subscription.
+  >
+  > Also discovered a genuine, PLAN-DOCUMENTED behavior change (not a gap): the decision-branches
+  > diagram in `tech-docs.md` states an unrated model never renders a capability OR price bar in the
+  > merged chart — unlike the old `price-chart.tsx`, which rendered metered bars for unrated models
+  > too (its band grouping used all four bands, not just the three rated ones). Three AC-15/17/18
+  > fixtures in the steps file relied on that old behavior (`figures: []`, i.e. unrated, yet expected
+  > price bars) and needed a figure added to become rated, per the new design — not a bug fix, an
+  > intentional carry-forward of the plan's own stated simplification.
+  >
+  > `npx nx run ayokoding-www:test:unit -- fe-steps`: 32 files / 1208 passed, 6 skipped (pre-existing
+  > jsdom-incapable placeholders, unrelated). `npx nx run ayokoding-www:typecheck`: exits 0.
   - _Suggested executor: `swe-typescript-dev`_
+
 - [ ] [AI] Delete `apps/ayokoding-www/src/features/ai-benchmark/shell/capability-chart.tsx` and
       `apps/ayokoding-www/src/features/ai-benchmark/shell/capability-chart.test.tsx` — acceptance:
       `git status` shows both deleted; `npx nx run ayokoding-www:typecheck` still exits 0 (no
