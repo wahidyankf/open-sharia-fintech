@@ -31,7 +31,17 @@ const translations: Record<Locale, Record<string, string>> = {
     // Every aiBench* key MUST exist in both locales (AC-35): a missing key renders as its
     // raw identifier, and the page test asserts no "aiBench" token leaks into rendered text.
     aiBenchTitle: "AI Model Benchmark",
-    aiBenchSubtitle: "A roster-relative index of coding-agent models across five harnesses, with every figure sourced.",
+    // Rule-15 UWT-003 fix (2026-07-30): reworded away from "roster-relative" — that term's own
+    // definition ("normalized to the strongest model on this roster") lived several bullets into
+    // the collapsed "How to read this benchmark" box, which a reader can skip entirely, so the very
+    // first sentence on the page used an undefined term. This wording states the same fact
+    // ("scored relative to each other", not against an absolute standard) in plain language.
+    // Rule-15 UWT-004 fix (2026-07-30): "harness" is the FIRST technical term on the page (right
+    // here, in the subtitle) and was never glossed anywhere — a first-time reader unfamiliar with
+    // coding-agent tooling had no way to learn what it means. The parenthetical below glosses it at
+    // its first use, rather than only inside the collapsed "How to read" box or the filter label.
+    aiBenchSubtitle:
+      "An index of coding-agent models scored relative to each other across five harnesses (the CLI or IDE tools used to run them), with every figure sourced.",
     aiBenchSnapshotLabel: "Data snapshot",
     aiBenchTableCaption:
       "Coding-agent model roster: capability figures, composite index, coverage, and per-harness prices.",
@@ -73,8 +83,13 @@ const translations: Record<Locale, Record<string, string>> = {
       "Coverage varies. A model scored on one of the four benchmarks rests on far less evidence than one scored on all four; low-coverage models are marked so the index is not mistaken for equal-confidence.",
     aiBenchHowToBestConfig:
       "Every figure reflects the vendor's best published configuration (effort setting, prompt, and harness). A model's everyday performance may be lower; the figure is a ceiling, not a typical.",
+    // Rule-15 UWT-005 fix (2026-07-30): the example named "ARC-AGI-2" alongside GPQA Diamond, but
+    // ARC-AGI-2 is not one of the four benchmarks that actually feed the composite index (see
+    // `aiBenchLegendCoverageFormula` below: SWE-bench Verified, SWE-bench Pro, Terminal-Bench 2.1,
+    // GPQA Diamond) — a reader who checked the claim against the data table found no ARC-AGI-2
+    // column anywhere. Swapped in SWE-bench Pro, one of the four benchmarks actually scored.
     aiBenchHowToArcConflict:
-      "Why provenance matters: ARC-AGI-2 / GPQA Diamond scores for the same model disagree across sources. Where published values conflict we show the full range and the low end enters the index — never an averaged middle value.",
+      "Why provenance matters: SWE-bench Pro / GPQA Diamond scores for the same model disagree across sources. Where published values conflict we show the full range and the low end enters the index — never an averaged middle value.",
     aiBenchHowToPriceGap:
       "Why prices are per-harness: DeepSeek V4 Pro costs about one quarter as much direct from DeepSeek as through a gateway that marks the rate up. Each price names the harness that charges it; there is no single 'the price'.",
     aiBenchSourcesHeading: "Sources and licences",
@@ -400,8 +415,11 @@ const translations: Record<Locale, Record<string, string>> = {
     // Setiap kunci aiBench* HARUS ada di kedua bahasa (AC-35): kunci yang hilang muncul sebagai
     // ID mentahnya, dan tes halaman memastikan tidak ada token "aiBench" yang bocor ke teks.
     aiBenchTitle: "Tolok Ukur Model AI",
+    // Rule-15 UWT-003 fix (2026-07-30): mirrors the English rewording — plain-language equivalent
+    // of "scored relative to each other", not the undefined "roster-relative" jargon.
+    // Rule-15 UWT-004 fix (2026-07-30): mirrors the English gloss for "harness" at its first use.
     aiBenchSubtitle:
-      "Indeks relatif terhadap roster model coding-agent di lima harness, dengan setiap angka disertai sumber.",
+      "Indeks model coding-agent yang dinilai secara relatif satu sama lain di lima harness (alat CLI atau IDE yang dipakai menjalankannya), dengan setiap angka disertai sumber.",
     aiBenchSnapshotLabel: "Cuplikan data",
     aiBenchTableCaption:
       "Roster model coding-agent: angka kapabilitas, indeks komposit, cakupan, dan harga per-harness.",
@@ -443,8 +461,10 @@ const translations: Record<Locale, Record<string, string>> = {
       "Cakupan bervariasi. Model yang dinilai pada satu dari empat tolok ukur bertumpu pada jauh lebih sedikit bukti daripada yang dinilai pada keempatnya; model dengan cakupan rendah ditandai agar indeks tidak disangka setara-kepercayaan.",
     aiBenchHowToBestConfig:
       "Setiap angka mencerminkan konfigurasi publik terbaik vendor (pengaturan effort, prompt, dan harness). Performa harian model bisa lebih rendah; angka tersebut adalah batas langit, bukan kondisi tipikal.",
+    // Rule-15 UWT-005 fix (2026-07-30): mirrors the English fix — ARC-AGI-2 is not one of the four
+    // benchmarks that feed the composite index; swapped in SWE-bench Pro.
     aiBenchHowToArcConflict:
-      "Mengapa provenans penting: angka ARC-AGI-2 / GPQA Diamond untuk model yang sama berbeda antar sumber. Saat nilai yang dipublikasikan berkonflik, kami menampilkan rentang lengkapnya dan ujung rendah masuk ke indeks — tidak pernah nilai rata-rata di tengah.",
+      "Mengapa provenans penting: angka SWE-bench Pro / GPQA Diamond untuk model yang sama berbeda antar sumber. Saat nilai yang dipublikasikan berkonflik, kami menampilkan rentang lengkapnya dan ujung rendah masuk ke indeks — tidak pernah nilai rata-rata di tengah.",
     aiBenchHowToPriceGap:
       "Mengapa harga per-harness: DeepSeek V4 Pro berharga sekitar seperempat langsung dari DeepSeek dibandingkan melalui gateway yang menaikkan tarifnya. Setiap harga menyebut harness yang menagihnya; tidak ada 'harga tunggal'.",
     aiBenchSourcesHeading: "Sumber dan lisensi",

@@ -175,14 +175,23 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
           allLabel={allClassesLabel}
           onChange={handleClassChange}
         />
-        {/* `role="status"` (implicit `aria-live="polite"`) — WCAG 4.1.3 Status Messages: a filter
-            change never moves focus or scrolls (`scroll: false` above is intentional), so the
-            narrowed/widened result count must announce itself to assistive tech instead
-            (Rule-15 EWT-004 fix). */}
-        <span data-testid={`${SLOT}-result-count`} role="status" className="text-sm text-muted-foreground">
-          {t(locale, "aiBenchFilterResultCountLabel")}: {resultCount}
-        </span>
       </div>
+
+      {/* `role="status"` (implicit `aria-live="polite"`) — WCAG 4.1.3 Status Messages: a filter
+          change never moves focus or scrolls (`scroll: false` above is intentional), so the
+          narrowed/widened result count must announce itself to assistive tech instead (Rule-15
+          EWT-004 fix, desktop). Hoisted OUT of the `hidden md:flex` desktop-only block so it stays
+          in the accessibility tree below `md` too (Rule-15 EWT-001 fix) — `sr-only md:not-sr-only`
+          keeps it visually identical to before at `md`+ while announcing silently on mobile,
+          matching the mobile `<details>`'s own summary text, which only reports the ACTIVE FILTER
+          count, never the resulting model count. */}
+      <span
+        data-testid={`${SLOT}-result-count`}
+        role="status"
+        className="sr-only text-sm text-muted-foreground md:not-sr-only"
+      >
+        {t(locale, "aiBenchFilterResultCountLabel")}: {resultCount}
+      </span>
     </div>
   );
 }

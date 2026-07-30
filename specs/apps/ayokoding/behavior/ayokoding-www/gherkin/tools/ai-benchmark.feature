@@ -308,12 +308,17 @@ Feature: AI model benchmark tool
     Then that model appears in the unrated group's plain text list
     And no capability bar or price bar is rendered for that model
 
-  # AC-46
+  # AC-46 — reworded (UWT-002 fix, Rule-15 web-usability-tester retest, 2026-07-30): the chart is
+  # now one svg PER rated band (each with its own accessible name), not one svg shared across every
+  # band — see benchmark-chart.tsx's own UWT-002 fix docstring for the sort-control-proximity
+  # reason this split happened. The property this scenario protects (every band's chart region is
+  # independently reachable to assistive tech, and the data is still doubled-up in ModelTable) is
+  # unchanged; only the "how many svgs" detail was stale.
   @unit
   Scenario: The merged chart keeps its accessible name and text alternative
     Given the merged chart has replaced the two former charts
     When a screen reader encounters the chart
-    Then the chart is one svg with role image and one localized title as its accessible name
+    Then each rated band renders its own svg with role image and its own localized title as its accessible name
     And every figure the chart encodes is still reachable via the unchanged ModelTable below
 
   # AC-47

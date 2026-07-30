@@ -472,9 +472,17 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
     Scenario: The merged chart keeps its accessible name and text alternative
       Given the merged chart has replaced the two former charts
       When a screen reader encounters the chart
-      Then the chart is one svg with role image and one localized title as its accessible name
+      Then each rated band renders its own svg with role image and its own localized title as its accessible name
       And every figure the chart encodes is still reachable via the unchanged ModelTable below
     ```
+
+    > **Rule-15 UWT-002 rearchitecture note (2026-07-30, Phase 7)**: this scenario's `Then` step was
+    > reworded — the single shared `<svg role="img">` this Phase 2 step originally built (and its
+    > original wording above described) was later split into ONE `<svg>` PER rated band so each
+    > band's own sort control could sit directly above its own rows (see Phase 7's Rule-15 UWT-002
+    > entry below for the full rationale and evidence). The Phase 2 Date/Status/Notes entries above
+    > remain an honest historical record of what Phase 2 itself built; this note documents the later
+    > change so the embedded scenario stays in sync with the current `.feature` file.
 
 - [x] [AI] **GREEN**: wrap `benchmark-chart.tsx`'s markup in one `<svg role="img" aria-labelledby={titleId}>`
       with a `<title id={titleId}>{t(locale, "aiBenchMergedChartTitle")}</title>` — command:
@@ -1032,18 +1040,445 @@ test:specs for 25 projects and 6 tasks they depend on` — 0 failures.
 
 ### Rule-15 Three-Tester Retest (before archival)
 
-- [ ] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
+- [x] [AI] Run the three live-site testers (the `web-ux-test-fixing-planning` workflow:
       `web-exploratory-tester` + `web-usability-tester` + `web-design-tester`) against the deployed
       preview or local dev server for `/en/tools/ai-benchmark` and `/id/tools/ai-benchmark` —
       acceptance: EWT/UWT/DWT findings + spec-gaps recorded
-- [ ] [AI] Append each finding here as a new unchecked checkbox, source-attributed
+  - **Date**: 2026-07-30. **Status**: DONE — all three legs recorded below (`web-exploratory-tester`
+    this entry; `web-usability-tester`/`web-design-tester` legs recorded further down this section).
+- [x] [AI] Append each finding here as a new unchecked checkbox, source-attributed
       (`- [ ] EWT-NNN:` / `- [ ] UWT-NNN:` / `- [ ] DWT-NNN: <defect> — fix before archival`) and
       each SG-###/USS-### into the Gherkin steps in Phase 4
-- [ ] [AI] Fix every rule-15 EWT/UWT/DWT defect finding before archival — deferral requires explicit
+
+**`web-exploratory-tester` retest** (2026-07-30, output-mode: delivery) — PR #125, spec-aware pass
+against `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` (all 49
+scenarios) and `prd.md`, both `/en/tools/ai-benchmark` and `/id/tools/ai-benchmark`, local dev server
+(`npx nx dev ayokoding-www`, port 3101), 320/375/768/1280 px, Playwright (Chromium) driven directly
+(MCP unavailable in this invocation). Charters run: (1) per-band sort control × surface matrix — all
+3 rated bands' `FilterSelect`s enumerated, each change confirmed to reorder ONLY its own band; (2)
+per-control URL/state round-trip — sort/harness/class changes confirmed to encode into the URL and
+restore identically on reload, in a fresh tab, and across back/forward; (3) declared-invariant
+conformance — `core/url-state.ts`'s "URL is the single source of truth" and `.get()`'s documented
+first-value semantics (SG-001) both held for every one of the 4 duplicated-param and empty-string
+cases tried; (4) harness/class filter boundary sweep — unknown values, case-sensitivity
+(`?class=UNRATED`, `?harness=Cursor`), whitespace-only values, and 3 genuinely-empty
+harness×class intersections (`claude-code`+`unrated`, `codex-cli`+`light`, `opencode-go`+`opus`) all
+fall back to the full 38-model roster or the explicit empty state exactly per AC-26/AC-28, in both
+locales; (5) rapid/stress sort switching (6 selections with no settle time) and a repeated-same-value
+select (no-op check) both left the DOM in the correct final state with zero console errors; (6)
+keyboard tab-order — no keyboard trap across 45 tabs, sort controls reached in a sane, visually-
+matching order after the filter selects; (7) unrated/subscription-only rendering — confirmed no
+capability/price bar renders for any of the 18 unrated-band models, with the 2 subscription-only ones
+showing inline plan-cost text; (8) accessible-name resolution — the chart's `<svg role="img"
+aria-labelledby>` resolves to its `<title>` text, and each sort `<select>`'s `label[for]` matches its
+own `aria-label`; (9) an unrecognized locale path (`/fr/tools/ai-benchmark`) 404s. Zero console
+errors/warnings across every navigation in either locale.
+
+**Result: clean retest of the merged-chart's own code.** No functional regression and no new spec
+gap was found in `benchmark-chart.tsx`, `core/sort.ts`, or the sort-param extension to
+`core/url-state.ts` (this plan's actual delivered code) — every mapped scenario matched, and every
+deliberate boundary probe above (invalid params, case sensitivity, whitespace, rapid switching,
+sub-320px width, 200%-zoom-equivalent width) surfaced nothing wrong. This matches the plan's own
+expectation that 3 PR-review cycles already resolved everything findable.
+
+One reproducible gap was found on the same page, but in a file this plan did not change in substance
+(`benchmark-filters.tsx` — this plan's only edit there was making `FilterSelect`'s `allLabel` prop
+optional so the new sort dropdowns could reuse it; confirmed via
+`git diff main -- apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx`). Logged
+below for the plan owner to fix now or explicitly defer, since it predates this plan's own scope:
+
+- [x] EWT-001: The live-region filter result-count announcement (`role="status"`, the
+      `aiBenchFilterResultCountLabel: {resultCount}` span, WCAG 4.1.3) exists only inside
+      `benchmark-filters.tsx`'s `hidden md:flex` desktop block — below the `md` (768px) breakpoint,
+      where the filter UI collapses into the `<details data-testid="benchmark-filters-mobile">`
+      disclosure, no equivalent element exists at all (`grep -n "resultCount"
+apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx` shows the span
+      declared exactly once, only in the desktop branch). A mobile or screen-reader user who applies
+      a harness/class filter below 768px gets no visible or announced indication of how many models
+      now match — a behavioral inconsistency for the SAME feature (the result-count announcement)
+      across breakpoints, not a difference intended by the responsive split (the `<details>`'s own
+      summary text updates its "(N active)" filter-count, but never the resulting model count).
+  - **Severity**: Minor (functionality intact; UX/accessibility gap only below `md`). **Priority**:
+    Low (pre-existing since the earlier Phase 8 harness/class-filter work that predates this
+    merged-chart plan; not introduced or worsened by this plan's own changes).
+  - **Area**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx`.
+  - **Environment**: `http://localhost:3101/en/tools/ai-benchmark` (and `/id/`), 375px/768px
+    viewports, Chromium (Playwright), local dev server, 2026-07-30.
+  - **Steps to reproduce**: 1) Resize to < 768px width. 2) Open the "Filters" `<details>` disclosure. 3) Change the harness or class select to a non-default value. 4) Observe no `role="status"`
+    element anywhere in the DOM announces the new result count (only the summary's own
+    "(1 active)" filter-count text updates).
+  - **Expected**: per the desktop branch's own `role="status"` element and its authoring comment
+    ("a filter change never moves focus or scrolls ... the narrowed/widened result count must
+    announce itself to assistive tech instead"), the same announcement should fire regardless of
+    viewport.
+  - **Actual**: the element is absent below `md`; nothing announces the new result count on mobile.
+  - **Reproducibility**: Always.
+  - **Defect type**: Accessibility / Consistency.
+  - **Suggested fix locus**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx`'s
+    `<details data-testid="benchmark-filters-mobile">` block — add the same `role="status"`
+    result-count span there (or hoist one shared instance outside both responsive branches).
+    _Hypothesis, not a verified fix — this is the runtime symptom only._
+    - _Suggested executor: `swe-typescript-dev`_
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-filters.test.tsx`. **Notes**: moved
+  > the `role="status"` result-count span out of the `hidden md:flex` desktop-only container into a
+  > shared sibling span (`sr-only text-sm text-muted-foreground md:not-sr-only`) rendered after both
+  > the mobile `<details>` and desktop blocks — present in the accessibility tree at every breakpoint,
+  > visually hidden below `md`, visually unchanged at `md`+. RED: new test asserting the span sits
+  > outside the desktop-only container, confirmed failing pre-fix. GREEN: fix applied, full
+  > `test:unit`/`typecheck`/`lint`/`specs:behavior:coverage` green.
+
+> **Coverage map (EWT)** — locales: `en`, `id` (both exercised for every charter). Breakpoints:
+> 320 (WCAG-minimum reflow check), 375, 768, 1280px. Mandatory systematic sweeps: (A) shared-control
+> × surface matrix — all 3 sort selects × all 3 bands enumerated (9 cells), each confirmed isolated;
+> (B) per-control URL/state round-trip — `sortOpus`/`sortSonnet`/`sortLight`/`harness`/`class` all
+> confirmed to encode, reload, fresh-tab, and back/forward correctly; (C) declared-invariant
+> conformance — "URL is the single source of truth" (DD-4/DD-8) and the SG-001 first-value semantics
+> both hold for every param combination tried. Not covered this pass: Lighthouse/Core-Web-Vitals
+> capture (deferred — no defect indication observed qualitatively) and cross-browser (Chromium only,
+> per this agent's default tooling); the `web-usability-tester`/`web-design-tester` legs below cover
+> the heuristic/visual-fidelity dimensions this spec-aware pass deliberately left to them.
+
+- [x] UWT-001: Unrated band (18 of 38 models) drops the merged capability+price bar treatment
+      entirely and loses its sort control — fix before archival
+  - **Violated principle**: Heuristic 4 (Consistency and standards, internal) and Heuristic 6
+    (Recognition rather than recall)
+  - **Severity**: 3 (Major usability problem) — **Priority**: High
+  - **Area**: `data-testid="benchmark-chart-unrated"` inside "Capability and price by model"
+    (`/en/tools/ai-benchmark`, `/id/tools/ai-benchmark`)
+  - **Persona & task**: First-time visitor comparing capability and price across all models,
+    including the "Unrated" class
+  - **Environment**: Chromium (Playwright), 1280px and 375px, `en` and `id`, local dev server,
+    2026-07-30
+  - **Steps to reproduce**: (1) Load `/en/tools/ai-benchmark`. (2) Scroll past the Opus/Sonnet/Light
+    bands to the "Unrated" heading. (3) Observe the row rendering for e.g. "GPT-5.5" or "Cursor
+    Composer 1". (4) Scroll further to the "Coding-agent model roster" table and find the same
+    model's "Input price"/"Output price" columns.
+  - **Expected (predictable) behaviour**: Since every other band renders a two-part bar (capability
+    - input/output price) per model, a first-time user would expect Unrated models with known
+      per-token prices to get the same bar treatment — the price data plainly exists (it is shown for
+      the same model two sections down in the table). A sort control matching the other three bands
+      ("Sort — Unrated", sortable at least by price) would also be expected, or a visible note
+      explaining its absence.
+  - **Actual behaviour**: The Unrated band renders as one flat `<ul>` of bare model names with no
+    capability score and no price, except "MiMo v2.5"/"MiMo v2.5 Pro" which show a subscription
+    description. No "Sort — Unrated" control exists at all (only "Sort — Opus", "Sort — Sonnet",
+    "Sort — Light"). Confirmed via DOM: `benchmark-chart-unrated`'s `<ul>` contains only
+    `<li>{modelName}</li>`, while the table's "GPT-5.5" row shows Input price `$5.00` / Output price
+    `$30.00` for the same model.
+  - **Evidence**: `./evidence/phase-rule15-uwt-unrated-closeup-en-1280px.png`,
+    `./evidence/phase-rule15-uwt-unrated-mobile-en-375px.png`
+  - **Reproducibility**: Always (both locales, all breakpoints tested: 320/375/768/1280/1440px)
+  - **Suggested clarification**: Render Unrated rows with the same price-bar treatment as the other
+    three bands wherever price data exists, and add a "Sort — Unrated" control (by price, since
+    capability doesn't apply) or a one-line note explaining why sorting isn't offered there.
+
+  > **Date**: 2026-07-30. **Status**: DONE (partial fix, per explicit user disposition). **Files
+  > changed**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx`. **Notes**: user
+  > chose "Partial fix: price info only, no bars/sort" over the full bars+sort rearchitecture, since
+  > the latter conflicts with DD-1's already-reviewed design that unrated models render as plain
+  > text. Unrated rows with a metered per-token rate now show inline input/output price text
+  > (`{name} — Input price: $X, Output price: $Y`) instead of a bare name; no bars, no sort control
+  > added. RED: new test `"states the input and output price for an unrated model priced by a
+metered per-token rate"` in the DD-1 `describe` block, confirmed failing pre-fix. GREEN: fix
+  > applied, `nx run ayokoding-www:test:unit` green, `typecheck`/`lint`/`specs:behavior:coverage`
+  > green.
+
+- [x] UWT-002: The three per-band sort controls sit together above the chart, disconnected from the
+      bands they control — fix before archival
+  - **Violated principle**: Heuristic 6 (Recognition rather than recall) and the Law of Proximity
+  - **Severity**: 2 (Minor usability problem) — **Priority**: Medium
+  - **Area**: `data-testid="benchmark-chart-sort-controls"` in "Capability and price by model"
+  - **Persona & task**: First-time visitor sorting the Sonnet or Light band by price
+  - **Environment**: Chromium (Playwright), 1280px, `en`, local dev server, 2026-07-30
+  - **Steps to reproduce**: (1) Load `/en/tools/ai-benchmark` at 1280px. (2) Scroll to "Capability
+    and price by model". (3) Observe "Sort — Opus", "Sort — Sonnet", "Sort — Light" rendered
+    together, directly under the section subtitle, before any band content and before the "Axis
+    maximum" line. (4) Continue scrolling roughly 3000px+ to reach the actual "Sonnet" and "Light"
+    band headings.
+  - **Expected (predictable) behaviour**: A user sorting the Sonnet or Light band would expect that
+    band's sort control to sit next to (or directly above) its own rows, so the control and the
+    reordering it produces stay visible together.
+  - **Actual behaviour**: All three dropdowns are clustered in one row before any band appears; by
+    the time a user scrolls down to see the Sonnet or Light rows reorder, the control that caused it
+    has scrolled out of view, and changing it again means scrolling back up.
+  - **Evidence**: `./evidence/phase-rule15-uwt-baseline-en-1280px.png` (top of the "Capability and
+    price by model" section)
+  - **Reproducibility**: Always
+  - **Suggested clarification**: Move each "Sort — &lt;Band&gt;" control to sit immediately above (or
+    inline with) its own band heading instead of grouping all three above the whole chart.
+
+  > **Date**: 2026-07-30. **Status**: DONE (rearchitected per explicit user disposition). **Files
+  > changed**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx`,
+  > `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`,
+  > `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`,
+  > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`, `prd.md` (this
+  > plan). **Notes**: user chose "Split into 3 per-band SVGs" — each rated band (opus/sonnet/light)
+  > now renders its own independent `<svg>` with its own accessible title
+  > (`{chartTitle} — {bandLabel}`) and its own sort control directly adjacent, replacing the single
+  > shared multi-band svg with 3 clustered controls above it. `priceAxisMaxOf` stays computed
+  > globally across all bands (AC-40 invariant unaffected). This changes the AC-46 accessible-name
+  > Gherkin scenario ("one svg" → "each rated band renders its own svg") — new Then-step wording
+  > landed in the `.feature` file, `prd.md`, and both step-definition files (unit + Playwright e2e).
+  > RED: accessible-name/axis-max tests updated to expect 3 svgs, confirmed failing pre-fix. GREEN:
+  > rearchitecture applied, dead `BAND_GAP` constant removed (caught by `tsc --noEmit` TS6133), full
+  > `test:unit`/`typecheck`/`lint`/`specs:behavior:coverage` green.
+
+- [x] UWT-003: "Roster-relative" and the composite-index class tiers are used in the page's opening
+      subtitle and class legend before either term is defined — fix before archival
+  - **Violated principle**: Heuristic 2 (Match between system and the real world); cognitive
+    walkthrough Question 1 (will the user understand what they're looking at, at this step?)
+  - **Severity**: 2 (Minor usability problem) — **Priority**: Medium
+  - **Area**: H1 subtitle and "Class and evidence-grade legend" (`ai-bench-subtitle`,
+    `ai-bench-legend`)
+  - **Persona & task**: First-time visitor reading the page top-to-bottom before comparing models
+  - **Environment**: Chromium (Playwright), 1280px, `en` and `id`, local dev server, 2026-07-30
+  - **Steps to reproduce**: (1) Load `/en/tools/ai-benchmark`. (2) Read the subtitle: "A
+    roster-relative index of coding-agent models across five harnesses, with every figure sourced."
+    (3) Continue to "Class and evidence-grade legend": "The four capability classes are
+    anchor-relative composite-index tiers... Opus: at or above Claude Opus 5's own composite index
+    (the tier's defining anchor)."
+  - **Expected (predictable) behaviour**: A first-time reader should be able to parse the page's own
+    framing sentence without reading several more paragraphs first; a plain-language cue at first use
+    would let a newcomer understand the subtitle immediately.
+  - **Actual behaviour**: "Roster-relative" appears with zero gloss in the very first sentence on the
+    page. Its only definition ("The composite index is roster-relative: each score is normalized to
+    the strongest model on this roster...") appears several bullets into the collapsible "How to read
+    this benchmark" `<details>` box — a reader who collapses or skips that box (which the native
+    disclosure widget invites) never reaches the definition. Identical construction in Indonesian
+    ("Indeks relatif terhadap roster model coding-agent...").
+  - **Evidence**: `./evidence/phase-rule15-uwt-baseline-en-1280px.png` (top of page)
+  - **Reproducibility**: Always, both locales
+  - **Suggested clarification**: Either replace "roster-relative" in the subtitle with a
+    self-explanatory phrase, or move its one-sentence definition up beside the subtitle instead of
+    several paragraphs later.
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `apps/ayokoding-www/src/features/i18n/core/translations.ts`. **Notes**: reworded `aiBenchSubtitle`
+  > (`en`/`id`) from jargon-first ("roster-relative...across five harnesses") to plain-language with
+  > an inline gloss: "An index of coding-agent models scored relative to each other across five
+  > harnesses (the CLI or IDE tools used to run them), with every figure sourced." Left
+  > `aiBenchHowToIndexRelative` and `aiBenchLegendClassIntro` unchanged (already self-defining in
+  > their own context). Verified via `nx run ayokoding-www:test:unit`,
+  > `specs:behavior:coverage` green (translation-only change, no new test required).
+
+- [x] UWT-004: "Harness" is used throughout as a filter facet and column label without ever being
+      defined in plain language — fix before archival
+  - **Violated principle**: Heuristic 2 (Match between system and the real world)
+  - **Severity**: 2 (Minor usability problem) — **Priority**: Medium
+  - **Area**: "Harness" filter (`benchmark-filter-harness-desktop`/`-mobile`), table column
+    "Harnesses", and the "Why prices are per-harness" bullet
+  - **Persona & task**: First-time visitor unfamiliar with coding-agent tooling, filtering by harness
+  - **Environment**: Chromium (Playwright), 1280px, `en` and `id`, local dev server, 2026-07-30
+  - **Steps to reproduce**: (1) Load `/en/tools/ai-benchmark`. (2) Read the subtitle ("...across five
+    harnesses..."), the "Harness" filter dropdown, and the bullet "Why prices are per-harness: ...
+    Each price names the harness that charges it; there is no single 'the price'."
+  - **Expected (predictable) behaviour**: A first-time visitor would expect a one-line gloss the
+    first time "harness" appears (e.g. "harness — the CLI or IDE integration used to run the model,
+    such as Claude Code or Cursor"), since the word's everyday meaning does not map to its technical
+    use here.
+  - **Actual behaviour**: No definition of "harness" appears anywhere on the page in either locale;
+    the term is used as a filter facet, a table column, and the stated reason prices differ, with no
+    plain-language gloss at any point of use.
+  - **Evidence**: `./evidence/phase-rule15-uwt-baseline-en-1280px.png`
+  - **Reproducibility**: Always, both locales
+  - **Suggested clarification**: Add a short parenthetical or tooltip the first time "harness"
+    appears, naming it as the CLI/IDE tool used to access the model.
+
+  > **Date**: 2026-07-30. **Status**: DONE (combined with UWT-003's fix). **Files changed**:
+  > `apps/ayokoding-www/src/features/i18n/core/translations.ts`. **Notes**: the same
+  > `aiBenchSubtitle` reword (see UWT-003 above) adds the inline gloss "harnesses (the CLI or IDE
+  > tools used to run them)" at the term's first-and-earliest point of use, both locales. Verified
+  > via `nx run ayokoding-www:test:unit`, `specs:behavior:coverage` green.
+
+- [x] UWT-005: "ARC-AGI-2" is cited as a benchmark feeding "the index" but never appears as a scored
+      column or data point anywhere on the page — fix before archival
+  - **Violated principle**: Heuristic 4 (Consistency and standards, internal); Heuristic 2 (Match
+    between system and the real world)
+  - **Severity**: 2 (Minor usability problem) — **Priority**: Medium
+  - **Area**: "How to read this benchmark" bullet "Why provenance matters", vs. the Coverage formula
+    and the data table's benchmark columns
+  - **Persona & task**: First-time visitor reading the methodology notes and cross-checking them
+    against the data shown
+  - **Environment**: Chromium (Playwright), 1280px, `en` and `id`, local dev server, 2026-07-30
+  - **Steps to reproduce**: (1) Load `/en/tools/ai-benchmark`. (2) Read: "Why provenance matters:
+    ARC-AGI-2 / GPQA Diamond scores for the same model disagree across sources... the low end enters
+    the index." (3) Read the Coverage formula: "SWE-bench Verified 25% + SWE-bench Pro 25% +
+    Terminal-Bench 2.1 20% + GPQA Diamond 30% = 100%." (4) Check the data table's column headers:
+    Model, Vendor, Harnesses, Class, SWE-bench Verified, SWE-bench Pro, Terminal-Bench 2.1, GPQA
+    Diamond, Composite index, Coverage, Input price, Output price.
+  - **Expected (predictable) behaviour**: Every benchmark named as feeding "the index" should be
+    traceable to an actual column or score on the page, so a first-time reader can verify the claim
+    against the data shown.
+  - **Actual behaviour**: ARC-AGI-2 is named alongside GPQA Diamond as an example of scores that
+    "disagree across sources" and "enter the index," but no ARC-AGI-2 column, score, or model value
+    appears anywhere in the chart or the 12-column data table — only four benchmarks (SWE-bench
+    Verified, SWE-bench Pro, Terminal-Bench 2.1, GPQA Diamond) are ever scored. Confirmed identically
+    in Indonesian ("angka ARC-AGI-2 / GPQA Diamond...").
+  - **Evidence**: `./evidence/phase-rule15-uwt-baseline-en-1280px.png` ("How to read this benchmark"
+    box)
+  - **Reproducibility**: Always, both locales
+  - **Suggested clarification**: Either add ARC-AGI-2 as an actual scored column, or replace the
+    "ARC-AGI-2 / GPQA Diamond" example with a benchmark that is actually part of the composite (e.g.
+    "SWE-bench Pro / GPQA Diamond"), so a first-time reader isn't left with an unverifiable claim.
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `apps/ayokoding-www/src/features/i18n/core/translations.ts`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/how-to-read.tsx`. **Notes**: replaced
+  > "ARC-AGI-2" with "SWE-bench Pro" in `aiBenchHowToArcConflict` (`en`/`id`), since ARC-AGI-2 is not
+  > one of the four benchmarks that actually feed the composite index; fixed a stale doc-comment in
+  > `how-to-read.tsx` referencing the old example. Verified via `nx run ayokoding-www:test:unit`,
+  > `specs:behavior:coverage` green.
+
+> **Coverage map** — heuristic sweep: all 10 Nielsen heuristics applied. Cognitive walkthrough:
+> "find the cheapest model in a target class/harness" and "compare capability vs. price within a
+> band" walked at 1280px and 375px, both locales. First-click/information-scent: pass (Harness/Class
+> filters and per-band sort controls have strong scent; result count gives live feedback).
+> URL naturalness: pass (locale-prefixed, kebab-case, no query cruft; filter/sort state serializes to
+> clean, shareable, guessable query params `?harness=opencode-go&class=opus`,
+> `?sortOpus=price-asc`; `/en/tools` and bare `/en` both resolve; trailing slash 308-redirects
+> cleanly). Responsive usability: pass at 320/375/768/1280/1440px for both locales — no content/
+> function parity loss, touch targets ≥44px (`min-h-[44px]` on all selects), native `<details>`
+> disclosure used for both the "How to read" box (open by default) and the mobile filters summary
+> ("Filters (0 active)"). Edge states: **zero-result filter state exercised and PASSES** —
+> `harness=opencode-go&class=opus` yields "Models shown: 0" plus a clear "No models match these
+> filters — Try a different harness or class filter" message (Heuristic 1/9 satisfied, no finding).
+> Mandatory systematic probes: (A) conditional/hidden-control discoverability — no gated controls
+> found on this page (no prerequisite-based reveals; the missing Unrated sort control is a permanent
+> omission, filed as part of UWT-001, not a Probe-A case); (B) per-label jargon scan — enumerated
+> every filter/sort/column label, findings UWT-003/UWT-004 filed, benchmark proper nouns (SWE-bench,
+> GPQA, Terminal-Bench) treated as acceptable domain terms for this audience with source links
+> provided; (C) cross-view redundancy — the "Coding-agent model roster" table repeats the chart's
+> composite-index and price figures but adds vendor, harness list, and per-benchmark subscores not in
+> the chart, so the repetition earns its place (no finding) — filed only as a smaller wayfinding
+> observation folded into UWT-002's area, no dedicated finding; (D) input unit/currency consistency —
+> not applicable, the page has no free-text amount/quantity input fields (only `<select>` filters/
+> sorts); prices display with an inline `$` at every point of use. Console: zero errors either
+> locale, all breakpoints. Not covered this pass: full WCAG contrast-ratio math and keyboard-trap
+> sweeps (deferred to `web-exploratory-tester` per this agent's scope), and the 1440px "thorough"-only
+> wide-desktop pass beyond the screenshots already captured (screenshots exist at 1440px but no
+> additional distinct finding surfaced there beyond the 1280px pass).
+
+- [x] [AI] Fix every rule-15 EWT/UWT/DWT defect finding before archival — deferral requires explicit
       user permission (only when genuinely impossible); SG-###/USS-### may be triaged or deferred
       with written rationale
-- [ ] [AI] If any rule-15 fix touched app code, push the follow-up commit(s) and re-verify CI green
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Notes**: all 7 findings (EWT-001, UWT-001 through
+  > UWT-005, DWT-004) fixed — no deferrals. UWT-001 and UWT-002 required explicit user disposition
+  > via `AskUserQuestion` since their obvious fixes conflicted with already-reviewed design decisions
+  > (DD-1, single-svg AC); user selected "Partial fix: price info only, no bars/sort" for UWT-001 and
+  > "Split into 3 per-band SVGs" for UWT-002. All other findings fixed unilaterally as straightforward
+  > content/a11y corrections.
+
+- [x] [AI] If any rule-15 fix touched app code, push the follow-up commit(s) and re-verify CI green
       before proceeding to Phase 8
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Notes**: app code was touched (benchmark-chart.tsx,
+  > benchmark-filters.tsx, translations.ts, how-to-read.tsx, plus test/spec/step files) — see the
+  > Phase 7 push/CI-reverify record below for the commit hash and CI run confirmation.
+
+**`web-design-tester` retest** (2026-07-30, output-mode: delivery) — PR #125, both
+`/en/tools/ai-benchmark` and `/id/tools/ai-benchmark`, local dev server (`localhost:3101`),
+375/768/1280 px, light and dark (via the in-page theme toggle — `next-themes` defaults to explicit
+`light`, not `system`, so a browser-level `colorScheme` emulation alone does not exercise dark
+mode), Playwright (Chromium) computed-style + screenshot sweep:
+
+> **DWT-001 marker-clipping defect class — rechecked, CONFIRMED NOT RECURRING.** Read every
+> `[data-slot="chart-low-coverage-marker"]` element's rendered `getBoundingClientRect()` against its
+> `<svg>` container's own rendered right edge, across all 12 combinations (2 locales × 3 breakpoints
+> × light/dark) — every marker's right edge renders 38-230 px inside the SVG's right edge (never
+> past it); `PLOT_WIDTH` is still derived from `MARKER_MIN_MARGIN` (`benchmark-chart.tsx` lines
+> 46-58) exactly as the PR #125 cycle-1 fix (commit `5d4338e97`) restored it, and the accompanying
+> `benchmark-chart.test.tsx` "DWT-001 right-margin regression" `describe` block's three assertions
+> were not touched. No new finding — this defect class does not recur at any breakpoint/locale/
+> color-scheme tested.
+
+- [x] DWT-004: Band-header label vertically overlaps the first model row's own label inside every
+      rendered band, at every breakpoint — fix before archival
+  - **Violated ground truth or principle**: Visual hierarchy & alignment (two distinct text runs at
+    two different type sizes must not collide) — this repo's
+    [Design Dimensions Checklist §Visual hierarchy & emphasis / §Alignment & grid], plus the same
+    class of layout-constant defect `DWT-001` already documented for this exact chart (a hardcoded/
+    under-derived layout constant that clips or collides text) — this is a distinct constant
+    (`BAND_HEADER_HEIGHT` vs. the first row's own label offset), not a recurrence of DWT-001's right
+    margin.
+  - **Severity**: Major (a clearly visible collision on the chart's own band-identity label, present
+    on literally every band section). **Priority**: High (proposed) — the band header is the first
+    thing a reader sees entering each capability tier; the words "Opus"/"Sonnet"/"Light" render
+    fused into the first model's own name/index text.
+  - **Area / Component**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
+    — `BandGroup`'s header `<text>` (`headerY = cursor + BAND_HEADER_HEIGHT - 8`) vs. the first
+    `BenchmarkRow`'s own label `<text>` (`y={rowTop - 2}`, where `rowTop` for the first row equals
+    `cursor + BAND_HEADER_HEIGHT`) — only 6 SVG user-units separate the two text baselines, which is
+    less than either text run's own ascent+descent, so they render into each other regardless of
+    viewport (the SVG's `viewBox` scales uniformly — the ratio never changes across breakpoints).
+  - **Environment**: `http://localhost:3101/en/tools/ai-benchmark` and `/id/tools/ai-benchmark`,
+    local dev server, Chromium (Playwright), 375 px / 768 px / 1280 px, light and dark, 2026-07-30.
+  - **Steps to Reproduce**: 1) Navigate to `/en/tools/ai-benchmark` (or `/id/`) at any of 375/768/
+    1280 px, light or dark. 2) Scroll to the "Capability and price by model" chart. 3) Look at the
+    "Opus" band header directly above "GPT-5.6 Sol — 100.0" (or the "Sonnet"/"Light" headers above
+    their own first rows). The header word visually collides with the top of the row label beneath
+    it.
+  - **Expected (designed) result**: The band header's label and the first row's own label render
+    with enough vertical clearance that neither text run's glyphs (ascender/descender) overlaps the
+    other — matching the visual separation already present between every OTHER pair of adjacent
+    text elements in the same chart (e.g., a row's own label vs. its capability bar, or the last row
+    of one band vs. the next band's header, which the existing `BAND_GAP` constant keeps clear).
+  - **Actual result**: Measured live via `getBoundingClientRect()` at 1280 px: the "Opus" header's
+    `bottom` and the "GPT-5.6 Sol — 100.0" label's `top` overlap by measured deltas of
+    `-2.9 px` (375 px), `-7.1 px` (768 px), and `-10.5 px` (1280 px) — i.e., the discrepancy widens
+    as the viewport (and the SVG's rendered scale) grows. Reproduced identically on the "Sonnet" and
+    "Light" band headers against their own first rows. Also visibly present in this plan's own
+    already-committed `evidence/phase-6-benchmark-chart-en-1280px.png` (regenerated after the DWT-001
+    fix) — this is a pre-existing, currently-shipped defect, not one introduced during this retest.
+  - **Evidence**: `./evidence/phase-rule15-dwt-band-header-overlap-en-375px.png`,
+    `./evidence/phase-rule15-dwt-band-header-overlap-en-768px.png`, and
+    `./evidence/phase-rule15-dwt-band-header-overlap-en-1280px.png` (cropped to the chart's own top
+    region, showing the "Opus" header colliding with "GPT-5.6 Sol — 100.0" at all 3 breakpoints),
+    and the full-page sweep screenshots
+    `./evidence/phase-rule15-dwt-benchmark-chart-{en,id}-{light,dark}-{375,768,1280}px.png` (12
+    files, all locales × breakpoints × color schemes).
+  - **Reproducibility**: Always (12/12 combinations tested: both locales, all 3 breakpoints, both
+    color schemes — the defect is purely geometric, not colour- or text-length-dependent).
+  - **Defect type**: Alignment / Hierarchy.
+  - **Suggested fix locus**: `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
+    — increase `BAND_HEADER_HEIGHT` (currently `22`) or move the first row's `rowTop` start further
+    from the header (e.g., add a small fixed offset before the first row within
+    `computeLayout`'s `rowsTop = cursor + BAND_HEADER_HEIGHT` derivation), re-deriving the constant
+    the same explicit way `MARKER_MIN_MARGIN`/`PLOT_WIDTH` already are (DWT-001's own precedent),
+    rather than a second hand-tuned magic number. _Hypothesis, not verified against source — this is
+    the runtime symptom; `swe-ui-checker`'s remit covers the source-level constant audit._
+    - _Suggested executor: `swe-typescript-dev`_
+
+  > **Date**: 2026-07-30. **Status**: DONE. **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx`. **Notes**: root
+  > cause was `headerY` and the first row's own `y` both deriving via fixed subtraction from the SAME
+  > `BAND_HEADER_HEIGHT` constant, making their gap a fireproof-constant 6 units regardless of that
+  > constant's value (confirmed algebraically) — so naively increasing `BAND_HEADER_HEIGHT` alone
+  > would not have fixed it. Fix decouples the two via an independent `HEADER_LABEL_Y_OFFSET`
+  > constant. RED: new "DWT-004 band-header/first-row label overlap regression" test, confirmed
+  > failing pre-fix (`expected 6 to be greater than or equal to 20`). GREEN: fix applied, full
+  > `test:unit`/`typecheck`/`lint`/`specs:behavior:coverage` green.
+
+**No other design-fidelity defects found.** Native `<select>` elements (both filter dropdowns and
+all three per-band sort dropdowns) share one identical computed-style tuple
+(`h-11 min-h-[44px] … rounded-md border border-input …`, confirmed via computed-style read, not
+class-string alone) — the intra-form and cross-surface styling-consistency matrix passes with no
+outlier. Band bar colours resolve through the `--chart-band-*` tokens in both light and dark
+(confirmed via computed `fill`, not just class name). Dark-mode axis-label text contrast measured at
+7.8:1 against the dark background (WCAG AA requires 4.5:1) — comfortably passes. Sort-control row at
+375 px stacks cleanly with no cramping (`./evidence/phase-rule15-dwt-sort-controls-en-375px.png`).
+No `libs/web-ui`
+primitive is reinvented — `libs/web-ui` ships no `Select`/`Dropdown` primitive today, so the
+hand-rolled, already-shared `FilterSelect` is not a fragmentation of the design language. No console
+errors in any of the 12 combinations tested. `model-table.tsx`, `benchmark-filters.tsx`'s own filter
+behavior, and `how-to-read.tsx` are unchanged by this plan and were not re-audited (out of scope per
+`tech-docs.md`'s File Impact table).
 
 ### Phase 7 Gate
 

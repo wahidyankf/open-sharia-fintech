@@ -1039,8 +1039,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("the chart states its axis maximum", () => {
-      const axisMax = screen.getByTestId("chart-axis-max");
-      expect(axisMax.textContent ?? "").toContain(formatIndex(COMPOSITE_INDEX_MAX, "en"));
+      // UWT-002 fix (Rule-15, 2026-07-30): one axis-maximum label PER rated band's own svg now,
+      // not one shared label — the axis maximum itself (COMPOSITE_INDEX_MAX) is still identical
+      // across every band, so every one of them must show it.
+      const axisMaxLabels = screen.getAllByTestId("chart-axis-max");
+      expect(axisMaxLabels.length).toBeGreaterThan(0);
+      for (const label of axisMaxLabels) {
+        expect(label.textContent ?? "").toContain(formatIndex(COMPOSITE_INDEX_MAX, "en"));
+      }
     });
   });
 
@@ -1311,12 +1317,15 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // Post-merge there is one `<svg role="img">`, so this binds against the one merged accessible
-    // name (`aiBenchMergedChartTitle`) rather than two distinct chart titles.
+    // UWT-002 fix (Rule-15, 2026-07-30): the merged chart is now one `<svg role="img">` PER rated
+    // band, each with its own title built from the shared `aiBenchMergedChartTitle` prefix plus
+    // its own band label — so this binds against every one of those accessible names starting
+    // with the shared prefix, rather than a single exact-match title.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
     Then("the merged chart exposes an accessible name", () => {
-      const chart = screen.getByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
-      expect(chart).not.toBeNull();
+      const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
+      const charts = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
+      expect(charts.length).toBeGreaterThan(0);
     });
   });
 
@@ -1524,7 +1533,10 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     But("the chart and the data table do not render in the empty state", () => {
-      expect(screen.queryByTestId("benchmark-chart-svg")).toBeNull();
+      // UWT-002 fix (Rule-15, 2026-07-30): the chart is now one `<svg>` PER rated band
+      // (`benchmark-chart-svg-{opus,sonnet,light}`), not one shared `benchmark-chart-svg` — match
+      // the whole family via regex so this guard still catches a chart that renders ANY band.
+      expect(screen.queryByTestId(/^benchmark-chart-svg-/)).toBeNull();
       // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
       // the empty-state message must not be followed by an empty, redundant table skeleton either
       // — <ModelTable> moved inside the `!isEmpty` branch alongside the chart. AC-28 itself
@@ -1851,12 +1863,22 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
+    // Reworded (UWT-002 fix, Rule-15, 2026-07-30): the chart is now one `<svg role="img">` PER
+    // rated band (three, for the live roster's opus/sonnet/light bands), each with its OWN
+    // localized title as ITS OWN accessible name — not one shared svg across every band. See
+    // `benchmark-chart.tsx`'s own UWT-002 fix docstring for why the split happened.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart keeps its accessible name and text alternative
-    Then("the chart is one svg with role image and one localized title as its accessible name", () => {
-      const charts = screen.getAllByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
-      expect(charts).toHaveLength(1);
-      expect(charts[0]?.tagName.toLowerCase()).toBe("svg");
-    });
+    Then(
+      "each rated band renders its own svg with role image and its own localized title as its accessible name",
+      () => {
+        const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
+        const charts = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
+        expect(charts.length).toBe(3); // opus, sonnet, light
+        for (const chart of charts) {
+          expect(chart.tagName.toLowerCase()).toBe("svg");
+        }
+      },
+    );
 
     And("every figure the chart encodes is still reachable via the unchanged ModelTable below", () => {
       const table = screen.getByTestId("model-table-desktop");

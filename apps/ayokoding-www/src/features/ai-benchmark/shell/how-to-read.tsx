@@ -5,7 +5,9 @@
 //   - AC-32: a `<details open>` how-to-read disclosure (visible without interaction) whose copy
 //     states, in both locales, that most frontier scores are vendor self-reported, the index is
 //     roster-relative with our weights, coverage varies, figures reflect each vendor's best
-//     configuration, the ARC-AGI-2 measurement conflict, and the DeepSeek-versus-gateway price gap;
+//     configuration, a measurement conflict example (Rule-15 UWT-005 fix, 2026-07-30: SWE-bench
+//     Pro / GPQA Diamond — not ARC-AGI-2, which isn't one of the four scored benchmarks), and the
+//     DeepSeek-versus-gateway price gap;
 //   - AC-34: a Sources and Licences section rendered from the dataset-level OPERATORS list, so a
 //     new operator appears with no component edit.
 //

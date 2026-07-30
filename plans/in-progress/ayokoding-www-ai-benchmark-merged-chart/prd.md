@@ -317,7 +317,7 @@ Feature: AI model benchmark tool — merged capability/price chart
   Scenario: The merged chart keeps its accessible name and text alternative
     Given the merged chart has replaced the two former charts
     When a screen reader encounters the chart
-    Then the chart is one svg with role image and one localized title as its accessible name
+    Then each rated band renders its own svg with role image and its own localized title as its accessible name
     And every figure the chart encodes is still reachable via the unchanged ModelTable below
 
   Scenario: The merged chart uses the identical DOM structure at every breakpoint

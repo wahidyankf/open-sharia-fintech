@@ -54,6 +54,23 @@ describe("BenchmarkFilters — responsive layout", () => {
     expect(resultCount.textContent ?? "").toContain("17");
   });
 
+  // Rule-15 EWT-001 fix: the pre-fix result-count `role="status"` span lived ONLY inside the
+  // `hidden md:flex` desktop-only div — below `md`, that div (and everything inside it) is removed
+  // from the accessibility tree by `display: none`, so a mobile/screen-reader user who filtered got
+  // no result-count announcement at all (only the mobile `<details>` summary's own, DIFFERENT
+  // active-filter-count text updates). The fix hoists the span OUT of that div entirely, so it
+  // stays in the a11y tree at every breakpoint (`sr-only md:not-sr-only` keeps it visually
+  // unchanged at `md`+ while only its screen-reader announcement survives below `md`).
+  it("keeps the result-count status span OUT of the desktop-only hidden-below-md container, so it survives at every breakpoint", () => {
+    render(<BenchmarkFilters state={NONE} resultCount={17} locale="en" onChange={vi.fn()} />);
+
+    const desktop = screen.getByTestId("benchmark-filters-desktop");
+    expect(desktop.querySelector('[data-testid="benchmark-filters-result-count"]')).toBeNull();
+
+    const resultCount = screen.getByTestId("benchmark-filters-result-count");
+    expect(resultCount.getAttribute("role")).toBe("status");
+  });
+
   it("both variants expose the same accessible control names for the harness and class selectors", () => {
     render(<BenchmarkFilters state={NONE} resultCount={38} locale="en" onChange={vi.fn()} />);
 

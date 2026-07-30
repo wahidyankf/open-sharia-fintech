@@ -59,8 +59,20 @@ export { SVG_WIDTH, PLOT_X, PLOT_WIDTH };
 const ROW_HEIGHT = 56; // room for the capability bar + two stacked price bars within one row
 const BAR_HEIGHT = 12;
 const BAR_GAP = 3;
-const BAND_HEADER_HEIGHT = 22;
-const BAND_GAP = 16;
+// HEADER_LABEL_Y_OFFSET (the band header's own text baseline, measured from the band's top) is a
+// FIXED distance, independent of BAND_HEADER_HEIGHT (the first row's start) — this is the DWT-004
+// fix (Rule-15 web-design-tester retest, 2026-07-30): the pre-fix code derived both `headerY` and
+// the first row's `rowTop` from the SAME `BAND_HEADER_HEIGHT` constant via fixed subtractions
+// (`headerY = cursor + BAND_HEADER_HEIGHT - 8`, first row `y = cursor + BAND_HEADER_HEIGHT - 2`),
+// so their gap (6 units) stayed constant no matter how `BAND_HEADER_HEIGHT` changed — less than
+// either text run's own ascent+descent at the header's text-xs (12px) vs. the row label's
+// text-[10px] font sizes, so the header word rendered fused into the first row's own label at
+// every breakpoint. Decoupling the header's baseline offset from `BAND_HEADER_HEIGHT` lets
+// `BAND_HEADER_HEIGHT` grow to give the first row real clearance instead of moving both lines in
+// lockstep. See `benchmark-chart.test.tsx`'s "DWT-004 band-header/first-row label overlap
+// regression" block for the regression guard this margin is locked by.
+const HEADER_LABEL_Y_OFFSET = 12;
+const BAND_HEADER_HEIGHT = 34;
 const TOP_MARGIN = 24; // room for the always-visible axis-maximum label
 
 // Only rated bands render rows (a row needs a capability bar) — mirrors the retired capability chart's
@@ -100,25 +112,38 @@ type BandLayout = {
   label: string;
   headerY: number;
   rows: RowLayout[];
+  plotHeight: number;
 };
 
+/**
+ * Each rated band gets its OWN independent layout (own `TOP_MARGIN`-anchored cursor and own
+ * `plotHeight`) — this is the UWT-002 fix (Rule-15 web-usability-tester retest, 2026-07-30): the
+ * pre-fix single shared cursor across all three bands meant they could only render inside ONE
+ * continuous `<svg>`, which forced their sort controls to cluster together above the whole chart
+ * (a control and the reordering it produces could be 3000px+ apart on a long roster). Splitting
+ * each band into its own `<svg>` (rendered below, one per `BandLayout`) lets each band's own sort
+ * control sit directly above its own rows. `BAND_GAP` no longer applies here — the gap between
+ * bands is now ordinary HTML flow spacing between each band's own wrapper `<div>`, not an SVG
+ * cursor offset. `priceAxisMaxOf` below still computes its max over ALL bands' rows combined
+ * (AC-40: the price axis is deliberately SHARED across bands, not per-band), so this split changes
+ * only how bands are RENDERED, never how their bars are SCALED.
+ */
 function computeLayout(
   groups: Record<ChartBand, ModelScore[]>,
   sortState: SortState,
   locale: Locale,
   harness?: HarnessId,
-): { bands: BandLayout[]; plotHeight: number } {
-  let cursor = TOP_MARGIN;
+): { bands: BandLayout[] } {
   const bands: BandLayout[] = [];
   for (const band of RATED_BANDS) {
     const scores = sortBand(groups[band], sortState[band], harness);
-    const headerY = cursor + BAND_HEADER_HEIGHT - 8;
-    const rowsTop = cursor + BAND_HEADER_HEIGHT;
+    const headerY = TOP_MARGIN + HEADER_LABEL_Y_OFFSET;
+    const rowsTop = TOP_MARGIN + BAND_HEADER_HEIGHT;
     const rows = scores.map((score, i) => ({ score, rowTop: rowsTop + i * ROW_HEIGHT }));
-    bands.push({ band, label: bandLabel(band, locale), headerY, rows });
-    cursor = rowsTop + scores.length * ROW_HEIGHT + BAND_GAP;
+    const plotHeight = rowsTop + scores.length * ROW_HEIGHT;
+    bands.push({ band, label: bandLabel(band, locale), headerY, rows, plotHeight });
   }
-  return { bands, plotHeight: cursor };
+  return { bands };
 }
 
 type BenchmarkRowProps = {
@@ -295,13 +320,14 @@ export function BenchmarkChart({
   const titleId = useId();
 
   const groups = computeGroups(dataset, fullDataset);
-  const { bands, plotHeight } = computeLayout(groups, sortState, locale, harness);
+  const { bands } = computeLayout(groups, sortState, locale, harness);
   const priceAxisMax = priceAxisMaxOf(bands, harness);
   const capabilityScale = scaleLinear(COMPOSITE_INDEX_MAX, PLOT_WIDTH);
   const priceScale = scaleLinear(priceAxisMax, PLOT_WIDTH);
   const axisLabel = t(locale, "aiBenchChartAxisMaxLabel");
   const formattedMax = formatIndex(COMPOSITE_INDEX_MAX, locale);
   const sortLabelPrefix = t(locale, "aiBenchSortLabel");
+  const chartTitle = t(locale, "aiBenchMergedChartTitle");
   const sortOptions: FilterOption[] = SORT_MODES.map((mode) => ({ value: mode, label: sortModeLabel(mode, locale) }));
 
   return (
@@ -319,68 +345,78 @@ export function BenchmarkChart({
         </p>
       ) : null}
 
-      {onSortChange ? (
-        <div data-testid={`${SLOT}-sort-controls`} className="mb-3 flex flex-wrap gap-3">
-          {bands.map((bandLayout) => (
-            <FilterSelect
-              key={bandLayout.band}
-              id={`${SLOT}-sort-${bandLayout.band}`}
-              label={`${sortLabelPrefix} — ${bandLayout.label}`}
-              value={sortState[bandLayout.band]}
-              options={sortOptions}
-              // No `allLabel` here (deliberately): sort has no "no sort" state, unlike a filter's
-              // legitimate "no filter on this axis" empty option — passing one produced a
-              // duplicate "Capability" option and an invalid `"" as SortMode` cast on change
-              // (pr-review-synthesis-maker HIGH finding). `isKnownSortMode` narrows instead.
-              onChange={(value) => {
-                if (isKnownSortMode(value)) onSortChange(bandLayout.band, value);
-              }}
-            />
-          ))}
-        </div>
-      ) : null}
+      {/* UWT-002 fix (Rule-15 web-usability-tester retest, 2026-07-30): each band gets its OWN
+          sort control directly above its OWN `<svg>`, instead of all three controls clustering
+          together above one shared multi-band chart (previously the reordering a control caused
+          could scroll 3000px+ out of view before the reader reached it). Each band's `<svg>` is
+          independently self-contained — `computeLayout`'s per-band `plotHeight` and `priceAxisMax`
+          (still computed GLOBALLY across all bands, AC-40) are unaffected by this split. */}
+      {bands.map((bandLayout) => {
+        const bandTitleId = `${titleId}-${bandLayout.band}`;
+        return (
+          <div key={bandLayout.band} data-testid={`${SLOT}-band-wrapper-${bandLayout.band}`} className="mb-4">
+            {onSortChange ? (
+              <div className="mb-2">
+                <FilterSelect
+                  id={`${SLOT}-sort-${bandLayout.band}`}
+                  label={`${sortLabelPrefix} — ${bandLayout.label}`}
+                  value={sortState[bandLayout.band]}
+                  options={sortOptions}
+                  // No `allLabel` here (deliberately): sort has no "no sort" state, unlike a
+                  // filter's legitimate "no filter on this axis" empty option — passing one
+                  // produced a duplicate "Capability" option and an invalid `"" as SortMode` cast
+                  // on change (pr-review-synthesis-maker HIGH finding). `isKnownSortMode` narrows
+                  // instead.
+                  onChange={(value) => {
+                    if (isKnownSortMode(value)) onSortChange(bandLayout.band, value);
+                  }}
+                />
+              </div>
+            ) : null}
 
-      <svg
-        data-testid={`${SLOT}-svg`}
-        role="img"
-        aria-labelledby={titleId}
-        viewBox={`0 0 ${SVG_WIDTH} ${plotHeight}`}
-        className="w-full"
-      >
-        <title id={titleId}>{t(locale, "aiBenchMergedChartTitle")}</title>
+            <svg
+              data-testid={`${SLOT}-svg-${bandLayout.band}`}
+              role="img"
+              aria-labelledby={bandTitleId}
+              viewBox={`0 0 ${SVG_WIDTH} ${bandLayout.plotHeight}`}
+              className="w-full"
+            >
+              <title id={bandTitleId}>
+                {chartTitle} — {bandLayout.label}
+              </title>
 
-        <Axis
-          max={COMPOSITE_INDEX_MAX}
-          width={PLOT_X + PLOT_WIDTH}
-          label={axisLabel}
-          formattedMax={formattedMax}
-          y={14}
-        />
-
-        {bands.map((bandLayout) => (
-          <BandGroup
-            key={bandLayout.band}
-            band={bandLayout.band}
-            label={bandLayout.label}
-            x={PLOT_X}
-            y={bandLayout.headerY}
-            testId={`${SLOT}-band-${bandLayout.band}`}
-          >
-            {bandLayout.rows.map(({ score, rowTop }) => (
-              <BenchmarkRow
-                key={score.model.id}
-                score={score}
-                rowTop={rowTop}
-                band={bandLayout.band}
-                locale={locale}
-                capabilityScale={capabilityScale}
-                priceScale={priceScale}
-                rate={harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model)}
+              <Axis
+                max={COMPOSITE_INDEX_MAX}
+                width={PLOT_X + PLOT_WIDTH}
+                label={axisLabel}
+                formattedMax={formattedMax}
+                y={14}
               />
-            ))}
-          </BandGroup>
-        ))}
-      </svg>
+
+              <BandGroup
+                band={bandLayout.band}
+                label={bandLayout.label}
+                x={PLOT_X}
+                y={bandLayout.headerY}
+                testId={`${SLOT}-band-${bandLayout.band}`}
+              >
+                {bandLayout.rows.map(({ score, rowTop }) => (
+                  <BenchmarkRow
+                    key={score.model.id}
+                    score={score}
+                    rowTop={rowTop}
+                    band={bandLayout.band}
+                    locale={locale}
+                    capabilityScale={capabilityScale}
+                    priceScale={priceScale}
+                    rate={harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model)}
+                  />
+                ))}
+              </BandGroup>
+            </svg>
+          </div>
+        );
+      })}
 
       {groups.unrated.length > 0 ? (
         <div data-slot={`${SLOT}-unrated`} data-testid={`${SLOT}-unrated`} className="mt-3">
@@ -401,6 +437,18 @@ export function BenchmarkChart({
                       {score.model.name} — {t(locale, "aiBenchSubscription")}:{" "}
                       {formatPriceUsd(rate.planCostUsd, locale)}
                       {rate.caps ? ` (${rate.caps})` : ""}
+                    </>
+                  ) : rate?.kind === "metered" ? (
+                    // Rule-15 UWT-001 fix (2026-07-30, partial fix by user decision): show the
+                    // price as TEXT (not a bar, no sort control) — this deliberately does not give
+                    // Unrated the full bar+sort treatment the other three bands get, since DD-1
+                    // already decided (Phase 2, reviewed) that unrated models render as plain text
+                    // because they have no comparable capability score to bar against. Before this
+                    // fix, a metered-priced unrated model showed ONLY its bare name here, even
+                    // though the same price was visible two sections down in ModelTable.
+                    <>
+                      {score.model.name} — {t(locale, "aiBenchColInputPrice")}: {formatPriceUsd(rate.input, locale)},{" "}
+                      {t(locale, "aiBenchColOutputPrice")}: {formatPriceUsd(rate.output, locale)}
                     </>
                   ) : (
                     score.model.name

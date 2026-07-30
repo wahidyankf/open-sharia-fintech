@@ -365,6 +365,30 @@ describe("BenchmarkChart — DD-1 retained global list for unrated + subscriptio
     const item = screen.getByTestId("benchmark-chart-unrated-model-unrated-no-price");
     expect(item.textContent).toBe("unrated-no-price");
   });
+
+  // Rule-15 UWT-001 fix (2026-07-30, partial fix by user decision): an unrated model priced by
+  // METERED per-token rate (not subscription) previously showed ONLY its bare name here, even
+  // though the same model's price was visible two sections down in ModelTable — the fix adds that
+  // price as TEXT (matching the subscription-only branch's existing pattern), deliberately NOT
+  // adding bars or a sort control (that would conflict with DD-1's already-reviewed decision that
+  // unrated models render as plain text, since they have no comparable capability score to bar
+  // against).
+  it("states the input and output price for an unrated model priced by a metered per-token rate", () => {
+    const unratedMetered: Model = {
+      id: "unrated-metered",
+      name: "unrated-metered",
+      vendor: "Test",
+      harnesses: ["claude-code"],
+      figures: [],
+      pricing: { "claude-code": metered(3, 15) },
+    };
+    const ds = fixtureDataset([unratedMetered]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const item = screen.getByTestId("benchmark-chart-unrated-model-unrated-metered");
+    expect(item.textContent ?? "").toContain(formatPriceUsd(3, "en"));
+    expect(item.textContent ?? "").toContain(formatPriceUsd(15, "en"));
+  });
 });
 
 describe("BenchmarkChart — accessible name and ModelTable reachability", () => {
@@ -372,7 +396,10 @@ describe("BenchmarkChart — accessible name and ModelTable reachability", () =>
     cleanup();
   });
 
-  it("renders as one svg with role img and a single localized title, and every model it shows is also reachable via ModelTable", () => {
+  // UWT-002 fix (Rule-15 web-usability-tester retest, 2026-07-30): the chart is now one svg PER
+  // rated band (three: opus/sonnet/light), each with its own role=img and its own localized title
+  // built from the shared `aiBenchMergedChartTitle` prefix — not one svg shared across every band.
+  it("renders one svg with role img and a localized title PER rated band, and every model it shows is also reachable via ModelTable", () => {
     const rated = ratedMeteredModel("access-rated-model", 2, 10);
     const unrated: Model = {
       id: "access-unrated-model",
@@ -391,11 +418,13 @@ describe("BenchmarkChart — accessible name and ModelTable reachability", () =>
       </>,
     );
 
-    const svgs = screen.getAllByRole("img", { name: t("en", "aiBenchMergedChartTitle") });
-    expect(svgs).toHaveLength(1);
-    const svg = svgs[0]!;
-    expect(svg.tagName.toLowerCase()).toBe("svg");
-    expect(svg.querySelectorAll("title")).toHaveLength(1);
+    const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
+    const svgs = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
+    expect(svgs).toHaveLength(3); // opus, sonnet, light
+    for (const svg of svgs) {
+      expect(svg.tagName.toLowerCase()).toBe("svg");
+      expect(svg.querySelectorAll("title")).toHaveLength(1);
+    }
 
     const table = screen.getByTestId("model-table");
     expect(table.textContent).toContain("access-rated-model");
@@ -477,6 +506,51 @@ describe("BenchmarkChart — DWT-001 right-margin regression", () => {
   });
 });
 
+// ─── Regression: DWT-004 (Rule-15 web-design-tester retest, 2026-07-30) — the band header's own
+// label text baseline sat only 6 SVG user-units above the first row's own label baseline
+// (`headerY = cursor + BAND_HEADER_HEIGHT - 8` vs. the first row's `y={rowTop - 2}` where
+// `rowTop = cursor + BAND_HEADER_HEIGHT`), which is less than either text run's own ascent+descent
+// at their respective font sizes — so the header word rendered fused into the first model's own
+// name/index text at every breakpoint (measured overlaps of -2.9px/-7.1px/-10.5px at
+// 375/768/1280px live in Chromium). A distinct layout-constant defect from DWT-001 (that one was
+// the plot's right margin; this one is the header-to-first-row vertical gap).
+describe("BenchmarkChart — DWT-004 band-header/first-row label overlap regression", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("keeps the band header's label baseline clear of the first row's own label baseline by at least the documented minimum", () => {
+    const model = ratedMeteredModel("dwt004-first-row-model", 2, 10);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    // A lone fixture model with no anchor models present always lands in the "light" band
+    // (bands.ts falls through to "light" when both anchor thresholds are undefined) — the "opus"
+    // and "sonnet" band headers still render (every RATED_BAND always renders, even with zero
+    // rows), but at unrelated cursor offsets, so this must reference "light", the band this
+    // model's own row actually belongs to.
+    const headerLabel = screen.getByTestId("benchmark-chart-band-light-label");
+    const rowLabel = screen.getByTestId("benchmark-chart-label-dwt004-first-row-model");
+    const headerY = Number(headerLabel.getAttribute("y"));
+    const rowLabelY = Number(rowLabel.getAttribute("y"));
+
+    // MIN_HEADER_TO_ROW_LABEL_GAP: the header's own descent (text-xs/12px, ~4 units) plus the row
+    // label's own ascent (text-[10px], ~8 units) plus a safety buffer (~8 units) — same
+    // documented-constant discipline DWT-001's MARKER_MIN_MARGIN already established for this file.
+    const MIN_HEADER_TO_ROW_LABEL_GAP = 20;
+    expect(rowLabelY - headerY).toBeGreaterThanOrEqual(MIN_HEADER_TO_ROW_LABEL_GAP);
+  });
+
+  it("would collide at the pre-fix hardcoded geometry — proving this guard is not vacuous", () => {
+    // The exact pre-fix offsets this PR shipped (`headerY = cursor + 22 - 8`, first row `y = cursor
+    // + 22 - 2`) gave a gap of only 6 units — reproducing the measured live overlap.
+    const preFixBandHeaderHeight = 22;
+    const preFixHeaderY = preFixBandHeaderHeight - 8;
+    const preFixRowLabelY = preFixBandHeaderHeight - 2;
+    expect(preFixRowLabelY - preFixHeaderY).toBeLessThan(20);
+  });
+});
+
 // ─── Regression: the axis-maximum label must right-align to the plot's TRUE right edge
 // (`PLOT_X + PLOT_WIDTH`), not to `SVG_WIDTH` (pr-review-synthesis-maker HIGH finding: this guard
 // was deleted with the retired `capability-chart.test.tsx` and never re-established here).
@@ -493,8 +567,15 @@ describe("BenchmarkChart — axis-maximum label right-alignment", () => {
     const ds = fixtureDataset([ratedModel]);
     render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
 
-    const axisMax = screen.getByTestId("chart-axis-max");
-    expect(axisMax.getAttribute("x")).toBe(String(PLOT_X + PLOT_WIDTH));
+    // UWT-002 fix (Rule-15, 2026-07-30): every RATED_BAND now renders its own svg (and its own
+    // axis-maximum label) regardless of whether it holds any rows — this fixture's lone,
+    // anchor-less model lands in "light" alone, so "opus"/"sonnet" render empty but still carry
+    // their own (identically positioned) axis-maximum label.
+    const axisMaxLabels = screen.getAllByTestId("chart-axis-max");
+    expect(axisMaxLabels.length).toBeGreaterThan(0);
+    for (const axisMax of axisMaxLabels) {
+      expect(axisMax.getAttribute("x")).toBe(String(PLOT_X + PLOT_WIDTH));
+    }
     // Sanity: this is NOT the same value as SVG_WIDTH, so the assertion above cannot be
     // accidentally satisfied by the pre-fix (defective) call site.
     expect(PLOT_X + PLOT_WIDTH).not.toBe(SVG_WIDTH);

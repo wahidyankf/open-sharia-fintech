@@ -65,9 +65,12 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 
 // ── Chart accessible-name assertion (AC-36) ───────────────────────────────────
 
+// UWT-002 fix (Rule-15, 2026-07-30): the chart is now one svg PER rated band
+// (`benchmark-chart-svg-{opus,sonnet,light}`), not one shared `benchmark-chart-svg` — the first
+// band's own svg is enough to prove the family carries a real accessible name.
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
 Then("the merged chart exposes an accessible name", async ({ page }) => {
-  await expect(page.getByTestId("benchmark-chart-svg")).toHaveAccessibleName(/.+/);
+  await expect(page.locator('[data-testid^="benchmark-chart-svg-"]').first()).toHaveAccessibleName(/.+/);
 });
 
 // ── Phase 8 — harness and class filters (AC-18, AC-22, AC-27) ─────────────────
