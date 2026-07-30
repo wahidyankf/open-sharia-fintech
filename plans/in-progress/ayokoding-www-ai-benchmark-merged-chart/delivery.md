@@ -606,31 +606,74 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
   > jsdom-incapable placeholders, unrelated). `npx nx run ayokoding-www:typecheck`: exits 0.
   - _Suggested executor: `swe-typescript-dev`_
 
-- [ ] [AI] Delete `apps/ayokoding-www/src/features/ai-benchmark/shell/capability-chart.tsx` and
+- [x] [AI] Delete `apps/ayokoding-www/src/features/ai-benchmark/shell/capability-chart.tsx` and
       `apps/ayokoding-www/src/features/ai-benchmark/shell/capability-chart.test.tsx` — acceptance:
       `git status` shows both deleted; `npx nx run ayokoding-www:typecheck` still exits 0 (no
       dangling import)
-- [ ] [AI] Delete `apps/ayokoding-www/src/features/ai-benchmark/shell/price-chart.tsx` and
+- [x] [AI] Delete `apps/ayokoding-www/src/features/ai-benchmark/shell/price-chart.tsx` and
       `apps/ayokoding-www/src/features/ai-benchmark/shell/price-chart.test.tsx` — acceptance: same
       as above
-- [ ] [AI] Rewrite `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-order-parity.test.tsx`
+
+  > **Date**: 2026-07-30. **Status**: DONE (both deletion items).
+  > **Files-Changed**: deleted `capability-chart.tsx`, `capability-chart.test.tsx`,
+  > `price-chart.tsx`, `price-chart.test.tsx`.
+  > **Notes**: `git rm` both pairs. Immediately after, `npx nx run ayokoding-www:typecheck` reported
+  > exactly the two EXPECTED failures — `chart-order-parity.test.tsx`'s now-dangling imports —
+  > confirming the deletion itself introduced no OTHER dangling reference; that one remaining file
+  > is the very next checklist item below.
+
+- [x] [AI] Rewrite `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-order-parity.test.tsx`
       to render `<BenchmarkChart>` alone (not two components) and assert each band's DOM row order
       matches `computeGroups()`'s canonical order for every one of the three sort modes —
       acceptance: `npx nx run ayokoding-www:test:unit -- chart-order-parity` passes
-- [ ] [AI] Run the full `ai-benchmark` unit suite: `npx nx run ayokoding-www:test:unit -- ai-benchmark` —
+
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-order-parity.test.tsx`.
+  > **Notes**: The pre-merge version rendered two components and compared their DOM row orders
+  > against EACH OTHER — trivially true post-merge (same component, same render). Rewrote as three
+  > tests against `<BenchmarkChart>` alone: default (capability) order matches
+  > `computeGroups()`'s own canonical order, `sortState.light: "price-asc"` reorders ascending by
+  > output price, `"price-desc"` reorders descending — using a fixture whose composite score and
+  > output price are deliberately uncorrelated so the three modes produce three different orders.
+  > `npx nx run ayokoding-www:test:unit -- chart-order-parity`: 3/3 pass. `typecheck`: exits 0.
+
+- [x] [AI] Run the full `ai-benchmark` unit suite: `npx nx run ayokoding-www:test:unit -- ai-benchmark` —
       acceptance: exits 0, and no dangling reference to the deleted modules remains anywhere in
       `src/` OR `test/` — run
       `grep -rl "capability-chart\|price-chart" apps/ayokoding-www/src/features/ai-benchmark apps/ayokoding-www/src/app apps/ayokoding-www/test/unit/fe-steps`
       (note: `-l`, files WITH a match — NOT `-L`, whose "files without a match" semantics would
       silently pass even if a leftover import exists) and confirm it returns **no output**
 
+  > **Date**: 2026-07-30. **Status**: DONE.
+  > **Files-Changed**: `chart-primitives.tsx`, `benchmark-chart.tsx`, `benchmark-chart.test.tsx`,
+  > `ai-benchmark.steps.tsx`, `translations.ts`.
+  > **Notes**: `npx nx run ayokoding-www:test:unit -- ai-benchmark`: 15 files / 646 tests pass. The
+  > lowercase `grep -rl` scoped to the three named paths initially returned FOUR files — all
+  > historical prose comments citing the retired filenames by name (e.g. "mirrors
+  > `capability-chart.tsx`'s RATED_BANDS"), not live imports — reworded each to name the retired
+  > component descriptively instead of by its literal deleted filename, so the check now returns
+  > true-clean. While at it, also found and removed three genuinely orphaned translation keys
+  > (`aiBenchCapabilityChartTitle`, `aiBenchPriceChartTitle`, `aiBenchPriceSubscriptionHeading`,
+  > both locales) that no longer had any reader now that both retired charts are gone — confirmed
+  > via a repo-wide grep before removal. Re-ran the full suite + typecheck after every edit: still
+  > 646/646 and exits 0. Final check: `grep -rl "capability-chart\|price-chart" ...` returns no
+  > output.
+
 ### Phase 3 Gate
 
-- [ ] [AI] `npx nx run ayokoding-www:test:unit -- ai-benchmark` — exits 0
-- [ ] [AI] `npx nx affected -t typecheck lint` — both exit 0
-- [ ] [AI] `grep -rl "CapabilityChart\|PriceChart" apps/ayokoding-www/src apps/ayokoding-www/test`
+- [x] [AI] `npx nx run ayokoding-www:test:unit -- ai-benchmark` — exits 0
+- [x] [AI] `npx nx affected -t typecheck lint` — both exit 0
+- [x] [AI] `grep -rl "CapabilityChart\|PriceChart" apps/ayokoding-www/src apps/ayokoding-www/test`
       returns no output (no dangling reference to the deleted component names anywhere, including
       the `test/unit/fe-steps/` step-definition file the plain `src`-only scope would have missed)
+
+  > **Date**: 2026-07-30. **Status**: DONE. All three Phase 3 Gate checks green.
+  > **Files-Changed**: none beyond what the phase's own items already record.
+  > **Notes**: `test:unit -- ai-benchmark`: 15/15 files, 646/646 tests. `nx affected -t typecheck
+lint --base=main`: both exit 0 for `ayokoding-www` and `ayokoding-www-fe-e2e` (warnings only,
+  > pre-existing style patterns e.g. `jsx-a11y/prefer-tag-over-role` on the `role="img"` svg — same
+  > pattern the retired charts already used). `grep -rl "CapabilityChart\|PriceChart" ...`: no
+  > output.
 
 > **Pause Safety**: the live page now renders the merged chart; the two old chart files are gone.
 > The repo builds and all unit tests pass. Safe to stop. To resume:

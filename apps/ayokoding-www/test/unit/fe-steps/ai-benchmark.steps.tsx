@@ -167,7 +167,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
    * Every model id rendered ANYWHERE in the merged chart (rated rows + the unrated list). Since
    * the merge (Phase 3), one rated row always carries BOTH the capability bar and some price
    * representation (bars, subscription text, or "not reported" text — `benchmark-chart.tsx`'s
-   * `BenchmarkRow`, unlike the old `price-chart.tsx`, never omits a priceless model's row), so this
+   * `BenchmarkRow`, unlike the old retired price chart, never omits a priceless model's row), so this
    * one helper now serves what `capabilityChartModelIds()`/`priceChartModelIds()` used to split
    * into two — both resolve to the exact same DOM node set post-merge.
    */
@@ -1160,7 +1160,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // This fixture carries zero figures, so it is UNRATED (no composite index, no row to attach
-    // to) — DD-1's resolution retains the old `price-chart.tsx` global subscription list's text
+    // to) — DD-1's resolution retains the old retired price chart's global subscription list text
     // (plan cost + caps) for exactly this subset, inside the merged chart's unrated list item,
     // rather than in a separate "subscription group" container (that container no longer exists
     // post-merge — a RATED+subscription-only model instead gets `BenchmarkRow`'s inline treatment,
@@ -1188,7 +1188,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // Post-merge, only a RATED model gets a row with price bars at all (the decision-branches
       // diagram in tech-docs.md: an unrated model never renders a price bar, only its bare name in
       // the unrated list) — this fixture carries one figure so it lands in a rated band, unlike the
-      // pre-merge fixture, which relied on `price-chart.tsx`'s now-removed "unrated models still get
+      // pre-merge fixture, which relied on the retired price chart's now-removed "unrated models still get
       // metered bars" behavior.
       const m: Model = {
         id: "price-two-harness",
@@ -1290,7 +1290,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     const expected = () => filterModels(dataset, { harness: "cursor" });
 
     // Post-merge, both step texts below bind against the SAME merged chart, so both resolve to an
-    // exact-set equality check now: unlike the retired `price-chart.tsx` (which omitted a priceless
+    // exact-set equality check now: unlike the retired price chart (which omitted a priceless
     // model entirely, AC-16/17), `benchmark-chart.tsx`'s `BenchmarkRow` always renders a row (with a
     // "not reported" placeholder when priceless) or an unrated-list entry — no filtered model is
     // ever dropped from the merged chart.

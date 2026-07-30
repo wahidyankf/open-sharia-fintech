@@ -106,11 +106,8 @@ const translations: Record<Locale, Record<string, string>> = {
       "Coverage is the weighted share of the composite a model's reported benchmarks cover (SWE-bench Verified 25% + SWE-bench Pro 25% + Terminal-Bench 2.1 20% + GPQA Diamond 30% = 100%), not a simple count of benchmarks reported.",
 
     // AI benchmark — charts (Phase 6/7).
-    aiBenchCapabilityChartTitle: "Capability index by model",
     aiBenchChartAxisMaxLabel: "Axis maximum",
-    aiBenchPriceChartTitle: "Price by model",
     aiBenchPriceLowestSubtitle: "Showing the lowest available rate across harnesses for each model",
-    aiBenchPriceSubscriptionHeading: "Subscription-only models",
 
     // AI benchmark — merged chart (Phase 2).
     aiBenchMergedChartTitle: "Capability and price by model",
@@ -480,11 +477,8 @@ const translations: Record<Locale, Record<string, string>> = {
       "Cakupan adalah porsi berbobot dari komposit yang dicakup oleh tolok ukur yang dilaporkan model (SWE-bench Verified 25% + SWE-bench Pro 25% + Terminal-Bench 2.1 20% + GPQA Diamond 30% = 100%), bukan sekadar jumlah tolok ukur yang dilaporkan.",
 
     // AI benchmark — bagan (Fase 6/7).
-    aiBenchCapabilityChartTitle: "Indeks kemampuan per model",
     aiBenchChartAxisMaxLabel: "Nilai maksimum sumbu",
-    aiBenchPriceChartTitle: "Harga per model",
     aiBenchPriceLowestSubtitle: "Menampilkan tarif harness terendah yang tersedia untuk setiap model",
-    aiBenchPriceSubscriptionHeading: "Model khusus langganan",
 
     // AI benchmark — bagan gabungan (Fase 2).
     aiBenchMergedChartTitle: "Kemampuan dan harga per model",

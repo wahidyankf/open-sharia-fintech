@@ -1,8 +1,8 @@
 // AI BENCHMARK — merged chart structural invariants (Phase 2).
 //
-// Direct component tests (not Gherkin-bound), mirroring `capability-chart.test.tsx`/
-// `price-chart.test.tsx`'s pattern: fixture models built inline, rendered, asserted via
-// `data-testid`. See tech-docs.md DD-1/DD-2/DD-8 for the decisions these tests bind.
+// Direct component tests (not Gherkin-bound), mirroring the two now-retired chart test files'
+// pattern: fixture models built inline, rendered, asserted via `data-testid`. See tech-docs.md
+// DD-1/DD-2/DD-8 for the decisions these tests bind.
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
@@ -73,7 +73,7 @@ describe("BenchmarkChart — DD-2 price bar text labels", () => {
     cleanup();
   });
 
-  it("labels the input and output price bars with their formatted USD rate, preserving price-chart.tsx's full detail (DD-2)", () => {
+  it("labels the input and output price bars with their formatted USD rate, preserving the retired price chart's full detail (DD-2)", () => {
     const model = ratedMeteredModel("labelled-model", 3, 15);
     const ds = fixtureDataset([model]);
     render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
@@ -265,7 +265,7 @@ describe("BenchmarkChart — AC-12 low-coverage marker", () => {
 
   it("marks a rated model whose coverage is below the low-coverage threshold, stating its coverage ratio in text", () => {
     // swe-bench-verified alone carries weight 25 → coverage 0.25, below the 0.5 threshold —
-    // mirrors `capability-chart.test.tsx`'s AC-12 fixture exactly.
+    // mirrors the retired capability chart test's AC-12 fixture exactly.
     const lowCoverageModel: Model = {
       id: "low-coverage-model",
       name: "low-coverage-model",
@@ -330,7 +330,7 @@ describe("BenchmarkChart — DD-1 retained global list for unrated + subscriptio
     cleanup();
   });
 
-  it("states the plan cost and caps for an unrated model priced only under a subscription, mirroring price-chart.tsx's retired global subscription list", () => {
+  it("states the plan cost and caps for an unrated model priced only under a subscription, mirroring the retired price chart's global subscription list", () => {
     const unratedSubOnly: Model = {
       id: "unrated-sub-only",
       name: "unrated-sub-only",

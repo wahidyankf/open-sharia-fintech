@@ -1,18 +1,20 @@
-// AI BENCHMARK — cross-chart band-order parity (Phase 7 Gate, AC-11).
+// AI BENCHMARK — per-band sort-order gate (Phase 3, DD-4).
 //
-// AC-11's Gherkin scenario ("Models are ordered identically in both charts within a band") is
-// bound at the `core/bands.ts` level (Phase 4's `ai-benchmark.steps.tsx` binding) — it proves the
-// CANONICAL per-band list `computeGroups` produces has the right order property, which both charts
-// read verbatim. This file is the Phase 7 Gate's own separate check: it renders BOTH chart
-// components against the same fixture roster and asserts the ACTUAL DOM row order matches, one
-// band at a time — not just that the shared canonical list they both read from is correctly
-// ordered, but that neither chart's rendering re-orders it.
+// Pre-merge, this file rendered the two separate charts against the same fixture and asserted
+// their DOM row orders matched each other — proving neither chart's rendering re-ordered the
+// shared canonical list `computeGroups` produces (AC-11). Post-merge there is only one chart, so
+// that cross-chart comparison is now vacuous by construction. This file's Phase-3 replacement
+// instead gates the property the merge actually introduced: `<BenchmarkChart>`'s per-band sort
+// control (DD-4) must reorder a band's rows to match `core/sort.ts`'s comparators exactly, for
+// every one of the three `SortMode`s — the default `"capability"` order still matches
+// `computeGroups()`'s own canonical order (AC-11's original guarantee, now checked against the
+// one merged chart instead of two).
 
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { OPUS_ANCHOR_ID, SONNET_ANCHOR_ID, type Dataset, type MeteredPrice, type Model } from "../core/data/models";
-import { CapabilityChart } from "./capability-chart";
-import { PriceChart } from "./price-chart";
+import { computeGroups } from "../core/bands";
+import { BenchmarkChart } from "./benchmark-chart";
 
 const SRC = "https://example.test/source";
 
@@ -20,10 +22,8 @@ function metered(input: number, output: number): MeteredPrice {
   return { kind: "metered", input, output, grade: "verified", source: SRC };
 }
 
-/** A model scored on all four composite benchmarks at one value, priced with a metered rate — so
- * it renders a row in BOTH charts (a metered rate never gets routed to the price chart's
- * subscription-only list). */
-function fixtureModel(id: string, score: number): Model {
+/** A model scored on all four composite benchmarks at one value, priced with a distinct metered rate. */
+function fixtureModel(id: string, score: number, output: number): Model {
   return {
     id,
     name: id,
@@ -35,17 +35,23 @@ function fixtureModel(id: string, score: number): Model {
       { benchmark: "terminal-bench-2-1", value: score, grade: "verified", source: SRC },
       { benchmark: "gpqa-diamond", value: score, grade: "verified", source: SRC },
     ],
-    pricing: { "claude-code": metered(1 + score / 10, 5 + score / 2) },
+    pricing: { "claude-code": metered(1, output) },
   };
 }
 
 // Deliberately excludes the OPUS/SONNET anchor ids, so `bands.ts` finds no anchor models in this
 // fixture dataset and every scored model falls into the "light" band (undefined anchor thresholds)
-// — one predictable band to compare, rather than depending on the live roster's anchor indices.
+// — one predictable band to sort, rather than depending on the live roster's anchor indices.
+// Composite index (score) and output price are deliberately UNCORRELATED (highest score does not
+// have the highest price) so the three sort modes below produce three genuinely different orders.
 const dataset: Dataset = {
   snapshotDate: "2026-07-28",
   anchorIds: { opus: OPUS_ANCHOR_ID, sonnet: SONNET_ANCHOR_ID },
-  models: [fixtureModel("order-c", 40), fixtureModel("order-a", 80), fixtureModel("order-b", 60)],
+  models: [
+    fixtureModel("order-c", 40, 50), // lowest score, highest price
+    fixtureModel("order-a", 80, 10), // highest score, lowest price
+    fixtureModel("order-b", 60, 30), // middle score, middle price
+  ],
 };
 
 function rowOrderWithin(containerTestId: string, rowPrefix: string): string[] {
@@ -57,22 +63,48 @@ function rowOrderWithin(containerTestId: string, rowPrefix: string): string[] {
     .filter((id) => id.length > 0);
 }
 
-describe("Chart band-order parity (AC-11 gate check)", () => {
+describe("BenchmarkChart per-band sort order (AC-11 / DD-4 gate check)", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("renders the light band's models in the same order in the capability chart and the price chart", () => {
-    render(<CapabilityChart dataset={dataset} fullDataset={dataset} locale="en" />);
-    const capabilityOrder = rowOrderWithin("capability-chart-band-light", "capability-chart-row-");
-    cleanup();
+  it("renders the light band in computeGroups()'s own canonical order by default (capability mode)", () => {
+    render(<BenchmarkChart dataset={dataset} fullDataset={dataset} locale="en" />);
+    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
 
-    render(<PriceChart dataset={dataset} fullDataset={dataset} locale="en" />);
-    const priceOrder = rowOrderWithin("price-chart-band-light", "price-chart-row-");
+    const canonicalOrder = computeGroups(dataset)
+      .light.map((s) => s.model.id)
+      .filter((id) => domOrder.includes(id));
 
-    // All three fixture models carry a metered price, so both charts render all three — the
-    // membership AND the order must match exactly (highest score first: order-a, order-b, order-c).
-    expect(capabilityOrder).toEqual(["order-a", "order-b", "order-c"]);
-    expect(priceOrder).toEqual(capabilityOrder);
+    expect(domOrder).toEqual(["order-a", "order-b", "order-c"]); // descending score: 80, 60, 40
+    expect(domOrder).toEqual(canonicalOrder);
+  });
+
+  it("reorders the light band ascending by price when sortState.light is price-asc", () => {
+    render(
+      <BenchmarkChart
+        dataset={dataset}
+        fullDataset={dataset}
+        locale="en"
+        sortState={{ opus: "capability", sonnet: "capability", light: "price-asc", unrated: "capability" }}
+      />,
+    );
+    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
+
+    expect(domOrder).toEqual(["order-a", "order-b", "order-c"]); // ascending output price: 10, 30, 50
+  });
+
+  it("reorders the light band descending by price when sortState.light is price-desc", () => {
+    render(
+      <BenchmarkChart
+        dataset={dataset}
+        fullDataset={dataset}
+        locale="en"
+        sortState={{ opus: "capability", sonnet: "capability", light: "price-desc", unrated: "capability" }}
+      />,
+    );
+    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
+
+    expect(domOrder).toEqual(["order-c", "order-b", "order-a"]); // descending output price: 50, 30, 10
   });
 });

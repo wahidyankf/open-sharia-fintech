@@ -1,7 +1,7 @@
 "use client";
 
-// AI BENCHMARK — merged capability + price chart (Phase 2). Replaces the two separate
-// `capability-chart.tsx`/`price-chart.tsx` components (Phase 3 deletes them) with ONE chart where
+// AI BENCHMARK — merged capability + price chart (Phase 2). Replaces the two separate,
+// now-retired chart components (Phase 3 deleted them) with ONE chart where
 // each rated model's row carries its capability bar and both price bars stacked together — see
 // `tech-docs.md`'s "Prior-Plan Rejection Precedent" for why this is a genuinely different layout
 // from the previously-rejected Option C, and DD-1/DD-2/DD-8 for the per-row rendering decisions
@@ -38,7 +38,7 @@ const BAND_HEADER_HEIGHT = 22;
 const BAND_GAP = 16;
 const TOP_MARGIN = 24; // room for the always-visible axis-maximum label
 
-// Only rated bands render rows (a row needs a capability bar) — mirrors `capability-chart.tsx`'s
+// Only rated bands render rows (a row needs a capability bar) — mirrors the retired capability chart's
 // `RATED_BANDS`, derived from `core/filter.ts`'s `BANDS` (F-9) rather than re-declared here.
 const RATED_BANDS: readonly ChartBand[] = BANDS.filter((band) => band !== "unrated");
 
@@ -221,7 +221,7 @@ export type BenchmarkChartProps = {
   /** Per-band display-order choice (DD-4); defaults to all-capability when omitted. */
   sortState?: SortState;
   /**
-   * The active harness filter (DD-8) — mirrors `price-chart.tsx`'s existing `harness` prop
+   * The active harness filter (DD-8) — mirrors the retired price chart's existing `harness` prop
    * exactly. When set, every price bar shows THAT harness's own rate instead of each model's
    * lowest available harness rate.
    */
@@ -276,7 +276,7 @@ export function BenchmarkChart({
 
       {/* AC-18: once a specific harness is selected, every row shows THAT harness's own rate, not
           the lowest across harnesses — the "lowest rate" subtitle would misstate that, so it only
-          renders when no harness filter is active (mirrors `price-chart.tsx`'s AC-17 subtitle). */}
+          renders when no harness filter is active (mirrors the retired price chart's AC-17 subtitle). */}
       {harness === undefined ? (
         <p data-testid={`${SLOT}-subtitle`} className="mb-2 text-xs text-muted-foreground">
           {t(locale, "aiBenchPriceLowestSubtitle")}
@@ -349,7 +349,7 @@ export function BenchmarkChart({
           <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
             {groups.unrated.map((score) => {
               // DD-1: an unrated model has no row to attach inline subscription text to, so the
-              // retired `price-chart.tsx` global subscription list's per-item text is preserved
+              // retired price chart's global subscription list per-item text is preserved
               // here for exactly this subset (a rated+subscription-only model instead gets the
               // inline `BenchmarkRow` treatment above — never both).
               const rate = harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model);
