@@ -323,7 +323,7 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
     honestly documented as "already satisfied" where no separate failure occurred.
 - [x] [AI] **RED**: write a failing test asserting the capability bar's `width` is proportional to
       `index / COMPOSITE_INDEX_MAX` and the price-out bar's `width` is proportional to
-      `output / <band price axis max>` — command:
+      `output / <the chart's shared price axis max>` — command:
       `npx nx run ayokoding-www:test:unit -- benchmark-chart` — acceptance: fails
       (widths not yet scaled per-bar-type)
   - **Date**: 2026-07-30. **Status**: Done (already satisfied). **Notes**: test added and run
@@ -336,7 +336,7 @@ ayokoding-www-ai-benchmark-merged-chart --json number --jq 'length'` → `1`.
       Given a model with a composite index of 85.7 and an output rate of $15.00
       When the merged chart renders that model's row
       Then the capability bar's length is proportional to 85.7 over the composite index max
-      And the price-out bar's length is proportional to $15.00 over that band's price axis max
+      And the price-out bar's length is proportional to $15.00 over the chart's shared price axis max
     ```
 
 - [x] [AI] **GREEN**: wire two independent `scaleLinear` instances into `benchmark-chart.tsx` — one
@@ -734,6 +734,35 @@ price chart is rendered` / `the capability chart` / `the price chart` as their s
   > **Files-Changed**: `ai-benchmark.feature`.
   > **Notes**: 9 new scenarios (AC-39..AC-47) added verbatim from prd.md, inserted after AC-37.
   > `grep -c "^  Scenario" ai-benchmark.feature` → `48`.
+
+- [x] [AI] **Post-hoc addition (PR #125 review-cycle 1, `pr-review-fixer`)**: add AC-48 — a rated
+      model with no reported price shows a not-reported placeholder — to the feature file,
+      resolving cycle 1's MEDIUM spec-coverage finding that the merged chart's inline "not
+      reported" placeholder (genuinely new rendering behaviour absent from the retired
+      `price-chart.tsx`, which used to omit such models from the plot entirely) had no owning
+      scenario — acceptance: `grep -c "^  Scenario" specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
+      returns `49`
+  - **Gherkin (binds) →** "A rated model with no reported price shows a not-reported placeholder"
+
+    ```gherkin
+    Scenario: A rated model with no reported price shows a not-reported placeholder
+      Given a model in the light band with no metered rate and no subscription rate
+      When the merged chart renders that model's row
+      Then the row shows its capability bar as normal
+      And the price-bar area of that row shows a "not reported" placeholder instead of two bars
+    ```
+
+  > **Date**: 2026-07-30. **Status**: DONE (post-hoc correction, PR #125 review-cycle 1,
+  > `pr-review-fixer`). **Files-Changed**: `ai-benchmark.feature` (AC-48 scenario added after
+  > AC-47), `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx` (new
+  > "BenchmarkChart — AC-48 rated model with no reported price" describe block asserting the
+  > `benchmark-chart-not-reported-{id}` placeholder renders and both price bars are absent),
+  > `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (new Given/When/Then/And step
+  > bindings for the scenario above). **Notes**: this scenario, its unit test, and its step
+  > bindings were all added directly in cycle 1's fixer commit resolving a MEDIUM spec-coverage
+  > finding, but the addition was never reflected back into this delivery checklist at the time —
+  > this entry is the missing traceability record, added while resolving review-cycle 2's HIGH
+  > governance finding on the same gap. `grep -c "^  Scenario" ai-benchmark.feature` → `49`.
 
 - [x] [AI] Implement or extend the corresponding step definitions in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (search for the file first:

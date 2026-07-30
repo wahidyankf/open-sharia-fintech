@@ -271,7 +271,7 @@ Feature: AI model benchmark tool — merged capability/price chart
     Given a model with a composite index of 85.7 and an output rate of $15.00
     When the merged chart renders that model's row
     Then the capability bar's length is proportional to 85.7 over the composite index max
-    And the price-out bar's length is proportional to $15.00 over that band's price axis max
+    And the price-out bar's length is proportional to $15.00 over the chart's shared price axis max
 
   Scenario: A band's sort control reorders only that band
     Given the sonnet band is displaying models in capability-descending order
