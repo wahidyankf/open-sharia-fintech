@@ -96,8 +96,9 @@ static server components wrapping client content in `<Suspense>`, and
 
 ## Related
 
-- [`ayokoding-www-ai-benchmark-merged-chart`](../ayokoding-www-ai-benchmark-merged-chart/README.md)
-  — sibling in-progress plan. Assumed complete for this plan's purposes. Verified non-conflicting:
+- [`ayokoding-www-ai-benchmark-merged-chart`](../../done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/README.md)
+  — sibling plan, completed and archived to `done/` during this plan's own execution. Verified
+  non-conflicting:
   its `/[locale]/tools/ai-benchmark` route already reads its `sortOpus`/`sortSonnet`/`sortLight`/
   `sortUnrated` query state client-side inside a `<Suspense>` boundary, which is exactly the pattern
   this plan enforces everywhere else.
