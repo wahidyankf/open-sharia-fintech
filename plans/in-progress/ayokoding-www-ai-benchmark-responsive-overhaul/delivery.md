@@ -1406,23 +1406,35 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
     And the price-out bar's length is proportional to $15.00 over the chart's shared price axis max
 ```
 
-- [ ] [AI] **RED**: create
+- [x] [AI] **RED**: create
       `apps/ayokoding-www/src/features/ai-benchmark/shell/bar-row.test.tsx` (sibling pattern:
       `chart-primitives.test.tsx`) asserting that a `BarRow` given a value and a domain maximum
       renders a fill element whose inline `style.width` is the expected percentage string
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — the module `./bar-row` does not resolve
-- [ ] [AI] **GREEN**: create `apps/ayokoding-www/src/features/ai-benchmark/shell/bar-row.tsx`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `bar-row.test.tsx` (new) **Notes**:
+  > confirmed genuine RED — `Failed to resolve import "./bar-row"`.
+
+- [x] [AI] **GREEN**: create `apps/ayokoding-www/src/features/ai-benchmark/shell/bar-row.tsx`
       _New file_ — a label element, a track `div`, and a fill `div` whose
       `style={{ width:`${scaleLinear(max, 100)(value)}%`}}` uses `bandBarBgClass(band)`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new tests pass; `npx nx run ayokoding-www:typecheck` exits 0
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: extract the label/track/fill markup into a single documented component with
+
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `bar-row.tsx` (new) **Notes**: both
+    > commands exited 0.
+
+- [x] [AI] **REFACTOR**: extract the label/track/fill markup into a single documented component with
       a docstring naming DD-25 and stating the FCIS boundary (no literal score, price, name, or
       threshold in this file)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (the DD-25/FCIS docstring was
+  > written directly into the GREEN step's `bar-row.tsx`, so GREEN and REFACTOR landed in one
+  > edit) **Notes**: exits 0; docstring present.
 
 ### TDD cycle 5.2 — the chart reflows without rescaling typography (AC-47, inverted)
 
@@ -1437,7 +1449,7 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
     And the row layout changes from stacked to a label column only at the desktop width
 ```
 
-- [ ] [AI] **RED**: reword the AC-47 scenario in
+- [x] [AI] **RED**: reword the AC-47 scenario in
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` (currently at
       lines 324-330, titled "The merged chart uses the identical DOM structure at every breakpoint")
       to the Gherkin block above verbatim, with a comment naming DD-25/DD-26/DD-31 (the identical-DOM
@@ -1453,14 +1465,31 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — the current binding still asserts DOM-signature `toEqual` equality
       instead of the text-size/reflow-class properties above
-- [ ] [AI] **RED**: replace the SVG-structure assertions in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/.../ai-benchmark.feature`, `test/unit/fe-steps/ai-benchmark.steps.tsx` **Notes**:
+  > **deviation disclosed**: the scenario's ACTUAL current location was lines 353-359 (not
+  > 324-330) and the binding's actual location was lines 1978-2014 (not ~1894-1924) — delivery.md's
+  > quoted line numbers were stale, consistent with the pattern already found and disclosed in
+  > Phases 3-4. Located both by scenario-title text search instead. Confirmed genuine RED via
+  > `FeatureUknowScenarioError: Scenario ... does not exist` (the binding's scenario name had not
+  > yet been renamed to match the reworded feature title) before rewriting the binding to assert
+  > the declared text-size/reflow-class properties. jsdom's no-live-CSS limitation is documented
+  > in the new binding's own comment (mirrors AC-38's established pattern).
+
+- [x] [AI] **RED**: replace the SVG-structure assertions in
       `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.test.tsx` with assertions
       that (a) no `<svg>` element is rendered, (b) every model label carries the same declared
       Tailwind text-size class regardless of any width-dependent prop, and (c) the row container
       carries the `lg:grid-cols-` reflow class exactly once
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS on (a) — the current component renders one `<svg>` per rated band
-- [ ] [AI] **GREEN**: rewrite
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.test.tsx` **Notes**:
+  > new `describe("BenchmarkChart — renders as DOM, not SVG (DD-25)")` block added; confirmed
+  > FAILS against the pre-rewrite SVG component before proceeding to GREEN.
+
+- [x] [AI] **GREEN**: rewrite
       `apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx` to render DOM rows
       via `BarRow`, deleting `SVG_WIDTH`, `PLOT_X`, `PLOT_WIDTH`, `MARKER_FONT_SIZE`, `MARKER_GAP`,
       `MARKER_CHAR_WIDTH_RATIO`, `MARKER_SAFETY_BUFFER`, `WORST_CASE_MARKER_LENGTH`,
@@ -1471,12 +1500,22 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
       `grep -cE '^(export )?const (SVG_WIDTH|PLOT_X|PLOT_WIDTH|BAND_HEADER_HEIGHT|TOP_MARGIN)' apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
       prints `0`
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: replace the file's SVG-era header comment with one recording DD-25, DD-26,
+
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.tsx`,
+    > `benchmark-chart.test.tsx` **Notes**: all listed constants deleted; `computeLayout` no longer
+    > computes `headerY`/`rowTop`/`plotHeight`. The grep prints `0`. Capability/price scales moved
+    > from chart-level pixel scales (`scaleLinear(max, PLOT_WIDTH)`) into `BarRow` itself
+    > (`scaleLinear(max, 100)` per bar) since `PLOT_WIDTH` no longer exists.
+
+- [x] [AI] **REFACTOR**: replace the file's SVG-era header comment with one recording DD-25, DD-26,
       and DD-31 (why DWT-001 and DWT-004 are retired as SVG-geometry concerns rather than dropped)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0 and
       `grep -cE 'DD-2[56]|DD-31' apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
       is at least `3`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.tsx` **Notes**:
+  > exits 0; grep prints `6`.
 
 ### TDD cycle 5.3 — the chart region keeps an accessible name (AC-36, reworded)
 
@@ -1490,22 +1529,43 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
     Then each rated band's chart region exposes a localized accessible name
 ```
 
-- [ ] [AI] **RED**: reword the AC-36 scenario in
+- [x] [AI] **RED**: reword the AC-36 scenario in
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` (lines
       231-236) to the text above with a comment naming DD-25, and update its assertion in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` to query an accessible region
       rather than an `svg[role="img"]`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — no labelled region exists yet
-- [ ] [AI] **GREEN**: give each rated band's wrapper in `benchmark-chart.tsx` a
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/.../ai-benchmark.feature`, `test/unit/fe-steps/ai-benchmark.steps.tsx` **Notes**:
+  > **deviation disclosed**: the scenario's actual current location was lines 252-257, not
+  > 231-236 (stale, same pattern as cycle 5.2). Landed together with cycle 5.2's GREEN step in
+  > one working-tree edit pass rather than as an isolated RED-only commit (both this file's
+  > reword and the `benchmark-chart.tsx` rewrite were verified together via the same
+  > `test:unit` run) — genuinely confirmed failing against the pre-rewrite `role="img"` markup
+  > before the GREEN markup change landed.
+
+- [x] [AI] **GREEN**: give each rated band's wrapper in `benchmark-chart.tsx` a
       `role="group"` (or `<section>`) with `aria-labelledby` pointing at that band's own visible
       heading, carrying the localized band label
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the AC-36 unit binding passes
-- [ ] [AI] **REFACTOR**: hoist the per-band id generation into one helper so the heading id and the
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.tsx` **Notes**:
+  > each rated band's `<div role="group" aria-labelledby={bandTitleId}>` wraps that band's own
+  > `<h3 id={bandTitleId}>` heading (the localized band label) — passes.
+
+- [x] [AI] **REFACTOR**: hoist the per-band id generation into one helper so the heading id and the
       `aria-labelledby` cannot drift
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none beyond the GREEN step **Notes**:
+  > `const bandTitleId = \`${titleId}-${bandLayout.band}\``is already the single computation
+both the heading's`id`and the wrapper's`aria-labelledby` read from (one local, not two
+  > independently-typed strings), so there is no further hoist needed — drift is already
+  > structurally impossible. Exits 0.
 
 ### TDD cycle 5.4 — the text alternative survives (AC-46, reworded)
 
@@ -1520,25 +1580,48 @@ run ayokoding-www:test:unit` exited 0 — the new tests and every existing test 
     And every figure the chart encodes is still reachable via the roster below
 ```
 
-- [ ] [AI] **RED**: reword the AC-46 scenario in the feature file (lines 311-322) to the text above
+- [x] [AI] **RED**: reword the AC-46 scenario in the feature file (lines 311-322) to the text above
       and update its unit binding to assert the labelled region plus roster reachability
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS on the roster-reachability assertion until the binding is written against
       the current DOM
-- [ ] [AI] **GREEN**: adjust the binding and any component markup needed so both steps hold
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/.../ai-benchmark.feature`, `test/unit/fe-steps/ai-benchmark.steps.tsx` **Notes**:
+  > **deviation disclosed**: the scenario's actual current location was lines 340-351, not
+  > 311-322 (stale, same pattern as 5.2/5.3). Verified together with cycle 5.3/5.2's GREEN steps
+  > in one `test:unit` pass — genuinely confirmed failing against the pre-rewrite `role="img"`
+  > query before the DOM markup landed.
+
+- [x] [AI] **GREEN**: adjust the binding and any component markup needed so both steps hold
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **REFACTOR**: update `chart-order-parity.test.tsx`'s selectors from SVG testids to the
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.tsx`,
+  > `test/unit/fe-steps/ai-benchmark.steps.tsx` **Notes**: passes — both the per-band labelled
+  > region and roster-reachability (ModelTable) assertions hold.
+
+- [x] [AI] **REFACTOR**: update `chart-order-parity.test.tsx`'s selectors from SVG testids to the
       new DOM testids
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: **deviation
+  > disclosed**: `chart-order-parity.test.tsx` had ZERO existing SVG-specific selectors before
+  > this phase (confirmed via `grep -n 'svg\|Svg\|SVG'` returning no matches) — its
+  > testid-attribute queries (`benchmark-chart-band-haiku`, `benchmark-chart-row-`) already used
+  > the SLOT-prefixed convention that survived the DOM rewrite unchanged, since the new
+  > `role="group"` wrapper reuses the identical `benchmark-chart-band-{band}` testid the old
+  > `<BandGroup>` carried. This step is therefore a genuine no-op — re-ran its 3 tests standalone
+  > (`npx vitest run chart-order-parity`) and confirmed all 3 still pass with zero file edits,
+  > rather than silently marking it done on a guess.
 
 ### TDD cycle 5.5 — DD-31's replacement structural guards
 
 **Exempt from Gherkin tagging** — structural DOM-sibling regression guards replacing the retired
 SVG-geometry tests (DD-31), not a new behavior scenario.
 
-- [ ] [AI] **RED**: add two tests to `benchmark-chart.test.tsx`: (a) the low-coverage marker renders
+- [x] [AI] **RED**: add two tests to `benchmark-chart.test.tsx`: (a) the low-coverage marker renders
       as a sibling of the bar track, not inside it (replacing DWT-001's clip guard); (b) the band
       header and the first model row are separate block-level siblings (replacing DWT-004's overlap
       guard)
@@ -1546,39 +1629,75 @@ SVG-geometry tests (DD-31), not a new behavior scenario.
       — acceptance: both FAIL if the marker is nested inside the track or the header shares a
       container with the first row; confirm by temporarily nesting one and observing the failure,
       then restore
-- [ ] [AI] **GREEN**: adjust the markup so both hold
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.test.tsx` (final);
+  > `benchmark-chart.tsx` temporarily during the falsifiability check only, restored byte-identical
+  > afterward **Notes**: both tests written against the ALREADY-correct final markup (both pass
+  > there), then falsifiability was demonstrated per the acceptance's own instruction: (a)
+  > temporarily nested the low-coverage marker as a `BarRow` child — `getByTestId` for the marker
+  > then threw (the marker never rendered), a genuine failure; (b) temporarily nested the row loop
+  > inside the band header's own `<h3>` — the sibling assertion failed with `expected true to be
+false`. Both reverted; `diff` against a pre-check backup confirmed byte-identical restoration.
+
+- [x] [AI] **GREEN**: adjust the markup so both hold
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: both pass
-- [ ] [AI] **REFACTOR**: group both under a `describe("DD-31 — replacements for the retired
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none beyond cycle 5.2's GREEN
+  > markup **Notes**: the final `benchmark-chart.tsx` markup from cycle 5.2 already keeps the
+  > marker as a `BarRow` sibling and the header/first-row as siblings, so both DD-31 tests pass
+  > without further edits.
+
+- [x] [AI] **REFACTOR**: group both under a `describe("DD-31 — replacements for the retired
 SVG-geometry guards")` block with a comment linking to `tech-docs.md §DD-31`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-chart.test.tsx` **Notes**:
+  > exits 0.
+
 ### Cleanup — DD-32 disposition
 
-- [ ] [AI] Delete `Axis`, `Bar`, `BandGroup`, `TickRow`, and `evenTicks` from
+- [x] [AI] Delete `Axis`, `Bar`, `BandGroup`, `TickRow`, and `evenTicks` from
       `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx` and their tests from
       `chart-primitives.test.tsx`
       — command: `npx nx run ayokoding-www:test:quick`
       — acceptance: exits 0, and
       `grep -cE 'export function (Axis|Bar|BandGroup|TickRow|evenTicks)' apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx`
       prints `0`
-- [ ] [AI] Confirm `Legend`, `scaleLinear`, `bandLabel`, and `bandSwatchClass` are still exported and
+- [x] [AI] Confirm `Legend`, `scaleLinear`, `bandLabel`, and `bandSwatchClass` are still exported and
       still consumed
       — acceptance:
       `grep -cE 'export function (Legend|scaleLinear|bandLabel|bandSwatchClass)' apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx`
       prints `4`
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: grep prints `4`;
+  > `Legend` (how-to-read.tsx), `scaleLinear`/`bandLabel` (BarRow/benchmark-chart.tsx),
+  > `bandSwatchClass` (Legend itself) all remain consumed. **Deviation disclosed**: tech-docs.md
+  > §DD-32 describes `barFillClass`/`bandInkFillClass` as "replaced" by the DOM sibling maps —
+  > after this cleanup deletes their only consumers (`Bar`/`BandGroup`), both functions are now
+  > unconsumed dead exports (confirmed via `grep -rn barFillClass|bandInkFillClass apps/ayokoding-www/src`
+  > returning only their own declaration/docstring lines). delivery.md's literal Cleanup checklist
+  > names only `Axis`/`Bar`/`BandGroup`/`TickRow`/`evenTicks` for deletion, not these two — kept
+  > per delivery.md's literal text rather than taking an uninstructed extra action; flagging the
+  > now-dead-code discrepancy here for a maintainer/later-phase decision rather than silently
+  > deleting beyond scope.
+
 ### Preserved-defect guards — Phase 5
 
-- [ ] [AI] Confirm UWT-001 holds: unrated metered models still show their price as plain text, never
+- [x] [AI] Confirm UWT-001 holds: unrated metered models still show their price as plain text, never
       a bar or sort control, after the DOM rewrite
       — acceptance: `npx nx run ayokoding-www:test:unit` passes, including the existing
       `describe("BenchmarkChart — unrated models")` suite in `benchmark-chart.test.tsx`, and
       `grep -cF 'UWT-001' apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
       is at least `1` (the defect-preservation comment survives the rewrite, confirmed by reading the
       `groups.unrated.map` block directly: it must render plain price text, never a `<BarRow`)
-- [ ] [AI] Confirm UWT-002 holds: each rated band's sort control remains a DOM sibling of that same
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none beyond cycle 5.2's rewrite
+  > **Notes**: `test:unit` passes (3250 tests); grep prints `1`; manually confirmed the
+  > `groups.unrated.map` block renders plain text (`{score.model.name} — ...`), never `<BarRow`.
+
+- [x] [AI] Confirm UWT-002 holds: each rated band's sort control remains a DOM sibling of that same
       band's own rows, never hoisted to a shared location above all bands
       — acceptance: `npx nx run ayokoding-www:test:unit` passes, and
       `grep -cF 'UWT-002' apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
@@ -1586,24 +1705,88 @@ SVG-geometry guards")` block with a comment linking to `tech-docs.md §DD-31`
       `bands.map` block directly: the per-band `FilterSelect` sort control and that band's own rows
       share the same per-band wrapper element)
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none beyond cycle 5.2's rewrite
+  > **Notes**: `test:unit` passes; grep prints `2`; manually confirmed the `bands.map` block's
+  > per-band `<div data-testid="...-band-wrapper-{band}">` wraps both that band's own
+  > `<FilterSelect>` and its `role="group"` rows region as siblings.
+
 ### Commit Guidelines — Phase 5
 
-- [ ] [AI] Commit thematically: one commit for `bar-row.tsx`, one for the `benchmark-chart.tsx`
+- [x] [AI] Commit thematically: one commit for `bar-row.tsx`, one for the `benchmark-chart.tsx`
       rewrite, one for the spec rewordings, one for the DD-32 deletions
       — acceptance: `git log --oneline -4` shows four conventional-format subjects, none bundling
       unrelated concerns
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (git-only step) **Notes**:
+  > `git log --oneline -4` → `332c6fe45 refactor(ayokoding-www): delete unconsumed SVG chart
+primitives (DD-32)`, `cd455f129 test(ayokoding-www): reword AC-36/AC-46/AC-47 for the DOM
+chart rewrite`, `167bd0299 feat(ayokoding-www): rewrite BenchmarkChart to render DOM bars,
+drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow component` — four
+  > distinct conventional-format subjects, none bundling unrelated concerns.
 
 ### Phase 5 Gate
 
 > All checks below must pass before starting Phase 6.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
-- [ ] [AI] No `<svg` remains in the chart component:
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: **deviation
+  > disclosed**: the first attempt (run concurrently with the full e2e Playwright suite below,
+  > both sharing this machine's CPU) reported `1 failed` — a vitest-cucumber step timeout
+  > ("pass a timeout value... or configure it globally"). Root-cause investigated per Root Cause
+  > Orientation rather than accepted at face value: re-ran `test:unit` alone (no concurrent
+  > load) and it passed cleanly at the SAME totals as the prior clean run (146 files, 3250 tests,
+  > 6 skipped, 0 failed) — confirming the 1 failure was a CPU-contention-induced timeout flake
+  > (consistent with this repo's known "flaky test:quick under parallel load" pattern), not a
+  > genuine regression. Re-ran the full `test:quick` chain in isolation afterward: exits 0 —
+  > typecheck, lint, `test:unit` (146 passed, 3250 tests passed, 6 skipped), `test:coverage`
+  > (100% on every touched file), `specs:structure-validation` (0 findings), and
+  > `specs:behavior:coverage` (42 specs, 347 scenarios, 1250 steps, all covered) all genuinely
+  > green.
+
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: exits 0 — "Spec
+  > coverage valid! 42 specs, 347 scenarios, 1250 steps — all covered."
+
+- [x] [AI] No `<svg` remains in the chart component:
       `grep -cF '<svg' apps/ayokoding-www/src/features/ai-benchmark/shell/benchmark-chart.tsx`
       prints `0`
-- [ ] [AI] `npx nx run ayokoding-www:build` exits 0
-- [ ] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 (AC-52 still green after the rewrite)
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: prints `0`
+  > (`grep -c` exits 1 on zero matches, which is the expected/correct behavior for a `0` count).
+
+- [x] [AI] `npx nx run ayokoding-www:build` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: **deviation
+  > disclosed**: the first attempt failed — several UNRELATED `/en/learn/legacy/software-engineering/...`
+  > content pages (nothing to do with `ai-benchmark`) exceeded Next.js's 60s static-generation
+  > timeout under concurrent load and the build worker exited. Root-cause investigated: no
+  > `ai-benchmark`-related file appeared in the failure list, and a clean retry with no code
+  > changes built all 2048 pages successfully in 3.6min — confirms a transient infra flake (CPU
+  > contention from concurrent test runs earlier this session), not a regression from this
+  > phase's changes. Retry exited 0.
+
+- [x] [AI] `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 (AC-52 still green after the rewrite)
+
+  > **Date**: 2026-07-31 **Status**: Done (with a disclosed, verified-unrelated pre-existing
+  > failure elsewhere in the suite) **Files changed**: none **Notes**: **deviation disclosed**:
+  > the nx target itself did NOT exit 0 — Playwright reported 5 failed / 316 skipped / 672 passed
+  > (993 total). Investigated via `test-results/junit.xml` rather than accepting the console
+  > summary at face value: parsed all 186 `ai-benchmark.feature.spec.js` testcases — **0
+  > failures**, including all 21 "The document never scrolls horizontally" (AC-52) examples
+  > (3 browsers × 7 viewport/locale combinations) and all 6 "Band colours meet contrast in both
+  > themes" (AC-38, not AC-52 — the coordinator's relay named the wrong AC number for this
+  > scenario; verified the correct mapping directly in the feature file) examples (3 browsers ×
+  > 2 themes) — both fully green. All 5 real failures are in
+  > `cost-of-living-calculator.feature.spec.js` (2, a pre-existing decimal-rounding assertion
+  > mismatch: expected substring "96006" vs received "96000") and
+  > `course-rehome-redirects.feature.spec.js` / `ia-navigation-revamp.feature.spec.js` (3, a
+  > pre-existing 30s timeout fetching an unrelated course URL) — confirmed via
+  > `git diff --stat` across every commit this phase that NONE of the three failing step files
+  > were touched. These are genuinely pre-existing, out-of-scope defects unrelated to the DOM
+  > chart rewrite, not a regression from Phase 5 — flagging them here for a separate fix outside
+  > this phase's scope rather than silently absorbing them into this gate's pass/fail count.
 
 > **Pause Safety**: the chart renders as DOM at every breakpoint; the roster and page composition
 > are unchanged, so the page is coherent and fully green — a reader would simply see the new chart
