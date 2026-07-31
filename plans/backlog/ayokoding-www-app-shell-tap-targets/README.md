@@ -1,7 +1,7 @@
 # Fix Shared App-Shell Tap Targets Below 24x24 CSS px
 
 > **Status**: Backlog stub (not started). Filed from Rule-15 finding `EWT-005`, surfaced during
-> [`ayokoding-www-ai-benchmark-responsive-overhaul`](../../in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/delivery.md)'s
+> [`ayokoding-www-ai-benchmark-responsive-overhaul`](../../done/2026-08-01__ayokoding-www-ai-benchmark-responsive-overhaul/delivery.md)'s
 > Phase 11 three-tester retest.
 
 ## Context
