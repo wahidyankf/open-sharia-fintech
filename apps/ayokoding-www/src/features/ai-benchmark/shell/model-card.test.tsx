@@ -74,3 +74,35 @@ describe("ModelCard — figure parity with the desktop table row (AC-54, W-30)",
     expect(figureValues(cardRoot).size).toBeGreaterThan(0);
   });
 });
+
+describe("ModelCard — disclosure content is grouped under labelled headings (AC-63, DD-34 Treatment 3)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("splits the expanded content into exactly two <section>s, each headed by an <h4>, covering every field exactly once", () => {
+    render(<ModelCard model={model} view={view} locale="en" />);
+    const details = screen.getByTestId(`model-card-details-${MODEL_ID}`);
+    const sections = Array.from(details.querySelectorAll("section"));
+    expect(sections.length).toBe(2);
+    expect(sections.every((section) => section.querySelector("h4") !== null)).toBe(true);
+
+    const labelsOf = (section: Element): Set<string> =>
+      new Set(Array.from(section.querySelectorAll("dt")).map((dt) => dt.textContent?.trim() ?? ""));
+    const [groupA, groupB] = sections.map(labelsOf);
+    const allLabels = new Set(Array.from(details.querySelectorAll("dt")).map((dt) => dt.textContent?.trim() ?? ""));
+
+    // Union of the two groups' labels equals every field's label (nothing left ungrouped)...
+    expect(new Set([...groupA!, ...groupB!])).toEqual(allLabels);
+    // ...and the two groups' label sets are disjoint (nothing belongs to more than one group).
+    expect([...groupA!].some((label) => groupB!.has(label))).toBe(false);
+  });
+
+  it("nests each group heading one level below the card's own model-name heading", () => {
+    render(<ModelCard model={model} view={view} locale="en" />);
+    expect(screen.getByTestId(`model-card-name-${MODEL_ID}`).tagName).toBe("H3");
+    const details = screen.getByTestId(`model-card-details-${MODEL_ID}`);
+    const headings = Array.from(details.querySelectorAll("h4"));
+    expect(headings.length).toBe(2);
+  });
+});

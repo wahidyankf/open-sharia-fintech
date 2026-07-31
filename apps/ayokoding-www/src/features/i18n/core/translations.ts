@@ -81,6 +81,10 @@ const translations: Record<Locale, Record<string, string>> = {
     // DD-33 item 1 (Phase 6, cycle 6.1) — the roster card's <summary> disclosure label. Genuinely
     // new copy: no existing key names "reveal the rest of this model's figures".
     aiBenchCardAllFigures: "All figures",
+    // DD-33 item 3/4 (Phase 6, cycle 6.6) — the two field-group headings DD-34 Treatment 3 adds.
+    // Genuinely new copy: no existing key names either heading.
+    aiBenchCardGroupModel: "Model",
+    aiBenchCardGroupScores: "Scores",
     aiBenchHowToSummary: "How to read this benchmark (please read before comparing models)",
     aiBenchHowToVendorReported:
       "Most frontier benchmark scores are vendor self-reported. On SWE-bench Verified, independent reproduction (METR) confirmed 0 of 104 vendor-claimed tasks — treat unverified scores as upper bounds, not measured facts.",
@@ -462,6 +466,8 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchPriceUnit: "per 1 juta token",
     aiBenchIntegrityLabel: "Catatan integritas",
     aiBenchCardAllFigures: "Semua angka",
+    aiBenchCardGroupModel: "Model",
+    aiBenchCardGroupScores: "Skor",
     aiBenchHowToSummary: "Cara membaca tolok ukur ini (harap dibaca sebelum membandingkan model)",
     aiBenchHowToVendorReported:
       "Sebagian besar angka tolok ukur frontier dilaporkan sendiri oleh vendor. Pada SWE-bench Verified, reproduksi independen (METR) mengonfirmasi 0 dari 104 tugas yang diklaim vendor — anggap angka yang belum diverifikasi sebagai batas atas, bukan fakta terukur.",

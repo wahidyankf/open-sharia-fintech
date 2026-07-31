@@ -2290,24 +2290,43 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-63/AC-64 — real assertions land with cycles 6.6/6.7's own RED steps.
+  // ─── AC-63 — an expanded card groups its fields under labelled headings (DD-34 Treatment 3) ───
+  // AC-64's placeholder still lands with cycle 6.7's own RED step.
   Scenario("An expanded card groups its fields under labelled headings", ({ Given, When, Then, And }) => {
     Given("a model's roster card is rendered with its disclosure expanded", () => {
-      expect(true).toBe(true);
+      ctx.fixtureDataset = fixtureDataset([bandFixtureModel("ac63-group-model", 65, 3)]);
+      const model = ctx.fixtureDataset.models[0]!;
+      const view = computeScoreViews(ctx.fixtureDataset, ctx.fixtureDataset).get(model.id)!;
+      const { container } = render(React.createElement(ModelCard, { model, view, locale: "en" }));
+      container.querySelector("details")?.setAttribute("open", "");
+      ctx.targetModelId = model.id;
+      ctx.cardContainer = container;
     });
 
     When("the structure of the disclosure's content is inspected", () => {
+      // Structural inspection happens directly in the Then/And assertions below.
       expect(true).toBe(true);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card groups its fields under labelled headings
     Then("every field belongs to exactly one labelled group", () => {
-      expect(true).toBe(true);
+      const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
+      const sections = Array.from(details.querySelectorAll("section"));
+      expect(sections.length).toBe(2);
+      expect(sections.every((section) => section.querySelector("h4") !== null)).toBe(true);
+      const labelsOf = (section: Element): Set<string> =>
+        new Set(Array.from(section.querySelectorAll("dt")).map((dt) => dt.textContent?.trim() ?? ""));
+      const [groupA, groupB] = sections.map(labelsOf);
+      const allLabels = new Set(Array.from(details.querySelectorAll("dt")).map((dt) => dt.textContent?.trim() ?? ""));
+      expect(new Set([...groupA!, ...groupB!])).toEqual(allLabels);
+      expect([...groupA!].some((label) => groupB!.has(label))).toBe(false);
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card groups its fields under labelled headings
     And("each group's heading is one level below the card's own model-name heading", () => {
-      expect(true).toBe(true);
+      expect(screen.getByTestId(`model-card-name-${ctx.targetModelId!}`).tagName).toBe("H3");
+      const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
+      expect(details.querySelectorAll("h4").length).toBe(2);
     });
   });
 

@@ -58,9 +58,11 @@ describe("ModelTable responsive parity", () => {
     expect(desktop.querySelectorAll("tbody tr[data-model-id]").length).toBe(dataset.models.length);
     expect(desktop.querySelectorAll("tbody tr[data-model-detail-id]").length).toBe(dataset.models.length);
 
-    // Mobile: stacked definition cards — one <li> per model, each carrying a <dl>.
+    // Mobile: stacked definition cards — one <li> per model. Each card's disclosure now groups its
+    // fields under two labelled <section>s (DD-34 Treatment 3, cycle 6.6), so each model carries
+    // TWO <dl>s, not one.
     expect(mobile.querySelectorAll("li[data-model-id]").length).toBe(dataset.models.length);
-    expect(mobile.querySelectorAll("dl").length).toBe(dataset.models.length);
+    expect(mobile.querySelectorAll("dl").length).toBe(dataset.models.length * 2);
   });
 
   it("renders the same figures in the mobile card and the desktop table for every model", () => {

@@ -272,6 +272,30 @@ export function renderStaticFigures(
   ];
 }
 
+/** One labelled group of detail-region figures, rendered as its own `<section>` (DD-34 Treatment 3). */
+export type FigureGroup = { heading: string; figures: ModelFigure[] };
+
+/**
+ * DD-34 Treatment 3 (DN-3 fix): splits a model's detail-region figures into the two labelled groups
+ * `ModelDetailDisclosure` renders as separate `<section>`s — a "Model" group (vendor/harnesses,
+ * whatever metadata the caller passes) and a "Scores" group (every benchmark figure plus coverage).
+ * Coverage groups with the benchmarks rather than with vendor/harnesses because it is DERIVED from
+ * them — coverage measures how many of the composite benchmarks this model actually reports, so it
+ * belongs with what it measures, not with unrelated metadata. One shared composition, called
+ * identically by `model-card.tsx` and `model-table.tsx`'s detail region, so the two callers cannot
+ * build a different grouping for the same figure set.
+ */
+export function buildDetailGroups(
+  modelMetaFigures: ModelFigure[],
+  scoreFigures: ModelFigure[],
+  locale: Locale,
+): FigureGroup[] {
+  return [
+    { heading: t(locale, "aiBenchCardGroupModel"), figures: modelMetaFigures },
+    { heading: t(locale, "aiBenchCardGroupScores"), figures: scoreFigures },
+  ];
+}
+
 /** The index/input-price/output-price figures picked out of `renderStaticFigures`'s list, plus everything else. */
 export type StaticFigurePartition = {
   index: ModelFigure | undefined;

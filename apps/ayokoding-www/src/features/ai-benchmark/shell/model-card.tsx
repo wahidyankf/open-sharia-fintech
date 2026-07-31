@@ -18,6 +18,7 @@ import type { Locale } from "@/features/i18n/core/config";
 import type { Model } from "../core/data/models";
 import { HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
 import {
+  buildDetailGroups,
   classLabel,
   integrityNotes,
   partitionStaticFigures,
@@ -61,12 +62,12 @@ export function ModelCard({ model, view, locale }: ModelCardProps) {
   const samePrice = inputFigure !== undefined && inputFigure.node === outputFigure?.node;
 
   const harnessNames = model.harnesses.map((h) => HARNESS_DISPLAY_NAMES[h] ?? h).join(", ");
-  const detailFigures: ModelFigure[] = [
+  const modelMetaFigures: ModelFigure[] = [
     { label: t(locale, "aiBenchColVendor"), node: <span>{model.vendor}</span> },
     { label: t(locale, "aiBenchColHarnesses"), node: <span>{harnessNames}</span> },
-    ...benchmarkFigures,
-    ...detailStaticFigures,
   ];
+  const scoreFigures: ModelFigure[] = [...benchmarkFigures, ...detailStaticFigures];
+  const groups = buildDetailGroups(modelMetaFigures, scoreFigures, locale);
 
   return (
     <li data-slot={SLOT} data-testid={`${SLOT}-${model.id}`} data-model-id={model.id} className="rounded-md border p-3">
@@ -97,7 +98,7 @@ export function ModelCard({ model, view, locale }: ModelCardProps) {
           </span>
         </div>
       </div>
-      <ModelDetailDisclosure slot={SLOT} modelId={model.id} figures={detailFigures} locale={locale} />
+      <ModelDetailDisclosure slot={SLOT} modelId={model.id} groups={groups} locale={locale} />
     </li>
   );
 }

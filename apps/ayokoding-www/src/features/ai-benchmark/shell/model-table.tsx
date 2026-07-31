@@ -38,6 +38,7 @@ import {
 import { dataset as defaultDataset, type Dataset } from "../core/data/models";
 import { HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
 import {
+  buildDetailGroups,
   classLabel,
   computeScoreViews,
   integrityNotes,
@@ -122,11 +123,16 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
               // `model-card.tsx`'s identical split.
               const inlineStaticFigures = renderStaticFigures(model, view, locale, "inline");
               const { rest: staticDetailFigures } = partitionStaticFigures(inlineStaticFigures, locale);
-              const detailFigures: ModelFigure[] = [
+              // Vendor is already its own primary column here (unlike the card, which has no
+              // separate vendor column) — this "Model" group carries only harnesses.
+              const modelMetaFigures: ModelFigure[] = [
                 { label: t(locale, "aiBenchColHarnesses"), node: <span>{harnessNames}</span> },
+              ];
+              const scoreFigures: ModelFigure[] = [
                 ...renderBenchmarkFigures(model, locale, "inline"),
                 ...staticDetailFigures,
               ];
+              const groups = buildDetailGroups(modelMetaFigures, scoreFigures, locale);
               return (
                 <Fragment key={model.id}>
                   <TableRow data-model-id={model.id} className="align-top">
@@ -145,7 +151,7 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
                   </TableRow>
                   <TableRow data-model-detail-id={model.id} className="align-top">
                     <TableCell colSpan={PRIMARY_COLUMN_COUNT}>
-                      <ModelDetailDisclosure slot={SLOT} modelId={model.id} figures={detailFigures} locale={locale} />
+                      <ModelDetailDisclosure slot={SLOT} modelId={model.id} groups={groups} locale={locale} />
                     </TableCell>
                   </TableRow>
                 </Fragment>
