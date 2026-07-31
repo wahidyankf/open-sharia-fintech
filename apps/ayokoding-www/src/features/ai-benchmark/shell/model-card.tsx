@@ -37,18 +37,24 @@ export type ModelCardProps = {
 };
 
 export function ModelCard({ model, view, locale }: ModelCardProps) {
+  // The summary carries index and price at the default `stacked` layout (DD-28) — see
+  // `partitionStaticFigures`'s own docstring for why this split is shared with `model-table.tsx`
+  // rather than re-implemented per caller.
   const staticFigures = renderStaticFigures(model, view, locale);
-  const benchmarkFigures = renderBenchmarkFigures(model, locale);
-
-  // The summary carries index and price (DD-28); the remaining static figure (coverage) joins the
-  // benchmark figures inside the disclosure — see `partitionStaticFigures`'s own docstring for why
-  // this split is shared with `model-table.tsx` rather than re-implemented per caller.
   const {
     index: indexFigure,
     input: inputFigure,
     output: outputFigure,
-    rest: detailStaticFigures,
   } = partitionStaticFigures(staticFigures, locale);
+
+  // The disclosure's remaining fields (coverage + every benchmark) render at the `inline` layout
+  // instead (DD-34 Treatment 2) — a SECOND call to the same builders, because the summary and the
+  // disclosure want different layouts for what is otherwise the identical figure. Rebuilding rather
+  // than relayout-ing the already-built summary nodes keeps every figure a single pure function
+  // call, never a post-hoc DOM/className patch.
+  const inlineStaticFigures = renderStaticFigures(model, view, locale, "inline");
+  const { rest: detailStaticFigures } = partitionStaticFigures(inlineStaticFigures, locale);
+  const benchmarkFigures = renderBenchmarkFigures(model, locale, "inline");
   // A subscription rate (or a genuinely absent price) reuses the SAME rendered node for input and
   // output (`model-figures.tsx`'s `priceCells`) — referential equality collapses that duplicate
   // node to a single visible price in the summary rather than showing the identical text twice.

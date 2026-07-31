@@ -370,3 +370,79 @@ Then("the table's header row is still visible", async ({ page }) => {
   const headerRow = page.locator('[data-testid="model-table-desktop"] thead tr').first();
   await expect(headerRow).toBeInViewport();
 });
+
+// ── Expanded card field density (DD-34, cycles 6.4/6.5) ───────────────────────
+
+async function navigateWithFirstCardExpanded(page: Page): Promise<void> {
+  await navigateAtViewport(page, 390, "en");
+  const summary = page.locator('[data-testid^="model-card-disclosure-"]').first();
+  await summary.click();
+}
+
+type ComputedTextStyle = { fontSize: number; fontWeight: number };
+
+async function readComputedTextStyle(locator: ReturnType<Page["locator"]>): Promise<ComputedTextStyle> {
+  return locator.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { fontSize: parseFloat(cs.fontSize), fontWeight: parseFloat(cs.fontWeight) };
+  });
+}
+
+let cardLabelStyle: ComputedTextStyle | null = null;
+let cardValueStyle: ComputedTextStyle | null = null;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
+Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", async ({ page }) => {
+  await navigateWithFirstCardExpanded(page);
+});
+
+When(
+  "the computed font size and font weight of a field label and of its own value are read from the live page",
+  async ({ page }) => {
+    const details = page.locator('[data-testid^="model-card-details-"]').first();
+    cardLabelStyle = await readComputedTextStyle(details.locator("dt").first());
+    cardValueStyle = await readComputedTextStyle(details.locator("dd").first());
+  },
+);
+
+Then("the value's computed font size is larger than the label's computed font size", async ({}) => {
+  expect(cardValueStyle!.fontSize).toBeGreaterThan(cardLabelStyle!.fontSize);
+});
+
+Then("the value's computed font weight is greater than the label's computed font weight", async ({}) => {
+  expect(cardValueStyle!.fontWeight).toBeGreaterThan(cardLabelStyle!.fontWeight);
+});
+
+let gradedCellFlexDirection = "";
+let labelBox: { top: number; bottom: number } | null = null;
+let valueBox: { top: number; bottom: number } | null = null;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
+When("the computed flex direction of a graded figure cell is read from the live page", async ({ page }) => {
+  const details = page.locator('[data-testid^="model-card-details-"]').first();
+  const gradedCell = details.locator('[data-slot="figure-cell"]').first();
+  gradedCellFlexDirection = await gradedCell.evaluate((el) => getComputedStyle(el).flexDirection);
+  // The field's own <dd> is the nearest <dd> ancestor of the graded cell; its parent is the
+  // shared name-value wrapper `model-detail-disclosure.tsx` renders one per field, so this
+  // navigation is stable whether that wrapper is today's stacked layout or 6.5's rail layout.
+  const dd = gradedCell.locator("xpath=ancestor::dd[1]");
+  const fieldRow = dd.locator("xpath=parent::div[1]");
+  const dt = fieldRow.locator("dt").first();
+  labelBox = await dt.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { top: r.top, bottom: r.bottom };
+  });
+  valueBox = await dd.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { top: r.top, bottom: r.bottom };
+  });
+});
+
+Then("that computed flex direction is row rather than column", async ({}) => {
+  expect(gradedCellFlexDirection).toBe("row");
+});
+
+Then("the field label's vertical band overlaps the vertical band of its own value", async ({}) => {
+  const overlaps = labelBox!.top < valueBox!.bottom && valueBox!.top < labelBox!.bottom;
+  expect(overlaps).toBe(true);
+});

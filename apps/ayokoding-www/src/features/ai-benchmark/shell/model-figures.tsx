@@ -20,7 +20,7 @@ import { LOW_COVERAGE_THRESHOLD } from "../core/score";
 import { lowestRate } from "../core/price";
 import { BAND_LABEL_KEYS, BENCHMARK_COLUMNS } from "../core/data/benchmarks";
 import { formatCoverage, formatIndex, formatPercent, formatPriceUsd } from "./format";
-import { FigureCell } from "./figure-cell";
+import { FigureCell, type FigureLayout } from "./figure-cell";
 
 /** Per-model scored view: band, composite index, and coverage derived from the pure core. */
 export type ScoreView = {
@@ -59,7 +59,12 @@ export function figureFor(model: Model, benchmark: string): Figure | undefined {
 }
 
 /** A benchmark score cell: a range for a conflicted figure, otherwise a single value; "—" when absent. */
-export function benchmarkCell(model: Model, benchmarkId: string, locale: Locale): ReactNode {
+export function benchmarkCell(
+  model: Model,
+  benchmarkId: string,
+  locale: Locale,
+  layout: FigureLayout = "stacked",
+): ReactNode {
   const f = figureFor(model, benchmarkId);
   if (!f) {
     return <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
@@ -72,14 +77,23 @@ export function benchmarkCell(model: Model, benchmarkId: string, locale: Locale)
         grade={f.grade}
         source={f.source}
         locale={locale}
+        layout={layout}
       />
     );
   }
-  return <FigureCell value={formatPercent(f.value, locale)} grade={f.grade} source={f.source} locale={locale} />;
+  return (
+    <FigureCell
+      value={formatPercent(f.value, locale)}
+      grade={f.grade}
+      source={f.source}
+      locale={locale}
+      layout={layout}
+    />
+  );
 }
 
 /** The composite-index cell, or "not reported" for an unrated model. */
-export function indexCell(view: ScoreView, locale: Locale): ReactNode {
+export function indexCell(view: ScoreView, locale: Locale, layout: FigureLayout = "stacked"): ReactNode {
   if (view.index === undefined) {
     return <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
   }
@@ -89,6 +103,7 @@ export function indexCell(view: ScoreView, locale: Locale): ReactNode {
       grade="verified"
       source={defaultSourceForIndex()}
       locale={locale}
+      layout={layout}
     />
   );
 }
@@ -99,7 +114,7 @@ export function isLowCoverageView(view: ScoreView): boolean {
 }
 
 /** The coverage cell; low-coverage rated models carry an advisory marker (text, not colour alone). */
-export function coverageCell(view: ScoreView, locale: Locale): ReactNode {
+export function coverageCell(view: ScoreView, locale: Locale, layout: FigureLayout = "stacked"): ReactNode {
   const text = formatCoverage(view.coverage, locale);
   const low = isLowCoverageView(view);
   // Routes through the AyoKoding `--evidence-self-reported` token (an alias onto `--hue-honey-ink`,
@@ -107,8 +122,15 @@ export function coverageCell(view: ScoreView, locale: Locale): ReactNode {
   // (Rule-15 DWT-002 fix) — `--hue-honey-ink` already clears WCAG AA's 4.5:1 text minimum in both
   // themes (it is the same tone `hero.tsx` already uses for its own links), and resolves
   // automatically per-theme from the one class, no `dark:` variant needed.
+  // Same `layout` contract as `FigureCell` (DD-34 Treatment 2) — this cell has its own
+  // `inline-flex flex-col` shape rather than delegating to `FigureCell`, so it threads the prop
+  // through independently rather than sharing a component.
+  const layoutClass =
+    layout === "inline"
+      ? "inline-flex flex-row flex-wrap items-baseline gap-x-1.5"
+      : "inline-flex flex-col items-start gap-0.5 leading-tight";
   return (
-    <span data-slot="coverage-cell" className="inline-flex flex-col items-start gap-0.5 leading-tight">
+    <span data-slot="coverage-cell" className={layoutClass}>
       <span data-slot="figure-cell-value">{text}</span>
       {low ? (
         <span className="text-xs text-[var(--evidence-self-reported)]">{t(locale, "aiBenchCoverageLow")}</span>
@@ -126,6 +148,7 @@ export function defaultSourceForIndex(): string {
 export function priceCells(
   model: Model,
   locale: Locale,
+  layout: FigureLayout = "stacked",
 ): { input: ReactNode; output: ReactNode; isSubscription: boolean } {
   const rate = lowestRate(model);
   if (rate && rate.kind === "metered") {
@@ -137,6 +160,7 @@ export function priceCells(
           grade={rate.grade}
           source={rate.source}
           locale={locale}
+          layout={layout}
         />
       ),
       output: (
@@ -145,6 +169,7 @@ export function priceCells(
           grade={rate.grade}
           source={rate.source}
           locale={locale}
+          layout={layout}
         />
       ),
     };
@@ -160,6 +185,7 @@ export function priceCells(
         grade={rate.grade}
         source={rate.source}
         locale={locale}
+        layout={layout}
       />
     );
     return { isSubscription: true, input: subCell, output: subCell };
@@ -201,11 +227,24 @@ export function integrityNotes(model: Model, locale: Locale): ReactNode {
 /** One shared per-model figure: a localized label paired with its rendered node. */
 export type ModelFigure = { label: string; node: ReactNode };
 
-/** The four composite-benchmark figures, in column order — shared by the table and the card (W-26). */
-export function renderBenchmarkFigures(model: Model, locale: Locale): ModelFigure[] {
+// DD-34 Treatment 1 (DN-1 fix): a detail-region field's VALUE must out-rank its own LABEL on every
+// one of the three encodings CSS offers — size, weight, and colour — never the label-first
+// convention body text defaults to. Named here, beside the figure builders both `model-card.tsx`
+// and `model-table.tsx`'s detail region already share, so the two callers cannot drift back apart
+// on any one of the three (consumed by `model-detail-disclosure.tsx`, the one place both render
+// through).
+export const DETAIL_FIELD_LABEL_CLASS = "text-xs font-normal text-muted-foreground";
+export const DETAIL_FIELD_VALUE_CLASS = "text-sm font-semibold text-foreground";
+
+/**
+ * The four composite-benchmark figures, in column order — shared by the table and the card (W-26).
+ * `layout` (DD-34 Treatment 2) is passed straight through to each figure's own `FigureCell` — it
+ * never changes which four figures are built, only how each one's value and badge lay out.
+ */
+export function renderBenchmarkFigures(model: Model, locale: Locale, layout: FigureLayout = "stacked"): ModelFigure[] {
   return BENCHMARK_COLUMNS.map((col) => ({
     label: t(locale, col.labelKey),
-    node: benchmarkCell(model, col.id, locale),
+    node: benchmarkCell(model, col.id, locale, layout),
   }));
 }
 
@@ -214,13 +253,20 @@ export function renderBenchmarkFigures(model: Model, locale: Locale): ModelFigur
  * shared by the table and the card (W-26/W-30). The card's summary picks index/input/output price
  * out of this list by label match; the remaining entry (coverage) joins the card's expanded
  * content, so parity across summary + details holds by construction rather than by a second
- * hand-maintained list.
+ * hand-maintained list. `layout` (DD-34 Treatment 2) threads through identically to
+ * `renderBenchmarkFigures` — callers build this list TWICE where the summary and the detail region
+ * want different layouts for the SAME underlying figures (see `model-card.tsx`/`model-table.tsx`).
  */
-export function renderStaticFigures(model: Model, view: ScoreView, locale: Locale): ModelFigure[] {
-  const prices = priceCells(model, locale);
+export function renderStaticFigures(
+  model: Model,
+  view: ScoreView,
+  locale: Locale,
+  layout: FigureLayout = "stacked",
+): ModelFigure[] {
+  const prices = priceCells(model, locale, layout);
   return [
-    { label: t(locale, "aiBenchColIndex"), node: indexCell(view, locale) },
-    { label: t(locale, "aiBenchColCoverage"), node: coverageCell(view, locale) },
+    { label: t(locale, "aiBenchColIndex"), node: indexCell(view, locale, layout) },
+    { label: t(locale, "aiBenchColCoverage"), node: coverageCell(view, locale, layout) },
     { label: t(locale, "aiBenchColInputPrice"), node: prices.input },
     { label: t(locale, "aiBenchColOutputPrice"), node: prices.output },
   ];

@@ -110,16 +110,21 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
             {models.map((model) => {
               const view = views.get(model.id) ?? { band: "unrated" as const, index: undefined, coverage: 0 };
               const harnessNames = model.harnesses.map((h) => HARNESS_DISPLAY_NAMES[h] ?? h).join(", ");
+              // Primary columns keep the `stacked` layout (DD-27 — the table must fit below `lg`).
               const staticFigures = renderStaticFigures(model, view, locale);
               const {
                 index: indexFigure,
                 input: inputFigure,
                 output: outputFigure,
-                rest: staticDetailFigures,
               } = partitionStaticFigures(staticFigures, locale);
+              // The detail region's remaining fields render at `inline` layout instead (DD-34
+              // Treatment 2) — a second build of the same figures, same reasoning as
+              // `model-card.tsx`'s identical split.
+              const inlineStaticFigures = renderStaticFigures(model, view, locale, "inline");
+              const { rest: staticDetailFigures } = partitionStaticFigures(inlineStaticFigures, locale);
               const detailFigures: ModelFigure[] = [
                 { label: t(locale, "aiBenchColHarnesses"), node: <span>{harnessNames}</span> },
-                ...renderBenchmarkFigures(model, locale),
+                ...renderBenchmarkFigures(model, locale, "inline"),
                 ...staticDetailFigures,
               ];
               return (
