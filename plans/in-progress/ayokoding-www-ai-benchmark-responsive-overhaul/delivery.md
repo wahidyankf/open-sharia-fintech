@@ -571,14 +571,20 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
 
 ### UI Design Funnel Delivery
 
-- [ ] [AI] Re-confirm the R5 grounding survey against the current commit: read
+- [x] [AI] Re-confirm the R5 grounding survey against the current commit: read
       `libs/web-ui/src/primitives/`, `libs/web-ui-token/src/ayokoding.css`, and
       `apps/ayokoding-www/src/features/cost-of-living-calculator/shell/`
       — acceptance: `prd.md` §R5 grounding note still names every net-new component, and no further
       net-new component beyond `shell/bar-row.tsx` and `shell/model-card.tsx` is required. If a
       third is required, add it to `prd.md` and to `tech-docs.md` §File impact before proceeding.
   - _Suggested executor: `swe-ui-maker` with the `swe-developing-frontend-ui` skill_
-- [ ] [AI] Prior art (R7): delegate to `web-researcher` — "How do public AI-model comparison and
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (survey unchanged)
+    > **Notes**: re-read `libs/web-ui/src/primitives/` (13 primitives, unchanged), `libs/web-ui-token/src/ayokoding.css`
+    > (present), and `apps/ayokoding-www/src/features/cost-of-living-calculator/shell/` (unchanged
+    > shape). `apps/ayokoding-www/src/features/ai-benchmark/shell/` confirmed to still lack both
+    > `bar-row.tsx` and `model-card.tsx` — matches `prd.md`'s R5 grounding note exactly, no third
+    > net-new component required.
+- [x] [AI] Prior art (R7): delegate to `web-researcher` — "How do public AI-model comparison and
       leaderboard tools render capability/price bar charts and wide comparison tables on viewports
       below 768px? Do they use SVG or DOM bars? How do they disclose secondary columns? Inside an
       expanded per-model detail panel, how do they rank field labels against field values
@@ -587,11 +593,19 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
       — acceptance: `grep -c "accessed 2026-" prd.md` is at least `2`, and the `[Unverified]` marker
       in §R7 is replaced by the cited findings
   - _Suggested executor: `web-researcher`_
-- [ ] [AI] Reconcile: for each alternative in Screens A, B, B-continued (the DD-34 density
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `prd.md`
+    > **Notes**: 9 cited findings (NN/g ×2, Jakob Nielsen, Baymard, 9elements, uxpatterns.dev,
+    > Artificial Analysis, Vellum, OpenRouter) plus a transparently-flagged tooling limitation
+    > (SVG-vs-DOM per named site unconfirmable via markdown-only WebFetch). `grep -c "accessed 2026-"`
+    > = 10. `[Unverified]` marker replaced.
+- [x] [AI] Reconcile: for each alternative in Screens A, B, B-continued (the DD-34 density
       sub-funnel), and C, state in one line whether the prior-art findings support, challenge, or
       invalidate it; drop any invalidated alternative with its reason rather than silently keeping it
       — acceptance: every dropped alternative in `prd.md` carries a one-line drop reason
-- [ ] [AI] Narrow: verify the eight hi-fi finalist mockups (two per screen for Screens A, B and C,
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `prd.md`
+  > **Notes**: one-line verdict added for all 12 alternatives (A1-A3, B1-B3, B4-B6, C1-C3). No
+  > invalidations; A2/B1/B4/C1 selections directly reinforced by Findings 1/2/4/5/9.
+- [x] [AI] Narrow: verify the eight hi-fi finalist mockups (two per screen for Screens A, B and C,
       plus two for Screen B's DD-34 density sub-funnel, each showing the mobile rendering beside the
       desktop rendering) exist as `.png` plus `.svg` under this plan's `assets/`, and REGENERATE any
       whose design the prior-art findings changed
@@ -601,12 +615,18 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
       (the repo's own `md links validate` pre-commit hook is the falsifier — a stale reference
       fails the commit). Falsifiable both ways: deleting one finalist prints `7` and fails, and
       adding a stray `option-*.png` prints `9` and fails.
-- [ ] [AI] Select + Justify: confirm or revise the four selections and their decision tables in
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: `/bin/ls assets/ | grep -c 'option-.*\.png'` = 8. No regeneration needed — no
+  > alternative was invalidated by the research.
+- [x] [AI] Select + Justify: confirm or revise the four selections and their decision tables in
       `prd.md` against the prior-art findings; if a selection changes, update `tech-docs.md`'s
       affected design decision in the same commit
       — acceptance: `grep -c "Selected:" prd.md` prints `4`, and each selection names a screen and
       an option letter
-- [ ] [AI] Responsive: confirm each screen's per-breakpoint responsive-strategy table states what
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: all 4 selections (A2, B1, B4, C1) reconfirmed unchanged; `grep -c "Selected:" prd.md`
+  > = 4. `tech-docs.md` untouched (no selection changed).
+- [x] [AI] Responsive: confirm each screen's per-breakpoint responsive-strategy table states what
       stacks, collapses, hides, or reflows at mobile / tablet / desktop. The DD-34 density
       sub-funnel has **no table of its own by design** — its per-breakpoint strategy is carried by
       Screen B's table as the three trailing rows (expanded field rows, expanded grouping, absent
@@ -615,6 +635,9 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
       AND `grep -c '(DD-34)' prd.md` is at least `3` (the three trailing rows). Falsifiable both
       ways: adding a fourth strategy heading makes the first print `4` and fails, and dropping the
       DD-34 rows makes the second fall below `3` and fails.
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: `grep -c "Responsive strategy — mobile-first, per breakpoint"` = 3;
+  > `grep -c '(DD-34)'` = 5 (≥3 required). Tables unchanged by research.
 
 ### Commit Guidelines — Phase 2
 
