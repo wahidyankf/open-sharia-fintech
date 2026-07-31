@@ -1,5 +1,6 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
@@ -320,4 +321,34 @@ Then("every rated band's bar fill meets the WCAG non-text contrast ratio against
       `--chart-band-${band} vs --color-background contrast ratio`,
     ).toBeGreaterThanOrEqual(WCAG_NON_TEXT_MIN_CONTRAST);
   }
+});
+
+// ── Horizontal overflow regression (AC-52 / R5) ───────────────────────────────
+
+// Shared by every viewport-and-locale-parametrized scenario outline against this page (AC-52 here;
+// the later AC-49/AC-50/AC-58 outlines reuse it instead of re-implementing navigation).
+async function navigateAtViewport(page: Page, width: number, locale: string): Promise<void> {
+  await page.setViewportSize({ width, height: 800 });
+  await page.goto(`/${locale}/tools/ai-benchmark`);
+  await page.waitForLoadState("networkidle");
+}
+
+let overflowScrollWidth = 0;
+let overflowClientWidth = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The document never scrolls horizontally
+Given(
+  "the AI benchmark page is loaded at a {string} px viewport in the {string} locale",
+  async ({ page }, width: string, locale: string) => {
+    await navigateAtViewport(page, Number(width), locale);
+  },
+);
+
+When("the document's scroll width is compared with its client width", async ({ page }) => {
+  overflowScrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  overflowClientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+});
+
+Then("the document scroll width does not exceed the document client width", async ({}) => {
+  expect(overflowScrollWidth).toBeLessThanOrEqual(overflowClientWidth);
 });

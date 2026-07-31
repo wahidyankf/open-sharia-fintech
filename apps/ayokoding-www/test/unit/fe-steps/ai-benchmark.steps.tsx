@@ -2006,4 +2006,26 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(true).toBe(true);
     });
   });
+
+  // ─── AC-52 — the document never scrolls horizontally (R5) ─────────────────────
+  //
+  // jsdom has no real viewport or layout engine, so `document.documentElement.scrollWidth` vs
+  // `clientWidth` cannot be meaningfully compared — the REAL assertion runs at the e2e layer
+  // (`apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`). Same established
+  // `expect(true).toBe(true)` placeholder convention as the AC-38 binding above, so
+  // `specs:behavior:coverage` finds a `@covers` annotation for this scenario.
+  ScenarioOutline("The document never scrolls horizontally", ({ Given, When, Then }) => {
+    Given('the AI benchmark page is loaded at a "<width>" px viewport in the "<locale>" locale', () => {
+      expect(true).toBe(true);
+    });
+
+    When("the document's scroll width is compared with its client width", () => {
+      expect(true).toBe(true);
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The document never scrolls horizontally
+    Then("the document scroll width does not exceed the document client width", () => {
+      expect(true).toBe(true);
+    });
+  });
 });
