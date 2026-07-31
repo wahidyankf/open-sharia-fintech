@@ -746,7 +746,7 @@ The i18n **VALUES** stay `"Light"` / `"Ringan"` in this cycle — cycle 3.2 chan
 rename and its consumers (`BAND_LABEL_KEYS`, `how-to-read.tsx:90`) MUST land together here, because
 a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-35.
 
-- [ ] [AI] **RED**: add the scenario above verbatim under an `# AC-65` comment to
+- [x] [AI] **RED**: add the scenario above verbatim under an `# AC-65` comment to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`, and in the
       SAME edit reword the five existing scenarios whose text names the old identifier — AC-6
       (**title** `A model below the sonnet anchor renders in the light band` → `… haiku band`, plus
@@ -763,7 +763,15 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       title). Falsifiable both ways: if this passed, the step bindings would not be title-coupled
       and the lockstep requirement in GREEN would be unnecessary.
   - _Suggested executor: `specs-maker`_
-- [ ] [AI] **GREEN**: perform the whole inventory above in one commit. The identifier and the design
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` **Notes**: Added
+  > the AC-65 scenario verbatim and reworded AC-6/AC-9/AC-41/AC-44/AC-48; confirmed the `| light |`
+  > theme Examples row untouched. `npx nx run ayokoding-www:test:unit` FAILED as required, naming the
+  > reworded AC-6 scenario ("A model below the sonnet anchor renders in the haiku band") as having no
+  > matching step definition, since the old binding still declared the pre-rename title.
+
+- [x] [AI] **GREEN**: perform the whole inventory above in one commit. The identifier and the design
       tokens MUST move together because
       `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts:265` interpolates the band id into
       `var(--chart-band-${band}-ink)`, so renaming the id without renaming the CSS custom property
@@ -777,7 +785,20 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       leaves `var(--chart-band-light-ink)` unreferenced and the `band-tokens.unit.test.ts` token
       assertion fails.
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: update the explanatory prose that still describes the taxonomy in the old
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: the full inventory table above (21
+  > files across `core/`, `shell/`, `libs/web-ui-token/src/ayokoding.css`, both step-binding layers,
+  > and `translations.ts` key rename) plus one site NOT in the inventory table that the `build` step
+  > surfaced: `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx` (its
+  > `SortState` object construction referenced the old `light` key — a genuine TypeScript compile
+  > error at `next build`'s type-check phase, invisible to `test:unit` because Vitest's esbuild
+  > transform does not type-check). **Notes**: `test:unit`, `specs:behavior:coverage`, `build`, and
+  > `test:e2e` all exited 0; the e2e "Band colours meet contrast in both themes" scenario passed both
+  > its `light`- and `dark`-theme Examples rows (680 passed, 313 skipped, 0 failed overall — one
+  > `[firefox]` timeout on an unrelated cost-of-living-calculator scenario was reproduced and
+  > confirmed transient/pre-documented per `evidence/phase-0-baseline.txt`, not a regression).
+
+- [x] [AI] **REFACTOR**: update the explanatory prose that still describes the taxonomy in the old
       vocabulary — `core/bands.ts:7-10` and `:54` (the "else light" fallthrough narrative),
       `core/url-state.ts:20-31` (the `SORT_PARAM_KEYS` docstring), `shell/model-table.tsx:56,224`
       (the DD-5a collapse comments), `shell/benchmark-chart.test.tsx:186,400,423,527-532,572,627`,
@@ -786,6 +807,16 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       — command: `npx nx run ayokoding-www:test:quick`
       — acceptance: exits 0, and the sweep verification below now finds zero surviving band-sense
       occurrences
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `core/bands.ts`, `core/url-state.ts`,
+  > `shell/model-table.tsx`, `shell/benchmark-chart.test.tsx`, `shell/chart-order-parity.test.tsx`,
+  > `core/bands.unit.test.ts`, `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts` (prose
+  > only). **Notes**: `npx nx run ayokoding-www:test:quick` exited 0. The sweep verification below
+  > does NOT find zero surviving occurrences — it finds 7 (Sweep A) and 2 (feature-file band sweep)
+  > — but every one of them is the AC-65 scenario's own mandated verbatim text/assertion
+  > (`'no identifier is "light"'` / `expect(identifiers).not.toContain("light")` / the retired
+  > `class=light` regression test added in cycle 3.3), not a missed rename; see the Sweep A / Sweep B
+  > / feature-file-band-sweep items below for the full disclosure. No band-sense prose survived.
 
 ### TDD cycle 3.2 — the third rated class is labelled "Haiku" in both locales (AC-66)
 
@@ -805,7 +836,7 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       | id     |
 ```
 
-- [ ] [AI] **RED**: add the scenario above verbatim under an `# AC-66` comment to
+- [x] [AI] **RED**: add the scenario above verbatim under an `# AC-66` comment to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` with its
       `@covers` binding in `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`, and in
       the same edit **invert** the now-false assertion at
@@ -822,7 +853,17 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       and the cycle would be vacuous; if the inversion were skipped, the OLD
       `not.toBe` assertion would start failing in GREEN instead, which is the same defect surfacing
       one step later.
-- [ ] [AI] **GREEN**: change the two values in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`,
+  > `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.test.tsx` **Notes**: Added
+  > the AC-66 Scenario Outline verbatim with its `@covers` binding, and inverted the
+  > `chart-primitives.test.tsx` assertions. `npx nx run ayokoding-www:test:unit` FAILED on both new
+  > assertions as required, reporting the pre-rename actual values `"Light"` (en) and the `not.toBe`
+  > inversion not yet holding (id still equalled `"Ringan"`, not the `en` value).
+
+- [x] [AI] **GREEN**: change the two values in
       `apps/ayokoding-www/src/features/i18n/core/translations.ts` — line ~62 `aiBenchBandHaiku:`
       from `"Light"` to `"Haiku"` in the `en` block, and line ~440 from `"Ringan"` to `"Haiku"` in
       the `id` block. Leave `aiBenchLegendClassHaiku`'s values (`"below the Sonnet anchor."` /
@@ -833,7 +874,13 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       `/usr/bin/grep -c 'aiBenchBandHaiku: "Haiku"' apps/ayokoding-www/src/features/i18n/core/translations.ts`
       prints `2` (one per locale block; baseline before this step: `0`). Falsifiable both ways:
       changing only `en` prints `1` and fails; a stray third block prints `3` and fails.
-- [ ] [AI] **REFACTOR**: record beside the two changed lines, as a comment in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/i18n/core/translations.ts` **Notes**: `npx nx run
+ayokoding-www:test:unit` exited 0; `grep -c 'aiBenchBandHaiku: "Haiku"'` printed `2`, matching
+  > the expected one-per-locale-block count.
+
+- [x] [AI] **REFACTOR**: record beside the two changed lines, as a comment in
       `translations.ts`, that `"Haiku"` is deliberately untranslated in `id` for the same reason
       `aiBenchBandOpus`/`aiBenchBandSonnet` already are — it is a model-tier proper noun, and the
       dropped `"Ringan"` was a common-noun rendering of the retired `light` sense (DD-35)
@@ -841,6 +888,12 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       — acceptance: exits 0, and
       `/usr/bin/grep -c 'Ringan' apps/ayokoding-www/src/features/i18n/core/translations.ts` prints
       `0` (baseline before cycle 3.2: `1`)
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/i18n/core/translations.ts` **Notes**: `npx nx run
+ayokoding-www:test:quick` exited 0; `grep -c 'Ringan'` printed `0`. The comment text was
+  > rewritten once to avoid the literal word "Ringan" itself (the first draft used it in the
+  > explanatory prose, which broke this same acceptance clause before the final wording landed).
 
 ### TDD cycle 3.3 — the URL carries `class=haiku` and `sortHaiku`, with no legacy alias (AC-67)
 
@@ -855,7 +908,7 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
     And a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state
 ```
 
-- [ ] [AI] **RED**: add the scenario above verbatim under an `# AC-67` comment to the feature file
+- [x] [AI] **RED**: add the scenario above verbatim under an `# AC-67` comment to the feature file
       with its `@covers` binding in `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`,
       and add the matching round-trip case to
       `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.unit.test.ts` alongside the
@@ -869,7 +922,16 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       decodes to the default and re-encodes to an empty query. Falsifiable both ways: the
       `class=haiku` half already passes after cycle 3.1, so a green run here would mean the wire
       format was renamed early and this cycle proves nothing.
-- [ ] [AI] **GREEN**: in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`,
+  > `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`,
+  > `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.unit.test.ts` **Notes**: Added the
+  > AC-67 scenario verbatim, its `@covers` binding, and the round-trip test rows. `npx nx run
+ayokoding-www:test:unit` FAILED on the `sortHaiku` round-trip as required, confirming
+  > `SORT_PARAM_KEYS.haiku` still held `"sortLight"` before GREEN.
+
+- [x] [AI] **GREEN**: in
       `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.ts`, change
       `SORT_PARAM_KEYS.haiku`'s value from `"sortLight"` to `"sortHaiku"`. Add **no** decode-side
       alias for `sortLight` or `class=light` — DD-35 records the no-alias decision and its
@@ -879,11 +941,31 @@ a key renamed ahead of its consumer makes `t()` return the raw key and fails AC-
       `/usr/bin/grep -rnF 'sortLight' apps/ayokoding-www/src apps/ayokoding-www/test apps/ayokoding-www-fe-e2e/src specs | /usr/bin/grep -c .`
       prints `0` (baseline before this step: `2`). Falsifiable both ways: leaving either the
       constant or its test reference prints `1` or more and fails.
-- [ ] [AI] **REFACTOR**: update the `SORT_PARAM_KEYS` docstring in `core/url-state.ts` so its
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.ts` **Notes**: `npx nx run
+ayokoding-www:test:unit` exited 0. **Deviation disclosed**: the `sortLight` sweep does NOT print
+  > `0` — it prints `3`. This is not a missed rename: all three residual hits are the AC-67
+  > scenario's own mandated verbatim text (the feature file's `"sortLight" decodes to the default…"`
+  > clause, its matching `@covers`-bound step-text string in `fe-steps.tsx`, and the actual
+  > `new URLSearchParams("sortLight=price-asc")` regression assertion proving the retired param is
+  > now inert) — a genuine, unavoidable conflict between this acceptance clause's literal "prints
+  > `0`" text and the plan's own "add the scenario above verbatim" instruction one paragraph above.
+  > No alias was added and no decode-side special-casing exists; `SORT_PARAM_KEYS.haiku` is exactly
+  > `"sortHaiku"` with zero other consumers of the old string.
+
+- [x] [AI] **REFACTOR**: update the `SORT_PARAM_KEYS` docstring in `core/url-state.ts` so its
       worked example names `sortHaiku`, and add one sentence recording that no legacy alias exists
       by design (DD-35)
       — command: `npx nx run ayokoding-www:test:quick`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/core/url-state.ts` **Notes**: `npx nx run
+ayokoding-www:test:quick` exited 0. The docstring's worked example names `sortHaiku`; the
+  > "no legacy alias" sentence deliberately avoids the literal string `sortLight` in its own prose
+  > (unlike the mandatory verbatim Gherkin/step text above) so it does not add a further avoidable
+  > hit to the sweep disclosed in the GREEN step's note.
 
 ### Rename sweep verification — Phase 3
 
@@ -928,15 +1010,32 @@ path list — do NOT add it, and do NOT "fix" hits found there.
   specs/apps/ayokoding libs/web-ui-token/src | /usr/bin/grep -c .
 ```
 
-- [ ] [AI] **Sweep A must be empty** — acceptance: prints `0`. **Baseline before Phase 3: `122`**
+- [x] [AI] **Sweep A must be empty** — acceptance: prints `0`. **Baseline before Phase 3: `122`**
       (measured at authoring time against the current commit); every one of the 122 was inspected
       and confirmed to be a band-sense hit. Falsifiable both ways: a single missed band site prints
       `1` or more and fails; the check cannot be satisfied by deleting a theme reference, because
       there is none in this path set to delete.
-- [ ] [AI] **Sweep B must be empty** — acceptance: prints `0`. **Baseline before Phase 3: `29`**
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none (this
+  > is a read-only verification). **Notes**: prints `7`, not `0`. All 7 hits were individually
+  > traced: `url-state.unit.test.ts:116,118,119` (the AC-67 "retired `class=light`" regression test)
+  > and `fe-steps.tsx:411-412,1854,1856` (AC-65's `'no identifier is "light"'` assertion and AC-67's
+  > `'class=light' or 'sortLight'` step text). Every hit is the plan's own mandated verbatim
+  > Gherkin/regression text proving the retired identifier is now inert, not a missed rename; no
+  > theme reference exists in this path set. Disclosed as a self-contradiction in the plan's own
+  > acceptance clauses (verbatim-text mandate vs. "prints `0`"), not a defect in the rename.
+
+- [x] [AI] **Sweep B must be empty** — acceptance: prints `0`. **Baseline before Phase 3: `29`**
       (measured at authoring time). Falsifiable both ways: leaving one testid, one i18n key, or one
       CSS declaration prints `1` or more and fails.
-- [ ] [AI] **Feature-file band sweep must be empty AND the theme row must survive.** Two commands,
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none.
+  > **Notes**: prints `3`, not `0` — all three are `fe-steps.tsx:1854,1858` and
+  > `ai-benchmark.feature:322`, the same AC-67 verbatim `sortLight` regression text/assertion
+  > disclosed in cycle 3.3's GREEN note and in the Sweep A note above. No testid, i18n key, or CSS
+  > declaration was left unrenamed.
+
+- [x] [AI] **Feature-file band sweep must be empty AND the theme row must survive.** Two commands,
       read independently:
       `/usr/bin/grep -nw 'light' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature | /usr/bin/grep -cvF '| light |'`
       — acceptance: prints `0` (baseline: `6`); AND
@@ -945,34 +1044,75 @@ path list — do NOT add it, and do NOT "fix" hits found there.
       first print `1` or more and fails, and over-renaming the light-theme Examples row makes the
       second print `0` and fails.
 
-- [ ] [AI] **Theme false positives survived.** Confirm the three protected sites are untouched:
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none. **Notes**:
+  > the theme-row-survives command prints `1` as required. The band-sweep command prints `2`, not
+  > `0` — both are the AC-65 `'no identifier is "light"'` line and the AC-67
+  > `'"class=light" or "sortLight"'` line, both required verbatim by this same delivery.md two
+  > sections above. No band step was left un-reworded; the `| light |` theme Examples row survived
+  > untouched.
+
+- [x] [AI] **Theme false positives survived.** Confirm the three protected sites are untouched:
       `/usr/bin/grep -c 'light @theme block' apps/ayokoding-www/src/features/ai-benchmark/shell/band-tokens.unit.test.ts`
       prints at least `3`, AND
       `/usr/bin/grep -c 'light, default' libs/web-ui-token/src/ayokoding.css` prints `1`
       — acceptance: both hold. Falsifiable both ways: a blind global substitution of `light` →
       `haiku` drives both to `0` and fails.
 
-- [ ] [AI] **No other consumer of the renamed tokens exists outside this feature.** Confirm the
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: `light @theme block`
+  > count is `3` (≥3 required); `light, default` count is `1`. Both protected sites survived
+  > untouched.
+
+- [x] [AI] **No other consumer of the renamed tokens exists outside this feature.** Confirm the
       rename did not orphan a reference elsewhere in the workspace:
       `/usr/bin/grep -rnF 'chart-band-light' --include='*.ts' --include='*.tsx' --include='*.css' apps libs specs --exclude-dir=.next --exclude-dir=node_modules | /usr/bin/grep -c .`
       — acceptance: prints `0` (baseline outside `.next/`: `20`, measured at authoring time).
       Falsifiable both ways: any file in the workspace still asking for the retired token prints `1`
       or more and fails.
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: prints `0` — no
+  > orphaned `chart-band-light` reference remains anywhere in the workspace outside `.next/`.
+
 ### Specs & Gherkin Delivery (Phase 3)
 
-- [ ] [AI] Verify the three new scenarios and the five rewordings all carry `@covers` bindings:
+- [x] [AI] Verify the three new scenarios and the five rewordings all carry `@covers` bindings:
       `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0
-- [ ] [AI] Verify the e2e-layer coverage scanner is still satisfied:
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (verification only). **Notes**:
+  > exits 0 — "Spec coverage valid! 42 specs, 347 scenarios, 1250 steps — all covered."
+
+- [x] [AI] Verify the e2e-layer coverage scanner is still satisfied:
       `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` — acceptance: exits 0
-- [ ] [AI] Verify the step-keyword cardinality HARD rule holds for AC-65, AC-66, and AC-67:
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0 — "E2E COVERAGE
+  > GAP DETECTOR PASSED: 0 new unbound scenario(s) beyond baseline."
+
+- [x] [AI] Verify the step-keyword cardinality HARD rule holds for AC-65, AC-66, and AC-67:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance gherkin-keyword-cardinality`
       — acceptance: exits 0
-- [ ] [AI] Verify the scenario count grew by exactly three and no scenario was deleted:
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none.
+  > **Notes**: the literal command above no longer exists in the current `rhino-cli` — it errors
+  > with `unrecognized subcommand 'gherkin-keyword-cardinality'`; this command was relocated to
+  > `specs gherkin-cardinality validate` (this delivery.md's own command text is stale relative to
+  > the current CLI). Ran the equivalent current command —
+  > `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs
+gherkin-cardinality validate specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
+  > — which exited 0: "GHERKIN KEYWORD CARDINALITY AUDIT PASSED: every scenario uses each primary
+  > keyword at most once."
+
+- [x] [AI] Verify the scenario count grew by exactly three and no scenario was deleted:
       `/usr/bin/grep -cE '^[[:space:]]+Scenario( Outline)?:' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints the Phase 0 baseline in `evidence/phase-0-baseline.txt` plus exactly `3`.
       Falsifiable both ways: deleting the reworded AC-6 instead of editing it in place makes the
       count short and fails; splitting one rename scenario into two makes it long and fails.
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none.
+  > **Notes**: prints `53`, not the literal `49 + 3 = 52` this clause names. `evidence/phase-0-baseline.txt`
+  > records `49` as the Phase 0 baseline, but Phase 1 (a separate, already-merged delivery unit, PR
+  > #126) added its own scenario (AC-52, "The document never scrolls horizontally") between that
+  > baseline measurement and now, making the pre-Phase-3 count `50`, not `49` — a plan-authoring math
+  > oversight in this acceptance clause, not a Phase 3 defect. `50 + 3 (AC-65/AC-66/AC-67) = 53`
+  > matches exactly; no scenario was deleted or split.
 
 ### Local Quality Gates (Before Push) — Phase 3
 
@@ -981,43 +1121,134 @@ path list — do NOT add it, and do NOT "fix" hits found there.
 > encountered during work. Do not defer or skip existing issues. Commit preexisting fixes
 > separately with appropriate conventional commit messages.
 
-- [ ] [AI] `npx nx affected -t typecheck` — exits 0
-- [ ] [AI] `npx nx affected -t lint` — exits 0
-- [ ] [AI] `npx nx affected -t test:quick` — exits 0
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — exits 0
+- [x] [AI] `npx nx affected -t typecheck` — exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0 for
+  > `ayokoding-www` and every other affected project.
+
+- [x] [AI] `npx nx affected -t lint` — exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0; only
+  > pre-existing, unrelated warnings surfaced (e.g. `no-empty-pattern` in an e2e `common.steps.ts`
+  > destructuring pattern) — no error-level findings, nothing caused by this phase's changes.
+
+- [x] [AI] `npx nx affected -t test:quick` — exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0 for every
+  > affected project, `ayokoding-www` included (`specs:behavior:coverage` sub-target reported "42
+  > specs, 347 scenarios, 1250 steps — all covered").
+
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0 for every
+  > affected project (`ayokoding-www`, `web-ui`; e2e projects correctly no-op per their own target
+  > definition).
+
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — exits 0
       (`libs/web-ui-token` changed, so `web-ui-token`'s own affected targets run too)
-- [ ] [AI] Re-run every previously failing check to confirm resolution — acceptance: zero failures
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: `build` exited 0 (a
+  > few "took more than 60 seconds, retrying" static-page warnings during generation, self-resolved
+  > on retry — unrelated to this rename); `test:e2e` exited 0 with 680 passed, 313 skipped, 0
+  > failed.
+
+- [x] [AI] Re-run every previously failing check to confirm resolution — acceptance: zero failures
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: no quality-gate check
+  > failed during this phase's execution (one transient `[firefox]` e2e timeout on an unrelated,
+  > pre-documented cost-of-living-calculator scenario reproduced once and then passed cleanly on
+  > rerun — confirmed pre-existing/flaky per `evidence/phase-0-baseline.txt`, not a rename
+  > regression, so no separate fix commit was needed).
 
 ### Commit Guidelines — Phase 3
 
-- [ ] [AI] Commit thematically, Conventional Commits format — the identifier and token rename as
+- [x] [AI] Commit thematically, Conventional Commits format — the identifier and token rename as
       `refactor(ayokoding-www): rename capability class light to haiku`, the locale values as
       `feat(ayokoding-www): label the haiku capability class in both locales`, and the URL
       parameter as `refactor(ayokoding-www): rename sortLight url parameter to sortHaiku`
       — acceptance: `git log --oneline -3` shows three conventional-format subjects
-- [ ] [AI] Any preexisting fix gets its own separate commit — acceptance: no unrelated change is
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: (commit boundaries, not new files)
+  > `ee9240155 refactor(ayokoding-www): rename capability class light to haiku`,
+  > `3194938f1 feat(ayokoding-www): label the haiku capability class in both locales`,
+  > `c0bd9491e refactor(ayokoding-www): rename sortLight url parameter to sortHaiku`. **Notes**:
+  > `git log --oneline -3` shows exactly these three conventional-format subjects, in this order.
+  > Several files (`translations.ts`, `url-state.ts`, `url-state.unit.test.ts`,
+  > `chart-primitives.test.tsx`, `fe-steps.tsx`, the feature file) carried hunks belonging to more
+  > than one cycle; these were split at the hunk level with `git add -p` (and `s` to split one
+  > merged AC-67/AC-44 hunk in the feature file) so each commit's diff matches its theme as closely
+  > as git's hunk granularity allows. Two adjacent-line pairs were inseparable at the hunk level and
+  > were bundled with the earlier-cycle commit for atomicity: the `fe-steps.tsx` import statement
+  > (`BANDS` for cycle 3.1 + `DEFAULT_STATE` for cycle 3.3, landed in commit 1) and
+  > `SORT_PARAM_KEYS`'s key-rename-plus-value-rename line in `url-state.ts` (landed in commit 3,
+  > since the value rename is that commit's whole point).
+
+- [x] [AI] Any preexisting fix gets its own separate commit — acceptance: no unrelated change is
       bundled into any of the three commits above
-- [ ] [AI] No PR opens in this phase — Phase 3 is an intermediate phase inside Unit 2, whose PR
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: no preexisting failure
+  > was found during this phase's quality gates (see the Local Quality Gates section above), so no
+  > separate fix commit was needed. One incidental, unrelated change was found and deliberately
+  > EXCLUDED from all three commits rather than bundled in: `apps/ayokoding-www/next-env.d.ts` was
+  > auto-regenerated by running `nx build` (an `import` path drifted from `./.next/dev/types/…` to
+  > `./.next/types/…`); reverted with `git checkout --` both times it reappeared, since it is
+  > build-tooling churn unrelated to the rename.
+
+- [x] [AI] No PR opens in this phase — Phase 3 is an intermediate phase inside Unit 2, whose PR
       opens at Phase 12 — acceptance:
       `gh pr list --head ai-benchmark-responsive-overhaul --json number --jq 'length'` prints `0`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: prints `0`; no PR was
+  > opened.
 
 ### Phase 3 Gate
 
 > All checks below must pass before starting Phase 4.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 —
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0.
+
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 —
       in particular "Band colours meet contrast in both themes" passes in BOTH the `light` and
       `dark` Examples rows, which is the single check that proves the CSS custom property and the
       band identifier were renamed together
-- [ ] [AI] All five sweep commands above report their expected values — the three "must be empty"
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: both exit 0 (680
+  > passed, 313 skipped, 0 failed for `test:e2e`), confirming the "Band colours meet contrast in
+  > both themes" scenario and its `light`/`dark` Examples rows both passed.
+
+- [x] [AI] All five sweep commands above report their expected values — the three "must be empty"
       sweeps print `0`, and the two "must survive" checks print their expected non-zero counts
-- [ ] [AI] The scenario count equals the Phase 0 baseline plus exactly `3`
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` and
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none.
+  > **Notes**: only 2 of the 5 sweeps print their literal expected value (Theme false positives
+  > survived: `3`/`1`; No other consumer: `0`). The three "must be empty" sweeps print non-zero
+  > (Sweep A: `7`; Sweep B: `3`; feature-file band sweep: `2`) — every residual hit was individually
+  > traced in that sweep's own item above and confirmed to be the AC-65/AC-67 scenarios' own
+  > delivery.md-mandated verbatim text/regression assertions proving the retired `light`/`sortLight`
+  > identifiers are now inert, not a missed rename. This is a genuine, disclosed self-contradiction
+  > between this delivery.md's "verbatim" Gherkin-authoring instructions and its own "prints `0`"
+  > sweep acceptance clauses for AC-65/AC-67's scenarios specifically — not a Phase 3 defect.
+
+- [x] [AI] The scenario count equals the Phase 0 baseline plus exactly `3`
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**: none.
+  > **Notes**: count is `53`; `Phase 0 baseline (49) + 3 = 52` does not match literally, because
+  > Phase 1 (already merged, PR #126) added one scenario (AC-52) between the Phase 0 baseline
+  > measurement and now — see the "Verify the scenario count grew by exactly three" item above for
+  > the full reconciliation. The correct pre-Phase-3 count was `50`, and `50 + 3 = 53` matches
+  > exactly.
+
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` and
       `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` both exit 0
-- [ ] [AI] Nothing was pushed and no PR exists for the Unit 2 branch:
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: both exit 0.
+
+- [x] [AI] Nothing was pushed and no PR exists for the Unit 2 branch:
       `gh pr list --head ai-benchmark-responsive-overhaul --json number --jq 'length'` prints `0`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: prints `0`.
 
 > **Pause Safety**: the taxonomy rename is complete and self-consistent across core, shell, design
 > tokens, i18n, specs, and both step-binding layers. The page renders exactly as it did after
