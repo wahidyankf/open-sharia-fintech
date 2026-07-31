@@ -63,6 +63,7 @@ weight: 10
   - [API Design](/en/learn/courses/api-design)
   - [Database Internals and Storage Engines](/en/learn/courses/database-internals-and-storage-engines)
   - [Containers and Orchestration](/en/learn/courses/containers-and-orchestration)
+  - [Cloud and IaC](/en/learn/courses/cloud-and-iac)
 - [Legacy](/en/learn/legacy)
   - [Overview](/en/learn/legacy/overview)
   - [Software Engineering](/en/learn/legacy/software-engineering)

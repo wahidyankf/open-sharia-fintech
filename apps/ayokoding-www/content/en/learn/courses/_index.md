@@ -192,3 +192,7 @@ weight: 95
   - [Overview](/en/learn/courses/containers-and-orchestration/overview)
   - [Learning](/en/learn/courses/containers-and-orchestration/learning)
   - [Drilling](/en/learn/courses/containers-and-orchestration/drilling)
+- [Cloud and IaC](/en/learn/courses/cloud-and-iac)
+  - [Overview](/en/learn/courses/cloud-and-iac/overview)
+  - [Learning](/en/learn/courses/cloud-and-iac/learning)
+  - [Drilling](/en/learn/courses/cloud-and-iac/drilling)

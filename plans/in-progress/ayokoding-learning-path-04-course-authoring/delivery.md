@@ -1084,7 +1084,14 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     commit remains local to the active cohort branch: no PR or deployment opens until the following
     four courses are completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `cloud-and-iac` (Annotated-concept · HCL/YAML) — convention complete; checkers clean.
+- [x] [AI] `cloud-and-iac` (Annotated-concept · HCL/YAML) — convention complete; checkers clean.
+  - _Completed 2026-07-31: authored the 53-example (18/20/15) LocalStack-only cloud and IaC course
+    with capstone, drilling, and dedicated course-owned artifacts. Fresh Annotated-concept acceptance
+    passes after full artifact self-containment, LocalStack provider, local-backend, decision-artifact,
+    and Mermaid-label repairs. Course-scoped Prettier, markdownlint, Terraform formatting/validation,
+    YAML, Node, and Mermaid checks pass; the production build regenerated the two learn indexes. Per
+    the five-course cadence amendment, this thematic commit remains on the active cohort branch: no
+    PR or deployment opens until the following three courses are completed._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [ ] [AI] `cicd-and-release-engineering` (By Example · YAML + Python) — convention complete; checkers
       clean.

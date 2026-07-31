@@ -1,0 +1,9 @@
+---
+- name: Converge a local learning host
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Ensure service account exists
+      ansible.builtin.user:
+        name: service
+        state: present
