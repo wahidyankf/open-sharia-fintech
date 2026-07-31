@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "lint": "node lint.mjs",
+    "test": "node test.mjs"
+  }
+}

@@ -1,0 +1,3 @@
+/help/password-reset  /help/reset-your-password  301
+/guides/email         /guides/configure-email   301
+

@@ -1,0 +1,34 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 53: Explicit Nx base and head"
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: Base branch used to calculate the affected graph.
+        required: false
+        default: main
+jobs:
+  affected:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+      # => This pinned Node action makes npm ci and Nx use the declared runtime.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24.13.1"
+          cache: npm
+      # => Install the lockfile-resolved graph before evaluating the selected revisions.
+      - run: npm ci
+      # => Fetching the chosen base keeps workflow_dispatch independent of a pull-request event.
+      - name: Fetch selected base
+        env:
+          BASE_REF: ${{ inputs.base }}
+        run: git fetch origin "$BASE_REF:refs/remotes/origin/$BASE_REF" --depth=1
+      # => These explicit revisions define the change graph being evaluated.
+      - name: Run affected tests
+        env:
+          BASE_REF: ${{ inputs.base }}
+          HEAD_REF: ${{ github.sha }}
+        run: npx nx affected -t test --base="origin/$BASE_REF" --head="$HEAD_REF"

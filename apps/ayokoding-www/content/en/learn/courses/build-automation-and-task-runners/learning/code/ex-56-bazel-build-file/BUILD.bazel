@@ -1,0 +1,7 @@
+# Copy a declared source into one declared generated output.
+genrule(
+    name = "message_copy",
+    srcs = ["message.txt"],
+    outs = ["message_copy.txt"],
+    cmd = "cp $(location message.txt) $@",
+)

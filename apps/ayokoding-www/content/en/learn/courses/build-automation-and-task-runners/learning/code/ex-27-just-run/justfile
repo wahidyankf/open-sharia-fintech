@@ -1,0 +1,3 @@
+# The first recipe is just's no-argument default.
+default:
+  @echo "default task ran"

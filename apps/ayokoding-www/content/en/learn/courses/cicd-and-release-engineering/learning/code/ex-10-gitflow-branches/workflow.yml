@@ -1,0 +1,23 @@
+# => This workflow is a complete, standalone GitHub Actions example for Example 10.
+# => Copy it into .github/workflows/ when executing it in a repository.
+name: "Example 10: Identify GitFlow Branch Roles"
+# => Manual dispatch keeps this educational workflow safe to run on a public repository.
+on:
+  workflow_dispatch:
+# => The single job invokes the typed, course-owned verification program.
+jobs:
+  verify:
+    # => A hosted Linux runner avoids self-hosted-runner trust assumptions.
+    runs-on: ubuntu-latest
+    steps:
+      # => The action SHA pins the reviewed checkout implementation.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => The runtime version is explicit, so the result is reproducible.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          # => Python 3.13 runs the fully typed standard-library program.
+          python-version: "3.13"
+      # => The command runs only the artifact owned by this example directory.
+      - name: Verify the example
+        working-directory: apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/code/ex-10-gitflow-branches
+        run: python automation.py

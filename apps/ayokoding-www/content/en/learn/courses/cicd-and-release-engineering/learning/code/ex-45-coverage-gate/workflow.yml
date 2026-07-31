@@ -1,0 +1,13 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 45: Coverage threshold gate"
+on:
+  workflow_dispatch:
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => The threshold comparison is explicit and fails below the chosen minimum.
+      - run: |
+          COVERAGE=92
+          test "$COVERAGE" -ge 90

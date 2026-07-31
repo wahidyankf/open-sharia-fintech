@@ -1,0 +1,15 @@
+# Prerequisites: replace the example metric URL with an authorized observable endpoint.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: course-success-rate
+spec:
+  metrics:
+    - name: success-rate
+      interval: 1m
+      successCondition: result[0] >= 0.99
+      failureLimit: 1
+      provider:
+        web:
+          url: https://metrics.example.invalid/success-rate
+          jsonPath: "{$.value}"

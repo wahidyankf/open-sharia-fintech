@@ -1,0 +1,18 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 46: CodeQL SAST"
+on:
+  workflow_dispatch:
+permissions:
+  security-events: write
+  contents: read
+jobs:
+  analyze:
+    name: CodeQL analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => Pin this action to a reviewed SHA when enabling it in a production repository.
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@v3

@@ -1,0 +1,2 @@
+User-agent: * Disallow: /downloads/ Allow: /downloads/public-guide.pdf
+

@@ -1,0 +1,23 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 34: OIDC cloud token"
+on:
+  workflow_dispatch:
+permissions:
+  # => GitHub issues an OIDC token only for this job when this permission is granted.
+  id-token: write
+  contents: read
+jobs:
+  exchange:
+    runs-on: ubuntu-latest
+    steps:
+      # => Prerequisite: AWS must trust GitHub's OIDC issuer for this repository, ref, and audience.
+      # => The documented placeholder ARN is not a real account or credential.
+      - name: Exchange job OIDC identity for AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsCourseRole
+          aws-region: us-east-1
+          role-session-name: cicd-course-oidc
+      # => The action obtains short-lived credentials; this step proves no value is printed.
+      - name: Confirm the exchange boundary
+        run: aws sts get-caller-identity --query Account --output text

@@ -1,0 +1,10 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 47: Dependency scanning context"
+on:
+  workflow_dispatch:
+jobs:
+  explain:
+    runs-on: ubuntu-latest
+    steps:
+      # => Dependabot configuration is evaluated by GitHub, not by a workflow step.
+      - run: echo 'See dependabot.yml for alerts, security updates, and version updates.'

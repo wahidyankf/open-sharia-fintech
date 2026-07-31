@@ -1,0 +1,3 @@
+# Local Compose credential inputs must never enter version control.
+.env
+local.env

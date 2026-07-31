@@ -101,6 +101,21 @@ push for durability) to that unit's branch without opening a PR of its own. See
 [Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
 and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
 
+> **Execution amendment — five-course PR cadence (2026-07-31, user-directed).** From the first
+> course that was not already merged when this amendment was recorded, course bodies are authored,
+> checked, and committed **one at a time**, but a draft PR opens only after every **five-course
+> cohort** is complete. The cohort shares one current worktree branch, one draft PR, one three-cycle
+> PR-Review Maker→Fixer Cycle, one merge, and one production deployment. Historical individual-course
+> PRs already merged remain valid evidence and are not rewritten. A final cohort with fewer than five
+> remaining bodies opens at the next plan-defined finalization boundary. This user-directed cadence
+> supersedes conflicting per-course-PR text while preserving per-course quality gates and manifest
+> isolation checks.
+>
+> **Execution stop boundary — current cohort only (2026-07-31, user-directed).** Complete and integrate
+> the active cohort ending with `information-architecture-and-seo`, then stop this execution after its
+> PR is merged and deployment is verified. Confirm every cohort change is on `origin/main`, remove this
+> plan's idle or past worktrees and related build artifacts, and pull the latest `origin/main` in the
+> repository root. Do not begin a subsequent cohort under this execution directive.
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
 > [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) has `[AI]`
 > merge the PR **by default** once its five hardened preconditions hold; a `[HUMAN]` merge gate is an
@@ -180,6 +195,14 @@ subagents capped per the orchestration convention). The main thread self-promote
 
 ### Delivery Boundaries
 
+> **Amended interpretation (2026-07-31):** the rows below record the original and historical
+> delivery shape. For every remaining unmerged course, replace “per course” in the `Worktree / branch`
+> and `PR opens` columns with “per sequential five-course cohort.” The active first cohort is
+> `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`,
+> `build-automation-and-task-runners`, and `information-architecture-and-seo`; it opens one PR only
+> after all five course items are complete. Later remaining courses continue in consecutive cohorts of
+> five; the terminal short cohort opens at the next finalization boundary.
+
 | Phase(s) | Delivery unit                                                                                                | Worktree / branch                                                                                                                                                     | PR opens                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | 0        | — (setup and baseline)                                                                                       | —                                                                                                                                                                     | no                                        |
@@ -196,11 +219,14 @@ subagents capped per the orchestration convention). The main thread self-promote
 | 12       | Final content-correctness sweep (structural verification + supersession sweep)                               | `ayokoding-learning-path-04-course-authoring/phase-12-verification`                                                                                                   | yes — at Phase 12                         |
 | 13-16    | Plan closeout (manual verification evidence, final `main`/CI integration check, Knowledge Capture, archival) | `ayokoding-learning-path-04-course-authoring/phase-16-closeout`                                                                                                       | yes — at Phase 16                         |
 
-Every band (Phases 1, 3–11) is already a genuine boundary at the **course-level** granularity the
+Every band (Phases 1, 3–11) was originally a genuine boundary at the **course-level** granularity the
 NEW-course authoring convention uses: each course is a content-independent DAG leaf, so "one PR per
 course" is the sanctioned DAG-leaf-per-PR pattern
 ([AGENTS.md §Delivery Mode](../../../AGENTS.md#delivery-mode): "each change-producing DAG leaf gets
-its own worktree and PR (strict 1-PR ↔ 1-worktree)"), not a phase-wide PR — no band needed to change.
+its own worktree and PR (strict 1-PR ↔ 1-worktree)"), not a phase-wide PR. The user-directed
+five-course PR-cadence amendment above supersedes that original shape for remaining unmerged bodies:
+one course is still authored, checked, and committed at a time, while five consecutive courses are
+one review, merge, and deployment unit.
 **Phase 2 is intermediate**:
 it locks the evals/D9/D11 contracts into this checklist's own text so Band 5 (Phase 7) applies them
 **by construction**, and ships no content of its own, so its edits ride the first Band-5 course PR
@@ -1052,19 +1078,55 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     hadolint + shellcheck fixes; cycles 2-3 clean), squash-merged `32896383b` into `main`; deployed to
     `prod-ayokoding-www`._
 
-- [ ] [AI] `containers-and-orchestration` (By Example · YAML/CLI) — convention complete; checkers
+- [x] [AI] `containers-and-orchestration` (By Example · YAML/CLI) — convention complete; checkers
       clean.
+  - _Completed 2026-07-31: authored the 83-example (27/28/28) Docker, Compose, Kubernetes, OCI, and
+    Quadlet course bundle with its capstone and course-owned runnable artifacts; regenerated the two
+    learn indexes. Fresh By-Example and factual audits pass after annotation-density and cgroup-v1/v2
+    portability repairs. Course-scoped Prettier, markdownlint, Mermaid, heading, YAML, JSON, Node,
+    and Compose-config checks pass; the production build completed from the initialized worktree.
+    Repository-wide link validation has 145 pre-existing historical findings outside this course and
+    reports none in its bundle. Per the 2026-07-31 five-course cadence amendment, this thematic
+    commit remains local to the active cohort branch: no PR or deployment opens until the following
+    four courses are completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `cloud-and-iac` (Annotated-concept · HCL/YAML) — convention complete; checkers clean.
+- [x] [AI] `cloud-and-iac` (Annotated-concept · HCL/YAML) — convention complete; checkers clean.
+  - _Completed 2026-07-31: authored the 53-example (18/20/15) LocalStack-only cloud and IaC course
+    with capstone, drilling, and dedicated course-owned artifacts. Fresh Annotated-concept acceptance
+    passes after full artifact self-containment, LocalStack provider, local-backend, decision-artifact,
+    and Mermaid-label repairs. Course-scoped Prettier, markdownlint, Terraform formatting/validation,
+    YAML, Node, and Mermaid checks pass; the production build regenerated the two learn indexes. Per
+    the five-course cadence amendment, this thematic commit remains on the active cohort branch: no
+    PR or deployment opens until the following three courses are completed._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `cicd-and-release-engineering` (By Example · YAML + Python) — convention complete; checkers
+- [x] [AI] `cicd-and-release-engineering` (By Example · YAML + Python) — convention complete; checkers
       clean.
+  - _Completed 2026-07-31: authored the 83-example (28/27/28) GitHub Actions and typed-Python course
+    with capstone, drilling, 83 dedicated artifact pairs, and controller artifacts for Argo Rollouts and
+    Flagger. Fresh By-Example and factual audits pass after real Actions-control, controller-manifest,
+    diagram, Flagger-range, Nx-runner, and OIDC-exchange repairs. Course-scoped Prettier, markdownlint,
+    Python, YAML, Mermaid, and actionlint checks pass; the production build regenerated both learn indexes.
+    Per the five-course cadence amendment, this thematic commit remains on the active cohort branch: no PR
+    or deployment opens until the following two courses are completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-automation-and-task-runners` (By Example · multi-tool) — convention complete;
+- [x] [AI] `build-automation-and-task-runners` (By Example · multi-tool) — convention complete;
       checkers clean.
+  - _Completed 2026-07-31: authored the 80-example (27/28/25) multi-tool build-automation course
+    with 30 accessible Mermaid diagrams, 79 dedicated example artifact directories, and a real
+    Make/npm/just capstone. Fresh By-Example and factual audits pass after full one-per-example
+    navigation, density, explanation-length, special-character-anchor, Bazel target-pattern, and
+    Gradle-cache-enable repairs. Course-scoped JSON, Node, C, Make dry-run/runtime, Prettier,
+    markdownlint, Mermaid, and production-build checks pass; the build regenerated both learn indexes.
+    just, Bazel, and Gradle CLIs are unavailable locally, so their complete local definitions received
+    static and factual validation. Per the five-course cadence, this thematic commit remains on the
+    active cohort branch: no PR or deployment opens until the following course is completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `information-architecture-and-seo` (Annotated-concept · HTML) — convention complete;
+- [x] [AI] `information-architecture-and-seo` (Annotated-concept · HTML) — convention complete;
       checkers clean.
+  - _Completed 2026-07-31: authored the 53-example (18/20/15) information-architecture and SEO
+    course with 53 dedicated artifacts and a runnable discoverability capstone. Course-scoped
+    Prettier, markdownlint, Mermaid, XML, JSON, HTML-structure, local-artifact-link, and production
+    build checks pass. The active five-course cohort is now complete and is ready for its single PR._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
       manifests.

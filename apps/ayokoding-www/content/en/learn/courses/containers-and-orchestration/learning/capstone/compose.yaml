@@ -1,0 +1,58 @@
+services:
+  app:
+    image: containers-capstone:local
+    build:
+      # => This explicit directory is the build context, so Docker automatically applies its .dockerignore.
+      context: .
+      # => Name the colocated image recipe rather than relying on an implicit filename.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      # => Non-secret configuration identifies the deployment environment.
+      APP_MESSAGE: "compose containers capstone"
+      # => Compose requires a token supplied through an untracked local env file or shell environment.
+      API_TOKEN: "${API_TOKEN:?Set API_TOKEN through --env-file or the shell environment}"
+      # => This URL derives its password from the same required source used to initialize PostgreSQL.
+      DATABASE_URL: "postgres://app:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD through --env-file or the shell environment}@db:5432/app"
+      CACHE_URL: "redis://cache:6379"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8080/readyz').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      # => PostgreSQL requires the same externally supplied password used by the app's DATABASE_URL.
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD through --env-file or the shell environment}"
+    volumes:
+      # => Docker owns this data independently of the db container lifecycle.
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  cache:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  postgres-data: {}

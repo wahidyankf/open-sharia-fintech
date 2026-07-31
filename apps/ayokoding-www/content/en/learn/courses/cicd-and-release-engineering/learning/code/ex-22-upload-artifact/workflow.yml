@@ -1,0 +1,15 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 22: Upload build artifact"
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => Build output is a distinct immutable hand-off, not a cache.
+      - run: mkdir -p dist && printf candidate > dist/release.txt
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: example-22-build
+          path: dist/release.txt

@@ -1,0 +1,2 @@
+User-agent: * Disallow: /private/ Sitemap: https://example.test/sitemap.xml
+
