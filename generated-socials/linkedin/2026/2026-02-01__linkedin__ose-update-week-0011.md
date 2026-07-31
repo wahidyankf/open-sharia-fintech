@@ -65,6 +65,6 @@ Organic Lever: Personal productivity tracker. Web + Android + iOS. Track goals, 
 🔗 LINKS
 
 - GitHub Repository: https://github.com/wahidyankf/ose-public
-- Roadmap: https://github.com/wahidyankf/ose-public/blob/main/ROADMAP.md
+- Roadmap: https://github.com/wahidyankf/ose-public/blob/main/roadmap.md
 - AyoKoding Software Engineering Content: https://www.ayokoding.com/en/learn/software-engineering/
 - AI Agents: https://github.com/wahidyankf/ose-public/tree/main/.claude/agents

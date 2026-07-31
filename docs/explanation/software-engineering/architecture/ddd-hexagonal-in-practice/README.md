@@ -42,7 +42,9 @@ DDD and Hexagonal Architecture are complementary but address different concerns.
 
 ## OrganicLever Domain
 
-OSE Platform Phase 1 centers on **OrganicLever** — a Sharia-compliant procurement tracker for the Procure-to-Pay workflow. All conventions in this directory use OrganicLever bounded contexts as canonical examples.
+This directory uses an **OrganicLever** Sharia-compliant Procure-to-Pay model as its canonical
+architecture example. The example is independent of OSE portfolio priorities and does not describe
+the implemented OrganicLever productivity product.
 
 | Bounded Context | Nx App            | Primary Stack | Aggregate Roots                        |
 | --------------- | ----------------- | ------------- | -------------------------------------- |

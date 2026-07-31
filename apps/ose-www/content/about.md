@@ -20,7 +20,11 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We're building an open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: OrganicLever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
+We develop products, platform capabilities, and research through concurrent workstreams.
+OrganicLever is the current product-delivery priority, while Shariah, regulatory, security,
+business-domain, enterprise, infrastructure, and public-learning work can progress in parallel.
+Each production-facing deliverable must satisfy the readiness checks relevant to its risks and
+claims.
 
 ## Why Open Source Matters
 
@@ -68,76 +72,106 @@ We share our OSE Platform journey through [**monthly updates**](/updates/) publi
 - **Demonstrates transparency** - Show how decisions are made
 - **Accelerates ecosystem growth** - Enable others to build on our foundation
 
-## Development Roadmap
+## Concurrent Workstreams
 
-Our progressive complexity approach - start simple, test thoroughly, scale systematically:
+The roadmap organizes work through mission-aligned workstreams:
 
 ```mermaid
-%% Color Palette: Gray #808080 (done), Orange #DE8F05 (current), Teal #029E73, Purple #CC78BC
-%% Phase 0: Done | Phase 1: Current | Phase 2-3: Future
-graph TD
-    P0["Phase 0: Setup & KB"]:::done
-    P1["Phase 1: OrganicLever"]:::current
-    P2["Phase 2: SMB Application"]:::future1
-    P3["Phase 3: Enterprise App"]:::future2
+%% Color-blind friendly palette with text contrast suitable for WCAG AA
+flowchart TB
+    Mission["OSE Mission<br/>Trustworthy open systems"]
 
-    P0 -->|"Foundation"| P1
-    P1 -->|"Revenue & Learnings"| P2
-    P2 -->|"Revenue & Certifications"| P3
+    Mission --> Product["Product Delivery<br/>OrganicLever"]
+    Mission --> Research["Business & Enterprise Research<br/>Domain discovery and prototypes"]
+    Mission --> Shariah["Shariah & Regulatory Research<br/>Rules, evidence, and review"]
+    Mission --> Trust["Trust & Assurance<br/>Security, privacy, and compliance"]
+    Mission --> Platform["Platform & Operations<br/>Architecture, tooling, and infrastructure"]
+    Mission --> Learning["Public Learning<br/>AyoKoding and OSE updates"]
 
-    classDef done fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef current fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef future1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef future2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    Product <-. "needs and evidence" .-> Research
+    Product <-. "controls and review" .-> Shariah
+    Product <-. "controls and review" .-> Trust
+    Product <-. "shared capabilities" .-> Platform
+    Research -. "findings" .-> Learning
+    Platform -. "learnings" .-> Learning
+
+    classDef mission fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    classDef product fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef research fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef assurance fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef platform fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef learning fill:#56B4E9,stroke:#000000,color:#000000,stroke-width:2px
+
+    class Mission mission
+    class Product product
+    class Research,Shariah research
+    class Trust assurance
+    class Platform platform
+    class Learning learning
 ```
 
-### Phase 0: Repository Setup & Knowledge Base (Done)
+The connections show coordination and evidence exchange, not a start-to-finish sequence.
 
-Established repository infrastructure and launched initial websites:
+### Product Delivery
 
-- 🛠️ **Repository Infrastructure** - Development tooling, documentation, AI agents, governance, planning systems
-- 🌐 **Website Launches** - ayokoding.com (educational) and oseplatform.com (marketing)
-- 🔧 **CLI Tools** - ayokoding-cli and rhino-cli (Golang) for automation and repository management
-- 🔐 **Golang Foundation** - Go forms the foundation for CLI tooling and information security infrastructure
-- 📊 **Strategic Value** - Early online presence, audience building, deployment validation
+**OrganicLever** is the current delivery priority:
 
-### Phase 1: OrganicLever - Productivity Tracker (Current)
+- 🌐 **Marketing site** - [organiclever.com](https://www.organiclever.com/)
+- 💻 **Product client** - Next.js 16 local-first web application with PGlite
+- 🔧 **Backend** - F#/Giraffe/ASP.NET REST API
+- 📚 **Learning focus** - Product validation, local-first data ownership, deployment, and
+  proportional assurance
 
-Building the first product application to test infrastructure at small scale:
+Small and medium business systems and enterprise systems remain important product directions.
+Focused research, domain modelling, contract design, and prototypes can begin whenever a clear
+question and sufficient capacity exist. OrganicLever does not have to finish before that work
+starts.
 
-- 📱 **Product** - organiclever.com (web) + Android + iOS apps — in active development
-- ⚡ **Tech Stack** - Java + Spring Boot (API), Next.js + TypeScript (web), Flutter + Dart (mobile & web), Kubernetes (infrastructure)
-- 📚 **Learning Focus** - Small-scale product patterns, deployment mastery, security practice
-- 💰 **Revenue Generation** - Fund Phase 2 expansion and Phase 3 certification costs
+### Shariah, Regulatory, and Enterprise Research
 
-### Phase 2: SMB Application (Small & Medium Business)
+Research work develops traceable Shariah rules, jurisdiction-specific knowledge, scholar-review
+requirements, business-domain models, and enterprise architecture evidence. Findings become
+dependencies only when a specific deliverable relies on them.
 
-Building on Phase 1 foundation with moderate complexity:
+### Trust, Platform, and Operations
 
-- 🏢 **Scope** - TBD based on Phase 1 learnings
-- 🔧 **Tech** - Likely additions: Elixir middleware, Kotlin or F#, modular services architecture
-- ☸️ **Infrastructure** - Building on Phase 1 Kubernetes experience for multi-service orchestration
-- 💰 **Critical Revenue** - Must fund Phase 3's significant certification budget
+Security, privacy, governance, shared architecture, tooling, deployment, observability, and
+reliability evolve continuously. Production-facing work must meet controls proportional to its
+risks; parallel exploration does not bypass readiness.
 
-### Phase 3: Enterprise Application (Large Organizations)
+### Public Learning
 
-Full enterprise capabilities with maximum scale:
+AyoKoding, OSE updates, repository documentation, and specifications share reusable knowledge from
+any active workstream while respecting security, privacy, licensing, and factual-accuracy
+constraints.
 
-- 🌐 **Scope** - Full ERP, financial services, multi-jurisdiction compliance
-- 🏗️ **Architecture** - Distributed microservices, event-driven, service mesh
-- 📜 **Certifications** - Multi-jurisdiction compliance, Sharia certifications, financial regulations (funded by Phase 1/2 success)
-- 🌏 **Global Expansion** - International Islamic standards, cross-border operations
+## Prioritization and Readiness
+
+We prioritize work by mission impact, user evidence, explicit dependencies, risk reduction,
+capacity, and funding. Priority focuses execution without turning one workstream into a universal
+gate for the others.
+
+Each initiative or deliverable can occupy a different readiness state:
+
+1. **Discovery** - Define the problem, research constraints, and test assumptions.
+2. **Validation** - Demonstrate user value and technical feasibility with evidence.
+3. **Production readiness** - Satisfy the relevant product, Shariah, security, operational, and
+   quality gates.
+
+These states apply to individual deliverables. They are not portfolio-wide stages, so research and
+development can progress in parallel.
 
 ## Why This Approach?
 
-- 📈 **Progressive Complexity** - Start simple (individuals), scale to moderate (SMB), then enterprise
-- 🧪 **Real-World Testing** - Each phase validates with actual users before scaling up
-- 💰 **Financial Sustainability** - Phase 3 requires significant certifications; Phase 1/2 revenue funds this
-- 📚 **Knowledge Base Learning** - Test patterns at small scale before enterprise ERP
-- 🔄 **Learn and Iterate** - Feedback from individual users (Phase 1) informs SMB (Phase 2); Phase 2 learnings inform enterprise
-- 🎯 **Minimum Risk** - OrganicLever tests infrastructure without enterprise stakes
-- 🛡️ **Security by Design** - Practice security early in low-stakes environment
-- ⚖️ **Proven Foundation** - Each phase proves architecture works before adding complexity
+- 🔀 **Parallel learning** - Useful work progresses wherever dependencies allow.
+- 🎯 **Focused execution** - Explicit priorities prevent uncontrolled multitasking.
+- 🔗 **Real dependencies** - Deliverables wait for necessary evidence, not arbitrary stage labels.
+- 🧪 **Continuous validation** - Each deliverable proves its own assumptions.
+- 🕌 **Compliance by design** - Shariah and regulatory research run alongside product discovery.
+- 🛡️ **Assurance from the start** - Security, privacy, and governance evolve continuously.
+- 📈 **Progressive complexity** - Initiatives add complexity only when evidence justifies it.
+- 💰 **Sustainable choices** - Funding affects priority and scope without dictating a fixed product
+  order.
 
 ## Core Principles
 
@@ -150,21 +184,13 @@ Full enterprise capabilities with maximum scale:
 
 ## Project Status
 
-**Current Phase: Phase 1 - OrganicLever (Productivity Tracker)**
+**Current delivery focus: OrganicLever — pre-alpha**
 
-Phase 0 foundations are complete. We are now actively building OrganicLever, the first product application:
-
-**Phase 0 (Done):**
-
-- ✅ ayokoding.com - Educational platform (live)
-- ✅ oseplatform.com - Marketing website (this site, live)
-- ✅ ayokoding-cli & rhino-cli - Golang CLI tools (live)
-
-**Phase 1 (In Progress):**
-
-- ✅ organiclever.com - Landing and promotional website (live)
-- 🚧 OrganicLever App - Flutter mobile & web app (Android, iOS, web) in development
-- 🚧 OrganicLever API - Spring Boot REST API backend in development
+- ✅ [organiclever.com](https://www.organiclever.com/) - Marketing website (live)
+- 🚧 OrganicLever product client - Next.js 16 local-first web application
+- 🚧 OrganicLever backend - F#/Giraffe/ASP.NET REST API
+- 🔬 **Parallel exploration** - Shariah, security, business-system, enterprise, infrastructure, and
+  public-learning research and prototyping
 
 **Note:**
 
@@ -173,14 +199,16 @@ Phase 0 foundations are complete. We are now actively building OrganicLever, the
 
 ## Technology
 
-Our tech stack reflects the progressive complexity approach — chosen for proven reliability, open-source availability, and suitability at each phase:
+We choose technology for the initiative that needs it rather than reserving stacks for future
+portfolio stages:
 
-- **Backend API** - Java + Spring Boot (REST API, enterprise-grade, battle-tested)
-- **Web Frontend** - Next.js 16 + TypeScript (React, App Router, modern full-stack)
-- **Mobile & Web App** - Flutter + Dart (Android, iOS, and web from a single codebase)
-- **Educational Sites** - Next.js 16 (ayokoding.com, oseplatform.com)
-- **CLI Tools** - Go (ayokoding-cli, rhino-cli — automation and repository management)
-- **Future additions** - Elixir (middleware), Kotlin (JVM alternative) under evaluation for Phase 2
+- **Product clients and public sites** - Next.js 16 + TypeScript
+- **Local-first product data** - PGlite (PostgreSQL-WASM) backed by IndexedDB
+- **Backend APIs** - F# + Giraffe + ASP.NET 10
+- **Backend data** - PostgreSQL
+- **CLI tools** - Rust for repository and content automation
+- **PDF-to-Markdown tooling** - F#
+- **Operations** - Vercel deployment plus Kubernetes, observability, and reliability research
 
 ## License
 
@@ -199,7 +227,7 @@ While we're not yet accepting public contributions, you can stay connected and s
 - **GitHub Repository**: [open-sharia-enterprise](https://github.com/wahidyankf/ose-public)
   - ⭐ Star the repository to show your support
   - 👀 Watch for updates and release announcements
-  - 📋 Read the [detailed roadmap](https://github.com/wahidyankf/ose-public/blob/main/ROADMAP.md) and planning documents
+  - 📋 Read the [detailed roadmap](https://github.com/wahidyankf/ose-public/blob/main/roadmap.md) and planning documents
 
 ### Learn and Explore
 

@@ -44,7 +44,11 @@ All hexagonal architecture implementations in OSE Platform MUST comply with the 
 
 ## OrganicLever Bounded Context Overview
 
-OSE Platform Phase 1 centers on **OrganicLever** — a Sharia-compliant productivity tracker. The hexagonal boundaries align with the following bounded contexts (each maps to an Nx app boundary per [DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md)):
+This convention uses an **OrganicLever** Procure-to-Pay model as its bounded-context example. The
+example is independent of OSE portfolio priorities and does not describe the implemented
+OrganicLever productivity product. Its hexagonal boundaries align with the following bounded
+contexts (each maps to an Nx app boundary per
+[DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md)):
 
 | Bounded Context | Nx App             | Primary Stack      | Status  |
 | --------------- | ------------------ | ------------------ | ------- |

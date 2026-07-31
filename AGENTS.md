@@ -7,7 +7,7 @@
 
 **open-sharia-enterprise** — Enterprise platform for Sharia-compliant business systems, Nx monorepo.
 
-**Status**: Phase 1 (OrganicLever — Productivity Tracker)
+**Status**: Concurrent workstreams; OrganicLever is the current delivery focus
 **License**: MIT
 **Main Branch**: `main` (Trunk Based Development)
 
