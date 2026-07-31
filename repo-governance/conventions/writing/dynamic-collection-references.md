@@ -166,6 +166,25 @@ If a count is needed anywhere, the index document for that collection is the sin
 | BE Gherkin Specs | `specs/apps/organiclever/behavior/organiclever-be/gherkin/README.md`      |
 | FE Gherkin Specs | `specs/apps/organiclever/behavior/organiclever-app-web/gherkin/README.md` |
 
+### Rule 7: An Amendment's Numeric Sweep Must Cover Advisory Prose, Not Only Machine-Checked Gates
+
+When a plan amendment changes a quantity (a funnel-selection count, a scenario count, a screenshot count, an i18n-key count), the sweep for stale copies of that quantity MUST cover every document mentioning it — not only the documents or lines a grep-based validation gate happens to check. Human-readable prose (a narrative sentence stating the count) and reference-table rows have no machine checker; a stale count survives an otherwise-clean amendment exactly there, because the machine-checked figures are self-defending and the advisory ones are not.
+
+**FAIL: Sweep limited to what the gate checks**:
+
+```markdown
+Amendment changes 3→4 funnel selections everywhere `plan-checker`'s grep scans, but a Pause Safety
+prose paragraph and a File Impact table row still say "3" — neither is read by the gate.
+```
+
+**PASS: Sweep covers every mention of the quantity, gate-checked or not**:
+
+```markdown
+After changing 3→4, grep the whole plan (and any doc it touches) for the literal count wherever it
+appears — narrative sentences, table cells, code comments — not only the locations the automated
+gate reads.
+```
+
 ## Examples
 
 ### Converting Existing References

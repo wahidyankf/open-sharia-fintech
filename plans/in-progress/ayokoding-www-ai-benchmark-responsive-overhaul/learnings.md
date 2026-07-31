@@ -3,6 +3,12 @@
 
 # Learnings: ayokoding-www-ai-benchmark-responsive-overhaul
 
+> **Triage (2026-08-01)**: all 5 entries below passed the litmus test (each names a durable surface
+> that would now catch the same defect automatically), the secret/sensitivity gate (no secrets,
+> credentials, tokens, or private hostnames present), and the repo-relevance gate (all public
+> governance content, none infra-private). All 5 are non-code-homed and landed inline in
+> `repo-governance/` per the routing matrix — see each entry's **Routed** line below.
+
 ## Learning: breakpoint verification that checks presence, not legibility, passes a broken chart
 
 - **Context**: seeded at plan-authoring time from the diagnosis of the prior plan's sign-off
@@ -17,6 +23,9 @@
   read a computed style or a bounding box — not merely to confirm the element exists. Candidate
   homes: `repo-governance/development/quality/manual-behavioral-verification.md`,
   `repo-governance/development/quality/evidence-capture.md`.
+- **Routed**: landed inline at
+  `repo-governance/development/quality/manual-behavioral-verification.md` (new sub-bullet under UI
+  Verification Checklist item 7, "All breakpoints verified").
 
 ## Learning: a "same DOM at every breakpoint" responsive strategy is incompatible with stable typography inside a scaled coordinate system
 
@@ -30,6 +39,9 @@
   scale text?" Candidate home:
   `repo-governance/conventions/formatting/diagrams.md` §UI Mockups in Plan Docs, or the
   `swe-developing-frontend-ui` skill.
+- **Routed**: landed inline at `repo-governance/conventions/formatting/diagrams.md` (new H3
+  "Design-Review Heuristic — Identical DOM at Every Breakpoint" in the UI Mockups in Plan Docs
+  section).
 
 ## Learning: collapsing a dense region hides its density rather than fixing it
 
@@ -45,6 +57,9 @@
   should be asked "and what does the revealed content look like?" as a matter of course. Candidate
   homes: `repo-governance/development/quality/user-facing-delivery-hardening.md`, or the
   `swe-developing-frontend-ui` skill.
+- **Routed**: landed inline at
+  `repo-governance/development/quality/user-facing-delivery-hardening.md` (new "Progressive-disclosure
+  density caution" paragraph after Rule 16).
 
 ## Learning: an amendment's numeric sweep must cover advisory prose, not only machine-checked gates
 
@@ -61,6 +76,9 @@
   updating the places the amendment happened to touch. Candidate home:
   `repo-governance/conventions/writing/dynamic-collection-references.md`, which already forbids
   hardcoded counts of dynamic collections and could extend to intra-plan counts.
+- **Routed**: landed inline at
+  `repo-governance/conventions/writing/dynamic-collection-references.md` (new "Rule 7: An
+  Amendment's Numeric Sweep Must Cover Advisory Prose, Not Only Machine-Checked Gates").
 
 ## Learning: a truncated DOM query silently under-counts, and the undercount propagates into every downstream figure
 
@@ -81,3 +99,6 @@
   other document is exactly what a propagated error looks like. Candidate home:
   `repo-governance/development/quality/plan-anti-hallucination.md`, as a recipe alongside the
   existing confidence-label rules.
+- **Routed**: landed inline at `repo-governance/development/quality/plan-anti-hallucination.md`
+  (new "A capped query silently under-counts, and the undercount propagates" subsection with a
+  verification recipe).

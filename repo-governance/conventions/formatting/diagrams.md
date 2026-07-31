@@ -2110,6 +2110,17 @@ The mockups MUST make the responsive behaviour explicit rather than showing a si
   (mobile-first)**, not only its desktop appearance; a layout that only works on desktop is not a
   valid finalist.
 
+### Design-Review Heuristic — Identical DOM at Every Breakpoint
+
+When a plan's responsive strategy proposes **identical DOM at every breakpoint** — for example, a
+single SVG mockup with one `viewBox` scaled uniformly across mobile/tablet/desktop — the required
+follow-up question is: **what is the responsive lever, and does it scale text?** Identical DOM
+combined with a uniform-scale coordinate system leaves scale as the only responsive lever available,
+which forces typography to become a function of viewport width — mutually exclusive with stable,
+legible text sizes at every breakpoint. Reviewers and `plan-checker` should treat "same DOM at every
+breakpoint" as a flag requiring an explicit, answered version of this question before the strategy is
+accepted.
+
 ### Grounding Rule (R5)
 
 Before drafting **either** tier, the author MUST survey the existing UI in the related app(s) and

@@ -4279,39 +4279,57 @@ Scenario: Price figures disclose their unit basis
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface
       would catch this automatically next time; discard the rest with a one-line reason
       — acceptance: every entry has either a route or a discard reason
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable
       — acceptance: `learnings.md` contains no raw secret
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays
       in `ose-private` only and is NEVER cross-routed into `ose-public`/`ose-primer`; public
       governance content may propagate via the existing parity loop
       — acceptance: no infra-private content appears in this repo's routed output
-- [ ] [AI] Route the DD-26 verification-gap learning specifically — a breakpoint verification that
+- [x] [AI] Route the DD-26 verification-gap learning specifically — a breakpoint verification that
       checks content PRESENCE and not rendered LEGIBILITY passes a chart rendering at 4.3 CSS px.
       Its likely home is
       `repo-governance/development/quality/manual-behavioral-verification.md` and/or
       `repo-governance/development/quality/evidence-capture.md`, as a requirement that responsive
       verification read computed styles and bounding boxes, not just element presence
       — acceptance: the learning reaches a terminal state naming its durable home
-- [ ] [AI] Route each remaining surviving learning to exactly one durable home per the open-ended
+- [x] [AI] Route each remaining surviving learning to exactly one durable home per the open-ended
       routing matrix — non-code homes may land inline (small edit) or as a `plans/backlog/`
       follow-up (large); code homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate
       `plans/backlog/<slug>/` plan and NEVER landed inline
       — acceptance: every `learnings.md` entry records its terminal routing state
-- [ ] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
+- [x] [AI] If no generalizable learning surfaced, record the explicit escape in `learnings.md`:
       `No generalizable learnings — <one-line reason>`
       — acceptance: `learnings.md` is never silently empty
+
+> **2026-08-01 — Status: Done.** 5 generalizable learnings surfaced during execution (so the
+> explicit "none" escape does not apply — this item is satisfied by that not being the case). All 5
+> passed the litmus test, secret/sensitivity gate, and repo-relevance gate (see `learnings.md`'s
+> triage note). None were code-homed, so all 5 landed as small inline additions to their candidate
+> `repo-governance/` docs: the DD-26 presence-vs-legibility learning →
+> `manual-behavioral-verification.md`; the identical-DOM/typography heuristic → `diagrams.md`; the
+> progressive-disclosure-density caution → `user-facing-delivery-hardening.md`; the
+> amendment-numeric-sweep rule (new Rule 7) → `dynamic-collection-references.md`; and the
+> capped-query-undercount recipe → `plan-anti-hallucination.md`. Each entry in `learnings.md` now
+> records its terminal **Routed** state naming the exact file and section.
 
 ### Phase 13 Gate
 
 > All checks below must pass before Plan Archival.
 
-- [ ] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
+- [x] [AI] Every `learnings.md` entry is in a terminal state (routed inline, filed as backlog, or
       discarded with reason), or the file records the explicit "none" escape
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PR
+
+> **2026-08-01 — Status: Done.** All 5 `learnings.md` entries carry a terminal **Routed** line
+> naming their exact governance-doc home; none were code-homed (all 5 are documentation-convention
+> additions to `repo-governance/`), so the code-homed-inline prohibition is vacuously satisfied —
+> confirmed by re-reading each entry's routing.
+
+<!-- separates adjacent blockquotes (markdownlint MD028) -->
 
 > **Pause Safety**: `learnings.md` is fully triaged; no future process depends on querying it later.
 > Safe to stop indefinitely. To resume: re-read `learnings.md` and confirm every entry is terminal.

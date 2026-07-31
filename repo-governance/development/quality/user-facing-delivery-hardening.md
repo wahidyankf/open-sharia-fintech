@@ -249,6 +249,14 @@ fix before archival`), in a labelled "Rule-15 three-tester retest follow-ups" se
     agree — if this rule and the workflow mapping ever diverge, the workflow mapping is the one to
     fix.
 
+**Progressive-disclosure density caution**: a fix for a "too dense" or "cramped" complaint that
+resorts to progressive disclosure (e.g., collapsing a region behind `<details>`) changes only the
+region's **collapsed** length, not its density. Before accepting such a fix, ask **"and what does
+the revealed content look like?"** — a collapse relocates the density problem to whoever expands it,
+and if the expanded state's typography, per-field line count, grouping, and absent-figure handling
+were never specified, the original complaint resurfaces unchanged the moment a reader opens the
+disclosure.
+
 ## Examples
 
 ### PASS: A user-facing plan that cannot ship bland
