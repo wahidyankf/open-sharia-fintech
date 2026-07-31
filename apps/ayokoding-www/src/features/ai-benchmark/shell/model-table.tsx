@@ -14,7 +14,6 @@
 // FCIS boundary: no literal figure, price, model name, or threshold lives here — every number
 // comes from the passed `dataset` via the pure `core/` selectors, formatted by `shell/format.ts`.
 
-import type { ReactNode } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import {
@@ -26,194 +25,21 @@ import {
   TableHeader,
   TableRow,
 } from "@open-sharia-enterprise/web-ui";
+import { dataset as defaultDataset, type Dataset } from "../core/data/models";
+import { HARNESS_DISPLAY_NAMES, BENCHMARK_COLUMNS } from "../core/data/benchmarks";
 import {
-  dataset as defaultDataset,
-  isConflictedFigure,
-  type Dataset,
-  type Figure,
-  type Model,
-} from "../core/data/models";
-import { LOW_COVERAGE_THRESHOLD } from "../core/score";
-import { computeGroups, type ModelScore } from "../core/bands";
-import { lowestRate } from "../core/price";
-import { BAND_LABEL_KEYS, BENCHMARK_COLUMNS, HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
-import { formatCoverage, formatIndex, formatPercent, formatPriceUsd } from "./format";
-import { FigureCell } from "./figure-cell";
+  classLabel,
+  computeScoreViews,
+  coverageCell,
+  indexCell,
+  integrityNotes,
+  benchmarkCell,
+  priceCells,
+  renderBenchmarkFigures,
+  renderStaticFigures,
+} from "./model-figures";
 
 const SLOT = "model-table";
-
-/** Per-model scored view: band, composite index, and coverage derived from the pure core. */
-type ScoreView = {
-  band: ModelScore["band"];
-  index: number | undefined;
-  coverage: number;
-};
-
-/**
- * Build the roster-relative index/coverage/band for every model in one scoring pass. `fullDataset`
- * (defaulting to `dataset` itself) is ALWAYS the source for the anchor thresholds and roster-max
- * map — `dataset` may be a harness/class-filtered subset, and re-deriving thresholds from it would
- * silently collapse every rated model to `haiku` when the filter excludes both anchor models
- * (DD-5a: bands are roster-relative to the FULL population; filtering governs display only).
- */
-function computeScoreViews(dataset: Dataset, fullDataset: Dataset = dataset): Map<string, ScoreView> {
-  const groups = computeGroups(dataset, fullDataset);
-  const byId = new Map<string, ScoreView>();
-  for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
-    for (const s of list) {
-      byId.set(s.model.id, { band: s.band, index: s.index, coverage: s.coverage });
-    }
-  }
-  return byId;
-}
-
-/** Find the model's published figure for a benchmark (absent → undefined, rendered as "not reported"). */
-function figureFor(model: Model, benchmark: string): Figure | undefined {
-  return model.figures.find((f) => f.benchmark === benchmark);
-}
-
-/** The model's localized class label. */
-function classLabel(band: ScoreView["band"], locale: Locale): string {
-  const key = BAND_LABEL_KEYS[band];
-  return key ? t(locale, key) : band;
-}
-
-/** A benchmark score cell: a range for a conflicted figure, otherwise a single value; "—" when absent. */
-function benchmarkCell(model: Model, benchmarkId: string, locale: Locale): ReactNode {
-  const f = figureFor(model, benchmarkId);
-  if (!f) {
-    return <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
-  }
-  if (isConflictedFigure(f)) {
-    return (
-      <FigureCell
-        value={formatPercent(f.low, locale)}
-        highValue={formatPercent(f.high, locale)}
-        grade={f.grade}
-        source={f.source}
-        locale={locale}
-      />
-    );
-  }
-  return <FigureCell value={formatPercent(f.value, locale)} grade={f.grade} source={f.source} locale={locale} />;
-}
-
-/** The composite-index cell, or "not reported" for an unrated model. */
-function indexCell(view: ScoreView, locale: Locale): ReactNode {
-  if (view.index === undefined) {
-    return <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
-  }
-  return (
-    <FigureCell
-      value={formatIndex(view.index, locale)}
-      grade="verified"
-      source={defaultSourceForIndex()}
-      locale={locale}
-    />
-  );
-}
-
-/** Low-coverage flag derived from the score view's coverage ratio against the core threshold. */
-function isLowCoverageView(view: ScoreView): boolean {
-  return view.index !== undefined && view.coverage > 0 && view.coverage < LOW_COVERAGE_THRESHOLD;
-}
-
-/** The coverage cell; low-coverage rated models carry an advisory marker (text, not colour alone). */
-function coverageCell(view: ScoreView, locale: Locale): ReactNode {
-  const text = formatCoverage(view.coverage, locale);
-  const low = isLowCoverageView(view);
-  // Routes through the AyoKoding `--evidence-self-reported` token (an alias onto `--hue-honey-ink`,
-  // `libs/web-ui-token/src/ayokoding.css`) rather than raw `text-amber-700 dark:text-amber-400`
-  // (Rule-15 DWT-002 fix) — `--hue-honey-ink` already clears WCAG AA's 4.5:1 text minimum in both
-  // themes (it is the same tone `hero.tsx` already uses for its own links), and resolves
-  // automatically per-theme from the one class, no `dark:` variant needed.
-  return (
-    <span data-slot="coverage-cell" className="inline-flex flex-col items-start gap-0.5 leading-tight">
-      <span data-slot="figure-cell-value">{text}</span>
-      {low ? (
-        <span className="text-xs text-[var(--evidence-self-reported)]">{t(locale, "aiBenchCoverageLow")}</span>
-      ) : null}
-    </span>
-  );
-}
-
-/** The source cited for the composite index — the dataset's own methodology page is not a figure. */
-function defaultSourceForIndex(): string {
-  return "https://ayokoding.com/tools/ai-benchmark";
-}
-
-/** Input/output price cells from the model's lowest available rate. */
-function priceCells(model: Model, locale: Locale): { input: ReactNode; output: ReactNode; isSubscription: boolean } {
-  const rate = lowestRate(model);
-  if (rate && rate.kind === "metered") {
-    return {
-      isSubscription: false,
-      input: (
-        <FigureCell
-          value={formatPriceUsd(rate.input, locale)}
-          grade={rate.grade}
-          source={rate.source}
-          locale={locale}
-        />
-      ),
-      output: (
-        <FigureCell
-          value={formatPriceUsd(rate.output, locale)}
-          grade={rate.grade}
-          source={rate.source}
-          locale={locale}
-        />
-      ),
-    };
-  }
-  if (rate && rate.kind === "subscription") {
-    // A flat-rate subscription is one price covering both directions — there is no separate
-    // input/output split to report, so both cells show the same graded, sourced figure via the
-    // shared FigureCell (grade marker for AC-21, source link for AC-30), never a bespoke unmarked
-    // link.
-    const subCell = (
-      <FigureCell
-        value={`${t(locale, "aiBenchSubscription")} (${formatPriceUsd(rate.planCostUsd, locale)})`}
-        grade={rate.grade}
-        source={rate.source}
-        locale={locale}
-      />
-    );
-    return { isSubscription: true, input: subCell, output: subCell };
-  }
-  // No price exists for this model at all (metered or subscription) — render exactly like an
-  // absent benchmark figure: a plain "not reported" span, never a grade marker and never a source
-  // link. A price that was never published must not resolve to a link (previously this fabricated
-  // a self-referential citation via `defaultSourceForIndex()`, which was wrong — that helper is for
-  // the composite index, whose source genuinely IS this page's own methodology, not for a missing
-  // price).
-  const notReported = <span data-slot="figure-cell-value">{t(locale, "aiBenchNoFigure")}</span>;
-  return { input: notReported, output: notReported, isSubscription: false };
-}
-
-/** A model's integrity-note links, rendered beside its name (AC-33). */
-function integrityNotes(model: Model, locale: Locale): ReactNode {
-  if (!model.notes || model.notes.length === 0) return null;
-  return (
-    <span data-slot="integrity-notes" className="mt-1 flex flex-wrap gap-2">
-      {model.notes.map((note, i) => (
-        <a
-          key={`${note.modelId}-${i}`}
-          data-slot="integrity-note"
-          href={note.source}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          // Same `--evidence-self-reported` token as the coverage marker above (Rule-15 DWT-002 fix).
-          className="text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2"
-          aria-label={`${t(locale, "aiBenchIntegrityLabel")}: ${note.text}`}
-          title={note.text}
-        >
-          {t(locale, "aiBenchIntegrityLabel")}
-        </a>
-      ))}
-    </span>
-  );
-}
 
 export type ModelTableProps = {
   dataset?: Dataset;
@@ -233,23 +59,6 @@ export type ModelTableProps = {
 export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: ModelTableProps) {
   const views = computeScoreViews(dataset, fullDataset);
   const models = dataset.models;
-
-  // Shared per-model figure set so the table and the card render identical figures (W-26).
-  const renderBenchmarkFigures = (model: Model): { label: string; node: ReactNode }[] =>
-    BENCHMARK_COLUMNS.map((col) => ({
-      label: t(locale, col.labelKey),
-      node: benchmarkCell(model, col.id, locale),
-    }));
-
-  const renderStaticFigures = (model: Model, view: ScoreView): { label: string; node: ReactNode }[] => {
-    const prices = priceCells(model, locale);
-    return [
-      { label: t(locale, "aiBenchColIndex"), node: indexCell(view, locale) },
-      { label: t(locale, "aiBenchColCoverage"), node: coverageCell(view, locale) },
-      { label: t(locale, "aiBenchColInputPrice"), node: prices.input },
-      { label: t(locale, "aiBenchColOutputPrice"), node: prices.output },
-    ];
-  };
 
   return (
     <section data-slot={SLOT} data-testid="model-table" className="space-y-4" aria-label={t(locale, "aiBenchTitle")}>
@@ -339,8 +148,8 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
               { label: t(locale, "aiBenchColVendor"), node: <span>{model.vendor}</span> },
               { label: t(locale, "aiBenchColHarnesses"), node: <span>{harnessNames}</span> },
               { label: t(locale, "aiBenchColClass"), node: <span>{classLabel(view.band, locale)}</span> },
-              ...renderBenchmarkFigures(model),
-              ...renderStaticFigures(model, view),
+              ...renderBenchmarkFigures(model, locale),
+              ...renderStaticFigures(model, view, locale),
             ];
             return (
               <li key={model.id} data-model-id={model.id} className="rounded-md border p-3">
