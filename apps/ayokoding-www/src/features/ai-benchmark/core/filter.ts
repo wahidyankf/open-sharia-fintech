@@ -17,7 +17,7 @@ import { computeGroups, type Band } from "./bands";
  */
 export const HARNESS_IDS: readonly HarnessId[] = ["claude-code", "codex-cli", "cursor", "opencode-go", "opencode-zen"];
 
-export const BANDS: readonly Band[] = ["opus", "sonnet", "light", "unrated"];
+export const BANDS: readonly Band[] = ["opus", "sonnet", "haiku", "unrated"];
 
 /** Type guard: is `v` one of the known harness ids? */
 export function isKnownHarness(v: string): v is HarnessId {

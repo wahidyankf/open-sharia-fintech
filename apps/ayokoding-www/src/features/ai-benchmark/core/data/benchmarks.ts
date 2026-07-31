@@ -39,7 +39,7 @@ export const HARNESS_DISPLAY_NAMES: Readonly<Record<string, string>> = {
 export const BAND_LABEL_KEYS: Readonly<Record<string, string>> = {
   opus: "aiBenchBandOpus",
   sonnet: "aiBenchBandSonnet",
-  light: "aiBenchBandLight",
+  haiku: "aiBenchBandHaiku",
   unrated: "aiBenchBandUnrated",
 };
 

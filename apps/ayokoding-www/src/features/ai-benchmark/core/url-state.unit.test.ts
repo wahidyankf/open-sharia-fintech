@@ -70,9 +70,9 @@ describe("decodeState / sanitizeState — unknown values fall back to unfiltered
   });
 
   it("a known harness and known class survive sanitizeState", () => {
-    expect(sanitizeState({ harness: "cursor", class: "light" })).toEqual({
+    expect(sanitizeState({ harness: "cursor", class: "haiku" })).toEqual({
       harness: "cursor",
-      class: "light",
+      class: "haiku",
       ...DEFAULT_SORT_STATE,
     });
   });
@@ -93,10 +93,10 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
     { name: "harness opencode-go", query: "harness=opencode-go" },
     { name: "class opus", query: "class=opus" },
     { name: "class sonnet", query: "class=sonnet" },
-    { name: "class light", query: "class=light" },
+    { name: "class haiku", query: "class=haiku" },
     { name: "class unrated", query: "class=unrated" },
     { name: "both filters", query: "harness=cursor&class=sonnet" },
-    { name: "both filters (other harness)", query: "harness=opencode-zen&class=light" },
+    { name: "both filters (other harness)", query: "harness=opencode-zen&class=haiku" },
   ];
 
   it.each(cases)("round-trips: $name — encodeState(decodeState($query)) is stable", ({ query }) => {
@@ -150,7 +150,7 @@ describe("encodeState / decodeState — round-trip the four per-band sort params
     expect(decoded.sonnet).toBe("capability");
     // The other two bands are unaffected by the one unrecognized value.
     expect(decoded.opus).toBe("capability");
-    expect(decoded.light).toBe("capability");
+    expect(decoded.haiku).toBe("capability");
   });
 });
 

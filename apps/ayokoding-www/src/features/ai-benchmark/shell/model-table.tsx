@@ -53,13 +53,13 @@ type ScoreView = {
  * Build the roster-relative index/coverage/band for every model in one scoring pass. `fullDataset`
  * (defaulting to `dataset` itself) is ALWAYS the source for the anchor thresholds and roster-max
  * map — `dataset` may be a harness/class-filtered subset, and re-deriving thresholds from it would
- * silently collapse every rated model to `light` when the filter excludes both anchor models
+ * silently collapse every rated model to `haiku` when the filter excludes both anchor models
  * (DD-5a: bands are roster-relative to the FULL population; filtering governs display only).
  */
 function computeScoreViews(dataset: Dataset, fullDataset: Dataset = dataset): Map<string, ScoreView> {
   const groups = computeGroups(dataset, fullDataset);
   const byId = new Map<string, ScoreView>();
-  for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+  for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
     for (const s of list) {
       byId.set(s.model.id, { band: s.band, index: s.index, coverage: s.coverage });
     }
@@ -221,7 +221,7 @@ export type ModelTableProps = {
    * The full unfiltered roster. Band thresholds (the anchor indices) and the roster-max map are
    * ALWAYS derived from this dataset, never from `dataset` — `dataset` may be a harness/class
    * filtered subset that excludes both anchor models, and re-deriving thresholds from it would
-   * silently collapse every rated model to `light` (DD-5a: bands are roster-relative to the FULL
+   * silently collapse every rated model to `haiku` (DD-5a: bands are roster-relative to the FULL
    * population; filtering governs display only). REQUIRED, not optional: an omitted `fullDataset`
    * reproduces the identical bug with identical silence, so this is a compile-time guard rather
    * than a silent self-fallback.

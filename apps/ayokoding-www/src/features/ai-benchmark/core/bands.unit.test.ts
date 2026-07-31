@@ -57,17 +57,17 @@ describe("assignBand — a model between the two anchors is sonnet", () => {
   });
 });
 
-// ─── B-5 / B-6 — light fallthrough ─────────────────────────────────────────────
+// ─── B-5 / B-6 — haiku fallthrough ─────────────────────────────────────────────
 
-describe("assignBand — a model below the sonnet anchor is light", () => {
-  it("assigns light when the index is below the sonnet anchor index", () => {
+describe("assignBand — a model below the sonnet anchor is haiku", () => {
+  it("assigns haiku when the index is below the sonnet anchor index", () => {
     const m = model("below-sonnet");
-    expect(assignBand(m, withIndex(m, 40), SYNTH_ANCHORS)).toBe("light");
+    expect(assignBand(m, withIndex(m, 40), SYNTH_ANCHORS)).toBe("haiku");
   });
 
-  it("assigns light at index zero (rated but lowest)", () => {
+  it("assigns haiku at index zero (rated but lowest)", () => {
     const m = model("floor");
-    expect(assignBand(m, withIndex(m, 0), SYNTH_ANCHORS)).toBe("light");
+    expect(assignBand(m, withIndex(m, 0), SYNTH_ANCHORS)).toBe("haiku");
   });
 });
 
@@ -104,7 +104,7 @@ describe("computeGroups — every roster model belongs to exactly one capability
   const allGroups: Array<[Band, ModelScore[]]> = [
     ["opus", groups.opus],
     ["sonnet", groups.sonnet],
-    ["light", groups.light],
+    ["haiku", groups.haiku],
     ["unrated", groups.unrated],
   ];
   const everyone = allGroups.flatMap(([, ms]) => ms);
@@ -164,10 +164,10 @@ describe("computeGroups — models are ordered identically within a band (descen
     }
   }
 
-  it("opus / sonnet / light bands are ordered by descending index then ascending id", () => {
+  it("opus / sonnet / haiku bands are ordered by descending index then ascending id", () => {
     assertCanonical(groups.opus, false);
     assertCanonical(groups.sonnet, false);
-    assertCanonical(groups.light, false);
+    assertCanonical(groups.haiku, false);
   });
 
   it("the unrated band (all undefined index) is ordered by ascending id", () => {
@@ -180,7 +180,7 @@ describe("computeGroups — models are ordered identically within a band (descen
   it("the per-band order is stable across repeated calls (one canonical list)", () => {
     const again = computeGroups(dataset);
     expect(again.opus.map((s) => s.model.id)).toEqual(groups.opus.map((s) => s.model.id));
-    expect(again.light.map((s) => s.model.id)).toEqual(groups.light.map((s) => s.model.id));
+    expect(again.haiku.map((s) => s.model.id)).toEqual(groups.haiku.map((s) => s.model.id));
     expect(again.unrated.map((s) => s.model.id)).toEqual(groups.unrated.map((s) => s.model.id));
   });
 });
@@ -204,20 +204,20 @@ describe("anchors — single helper deriving the anchor ids + threshold indices"
   });
 });
 
-// ─── Regression: a harness filter excluding both anchors must not collapse rated models to `light`
+// ─── Regression: a harness filter excluding both anchors must not collapse rated models to `haiku`
 // (pr-review-synthesis-maker CRITICAL finding on PR #118, benchmark-content.tsx:28) ───────────────
 //
 // `codex-cli` and `opencode-go` are the two harnesses that expose neither `claude-opus-5` nor
 // `claude-sonnet-5` (see `core/data/models.ts`). Before this fix, `computeGroups` re-derived the
 // anchor thresholds from whatever `dataset` it was handed — so a harness-filtered `Dataset` with
 // both anchors excluded made `anchorIndices.opus`/`.sonnet` both `undefined`, and every surviving
-// rated model silently fell through to `light`. The fix is the `fullDataset` parameter: thresholds
+// rated model silently fell through to `haiku`. The fix is the `fullDataset` parameter: thresholds
 // are ALWAYS derived from it (defaulting to `dataset` itself), independent of what subset is being
 // displayed.
 
 function bandById(groups: BandGroups): Map<string, Band> {
   const byId = new Map<string, Band>();
-  for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+  for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
     for (const s of list) {
       byId.set(s.model.id, s.band);
     }
@@ -259,15 +259,15 @@ describe("computeGroups — a harness filter that excludes both anchors keeps ev
     }
   }
 
-  it("codex-cli: gpt-5.6-sol/terra/luna keep their opus/sonnet bands instead of collapsing to light", () => {
+  it("codex-cli: gpt-5.6-sol/terra/luna keep their opus/sonnet bands instead of collapsing to haiku", () => {
     assertHarnessPreservesRatedBands("codex-cli");
   });
 
-  it("opencode-go: the harness's rated survivors keep their opus/sonnet bands instead of collapsing to light", () => {
+  it("opencode-go: the harness's rated survivors keep their opus/sonnet bands instead of collapsing to haiku", () => {
     assertHarnessPreservesRatedBands("opencode-go");
   });
 
-  it("WITHOUT the fullDataset override, the bug reproduces — the same rated models collapse to light", () => {
+  it("WITHOUT the fullDataset override, the bug reproduces — the same rated models collapse to haiku", () => {
     const filteredModels = dataset.models.filter((m) => m.harnesses.includes("codex-cli"));
     const filteredDataset: Dataset = { ...dataset, models: filteredModels };
     // No second argument — the pre-fix call shape. Documents the bug this fix closes; must stay
@@ -279,7 +279,7 @@ describe("computeGroups — a harness filter that excludes both anchors keeps ev
       .filter((id) => fullRosterBand.get(id) === "opus" || fullRosterBand.get(id) === "sonnet");
     expect(ratedSurvivorIds.length).toBeGreaterThan(0);
     for (const id of ratedSurvivorIds) {
-      expect(collapsedBand.get(id), `${id} collapses to light when no fullDataset is supplied`).toBe("light");
+      expect(collapsedBand.get(id), `${id} collapses to haiku when no fullDataset is supplied`).toBe("haiku");
     }
   });
 });

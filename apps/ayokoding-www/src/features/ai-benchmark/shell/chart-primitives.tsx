@@ -43,21 +43,21 @@ export type { ChartBand };
 const BAR_FILL_CLASS: Record<ChartBand, string> = {
   opus: "fill-[var(--chart-band-opus)]",
   sonnet: "fill-[var(--chart-band-sonnet)]",
-  light: "fill-[var(--chart-band-light)]",
+  haiku: "fill-[var(--chart-band-haiku)]",
   unrated: "fill-[var(--chart-band-unrated)]",
 };
 
 const BAND_INK_FILL_CLASS: Record<ChartBand, string> = {
   opus: "fill-[var(--chart-band-opus-ink)]",
   sonnet: "fill-[var(--chart-band-sonnet-ink)]",
-  light: "fill-[var(--chart-band-light-ink)]",
+  haiku: "fill-[var(--chart-band-haiku-ink)]",
   unrated: "fill-[var(--chart-band-unrated-ink)]",
 };
 
 const BAND_SWATCH_CLASS: Record<ChartBand, string> = {
   opus: "bg-[var(--chart-band-opus)]",
   sonnet: "bg-[var(--chart-band-sonnet)]",
-  light: "bg-[var(--chart-band-light)]",
+  haiku: "bg-[var(--chart-band-haiku)]",
   unrated: "bg-[var(--chart-band-unrated)]",
 };
 

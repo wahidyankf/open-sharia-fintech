@@ -20,10 +20,10 @@ Feature: AI model benchmark tool
 
   # AC-6
   @unit
-  Scenario: A model below the sonnet anchor renders in the light band
+  Scenario: A model below the sonnet anchor renders in the haiku band
     Given a fixture model whose composite index is below the sonnet anchor index
     When the capability groups are computed
-    Then that model belongs to the "light" band
+    Then that model belongs to the "haiku" band
 
   # AC-7
   @unit
@@ -46,7 +46,15 @@ Feature: AI model benchmark tool
   Scenario: Every roster model belongs to exactly one capability group
     Given the full roster is loaded
     When the capability groups are computed
-    Then each model appears in exactly one of "opus", "sonnet", "light", or "unrated"
+    Then each model appears in exactly one of "opus", "sonnet", "haiku", or "unrated"
+
+  # AC-65
+  @unit
+  Scenario: The rated capability classes are named opus, sonnet, and haiku
+    Given the full roster is loaded
+    When the set of known capability class identifiers is inspected
+    Then the identifiers are exactly "opus", "sonnet", "haiku", and "unrated"
+    And no identifier is "light"
 
   # AC-10
   @unit
@@ -274,7 +282,7 @@ Feature: AI model benchmark tool
     Given the sonnet band is displaying models in capability-descending order
     When the reader selects "Price: Low to High" from the sonnet band's sort control
     Then the sonnet band's rows re-render sorted by ascending output rate
-    And the opus and light bands keep their own independently-selected sort order
+    And the opus and haiku bands keep their own independently-selected sort order
 
   # AC-42
   @unit
@@ -295,7 +303,7 @@ Feature: AI model benchmark tool
   # AC-44 — DD-1
   @unit
   Scenario: A rated model billed only by subscription shows inline subscription text
-    Given a model in the light band with no metered rate and one subscription rate
+    Given a model in the haiku band with no metered rate and one subscription rate
     When the merged chart renders that model's row
     Then the row shows its capability bar as normal
     And the price-bar area of that row shows "Subscription ($cost)" text instead of two bars
@@ -336,7 +344,7 @@ Feature: AI model benchmark tool
   # "not reported" placeholder, which had no owning scenario until now.
   @unit
   Scenario: A rated model with no reported price shows a not-reported placeholder
-    Given a model in the light band with no metered rate and no subscription rate
+    Given a model in the haiku band with no metered rate and no subscription rate
     When the merged chart renders that model's row
     Then the row shows its capability bar as normal
     And the price-bar area of that row shows a "not reported" placeholder instead of two bars

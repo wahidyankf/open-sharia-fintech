@@ -183,7 +183,7 @@ describe("BenchmarkChart — per-band sort control", () => {
   });
 
   it("reports a sort change for only the changed band, leaving other bands untouched", () => {
-    // Two sonnet-band models so a sort-order change is observable; opus/light are untouched by
+    // Two sonnet-band models so a sort-order change is observable; opus/haiku are untouched by
     // the sonnet dropdown regardless of how many models they hold.
     const sonnetA = ratedMeteredModel("sonnet-a", 1, 5);
     const sonnetB = ratedMeteredModel("sonnet-b", 1, 20);
@@ -200,8 +200,8 @@ describe("BenchmarkChart — per-band sort control", () => {
   });
 
   it("re-orders only the band whose sortState entry changed", () => {
-    // Fixture carries no anchor models, so both models fall through to the `light` band (no
-    // opus/sonnet threshold to compare against) — this test targets `light` accordingly.
+    // Fixture carries no anchor models, so both models fall through to the `haiku` band (no
+    // opus/sonnet threshold to compare against) — this test targets `haiku` accordingly.
     const modelA = ratedMeteredModel("model-a", 1, 5); // cheaper output
     const modelB = ratedMeteredModel("model-b", 1, 20); // pricier output
     const ds = fixtureDataset([modelA, modelB]);
@@ -209,7 +209,7 @@ describe("BenchmarkChart — per-band sort control", () => {
     // Default (capability) order: both share the same composite index (identical figures), so the
     // tie-break is ascending id — model-a before model-b.
     const { rerender } = render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
-    const bandDefault = screen.getByTestId("benchmark-chart-band-light");
+    const bandDefault = screen.getByTestId("benchmark-chart-band-haiku");
     const idsDefault = within(bandDefault)
       .getAllByTestId(/^benchmark-chart-row-/)
       .map((el) => el.getAttribute("data-testid"));
@@ -221,10 +221,10 @@ describe("BenchmarkChart — per-band sort control", () => {
         dataset={ds}
         fullDataset={ds}
         locale="en"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-desc" }}
+        sortState={{ opus: "capability", sonnet: "capability", haiku: "price-desc" }}
       />,
     );
-    const bandSorted = screen.getByTestId("benchmark-chart-band-light");
+    const bandSorted = screen.getByTestId("benchmark-chart-band-haiku");
     const idsSorted = within(bandSorted)
       .getAllByTestId(/^benchmark-chart-row-/)
       .map((el) => el.getAttribute("data-testid"));
@@ -397,7 +397,7 @@ describe("BenchmarkChart — accessible name and ModelTable reachability", () =>
   });
 
   // UWT-002 fix (Rule-15 web-usability-tester retest, 2026-07-30): the chart is now one svg PER
-  // rated band (three: opus/sonnet/light), each with its own role=img and its own localized title
+  // rated band (three: opus/sonnet/haiku), each with its own role=img and its own localized title
   // built from the shared `aiBenchMergedChartTitle` prefix — not one svg shared across every band.
   it("renders one svg with role img and a localized title PER rated band, and every model it shows is also reachable via ModelTable", () => {
     const rated = ratedMeteredModel("access-rated-model", 2, 10);
@@ -420,7 +420,7 @@ describe("BenchmarkChart — accessible name and ModelTable reachability", () =>
 
     const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
     const svgs = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
-    expect(svgs).toHaveLength(3); // opus, sonnet, light
+    expect(svgs).toHaveLength(3); // opus, sonnet, haiku
     for (const svg of svgs) {
       expect(svg.tagName.toLowerCase()).toBe("svg");
       expect(svg.querySelectorAll("title")).toHaveLength(1);
@@ -524,12 +524,12 @@ describe("BenchmarkChart — DWT-004 band-header/first-row label overlap regress
     const ds = fixtureDataset([model]);
     render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
 
-    // A lone fixture model with no anchor models present always lands in the "light" band
-    // (bands.ts falls through to "light" when both anchor thresholds are undefined) — the "opus"
+    // A lone fixture model with no anchor models present always lands in the "haiku" band
+    // (bands.ts falls through to "haiku" when both anchor thresholds are undefined) — the "opus"
     // and "sonnet" band headers still render (every RATED_BAND always renders, even with zero
-    // rows), but at unrelated cursor offsets, so this must reference "light", the band this
+    // rows), but at unrelated cursor offsets, so this must reference "haiku", the band this
     // model's own row actually belongs to.
-    const headerLabel = screen.getByTestId("benchmark-chart-band-light-label");
+    const headerLabel = screen.getByTestId("benchmark-chart-band-haiku-label");
     const rowLabel = screen.getByTestId("benchmark-chart-label-dwt004-first-row-model");
     const headerY = Number(headerLabel.getAttribute("y"));
     const rowLabelY = Number(rowLabel.getAttribute("y"));
@@ -569,7 +569,7 @@ describe("BenchmarkChart — axis-maximum label right-alignment", () => {
 
     // UWT-002 fix (Rule-15, 2026-07-30): every RATED_BAND now renders its own svg (and its own
     // axis-maximum label) regardless of whether it holds any rows — this fixture's lone,
-    // anchor-less model lands in "light" alone, so "opus"/"sonnet" render empty but still carry
+    // anchor-less model lands in "haiku" alone, so "opus"/"sonnet" render empty but still carry
     // their own (identically positioned) axis-maximum label.
     const axisMaxLabels = screen.getAllByTestId("chart-axis-max");
     expect(axisMaxLabels.length).toBeGreaterThan(0);
@@ -599,7 +599,7 @@ describe("BenchmarkChart — fullDataset keeps a harness-filtered survivor in it
   const fullRosterBand = (() => {
     const groups = computeGroups(fullRosterDataset);
     const byId = new Map<string, string>();
-    for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+    for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
       for (const s of list) byId.set(s.model.id, s.band);
     }
     return byId;
@@ -624,16 +624,16 @@ describe("BenchmarkChart — fullDataset keeps a harness-filtered survivor in it
     expect(bandGroup.querySelector(`[data-testid="benchmark-chart-row-${survivor!.id}"]`)).not.toBeNull();
   });
 
-  it("WITHOUT fullDataset, the bug would reproduce — the survivor's own band collapses to light", () => {
+  it("WITHOUT fullDataset, the bug would reproduce — the survivor's own band collapses to haiku", () => {
     // Proves the assertion above is not vacuous: the same survivor, scored against ONLY the
     // filtered subset (no full-roster anchors), no longer lands in its full-roster band.
     const collapsedGroups = computeGroups(filteredDataset);
     const collapsedById = new Map<string, string>();
-    for (const list of [collapsedGroups.opus, collapsedGroups.sonnet, collapsedGroups.light, collapsedGroups.unrated]) {
+    for (const list of [collapsedGroups.opus, collapsedGroups.sonnet, collapsedGroups.haiku, collapsedGroups.unrated]) {
       for (const s of list) collapsedById.set(s.model.id, s.band);
     }
-    expect(collapsedById.get(survivor!.id)).toBe("light");
-    expect(fullRosterBand.get(survivor!.id)).not.toBe("light");
+    expect(collapsedById.get(survivor!.id)).toBe("haiku");
+    expect(fullRosterBand.get(survivor!.id)).not.toBe("haiku");
   });
 });
 
@@ -684,12 +684,12 @@ describe("BenchmarkChart — price sort honours an active harness filter (DD-8)"
         fullDataset={ds}
         locale="en"
         harness="codex-cli"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-asc" }}
+        sortState={{ opus: "capability", sonnet: "capability", haiku: "price-asc" }}
       />,
     );
 
-    const bandLight = screen.getByTestId("benchmark-chart-band-light");
-    const domOrder = within(bandLight)
+    const bandHaiku = screen.getByTestId("benchmark-chart-band-haiku");
+    const domOrder = within(bandHaiku)
       .getAllByTestId(/^benchmark-chart-row-/)
       .map((el) => el.getAttribute("data-testid"));
     expect(domOrder).toEqual(["benchmark-chart-row-harness-sort-flat", "benchmark-chart-row-harness-sort-dual"]);
@@ -721,7 +721,7 @@ describe("BenchmarkChart — sort dropdown has no duplicate/invalid empty option
     const ds = fixtureDataset([model]);
     render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" onSortChange={vi.fn()} />);
 
-    const sortLabel = `${t("en", "aiBenchSortLabel")} — ${bandLabel("light", "en")}`;
+    const sortLabel = `${t("en", "aiBenchSortLabel")} — ${bandLabel("haiku", "en")}`;
     const select = screen.getByRole("combobox", { name: sortLabel }) as HTMLSelectElement;
     const values = Array.from(select.options).map((opt) => opt.value);
 

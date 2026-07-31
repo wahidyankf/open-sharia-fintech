@@ -87,7 +87,7 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
               [
                 ["opus", "aiBenchBandOpus", "aiBenchLegendClassOpus"],
                 ["sonnet", "aiBenchBandSonnet", "aiBenchLegendClassSonnet"],
-                ["light", "aiBenchBandLight", "aiBenchLegendClassLight"],
+                ["haiku", "aiBenchBandHaiku", "aiBenchLegendClassHaiku"],
                 ["unrated", "aiBenchBandUnrated", "aiBenchLegendClassUnrated"],
               ] as const
             ).map(([band, labelKey, defKey]) => (

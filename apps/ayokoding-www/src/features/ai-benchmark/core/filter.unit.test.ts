@@ -47,7 +47,7 @@ describe("filterModels — class filter narrows to a capability band over the fu
   const bandIds = (band: keyof ReturnType<typeof computeGroups>) => groups[band].map((s) => s.model.id);
 
   it("a class filter returns exactly the models computeGroups placed in that band", () => {
-    for (const band of ["opus", "sonnet", "light", "unrated"] as const) {
+    for (const band of ["opus", "sonnet", "haiku", "unrated"] as const) {
       const got = filterModels(dataset, { class: band })
         .map((m) => m.id)
         .sort();

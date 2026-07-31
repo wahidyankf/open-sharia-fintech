@@ -76,12 +76,12 @@ describe("ModelTable responsive parity", () => {
 });
 
 // ─── Regression: a harness filter excluding both anchors must not collapse rated models to
-// `light` (pr-review-synthesis-maker CRITICAL finding on PR #118, benchmark-content.tsx:28) ────
+// `haiku` (pr-review-synthesis-maker CRITICAL finding on PR #118, benchmark-content.tsx:28) ────
 //
 // `codex-cli` exposes neither `claude-opus-5` nor `claude-sonnet-5`. Before this fix, passing the
 // codex-cli-filtered dataset as `<ModelTable dataset={filtered} locale="en" />` (no `fullDataset`)
 // re-derived the anchor thresholds from the filtered subset — collapsing `gpt-5.6-sol` (opus on
-// the full roster) to `light`. The fix threads a `fullDataset` prop so thresholds always come from
+// the full roster) to `haiku`. The fix threads a `fullDataset` prop so thresholds always come from
 // the unfiltered roster while `dataset` still governs which models are displayed. `fullDataset` is
 // now a REQUIRED prop (pr-review-synthesis-maker Finding 3, PR #118 cycle 2), so the "omitted"
 // half of this regression is a compile-time `TS2741` error rather than a runtime test — a strictly

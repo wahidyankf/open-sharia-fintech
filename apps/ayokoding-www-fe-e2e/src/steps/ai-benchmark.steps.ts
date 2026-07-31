@@ -67,7 +67,7 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 // ── Chart accessible-name assertion (AC-36) ───────────────────────────────────
 
 // UWT-002 fix (Rule-15, 2026-07-30): the chart is now one svg PER rated band
-// (`benchmark-chart-svg-{opus,sonnet,light}`), not one shared `benchmark-chart-svg` — the first
+// (`benchmark-chart-svg-{opus,sonnet,haiku}`), not one shared `benchmark-chart-svg` — the first
 // band's own svg is enough to prove the family carries a real accessible name.
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
 Then("the merged chart exposes an accessible name", async ({ page }) => {
@@ -165,14 +165,14 @@ Then("the same filtered set of models is shown", async ({ page }) => {
 // exactly as declared, is therefore the correct level to assert this at — not by locating one
 // particular rendered DOM element.
 
-const BAND_IDS = ["opus", "sonnet", "light", "unrated"] as const;
+const BAND_IDS = ["opus", "sonnet", "haiku", "unrated"] as const;
 
 // The three bands that actually render as a bar (`benchmark-chart.tsx` never plots `unrated` as
 // a bar — it is a plain text list) — the base/bar-fill token `--chart-band-<band>` against
 // `--color-background` (the page background a bar renders directly onto) is the pair the M-14 fix
 // (delivery.md, Phase 9 Round 1a) actually changed and the one WCAG 1.4.11's 3:1 non-text minimum
 // applies to; `unrated`'s base token was never implicated (it aliases the neutral `--warm-400`).
-const RATED_BAND_IDS = ["opus", "sonnet", "light"] as const;
+const RATED_BAND_IDS = ["opus", "sonnet", "haiku"] as const;
 
 const WCAG_NON_TEXT_MIN_CONTRAST = 3.0;
 
@@ -202,7 +202,7 @@ const WCAG_AA_MIN_CONTRAST = 4.5;
 let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
   opus: 0,
   sonnet: 0,
-  light: 0,
+  haiku: 0,
   unrated: 0,
 };
 
@@ -213,7 +213,7 @@ let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
 let bandBaseContrastRatios: Record<(typeof RATED_BAND_IDS)[number], number> = {
   opus: 0,
   sonnet: 0,
-  light: 0,
+  haiku: 0,
 };
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
@@ -311,7 +311,7 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
 // (`--chart-band-<band>`) is what a bar's `fill` colour resolves to (`chart-primitives.tsx`'s
 // `barFillClass`), rendered directly against the page background — a meaningful, non-text
 // graphical object under WCAG 1.4.11, whose minimum is 3:1, not the 4.5:1 text minimum the
-// `-ink`/`-wash` assertion above checks. `sonnet`/`light` measured ~2.90:1/~2.13:1 before the fix
+// `-ink`/`-wash` assertion above checks. `sonnet`/`haiku` measured ~2.90:1/~2.13:1 before the fix
 // pinned literal OKLCH values (`ayokoding.css:107-108`); this would have failed against those
 // pre-fix alias values and passes against the pinned literals.
 Then("every rated band's bar fill meets the WCAG non-text contrast ratio against the page background", async ({}) => {

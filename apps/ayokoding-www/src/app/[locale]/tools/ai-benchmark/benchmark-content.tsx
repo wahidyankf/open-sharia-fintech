@@ -27,10 +27,10 @@ export function BenchmarkContent() {
   // thresholds must stay roster-relative to the FULL population (DD-5a), so every consumer below
   // is ALSO given `dataset` (the unfiltered full roster) as its `fullDataset` — never re-deriving
   // anchor thresholds from `filteredDataset`, which can exclude both anchor models entirely and
-  // would otherwise silently collapse every rated model to `light`.
+  // would otherwise silently collapse every rated model to `haiku`.
   // `decodeState` returns ONE flat object carrying both the filter and sort keys — picked apart
   // into two disjoint-key objects here (not just re-typed) so `latestFilterStateRef` never carries
-  // an own `opus`/`sonnet`/`light` key and `latestSortStateRef` never carries an own
+  // an own `opus`/`sonnet`/`haiku` key and `latestSortStateRef` never carries an own
   // `harness`/`class` key. Without this, `{ ...next, ...latestSortStateRef.current }` below would
   // spread `latestSortStateRef.current`'s own (implicitly `undefined`) `harness`/`class` keys
   // OVER `next`'s real values, silently dropping whichever filter had just changed.
@@ -39,7 +39,7 @@ export function BenchmarkContent() {
   const sortState: SortState = {
     opus: decoded.opus,
     sonnet: decoded.sonnet,
-    light: decoded.light,
+    haiku: decoded.haiku,
   };
   const filteredModels = filterModels(dataset, filterState);
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };

@@ -108,7 +108,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "The four capability classes are anchor-relative composite-index tiers, not vendor brand names — a model of any vendor can land in any class:",
     aiBenchLegendClassOpus: "at or above Claude Opus 5's own composite index (the tier's defining anchor).",
     aiBenchLegendClassSonnet: "at or above Claude Sonnet 5's own composite index, below the Opus anchor.",
-    aiBenchLegendClassLight: "below the Sonnet anchor.",
+    aiBenchLegendClassHaiku: "below the Sonnet anchor.",
     aiBenchLegendClassUnrated: "no figure on any of the four composite benchmarks.",
     aiBenchLegendGradeIntro: "The five evidence grades describe how each figure was sourced:",
     aiBenchLegendGradeVerified: "scored by an independent verifier (e.g. Scale AI SEAL) or an official model card.",
@@ -484,7 +484,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchLegendClassOpus:
       "setara atau di atas indeks komposit Claude Opus 5 sendiri (jangkar yang menentukan tingkatan ini).",
     aiBenchLegendClassSonnet: "setara atau di atas indeks komposit Claude Sonnet 5 sendiri, di bawah jangkar Opus.",
-    aiBenchLegendClassLight: "di bawah jangkar Sonnet.",
+    aiBenchLegendClassHaiku: "di bawah jangkar Sonnet.",
     aiBenchLegendClassUnrated: "tidak ada angka pada satu pun dari empat tolok ukur komposit.",
     aiBenchLegendGradeIntro: "Kelima tingkat bukti menjelaskan bagaimana setiap angka bersumber:",
     aiBenchLegendGradeVerified: "dinilai oleh verifikator independen (mis. Scale AI SEAL) atau kartu model resmi.",

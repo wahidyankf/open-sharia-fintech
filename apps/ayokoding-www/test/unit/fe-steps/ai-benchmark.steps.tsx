@@ -60,10 +60,16 @@ import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
 import { bandLabel } from "@/features/ai-benchmark/shell/chart-primitives";
 import { formatCoverage, formatIndex, formatPriceUsd } from "@/features/ai-benchmark/shell/format";
-import { filterModels } from "@/features/ai-benchmark/core/filter";
+import { BANDS, filterModels } from "@/features/ai-benchmark/core/filter";
 import { lowestRate } from "@/features/ai-benchmark/core/price";
 import type { SortMode } from "@/features/ai-benchmark/core/sort";
-import { decodeState, encodeState, DEFAULT_SORT_STATE, type SortState } from "@/features/ai-benchmark/core/url-state";
+import {
+  decodeState,
+  encodeState,
+  DEFAULT_SORT_STATE,
+  DEFAULT_STATE,
+  type SortState,
+} from "@/features/ai-benchmark/core/url-state";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 
@@ -101,7 +107,7 @@ function fixtureDataset(models: Model[]): Dataset {
  * Every model built by this helper for the SAME fixture roster shares a `rosterMax` of whichever
  * one holds the highest `score` — so when that holder scores exactly 100, every other model's
  * composite index equals its own `score` verbatim (100 × score ÷ 100), making index values
- * trivial to reason about across a multi-band fixture (AC-11/AC-41's real opus/sonnet/light
+ * trivial to reason about across a multi-band fixture (AC-11/AC-41's real opus/sonnet/haiku
  * split, rather than the single-band-only shortcut most other fixtures use).
  */
 function bandFixtureModel(id: string, score: number, outputRate: number): Model {
@@ -151,7 +157,7 @@ type Ctx = {
   requestedSortMode?: SortMode;
   // A band's row order captured before a sort change, to prove an unrelated band is untouched (AC-41).
   opusOrderBefore?: string[];
-  lightOrderBefore?: string[];
+  haikuOrderBefore?: string[];
   // The encoded URLSearchParams a URL-encoding scenario builds (AC-42).
   encodedParams?: URLSearchParams;
   // Whether the page-load step threw (AC-43).
@@ -286,9 +292,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-6 — light band ──────────────────────────────────────────────────────
+  // ─── AC-6 — haiku band ──────────────────────────────────────────────────────
 
-  Scenario("A model below the sonnet anchor renders in the light band", ({ Given, When, Then }) => {
+  Scenario("A model below the sonnet anchor renders in the haiku band", ({ Given, When, Then }) => {
     const sonnet = liveAnchors.sonnet as number;
 
     Given("a fixture model whose composite index is below the sonnet anchor index", () => {
@@ -302,9 +308,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       ctx.band = assignBand(ctx.model!, ctx.indices!, ctx.anchorIndices!);
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A model below the sonnet anchor renders in the light band
-    Then('that model belongs to the "light" band', () => {
-      expect(ctx.band).toBe("light");
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A model below the sonnet anchor renders in the haiku band
+    Then('that model belongs to the "haiku" band', () => {
+      expect(ctx.band).toBe("haiku");
     });
   });
 
@@ -375,12 +381,35 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every roster model belongs to exactly one capability group
-    Then('each model appears in exactly one of "opus", "sonnet", "light", or "unrated"', () => {
+    Then('each model appears in exactly one of "opus", "sonnet", "haiku", or "unrated"', () => {
       const g = ctx.groups!;
-      const placed = [...g.opus, ...g.sonnet, ...g.light, ...g.unrated].map((s) => s.model.id);
+      const placed = [...g.opus, ...g.sonnet, ...g.haiku, ...g.unrated].map((s) => s.model.id);
       // Exactly once each (no duplicates), and every roster model is covered.
       expect(new Set(placed).size).toBe(placed.length);
       expect(placed.length).toBe(dataset.models.length);
+    });
+  });
+
+  // ─── AC-65 — the rated capability classes are named opus, sonnet, and haiku ────
+
+  Scenario("The rated capability classes are named opus, sonnet, and haiku", ({ Given, When, Then, And }) => {
+    let identifiers: readonly string[] = [];
+
+    Given("the full roster is loaded", () => {
+      // dataset is the full roster.
+    });
+
+    When("the set of known capability class identifiers is inspected", () => {
+      identifiers = BANDS;
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The rated capability classes are named opus, sonnet, and haiku
+    Then('the identifiers are exactly "opus", "sonnet", "haiku", and "unrated"', () => {
+      expect(identifiers).toEqual(["opus", "sonnet", "haiku", "unrated"]);
+    });
+
+    And('no identifier is "light"', () => {
+      expect(identifiers).not.toContain("light");
     });
   });
 
@@ -846,7 +875,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(legend.tagName).not.toBe("DETAILS");
       expect(legend.closest("details")).toBeNull();
 
-      for (const band of ["opus", "sonnet", "light", "unrated"]) {
+      for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
         expect(screen.getByTestId(`ai-bench-legend-class-${band}`)).toBeTruthy();
       }
       for (const grade of ["verified", "self-reported", "secondary", "conflicted", "unavailable"]) {
@@ -1022,7 +1051,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Bar length is proportional to the composite index
     Then("the ratio of their bar lengths equals the ratio of their composite indices", () => {
       const groups = computeGroups(ctx.fixtureDataset!);
-      const all = [...groups.opus, ...groups.sonnet, ...groups.light];
+      const all = [...groups.opus, ...groups.sonnet, ...groups.haiku];
       const lowScore = all.find((s) => s.model.id === "cap-low");
       const highScore = all.find((s) => s.model.id === "cap-high");
       expect(lowScore?.index).toBeDefined();
@@ -1090,7 +1119,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // swe-bench-verified alone carries weight 25 → coverage 0.25, below the 0.5 threshold.
       const lowCoverage = fixtureModel("cap-low-coverage", [fig("swe-bench-verified", 50)]);
       ctx.fixtureDataset = fixtureDataset([lowCoverage]);
-      const [score] = computeGroups(ctx.fixtureDataset).light;
+      const [score] = computeGroups(ctx.fixtureDataset).haiku;
       expect(score?.coverage).toBeLessThan(LOW_COVERAGE_THRESHOLD);
     });
 
@@ -1111,7 +1140,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     And("the marker states the model's coverage ratio in text", () => {
       const marker = screen.getByTestId("benchmark-chart-low-coverage-cap-low-coverage");
-      const [score] = computeGroups(ctx.fixtureDataset!).light;
+      const [score] = computeGroups(ctx.fixtureDataset!).haiku;
       expect(marker.textContent ?? "").toContain(formatCoverage(score!.coverage, "en"));
     });
   });
@@ -1140,7 +1169,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       cleanup();
       render(React.createElement(ModelTable, { dataset, fullDataset: dataset, locale: "en" }));
       const groups = computeGroups(dataset);
-      for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+      for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
         for (const s of list) {
           const row = document.querySelector(`tbody tr[data-model-id="${s.model.id}"]`);
           expect(row, `row for ${s.model.id}`).not.toBeNull();
@@ -1534,7 +1563,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     But("the chart and the data table do not render in the empty state", () => {
       // UWT-002 fix (Rule-15, 2026-07-30): the chart is now one `<svg>` PER rated band
-      // (`benchmark-chart-svg-{opus,sonnet,light}`), not one shared `benchmark-chart-svg` — match
+      // (`benchmark-chart-svg-{opus,sonnet,haiku}`), not one shared `benchmark-chart-svg` — match
       // the whole family via regex so this guard still catches a chart that renders ANY band.
       expect(screen.queryByTestId(/^benchmark-chart-svg-/)).toBeNull();
       // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
@@ -1674,9 +1703,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     const opusB = bandFixtureModel("ac41-opus-b", 100, 5);
     const sonnetHi = bandFixtureModel("ac41-sonnet-hi", 85, 50); // higher score, higher price
     const sonnetLo = bandFixtureModel("ac41-sonnet-lo", 75, 10); // lower score, lower price
-    const lightA = bandFixtureModel("ac41-light-a", 30, 40);
-    const lightB = bandFixtureModel("ac41-light-b", 20, 15);
-    const ds = fixtureDataset([opusAnchor, sonnetAnchor, opusA, opusB, sonnetHi, sonnetLo, lightA, lightB]);
+    const haikuA = bandFixtureModel("ac41-haiku-a", 30, 40);
+    const haikuB = bandFixtureModel("ac41-haiku-b", 20, 15);
+    const ds = fixtureDataset([opusAnchor, sonnetAnchor, opusA, opusB, sonnetHi, sonnetLo, haikuA, haikuB]);
 
     function renderWithSort(sortState: SortState) {
       cleanup();
@@ -1700,7 +1729,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       // LOWEST of the three) — descending score: hi(85), lo(75), anchor(60).
       expect(sonnetOrder).toEqual(["ac41-sonnet-hi", "ac41-sonnet-lo", SONNET_ANCHOR_ID]);
       ctx.opusOrderBefore = rowOrderWithin("benchmark-chart-band-opus");
-      ctx.lightOrderBefore = rowOrderWithin("benchmark-chart-band-light");
+      ctx.haikuOrderBefore = rowOrderWithin("benchmark-chart-band-haiku");
     });
 
     When('the reader selects "Price: Low to High" from the sonnet band\'s sort control', () => {
@@ -1718,9 +1747,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(sonnetOrder).toEqual([SONNET_ANCHOR_ID, "ac41-sonnet-lo", "ac41-sonnet-hi"]);
     });
 
-    And("the opus and light bands keep their own independently-selected sort order", () => {
+    And("the opus and haiku bands keep their own independently-selected sort order", () => {
       expect(rowOrderWithin("benchmark-chart-band-opus")).toEqual(ctx.opusOrderBefore);
-      expect(rowOrderWithin("benchmark-chart-band-light")).toEqual(ctx.lightOrderBefore);
+      expect(rowOrderWithin("benchmark-chart-band-haiku")).toEqual(ctx.haikuOrderBefore);
     });
   });
 
@@ -1864,7 +1893,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // Reworded (UWT-002 fix, Rule-15, 2026-07-30): the chart is now one `<svg role="img">` PER
-    // rated band (three, for the live roster's opus/sonnet/light bands), each with its OWN
+    // rated band (three, for the live roster's opus/sonnet/haiku bands), each with its OWN
     // localized title as ITS OWN accessible name — not one shared svg across every band. See
     // `benchmark-chart.tsx`'s own UWT-002 fix docstring for why the split happened.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart keeps its accessible name and text alternative
@@ -1873,7 +1902,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       () => {
         const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
         const charts = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
-        expect(charts.length).toBe(3); // opus, sonnet, light
+        expect(charts.length).toBe(3); // opus, sonnet, haiku
         for (const chart of charts) {
           expect(chart.tagName.toLowerCase()).toBe("svg");
         }
@@ -1883,7 +1912,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     And("every figure the chart encodes is still reachable via the unchanged ModelTable below", () => {
       const table = screen.getByTestId("model-table-desktop");
       const groups = computeGroups(dataset);
-      for (const list of [groups.opus, groups.sonnet, groups.light, groups.unrated]) {
+      for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
         for (const s of list) {
           expect(table.textContent ?? "").toContain(s.model.name);
         }
@@ -1940,13 +1969,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   // (`benchmark-chart.tsx`'s `not-reported` branch), which had no owning scenario until now.
 
   Scenario("A rated model with no reported price shows a not-reported placeholder", ({ Given, When, Then, And }) => {
-    Given("a model in the light band with no metered rate and no subscription rate", () => {
+    Given("a model in the haiku band with no metered rate and no subscription rate", () => {
       const m: Model = {
         id: "ac48-no-price-rated",
         name: "ac48-no-price-rated",
         vendor: "Test",
         harnesses: ["claude-code"],
-        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> light band
+        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> haiku band
         pricing: {}, // no metered rate anywhere AND no subscription — genuinely no reported price
       };
       ctx.fixtureDataset = fixtureDataset([m]);

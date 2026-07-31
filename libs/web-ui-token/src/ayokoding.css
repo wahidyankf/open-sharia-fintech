@@ -48,7 +48,7 @@
      Declaring them as plain custom properties here sidesteps the compiler path entirely. */
   --chart-band-opus-wash: var(--warm-0);
   --chart-band-sonnet-wash: var(--warm-0);
-  --chart-band-light-wash: var(--warm-0);
+  --chart-band-haiku-wash: var(--warm-0);
   --chart-band-unrated-wash: var(--warm-0);
 }
 
@@ -92,7 +92,7 @@
 
   /* ── Chart band tokens ── */
   --chart-band-opus: var(--hue-plum);
-  /* `sonnet`/`light` deliberately do NOT alias the shared `--hue-teal`/`--hue-honey` tokens here
+  /* `sonnet`/`haiku` deliberately do NOT alias the shared `--hue-teal`/`--hue-honey` tokens here
      (unlike `opus`, which does — `--hue-plum` already clears WCAG 1.4.11's 3:1 non-text minimum
      against this theme's near-white background at its shared lightness). At `--hue-teal`'s and
      `--hue-honey`'s own lightness (66%/76%), the two chart bars measured only ~2.90:1 and ~2.13:1
@@ -103,13 +103,13 @@
      them at their current lightness, so each chart-band token instead pins its own literal OKLCH
      value here — same hue angle (200°/75°, preserving the ≥105° colour-blind-safe hue separation
      from Phase 1), darker lightness only. Re-measured: teal-based sonnet at L=56% → 4.28:1;
-     honey-based light at L=60% → 3.91:1 — both comfortably clear 3:1 with margin. */
+     honey-based haiku at L=60% → 3.91:1 — both comfortably clear 3:1 with margin. */
   --chart-band-sonnet: oklch(56% 0.1 200);
-  --chart-band-light: oklch(60% 0.15 75);
+  --chart-band-haiku: oklch(60% 0.15 75);
   --chart-band-unrated: var(--warm-400);
   --chart-band-opus-ink: var(--warm-900);
   --chart-band-sonnet-ink: var(--warm-900);
-  --chart-band-light-ink: var(--warm-900);
+  --chart-band-haiku-ink: var(--warm-900);
   --chart-band-unrated-ink: var(--warm-900);
   /* The four `-wash` declarations for this (light) theme live in the plain `:root` block above,
      not here — see that block's comment for why. */
@@ -178,14 +178,14 @@
   /* ── Chart band tokens ── */
   --chart-band-opus: var(--hue-plum);
   --chart-band-sonnet: var(--hue-teal);
-  --chart-band-light: var(--hue-honey);
+  --chart-band-haiku: var(--hue-honey);
   --chart-band-unrated: var(--warm-400);
   --chart-band-opus-ink: var(--warm-900);
   --chart-band-sonnet-ink: var(--warm-900);
-  --chart-band-light-ink: var(--warm-900);
+  --chart-band-haiku-ink: var(--warm-900);
   --chart-band-unrated-ink: var(--warm-900);
   --chart-band-opus-wash: var(--warm-0);
   --chart-band-sonnet-wash: var(--warm-0);
-  --chart-band-light-wash: var(--warm-0);
+  --chart-band-haiku-wash: var(--warm-0);
   --chart-band-unrated-wash: var(--warm-0);
 }
