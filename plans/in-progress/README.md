@@ -6,6 +6,11 @@ Active project plans currently being worked on.
 
 - [ayokoding-learning-path-04-course-authoring](./ayokoding-learning-path-04-course-authoring/README.md)
   — Wave 2. Authors the `careers/` course bodies band by band, each from its `syllabus/` spec.
+- [ayokoding-www-ai-benchmark-responsive-overhaul](./ayokoding-www-ai-benchmark-responsive-overhaul/README.md)
+  — Full responsive re-look of the AI Model Benchmark page: DOM bars replace the scale-coupled SVG
+  chart, the 38-model roster gains progressive disclosure, the prose preamble collapses below the
+  chart, the desktop table stops making the document scroll horizontally, and the third capability
+  class renames from `light` to `haiku`.
 - [vercel-function-cost-reduction](./vercel-function-cost-reduction/README.md) — Cuts gross metered
   Vercel usage from ~$57/mo to under $20/mo so the Pro plan's included credit absorbs it and the
   invoice stays at the $20 subscription. Fixes the root cause: `ayokoding-www` prerenders zero of
