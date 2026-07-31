@@ -236,7 +236,7 @@ OrganicLeverBe/
 
 ## Standard 7: OrganicLever Module Catalog
 
-Authoritative list of all required packages/modules for `organiclever-be` Phase 1.
+Reference package/module catalog for this convention's Procure-to-Pay `organiclever-be` example.
 
 ### Java Package Catalog (Active Contexts)
 

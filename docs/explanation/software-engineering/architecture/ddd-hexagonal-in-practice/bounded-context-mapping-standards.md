@@ -29,7 +29,11 @@ OSE Platform standards for translating DDD bounded context decisions into Hexago
 
 **PROHIBITED**: Two hexagons sharing a domain core. If `purchasing` and `supplier` shared one aggregate package, neither would have a clean dependency direction.
 
-The rule maps directly onto Nx app boundaries per [DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md). OrganicLever hosts multiple bounded contexts within one Nx app (`organiclever-be`) during Phase 1 — each context still has its own isolated hexagon within that app's package structure.
+The rule maps directly onto Nx app boundaries per
+[DDD Bounded Context Standards](../domain-driven-design-ddd/bounded-context-standards.md). In this
+convention's Procure-to-Pay example, OrganicLever hosts multiple bounded contexts within one Nx app
+(`organiclever-be`); each context still has its own isolated hexagon within that app's package
+structure.
 
 **Rationale**: Hexagonal architecture's value — replaceable adapters, testable domain core — is lost when the hexagon boundary does not coincide with the context boundary. Mixing contexts inside the hexagon means the domain core cannot be independently reasoned about, tested, or evolved.
 

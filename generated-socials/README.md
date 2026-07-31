@@ -25,7 +25,8 @@ updated: 2026-07-27
 
 This directory contains **auto-generated and curated LinkedIn posts** that communicate platform progress, technical achievements, and project milestones to the professional community. Posts follow a consistent format optimized for LinkedIn's character limits and engagement patterns.
 
-**Purpose**: Maintain consistent social media presence documenting the platform's development journey in Phase 1 (OrganicLever).
+**Purpose**: Maintain a consistent social media presence documenting progress across OSE
+workstreams, including the current OrganicLever delivery focus.
 
 ## Directory Structure
 
@@ -153,7 +154,7 @@ Platform launch announcement introducing:
 
 - Project vision and mission
 - Key technology stack
-- Current phase and roadmap
+- Current priorities, workstreams, and roadmap
 - How to follow progress
 
 **Example**: `2025-12-15__linkedin__ose-update-init.md`
@@ -206,7 +207,7 @@ LinkedIn serves as the primary professional social channel:
 
 - **Audience**: Enterprise developers, software architects, Islamic finance professionals
 - **Content focus**: Technical progress, architecture decisions, open-source development
-- **Frequency**: Weekly updates during active development phases
+- **Frequency**: Weekly updates while development workstreams are active
 - **Engagement**: Technical discussions, questions, community building
 
 ### Documentation Cross-Reference

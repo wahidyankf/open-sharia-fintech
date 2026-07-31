@@ -8,9 +8,9 @@ and authorization for platform products.
 ## Problem / context
 
 There is no shared IAM capability in the platform: authentication and authorization would have to be
-reinvented per product. **Data point:** 0 products require shared auth today — Phase 1 (OrganicLever
-productivity tracker) has not forced a concrete auth requirement, so there is no baseline to measure
-against. This is a placeholder for a real need that has not yet materialized.
+reinvented per product. **Data point:** 0 products require shared auth today — the current
+OrganicLever productivity work has not forced a concrete auth requirement, so there is no baseline
+to measure against. This is a placeholder for a real need that has not yet materialized.
 
 ## Why now
 

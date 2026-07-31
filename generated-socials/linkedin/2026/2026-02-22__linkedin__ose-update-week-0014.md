@@ -46,7 +46,7 @@ Every commit visible on GitHub. Updates every second Sunday.
 
 🔗 LINKS
 
-- Roadmap: https://github.com/wahidyankf/ose-public/blob/main/ROADMAP.md
+- Roadmap: https://github.com/wahidyankf/ose-public/blob/main/roadmap.md
 - Phase 0 Retrospective: https://www.oseplatform.com/updates/2026-02-08-phase-0-end-of-phase-0/
 - All Updates: https://www.oseplatform.com/updates/
 - Learning Content: https://www.ayokoding.com/
