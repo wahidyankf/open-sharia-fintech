@@ -15,4 +15,4 @@ jobs:
       # => This condition demonstrates the cache-hit output's intended control flow.
       - if: steps.cache.outputs.cache-hit != 'true'
         run: mkdir -p .example-cache && printf restored > .example-cache/state
-      - run: test -f .example-cache/state || true
+      - run: test -f .example-cache/state

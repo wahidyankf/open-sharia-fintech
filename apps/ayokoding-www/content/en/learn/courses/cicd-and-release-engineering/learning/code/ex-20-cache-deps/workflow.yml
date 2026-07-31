@@ -18,5 +18,5 @@ jobs:
           key: python-pip-${{ hashFiles('requirements.txt') }}
       # => Installation runs only when no exact cache entry was restored.
       - if: steps.dependency-cache.outputs.cache-hit != 'true'
-        run: python -m pip install -r requirements.txt || true
+        run: python -m pip install -r requirements.txt
       - run: python automation.py
