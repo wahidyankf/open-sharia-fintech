@@ -59,7 +59,11 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchColOutputPrice: "Output price",
     aiBenchBandOpus: "Opus",
     aiBenchBandSonnet: "Sonnet",
-    aiBenchBandLight: "Light",
+    // "Haiku" is deliberately untranslated in `id` (see the `id` block below), for the same
+    // reason `aiBenchBandOpus`/`aiBenchBandSonnet` already are — it is a model-tier proper noun
+    // (DD-35), not the common-noun adjective this now-retired band's own Indonesian value used
+    // to be, before the rename.
+    aiBenchBandHaiku: "Haiku",
     aiBenchBandUnrated: "Unrated",
     aiBenchNoFigure: "Not reported",
     aiBenchSubscription: "Subscription",
@@ -437,7 +441,9 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchColOutputPrice: "Harga output",
     aiBenchBandOpus: "Opus",
     aiBenchBandSonnet: "Sonnet",
-    aiBenchBandLight: "Ringan",
+    // "Haiku" tetap tidak diterjemahkan (mirip aiBenchBandOpus/aiBenchBandSonnet) — nama tingkatan
+    // model (DD-35), bukan kata sifat umum seperti nilai kelas ini sebelum penggantian nama.
+    aiBenchBandHaiku: "Haiku",
     aiBenchBandUnrated: "Belum dinilai",
     aiBenchNoFigure: "Tidak dilaporkan",
     aiBenchSubscription: "Langganan",

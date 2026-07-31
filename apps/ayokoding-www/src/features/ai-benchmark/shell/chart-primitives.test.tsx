@@ -67,14 +67,15 @@ describe("bandLabel", () => {
   it("resolves each known band to its localized class-name label", () => {
     expect(bandLabel("opus", "en")).toBe("Opus");
     expect(bandLabel("sonnet", "en")).toBe("Sonnet");
-    expect(bandLabel("light", "en")).toBe("Light");
+    expect(bandLabel("haiku", "en")).toBe("Haiku");
     expect(bandLabel("unrated", "en")).toBe("Unrated");
   });
 
-  it("resolves distinct localized copy per locale", () => {
-    // "light" translates ("Light" / "Ringan"); "opus" is a proper noun and is identical in both
-    // locales, so it would not distinguish a real locale switch from a copy-paste bug.
-    expect(bandLabel("light", "id")).not.toBe(bandLabel("light", "en"));
+  it("resolves identical copy per locale for haiku, a model-tier proper noun like opus/sonnet", () => {
+    // All three rated labels ("Opus"/"Sonnet"/"Haiku") are proper nouns and are therefore
+    // identical in both locales — unlike "unrated", which still translates ("Unrated"/"Belum
+    // dinilai").
+    expect(bandLabel("haiku", "id")).toBe(bandLabel("haiku", "en"));
   });
 });
 

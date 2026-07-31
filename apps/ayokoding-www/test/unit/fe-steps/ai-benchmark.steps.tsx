@@ -1017,12 +1017,36 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
+  // ─── AC-66 — the haiku class label is identical in both locales ───────────────
+
+  ScenarioOutline("The haiku class label is identical in both locales", ({ Given, When, Then, And }, variables) => {
+    let label = "";
+
+    Given('the class legend is rendered in the "<locale>" locale', () => {
+      ctx.locale = variables.locale as Locale;
+    });
+
+    When("the haiku class label is read", () => {
+      label = bandLabel("haiku", ctx.locale ?? "en");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The haiku class label is identical in both locales
+    Then('that label is "Haiku"', () => {
+      expect(label).toBe("Haiku");
+    });
+
+    And("that label is identical to the label the other locale renders", () => {
+      const otherLocale: Locale = ctx.locale === "en" ? "id" : "en";
+      expect(label).toBe(bandLabel("haiku", otherLocale));
+    });
+  });
+
   // ════════════════════════════════════════════════════════════════════════════
   // Phase 6 — shared chart primitives and the capability chart (AC-12/13/14/36/37).
   // ════════════════════════════════════════════════════════════════════════════
 
   // The three RATED bands, in the same canonical order `computeGroups` produces them.
-  const RATED_BAND_KEYS = ["opus", "sonnet", "light"] as const;
+  const RATED_BAND_KEYS = ["opus", "sonnet", "haiku"] as const;
 
   // ─── AC-13 — bar length proportional to the composite index ────────────────────
 

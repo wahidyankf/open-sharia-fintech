@@ -183,6 +183,19 @@ Feature: AI model benchmark tool
       | en     |
       | id     |
 
+  # AC-66
+  @unit
+  Scenario Outline: The haiku class label is identical in both locales
+    Given the class legend is rendered in the "<locale>" locale
+    When the haiku class label is read
+    Then that label is "Haiku"
+    And that label is identical to the label the other locale renders
+
+    Examples:
+      | locale |
+      | en     |
+      | id     |
+
   # AC-12
   @unit
   Scenario: A low-coverage model is marked as low coverage
