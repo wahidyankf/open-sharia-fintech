@@ -220,13 +220,14 @@ _ex-48 · exercises co-24_
 
 **Brief explanation**: A 308 permanent redirect preserves the HTTP method and request body.
 
-**Artifact**: [headers.txt](./code/ex-48-redirect-308-method/headers.txt)
+**Artifact**: [verify.mjs](./code/ex-48-redirect-308-method/verify.mjs) and
+[headers.txt](./code/ex-48-redirect-308-method/headers.txt)
 
 ```text
-HTTP/1.1 308 Permanent Redirect Location: https://example.test/api/v2/orders
+node verify.mjs
 ```
 
-**Verify**: Confirm a POST remains a POST after redirect handling.
+**Verify**: Run `node verify.mjs`; it asserts that the modeled redirected request remains a POST.
 
 **Key takeaway**: Method preservation matters for non-idempotent request flows.
 
