@@ -249,12 +249,14 @@ Feature: AI model benchmark tool
     Then that model's bars use the lower of the two harness rates
     And the chart states that it shows the lowest available harness rate
 
-  # AC-36
+  # AC-36 — reworded (Phase 5, DD-25): the chart no longer renders `<svg role="img">`; each rated
+  # band's own DOM region now carries `role="group"` with `aria-labelledby` pointing at its own
+  # visible heading, giving each band a genuine, localized accessible name.
   @unit @e2e
   Scenario: The merged chart exposes an accessible name
     Given the full roster is loaded
     When the page renders
-    Then the merged chart exposes an accessible name
+    Then each rated band's chart region exposes a localized accessible name
 
   # AC-37
   @unit
@@ -337,26 +339,31 @@ Feature: AI model benchmark tool
     Then that model appears in the unrated group's plain text list
     And no capability bar or price bar is rendered for that model
 
-  # AC-46 — reworded (UWT-002 fix, Rule-15 web-usability-tester retest, 2026-07-30): the chart is
-  # now one svg PER rated band (each with its own accessible name), not one svg shared across every
-  # band — see benchmark-chart.tsx's own UWT-002 fix docstring for the sort-control-proximity
-  # reason this split happened. The property this scenario protects (every band's chart region is
-  # independently reachable to assistive tech, and the data is still doubled-up in ModelTable) is
-  # unchanged; only the "how many svgs" detail was stale.
+  # AC-46 — reworded (Phase 5, DD-25): the chart no longer renders any svg — each rated band's own
+  # DOM region instead carries `role="group"` with `aria-labelledby`, giving each band its own
+  # labelled region carrying its localized band name as its accessible name. The property this
+  # scenario protects (every band's chart region is independently reachable to assistive tech, and
+  # the data is still doubled-up in the roster below) is unchanged; only the "svg role=img"
+  # mechanism was reworded to a DOM "group" region.
   @unit
   Scenario: The merged chart keeps its accessible name and text alternative
     Given the merged chart has replaced the two former charts
     When a screen reader encounters the chart
-    Then each rated band renders its own svg with role image and its own localized title as its accessible name
-    And every figure the chart encodes is still reachable via the unchanged ModelTable below
+    Then each rated band renders its own labelled region carrying its localized band name as its accessible name
+    And every figure the chart encodes is still reachable via the roster below
 
-  # AC-47
+  # AC-47 — reworded (Phase 5, DD-25/DD-26/DD-31, 2026-07-31): the identical-DOM-at-every-breakpoint
+  # guarantee this scenario used to protect is retired — Phase 5 replaced the SVG chart with DOM
+  # `BarRow`s (DD-25) whose declared markup now varies deliberately by breakpoint (a stacked layout
+  # reflows into a label column only at the desktop width, DD-26), so "the same set of elements
+  # renders at all three widths" no longer holds by design. The property still worth protecting is
+  # that the chart's TYPOGRAPHY never rescales across that reflow — only the layout does.
   @unit
-  Scenario: The merged chart uses the identical DOM structure at every breakpoint
-    Given the merged chart is rendered at a 375px, a 768px, and a 1280px viewport width
-    When the DOM structure at each width is inspected
-    Then the same set of elements renders at all three widths
-    And only the pixel width of each bar changes between the three renders
+  Scenario: The chart reflows its layout without rescaling its typography
+    Given the merged chart is rendered at a mobile, a tablet, and a desktop viewport width
+    When the DOM structure and the declared text sizes at each width are inspected
+    Then the declared text size of every chart label is identical at all three widths
+    And the row layout changes from stacked to a label column only at the desktop width
 
   # AC-48 — added post-merge (pr-review-synthesis-maker MEDIUM finding): a rated model with no
   # reported price at all (no metered rate, no subscription, under any harness) is genuinely new

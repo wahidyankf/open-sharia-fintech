@@ -162,8 +162,12 @@ type Ctx = {
   encodedParams?: URLSearchParams;
   // Whether the page-load step threw (AC-43).
   thrown?: boolean;
-  // One DOM-testid signature per simulated viewport width (AC-47).
-  widthSignatures?: string[][];
+  // One label-element declared text-size class list per simulated viewport width (AC-47, Phase 5
+  // reword — DD-25/DD-26).
+  widthLabelClasses?: string[][];
+  // The row container's own declared className, captured once (it never varies by window width —
+  // see the AC-47 binding's own docstring for why jsdom cannot exercise a live reflow).
+  rowReflowClassName?: string;
 };
 
 let ctx: Ctx = {};
@@ -1081,10 +1085,10 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(lowScore?.index).toBeDefined();
       expect(highScore?.index).toBeDefined();
 
-      const lowBar = screen.getByTestId("benchmark-chart-bar-capability-cap-low");
-      const highBar = screen.getByTestId("benchmark-chart-bar-capability-cap-high");
-      const lowWidth = Number(lowBar.getAttribute("width"));
-      const highWidth = Number(highBar.getAttribute("width"));
+      const lowBar = screen.getByTestId("benchmark-chart-bar-capability-cap-low-fill");
+      const highBar = screen.getByTestId("benchmark-chart-bar-capability-cap-high-fill");
+      const lowWidth = parseFloat(lowBar.style.width);
+      const highWidth = parseFloat(highBar.style.width);
 
       const expectedRatio = (lowScore!.index ?? 0) / (highScore!.index ?? 1);
       const actualRatio = lowWidth / highWidth;
@@ -1092,9 +1096,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("the chart states its axis maximum", () => {
-      // UWT-002 fix (Rule-15, 2026-07-30): one axis-maximum label PER rated band's own svg now,
-      // not one shared label — the axis maximum itself (COMPOSITE_INDEX_MAX) is still identical
-      // across every band, so every one of them must show it.
+      // UWT-002 fix (Rule-15, 2026-07-30): one axis-maximum label PER rated band's own DOM region
+      // now, not one shared label — the axis maximum itself (COMPOSITE_INDEX_MAX) is still
+      // identical across every band, so every one of them must show it.
       const axisMaxLabels = screen.getAllByTestId("chart-axis-max");
       expect(axisMaxLabels.length).toBeGreaterThan(0);
       for (const label of axisMaxLabels) {
@@ -1242,13 +1246,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A metered model shows separate labelled input and output bars
     Then("that model has one bar labelled as the input rate", () => {
       expect(screen.getByTestId("benchmark-chart-bar-price-in-price-metered")).not.toBeNull();
-      const label = screen.getByTestId("benchmark-chart-label-in-price-metered");
+      const label = screen.getByTestId("benchmark-chart-bar-price-in-price-metered-label");
       expect(label.textContent ?? "").toContain(formatPriceUsd(3, "en"));
     });
 
     And("that model has one bar labelled as the output rate", () => {
       expect(screen.getByTestId("benchmark-chart-bar-price-out-price-metered")).not.toBeNull();
-      const label = screen.getByTestId("benchmark-chart-label-out-price-metered");
+      const label = screen.getByTestId("benchmark-chart-bar-price-out-price-metered-label");
       expect(label.textContent ?? "").toContain(formatPriceUsd(15, "en"));
     });
   });
@@ -1348,7 +1352,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An unfiltered merged chart shows the lowest harness rate
     Then("that model's bars use the lower of the two harness rates", () => {
-      const inLabel = screen.getByTestId("benchmark-chart-label-in-price-two-harness");
+      const inLabel = screen.getByTestId("benchmark-chart-bar-price-in-price-two-harness-label");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(3, "en"));
       expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(5, "en"));
     });
@@ -1370,15 +1374,15 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // UWT-002 fix (Rule-15, 2026-07-30): the merged chart is now one `<svg role="img">` PER rated
-    // band, each with its own title built from the shared `aiBenchMergedChartTitle` prefix plus
-    // its own band label — so this binds against every one of those accessible names starting
-    // with the shared prefix, rather than a single exact-match title.
+    // DD-25 reword: the merged chart no longer renders `<svg role="img">` — each rated band's own
+    // DOM region instead carries `role="group"` with `aria-labelledby` pointing at its own visible
+    // heading (its localized band label), giving each band a genuine accessible name.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
-    Then("the merged chart exposes an accessible name", () => {
-      const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
-      const charts = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
-      expect(charts.length).toBeGreaterThan(0);
+    Then("each rated band's chart region exposes a localized accessible name", () => {
+      for (const band of ["opus", "sonnet", "haiku"] as const) {
+        const group = screen.getByRole("group", { name: bandLabel(band, "en") });
+        expect(group).not.toBeNull();
+      }
     });
   });
 
@@ -1506,9 +1510,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A harness filter switches the merged chart to that harness's rate
     Then("that model's price bars use that harness's own rate, not its lowest available rate", () => {
-      const inLabel = screen.getByTestId("benchmark-chart-label-in-price-harness-switch");
+      const inLabel = screen.getByTestId("benchmark-chart-bar-price-in-price-harness-switch-label");
       expect(inLabel.textContent ?? "").toContain(formatPriceUsd(5, "en"));
-      const outLabel = screen.getByTestId("benchmark-chart-label-out-price-harness-switch");
+      const outLabel = screen.getByTestId("benchmark-chart-bar-price-out-price-harness-switch-label");
       expect(outLabel.textContent ?? "").toContain(formatPriceUsd(20, "en"));
       // Never the OTHER (lowest-available) harness's cheaper rate.
       expect(inLabel.textContent ?? "").not.toContain(formatPriceUsd(2, "en"));
@@ -1696,11 +1700,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Bar length is proportional to its own value
     Then("the capability bar's length is proportional to 85.7 over the composite index max", () => {
-      const targetWidth = Number(
-        screen.getByTestId("benchmark-chart-bar-capability-ac40-target").getAttribute("width"),
-      );
-      const referenceWidth = Number(
-        screen.getByTestId("benchmark-chart-bar-capability-ac40-reference-max").getAttribute("width"),
+      const targetWidth = parseFloat(screen.getByTestId("benchmark-chart-bar-capability-ac40-target-fill").style.width);
+      const referenceWidth = parseFloat(
+        screen.getByTestId("benchmark-chart-bar-capability-ac40-reference-max-fill").style.width,
       );
       // The reference model's own index is exactly COMPOSITE_INDEX_MAX (100), so its bar spans the
       // full capability plot width — the ruler for "85.7 over the composite index max".
@@ -1708,9 +1710,9 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     And("the price-out bar's length is proportional to $15.00 over the chart's shared price axis max", () => {
-      const targetWidth = Number(screen.getByTestId("benchmark-chart-bar-price-out-ac40-target").getAttribute("width"));
-      const referenceWidth = Number(
-        screen.getByTestId("benchmark-chart-bar-price-out-ac40-reference-max").getAttribute("width"),
+      const targetWidth = parseFloat(screen.getByTestId("benchmark-chart-bar-price-out-ac40-target-fill").style.width);
+      const referenceWidth = parseFloat(
+        screen.getByTestId("benchmark-chart-bar-price-out-ac40-reference-max-fill").style.width,
       );
       // The reference model's own output rate (30) is the highest metered rate in the fixture, so
       // it IS the price axis max — the ruler for "$15.00 over the chart's shared price axis max".
@@ -1947,24 +1949,21 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       renderPageForLocale("en");
     });
 
-    // Reworded (UWT-002 fix, Rule-15, 2026-07-30): the chart is now one `<svg role="img">` PER
-    // rated band (three, for the live roster's opus/sonnet/haiku bands), each with its OWN
-    // localized title as ITS OWN accessible name — not one shared svg across every band. See
-    // `benchmark-chart.tsx`'s own UWT-002 fix docstring for why the split happened.
+    // DD-25 reword: the chart no longer renders any svg — each rated band (three, for the live
+    // roster's opus/sonnet/haiku bands) instead renders its own `role="group"` DOM region, labelled
+    // via `aria-labelledby` at its own localized band-name heading.
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart keeps its accessible name and text alternative
     Then(
-      "each rated band renders its own svg with role image and its own localized title as its accessible name",
+      "each rated band renders its own labelled region carrying its localized band name as its accessible name",
       () => {
-        const chartTitlePrefix = t("en", "aiBenchMergedChartTitle");
-        const charts = screen.getAllByRole("img", { name: new RegExp(`^${chartTitlePrefix} — `) });
-        expect(charts.length).toBe(3); // opus, sonnet, haiku
-        for (const chart of charts) {
-          expect(chart.tagName.toLowerCase()).toBe("svg");
+        for (const band of ["opus", "sonnet", "haiku"] as const) {
+          const group = screen.getByRole("group", { name: bandLabel(band, "en") });
+          expect(group).not.toBeNull();
         }
       },
     );
 
-    And("every figure the chart encodes is still reachable via the unchanged ModelTable below", () => {
+    And("every figure the chart encodes is still reachable via the roster below", () => {
       const table = screen.getByTestId("model-table-desktop");
       const groups = computeGroups(dataset);
       for (const list of [groups.opus, groups.sonnet, groups.haiku, groups.unrated]) {
@@ -1975,44 +1974,60 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-47 — the merged chart uses the identical DOM structure at every breakpoint ──
+  // ─── AC-47 — reworded (Phase 5, DD-25/DD-26/DD-31): the chart reflows without rescaling type ──
 
-  Scenario("The merged chart uses the identical DOM structure at every breakpoint", ({ Given, When, Then, And }) => {
+  Scenario("The chart reflows its layout without rescaling its typography", ({ Given, When, Then, And }) => {
     // jsdom applies no CSS and has no real layout engine (same limitation AC-38's docstring
-    // records), so there is no responsive DOM branch to trigger by window width — this scenario
-    // instead proves the ACTUAL guarantee: `BenchmarkChart` never reads window/viewport state, so
-    // its rendered node set cannot diverge across widths in the first place.
-    function domSignature(): string[] {
+    // records) — there is no live reflow to trigger by window width. What IS assertable here: the
+    // component's rendered markup is declared identically at every render (it never reads
+    // `window.innerWidth`), and that declared markup uses a plain, un-prefixed text-size utility on
+    // every label (identical regardless of viewport) plus a `lg:`-prefixed grid utility on the row
+    // container — Tailwind's own breakpoint-prefix convention is what makes "only at the desktop
+    // width" true in a real browser; jsdom cannot exercise that live, so this asserts the
+    // DECLARATION rather than a live-rendered pixel/layout change.
+    function labelTextSizeClasses(): string[] {
       const container = screen.getByTestId("benchmark-chart");
-      return Array.from(container.querySelectorAll("[data-testid]")).map((el) => el.getAttribute("data-testid") ?? "");
+      return Array.from(
+        container.querySelectorAll('[data-slot="chart-bar-label"], [data-slot="chart-bar-row-label"]'),
+      ).map((el) => {
+        const match = el.className.match(/text-\[[0-9]+px\]/);
+        return match ? match[0] : "";
+      });
     }
 
-    Given("the merged chart is rendered at a 375px, a 768px, and a 1280px viewport width", () => {
-      ctx.widthSignatures = [375, 768, 1280].map((width) => {
+    Given("the merged chart is rendered at a mobile, a tablet, and a desktop viewport width", () => {
+      ctx.widthLabelClasses = [375, 768, 1280].map((width) => {
         Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: width });
         window.dispatchEvent(new Event("resize"));
         cleanup();
         render(React.createElement(BenchmarkChart, { dataset, fullDataset: dataset, locale: "en" }));
-        return domSignature();
+        return labelTextSizeClasses();
       });
+      // The row container's own className is captured once — it is a static declaration, not a
+      // window-width-dependent branch (see docstring above).
+      const anyRow = screen.getAllByTestId(/^benchmark-chart-row-/)[0];
+      ctx.rowReflowClassName = anyRow?.className ?? "";
     });
 
-    When("the DOM structure at each width is inspected", () => {
-      // The three signatures were already captured per width above; nothing further to arrange.
+    When("the DOM structure and the declared text sizes at each width are inspected", () => {
+      // The three label-class lists and the row's reflow class were already captured above;
+      // nothing further to arrange.
     });
 
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart uses the identical DOM structure at every breakpoint
-    Then("the same set of elements renders at all three widths", () => {
-      const [narrow, medium, wide] = ctx.widthSignatures!;
-      expect(narrow).toEqual(medium);
-      expect(medium).toEqual(wide);
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart reflows its layout without rescaling its typography
+    Then("the declared text size of every chart label is identical at all three widths", () => {
+      const [mobile, tablet, desktop] = ctx.widthLabelClasses!;
+      expect(mobile).toEqual(tablet);
+      expect(tablet).toEqual(desktop);
+      expect(mobile!.length).toBeGreaterThan(0);
+      expect(mobile!.every((c) => c.length > 0)).toBe(true);
     });
 
-    And("only the pixel width of each bar changes between the three renders", () => {
-      // `BenchmarkChart` computes every bar's pixel width from its own fixed internal plot width,
-      // never from `window.innerWidth` — so bar widths are identical across the three renders too,
-      // which this equality (rather than a literal cross-viewport pixel diff) documents.
-      expect(ctx.widthSignatures![0]).toEqual(ctx.widthSignatures![1]);
+    And("the row layout changes from stacked to a label column only at the desktop width", () => {
+      // Tailwind's `lg:` prefix is exactly what makes this class a no-op below the desktop
+      // breakpoint and a grid-column layout at/above it — declared once, applied conditionally by
+      // the browser's own media query, not by any window-width branch in this component.
+      expect(ctx.rowReflowClassName ?? "").toMatch(/\blg:grid-cols-\S+/);
     });
   });
 

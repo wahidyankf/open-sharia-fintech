@@ -66,12 +66,13 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 
 // ── Chart accessible-name assertion (AC-36) ───────────────────────────────────
 
-// UWT-002 fix (Rule-15, 2026-07-30): the chart is now one svg PER rated band
-// (`benchmark-chart-svg-{opus,sonnet,haiku}`), not one shared `benchmark-chart-svg` — the first
-// band's own svg is enough to prove the family carries a real accessible name.
+// DD-25 reword (Phase 5, 2026-07-31): the chart no longer renders any svg — each rated band's own
+// DOM region instead carries `role="group"` with `aria-labelledby` (`benchmark-chart-band-{opus,
+// sonnet,haiku}`), not one shared svg — the first band's own region is enough to prove the family
+// carries a real accessible name.
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
 Then("the merged chart exposes an accessible name", async ({ page }) => {
-  await expect(page.locator('[data-testid^="benchmark-chart-svg-"]').first()).toHaveAccessibleName(/.+/);
+  await expect(page.locator('[data-testid^="benchmark-chart-band-"][role="group"]').first()).toHaveAccessibleName(/.+/);
 });
 
 // ── Phase 8 — harness and class filters (AC-18, AC-22, AC-27) ─────────────────
