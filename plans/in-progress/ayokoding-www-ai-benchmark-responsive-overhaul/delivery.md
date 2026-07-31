@@ -466,12 +466,23 @@ minimum`, same root-cause class Phase 0 fixed elsewhere in this file) — fixed 
 
 ### Commit Guidelines — Phase 1
 
-- [ ] [AI] Commit thematically, Conventional Commits format:
+- [x] [AI] Commit thematically, Conventional Commits format:
       `fix(ayokoding-www): contain ai-benchmark table overflow at lg (R5)` for the source change and
       `test(ayokoding-www): add horizontal-overflow regression coverage` for the tests
       — acceptance: `git log --oneline -2` shows two conventional-format subjects
-- [ ] [AI] Any preexisting fix gets its own separate commit — acceptance: no unrelated change is
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: `6f48c13e1 fix(ayokoding-www): contain
+ai-benchmark table overflow at lg (R5)` and `f092cf7e8 test(ayokoding-www): add
+horizontal-overflow regression coverage`, both conventional-format.
+
+- [x] [AI] Any preexisting fix gets its own separate commit — acceptance: no unrelated change is
       bundled into either commit above
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: `899978ee4
+fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` — the Phase 0
+  > flakiness fix plus the Phase 1-discovered cost-of-living-calculator flakiness fix, both bundled
+  > into this one separate preexisting-fix commit (same root-cause class), not into the fix/test
+  > commits above.
 
 ### Integration — Unit 1 boundary
 
