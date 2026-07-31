@@ -6,7 +6,7 @@
 
 import { describe, it, expect, afterEach } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { dataset } from "../core/data/models";
+import { dataset, type Model } from "../core/data/models";
 import { computeScoreViews } from "./model-figures";
 import { ModelCard } from "./model-card";
 import { ModelTable } from "./model-table";
@@ -14,6 +14,21 @@ import { ModelTable } from "./model-table";
 const MODEL_ID = "claude-opus-5";
 const model = dataset.models.find((m) => m.id === MODEL_ID)!;
 const view = computeScoreViews(dataset, dataset).get(MODEL_ID)!;
+
+const SRC = "https://example.test/source";
+
+/** A model reporting only `swe-bench-verified` — `swe-bench-pro`, `terminal-bench-2-1`, and
+ * `gpqa-diamond` are all unpublished (AC-64 needs MORE THAN ONE unpublished figure). */
+function unpublishedFixtureModel(): Model {
+  return {
+    id: "ac64-unpublished-model",
+    name: "ac64-unpublished-model",
+    vendor: "Test",
+    harnesses: ["claude-code"],
+    figures: [{ benchmark: "swe-bench-verified", value: 80, grade: "verified", source: SRC }],
+    pricing: {},
+  };
+}
 
 describe("ModelCard — collapsed summary until expanded (AC-53)", () => {
   afterEach(() => {
@@ -104,5 +119,34 @@ describe("ModelCard — disclosure content is grouped under labelled headings (A
     const details = screen.getByTestId(`model-card-details-${MODEL_ID}`);
     const headings = Array.from(details.querySelectorAll("h4"));
     expect(headings.length).toBe(2);
+  });
+});
+
+describe("ModelCard — unpublished figures share one value (AC-64, DD-34 Treatment 4)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("carries all unpublished labels as terms in ONE shared name-value group, never one dd per absent figure", () => {
+    const unpublishedModel = unpublishedFixtureModel();
+    const unpublishedView = computeScoreViews(
+      { snapshotDate: "2026-07-28", anchorIds: dataset.anchorIds, models: [unpublishedModel] },
+      { snapshotDate: "2026-07-28", anchorIds: dataset.anchorIds, models: [unpublishedModel] },
+    ).get(unpublishedModel.id)!;
+    render(<ModelCard model={unpublishedModel} view={unpublishedView} locale="en" />);
+    const details = screen.getByTestId(`model-card-details-${unpublishedModel.id}`);
+
+    // Exactly one <dd> anywhere in the disclosure carries the "not reported" text.
+    const notReportedDds = Array.from(details.querySelectorAll("dd")).filter(
+      (dd) => dd.textContent?.trim() === "Not reported",
+    );
+    expect(notReportedDds.length).toBe(1);
+
+    // That one <dd>'s own name-value group carries TWO (or more) <dt> siblings — one per
+    // unpublished label — never one <dt>/<dd> pair per absent figure.
+    const sharedDd = notReportedDds[0]!;
+    const sharedGroup = sharedDd.closest("div") ?? sharedDd.parentElement!;
+    expect(sharedGroup.querySelectorAll("dt").length).toBeGreaterThanOrEqual(2);
+    expect(sharedGroup.querySelectorAll("dd").length).toBe(1);
   });
 });

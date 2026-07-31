@@ -640,7 +640,12 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
           expect(model).toBeDefined();
           const detailRow = desktop.querySelector(`tbody tr[data-model-detail-id="${modelId}"]`);
           expect(detailRow, `detail row for ${modelId}`).not.toBeNull();
-          const detailDtLabels = Array.from(detailRow!.querySelectorAll("dt")).map((dt) => dt.textContent ?? "");
+          // A benchmark this model never published (DD-34 Treatment 4, cycle 6.7) shares its <dt>
+          // with the other unpublished labels in the same group, each carrying a trailing comma
+          // except the last — strip it so the label match below is exact either way.
+          const detailDtLabels = Array.from(detailRow!.querySelectorAll("dt")).map((dt) =>
+            (dt.textContent ?? "").replace(/,$/, "").trim(),
+          );
           for (const col of BENCHMARK_COLUMNS) {
             expect(detailDtLabels).toContain(t("en", col.labelKey));
           }
@@ -2330,12 +2335,21 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
+  // ─── AC-64 — unpublished figures share one value instead of occupying a field each (DD-34 T4) ──
   Scenario("Unpublished figures share one value instead of occupying a field each", ({ Given, When, Then, And }) => {
     Given("a model with more than one unpublished benchmark figure is rendered with its disclosure expanded", () => {
-      expect(true).toBe(true);
+      // Reports only one of the four composite benchmarks — the other three are unpublished.
+      const model = fixtureModel("ac64-unpublished-model", [fig("swe-bench-verified", 80)]);
+      ctx.fixtureDataset = fixtureDataset([model]);
+      const view = computeScoreViews(ctx.fixtureDataset, ctx.fixtureDataset).get(model.id)!;
+      const { container } = render(React.createElement(ModelCard, { model, view, locale: "en" }));
+      container.querySelector("details")?.setAttribute("open", "");
+      ctx.targetModelId = model.id;
+      ctx.cardContainer = container;
     });
 
     When("the disclosure's name-value groups are inspected", () => {
+      // Structural inspection happens directly in the Then/And assertions below.
       expect(true).toBe(true);
     });
 
@@ -2343,13 +2357,24 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     Then(
       'every unpublished figure\'s label is a term in one single group sharing one "not reported" description',
       () => {
-        expect(true).toBe(true);
+        const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
+        const notReportedDds = Array.from(details.querySelectorAll("dd")).filter(
+          (dd) => dd.textContent?.trim() === "Not reported",
+        );
+        expect(notReportedDds.length).toBe(1);
+        const sharedGroup = notReportedDds[0]!.closest("div")!;
+        expect(sharedGroup.querySelectorAll("dt").length).toBeGreaterThanOrEqual(2);
       },
     );
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Unpublished figures share one value instead of occupying a field each
     And("no unpublished figure occupies a name-value group of its own", () => {
-      expect(true).toBe(true);
+      const details = screen.getByTestId(`model-card-details-${ctx.targetModelId!}`);
+      const notReportedDds = Array.from(details.querySelectorAll("dd")).filter(
+        (dd) => dd.textContent?.trim() === "Not reported",
+      );
+      const sharedGroup = notReportedDds[0]!.closest("div")!;
+      expect(sharedGroup.querySelectorAll("dd").length).toBe(1);
     });
   });
 });

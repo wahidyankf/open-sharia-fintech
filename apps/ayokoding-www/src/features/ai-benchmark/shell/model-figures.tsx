@@ -224,8 +224,14 @@ export function integrityNotes(model: Model, locale: Locale): ReactNode {
   );
 }
 
-/** One shared per-model figure: a localized label paired with its rendered node. */
-export type ModelFigure = { label: string; node: ReactNode };
+/**
+ * One shared per-model figure: a localized label paired with its rendered node. `reported`
+ * (DD-34 Treatment 4, DN-4 fix) defaults to `true` — only a benchmark figure the model never
+ * published sets it `false`, so `ModelDetailDisclosure` can collapse every unpublished figure in a
+ * group into one shared "not reported" name-value pair instead of giving each one its own full
+ * field slot at the same weight as a real, measured figure.
+ */
+export type ModelFigure = { label: string; node: ReactNode; reported?: boolean };
 
 // DD-34 Treatment 1 (DN-1 fix): a detail-region field's VALUE must out-rank its own LABEL on every
 // one of the three encodings CSS offers — size, weight, and colour — never the label-first
@@ -245,6 +251,7 @@ export function renderBenchmarkFigures(model: Model, locale: Locale, layout: Fig
   return BENCHMARK_COLUMNS.map((col) => ({
     label: t(locale, col.labelKey),
     node: benchmarkCell(model, col.id, locale, layout),
+    reported: model.figures.some((f) => f.benchmark === col.id),
   }));
 }
 
