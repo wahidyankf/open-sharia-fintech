@@ -26,11 +26,17 @@ export const PARAM_KEYS = {
  * PS-4 claims). Kept as their own map, distinct from {@link PARAM_KEYS}, so `SORT_PARAM_KEYS` can
  * be iterated over uniformly (all three bands share the same shape) without mixing in the two
  * unrelated filter keys.
+ *
+ * Worked example: a URL sorting the haiku band ascending by price carries `?sortHaiku=price-asc`
+ * (via {@link SORT_PARAM_KEYS.haiku}). This key was renamed alongside the capability-class rename
+ * (DD-35) — deliberately with NO legacy alias for the retired key: a bookmarked or shared URL
+ * still using it sanitizes to the default (`"capability"`) sort, exactly like any other
+ * unrecognized sort value, rather than being silently rewritten to the new key.
  */
 export const SORT_PARAM_KEYS = {
   opus: "sortOpus",
   sonnet: "sortSonnet",
-  light: "sortLight",
+  haiku: "sortHaiku",
 } as const;
 
 /** One {@link SortMode} per RATED capability band — the per-band sort choice (DD-4). The `unrated`

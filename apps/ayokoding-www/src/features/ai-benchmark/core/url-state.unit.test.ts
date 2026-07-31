@@ -112,6 +112,14 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
     expect(decoded).toEqual({ harness: "cursor", class: "opus", ...DEFAULT_SORT_STATE });
     expect(encodeState(decoded).toString()).toBe("harness=cursor&class=opus");
   });
+
+  // AC-67 (cycle 3.3): the retired "class=light" value is no longer a known band, so it must
+  // sanitize to the default unfiltered state, exactly like any other unrecognized class value.
+  it("a retired class=light value decodes to the default unfiltered state (class: undefined)", () => {
+    const decoded = decodeState(new URLSearchParams("class=light"));
+    expect(decoded.class).toBeUndefined();
+    expect(decoded).toEqual(DEFAULT_STATE);
+  });
 });
 
 // ─── Sort params (Phase 1) — round-trip the four per-band sort choices ─────────
@@ -123,13 +131,23 @@ describe("encodeState / decodeState — round-trip the four per-band sort params
       class: undefined,
       opus: "price-asc" as const,
       sonnet: "price-desc" as const,
-      light: "price-asc" as const,
+      haiku: "price-asc" as const,
     };
     const encoded = encodeState(state);
     expect(encoded.get("sortOpus")).toBe("price-asc");
     expect(encoded.get("sortSonnet")).toBe("price-desc");
-    expect(encoded.get("sortLight")).toBe("price-asc");
+    expect(encoded.get("sortHaiku")).toBe("price-asc");
     expect(decodeState(encoded)).toEqual(state);
+  });
+
+  // AC-67 (cycle 3.3): a full query string using the renamed `class`/`sortHaiku` wire values
+  // round-trips to itself exactly — the identifier and its URL-parameter wire format move
+  // together, with NO legacy alias for the retired per-band sort key (DD-35 — no-alias by design).
+  it("round-trips a full query string using the renamed class=haiku and sortHaiku parameters", () => {
+    const query = "class=haiku&sortHaiku=price-asc";
+    const decoded = decodeState(new URLSearchParams(query));
+    const reEncoded = encodeState(decoded).toString();
+    expect(reEncoded).toBe(query);
   });
 
   // Regression (pr-review-synthesis-maker MEDIUM finding): a `sortUnrated` param used to exist and

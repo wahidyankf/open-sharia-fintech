@@ -313,6 +313,14 @@ Feature: AI model benchmark tool
     Then the sonnet band renders sorted by capability (the default)
     And no error is thrown
 
+  # AC-67
+  @unit
+  Scenario: A shared benchmark URL carries the renamed capability-class parameters
+    Given a query string of "class=haiku&sortHaiku=price-asc"
+    When that query string is decoded and then re-encoded
+    Then the re-encoded query string is identical to the original
+    And a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state
+
   # AC-44 — DD-1
   @unit
   Scenario: A rated model billed only by subscription shows inline subscription text

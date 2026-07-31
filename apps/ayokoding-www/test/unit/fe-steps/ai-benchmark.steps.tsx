@@ -1828,16 +1828,47 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
+  // ─── AC-67 — the URL carries the renamed class=haiku and sortHaiku parameters ─
+
+  Scenario("A shared benchmark URL carries the renamed capability-class parameters", ({ Given, When, Then, And }) => {
+    let original = "";
+    let reEncoded = "";
+
+    Given('a query string of "class=haiku&sortHaiku=price-asc"', () => {
+      original = "class=haiku&sortHaiku=price-asc";
+    });
+
+    When("that query string is decoded and then re-encoded", () => {
+      const decoded = decodeState(new URLSearchParams(original));
+      reEncoded = encodeState(decoded).toString();
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A shared benchmark URL carries the renamed capability-class parameters
+    Then("the re-encoded query string is identical to the original", () => {
+      expect(reEncoded).toBe(original);
+    });
+
+    And(
+      'a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state',
+      () => {
+        const decodedClass = decodeState(new URLSearchParams("class=light"));
+        expect(decodedClass).toEqual(DEFAULT_STATE);
+        const decodedSort = decodeState(new URLSearchParams("sortLight=price-asc"));
+        expect(decodedSort).toEqual(DEFAULT_STATE);
+      },
+    );
+  });
+
   // ─── AC-44 (DD-1) — a rated model billed only by subscription shows inline subscription text ──
 
   Scenario("A rated model billed only by subscription shows inline subscription text", ({ Given, When, Then, And }) => {
-    Given("a model in the light band with no metered rate and one subscription rate", () => {
+    Given("a model in the haiku band with no metered rate and one subscription rate", () => {
       const m: Model = {
         id: "ac44-sub-rated",
         name: "ac44-sub-rated",
         vendor: "Test",
         harnesses: ["opencode-go"],
-        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> light band
+        figures: [fig("swe-bench-verified", 50)], // rated: one figure, no anchors present -> haiku band
         pricing: {
           "opencode-go": {
             kind: "subscription",
