@@ -4158,14 +4158,24 @@ Scenario: Price figures disclose their unit basis
 
 ### Post-Push CI Verification
 
-- [ ] [AI] Monitor ALL GitHub Actions workflows triggered by the push — poll every 2 minutes with
+- [x] [AI] Monitor ALL GitHub Actions workflows triggered by the push — poll every 2 minutes with
       one `gh run view --json status,conclusion` per wakeup; never tight-loop, never `gh run watch`
       — acceptance: every check reports `conclusion: success`
-- [ ] [AI] If any CI check fails, investigate the root cause and fix it properly — never bypass
+- [x] [AI] If any CI check fails, investigate the root cause and fix it properly — never bypass
       — acceptance: a follow-up commit resolves it and CI turns green
-- [ ] [AI] Repeat until ALL GitHub Actions pass with zero failures
+- [x] [AI] Repeat until ALL GitHub Actions pass with zero failures
       — acceptance: zero failing checks
-- [ ] [AI] Do NOT proceed while CI is red
+- [x] [AI] Do NOT proceed while CI is red
+
+> **2026-08-01 — Status: Done.** Polled `gh run view --json status,conclusion` for both workflows
+> triggered by the push (`pr-quality-gate` run `30655129442`, `validate-env` run `30655130520`)
+> every 2 minutes until both reported `completed`. Independently confirmed via
+> `gh pr checks 128`: all 20 checks report `pass` (.NET quality gate, Auto-format affected,
+> Detect affected languages, Dockerfile lint, GitHub Actions lint, Governance validators, Harness
+> duplication validation, Instruction-size budget gate, Markdown link validation, Markdown quality
+> gate, Minimum version compatibility, Naming validators, Quality gate, README index validation,
+> Rust quality gate, Shell lint, Specs gate, TypeScript quality gate, Validate env-contract
+> surfaces, repo-config.yml schema parity). Zero failures — no fix commit was needed.
 
 ### PR-Review Maker→Fixer Cycle
 
