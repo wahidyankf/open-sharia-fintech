@@ -99,7 +99,7 @@ describe("bandLabel", () => {
 // Cycle 4.2 — DOM band class-map helpers. Exempt from Gherkin tagging (pure plumbing, no
 // user-observable behavior of its own); consumed by cycle 5.1's behavior-bound `BarRow`.
 describe("bandBarBgClass", () => {
-  it("returns the bg-[var(--chart-band-*)] class string for every band", () => {
+  it("returns the bg-[var(--chart-band-ID)] class string for every band", () => {
     for (const band of ALL_BANDS) {
       expect(bandBarBgClass(band)).toBe(`bg-[var(--chart-band-${band})]`);
     }
@@ -107,7 +107,7 @@ describe("bandBarBgClass", () => {
 });
 
 describe("bandInkTextClass", () => {
-  it("returns the text-[var(--chart-band-*-ink)] class string for every band", () => {
+  it("returns the text-[var(--chart-band-ID-ink)] class string for every band", () => {
     for (const band of ALL_BANDS) {
       expect(bandInkTextClass(band)).toBe(`text-[var(--chart-band-${band}-ink)]`);
     }
