@@ -258,15 +258,15 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
           `TableHead`/`TableCell`/`TableCaption` set `cost-of-living-calculator/shell/min-role.tsx`
           already uses, rather than a bespoke hand-rolled `<table>`. Sticky header/first-column and
           `scope="row"` are preserved via className overrides on top of the shared primitives; the
-          row-hover intensity is now the primitive's own `hover:bg-muted/50` (previously a bespoke,
-          inconsistent `hover:bg-muted/40`). `wrapperClassName="lg:overflow-visible"` restores the
-          bespoke table's original override (pr-review-synthesis-maker HIGH finding, PR #122 cycle
-          1): the primitive's wrapper hardcodes `overflow-x-auto`, which forces `overflow-y` to
-          compute to `auto` too, making it a scroll container in BOTH axes at every breakpoint —
-          `position: sticky` on `<thead>` resolves against that ancestor and never sticks during a
-          page scroll unless this override restores non-scrolling behaviour at `lg`+. ───────────── */}
+          row-hover intensity is the primitive's own `hover:bg-muted/50`. DD-27 (tech-docs.md) fixes
+          R5 — the table bleeding past the viewport and forcing the whole document to scroll
+          horizontally — in two steps: Unit 1 (here) removes the wrapper's `lg`-breakpoint overflow
+          override so `overflow-x-auto` contains the table at every breakpoint, at the cost of the
+          sticky `<thead>` no longer sticking at `lg` (a scroll container in both axes can't have a
+          sticky descendant). Unit 2 restores that override once the column-reduction work shrinks
+          the table below the `lg` viewport, making it safe again (AC-59). ─────────────────────── */}
       <div data-testid="model-table-desktop" className="hidden md:block">
-        <Table wrapperClassName="lg:overflow-visible" className="w-max min-w-full border-collapse lg:w-full">
+        <Table className="w-max min-w-full border-collapse lg:w-full">
           <TableCaption className="sr-only">{t(locale, "aiBenchTableCaption")}</TableCaption>
           <TableHeader className="sticky top-0 z-10 bg-background">
             <TableRow>
