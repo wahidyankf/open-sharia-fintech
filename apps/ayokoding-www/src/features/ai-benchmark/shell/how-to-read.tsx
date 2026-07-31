@@ -1,15 +1,18 @@
-// AI BENCHMARK — honesty surface (Phase 5, W-19..W-22).
+// AI BENCHMARK — honesty surface (Phase 5, W-19..W-22; reworked Phase 7, D3).
 //
-// Three behaviours land here:
-//   - AC-29: the dataset snapshot date shown in text;
-//   - AC-32: a `<details open>` how-to-read disclosure (visible without interaction) whose copy
-//     states, in both locales, that most frontier scores are vendor self-reported, the index is
-//     roster-relative with our weights, coverage varies, figures reflect each vendor's best
-//     configuration, a measurement conflict example (Rule-15 UWT-005 fix, 2026-07-30: SWE-bench
-//     Pro / GPQA Diamond — not ARC-AGI-2, which isn't one of the four scored benchmarks), and the
-//     DeepSeek-versus-gateway price gap;
-//   - AC-34: a Sources and Licences section rendered from the dataset-level OPERATORS list, so a
-//     new operator appears with no component edit.
+// Three exports, one concern each:
+//   - `HowToRead` — AC-29's dataset snapshot date in text, plus AC-32's ONE always-visible honesty
+//     line (most frontier scores are vendor self-reported) with the remaining five how-to-read
+//     points (index is roster-relative with our weights, coverage varies, figures reflect each
+//     vendor's best configuration, a measurement conflict example — Rule-15 UWT-005 fix,
+//     2026-07-30: SWE-bench Pro / GPQA Diamond, not ARC-AGI-2 — and the DeepSeek-versus-gateway
+//     price gap) behind their own `<details>` (D3 narrowed the Phase-5 "whole block open by
+//     default" guarantee to just the honesty line);
+//   - `AiBenchLegend` — USS-002's class/grade/coverage-formula legend, now its own `<details>`
+//     (AC-57, Phase 7 cycle 7.3) rendered after the roster (Phase 7 cycle 7.2's document reorder);
+//   - `AiBenchSources` — AC-34's Sources and Licences section from the dataset-level OPERATORS
+//     list, also its own `<details>` (AC-57) rendered after the roster, so a new operator appears
+//     with no component edit.
 //
 // No literal figure lives here — the snapshot date comes from the dataset, the operators from
 // `core/data/operators.ts`, and all copy from i18n.
@@ -52,11 +55,27 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
         <span className="font-medium text-foreground">{t(locale, "aiBenchSnapshotLabel")}:</span> {dateText}
       </p>
 
-      {/* AC-32 — how-to-read disclosure, open by default. */}
-      <details open data-testid="ai-bench-how-to" className="rounded-md border p-3 text-sm">
+      {/* AC-32 (reworded, D3) — the ONE always-visible guarantee is this single honesty line;
+          it carries no `<details>` ancestor, so it renders before any interaction regardless of
+          the remainder disclosure's open/closed state. */}
+      <p data-testid="ai-bench-how-to-honesty" className="text-sm">
+        {t(locale, "aiBenchHowToVendorReported")}
+      </p>
+
+      {/* The remaining five how-to-read points sit behind their own disclosure — D3 narrowed the
+          Phase-5 guarantee (the WHOLE six-bullet block open by default) down to just the honesty
+          line above, once Phase 6/7's denser layout made a permanently-open six-bullet block feel
+          heavy. `group` + `group-open:` (Tailwind's built-in `<details>`-open variant) plus a
+          `lg:block` override render the list open at `lg`+ via CSS alone — no JS width check, no
+          `matchMedia`, so server and client always agree on markup and there is no hydration
+          mismatch (DD-29). Below `lg`, the list starts closed and opens only via the native
+          `<summary>` toggle. */}
+      <details data-testid="ai-bench-how-to-details" className="group rounded-md border p-3 text-sm">
         <summary className="cursor-pointer font-medium">{t(locale, "aiBenchHowToSummary")}</summary>
-        <ul data-testid="ai-bench-how-to-list" className="mt-2 list-disc space-y-2 pl-5 text-muted-foreground">
-          <li>{t(locale, "aiBenchHowToVendorReported")}</li>
+        <ul
+          data-testid="ai-bench-how-to-list"
+          className="mt-2 hidden list-disc space-y-2 pl-5 text-muted-foreground group-open:block lg:block"
+        >
           <li>{t(locale, "aiBenchHowToIndexRelative")}</li>
           <li>{t(locale, "aiBenchHowToCoverage")}</li>
           <li>{t(locale, "aiBenchHowToBestConfig")}</li>
@@ -64,22 +83,26 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
           <li>{t(locale, "aiBenchHowToPriceGap")}</li>
         </ul>
       </details>
+    </section>
+  );
+}
 
-      {/* Rule-15 UWT-002/UWT-003/UWT-005/USS-002 fix — a visible, always-available legend (not
-          inside the collapsible `<details>` above, so it stays visible even if the reader closes
-          that disclosure) defining the four capability classes, the five evidence grades, and the
-          coverage formula. Reuses the SAME label words the page already shows (`aiBenchBand*`,
-          `aiBenchGrade*`) so the legend and the live page never drift into two vocabularies. */}
-      <section
-        data-slot="ai-bench-legend"
-        data-testid="ai-bench-legend"
-        className="space-y-3 rounded-md border p-3 text-sm"
-        aria-labelledby="ai-bench-legend-heading"
-      >
-        <h3 id="ai-bench-legend-heading" className="font-semibold">
-          {t(locale, "aiBenchLegendHeading")}
-        </h3>
+// Rule-15 UWT-002/UWT-003/UWT-005/USS-002 fix — a legend defining the four capability classes,
+// the five evidence grades, and the coverage formula. Reuses the SAME label words the page already
+// shows (`aiBenchBand*`, `aiBenchGrade*`) so the legend and the live page never drift into two
+// vocabularies. AC-57 (Phase 7, cycle 7.3): wrapped in its own `<details>` with a localized
+// `<summary>` so it stays reachable after the page's document-order reshuffle (cycle 7.2) moved it
+// below the roster, rather than staying unconditionally visible at that position.
+export function AiBenchLegend({ locale }: { locale: Locale }) {
+  return (
+    <details
+      data-slot="ai-bench-legend"
+      data-testid="ai-bench-legend"
+      className="space-y-3 rounded-md border p-3 text-sm"
+    >
+      <summary className="cursor-pointer font-semibold">{t(locale, "aiBenchLegendHeading")}</summary>
 
+      <div className="mt-3 space-y-3">
         <div>
           <p className="text-muted-foreground">{t(locale, "aiBenchLegendClassIntro")}</p>
           <dl data-testid="ai-bench-legend-classes" className="mt-1 space-y-1">
@@ -124,13 +147,19 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
         <p data-testid="ai-bench-legend-coverage" className="text-muted-foreground">
           {t(locale, "aiBenchLegendCoverageFormula")}
         </p>
-      </section>
+      </div>
+    </details>
+  );
+}
 
-      {/* AC-34 — Sources and Licences, rendered from the OPERATORS dataset list. */}
-      <section data-testid="ai-bench-sources" className="space-y-2 text-sm" aria-labelledby="ai-bench-sources-heading">
-        <h3 id="ai-bench-sources-heading" className="font-semibold">
-          {t(locale, "aiBenchSourcesHeading")}
-        </h3>
+// AC-34 — Sources and Licences, rendered from the OPERATORS dataset list. AC-57 (Phase 7, cycle
+// 7.3): wrapped in its own `<details>` with a localized `<summary>`, same rationale as
+// `AiBenchLegend` above.
+export function AiBenchSources({ locale }: { locale: Locale }) {
+  return (
+    <details data-testid="ai-bench-sources" className="space-y-2 rounded-md border p-3 text-sm">
+      <summary className="cursor-pointer font-semibold">{t(locale, "aiBenchSourcesHeading")}</summary>
+      <div className="mt-2 space-y-2">
         <p className="text-muted-foreground">{t(locale, "aiBenchSourcesIntro")}</p>
         <dl className="space-y-2">
           {OPERATORS.map((op) => (
@@ -160,7 +189,7 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
             </div>
           ))}
         </dl>
-      </section>
-    </section>
+      </div>
+    </details>
   );
 }

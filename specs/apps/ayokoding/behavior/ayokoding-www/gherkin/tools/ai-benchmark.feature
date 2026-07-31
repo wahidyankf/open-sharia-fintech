@@ -137,24 +137,30 @@ Feature: AI model benchmark tool
     Then that cell shows the lowest and highest published values
     But that cell shows no averaged value
 
-  # AC-32
+  # AC-32 — reworded (Phase 7, D3): D3 narrowed the always-visible guarantee from the WHOLE
+  # how-to-read disclosure (Phase 5's `<details open>` wrapping all six bullets) down to just the
+  # one honesty line stating scores are vendor self-reported — the other five points now sit
+  # behind that line's own disclosure control instead of being unconditionally open.
   @unit
   Scenario: The page discloses that frontier scores are overwhelmingly vendor-reported
     Given the page carries a how-to-read disclosure
     When the page renders
-    Then the disclosure states that most frontier benchmark scores are vendor self-reported
-    And the disclosure is visible without interaction
+    Then a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction
+    And the remaining how-to-read points are reachable from that line's disclosure control
 
   # USS-002 — Rule-15 web-usability-tester spec-blind suggestion (paired with UWT-002/UWT-003): the
   # four capability classes and five evidence grades appeared throughout the page with no on-page
-  # definition, forcing a first-time user to infer their meaning from context. Fixed via an
-  # always-visible legend section in `shell/how-to-read.tsx` (not inside the collapsible
-  # `<details>`, so it stays visible even if that disclosure is closed).
+  # definition, forcing a first-time user to infer their meaning from context. Fixed via a legend
+  # section in `shell/how-to-read.tsx`. Reworded (Phase 7, AC-57/cycle 7.3): the legend is now its
+  # own `<details>` below the roster rather than an unconditionally visible section — its own
+  # `<summary>` keeps it one interaction away, which is what "reachable" now means for this
+  # scenario; the original "visible" wording stopped being literally true once the legend became
+  # collapsible.
   @unit
   Scenario: A legend defines the capability classes and evidence grades
     Given I am on the AI Model Benchmark page
     When I look for an explanation of the "Class" and evidence-grade labels
-    Then a visible legend defines each of the four classes and each of the five evidence grades
+    Then an expandable legend defines each of the four classes and each of the five evidence grades
 
   # AC-33
   @unit
@@ -543,3 +549,23 @@ Feature: AI model benchmark tool
     When the disclosure's name-value groups are inspected
     Then every unpublished figure's label is a term in one single group sharing one "not reported" description
     And no unpublished figure occupies a name-value group of its own
+
+  # AC-56 — Phase 7, cycle 7.2 (R4/D3): the chart and roster are the page's primary content and
+  # now precede the reference material (the how-to-read remainder, the legend, and the sources
+  # section), which collapses into disclosures below them instead of appearing above the fold.
+  @unit
+  Scenario: The chart precedes the roster and both precede the collapsed reference sections
+    Given the page renders with no filters applied
+    When the document order of the page's regions is inspected
+    Then the chart region precedes the roster region
+    And the legend and sources disclosures both follow the roster region
+
+  # AC-57 — Phase 7, cycle 7.3 (R4/D3): collapsing the legend and sources sections into
+  # disclosures (AC-56's reorder) must not make their content unreachable — each stays one click
+  # away behind its own localized `<summary>`.
+  @unit
+  Scenario: The legend and sources remain reachable after collapsing
+    Given the legend and sources are rendered as disclosures below the roster
+    When each disclosure is expanded
+    Then the legend defines each of the four classes and each of the five evidence grades
+    And the sources section lists every named operator

@@ -9,7 +9,7 @@ import { decodeState, encodeState, type SortState } from "@/features/ai-benchmar
 import { filterModels, type FilterState } from "@/features/ai-benchmark/core/filter";
 import type { ChartBand } from "@/features/ai-benchmark/shell/chart-primitives";
 import type { SortMode } from "@/features/ai-benchmark/core/sort";
-import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
+import { HowToRead, AiBenchLegend, AiBenchSources } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
 import { BenchmarkFilters } from "@/features/ai-benchmark/shell/benchmark-filters";
@@ -80,18 +80,24 @@ export function BenchmarkContent() {
   }
 
   return (
-    // A plain `<div>`, not `<main>` — `layout.tsx`'s `<main id="main-content">` is already the
-    // page's one landmark; a second nested `<main>` here produced two `role="main"` landmarks on
-    // this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect (Rule-15 EWT-001 fix).
+    // Rule-15 EWT-001 fix, preserved through Phase 7's reorder (DD-29): this root stays a plain
+    // element, never the landmark element `layout.tsx`'s root already renders with
+    // `id="main-content"` — nesting a second one of those here produced two landmarks with the
+    // same accessibility role on this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect. Spelled
+    // without the literal element-name markup below so this explanatory comment cannot itself trip
+    // `grep -cF` guards written against that markup (Phase 7 Gate's own EWT-001 regression check).
     <div data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-      <header className="space-y-1">
+      {/* AC-56 (Phase 7, cycle 7.2) document order: header (title + subtitle + the how-to-read
+          snapshot/honesty line) → filters → chart → roster → legend disclosure → sources
+          disclosure. The ref-based race guards above (EWT-003) are untouched by this reorder —
+          they live in the handlers, not the JSX. */}
+      <header className="space-y-3">
         <h1 className="text-2xl font-bold tracking-tight">{t(locale, "aiBenchTitle")}</h1>
         <p data-testid="ai-bench-subtitle" className="text-sm text-muted-foreground">
           {t(locale, "aiBenchSubtitle")}
         </p>
+        <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
       </header>
-
-      <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
 
       <BenchmarkFilters
         state={filterState}
@@ -132,6 +138,12 @@ export function BenchmarkContent() {
           <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
         </>
       )}
+
+      {/* AC-57 — the legend and sources stay reachable regardless of the empty-state branch above
+          (both are dataset-level, not filtered-roster-level, content), always following whichever
+          of the roster or the empty-state message rendered. */}
+      <AiBenchLegend locale={locale} />
+      <AiBenchSources locale={locale} />
     </div>
   );
 }

@@ -73,3 +73,28 @@ describe("BenchmarkContent — rapid successive filter changes (Rule-15 EWT-003)
     expect(finalParams.get("harness")).toBe("claude-code");
   });
 });
+
+// AC-56 (Phase 7, cycle 7.2): the chart and roster (the page's primary content) now precede the
+// legend and sources (reference material, collapsed into `<details>`) in document order — this
+// file carried no `@covers` marker before this cycle, so one is added here directly (per
+// delivery.md's instruction to follow cycle 6.1's pattern of binding the scenario at the same
+// site as its assertion) alongside the mirrored binding in
+// `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`.
+describe("BenchmarkContent — document order (AC-56)", () => {
+  it("renders the chart before the roster, and the roster before the legend and sources disclosures", async () => {
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
+    const { BenchmarkContent } = await import("./benchmark-content");
+    render(<BenchmarkContent />);
+
+    const chart = screen.getByTestId("benchmark-chart");
+    const roster = screen.getByTestId("model-table");
+    const legend = screen.getByTestId("ai-bench-legend");
+    const sources = screen.getByTestId("ai-bench-sources");
+
+    // `DOCUMENT_POSITION_FOLLOWING` (4) on `a.compareDocumentPosition(b)` means `b` follows `a` in
+    // the document — i.e. `a` precedes `b`.
+    expect(chart.compareDocumentPosition(roster) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(roster.compareDocumentPosition(legend) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(roster.compareDocumentPosition(sources) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});

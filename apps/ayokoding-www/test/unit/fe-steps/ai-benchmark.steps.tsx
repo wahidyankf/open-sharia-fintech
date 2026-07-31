@@ -873,18 +873,22 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       });
 
       // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The page discloses that frontier scores are overwhelmingly vendor-reported
-      Then("the disclosure states that most frontier benchmark scores are vendor self-reported", () => {
-        const disclosure = screen.getByTestId("ai-bench-how-to");
-        const text = disclosure.textContent ?? "";
-        // The English disclosure copy states vendor self-reported scores explicitly.
-        expect(text.toLowerCase()).toContain("self-reported");
-      });
+      Then(
+        "a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction",
+        () => {
+          const honesty = screen.getByTestId("ai-bench-how-to-honesty");
+          // The English copy states vendor self-reported scores explicitly.
+          expect((honesty.textContent ?? "").toLowerCase()).toContain("self-reported");
+          // Visible without interaction means it is NOT gated behind any `<details>` ancestor.
+          expect(honesty.closest("details")).toBeNull();
+        },
+      );
 
-      And("the disclosure is visible without interaction", () => {
-        const disclosure = screen.getByTestId("ai-bench-how-to");
-        // <details open> means the body is shown on first paint, before any click.
-        expect(disclosure.tagName).toBe("DETAILS");
-        expect(disclosure.hasAttribute("open")).toBe(true);
+      And("the remaining how-to-read points are reachable from that line's disclosure control", () => {
+        const details = screen.getByTestId("ai-bench-how-to-details");
+        expect(details.tagName).toBe("DETAILS");
+        expect(details.querySelector("summary")).not.toBeNull();
+        expect(details.querySelectorAll("li").length).toBe(5);
       });
     },
   );
@@ -901,12 +905,12 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A legend defines the capability classes and evidence grades
-    Then("a visible legend defines each of the four classes and each of the five evidence grades", () => {
+    Then("an expandable legend defines each of the four classes and each of the five evidence grades", () => {
       const legend = screen.getByTestId("ai-bench-legend");
-      // Not inside the collapsible <details> — a <section>, always visible regardless of whether
-      // the how-to-read disclosure is open or closed.
-      expect(legend.tagName).not.toBe("DETAILS");
-      expect(legend.closest("details")).toBeNull();
+      // AC-57 (cycle 7.3): the legend is now its own `<details>`, reachable via its `<summary>`
+      // rather than unconditionally visible.
+      expect(legend.tagName).toBe("DETAILS");
+      expect(legend.querySelector("summary")).not.toBeNull();
 
       for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
         expect(screen.getByTestId(`ai-bench-legend-class-${band}`)).toBeTruthy();
@@ -2375,6 +2379,74 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       );
       const sharedGroup = notReportedDds[0]!.closest("div")!;
       expect(sharedGroup.querySelectorAll("dd").length).toBe(1);
+    });
+  });
+
+  // ─── AC-56 — document order (Phase 7, cycle 7.2) ──────────────────────────────
+  // The full ordering assertion (via `compareDocumentPosition`) lives in
+  // `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.test.tsx` — this
+  // binding renders the same route through `AiBenchmarkPage` (this file's own navigation mock)
+  // and repeats the check so `specs:behavior:coverage`'s `@covers` scan finds this scenario here.
+  Scenario(
+    "The chart precedes the roster and both precede the collapsed reference sections",
+    ({ Given, When, Then, And }) => {
+      Given("the page renders with no filters applied", () => {
+        renderPageForLocale("en");
+      });
+
+      When("the document order of the page's regions is inspected", () => {
+        // Inspection happens directly in the Then/And assertions below.
+        expect(true).toBe(true);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
+      Then("the chart region precedes the roster region", () => {
+        const chart = screen.getByTestId("benchmark-chart");
+        const roster = screen.getByTestId("model-table");
+        expect(chart.compareDocumentPosition(roster) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections
+      And("the legend and sources disclosures both follow the roster region", () => {
+        const roster = screen.getByTestId("model-table");
+        const legend = screen.getByTestId("ai-bench-legend");
+        const sources = screen.getByTestId("ai-bench-sources");
+        expect(roster.compareDocumentPosition(legend) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(roster.compareDocumentPosition(sources) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      });
+    },
+  );
+
+  // ─── AC-57 — the legend and sources stay reachable after collapsing (Phase 7, cycle 7.3) ─────
+  Scenario("The legend and sources remain reachable after collapsing", ({ Given, When, Then, And }) => {
+    Given("the legend and sources are rendered as disclosures below the roster", () => {
+      renderPageForLocale("en");
+    });
+
+    When("each disclosure is expanded", () => {
+      screen.getByTestId("ai-bench-legend").setAttribute("open", "");
+      screen.getByTestId("ai-bench-sources").setAttribute("open", "");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The legend and sources remain reachable after collapsing
+    Then("the legend defines each of the four classes and each of the five evidence grades", () => {
+      for (const band of ["opus", "sonnet", "haiku", "unrated"]) {
+        expect(screen.getByTestId(`ai-bench-legend-class-${band}`)).toBeTruthy();
+      }
+      for (const grade of ["verified", "self-reported", "secondary", "conflicted", "unavailable"]) {
+        expect(screen.getByTestId(`ai-bench-legend-grade-${grade}`)).toBeTruthy();
+      }
+      // UWT-005 — the coverage formula is stated in text, not just a bare percentage.
+      expect(screen.getByTestId("ai-bench-legend-coverage")).toBeTruthy();
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The legend and sources remain reachable after collapsing
+    And("the sources section lists every named operator", () => {
+      const sources = screen.getByTestId("ai-bench-sources");
+      const text = sources.textContent ?? "";
+      for (const op of OPERATORS) {
+        expect(text).toContain(op.name);
+      }
     });
   });
 });
