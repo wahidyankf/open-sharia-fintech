@@ -21,6 +21,7 @@ import { lowestRate } from "../core/price";
 import { BAND_LABEL_KEYS, BENCHMARK_COLUMNS } from "../core/data/benchmarks";
 import { formatCoverage, formatIndex, formatPercent, formatPriceUsd } from "./format";
 import { FigureCell, type FigureLayout } from "./figure-cell";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 
 /** Per-model scored view: band, composite index, and coverage derived from the pure core. */
 export type ScoreView = {
@@ -213,7 +214,8 @@ export function integrityNotes(model: Model, locale: Locale): ReactNode {
           target="_blank"
           rel="noopener noreferrer nofollow"
           // Same `--evidence-self-reported` token as the coverage marker above (Rule-15 DWT-002 fix).
-          className="text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2"
+          // DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
+          className={`inline-flex items-center text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
           aria-label={`${t(locale, "aiBenchIntegrityLabel")}: ${note.text}`}
           title={note.text}
         >

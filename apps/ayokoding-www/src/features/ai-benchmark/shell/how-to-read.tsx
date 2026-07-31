@@ -20,6 +20,7 @@
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { OPERATORS } from "../core/data/operators";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 
 export type HowToReadProps = {
   snapshotDate: string;
@@ -71,7 +72,10 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
           mismatch (DD-29). Below `lg`, the list starts closed and opens only via the native
           `<summary>` toggle. */}
       <details data-testid="ai-bench-how-to-details" className="group rounded-md border p-3 text-sm">
-        <summary className="cursor-pointer font-medium">{t(locale, "aiBenchHowToSummary")}</summary>
+        {/* DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`. */}
+        <summary className={`cursor-pointer font-medium ${TAP_TARGET_MIN_CLASS}`}>
+          {t(locale, "aiBenchHowToSummary")}
+        </summary>
         <ul
           data-testid="ai-bench-how-to-list"
           className="mt-2 hidden list-disc space-y-2 pl-5 text-muted-foreground group-open:block lg:block"
@@ -100,7 +104,10 @@ export function AiBenchLegend({ locale }: { locale: Locale }) {
       data-testid="ai-bench-legend"
       className="space-y-3 rounded-md border p-3 text-sm"
     >
-      <summary className="cursor-pointer font-semibold">{t(locale, "aiBenchLegendHeading")}</summary>
+      {/* DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`. */}
+      <summary className={`cursor-pointer font-semibold ${TAP_TARGET_MIN_CLASS}`}>
+        {t(locale, "aiBenchLegendHeading")}
+      </summary>
 
       <div className="mt-3 space-y-3">
         <div>
@@ -158,7 +165,10 @@ export function AiBenchLegend({ locale }: { locale: Locale }) {
 export function AiBenchSources({ locale }: { locale: Locale }) {
   return (
     <details data-testid="ai-bench-sources" className="space-y-2 rounded-md border p-3 text-sm">
-      <summary className="cursor-pointer font-semibold">{t(locale, "aiBenchSourcesHeading")}</summary>
+      {/* DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`. */}
+      <summary className={`cursor-pointer font-semibold ${TAP_TARGET_MIN_CLASS}`}>
+        {t(locale, "aiBenchSourcesHeading")}
+      </summary>
       <div className="mt-2 space-y-2">
         <p className="text-muted-foreground">{t(locale, "aiBenchSourcesIntro")}</p>
         <dl className="space-y-2">

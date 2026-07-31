@@ -569,3 +569,81 @@ Feature: AI model benchmark tool
     When each disclosure is expanded
     Then the legend defines each of the four classes and each of the five evidence grades
     And the sources section lists every named operator
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # Phase 8 — accessibility: tap targets and the live layout criteria (AC-49..AC-51, AC-55, AC-58,
+  # AC-60). Every scenario below is @e2e-only — each asserts a computed style, a bounding box, or a
+  # document-order property that jsdom cannot resolve (DD-26's "verification gap" lesson).
+  # ══════════════════════════════════════════════════════════════════════════
+
+  # AC-58 — DD-30: every interactive target (an evidence-badge link, an integrity-note link, or a
+  # disclosure's own `<summary>`) reaches WCAG 2.5.8's 24x24 CSS px minimum.
+  @e2e
+  Scenario Outline: Every interactive target meets the minimum target size
+    Given the AI benchmark page is loaded at a "<width>" px viewport
+    When the bounding box of every link and every disclosure control is measured
+    Then every measured target is at least 24 CSS pixels wide and at least 24 CSS pixels tall
+
+    Examples:
+      | width |
+      | 390   |
+      | 1280  |
+
+  # AC-49 — DD-25/DD-26: since the chart no longer lives inside an SVG `viewBox`, its declared
+  # typography no longer scales with viewport width — a chart label's computed font size must be the
+  # SAME at every tested width, and never smaller than 12 CSS px.
+  @e2e
+  Scenario Outline: Chart label text renders at a fixed size across viewports
+    Given the AI benchmark page is loaded at a "<width>" px viewport
+    When the computed font size of a chart model label is read from the live page
+    Then that computed font size equals the computed font size of the same label at every other tested width
+    And that computed font size is at least 12 CSS pixels
+
+    Examples:
+      | width |
+      | 320   |
+      | 390   |
+      | 768   |
+      | 1280  |
+      | 1440  |
+
+  # AC-50 — the chart's own typography must never outrank the page's body text, even though both are
+  # now ordinary CSS pixels rather than viewBox-relative units.
+  @e2e
+  Scenario: Chart label text never exceeds the page's own body text size
+    Given the AI benchmark page is loaded at a 1440 px viewport
+    When the computed font sizes of a chart model label and the page body text are read from the live page
+    Then the chart label's computed font size is no larger than the page body text's computed font size
+
+  # AC-51 — DD-25/DWT-001: the DOM bar's track is a plain full-width `<div>`, so at the narrowest
+  # supported viewport it must span its own containing chart region with no reserved label column
+  # (the `lg:grid-cols-[10rem_1fr]` reflow in `benchmark-chart.tsx` only applies from `lg` up).
+  @e2e
+  Scenario: The chart plot occupies the full container width on a phone
+    Given the AI benchmark page is loaded at a 320 px viewport
+    When the width of a capability bar's track is compared with the width of its containing chart region
+    Then the bar track spans the full width of that region
+    And no reserved label column is present at that width
+
+  # AC-55 — DD-29: the chart is the page's primary content and now sits directly below the header
+  # and filters, so a phone reader must not have to scroll past reference material to reach it.
+  @e2e
+  Scenario: The chart is visible above the fold on a phone
+    Given the AI benchmark page is loaded at a 390 px wide, 844 px tall viewport
+    When the vertical offset of the first chart element is read from the live page
+    Then that offset is less than the viewport height
+
+  # AC-60 — the whole overhaul (chart typography, above-the-fold placement, card collapse, i18n)
+  # must hold identically in both locales — Indonesian's longer strings are the risk this guards.
+  @e2e
+  Scenario Outline: The overhauled page behaves identically in both locales
+    Given the AI benchmark page is loaded in the "<locale>" locale at a 390 px viewport
+    When the page renders
+    Then the chart is present above the fold
+    And every roster card is collapsed
+    And no raw translation key is rendered
+
+    Examples:
+      | locale |
+      | en     |
+      | id     |

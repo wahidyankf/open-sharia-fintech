@@ -444,8 +444,11 @@ describe("BenchmarkChart — renders as DOM, not SVG (DD-25)", () => {
     const container = screen.getByTestId("benchmark-chart");
     expect(container.querySelectorAll("svg").length).toBe(0);
 
+    // Phase 8, AC-49: `text-[10px]` (9.5px under the plan's own 12 CSS px floor) is retired for
+    // `text-xs` (12px) — the property this test protects (a STATIC class, no responsive modifier)
+    // is unchanged; only the declared size itself moved to clear the new floor.
     const label = screen.getByTestId("benchmark-chart-label-dom-only-model");
-    expect(label.className).toContain("text-[10px]");
+    expect(label.className).toContain("text-xs");
 
     const row = screen.getByTestId("benchmark-chart-row-dom-only-model");
     const reflowMatches = row.className.match(/lg:grid-cols-\S+/g) ?? [];

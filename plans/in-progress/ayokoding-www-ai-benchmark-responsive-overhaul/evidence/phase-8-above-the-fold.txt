@@ -1,0 +1,26 @@
+Phase 8 Above-the-Fold Evidence — ayokoding-www-ai-benchmark-responsive-overhaul
+Recorded: 2026-07-31 (Phase 8, cycle 8.5, AC-55)
+
+Method: a real Chromium page (http://localhost:3101/en/tools/ai-benchmark, production build) at a
+390px wide, 844px tall viewport (an iPhone-class phone), fresh load with no scroll. The chart
+container's own vertical offset (`[data-testid="benchmark-chart"]`'s `boundingBox().y`, equivalent
+to its distance from the top of the document since scrollY is 0 on a fresh load) was read via
+Playwright.
+
+  measured offset (chart top, px) | viewport height (px)
+  ---------------------------------|----------------------
+  533                              | 844
+
+533 < 844 — the chart is visible above the fold without scrolling, on a fresh load, in English.
+
+Context: Phase 7's document reorder (AC-56) moved the chart to directly follow the header and
+filters, ahead of the roster and the collapsed reference sections (legend, sources) — this is what
+makes 533px achievable; the how-to-read remainder and the roster table no longer sit above the
+chart.
+
+Falsifiability check performed (delivery.md cycle 8.5 REFACTOR): temporarily restored the retired
+composition order by rendering the full roster (`ModelTable`) BEFORE the chart in
+`benchmark-content.tsx`. Re-ran the scenario: failed with the chart's offset measured at 6809px (far
+above the 844px viewport height) — even larger than the original diagnosis's y=2127 measurement,
+since this regression pushes the ENTIRE 38-model roster above the chart rather than the original
+defect's narrower reordering. Reverted immediately after observing the failure.

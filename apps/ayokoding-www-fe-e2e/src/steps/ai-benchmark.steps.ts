@@ -446,3 +446,193 @@ Then("the field label's vertical band overlaps the vertical band of its own valu
   const overlaps = labelBox!.top < valueBox!.bottom && valueBox!.top < labelBox!.bottom;
   expect(overlaps).toBe(true);
 });
+
+// ── Phase 8 — accessibility: tap targets and the live layout criteria ────────
+//
+// AC-49, AC-50, AC-51, AC-55, AC-58, AC-60 all read a computed style, a bounding box, or a real
+// viewport dimension jsdom cannot produce (DD-26's "verification gap" — see tech-docs.md). Every
+// scenario below shares `navigateAtViewport` above rather than re-implementing navigation
+// (delivery.md's cycle 8.4/8.6 REFACTOR instruction).
+
+// Quoted-width Given, shared by AC-58 (8.1) and AC-49 (8.2) — the Scenario Outline's own Gherkin
+// text quotes `"<width>"`, which is what makes this Cucumber Expression `{string}` step distinct
+// from the UNQUOTED literal `Given`s below (AC-50's "1440 px viewport", AC-51's "320 px viewport"):
+// a bare Cucumber Expression `{string}` only matches a quoted substring, so there is no ambiguity
+// between this generic step and any of the pre-existing literal ones (AC-59's, for instance).
+Given("the AI benchmark page is loaded at a {string} px viewport", async ({ page }, width: string) => {
+  await navigateAtViewport(page, Number(width), "en");
+});
+
+// ── AC-58 — every interactive target reaches WCAG 2.5.8's 24x24 CSS px minimum (DD-30) ───────
+
+type TapTargetFailure = { description: string; width: number; height: number };
+let tapTargetFailures: TapTargetFailure[] = [];
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
+When("the bounding box of every link and every disclosure control is measured", async ({ page }) => {
+  const targets = page.locator('[data-testid="ai-bench-page"] a, [data-testid="ai-bench-page"] summary');
+  const count = await targets.count();
+  const failures: TapTargetFailure[] = [];
+  for (let i = 0; i < count; i++) {
+    const el = targets.nth(i);
+    // A target inside a still-closed `<details>`, or inside whichever of the mobile card / desktop
+    // table CSS hides at the current width, is NOT an operable target right now — it carries no
+    // WCAG 2.5.8 obligation until it becomes visible. `boundingBox()` alone does not detect this:
+    // a `display: none` ancestor still yields a real (zero-sized) box rather than `null`, so
+    // `isVisible()` (which correctly accounts for `display`/`visibility` and a closed `<details>`)
+    // is the actual visibility gate; `boundingBox()` only handles the "detached from the DOM" case.
+    if (!(await el.isVisible())) continue;
+    const box = await el.boundingBox();
+    if (!box) continue;
+    if (box.width < 24 || box.height < 24) {
+      const raw = (await el.getAttribute("aria-label")) ?? (await el.textContent()) ?? "(unnamed target)";
+      failures.push({ description: raw.trim().slice(0, 80), width: box.width, height: box.height });
+    }
+  }
+  tapTargetFailures = failures;
+});
+
+Then("every measured target is at least 24 CSS pixels wide and at least 24 CSS pixels tall", async ({}) => {
+  expect(tapTargetFailures, `undersized target(s): ${JSON.stringify(tapTargetFailures)}`).toEqual([]);
+});
+
+// ── AC-49 — chart label typography is viewport-independent (DD-25/DD-26) ─────────────────────
+
+let chartLabelFontSizePx = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
+When("the computed font size of a chart model label is read from the live page", async ({ page }) => {
+  const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
+  chartLabelFontSizePx = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+});
+
+// The declared size (`text-xs`, 12px — `benchmark-chart.tsx`'s `chart-bar-label`) carries no
+// responsive (`sm:`/`lg:`) modifier (DD-25/DD-26), so every one of the five Outline rows
+// independently equalling this ONE fixed constant is what proves the property this scenario names
+// ("equals ... at every other tested width") — comparing five live values pairwise across rows
+// would need module-scoped state to survive Playwright's `fullyParallel` worker split, which is not
+// guaranteed, whereas each row asserting the same known constant is both simpler and a strictly
+// equivalent proof of the same invariant.
+const CHART_LABEL_DECLARED_FONT_SIZE_PX = 12;
+
+Then(
+  "that computed font size equals the computed font size of the same label at every other tested width",
+  async ({}) => {
+    expect(chartLabelFontSizePx).toBe(CHART_LABEL_DECLARED_FONT_SIZE_PX);
+  },
+);
+
+Then("that computed font size is at least 12 CSS pixels", async ({}) => {
+  expect(chartLabelFontSizePx).toBeGreaterThanOrEqual(12);
+});
+
+// ── AC-50 — chart label typography never outranks the page's own body text ───────────────────
+// Reuses the pre-existing literal `Given("the AI benchmark page is loaded at a 1440 px viewport", …)`
+// bound above for AC-59 — this scenario's own Gherkin line is the identical, UNQUOTED literal text.
+
+let chartLabelFontSizeAt1440 = 0;
+let bodyFontSizeAt1440 = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
+When(
+  "the computed font sizes of a chart model label and the page body text are read from the live page",
+  async ({ page }) => {
+    const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
+    chartLabelFontSizeAt1440 = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    bodyFontSizeAt1440 = await page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize));
+  },
+);
+
+Then("the chart label's computed font size is no larger than the page body text's computed font size", async ({}) => {
+  expect(chartLabelFontSizeAt1440).toBeLessThanOrEqual(bodyFontSizeAt1440);
+});
+
+// ── AC-51 — the chart plot spans the full container width on a phone (DD-25/DWT-001) ─────────
+
+Given("the AI benchmark page is loaded at a 320 px viewport", async ({ page }) => {
+  await navigateAtViewport(page, 320, "en");
+});
+
+let barTrackWidthAt320 = 0;
+let chartRowWidthAt320 = 0;
+let chartRowDisplayAt320 = "";
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
+When(
+  "the width of a capability bar's track is compared with the width of its containing chart region",
+  async ({ page }) => {
+    const row = page.locator('[data-testid^="benchmark-chart-row-"]').first();
+    const track = row.locator('[data-slot="chart-bar-row-track"]').first();
+    const rowBox = await row.boundingBox();
+    const trackBox = await track.boundingBox();
+    if (!rowBox || !trackBox) throw new Error("chart row or bar track is not visible at 320px");
+    chartRowWidthAt320 = rowBox.width;
+    barTrackWidthAt320 = trackBox.width;
+    // `lg:grid-cols-[10rem_1fr]` is the ONLY mechanism that reserves a label column — it applies
+    // from `lg` up only, so at 320px the row's own computed `display` must not be `grid`.
+    chartRowDisplayAt320 = await row.evaluate((el) => getComputedStyle(el).display);
+  },
+);
+
+Then("the bar track spans the full width of that region", async ({}) => {
+  expect(Math.abs(barTrackWidthAt320 - chartRowWidthAt320)).toBeLessThan(2);
+});
+
+Then("no reserved label column is present at that width", async ({}) => {
+  expect(chartRowDisplayAt320).not.toBe("grid");
+});
+
+// ── AC-55 — the chart is visible above the fold on a phone (DD-29) ───────────────────────────
+
+Given("the AI benchmark page is loaded at a 390 px wide, 844 px tall viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/tools/ai-benchmark");
+  await page.waitForLoadState("networkidle");
+});
+
+let firstChartElementOffsetTop = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
+When("the vertical offset of the first chart element is read from the live page", async ({ page }) => {
+  const chart = page.locator('[data-testid="benchmark-chart"]').first();
+  const box = await chart.boundingBox();
+  if (!box) throw new Error("chart is not visible at 390x844");
+  firstChartElementOffsetTop = box.y;
+});
+
+Then("that offset is less than the viewport height", async ({}) => {
+  expect(firstChartElementOffsetTop).toBeLessThan(844);
+});
+
+// ── AC-60 — the whole overhaul holds identically in both locales ─────────────────────────────
+// `navigateAtViewport`'s own default height (800) is the "viewport" this scenario's fold check is
+// measured against — the same shared helper every other viewport-parametrized scenario in this file
+// already reuses (delivery.md's cycle 8.6 REFACTOR instruction).
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
+Given(
+  "the AI benchmark page is loaded in the {string} locale at a 390 px viewport",
+  async ({ page }, locale: string) => {
+    await navigateAtViewport(page, 390, locale);
+  },
+);
+
+Then("the chart is present above the fold", async ({ page }) => {
+  const chart = page.locator('[data-testid="benchmark-chart"]').first();
+  const box = await chart.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.y).toBeLessThan(800);
+});
+
+Then("every roster card is collapsed", async ({ page }) => {
+  const details = page.locator('[data-testid^="model-card-details-"]');
+  const count = await details.count();
+  expect(count).toBeGreaterThan(0);
+  const openFlags = await details.evaluateAll((els) => els.map((el) => (el as HTMLDetailsElement).open));
+  expect(openFlags.every((open) => open === false)).toBe(true);
+});
+
+Then("no raw translation key is rendered", async ({ page }) => {
+  const bodyText = await page.locator("body").textContent();
+  expect(bodyText).not.toMatch(/aiBench/);
+});

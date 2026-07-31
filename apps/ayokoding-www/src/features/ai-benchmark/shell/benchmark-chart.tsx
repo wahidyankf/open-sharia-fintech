@@ -117,10 +117,12 @@ function BenchmarkRow({ score, band, locale, priceAxisMax, rate }: BenchmarkRowP
 
   return (
     <div data-testid={`${SLOT}-row-${id}`} className="mb-3 lg:grid lg:grid-cols-[10rem_1fr] lg:items-start lg:gap-x-4">
+      {/* AC-49 (Phase 8): `text-xs` (12px) is the floor every chart label must clear (see
+          `bar-row.tsx`'s own AC-49 comment) — the retired `text-[10px]` predates it. */}
       <p
         data-slot="chart-bar-label"
         data-testid={`${SLOT}-label-${id}`}
-        className="text-[10px] font-medium text-foreground lg:col-start-1"
+        className="text-xs font-medium text-foreground lg:col-start-1"
       >
         {score.model.name} — {formatIndex(index, locale)}
       </p>
@@ -136,7 +138,7 @@ function BenchmarkRow({ score, band, locale, priceAxisMax, rate }: BenchmarkRowP
           <p
             data-slot="chart-low-coverage-marker"
             data-testid={`${SLOT}-low-coverage-${id}`}
-            className="text-[9px] text-muted-foreground"
+            className="text-xs text-muted-foreground"
           >
             {t(locale, "aiBenchCoverageLow")} ({formatCoverage(score.coverage, locale)})
           </p>
@@ -162,7 +164,7 @@ function BenchmarkRow({ score, band, locale, priceAxisMax, rate }: BenchmarkRowP
           <p
             data-slot="chart-subscription-label"
             data-testid={`${SLOT}-subscription-${id}`}
-            className="text-[10px] text-muted-foreground"
+            className="text-xs text-muted-foreground"
           >
             {t(locale, "aiBenchSubscription")} ({formatPriceUsd(rate.planCostUsd, locale)})
           </p>
@@ -170,7 +172,7 @@ function BenchmarkRow({ score, band, locale, priceAxisMax, rate }: BenchmarkRowP
           <p
             data-slot="chart-not-reported-label"
             data-testid={`${SLOT}-not-reported-${id}`}
-            className="text-[10px] text-muted-foreground"
+            className="text-xs text-muted-foreground"
           >
             {t(locale, "aiBenchNoFigure")}
           </p>
@@ -305,11 +307,7 @@ export function BenchmarkChart({
               >
                 {bandLayout.label}
               </h3>
-              <p
-                data-slot="chart-axis-max"
-                data-testid="chart-axis-max"
-                className="mb-2 text-[10px] text-muted-foreground"
-              >
+              <p data-slot="chart-axis-max" data-testid="chart-axis-max" className="mb-2 text-xs text-muted-foreground">
                 {axisLabel}: {formattedMax}
               </p>
               {bandLayout.rows.map((score) => (

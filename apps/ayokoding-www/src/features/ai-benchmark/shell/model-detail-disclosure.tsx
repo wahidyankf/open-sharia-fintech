@@ -17,6 +17,7 @@ import {
   type FigureGroup,
   type ModelFigure,
 } from "./model-figures";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 
 export type ModelDetailDisclosureProps = {
   slot: string;
@@ -72,7 +73,10 @@ function GroupFigures({ figures, locale }: { figures: ModelFigure[]; locale: Loc
 export function ModelDetailDisclosure({ slot, modelId, groups, locale }: ModelDetailDisclosureProps) {
   return (
     <details data-testid={`${slot}-details-${modelId}`}>
-      <summary data-testid={`${slot}-disclosure-${modelId}`}>{t(locale, "aiBenchCardAllFigures")}</summary>
+      {/* DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`. */}
+      <summary data-testid={`${slot}-disclosure-${modelId}`} className={TAP_TARGET_MIN_CLASS}>
+        {t(locale, "aiBenchCardAllFigures")}
+      </summary>
       {groups.map((group) => (
         // DD-34 Treatment 3 (DN-3 fix): each group is its own <section>, headed by an <h4> one
         // level below the card's own <h3> model name — a heading is not valid <dl> content, so the

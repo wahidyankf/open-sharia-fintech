@@ -32,10 +32,13 @@ export function BarRow({ value, max, band, label, testId }: BarRowProps) {
   const widthPct = `${scaleLinear(max, 100)(value)}%`;
   return (
     <div data-slot="chart-bar-row" data-testid={testId}>
+      {/* AC-49 (Phase 8): `text-xs` (12px) is the floor every chart label must clear — the retired
+          `text-[10px]` predates this plan's own 12 CSS px minimum. No responsive modifier here
+          (DD-25/DD-26), so the declared size is identical at every viewport by construction. */}
       <span
         data-slot="chart-bar-row-label"
         data-testid={testId ? `${testId}-label` : undefined}
-        className="block text-[10px] text-foreground"
+        className="block text-xs text-foreground"
       >
         {label}
       </span>

@@ -28,6 +28,7 @@ import type { HarnessId } from "../core/data/models";
 import { HARNESS_IDS, BANDS, type FilterState } from "../core/filter";
 import type { Band } from "../core/bands";
 import { HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 import { bandLabel } from "./chart-primitives";
 
 const SLOT = "benchmark-filters";
@@ -133,7 +134,16 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
     <div data-slot={SLOT} data-testid={SLOT}>
       {/* Below `md`: a collapsed disclosure naming the active-filter count. */}
       <details data-testid={`${SLOT}-mobile`} className={cn("rounded-md border p-3 md:hidden")}>
-        <summary data-testid={`${SLOT}-mobile-summary`} className="cursor-pointer text-sm font-medium">
+        {/* DD-30/AC-58 (Phase 8): a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
+            This pre-existing `<summary>` predates the plan's own AC-58 scope note ("Phases 6 and 7"),
+            but it is the same disclosure-control defect class and is genuinely present on the live
+            page at 390px — Root Cause Orientation applies the shared fix here too rather than leaving
+            one known-undersized target on the page the scenario's own text ("every ... disclosure
+            control") already covers. */}
+        <summary
+          data-testid={`${SLOT}-mobile-summary`}
+          className={`cursor-pointer text-sm font-medium ${TAP_TARGET_MIN_CLASS}`}
+        >
           {t(locale, "aiBenchFilterSummary")} ({activeCount} {t(locale, "aiBenchFilterActiveCountLabel")})
         </summary>
         <div className="mt-3 flex flex-col gap-3">
