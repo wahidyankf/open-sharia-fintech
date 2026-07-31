@@ -894,14 +894,21 @@ When("I view the minimum role result", async ({ page }) => {
 });
 
 Then("the baseline savings bar equals that role's essential savings in Jakarta", async ({ page }) => {
-  const marker = page.locator("[data-testid='minimum-marker']");
-  await expect(marker).toBeVisible();
+  // Several cities can legitimately tie for the lowest qualifying rank (see min-role.tsx's
+  // `isMinEntry` — every tied entry is marked), so this can resolve to more than one element;
+  // `.first()` avoids a strict-mode violation on ties. The controlled reference-role/city
+  // selects commit through a URL round-trip before the ladder re-renders (same class as the
+  // household-composition race elsewhere in this file), so a generous timeout tolerates that
+  // round-trip under full-suite parallel load instead of sampling the DOM once.
+  const marker = page.locator("[data-testid='minimum-marker']").first();
+  await expect(marker).toBeVisible({ timeout: 15000 });
 });
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/cost-of-living-calculator.feature:Minimum role from a reference city and role
 Then("the marked minimum role reaches at least that essential savings in absolute terms", async ({ page }) => {
-  const marker = page.locator("[data-testid='minimum-marker']");
-  await expect(marker).toBeVisible();
+  // See the comment above — ties are valid, `.first()` avoids a strict-mode violation.
+  const marker = page.locator("[data-testid='minimum-marker']").first();
+  await expect(marker).toBeVisible({ timeout: 15000 });
 });
 
 // ── My salary baseline ────────────────────────────────────────────────────────
@@ -985,9 +992,15 @@ Then(
   async ({ page }, _role: string) => {
     const divider = page.locator("[data-testid='qualifying-divider']");
     const noQual = page.locator("[data-testid='no-qualifier-message']");
-    const hasDivider = await divider.isVisible().catch(() => false);
-    const hasNoQual = await noQual.isVisible().catch(() => false);
-    expect(hasDivider || hasNoQual).toBe(true);
+    // `waitForLoadState("networkidle")` in the preceding step settles network requests, but the
+    // React re-render this triggers can still lag behind under full-suite parallel load — a bare
+    // `.isVisible()` sampled the DOM once and flaked. `expect.poll` retries the predicate until
+    // one of the two elements actually renders, matching Playwright's normal auto-wait behavior.
+    await expect
+      .poll(async () => (await divider.isVisible()) || (await noQual.isVisible()), {
+        timeout: 60000,
+      })
+      .toBe(true);
   },
 );
 
@@ -996,15 +1009,20 @@ Then("a more senior role becomes the marked minimum", async ({ page }) => {
   // The minimum-role marker can render on more than one row when several cities tie at the same
   // minimum-qualifying role rank (see min-role.tsx's RoleRow `isMin` prop — this is correct,
   // expected product behaviour, not a bug). `.isVisible()` on a locator that resolves to more
-  // than one element throws a strict-mode-violation error; the `.catch(() => false)` below was
-  // silently swallowing that error, making `hasMarker` always false whenever more than one role
-  // tied for the minimum — i.e. this assertion could fail regardless of the real DOM state.
-  // `.first()` narrows to Playwright's single-element strict-mode requirement.
+  // than one element throws a strict-mode-violation error; `.first()` narrows to Playwright's
+  // single-element strict-mode requirement. A bare single-sample `.isVisible()` also flaked under
+  // full-suite parallel load (shared-machine contention — same root cause the Phase 0 baseline
+  // fixed elsewhere in this file): the household-composition re-render can lag behind the
+  // preceding step's `networkidle` wait, so neither element is visible yet on the first sample.
+  // `expect.poll` retries the predicate until the re-render catches up, matching the fix already
+  // applied to the sibling assertion above.
   const marker = page.locator("[data-testid='minimum-marker']").first();
   const noQual = page.locator("[data-testid='no-qualifier-message']");
-  const hasMarker = await marker.isVisible().catch(() => false);
-  const hasNoQual = await noQual.isVisible().catch(() => false);
-  expect(hasMarker || hasNoQual).toBe(true);
+  await expect
+    .poll(async () => (await marker.isVisible().catch(() => false)) || (await noQual.isVisible().catch(() => false)), {
+      timeout: 60000,
+    })
+    .toBe(true);
 });
 
 // ── No role can reach the bar ─────────────────────────────────────────────────

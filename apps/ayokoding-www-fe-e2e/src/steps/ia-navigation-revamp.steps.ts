@@ -1,5 +1,6 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import { getResilient } from "../support/resilient-request";
 
 const { Given, When, Then } = createBdd();
 
@@ -72,9 +73,12 @@ Then("every content link resolves directly to its bare URL with status 200", asy
   }
   expect(hrefs.length).toBeGreaterThan(0);
 
+  // See `getResilient` — retries once on a load-induced ECONNRESET; 30s (vs. the 10s
+  // default) additionally tolerates slow-but-successful responses under full-suite
+  // parallel contention on the single local server instance.
   await Promise.all(
     hrefs.map(async (href) => {
-      const response = await page.request.get(href, { maxRedirects: 0, timeout: 10000 });
+      const response = await getResilient(page, href, { maxRedirects: 0, timeout: 30000 });
       expect(response.status(), `${href} should resolve directly, not 404`).not.toBe(404);
     }),
   );
@@ -95,9 +99,12 @@ Then("no internal content link resolves through a 308 redirect", async ({ page }
     hrefs.push(href);
   }
 
+  // See `getResilient` — retries once on a load-induced ECONNRESET; 30s (vs. the 10s
+  // default) additionally tolerates slow-but-successful responses under full-suite
+  // parallel contention on the single local server instance.
   await Promise.all(
     hrefs.map(async (href) => {
-      const response = await page.request.get(href, { maxRedirects: 0, timeout: 10000 });
+      const response = await getResilient(page, href, { maxRedirects: 0, timeout: 30000 });
       expect(response.status(), `Link ${href} should not be a 308 redirect`).not.toBe(308);
     }),
   );
@@ -158,7 +165,8 @@ Then(
 let feedBody = "";
 
 Given("the feed is generated from the content index", async ({ page }) => {
-  const response = await page.request.get("/feed.xml");
+  // See `getResilient` — retries once on a load-induced ECONNRESET.
+  const response = await getResilient(page, "/feed.xml");
   expect(response.status()).toBe(200);
   feedBody = await response.text();
 });

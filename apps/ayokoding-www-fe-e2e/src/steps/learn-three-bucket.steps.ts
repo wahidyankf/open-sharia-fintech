@@ -1,5 +1,6 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import { getResilient } from "../support/resilient-request";
 
 const { Then } = createBdd();
 
@@ -11,6 +12,6 @@ Then("the response status should not be a client or server error", async ({ page
   // Re-fetch whatever URL the browser landed on after following every redirect hop, so this
   // check is independent of how many hops the prior "a visitor navigates to" step's own
   // page.goto() Response object already discarded.
-  const response = await page.request.get(page.url());
+  const response = await getResilient(page, page.url());
   expect(response.status(), `${page.url()} responded ${response.status()}`).toBeLessThan(400);
 });

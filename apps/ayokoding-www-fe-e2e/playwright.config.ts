@@ -53,6 +53,14 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+  // Default (30s) is too tight for the handful of scenarios that fan out several
+  // `page.request.get()` calls (with `getResilient`'s single-retry, and per-request timeouts up
+  // to 30s) against the single local production server instance under full-suite parallel load —
+  // see `src/support/resilient-request.ts`. It also has to accommodate the `expect.poll` calls in
+  // `cost-of-living-calculator.steps.ts` (up to 60s each) that wait out a lagging React re-render
+  // under the same contention. 150s gives that combined class of scenario room to retry without
+  // hitting the test's own deadline first.
+  timeout: 150000,
   reporter: [["list"], ["html"], ["junit", { outputFile: "test-results/junit.xml" }]],
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:3101",

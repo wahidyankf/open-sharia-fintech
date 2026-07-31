@@ -107,25 +107,20 @@ describe("ModelTable — fullDataset keeps a harness-filtered model's full-roste
   });
 });
 
-// ─── Regression: the DWT-003 migration to the shared `Table` primitive silently disabled the
-// sticky table header at `lg`+ (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1) — the
-// primitive's own wrapper hardcodes `overflow-x-auto` (forcing `overflow-y` to compute to `auto`
-// too, per MDN's `overflow-x` computed-value rule), making it a scroll container in BOTH axes at
-// every breakpoint. `position: sticky` on `<thead>` resolves against that ancestor and never
-// sticks unless `lg:overflow-visible` restores the bespoke table's original non-scrolling
-// behaviour at `lg`+. jsdom applies no CSS, so this only asserts the class NAME reaches the
-// wrapper div (not the `<table>` element, which the plain `className` prop reaches instead) — a
-// real assertion, since reverting the `wrapperClassName` prop wiring makes this fail.
-describe("ModelTable — sticky header wrapper override survives the DWT-003 shared-primitive migration", () => {
+// ─── Regression: R5 (tech-docs.md §DD-27) — the desktop table bled past the viewport and forced
+// the whole document to scroll horizontally, because the `lg`-breakpoint overflow override
+// (`lg:overflow-visible`) cancelled the wrapper's scroll container at `lg`, leaving the table
+// uncontained. Removing it lets `overflow-x-auto` hold a BOTH-axes scroll container at every
+// breakpoint. A unit-level re-guard for AC-52 (Phase 1 cycle 1.1's e2e-tagged behaviour) against
+// ever re-adding that override — no new behaviour scenario to bind.
+describe("ModelTable — R5 desktop horizontal overflow regression", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("passes lg:overflow-visible to the table-wrapper div, not the <table> element", () => {
+  it("never restores the lg-breakpoint overflow override on the table wrapper", () => {
     const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     const wrapper = container.querySelector('[data-testid="model-table-desktop"] [data-slot="table-wrapper"]');
-    expect(wrapper?.className).toContain("lg:overflow-visible");
-    const table = container.querySelector('[data-testid="model-table-desktop"] table');
-    expect(table?.className).not.toContain("lg:overflow-visible");
+    expect(wrapper?.className).not.toContain("lg:overflow-visible");
   });
 });

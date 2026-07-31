@@ -436,3 +436,20 @@ Feature: AI model benchmark tool
       | theme |
       | light |
       | dark  |
+
+  # AC-52
+  @e2e
+  Scenario Outline: The document never scrolls horizontally
+    Given the AI benchmark page is loaded at a "<width>" px viewport in the "<locale>" locale
+    When the document's scroll width is compared with its client width
+    Then the document scroll width does not exceed the document client width
+
+    Examples:
+      | width | locale |
+      | 320   | en     |
+      | 390   | en     |
+      | 768   | en     |
+      | 1280  | en     |
+      | 1440  | en     |
+      | 320   | id     |
+      | 1440  | id     |

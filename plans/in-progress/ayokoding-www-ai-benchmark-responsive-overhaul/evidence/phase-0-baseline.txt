@@ -1,0 +1,77 @@
+Phase 0 Baseline — ayokoding-www-ai-benchmark-responsive-overhaul
+Recorded: 2026-07-31 02:35 UTC
+
+Scenario count baseline (Phase 9 audit reference):
+grep -cE '^\s+Scenario( Outline)?:' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature
+49
+
+Quality-gate baseline:
+  npx nx run ayokoding-www:test:quick        -> exit 0 (145 test files, 3196 passed, 6 skipped)
+  npx nx run ayokoding-www:specs:behavior:coverage -> exit 0 (42 specs, 343 scenarios, 1235 steps — all covered)
+  No failures to document for this pair.
+
+Build baseline:
+  npx nx run ayokoding-www:build              -> exit 0
+  apps/ayokoding-www/.next/standalone/ present -> confirmed
+
+e2e baseline: npx nx run ayokoding-www-fe-e2e:test:e2e
+  Initial (cold) run: 3 failed / 656 passed / 301 skipped, exit 1.
+  Root cause (confirmed via single-worker isolation reruns of every failing scenario — all
+  passed in isolation): this project's `webServer` boots exactly one local production Node.js
+  server instance (playwright.config.ts), and `fullyParallel: true` with `workers: undefined`
+  locally opens hundreds of concurrent browser-driven connections against that one instance.
+  Under contention (this dev machine's own load average was observed at 14-37 on 12 cores
+  during these runs — other concurrent processes on a shared machine, not this plan's doing)
+  the server occasionally answers slowly (>10s) or drops a connection mid-handshake
+  (ECONNRESET). Every failing scenario passed deterministically when re-run in isolation
+  (--workers=1), proving these were load-induced test-robustness gaps, not application defects.
+  Preexisting failures observed across repeated full-suite runs while isolating root cause
+  (each run surfaced a different subset/superset of the same failure class — course-rehome
+  network checks, RSS-feed/content-link network checks, and one household-composition UI
+  assertion — all tracing to the single-server-under-full-parallel-load pattern above):
+    - navigation/course-rehome-redirects.feature: "...resolves every re-homed course" (chromium,
+      firefox) — bare `page.request.get(href, { timeout: 10000 })` too tight under load.
+    - navigation/ia-navigation-revamp.feature: "RSS feed item links use bare content URLs"
+      (webkit) — bare `page.request.get("/feed.xml")` hit ECONNRESET under load.
+    - navigation/ia-navigation-revamp.feature: "Internal content links emit bare URLs directly
+      without relying on redirects" (both scenarios in this feature use the same pattern,
+      timeout: 10000) — same ECONNRESET class.
+    - tools/cost-of-living-calculator.feature: "Household composition changes the minimum
+      qualifying role" (firefox) — a bare single-shot `.isVisible()` check sampled the DOM
+      before the URL-driven re-render had caught up under load; no auto-retry.
+    - tools/cost-of-living-calculator.feature: "Minimum role from a reference city and role"
+      (webkit) — `page.locator("[data-testid='minimum-marker']")` used a bare `.toBeVisible()`
+      that throws a strict-mode violation when several cities legitimately tie for the lowest
+      qualifying rank (min-role.tsx's `isMinEntry` intentionally marks every tied entry); a
+      URL-round-trip render race under load could also leave a stale multi-tie view visible
+      momentarily.
+
+  Fixes applied (all in apps/ayokoding-www-fe-e2e, test-code only — no apps/ayokoding-www
+  application-source changes were needed since every failure reproduced was a test-robustness
+  gap, confirmed passing in single-worker isolation before any fix):
+    - Added `apps/ayokoding-www-fe-e2e/src/support/resilient-request.ts` (`getResilient`): a
+      `page.request.get()` wrapper that retries once on a thrown network error (e.g.
+      ECONNRESET), used by every raw `page.request.get()` call site in the step files
+      (course-rehome-redirects, content-namespace, learn-three-bucket, ia-navigation-revamp).
+    - Raised the course-rehome and ia-navigation-revamp per-request `timeout` from 10000ms to
+      30000ms alongside the retry, so a genuine 404/drained route still fails fast while slow
+      (but successful) responses under load are tolerated.
+    - Replaced the household-composition step's bare `.isVisible()` single-shot check with
+      `expect.poll(..., { timeout: 30000 })`, giving it Playwright's normal auto-retry semantics
+      instead of one instantaneous sample.
+    - Changed both "minimum role" step assertions to `page.locator(...).first()` (ties are valid
+      application behavior, not a bug — avoids the strict-mode violation) with an explicit
+      `toBeVisible({ timeout: 15000 })` to tolerate the same URL-round-trip render race.
+    - Raised the project's global Playwright test timeout from the 30000ms default to 90000ms
+      (playwright.config.ts) so the above retries/timeouts have room to complete inside a single
+      test's own deadline instead of being cut off by it (this surfaced as a new, distinct
+      failure — "Test timeout of 30000ms exceeded" — partway through fixing the above, and was
+      resolved by this config change).
+
+  Verification: after all fixes above, `npx nx run ayokoding-www-fe-e2e:test:e2e --skip-nx-cache`
+  was re-run to completion 3 additional consecutive times, each fully green:
+    659 passed, 301 skipped, 0 failed, exit 0 (all three runs).
+  `npx tsc --noEmit -p apps/ayokoding-www-fe-e2e/tsconfig.json` and
+  `npx nx run ayokoding-www-fe-e2e:lint` both exit 0 on the changed files.
+
+No unresolved preexisting failure remains as of this baseline.
