@@ -71,7 +71,7 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 // sonnet,haiku}`), not one shared svg — the first band's own region is enough to prove the family
 // carries a real accessible name.
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
-Then("the merged chart exposes an accessible name", async ({ page }) => {
+Then("each rated band's chart region exposes a localized accessible name", async ({ page }) => {
   await expect(page.locator('[data-testid^="benchmark-chart-band-"][role="group"]').first()).toHaveAccessibleName(/.+/);
 });
 

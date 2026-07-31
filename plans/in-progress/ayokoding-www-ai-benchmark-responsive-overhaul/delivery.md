@@ -1787,6 +1787,27 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
   > were touched. These are genuinely pre-existing, out-of-scope defects unrelated to the DOM
   > chart rewrite, not a regression from Phase 5 — flagging them here for a separate fix outside
   > this phase's scope rather than silently absorbing them into this gate's pass/fail count.
+  >
+  > **Gap disclosed (caught by the pre-push hook, not by this gate's own verification)**: after the
+  > `docs(plans): record Phase 5 completion` commit (`2b7a6b5a8`) had already been pushed to origin,
+  > `git push`'s pre-push hook ran `ayokoding-www-fe-e2e:specs:e2e:coverage` and it genuinely FAILED —
+  > `E2E COVERAGE GAP DETECTOR FAILED: 1 new unbound scenario(s)` for AC-36's reworded scenario "The
+  > merged chart exposes an accessible name". Root cause: cycle 5.3's rewording changed the Gherkin
+  > `Then` step text to `each rated band's chart region exposes a localized accessible name`, but
+  > `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`'s bound `Then(...)` string was left at
+  > the OLD pre-rewording text — a genuine binding-drift bug in cycle 5.3's own work, not caught
+  > before the push because the earlier `npx playwright test -g` spot-check and the full `test:e2e`
+  > run both happened before AC-36's rewording was finalized in that commit, and `specs:e2e:coverage`
+  > was never re-run standalone afterward. Fixed by updating the step text to match; re-verified
+  > `specs:e2e:coverage` → `E2E COVERAGE GAP DETECTOR PASSED: 0 new unbound scenario(s)`, re-ran the
+  > scenario standalone via `npx playwright test -g "The merged chart exposes an accessible name"
+--project=chromium` → 1 passed, and re-ran the full `ayokoding-www:test:quick` chain in isolation
+  > (after clearing a stale `coverage/.tmp` dir from an earlier concurrent run) → exits 0. This gap
+  > means the earlier "Done" status recorded above for this checkbox was written before this
+  > binding-drift bug was caught — the underlying DOM rewrite and its own tests were never wrong, but
+  > the e2e-layer step binding for AC-36 was, for the span between commit `2b7a6b5a8` landing and this
+  > note being added. Fixed in a follow-up commit
+  > `fix(ayokoding-www-fe-e2e): match AC-36 e2e step text to its reworded Gherkin step`.
 
 > **Pause Safety**: the chart renders as DOM at every breakpoint; the roster and page composition
 > are unchanged, so the page is coherent and fully green — a reader would simply see the new chart
