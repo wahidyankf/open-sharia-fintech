@@ -1,19 +1,30 @@
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 
-const redirect = new Response(null, {
-  status: 308,
-  headers: { location: "https://example.test/api/v2/orders" },
+let receivedMethod;
+const server = createServer((request, response) => {
+  if (request.url === "/source") {
+    response.writeHead(308, { location: "/target" });
+    response.end();
+    return;
+  }
+
+  receivedMethod = request.method;
+  response.end("ok");
 });
 
-const original = new Request("https://example.test/api/v1/orders", {
-  method: "POST",
-  body: "order=42",
-});
-const redirected = new Request(redirect.headers.get("location"), {
-  method: original.method,
-  body: "order=42",
-});
+await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+const { port } = server.address();
 
-assert.equal(redirect.status, 308);
-assert.equal(redirected.method, "POST");
-console.log("308 preserves POST method in the modeled redirect request.");
+try {
+  const response = await fetch(`http://127.0.0.1:${port}/source`, {
+    method: "POST",
+    body: "order=42",
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(receivedMethod, "POST");
+  console.log("308 redirect preserved POST method at the target.");
+} finally {
+  await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+}

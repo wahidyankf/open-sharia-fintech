@@ -227,7 +227,7 @@ _ex-48 · exercises co-24_
 node verify.mjs
 ```
 
-**Verify**: Run `node verify.mjs`; it asserts that the modeled redirected request remains a POST.
+**Verify**: Run `node verify.mjs`; it follows a local 308 and asserts that the target receives a POST.
 
 **Key takeaway**: Method preservation matters for non-idempotent request flows.
 
