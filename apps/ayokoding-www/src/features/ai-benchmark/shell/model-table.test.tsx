@@ -109,8 +109,10 @@ describe("ModelTable — fullDataset keeps a harness-filtered model's full-roste
 
 // ─── Regression: R5 (tech-docs.md §DD-27) — the desktop table bled past the viewport and forced
 // the whole document to scroll horizontally, because the `lg`-breakpoint overflow override
-// restored a BOTH-axes scroll container. A unit-level re-guard for AC-52 (Phase 1 cycle 1.1's
-// e2e-tagged behaviour) against ever re-adding that override — no new behaviour scenario to bind.
+// (`lg:overflow-visible`) cancelled the wrapper's scroll container at `lg`, leaving the table
+// uncontained. Removing it lets `overflow-x-auto` hold a BOTH-axes scroll container at every
+// breakpoint. A unit-level re-guard for AC-52 (Phase 1 cycle 1.1's e2e-tagged behaviour) against
+// ever re-adding that override — no new behaviour scenario to bind.
 describe("ModelTable — R5 desktop horizontal overflow regression", () => {
   afterEach(() => {
     cleanup();
