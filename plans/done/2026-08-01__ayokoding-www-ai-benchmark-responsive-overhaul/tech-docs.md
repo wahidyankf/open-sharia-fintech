@@ -325,9 +325,11 @@ behind a disclosure control rather than removing it.
 **Decision**: `benchmark-content.tsx` renders header (with snapshot date and one honesty line) →
 filters → chart → roster → legend `<details>` → sources `<details>`.
 
-**`how-to-read.tsx` splits into three exports**: an always-visible `HonestyLine`, a collapsible
-`HowToReadDetails`, and the `Legend`/`Sources` disclosures that move below the roster. The
-component's existing i18n keys are reused verbatim — **zero new translation strings** are needed for
+**`how-to-read.tsx` carries three exports**: `HowToRead` (the always-visible snapshot date plus
+AC-32's one always-visible honesty line, with the remaining how-to-read points behind their own
+collapsible `<details>` — both regions live inside this one function, not two separate components),
+and the `AiBenchLegend`/`AiBenchSources` disclosures that move below the roster. The component's
+existing i18n keys are reused verbatim — **zero new translation strings** are needed for
 the honesty line, because `aiBenchHowToVendorReported` already carries exactly the claim AC-32
 names `[Repo-grounded]`.
 
@@ -337,9 +339,15 @@ benchmark scores are vendor self-reported" — is visible without interaction, a
 requiring the rest to be reachable from that line's control. The claim under test is identical; the
 guarantee is now precise about which element carries it.
 
-**`lg`-only open state**: `HowToReadDetails` renders `open` at `lg` and above via a CSS-driven
-approach rather than a JS width check, so there is no hydration mismatch. Desktop has the vertical
-budget; mobile does not.
+**`lg`-only open state**: `HowToRead`'s collapsible remainder `<details>` renders `open` at `lg` and
+above via a CSS-driven approach (`group-open:` plus an `lg:block` override) rather than a JS width
+check, so there is no hydration mismatch. Desktop has the vertical budget; mobile does not.
+
+> **2026-08-01 — Phase 12 PR review correction (finding F4)**: this section previously named two
+> components, `HonestyLine` and `HowToReadDetails`, that were never implemented — the honesty line
+> and the collapsible remainder both ended up as two regions inside one `HowToRead` function rather
+> than as separate components, and this prose was never updated to match. Corrected above to name
+> the actual shipped exports (`HowToRead`, `AiBenchLegend`, `AiBenchSources`).
 
 ### DD-30 — tap targets reach 24x24 CSS px
 
@@ -379,21 +387,25 @@ Every other tagged defect is **preserved**, and each has an explicit guard step 
 
 ### DD-32 — disposition of the now-unused SVG primitives
 
-`chart-primitives.tsx` currently exports `barFillClass`, `bandInkFillClass`, `bandSwatchClass`,
-`bandLabel`, `scaleLinear`, `Axis`, `Bar`, `BandGroup`, `Legend`, `evenTicks`, `TickRow`
-`[Repo-grounded]`.
+`chart-primitives.tsx` exports `bandSwatchClass`, `bandBarBgClass`, `bandInkTextClass`, `bandLabel`,
+`scaleLinear`, `Legend` `[Repo-grounded]`.
 
-| Export                                             | Disposition                                                                                              |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `scaleLinear`, `bandLabel`, `bandSwatchClass`      | **Kept, reused** by the DOM chart                                                                        |
-| `barFillClass`                                     | **Replaced** by a `bg-[var(--chart-band-*)]` sibling map — the SVG `fill-` variant has no DOM equivalent |
-| `bandInkFillClass`                                 | **Replaced** by a `text-[var(--chart-band-*-ink)]` sibling map for the same reason                       |
-| `Legend`                                           | **Kept** — consumed by `how-to-read.tsx`, unaffected                                                     |
-| `Axis`, `Bar`, `BandGroup`, `TickRow`, `evenTicks` | **Deleted** — zero consumers after DD-25; their unit tests are deleted with them                         |
+| Export                                             | Disposition                                                                                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scaleLinear`, `bandLabel`, `bandSwatchClass`      | **Kept, reused** by the DOM chart                                                                                                            |
+| `barFillClass`                                     | **Deleted** — the SVG `fill-` variant has no DOM equivalent; superseded by the DOM `bandBarBgClass` (`bg-[var(--chart-band-*)]`) sibling map |
+| `bandInkFillClass`                                 | **Deleted** — superseded by the DOM `bandInkTextClass` (`text-[var(--chart-band-*-ink)]`) sibling map for the same reason                    |
+| `Legend`                                           | **Kept** — consumed by `how-to-read.tsx`, unaffected                                                                                         |
+| `Axis`, `Bar`, `BandGroup`, `TickRow`, `evenTicks` | **Deleted** — zero consumers after DD-25; their unit tests are deleted with them                                                             |
 
 Deleting dead exports rather than leaving them is deliberate: `chart-primitives.test.tsx` and
 `band-tokens.unit.test.ts` would otherwise keep them green forever with no production consumer,
-which is exactly the shape of drift the module's own docstring warns about.
+which is exactly the shape of drift the module's own docstring warns about. `barFillClass` and
+`bandInkFillClass` were initially left in place after the DOM rewrite deleted their only callers
+(`delivery.md`'s Phase 5 REFACTOR note explicitly deferred that cleanup to a later maintainer
+decision) — this table originally read "Replaced" for both while the code still carried them
+unreferenced; the Phase 12 PR review (finding F1) flagged that mismatch, and both are now actually
+deleted, bringing the table back in sync with the code.
 
 ### DD-33 — no new i18n keys unless genuinely new copy is introduced
 
@@ -401,23 +413,44 @@ Every string the overhaul needs already exists: `aiBenchHowToVendorReported` (th
 `aiBenchLegendHeading` and `aiBenchSourcesHeading` (the new disclosure summaries), the band and
 grade labels, and the column labels for the card `<dt>`s `[Repo-grounded]`.
 
-Four strings are genuinely new and MUST land in **both** `en` and `id`:
+Three strings are genuinely new and MUST land in **both** `en` and `id`:
 
 1. A `<summary>` label for the per-model roster disclosure (e.g. "All figures").
-2. A `<summary>` label for the how-to-read remainder if `aiBenchHowToSummary` does not read
-   correctly as a "more" affordance — to be decided during Phase 7 by reading the live string in
-   both locales, not assumed here.
-3. `aiBenchCardGroupModel` — the group heading over the card's vendor/harness fields (DD-34).
-4. `aiBenchCardGroupScores` — the group heading over the card's benchmark figures and coverage
+2. `aiBenchCardGroupModel` — the group heading over the card's vendor/harness fields (DD-34).
+3. `aiBenchCardGroupScores` — the group heading over the card's benchmark figures and coverage
    (DD-34).
 
-`[Unverified]` on the second: the decision depends on how the existing Indonesian string reads in
-its new position. Keys 3 and 4 are unconditional and land in Phase 6, in the key-before-consumer
+**Phase 7 resolution of the how-to-read remainder's `<summary>` label**: no new key was needed.
+`aiBenchHowToSummary` — `"How to read this benchmark (please read before comparing models)"` (en)
+/ `"Cara membaca tolok ukur ini (harap dibaca sebelum membandingkan model)"` (id) — was read live in
+its new position (cycle 7.1's remainder `<details>`, after the always-visible honesty line moved
+out) in both locales. It still reads correctly as a "click for more" affordance in both: the
+sentence names exactly what expanding it does (read the rest of the how-to guidance before
+comparing models), and nothing about its wording assumes it is the label for the WHOLE disclosure
+rather than just the remainder — the honesty line it now sits beside states the one guaranteed
+fact, and this label still accurately invites the reader into the rest of the how-to-read content.
+The key is reused verbatim, unchanged, on the remainder `<details>`'s `<summary>`. What were keys 3
+and 4 above (now keys 2 and 3) are unconditional and landed in Phase 6, in the key-before-consumer
 order cycle 6.1 established.
 
 **DD-34 adds no key for its absent-figure run**: the shared `<dd>` reuses the existing
-`aiBenchNoFigure` verbatim (`"Not reported"` / `"Tidak dilaporkan"`, `translations.ts` lines 64 and 442) `[Repo-grounded]`, and each collapsed field's `<dt>` reuses the column label key it already
-had.
+`aiBenchNoFigure` verbatim (`"Not reported"` / `"Tidak dilaporkan"`, the `aiBenchNoFigure` key in
+`translations.ts` — lines 68 and 477 as of this correction; cite the key name rather than these line
+numbers for anything longer-lived, since insertions elsewhere in the file shift them)
+`[Repo-grounded]`, and each collapsed field's `<dt>` reuses the column label key it already had.
+
+> **2026-08-01 — Phase 12 Cycle 2 PR review correction (finding F9)**: this section's enumeration is
+> incomplete. A second locale-copy mechanism exists outside `translations.ts`, scoped to one entry.
+> `IntegrityNote.text` is literal English data owned by `core/data/models.ts`, and the functional
+> core stays locale-blind — a per-model translation cannot become a static `translations.ts` key
+> without letting locale-specific prose leak into the core. `model-figures.tsx` instead carries a
+> shell-layer `INTEGRITY_NOTE_ID_TEXT: Record<string, string>` keyed by `note.modelId`, overriding
+> the `id` rendering of any note this map names; any note (present or future) it does not name falls
+> back to `note.text`'s English source, so an untranslated note degrades gracefully instead of
+> rendering `undefined`. The live dataset carries exactly one integrity note (`gpt-5.6-sol`,
+> `core/data/models.ts:368-371`), so this map's current scope is one entry — a bounded, working
+> override, not the standard key/value system this section otherwise enumerates. Any future
+> integrity note needing an Indonesian translation must add an entry here, not to `translations.ts`.
 
 ### DD-34 — the expanded card's field density
 
@@ -545,9 +578,24 @@ This is the spec's own "multiple terms, single description" shape — MDN's `<dl
 `Permitted content: … one or more <dt> elements followed by one or more <dd> elements` and an
 example section titled "Multiple terms, single description" —
 <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dl> (accessed 2026-07-31)
-`[Web-cited]`. The `<dt>`s render inline and wrap as one run
-(`flex flex-wrap` on the group, comma separators via `after:content` on all but the last), so N
-absent figures cost one wrapped line instead of N field slots.
+`[Web-cited]`. Every `<dt>` and the shared `<dd>` are **direct children** of the `dl > div` wrapper
+shown above — MDN's permitted-content rule requires exactly that, and a nested element wrapping only
+the `<dt>`s (which an earlier revision of this fix used, to get them to visually run together) is
+NOT permitted content, since it stops the `<dt>`s being direct children. The visual "one run" effect
+is achieved without that wrapper: the `dl > div` is a two-column CSS grid (the same
+`grid-cols-[6.5rem_1fr]` rail template Treatment 2 already applies to every reported figure's own
+row); each `<dt>` is pinned to the label column (`col-start-1`, comma-separated, stacking one per
+row), and the shared `<dd>` is pinned to the value column with an explicit `grid-row` span covering
+exactly as many rows as there are absent labels, so it stays vertically centred beside the whole
+stacked run. N absent figures still cost far less vertical space than N full field slots — one
+shared row-height per label rather than one label-plus-value pair per label.
+
+> **2026-08-01 — Phase 12 PR review correction (finding F3)**: the DWT-006 rail-alignment fix that
+> introduced this collapsed run originally wrapped the `<dt>` run in its own `<div>` (inside the
+> `dl > div` shown above) to get `flex flex-wrap` behaviour — which is exactly the "nested element
+> wrapping only the `<dt>`s" case the permitted-content rule forbids, a defect this illustration
+> never caught because it never showed that wrapper. `model-detail-disclosure.tsx` is fixed to the
+> flattened grid structure described above; this illustration and prose now match what ships.
 
 **Why parity survives (W-26 / W-30).** Nothing is removed from the DOM:
 
@@ -655,7 +703,7 @@ preserved there.
 
 `core/url-state.ts` carries the class filter as `class=<band>` and the per-band sort as
 `sortOpus`/`sortSonnet`/`sortLight` `[Repo-grounded]` (`SORT_PARAM_KEYS`, line 30-34). Both rename
-cleanly: `class=haiku` and `sortHaiku`. **No decode-side alias is added** for the retired
+cleanly: `class=haiku` and `sort-haiku`. **No decode-side alias is added** for the retired
 `class=light` or `sortLight` values.
 
 Rationale: the page shipped 2026-07-30 — one day before this plan — so its URL space has no
@@ -850,7 +898,7 @@ Each delivery unit is independently revertible.
   and must be applied as a fresh reverse-rename commit instead.
 
 There is no data migration, no persisted state, and no external contract. The one externally
-observable surface the rename changes is the **query string** (`class=haiku`, `sortHaiku`), and
+observable surface the rename changes is the **query string** (`class=haiku`, `sort-haiku`), and
 DD-35 deliberately ships no alias for the retired values — a stale link degrades to the unfiltered
 default view rather than erroring, which is `sanitizeState`'s existing AC-26 contract. Rollback is
 therefore purely a git operation.

@@ -91,8 +91,118 @@ to retroactively justify them. Findings are recorded inline in this subsection d
 excerpt + URL + access date; any alternative they invalidate is dropped with a one-line reason, and
 any selection they overturn is re-decided in the relevant decision table rather than defended.
 
-**Prior-art findings** — `[Unverified]`, recorded by the Phase 2 `web-researcher` step. This is the
-one deliberately-open item in the funnel; every other artefact below is complete.
+**Prior-art findings** — recorded by the Phase 2 `web-researcher` step (accessed 2026-07-31 unless
+noted otherwise):
+
+1. **DOM/CSS bars over SVG for responsive reflow** — "SVG does not have layout techniques like
+   Flexbox, Grid or even Normal Flow. In SVG, all shapes are absolutely positioned", and on
+   container resize "the JavaScript needs to compute all SVG positions and sizes from scratch...
+   a page with 20 charts freezes the browser for 1-2 seconds" — [Responsive bar charts in HTML and
+   CSS](https://9elements.com/blog/responsive-bar-charts-in-html-and-css/), 9elements engineering
+   blog, accessed 2026-07-31. Directly validates Screen A's DOM-bar-row direction as the
+   lower-risk choice for a page with many per-model bar rows.
+2. **Accordion disclosure for mobile comparison rows** — "use accordions to allow mobile users to:
+   See an overview of the type of data that's available" and "the leftmost column... should be
+   locked in place, so users can see the necessary labels at all times" —
+   [Mobile Tables: Comparisons and Other Data Tables](https://www.nngroup.com/articles/mobile-tables/),
+   Nielsen Norman Group, accessed 2026-07-31. Directly validates Screen B's summary-card-plus-`<details>`
+   direction.
+3. **Column-priority/hide-and-reveal as an "advanced" tier, not the baseline** — "Simple interaction
+   techniques can help, but you may need to offer users more advanced features for information
+   hiding and column reordering" —
+   [How to Fit Big Tables on Small Screens](https://www.nngroup.com/videos/big-tables-small-screens/),
+   Nielsen Norman Group, 2021-08-20, accessed 2026-07-31. Read alongside Finding 4 below, this
+   frames a hidden-column table as a heavier, less-proven pattern than a card/accordion disclosure.
+4. **Card View avoids horizontal scroll entirely; frozen-column scroll is the named alternative** —
+   "Card View: A collapsed table keeps all the data but rolls each row into a card... no horizontal
+   scrolling with a card view" and "Horizontal Scroll with Frozen Columns: locks the first column
+   and allows the rest of the columns to scroll horizontally" —
+   [Data Table Pattern](https://uxpatterns.dev/patterns/data-display/table), uxpatterns.dev,
+   accessed 2026-07-31 (community reference, cross-checked against Findings 2-3 above, which it
+   agrees with directionally).
+5. **Grouped fields with subheads, and a warning against unexplained missing data** — "organized...
+   with subheads for major categories, such as size, hardware compatibility, and performance" and,
+   on inconsistent missing-value treatment across four compared products: "the first product has no
+   speed given... users cannot tell whether an absent value means 'not applicable' or 'simply
+   unreported'" —
+   [Specification Lists Have Terrible Usability](https://jakobnielsenphd.substack.com/p/specification-lists),
+   Jakob Nielsen, accessed 2026-07-31. Validates Screen B (continued)'s semantic grouping (DN-3) and
+   its explicit shared `"Not reported"` `<dd>` run (DN-4) over silently omitting the field.
+6. **A live per-model detail page's own grouping and typography** — Artificial Analysis's per-model
+   page organizes fields into named sections ("Model summary", "Technical specifications",
+   "Detailed breakdowns") and, for an undisclosed metric, "simply omits the field... and separately
+   explains the gap in FAQ prose" rather than a dash —
+   [artificialanalysis.ai/models](https://artificialanalysis.ai/models), accessed 2026-07-31. This
+   is the one finding that runs the other way on missing-data treatment (omission vs. Option B4's
+   shared "Not reported" row) — see Reconcile below for why B4 is kept over this precedent.
+7. **A competing leaderboard's plain-dash convention** — Vellum's LLM leaderboard renders missing
+   benchmark data as a plain `-`, observed across multiple models and fields, with no documented
+   mobile-specific table transformation —
+   [vellum.ai/llm-leaderboard](https://www.vellum.ai/llm-leaderboard), accessed 2026-07-31. A
+   useful negative finding: not every public comparison tool has solved narrow-viewport disclosure.
+8. **An explicit density-mode toggle as a third pattern** — OpenRouter's models page exposes a
+   "List" vs. "Table" view-mode toggle alongside filtering, rather than relying on horizontal
+   scroll or automatic column hiding —
+   [openrouter.ai/models](https://openrouter.ai/models), accessed 2026-07-31.
+9. **Comparison-table scanning techniques** — grouping attributes by category, sticking column
+   headings during scroll, and horizontal (row-based) styling to aid left-to-right scanning —
+   [4 Ways to Optimize the Comparison Feature for Scanning](https://baymard.com/blog/user-friendly-comparison-tools),
+   Baymard Institute, accessed 2026-07-31. Corroborates Finding 5's grouping guidance and Screen B's
+   sticky-header restoration once the table fits (DD-27).
+
+**Confirmable-but-not-confirmed**: the exact SVG-vs-DOM rendering technology used by LMSYS Chatbot
+Arena, Artificial Analysis, and OpenRouter specifically could not be determined — the
+`web-researcher` agent's read-only tooling converts pages to markdown, which strips chart markup
+from these JS-rendered sites. Finding 1 above (an engineering deep-dive on the general SVG-vs-DOM
+tradeoff, not a claim about any specific site) stands on its own technical merits regardless. A
+browser-capable spot-check (Playwright MCP, already scheduled for Phase 10's live manual
+verification) can confirm the specific-site claim if ever needed; it is not a blocker for this
+plan's own DOM-bar-row decision, which Finding 1 already grounds independently.
+
+**Reconcile** — each of the 12 alternatives across the 4 screens against Findings 1-9 above. No
+alternative below is invalidated by the research; none of the four named selections changes.
+
+- **A1** (DOM bars, label above) — supported by Finding 1 (DOM/CSS avoids SVG's absolute-position
+  reflow cost); not chosen because A2's responsive label column reads better at `lg`, per this
+  plan's own AC-32-adjacent visual-hierarchy criteria, not because A1 is technically unsound.
+- **A2** (DOM bars, responsive label column) — **Selected**, reinforced by Finding 1 directly.
+- **A3** (SVG) — reinforced-as-dropped by Finding 1 (the 9elements deep-dive independently confirms
+  the same reflow-cost concern that failed A3 at the `md` breakpoint in this plan's own R1 check).
+- **B1** (summary card + `<details>`) — **Selected**, directly supported by Finding 2 (NN/g:
+  accordion disclosure for mobile comparison rows) and Finding 4 (Card View avoids horizontal
+  scroll entirely).
+- **B2** (per-model detail route) — no finding challenges or supports a route-based split; stays
+  dropped on this plan's own W-26 figure-parity/shareability grounds, unchanged.
+- **B3** (column-priority table) — supported-as-dropped by Finding 3 (NN/g: column-hiding is an
+  "advanced" tier, not the baseline) and Finding 4 (frozen-column scroll named as the alternative
+  to card view, not the default).
+- **B4** (label rail, grouped fields, shared "Not reported" row) — **Selected**, directly supported
+  by Finding 5 (Jakob Nielsen: grouped subheads, and inconsistent missing-value treatment across
+  compared products actively harms usability) and Finding 9 (Baymard: category grouping aids
+  scanning). Finding 6 (Artificial Analysis omits undisclosed fields silently, explained in FAQ
+  prose instead) points the other way, but Nielsen's finding is the more directly on-point source —
+  it evaluates exactly this failure mode (silent omission across a _compared_ list) and finds it
+  harmful, whereas Finding 6 describes a single-model detail page with no comparison context. B4's
+  explicit shared row stays selected.
+- **B5** (contrast-only) — kept as documented runner-up/reducible-fallback; no finding changes that
+  status.
+- **B6** (mini-table) — stays dropped on this plan's own DN-2/`<dl>`-semantics grounds; Finding 3
+  independently reinforces that a table-shaped sub-pattern is the heavier "advanced" tier this
+  screen was avoiding.
+- **C1** (chart first, one visible honesty line) — **Selected**; no finding addresses page-honesty
+  banner composition directly, so this decision rests on the plan's own AC-32 requirement,
+  unchanged.
+- **C2** (sticky dismissible banner) — stays dropped on this plan's own AC-32 long-term-visibility
+  grounds; unaffected by the research.
+- **C3** (prose moved unchanged) — stays dropped on this plan's own above-the-fold grounds;
+  unaffected.
+
+Findings 7 (Vellum's plain-dash convention) and 8 (OpenRouter's List/Table toggle) are recorded as
+useful negative/alternative-pattern evidence but do not bear on any of the 12 alternatives above —
+neither a dash-only convention nor a density-mode toggle was ever a candidate in this funnel.
+
+No mockup regeneration needed: all 8 finalist mockups (2 per screen × 4 screens, confirmed present
+under `assets/`) remain accurate to the still-current selections above.
 
 ---
 
@@ -594,22 +704,22 @@ much of the prior plan's disclosure prominence as the viewport allows.
 
 ### In scope
 
-| #     | Feature                                                                                                                                                                                                                                                                                   |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PS-1  | `shell/bar-row.tsx` — a new HTML/CSS bar row component replacing the SVG `BenchmarkRow`                                                                                                                                                                                                   |
-| PS-2  | `shell/benchmark-chart.tsx` rewritten to render DOM rows; every SVG layout constant removed                                                                                                                                                                                               |
-| PS-3  | Responsive label column at `lg` via CSS grid (Screen A, Option A2)                                                                                                                                                                                                                        |
-| PS-4  | `shell/model-card.tsx` — a new summary-plus-`<details>` roster card                                                                                                                                                                                                                       |
-| PS-5  | `shell/model-table.tsx` reduced to primary columns with a per-row expandable detail row                                                                                                                                                                                                   |
-| PS-6  | R5 fix: Unit 1 contains the overflow; Unit 2 shrinks the table so `lg:overflow-visible` becomes safe again                                                                                                                                                                                |
-| PS-7  | Page composition reorder in `app/[locale]/tools/ai-benchmark/benchmark-content.tsx`                                                                                                                                                                                                       |
-| PS-8  | `shell/how-to-read.tsx` split: one always-visible honesty line; the rest, the legend, and Sources collapse                                                                                                                                                                                |
-| PS-9  | `shell/evidence-badge.tsx` tap-target enlargement to 24x24 CSS px minimum                                                                                                                                                                                                                 |
-| PS-10 | Gherkin: reword AC-32, AC-36, AC-46, AC-47 (overhaul) and AC-6, AC-9, AC-41, AC-44, AC-48 (DD-35 taxonomy); add AC-49..AC-67 in the existing `ai-benchmark.feature`                                                                                                                       |
-| PS-11 | A real e2e regression test for R5 in `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`                                                                                                                                                                                          |
-| PS-12 | Any new i18n keys required, in **both** `en` and `id`                                                                                                                                                                                                                                     |
-| PS-13 | Expanded-card density (DD-34): label rail, `FigureCell` `layout` prop, two `<h4>` groups, and the collapsed absent-figure run — in the card and in the table's per-row detail region alike                                                                                                |
-| PS-14 | Capability-class rename (DD-35): the third rated class becomes `haiku` everywhere it is named — `core/` types, the `class`/`sortHaiku` URL parameters, the `--chart-band-haiku*` design tokens, both i18n keys, the per-band testids, the Gherkin step text, and both step-binding layers |
+| #     | Feature                                                                                                                                                                                                                                                                                    |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PS-1  | `shell/bar-row.tsx` — a new HTML/CSS bar row component replacing the SVG `BenchmarkRow`                                                                                                                                                                                                    |
+| PS-2  | `shell/benchmark-chart.tsx` rewritten to render DOM rows; every SVG layout constant removed                                                                                                                                                                                                |
+| PS-3  | Responsive label column at `lg` via CSS grid (Screen A, Option A2)                                                                                                                                                                                                                         |
+| PS-4  | `shell/model-card.tsx` — a new summary-plus-`<details>` roster card                                                                                                                                                                                                                        |
+| PS-5  | `shell/model-table.tsx` reduced to primary columns with a per-row expandable detail row                                                                                                                                                                                                    |
+| PS-6  | R5 fix: Unit 1 contains the overflow; Unit 2 shrinks the table so `lg:overflow-visible` becomes safe again                                                                                                                                                                                 |
+| PS-7  | Page composition reorder in `app/[locale]/tools/ai-benchmark/benchmark-content.tsx`                                                                                                                                                                                                        |
+| PS-8  | `shell/how-to-read.tsx` split: one always-visible honesty line; the rest, the legend, and Sources collapse                                                                                                                                                                                 |
+| PS-9  | `shell/evidence-badge.tsx` tap-target enlargement to 24x24 CSS px minimum                                                                                                                                                                                                                  |
+| PS-10 | Gherkin: reword AC-32, AC-36, AC-46, AC-47 (overhaul) and AC-6, AC-9, AC-41, AC-44, AC-48 (DD-35 taxonomy); add AC-49..AC-67 in the existing `ai-benchmark.feature`                                                                                                                        |
+| PS-11 | A real e2e regression test for R5 in `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`                                                                                                                                                                                           |
+| PS-12 | Any new i18n keys required, in **both** `en` and `id`                                                                                                                                                                                                                                      |
+| PS-13 | Expanded-card density (DD-34): label rail, `FigureCell` `layout` prop, two `<h4>` groups, and the collapsed absent-figure run — in the card and in the table's per-row detail region alike                                                                                                 |
+| PS-14 | Capability-class rename (DD-35): the third rated class becomes `haiku` everywhere it is named — `core/` types, the `class`/`sort-haiku` URL parameters, the `--chart-band-haiku*` design tokens, both i18n keys, the per-band testids, the Gherkin step text, and both step-binding layers |
 
 ### Out of scope
 
@@ -923,7 +1033,7 @@ visible:
   # `sanitizeState`'s existing AC-26 contract rather than a new behaviour.
   @unit
   Scenario: A shared benchmark URL carries the renamed capability-class parameters
-    Given a query string of "class=haiku&sortHaiku=price-asc"
+    Given a query string of "class=haiku&sort-haiku=price-asc"
     When that query string is decoded and then re-encoded
     Then the re-encoded query string is identical to the original
     And a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state

@@ -20,6 +20,7 @@
 // display name from `core/data/benchmarks.ts`, and every band label from `chart-primitives.tsx`'s
 // `bandLabel`.
 
+import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
@@ -28,6 +29,7 @@ import type { HarnessId } from "../core/data/models";
 import { HARNESS_IDS, BANDS, type FilterState } from "../core/filter";
 import type { Band } from "../core/bands";
 import { HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 import { bandLabel } from "./chart-primitives";
 
 const SLOT = "benchmark-filters";
@@ -50,6 +52,13 @@ export type FilterSelectProps = {
    * of `options`' own values.
    */
   allLabel?: string;
+  /**
+   * Rule-15 UWT-011 fix: an optional inline cue rendered right after the `<label>` — used by the
+   * Class selects to point at the always-reachable (if collapsed) legend, since Class values reuse
+   * Anthropic's own tier names cross-vendor with no other on-page hint. Omitted by the harness
+   * select, which has no such jargon concern.
+   */
+  hint?: ReactNode;
   onChange: (value: string) => void;
 };
 
@@ -59,12 +68,13 @@ export type FilterSelectProps = {
  * (`value=""`) is always "no filter on this axis" (rendered with the caller's localized `allLabel`)
  * — and is omitted entirely when the caller passes no `allLabel` (see its doc above).
  */
-export function FilterSelect({ id, label, value, options, allLabel, onChange }: FilterSelectProps) {
+export function FilterSelect({ id, label, value, options, allLabel, hint, onChange }: FilterSelectProps) {
   return (
     <div data-slot="filter-select" className="flex min-w-0 basis-full items-center gap-2 sm:basis-auto">
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
+      {hint}
       <div className="relative w-full max-w-full min-w-0 sm:w-48">
         <select
           id={id}
@@ -118,6 +128,18 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
   const allClassesLabel = t(locale, "aiBenchFilterAllClasses");
 
   const activeCount = (state.harness !== undefined ? 1 : 0) + (state.class !== undefined ? 1 : 0);
+  const classHint = t(locale, "aiBenchClassHint");
+  // Rule-15 UWT-011 fix: a real `<a>` (not a hover-only `title`) — Tab-focusable and touch-usable,
+  // and following it auto-expands the closed legend `<details>` this targets (native HTML "reveal"
+  // algorithm).
+  const classHintLink = (
+    <a
+      href="#ai-bench-legend-classes"
+      className={`inline-flex items-center text-xs text-muted-foreground underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
+    >
+      {classHint}
+    </a>
+  );
 
   function handleHarnessChange(raw: string) {
     const harness = raw === "" ? undefined : (raw as HarnessId);
@@ -132,8 +154,19 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
   return (
     <div data-slot={SLOT} data-testid={SLOT}>
       {/* Below `md`: a collapsed disclosure naming the active-filter count. */}
-      <details data-testid={`${SLOT}-mobile`} className={cn("rounded-md border p-3 md:hidden")}>
-        <summary data-testid={`${SLOT}-mobile-summary`} className="cursor-pointer text-sm font-medium">
+      {/* Rule-15 UWT-007 fix: tighter padding below `sm` — see `benchmark-content.tsx`'s root
+          className docstring for the fold-budget rationale. */}
+      <details data-testid={`${SLOT}-mobile`} className={cn("rounded-md border p-2 sm:p-3 md:hidden")}>
+        {/* DD-30/AC-58 (Phase 8): a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
+            This pre-existing `<summary>` predates the plan's own AC-58 scope note ("Phases 6 and 7"),
+            but it is the same disclosure-control defect class and is genuinely present on the live
+            page at 390px — Root Cause Orientation applies the shared fix here too rather than leaving
+            one known-undersized target on the page the scenario's own text ("every ... disclosure
+            control") already covers. */}
+        <summary
+          data-testid={`${SLOT}-mobile-summary`}
+          className={`cursor-pointer text-sm font-medium ${TAP_TARGET_MIN_CLASS}`}
+        >
           {t(locale, "aiBenchFilterSummary")} ({activeCount} {t(locale, "aiBenchFilterActiveCountLabel")})
         </summary>
         <div className="mt-3 flex flex-col gap-3">
@@ -151,6 +184,7 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
             value={state.class ?? ""}
             options={classOptions}
             allLabel={allClassesLabel}
+            hint={classHintLink}
             onChange={handleClassChange}
           />
         </div>
@@ -173,6 +207,7 @@ export function BenchmarkFilters({ state, resultCount, locale, onChange }: Bench
           value={state.class ?? ""}
           options={classOptions}
           allLabel={allClassesLabel}
+          hint={classHintLink}
           onChange={handleClassChange}
         />
       </div>

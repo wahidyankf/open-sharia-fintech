@@ -26,11 +26,23 @@ export const PARAM_KEYS = {
  * PS-4 claims). Kept as their own map, distinct from {@link PARAM_KEYS}, so `SORT_PARAM_KEYS` can
  * be iterated over uniformly (all three bands share the same shape) without mixing in the two
  * unrelated filter keys.
+ *
+ * Worked example: a URL sorting the haiku band ascending by price carries `?sort-haiku=price-asc`
+ * (via {@link SORT_PARAM_KEYS.haiku}).
+ *
+ * Rule-15 UWT-015 fix: these three keys were `sortOpus`/`sortSonnet`/`sortHaiku` (camelCase),
+ * mixed with every VALUE on this page already being kebab-case (`price-asc`, `claude-code`, …) —
+ * one query string carried both casing conventions at once. Renamed to kebab-case
+ * (`sort-opus`/`sort-sonnet`/`sort-haiku`) so every key AND every value share one convention.
+ * Following the SAME no-legacy-alias precedent DD-35's capability-class rename already set for
+ * this exact map: a bookmarked or shared URL still using the retired camelCase key sanitizes to
+ * the default (`"capability"`) sort, exactly like any other unrecognized sort value, rather than
+ * being silently rewritten to the new key.
  */
 export const SORT_PARAM_KEYS = {
-  opus: "sortOpus",
-  sonnet: "sortSonnet",
-  light: "sortLight",
+  opus: "sort-opus",
+  sonnet: "sort-sonnet",
+  haiku: "sort-haiku",
 } as const;
 
 /** One {@link SortMode} per RATED capability band — the per-band sort choice (DD-4). The `unrated`
@@ -38,7 +50,7 @@ export const SORT_PARAM_KEYS = {
 export type SortState = {
   opus: SortMode;
   sonnet: SortMode;
-  light: SortMode;
+  haiku: SortMode;
 };
 
 /** The default sort mode for every band: capability (composite index), matching the band's own canonical order. */
@@ -48,7 +60,7 @@ export const DEFAULT_SORT_MODE: SortMode = "capability";
 export const DEFAULT_SORT_STATE: SortState = {
   opus: DEFAULT_SORT_MODE,
   sonnet: DEFAULT_SORT_MODE,
-  light: DEFAULT_SORT_MODE,
+  haiku: DEFAULT_SORT_MODE,
 };
 
 /** The unfiltered state — what an empty or unrecognized query resolves to. */
@@ -62,7 +74,7 @@ export const DEFAULT_STATE: FilterState & SortState = {
  * An untrusted, possibly-raw-string per-band sort state — what a URL param actually hands
  * {@link sanitizeState} before validation narrows it to {@link SortMode}.
  */
-type UntrustedSortState = { opus?: string; sonnet?: string; light?: string };
+type UntrustedSortState = { opus?: string; sonnet?: string; haiku?: string };
 
 /**
  * Sanitize a (possibly untrusted) filter + sort state to a valid one: drop any harness value that
@@ -79,7 +91,7 @@ export function sanitizeState(state: Partial<FilterState> & UntrustedSortState):
     class: bandClass,
     opus: sanitizeSortMode(state.opus),
     sonnet: sanitizeSortMode(state.sonnet),
-    light: sanitizeSortMode(state.light),
+    haiku: sanitizeSortMode(state.haiku),
   };
 }
 
@@ -105,7 +117,7 @@ export function decodeState(params: URLSearchParams): FilterState & SortState {
     class: classRaw !== null ? (classAsBand(classRaw) ?? undefined) : undefined,
     opus: params.get(SORT_PARAM_KEYS.opus) ?? undefined,
     sonnet: params.get(SORT_PARAM_KEYS.sonnet) ?? undefined,
-    light: params.get(SORT_PARAM_KEYS.light) ?? undefined,
+    haiku: params.get(SORT_PARAM_KEYS.haiku) ?? undefined,
   });
 }
 
@@ -136,15 +148,15 @@ export function encodeState(state: FilterState & Partial<SortState>): URLSearchP
   }
   const opus = state.opus ?? DEFAULT_SORT_MODE;
   const sonnet = state.sonnet ?? DEFAULT_SORT_MODE;
-  const light = state.light ?? DEFAULT_SORT_MODE;
+  const haiku = state.haiku ?? DEFAULT_SORT_MODE;
   if (opus !== DEFAULT_SORT_MODE) {
     params.set(SORT_PARAM_KEYS.opus, opus);
   }
   if (sonnet !== DEFAULT_SORT_MODE) {
     params.set(SORT_PARAM_KEYS.sonnet, sonnet);
   }
-  if (light !== DEFAULT_SORT_MODE) {
-    params.set(SORT_PARAM_KEYS.light, light);
+  if (haiku !== DEFAULT_SORT_MODE) {
+    params.set(SORT_PARAM_KEYS.haiku, haiku);
   }
   return params;
 }

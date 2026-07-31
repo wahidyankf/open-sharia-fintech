@@ -10,7 +10,7 @@ import { describe, expect, it } from "vitest";
 //
 //   --chart-band-opus     (Opus tier)
 //   --chart-band-sonnet   (Sonnet tier)
-//   --chart-band-light    (_LIGHT / "fast" tier)
+//   --chart-band-haiku    (_HAIKU / "fast" tier)
 //   --chart-band-unrated  (models that have no tier rating)
 //
 // Token home: `libs/web-ui-token/src/ayokoding.css` (the AyoKoding theme that
@@ -54,7 +54,7 @@ const css = readFileSync(tokensPath, "utf8");
 const bandTokenNames = [
   "--chart-band-opus",
   "--chart-band-sonnet",
-  "--chart-band-light",
+  "--chart-band-haiku",
   "--chart-band-unrated",
 ] as const;
 

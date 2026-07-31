@@ -66,12 +66,13 @@ Then("the document language attribute is {string}", async ({ page }, expectedLan
 
 // ── Chart accessible-name assertion (AC-36) ───────────────────────────────────
 
-// UWT-002 fix (Rule-15, 2026-07-30): the chart is now one svg PER rated band
-// (`benchmark-chart-svg-{opus,sonnet,light}`), not one shared `benchmark-chart-svg` — the first
-// band's own svg is enough to prove the family carries a real accessible name.
+// DD-25 reword (Phase 5, 2026-07-31): the chart no longer renders any svg — each rated band's own
+// DOM region instead carries `role="group"` with `aria-labelledby` (`benchmark-chart-band-{opus,
+// sonnet,haiku}`), not one shared svg — the first band's own region is enough to prove the family
+// carries a real accessible name.
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The merged chart exposes an accessible name
-Then("the merged chart exposes an accessible name", async ({ page }) => {
-  await expect(page.locator('[data-testid^="benchmark-chart-svg-"]').first()).toHaveAccessibleName(/.+/);
+Then("each rated band's chart region exposes a localized accessible name", async ({ page }) => {
+  await expect(page.locator('[data-testid^="benchmark-chart-band-"][role="group"]').first()).toHaveAccessibleName(/.+/);
 });
 
 // ── Phase 8 — harness and class filters (AC-18, AC-22, AC-27) ─────────────────
@@ -165,14 +166,14 @@ Then("the same filtered set of models is shown", async ({ page }) => {
 // exactly as declared, is therefore the correct level to assert this at — not by locating one
 // particular rendered DOM element.
 
-const BAND_IDS = ["opus", "sonnet", "light", "unrated"] as const;
+const BAND_IDS = ["opus", "sonnet", "haiku", "unrated"] as const;
 
 // The three bands that actually render as a bar (`benchmark-chart.tsx` never plots `unrated` as
 // a bar — it is a plain text list) — the base/bar-fill token `--chart-band-<band>` against
 // `--color-background` (the page background a bar renders directly onto) is the pair the M-14 fix
 // (delivery.md, Phase 9 Round 1a) actually changed and the one WCAG 1.4.11's 3:1 non-text minimum
 // applies to; `unrated`'s base token was never implicated (it aliases the neutral `--warm-400`).
-const RATED_BAND_IDS = ["opus", "sonnet", "light"] as const;
+const RATED_BAND_IDS = ["opus", "sonnet", "haiku"] as const;
 
 const WCAG_NON_TEXT_MIN_CONTRAST = 3.0;
 
@@ -202,7 +203,7 @@ const WCAG_AA_MIN_CONTRAST = 4.5;
 let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
   opus: 0,
   sonnet: 0,
-  light: 0,
+  haiku: 0,
   unrated: 0,
 };
 
@@ -213,7 +214,7 @@ let bandContrastRatios: Record<(typeof BAND_IDS)[number], number> = {
 let bandBaseContrastRatios: Record<(typeof RATED_BAND_IDS)[number], number> = {
   opus: 0,
   sonnet: 0,
-  light: 0,
+  haiku: 0,
 };
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
@@ -308,10 +309,12 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 //
 // The assertion the M-14 fix (Phase 9 Round 1a) actually needs: the base/bar-fill token
-// (`--chart-band-<band>`) is what a bar's `fill` colour resolves to (`chart-primitives.tsx`'s
-// `barFillClass`), rendered directly against the page background — a meaningful, non-text
+// (`--chart-band-<band>`) is what a DOM bar's `bg-*` background colour resolves to
+// (`chart-primitives.tsx`'s `bandBarBgClass` — the SVG-era `barFillClass` this comment used to name
+// was deleted in DD-32 once the DOM rewrite left it with zero consumers), rendered directly against
+// the page background — a meaningful, non-text
 // graphical object under WCAG 1.4.11, whose minimum is 3:1, not the 4.5:1 text minimum the
-// `-ink`/`-wash` assertion above checks. `sonnet`/`light` measured ~2.90:1/~2.13:1 before the fix
+// `-ink`/`-wash` assertion above checks. `sonnet`/`haiku` measured ~2.90:1/~2.13:1 before the fix
 // pinned literal OKLCH values (`ayokoding.css:107-108`); this would have failed against those
 // pre-fix alias values and passes against the pinned literals.
 Then("every rated band's bar fill meets the WCAG non-text contrast ratio against the page background", async ({}) => {
@@ -327,8 +330,8 @@ Then("every rated band's bar fill meets the WCAG non-text contrast ratio against
 
 // Shared by every viewport-and-locale-parametrized scenario outline against this page (AC-52 here;
 // the later AC-49/AC-50/AC-58 outlines reuse it instead of re-implementing navigation).
-async function navigateAtViewport(page: Page, width: number, locale: string): Promise<void> {
-  await page.setViewportSize({ width, height: 800 });
+async function navigateAtViewport(page: Page, width: number, locale: string, height = 800): Promise<void> {
+  await page.setViewportSize({ width, height });
   await page.goto(`/${locale}/tools/ai-benchmark`);
   await page.waitForLoadState("networkidle");
 }
@@ -351,4 +354,305 @@ When("the document's scroll width is compared with its client width", async ({ p
 
 Then("the document scroll width does not exceed the document client width", async ({}) => {
   expect(overflowScrollWidth).toBeLessThanOrEqual(overflowClientWidth);
+});
+
+// ── Sticky desktop header (AC-59, DD-27 Unit 2) ───────────────────────────────
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
+Given("the AI benchmark page is loaded at a 1440 px viewport", async ({ page }) => {
+  await navigateAtViewport(page, 1440, "en");
+});
+
+When("the page is scrolled until the roster table's last row is in view", async ({ page }) => {
+  const lastRow = page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]').last();
+  await lastRow.scrollIntoViewIfNeeded();
+});
+
+Then("the table's header row is still visible", async ({ page }) => {
+  const headerRow = page.locator('[data-testid="model-table-desktop"] thead tr').first();
+  await expect(headerRow).toBeInViewport();
+});
+
+// ── Expanded card field density (DD-34, cycles 6.4/6.5) ───────────────────────
+
+async function navigateWithFirstCardExpanded(page: Page): Promise<void> {
+  await navigateAtViewport(page, 390, "en");
+  const summary = page.locator('[data-testid^="model-card-disclosure-"]').first();
+  await summary.click();
+}
+
+type ComputedTextStyle = { fontSize: number; fontWeight: number };
+
+async function readComputedTextStyle(locator: ReturnType<Page["locator"]>): Promise<ComputedTextStyle> {
+  return locator.evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { fontSize: parseFloat(cs.fontSize), fontWeight: parseFloat(cs.fontWeight) };
+  });
+}
+
+let cardLabelStyle: ComputedTextStyle | null = null;
+let cardValueStyle: ComputedTextStyle | null = null;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value out-ranks its own field label
+Given("the AI benchmark page is loaded at a 390 px viewport with one roster card expanded", async ({ page }) => {
+  await navigateWithFirstCardExpanded(page);
+});
+
+When(
+  "the computed font size and font weight of a field label and of its own value are read from the live page",
+  async ({ page }) => {
+    const details = page.locator('[data-testid^="model-card-details-"]').first();
+    cardLabelStyle = await readComputedTextStyle(details.locator("dt").first());
+    cardValueStyle = await readComputedTextStyle(details.locator("dd").first());
+  },
+);
+
+Then("the value's computed font size is larger than the label's computed font size", async ({}) => {
+  expect(cardValueStyle!.fontSize).toBeGreaterThan(cardLabelStyle!.fontSize);
+});
+
+Then("the value's computed font weight is greater than the label's computed font weight", async ({}) => {
+  expect(cardValueStyle!.fontWeight).toBeGreaterThan(cardLabelStyle!.fontWeight);
+});
+
+let gradedCellFlexDirection = "";
+let labelBox: { top: number; bottom: number } | null = null;
+let valueBox: { top: number; bottom: number } | null = null;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded card's figure value and its evidence badge flow on one row
+When("the computed flex direction of a graded figure cell is read from the live page", async ({ page }) => {
+  const details = page.locator('[data-testid^="model-card-details-"]').first();
+  const gradedCell = details.locator('[data-slot="figure-cell"]').first();
+  gradedCellFlexDirection = await gradedCell.evaluate((el) => getComputedStyle(el).flexDirection);
+  // The field's own <dd> is the nearest <dd> ancestor of the graded cell; its parent is the
+  // shared name-value wrapper `model-detail-disclosure.tsx` renders one per field, so this
+  // navigation is stable whether that wrapper is today's stacked layout or 6.5's rail layout.
+  const dd = gradedCell.locator("xpath=ancestor::dd[1]");
+  const fieldRow = dd.locator("xpath=parent::div[1]");
+  const dt = fieldRow.locator("dt").first();
+  labelBox = await dt.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { top: r.top, bottom: r.bottom };
+  });
+  valueBox = await dd.evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { top: r.top, bottom: r.bottom };
+  });
+});
+
+Then("that computed flex direction is row rather than column", async ({}) => {
+  expect(gradedCellFlexDirection).toBe("row");
+});
+
+Then("the field label's vertical band overlaps the vertical band of its own value", async ({}) => {
+  const overlaps = labelBox!.top < valueBox!.bottom && valueBox!.top < labelBox!.bottom;
+  expect(overlaps).toBe(true);
+});
+
+// ── Phase 8 — accessibility: tap targets and the live layout criteria ────────
+//
+// AC-49, AC-50, AC-51, AC-55, AC-58, AC-60 all read a computed style, a bounding box, or a real
+// viewport dimension jsdom cannot produce (DD-26's "verification gap" — see tech-docs.md). Every
+// scenario below shares `navigateAtViewport` above rather than re-implementing navigation
+// (delivery.md's cycle 8.4/8.6 REFACTOR instruction).
+
+// Quoted-width Given, shared by AC-58 (8.1) and AC-49 (8.2) — the Scenario Outline's own Gherkin
+// text quotes `"<width>"`, which is what makes this Cucumber Expression `{string}` step distinct
+// from the UNQUOTED literal `Given`s below (AC-50's "1440 px viewport", AC-51's "320 px viewport"):
+// a bare Cucumber Expression `{string}` only matches a quoted substring, so there is no ambiguity
+// between this generic step and any of the pre-existing literal ones (AC-59's, for instance).
+Given("the AI benchmark page is loaded at a {string} px viewport", async ({ page }, width: string) => {
+  await navigateAtViewport(page, Number(width), "en");
+});
+
+// ── AC-58 — every interactive target reaches WCAG 2.5.8's 24x24 CSS px minimum (DD-30) ───────
+
+type TapTargetFailure = { description: string; width: number; height: number };
+let tapTargetFailures: TapTargetFailure[] = [];
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Every interactive target meets the minimum target size
+When("the bounding box of every link and every disclosure control is measured", async ({ page }) => {
+  const targets = page.locator('[data-testid="ai-bench-page"] a, [data-testid="ai-bench-page"] summary');
+  const count = await targets.count();
+  const failures: TapTargetFailure[] = [];
+  for (let i = 0; i < count; i++) {
+    const el = targets.nth(i);
+    // A target inside a still-closed `<details>`, or inside whichever of the mobile card / desktop
+    // table CSS hides at the current width, is NOT an operable target right now — it carries no
+    // WCAG 2.5.8 obligation until it becomes visible. `boundingBox()` alone does not detect this:
+    // a `display: none` ancestor still yields a real (zero-sized) box rather than `null`, so
+    // `isVisible()` (which correctly accounts for `display`/`visibility` and a closed `<details>`)
+    // is the actual visibility gate; `boundingBox()` only handles the "detached from the DOM" case.
+    if (!(await el.isVisible())) continue;
+    const box = await el.boundingBox();
+    if (!box) continue;
+    if (box.width < 24 || box.height < 24) {
+      const raw = (await el.getAttribute("aria-label")) ?? (await el.textContent()) ?? "(unnamed target)";
+      failures.push({ description: raw.trim().slice(0, 80), width: box.width, height: box.height });
+    }
+  }
+  tapTargetFailures = failures;
+});
+
+Then("every measured target is at least 24 CSS pixels wide and at least 24 CSS pixels tall", async ({}) => {
+  expect(tapTargetFailures, `undersized target(s): ${JSON.stringify(tapTargetFailures)}`).toEqual([]);
+});
+
+// ── AC-49 — chart label typography is viewport-independent (DD-25/DD-26) ─────────────────────
+
+let chartLabelFontSizePx = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text renders at a fixed size across viewports
+When("the computed font size of a chart model label is read from the live page", async ({ page }) => {
+  const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
+  chartLabelFontSizePx = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+});
+
+// The declared size (`text-xs`, 12px — `benchmark-chart.tsx`'s `chart-bar-label`) carries no
+// responsive (`sm:`/`lg:`) modifier (DD-25/DD-26), so every one of the five Outline rows
+// independently equalling this ONE fixed constant is what proves the property this scenario names
+// ("equals ... at every other tested width") — comparing five live values pairwise across rows
+// would need module-scoped state to survive Playwright's `fullyParallel` worker split, which is not
+// guaranteed, whereas each row asserting the same known constant is both simpler and a strictly
+// equivalent proof of the same invariant.
+const CHART_LABEL_DECLARED_FONT_SIZE_PX = 12;
+
+Then(
+  "that computed font size equals the computed font size of the same label at every other tested width",
+  async ({}) => {
+    expect(chartLabelFontSizePx).toBe(CHART_LABEL_DECLARED_FONT_SIZE_PX);
+  },
+);
+
+Then("that computed font size is at least 12 CSS pixels", async ({}) => {
+  expect(chartLabelFontSizePx).toBeGreaterThanOrEqual(12);
+});
+
+// ── AC-50 — chart label typography never outranks the page's own body text ───────────────────
+// Reuses the pre-existing literal `Given("the AI benchmark page is loaded at a 1440 px viewport", …)`
+// bound above for AC-59 — this scenario's own Gherkin line is the identical, UNQUOTED literal text.
+
+let chartLabelFontSizeAt1440 = 0;
+let bodyFontSizeAt1440 = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Chart label text never exceeds the page's own body text size
+When(
+  "the computed font sizes of a chart model label and the page body text are read from the live page",
+  async ({ page }) => {
+    const label = page.locator('[data-testid^="benchmark-chart-label-"]').first();
+    chartLabelFontSizeAt1440 = await label.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    bodyFontSizeAt1440 = await page.evaluate(() => parseFloat(getComputedStyle(document.body).fontSize));
+  },
+);
+
+Then("the chart label's computed font size is no larger than the page body text's computed font size", async ({}) => {
+  expect(chartLabelFontSizeAt1440).toBeLessThanOrEqual(bodyFontSizeAt1440);
+});
+
+// ── AC-51 — the chart plot spans the full container width on a phone (DD-25/DWT-001) ─────────
+
+Given("the AI benchmark page is loaded at a 320 px viewport", async ({ page }) => {
+  await navigateAtViewport(page, 320, "en");
+});
+
+let barTrackWidthAt320 = 0;
+let chartRowWidthAt320 = 0;
+let chartRowDisplayAt320 = "";
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart plot occupies the full container width on a phone
+When(
+  "the width of a capability bar's track is compared with the width of its containing chart region",
+  async ({ page }) => {
+    const row = page.locator('[data-testid^="benchmark-chart-row-"]').first();
+    const track = row.locator('[data-slot="chart-bar-row-track"]').first();
+    const rowBox = await row.boundingBox();
+    const trackBox = await track.boundingBox();
+    if (!rowBox || !trackBox) throw new Error("chart row or bar track is not visible at 320px");
+    chartRowWidthAt320 = rowBox.width;
+    barTrackWidthAt320 = trackBox.width;
+    // `lg:grid-cols-[10rem_1fr]` is the ONLY mechanism that reserves a label column — it applies
+    // from `lg` up only, so at 320px the row's own computed `display` must not be `grid`.
+    chartRowDisplayAt320 = await row.evaluate((el) => getComputedStyle(el).display);
+  },
+);
+
+Then("the bar track spans the full width of that region", async ({}) => {
+  expect(Math.abs(barTrackWidthAt320 - chartRowWidthAt320)).toBeLessThan(2);
+});
+
+Then("no reserved label column is present at that width", async ({}) => {
+  expect(chartRowDisplayAt320).not.toBe("grid");
+});
+
+// ── AC-55 — the chart is visible above the fold on a phone (DD-29) ───────────────────────────
+//
+// Rule-15 UWT-007 regression fix (Phase 12 PR review, finding F2): the Given below used to load a
+// fixed 390x844 viewport — a height tall enough that the pre-fix chart position (701px measured at
+// 390px width) already satisfied the fold check, so this scenario stayed green throughout the
+// defect. `delivery.md`'s own UWT-007 entry retested at 320x568 and 390x664 (the realistic visible
+// height once mobile browser chrome is accounted for) and is the source of both the pre-fix
+// (741px/701px) and post-fix (536.5px/517.25px) measurements this Outline now guards against —
+// `loadedViewportHeight` below is set from whichever breakpoint the Given loads, so the assertion
+// checks the SAME height the page was actually measured at, not a hardcoded constant.
+
+let loadedViewportHeight = 0;
+
+Given(
+  "the AI benchmark page is loaded at a {string} px wide, {string} px tall viewport",
+  async ({ page }, width: string, height: string) => {
+    loadedViewportHeight = Number(height);
+    await page.setViewportSize({ width: Number(width), height: loadedViewportHeight });
+    await page.goto("/en/tools/ai-benchmark");
+    await page.waitForLoadState("networkidle");
+  },
+);
+
+let firstChartElementOffsetTop = 0;
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart is visible above the fold on a phone
+When("the vertical offset of the first chart element is read from the live page", async ({ page }) => {
+  const chart = page.locator('[data-testid="benchmark-chart"]').first();
+  const box = await chart.boundingBox();
+  if (!box) throw new Error(`chart is not visible at the loaded viewport (height ${loadedViewportHeight})`);
+  firstChartElementOffsetTop = box.y;
+});
+
+Then("that offset is less than the viewport height", async ({}) => {
+  expect(firstChartElementOffsetTop).toBeLessThan(loadedViewportHeight);
+});
+
+// ── AC-60 — the whole overhaul holds identically in both locales ─────────────────────────────
+// `navigateAtViewport`'s own default height (800) is used by every OTHER viewport-parametrized
+// scenario in this file that reuses it (delivery.md's cycle 8.6 REFACTOR instruction) — but this
+// scenario's own fold check is overridden to 664 (Rule-15 UWT-007 regression fix, Phase 12 PR
+// review finding F2): 800 already satisfied the fold check throughout the UWT-007 defect (the
+// pre-fix chart position measured 701px at 390px width), so it was non-protective; 664 is the
+// realistic breakpoint `delivery.md`'s UWT-007 retest actually measured the defect and its fix at.
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
+Given(
+  "the AI benchmark page is loaded in the {string} locale at a 390 px viewport",
+  async ({ page }, locale: string) => {
+    await navigateAtViewport(page, 390, locale, 664);
+  },
+);
+
+Then("the chart is present above the fold", async ({ page }) => {
+  const chart = page.locator('[data-testid="benchmark-chart"]').first();
+  const box = await chart.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box!.y).toBeLessThan(664);
+});
+
+Then("every roster card is collapsed", async ({ page }) => {
+  const details = page.locator('[data-testid^="model-card-details-"]');
+  const count = await details.count();
+  expect(count).toBeGreaterThan(0);
+  const openFlags = await details.evaluateAll((els) => els.map((el) => (el as HTMLDetailsElement).open));
+  expect(openFlags.every((open) => open === false)).toBe(true);
+});
+
+Then("no raw translation key is rendered", async ({ page }) => {
+  const bodyText = await page.locator("body").textContent();
+  expect(bodyText).not.toMatch(/aiBench/);
 });

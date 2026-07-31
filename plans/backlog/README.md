@@ -50,6 +50,10 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   — Designs a durable, automated guard against test files landing outside every configured Vitest
   project's `include` glob, after an `ayokoding-www` regression test silently executed zero times
   due to exactly this gap.
+- [ayokoding-www-app-shell-tap-targets](./ayokoding-www-app-shell-tap-targets/README.md)
+  — Fixes two shared `ayokoding-www` app-shell tap targets (the header's "Learn"/"Tools" nav links
+  and the footer's "MIT" license link) measuring below the WCAG 2.5.8 24x24 CSS px minimum,
+  deferred out of `ayokoding-www-ai-benchmark-responsive-overhaul`'s scope (Rule-15 `EWT-005`).
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.

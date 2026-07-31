@@ -1,0 +1,37 @@
+Phase 8 Typography Evidence — ayokoding-www-ai-benchmark-responsive-overhaul
+Recorded: 2026-07-31 (Phase 8, cycles 8.2/8.3, AC-49/AC-50)
+
+Method: a real Chromium page (http://localhost:3101/en/tools/ai-benchmark, production build), one
+label from `benchmark-chart.tsx`'s BenchmarkRow (`[data-testid^="benchmark-chart-label-"]`, the
+first rated model's name+index label), computed via `getComputedStyle(el).fontSize` at each width.
+
+AC-49 — computed font size of a chart model label, at every tested width (all en, 800px height):
+
+  width (px) | computed font-size (px)
+  -----------|------------------------
+  320        | 12
+  390        | 12
+  768        | 12
+  1280       | 12
+  1440       | 12
+
+Identical at all five widths, and each >= the 12 CSS px floor. The label's declared class is a
+static `text-xs` (12px) with no responsive (`sm:`/`lg:`) modifier (DD-25/DD-26) — this is BY
+CONSTRUCTION, not a coincidence of these five particular widths.
+
+Falsifiability check performed (delivery.md cycle 8.2 REFACTOR): temporarily reverted the label's
+class to the retired `text-[10px]` (the pre-Phase-8 declared size) and re-ran the Outline. All five
+rows failed with `Expected: 12, Received: 10`. Reverted immediately after observing the failure.
+
+AC-50 — chart label vs. page body text, at 1440px (en):
+
+  element                         | computed font-size (px)
+  ---------------------------------|------------------------
+  chart model label (`text-xs`)    | 12
+  page body (`document.body`, no `body { font-size }` override in globals.css — browser default) | 16
+
+12 <= 16 — the chart label's typography does not out-rank the page's own body text.
+
+Falsifiability check performed (delivery.md cycle 8.3 REFACTOR): temporarily raised the label's
+class to `text-2xl` (24px), one step above the 16px body size. Re-ran the scenario: failed with
+`Expected: <= 16, Received: 24`. Reverted immediately after observing the failure.

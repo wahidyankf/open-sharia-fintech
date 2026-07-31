@@ -8,6 +8,7 @@ import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { GRADE_LABEL_KEYS } from "../core/data/benchmarks";
 import type { EvidenceGrade } from "../core/data/models";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 
 const SLOT = "evidence-badge";
 
@@ -35,7 +36,8 @@ export function EvidenceBadge({ grade, source, locale }: { grade: EvidenceGrade;
       target="_blank"
       rel="noopener noreferrer nofollow"
       title={`${evidenceLabel}: ${gradeWord}`}
-      className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-foreground"
+      // DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
+      className={`inline-flex items-center gap-1 text-xs font-medium text-muted-foreground underline decoration-dotted underline-offset-2 hover:text-foreground ${TAP_TARGET_MIN_CLASS}`}
       aria-label={`${evidenceLabel}: ${gradeWord} — ${sourceLabel}`}
     >
       <span aria-hidden="true" className={dotClass(grade)} data-slot={`${SLOT}-dot`} />

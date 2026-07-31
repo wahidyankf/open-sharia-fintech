@@ -40,7 +40,7 @@ function fixtureModel(id: string, score: number, output: number): Model {
 }
 
 // Deliberately excludes the OPUS/SONNET anchor ids, so `bands.ts` finds no anchor models in this
-// fixture dataset and every scored model falls into the "light" band (undefined anchor thresholds)
+// fixture dataset and every scored model falls into the "haiku" band (undefined anchor thresholds)
 // — one predictable band to sort, rather than depending on the live roster's anchor indices.
 // Composite index (score) and output price are deliberately UNCORRELATED (highest score does not
 // have the highest price) so the three sort modes below produce three genuinely different orders.
@@ -68,42 +68,42 @@ describe("BenchmarkChart per-band sort order (AC-11 / DD-4 gate check)", () => {
     cleanup();
   });
 
-  it("renders the light band in computeGroups()'s own canonical order by default (capability mode)", () => {
+  it("renders the haiku band in computeGroups()'s own canonical order by default (capability mode)", () => {
     render(<BenchmarkChart dataset={dataset} fullDataset={dataset} locale="en" />);
-    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
+    const domOrder = rowOrderWithin("benchmark-chart-band-haiku", "benchmark-chart-row-");
 
     const canonicalOrder = computeGroups(dataset)
-      .light.map((s) => s.model.id)
+      .haiku.map((s) => s.model.id)
       .filter((id) => domOrder.includes(id));
 
     expect(domOrder).toEqual(["order-a", "order-b", "order-c"]); // descending score: 80, 60, 40
     expect(domOrder).toEqual(canonicalOrder);
   });
 
-  it("reorders the light band ascending by price when sortState.light is price-asc", () => {
+  it("reorders the haiku band ascending by price when sortState.haiku is price-asc", () => {
     render(
       <BenchmarkChart
         dataset={dataset}
         fullDataset={dataset}
         locale="en"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-asc" }}
+        sortState={{ opus: "capability", sonnet: "capability", haiku: "price-asc" }}
       />,
     );
-    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
+    const domOrder = rowOrderWithin("benchmark-chart-band-haiku", "benchmark-chart-row-");
 
     expect(domOrder).toEqual(["order-a", "order-b", "order-c"]); // ascending output price: 10, 30, 50
   });
 
-  it("reorders the light band descending by price when sortState.light is price-desc", () => {
+  it("reorders the haiku band descending by price when sortState.haiku is price-desc", () => {
     render(
       <BenchmarkChart
         dataset={dataset}
         fullDataset={dataset}
         locale="en"
-        sortState={{ opus: "capability", sonnet: "capability", light: "price-desc" }}
+        sortState={{ opus: "capability", sonnet: "capability", haiku: "price-desc" }}
       />,
     );
-    const domOrder = rowOrderWithin("benchmark-chart-band-light", "benchmark-chart-row-");
+    const domOrder = rowOrderWithin("benchmark-chart-band-haiku", "benchmark-chart-row-");
 
     expect(domOrder).toEqual(["order-c", "order-b", "order-a"]); // descending output price: 50, 30, 10
   });

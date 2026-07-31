@@ -9,6 +9,18 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-01: ayokoding-www-ai-benchmark-responsive-overhaul](./2026-08-01__ayokoding-www-ai-benchmark-responsive-overhaul/README.md) —
+  Full responsive re-look of the AI Model Benchmark page: DOM bars replace the scale-coupled SVG
+  chart, the 38-model roster gains progressive disclosure behind a `model-card`, the prose preamble
+  collapses below the chart, the desktop table stops making the document scroll horizontally, and
+  the third capability class renames from `light` to `haiku`. Delivered across 15 phases (0-14) in
+  two delivery-boundary PRs (#126 Unit 1, #128 Unit 2). Rule-15 three-tester retest filed 16
+  findings (1 EWT deferred, 10 UWT, 2 USS spec-gaps, 2 DWT) — all fixed or triaged before archival.
+  A 3-cycle PR-review gate on PR #128 caught a permanently-vacuous test assertion left over from the
+  Phase 5 SVG-to-DOM rewrite and 7 stale `sortLight`→`sort-haiku` rename sites. Five Knowledge
+  Capture learnings routed into `repo-governance/` (breakpoint-presence-vs-legibility,
+  identical-DOM-vs-scaled-typography, progressive-disclosure density caution, amendment numeric
+  sweeps, and capped-query undercounting). Delivery Mode: `worktree-to-pr`. Completed 2026-08-01.
 - [2026-07-30: ayokoding-www-ai-benchmark-merged-chart](./2026-07-30__ayokoding-www-ai-benchmark-merged-chart/README.md) —
   Merged the AI Benchmark tool's separate capability and price charts into one per-model row with a
   per-band sort control, replacing `capability-chart.tsx` + `price-chart.tsx` with a single

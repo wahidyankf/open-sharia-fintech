@@ -70,9 +70,9 @@ describe("decodeState / sanitizeState — unknown values fall back to unfiltered
   });
 
   it("a known harness and known class survive sanitizeState", () => {
-    expect(sanitizeState({ harness: "cursor", class: "light" })).toEqual({
+    expect(sanitizeState({ harness: "cursor", class: "haiku" })).toEqual({
       harness: "cursor",
-      class: "light",
+      class: "haiku",
       ...DEFAULT_SORT_STATE,
     });
   });
@@ -93,10 +93,10 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
     { name: "harness opencode-go", query: "harness=opencode-go" },
     { name: "class opus", query: "class=opus" },
     { name: "class sonnet", query: "class=sonnet" },
-    { name: "class light", query: "class=light" },
+    { name: "class haiku", query: "class=haiku" },
     { name: "class unrated", query: "class=unrated" },
     { name: "both filters", query: "harness=cursor&class=sonnet" },
-    { name: "both filters (other harness)", query: "harness=opencode-zen&class=light" },
+    { name: "both filters (other harness)", query: "harness=opencode-zen&class=haiku" },
   ];
 
   it.each(cases)("round-trips: $name — encodeState(decodeState($query)) is stable", ({ query }) => {
@@ -112,6 +112,14 @@ describe("encodeState ∘ decodeState — round-trips for every valid query stri
     expect(decoded).toEqual({ harness: "cursor", class: "opus", ...DEFAULT_SORT_STATE });
     expect(encodeState(decoded).toString()).toBe("harness=cursor&class=opus");
   });
+
+  // AC-67 (cycle 3.3): the retired "class=light" value is no longer a known band, so it must
+  // sanitize to the default unfiltered state, exactly like any other unrecognized class value.
+  it("a retired class=light value decodes to the default unfiltered state (class: undefined)", () => {
+    const decoded = decodeState(new URLSearchParams("class=light"));
+    expect(decoded.class).toBeUndefined();
+    expect(decoded).toEqual(DEFAULT_STATE);
+  });
 });
 
 // ─── Sort params (Phase 1) — round-trip the four per-band sort choices ─────────
@@ -123,13 +131,25 @@ describe("encodeState / decodeState — round-trip the four per-band sort params
       class: undefined,
       opus: "price-asc" as const,
       sonnet: "price-desc" as const,
-      light: "price-asc" as const,
+      haiku: "price-asc" as const,
     };
     const encoded = encodeState(state);
-    expect(encoded.get("sortOpus")).toBe("price-asc");
-    expect(encoded.get("sortSonnet")).toBe("price-desc");
-    expect(encoded.get("sortLight")).toBe("price-asc");
+    expect(encoded.get("sort-opus")).toBe("price-asc");
+    expect(encoded.get("sort-sonnet")).toBe("price-desc");
+    expect(encoded.get("sort-haiku")).toBe("price-asc");
     expect(decodeState(encoded)).toEqual(state);
+  });
+
+  // AC-67 (cycle 3.3): a full query string using the renamed `class`/`sort-haiku` wire values
+  // round-trips to itself exactly — the identifier and its URL-parameter wire format move
+  // together, with NO legacy alias for the retired per-band sort key (DD-35 — no-alias by design).
+  // Rule-15 UWT-015 fix: `sortHaiku` (camelCase) renamed to `sort-haiku` (kebab-case), matching
+  // every VALUE on this page already being kebab-case — same no-legacy-alias precedent.
+  it("round-trips a full query string using the renamed class=haiku and sort-haiku parameters", () => {
+    const query = "class=haiku&sort-haiku=price-asc";
+    const decoded = decodeState(new URLSearchParams(query));
+    const reEncoded = encodeState(decoded).toString();
+    expect(reEncoded).toBe(query);
   });
 
   // Regression (pr-review-synthesis-maker MEDIUM finding): a `sortUnrated` param used to exist and
@@ -144,13 +164,13 @@ describe("encodeState / decodeState — round-trip the four per-band sort params
     expect(encodeState(decoded).toString()).toBe("");
   });
 
-  it("an unrecognized sortSonnet value in the URL sanitizes to the default (capability), never throwing", () => {
-    expect(() => decodeState(new URLSearchParams("sortSonnet=not-a-real-value"))).not.toThrow();
-    const decoded = decodeState(new URLSearchParams("sortSonnet=not-a-real-value"));
+  it("an unrecognized sort-sonnet value in the URL sanitizes to the default (capability), never throwing", () => {
+    expect(() => decodeState(new URLSearchParams("sort-sonnet=not-a-real-value"))).not.toThrow();
+    const decoded = decodeState(new URLSearchParams("sort-sonnet=not-a-real-value"));
     expect(decoded.sonnet).toBe("capability");
     // The other two bands are unaffected by the one unrecognized value.
     expect(decoded.opus).toBe("capability");
-    expect(decoded.light).toBe("capability");
+    expect(decoded.haiku).toBe("capability");
   });
 });
 

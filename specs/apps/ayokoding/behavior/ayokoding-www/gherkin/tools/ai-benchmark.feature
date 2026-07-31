@@ -20,10 +20,10 @@ Feature: AI model benchmark tool
 
   # AC-6
   @unit
-  Scenario: A model below the sonnet anchor renders in the light band
+  Scenario: A model below the sonnet anchor renders in the haiku band
     Given a fixture model whose composite index is below the sonnet anchor index
     When the capability groups are computed
-    Then that model belongs to the "light" band
+    Then that model belongs to the "haiku" band
 
   # AC-7
   @unit
@@ -46,7 +46,15 @@ Feature: AI model benchmark tool
   Scenario: Every roster model belongs to exactly one capability group
     Given the full roster is loaded
     When the capability groups are computed
-    Then each model appears in exactly one of "opus", "sonnet", "light", or "unrated"
+    Then each model appears in exactly one of "opus", "sonnet", "haiku", or "unrated"
+
+  # AC-65
+  @unit
+  Scenario: The rated capability classes are named opus, sonnet, and haiku
+    Given the full roster is loaded
+    When the set of known capability class identifiers is inspected
+    Then the identifiers are exactly "opus", "sonnet", "haiku", and "unrated"
+    And no identifier is "light"
 
   # AC-10
   @unit
@@ -129,24 +137,40 @@ Feature: AI model benchmark tool
     Then that cell shows the lowest and highest published values
     But that cell shows no averaged value
 
-  # AC-32
+  # AC-32 — reworded (Phase 7, D3): D3 narrowed the always-visible guarantee from the WHOLE
+  # how-to-read disclosure (Phase 5's `<details open>` wrapping all six bullets) down to just the
+  # one honesty line stating scores are vendor self-reported — the other five points now sit
+  # behind that line's own disclosure control instead of being unconditionally open.
   @unit
   Scenario: The page discloses that frontier scores are overwhelmingly vendor-reported
     Given the page carries a how-to-read disclosure
     When the page renders
-    Then the disclosure states that most frontier benchmark scores are vendor self-reported
-    And the disclosure is visible without interaction
+    Then a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction
+    And the remaining how-to-read points are reachable from that line's disclosure control
+
+  # Rule-15 UWT-013/USS-004 fix (Phase 11): no unit basis (per-token/per-million/subscription) was
+  # disclosed anywhere for the roughly 80 dollar figures on the page — a reader had no way to tell
+  # what a bare "$5.00" was priced per.
+  @unit
+  Scenario: Price figures disclose their unit basis
+    Given the reader opens "How to read this benchmark"
+    When the reader reads the price-related guidance
+    Then the text states the unit each dollar figure is priced per
+    And a Subscription-priced model's figure is visibly distinguished from a per-unit price
 
   # USS-002 — Rule-15 web-usability-tester spec-blind suggestion (paired with UWT-002/UWT-003): the
   # four capability classes and five evidence grades appeared throughout the page with no on-page
-  # definition, forcing a first-time user to infer their meaning from context. Fixed via an
-  # always-visible legend section in `shell/how-to-read.tsx` (not inside the collapsible
-  # `<details>`, so it stays visible even if that disclosure is closed).
+  # definition, forcing a first-time user to infer their meaning from context. Fixed via a legend
+  # section in `shell/how-to-read.tsx`. Reworded (Phase 7, AC-57/cycle 7.3): the legend is now its
+  # own `<details>` below the roster rather than an unconditionally visible section — its own
+  # `<summary>` keeps it one interaction away, which is what "reachable" now means for this
+  # scenario; the original "visible" wording stopped being literally true once the legend became
+  # collapsible.
   @unit
   Scenario: A legend defines the capability classes and evidence grades
     Given I am on the AI Model Benchmark page
     When I look for an explanation of the "Class" and evidence-grade labels
-    Then a visible legend defines each of the four classes and each of the five evidence grades
+    Then an expandable legend defines each of the four classes and each of the five evidence grades
 
   # AC-33
   @unit
@@ -154,6 +178,17 @@ Feature: AI model benchmark tool
     Given the dataset records a benchmark-integrity note for a model
     When that model is rendered in the data table
     Then the integrity note is reachable from that model's row
+
+  # Rule-15 UWT-010 fix (Phase 11): the claim itself previously existed ONLY in a `title` (hover)
+  # and an `aria-label` (screen reader) — invisible to a sighted touch/keyboard reader with no
+  # hover, and the `id` locale translated only the label prefix around the claim, never the claim
+  # text itself.
+  @unit
+  Scenario: The integrity-note claim is reachable without hovering, and is localized on id
+    Given the dataset records a benchmark-integrity note for the model "gpt-5.6-sol"
+    When that model is rendered in the data table on the "id" locale
+    Then the claim text is visible as real on-page text behind a click-to-reveal disclosure
+    And the visible claim text is the Indonesian translation, not the English source text
 
   # AC-34
   @unit
@@ -169,6 +204,19 @@ Feature: AI model benchmark tool
     Given the locale is "<locale>"
     When the AI benchmark page renders
     Then no rendered text matches a raw translation key
+
+    Examples:
+      | locale |
+      | en     |
+      | id     |
+
+  # AC-66
+  @unit
+  Scenario Outline: The haiku class label is identical in both locales
+    Given the class legend is rendered in the "<locale>" locale
+    When the haiku class label is read
+    Then that label is "Haiku"
+    And that label is identical to the label the other locale renders
 
     Examples:
       | locale |
@@ -228,12 +276,14 @@ Feature: AI model benchmark tool
     Then that model's bars use the lower of the two harness rates
     And the chart states that it shows the lowest available harness rate
 
-  # AC-36
+  # AC-36 — reworded (Phase 5, DD-25): the chart no longer renders `<svg role="img">`; each rated
+  # band's own DOM region now carries `role="group"` with `aria-labelledby` pointing at its own
+  # visible heading, giving each band a genuine, localized accessible name.
   @unit @e2e
   Scenario: The merged chart exposes an accessible name
     Given the full roster is loaded
     When the page renders
-    Then the merged chart exposes an accessible name
+    Then each rated band's chart region exposes a localized accessible name
 
   # AC-37
   @unit
@@ -274,28 +324,36 @@ Feature: AI model benchmark tool
     Given the sonnet band is displaying models in capability-descending order
     When the reader selects "Price: Low to High" from the sonnet band's sort control
     Then the sonnet band's rows re-render sorted by ascending output rate
-    And the opus and light bands keep their own independently-selected sort order
+    And the opus and haiku bands keep their own independently-selected sort order
 
   # AC-42
   @unit
   Scenario: A band's sort choice is encoded in the URL
     Given the reader has selected "Price: High to Low" for the opus band
     When the reader copies the current page URL
-    Then the URL contains a "sortOpus" query parameter set to the descending-price value
+    Then the URL contains a "sort-opus" query parameter set to the descending-price value
     And loading that URL directly reproduces the opus band sorted the same way
 
   # AC-43
   @unit
   Scenario: An unknown sort value in the URL falls back to the default
-    Given a URL containing "sortSonnet=not-a-real-value"
+    Given a URL containing "sort-sonnet=not-a-real-value"
     When the page loads with that URL
     Then the sonnet band renders sorted by capability (the default)
     And no error is thrown
 
+  # AC-67
+  @unit
+  Scenario: A shared benchmark URL carries the renamed capability-class parameters
+    Given a query string of "class=haiku&sort-haiku=price-asc"
+    When that query string is decoded and then re-encoded
+    Then the re-encoded query string is identical to the original
+    And a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state
+
   # AC-44 — DD-1
   @unit
   Scenario: A rated model billed only by subscription shows inline subscription text
-    Given a model in the light band with no metered rate and one subscription rate
+    Given a model in the haiku band with no metered rate and one subscription rate
     When the merged chart renders that model's row
     Then the row shows its capability bar as normal
     And the price-bar area of that row shows "Subscription ($cost)" text instead of two bars
@@ -308,26 +366,31 @@ Feature: AI model benchmark tool
     Then that model appears in the unrated group's plain text list
     And no capability bar or price bar is rendered for that model
 
-  # AC-46 — reworded (UWT-002 fix, Rule-15 web-usability-tester retest, 2026-07-30): the chart is
-  # now one svg PER rated band (each with its own accessible name), not one svg shared across every
-  # band — see benchmark-chart.tsx's own UWT-002 fix docstring for the sort-control-proximity
-  # reason this split happened. The property this scenario protects (every band's chart region is
-  # independently reachable to assistive tech, and the data is still doubled-up in ModelTable) is
-  # unchanged; only the "how many svgs" detail was stale.
+  # AC-46 — reworded (Phase 5, DD-25): the chart no longer renders any svg — each rated band's own
+  # DOM region instead carries `role="group"` with `aria-labelledby`, giving each band its own
+  # labelled region carrying its localized band name as its accessible name. The property this
+  # scenario protects (every band's chart region is independently reachable to assistive tech, and
+  # the data is still doubled-up in the roster below) is unchanged; only the "svg role=img"
+  # mechanism was reworded to a DOM "group" region.
   @unit
   Scenario: The merged chart keeps its accessible name and text alternative
     Given the merged chart has replaced the two former charts
     When a screen reader encounters the chart
-    Then each rated band renders its own svg with role image and its own localized title as its accessible name
-    And every figure the chart encodes is still reachable via the unchanged ModelTable below
+    Then each rated band renders its own labelled region carrying its localized band name as its accessible name
+    And every figure the chart encodes is still reachable via the roster below
 
-  # AC-47
+  # AC-47 — reworded (Phase 5, DD-25/DD-26/DD-31, 2026-07-31): the identical-DOM-at-every-breakpoint
+  # guarantee this scenario used to protect is retired — Phase 5 replaced the SVG chart with DOM
+  # `BarRow`s (DD-25) whose declared markup now varies deliberately by breakpoint (a stacked layout
+  # reflows into a label column only at the desktop width, DD-26), so "the same set of elements
+  # renders at all three widths" no longer holds by design. The property still worth protecting is
+  # that the chart's TYPOGRAPHY never rescales across that reflow — only the layout does.
   @unit
-  Scenario: The merged chart uses the identical DOM structure at every breakpoint
-    Given the merged chart is rendered at a 375px, a 768px, and a 1280px viewport width
-    When the DOM structure at each width is inspected
-    Then the same set of elements renders at all three widths
-    And only the pixel width of each bar changes between the three renders
+  Scenario: The chart reflows its layout without rescaling its typography
+    Given the merged chart is rendered at a mobile, a tablet, and a desktop viewport width
+    When the DOM structure and the declared text sizes at each width are inspected
+    Then the declared text size of every chart label is identical at all three widths
+    And the row layout changes from stacked to a label column only at the desktop width
 
   # AC-48 — added post-merge (pr-review-synthesis-maker MEDIUM finding): a rated model with no
   # reported price at all (no metered rate, no subscription, under any harness) is genuinely new
@@ -336,7 +399,7 @@ Feature: AI model benchmark tool
   # "not reported" placeholder, which had no owning scenario until now.
   @unit
   Scenario: A rated model with no reported price shows a not-reported placeholder
-    Given a model in the light band with no metered rate and no subscription rate
+    Given a model in the haiku band with no metered rate and no subscription rate
     When the merged chart renders that model's row
     Then the row shows its capability bar as normal
     And the price-bar area of that row shows a "not reported" placeholder instead of two bars
@@ -402,6 +465,26 @@ Feature: AI model benchmark tool
     Then the filter uses the first of the two values
     And every roster model matching that harness is shown
 
+  # SG-002 — Rule-15 web-exploratory-tester spec gap (Phase 11): generalizes SG-001 — a duplicated
+  # parameter's first-match semantics also apply when the first value is UNRECOGNIZED, so decoding
+  # never falls through to a later, valid value.
+  @unit
+  Scenario: A duplicated query parameter with an unrecognized first value ignores a valid later value
+    Given the URL carries the harness parameter twice, an unknown value first and a known harness second
+    When the page renders
+    Then the filter falls back to unfiltered
+    And every roster model is shown
+
+  # SG-003 — Rule-15 web-exploratory-tester spec gap (Phase 11): `encodeState` omits default values
+  # from the query string (`core/url-state.ts`), so resetting one filter to "All" removes only that
+  # filter's own param, leaving any other active filter's param untouched.
+  @unit
+  Scenario: Resetting a filter to "All" removes it from the URL
+    Given the URL carries both a harness parameter and a class parameter
+    When the reader resets the class filter to "All classes"
+    Then the URL retains the harness parameter but no longer carries the class parameter
+    And the roster reflects only the harness filter
+
   # AC-28 (chart) + Rule-15 UWT-006 fix (data table, folded into the same scenario)
   @unit
   Scenario: A filter combination matching no model renders an explicit empty state
@@ -409,6 +492,16 @@ Feature: AI model benchmark tool
     When the page renders
     Then an explicit empty-state message is shown
     But the chart and the data table do not render in the empty state
+
+  # Rule-15 UWT-009/USS-003 fix (Phase 11): distinct from the whole-roster empty state above — a
+  # Class filter can empty ONE rated band while other bands (and the table) still show models, so
+  # this needs its own explicit per-band message rather than a bare heading over nothing.
+  @unit
+  Scenario: An active Class filter empties one rated band while others still show models
+    Given a Class filter is active that excludes every model in the Sonnet band
+    When the page renders the Sonnet band
+    Then the band shows an explicit message that no models in this class match the current filter
+    And the band's own sort control is hidden rather than left interactive
 
   # AC-27
   @unit @e2e
@@ -453,3 +546,174 @@ Feature: AI model benchmark tool
       | 1440  | en     |
       | 320   | id     |
       | 1440  | id     |
+
+  # AC-53
+  @unit
+  Scenario: A roster card shows only its summary until it is expanded
+    Given the full roster is rendered below the md breakpoint
+    When a model's card is inspected before any interaction
+    Then the card shows the model name, its class, its composite index, and its price
+    But the card's remaining figures are inside a closed disclosure
+
+  # AC-54
+  @unit
+  Scenario: An expanded roster card carries every figure the desktop table carries
+    Given a model is rendered in both the roster card and the desktop table
+    When that model's card disclosure is expanded
+    Then the card's summary and expanded content together carry every figure that model's table row carries
+
+  # AC-59
+  @e2e
+  Scenario: The roster table header stays visible while the page scrolls at desktop width
+    Given the AI benchmark page is loaded at a 1440 px viewport
+    When the page is scrolled until the roster table's last row is in view
+    Then the table's header row is still visible
+
+  # AC-61 — DD-34 Treatment 1
+  @e2e
+  Scenario: An expanded card's figure value out-ranks its own field label
+    Given the AI benchmark page is loaded at a 390 px viewport with one roster card expanded
+    When the computed font size and font weight of a field label and of its own value are read from the live page
+    Then the value's computed font size is larger than the label's computed font size
+    And the value's computed font weight is greater than the label's computed font weight
+
+  # AC-62 — DD-34 Treatment 2
+  @e2e
+  Scenario: An expanded card's figure value and its evidence badge flow on one row
+    Given the AI benchmark page is loaded at a 390 px viewport with one roster card expanded
+    When the computed flex direction of a graded figure cell is read from the live page
+    Then that computed flex direction is row rather than column
+    And the field label's vertical band overlaps the vertical band of its own value
+
+  # AC-63 — DD-34 Treatment 3
+  @unit
+  Scenario: An expanded card groups its fields under labelled headings
+    Given a model's roster card is rendered with its disclosure expanded
+    When the structure of the disclosure's content is inspected
+    Then every field belongs to exactly one labelled group
+    And each group's heading is one level below the card's own model-name heading
+
+  # AC-64 — DD-34 Treatment 4
+  @unit
+  Scenario: Unpublished figures share one value instead of occupying a field each
+    Given a model with more than one unpublished benchmark figure is rendered with its disclosure expanded
+    When the disclosure's name-value groups are inspected
+    Then every unpublished figure's label is a term in one single group sharing one "not reported" description
+    And no unpublished figure occupies a name-value group of its own
+
+  # AC-56 — Phase 7, cycle 7.2 (R4/D3): the chart and roster are the page's primary content and
+  # now precede the reference material (the how-to-read remainder, the legend, and the sources
+  # section), which collapses into disclosures below them instead of appearing above the fold.
+  @unit
+  Scenario: The chart precedes the roster and both precede the collapsed reference sections
+    Given the page renders with no filters applied
+    When the document order of the page's regions is inspected
+    Then the chart region precedes the roster region
+    And the legend and sources disclosures both follow the roster region
+
+  # AC-57 — Phase 7, cycle 7.3 (R4/D3): collapsing the legend and sources sections into
+  # disclosures (AC-56's reorder) must not make their content unreachable — each stays one click
+  # away behind its own localized `<summary>`.
+  @unit
+  Scenario: The legend and sources remain reachable after collapsing
+    Given the legend and sources are rendered as disclosures below the roster
+    When each disclosure is expanded
+    Then the legend defines each of the four classes and each of the five evidence grades
+    And the sources section lists every named operator
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # Phase 8 — accessibility: tap targets and the live layout criteria (AC-49..AC-51, AC-55, AC-58,
+  # AC-60). Every scenario below is @e2e-only — each asserts a computed style, a bounding box, or a
+  # document-order property that jsdom cannot resolve (DD-26's "verification gap" lesson).
+  # ══════════════════════════════════════════════════════════════════════════
+
+  # AC-58 — DD-30: every interactive target (an evidence-badge link, an integrity-note link, or a
+  # disclosure's own `<summary>`) reaches WCAG 2.5.8's 24x24 CSS px minimum.
+  @e2e
+  Scenario Outline: Every interactive target meets the minimum target size
+    Given the AI benchmark page is loaded at a "<width>" px viewport
+    When the bounding box of every link and every disclosure control is measured
+    Then every measured target is at least 24 CSS pixels wide and at least 24 CSS pixels tall
+
+    Examples:
+      | width |
+      | 390   |
+      | 1280  |
+
+  # AC-49 — DD-25/DD-26: since the chart no longer lives inside an SVG `viewBox`, its declared
+  # typography no longer scales with viewport width — a chart label's computed font size must be the
+  # SAME at every tested width, and never smaller than 12 CSS px.
+  @e2e
+  Scenario Outline: Chart label text renders at a fixed size across viewports
+    Given the AI benchmark page is loaded at a "<width>" px viewport
+    When the computed font size of a chart model label is read from the live page
+    Then that computed font size equals the computed font size of the same label at every other tested width
+    And that computed font size is at least 12 CSS pixels
+
+    Examples:
+      | width |
+      | 320   |
+      | 390   |
+      | 768   |
+      | 1280  |
+      | 1440  |
+
+  # AC-50 — the chart's own typography must never outrank the page's body text, even though both are
+  # now ordinary CSS pixels rather than viewBox-relative units.
+  @e2e
+  Scenario: Chart label text never exceeds the page's own body text size
+    Given the AI benchmark page is loaded at a 1440 px viewport
+    When the computed font sizes of a chart model label and the page body text are read from the live page
+    Then the chart label's computed font size is no larger than the page body text's computed font size
+
+  # AC-51 — DD-25/DWT-001: the DOM bar's track is a plain full-width `<div>`, so at the narrowest
+  # supported viewport it must span its own containing chart region with no reserved label column
+  # (the `lg:grid-cols-[10rem_1fr]` reflow in `benchmark-chart.tsx` only applies from `lg` up).
+  @e2e
+  Scenario: The chart plot occupies the full container width on a phone
+    Given the AI benchmark page is loaded at a 320 px viewport
+    When the width of a capability bar's track is compared with the width of its containing chart region
+    Then the bar track spans the full width of that region
+    And no reserved label column is present at that width
+
+  # AC-55 — DD-29: the chart is the page's primary content and now sits directly below the header
+  # and filters, so a phone reader must not have to scroll past reference material to reach it.
+  #
+  # 2026-08-01 — Phase 12 PR review correction (finding F2): this scenario previously loaded a fixed
+  # 390x844 viewport, which was NON-PROTECTIVE against the Rule-15 UWT-007 defect it is meant to
+  # guard — the pre-fix chart position (measured at `top: 701px` at 390px width) already satisfied
+  # `< 844`, so this check stayed green throughout the defect. Retargeted to a Scenario Outline over
+  # the two breakpoints `delivery.md`'s own UWT-007 retest actually measured the defect and its fix
+  # at (320x568, 390x664) — the pre-fix top was 741px/701px (both fail `< height`), the post-fix top
+  # is 536.5px/517.25px (both pass), so this now fails before the fix and passes after it.
+  @e2e
+  Scenario Outline: The chart is visible above the fold on a phone
+    Given the AI benchmark page is loaded at a "<width>" px wide, "<height>" px tall viewport
+    When the vertical offset of the first chart element is read from the live page
+    Then that offset is less than the viewport height
+
+    Examples:
+      | width | height |
+      | 320   | 568    |
+      | 390   | 664    |
+
+  # AC-60 — the whole overhaul (chart typography, above-the-fold placement, card collapse, i18n)
+  # must hold identically in both locales — Indonesian's longer strings are the risk this guards.
+  #
+  # 2026-08-01 — Phase 12 PR review correction (finding F2): this scenario's own fold check ("the
+  # chart is present above the fold") used to compare against an 800px viewport height (the shared
+  # navigation helper's default) — non-protective for the same reason as AC-55 above. It now loads
+  # at the realistic 390x664 breakpoint and compares against 664, so it too fails before the
+  # UWT-007 fix and passes after it.
+  @e2e
+  Scenario Outline: The overhauled page behaves identically in both locales
+    Given the AI benchmark page is loaded in the "<locale>" locale at a 390 px viewport
+    When the page renders
+    Then the chart is present above the fold
+    And every roster card is collapsed
+    And no raw translation key is rendered
+
+    Examples:
+      | locale |
+      | en     |
+      | id     |

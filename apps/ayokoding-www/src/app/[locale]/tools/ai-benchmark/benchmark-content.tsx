@@ -9,7 +9,7 @@ import { decodeState, encodeState, type SortState } from "@/features/ai-benchmar
 import { filterModels, type FilterState } from "@/features/ai-benchmark/core/filter";
 import type { ChartBand } from "@/features/ai-benchmark/shell/chart-primitives";
 import type { SortMode } from "@/features/ai-benchmark/core/sort";
-import { HowToRead } from "@/features/ai-benchmark/shell/how-to-read";
+import { HowToRead, AiBenchLegend, AiBenchSources } from "@/features/ai-benchmark/shell/how-to-read";
 import { ModelTable } from "@/features/ai-benchmark/shell/model-table";
 import { BenchmarkChart } from "@/features/ai-benchmark/shell/benchmark-chart";
 import { BenchmarkFilters } from "@/features/ai-benchmark/shell/benchmark-filters";
@@ -27,10 +27,10 @@ export function BenchmarkContent() {
   // thresholds must stay roster-relative to the FULL population (DD-5a), so every consumer below
   // is ALSO given `dataset` (the unfiltered full roster) as its `fullDataset` — never re-deriving
   // anchor thresholds from `filteredDataset`, which can exclude both anchor models entirely and
-  // would otherwise silently collapse every rated model to `light`.
+  // would otherwise silently collapse every rated model to `haiku`.
   // `decodeState` returns ONE flat object carrying both the filter and sort keys — picked apart
   // into two disjoint-key objects here (not just re-typed) so `latestFilterStateRef` never carries
-  // an own `opus`/`sonnet`/`light` key and `latestSortStateRef` never carries an own
+  // an own `opus`/`sonnet`/`haiku` key and `latestSortStateRef` never carries an own
   // `harness`/`class` key. Without this, `{ ...next, ...latestSortStateRef.current }` below would
   // spread `latestSortStateRef.current`'s own (implicitly `undefined`) `harness`/`class` keys
   // OVER `next`'s real values, silently dropping whichever filter had just changed.
@@ -39,7 +39,7 @@ export function BenchmarkContent() {
   const sortState: SortState = {
     opus: decoded.opus,
     sonnet: decoded.sonnet,
-    light: decoded.light,
+    haiku: decoded.haiku,
   };
   const filteredModels = filterModels(dataset, filterState);
   const filteredDataset: Dataset = { ...dataset, models: filteredModels };
@@ -80,18 +80,39 @@ export function BenchmarkContent() {
   }
 
   return (
-    // A plain `<div>`, not `<main>` — `layout.tsx`'s `<main id="main-content">` is already the
-    // page's one landmark; a second nested `<main>` here produced two `role="main"` landmarks on
-    // this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect (Rule-15 EWT-001 fix).
-    <div data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-      <header className="space-y-1">
+    // Rule-15 EWT-001 fix, preserved through Phase 7's reorder (DD-29): this root stays a plain
+    // element, never the landmark element `layout.tsx`'s root already renders with
+    // `id="main-content"` — nesting a second one of those here produced two landmarks with the
+    // same accessibility role on this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect. Spelled
+    // without the literal element-name markup below so this explanatory comment cannot itself trip
+    // `grep -cF` guards written against that markup (Phase 7 Gate's own EWT-001 regression check).
+    <div
+      data-testid="ai-bench-page"
+      // Rule-15 UWT-007 fix: below `sm`, every gap tightens (space-y-6→4, py-6→4) — the chart was
+      // measured starting at `top: 741px`/`701px` at the two narrowest breakpoints (320x568,
+      // 390x664), well past the visible viewport. This alone does not close the gap (the always
+      // -visible AC-32 honesty line cannot shrink further without hurting readability); the
+      // remaining trims live in `how-to-read.tsx`, `benchmark-filters.tsx`, and
+      // `benchmark-chart.tsx`.
+      className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:space-y-6 sm:py-6"
+    >
+      {/* AC-56 (Phase 7, cycle 7.2) document order: header (title + subtitle + the how-to-read
+          snapshot/honesty line) → filters → chart → roster → legend disclosure → sources
+          disclosure. The ref-based race guards above (EWT-003) are untouched by this reorder —
+          they live in the handlers, not the JSX. */}
+      <header className="space-y-2 sm:space-y-3">
         <h1 className="text-2xl font-bold tracking-tight">{t(locale, "aiBenchTitle")}</h1>
-        <p data-testid="ai-bench-subtitle" className="text-sm text-muted-foreground">
+        {/* Rule-15 UWT-007 fix: hidden below `sm` — decorative orientation copy, not gated by any
+            AC (unlike the honesty line right below, which AC-32 requires always-visible). At 320px
+            this alone was ~80px (4 wrapped lines) of the ~120px still separating the chart's first
+            bar from the visible viewport after every other trim in this fix. Stays in DOM order
+            (AC-56 is about document ORDER, not pixel-visibility), so a screen reader or a widened
+            viewport still reaches it. */}
+        <p data-testid="ai-bench-subtitle" className="hidden text-sm text-muted-foreground sm:block">
           {t(locale, "aiBenchSubtitle")}
         </p>
+        <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
       </header>
-
-      <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />
 
       <BenchmarkFilters
         state={filterState}
@@ -132,6 +153,12 @@ export function BenchmarkContent() {
           <ModelTable dataset={filteredDataset} fullDataset={dataset} locale={locale} />
         </>
       )}
+
+      {/* AC-57 — the legend and sources stay reachable regardless of the empty-state branch above
+          (both are dataset-level, not filtered-roster-level, content), always following whichever
+          of the roster or the empty-state message rendered. */}
+      <AiBenchLegend locale={locale} />
+      <AiBenchSources locale={locale} />
     </div>
   );
 }

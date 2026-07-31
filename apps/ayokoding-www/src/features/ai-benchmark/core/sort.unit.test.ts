@@ -20,7 +20,7 @@ function modelWith(id: string, pricing: Model["pricing"] = {}): Model {
 }
 
 function score(id: string, index: number | undefined, pricing: Model["pricing"] = {}): ModelScore {
-  return { model: modelWith(id, pricing), index, coverage: 1, band: "light" };
+  return { model: modelWith(id, pricing), index, coverage: 1, band: "haiku" };
 }
 
 // ─── byCapabilityDesc ───────────────────────────────────────────────────────────

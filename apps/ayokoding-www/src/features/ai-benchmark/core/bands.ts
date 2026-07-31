@@ -4,17 +4,17 @@
 // `plans/done/2026-07-30__ayokoding-www-tools-ai-benchmark/tech-docs.md` §"Band assignment" (the
 // state diagram with anchor pinning) and §"DD-20a". No React, no router, no side effects.
 //
-// Bands: `opus` | `sonnet` | `light` | `unrated`. The two anchors (Claude Opus 5, Claude Sonnet 5)
+// Bands: `opus` | `sonnet` | `haiku` | `unrated`. The two anchors (Claude Opus 5, Claude Sonnet 5)
 // DEFINE the bands and are PINNED by id — they always occupy their own band even if arithmetic
 // would place them elsewhere. Every other model is compared against the anchors' own full
-// composite indices (DD-20a): at/above opus → opus, at/above sonnet → sonnet, else light. A model
+// composite indices (DD-20a): at/above opus → opus, at/above sonnet → sonnet, else haiku. A model
 // with no composite index (zero coverage) is unrated.
 
 import { OPUS_ANCHOR_ID, SONNET_ANCHOR_ID, type Dataset, type Model } from "./data/models";
 import { computeIndex, computeRosterMaxes, coverage, type RosterMaxes } from "./score";
 
 /** The four capability classes. */
-export type Band = "opus" | "sonnet" | "light" | "unrated";
+export type Band = "opus" | "sonnet" | "haiku" | "unrated";
 
 /** Per-model composite index lookup; `undefined` = no index (unrated). */
 export type IndexMap = Record<string, number | undefined>;
@@ -39,7 +39,7 @@ export type ModelScore = {
 export type BandGroups = {
   opus: ModelScore[];
   sonnet: ModelScore[];
-  light: ModelScore[];
+  haiku: ModelScore[];
   unrated: ModelScore[];
 };
 
@@ -51,7 +51,7 @@ export type BandGroups = {
  *   2. No composite index (zero coverage) → `unrated`.
  *   3. `index ≥ opus anchor index` → `opus`.
  *   4. `index ≥ sonnet anchor index` → `sonnet`.
- *   5. otherwise → `light`.
+ *   5. otherwise → `haiku`.
  *
  * Pinning is checked BEFORE the zero-coverage branch so an anchor always lands in its own band
  * even in the degenerate case where an anchor happened to carry no composite figure — the bands
@@ -82,7 +82,7 @@ export function assignBand(model: Model, indices: IndexMap, anchorIndices: Ancho
   if (anchorIndices.sonnet !== undefined && index >= anchorIndices.sonnet) {
     return "sonnet";
   }
-  return "light";
+  return "haiku";
 }
 
 /**
@@ -135,7 +135,7 @@ function compareForOrder(a: ModelScore, b: ModelScore): number {
  * displayed, never which models define the band boundaries. Passing the harness-filtered subset
  * as BOTH `dataset` and (implicitly) `fullDataset` reproduces the anchor-collapse bug: when the
  * filter excludes both `claude-opus-5` and `claude-sonnet-5`, the thresholds silently become
- * `undefined` and every surviving rated model falls through to `light`.
+ * `undefined` and every surviving rated model falls through to `haiku`.
  */
 export function computeGroups(dataset: Dataset, fullDataset: Dataset = dataset): BandGroups {
   const maxes = computeRosterMaxes(fullDataset);
@@ -151,13 +151,13 @@ export function computeGroups(dataset: Dataset, fullDataset: Dataset = dataset):
     band: assignBand(m, indices, anchorIdx),
   }));
 
-  const groups: BandGroups = { opus: [], sonnet: [], light: [], unrated: [] };
+  const groups: BandGroups = { opus: [], sonnet: [], haiku: [], unrated: [] };
   for (const s of scored) {
     groups[s.band].push(s);
   }
   groups.opus.sort(compareForOrder);
   groups.sonnet.sort(compareForOrder);
-  groups.light.sort(compareForOrder);
+  groups.haiku.sort(compareForOrder);
   groups.unrated.sort(compareForOrder);
   return groups;
 }

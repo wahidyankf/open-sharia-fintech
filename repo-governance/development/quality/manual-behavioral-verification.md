@@ -76,6 +76,7 @@ After implementing a UI change, verify:
 5. **Visual correctness**: Take a screenshot and confirm the layout, typography, and content match expectations.
 6. **All locales verified**: For multi-locale apps, repeat steps 1–5 for EVERY supported locale — navigate to each locale-prefixed URL (e.g., `/en/`, `/id/`). A UI change verified only in the default locale is incomplete. Confirm the `html[lang]` attribute matches each locale and that no strings are untranslated.
 7. **All breakpoints verified**: Repeat at mobile (375 px), tablet (768 px), and desktop (1280 px). Responsive behavior at one viewport does not imply correct behavior at others.
+   - **Presence is not legibility**: confirming an element is present at a breakpoint (via `browser_snapshot` or a DOM query) does not confirm it is legible. Read a computed style (e.g., font-size) or a bounding box for representative text elements at each breakpoint — an element can exist in the DOM while rendering too small to read, and a screenshot scaled into a review pane can hide a factor-of-two type-size error.
 8. **Evidence captured**: Save one screenshot per breakpoint per locale to the plan's `evidence/` subfolder; reference each from the `delivery.md` implementation notes. See [Evidence Capture Convention](./evidence-capture.md).
 
 ### Example: UI Feature Verification (multi-locale app)
