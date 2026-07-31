@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: containers-capstone-config
+  namespace: containers-learning
+data:
+  APP_MESSAGE: "kubernetes containers capstone"

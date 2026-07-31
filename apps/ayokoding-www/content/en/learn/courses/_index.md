@@ -188,3 +188,7 @@ weight: 95
   - [Overview](/en/learn/courses/database-internals-and-storage-engines/overview)
   - [Learning](/en/learn/courses/database-internals-and-storage-engines/learning)
   - [Drilling](/en/learn/courses/database-internals-and-storage-engines/drilling)
+- [Containers and Orchestration](/en/learn/courses/containers-and-orchestration)
+  - [Overview](/en/learn/courses/containers-and-orchestration/overview)
+  - [Learning](/en/learn/courses/containers-and-orchestration/learning)
+  - [Drilling](/en/learn/courses/containers-and-orchestration/drilling)

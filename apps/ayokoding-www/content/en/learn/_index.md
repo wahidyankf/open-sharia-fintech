@@ -62,6 +62,7 @@ weight: 10
   - [NoSQL Databases](/en/learn/courses/nosql-databases)
   - [API Design](/en/learn/courses/api-design)
   - [Database Internals and Storage Engines](/en/learn/courses/database-internals-and-storage-engines)
+  - [Containers and Orchestration](/en/learn/courses/containers-and-orchestration)
 - [Legacy](/en/learn/legacy)
   - [Overview](/en/learn/legacy/overview)
   - [Software Engineering](/en/learn/legacy/software-engineering)

@@ -161,6 +161,11 @@ once the review and all quality gates are green (see **DN-11** below). `ayokodin
 `prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree` and
 `## Delivery Mode` declarations and the PR-review-cycle steps.
 
+**Execution amendment (2026-07-31):** remaining unmerged course bodies use sequential
+five-course delivery cohorts. Each course still completes maker-checker-fixer and a thematic commit
+on its own; after every fifth course, the cohort opens one draft PR, runs the three-cycle review,
+merges, and deploys once. Historical already-merged individual-course PRs remain valid evidence.
+
 ## Depends-on
 
 | Direction     | Plan (full folder name)                                  | Nature                                                           |

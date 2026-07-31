@@ -1,0 +1,43 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      API_TOKEN: "${API_TOKEN:?Set API_TOKEN through --env-file}"
+      DATABASE_URL: "postgres://app:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD through --env-file}@db:5432/app"
+      CACHE_URL: "redis://cache:6379"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8080/readyz').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD through --env-file}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+  cache:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 10

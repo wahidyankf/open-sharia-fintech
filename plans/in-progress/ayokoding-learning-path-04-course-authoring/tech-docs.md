@@ -357,7 +357,7 @@ sequenceDiagram
 
     CA->>CA: Author every body in Band N from its syllabus spec
     CA->>CA: Run content checkers, apply fixers, re-verify
-    CA->>Main: Each course lands via its own draft PR, 3-cycle review, [AI] merge (per-course DAG-leaf PRs)
+    CA->>Main: Each five-course cohort lands via one draft PR, 3-cycle review, [AI] merge
     CA->>CA: Record five-field band-completion signal in delivery.md
     Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (full paths), MERGED_COMMIT
     CA->>MF: Hand off the signal (via this plan's merged delivery.md)
@@ -367,7 +367,9 @@ sequenceDiagram
     Note over MF: If a signal is incomplete, the manifest plan REJECTS it<br/>rather than guessing which manifests to grow
 ```
 
-The signal's five fields and the per-band `GROW_MANIFESTS` routing are specified in
+Per the 2026-07-31 execution amendment in `delivery.md`, courses continue through authoring and
+content checks one by one, but remaining bodies land in sequential five-course PR cohorts. The
+signal's five fields and the per-band `GROW_MANIFESTS` routing are specified in
 [README §Band-completion signal contract](./README.md#band-completion-signal-contract). The routing
 is not uniform — Band 9 grows two manifests, Bands 5 and 8 grow four, and Bands 1–4/6/7 grow three.
 

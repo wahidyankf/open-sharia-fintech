@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: containers-capstone
+  namespace: containers-learning
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: containers-capstone
+  template:
+    metadata:
+      labels:
+        app: containers-capstone
+    spec:
+      containers:
+        - name: app
+          image: containers-capstone:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: containers-capstone-config
+            - secretRef:
+                name: containers-capstone-secret
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8080
+            periodSeconds: 5
