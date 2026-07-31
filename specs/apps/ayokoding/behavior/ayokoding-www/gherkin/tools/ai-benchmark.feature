@@ -489,3 +489,57 @@ Feature: AI model benchmark tool
       | 1440  | en     |
       | 320   | id     |
       | 1440  | id     |
+
+  # AC-53
+  @unit
+  Scenario: A roster card shows only its summary until it is expanded
+    Given the full roster is rendered below the md breakpoint
+    When a model's card is inspected before any interaction
+    Then the card shows the model name, its class, its composite index, and its price
+    But the card's remaining figures are inside a closed disclosure
+
+  # AC-54
+  @unit
+  Scenario: An expanded roster card carries every figure the desktop table carries
+    Given a model is rendered in both the roster card and the desktop table
+    When that model's card disclosure is expanded
+    Then the card's summary and expanded content together carry every figure that model's table row carries
+
+  # AC-59
+  @e2e
+  Scenario: The roster table header stays visible while the page scrolls at desktop width
+    Given the AI benchmark page is loaded at a 1440 px viewport
+    When the page is scrolled until the roster table's last row is in view
+    Then the table's header row is still visible
+
+  # AC-61 — DD-34 Treatment 1
+  @e2e
+  Scenario: An expanded card's figure value out-ranks its own field label
+    Given the AI benchmark page is loaded at a 390 px viewport with one roster card expanded
+    When the computed font size and font weight of a field label and of its own value are read from the live page
+    Then the value's computed font size is larger than the label's computed font size
+    And the value's computed font weight is greater than the label's computed font weight
+
+  # AC-62 — DD-34 Treatment 2
+  @e2e
+  Scenario: An expanded card's figure value and its evidence badge flow on one row
+    Given the AI benchmark page is loaded at a 390 px viewport with one roster card expanded
+    When the computed flex direction of a graded figure cell is read from the live page
+    Then that computed flex direction is row rather than column
+    And the field label's vertical band overlaps the vertical band of its own value
+
+  # AC-63 — DD-34 Treatment 3
+  @unit
+  Scenario: An expanded card groups its fields under labelled headings
+    Given a model's roster card is rendered with its disclosure expanded
+    When the structure of the disclosure's content is inspected
+    Then every field belongs to exactly one labelled group
+    And each group's heading is one level below the card's own model-name heading
+
+  # AC-64 — DD-34 Treatment 4
+  @unit
+  Scenario: Unpublished figures share one value instead of occupying a field each
+    Given a model with more than one unpublished benchmark figure is rendered with its disclosure expanded
+    When the disclosure's name-value groups are inspected
+    Then every unpublished figure's label is a term in one single group sharing one "not reported" description
+    And no unpublished figure occupies a name-value group of its own
