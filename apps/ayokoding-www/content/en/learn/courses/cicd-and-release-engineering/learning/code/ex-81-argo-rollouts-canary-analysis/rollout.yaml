@@ -1,0 +1,30 @@
+# Prerequisites: install the Argo Rollouts controller and configure the metrics endpoint.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: course-service
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: course-service
+  template:
+    metadata:
+      labels:
+        app: course-service
+    spec:
+      containers:
+        - name: service
+          image: example.invalid/course-service:0.0.0
+          ports:
+            - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause:
+            duration: 1m
+        - analysis:
+            templates:
+              - templateName: course-success-rate
+        - setWeight: 100

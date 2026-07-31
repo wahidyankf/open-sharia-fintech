@@ -1,0 +1,2 @@
+# Keeps dense educational annotations on one physical line in course-owned Python artifacts.
+line-length = 230

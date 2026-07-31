@@ -1,0 +1,24 @@
+# => This workflow models approved, evidence-gated production promotion.
+# => It contains no real secret value and never prints a token.
+name: capstone-deploy
+on:
+  workflow_dispatch:
+permissions:
+  # => OIDC permission is the short-lived cloud-identity boundary.
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    # => Repository environment rules supply the required-reviewer gate.
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      # => This command demonstrates the deployment input remains masked.
+      - name: Confirm deployment input
+        env:
+          DEMO_DEPLOY_TOKEN: placeholder-injected-by-environment
+        run: test -n "$DEMO_DEPLOY_TOKEN"
+      # => A local composite action centralizes rollout behavior for reuse.
+      - uses: ./apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/.github/actions/run-rollout
+        with:
+          health: healthy

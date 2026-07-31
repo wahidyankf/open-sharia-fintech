@@ -1,0 +1,15 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 38: Create release tag"
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => A real release job needs a unique, verified version supplied by the release process.
+      - run: |
+          git tag v0.0.0-example
+          gh release create v0.0.0-example --title 'Example release' --notes 'Safe disposable-repository example.'

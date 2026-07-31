@@ -196,3 +196,7 @@ weight: 95
   - [Overview](/en/learn/courses/cloud-and-iac/overview)
   - [Learning](/en/learn/courses/cloud-and-iac/learning)
   - [Drilling](/en/learn/courses/cloud-and-iac/drilling)
+- [55 · CI/CD and Release Engineering](/en/learn/courses/cicd-and-release-engineering)
+  - [Overview](/en/learn/courses/cicd-and-release-engineering/overview)
+  - [Learning](/en/learn/courses/cicd-and-release-engineering/learning)
+  - [Drilling](/en/learn/courses/cicd-and-release-engineering/drilling)

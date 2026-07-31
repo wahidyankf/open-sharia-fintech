@@ -1,0 +1,17 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 42: Docker registry push"
+on:
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => A real repository injects registry credentials from its protected environment.
+      - name: Build and push configured image
+        env:
+          IMAGE: example.invalid/cicd-course/service:0.0.0-example
+        run: |
+          docker build --tag "$IMAGE" .
+          echo 'Authenticate with a protected registry credential before enabling the next command.'
+          echo "docker image push $IMAGE"

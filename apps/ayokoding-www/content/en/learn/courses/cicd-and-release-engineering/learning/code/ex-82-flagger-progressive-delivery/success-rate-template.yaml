@@ -1,0 +1,10 @@
+# Prerequisites: configure Prometheus to scrape the course-service workload.
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+  name: course-success-rate
+spec:
+  provider:
+    type: prometheus
+    address: https://prometheus.example.invalid
+  query: sum(rate(http_requests_total{status!~"5.."}[1m])) / sum(rate(http_requests_total[1m])) * 100

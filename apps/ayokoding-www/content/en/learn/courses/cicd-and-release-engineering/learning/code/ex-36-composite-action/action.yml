@@ -1,0 +1,12 @@
+# => Install this directory as .github/actions/example-36-shared-check.
+name: example-36-shared-check
+description: Reusable local check for the composite-action example.
+inputs:
+  message:
+    description: Evidence message from the caller.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: 'echo "Composite action: ${{ inputs.message }}"'

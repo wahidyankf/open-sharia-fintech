@@ -1,0 +1,13 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 40: Semantic release dry run"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => Dry-run calculates the release chain without publishing anything.
+      - run: npx semantic-release --dry-run

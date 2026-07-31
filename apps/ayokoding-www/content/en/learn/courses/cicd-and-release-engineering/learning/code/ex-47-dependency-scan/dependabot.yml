@@ -1,0 +1,10 @@
+# => GitHub evaluates this complete Dependabot configuration without workflow credentials.
+version: 2
+updates:
+  # => Version updates keep dependency maintenance visible and reviewable.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+  # => Security alerts and security updates are enabled in repository security settings.
+  # => GitHub also reports vulnerable dependencies through Dependabot alerts.

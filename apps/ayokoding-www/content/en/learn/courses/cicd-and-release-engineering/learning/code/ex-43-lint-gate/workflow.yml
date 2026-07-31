@@ -1,0 +1,11 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 43: Lint gate"
+on:
+  workflow_dispatch:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => A nonzero lint command is a merge-blocking status check when required by protection.
+      - run: python -m compileall automation.py

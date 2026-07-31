@@ -1093,8 +1093,15 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     the five-course cadence amendment, this thematic commit remains on the active cohort branch: no
     PR or deployment opens until the following three courses are completed._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `cicd-and-release-engineering` (By Example · YAML + Python) — convention complete; checkers
+- [x] [AI] `cicd-and-release-engineering` (By Example · YAML + Python) — convention complete; checkers
       clean.
+  - _Completed 2026-07-31: authored the 83-example (28/27/28) GitHub Actions and typed-Python course
+    with capstone, drilling, 83 dedicated artifact pairs, and controller artifacts for Argo Rollouts and
+    Flagger. Fresh By-Example and factual audits pass after real Actions-control, controller-manifest,
+    diagram, Flagger-range, Nx-runner, and OIDC-exchange repairs. Course-scoped Prettier, markdownlint,
+    Python, YAML, Mermaid, and actionlint checks pass; the production build regenerated both learn indexes.
+    Per the five-course cadence amendment, this thematic commit remains on the active cohort branch: no PR
+    or deployment opens until the following two courses are completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [ ] [AI] `build-automation-and-task-runners` (By Example · multi-tool) — convention complete;
       checkers clean.

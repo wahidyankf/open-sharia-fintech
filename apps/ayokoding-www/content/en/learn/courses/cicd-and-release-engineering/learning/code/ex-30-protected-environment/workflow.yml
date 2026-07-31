@@ -1,0 +1,11 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 30: Protected environment"
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    # => Configure required reviewers for this environment in repository settings.
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Deployment starts only after environment protection rules approve it.'

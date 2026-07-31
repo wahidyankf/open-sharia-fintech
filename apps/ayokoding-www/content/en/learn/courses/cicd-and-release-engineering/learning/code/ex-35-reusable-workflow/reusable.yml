@@ -1,0 +1,13 @@
+# => Install this as .github/workflows/example-35-reusable.yml before calling it.
+name: example-35-reusable
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Reusable workflow received configured runtime input."

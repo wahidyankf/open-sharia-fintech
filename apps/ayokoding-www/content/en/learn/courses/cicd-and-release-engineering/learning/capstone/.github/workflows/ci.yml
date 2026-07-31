@@ -1,0 +1,35 @@
+# => This complete workflow creates one promotable artifact after matrix verification.
+# => It uses only course-owned code and a hosted runner.
+name: capstone-ci
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    # => The matrix demonstrates compatibility evidence across supported runtimes.
+    runs-on: ubuntu-latest
+    strategy:
+      # => A failure ends useless parallel work quickly.
+      fail-fast: true
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      # => Pin checkout to a reviewed action commit.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => Pin setup-python to a reviewed action commit.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      # => Cache a stable dependency location for repeated candidate checks.
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ~/.cache/pip
+          key: capstone-pip-v1
+      # => The local program proves a healthy candidate can promote.
+      - name: Verify candidate
+        working-directory: apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/code
+        run: python rollout.py --health healthy
+      # => Upload the exact evidence a deploy job must consume.
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: promotable-artifact
+          path: apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/code/provenance.json

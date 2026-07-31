@@ -1,0 +1,6 @@
+{
+  "artifactDigest": "sha256:demo-candidate",
+  "builder": "course-local-simulation",
+  "sourceRevision": "example-only",
+  "signature": "simulated-valid-signature"
+}

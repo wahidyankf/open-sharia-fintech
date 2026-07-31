@@ -1,0 +1,10 @@
+# Prerequisites: configure Prometheus to scrape the course-service workload.
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+  name: course-request-duration
+spec:
+  provider:
+    type: prometheus
+    address: https://prometheus.example.invalid
+  query: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[1m])) by (le))

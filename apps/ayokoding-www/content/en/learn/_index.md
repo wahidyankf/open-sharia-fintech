@@ -64,6 +64,7 @@ weight: 10
   - [Database Internals and Storage Engines](/en/learn/courses/database-internals-and-storage-engines)
   - [Containers and Orchestration](/en/learn/courses/containers-and-orchestration)
   - [Cloud and IaC](/en/learn/courses/cloud-and-iac)
+  - [55 · CI/CD and Release Engineering](/en/learn/courses/cicd-and-release-engineering)
 - [Legacy](/en/learn/legacy)
   - [Overview](/en/learn/legacy/overview)
   - [Software Engineering](/en/learn/legacy/software-engineering)

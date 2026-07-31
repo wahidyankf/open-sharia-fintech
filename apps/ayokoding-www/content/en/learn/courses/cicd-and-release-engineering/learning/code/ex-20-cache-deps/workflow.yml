@@ -1,0 +1,22 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 20: Cache dependency inputs"
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.13"
+      # => A dependency-derived key prevents a stale restore from silently passing.
+      - id: dependency-cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: ~/.cache/pip
+          key: python-pip-${{ hashFiles('requirements.txt') }}
+      # => Installation runs only when no exact cache entry was restored.
+      - if: steps.dependency-cache.outputs.cache-hit != 'true'
+        run: python -m pip install -r requirements.txt || true
+      - run: python automation.py
