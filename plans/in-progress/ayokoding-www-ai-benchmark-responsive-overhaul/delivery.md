@@ -500,8 +500,15 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
   > **Date**: 2026-07-31 **Status**: Done **Notes**: opened
   > [PR #126](https://github.com/wahidyankf/ose-public/pull/126); `gh pr list` confirms `1`.
 
-- [ ] [AI] Monitor CI (poll every 2 minutes, one `gh run view --json status,conclusion` per wakeup —
+- [x] [AI] Monitor CI (poll every 2 minutes, one `gh run view --json status,conclusion` per wakeup —
       never `gh run watch`) — acceptance: every check reports `conclusion: success`
+
+  > **Date**: 2026-08-01 **Status**: Done (retroactive tick) **Notes**: this checkbox was left
+  > unticked despite CI having genuinely gone green at the time — the PR-Review Maker→Fixer Cycle
+  > note directly below states "CI green at final head", and the subsequent `gh pr ready`/merge step
+  > (which requires passing checks) succeeded and produced merge commit `ba190682f`. No further
+  > action was needed; this is a bookkeeping fix, not new verification.
+
 - [x] [AI] Run the PR-Review Maker→Fixer Cycle — 3 sequential cycles, each gated by a green CI run
       (see [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       — acceptance: cycle 3's consolidated review reports zero unresolved CRITICAL or HIGH findings
