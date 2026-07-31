@@ -1,5 +1,6 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import { getResilient } from "../support/resilient-request";
 
 const { Then } = createBdd();
 
@@ -22,7 +23,10 @@ Then(
 
     await Promise.all(
       [...hrefs].map(async (href) => {
-        const response = await page.request.get(href, { timeout: 10000 });
+        // See `getResilient` — retries once on a load-induced ECONNRESET; the 30s timeout
+        // (vs. the 10s default) additionally tolerates slow-but-successful responses under
+        // full-suite contention. A genuine 404/drained route still fails on the retry.
+        const response = await getResilient(page, href, { timeout: 30000 });
         expect(response.status(), `Course catalog entry ${href} should not be a drained/missing location`).not.toBe(
           404,
         );

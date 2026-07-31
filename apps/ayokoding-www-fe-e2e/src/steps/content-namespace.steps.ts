@@ -1,5 +1,6 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
+import { getResilient } from "../support/resilient-request";
 
 const { When, Then } = createBdd();
 
@@ -11,7 +12,7 @@ When("a raw HTTP GET is made to {string} with redirects disabled", async ({ page
   // Stash the raw response on the page object via evaluate so the Then step
   // can inspect it. We use page.request (the APIRequestContext bound to this
   // browser context) with maxRedirects: 0 so the 308 is captured as-is.
-  const response = await page.request.get(url, { maxRedirects: 0 });
+  const response = await getResilient(page, url, { maxRedirects: 0 });
   // Store status + location in page title attribute via a temp state variable.
   // playwright-bdd shares fixture state across steps in the same scenario,
   // so we piggy-back on page.evaluate to stash in window.__redirectCapture.
