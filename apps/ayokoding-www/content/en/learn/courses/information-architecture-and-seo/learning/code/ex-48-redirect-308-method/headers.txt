@@ -1,0 +1,1 @@
+HTTP/1.1 308 Permanent Redirect Location: https://example.test/api/v2/orders

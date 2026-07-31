@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /guides/
+Sitemap: https://example.test/sitemap.xml

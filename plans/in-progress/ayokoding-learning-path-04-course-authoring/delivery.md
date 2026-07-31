@@ -1121,8 +1121,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     static and factual validation. Per the five-course cadence, this thematic commit remains on the
     active cohort branch: no PR or deployment opens until the following course is completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `information-architecture-and-seo` (Annotated-concept · HTML) — convention complete;
+- [x] [AI] `information-architecture-and-seo` (Annotated-concept · HTML) — convention complete;
       checkers clean.
+  - _Completed 2026-07-31: authored the 53-example (18/20/15) information-architecture and SEO
+    course with 53 dedicated artifacts and a runnable discoverability capstone. Course-scoped
+    Prettier, markdownlint, Mermaid, XML, JSON, HTML-structure, local-artifact-link, and production
+    build checks pass. The active five-course cohort is now complete and is ready for its single PR._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
       manifests.
