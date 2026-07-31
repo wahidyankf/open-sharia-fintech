@@ -4117,27 +4117,41 @@ Scenario: Price figures disclose their unit basis
 > changes. Root Cause Orientation — proactively fix preexisting errors encountered during work. Do
 > not defer. Commit preexisting fixes separately with appropriate conventional commit messages.
 
-- [ ] [AI] `npx nx affected -t typecheck` — exits 0
-- [ ] [AI] `npx nx affected -t lint` — exits 0
-- [ ] [AI] `npx nx affected -t test:quick` — exits 0
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — exits 0
-- [ ] [AI] Re-run every previously failing check — acceptance: zero failures
+- [x] [AI] `npx nx affected -t typecheck` — exits 0
+- [x] [AI] `npx nx affected -t lint` — exits 0
+- [x] [AI] `npx nx affected -t test:quick` — exits 0
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` — exits 0
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` — exits 0
+- [x] [AI] Re-run every previously failing check — acceptance: zero failures
+
+> **2026-08-01 — Status: Done.** All five commands run against `--base=origin/main --head=HEAD`
+> (27 affected projects) and exit 0: `typecheck` (33 tasks, all cache/fresh green), `lint` (green),
+> `test:quick` (green), `specs:behavior:coverage` (green — 27 projects, no-op on non-spec projects),
+> and `ayokoding-www:build && ayokoding-www-fe-e2e:test:e2e` (build succeeded; e2e — 725 passed, 346
+> skipped, 0 failed). No failures were found, so there was no preexisting-fix commit to make; the
+> working tree carries no changes beyond the auto-generated, intentionally-uncommitted
+> `apps/ayokoding-www/next-env.d.ts` codegen artifact.
 
 ### Commit Guidelines — Unit 2
 
-- [ ] [AI] Commit thematically, Conventional Commits format, split by concern: chart rewrite,
+- [x] [AI] Commit thematically, Conventional Commits format, split by concern: chart rewrite,
       roster card, composition reorder, accessibility, specs, evidence
       — acceptance: no commit bundles two unrelated domains
-- [ ] [AI] Preexisting fixes get their own separate commits
+- [x] [AI] Preexisting fixes get their own separate commits
       — acceptance: `git log --oneline` shows them distinctly
+
+> **2026-08-01 — Status: Done.** All Phases 3-11 commits were already made thematically across
+> prior phases (chart primitives/rewrite, roster card, composition reorder, accessibility, specs
+> audit, live verification, rule-15 fixes each in their own commit(s); Phase 11's fix commit and
+> docs-ticking commit kept separate). No new preexisting-fix commit was needed this phase since all
+> local gates passed cleanly with zero failures.
 
 ### Integration
 
-- [ ] [AI] Commit and push to `origin ai-benchmark-responsive-overhaul`
+- [x] [AI] Commit and push to `origin ai-benchmark-responsive-overhaul`
       — acceptance: `git ls-remote --heads origin ai-benchmark-responsive-overhaul | grep -c .`
       prints `1`
-- [ ] [AI] Open a draft PR against `main`:
+- [x] [AI] Open a draft PR against `main`:
       `gh pr create --draft --base main --title "feat(ayokoding-www): responsive overhaul of the AI benchmark page"`
       — acceptance: `gh pr list --head ai-benchmark-responsive-overhaul --json number --jq 'length'`
       prints `1`
