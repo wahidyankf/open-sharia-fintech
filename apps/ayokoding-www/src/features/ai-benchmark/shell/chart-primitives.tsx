@@ -1,11 +1,12 @@
-// AI BENCHMARK — shared chart primitives (Phase 6, A-2; refactored A-17; reused by Phase 7).
+// AI BENCHMARK — shared chart primitives (Phase 6, A-2; refactored A-17; reused by Phase 7; DOM
+// class maps added Phase 4/5, cycle 4.2/DD-25).
 //
-// `benchmark-chart.tsx` (the merged chart, Phase 2) is the sole consumer of this shared set of SVG
-// building blocks today — it never re-derives its own scale, axis, bar, or band-header rendering.
-// This module predates the merge: the retired `capability-chart.tsx` and `price-chart.tsx`
-// (deleted, Phase 3c — see git history) used to share it (Y-11 hoisted anything they duplicated
-// back here), which is why the primitives still live in their own module rather than being folded
-// into `benchmark-chart.tsx` directly. `Legend` also lives here but is currently used by
+// `benchmark-chart.tsx` (the merged chart, Phase 2) is the sole consumer of this shared scale/
+// colour-token/label logic today — it never re-derives its own scale or band-label lookup. This
+// module predates the merge: the retired `capability-chart.tsx` and `price-chart.tsx` (deleted,
+// Phase 3c — see git history) used to share it (Y-11 hoisted anything they duplicated back here),
+// which is why the primitives still live in their own module rather than being folded into
+// `benchmark-chart.tsx` directly. `Legend` also lives here but is currently used by
 // `how-to-read.tsx` only — see its own docstring below. Every colour reference resolves through the
 // `--chart-band-*` design tokens declared in `<TOKENS>` (Phase 1) — no component in this file (or
 // any file that imports it) may name a hue directly (A-17).
