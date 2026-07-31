@@ -49,6 +49,7 @@ import {
 } from "./model-figures";
 import { ModelDetailDisclosure } from "./model-detail-disclosure";
 import { ModelCard } from "./model-card";
+import { TAP_TARGET_MIN_CLASS } from "./tap-target";
 
 const SLOT = "model-table";
 /** Model, vendor, class, index, input price, output price — the desktop table's primary columns. */
@@ -95,7 +96,21 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
                 {t(locale, "aiBenchColModel")}
               </TableHead>
               <TableHead scope="col">{t(locale, "aiBenchColVendor")}</TableHead>
-              <TableHead scope="col">{t(locale, "aiBenchColClass")}</TableHead>
+              <TableHead scope="col">
+                {t(locale, "aiBenchColClass")}{" "}
+                {/* Rule-15 UWT-011 fix: same real, keyboard/touch-reachable link the Class filter
+                    now carries (`benchmark-filters.tsx`'s `classHintLink`) — a compact "(?)" glyph
+                    here rather than the filter's full sentence, so this primary-column header does
+                    not grow the table's intrinsic width past its DD-27/AC-59 budget; the accessible
+                    name still carries the full hint text. */}
+                <a
+                  href="#ai-bench-legend-classes"
+                  aria-label={t(locale, "aiBenchClassHint")}
+                  className={`inline-flex items-center text-xs font-normal text-muted-foreground underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
+                >
+                  (?)
+                </a>
+              </TableHead>
               <TableHead scope="col" className="text-right">
                 {t(locale, "aiBenchColIndex")}
               </TableHead>
@@ -149,7 +164,14 @@ export function ModelTable({ dataset = defaultDataset, fullDataset, locale }: Mo
                     <TableCell className="text-right">{inputFigure?.node}</TableCell>
                     <TableCell className="text-right">{outputFigure?.node}</TableCell>
                   </TableRow>
-                  <TableRow data-model-detail-id={model.id} className="align-top">
+                  {/* Rule-15 DWT-005 fix: `TableRow`'s shared `hover:bg-muted/50` (meant to
+                      highlight one data row under the pointer) instead tints this ENTIRE
+                      multi-line detail panel the moment the pointer crosses any element inside
+                      it — hovering a single `<dt>` deep in "Scores" visibly shaded the whole
+                      row. `hover:bg-transparent` overrides it via `cn`'s `tailwind-merge` pass
+                      (last hover:bg-* utility for the same property wins); the primary row above
+                      keeps the shared hover treatment untouched. */}
+                  <TableRow data-model-detail-id={model.id} className="align-top hover:bg-transparent">
                     <TableCell colSpan={PRIMARY_COLUMN_COUNT}>
                       <ModelDetailDisclosure slot={SLOT} modelId={model.id} groups={groups} locale={locale} />
                     </TableCell>

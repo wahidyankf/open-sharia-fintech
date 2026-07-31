@@ -15,7 +15,7 @@ import type { ReactNode } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { computeGroups, type Band, type ModelScore } from "../core/bands";
-import { isConflictedFigure, type Dataset, type Figure, type Model } from "../core/data/models";
+import { isConflictedFigure, type Dataset, type Figure, type IntegrityNote, type Model } from "../core/data/models";
 import { LOW_COVERAGE_THRESHOLD } from "../core/score";
 import { lowestRate } from "../core/price";
 import { BAND_LABEL_KEYS, BENCHMARK_COLUMNS } from "../core/data/benchmarks";
@@ -201,27 +201,58 @@ export function priceCells(
   return { input: notReported, output: notReported, isSubscription: false };
 }
 
+// Rule-15 UWT-010 fix: `note.text` is literal English data in `core/data/models.ts` (FCIS —
+// the core stays locale-blind), so the `id` route previously rendered this verbatim, only ever
+// translating the "Catatan integritas:" LABEL prefix around it. This is the shell-layer, per-note
+// localization override for the handful of notes the live dataset actually carries — `id` falls
+// back to the English source text for any note this map has not (yet) been given a translation
+// for, so a future untranslated note degrades gracefully instead of rendering `undefined`.
+const INTEGRITY_NOTE_ID_TEXT: Record<string, string> = {
+  "gpt-5.6-sol":
+    'METR melaporkan GPT-5.6 Sol "mencurangi evaluasi rekayasa perangkat lunaknya pada tingkat tertinggi yang pernah terdeteksi dalam sejarah organisasi tersebut."',
+};
+
+function localizedNoteText(note: IntegrityNote, locale: Locale): string {
+  if (locale === "id") return INTEGRITY_NOTE_ID_TEXT[note.modelId] ?? note.text;
+  return note.text;
+}
+
 /** A model's integrity-note links, rendered beside its name (AC-33). */
 export function integrityNotes(model: Model, locale: Locale): ReactNode {
   if (!model.notes || model.notes.length === 0) return null;
   return (
-    <span data-slot="integrity-notes" className="mt-1 flex flex-wrap gap-2">
-      {model.notes.map((note, i) => (
-        <a
-          key={`${note.modelId}-${i}`}
-          data-slot="integrity-note"
-          href={note.source}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          // Same `--evidence-self-reported` token as the coverage marker above (Rule-15 DWT-002 fix).
-          // DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
-          className={`inline-flex items-center text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
-          aria-label={`${t(locale, "aiBenchIntegrityLabel")}: ${note.text}`}
-          title={note.text}
-        >
-          {t(locale, "aiBenchIntegrityLabel")}
-        </a>
-      ))}
+    <span data-slot="integrity-notes" className="mt-1 flex flex-col flex-wrap gap-2">
+      {model.notes.map((note, i) => {
+        const noteText = localizedNoteText(note, locale);
+        return (
+          <span key={`${note.modelId}-${i}`} className="flex flex-wrap items-center gap-2">
+            <a
+              data-slot="integrity-note"
+              href={note.source}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              // Same `--evidence-self-reported` token as the coverage marker above (Rule-15 DWT-002 fix).
+              // DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`.
+              className={`inline-flex items-center text-xs font-medium text-[var(--evidence-self-reported)] underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
+              aria-label={`${t(locale, "aiBenchIntegrityLabel")}: ${noteText}`}
+              title={noteText}
+            >
+              {t(locale, "aiBenchIntegrityLabel")}
+            </a>
+            {/* Rule-15 UWT-010 fix: the claim itself was reachable ONLY via `title` (hover) and
+                `aria-label` (screen reader) above — invisible to a sighted touch/keyboard user with
+                no hover. This `<details>` puts the SAME (now locale-correct) claim text on the page
+                as real, always-reachable text, behind the same native disclosure idiom every other
+                click-to-reveal control on this page already uses. */}
+            <details data-slot="integrity-note-detail" className="text-xs">
+              <summary className={`cursor-pointer text-muted-foreground ${TAP_TARGET_MIN_CLASS}`}>
+                {t(locale, "aiBenchIntegrityDetailsSummary")}
+              </summary>
+              <p className="mt-1 max-w-prose text-muted-foreground">{noteText}</p>
+            </details>
+          </span>
+        );
+      })}
     </span>
   );
 }
@@ -273,12 +304,30 @@ export function renderStaticFigures(
   layout: FigureLayout = "stacked",
 ): ModelFigure[] {
   const prices = priceCells(model, locale, layout);
-  return [
+  const figures: ModelFigure[] = [
     { label: t(locale, "aiBenchColIndex"), node: indexCell(view, locale, layout) },
     { label: t(locale, "aiBenchColCoverage"), node: coverageCell(view, locale, layout) },
     { label: t(locale, "aiBenchColInputPrice"), node: prices.input },
     { label: t(locale, "aiBenchColOutputPrice"), node: prices.output },
   ];
+  // Rule-15 UWT-016 fix: a subscription-priced model's usage-cap detail (e.g. "First month $5,
+  // then $10/month. Usage caps: ...") previously existed ONLY in `BenchmarkChart`'s Unrated-band
+  // list item text — this model's OWN row/card carried no mention of it at all, since
+  // `partitionStaticFigures` (below) routes the Input/Output price entries straight to the
+  // always-visible summary, never into the detail region `renderStaticFigures`'s OTHER entries
+  // (e.g. coverage) already reach. Adding this as its OWN entry (never merged into the price
+  // entries) makes it flow into the detail region for both `model-table.tsx` and `model-card.tsx`
+  // (`partitionStaticFigures` keeps any label besides index/input/output in `rest`), so expanding
+  // this model's OWN disclosure now surfaces the exact same usage-cap text the chart's Unrated
+  // list item shows.
+  const rate = lowestRate(model);
+  if (rate?.kind === "subscription" && rate.caps) {
+    figures.push({
+      label: t(locale, "aiBenchSubscriptionTerms"),
+      node: <FigureCell value={rate.caps} grade={rate.grade} source={rate.source} locale={locale} layout={layout} />,
+    });
+  }
+  return figures;
 }
 
 /** One labelled group of detail-region figures, rendered as its own `<section>` (DD-34 Treatment 3). */

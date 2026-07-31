@@ -86,14 +86,29 @@ export function BenchmarkContent() {
     // same accessibility role on this page, invalid HTML5 and a WCAG 4.1.2/1.3.1 defect. Spelled
     // without the literal element-name markup below so this explanatory comment cannot itself trip
     // `grep -cF` guards written against that markup (Phase 7 Gate's own EWT-001 regression check).
-    <div data-testid="ai-bench-page" className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+    <div
+      data-testid="ai-bench-page"
+      // Rule-15 UWT-007 fix: below `sm`, every gap tightens (space-y-6→4, py-6→4) — the chart was
+      // measured starting at `top: 741px`/`701px` at the two narrowest breakpoints (320x568,
+      // 390x664), well past the visible viewport. This alone does not close the gap (the always
+      // -visible AC-32 honesty line cannot shrink further without hurting readability); the
+      // remaining trims live in `how-to-read.tsx`, `benchmark-filters.tsx`, and
+      // `benchmark-chart.tsx`.
+      className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:space-y-6 sm:py-6"
+    >
       {/* AC-56 (Phase 7, cycle 7.2) document order: header (title + subtitle + the how-to-read
           snapshot/honesty line) → filters → chart → roster → legend disclosure → sources
           disclosure. The ref-based race guards above (EWT-003) are untouched by this reorder —
           they live in the handlers, not the JSX. */}
-      <header className="space-y-3">
+      <header className="space-y-2 sm:space-y-3">
         <h1 className="text-2xl font-bold tracking-tight">{t(locale, "aiBenchTitle")}</h1>
-        <p data-testid="ai-bench-subtitle" className="text-sm text-muted-foreground">
+        {/* Rule-15 UWT-007 fix: hidden below `sm` — decorative orientation copy, not gated by any
+            AC (unlike the honesty line right below, which AC-32 requires always-visible). At 320px
+            this alone was ~80px (4 wrapped lines) of the ~120px still separating the chart's first
+            bar from the visible viewport after every other trim in this fix. Stays in DOM order
+            (AC-56 is about document ORDER, not pixel-visibility), so a screen reader or a widened
+            viewport still reaches it. */}
+        <p data-testid="ai-bench-subtitle" className="hidden text-sm text-muted-foreground sm:block">
           {t(locale, "aiBenchSubtitle")}
         </p>
         <HowToRead snapshotDate={dataset.snapshotDate} locale={locale} />

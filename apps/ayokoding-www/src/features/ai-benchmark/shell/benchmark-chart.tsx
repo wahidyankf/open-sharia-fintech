@@ -254,9 +254,24 @@ export function BenchmarkChart({
       {/* AC-18: once a specific harness is selected, every row shows THAT harness's own rate, not
           the lowest across harnesses — the "lowest rate" subtitle would misstate that, so it only
           renders when no harness filter is active (mirrors the retired price chart's AC-17 subtitle). */}
+      {/* Rule-15 UWT-007 fix: hidden below `sm` (320/390px) — both this subtitle and the
+          UWT-008 scope note below are supplementary context, not load-bearing content (`t()`
+          still renders the text into the DOM either way, so a screen reader with no CSS applied,
+          or a widened viewport, still reaches it — this is a visual fold-budget trim, not a
+          content removal). */}
       {harness === undefined ? (
-        <p data-testid={`${SLOT}-subtitle`} className="mb-2 text-xs text-muted-foreground">
+        <p data-testid={`${SLOT}-subtitle`} className="mb-2 hidden text-xs text-muted-foreground sm:block">
           {t(locale, "aiBenchPriceLowestSubtitle")}
+        </p>
+      ) : null}
+
+      {/* Rule-15 UWT-008 fix: stated ONCE here (chart-wide), not repeated per band's own sort
+          control — a per-band repeat (once per rated band) would cost 3 extra line boxes above the
+          fold at the narrowest breakpoints (Rule-15 UWT-007), for a fact that is true chart-wide,
+          not band-specific. */}
+      {onSortChange ? (
+        <p data-testid={`${SLOT}-sort-scope-note`} className="mb-2 hidden text-xs text-muted-foreground sm:block">
+          {t(locale, "aiBenchSortScopeNote")}
         </p>
       ) : null}
 
@@ -267,10 +282,15 @@ export function BenchmarkChart({
           band's region below is independently self-contained. */}
       {bands.map((bandLayout) => {
         const bandTitleId = `${titleId}-${bandLayout.band}`;
+        // Rule-15 UWT-009 fix: an active Class filter can leave a rated band with zero matching
+        // models — before this fix, the band still rendered its heading, its "Axis maximum" line,
+        // AND a fully live, still-enabled sort control with nothing to sort, reading as a broken
+        // empty area rather than an intentional filtered-out state.
+        const isBandEmpty = bandLayout.rows.length === 0;
         return (
-          <div key={bandLayout.band} data-testid={`${SLOT}-band-wrapper-${bandLayout.band}`} className="mb-4">
-            {onSortChange ? (
-              <div className="mb-2">
+          <div key={bandLayout.band} data-testid={`${SLOT}-band-wrapper-${bandLayout.band}`} className="mb-2 sm:mb-4">
+            {onSortChange && !isBandEmpty ? (
+              <div className="mb-1 sm:mb-2">
                 <FilterSelect
                   id={`${SLOT}-sort-${bandLayout.band}`}
                   label={`${sortLabelPrefix} — ${bandLayout.label}`}
@@ -307,19 +327,35 @@ export function BenchmarkChart({
               >
                 {bandLayout.label}
               </h3>
-              <p data-slot="chart-axis-max" data-testid="chart-axis-max" className="mb-2 text-xs text-muted-foreground">
-                {axisLabel}: {formattedMax}
-              </p>
-              {bandLayout.rows.map((score) => (
-                <BenchmarkRow
-                  key={score.model.id}
-                  score={score}
-                  band={bandLayout.band}
-                  locale={locale}
-                  priceAxisMax={priceAxisMax}
-                  rate={harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model)}
-                />
-              ))}
+              {isBandEmpty ? (
+                <p
+                  data-slot="chart-band-empty"
+                  data-testid={`${SLOT}-band-${bandLayout.band}-empty`}
+                  className="text-xs text-muted-foreground"
+                >
+                  {t(locale, "aiBenchBandEmptyMessage")}
+                </p>
+              ) : (
+                <>
+                  <p
+                    data-slot="chart-axis-max"
+                    data-testid="chart-axis-max"
+                    className="mb-1 text-xs text-muted-foreground sm:mb-2"
+                  >
+                    {axisLabel}: {formattedMax}
+                  </p>
+                  {bandLayout.rows.map((score) => (
+                    <BenchmarkRow
+                      key={score.model.id}
+                      score={score}
+                      band={bandLayout.band}
+                      locale={locale}
+                      priceAxisMax={priceAxisMax}
+                      rate={harness !== undefined ? rateForHarness(score.model, harness) : lowestRate(score.model)}
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         );
@@ -330,7 +366,11 @@ export function BenchmarkChart({
           <h3 data-testid={`${SLOT}-unrated-heading`} className="text-sm font-semibold">
             {bandLabel("unrated", locale)}
           </h3>
-          <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          {/* Rule-15 UWT-014 fix: `flex flex-wrap` let multiple models share one visual line,
+              wrapping only when a row filled — reading as one dense, unbroken run rather than a
+              list (worst with ~15 Unrated models). A plain `space-y-1` block list gives every
+              model its own line, same as the roster table beneath it. */}
+          <ul className="mt-1 space-y-1 text-sm text-muted-foreground">
             {groups.unrated.map((score) => {
               // DD-1: an unrated model has no row to attach inline subscription text to, so the
               // retired price chart's global subscription list per-item text is preserved

@@ -158,3 +158,68 @@ describe("ModelTable — R5/AC-59 desktop overflow + sticky-header column budget
     expect(headerCells.length).toBe(6);
   });
 });
+
+// ─── Rule-15 DWT-005 fix (Phase 11): the detail row must not inherit the primary row's hover tint ─
+
+describe("ModelTable — Rule-15 DWT-005 fix (detail row does not inherit the primary row's hover tint)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("gives the detail TableRow its own hover:bg-transparent override, leaving the primary row's hover class untouched", () => {
+    const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
+    const anyModelId = dataset.models[0]!.id;
+    const { primary, detail } = rowsFor(container.querySelector('[data-testid="model-table-desktop"]')!, anyModelId);
+    expect(detail?.className).toContain("hover:bg-transparent");
+    // Falsifiable both ways: a regression that also strips the primary row's own shared hover
+    // treatment (rather than overriding only the detail row) would make this fail too.
+    expect(primary?.className).not.toContain("hover:bg-transparent");
+  });
+});
+
+// ─── Rule-15 DWT-006 fix (Phase 11): the collapsed absent-figure run shares the reported-figure rail ─
+
+describe("ModelTable — Rule-15 DWT-006 fix (collapsed absent-figure run shares the reported-figure grid rail)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("wraps the collapsed absent-figure run in the same grid-rail class reported figures use", () => {
+    // gpt-5.6-terra reports only one of the four composite benchmarks (see core/data/models.ts),
+    // so its detail region has a genuine collapsed multi-label run to check alignment against.
+    const partialModel = dataset.models.find((m) => m.id === "gpt-5.6-terra");
+    expect(partialModel).toBeDefined();
+    const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
+    const { detail } = rowsFor(container.querySelector('[data-testid="model-table-desktop"]')!, "gpt-5.6-terra");
+    expect(detail).not.toBeNull();
+    const notReportedValue = Array.from(detail!.querySelectorAll('[data-slot="figure-cell-value"]')).find(
+      (el) => el.textContent?.trim() === "Not reported",
+    );
+    expect(notReportedValue).toBeDefined();
+    // The rail wrapper is the value's own grandparent (dd's parent `<div>` carrying the grid class) —
+    // same `grid-cols-[6.5rem_1fr]` template Treatment 2 already applies to every REPORTED figure's
+    // own row, so this row's `<dd>` starts at the identical rail position.
+    const railWrapper = notReportedValue!.closest('div[class*="grid-cols-[6.5rem_1fr]"]');
+    expect(railWrapper).not.toBeNull();
+  });
+});
+
+// ─── Rule-15 UWT-016 fix (Phase 11): a subscription's usage-cap detail reaches the model's own row ─
+
+describe("ModelTable — Rule-15 UWT-016 fix (subscription usage-cap detail on the model's own row)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("surfaces mimo-v2.5's usage-cap text in its own detail region, not only in the chart's Unrated list", () => {
+    const model = dataset.models.find((m) => m.id === "mimo-v2.5");
+    expect(model?.pricing["opencode-go"]?.kind).toBe("subscription");
+    const caps = (model!.pricing["opencode-go"] as { caps?: string }).caps;
+    expect(caps).toBeTruthy();
+
+    const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
+    const { detail } = rowsFor(container.querySelector('[data-testid="model-table-desktop"]')!, "mimo-v2.5");
+    expect(detail).not.toBeNull();
+    expect(detail!.textContent ?? "").toContain(caps);
+  });
+});

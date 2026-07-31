@@ -44,7 +44,8 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
     <section
       data-slot="how-to-read"
       data-testid="how-to-read"
-      className="space-y-4"
+      // Rule-15 UWT-007 fix: tighter below `sm` — see `benchmark-content.tsx`'s root className.
+      className="space-y-2 sm:space-y-4"
       aria-labelledby="how-to-read-heading"
     >
       <h2 id="how-to-read-heading" className="sr-only">
@@ -59,7 +60,7 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
       {/* AC-32 (reworded, D3) — the ONE always-visible guarantee is this single honesty line;
           it carries no `<details>` ancestor, so it renders before any interaction regardless of
           the remainder disclosure's open/closed state. */}
-      <p data-testid="ai-bench-how-to-honesty" className="text-sm">
+      <p data-testid="ai-bench-how-to-honesty" className="text-sm leading-snug">
         {t(locale, "aiBenchHowToVendorReported")}
       </p>
 
@@ -71,7 +72,7 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
           `matchMedia`, so server and client always agree on markup and there is no hydration
           mismatch (DD-29). Below `lg`, the list starts closed and opens only via the native
           `<summary>` toggle. */}
-      <details data-testid="ai-bench-how-to-details" className="group rounded-md border p-3 text-sm">
+      <details data-testid="ai-bench-how-to-details" className="group rounded-md border p-2 text-sm sm:p-3">
         {/* DD-30/AC-58: a 24x24 CSS px minimum tap target (WCAG 2.5.8) — see `tap-target.ts`. */}
         <summary className={`cursor-pointer font-medium ${TAP_TARGET_MIN_CLASS}`}>
           {t(locale, "aiBenchHowToSummary")}
@@ -85,6 +86,8 @@ export function HowToRead({ snapshotDate, locale }: HowToReadProps) {
           <li>{t(locale, "aiBenchHowToBestConfig")}</li>
           <li>{t(locale, "aiBenchHowToArcConflict")}</li>
           <li>{t(locale, "aiBenchHowToPriceGap")}</li>
+          {/* Rule-15 UWT-013 fix — the unit basis every price figure is quoted per. */}
+          <li data-testid="ai-bench-how-to-price-unit">{t(locale, "aiBenchHowToPriceUnit")}</li>
         </ul>
       </details>
     </section>
@@ -112,7 +115,12 @@ export function AiBenchLegend({ locale }: { locale: Locale }) {
       <div className="mt-3 space-y-3">
         <div>
           <p className="text-muted-foreground">{t(locale, "aiBenchLegendClassIntro")}</p>
-          <dl data-testid="ai-bench-legend-classes" className="mt-1 space-y-1">
+          {/* Rule-15 UWT-011 fix: a real, native `id` anchor target — the Class column header and
+              the Class filter each link here via `href="#ai-bench-legend-classes"`. A closed
+              ancestor `<details>` auto-expands when a fragment navigation targets an element
+              inside it (the HTML "reveal" algorithm), so this stays reachable even before the
+              legend has been opened once. */}
+          <dl id="ai-bench-legend-classes" data-testid="ai-bench-legend-classes" className="mt-1 space-y-1">
             {(
               [
                 ["opus", "aiBenchBandOpus", "aiBenchLegendClassOpus"],
@@ -181,11 +189,14 @@ export function AiBenchSources({ locale }: { locale: Locale }) {
             >
               <dt className="font-medium">
                 {op.url ? (
+                  // Rule-15 UWT-012 fix: these citation links measured below the 24x24 CSS px
+                  // minimum (DD-30/AC-58) — same treatment already applied to the integrity-note
+                  // links and every `<summary>` on this page.
                   <a
                     href={op.url}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
-                    className="underline decoration-dotted underline-offset-2"
+                    className={`inline-flex items-center underline decoration-dotted underline-offset-2 ${TAP_TARGET_MIN_CLASS}`}
                   >
                     {op.name}
                   </a>

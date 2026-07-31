@@ -67,6 +67,9 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchBandUnrated: "Unrated",
     aiBenchNoFigure: "Not reported",
     aiBenchSubscription: "Subscription",
+    // Rule-15 UWT-016 fix: the detail-region label for a subscription's usage-cap text (plan
+    // ramp/caps), surfaced as its own field so a model's own row/card discloses it directly.
+    aiBenchSubscriptionTerms: "Subscription terms",
     aiBenchCoverageLow: "low coverage",
     aiBenchGradeVerified: "verified",
     aiBenchGradeSelfReported: "self-reported",
@@ -78,6 +81,8 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchRangeSeparator: "to",
     aiBenchPriceUnit: "per 1M tokens",
     aiBenchIntegrityLabel: "Integrity note",
+    // Rule-15 UWT-010 fix: the `<summary>` for the always-reachable, click-to-reveal claim text.
+    aiBenchIntegrityDetailsSummary: "Read the finding",
     // DD-33 item 1 (Phase 6, cycle 6.1) — the roster card's <summary> disclosure label. Genuinely
     // new copy: no existing key names "reveal the rest of this model's figures".
     aiBenchCardAllFigures: "All figures",
@@ -103,6 +108,12 @@ const translations: Record<Locale, Record<string, string>> = {
       "Why provenance matters: SWE-bench Pro / GPQA Diamond scores for the same model disagree across sources. Where published values conflict we show the full range and the low end enters the index — never an averaged middle value.",
     aiBenchHowToPriceGap:
       "Why prices are per-harness: DeepSeek V4 Pro costs about one quarter as much direct from DeepSeek as through a gateway that marks the rate up. Each price names the harness that charges it; there is no single 'the price'.",
+    // Rule-15 UWT-013 fix: no unit basis (per-token/per-1K/per-million) was disclosed anywhere on
+    // the page for the ~80 dollar figures shown. Reuses the wording already defined in
+    // `aiBenchPriceUnit` (a key that existed but was never rendered anywhere) so the two stay
+    // word-for-word consistent.
+    aiBenchHowToPriceUnit:
+      "Unless marked Subscription, every dollar figure is priced per 1M tokens — a Subscription figure is a flat monthly rate with its own usage caps, not a per-token rate.",
     aiBenchSourcesHeading: "Sources and licences",
     aiBenchSourcesIntro:
       "Every figure links to the leaderboard or vendor page it came from. These are the benchmark operators whose figures appear here, with their republication terms.",
@@ -141,6 +152,9 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchSortCapability: "Capability (high to low)",
     aiBenchSortPriceAsc: "Price: Low to High",
     aiBenchSortPriceDesc: "Price: High to Low",
+    // Rule-15 UWT-008 fix: clarifies this sort's scope, since the roster table below keeps its own,
+    // independent row order rather than following a band's chart sort.
+    aiBenchSortScopeNote: "(chart order only)",
 
     // AI benchmark — harness/class filters (Phase 8).
     aiBenchFilterSummary: "Filters",
@@ -148,10 +162,18 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchFilterClassLabel: "Class",
     aiBenchFilterAllHarnesses: "All harnesses",
     aiBenchFilterAllClasses: "All classes",
+    // Rule-15 UWT-011 fix: the Class values reuse Anthropic's own tier names cross-vendor with no
+    // inline hint anywhere the column/filter itself appears — this is that hint, linking to the
+    // always-reachable (if collapsed) legend.
+    aiBenchClassHint: "What do these mean?",
     aiBenchFilterResultCountLabel: "Models shown",
     aiBenchFilterActiveCountLabel: "active",
     aiBenchEmptyStateTitle: "No models match these filters",
     aiBenchEmptyStateMessage: "Try a different harness or class filter.",
+    // Rule-15 UWT-009 fix: a single RATED band (Opus/Sonnet/Haiku) can be emptied by an active
+    // Class filter even while other bands still have models — distinct from `aiBenchEmptyStateTitle`
+    // above, which covers the whole-roster empty state.
+    aiBenchBandEmptyMessage: "No models in this class match the current filter.",
 
     // Calculator — page
     calcTitle: "Cost of Living Calculator",
@@ -454,6 +476,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchBandUnrated: "Belum dinilai",
     aiBenchNoFigure: "Tidak dilaporkan",
     aiBenchSubscription: "Langganan",
+    aiBenchSubscriptionTerms: "Ketentuan langganan",
     aiBenchCoverageLow: "cakupan rendah",
     aiBenchGradeVerified: "terverifikasi",
     aiBenchGradeSelfReported: "dilaporkan sendiri",
@@ -465,6 +488,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchRangeSeparator: "hingga",
     aiBenchPriceUnit: "per 1 juta token",
     aiBenchIntegrityLabel: "Catatan integritas",
+    aiBenchIntegrityDetailsSummary: "Baca temuannya",
     aiBenchCardAllFigures: "Semua angka",
     aiBenchCardGroupModel: "Model",
     aiBenchCardGroupScores: "Skor",
@@ -483,6 +507,8 @@ const translations: Record<Locale, Record<string, string>> = {
       "Mengapa provenans penting: angka SWE-bench Pro / GPQA Diamond untuk model yang sama berbeda antar sumber. Saat nilai yang dipublikasikan berkonflik, kami menampilkan rentang lengkapnya dan ujung rendah masuk ke indeks — tidak pernah nilai rata-rata di tengah.",
     aiBenchHowToPriceGap:
       "Mengapa harga per-harness: DeepSeek V4 Pro berharga sekitar seperempat langsung dari DeepSeek dibandingkan melalui gateway yang menaikkan tarifnya. Setiap harga menyebut harness yang menagihnya; tidak ada 'harga tunggal'.",
+    aiBenchHowToPriceUnit:
+      "Kecuali ditandai Langganan, setiap angka dolar adalah harga per 1 juta token — angka Langganan adalah tarif bulanan tetap dengan batas pemakaiannya sendiri, bukan harga per-token.",
     aiBenchSourcesHeading: "Sumber dan lisensi",
     aiBenchSourcesIntro:
       "Setiap angka menaut ke halaman leaderboard atau vendor asalnya. Berikut operator tolok ukur yang angkanya muncul di sini, beserta ketentuan republikasinya.",
@@ -522,6 +548,7 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchSortCapability: "Kemampuan (tinggi ke rendah)",
     aiBenchSortPriceAsc: "Harga: Rendah ke Tinggi",
     aiBenchSortPriceDesc: "Harga: Tinggi ke Rendah",
+    aiBenchSortScopeNote: "(hanya urutan bagan)",
 
     // AI benchmark — filter harness/kelas (Fase 8).
     aiBenchFilterSummary: "Filter",
@@ -529,10 +556,12 @@ const translations: Record<Locale, Record<string, string>> = {
     aiBenchFilterClassLabel: "Kelas",
     aiBenchFilterAllHarnesses: "Semua harness",
     aiBenchFilterAllClasses: "Semua kelas",
+    aiBenchClassHint: "Apa artinya ini?",
     aiBenchFilterResultCountLabel: "Model ditampilkan",
     aiBenchFilterActiveCountLabel: "aktif",
     aiBenchEmptyStateTitle: "Tidak ada model yang cocok dengan filter ini",
     aiBenchEmptyStateMessage: "Coba filter harness atau kelas yang berbeda.",
+    aiBenchBandEmptyMessage: "Tidak ada model di kelas ini yang cocok dengan filter saat ini.",
 
     // Calculator — page
     calcTitle: "Kalkulator Biaya Hidup",

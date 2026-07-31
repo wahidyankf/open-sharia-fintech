@@ -49,6 +49,28 @@ function ratedMeteredModel(id: string, input: number, output: number): Model {
   };
 }
 
+/**
+ * A model scored across all four composite benchmarks at the SAME value (full coverage), so
+ * `assignBand` can place it against a real anchor threshold rather than falling through to
+ * `haiku` for want of one (mirrors `ai-benchmark.steps.tsx`'s own `bandFixtureModel` helper, used
+ * for the identical anchor-threshold need there).
+ */
+function bandFixtureModel(id: string, score: number, outputRate: number): Model {
+  return {
+    id,
+    name: id,
+    vendor: "Test",
+    harnesses: ["claude-code"],
+    figures: (["swe-bench-verified", "swe-bench-pro", "terminal-bench-2-1", "gpqa-diamond"] as const).map((b) => ({
+      benchmark: b,
+      value: score,
+      grade: "verified",
+      source: SRC,
+    })),
+    pricing: { "claude-code": metered(1, outputRate) },
+  };
+}
+
 describe("BenchmarkChart — merged row structure", () => {
   afterEach(() => {
     cleanup();
@@ -183,11 +205,19 @@ describe("BenchmarkChart — per-band sort control", () => {
   });
 
   it("reports a sort change for only the changed band, leaving other bands untouched", () => {
-    // Two sonnet-band models so a sort-order change is observable; opus/haiku are untouched by
-    // the sonnet dropdown regardless of how many models they hold.
-    const sonnetA = ratedMeteredModel("sonnet-a", 1, 5);
-    const sonnetB = ratedMeteredModel("sonnet-b", 1, 20);
-    const ds = fixtureDataset([sonnetA, sonnetB]);
+    // Regression (Rule-15 UWT-009 fix): the fixture previously carried NO anchor models at all, so
+    // — per `assignBand`'s own fallback (no opus/sonnet threshold to compare against) — both
+    // "sonnet-a"/"sonnet-b" silently landed in the `haiku` band despite their names, and this test
+    // only ever exercised an EMPTY Sonnet band's sort control. Before UWT-009's fix, every band's
+    // control rendered unconditionally regardless of whether it had rows, so the test passed
+    // anyway; UWT-009 now hides an empty band's control, which is the CORRECT behaviour and is
+    // exactly what broke this test — the fixture below adds real opus/sonnet anchor models so
+    // "sonnet-a"/"sonnet-b" genuinely land in the Sonnet band this test's own name promises.
+    const opusAnchor = bandFixtureModel(OPUS_ANCHOR_ID, 100, 1);
+    const sonnetAnchor = bandFixtureModel(SONNET_ANCHOR_ID, 60, 1);
+    const sonnetA = bandFixtureModel("sonnet-a", 70, 5);
+    const sonnetB = bandFixtureModel("sonnet-b", 70, 20);
+    const ds = fixtureDataset([opusAnchor, sonnetAnchor, sonnetA, sonnetB]);
     const onSortChange = vi.fn();
     render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" onSortChange={onSortChange} />);
 
@@ -325,6 +355,20 @@ describe("BenchmarkChart — unrated models", () => {
     expect(screen.queryByTestId("benchmark-chart-bar-capability-unrated-model")).toBeNull();
     expect(screen.queryByTestId("benchmark-chart-bar-price-in-unrated-model")).toBeNull();
     expect(screen.queryByTestId("benchmark-chart-bar-price-out-unrated-model")).toBeNull();
+  });
+
+  // Rule-15 UWT-014 fix (Phase 11): `flex flex-wrap` let multiple Unrated models share one visual
+  // line (wrapping only when a row filled), reading as one dense, unbroken text run — worst with
+  // the roster's own ~15 Unrated models — rather than a properly chunked, one-model-per-line list.
+  it("lists Unrated models one per line (no flex-wrap sharing a visual line), matching the roster table's own line-per-model layout", () => {
+    const unratedA = { ...ratedMeteredModel("unrated-a", 1, 5), figures: [] };
+    const unratedB = { ...ratedMeteredModel("unrated-b", 1, 20), figures: [] };
+    const ds = fixtureDataset([unratedA, unratedB]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+
+    const list = screen.getByTestId("benchmark-chart-unrated").querySelector("ul");
+    expect(list?.className).not.toContain("flex-wrap");
+    expect(list?.className).toContain("space-y-1");
   });
 });
 
@@ -680,5 +724,62 @@ describe("BenchmarkChart — AC-48 rated model with no reported price", () => {
     expect(screen.queryByTestId("benchmark-chart-subscription-no-price-rated-model")).toBeNull();
     const notReported = screen.getByTestId("benchmark-chart-not-reported-no-price-rated-model");
     expect(notReported.textContent).toBe(t("en", "aiBenchNoFigure"));
+  });
+});
+
+// ─── Rule-15 UWT-008 fix (Phase 11): the sort scope note ───────────────────────
+
+describe("BenchmarkChart — Rule-15 UWT-008 fix (sort scope note)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("states the per-band sort applies to the chart only, when a sort handler is passed", () => {
+    const model = ratedMeteredModel("scope-note-model", 1, 5);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" onSortChange={vi.fn()} />);
+    const note = screen.getByTestId("benchmark-chart-sort-scope-note");
+    expect(note.textContent).toBe(t("en", "aiBenchSortScopeNote"));
+  });
+
+  it("omits the sort scope note when no sort handler is passed (read-only rendering)", () => {
+    const model = ratedMeteredModel("scope-note-readonly-model", 1, 5);
+    const ds = fixtureDataset([model]);
+    render(<BenchmarkChart dataset={ds} fullDataset={ds} locale="en" />);
+    expect(screen.queryByTestId("benchmark-chart-sort-scope-note")).toBeNull();
+  });
+});
+
+// ─── Rule-15 UWT-009 fix (Phase 11): an active Class filter can empty one rated band ───
+
+describe("BenchmarkChart — Rule-15 UWT-009 fix (a rated band emptied by the active Class filter)", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("shows an explicit empty-band message and hides that band's sort control, leaving other bands untouched", () => {
+    // Only an opus-anchor model in the (already filtered) `dataset` prop — but `fullDataset` still
+    // carries both anchors, so the sonnet band genuinely exists (AC-40-style roster-relative
+    // thresholds) yet has zero matching rows in THIS filtered view.
+    const opusAnchor = bandFixtureModel(OPUS_ANCHOR_ID, 100, 1);
+    const sonnetAnchor = bandFixtureModel(SONNET_ANCHOR_ID, 60, 1);
+    const fullDs = fixtureDataset([opusAnchor, sonnetAnchor]);
+    const filteredDs = fixtureDataset([opusAnchor]); // sonnet anchor filtered out of THIS view
+    render(<BenchmarkChart dataset={filteredDs} fullDataset={fullDs} locale="en" onSortChange={vi.fn()} />);
+
+    // Opus (still populated) keeps its normal axis-max line and sort control.
+    expect(screen.getByTestId(`benchmark-chart-band-opus-label`).textContent).toBe(bandLabel("opus", "en"));
+    expect(screen.queryByTestId("benchmark-chart-band-opus-empty")).toBeNull();
+    expect(
+      screen.getByRole("combobox", { name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("opus", "en")}` }),
+    ).not.toBeNull();
+
+    // Sonnet (emptied by the filter) shows the explicit message, not a bare axis-max line, and its
+    // OWN sort control does not render at all (rather than rendering disabled-but-present).
+    const sonnetEmpty = screen.getByTestId("benchmark-chart-band-sonnet-empty");
+    expect(sonnetEmpty.textContent).toBe(t("en", "aiBenchBandEmptyMessage"));
+    expect(
+      screen.queryByRole("combobox", { name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("sonnet", "en")}` }),
+    ).toBeNull();
   });
 });

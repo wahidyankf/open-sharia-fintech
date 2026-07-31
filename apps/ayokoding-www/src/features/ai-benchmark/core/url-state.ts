@@ -27,16 +27,22 @@ export const PARAM_KEYS = {
  * be iterated over uniformly (all three bands share the same shape) without mixing in the two
  * unrelated filter keys.
  *
- * Worked example: a URL sorting the haiku band ascending by price carries `?sortHaiku=price-asc`
- * (via {@link SORT_PARAM_KEYS.haiku}). This key was renamed alongside the capability-class rename
- * (DD-35) — deliberately with NO legacy alias for the retired key: a bookmarked or shared URL
- * still using it sanitizes to the default (`"capability"`) sort, exactly like any other
- * unrecognized sort value, rather than being silently rewritten to the new key.
+ * Worked example: a URL sorting the haiku band ascending by price carries `?sort-haiku=price-asc`
+ * (via {@link SORT_PARAM_KEYS.haiku}).
+ *
+ * Rule-15 UWT-015 fix: these three keys were `sortOpus`/`sortSonnet`/`sortHaiku` (camelCase),
+ * mixed with every VALUE on this page already being kebab-case (`price-asc`, `claude-code`, …) —
+ * one query string carried both casing conventions at once. Renamed to kebab-case
+ * (`sort-opus`/`sort-sonnet`/`sort-haiku`) so every key AND every value share one convention.
+ * Following the SAME no-legacy-alias precedent DD-35's capability-class rename already set for
+ * this exact map: a bookmarked or shared URL still using the retired camelCase key sanitizes to
+ * the default (`"capability"`) sort, exactly like any other unrecognized sort value, rather than
+ * being silently rewritten to the new key.
  */
 export const SORT_PARAM_KEYS = {
-  opus: "sortOpus",
-  sonnet: "sortSonnet",
-  haiku: "sortHaiku",
+  opus: "sort-opus",
+  sonnet: "sort-sonnet",
+  haiku: "sort-haiku",
 } as const;
 
 /** One {@link SortMode} per RATED capability band — the per-band sort choice (DD-4). The `unrated`

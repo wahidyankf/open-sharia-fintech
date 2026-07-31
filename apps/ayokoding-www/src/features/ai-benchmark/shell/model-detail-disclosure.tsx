@@ -54,14 +54,22 @@ function GroupFigures({ figures, locale }: { figures: ModelFigure[]; locale: Loc
         </div>
       ))}
       {unreportedFigures.length > 0 ? (
-        <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5">
-          {unreportedFigures.map((fig, i) => (
-            <dt key={fig.label} className={`${DETAIL_FIELD_LABEL_CLASS} m-0`}>
-              {fig.label}
-              {i < unreportedFigures.length - 1 ? "," : ""}
-            </dt>
-          ))}
-          <dd className={`${DETAIL_FIELD_VALUE_CLASS} m-0`} data-slot="figure-cell-value">
+        // Rule-15 DWT-006 fix: this collapsed run used to be a single `flex flex-wrap` row, so its
+        // `<dd>` sat flush against its own `<dt>` run instead of the fixed-width rail column every
+        // REPORTED figure's `<dd>` above already aligns to (Treatment 2) — a visible ~61px left-edge
+        // gap. Wrapping in the SAME grid template puts the whole comma-joined `<dt>` run in one grid
+        // cell (the label column) and the shared `<dd>` in the other (the value column), so this
+        // row's `<dd>` starts at the identical rail position as every reported row's `<dd>`.
+        <div className="grid grid-cols-[6.5rem_1fr] items-baseline gap-x-2 gap-y-0.5 md:grid-cols-[9rem_1fr]">
+          <div className="flex flex-wrap items-baseline gap-x-1 gap-y-0.5 text-left">
+            {unreportedFigures.map((fig, i) => (
+              <dt key={fig.label} className={`${DETAIL_FIELD_LABEL_CLASS} m-0`}>
+                {fig.label}
+                {i < unreportedFigures.length - 1 ? "," : ""}
+              </dt>
+            ))}
+          </div>
+          <dd className={`${DETAIL_FIELD_VALUE_CLASS} m-0 text-left`} data-slot="figure-cell-value">
             {t(locale, "aiBenchNoFigure")}
           </dd>
         </div>

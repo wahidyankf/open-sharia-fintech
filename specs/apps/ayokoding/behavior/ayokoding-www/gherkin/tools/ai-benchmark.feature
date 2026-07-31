@@ -148,6 +148,16 @@ Feature: AI model benchmark tool
     Then a single honesty line stating that most frontier benchmark scores are vendor self-reported is visible without interaction
     And the remaining how-to-read points are reachable from that line's disclosure control
 
+  # Rule-15 UWT-013/USS-004 fix (Phase 11): no unit basis (per-token/per-million/subscription) was
+  # disclosed anywhere for the roughly 80 dollar figures on the page — a reader had no way to tell
+  # what a bare "$5.00" was priced per.
+  @unit
+  Scenario: Price figures disclose their unit basis
+    Given the reader opens "How to read this benchmark"
+    When the reader reads the price-related guidance
+    Then the text states the unit each dollar figure is priced per
+    And a Subscription-priced model's figure is visibly distinguished from a per-unit price
+
   # USS-002 — Rule-15 web-usability-tester spec-blind suggestion (paired with UWT-002/UWT-003): the
   # four capability classes and five evidence grades appeared throughout the page with no on-page
   # definition, forcing a first-time user to infer their meaning from context. Fixed via a legend
@@ -168,6 +178,17 @@ Feature: AI model benchmark tool
     Given the dataset records a benchmark-integrity note for a model
     When that model is rendered in the data table
     Then the integrity note is reachable from that model's row
+
+  # Rule-15 UWT-010 fix (Phase 11): the claim itself previously existed ONLY in a `title` (hover)
+  # and an `aria-label` (screen reader) — invisible to a sighted touch/keyboard reader with no
+  # hover, and the `id` locale translated only the label prefix around the claim, never the claim
+  # text itself.
+  @unit
+  Scenario: The integrity-note claim is reachable without hovering, and is localized on id
+    Given the dataset records a benchmark-integrity note for the model "gpt-5.6-sol"
+    When that model is rendered in the data table on the "id" locale
+    Then the claim text is visible as real on-page text behind a click-to-reveal disclosure
+    And the visible claim text is the Indonesian translation, not the English source text
 
   # AC-34
   @unit
@@ -310,13 +331,13 @@ Feature: AI model benchmark tool
   Scenario: A band's sort choice is encoded in the URL
     Given the reader has selected "Price: High to Low" for the opus band
     When the reader copies the current page URL
-    Then the URL contains a "sortOpus" query parameter set to the descending-price value
+    Then the URL contains a "sort-opus" query parameter set to the descending-price value
     And loading that URL directly reproduces the opus band sorted the same way
 
   # AC-43
   @unit
   Scenario: An unknown sort value in the URL falls back to the default
-    Given a URL containing "sortSonnet=not-a-real-value"
+    Given a URL containing "sort-sonnet=not-a-real-value"
     When the page loads with that URL
     Then the sonnet band renders sorted by capability (the default)
     And no error is thrown
@@ -324,7 +345,7 @@ Feature: AI model benchmark tool
   # AC-67
   @unit
   Scenario: A shared benchmark URL carries the renamed capability-class parameters
-    Given a query string of "class=haiku&sortHaiku=price-asc"
+    Given a query string of "class=haiku&sort-haiku=price-asc"
     When that query string is decoded and then re-encoded
     Then the re-encoded query string is identical to the original
     And a query string carrying the retired "class=light" or "sortLight" decodes to the default unfiltered, capability-sorted state
@@ -444,6 +465,26 @@ Feature: AI model benchmark tool
     Then the filter uses the first of the two values
     And every roster model matching that harness is shown
 
+  # SG-002 — Rule-15 web-exploratory-tester spec gap (Phase 11): generalizes SG-001 — a duplicated
+  # parameter's first-match semantics also apply when the first value is UNRECOGNIZED, so decoding
+  # never falls through to a later, valid value.
+  @unit
+  Scenario: A duplicated query parameter with an unrecognized first value ignores a valid later value
+    Given the URL carries the harness parameter twice, an unknown value first and a known harness second
+    When the page renders
+    Then the filter falls back to unfiltered
+    And every roster model is shown
+
+  # SG-003 — Rule-15 web-exploratory-tester spec gap (Phase 11): `encodeState` omits default values
+  # from the query string (`core/url-state.ts`), so resetting one filter to "All" removes only that
+  # filter's own param, leaving any other active filter's param untouched.
+  @unit
+  Scenario: Resetting a filter to "All" removes it from the URL
+    Given the URL carries both a harness parameter and a class parameter
+    When the reader resets the class filter to "All classes"
+    Then the URL retains the harness parameter but no longer carries the class parameter
+    And the roster reflects only the harness filter
+
   # AC-28 (chart) + Rule-15 UWT-006 fix (data table, folded into the same scenario)
   @unit
   Scenario: A filter combination matching no model renders an explicit empty state
@@ -451,6 +492,16 @@ Feature: AI model benchmark tool
     When the page renders
     Then an explicit empty-state message is shown
     But the chart and the data table do not render in the empty state
+
+  # Rule-15 UWT-009/USS-003 fix (Phase 11): distinct from the whole-roster empty state above — a
+  # Class filter can empty ONE rated band while other bands (and the table) still show models, so
+  # this needs its own explicit per-band message rather than a bare heading over nothing.
+  @unit
+  Scenario: An active Class filter empties one rated band while others still show models
+    Given a Class filter is active that excludes every model in the Sonnet band
+    When the page renders the Sonnet band
+    Then the band shows an explicit message that no models in this class match the current filter
+    And the band's own sort control is hidden rather than left interactive
 
   # AC-27
   @unit @e2e

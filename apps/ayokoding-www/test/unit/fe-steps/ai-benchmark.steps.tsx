@@ -8,12 +8,25 @@ import React from "react";
 // AC-1/AC-2/AC-19/AC-29/AC-32/AC-34/AC-35 render the route's client content, which reads its
 // locale from useLocale() → useParams(). navState holds the active locale so each scenario's
 // Given step can set it before the page renders. Hoisted so the vi.mock factory can close over it.
-const { navState } = vi.hoisted(() => ({ navState: { locale: "en" as string, search: "" as string } }));
+// `lastPush` (SG-003 fix) — the most recent URL string a filter/sort change passed to
+// `router.push`, so a scenario can assert what the NEXT navigation would carry without needing
+// the full reactive-context re-render machinery `cost-of-living-calculator.steps.tsx` uses (no
+// existing scenario here needs the page to actually re-render after a push).
+const { navState } = vi.hoisted(() => ({
+  navState: { locale: "en" as string, search: "" as string, lastPush: undefined as string | undefined },
+}));
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ locale: navState.locale }),
   useSearchParams: () => new URLSearchParams(navState.search),
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn(), prefetch: vi.fn() }),
+  useRouter: () => ({
+    push: (url: string) => {
+      navState.lastPush = url;
+    },
+    replace: vi.fn(),
+    back: vi.fn(),
+    prefetch: vi.fn(),
+  }),
   usePathname: () => "/en/tools/ai-benchmark",
   notFound: vi.fn(),
 }));
@@ -202,6 +215,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     // Reset the mocked navigation locale/search and the simulated <html lang> between scenarios.
     navState.locale = "en";
     navState.search = "";
+    navState.lastPush = undefined;
     document.documentElement.lang = "";
     cleanup();
   });
@@ -888,10 +902,38 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
         const details = screen.getByTestId("ai-bench-how-to-details");
         expect(details.tagName).toBe("DETAILS");
         expect(details.querySelector("summary")).not.toBeNull();
-        expect(details.querySelectorAll("li").length).toBe(5);
+        // 6, not 5, since Rule-15 UWT-013 added the price-unit-basis bullet.
+        expect(details.querySelectorAll("li").length).toBe(6);
       });
     },
   );
+
+  // ─── Rule-15 UWT-013/USS-004 fix — price figures disclose their unit basis ────
+
+  Scenario("Price figures disclose their unit basis", ({ Given, When, Then, And }) => {
+    Given('the reader opens "How to read this benchmark"', () => {
+      renderPageForLocale("en");
+      const details = screen.getByTestId("ai-bench-how-to-details");
+      // Native `<details>` starts closed below `lg` in jsdom (no CSS applied) — open it via its
+      // own `open` attribute so its content is present the same way a real click would reveal it.
+      details.setAttribute("open", "");
+    });
+
+    When("the reader reads the price-related guidance", () => {
+      // Nothing further to set up — the content opened above IS the guidance being read.
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Price figures disclose their unit basis
+    Then("the text states the unit each dollar figure is priced per", () => {
+      const priceUnit = screen.getByTestId("ai-bench-how-to-price-unit");
+      expect((priceUnit.textContent ?? "").toLowerCase()).toContain("per 1m tokens");
+    });
+
+    And("a Subscription-priced model's figure is visibly distinguished from a per-unit price", () => {
+      const priceUnit = screen.getByTestId("ai-bench-how-to-price-unit");
+      expect((priceUnit.textContent ?? "").toLowerCase()).toContain("subscription");
+    });
+  });
 
   // ─── USS-002 — a legend defines the capability classes and evidence grades ────
 
@@ -918,6 +960,19 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       for (const grade of ["verified", "self-reported", "secondary", "conflicted", "unavailable"]) {
         expect(screen.getByTestId(`ai-bench-legend-grade-${grade}`)).toBeTruthy();
       }
+
+      // Rule-15 UWT-011 fix: the Class column/filter reused Anthropic's own tier names
+      // cross-vendor with no inline hint anywhere pointing at this legend — both hint links below
+      // must resolve to a real anchor `id` this legend's own classes list carries.
+      const classesList = screen.getByTestId("ai-bench-legend-classes");
+      expect(classesList.id).toBe("ai-bench-legend-classes");
+      const desktopHint = document
+        .getElementById("benchmark-filter-class-desktop")
+        ?.closest('[data-slot="filter-select"]')
+        ?.querySelector('a[href="#ai-bench-legend-classes"]');
+      expect(desktopHint).not.toBeNull();
+      const tableHint = screen.getByTestId("model-table-desktop").querySelector('a[href="#ai-bench-legend-classes"]');
+      expect(tableHint).not.toBeNull();
     });
   });
 
@@ -961,6 +1016,39 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     },
   );
 
+  // ─── Rule-15 UWT-010 fix — the integrity-note claim is visible + localized ────
+
+  Scenario(
+    "The integrity-note claim is reachable without hovering, and is localized on id",
+    ({ Given, When, Then, And }) => {
+      Given('the dataset records a benchmark-integrity note for the model "gpt-5.6-sol"', () => {
+        expect(dataset.models.find((m) => m.id === "gpt-5.6-sol")?.notes?.length).toBeGreaterThan(0);
+      });
+
+      When('that model is rendered in the data table on the "id" locale', () => {
+        render(<ModelTable dataset={dataset} fullDataset={dataset} locale="id" />);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The integrity-note claim is reachable without hovering, and is localized on id
+      Then("the claim text is visible as real on-page text behind a click-to-reveal disclosure", () => {
+        const row = screen.getByTestId("model-table-desktop").querySelector('tbody tr[data-model-id="gpt-5.6-sol"]');
+        const detail = row?.querySelector('[data-slot="integrity-note-detail"]');
+        expect(detail?.tagName).toBe("DETAILS");
+        expect(detail?.querySelector("summary")).not.toBeNull();
+        const claimText = detail?.querySelector("p")?.textContent ?? "";
+        expect(claimText.length).toBeGreaterThan(0);
+      });
+
+      And("the visible claim text is the Indonesian translation, not the English source text", () => {
+        const row = screen.getByTestId("model-table-desktop").querySelector('tbody tr[data-model-id="gpt-5.6-sol"]');
+        const claimText = row?.querySelector('[data-slot="integrity-note-detail"] p')?.textContent ?? "";
+        const englishSource = dataset.models.find((m) => m.id === "gpt-5.6-sol")!.notes![0]!.text;
+        expect(claimText).not.toBe(englishSource);
+        expect(claimText.toLowerCase()).toContain("mencurangi");
+      });
+    },
+  );
+
   // ─── AC-34 — sources and licences section ─────────────────────────────────────
 
   Scenario("The page carries a sources and licences section", ({ Given, When, Then, And }) => {
@@ -992,6 +1080,10 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
           expect(link).not.toBeNull();
           expect(link?.getAttribute("href")).toBe(op.url);
           expect(link?.textContent).toBe(op.name);
+          // Rule-15 UWT-012 fix: these citation links measured below the 24x24 CSS px minimum
+          // (DD-30/AC-58) — same `TAP_TARGET_MIN_CLASS` treatment already applied to the
+          // integrity-note links and every `<summary>` on this page.
+          expect(link?.className).toContain("min-h-6");
         } else {
           expect(link).toBeNull();
         }
@@ -1603,6 +1695,60 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
+  // ─── SG-002 — a duplicated parameter with an unrecognized first value ignores a valid later value ─
+
+  Scenario(
+    "A duplicated query parameter with an unrecognized first value ignores a valid later value",
+    ({ Given, When, Then, And }) => {
+      Given("the URL carries the harness parameter twice, an unknown value first and a known harness second", () => {
+        ctx.search = "harness=not-a-real-harness&harness=claude-code";
+      });
+
+      When("the page renders", () => {
+        renderPageWithSearch(ctx.search!);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A duplicated query parameter with an unrecognized first value ignores a valid later value
+      Then("the filter falls back to unfiltered", () => {
+        const select = document.getElementById("benchmark-filter-harness-desktop") as HTMLSelectElement;
+        expect(select.value).toBe("");
+      });
+
+      And("every roster model is shown", () => {
+        expect(sorted(tableModelIds())).toEqual(sorted(idsOf(dataset.models)));
+      });
+    },
+  );
+
+  // ─── SG-003 — resetting a filter to "All" removes it from the URL ─────────────
+
+  Scenario('Resetting a filter to "All" removes it from the URL', ({ Given, When, Then, And }) => {
+    Given("the URL carries both a harness parameter and a class parameter", () => {
+      ctx.search = "harness=claude-code&class=opus";
+      renderPageWithSearch(ctx.search);
+    });
+
+    When('the reader resets the class filter to "All classes"', () => {
+      const select = document.getElementById("benchmark-filter-class-desktop") as HTMLSelectElement;
+      fireEvent.change(select, { target: { value: "" } });
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Resetting a filter to "All" removes it from the URL
+    Then("the URL retains the harness parameter but no longer carries the class parameter", () => {
+      const pushed = new URLSearchParams((navState.lastPush ?? "").split("?")[1] ?? "");
+      expect(pushed.get("harness")).toBe("claude-code");
+      expect(pushed.has("class")).toBe(false);
+    });
+
+    And("the roster reflects only the harness filter", () => {
+      const pushed = new URLSearchParams((navState.lastPush ?? "").split("?")[1] ?? "");
+      cleanup();
+      renderPageWithSearch(pushed.toString());
+      const expected = idsOf(dataset.models.filter((m) => m.harnesses.includes("claude-code")));
+      expect(sorted(tableModelIds())).toEqual(sorted(expected));
+    });
+  });
+
   // ─── AC-28 — a filter combination matching no model renders an explicit empty state ─
 
   Scenario("A filter combination matching no model renders an explicit empty state", ({ Given, When, Then, But }) => {
@@ -1635,6 +1781,36 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       expect(screen.queryByTestId("model-table")).toBeNull();
     });
   });
+
+  // ─── Rule-15 UWT-009/USS-003 fix — an active Class filter can empty ONE rated band ─
+
+  Scenario(
+    "An active Class filter empties one rated band while others still show models",
+    ({ Given, When, Then, And }) => {
+      // `?class=opus` matches at least one model (the Opus anchor itself always qualifies), so the
+      // page renders the roster, not the whole-roster empty state above — but the Sonnet and Haiku
+      // bands genuinely have zero matching rows under this filter.
+      Given("a Class filter is active that excludes every model in the Sonnet band", () => {
+        ctx.search = "class=opus";
+      });
+
+      When("the page renders the Sonnet band", () => {
+        renderPageWithSearch(ctx.search!);
+      });
+
+      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An active Class filter empties one rated band while others still show models
+      Then("the band shows an explicit message that no models in this class match the current filter", () => {
+        const sonnetEmpty = screen.getByTestId("benchmark-chart-band-sonnet-empty");
+        expect(sonnetEmpty.textContent).toBe(t("en", "aiBenchBandEmptyMessage"));
+      });
+
+      And("the band's own sort control is hidden rather than left interactive", () => {
+        expect(
+          screen.queryByRole("combobox", { name: `${t("en", "aiBenchSortLabel")} — ${bandLabel("sonnet", "en")}` }),
+        ).toBeNull();
+      });
+    },
+  );
 
   // ─── AC-27 — a reloaded filtered URL reproduces the same view ─────────────────
 
@@ -1824,8 +2000,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A band's sort choice is encoded in the URL
-    Then('the URL contains a "sortOpus" query parameter set to the descending-price value', () => {
-      expect(ctx.encodedParams!.get("sortOpus")).toBe("price-desc");
+    Then('the URL contains a "sort-opus" query parameter set to the descending-price value', () => {
+      expect(ctx.encodedParams!.get("sort-opus")).toBe("price-desc");
     });
 
     And("loading that URL directly reproduces the opus band sorted the same way", () => {
@@ -1837,8 +2013,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
   // ─── AC-43 — an unknown sort value in the URL falls back to the default ──────
 
   Scenario("An unknown sort value in the URL falls back to the default", ({ Given, When, Then, And }) => {
-    Given('a URL containing "sortSonnet=not-a-real-value"', () => {
-      ctx.search = "sortSonnet=not-a-real-value";
+    Given('a URL containing "sort-sonnet=not-a-real-value"', () => {
+      ctx.search = "sort-sonnet=not-a-real-value";
     });
 
     When("the page loads with that URL", () => {
@@ -1869,8 +2045,8 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     let original = "";
     let reEncoded = "";
 
-    Given('a query string of "class=haiku&sortHaiku=price-asc"', () => {
-      original = "class=haiku&sortHaiku=price-asc";
+    Given('a query string of "class=haiku&sort-haiku=price-asc"', () => {
+      original = "class=haiku&sort-haiku=price-asc";
     });
 
     When("that query string is decoded and then re-encoded", () => {
