@@ -14,21 +14,19 @@
 > ⚠️ **Pre-Alpha - In Development** - APIs and implementations may change significantly.
 > **Contributions and pull requests are not being accepted** at this time.
 
-**Current delivery focus: OrganicLever — local-first productivity tracker**
+Product development, research, assurance, platform engineering, and public learning proceed as
+parallel workstreams wherever evidence, dependencies, and capacity allow:
 
-OrganicLever is the highest-priority product delivery workstream:
+- 🚀 **Product delivery** — OrganicLever marketing site, local-first client, backend, and paired
+  end-to-end suites
+- 🕌 **Shariah and regulatory research** — principles, rules, review methods, and prototypes
+- 🏢 **Business and enterprise research** — domain discovery, process models, and experiments
+- 🛡️ **Trust and assurance** — security, privacy, governance, and compliance capabilities
+- ⚙️ **Platform and operations** — architecture, developer tooling, infrastructure, and reliability
+- 📚 **Public learning** — AyoKoding educational content and OSE project updates
 
-- 🌐 **Marketing site**:
-  [organiclever.com](https://www.organiclever.com/)
-  ([`organiclever-www`](./apps/organiclever-www/))
-- 💻 **Product client**: [`organiclever-app-web`](./apps/organiclever-app-web/) — Next.js 16
-  local-first web application
-- 🔧 **Backend**: [`organiclever-be`](./apps/organiclever-be/) — F#/Giraffe/ASP.NET REST API
-
-Research and prototyping for Shariah compliance, security, business systems, enterprise domains,
-infrastructure, and public education can progress in parallel. Workstreams coordinate through
-explicit dependencies and per-deliverable readiness checks instead of portfolio-wide stage
-transitions.
+Workstreams coordinate through explicit dependencies and per-deliverable readiness checks instead
+of portfolio-wide stage transitions.
 
 **What to Expect:**
 

@@ -4,9 +4,9 @@ Open Sharia Enterprise develops products, platform capabilities, and research th
 **concurrent workstreams**. The roadmap does not impose a fixed portfolio-wide sequence or require
 one product area to finish before another can begin.
 
-OrganicLever remains the highest-priority product delivery workstream. Research and prototyping for
-Shariah compliance, security, business systems, enterprise domains, infrastructure, and public
-education can progress alongside it when evidence, dependencies, and capacity allow.
+Product delivery, Shariah and regulatory research, business and enterprise research, trust and
+assurance, platform engineering, and public education progress alongside one another when evidence,
+dependencies, and capacity allow.
 
 ## 🔀 Operating Model
 
@@ -61,8 +61,8 @@ The diagram shows coordination and evidence exchange, not a start-to-finish sequ
 
 ### OrganicLever
 
-**Current priority**: Deliver and validate a local-first individual productivity product while
-testing full-stack development and operational practices in a real application.
+**Purpose**: Deliver and validate a local-first individual productivity product while testing
+full-stack development and operational practices in a real application.
 
 **Current repository surfaces**:
 
@@ -80,13 +80,13 @@ testing full-stack development and operational practices in a real application.
 - Shariah-aware features introduced only with appropriate research and review
 - Proportional security, privacy, observability, and deployment controls
 
-OrganicLever is a delivery priority and a learning environment. It is not a gate that prevents
-other workstreams from starting.
+OrganicLever is a product-delivery workstream and a learning environment. It can progress in
+parallel with the other workstreams.
 
-### Future Product Initiatives
+### Business and Enterprise Product Initiatives
 
-Small and medium business systems and enterprise systems remain important product directions.
-Neither is designated as a mandatory successor to OrganicLever.
+Small and medium business systems and enterprise systems remain important product directions. They
+can progress in parallel with OrganicLever and are not designated as mandatory successors.
 
 Work can begin as focused research, domain modelling, contract design, or prototypes whenever a
 clear question and sufficient capacity exist. A product commitment requires evidence of a real user

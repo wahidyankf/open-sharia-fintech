@@ -20,11 +20,10 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We develop products, platform capabilities, and research through concurrent workstreams.
-OrganicLever is the current product-delivery priority, while Shariah, regulatory, security,
-business-domain, enterprise, infrastructure, and public-learning work can progress in parallel.
-Each production-facing deliverable must satisfy the readiness checks relevant to its risks and
-claims.
+We develop products, platform capabilities, and research through concurrent workstreams. Product
+delivery, Shariah and regulatory research, trust and assurance, business and enterprise research,
+platform engineering, and public learning can all progress in parallel. Each production-facing
+deliverable must satisfy the readiness checks relevant to its risks and claims.
 
 ## Why Open Source Matters
 
@@ -114,12 +113,12 @@ The connections show coordination and evidence exchange, not a start-to-finish s
 
 ### Product Delivery
 
-**OrganicLever** is the current delivery priority:
+**OrganicLever** is an active product-delivery workstream:
 
 - 🌐 **Marketing site** - [organiclever.com](https://www.organiclever.com/)
 - 💻 **Product client** - Next.js 16 local-first web application with PGlite
 - 🔧 **Backend** - F#/Giraffe/ASP.NET REST API
-- 📚 **Learning focus** - Product validation, local-first data ownership, deployment, and
+- 📚 **Learning goals** - Product validation, local-first data ownership, deployment, and
   proportional assurance
 
 Small and medium business systems and enterprise systems remain important product directions.
@@ -184,13 +183,15 @@ development can progress in parallel.
 
 ## Project Status
 
-**Current delivery focus: OrganicLever — pre-alpha**
+Development and research proceed through parallel workstreams:
 
-- ✅ [organiclever.com](https://www.organiclever.com/) - Marketing website (live)
-- 🚧 OrganicLever product client - Next.js 16 local-first web application
-- 🚧 OrganicLever backend - F#/Giraffe/ASP.NET REST API
-- 🔬 **Parallel exploration** - Shariah, security, business-system, enterprise, infrastructure, and
-  public-learning research and prototyping
+- 🚀 **Product delivery** - OrganicLever marketing site, local-first client, backend, and paired
+  end-to-end suites
+- 🕌 **Shariah and regulatory research** - Principles, rules, review methods, and prototypes
+- 🏢 **Business and enterprise research** - Domain discovery, process models, and experiments
+- 🛡️ **Trust and assurance** - Security, privacy, governance, and compliance capabilities
+- ⚙️ **Platform and operations** - Architecture, developer tooling, infrastructure, and reliability
+- 📚 **Public learning** - AyoKoding educational content and OSE project updates
 
 **Note:**
 
