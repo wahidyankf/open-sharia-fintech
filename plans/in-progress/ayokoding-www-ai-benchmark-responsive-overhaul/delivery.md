@@ -486,34 +486,72 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
 
 ### Integration — Unit 1 boundary
 
-- [ ] [AI] Commit and push to `origin ai-benchmark-r5-overflow-containment`
+- [x] [AI] Commit and push to `origin ai-benchmark-r5-overflow-containment`
       — acceptance: `git ls-remote --heads origin ai-benchmark-r5-overflow-containment | grep -c .`
       prints `1`
-- [ ] [AI] Open a draft PR against `main`:
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: pushed; confirmed live on GitHub.
+
+- [x] [AI] Open a draft PR against `main`:
       `gh pr create --draft --base main --title "fix(ayokoding-www): contain ai-benchmark table horizontal overflow at lg"`
       — acceptance: `gh pr list --head ai-benchmark-r5-overflow-containment --json number --jq 'length'`
       prints `1`
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: opened
+  > [PR #126](https://github.com/wahidyankf/ose-public/pull/126); `gh pr list` confirms `1`.
+
 - [ ] [AI] Monitor CI (poll every 2 minutes, one `gh run view --json status,conclusion` per wakeup —
       never `gh run watch`) — acceptance: every check reports `conclusion: success`
-- [ ] [AI] Run the PR-Review Maker→Fixer Cycle — 3 sequential cycles, each gated by a green CI run
+- [x] [AI] Run the PR-Review Maker→Fixer Cycle — 3 sequential cycles, each gated by a green CI run
       (see [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md))
       — acceptance: cycle 3's consolidated review reports zero unresolved CRITICAL or HIGH findings
-- [ ] [AI] `gh pr ready` then merge — acceptance:
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (review-only cycles)
+  > **Notes**: 3 sequential cycles run, each fanning out all 8 discipline specialists, coordinated
+  > by `pr-review-synthesis-maker`. Cycle 1: zero findings, review
+  > [#pullrequestreview-4825449810](https://github.com/wahidyankf/ose-public/pull/126#pullrequestreview-4825449810).
+  > Cycle 2: one HIGH docs finding (inverted causal comment in `model-table.test.tsx`), fixed and
+  > pushed as `bffa61df9`, thread resolved, review
+  > [#pullrequestreview-4825482967](https://github.com/wahidyankf/ose-public/pull/126#pullrequestreview-4825482967).
+  > Cycle 3: zero findings (docs specialist independently re-verified cycle 2's fix landed
+  > correctly), review
+  > [#pullrequestreview-4825606808](https://github.com/wahidyankf/ose-public/pull/126#pullrequestreview-4825606808).
+  > Loop exited `done`, not `escalated`. 0 unresolved threads, CI green at final head.
+- [x] [AI] `gh pr ready` then merge — acceptance:
       `gh pr view --json state --jq .state` prints `MERGED`
-- [ ] [AI] Fast-forward local `main` and create Unit 2's branch off the merged state:
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (GitHub-only operations)
+  > **Notes**: `gh pr ready 126` then `gh pr merge 126 --squash --delete-branch`. Merge commit
+  > `ba190682f6a69c9631b88684e057ef9b3076772e`. `gh pr view 126 --json state` prints `MERGED`.
+- [x] [AI] Fast-forward local `main` and create Unit 2's branch off the merged state:
       `git fetch origin && git checkout -b ai-benchmark-responsive-overhaul origin/main`
       — acceptance: `git merge-base --is-ancestor origin/main HEAD` exits 0
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (branch operation)
+  > **Notes**: `git fetch origin && git checkout -b ai-benchmark-responsive-overhaul origin/main` —
+  > new branch tracks `origin/main` at `ba190682f`.
+  > `git merge-base --is-ancestor origin/main HEAD` exits 0.
 
 ### Phase 1 Gate
 
 > All checks below must pass before starting Phase 2.
 
-- [ ] [AI] AC-52 passes at all seven example rows:
+- [x] [AI] AC-52 passes at all seven example rows:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
-- [ ] [AI] `grep -cF 'lg:overflow-visible' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: re-ran on the Unit 2 branch (`ba190682f`) per the literal acceptance clause rather
+  > than citing the PR-branch run. `npx nx run ayokoding-www-fe-e2e:test:e2e --skip-nx-cache` —
+  > 680 passed, 301 skipped, 0 failed, exit 0 (4.0m). All 21 AC-52 rows (7 Examples × 3 browsers)
+  > pass: `grep -c "never scrolls horizontally"` on the captured log prints 21, all `✓`.
+- [x] [AI] `grep -cF 'lg:overflow-visible' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
       prints `0`
-- [ ] [AI] Unit 1's PR is merged: `gh pr view --json state --jq .state` prints `MERGED`
-- [ ] [AI] The Unit 2 branch exists and is based on the merged `origin/main`
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: `grep -cF 'lg:overflow-visible' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
+  > prints `0` on the Unit 2 branch.
+- [x] [AI] Unit 1's PR is merged: `gh pr view --json state --jq .state` prints `MERGED`
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: `gh pr view 126 --json state --jq .state` prints `MERGED`.
+- [x] [AI] The Unit 2 branch exists and is based on the merged `origin/main`
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: branch `ai-benchmark-responsive-overhaul` exists at `ba190682f`, identical to
+  > `origin/main`; `git merge-base --is-ancestor origin/main HEAD` exits 0.
 
 > **Pause Safety**: the live desktop overflow defect is off `main` and guarded by a regression test
 > at two layers. The sticky `<thead>` is temporarily inactive at `lg`, documented in DD-27 and owned
