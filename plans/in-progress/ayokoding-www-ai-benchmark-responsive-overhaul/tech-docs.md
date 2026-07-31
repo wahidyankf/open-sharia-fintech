@@ -401,18 +401,24 @@ Every string the overhaul needs already exists: `aiBenchHowToVendorReported` (th
 `aiBenchLegendHeading` and `aiBenchSourcesHeading` (the new disclosure summaries), the band and
 grade labels, and the column labels for the card `<dt>`s `[Repo-grounded]`.
 
-Four strings are genuinely new and MUST land in **both** `en` and `id`:
+Three strings are genuinely new and MUST land in **both** `en` and `id`:
 
 1. A `<summary>` label for the per-model roster disclosure (e.g. "All figures").
-2. A `<summary>` label for the how-to-read remainder if `aiBenchHowToSummary` does not read
-   correctly as a "more" affordance — to be decided during Phase 7 by reading the live string in
-   both locales, not assumed here.
-3. `aiBenchCardGroupModel` — the group heading over the card's vendor/harness fields (DD-34).
-4. `aiBenchCardGroupScores` — the group heading over the card's benchmark figures and coverage
+2. `aiBenchCardGroupModel` — the group heading over the card's vendor/harness fields (DD-34).
+3. `aiBenchCardGroupScores` — the group heading over the card's benchmark figures and coverage
    (DD-34).
 
-`[Unverified]` on the second: the decision depends on how the existing Indonesian string reads in
-its new position. Keys 3 and 4 are unconditional and land in Phase 6, in the key-before-consumer
+**Phase 7 resolution of the how-to-read remainder's `<summary>` label**: no new key was needed.
+`aiBenchHowToSummary` — `"How to read this benchmark (please read before comparing models)"` (en)
+/ `"Cara membaca tolok ukur ini (harap dibaca sebelum membandingkan model)"` (id) — was read live in
+its new position (cycle 7.1's remainder `<details>`, after the always-visible honesty line moved
+out) in both locales. It still reads correctly as a "click for more" affordance in both: the
+sentence names exactly what expanding it does (read the rest of the how-to guidance before
+comparing models), and nothing about its wording assumes it is the label for the WHOLE disclosure
+rather than just the remainder — the honesty line it now sits beside states the one guaranteed
+fact, and this label still accurately invites the reader into the rest of the how-to-read content.
+The key is reused verbatim, unchanged, on the remainder `<details>`'s `<summary>`. What were keys 3
+and 4 above (now keys 2 and 3) are unconditional and landed in Phase 6, in the key-before-consumer
 order cycle 6.1 established.
 
 **DD-34 adds no key for its absent-figure run**: the shared `<dd>` reuses the existing
