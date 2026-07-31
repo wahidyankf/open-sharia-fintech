@@ -92,6 +92,13 @@ export function bandLabel(band: ChartBand, locale: Locale): string {
  * chart converts a domain value (a composite index, a price) into a bar length. Monotonic: a
  * larger domain value always yields an offset ≥ a smaller one's. A non-positive `domainMax`
  * degenerates to always-zero rather than dividing by zero or producing `NaN`.
+ *
+ * Doubles as a PERCENTAGE scale when `pixelWidth` is exactly `100` (DD-25) — Phase 5's DOM bar
+ * rows call `scaleLinear(COMPOSITE_INDEX_MAX, 100)` to turn a composite index into the `${n}%`
+ * inline `width` a percentage-based (non-SVG) bar needs, rather than a pixel offset into a fixed
+ * SVG viewBox. No new code path exists for this — it is the SAME function, at the SAME contract,
+ * called with `100` for the second argument; `chart-primitives.test.tsx`'s "percentage contract"
+ * describe block characterizes exactly this call shape.
  */
 export function scaleLinear(domainMax: number, pixelWidth: number): (value: number) => number {
   if (!(domainMax > 0)) {

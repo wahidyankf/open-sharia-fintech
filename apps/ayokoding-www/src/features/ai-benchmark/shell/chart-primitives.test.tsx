@@ -11,7 +11,11 @@
 
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { bandLabel, evenTicks, scaleLinear, TickRow } from "./chart-primitives";
+import { bandBarBgClass, bandInkTextClass, bandLabel, evenTicks, scaleLinear, TickRow } from "./chart-primitives";
+import { COMPOSITE_INDEX_MAX } from "../core/score";
+import type { ChartBand } from "./chart-primitives";
+
+const ALL_BANDS: readonly ChartBand[] = ["opus", "sonnet", "haiku", "unrated"];
 
 describe("scaleLinear", () => {
   it("maps 0 to 0", () => {
@@ -43,6 +47,35 @@ describe("scaleLinear", () => {
     const scale = scaleLinear(0, 400);
     expect(scale(0)).toBe(0);
     expect(scale(10)).toBe(0);
+  });
+});
+
+// Characterization (cycle 4.1, DD-25) — pins the specific `scaleLinear(COMPOSITE_INDEX_MAX, 100)`
+// call Phase 5's DOM bar rendering will make: with a pixel width of exactly 100, `scaleLinear`
+// degenerates into a PERCENTAGE scale (a bar's inline `width` style becomes a `${n}%` string). This
+// is a characterization test, not a RED — `scaleLinear`'s existing contract already satisfies it,
+// so these assertions are expected to PASS immediately, confirming `tech-docs.md` DD-25's assumption
+// rather than driving new production code.
+describe("scaleLinear — percentage contract (DD-25)", () => {
+  it("maps the domain maximum to 100", () => {
+    const scale = scaleLinear(COMPOSITE_INDEX_MAX, 100);
+    expect(scale(COMPOSITE_INDEX_MAX)).toBe(100);
+  });
+
+  it("maps the midpoint to 50", () => {
+    const scale = scaleLinear(COMPOSITE_INDEX_MAX, 100);
+    expect(scale(COMPOSITE_INDEX_MAX / 2)).toBe(50);
+  });
+
+  it("maps 0 to 0", () => {
+    const scale = scaleLinear(COMPOSITE_INDEX_MAX, 100);
+    expect(scale(0)).toBe(0);
+  });
+
+  it("maps every value to 0 when domainMax is non-positive", () => {
+    const scale = scaleLinear(0, 100);
+    expect(scale(0)).toBe(0);
+    expect(scale(COMPOSITE_INDEX_MAX)).toBe(0);
   });
 });
 
