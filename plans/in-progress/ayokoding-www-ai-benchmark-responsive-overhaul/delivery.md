@@ -641,21 +641,32 @@ fix(ayokoding-www-fe-e2e): harden e2e steps against shared-machine contention` �
 
 ### Commit Guidelines — Phase 2
 
-- [ ] [AI] Commit: `docs(plans): validate ai-benchmark responsive-overhaul design funnel`
+- [x] [AI] Commit: `docs(plans): validate ai-benchmark responsive-overhaul design funnel`
       — acceptance: the commit touches only files under this plan's folder
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `delivery.md`, `prd.md`
+  > **Notes**: commit `b39dacc89`, 2 files changed (141 insertions, 8 deletions), both under this
+  > plan's folder. Working tree clean after commit.
 
 ### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
-- [ ] [AI] No `[Unverified]` marker remains anywhere in `prd.md`:
+- [x] [AI] No `[Unverified]` marker remains anywhere in `prd.md`:
       `grep -c '\[Unverified\]' plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/prd.md`
       prints `0`. Falsifiable both ways: leaving the R7 placeholder in place prints `1` and fails.
-- [ ] [AI] All eight finalist mockups exist and every `prd.md` image reference resolves —
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: verified `= 0`.
+- [x] [AI] All eight finalist mockups exist and every `prd.md` image reference resolves —
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate`
       reports no broken link under this plan's folder
-- [ ] [AI] The pre-commit markdown hooks passed on commit — acceptance: the commit succeeded
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: full-repo scan found 145 preexisting broken links, all under unrelated
+  > `plans/done/**` folders; `grep -c 'ayokoding-www-ai-benchmark-responsive-overhaul'` on the
+  > report = 0, confirming none under this plan's folder.
+- [x] [AI] The pre-commit markdown hooks passed on commit — acceptance: the commit succeeded
       without `--no-verify`
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none
+  > **Notes**: prettier, markdownlint-cli2, mermaid/heading-hierarchy/naming/frontmatter validate,
+  > and binding sync all completed successfully; commit `b39dacc89` made with no `--no-verify`.
 
 > **Pause Safety**: only plan documents changed; the app source is exactly as Phase 1 left it and
 > is fully green. Safe to stop indefinitely. To resume: re-read `prd.md` §UI design funnel and
