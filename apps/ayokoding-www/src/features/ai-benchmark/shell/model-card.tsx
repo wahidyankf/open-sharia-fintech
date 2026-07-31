@@ -20,11 +20,13 @@ import { HARNESS_DISPLAY_NAMES } from "../core/data/benchmarks";
 import {
   classLabel,
   integrityNotes,
+  partitionStaticFigures,
   renderBenchmarkFigures,
   renderStaticFigures,
   type ModelFigure,
   type ScoreView,
 } from "./model-figures";
+import { ModelDetailDisclosure } from "./model-detail-disclosure";
 
 const SLOT = "model-card";
 
@@ -39,18 +41,14 @@ export function ModelCard({ model, view, locale }: ModelCardProps) {
   const benchmarkFigures = renderBenchmarkFigures(model, locale);
 
   // The summary carries index and price (DD-28); the remaining static figure (coverage) joins the
-  // benchmark figures inside the disclosure. Partitioning by LABEL match — rather than duplicating
-  // the underlying index/price selection logic — keeps this the ONLY place that decides which
-  // slice of the shared list is always-visible (W-30: parity holds by construction).
-  const indexLabel = t(locale, "aiBenchColIndex");
-  const inputLabel = t(locale, "aiBenchColInputPrice");
-  const outputLabel = t(locale, "aiBenchColOutputPrice");
-  const indexFigure = staticFigures.find((f) => f.label === indexLabel);
-  const inputFigure = staticFigures.find((f) => f.label === inputLabel);
-  const outputFigure = staticFigures.find((f) => f.label === outputLabel);
-  const detailStaticFigures = staticFigures.filter(
-    (f) => f.label !== indexLabel && f.label !== inputLabel && f.label !== outputLabel,
-  );
+  // benchmark figures inside the disclosure — see `partitionStaticFigures`'s own docstring for why
+  // this split is shared with `model-table.tsx` rather than re-implemented per caller.
+  const {
+    index: indexFigure,
+    input: inputFigure,
+    output: outputFigure,
+    rest: detailStaticFigures,
+  } = partitionStaticFigures(staticFigures, locale);
   // A subscription rate (or a genuinely absent price) reuses the SAME rendered node for input and
   // output (`model-figures.tsx`'s `priceCells`) — referential equality collapses that duplicate
   // node to a single visible price in the summary rather than showing the identical text twice.
@@ -93,17 +91,7 @@ export function ModelCard({ model, view, locale }: ModelCardProps) {
           </span>
         </div>
       </div>
-      <details data-testid={`${SLOT}-details-${model.id}`}>
-        <summary data-testid={`${SLOT}-disclosure-${model.id}`}>{t(locale, "aiBenchCardAllFigures")}</summary>
-        <dl className="mt-2 space-y-2 text-sm">
-          {detailFigures.map((fig) => (
-            <div key={fig.label} className="flex flex-col gap-0.5">
-              <dt className="text-xs font-medium text-muted-foreground">{fig.label}</dt>
-              <dd>{fig.node}</dd>
-            </div>
-          ))}
-        </dl>
-      </details>
+      <ModelDetailDisclosure slot={SLOT} modelId={model.id} figures={detailFigures} locale={locale} />
     </li>
   );
 }

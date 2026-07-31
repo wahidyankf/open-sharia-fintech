@@ -225,3 +225,30 @@ export function renderStaticFigures(model: Model, view: ScoreView, locale: Local
     { label: t(locale, "aiBenchColOutputPrice"), node: prices.output },
   ];
 }
+
+/** The index/input-price/output-price figures picked out of `renderStaticFigures`'s list, plus everything else. */
+export type StaticFigurePartition = {
+  index: ModelFigure | undefined;
+  input: ModelFigure | undefined;
+  output: ModelFigure | undefined;
+  rest: ModelFigure[];
+};
+
+/**
+ * Splits `renderStaticFigures`'s output into the three figures a summary shows (index, input price,
+ * output price) and everything else (coverage). Both `model-card.tsx`'s summary and
+ * `model-table.tsx`'s primary columns need this exact split — sharing it here (rather than each
+ * re-implementing its own label match) keeps the split the ONE place that decides what counts as
+ * "primary" (W-30: parity holds by construction, not by two hand-synchronized lists).
+ */
+export function partitionStaticFigures(figures: ModelFigure[], locale: Locale): StaticFigurePartition {
+  const indexLabel = t(locale, "aiBenchColIndex");
+  const inputLabel = t(locale, "aiBenchColInputPrice");
+  const outputLabel = t(locale, "aiBenchColOutputPrice");
+  return {
+    index: figures.find((f) => f.label === indexLabel),
+    input: figures.find((f) => f.label === inputLabel),
+    output: figures.find((f) => f.label === outputLabel),
+    rest: figures.filter((f) => f.label !== indexLabel && f.label !== inputLabel && f.label !== outputLabel),
+  };
+}

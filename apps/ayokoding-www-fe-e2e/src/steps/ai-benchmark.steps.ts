@@ -353,3 +353,20 @@ When("the document's scroll width is compared with its client width", async ({ p
 Then("the document scroll width does not exceed the document client width", async ({}) => {
   expect(overflowScrollWidth).toBeLessThanOrEqual(overflowClientWidth);
 });
+
+// ── Sticky desktop header (AC-59, DD-27 Unit 2) ───────────────────────────────
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The roster table header stays visible while the page scrolls at desktop width
+Given("the AI benchmark page is loaded at a 1440 px viewport", async ({ page }) => {
+  await navigateAtViewport(page, 1440, "en");
+});
+
+When("the page is scrolled until the roster table's last row is in view", async ({ page }) => {
+  const lastRow = page.locator('[data-testid="model-table-desktop"] tbody tr[data-model-id]').last();
+  await lastRow.scrollIntoViewIfNeeded();
+});
+
+Then("the table's header row is still visible", async ({ page }) => {
+  const headerRow = page.locator('[data-testid="model-table-desktop"] thead tr').first();
+  await expect(headerRow).toBeInViewport();
+});

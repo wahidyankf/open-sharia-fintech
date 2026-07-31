@@ -57,20 +57,20 @@ describe("ModelCard — figure parity with the desktop table row (AC-54, W-30)",
 
   it("carries every figure the desktop table row carries once the disclosure is expanded", () => {
     const { container: cardContainer } = render(<ModelCard model={model} view={view} locale="en" />);
-    const { container: tableContainer } = render(
-      <table>
-        <tbody>
-          <ModelTable dataset={dataset} fullDataset={dataset} locale="en" />
-        </tbody>
-      </table>,
-    );
+    const { container: tableContainer } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     const cardRoot = cardContainer.querySelector(`[data-testid="model-card-${MODEL_ID}"]`);
-    const tableRow = tableContainer.querySelector(
+    // Desktop splits its figures across TWO rows (primary + a sibling detail row, cycle 6.3) — the
+    // comparison combines both before checking against the card's own summary+details total.
+    const primaryRow = tableContainer.querySelector(
       `[data-testid="model-table-desktop"] tbody tr[data-model-id="${MODEL_ID}"]`,
     );
+    const detailRow = tableContainer.querySelector(
+      `[data-testid="model-table-desktop"] tbody tr[data-model-detail-id="${MODEL_ID}"]`,
+    );
+    const tableValues = new Set([...figureValues(primaryRow), ...figureValues(detailRow)]);
     // jsdom has no CSS/layout engine, so a closed <details> still exposes its content to
     // querySelectorAll — the parity comparison does not depend on the disclosure's open state.
-    expect(figureValues(cardRoot)).toEqual(figureValues(tableRow));
+    expect(figureValues(cardRoot)).toEqual(tableValues);
     expect(figureValues(cardRoot).size).toBeGreaterThan(0);
   });
 });

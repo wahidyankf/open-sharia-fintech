@@ -1,9 +1,10 @@
-// AI BENCHMARK — ModelTable responsive parity test (Phase 5, W-26/W-27).
+// AI BENCHMARK — ModelTable responsive parity test (Phase 5/6, W-26/W-27, DD-27/DD-28).
 //
-// Asserts the two representations the component emits — a semantic <table> for md+ and stacked
-// definition cards below md — render the IDENTICAL set of figures for every model. CSS toggles
-// which is visible at a given viewport; jsdom applies no CSS, so both are in the DOM and the test
-// can assert parity without a real browser viewport.
+// Asserts the two representations the component emits — a semantic <table> for md+ (primary
+// columns plus a per-row detail disclosure) and `model-card.tsx`'s stacked summary cards below md —
+// render the IDENTICAL set of figures for every model. CSS toggles which is visible at a given
+// viewport; jsdom applies no CSS, so both are in the DOM and the test can assert parity without a
+// real browser viewport.
 //
 // This is a direct component test (not a Gherkin step): the responsive behaviour is a structural
 // invariant of the table, exercised here rather than via a feature scenario.
@@ -13,10 +14,18 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { dataset, type Dataset } from "../core/data/models";
 import { ModelTable } from "./model-table";
 
-/** The class-column text (td index 2: after vendor(0) and harnesses(1)) for one model's desktop row. */
-function classCellText(container: Element, modelId: string): string | undefined {
-  const row = container.querySelector(`tbody tr[data-model-id="${modelId}"]`);
-  return row?.querySelectorAll("td")[2]?.textContent?.trim();
+/** A model's primary row and its adjacent detail row (cycle 6.3: two <tr>s per model). */
+function rowsFor(desktop: Element, modelId: string): { primary: Element | null; detail: Element | null } {
+  return {
+    primary: desktop.querySelector(`tbody tr[data-model-id="${modelId}"]`),
+    detail: desktop.querySelector(`tbody tr[data-model-detail-id="${modelId}"]`),
+  };
+}
+
+/** The class-column text (td index 1: after vendor(0)) for one model's desktop primary row. */
+function classCellText(desktop: Element, modelId: string): string | undefined {
+  const { primary } = rowsFor(desktop, modelId);
+  return primary?.querySelectorAll("td")[1]?.textContent?.trim();
 }
 
 /** The set of formatted figure values rendered inside one model's representation. */
@@ -25,6 +34,12 @@ function figureValues(container: Element | null | undefined): Set<string> {
   return new Set(
     Array.from(container.querySelectorAll('[data-slot="figure-cell-value"]')).map((el) => el.textContent?.trim() ?? ""),
   );
+}
+
+/** Every figure value across a model's primary row AND its adjacent detail row, combined. */
+function desktopFigureValues(desktop: Element, modelId: string): Set<string> {
+  const { primary, detail } = rowsFor(desktop, modelId);
+  return new Set([...figureValues(primary), ...figureValues(detail)]);
 }
 
 describe("ModelTable responsive parity", () => {
@@ -37,10 +52,11 @@ describe("ModelTable responsive parity", () => {
     const desktop = screen.getByTestId("model-table-desktop");
     const mobile = screen.getByTestId("model-table-mobile");
 
-    // Desktop: a real <table> with a caption and a row per model.
+    // Desktop: a real <table> with a caption and one primary row + one detail row per model.
     expect(desktop.querySelector("table")).not.toBeNull();
     expect(desktop.querySelector("caption")).not.toBeNull();
     expect(desktop.querySelectorAll("tbody tr[data-model-id]").length).toBe(dataset.models.length);
+    expect(desktop.querySelectorAll("tbody tr[data-model-detail-id]").length).toBe(dataset.models.length);
 
     // Mobile: stacked definition cards — one <li> per model, each carrying a <dl>.
     expect(mobile.querySelectorAll("li[data-model-id]").length).toBe(dataset.models.length);
@@ -53,12 +69,15 @@ describe("ModelTable responsive parity", () => {
     const mobile = screen.getByTestId("model-table-mobile");
 
     for (const model of dataset.models) {
-      const desktopRow = desktop.querySelector(`tbody tr[data-model-id="${model.id}"]`);
+      const { primary: desktopRow, detail: detailRow } = rowsFor(desktop, model.id);
       const mobileCard = mobile.querySelector(`li[data-model-id="${model.id}"]`);
       expect(desktopRow, `desktop row for ${model.id}`).not.toBeNull();
+      expect(detailRow, `desktop detail row for ${model.id}`).not.toBeNull();
       expect(mobileCard, `mobile card for ${model.id}`).not.toBeNull();
-      // The figure sets must match exactly — no figure may appear in one variant but not the other.
-      expect(figureValues(mobileCard)).toEqual(figureValues(desktopRow));
+      // The figure sets must match exactly — no figure may appear in one variant but not the
+      // other. Desktop now splits its figures across TWO rows (primary + detail, cycle 6.3), so
+      // the comparison combines both before checking against the mobile card's own summary+detail.
+      expect(figureValues(mobileCard)).toEqual(desktopFigureValues(desktop, model.id));
     }
   });
 
@@ -67,11 +86,12 @@ describe("ModelTable responsive parity", () => {
     render(<ModelTable dataset={dataset} fullDataset={dataset} locale="id" />);
     const desktop = screen.getByTestId("model-table-desktop");
     const mobile = screen.getByTestId("model-table-mobile");
-    const desktopRow = desktop.querySelector('tbody tr[data-model-id="claude-opus-5"]');
     const mobileCard = mobile.querySelector('li[data-model-id="claude-opus-5"]');
+    const { primary: desktopRow, detail: detailRow } = rowsFor(desktop, "claude-opus-5");
     expect(desktopRow).not.toBeNull();
+    expect(detailRow).not.toBeNull();
     expect(mobileCard).not.toBeNull();
-    expect(figureValues(mobileCard)).toEqual(figureValues(desktopRow));
+    expect(figureValues(mobileCard)).toEqual(desktopFigureValues(desktop, "claude-opus-5"));
   });
 });
 
@@ -107,20 +127,32 @@ describe("ModelTable — fullDataset keeps a harness-filtered model's full-roste
   });
 });
 
-// ─── Regression: R5 (tech-docs.md §DD-27) — the desktop table bled past the viewport and forced
-// the whole document to scroll horizontally, because the `lg`-breakpoint overflow override
-// (`lg:overflow-visible`) cancelled the wrapper's scroll container at `lg`, leaving the table
-// uncontained. Removing it lets `overflow-x-auto` hold a BOTH-axes scroll container at every
-// breakpoint. A unit-level re-guard for AC-52 (Phase 1 cycle 1.1's e2e-tagged behaviour) against
-// ever re-adding that override — no new behaviour scenario to bind.
-describe("ModelTable — R5 desktop horizontal overflow regression", () => {
+// ─── R5/AC-59 (tech-docs.md §DD-27) — two-unit fix. Unit 1 (Phase 1) removed the wrapper's
+// `lg`-breakpoint overflow override so `overflow-x-auto` held a scroll container at every
+// breakpoint, at the cost of the sticky `<thead>` no longer sticking at `lg`. Unit 2 (here, cycle
+// 6.3) restores that override — safe now that the table is reduced to its primary columns and fits
+// below the `lg` viewport. This guard flips from "the override is absent" (Phase 1) to "the
+// override is present AND the table stays within its primary-column budget" (Phase 6) — a table
+// that regained the override WITHOUT shedding its secondary columns would still overflow (AC-52).
+describe("ModelTable — R5/AC-59 desktop overflow + sticky-header column budget", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("never restores the lg-breakpoint overflow override on the table wrapper", () => {
+  it("restores the lg-breakpoint overflow override now that the table fits", () => {
     const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
     const wrapper = container.querySelector('[data-testid="model-table-desktop"] [data-slot="table-wrapper"]');
-    expect(wrapper?.className).not.toContain("lg:overflow-visible");
+    expect(wrapper?.className).toContain("lg:overflow-visible");
+  });
+
+  it("keeps the desktop primary row within the primary-column budget (model, vendor, class, index, input price, output price)", () => {
+    const { container } = render(<ModelTable dataset={dataset} fullDataset={dataset} locale="en" />);
+    const headerCells = container.querySelectorAll(
+      '[data-testid="model-table-desktop"] thead tr th, [data-testid="model-table-desktop"] thead tr td',
+    );
+    // 6 primary columns: model, vendor, class, index, input price, output price. Falsifiable both
+    // ways: re-adding harnesses/benchmark/coverage columns to the header prints more than 6 and
+    // fails; dropping a genuine primary column prints fewer than 6 and fails.
+    expect(headerCells.length).toBe(6);
   });
 });

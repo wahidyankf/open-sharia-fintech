@@ -623,24 +623,32 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
       () => {
         const desktop = screen.getByTestId("model-table-desktop");
         const headerTexts = Array.from(desktop.querySelectorAll("thead th")).map((h) => h.textContent ?? "");
-        // Every benchmark column header is present, plus index, coverage, and the two prices.
-        for (const col of BENCHMARK_COLUMNS) {
-          expect(headerTexts.some((h) => h === t("en", col.labelKey))).toBe(true);
-        }
+        // Index and the two prices are primary columns (Phase 6 cycle 6.3), so their header exists.
         expect(headerTexts.some((h) => h === t("en", "aiBenchColIndex"))).toBe(true);
-        expect(headerTexts.some((h) => h === t("en", "aiBenchColCoverage"))).toBe(true);
         expect(headerTexts.some((h) => h === t("en", "aiBenchColInputPrice"))).toBe(true);
         expect(headerTexts.some((h) => h === t("en", "aiBenchColOutputPrice"))).toBe(true);
 
         const rows = desktop.querySelectorAll<HTMLTableRowElement>("tbody tr[data-model-id]");
         expect(rows.length).toBe(dataset.models.length);
-        // Each row carries its harness display names and its localized class label.
+        // Every benchmark score and coverage moved into each row's own detail disclosure (cycle
+        // 6.3) rather than the header — assert each row's ADJACENT detail row carries every
+        // benchmark column's label plus coverage's label as a `<dt>` (DD-28: still in the DOM,
+        // just behind a native disclosure, not a hidden column).
         for (const row of Array.from(rows)) {
-          const model = dataset.models.find((m) => m.id === row.getAttribute("data-model-id"));
+          const modelId = row.getAttribute("data-model-id")!;
+          const model = dataset.models.find((m) => m.id === modelId);
           expect(model).toBeDefined();
-          const rowText = row.textContent ?? "";
+          const detailRow = desktop.querySelector(`tbody tr[data-model-detail-id="${modelId}"]`);
+          expect(detailRow, `detail row for ${modelId}`).not.toBeNull();
+          const detailDtLabels = Array.from(detailRow!.querySelectorAll("dt")).map((dt) => dt.textContent ?? "");
+          for (const col of BENCHMARK_COLUMNS) {
+            expect(detailDtLabels).toContain(t("en", col.labelKey));
+          }
+          expect(detailDtLabels).toContain(t("en", "aiBenchColCoverage"));
+          // Each row's own detail region carries its harness display names.
+          const detailText = detailRow!.textContent ?? "";
           for (const h of model!.harnesses) {
-            expect(rowText).toContain(HARNESS_DISPLAY_NAMES[h] ?? h);
+            expect(detailText).toContain(HARNESS_DISPLAY_NAMES[h] ?? h);
           }
         }
         // At least one metered model renders numeric input and output prices.
@@ -824,21 +832,23 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A conflicted figure renders as a range rather than a single number
     Then("that cell shows the lowest and highest published values", () => {
-      const row = screen
+      // GPQA Diamond is a benchmark column — it lives in the row's own detail disclosure (cycle
+      // 6.3), not the primary row.
+      const detailRow = screen
         .getByTestId("model-table-desktop")
-        .querySelector('tbody tr[data-model-id="fixture-conflicted"]');
-      expect(row).not.toBeNull();
-      const cellText = row?.textContent ?? "";
+        .querySelector('tbody tr[data-model-detail-id="fixture-conflicted"]');
+      expect(detailRow).not.toBeNull();
+      const cellText = detailRow?.textContent ?? "";
       // Both the low (70.0) and high (80.0) formatted values appear.
       expect(cellText).toContain("70.0");
       expect(cellText).toContain("80.0");
     });
 
     But("that cell shows no averaged value", () => {
-      const row = screen
+      const detailRow = screen
         .getByTestId("model-table-desktop")
-        .querySelector('tbody tr[data-model-id="fixture-conflicted"]');
-      const cellText = row?.textContent ?? "";
+        .querySelector('tbody tr[data-model-detail-id="fixture-conflicted"]');
+      const cellText = detailRow?.textContent ?? "";
       // The average (75.0) must NOT appear — no averaged middle value is shown.
       expect(cellText).not.toContain(`${average.toFixed(1)}`);
     });
@@ -2202,11 +2212,15 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:An expanded roster card carries every figure the desktop table carries
     Then("the card's summary and expanded content together carry every figure that model's table row carries", () => {
-      const row = ctx.tableContainer!.querySelector(
+      // Desktop splits its figures across TWO rows (primary + a sibling detail row, cycle 6.3).
+      const primaryRow = ctx.tableContainer!.querySelector(
         `[data-testid="model-table-desktop"] tbody tr[data-model-id="${ctx.targetModelId}"]`,
       );
+      const detailRow = ctx.tableContainer!.querySelector(
+        `[data-testid="model-table-desktop"] tbody tr[data-model-detail-id="${ctx.targetModelId}"]`,
+      );
       const cardValues = figureValuesIn(ctx.cardContainer);
-      const tableValues = figureValuesIn(row);
+      const tableValues = new Set([...figureValuesIn(primaryRow), ...figureValuesIn(detailRow)]);
       expect(cardValues).toEqual(tableValues);
       expect(cardValues.size).toBeGreaterThan(0);
     });
