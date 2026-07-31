@@ -1271,7 +1271,7 @@ gherkin-cardinality validate specs/apps/ayokoding/behavior/ayokoding-www/gherkin
 **Gherkin (underpins) →** the pure-core scale behaviour AC-13 and AC-49 both rest on. This is the
 pure-core exception to one-scenario-per-cycle: it is a data/calculation test, not a behaviour slice.
 
-- [ ] [AI] **RED**: add tests to
+- [x] [AI] **RED**: add tests to
       `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.test.tsx` asserting
       `scaleLinear(COMPOSITE_INDEX_MAX, 100)` maps the domain maximum to `100`, the midpoint to
       `50`, `0` to `0`, and a non-positive `domainMax` to always-`0`
@@ -1280,11 +1280,25 @@ pure-core exception to one-scenario-per-cycle: it is a data/calculation test, no
       satisfies them) — record this explicitly as a **characterization** test, not a RED. If any
       assertion fails, `scaleLinear`'s contract is not what `tech-docs.md` DD-25 assumes and the
       plan must be revised before proceeding.
-- [ ] [AI] **GREEN**: no production change required — record "no change needed; contract confirmed"
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.test.tsx` **Notes**: Added
+  > a new `describe("scaleLinear — percentage contract (DD-25)")` block asserting
+  > `scaleLinear(COMPOSITE_INDEX_MAX, 100)` maps the domain max to `100`, the midpoint to `50`, `0`
+  > to `0`, and a non-positive `domainMax` to always-`0`. `npx nx run ayokoding-www:test:unit`
+  > PASSED immediately (145 test files, 3250 passed) — recorded as a characterization, not a RED:
+  > `scaleLinear`'s existing contract already satisfies `tech-docs.md` DD-25's assumption.
+
+- [x] [AI] **GREEN**: no production change required — record "no change needed; contract confirmed"
       in the checklist
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
-- [ ] [AI] **REFACTOR**: extend `scaleLinear`'s docstring in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none — no change needed; contract
+  > confirmed. **Notes**: `npx nx run ayokoding-www:test:unit` exited 0 (no production code
+  > touched).
+
+- [x] [AI] **REFACTOR**: extend `scaleLinear`'s docstring in
       `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx` to state the
       percentage use, naming DD-25
       — command: `npx nx run ayokoding-www:test:unit`
@@ -1292,38 +1306,79 @@ pure-core exception to one-scenario-per-cycle: it is a data/calculation test, no
       `grep -cF 'DD-25' apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx`
       is at least `1`
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx` **Notes**: Extended
+  > `scaleLinear`'s docstring with a paragraph naming DD-25 and the `scaleLinear(COMPOSITE_INDEX_MAX,
+100)` worked example. `npx nx run ayokoding-www:test:unit` exited 0 (3252 passed); `grep -cF
+'DD-25'` prints `1`.
+
 ### TDD cycle 4.2 — DOM band class maps
 
 **Exempt from Gherkin tagging** — a pure plumbing/helper addition (DOM class-map constants) with no
 user-observable behavior of its own; consumed by cycle 5.1's behavior-bound `BarRow`.
 
-- [ ] [AI] **RED**: add tests to `chart-primitives.test.tsx` asserting new
+- [x] [AI] **RED**: add tests to `chart-primitives.test.tsx` asserting new
       `bandBarBgClass(band)` and `bandInkTextClass(band)` helpers return the
       `bg-[var(--chart-band-*)]` and `text-[var(--chart-band-*-ink)]` class strings for all four
       bands
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS with `bandBarBgClass is not a function`
-- [ ] [AI] **GREEN**: add both helpers to `chart-primitives.tsx` as `Record<ChartBand, string>` maps
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.test.tsx` **Notes**: Added
+  > `describe("bandBarBgClass")` and `describe("bandInkTextClass")` blocks iterating all four
+  > bands. `npx nx run ayokoding-www:test:unit` FAILED exactly as required: `TypeError: bandBarBgClass
+is not a function` (and the same for `bandInkTextClass`), 2 failed / 3250 passed.
+
+- [x] [AI] **GREEN**: add both helpers to `chart-primitives.tsx` as `Record<ChartBand, string>` maps
       with complete, literal, unbroken class strings (Tailwind's scanner reads literals — the
       existing module docstring documents exactly this constraint)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: the new tests pass and every existing test in the file still passes
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: place the new maps directly beside the existing `BAR_FILL_CLASS` /
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx` **Notes**: Added
+  > `BAND_BAR_BG_CLASS`/`BAND_INK_TEXT_CLASS` `Record<ChartBand, string>` maps (complete, literal,
+  > unbroken class strings) and the `bandBarBgClass`/`bandInkTextClass` accessor functions. `npx nx
+run ayokoding-www:test:unit` exited 0 — the new tests and every existing test in the file
+  > passed (3252 passed, 0 failed).
+
+- [x] [AI] **REFACTOR**: place the new maps directly beside the existing `BAR_FILL_CLASS` /
       `BAND_INK_FILL_CLASS` maps and extend the module's hand-consistency warning comment to name
       the two new maps
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx` **Notes**: The two new
+  > maps sit directly beside `BAND_SWATCH_CLASS` (immediately after `BAR_FILL_CLASS` /
+  > `BAND_INK_FILL_CLASS`), and the module's hand-consistency warning comment now names all five
+  > maps by name (`BAR_FILL_CLASS`, `BAND_INK_FILL_CLASS`, `BAND_SWATCH_CLASS`, `BAND_BAR_BG_CLASS`,
+  > `BAND_INK_TEXT_CLASS`). `npx nx run ayokoding-www:test:unit` exited 0.
+
 ### Phase 4 Gate
 
 > All checks below must pass before starting Phase 5.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build` exits 0
-- [ ] [AI] The SVG exports are still present and still consumed — deletion happens in Phase 5, not
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0.
+
+- [x] [AI] `npx nx run ayokoding-www:build` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exits 0 — no static-page
+  > retry warnings this run (unlike Phase 3's build, which self-resolved a few transient ones);
+  > route map unchanged from Phase 3.
+
+- [x] [AI] The SVG exports are still present and still consumed — deletion happens in Phase 5, not
       here: `grep -cE 'export function (Axis|Bar|BandGroup|TickRow)' apps/ayokoding-www/src/features/ai-benchmark/shell/chart-primitives.tsx`
       prints `4`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: prints `4` — `Axis`,
+  > `Bar`, `BandGroup`, and `TickRow` are all still exported and untouched; their sole consumer
+  > (`benchmark-chart.tsx`) is unchanged in this phase. Deletion is deferred to Phase 5 as
+  > specified.
 
 > **Pause Safety**: `chart-primitives.tsx` has gained two helpers and one docstring; nothing
 > consumes them yet and no rendering changed beyond Phase 3's Haiku label/URL-param rename, which
