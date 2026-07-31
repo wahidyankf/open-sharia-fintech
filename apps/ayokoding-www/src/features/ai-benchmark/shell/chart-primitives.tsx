@@ -36,10 +36,12 @@ export type { ChartBand };
 
 // Tailwind's class scanner reads literal, unbroken strings out of the source text — a template
 // literal built from a shared `band → token name` lookup would never be found by the scanner, so
-// there is deliberately no single token-name registry these maps "read through". Each of the three
-// maps below independently hardcodes its own complete, static class string per band and must be
-// kept consistent with the others by hand — colour CAN drift if a future edit updates one map
-// without the others.
+// there is deliberately no single token-name registry these maps "read through". Each of the five
+// maps below (`BAR_FILL_CLASS`, `BAND_INK_FILL_CLASS`, `BAND_SWATCH_CLASS`, and — added in Phase 4,
+// cycle 4.2, for the upcoming DOM bar row — `BAND_BAR_BG_CLASS`/`BAND_INK_TEXT_CLASS`)
+// independently hardcodes its own complete, static class string per band and must be kept
+// consistent with the others by hand — colour CAN drift if a future edit updates one map without
+// the others.
 const BAR_FILL_CLASS: Record<ChartBand, string> = {
   opus: "fill-[var(--chart-band-opus)]",
   sonnet: "fill-[var(--chart-band-sonnet)]",
@@ -61,6 +63,23 @@ const BAND_SWATCH_CLASS: Record<ChartBand, string> = {
   unrated: "bg-[var(--chart-band-unrated)]",
 };
 
+// DOM (non-SVG) equivalents of `BAR_FILL_CLASS` / `BAND_INK_FILL_CLASS` above — a Phase 5
+// `<div>`-based bar row cannot use `fill-*` (an SVG-only Tailwind utility); it needs `bg-*` for its
+// own background and `text-*` for its ink-coloured label instead. Consumed by cycle 5.1's `BarRow`.
+const BAND_BAR_BG_CLASS: Record<ChartBand, string> = {
+  opus: "bg-[var(--chart-band-opus)]",
+  sonnet: "bg-[var(--chart-band-sonnet)]",
+  haiku: "bg-[var(--chart-band-haiku)]",
+  unrated: "bg-[var(--chart-band-unrated)]",
+};
+
+const BAND_INK_TEXT_CLASS: Record<ChartBand, string> = {
+  opus: "text-[var(--chart-band-opus-ink)]",
+  sonnet: "text-[var(--chart-band-sonnet-ink)]",
+  haiku: "text-[var(--chart-band-haiku-ink)]",
+  unrated: "text-[var(--chart-band-unrated-ink)]",
+};
+
 /** The Tailwind class that fills an SVG shape with a band's colour token. */
 export function barFillClass(band: ChartBand): string {
   return BAR_FILL_CLASS[band];
@@ -74,6 +93,16 @@ export function bandInkFillClass(band: ChartBand): string {
 /** The Tailwind class that colours a small swatch (e.g. a legend dot) with a band's colour token. */
 export function bandSwatchClass(band: ChartBand): string {
   return BAND_SWATCH_CLASS[band];
+}
+
+/** The DOM (non-SVG) equivalent of {@link barFillClass} — a `<div>` bar's own `bg-*` background. */
+export function bandBarBgClass(band: ChartBand): string {
+  return BAND_BAR_BG_CLASS[band];
+}
+
+/** The DOM (non-SVG) equivalent of {@link bandInkFillClass} — a DOM label's `text-*` ink colour. */
+export function bandInkTextClass(band: ChartBand): string {
+  return BAND_INK_TEXT_CLASS[band];
 }
 
 /**
