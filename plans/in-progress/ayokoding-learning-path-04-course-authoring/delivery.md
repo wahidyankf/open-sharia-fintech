@@ -110,6 +110,12 @@ and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/
 > remaining bodies opens at the next plan-defined finalization boundary. This user-directed cadence
 > supersedes conflicting per-course-PR text while preserving per-course quality gates and manifest
 > isolation checks.
+>
+> **Execution stop boundary — current cohort only (2026-07-31, user-directed).** Complete and integrate
+> the active cohort ending with `information-architecture-and-seo`, then stop this execution after its
+> PR is merged and deployment is verified. Confirm every cohort change is on `origin/main`, remove this
+> plan's idle or past worktrees and related build artifacts, and pull the latest `origin/main` in the
+> repository root. Do not begin a subsequent cohort under this execution directive.
 > **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
 > [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) has `[AI]`
 > merge the PR **by default** once its five hardened preconditions hold; a `[HUMAN]` merge gate is an
@@ -1103,8 +1109,17 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     Per the five-course cadence amendment, this thematic commit remains on the active cohort branch: no PR
     or deployment opens until the following two courses are completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-automation-and-task-runners` (By Example · multi-tool) — convention complete;
+- [x] [AI] `build-automation-and-task-runners` (By Example · multi-tool) — convention complete;
       checkers clean.
+  - _Completed 2026-07-31: authored the 80-example (27/28/25) multi-tool build-automation course
+    with 30 accessible Mermaid diagrams, 79 dedicated example artifact directories, and a real
+    Make/npm/just capstone. Fresh By-Example and factual audits pass after full one-per-example
+    navigation, density, explanation-length, special-character-anchor, Bazel target-pattern, and
+    Gradle-cache-enable repairs. Course-scoped JSON, Node, C, Make dry-run/runtime, Prettier,
+    markdownlint, Mermaid, and production-build checks pass; the build regenerated both learn indexes.
+    just, Bazel, and Gradle CLIs are unavailable locally, so their complete local definitions received
+    static and factual validation. Per the five-course cadence, this thematic commit remains on the
+    active cohort branch: no PR or deployment opens until the following course is completed._
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [ ] [AI] `information-architecture-and-seo` (Annotated-concept · HTML) — convention complete;
       checkers clean.

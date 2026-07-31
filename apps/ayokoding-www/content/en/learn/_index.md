@@ -28,6 +28,7 @@ weight: 10
   - [14 · Frontend Essentials](/en/learn/courses/frontend-essentials)
   - [Advanced Frontend](/en/learn/courses/advanced-frontend)
   - [15 · Software Testing](/en/learn/courses/software-testing)
+  - [Build Automation and Task Runners](/en/learn/courses/build-automation-and-task-runners)
   - [16 · Debugging & Profiling](/en/learn/courses/debugging-and-profiling)
   - [17 · Security Essentials](/en/learn/courses/security-essentials)
   - [Pass 1 Capstone · First Working Software](/en/learn/courses/capstone-first-working-software)

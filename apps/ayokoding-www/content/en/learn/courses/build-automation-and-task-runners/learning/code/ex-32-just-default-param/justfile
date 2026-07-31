@@ -1,0 +1,3 @@
+# local is used when no target argument is present.
+deploy target="local":
+  @echo "deploy {{target}}"

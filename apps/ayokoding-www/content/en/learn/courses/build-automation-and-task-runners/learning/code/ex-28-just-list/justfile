@@ -1,0 +1,6 @@
+# Both recipes appear in just --list.
+format:
+  @echo "format"
+
+test:
+  @echo "test"

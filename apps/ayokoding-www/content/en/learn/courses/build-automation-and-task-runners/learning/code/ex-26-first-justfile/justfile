@@ -1,0 +1,3 @@
+# hello is a named task, always executed when requested.
+hello:
+  @echo "hello from just"

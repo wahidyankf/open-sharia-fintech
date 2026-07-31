@@ -1,0 +1,3 @@
+# The recipe receives one positional caller value.
+greet name:
+  @echo "hello {{name}}"
