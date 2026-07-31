@@ -678,14 +678,33 @@ Feature: AI model benchmark tool
 
   # AC-55 — DD-29: the chart is the page's primary content and now sits directly below the header
   # and filters, so a phone reader must not have to scroll past reference material to reach it.
+  #
+  # 2026-08-01 — Phase 12 PR review correction (finding F2): this scenario previously loaded a fixed
+  # 390x844 viewport, which was NON-PROTECTIVE against the Rule-15 UWT-007 defect it is meant to
+  # guard — the pre-fix chart position (measured at `top: 701px` at 390px width) already satisfied
+  # `< 844`, so this check stayed green throughout the defect. Retargeted to a Scenario Outline over
+  # the two breakpoints `delivery.md`'s own UWT-007 retest actually measured the defect and its fix
+  # at (320x568, 390x664) — the pre-fix top was 741px/701px (both fail `< height`), the post-fix top
+  # is 536.5px/517.25px (both pass), so this now fails before the fix and passes after it.
   @e2e
-  Scenario: The chart is visible above the fold on a phone
-    Given the AI benchmark page is loaded at a 390 px wide, 844 px tall viewport
+  Scenario Outline: The chart is visible above the fold on a phone
+    Given the AI benchmark page is loaded at a "<width>" px wide, "<height>" px tall viewport
     When the vertical offset of the first chart element is read from the live page
     Then that offset is less than the viewport height
 
+    Examples:
+      | width | height |
+      | 320   | 568    |
+      | 390   | 664    |
+
   # AC-60 — the whole overhaul (chart typography, above-the-fold placement, card collapse, i18n)
   # must hold identically in both locales — Indonesian's longer strings are the risk this guards.
+  #
+  # 2026-08-01 — Phase 12 PR review correction (finding F2): this scenario's own fold check ("the
+  # chart is present above the fold") used to compare against an 800px viewport height (the shared
+  # navigation helper's default) — non-protective for the same reason as AC-55 above. It now loads
+  # at the realistic 390x664 breakpoint and compares against 664, so it too fails before the
+  # UWT-007 fix and passes after it.
   @e2e
   Scenario Outline: The overhauled page behaves identically in both locales
     Given the AI benchmark page is loaded in the "<locale>" locale at a 390 px viewport

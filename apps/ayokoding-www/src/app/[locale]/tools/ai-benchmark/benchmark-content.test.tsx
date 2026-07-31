@@ -80,6 +80,35 @@ describe("BenchmarkContent — rapid successive filter changes (Rule-15 EWT-003)
 // delivery.md's instruction to follow cycle 6.1's pattern of binding the scenario at the same
 // site as its assertion) alongside the mirrored binding in
 // `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`.
+// Regression test for Rule-15 UWT-007 (Phase 12 PR review, finding F2): the e2e AC-55/AC-60
+// scenarios (retargeted in this same fix to the realistic 320x568/390x664 breakpoints) are the
+// pixel-measuring half of this guard — jsdom cannot measure wrapped-text layout, so it cannot
+// reproduce the "chart pushed past the fold" defect directly. This unit test is the other half: it
+// pins the className-level edits the fix actually made, so reverting any one of them (even if the
+// e2e suite were skipped locally) fails immediately here instead of silently reopening the defect.
+describe("BenchmarkContent — Rule-15 UWT-007 regression guard (F2, Phase 12 PR review)", () => {
+  it("hides the decorative subtitle below `sm` and keeps the trimmed vertical spacing that closes the above-the-fold gap", async () => {
+    const { BenchmarkContent } = await import("./benchmark-content");
+    render(<BenchmarkContent />);
+
+    const subtitle = screen.getByTestId("ai-bench-subtitle");
+    expect(subtitle.className).toContain("hidden");
+    expect(subtitle.className).toContain("sm:block");
+
+    const root = screen.getByTestId("ai-bench-page");
+    expect(root.className).toContain("py-4");
+    expect(root.className).toContain("sm:py-6");
+
+    const howToRead = screen.getByTestId("how-to-read");
+    expect(howToRead.className).toContain("space-y-2");
+    expect(howToRead.className).toContain("sm:space-y-4");
+
+    const filtersMobile = screen.getByTestId("benchmark-filters-mobile");
+    expect(filtersMobile.className).toContain("p-2");
+    expect(filtersMobile.className).toContain("sm:p-3");
+  });
+});
+
 describe("BenchmarkContent — document order (AC-56)", () => {
   it("renders the chart before the roster, and the roster before the legend and sources disclosures", async () => {
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The chart precedes the roster and both precede the collapsed reference sections

@@ -2708,8 +2708,14 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  Scenario("The chart is visible above the fold on a phone", ({ Given, When, Then }) => {
-    Given("the AI benchmark page is loaded at a 390 px wide, 844 px tall viewport", () => {
+  // Rule-15 UWT-007 regression fix (Phase 12 PR review, finding F2): mirrors the Scenario Outline
+  // the `.feature` file now carries (retargeted from a fixed 390x844 viewport to the two realistic
+  // breakpoints `delivery.md`'s UWT-007 retest actually measured — this mock binding is unaffected
+  // by which breakpoint is substituted since every step body is a no-op `expect(true).toBe(true)`,
+  // but the step TEXT must still match the `.feature` file's quoted-parameter Given for the shared
+  // spec-coverage validator to resolve this as a bound step rather than an orphan).
+  ScenarioOutline("The chart is visible above the fold on a phone", ({ Given, When, Then }) => {
+    Given('the AI benchmark page is loaded at a "<width>" px wide, "<height>" px tall viewport', () => {
       expect(true).toBe(true);
     });
 

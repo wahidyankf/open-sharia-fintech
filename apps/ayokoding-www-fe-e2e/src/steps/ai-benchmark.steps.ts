@@ -309,8 +309,10 @@ Then("every band token meets the WCAG AA contrast ratio against its background",
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:Band colours meet contrast in both themes
 //
 // The assertion the M-14 fix (Phase 9 Round 1a) actually needs: the base/bar-fill token
-// (`--chart-band-<band>`) is what a bar's `fill` colour resolves to (`chart-primitives.tsx`'s
-// `barFillClass`), rendered directly against the page background — a meaningful, non-text
+// (`--chart-band-<band>`) is what a DOM bar's `bg-*` background colour resolves to
+// (`chart-primitives.tsx`'s `bandBarBgClass` — the SVG-era `barFillClass` this comment used to name
+// was deleted in DD-32 once the DOM rewrite left it with zero consumers), rendered directly against
+// the page background — a meaningful, non-text
 // graphical object under WCAG 1.4.11, whose minimum is 3:1, not the 4.5:1 text minimum the
 // `-ink`/`-wash` assertion above checks. `sonnet`/`haiku` measured ~2.90:1/~2.13:1 before the fix
 // pinned literal OKLCH values (`ayokoding.css:107-108`); this would have failed against those
@@ -328,8 +330,8 @@ Then("every rated band's bar fill meets the WCAG non-text contrast ratio against
 
 // Shared by every viewport-and-locale-parametrized scenario outline against this page (AC-52 here;
 // the later AC-49/AC-50/AC-58 outlines reuse it instead of re-implementing navigation).
-async function navigateAtViewport(page: Page, width: number, locale: string): Promise<void> {
-  await page.setViewportSize({ width, height: 800 });
+async function navigateAtViewport(page: Page, width: number, locale: string, height = 800): Promise<void> {
+  await page.setViewportSize({ width, height });
   await page.goto(`/${locale}/tools/ai-benchmark`);
   await page.waitForLoadState("networkidle");
 }
@@ -583,12 +585,27 @@ Then("no reserved label column is present at that width", async ({}) => {
 });
 
 // ── AC-55 — the chart is visible above the fold on a phone (DD-29) ───────────────────────────
+//
+// Rule-15 UWT-007 regression fix (Phase 12 PR review, finding F2): the Given below used to load a
+// fixed 390x844 viewport — a height tall enough that the pre-fix chart position (701px measured at
+// 390px width) already satisfied the fold check, so this scenario stayed green throughout the
+// defect. `delivery.md`'s own UWT-007 entry retested at 320x568 and 390x664 (the realistic visible
+// height once mobile browser chrome is accounted for) and is the source of both the pre-fix
+// (741px/701px) and post-fix (536.5px/517.25px) measurements this Outline now guards against —
+// `loadedViewportHeight` below is set from whichever breakpoint the Given loads, so the assertion
+// checks the SAME height the page was actually measured at, not a hardcoded constant.
 
-Given("the AI benchmark page is loaded at a 390 px wide, 844 px tall viewport", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/en/tools/ai-benchmark");
-  await page.waitForLoadState("networkidle");
-});
+let loadedViewportHeight = 0;
+
+Given(
+  "the AI benchmark page is loaded at a {string} px wide, {string} px tall viewport",
+  async ({ page }, width: string, height: string) => {
+    loadedViewportHeight = Number(height);
+    await page.setViewportSize({ width: Number(width), height: loadedViewportHeight });
+    await page.goto("/en/tools/ai-benchmark");
+    await page.waitForLoadState("networkidle");
+  },
+);
 
 let firstChartElementOffsetTop = 0;
 
@@ -596,24 +613,27 @@ let firstChartElementOffsetTop = 0;
 When("the vertical offset of the first chart element is read from the live page", async ({ page }) => {
   const chart = page.locator('[data-testid="benchmark-chart"]').first();
   const box = await chart.boundingBox();
-  if (!box) throw new Error("chart is not visible at 390x844");
+  if (!box) throw new Error(`chart is not visible at the loaded viewport (height ${loadedViewportHeight})`);
   firstChartElementOffsetTop = box.y;
 });
 
 Then("that offset is less than the viewport height", async ({}) => {
-  expect(firstChartElementOffsetTop).toBeLessThan(844);
+  expect(firstChartElementOffsetTop).toBeLessThan(loadedViewportHeight);
 });
 
 // ── AC-60 — the whole overhaul holds identically in both locales ─────────────────────────────
-// `navigateAtViewport`'s own default height (800) is the "viewport" this scenario's fold check is
-// measured against — the same shared helper every other viewport-parametrized scenario in this file
-// already reuses (delivery.md's cycle 8.6 REFACTOR instruction).
+// `navigateAtViewport`'s own default height (800) is used by every OTHER viewport-parametrized
+// scenario in this file that reuses it (delivery.md's cycle 8.6 REFACTOR instruction) — but this
+// scenario's own fold check is overridden to 664 (Rule-15 UWT-007 regression fix, Phase 12 PR
+// review finding F2): 800 already satisfied the fold check throughout the UWT-007 defect (the
+// pre-fix chart position measured 701px at 390px width), so it was non-protective; 664 is the
+// realistic breakpoint `delivery.md`'s UWT-007 retest actually measured the defect and its fix at.
 
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:The overhauled page behaves identically in both locales
 Given(
   "the AI benchmark page is loaded in the {string} locale at a 390 px viewport",
   async ({ page }, locale: string) => {
-    await navigateAtViewport(page, 390, locale);
+    await navigateAtViewport(page, 390, locale, 664);
   },
 );
 
@@ -621,7 +641,7 @@ Then("the chart is present above the fold", async ({ page }) => {
   const chart = page.locator('[data-testid="benchmark-chart"]').first();
   const box = await chart.boundingBox();
   expect(box).not.toBeNull();
-  expect(box!.y).toBeLessThan(800);
+  expect(box!.y).toBeLessThan(664);
 });
 
 Then("every roster card is collapsed", async ({ page }) => {
