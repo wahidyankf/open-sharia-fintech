@@ -2675,22 +2675,71 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       | 1280  |
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-58` comment and bind it in
+- [x] [AI] **RED**: add the scenario under an `# AC-58` comment and bind it in
       `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`, measuring
       `boundingBox()` for every `a` and every `summary` inside the page container
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: FAILS, and the failure names at least one `(Source)` evidence link with a height
       below 24 (the diagnosis measured 17px)
-- [ ] [AI] **GREEN**: give `apps/ayokoding-www/src/features/ai-benchmark/shell/evidence-badge.tsx`'s
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` (six new Phase 8
+  > `@e2e` scenarios added under `# AC-58`/`# AC-49`/`# AC-50`/`# AC-51`/`# AC-55`/`# AC-60`
+  > comments in this one RED pass — all six shared one bddgen/build/test:e2e verification loop),
+  > `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts` (all six scenarios' bindings added
+  > together), `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx` (six
+  > `expect(true).toBe(true)` placeholder bindings, same established convention as AC-38/AC-52/AC-59,
+  > so `specs:behavior:coverage` finds a `@covers` for each `@e2e`-only scenario). Notes: ran a
+  > CHROMIUM-ONLY spec-scoped run (`--project=chromium --grep "AI model benchmark tool"` against a
+  > manually-started persistent standalone server) rather than the full literal command for this
+  > RED confirmation, to keep the iterative loop fast across six cycles sharing one implementation
+  > surface — the full literal `build && test:e2e` command IS run at the Phase 8 Gate below. Observed
+  > failure: 2 undersized targets at both 390px and 1280px, each named via its own `aria-label` in the
+  > assertion message — e.g. `"Evidence grade: verified — Source"` at `height: 16` / `height: 17`px
+  > (both below 24), matching the diagnosis's ~17px measurement. AC-49/AC-50/AC-51/AC-55/AC-60 all
+  > PASSED already on this same RED run (no production change needed for those four — confirmed in
+  > their own cycles below); only AC-58 failed at this point.
+
+- [x] [AI] **GREEN**: give `apps/ayokoding-www/src/features/ai-benchmark/shell/evidence-badge.tsx`'s
       anchor a minimum 24x24 CSS px box (vertical padding plus `min-h`/`min-w`), and apply the same
       to every `<summary>` introduced in Phases 6 and 7
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: both example rows pass
   - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **REFACTOR**: extract the shared sizing into one documented Tailwind class string
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/tap-target.ts` (new — shared
+  > `TAP_TARGET_MIN_CLASS` constant), `evidence-badge.tsx`, `how-to-read.tsx` (all 3 `<summary>`s),
+  > `model-detail-disclosure.tsx` (1 `<summary>`), `model-figures.tsx` (the `integrityNotes` anchor —
+  > same undersized-link defect class, found by the SAME RED run's own measurement loop; not in the
+  > plan's literal "Phases 6 and 7" summary list but genuinely present on the live page, so fixed here
+  > too per Root Cause Orientation), `benchmark-filters.tsx` (the mobile filters `<summary>` —
+  > likewise a pre-existing `<summary>` outside the plan's literal Phase 6/7 scope note but caught by
+  > this same RED run once the first two fixes cleared the evidence-badge failures and exposed it).
+  > Deviation disclosed: `boundingBox()` alone does not detect a target hidden by CSS
+  > (`display:none`/a closed `<details>`) — it returns a real, zero-sized box rather than `null` for
+  > those, which produced a batch of false-positive "0x0" failures on the first GREEN attempt (every
+  > figure inside a closed disclosure, and every mobile/desktop CSS-toggled duplicate). Fixed by
+  > gating each measurement on `el.isVisible()` first (which correctly accounts for `display`/
+  > `visibility`/closed-`<details>` state) before calling `boundingBox()`. A second false start:
+  > restarting the local dev server for GREEN verification hit `EADDRINUSE` because Next.js renames
+  > its process title to `next-server (vX.Y.Z)`, so `pkill -f <script-path>` (matching against the
+  > ORIGINAL invoked command line) silently failed to find/kill the still-running prior server —
+  > diagnosed via `lsof -i :3101` + `ps -p <pid> -o command`, fixed by killing the exact PID directly.
+  > Both diagnosed via the "Same-machine assumption"/general false-negative tooling classes this repo
+  > already tracks, not application defects. Both example rows pass after the fix.
+
+- [x] [AI] **REFACTOR**: extract the shared sizing into one documented Tailwind class string
       referenced by both components, with a comment citing WCAG 2.5.8 and DD-30
       — command: `npx nx run ayokoding-www:test:quick`
       — acceptance: exits 0
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/tap-target.ts` (the extraction — a single
+  > `TAP_TARGET_MIN_CLASS` string, documented with a WCAG 2.5.8/DD-30 docstring, imported by all six
+  > consumer sites listed in the GREEN note above). `npx nx run ayokoding-www:test:quick` exits 0
+  > (148 test files, 440+ tests including the newly-added Phase 8 placeholder scenarios, coverage
+  > unaffected).
 
 ### TDD cycle 8.2 — chart typography is viewport-independent (AC-49)
 
@@ -2713,20 +2762,59 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       | 1440  |
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-49` comment and bind it, reading
+- [x] [AI] **RED**: add the scenario under an `# AC-49` comment and bind it, reading
       `getComputedStyle(el).fontSize` from the live page at each width
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: PASSES on the current DOM chart. Record the measured font size at all five
       widths in the checklist, then verify falsifiability by temporarily re-wrapping the label in an
       `<svg viewBox>` and confirming the scenario FAILS — this is the test that would have caught
       the original defect, so it must be proven to fail against the original design.
-- [ ] [AI] **GREEN**: no production change expected — if the RED step's measurement shows drift,
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: same feature/step-binding
+  > files as cycle 8.1's RED (all six scenarios added together). Deviation disclosed: on the very
+  > FIRST RED run, the label under test (`benchmark-chart.tsx`'s `chart-bar-label`, `text-[10px]`)
+  > measured 10px, not 12 — the retired declared size predates this plan's own 12px floor, so this
+  > scenario did NOT "PASS on the current DOM chart" as the acceptance clause anticipated; it FAILED
+  > with `Expected: 12, Received: 10` at all five widths, correctly catching a genuine (if small)
+  > pre-existing defect. Falsifiability was therefore proven by that same observation rather than a
+  > separate simulated regression at this RED step — see cycle 8.2's REFACTOR note for the SEPARATE,
+  > explicit falsifiability re-confirmation performed after the GREEN fix (temporarily reverting to
+  > `text-[10px]`, per the plan's own instruction). Re: "re-wrapping the label in an `<svg viewBox>`"
+  > — `getComputedStyle().fontSize` reports the CSS-specified value, not a value scaled by an
+  > ancestor's coordinate-system transform (the same reason a CSS `transform: scale()` never changes
+  > a descendant's OWN computed length values) — an SVG `viewBox`'s scale factor works the same way,
+  > so a literal SVG re-wrap would not exercise this assertion any differently. Reverting the
+  > declared class to a sub-12px value is the faithful, mechanism-accurate equivalent for THIS
+  > specific assertion (computed style, not bounding box) and is what was actually performed.
+
+- [x] [AI] **GREEN**: no production change expected — if the RED step's measurement shows drift,
       fix the offending class
       — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: all five rows pass
-- [ ] [AI] **REFACTOR**: record the measured font size and the falsifiability check in
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `apps/ayokoding-www/src/features/ai-benchmark/shell/bar-row.tsx` (`chart-bar-row-label`:
+  > `text-[10px]` → `text-xs`), `benchmark-chart.tsx` (`chart-bar-label`: `text-[10px]` → `text-xs`;
+  > also `chart-low-coverage-marker` `text-[9px]`, `chart-subscription-label`/`chart-not-reported-
+label`/`chart-axis-max` `text-[10px]` — all bumped to `text-xs` too, since DD-34's own tech-docs.md
+  > note already asserts "no text on the page drops below [12px]" as a page-wide invariant post-
+  > Phase-8; leaving these scattered sub-12px siblings would have been a half-fix of the same defect
+  > class this cycle exists to close). `benchmark-chart.test.tsx` (the pre-existing unit assertion
+  > `expect(label.className).toContain("text-[10px]")` updated to `"text-xs"` — a genuine test-code
+  > update tracking the intentional class rename, not a behavior change). Drift WAS found (see RED
+  > note); this GREEN step is what fixed it. All five Outline rows pass after the fix.
+
+- [x] [AI] **REFACTOR**: record the measured font size and the falsifiability check in
       `evidence/phase-8-typography.txt`
       — acceptance: the file exists and names all five widths
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `evidence/phase-8-typography.txt` (new). Measured (real Chromium, production build): 12px at
+  > 320/390/768/1280/1440 — identical at all five, each ≥12px. Falsifiability re-confirmed explicitly
+  > (separate from the RED-step observation): temporarily reverted `chart-bar-label` to the retired
+  > `text-[10px]`, rebuilt, reran the Outline — all five rows failed with `Expected: 12, Received: 10`
+  > — then reverted immediately. `git diff` confirmed clean (no `TEMP-REGRESSION` residue) before
+  > proceeding.
 
 ### TDD cycle 8.3 — chart typography does not out-type the body (AC-50)
 
@@ -2740,14 +2828,34 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     Then the chart label's computed font size is no larger than the page body text's computed font size
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-50` comment and bind it
+- [x] [AI] **RED**: add the scenario under an `# AC-50` comment and bind it
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: PASSES on the new chart; verify falsifiability by temporarily raising the label
       class one step above the body size and confirming the scenario FAILS
-- [ ] [AI] **GREEN**: no production change expected; fix any drift found
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: same feature/step-binding
+  > files as cycle 8.1's RED. This scenario reuses the pre-existing literal `Given("the AI benchmark
+page is loaded at a 1440 px viewport", …)` bound for AC-59 — no new Given binding needed. Passed
+  > cleanly once the GREEN fix from cycle 8.2 was in place (12px chart label vs 16px body,
+  > 12 ≤ 16); before that fix it would ALSO have failed (10 ≤ 16 is still true, so this specific
+  > scenario would not have caught cycle 8.2's defect — only AC-49 does, confirming the two scenarios
+  > protect genuinely distinct properties).
+
+- [x] [AI] **GREEN**: no production change expected; fix any drift found
       — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: passes
-- [ ] [AI] **REFACTOR**: record both measured sizes in `evidence/phase-8-typography.txt`
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none (no drift found once
+  > cycle 8.2's GREEN landed — passes as-is).
+
+- [x] [AI] **REFACTOR**: record both measured sizes in `evidence/phase-8-typography.txt`
       — acceptance: the file names the chart label size and the body size
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `evidence/phase-8-typography.txt` (AC-50 section appended alongside AC-49's). Measured (real
+  > Chromium, production build, 1440px, en): chart label 12px, page body (`document.body`, no
+  > `globals.css` override, browser default) 16px. Falsifiability confirmed: temporarily raised the
+  > label class to `text-2xl` (24px), rebuilt, reran — failed with `Expected: <= 16, Received: 24` —
+  > reverted immediately. `git diff` confirmed clean before proceeding.
 
 ### TDD cycle 8.4 — the plot uses the full mobile width (AC-51)
 
@@ -2762,15 +2870,33 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     And no reserved label column is present at that width
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-51` comment and bind it, comparing
+- [x] [AI] **RED**: add the scenario under an `# AC-51` comment and bind it, comparing
       `boundingBox().width` of the track against its containing region
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: PASSES on the new chart; verify falsifiability by temporarily adding a
       fixed-width label column at all breakpoints and confirming the scenario FAILS
-- [ ] [AI] **GREEN**: fix any drift found — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: same feature/step-binding
+  > files as cycle 8.1's RED. Passed cleanly on the current DOM chart (`lg:grid-cols-[10rem_1fr]`
+  > only applies from `lg` up, so below `lg` the row is plain block flow and the bar track already
+  > spans the full row width).
+
+- [x] [AI] **GREEN**: fix any drift found — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: passes
-- [ ] [AI] **REFACTOR**: reuse the Phase 1 navigation helper rather than re-implementing navigation
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none (no drift found).
+
+- [x] [AI] **REFACTOR**: reuse the Phase 1 navigation helper rather than re-implementing navigation
       — command: `npx nx run ayokoding-www-fe-e2e:typecheck` — acceptance: exits 0
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none beyond cycle 8.1's
+  > additions — the `Given("the AI benchmark page is loaded at a 320 px viewport", …)` step calls the
+  > shared `navigateAtViewport(page, width, locale)` helper (the one every viewport-parametrized
+  > scenario in this file already reuses since AC-52), not a re-implemented navigation. Falsifiability
+  > confirmed: temporarily removed the `lg:` prefixes on the row wrapper's `grid-cols-[10rem_1fr]`
+  > class (making it unconditional at every breakpoint), rebuilt, reran — failed with
+  > `Expected: < 2, Received: 176` (the reserved 10rem=160px column + 1rem=16px gap ≈ 176px
+  > discrepancy) — reverted immediately. `git diff` confirmed clean before proceeding.
 
 ### TDD cycle 8.5 — the chart is above the fold on a phone (AC-55)
 
@@ -2784,15 +2910,32 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     Then that offset is less than the viewport height
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-55` comment and bind it
+- [x] [AI] **RED**: add the scenario under an `# AC-55` comment and bind it
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: PASSES on the reordered page; verify falsifiability by temporarily restoring the
       old composition order and confirming the scenario FAILS with an offset well above 844 (the
       diagnosis measured y=2127)
-- [ ] [AI] **GREEN**: fix any drift found — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: same feature/step-binding
+  > files as cycle 8.1's RED. Passed cleanly on the Phase 7 reordered page (chart directly follows
+  > header+filters, per AC-56).
+
+- [x] [AI] **GREEN**: fix any drift found — command: `npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: passes
-- [ ] [AI] **REFACTOR**: record the measured offset in `evidence/phase-8-above-the-fold.txt`
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none (no drift found).
+
+- [x] [AI] **REFACTOR**: record the measured offset in `evidence/phase-8-above-the-fold.txt`
       — acceptance: the file exists and names the measured offset and the viewport height
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed:
+  > `evidence/phase-8-above-the-fold.txt` (new). Measured (real Chromium, production build, 390x844,
+  > en): chart offset 533px, viewport height 844px — 533 < 844, above the fold. Falsifiability
+  > confirmed: temporarily rendered `ModelTable` BEFORE `BenchmarkChart` in `benchmark-content.tsx`
+  > (restoring the pre-Phase-7 composition order), rebuilt, reran — failed with the chart offset
+  > measured at 6809px (even further above the fold-breaking threshold than the original diagnosis's
+  > y=2127, since this regression pushes the WHOLE 38-model roster above the chart) — reverted
+  > immediately. `git diff` confirmed clean before proceeding.
 
 ### TDD cycle 8.6 — locale parity for the whole overhaul (AC-60)
 
@@ -2813,24 +2956,63 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       | id     |
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-60` comment and bind all three `Then` steps
+- [x] [AI] **RED**: add the scenario under an `# AC-60` comment and bind all three `Then` steps
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: both rows run; record any Indonesian-specific failure (longer strings can push
       the chart below the fold) before fixing
-- [ ] [AI] **GREEN**: fix any `id`-specific layout failure found
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: same feature/step-binding
+  > files as cycle 8.1's RED — the Given reuses `navigateAtViewport`'s default 800px height (the
+  > same shared helper every other viewport-parametrized scenario in this file already reuses; the
+  > Gherkin's own text states no explicit height for this scenario). Both `en`/`id` rows passed
+  > cleanly — no Indonesian-specific fold or roster-collapse regression found; the longer Indonesian
+  > strings (e.g. `aiBenchHowToSummary`'s `id` copy) do not push the chart below 800px at 390px width.
+
+- [x] [AI] **GREEN**: fix any `id`-specific layout failure found
       — command: `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: both rows pass
-- [ ] [AI] **REFACTOR**: fold the repeated locale navigation into the Phase 1 helper
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none (no `id`-specific
+  > failure found — see RED note).
+
+- [x] [AI] **REFACTOR**: fold the repeated locale navigation into the Phase 1 helper
       — command: `npx nx run ayokoding-www-fe-e2e:typecheck` — acceptance: exits 0
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Files changed: none beyond cycle 8.1's
+  > additions — `Given("the AI benchmark page is loaded in the {string} locale at a 390 px
+viewport", …)` calls `navigateAtViewport(page, 390, locale)` directly (the same shared helper),
+  > not a re-implemented navigation path. `npx nx run ayokoding-www-fe-e2e:typecheck` exits 0.
 
 ### Phase 8 Gate
 
 > All checks below must pass before starting Phase 9.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
-- [ ] [AI] Every AC-49/AC-50/AC-51/AC-55 falsifiability check was performed and its observed failure
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Confirmed via the `NX Successfully ran
+target test:quick for project ayokoding-www` banner (typecheck, lint, test:unit, test:coverage,
+  > test:specs, specs:structure-validation, specs:behavior:coverage sub-targets all green; coverage
+  > report showed the vast majority of files at 100%/97%+ line coverage, consistent with prior
+  > phases' baseline).
+
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Build: `NX Successfully ran target build
+for project ayokoding-www`. E2E (all 3 browsers, run via the official nx target with its own
+  > managed `webServer`, not the manual persistent server used for iterative cycle work): 725 passed,
+  > 331 skipped (pre-existing e2e coverage gaps, unrelated to this phase), 0 failed —
+  > `NX Successfully ran target test:e2e for project ayokoding-www-fe-e2e`.
+
+- [x] [AI] Every AC-49/AC-50/AC-51/AC-55 falsifiability check was performed and its observed failure
       recorded in the checklist — acceptance: four recorded failure observations, one per criterion
-- [ ] [AI] `evidence/phase-8-typography.txt` and `evidence/phase-8-above-the-fold.txt` both exist
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. All four recorded in their own cycles
+  > above (8.2 REFACTOR: 12→10, all 5 rows; 8.3 REFACTOR: 16→24; 8.4 REFACTOR: <2→176; 8.5 REFACTOR:
+  > <844→6809) and in both evidence files.
+
+- [x] [AI] `evidence/phase-8-typography.txt` and `evidence/phase-8-above-the-fold.txt` both exist
+
+  > **Atomic Sync Ritual** — Date: 2026-07-31. Status: DONE. Both files created this phase (cycles
+  > 8.2/8.3 REFACTOR and 8.5 REFACTOR respectively), confirmed present via `/bin/ls evidence/`.
 
 > **Pause Safety**: every measurable acceptance criterion is implemented and passing at the real
 > browser layer, and each has been proven to fail against the pre-change design. Safe to stop
