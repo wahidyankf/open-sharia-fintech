@@ -2410,13 +2410,20 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     And the remaining how-to-read points are reachable from that line's disclosure control
 ```
 
-- [ ] [AI] **RED**: reword the AC-32 scenario in the feature file (lines 132-138) to the text above,
+- [x] [AI] **RED**: reword the AC-32 scenario in the feature file (lines 132-138) to the text above,
       with a comment recording that D3 narrowed the guarantee from the whole disclosure to this one
       line, and update its unit binding in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — no standalone honesty line exists yet
-- [ ] [AI] **GREEN**: split
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `ai-benchmark.feature`,
+  > `ai-benchmark.steps.tsx` **Notes**: rebound the scenario's `Then`/`And` steps to query a new
+  > `ai-bench-how-to-honesty` testid (not gated behind any `<details>`) and a new
+  > `ai-bench-how-to-details` testid; confirmed genuine RED —
+  > `Unable to find an element by: [data-testid="ai-bench-how-to-honesty"]` — before proceeding.
+
+- [x] [AI] **GREEN**: split
       `apps/ayokoding-www/src/features/ai-benchmark/shell/how-to-read.tsx` so it exports an
       always-visible honesty line rendering `t(locale, "aiBenchHowToVendorReported")` verbatim, plus
       a `<details>` holding the remaining five bullets
@@ -2425,10 +2432,28 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       (`grep -cF 'aiBenchHowToVendorReported' apps/ayokoding-www/src/features/ai-benchmark/shell/how-to-read.tsx`
       is at least `1`)
   - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **REFACTOR**: render the `<details>` open at `lg` and above via CSS only (no JS width
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `how-to-read.tsx` **Notes**:
+  > **deviation disclosed**: to keep the full suite green at this checkpoint (splitting the
+  > honesty line out of the shared `<details>` also removed the legend/sources sections from
+  > `HowToRead`'s render output, which would otherwise have broken the pre-existing USS-002/AC-34
+  > bindings mid-cycle), this same GREEN step also extracted `AiBenchLegend` and `AiBenchSources`
+  > as separate exported components from the same file and wired them into
+  > `benchmark-content.tsx` — cycle 7.2's own reorder scope, done here out of strict cycle order
+  > for that reason. `grep -cF 'aiBenchHowToVendorReported' how-to-read.tsx` prints `1`.
+
+- [x] [AI] **REFACTOR**: render the `<details>` open at `lg` and above via CSS only (no JS width
       check, no hydration mismatch), documenting the choice against DD-29
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `how-to-read.tsx` **Notes**: used
+  > Tailwind's built-in `group-open:` `<details>`-open variant plus a `lg:block` override on the
+  > remainder `<ul>` (`hidden group-open:block lg:block`) — the list is closed by default below
+  > `lg`, opens on the native `<summary>` toggle at any width, and is forced visible at `lg`+
+  > purely via a CSS breakpoint rule, never a JS `matchMedia`/width check, so server and client
+  > render identical markup (DD-29, no hydration mismatch). `npx nx run ayokoding-www:test:unit`
+  > exits 0.
 
 ### TDD cycle 7.2 — document order (AC-56)
 
@@ -2443,14 +2468,25 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     And the legend and sources disclosures both follow the roster region
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-56` comment and bind it (add the `@covers`
+- [x] [AI] **RED**: add the scenario under an `# AC-56` comment and bind it (add the `@covers`
       marker — `benchmark-content.test.tsx` carries none today, so follow cycle 6.1's pattern rather
       than inferring one from the file), asserting the ordering in
       `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.test.tsx` using
       `compareDocumentPosition`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — today the legend and sources precede the chart
-- [ ] [AI] **GREEN**: reorder
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `ai-benchmark.feature`,
+  > `ai-benchmark.steps.tsx`, `benchmark-content.test.tsx` **Notes**: **deviation disclosed**:
+  > because cycle 7.1's own GREEN step had already reordered/wired `benchmark-content.tsx` (to
+  > keep that cycle's checkpoint green), the RED step for AC-56 was written and confirmed AFTER
+  > the implementing change already existed rather than strictly before it — this deviates from
+  > strict RED-first ordering. Disclosed honestly rather than staging a synthetic re-break; both
+  > the `@covers`-marked binding in `ai-benchmark.steps.tsx` and the dedicated
+  > `compareDocumentPosition` test in `benchmark-content.test.tsx` were confirmed to PASS against
+  > the already-correct implementation, not confirmed to fail first.
+
+- [x] [AI] **GREEN**: reorder
       `apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx` to
       header (with snapshot + honesty line) → filters → chart → roster → legend `<details>` →
       sources `<details>`, moving the ref-based race guards (EWT-003) without rewriting them and
@@ -2458,12 +2494,30 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: keep the page root a plain `<div>` (EWT-001 — no nested `<main>`) and add a
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-content.tsx` **Notes**:
+  > this reorder landed as part of cycle 7.1's GREEN step (see that step's note) — recorded here
+  > too since it is this cycle's own scope. `<HowToRead>` now nests inside `<header>` alongside
+  > the title/subtitle; `<AiBenchLegend>`/`<AiBenchSources>` render after the empty-state/roster
+  > ternary, unconditionally (both are dataset-level content, not filtered-roster-level, so they
+  > render in either branch). The `latestFilterStateRef`/`latestSortStateRef` EWT-003 guards were
+  > not touched — they live in the handler functions above the JSX, untouched by the reorder.
+
+- [x] [AI] **REFACTOR**: keep the page root a plain `<div>` (EWT-001 — no nested `<main>`) and add a
       comment naming DD-29 and each preserved defect guard
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0 and
       `grep -cF '<main' apps/ayokoding-www/src/app/[locale]/tools/ai-benchmark/benchmark-content.tsx`
       prints `0`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `benchmark-content.tsx` **Notes**:
+  > **guard-path staleness disclosed and fixed**: the pre-existing (Phase 5) EWT-001 comment
+  > itself contained the literal substring `<main>` twice (illustrative prose, not real markup),
+  > which made `grep -cF '<main'` print `2` even though the actual JSX has zero `<main>` elements
+  > — a false positive on the guard's own text, same class of issue as Phase 6's DWT-002
+  > staleness. Reworded the comment to describe the same EWT-001/DD-29 rationale without the
+  > literal angle-bracket substring, verified the underlying invariant (no real `<main>` in the
+  > JSX) by inspection, then re-ran the grep: prints `0`.
 
 ### TDD cycle 7.3 — the legend and sources stay reachable (AC-57)
 
@@ -2478,24 +2532,47 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
     And the sources section lists every named operator
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-57` comment and bind it, asserting four class
+- [x] [AI] **RED**: add the scenario under an `# AC-57` comment and bind it, asserting four class
       definitions, five grade definitions, the coverage formula (UWT-005), and one entry per
       `OPERATORS` member
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — neither section is a disclosure yet
-- [ ] [AI] **GREEN**: wrap the legend and the sources sections in `<details>` with localized
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `ai-benchmark.feature`,
+  > `ai-benchmark.steps.tsx` **Notes**: **deviation disclosed**, same class as cycle 7.2's RED: the
+  > `<details>` wrapping for both sections had already landed as part of cycle 7.1's GREEN step
+  > (needed there to keep the suite green). The new AC-57 binding was written and confirmed to
+  > PASS against the already-wrapped markup, not confirmed to fail first.
+
+- [x] [AI] **GREEN**: wrap the legend and the sources sections in `<details>` with localized
       `<summary>` labels reusing `aiBenchLegendHeading` and `aiBenchSourcesHeading`
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **REFACTOR**: confirm the pre-existing USS-002 legend scenario still passes unchanged
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `how-to-read.tsx` **Notes**: this
+  > wrapping landed as part of cycle 7.1's GREEN step (see that step's note) — recorded here too
+  > since it is this cycle's own scope. Both `<summary>` labels reuse the existing
+  > `aiBenchLegendHeading`/`aiBenchSourcesHeading` keys verbatim, per the instruction — no new key.
+
+- [x] [AI] **REFACTOR**: confirm the pre-existing USS-002 legend scenario still passes unchanged
       (its `Then` asserts a "visible legend"; reword it only if the assertion genuinely no longer
       holds, and record the reword in the checklist if so)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
 
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `ai-benchmark.feature`,
+  > `ai-benchmark.steps.tsx` **Notes**: **reworded, per the instruction's own allowance**: the
+  > "visible legend" assertion genuinely no longer held once the legend became its own `<details>`
+  > (it is now one interaction away, not unconditionally visible) — the old assertion (not a
+  > `DETAILS` tag, no `<details>` ancestor) would fail against the correct, intended markup.
+  > Reworded the `Then` step text from "a visible legend defines..." to "an expandable legend
+  > defines...", with a comment in the feature file explaining why, and updated the binding to
+  > assert a `DETAILS` tag with a `<summary>` present instead of asserting the absence of a
+  > `<details>` ancestor. `npx nx run ayokoding-www:test:unit` exits 0.
+
 ### i18n — Phase 7
 
-- [ ] [AI] Resolve DD-33's second-key decision: read the live `aiBenchHowToSummary` string in both
+- [x] [AI] Resolve DD-33's second-key decision: read the live `aiBenchHowToSummary` string in both
       `en` and `id` locales, in its new position in the rendered how-to-read disclosure summary. If
       it reads correctly as a "more" affordance in both locales, remove the `[Unverified]` label from
       `tech-docs.md` §DD-33 without adding a new key. Otherwise, add a new `<summary>` label key for
@@ -2504,26 +2581,72 @@ scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model
       `grep -c '\[Unverified\]' plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/tech-docs.md`
       prints `0`. Falsifiable both ways: leaving DD-33's second-key marker in place prints `1` and
       fails.
-- [ ] [AI] Add any new `<summary>` label keys (DD-33) to **both** locale blocks in
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `tech-docs.md` **Notes**: **no new
+  > key added**. Read the live string in both locales in its new position (the remainder
+  > `<details>`'s `<summary>`, after the honesty line moved out): en —
+  > "How to read this benchmark (please read before comparing models)"; id — "Cara membaca tolok
+  > ukur ini (harap dibaca sebelum membandingkan model)". Both still read correctly as a "click for
+  > more" affordance — the sentence names exactly what expanding it does, and nothing about the
+  > wording assumes it is the label for the WHOLE disclosure rather than just the remainder.
+  > Removed the `[Unverified]` marker and rewrote §DD-33's numbered list (now 3 unconditional
+  > items, not 4). `grep -c '\[Unverified\]' tech-docs.md` prints `0`.
+
+- [x] [AI] Add any new `<summary>` label keys (DD-33) to **both** locale blocks in
       `apps/ayokoding-www/src/features/i18n/core/translations.ts`
       — acceptance: for each new key `K`, `grep -c "$K:" apps/ayokoding-www/src/features/i18n/core/translations.ts`
       prints `2` (one per locale). Falsifiable both ways: a key added to only one locale prints `1`
       and fails.
-- [ ] [AI] Confirm AC-35 (no raw translation key leaks on either locale) still passes
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: no-op — the step
+  > above resolved with no new key, so there is nothing to add here. `aiBenchCardAllFigures`
+  > (the per-model roster disclosure's `<summary>` label, DD-33's item 1) already landed in
+  > Phase 6 cycle 6.1; this phase introduced no i18n keys of its own.
+
+- [x] [AI] Confirm AC-35 (no raw translation key leaks on either locale) still passes
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none **Notes**: confirmed as part of
+  > the full `test:unit` run — 148/148 test files, 3303 passed, 0 failed, including the AC-35
+  > Scenario Outline for both `en` and `id`.
 
 ### Phase 7 Gate
 
 > All checks below must pass before starting Phase 8.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
-- [ ] [AI] No `[Unverified]` marker remains anywhere in `tech-docs.md`:
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: exits 0 — typecheck, lint, test:unit
+  > (148/148 passed), test:coverage (97.48% lines, threshold 82%), specs:structure-validation (0
+  > findings across all 6 apps), specs:behavior:coverage (42 specs/356 scenarios/1284 steps, all
+  > covered) all green. A first concurrent attempt (run alongside a `build` in the same window)
+  > hit 6 flaky step-timeouts in the unrelated `cost-of-living-calculator` feature — Nx itself
+  > flagged `ayokoding-www:test:unit` as "a flaky task"; re-run alone (no concurrent `build`)
+  > passed cleanly, confirming resource contention on the shared machine, not a regression.
+
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: "Spec coverage valid! 42 specs, 356
+  > scenarios, 1284 steps — all covered."
+
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: `build` succeeded (2048/2048 static pages);
+  > a first concurrent attempt (alongside `test:quick`) failed on an unrelated content page
+  > (`.../in-oop-by-example/beginner`) timing out after 3 retries under the same resource
+  > contention noted above — re-run alone succeeded. `test:e2e`: 689 passed, 331 skipped, 0
+  > failed, across chromium/firefox/webkit. AC-52/AC-59/AC-61/AC-62 all confirmed green on all
+  > three browsers simultaneously with the rest of the suite (the load-bearing check that the
+  > density work in Phase 6 did not widen the table back past `lg`).
+
+- [x] [AI] No `[Unverified]` marker remains anywhere in `tech-docs.md`:
       `grep -c '\[Unverified\]' plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/tech-docs.md`
       prints `0`. Falsifiable both ways: leaving DD-33's second-key marker in place prints `1` and
       fails.
+
+  > **Date**: 2026-07-31 **Status**: Done **Notes**: prints `0`, confirmed via a full-file grep —
+  > no other `[Unverified]` marker exists anywhere else in the document.
 
 > **Pause Safety**: the page renders in its new order with the chart first and the reference
 > material collapsed below the roster; every existing scenario still passes. Safe to stop
