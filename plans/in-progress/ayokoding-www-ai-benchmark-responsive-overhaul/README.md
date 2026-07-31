@@ -48,7 +48,7 @@ couples typography to viewport width. See
 - **Capability-class rename** — the third rated class becomes `haiku`, so the rated vocabulary reads
   **opus / sonnet / haiku** rather than two model-tier names plus one weight adjective
   ([DD-35](./tech-docs.md#dd-35--the-capability-class-rename-light-to-haiku)). The rename reaches the
-  `core/` types, the `class`/`sortHaiku` URL parameters, the `--chart-band-haiku*` design tokens in
+  `core/` types, the `class`/`sort-haiku` URL parameters, the `--chart-band-haiku*` design tokens in
   `libs/web-ui-token/src/ayokoding.css`, both i18n keys, and both step-binding layers. `unrated` is
   untouched, no model changes class, and the label reads "Haiku" in **both** locales because it is a
   proper noun.

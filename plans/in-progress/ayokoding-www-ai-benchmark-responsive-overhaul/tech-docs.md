@@ -703,7 +703,7 @@ preserved there.
 
 `core/url-state.ts` carries the class filter as `class=<band>` and the per-band sort as
 `sortOpus`/`sortSonnet`/`sortLight` `[Repo-grounded]` (`SORT_PARAM_KEYS`, line 30-34). Both rename
-cleanly: `class=haiku` and `sortHaiku`. **No decode-side alias is added** for the retired
+cleanly: `class=haiku` and `sort-haiku`. **No decode-side alias is added** for the retired
 `class=light` or `sortLight` values.
 
 Rationale: the page shipped 2026-07-30 — one day before this plan — so its URL space has no
@@ -898,7 +898,7 @@ Each delivery unit is independently revertible.
   and must be applied as a fresh reverse-rename commit instead.
 
 There is no data migration, no persisted state, and no external contract. The one externally
-observable surface the rename changes is the **query string** (`class=haiku`, `sortHaiku`), and
+observable surface the rename changes is the **query string** (`class=haiku`, `sort-haiku`), and
 DD-35 deliberately ships no alias for the retired values — a stale link degrades to the unfiltered
 default view rather than erroring, which is `sanitizeState`'s existing AC-26 contract. Rollback is
 therefore purely a git operation.

@@ -1769,10 +1769,13 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature:A filter combination matching no model renders an explicit empty state
     But("the chart and the data table do not render in the empty state", () => {
-      // UWT-002 fix (Rule-15, 2026-07-30): the chart is now one `<svg>` PER rated band
-      // (`benchmark-chart-svg-{opus,sonnet,haiku}`), not one shared `benchmark-chart-svg` — match
-      // the whole family via regex so this guard still catches a chart that renders ANY band.
-      expect(screen.queryByTestId(/^benchmark-chart-svg-/)).toBeNull();
+      // Phase 5 fix (commit 167bd0299): BenchmarkChart was rewritten from per-band `<svg>`
+      // elements to DOM bars, so this guard now targets the chart root's exact testid
+      // (`benchmark-chart`, `benchmark-chart.tsx:38`/`:249`) rather than a per-band SVG family.
+      // Exact string match only — `queryByTestId` throws on multiple matches, and a broader
+      // pattern like `/^benchmark-chart/` would collide with sibling testids
+      // (`benchmark-chart-heading`, `-row-*`, `-band-*`, etc.).
+      expect(screen.queryByTestId("benchmark-chart")).toBeNull();
       // Rule-15 UWT-006 fix regression (pr-review-synthesis-maker HIGH finding, PR #122 cycle 1):
       // the empty-state message must not be followed by an empty, redundant table skeleton either
       // — <ModelTable> moved inside the `!isEmpty` branch alongside the chart. AC-28 itself
@@ -2039,7 +2042,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline, AfterEachScen
     });
   });
 
-  // ─── AC-67 — the URL carries the renamed class=haiku and sortHaiku parameters ─
+  // ─── AC-67 — the URL carries the renamed class=haiku and sort-haiku parameters ─
 
   Scenario("A shared benchmark URL carries the renamed capability-class parameters", ({ Given, When, Then, And }) => {
     let original = "";
