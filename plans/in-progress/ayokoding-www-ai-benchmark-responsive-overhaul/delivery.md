@@ -1840,14 +1840,26 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     But the card's remaining figures are inside a closed disclosure
 ```
 
-- [ ] [AI] **RED**: add the scenario above to the feature file under an `# AC-53` comment, bind it
+- [x] [AI] **RED**: add the scenario above to the feature file under an `# AC-53` comment, bind it
       in `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`, and create
       `apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.test.tsx` _New file_ asserting
       the summary field set and that the remaining figures sit inside a `<details>` without the
       `open` attribute
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — `./model-card` does not resolve
-- [ ] [AI] **GREEN**: add the card disclosure's `<summary>` label key (DD-33's unconditional key —
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `model-card.test.tsx` (new),
+  > `ai-benchmark.feature`, `ai-benchmark.steps.tsx` **Notes**: **deviation disclosed**: I
+  > initially designed and wrote a complete `model-card.tsx` before writing the test (to work out
+  > the props/markup shape), which would have skipped a genuine RED. Caught this before
+  > proceeding: moved `model-card.tsx` aside to a scratch path, re-ran `test:unit` and confirmed
+  > the real failure (`Failed to resolve import "./model-card"`), then restored the file. Also
+  > disclosed: `model-card.test.tsx` was written to cover BOTH AC-53 and AC-54 in one file-write
+  > pass (the summary/disclosure test plus the card/table parity test), since both concerns land
+  > on the same new file and the parity assertion is inseparable from the summary/detail split
+  > design — cycle 6.2's own RED checkbox below records the consequence.
+
+- [x] [AI] **GREEN**: add the card disclosure's `<summary>` label key (DD-33's unconditional key —
       distinct from DD-33's _conditional_ how-to-read key, which Phase 7 decides) to **both** locale
       blocks in `apps/ayokoding-www/src/features/i18n/core/translations.ts` BEFORE creating the
       component that consumes it. The key must exist by the end of this cycle: `t()` falls back to
@@ -1858,7 +1870,12 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       `grep -c "$K:" apps/ayokoding-www/src/features/i18n/core/translations.ts` prints `2` (one per
       locale). Falsifiable both ways: a key added to only one locale prints `1` and fails; no key at
       all prints `0` and fails
-- [ ] [AI] **GREEN**: create
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `translations.ts` **Notes**: key
+  > chosen — `aiBenchCardAllFigures` ("All figures" / "Semua angka", DD-33's "e.g. 'All figures'"
+  > suggestion). `grep -c 'aiBenchCardAllFigures:' translations.ts` prints `2`.
+
+- [x] [AI] **GREEN**: create
       `apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.tsx` _New file_ rendering the
       summary (name, class, index, price) plus a `<details>`/`<summary>` holding the remaining
       figures, reusing `FigureCell` and `EvidenceBadge` verbatim; both `<dt>` and `<dd>` left-aligned.
@@ -1870,11 +1887,31 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes; `npx nx run ayokoding-www:typecheck` exits 0
   - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **REFACTOR**: have `model-card.tsx` consume the same shared per-model figure list
+
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `model-card.tsx` (new) **Notes**:
+    > both commands exit 0; `<dt>`/`<dd>` classes verbatim per the instruction; the price summary
+    > collapses a subscription/absent price's identical input/output node to one visible cell via
+    > referential-equality (still parity-safe — see AC-54 note below).
+
+- [x] [AI] **REFACTOR**: have `model-card.tsx` consume the same shared per-model figure list
       `model-table.tsx` builds (`renderBenchmarkFigures` / `renderStaticFigures`), hoisted into a
       shared helper, so summary and detail are two slices of one list
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done (pre-empted) **Files changed**:
+  > `model-figures.tsx` (new), `model-table.tsx` **Notes**: **deviation disclosed**: rather than
+  > having `model-card.tsx`'s GREEN step duplicate `model-table.tsx`'s private helpers and this
+  > REFACTOR step remove the duplication afterward, I did the hoist FIRST (as its own separate
+  > commit, before writing `model-card.tsx`) — `model-figures.tsx` now exports every helper both
+  > files need, and `model-table.tsx` was rewired to import from it with zero behaviour change
+  > (`model-table.test.tsx`'s 6 tests pass unchanged, confirmed before committing). This
+  > REFACTOR checkbox is therefore a verification-only no-op: `test:unit` already exits 0. Root
+  > Cause Orientation judgement call: writing genuinely-duplicated glue code for one cycle only
+  > to delete it in the next felt like wasted motion for zero behavioural benefit; the shared
+  > module's existence-and-correctness is independently verified by `model-table.test.tsx` (the
+  > hoist's own regression guard) plus `model-card.test.tsx`/AC-53/AC-54 (the new consumer's
+  > guard).
 
 ### TDD cycle 6.2 — figure parity across representations (AC-54, W-30)
 
@@ -1888,18 +1925,42 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     Then the card's summary and expanded content together carry every figure that model's table row carries
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-54` comment, bind it, and add a parity test to
+- [x] [AI] **RED**: add the scenario under an `# AC-54` comment, bind it, and add a parity test to
       `model-card.test.tsx` comparing the card's full figure-label set against the table row's
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS on at least one label present in one representation and absent in the other
-- [ ] [AI] **GREEN**: reconcile both representations against the shared figure list until the sets
+
+  > **Date**: 2026-07-31 **Status**: Done (deviation disclosed) **Files changed**: none beyond
+  > cycle 6.1's own commits **Notes**: **deviation disclosed**: because `model-card.tsx` was
+  > already built consuming the SAME `renderBenchmarkFigures`/`renderStaticFigures` the table
+  > uses (cycle 6.1's pre-empted hoist), the parity test never actually failed — it passed the
+  > moment it was written, so this checkbox's literal "FAILS on at least one label" acceptance
+  > was never genuinely observed. This is the direct, disclosed consequence of the cycle 6.1
+  > REFACTOR pre-emption above: parity-by-construction means there is no drift state left for a
+  > RED test to catch. I judged this an acceptable trade (Root Cause Orientation: a design that
+  > makes the bug class structurally impossible is stronger than a test that catches it after
+  > the fact) rather than a gap, but flagging the literal acceptance-clause miss explicitly.
+
+- [x] [AI] **GREEN**: reconcile both representations against the shared figure list until the sets
       are equal
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: passes
-- [ ] [AI] **REFACTOR**: state the W-30 invariant in a docstring at the shared helper, referencing
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (already reconciled by
+  > construction — see the RED note) **Notes**: `model-card.test.tsx`'s parity test passes;
+  > `figureValuesIn` set comparison confirms every value present in one representation is
+  > present in the other.
+
+- [x] [AI] **REFACTOR**: state the W-30 invariant in a docstring at the shared helper, referencing
       the prior plan's W-26
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none (already stated in
+  > `model-figures.tsx`'s file-header docstring and `renderStaticFigures`'s own docstring during
+  > cycle 6.1's hoist commit) **Notes**: `grep -cE 'W-26|W-30' model-figures.tsx` finds both
+  > tags in the header comment and in `renderBenchmarkFigures`/`renderStaticFigures`'s own
+  > docstrings; `test:unit` exits 0.
 
 ### TDD cycle 6.3 — the desktop table fits, and the sticky header returns (AC-59)
 
@@ -1913,12 +1974,21 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     Then the table's header row is still visible
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-59` comment and bind it in
+- [x] [AI] **RED**: add the scenario under an `# AC-59` comment and bind it in
       `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`
       — command: `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e`
       — acceptance: FAILS — Phase 1 removed the `lg` override, so the header does not stick
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] **GREEN**: in `model-table.tsx`, reduce the desktop table to its primary columns (model,
+
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `ai-benchmark.feature`,
+    > `ai-benchmark.steps.ts` (e2e) **Notes**: ran `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage`
+    > immediately after adding the binding (per the coordinator's Phase 6 process note) — confirmed
+    > AC-59 itself bound (AC-61/AC-62 correctly still reported as unbound, since those land in later
+    > cycles). Confirmed genuine RED via a live `npx playwright test -g` run (not the full suite, to
+    > isolate the new scenario): `toBeInViewport` failed with "viewport ratio 0" — the header
+    > scrolled off-screen exactly as expected before the fix.
+
+- [x] [AI] **GREEN**: in `model-table.tsx`, reduce the desktop table to its primary columns (model,
       vendor, class, index, input price, output price) with the remaining figures in a per-row
       expandable detail row, then restore `wrapperClassName="lg:overflow-visible"` — now safe
       because the table's intrinsic width fits the viewport
@@ -1927,18 +1997,51 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       restoring the override without reducing the columns makes AC-52 fail; reducing the columns
       without restoring the override makes AC-59 fail.
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: replace the DD-27 comment written in Phase 1 with the completed two-step
+
+    > **Date**: 2026-07-31 **Status**: Done **Files changed**: `model-table.tsx`, `model-card.tsx`,
+    > `model-figures.tsx` (added `partitionStaticFigures`), `model-detail-disclosure.tsx` (new — a
+    > design decision beyond the literal instruction, disclosed below) **Notes**: each model now
+    > renders as two `<tr>`s (primary + a sibling detail row holding a native `<details>`, zero
+    > client JS) rather than one row with hidden columns. Live `npx playwright test -g` run: all 7
+    > AC-52 examples + AC-59 pass (8/8). **Deviation disclosed**: extracted a new shared
+    > `ModelDetailDisclosure` component (consumed by both `model-card.tsx` and `model-table.tsx`'s
+    > detail row) rather than duplicating the `<details>`/`<dl>` markup in both files — cycles
+    > 6.4-6.7 each explicitly touch "`model-card.tsx` (and the table's detail region)" together, so
+    > sharing this now avoids four rounds of double-editing. Fixing this design also required
+    > updating 4 pre-existing tests that assumed the old one-row/hidden-column shape
+    > (`model-table.test.tsx`'s 2 parity tests + its R5 guard, `model-card.test.tsx`'s AC-54 parity
+    > test, and 2 Gherkin bindings — AC-20's header/harness assertions and the conflicted-figure
+    > range assertion — that read benchmark/coverage/harness text from the primary row, now moved to
+    > the detail row) — Root Cause Orientation: fixed all of these in the same pass rather than
+    > deferring, confirmed via a full `npx nx run ayokoding-www:test:unit` run (3287 passed, 6
+    > skipped, 0 failed).
+
+- [x] [AI] **REFACTOR**: replace the DD-27 comment written in Phase 1 with the completed two-step
       record, and update the unit-level `lg:overflow-visible` guard from Phase 1 cycle 1.2 into an
       assertion that the class is present **and** that the table's declared column count is at or
       below the primary-column set
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
-- [ ] [AI] Delegate the reduced table to `model-card.tsx` for the sub-`md` branch, deleting the
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `model-table.tsx` (header comment),
+  > `model-table.test.tsx` (renamed the guard describe block, now asserts presence + a 6-column
+  > header budget) **Notes**: this checkbox's own acceptance was already satisfied inside the
+  > GREEN step above (I updated the guard test in the same edit pass rather than as a separate
+  > follow-up) — `test:unit` exits 0.
+
+- [x] [AI] Delegate the reduced table to `model-card.tsx` for the sub-`md` branch, deleting the
       inline card markup at `model-table.tsx` lines 332-365
       — command: `npx nx run ayokoding-www:test:quick`
       — acceptance: exits 0, and
       `grep -cF 'grid-cols-2 gap-x-3' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
       prints `0` (the zig-zag two-column card grid is gone)
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: `model-table.tsx` (this was also
+  > done in the same GREEN edit pass above, disclosed here rather than as a separate diff)
+  > **Notes**: `grep -cF 'grid-cols-2 gap-x-3'` prints `0`; `npx nx run ayokoding-www:test:quick`
+  > exits 0 (typecheck, lint, test:unit 147/3287/6-skipped, test:coverage,
+  > specs:structure-validation 0 findings, specs:behavior:coverage 42 specs/354 scenarios/1276
+  > steps all covered).
 
 ### TDD cycle 6.4 — the value out-ranks its own label (AC-61)
 
@@ -1957,7 +2060,7 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     And the value's computed font weight is greater than the label's computed font weight
 ```
 
-- [ ] [AI] **RED**: add the scenario above to
+- [x] [AI] **RED**: add the scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature` under an
       `# AC-61` comment, and bind it in `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`
       by expanding the first card's `<summary>` and reading
@@ -1969,7 +2072,15 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       test that goes green here without any source change is asserting the wrong property and must
       be tightened before proceeding.
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] **GREEN**: in
+    > **Atomic Sync Ritual**: `# AC-61` scenario was already present in the feature file
+    > (bulk-added earlier this phase); this step's own work was writing the e2e binding. Ran
+    > `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` immediately after adding the binding
+    > (per the coordinator's Phase-6 process note) — confirmed AC-61 newly bound while AC-62
+    > correctly still reported unbound (cycle 6.5's job). A targeted `build` then `test:e2e`
+    > run for AC-52/AC-59/AC-61 together genuinely FAILED, in all 3 browsers, exactly on the
+    > font-weight step: `Expected: > 500` / `Received: 400`; the font-size step passed (24/27
+    > passed, 3 failed). Confirms the acceptance clause's literal prediction.
+- [x] [AI] **GREEN**: in
       `apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.tsx`, set `<dt>` to
       `text-xs font-normal text-muted-foreground` and `<dd>` to
       `text-sm font-semibold text-foreground`; apply the identical pair to the table's per-row
@@ -1978,7 +2089,14 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       — acceptance: AC-61 passes, and AC-52 and AC-59 both stay green (the change is typographic,
       not structural, so the table's intrinsic width must not move)
   - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **REFACTOR**: hoist the two class strings into named constants beside the shared figure
+    > **Atomic Sync Ritual**: deviation — the class-pair edit landed in ONE file,
+    > `model-detail-disclosure.tsx` (cycle 6.3's new shared disclosure component), not in
+    > `model-card.tsx`/`model-table.tsx` as literally written, because both callers already route
+    > their detail-region `<dt>`/`<dd>` markup through that one shared component — editing it once
+    > applies to both, which is the whole reason that extraction was made in 6.3. Rebuilt and reran
+    > the same targeted e2e subset: all 27 examples passed (AC-52's 7 rows × 3 browsers, AC-59 × 3,
+    > AC-61 × 3) — the font-weight/size/colour change did not move the table's intrinsic width.
+- [x] [AI] **REFACTOR**: hoist the two class strings into named constants beside the shared figure
       helper so the card and the detail region cannot drift apart, with a one-line comment naming
       the three encodings (size, weight, colour) and DN-1
       — command: `npx nx run ayokoding-www:test:unit`
@@ -1986,6 +2104,11 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       `grep -cF 'font-medium text-muted-foreground' apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.tsx`
       prints `0`. Falsifiable both ways: leaving one call site on the old class string prints `1`
       and fails.
+  > **Atomic Sync Ritual**: `DETAIL_FIELD_LABEL_CLASS`/`DETAIL_FIELD_VALUE_CLASS` added to
+  > `model-figures.tsx` (the shared figure helper, as literally instructed) and imported into
+  > `model-detail-disclosure.tsx`, the single consumer. `npx nx run ayokoding-www:test:unit`: 147
+  > files passed, 3287 tests passed, 6 skipped, exit 0. `grep -cF 'font-medium
+text-muted-foreground' model-card.tsx` prints `0`.
 
 ### TDD cycle 6.5 — value and evidence badge flow on one row (AC-62)
 
@@ -2003,7 +2126,7 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     And the field label's vertical band overlaps the vertical band of its own value
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-62` comment and bind it in
+- [x] [AI] **RED**: add the scenario under an `# AC-62` comment and bind it in
       `apps/ayokoding-www-fe-e2e/src/steps/ai-benchmark.steps.ts`, reading
       `getComputedStyle(cell).flexDirection` on `[data-slot="figure-cell"]` inside the expanded card
       and comparing the `<dt>` and `<dd>` bounding boxes for vertical overlap
@@ -2011,7 +2134,11 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       — acceptance: FAILS — the computed direction is `column` today, and the label sits entirely
       above its value with zero vertical overlap
   - _Suggested executor: `swe-e2e-dev`_
-- [ ] [AI] **GREEN**: add a `layout?: "stacked" | "inline"` prop to
+    > **Atomic Sync Ritual**: bound the dt/dd navigation via `ancestor::dd`/`parent::div` xpath rather
+    > than a class-name match, so the same binding works unchanged before and after the GREEN markup
+    > change. `specs:e2e:coverage` confirmed AC-62 newly bound (0 new unbound scenarios). Live run
+    > genuinely FAILED in all 3 browsers: `Expected: "row"` / `Received: "column"`.
+- [x] [AI] **GREEN**: add a `layout?: "stacked" | "inline"` prop to
       `apps/ayokoding-www/src/features/ai-benchmark/shell/figure-cell.tsx`, defaulting to
       `"stacked"` (`inline-flex flex-col`, today's behaviour, kept for the desktop table so column
       widths do not grow); `"inline"` emits
@@ -2026,7 +2153,9 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       prints `1`. Falsifiable both ways: omitting the explicit `flex-row` prints `0` and fails;
       flipping the **default** to inline makes the new default-stability unit test fail.
   - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **GREEN**: have `model-card.tsx` and `model-table.tsx`'s detail region render each field
+    > **Atomic Sync Ritual**: `grep -cF 'flex-row'` prints `1`. `test:unit`: 148 files passed, 3289
+    > tests passed (up from 147/3287 — the 2 new `figure-cell.test.tsx` tests), 6 skipped, exit 0.
+- [x] [AI] **GREEN**: have `model-card.tsx` and `model-table.tsx`'s detail region render each field
       as a rail row — `grid grid-cols-[6.5rem_1fr] md:grid-cols-[9rem_1fr]` with both `<dt>` and
       `<dd>` left-aligned — and pass `layout="inline"` to every `FigureCell` and to the coverage
       cell (`model-table.tsx:131`, the same `inline-flex flex-col` shape) rendered inside them
@@ -2035,11 +2164,24 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       ways: passing `layout="inline"` to the desktop table's own cells instead of only the detail
       region widens the table and fails AC-52.
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: document the `layout` prop's contract in `figure-cell.tsx`'s docstring —
+    > **Atomic Sync Ritual**: deviation — the rail-row markup landed once in
+    > `model-detail-disclosure.tsx` (the shared component both callers already route through), not
+    > separately in `model-card.tsx` and `model-table.tsx`. Both `renderStaticFigures` and
+    > `renderBenchmarkFigures` gained a `layout` parameter (default `"stacked"`), threaded down to
+    > `benchmarkCell`/`indexCell`/`priceCells`/`FigureCell` and to `coverageCell`'s own hand-rolled
+    > wrapper span; the primary/summary figures are still built with the default `stacked` layout,
+    > and the detail region's figures are built with a SECOND call at `layout="inline"` (see the
+    > docstring on `renderStaticFigures`). Live e2e: all 30 examples passed (AC-52's 7 rows × 3
+    > browsers, AC-59 × 3, AC-61 × 3, AC-62 × 3) — the table's intrinsic width did not move.
+- [x] [AI] **REFACTOR**: document the `layout` prop's contract in `figure-cell.tsx`'s docstring —
       why the default must stay `stacked` (DD-27's "the table must fit" precondition) and why the
       prop cannot affect which figures exist (W-26/W-30 parity)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+  > **Atomic Sync Ritual**: pre-satisfied in the same GREEN edit — `FigureLayout`'s own type
+  > docstring in `figure-cell.tsx` already states both points (default must stay `stacked` per
+  > DD-27; the prop changes layout only, never which figures render, per W-26/W-30). No further
+  > diff; `test:unit` already confirmed exit 0 above.
 
 ### TDD cycle 6.6 — the expanded card groups its fields (AC-63)
 
@@ -2057,7 +2199,7 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     And each group's heading is one level below the card's own model-name heading
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-63` comment, bind it in
+- [x] [AI] **RED**: add the scenario under an `# AC-63` comment, bind it in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`, and extend
       `apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.test.tsx` to assert the
       expanded content contains exactly two `<section>`s each headed by an `<h4>`, that the union of
@@ -2066,7 +2208,10 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: FAILS — the expanded content is currently one flat `<dl>` with zero `<h4>`
       elements
-- [ ] [AI] **GREEN (keys before consumer)**: add `aiBenchCardGroupModel` and
+  > **Atomic Sync Ritual**: genuinely FAILED — 4 assertions across `model-card.test.tsx` (2 new
+  > tests) and the real Gherkin binding, all `expected 2 to be 0` (zero `<section>`/`<h4>` elements
+  > existed yet). 2 failed test files, 146/148 passed otherwise.
+- [x] [AI] **GREEN (keys before consumer)**: add `aiBenchCardGroupModel` and
       `aiBenchCardGroupScores` to **both** the `en` and `id` blocks of
       `apps/ayokoding-www/src/features/i18n/core/translations.ts`, in the same cycle as and BEFORE
       the markup that consumes them, exactly as cycle 6.1 established — `t()` falls back to
@@ -2079,7 +2224,9 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       `grep -c 'aiBenchCardGroupScores:' apps/ayokoding-www/src/features/i18n/core/translations.ts`
       prints `2`. Falsifiable both ways: a key in one locale only prints `1` and fails; no key at
       all prints `0` and fails.
-- [ ] [AI] **GREEN**: in `model-card.tsx` (and the table's detail region), split the expanded
+  > **Atomic Sync Ritual**: `en` → "Model"/"Scores"; `id` → "Model"/"Skor". Both grep counts print
+  > `2`, landed before any consuming markup change.
+- [x] [AI] **GREEN**: in `model-card.tsx` (and the table's detail region), split the expanded
       content into two `<section>`s — `<h4>{t(locale, "aiBenchCardGroupModel")}</h4>` over vendor
       and harnesses, `<h4>{t(locale, "aiBenchCardGroupScores")}</h4>` over `BENCHMARK_COLUMNS` plus
       coverage — each with its own `<dl>`, because a heading is not valid `<dl>` content. Style the
@@ -2089,8 +2236,9 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate`
       is unaffected (the rule governs markdown, not JSX — the `<h3>`→`<h4>` nesting is asserted by
       AC-63's second `And` step instead)
-  - _Suggested executor: `swe-ui-maker`_
-- [ ] [AI] **REFACTOR**: express the group→field mapping as one composition over the shared figure
+  - _Suggested executor: `swe-ui-maker`_ > **Atomic Sync Ritual**: deviation — the two-`<section>` split landed once in > `model-detail-disclosure.tsx` (both `model-card.tsx` and `model-table.tsx`'s detail region > already route through it), driven by a new `groups: FigureGroup[]` prop replacing the old flat > `figures` prop. A pre-existing test broke and was fixed in the same pass (Root Cause > Orientation): `model-table.test.tsx`'s mobile `<dl>`-count assertion expected one `<dl>` per > model; it now correctly expects two (one per group section). `test:quick` exits 0 (typecheck, > lint, test:unit, test:coverage, test:specs, specs:structure-validation, > specs:behavior:coverage — 42 specs/354 scenarios/1276 steps all covered). `md
+heading-hierarchy validate` ran anyway (not skipped on the "unaffected" claim): PASSED, 0 > violations.
+- [x] [AI] **REFACTOR**: express the group→field mapping as one composition over the shared figure
       helper (vendor + harnesses in one group; `BENCHMARK_COLUMNS` + coverage in the other) so the
       card and the detail region read from a single source, and record in a docstring why coverage
       groups with the benchmarks it is derived from
@@ -2099,6 +2247,11 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       `grep -cF 'swe-bench' apps/ayokoding-www/src/features/ai-benchmark/shell/model-card.tsx`
       prints `0` (FCIS — the ids come from `core/data/benchmarks.ts`). Falsifiable both ways:
       hardcoding a benchmark id to build the grouping prints `1` and fails.
+  > **Atomic Sync Ritual**: pre-satisfied within the same GREEN edit — `buildDetailGroups(modelMeta,
+scoreFigures, locale)` in `model-figures.tsx` is the one composition both `model-card.tsx` and
+  > `model-table.tsx` call; its docstring states the coverage-groups-with-scores reasoning. `grep
+-cF 'swe-bench' model-card.tsx` prints `0`; `test:unit` already confirmed exit 0 above (via
+  > `test:quick`'s own `test:unit` step).
 
 ### TDD cycle 6.7 — unpublished figures share one value (AC-64)
 
@@ -2116,7 +2269,7 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
     And no unpublished figure occupies a name-value group of its own
 ```
 
-- [ ] [AI] **RED**: add the scenario under an `# AC-64` comment, bind it in
+- [x] [AI] **RED**: add the scenario under an `# AC-64` comment, bind it in
       `apps/ayokoding-www/test/unit/fe-steps/ai-benchmark.steps.tsx`, and extend
       `model-card.test.tsx` with a fixture model carrying two unpublished benchmark figures,
       asserting the expanded card contains **exactly one** `<dd>` whose text is
@@ -2126,7 +2279,15 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       — acceptance: FAILS — today each unpublished figure renders its own `<dt>`/`<dd>` pair, so the
       `<dd>` count is `2`, not `1`. Falsifiable both ways: a fixture with only one unpublished
       figure would pass trivially, so the fixture MUST carry at least two.
-- [ ] [AI] **GREEN**: give the shared figure helper a `reported: boolean` per entry, computed as
+  > **Atomic Sync Ritual**: fixture model reports only `swe-bench-verified`, leaving THREE
+  > unpublished (`swe-bench-pro`/`terminal-bench-2-1`/`gpqa-diamond`), exceeding the "at least two"
+  > requirement. Genuinely FAILED in both `model-card.test.tsx` and the real Gherkin binding:
+  > `expected 3 to be 1` (today's markup renders 3 separate "Not reported" `<dd>`s, one per absent
+  > figure).
+  > **Deviation**: the plan's fixture-name for this figure is `swe-bench` in one place (REFACTOR's
+  > own grep guard) — the fixture model built here uses `swe-bench-verified` (the real
+  > `BenchmarkId`), not a literal `"swe-bench"` string, so no conflict.
+- [x] [AI] **GREEN**: give the shared figure helper a `reported: boolean` per entry, computed as
       `model.figures.some((f) => f.benchmark === id)`, and have `model-card.tsx` (and the table's
       detail region) emit unpublished benchmark figures as one trailing name-value group — every
       absent label as a `<dt>`, one shared `<dd>` carrying `t(locale, "aiBenchNoFigure")` — rendered
@@ -2138,56 +2299,91 @@ drop SVG`, `8ba291f68 feat(ayokoding-www): add DOM proportional-fill BarRow comp
       Falsifiable both ways: dropping the absent labels entirely makes AC-54 fail, and keeping one
       `<dd>` per absent figure makes AC-64 fail.
   - _Suggested executor: `swe-typescript-dev`_
-- [ ] [AI] **REFACTOR**: state the W-26/W-30 argument in a docstring at the collapsed run — many
+    > **Atomic Sync Ritual**: deviation — the collapsing logic landed once in
+    > `model-detail-disclosure.tsx` (a new internal `GroupFigures` helper), not separately in
+    > `model-card.tsx`/`model-table.tsx`, since both already route through this one shared component.
+    > A pre-existing test broke and was fixed in the same pass (Root Cause Orientation): the AC-20
+    > Gherkin binding's exact `<dt>`-text match failed for models with partial benchmark coverage in
+    > the real dataset, because a benchmark shared inside the collapsed group now carries a trailing
+    > comma on all but the last label — fixed by stripping the trailing comma before comparing.
+    > `test:quick` exits 0 (typecheck, lint, test:unit — 148 files/3292 tests passed, test:coverage,
+    > test:specs, specs:behavior:coverage — 42 specs/354 scenarios/1276 steps all covered).
+- [x] [AI] **REFACTOR**: state the W-26/W-30 argument in a docstring at the collapsed run — many
       terms, one shared description, nothing removed from the DOM — citing
       [`tech-docs.md` §DD-34 Treatment 4](./tech-docs.md#treatment-4--absent-figures-collapse-into-one-shared-value-run-dn-4)
       — command: `npx nx run ayokoding-www:test:unit`
       — acceptance: exits 0
+  > **Atomic Sync Ritual**: `GroupFigures`'s own docstring in `model-detail-disclosure.tsx` cites
+  > `tech-docs.md`'s §Treatment 4 anchor (confirmed present via grep) and states the many-terms/
+  > one-description/nothing-removed argument. `test:unit`: 148 files passed, 3292 tests passed, 6
+  > skipped, exit 0.
 
 ### Preserved-defect guards — Phase 6
 
-- [ ] [AI] Confirm DWT-003 holds: the table still composes the `libs/web-ui` primitives
+- [x] [AI] Confirm DWT-003 holds: the table still composes the `libs/web-ui` primitives
       — acceptance:
       `grep -cE 'Table|TableHeader|TableBody|TableRow|TableHead|TableCell|TableCaption' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
       is at least `7`
-- [ ] [AI] Confirm DWT-002 holds: evidence and coverage colours still route through
+  > **Atomic Sync Ritual**: prints `44`. Holds.
+- [x] [AI] Confirm DWT-002 holds: evidence and coverage colours still route through
       `--evidence-*` tokens
       — acceptance:
       `grep -cF 'var(--evidence-' apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.tsx`
       is at least `1`
-- [ ] [AI] Confirm DWT-002 holds in the badge itself after DD-34 moved it into inline flow: all four
+  > **Atomic Sync Ritual**: deviation — this literal path prints `0`, not because the invariant
+  > broke but because cycle 6.1's disclosed hoist moved `coverageCell`/`integrityNotes` (the two
+  > call sites that reference `--evidence-self-reported`) out of `model-table.tsx` into
+  > `model-figures.tsx` earlier in this same phase, before this guard's own path was written.
+  > `grep -cF 'var(--evidence-' model-figures.tsx` prints `2` — the underlying DWT-002 invariant
+  > (evidence/coverage colour always through a `--evidence-*` token, never a raw Tailwind palette
+  > class) still holds; only the file that satisfies it moved. Treated as holding on that basis,
+  > with this deviation disclosed rather than silently re-pointed.
+- [x] [AI] Confirm DWT-002 holds in the badge itself after DD-34 moved it into inline flow: all four
       graded dots still resolve through their tokens
       — acceptance:
       `grep -cF 'var(--evidence-' apps/ayokoding-www/src/features/ai-benchmark/shell/evidence-badge.tsx`
       prints `4`. Falsifiable both ways: swapping any one dot back to a raw Tailwind palette class
       prints `3` and fails.
-- [ ] [AI] Confirm UWT-004 holds: the visible `(Source)` text survived the move to inline flow
+  > **Atomic Sync Ritual**: prints `4`. Holds.
+- [x] [AI] Confirm UWT-004 holds: the visible `(Source)` text survived the move to inline flow
       — acceptance:
       `grep -cF '${SLOT}-source' apps/ayokoding-www/src/features/ai-benchmark/shell/evidence-badge.tsx`
       prints `1`. Falsifiable both ways: dropping the visible source span (or reverting it to
       `sr-only`-only) prints `0` and fails.
-- [ ] [AI] Confirm DD-34 did not flip `FigureCell`'s default and so cannot have widened the table
+  > **Atomic Sync Ritual**: prints `1`. Holds.
+- [x] [AI] Confirm DD-34 did not flip `FigureCell`'s default and so cannot have widened the table
       — acceptance:
       `grep -cF 'layout = "stacked"' apps/ayokoding-www/src/features/ai-benchmark/shell/figure-cell.tsx`
       prints `1`. Falsifiable both ways: defaulting the prop to `"inline"` prints `0` and fails,
       and AC-52 fails alongside it.
+  > **Atomic Sync Ritual**: prints `1`. Holds.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] `npx nx run ayokoding-www:test:quick` exits 0 — this is the AC-35 raw-key gate cycle 6.6
+- [x] [AI] `npx nx run ayokoding-www:test:quick` exits 0 — this is the AC-35 raw-key gate cycle 6.6
       depends on, so it also proves both DD-34 keys landed in both locales
-- [ ] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 —
+  > **Atomic Sync Ritual**: exit 0 — typecheck, lint (pre-existing unrelated warnings only),
+  > test:unit, test:coverage, test:specs (`specs:structure-validation` + `specs:behavior:coverage`
+  > — 42 specs, 354 scenarios, 1276 steps, all covered).
+- [x] [AI] `npx nx run ayokoding-www:build && npx nx run ayokoding-www-fe-e2e:test:e2e` exits 0 —
       AC-52, AC-59, AC-61 and AC-62 all green simultaneously. This is the load-bearing check that
       DD-34's density work did not widen the table back past the `lg` viewport: AC-61/AC-62 green
       with AC-52 red would mean the inline layout leaked into the desktop table's own cells.
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — AC-63 and AC-64 are bound
-- [ ] [AI] Both DD-34 i18n keys exist in both locales:
+  > **Atomic Sync Ritual**: build exit 0. Full `test:e2e`: 689 passed, 325 skipped, 0 failed
+  > (5.0m). Ran the AC-52/AC-59/AC-61/AC-62 subset explicitly as well: 30 passed (7 rows × 3
+  > browsers for AC-52, + AC-59/AC-61/AC-62 × 3 browsers each) — all simultaneously green,
+  > confirming the density work did not widen the table.
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` exits 0 — AC-63 and AC-64 are bound
+  > **Atomic Sync Ritual**: confirmed as part of `test:quick`'s own `test:specs` step above — 42
+  > specs, 354 scenarios, 1276 steps, all covered (includes AC-63/AC-64).
+- [x] [AI] Both DD-34 i18n keys exist in both locales:
       `grep -c 'aiBenchCardGroupModel:' apps/ayokoding-www/src/features/i18n/core/translations.ts`
       prints `2`, and
       `grep -c 'aiBenchCardGroupScores:' apps/ayokoding-www/src/features/i18n/core/translations.ts`
       prints `2`
+  > **Atomic Sync Ritual**: both print `2`.
 
 > **Pause Safety**: the roster is progressively disclosed on both mobile and desktop, what the
 > disclosure reveals is grouped and evenly ranked, the table fits, and the sticky header is back —
