@@ -11,4 +11,4 @@ runs:
   steps:
     # => Course-owned Python performs the local, credential-free decision.
     - shell: bash
-      run: python apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/code/rollout.py --health healthy
+      run: python apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/code/rollout.py --health "${{ inputs.health }}"
