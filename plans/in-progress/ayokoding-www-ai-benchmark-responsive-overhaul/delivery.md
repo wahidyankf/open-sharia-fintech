@@ -3026,36 +3026,68 @@ for project ayokoding-www`. E2E (all 3 browsers, run via the official nx target 
 > coverage. Nine scenarios are reworded across this plan — four by the overhaul (AC-32, AC-36,
 > AC-46, AC-47) and five by the Phase 3 capability-class rename (AC-6, AC-9, AC-41, AC-44, AC-48).
 
-- [ ] [AI] Recount scenarios:
+- [x] [AI] Recount scenarios:
       `grep -cE '^\s+Scenario( Outline)?:' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: the count equals the Phase 0 baseline in `evidence/phase-0-baseline.txt` plus
       exactly 19 (AC-49..AC-64 — twelve for the overhaul, four for DD-34's density work — plus
       AC-65..AC-67 for the Phase 3 capability-class rename); no scenario was deleted. Falsifiable
       both ways: deleting a reworded scenario instead of editing it in place makes the count short
       and fails, and adding an unnumbered scenario makes it long and fails.
-- [ ] [AI] Confirm the three rename scenarios landed under their own markers:
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: printed `68`. Baseline
+  > (`evidence/phase-0-baseline.txt`) is `49`; `49 + 19 = 68` — matches exactly. No scenario deleted,
+  > none unnumbered.
+
+- [x] [AI] Confirm the three rename scenarios landed under their own markers:
       `grep -cE '# AC-(65|66|67)' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `3`. Falsifiable both ways: folding the URL-parameter behaviour into the
       identifier scenario prints `2` and fails.
-- [ ] [AI] Confirm the five taxonomy rewordings landed and left no band-sense `light` behind — two
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: printed `3`.
+
+- [x] [AI] Confirm the five taxonomy rewordings landed and left no band-sense `light` behind — two
       commands, read independently:
-      `grep -nw 'light' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature | grep -cvF '| light |'`
-      — acceptance: prints `0`; AND
+      `grep -nw 'light' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature | grep -vF '| light |' | grep -vF 'no identifier is "light"' | grep -cvF 'retired "class=light"'`
+      — acceptance: prints `0`. Three named exclusions, not one: the light-**theme** Examples row
+      (see the second command below) plus AC-65's `And no identifier is "light"` and AC-67's
+      `...retired "class=light"...` — both of the latter are the Phase 3 rename's own regression
+      guards, asserting the OLD identifier is gone, and were discovered as false positives during
+      Phase 9's first run of this check (it originally printed `2`, not `0`, because it had no
+      exclusion for a negation assertion that must legitimately contain the retired word to prove
+      the retirement); AND
       `grep -cF '| light |' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `1` (the light-**theme** Examples row of "Band colours meet contrast in
       both themes" is a false positive and MUST survive). Falsifiable in both directions: a missed
       band step makes the first print `1` or more and fails; an over-eager global substitution
       makes the second print `0` and fails.
-- [ ] [AI] Confirm AC-6's **title** was reworded rather than the scenario duplicated:
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**:
+  > `plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/delivery.md`. **Notes**: the
+  > band-sense sweep as originally written printed `2`, not `0` — root-caused to two legitimate
+  > negation assertions the original grep had no exclusion for: AC-65's negation of the identifier
+  > and AC-67's retired-query-parameter compatibility check, both of which deliberately quote the
+  > retired capability-class value to PROVE it is gone (they are the Phase 3 rename's own regression
+  > guards, not leftover band-sense usage). Refined the check to name all three exclusions explicitly
+  > (the theme-row Examples line plus these two negation lines); re-ran and it printed `0`. The
+  > theme-row command separately printed `1`, unchanged.
+
+- [x] [AI] Confirm AC-6's **title** was reworded rather than the scenario duplicated:
       `grep -cF 'renders in the haiku band' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `1`; AND
       `grep -cF 'renders in the light band' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `0` (the retired title is gone, so this cannot pass on a stale body)
-- [ ] [AI] Confirm the four DD-34 scenarios landed under their own markers:
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: first command printed
+  > `1`, second printed `0` — both as expected.
+
+- [x] [AI] Confirm the four DD-34 scenarios landed under their own markers:
       `grep -cE '# AC-(61|62|63|64)' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `4`. Falsifiable both ways: folding two density behaviours into one
       scenario prints `3` and fails.
-- [ ] [AI] Confirm each of the nine reworded scenarios still exists under its original AC number —
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: printed `4`.
+
+- [x] [AI] Confirm each of the nine reworded scenarios still exists under its original AC number —
       the four overhaul rewordings and the five DD-35 taxonomy rewordings:
       `grep -cE '# AC-(32|36|46|47)' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints at least `4`; AND
@@ -3063,7 +3095,11 @@ for project ayokoding-www`. E2E (all 3 browsers, run via the official nx target 
       — acceptance: prints at least `5`. The trailing `([^0-9]|$)` is load-bearing: without it
       `# AC-6` would also match `# AC-60`..`# AC-67` and the check would pass on a file that had
       lost AC-6 entirely.
-- [ ] [AI] Confirm AC-47's body was genuinely reworded, not left stale under an unchanged marker —
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: first command printed
+  > `4` (>= 4), second printed `5` (>= 5).
+
+- [x] [AI] Confirm AC-47's body was genuinely reworded, not left stale under an unchanged marker —
       assert on distinguishing text from the NEW scenario, not the `# AC-47` marker alone, and
       falsifiably confirm the stale text is gone:
       `grep -cF 'the declared text size of every chart label is identical at all three widths' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
@@ -3071,20 +3107,60 @@ for project ayokoding-www`. E2E (all 3 browsers, run via the official nx target 
       `grep -cF 'uses the identical DOM structure at every breakpoint' specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
       — acceptance: prints `0` (the pre-change scenario title is gone, so this check cannot pass on
       a stale body the way the marker-only check above could)
-- [ ] [AI] Confirm the step-keyword cardinality HARD rule holds for every new and reworded scenario
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: first command printed
+  > `1`, second printed `0` — both as expected.
+
+- [x] [AI] Confirm the step-keyword cardinality HARD rule holds for every new and reworded scenario
       (exactly one primary `Given`, one `When`, one `Then`; extras chained with `And`/`But`)
-      — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance gherkin-keyword-cardinality`
+      — command: `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate specs/apps/ayokoding/behavior/ayokoding-www/gherkin/tools/ai-benchmark.feature`
+      (the Phase 3 blockquote above already disclosed that `repo-governance gherkin-keyword-cardinality`
+      was relocated to `specs gherkin-cardinality validate`; this bullet uses the corrected command
+      directly rather than repeating the same stale-command discovery)
       — acceptance: exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0
-- [ ] [AI] `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` — acceptance: exits 0
-- [ ] [AI] `npx nx run ayokoding-www:specs:structure-validation` — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done (with disclosed deviation) **Files changed**:
+  > `plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/delivery.md`. **Notes**: the
+  > literal command this bullet originally carried (`repo-governance gherkin-keyword-cardinality`)
+  > still errored with `unrecognized subcommand`, exactly the same stale-command defect the Phase 3
+  > blockquote around line 1090 already disclosed — this checklist item's own command text had never
+  > been updated after that earlier discovery. Fixed the command text in place to the corrected
+  > `specs gherkin-cardinality validate` form and re-ran: exited 0, printing "GHERKIN KEYWORD
+  > CARDINALITY AUDIT PASSED: every scenario uses each primary keyword at most once."
+
+- [x] [AI] `npx nx run ayokoding-www:specs:behavior:coverage` — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exit 0 — "Spec coverage
+  > valid! 42 specs, 362 scenarios, 1306 steps — all covered."
+
+- [x] [AI] `npx nx run ayokoding-www-fe-e2e:specs:e2e:coverage` — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: ran with
+  > `--skip-nx-cache`, exit 0 — "E2E COVERAGE GAP DETECTOR PASSED: 0 new unbound scenario(s) beyond
+  > baseline."
+
+- [x] [AI] `npx nx run ayokoding-www:specs:structure-validation` — acceptance: exits 0
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**: none. **Notes**: exit 0 — "specs
+  > structure validate: 0 finding(s)" for all six spec trees (ayokoding, crane, organiclever, ose,
+  > rhino, wahidyankf).
 
 ### Phase 9 Gate
 
-- [ ] [AI] All commands above exit 0, the scenario-count arithmetic holds (baseline plus exactly
+- [x] [AI] All commands above exit 0, the scenario-count arithmetic holds (baseline plus exactly
       `19`), the AC-61..AC-64 marker count prints `4`, and the AC-65..AC-67 marker count prints `3`
-- [ ] [AI] The feature file's band-sense sweep prints `0` AND its `| light |` theme row still
+- [x] [AI] The feature file's band-sense sweep prints `0` AND its `| light |` theme row still
       prints `1`
+
+  > **Date**: 2026-07-31 **Status**: Done **Files changed**:
+  > `plans/in-progress/ayokoding-www-ai-benchmark-responsive-overhaul/delivery.md`. **Notes**: all 11
+  > checklist commands re-verified together after the two root-cause fixes above (the band-sense
+  > exclusion refinement and the stale cardinality-command fix) — every one exits 0 / prints its
+  > exact expected number: recount `68` (`49` baseline `+ 19`), AC-65..67 marker `3`, band-sense sweep
+  > `0`, `| light |` row `1`, haiku-band title `1` / light-band title `0`, AC-61..64 marker `4`,
+  > AC-32/36/46/47 marker `4` (>=4), AC-6/9/41/44/48 marker `5` (>=5), AC-47 new text `1` / old text
+  > `0`, cardinality audit exit 0, behavior-coverage exit 0 (362 scenarios all covered), e2e-coverage
+  > exit 0 (0 new gaps), structure-validation exit 0 (0 findings, all six trees). Gate green.
 
 > **Pause Safety**: the spec file and both coverage scanners agree; no scenario is orphaned or
 > silently dropped. Safe to stop indefinitely. To resume: re-run the scenario recount.
