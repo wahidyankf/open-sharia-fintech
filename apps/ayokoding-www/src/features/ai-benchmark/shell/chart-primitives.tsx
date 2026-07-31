@@ -14,7 +14,6 @@
 // threshold — `ChartBand` is a closed four-value union (the same one `core/bands.ts` produces),
 // and every numeric value a caller passes in comes from the dataset via `core/`.
 
-import type { ReactNode } from "react";
 import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { BAND_LABEL_KEYS } from "../core/data/benchmarks";
@@ -136,91 +135,6 @@ export function scaleLinear(domainMax: number, pixelWidth: number): (value: numb
   return (value: number) => (value / domainMax) * pixelWidth;
 }
 
-export type AxisProps = {
-  /** The domain maximum this axis represents — always rendered as text (AC-13). */
-  max: number;
-  /** Right edge of the plot area, in pixels — the axis-maximum label right-aligns to this. */
-  width: number;
-  /** A localized label placed before the number (e.g. "Axis maximum"). */
-  label: string;
-  /** The already-localized, formatted number to render (the caller owns number formatting). */
-  formattedMax: string;
-  y?: number;
-};
-
-/**
- * Renders the axis maximum as text — always visible, regardless of viewport — so the chart states
- * its scale in a form a screen reader or a search-in-page can find (AC-13).
- */
-export function Axis({ width, label, formattedMax, y = 0 }: AxisProps) {
-  return (
-    <text
-      data-slot="chart-axis-max"
-      data-testid="chart-axis-max"
-      x={width}
-      y={y}
-      textAnchor="end"
-      className="fill-muted-foreground text-[10px]"
-    >
-      {label}: {formattedMax}
-    </text>
-  );
-}
-
-export type BarProps = {
-  x: number;
-  y: number;
-  /** Bar length in pixels — already scaled by the caller via {@link scaleLinear}. */
-  width: number;
-  height: number;
-  band: ChartBand;
-  testId?: string;
-};
-
-/** A single bar rect, filled from the shared band token — the only place a `<rect>` is emitted. */
-export function Bar({ x, y, width, height, band, testId }: BarProps) {
-  return (
-    <rect
-      data-slot="chart-bar"
-      data-testid={testId}
-      x={x}
-      y={y}
-      width={Math.max(width, 0)}
-      height={height}
-      rx={2}
-      className={barFillClass(band)}
-    />
-  );
-}
-
-export type BandGroupProps = {
-  band: ChartBand;
-  /** The band's localized class name — rendered as text so class is never colour-only (AC-37). */
-  label: string;
-  x?: number;
-  y: number;
-  testId?: string;
-  children?: ReactNode;
-};
-
-/** One capability/price band section: a text header naming the band, then its children (bars). */
-export function BandGroup({ band, label, x = 0, y, testId, children }: BandGroupProps) {
-  return (
-    <g data-slot="chart-band-group" data-band={band} data-testid={testId}>
-      <text
-        data-slot="chart-band-group-label"
-        data-testid={testId ? `${testId}-label` : undefined}
-        x={x}
-        y={y}
-        className={`text-xs font-semibold ${bandInkFillClass(band)}`}
-      >
-        {label}
-      </text>
-      {children}
-    </g>
-  );
-}
-
 export type LegendItem = {
   band: ChartBand;
   label: string;
@@ -232,8 +146,9 @@ export type LegendProps = {
 
 /**
  * A compact swatch + text legend, used by `how-to-read.tsx` — the merged chart itself does not
- * render one, since each of its band groups already carries a text header via `BandGroup`, so
- * AC-37's "class is never colour-only" holds there without a legend. The swatch is `aria-hidden`
+ * render one, since each of its DOM band regions already carries its own visible text heading
+ * (`benchmark-chart.tsx`'s per-band `<h3>`), so AC-37's "class is never colour-only" holds there
+ * without a legend. The swatch is `aria-hidden`
  * decoration — the label text beside it is what actually carries the band's identity (never colour
  * alone).
  */
@@ -247,61 +162,5 @@ export function Legend({ items }: LegendProps) {
         </li>
       ))}
     </ul>
-  );
-}
-
-/**
- * `count + 1` evenly spaced values from `0` to `max`, inclusive — the domain values an lg-only
- * tick row renders (Y-11 refactor target: both retired charts built their own near-identical
- * "even ticks up to a max" generator; the retired capability chart's fixed-20-unit-interval ticks
- * over `COMPOSITE_INDEX_MAX` (100) were exactly `evenTicks(100, 5)`, so no chart's tick VALUES
- * changed, only where the generator lives). A non-positive `max` or non-positive `count` degenerates to a
- * single `[0]` tick rather than dividing by zero or looping forever.
- */
-export function evenTicks(max: number, count: number): number[] {
-  if (!(max > 0) || count <= 0) return [0];
-  const out: number[] = [];
-  for (let i = 0; i <= count; i++) {
-    out.push((max * i) / count);
-  }
-  return out;
-}
-
-export type TickRowProps = {
-  /** The outer `<g>`'s `data-testid` (the whole row, e.g. `"benchmark-chart-ticks"`). */
-  testId: string;
-  /** Each individual tick's `data-testid` prefix — the tick's own testid is `${tickTestId}-${value}`. */
-  tickTestId: string;
-  values: readonly number[];
-  /** Maps a domain value to its pixel x-offset (typically the chart's own {@link scaleLinear} plus the plot's left gutter). */
-  x: (value: number) => number;
-  y: number;
-  /** The already-localized, formatted string for one tick value (the caller owns number formatting). */
-  format: (value: number) => string;
-};
-
-/**
- * An lg-only row of axis ticks — always visible ABOVE `lg` in the DOM (jsdom applies no CSS, so a
- * test can assert its content regardless of viewport), only visually shown at `lg` via the
- * `hidden lg:block` class. The one place either chart renders its tick-value `<text>` row (Y-11
- * refactor target: both charts previously carried their own copy of this exact markup).
- */
-export function TickRow({ testId, tickTestId, values, x, y, format }: TickRowProps) {
-  return (
-    <g data-slot="chart-tick-row" data-testid={testId} className="hidden lg:block">
-      {values.map((v) => (
-        <text
-          key={v}
-          data-slot="chart-axis-tick"
-          data-testid={`${tickTestId}-${v}`}
-          x={x(v)}
-          y={y}
-          textAnchor="middle"
-          className="fill-muted-foreground text-[9px]"
-        >
-          {format(v)}
-        </text>
-      ))}
-    </g>
   );
 }

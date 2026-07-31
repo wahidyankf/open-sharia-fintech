@@ -6,12 +6,13 @@
 // `domainMax → pixelWidth`, and monotonically increasing in between — so a caller can trust that
 // a larger domain value always produces a longer (or equal) bar.
 //
-// `evenTicks` and `bandLabel` (Y-11 refactor targets, hoisted here from both charts' identical
-// local copies) get their own direct tests too.
+// `bandLabel` (a Y-11 refactor target, hoisted here from both retired charts' identical local
+// copies) gets its own direct tests too. `Axis`, `Bar`, `BandGroup`, `TickRow`, and `evenTicks`
+// (the SVG-only primitives this file used to export) were deleted in Phase 5 (DD-32) once the DOM
+// rewrite left them with zero consumers; their own tests were deleted with them.
 
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { bandBarBgClass, bandInkTextClass, bandLabel, evenTicks, scaleLinear, TickRow } from "./chart-primitives";
+import { bandBarBgClass, bandInkTextClass, bandLabel, scaleLinear } from "./chart-primitives";
 import { COMPOSITE_INDEX_MAX } from "../core/score";
 import type { ChartBand } from "./chart-primitives";
 
@@ -79,23 +80,6 @@ describe("scaleLinear — percentage contract (DD-25)", () => {
   });
 });
 
-describe("evenTicks", () => {
-  it("returns count + 1 evenly spaced values from 0 to max, inclusive", () => {
-    expect(evenTicks(100, 5)).toEqual([0, 20, 40, 60, 80, 100]);
-  });
-
-  it("reproduces the capability chart's fixed-20-unit-interval ticks over its 0-100 domain", () => {
-    // Pins the Y-11 refactor's own claim: hoisting the generator changes WHERE it lives, not the
-    // tick VALUES either chart renders.
-    expect(evenTicks(100, 5)).toEqual([0, 20, 40, 60, 80, 100]);
-  });
-
-  it("degenerates to a single zero tick for a non-positive max or count", () => {
-    expect(evenTicks(0, 5)).toEqual([0]);
-    expect(evenTicks(100, 0)).toEqual([0]);
-  });
-});
-
 describe("bandLabel", () => {
   it("resolves each known band to its localized class-name label", () => {
     expect(bandLabel("opus", "en")).toBe("Opus");
@@ -127,26 +111,5 @@ describe("bandInkTextClass", () => {
     for (const band of ALL_BANDS) {
       expect(bandInkTextClass(band)).toBe(`text-[var(--chart-band-${band}-ink)]`);
     }
-  });
-});
-
-describe("TickRow", () => {
-  it("renders one text element per value, each carrying the formatted value as testid and text", () => {
-    render(
-      <svg>
-        <TickRow
-          testId="chart-ticks"
-          tickTestId="chart-tick"
-          values={[0, 50, 100]}
-          x={(v) => v * 2}
-          y={10}
-          format={(v) => `${v}%`}
-        />
-      </svg>,
-    );
-    const row = screen.getByTestId("chart-ticks");
-    expect(row.querySelectorAll("text").length).toBe(3);
-    expect(screen.getByTestId("chart-tick-0").textContent).toBe("0%");
-    expect(screen.getByTestId("chart-tick-100").textContent).toBe("100%");
   });
 });
