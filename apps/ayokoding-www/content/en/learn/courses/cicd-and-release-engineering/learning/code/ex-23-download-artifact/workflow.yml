@@ -1,0 +1,23 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 23: Download build artifact"
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: mkdir -p dist && printf candidate > dist/release.txt
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        with:
+          name: example-23-build
+          path: dist/release.txt
+  consume:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: example-23-build
+          path: received
+      # => The consumer verifies the producer's exact hand-off.
+      - run: test -f received/release.txt

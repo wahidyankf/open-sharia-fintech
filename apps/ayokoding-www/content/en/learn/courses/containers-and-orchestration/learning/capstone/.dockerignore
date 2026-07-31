@@ -1,0 +1,9 @@
+# Keep credentials and workstation state outside the Docker build context.
+.env
+local.env
+.git
+node_modules
+npm-debug.log
+coverage
+dist
+.DS_Store

@@ -6,20 +6,27 @@
 
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
 - **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Engineering research and learnings from this project, shared publicly as educational content
-- **OrganicLever** ([organiclever.com](https://www.organiclever.com/)) - Landing and promotional website (Phase 1, in development)
+- **OrganicLever** ([organiclever.com](https://www.organiclever.com/)) - Marketing site for the
+  active OrganicLever product workstream
 
 ## 🚧 Project Status
 
-> ⚠️ **Phase 1 - In Development** - APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+> ⚠️ **Pre-Alpha - In Development** - APIs and implementations may change significantly.
+> **Contributions and pull requests are not being accepted** at this time.
 
-**Current Phase: Phase 1 (OrganicLever - Productivity Tracker)**
+Product development, research, assurance, platform engineering, and public learning proceed as
+parallel workstreams wherever evidence, dependencies, and capacity allow:
 
-Building OrganicLever, a full-stack individual productivity tracker:
+- 🚀 **Product delivery** — OrganicLever marketing site, local-first client, backend, and paired
+  end-to-end suites
+- 🕌 **Shariah and regulatory research** — principles, rules, review methods, and prototypes
+- 🏢 **Business and enterprise research** — domain discovery, process models, and experiments
+- 🛡️ **Trust and assurance** — security, privacy, governance, and compliance capabilities
+- ⚙️ **Platform and operations** — architecture, developer tooling, infrastructure, and reliability
+- 📚 **Public learning** — AyoKoding educational content and OSE project updates
 
-- 🌐 **Landing site**: [organiclever.com](https://www.organiclever.com/) ([organiclever-web](./apps/organiclever-app-web/)) - Next.js promotional website
-- ✅ **Phase 0 complete**: [ayokoding.com](https://ayokoding.com), [oseplatform.com](https://oseplatform.com), AI agents, governance, CLI tools
-
-**Next Phase: Phase 2 (SMB Application)** - Small and medium business application building on OrganicLever's foundation.
+Workstreams coordinate through explicit dependencies and per-deliverable readiness checks instead
+of portfolio-wide stage transitions.
 
 **What to Expect:**
 
@@ -27,7 +34,8 @@ Building OrganicLever, a full-stack individual productivity tracker:
 - 📐 Architecture still evolving
 - 🧪 Experimental implementations
 
-See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
+See the **[development roadmap](./roadmap.md)** for the concurrent workstreams, readiness model,
+and strategy.
 
 ## 🚀 Getting Started
 
@@ -45,18 +53,23 @@ npm install
 
 **Guiding Principle**: Technologies that keep you free - open formats, portable data, no vendor lock-in.
 
-**Phase 0 (Complete):**
+**Established platform:**
 
 - Node.js & npm (via Volta) - Tooling and development infrastructure
 - Next.js 16 - Public websites and content platforms
-- Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
+- Rust - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/),
+  [rhino-cli](./apps/rhino-cli/), and [ose-cli](./apps/ose-cli/))
+- F# - PDF-to-Markdown tooling and shared processing libraries
 
-**Current Phase 1 (OrganicLever):**
+**Active OrganicLever product work:**
 
-- Frontend (landing): Next.js + TypeScript
-- Infrastructure: Kubernetes
+- Product client: Next.js 16 + TypeScript + PGlite
+- Backend: F# + Giraffe + ASP.NET 10
+- Data: Local-first PostgreSQL-WASM in the product client; PostgreSQL for backend integration
+- Operations: Vercel deployment plus Kubernetes, observability, and reliability research
 
-See **[ROADMAP.md](./ROADMAP.md)** for complete tech stack evolution across all phases.
+Technology choices belong to the initiatives that need them; no language or architecture is
+reserved for a future project stage. See the **[development roadmap](./roadmap.md)** for details.
 
 ## 📂 Project Structure
 
@@ -83,9 +96,21 @@ open-sharia-enterprise/
 
 **Applications** (`apps/`):
 
-- **Sites**: [`ose-web`](./apps/ose-www/), [`ayokoding-web`](./apps/ayokoding-www/), [`organiclever-web`](./apps/organiclever-app-web/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-web-e2e`](./apps/organiclever-app-web-e2e/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`wahidyankf-web`](./apps/wahidyankf-www/), [`wahidyankf-web-fe-e2e`](./apps/wahidyankf-www-fe-e2e/)
-- **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`ose-cli`](./apps/ose-cli/)
-- **Polyglot demo apps**: extracted 2026-04-18 to the downstream [`ose-primer`](https://github.com/wahidyankf/ose-primer) template repository, which is now authoritative for the polyglot showcase (Go, Java, Elixir, F#, Python, Rust, Kotlin, TypeScript, C#, Clojure backends + Next.js, TanStack Start, Flutter Web frontends).
+- **Public websites**: [`ose-www`](./apps/ose-www/),
+  [`ayokoding-www`](./apps/ayokoding-www/),
+  [`organiclever-www`](./apps/organiclever-www/), and
+  [`wahidyankf-www`](./apps/wahidyankf-www/)
+- **Product apps**: [`organiclever-app-web`](./apps/organiclever-app-web/),
+  [`organiclever-be`](./apps/organiclever-be/), [`ose-app-web`](./apps/ose-app-web/), and
+  [`ose-be`](./apps/ose-be/)
+- **CLI and processing tools**: [`ayokoding-cli`](./apps/ayokoding-cli/),
+  [`rhino-cli`](./apps/rhino-cli/), [`ose-cli`](./apps/ose-cli/), and
+  [`crane-cli`](./apps/crane-cli/)
+- **End-to-end suites**: see the [applications index](./apps/README.md) and
+  [monorepo structure reference](./docs/reference/monorepo-structure.md)
+- **Polyglot demo apps**: extracted 2026-04-18 to the downstream
+  [`ose-primer`](https://github.com/wahidyankf/ose-primer) template repository, which is now
+  authoritative for the polyglot showcase.
 
 **Libraries** (`libs/`): Reusable shared code
 
@@ -149,10 +174,12 @@ Our mission is to democratize access to trustworthy, Sharia-compliant enterprise
 - Most organizations rely on legacy systems retrofitted for Sharia compliance
 - The gap: open-source, compliance-first solutions with radical transparency
 
-**Our Solution:**
+**Our Approach:**
 
-- Progressive complexity: individual (Phase 1) → SMB (Phase 2) → enterprise (Phase 3)
-- Each phase funds the next; Phase 1/2 success funds Phase 3's certification budget
+- Concurrent product, research, assurance, platform, and public-learning workstreams
+- Progressive complexity within each initiative, based on evidence rather than a fixed sequence
+- Explicit dependencies and readiness gates for every production-facing deliverable
+- Sustainable prioritization based on user value, risk, capacity, and funding
 - Sharia-compliance built in from the ground up, not bolted on after
 
 **What We Believe:**

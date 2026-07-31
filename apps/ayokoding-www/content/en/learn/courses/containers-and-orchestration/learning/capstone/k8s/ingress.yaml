@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: containers-capstone
+  namespace: containers-learning
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: containers-capstone.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: containers-capstone
+                port:
+                  number: 80

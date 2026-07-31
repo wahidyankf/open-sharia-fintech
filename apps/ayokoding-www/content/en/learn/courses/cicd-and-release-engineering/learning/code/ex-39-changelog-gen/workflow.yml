@@ -1,0 +1,13 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 39: Generate changelog"
+on:
+  workflow_dispatch:
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => The script groups conventional commit types into visible release-note sections.
+      - run: |
+          printf '## Features\n- feat: example\n\n## Fixes\n- fix: example\n' > CHANGELOG.example.md
+          cat CHANGELOG.example.md

@@ -1,0 +1,18 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 21: Branch on cache hit"
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - id: cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: .example-cache
+          key: cache-hit-control-${{ hashFiles('requirements.txt') }}
+      # => This condition demonstrates the cache-hit output's intended control flow.
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: mkdir -p .example-cache && printf restored > .example-cache/state
+      - run: test -f .example-cache/state

@@ -1,0 +1,3 @@
+# The final parameter collects one or more remaining values.
+inspect +files:
+  @echo "files: {{files}}"

@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "prebuild": "node prebuild.mjs",
+    "build": "node build.mjs"
+  }
+}

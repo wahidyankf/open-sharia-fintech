@@ -1,0 +1,11 @@
+{
+  "name": "ex12-cache",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "packages": {
+    "": {
+      "name": "ex12-cache",
+      "version": "1.0.0"
+    }
+  }
+}

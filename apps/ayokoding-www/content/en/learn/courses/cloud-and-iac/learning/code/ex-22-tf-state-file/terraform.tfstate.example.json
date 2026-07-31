@@ -1,0 +1,4 @@
+{
+  "version": 4,
+  "resources": [{ "address": "aws_s3_bucket.assets", "instances": [{ "attributes": { "id": "cloud-iac-assets" } }] }]
+}

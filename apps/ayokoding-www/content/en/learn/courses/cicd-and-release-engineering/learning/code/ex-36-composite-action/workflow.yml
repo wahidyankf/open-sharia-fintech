@@ -1,0 +1,13 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 36: Composite action caller"
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # => After installation, this path resolves to the course-owned composite action.
+      - uses: ./.github/actions/example-36-shared-check
+        with:
+          message: reused-without-duplication

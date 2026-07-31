@@ -1,0 +1,14 @@
+# => This composite action is the reusable rollout step consumed by deployment workflows.
+name: run-rollout
+description: Run the typed local progressive-delivery simulation.
+inputs:
+  health:
+    # => The caller supplies deterministic health evidence for the canary decision.
+    description: Simulated health signal.
+    required: true
+runs:
+  using: composite
+  steps:
+    # => Course-owned Python performs the local, credential-free decision.
+    - shell: bash
+      run: python apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/capstone/code/rollout.py --health "${{ inputs.health }}"

@@ -1,0 +1,10 @@
+# => Complete GitHub Actions workflow; copy into .github/workflows in a disposable repository.
+name: "Example 35: Reusable workflow caller"
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    # => This relative path keeps caller and reusable workflow together as one course artifact.
+    uses: ./apps/ayokoding-www/content/en/learn/courses/cicd-and-release-engineering/learning/code/ex-35-reusable-workflow/reusable.yml
+    with:
+      python-version: "3.13"

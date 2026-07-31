@@ -1,0 +1,6 @@
+# just provides task aliases and delegates freshness to Make.
+build:
+  make all
+
+clean:
+  make clean
