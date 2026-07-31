@@ -439,6 +439,19 @@ order cycle 6.1 established.
 numbers for anything longer-lived, since insertions elsewhere in the file shift them)
 `[Repo-grounded]`, and each collapsed field's `<dt>` reuses the column label key it already had.
 
+> **2026-08-01 — Phase 12 Cycle 2 PR review correction (finding F9)**: this section's enumeration is
+> incomplete. A second locale-copy mechanism exists outside `translations.ts`, scoped to one entry.
+> `IntegrityNote.text` is literal English data owned by `core/data/models.ts`, and the functional
+> core stays locale-blind — a per-model translation cannot become a static `translations.ts` key
+> without letting locale-specific prose leak into the core. `model-figures.tsx` instead carries a
+> shell-layer `INTEGRITY_NOTE_ID_TEXT: Record<string, string>` keyed by `note.modelId`, overriding
+> the `id` rendering of any note this map names; any note (present or future) it does not name falls
+> back to `note.text`'s English source, so an untranslated note degrades gracefully instead of
+> rendering `undefined`. The live dataset carries exactly one integrity note (`gpt-5.6-sol`,
+> `core/data/models.ts:368-371`), so this map's current scope is one entry — a bounded, working
+> override, not the standard key/value system this section otherwise enumerates. Any future
+> integrity note needing an Indonesian translation must add an entry here, not to `translations.ts`.
+
 ### DD-34 — the expanded card's field density
 
 **Paired with [DD-28](#dd-28--roster-summary-card-plus-per-card-disclosure).** DD-28 decides _what

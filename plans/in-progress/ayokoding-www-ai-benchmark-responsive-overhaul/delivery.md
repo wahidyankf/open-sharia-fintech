@@ -4069,6 +4069,18 @@ Scenario: Price figures disclose their unit basis
 > `apps/ayokoding-www/src/features/ai-benchmark/shell/model-detail-disclosure.tsx`,
 > `apps/ayokoding-www/src/features/ai-benchmark/shell/model-table.test.tsx`.
 
+<!-- separates adjacent blockquotes (markdownlint MD028) -->
+
+> **2026-08-01 — Phase 12 Cycle 2 PR review correction (finding F8)**: the mechanism sentence above
+> is stale. The wrapped-`<dt>`-run structure it describes was replaced before this finding was filed
+> — a nested `<div>` wrapping only `<dt>`s is not permitted `dl > div` content per MDN's `<dl>`
+> content model, exactly as `tech-docs.md`'s DD-34 F3 correction and `model-detail-disclosure.tsx`'s
+> own docstring now explain. Shipped code makes every `<dt>` a **direct** child of the grid `<div>`
+> (each pinned to the label column via `col-start-1`), with the shared `<dd>` given `col-start-2` and
+> an explicit ``style={{ gridRow: `1 / span ${unreportedFigures.length}` }}`` spanning every
+> unreported label's row. The `Status: Done` verdict, files-changed list, and cited test assertion
+> above remain accurate — only the wrapped-`<dt>`-run description was wrong.
+
 - [x] [AI] Fix every rule-15 EWT/UWT/DWT **defect** finding before archival — deferral requires
       explicit user permission and is allowed only when the fix is genuinely impossible; SG-###
       spec-gap proposals and USS-### spec suggestions may be triaged or deferred with written
@@ -4099,7 +4111,12 @@ Scenario: Price figures disclose their unit basis
 > section (EWT-005 deferred with explicit rationale + backlog path; UWT-007..016 and DWT-005/006
 > all fixed and verified). Both gate commands exit 0 (see note above). No SG-###/USS-### item was
 > deferred — all four (SG-002, SG-003, USS-003, USS-004) were implemented as Gherkin scenarios and
-> bound in steps.tsx, confirmed passing via the spec-coverage validator.
+> bound in steps.tsx, confirmed passing via the spec-coverage validator. **Clean-sweep confirmation
+> evidence**: `./evidence/phase-11-dwt-sweep-{en,id}-{320,390,1280}px.png` (six shots, both locales
+> at all three swept breakpoints) plus `phase-11-dwt-sweep-dark-en-{390,1280}px.png` (the two
+> dark-mode variants) are the full-page retest sweep taken after both DWT-005 (detail-row hover
+> blanket) and DWT-006 (rail misalignment) fixes landed, confirming neither defect nor a regression
+> is visible at any swept breakpoint, locale, or (for the dark-mode pair) color scheme.
 
 <!-- separates adjacent blockquotes (markdownlint MD028) -->
 
