@@ -55,7 +55,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
   });
 
-  Scenario("A repeat request to a content page is served from the CDN", ({ Given, When, Then, And }) => {
+  Scenario("A repeat request to a content page remains cacheable", ({ Given, When, Then }) => {
     Given("a visitor has already requested a course lesson URL", () => {
       expect(existsSync(path.join(contentDirectory, "en", "learn", "overview.md"))).toBe(true);
     });
@@ -64,13 +64,11 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
       expect(contentPageSource).toContain("generateStaticParams");
     });
 
-    Then("the response is served from the CDN cache", () => {
-      // HTTP cache headers are deployment behaviour; the Playwright binding performs the live repeat-request assertion.
+    // A local runner has no Vercel CDN. Preview/production checks own the HIT assertion; this
+    // source-level binding keeps the local contract to static cacheability.
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page remains cacheable
+    Then("the response does not carry a no-store cache directive", () => {
       expect(contentPageSource).not.toMatch(/\bforce-dynamic\b/);
-    });
-
-    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page is served from the CDN
-    And("the response does not carry a no-store cache directive", () => {
       expect(contentPageSource).not.toMatch(/\bcache\s*:\s*["']no-store["']/);
       expect(contentPageSource).not.toMatch(/\bnoStore\s*\(/);
     });

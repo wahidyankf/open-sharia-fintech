@@ -15,11 +15,10 @@ Feature: Statically delivered content pages
     And the content catch-all route is not marked as dynamically rendered
 
   @e2e
-  Scenario: A repeat request to a content page is served from the CDN
+  Scenario: A repeat request to a content page remains cacheable
     Given a visitor has already requested a course lesson URL
     When the same URL is requested again
-    Then the response is served from the CDN cache
-    And the response does not carry a no-store cache directive
+    Then the response does not carry a no-store cache directive
 
   @unit @e2e
   Scenario: Runtime tRPC endpoints retain their filesystem assets

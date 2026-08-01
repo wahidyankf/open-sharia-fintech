@@ -355,10 +355,13 @@ export default async function ContentPage({ params }: Props) {
   );
 
   return (
-    <Suspense fallback={<CoursePageContent {...contentProps} courseId={courseId} renderData={canonicalCourseRenderData} />}>
+    <Suspense
+      fallback={<CoursePageContent {...contentProps} courseId={courseId} renderData={canonicalCourseRenderData} />}
+    >
       <CoursePagePathContent
         {...contentProps}
         courseId={courseId}
+        canonicalRenderData={canonicalCourseRenderData}
         fallbackPrev={page.prev}
         fallbackNext={page.next}
       />

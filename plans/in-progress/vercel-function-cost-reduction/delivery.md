@@ -1097,12 +1097,15 @@ only hot-path work is dead.
 
 ### Phase 4 Gate
 
-- [x] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
-  - **Date**: 2026-08-01. **Status**: done.
-  - **Command**: `jq '[.files[] | select(startswith("content/"))] | length'
+- [x] `[AI]` tRPC tracing is scoped to the runtime assets it actually reads.
+  - **Date**: 2026-08-02. **Status**: corrected after review.
+  - **Command**: `jq '[.files[] | select(test("(^|/)content/"))] | length'
 apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
-  - **Result**: the generated trace contained 0 content files. The subsequent static export failed,
-    so its generated `.next` directory was removed after recording this compiled-route artifact.
+  - **Result**: a fresh standalone build traces **8,300** content entries, plus the generated index
+    and course-path manifest. The former claimed count of zero was an invalid `startswith("content/")`
+    check against trace paths prefixed by `../../`; it also would have broken the runtime tRPC
+    handlers. The trace is intentionally non-zero, limited to the three filesystem-backed tRPC
+    procedures, and exercised by the standalone runtime-assets E2E scenario.
 - [x] `[AI]` `getBySlug` executes once per render pass.
   - **Date**: 2026-08-01. **Status**: done.
   - **Result**: the focused regression test passes with one repository read for two concurrent calls
@@ -1144,7 +1147,9 @@ apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
     - `504` count → **0** (was 49/24h).
   - Record the after-table in `evidence/baseline-per-project.md` beside the before-table.
 
-> **Pause Safety**: safe to stop. Unit 1 — the 65% line item — is fully delivered and deployed.
+> **Pause Safety**: safe to stop only at the checked delivery boundary. Unit 1's implementation and
+> local gates are complete, but review, merge, production deployment, Vercel CDN-HIT verification,
+> and the 24-hour post-deploy comparison remain open.
 
 ---
 
