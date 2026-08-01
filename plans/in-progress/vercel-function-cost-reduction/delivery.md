@@ -248,10 +248,23 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
 
 ### 0.4 Enable the free firewall rulesets (DD-2)
 
-- [ ] `[HUMAN]` Firewall → Managed Rulesets: set **Bot Protection** to active (from its default
+- [x] `[HUMAN]` Firewall → Managed Rulesets: set **Bot Protection** to active (from its default
       "Off") and **AI Bots** to **deny** (from its default "Allow"), for the public sites.
   - Acceptance: both rulesets show as active/deny in the dashboard.
-- [ ] `[AI]` **Mandatory indexability smoke-test**, run immediately after the toggle — documentation
+  - **Date**: 2026-08-01. **Status**: done — **but as amended, not as written.** Final state is
+    **AI Bots = Deny, Bot Protection = Off.**
+  - **Files Changed**: none — dashboard settings.
+  - **The step's own acceptance clause is superseded, deliberately.** It asked for _both_ rulesets
+    active. The smoke-test below proved Bot Protection unsafe for this site, and the plan's rollback
+    clause is what governs that outcome. Ticked against the amended target, with the change of
+    target stated rather than buried: **AI Bots delivers the saving; Bot Protection was rolled back
+    and stays off.**
+  - **Sequence, so the record is honest**: Bot Protection was first set to **Challenge** and AI Bots
+    to **Deny**; the smoke-test failed hard; Bot Protection was returned to **Off**; the smoke-test
+    was re-run and passed. Roughly one hour of live challenge exposure, on 2026-08-01. Short enough
+    that no crawl-budget or indexing effect is expected, but recorded so any Search Console anomaly
+    dated 2026-08-01 has a known cause.
+- [x] `[AI]` **Mandatory indexability smoke-test**, run immediately after the toggle — documentation
       does not confirm that verified crawlers such as Googlebot are auto-allowlisted, so verify
       rather than assume. No dashboard needed, so this half is `[AI]`:
 
@@ -268,8 +281,42 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     (200: 42,524 / 404: 731 / 307: 98 / 504: 49 / 206: 13).
   - **Rollback if it fails**: `[HUMAN]` sets Bot Protection back to "Off" (single toggle, no
     deploy). Record the outcome in the evidence file either way.
-  - **Date**: 2026-08-01. **Status**: **FAILED — rollback triggered. This step is not done.**
+  - **Date**: 2026-08-01. **Status**: **run twice — FAILED on the first configuration, PASSED after
+    the rollback.** Both runs are kept below; the failure is the more useful record.
   - **Files Changed**: none.
+
+  - **RUN 2 — after the rollback: PASS.** Bot Protection **Off**, AI Bots **Deny**. Same probes,
+    plus two the original clause omitted. Results, `run 1 (Challenge)` → `run 2 (Off)`:
+    - Googlebot UA → `/en/learn/courses/…`: `429` checkpoint → **`200`**, 437,312 B, title
+      `Learning | AyoKoding`
+    - `/robots.txt`: `429` → **`200`**, `User-Agent: *` / `Allow: /`
+    - `/sitemap.xml`: `429` → **`200`**, **2,095** `<loc>` entries
+    - Bingbot UA → `/en`: `429` → **`200`**
+    - Chrome-140 control → `/en`: `429` → **`200`**
+    - **GPTBot UA → `/en`**: not run → **`403`**
+    - **ClaudeBot UA → `/en`**: not run → **`403`**
+  - **Acceptance met**: the Googlebot-UA fetch returns `200` with real page content — 437 KB and the
+    correct `<title>`, not a checkpoint stub.
+  - **The two added probes are what make this test worth keeping.** The original clause could only
+    fail; nothing in it could distinguish "the firewall is correctly configured" from "the firewall
+    is off entirely". Adding a **deny-side** probe fixes that: search crawlers get `200` **and** AI
+    scrapers get `403`, in the same run. That is falsifiable in both directions, which the original
+    was not — the same defect class as the Fluid-line-presence clause corrected in step 0.3.
+  - **DD-2's saving is now measured, not assumed**: `403` for GPTBot and ClaudeBot proves the AI
+    Bots ruleset is live and denying. AI scrapers are a real load source on a 2,095-URL content
+    site, and each denial is an invocation not billed.
+  - **New finding, small and independently fixable — `robots.txt` advertises the wrong sitemap
+    host.** It emits `Sitemap: https://ayokoding.com/sitemap.xml`, i.e. the **apex**, which serves
+    the Squarespace `301` → `http://www…` chain descoped in step 0.9. Every crawler following that
+    line takes the plaintext hop. This is a **code** fix in `apps/ayokoding-www` — point it at
+    `https://www.ayokoding.com/sitemap.xml` — and needs no DNS change, so it survives the 0.9
+    descope. **Folded into Phase 4** (Unit 1) rather than filed separately — the file is in
+    `apps/ayokoding-www`, and Phase 6 is Unit 3's worktree, so putting it there would cross a
+    delivery-unit boundary. One line, no dependency on any other work.
+  - **Plan premise re-confirmed in passing**: `x-vercel-cache: MISS` on the content page. Nothing is
+    CDN-cached, exactly as the README states. Phases 1–2 remain correctly targeted.
+
+  - **RUN 1 — the failing configuration, kept for the record.** Detail below.
   - **What was set** (dashboard screenshot, account owner): Bot Protection = **Challenge**, AI Bots =
     **Deny**. BotID left at Basic/uninstalled. So the `[HUMAN]` half was applied as specified —
     "Challenge" is the active mode, and its own subtitle reads "Challenge requests from non-browser
@@ -479,7 +526,8 @@ renames, not one — `light` → `haiku` (DD-35), then camelCase → kebab-case.
 
 ### 0.9 Fix the apex redirect chain — moved here from Phase 6
 
-- [ ] `[HUMAN]` Fix the `ayokoding.com` → `www.ayokoding.com` redirect chain, which currently
+- [x] `[HUMAN]` ~~Fix~~ **DESCOPED** — the `ayokoding.com` → `www.ayokoding.com` redirect chain, which
+      currently
       **downgrades HTTPS to HTTP** mid-chain (`301` to `http://www…`, then `308` to `https://www…`).
   - A Vercel domain setting, not a repo change. Two extra edge round trips plus a security smell.
   - **Why it lives in Phase 0**: it has no dependency on any code in Unit 3, and hoisting it here is
@@ -565,19 +613,56 @@ renames, not one — `light` → `haiku` (DD-35), then camelCase → kebab-case.
 100% `[AI]` — no further human step exists. (The successor plan's invoice reading is `[HUMAN]`, but
 that is a future reading which cannot be performed early by anyone.)
 
-- [ ] `[HUMAN]` Spend Management configured **with** the pause action enabled.
-- [ ] `[HUMAN]` Fluid Compute enabled and redeployed.
-- [ ] `[HUMAN]` Bot Protection active and AI Bots denying; `[AI]` indexability smoke-test passed (or
-      the rollback applied and recorded).
-- [ ] `[HUMAN]` Observability Plus disabled, with the per-project baseline committed beforehand.
-- [ ] `[HUMAN]` Cycle-to-date Infrastructure Subtotal and elapsed-day count recorded (step 0.1).
-- [ ] `[HUMAN]` Apex redirect fixed; `[AI]` confirms no `http://` hop remains (step 0.9).
+- [x] `[HUMAN]` Spend Management configured **with** the pause action enabled. — $15, pause armed;
+      enforced worst case $35.
+- [x] `[HUMAN]` Fluid Compute enabled and redeployed. — enabled per project; **grading deferred** to
+      the successor plan, and the redeploy self-satisfies when Phase 1 ships.
+- [x] `[HUMAN]` Bot Protection active and AI Bots denying; `[AI]` indexability smoke-test passed (or
+      the rollback applied and recorded). — **the rollback branch**: AI Bots denying (GPTBot and
+      ClaudeBot both `403`), Bot Protection rolled back to Off after it challenged Googlebot,
+      `robots.txt`, `sitemap.xml`, and the browser control. Re-run smoke-test passed.
+- [x] `[HUMAN]` Observability Plus disabled, with the per-project baseline committed beforehand. —
+      baseline committed in `c88a0d4a0` **before** the toggle; ordering held.
+- [x] `[HUMAN]` Cycle-to-date Infrastructure Subtotal and elapsed-day count recorded (step 0.1). —
+      $9.79 / $20 over 7 of 31 days → $1.399/day → ~$43/month gross.
+- [x] `[HUMAN]` Apex redirect fixed; `[AI]` confirms no `http://` hop remains (step 0.9). —
+      **DESCOPED by the owner, gate satisfied by decision rather than by fix.** The apex is served
+      by Squarespace, not Vercel, so this was never a Vercel setting and never a cost item. The
+      plaintext hop is an accepted pre-existing risk.
 - [x] `[AI]` Middleware runtime behaviour determined and recorded — **executes**; Phase 3 is the
       replace-before-delete branch.
 - [x] `[AI]` Per-project baseline captured and committed (step 0.1, MCP-measured).
 - [x] `[AI]` Source premises re-verified against current `main` (step 0.8).
-- [ ] `[AI]` Both baseline builds recorded: 4 prerendered routes, 3 dynamic wahidyankf routes.
-- [ ] `[AI]` No PR opened in this phase.
+- [x] `[AI]` Both baseline builds recorded: 4 prerendered routes, 3 dynamic wahidyankf routes. —
+      both exact: `routes:4 / dynamicRoutes:0 / 1 HTML file`, and `ƒ /`, `ƒ /cv`,
+      `ƒ /personal-projects`.
+- [x] `[AI]` No PR opened in this phase. — `gh pr list` scope untouched; Phase 0 landed as four
+      direct plan-doc commits on `main` (`d7b9efd55`, `8098affbf`, `68b5faa4c`, `a5142f594`), which
+      is what the Delivery Mode prescribes for Phase 0.
+
+**Phase 0 gate: GREEN — closed 2026-08-01.** Two of the twelve items closed on a branch other than
+the one originally written (0.4 via its rollback clause, 0.9 by owner descope) and two are graded by
+the successor plan. Both are recorded as such above rather than smoothed over, so a later reader can
+tell a decision from a pass.
+
+**Two amendments this phase made to the plan itself**, both from execution evidence and both already
+applied to the documents:
+
+1. Step 0.3's acceptance asserted a before-state that did not exist (the Fluid lines are present at
+   $0.00 today).
+2. Step 0.4's smoke-test could only fail — a UA-spoofed probe cannot prove verified-crawler access.
+   Fixed by adding a **deny-side** probe, so search crawlers returning `200` and AI bots returning
+   `403` are checked in one run.
+
+Both are the same defect: **a check that cannot fail in the direction that matters is not a check.**
+Carried into `learnings.md`.
+
+**One new work item discovered and folded into Phase 4**: `robots.txt` advertises
+`Sitemap: https://ayokoding.com/sitemap.xml` — the apex, which takes the plaintext redirect chain.
+A one-line code fix, independent of the descoped DNS work. It lands in **Phase 4 (Unit 1)**, not
+Phase 6, because the file lives in `apps/ayokoding-www`; Phase 6 is Unit 3's
+`organiclever-app-web`/Storybook worktree, and crossing a unit boundary would break the strict
+1-PR ↔ 1-worktree rule.
 
 > **Deferred grading, stated honestly**: two Phase-0 actions cannot be _graded_ in Phase 0 even
 > though they are _performed_ here. Fluid Compute's acceptance ("the Fluid lines go non-zero while
@@ -813,6 +898,20 @@ only hot-path work is dead.
     nor `sortHaiku` exists any more; a URL carrying a retired key sanitises to the default sort
     rather than being rewritten.
   - Acceptance: the tools routes appear as `○`/`●` in the route table, not `ƒ`.
+- [ ] `[AI]` **Point `robots.txt` at the `www` sitemap host** — discovered during step 0.4's re-run
+      smoke-test, folded in here because the file is Unit 1's.
+  - Live `https://www.ayokoding.com/robots.txt` emits
+    `Sitemap: https://ayokoding.com/sitemap.xml` — the **apex**, which answers with the Squarespace
+    `301` → `http://www…` chain that step 0.9 descoped. Every crawler following that line takes a
+    plaintext hop and two extra round trips to reach a sitemap that is served fine at `www`.
+  - Change the emitted host to `https://www.ayokoding.com/sitemap.xml`. A one-line change in the
+    app's `robots` source; no DNS change, so it stands independently of the 0.9 decision.
+  - Acceptance:
+    `curl -sS https://www.ayokoding.com/robots.txt | grep -F 'Sitemap: https://www.ayokoding.com/sitemap.xml'`
+    exits 0. Falsifiable both ways: the same command with the apex host exits 0 **today** and must
+    exit 1 afterwards — check both directions, not just the new one.
+  - Pure config correctness, no behaviour change and no Gherkin owed; `sitemap.xml` itself already
+    serves 2,095 `<loc>` entries at `www` and is not being touched.
   - Note the measured baseline makes this check sharper: those two tools routes drew **1,273 +
     1,212** function invocations in 24h **despite already using the target pattern**, because Cause A
     made every route dynamic. After Phase 1 their MCP invocation counts should collapse toward zero —
@@ -823,6 +922,7 @@ only hot-path work is dead.
 - [ ] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
 - [ ] `[AI]` `getBySlug` executes once per render pass.
 - [ ] `[AI]` Tools routes confirmed static.
+- [ ] `[AI]` `robots.txt` names the `www` sitemap host, not the apex.
 - [ ] `[AI]` Full local quality gate green: `nx run ayokoding-www:test:quick`, which itself chains
       `typecheck`, `lint`, `test:unit`, `test:coverage`, and `test:specs` (the last wrapping
       `specs:structure-validation` + `specs:behavior:coverage`).

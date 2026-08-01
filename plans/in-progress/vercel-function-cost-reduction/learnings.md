@@ -37,3 +37,41 @@ Added 2026-08-01 during the pre-execution readiness review:
   match reality (9), so its "falsifiable both ways" check failed in the "before" direction. Possible
   home: the testing/verification guidance, generalising the existing "dev-mode is not evidence" and
   UGREP `-L` rules into one "prove the check can fail" standard.
+
+Added 2026-08-01 during Phase 0 execution:
+
+- **A probe that spoofs an identity cannot test a control that verifies identity.** The plan's
+  indexability smoke-test fetched a page with a Googlebot `User-Agent` and expected `200`. But
+  Vercel's verified-bot exclusion is decided by source IP and reverse DNS, so a `curl` claiming to
+  be Googlebot **is** an unverified bot and challenging it is correct behaviour. The probe could
+  therefore only ever fail, whatever the firewall did — it could not distinguish "correctly
+  configured" from "switched off entirely". The fix was to add a **deny-side** probe: assert search
+  crawlers get `200` **and** AI-bot UAs get `403` in the same run, so the test has a passing state
+  and a failing state that mean different things. This is the same defect as the four above, in a
+  new dress: **a one-sided check is not a check**. Possible home: the same "prove the check can
+  fail" standard, as the identity-spoofing corollary.
+- **Vercel's Bot Protection "Challenge" mode gates any client that cannot execute JavaScript, not
+  just bot-shaped traffic.** With it on, a Chrome-140 `User-Agent` control was challenged alongside
+  `robots.txt` and `sitemap.xml` — all returning `HTTP/2 429` with a `Vercel Security Checkpoint`
+  body. Real browsers solve the challenge and proceed, so human traffic is fine, but every non-JS
+  consumer is not: crawlers, feed readers, link checkers, uptime monitors, social-card unfurlers.
+  For a content site whose value is organic search, that risk dwarfs the cost saving. **AI Bots =
+  Deny is the half worth keeping** — verified as live by GPTBot and ClaudeBot both returning `403`
+  while Googlebot and Bingbot returned `200`. This qualifies the planning-time note above that the
+  WAF "mitigates before the billing meter": true, but the two rulesets are not interchangeable, and
+  only one of them is safe to leave on unattended. Possible home: the Vercel billing/ops reference
+  note, together with the Spend Management entry.
+- **`generateStaticParams` running is not evidence that anything is prerendered.** The
+  `ayokoding-www` build logs `✓ Generating static pages using 11 workers (2103/2103) in 3.8min`,
+  then emits exactly **one** HTML file and marks all nine routes `ƒ`. Next.js renders every page
+  and discards the output when a dynamic API in the root layout forces on-demand rendering. A build
+  log that looks like success is not success — only `.next/prerender-manifest.json` and the route
+  table's `○`/`ƒ` markers are. Possible home: the same Next.js guidance as the root-layout entry
+  above; the two are halves of one lesson.
+- **A "dashboard setting" in a plan step is an assumption about who serves the hostname, and it
+  should be verified before the step is written.** Step 0.9 called the apex-redirect HTTPS
+  downgrade "a Vercel domain setting". One `dig` showed the apex on Squarespace A records with
+  `server: Squarespace`, while only `www` is CNAME'd to Vercel — so Vercel never sees the offending
+  hop and no Vercel setting could fix it. Cost: a `[HUMAN]` step scoped to the wrong console.
+  Possible home: the planning guidance, as a "verify the control plane before assigning the step"
+  rule.
