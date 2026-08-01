@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Capstones (Band 8)
 
+## Delivery amendment — one final PR
+
+All 8 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author **Band 8 — Remaining capstones**: the **8 course bodies**
 `capstone-build-your-own-coding-agent`, `capstone-build-your-own-pentest-engine`,
 `capstone-real-world-delivery`, `capstone-secure-service`, `capstone-data-pipeline`,

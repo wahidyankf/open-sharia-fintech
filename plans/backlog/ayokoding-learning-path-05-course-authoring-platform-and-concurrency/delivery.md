@@ -37,6 +37,20 @@ platforms** (10 bodies) and **Band 4 — Concurrency languages** (4 bodies), mer
 > and for that assertion the sanctioned form is **`| grep -c .`**. Never use an `ls`-based emptiness
 > assertion.
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This 14-course plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
+worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
+course work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
+cohort or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/` path below
+is this plan's only worktree; no per-course, cohort, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`

@@ -21,6 +21,22 @@
 > plan edits the other's manifest. The seven course-authoring successor plans own course **bodies
 > only**.
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This three-manifest plan is one inseparable delivery unit: every Phase 1–10 change lands in **one
+worktree, one branch, and exactly one draft PR**. Manifests may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 10 opens the draft PR, after all
+manifest work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. The former intermediate Plan 12→13
+handoff is removed: Plan 13 delivers its independent manifest first, then this plan consumes that
+merged state for its four-manifest validation before Phase 10. This contract supersedes every older
+manifest-unit or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-12-careers-se-manifests/` path below is this plan's only
+worktree; no per-manifest, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-12-careers-se-manifests/`

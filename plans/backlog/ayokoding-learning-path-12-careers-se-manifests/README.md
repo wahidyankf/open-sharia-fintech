@@ -1,5 +1,13 @@
 # Learning Path Manifests — the three `software-engineer`-role `careers/` manifests
 
+## Delivery amendment — one final PR and Plan 13 handoff
+
+This plan uses one branch and its sole PR in Phase 10, after verification and Knowledge Capture; the
+archival move, review cycle, CI, merge, and deploy are all in that final delivery. The former
+intermediate Plan 12→13 merge handoff is removed. Plan 13 may deliver its independent manifest
+first, then Plan 12 consumes that merged state for its four-manifest check before its final PR.
+Earlier per-manifest or delivery-boundary PR wording is superseded.
+
 > **Successor plan.** This plan and its sibling
 > [`ayokoding-learning-path-13-careers-ai-manifest`](../ayokoding-learning-path-13-careers-ai-manifest/README.md)
 > together replace the single prior plan that authored, published, grew, and verified all four

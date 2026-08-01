@@ -41,6 +41,20 @@ This checklist authors **5 course bodies** into `apps/ayokoding-www/content/en/l
 > an `ls`-based emptiness assertion (`ls <dir> | wc -l` is unreliable under RTK for the same family of
 > reasons; unrelated to the `git diff` trailer specifically).
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This 5-course plan is one inseparable delivery unit: every Phase 1–6 change lands in **one
+worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 6 opens the draft PR, after all
+course work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
+cohort or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/` path below is
+this plan's only worktree; no per-course, cohort, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`
@@ -227,7 +241,7 @@ is the plan's last change-producing phase and therefore always a boundary, per
       returns `0`. Record the printed path to `evidence/phase-0-snapshot.txt` as
       `SYLLABUS_ROOT=<path>`. **Do not write this as a `test -d plans/done/*__…/syllabus/courses`
       glob** — this harness runs zsh, where an unmatched glob is a fatal error, not a literal; `git
-    ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `*`.
+  ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `*`.
 - [ ] [AI] **Verify blocking plan #3 baseline — the parent plan's own Phase 0 established** — command
       (single line):
       `git log --oneline -1 -- plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md | grep -c .`
@@ -678,7 +692,7 @@ is the plan's last change-producing phase and therefore always a boundary, per
 
 - [ ] [AI] Verify ALL delivery checklist items above are ticked.
 - [ ] [AI] Verify ALL quality gates pass (local + CI): `npx nx affected -t typecheck lint test:quick
-    test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failures, including
+  test:unit specs:behavior:coverage` all exit 0 for `ayokoding-www`. Fix ALL failures, including
       preexisting ones (Root Cause Orientation).
 - [ ] [AI] Verify ALL manual assertions pass with committed evidence in `evidence/` (15 screenshots +
       the Phase 0/2 snapshot text files).

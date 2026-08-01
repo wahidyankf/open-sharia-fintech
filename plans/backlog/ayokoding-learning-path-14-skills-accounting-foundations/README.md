@@ -1,5 +1,11 @@
 # Skills Paths — Accounting Foundations & Transactional Cycles
 
+## Delivery amendment — one final PR
+
+All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+
 > **This plan is the first of a three-plan sequential chain** that replaces the retired
 > `ayokoding-learning-path-06-skills-accounting/` design (24 courses, 2 manifests, 1 monolithic
 > plan) with three smaller plans, each owning a contiguous course range and chained by hard

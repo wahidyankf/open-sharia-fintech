@@ -1,5 +1,12 @@
 # Learning Path Manifest — the `careers/immediately-effective/ai-engineer` manifest
 
+## Delivery amendment — one final PR and independent start
+
+This plan uses one branch and its sole PR in Phase 7, after verification and Knowledge Capture; the
+archival move, review cycle, CI, merge, and deploy are all in that final delivery. It no longer waits
+for an intermediate Plan 12 merge: its manifest ownership is disjoint, and Plan 12 consumes this
+plan only after this final PR merges. Earlier delivery-boundary wording is superseded.
+
 > **Successor plan.** This plan and its sibling
 > [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
 > together replace the single prior plan that authored, published, grew, and verified all four

@@ -1,5 +1,13 @@
 # Learning Path — Course Authoring (course bodies only)
 
+## Delivery amendment — one remaining closeout PR
+
+The course bodies in this plan are historical execution: the 21 bodies landed through completed
+PRs before this amendment. Its remaining unchecked delivery work uses one shared closeout branch
+and one final PR only: after Phases 5–8 are green, Phase 9 archives the plan in that PR and runs the
+review, CI, merge, and deploy protocol. Earlier cohort-PR wording is historical evidence, not an
+instruction for remaining work.
+
 Author **21 course bodies** of the shared course library: the six net-new AI-engineering courses
 (`evaluating-ai-output-essentials`, `statistics-for-evaluation`, `evaluating-ai-systems-in-depth`,
 `product-patterns-for-probabilistic-systems`, `inference-serving-and-model-deployment`,

@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Platform & Concurrency Languages
 
+## Delivery amendment — one final PR
+
+All 14 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author **14 course bodies** — the platform-development pairs and the concurrency-language pairs that
 `ayokoding-learning-path-04-course-authoring` scoped as its **Band 3** ("Mobile & desktop platforms",
 originally 10 courses) and **Band 4** ("Concurrency languages", originally 4 courses) — landing under

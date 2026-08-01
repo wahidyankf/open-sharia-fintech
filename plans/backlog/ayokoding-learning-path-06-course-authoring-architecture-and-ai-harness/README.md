@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Architecture, Distributed & AI/Harness (Band 5)
 
+## Delivery amendment — one final PR
+
+All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 9, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 This plan authors **Band 5 — Architecture, distributed & AI/harness** of the shared course library:
 **15 course bodies**, landing under `apps/ayokoding-www/content/en/learn/courses/`. It also owns the
 three **course-surgery scope contracts** (evals forward-link, D9 naming-and-citation, D11

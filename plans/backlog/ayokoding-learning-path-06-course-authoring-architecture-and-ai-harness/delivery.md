@@ -43,6 +43,20 @@ construction rather than as a retrofit.
 > `grep` here routes to **UGREP**: use `--exclude-dir`, never `--glob`, and never `-L` (which means
 > files-without-match and exits 0 — never use it in an acceptance clause).
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This 15-course plan is one inseparable delivery unit: every Phase 1–9 change lands in **one
+worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 9 opens the draft PR, after all
+course work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
+cohort or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/` path
+below is this plan's only worktree; no per-course, cohort, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path:

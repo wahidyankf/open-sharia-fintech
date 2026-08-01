@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Low-Level Systems & Native Languages
 
+## Delivery amendment — one final PR
+
+All 7 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author **seven course bodies** — the C-family / native-OS / Rust half of the shared course
 library's low-level-systems band — landing under
 `apps/ayokoding-www/content/en/learn/courses/`:

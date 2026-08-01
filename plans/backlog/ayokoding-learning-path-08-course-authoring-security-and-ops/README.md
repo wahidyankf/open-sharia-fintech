@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Security, Ops & Delivery (Band 7)
 
+## Delivery amendment — one final PR
+
+All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author the **eleven course bodies** of Band 7 — "Security, ops, quality & delivery" — of the shared
 course library: `it-and-application-security`, `offensive-security`, `defensive-security`,
 `detection-engineering-and-siem-operations`, `vulnerability-management-and-assessment`,

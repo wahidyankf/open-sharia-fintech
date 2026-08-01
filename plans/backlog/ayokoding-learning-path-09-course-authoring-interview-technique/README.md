@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: Interview-Technique Courses (Band 9)
 
+## Delivery amendment — one final PR
+
+All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 6, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author **Band 9 — Interview-technique courses**: the 5 course bodies
 `coding-interview`, `take-home-and-live-coding`, `system-design-interview`,
 `behavioral-and-leadership-interviews`, and `capstone-interview-loop`, landing under

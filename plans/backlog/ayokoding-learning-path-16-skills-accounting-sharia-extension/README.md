@@ -1,5 +1,11 @@
 # Skills Paths — Accounting Sharia Extension
 
+## Delivery amendment — one final PR
+
+All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+
 > **This plan is the third and final of a three-plan sequential chain** that replaces the retired
 > `ayokoding-learning-path-06-skills-accounting/` design with three smaller plans:
 > `ayokoding-learning-path-14-skills-accounting-foundations` (courses #1–#11) →

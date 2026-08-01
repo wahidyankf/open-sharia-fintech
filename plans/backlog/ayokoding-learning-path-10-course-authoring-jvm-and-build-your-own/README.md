@@ -1,5 +1,11 @@
 # Learning Path — Course Authoring: JVM, Advanced Languages & Build-Your-Own Internals
 
+## Delivery amendment — one final PR
+
+All 9 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier cohort or delivery-boundary PR wording is superseded.
+
 Author **9 course bodies** — the JVM/advanced-language half of the original Band 6 — into
 `apps/ayokoding-www/content/en/learn/courses/`: `just-enough-java`, `enterprise-java-and-the-jvm`,
 `lisp`, `just-enough-fsharp`, `type-systems`, `compilers-parsers-and-transpilers`,

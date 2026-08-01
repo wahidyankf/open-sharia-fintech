@@ -64,6 +64,24 @@ see [README §Successor plans](./README.md#successor-plans).
 > None of this generalizes to `ls` — **never use an `ls`-based emptiness assertion** (an
 > `ls <dir> | wc -l` clause asserting 0 is unreliable under RTK).
 
+## One-PR closeout amendment (binding, 2026-08-01)
+
+This plan is a documented historical exception to the 5–15-course planning limit: all 21 scoped
+course bodies already landed through earlier, completed PRs. Do not rewrite that history or use it
+as a precedent. The remaining execution is Phases 5–9 (including any fixes discovered there), and
+it uses **one worktree, one branch, and exactly one draft PR**, opened only in Phase 9 after all
+verification and Knowledge Capture are green. Phase 9 moves this plan to `plans/done/` in that PR,
+then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review transition, and the
+normal `[AI]` merge/deploy protocol.
+
+The `worktrees/ayokoding-learning-path-04-course-authoring/` path below is this plan's only
+worktree; no per-course, cohort, phase, or closeout worktree is created.
+
+Every remaining phase before Phase 9 is intermediate: commit its work to the same branch, but do
+not push, open a PR, run PR review, merge, deploy, or claim a per-phase `MERGED_COMMIT`. The older
+delivery-boundary, cohort-PR, and per-course-PR wording below records completed history only and is
+superseded for all unchecked work by this amendment.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-04-course-authoring/`
@@ -1085,17 +1103,17 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       exactly this plan's remaining slugs (confirmed: they are the AI-engineering + Band 1 + Band 2
       course IDs, in that order); the other 69 lines name courses the 7 successor plans now own. Trim
       the register in place: `head -21 evidence/authored-body-slugs.txt > /tmp/slugs21.txt && mv
-    /tmp/slugs21.txt evidence/authored-body-slugs.txt` — acceptance:
+  /tmp/slugs21.txt evidence/authored-body-slugs.txt` — acceptance:
       `wc -l < evidence/authored-body-slugs.txt` returns **21**, and every remaining line matches one of
       this plan's 21 course IDs (`diff <(sort evidence/authored-body-slugs.txt) <(printf '%s\n'
-    evaluating-ai-output-essentials evaluating-ai-systems-in-depth statistics-for-evaluation
-    product-patterns-for-probabilistic-systems inference-serving-and-model-deployment
-    fine-tuning-and-adaptation nosql-databases graph-databases
-    database-internals-and-storage-engines data-engineering search-and-information-retrieval
-    api-design advanced-frontend backend-at-scale async-python-and-fastapi-services
-    self-hosting-essentials containers-and-orchestration cloud-and-iac
-    cicd-and-release-engineering build-automation-and-task-runners
-    information-architecture-and-seo | sort)` exits with no output). The original 90-slug register is
+  evaluating-ai-output-essentials evaluating-ai-systems-in-depth statistics-for-evaluation
+  product-patterns-for-probabilistic-systems inference-serving-and-model-deployment
+  fine-tuning-and-adaptation nosql-databases graph-databases
+  database-internals-and-storage-engines data-engineering search-and-information-retrieval
+  api-design advanced-frontend backend-at-scale async-python-and-fastapi-services
+  self-hosting-essentials containers-and-orchestration cloud-and-iac
+  cicd-and-release-engineering build-automation-and-task-runners
+  information-architecture-and-seo | sort)` exits with no output). The original 90-slug register is
       recorded verbatim in this checklist's own Phase 0 history above and in git history — this step
       does not rewrite that history, only the live working file used by the checks below.
 - [ ] [AI] **Verify all 21 authored bodies are present** —

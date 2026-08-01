@@ -8,6 +8,20 @@
 > a **Pause Safety** note. A phase is **not complete until its gate is green**; do not start phase N+1
 > while any check in phase N's gate is failing.
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This 8-course plan is one inseparable delivery unit: every Phase 1–7 change lands in **one
+worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 7 opens the draft PR, after all
+course work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
+stage or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/` path below is
+this plan's only worktree; no per-course, stage, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-15-skills-accounting-enterprise-reporting/`

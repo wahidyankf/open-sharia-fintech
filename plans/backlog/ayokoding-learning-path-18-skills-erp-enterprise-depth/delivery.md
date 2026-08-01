@@ -26,6 +26,20 @@ Three standing constraints govern every step below.
 > **Id-shape rule (schema-owner ruling, inherited)**: every URL/id match below is a **full-string
 > literal** (`grep -F -q`).
 
+## One-PR delivery contract (binding, 2026-08-01)
+
+This 15-course plan is one inseparable delivery unit: every Phase 1–9 change lands in **one
+worktree, one branch, and exactly one draft PR**. Courses may still be authored, checked, and
+committed in their dependency order, but no intermediate phase may push, open a PR, run the PR
+review cycle, merge, deploy, or record a merge SHA. Only Phase 9 opens the draft PR, after all
+course work, verification, and Knowledge Capture are green; it includes the archival move to
+`plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
+transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
+stage or delivery-boundary PR reference below.
+
+The `worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/` path below is this plan's
+only worktree; no per-course, stage, phase, or closeout worktree is created.
+
 ## Worktree
 
 Worktree path: `worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/`
@@ -564,7 +578,7 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
 ```
 
 - [ ] [AI] **RED** — add the `sharia-erp landing renders with its full terminal course count and
-    states it covers the basics` scenario above to
+  states it covers the basics` scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`,
       then extend `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` to assert the
       Dangerous 4 boundary and the terminal "ENDS HERE" / "covers all the basics" statement on

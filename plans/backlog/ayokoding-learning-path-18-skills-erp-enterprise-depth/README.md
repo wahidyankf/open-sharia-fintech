@@ -1,5 +1,11 @@
 # Plan: Skills Path — ERP Enterprise Depth (Stage B + Stage C)
 
+## Delivery amendment — one final PR
+
+All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
+Phase 9, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
+merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+
 ## Overview
 
 Authors **Stage B — Conventional Enterprise Depth** (12 courses: `#13-16, 18-21, 24-27`) **and Stage
