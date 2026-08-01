@@ -422,24 +422,19 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 
 ## Related Repositories
 
-Four sibling repos, no parent coordination repo. **"All of the OSE repos" means exactly these four**
-— `beaver-nest` included, despite sitting outside the parity loop:
+Four sibling repos, no parent coordination repo — **"all of the OSE repos" means exactly these four**:
 [`ose-public`](https://github.com/wahidyankf/ose-public) (this repo, MIT — upstream source of truth),
 [`ose-primer`](https://github.com/wahidyankf/ose-primer) (MIT — downstream template),
-[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public), and
+[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public),
 [`beaver-nest`](https://github.com/wahidyankf/beaver-nest) (MIT — product on this ecosystem).
 
-Two cross-repo boundaries cover **different** repo sets — do not conflate:
+Two cross-repo boundaries cover **different** repo sets — do not conflate: **content parity** is
+`ose-public` ↔ `ose-primer` only; **`apps/rhino-cli` byte-identity** spans `ose-public`,
+`ose-primer`, `ose-private` with zero carve-outs. `beaver-nest` is in neither and carries a **fork**
+of `rhino-cli` — still a full member of the four-repo set.
 
-- **Content parity** — `ose-public` ↔ `ose-primer` only, via
-  [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md).
-- **`apps/rhino-cli` byte-identity** — `ose-public`, `ose-primer`, `ose-private`; zero carve-outs,
-  including `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
-  [SDLC Gate Standard](./docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
-
-`beaver-nest` is in neither; it carries a **fork** of `rhino-cli`.
-
-**See**: [Related Repositories reference](./docs/reference/related-repositories.md).
+**See**: [Related Repositories reference](./docs/reference/related-repositories.md) — both boundaries
+in full, the parity workflow, and the byte-identity gate.
 
 ## Models
 
