@@ -79,6 +79,43 @@ For each failure found in Step 3:
 emit a clear stop signal: the plan cannot proceed until the failure is resolved. Surface the
 failure details and halt.
 
+### Step 5: Vercel MCP Probe (Conditional)
+
+**Skip entirely unless the plan touches a Vercel-deployed surface.** Decide mechanically, never from
+a remembered project list:
+
+```bash
+git ls-files | grep 'vercel\.json$'
+```
+
+Empty output, and no `prod-*`/`stag-*` deploy branch or deployment agent among the plan's targets,
+means this repository has no Vercel-deployed surface — skip this step and say so.
+
+When it does apply, resolve whether a Vercel MCP server is connected **and authenticated**. A server
+that connects but exposes only authentication tools is unauthenticated, therefore unavailable;
+authenticating it is interactive and belongs to a human, so report it rather than attempting it.
+
+Then reconcile against what the plan assumed:
+
+- **Probe agrees with the plan** — record the confirmation and proceed.
+- **Probe disagrees** — do NOT proceed as written. Report which `[AI]` steps must downgrade per
+  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp.md#degraded-mode). Silently
+  skipping a verification step the plan can no longer perform is the failure this step prevents.
+
+**Capture ordering matters**: if the plan's Phase 0 also takes a deployment baseline for later
+comparison, take it **now**, before any Phase 0 platform-settings step runs. Some measurements cannot
+be taken retroactively once a setting in the same phase disables their source.
+
+**Do not over-assume the boundary.** Available: deployments, build logs, runtime errors, runtime log
+counts grouped by source/route/status. Not available, and therefore `[HUMAN]` no matter what the
+probe says: billing and usage figures, Spend Management, Observability settings, firewall rulesets,
+the compute-model setting, and domain configuration.
+
+**Acceptance**: either "not applicable — no Vercel-deployed surface" or a recorded probe outcome that
+the plan's `[AI]`/`[HUMAN]` tags are reconciled against.
+
+See [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
+
 ## Principles Implemented/Respected
 
 - **[Root Cause Orientation](../../repo-governance/principles/general/root-cause-orientation.md)**:
@@ -95,3 +132,5 @@ failure details and halt.
 - [Plan Execution Workflow](../../repo-governance/workflows/plan/plan-execution.md) — Phase 0 is
   the first phase of every plan
 - [plan-maker Agent](./plan-maker.md) — delivery template includes Phase 0
+- [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md) — the
+  Step 5 probe, its capability boundary, and degraded mode

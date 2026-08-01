@@ -42,6 +42,7 @@ These standards define **HOW to manage development infrastructure**, including w
 - [Nx Target Standards](./nx-targets.md) - Standard Nx targets that apps and libs must expose, canonical target names, caching rules, build output conventions, and the four-dimension tag scheme for `project.json`
 - [Temporary Files Convention](./temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Vercel Deployment Convention](./vercel-deployment.md) - Rules for configuring `vercel.json` when Nx build targets must run before the framework build
+- [Vercel MCP Capability Convention](./vercel-mcp.md) - An MCP server for Vercel is an assumed capability for plans touching a Vercel-deployed surface, probed at planning time and again at execution Phase 0, with an explicit boundary of what stays `[HUMAN]`
 
 ## Companion Documents
 

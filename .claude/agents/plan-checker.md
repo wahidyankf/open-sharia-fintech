@@ -758,6 +758,10 @@ physically impossible action.
 - `[HUMAN]`-tagged git-mechanical step (worktree create/remove, push) absent an explicit sign-off request: **HIGH** per occurrence. Does **not** apply to a `[HUMAN]`-tagged PR **merge** step — that is a valid per-plan opt-in governed by rule 19.
 - Executor-tag / suggested-executor conflation: **MEDIUM**
 
+**Capability-dependent tags**: a step may also be mis-tagged because it assumes a tool the agent does
+not have. For Vercel-deployed surfaces that judgement is delegated to rule 21 — do not double-report
+the same step under both rules.
+
 ### 15. Phase-Gate & Natural-Pause Validation (Step 5i — MANDATORY HARD RULE)
 
 Enforces [Plans Convention §Phased Delivery: Natural Pauses and Phase Gates](../../repo-governance/conventions/structure/plans.md#phases-as-natural-pauses-with-clear-gates-hard-rule).
@@ -1056,3 +1060,48 @@ linking to, or lightly correcting an existing corpus does not trigger it.
 - Declared artefact with no corresponding delivery step: **HIGH**
 - Illegitimate "not learning-bearing" exemption used to skip the syllabus record: **HIGH**
 - Non-learning-bearing plan: **not flagged** (exempt; record the exemption explicitly)
+
+### 21. Vercel MCP Capability Declaration (Step 5o — CONDITIONAL)
+
+Enforces the [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
+A plan touching a Vercel-deployed surface asserts a tool capability when it tags deployment
+observation `[AI]`. This rule checks the assertion was made deliberately and stays inside the real
+boundary. It is the capability-shaped sibling of rule 14's executor-tag validation.
+
+#### What to Validate
+
+1. **Trigger detection** — Determine mechanically whether the plan touches a Vercel-deployed surface:
+   a changed path covered by a `vercel.json` (`git ls-files | grep 'vercel\.json$'`), a named
+   `prod-*`/`stag-*` deploy branch a Vercel project builds from, or a deployment agent for an app in
+   scope. **A repository with no `vercel.json` at all makes every plan in it exempt** — record the
+   exemption, do not flag.
+2. **Availability declared** — A triggered plan's `tech-docs.md` states whether a Vercel MCP server
+   is available and what follows from that. Absent: **MEDIUM** (an executor cannot tell an assumed
+   capability from an overlooked one).
+3. **No step assumes a capability outside the boundary** — Any step tagged `[AI]` that requires
+   billing or usage figures, an invoice, Spend Management, Observability settings, firewall/WAF
+   rulesets, the compute-model setting, or domain/DNS configuration is **HIGH**. No tool provides
+   these; the step must be `[HUMAN]`. This is the single most common failure of this rule.
+4. **Human platform steps are consolidated** — A triggered plan SHOULD gather its `[HUMAN]`
+   dashboard steps into Phase 0 rather than scattering them across later phases, so the human actions
+   land in one sitting and later phases stay `[AI]`. Scattered without a stated reason: **MEDIUM**.
+5. **Acceptance commands respect the operational limits** — A criterion depending on a query window
+   wider than 72 hours, or on a grouped query with no explicit result limit, will fail or silently
+   truncate at execution: **MEDIUM**. A criterion that treats log-event counts as evidence of **cost**
+   is **HIGH** — log events are not billed units, so the criterion cannot be graded as written.
+6. **Identifier hygiene** — Opaque `team_*` / `prj_*` / `dpl_*` identifiers committed in plan
+   documents or evidence files: **MEDIUM**. Slugs are accepted by the same tools, already public in
+   deployment hostnames, and safe in a public repository's permanent history.
+7. **Phase 0 probe step present** — A triggered plan's Phase 0 includes the availability probe.
+   Missing: **MEDIUM**.
+
+#### Finding Severity
+
+- `[AI]` step requiring billing, settings, firewall, or domain configuration: **HIGH** per occurrence
+- Acceptance criterion treating log-event counts as cost evidence: **HIGH**
+- Missing availability declaration on a triggered plan: **MEDIUM**
+- Missing Phase 0 probe step: **MEDIUM**
+- Query window over 72h, or grouped query with no explicit limit: **MEDIUM**
+- Opaque Vercel IDs committed in plan docs: **MEDIUM**
+- Scattered `[HUMAN]` platform steps with no stated reason: **MEDIUM**
+- Plan touching no Vercel-deployed surface: **not flagged** (exempt)

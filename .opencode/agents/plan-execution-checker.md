@@ -94,6 +94,11 @@ Validate that completed plan implementation:
 - All phase acceptance criteria verified
 - Each `### Phase N Gate` passed before the next phase's work began; `[HUMAN]` steps show genuine human-confirmation evidence (see Step 5g)
 - Progress tracking is comprehensive
+- **Vercel MCP probe recorded (conditional)** — if the plan touches a Vercel-deployed surface, Phase 0
+  records the availability probe outcome, and any step the probe forced to downgrade says so
+  explicitly. A deployment-verification step that was silently skipped because the capability was
+  absent is a finding, not a pass: the evidence and the checklist must agree on what actually ran.
+  See [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
 
 ### 4. Code Quality
 

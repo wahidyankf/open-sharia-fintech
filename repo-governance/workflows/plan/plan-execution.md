@@ -166,6 +166,25 @@ statically via `swe-ui-checker` / `swe-ui-fixer` (no browser); and
 `web/web-ux-test-fixing-planning.md` gates the **running UI** via the EWT/UWT/DWT triad in a real
 browser. Passing one never discharges another.
 
+### Vercel MCP Availability (Surface-Conditional)
+
+Binds here exactly as it bound at authoring time (see
+[plan-planning §Vercel MCP Availability](./plan-planning.md#vercel-mcp-availability-surface-conditional)).
+The plan already assumed an answer; Phase 0 confirms it still holds before Phase 1 depends on it.
+
+- **Plan touches no Vercel-deployed surface** → skip. Nothing to probe, nothing to record.
+- **Touches one, and the probe agrees with the plan** → record the confirmation and proceed.
+- **Touches one, and the probe disagrees** → do **not** proceed as written. Downgrade every affected
+  `[AI]` step per [§Degraded Mode](../../development/infra/vercel-mcp.md#degraded-mode), record the
+  downgrade in the plan, and continue. Silently skipping a verification step it can no longer perform
+  is the failure this gate exists to prevent.
+
+A server that connects but exposes only authentication tools is **unauthenticated**, not available;
+authenticating it is interactive and belongs to a human.
+
+Capability boundary, operational limits (a 72-hour query window is the widest usable one), and
+identifier hygiene: [Vercel MCP Capability Convention](../../development/infra/vercel-mcp.md).
+
 ## Task-Checklist Synchronization
 
 The live Task list (`TaskCreate` / `TaskUpdate`) and the on-disk delivery checklist (`delivery.md`) are two views of the same state. They MUST agree at every moment of execution. Disagreement is a bug the orchestrator MUST detect and fix immediately.
@@ -347,6 +366,11 @@ Before implementing anything, ensure the development environment is ready.
 - Verify dev server starts for affected projects
 - Run existing quality gates to establish a baseline: `npx nx affected -t typecheck lint test:quick`
 - Note any preexisting failures — these MUST be fixed during execution (Iron Rule 3)
+- If the plan touches a Vercel-deployed surface, probe Vercel MCP availability and record the outcome
+  (see [§Vercel MCP Availability](#vercel-mcp-availability-surface-conditional)). Where the plan's
+  Phase 0 also captures a deployment baseline for later comparison, capture it **now** — some
+  measurements cannot be taken retroactively once a platform setting in the same phase disables the
+  source.
 
 **Output**: Environment ready, baseline failures identified
 

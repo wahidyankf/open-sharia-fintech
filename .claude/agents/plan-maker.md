@@ -155,6 +155,35 @@ tests are written BEFORE implementation. Gherkin acceptance criteria in `prd.md`
 source of first failing tests. Document which test level (unit/integration/E2E) covers each
 acceptance criterion.
 
+**Vercel MCP availability (conditional — resolve BEFORE writing the delivery checklist)**: if the
+plan touches a Vercel-deployed surface, probe for a connected, authenticated Vercel MCP server and
+record the outcome in `tech-docs.md`. The answer decides executor tags in Step 6, so it cannot be
+deferred until after the checklist is written.
+
+Decide the trigger mechanically, never from a remembered project list —
+`git ls-files | grep 'vercel\.json$'`, plus any `prod-*`/`stag-*` deploy branch or deployment agent
+among the plan's targets. Empty means out of scope; skip and say so rather than adding a vacuous
+check.
+
+- **Available** → deployment-observation steps may be `[AI]`: deploy state and provenance, build
+  logs, runtime errors, and runtime invocation counts grouped by source, route, or status code. Use
+  this to give the plan a measured before-and-after of its own effect rather than a single
+  hand-checked URL.
+- **Unavailable** → degrade explicitly per
+  [§Degraded Mode](../../repo-governance/development/infra/vercel-mcp.md#degraded-mode). Never
+  quietly weaken an acceptance criterion into something unfalsifiable.
+
+**The boundary is narrow and over-assuming it is the common failure.** No tool exists for billing,
+usage, invoices, Spend Management, Observability settings, firewall rulesets, the compute-model
+setting, or domain configuration. Those steps stay `[HUMAN]` regardless of the probe. Gather every
+such step into Phase 0 so the human actions happen in one sitting and later phases stay `[AI]`.
+
+Respect the operational limits when writing acceptance commands: a 72-hour query window is the widest
+usable one, grouped queries need an explicit result limit or they truncate, and log-event counts
+prove volume but never cost. Address projects by slug, never by opaque ID, in any committed artifact.
+
+See [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md).
+
 ### Step 6: Create Delivery Checklist
 
 Break work into executable steps:

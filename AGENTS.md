@@ -422,7 +422,8 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 
 ## Related Repositories
 
-Four sibling repos, no parent coordination repo:
+Four sibling repos, no parent coordination repo. **"All of the OSE repos" means exactly these four**
+— `beaver-nest` included, despite sitting outside the parity loop:
 [`ose-public`](https://github.com/wahidyankf/ose-public) (this repo, MIT — upstream source of truth),
 [`ose-primer`](https://github.com/wahidyankf/ose-primer) (MIT — downstream template),
 [`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public), and
