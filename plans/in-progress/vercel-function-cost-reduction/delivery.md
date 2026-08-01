@@ -237,7 +237,7 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     Compute changes the meter, and a meter is only readable once it has metered. The check that
     `Fluid Active CPU` / `Fluid Provisioned Memory` go non-zero **while `Function Duration` stops
     climbing** belongs to
-    [`vercel-cost-steady-state-verification`](../../../backlog/vercel-cost-steady-state-verification/README.md),
+    [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md),
     which reads a full closed cycle.
   - **Open item — does the setting bind yet?** Fluid Compute applies to **new deployments**; it does
     not retrofit the deployment already serving traffic. If no redeploy followed the toggle, the
@@ -311,7 +311,7 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     Inspection → Live Test** (authoritative, and `[HUMAN]`), or Vercel Firewall logs showing zero
     challenges issued to verified Google source IPs. Until one of those exists, this stays "Off".
   - **Follow-up filed against the successor plan**: the smoke-test design itself needs replacing in
-    [`vercel-cost-steady-state-verification`](../../../backlog/vercel-cost-steady-state-verification/README.md)
+    [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
     — a UA-header probe is the wrong instrument for an IP-verified control, and it would have
     produced the same uninterpretable result on any future re-attempt.
 
