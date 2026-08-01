@@ -11,19 +11,22 @@ import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { PRIMARY_NAV_LINKS } from "@/features/app-shell/core/nav-links";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
-import type { PathManifest } from "@/features/course-paths/core/schemas";
+import {
+  EMPTY_COURSE_PATH_CLIENT_DATA,
+  type CoursePathClientData,
+} from "@/features/course-paths/shell/course-path-nav";
 
 interface HeaderProps {
   locale: string;
   // Course-paths plan (Cycle 2.9) — optional/additive, threaded through to MobileNav so it can
   // detect an active path context and swap its drawer content.
-  manifests?: readonly PathManifest[];
-  courseTitles?: Readonly<Record<string, string>>;
+  pathData?: CoursePathClientData;
 }
 
-export function Header({ locale, manifests, courseTitles }: HeaderProps) {
+export function Header({ locale, pathData = EMPTY_COURSE_PATH_CLIENT_DATA }: HeaderProps) {
   const { setOpen: setSearchOpen } = useSearchOpen();
   // Course-paths plan (Cycle 2.9) — lifted from a local useState into a shared context so
   // PathBanner's "open path course list" trigger can open this exact same drawer.
@@ -100,16 +103,19 @@ export function Header({ locale, manifests, courseTitles }: HeaderProps) {
           <Search className="h-5 w-5" />
         </Button>
 
-        <LanguageSwitcher locale={locale} />
+        <Suspense fallback={null}>
+          <LanguageSwitcher locale={locale} />
+        </Suspense>
         <ThemeToggle />
 
-        <MobileNav
-          locale={locale}
-          open={mobileOpen}
-          onOpenChange={setMobileOpen}
-          manifests={manifests}
-          courseTitles={courseTitles}
-        />
+        <Suspense fallback={null}>
+          <MobileNav
+            locale={locale}
+            open={mobileOpen}
+            onOpenChange={setMobileOpen}
+            pathData={pathData}
+          />
+        </Suspense>
       </div>
     </header>
   );

@@ -137,6 +137,50 @@ export interface CoursePathData {
   libraryCourseIds: readonly string[];
 }
 
+/**
+ * The serializable subset of {@link CoursePathData} a client-side course-page
+ * chrome needs. `contentMap` deliberately becomes a plain course-ID lookup:
+ * React Server Component props must not pass the server-side `Map`, while the
+ * browser only needs each course's already-resolved title and slug.
+ */
+export interface CoursePathClientData {
+  manifests: readonly PathManifest[];
+  prerequisitesByCourse: PrerequisitesByCourse;
+  libraryCourseIds: readonly string[];
+  courseLinks: Readonly<Record<string, PageLink>>;
+}
+
+/** Safe fallback while a statically generated page refreshes deployment data. */
+export const EMPTY_COURSE_PATH_CLIENT_DATA: CoursePathClientData = {
+  manifests: [],
+  prerequisitesByCourse: {},
+  libraryCourseIds: [],
+  courseLinks: {},
+};
+
+/** Convert route-loaded data into the safe prop shape used by client chrome. */
+export function toCoursePathClientData(data: CoursePathData, locale: string): CoursePathClientData {
+  const courseLinks: Record<string, PageLink> = {};
+  for (const courseId of data.libraryCourseIds) {
+    const link = pageLinkForCourseId(data.contentMap, locale, courseId);
+    if (link) {
+      courseLinks[courseId] = link;
+    }
+  }
+
+  return {
+    manifests: data.manifests,
+    prerequisitesByCourse: data.prerequisitesByCourse,
+    libraryCourseIds: data.libraryCourseIds,
+    courseLinks,
+  };
+}
+
+/** Derive the path-rail title lookup from serializable client route data. */
+export function courseTitlesFromClientData(data: CoursePathClientData): Readonly<Record<string, string>> {
+  return Object.fromEntries(Object.entries(data.courseLinks).map(([courseId, link]) => [courseId, link.title]));
+}
+
 /** Everything `<ROUTE>` needs to render a course page's path-aware chrome, resolved in one call. */
 export interface CoursePathRenderData {
   activeContext: ActiveCoursePathContext | null;
@@ -200,6 +244,41 @@ export function resolveCoursePathRenderData(
       ? pageLinkForCourseId(data.contentMap, locale, activeContext.nav.next.id)
       : null
     : fallbackNext;
+
+  return { activeContext, prerequisiteLinks, pathBadges, prev, next };
+}
+
+/**
+ * Client-side counterpart of {@link resolveCoursePathRenderData}. It keeps
+ * `?path=` request state out of the statically rendered route while retaining
+ * the identical path-aware navigation rules after hydration.
+ */
+export function resolveCoursePathClientRenderData(
+  searchParams: URLSearchParams,
+  data: CoursePathClientData,
+  courseId: string,
+  fallbackPrev: PageLink | null,
+  fallbackNext: PageLink | null,
+): CoursePathRenderData {
+  const activeContext = resolveActiveCoursePathContext(searchParams, data.manifests, courseId);
+  const activeManifestCourseIds = activeContext
+    ? new Set(activeContext.manifest.courseOrder.map((ref) => normalizeCourseRef(ref).id))
+    : null;
+
+  const prerequisiteLinks: PrerequisiteLink[] = resolvePrerequisites(
+    courseId,
+    data.prerequisitesByCourse,
+    data.libraryCourseIds,
+  ).flatMap((id) => {
+    const link = data.courseLinks[id];
+    if (!link) return [];
+    const pathId = activeContext && activeManifestCourseIds?.has(id) ? activeContext.pathId : undefined;
+    return [{ ...link, pathId }];
+  });
+
+  const pathBadges = activeContext === null ? derivePathBadges(data.manifests, courseId) : [];
+  const prev = activeContext ? (activeContext.nav.prev ? data.courseLinks[activeContext.nav.prev.id] ?? null : null) : fallbackPrev;
+  const next = activeContext ? (activeContext.nav.next ? data.courseLinks[activeContext.nav.next.id] ?? null : null) : fallbackNext;
 
   return { activeContext, prerequisiteLinks, pathBadges, prev, next };
 }

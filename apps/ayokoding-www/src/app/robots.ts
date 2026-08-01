@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://ayokoding.com/sitemap.xml",
+    sitemap: "https://www.ayokoding.com/sitemap.xml",
   };
 }

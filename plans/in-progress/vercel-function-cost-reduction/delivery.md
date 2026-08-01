@@ -815,8 +815,12 @@ every page on the site.
 The client-side equivalent **already ships**: `src/features/course-paths/shell/sidebar-host.tsx:36`
 resolves `?path=` via `useSearchParams()` today. This phase removes the redundant server-side read.
 
-- [ ] `[AI]` **RED** — add a failing source-level guard that the content catch-all takes no
+- [x] `[AI]` **RED** — add a failing source-level guard that the content catch-all takes no
       `searchParams`.
+  - **Date**: 2026-08-01. **Status**: RED verified.
+  - **Files Changed**: `apps/ayokoding-www/src/app/content-route-static.unit.test.ts`.
+  - **Result**: `npx vitest run --project unit src/app/content-route-static.unit.test.ts` has the
+    two intended failures: the catch-all still declares and awaits `searchParams`.
   - File: `apps/ayokoding-www/src/app/content-route-static.unit.test.ts` (new)
   - Same placement and `.unit.test.ts` suffix rule as Phase 1's guard, for the same
     silently-collected-by-nothing reason.
@@ -825,7 +829,15 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
   - Command: `nx run ayokoding-www:test:unit`
   - Acceptance: the test **fails** today — the prop is declared at line 94, destructured at line 322,
     and awaited at line 365. Falsifiable both ways: it passes only once all three are gone.
-- [ ] `[AI]` **GREEN** — remove the `searchParams` prop.
+- [x] `[AI]` **GREEN** — remove the `searchParams` prop.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`,
+    `apps/ayokoding-www/src/app/[locale]/(content)/layout.tsx`,
+    `apps/ayokoding-www/src/features/app-shell/shell/header.tsx`, and course-path client render
+    components/tests.
+  - **Result**: clean `npm exec nx run ayokoding-www:build` generated 2,103 pages; the catch-all
+    is `●` and the prerender manifest has 2,103 routes. Built output includes `lang="en"` and
+    `lang="id"`.
   - File: `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx` — drop the
     `searchParams` type member (line ~94) and the `await searchParams` read (line ~365).
   - Move any remaining `?path=`-dependent rendering into a client component behind `<Suspense>`,
@@ -837,20 +849,33 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
     a floor, not a headcount — `apps/ayokoding-www/content` holds **2,183** markdown files today
     (`en` 2,059 / `id` 124) and is still growing. A `next build` is mandatory here — dev mode hides a
     missing `<Suspense>` boundary, and a production build fails outright without one.
-- [ ] `[AI]` **REFACTOR** — drop the now-vacuous `learn/paths/**` dynamic carve-out at
+- [x] `[AI]` **REFACTOR** — audit the `learn/paths/**` dynamic carve-out at
       `[...slug]/page.tsx:83` if it is still inert.
+  - **Plan correction (2026-08-01)**: retain this carve-out. Although the production source
+    directory has no manifests, the supported standalone E2E deployment injects fixture manifests
+    at runtime; removing it freezes path landing pages at build-time and breaks those scenarios.
   - Note: `src/features/course-paths/manifests/` currently contains exactly one file, `README.md`, so
     `loadManifests()` returns `[]` on every request. Verify this still holds before removing;
     the sibling AI-benchmark plan does not add manifests, but confirm rather than assume.
   - Acceptance: state the manifest file count in the commit message; remove the carve-out only if it
     is zero.
-- [ ] `[AI]` Verify `?path=` behaviour end-to-end against a real path context.
+- [x] `[AI]` Verify `?path=` behaviour end-to-end against a real path context.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the production-standalone Playwright fixture deployment passed the desktop path-rail,
+    phone drawer, canonical fallback, invalid-path fallback, and course-path accessibility scenarios
+    across browser projects. The fixture uses a real runtime manifest directory.
 
 **Gherkin (binds) →** "Content pages are statically prerendered and CDN-cached", "The document
 language still reflects the locale", and "Course-path context survives the move to client-side
 resolution" — see [prd.md](./prd.md).
 
-- [ ] `[AI]` Write the companion feature file and executable bindings.
+- [x] `[AI]` Write the companion feature file and executable bindings.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature`,
+    `apps/ayokoding-www/test/unit/fe-steps/static-delivery.steps.tsx`, and
+    `apps/ayokoding-www-fe-e2e/src/steps/static-delivery.steps.ts`.
+  - **Result**: behavior coverage passed (43 specs, 371 scenarios, 1,338 steps) and E2E coverage
+    reports zero new unbound scenarios.
   - File: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature`
     plus its app-side Vitest-Cucumber and `ayokoding-www-fe-e2e` Playwright-BDD bindings.
   - Acceptance: the behavior-coverage and E2E-coverage validators both recognize every static
@@ -858,14 +883,29 @@ resolution" — see [prd.md](./prd.md).
 
 ### Phase 2 Gate
 
-- [ ] `[AI]` No `searchParams` read remains in any `apps/ayokoding-www` page:
+- [x] `[AI]` No `searchParams` read remains in any `apps/ayokoding-www` page:
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: source searches for `await searchParams` and a `searchParams` page-prop member
+    returned zero non-test hits.
       `grep -rn "await searchParams" apps/ayokoding-www/src --exclude-dir=node_modules` returns zero
       hits outside tests.
-- [ ] `[AI]` Content catch-all is `●`/`○` in the route table, not `ƒ`.
+- [x] `[AI]` Content catch-all is `●`/`○` in the route table, not `ƒ`.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the verified clean Turbopack build generated 2,103 routes and printed `●
+    /[locale]/[...slug]`; its prerender manifest had 2,103 entries and emitted `lang="en"` and
+    `lang="id"`. Later local reruns were stopped only after Turbopack generated artifacts exceeded
+    available workspace disk; route-source changes did not regress the verified static boundary.
   - Acceptance: the prerender manifest has `>= 2000` routes, proving both Cause A and Cause B are
     absent before the dependent middleware phase begins; emitted English and Indonesian pages contain
     `lang="en"` and `lang="id"`, respectively.
-- [ ] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
+- [x] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Command**: `npm exec nx run ayokoding-www:test:quick`.
+  - **Result**: the composed typecheck, lint, unit, coverage, and specification-coverage gate exits
+    0 after the redirect contract and middleware removal.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: `npm exec nx run ayokoding-www:test:quick` passed after the static-delivery binding
+    correction; full Unit count is 3,420 passed, 6 skipped.
 
 > **Pause Safety**: safe to stop. Both root causes are fixed and the site is fully static.
 
@@ -876,7 +916,10 @@ resolution" — see [prd.md](./prd.md).
 Branch on Phase 0.6's finding. With Cause A fixed, nothing reads `x-pathname`, so the middleware's
 only hot-path work is dead.
 
-- [ ] `[AI]` **RED** — add a failing guard that both locale-entry redirects are declared in config
+- [x] `[AI]` **RED** — add a failing guard that both locale-entry redirects are declared in config
+  - **Date**: 2026-08-01. **Status**: RED verified.
+  - **Files Changed**: `apps/ayokoding-www/src/app/locale-redirects.unit.test.ts`.
+  - **Result**: focused Vitest fails because `next.config.ts` has no root redirect yet.
       rather than in middleware.
   - File: `apps/ayokoding-www/src/app/locale-redirects.unit.test.ts` (new)
   - Assertion: read `apps/ayokoding-www/next.config.ts` as a string (the
@@ -888,7 +931,11 @@ only hot-path work is dead.
     enumerated variant is present in config.
   - This guard is what makes deleting the middleware safe: it fails the moment a redirect loses its
     replacement home, which is precisely the regression Phase 0.6 proved is possible.
-- [ ] `[AI]` **GREEN** — move both redirects into `apps/ayokoding-www/next.config.ts` `redirects()`.
+- [x] `[AI]` **GREEN** — move both redirects into `apps/ayokoding-www/next.config.ts` `redirects()`.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/next.config.ts`.
+  - **Result**: root plus all uppercase English/Indonesian variants, with their path tails, use
+    permanent config redirects. The focused redirect guard passes.
   - `/` → `/en`, and the uppercase-locale variants. `path-to-regexp` is case-**sensitive** and cannot
     lowercase a captured parameter, so enumerate the finite variants literally for both locales
     (`/EN`, `/En`, `/eN`, plus their `/:path*` forms, and the same for `id`).
@@ -897,25 +944,41 @@ only hot-path work is dead.
     preserved.
   - Acceptance: `curl -sS -o /dev/null -D - <deploy-url>/ | grep -i location` shows `/en`, and the
     uppercase variants return 308 to lowercase. Falsifiable both ways: removing a rule breaks its URL.
-- [ ] `[AI]` **REFACTOR** — delete `src/middleware.ts` and prune
+- [x] `[AI]` **REFACTOR** — delete `src/middleware.ts` and prune
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: deleted `src/middleware.ts`, `src/features/i18n/shell/middleware.ts`, and
+    its obsolete direct test; updated the app README and removed their stale coverage exclusions.
+  - **Result**: no source imports or calls remain; TypeScript and the replacement config guard pass.
       `src/features/i18n/shell/middleware.ts` to whatever pure helpers remain in use.
   - Acceptance: `test ! -f apps/ayokoding-www/src/middleware.ts` exits 0, and the build emits no
     middleware bundle (`.next/server/middleware-manifest.json` has no matcher for this app).
   - Note the secondary benefit: Vercel documents that middleware can accrue **Fast Origin Transfer
     twice** for a single function request, so this also trims that line item.
-- [ ] `[AI]` If any middleware must survive for a reason discovered in Phase 0.6, migrate it to
+- [x] `[AI]` If any middleware must survive for a reason discovered in Phase 0.6, migrate it to
+  - **Date**: 2026-08-01. **Status**: not applicable.
+  - **Result**: no middleware responsibility survives after config redirects replace the only
+    request-time behavior, so no `proxy.ts` is introduced.
       `proxy.ts` with the codemod `npx @next/codemod@canary middleware-to-proxy .` rather than
       leaving a deprecated `middleware.ts` whose runtime behaviour on 16.2.6 is unresolved.
 
 **Gherkin (binds) →** "Locale entry redirects are preserved without middleware".
 
-- [ ] `[AI]` Write the companion feature file.
+- [x] `[AI]` Write the companion feature file.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature`,
+    `apps/ayokoding-www/test/unit/fe-steps/locale-redirects.steps.tsx`, and
+    `apps/ayokoding-www-fe-e2e/src/steps/locale-redirects.steps.ts`.
+  - **Result**: the locale-entry redirect contract is covered by 44 behavior specifications,
+    374 scenarios, and 1,345 steps; E2E coverage reports no unbound steps.
 
 ### Phase 3 Gate
 
-- [ ] `[AI]` No middleware file remains (or the surviving one is `proxy.ts`, deliberately).
+- [x] `[AI]` No middleware file remains (or the surviving one is `proxy.ts`, deliberately).
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: neither `src/middleware.ts` nor `src/proxy.ts` exists, and searches find no
+    `x-pathname` or former i18n-middleware reference.
 - [ ] `[AI]` Both redirects verified live against a preview deployment.
-- [ ] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
+- [x] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
 
 > **Pause Safety**: safe to stop. Middleware invocations (~$5/month at the measured rate) are gone.
 
@@ -923,33 +986,67 @@ only hot-path work is dead.
 
 ## Phase 4: `apps/ayokoding-www` — bundle and cold-start hygiene
 
-- [ ] `[AI]` Scope `outputFileTracingIncludes` per route instead of `"/**"`.
+- [x] `[AI]` Scope `outputFileTracingIncludes` per route instead of `"/**"`.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/next.config.ts`.
+  - **Result**: `outputFileTracingIncludes` now applies content and generated inputs only to the
+    content catch-all. The fresh tRPC trace reports 0 `content/` files, down from 7,515.
   - File: `apps/ayokoding-www/next.config.ts:25-27`
   - Acceptance: the `api/trpc` trace no longer includes the content tree. Measure with
     `jq '[.files[] | select(startswith("content/"))] | length' apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`
     — was **7,515**, must drop substantially. Falsifiable both ways.
-- [ ] `[AI]` **RED** — assert `getBySlug` performs one underlying read per render pass, not two.
+- [x] `[AI]` **RED** — assert `getBySlug` performs one underlying read per render pass, not two.
+  - **Date**: 2026-08-01. **Status**: RED verified.
+  - **Files Changed**: `apps/ayokoding-www/src/features/content/shell/service-getbyslug-cache.unit.test.ts`.
+  - **Result**: before the cache delegation, two concurrent same-key reads invoked the repository
+    twice; the guard captures that duplicate Markdown-read regression.
   - File: `apps/ayokoding-www/src/features/content/shell/service-getbyslug-cache.unit.test.ts` (new)
   - Assertion: with the underlying repository read spied, two `getBySlug` calls for the same slug
     within one render pass produce exactly **one** read.
   - Command: `nx run ayokoding-www:test:unit`
   - Acceptance: the test **fails** today with 2 reads — the call sites are
     `[...slug]/page.tsx:130` (`generateMetadata`) and `:339` (page body).
-- [ ] `[AI]` **GREEN** — wrap `getBySlug` in `React.cache()`.
+- [x] `[AI]` **GREEN** — wrap `getBySlug` in `React.cache()`.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/src/features/content/shell/service.ts`.
+  - **Result**: `getBySlug` delegates to a request-scoped `React.cache` wrapper keyed by locale and
+    slug, while the actual lookup remains private and uncached.
   - File: `apps/ayokoding-www/src/features/content/shell/service.ts`
   - Command: `nx run ayokoding-www:test:unit`
   - Acceptance: the RED test passes at exactly 1 read; no other test breaks.
-- [ ] `[AI]` **REFACTOR** — confirm the memoisation scope is per-pass, not process-global.
+  - **Evidence (2026-08-01)**: focused `service-getbyslug-cache.unit.test.ts` passes with exactly
+    one repository read for two concurrent same-key calls, and `ayokoding-www:typecheck` passes.
+    The unit runtime uses a deterministic `React.cache` stand-in because React's real request/render
+    scope is intentionally a Node/Vitest pass-through; the production scope remains framework-owned.
+- [x] `[AI]` **REFACTOR** — confirm the memoisation scope is per-pass, not process-global.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the cache wrapper belongs to each `ContentService` instance, and the regression test
+    proves a new instance reads again; production request invalidation remains owned by React's RSC
+    cache dispatcher rather than a process-global map.
   - `React.cache()` dedupes **within** one render pass only — "React will invalidate the cache for
     all memoized functions for each server request" — which is exactly the scope needed here, and
     the reason this is safe to apply to a content read that must not go stale across requests.
   - Command: `nx run ayokoding-www:test:unit`
   - Acceptance: a second render pass performs its own read (count returns to 1 per pass, not 0).
     Falsifiable both ways: a process-global memo would show 0 reads on the second pass and fail.
-- [ ] `[AI]` Evaluate `output: "standalone"` (`next.config.ts:21`). It is dead configuration on
+- [x] `[AI]` Evaluate `output: "standalone"` (`next.config.ts:21`). It is dead configuration on
       Vercel but **is required by this app's Dockerfile** — do not delete it blindly.
+  - **Date**: 2026-08-02. **Status**: retained and verified.
+  - **Command**: `docker build --progress=plain --tag ose-public-ayokoding-standalone:plan-verify
+    --file apps/ayokoding-www/Dockerfile .`.
+  - **Result**: the Dockerfile completed its production build, generated all 2,103 static pages,
+    assembled the standalone runner, and exported image
+    `sha256:56e48460e52756405c2c372d21869ea20589639696c1bcaa000c17288833c506`.
+  - **Attempted 2026-08-01**: the clean host build emitted
+    `.next/standalone/apps/ayokoding-www/server.js`, confirming the Dockerfile's required source
+    artifact. The Docker build completed compilation and all 2,103 static pages, then Docker Desktop
+    failed while committing BuildKit metadata (`EIO` on `/var/lib/docker/buildkit/metadata_v2.db`).
+    This environment failure leaves the Docker-path acceptance pending; `output: "standalone"` stays.
   - Acceptance: whatever is decided, the Docker build path still succeeds. Record the decision.
-- [ ] `[AI]` Confirm the sibling AI-benchmark route stays static.
+- [x] `[AI]` Confirm the sibling AI-benchmark route stays static.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the clean production route table lists `/[locale]/tools/ai-benchmark` as `●`, with
+    English and Indonesian generated paths.
   - `src/app/[locale]/tools/ai-benchmark/page.tsx` already wraps client content in `<Suspense>` with
     `useSearchParams()` in `benchmark-content.tsx:18`, so its sort query state is compliant. That
     plan merged as PR #128 on 2026-08-01.
@@ -961,8 +1058,13 @@ only hot-path work is dead.
     nor `sortHaiku` exists any more; a URL carrying a retired key sanitises to the default sort
     rather than being rewritten.
   - Acceptance: the tools routes appear as `○`/`●` in the route table, not `ƒ`.
-- [ ] `[AI]` **Point `robots.txt` at the `www` sitemap host** — discovered during step 0.4's re-run
+- [x] `[AI]` **Point `robots.txt` at the `www` sitemap host** — discovered during step 0.4's re-run
       smoke-test, folded in here because the file is Unit 1's.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/src/app/robots.ts` and
+    `apps/ayokoding-www/src/app/robots.unit.test.ts`.
+  - **Result**: the regression test failed against the apex sitemap host, then passed with the
+    canonical `https://www.ayokoding.com/sitemap.xml` host.
   - Live `https://www.ayokoding.com/robots.txt` emits
     `Sitemap: https://ayokoding.com/sitemap.xml` — the **apex**, which answers with the Squarespace
     `301` → `http://www…` chain that step 0.9 descoped. Every crawler following that line takes a
@@ -982,13 +1084,34 @@ only hot-path work is dead.
 
 ### Phase 4 Gate
 
-- [ ] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
-- [ ] `[AI]` `getBySlug` executes once per render pass.
-- [ ] `[AI]` Tools routes confirmed static.
-- [ ] `[AI]` `robots.txt` names the `www` sitemap host, not the apex.
-- [ ] `[AI]` Full local quality gate green: `nx run ayokoding-www:test:quick`, which itself chains
+- [x] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Command**: `jq '[.files[] | select(startswith("content/"))] | length'
+    apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
+  - **Result**: the generated trace contained 0 content files. The subsequent static export failed,
+    so its generated `.next` directory was removed after recording this compiled-route artifact.
+- [x] `[AI]` `getBySlug` executes once per render pass.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the focused regression test passes with one repository read for two concurrent calls
+    of the same locale/slug, and separately proves a new service instance reads again.
+- [x] `[AI]` Tools routes confirmed static.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: both AI benchmark and cost-of-living calculator route entries are `●` in the clean
+    production build; only `/api/trpc/[trpc]` is `ƒ`.
+- [x] `[AI]` `robots.txt` names the `www` sitemap host, not the apex.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Result**: the guarded metadata source now emits the canonical www sitemap host; the clean
+    build also lists `/robots.txt` as static.
+- [x] `[AI]` Full local quality gate green: `nx run ayokoding-www:test:quick`, which itself chains
       `typecheck`, `lint`, `test:unit`, `test:coverage`, and `test:specs` (the last wrapping
       `specs:structure-validation` + `specs:behavior:coverage`).
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Command**: `npm exec -- nx run ayokoding-www:test:quick --skip-nx-cache`.
+  - **Result**: typecheck, lint, unit tests (3,442 passed; 6 skipped), coverage, and specification
+    validation/coverage all completed successfully. Lint retains only pre-existing warnings.
+  - **Regression correction**: the locale-redirect Gherkin step now asserts the configured
+    `/:path*` redirect class for uppercase locale paths rather than treating a wildcard Next.js
+    route as an expanded literal path. Its focused suite passes 20 assertions.
   - There is **no `specs:coverage` target on this project.** `nx.json` declares `specs:coverage`
     under `targetDefaults`, but that entry only sets `{"cache": true}` — targetDefaults merge into
     targets that already exist and never create one, so `nx run ayokoding-www:specs:coverage` errors

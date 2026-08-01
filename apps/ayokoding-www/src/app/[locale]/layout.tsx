@@ -12,7 +12,7 @@ import { Footer } from "@/features/app-shell/shell/footer";
 import { SkipLink } from "@/features/app-shell/shell/skip-link";
 import { MobileNavOpenProvider } from "@/features/app-shell/shell/mobile-nav-open-provider";
 import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
-import { buildCourseTitleIndex } from "@/features/course-paths/shell/course-path-nav";
+import { toCoursePathClientData } from "@/features/course-paths/shell/course-path-nav";
 
 export const metadata: Metadata = {
   title: {
@@ -43,7 +43,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   // Course-paths plan (Cycle 2.9) — loaded here (not per-page) so the header's mobile nav drawer
   // can detect an active path context on every route, not just under (content)/.
   const pathData = await loadRoutePathData(locale);
-  const courseTitles = buildCourseTitleIndex(pathData.contentMap, locale, pathData.manifests);
+  const clientPathData = toCoursePathClientData(pathData, locale);
 
   return (
     <html lang={(await params).locale} suppressHydrationWarning>
@@ -54,7 +54,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               <MobileNavOpenProvider>
                 <SkipLink locale={locale} />
                 <div className="flex min-h-screen flex-col">
-                  <Header locale={locale} manifests={pathData.manifests} courseTitles={courseTitles} />
+                  <Header locale={locale} pathData={clientPathData} />
                   <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
                     {children}
                   </main>

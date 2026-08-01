@@ -18,10 +18,16 @@ import { t } from "@/features/i18n/core/translations";
 import type { Locale } from "@/features/i18n/core/config";
 import { PRIMARY_NAV_LINKS } from "@/features/app-shell/core/nav-links";
 import { resolveActiveCourseFromLocation } from "@/features/course-paths/shell/course-path-nav";
+import {
+  courseTitlesFromClientData,
+  EMPTY_COURSE_PATH_CLIENT_DATA,
+  type CoursePathClientData,
+} from "@/features/course-paths/shell/course-path-nav";
 import { PathRail } from "@/features/course-paths/shell/path-rail";
 import { MOBILE_NAV_DRAWER_ID } from "@/features/course-paths/shell/path-banner";
 import type { PathManifest } from "@/features/course-paths/core/schemas";
 import { useMobileNavOpen } from "@/features/app-shell/shell/use-mobile-nav-open";
+import { useRuntimeCoursePathData } from "@/features/course-paths/shell/use-runtime-course-path-data";
 
 interface MobileNavProps {
   locale: string;
@@ -29,6 +35,8 @@ interface MobileNavProps {
   onOpenChange: (open: boolean) => void;
   // Course-paths plan (Cycle 2.9) — optional/additive so every pre-existing call site (that
   // renders no path chrome) stays valid unchanged.
+  pathData?: CoursePathClientData;
+  /** Legacy test and integration props; runtime data supersedes them after hydration. */
   manifests?: readonly PathManifest[];
   courseTitles?: Readonly<Record<string, string>>;
 }
@@ -49,11 +57,23 @@ const MOBILE_NAV_WIDTH_PRESETS = [
   { id: "wide", labelKey: "mobileNavWidthWide", widthPx: 360 },
 ] as const;
 
-export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTitles = {} }: MobileNavProps) {
+export function MobileNav({
+  locale,
+  open,
+  onOpenChange,
+  pathData,
+  manifests = [],
+  courseTitles: initialTitles,
+}: MobileNavProps) {
   const [tree, setTree] = useState<TreeNode[]>([]);
   const [widthPx, setWidthPx] = useState<number>(MOBILE_NAV_WIDTH_PRESETS[0].widthPx);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const runtimePathData = useRuntimeCoursePathData(
+    locale,
+    pathData ?? { ...EMPTY_COURSE_PATH_CLIENT_DATA, manifests },
+  );
+  const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData);
   // Cycle 3.4 — the control that opened this drawer (header menu button or `PathBanner`'s "View
   // path" button) is a plain, context-driven trigger, not a `Dialog.Trigger`, so Radix's own
   // close-focus restoration never applies (see `use-mobile-nav-open.ts`). Restore it ourselves.
@@ -63,7 +83,7 @@ export function MobileNav({ locale, open, onOpenChange, manifests = [], courseTi
   // MobileNav (hosted from `[locale]/layout.tsx` via `Header`, structurally disconnected from
   // `<ROUTE>`) detects the active path context itself — the same client-side pattern
   // `SidebarHost` uses for the desktop rail (Cycle 2.8).
-  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, manifests);
+  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, runtimePathData.manifests);
 
   // Mount-effect read of the persisted preset width — mirrors the pattern
   // `useResizableWidth` (libs/web-ui) uses for the desktop rail. Only one of

@@ -79,7 +79,7 @@ IO, React, or wiring) → `shell/`.
 | `health`       | `[shell]`       | —                                                                                                                           | tRPC `meta.health` liveness probe                                                                                                                                         |
 
 Other modules and pages import feature code directly from the file in `core/` or `shell/`
-(e.g. `@/features/content/core/schemas`, `@/features/i18n/shell/middleware`). The cardinal
+(e.g. `@/features/content/core/schemas`, `@/features/content/shell/service`). The cardinal
 rule is one-directional: `shell/` may depend on `core/`, but `core/` must never depend on
 `shell/`.
 
@@ -97,19 +97,11 @@ container. Both perspectives execute inside this single `web` Next.js process. T
 rename `be` → `api` reflects this (the `organiclever` peer keeps `be` because
 `organiclever-be` is a real F#/Giraffe deployment).
 
-## i18n middleware ownership
+## i18n entry redirects
 
-The Next.js middleware lives at the conventional path `src/middleware.ts` but is reduced to
-a one-line re-export from the `i18n` feature module's shell zone:
-
-```ts
-export { middleware, config } from "./features/i18n/shell/middleware";
-```
-
-The actual implementation (locale negotiation, `/` redirect to `/<DEFAULT_LOCALE>`) lives in
-`src/features/i18n/shell/middleware.ts`. This keeps `next dev` and `next build` happy
-(they find the middleware where Next.js expects it) while putting all i18n code under the
-`i18n` feature module's ownership.
+Locale entry redirects live in `next.config.ts`. The root route redirects permanently to `/en`, and
+the finite uppercase variants of `en` and `id` redirect to their lowercase canonical paths. Keeping
+these rules in Next.js configuration avoids request-time middleware for every page view.
 
 ## Related
 

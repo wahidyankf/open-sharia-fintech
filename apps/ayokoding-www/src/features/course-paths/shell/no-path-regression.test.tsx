@@ -106,7 +106,7 @@ import { SidebarHost } from "./sidebar-host";
 // eslint-disable-next-line import/first
 import { MobileNav } from "@/features/app-shell/shell/mobile-nav";
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../../../../test/unit/render-course-path-page";
 
 afterEach(() => {
   cleanup();
@@ -153,10 +153,7 @@ describe("Cycle 2.10 — no-path regression guard (direction 1: no ?path=)", () 
     mockPathname = "/en/learn/courses/just-enough-python";
     mockSearchParams = new URLSearchParams();
 
-    const jsx = await ContentPage({
-      params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-      searchParams: Promise.resolve({}),
-    });
+    const jsx = await renderCoursePathPage({ locale: "en", slug: ["learn", "courses", "just-enough-python"], search: {} });
     render(jsx);
 
     // No path crumb in the breadcrumb (canonical trail only) — "Python Fundamentals" may
@@ -205,9 +202,10 @@ describe("Cycle 2.10 — no-path regression guard (direction 2: valid ?path=)", 
     mockPathname = "/en/learn/courses/just-enough-python";
     mockSearchParams = new URLSearchParams({ path: fixtureManifest.pathId });
 
-    const jsx = await ContentPage({
-      params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-      searchParams: Promise.resolve({ path: fixtureManifest.pathId }),
+    const jsx = await renderCoursePathPage({
+      locale: "en",
+      slug: ["learn", "courses", "just-enough-python"],
+      search: { path: fixtureManifest.pathId },
     });
     render(jsx);
 

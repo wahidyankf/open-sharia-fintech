@@ -102,15 +102,12 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 }));
 
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../../../../test/unit/render-course-path-page";
 
 afterEach(cleanup);
 
 function renderCoursePage(slug: string[], searchParams: Record<string, string | string[] | undefined> = {}) {
-  return ContentPage({
-    params: Promise.resolve({ locale: "en", slug }),
-    searchParams: Promise.resolve(searchParams),
-  });
+  return renderCoursePathPage({ locale: "en", slug, search: searchParams });
 }
 
 describe("Cycle 2.2 — route wiring: prev/next follow the active path's order", () => {

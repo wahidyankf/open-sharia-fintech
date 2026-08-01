@@ -102,7 +102,7 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 }));
 
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../render-course-path-page";
 // eslint-disable-next-line import/first
 import { htmlLang } from "@/features/i18n/core/html-lang";
 
@@ -120,9 +120,10 @@ const feature = await loadFeature(
 describeFeature(feature, ({ Scenario }) => {
   Scenario("The navigation feature meets accessibility requirements", ({ Given, When, Then, And }) => {
     Given("a reader uses a keyboard and a screen reader on a course in path context", async () => {
-      const jsx = await ContentPage({
-        params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-        searchParams: Promise.resolve({ path: fixtureManifest.pathId }),
+      const jsx = await renderCoursePathPage({
+        locale: "en",
+        slug: ["learn", "courses", "just-enough-python"],
+        search: { path: fixtureManifest.pathId },
       });
       cleanup();
       render(jsx);
