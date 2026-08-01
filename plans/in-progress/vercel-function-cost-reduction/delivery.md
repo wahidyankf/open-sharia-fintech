@@ -1035,11 +1035,12 @@ Independent of Unit 1; runs in parallel in its own worktree.
     `static-filterable-routes.feature`, its Vitest and Playwright step bindings, and the feature
     indexes.
   - **Result**: the direct CV query URL pre-fills `TypeScript`, shows a matching entry, and hides an
-    unrelated one. Cycle-1 review added executable static-route and crawler-directive scenarios:
-    the former inspects both emitted manifests, while the latter fetches `robots.txt` and
-    `sitemap.xml` from the production server. Local fixer verification records 20 unit files / 199
-    tests, 8 specs / 40 scenarios / 95 steps, zero new unbound E2E scenarios, and 32 passing
-    Chromium tests.
+    unrelated one. The uncached app `static-routes:validation` gate independently inspects the
+    emitted manifests for static-route proof. The complementary E2E scenarios are black-box HTTP
+    assertions: the required target builds a fresh production Docker image, waits for its health
+    check, then verifies every public HTML route plus `robots.txt` and `sitemap.xml` without reading
+    checkout artifacts. Local fixer verification records 20 unit files / 198 tests, 8 specs / 40
+    scenarios / 95 steps, zero new unbound E2E scenarios, and 32 passing Chromium tests.
 
 ### Phase 5 Gate
 
@@ -1061,9 +1062,9 @@ Independent of Unit 1; runs in parallel in its own worktree.
       Phase 4).
   - **Date**: 2026-08-02. **Status**: done.
   - **Files Changed**: none (verification only).
-  - **Result**: before the Cycle-1 review correction, `npm exec -- nx run
-    wahidyankf-www:test:quick --skip-nx-cache` exited 0 after typecheck, lint, 20 test files / 191
-    unit tests, 97.38% line coverage, specs structure with 0 findings, and behavior coverage of 8
+  - **Result**: before the Cycle-1 review correction, an uncached `wahidyankf-www:test:quick` run
+    exited 0 after typecheck, lint, 20 test files / 191 unit tests, 97.38% line coverage, specs
+    structure with 0 findings, and behavior coverage of 8
     specs / 38 scenarios / 89 steps. The correction adds the uncached manifest proof and six BDD
     steps; its replacement local gate is recorded with the corrective commit. Network access was
     needed only for the configured `npx oxlint@latest` lint invocation.

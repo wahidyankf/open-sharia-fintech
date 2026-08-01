@@ -10,10 +10,7 @@ Playwright and `playwright-bdd`. Consumes the Gherkin feature files at
 # Install Chromium for Playwright
 nx run wahidyankf-www-fe-e2e:install
 
-# Start the app first in another shell
-nx dev wahidyankf-www
-
-# Run all E2E scenarios headlessly
+# Build a fresh production Docker image, wait for its health check, and run all E2E scenarios
 nx run wahidyankf-www-fe-e2e:test:e2e
 
 # Run with Playwright UI
@@ -35,8 +32,16 @@ nx run wahidyankf-www-fe-e2e:test:quick
 - `personal-projects.feature`
 - `responsive.feature`
 - `accessibility.feature` — E2E-only, axe-core-driven
+- `static-filterable-routes.feature` — production-container route and crawler checks
 
 ## Default base URL
 
-`http://localhost:3201` — override with `BASE_URL` env var for staging /
-production smoke runs.
+The regular E2E command builds a fresh production Docker image, starts an isolated container on an
+ephemeral loopback port, waits for its health check, then supplies that URL to Playwright. It never
+reuses a checkout server.
+
+Set `BASE_URL` only to run the same suite against an already-running staging or production deployment:
+
+```bash
+BASE_URL=https://example.com nx run wahidyankf-www-fe-e2e:test:e2e
+```
