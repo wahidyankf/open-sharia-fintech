@@ -50,6 +50,10 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../../"),
   outputFileTracingIncludes: {
     "/[locale]/[...slug]": ["./content/**/*", "./generated/**/*"],
+    // tRPC serves navigation, search, and course-path data from the standalone
+    // function at runtime. These are filesystem reads, so trace their assets
+    // independently of the static content route.
+    "/api/trpc/[trpc]": ["./content/**/*", "./generated/**/*", "./src/features/course-paths/manifests/**/*"],
   },
   serverExternalPackages: ["flexsearch"],
   images: {

@@ -21,6 +21,12 @@ Feature: Statically delivered content pages
     Then the response is served from the CDN cache
     And the response does not carry a no-store cache directive
 
+  @unit @e2e
+  Scenario: Runtime tRPC endpoints retain their filesystem assets
+    Given the ayokoding-www standalone package is running
+    When navigation search and course-path data are requested through tRPC
+    Then every runtime data endpoint responds successfully
+
   @e2e
   Scenario Outline: The document language reflects the content-page locale
     Given a visitor opens a content page in the "<locale>" locale

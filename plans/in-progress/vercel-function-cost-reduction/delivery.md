@@ -863,6 +863,13 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
   - **Result**: the production-standalone Playwright fixture deployment passed the desktop path-rail,
     phone drawer, canonical fallback, invalid-path fallback, and course-path accessibility scenarios
     across browser projects. The fixture uses a real runtime manifest directory.
+- [x] `[AI]` **Review correction** — make the runtime path-data refresh demand-driven and shared.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `apps/ayokoding-www/src/features/course-paths/shell/use-runtime-course-path-data.ts`,
+    `sidebar-host.tsx`, `course-page-path-content.tsx`, `mobile-nav.tsx`, and their regression tests.
+  - **Result**: ordinary static page renders make no `coursePaths.getRouteData` request. A valid
+    `?path=` context or an opened mobile drawer opts into one runtime refresh; all simultaneous
+    consumers for the same locale share its in-flight request.
 
 **Gherkin (binds) →** "Content pages are statically prerendered and CDN-cached", "The document
 language still reflects the locale", and "Course-path context survives the move to client-side
@@ -991,14 +998,16 @@ only hot-path work is dead.
 ## Phase 4: `apps/ayokoding-www` — bundle and cold-start hygiene
 
 - [x] `[AI]` Scope `outputFileTracingIncludes` per route instead of `"/**"`.
-  - **Date**: 2026-08-01. **Status**: done.
+  - **Date**: 2026-08-02. **Status**: corrected after review.
   - **Files Changed**: `apps/ayokoding-www/next.config.ts`.
-  - **Result**: `outputFileTracingIncludes` now applies content and generated inputs only to the
-    content catch-all. The fresh tRPC trace reports 0 `content/` files, down from 7,515.
+  - **Result**: `outputFileTracingIncludes` applies content and generated inputs to the static
+    content catch-all and precisely to `/api/trpc/[trpc]`, with course-path manifests for the
+    latter. This retains the runtime files that navigation, search, and course-path procedures
+    read in the standalone/function package without restoring a repository-wide trace.
   - File: `apps/ayokoding-www/next.config.ts:25-27`
-  - Acceptance: the `api/trpc` trace no longer includes the content tree. Measure with
-    `jq '[.files[] | select(startswith("content/"))] | length' apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`
-    — was **7,515**, must drop substantially. Falsifiable both ways.
+  - Acceptance: the `api/trpc` trace includes `content/`, `generated/`, and course-path manifests,
+    and its standalone E2E package responds successfully to navigation, search, and course-path
+    tRPC requests. It must not regain unrelated repository-wide assets.
 - [x] `[AI]` **RED** — assert `getBySlug` performs one underlying read per render pass, not two.
   - **Date**: 2026-08-01. **Status**: RED verified.
   - **Files Changed**: `apps/ayokoding-www/src/features/content/shell/service-getbyslug-cache.unit.test.ts`.

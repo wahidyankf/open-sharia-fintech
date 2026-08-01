@@ -12,6 +12,7 @@ interface StaticDeliveryState {
   firstResponse?: import("@playwright/test").APIResponse;
   secondResponse?: import("@playwright/test").APIResponse;
   manifest?: { routes?: Record<string, unknown> };
+  runtimeDataResponses?: readonly import("@playwright/test").APIResponse[];
 }
 
 const stateByPage = new WeakMap<import("@playwright/test").Page, StaticDeliveryState>();
@@ -67,6 +68,32 @@ Then("the response is served from the CDN cache", async ({ page }) => {
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page is served from the CDN
 Then("the response does not carry a no-store cache directive", async ({ page }) => {
   expect(stateFor(page).secondResponse?.headers()["cache-control"] ?? "").not.toMatch(/\bno-store\b/i);
+});
+
+Given("the ayokoding-www standalone package is running", async ({ page }) => {
+  const response = await getResilient(page, "/api/trpc/meta.health");
+  expect(response.ok()).toBe(true);
+});
+
+When("navigation search and course-path data are requested through tRPC", async ({ page }) => {
+  const endpoint = (procedure: string, input: Record<string, string>) =>
+    `/api/trpc/${procedure}?input=${encodeURIComponent(JSON.stringify({ json: input }))}`;
+  const responses = await Promise.all([
+    getResilient(page, endpoint("content.getTree", { locale: "en" })),
+    getResilient(page, endpoint("search.query", { locale: "en", query: "AyoKoding" })),
+    getResilient(page, endpoint("coursePaths.getRouteData", { locale: "en" })),
+  ]);
+  stateFor(page).runtimeDataResponses = responses;
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
+Then("every runtime data endpoint responds successfully", async ({ page }) => {
+  const responses = stateFor(page).runtimeDataResponses;
+  expect(responses).toHaveLength(3);
+  for (const response of responses ?? []) {
+    expect(response.ok(), `${response.url()} should read its traced runtime assets`).toBe(true);
+    expect(await response.json()).toHaveProperty("result.data");
+  }
 });
 
 Given("a visitor opens a content page in the {string} locale", async ({ page }, locale: string) => {

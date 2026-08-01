@@ -72,6 +72,7 @@ export function MobileNav({
   const runtimePathData = useRuntimeCoursePathData(
     locale,
     pathData ?? { ...EMPTY_COURSE_PATH_CLIENT_DATA, manifests },
+    open || searchParams.has("path"),
   );
   const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData);
   // Cycle 3.4 — the control that opened this drawer (header menu button or `PathBanner`'s "View

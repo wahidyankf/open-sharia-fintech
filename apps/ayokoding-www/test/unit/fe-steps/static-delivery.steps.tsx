@@ -10,6 +10,8 @@ const localeLayoutPath = path.join(appRoot, "src/app/[locale]/layout.tsx");
 const contentDirectory = path.join(appRoot, "content");
 const contentPageSource = readFileSync(contentPagePath, "utf8");
 const localeLayoutSource = readFileSync(localeLayoutPath, "utf8");
+const nextConfigSource = readFileSync(path.join(appRoot, "next.config.ts"), "utf8");
+const appRouterSource = readFileSync(path.join(appRoot, "src/features/app-shell/shell/root-router.ts"), "utf8");
 
 function markdownFileCount(directory: string): number {
   return readdirSync(directory, { recursive: true }).filter(
@@ -74,8 +76,28 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
   });
 
+  Scenario("Runtime tRPC endpoints retain their filesystem assets", ({ Given, When, Then }) => {
+    Given("the ayokoding-www standalone package is running", () => {
+      expect(nextConfigSource).toContain('output: "standalone"');
+    });
+
+    When("navigation search and course-path data are requested through tRPC", () => {
+      expect(appRouterSource).toContain("navigationProcedures");
+      expect(appRouterSource).toContain("searchProcedures");
+      expect(appRouterSource).toContain("coursePathProcedures");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:Runtime tRPC endpoints retain their filesystem assets
+    Then("every runtime data endpoint responds successfully", () => {
+      expect(nextConfigSource).toMatch(/"\/api\/trpc\/\[trpc\]"\s*:/);
+      expect(nextConfigSource).toContain('"./content/**/*"');
+      expect(nextConfigSource).toContain('"./generated/**/*"');
+      expect(nextConfigSource).toContain('"./src/features/course-paths/manifests/**/*"');
+    });
+  });
+
   ScenarioOutline("The document language reflects the content-page locale", ({ Given, When, Then }, variables) => {
-    Given("a visitor opens a content page in the \"<locale>\" locale", () => {
+    Given('a visitor opens a content page in the "<locale>" locale', () => {
       expect(isValidLocale(String(variables.locale))).toBe(true);
     });
 
@@ -84,7 +106,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
 
     // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:The document language reflects the content-page locale
-    Then("the html element declares the \"<language_code>\" language code", () => {
+    Then('the html element declares the "<language_code>" language code', () => {
       expect(String(variables.locale)).toBe(String(variables.language_code));
     });
   });

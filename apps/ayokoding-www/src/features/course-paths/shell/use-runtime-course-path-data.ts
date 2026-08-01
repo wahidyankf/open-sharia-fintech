@@ -4,27 +4,52 @@ import { useEffect, useState } from "react";
 import { trpcClient } from "@/lib/trpc/client";
 import type { CoursePathClientData } from "./course-path-nav";
 
+const requestsByLocale = new Map<string, Promise<CoursePathClientData>>();
+
+function requestRuntimePathData(locale: string): Promise<CoursePathClientData> | null {
+  const coursePaths = trpcClient.coursePaths;
+  if (!coursePaths) return null;
+
+  const existing = requestsByLocale.get(locale);
+  if (existing) return existing;
+
+  const request = coursePaths.getRouteData.query(locale as "en" | "id").catch((error: unknown) => {
+    requestsByLocale.delete(locale);
+    throw error;
+  });
+  requestsByLocale.set(locale, request);
+  return request;
+}
+
 /**
- * Refresh course-path data after hydration. Static generation intentionally
- * captures no deployment-specific manifest state; this query lets a running
- * deployment supply its current manifest set without making the page dynamic.
+ * Refresh course-path data only after an active path context or opened drawer
+ * needs it. Static generation intentionally captures no deployment-specific
+ * manifest state; this opt-in query lets a running deployment supply its
+ * current manifest set without making ordinary pages dynamic or chatty.
  */
-export function useRuntimeCoursePathData(locale: string, fallback: CoursePathClientData): CoursePathClientData {
+export function useRuntimeCoursePathData(
+  locale: string,
+  fallback: CoursePathClientData,
+  enabled: boolean,
+): CoursePathClientData {
   const [data, setData] = useState(fallback);
 
   useEffect(() => {
     let active = true;
-    const coursePaths = trpcClient.coursePaths;
-
-    // Unit renderers deliberately provide their own deterministic path data;
-    // they neither run an HTTP server nor need a runtime refresh.
-    if (process.env.NODE_ENV === "test" || !coursePaths) {
+    if (!enabled) {
       return () => {
         active = false;
       };
     }
 
-    void coursePaths.getRouteData.query(locale as "en" | "id").then(
+    const request = requestRuntimePathData(locale);
+    if (!request) {
+      return () => {
+        active = false;
+      };
+    }
+
+    void request.then(
       (next) => {
         if (active) setData(next);
       },
@@ -37,7 +62,7 @@ export function useRuntimeCoursePathData(locale: string, fallback: CoursePathCli
     return () => {
       active = false;
     };
-  }, [locale]);
+  }, [enabled, locale]);
 
   return data;
 }

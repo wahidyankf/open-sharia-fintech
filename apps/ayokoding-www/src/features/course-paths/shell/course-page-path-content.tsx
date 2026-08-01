@@ -17,9 +17,15 @@ interface CoursePagePathContentProps extends Omit<CoursePageContentProps, "rende
  * narrow Suspense boundary, preserving a static HTML fallback for every
  * generated content URL while retaining `?path=` navigation after hydration.
  */
-export function CoursePagePathContent({ courseId, pathData, fallbackPrev, fallbackNext, ...page }: CoursePagePathContentProps) {
+export function CoursePagePathContent({
+  courseId,
+  pathData,
+  fallbackPrev,
+  fallbackNext,
+  ...page
+}: CoursePagePathContentProps) {
   const searchParams = useSearchParams();
-  const runtimePathData = useRuntimeCoursePathData(page.locale, pathData);
+  const runtimePathData = useRuntimeCoursePathData(page.locale, pathData, searchParams.has("path"));
   const renderData = resolveCoursePathClientRenderData(
     searchParams,
     runtimePathData,

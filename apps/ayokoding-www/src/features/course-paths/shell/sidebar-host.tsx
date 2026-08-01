@@ -38,12 +38,19 @@ export interface SidebarHostProps {
  * Renders the passed-through `children` (today's generic `<Sidebar>`) unchanged when there is no
  * active path context — the Cycle 2.10 invariant this component must never regress.
  */
-export function SidebarHost({ locale, pathData, manifests = [], courseTitles: initialTitles, children }: SidebarHostProps) {
+export function SidebarHost({
+  locale,
+  pathData,
+  manifests = [],
+  courseTitles: initialTitles,
+  children,
+}: SidebarHostProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const runtimePathData = useRuntimeCoursePathData(
     locale,
     pathData ?? { ...EMPTY_COURSE_PATH_CLIENT_DATA, manifests },
+    searchParams.has("path"),
   );
   const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData);
 
