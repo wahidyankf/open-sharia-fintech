@@ -638,4 +638,4 @@ the `local-temp/` path to the orchestrator.
 - Sibling agents: `web-exploratory-tester`, `web-usability-tester`, `web-design-tester` (rendered-UI
   surface — disjoint from this agent's API surface).
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
-- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli agents sync`)
+- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)

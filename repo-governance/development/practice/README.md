@@ -36,6 +36,7 @@ These practices define **HOW developers and AI agents should behave** when encou
 - [Proactive Preexisting Error Resolution](./proactive-preexisting-error-resolution.md) - When encountering preexisting errors during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem
 - [Parallel-by-Default Practice](./parallel-by-default.md) - Default to running independent units of work (tool calls, file reads, searches, delegated agents) in parallel rather than serially, capped at three concurrent units
 - [Task List Discipline](./task-list-discipline.md) - For any non-trivial multi-step work (3+ steps or spanning multiple files/phases), maintain a live task list from the start and keep it continuously in sync with actual progress
+- [File-Touch Discipline](./file-touch-discipline.md) - Keep a deliberate, append-only record of every file you touch, carry it intact through every compaction and handoff, and treat any path not on it as another actor's in-flight work; covers the ledger standards, degraded mode when the ledger is lost, and the rule that generated harness mirrors ship in the same commit as their source
 
 ## Related Documentation
 

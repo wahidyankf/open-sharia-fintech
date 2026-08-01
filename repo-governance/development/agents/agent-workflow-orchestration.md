@@ -393,6 +393,7 @@ After any correction, update `local-temp/lessons.md`. This is the direct applica
 - [Implementation Workflow](../workflow/implementation.md) - Make it work, make it right, make it fast; surgical changes; goal-driven execution
 - [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Multi-agent orchestration for content quality workflows
 - [AI Agents Convention](./ai-agents.md) - Agent structure, frontmatter, and tool access standards
+- [File-Touch Discipline](../practice/file-touch-discipline.md) - The touched-file ledger every actor keeps and carries through compaction; operationalizes the same-machine assumption, since concurrent orchestration is exactly what makes `git status` unreliable as a record of your own work
 - [Skill Context Architecture](./skill-context-architecture.md) - Inline vs fork skills for delegated agent invocation
 - [Subagent Orchestration Convention](./subagent-orchestration.md) - Concurrency cap (max 2 simultaneous background Agent-tool spawns) and 3-minute stuck-detection polling for background subagents; specializes the delegated agent model for background execution
 - [CI Post-Push Verification Convention](../workflow/ci-post-push-verification.md) - Trigger and monitor CI after every push; required final step in plan execution

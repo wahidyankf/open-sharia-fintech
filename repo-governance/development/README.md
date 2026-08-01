@@ -149,6 +149,7 @@ Development practices in this directory fall into several categories:
 - [Proactive Preexisting Error Resolution](./practice/proactive-preexisting-error-resolution.md) - When encountering preexisting errors, bugs, broken tests, or incorrect configurations during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem. Covers the three anti-patterns (acting ignorant, monkey-patching, passive mentioning), scope judgment (inline/separate commit/plan), and full agent requirements
 - [Parallel-by-Default Practice](./practice/parallel-by-default.md) - Default to running independent units of work (tool calls, file reads, searches, delegated agents) in parallel rather than serially, capped at three concurrent units; covers dependency detection, the self-promotion anti-pattern, and the subagent-orchestration specialization relationship
 - [Task List Discipline](./practice/task-list-discipline.md) - For any non-trivial multi-step work (3+ steps or spanning multiple files/phases), maintain a live task list from the start and keep it continuously in sync; covers in-progress-before-starting, completed-after-verification, discovered-task recording, and the relationship to plan delivery checklists
+- [File-Touch Discipline](./practice/file-touch-discipline.md) - Keep a deliberate, append-only record of every file you touch, reproduce it in full through every compaction and handoff, and treat any path not on it as another actor's in-flight work; covers the nine ledger standards, degraded mode when the ledger is lost, and the rule that generated harness mirrors (`.opencode/`, `.cursor/`, `.amazonq/`) ship in the same commit as their `.claude/` source
 
 ### Agent Standards Documentation
 
@@ -185,7 +186,7 @@ Each primary practice document in this directory has companion files providing p
 - **anti-patterns.md** - Common mistakes to avoid (with examples and corrections)
 - **best-practices.md** - Recommended patterns and techniques
 
-These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, and `infra/`. The `frontend/` directory embeds anti-patterns and best practices inline within its convention documents. The `practice/` subdirectory currently contains only one document; companion files will be added as the category grows.
+These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, and `infra/`. The `frontend/` directory embeds anti-patterns and best practices inline within its convention documents. The `practice/` subdirectory does not yet carry companion anti-pattern/best-practice files; each practice document embeds its own anti-patterns inline.
 
 ## 🔗 Related Documentation
 

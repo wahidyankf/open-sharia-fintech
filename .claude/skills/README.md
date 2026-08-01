@@ -103,7 +103,7 @@ See `repo-applying-maker-checker-fixer` skill for complete workflow patterns.
 **Source of Truth**: This directory (`.claude/skills/`) is the PRIMARY source for both Claude Code AND OpenCode.
 
 **No mirror copy**: Per [opencode.ai/docs/skills](https://opencode.ai/docs/skills/),
-OpenCode reads `.claude/skills/<name>/SKILL.md` natively. `rhino-cli agents sync`
+OpenCode reads `.claude/skills/<name>/SKILL.md` natively. `rhino-cli harness bindings generate`
 does NOT copy skills to `.opencode/skill/` or `.opencode/skills/`. Editing a
 skill here is immediately visible to both systems on the next session start.
 

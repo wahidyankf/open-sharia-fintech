@@ -65,9 +65,9 @@ sync`**:
   `[agents.<name>]` sub-table whose `config_file` points to `.codex/ci-monitor-subagent.toml`.
   The former `.codex/agents/` directory was removed (2026-06-06): it was never an official
   Codex CLI convention — the official per-agent mechanism is `config.toml` `agents.<name>`
-  sub-tables — and `rhino-cli agents validate-bindings` now fails if `.codex/agents/`
+  sub-tables — and `rhino-cli harness bindings validate` now fails if `.codex/agents/`
   reappears. These files are Codex/Nx infrastructure — not
-  hand-authored custom agents produced by this repo's pipeline. `rhino-cli agents sync` does
+  hand-authored custom agents produced by this repo's pipeline. `rhino-cli harness bindings generate` does
   not write to `.codex/` and will not clobber these files.
 
 `.github/` holds only the in-repo CI surface — GitHub Actions `workflows/` and composite `actions/`,
@@ -82,7 +82,7 @@ affect the canonical `AGENTS.md` instruction surface.
 ### Generated Amazon Q Developer bridge
 
 Amazon Q Developer does not read the canonical `AGENTS.md` natively (open feature request #2712), so
-its instruction surface is generated mechanically by `rhino-cli agents emit-bindings`:
+its instruction surface is generated mechanically by `rhino-cli harness bindings generate`:
 
 - **`.amazonq/rules/00-agents-md.md`** — a pointer file (not a copy) directing Amazon Q to read and
   follow `AGENTS.md` at the repository root.
@@ -90,7 +90,7 @@ its instruction surface is generated mechanically by `rhino-cli agents emit-bind
   load `file://AGENTS.md` and `file://.amazonq/rules/**/*.md`.
 
 These files are deterministic and idempotent — never hand-edit them. The companion guard
-`rhino-cli agents validate-bindings` enforces byte-for-byte parity against the generator and runs in
+`rhino-cli harness bindings validate` enforces byte-for-byte parity against the generator and runs in
 the pre-push pipeline. The same guard asserts that every present binding directory under `.amazonq`,
 `.claude`, `.opencode`, `.codex`, and `.github` is referenced in this catalog.
 
@@ -175,8 +175,8 @@ instruction file to receive the canonical instructions.
 `.cursor/rules/*.mdc`, `.windsurf/rules/*.md`) by default. Rationale: each would be either redundant
 (the native `AGENTS.md` read already applies) or a drift/shadowing risk. Only the Tier-2 Amazon Q
 bridge is generated, because Amazon Q does not read `AGENTS.md` natively. If a thin pointer is added
-later, it must be a pure `AGENTS.md` pointer emitted by `rhino-cli agents emit-bindings` and covered
-by `rhino-cli agents validate-bindings`.
+later, it must be a pure `AGENTS.md` pointer emitted by `rhino-cli harness bindings generate` and covered
+by `rhino-cli harness bindings validate`.
 
 **Amended for the agent surface only (2026-07-28):** the standing "no thin pointer files" decision
 is amended for the agent surface only — `.cursor/agents/` is generated from `.claude/agents/` and is

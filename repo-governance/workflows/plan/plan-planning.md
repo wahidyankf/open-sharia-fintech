@@ -270,6 +270,27 @@ ships no runtime behaviour, so the PR review cycle has no code surface to review
 It is stated here in its own right and is **not** derived from DD-11 of any individual plan, which
 disclaims being a general precedent.
 
+### File-Touch Ledger (All Plans, Unconditional)
+
+Every plan executes in a repository that other agents, engineers, and background processes are
+editing at the same time — in other worktrees, on other branches, and on local `main`. A plan is
+therefore never the only writer to the tree it runs in, and `git status` during execution shows the
+union of every writer's work.
+
+Two planning-side obligations follow, and they apply to every plan without exception:
+
+- **Each delivery step's implementation-notes block carries a `Files Changed` list.** That list is
+  the plan's durable, on-disk copy of the executor's touched-file ledger — the one artefact that
+  survives a context compaction, a session restart, or a handoff to a different agent, because it
+  lives in `delivery.md` rather than in a context window. `plan-maker` scaffolds the field; execution
+  fills it in per [Iron Rule 4](./plan-execution.md#iron-rules-non-negotiable).
+- **A plan never authorizes touching paths outside its own footprint.** Encountering another actor's
+  in-flight work is an expected condition, not an anomaly to tidy up: leave it, and say so.
+
+The full standard — the ledger, its compaction-survival requirement, degraded mode when it is lost,
+and the rule that generated harness mirrors ship in their source's commit — is
+[File-Touch Discipline](../../development/practice/file-touch-discipline.md).
+
 ## Steps
 
 ### 0. Prompt Parsing and Repo Exploration (Sequential)

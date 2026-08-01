@@ -397,3 +397,4 @@ See `repo-applying-maker-checker-fixer` skill for mode-based filtering:
   UTC+7 timestamps
 - `repo-understanding-repository-architecture` - Six-layer governance model context
 - `docs-applying-content-quality` - Content quality standards for fix report writing
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

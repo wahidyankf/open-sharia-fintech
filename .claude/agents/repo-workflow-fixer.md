@@ -68,3 +68,4 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 - [Workflow Pattern Convention](../../repo-governance/workflows/meta/workflow-identifier.md)
 - [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

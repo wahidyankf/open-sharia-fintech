@@ -198,6 +198,7 @@ The [Plans Convention](../../conventions/structure/plans.md) governs the deliver
 
 ## Related Documentation
 
+- [File-Touch Discipline](./file-touch-discipline.md) - The structural sibling: the same append-only, survives-compaction shape applied to files already touched rather than work still intended. An agent that keeps one and not the other is only half-recoverable — the task list says what it meant to do, the ledger says what it actually changed
 - [Plans Convention](../../conventions/structure/plans.md) - Governs plan-file delivery checklists; complementary scope to this practice
 - [Proactive Preexisting Error Resolution](./proactive-preexisting-error-resolution.md) - Handling discovered errors during work; pairs with Standard 4 on adding discovered tasks
 - [Agent Workflow Orchestration Convention](../agents/agent-workflow-orchestration.md) - Broader agent task management strategy including plan mode and verification loops

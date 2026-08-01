@@ -1095,3 +1095,4 @@ boundary. It is the capability-shaped sibling of rule 14's executor-tag validati
 - Opaque Vercel IDs committed in plan docs: **MEDIUM**
 - Scattered `[HUMAN]` platform steps with no stated reason: **MEDIUM**
 - Plan touching no Vercel-deployed surface: **not flagged** (exempt)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

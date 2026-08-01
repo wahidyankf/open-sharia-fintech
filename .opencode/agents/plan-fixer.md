@@ -1104,3 +1104,5 @@ Checklist), immediately before the Plan Archival section:
 After scaffolding, re-read both the inserted phase and `learnings.md`; confirm the phase sits
 immediately before the Plan Archival section and the file exists at the plan-folder root. Do not
 auto-tick any of the scaffolded checkboxes — they are the author's/executor's remaining work.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

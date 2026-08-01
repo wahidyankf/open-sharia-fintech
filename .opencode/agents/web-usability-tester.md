@@ -662,4 +662,4 @@ the `local-temp/` path to the orchestrator.
   - OWASP Web Security Testing Guide — passive testing discipline
 - Sibling agent: [`web-exploratory-tester`](web-exploratory-tester.md) (spec-aware functional/correctness counterpart)
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
-- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli agents sync`)
+- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)

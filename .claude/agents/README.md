@@ -140,7 +140,7 @@ Normative source: [Agent Naming Convention](../../repo-governance/conventions/st
 | `tester`     | Explores or evaluates a running system, live site, or API and reports defects/friction | `web-exploratory-tester`, `web-usability-tester`, `web-design-tester`, `api-exploratory-tester` |
 | `researcher` | Gathers and verifies external information; read-only research                          | `web-researcher`                                                                                |
 
-Enforcement: `rhino-cli agents validate-naming` (wired into pre-push and CI).
+Enforcement: `rhino-cli harness naming validate` (wired into pre-push and CI).
 
 ## Agent Format (Claude Code)
 
@@ -195,7 +195,7 @@ Three-stage quality workflow:
 2. Run: `npm run generate:bindings` (powered by `rhino-cli` for fast syncing)
 3. Both systems stay synchronized
 
-**Implementation**: Sync powered by `rhino-cli agents sync` (~121ms, 25-60x faster than bash)
+**Implementation**: Sync powered by `rhino-cli harness bindings generate` (~121ms, 25-60x faster than bash)
 
 **See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [AGENTS.md](../../AGENTS.md) for OpenCode documentation, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 

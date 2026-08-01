@@ -134,3 +134,5 @@ See [Vercel MCP Capability Convention](../../repo-governance/development/infra/v
 - [plan-maker Agent](./plan-maker.md) — delivery template includes Phase 0
 - [Vercel MCP Capability Convention](../../repo-governance/development/infra/vercel-mcp.md) — the
   Step 5 probe, its capability boundary, and degraded mode
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -525,4 +525,4 @@ the `local-temp/` path to the orchestrator.
   [`web-usability-tester`](web-usability-tester.md) (spec-blind usability).
 - Static counterpart: `swe-ui-checker` (component-source token/a11y/pattern audit — `generated-reports/`).
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
-- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli agents sync`)
+- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)

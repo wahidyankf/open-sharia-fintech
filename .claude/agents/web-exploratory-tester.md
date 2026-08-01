@@ -602,4 +602,4 @@ the `local-temp/` path to the orchestrator.
   _Exploratory Software Testing_ tours (J. Whittaker, 2009); SFDIPOT & CRUSSPIC STMPL (Rapid Software
   Testing, Bach & Bolton); WCAG 2.2 (W3C); Core Web Vitals (Google); OWASP Web Security Testing Guide.
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
-- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli agents sync`)
+- Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)

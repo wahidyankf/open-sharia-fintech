@@ -199,6 +199,10 @@ and stays out of the cleanup gate entirely.
   set that bounds what this gate may do. `git branch -D`, `rm -rf` of a worktree, forced worktree
   removal, and object-store pruning are all forbidden there, which is why this convention prescribes
   `-d`, non-force removal, and no `gc`.
+- [File-Touch Discipline](../practice/file-touch-discipline.md) — cleanup is the moment this matters
+  most, because it is the moment an agent deliberately removes things. A worktree whose PR has merged
+  can still hold uncommitted work that was never part of that PR; the ledger is what distinguishes
+  your artifacts from another actor's, and uncommitted work has no recovery path once deleted.
 - [Git Push Safety Convention](./git-push-safety.md) — the remote-side companion. Note the boundary
   set out in the Jurisdiction note above: remote **branch deletion** is gated here by the merged-check,
   not there by the force-push approval gate.

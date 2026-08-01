@@ -660,3 +660,5 @@ require the PR to be merged.
 - `*-to-pr` mode: archival-in-PR missing or deferred post-merge (where applicable): **HIGH**
 - Filing a finding solely because a `*-to-pr` PR remains unmerged: **not a finding** (false positive
   to avoid — flag the CHECK itself as wrong if this occurs)
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

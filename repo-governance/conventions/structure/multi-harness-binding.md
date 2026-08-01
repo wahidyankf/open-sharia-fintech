@@ -289,6 +289,19 @@ of 2026-05-24. They must not be committed with content that diverges from `AGENT
   demand or on a schedule; use web research to detect external upstream convention drift (distinct
   from the deterministic parity guard above).
 
+**Generated bindings ship in their source's commit.** Editing one primary-binding source file
+mechanically rewrites its mirror in every secondary binding directory, so a single logical change
+spans several files — most of which the author never opened. Those mirrors are still the author's
+changes: they belong on the touched-file ledger
+([File-Touch Discipline](../../development/practice/file-touch-discipline.md)) and in the **same
+commit** as the source that produced them.
+
+Splitting them into a follow-up "sync" commit publishes an intermediate tree in which a source and
+its generated mirror disagree — a state that fails the byte-equality guard above for anyone who
+checks out that revision, for reasons unrelated to their own work. The pre-commit hook regenerates
+and auto-stages the mirrors precisely so this happens by default; bypassing the hook, or staging
+narrowly and reconciling afterwards, defeats it.
+
 ## Related
 
 - [docs/reference/platform-bindings.md](../../../docs/reference/platform-bindings.md) — Authoritative

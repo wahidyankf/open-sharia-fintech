@@ -57,7 +57,7 @@ iteratively until zero findings:
    binding files still match each supported harness's current upstream configuration
    conventions.
 
-**Distinction from the deterministic pre-push guard**: The `rhino-cli agents validate-bindings`
+**Distinction from the deterministic pre-push guard**: The `rhino-cli harness bindings validate`
 command (run automatically in the pre-push hook) checks internal byte-drift at the file level.
 This workflow's Phase 0 checks behavioral-parity invariants at the semantic level; Phase 1
 checks external convention drift via web research. All three guards are complementary: the
@@ -500,7 +500,7 @@ Result: PARTIAL after 1 iteration; user must resolve before re-running.
   regardless of `scope`, before any web research begins.
 - **On-demand for Phase 1**: Phase 1 (external drift) does not run automatically on every
   push — schedule it periodically or trigger it when upstream harness changes are announced.
-- **Pre-push guard is separate**: `rhino-cli agents validate-bindings` (the pre-push parity
+- **Pre-push guard is separate**: `rhino-cli harness bindings validate` (the pre-push parity
   guard) checks internal byte-level consistency deterministically and runs automatically.
 - **Idempotent**: Safe to run multiple times without breaking working state.
 - **Observable**: Generates audit reports for every iteration in `generated-reports/`.

@@ -1101,3 +1101,5 @@ ALWAYS include at the end of the delivery checklist:
 - [ ] Update any other READMEs that reference this plan (e.g., plans/README.md)
 - [ ] Commit the archival (the `evidence/` subfolder moves with the plan): `chore(plans): move [plan-name] to done`
 ```
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

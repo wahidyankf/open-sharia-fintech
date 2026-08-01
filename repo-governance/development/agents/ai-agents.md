@@ -757,7 +757,7 @@ When the sync tool writes secondary binding files, it translates the named color
 
 ## Platform Binding Examples
 
-The content below is platform-specific. It documents the concrete translation applied by `rhino-cli agents sync` and is intentionally vendor-specific.
+The content below is platform-specific. It documents the concrete translation applied by `rhino-cli harness bindings generate` and is intentionally vendor-specific.
 
 ### Color Translation Table
 

@@ -268,3 +268,5 @@ three-stage fixers.
 This agent resolves what the eight discipline specialists and `pr-review-synthesis-maker` find —
 carefully, with a documented reason for every outcome, and without ever leaving a thread both
 unresolved and unanswered.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths
