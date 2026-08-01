@@ -389,8 +389,8 @@ sequenceDiagram
     P16->>P16: Resolve OI-1 through OI-4 (Phase 2), before any course is authored
     P16->>P16: Author every body in this plan's range from its syllabus spec
     P16->>P16: Run content checkers, apply fixers, re-verify
-    P16->>Main: Push branch, draft PR, 3-cycle review, AI merge
-    P16->>P16: Grow sharia-accounting.yaml to 24, record the five-field stage signal
+    P16->>P16: Grow sharia-accounting.yaml to 24, record the five-field stage signal on final-delivery
+    P16->>Main: Archive, then push final-delivery and open the sole PR for review and AI merge
     Note over P16,P18: The record lives in this plan's delivery.md only - plan 18 never reads that file
     P18->>Main: At its own gate, independently test -d every course ID its own Sharia-specific stage needs
     Note over P18: A missing course ID blocks plan 18's own gate directly - no signal is parsed or rejected
@@ -404,7 +404,7 @@ sequenceDiagram
 | `PLAN`                    | `ayokoding-learning-path-16-skills-accounting-sharia-extension`                                                                                                                                                                                                         |
 | `LANDED_COURSE_IDS`       | Every course ID authored by this plan (#20–#24)                                                                                                                                                                                                                         |
 | `UNBLOCKS_ERP_CAPABILITY` | "the Sharia-specific ERP stages delivering Sharia-compliant contract handling, Zakah/Sukuk reporting, and Sharia-ledger founding-architecture capability — and the whole sharia-accounting path, and the whole 24-course accounting corpus, are complete at this point" |
-| `MERGED_COMMIT`           | A real 40-character SHA on `origin/main`, checkable with `git cat-file -e`                                                                                                                                                                                              |
+| `FINAL_DELIVERY_BRANCH`   | The persistent branch carrying the signal until the terminal archival PR merges                                                                                                                                                                                         |
 
 **Recording format (grep-checkable)**, same shape as plan 15's:
 
@@ -413,7 +413,7 @@ STAGE: 3
 PLAN: ayokoding-learning-path-16-skills-accounting-sharia-extension
 LANDED_COURSE_IDS: sharia-accounting-and-aaoifi-standards, islamic-contract-modeling-for-systems, zakah-computation-and-reporting-for-systems, sukuk-and-islamic-capital-markets-accounting, sharia-ledger-system-architecture
 UNBLOCKS_ERP_CAPABILITY: the Sharia-specific ERP stages delivering Sharia-compliant contract handling, Zakah/Sukuk reporting, and Sharia-ledger founding-architecture capability — and the whole sharia-accounting path, and the whole 24-course accounting corpus, are complete at this point
-MERGED_COMMIT: <40-character SHA — fill in from the actual merge>
+FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-extension/final-delivery
 ```
 
 **Why this plan's own Stage number is "3", continuing plan 15's numbering choice** [Judgment call],

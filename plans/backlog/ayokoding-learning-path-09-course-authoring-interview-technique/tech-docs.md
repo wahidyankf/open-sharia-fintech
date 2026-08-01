@@ -384,5 +384,5 @@ any other dependency manifest.
 Each authored body is additive-only under its own `<course-id>/` subtree. Rolling back is a single
 `git revert` of this plan's merge commit — no migration, no data change, and no manifest to unwind
 (this plan never touched one). The band-completion signal is invalidated by the same revert (its
-`MERGED_COMMIT` no longer resolves on `origin/main`), and the downstream manifest plan's own gate
-would catch a signal pointing at a reverted commit before growing either manifest.
+terminal archival PR no longer resolves as merged), and the downstream manifest plan's own gate would
+catch a reverted final delivery before growing either manifest.

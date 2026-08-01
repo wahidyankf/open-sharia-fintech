@@ -59,49 +59,18 @@ this plan's only worktree; no per-course, cohort, phase, or closeout worktree is
 
 Worktree path: `worktrees/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
 
-Optional manual pre-provisioning (run from repo root):
-
-```bash
-claude --worktree ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own
-```
-
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
-`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
-the worktree after the plan is archived and pushed. Every phase branches fresh from the latest
-`origin/main` inside this one shared worktree and authors its work there, committing as it goes. Only
-the phase(s) named as a **delivery boundary** in the [`### Delivery Boundaries`](#delivery-boundaries)
-table push that branch and open their own draft PR; an intermediate phase commits without opening one.
-
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each delivery boundary works in the shared worktree on its own branch, opens a draft PR against
-`main`, runs the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), flips the PR to ready,
-and `[AI]` merges it automatically once all quality gates are green — then deploys `ayokoding-www` to
-`prod-ayokoding-www`, **contingent on the Vercel cost-reduction precondition** (see Phase 0) holding at
-that point in time. See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
-and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
-
-**Delivery-Boundary Integration Protocol** (fires once per delivery boundary — Phase 0 is excluded):
-
-1. [AI] Sync the worktree to latest `origin/main` and branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/<phase-slug>`.
-2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically (Conventional Commits, imperative, no period), push the branch, open a draft PR
-   against `main` (`gh pr create --draft --base main ...`).
-3. [AI] Run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), resolve every finding, then
-   `gh pr ready`.
-4. [AI] Merge once all quality gates are green (typecheck, lint, `test:quick`, `test:unit`, CI, the
-   3-cycle review) — `[AI]` auto-merge, matching the repo's default PR Merge Protocol; this plan
-   declares no `[HUMAN]` merge gate.
-5. [AI] **Check the Vercel cost-reduction precondition** (see Phase 0's check, re-run here):
-   `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` — if the value is `< 2000`,
-   STOP before dispatching the deployer and surface this to the user rather than deploying more
-   always-dynamic pages.
-6. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 7 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on
 
@@ -156,20 +125,13 @@ course-authoring plan.
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                                                                                     | Worktree / branch                                                                     | PR opens         |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------- |
-| 0        | — (setup and baseline)                                                                                                            | —                                                                                     | no               |
-| 1        | Cohort 1 — 5 bodies (`just-enough-java`, `enterprise-java-and-the-jvm`, `lisp`, `just-enough-fsharp`, `type-systems`)             | shared worktree; one branch + one draft PR for the whole cohort                       | yes — at Phase 1 |
-| 2        | Cohort 2 — 4 bodies (`compilers-parsers-and-transpilers`, `build-your-own-git`, `build-your-own-database`, `build-your-own-raft`) | shared worktree; one branch + one draft PR for the whole cohort                       | yes — at Phase 2 |
-| 3-7      | Plan closeout (final content-correctness sweep, manual verification evidence, final CI/`main` check, Knowledge Capture, archival) | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/phase-7-closeout` | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–6      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 7        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-**Phases 3–6 are intermediate**: Phase 3's structural verification produces no new authored content
-(the 9 bodies already exist by Phase 2's merge); Phase 4's screenshots and Phase 6's `learnings.md`
-triage are evidence the Phase 7 archival gate reads as a precondition; Phase 5 is CI-monitoring only.
-All four fold into the Phase 7 closeout PR, which is this plan's last change-producing phase and
-therefore always a boundary.
-
----
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Phase 0: Environment Setup & Baseline
 
@@ -398,12 +360,10 @@ therefore always a boundary.
 - [ ] [AI] Checkers clean across all 5; `npx nx run ayokoding-www:build` and `npm run lint:md` exit 0;
       the Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
 - [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Draft PR opened, 3-cycle PR-Review complete, `[AI]`-merged to `origin/main`, deployed to
-      `prod-ayokoding-www` (contingent on the Vercel cost-reduction precondition — see Delivery-Boundary
-      Integration Protocol step 5; if the precondition does not yet hold, the merge still happens but
-      the deploy step is deferred and this is recorded here rather than silently skipped).
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
-> **Pause Safety**: the JVM/Lisp/functional-typing quintet is live; every internal prerequisite pair
+> **Pause Safety**: the JVM/Lisp/functional-typing quintet is committed on `final-delivery`; every internal prerequisite pair
 > (Java, F#) resolves within this same cohort, and `enterprise-java-and-the-jvm`'s external
 > prerequisite (`software-architecture`, plan `06`) was hard-gated present before authoring — no
 > dangling edge. Safe to stop. To resume: re-run the section build.
@@ -522,7 +482,6 @@ therefore always a boundary.
   <MANIFESTS>careers/interview-ready/software-engineer.yaml
   <MANIFESTS>careers/immediately-effective/software-engineer.yaml
   <MANIFESTS>careers/fundamentally-strong/software-engineer.yaml
-  MERGED_COMMIT: <fill in with the actual origin/main merge commit SHA of this cohort's PR at merge time>
   ```
 
   — acceptance: all five fields present, `LANDED_COURSE_IDS` names exactly the 9 slugs in
@@ -557,14 +516,15 @@ therefore always a boundary.
 - [ ] [AI] Checkers clean across all 4; build + `lint:md` exit 0; the Local Quality Gates section
       above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
 - [ ] [AI] Zero manifest files touched.
-- [ ] [AI] Partial band-completion signal recorded with all five fields complete.
-- [ ] [AI] Draft PR opened, 3-cycle PR-Review complete, `[AI]`-merged, deployed (contingent on the
-      Vercel cost-reduction precondition).
+- [ ] [AI] Partial band-completion signal recorded with its four content fields complete; it becomes
+      actionable only after the Phase 7 terminal archival PR merges.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 - [ ] [AI] **Confirm all 9 course bodies now exist** (both cohorts combined):
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
       returns **0**.
 
-> **Pause Safety**: all 9 course bodies are live; `build-your-own-raft`'s two external prerequisite
+> **Pause Safety**: all 9 course bodies are committed on `final-delivery`; `build-your-own-raft`'s two external prerequisite
 > bodies were re-confirmed present immediately before its own authoring, so no dangling edge exists.
 > The partial band-completion signal is recorded for the manifest plan to consume. Safe to stop. To
 > resume: re-run the section build and re-verify the signal fields.
@@ -573,7 +533,7 @@ therefore always a boundary.
 
 ## Phase 3: Final content-correctness sweep
 
-> Intermediate phase — folds into the Phase 7 closeout PR (see Delivery Boundaries table).
+> Intermediate phase — folds into the Phase 7 terminal archival PR (see Delivery Boundaries table).
 
 - [ ] [AI] Re-run every content checker across all 9 bodies (`apps-ayokoding-www-primer-checker` for
       the 2 Primers, `apps-ayokoding-www-by-example-checker` for the 7 By-Example bodies,
@@ -591,8 +551,8 @@ therefore always a boundary.
 
 - [ ] [AI] All checkers clean; build + lint green; cross-plan link gate green; independence check
       returns 0.
-- [ ] [AI] Nothing pushed for review yet at this intermediate phase (commits land on the Phase 7
-      closeout branch).
+- [ ] [AI] Nothing pushed for review yet at this intermediate phase (commits remain on
+      `final-delivery`).
 
 > **Pause Safety**: all 9 bodies pass every content-correctness check with zero outstanding findings.
 > Safe to stop. To resume: re-run the checker sweep.
@@ -629,20 +589,17 @@ therefore always a boundary.
 
 ---
 
-## Phase 5: Post-Push CI / `main` Integration Final Check
+## Phase 5: Pre-PR CI Readiness Check
 
-- [ ] [AI] Confirm both cohort PRs (Phase 1, Phase 2) are merged to `origin/main`:
-      `gh pr list --state merged --search "ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own" --json number --jq 'length'`
-      — acceptance: returns **2**.
-- [ ] [AI] Pull latest `origin/main` in the shared worktree and confirm CI is green on the latest
-      commit touching this plan's courses.
+- [ ] [AI] Run the full applicable quality suite against `final-delivery`; acceptance: all commands
+      exit 0. Do not push or open a PR in this phase.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Both cohort PRs confirmed merged; latest `main` CI green.
+- [ ] [AI] The full applicable quality suite is green on `final-delivery`.
 
-> **Pause Safety**: both cohorts are confirmed integrated. Safe to stop. To resume: re-run the `gh pr
-list` check.
+> **Pause Safety**: both cohorts are verified on `final-delivery`. Safe to stop. To resume: re-run
+> the local quality suite.
 
 ---
 
@@ -672,6 +629,12 @@ list` check.
 
 ## Phase 7: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] Verify all delivery checklist items above are ticked.
 - [ ] [AI] Verify all quality gates pass (local + CI).
 - [ ] [AI] Verify all manual assertions pass with committed evidence in `evidence/`.
@@ -684,8 +647,8 @@ list` check.
 - [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
 - [ ] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
       those plans exist on disk).
-- [ ] [AI] Push this closeout branch, open the draft PR, run the 3-cycle PR-Review, `[AI]`-merge, and
-      deploy (contingent on the Vercel cost-reduction precondition).
+- [ ] [AI] Push `final-delivery`, open the one terminal archival draft PR, run the 3-cycle PR-Review,
+      `[AI]`-merge, and deploy (contingent on the Vercel cost-reduction precondition).
 - [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own to done`.
 - [ ] [AI] Prompt the user before removing this plan's worktree; remove it only on explicit
       confirmation, and only once nothing is uncommitted or unpushed.

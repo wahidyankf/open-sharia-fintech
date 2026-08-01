@@ -57,38 +57,18 @@ only worktree; no per-course, cohort, phase, or closeout worktree is created.
 
 Worktree path: `worktrees/ayokoding-learning-path-11-course-authoring-capstones/`
 
-Optional manual pre-provisioning (run from repo root):
-
-```bash
-claude --worktree ayokoding-learning-path-11-course-authoring-capstones
-```
-
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
-`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
-the worktree after the plan is archived and pushed.
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery boundary** named in the [`### Delivery Boundaries`](#delivery-boundaries) table works
-in the shared worktree on its own branch, opens a **draft PR** against `main`, runs the
-**PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), flips the PR to ready, and `[AI]`
-**merges automatically once all quality gates are green** — then `[AI]` **deploys `ayokoding-www` to
-`prod-ayokoding-www` after every merge**. An intermediate phase inside a delivery unit commits (and
-may push for durability) without opening a PR of its own.
-
-**Delivery-Boundary Integration Protocol** (fires once per delivery boundary, not once per phase):
-
-1. [AI] Sync the worktree to latest `origin/main` and branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-11-course-authoring-capstones/<cohort-slug>`.
-2. [AI] Stage only this cohort's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically per course (Conventional Commits, imperative, no period), push the branch, open a
-   **draft PR** against `main`.
-3. [AI] Run the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), resolve every finding,
-   then `gh pr ready`.
-4. [AI] **Merge** once all quality gates are green (typecheck, lint, `test:quick`,
-   `specs:behavior:coverage`, CI, the 3-cycle review) — `[AI]` auto-merge per the repo's PR Merge
-   Protocol default.
-5. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 7 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on
 
@@ -130,22 +110,13 @@ merely "the plan folder exists").
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                              | Worktree / branch          | PR opens         |
-| -------- | -------------------------------------------------------------------------- | -------------------------- | ---------------- |
-| 0        | — (setup and baseline)                                                     | —                          | no               |
-| 1        | Cohort A — 5 independent capstones                                         | `.../phase-1-cohort-a`     | yes — at Phase 1 |
-| 2        | Cohort B — 3 dependency-chained capstones + band-completion signal         | `.../phase-2-cohort-b`     | yes — at Phase 2 |
-| 3        | Final content-correctness sweep                                            | `.../phase-3-verification` | yes — at Phase 3 |
-| 4-7      | Plan closeout (manual verification, CI check, knowledge capture, archival) | `.../phase-7-closeout`     | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–6      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 7        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-Phase 0 produces nothing shippable and opens no PR. Phase 3 stands alone because it lands a real
-content fix (any residual structural/link issue found by the plan-wide sweep) plus the
-structural/build/link verification, and already satisfies the boundary test standalone. Phases 4–7
-fold into one closeout PR: Phase 4's screenshots and Phase 6's `learnings.md` triage are evidence
-Phase 7's archival gate itself reads as a precondition, and Phase 5 makes no routine change
-(verification/CI-monitoring only).
-
----
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Phase 0: Environment Setup & Baseline
 
@@ -355,8 +326,8 @@ Phase 7's archival gate itself reads as a precondition, and Phase 5 makes no rou
    `grep -rn 'stackoverflow\.com\|reddit\.com' "<COURSES><course-id>/" 2>/dev/null | grep -c .`
    — acceptance: prints `0`.
 
-Each course below is its own sub-step (own commit → cohort PR after all five land), applying the
-convention:
+Each course below is its own sub-step. Its work may have its own thematic commit, but all commits
+remain on the persistent `final-delivery` branch and ship together in the one Phase 7 archival PR:
 
 - [ ] [AI] `capstone-build-your-own-coding-agent` (Harness milestone, Python, settled per
       `<SYLLABUS>capstone-build-your-own-coding-agent.md`) — assembles the five-course harness
@@ -404,7 +375,7 @@ convention:
       exits 0 (both, and only these two, prerequisites declared).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 
-### Phase 1 Gate (delivery boundary)
+### Phase 1 Gate
 
 > All checks below must pass before starting Phase 2.
 
@@ -414,12 +385,11 @@ convention:
 - [ ] [AI] Zero manifest files touched:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0**.
-- [ ] [AI] Draft PR opened for Cohort A, 3-cycle PR-Review complete, all quality gates green, `[AI]`
-      merge complete, `ayokoding-www` deployed to `prod-ayokoding-www`.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
-> **Pause Safety**: Cohort A's five capstones are merged to `main` and deployed; Cohort B has not
-> started. Safe to stop. To resume: re-verify Cohort A's five slugs exist under `<COURSES>`, then
-> begin Phase 2.
+> **Pause Safety**: Cohort A's five capstones are committed on `final-delivery`; Cohort B has not
+> started. Safe to stop. To resume: re-verify Cohort A's five slugs exist under `<COURSES>`, then begin Phase 2.
 
 ---
 
@@ -470,7 +440,6 @@ convention:
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [ ] [AI] **Record the band-completion signal** — append the five-field signal block (verbatim, per
       [README §Band-completion signal contract](./README.md#band-completion-signal-contract)) to this
-      file, immediately below this bullet, with `MERGED_COMMIT` filled from the Cohort-B merge commit
       SHA once merged:
 
   ```text
@@ -490,14 +459,13 @@ convention:
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml
-  MERGED_COMMIT: <filled at execution time>
   ```
 
   — acceptance: all five fields present, `LANDED_COURSE_IDS` lists all 8 slugs from
   `evidence/authored-body-slugs.txt` in the same order, `GROW_MANIFESTS` names exactly the four
   manifest paths above.
 
-### Phase 2 Gate (delivery boundary)
+### Phase 2 Gate
 
 > All checks below must pass before starting Phase 3.
 
@@ -506,12 +474,12 @@ convention:
       last).
 - [ ] [AI] `npx nx run ayokoding-www:build` and `npm run lint:md` both exit 0 over the Cohort-B tree.
 - [ ] [AI] Zero manifest files touched.
-- [ ] [AI] The band-completion signal is recorded with all five fields, `MERGED_COMMIT` filled.
-- [ ] [AI] Draft PR opened for Cohort B, 3-cycle PR-Review complete, all quality gates green, `[AI]`
-      merge complete, `ayokoding-www` deployed to `prod-ayokoding-www`.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7. The band-completion signal becomes consumable
+      only after the terminal archival PR merges.
 
-> **Pause Safety**: all 8 capstones are merged to `main` and deployed; the band-completion signal is
-> recorded. Safe to stop. To resume: proceed to Phase 3's plan-wide verification sweep.
+> **Pause Safety**: all 8 capstones and the band-completion signal are committed on `final-delivery`.
+> Safe to stop. To resume: proceed to Phase 3's plan-wide verification sweep.
 
 ---
 
@@ -534,13 +502,13 @@ convention:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
 
-### Phase 3 Gate (delivery boundary)
+### Phase 3 Gate
 
 - [ ] [AI] All structural, build, lint, link, regression, and manifest-isolation checks pass.
-- [ ] [AI] Draft PR opened, 3-cycle PR-Review complete, all quality gates green, `[AI]` merge complete,
-      `ayokoding-www` deployed.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
-> **Pause Safety**: the plan-wide content-correctness sweep is complete and merged. Safe to stop. To
+> **Pause Safety**: the plan-wide content-correctness sweep is complete on `final-delivery`. Safe to
 > resume: proceed to Phase 4's manual verification.
 
 ---
@@ -564,9 +532,9 @@ convention:
 
 ## Phase 5: Final CI/Regression Check
 
-- [ ] [AI] Re-run `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` against the
-      latest `origin/main` (post Phase 3 merge) — acceptance: all exit 0, confirming no regression
-      introduced by this plan's cumulative changes.
+- [ ] [AI] Re-run `npx nx affected -t typecheck lint test:quick specs:behavior:coverage` against
+      `final-delivery` — acceptance: all exit 0, confirming no regression introduced by this plan's
+      cumulative changes.
 
 ### Phase 5 Gate
 
@@ -595,16 +563,23 @@ convention:
 
 ## Phase 7: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] Move this plan folder from `plans/backlog/ayokoding-learning-path-11-course-authoring-capstones/`
       to `plans/done/YYYY-MM-DD__ayokoding-learning-path-11-course-authoring-capstones/` (today's
       completion date), update `plans/backlog/README.md` and `plans/done/README.md`.
-- [ ] [AI] Remove the worktree: `git worktree remove worktrees/ayokoding-learning-path-11-course-authoring-capstones`
-      after confirming nothing uncommitted or unpushed remains.
-- [ ] [AI] Push the closeout commit (Phases 4–7) to `origin main` via the closeout PR's merge.
+- [ ] [AI] Push `final-delivery` and open the one terminal archival PR, then run the PR-Review
+      Maker→Fixer Cycle, CI verification, `[AI]` merge, and deployment.
+- [ ] [AI] Remove the declared worktree only after the terminal archival PR merges and it has no
+      uncommitted changes.
 
 ### Phase 7 Gate
 
 - [ ] [AI] Plan folder present under `plans/done/` with the completion-date prefix; both index
-      `README.md` files updated; worktree removed; closeout PR merged.
+      `README.md` files updated; terminal archival PR merged; worktree then removed.
 
 > **Pause Safety**: this is the plan's terminal phase. Once complete, the plan is fully archived.

@@ -4,7 +4,7 @@
 
 All 15 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
 Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
-merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 ## Overview
 
@@ -136,11 +136,14 @@ deferring entirely to the successor plan's end-of-programme retest. See
 [tech-docs.md §Rule-15 retest split decision](./tech-docs.md#rule-15-retest-split-decision) for the
 reasoning.
 
-## Delivery Mode
+## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` — see [delivery.md](./delivery.md#delivery-mode-worktree-to-pr). No `[HUMAN]` merge
-gate is declared; `[AI]` merges every delivery unit once the PR-Review Maker→Fixer Cycle and CI are
-green. Phase 0 opens no PR; the earliest PR is Phase 1's.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Related documents
 

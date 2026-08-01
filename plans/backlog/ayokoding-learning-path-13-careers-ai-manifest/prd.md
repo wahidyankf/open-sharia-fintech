@@ -67,11 +67,11 @@ Each scenario uses exactly one primary `Given`, one `When`, and one `Then`; ever
 action, or outcome chains with `And`.
 
 ```gherkin
-Scenario: This plan's authoring begins only once the sibling plan's interview-ready delivery unit has merged
-  Given the careers/interview-ready/software-engineer MVP (owned by ayokoding-learning-path-12-careers-se-manifests) has merged its delivery unit to origin/main
+Scenario: This plan starts independently and unblocks the sibling's final cross-check
+  Given Plan 12 has not delivered any manifest
   When this plan's Phase 0 checks its start precondition
-  Then the merged-PR check for that delivery unit returns a non-zero count
-  And this plan's Phase 1 authoring begins only after that check passes
+  Then this plan's Phase 1 authoring may begin without a Plan 12 merge
+  And Plan 12 waits for this plan's terminal archival PR before its own Phase 8 cross-check
 ```
 
 ```gherkin

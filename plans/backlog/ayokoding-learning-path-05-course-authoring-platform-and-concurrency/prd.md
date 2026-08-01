@@ -156,7 +156,7 @@ Scenario: just-enough-go is ready as build-your-own-raft's declared prerequisite
   Given just-enough-go is authored and merged to origin/main
   When ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own's build-your-own-raft authoring begins
   Then the just-enough-go course body resolves under the courses bucket
-  And the band-completion signal naming just-enough-go among the Band-4 IDs is present on origin/main
+  And the terminal delivery record will name just-enough-go among the Band-4 IDs after the sole PR merges
 ```
 
 ### Scoped build-green (this plan's own surface)

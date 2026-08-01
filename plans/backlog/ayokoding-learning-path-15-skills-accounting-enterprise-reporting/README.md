@@ -4,7 +4,7 @@
 
 All 8 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
 Phase 7, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
-merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the second of a three-plan sequential chain** that replaces the retired
 > `ayokoding-learning-path-06-skills-accounting/` design with three smaller plans:
@@ -162,38 +162,14 @@ stateDiagram-v2
 **The whole `conventional-accounting` path (#1–#19) is standalone-useful and production-complete at
 this plan's end** — a complete, shippable competence in its own right, not a truncated on-ramp.
 
-## Delivery flow
+## Delivery Mode: worktree-to-pr
 
-```mermaid
-flowchart TD
-    P0(["Phase 0 · setup"]):::setup
-    P1[/"Phase 1 · spec<br/>8 syllabus specs"/]:::spec
-    P2{{"Phase 2 · author<br/>courses 12-19<br/>grow both manifests to 19<br/>conventional-accounting DONE"}}:::author
-    P3["Phase 3 · verify<br/>section verification"]:::verify
-    P4["Phase 4 · verify<br/>manual UI + FULL rule-15"]:::verify
-    P5["Phase 5 · verify<br/>main integration + CI"]:::verify
-    P6[["Phase 6 · final<br/>knowledge capture"]]:::final
-    P7[["Phase 7 · final<br/>archival"]]:::final
-
-    P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7
-
-    classDef setup fill:#CA9161,stroke:#000000,color:#000000
-    classDef spec fill:#DE8F05,stroke:#000000,color:#000000
-    classDef author fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef verify fill:#56B4E9,stroke:#000000,color:#000000
-    classDef final fill:#029E73,stroke:#000000,color:#FFFFFF
-```
-
-| Phase | Closing gate                                                                                                        |
-| ----- | ------------------------------------------------------------------------------------------------------------------- |
-| 0     | Preconditions hold (14, 01, 02, 03, `vercel-function-cost-reduction` merged); baselines recorded green              |
-| 1     | 8 specs exist, each with a module/topic breakdown; every prerequisite edge into plan 14's range resolves            |
-| 2     | Both manifests at 19 entries; **`conventional-accounting` is DONE and production-serving**; Stage-2 signal recorded |
-| 3     | Integrity, prerequisite-consistency, licensing, and ownership sweeps all green                                      |
-| 4     | Both landings verified live at three breakpoints; **full Rule-15 retest** for `conventional-accounting` complete    |
-| 5     | CI green on `main`; production serves `conventional-accounting` as a complete path                                  |
-| 6     | Every `learnings.md` entry terminal                                                                                 |
-| 7     | Archived; plan 16 is unblocked                                                                                      |
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Rule-15 disposition for this plan
 

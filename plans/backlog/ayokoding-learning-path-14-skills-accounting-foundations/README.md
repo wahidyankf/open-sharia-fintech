@@ -4,7 +4,7 @@
 
 All 11 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
 Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
-merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the first of a three-plan sequential chain** that replaces the retired
 > `ayokoding-learning-path-06-skills-accounting/` design (24 courses, 2 manifests, 1 monolithic
@@ -222,45 +222,14 @@ company's day-to-day transactional cycle — but it is **not** independently pro
 so neither landing states path completeness here (that claim is plan 15's, for
 `conventional-accounting`, at course #19).
 
-## Delivery flow
+## Delivery Mode: worktree-to-pr
 
-```mermaid
-%% Phase progression. Every phase ends in a gate and a safe stopping point.
-flowchart TD
-    P0(["Phase 0 · setup<br/>baseline + preconditions"]):::setup
-    P1[/"Phase 1 · spec<br/>11 syllabus specs"/]:::spec
-    P2{{"Phase 2 · author<br/>courses 1-3<br/>CREATE both manifests<br/>at 3 entries"}}:::author
-    P3{{"Phase 3 · author<br/>courses 4-11<br/>grow both manifests to 11"}}:::author
-    P4["Phase 4 · verify<br/>section + app verification<br/>(incl. verification debt)"]:::verify
-    P5["Phase 5 · verify<br/>manual UI + Rule-15 retest"]:::verify
-    P6["Phase 6 · verify<br/>main integration + CI"]:::verify
-    P7[["Phase 7 · final<br/>knowledge capture"]]:::final
-    P8[["Phase 8 · final<br/>archival"]]:::final
-
-    P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
-
-    classDef setup fill:#CA9161,stroke:#000000,color:#000000
-    classDef spec fill:#DE8F05,stroke:#000000,color:#000000
-    classDef author fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef verify fill:#56B4E9,stroke:#000000,color:#000000
-    classDef final fill:#029E73,stroke:#000000,color:#FFFFFF
-```
-
-**Accessibility note.** Phase category is carried by node **shape** (stadium = setup, parallelogram
-= spec, hexagon = authoring, rectangle = verification, subroutine = finalisation) and named in
-each label's text, never by colour alone.
-
-| Phase | Closing gate                                                                                                                                                                            |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0     | Preconditions hold (01, 02, 03, `vercel-function-cost-reduction` merged); baselines recorded green                                                                                      |
-| 1     | 11 specs exist, each with a module/topic breakdown; every prerequisite edge transcribed                                                                                                 |
-| 2     | Both manifests created at 3 entries; both landings created; the first 2-segment `pathId`s resolve end-to-end                                                                            |
-| 3     | Both manifests at 11 entries; the transactional/cost-accounting cycle is complete for both paths                                                                                        |
-| 4     | Integrity, prerequisite-consistency, licensing, and ownership sweeps all green; every `[Needs Verification]` marker still standing is registered with a reason in `verification-log.md` |
-| 5     | Both landings manually verified live at three breakpoints; Rule-15 three-tester retest run and every finding dispositioned, scoped to this plan's own eleven-course slice               |
-| 6     | CI green on `main`; production serves both partial accounting landings                                                                                                                  |
-| 7     | Every `learnings.md` entry terminal                                                                                                                                                     |
-| 8     | Archived; plan 15 is unblocked                                                                                                                                                          |
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Rule-15 disposition for this plan — scoped retest against the eleven-course slice
 

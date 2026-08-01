@@ -6,7 +6,7 @@
 > Git-mechanical steps (worktree create/remove, branch, commit, push, merge) are `[AI]`.
 >
 > **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
-> `> **Pause Safety**:` note. PRs open and merge at **delivery boundaries**, not every phase — see
+> `> **Pause Safety**:` note. The sole PR opens only at the terminal archival boundary — see
 > [Parallelization Model §Delivery Boundaries](#delivery-boundaries).
 
 Three standing constraints govern every step below.
@@ -34,8 +34,8 @@ committed in their dependency order, but no intermediate phase may push, open a 
 review cycle, merge, deploy, or record a merge SHA. Only Phase 9 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
 `plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
-transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
-stage or delivery-boundary PR reference below.
+transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
+a PR.
 
 The `worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/` path below is this plan's
 only worktree; no per-course, stage, phase, or closeout worktree is created.
@@ -44,46 +44,20 @@ only worktree; no per-course, stage, phase, or closeout worktree is created.
 
 Worktree path: `worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/`
 
-Optional manual pre-provisioning (run from repo root):
+Final-delivery branch: `ayokoding-learning-path-18-skills-erp-enterprise-depth/final-delivery`
 
-```bash
-claude --worktree ayokoding-learning-path-18-skills-erp-enterprise-depth
-```
-
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
-`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
-the worktree after the plan is archived and pushed.
-
-Every **delivery unit** branches from the **latest `origin/main`** inside this one shared worktree
-(`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-18-skills-erp-enterprise-depth/<unit-slug>`),
-authors its work there, commits, pushes that branch, and opens **its own draft PR** — from **Phase 1
-onward**. **Phase 0 is excluded**.
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each delivery unit works in the shared worktree on its **own branch**, opens a **draft PR** against
-`main`, runs the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), flips the PR to
-ready, and `[AI]` **merges it once all quality gates are green** — then `[AI]` **deploys
-`ayokoding-www` to `prod-ayokoding-www` after every merge**. This plan declares **no** `[HUMAN]` merge
-gate.
-
-**Delivery-Boundary Integration Protocol**:
-
-1. [AI] Sync the shared worktree to latest `origin/main` and branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-18-skills-erp-enterprise-depth/<phase-slug>`.
-2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically, push the branch, open a **draft PR** against `main`.
-3. [AI] Run the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), resolve every finding,
-   then `gh pr ready`.
-4. [AI] **Merge** once all quality gates are green (typecheck, lint, `test:quick`, `test:unit`,
-   `ayokoding-www-fe-e2e:test:e2e` where affected — **not** `ayokoding-www:test:e2e`, a no-op echo
-   stub — `specs:behavior:coverage`, CI, the 3-cycle review).
-5. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
-   Verify via
-   `curl -sf https://ayokoding.com/en/learn/paths/skills/conventional-erp | grep -qi "ENDS HERE"`
-   (after Phase 2) or the equivalent `sharia-erp` URL (after Phase 3).
-
-> **Important — fix ALL failures found during quality gates, not just those caused by your changes.**
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 9 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 9 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on and start preconditions
 
@@ -125,13 +99,13 @@ while `<SHARMAN>` continues to 30, so after Stage B's §2.2 they no longer conte
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                                                                                                                | Worktree / branch                                                                            | PR opens                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| 0        | — (setup and baseline)                                                                                                                                       | —                                                                                            | no                                                                                    |
-| 1        | Syllabus corpus — authoring and verification (15 files)                                                                                                      | shared worktree; `ayokoding-learning-path-18-skills-erp-enterprise-depth/syllabus`           | yes — at Phase 1                                                                      |
-| 2        | Stage B — Conventional Enterprise Depth (12 courses; `conventional-erp` reaches terminal 27 ids)                                                             | shared worktree; `ayokoding-learning-path-18-skills-erp-enterprise-depth/stage-b`            | yes — at Phase 2                                                                      |
-| 3        | Stage C — Sharia-Compliant Design (3 courses; `sharia-erp` reaches terminal 30 ids)                                                                          | shared worktree; `ayokoding-learning-path-18-skills-erp-enterprise-depth/stage-c`            | yes — at Phase 3                                                                      |
-| 4-9      | Final Verification, Retest, and Archival — cross-path integrity, licensing/Sharia audit, rule-15 retest, full-corpus build/walk, knowledge capture, archival | shared worktree; `ayokoding-learning-path-18-skills-erp-enterprise-depth/final-verification` | yes — opens once the first real diff lands (Phase 7 at the latest); merges at Phase 9 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–8      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 9        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
+
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Shell constants (reused across phases)
 
@@ -317,8 +291,8 @@ accounting plan — domain reasoning for these 15 courses needs no accounting co
 
 - [ ] [AI] `npm run lint:md` is green on all `syllabus/**` files.
 - [ ] [AI] Every syllabus file's Accuracy notes section reflects the Phase 1.2/1.2a pass results.
-- [ ] [AI] **Integration**: draft PR opened for `syllabus/**` changes only, 3-cycle PR-Review complete,
-      CI green, `[AI]` merge, no deploy needed.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
 > **Pause Safety**: `syllabus/` is fully authored and confirmed; no `<COURSES>` entry yet created and
 > both manifests remain at plan 17's 15-id state. Safe to stop. To resume: re-derive `PLANDIR`/`SYL`
@@ -457,13 +431,11 @@ Scenario: conventional-erp landing renders with its full terminal course count
 - [ ] [AI] `nx run ayokoding-www:typecheck`, `:lint`, `:test:quick` all green.
 - [ ] [AI] `<CONVMAN>` has exactly 27 `courseOrder` entries; `<SHARMAN>` has exactly 27 (Stage C not
       yet grown) — `grep -cE '^  - ' "${CONVMAN}"` prints `27`.
-- [ ] [AI] **Integration**: draft PR opened, 3-cycle PR-Review complete, CI green, `[AI]` merge,
-      `ayokoding-www` deployed, post-deploy curl check confirms `<CONVLANDING>` shows "ENDS HERE".
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
 > **Pause Safety**: `conventional-erp` is terminal (27/27); `sharia-erp` is mid-growth (27/30). Safe
-> to stop — `conventional-erp` readers get the complete path today. To resume:
-> `grep -cE '^  - ' worktrees/ayokoding-learning-path-18-skills-erp-enterprise-depth/${SHARMAN}` and
-> confirm it reads `27`.
+> to stop. To resume: `grep -cE '^  - ' "${SHARMAN}"` and confirm it reads `27`.
 
 ## Phase 3: Stage C — Sharia-Compliant Design
 
@@ -578,7 +550,7 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
 ```
 
 - [ ] [AI] **RED** — add the `sharia-erp landing renders with its full terminal course count and
-  states it covers the basics` scenario above to
+states it covers the basics` scenario above to
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/course-paths/skills-erp-paths.feature`,
       then extend `apps/ayokoding-www-fe-e2e/src/steps/skills-erp-paths.steps.ts` to assert the
       Dangerous 4 boundary and the terminal "ENDS HERE" / "covers all the basics" statement on
@@ -596,23 +568,17 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
 
 - [ ] [AI] All Phase 2 Gate checks re-run and still green; `<CONVMAN>` unchanged at 27.
 - [ ] [AI] `grep -cE '^  - ' "${SHARMAN}"` prints `30`.
-- [ ] [AI] **Integration**: draft PR opened, 3-cycle PR-Review complete, CI green, `[AI]` merge,
-      `ayokoding-www` deployed, post-deploy curl check confirms `<SHARLANDING>` shows "ENDS HERE".
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 9.
 
-> **Pause Safety**: both paths are terminal (27/27 and 30/30). The full 30-course corpus is live
-> across plans 17 and 18. Safe to stop. To resume: `grep -cE '^  - ' ${SHARMAN}` reads `30` and
-> `curl -sf https://ayokoding.com/en/learn/paths/skills/sharia-erp | grep -qi "covers all the basics"`.
+> **Pause Safety**: both paths are terminal (27/27 and 30/30) and verified on the persistent branch.
+> Safe to stop. To resume: `grep -cE '^  - ' "${SHARMAN}"` reads `30`.
 
 ## Phase 4: Cross-Path Integrity and Spec Coverage Verification
 
-- [ ] [AI] **Open the `final-verification` delivery unit's branch** — step 1 of the
-      [Delivery-Boundary Integration Protocol](#delivery-mode-worktree-to-pr): sync the shared
-      worktree to latest `origin/main` and branch:
-      `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-18-skills-erp-enterprise-depth/final-verification`
-      — acceptance: `git rev-parse --abbrev-ref HEAD` prints
-      `ayokoding-learning-path-18-skills-erp-enterprise-depth/final-verification`. Any fix committed
-      during Phases 4-6 lands on this branch; the branch is pushed and the draft PR opened no later
-      than Phase 7, per that phase's own gate.
+- [ ] [AI] Reconcile the declared worktree non-destructively with current `origin/main` while staying
+      on the persistent final-delivery branch. Any fix remains on that branch; no additional branch or
+      PR is created.
 - [ ] [AI] Run `checkManifestIntegrity` and `checkPrerequisiteConsistency` against **both** final
       manifests together — acceptance: zero violations reported by each.
 - [ ] [AI] **A11 — one body, two references, across both plans.** Verify no shared course id has a
@@ -636,8 +602,8 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
 
 ### Phase 4 Gate
 
-- [ ] [AI] All checks above pass. **Integration**: this phase belongs to the **Final Verification,
-      Retest, and Archival** delivery unit (Phases 4-9). Nothing merges here.
+- [ ] [AI] All checks above pass. Commit any residual fixes to the persistent final-delivery branch;
+      nothing opens or merges before Phase 9.
 
 > **Pause Safety**: the full corpus is integrity-verified. Safe to stop. To resume: re-run
 > `nx run ayokoding-www:specs:behavior:coverage`.
@@ -677,8 +643,8 @@ Scenario: sharia-erp landing renders with its full terminal course count and sta
 
 ### Phase 5 Gate
 
-- [ ] [AI] All six clauses above pass. **Integration**: this phase belongs to the **Final
-      Verification, Retest, and Archival** delivery unit; nothing merges here.
+- [ ] [AI] All six clauses above pass. Commit any residual fixes to the persistent final-delivery
+      branch; nothing opens or merges before Phase 9.
 
 > **Pause Safety**: licensing/trademark posture (including the Sharia addendum) is verified across
 > this plan's corpus. Safe to stop. To resume: re-run the six clauses above.
@@ -713,8 +679,8 @@ redundant with plan 17's own Stage A retest (DD-8).
 - [ ] [AI] All three testers report zero CRITICAL/HIGH findings, or every finding is fixed and
       re-verified.
 - [ ] [AI] Evidence captured under `${PLANDIR}evidence/`.
-- [ ] [AI] **Integration**: this phase belongs to the **Final Verification, Retest, and Archival**
-      delivery unit; nothing merges here.
+- [ ] [AI] Evidence is committed to the persistent final-delivery branch; nothing opens or merges
+      before Phase 9.
 
 > **Pause Safety**: both landings are manually retested and clean at their terminal state. Safe to
 > stop. To resume: re-dispatch the three testers.
@@ -742,12 +708,8 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 ### Phase 7 Gate
 
-- [ ] [AI] Build succeeds; affected checks green; both path-walks complete with zero errors.
-      **Integration**: this phase is the latest point at which the **Final Verification, Retest, and
-      Archival** unit's draft PR opens — carrying forward any residual fixes already committed from
-      Phases 4-6 plus this phase's own evidence — with all preconditions confirmed but **not merged
-      here**. The PR stays open through Phases 8-9. The `[AI]` merge and the `ayokoding-www` deploy
-      are Phase 9's terminal steps.
+- [ ] [AI] Build succeeds; affected checks green; both path-walks complete with zero errors. Commit
+      the evidence to the persistent final-delivery branch; Phase 9 alone opens the terminal archival PR.
 
 > **Pause Safety**: the full corpus builds and both paths are walkable end to end at their terminal
 > state. Safe to stop. To resume: re-run the Playwright path-walk.
@@ -773,18 +735,24 @@ redundant with plan 17's own Stage A retest (DD-8).
 
 - [ ] [AI] Every `learnings.md` entry is terminal, or the explicit "none" escape is recorded.
 - [ ] [AI] No code-homed learning landed inline in this plan's own commits/PR.
-- [ ] [AI] **Integration**: the triaged `learnings.md` is committed to the still-open
-      `final-verification` PR branch opened by Phase 7; CI green.
+- [ ] [AI] The triaged `learnings.md` is committed to the persistent final-delivery branch; no PR is
+      open before archival.
 
 > **Pause Safety**: `learnings.md` is fully triaged. Safe to stop. To resume: re-read `learnings.md`.
 
 ## Phase 9: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] `git mv plans/backlog/ayokoding-learning-path-18-skills-erp-enterprise-depth plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-18-skills-erp-enterprise-depth`.
 - [ ] [AI] Update `plans/backlog/README.md` to remove this plan's backlog entry and reflect its
       completed status.
-- [ ] [AI] Commit the archival move **to the still-open PR branch from Phase 7** — no dedicated
-      follow-up archival PR. Use a Conventional Commits message, e.g.
+- [ ] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR.
+      Use a Conventional Commits message, e.g.
       `git commit -m "chore(plans): archive ayokoding-learning-path-18-skills-erp-enterprise-depth"`.
 - [ ] [AI] **Push it** — `git push origin HEAD` — acceptance: exits 0 and
       `git status -sb | grep -c 'ahead'` returns **0**.
@@ -803,9 +771,9 @@ redundant with plan 17's own Stage A retest (DD-8).
       `gh pr list --head "$(git rev-parse --abbrev-ref HEAD)" --state merged --json number,mergeCommit`
       returns this plan's PR. Use `gh pr list --head`, not `git merge-base --is-ancestor` (this repo
       squash-merges).
-- [ ] [AI] **Integration**: this phase closes the **Final Verification, Retest, and Archival** delivery
-      unit (Phases 4-9) — the `final-verification` PR merges here, `ayokoding-www` deploys to
-      `prod-ayokoding-www`. Both `skills/` ERP paths are now complete end to end, across plans 17 and 18.
+- [ ] [AI] **Integration**: this phase opens, reviews, and merges the plan's sole terminal archival PR,
+      then deploys `ayokoding-www` to `prod-ayokoding-www`. Both `skills/` ERP paths are complete end
+      to end across plans 17 and 18.
 
 > **Pause Safety**: the plan is archived. Terminal state — no further resume needed. Both
 > `skills/conventional-erp` and `skills/sharia-erp` are complete in production.

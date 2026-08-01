@@ -16,8 +16,8 @@ committed in their dependency order, but no intermediate phase may push, open a 
 review cycle, merge, deploy, or record a merge SHA. Only Phase 8 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
 `plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
-transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
-stage or delivery-boundary PR reference below.
+transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
+a PR.
 
 The `worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension/` path below is this
 plan's only worktree; no per-course, stage, phase, or closeout worktree is created.
@@ -26,43 +26,20 @@ plan's only worktree; no per-course, stage, phase, or closeout worktree is creat
 
 Worktree path: `worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension/`
 
-**One worktree per parallel unit — strict 1 PR ↔ 1 worktree.**
+Final-delivery branch: `ayokoding-learning-path-16-skills-accounting-sharia-extension/final-delivery`
 
-Base worktree — sequential phases (0, 1, 2, 4-8):
-
-```
-worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension/
-```
-
-Per-unit worktrees — one per course-authoring leaf and the manifest-growth cycle in Phase 3:
-
-```
-worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension-unit-<unit-id>/
-```
-
-```bash
-claude --worktree ayokoding-learning-path-16-skills-accounting-sharia-extension
-# and, per parallel unit:
-claude --worktree ayokoding-learning-path-16-skills-accounting-sharia-extension-unit-<unit-id>
-```
-
-The plan-execution Step 0 gate enters the base worktree by default: it auto-provisions from the
-latest `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before
-deleting the worktree after the plan is archived and pushed. See
-[Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md).
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Phase 3 (course authoring, manifest growth, landing update) is a set of delivery units, each its
-own branch/PR/3-cycle-review/`[AI]`-merge, pipelined up to the in-force concurrency cap. **Phase 0
-is not a delivery unit** — the earliest PR belongs to Phase 1. Phases 1, 2, and 4 are likewise not
-delivery units on their own — they commit to the base worktree's branch and fold forward into this
-plan's one final-integration delivery unit; see [§Delivery Boundaries](#delivery-boundaries). See
-[PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
-
-**Per-merge integration protocol.** After each `[AI]` merge above: confirm CI green on `origin/main`
-for the merged SHA, then **dispatch `apps-ayokoding-www-deployer`** to deploy `ayokoding-www` to
-`prod-ayokoding-www`.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 8 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 8 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on and start preconditions
 
@@ -107,16 +84,13 @@ The manifest-growth TDD cycle is one sub-phase, run once all five bodies exist.
 
 ### Delivery Boundaries
 
-| Phase(s)  | Delivery unit                                                                                                                                                                                                                                                                                            | Worktree / branch                                                                 | PR opens                                                                                                         |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 0         | — (setup and baseline)                                                                                                                                                                                                                                                                                   | —                                                                                 | no                                                                                                               |
-| 3         | Stage 3, repeating per-unit: one delivery unit per course (#20–#24), one for the 24-entry manifest-growth TDD cycle, one for the `sharia-accounting`-completion landing update plus its companion 24-course e2e-walk extension                                                                           | `worktrees/…-unit-<course-id\|manifest-sharia>/` — one worktree per unit          | yes — one PR per unit, pipelined up to the concurrency cap                                                       |
-| 1, 2, 4-8 | Final-integration delivery unit: syllabus corpus (Phase 1), verification-debt resolution (Phase 2), corpus-wide verification/licensing sweep (Phase 4), manual UI + full Rule-15 retest (Phase 5), final `origin/main` integration and CI (Phase 6), Knowledge Capture (Phase 7), and archival (Phase 8) | `worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension/` (base) | yes — pushed and opened at Phase 6; stays open through Phases 7-8; `[AI]` merges as the terminal step of Phase 8 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–7      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 8        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-Phase 2 (verification-debt resolution) sits in the base worktree, not its own PR — its output is a
-tech-docs.md/delivery.md status-line update, consumed by Phase 3's authoring rather than an
-independently shippable increment on its own, matching the boundary-test reasoning plan 14 and
-plan 15 already applied to their own scaffold/hardening phases.
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Path constants
 
@@ -370,29 +344,12 @@ Acceptance: command (1) returns **0**; command (2) returns a count **> 0**. Unli
 >
 > **This phase completes `sharia-accounting`, and with it, the whole 24-course corpus.**
 
-### 3.0 · Per-unit push, PR, and review-cycle protocol
+### 3.0 · Single-branch commit protocol
 
-Phase 3 is a declared delivery boundary with **7 delivery units**, per
-[§Delivery Boundaries](#delivery-boundaries): the 5 course-authoring units in §3.1 (courses
-\#20–#24), the manifest-growth TDD cycle in §3.2, and the landing-completion-plus-e2e-walk unit
-spanning §§3.3–3.4. For **each** unit, once its own work items (below) are complete, repeat this
-five-checkbox cycle before starting the next unit in the order defined in
-[§Parallelization Model](#parallelization-model):
-
-- [ ] [AI] Commit the unit's changes in its own per-unit worktree
-      (`worktrees/ayokoding-learning-path-16-skills-accounting-sharia-extension-unit-<unit-id>/`),
-      following Conventional Commits format — acceptance: `git status -sb` shows a clean tree with
-      the unit's commit(s) present.
-- [ ] [AI] Push the unit's branch and open its draft PR against `main` —
-      `gh pr create --base main --draft` — acceptance: `gh pr view --json number` returns a PR
-      number.
-- [ ] [AI] Run the 3-cycle fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review —
-      acceptance: 0 CRITICAL + 0 HIGH outstanding, branch non-destructively up to date with `main`,
-      all quality gates green.
-- [ ] [AI] Confirm all five PR Merge Protocol preconditions hold, then `[AI]`-merge the unit's PR
-      to `main` — acceptance: `gh pr view <pr-number> --json state --jq .state` returns `MERGED`.
-- [ ] [AI] Remove the unit's worktree — `git worktree remove worktrees/…-unit-<unit-id>/` —
-      acceptance: `git worktree list` no longer lists it.
+Phase 3 authors its five course bodies, manifest growth, landings, and E2E walk in the one declared
+worktree. Commit complete, checked work on the persistent final-delivery branch in dependency order;
+there is no per-course worktree, push, PR, review, merge, or deployment. These artifacts are reviewed
+with the rest of the plan only when Phase 8 opens the sole final PR.
 
 ### 3.1 · Author the five Stage-3 bodies
 
@@ -591,11 +548,11 @@ STAGE: 3
 PLAN: ayokoding-learning-path-16-skills-accounting-sharia-extension
 LANDED_COURSE_IDS: sharia-accounting-and-aaoifi-standards, islamic-contract-modeling-for-systems, zakah-computation-and-reporting-for-systems, sukuk-and-islamic-capital-markets-accounting, sharia-ledger-system-architecture
 UNBLOCKS_ERP_CAPABILITY: the Sharia-specific ERP stages delivering Sharia-compliant contract handling, Zakah/Sukuk reporting, and Sharia-ledger founding-architecture capability — and the whole sharia-accounting path, and the whole 24-course accounting corpus, are complete at this point
-MERGED_COMMIT: <40-character SHA — fill in from the actual merge>
+FINAL_DELIVERY_BRANCH: ayokoding-learning-path-16-skills-accounting-sharia-extension/final-delivery
 ```
 
-— acceptance: `git cat-file -e <sha>^{commit}` exits 0 once the real SHA is recorded, AND
-`grep -c '^STAGE: 3$' delivery.md` returns **1**.
+— acceptance: `grep -c '^STAGE: 3$' delivery.md` returns **1** and the signal is committed on this
+plan's persistent final-delivery branch. The terminal archival PR is the only merge record.
 
 ### Phase 3 Gate
 
@@ -610,7 +567,8 @@ MERGED_COMMIT: <40-character SHA — fill in from the actual merge>
       landing is untouched.
 - [ ] [AI] `sharia-accounting`'s path-walk e2e walks all 24 courses; `conventional-accounting`'s own
       19-course walk assertion is unaffected.
-- [ ] [AI] Stage-3 signal recorded with a real, verifiable `MERGED_COMMIT`.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 8.
 - [ ] [AI] `nx run ayokoding-www:build` exits 0.
 
 > **Pause Safety**: `sharia-accounting` is a genuinely complete, shippable 24-course path, **walked
@@ -764,11 +722,11 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ---
 
-## Phase 6: Final origin main integration and CI verification
+## Phase 6: Final quality and archival-PR readiness
 
 > _Suggested executor: direct git/CI operations._
 
-### Local Quality Gates (Before Push)
+### Local Quality Gates (Before archival)
 
 - [ ] [AI] `nx affected -t typecheck,build,test:quick,lint` exits 0.
 - [ ] [AI] `nx run ayokoding-www:specs:behavior:coverage` exits 0.
@@ -782,16 +740,14 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 - [ ] [AI] Commit changes thematically. Follow Conventional Commits format. Split different
       domains/concerns into separate commits. Do NOT bundle unrelated fixes into a single commit.
 
-### Post-Push Verification
+### Pre-archival readiness
 
-- [ ] [AI] Push the final integration branch, open the draft PR, run the 3-cycle
-      fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review — acceptance: 0 CRITICAL + 0
-      HIGH outstanding, branch non-destructively up to date with `origin/main`, all quality gates
-      green.
-- [ ] [AI] Monitor GitHub Actions for this PR's check run — poll every 2 minutes.
-- [ ] [AI] Verify all CI checks pass; fix and push a follow-up commit for any failure.
-- [ ] [AI] Confirm all five PR Merge Protocol preconditions hold. **Do not merge here.** The PR
-      stays open through Phases 7 and 8.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch; acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 8.
+- [ ] [AI] Reconcile the persistent branch non-destructively with current `origin/main`, then re-run
+      every local quality gate; acceptance: all gates are green.
+- [ ] [AI] Preserve Phase 5's local UI evidence. Open no PR until Phase 8 has committed the archival
+      move and index updates.
 
   **Gherkin (binds) →** "This plan's authored slice builds and validates green"
 
@@ -806,29 +762,18 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ### Stage-3 signal, final confirmation
 
-- [ ] [AI] `grep -c '^STAGE: 3$' "${PLANDIR}delivery.md"` returns **1**, AND the recorded
-      `MERGED_COMMIT` value passes `git cat-file -e`.
+- [ ] [AI] `grep -c '^STAGE: 3$' "${PLANDIR}delivery.md"` returns **1**, and the signal is committed
+      on the persistent final-delivery branch.
 
 ### Phase 6 Gate
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] CI green on `origin/main` for this plan's already-merged course and manifest changes.
-- [ ] [AI] Stage-3 signal present with a real, verifiable commit.
-- [ ] [AI] **Production serves `sharia-accounting` as a complete, 24-course path, and
-      `conventional-accounting` unchanged at 19.** Dispatch (or re-dispatch)
-      `apps-ayokoding-www-deployer` — acceptance:
-      `https://ayokoding.com/en/learn/paths/skills/sharia-accounting` returns HTTP 200 and renders a
-      24-course list; `.../conventional-accounting` returns HTTP 200 and still renders its own
-      19-course list.
-- [ ] [AI] **This plan's final PR is still open** —
-      `gh pr list --head "$(git rev-parse --abbrev-ref HEAD)" --state open --json number --jq 'length'`
-      returns **1**.
+- [ ] [AI] Stage-3 signal is present and committed on the persistent final-delivery branch.
+- [ ] [AI] All local quality gates and Phase 5 evidence are green; no PR exists before Phase 8.
 
-> **Pause Safety**: this plan's authored corpus is live on `origin/main` and CI-green;
-> `sharia-accounting` serves as a complete, 24-course path in production; the whole 24-course
-> accounting corpus is now complete. Safe to stop. To resume: confirm the `origin/main` run matching
-> the current tip SHA is green before starting Phase 7.
+> **Pause Safety**: this plan's authored corpus is verified and committed on the persistent
+> final-delivery branch. Safe to stop. To resume: re-run the local quality gates before Phase 7.
 
 ---
 
@@ -855,6 +800,12 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 
 ## Phase 8: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-16-skills-accounting-sharia-extension plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-16-skills-accounting-sharia-extension`
       (or from `plans/backlog/…`).
 - [ ] [AI] Update `plans/in-progress/README.md` (or `plans/backlog/README.md`) — remove this
@@ -863,7 +814,7 @@ as its own checkbox**, prefixed with the issuing tester's id — `EWT-###` / `UW
 - [ ] [AI] Update `ayokoding-learning-path-18-skills-erp-enterprise-depth`'s
       own docs (if it exists at this point) to note this plan's merge and Stage-3 signal are now on
       `origin/main` — this is the **final** handoff of the three-plan accounting chain.
-- [ ] [AI] Commit the archival move **to the still-open PR branch from Phase 6** —
+- [ ] [AI] Commit the archival move to the persistent final-delivery branch before opening the only PR —
       `git commit -m "chore(plans): archive ayokoding-learning-path-16-skills-accounting-sharia-extension"`.
 - [ ] [AI] **Push the archival commit** — `git push origin HEAD` — acceptance: exits 0 and
       `git status -sb | grep -c 'ahead'` returns **0**.

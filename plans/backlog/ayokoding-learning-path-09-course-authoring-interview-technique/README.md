@@ -113,11 +113,10 @@ the same five fields the parent plan's contract defines, verbatim, in a fenced `
 | `PLAN`              | `ayokoding-learning-path-09-course-authoring-interview-technique`                                                                                                       |
 | `LANDED_COURSE_IDS` | the 5 course IDs, one per line, in this plan's own listing order (see below)                                                                                            |
 | `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` — **exactly these two, never a third** |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of this band's single cohort PR                                                                                                      |
+| Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges                                                                         |
 
-A signal that names three manifests, or omits `MERGED_COMMIT`, is incomplete and the receiving plan
-must reject it rather than guess — exactly the same rejection discipline the parent plan's contract
-states.
+A signal that names three manifests is incomplete and the receiving plan must reject it rather than
+guess. It becomes actionable only after this plan's terminal archival PR merges.
 
 ## Exact course list, in landing order
 
@@ -132,19 +131,12 @@ Full per-course concept/example counts, prerequisites, and format detail: see
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (repo default; see [Delivery Mode
-Convention](../../../repo-governance/conventions/structure/plans.md#delivery-mode)): work in
-`worktrees/ayokoding-learning-path-09-course-authoring-interview-technique/`. With only 5 courses,
-this plan's authoring work is naturally **one five-course cohort** — a single draft PR covers all 5
-bodies, opened once all 5 pass their own maker-checker-fixer cycle, after Phase 0 setup. This plan
-does **not** invent multiple cohorts or per-course PRs for 5 courses — that granularity made sense for
-the parent plan's 90-body scope, not for this plan's 5. See [delivery.md](./delivery.md) for the
-`## Worktree`, `## Delivery Mode`, and `### Delivery Boundaries` declarations.
-
-No `[HUMAN]` merge gate — `[AI]` merges each delivery boundary's PR automatically once the 3-cycle
-PR-Review Maker→Fixer Cycle and all quality gates are green (repo default per **DN-11**, confirmed for
-the parent plan and inherited here — see [delivery.md](./delivery.md#delivery-mode-worktree-to-pr)).
-`ayokoding-www` is deployed to `prod-ayokoding-www` after every merge.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 6, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
@@ -206,7 +198,7 @@ verification step in this plan exercises `en` only and states the deferral inlin
   parent plan), the two-of-three manifest asymmetry, the Course Library Catalog rows for these 5
   courses, and the two hard cross-plan preconditions.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased, executable checklist: Phase 0 setup
-  → Phase 1 authoring (one cohort PR) → verification, manual test, CI, knowledge capture, archival.
+  → Phase 1 authoring → verification, manual test, CI readiness, knowledge capture, terminal archival PR.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
 - **Cross-plan**:
   [parent course-authoring plan](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)

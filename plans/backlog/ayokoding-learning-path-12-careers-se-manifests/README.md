@@ -78,22 +78,10 @@ plan's growth phase runs longest — so this plan finishes the whole four-manife
 four-manifest check therefore lives in this plan, as its own final phase**, run only after **both**
 this plan's own three manifests **and** the sibling AI-manifest plan are fully merged.
 
-This produces a two-way dependency between the two plans that is **sequential, not cyclic**:
-
-- `ayokoding-learning-path-13-careers-ai-manifest` is `blockedBy` **this plan's Phase 1 delivery unit
-  merged** — a **partial, staged** dependency on just this plan's first delivery boundary (the
-  interview-ready manifest + landing + hub card), not the whole plan. This mirrors the existing
-  band-completion-signal pattern: a specific merged PR/commit is the checkable precondition, exactly
-  as the course-authoring successor plans already cite for their own growth signals.
-- **This plan's own final phase** (the four-manifest cross-check) is `blockedBy` **the sibling plan
-  fully merged** — a normal, whole-plan dependency.
-
-The two edges point at **different nodes inside this plan** — the first phase and the last phase — so
-there is no cycle: this plan's first phase happens **before** the sibling plan even starts, and this
-plan's last phase happens **after** the sibling plan finishes. A future reader must not conflate "plan
-12 depends partially on plan 13's start-condition" with "plan 13 depends on plan 12" as if it were the
-same edge reversed — they are two distinct, one-directional edges resolved at two distinct points in
-this plan's own phase sequence.
+Plan 13 starts independently because the manifest file subtrees are disjoint. It merges its sole
+final PR first. This plan's Phase 8 is then `blockedBy` that whole merged Plan 13 delivery, allowing
+the all-four-manifest check to run before this plan's own sole final PR. There is no partial
+intermediate-PR handoff and therefore no cycle.
 
 ```mermaid
 %% The plan-12 / plan-13 coupling, shown as a sequence to make the non-circularity explicit.
@@ -103,19 +91,12 @@ sequenceDiagram
     participant P12 as Plan 12 (this plan)<br/>3 SE manifests
     participant P13 as Plan 13 (sibling)<br/>1 AI manifest
 
-    Note over P12: Phase 1 — interview-ready<br/>manifest + landing + hub card
-    P12->>P12: Phase 1 delivery unit merged to origin/main
-    P12-->>P13: unblocks (partial, staged dependency)
-    Note over P13: Phase 0 — start precondition:<br/>"Plan 12 Phase 1 merged" holds
-    par Concurrent work
-        Note over P13: Phases 1-7 — author, grow,<br/>verify, retest, archive
-    and
-        Note over P12: Phase 2 — immediately-effective<br/>Phase 3 — fundamentally-strong<br/>Phase 4 — growth (6 source-plan signals)<br/>Phases 5-7 — verify, retest, integrate
-    end
-    P13->>P13: Plan 13 fully merged and archived
-    P13-->>P12: unblocks (whole-plan dependency)
-    Note over P12: Phase 8 — four-manifest cross-check<br/>(needs ALL FOUR manifests live)
-    P12->>P12: Phases 9-10 — Knowledge Capture, Archival
+    Note over P13: Phases 0-6 — author, grow, verify, retest
+    P13->>P13: Phase 7 — archive, sole PR, merge
+    P13-->>P12: merged AI-engineer manifest unblocks Phase 8
+    Note over P12: Phases 1-7 — author and verify three SE manifests
+    P12->>P12: Phase 8 — four-manifest cross-check
+    P12->>P12: Phases 9-10 — Knowledge Capture, archive, sole PR, merge
 ```
 
 **Accessibility note.** The diagram is a `sequenceDiagram`, whose reading order (top to bottom, arrows
@@ -236,7 +217,6 @@ flowchart LR
     CA8 -.->|"growth signals"| P13
     VFC --> P12
     VFC --> P13
-    P12 -.->|"Phase 1 merged (partial)"| P13
     P13 -.->|"whole plan merged"| P12
 
     classDef done fill:#0173B2,stroke:#000000,color:#FFFFFF
@@ -302,24 +282,23 @@ phases to delivery units, branches, and PRs.
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                                                     | Relationship                                                                                                                                                                  |
-| ----------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                                  | hard — merged to `origin/main` first (done)                                                                                                                                   |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                                                | transitive, via the navigation plan (done)                                                                                                                                    |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                    | transitive, via the navigation plan (done)                                                                                                                                    |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)                         | hard for this plan's own growth — Bands 1,2 must land before Phase 4.1 processes them                                                                                         |
-| `blockedBy` | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`                      | hard for growth — old Band 3+4                                                                                                                                                |
-| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                   | hard for growth — old Band 5 (this plan's SE-manifest slice only; the AI-manifest slice is plan 13's)                                                                         |
-| `blockedBy` | `ayokoding-learning-path-07-course-authoring-low-level-systems`                             | hard for growth — old Band 6 (half)                                                                                                                                           |
-| `blockedBy` | `ayokoding-learning-path-08-course-authoring-security-and-ops`                              | hard for growth — old Band 7                                                                                                                                                  |
-| `blockedBy` | `ayokoding-learning-path-09-course-authoring-interview-technique`                           | hard for growth — old Band 9 (two-of-three growth into this plan's manifests)                                                                                                 |
-| `blockedBy` | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                        | hard for growth — old Band 6 (other half)                                                                                                                                     |
-| `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                                     | hard for growth — old Band 8 (this plan's SE-manifest slice; also grows plan 13's AI manifest independently)                                                                  |
-| `blockedBy` | `vercel-function-cost-reduction`                                                            | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                                                                  |
-| `blocks`    | `ayokoding-learning-path-13-careers-ai-manifest` (**partial** — Phase 1 delivery unit only) | this plan's Phase 1 merging is the sibling plan's own start precondition — see [§The plan-12 / plan-13 coupling](#the-plan-12--plan-13-coupling-non-circular-by-construction) |
-| _(no edge)_ | `ayokoding-learning-path-13-careers-ai-manifest` (**whole-plan**)                           | **this plan's own final phase (8)** is `blockedBy` the sibling plan's **whole-plan** completion — a distinct, later edge from the partial one above; see the coupling section |
-| _(no edge)_ | `ayokoding-learning-path-14`/`-15`/`-16` (the `skills/`-accounting split)                   | **disjoint category subtree** — `careers/` vs `skills/`; no shared file. Confirmed explicitly, not merely absent from this table.                                             |
-| _(no edge)_ | `ayokoding-learning-path-17`/`-18` (the `skills/`-ERP split)                                | **disjoint category subtree** — same confirmation as above.                                                                                                                   |
+| Direction   | Plan (full folder name)                                                   | Relationship                                                                                                                       |
+| ----------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                | hard — merged to `origin/main` first (done)                                                                                        |
+| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                              | transitive, via the navigation plan (done)                                                                                         |
+| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | transitive, via the navigation plan (done)                                                                                         |
+| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)       | hard for this plan's own growth — Bands 1,2 must land before Phase 4.1 processes them                                              |
+| `blockedBy` | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`    | hard for growth — old Band 3+4                                                                                                     |
+| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | hard for growth — old Band 5 (this plan's SE-manifest slice only; the AI-manifest slice is plan 13's)                              |
+| `blockedBy` | `ayokoding-learning-path-07-course-authoring-low-level-systems`           | hard for growth — old Band 6 (half)                                                                                                |
+| `blockedBy` | `ayokoding-learning-path-08-course-authoring-security-and-ops`            | hard for growth — old Band 7                                                                                                       |
+| `blockedBy` | `ayokoding-learning-path-09-course-authoring-interview-technique`         | hard for growth — old Band 9 (two-of-three growth into this plan's manifests)                                                      |
+| `blockedBy` | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`      | hard for growth — old Band 6 (other half)                                                                                          |
+| `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                   | hard for growth — old Band 8 (this plan's SE-manifest slice; also grows plan 13's AI manifest independently)                       |
+| `blockedBy` | `vercel-function-cost-reduction`                                          | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                       |
+| `blockedBy` | `ayokoding-learning-path-13-careers-ai-manifest` (**whole-plan**)         | Phase 8's four-manifest cross-check begins only after Plan 13's sole final PR merges; Plan 13 has no start dependency on this plan |
+| _(no edge)_ | `ayokoding-learning-path-14`/`-15`/`-16` (the `skills/`-accounting split) | **disjoint category subtree** — `careers/` vs `skills/`; no shared file. Confirmed explicitly, not merely absent from this table.  |
+| _(no edge)_ | `ayokoding-learning-path-17`/`-18` (the `skills/`-ERP split)              | **disjoint category subtree** — same confirmation as above.                                                                        |
 
 ### Vercel cost-reduction dependency (hard, both plans)
 
@@ -374,13 +353,12 @@ falsifiable check that makes the correction auditable rather than asserted.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (the repo default): work in
-`worktrees/ayokoding-learning-path-12-careers-se-manifests/`, open a draft PR per **delivery
-boundary** — not every phase; Phase 0 opens none — against `main`, run the PR-Review Maker→Fixer Cycle
-(3 sequential CI-gated cycles), then `[AI]` merges automatically once the review and all quality gates
-are green (repo default per **DN-11**, no `[HUMAN]` merge gate). `ayokoding-www` is deployed to
-`prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree`,
-`## Delivery Mode`, and `### Delivery Boundaries` declarations and the PR-review-cycle steps.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 10, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Navigation
 

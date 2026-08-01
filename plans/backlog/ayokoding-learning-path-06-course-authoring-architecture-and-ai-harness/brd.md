@@ -106,7 +106,7 @@ Solo-maintainer repo — no sign-off ceremony. The maintainer wears:
 - **Content author** (via the `apps-ayokoding-www-{by-example,annotated-concept}-maker` agents) —
   writes the 15 bodies.
 - **Content reviewer** (via the matching checkers plus facts and link checkers) — validates every
-  body before its cohort PR merges.
+  body before the plan's sole terminal PR merges.
 
 Consuming agents [Repo-grounded]: `apps-ayokoding-www-by-example-maker`,
 `apps-ayokoding-www-annotated-concept-maker`, and their matching checkers, plus

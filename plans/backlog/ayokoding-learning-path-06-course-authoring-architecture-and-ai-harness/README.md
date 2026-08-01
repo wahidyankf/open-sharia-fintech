@@ -140,7 +140,7 @@ MUST carry all five fields below, verbatim, in a fenced `text` block directly un
 | `PLAN`              | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`                                                  |
 | `LANDED_COURSE_IDS` | all 15 course IDs this plan authors, one per line, in the order listed in [§Exact scope](#exact-scope-15-courses-in-order) |
 | `GROW_MANIFESTS`    | every manifest a downstream plan must grow, by **full path** under `<MANIFESTS>`                                           |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of the cohort PR that landed the last of the 15 bodies                                  |
+| `FINAL_PR`          | the number of this plan's sole terminal archival PR, verified merged before consumption                                    |
 
 **`GROW_MANIFESTS` for this band is four manifests** — Band 5 is one of only two bands (the other is
 Band 8, in `ayokoding-learning-path-11-course-authoring-capstones`) that grows the fourth path's
@@ -152,7 +152,7 @@ README: "this band lands eight of the nine courses that manifest walks (DD-33)":
 - `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
 - `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`
 
-A signal that names manifests loosely, or omits `MERGED_COMMIT`, is incomplete and the receiving
+A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving
 plan(s) must reject it rather than guess.
 
 ## Phase-ordering fact (internal, not cross-plan)
@@ -168,21 +168,12 @@ this ordering.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (inherited from the parent plan, tier-2 plan-field precedence): work in
-`worktrees/ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/`, open a draft PR
-at each **delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green. `ayokoding-www` is deployed to
-`prod-ayokoding-www` after every merge. This plan declares **no `[HUMAN]` merge gate**.
-
-**Inherited sequential five-course delivery cohort cadence** — the parent plan's 2026-07-31 execution
-amendment established that remaining course bodies land in sequential five-course PR cohorts rather
-than one PR per course. This plan inherits that cadence as standing policy and applies it natively
-from the start: 15 courses = exactly **3 full five-course cohorts** (Cohort 1 = courses 1–5, Cohort 2
-= courses 6–10, Cohort 3 = courses 11–15 — see [§Exact scope](#exact-scope-15-courses-in-order)).
-Each course still completes maker-checker-fixer and its own thematic commit; each cohort opens one
-draft PR, runs one three-cycle review, merges once, and deploys once.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 9, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 

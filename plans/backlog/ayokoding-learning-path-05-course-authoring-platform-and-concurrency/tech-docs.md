@@ -205,9 +205,9 @@ sequenceDiagram
 
     CA->>CA: Author every body in the band from its syllabus spec
     CA->>CA: Run content checkers, apply fixers, re-verify
-    CA->>Main: Each band lands via one draft PR, 3-cycle review, [AI] merge
+    CA->>Main: One terminal archival PR lands all 14 bodies, then review and [AI] merge run once
     CA->>CA: Record five-field band-completion signal in delivery.md
-    Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (3 SE manifests), MERGED_COMMIT
+    Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (3 SE manifests), FINAL_PR
     CA->>MF: Hand off the signal (via this plan's merged delivery.md)
     MF->>Main: Read LANDED_COURSE_IDS, confirm each resolves under COURSES
     MF->>MF: Append IDs to exactly the three manifests named in GROW_MANIFESTS
@@ -270,9 +270,8 @@ renumbering:
   authoring-priority-#1 courses. This plan does not reorder that sequence; it narrows plan04's already
   -scoped Bands 3 and 4 into an independently deliverable slice, unblocked the moment plan04's own
   Phase 0 baseline and populated `courses/` namespace exist (this plan's own hard `blockedBy`).
-- **DN-11 · `[AI]` auto-merge (repo default).** `[AI]` merges each delivery boundary's PR automatically
-  once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green; no `[HUMAN]` merge gate
-  in this plan.
+- **DN-11 · `[AI]` auto-merge (repo default).** `[AI]` merges the sole terminal archival PR once the
+  3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green; no `[HUMAN]` merge gate exists.
 
 ### Referenced but owned elsewhere
 

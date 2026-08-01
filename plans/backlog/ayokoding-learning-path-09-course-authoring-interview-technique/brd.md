@@ -56,7 +56,7 @@ wears, or agents the maintainer delegates to:
 2. **Observable fact**: one band-completion signal, naming exactly two manifests
    (`careers/interview-ready/software-engineer.yaml`,
    `careers/fundamentally-strong/software-engineer.yaml`), is recorded in this plan's `delivery.md`
-   with a real `MERGED_COMMIT` SHA — verifiable by reading the file after archival.
+   in this plan's terminal archival PR — verifiable after that PR merges.
 3. **Judgment call**: closing this deferral removes the one remaining content gap blocking the
    `interview-ready` path's own manifest from reaching content-completeness. No baseline cycle-time
    measurement exists for "how long a manifest stays blocked on a missing band," so this is stated

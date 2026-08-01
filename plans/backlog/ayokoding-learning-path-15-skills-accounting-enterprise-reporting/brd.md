@@ -110,8 +110,9 @@ their matching checkers and fixers, `apps-ayokoding-www-general-maker` (landing 
   carries an explicit "what still balances while being wrong" section.
 - **No prerequisite is walked that should be linked** (observable): neither manifest's
   `courseOrder` contains `backend-essentials`.
-- **The Stage-2 signal is recorded with a real, verifiable commit** (observable):
-  `git cat-file -e <sha>^{commit}` exits 0 for the recorded `MERGED_COMMIT`.
+- **The Stage-2 signal is recorded on the persistent final-delivery branch** (observable): its four
+  required fields, including `FINAL_DELIVERY_BRANCH`, are present exactly once before the terminal
+  archival PR is opened.
 - **`conventional-accounting` passes its full Rule-15 retest** (observable): every EWT/UWT/DWT
   finding against that landing and its 19-course walk is resolved or explicitly deferred with
   recorded permission.

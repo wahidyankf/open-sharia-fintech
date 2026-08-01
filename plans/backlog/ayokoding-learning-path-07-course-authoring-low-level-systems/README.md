@@ -142,13 +142,13 @@ field's wording matches the pattern the sibling plan
 (`ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`) independently adopted for its
 own half's signal, so the two partial signals read as a matched pair to the downstream manifest plan:
 
-| Field               | Content                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------ |
-| `BAND`              | `Band 6 (Low-level systems & native-languages half) — ayokoding-learning-path-07`    |
-| `PLAN`              | `ayokoding-learning-path-07-course-authoring-low-level-systems`                      |
-| `LANDED_COURSE_IDS` | all 7 course IDs, one per line, in this plan's own listing order (courses 1–7 above) |
-| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>`     |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of this band's closeout PR                        |
+| Field               | Content                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| `BAND`              | `Band 6 (Low-level systems & native-languages half) — ayokoding-learning-path-07`       |
+| `PLAN`              | `ayokoding-learning-path-07-course-authoring-low-level-systems`                         |
+| `LANDED_COURSE_IDS` | all 7 course IDs, one per line, in this plan's own listing order (courses 1–7 above)    |
+| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>`        |
+| `FINAL_PR`          | the number of this plan's sole terminal archival PR, verified merged before consumption |
 
 **`GROW_MANIFESTS` for this band is the three `software-engineer`-role manifests** — matching
 `ayokoding-learning-path-04-course-authoring`'s own rule that "Bands 1–4/6/7 grow three" (this band was
@@ -159,30 +159,17 @@ originally numbered 6 in that plan, and none of these 7 courses feeds the fourth
 - `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`
 - `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
 
-A signal that names manifests loosely, or omits `MERGED_COMMIT`, is incomplete and the receiving plan
+A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving plan
 must reject it rather than guess — same rule as the source plan.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (repo default; matches every sibling in this course-authoring family): work in
-`worktrees/ayokoding-learning-path-07-course-authoring-low-level-systems/`, open a draft PR at each
-**delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green — the repo default, no
-`[HUMAN]` merge gate declared. `ayokoding-www` is deployed to `prod-ayokoding-www` after every merge.
-
-**Inherited sequential five-course delivery cohort cadence.** This plan adopts, from the start (it is
-a brand-new plan, not a retrofit), the same cohort cadence
-`ayokoding-learning-path-04-course-authoring` adopted by amendment on 2026-07-31: courses are
-authored, checked, and committed **one at a time**, and a draft PR opens only after a complete cohort
-of courses lands. With exactly 7 courses (already under the 5–15-course-per-plan cap on its own),
-this plan groups them into **one five-course cohort (courses 1–5) plus one two-course tail cohort
-(courses 6–7)** rather than a single seven-course cohort — see
-[tech-docs.md §Why two cohorts, not one](./tech-docs.md#why-two-cohorts-not-one) for the reasoning
-(in short: it keeps each PR's diff and review load close to the cadence's own five-course design
-point, and the natural prerequisite seam — the C-family cluster vs. the Rust on-ramp pair — already
-falls at exactly that boundary).
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
@@ -260,7 +247,7 @@ instruction to proceed without grilling:
    ready for the executor to append to during execution.
 5. **Delivery-boundary grouping.** Verification, manual testing, final CI integration, and knowledge
    capture all fold into one closeout unit ending at Phase 7 (Plan Archival) rather than each opening
-   its own PR — this plan has no supersession-sweep-style real content fix at the verification phase
+   a separate PR — this plan has no supersession-sweep-style real content fix at the verification phase
    (unlike `ayokoding-learning-path-04-course-authoring`'s Phase 12), so nothing forces an earlier
    standalone boundary.
 

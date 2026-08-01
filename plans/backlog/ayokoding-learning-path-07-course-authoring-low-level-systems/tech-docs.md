@@ -124,8 +124,8 @@ the 7 courses:
 6. **Apply content fixers** — resolve every CRITICAL/HIGH/MEDIUM finding.
 7. **Re-verify** — re-run checkers + `npx nx run ayokoding-www:build` + `npm run lint:md`.
 
-Plus the same two closing per-course checks every course in this programme runs on its own branch
-before merging:
+Plus the same two closing per-course checks every course in this programme runs on the persistent
+final-delivery branch before the terminal PR opens:
 
 **8. Confirm no manifest file changed in this course's own diff.**
 
@@ -192,27 +192,23 @@ prerequisite (`just-enough-bash`, already live from Wave 1) is tan-filled and la
 
 ### Band-completion signal (the handoff to the manifest plan)
 
-This plan lands **one** band-completion signal after both cohorts merge (see
+This plan lands **one** band-completion signal after its terminal archival PR merges (see
 `delivery.md` Phase 2). The signal's five fields and rejection rule are specified in
 [README §Band-completion signal contract](./README.md#band-completion-signal-contract); this plan
 carries no per-band routing table because it authors exactly one band.
 
 ## Why two cohorts, not one
 
-This plan's 7 courses already sit under the repo's 5–15-course-per-plan sizing rule on their own — a
-single-cohort delivery is a legitimate option. This plan instead splits into a **five-course cohort
-(1–5) plus a two-course tail cohort (6–7)** for two concrete reasons:
+This plan's 7 courses already sit under the repo's 5–15-course-per-plan sizing rule. It uses a
+**five-course authoring phase (1–5) plus a two-course tail phase (6–7)** for two concrete reasons:
 
-1. **It matches the inherited cadence's own design point.** The five-course cohort cadence
-   `ayokoding-learning-path-04-course-authoring` adopted (2026-07-31 amendment) sizes each PR's review
-   load — discipline-specialist fan-out, synthesis, three CI-gated cycles — around five courses. A
-   single seven-course cohort stretches that review load by 40% for no corresponding benefit; two
-   cohorts keeps each PR closer to the cadence's own calibration point.
+1. **It keeps authoring bounded.** Five courses is a practical unit for the authoring/checker loop;
+   a two-course tail avoids splitting the C-family chain while retaining one terminal delivery unit.
 2. **The natural DAG seam already falls there.** Courses 1–5 (`just-enough-c` through
    `system-programming`) are the complete C-family chain — every dependency among them resolves
-   within the cohort. Courses 6–7 (`just-enough-rust`, `modern-system-programming`) are the complete
+   within the phase. Courses 6–7 (`just-enough-rust`, `modern-system-programming`) are the complete
    Rust chain, similarly self-contained. Splitting anywhere else (e.g., 4+3) would cut through the
-   C-family chain and leave a cohort with an unresolved external-to-the-cohort prerequisite reference
+   C-family chain and leave an authoring phase with an unresolved external prerequisite reference
    until the next cohort lands — not a build failure (the course-library resolver tolerates an
    unresolved prerequisite ID), but a less coherent review unit.
 
@@ -438,13 +434,9 @@ asserted):
 Every artefact this plan produces is an **additive** new directory under `<COURSES>`. Nothing is
 moved, renamed, or deleted, so rollback is subtractive and total:
 
-- **Per cohort**: revert that cohort's merge commit. The bodies disappear; no other course is
-  affected (content-independent, each writes only its own subtree). If the band-completion signal was
-  already recorded and the manifest plan already consumed it, coordinate with that plan before
-  reverting Cohort B (which is where the signal lands).
 - **Per course**: `git rm -r <COURSES><course-id>/` plus removing its catalog row and its
   `<COURSES>_index.md` entry. Safe **only** if no manifest already references the ID.
-- **Whole plan**: revert both cohort merges in reverse order. The `courses/` bucket returns to its
+- **Whole plan**: revert the sole terminal merge commit. The `courses/` bucket returns to its
   pre-this-plan state.
 
 **The one-way door**: once a manifest references one of these 7 course IDs, deleting that body breaks

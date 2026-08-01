@@ -16,8 +16,8 @@ committed in their dependency order, but no intermediate phase may push, open a 
 review cycle, merge, deploy, or record a merge SHA. Only Phase 8 opens the draft PR, after all
 course work, verification, and Knowledge Capture are green; it includes the archival move to
 `plans/done/`, then runs the PR-Review Maker→Fixer Cycle, CI verification, ready-for-review
-transition, and the normal `[AI]` merge/deploy protocol. This contract supersedes every older
-stage or delivery-boundary PR reference below.
+transition, and the normal `[AI]` merge/deploy protocol. No earlier stage or delivery boundary opens
+a PR.
 
 The `worktrees/ayokoding-learning-path-14-skills-accounting-foundations/` path below is this
 plan's only worktree; no per-course, stage, phase, or closeout worktree is created.
@@ -26,54 +26,20 @@ plan's only worktree; no per-course, stage, phase, or closeout worktree is creat
 
 Worktree path: `worktrees/ayokoding-learning-path-14-skills-accounting-foundations/`
 
-**One worktree per parallel unit — strict 1 PR ↔ 1 worktree.** Git permits exactly one checked-out
-branch per worktree, so the concurrent course PRs this plan declares below require their own
-worktrees. Names stay lowercase kebab-case; the per-unit suffix is `-unit-<unit-id>`, never an
-underscore separator.
+Final-delivery branch: `ayokoding-learning-path-14-skills-accounting-foundations/final-delivery`
 
-Base worktree — sequential phases (0, 1, 4-8):
-
-```
-worktrees/ayokoding-learning-path-14-skills-accounting-foundations/
-```
-
-Per-unit worktrees — one per course-authoring leaf and per manifest-growth cycle in Phases 2 and 3,
-where `<unit-id>` is the course id (or `manifest-conventional` / `manifest-sharia`):
-
-```
-worktrees/ayokoding-learning-path-14-skills-accounting-foundations-unit-<unit-id>/
-```
-
-```bash
-claude --worktree ayokoding-learning-path-14-skills-accounting-foundations
-# and, per parallel unit:
-claude --worktree ayokoding-learning-path-14-skills-accounting-foundations-unit-<unit-id>
-```
-
-The plan-execution Step 0 gate enters the base worktree by default: it auto-provisions from the
-latest `origin/main` when missing, syncs with `origin/main` before implementing, and prompts before
-deleting the worktree after the plan is archived and pushed. Provision a per-unit worktree at the
-start of each parallel unit and remove it once that unit's PR has merged. Never exceed the in-force
-concurrency cap in live worktrees. See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md)
-and [Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each course-authoring sub-phase (Phase 2, Phase 3) is its own **delivery unit**: its own branch, its
-own draft PR, its own 3-cycle fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review, its
-own `[AI]` merge — strict 1-PR-per-course, pipelined up to the in-force concurrency cap (check the
-latest `AGENTS.md` §Agent Workflow Orchestration value before starting). Manifest-growth TDD cycles
-and landing authoring are each their own PR too. **Phase 0 is not a delivery unit** — it opens no
-PR, pushes no branch, runs no review cycle, and merges nothing; the earliest PR belongs to Phase 1
-([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
-Phases 1, 4 and 5 are likewise not delivery units on their own — they commit to the base worktree's
-branch and fold forward into this plan's one final-integration delivery unit; see
-[§Delivery Boundaries](#delivery-boundaries). See
-[PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
-
-**Per-merge integration protocol.** After each `[AI]` merge above: confirm CI green on `origin/main`
-for the merged SHA, then **dispatch `apps-ayokoding-www-deployer`** to deploy `ayokoding-www` to
-`prod-ayokoding-www` — a no-op redeploy where a phase changed no app content.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 8 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 8 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on and start preconditions
 
@@ -108,26 +74,18 @@ cycles are two separate, parallelizable sub-phases once their shared courses exi
 [tech-docs §The eleven-course catalog slice](./tech-docs.md#the-eleven-course-catalog-slice-courses-111)
 for the full topological ordering this parallelization respects.
 
-**Each parallel unit runs in its own worktree** (see [§Worktree](#worktree)).
+Research and drafting may run concurrently, but all changes are committed serially on the one
+persistent branch in the declared worktree (see [§Worktree](#worktree)).
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                                                                                                                                                                                                           | Worktree / branch                                                                               | PR opens                                                                                                         |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 0        | — (setup and baseline)                                                                                                                                                                                                                                  | —                                                                                               | no                                                                                                               |
-| 2        | Stage 1, repeating per-unit: one delivery unit per course (#1–#3), one for the 3-entry manifest-publish TDD cycle, one for both landings plus their companion path-walk e2e TDD cycle                                                                   | `worktrees/…-unit-<course-id\|manifest-conventional\|manifest-sharia>/` — one worktree per unit | yes — one PR per unit, pipelined up to the concurrency cap                                                       |
-| 3        | Stage 1B, repeating per-unit: one delivery unit per course (#4–#11), one for the 11-entry manifest-growth TDD cycle, one for the transactional-cycle-complete landing update plus its companion e2e-walk extension                                      | same per-unit pattern as Phase 2                                                                | yes — one PR per unit, pipelined up to the concurrency cap                                                       |
-| 1, 4-8   | Final-integration delivery unit: syllabus corpus (Phase 1), corpus-wide verification/licensing sweep (Phase 4), manual UI verification (Phase 5), final `origin/main` integration and CI (Phase 6), Knowledge Capture (Phase 7), and archival (Phase 8) | `worktrees/ayokoding-learning-path-14-skills-accounting-foundations/` (base)                    | yes — pushed and opened at Phase 6; stays open through Phases 7-8; `[AI]` merges as the terminal step of Phase 8 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–7      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 8        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-Phase 1 fails the boundary test's **(a) coherent** prong — it produces a scaffold (the syllabus
-corpus) the next authoring phase consumes, not an independently meaningful increment. Phase 4 also
-fails **(a) coherent** — its edits (citation links, licensing fixes) harden content that Phases 2
-and 3 already shipped on their own PRs. Both sit in the base worktree with no push/PR/merge step of
-their own; their work accumulates on that branch until Phase 6 pushes it and opens this plan's one
-final PR, which Phases 7-8 commit into and Phase 8 merges as its terminal step. The per-course,
-per-manifest-cycle, and per-landing units inside Phases 2 and 3 remain independent DAG nodes and
-stay separate delivery units per
-[rule 5](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Path constants
 
@@ -321,7 +279,6 @@ exclusion in command (1) accounts for course #2's one linked (never-walked) exte
 ### 2.1 · Author the three Stage-1 bodies (maker-checker-fixer, not TDD)
 
 Apply the seven-step per-course convention to each course; each course is its own sub-phase (own
-branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining up to the in-force cap.
 
 1. [AI] **Accuracy pre-verify** — spot-check every external claim via `web-researcher`.
 2. [AI] **Skeleton** — create `"${COURSES}<course-id>/"` (`_index.md` with `prerequisites: [...]`,
@@ -822,11 +779,11 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 
 ---
 
-## Phase 6: Final origin main integration and CI verification
+## Phase 6: Final quality and archival-PR readiness
 
 > _Suggested executor: direct git/CI operations._
 
-### Local Quality Gates (Before Push)
+### Local Quality Gates (Before archival)
 
 - [ ] [AI] `nx affected -t typecheck,build,test:quick,lint` exits 0.
 - [ ] [AI] `nx run ayokoding-www:specs:behavior:coverage` exits 0.
@@ -842,18 +799,15 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 - [ ] [AI] Split different domains/concerns into separate commits.
 - [ ] [AI] Do NOT bundle unrelated fixes into a single commit.
 
-### Post-Push Verification
+### Pre-archival readiness
 
-- [ ] [AI] Push the final integration branch, open the draft PR, run the 3-cycle
-      fan-out → `pr-review-synthesis-maker` → `pr-review-fixer` review — acceptance: 0 CRITICAL + 0
-      HIGH outstanding, branch non-destructively up to date with `origin/main`, all quality gates
-      green.
-- [ ] [AI] Monitor GitHub Actions for this PR's check run — poll every 2 minutes, one
-      `gh run view --json status,conclusion` per wakeup.
-- [ ] [AI] Verify all CI checks pass; fix and push a follow-up commit for any failure.
-- [ ] [AI] Confirm all five PR Merge Protocol preconditions hold. **Do not merge here.** The PR
-      stays open through Phases 7 and 8 so that Knowledge Capture and the archival move land inside
-      this same PR. The `[AI]` merge is the terminal step of Phase 8.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch; acceptance:
+      no PR, merge, deployment, or merge-commit record occurs before Phase 8.
+- [ ] [AI] Rebase or otherwise non-destructively reconcile the persistent branch with current
+      `origin/main`, then re-run every local quality gate; acceptance: the branch is current and all
+      gates are green.
+- [ ] [AI] Preserve the Phase 5 local UI evidence as the pre-archival verification record. The sole
+      PR is intentionally not opened until the Phase 8 archival move is committed.
 
   **Gherkin (binds) →** "This plan's authored slice builds and validates green"
 
@@ -870,20 +824,13 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 
 > All checks below must pass before starting Phase 7.
 
-- [ ] [AI] CI green on `origin/main` for this plan's already-merged course and manifest changes —
-      verify against the run whose head SHA matches `origin/main`'s current tip.
-- [ ] [AI] **Production serves both partial accounting landings.** Dispatch (or re-dispatch)
-      `apps-ayokoding-www-deployer` — acceptance:
-      `https://ayokoding.com/en/learn/paths/skills/conventional-accounting` and `.../sharia-accounting`
-      both return HTTP 200 and each renders an 11-entry course list.
-- [ ] [AI] **This plan's final PR is still open** —
-      `gh pr list --head "$(git rev-parse --abbrev-ref HEAD)" --state open --json number --jq 'length'`
-      returns **1**.
+- [ ] [AI] All local quality gates and Phase 5 evidence are green and committed on the persistent
+      final-delivery branch.
+- [ ] [AI] No PR exists yet for this plan; Phase 8 is the sole terminal archival delivery boundary.
 
-> **Pause Safety**: this plan's authored corpus is live on `origin/main` and CI-green, while this
-> plan's final PR remains open by design. Safe to stop. To resume: confirm the `origin/main` run
-> matching the current tip SHA is green, and that this plan's final PR is still open, before
-> starting Phase 7.
+> **Pause Safety**: this plan's authored corpus is verified and committed on the persistent
+> final-delivery branch. Safe to stop. To resume: re-run the local quality gates before starting
+> Phase 7.
 
 ---
 
@@ -916,6 +863,12 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 
 ## Phase 8: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] `git mv plans/in-progress/ayokoding-learning-path-14-skills-accounting-foundations plans/done/$(date +%Y-%m-%d)__ayokoding-learning-path-14-skills-accounting-foundations`
       (or from `plans/backlog/…` if it was never promoted to `in-progress/`).
 - [ ] [AI] Update `plans/in-progress/README.md` (or `plans/backlog/README.md`) — remove this
@@ -924,8 +877,8 @@ branch → draft PR → 3-cycle review → `[AI]` merge → deploy), pipelining 
 - [ ] [AI] Update `ayokoding-learning-path-15-skills-accounting-enterprise-reporting`'s own docs (if
       it exists at this point) to note this plan's merge is on `origin/main`, per its own Phase 0
       precondition check — this is a note only; plan 15 verifies readiness itself.
-- [ ] [AI] Commit the archival move **to the still-open PR branch from Phase 6** — no dedicated
-      follow-up archival PR.
+- [ ] [AI] Commit the archival move to the persistent final-delivery branch, before opening the
+      plan's only PR.
       `git commit -m "chore(plans): archive ayokoding-learning-path-14-skills-accounting-foundations"`.
 - [ ] [AI] **Push the archival commit** — `git push origin HEAD` — acceptance: exits 0 and
       `git status -sb | grep -c 'ahead'` returns **0**.

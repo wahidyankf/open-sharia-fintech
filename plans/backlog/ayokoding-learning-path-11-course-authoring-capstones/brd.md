@@ -63,7 +63,7 @@ that consume this plan's artefacts, not external stakeholder sign-off:
   `apps-ayokoding-www-facts-checker`, `apps-ayokoding-www-link-checker`) for all eight bodies at merge
   time.
 - **Observable fact**: the band-completion signal recorded in `delivery.md` carries all five required
-  fields (`BAND`, `PLAN`, `LANDED_COURSE_IDS`, `GROW_MANIFESTS`, `MERGED_COMMIT`) per the
+  content fields (`BAND`, `PLAN`, `LANDED_COURSE_IDS`, `GROW_MANIFESTS`) per the
   [Band-completion signal contract](./README.md#band-completion-signal-contract).
 - _Judgment call_: completing this band is expected to meaningfully de-risk the two downstream
   manifest-growth plans' own scheduling, since they no longer need to track Band 8's authoring

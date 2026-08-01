@@ -101,7 +101,7 @@ sibling plan can never change this plan's own gate results.
 
 The original single course-authoring plan is now seven successor plans. Each still records a
 **band-completion signal** (the same 5-field contract: `BAND` / `PLAN` / `LANDED_COURSE_IDS` /
-`GROW_MANIFESTS` / `MERGED_COMMIT`) in its own `delivery.md`, naming every manifest that must grow, by
+`GROW_MANIFESTS`) in its own `delivery.md`, naming every manifest that must grow, by
 full path. This plan's [Phase 4](./delivery.md#phase-4-manifest-growth-as-backfill-lands) processes
 each signal **as it arrives** — one sub-phase per source plan — rather than waiting for all seven.
 
@@ -306,8 +306,8 @@ gate.
 
 ### DD-42 · The plan-12 / plan-13 coupling is a sequential, two-edge dependency, not a cycle (new, 2026-08-01)
 
-**Decision.** `ayokoding-learning-path-13-careers-ai-manifest` is `blockedBy` this plan's **Phase 1
-delivery unit merged** (a partial, staged dependency); this plan's own **final phase** (Phase 8, the
+**Decision.** `ayokoding-learning-path-13-careers-ai-manifest` starts independently; this plan's
+**Phase 8** (the
 four-manifest cross-check) is `blockedBy` the sibling plan's **whole-plan merge** (a normal, whole-plan
 dependency). These are two distinct edges terminating at two distinct nodes inside this plan — Phase 1
 (first) and Phase 8 (last) — so the coupling is sequential, never cyclic.
@@ -321,10 +321,9 @@ last. Placing the four-manifest check as this plan's own final phase, gated on t
 merge, is therefore the only placement that does not require either plan to reach into the other's
 folder to close a check.
 
-**Non-circularity, stated precisely.** "Plan 13 needs part of plan 12" and "plan 12 needs all of plan
-13" are not inverse statements about the same pair of nodes — they reference different phases of this
-plan. A cycle would require plan 13 to (directly or transitively) block plan 12's **Phase 1**; it does
-not — Phase 1 has no dependency on plan 13 at all, partial or whole. See the sequence diagram in
+**Non-circularity, stated precisely.** Plan 13 has no dependency on Plan 12; Plan 12 alone waits for
+Plan 13's terminal archival PR before Phase 8. A cycle would require Plan 13 to (directly or
+transitively) block Plan 12's Phase 1; it does not. See the sequence diagram in
 [README](./README.md#the-plan-12--plan-13-coupling-non-circular-by-construction) for the visual proof.
 
 ## UI-gate and API-gate posture (R9)
@@ -405,12 +404,14 @@ plan's own prior phases could not assert (it needs the sibling manifest to exist
 
 ## Rollback
 
-Each **delivery unit** is its own branch and PR, so rollback is per-unit and non-destructive:
+This plan has one delivery unit: its persistent `final-delivery` branch and one terminal archival PR.
+Before that PR merges, rollback is local and non-destructive:
 
 - **A manifest unit (Phases 1-3, one PR each)**: `git revert` the unit's merge commit. The manifest and
   its landing disappear; the hub card count drops by one; every other path (including the sibling
   plan's, if already live) keeps working, since manifests are independent data files.
-- **The growth unit (Phase 4)**: `git revert` returns each manifest to its pre-growth state; integrity
+- **The growth work (Phase 4)**: amend or revert the relevant local commit to return each manifest to
+  its pre-growth state; integrity
   still passes at the smaller scope.
 - **The four-manifest cross-check unit (Phase 8)**: reverting removes only this plan's own check and
   assertion record — it never touches the sibling plan's manifest, since this plan writes none of its

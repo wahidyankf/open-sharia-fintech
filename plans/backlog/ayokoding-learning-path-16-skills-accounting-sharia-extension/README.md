@@ -4,7 +4,7 @@
 
 All 5 courses remain within one plan branch and one delivery unit. The sole draft PR opens only in
 Phase 8, after verification and Knowledge Capture, and carries the archival move, review cycle, CI,
-merge, and deploy. Earlier stage or delivery-boundary PR wording is superseded.
+merge, and deploy. No earlier stage or delivery boundary opens a PR.
 
 > **This plan is the third and final of a three-plan sequential chain** that replaces the retired
 > `ayokoding-learning-path-06-skills-accounting/` design with three smaller plans:
@@ -162,40 +162,14 @@ stateDiagram-v2
 **The whole `sharia-accounting` path (#1–#24) is standalone-useful and production-complete at this
 plan's end.**
 
-## Delivery flow
+## Delivery Mode: worktree-to-pr
 
-```mermaid
-flowchart TD
-    P0(["Phase 0 · setup"]):::setup
-    P1[/"Phase 1 · spec<br/>5 syllabus specs"/]:::spec
-    P2[/"Phase 2 · spec<br/>verification debt<br/>OI-1 through OI-4"/]:::spec
-    P3{{"Phase 3 · author<br/>courses 20-24<br/>grow sharia-accounting to 24<br/>CORPUS TERMINAL"}}:::author
-    P4["Phase 4 · verify<br/>section verification"]:::verify
-    P5["Phase 5 · verify<br/>manual UI + FULL rule-15<br/>(sharia-accounting only)"]:::verify
-    P6["Phase 6 · verify<br/>main integration + CI"]:::verify
-    P7[["Phase 7 · final<br/>knowledge capture"]]:::final
-    P8[["Phase 8 · final<br/>archival"]]:::final
-
-    P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8
-
-    classDef setup fill:#CA9161,stroke:#000000,color:#000000
-    classDef spec fill:#DE8F05,stroke:#000000,color:#000000
-    classDef author fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef verify fill:#56B4E9,stroke:#000000,color:#000000
-    classDef final fill:#029E73,stroke:#000000,color:#FFFFFF
-```
-
-| Phase | Closing gate                                                                                                                    |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 0     | Preconditions hold (15, 01, 02, 03, `vercel-function-cost-reduction` merged); baselines recorded green                          |
-| 1     | 5 specs exist, each with a module/topic breakdown; every prerequisite edge (including cross-plan edges into 14/15) resolves     |
-| 2     | OI-1 residual stated; OI-2 remains OPEN (verified, not assumed); OI-3 residual stated; OI-4 remains routed                      |
-| 3     | `sharia-accounting.yaml` at 24 entries — **CORPUS TERMINAL**; `conventional-accounting.yaml` untouched; Stage-3 signal recorded |
-| 4     | Integrity, prerequisite-consistency, licensing, and ownership sweeps all green                                                  |
-| 5     | `sharia-accounting` landing verified live at three breakpoints; **full Rule-15 retest** for `sharia-accounting` complete        |
-| 6     | CI green on `main`; production serves `sharia-accounting` as a complete, 24-course path                                         |
-| 7     | Every `learnings.md` entry terminal                                                                                             |
-| 8     | Archived; whole three-plan chain complete; `ayokoding-learning-path-18-skills-erp-enterprise-depth` fully unblocked             |
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 8, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Rule-15 disposition for this plan
 

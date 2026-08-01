@@ -374,11 +374,11 @@ sequenceDiagram
     participant Main as origin/main
     participant MF as Manifest-growth plans (05, 12, 13)
 
-    BAND->>BAND: Author all 15 bodies across three cohorts, applying the three locked contracts
+    BAND->>BAND: Author all 15 bodies across three prerequisite-oriented phases, applying the locked contracts
     BAND->>BAND: Run content checkers, apply fixers, re-verify
-    BAND->>Main: Each five-course cohort lands via one draft PR, 3-cycle review, [AI] merge
+    BAND->>Main: One terminal archival PR lands all 15 bodies, then review and [AI] merge run once
     BAND->>BAND: Record the five-field Band-5 completion signal in delivery.md
-    Note over BAND,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (4 full paths), MERGED_COMMIT
+    Note over BAND,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (4 full paths), FINAL_PR
     BAND->>MF: Hand off the signal (via this plan's merged delivery.md)
     MF->>Main: Read LANDED_COURSE_IDS, confirm each resolves under COURSES
     MF->>MF: Append IDs to exactly the four manifests named in GROW_MANIFESTS
@@ -570,11 +570,9 @@ any other dependency manifest.
 Every artefact this plan produces is an **additive** new directory under `<COURSES>`. Nothing is
 moved, renamed, or deleted, so rollback is subtractive and total:
 
-- **Per cohort**: revert that cohort's merge commit. The five bodies disappear; no other course is
-  affected because bodies are content-independent within a cohort.
 - **Per course**: `git rm -r <COURSES><course-id>/` plus removing its row from the catalog and its
   entry from `<COURSES>_index.md`. Safe **only** if no manifest already references the ID.
-- **Whole plan**: revert all three cohort merges in reverse order.
+- **Whole plan**: revert the sole terminal merge commit.
 
 **The one-way door**: once a manifest references a course ID, deleting that body breaks
 `checkManifestIntegrity` downstream — this is why bodies land first and manifests grow after, and why

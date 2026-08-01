@@ -179,11 +179,12 @@ defines:
 | `PLAN`              | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                                                                                                                                                                                                                    |
 | `LANDED_COURSE_IDS` | all 9 course IDs this plan authors, one per line, in this plan's own cohort order                                                                                                                                                                                                                                                                                       |
 | `GROW_MANIFESTS`    | `<MANIFESTS>careers/interview-ready/software-engineer.yaml`, `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`, `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` — **exactly these three**, per this plan's commissioning instructions ("Band 6 routes to exactly these three") and consistent with plan04's own Bands-1–8 routing rule |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of the delivery boundary that lands the ninth course                                                                                                                                                                                                                                                                                 |
+| Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges                                                                                                                                                                                                                                                                         |
 
 The manifest plan (`ayokoding-learning-path-12-careers-se-manifests`) needs **both** this plan's signal
 and plan 07's signal before Band 6's `courseOrder` entries are complete across all 16 courses — but each signal
-is independently actionable the moment it lands, since the two halves share no prerequisite edge (see
+is independently actionable only after its owning plan's terminal archival PR merges, since the two
+halves share no prerequisite edge (see
 [the independence check above](#what-i-could-not-confirm)).
 
 ## Vercel Cost-Reduction Precondition
@@ -202,7 +203,7 @@ plans/in-progress/vercel-function-cost-reduction/]`. The reasoning, read from th
   now-purposeless middleware.
 - **Concrete checkable signal** this plan's Phase 0 uses:
   `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` reads **4** today and must
-  read a number **≥ 2000** (close to the full ~2,068-page content tree) before this plan's own PRs
+  read a number **≥ 2000** (close to the full ~2,068-page content tree) before this plan's sole PR
   deploy 9 more pages into the same, currently-uncached, cost-generating pattern.
 - **Why this matters for this plan specifically**: every delivery boundary in this plan's
   `worktree-to-pr` mode triggers a production deploy to `prod-ayokoding-www`
@@ -212,15 +213,12 @@ plans/in-progress/vercel-function-cost-reduction/]`. The reasoning, read from th
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (repo default, tier-2 plan-field precedence, matching every sibling course-authoring
-plan): work in `worktrees/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`, open a
-draft PR at each **delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green — mirroring plan04's own DN-11
-confirmation of the repo-default `[AI]` auto-merge (no `[HUMAN]` merge gate is declared by this plan).
-`ayokoding-www` is deployed to `prod-ayokoding-www` after every merge, contingent on the Vercel
-cost-reduction precondition above holding at that point in time.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Cohort grouping and reasoning
 

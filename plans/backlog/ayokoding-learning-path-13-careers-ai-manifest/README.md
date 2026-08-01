@@ -43,20 +43,10 @@ One check — "a shared course names every path that includes it" — spans **al
 manifests and cannot resolve inside either plan alone. It lives in the sibling plan's own **final**
 phase, since the sibling plan finishes the whole four-manifest product last (its fundamentally-strong
 phase is the last manifest-authoring step in DD-27's build order, and its growth phase runs longest).
-This plan therefore participates in a two-way, **sequential** dependency with the sibling plan:
-
-- **This plan** is `blockedBy` **the sibling plan's Phase 1 delivery unit merged** — a partial, staged
-  dependency on just the sibling's first delivery boundary (the interview-ready manifest + landing +
-  hub card), not its whole plan. This mirrors the band-completion-signal pattern the course-authoring
-  successor plans already use: a specific merged PR/commit is the checkable precondition.
-- **The sibling plan's own final phase** (its four-manifest cross-check) is `blockedBy` **this plan
-  fully merged** — a normal, whole-plan dependency, owned by that plan, not this one.
-
-These are two distinct edges terminating at two distinct nodes in the **sibling's** phase sequence —
-its Phase 1 (first) and its final phase (last) — so the coupling is sequential, never cyclic: this
-plan's own start depends only on the sibling's Phase 1, never on the sibling's final phase, and the
-sibling's final phase depends on this plan's whole completion, never on this plan needing anything back
-from that final phase. See the sequence diagram below.
+Plan 13 starts independently: its manifest owns a disjoint file subtree and does not need an
+intermediate Plan 12 PR. It finishes and merges its sole final PR first. Plan 12's Phase 8 then
+performs the all-four-manifest check against that merged state before Plan 12 opens its own final PR.
+The relationship is therefore one ordered handoff, not a two-way staged dependency.
 
 ```mermaid
 %% The plan-12 / plan-13 coupling, from this plan's (plan 13's) point of view.
@@ -66,19 +56,12 @@ sequenceDiagram
     participant P12 as Plan 12 (sibling)<br/>3 SE manifests
     participant P13 as Plan 13 (this plan)<br/>1 AI manifest
 
-    Note over P12: Phase 1 — interview-ready<br/>manifest + landing + hub card
-    P12->>P12: Phase 1 delivery unit merged to origin/main
-    P12-->>P13: unblocks THIS PLAN'S start (partial, staged dependency)
-    Note over P13: Phase 0 — start precondition:<br/>"Plan 12 Phase 1 merged" holds
-    par Concurrent work
-        Note over P13: Phases 1-7 — author, grow,<br/>verify, retest, archive (THIS PLAN)
-    and
-        Note over P12: Phase 2 — immediately-effective<br/>Phase 3 — fundamentally-strong<br/>Phase 4 — growth<br/>Phases 5-7 — verify, retest, integrate
-    end
-    P13->>P13: THIS PLAN fully merged and archived
-    P13-->>P12: unblocks the sibling's final phase (whole-plan dependency)
-    Note over P12: Phase 8 — four-manifest cross-check<br/>(the sibling's own responsibility, not this plan's)
-    P12->>P12: Phases 9-10 — Knowledge Capture, Archival
+    Note over P13: Phases 0-6 — author, grow, verify, retest
+    P13->>P13: Phase 7 — archive, sole PR, merge
+    P13-->>P12: merged AI-engineer manifest unblocks Phase 8
+    Note over P12: Phases 1-7 — author and verify three SE manifests
+    P12->>P12: Phase 8 — four-manifest cross-check
+    P12->>P12: Phases 9-10 — Knowledge Capture, archive, sole PR, merge
 ```
 
 **Accessibility note.** As in the sibling's copy of this diagram, reading order (top to bottom, every
@@ -159,7 +142,6 @@ flowchart LR
     CA3 -.->|"8 harness-cluster courses"| P13
     CA8 -.->|"9th harness-cluster course"| P13
     VFC --> P13
-    P12 -.->|"Phase 1 merged (partial)"| P13
     P13 -.->|"whole plan merged"| P12
 
     classDef done fill:#0173B2,stroke:#000000,color:#FFFFFF
@@ -210,20 +192,20 @@ flowchart TD
 
 ## Depends-on
 
-| Direction   | Plan (full folder name)                                                       | Relationship                                                                                                                                                                            |
-| ----------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                    | hard — merged to `origin/main` (done)                                                                                                                                                   |
-| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                                  | transitive (done)                                                                                                                                                                       |
-| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                      | transitive (done)                                                                                                                                                                       |
-| `blockedBy` | `ayokoding-learning-path-12-careers-se-manifests` (**Phase 1 only, partial**) | hard — this plan's own Phase 0 start precondition; see [§The plan-12 / plan-13 coupling](#the-plan-12--plan-13-coupling-non-circular-by-construction)                                   |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Phase 1 — 6 AI courses)        | hard — this plan's Phase 1 GREEN step needs these six courses to author the manifest's AI-engineer-role spine                                                                           |
-| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`     | hard for growth — 8 of the 9 AI/harness-cluster courses                                                                                                                                 |
-| `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                       | hard for growth — the 9th/final AI/harness-cluster course                                                                                                                               |
-| `blockedBy` | `vercel-function-cost-reduction`                                              | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                                                                            |
-| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests` (**whole-plan**)            | **this plan does not depend on the sibling's whole-plan completion** — the reverse whole-plan edge belongs to the sibling's own final phase, not to this plan; see the coupling section |
-| _(no edge)_ | `ayokoding-learning-path-14`/`-15`/`-16` (the `skills/`-accounting split)     | **disjoint category subtree** — `careers/` vs `skills/`; no shared file.                                                                                                                |
-| _(no edge)_ | `ayokoding-learning-path-17`/`-18` (the `skills/`-ERP split)                  | **disjoint category subtree** — same confirmation as above.                                                                                                                             |
-| `blocks`    | _(none)_                                                                      | this plan blocks no other plan directly; the sibling's own final phase is `blockedBy` this plan, which is that plan's own edge to declare, not this plan's                              |
+| Direction   | Plan (full folder name)                                                   | Relationship                                                                                                                                                                            |
+| ----------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                | hard — merged to `origin/main` (done)                                                                                                                                                   |
+| `blockedBy` | `ayokoding-learning-path-01-url-restructure`                              | transitive (done)                                                                                                                                                                       |
+| `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | transitive (done)                                                                                                                                                                       |
+| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests`                         | this plan starts independently; Plan 12 consumes this plan's whole merged delivery in its Phase 8 cross-check                                                                           |
+| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Phase 1 — 6 AI courses)    | hard — this plan's Phase 1 GREEN step needs these six courses to author the manifest's AI-engineer-role spine                                                                           |
+| `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | hard for growth — 8 of the 9 AI/harness-cluster courses                                                                                                                                 |
+| `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                   | hard for growth — the 9th/final AI/harness-cluster course                                                                                                                               |
+| `blockedBy` | `vercel-function-cost-reduction`                                          | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                                                                            |
+| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests` (**whole-plan**)        | **this plan does not depend on the sibling's whole-plan completion** — the reverse whole-plan edge belongs to the sibling's own final phase, not to this plan; see the coupling section |
+| _(no edge)_ | `ayokoding-learning-path-14`/`-15`/`-16` (the `skills/`-accounting split) | **disjoint category subtree** — `careers/` vs `skills/`; no shared file.                                                                                                                |
+| _(no edge)_ | `ayokoding-learning-path-17`/`-18` (the `skills/`-ERP split)              | **disjoint category subtree** — same confirmation as above.                                                                                                                             |
+| `blocks`    | _(none)_                                                                  | this plan blocks no other plan directly; the sibling's own final phase is `blockedBy` this plan, which is that plan's own edge to declare, not this plan's                              |
 
 ### Vercel cost-reduction dependency (hard, both plans)
 
@@ -260,12 +242,12 @@ already has the coupling edge back to this one is the only placement that adds n
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (the repo default): work in `worktrees/ayokoding-learning-path-13-careers-ai-manifest/`,
-open a draft PR per **delivery boundary** — Phase 0 opens none — against `main`, run the PR-Review
-Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically once the review and
-all quality gates are green (repo default per **DN-11**, no `[HUMAN]` merge gate). `ayokoding-www` is
-deployed to `prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the
-`## Worktree`, `## Delivery Mode`, and `### Delivery Boundaries` declarations.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Navigation
 

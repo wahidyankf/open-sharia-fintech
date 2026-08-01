@@ -86,92 +86,18 @@ superseded for all unchecked work by this amendment.
 
 Worktree path: `worktrees/ayokoding-learning-path-04-course-authoring/`
 
-Optional manual pre-provisioning (run from repo root):
-
-```bash
-claude --worktree ayokoding-learning-path-04-course-authoring
-```
-
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
-`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
-the worktree after the plan is archived and pushed.
-
-Every phase branches from the **latest `origin/main`** inside this one shared worktree
-(`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`)
-and authors its work there, committing as it goes. Only the phase(s) named as a **delivery boundary**
-in the [`### Delivery Boundaries`](#delivery-boundaries) table push that branch and open **their own
-draft PR**; an **intermediate** phase commits (and may push the branch for durability) without opening
-one, per [Plans Organization Convention §PRs Open at Delivery
-Boundaries](../../../repo-governance/conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule).
-**Phase 0 is excluded from opening a PR under any circumstance**: it is setup and baseline, pushes no
-branch and opens no PR, and its evidence artifacts ride the Phase 1 PR.
-
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery boundary** named in the [`### Delivery Boundaries`](#delivery-boundaries) table —
-**Phase 1 onward**; Phase 0 opens none — works in the shared worktree on its **own branch**, opens a
-**draft PR** against `main`,
-runs the **PR-Review Maker→Fixer Cycle** (fan-out → `pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential
-CI-gated cycles), flips the PR to ready, and `[AI]` **merges it automatically once all quality gates
-are green** — then `[AI]` **deploys `ayokoding-www` to `prod-ayokoding-www` after every merge** (this
-plan ships to ayokoding.com). An **intermediate** phase inside a delivery unit instead commits (and may
-push for durability) to that unit's branch without opening a PR of its own. See
-[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
-and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
-
-> **Execution amendment — five-course PR cadence (2026-07-31, user-directed).** From the first
-> course that was not already merged when this amendment was recorded, course bodies are authored,
-> checked, and committed **one at a time**, but a draft PR opens only after every **five-course
-> cohort** is complete. The cohort shares one current worktree branch, one draft PR, one three-cycle
-> PR-Review Maker→Fixer Cycle, one merge, and one production deployment. Historical individual-course
-> PRs already merged remain valid evidence and are not rewritten. A final cohort with fewer than five
-> remaining bodies opens at the next plan-defined finalization boundary. This user-directed cadence
-> supersedes conflicting per-course-PR text while preserving per-course quality gates and manifest
-> isolation checks.
->
-> **Execution stop boundary — current cohort only (2026-07-31, user-directed).** Complete and integrate
-> the active cohort ending with `information-architecture-and-seo`, then stop this execution after its
-> PR is merged and deployment is verified. Confirm every cohort change is on `origin/main`, remove this
-> plan's idle or past worktrees and related build artifacts, and pull the latest `origin/main` in the
-> repository root. Do not begin a subsequent cohort under this execution directive.
-> **DN-11 DECIDED — `[AI]` auto-merge (now the repo default)**: the repo's
-> [PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md) has `[AI]`
-> merge the PR **by default** once its five hardened preconditions hold; a `[HUMAN]` merge gate is an
-> explicit per-plan opt-in, and this plan does not opt in. When DN-11 was first recorded the protocol
-> still defaulted to a `[HUMAN]` merge, so the maintainer authorized `[AI]` merge for this plan
-> specifically (2026-07-18, in-session — modeled on the sibling plan
-> `fundamentally-strong-software-engineer`'s own separately-recorded authorization) via two directives:
-> (a) this plan uses the SAME delivery methods as the sibling plan, and (b) no maintainer permission is
-> needed to merge a PR once it has passed 3 review cycles and the PR quality gate. The protocol has
-> since been changed to match, so **DN-11 = AI-auto-merge** now simply confirms the repo default rather
-> than deviating from it. The preconditions are unchanged either way — only the actor differs.
->
-> **`DL-11` does not exist.** The slot is `DN-11`, a Delivery Note. The Decisions-Locked register runs
-> DL-1…DL-17 with **17** entries, not 25. Never renumber to close the apparent gap.
-
-**Delivery-Boundary Integration Protocol** (each delivery boundary's gate lists these as must-pass —
-see the [`### Delivery Boundaries`](#delivery-boundaries) table, in `## Parallelization Model` below,
-for which phase(s) land in each boundary; these steps fire once per **delivery boundary**, not once
-per phase — an intermediate phase inside a unit commits without running them, and a band phase's
-course-level sub-phases each run this same five-step protocol at their own narrower per-course
-granularity, per the NEW-course authoring convention). **Phase 0 is excluded**: it is Environment
-Setup and Baseline, opens no PR, pushes no branch, runs no review cycle, and merges nothing; its
-evidence artifacts ride the Phase 1 PR
-([§Phase 0 Opens No PR](../../../repo-governance/conventions/structure/plans.md#phase-0-opens-no-pr--the-earliest-pr-is-phase-1-hard-rule)).
-
-1. [AI] Sync the worktree to latest `origin/main` and branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-04-course-authoring/<phase-slug>`.
-2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically (Conventional Commits, imperative, no period), push the branch, open a **draft PR**
-   against `main` (`gh pr create --draft --base main ...`) — CI runs on the PR.
-3. [AI] Run the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), resolve every finding,
-   then `gh pr ready`.
-4. [AI] **Merge** once all quality gates are green (typecheck, lint, `test:quick`, `test:unit`,
-   `specs:behavior:coverage`, CI, the 3-cycle review) — `[AI]` auto-merge per DN-11.
-5. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 9 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 9 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on
 
@@ -227,46 +153,13 @@ subagents capped per the orchestration convention). The main thread self-promote
 
 ### Delivery Boundaries
 
-> **Amended interpretation (2026-07-31):** the rows below record the original and historical
-> delivery shape. For every remaining unmerged course, replace “per course” in the `Worktree / branch`
-> and `PR opens` columns with “per sequential five-course cohort.” The active first cohort is
-> `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`,
-> `build-automation-and-task-runners`, and `information-architecture-and-seo`; it opens one PR only
-> after all five course items are complete. This is the plan's **final Band-2 cohort** — Band 2 is
-> now fully authored/committed and this is the only remaining unmerged unit before finalization.
->
-> **Numbering note.** There is deliberately no Phase 2 (it moved out with Band 5 — see the
-> Parallelization Model above) and no Phases 5–11 (Bands 3–9 moved to the 7 successor plans). The
-> finalization tail is renumbered from the original Phases 12–16 down to **Phases 5–9**.
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–8      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 9        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-| Phase(s) | Delivery unit                                                                                                | Worktree / branch                                                                                                                              | PR opens                                 |
-| -------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| 0        | — (setup and baseline)                                                                                       | —                                                                                                                                              | no                                       |
-| 1        | AI-engineering courses (6 bodies)                                                                            | shared worktree; one branch + draft PR per course (6 independent DAG-leaf PRs; see NEW-course authoring convention)                            | yes — per course, as each of the 6 lands |
-| 3        | Band 1 — Data depth (5 bodies)                                                                               | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                 | yes — per course, as each of the 5 lands |
-| 4        | Band 2 — Web, backend & platform productivity (10 bodies)                                                    | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs, final 5 as one cohort PR per the amended interpretation above) | yes — per course/cohort, as each lands   |
-| 5        | Final content-correctness sweep (structural verification + supersession sweep)                               | `ayokoding-learning-path-04-course-authoring/phase-5-verification`                                                                             | yes — at Phase 5                         |
-| 6-9      | Plan closeout (manual verification evidence, final `main`/CI integration check, Knowledge Capture, archival) | `ayokoding-learning-path-04-course-authoring/phase-9-closeout`                                                                                 | yes — at Phase 9                         |
-
-Every band (Phases 1, 3, 4) was originally a genuine boundary at the **course-level** granularity the
-NEW-course authoring convention uses: each course is a content-independent DAG leaf, so "one PR per
-course" is the sanctioned DAG-leaf-per-PR pattern
-([AGENTS.md §Delivery Mode](../../../AGENTS.md#delivery-mode): "each change-producing DAG leaf gets
-its own worktree and PR (strict 1-PR ↔ 1-worktree)"), not a phase-wide PR. The user-directed
-five-course PR-cadence amendment above supersedes that original shape for remaining unmerged bodies:
-one course is still authored, checked, and committed at a time, while five consecutive courses are
-one review, merge, and deployment unit.
-**Phase 5 stays its own boundary**: unlike Phases 6–8, it lands
-a real content fix (the supersession sweep) plus the plan-wide structural/build/link verification, and
-already passes all four boundary-test criteria standalone — deferring it into the closeout unit would
-defer an already-reached boundary, which the convention forbids. **Phases 6, 7, and 8 are
-intermediate**: Phase 6's screenshots and Phase 8's `learnings.md` triage are evidence the Phase 9
-archival gate itself reads and verifies as a precondition (the textbook "a later phase consumes it"
-signature of scaffolding), and Phase 7 makes no routine change at all (verification/CI-monitoring
-only) — all three fold into the Phase 9 closeout PR, which is the plan's last change-producing phase
-and therefore always a boundary.
-
----
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Phase 0: Environment Setup & Baseline
 
@@ -594,6 +487,13 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
 > indefinitely. To resume: re-run the two blocking-plan verification commands and the baseline build.
 
 ---
+
+## Historical execution record — Phases 1–4
+
+All checked course-authoring entries in Phases 1–4 are factual records of execution completed before
+the one-final-PR amendment. They preserve provenance only: they must not be used to create a new
+per-course or per-cohort worktree, branch, PR, review, merge, or deployment. The remaining unchecked
+work starts with Phase 5 and follows the one-worktree, one-branch, one-final-PR contract.
 
 ## Phase 1: Author the six net-new AI-engineering courses
 
@@ -1074,12 +974,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [ ] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
 - [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
 - [ ] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
-      cohort PR — see [§`vercel-function-cost-reduction` precondition](./README.md#vercel-function-cost-reduction-precondition)):
+      terminal PR — see [§`vercel-function-cost-reduction` precondition](./README.md#vercel-function-cost-reduction-precondition)):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx` — acceptance: exits **0** (the old root layout
       no longer exists, i.e. `vercel-function-cost-reduction`'s Phase 1 has merged to `origin/main`).
       **This check MUST pass before the cohort's remaining PR merges** — if it fails, do not merge;
       wait for `vercel-function-cost-reduction` Phase 1 to land first.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
 
 > **Pause Safety**: the web/platform productivity band is live and self-contained. Safe to stop. To
 > resume: re-run the section build.
@@ -1094,291 +994,44 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ---
 
-## Phase 5: Section & Authored-Tree Verification
+## Phase 5: Section and authored-tree verification
 
-- [ ] [AI] **Re-scope the authored-body register for the 21-course trim** — Phase 0 registered **90**
-      slugs (this plan's original nine-band scope); this plan's terminal scope is now **21** (the six
-      AI-engineering courses, Band 1, and Band 2 — see [README §Split history and terminal
-      scope](./README.md#split-history-and-terminal-scope)). The register's first 21 lines are already
-      exactly this plan's remaining slugs (confirmed: they are the AI-engineering + Band 1 + Band 2
-      course IDs, in that order); the other 69 lines name courses the 7 successor plans now own. Trim
-      the register in place: `head -21 evidence/authored-body-slugs.txt > /tmp/slugs21.txt && mv
-  /tmp/slugs21.txt evidence/authored-body-slugs.txt` — acceptance:
-      `wc -l < evidence/authored-body-slugs.txt` returns **21**, and every remaining line matches one of
-      this plan's 21 course IDs (`diff <(sort evidence/authored-body-slugs.txt) <(printf '%s\n'
-  evaluating-ai-output-essentials evaluating-ai-systems-in-depth statistics-for-evaluation
-  product-patterns-for-probabilistic-systems inference-serving-and-model-deployment
-  fine-tuning-and-adaptation nosql-databases graph-databases
-  database-internals-and-storage-engines data-engineering search-and-information-retrieval
-  api-design advanced-frontend backend-at-scale async-python-and-fastapi-services
-  self-hosting-essentials containers-and-orchestration cloud-and-iac
-  cicd-and-release-engineering build-automation-and-task-runners
-  information-architecture-and-seo | sort)` exits with no output). The original 90-slug register is
-      recorded verbatim in this checklist's own Phase 0 history above and in git history — this step
-      does not rewrite that history, only the live working file used by the checks below.
-- [ ] [AI] **Verify all 21 authored bodies are present** —
-      `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      — acceptance: returns **0**. Falsifiable both ways: this returned **90** at the Phase-0 baseline
-      (before the register was re-scoped to 21 by the step above), and removing any one bundle from the
-      re-scoped register makes it return 1.
-- [ ] [AI] **Verify every authored body declares prerequisites** —
-      `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      — acceptance: returns **0** (returns 21 against the re-scoped register if none of these 21 were
-      yet authored — not the case here, since Phase 1, Phase 3, and Phase 4 land before this phase).
-- [ ] [AI] **Verify every authored body has both tracks** —
-      `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      — acceptance: returns **0**.
-- [ ] [AI] **Supersession sweep (Q-A-conditional)** — this plan's hard `blockedBy` on
-      `ayokoding-learning-path-01-url-restructure` guarantees Q-A is ruled (not left
-      "Recommendation") by the time this phase runs: Phase 0 already verified that plan is merged to
-      `origin/main`, and its own archival gate requires all six Q-A…Q-F rulings recorded in its
-      `tech-docs.md`. Read the ruled option in the
-      [Q-A record](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/tech-docs.md#q-a--is-legacy-a-staging-pen-or-a-permanent-archive)
-      before branching:
-  - **If ruled A (staging pen) or C (hybrid, for the overlapping subjects)**: for every course in
-    `evidence/authored-body-slugs.txt` whose subject overlaps a remaining
-    `apps/ayokoding-www/content/en/learn/legacy/` page, append a `Superseded by:` line naming that
-    page to the course's own `<COURSES><course-id>/overview.md`, and record the identified slug list
-    (one per line) to `evidence/supersession-sweep-slugs.txt` — acceptance:
-    `grep -lF 'Superseded by:' <COURSES>*/overview.md | wc -l` equals
-    `wc -l < evidence/supersession-sweep-slugs.txt`. Falsifiable both ways: before this step runs,
-    `grep -lF 'Superseded by:' <COURSES>*/overview.md | wc -l` returns **0**; after this step, both
-    counts are equal (non-zero unless the overlap set is genuinely empty, in which case both are 0
-    and this branch's outcome matches ruling B's).
-  - **If ruled B (permanent archive)**: edit no `overview.md`; record
-    `Q-A ruled B — no supersession sweep performed` in `learnings.md` — acceptance:
-    `grep -lF 'Superseded by:' <COURSES>*/overview.md | wc -l` returns **0**.
-  - Either branch commits on this phase's own branch, ahead of this phase's existing
-    manifest-ownership check below and its own draft PR — no separate branch or PR is opened for the
-    sweep. The sweep only ever touches `<COURSES>*/overview.md`, never a `<MANIFESTS>` path, so it is
-    already covered by this phase's manifest-ownership check, which runs on this same branch before
-    the phase merges.
-- [ ] [AI] Run affected quality gates from the worktree:
-      `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
-      — acceptance: exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation),
-      committing preexisting fixes separately.
-- [ ] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
-      `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` +
-      `npm run lint:md`, plus the scoped link gate:
-
-  ```bash
-  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
-    --quiet \
-    --exclude plans/done \
-    --exclude apps/ose-www/content 2>&1 | grep -F "learn/courses/"
-  ```
-
-  — acceptance: the first two exit 0 and the `grep` finds **no** line naming a `learn/courses/`
-  path (exits 1). Note the content exclusion is narrowed here (only `ose-www` content is excluded)
-  precisely so this plan's own authored bodies are validated; `plans/done` stays excluded because
-  the repo carries a pre-existing, non-zero backlog of broken links there, unrelated to this work
-  (137 as of 2026-07-22, and drifts as more plans archive).
-
-  **Gherkin (binds) →** "The authored course library builds and validates green"
-
-  ```gherkin
-  Scenario: The authored course library builds and validates green
-    Given every course body this plan authors has landed under the courses bucket
-    When the ayokoding-www build, markdownlint, link validation, and heading-hierarchy validation run
-    Then the build succeeds over the authored tree
-    And link, heading-hierarchy, and markdownlint validation report no errors across the authored course bodies
-  ```
-
-- [ ] [AI] **Verify zero manifest files were touched by this entire plan** — every phase before this
-      one, whether or not it opens its own PR, carries the identical individual check on its own diff
-      before that phase merges or folds into its delivery unit's PR (Phase 0's check, Phase 1's check,
-      and Phase 3's and Phase 4's own "per-band closing steps" step 3); each of the **21
-      individual course sub-phases** nested inside Phase 1, Phase 3, and Phase 4 additionally carries
-      its own instance of this check as **convention step 8** (see the
-      "NEW-course authoring convention"), asserted on that course's own branch before it merges — the
-      closing-steps checks alone branch fresh from `origin/main` after every course in that band has
-      already merged, so they can only ever see their own diff, never the already-merged course diffs;
-      only each course's own convention step 8 can see that. Re-assert the same sound mechanism here on
-      this phase's own branch. A commit-message `--grep` filter is unsound for this purpose: nothing in
-      this plan mandates the plan identifier appear in commit messages (the Commit Guidelines example
-      below, `feat(ayokoding-www): add nosql-databases course body`, does not contain it), and a filter
-      that matches zero commits exits 0 and looks like success whether or not the invariant actually
-      held:
-      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0**. Falsifiable both ways: touching any file under that path on this
-      branch makes it return ≥1; this check, plus every one of the 21 course sub-phases' own
-      convention-step-8 check, plus every prior phase's own already-passed individual check, together
-      constitute the ownership invariant's terminal proof for Phases 0–5 (Phase 6, 7, and 8 each
-      carry — or, for Phase 7, do not need, since it commits nothing of its own — the same individual
-      check on their own diffs; Phase 9 re-asserts once more for its own diff).
-- [ ] [AI] **Verify every band-completion signal is complete** — each of the three signals in this file
-      (Phase 1, Band 1, Band 2) carries all five fields and a `MERGED_COMMIT` that resolves. Anchor the
-      count on the field's line-start form (`MERGED_COMMIT: <sha>` alone on its own line inside the
-      fenced signal block per the [band-completion signal contract](./README.md#band-completion-signal-contract))
-      so the checklist's own prose mentions of the bare substring `MERGED_COMMIT:` (this explanation,
-      the command below, and Phase 7's downstream-notification check all mention the literal
-      substring in prose) are never counted:
-      `for c in $(grep -oE '^MERGED_COMMIT: [0-9a-f]{7,40}$' delivery.md | awk '{print $NF}'); do git cat-file -e "$c^{commit}" || echo "BAD $c"; done | wc -l`
-      — acceptance: returns **0**, and `grep -cE '^MERGED_COMMIT: [0-9a-f]{7,40}$' delivery.md` returns
-      **3** (`-c` counts matching _lines_ here, which is exactly one per genuine signal block, not
-      substring occurrences — unlike the bare-substring form `grep -cF 'MERGED_COMMIT:' delivery.md`,
-      which overcounts by however many prose lines in this checklist happen to mention the literal
-      substring at the time; that count drifts as the checklist itself is edited, so do not trust a
-      fixed number here — run `grep -nF 'MERGED_COMMIT:' delivery.md` to see the live count before
-      reasoning about the bare-substring form). Falsifiable both ways: today, before any band lands,
-      both commands return **0** (not 3); once all three signals are genuinely recorded, the second
-      returns exactly **3**.
-
-> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
-> (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
+- [ ] [AI] Verify the 21 historically authored course bundles and their catalogue rows using `npx nx run ayokoding-www:build` — acceptance: exits `0` and every expected course route resolves in the generated output.
+- [ ] [AI] Check the manifest-ownership boundary on the persistent final-delivery branch: `git diff --name-only origin/main...HEAD -- apps/ayokoding-www/src/features/course-paths/manifests/ | grep -c .` — acceptance: returns `0`.
 
 ### Phase 5 Gate
 
-- [ ] [AI] All three 21-body structural loops (presence, prerequisites, both tracks) return 0.
-- [ ] [AI] Supersession sweep resolved one way or the other: either the `Superseded by:` count in
-      `<COURSES>*/overview.md` matches `evidence/supersession-sweep-slugs.txt`, or Q-A ruled B and
-      `learnings.md` records the no-op — never left unresolved.
-- [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no
-      `learn/courses/` failure.
-- [ ] [AI] Zero manifest files touched across the whole plan's history; all three band signals complete
-      with resolvable `MERGED_COMMIT` SHAs.
-- [ ] [AI] Draft PR opened at Phase 5 — this unit's own boundary (see the
-      [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
-      PR `[AI]`-merged; deployed.
+- [ ] [AI] The course-tree verification and ownership-boundary check are green, with no PR, merge, deployment, or new merge SHA.
 
-> **Pause Safety**: the authored library passes every automated gate. Safe to stop. To resume: re-run
-> the affected quality gates + build.
+> **Pause Safety**: verification is committed only on the persistent final-delivery branch.
 
 ---
 
-## Phase 6: Manual Content Verification (Playwright MCP)
+## Phase 6: Manual content verification
 
-> **Locale scope**: this plan's course content is authored `en`-only — per
-> [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals), an Indonesian content mirror
-> is explicitly deferred. Verify the authored course pages in `en` only; do not fabricate an `id`
-> walk-through for content that does not exist. This is a content-availability fact, not a code
-> limitation.
->
-> **Rule-15 exemption (recorded, not silently omitted)**: the three live-site testers
-> (`web-exploratory-tester` / `web-usability-tester` / `web-design-tester`) are **exempt for this
-> plan**, for three reasons: (1) it ships no screen or component — every artefact is a markdown page
-> bundle rendered by components owned by
-> [`ayokoding-learning-path-03-navigation-ui`](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md);
-> (2) its output surface is already covered by the ayokoding content checkers, which are
-> content-specific where the triad is UI-specific; (3) running the triad here would test the other
-> plan's navigation surface and file its defects against the wrong plan. See
-> [README §Rule-15](./README.md#rule-15-three-tester-retest--exemption-recorded). **The exemption is
-> narrow** — the Playwright manual behavioural verification below is mandatory and performed, with
-> committed evidence.
-
-- [ ] [AI] Confirm `en` is the content locale for the course library — command:
-      `test -d apps/ayokoding-www/content/en/learn/courses && test ! -d apps/ayokoding-www/content/id/learn/courses`
-      — acceptance: exits 0 (the `en` bucket exists; no `id` mirror is expected or required).
-- [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify authored course pages** — for a sample of **two** authored courses (one per
-      remaining band — Band 1 and Band 2) plus **two** AI-engineering courses, at breakpoints
-      375 / 768 / 1280 px, via Playwright MCP:
-      `browser_navigate` to `/en/learn/courses/<course-id>`, `browser_resize`, then `browser_snapshot`
-      — acceptance: each page renders its overview, learning track, and drilling track; `html[lang]` is
-      `en`; `browser_console_messages` reports **zero** errors per page per breakpoint.
-- [ ] [AI] **Verify prerequisite rendering** — on a course with a declared prerequisite chain (e.g.
-      `evaluating-ai-systems-in-depth`, which declares `statistics-for-evaluation`), confirm the
-      prerequisite is displayed and its link resolves to the prerequisite's canonical page —
-      acceptance: the link target returns 200 and the landed page is the named prerequisite.
-- [ ] [AI] **Verify a drilling track renders** — open one authored `drilling/overview.md` page and
-      confirm all five fixed sections are present in the rendered output — acceptance: five section
-      headings visible in `browser_snapshot`.
-- [ ] [AI] Capture one screenshot per sampled course per breakpoint to
-      `evidence/phase-6-<course-id>-en-<breakpoint>px.png` — acceptance:
-      `git ls-files -- 'evidence/phase-6-*-en-*px.png' | grep -c .` returns **12** (4 courses × 3
-      breakpoints), once the captures are staged or committed with the rest of this phase's evidence.
-      Counting with `git ls-files` rather than `find … | wc -l` keeps the number immune to RTK's
-      `find` reformatting (see Phase 0's blocking-plan checks for the measurement).
-      Falsifiable both ways: returns 0 before this step and a number below 12 if any capture is skipped.
-- [ ] [AI] Document the evidence in this checklist: reference each screenshot
-      (`![alt](./evidence/...)`) and note the console/network status per sampled course — acceptance:
-      every captured file is referenced.
-- [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
-      the navigation-UI plan that carries the triad — acceptance: the exemption entry is present, so
-      the archival gate can verify it was recorded rather than forgotten.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 6 is intermediate (see the
-      [`### Delivery Boundaries`](#delivery-boundaries) table): its evidence commits fold into the
-      Phase 9 closeout PR rather than opening one of their own, so this phase still needs its own
-      individual gate on this phase's own diff before that PR opens:
-      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
-      command return ≥1 and the phase gate fails.
+- [ ] [AI] Run `npx nx run ayokoding-www:build` and use Playwright MCP to inspect representative AI-engineering, Band 1, and Band 2 courses across supported locales — acceptance: routes render with titles, navigation, and declared prerequisites.
+- [ ] [AI] Save committed screenshot evidence under `plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
+- [ ] [AI] Run the Rule-15 exploratory, usability, and design retest; record and fix every EWT/UWT/DWT defect before continuing — acceptance: no unresolved defect remains.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Four sampled courses verified across three breakpoints in `en`; zero console errors;
-      prerequisite display and drilling-track rendering confirmed.
-- [ ] [AI] 12 screenshots present under `evidence/` and referenced in this checklist.
-- [ ] [AI] The rule-15 exemption is recorded with reasons (not silently omitted); the triad itself is
-      **not** run here.
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR opens for this phase** (intermediate — see the
-      [`### Delivery Boundaries`](#delivery-boundaries) table): the evidence commits are on the shared
-      worktree, this phase's own gate above is green, and nothing is pushed for review yet — the
-      closeout PR for Phases 6–9 opens at Phase 9.
+- [ ] [AI] Manual assertions, evidence, and the Rule-15 retest are green on the persistent final-delivery branch; no PR is open.
 
-> **Pause Safety**: the authored library is verified live and defect-clean in `en`. Safe to stop. To
-> resume: restart the dev server and re-open one sampled course per remaining band.
+> **Pause Safety**: manual verification is complete but not deployed; it rides the sole Phase 9 archival PR.
 
 ---
 
-## Phase 7: Final `origin/main` Integration & CI Verification
+## Phase 7: Final branch verification
 
-- [ ] [AI] Confirm no plan PR is still open:
-      `gh pr list --search "ayokoding-learning-path-04-course-authoring" --state open --json number --jq 'length'`
-      — acceptance: returns **0**. Falsifiable both ways: an open PR makes it return ≥1.
-- [ ] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
-      `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
-      `npx nx run ayokoding-www:build` — acceptance: all exit 0 on the integrated `main`.
-- [ ] [AI] Monitor the final `main` CI run (poll every ~2 min; one
-      `gh run view --json status,conclusion` per wakeup; never `gh run watch`) — acceptance: all GitHub
-      Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
-      **Any follow-up PR opened here carries the identical individual manifest-diff check on its own
-      branch before it merges** — this hypothetical path has no dedicated content-authoring convention
-      to inherit the check from (unlike the 21 course sub-phases), so it is stated explicitly here:
-      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      returns **0** on the follow-up branch before merge. Falsifiable both ways: touching any file
-      under that path makes it return ≥1.
-- [ ] [AI] Confirm `prod-ayokoding-www` serves the authored bodies — spot-check five canonical course
-      URLs spanning this plan's three course groups (AI-engineering, Band 1, Band 2) — acceptance: each
-      returns 200 with the expected course title.
-      Re-dispatch `apps-ayokoding-www-deployer` if any earlier deploy lagged.
-- [ ] [AI] **Notify the downstream manifest plans** — confirm all three band-completion signals are
-      present in this file on `origin/main` and reachable by
-      [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/delivery.md)
-      (Band 1/Band 2 signals) and
-      [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/delivery.md)
-      (Phase 1 signal)
-      — acceptance: two steps. (a) Resolve the literal path on `origin/main` — command (single line):
-      `git ls-tree -r --name-only origin/main -- plans | grep -F 'ayokoding-learning-path-04-course-authoring/delivery.md'`
-      — it prints **exactly one** path. (b) Feed that literal path to `git show` — command (single line):
-      `git show "origin/main:<the printed path>" | grep -cE '^MERGED_COMMIT: [0-9a-f]{7,40}$'`
-      returns **3**.
-      **Never put a glob in a `git show <rev>:<path>` argument.** Unquoted,
-      `plans/*/ayokoding-…/delivery.md` is a zsh pattern, and whenever it matches nothing zsh aborts
-      the whole command line with `no matches found` before `git show` runs. Quoted, it fares no
-      better: `git show` does **not** glob-expand its path argument, so it returns **zero bytes and
-      exits 0**, making the acceptance value of 3 silently unreachable. [Repo-grounded — both
-      measured 2026-07-22.] Uses the same anchored line-start form as Phase 5's band-completion-signal
-      check; the bare-substring form (`grep -cF 'MERGED_COMMIT:'`) is unreachable here too, for the
-      same reason — it also matches this checklist's own prose mentions of the literal substring, so
-      it overcounts by however many such prose lines exist at the time (that count drifts as the
-      checklist is edited; re-run `grep -nF 'MERGED_COMMIT:' delivery.md` for the live figure rather
-      than trusting a fixed number here). Falsifiable both ways: today, before any band lands, this
-      returns **0**.
+- [ ] [AI] Confirm the persistent final-delivery branch has no open PR: `gh pr list --head "$(git branch --show-current)" --state open --json number --jq 'length'` — acceptance: returns `0`.
+- [ ] [AI] Run the complete local quality suite on the persistent branch: `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage && npx nx run ayokoding-www:build` — acceptance: exits `0`.
+- [ ] [AI] Record any required downstream manifest handoff in `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md` — acceptance: it names only the historically completed course bodies and does not claim a new merge SHA.
 
 ### Phase 7 Gate
 
-- [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
-- [ ] [AI] Full affected suite + build green on integrated `main`; final `main` CI run green.
-- [ ] [AI] `prod-ayokoding-www` serving the authored bodies (five spot-checks return 200).
-- [ ] [AI] All three band signals present on `origin/main` and reachable downstream.
+- [ ] [AI] No PR is open; the full local suite and build are green; the handoff is branch-local and ready for the sole Phase 9 archival PR.
 
-> **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production; the
-> downstream manifest plan has everything it needs. Safe to stop. To resume: re-run the affected suite
-> on `main` and check CI/prod status.
+> **Pause Safety**: final verification is green on the one persistent branch; nothing is deployed or merged yet.
 
 ---
 
@@ -1432,6 +1085,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 ---
 
 ## Phase 9: Plan Archival
+
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"

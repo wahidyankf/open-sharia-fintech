@@ -197,13 +197,13 @@ The two manifest-growth plans cannot act on a vague signal. This plan's single b
 signal, recorded in [`delivery.md`](./delivery.md) at the close of Cohort B, MUST carry all five
 fields below, verbatim, in a fenced `text` block:
 
-| Field               | Content                                                                          |
-| ------------------- | -------------------------------------------------------------------------------- |
-| `BAND`              | `Band 8 — Remaining capstones`                                                   |
-| `PLAN`              | `ayokoding-learning-path-11-course-authoring-capstones`                          |
-| `LANDED_COURSE_IDS` | all eight course IDs, one per line, in this plan's own listing order             |
-| `GROW_MANIFESTS`    | every manifest a downstream plan must grow, by **full path** under `<MANIFESTS>` |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of the Cohort-B PR that completes Band 8      |
+| Field               | Content                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `BAND`              | `Band 8 — Remaining capstones`                                                                  |
+| `PLAN`              | `ayokoding-learning-path-11-course-authoring-capstones`                                         |
+| `LANDED_COURSE_IDS` | all eight course IDs, one per line, in this plan's own listing order                            |
+| `GROW_MANIFESTS`    | every manifest a downstream plan must grow, by **full path** under `<MANIFESTS>`                |
+| Final delivery      | this plan's terminal archival PR; downstream work consumes the signal only after that PR merges |
 
 **`GROW_MANIFESTS` for this band is four manifests** — Band 8 is one of only two bands (the other is
 Band 5, in `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`) that grows the
@@ -230,30 +230,22 @@ apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/s
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/ai-engineer.yaml
-MERGED_COMMIT: <filled at execution time>
 ```
 
-A signal that names manifests loosely, splits into partial signals per cohort, or omits
-`MERGED_COMMIT` is incomplete and the receiving plans must reject it rather than guess.
+A signal that names manifests loosely or splits into partial signals per cohort is incomplete and the
+receiving plans must reject it rather than guess. It becomes actionable only after this plan's terminal
+archival PR merges.
 `ayokoding-learning-path-12-careers-se-manifests` consumes the first three manifest lines;
 `ayokoding-learning-path-13-careers-ai-manifest` consumes the fourth.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr`, inherited from `ayokoding-learning-path-04-course-authoring` (tier-2 plan-field
-precedence, same programme): work in
-`worktrees/ayokoding-learning-path-11-course-authoring-capstones/`, open a draft PR at each
-**delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green — no `[HUMAN]` merge gate is
-declared. `ayokoding-www` is deployed to `prod-ayokoding-www` after every merge.
-
-**Sequential-cohort cadence, inherited natively.** Following plan 04's 2026-07-31 execution
-amendment (and applied natively from the start by every sibling split plan, per plans 05/06/08's own
-precedent), courses are authored, checked, and committed **one at a time**, but a draft PR opens only
-once a full cohort is complete: **Cohort A (5 courses) opens one PR; Cohort B (3 courses) opens one
-PR** and carries the band-completion signal.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 

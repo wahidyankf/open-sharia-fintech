@@ -36,35 +36,18 @@ worktree; no per-manifest, phase, or closeout worktree is created.
 
 Worktree path: `worktrees/ayokoding-learning-path-13-careers-ai-manifest/`
 
-Optional manual pre-provisioning (run from repo root):
-
-```bash
-claude --worktree ayokoding-learning-path-13-careers-ai-manifest
-```
-
-The plan-execution Step 0 gate enters this worktree by default.
-
-See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
-[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery unit** works in the shared worktree on its own branch, opens a **draft PR** against
-`main` at its boundary phase, runs the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles),
-then `[AI]` merges automatically once all quality gates are green (DN-11, repo default), then
-dispatches `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
-
-**Delivery-Boundary Integration Protocol** (fires once per delivery boundary; excludes Phase 0):
-
-1. [AI] Sync to latest `origin/main`, branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-13-careers-ai-manifest/<phase-slug>`.
-2. [AI] Stage only this unit's paths, commit thematically, push, open a draft PR
-   (`gh pr create --draft --base main ...`).
-3. [AI] Run the PR-Review Maker→Fixer Cycle (3 cycles), resolve every finding, `gh pr ready` —
-   acceptance: zero unresolved threads, zero CRITICAL/HIGH outstanding.
-4. [AI] Merge once all quality gates are green — `[AI]` auto-merge per DN-11.
-5. [AI] Dispatch `apps-ayokoding-www-deployer` — acceptance:
-   `git rev-parse origin/prod-ayokoding-www` equals `git rev-parse origin/main` after it returns.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 7 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on and start preconditions
 
@@ -74,7 +57,7 @@ dispatches `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayok
 | `blockedBy` | `ayokoding-learning-path-01-url-restructure` (done, transitive)                                                                                                                            |
 | `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag` (done, transitive)                                                                                                                |
 | `blockedBy` | `vercel-function-cost-reduction` (`ayokoding-www` unit merged)                                                                                                                             |
-| `blockedBy` | `ayokoding-learning-path-12-careers-se-manifests`, **Phase 1 delivery unit only**, partial — this plan's own Phase 0 start precondition                                                    |
+| _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests` — Plan 13 starts independently; the reverse whole-plan edge is consumed by Plan 12 Phase 8 after this plan's sole PR merges              |
 | `blockedBy` | `ayokoding-learning-path-04-course-authoring` Phase 1 (6 AI courses) — needed for Phase 1's GREEN step                                                                                     |
 | `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, `ayokoding-learning-path-11-course-authoring-capstones` — needed for Phase 2's growth                           |
 | _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests`, **whole-plan** — this plan has no dependency on the sibling's whole-plan completion; that edge belongs to the sibling's own final phase |
@@ -91,24 +74,18 @@ See [README §Depends-on](./README.md#depends-on) for the full table.
   processed independently as it lands.
 - **Phases 3 → 7 are serial.**
 - **This plan's own phases have DAG width 1** — every phase mutates or re-verifies the same one data
-  file. The parallelism this split bought is _between_ this plan and the sibling plan, which proceed
-  concurrently once this plan's Phase 0 start precondition (the sibling's Phase 1 merged) holds.
+  file. This plan starts independently, delivers its one final PR first, and then unblocks Plan 12's
+  Phase 8 four-manifest validation.
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                            | Worktree / branch                                                                         | PR opens         |
-| -------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ---------------- |
-| 0        | — (setup and baseline)                                                   | —                                                                                         | no               |
-| 1        | AI-engineer manifest + landing + hub card                                | `ayokoding-learning-path-13-careers-ai-manifest/phase-1-ai-engineer`                      | yes — at Phase 1 |
-| 2        | Manifest growth to full 9-course harness-cluster walk                    | `ayokoding-learning-path-13-careers-ai-manifest/phase-2-manifest-growth`                  | yes — at Phase 2 |
-| 3-4      | Automated verification sweep + manual UI verification and Rule-15 retest | `ayokoding-learning-path-13-careers-ai-manifest/phase-3-4-verify-and-retest`              | yes — at Phase 4 |
-| 5-7      | Final `main`/CI checkpoint + Knowledge Capture + Plan Archival           | `ayokoding-learning-path-13-careers-ai-manifest/phase-5-7-final-integration-and-archival` | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–6      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 7        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-Phases 1-2 each satisfy the boundary test independently. Phase 3 alone fails coherence (a
-re-verification sweep over content Phase 2's gate already proved green); it shares Phase 4's branch,
-opening only once Phase 4 adds reviewable retest evidence. Phase 5 alone is a checkpoint confirming
-`main` is green, shipping nothing new; it shares Phases 6-7's branch. Phase 6's triage is real but
-small; Phase 7 re-verifies it as an archival precondition, so the three share one unit.
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Path constants
 
@@ -153,12 +130,9 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
       merged:
       `gh pr list --search "vercel-function-cost-reduction" --state merged --json number --jq 'length'`
       — acceptance: returns a value ≥ 1.
-- [ ] [AI] **Precondition 3 (this plan's own start-precondition edge)** — confirm the sibling plan's
-      Phase 1 (interview-ready) delivery unit has merged:
-      `gh pr list --search "ayokoding-learning-path-12-careers-se-manifests phase-1-interview-ready" --state merged --json number --jq 'length'`
-      — acceptance: returns a value ≥ 1. Falsifiable both ways: returns `0` while that delivery unit is
-      still open, in which case this phase **blocks** — this plan does not proceed on an assumption
-      that the sibling's Phase 1 "should" be done by now.
+- [ ] [AI] Confirm Plan 12's three-manifest files remain absent at this plan's start — command:
+      `test ! -e <MANIFESTS>careers/interview-ready/software-engineer.yaml` — acceptance: exits 0;
+      Plan 13 starts independently and does not wait for any Plan 12 PR.
 - [ ] [AI] **Precondition 4** — confirm the six net-new AI-engineer-role courses (or at least enough of
       them for Phase 1's GREEN step) exist:
       `gh pr list --search "ayokoding-learning-path-04-course-authoring" --state merged --json number --jq 'length'`
@@ -189,16 +163,16 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 ### Phase 0 Gate
 
 - [ ] [AI] `npm install` and `npm run doctor -- --fix` exit 0.
-- [ ] [AI] Preconditions 1-3 and 5-6 all hold; precondition 4 holds via at least one of its two checks.
+- [ ] [AI] Preconditions 1-2 and 5-6 all hold; the independent-start absence check holds; precondition
+      4 holds via at least one of its two checks.
 - [ ] [AI] Baselines recorded green; zero preexisting failures unresolved.
 - [ ] [AI] This plan's one manifest path recorded absent; its intended href recorded absent.
 - [ ] [AI] **No PR opened, nothing pushed** —
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
 
-> **Pause Safety**: only the toolchain was verified and the current state snapshotted; the sibling
-> plan's Phase 1 merge was confirmed rather than assumed. Safe to stop indefinitely. To resume: re-run
-> the six precondition checks and the baselines.
+> **Pause Safety**: only the toolchain was verified and the current state snapshotted. Safe to stop
+> indefinitely. To resume: re-run the independent-start checks and the baselines.
 
 ---
 
@@ -206,7 +180,7 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 
 > _Suggested executor: `apps-ayokoding-www-general-maker` + `web-researcher`._
 >
-> **Authoring priority #1** (DD-27), immediately behind the sibling plan's smoke-test MVP. This
+> **Authoring priority #1** (DD-27). This plan starts independently of the sibling plan. This
 > manifest is **from-scratch** (DD-35): its SWE-fundamentals prerequisites are **included** at the head
 > of `courseOrder`, not linked out. Per DD-33 (still holding in scope) `courseOrder` also **walks**,
 > never links, the existing nine-course AI/harness cluster — deliberately deferred here to
@@ -280,26 +254,26 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
       `?path=careers/immediately-effective/ai-engineer` context propagates, prev/next walks the order,
       breadcrumb shows the path, course pages show prerequisites — command:
       `npx nx run ayokoding-www-fe-e2e:test:e2e` — acceptance: passes in `en`.
-- [ ] [AI] **Record the build-order assertion (documentation-verified, not harness-executable).**
-      Confirm by reading this checklist that this plan's Phase 1 begins only after the sibling plan's
-      interview-ready delivery unit has merged (Phase 0's precondition 3), and that it precedes the
-      sibling plan's `immediately-effective/software-engineer` and `fundamentally-strong/software-engineer`
-      phases — acceptance: this ordering is stated here in writing. This is a build-order claim about
-      the programme's own delivery sequence across two plan folders; no test harness can execute it.
+- [ ] [AI] **Record the independent-start assertion (documentation-verified, not harness-executable).**
+      Confirm by reading this checklist that this plan's Phase 1 does not wait for any Plan 12 delivery,
+      and that Plan 12 waits for this plan's terminal archival PR only before its own Phase 8
+      four-manifest cross-check — acceptance: this ordering is stated here in writing. This is a
+      build-order claim about the programme's own delivery sequence across two plan folders; no test
+      harness can execute it.
       **This scenario intentionally does not land in `<SPECS>path-composition.feature`** — it has no
       step binding and never will one.
 
-  **Gherkin (documentation-verified) →** "This plan's authoring begins only once the sibling plan's
-  interview-ready delivery unit has merged" — a deliberate third tag form: neither `(binds)` nor
+  **Gherkin (documentation-verified) →** "This plan starts independently and unblocks the sibling's
+  final cross-check" — a deliberate third tag form: neither `(binds)` nor
   `(underpins)` fits, since this scenario will never have a step definition and is not a pure-core unit
   test either.
 
   ```gherkin
-  Scenario: This plan's authoring begins only once the sibling plan's interview-ready delivery unit has merged
-    Given the careers/interview-ready/software-engineer MVP (owned by ayokoding-learning-path-12-careers-se-manifests) has merged its delivery unit to origin/main
-    When this plan's Phase 0 checks its start precondition
-    Then the merged-PR check for that delivery unit returns a non-zero count
-    And this plan's Phase 1 authoring begins only after that check passes
+  Scenario: This plan starts independently and unblocks the sibling's final cross-check
+    Given Plan 12 has not delivered any manifest
+    When this plan's Phase 0 checks its start preconditions
+    Then this plan's Phase 1 authoring may begin without a Plan 12 merge
+    And Plan 12 waits for this plan's terminal archival PR before its own Phase 8 cross-check
   ```
 
 - [ ] [AI] **Progression smoothness audit (from-scratch-first)** — walk the manifest order and confirm
@@ -316,10 +290,11 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:specs:behavior:coverage` +
       `ayokoding-www-fe-e2e:test:e2e` exit 0.
 - [ ] [AI] The hub-card href check returns **1**; the persona-language leak check returns **0**.
-- [ ] [AI] The build-order assertion is recorded in writing, with its non-executability stated.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] The independent-start assertion is recorded in writing, with its non-executability stated.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
-> **Pause Safety**: the AI-engineer path is live end-to-end in production over its smoke-test-scoped
+> **Pause Safety**: the AI-engineer path is verified end-to-end on `final-delivery` over its smoke-test-scoped
 > starting composition — the included SWE-fundamentals prerequisites plus whichever AI-engineer-role
 > courses exist by this point. DD-27's authoring priority #1 is delivered. Safe to stop indefinitely. To
 > resume: `npx nx run ayokoding-www:test:unit && npx nx run ayokoding-www-fe-e2e:test:e2e`.
@@ -388,7 +363,8 @@ shared with the sibling plan, which owns its own `careers-se-manifests.unit.test
 - [ ] [AI] The SWE-fundamentals inclusion check still returns **11 or more**.
 - [ ] [AI] The persisted walk-order assertion (2.3) passes.
 - [ ] [AI] `npx nx run ayokoding-www:build` + `:test:unit` + `ayokoding-www-fe-e2e:test:e2e` exit 0.
-- [ ] [AI] Draft PR opened; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged; deployed.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: this plan's manifest is at its **full** composition — the included SWE-fundamentals
 > set, the six AI-engineer-role courses, and the full nine-course AI/harness cluster walk. No manifest
@@ -433,8 +409,8 @@ together every time this phase's gate is checked.
 - [ ] [AI] Manifest integrity + prerequisite-consistency + smoothness report zero violations.
 - [ ] [AI] This plan's own manifest file present.
 - [ ] [AI] Scoped cross-plan link check finds no line naming this plan's folder.
-- [ ] [AI] Work committed to this delivery unit's branch; nothing pushed for review yet — the unit's PR
-      opens only at Phase 4.
+- [ ] [AI] Work committed to `final-delivery`; nothing pushed for review yet — the unit's PR opens
+      only at Phase 7.
 
 > **Pause Safety**: this plan's one-path composition passes every automated gate. Safe to stop
 > indefinitely. To resume: re-run the affected quality gates and the build.
@@ -477,37 +453,29 @@ together every time this phase's gate is checked.
       breakpoints; console clean.
 - [ ] [AI] `find evidence -name 'phase-4-*-en-*px.png' | wc -l` returns **6**.
 - [ ] [AI] Every Rule-15 defect finding is fixed and ticked, or explicitly permitted to defer.
-- [ ] [AI] Draft PR opened for Phases 3-4; 3-cycle PR-Review complete; CI green; PR `[AI]`-merged;
-      deployed.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, or deployment occurs before Phase 7.
 
 > **Pause Safety**: this plan's one-path UI is verified live and defect-clean in `en`, with committed
 > evidence. Safe to stop indefinitely. To resume: re-run the three testers against the running app.
 
 ---
 
-## Phase 5: Final origin main integration and CI verification
+## Phase 5: Pre-PR readiness verification
 
-- [ ] [AI] Confirm no plan PR is still open:
-      `gh pr list --search "ayokoding-learning-path-13-careers-ai-manifest" --state open --json number --jq 'length'`
-      — acceptance: returns **0**.
-- [ ] [AI] Sync to latest `origin/main`: `git fetch origin && git checkout main && git pull`. Run
-      `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`,
-      `npx nx run ayokoding-www-fe-e2e:test:e2e`, and `npx nx run ayokoding-www:build` — acceptance:
-      all exit 0.
-- [ ] [AI] Monitor the final `main` CI run (poll every ~2 minutes, never `gh run watch`) — acceptance:
-      all green.
-- [ ] [AI] Confirm `prod-ayokoding-www` serves this plan's one path landing and its hub card —
-      acceptance: production serves the path.
+- [ ] [AI] Run `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`,
+      `npx nx run ayokoding-www-fe-e2e:test:e2e`, and `npx nx run ayokoding-www:build` on
+      `final-delivery` — acceptance: all exit 0. Do not push or open a PR in this phase.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Zero open plan PRs; full affected suite + e2e + build green on the integrated `main`.
-- [ ] [AI] `prod-ayokoding-www` serves this plan's path and its hub-card slice.
+- [ ] [AI] Full affected suite + e2e + build are green on `final-delivery`.
 - [ ] [AI] Work committed to this delivery unit's branch; nothing pushed for review yet — the unit's PR
       opens only at Phase 7.
 
-> **Pause Safety**: this plan's own product is integrated on `main`, green in CI, and live in
-> production. Safe to stop indefinitely. To resume: re-run the affected suite and check CI/prod.
+> **Pause Safety**: this plan's own product is green on the persistent final-delivery branch and is
+> not yet integrated on `main` or deployed; it rides the sole Phase 7 PR.
+> Safe to stop indefinitely. To resume: re-run the affected suite.
 
 ---
 
@@ -528,13 +496,19 @@ together every time this phase's gate is checked.
 
 - [ ] [AI] Every `learnings.md` entry is terminal, or the file records the explicit "none" escape.
 - [ ] [AI] No code-homed learning landed inline.
-- [ ] [AI] Work committed to this delivery unit's branch; the unit's PR opens only at Phase 7.
+- [ ] [AI] Work committed to `final-delivery`; the unit's PR opens only at Phase 7.
 
 > **Pause Safety**: `learnings.md` is fully triaged. Safe to stop. To resume: re-read `learnings.md`.
 
 ---
 
 ## Phase 7: Plan Archival
+
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [ ] [AI] Verify Knowledge Capture is complete.

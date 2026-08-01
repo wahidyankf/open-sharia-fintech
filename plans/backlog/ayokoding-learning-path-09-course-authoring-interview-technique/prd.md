@@ -107,7 +107,7 @@ Scenario: The coding-agent capstone assembles the four interview courses into a 
 
 ```gherkin
 Scenario: The band-completion signal names exactly the two manifests this band feeds
-  Given all 5 Band-9 bodies are authored and merged to origin/main
+Given all 5 Band-9 bodies are authored on this plan's final-delivery branch
   When the band-completion signal is recorded in delivery.md
   Then GROW_MANIFESTS names exactly careers/interview-ready/software-engineer.yaml and careers/fundamentally-strong/software-engineer.yaml
   And it does not name careers/immediately-effective/software-engineer.yaml

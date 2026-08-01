@@ -78,8 +78,8 @@ action, or outcome chains with `And`.
 Scenario: The interview-ready MVP proves the architecture and unblocks the sibling AI-manifest plan
   Given the careers/interview-ready/software-engineer MVP (an architecture smoke test over already-live topics 1-33) is delivered end-to-end
   When its delivery unit is merged to origin/main
-  Then the interview-ready MVP's landing page, manifest, and path-aware nav are already live in production
-  And the merge of this delivery unit is the recorded start precondition ayokoding-learning-path-13-careers-ai-manifest checks before its own Phase 0 begins
+  Then the interview-ready MVP's landing page, manifest, and path-aware nav are verified on final-delivery
+  And Plan 13 remains independent until this plan's Phase 8 consumes Plan 13's final merged delivery
 ```
 
 ```gherkin

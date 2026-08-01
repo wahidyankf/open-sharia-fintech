@@ -229,12 +229,11 @@ sequenceDiagram
     participant Main as origin/main
     participant MF as manifests (ayokoding-learning-path-12-careers-se-manifests)
 
-    B7->>B7: Author all 11 bodies from their syllabus specs, two cohorts
+    B7->>B7: Author all 11 bodies from their syllabus specs in prerequisite-oriented phases
     B7->>B7: Run content checkers, apply fixers, re-verify
-    B7->>Main: Cohort A (5 bodies) lands via one draft PR, 3-cycle review, [AI] merge
-    B7->>Main: Cohort B (6 bodies) lands via one draft PR, 3-cycle review, [AI] merge
+    B7->>Main: One terminal archival PR lands all 11 bodies, then review and [AI] merge run once
     B7->>B7: Record the single five-field band-completion signal in delivery.md
-    Note over B7,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS (all 11),<br/>GROW_MANIFESTS (3 software-engineer manifests), MERGED_COMMIT (Cohort B's)
+    Note over B7,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS (all 11),<br/>GROW_MANIFESTS (3 software-engineer manifests), FINAL_PR (terminal PR)
     B7->>MF: Hand off the signal (via this plan's merged delivery.md)
     MF->>Main: Read LANDED_COURSE_IDS, confirm each resolves under COURSES
     MF->>MF: Append IDs to exactly the three named software-engineer manifests
@@ -429,12 +428,10 @@ any other dependency manifest.
 Every artefact this plan produces is an **additive** new directory under `<COURSES>`. Nothing is
 moved, renamed, or deleted, so rollback is subtractive and total:
 
-- **Per cohort**: revert that cohort's merge commit. The bodies disappear; no other course is affected
-  because bodies are content-independent.
 - **Per course**: `git rm -r <COURSES><course-id>/` plus removing its row from the catalog and its
   entry from `<COURSES>_index.md`. Safe **only** if no manifest already references the ID — check with
   the manifest plan first.
-- **Whole plan**: revert both cohort merges in reverse order. The `courses/` bucket returns to whatever
+- **Whole plan**: revert the sole terminal merge commit. The `courses/` bucket returns to whatever
   plan 04 had already landed before this plan started.
 
 **The one-way door**: once a manifest references a course ID, deleting that body breaks

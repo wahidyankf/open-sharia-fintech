@@ -60,62 +60,18 @@ plan's only worktree; no per-course, cohort, phase, or closeout worktree is crea
 
 Worktree path: `worktrees/ayokoding-learning-path-07-course-authoring-low-level-systems/`
 
-Optional manual pre-provisioning (run from repo root):
-
-```bash
-claude --worktree ayokoding-learning-path-07-course-authoring-low-level-systems
-```
-
-The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
-`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
-the worktree after the plan is archived and pushed.
-
-Every phase branches from the **latest `origin/main`** inside this one shared worktree
-(`git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-07-course-authoring-low-level-systems/<phase-slug>`)
-and authors its work there, committing as it goes. Only the phase(s) named as a **delivery boundary**
-in the [`### Delivery Boundaries`](#delivery-boundaries) table push that branch and open **their own
-draft PR**; an intermediate phase commits (and may push the branch for durability) without opening
-one. **Phase 0 is excluded from opening a PR under any circumstance**: its evidence artifacts ride
-the Phase 1 PR.
+This path is the one and only worktree for the entire plan. Provision it once from current
+`origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
+per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
 ## Delivery Mode: worktree-to-pr
 
-Each **delivery boundary** named in the [`### Delivery Boundaries`](#delivery-boundaries) table —
-Phase 1, Phase 2, and Phase 7; Phase 0 opens none — works in the shared worktree on its **own
-branch**, opens a **draft PR** against `main`, runs the **PR-Review Maker→Fixer Cycle** (fan-out →
-`pr-review-synthesis-maker` → `pr-review-fixer`, 3 sequential CI-gated cycles), flips the PR to ready,
-and `[AI]` **merges it automatically once all quality gates are green** — then `[AI]` **deploys
-`ayokoding-www` to `prod-ayokoding-www` after every merge**. An intermediate phase inside a delivery
-unit instead commits (and may push for durability) to that unit's branch without opening a PR of its
-own.
-
-**Inherited sequential five-course delivery cohort cadence** (stated fresh here, not retrofitted —
-this is a brand-new plan): courses are authored, checked, and committed **one at a time** within a
-cohort; a draft PR opens only after the cohort is complete. This plan's 7 courses form **two
-cohorts**: Cohort A (courses 1–5, Phase 1) and Cohort B (courses 6–7, Phase 2) — see
-[tech-docs.md §Why two cohorts, not one](./tech-docs.md#why-two-cohorts-not-one) for the reasoning.
-The two cohorts execute **sequentially** (Phase 2 begins only after Phase 1's PR is merged), not in
-parallel, even though they are DAG-independent of each other — matching the one-cohort-at-a-time
-operating model the inherited cadence itself uses.
-
-**`[AI]` auto-merge is the repo default** (per the
-[PR Merge Protocol](../../../repo-governance/development/workflow/pr-merge-protocol.md)): a PR merges
-once 3 review cycles are complete (a hard ceiling, not a floor), 0 CRITICAL + 0 HIGH findings remain,
-the branch is up-to-date with `origin/main`, all quality gates are green, and the surface-conditional
-tester gates are resolved or exempt. This plan declares **no `[HUMAN]` merge gate**.
-
-**Delivery-Boundary Integration Protocol** (fires once per delivery boundary — Phases 1, 2, and 7;
-Phase 0 is excluded):
-
-1. [AI] Sync the worktree to latest `origin/main` and branch:
-   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-07-course-authoring-low-level-systems/<phase-slug>`.
-2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
-   thematically (Conventional Commits, imperative, no period), push the branch, open a **draft PR**
-   against `main` (`gh pr create --draft --base main ...`).
-3. [AI] Run the **PR-Review Maker→Fixer Cycle** (3 sequential CI-gated cycles), resolve every finding,
-   then `gh pr ready`.
-4. [AI] **Merge** once all quality gates are green — `[AI]` auto-merge per the repo default.
-5. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
+This plan has one delivery unit: all change-producing work is committed on the persistent
+`final-delivery` branch in the declared worktree. Phases before 7 must not push, open
+a PR, run PR review, merge, deploy, or record an in-repository merge SHA. Phase 7 first
+commits the archival move and index updates, then opens the sole draft PR, runs the three-cycle
+PR-Review Maker→Fixer Cycle plus local and CI gates, marks it ready, merges under the hardened
+preconditions, and deploys once.
 
 ## Depends-on
 
@@ -133,14 +89,14 @@ Phase 0 is excluded):
 **Cap**: honor the in-force subagent/PR-review concurrency cap.
 
 - **Phase 0** is a single serial baseline.
-- **Phase 1 (Cohort A, 5 courses)** — authored **one course at a time** in DAG order
+- **Phase 1 (Cohort A, 5 courses)** — authored **one course at a time** on the persistent
+  final-delivery branch in DAG order
   (`just-enough-c` → `just-enough-cpp`/`linux-os`/`windows-os` in any order → `system-programming`
-  last, since it needs `linux-os`), per the inherited cadence. One shared branch, one PR at the end.
+  last, since it needs `linux-os`).
 - **Phase 2 (Cohort B, 2 courses)** — authored one at a time (`just-enough-rust` →
-  `modern-system-programming`, since the latter needs the former). One shared branch, one PR, plus
-  the band-completion signal at the end.
-- **Phases 3–6 (verification, manual test, CI integration, knowledge capture)** are serial,
-  committing to one shared closeout branch, folding into Phase 7's PR.
+  `modern-system-programming`, since the latter needs the former), on the same branch.
+- **Phases 3–6 (verification, manual test, CI preparation, knowledge capture)** are serial on the
+  same branch and fold into Phase 7's sole PR.
 - **Phase 7 (archival)** is the terminal serial node, depending on every prior phase.
 
 **Path constants** (referenced throughout):
@@ -157,56 +113,13 @@ Phase 0 is excluded):
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit                                                                                                  | Worktree / branch                                                                | PR opens         |
-| -------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------- |
-| 0        | — (setup and baseline)                                                                                         | —                                                                                | no               |
-| 1        | Cohort A — 5 courses (`just-enough-c`, `just-enough-cpp`, `linux-os`, `windows-os`, `system-programming`)      | `ayokoding-learning-path-07-course-authoring-low-level-systems/cohort-a`         | yes — at Phase 1 |
-| 2        | Cohort B — 2 courses (`just-enough-rust`, `modern-system-programming`) + the band-completion signal            | `ayokoding-learning-path-07-course-authoring-low-level-systems/cohort-b`         | yes — at Phase 2 |
-| 3–7      | Closeout: structural verification, manual verification, final CI integration, knowledge capture, plan archival | `ayokoding-learning-path-07-course-authoring-low-level-systems/phase-7-closeout` | yes — at Phase 7 |
+| Phase(s) | Delivery unit                                               | Worktree / branch                                                         | PR opens                           |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
+| 0        | Setup and baseline                                          | No delivery worktree or PR                                                | no                                 |
+| 1–6      | Intermediate authoring, verification, and Knowledge Capture | This plan's single declared worktree and persistent final-delivery branch | no — commit only                   |
+| 7        | Final archival and integration                              | The same worktree and branch; archive before opening the PR               | yes — exactly once, after archival |
 
-**Phases 3–6 are intermediate**: none produces a real content fix that by itself satisfies the
-boundary test (coherent / green standalone / defensible on `main` / reviewable whole) independent of
-what Phase 1 and 2 already shipped — unlike `ayokoding-learning-path-04-course-authoring`'s own Phase
-12, this plan carries no supersession sweep. All four fold into Phase 7's closeout PR, which is the
-plan's last change-producing phase and therefore always a boundary.
-
-### Phase / delivery-flow diagram
-
-```mermaid
-%% Phase sequence with PR-opening boundaries highlighted.
-%% Node SHAPE encodes role: stadium = boundary phase (opens its own PR), rectangle = intermediate
-%% phase (commits only, no PR). Node LABEL text always states "PR opens" or "no PR" explicitly —
-%% never conveyed by fill colour alone.
-%% TD required: the chain is 8 nodes deep, so LR depth would exceed MaxWidth=4.
-flowchart TD
-    P0["Phase 0<br/>Setup & Baseline<br/>no PR"]:::intermediate
-    P1(["Phase 1<br/>Cohort A (5 courses)<br/>PR opens"]):::boundary
-    P2(["Phase 2<br/>Cohort B (2 courses)<br/>+ signal<br/>PR opens"]):::boundary
-    P3["Phase 3<br/>Section & Tree<br/>Verification<br/>no PR"]:::intermediate
-    P4["Phase 4<br/>Manual Content<br/>Verification<br/>no PR"]:::intermediate
-    P5["Phase 5<br/>Final Integration<br/>& CI Verification<br/>no PR"]:::intermediate
-    P6["Phase 6<br/>Knowledge Capture<br/>no PR"]:::intermediate
-    P7(["Phase 7<br/>Plan Archival<br/>PR opens"]):::boundary
-
-    P0 --> P1
-    P1 -->|"Phase 1 PR merged"| P2
-    P2 -->|"Phase 2 PR merged"| P3
-    P3 --> P4
-    P4 --> P5
-    P5 --> P6
-    P6 --> P7
-
-    classDef boundary fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:4px
-    classDef intermediate fill:#0173B2,stroke:#000000,color:#FFFFFF
-```
-
-**Accessibility note.** Boundary vs. intermediate is carried by node **shape** (stadium = boundary,
-rectangle = intermediate) and by explicit `"PR opens"` / `"no PR"` label text, never by fill colour
-alone; boundary nodes additionally carry a thicker border. Fills use the repo's verified accessible
-palette per the
-[Color Accessibility Convention](../../../repo-governance/conventions/formatting/color-accessibility.md).
-
----
+No phase may create an additional worktree or branch. The final phase is the only delivery boundary.
 
 ## Phase 0: Environment Setup & Baseline
 
@@ -355,7 +268,6 @@ palette per the
 > nine-step convention in
 > [tech-docs.md §The per-course authoring convention](./tech-docs.md#the-per-course-authoring-convention-maker-checker-fixer-not-code-tdd).
 > **Author each course body from its `<SYLLABUS>courses/<id>.md` spec, not from a fresh judgment call.**
-> Courses are authored **one at a time** (inherited cadence); the cohort opens **one** draft PR after
 > all 5 land.
 
 - [ ] [AI] `just-enough-c` (Primer · C, `<SYLLABUS>courses/just-enough-c.md`) — convention steps 1–9
@@ -448,7 +360,7 @@ palette per the
 - [ ] [AI] Checkers clean across all 5; `npx nx run ayokoding-www:build` and `npm run lint:md` exit 0.
 - [ ] [AI] Catalog rows added for all 5; `<COURSES>_index.md` lists all 5; zero manifest files
       touched.
-- [ ] [AI] Draft PR opened for Cohort A — this unit's own boundary; 3-cycle PR-Review complete; CI
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
       green; PR `[AI]`-merged; `ayokoding-www` deployed.
 
 > **Pause Safety**: the complete C-family chain (`just-enough-c` → `just-enough-cpp` / `linux-os` /
@@ -460,8 +372,8 @@ palette per the
 ## Phase 2: Author Cohort B (2 courses — the Rust chain) + band-completion signal
 
 > Cohort B is DAG-independent of Cohort A (neither `just-enough-rust` nor
-> `modern-system-programming` references any Cohort-A course), but executes **after** Phase 1 merges,
-> per the inherited one-cohort-at-a-time cadence.
+> `modern-system-programming` references any Cohort-A course), and follows Phase 1 on the same
+> persistent final-delivery branch.
 
 - [ ] [AI] `just-enough-rust` (Primer · Rust, `<SYLLABUS>courses/just-enough-rust.md`) — convention
       steps 1–9 complete; checkers clean — acceptance:
@@ -514,14 +426,11 @@ palette per the
   apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-  MERGED_COMMIT: <this cohort's origin/main merge commit SHA>
   ```
 
   — acceptance: all seven `LANDED_COURSE_IDS` resolve to a directory under `<COURSES>`; all three
   `GROW_MANIFESTS` paths are the software-engineer-role manifests only (never the `ai-engineer`
-  manifest — none of these 7 courses is AI-engineering content); `MERGED_COMMIT` is filled in
-  **after** this cohort's PR merges (a placeholder until then is acceptable mid-phase, but the gate
-  below requires it resolved).
+  **after** the terminal archival PR merges; keep the merge field pending during intermediate phases.
 
 ### Phase 2 Gate
 
@@ -532,14 +441,13 @@ palette per the
       its counterpart in its own overview.
 - [ ] [AI] Checkers clean across both; `npx nx run ayokoding-www:build` and `npm run lint:md` exit 0.
 - [ ] [AI] Catalog rows added for both; `<COURSES>_index.md` lists both; zero manifest files touched.
-- [ ] [AI] The one band-completion signal is present with all five fields filled and a resolvable
-      `MERGED_COMMIT` — `git cat-file -e "<the recorded SHA>^{commit}"` exits 0.
-- [ ] [AI] Draft PR opened for Cohort B — this unit's own boundary; 3-cycle PR-Review complete; CI
-      green; PR `[AI]`-merged; `ayokoding-www` deployed.
+- [ ] [AI] The one band-completion signal is prepared with its course IDs and manifest paths; its
+      `FINAL_PR` remains pending until the terminal archival PR merges.
+- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance:
+      no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
 
-> **Pause Safety**: all 7 authored bodies are now live; the one band-completion signal is recorded
-> and reachable. This plan's content-authoring surface is complete. Safe to stop. To resume: re-run
-> the 7-slug presence check and the signal's `MERGED_COMMIT` resolution check.
+> **Pause Safety**: all 7 authored bodies are ready on the persistent branch; the one band-completion
+> signal is prepared for the terminal delivery record. Safe to stop. To resume: re-run
 
 ---
 
@@ -584,7 +492,6 @@ palette per the
 
 - [ ] [AI] **Confirm zero manifest files touched across this plan's entire history** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0** on this phase's own branch.
 
 ### Phase 3 Gate
 
@@ -650,51 +557,23 @@ palette per the
 
 ---
 
-## Phase 5: Final `origin/main` Integration & CI Verification
+## Phase 5: Pre-archival Quality & CI Preparation
 
-- [ ] [AI] Confirm no plan PR is still open:
-      `gh pr list --search "ayokoding-learning-path-07-course-authoring-low-level-systems" --state open --json number --jq 'length'`
-      — acceptance: returns **0**.
-- [ ] [AI] Sync the worktree to latest `origin/main` and run the full affected suite:
+- [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
       `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
-      `npx nx run ayokoding-www:build` — acceptance: all exit 0 on the integrated `main`.
-- [ ] [AI] Monitor the final `main` CI run (poll every ~2 min; one
-      `gh run view --json status,conclusion` per wakeup; never `gh run watch`) — acceptance: all
-      GitHub Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until
-      green. Any follow-up PR carries the identical manifest-diff check on its own branch before it
-      merges:
-      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      returns **0**.
-- [ ] [AI] Confirm `prod-ayokoding-www` serves the authored bodies — spot-check all 7 canonical
-      course URLs — acceptance: each returns 200 with the expected course title. Re-dispatch
-      `apps-ayokoding-www-deployer` if any earlier deploy lagged.
-- [ ] [AI] **Notify the downstream manifest plan** — confirm the one band-completion signal is
-      present in this file on `origin/main`:
-
-  ```bash
-  git ls-tree -r --name-only origin/main -- plans | grep -F 'ayokoding-learning-path-07-course-authoring-low-level-systems/delivery.md'
-  ```
-
-  — prints **exactly one** path. Then:
-
-  ```bash
-  git show "origin/main:<the printed path>" | grep -cE '^MERGED_COMMIT: [0-9a-f]{7,40}$'
-  ```
-
-  — returns **1** (exactly one resolved signal). **Never put a glob in a `git show <rev>:<path>`
-  argument** — it does not glob-expand and returns zero bytes silently.
+      `npx nx run ayokoding-www:build` — acceptance: all exit 0 before Phase 7 opens the terminal PR.
+- [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: no follow-up
+      worktree, branch, or PR is required.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Zero open plan PRs; both cohort PRs merged to `main`.
-- [ ] [AI] Full affected suite + build green on integrated `main`; final `main` CI run green.
-- [ ] [AI] `prod-ayokoding-www` serving all 7 authored bodies.
-- [ ] [AI] The one band signal present on `origin/main` and reachable downstream.
-- [ ] [AI] **No PR opens for this phase** (intermediate) — folds into Phase 7's closeout PR.
+- [ ] [AI] Full affected suite + build green on the persistent final-delivery branch.
+- [ ] [AI] The band signal is prepared without a merge SHA; downstream notification waits for the
+      terminal PR merge.
+- [ ] [AI] **No PR opens for this phase** — it folds into the Phase 7 archival PR.
 
-> **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production; the
-> downstream manifest plan has everything it needs. Safe to stop. To resume: re-run the affected
-> suite on `main` and check CI/prod status.
+> **Pause Safety**: the branch is ready for archival and terminal review. Safe to stop. To resume:
+> re-run the affected suite on the persistent final-delivery branch.
 
 ---
 
@@ -731,6 +610,12 @@ palette per the
 
 ## Phase 7: Plan Archival
 
+### Sole PR integration (binding)
+
+- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [ ] [AI] Verify the Knowledge Capture phase is complete.
 - [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
@@ -743,7 +628,7 @@ palette per the
       **7**, not the sibling plan's 9 nor the original band's 16.
 - [ ] [AI] **Verify the ownership invariant held across this plan's entire history** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      returns **0** on this phase's own branch.
+      returns **0** on the persistent final-delivery branch.
 - [ ] [AI] **Re-run the cross-plan link gate**:
 
   ```bash
@@ -777,9 +662,8 @@ palette per the
 - [ ] [AI] Plan folder is under
       `plans/done/YYYY-MM-DD__ayokoding-learning-path-07-course-authoring-low-level-systems/`; all
       READMEs updated; archival committed.
-- [ ] [AI] Draft PR opened for the Phase 3–7 closeout unit (verification, manual evidence, CI
-      integration, `learnings.md` triage, and the archival move — this unit's own boundary); 3-cycle
-      PR-Review complete; CI green; PR `[AI]`-merged; deployed (no-op).
+- [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
+      CI gates are green, then it is `[AI]`-merged and deployed once.
 
 > **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
 > resume: nothing — the plan is complete.

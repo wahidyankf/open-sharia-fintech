@@ -362,9 +362,10 @@ sequenceDiagram
 
     CA->>CA: Author every body in Band N from its syllabus spec
     CA->>CA: Run content checkers, apply fixers, re-verify
-    CA->>Main: Each five-course cohort lands via one draft PR, 3-cycle review, [AI] merge
-    CA->>CA: Record five-field band-completion signal in delivery.md
-    Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (full paths), MERGED_COMMIT
+    CA->>CA: Historical cohorts completed before the one-final-PR amendment
+    CA->>Main: Remaining closeout lands through one final draft PR, review, and [AI] merge
+    CA->>CA: Record the historical completion evidence without a new intermediate merge SHA
+    Note over CA,MF: Signal fields: BAND, PLAN, LANDED_COURSE_IDS,<br/>GROW_MANIFESTS (full paths), final PR evidence
     CA->>MF: Hand off the signal (via this plan's merged delivery.md)
     MF->>Main: Read LANDED_COURSE_IDS, confirm each resolves under COURSES
     MF->>MF: Append IDs to exactly the manifests named in GROW_MANIFESTS
@@ -906,7 +907,7 @@ rather than a claimed one. The components that render these bodies — `PathRail
 
 **The exemption is narrow.** It covers `ui-quality-gate` **only**. Because this plan ships 21
 user-visible pages, manual behavioural verification via Playwright MCP is **mandatory and
-performed** — [Phase 6](./delivery.md#phase-6-manual-content-verification-playwright-mcp) opens a
+performed** — [Phase 6](./delivery.md#phase-6-manual-content-verification) opens a
 sample of authored course pages at all three breakpoints in the `en` content locale, with committed
 screenshot evidence. The **Rule-15 three-tester retest is separately and already exempted**, with its
 own stated reasons, in

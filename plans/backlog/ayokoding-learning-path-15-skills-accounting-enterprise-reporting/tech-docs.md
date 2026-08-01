@@ -299,8 +299,8 @@ sequenceDiagram
 
     P15->>P15: Author every body in this plan's range from its syllabus spec
     P15->>P15: Run content checkers, apply fixers, re-verify
-    P15->>Main: Push branch, draft PR, 3-cycle review, AI merge
-    P15->>P15: Grow both manifests to 19, record the five-field stage signal
+    P15->>P15: Grow both manifests to 19, record the five-field stage signal on final-delivery
+    P15->>Main: Archive, then push final-delivery and open the sole PR for review and AI merge
     Note over P15,P18: The record lives in this plan's delivery.md only - plan 18 never reads that file
     P18->>Main: At its own gate, independently test -d every course ID its own Stage-B-equivalent stage needs
     Note over P18: A missing course ID blocks plan 18's own gate directly - no signal is parsed or rejected
@@ -314,7 +314,7 @@ sequenceDiagram
 | `PLAN`                    | `ayokoding-learning-path-15-skills-accounting-enterprise-reporting`                                                                                                                                                                           |
 | `LANDED_COURSE_IDS`       | Every course ID authored by this plan (#12–#19)                                                                                                                                                                                               |
 | `UNBLOCKS_ERP_CAPABILITY` | "the ERP stages delivering inventory-costing, multi-company/consolidation, hire-to-retire/payroll, and segregation-of-duties/security capability (Stage-B-equivalent) — and the whole conventional-accounting path is complete at this point" |
-| `MERGED_COMMIT`           | A real 40-character SHA on `origin/main`, checkable with `git cat-file -e`                                                                                                                                                                    |
+| `FINAL_DELIVERY_BRANCH`   | The persistent branch carrying the signal until the terminal archival PR merges                                                                                                                                                               |
 
 **Recording format (grep-checkable)**. Record the five fields as their own paragraph in
 `delivery.md`, each field name anchored at **column 0**, outside any table, bullet, or blockquote:
@@ -324,7 +324,7 @@ STAGE: 2
 PLAN: ayokoding-learning-path-15-skills-accounting-enterprise-reporting
 LANDED_COURSE_IDS: multi-currency-accounting-and-fx-translation, consolidation-and-multi-entity-accounting, financial-reporting-standards-ifrs-vs-gaap, audit-controls-and-compliance, payroll-and-tax-accounting-essentials, treasury-and-cash-management, financial-reporting-and-xbrl, general-ledger-system-architecture
 UNBLOCKS_ERP_CAPABILITY: the ERP stages delivering inventory-costing, multi-company/consolidation, hire-to-retire/payroll, and segregation-of-duties/security capability (Stage-B-equivalent) — and the whole conventional-accounting path is complete at this point
-MERGED_COMMIT: <40-character SHA — fill in from the actual merge>
+FINAL_DELIVERY_BRANCH: ayokoding-learning-path-15-skills-accounting-enterprise-reporting/final-delivery
 ```
 
 **Why this plan's own Stage number is "2", matching the retired plan's own Dangerous-2 vocabulary,

@@ -140,32 +140,12 @@ landed; this plan's own Phase 0 re-checks the same command and refuses to procee
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (the repo default, inherited from plan04's own delivery-mode declaration). Work in
-`worktrees/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`, open a draft PR at
-each **delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green — no `[HUMAN]` merge gate.
-`ayokoding-www` is deployed to `prod-ayokoding-www` after every merge.
-
-**Inherited execution policy — sequential delivery cohorts (per plan04's 2026-07-31 amendment).**
-Plan04 established that its own remaining unmerged course bodies land in **sequential five-course PR
-cohorts**: each course still completes maker-checker-fixer and its own thematic commit individually,
-but a draft PR opens only once every five-course cohort is complete. This plan inherits that cadence
-as its execution policy rather than re-deciding it — but applies it **grouped by the two original
-bands (10 + 4), not by a mechanical five-course slice**, for one concrete reason: a strict 5-course
-slice of Band 3's 10 courses would cut the boundary between courses 5 and 6 — `just-enough-dart` and
-its paired `hybrid-app-development` — splitting one primer-and-its-platform pair across two separate
-PRs and two separate delivery-boundary reviews. Every other pair in this plan's course list (courses
-1–2, 3–4, 7–8) already falls inside whichever five-course window a mechanical slice would draw, so
-only the dart/hybrid pair is at risk — but that risk is exactly the failure mode the five-course
-cadence itself was designed to avoid for hard-prerequisite pairs elsewhere (e.g. plan04 keeps
-`statistics-for-evaluation` in the same or an earlier review cycle than the course that depends on
-it). Grouping by the two original bands instead keeps **every** primer/platform pair, and the whole
-four-course concurrency band, inside one coherent PR each. This is a **[Judgment call]**, made because
-the brief explicitly authorized either grouping and asked for the reasoning to be stated: **two
-cohorts — Band 3 (10 courses, one PR) then Band 4 (4 courses, one PR) — win over a 5+5+4 mechanical
-split.**
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on scope note (Band-independence, stated explicitly)
 
@@ -212,7 +192,7 @@ under the band's gate — the identical contract plan04 defined:
 | `PLAN`              | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`                  |
 | `LANDED_COURSE_IDS` | every course ID the band authored, one per line, in this plan's own listing order       |
 | `GROW_MANIFESTS`    | every manifest the manifest-growth plan must grow, by **full path** under `<MANIFESTS>` |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of that band's PR                                    |
+| `FINAL_PR`          | the number of this plan's sole terminal archival PR, verified merged before consumption |
 
 `GROW_MANIFESTS` for **both** Band 3 and Band 4 is exactly the three software-engineer-role manifests
 — confirmed by re-reading plan04's own `README.md` §Band-completion signal contract ("Bands 1–8 →
@@ -242,7 +222,7 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-MERGED_COMMIT: <filled at execution time>
+FINAL_PR: <filled only after the terminal PR merges>
 ```
 
 ```text
@@ -257,11 +237,11 @@ GROW_MANIFESTS:
 apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
 apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
-MERGED_COMMIT: <filled at execution time>
+FINAL_PR: <filled only after the terminal PR merges>
 ```
 
-A signal that names manifests loosely, or omits `MERGED_COMMIT`, is incomplete and the receiving plan
-must reject it rather than guess.
+A signal that names manifests loosely, or omits the merged `FINAL_PR`, is incomplete and the receiving
+plan must reject it rather than guess.
 
 ## Navigation
 

@@ -112,13 +112,13 @@ The manifest plan cannot act on a vague signal. This plan's single band-completi
 in [`delivery.md`](./delivery.md) at the close of Phase 2, MUST carry all five fields below, verbatim,
 in a fenced `text` block:
 
-| Field               | Content                                                                           |
-| ------------------- | --------------------------------------------------------------------------------- |
-| `BAND`              | `Band 7 — Security, ops, quality & delivery`                                      |
-| `PLAN`              | `ayokoding-learning-path-08-course-authoring-security-and-ops`                    |
-| `LANDED_COURSE_IDS` | all eleven course IDs, one per line, in this plan's own listing order             |
-| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>`  |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of the delivery boundary that completes Band 7 |
+| Field               | Content                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| `BAND`              | `Band 7 — Security, ops, quality & delivery`                                            |
+| `PLAN`              | `ayokoding-learning-path-08-course-authoring-security-and-ops`                          |
+| `LANDED_COURSE_IDS` | all eleven course IDs, one per line, in this plan's own listing order                   |
+| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>`        |
+| `FINAL_PR`          | the number of this plan's sole terminal archival PR, verified merged before consumption |
 
 `GROW_MANIFESTS` is the load-bearing field, and for this band it is fixed: derived by elimination from
 plan 04's own routing notes (Band 9 grows two manifests; Bands 5 and 8 grow four), every other band,
@@ -133,41 +133,19 @@ The fourth manifest, `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`
 this band — it grows only for Bands 5 and 8 (the AI/harness cluster and the capstones that assemble
 it), neither of which is this plan's scope.
 
-**Adaptation note — one signal covering two delivery-boundary PRs.** Unlike plan 04's smaller bands
-(each landing as a single PR), this plan splits Band 7's eleven bodies into **two** delivery-boundary
-PRs (a five-course cohort and a six-course cohort — see
-[§Delivery Mode](#delivery-mode-worktree-to-pr) below), inheriting plan 04's own five-course cohort
-cadence. The single band-completion signal is still recorded only **once**, at the close of Phase 2
-(after both cohorts have merged): `LANDED_COURSE_IDS` lists all eleven IDs from both cohorts, and
-`MERGED_COMMIT` names the **second** cohort's merge commit — the commit that completes the band. A
-signal that names manifests loosely, splits into two partial signals, or omits `MERGED_COMMIT` is
-incomplete and the receiving plan must reject it rather than guess.
+**Delivery note — one terminal signal.** The eleven bodies are authored in two prerequisite-oriented
+authoring phases, but they remain on one persistent branch. The plan emits one band-completion signal
+only after its sole terminal archival PR merges; `LANDED_COURSE_IDS` lists all eleven IDs and
+`FINAL_PR` names that one terminal delivery. Receiving plans must not consume a provisional signal.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr`, inherited from `ayokoding-learning-path-04-course-authoring` (tier-2 plan-field
-precedence, same programme): work in
-`worktrees/ayokoding-learning-path-08-course-authoring-security-and-ops/`, open a draft PR at each
-**delivery boundary** named in
-[delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against `main`
-(Phase 0 opens none), run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]`
-merges automatically once the review and all quality gates are green — no `[HUMAN]` merge gate is
-declared. `ayokoding-www` is deployed to `prod-ayokoding-www` after every merge.
-
-**Inherited sequential-cohort cadence.** Following plan 04's 2026-07-31 execution amendment, courses
-are authored, checked, and committed **one at a time**, but a draft PR opens only once a full cohort
-is complete. Eleven courses split as **one five-course cohort (courses 1–5) plus one six-course
-cohort (courses 6–11)** — the plan's own natural in-order split, not an arbitrary 5+5+1: courses 1–5
-are the security-core cluster (`it-and-application-security` through
-`vulnerability-management-and-assessment`, all consuming `security-essentials` and/or
-`networking-essentials`, and `detection-engineering-and-siem-operations` directly extending
-`defensive-security`), while courses 6–11 are the governance/ops/analytics cluster
-(`it-governance-grc` through `analytics-and-experimentation`). Keeping the security cluster in one
-cohort lets `defensive-security` and `detection-engineering-and-siem-operations` — whose distinctness
-is a locked, cross-checked contract (DL-9/DD-12 below) — land inside the same review cycle.
-[Judgment call — a 5+6 split was chosen over 5+5+1 because the eleventh course
-(`analytics-and-experimentation`) has no natural third-cohort partner and a lone-course final PR adds
-process overhead the ops/governance cluster does not need.]
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 7, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 

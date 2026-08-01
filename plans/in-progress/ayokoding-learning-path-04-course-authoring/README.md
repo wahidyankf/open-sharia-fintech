@@ -231,19 +231,12 @@ must reject it rather than guess.
 
 ## Delivery Mode: worktree-to-pr
 
-`worktree-to-pr` (inherited from the source plan, tier-2 plan-field precedence): work in
-`worktrees/ayokoding-learning-path-04-course-authoring/`, open a draft PR at each **delivery boundary**
-named in [delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries) against
-`main` (Phase 0 opens none; intermediate phases commit to their unit's branch without opening one),
-run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), then `[AI]` merges automatically
-once the review and all quality gates are green (see **DN-11** below). `ayokoding-www` is deployed to
-`prod-ayokoding-www` after every merge. See [delivery.md](./delivery.md) for the `## Worktree` and
-`## Delivery Mode` declarations and the PR-review-cycle steps.
-
-**Execution amendment (2026-07-31):** remaining unmerged course bodies use sequential
-five-course delivery cohorts. Each course still completes maker-checker-fixer and a thematic commit
-on its own; after every fifth course, the cohort opens one draft PR, runs the three-cycle review,
-merges, and deploys once. Historical already-merged individual-course PRs remain valid evidence.
+This plan has exactly one dedicated worktree, one persistent final-delivery branch, and one PR.
+All authoring, verification, and Knowledge Capture phases commit on that branch without a push, PR,
+review cycle, merge, or deployment. In Phase 9, the executor commits the archival move and
+any index updates, opens the sole draft PR, completes the PR-Review Maker→Fixer Cycle and CI gates,
+marks it ready, and performs the normal AI merge/deploy after the hardened preconditions hold.
+No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ## Depends-on
 
@@ -353,7 +346,7 @@ after the split. Do not copy `syllabus/` into this folder.
 This plan is done for downstream purposes when its final PR is **merged to `origin/main`** AND every
 one of its own **21** named course bodies exists as a directory under
 `apps/ayokoding-www/content/en/learn/courses/` (see
-[delivery.md](./delivery.md#phase-5-section--authored-tree-verification) for the exact
+[delivery.md](./delivery.md#phase-5-section-and-authored-tree-verification) for the exact
 `evidence/authored-body-slugs.txt`-driven check).
 
 > **Scope note on the handoff-signal count.** The full programme's **127-course catalog** total is
@@ -410,7 +403,7 @@ Two entries are **cross-cutting** and are reproduced verbatim in all five split 
   cluster); then `careers/immediately-effective/ai-engineer` (authoring priority #1); then
   the `careers/immediately-effective/software-engineer` manifest; then the `careers/fundamentally-strong/software-engineer`
   manifest; then backfill topics 34–94 native as the library fills. **Decided; amended 2026-07-20.**
-- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges each delivery boundary's
+- **DN-11 DECIDED — `[AI]` auto-merge (now the repo default).** `[AI]` merges this plan's sole final
   PR (see [delivery.md's `### Delivery Boundaries` table](./delivery.md#delivery-boundaries))
   automatically once the 3-cycle PR-Review Maker→Fixer Cycle and all quality gates are green — this
   plan declares no `[HUMAN]` merge gate. When DN-11 was first recorded, `pr-merge-protocol.md` still
