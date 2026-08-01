@@ -206,9 +206,9 @@ canonical set, organized by tier:
 
 ### Library deploy workflows
 
-| Filename                       | Domain   | Purpose                                                             |
-| ------------------------------ | -------- | ------------------------------------------------------------------- |
-| `web-ui-build-deploy-prod.yml` | `web-ui` | Build Storybook and force-push to `prod-web-ui` (daily + on-demand) |
+| Filename                       | Domain   | Purpose                                                                                 |
+| ------------------------------ | -------- | --------------------------------------------------------------------------------------- |
+| `web-ui-build-deploy-prod.yml` | `web-ui` | Daily/on-demand: build Storybook and force-push `prod-web-ui` only when inputs changed |
 
 ### Cross-cutting workflows
 
