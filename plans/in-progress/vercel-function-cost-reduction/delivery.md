@@ -1084,6 +1084,10 @@ Independent of Units 1 and 2.
     `HEAD^..HEAD` window can skip a required build when an older `web-ui` change is followed by an
     unrelated commit; the workflow's deployed-ref comparison is the single reliable gate and prevents
     Vercel from receiving an unchanged ref at all.
+  - **Correction 2026-08-02 (review cycle 2)**: the deployed-baseline comparison now covers every
+    Storybook build input: `libs/web-ui/`, `libs/web-ui-token/`, `package.json`, `package-lock.json`,
+    `nx.json`, `tsconfig.base.json`, and `.npmrc`. The CI/CD architecture reference and workflow
+    catalog now describe the resulting changed-input deployment and unchanged-run no-op behavior.
 
 ### Phase 6 Gate
 

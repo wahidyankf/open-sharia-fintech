@@ -51,6 +51,6 @@ reusable-workflow pattern and the twice-daily WIB CRON schedule (with a 2.5-hour
 
 ## web-ui — Storybook (scheduled deploy)
 
-| Workflow                       | Trigger                           | Role                                                                          |
-| ------------------------------ | --------------------------------- | ----------------------------------------------------------------------------- |
-| `web-ui-build-deploy-prod.yml` | Daily CRON (00:00 UTC) + dispatch | Build the `web-ui` lib's Storybook and force-push the output to `prod-web-ui` |
+| Workflow                       | Trigger                           | Role                                                                                     |
+| ------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------- |
+| `web-ui-build-deploy-prod.yml` | Daily CRON (00:00 UTC) + dispatch | Compare Storybook inputs with `prod-web-ui`; build and force-push only when they changed |

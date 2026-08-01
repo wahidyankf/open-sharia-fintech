@@ -240,10 +240,16 @@ against the entire monorepo on a fixed cadence independent of any single PR
 
 **Steps:**
 
-1. Build the shared `web-ui` lib's Storybook (`nx run web-ui:build-storybook`)
-2. Force-push `HEAD` to `prod-web-ui`
+1. Compare the Storybook inputs with `prod-web-ui`: `libs/web-ui/`, its `web-ui-token` workspace
+   dependency, and the root package, Nx, TypeScript, and npm configuration files that affect the
+   build.
+2. Build the shared `web-ui` lib's Storybook (`nx run web-ui:build-storybook`) only when that
+   comparison finds a change.
+3. Force-push `HEAD` to `prod-web-ui` only after a successful changed-input build.
 
-**Purpose**: Publish the `web-ui` component library's Storybook to the `prod-web-ui` branch on a fixed daily cadence, independent of any single PR — the same scheduled-CD pattern as the `*-www-test-local-deploy-prod.yml` workflows above, but for the shared component-library Storybook rather than an app.
+**Purpose**: Poll daily for Storybook-input changes and publish the `web-ui` component library's
+Storybook to `prod-web-ui` only when the deployed baseline is stale. Unchanged scheduled or manual
+runs are no-ops, avoiding both the Storybook build and the Vercel deployment.
 
 ### PR Quality Gate Workflow (duplicate entry)
 
