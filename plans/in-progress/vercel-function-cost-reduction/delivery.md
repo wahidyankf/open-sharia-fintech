@@ -148,47 +148,103 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     seven projects — **99.90%**; `[...slug]` alone is **85.6%** of that. The DD-7 inference held.
     Independent cross-check: 91,162 invocations/day measured versus 85,250/day read off the
     dashboard on 2026-07-30, ~7% apart.
-- [ ] `[HUMAN]` Record the cycle-to-date Infrastructure Subtotal and the elapsed day count, so the
+- [x] `[HUMAN]` Record the cycle-to-date Infrastructure Subtotal and the elapsed day count, so the
       monthly extrapolation is reproducible. **Still `[HUMAN]`** — the MCP exposes no billing or
       usage tool, so no agent can read a currency figure (DD-8).
   - Acceptance: same evidence file states both numbers. Baseline for comparison: **$7.43 over ~4
     days as of 2026-07-30**.
   - Append to the "What still needs a human" table already in the evidence file.
+  - **Date**: 2026-08-01. **Status**: done — the account owner supplied the dashboard reading
+    directly, which is the only route to this datum (DD-8).
+  - **Files Changed**: `evidence/baseline-per-project.md`.
+  - **Result**: **$9.79 of the $20 included credit consumed, $0.00 on-demand, 7 of 31 cycle days
+    elapsed** (panel read "24 days remaining"). Rate **$1.399/day → ~$43/month gross**, materially
+    **below** the ~$57/month the 2026-07-30 short-window reading projected. Baseline for the rest of
+    the plan is now**$43/month**, not $57. Largest line: Function Duration $6.62 (~$29/mo).
+  - **Dated projection**: credit exhausts ~**Aug 8**; the $30 budget goal is passed ~**Aug 15**; the
+    $15 spend cap trips at $35 gross ~**Aug 19**, pausing every production project. Cycle close ~$43
+    if nothing changes — above the cap, so it fires this cycle unless Phases 1–4 land first.
+  - **Incidental finding**: `Fluid Active CPU` and `Fluid Provisioned Memory` are already listed at
+    $0.00 next to a non-zero `Function Duration`. Vercel renders the full catalogue and zeroes
+    inapplicable lines, so step 0.3's acceptance clause needed correcting — see the next item.
 
 ### 0.2 Install the spend safety rail
 
-- [ ] `[HUMAN]` Team → Settings → Billing → **Spend Management**: enable it, set the spend amount to
-      **$10**, and explicitly enable **"Pause production deployment"** (off by default; requires
+- [x] `[HUMAN]` Team → Settings → Billing → **Spend Management**: enable it, set the spend amount to
+      **$15**, and explicitly enable **"Pause production deployment"** (off by default; requires
       typing the team name to confirm).
   - **The spend amount is measured after the credit, not before it.** Verbatim: "The spend amount
     that you set covers metered resources that go **beyond** your Pro plan credits and usage
-    allocation." So a $10 spend amount means $10 of _on-demand_ charge on top of the $20 platform
-    fee — a **$30 invoice**, which is exactly the stated ceiling. It does **not** mean $10 of gross
-    usage. See [tech-docs.md DD-9](./tech-docs.md#dd-9--spend-amount-10-pause-armed-immediately).
-  - Vercel's own guidance is to set the amount below the absolute maximum you will tolerate, because
-    checks run only every few minutes and spend can overshoot. **$10 uses the full ceiling with no
-    lag margin — a deliberate choice**, accepting a small overshoot above $30 in exchange for not
-    surrendering any of the allowance.
-  - **Consequence to expect, not a surprise**: at the pre-fix burn rate (~$1.90/day gross) the $20
-    credit is exhausted around **day 10** of a cycle and on-demand reaches $10 around **day 16** — at
-    which point every production project returns
+    allocation." So $15 means $15 of _on-demand_ charge on top of the $20 platform fee — an
+    **enforced worst case of $35**. It does **not** mean $15 of gross usage. See
+    [tech-docs.md DD-9](./tech-docs.md#dd-9--15-spend-cap-as-a-soft-backstop-under-a-30-budget-goal).
+  - **$15 is a backstop, not the budget.** The budget goal is a **$30 invoice** and it is
+    **advisory** — deliberately not mechanically enforced. The cap sits $5 above it so it fires only
+    on a genuine runaway rather than on a normal overrun. The accepted consequence is that a quiet
+    month can invoice up to **$35** without the cap ever intervening: **the cap stops catastrophe,
+    not overspend.** Holding $30 is the engineering work's job, not the cap's.
+  - **Consequence to expect, not a surprise**: at the measured burn rate (**$1.399/day gross**, from
+    $9.79 over 7 days on 2026-08-01) the $20 credit is exhausted around **Aug 8**, the $30 advisory
+    goal is passed around **Aug 15**, and on-demand reaches $15 around **Aug 19** — at which point
+    every production project returns
     [`503 DEPLOYMENT_PAUSED`](https://vercel.com/docs/errors/DEPLOYMENT_PAUSED). Projects **do not
     auto-resume**: raising the amount does not unpause them, and each must be resumed individually
-    via the dashboard or the REST API. That is the intended behaviour of a hard cap, and it is the
-    reason Phases 1–4 are time-critical rather than merely valuable.
-  - Acceptance: the Spend Management panel shows **$10** configured **and** the pause action enabled.
+    via the dashboard or the REST API. Cycle close at this rate is ~$43, which is **above** the cap,
+    so the cap **will** fire this cycle unless Phases 1–4 land first. That is the schedule pressure.
+  - Acceptance: the Spend Management panel shows **$15** configured **and** the pause action enabled.
     Falsifiable both ways: before this step no amount is set and no pause action exists; after it,
     both are visible.
   - Note the threshold also excludes **seats, Marketplace integrations, and add-ons**, which Vercel
     bills separately and monthly.
+  - **Date**: 2026-08-01. **Status**: done, per the account owner.
+  - **Files Changed**: none — a dashboard setting.
+  - **Result**: Spend Management enabled at **$15** with the pause action armed. Enforced worst-case
+    invoice is therefore **$35** (`$20 platform fee + $15 post-credit on-demand`), sitting $5 above
+    the **$30 advisory budget goal** exactly as DD-9 intends.
+  - **The clock this starts is real and it is short.** At the measured $1.399/day, the cap fires
+    around **Aug 19** and the cycle closes near **$43** — above the cap — so on today's trajectory
+    the pause **will** trigger before Aug 26 and every production project will return
+    `503 DEPLOYMENT_PAUSED` until each is resumed **by hand, one at a time**. Phases 1–4 are what
+    prevent that; they are now schedule-critical, not merely cost-motivated.
+  - **No independent verification was possible** — the Vercel MCP exposes no Spend Management tool
+    and its token is expired besides (DD-8). This tick rests on the owner's attestation.
 
 ### 0.3 Migrate off legacy billing (DD-3)
 
-- [ ] `[HUMAN]` For each project with functions, Project → Settings → Functions → enable **Fluid
+- [x] `[HUMAN]` For each project with functions, Project → Settings → Functions → enable **Fluid
       Compute**. Then trigger a redeploy so the setting takes effect.
-  - Acceptance: after the next cycle's first usage appears, the dashboard reports **Active CPU** and
-    **Provisioned Memory** line items and **no** "Function Duration (GB-Hrs)" line. Falsifiable both
-    ways: today the reverse is true, which is precisely the diagnostic that identified legacy billing.
+  - Acceptance **(corrected 2026-08-01 against the real dashboard)**: after the next cycle's first
+    usage appears, **`Fluid Active CPU` and `Fluid Provisioned Memory` are non-zero** and
+    **`Function Duration` has stopped accruing** (it holds at its pre-migration value rather than
+    climbing). Falsifiable both ways: today the reverse holds — Function Duration is $6.62 and
+    climbing while both Fluid lines sit at $0.00.
+  - **Do not use "the Fluid line items appear" as the test.** They are already present at $0.00
+    today, alongside the legacy line. Vercel renders the full line-item catalogue and zeroes the ones
+    that do not apply, so presence proves nothing and absence never happens. The original clause
+    asserted a before-state that does not exist and would have passed the moment anyone looked.
+    Legacy billing is diagnosed by `Function Duration` being **non-zero**, not by Fluid lines being
+    missing.
+  - **Date**: 2026-08-01. **Status**: setting applied — the account owner reports Fluid Compute
+    enabled on every project. **Its acceptance clause is deliberately deferred**, because the clause
+    is a billing observation and billing has not yet turned over.
+  - **Files Changed**: none — a dashboard setting, no repo surface.
+  - **No independent corroboration was available.** The Vercel MCP returned
+    `requires re-authorization (token expired)`, and even authenticated it exposes no Fluid tool —
+    `get_deployment` reports `type: "LAMBDAS"` either way (DD-8, and §"Vercel MCP capability
+    boundary" in tech-docs.md). This tick therefore rests on the owner's attestation, which is the
+    only evidence obtainable today. Recorded plainly rather than dressed up as a verification.
+  - **Carry-forward — the acceptance is graded by the successor plan, not here.** Enabling Fluid
+    Compute changes the meter, and a meter is only readable once it has metered. The check that
+    `Fluid Active CPU` / `Fluid Provisioned Memory` go non-zero **while `Function Duration` stops
+    climbing** belongs to
+    [`vercel-cost-steady-state-verification`](../../../backlog/vercel-cost-steady-state-verification/README.md),
+    which reads a full closed cycle.
+  - **Open item — does the setting bind yet?** Fluid Compute applies to **new deployments**; it does
+    not retrofit the deployment already serving traffic. If no redeploy followed the toggle, the
+    setting is enabled but **inert**, and `Function Duration` keeps accruing exactly as before. This
+    self-resolves the moment Phase 1 ships (every phase deploys), so it blocks nothing — but until
+    then, do **not** read a still-climbing `Function Duration` as evidence that the migration
+    failed. Confirm a post-toggle deployment exists before drawing any conclusion from the meter.
 
 ### 0.4 Enable the free firewall rulesets (DD-2)
 
@@ -212,13 +268,78 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     (200: 42,524 / 404: 731 / 307: 98 / 504: 49 / 206: 13).
   - **Rollback if it fails**: `[HUMAN]` sets Bot Protection back to "Off" (single toggle, no
     deploy). Record the outcome in the evidence file either way.
+  - **Date**: 2026-08-01. **Status**: **FAILED — rollback triggered. This step is not done.**
+  - **Files Changed**: none.
+  - **What was set** (dashboard screenshot, account owner): Bot Protection = **Challenge**, AI Bots =
+    **Deny**. BotID left at Basic/uninstalled. So the `[HUMAN]` half was applied as specified —
+    "Challenge" is the active mode, and its own subtitle reads "Challenge requests from non-browser
+    sources, **excluding verified bots**".
+  - **Result — every probe returned `HTTP/2 429` with `<title>Vercel Security Checkpoint</title>`**:
+
+    | Probe                                | Result                             |
+    | ------------------------------------ | ---------------------------------- |
+    | Googlebot UA → `/en/learn/courses/…` | `429` + checkpoint interstitial    |
+    | Bingbot UA → `/en`                   | `429`                              |
+    | `/robots.txt`                        | `429`                              |
+    | `/sitemap.xml`                       | `429`                              |
+    | Plain `curl` UA → `/en`              | `429`                              |
+    | **Chrome-140 browser UA → `/en`**    | **`429` — the control also fails** |
+
+  - **The acceptance clause is met in the negative and the rollback clause fires**: "a challenge
+    interstitial or a non-200 fails this check". A 33,789-byte checkpoint page was returned instead
+    of content. Not a marginal result.
+  - **But the test cannot answer the question it was written to answer, and that flaw is the real
+    finding.** Verified-bot exclusion is decided by reverse-DNS / source-IP verification, not by the
+    `User-Agent` string. A `curl` that merely _claims_ to be Googlebot is by construction an
+    unverified bot, so challenging it is **correct** behaviour. UA spoofing can therefore never
+    prove verified-Googlebot access — the probe as designed is unfalsifiable in the direction that
+    matters. Recorded rather than quietly reinterpreted as a pass.
+  - **What the run does prove, and it is enough to act on**: the Chrome-140 **control** was
+    challenged too. The challenge is not narrowly scoped to bot-shaped traffic; it gates any client
+    that cannot execute the JS challenge. Real browsers solve it and proceed, so human visitors are
+    likely unaffected — but every non-JS consumer is not: `robots.txt` and `sitemap.xml` are behind
+    the interstitial, and so is every feed reader, link checker, uptime monitor, social-card
+    unfurler, and non-verified crawler.
+  - **Decision — roll Bot Protection back to "Off"; keep AI Bots = Deny.** The asymmetry decides it:
+    the downside is deindexing a content site whose entire value is organic search, which is severe
+    and slow to reverse; the upside is a fraction of a line item on a ~$43/month bill. Never trade
+    an SEO catastrophe for a cost optimisation. **AI Bots = Deny stays** — it is the half that
+    actually cuts invocations (AI scrapers hammer content sites), it targets scrapers rather than
+    search crawlers, and nothing in this run implicates it.
+  - **Re-entry condition, not abandonment.** Bot Protection may be re-enabled once verified-bot
+    access is proven by a method that UA spoofing cannot fake — Google Search Console's **URL
+    Inspection → Live Test** (authoritative, and `[HUMAN]`), or Vercel Firewall logs showing zero
+    challenges issued to verified Google source IPs. Until one of those exists, this stays "Off".
+  - **Follow-up filed against the successor plan**: the smoke-test design itself needs replacing in
+    [`vercel-cost-steady-state-verification`](../../../backlog/vercel-cost-steady-state-verification/README.md)
+    — a UA-header probe is the wrong instrument for an IP-verified control, and it would have
+    produced the same uninterpretable result on any future re-attempt.
 
 ### 0.5 Disable Observability Plus (DD-1) — only after 0.1 is committed
 
-- [ ] `[HUMAN]` Team → Settings → Billing → Observability Plus: disable team-wide.
+- [x] `[HUMAN]` Team → Settings → Billing → Observability Plus: disable team-wide.
   - Acceptance: the Observability Events line stops accruing in the next cycle. Removes a measured
     ~$10/month.
   - Precondition: step 0.1's evidence file is committed. Do not proceed otherwise.
+  - **Date**: 2026-08-01. **Status**: done, precondition satisfied.
+  - **Files Changed**: none — a dashboard setting.
+  - **Precondition check**: step 0.1's evidence file was committed in `c88a0d4a0` **before** this
+    toggle, so the seven-project attribution table and the 72h rate survive the loss of retention.
+    The ordering DD-7 insisted on held; nothing was measured away.
+  - **Result**: Observability Plus disabled team-wide. Removes the second-largest line item —
+    **$1.69 of $9.79 consumed, ~$7.5/month** at the measured rate.
+  - **Acceptance is deferred by construction** (it grades a line item in the _next_ cycle) and is
+    read by the successor plan, same as 0.3.
+  - **Consequence to expect**: `get_runtime_logs` retention shrinks to the base tier. Every
+    measurement that depended on it — the per-project split, the 72h rate, the status-code
+    histogram, the middleware-executes finding — is already captured in
+    [`evidence/baseline-per-project.md`](./evidence/baseline-per-project.md). Do not plan a phase
+    around re-querying that data.
+  - **Bonus, volunteered by the account owner and outside this plan's scope**: **Speed Insights
+    disabled on all projects** as well. Not a line item in the 2026-08-01 baseline table (it read
+    $0.00), so this books no measured saving — but it removes a client-side beacon per page view
+    and forecloses the line item growing once Phases 1–4 raise cached page views. Recorded so the
+    successor plan does not attribute the difference to the engineering work.
 
 ### 0.6 Resolve the blocking middleware question empirically — RESOLVED
 
@@ -243,14 +364,80 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
 
 ### 0.7 Repo baseline
 
-- [ ] `[AI]` `npm install` and `npm run doctor -- --fix` in the primary checkout.
-- [ ] `[AI]` Build `apps/ayokoding-www` and record the prerendered route count:
+- [x] `[AI]` `npm install` and `npm run doctor -- --fix` in the primary checkout.
+  - **Date**: 2026-08-01. **Status**: done, no remediation needed.
+  - **Files Changed**: none — both commands were no-ops against an already-converged environment.
+  - **Result**: `npm install` → "up to date, audited 1596 packages"; `npm run doctor -- --fix` →
+    "16/16 tools OK, 0 warning, 0 missing", "Target-share fix: 0 created, 4 already correct",
+    "Nothing to fix — all tools are installed."
+  - **Noted, not actioned**: `npm audit` reports 52 vulnerabilities (4 critical, 20 high, 26
+    moderate, 2 low). Preexisting and out of this plan's scope — it changes no application
+    dependency. Not a Phase 0 blocker; recorded here so the number is not mistaken for a regression
+    introduced by later phases.
+- [x] `[AI]` Build `apps/ayokoding-www` and record the prerendered route count:
       `nx build ayokoding-www && jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json`
   - Acceptance: returns **4** (the documented pre-fix baseline). If it returns anything else, stop —
     the premise of the plan has changed and the analysis must be redone.
-- [ ] `[AI]` Build `apps/wahidyankf-www` and record its route table.
+  - **Date**: 2026-08-01. **Status**: done — acceptance met exactly.
+  - **Files Changed**: none (throwaway build; `.next/` is gitignored).
+  - **Result**: `.routes | length` = **4**, `.dynamicRoutes | length` = **0**,
+    `find .next/server/app -name "*.html" | wc -l` = **1**. All nine app routes print `ƒ`; only
+    `/feed.xml`, `/robots.txt`, `/sitemap.xml` print `○`.
+  - **Strongest single piece of evidence for Cause A yet, and it is new**: the build log reads
+    `✓ Generating static pages using 11 workers (2103/2103) in 3.8min` — `generateStaticParams`
+    enumerates and Next.js **renders all 2,103 pages at build time**, then emits exactly **one**
+    HTML file and marks every route `ƒ`. The work is done and thrown away. This is not "prerendering
+    never runs"; it is "prerendering runs and its output is discarded because a dynamic API in the
+    root layout forces on-demand rendering." Phase 1 therefore recovers a build step that is already
+    being paid for.
+  - **Second-order cost, previously unquantified**: those 3.8 minutes of static generation are spent
+    on every deploy for zero benefit. Phase 1 converts the same 3.8 minutes into 2,103 cached pages.
+  - **Build-time warning to carry into Phase 3**: `The "middleware" file convention is deprecated.
+Please use "proxy" instead.` Phase 3 deletes `src/middleware.ts` outright, so this resolves
+    itself — do **not** spend a step migrating `middleware.ts` → `proxy.ts` for a file about to be
+    removed.
+  - **Pre-existing, out of scope, recorded so it is not mistaken for a regression**: eight KaTeX
+    `strict: 'warn'` diagnostics (`Unrecognized Unicode character "–"/"—"`, `\\ does nothing in
+display mode`) and a handful of `took more than 60 seconds … Retrying` messages on
+    `/en/learn/legacy/software-engineering/software-architecture/*`. All retries succeeded — the
+    build exited clean. Slow pages under `learn/legacy/` are a content-side signal, not a blocker.
+- [x] `[AI]` Build `apps/wahidyankf-www` and record its route table.
   - Acceptance: three routes show `ƒ` (`/`, `/cv`, `/personal-projects`).
-- [ ] `[AI]` Resolve preexisting failures in scope before any plan work begins.
+  - **Date**: 2026-08-01. **Status**: done — acceptance met exactly.
+  - **Files Changed**: none (throwaway build).
+  - **Result**: the route table is four rows — `ƒ /`, `○ /_not-found`, `ƒ /cv`,
+    `ƒ /personal-projects`. Exactly the three predicted dynamic routes; `_not-found` is already
+    static and is not a Phase 5 target.
+  - **Corroborates two Phase 5 premises at once**: `robots.txt` and `sitemap.xml` are **absent from
+    the route table entirely**, independently confirming §0.8's "no `robots.ts`/`sitemap.ts`" via a
+    second method (build output, not file existence). Contrast `ayokoding-www`, whose table lists
+    all three of `/feed.xml`, `/robots.txt`, `/sitemap.xml` as `○`.
+  - **Scale contrast worth keeping**: 6 static pages generated in **225ms** here versus 2,103 in
+    **3.8min** on `ayokoding-www`. Consistent with the measured 45-versus-43,105 invocation split —
+    Unit 2 remains an SEO/correctness fix, not a cost saving (README §Measured baseline).
+- [x] `[AI]` Resolve preexisting failures in scope before any plan work begins.
+  - **Date**: 2026-08-01. **Status**: done — baseline is clean; nothing needed fixing.
+  - **Files Changed**: none.
+  - **Command**:
+    `nx run-many -t test:quick,lint,typecheck -p ayokoding-www,wahidyankf-www,organiclever-app-web`
+  - **Result**: green for all three after one flake. First pass reported
+    `Failed tasks: - wahidyankf-www:test:quick`; the isolated re-run passed and **Nx itself labelled
+    it** — `NX Nx detected a flaky task: wahidyankf-www:test:coverage`. Not a real failure, and not
+    a defect this plan introduced. Coverage and spec gates both clean:
+    `Spec coverage valid! 42 specs, 367 scenarios, 1326 steps` (ayokoding-www) and
+    `7 specs, 36 scenarios, 84 steps` (wahidyankf-www), plus `0 finding(s)` from
+    `specs structure validate` across all six spec areas.
+  - **Treat a single red `test:quick` here as flake-until-proven**, and re-run the one project in
+    isolation before investigating. Matches the standing repo pattern of `test:quick` flaking under
+    parallel load.
+  - **Cross-worktree contamination observed, deliberately not acted on**: the run emitted ~24
+    `[tsconfig-paths] An error occurred while parsing …/worktrees/push-plan-quality-gate-fix/apps/*-e2e/tsconfig.json`
+    warnings. That worktree belongs to **another session** and is not on this plan's file-touch
+    ledger, so it stays untouched. The warnings are noise — every gate passed — and they are exactly
+    the symptom already filed as
+    [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md).
+    Relevant because this plan runs three concurrent worktrees in Phases 1–6; expect the same noise
+    there and do not chase it.
 
 ### 0.8 Source-premise re-verification — CONFIRMED 2026-08-01
 
@@ -325,9 +512,9 @@ that is a future reading which cannot be performed early by anyone.)
 - [ ] `[AI]` No PR opened in this phase.
 
 > **Deferred grading, stated honestly**: two Phase-0 actions cannot be _graded_ in Phase 0 even
-> though they are _performed_ here. Fluid Compute's acceptance ("Active CPU and Provisioned Memory
-> line items appear, Function Duration disappears") and Observability Plus's ("the Events line stops
-> accruing") both need the next cycle's billing data. Those confirmations belong to
+> though they are _performed_ here. Fluid Compute's acceptance ("the Fluid lines go non-zero while
+> Function Duration stops accruing") and Observability Plus's ("the Events line stops accruing") both
+> need the next cycle's billing data. Those confirmations belong to
 > [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md),
 > which carries them explicitly. Do not block Phase 1 on them.
 >

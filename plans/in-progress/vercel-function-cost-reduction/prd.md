@@ -18,7 +18,7 @@ requirement is that they remain functionally equivalent from the reader's point 
 | Course-path follower       | Navigates within a learning path via `?path=` context and expects the sidebar to reflect it |
 | CV/portfolio visitor       | Lands on wahidyankf.com, filters content with a search box, may share a filtered URL        |
 | Search engine crawler      | Must reach, render, and index every public page                                             |
-| Site owner                 | Must not receive an invoice above $30; wants it at the $20 subscription                     |
+| Site owner                 | Budgets $30, backstops at $35, wants it at the $20 subscription                             |
 
 ## User stories
 
@@ -34,8 +34,8 @@ requirement is that they remain functionally equivalent from the reader's point 
 - As a **crawler**, I can fetch `robots.txt` and `sitemap.xml` from wahidyankf.com (neither exists
   today) and I remain able to crawl and index every public page on both sites.
 - As the **site owner**, I can see a configured spend cap that will pause production deployments
-  before my bill exceeds $30, and I understand that pausing takes the sites down until I resume each
-  project by hand.
+  before my bill runs away, set at $35 rather than at my $30 budget so it fires only on a genuine
+  runaway — and I understand that pausing takes the sites down until I resume each project by hand.
 
 ## Behaviour that must not regress
 
@@ -152,11 +152,17 @@ Feature: Search-filtered portfolio routes are static yet still filterable
 ```gherkin
 Feature: The billing outcome is verified, not assumed
 
-  Scenario: Gross metered usage stays inside the authorised ceiling
+  Scenario: Gross metered usage stays inside the budget goal
     Given a full billing cycle has elapsed at the new steady state
     When the cycle's infrastructure subtotal is read from the usage dashboard
     Then the gross metered usage is at or below thirty US dollars
     And the invoice total is at or below thirty US dollars
+
+  Scenario: The backstop never had to fire
+    Given a full billing cycle has elapsed at the new steady state
+    When the spend management activity log is read for that cycle
+    Then no project was paused
+    And the invoice total is below thirty-five US dollars
 
   Scenario: Gross metered usage fits inside the included credit
     Given a full billing cycle has elapsed at the new steady state
@@ -166,19 +172,21 @@ Feature: The billing outcome is verified, not assumed
 
   Scenario: A spend cap exists as a backstop
     When the team billing settings are inspected
-    Then a spend amount of ten US dollars is configured
+    Then a spend amount of fifteen US dollars is configured
     And the automatic pause action is enabled
 
   Scenario: The spend amount is understood as post-credit
-    Given a spend amount of ten US dollars is configured
+    Given a spend amount of fifteen US dollars is configured
     When the amount that would trigger the pause is reasoned about
-    Then it means ten US dollars of charge beyond the included credit
-    And it does not mean ten US dollars of gross metered usage
+    Then it means fifteen US dollars of charge beyond the included credit
+    And it implies a worst-case invoice of thirty-five US dollars
+    And it does not mean fifteen US dollars of gross metered usage
 ```
 
-The first two scenarios are deliberately separate and both retained: the first is the **ceiling**,
-whose breach is a failure; the second is the **target**, whose miss is a shortfall but not a breach.
-Collapsing them would lose the distinction the budget rests on.
+These scenarios are deliberately separate: the **budget goal** ($30) is advisory and missing it is a
+shortfall; the **backstop** ($35) is machine-enforced and firing it is an incident; the **target**
+($20) is where the engineering is aimed. Collapsing them would lose the distinction the budget rests
+on — see [tech-docs.md DD-9](./tech-docs.md#dd-9--15-spend-cap-as-a-soft-backstop-under-a-30-budget-goal).
 
 ```gherkin
 Feature: The backend health-check page is excluded from search indexes

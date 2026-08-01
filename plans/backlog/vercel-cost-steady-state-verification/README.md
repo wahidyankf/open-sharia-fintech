@@ -1,19 +1,21 @@
-# Vercel Cost Steady-State Verification — grade the invoice against the $30 ceiling
+# Vercel Cost Steady-State Verification — grade the invoice against the $30 budget
 
 Verify that [`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md)
 actually achieved its objective. That plan carries **three tiers**, and this plan grades against all
 three rather than a single number:
 
-| Tier                    | Gross metered usage | Invoice  | Verdict if missed                     |
-| ----------------------- | ------------------- | -------- | ------------------------------------- |
-| **Ceiling** (owner-set) | `<= $30/month`      | `<= $30` | **Failure** — the budget was breached |
-| **Target**              | `< $20/month`       | `$20.00` | Shortfall, not a breach               |
-| **Stretch**             | `< $10/month`       | `$20.00` | Missed upside                         |
+| Level                       | Gross metered usage | Invoice  | Verdict if missed                          |
+| --------------------------- | ------------------- | -------- | ------------------------------------------ |
+| **Backstop** (armed cap)    | `$35`               | `$35`    | **Incident** — the cap fired, sites paused |
+| **Budget goal** (owner-set) | `<= $30/month`      | `<= $30` | **Failure** — the budget was missed        |
+| **Target**                  | `< $20/month`       | `$20.00` | Shortfall, not a failure                   |
+| **Stretch**                 | `< $10/month`       | `$20.00` | Missed upside                              |
 
 Because `invoice = 20 + max(0, gross − 20)`, every tier above is a statement about **gross** metered
 usage — the figure the dashboard reports as the Infrastructure Subtotal. The one number in the parent
-plan that is _not_ gross is the Spend Management amount ($10), which meters post-credit charge only.
-Do not compare those two figures directly.
+plan that is _not_ gross is the Spend Management amount ($15), which meters post-credit charge only —
+$15 of on-demand is a $35 invoice, deliberately set $5 above the $30 goal so the cap bounds a runaway
+rather than enforcing the budget. Do not compare those two figures directly.
 
 That plan changes the code and the platform settings. **This plan grades it.** The split exists
 because grading is gated on a calendar nobody controls — a full billing cycle must elapse — while
@@ -62,7 +64,7 @@ becomes its **own** plan (see Phase 3), which takes the normal default.
 
 The parent plan is a **cost** plan, not a refactor. Its objective is a dollar figure. Delivering the
 code without ever reading the invoice would leave the stated goal unverified — and the projection it
-rests on (~$57/month gross → ~$2–4/month) is largely **estimated**, not measured: only the
+rests on (~$43/month gross → ~$2–4/month) is largely **estimated**, not measured: only the
 Observability (~$10/mo) and middleware (~$5/mo) rows carried measured rates. The largest single row,
 the static conversion at −$30/mo or more, is an estimate.
 
@@ -81,8 +83,10 @@ wrong, which is worth more than a pass.
 - The dollar-side check: full-cycle line items, Infrastructure Subtotal, on-demand charge, invoice
   total.
 - Confirming the two platform migrations landed as billed reality, not just as toggles:
-  Fluid Compute (Active CPU + Provisioned Memory line items present, "Function Duration (GB-Hrs)"
-  absent) and Observability Plus (Observability Events line stopped accruing).
+  Fluid Compute (the `Fluid Active CPU` and `Fluid Provisioned Memory` lines **non-zero** while
+  `Function Duration` has **stopped accruing**) and Observability Plus (Observability Events line
+  stopped accruing). **Not** "the Fluid lines are present" — they are already present at $0.00 under
+  legacy billing, so presence proves nothing; see the parent plan's evidence file.
 - Actual-versus-projected reconciliation per action, marking each figure measured or estimated.
 
 **Out of scope**:
@@ -106,8 +110,8 @@ captured 2026-08-01:
 | `/[locale]/[...slug]` / 24h           | 36,881 (85.6% of function) |
 | `504` responses / 24h                 | 49                         |
 | Share of all function volume          | 99.90% of seven projects   |
-| Gross metered usage                   | ~$57/month extrapolated    |
-| Of which Function Duration            | 27.04 GB-Hrs = $4.87 (65%) |
+| Gross metered usage                   | ~$43/month extrapolated    |
+| Of which Function Duration            | $6.62 of $9.79 (68%)       |
 
 ## The projection being graded
 
@@ -116,9 +120,9 @@ explicit "not separable from the aggregate" with a reason:
 
 | Action                            | Line item affected                    | Projected effect                  | Confidence                                                                 |
 | --------------------------------- | ------------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
-| Disable Observability Plus        | Observability Events                  | −$10/mo                           | **Measured rate**, certain                                                 |
-| Eliminate middleware              | Edge Middleware Invocations           | −$5/mo                            | **Measured rate**, certain                                                 |
-| Static conversion (ayokoding-www) | Function Duration + Invocations       | −$30/mo or more                   | Estimated; the 65% line item collapses when ~2,068 pages become CDN-served |
+| Disable Observability Plus        | Observability Events                  | −$7.5/mo                          | **Measured rate** ($1.69 / 7 days), certain                                |
+| Eliminate middleware              | Edge Middleware Invocations           | −$2.9/mo                          | **Measured rate** ($0.65 / 7 days), certain                                |
+| Static conversion (ayokoding-www) | Function Duration + Invocations       | −$30/mo or more                   | Estimated; the 68% line item collapses when 2,183 pages become CDN-served  |
 | Fluid Compute migration           | Function Duration on whatever remains | roughly halves the residue        | Estimated from Vercel's own comparison                                     |
 | Bot/AI-bot blocking               | Invocations + Duration                | unknown but positive              | Unquantified — depends on the crawler share                                |
 | wahidyankf-www static             | Function Duration + Invocations       | **≈$0** — 0.1% of function volume | **Measured 2026-08-01**: 45 invocations/24h. Correctness win, not a saving |
@@ -137,7 +141,7 @@ Feature: Steady-state Vercel cost verification
     Given all three delivery units of vercel-function-cost-reduction are merged and deployed
     And a full billing cycle has elapsed since the last of them deployed
 
-  Scenario: The invoice stays inside the authorised ceiling
+  Scenario: The invoice stays inside the budget goal
     When the completed cycle's usage is read from the Vercel dashboard
     Then the Infrastructure Subtotal is at or below $30.00
     And the on-demand charge above the subscription is at or below $10.00
@@ -149,10 +153,11 @@ Feature: Steady-state Vercel cost verification
     And the on-demand charge above the subscription is $0.00
     And the invoice total equals the $20 Pro platform fee with no additional line
 
-  Scenario: The spend cap did not have to fire
+  Scenario: The backstop did not have to fire
     When the Spend Management activity log is read for the completed cycle
     Then no project was paused during the cycle
     And no 100% spend-amount notification was sent
+    And the invoice total is below $35.00
 
   Scenario: Function volume collapsed
     When runtime log counts for ayokoding-www are queried over a 72h window
@@ -162,9 +167,9 @@ Feature: Steady-state Vercel cost verification
 
   Scenario: The billing model migrated
     When the completed cycle's line items are read
-    Then an "Active CPU" line item is present
-    And a "Provisioned Memory" line item is present
-    And no "Function Duration (GB-Hrs)" line item is present
+    Then the Fluid Active CPU line item has a non-zero charge
+    And the Fluid Provisioned Memory line item has a non-zero charge
+    And the Function Duration line item has stopped accruing
 
   Scenario: Observability Plus stopped billing
     When the completed cycle's line items are read
@@ -182,9 +187,10 @@ Feature: Steady-state Vercel cost verification
     And this plan is archived recording the gap rather than widening its own scope
 
     Examples:
-      | subtotal            | verdict            |
-      | above $30.00        | ceiling breached   |
-      | $20.00 up to $30.00 | target missed      |
+      | subtotal            | verdict           |
+      | above $35.00        | backstop breached |
+      | $30.00 up to $35.00 | budget missed     |
+      | $20.00 up to $30.00 | target missed     |
 ```
 
 ## Technical notes
@@ -239,8 +245,9 @@ back far enough by then. The dollar read has no such constraint.
     invoice total, and each line item by name. No MCP tool can supply these.
 - [ ] `[HUMAN]` Record whether the Fluid Compute and Observability Plus migrations show up in the
       billing vocabulary as expected.
-  - Acceptance: the file states, per the acceptance criteria above, whether Active CPU and
-    Provisioned Memory appear and whether Function Duration (GB-Hrs) is gone.
+  - Acceptance: the file states, per the acceptance criteria above, whether the two Fluid lines
+    carry non-zero charges and whether Function Duration has stopped accruing. Record the actual
+    figures, not a yes/no — presence of a line item is not evidence either way.
 
 > **Pause Safety**: measurement is captured and committed. The verdict can be written later.
 
@@ -250,10 +257,11 @@ back far enough by then. The dollar read has no such constraint.
       **estimated**, against the parent plan's projection table.
   - Acceptance: each of the parent's seven projection rows gets an actual, or an explicit "not
     separable from the aggregate" with a reason. No row is silently dropped.
-- [ ] `[AI]` State the verdict against **all three tiers**: at or below $30.00 (ceiling, owner-set),
-      under $20.00 (target), under $10.00 (stretch).
-  - Acceptance: three bare pass/fail verdicts with the one measured figure, not a narrative. A
-    ceiling breach and a target miss are different outcomes and must not be reported as one.
+- [ ] `[AI]` State the verdict against **all four levels**: below $35.00 (backstop never fired), at
+      or below $30.00 (budget goal), under $20.00 (target), under $10.00 (stretch).
+  - Acceptance: four bare pass/fail verdicts with the one measured figure, not a narrative. A fired
+    backstop, a missed budget, and a missed target are three different outcomes and must not be
+    reported as one.
 
 ### Phase 3: Escalate or close
 
@@ -282,7 +290,7 @@ back far enough by then. The dollar read has no such constraint.
 
 - [ ] `[HUMAN]` Full-cycle gross metered usage figure recorded, with the on-demand charge.
 - [ ] `[AI]` Volume-side after-table committed and compared against the 2026-08-01 baseline.
-- [ ] `[AI]` Verdict stated against all three tiers (ceiling, target, stretch).
+- [ ] `[AI]` Verdict stated against all four levels (backstop, budget, target, stretch).
 - [ ] `[AI]` Follow-up opened if the hard target was missed.
 - [ ] `[AI]` `learnings.md` fully triaged.
 

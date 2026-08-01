@@ -143,11 +143,63 @@ location: http://www.ayokoding.com     <-- http, not https
 
 Still reproduces on 2026-08-01. Remains `[HUMAN]` — no MCP tool configures domains or redirects.
 
+## Billing baseline — read from the dashboard 2026-08-01 (step 0.1, human-supplied)
+
+Supplied by the account owner as a dashboard screenshot, which is the only way this datum can be
+obtained — the Vercel MCP exposes no billing or usage tool (DD-8). This closes the `[HUMAN]` half of
+step 0.1.
+
+**Cycle position**: Jul 26 – Aug 26 (31 days). Panel reads **24 days remaining**, so **7 days
+elapsed**.
+
+| Line item                               | Cycle-to-date   | Implied monthly (×31/7) |
+| --------------------------------------- | --------------- | ----------------------- |
+| Function Duration                       | $6.62           | ~$29.3                  |
+| Observability Events                    | $1.69           | ~$7.5                   |
+| Edge Middleware Invocations             | $0.65           | ~$2.9                   |
+| Fast Origin Transfer                    | $0.53           | ~$2.3                   |
+| Function Invocations                    | $0.26           | ~$1.2                   |
+| Edge Requests — Additional CPU Duration | $0.02           | ~$0.1                   |
+| ISR Reads                               | $0.00           | $0.00                   |
+| Fluid Active CPU                        | $0.00           | $0.00                   |
+| Fluid Provisioned Memory                | $0.00           | $0.00                   |
+| **Included Credit consumed**            | **$9.79 / $20** | **~$43.4 gross**        |
+| **On-Demand Charges**                   | **$0.00**       | ~$23.4 at this rate     |
+
+**Burn rate is lower than the plan's opening figure.** $9.79 over 7 days = **$1.399/day**, projecting
+**~$43/month gross** — against the $1.858/day (~$57/month) extrapolated from $7.43 over ~4 days on
+2026-07-30. Two readings of the same cycle, 2 days apart, differing by 25%. The 2026-07-30 figure was
+taken over a shorter window and over-projected; **use $43/month as the working baseline** and treat
+any single short-window extrapolation as provisional. This does not change any decision in the plan:
+$43 still misses the $30 budget goal, overruns the $20 credit, and trips the $35 armed backstop.
+
+**Dated projection against the ceiling**, at $1.399/day from $9.79 on 2026-08-01:
+
+| Event                                                | Gross reached | Approx. date |
+| ---------------------------------------------------- | ------------- | ------------ |
+| $20 included credit exhausted; on-demand starts      | $20           | **~Aug 8**   |
+| On-demand hits $10 → spend cap trips, projects pause | $30           | **~Aug 15**  |
+| Cycle close at the current rate                      | ~$43          | Aug 26       |
+
+### Correction to the legacy-billing diagnostic
+
+tech-docs.md §"The team is on legacy pre-Fluid-Compute billing" reasoned that Fluid vocabulary line
+items are **absent** under legacy billing. The dashboard shows otherwise: **`Fluid Active CPU` and
+`Fluid Provisioned Memory` are both listed, at $0.00**, alongside a non-zero `Function Duration` of
+$6.62. Vercel renders the full line-item catalogue and zeroes the ones that do not apply.
+
+The conclusion (this team is on legacy billing) still holds — it is carried by `Function Duration`
+being **non-zero**, not by the Fluid lines being missing. But the **acceptance criterion** in step
+0.3 was written against the absent-line reading and is corrected accordingly: migration is proven by
+the Fluid lines going **non-zero** while Function Duration **stops accruing**, not by either line
+appearing or disappearing.
+
 ## What still needs a human
 
-| Datum                                              | Why MCP cannot supply it                                     |
-| -------------------------------------------------- | ------------------------------------------------------------ |
-| Cycle-to-date Infrastructure Subtotal (was $7.43)  | No billing/usage tool in the MCP                             |
-| Per-line-item costs (GB-Hrs, Observability Events) | Same                                                         |
-| Whether Fluid Compute is on                        | `get_deployment` reports `type: "LAMBDAS"` and no fluid flag |
-| Spend Management / firewall / Observability state  | No settings tool of any kind                                 |
+| Datum                                             | Why MCP cannot supply it                                      |
+| ------------------------------------------------- | ------------------------------------------------------------- |
+| ~~Cycle-to-date Infrastructure Subtotal~~         | **Supplied 2026-08-01**: $9.79/$20 credit, 7 days elapsed     |
+| ~~Per-line-item costs~~                           | **Supplied 2026-08-01**: see the billing-baseline table above |
+| Same figures at cycle close (for grading)         | No billing/usage tool in the MCP; successor plan reads them   |
+| Whether Fluid Compute is on                       | `get_deployment` reports `type: "LAMBDAS"` and no fluid flag  |
+| Spend Management / firewall / Observability state | No settings tool of any kind                                  |

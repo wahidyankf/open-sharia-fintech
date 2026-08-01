@@ -117,10 +117,19 @@ maximally crawl-inviting robots metadata. `layout.tsx:39,51` reference an `og-im
 
 ### The team is on legacy pre-Fluid-Compute billing
 
-A line item named **"Function Duration" measured in GB-Hrs**, plus a **standalone priced "Edge
-Middleware Invocations"** line, do not exist in the current Fluid Compute billing vocabulary. The
-current model bills three distinct resources: Active CPU ($0.128/CPU-hr in `iad1`), Provisioned
-Memory ($0.0106/GB-hr), and Invocations ($0.60/M).
+A **non-zero** line item named **"Function Duration" measured in GB-Hrs**, plus a **standalone priced
+"Edge Middleware Invocations"** line, belong to the legacy pre-Fluid vocabulary. The current model
+bills three distinct resources: Active CPU ($0.128/CPU-hr in `iad1`), Provisioned Memory
+($0.0106/GB-hr), and Invocations ($0.60/M).
+
+**Read the values, not the presence of the rows (corrected 2026-08-01).** The dashboard renders the
+full line-item catalogue and zeroes whatever does not apply, so `Fluid Active CPU` and
+`Fluid Provisioned Memory` are already visible at **$0.00** next to `Function Duration` at **$6.62**.
+An earlier draft of this section reasoned from the Fluid rows being _absent_ under legacy billing;
+they are not absent, they are zero. The diagnosis stands on Function Duration being non-zero. This
+matters because step 0.3's acceptance criterion was written against the absent-row reading and would
+have "passed" on first inspection without any migration having occurred — see the evidence file's
+§Correction to the legacy-billing diagnostic.
 
 - [Fluid compute pricing](https://vercel.com/docs/functions/usage-and-pricing) — updated 2026-06-16
 - [Legacy usage & pricing for Functions](https://vercel.com/docs/functions/usage-and-pricing/legacy-pricing) — updated 2026-06-25
@@ -180,12 +189,11 @@ the ambiguity rather than betting on either reading.
 - Notifications fire at 50%, 75%, 100%. Unpausing is manual and per-project — raising the spend
   amount does **not** unpause anything.
 
-**Correction, 2026-08-01.** An earlier draft of this plan recommended a $10 spend amount on the
+**Correction, 2026-08-01.** An earlier draft of this plan recommended a spend amount on the
 reasoning that it was "well inside the $20 credit". That reading was **inverted**: because the
-threshold counts only post-credit spend, a $10 amount is not inside the credit at all — it is $10
-_past_ it, i.e. a **$30 invoice**. The number happens to be right for the ceiling that was later
-set, but the rationale was wrong, and anyone reasoning from the old sentence would have picked a
-dangerous value for a different ceiling. See DD-9.
+threshold counts only post-credit spend, any amount you set is _past_ the credit, not inside it — the
+configured $15 means a **$35 invoice**, not $15 of gross usage. Anyone reasoning from the old
+sentence would pick a dangerously low value believing it bought safety. See DD-9.
 
 ### Free firewall rulesets block before the meter
 
@@ -489,32 +497,40 @@ Rejected alternative: `get_web_analytics` as the baseline source. It returns
 `400 web_analytics_not_enabled`, and enabling Web Analytics to measure a cost-reduction plan would
 add a metered product to cut a bill.
 
-### DD-9 — Spend amount $10, pause armed immediately
+### DD-9 — $15 spend cap as a soft backstop under a $30 budget goal
 
-The budget ceiling is a **$30/month invoice**: the $20 Pro platform fee plus at most $10 of
-on-demand charge. Because the spend amount meters post-credit spend (see §Spend Management above),
-that ceiling maps to a spend amount of exactly **$10**, with **"Pause production deployment"
-enabled from Phase 0**.
+Two numbers doing two different jobs, deliberately not the same number:
 
-Vercel's guidance is to set the amount below the maximum you will tolerate, since checks lag by
-minutes. This plan **deliberately declines that margin** and uses the full $10, accepting a small
-overshoot above $30 rather than surrendering any allowance. That is an owner decision, recorded here
-so it is not silently "corrected" later.
+| Number                          | Kind                    | Enforced by             |
+| ------------------------------- | ----------------------- | ----------------------- |
+| **$30 invoice** (gross ≤ $30)   | Budget **goal**         | The engineering work    |
+| **$15 on-demand** (invoice $35) | **Backstop**, armed     | Vercel Spend Management |
+| **$20 invoice** (gross < $20)   | Target — zero on-demand | The engineering work    |
+| **$10 gross**                   | Stretch                 | The engineering work    |
 
-The consequence is stated plainly rather than discovered in production: at the pre-fix burn rate
-(~$1.90/day gross) the $20 credit is exhausted around day 10 of a billing cycle and on-demand
-reaches $10 around **day 16**, at which point every production project serves
-`503 DEPLOYMENT_PAUSED` until it is resumed **one project at a time**. Raising the amount does not
-unpause them. This is the intended behaviour of a hard cap, and it is why Phases 1–4 carry schedule
-pressure that the pre-ceiling version of this plan did not have.
+Because the spend amount meters post-credit spend (see §Spend Management above), $15 sits **$5 above**
+the $30 goal, making the enforced worst case **$35**. That gap is the decision.
+
+**Why not set the cap at the goal.** A cap pinned to $10 fires on a normal overrun — an ordinary bad
+week takes every production site down and each project then needs resuming by hand. Setting it $5
+higher means it fires only on a genuine runaway. The explicit, accepted cost: **a quiet month can
+invoice up to $35 without the cap ever intervening.** The cap stops catastrophe, not overspend.
+Holding $30 is the plan's job, not the cap's — and the $30 goal is therefore **advisory**, tracked by
+the successor plan's grading rather than enforced by the platform.
+
+The consequence is stated plainly rather than discovered in production. At the measured burn rate
+(**$1.399/day gross**, from $9.79 over 7 elapsed days on 2026-08-01): the $20 credit is exhausted
+around **Aug 8**, the $30 goal is passed around **Aug 15**, the cap fires around **Aug 19**, and the
+cycle would close near**$43**. Since $43 exceeds the $35 cap, **the cap will fire this cycle unless
+Phases 1–4 land first** — every production project serving `503 DEPLOYMENT_PAUSED` until resumed one
+at a time. That is the schedule pressure on Unit 1.
 
 Rejected alternatives:
 
-- **Alerts only, arm the pause after Phase 4** — no outage risk, but the ceiling degrades to a
-  promise that depends on someone reading a notification. Rejected: the owner asked for a maximum,
-  not a warning.
-- **A $7–8 amount for lag margin** — safer against overshoot, but pauses ~1–2 days earlier and gives
-  up ~25% of the allowance for a lag whose cost at current rates is roughly one cent.
+- **Cap at $10, matching the goal exactly** — enforces $30 mechanically, but converts every ordinary
+  overrun into an outage and offers no lag margin against Vercel's multi-minute check interval.
+- **Alerts only, arm the pause after Phase 4** — no outage risk at all, but then nothing bounds a
+  runaway; the ceiling degrades to a promise that depends on someone reading a notification.
 
 ## File impact
 

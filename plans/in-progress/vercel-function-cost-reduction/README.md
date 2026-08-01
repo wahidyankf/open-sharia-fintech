@@ -1,27 +1,35 @@
-# Vercel Function Cost Reduction — hold the invoice under the $30 ceiling
+# Vercel Function Cost Reduction — hold the invoice under the $30 budget
 
-Cut gross metered Vercel infrastructure usage from **~$57/month** to inside an owner-set ceiling of
+Cut gross metered Vercel infrastructure usage from **~$43/month** to inside an owner-set budget of
 **$30/month total invoice**, and ideally well inside it. Because
-`invoice = 20 + max(0, gross − 20)`, the three tiers are:
+`invoice = 20 + max(0, gross − 20)`:
 
-| Tier                    | Gross metered usage | Invoice  | Meaning                                      |
-| ----------------------- | ------------------- | -------- | -------------------------------------------- |
-| **Ceiling** (owner-set) | `<= $30/month`      | `<= $30` | Enforced mechanically by the spend cap       |
-| **Target**              | `< $20/month`       | `$20.00` | Credit absorbs everything; no on-demand line |
-| **Stretch**             | `< $10/month`       | `$20.00` | 50% headroom inside the credit               |
+| Level                       | Gross metered usage | Invoice  | Enforced by                                  |
+| --------------------------- | ------------------- | -------- | -------------------------------------------- |
+| **Backstop** (armed cap)    | `$35`               | `$35`    | Vercel Spend Management — $15 on-demand      |
+| **Budget goal** (owner-set) | `<= $30/month`      | `<= $30` | The engineering work; **advisory**           |
+| **Target**                  | `< $20/month`       | `$20.00` | Credit absorbs everything; no on-demand line |
+| **Stretch**                 | `< $10/month`       | `$20.00` | 50% headroom inside the credit               |
 
-The ceiling is what the cap enforces; the target is what the engineering is sized to reach. A cap
-you expect to hit is not a cap.
+The cap sits **above** the budget on purpose: it fires only on a genuine runaway, not on an ordinary
+overrun, because a cap pinned to the goal turns every bad week into a production outage. **The cap
+stops catastrophe; holding $30 is the engineering work's job.** Accepted cost — a quiet month can
+reach $35 without the cap ever intervening.
 
 ## Context
 
-Observed on **2026-07-30**, four days into the Jul 26 – Aug 26 billing cycle: **$7.43** of
-infrastructure usage, which extrapolates to **~$57/month gross**. The Pro platform fee is
-$20/month and includes $20/month of usage credit, so ~$57 of gross usage means roughly **$37/month
-of real on-demand overage on top of the subscription** — an invoice around $57 against a $30
-ceiling, roughly **$27 over the authorised maximum**.
+Re-read on **2026-08-01**, seven days into the Jul 26 – Aug 26 billing cycle: **$9.79 of the $20
+included credit consumed, $0.00 on-demand** — a rate of **$1.399/day**, extrapolating to **~$43/month
+gross**. That means roughly **$23/month of real on-demand overage** and an invoice around $43 against
+the $30 budget, about **$13 over it** — and above the $35 armed cap, so at this rate the cap fires
+before the cycle closes (~Aug 19).
 
-The single dominant line item is **Function Duration: 27.04 GB-Hrs = $4.87 (65% of spend)**.
+The first reading (2026-07-30, $7.43 over four days) projected ~$57/month. The seven-day window is
+the better estimate and supersedes it; a four-day extrapolation was too short. The problem is
+smaller than first thought, and every conclusion below still holds — $43 misses the $30 budget,
+overruns the credit, and trips the $35 backstop.
+
+The single dominant line item is **Function Duration: $6.62 of the $9.79 consumed — 68% of spend**.
 
 Root cause, verified three independent ways rather than inferred: **`apps/ayokoding-www`
 prerenders zero of its 2,183 content pages.** Its build output
@@ -56,7 +64,7 @@ wall-clock time including I/O wait rather than active CPU.
   `outputFileTracingIncludes`, dedupe the double `getBySlug`.
 - `apps/wahidyankf-www`: convert `/`, `/cv`, `/personal-projects` to static; add `robots.ts` and
   `sitemap.ts`; fix the 404 `og-image.jpg`.
-- Secondary waste: nine inert `force-dynamic` directives in `organiclever-app-web`, the crawlable
+- Secondary waste: eight inert `force-dynamic` directives in `organiclever-app-web`, the crawlable
   `/system/status/be` health-check page, and an unconditional daily Storybook rebuild.
 
 **Out of scope** (each with a recorded rationale in [tech-docs.md](./tech-docs.md))
