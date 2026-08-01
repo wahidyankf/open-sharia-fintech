@@ -6,6 +6,7 @@ import { CvContent } from "@/features/cv/shell/CvContent";
 // Mock declarations
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
+let mockSearchParams = new URLSearchParams();
 
 // Add this mock for window.scrollTo
 vi.stubGlobal("scrollTo", vi.fn());
@@ -15,6 +16,7 @@ vi.mock("next/navigation", () => ({
     push: mockPush,
     replace: mockReplace,
   }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -39,10 +41,6 @@ vi.mock("@open-sharia-enterprise/web-ui", () => ({
     />
   ),
   HighlightText: ({ text }: { text: string }) => <span>{text}</span>,
-}));
-
-vi.mock("@/features/search/core/search", () => ({
-  filterItems: vi.fn((items) => items),
 }));
 
 vi.mock("@/features/cv/core/data", () => ({
@@ -88,32 +86,43 @@ describe("CV component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(window.scrollTo).mockReset();
+    mockSearchParams = new URLSearchParams();
+    window.history.replaceState({}, "", "/cv");
   });
 
   it("renders the main sections", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByText("Curriculum Vitae")).toBeInTheDocument();
     expect(screen.getByText("Highlights")).toBeInTheDocument();
   });
 
   it("renders the Navigation component", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByTestId("navigation")).toBeInTheDocument();
   });
 
   it("renders the SearchComponent", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByTestId("search-component")).toBeInTheDocument();
   });
 
+  it("prefills and filters from a shared search URL", () => {
+    window.history.replaceState({}, "", "/cv?search=Software");
+    render(<CvContent />);
+
+    expect(screen.getByTestId("search-component")).toHaveValue("Software");
+    expect(screen.getByText("Software Engineer")).toBeInTheDocument();
+    expect(screen.queryByText("Bachelor of Science in Computer Science")).not.toBeInTheDocument();
+  });
+
   it("renders the about section", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByText("About Me")).toBeInTheDocument();
     expect(screen.getByText(/Test about me/)).toBeInTheDocument();
   });
 
   it("renders work experience", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByText("Work Experience")).toBeInTheDocument();
     const softwareElements = screen.getAllByText(/Software/);
     expect(softwareElements.length).toBeGreaterThan(0);
@@ -124,21 +133,21 @@ describe("CV component", () => {
   });
 
   it("renders skills, languages, and frameworks", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     expect(screen.getByText("Top Skills Used in The Last 5 Years")).toBeInTheDocument();
     const reactElements = screen.getAllByText(/React/);
     expect(reactElements.length).toBeGreaterThan(0);
   });
 
   it("updates search term when typing in the search component", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     const searchInput = screen.getByTestId("search-component") as HTMLInputElement;
     fireEvent.change(searchInput, { target: { value: "React" } });
     expect(searchInput.value).toBe("React");
   });
 
   it("filters content based on search term", async () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     const searchInput = screen.getByTestId("search-component");
     fireEvent.change(searchInput, { target: { value: "Software" } });
     await waitFor(() => {
@@ -147,7 +156,7 @@ describe("CV component", () => {
   });
 
   it("handles item click and updates search", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
     const skillButtons = screen.getAllByText("React");
     fireEvent.click(skillButtons[0]);
     expect(mockPush).toHaveBeenCalled();
@@ -156,7 +165,7 @@ describe("CV component", () => {
   });
 
   it("renders education entries with organization", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={false} />);
+    render(<CvContent />);
 
     expect(screen.getByText("Education")).toBeInTheDocument();
     expect(screen.getByText("Bachelor of Science in Computer Science")).toBeInTheDocument();
@@ -166,7 +175,8 @@ describe("CV component", () => {
   });
 
   it("scrolls to top when scrollTop prop is true", () => {
-    render(<CvContent initialSearchTerm="" scrollTop={true} />);
+    window.history.replaceState({}, "", "/cv?scrollTop=true");
+    render(<CvContent />);
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
   });
 });

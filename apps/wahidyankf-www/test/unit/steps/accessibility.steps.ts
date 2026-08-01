@@ -14,6 +14,7 @@ import { PersonalProjectsContent } from "@/features/personal-projects/shell/Pers
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 // @amiceli/vitest-cucumber registers every Given/When/Then/And as its own vitest
@@ -44,7 +45,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     // an axe scan checks for.
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/accessibility.feature:Home page has zero axe-core WCAG 2.1 AA violations
     Then("an axe-core scan against WCAG 2.1 AA reports zero violations", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
 
       const main = screen.getByRole("main");
       expect(main).toBeInTheDocument();
@@ -67,7 +68,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/accessibility.feature:CV page has zero axe-core WCAG 2.1 AA violations
     Then("an axe-core scan against WCAG 2.1 AA reports zero violations", () => {
-      render(React.createElement(CvContent, { initialSearchTerm: "", scrollTop: false }));
+      render(React.createElement(CvContent));
 
       const main = screen.getByRole("main");
       expect(main).toBeInTheDocument();
@@ -85,19 +86,15 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/accessibility.feature:Every page has exactly one H1
     Then("each of those pages has exactly one H1 element", () => {
-      const { unmount: unmountHome } = render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      const { unmount: unmountHome } = render(React.createElement(HomeContent));
       expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
       unmountHome();
 
-      const { unmount: unmountCv } = render(
-        React.createElement(CvContent, { initialSearchTerm: "", scrollTop: false }),
-      );
+      const { unmount: unmountCv } = render(React.createElement(CvContent));
       expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
       unmountCv();
 
-      const { unmount: unmountProjects } = render(
-        React.createElement(PersonalProjectsContent, { initialSearchTerm: "" }),
-      );
+      const { unmount: unmountProjects } = render(React.createElement(PersonalProjectsContent));
       expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
       unmountProjects();
     });
@@ -114,7 +111,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/app-shell/accessibility.feature:Interactive controls expose accessible names
     And("every navigation link exposes link text or an aria-label", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       const desktopNav = screen.getByTestId("desktop-nav");
       for (const name of ["Home", "CV", "Personal Projects"]) {
         expect(within(desktopNav).getByRole("link", { name })).toBeInTheDocument();

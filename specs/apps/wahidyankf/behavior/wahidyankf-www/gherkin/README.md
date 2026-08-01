@@ -21,19 +21,19 @@ specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/
 ├── personal-projects/
 │   └── personal-projects.feature
 └── search/
-    └── search.feature
+    ├── search.feature
+    └── static-filterable-routes.feature
 ```
 
 ## Coverage
 
-| Bounded Context     | Features                               | Count |
-| ------------------- | -------------------------------------- | ----- |
-| `app-shell`         | `accessibility`, `responsive`, `theme` | 3     |
-| `cv`                | `cv`                                   | 1     |
-| `home`              | `home`                                 | 1     |
-| `personal-projects` | `personal-projects`                    | 1     |
-| `search`            | `search`                               | 1     |
-| **Total**           |                                        | **7** |
+| Bounded Context     | Features                               |
+| ------------------- | -------------------------------------- |
+| `app-shell`         | `accessibility`, `responsive`, `theme` |
+| `cv`                | `cv`                                   |
+| `home`              | `home`                                 |
+| `personal-projects` | `personal-projects`                    |
+| `search`            | `search`, `static-filterable-routes`   |
 
 ## Consumed by
 

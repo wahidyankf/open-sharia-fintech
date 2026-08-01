@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import RootLayout from "./layout";
+import RootLayout, { metadata } from "./layout";
 
 vi.mock("@open-sharia-enterprise/web-ui", () => ({
   ScrollToTop: () => <div data-testid="scroll-to-top">ScrollToTop</div>,
@@ -37,5 +37,14 @@ describe("RootLayout", () => {
     );
 
     expect(screen.getByTestId("scroll-to-top")).toBeInTheDocument();
+  });
+
+  it("does not reference the absent og-image.jpg asset", () => {
+    expect(metadata.openGraph?.images).toBeUndefined();
+    expect(metadata.twitter?.images).toBeUndefined();
+  });
+
+  it("uses the canonical public URL for OpenGraph metadata", () => {
+    expect(metadata.openGraph?.url).toBe("https://www.wahidyankf.com");
   });
 });

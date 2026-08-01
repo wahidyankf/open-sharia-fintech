@@ -7,7 +7,6 @@ export const metadata: Metadata = {
     "Open-source and personal projects by Wahidyan Kresna Fridayoka, including OSE, AyoKoding, OrganicLever, and more.",
 };
 
-export default async function Projects({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
-  const { search } = await searchParams;
-  return <PersonalProjectsContent initialSearchTerm={search ?? ""} />;
+export default function Projects() {
+  return <PersonalProjectsContent />;
 }

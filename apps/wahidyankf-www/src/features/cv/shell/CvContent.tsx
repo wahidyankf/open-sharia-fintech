@@ -474,23 +474,29 @@ const WorkExperienceSection = ({
 };
 
 // In the main CV component, update the type of topSkills
-export function CvContent({ initialSearchTerm, scrollTop }: { initialSearchTerm: string; scrollTop: boolean }) {
+export function CvContent() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showRecentOnly, setShowRecentOnly] = useState(false);
 
   useEffect(() => {
-    setSearchTerm(initialSearchTerm);
-  }, [initialSearchTerm]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   useEffect(() => {
-    if (scrollTop) {
+    if (new URLSearchParams(window.location.search).get("scrollTop") === "true") {
       window.scrollTo(0, 0);
       const newURL = new URL(window.location.href);
       newURL.searchParams.delete("scrollTop");
       router.replace(newURL.toString(), { scroll: false });
     }
-  }, []);
+  }, [router]);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/cv?search=${encodeURIComponent(term)}` : "/cv";

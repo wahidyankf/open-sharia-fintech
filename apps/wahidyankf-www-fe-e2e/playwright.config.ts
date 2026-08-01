@@ -19,13 +19,6 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
-  webServer: {
-    command: "npx nx run wahidyankf-www:start",
-    url: "http://localhost:3201",
-    reuseExistingServer: true,
-    timeout: 120000,
-    cwd: "../..",
-  },
   projects: [
     {
       name: "chromium",
