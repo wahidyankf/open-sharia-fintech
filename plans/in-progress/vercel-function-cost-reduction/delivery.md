@@ -524,11 +524,40 @@ renames, not one — `light` → `haiku` (DD-35), then camelCase → kebab-case.
   - **Why this is worth doing beyond the two round trips**: hop 1 is a plaintext `http://` URL, so
     any apex visitor on a hostile network has one unencrypted request to intercept before HSTS can
     apply. That is the real defect; the latency is secondary.
+  - **DECISION 2026-08-01 — DESCOPED, not done. The owner declined the apex migration.** Recorded as
+    an accepted risk rather than an open task, so nothing downstream waits on it.
+  - **Owner's stated reason**: `api.ayokoding.com` will be hosted elsewhere, so DNS authority stays
+    with the current provider rather than consolidating onto Vercel.
+  - **One factual note for whoever revisits this, recorded because the constraint is narrower than
+    it looks**: adding an apex `A` record for Vercel would **not** have moved the zone or the
+    nameservers. The zone stays on `ns-cloud-*`, and `api.ayokoding.com` could still point anywhere
+    — per-record delegation, not per-domain. `www` already demonstrates this: it is CNAME'd to
+    Vercel today from that same zone while the apex answers from Squarespace. The decision below
+    stands regardless; this only means it was a preference, not a blocker.
+  - **Rationale, and it is sound**: moving the apex means repointing live nameserver-level A records
+    for a production content site, for a benefit — one saved round trip and one closed plaintext hop
+    — that is unrelated to this plan's cost goal. The apex serves a redirect only; **no function
+    invocation, no billing line, and no cost saving is involved**. Declining is the reversible
+    choice, and it removes the only step in Phase 0 capable of taking the site down.
+  - **Residual risk, stated plainly rather than dissolved**: the plaintext `http://www.ayokoding.com`
+    hop remains. An apex visitor on a hostile network still has exactly one unencrypted request
+    exposed. This is a **pre-existing** condition, not one this plan introduces, and it affects only
+    visitors who type the bare apex — `www` links, every internal link, and every search result are
+    unaffected.
+  - **Cheaper option if it is ever revisited — it needs no DNS change at all.** The `http://` is a
+    literal in the Squarespace forwarding rule, not a protocol constraint. Editing that one field to
+    `https://www.ayokoding.com` collapses three hops to two and closes the plaintext hop, with the
+    apex staying exactly where it is. Left unfiled rather than pushed; the owner's call stands.
 
-- [ ] `[AI]` Verify the fix:
+- [x] `[AI]` Verify the fix:
       `curl -sS -o /dev/null -D - https://ayokoding.com/ | grep -i "^HTTP/\|^location:"`
   - Acceptance: a single redirect straight to `https://www.ayokoding.com/`, with **no** `http://`
     hop. Falsifiable both ways: today it emits `location: http://www.ayokoding.com`.
+  - **Date**: 2026-08-01. **Status**: closed as **not-applicable** — it verifies a fix that was
+    deliberately not applied. Ticked to unblock the gate, **not** because the acceptance passed.
+  - **Measured final state**, which is also the accepted state:
+    `HTTP/2 301` → `location: http://www.ayokoding.com` → `308` → `https://www.ayokoding.com/`.
+    The acceptance clause is **failed by design**. Do not read this tick as a pass.
 
 ### Phase 0 Gate
 
