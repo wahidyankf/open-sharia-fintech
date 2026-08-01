@@ -101,7 +101,7 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   deferred out of `ayokoding-www-ai-benchmark-responsive-overhaul`'s scope (Rule-15 `EWT-005`).
 - [vercel-cost-steady-state-verification](./vercel-cost-steady-state-verification/README.md)
   — Grades whether [`vercel-function-cost-reduction`](../in-progress/vercel-function-cost-reduction/README.md)
-  actually hit its $20 invoice target, once a full clean billing cycle has closed. Split out of that
+  held its $30 invoice ceiling and hit its $20 target, once a full clean billing cycle has closed. Split out of that
   plan because the grading is calendar-gated (**earliest 2026-09-26**) while the engineering finishes
   in days. Hard `blockedBy` that plan; single-file structure.
 

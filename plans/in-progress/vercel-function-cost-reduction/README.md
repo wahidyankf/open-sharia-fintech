@@ -1,20 +1,30 @@
-# Vercel Function Cost Reduction — hold the invoice at the $20 Pro subscription
+# Vercel Function Cost Reduction — hold the invoice under the $30 ceiling
 
-Cut gross metered Vercel infrastructure usage from **~$57/month to under $20/month** (stretch:
-under $10) so the Pro plan's **included $20/month usage credit absorbs 100% of it** and the invoice
-stays at exactly **$20.00** — the flat subscription, with zero on-demand charges.
+Cut gross metered Vercel infrastructure usage from **~$57/month** to inside an owner-set ceiling of
+**$30/month total invoice**, and ideally well inside it. Because
+`invoice = 20 + max(0, gross − 20)`, the three tiers are:
+
+| Tier                    | Gross metered usage | Invoice  | Meaning                                      |
+| ----------------------- | ------------------- | -------- | -------------------------------------------- |
+| **Ceiling** (owner-set) | `<= $30/month`      | `<= $30` | Enforced mechanically by the spend cap       |
+| **Target**              | `< $20/month`       | `$20.00` | Credit absorbs everything; no on-demand line |
+| **Stretch**             | `< $10/month`       | `$20.00` | 50% headroom inside the credit               |
+
+The ceiling is what the cap enforces; the target is what the engineering is sized to reach. A cap
+you expect to hit is not a cap.
 
 ## Context
 
 Observed on **2026-07-30**, four days into the Jul 26 – Aug 26 billing cycle: **$7.43** of
 infrastructure usage, which extrapolates to **~$57/month gross**. The Pro platform fee is
 $20/month and includes $20/month of usage credit, so ~$57 of gross usage means roughly **$37/month
-of real on-demand overage on top of the subscription**.
+of real on-demand overage on top of the subscription** — an invoice around $57 against a $30
+ceiling, roughly **$27 over the authorised maximum**.
 
 The single dominant line item is **Function Duration: 27.04 GB-Hrs = $4.87 (65% of spend)**.
 
 Root cause, verified three independent ways rather than inferred: **`apps/ayokoding-www`
-prerenders zero of its ~2,068 content pages.** Its build output
+prerenders zero of its 2,183 content pages.** Its build output
 (`.next/prerender-manifest.json`) contains 4 entries, none of them a page, with `dynamicRoutes: 0`;
 `find .next/server/app -name "*.html"` returns exactly 1 file; and live production returns
 `x-vercel-cache: MISS` with `cache-control: private, no-cache, no-store` on repeated identical
@@ -52,7 +62,7 @@ wall-clock time including I/O wait rather than active CPU.
 **Out of scope** (each with a recorded rationale in [tech-docs.md](./tech-docs.md))
 
 - Adopting `cacheComponents` / PPR — it cannot fix Cause A, and it would invert fetch-caching
-  defaults across 2,068 pages, risking a re-introduction of the very problem being fixed.
+  defaults across all 2,183 pages, risking a re-introduction of the very problem being fixed.
 - Rendering changes to `ose-www`, `organiclever-www`, `ose-app-web`, and the web-ui Storybook —
   all four are provably already fully CDN-cached.
 - The 74 compiled `next.config.ts` redirect rules — they run in Vercel's edge routing layer and
@@ -143,8 +153,9 @@ they self-verify against `origin/main` at their own Phase 0.
 - [`ayokoding-www-ai-benchmark-merged-chart`](../../done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/README.md)
   — sibling plan, completed and archived to `done/` during this plan's own execution. Verified
   non-conflicting:
-  its `/[locale]/tools/ai-benchmark` route already reads its `sortOpus`/`sortSonnet`/`sortLight`/
-  `sortUnrated` query state client-side inside a `<Suspense>` boundary, which is exactly the pattern
-  this plan enforces everywhere else.
+  its `/[locale]/tools/ai-benchmark` route already reads its `sort-opus`/`sort-sonnet`/`sort-haiku`
+  query state client-side inside a `<Suspense>` boundary, which is exactly the pattern this plan
+  enforces everywhere else. (Those keys went through two renames after this plan was first written —
+  `light` → `haiku`, then camelCase → kebab-case — and no unrated sort key exists at all.)
 - [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md)
   — filed two-pager; relevant because this plan spans three worktrees concurrently.

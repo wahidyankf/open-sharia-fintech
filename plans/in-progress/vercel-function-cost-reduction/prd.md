@@ -18,7 +18,7 @@ requirement is that they remain functionally equivalent from the reader's point 
 | Course-path follower       | Navigates within a learning path via `?path=` context and expects the sidebar to reflect it |
 | CV/portfolio visitor       | Lands on wahidyankf.com, filters content with a search box, may share a filtered URL        |
 | Search engine crawler      | Must reach, render, and index every public page                                             |
-| Site owner                 | Must not receive an invoice above the $20 subscription                                      |
+| Site owner                 | Must not receive an invoice above $30; wants it at the $20 subscription                     |
 
 ## User stories
 
@@ -34,7 +34,8 @@ requirement is that they remain functionally equivalent from the reader's point 
 - As a **crawler**, I can fetch `robots.txt` and `sitemap.xml` from wahidyankf.com (neither exists
   today) and I remain able to crawl and index every public page on both sites.
 - As the **site owner**, I can see a configured spend cap that will pause production deployments
-  before my bill exceeds the subscription.
+  before my bill exceeds $30, and I understand that pausing takes the sites down until I resume each
+  project by hand.
 
 ## Behaviour that must not regress
 
@@ -151,6 +152,12 @@ Feature: Search-filtered portfolio routes are static yet still filterable
 ```gherkin
 Feature: The billing outcome is verified, not assumed
 
+  Scenario: Gross metered usage stays inside the authorised ceiling
+    Given a full billing cycle has elapsed at the new steady state
+    When the cycle's infrastructure subtotal is read from the usage dashboard
+    Then the gross metered usage is at or below thirty US dollars
+    And the invoice total is at or below thirty US dollars
+
   Scenario: Gross metered usage fits inside the included credit
     Given a full billing cycle has elapsed at the new steady state
     When the cycle's infrastructure subtotal is read from the usage dashboard
@@ -159,6 +166,30 @@ Feature: The billing outcome is verified, not assumed
 
   Scenario: A spend cap exists as a backstop
     When the team billing settings are inspected
-    Then a spend amount is configured
+    Then a spend amount of ten US dollars is configured
     And the automatic pause action is enabled
+
+  Scenario: The spend amount is understood as post-credit
+    Given a spend amount of ten US dollars is configured
+    When the amount that would trigger the pause is reasoned about
+    Then it means ten US dollars of charge beyond the included credit
+    And it does not mean ten US dollars of gross metered usage
+```
+
+The first two scenarios are deliberately separate and both retained: the first is the **ceiling**,
+whose breach is a failure; the second is the **target**, whose miss is a shortfall but not a breach.
+Collapsing them would lose the distinction the budget rests on.
+
+```gherkin
+Feature: The backend health-check page is excluded from search indexes
+
+  Scenario: A crawler that does not execute JavaScript still sees the directive
+    Given the backend health-check status page is deployed
+    When a crawler requests that page and reads only the server-rendered HTML
+    Then the response carries a robots directive marking the page as not indexable
+
+  Scenario: The page remains reachable for humans
+    When a person opens the backend health-check status page
+    Then the page renders its health result as before
+    And it is not redirected or blocked
 ```

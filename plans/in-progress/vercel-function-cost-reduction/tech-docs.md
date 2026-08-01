@@ -44,7 +44,9 @@ const pathname = headersList.get("x-pathname") ?? headersList.get("x-url") ?? ""
 ```
 
 Its only purpose is line 30's `htmlLang(locale)` — computing the `lang` attribute. Roughly four
-lines of code forfeit static generation for ~2,068 pages.
+lines of code forfeit static generation for every content page in the app — **2,183** markdown files
+as of 2026-08-01 (`en` 2,059 / `id` 124), up from the 2,068 measured on 2026-07-30 and still growing
+under the `ayokoding-learning-path-*` plans. The cost of Cause A scales with the content tree.
 
 ### Cause B — `searchParams` in the content catch-all
 
@@ -78,13 +80,13 @@ The other four steps are: an early `next()` for `/api/`, `/_next/`, favicons, `r
 
 ### Supporting cost drivers
 
-| Driver                                                                                               | Evidence                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full content index read per cold start: 2,068 files / 70.46 MiB, `readFile` + gray-matter + Zod each | `src/features/content/shell/repository-fs.ts:18-58`, `service.ts:246-256`, module singleton at `src/features/app-shell/shell/trpc-init.ts:12`                               |
-| Per-request markdown parse with Shiki dual themes                                                    | `src/features/content/core/parser.ts:33-61` (`rehypePrettyCode`, `github-dark` + `github-light`)                                                                            |
-| `getBySlug` called **twice per request** for the same slug                                           | `[...slug]/page.tsx:130` (`generateMetadata`) and `:339` (page body)                                                                                                        |
-| 7,515 content files traced into **every** function bundle                                            | `next.config.ts:25-27` `outputFileTracingIncludes: { "/**": [...] }`; confirmed in four separate `.nft.json` trace files, including `api/trpc`. `.next/standalone` = 165 MB |
-| Whole content tree in every page's RSC flight payload                                                | `src/features/navigation/shell/sidebar.tsx:10` → `sidebar-tree.tsx:1` (`"use client"`); 1,938 `"slug"` occurrences in one 425,996-byte live response                        |
+| Driver                                                                                                                                                      | Evidence                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full content index read per cold start: 2,068 files / 70.46 MiB **as measured 2026-07-30** (2,183 files by 2026-08-01), `readFile` + gray-matter + Zod each | `src/features/content/shell/repository-fs.ts:18-58`, `service.ts:246-256`, module singleton at `src/features/app-shell/shell/trpc-init.ts:12`                               |
+| Per-request markdown parse with Shiki dual themes                                                                                                           | `src/features/content/core/parser.ts:33-61` (`rehypePrettyCode`, `github-dark` + `github-light`)                                                                            |
+| `getBySlug` called **twice per request** for the same slug                                                                                                  | `[...slug]/page.tsx:130` (`generateMetadata`) and `:339` (page body)                                                                                                        |
+| 7,515 content files traced into **every** function bundle                                                                                                   | `next.config.ts:25-27` `outputFileTracingIncludes: { "/**": [...] }`; confirmed in four separate `.nft.json` trace files, including `api/trpc`. `.next/standalone` = 165 MB |
+| Whole content tree in every page's RSC flight payload                                                                                                       | `src/features/navigation/shell/sidebar.tsx:10` → `sidebar-tree.tsx:1` (`"use client"`); 1,938 `"slug"` occurrences in one 425,996-byte live response                        |
 
 ### wahidyankf-www
 
@@ -144,7 +146,17 @@ usage against your monthly credit before switching to on-demand billing." The cr
 and unused portions expire.
 
 Therefore the $7.43 "Infrastructure Subtotal" is **pre-credit gross usage**, not an additive charge.
-Keeping gross monthly usage under $20 yields an invoice of exactly $20.00 with no on-demand line.
+The arithmetic that governs every target in this plan is:
+
+```text
+invoice = 20 + max(0, gross_metered_usage - 20)
+```
+
+So the owner's **$30/month invoice ceiling** is exactly `gross_metered_usage <= $30`; a gross figure
+of $20 or below yields an invoice of exactly $20.00 with no on-demand line at all. The three tiers in
+[brd.md](./brd.md) — ceiling $30, target $20, stretch $10 — are all statements about **gross** usage,
+which is what the dashboard's Infrastructure Subtotal reports. The Spend Management threshold is the
+one number in this plan that is **not** gross (see below).
 
 **Open risk carried forward**: Vercel's docs are internally inconsistent about whether the credit
 covers **Observability Plus** — the Pro plan page lists it under "Paid add-ons" while the pricing
@@ -161,8 +173,19 @@ the ambiguity rather than betting on either reading.
   requires typing the team name to confirm.
 - Checks run "every few minutes", so spend can overshoot. Vercel's own guidance: set the threshold
   below the true ceiling.
-- The threshold covers **metered usage only** — not the seat fee, not add-ons, not Marketplace.
-- Notifications fire at 50%, 75%, 100%. Unpausing is manual and per-project.
+- **The threshold meters spend _above_ the plan credit, not gross usage.** Verbatim: "The spend
+  amount that you set covers metered resources that go **beyond** your Pro plan credits and usage
+  allocation for all projects on your team." It also excludes seats, Marketplace integrations, and
+  add-ons, which Vercel bills separately and monthly.
+- Notifications fire at 50%, 75%, 100%. Unpausing is manual and per-project — raising the spend
+  amount does **not** unpause anything.
+
+**Correction, 2026-08-01.** An earlier draft of this plan recommended a $10 spend amount on the
+reasoning that it was "well inside the $20 credit". That reading was **inverted**: because the
+threshold counts only post-credit spend, a $10 amount is not inside the credit at all — it is $10
+_past_ it, i.e. a **$30 invoice**. The number happens to be right for the ceiling that was later
+set, but the rationale was wrong, and anyone reasoning from the old sentence would have picked a
+dangerous value for a different ceiling. See DD-9.
 
 ### Free firewall rulesets block before the meter
 
@@ -427,7 +450,7 @@ Three independent reasons:
    an attribute cannot be deferred behind a `<Suspense>` boundary the way child content can.
 2. **It could make things worse.** Enabling it means "all dynamic code in any page, layout, or API
    route is executed at request time by default" ([Next.js 16](https://nextjs.org/blog/next-16),
-   2025-10-21) — inverting fetch-caching defaults across 2,068 pages risks re-introducing the exact
+   2025-10-21) — inverting fetch-caching defaults across all 2,183 pages risks re-introducing the exact
    problem being fixed, absent an exhaustive `use cache` audit.
 3. **It is not declared stable.** Next.js labelled Turbopack and React Compiler "stable" in the same
    release post and never applied that word to Cache Components
@@ -466,26 +489,53 @@ Rejected alternative: `get_web_analytics` as the baseline source. It returns
 `400 web_analytics_not_enabled`, and enabling Web Analytics to measure a cost-reduction plan would
 add a metered product to cut a bill.
 
+### DD-9 — Spend amount $10, pause armed immediately
+
+The budget ceiling is a **$30/month invoice**: the $20 Pro platform fee plus at most $10 of
+on-demand charge. Because the spend amount meters post-credit spend (see §Spend Management above),
+that ceiling maps to a spend amount of exactly **$10**, with **"Pause production deployment"
+enabled from Phase 0**.
+
+Vercel's guidance is to set the amount below the maximum you will tolerate, since checks lag by
+minutes. This plan **deliberately declines that margin** and uses the full $10, accepting a small
+overshoot above $30 rather than surrendering any allowance. That is an owner decision, recorded here
+so it is not silently "corrected" later.
+
+The consequence is stated plainly rather than discovered in production: at the pre-fix burn rate
+(~$1.90/day gross) the $20 credit is exhausted around day 10 of a billing cycle and on-demand
+reaches $10 around **day 16**, at which point every production project serves
+`503 DEPLOYMENT_PAUSED` until it is resumed **one project at a time**. Raising the amount does not
+unpause them. This is the intended behaviour of a hard cap, and it is why Phases 1–4 carry schedule
+pressure that the pre-ceiling version of this plan did not have.
+
+Rejected alternatives:
+
+- **Alerts only, arm the pause after Phase 4** — no outage risk, but the ceiling degrades to a
+  promise that depends on someone reading a notification. Rejected: the owner asked for a maximum,
+  not a warning.
+- **A $7–8 amount for lag margin** — safer against overshoot, but pauses ~1–2 days earlier and gives
+  up ~25% of the allowance for a lag whose cost at current rates is roughly one cent.
+
 ## File impact
 
-| Path                                                                    | Change                                                             |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `apps/ayokoding-www/src/app/layout.tsx`                                 | **Deleted**; contents merged into the locale layout                |
-| `apps/ayokoding-www/src/app/[locale]/layout.tsx`                        | Becomes the root layout; renders `<html lang={params.locale}>`     |
-| `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`      | `searchParams` prop removed; `?path=` resolution moves client-side |
-| `apps/ayokoding-www/src/middleware.ts`                                  | **Deleted** (redirects move to config)                             |
-| `apps/ayokoding-www/src/features/i18n/shell/middleware.ts`              | **Deleted** or reduced to the pure redirect helpers it still needs |
-| `apps/ayokoding-www/next.config.ts`                                     | Two redirects added; `outputFileTracingIncludes` scoped per route  |
-| `apps/ayokoding-www/src/features/content/shell/service.ts`              | `getBySlug` wrapped in `React.cache()`                             |
-| `apps/wahidyankf-www/src/app/{page,cv/page,personal-projects/page}.tsx` | `searchParams` prop removed                                        |
-| `apps/wahidyankf-www/src/features/*/shell/*Content.tsx`                 | Read `useSearchParams()` behind `<Suspense>`                       |
-| `apps/wahidyankf-www/src/app/{robots,sitemap}.ts`                       | **New**                                                            |
-| `apps/wahidyankf-www/src/app/layout.tsx`                                | Fix the 404 `og-image.jpg` reference                               |
-| `apps/organiclever-app-web/src/app/app/**/{layout,page}.tsx`            | Remove 9 inert `force-dynamic` directives                          |
-| `apps/organiclever-app-web/src/app/system/status/be/page.tsx`           | Add `robots: { index: false }`                                     |
-| `.github/workflows/web-ui-build-deploy-prod.yml`                        | Gate the daily force-push on a `libs/web-ui/` diff                 |
-| `libs/web-ui/vercel.json`                                               | Add an `ignoreCommand`                                             |
-| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**`                | New/updated feature files per the PRD                              |
+| Path                                                                    | Change                                                               |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `apps/ayokoding-www/src/app/layout.tsx`                                 | **Deleted**; contents merged into the locale layout                  |
+| `apps/ayokoding-www/src/app/[locale]/layout.tsx`                        | Becomes the root layout; renders `<html lang={params.locale}>`       |
+| `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx`      | `searchParams` prop removed; `?path=` resolution moves client-side   |
+| `apps/ayokoding-www/src/middleware.ts`                                  | **Deleted** (redirects move to config)                               |
+| `apps/ayokoding-www/src/features/i18n/shell/middleware.ts`              | **Deleted** or reduced to the pure redirect helpers it still needs   |
+| `apps/ayokoding-www/next.config.ts`                                     | Two redirects added; `outputFileTracingIncludes` scoped per route    |
+| `apps/ayokoding-www/src/features/content/shell/service.ts`              | `getBySlug` wrapped in `React.cache()`                               |
+| `apps/wahidyankf-www/src/app/{page,cv/page,personal-projects/page}.tsx` | `searchParams` prop removed                                          |
+| `apps/wahidyankf-www/src/features/*/shell/*Content.tsx`                 | Read `useSearchParams()` behind `<Suspense>`                         |
+| `apps/wahidyankf-www/src/app/{robots,sitemap}.ts`                       | **New**                                                              |
+| `apps/wahidyankf-www/src/app/layout.tsx`                                | Fix the 404 `og-image.jpg` reference                                 |
+| `apps/organiclever-app-web/src/app/app/**/{layout,page}.tsx`            | Remove **8** inert `force-dynamic` directives (9 in the app; 1 kept) |
+| `apps/organiclever-app-web/src/app/system/status/be/page.tsx`           | Add `robots: { index: false }`                                       |
+| `.github/workflows/web-ui-build-deploy-prod.yml`                        | Gate the daily force-push on a `libs/web-ui/` diff                   |
+| `libs/web-ui/vercel.json`                                               | Add an `ignoreCommand`                                               |
+| `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/**`                | New/updated feature files per the PRD                                |
 
 ## Testing strategy
 
@@ -499,12 +549,29 @@ Machine-checkable criteria only, each falsifiable in both directions:
 | `curl -I` repeat request, `x-vercel-cache`                             | `MISS`      | `HIT`                   |
 | `curl -I` `/` with redirects disabled                                  | 307 → `/en` | 307 → `/en` (unchanged) |
 
-Two repo-specific traps to avoid when writing acceptance commands:
+Five repo-specific traps to avoid when writing acceptance commands. Every one of them shares a
+failure mode: **a check that silently observes nothing still exits 0**, and reads as a pass.
 
 - `grep` here is a shell function routing to **UGREP**. Never use `-L` (it means
   files-without-match and exits 0). Use `--exclude-dir`, not `--glob`.
 - `apps/ayokoding-www`'s `test:e2e` and `test:integration` Nx targets are **no-op echo stubs**. They
   must never be cited as evidence that anything passed.
+- **There is no `specs:coverage` target** on `ayokoding-www`, `wahidyankf-www`, or
+  `organiclever-app-web`. `nx.json` lists `specs:coverage` under `targetDefaults`, but that entry
+  carries only `{"cache": true}` — targetDefaults merge into targets that already exist and never
+  create one. The real names are `specs:structure-validation` and `specs:behavior:coverage`, both
+  wrapped by `test:specs`, which `test:quick` already chains. Confirm with `nx show project <name>`.
+- **A test file that matches no vitest include glob is collected by nothing and exits 0.** The three
+  apps do not share globs: `ayokoding-www` collects `**/*.unit.{test,spec}.{ts,tsx}` (node) plus
+  `src/features/**` and `src/app/**` `*.test.*` (jsdom), and `test/unit/**` only under `be-steps`
+  and `fe-steps`; `wahidyankf-www` collects `src/**/*.unit.test.{ts,tsx}` only; `organiclever-app-web`
+  collects both `**/*.unit.*` and `src/**/*.{test,spec}.*`. This exact trap was already caught once
+  as a HIGH review finding — see the comment at `apps/ayokoding-www/vitest.config.ts:82-93`.
+- **`test:unit` cannot see build output, and will cache a stale pass.** It is `cache: true`, has no
+  `dependsOn: ["build"]`, and does not list `.next/**` among its inputs. Any assertion over
+  `.next/prerender-manifest.json`, `*.nft.json`, or the route table must run behind an explicit
+  `nx build`, never inside a unit test. This plan therefore splits every such check into a
+  cache-safe **source-level** guard plus a separate **build-output proof**.
 
 Unit coverage follows the repo's three-level standard; the Gherkin in [prd.md](./prd.md) binds to
 feature files under `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/`. The wahidyankf-www spec

@@ -1,9 +1,19 @@
-# Vercel Cost Steady-State Verification — prove the $20 invoice
+# Vercel Cost Steady-State Verification — grade the invoice against the $30 ceiling
 
 Verify that [`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md)
-actually achieved its objective: gross metered Vercel usage under **$20/month** so the Pro plan's
-included credit absorbs 100% of it and the invoice stays at exactly **$20.00** with **$0.00**
-on-demand.
+actually achieved its objective. That plan carries **three tiers**, and this plan grades against all
+three rather than a single number:
+
+| Tier                    | Gross metered usage | Invoice  | Verdict if missed                     |
+| ----------------------- | ------------------- | -------- | ------------------------------------- |
+| **Ceiling** (owner-set) | `<= $30/month`      | `<= $30` | **Failure** — the budget was breached |
+| **Target**              | `< $20/month`       | `$20.00` | Shortfall, not a breach               |
+| **Stretch**             | `< $10/month`       | `$20.00` | Missed upside                         |
+
+Because `invoice = 20 + max(0, gross − 20)`, every tier above is a statement about **gross** metered
+usage — the figure the dashboard reports as the Infrastructure Subtotal. The one number in the parent
+plan that is _not_ gross is the Spend Management amount ($10), which meters post-credit charge only.
+Do not compare those two figures directly.
 
 That plan changes the code and the platform settings. **This plan grades it.** The split exists
 because grading is gated on a calendar nobody controls — a full billing cycle must elapse — while
@@ -112,7 +122,7 @@ explicit "not separable from the aggregate" with a reason:
 | Fluid Compute migration           | Function Duration on whatever remains | roughly halves the residue        | Estimated from Vercel's own comparison                                     |
 | Bot/AI-bot blocking               | Invocations + Duration                | unknown but positive              | Unquantified — depends on the crawler share                                |
 | wahidyankf-www static             | Function Duration + Invocations       | **≈$0** — 0.1% of function volume | **Measured 2026-08-01**: 45 invocations/24h. Correctness win, not a saving |
-| **Projected total**               | —                                     | **~$2–4/mo gross**                | Claimed to be inside both targets                                          |
+| **Projected total**               | —                                     | **~$2–4/mo gross**                | Claimed to be inside all three tiers — ceiling, target, and stretch        |
 
 Note where the weight sits: the single largest row (−$30/mo, static conversion) is **estimated**, and
 `ayokoding-www` carries 99.90% of all function volume, so essentially the entire projected saving
@@ -127,11 +137,22 @@ Feature: Steady-state Vercel cost verification
     Given all three delivery units of vercel-function-cost-reduction are merged and deployed
     And a full billing cycle has elapsed since the last of them deployed
 
+  Scenario: The invoice stays inside the authorised ceiling
+    When the completed cycle's usage is read from the Vercel dashboard
+    Then the Infrastructure Subtotal is at or below $30.00
+    And the on-demand charge above the subscription is at or below $10.00
+    And the invoice total is at or below $30.00
+
   Scenario: The invoice holds at the subscription
     When the completed cycle's usage is read from the Vercel dashboard
     Then the Infrastructure Subtotal is under $20.00
     And the on-demand charge above the subscription is $0.00
     And the invoice total equals the $20 Pro platform fee with no additional line
+
+  Scenario: The spend cap did not have to fire
+    When the Spend Management activity log is read for the completed cycle
+    Then no project was paused during the cycle
+    And no 100% spend-amount notification was sent
 
   Scenario: Function volume collapsed
     When runtime log counts for ayokoding-www are queried over a 72h window
@@ -153,11 +174,17 @@ Feature: Steady-state Vercel cost verification
     When runtime log counts are grouped by status code over 24h
     Then the 504 count is 0
 
-  Scenario: A miss is escalated, not absorbed
-    Given the Infrastructure Subtotal is $20.00 or above
+  Scenario Outline: A miss is escalated, not absorbed
+    Given the Infrastructure Subtotal is <subtotal>
     When the reconciliation is written
-    Then a follow-up plan is opened in plans/backlog/
+    Then the verdict is recorded as "<verdict>"
+    And a follow-up plan is opened in plans/backlog/
     And this plan is archived recording the gap rather than widening its own scope
+
+    Examples:
+      | subtotal            | verdict            |
+      | above $30.00        | ceiling breached   |
+      | $20.00 up to $30.00 | target missed      |
 ```
 
 ## Technical notes
@@ -223,8 +250,10 @@ back far enough by then. The dollar read has no such constraint.
       **estimated**, against the parent plan's projection table.
   - Acceptance: each of the parent's seven projection rows gets an actual, or an explicit "not
     separable from the aggregate" with a reason. No row is silently dropped.
-- [ ] `[AI]` State the verdict against both targets: under $20.00 (hard) and under $10.00 (stretch).
-  - Acceptance: verdict is stated as a bare pass/fail with the figure, not as a narrative.
+- [ ] `[AI]` State the verdict against **all three tiers**: at or below $30.00 (ceiling, owner-set),
+      under $20.00 (target), under $10.00 (stretch).
+  - Acceptance: three bare pass/fail verdicts with the one measured figure, not a narrative. A
+    ceiling breach and a target miss are different outcomes and must not be reported as one.
 
 ### Phase 3: Escalate or close
 
@@ -253,7 +282,7 @@ back far enough by then. The dollar read has no such constraint.
 
 - [ ] `[HUMAN]` Full-cycle gross metered usage figure recorded, with the on-demand charge.
 - [ ] `[AI]` Volume-side after-table committed and compared against the 2026-08-01 baseline.
-- [ ] `[AI]` Verdict stated against both targets.
+- [ ] `[AI]` Verdict stated against all three tiers (ceiling, target, stretch).
 - [ ] `[AI]` Follow-up opened if the hard target was missed.
 - [ ] `[AI]` `learnings.md` fully triaged.
 

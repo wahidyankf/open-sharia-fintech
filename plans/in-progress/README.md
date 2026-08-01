@@ -10,9 +10,9 @@ Active project plans currently being worked on.
   original 90-course scope are split across 7 new backlog plans
   (`ayokoding-learning-path-05` through `-11`).
 - [vercel-function-cost-reduction](./vercel-function-cost-reduction/README.md) — Cuts gross metered
-  Vercel usage from ~$57/mo to under $20/mo so the Pro plan's included credit absorbs it and the
-  invoice stays at the $20 subscription. Fixes the root cause: `ayokoding-www` prerenders zero of
-  its ~2,068 content pages.
+  Vercel usage from ~$57/mo to inside an owner-set **$30/mo invoice ceiling**, targeting under
+  $20/mo so the Pro plan's included credit absorbs it entirely. Fixes the root cause:
+  `ayokoding-www` prerenders zero of its 2,183 content pages.
 - [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md) — Four
   authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
   pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied

@@ -157,15 +157,30 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
 
 ### 0.2 Install the spend safety rail
 
-- [ ] `[HUMAN]` Team → Settings → Billing → **Spend Management**: enable it, set the spend amount,
-      and explicitly enable **"Pause production deployment"** (off by default; requires typing the
-      team name to confirm).
-  - Set the amount **below** the true ceiling — checks run only every few minutes, so spend can
-    overshoot. Recommended: **$10**, giving a hard stop well inside the $20 credit.
-  - Acceptance: the Spend Management panel shows a configured amount **and** the pause action
-    enabled. Falsifiable both ways: before this step no amount is set and no pause action exists;
-    after it, both are visible. Note the threshold governs **metered usage only** — not the $20 seat
-    fee.
+- [ ] `[HUMAN]` Team → Settings → Billing → **Spend Management**: enable it, set the spend amount to
+      **$10**, and explicitly enable **"Pause production deployment"** (off by default; requires
+      typing the team name to confirm).
+  - **The spend amount is measured after the credit, not before it.** Verbatim: "The spend amount
+    that you set covers metered resources that go **beyond** your Pro plan credits and usage
+    allocation." So a $10 spend amount means $10 of _on-demand_ charge on top of the $20 platform
+    fee — a **$30 invoice**, which is exactly the stated ceiling. It does **not** mean $10 of gross
+    usage. See [tech-docs.md DD-9](./tech-docs.md#dd-9--spend-amount-10-pause-armed-immediately).
+  - Vercel's own guidance is to set the amount below the absolute maximum you will tolerate, because
+    checks run only every few minutes and spend can overshoot. **$10 uses the full ceiling with no
+    lag margin — a deliberate choice**, accepting a small overshoot above $30 in exchange for not
+    surrendering any of the allowance.
+  - **Consequence to expect, not a surprise**: at the pre-fix burn rate (~$1.90/day gross) the $20
+    credit is exhausted around **day 10** of a cycle and on-demand reaches $10 around **day 16** — at
+    which point every production project returns
+    [`503 DEPLOYMENT_PAUSED`](https://vercel.com/docs/errors/DEPLOYMENT_PAUSED). Projects **do not
+    auto-resume**: raising the amount does not unpause them, and each must be resumed individually
+    via the dashboard or the REST API. That is the intended behaviour of a hard cap, and it is the
+    reason Phases 1–4 are time-critical rather than merely valuable.
+  - Acceptance: the Spend Management panel shows **$10** configured **and** the pause action enabled.
+    Falsifiable both ways: before this step no amount is set and no pause action exists; after it,
+    both are visible.
+  - Note the threshold also excludes **seats, Marketplace integrations, and add-ons**, which Vercel
+    bills separately and monthly.
 
 ### 0.3 Migrate off legacy billing (DD-3)
 
@@ -250,14 +265,30 @@ still reproduces at the documented line numbers, so no phase needs rework:
 | `outputFileTracingIncludes: { "/**": ... }`      | present, `next.config.ts:25-27`                                            |
 | `wahidyankf-www` three dynamic routes            | present, `page.tsx:3-4`, `cv/page.tsx:10-11`, `personal-projects:10-11`    |
 | `wahidyankf-www` has no `robots.ts`/`sitemap.ts` | confirmed absent                                                           |
-| `organiclever-app-web` `force-dynamic`           | **9 hits** — matches; the 10th is the `system/status/be` keeper            |
+| `organiclever-app-web` `force-dynamic`           | **9 hits total** — 8 inert + the `system/status/be` keeper                 |
 | Storybook daily cron + no `ignoreCommand`        | both confirmed (`cron: "0 0 * * *"`; `vercel.json` has no `ignoreCommand`) |
 | apex → `www` redirect downgrades to HTTP         | still reproduces: `301` → `http://www.ayokoding.com`                       |
 
 The sibling `ai-benchmark-merged-chart` plan merged (PR #128, deployed 2026-08-01 06:46 WIB) and did
-**not** disturb any of the above. One naming drift to be aware of when reading Phase 4: that plan
-renamed the `light` capability class to `haiku`, so the query parameter is now `sortHaiku`, not
-`sortLight`.
+**not** disturb any of the above.
+
+#### Second re-verification — 2026-08-01, `main` at `cfcb27cbc`
+
+Re-run before execution started. Every premise in the table above still reproduces at the documented
+line numbers. Four documentation defects were found and fixed in this pass; none invalidates the
+analysis, but each would have broken a gate at execution time:
+
+| Defect                                                                                         | Correction                                                                               |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `force-dynamic` stated as "9 inert / 10 before" in four places, while enumerating only 8 files | **8 inert, 9 before, 1 after** — the pre-state check would have failed against itself    |
+| Phase 4 and Phase 5 gates required a `specs:coverage` target                                   | No such target exists on either project; use `test:quick`, which chains the real ones    |
+| Phase 1's RED test path `test/unit/build-output/prerender-coverage.test.ts`                    | Matches no vitest include glob — would have been collected by nothing and read as a pass |
+| Build-output assertions routed through the cached, non-`build`-dependent `test:unit` target    | Split into a source-level guard plus an explicit `nx build` proof                        |
+
+One naming drift to carry into Phase 4: the AI-benchmark sort parameters went through **two**
+renames, not one — `light` → `haiku` (DD-35), then camelCase → kebab-case. The live keys are
+`sort-opus` / `sort-sonnet` / `sort-haiku`, and no unrated sort key exists at all
+(`src/features/ai-benchmark/core/url-state.ts:42-46`).
 
 ### 0.9 Fix the apex redirect chain — moved here from Phase 6
 
@@ -312,11 +343,31 @@ that is a future reading which cannot be performed early by anyone.)
 Highest-leverage single change in the plan. Isolated in its own phase because its blast radius is
 every page on the site.
 
-- [ ] `[AI]` **RED** — add a failing assertion that content routes are prerendered.
-  - File: `apps/ayokoding-www/test/unit/build-output/prerender-coverage.test.ts` (new)
+> **Why the regression net is a source-level test and the proof is a separate build command.**
+> `test:unit` is `cache: true`, has **no** `dependsOn: ["build"]`, and does not list `.next/**` among
+> its inputs. A test that reads `.next/prerender-manifest.json` would therefore (a) fail outright in
+> the fresh worktree this phase mandates, before anything is built, and (b) once green, replay from
+> the Nx cache without ever re-reading the manifest. Build output is not unit-testable here. So the
+> committed guard asserts the **source-level** invariant (cache-safe, correctly hashed by `default`
+> inputs), and the build-output count is asserted by an explicit `nx build` step that never runs
+> through a cached target.
+
+- [ ] `[AI]` **RED** — add a failing source-level guard that no root layout opts the app into dynamic
+      rendering.
+  - File: `apps/ayokoding-www/src/app/root-layout-static.unit.test.ts` (new)
+  - Modelled on the existing `apps/ayokoding-www/src/app/security-headers.unit.test.ts`, which reads
+    a source file as a string and asserts over it. That path and the `.unit.test.ts` suffix matter:
+    vitest's `unit` project collects `**/*.unit.{test,spec}.{ts,tsx}` under `environment: "node"`,
+    while a plain `*.test.ts` under `test/unit/<anything-but-be-steps>/` matches **neither** the
+    `unit` nor the `unit-fe` include globs and would be silently collected by nothing — exiting 0
+    with zero files matched. See the comment block at `apps/ayokoding-www/vitest.config.ts:82-93`,
+    which records this exact failure mode being caught as a HIGH finding in the PR #122 review cycle.
+  - Assertions: `src/app/layout.tsx` does not exist, **and** no file matching `src/app/**/layout.tsx`
+    contains `headers(`, `cookies(`, `draftMode(`, `connection(`, or `noStore(`.
   - Command: `nx run ayokoding-www:test:unit`
-  - Acceptance: the test asserts the prerendered route count is `>= 2000` and **fails** against the
-    current build output (which has 4).
+  - Acceptance: the test **fails** today on both assertions — `src/app/layout.tsx` exists and calls
+    `headers()` at line 24. Falsifiable both ways: it passes only once the file is gone and no layout
+    reads a dynamic API.
 - [ ] `[AI]` **GREEN** — promote the locale layout and delete the root layout.
   - Delete `apps/ayokoding-www/src/app/layout.tsx` **entirely**. If it remains it stays the root
     layout, and nested layouts may not render `<html>`/`<body>`.
@@ -324,10 +375,23 @@ every page on the site.
     `<html lang={(await params).locale}>` and `<body>`. Remove the `headers()` import and the
     `x-pathname` read; the locale now comes from the route segment.
   - Preserve everything else the old root layout rendered, including the Google Analytics tags.
-  - Command: `nx build ayokoding-www`
-  - Acceptance: build exits 0 and
-    `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` returns `>= 2000`
-    (was `4`).
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: the RED guard now passes, and no other test breaks.
+- [ ] `[AI]` **Build-output proof** — assert the prerendered route count against a real build.
+  - Command, run in this order and never through a cached test target:
+
+    ```bash
+    nx build ayokoding-www
+    jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json
+    ```
+
+  - Acceptance: build exits 0 and the count is **`>= 2000`** (was `4`). The threshold is a floor, not
+    a headcount — `apps/ayokoding-www/content` holds **2,183** markdown files today (`en` 2,059 /
+    `id` 124) and is still growing under
+    [`ayokoding-learning-path-04-course-authoring`](../ayokoding-learning-path-04-course-authoring/README.md),
+    so an exact expected count would rot within days. Falsifiable both ways: the pre-fix build
+    returns 4.
+
 - [ ] `[AI]` **REFACTOR** — confirm no other dynamic-API read remains in a layout.
   - Command: `grep -rn "headers()\|cookies()\|draftMode()\|noStore()\|connection()" apps/ayokoding-www/src --exclude-dir=node_modules`
   - Acceptance: zero hits in any `layout.tsx`. Note: use `--exclude-dir`, never `--glob`, and never
@@ -359,9 +423,16 @@ language still reflects the locale" — see [prd.md](./prd.md).
 The client-side equivalent **already ships**: `src/features/course-paths/shell/sidebar-host.tsx:36`
 resolves `?path=` via `useSearchParams()` today. This phase removes the redundant server-side read.
 
-- [ ] `[AI]` **RED** — assert the content catch-all is not dynamically rendered.
-  - Command: `nx build ayokoding-www`
-  - Acceptance: a test or build-output assertion fails while `[...slug]` still reads `searchParams`.
+- [ ] `[AI]` **RED** — add a failing source-level guard that the content catch-all takes no
+      `searchParams`.
+  - File: `apps/ayokoding-www/src/app/content-route-static.unit.test.ts` (new)
+  - Same placement and `.unit.test.ts` suffix rule as Phase 1's guard, for the same
+    silently-collected-by-nothing reason.
+  - Assertion: the source of `src/app/[locale]/(content)/[...slug]/page.tsx` contains neither a
+    `searchParams` prop member nor an `await searchParams` read.
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: the test **fails** today — the prop is declared at line 94, destructured at line 322,
+    and awaited at line 365. Falsifiable both ways: it passes only once all three are gone.
 - [ ] `[AI]` **GREEN** — remove the `searchParams` prop.
   - File: `apps/ayokoding-www/src/app/[locale]/(content)/[...slug]/page.tsx` — drop the
     `searchParams` type member (line ~94) and the `await searchParams` read (line ~365).
@@ -402,9 +473,18 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
 Branch on Phase 0.6's finding. With Cause A fixed, nothing reads `x-pathname`, so the middleware's
 only hot-path work is dead.
 
-- [ ] `[AI]` **RED** — assert both redirects still work with middleware removed.
-  - Acceptance: a test covering `/` → `/en` and uppercase-locale normalisation fails before the
-    config redirects are added.
+- [ ] `[AI]` **RED** — add a failing guard that both locale-entry redirects are declared in config
+      rather than in middleware.
+  - File: `apps/ayokoding-www/src/app/locale-redirects.unit.test.ts` (new)
+  - Assertion: read `apps/ayokoding-www/next.config.ts` as a string (the
+    `security-headers.unit.test.ts` pattern) and require a `redirects()` entry whose `source` is
+    `"/"` with `destination` `"/en"`, plus one entry per uppercase-locale variant.
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: the test **fails** today — those rules live in `src/features/i18n/shell/middleware.ts`
+    (lines 21-23 and 30-34), not in `next.config.ts`. Falsifiable both ways: it passes only once every
+    enumerated variant is present in config.
+  - This guard is what makes deleting the middleware safe: it fails the moment a redirect loses its
+    replacement home, which is precisely the regression Phase 0.6 proved is possible.
 - [ ] `[AI]` **GREEN** — move both redirects into `apps/ayokoding-www/next.config.ts` `redirects()`.
   - `/` → `/en`, and the uppercase-locale variants. `path-to-regexp` is case-**sensitive** and cannot
     lowercase a captured parameter, so enumerate the finite variants literally for both locales
@@ -445,19 +525,38 @@ only hot-path work is dead.
   - Acceptance: the `api/trpc` trace no longer includes the content tree. Measure with
     `jq '[.files[] | select(startswith("content/"))] | length' apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`
     — was **7,515**, must drop substantially. Falsifiable both ways.
-- [ ] `[AI]` Wrap `getBySlug` in `React.cache()` to collapse the double per-request call
-      (`[...slug]/page.tsx:130` in `generateMetadata` and `:339` in the body).
+- [ ] `[AI]` **RED** — assert `getBySlug` performs one underlying read per render pass, not two.
+  - File: `apps/ayokoding-www/src/features/content/shell/service-getbyslug-cache.unit.test.ts` (new)
+  - Assertion: with the underlying repository read spied, two `getBySlug` calls for the same slug
+    within one render pass produce exactly **one** read.
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: the test **fails** today with 2 reads — the call sites are
+    `[...slug]/page.tsx:130` (`generateMetadata`) and `:339` (page body).
+- [ ] `[AI]` **GREEN** — wrap `getBySlug` in `React.cache()`.
   - File: `apps/ayokoding-www/src/features/content/shell/service.ts`
-  - Acceptance: an instrumented unit test shows one underlying read per render pass, not two.
-    `React.cache()` dedupes **within** a render pass only, which is exactly the scope needed.
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: the RED test passes at exactly 1 read; no other test breaks.
+- [ ] `[AI]` **REFACTOR** — confirm the memoisation scope is per-pass, not process-global.
+  - `React.cache()` dedupes **within** one render pass only — "React will invalidate the cache for
+    all memoized functions for each server request" — which is exactly the scope needed here, and
+    the reason this is safe to apply to a content read that must not go stale across requests.
+  - Command: `nx run ayokoding-www:test:unit`
+  - Acceptance: a second render pass performs its own read (count returns to 1 per pass, not 0).
+    Falsifiable both ways: a process-global memo would show 0 reads on the second pass and fail.
 - [ ] `[AI]` Evaluate `output: "standalone"` (`next.config.ts:21`). It is dead configuration on
       Vercel but **is required by this app's Dockerfile** — do not delete it blindly.
   - Acceptance: whatever is decided, the Docker build path still succeeds. Record the decision.
 - [ ] `[AI]` Confirm the sibling AI-benchmark route stays static.
   - `src/app/[locale]/tools/ai-benchmark/page.tsx` already wraps client content in `<Suspense>` with
-    `useSearchParams()` in `benchmark-content.tsx:18`, so its `sortOpus`/`sortSonnet`/`sortHaiku`/
-    `sortUnrated` query state is compliant. That plan merged as PR #128 on 2026-08-01; the parameter
-    is `sortHaiku`, renamed from `sortLight`.
+    `useSearchParams()` in `benchmark-content.tsx:18`, so its sort query state is compliant. That
+    plan merged as PR #128 on 2026-08-01.
+  - **Two renames have landed since, not one** — re-verified 2026-08-01 against
+    `src/features/ai-benchmark/core/url-state.ts:42-46`. The capability class `light` became `haiku`
+    (DD-35), and then the keys themselves went camelCase → **kebab-case**. The live parameters are
+    `sort-opus` / `sort-sonnet` / `sort-haiku`. There is **no `sortUnrated` and no unrated sort key
+    at all** — that band is never sorted, and the parameter was dead on arrival. Neither `sortLight`
+    nor `sortHaiku` exists any more; a URL carrying a retired key sanitises to the default sort
+    rather than being rewritten.
   - Acceptance: the tools routes appear as `○`/`●` in the route table, not `ƒ`.
   - Note the measured baseline makes this check sharper: those two tools routes drew **1,273 +
     1,212** function invocations in 24h **despite already using the target pattern**, because Cause A
@@ -469,7 +568,13 @@ only hot-path work is dead.
 - [ ] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
 - [ ] `[AI]` `getBySlug` executes once per render pass.
 - [ ] `[AI]` Tools routes confirmed static.
-- [ ] `[AI]` Full local quality gate green: `typecheck`, `lint`, `test:quick`, `specs:coverage`.
+- [ ] `[AI]` Full local quality gate green: `nx run ayokoding-www:test:quick`, which itself chains
+      `typecheck`, `lint`, `test:unit`, `test:coverage`, and `test:specs` (the last wrapping
+      `specs:structure-validation` + `specs:behavior:coverage`).
+  - There is **no `specs:coverage` target on this project.** `nx.json` declares `specs:coverage`
+    under `targetDefaults`, but that entry only sets `{"cache": true}` — targetDefaults merge into
+    targets that already exist and never create one, so `nx run ayokoding-www:specs:coverage` errors
+    out. Verified with `nx show project ayokoding-www`. Use the real names above.
 - [ ] `[AI]` **Unit 1 delivery boundary** — PR-Review Maker→Fixer Cycle (3 CI-gated cycles), then
       `[AI]` merge once all five hardened preconditions hold.
 - [ ] `[AI]` Deploy to `prod-ayokoding-www` and verify live: a repeat request to a content page
@@ -500,9 +605,20 @@ Independent of Unit 1; runs in parallel in its own worktree.
 > attribute budget headroom to it**, and if capacity is ever contested, this is the unit to defer —
 > not Unit 1. Phase 7's savings table is corrected accordingly.
 
-- [ ] `[AI]` **RED** — assert the three routes are static.
-  - Command: `nx build wahidyankf-www`
-  - Acceptance: an assertion on the route table fails while `/`, `/cv`, `/personal-projects` are `ƒ`.
+- [ ] `[AI]` **RED** — add a failing source-level guard that the three routes take no `searchParams`.
+  - File: `apps/wahidyankf-www/src/app/static-routes.unit.test.ts` (new)
+  - This app's vitest globs differ from `ayokoding-www`'s: the `unit-fe` project collects
+    `src/**/*.unit.test.{ts,tsx}` under **jsdom**, and there is no `test/unit/**` unit glob at all
+    (`apps/wahidyankf-www/vitest.config.ts:38`). Put the file under `src/` with the `.unit.test.ts`
+    suffix or nothing collects it.
+  - Assertion: none of `src/app/page.tsx`, `src/app/cv/page.tsx`,
+    `src/app/personal-projects/page.tsx` declares a `searchParams` prop or awaits it.
+  - Command: `nx run wahidyankf-www:test:unit`
+  - Acceptance: the test **fails** today on all three — `page.tsx:3-4`, `cv/page.tsx:10-11`,
+    `personal-projects/page.tsx:10-11`. Falsifiable both ways.
+- [ ] `[AI]` **Build-output proof** — `nx build wahidyankf-www`; the route table must show `ƒ` for
+      `/`, `/cv`, and `/personal-projects` before the fix. Same tiering rationale as Phase 1: the
+      route table is build output and cannot be asserted from a cached `test:unit` run.
 - [ ] `[AI]` **GREEN** — remove the `searchParams` props and read the query client-side.
   - Files: `src/app/page.tsx:3-4`, `src/app/cv/page.tsx:10-11`,
     `src/app/personal-projects/page.tsx:10-11` — drop the prop.
@@ -532,7 +648,9 @@ Independent of Unit 1; runs in parallel in its own worktree.
 
 - [ ] `[AI]` Zero `ƒ` routes in the `wahidyankf-www` route table (was 3).
 - [ ] `[AI]` `robots.ts` and `sitemap.ts` exist and prerender.
-- [ ] `[AI]` `typecheck`, `lint`, `test:quick`, `specs:coverage` exit 0.
+- [ ] `[AI]` `nx run wahidyankf-www:test:quick` exits 0 — it chains `typecheck`, `lint`, `test:unit`,
+      `test:coverage`, and `test:specs`. Do **not** call `specs:coverage`; no such target exists on
+      this project either (same `targetDefaults`-does-not-create-targets reason as Phase 4).
 - [ ] `[AI]` **Unit 2 delivery boundary** — review cycle, then `[AI]` merge; deploy to
       `prod-wahidyankf-www` and confirm `x-vercel-cache: HIT` on a repeat request.
 
@@ -544,22 +662,45 @@ Independent of Unit 1; runs in parallel in its own worktree.
 
 Independent of Units 1 and 2.
 
-- [ ] `[AI]` Delete the 9 inert `export const dynamic = "force-dynamic"` lines in
+- [ ] `[AI]` Delete the **8** inert `export const dynamic = "force-dynamic"` lines in
       `apps/organiclever-app-web` — line 3 of `src/app/app/layout.tsx` and of the `home`, `history`,
       `progress`, `settings`, `routines/edit`, `workout`, and `workout/finish` pages.
-  - These are no-ops today because every one of those files is `"use client"`, so Next.js already
-    prerenders them as `○`. They are a latent cost landmine if any file is later converted to a
-    server component.
+  - These are no-ops today because every one of those eight files is `"use client"` (verified
+    2026-08-01, all eight), so Next.js already prerenders them as `○`. They are a latent cost
+    landmine if any file is later converted to a server component.
   - Acceptance: `grep -rn "force-dynamic" apps/organiclever-app-web/src --exclude-dir=node_modules`
     returns exactly **one** hit — `src/app/system/status/be/page.tsx`, which is a genuine server
-    component and keeps it. Falsifiable both ways: returns 10 before, 1 after.
+    component (no `"use client"`; imports `env` and fetches) and keeps it. Falsifiable both ways:
+    **9 before, 1 after**.
+  - Behaviour-preserving deletion, so no Gherkin is owed for this step — see the change-type matrix
+    in [feature-change-completeness.md](../../../repo-governance/development/quality/feature-change-completeness.md).
   - Acceptance: the route table is unchanged (all still `○`), proving the directives were inert.
-- [ ] `[AI]` Make `apps/organiclever-app-web/src/app/system/status/be/page.tsx` non-indexable.
+- [ ] `[AI]` **RED** — assert the health-check page is non-indexable.
+  - File: `apps/organiclever-app-web/src/app/system/status/be/metadata.unit.test.ts` (new)
+  - This app's `unit` project collects `**/*.unit.{test,spec}.{ts,tsx}` **and**
+    `src/**/*.{test,spec}.{ts,tsx}` under jsdom (`apps/organiclever-app-web/vitest.config.ts`), so
+    either suffix is collected here — unlike `ayokoding-www`. Use `.unit.test.ts` for consistency.
+  - Assertion: the route module exports `metadata` whose `robots.index` is `false`.
+  - Command: `nx run organiclever-app-web:test:unit`
+  - Acceptance: the test **fails** today — the module exports no `robots` metadata at all.
+- [ ] `[AI]` **GREEN** — add `robots: { index: false }` to the page's exported `metadata`.
+  - File: `apps/organiclever-app-web/src/app/system/status/be/page.tsx`
   - It is a genuinely dynamic server component that `fetch`es a backend health endpoint with a 3s
     `AbortSignal.timeout` (line 15) — worst case 3s of billed function time per crawler hit, and it
-    is currently crawlable.
-  - Add `robots: { index: false }` metadata (server-side, so crawlers that do not run JS see it).
-  - Acceptance: the rendered page emits a `noindex` directive in its HTML, not via client JS.
+    is currently crawlable. Server-side metadata means crawlers that do not run JS still see it.
+  - Command: `nx run organiclever-app-web:test:unit`
+  - Acceptance: the RED test passes; no other test breaks.
+- [ ] `[AI]` **REFACTOR** — confirm the directive reaches the rendered HTML, not just the module.
+  - Command: `nx build organiclever-app-web`, then request the route and inspect the response body.
+  - Acceptance: the served HTML carries `<meta name="robots" content="noindex">`. Falsifiable both
+    ways: absent before this phase. A module-level assertion alone would pass even if Next.js never
+    emitted the tag, which is why this substep exists.
+
+**Gherkin (binds) →** "The backend health-check page is excluded from search indexes".
+
+- [ ] `[AI]` Write the companion feature file under
+      `specs/apps/organiclever/behavior/organiclever-app-web/gherkin/`. This is a
+      behaviour-changing step, so Gherkin is owed; the `force-dynamic` deletions above are not.
 - [ ] `[AI]` Gate the daily Storybook rebuild.
   - `.github/workflows/web-ui-build-deploy-prod.yml:5` schedules `cron: "0 0 * * *"` and line 36
     force-pushes unconditionally, while `libs/web-ui/vercel.json` has no `ignoreCommand` — so Vercel
@@ -574,10 +715,11 @@ Independent of Units 1 and 2.
 
 ### Phase 6 Gate
 
-- [ ] `[AI]` Exactly one `force-dynamic` remains in `organiclever-app-web`, and route tables unchanged.
-- [ ] `[AI]` `/system/status/be` emits a server-rendered `noindex`.
+- [ ] `[AI]` Exactly one `force-dynamic` remains in `organiclever-app-web` (9 before, 1 after), and
+      route tables unchanged.
+- [ ] `[AI]` `/system/status/be` emits a server-rendered `noindex` in the served HTML.
 - [ ] `[AI]` Storybook deploy gated in both the workflow and `vercel.json`.
-- [ ] `[AI]` `typecheck`, `lint`, `test:quick` exit 0; workflow lints clean (actionlint).
+- [ ] `[AI]` `nx run organiclever-app-web:test:quick` exits 0; workflow lints clean (actionlint).
 - [ ] `[AI]` **Unit 3 delivery boundary** — review cycle, then `[AI]` merge.
 
 > **Pause Safety**: safe to stop. Unit 3 is pure waste removal.
