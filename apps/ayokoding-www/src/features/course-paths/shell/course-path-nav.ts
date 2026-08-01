@@ -176,9 +176,25 @@ export function toCoursePathClientData(data: CoursePathData, locale: string): Co
   };
 }
 
-/** Derive the path-rail title lookup from serializable client route data. */
+/**
+ * Derive the path-rail title lookup from serializable client route data.
+ *
+ * This preserves {@link buildCourseTitleIndex}'s promise for manifest-only
+ * course IDs. A statically generated client fallback can lack a content link
+ * for such an ID, but the navigation chrome must still show a human-readable
+ * title instead of the raw kebab-case identifier.
+ */
 export function courseTitlesFromClientData(data: CoursePathClientData): Readonly<Record<string, string>> {
-  return Object.fromEntries(Object.entries(data.courseLinks).map(([courseId, link]) => [courseId, link.title]));
+  const courseIds = new Set<string>();
+  for (const manifest of data.manifests) {
+    for (const ref of manifest.courseOrder) {
+      courseIds.add(normalizeCourseRef(ref).id);
+    }
+  }
+
+  return Object.fromEntries(
+    [...courseIds].map((courseId) => [courseId, data.courseLinks[courseId]?.title ?? humanizeKebabSlug(courseId)]),
+  );
 }
 
 /** Everything `<ROUTE>` needs to render a course page's path-aware chrome, resolved in one call. */
@@ -277,8 +293,16 @@ export function resolveCoursePathClientRenderData(
   });
 
   const pathBadges = activeContext === null ? derivePathBadges(data.manifests, courseId) : [];
-  const prev = activeContext ? (activeContext.nav.prev ? data.courseLinks[activeContext.nav.prev.id] ?? null : null) : fallbackPrev;
-  const next = activeContext ? (activeContext.nav.next ? data.courseLinks[activeContext.nav.next.id] ?? null : null) : fallbackNext;
+  const prev = activeContext
+    ? activeContext.nav.prev
+      ? (data.courseLinks[activeContext.nav.prev.id] ?? null)
+      : null
+    : fallbackPrev;
+  const next = activeContext
+    ? activeContext.nav.next
+      ? (data.courseLinks[activeContext.nav.next.id] ?? null)
+      : null
+    : fallbackNext;
 
   return { activeContext, prerequisiteLinks, pathBadges, prev, next };
 }

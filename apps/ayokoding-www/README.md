@@ -100,8 +100,10 @@ rename `be` → `api` reflects this (the `organiclever` peer keeps `be` because
 ## i18n entry redirects
 
 Locale entry redirects live in `next.config.ts`. The root route redirects permanently to `/en`, and
-the finite uppercase variants of `en` and `id` redirect to their lowercase canonical paths. Keeping
-these rules in Next.js configuration avoids request-time middleware for every page view.
+the finite uppercase variants of `en` and `id` redirect to their lowercase canonical paths.
+`experimental.caseSensitiveRoutes` makes those uppercase sources distinct from their canonical
+lowercase destinations, preventing self-redirects while keeping this work out of request-time
+middleware.
 
 ## Related
 

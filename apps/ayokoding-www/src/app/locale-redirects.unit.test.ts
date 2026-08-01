@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest";
 const configSource = readFileSync(join(__dirname, "../../next.config.ts"), "utf8");
 
 describe("ayokoding-www locale redirects", () => {
-  it("declares root and uppercase-locale redirects in Next config", () => {
+  it("declares case-sensitive root and uppercase-locale redirects in Next config", () => {
+    expect(configSource).toMatch(/experimental:\s*\{[\s\S]*?caseSensitiveRoutes:\s*true,/);
     expect(configSource).toContain('source: "/"');
     expect(configSource).toContain('destination: "/en"');
 

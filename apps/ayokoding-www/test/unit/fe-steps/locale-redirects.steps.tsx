@@ -13,9 +13,7 @@ const feature = await loadFeature(
 
 function expectPermanentRedirect(source: string, destination: string) {
   if (source === "/") {
-    expect(configSource).toContain(
-      `{ source: "${source}", destination: "${destination}", permanent: true }`,
-    );
+    expect(configSource).toContain(`{ source: "${source}", destination: "${destination}", permanent: true }`);
     return;
   }
 
@@ -33,6 +31,7 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
   Background(({ Given }) => {
     Given("the app is running", () => {
       expect(configSource).toContain("const localeEntryRedirects");
+      expect(configSource).toMatch(/experimental:\s*\{[\s\S]*?caseSensitiveRoutes:\s*true,/);
     });
   });
 
@@ -51,24 +50,21 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
   });
 
-  ScenarioOutline(
-    "Uppercase locale URLs redirect to lowercase canonical URLs",
-    ({ Given, When, Then }, variables) => {
-      const source = String(variables.source_url);
-      const destination = String(variables.destination_url);
+  ScenarioOutline("Uppercase locale URLs redirect to lowercase canonical URLs", ({ Given, When, Then }, variables) => {
+    const source = String(variables.source_url);
+    const destination = String(variables.destination_url);
 
-      Given('a visitor requests the uppercase locale URL "<source_url>"', () => {
-        expect(source).toMatch(/^\/[A-Z]{2}(?:\/|$)/);
-      });
+    Given('a visitor requests the uppercase locale URL "<source_url>"', () => {
+      expect(source).toMatch(/^\/[A-Z]{2}(?:\/|$)/);
+    });
 
-      When("locale redirects are applied", () => {
-        expect(configSource).toContain("...localeEntryRedirects");
-      });
+    When("locale redirects are applied", () => {
+      expect(configSource).toContain("...localeEntryRedirects");
+    });
 
-      // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature:Uppercase locale URLs redirect to lowercase canonical URLs
-      Then('the visitor is permanently redirected to "<destination_url>"', () => {
-        expectPermanentRedirect(source, destination);
-      });
-    },
-  );
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/i18n/locale-redirects.feature:Uppercase locale URLs redirect to lowercase canonical URLs
+    Then('the visitor is permanently redirected to "<destination_url>"', () => {
+      expectPermanentRedirect(source, destination);
+    });
+  });
 });

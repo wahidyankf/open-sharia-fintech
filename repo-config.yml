@@ -272,6 +272,7 @@ env-contract:
       allowlist:
         - PORT
         - HOSTNAME
+        - NODE_ENV # Node-reserved; read by static client-data refresh test guard
 
     - root: apps/organiclever-www
       kind: app

@@ -35,6 +35,13 @@ const localeEntryRedirects = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Redirect sources are case-sensitive. Without this explicit setting, Next
+  // treats `/EN/:path*` as a match for canonical `/en/:path*`, creating a
+  // permanent self-redirect loop. Keeping the finite locale rules below in
+  // config preserves static redirects without restoring request-time proxying.
+  experimental: {
+    caseSensitiveRoutes: true,
+  },
   // Legacy markdown pages can exceed Next's 60s default during the full SSG
   // fan-out; retain static generation instead of retrying them as failures.
   staticPageGenerationTimeout: 180,

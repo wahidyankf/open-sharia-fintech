@@ -7,6 +7,7 @@ import {
   derivePathBadges,
   resolveCoursePathRenderData,
   buildCourseTitleIndex,
+  courseTitlesFromClientData,
   humanizeKebabSlug,
   buildArcTitleIndex,
   slugFromPathname,
@@ -349,6 +350,24 @@ describe("buildCourseTitleIndex", () => {
     ]);
 
     expect(index).toEqual({ "version-control-and-git": "Git", "does-not-exist": "Does Not Exist" });
+  });
+});
+
+describe("courseTitlesFromClientData", () => {
+  it("preserves humanized titles for manifest-only course IDs after hydration", () => {
+    const titles = courseTitlesFromClientData({
+      manifests: [{ ...fixtureManifest, courseOrder: ["just-enough-python", "does-not-exist"] }],
+      prerequisitesByCourse: {},
+      libraryCourseIds: ["just-enough-python"],
+      courseLinks: {
+        "just-enough-python": { title: "Just Enough Python", slug: "learn/courses/just-enough-python" },
+      },
+    });
+
+    expect(titles).toEqual({
+      "just-enough-python": "Just Enough Python",
+      "does-not-exist": "Does Not Exist",
+    });
   });
 });
 

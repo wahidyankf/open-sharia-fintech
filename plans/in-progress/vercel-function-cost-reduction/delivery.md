@@ -774,8 +774,7 @@ every page on the site.
   - **Result**: `src/app/[locale]/layout.tsx` renders `lang={(await params).locale}` after its
     `isValidLocale(locale)` guard; the emitted-HTML check is retained in Phase 2.
 
-> **Plan correction (2026-08-01)**: the executable static-delivery Gherkin contract moves to Phase
-> 2. Its assertions depend on both Cause A and Cause B being absent; binding it here makes Phase 1's
+> **Plan correction (2026-08-01)**: the executable static-delivery Gherkin contract moves to Phase 2. Its assertions depend on both Cause A and Cause B being absent; binding it here makes Phase 1's
 > required quick gate fail for the deliberately retained Cause B RED state. Unit 1 remains one PR,
 > so the root-layout implementation still lands with its companion Gherkin before merge.
 
@@ -887,12 +886,12 @@ resolution" — see [prd.md](./prd.md).
   - **Date**: 2026-08-01. **Status**: done.
   - **Result**: source searches for `await searchParams` and a `searchParams` page-prop member
     returned zero non-test hits.
-      `grep -rn "await searchParams" apps/ayokoding-www/src --exclude-dir=node_modules` returns zero
-      hits outside tests.
+    `grep -rn "await searchParams" apps/ayokoding-www/src --exclude-dir=node_modules` returns zero
+    hits outside tests.
 - [x] `[AI]` Content catch-all is `●`/`○` in the route table, not `ƒ`.
   - **Date**: 2026-08-01. **Status**: done.
   - **Result**: the verified clean Turbopack build generated 2,103 routes and printed `●
-    /[locale]/[...slug]`; its prerender manifest had 2,103 entries and emitted `lang="en"` and
+/[locale]/[...slug]`; its prerender manifest had 2,103 entries and emitted `lang="en"` and
     `lang="id"`. Later local reruns were stopped only after Turbopack generated artifacts exceeded
     available workspace disk; route-source changes did not regress the verified static boundary.
   - Acceptance: the prerender manifest has `>= 2000` routes, proving both Cause A and Cause B are
@@ -920,7 +919,7 @@ only hot-path work is dead.
   - **Date**: 2026-08-01. **Status**: RED verified.
   - **Files Changed**: `apps/ayokoding-www/src/app/locale-redirects.unit.test.ts`.
   - **Result**: focused Vitest fails because `next.config.ts` has no root redirect yet.
-      rather than in middleware.
+    rather than in middleware.
   - File: `apps/ayokoding-www/src/app/locale-redirects.unit.test.ts` (new)
   - Assertion: read `apps/ayokoding-www/next.config.ts` as a string (the
     `security-headers.unit.test.ts` pattern) and require a `redirects()` entry whose `source` is
@@ -932,12 +931,15 @@ only hot-path work is dead.
   - This guard is what makes deleting the middleware safe: it fails the moment a redirect loses its
     replacement home, which is precisely the regression Phase 0.6 proved is possible.
 - [x] `[AI]` **GREEN** — move both redirects into `apps/ayokoding-www/next.config.ts` `redirects()`.
-  - **Date**: 2026-08-01. **Status**: done.
+  - **Date**: 2026-08-02. **Status**: corrected after review.
   - **Files Changed**: `apps/ayokoding-www/next.config.ts`.
   - **Result**: root plus all uppercase English/Indonesian variants, with their path tails, use
-    permanent config redirects. The focused redirect guard passes.
-  - `/` → `/en`, and the uppercase-locale variants. `path-to-regexp` is case-**sensitive** and cannot
-    lowercase a captured parameter, so enumerate the finite variants literally for both locales
+    permanent config redirects. `experimental.caseSensitiveRoutes: true` makes each uppercase
+    source distinct from its lowercase destination, so canonical URLs cannot self-redirect while
+    the app remains free of request-time middleware or proxying.
+  - `/` → `/en`, and the uppercase-locale variants. Next's default custom-route matching is
+    case-insensitive; the explicit case-sensitive routing setting makes the finite enumerated
+    variants safe for both locales
     (`/EN`, `/En`, `/eN`, plus their `/:path*` forms, and the same for `id`).
   - Append to the existing `redirects()` array — do **not** modify the 74 existing rules.
   - Config redirects are evaluated **before** middleware in Next.js's routing order, so behaviour is
@@ -949,7 +951,7 @@ only hot-path work is dead.
   - **Files Changed**: deleted `src/middleware.ts`, `src/features/i18n/shell/middleware.ts`, and
     its obsolete direct test; updated the app README and removed their stale coverage exclusions.
   - **Result**: no source imports or calls remain; TypeScript and the replacement config guard pass.
-      `src/features/i18n/shell/middleware.ts` to whatever pure helpers remain in use.
+    `src/features/i18n/shell/middleware.ts` to whatever pure helpers remain in use.
   - Acceptance: `test ! -f apps/ayokoding-www/src/middleware.ts` exits 0, and the build emits no
     middleware bundle (`.next/server/middleware-manifest.json` has no matcher for this app).
   - Note the secondary benefit: Vercel documents that middleware can accrue **Fast Origin Transfer
@@ -958,8 +960,8 @@ only hot-path work is dead.
   - **Date**: 2026-08-01. **Status**: not applicable.
   - **Result**: no middleware responsibility survives after config redirects replace the only
     request-time behavior, so no `proxy.ts` is introduced.
-      `proxy.ts` with the codemod `npx @next/codemod@canary middleware-to-proxy .` rather than
-      leaving a deprecated `middleware.ts` whose runtime behaviour on 16.2.6 is unresolved.
+    `proxy.ts` with the codemod `npx @next/codemod@canary middleware-to-proxy .` rather than
+    leaving a deprecated `middleware.ts` whose runtime behaviour on 16.2.6 is unresolved.
 
 **Gherkin (binds) →** "Locale entry redirects are preserved without middleware".
 
@@ -969,7 +971,9 @@ only hot-path work is dead.
     `apps/ayokoding-www/test/unit/fe-steps/locale-redirects.steps.tsx`, and
     `apps/ayokoding-www-fe-e2e/src/steps/locale-redirects.steps.ts`.
   - **Result**: the locale-entry redirect contract is covered by 44 behavior specifications,
-    374 scenarios, and 1,345 steps; E2E coverage reports no unbound steps.
+    374 scenarios, and 1,345 steps; unit coverage asserts the case-sensitive setting and E2E
+    coverage asserts the actual 308 response plus destination. E2E coverage reports no unbound
+    steps.
 
 ### Phase 3 Gate
 
@@ -1033,7 +1037,7 @@ only hot-path work is dead.
       Vercel but **is required by this app's Dockerfile** — do not delete it blindly.
   - **Date**: 2026-08-02. **Status**: retained and verified.
   - **Command**: `docker build --progress=plain --tag ose-public-ayokoding-standalone:plan-verify
-    --file apps/ayokoding-www/Dockerfile .`.
+--file apps/ayokoding-www/Dockerfile .`.
   - **Result**: the Dockerfile completed its production build, generated all 2,103 static pages,
     assembled the standalone runner, and exported image
     `sha256:56e48460e52756405c2c372d21869ea20589639696c1bcaa000c17288833c506`.
@@ -1087,7 +1091,7 @@ only hot-path work is dead.
 - [x] `[AI]` Content files traced into the tRPC function bundle substantially reduced from 7,515.
   - **Date**: 2026-08-01. **Status**: done.
   - **Command**: `jq '[.files[] | select(startswith("content/"))] | length'
-    apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
+apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
   - **Result**: the generated trace contained 0 content files. The subsequent static export failed,
     so its generated `.next` directory was removed after recording this compiled-route artifact.
 - [x] `[AI]` `getBySlug` executes once per render pass.
