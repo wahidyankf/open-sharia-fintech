@@ -48,9 +48,22 @@ When("a visitor requests GET \\/system\\/status\\/be", async ({ page }) => {
   await page.waitForLoadState("load");
 });
 
+When("a crawler requests GET \\/system\\/status\\/be", async ({ page }) => {
+  await page.goto("/system/status/be");
+  await page.waitForLoadState("load");
+});
+
 Then("the response status is 200", async ({ page }) => {
   // Page loaded without an error boundary — any URL is valid here
   await expect(page.locator("main")).toBeVisible();
+});
+
+// @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:Backend health-check page is excluded from search indexes
+Then("the response declares the page non-indexable", async ({ page }) => {
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    "noindex",
+  );
 });
 
 // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows Not Configured when env unset
