@@ -47,4 +47,4 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 
 ### Ecosystem
 
-- [Related Repositories](./related-repositories.md) - Sibling repositories derived from or related to `ose-public` (notably `ose-primer`), upstream/downstream relationships, and license differences
+- [Related Repositories](./related-repositories.md) - Catalogue of the four sibling repositories in the Open Sharia Enterprise family (`ose-public`, `ose-primer`, `ose-private`, `beaver-nest`) with visibility, license, and purpose — plus upstream/downstream relationships, license differences, and which repositories sit inside the parity loop

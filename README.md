@@ -161,7 +161,14 @@ See [`docs/README.md`](./docs/README.md) for details.
 
 ## 🔗 Related Repositories
 
-- **[`ose-primer`](https://github.com/wahidyankf/ose-primer)** — public, MIT-licensed template repository derived from `ose-public`. Packages scaffolding (governance, AI agents, skills, conventions, CI harness, polyglot demo apps) into a reusable starting point. `ose-public` is upstream source of truth; content parity with `ose-primer` is maintained manually via the multi-repo parity planning workflows. For the upstream/downstream relationship and license difference, see [Related Repositories reference](./docs/reference/related-repositories.md).
+`ose-public` is one of four sibling repositories in the Open Sharia Enterprise (OSE) family. The four repositories cross-reference each other directly — no parent coordination repository exists.
+
+- **[`ose-public`](https://github.com/wahidyankf/ose-public)** — MIT, public. This repository. The main OSE platform monorepo and upstream source of truth for governance, conventions, AI agents, and scaffolding.
+- **[`ose-primer`](https://github.com/wahidyankf/ose-primer)** — MIT, public. Template repository derived from `ose-public`. Packages scaffolding (governance, AI agents, skills, conventions, CI harness, polyglot demo apps) into a reusable starting point. `ose-public` is upstream; content parity is maintained manually via the multi-repo parity planning workflows.
+- **[`ose-private`](https://github.com/wahidyankf/ose-private)** — Proprietary, private. The unexposed surface of OSE: self-hosted GitHub Actions runner stack and the `coralpolyp` app. Not publicly accessible.
+- **[`beaver-nest`](https://github.com/wahidyankf/beaver-nest)** — MIT, public. BeaverNest, a personal operating layer built as a product within the OSE ecosystem. Scaffolded from this lineage but standing **outside** the parity loop — it does not participate in cross-repo parity syncs.
+
+For the full catalogue, upstream/downstream relationships, and license differences, see the [Related Repositories reference](./docs/reference/related-repositories.md).
 
 ## 🎯 Motivation
 

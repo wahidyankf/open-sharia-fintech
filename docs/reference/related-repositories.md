@@ -7,6 +7,7 @@ tags:
   - reference
   - ose-primer
   - ose-private
+  - beaver-nest
   - ecosystem
   - cross-repo
 created: 2026-04-18
@@ -16,13 +17,16 @@ created: 2026-04-18
 
 This reference documents the external repositories that exist in the `open-sharia-enterprise` ecosystem, the relationships between them, and where to find authoritative source-of-truth for each concern.
 
-The ecosystem consists of three independent sibling repositories. No parent coordination repository exists.
+The ecosystem consists of four independent sibling repositories. No parent coordination repository exists.
 
 | Repository                                                 | Visibility | License     | Purpose                                                    |
 | ---------------------------------------------------------- | ---------- | ----------- | ---------------------------------------------------------- |
 | [`ose-public`](https://github.com/wahidyankf/ose-public)   | Public     | MIT         | Enterprise platform — upstream source of truth (this repo) |
 | [`ose-primer`](https://github.com/wahidyankf/ose-primer)   | Public     | MIT         | Scaffolding template derived from `ose-public`             |
 | [`ose-private`](https://github.com/wahidyankf/ose-private) | Private    | Proprietary | Infrastructure — self-hosted CI runner, `coralpolyp` app   |
+| [`beaver-nest`](https://github.com/wahidyankf/beaver-nest) | Public     | MIT         | BeaverNest — personal operating layer product on OSE       |
+
+Three of the four — `ose-public`, `ose-primer`, and `ose-private` — form the **parity loop** whose generic content is kept aligned. `beaver-nest` is a full family member that stands **outside** that loop.
 
 ## `ose-primer`
 
@@ -70,3 +74,21 @@ Both directions — propagation (upstream → downstream) and adoption (downstre
 ### Licensing
 
 `ose-private` is **proprietary** (not MIT). It is listed here for ecosystem awareness; contributors to `ose-public` are not expected to have access.
+
+## `beaver-nest`
+
+`beaver-nest` ([github.com/wahidyankf/beaver-nest](https://github.com/wahidyankf/beaver-nest)) is a public, MIT-licensed repository hosting **BeaverNest** — a personal operating layer covering an AI assistant, a content builder, a posting helper, and a personal workflow engine. It is a product built **within** the Open Sharia Enterprise ecosystem, not a replacement for it.
+
+### Relationship to `ose-public`
+
+`beaver-nest` scaffolded from this ecosystem — its governance tree, agent catalog, skills, conventions, and CI harness all originate in `ose-public` lineage. It is nonetheless a **fourth repository standing outside the parity loop**: it does not participate in cross-repo parity syncs in either direction, and no parity plan targets it. Adopting an `ose-public` change into `beaver-nest` is a deliberate, separately-planned decision made inside that repository.
+
+Its product surface (`apps/beaver-nest-fe`, `apps/beaver-nest-be`) is product-specific and never flows back here.
+
+### `apps/rhino-cli` boundary
+
+`apps/rhino-cli` must be byte-identical across the three parity repositories per the [SDLC Gate Standard](./sdlc-gate-standard.md#rhino-cli-byte-identity-boundary). `beaver-nest` carries a **fork** of that shared tool which is explicitly **not** bound by the byte-identity rule.
+
+### Licensing
+
+`beaver-nest` is **MIT throughout**, matching `ose-public` and `ose-primer`.

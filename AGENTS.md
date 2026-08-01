@@ -422,7 +422,7 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 
 ## Related Repositories
 
-Three independent sibling repositories (no parent coordination repo):
+Four independent sibling repositories in the Open Sharia Enterprise family (no parent coordination repo):
 
 - [`ose-public`](https://github.com/wahidyankf/ose-public) — this repo; upstream source of truth for
   scaffolding. MIT licensed.
@@ -430,14 +430,20 @@ Three independent sibling repositories (no parent coordination repo):
   layer: governance, AI agents, skills, conventions, CI harness, polyglot demo apps). MIT licensed.
 - [`ose-private`](https://github.com/wahidyankf/ose-private) — private infrastructure repo (GitHub Actions
   runner stack, `coralpolyp` app). Proprietary; not publicly accessible.
+- [`beaver-nest`](https://github.com/wahidyankf/beaver-nest) — BeaverNest, a personal operating layer
+  built as a product within the OSE ecosystem. MIT licensed; scaffolded from this lineage but
+  **outside** the parity loop.
 
-Content parity between `ose-public` and `ose-primer` maintained via
-[plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
-workflow. `ose-private` does not participate in the parity loop.
+Two distinct cross-repo boundaries apply, and they cover different repository sets:
 
-`apps/rhino-cli` must be byte-identical (zero carve-outs) across all three repos, including its
-Gherkin behavior tree at `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
-[SDLC Gate Standard](./docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
+- **Classifier-driven content parity** — between `ose-public` and `ose-primer` only, maintained via the
+  [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
+  workflow. `ose-private` and `beaver-nest` do not participate in it.
+- **`apps/rhino-cli` byte-identity** — spans `ose-public`, `ose-primer`, and `ose-private`. The tool must
+  be byte-identical (zero carve-outs) across those three repos, including its Gherkin behavior tree at
+  `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
+  [SDLC Gate Standard](./docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
+  `beaver-nest` carries a **fork** of that tool and is explicitly **not** bound by the byte-identity rule.
 
 See: [Related Repositories reference](./docs/reference/related-repositories.md).
 
