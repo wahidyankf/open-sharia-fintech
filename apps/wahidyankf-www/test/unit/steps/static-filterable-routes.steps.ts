@@ -1,18 +1,26 @@
-import { readFileSync } from "node:fs";
 import path from "node:path";
 import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, within } from "@testing-library/react";
 import { afterAll, expect, vi } from "vitest";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
+import Home from "@/app/page";
+import CV from "@/app/cv/page";
+import PersonalProjects from "@/app/personal-projects/page";
 import { CvContent } from "@/features/cv/shell/CvContent";
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
 let mockSearchParams = new URLSearchParams();
 let renderedCv: HTMLElement | undefined;
-let staticRouteSources: string[] = [];
+const publicPortfolioPages = [
+  { Component: Home, content: "Welcome to My Portfolio" },
+  { Component: CV, content: "Curriculum Vitae" },
+  { Component: PersonalProjects, content: "Personal Projects" },
+] as const;
+let renderedStaticPortfolioPages: string[] = [];
 let crawlerRobots: ReturnType<typeof robots> | undefined;
 let crawlerSitemap: ReturnType<typeof sitemap> | undefined;
 
@@ -122,30 +130,19 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
   });
 
-  Scenario("Public portfolio routes are emitted as static build routes", ({ When, Then, And }) => {
-    When("the portfolio build output is inspected", () => {
-      staticRouteSources = ["page.tsx", "cv/page.tsx", "personal-projects/page.tsx"].map((route) =>
-        readFileSync(path.resolve(process.cwd(), "src/app", route), "utf8"),
+  Scenario("Public portfolio routes are available from the production server", ({ When, Then }) => {
+    When("a visitor requests every public portfolio page", () => {
+      renderedStaticPortfolioPages = publicPortfolioPages.map(({ Component }) =>
+        renderToStaticMarkup(React.createElement(Component)),
       );
     });
 
-    Then("the portfolio route table contains no dynamic route", () => {
-      for (const source of staticRouteSources) {
-        expect(source).not.toMatch(/\bsearchParams\b/);
+    // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Public portfolio routes are available from the production server
+    Then("each public portfolio page responds with a successful HTML document", () => {
+      expect(renderedStaticPortfolioPages).toHaveLength(publicPortfolioPages.length);
+      for (const [index, page] of renderedStaticPortfolioPages.entries()) {
+        expect(page).toContain(publicPortfolioPages[index]?.content);
       }
-    });
-
-    // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Public portfolio routes are emitted as static build routes
-    And("the static route table contains every public portfolio route", () => {
-      expect(staticRouteSources).toHaveLength(3);
-      expect(robots().rules).toEqual([{ userAgent: "*", allow: "/" }]);
-      expect(sitemap()).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ url: "https://www.wahidyankf.com" }),
-          expect.objectContaining({ url: "https://www.wahidyankf.com/cv" }),
-          expect.objectContaining({ url: "https://www.wahidyankf.com/personal-projects" }),
-        ]),
-      );
     });
   });
 

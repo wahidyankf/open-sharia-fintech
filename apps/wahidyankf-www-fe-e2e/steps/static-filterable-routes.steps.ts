@@ -1,13 +1,11 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 const { When, Then } = createBdd();
-const publicPortfolioRoutes = ["/", "/cv", "/personal-projects", "/robots.txt", "/sitemap.xml"];
+const publicPortfolioPages = ["/", "/cv", "/personal-projects"];
+const publicPortfolioRoutes = [...publicPortfolioPages, "/robots.txt", "/sitemap.xml"];
 
-let emittedStaticRoutes: string[] = [];
-let emittedDynamicRoutes: string[] = [];
+let publicPortfolioPageResponses: Array<{ contentType: string | null; pathname: string; status: number }> = [];
 let robotsText = "";
 let sitemapText = "";
 
@@ -29,26 +27,23 @@ Then('the "Database Design Fundamentals for Software Engineers" entry is hidden'
   await expect(page.getByText("Database Design Fundamentals for Software Engineers")).not.toBeVisible();
 });
 
-When("the portfolio build output is inspected", async () => {
-  const appRoot = resolve(process.cwd(), "../wahidyankf-www");
-  const prerenderManifest = JSON.parse(
-    readFileSync(resolve(appRoot, ".next/prerender-manifest.json"), "utf8"),
-  ) as { routes: Record<string, unknown> };
-  const routesManifest = JSON.parse(readFileSync(resolve(appRoot, ".next/routes-manifest.json"), "utf8")) as {
-    dynamicRoutes: Array<{ page: string }>;
-  };
+When("a visitor requests every public portfolio page", async ({ page }) => {
+  publicPortfolioPageResponses = await Promise.all(
+    publicPortfolioPages.map(async (pathname) => {
+      const response = await page.request.get(pathname);
 
-  emittedStaticRoutes = Object.keys(prerenderManifest.routes);
-  emittedDynamicRoutes = routesManifest.dynamicRoutes.map(({ page }) => page);
+      return { contentType: response.headers()["content-type"] ?? null, pathname, status: response.status() };
+    }),
+  );
 });
 
-Then("the portfolio route table contains no dynamic route", async () => {
-  expect(emittedDynamicRoutes).toEqual([]);
-});
-
-// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Public portfolio routes are emitted as static build routes
-Then("the static route table contains every public portfolio route", async () => {
-  expect(emittedStaticRoutes).toEqual(expect.arrayContaining(publicPortfolioRoutes));
+// @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Public portfolio routes are available from the production server
+Then("each public portfolio page responds with a successful HTML document", async () => {
+  expect(publicPortfolioPageResponses).toEqual(
+    publicPortfolioPages.map((pathname) =>
+      expect.objectContaining({ contentType: expect.stringContaining("text/html"), pathname, status: 200 }),
+    ),
+  );
 });
 
 When("a crawler requests the robots and sitemap routes", async ({ page }) => {

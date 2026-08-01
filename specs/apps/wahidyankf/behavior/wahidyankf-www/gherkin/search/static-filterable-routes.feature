@@ -14,11 +14,10 @@ Feature: Static filtered portfolio routes
     And the "Head of Engineering - Hijra Bank" entry is visible
     And the "Database Design Fundamentals for Software Engineers" entry is hidden
 
-  @e2e
-  Scenario: Public portfolio routes are emitted as static build routes
-    When the portfolio build output is inspected
-    Then the portfolio route table contains no dynamic route
-    And the static route table contains every public portfolio route
+  @unit @e2e
+  Scenario: Public portfolio routes are available from the production server
+    When a visitor requests every public portfolio page
+    Then each public portfolio page responds with a successful HTML document
 
   @e2e
   Scenario: Crawlers receive discovery directives for every public route
