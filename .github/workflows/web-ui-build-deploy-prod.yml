@@ -13,8 +13,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  detect-changes:
+    name: Detect web-ui changes since production
+    runs-on: ubuntu-latest
+    outputs:
+      has-changes: ${{ steps.check.outputs.has-changes }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          if git fetch origin prod-web-ui:refs/remotes/origin/prod-web-ui; then
+            if git diff --quiet origin/prod-web-ui HEAD -- libs/web-ui/; then
+              echo "has-changes=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "has-changes=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            # The production branch does not exist yet, so create its first deployment.
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: Build Storybook
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.has-changes == 'true'
     runs-on: ubuntu-latest
     env:
       STORYBOOK_DISABLE_TELEMETRY: "1"
@@ -26,7 +50,8 @@ jobs:
 
   deploy:
     name: Deploy to prod-web-ui
-    needs: [build]
+    needs: [build, detect-changes]
+    if: needs.detect-changes.outputs.has-changes == 'true' && needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

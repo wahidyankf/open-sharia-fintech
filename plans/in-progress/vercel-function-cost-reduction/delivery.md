@@ -1045,36 +1045,60 @@ Independent of Units 1 and 2.
     is currently crawlable. Server-side metadata means crawlers that do not run JS still see it.
   - Command: `nx run organiclever-app-web:test:unit`
   - Acceptance: the RED test passes; no other test breaks.
-- [ ] `[AI]` **REFACTOR** — confirm the directive reaches the rendered HTML, not just the module.
+- [x] `[AI]` **REFACTOR** — confirm the directive reaches the rendered HTML, not just the module.
   - Command: `nx build organiclever-app-web`, then request the route and inspect the response body.
   - Acceptance: the served HTML carries `<meta name="robots" content="noindex">`. Falsifiable both
     ways: absent before this phase. A module-level assertion alone would pass even if Next.js never
     emitted the tag, which is why this substep exists.
+  - **Verified 2026-08-02**: `npm exec nx -- run organiclever-app-web:build --skip-nx-cache` exited 0. The built standalone app, served locally with `ORGANICLEVER_BE_URL` unset, returned `HTTP 200`
+    for `/system/status/be`; its response body contained the exact
+    `<meta name="robots" content="noindex"/>` tag before the page body. The local verification server
+    was then stopped.
 
 **Gherkin (binds) →** "The backend health-check page is excluded from search indexes".
 
-- [ ] `[AI]` Write the companion feature file under
+- [x] `[AI]` Write the companion feature file under
       `specs/apps/organiclever/behavior/organiclever-app-web/gherkin/`. This is a
       behaviour-changing step, so Gherkin is owed; the `force-dynamic` deletions above are not.
-- [ ] `[AI]` Gate the daily Storybook rebuild.
+  - **Verified 2026-08-02**: extended the existing health feature with
+    `Backend health-check page is excluded from search indexes` and its unit step definition.
+    `npm exec vitest -- run --project unit test/unit/steps/health/system-status-be.steps.tsx` passed
+    (**25** tests); `npm exec nx -- run organiclever-app-web:specs:behavior:coverage` reported all
+    **14** specs, **77** scenarios, and **312** steps covered; repository Gherkin cardinality
+    validation passed.
+- [x] `[AI]` Gate the daily Storybook rebuild.
   - `.github/workflows/web-ui-build-deploy-prod.yml:5` schedules `cron: "0 0 * * *"` and line 36
-    force-pushes unconditionally, while `libs/web-ui/vercel.json` has no `ignoreCommand` — so Vercel
-    rebuilds Storybook every single day whether or not `libs/web-ui` changed.
-  - Gate it on a `libs/web-ui/` diff, mirroring `_reusable-www-test-local-deploy.yml:112,122`, and
-    add an `ignoreCommand` to `libs/web-ui/vercel.json`.
-  - Acceptance: the workflow has a change-detection step guarding the push, and the `vercel.json`
-    has an `ignoreCommand`. Falsifiable both ways: neither exists today.
+    force-pushes unconditionally, so Vercel rebuilds Storybook every single day whether or not
+    `libs/web-ui` changed.
+  - Gate it on a `libs/web-ui/` diff, mirroring `_reusable-www-test-local-deploy.yml:112,122`.
+  - Acceptance: the workflow has a change-detection step guarding both Storybook build and the push.
+    Falsifiable both ways: before this step each job runs daily; after it, neither runs without a
+    `libs/web-ui/` change since the deployed production ref.
     > The apex-redirect HTTPS-downgrade fix used to live here. It is a Vercel domain setting with no
     > dependency on any code in this unit, so it moved to **step 0.9** to keep every `[HUMAN]` action in
     > one sitting. **Unit 3 is now 100% `[AI]`.**
+  - **Verified 2026-08-02**: the workflow compares `HEAD` with `origin/prod-web-ui` over
+    `libs/web-ui/`, bootstraps the production branch if absent, and gates both Storybook build and
+    force-push on that result. `actionlint`, Prettier, and JSON parsing passed.
+  - **Correction 2026-08-02 (review cycle 1)**: removed the Vercel `ignoreCommand`. Its
+    `HEAD^..HEAD` window can skip a required build when an older `web-ui` change is followed by an
+    unrelated commit; the workflow's deployed-ref comparison is the single reliable gate and prevents
+    Vercel from receiving an unchanged ref at all.
 
 ### Phase 6 Gate
 
-- [ ] `[AI]` Exactly one `force-dynamic` remains in `organiclever-app-web` (9 before, 1 after), and
+- [x] `[AI]` Exactly one `force-dynamic` remains in `organiclever-app-web` (9 before, 1 after), and
       route tables unchanged.
-- [ ] `[AI]` `/system/status/be` emits a server-rendered `noindex` in the served HTML.
-- [ ] `[AI]` Storybook deploy gated in both the workflow and `vercel.json`.
-- [ ] `[AI]` `nx run organiclever-app-web:test:quick` exits 0; workflow lints clean (actionlint).
+- [x] `[AI]` `/system/status/be` emits a server-rendered `noindex` in the served HTML.
+- [x] `[AI]` Storybook build and deploy are gated in the workflow.
+- [x] `[AI]` `nx run organiclever-app-web:test:quick` exits 0; workflow lints clean (actionlint).
+  - **Verified 2026-08-02**: source search returned the sole kept directive at
+    `system/status/be/page.tsx`; the fresh production output contains prerendered HTML for all seven
+    affected `/app/*` pages and none for the dynamic health-check. The served health-check response
+    was previously confirmed as `HTTP 200` with `<meta name="robots" content="noindex"/>`.
+    Storybook change detection compares the deployed production ref and passed actionlint, Prettier,
+    and JSON parsing. The fresh command below exited `0`; actionlint is clean:
+    `npm exec -- nx run organiclever-app-web:test:quick --skip-nx-cache`.
 - [ ] `[AI]` **Unit 3 delivery boundary** — review cycle, then `[AI]` merge.
 
 > **Pause Safety**: safe to stop. Unit 3 is pure waste removal.

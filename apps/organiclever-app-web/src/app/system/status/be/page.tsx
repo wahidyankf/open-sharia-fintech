@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { env } from "../../../../env";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 type Probe =
   | { kind: "unset" }
