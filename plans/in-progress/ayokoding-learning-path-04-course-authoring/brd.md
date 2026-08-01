@@ -2,10 +2,12 @@
 
 ## Business Goal
 
-Fill the shared course library with the **90 course bodies** it does not yet have, so that the
+Fill the shared course library with **21 of the course bodies** it does not yet have, so that the
 four-path product the split delivers has something to compose. A path manifest is an ordered list of
-course IDs; an ID with no resolving body is an integrity failure, not a path. **This plan is the one
-that turns an architecture into a curriculum.**
+course IDs; an ID with no resolving body is an integrity failure, not a path. **This plan turns the
+first slice of the architecture into a curriculum** — the fourth path's spine plus two of nine bands;
+the remaining 69 bodies and the three course-surgery contracts are carried by seven successor plans
+(see [README §Successor plans](./README.md#successor-plans)).
 
 Concretely it authors:
 
@@ -14,16 +16,17 @@ Concretely it authors:
   and adaptation — the spine of the fourth path
   (`careers/immediately-effective/ai-engineer`), and **authoring priority #1** under the
   locked build order (DD-27).
-- **61 transferred topics** (FS-SE topics 34–94), authored **native** into `courses/` — no legacy
-  home, therefore no re-home and no redirect.
-- **10 remaining new courses** the productivity, harness, and security clusters need.
-- **8 remaining capstones** — 2 original plus 6 of the 7 DD-20 inter-topic capstones.
-- **5 deferred interview-technique bodies** (Band 9) — the four interview courses plus
-  `capstone-interview-loop`, deliberately deferred out of the architecture-smoke-test MVP gate so
-  they never blocked the AI path's authoring start.
-- **3 course-surgery scope contracts** — the evals forward-link contract, the D9 naming-and-citation
-  contract, and the D11 concept-addition contract — locked once and applied by construction when
-  their target bodies are authored, rather than retrofitted later.
+- **Band 1 — Data depth** (5 transferred FS-SE topics): `nosql-databases`, `graph-databases`,
+  `database-internals-and-storage-engines`, `data-engineering`, `search-and-information-retrieval`.
+- **Band 2 — Web, backend & platform productivity** (10 courses): `api-design`, `advanced-frontend`,
+  `backend-at-scale`, `async-python-and-fastapi-services`, `self-hosting-essentials`,
+  `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`,
+  `build-automation-and-task-runners`, `information-architecture-and-seo`.
+
+The remaining 56 transferred topics, the 8 remaining capstones, the 5 deferred interview-technique
+bodies (Band 9), and the 3 course-surgery scope contracts are **no longer this plan's scope** — they
+are carried forward by the seven successor plans named in
+[README §Successor plans](./README.md#successor-plans).
 
 The business change here is **content**, not architecture: no schema, no route, no component, no
 redirect, and — by binding invariant — **no manifest**.
@@ -39,9 +42,10 @@ coverage, worked-example volume, and prerequisite edges. That fails in a specifi
   judgment call" silently drops concepts nobody notices are missing until a reader hits the gap.
 - **Prerequisite edges get invented.** A body that declares a prerequisite the spec never named adds
   an edge to the library's DAG. The DAG stops being topologically consistent — and that failure does
-  **not** surface here. It surfaces much later, in
-  `ayokoding-learning-path-05-manifests`, as a manifest-integrity failure with no traceable link
-  back to the authoring decision that caused it.
+  **not** surface here. It surfaces much later, in whichever of
+  `ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest`
+  composes the affected path, as a manifest-integrity failure with no traceable link back to the
+  authoring decision that caused it.
 - **Scope boundaries collapse.** The library's largest historical duplication risk is the AI band:
   three courses independently teaching evals, and a survey course re-teaching what the harness
   cluster owns. Only an explicit, pre-locked scope contract prevents a fourth treatment appearing.
@@ -82,7 +86,8 @@ shape is specified in `README.md` rather than left to convention.
   systems. The six net-new AI courses are that on-ramp. (Re-scoped 2026-07-21: the path assumes no
   prior software-engineering competence and includes its prerequisites in `courseOrder` rather than
   linking out. Those prerequisites are existing library courses, so the re-scoping lengthens the
-  path's manifest — owned by `ayokoding-learning-path-05-manifests` — without adding a body here.)
+  path's manifest — owned by `ayokoding-learning-path-13-careers-ai-manifest` — without adding a
+  body here.)
 - The library's evals material is triple-taught with no single owner, and its agent primitives risk
   being taught twice (once as survey, once at build-your-own depth). Both are duplication the
   shared-library model exists to prevent.
@@ -106,9 +111,10 @@ shape is specified in `README.md` rather than left to convention.
 
 Solo-maintainer repo — no sign-off ceremony. The maintainer wears:
 
-- **Content strategist** — owns each course's scope boundary against its siblings, and the three
-  course-surgery contracts.
-- **Content author** (via the `apps-ayokoding-www-*-maker` agents) — writes the 90 bodies.
+- **Content strategist** — owns each course's scope boundary against its siblings. (The three
+  course-surgery contracts are no longer this plan's concern — they target Band 5, which moved to
+  `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`.)
+- **Content author** (via the `apps-ayokoding-www-*-maker` agents) — writes the 21 bodies.
 - **Content reviewer** (via the `apps-ayokoding-www-*-checker` plus facts and link checkers) —
   validates every body before its PR merges.
 
@@ -121,7 +127,8 @@ accuracy pre-verification pass.
 **Roles explicitly NOT worn by this plan**: frontend engineer (owned by
 `ayokoding-learning-path-03-navigation-ui`), data/schema author (owned by
 `ayokoding-learning-path-02-schema-and-prerequisite-dag`), path composer (owned by
-`ayokoding-learning-path-05-manifests`), IA/URL owner (owned by
+`ayokoding-learning-path-12-careers-se-manifests` and its sibling
+`ayokoding-learning-path-13-careers-ai-manifest`), IA/URL owner (owned by
 `ayokoding-learning-path-01-url-restructure`).
 
 ## Business-Level Success Metrics
@@ -129,9 +136,9 @@ accuracy pre-verification pass.
 Each metric below is an **observable check**, not a projected number. Where a claim rests on
 judgment rather than a check, it is labelled.
 
-- **90 authored bodies exist** (observable): every slug listed in
+- **21 authored bodies exist** (observable): every slug listed in
   `evidence/authored-body-slugs.txt` resolves to a directory under `<COURSES>`. Falsifiable in both
-  directions — before Phase 1 all 90 are absent; after Band 9 none is.
+  directions — before Phase 1 all 21 are absent; after Band 2 none is.
 - **Every body traces to its spec** (observable): each authored course's scope, concept coverage,
   and declared prerequisites match the `co-NN` / `ex-NN` / prerequisite-chain enumeration in its
   `syllabus/courses/<course-id>.md` spec. Verified per-course by its checker pass.
@@ -147,13 +154,13 @@ judgment rather than a check, it is labelled.
   `detection-engineering-and-siem-operations` names `defensive-security`; `self-hosting-essentials`
   names the cluster and IaC courses it stays below. Each is a grep-checkable assertion on the
   course's own `overview.md`.
-- **The AI-band scope-guard holds** (observable): `agentic-ai`'s overview names and forward-links all
-  five harness-cluster courses, and no lesson in `agentic-ai/` builds a working
-  loop / tool / memory / permission / orchestration implementation.
-- **The three course-surgery contracts are applied by construction** (observable): each of the three
-  evals-donor courses forward-links `deep-evals`; `agent-context-and-memory` carries its
-  context-engineering lineage citation; the harness cluster and the coding-agent capstone carry the
-  harness-engineering citation; the four D11 concepts appear in their named target courses.
+
+> Two success metrics from this plan's original 90-body scope — the AI-band scope-guard holding on
+> `agentic-ai`/the harness cluster, and the three course-surgery contracts being applied by
+> construction — moved with Band 5 to
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, which authors that
+> content and restates the equivalent metrics in its own `brd.md`.
+
 - **No manifest file changed in this plan's commits** (observable): the plan's own diff across all
   merged PRs touches zero paths under `<MANIFESTS>`. This is the manifest ownership invariant
   expressed as a business check.
@@ -165,12 +172,15 @@ judgment rather than a check, it is labelled.
 ## Business-Scope Non-Goals
 
 - **Editing any manifest file.** Binding invariant — owned by
-  `ayokoding-learning-path-05-manifests`. Not a scope preference; a correctness requirement.
+  `ayokoding-learning-path-12-careers-se-manifests` and its sibling
+  `ayokoding-learning-path-13-careers-ai-manifest`. Not a scope preference; a correctness requirement.
 - **Building any part of the navigation UI.** The path rail, banner, breadcrumb, prerequisite-list
   component, path landings, and paths hub belong to `ayokoding-learning-path-03-navigation-ui`.
 - **Re-homing the 33 shipped topics or the 4 existing capstones.** Those bodies already exist; moving
   them is `ayokoding-learning-path-01-url-restructure`'s work. This plan authors only what has no
-  body yet — which is why `capstone-solid-core` is absent from its 90 despite being a DD-20 capstone.
+  body yet — which is why `capstone-solid-core` is absent from its 21 despite being a DD-20 capstone
+  (the other six DD-20 capstones are Band 8, also absent from this plan's 21 — they moved to
+  `ayokoding-learning-path-11-course-authoring-capstones`).
 - **Defining the `prerequisites` frontmatter contract.** This plan **consumes** the contract;
   `ayokoding-learning-path-02-schema-and-prerequisite-dag` owns its canonical shape.
 - **Adding an Indonesian mirror of the course content** — deferred, recorded as a decision rather
@@ -194,12 +204,17 @@ judgment rather than a check, it is labelled.
 | A step in this plan mutates a manifest, making the wave order unschedulable.                                                                                                                                                                                                          | The manifest ownership invariant is stated in `README.md`, `tech-docs.md`, and `delivery.md`; the handoff is a five-field band-completion signal; a phase gate asserts the plan's diff touches zero paths under `<MANIFESTS>`.                                                                                                                                                                                                                                                            |
 | A natively-authored slug collides with a not-yet-moved re-home slug, silently sharing one canonical URL.                                                                                                                                                                              | The 29-new-slug collision check runs in Phase 0 **against a populated `courses/` namespace** — which is exactly why the URL-restructure plan is a hard prerequisite. Against an empty namespace the check passes vacuously and proves nothing.                                                                                                                                                                                                                                            |
 | Invented prerequisite edges break the DAG, surfacing far downstream with no traceable cause.                                                                                                                                                                                          | Each body's `prerequisites` are transcribed from its spec's declared chain, never re-derived; the declaration is an explicit per-course acceptance criterion at authoring time rather than a downstream discovery.                                                                                                                                                                                                                                                                        |
-| AI-band courses duplicate the agent-loop / tools / MCP / memory / evals material.                                                                                                                                                                                                     | The AI-band scope-guard contract (DD-11 / DL-10) is baked into the Band 5 authoring steps as grep-checkable acceptance criteria: `agentic-ai` forward-links each primitive and stops short of build-your-own depth.                                                                                                                                                                                                                                                                       |
-| The evals material gains a fourth treatment instead of being extracted to a single owner.                                                                                                                                                                                             | The evals forward-link contract is locked **before** its donor courses are authored, and lands as an explicit acceptance criterion on each of the three donors' own authoring steps — applied by construction, never retrofitted.                                                                                                                                                                                                                                                         |
-| `detection-engineering-and-siem-operations` and `defensive-security` overlap.                                                                                                                                                                                                         | Explicit scope lines in both bodies: `defensive-security` (re-labelled hands-on By-Example) keeps generalist Sigma/ELK breadth, IR, and hardening; the detection course owns deep Wazuh decoder/rule/dashboard SIEM-ops and declares `defensive-security` a prereq.                                                                                                                                                                                                                       |
 | Volatile AI/SDK/model/pricing facts are written into the stable spine and age the curriculum badly.                                                                                                                                                                                   | DD-28's durability constraint is an authoring requirement, not polish: volatile facts sit **only** in dated accuracy-note sidebars. Enforced per-course by the accuracy pre-verify step and re-checked by `apps-ayokoding-www-facts-checker`.                                                                                                                                                                                                                                             |
-| Unsourced or contested claims are written as settled fact (the harness-engineering naming dispute).                                                                                                                                                                                   | DD-29 cites the containment dispute as **unresolved** rather than adopting a side as course structure; DD-30 labels the competence-floor reconciliation a synthesis no single source makes and marks the 42%→78% figure an explicit do-not-cite.                                                                                                                                                                                                                                          |
-| Ninety bodies authored serially stall the plan indefinitely.                                                                                                                                                                                                                          | Bodies are content-independent (each writes only its own subtree) and pipeline concurrently through review, bounded by the in-force concurrency cap. Each band is its own phase with its own safe stopping point, so partial delivery is always a coherent state.                                                                                                                                                                                                                         |
+| Twenty-one bodies authored serially stall the plan indefinitely.                                                                                                                                                                                                                      | Bodies are content-independent (each writes only its own subtree) and pipeline concurrently through review, bounded by the in-force concurrency cap. Each band is its own phase with its own safe stopping point, so partial delivery is always a coherent state.                                                                                                                                                                                                                         |
 | A course body reproduces copyrighted material — code copied from a framework's docs/Stack Overflow, documentation prose paraphrased-by-substitution, a lifted figure/screenshot, or a well-known book/paid course's structure (programme [`A8`](./tech-docs.md#programme-decisions)). | Six concrete hazards mapped to the authoring pipeline in [tech-docs.md §Licensing posture](./tech-docs.md#licensing-posture-programme-a8): code examples authored originally, docs prose restated with citation, figures authored (Mermaid) not lifted, structure derived from the course's own `co-NN` spec order, trademarks used nominatively only, datasets authored not lifted. Step-5 content checkers are the enforcement point; see `delivery.md`'s per-course acceptance clause. |
-| Q-A is ruled after authoring begins, forcing a rewrite of 90 `overview.md` files.                                                                                                                                                                                                     | Authoring proceeds without the supersession line and records the pending obligation; the supersession sweep is one bounded conditional pass over only the courses whose subject a legacy page covers, not a per-course rewrite.                                                                                                                                                                                                                                                           |
+| Q-A is ruled after authoring begins, forcing a rewrite of 21 `overview.md` files.                                                                                                                                                                                                     | Authoring proceeds without the supersession line and records the pending obligation; the supersession sweep is one bounded conditional pass over only the courses whose subject a legacy page covers, not a per-course rewrite.                                                                                                                                                                                                                                                           |
 | A band lands but the manifest plan never grows its manifests, leaving paths permanently truncated.                                                                                                                                                                                    | Each band's gate requires a complete five-field signal naming every affected manifest by full path plus the merge commit SHA; an incomplete signal is rejected by the receiving plan rather than guessed at.                                                                                                                                                                                                                                                                              |
+| The Band-2 cohort's remaining PR merges before `vercel-function-cost-reduction`'s route-tree changes land, so the two plans' changes collide on `apps/ayokoding-www`'s app/route tree.                                                                                                | The `test ! -f apps/ayokoding-www/src/app/layout.tsx` precondition gates the cohort PR merge, wired as an executable Phase 4 Gate checklist item — see `delivery.md`'s `Depends-on`, Start-precondition, and Phase 4 Gate sections.                                                                                                                                                                                                                                                       |
+
+> **Four risk rows moved out with Band 5/Band 7 (removed from this table by this revision)**: AI-band
+> courses duplicating the harness cluster (DD-11/DL-10), the evals material gaining a fourth
+> treatment, `detection-engineering-and-siem-operations`/`defensive-security` overlap, and the
+> harness-engineering naming dispute (DD-29/DD-30) are now risks owned by
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` (the first three) and
+> `ayokoding-learning-path-08-course-authoring-security-and-ops` (the detection-engineering row),
+> which restate the equivalent risk/mitigation pairs in their own `brd.md` files.

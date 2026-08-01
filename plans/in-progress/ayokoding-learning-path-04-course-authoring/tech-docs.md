@@ -9,12 +9,14 @@ change to that corpus is routed to plan 02's own `delivery.md` as a change reque
 
 ## Overview
 
-This plan produces **content artefacts only**: 90 page bundles under
-`apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no YAML data
-file, no route, no component, and no redirect rule. Its "architecture" is therefore an **authoring
-architecture**: where each body's authoritative spec lives, what shape the produced bundle takes, how
-scope contracts are locked before their target bodies exist, and how a landed band is handed to the
-plan that composes it.
+This plan produces **content artefacts only**: **21** page bundles under
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/` — the six net-new AI-engineering courses
+(Phase 1), Band 1 — Data depth (5), and Band 2 — Web, backend & platform productivity (10). (This
+plan originally scoped 90 bodies across all nine bands; Bands 3–9 and the course-surgery contracts
+now belong to seven successor plans — see [README §Successor plans](./README.md#successor-plans).) It
+writes no TypeScript, no YAML data file, no route, no component, and no redirect rule. Its
+"architecture" is therefore an **authoring architecture**: where each body's authoritative spec lives,
+what shape the produced bundle takes, and how a landed band is handed to the plan that composes it.
 
 ## Programme decisions
 
@@ -93,7 +95,10 @@ transcribing its outline is not.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md). A
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> (the three `software-engineer`-role manifests) and its sibling
+> [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> (the `ai-engineer` manifest). A
 > step here that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a **boundary
 > violation**, not a convenience.
 
@@ -155,7 +160,7 @@ verified accessible palette per the
 | Append a course ID to any `<MANIFESTS>**/*.yaml`                    | **No**                                                               |
 | Re-order any `courseOrder`                                          | **No**                                                               |
 | Re-run manifest integrity / prerequisite-consistency as a gate here | **No** — the manifest plan re-verifies its own artefacts             |
-| Assert the 127-course catalog total                                 | **No** — that is the catalog total; this plan asserts its own **90** |
+| Assert the 127-course catalog total                                 | **No** — that is the catalog total; this plan asserts its own **21** |
 
 ## Cross-plan `syllabus/` reference rule (binding)
 
@@ -224,7 +229,7 @@ transcribes them; it does not re-decide them.
 ### The per-course authoring convention (maker-checker-fixer, not code TDD)
 
 ```mermaid
-%% The seven-step per-course authoring pipeline. Applied identically to every one of the 90 bodies.
+%% The seven-step per-course authoring pipeline. Applied identically to every one of the 21 bodies.
 %% Node SHAPE encodes stage kind: rectangle = produce, hexagon = verify, stadium = terminal.
 %% The loop edge is labelled, so the retry path reads without colour.
 %% TD required: the pipeline is an 8-step chain, so LR depth would exceed MaxWidth=4.
@@ -260,7 +265,7 @@ source plan states this explicitly and this plan preserves the ruling. See
 
 Programme
 [`A8`](#programme-decisions) binds every plan that
-authors teaching material, and this plan authors the most of it — 90 course bodies. **Describe, cite,
+authors teaching material, and this plan authors 21 course bodies. **Describe, cite,
 and link; never reproduce.** Six concrete hazards apply to a `careers/` course body, each mapped to
 where the maker-checker-fixer pipeline above must catch it:
 
@@ -369,59 +374,93 @@ sequenceDiagram
 
 Per the 2026-07-31 execution amendment in `delivery.md`, courses continue through authoring and
 content checks one by one, but remaining bodies land in sequential five-course PR cohorts. The
-signal's five fields and the per-band `GROW_MANIFESTS` routing are specified in
-[README §Band-completion signal contract](./README.md#band-completion-signal-contract). The routing
-is not uniform — Band 9 grows two manifests, Bands 5 and 8 grow four, and Bands 1–4/6/7 grow three.
+signal's five fields are specified in
+[README §Band-completion signal contract](./README.md#band-completion-signal-contract). **This plan's
+own `GROW_MANIFESTS` routing is uniform across its three signals**: Phase 1 grows one manifest (the
+fourth path only); Band 1 and Band 2 each grow the three software-engineer-role manifests. The
+non-uniform routing this section previously described for Bands 3–9 (Band 9 growing two manifests,
+Bands 5 and 8 growing four) is no longer this plan's concern — each successor plan states its own
+routing for the band(s) it lands.
 
-### Delivery flow across bands
+### Delivery flow across this plan's phases
 
 ```mermaid
 %% Phase progression. Each band is its own phase with its own gate and its own safe stopping point.
-%% Node SHAPE encodes kind: rectangle = authoring phase, hexagon = contract phase, stadium = finalization.
-%% TD required: the plan is a 14-phase chain, so LR depth would far exceed MaxWidth=4.
+%% Node SHAPE encodes kind: rectangle = authoring phase, stadium = finalization.
+%% TD required: the chain is 5 nodes deep, so LR depth would exceed MaxWidth=4.
 flowchart TD
     P0["Phase 0<br/>Baseline +<br/>collision check"]:::setup
     P1["Phase 1<br/>Six net-new AI courses<br/>(authoring priority #1)"]:::author
-    P2{{"Phase 2<br/>Course-surgery<br/>contracts locked"}}:::contract
-    B1["P3 · Band 1<br/>Data depth"]:::author
-    B2["P4 · Band 2<br/>Web + platform"]:::author
-    B3["P5 · Band 3<br/>Mobile + desktop"]:::author
-    B4["P6 · Band 4<br/>Concurrency langs"]:::author
-    B5["P7 · Band 5<br/>Arch + AI/harness<br/>applies contracts"]:::author
-    B6["P8 · Band 6<br/>Low-level + JVM"]:::author
-    B7["P9 · Band 7<br/>Security + ops"]:::author
-    B8["P10 · Band 8<br/>Capstones"]:::author
-    B9["P11 · Band 9<br/>Interview technique"]:::author
-    FIN(["Phases 12-16<br/>Verify · Manual · CI ·<br/>Knowledge · Archive"]):::final
+    B1["Phase 3 · Band 1<br/>Data depth"]:::author
+    B2["Phase 4 · Band 2<br/>Web + platform"]:::author
+    FIN(["Phases 5-9<br/>Verify · Manual · CI ·<br/>Knowledge · Archive"]):::final
 
-    P0 --> P1 --> P2 --> B1 --> B2 --> B3 --> B4 --> B5 --> B6 --> B7 --> B8 --> B9 --> FIN
+    P0 --> P1 --> B1 --> B2 --> FIN
 
     classDef setup fill:#CA9161,stroke:#000000,color:#000000
     classDef author fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef contract fill:#DE8F05,stroke:#000000,color:#000000
     classDef final fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
-**Accessibility note.** Phase kind is carried by node **shape** (hexagon = contract, stadium =
-finalization, rectangle = authoring) and by explicit phase numbers in every label. Colour is
-redundant.
+**Accessibility note.** Phase kind is carried by node **shape** (stadium = finalization, rectangle =
+authoring) and by explicit phase numbers in every label. Colour is redundant.
 
-**Band ordering rationale.** Band 5 must follow Phase 2 because it is the band whose bodies the three
-course-surgery contracts target — the contracts are applied **by construction** at authoring time
-rather than retrofitted across six bodies afterwards. Band 8's `capstone-build-your-own-coding-agent`
-must follow Band 5 because it assembles the harness cluster Band 5 authors. Bands 1–4, 6, and 7 are
-mutually content-independent and their relative order is a convenience, not a constraint; each body
+> **Numbering note.** Phase 3 and Phase 4 retain their original numbers from this plan's 90-body
+> scope (there is deliberately no "Phase 2" in this diagram — it was the course-surgery contract-lock
+> phase, which moved to `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`
+> along with Band 5, the band the contracts targeted). This is the least-diff renumbering: Phase 0,
+> Phase 1, Phase 3, and Phase 4 are unchanged from their already-merged/in-flight history; only the
+> finalization tail (formerly Phases 12–16) is renumbered to Phases 5–9. See
+> [delivery.md](./delivery.md) for the full phase list and the original Bands 3–9's phase numbers,
+> which are documented there as moved rather than silently dropped.
+
+**Band ordering rationale (updated by this revision).** The original rationale — Band 5 following the
+contract-lock phase; Band 8's `capstone-build-your-own-coding-agent` following Band 5 because it
+assembles the harness cluster — described bands no longer authored here; it is preserved verbatim in
+`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` and
+`ayokoding-learning-path-11-course-authoring-capstones`. Within this plan's own remaining scope, Band 1
+and Band 2 are mutually content-independent and their relative order (1 before 2) is a convenience,
+not a constraint; each body
 writes only its own subtree, so they pipeline concurrently through review bounded by the in-force cap.
 
 ## Design Decisions
 
-This plan owns **sixteen** design decisions and carries **two** cross-cutting ones verbatim.
+This plan owns **sixteen** design decisions (text preserved verbatim below — several target Bands 3–9
+content this plan no longer authors) and carries **two** cross-cutting ones verbatim.
 
 > **Numbering note.** `DD-34`, `DD-35`, and `DD-39` are **not** this split's decisions — they are
 > FS-SE-inherited tokens used throughout `syllabus/courses/**` with different meanings (concept
 > enumeration, primary-source citation policy, typed-Python policy) and travel with `syllabus/` into
 > the schema plan. `DD-36`, `DD-37`, and `DD-38` are unused. **Do not renumber to close the apparent
 > gap.**
+>
+> **Band-carve-out scope note (added by this revision — read before the individual entries below).**
+> None of the sixteen DD ids below is renumbered or deleted — several are cited from the manifest
+> plans' own `tech-docs.md` files (`ayokoding-learning-path-12-careers-se-manifests` and
+> `ayokoding-learning-path-13-careers-ai-manifest`, successors to the retired
+> `ayokoding-learning-path-05-manifests`) (DD-13, DD-25, DD-26 by exact id) and
+> must survive at their current numbers. Where a DD's target content moved with a band to a successor
+> plan, the DD's text is kept verbatim as the historical rationale record, with an inline scope note
+> naming the successor plan that now applies it. Quick reference:
+>
+> | DD    | Still this plan's scope (Phase 1 / Band 1 / Band 2)?                                                                                                | If not, moved with band to                          |
+> | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+> | DD-8  | Yes — general variant policy, not band-specific                                                                                                     | —                                                   |
+> | DD-10 | No — targets Band 9 interview courses                                                                                                               | `…-09-course-authoring-interview-technique`         |
+> | DD-11 | No — targets Band 5 AI-band scope-guard                                                                                                             | `…-06-course-authoring-architecture-and-ai-harness` |
+> | DD-12 | No — targets Band 7 detection-engineering/defensive-security                                                                                        | `…-08-course-authoring-security-and-ops`            |
+> | DD-13 | No — targets Band 5 harness cluster (cited by DD-13's manifest-half sibling in `ayokoding-learning-path-13-careers-ai-manifest`)                    | `…-06-course-authoring-architecture-and-ai-harness` |
+> | DD-14 | Partially — `self-hosting-essentials` (Band 2) stays; `bare-metal-virtualization`, `just-enough-cpp`, and the pentest-engine capstone are Bands 6–8 | `…-07…`, `…-08…`, `…-11…` (see entry)               |
+> | DD-17 | Yes — general FS-SE-dependency-removal ruling, programme-wide                                                                                       | —                                                   |
+> | DD-18 | Yes — path-independent library philosophy                                                                                                           | —                                                   |
+> | DD-20 | No — six of seven capstones are Band 8                                                                                                              | `…-11-course-authoring-capstones`                   |
+> | DD-25 | Yes — Phase 1's light-eval-gate/deep-evals split                                                                                                    | —                                                   |
+> | DD-26 | Yes — Phase 1's statistics-for-evals course                                                                                                         | —                                                   |
+> | DD-28 | Yes (catalog-total ruling); the Band-5 donor-course surgery itself is authored by the successor plan                                                | `…-06…` for the donor-course edits                  |
+> | DD-29 | No — targets Band 5 harness cluster + `agent-context-and-memory`                                                                                    | `…-06-course-authoring-architecture-and-ai-harness` |
+> | DD-30 | No — targets the Band 8 coding-agent capstone                                                                                                       | `…-11-course-authoring-capstones`                   |
+> | DD-31 | No — targets Band 5 harness-cluster courses                                                                                                         | `…-06-course-authoring-architecture-and-ai-harness` |
+> | DD-32 | Yes — confirms the Phase 1 six-course AI list is locked                                                                                             | —                                                   |
 
 ### Owned by this plan
 
@@ -481,9 +520,11 @@ This plan owns **sixteen** design decisions and carries **two** cross-cutting on
   enumeration, and the delivery checklists. Corrected baseline: **114 → 121 courses, still 0 merges**.
   Never fold into a parent course's intra-course capstone or cut — each is a genuine, independently
   valuable building block with its own stable ID. **Decided 2026-07-19.**
-  - _Split note_: this plan authors six of the seven natively (Band 8). `capstone-solid-core` is
-    re-homed by `ayokoding-learning-path-01-url-restructure`; the manifest placements are performed
-    by `ayokoding-learning-path-05-manifests`.
+  - _Split note (updated for the 21-course trim)_: none of the seven capstones are authored by this
+    plan. `ayokoding-learning-path-11-course-authoring-capstones` authors the six native ones
+    (Band 8); `capstone-solid-core` is re-homed by `ayokoding-learning-path-01-url-restructure`; the
+    manifest placements (all three `software-engineer`-role manifests, per DL-14) are performed by
+    `ayokoding-learning-path-12-careers-se-manifests`.
 - **DD-25 · Evals split: an early light gate plus a later deep-evals course (D5).** Resolves a genuine
   ordering disagreement (Huyen-style "evals first" vs. bootcamp-style "evals after building") rather
   than silently picking a side. A **light eval gate** lands early — immediately after a learner's first
@@ -519,8 +560,12 @@ This plan owns **sixteen** design decisions and carries **two** cross-cutting on
   adaptation — DD-25/DD-26), bringing the catalog from the original 121 (114 authored + 7 DD-20
   capstones catalogued) to **127**.
   - **Amendment pair split across plans (binding — read both halves).** DD-28 is the **amendment**;
-    the invariant it amends, **DD-7**, lands in
-    [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/tech-docs.md#design-decisions).
+    the invariant it amends, **DD-7**, lands in whichever of
+    [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/tech-docs.md#design-decisions)
+    /
+    [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/tech-docs.md#design-decisions)
+    reproduces it (successors to the retired `ayokoding-learning-path-05-manifests`, the plan this
+    decision originally targeted).
     **DD-28 supersedes the "create-only, never modify existing" half of DD-7.**
   - **DD-7's surviving half still binds here**, restated so a reader of this plan alone cannot read
     "surgery permitted" as "forking permitted": _a path omits a course that does not fit and creates a
@@ -663,16 +708,16 @@ This plan owns **sixteen** design decisions and carries **two** cross-cutting on
 
 ### Referenced but owned elsewhere
 
-| DD    | Subject                                                                                                                                   | Owner plan                                                |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| DD-2  | One canonical body + URL per course; re-home with redirects                                                                               | `ayokoding-learning-path-01-url-restructure`              |
-| DD-6  | Every course declares `prerequisites` → a prerequisite DAG                                                                                | `ayokoding-learning-path-02-schema-and-prerequisite-dag`  |
-| DD-7  | Omit-or-create; per-path framing is a callout, never a body fork                                                                          | `ayokoding-learning-path-05-manifests` (amended by DD-28) |
-| DD-16 | Prerequisite-consistency is the audited smoothness property                                                                               | `ayokoding-learning-path-02-schema-and-prerequisite-dag`  |
-| DD-21 | The AI path teaches building AI systems, not driving them                                                                                 | `ayokoding-learning-path-05-manifests`                    |
-| DD-22 | Convergence amended: paths converge per role, not globally                                                                                | `ayokoding-learning-path-05-manifests`                    |
-| DD-24 | Fourth path's entry point — **SUPERSEDED 2026-07-21**, see below                                                                          | `ayokoding-learning-path-05-manifests`                    |
-| DD-33 | Fourth path's manifest WALKS the AI/harness cluster; spine was fixed at 15 — **SUPERSEDED 2026-07-21** by DD-35, no longer a fixed figure | `ayokoding-learning-path-05-manifests`                    |
+| DD    | Subject                                                                                                                                   | Owner plan                                                                                                              |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| DD-2  | One canonical body + URL per course; re-home with redirects                                                                               | `ayokoding-learning-path-01-url-restructure`                                                                            |
+| DD-6  | Every course declares `prerequisites` → a prerequisite DAG                                                                                | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                |
+| DD-7  | Omit-or-create; per-path framing is a callout, never a body fork                                                                          | `ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest` (amended by DD-28) |
+| DD-16 | Prerequisite-consistency is the audited smoothness property                                                                               | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                |
+| DD-21 | The AI path teaches building AI systems, not driving them                                                                                 | `ayokoding-learning-path-13-careers-ai-manifest`                                                                        |
+| DD-22 | Convergence amended: paths converge per role, not globally                                                                                | `ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest`                    |
+| DD-24 | Fourth path's entry point — **SUPERSEDED 2026-07-21**, see below                                                                          | `ayokoding-learning-path-13-careers-ai-manifest`                                                                        |
+| DD-33 | Fourth path's manifest WALKS the AI/harness cluster; spine was fixed at 15 — **SUPERSEDED 2026-07-21** by DD-35, no longer a fixed figure | `ayokoding-learning-path-13-careers-ai-manifest`                                                                        |
 
 **DD-24 supersession (2026-07-21).** DD-24 originally set the fourth path's entry point as
 **linked, not included** prerequisites, on the assumption of an already-working software engineer.
@@ -680,146 +725,88 @@ That assumption is overturned: `careers/immediately-effective/ai-engineer` assum
 software-engineering competence, and its prerequisites are **included** in `courseOrder` rather than
 linked out. The consequence for this plan is **nil in authored volume** — the included prerequisites
 are existing library courses, so the path's manifest lengthens (a
-`ayokoding-learning-path-05-manifests` change) while the 90 bodies authored here are unchanged. The
+`ayokoding-learning-path-13-careers-ai-manifest` change) while the 21 bodies authored here are unchanged. The
 body-level rule that survives is a **scope boundary**, not an entry assumption: each AI-specific
 course teaches AI material only and never re-teaches SWE fundamentals another course owns. Recorded
 in [`prd.md` §Product Overview](./prd.md#product-overview).
 
 ## Course Library Catalog
 
-The library holds **127 courses** (amended 2026-07-20, DD-28 — was 121): **33 re-homed** (shipped
-topics 1–33) + **61 transferred-native** (FS-SE topics 34–94) + **4 existing capstones** + **29 new**
-(20 courses + 9 capstones). The **29 new** breaks down as the original **14 courses** + the **fourth
-path's six net-new AI-engineering courses** + **9 capstones**. **Zero merges among the original 121**
-— every overlap resolved keep-distinct per the reconciliation rulings recorded in
-[`README.md`](./README.md) and the **DD-20** inter-topic-capstone reconciliation. Course surgery
-against the original 121 is now permitted (DD-28) and, when applied, replaces "zero merges" with an
-explicit blast-radius statement for that surgery.
+> **Scope note**: the full-programme catalog (127 courses across all bands) is described in full in
+> this plan's history — see the git history of this file, or the manifest plans' own terminal
+> cross-plan totals in `ayokoding-learning-path-12-careers-se-manifests/tech-docs.md` and
+> `ayokoding-learning-path-13-careers-ai-manifest/tech-docs.md`. **This
+> section now lists only the 21 course bodies this plan authors.** The other 69 native bodies (Bands
+> 3–9) plus the 3 course-surgery scope contracts move to the 7 successor plans:
+> `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`,
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`,
+> `ayokoding-learning-path-07-course-authoring-low-level-systems`,
+> `ayokoding-learning-path-08-course-authoring-security-and-ops`,
+> `ayokoding-learning-path-09-course-authoring-interview-technique`,
+> `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`,
+> `ayokoding-learning-path-11-course-authoring-capstones`. Each successor plan's own tech-docs.md
+> carries its slice of the catalog forward.
 
-> **This plan authors 90 of the 127.** The other 37 (33 shipped topics + 4 existing capstones,
-> including `capstone-solid-core`) already exist on disk and are **re-homed** by
-> `ayokoding-learning-path-01-url-restructure`. The 127 total is the manifest plan's terminal
-> assertion; this plan asserts its own **90** — see [delivery.md](./delivery.md).
+This plan's **21 bodies** split into three groups: **Band 1 — Data depth** (5), **Band 2 — Web &
+platform productivity** (10, `N`/`T` rows only — the `E`-origin courses in this cluster, e.g.
+`just-enough-typescript`/`frontend-essentials`/`backend-essentials`/`networking-essentials`, are
+already shipped and re-homed by `ayokoding-learning-path-01-url-restructure`, not authored here), and
+the **fourth path's six net-new AI-engineering courses** (Phase 1). 21 = 5 + 10 + 6.
 
 Each row lists **course-id · origin · format · primary language · prerequisites · one-line scope**.
-**Origin**: `E` = existing shipped (1–33, re-homed elsewhere), `T(n)` = transferred FS-SE topic n
-(authored here), `Ecap` = existing capstone (re-homed elsewhere), `N` = one of the 29 new (authored
-here). **Order is NOT a catalog property** — it lives in the four path manifests owned by
-`ayokoding-learning-path-05-manifests`. `prerequisites` are the course's own DAG edges (`—` = entry
+**Origin**: `E` = existing shipped (re-homed elsewhere, listed here only for prerequisite context),
+`T(n)` = transferred FS-SE topic n (authored here), `N` = new (authored here). **Order is NOT a
+catalog property** — it lives in the four path manifests owned by
+`ayokoding-learning-path-12-careers-se-manifests` (three `software-engineer`-role manifests) and its
+sibling `ayokoding-learning-path-13-careers-ai-manifest` (the `ai-engineer` manifest). `prerequisites`
+are the course's own DAG edges (`—` = entry
 point). Variants are added **on demand** and are not enumerated here.
 
 Full per-course detail is the cross-plan
 [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
 
-### Editor & tooling foundations
+### Web & platform productivity (Band 2 — `N`/`T` rows only; this plan's 10 authored bodies)
 
-| Course ID                 | Origin | Format     | Primary language | Prerequisites                         | One-line scope                       |
-| ------------------------- | ------ | ---------- | ---------------- | ------------------------------------- | ------------------------------------ |
-| `just-enough-nvim`        | E      | Primer     | Neovim           | —                                     | Modal editing, motions, buffers      |
-| `just-enough-lua`         | E      | Primer     | Lua              | —                                     | Lua as Neovim's scripting language   |
-| `extending-neovim`        | E      | By Example | Lua              | `just-enough-nvim`, `just-enough-lua` | Neovim config, plugins, LSP, keymaps |
-| `just-enough-python`      | E      | Primer     | Python           | —                                     | Python syntax, types, idioms         |
-| `just-enough-bash`        | E      | Primer     | Bash             | —                                     | Shell scripting, pipes, composition  |
-| `version-control-and-git` | E      | By Example | Git              | —                                     | Branching, merging, history          |
+> The `E`-origin courses this cluster depends on (`just-enough-typescript`, `frontend-essentials`,
+> `backend-essentials`, `networking-essentials`, `just-enough-bash`, `version-control-and-git`,
+> `sql-essentials`) already exist on disk, re-homed by `ayokoding-learning-path-01-url-restructure` —
+> not authored or re-listed here; see the cross-plan syllabus catalog linked above for their rows.
 
-### Coding, DS&A & interview technique
+| Course ID                           | Origin | Format            | Primary language | Prerequisites                                             | One-line scope                                                                                |
+| ----------------------------------- | ------ | ----------------- | ---------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `async-python-and-fastapi-services` | N      | By Example        | Python           | `backend-essentials`, `concurrency-and-parallelism`       | FastAPI + Pydantic + uv/ruff/pyright (defers async concepts to 24, framework internals to 40) |
+| `api-design`                        | T(41)  | By Example        | Python           | `backend-essentials`                                      | REST/GraphQL/gRPC, OpenAPI, versioning                                                        |
+| `advanced-frontend`                 | T(47)  | By Example        | TypeScript       | `frontend-essentials`                                     | State mgmt, performance, FE architecture                                                      |
+| `self-hosting-essentials`           | N      | By Example        | ops/config       | `backend-essentials`, `networking-essentials`             | One box: containerize, reverse proxy + TLS, PaaS push                                         |
+| `backend-at-scale`                  | T(39)  | By Example        | Python           | `backend-essentials`, `api-design`                        | Caching, sharding, queues, scaling                                                            |
+| `containers-and-orchestration`      | T(50)  | By Example        | YAML/CLI         | `just-enough-bash`, `backend-essentials`                  | Docker + Kubernetes                                                                           |
+| `cloud-and-iac`                     | T(51)  | Annotated-concept | HCL/YAML         | `containers-and-orchestration`                            | Terraform/OpenTofu IaC lifecycle                                                              |
+| `cicd-and-release-engineering`      | T(55)  | By Example        | YAML + Python    | `version-control-and-git`, `containers-and-orchestration` | Pipelines, artifacts, release                                                                 |
+| `build-automation-and-task-runners` | T(54)  | By Example        | multi-tool       | `just-enough-bash`, `version-control-and-git`             | Build systems, task runners, graphs                                                           |
+| `information-architecture-and-seo`  | T(49)  | Annotated-concept | HTML             | `frontend-essentials`                                     | Structuring content, SEO                                                                      |
 
-| Course ID                                   | Origin | Format            | Primary language  | Prerequisites                                                      | One-line scope                                                     |
-| ------------------------------------------- | ------ | ----------------- | ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `data-structures-and-algorithms-essentials` | E      | By Example        | Python            | `just-enough-python`                                               | Core DS&A, complexity                                              |
-| `advanced-algorithms`                       | E      | By Example        | Python            | `data-structures-and-algorithms-essentials`                        | Graphs, DP, advanced techniques                                    |
-| `coding-interview`                          | N      | By Example        | Python (agnostic) | `data-structures-and-algorithms-essentials`, `advanced-algorithms` | LeetCode-pattern recognition + narration                           |
-| `take-home-and-live-coding`                 | N      | By Example        | Python            | `data-structures-and-algorithms-essentials`                        | Take-home + live/pair technique                                    |
-| `object-oriented-programming-essentials`    | E      | By Example        | Python            | `just-enough-python`                                               | Classes, inheritance, polymorphism                                 |
-| `object-oriented-design-and-patterns`       | E      | By Example        | Python            | `object-oriented-programming-essentials`                           | SOLID, patterns, refactoring                                       |
-| `sql-essentials`                            | E      | By Example        | SQL + Python      | `just-enough-python`                                               | Relational modeling, joins                                         |
-| `system-design-interview`                   | N      | Annotated-concept | none              | `backend-essentials`, `networking-essentials`, `sql-essentials`    | Interview rubric + whiteboard flow (forward-links `system-design`) |
-| `technical-communication`                   | E      | Annotated-concept | none              | —                                                                  | Docs, proposals, reviews                                           |
-| `behavioral-and-leadership-interviews`      | N      | Annotated-concept | none              | —                                                                  | STAR, senior rounds, layoff/gap narrative                          |
+> **Moved out**: Mobile & desktop platforms, CS foundations/paradigms/concurrency,
+> Architecture/distributed/AI-harness, Low-level systems/JVM/languages/build-your-own, Security/ops/
+> quality/delivery, Coding-DS&A/interview-technique, Editor & tooling foundations, and Capstones — all
+> carried forward by the 7 successor plans (`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`,
+> `-06-course-authoring-architecture-and-ai-harness`, `-07-course-authoring-low-level-systems`,
+> `-08-course-authoring-security-and-ops`, `-09-course-authoring-interview-technique`,
+> `-10-course-authoring-jvm-and-build-your-own`, `-11-course-authoring-capstones`), each carrying its
+> own slice of the catalog table forward in its own tech-docs.md.
 
-### Web & platform productivity
+### Data depth (Band 1 — `T` rows only; this plan's 5 authored bodies)
 
-| Course ID                           | Origin | Format            | Primary language    | Prerequisites                                             | One-line scope                                                                                |
-| ----------------------------------- | ------ | ----------------- | ------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `just-enough-typescript`            | E      | Primer            | TypeScript          | —                                                         | Typed-JS types, tooling, idioms                                                               |
-| `frontend-essentials`               | E      | By Example        | TypeScript          | `just-enough-typescript`                                  | Interactive UIs, components, state                                                            |
-| `backend-essentials`                | E      | By Example        | Python (PostgreSQL) | `just-enough-python`, `sql-essentials`                    | HTTP backend + persistence (usable slice)                                                     |
-| `async-python-and-fastapi-services` | N      | By Example        | Python              | `backend-essentials`, `concurrency-and-parallelism`       | FastAPI + Pydantic + uv/ruff/pyright (defers async concepts to 24, framework internals to 40) |
-| `networking-essentials`             | E      | By Example        | Python              | `just-enough-python`                                      | TCP/IP, HTTP, DNS, sockets                                                                    |
-| `api-design`                        | T(41)  | By Example        | Python              | `backend-essentials`                                      | REST/GraphQL/gRPC, OpenAPI, versioning                                                        |
-| `advanced-frontend`                 | T(47)  | By Example        | TypeScript          | `frontend-essentials`                                     | State mgmt, performance, FE architecture                                                      |
-| `self-hosting-essentials`           | N      | By Example        | ops/config          | `backend-essentials`, `networking-essentials`             | One box: containerize, reverse proxy + TLS, PaaS push                                         |
-| `backend-at-scale`                  | T(39)  | By Example        | Python              | `backend-essentials`, `api-design`                        | Caching, sharding, queues, scaling                                                            |
-| `containers-and-orchestration`      | T(50)  | By Example        | YAML/CLI            | `just-enough-bash`, `backend-essentials`                  | Docker + Kubernetes                                                                           |
-| `cloud-and-iac`                     | T(51)  | Annotated-concept | HCL/YAML            | `containers-and-orchestration`                            | Terraform/OpenTofu IaC lifecycle                                                              |
-| `cicd-and-release-engineering`      | T(55)  | By Example        | YAML + Python       | `version-control-and-git`, `containers-and-orchestration` | Pipelines, artifacts, release                                                                 |
-| `build-automation-and-task-runners` | T(54)  | By Example        | multi-tool          | `just-enough-bash`, `version-control-and-git`             | Build systems, task runners, graphs                                                           |
-| `information-architecture-and-seo`  | T(49)  | Annotated-concept | HTML                | `frontend-essentials`                                     | Structuring content, SEO                                                                      |
-
-### Mobile & desktop platforms
-
-| Course ID                       | Origin | Format     | Primary language | Prerequisites                        | One-line scope                         |
-| ------------------------------- | ------ | ---------- | ---------------- | ------------------------------------ | -------------------------------------- |
-| `just-enough-kotlin`            | T(68)  | Primer     | Kotlin           | —                                    | Kotlin syntax, null-safety, coroutines |
-| `android-app-development`       | T(69)  | By Example | Kotlin           | `just-enough-kotlin`                 | Native Android with the SDK            |
-| `just-enough-swift`             | T(70)  | Primer     | Swift            | —                                    | Swift syntax, optionals                |
-| `ios-app-development`           | T(71)  | By Example | Swift            | `just-enough-swift`                  | Native iOS with the SDK                |
-| `just-enough-dart`              | T(72)  | Primer     | Dart             | —                                    | Dart syntax, async, Flutter idioms     |
-| `hybrid-app-development`        | T(73)  | By Example | Dart             | `just-enough-dart`                   | Cross-platform from one Dart codebase  |
-| `just-enough-csharp`            | T(74)  | Primer     | C#               | —                                    | C# syntax, LINQ, async, .NET           |
-| `windows-app-development`       | T(75)  | By Example | C#               | `just-enough-csharp`                 | Native Windows desktop                 |
-| `linux-app-development`         | T(76)  | By Example | Python           | `just-enough-python`                 | Native Linux desktop, packaging        |
-| `building-production-cli-tools` | T(77)  | By Example | Go + Rust        | `just-enough-go`, `just-enough-rust` | Distributable CLI tools                |
-
-### CS foundations, paradigms & concurrency
-
-| Course ID                      | Origin | Format            | Primary language | Prerequisites                                       | One-line scope                                  |
-| ------------------------------ | ------ | ----------------- | ---------------- | --------------------------------------------------- | ----------------------------------------------- |
-| `computer-science-foundations` | E      | Annotated-concept | Python           | `just-enough-python`                                | Automata, computability, complexity             |
-| `computer-architecture`        | E      | By Example        | C                | `just-enough-c`                                     | CPU, memory, caches, instruction execution      |
-| `programming-paradigms`        | E      | By Example        | Python           | `just-enough-python`                                | Imperative/functional/logic survey              |
-| `functional-programming`       | E      | By Example        | Python           | `just-enough-python`                                | Pure fns, immutability, HOFs                    |
-| `concurrency-and-parallelism`  | E      | By Example        | Python           | `just-enough-python`                                | Threads, async, locks (owns async fundamentals) |
-| `just-enough-go`               | T(64)  | Primer            | Go               | —                                                   | Go syntax, goroutines                           |
-| `csp-style-concurrency`        | T(65)  | By Example        | Go               | `just-enough-go`, `concurrency-and-parallelism`     | Channels, CSP concurrency                       |
-| `just-enough-elixir`           | T(66)  | Primer            | Elixir           | —                                                   | Elixir syntax, pattern matching                 |
-| `actor-model-concurrency`      | T(67)  | By Example        | Elixir           | `just-enough-elixir`, `concurrency-and-parallelism` | Actors, supervision trees                       |
-
-### Data depth
+> The `E`-origin courses this cluster depends on (`advanced-networking`, `advanced-sql-and-query-performance`,
+> `data-access-orms-and-query-builders`, `build-your-own-orm-and-query-builder`) already exist on
+> disk, re-homed by `ayokoding-learning-path-01-url-restructure` — not authored or re-listed here.
 
 | Course ID                                | Origin | Format            | Primary language | Prerequisites                                                                | One-line scope                       |
 | ---------------------------------------- | ------ | ----------------- | ---------------- | ---------------------------------------------------------------------------- | ------------------------------------ |
-| `advanced-networking`                    | E(29)  | Annotated-concept | Python           | `networking-essentials`                                                      | Load balancing, proxies, TLS         |
-| `advanced-sql-and-query-performance`     | E(26)  | By Example        | SQL + Python     | `sql-essentials`                                                             | Query plans, indexing, tuning        |
-| `data-access-orms-and-query-builders`    | E(27)  | By Example        | Python           | `sql-essentials`, `object-oriented-programming-essentials`                   | Using ORMs/query builders safely     |
-| `build-your-own-orm-and-query-builder`   | E(28)  | By Example        | Python           | `data-access-orms-and-query-builders`                                        | Implementing a small ORM             |
 | `nosql-databases`                        | T(34)  | By Example        | Python           | `sql-essentials`, `just-enough-python`                                       | Document, KV, column stores          |
 | `graph-databases`                        | T(35)  | By Example        | Cypher + Python  | `sql-essentials`, `nosql-databases`, `just-enough-python`                    | Modeling/querying connected data     |
 | `database-internals-and-storage-engines` | T(36)  | By Example        | Python           | `sql-essentials`, `advanced-sql-and-query-performance`                       | B-trees, LSM-trees, WAL              |
 | `data-engineering`                       | T(37)  | Annotated-concept | Python           | `sql-essentials`, `advanced-sql-and-query-performance`, `just-enough-python` | Pipelines, batch/stream, warehousing |
 | `search-and-information-retrieval`       | T(38)  | By Example        | Python           | `sql-essentials`, `data-structures-and-algorithms-essentials`                | Inverted indexes, ranking            |
-
-### Architecture, distributed & AI / harness
-
-| Course ID                                         | Origin | Format            | Primary language | Prerequisites                                                  | One-line scope                                                                                                 |
-| ------------------------------------------------- | ------ | ----------------- | ---------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `software-architecture`                           | T(42)  | Annotated-concept | Python           | `backend-essentials`, `object-oriented-design-and-patterns`    | Styles, tradeoffs, structuring                                                                                 |
-| `domain-driven-design`                            | T(43)  | By Example        | Python           | `object-oriented-design-and-patterns`, `software-architecture` | Bounded contexts, modeling                                                                                     |
-| `system-design`                                   | T(44)  | Annotated-concept | Python           | `backend-at-scale`, `networking-essentials`                    | Designing for scale/availability (depth sibling of `system-design-interview`)                                  |
-| `event-driven-architecture`                       | T(45)  | By Example        | Python           | `software-architecture`, `backend-essentials`                  | Events, brokers, EDA                                                                                           |
-| `distributed-systems`                             | T(46)  | By Example        | Python           | `networking-essentials`, `concurrency-and-parallelism`         | Consensus, replication, CAP                                                                                    |
-| `build-your-own-web-framework`                    | T(40)  | By Example        | Python           | `backend-essentials`, `networking-essentials`                  | WSGI/ASGI, router, middleware (demystifies FastAPI)                                                            |
-| `build-your-own-reactive-ui`                      | T(48)  | By Example        | TypeScript       | `advanced-frontend`                                            | Reactive UI lib + virtual DOM                                                                                  |
-| `software-engineering-practices`                  | E(30)  | Annotated-concept | Python           | `version-control-and-git`, `software-testing`                  | Code review, CI, quality gates                                                                                 |
-| `agentic-coding`                                  | E(31)  | Annotated-concept | polyglot         | `version-control-and-git`                                      | Driving AI agents (user/driver side — distinct axis)                                                           |
-| `creating-ai-powered-apps`                        | T(56)  | By Example        | Python           | `backend-essentials`, `api-design`                             | **Use an LLM in an app**: RAG, tool-calling, MCP, evals (scope-guard head, DD-11)                              |
-| `agentic-ai`                                      | T(57)  | By Example        | Python           | `creating-ai-powered-apps`                                     | **Survey** of agents; forward-links each primitive to the harness cluster (does NOT re-teach at depth — DD-11) |
-| `browser-automation-with-cdp`                     | N      | By Example        | Python (CDP)     | `just-enough-python`, `networking-essentials`                  | Chrome DevTools Protocol automation (remotebrowser skill)                                                      |
-| `the-agent-loop`                                  | N      | By Example        | Python           | `agentic-ai`                                                   | LLM read-eval-act loop, streaming, stops (build-your-own tier)                                                 |
-| `agent-tools-and-mcp`                             | N      | By Example        | Python           | `the-agent-loop`                                               | Tool/function schemas; MCP server + client                                                                     |
-| `agent-context-and-memory`                        | N      | Annotated-concept | Python           | `the-agent-loop`                                               | Context budgeting, compaction, memory                                                                          |
-| `agent-permissions-and-sandboxing`                | N      | By Example        | Python           | `the-agent-loop`                                               | Approval models, sandboxing, guardrails                                                                        |
-| `agent-orchestration-subagents-and-observability` | N      | Annotated-concept | Python           | `agent-tools-and-mcp`, `agent-context-and-memory`              | Subagents, hooks/skills, evals, tracing                                                                        |
 
 ### AI-engineering specialization (the fourth path's six net-new courses)
 
@@ -845,76 +832,28 @@ anywhere in this plan (`agentic-ai`, `agent-orchestration-subagents-and-observab
 matches the course-library resolver's own tolerance for an unresolved prerequisite ID (a lookup miss,
 never a build failure).
 
-### Low-level systems, JVM & languages, internals builds
+**Count check (this plan's scope)**: 5 (Data depth) + 10 (Web & platform productivity, `N`/`T`
+rows) + 6 (AI-engineering specialization) = **21 course bodies**, this plan's terminal total. The
+full-programme catalog (127 courses across all bands) is the manifest plans' terminal assertion —
+see `ayokoding-learning-path-12-careers-se-manifests/tech-docs.md` and
+`ayokoding-learning-path-13-careers-ai-manifest/tech-docs.md`; this plan asserts only its own **21**.
 
-| Course ID                           | Origin | Format     | Primary language     | Prerequisites                                                     | One-line scope                                             |
-| ----------------------------------- | ------ | ---------- | -------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
-| `just-enough-c`                     | T(78)  | Primer     | C                    | —                                                                 | Minimal C for the OS/systems topics                        |
-| `just-enough-cpp`                   | N      | Primer     | C++                  | `just-enough-c`                                                   | RAII, templates, STL, smart pointers (no FS-SE C++ course) |
-| `linux-os`                          | T(79)  | By Example | C + shell            | `just-enough-c`, `just-enough-bash`                               | Processes, syscalls, filesystems                           |
-| `windows-os`                        | T(80)  | By Example | C + PowerShell       | `just-enough-c`                                                   | Windows internals, the API                                 |
-| `system-programming`                | T(81)  | By Example | C                    | `just-enough-c`, `linux-os`                                       | Close-to-metal C: memory model, manual RM                  |
-| `just-enough-rust`                  | T(82)  | Primer     | Rust                 | —                                                                 | Ownership, borrowing, type system                          |
-| `modern-system-programming`         | T(83)  | By Example | Rust                 | `just-enough-rust`                                                | Safe systems programming (Rust counterpart of 81)          |
-| `just-enough-java`                  | T(84)  | Primer     | Java                 | —                                                                 | Java syntax, JVM, collections                              |
-| `enterprise-java-and-the-jvm`       | T(85)  | By Example | Java                 | `just-enough-java`                                                | Spring, JVM ecosystem                                      |
-| `lisp`                              | T(86)  | By Example | Scheme + Clojure     | —                                                                 | Macros, homoiconicity                                      |
-| `just-enough-fsharp`                | T(87)  | Primer     | F#                   | —                                                                 | DUs, functional-first                                      |
-| `type-systems`                      | T(88)  | By Example | OCaml + Haskell + F# | `just-enough-fsharp`, `functional-programming`                    | Algebraic types, inference                                 |
-| `compilers-parsers-and-transpilers` | T(89)  | By Example | F#                   | `just-enough-fsharp`, `data-structures-and-algorithms-essentials` | Lexers, parsers, ASTs                                      |
-| `build-your-own-git`                | T(90)  | By Example | Python               | `just-enough-python`, `version-control-and-git`                   | Git object model + plumbing                                |
-| `build-your-own-database`           | T(91)  | By Example | Python               | `just-enough-python`, `database-internals-and-storage-engines`    | Storage, indexing, transactions                            |
-| `build-your-own-raft`               | T(92)  | By Example | Go                   | `just-enough-go`, `distributed-systems`                           | Raft consensus + replicated KV                             |
-
-### Security, ops, quality & delivery
-
-| Course ID                                   | Origin | Format            | Primary language            | Prerequisites                                                  | One-line scope                                                                                                             |
-| ------------------------------------------- | ------ | ----------------- | --------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `security-essentials`                       | E(17)  | By Example        | Python                      | `backend-essentials`                                           | Common vulns, auth, secrets                                                                                                |
-| `it-and-application-security`               | T(58)  | Annotated-concept | Python                      | `security-essentials`                                          | CIA, STRIDE, OWASP, crypto, identity                                                                                       |
-| `offensive-security`                        | T(59)  | By Example        | Python + shell              | `security-essentials`, `networking-essentials`                 | Recon, scanning, exploitation (lab-local)                                                                                  |
-| `defensive-security`                        | T(60)  | **By Example**    | Python + shell              | `security-essentials`, `networking-essentials`                 | **Hands-on** generalist blue-team: Sigma-on-ELK/OpenSearch + IR lifecycle + hardening (label fixed — NOT "concept", DD-12) |
-| `detection-engineering-and-siem-operations` | N      | By Example        | XML/rules + config + Python | `defensive-security`                                           | **Wazuh-specific deep tier**: decoders, correlation rules, FP tuning, dashboards (specialist — DD-12)                      |
-| `vulnerability-management-and-assessment`   | T(61)  | By Example        | Python                      | `security-essentials`                                          | Scanning, triage, remediation at scale, SBOM                                                                               |
-| `it-governance-grc`                         | T(62)  | Annotated-concept | none                        | `it-and-application-security`                                  | Governance, risk, compliance, audit                                                                                        |
-| `bare-metal-virtualization`                 | T(52)  | By Example        | HCL/YAML/shell              | `containers-and-orchestration`                                 | Proxmox, hypervisors (full-depth sibling of `self-hosting-essentials`)                                                     |
-| `self-managed-kubernetes-and-gitops`        | T(53)  | By Example        | YAML/CLI                    | `containers-and-orchestration`, `cicd-and-release-engineering` | Self-owned prod K8s + GitOps                                                                                               |
-| `platform-engineering-and-devex`            | T(93)  | Annotated-concept | none                        | `containers-and-orchestration`, `cicd-and-release-engineering` | Internal platforms, golden paths                                                                                           |
-| `site-reliability-engineering`              | T(94)  | Annotated-concept | Python                      | `containers-and-orchestration`, `system-design`                | SLOs, observability, IR                                                                                                    |
-| `software-testing`                          | E(15)  | By Example        | Python + TS                 | `just-enough-python`, `just-enough-typescript`                 | Unit, integration, E2E (Playwright)                                                                                        |
-| `debugging-and-profiling`                   | E(16)  | By Example        | Python + native             | `just-enough-python`                                           | Systematic debugging + profiling                                                                                           |
-| `analytics-and-experimentation`             | T(63)  | By Example        | Python                      | `sql-essentials`                                               | Metrics, A/B testing                                                                                                       |
-| `software-product-engineering`              | E(32)  | Annotated-concept | none                        | —                                                              | Turning engineering into products                                                                                          |
-| `engineering-management`                    | E(33)  | Annotated-concept | none                        | —                                                              | Leading engineers/teams                                                                                                    |
-| `project-management`                        | E(9)   | Annotated-concept | none                        | —                                                              | Scoping, planning, tracking                                                                                                |
-
-### Capstones (courses too — each a building block)
-
-| Course ID                                | Origin | Kind                    | Primary language  | Prerequisites                                                                                                                                                                                             | One-line scope                                                                                                                                                                                                                                |
-| ---------------------------------------- | ------ | ----------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `capstone-forge-ready`                   | Ecap   | Prologue milestone      | multi             | `extending-neovim`, `just-enough-python`, `just-enough-bash`, `version-control-and-git`                                                                                                                   | Reproducible dev forge (nvim + lua + extend)                                                                                                                                                                                                  |
-| `capstone-interview-loop`                | N      | Interview milestone     | Python + prose    | `coding-interview`, `take-home-and-live-coding`, `system-design-interview`, `behavioral-and-leadership-interviews`                                                                                        | Full mock loop: coding + system-design + behavioral                                                                                                                                                                                           |
-| `capstone-first-working-software`        | Ecap   | Web milestone           | Python + TS       | `frontend-essentials`, `backend-essentials`, `security-essentials`, `software-testing`                                                                                                                    | First secure, tested web app                                                                                                                                                                                                                  |
-| `capstone-full-stack-app`                | Ecap   | Full-stack milestone    | TS + Python       | `frontend-essentials`, `backend-essentials`, `sql-essentials`, `api-design`                                                                                                                               | Typed FE ↔ BE ↔ SQL vertical slice                                                                                                                                                                                                            |
-| `capstone-build-your-own-coding-agent`   | N      | Harness milestone       | Python            | `agent-tools-and-mcp`, `agent-context-and-memory`, `agent-permissions-and-sandboxing`, `agent-orchestration-subagents-and-observability`                                                                  | Assemble the harness cluster into a coding-agent CLI                                                                                                                                                                                          |
-| `capstone-build-your-own-pentest-engine` | N      | Security milestone      | TypeScript        | `offensive-security`, `detection-engineering-and-siem-operations`, `agent-orchestration-subagents-and-observability`, `browser-automation-with-cdp`                                                       | Agentic pentest engine (swarm + MCP + CDP + security chaining) — **lab-local, authorized-scope-only** (inherits `offensive-security`'s rules-of-engagement guard; body must restate scope/authorization limits per OWASP 2026 Agentic Top-10) |
-| `capstone-solid-core`                    | Ecap   | Pass-boundary milestone | Python + TS       | `capstone-first-working-software`, `object-oriented-design-and-patterns`, `functional-programming`, `concurrency-and-parallelism`, `advanced-sql-and-query-performance`, `software-engineering-practices` | Re-engineer the Pass-1 app to a SOLID/functional-core professional baseline with a CI gate + ADRs (DD-20; embedded spec in `engineering-management.md`)                                                                                       |
-| `capstone-real-world-delivery`           | N      | Full-stack milestone    | Python + TS + IaC | `capstone-solid-core`, `system-design`, `event-driven-architecture`, `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`, `defensive-security`                                | Deploy-as-code, secured, observable delivery of the Pass-2 app — DDD + capacity plan + red/blue-team loop (DD-20; embedded spec in `defensive-security.md`)                                                                                   |
-| `capstone-secure-service`                | N      | Security milestone      | Python + shell    | `security-essentials`, `backend-essentials`, `it-and-application-security`, `offensive-security`, `defensive-security`                                                                                    | End-to-end secured HTTP service: OWASP-2025 + OAuth2/OIDC, red-team validated + blue-team detected (DD-20; embedded spec in `defensive-security.md`)                                                                                          |
-| `capstone-data-pipeline`                 | N      | Data milestone          | SQL + Python      | `sql-essentials`, `advanced-sql-and-query-performance`, `data-engineering`, `creating-ai-powered-apps`, `backend-essentials`                                                                              | Medallion pipeline (bronze/silver/gold) → governed warehouse → RAG-grounded query interface (DD-20; embedded spec in `defensive-security.md`)                                                                                                 |
-| `capstone-concurrency-and-systems`       | N      | Systems milestone       | Go or Elixir + C  | `csp-style-concurrency`, `actor-model-concurrency`, `containers-and-orchestration`, `site-reliability-engineering`                                                                                        | Concurrent, containerized, SRE-instrumented (golden signals + SLO) service (DD-20; embedded spec in `compilers-parsers-and-transpilers.md`)                                                                                                   |
-| `capstone-concurrency-showdown`          | N      | Comparison milestone    | Go + Elixir       | `csp-style-concurrency`, `actor-model-concurrency`                                                                                                                                                        | The same problem solved CSP-Go vs actor-Elixir, compared head-to-head (DD-20; embedded spec in `compilers-parsers-and-transpilers.md`)                                                                                                        |
-| `capstone-lead-at-altitude`              | N      | Whole-journey milestone | polyglot + prose  | `capstone-concurrency-and-systems`, `capstone-real-world-delivery`, `site-reliability-engineering`, `software-product-engineering`, `engineering-management`                                              | Whole-journey leadership synthesis: SLOs, strategy, prioritization, a six-pass retrospective (DD-20; embedded spec in `site-reliability-engineering.md`)                                                                                      |
-
-**Count check**: 33 re-homed (E) + 61 transferred-native (T) + 4 existing capstones (Ecap) + 29 new
-(N: 14 courses + 6 AI-engineering courses + 9 capstones) = **127** total catalog, zero merges among
-the original 121 (DD-28 permits course surgery against this 121 going forward, replacing "zero
-merges" with an explicit per-surgery blast-radius statement).
-
-**This plan's own share**: 61 (T) + 29 (N) = **90 authored bodies**. The remaining 37
-(33 E + 4 Ecap) are re-homed by `ayokoding-learning-path-01-url-restructure`. 90 + 37 = 127.
+**This plan's own share**: 21 authored bodies — **13 `T` transferred-native** (8 in Band 2 + 5 in
+Data depth, all five Data-depth rows are `T`-origin, see the table above) **+ 8 `N` new** (2 in
+Band 2 — `async-python-and-fastapi-services`, `self-hosting-essentials` — + 6 AI-engineering). The
+other 106 (33 E + 4 Ecap re-homed by `ayokoding-learning-path-01-url-restructure`, plus 69 native
+bodies carried by the 7 successor plans) are not this plan's concern. 21 + 106 = 127.
 
 ## Productive in Target Codebases (proof-of-transfer outcome-anchor)
+
+> **Scope note**: this anchor is path-independent and library-wide (DD-18), so it is reproduced here
+> unedited from the full-programme original. Of the gap-filling NEW courses named below, only
+> `async-python-and-fastapi-services` is authored by this plan (Band 2). `browser-automation-with-cdp`
+> and the harness cluster move to `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`;
+> `just-enough-cpp` moves to `ayokoding-learning-path-07-course-authoring-low-level-systems`;
+> `detection-engineering-and-siem-operations` moves to
+> `ayokoding-learning-path-08-course-authoring-security-and-ops`; `capstone-build-your-own-pentest-engine`
+> moves to `ayokoding-learning-path-11-course-authoring-capstones`.
 
 **Philosophy.** The library teaches durable **PRINCIPLES**; the target codebases are **evidence the
 principles transfer**, never subject matter. No course is "about" a target repo. This anchor is
@@ -959,15 +898,15 @@ belongs only to a plan with no reachable behavioural delta at all, and it must b
 
 `swe-ui-checker` validates component **source** — it globs for `.tsx` files. This plan's own
 [Overview](#overview) already states the fact plainly: it "writes no TypeScript, no YAML data file,
-no route, no component, and no redirect rule." Its entire output is 90 markdown page bundles under
+no route, no component, and no redirect rule." Its entire output is 21 markdown page bundles under
 `apps/ayokoding-www/content/en/learn/courses/<course-id>/`. A checker run scoped to this plan's diff
 would scan **zero** `.tsx` files and return zero findings — a vacuous pass, recorded as an exemption
 rather than a claimed one. The components that render these bodies — `PathRail`, `PathLanding`,
 `PathCard`, the paths hub — are owned and gated by `ayokoding-learning-path-03-navigation-ui`.
 
-**The exemption is narrow.** It covers `ui-quality-gate` **only**. Because this plan ships 90
+**The exemption is narrow.** It covers `ui-quality-gate` **only**. Because this plan ships 21
 user-visible pages, manual behavioural verification via Playwright MCP is **mandatory and
-performed** — [Phase 13](./delivery.md#phase-13-manual-content-verification-playwright-mcp) opens a
+performed** — [Phase 6](./delivery.md#phase-6-manual-content-verification-playwright-mcp) opens a
 sample of authored course pages at all three breakpoints in the `en` content locale, with committed
 screenshot evidence. The **Rule-15 three-tester retest is separately and already exempted**, with its
 own stated reasons, in
@@ -987,9 +926,10 @@ other.
 Unlike its sibling manifest-owning plans, this plan **never edits a manifest file** — forbidden
 outright by [§The manifest ownership invariant](#the-manifest-ownership-invariant-binding) — and
 ships no code, no YAML, no route. Its one piece of structured data, the `prerequisites` frontmatter
-this plan writes into each of the 90 `_index.md` files, is **inert until a downstream consumer reads
-it**: `checkManifestIntegrity` / `checkPrerequisiteConsistency` run against it only once
-`ayokoding-learning-path-05-manifests` grows a manifest to include these courses. This plan's own
+this plan writes into each of the 21 `_index.md` files, is **inert until a downstream consumer reads
+it**: `checkManifestIntegrity` / `checkPrerequisiteConsistency` run against it only once whichever of
+`ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest`
+owns the target manifest grows it to include these courses. This plan's own
 structural check — `test -d` / `test -f` + frontmatter grep (see
 [Testing / Verification Strategy](#testing--verification-strategy)) — verifies only that the field is
 present and well-formed, never that it resolves; that re-verification belongs entirely to the
@@ -1026,7 +966,7 @@ it adds content under `apps/ayokoding-www/content/`, which the source plan expli
 "largely content (exempt from `specs:coverage`)". The `course-paths` feature's Gherkin companion is
 owned by the schema and navigation-UI plans.
 
-The eleven Gherkin scenarios in [`prd.md`](./prd.md#acceptance-criteria-gherkin) are therefore
+The four Gherkin scenarios in [`prd.md`](./prd.md#acceptance-criteria-gherkin) are therefore
 **content-level acceptance criteria**, bound to delivery steps and verified by grep-checkable
 assertions plus the ayokoding content checkers — not by `specs:behavior:coverage`. The plan still
 runs `npx nx affected -t specs:behavior:coverage` in its verification phase to prove it introduced no
@@ -1072,8 +1012,8 @@ table above. This section consolidates that scattered per-path detail — previo
 [§The course page bundle](#the-course-page-bundle), the manifest-invariant table, and `delivery.md`'s
 own Path constants block — into one enumeration.
 
-**New directories created** (90 total, one per authored body, zero overlap with the 37 pre-existing
-re-homed bundles):
+**New directories created** (21 total, one per authored body, zero overlap with the 33 shipped + 4
+existing-capstone pre-existing re-homed bundles this plan does not touch):
 
 - `apps/ayokoding-www/content/en/learn/courses/<course-id>/` — the fixed course-page bundle anatomy
   (`_index.md`, `overview.md`, `learning/`, `drilling/`), one per slug in
@@ -1106,21 +1046,22 @@ or any other dependency manifest — see [§Dependencies](#dependencies) below.
 
 ## Dependencies
 
-| Dependency                                                      | Kind       | Note                                                                 |
-| --------------------------------------------------------------- | ---------- | -------------------------------------------------------------------- |
-| `ayokoding-learning-path-01-url-restructure` merged             | hard, plan | populated flat `courses/` namespace + `courses/_index.md`            |
-| `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged | hard, plan | `syllabus/courses/` specs + the `prerequisites` frontmatter contract |
-| `apps-ayokoding-www-by-example-maker` and its checker           | agent      | the By-Example bodies                                                |
-| `apps-ayokoding-www-annotated-concept-maker` and its checker    | agent      | the Annotated-concept bodies                                         |
-| `apps-ayokoding-www-primer-maker` and its checker               | agent      | the `just-enough-*` primer bodies                                    |
-| `apps-ayokoding-www-general-maker` / `-general-checker`         | agent      | `drilling/overview.md` and general prose                             |
-| `apps-ayokoding-www-facts-checker`                              | agent      | version-pinned / market / pre-1.0-stack fact verification            |
-| `apps-ayokoding-www-link-checker`                               | agent      | intra-course and cross-course link integrity                         |
-| `web-researcher`                                                | agent      | the per-course accuracy pre-verify (`V`) step                        |
-| `apps-ayokoding-www-deployer`                                   | agent      | post-merge deploy to `prod-ayokoding-www`                            |
-| `nx run ayokoding-www:build`                                    | Nx target  | renders the authored tree                                            |
-| `rhino-cli md links validate` / `md heading-hierarchy validate` | CLI        | run as raw `cargo run`, not Nx targets                               |
-| `npm run lint:md`                                               | npm script | markdownlint over the authored tree                                  |
+| Dependency                                                      | Kind       | Note                                                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ayokoding-learning-path-01-url-restructure` merged             | hard, plan | populated flat `courses/` namespace + `courses/_index.md`                                                                                                                                                                                                                                                                                                                   |
+| `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged | hard, plan | `syllabus/courses/` specs + the `prerequisites` frontmatter contract                                                                                                                                                                                                                                                                                                        |
+| `vercel-function-cost-reduction` merged                         | hard, plan | promotes `[locale]/layout.tsx` to the app's root layout, removes the `?path=` `searchParams` read on the content catch-all route, and deletes `middleware.ts` — the same app/route tree this plan authors content into. Checkable via `test ! -f apps/ayokoding-www/src/app/layout.tsx`; gates the remaining Band-2 cohort PR merge, not Phase 0/1/Band-1 (already merged). |
+| `apps-ayokoding-www-by-example-maker` and its checker           | agent      | the By-Example bodies                                                                                                                                                                                                                                                                                                                                                       |
+| `apps-ayokoding-www-annotated-concept-maker` and its checker    | agent      | the Annotated-concept bodies                                                                                                                                                                                                                                                                                                                                                |
+| `apps-ayokoding-www-primer-maker` and its checker               | agent      | the `just-enough-*` primer bodies                                                                                                                                                                                                                                                                                                                                           |
+| `apps-ayokoding-www-general-maker` / `-general-checker`         | agent      | `drilling/overview.md` and general prose                                                                                                                                                                                                                                                                                                                                    |
+| `apps-ayokoding-www-facts-checker`                              | agent      | version-pinned / market / pre-1.0-stack fact verification                                                                                                                                                                                                                                                                                                                   |
+| `apps-ayokoding-www-link-checker`                               | agent      | intra-course and cross-course link integrity                                                                                                                                                                                                                                                                                                                                |
+| `web-researcher`                                                | agent      | the per-course accuracy pre-verify (`V`) step                                                                                                                                                                                                                                                                                                                               |
+| `apps-ayokoding-www-deployer`                                   | agent      | post-merge deploy to `prod-ayokoding-www`                                                                                                                                                                                                                                                                                                                                   |
+| `nx run ayokoding-www:build`                                    | Nx target  | renders the authored tree                                                                                                                                                                                                                                                                                                                                                   |
+| `rhino-cli md links validate` / `md heading-hierarchy validate` | CLI        | run as raw `cargo run`, not Nx targets                                                                                                                                                                                                                                                                                                                                      |
+| `npm run lint:md`                                               | npm script | markdownlint over the authored tree                                                                                                                                                                                                                                                                                                                                         |
 
 **No new package dependency.** This plan adds no entry to `package.json`, `go.mod`, `Cargo.toml`, or
 any other manifest.

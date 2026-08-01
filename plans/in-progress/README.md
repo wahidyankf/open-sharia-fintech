@@ -5,7 +5,10 @@ Active project plans currently being worked on.
 ## Active Plans
 
 - [ayokoding-learning-path-04-course-authoring](./ayokoding-learning-path-04-course-authoring/README.md)
-  — Wave 2. Authors the `careers/` course bodies band by band, each from its `syllabus/` spec.
+  — Wave 2. Trimmed 2026-08-01 to its 21 already-merged/in-flight course bodies (6 net-new AI
+  courses + Band 1 Data-depth + Band 2 Web/backend/platform); the remaining 69 courses of its
+  original 90-course scope are split across 7 new backlog plans
+  (`ayokoding-learning-path-05` through `-11`).
 - [vercel-function-cost-reduction](./vercel-function-cost-reduction/README.md) — Cuts gross metered
   Vercel usage from ~$57/mo to under $20/mo so the Pro plan's included credit absorbs it and the
   invoice stays at the $20 subscription. Fixes the root cause: `ayokoding-www` prerenders zero of

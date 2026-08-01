@@ -6,29 +6,74 @@ that genuinely need a full plan's depth to answer.
 
 ## Planned Projects
 
-The `ayokoding-learning-path-*` plans deliver one programme in three dependency waves. Each
-plan is **self-contained**: the shared programme decisions (the `R*`/`A*` ids) are folded into each
-plan's own `tech-docs.md` under a `## Programme decisions` section, and each plan's README carries its
-scope, counts, gates, and local wave position. The three waves are: **Wave 1** — `01`, `02` (no
-prerequisite); **Wave 2** — `03`, `04`, `06` (need both Wave 1 plans merged; `06` additionally
-hard-depends on `03`'s renderer); **Wave 3** — `05`, `07` (each needs its own Wave 2 predecessor
-merged). **Both Wave-1 plans have left this backlog**: `01-url-restructure` is
-[complete](../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md) and
-`02-schema-and-prerequisite-dag` is
-[complete](../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md).
-`03-navigation-ui` is
-[complete](../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md). `04-course-authoring`
-is now [in progress](../in-progress/ayokoding-learning-path-04-course-authoring/README.md).
+The `ayokoding-learning-path-*` plans deliver one programme. Each plan is **self-contained**: the
+shared programme decisions (the `R*`/`A*` ids) are folded into each plan's own `tech-docs.md` under a
+`## Programme decisions` section, and each plan's README carries its scope, course count, gates, and
+dependency edges. **Renumbered 2026-08-01** (see
+[`plan-decision-integrity-hardening`](../in-progress/plan-decision-integrity-hardening/README.md)'s
+retrofit rationale): plans `05` through `07` originally each delivered more than the 5-15-course
+governance band allows (`04` alone scoped 90 courses; `05-manifests` scoped all four path manifests
+at once; `06`/`07` scoped 24 and 30 courses respectively). Every one of them is now split along its
+own natural theme/stage boundaries, and every resulting plan carries a hard `blockedBy` on
+[`vercel-function-cost-reduction`](../in-progress/vercel-function-cost-reduction/README.md) (treated
+as already merged), since it rewrites the same `apps/ayokoding-www` root layout/middleware every one
+of these plans lands content or manifests into. **Waves 1-2 have left this backlog**:
+`01-url-restructure`, `02-schema-and-prerequisite-dag`, and `03-navigation-ui` are done;
+[`04-course-authoring`](../in-progress/ayokoding-learning-path-04-course-authoring/README.md) is
+in-progress, trimmed to its 21 already-merged/in-flight courses (a documented exception to the
+5-15 rule — real execution history, not new backlog scoping).
 
-- [ayokoding-learning-path-05-manifests](./ayokoding-learning-path-05-manifests/README.md)
-  — **Wave 3, terminal for `careers/`.** Owns every `careers/` manifest and every step that touches
-  one.
-- [ayokoding-learning-path-06-skills-accounting](./ayokoding-learning-path-06-skills-accounting/README.md)
-  — **Wave 2.** The `conventional-accounting` and `sharia-accounting` paths, their corpus and their
-  manifests.
-- [ayokoding-learning-path-07-skills-erp](./ayokoding-learning-path-07-skills-erp/README.md)
-  — **Wave 3, terminal for `skills/`.** The `conventional-erp` and `sharia-erp` paths, their corpus
-  and their manifests.
+**Course-authoring remainder** (splits `04`'s original Bands 3-9 + course-surgery contracts; 69
+courses total, `blockedBy 04`):
+
+- [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
+  — 14 courses (old Band 3 + Band 4 merged): mobile/desktop platforms paired with their language
+  primers, plus the two concurrency languages.
+- [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
+  — 15 courses (old Band 5 + the three course-surgery scope contracts): software architecture,
+  distributed systems, and the AI/agent-harness cluster.
+- [ayokoding-learning-path-07-course-authoring-low-level-systems](./ayokoding-learning-path-07-course-authoring-low-level-systems/README.md)
+  — 7 courses (old Band 6, first half): C/C++/Rust, Linux/Windows OS, systems programming.
+- [ayokoding-learning-path-08-course-authoring-security-and-ops](./ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
+  — 11 courses (old Band 7): security, SRE, platform engineering, governance.
+- [ayokoding-learning-path-09-course-authoring-interview-technique](./ayokoding-learning-path-09-course-authoring-interview-technique/README.md)
+  — 5 courses (old Band 9): coding/system-design/behavioral interview prep + the interview capstone.
+- [ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own](./ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/README.md)
+  — 9 courses (old Band 6, second half; `blockedBy 05, 06`): JVM languages, type systems, compilers,
+  and the build-your-own-{git,database,raft} cluster.
+- [ayokoding-learning-path-11-course-authoring-capstones](./ayokoding-learning-path-11-course-authoring-capstones/README.md)
+  — 8 courses (old Band 8; `blockedBy 05, 06, 08`, the most dependency-heavy successor plan): the
+  remaining cross-band synthesis capstones.
+
+**Careers manifests** (splits old `05-manifests`; needs all of `04`-`11` merged, `blockedBy` each as
+its band-completion signal lands):
+
+- [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
+  — the three `software-engineer`-role manifests (`interview-ready`, `immediately-effective`,
+  `fundamentally-strong`) — grouped together because the no-forked-body and Band-9 checks bind
+  across exactly these three.
+- [ayokoding-learning-path-13-careers-ai-manifest](./ayokoding-learning-path-13-careers-ai-manifest/README.md)
+  — the `immediately-effective/ai-engineer` manifest alone (a structurally independent growth track).
+
+**Skills — accounting** (splits old `06-skills-accounting`'s 24 courses; strict sequential chain):
+
+- [ayokoding-learning-path-14-skills-accounting-foundations](./ayokoding-learning-path-14-skills-accounting-foundations/README.md)
+  — 11 courses (#1-11): foundations through the transactional/cost-accounting cycle.
+- [ayokoding-learning-path-15-skills-accounting-enterprise-reporting](./ayokoding-learning-path-15-skills-accounting-enterprise-reporting/README.md)
+  — 8 courses (#12-19, `blockedBy 14`): reporting, consolidation, architecture —
+  `conventional-accounting` terminates here.
+- [ayokoding-learning-path-16-skills-accounting-sharia-extension](./ayokoding-learning-path-16-skills-accounting-sharia-extension/README.md)
+  — 5 courses (#20-24, `blockedBy 15`): the Sharia-specific extension — `sharia-accounting`
+  terminates here.
+
+**Skills — ERP** (splits old `07-skills-erp`'s 30 courses):
+
+- [ayokoding-learning-path-17-skills-erp-foundations](./ayokoding-learning-path-17-skills-erp-foundations/README.md)
+  — 15 courses (Stage A): both `conventional-erp` and `sharia-erp` publish here — a genuine,
+  deployable checkpoint.
+- [ayokoding-learning-path-18-skills-erp-enterprise-depth](./ayokoding-learning-path-18-skills-erp-enterprise-depth/README.md)
+  — 15 courses (Stage B + C merged, `blockedBy 17`; soft-overall/hard-at-two-gates on `15`/`16` at
+  stage granularity): conventional enterprise depth, then the Sharia-compliant design stage.
 
 Standalone plans (outside the `ayokoding-learning-path-*` programme):
 

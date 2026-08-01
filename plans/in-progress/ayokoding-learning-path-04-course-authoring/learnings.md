@@ -1,7 +1,7 @@
 # Learnings: ayokoding-learning-path-04-course-authoring
 
 Transient running log. The executor appends one entry per generalizable learning **during**
-execution; the Knowledge Capture phase (Phase 15 of [`delivery.md`](./delivery.md)) triages every
+execution; the Knowledge Capture phase (Phase 8 of [`delivery.md`](./delivery.md)) triages every
 entry to a durable home or an explicit discard before archival.
 
 **Sanitize before writing.** Apply the secret/sensitivity gate at write time, not at triage time — a

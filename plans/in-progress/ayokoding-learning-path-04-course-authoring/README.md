@@ -1,15 +1,81 @@
 # Learning Path — Course Authoring (course bodies only)
 
-Author the **course bodies** of the shared course library: the six net-new AI-engineering courses,
-the 61 transferred topics, the 10 remaining new courses, the 8 remaining capstones, the 5 deferred
-interview-technique bodies, and the three course-surgery scope contracts (evals / D9 naming-and-citation
-/ D11 concept additions). **90 authored course bundles** in total, landing under
-`apps/ayokoding-www/content/en/learn/courses/`.
+Author **21 course bodies** of the shared course library: the six net-new AI-engineering courses
+(`evaluating-ai-output-essentials`, `statistics-for-evaluation`, `evaluating-ai-systems-in-depth`,
+`product-patterns-for-probabilistic-systems`, `inference-serving-and-model-deployment`,
+`fine-tuning-and-adaptation`), Band 1 — Data depth (`nosql-databases`, `graph-databases`,
+`database-internals-and-storage-engines`, `data-engineering`, `search-and-information-retrieval`), and
+Band 2 — Web, backend & platform productivity (`api-design`, `advanced-frontend`, `backend-at-scale`,
+`async-python-and-fastapi-services`, `self-hosting-essentials`, `containers-and-orchestration`,
+`cloud-and-iac`, `cicd-and-release-engineering`, `build-automation-and-task-runners`,
+`information-architecture-and-seo`) — landing under `apps/ayokoding-www/content/en/learn/courses/`.
+
+**Split history and terminal scope (read before anything else).** This plan originally scoped 90
+course bodies across nine bands, a 6-course AI phase, and a course-surgery-contracts phase. As of this
+revision, everything from Band 3 onward (Bands 3–9, 69 course bodies) plus the three course-surgery
+scope contracts (0 course bodies; they target Band 5, which moved out) has been **carved out into
+seven new backlog plans** — see [§Successor plans](#successor-plans) below. This plan's terminal scope
+is now exactly Phase 0 (setup) + Phase 1 (6 AI courses) + Band 1 (5 courses) + Band 2 (10 courses) =
+**21 course bodies**, all either already merged to `origin/main` or actively in-flight on the currently
+open Band 2 cohort branch. This trim does not touch the historical status of any already-merged or
+already-authored checklist item — see [delivery.md](./delivery.md) for the real PR numbers and merge
+commits.
 
 This is **Wave 2** of a five-plan split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
-plan. It owns **course bodies only**. It owns no schema, no route, no component, no redirect — and,
-most importantly, **no manifest**.
+plan. It owns **course bodies only** — and, within course bodies, only the 21 named above. It owns no
+schema, no route, no component, no redirect — and, most importantly, **no manifest**.
+
+## Successor plans
+
+The remaining 69 course bodies (Bands 3–9) and the 3 course-surgery scope contracts (which target Band 5) are carved out into seven new backlog plans, authored independently and in parallel by sibling
+agents (do not create these folders from this plan; they are out of scope here):
+
+| Successor plan (full folder name)                                         | Inherits                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`    | Band 3 — Mobile & desktop platforms (10) + Band 4 — Concurrency languages (4)                                                                                                                                |
+| `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | Band 5 — Architecture, distributed & AI/harness (15) + the three course-surgery contracts (evals forward-link, D9 naming/citation, D11 concept additions) — it authors Band 5, the band the contracts target |
+| `ayokoding-learning-path-07-course-authoring-low-level-systems`           | Band 6 — Low-level systems, JVM & languages, internals builds (16)                                                                                                                                           |
+| `ayokoding-learning-path-08-course-authoring-security-and-ops`            | Band 7 — Security, ops, quality & delivery (11)                                                                                                                                                              |
+| `ayokoding-learning-path-09-course-authoring-interview-technique`         | Band 9 — Interview-technique courses (5)                                                                                                                                                                     |
+| `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`      | (reserved — see the sibling plan's own README for its exact scope statement)                                                                                                                                 |
+| `ayokoding-learning-path-11-course-authoring-capstones`                   | Band 8 — Remaining capstones (8)                                                                                                                                                                             |
+
+Each successor plan declares its own `blocks` edge to whichever of
+[`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+/ [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+owns the manifest(s) it grows, per its own README's `GROW_MANIFESTS` routing — this plan's own
+`blocks` edge below covers only its own 21 courses.
+
+> **Naming note (updated — the collision this note originally flagged is resolved).** The
+> manifest-composition plan this note originally described — then named `ayokoding-learning-path-05-manifests`
+> (Wave 3 of the original five-way split) — has since been renamed and split into two successor plans:
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> (the three `software-engineer`-role manifests) and
+> [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> (the `ai-engineer` manifest). Neither new number collides with the course-authoring successor plan
+> above, `ayokoding-learning-path-05-course-authoring-platform-and-concurrency` — the numbering
+> collision this note originally flagged (two different `05`s under two co-existing schemes) no
+> longer exists now that the manifest plan carries numbers `12`/`13` instead of `05`.
+
+## Documented exception to the 5-15-course delivery-unit-sizing rule
+
+This plan's 21-course terminal scope exceeds the repo's 5-15-course delivery-unit sizing guidance for
+new backlog plans. That is deliberate, not an oversight, and applies only to this plan among the
+course-authoring family. The 5-15 rule binds **new** backlog delivery-unit sizing, to prevent the
+pattern that caused three redundant plans to accumulate scope on one page before this split. It does
+not require retroactively fragmenting an **in-progress** plan's already-merged and already-in-flight
+execution history into smaller pieces: Phase 0, Phase 1, and Band 1 are fully merged to `origin/main`
+with real PR numbers and merge commits, and Band 2 is five-of-ten merged with the remaining five
+authored and committed on the active cohort branch awaiting its single cohort PR. Splitting this
+already-executing 21-course unit across two or more plan folders would require either un-merging real
+history or reassigning already-landed PRs to a different plan folder after the fact — both falsify the
+delivery record for no benefit, since the point of the sizing rule (bounding a single plan's blast
+radius before work starts) has already been satisfied by the band-by-band phase structure this plan
+used throughout its execution. The seven new successor plans (05–11 above), each newly authored and
+each sized within the 5-15-course band, are the vehicle for applying the rule going forward; this
+plan's 21-course exception is scoped to its own already-in-flight history and does not set precedent
+for any future plan.
 
 > **Programme decisions** — this plan cites the shared `R*`/`A*` decision ids (`R9`, `A6`, `A8`,
 > `A9`, `A12`) throughout; their definitions (folded from the retired shared programme file so this
@@ -29,7 +95,10 @@ most importantly, **no manifest**.
 
 > **This plan never edits a manifest file.** Every file under
 > `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-> [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md).
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> (the three `software-engineer`-role manifests) and its sibling
+> [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> (the `ai-engineer` manifest).
 > A step in this plan that creates, appends to, reorders, or re-verifies a `.yaml` manifest is a
 > **boundary violation**, not a convenience.
 
@@ -50,7 +119,7 @@ plan alone.
 | Interview-ready refresh-register smoothness re-audit                                   | mutation-adjacent; closes the manifest plan's own earlier deferral                 |
 | AI-path manifest growth from the 6-course spine to its full DD-35-governed composition | genuine manifest mutation                                                          |
 | The course-surgery phase's manifest re-verification                                    | read-only, but it inverts the wave order (this plan is Wave 2, that one is Wave 3) |
-| The terminal **127-catalog** assertion                                                 | that is the catalog total; this plan asserts only its own **90** authored bodies   |
+| The terminal **127-catalog** assertion                                                 | that is the catalog total; this plan asserts only its own **21** authored bodies   |
 
 ## Position in the split
 
@@ -76,7 +145,7 @@ flowchart LR
     P2 -->|"syllabus/courses specs<br/>prerequisite frontmatter contract"| THIS
     P1 --> P3
     P2 --> P3
-    THIS -->|"90 authored course bodies<br/>band-completion signals"| P5
+    THIS -->|"21 authored course bodies<br/>band-completion signals<br/>(remaining 69 flow from<br/>7 successor plans)"| P5
     P3 --> P5
 
     classDef wave1 fill:#0173B2,stroke:#000000,color:#FFFFFF
@@ -123,29 +192,31 @@ labels — never by fill colour alone. The forbidden node additionally carries a
 
 The manifest plan cannot act on a vague signal. Every band-completion signal recorded in this plan's
 `delivery.md` MUST carry all five fields below, verbatim, in a fenced `text` block directly under the
-band's gate:
+band's gate. This plan now records exactly **three** such signals — Phase 1 (the six AI-engineering
+courses), Band 1 (Phase 3, Data depth), and Band 2 (Phase 4, Web/backend/platform productivity). The
+signal contract's shape below is otherwise unchanged and is reused verbatim by every successor plan
+(05–11) for the bands each of them lands:
 
-| Field               | Content                                                                           |
-| ------------------- | --------------------------------------------------------------------------------- |
-| `BAND`              | the band number and title, e.g. `Band 5 — Architecture, distributed & AI/harness` |
-| `PLAN`              | `ayokoding-learning-path-04-course-authoring`                                     |
-| `LANDED_COURSE_IDS` | every course ID the band authored, one per line, in the band's own listing order  |
-| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>`  |
-| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of that band's PR                              |
+| Field               | Content                                                                          |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `BAND`              | the band number and title, e.g. `Band 1 — Data depth`                            |
+| `PLAN`              | `ayokoding-learning-path-04-course-authoring`                                    |
+| `LANDED_COURSE_IDS` | every course ID the band authored, one per line, in the band's own listing order |
+| `GROW_MANIFESTS`    | every manifest the manifest plan must grow, by **full path** under `<MANIFESTS>` |
+| `MERGED_COMMIT`     | the `origin/main` merge commit SHA of that band's PR                             |
 
-`GROW_MANIFESTS` is the load-bearing field. It is **not** "all four manifests" by default:
+`GROW_MANIFESTS` is the load-bearing field. For this plan's own three signals it is **not** "all four
+manifests" by default:
 
-- **Bands 1–8** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml`,
+- **Phase 1 (AI-engineering courses)** → `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml`
+  only.
+- **Band 1 and Band 2** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml`,
   `<MANIFESTS>careers/immediately-effective/software-engineer.yaml`,
   `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`
-- **Band 5 and Band 8 additionally** →
-  `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (the nine harness-cluster
-  bodies that grow the fourth path from its 6-course spine into its full DD-35-governed manifest
-  composition — DD-33's fixed 6→15 figure is superseded, and the manifest now includes prerequisites)
-- **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
-  `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml` **only** — the
-  `careers/immediately-effective/software-engineer` path omits the interview-technique band from its
-  `courseOrder` by design
+
+The routing for Bands 3–9 (including the Band 5/Band 8 fourth-path-manifest additions and the Band 9
+two-manifest carve-out) is no longer this plan's concern — each successor plan states its own
+`GROW_MANIFESTS` routing for the band(s) it lands, in its own README.
 
 A signal that names manifests loosely, or omits `MERGED_COMMIT`, is incomplete and the receiving plan
 must reject it rather than guess.
@@ -168,12 +239,35 @@ merges, and deploys once. Historical already-merged individual-course PRs remain
 
 ## Depends-on
 
-| Direction     | Plan (full folder name)                                  | Nature                                                           |
-| ------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
-| **blockedBy** | `ayokoding-learning-path-01-url-restructure`             | hard — populated flat `courses/` namespace + `courses/_index.md` |
-| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | hard — `syllabus/courses/` specs + the `prerequisites` contract  |
-| **blocks**    | `ayokoding-learning-path-05-manifests`                   | hard — 90 authored bodies + the band-completion signals          |
-| _(sibling)_   | `ayokoding-learning-path-03-navigation-ui`               | none — same wave, independent surface, no shared file            |
+| Direction     | Plan (full folder name)                                  | Nature                                                                                                                    |
+| ------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **blockedBy** | `ayokoding-learning-path-01-url-restructure`             | hard — populated flat `courses/` namespace + `courses/_index.md`                                                          |
+| **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | hard — `syllabus/courses/` specs + the `prerequisites` contract                                                           |
+| **blockedBy** | `vercel-function-cost-reduction`                         | hard — see [§`vercel-function-cost-reduction` precondition](#vercel-function-cost-reduction-precondition) below           |
+| **blocks**    | `ayokoding-learning-path-12-careers-se-manifests`        | hard — this plan's Band 1 + Band 2 bodies and their band-completion signals (the successor plans 05–11 declare their own) |
+| **blocks**    | `ayokoding-learning-path-13-careers-ai-manifest`         | hard — this plan's Phase 1 (six AI-engineering courses) and its band-completion signal                                    |
+| _(sibling)_   | `ayokoding-learning-path-03-navigation-ui`               | none — same wave, independent surface, no shared file                                                                     |
+
+### `vercel-function-cost-reduction` precondition
+
+[`vercel-function-cost-reduction`](../vercel-function-cost-reduction/README.md) (folder:
+`plans/in-progress/vercel-function-cost-reduction/`) is a **new hard `blockedBy` dependency**, added
+because that plan's Phases 1–3 change the same app and route tree this plan authors **~21 course
+bundles (~150 rendered pages)** into: it promotes `apps/ayokoding-www/src/app/[locale]/layout.tsx` to the app's root layout
+(deleting `apps/ayokoding-www/src/app/layout.tsx` outright, to fix dynamic rendering caused by a
+`headers()` read in the root layout), removes the server-side `?path=` `searchParams` read on the
+`[...slug]` content catch-all route, and deletes `apps/ayokoding-www/src/middleware.ts` once nothing
+reads the `x-pathname` header it existed to set.
+
+**Per explicit instruction, `vercel-function-cost-reduction` is treated as already merged/done** for
+planning purposes in this plan's documents — i.e. this is stated as a precondition that must hold
+before this plan's remaining Band-2 cohort PR merges, not as a claim already verified true on disk
+today. **Start-precondition (checkable):**
+`test ! -f apps/ayokoding-www/src/app/layout.tsx` returns 0 once that plan's Phase 1 has merged (the
+root layout it deletes). At the time this README was last edited, that file still exists on disk
+(`vercel-function-cost-reduction` has not yet executed its Phases 1–4 in this checkout) — the
+precondition is forward-looking, not yet satisfied, and the remaining Band-2 cohort PR must not merge
+until it is.
 
 **No dependency on any plan outside this split.** The prior "FS-SE must be DONE first" hard dependency
 is **REMOVED** — the sibling FS-SE plan is closed
@@ -184,16 +278,21 @@ as the native-authored backfill (DD-17 / DL-12).
 ## Implementation Sequence and Prerequisites
 
 This plan is **Wave 2** of a five-plan split of the closed
-`shared-course-library-and-learning-paths` plan. It owns **course bodies only**: the six net-new AI
-courses, the 61 transferred topics, the 10 remaining new courses, the 8 remaining capstones, the 5
-deferred interview-technique bodies, and the course-surgery scope contracts.
+`shared-course-library-and-learning-paths` plan. It owns **course bodies only**, and, as of this
+plan's own split into successors 05–11, only **21** of them: the six net-new AI courses, Band 1 —
+Data depth (5), and Band 2 — Web, backend & platform productivity (10). The 61 transferred topics
+beyond Bands 1–2, the 10 remaining new courses beyond Band 2, the 8 remaining capstones, the 5
+deferred interview-technique bodies, and the course-surgery scope contracts are carried by the seven
+successor plans named in [README §Successor plans](./README.md#successor-plans).
 
 ### The manifest ownership invariant (binding)
 
 **This plan never edits a manifest file.** Every file under
 `apps/ayokoding-www/src/features/course-paths/manifests/` is owned by
-`ayokoding-learning-path-05-manifests`. When a band lands, this plan records a
-**band-completion signal** in its own `delivery.md` and the manifest plan performs the growth. A
+`ayokoding-learning-path-12-careers-se-manifests` (the three `software-engineer`-role manifests) and
+its sibling `ayokoding-learning-path-13-careers-ai-manifest` (the `ai-engineer` manifest). When a
+band lands, this plan records a **band-completion signal** in its own `delivery.md` and the owning
+manifest plan performs the growth. A
 step here that appends a course ID to a `.yaml` is a boundary violation, not a convenience.
 
 ### Upstream — what must exist before this plan starts
@@ -214,14 +313,26 @@ step here that appends a course ID to a `.yaml` is a boundary violation, not a c
 4. `test -f plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md`
    returns 0 (substitute the schema plan's current stage folder).
 
+**Additional precondition on the remaining Band-2 cohort PR (added by this revision):**
+
+**5.** `vercel-function-cost-reduction` is merged to `origin/main` — checkable via
+`test ! -f apps/ayokoding-www/src/app/layout.tsx` (see [§`vercel-function-cost-reduction`
+precondition](#vercel-function-cost-reduction-precondition) above). This precondition binds only
+the still-open Band-2 cohort PR, not Phase 0/1/Band-1, which are already merged and unaffected.
+
 ### Downstream — what this plan hands off, and to whom
 
-| Downstream plan                        | Artefact handed over                                                           | Consumed by                                                               |
-| -------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `ayokoding-learning-path-05-manifests` | 90 authored course bundles under `<COURSES>`                                   | manifest integrity fails on any `courseOrder` ID with no resolving bundle |
-| `ayokoding-learning-path-05-manifests` | the six net-new AI course bodies                                               | the fourth path's spine references exactly these six                      |
-| `ayokoding-learning-path-05-manifests` | the locked evals forward-link / D9 citation / D11 concept contracts            | the four-path blast-radius statement cites them                           |
-| `ayokoding-learning-path-05-manifests` | one **band-completion signal** per band, recorded in this plan's `delivery.md` | triggers the corresponding manifest-growth step there                     |
+| Downstream plan                                   | Artefact handed over                                                                     | Consumed by                                                               |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `ayokoding-learning-path-12-careers-se-manifests` | 15 authored course bundles under `<COURSES>` (Band 1 + Band 2)                           | manifest integrity fails on any `courseOrder` ID with no resolving bundle |
+| `ayokoding-learning-path-13-careers-ai-manifest`  | the six net-new AI course bodies (Phase 1)                                               | the fourth path's spine references exactly these six                      |
+| `ayokoding-learning-path-12-careers-se-manifests` | the Band 1 and Band 2 **band-completion signals**, recorded in this plan's `delivery.md` | triggers the corresponding manifest-growth step there                     |
+| `ayokoding-learning-path-13-careers-ai-manifest`  | the Phase 1 **band-completion signal**, recorded in this plan's `delivery.md`            | triggers the corresponding manifest-growth step there                     |
+
+> The locked evals forward-link / D9 citation / D11 concept contracts are no longer handed off from
+> this plan — they target Band 5, which moved to
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, and that plan hands them
+> off to the manifest plan instead.
 
 ### Cross-plan `syllabus/` reference rule
 
@@ -231,21 +342,26 @@ after the split. Do not copy `syllabus/` into this folder.
 
 ### Handoff signal
 
-This plan is done for downstream purposes when its final PR is **merged to `origin/main`** AND
-`find apps/ayokoding-www/content/en/learn/courses -maxdepth 1 -mindepth 1 -type d | wc -l`
-returns **127**.
+This plan is done for downstream purposes when its final PR is **merged to `origin/main`** AND every
+one of its own **21** named course bodies exists as a directory under
+`apps/ayokoding-www/content/en/learn/courses/` (see
+[delivery.md](./delivery.md#phase-5-section--authored-tree-verification) for the exact
+`evidence/authored-body-slugs.txt`-driven check).
 
-> **Scope note on the handoff-signal count.** The `127` above is the **catalog total** and is the
-> **manifest plan's** assertion, not this plan's. This plan's own terminal assertion is its **90
-> authored bodies** (37 re-homed bundles arrive from `ayokoding-learning-path-01-url-restructure`;
-> 37 + 90 = 127). See [delivery.md](./delivery.md) for the authored-body-only check and its
+> **Scope note on the handoff-signal count.** The full programme's **127-course catalog** total is
+> the **manifest plan's** eventual assertion, once this plan and all seven successor plans (05–11)
+> have landed their own shares. **This plan's own terminal assertion is its 21 authored bodies**, not
+> 127 and not 90 — the 90-body figure described this plan's scope before the Band-3-onward carve-out.
+> 37 re-homed bundles (from `ayokoding-learning-path-01-url-restructure`) + this plan's 21 + the seven
+> successor plans' 69 = 127. See [delivery.md](./delivery.md) for the authored-body-only check and its
 > `evidence/authored-body-slugs.txt` manifest.
 
 ## Build order (inherited)
 
 Reproduced **verbatim** from the source plan. Do not paraphrase — the amendment annotations are the
-point. The canonical owner for citation purposes is `ayokoding-learning-path-05-manifests` (its
-phase ordering is what DD-27 most directly constrains).
+point. The canonical owners for citation purposes are `ayokoding-learning-path-12-careers-se-manifests`
+and `ayokoding-learning-path-13-careers-ai-manifest` (their combined phase ordering is what DD-27
+most directly constrains).
 
 - **DD-15 · Build order (locked; amended 2026-07-20 by DD-27 — see below).** Group A (architecture +
   `course-paths` UI — hard prerequisite) → `interview-ready` MVP ships first (re-home 1–33, author the
@@ -313,8 +429,12 @@ The source plan's `## Decisions Locked` list holds **17** entries (`DL-1`…`DL-
   path, bringing the catalog to **127**; update / merge / split / create course surgery is now
   permitted, superseding the original zero-new-bodies invariant, subject to the four-path blast-radius
   rule. **Decided; amended 2026-07-20.**
-  - _Amendment split across plans_: DL-6 is amended by **DL-15**, which lands in
-    [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md).
+  - _Amendment split across plans_: DL-6 is amended by **DL-15**, which lands in whichever of
+    [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+    /
+    [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+    reproduces it (the manifest-composition plan this decision targets, since renamed and split into
+    the two successors above).
     The re-home half of DL-6 is executed by
     [`ayokoding-learning-path-01-url-restructure`](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md);
     the native-authoring half is executed here.
@@ -323,10 +443,19 @@ The source plan's `## Decisions Locked` list holds **17** entries (`DL-1`…`DL-
   `defensive-security` is re-labelled **hands-on By-Example** (the catalog's "concept-level" label was
   wrong); explicit scope lines are drawn (generalist Sigma/ELK breadth vs deep Wazuh SIEM-ops).
   **Decided.**
+  - _Scope note (added by this revision)_: both courses are Band 7, which is **no longer this plan's
+    scope** — Band 7 moved to `ayokoding-learning-path-08-course-authoring-security-and-ops`, which
+    authors both bodies per this ruling. Text kept verbatim (not deleted) as the historical rationale
+    record.
 - **DL-10 · AI-band scope-guard.** `creating-ai-powered-apps` (use-an-LLM) → `agentic-ai` (survey +
   forward-link, does not re-teach at depth) → build-your-own harness cluster (build-your-own depth).
   A cross-reference contract prevents the survey and the cluster from duplicating the
   loop/tools/MCP/memory/evals explanations. **Decided.**
+  - _Scope note (added by this revision)_: all named courses are Band 5, which is **no longer this
+    plan's scope** — Band 5 moved to
+    `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`, which authors the
+    cluster and applies this scope-guard by construction. Text kept verbatim as the historical
+    rationale record.
 - **DL-12 · FS-SE hard dependency REMOVED.** The sibling FS-SE plan is closed; its Passes 3–5 scope is
   absorbed here as the native-authored backfill of topics 34–94. This plan waits on no other plan.
   **Decided.**
@@ -344,9 +473,11 @@ The source plan's `## Decisions Locked` list holds **17** entries (`DL-1`…`DL-
   position (none is genuinely omitted, verified machine-checked topologically-consistent in all
   three); never fold any into a parent course's intra-course capstone or cut it. Mirrors
   [tech-docs DD-20](./tech-docs.md#design-decisions). **Decided 2026-07-19.**
-  - _Split note_: this plan authors six of the seven natively (Band 8). `capstone-solid-core` is
-    already live on disk and is re-homed by `ayokoding-learning-path-01-url-restructure`, not
-    authored here.
+  - _Split note (updated by this revision)_: six of the seven are authored natively as Band 8, which
+    is **no longer this plan's scope** — Band 8 moved to
+    `ayokoding-learning-path-11-course-authoring-capstones`. `capstone-solid-core` is already live on
+    disk and is re-homed by `ayokoding-learning-path-01-url-restructure`, not authored by any
+    course-authoring plan.
 
 ## Blocked-on: Open Question Q-A
 
@@ -383,7 +514,7 @@ round for **web-UI feature-change** plans. This plan is not one:
    the navigation plan's rendering layer, producing findings this plan cannot act on.
 
 **This is an exemption, not an omission**, and it is **narrow**: manual behavioural verification via
-Playwright MCP is **still mandatory and still performed** (see `delivery.md` Phase 13) — a sample of
+Playwright MCP is **still mandatory and still performed** (see `delivery.md` Phase 6) — a sample of
 authored course pages is opened at all three breakpoints in the `en` content locale, with committed
 screenshot evidence. Only the three-tester triad is waived.
 
@@ -397,13 +528,15 @@ forbidden.
 
 ## Navigation
 
-- [Business Requirements (brd.md)](./brd.md) — WHY these 90 bodies exist, who they serve, the
+- [Business Requirements (brd.md)](./brd.md) — WHY these 21 bodies exist, who they serve, the
   business risks of authoring them, and what "done" means in business terms.
-- [Product Requirements (prd.md)](./prd.md) — personas, user stories, the eleven Gherkin acceptance
-  criteria this plan owns (ten routed from the source plan, plus one newly authored scoped
-  build-green scenario), the NEW-course and capstone specifications, and product scope.
-- [Technical Docs (tech-docs.md)](./tech-docs.md) — the authoring architecture, the sixteen design
-  decisions this plan owns, the Course Library Catalog, the proof-of-transfer outcome-anchor, the
+- [Product Requirements (prd.md)](./prd.md) — personas, user stories, the four Gherkin acceptance
+  criteria this plan owns (three routed from the source plan, plus one newly authored scoped
+  build-green scenario — the other seven inherited scenarios moved with their bands to the successor
+  plans), the NEW-course specifications this plan still authors, and product scope.
+- [Technical Docs (tech-docs.md)](./tech-docs.md) — the authoring architecture, the design
+  decisions this plan owns (several re-scoped to point at the successor plan that now authors their
+  target band), the Course Library Catalog (21 rows), the proof-of-transfer outcome-anchor, the
   cross-plan `syllabus/` reference rule, and the UI-design-funnel exemption.
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased, executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
@@ -413,7 +546,8 @@ forbidden.
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   ·
   [`syllabus/paths/` manifests](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/paths/README.md)
-  · [manifest plan](../../backlog/ayokoding-learning-path-05-manifests/README.md)
+  · [SE manifests plan](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+  · [AI manifest plan](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
   · [URL-restructure plan](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
   · [navigation-UI plan](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/README.md)
   · [schema plan](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/README.md)

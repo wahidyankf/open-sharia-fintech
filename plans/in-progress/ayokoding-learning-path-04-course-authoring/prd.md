@@ -2,17 +2,20 @@
 
 ## Product Overview
 
-This plan authors the **course bodies** of the shared course library — 90 page bundles under
+This plan authors **21 course bodies** of the shared course library — page bundles under
 `apps/ayokoding-www/content/en/learn/courses/`, each a standalone, path-neutral building block with a
 stable course ID, a canonical URL, a declared prerequisite list, a learning track, and a drilling
-track.
+track. (This plan originally scoped 90 bodies; the remaining 69, plus the three course-surgery scope
+contracts, are now carried by seven successor plans — see
+[README §Successor plans](./README.md#successor-plans).)
 
 A **course** is the unit of reading. A **path** is an ordered manifest of course IDs. This plan owns
 the former and never the latter. Four **`careers/`** paths compose these bodies — the two
-**`skills/`** paths and their corpora belong to
-[`ayokoding-learning-path-06-skills-accounting`](../../backlog/ayokoding-learning-path-06-skills-accounting/README.md)
-and [`ayokoding-learning-path-07-skills-erp`](../../backlog/ayokoding-learning-path-07-skills-erp/README.md),
-and are explicitly **not** authored here:
+**`skills/`** domains and their corpora belong to the entry-point plans
+[`ayokoding-learning-path-14-skills-accounting-foundations`](../../backlog/ayokoding-learning-path-14-skills-accounting-foundations/README.md)
+(accounting, first of a 3-plan chain: 14 → 15 → 16) and
+[`ayokoding-learning-path-17-skills-erp-foundations`](../../backlog/ayokoding-learning-path-17-skills-erp-foundations/README.md)
+(ERP, first of a 2-plan chain: 17 → 18), and are explicitly **not** authored here:
 
 - **`careers/interview-ready/software-engineer`** — the **interview/job-prep-first** arc for an
   experienced engineer re-entering the market: interview prep FIRST → production-effective → deeper.
@@ -30,7 +33,7 @@ and are explicitly **not** authored here:
   > competence, and its prerequisites are **included** in `courseOrder`. The consequence for this
   > plan is bounded — the included prerequisites are **existing library courses**, so no additional
   > body is authored here; the growth lands in the path's manifest, which
-  > [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md) owns.
+  > [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md) owns.
   > **DD-24** ("fourth path's entry point: linked, not included, prerequisites") is superseded by
   > this amendment.
 
@@ -75,10 +78,11 @@ plan's bodies serve most directly — every authored course is reached by reader
   four-path architecture, builds the navigation feature, and authors the NEW courses via the ayokoding
   maker agents.
 
-> The end-to-end **Learner Journey** walk-through is not duplicated here. It belongs to the two plans
+> The end-to-end **Learner Journey** walk-through is not duplicated here. It belongs to the three plans
 > that build and populate that journey — see the
-> [navigation-UI plan](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/prd.md) and the
-> [manifest plan](../../backlog/ayokoding-learning-path-05-manifests/prd.md).
+> [navigation-UI plan](../../done/2026-07-25__ayokoding-learning-path-03-navigation-ui/prd.md), the
+> [SE manifests plan](../../backlog/ayokoding-learning-path-12-careers-se-manifests/prd.md), and the
+> [AI manifest plan](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/prd.md).
 
 ## User Stories
 
@@ -123,33 +127,27 @@ Scoped to this plan's surface — the course bodies themselves.
 
 ## Acceptance Criteria (Gherkin)
 
-This plan owns **ten** scenarios routed from the source plan, plus **one** scoped build-green
-scenario written to replace the source's composite, unassignable
-`Scenario: The app builds and validates green` (which conjoined the navigation feature and the
-interview-ready path in its `Given`, spanning two plans by construction — see
-[README §Provenance](./README.md#provenance)).
+This plan owns **four** scenarios: three routed from the source plan (covering Phase 1's AI-evals
+courses and Band 2's self-hosting course), plus **one** scoped build-green scenario written to
+replace the source's composite, unassignable `Scenario: The app builds and validates green` (which
+conjoined the navigation feature and the interview-ready path in its `Given`, spanning two plans by
+construction — see [README §Provenance](./README.md#provenance)).
+
+> **Seven scenarios moved out with their content (removed from this section by this revision).** The
+> interview-technique scenarios (behavioral course layoff/gap narrative; interview refresh register,
+> Band 9), the harness-engineering-cluster scenarios (working agent from runnable code; agentic-ai
+> forward-linking, Band 5), the detection-engineering-vs-defensive-security scenario (Band 7), and the
+> two capstone scenarios (coding-agent; pentest-engine, Band 8) all describe content that is no longer
+> authored by this plan. Each moved with its target band to the owning successor plan —
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` (harness-cluster
+> scenarios), `ayokoding-learning-path-08-course-authoring-security-and-ops` (detection-engineering
+> scenario), `ayokoding-learning-path-09-course-authoring-interview-technique` (interview scenarios),
+> and `ayokoding-learning-path-11-course-authoring-capstones` (capstone scenarios) — which restates
+> the scenario verbatim in its own `prd.md` and binds it to its own `delivery.md`.
 
 Every scenario below uses exactly one primary `Given`, one `When`, and one `Then`, with all extras
 chained via `And` / `But`, per the
 [Acceptance Criteria Convention](../../../repo-governance/development/infra/acceptance-criteria.md#step-keyword-cardinality-hard-rule).
-
-### Interview-technique courses
-
-```gherkin
-Scenario: The behavioral course covers the layoff and employment-gap narrative
-  Given the behavioral-and-leadership-interviews course is authored
-  When an experienced re-entrant reads its learning track
-  Then it explicitly covers framing an employment gap, a layoff, or a re-entry story
-  And it treats senior/staff/EM leadership rounds as core material
-```
-
-```gherkin
-Scenario: Interview courses are written in a refresh register
-  Given the four new interview-technique courses are authored
-  When an experienced engineer reads them
-  Then each assumes prior professional experience and focuses on interview technique and breadth refresh
-  And none teaches core concepts from zero
-```
 
 ### Productivity and self-hosting courses
 
@@ -159,24 +157,6 @@ Scenario: The light self-hosting course stays below clusters and IaC
   When a reader compares it with containers-and-orchestration and cloud-and-iac
   Then it teaches running one box, containerizing a service, a reverse proxy, and PaaS git-push deploy
   And its overview explicitly excludes clusters, Terraform/Packer/Ansible IaC, and Proxmox
-```
-
-### Harness-engineering cluster
-
-```gherkin
-Scenario: The harness cluster builds a working agent from runnable code
-  Given the five harness-engineering courses are authored
-  When a reader builds an agent from them
-  Then the agent loop, tools/MCP, memory, permissions, and orchestration each ship runnable typed-Python examples
-  And each course names remotebrowser's bundled MCP or CDP browser only as an illustrative pickup
-```
-
-```gherkin
-Scenario: The agentic-ai survey forward-links each primitive without re-teaching it
-  Given the agentic-ai survey course and the five harness-cluster courses are authored
-  When a reader reads the agentic-ai survey
-  Then it previews the agent loop, tools/MCP, memory/context, and evals and forward-links each to its cluster course
-  And it does not re-teach any primitive at build-your-own depth
 ```
 
 ### AI-engineering specialization courses
@@ -197,34 +177,6 @@ Scenario: The statistics-for-evals course stays scoped to what evals demand
   And it does not re-teach general product A/B testing, which stays analytics-and-experimentation's scope
 ```
 
-### Security and systems gap-closers
-
-```gherkin
-Scenario: Hands-on detection engineering stays distinct from generalist defensive security
-  Given the detection-engineering-and-siem-operations course is authored
-  When a reader compares it with the hands-on defensive-security course
-  Then it has the reader author working Wazuh decoders, correlation rules, and a dashboard with false-positive tuning
-  And defensive-security keeps the generalist Sigma/ELK breadth, IR, and hardening as its distinct scope
-```
-
-### Capstones
-
-```gherkin
-Scenario: The coding-agent capstone assembles the harness cluster into a working CLI
-  Given the harness cluster and the build-your-own-coding-agent capstone are authored
-  When a reader completes the capstone
-  Then they have a runnable coding-agent CLI built from the agent loop, tools/MCP, memory, permissions, and orchestration courses
-  And a disallowed action fails closed while every run emits a trace
-```
-
-```gherkin
-Scenario: The pentest-engine capstone assembles the convergence track into a scoped engine
-  Given the harness cluster, the CDP course, the security suite, and detection-engineering are authored
-  When a reader completes the build-your-own-pentest-engine capstone
-  Then they have a runnable engine from swarm orchestration, MCP tooling, CDP browser driving, and security-tool-chaining
-  And scope enforcement refuses an out-of-scope target while the capstone uses vacti-pentest-engine only as an illustration
-```
-
 ### Scoped build-green (this plan's own surface)
 
 ```gherkin
@@ -237,33 +189,27 @@ Scenario: The authored course library builds and validates green
 
 ## Scenario-to-delivery binding
 
-Every scenario above binds to a named delivery step. The five marked **newly bound** reached no
-delivery step in the source plan and would have been silently dropped by the split; each now carries
-a `**Gherkin (binds) →**` marker plus its verbatim fenced block on the named step in
-[`delivery.md`](./delivery.md).
+Every scenario above binds to a named delivery step, in this plan's own [`delivery.md`](./delivery.md).
 
-| Scenario                                                                         | Binds to                                                                                       | Status          |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------- |
-| The light eval gate and deep evals course do not overlap                         | Phase 1 · `evaluating-ai-systems-in-depth` authoring step                                      | inherited bind  |
-| The statistics-for-evals course stays scoped to what evals demand                | Phase 1 · `statistics-for-evaluation` authoring step                                           | inherited bind  |
-| The light self-hosting course stays below clusters and IaC                       | Phase 4 (Band 2) · `self-hosting-essentials` authoring step                                    | inherited bind  |
-| Hands-on detection engineering stays distinct from generalist defensive security | Phase 9 (Band 7) · `detection-engineering-and-siem-operations` step                            | inherited bind  |
-| The behavioral course covers the layoff and employment-gap narrative             | Phase 11 (Band 9) · `behavioral-and-leadership-interviews` step                                | inherited bind  |
-| The agentic-ai survey forward-links each primitive without re-teaching it        | Phase 7 (Band 5) · `agentic-ai` authoring step                                                 | **newly bound** |
-| The harness cluster builds a working agent from runnable code                    | Phase 7 (Band 5) · `agent-orchestration-subagents-and-observability` step (closes the cluster) | **newly bound** |
-| The coding-agent capstone assembles the harness cluster into a working CLI       | Phase 10 (Band 8) · `capstone-build-your-own-coding-agent` step                                | **newly bound** |
-| The pentest-engine capstone assembles the convergence track into a scoped engine | Phase 10 (Band 8) · `capstone-build-your-own-pentest-engine` step                              | **newly bound** |
-| Interview courses are written in a refresh register                              | Phase 11 (Band 9) · the four interview-technique authoring steps                               | **newly bound** |
-| The authored course library builds and validates green                           | Phase 12 · Section and App Verification                                                        | new (scoped)    |
+| Scenario                                                          | Binds to                                                    | Status         |
+| ----------------------------------------------------------------- | ----------------------------------------------------------- | -------------- |
+| The light eval gate and deep evals course do not overlap          | Phase 1 · `evaluating-ai-systems-in-depth` authoring step   | inherited bind |
+| The statistics-for-evals course stays scoped to what evals demand | Phase 1 · `statistics-for-evaluation` authoring step        | inherited bind |
+| The light self-hosting course stays below clusters and IaC        | Phase 4 (Band 2) · `self-hosting-essentials` authoring step | inherited bind |
+| The authored course library builds and validates green            | Phase 5 · Section and Authored-Tree Verification            | new (scoped)   |
 
 ## NEW Course & Capstone Specifications
 
-This plan authors **twenty NEW courses + nine NEW capstones** — the original fourteen (interview +
-productivity/harness/security clusters) plus **six further NEW AI-specific courses** added 2026-07-20
-for the `careers/immediately-effective/ai-engineer` path, plus nine capstones (three original plus six
-of the seven DD-20 inter-topic capstones; the seventh, `capstone-solid-core`, is already live on disk
-and is re-homed by `ayokoding-learning-path-01-url-restructure`, not authored here) — alongside the 61
-transferred topics authored native.
+This plan authors **eight NEW courses + zero NEW capstones** — two Band-2 productivity courses
+(`async-python-and-fastapi-services`, `self-hosting-essentials`) plus the **six NEW AI-specific
+courses** for the `careers/immediately-effective/ai-engineer` path — alongside Band 1's **5**
+transferred topics and Band 2's remaining **8** transferred topics (13 transferred total). The
+original twenty-NEW-course figure (interview + productivity/harness/security clusters) and all nine
+NEW capstones now belong to the successor plans named in
+[README §Successor plans](./README.md#successor-plans): twelve of the twenty NEW courses (the four
+interview courses, the five harness-cluster courses, `browser-automation-with-cdp`, `just-enough-cpp`,
+and `detection-engineering-and-siem-operations`) and all nine NEW capstones moved out with Bands
+5–9.
 
 Each course is a full page-bundle (learning track + drilling track) matching the sibling plan's
 per-topic anatomy and inheriting its cross-cutting authoring guarantees verbatim: accuracy-verified
@@ -276,12 +222,13 @@ Every course declares its `prerequisites` so it takes its place in the library's
 (one file per course ID) — the specs below fix each course's purpose, register, and acceptance shape.
 The catalog is the source of truth for authoring; these specs are not a substitute for it.
 
-**Register.** The four interview-technique courses use a **refresh register** (assume prior
-professional experience; reload technique, do not teach from zero). The ten productivity/harness/
-security courses and the six AI-specific courses (2026-07-20) use the normal **first-learn By-Example
-register**; `just-enough-cpp` is primer scope. Each AI-specific course teaches **AI material only**
-and never re-teaches the SWE fundamentals the other three paths own — but that scope boundary is a
-**body-level** rule, not an entry assumption about the reader. DD-24's **links-not-included** entry
+**Register.** This plan's two Band-2 NEW productivity courses and the six AI-specific courses
+(2026-07-20) use the normal **first-learn By-Example register**. (The four interview-technique
+courses' refresh register, and `just-enough-cpp`'s primer scope, describe content that moved out with
+Bands 9 and 6 respectively — see the successor plans' own `prd.md` files.) Each AI-specific course
+teaches **AI material only** and never re-teaches the SWE fundamentals the other three paths own — but
+that scope boundary is a **body-level** rule, not an entry assumption about the reader. DD-24's
+**links-not-included** entry
 model is **superseded** by the 2026-07-21 re-scoping recorded above (see
 [Product Overview](#product-overview)): the fourth path assumes **no** prior software-engineering
 competence and **includes** its prerequisite courses in `courseOrder`. Those prerequisites are
@@ -301,18 +248,20 @@ subject.
 | Annotated-concept, code-bearing               | ≥ 10                    | 45–60 worked examples                 |
 | Annotated-concept, no-code (refresh register) | ≥ 8                     | 30–60 worked scenarios                |
 
-### Interview-technique courses (refresh register)
+> **Three specification sections moved out with their bands (removed from this section by this
+> revision).** The interview-technique courses (Band 9), the harness-engineering cluster (Band 5,
+> including `browser-automation-with-cdp`, which the source catalog places in Band 5 alongside the
+> cluster rather than in Band 2), and the security & systems gap-closers (`just-enough-cpp` is
+> Band 6; `detection-engineering-and-siem-operations` is Band 7) are no longer authored by this plan.
+> Their specs move with their bands to
+> `ayokoding-learning-path-09-course-authoring-interview-technique`,
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`,
+> `ayokoding-learning-path-07-course-authoring-low-level-systems`, and
+> `ayokoding-learning-path-08-course-authoring-security-and-ops` respectively, each restating the
+> relevant spec verbatim in its own `prd.md`. The NEW capstones section below is similarly removed in
+> full — all nine NEW capstones are Band 8 or Band 9, neither owned here.
 
-- **`coding-interview`** (By Example · Python, patterns language-agnostic) — reload LeetCode-style
-  pattern recognition + time-boxed problem-solving; hosts the 2026 senior interview-loop-map.
-- **`take-home-and-live-coding`** (By Example · Python) — time-boxed take-home + observed live/pair
-  technique: scope, test, README hygiene, thinking aloud.
-- **`system-design-interview`** (Annotated-concept · no code) — the senior/staff system-design
-  interview rubric + whiteboard flow; forward-links the depth course `system-design`.
-- **`behavioral-and-leadership-interviews`** (Annotated-concept · no code) — STAR + senior/staff/EM
-  rounds AND framing an **employment-gap / layoff / re-entry** narrative.
-
-### Productivity & self-hosting courses (first-learn By-Example)
+### Productivity & self-hosting courses (first-learn By-Example) — Band 2
 
 - **`async-python-and-fastapi-services`** (By Example · Python) — async Python, FastAPI/Uvicorn,
   Pydantic, `uv`/`ruff`/`pyright`/`pytest-asyncio` — the `remotebrowser` + FastAPI-backend stack.
@@ -322,26 +271,6 @@ subject.
 - **`self-hosting-essentials`** (By Example · ops/config) — **light** on-ramp: one box, containerize,
   reverse proxy + TLS, systemd/ports, env/secrets, backups, PaaS git-push. Strictly below
   `containers-and-orchestration` / `cloud-and-iac`; distinct from `bare-metal-virtualization`.
-- **`browser-automation-with-cdp`** (By Example · Python) — Chrome DevTools Protocol browser
-  automation (port 9222; nodriver/zendriver family) — the core `remotebrowser` skill. Distinct from
-  `software-testing`'s Playwright E2E: raw CDP automation, not a test runner.
-
-### Harness-engineering cluster (first-learn By-Example · Python)
-
-The five build-your-own-agentic-coding-tool courses; the MCP built in `agent-tools-and-mcp` is the same
-MCP `remotebrowser` exposes; all feed `capstone-build-your-own-coding-agent`. **AI-band scope-guard**:
-these build the primitives at build-your-own depth; the survey course `agentic-ai` (57) previews and
-**forward-links** each primitive here and does NOT re-teach at cluster depth, and
-`creating-ai-powered-apps` (56) stays at the _use-an-LLM-in-an-app_ altitude.
-
-- **`the-agent-loop`** — the LLM read-eval-act tool-use loop, streaming, stop conditions.
-- **`agent-tools-and-mcp`** — tool/function schema design; an MCP server + client; resources/prompts.
-- **`agent-context-and-memory`** (Annotated-concept) — context budgeting, compaction, retrieval,
-  persistent memory.
-- **`agent-permissions-and-sandboxing`** — approval models, sandboxed execution, guardrails,
-  fail-closed defaults.
-- **`agent-orchestration-subagents-and-observability`** (Annotated-concept) — subagents, background
-  tasks, hooks/skills systems, a TUI, evals + tracing/telemetry.
 
 ### AI-engineering specialization courses (`careers/immediately-effective/ai-engineer` path, added 2026-07-20)
 
@@ -385,61 +314,29 @@ The scope boundary between the light eval gate and deep evals is stated explicit
 overviews, in the style of the existing AI-band scope-guard (DD-10/DD-11), to avoid reproducing that
 cluster's overlap problem.
 
-### Security & systems gap-closers
-
-- **`just-enough-cpp`** (Primer · C++) — systems-language principle on-ramp (RAII, templates/generics,
-  STL, smart pointers, manual memory); prereq `just-enough-c`; Wazuh's C++ core is one illustration.
-- **`detection-engineering-and-siem-operations`** (By Example · XML/rules + config + Python) —
-  decoders, correlation rules, log parsing/normalization, FP tuning, dashboards, alert triage; Wazuh
-  XML is the worked example. Distinct from `defensive-security` (which is **hands-on By-Example**
-  generalist blue-team breadth — Sigma/ELK + IR + hardening, **not** concept-level); prereq
-  `defensive-security`.
-
-### NEW capstones
-
-Capstones follow the sibling's capstone-policy shape (goal/outcome, concepts-exercised checklist,
-ordered step outline, testable acceptance criteria, done bar = runnable end-to-end + web-verified).
-
-- **`capstone-interview-loop`** (Python + prose) — a full mock interview loop (coding + system-design +
-  behavioral incl. gap narrative), each round self-scored against its module rubric.
-- **`capstone-build-your-own-coding-agent`** (Python) — assemble the harness cluster into a working
-  minimal coding-agent CLI; bonus path drives `remotebrowser` over MCP.
-- **`capstone-build-your-own-pentest-engine`** (TypeScript default) — assemble swarm orchestration +
-  MCP tool arsenal + CDP browser driving + security-tool-chaining + evidence pipeline + scope
-  enforcement + deterministic-prober-vs-AI-verifier into a working engine; `vacti-pentest-engine` is
-  the illustration. **Lab-local, authorized-scope-only** — inherits `offensive-security`'s
-  rules-of-engagement guard; the body must restate scope and authorization limits.
-
-The six DD-20 inter-topic capstones authored here (`capstone-real-world-delivery`,
-`capstone-secure-service`, `capstone-data-pipeline`, `capstone-concurrency-and-systems`,
-`capstone-concurrency-showdown`, `capstone-lead-at-altitude`) have fully-specified specs embedded
-inside their host course spec files under the cross-plan `syllabus/courses/` folder — see
-[tech-docs DD-20](./tech-docs.md#design-decisions) for the host mapping.
-
 ## Product Scope
 
 **In-scope**:
 
-- Authoring **90 course page bundles** under `apps/ayokoding-www/content/en/learn/courses/<course-id>/`,
+- Authoring **21 course page bundles** under `apps/ayokoding-www/content/en/learn/courses/<course-id>/`,
   each with `_index.md` (declaring `prerequisites`), `overview.md`, a `learning/` track (concepts,
   worked examples, colocated runnable `code/` where code-bearing, and `learning/capstone/`), and a
   `drilling/` track in the fixed five-section order.
 - Declaring each body's `prerequisites` in the contracted frontmatter shape, transcribed from its
   settled spec.
 - Stating each body's **scope boundary** against any sibling course it could be confused with.
-- Locking and applying the three **course-surgery contracts** (evals forward-link, D9
-  naming/citation, D11 concept additions), including their four-path blast-radius statement.
 - Adding this plan's authored courses to the tracked
   [Course Library Catalog](./tech-docs.md#course-library-catalog) as real rows.
 - Updating `<COURSES>_index.md` to list every authored course.
-- Emitting one complete **band-completion signal** per band.
+- Emitting one complete **band-completion signal** per band (three total: Phase 1, Band 1, Band 2).
 - Manual behavioural verification of a sample of authored course pages via Playwright MCP, with
   committed screenshot evidence in `evidence/`.
 
 **Out of scope**:
 
 - **Any manifest file** under `<MANIFESTS>` — creating, appending to, reordering, or re-verifying.
-  Owned by `ayokoding-learning-path-05-manifests`. Binding invariant.
+  Owned by `ayokoding-learning-path-12-careers-se-manifests` and its sibling
+  `ayokoding-learning-path-13-careers-ai-manifest`. Binding invariant.
 - **Any path landing anchor** under `<PATHS>` and the paths hub — owned by the manifest and
   navigation-UI plans.
 - **Any `course-paths` feature code** (`core/` or `shell/`) — owned by the schema and navigation-UI
@@ -447,6 +344,8 @@ inside their host course spec files under the cross-plan `syllabus/courses/` fol
 - **Any redirect module or rule** — owned by `ayokoding-learning-path-01-url-restructure`.
 - **The 33 shipped topics and the 4 existing capstones** (including `capstone-solid-core`) — re-homed,
   not authored, by `ayokoding-learning-path-01-url-restructure`.
+- **Bands 3–9 (69 course bodies) and the three course-surgery contracts** — carried by the seven
+  successor plans; see [README §Successor plans](./README.md#successor-plans).
 - **The `prerequisites` frontmatter contract's definition** — consumed here, owned by the schema plan.
 - **The `syllabus/` folder** — read-only from this plan; never copied.
 - **Any Indonesian (`id`) course content** — explicitly deferred.
@@ -463,18 +362,10 @@ inside their host course spec files under the cross-plan `syllabus/courses/` fol
 - **A prerequisite edge invented at authoring time.** The failure does not surface here — it surfaces
   in the manifest plan as an integrity failure with no trace back. Mitigated by transcribing the
   declared chain rather than re-deriving it.
-- **Duplication creep in the AI band.** The band's largest historical risk: the survey re-teaching
-  what the cluster owns, or a fourth evals treatment appearing. Mitigated by the AI-band scope-guard
-  and the evals forward-link contract, both as grep-checkable acceptance criteria on the authoring
-  steps themselves.
 - **Volatile facts in the stable spine.** SDK, model, pricing, and framework specifics age within
   months. Mitigated by DD-28's durability constraint: volatile facts live only in dated accuracy-note
   sidebars, enforced per-course by the accuracy pre-verify step and re-checked by the facts checker.
-- **Contested terminology adopted as course structure.** "Harness engineering" is young and disputed
-  among named practitioners. Mitigated by DD-29: cite the disagreement, rename nothing, add no course.
-- **An unsourced figure cited as fact.** Mitigated by DD-30's explicit do-not-cite ruling on the
-  42%→78% scaffold-swing figure and by labelling the competence-floor reconciliation a synthesis no
-  single source makes.
+  (This still applies to Phase 1's six AI-specific courses, authored here.)
 - **A natively-authored slug colliding with a not-yet-moved re-home slug.** Two courses would silently
   share one canonical URL. Mitigated by running the 29-new-slug collision check against a **populated**
   namespace — which is why the URL-restructure plan is a hard prerequisite.
@@ -490,5 +381,11 @@ inside their host course spec files under the cross-plan `syllabus/courses/` fol
   permitted" (DD-28) as "body forking permitted". Mitigated by DD-28's copy here restating DD-7's
   surviving half and carrying a working cross-plan link to DD-7 in the manifest plan — see
   [tech-docs DD-28](./tech-docs.md#design-decisions).
-- **Ninety bodies authored serially stalling the plan.** Mitigated by band-per-phase structure with
-  independent safe stopping points and concurrent review pipelining bounded by the in-force cap.
+- **Twenty-one bodies authored serially stalling the plan.** Mitigated by band-per-phase structure
+  with independent safe stopping points and concurrent review pipelining bounded by the in-force cap.
+
+> Three risks moved out with Band 5 (removed from this list by this revision): duplication creep in
+> the AI band (survey re-teaching the harness cluster, or a fourth evals treatment), contested
+> "harness engineering" terminology (DD-29), and the unsourced 42%→78% scaffold-swing figure (DD-30).
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` restates the equivalent
+> risks in its own `prd.md`.

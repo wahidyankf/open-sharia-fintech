@@ -1,0 +1,706 @@
+# Delivery Checklist — Course Authoring: JVM, Advanced Languages & Build-Your-Own Internals
+
+This checklist authors **9 course bodies** into
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`: `just-enough-java`,
+`enterprise-java-and-the-jvm`, `lisp`, `just-enough-fsharp`, `type-systems`,
+`compilers-parsers-and-transpilers`, `build-your-own-git`, `build-your-own-database`,
+`build-your-own-raft` — the JVM/advanced-language/build-your-own half of
+`ayokoding-learning-path-04-course-authoring`'s Band 6.
+
+> **This plan never edits a manifest file.** Every file under `<MANIFESTS>` belongs to
+> [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
+> (successor to the retired `ayokoding-learning-path-05-manifests`). This
+> plan's only outbound artefact is the **partial band-completion signal** recorded at the end of
+> Phase 2. See [README.md §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else)
+> and [tech-docs.md §The manifest ownership invariant](./tech-docs.md#the-manifest-ownership-invariant-binding).
+>
+> **Cross-plan source of truth** — the shared `syllabus/` detail layer lives in
+> [`../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md).
+> Every course body is authored **from** its `syllabus/courses/<course-id>.md` spec. **Never copy**
+> those files into this plan.
+>
+> **Legend** — `[AI]`: an agent performs the step (the default; unmarked steps are `[AI]`).
+> `[HUMAN]`: only a human can do it (physical action, out-of-band approval, real-secret or
+> privileged-credential handling). `[AI+HUMAN]`: agent prepares, human approves or finishes.
+> Git-mechanical steps (worktree create/remove, branch, push, merge) are `[AI]`. **This plan contains
+> no `[HUMAN]` step.**
+>
+> **Phase Gate** — every phase ends with a `### Phase N Gate` (must-pass verification) plus a
+> `> **Pause Safety**:` note. A gate in a phase named as a delivery boundary in the
+> [`### Delivery Boundaries`](#delivery-boundaries) table additionally covers **integration** (draft
+> PR opened, 3-cycle PR-Review, CI green, `[AI]` merge, `ayokoding-www` deployed); a gate in an
+> **intermediate** phase confirms the work is committed to its delivery unit's branch with nothing
+> pushed for review yet.
+>
+> **Executor environment note (RTK)** — this repo routes `git` through RTK via a Claude Code hook.
+> For a **non-empty** `git diff --name-only`, `| grep -c .` reads the true changed-path count; for the
+> **clean** state, `| grep -c .` reads `0` while `| wc -l` reads `1` (RTK's empty-output marker is a
+> lone newline, not true zero-byte emptiness). **Every zero-count assertion in this plan therefore
+> uses `| grep -c .`, never `| wc -l`.** See
+> [`ayokoding-learning-path-04-course-authoring/delivery.md`'s fuller RTK note](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md)
+> (its own intro blockquote, near the top of the file) for the fully-measured detail this plan
+> inherits without re-deriving.
+
+## Worktree
+
+Worktree path: `worktrees/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/`
+
+Optional manual pre-provisioning (run from repo root):
+
+```bash
+claude --worktree ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own
+```
+
+The plan-execution Step 0 gate enters this worktree by default: it auto-provisions from the latest
+`origin/main` when missing, syncs with `origin/main` before implementing, and prompts before deleting
+the worktree after the plan is archived and pushed. Every phase branches fresh from the latest
+`origin/main` inside this one shared worktree and authors its work there, committing as it goes. Only
+the phase(s) named as a **delivery boundary** in the [`### Delivery Boundaries`](#delivery-boundaries)
+table push that branch and open their own draft PR; an intermediate phase commits without opening one.
+
+See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
+[Plans Organization Convention §Worktree Specification](../../../repo-governance/conventions/structure/plans.md#worktree-specification).
+
+## Delivery Mode: worktree-to-pr
+
+Each delivery boundary works in the shared worktree on its own branch, opens a draft PR against
+`main`, runs the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), flips the PR to ready,
+and `[AI]` merges it automatically once all quality gates are green — then deploys `ayokoding-www` to
+`prod-ayokoding-www`, **contingent on the Vercel cost-reduction precondition** (see Phase 0) holding at
+that point in time. See
+[Plans Organization Convention §Delivery Mode](../../../repo-governance/conventions/structure/plans.md#delivery-mode)
+and the [PR Review Quality Gate workflow](../../../repo-governance/workflows/pr/pr-review-quality-gate.md).
+
+**Delivery-Boundary Integration Protocol** (fires once per delivery boundary — Phase 0 is excluded):
+
+1. [AI] Sync the worktree to latest `origin/main` and branch:
+   `git fetch origin && git checkout main && git pull && git checkout -b ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/<phase-slug>`.
+2. [AI] Stage only this phase's paths (`git add <explicit paths>` — never `git add -A`), commit
+   thematically (Conventional Commits, imperative, no period), push the branch, open a draft PR
+   against `main` (`gh pr create --draft --base main ...`).
+3. [AI] Run the PR-Review Maker→Fixer Cycle (3 sequential CI-gated cycles), resolve every finding, then
+   `gh pr ready`.
+4. [AI] Merge once all quality gates are green (typecheck, lint, `test:quick`, `test:unit`, CI, the
+   3-cycle review) — `[AI]` auto-merge, matching the repo's default PR Merge Protocol; this plan
+   declares no `[HUMAN]` merge gate.
+5. [AI] **Check the Vercel cost-reduction precondition** (see Phase 0's check, re-run here):
+   `jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json` — if the value is `< 2000`,
+   STOP before dispatching the deployer and surface this to the user rather than deploying more
+   always-dynamic pages.
+6. [AI] Dispatch `apps-ayokoding-www-deployer` to deploy `ayokoding-www` to `prod-ayokoding-www`.
+
+## Depends-on
+
+| Relation        | Plan (full folder name)                                                   | Nature                                                                                                                                                                                                                                                                                                                      |
+| --------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`                              | **Hard, transitive.** Populates the flat `courses/` bucket + `courses/_index.md` this plan authors into.                                                                                                                                                                                                                    |
+| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | **Hard, transitive.** Owns `syllabus/` (all 9 authoring source specs) and the `prerequisites` contract.                                                                                                                                                                                                                     |
+| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`                             | **Hard, already satisfied for the Band-1 edge.** `build-your-own-database`'s prerequisite `database-internals-and-storage-engines` is confirmed present on `origin/main` (see Phase 0).                                                                                                                                     |
+| **blockedBy**   | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`    | **Hard, not yet satisfied.** `build-your-own-raft`'s prerequisite `just-enough-go` (Band 4) lives here.                                                                                                                                                                                                                     |
+| **blockedBy**   | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | **Hard, not yet satisfied.** Two bodies live here: `build-your-own-raft`'s prerequisite `distributed-systems` (Band 5), and `enterprise-java-and-the-jvm`'s prerequisite `software-architecture` (also Band 5 — previously undeclared; see [tech-docs.md's Course Library Catalog](./tech-docs.md#course-library-catalog)). |
+| **blockedBy**   | `vercel-function-cost-reduction`                                          | **Hard, new.** Every delivery boundary here deploys to production; deploying before that plan's prerendering fix compounds its cost defect.                                                                                                                                                                                 |
+| **blocks**      | `ayokoding-learning-path-12-careers-se-manifests`                         | Needs this plan's 9 bodies + partial band-completion signal to grow the three software-engineer manifests' Band-6 entries, per this plan's commissioning instructions.                                                                                                                                                      |
+| **independent** | `ayokoding-learning-path-07-course-authoring-low-level-systems`           | Same wave, sibling half of Band 6. Verified zero shared prerequisite edge in either direction (see tech-docs.md).                                                                                                                                                                                                           |
+
+**Start precondition (hard gate, checked in Phase 0)**: `01` and `02` are merged to `origin/main`; the
+Band-1 body for `build-your-own-database` exists; the Vercel cost-reduction fix's route-count signal
+is tracked (not necessarily satisfied yet — re-checked at each boundary's deploy step). `06`'s
+`software-architecture` body is re-checked immediately before `enterprise-java-and-the-jvm`'s own
+sub-phase in Phase 1; `05`'s `just-enough-go` and `06`'s `distributed-systems` bodies are re-checked
+immediately before `build-your-own-raft`'s own sub-phase in Phase 2 — none of the three is checked
+merely at plan start.
+
+## Parallelization Model
+
+**Cap**: honor the in-force subagent/PR-review concurrency cap, matching every sibling
+course-authoring plan.
+
+- **Phase 0** is a single serial baseline.
+- **Phase 1 (Cohort 1, 5 bodies)** — content-independent bodies that pipeline concurrently through
+  review, bounded by the cap. One internal ordering constraint: `enterprise-java-and-the-jvm` declares
+  `just-enough-java` a prerequisite — both are inside this same cohort, so ordering is a convenience
+  (author `just-enough-java` first, or in the same review cycle), not a cross-cohort blocker.
+  `enterprise-java-and-the-jvm`'s other prerequisite, `software-architecture`, is external (plan `06`,
+  not yet on disk) and is hard-gated immediately before this course's own sub-phase (see Phase 1's
+  hard gate below) rather than assumed satisfied. `type-systems` does **not** declare
+  `just-enough-fsharp` as a prerequisite — its actual prerequisites (`functional-programming`,
+  `programming-paradigms`, `just-enough-typescript`) are all already-shipped, so it carries no ordering
+  constraint of its own within this cohort.
+- **Phase 2 (Cohort 2, 4 bodies)** — `compilers-parsers-and-transpilers` and `build-your-own-git` have
+  no external blocker beyond cohort 1 (already merged) and already-shipped courses; `build-your-own-database`
+  re-confirms its Band-1 prerequisite exists (it already does, per Phase 0); `build-your-own-raft`
+  additionally re-confirms `just-enough-go` and `distributed-systems` exist before its own sub-phase
+  starts. The trio is ordered **last within this cohort**, per the commissioning instruction to defer
+  externally-gated courses as late as possible.
+- **Phases 3–7 (closeout)** is serial.
+
+**Path constants**:
+
+- `<COURSES>` = `apps/ayokoding-www/content/en/learn/courses/`
+- `<MANIFESTS>` = `apps/ayokoding-www/src/features/course-paths/manifests/` (**never written here**)
+- `<SYLLABUS>` = `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (never copied)
+
+### Delivery Boundaries
+
+| Phase(s) | Delivery unit                                                                                                                     | Worktree / branch                                                                     | PR opens         |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------- |
+| 0        | — (setup and baseline)                                                                                                            | —                                                                                     | no               |
+| 1        | Cohort 1 — 5 bodies (`just-enough-java`, `enterprise-java-and-the-jvm`, `lisp`, `just-enough-fsharp`, `type-systems`)             | shared worktree; one branch + one draft PR for the whole cohort                       | yes — at Phase 1 |
+| 2        | Cohort 2 — 4 bodies (`compilers-parsers-and-transpilers`, `build-your-own-git`, `build-your-own-database`, `build-your-own-raft`) | shared worktree; one branch + one draft PR for the whole cohort                       | yes — at Phase 2 |
+| 3-7      | Plan closeout (final content-correctness sweep, manual verification evidence, final CI/`main` check, Knowledge Capture, archival) | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/phase-7-closeout` | yes — at Phase 7 |
+
+**Phases 3–6 are intermediate**: Phase 3's structural verification produces no new authored content
+(the 9 bodies already exist by Phase 2's merge); Phase 4's screenshots and Phase 6's `learnings.md`
+triage are evidence the Phase 7 archival gate reads as a precondition; Phase 5 is CI-monitoring only.
+All four fold into the Phase 7 closeout PR, which is this plan's last change-producing phase and
+therefore always a boundary.
+
+---
+
+## Phase 0: Environment Setup & Baseline
+
+> _Executor: repo-setup-manager_
+>
+> **Cross-plan precondition (hard, five plans).** Unlike a dependency-light band, this plan has three
+> content-prerequisite plans (`01`, `02`, `04`) plus two sibling plans (`05`, `06` — both now exist on
+> disk under `plans/backlog/`, though their own bodies have not yet merged) gating `enterprise-java-and-the-jvm`'s
+> (`06`, `software-architecture`) and `build-your-own-raft`'s (`05` + `06`, `just-enough-go` +
+> `distributed-systems`) sub-phases specifically, plus one infrastructure plan
+> (`vercel-function-cost-reduction`) gating every deploy.
+
+- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
+      — acceptance: exits 0, `node_modules/` synchronized.
+- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
+      — acceptance: exits 0 with no unresolved drift.
+- [ ] [AI] **Verify blocking plan `01` merged** — the `<COURSES>` bucket exists and holds its
+      `_index.md` — command:
+      `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md`
+      — acceptance: both exit 0. Falsifiable both ways: before the URL-restructure plan merges, the
+      first `test -d` exits non-zero.
+- [ ] [AI] **Verify blocking plan `02` merged and locate the syllabus root** — command:
+      `git ls-files -- 'plans/done/*ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md'`
+      — acceptance: prints **exactly one** path (pipe to `grep -c .`, read `1`); record it to
+      `evidence/phase-0-snapshot.txt` as `SYLLABUS_ROOT=<path>`.
+- [ ] [AI] **Verify all 9 syllabus spec files exist** — command:
+      `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -f "<SYLLABUS_ROOT>/$s.md" || echo "ABSENT $s"; done | grep -c .`
+      — acceptance: reads **0**. Falsifiable both ways: renaming one spec file makes the count read 1.
+- [ ] [AI] **Verify plan `04`'s Band-1 prerequisite body is present** (the already-satisfied edge for
+      `build-your-own-database`) — command:
+      `test -d apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines`
+      — acceptance: exits 0. `[Repo-grounded — confirmed present at plan-authoring time]`.
+- [ ] [AI] **Record plan `05`/`06`'s not-yet-satisfied state** (informational at Phase 0; the hard gates
+      are re-checked immediately before `enterprise-java-and-the-jvm`'s own sub-phase in Phase 1 and
+      `build-your-own-raft`'s own sub-phase in Phase 2) — command:
+      `for s in just-enough-go distributed-systems software-architecture; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" && echo "PRESENT $s" || echo "ABSENT $s"; done`
+      — record the output to `evidence/phase-0-snapshot.txt`. No acceptance gate here — this is a
+      baseline snapshot, not a blocker, since `enterprise-java-and-the-jvm` and `build-your-own-raft`
+      are each hard-gated immediately before their own sub-phase (see Phase 1 and Phase 2 respectively).
+- [ ] [AI] **Record the Vercel cost-reduction precondition's current signal** — command:
+      `test -f apps/ayokoding-www/.next/prerender-manifest.json && jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json || echo "no build artifact yet — run npx nx run ayokoding-www:build first"`
+      — record the printed value to `evidence/phase-0-snapshot.txt`. This is re-checked (not merely
+      recorded) immediately before every delivery-boundary deploy step (see Delivery-Boundary
+      Integration Protocol step 5 above).
+- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
+      `npx nx run ayokoding-www:test:unit` — acceptance: both exit 0; record pass state in
+      `evidence/phase-0-snapshot.txt`.
+- [ ] [AI] **Confirm all 9 slugs are absent (no collision)** — command:
+      `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -e "apps/ayokoding-www/content/en/learn/courses/$s" && echo "EXISTS $s"; done | grep -c .`
+      — acceptance: reads **0**. Falsifiable both ways: `mkdir -p apps/ayokoding-www/content/en/learn/courses/lisp` makes the loop print `EXISTS lisp`.
+- [ ] [AI] **Create the authored-body slug register** — write the 9 slugs to
+      `evidence/authored-body-slugs.txt`, one per line, in cohort order:
+
+  ```bash
+  cat > evidence/authored-body-slugs.txt <<'EOF'
+  just-enough-java
+  enterprise-java-and-the-jvm
+  lisp
+  just-enough-fsharp
+  type-systems
+  compilers-parsers-and-transpilers
+  build-your-own-git
+  build-your-own-database
+  build-your-own-raft
+  EOF
+  ```
+
+  — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **9**, and
+  `sort evidence/authored-body-slugs.txt | uniq -d | grep -c .` returns **0** (no duplicate).
+
+- [ ] [AI] **Record the authored-body baseline** —
+      `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
+      — acceptance: returns **9** today (none authored yet), recorded in
+      `evidence/phase-0-snapshot.txt`. Must return **0** at archival (Phase 7).
+- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+      `test -f learnings.md && head -1 learnings.md` — acceptance: file present and first line is
+      `# Learnings: ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`.
+- [ ] [AI] **Cross-plan link gate** — confirm every reference in this plan's own files resolves:
+
+  ```bash
+  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
+    --quiet \
+    --exclude plans/done \
+    --exclude apps/ayokoding-www/content \
+    --exclude apps/ose-www/content 2>&1 | grep -F "ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own"
+  ```
+
+  — acceptance: the `grep` finds **no** matching line (exits 1).
+
+- [ ] [AI] **Confirm no manifest file changed in this phase** — command:
+      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
+      — acceptance: returns **0**.
+
+### Phase 0 Gate
+
+> All checks below must pass before starting Phase 1.
+
+- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+- [ ] [AI] Plans `01` and `02` verified merged; all 9 syllabus spec files confirmed present;
+      `SYLLABUS_ROOT` recorded.
+- [ ] [AI] Plan `04`'s Band-1 body (`database-internals-and-storage-engines`) confirmed present.
+- [ ] [AI] Plan `05`/`06`'s current state recorded (informational; not a Phase-0 blocker).
+- [ ] [AI] Vercel cost-reduction route-count signal recorded.
+- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+- [ ] [AI] All 9 slugs confirmed absent (zero `EXISTS` lines).
+- [ ] [AI] `evidence/authored-body-slugs.txt` holds 9 unique slugs; ABSENT-count baseline of 9 recorded.
+- [ ] [AI] Cross-plan link gate green.
+- [ ] [AI] Zero manifest files touched.
+- [ ] [AI] No PR opened, nothing pushed for this phase:
+      `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
+      `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
+
+> **Pause Safety**: only the toolchain, the five upstream preconditions, and the slug register are
+> established — no course body exists yet, nothing is pushed, no PR exists. Safe to stop indefinitely.
+> To resume: re-run the precondition checks and the baseline build.
+
+---
+
+## Phase 1: Cohort 1 — 5 bodies (Java, Lisp, F#, type systems)
+
+> Each course is authored as a full page bundle into `<COURSES><course-id>/`, from its
+> `<SYLLABUS_ROOT>/<course-id>.md` spec, following the NEW-course authoring convention
+> [`ayokoding-learning-path-04-course-authoring/delivery.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md#new-course-authoring-convention-applies-to-every-authoring-step-in-phases-1-and-311)
+> defines (V pre-verify → skeleton → learning track → drilling track → content checkers → fixers →
+> re-verify → manifest-isolation self-check → licensing self-check). This plan applies the same
+> nine-step convention to every one of its 9 courses without restating it verbatim per course.
+
+- [ ] [AI] `just-enough-java` (Primer · Java) — convention complete; checkers clean; declares
+      `object-oriented-programming-essentials` as its prerequisite (already-shipped) — acceptance:
+      `grep -F -q 'object-oriented-programming-essentials' "apps/ayokoding-www/content/en/learn/courses/just-enough-java/_index.md"`
+      exits 0.
+  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
+- [ ] [AI] **Hard gate — re-confirm `enterprise-java-and-the-jvm`'s external prerequisite body
+      `software-architecture` is present** (immediately before its own sub-phase; STOP and surface to
+      the user if absent, rather than authoring a dangling prerequisite edge, mirroring the
+      `build-your-own-raft` gate in Phase 2) — command:
+      `test -d apps/ayokoding-www/content/en/learn/courses/software-architecture`
+      — acceptance: exits 0. If it returns non-zero, this checklist item is **not** ticked and
+      execution pauses here until plan `06` merges the missing body.
+- [ ] [AI] `enterprise-java-and-the-jvm` (By Example · Java) — convention complete; checkers clean;
+      declares `just-enough-java` and `software-architecture` as its prerequisites — acceptance:
+      `for p in just-enough-java software-architecture; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/enterprise-java-and-the-jvm/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+
+  **Gherkin (binds) →** "enterprise-java-and-the-jvm declares just-enough-java and software-architecture as its prerequisites"
+
+  ```gherkin
+  Scenario: enterprise-java-and-the-jvm declares just-enough-java and software-architecture as its prerequisites
+    Given the just-enough-java course is authored and software-architecture is confirmed present
+    When a reader opens enterprise-java-and-the-jvm's frontmatter
+    Then it declares just-enough-java in its prerequisites list
+    And it also declares software-architecture in its prerequisites list
+  ```
+
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+- [ ] [AI] `lisp` (By Example · Scheme + Clojure) — convention complete; checkers clean; declares the
+      already-shipped `functional-programming` and `programming-paradigms` as its prerequisites (not an
+      entry point) — acceptance:
+      `for p in functional-programming programming-paradigms; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/lisp/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+- [ ] [AI] `just-enough-fsharp` (Primer · F#) — convention complete; checkers clean; declares the
+      already-shipped `functional-programming` and `object-oriented-programming-essentials` as its
+      prerequisites (not an entry point) — acceptance:
+      `for p in functional-programming object-oriented-programming-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/just-enough-fsharp/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
+- [ ] [AI] `type-systems` (By Example · OCaml + Haskell + F#) — convention complete; checkers clean;
+      declares the already-shipped `functional-programming`, `programming-paradigms`, and
+      `just-enough-typescript` as prerequisites (**not** `just-enough-fsharp` — corrected) —
+      acceptance:
+      `for p in functional-programming programming-paradigms just-enough-typescript; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/type-systems/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+
+  **Gherkin (binds) →** "type-systems declares functional-programming, programming-paradigms, and just-enough-typescript as its prerequisites"
+
+  ```gherkin
+  Scenario: type-systems declares functional-programming, programming-paradigms, and just-enough-typescript as its prerequisites
+    Given the type-systems course is authored
+    When a reader opens type-systems's frontmatter
+    Then it declares the already-shipped functional-programming course in its prerequisites list
+    And it also declares the already-shipped programming-paradigms and just-enough-typescript courses
+  ```
+
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+- [ ] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
+      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
+      — acceptance: returns **0**.
+- [ ] [AI] **Licensing self-check (programme A8)** on all 5 bodies' worked-example code:
+      `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems; do grep -rln 'stackoverflow\.com\|reddit\.com' "apps/ayokoding-www/content/en/learn/courses/$s/learning/code/" 2>/dev/null; done | grep -c .`
+      — acceptance: prints `0`.
+
+### Local Quality Gates (Before Push)
+
+- [ ] [AI] `npx nx affected -t typecheck` exits 0.
+- [ ] [AI] `npx nx affected -t lint` exits 0.
+- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+      content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
+      change in this cohort's diff); stated here explicitly rather than by silent omission.
+- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+      (Root Cause Orientation) — committing any preexisting fixes separately from this cohort's own
+      thematic commits.
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
+> This follows the root cause orientation principle — proactively fix preexisting errors encountered
+> during work. Do not defer or mention-and-skip existing issues.
+
+### Phase 1 Gate
+
+> All checks below must pass before starting Phase 2.
+
+- [ ] [AI] All 5 Cohort-1 bodies exist:
+      `for s in just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
+      returns **0**.
+- [ ] [AI] `just-enough-java` declares `object-oriented-programming-essentials`; `enterprise-java-and-the-jvm`
+      declares both `just-enough-java` and `software-architecture`; `lisp` declares both
+      `functional-programming` and `programming-paradigms`; `just-enough-fsharp` declares both
+      `functional-programming` and `object-oriented-programming-essentials`; `type-systems` declares
+      `functional-programming`, `programming-paradigms`, and `just-enough-typescript` (not
+      `just-enough-fsharp`).
+- [ ] [AI] `software-architecture`'s hard gate (immediately before `enterprise-java-and-the-jvm`'s own
+      sub-phase) passed with a zero-exit `test -d`, confirming no dangling prerequisite edge shipped.
+- [ ] [AI] Checkers clean across all 5; `npx nx run ayokoding-www:build` and `npm run lint:md` exit 0;
+      the Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
+- [ ] [AI] Zero manifest files touched.
+- [ ] [AI] Draft PR opened, 3-cycle PR-Review complete, `[AI]`-merged to `origin/main`, deployed to
+      `prod-ayokoding-www` (contingent on the Vercel cost-reduction precondition — see Delivery-Boundary
+      Integration Protocol step 5; if the precondition does not yet hold, the merge still happens but
+      the deploy step is deferred and this is recorded here rather than silently skipped).
+
+> **Pause Safety**: the JVM/Lisp/functional-typing quintet is live; every internal prerequisite pair
+> (Java, F#) resolves within this same cohort, and `enterprise-java-and-the-jvm`'s external
+> prerequisite (`software-architecture`, plan `06`) was hard-gated present before authoring — no
+> dangling edge. Safe to stop. To resume: re-run the section build.
+
+---
+
+## Phase 2: Cohort 2 — 4 bodies (compilers, build-your-own trio)
+
+> The `build-your-own-*` trio is authored **last within this cohort**, per the commissioning
+> instruction to defer externally-gated courses as late as possible, giving plans `05`/`06` the maximum
+> window to land.
+
+- [ ] [AI] `compilers-parsers-and-transpilers` (By Example · F#) — convention complete; checkers clean;
+      declares `just-enough-fsharp` and `type-systems` (both cohort 1, already merged) and the
+      already-shipped `computer-science-foundations` as prerequisites (**not**
+      `data-structures-and-algorithms-essentials` — corrected) — acceptance:
+      `for p in just-enough-fsharp type-systems computer-science-foundations; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/compilers-parsers-and-transpilers/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+
+  **Gherkin (binds) →** "compilers-parsers-and-transpilers declares its three prerequisites"
+
+  ```gherkin
+  Scenario: compilers-parsers-and-transpilers declares its three prerequisites
+    Given the compilers-parsers-and-transpilers and type-systems courses are authored
+    When a reader opens compilers-parsers-and-transpilers's frontmatter
+    Then it declares just-enough-fsharp and type-systems in its prerequisites list
+    And it declares the already-shipped computer-science-foundations course
+  ```
+
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+- [ ] [AI] `build-your-own-git` (By Example · Python) — convention complete; checkers clean; declares
+      `just-enough-python` and the already-shipped `version-control-and-git` as prerequisites —
+      acceptance:
+      `for p in just-enough-python version-control-and-git; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-git/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+
+  **Gherkin (binds) →** "build-your-own-git declares its two prerequisites"
+
+  ```gherkin
+  Scenario: build-your-own-git declares its two prerequisites
+    Given the build-your-own-git course is authored
+    When a reader opens its frontmatter
+    Then it declares just-enough-python in its prerequisites list
+    And it declares the already-shipped version-control-and-git course
+  ```
+
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+- [ ] [AI] **Re-confirm `build-your-own-database`'s prerequisite body is present** (immediately before
+      authoring, not only at Phase 0) — command:
+      `test -d apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines`
+      — acceptance: exits 0.
+
+  **Gherkin (binds) →** "build-your-own-database's prerequisite body is confirmed present before authoring"
+
+  ```gherkin
+  Scenario: build-your-own-database's prerequisite body is confirmed present before authoring
+    Given database-internals-and-storage-engines already exists under the courses namespace (Band 1, plan04)
+    When build-your-own-database's own authoring sub-phase begins
+    Then a repo-grounded check confirms the course directory exists before the body is written
+    And build-your-own-database's frontmatter declares it as a prerequisite
+  ```
+
+- [ ] [AI] `build-your-own-database` (By Example · Python) — convention complete; checkers clean;
+      declares `database-internals-and-storage-engines` and the already-shipped `sql-essentials` as
+      prerequisites (**not** `just-enough-python` — corrected) — acceptance:
+      `for p in database-internals-and-storage-engines sql-essentials; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-database/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+- [ ] [AI] **Hard gate — re-confirm `build-your-own-raft`'s two external prerequisite bodies are
+      present** (immediately before its own sub-phase; STOP and surface to the user if either is
+      absent, rather than authoring a dangling prerequisite edge) — command:
+      `for s in just-enough-go distributed-systems; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
+      — acceptance: returns **0**. If it returns non-zero, this checklist item is **not** ticked and
+      execution pauses here until plans `05`/`06` merge the missing body/bodies.
+
+  **Gherkin (binds) →** "build-your-own-raft's two external prerequisite bodies are confirmed present before authoring"
+
+  ```gherkin
+  Scenario: build-your-own-raft's two external prerequisite bodies are confirmed present before authoring
+    Given just-enough-go and distributed-systems are each declared prerequisites of build-your-own-raft
+    When build-your-own-raft's own authoring sub-phase begins
+    Then a repo-grounded check confirms both course directories exist under the courses namespace
+    And the check blocks authoring until both directories are present
+  ```
+
+- [ ] [AI] `build-your-own-raft` (By Example · Go) — convention complete; checkers clean; declares
+      `just-enough-go` and `distributed-systems` as prerequisites — acceptance:
+      `for p in just-enough-go distributed-systems; do grep -F -q "$p" "apps/ayokoding-www/content/en/learn/courses/build-your-own-raft/_index.md" || echo "MISSING $p"; done | grep -c .`
+      returns **0**.
+  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+- [ ] [AI] **Confirm no manifest file changed in this cohort's own diff** — command:
+      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
+      — acceptance: returns **0**.
+- [ ] [AI] **Licensing self-check (programme A8)** on all 4 bodies' worked-example code:
+      `for s in compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do grep -rln 'stackoverflow\.com\|reddit\.com' "apps/ayokoding-www/content/en/learn/courses/$s/learning/code/" 2>/dev/null; done | grep -c .`
+      — acceptance: prints `0`.
+- [ ] [AI] **Record the partial band-completion signal** — append to this file, in a fenced `text`
+      block:
+
+  ```text
+  BAND: Band 6 (JVM/advanced-language/build-your-own half) — ayokoding-learning-path-10
+  PLAN: ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own
+  LANDED_COURSE_IDS:
+  just-enough-java
+  enterprise-java-and-the-jvm
+  lisp
+  just-enough-fsharp
+  type-systems
+  compilers-parsers-and-transpilers
+  build-your-own-git
+  build-your-own-database
+  build-your-own-raft
+  GROW_MANIFESTS:
+  <MANIFESTS>careers/interview-ready/software-engineer.yaml
+  <MANIFESTS>careers/immediately-effective/software-engineer.yaml
+  <MANIFESTS>careers/fundamentally-strong/software-engineer.yaml
+  MERGED_COMMIT: <fill in with the actual origin/main merge commit SHA of this cohort's PR at merge time>
+  ```
+
+  — acceptance: all five fields present, `LANDED_COURSE_IDS` names exactly the 9 slugs in
+  `evidence/authored-body-slugs.txt`, `GROW_MANIFESTS` names exactly the three software-engineer
+  manifests (never the AI-engineer manifest — this plan authors no AI-engineering course).
+
+### Local Quality Gates (Before Push)
+
+- [ ] [AI] `npx nx affected -t typecheck` exits 0.
+- [ ] [AI] `npx nx affected -t lint` exits 0.
+- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+      content-authoring cohort, exempt per `prd.md`'s stated content-exemption (no route/component/schema
+      change in this cohort's diff); stated here explicitly rather than by silent omission.
+- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+      (Root Cause Orientation) — committing any preexisting fixes separately from this cohort's own
+      thematic commits.
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
+> This follows the root cause orientation principle — proactively fix preexisting errors encountered
+> during work. Do not defer or mention-and-skip existing issues.
+
+### Phase 2 Gate
+
+> All checks below must pass before starting Phase 3.
+
+- [ ] [AI] All 4 Cohort-2 bodies exist:
+      `for s in compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | grep -c .`
+      returns **0**.
+- [ ] [AI] All 4 bodies' declared prerequisites verified present (per each item's own acceptance
+      clause above).
+- [ ] [AI] Checkers clean across all 4; build + `lint:md` exit 0; the Local Quality Gates section
+      above (`typecheck`, `lint`, `test:quick test:unit`) all pass.
+- [ ] [AI] Zero manifest files touched.
+- [ ] [AI] Partial band-completion signal recorded with all five fields complete.
+- [ ] [AI] Draft PR opened, 3-cycle PR-Review complete, `[AI]`-merged, deployed (contingent on the
+      Vercel cost-reduction precondition).
+- [ ] [AI] **Confirm all 9 course bodies now exist** (both cohorts combined):
+      `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | grep -c .`
+      returns **0**.
+
+> **Pause Safety**: all 9 course bodies are live; `build-your-own-raft`'s two external prerequisite
+> bodies were re-confirmed present immediately before its own authoring, so no dangling edge exists.
+> The partial band-completion signal is recorded for the manifest plan to consume. Safe to stop. To
+> resume: re-run the section build and re-verify the signal fields.
+
+---
+
+## Phase 3: Final content-correctness sweep
+
+> Intermediate phase — folds into the Phase 7 closeout PR (see Delivery Boundaries table).
+
+- [ ] [AI] Re-run every content checker across all 9 bodies (`apps-ayokoding-www-primer-checker` for
+      the 2 Primers, `apps-ayokoding-www-by-example-checker` for the 7 By-Example bodies,
+      `apps-ayokoding-www-facts-checker`, `apps-ayokoding-www-link-checker`) — acceptance: zero
+      CRITICAL/HIGH/MEDIUM findings remain across all 9.
+- [ ] [AI] Re-run the cross-plan link gate (same command as Phase 0) — acceptance: `grep` finds no
+      matching line naming this plan's folder.
+- [ ] [AI] `npx nx run ayokoding-www:build` and `npm run lint:md` — acceptance: both exit 0.
+- [ ] [AI] Re-run the independence-from-plan-07 check from tech-docs.md — command:
+      `for s in just-enough-c just-enough-cpp linux-os windows-os system-programming just-enough-rust modern-system-programming; do grep -rl "$s" apps/ayokoding-www/content/en/learn/courses/{just-enough-java,enterprise-java-and-the-jvm,lisp,just-enough-fsharp,type-systems,compilers-parsers-and-transpilers,build-your-own-git,build-your-own-database,build-your-own-raft}/_index.md 2>/dev/null; done | grep -c .`
+      — acceptance: returns **0** (none of this plan's 9 `_index.md` files declares a plan-07 course
+      as a prerequisite).
+
+### Phase 3 Gate
+
+- [ ] [AI] All checkers clean; build + lint green; cross-plan link gate green; independence check
+      returns 0.
+- [ ] [AI] Nothing pushed for review yet at this intermediate phase (commits land on the Phase 7
+      closeout branch).
+
+> **Pause Safety**: all 9 bodies pass every content-correctness check with zero outstanding findings.
+> Safe to stop. To resume: re-run the checker sweep.
+
+---
+
+## Phase 4: Manual Behavioral Verification (Playwright MCP)
+
+> Rule-15 three-tester triad exempt (see [README.md](./README.md#rule-15-three-tester-retest--exemption-recorded)).
+> A sample of this plan's 9 authored pages is still opened and screenshotted manually, `en` locale only
+> (this plan's content is `en`-only by design; the `id` deferral is stated, not silently skipped).
+
+- [ ] [AI] Start dev server: `nx dev ayokoding-www`.
+- [ ] [AI] For a representative sample — `just-enough-java` (Primer), `build-your-own-database`
+      (By Example, Band-1-dependent), and `build-your-own-raft` (By Example, cross-plan-dependent) —
+      navigate to `/en/learn/courses/<course-id>` at 375px, 768px, and 1280px via `browser_navigate` +
+      `browser_resize`.
+- [ ] [AI] Inspect DOM via `browser_snapshot` — verify `html[lang]` is `en`, prerequisites render, no
+      untranslated strings.
+- [ ] [AI] Check for JS errors via `browser_console_messages` — zero errors per page per breakpoint.
+- [ ] [AI] Capture one screenshot per page per breakpoint via `browser_take_screenshot`, saved to
+      `evidence/phase-4-<course-id>-en-<breakpoint>px.png` (9 screenshots total: 3 courses × 3
+      breakpoints).
+- [ ] [AI] Document each screenshot inline: `![alt](./evidence/phase-4-<course-id>-en-<breakpoint>px.png)`.
+
+### Phase 4 Gate
+
+- [ ] [AI] All 9 screenshots committed under `evidence/`.
+- [ ] [AI] Zero console errors recorded across all sampled pages/breakpoints.
+
+> **Pause Safety**: manual verification evidence is committed; nothing pushed for review yet at this
+> intermediate phase. Safe to stop. To resume: re-open the dev server and re-capture any missing
+> screenshot.
+
+---
+
+## Phase 5: Post-Push CI / `main` Integration Final Check
+
+- [ ] [AI] Confirm both cohort PRs (Phase 1, Phase 2) are merged to `origin/main`:
+      `gh pr list --state merged --search "ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own" --json number --jq 'length'`
+      — acceptance: returns **2**.
+- [ ] [AI] Pull latest `origin/main` in the shared worktree and confirm CI is green on the latest
+      commit touching this plan's courses.
+
+### Phase 5 Gate
+
+- [ ] [AI] Both cohort PRs confirmed merged; latest `main` CI green.
+
+> **Pause Safety**: both cohorts are confirmed integrated. Safe to stop. To resume: re-run the `gh pr
+list` check.
+
+---
+
+## Phase 6: Knowledge Capture
+
+- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
+      surface would catch this automatically next time; discard the rest with a one-line reason.
+- [ ] [AI] Apply the secret/sensitivity gate to every surviving entry.
+- [ ] [AI] Apply the repo-relevance gate to every surviving entry.
+- [ ] [AI] Route each surviving entry to exactly one durable home (a small non-code edit lands inline;
+      larger non-code work or any code-homed learning files a `plans/backlog/` follow-up plan).
+- [ ] [AI] Record the terminal state of every entry directly in `learnings.md`.
+- [ ] [AI] If execution surfaced no generalizable learning, record the explicit escape
+      `No generalizable learnings — <one-line reason>` instead.
+
+### Phase 6 Gate
+
+- [ ] [AI] Every `learnings.md` entry reached a terminal state or the explicit "none" escape is
+      present.
+- [ ] [AI] No code-homed learning landed inline — every code-routed learning has a corresponding
+      `plans/backlog/` folder.
+
+> **Pause Safety**: all learnings are triaged or explicitly discarded. Safe to stop. To resume:
+> re-check `learnings.md` for any entry without a terminal-state marker.
+
+---
+
+## Phase 7: Plan Archival
+
+- [ ] [AI] Verify all delivery checklist items above are ticked.
+- [ ] [AI] Verify all quality gates pass (local + CI).
+- [ ] [AI] Verify all manual assertions pass with committed evidence in `evidence/`.
+- [ ] [AI] Verify the `en`-only locale scope was exercised and the `id` deferral stated, not silently
+      skipped.
+- [ ] [AI] Move plan folder from `plans/backlog/` to `plans/done/` via
+      `git mv plans/backlog/ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own plans/done/<completion-date>__ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`
+      (the `evidence/` subfolder moves with it).
+- [ ] [AI] Update `plans/backlog/README.md` — remove this plan's entry.
+- [ ] [AI] Update `plans/done/README.md` — add this plan's entry with its completion date.
+- [ ] [AI] Update any other READMEs that reference this plan (sibling plans' Depends-on tables, once
+      those plans exist on disk).
+- [ ] [AI] Push this closeout branch, open the draft PR, run the 3-cycle PR-Review, `[AI]`-merge, and
+      deploy (contingent on the Vercel cost-reduction precondition).
+- [ ] [AI] Commit: `chore(plans): move ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own to done`.
+- [ ] [AI] Prompt the user before removing this plan's worktree; remove it only on explicit
+      confirmation, and only once nothing is uncommitted or unpushed.
+
+### Local Quality Gates (Before Push)
+
+- [ ] [AI] `npx nx affected -t typecheck` exits 0.
+- [ ] [AI] `npx nx affected -t lint` exits 0.
+- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [ ] [AI] `specs:coverage` / `specs:behavior:coverage` is intentionally **not** run here — this is a
+      content-authoring plan, exempt per `prd.md`'s stated content-exemption (no route/component/schema
+      change across this plan's closeout diff); stated here explicitly rather than by silent omission.
+- [ ] [AI] Fix ALL failures found — including preexisting issues not caused by this plan's own changes
+      (Root Cause Orientation) — committing any preexisting fixes separately from this closeout's own
+      thematic commits.
+
+> **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
+> This follows the root cause orientation principle — proactively fix preexisting errors encountered
+> during work. Do not defer or mention-and-skip existing issues.
+
+### Phase 7 Gate
+
+- [ ] [AI] Plan folder confirmed under `plans/done/`; both `README.md` indexes updated; closeout PR
+      merged to `origin/main`.
+- [ ] [AI] `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < plans/done/*ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own/evidence/authored-body-slugs.txt | grep -c .`
+      returns **0** — all 9 authored bodies confirmed present on `origin/main` at archival.
+- [ ] [AI] The Local Quality Gates section above (`typecheck`, `lint`, `test:quick test:unit`) all
+      passed before this closeout PR merged.
+
+> **Pause Safety**: the plan is archived, all 9 bodies are live on `origin/main`, and the manifest plan
+> has a complete, five-field partial band-completion signal to act on. Nothing further to resume — the
+> plan is done.

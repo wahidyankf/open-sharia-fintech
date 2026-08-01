@@ -94,6 +94,16 @@ static server components wrapping client content in `<Suspense>`, and
 - **Phase 0 opens no PR** and is almost entirely `[HUMAN]` — an agent cannot reach the Vercel
   dashboard.
 
+## Downstream dependents
+
+All 15 `ayokoding-learning-path-*` course-authoring/careers/skills plans in `plans/backlog/`
+(`05`–`18`, plus the in-progress `04`) carry a hard `blockedBy` on this plan, since every one of them
+lands new content or manifest data under `apps/ayokoding-www`'s root layout/middleware — the exact
+surface this plan rewrites. Each of those plans checks this plan's completion via the same concrete
+signal: `test ! -f apps/ayokoding-www/src/app/layout.tsx` (i.e. Cause A's fix — promoting
+`app/[locale]/layout.tsx` to root — has landed). This plan does not need to track them individually;
+they self-verify against `origin/main` at their own Phase 0.
+
 ## Related
 
 - [`ayokoding-www-ai-benchmark-merged-chart`](../../done/2026-07-30__ayokoding-www-ai-benchmark-merged-chart/README.md)

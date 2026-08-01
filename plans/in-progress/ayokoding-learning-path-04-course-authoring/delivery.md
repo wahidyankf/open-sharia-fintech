@@ -1,14 +1,17 @@
 # Delivery Checklist — Learning Path Course Authoring
 
-This checklist authors **90 course bodies** into
-`apps/ayokoding-www/content/en/learn/courses/<course-id>/`: the **6 net-new AI-engineering courses**,
-the **61 transferred FS-SE topics**, the **10 remaining new courses**, the **8 remaining capstones**,
-and the **5 deferred interview-technique bodies** (Band 9). It also locks the three **course-surgery
-contracts** (evals forward-link, D9 naming/citation, D11 concept additions) so Band 5 applies them by
-construction rather than as a retrofit.
+This checklist authors **21 course bodies** into
+`apps/ayokoding-www/content/en/learn/courses/<course-id>/`: the **6 net-new AI-engineering courses**
+(Phase 1), **Band 1 — Data depth** (5 bodies, Phase 3), and **Band 2 — Web, backend & platform
+productivity** (10 bodies, Phase 4). This plan originally scoped 90 bodies across all nine bands plus
+three course-surgery scope contracts; Bands 3–9 and the contracts now belong to 7 successor plans —
+see [README §Successor plans](./README.md#successor-plans).
 
 > **This plan never edits a manifest file.** Every file under `<MANIFESTS>` belongs to
-> [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/README.md). This
+> [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
+> (the three `software-engineer`-role manifests) and its sibling
+> [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/README.md)
+> (the `ai-engineer` manifest). This
 > plan's only outbound artefact is the **band-completion signal** recorded at the end of each band
 > phase. See
 > [README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding)
@@ -154,15 +157,23 @@ evidence artifacts ride the Phase 1 PR
 
 ## Depends-on
 
-| Relation        | Plan (full folder name)                                  | Nature                                                                                                          |
-| --------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`             | **Hard.** Creates the flat `<COURSES>` bucket + `<COURSES>_index.md` + the 37 re-homed bundles this plan joins. |
-| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | **Hard.** Owns `syllabus/` (every authoring source spec) and the `prerequisites` frontmatter contract.          |
-| **blocks**      | `ayokoding-learning-path-05-manifests`                   | The manifest plan's `courseOrder` IDs resolve only after this plan's bands land; it consumes the band signals.  |
-| **independent** | `ayokoding-learning-path-03-navigation-ui`               | Same Wave 2. Touches `<FEAT>` app code only; this plan touches content only. No shared file.                    |
+| Relation        | Plan (full folder name)                                  | Nature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| --------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`             | **Hard.** Creates the flat `<COURSES>` bucket + `<COURSES>_index.md` + the 37 re-homed bundles this plan joins.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag` | **Hard.** Owns `syllabus/` (every authoring source spec) and the `prerequisites` frontmatter contract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **blockedBy**   | `vercel-function-cost-reduction`                         | **Hard, assumed already merged per explicit instruction.** Promotes `apps/ayokoding-www/app/[locale]/layout.tsx` to the app's root layout, removes the `?path=` `searchParams` read on the catch-all content route, and deletes `middleware.ts` — the same app/route tree this plan authors ~21 course bundles (~150 rendered pages) into. Verify with `test ! -f apps/ayokoding-www/src/app/layout.tsx` (returns true once that plan's Phase 1 has landed; today, before that plan executes, the old root layout still exists and the check fails — this is a forward-looking precondition, not yet satisfied). |
+| **blocks**      | `ayokoding-learning-path-12-careers-se-manifests`        | Its `courseOrder` IDs for the three `software-engineer`-role manifests resolve only after this plan's Band 1/Band 2 bodies land; it consumes those band signals.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **blocks**      | `ayokoding-learning-path-13-careers-ai-manifest`         | Its `courseOrder` IDs for the `ai-engineer` manifest resolve only after this plan's Phase 1 (six AI courses) land; it consumes that band signal.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **independent** | `ayokoding-learning-path-03-navigation-ui`               | Same Wave 2. Touches `<FEAT>` app code only; this plan touches content only. No shared file.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
-**Start precondition (hard gate, checked in Phase 0)**: both blocking plans are **merged to
-`origin/main`**. This plan does not start on a promise.
+**Start precondition (hard gate, checked in Phase 0)**: all three blocking plans are **merged to
+`origin/main`** — `ayokoding-learning-path-01-url-restructure` and
+`ayokoding-learning-path-02-schema-and-prerequisite-dag` verified as originally; `vercel-function-cost-reduction`
+verified via `test ! -f apps/ayokoding-www/src/app/layout.tsx` (assumed already merged per explicit
+instruction — this plan does not re-litigate that plan's own delivery checklist, only checks its
+outcome). This plan does not start on a promise. **This precondition must also hold again before the
+Band-2 cohort's remaining PR merges** (the active cohort touches the same route tree), re-verified at
+that PR's own gate.
 
 ## Parallelization Model
 
@@ -175,14 +186,17 @@ subagents capped per the orchestration convention). The main thread self-promote
   ordering constraint: `statistics-for-evaluation` is a **hard prerequisite** of
   `evaluating-ai-systems-in-depth`, so it is authored before (or in the same review cycle as) the
   deep-evals course.
-- **Phase 2 (surgery contracts)** is a serial sync point — documentation-only, but every Band 5/8
-  acceptance criterion derives from it.
-- **Phases 3–11 (Bands 1–9)** — bodies within a band are content-independent and pipeline
-  concurrently, bounded by the cap. Band ordering is fixed only where content depends on content:
-  **Band 5 after Phase 2** (the contracts it applies by construction), **Band 8 after Band 5** (the
-  coding-agent capstone assembles the harness cluster). Bands 1–4, 6, 7, and 9 are mutually
-  independent; their listed order is convenience.
-- **Phases 12–16 (finalization)** is serial.
+- **Phase 3 (Band 1) and Phase 4 (Band 2)** — bodies within each band are content-independent and
+  pipeline concurrently, bounded by the cap. Bands 1 and 2 are mutually independent of each other;
+  their listed order is convenience.
+- **There is deliberately no Phase 2 in this plan's numbering.** Phase 2 was the course-surgery
+  contract-lock phase; it moved to
+  `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` along with Band 5, the
+  band the contracts targeted. Phase 0, Phase 1, Phase 3, and Phase 4 keep their original numbers
+  (least-diff renumbering — see [tech-docs.md's numbering note](./tech-docs.md#delivery-flow-across-this-plans-phases)
+  for the full rationale); only the finalization tail is renumbered, from the original Phases 12–16
+  down to **Phases 5–9**.
+- **Phases 5–9 (finalization, formerly 12–16)** is serial.
 
 **Path constants** (referenced throughout):
 
@@ -200,26 +214,23 @@ subagents capped per the orchestration convention). The main thread self-promote
 > and `PR opens` columns with “per sequential five-course cohort.” The active first cohort is
 > `containers-and-orchestration`, `cloud-and-iac`, `cicd-and-release-engineering`,
 > `build-automation-and-task-runners`, and `information-architecture-and-seo`; it opens one PR only
-> after all five course items are complete. Later remaining courses continue in consecutive cohorts of
-> five; the terminal short cohort opens at the next finalization boundary.
+> after all five course items are complete. This is the plan's **final Band-2 cohort** — Band 2 is
+> now fully authored/committed and this is the only remaining unmerged unit before finalization.
+>
+> **Numbering note.** There is deliberately no Phase 2 (it moved out with Band 5 — see the
+> Parallelization Model above) and no Phases 5–11 (Bands 3–9 moved to the 7 successor plans). The
+> finalization tail is renumbered from the original Phases 12–16 down to **Phases 5–9**.
 
-| Phase(s) | Delivery unit                                                                                                | Worktree / branch                                                                                                                                                     | PR opens                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| 0        | — (setup and baseline)                                                                                       | —                                                                                                                                                                     | no                                        |
-| 1        | AI-engineering courses (6 bodies)                                                                            | shared worktree; one branch + draft PR per course (6 independent DAG-leaf PRs; see NEW-course authoring convention)                                                   | yes — per course, as each of the 6 lands  |
-| 2, 7     | Band 5 — Architecture, distributed & AI/harness (+ Phase 2 surgery-contract lock, 15 bodies)                 | shared worktree; one branch + draft PR per course (15 independent DAG-leaf PRs); Phase 2's contract text rides the first Band-5 course's PR (`software-architecture`) | yes — per course, as each of the 15 lands |
-| 3        | Band 1 — Data depth (5 bodies)                                                                               | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 5 lands  |
-| 4        | Band 2 — Web, backend & platform productivity (10 bodies)                                                    | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 10 lands |
-| 5        | Band 3 — Mobile & desktop platforms (10 bodies)                                                              | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 10 lands |
-| 6        | Band 4 — Concurrency languages (4 bodies)                                                                    | shared worktree; one branch + draft PR per course (4 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 4 lands  |
-| 8        | Band 6 — Low-level systems, JVM & languages, internals builds (16 bodies)                                    | shared worktree; one branch + draft PR per course (16 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 16 lands |
-| 9        | Band 7 — Security, ops, quality & delivery (11 bodies)                                                       | shared worktree; one branch + draft PR per course (11 independent DAG-leaf PRs)                                                                                       | yes — per course, as each of the 11 lands |
-| 10       | Band 8 — Remaining capstones (8 bodies)                                                                      | shared worktree; one branch + draft PR per course (8 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 8 lands  |
-| 11       | Band 9 — Interview-technique courses (5 bodies)                                                              | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                                        | yes — per course, as each of the 5 lands  |
-| 12       | Final content-correctness sweep (structural verification + supersession sweep)                               | `ayokoding-learning-path-04-course-authoring/phase-12-verification`                                                                                                   | yes — at Phase 12                         |
-| 13-16    | Plan closeout (manual verification evidence, final `main`/CI integration check, Knowledge Capture, archival) | `ayokoding-learning-path-04-course-authoring/phase-16-closeout`                                                                                                       | yes — at Phase 16                         |
+| Phase(s) | Delivery unit                                                                                                | Worktree / branch                                                                                                                              | PR opens                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| 0        | — (setup and baseline)                                                                                       | —                                                                                                                                              | no                                       |
+| 1        | AI-engineering courses (6 bodies)                                                                            | shared worktree; one branch + draft PR per course (6 independent DAG-leaf PRs; see NEW-course authoring convention)                            | yes — per course, as each of the 6 lands |
+| 3        | Band 1 — Data depth (5 bodies)                                                                               | shared worktree; one branch + draft PR per course (5 independent DAG-leaf PRs)                                                                 | yes — per course, as each of the 5 lands |
+| 4        | Band 2 — Web, backend & platform productivity (10 bodies)                                                    | shared worktree; one branch + draft PR per course (10 independent DAG-leaf PRs, final 5 as one cohort PR per the amended interpretation above) | yes — per course/cohort, as each lands   |
+| 5        | Final content-correctness sweep (structural verification + supersession sweep)                               | `ayokoding-learning-path-04-course-authoring/phase-5-verification`                                                                             | yes — at Phase 5                         |
+| 6-9      | Plan closeout (manual verification evidence, final `main`/CI integration check, Knowledge Capture, archival) | `ayokoding-learning-path-04-course-authoring/phase-9-closeout`                                                                                 | yes — at Phase 9                         |
 
-Every band (Phases 1, 3–11) was originally a genuine boundary at the **course-level** granularity the
+Every band (Phases 1, 3, 4) was originally a genuine boundary at the **course-level** granularity the
 NEW-course authoring convention uses: each course is a content-independent DAG leaf, so "one PR per
 course" is the sanctioned DAG-leaf-per-PR pattern
 ([AGENTS.md §Delivery Mode](../../../AGENTS.md#delivery-mode): "each change-producing DAG leaf gets
@@ -227,17 +238,14 @@ its own worktree and PR (strict 1-PR ↔ 1-worktree)"), not a phase-wide PR. The
 five-course PR-cadence amendment above supersedes that original shape for remaining unmerged bodies:
 one course is still authored, checked, and committed at a time, while five consecutive courses are
 one review, merge, and deployment unit.
-**Phase 2 is intermediate**:
-it locks the evals/D9/D11 contracts into this checklist's own text so Band 5 (Phase 7) applies them
-**by construction**, and ships no content of its own, so its edits ride the first Band-5 course PR
-rather than opening a standalone PR. **Phase 12 stays its own boundary**: unlike Phases 13–15, it lands
+**Phase 5 stays its own boundary**: unlike Phases 6–8, it lands
 a real content fix (the supersession sweep) plus the plan-wide structural/build/link verification, and
 already passes all four boundary-test criteria standalone — deferring it into the closeout unit would
-defer an already-reached boundary, which the convention forbids. **Phases 13, 14, and 15 are
-intermediate**: Phase 13's screenshots and Phase 15's `learnings.md` triage are evidence the Phase 16
+defer an already-reached boundary, which the convention forbids. **Phases 6, 7, and 8 are
+intermediate**: Phase 6's screenshots and Phase 8's `learnings.md` triage are evidence the Phase 9
 archival gate itself reads and verifies as a precondition (the textbook "a later phase consumes it"
-signature of scaffolding), and Phase 14 makes no routine change at all (verification/CI-monitoring
-only) — all three fold into the Phase 16 closeout PR, which is the plan's last change-producing phase
+signature of scaffolding), and Phase 7 makes no routine change at all (verification/CI-monitoring
+only) — all three fold into the Phase 9 closeout PR, which is the plan's last change-producing phase
 and therefore always a boundary.
 
 ---
@@ -490,9 +498,10 @@ and therefore always a boundary.
 - [x] [AI] **Record the authored-body baseline (the falsifiable-both-ways anchor for archival)** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **90** today (none authored yet) and is recorded in
-      `evidence/phase-0-snapshot.txt`. The same command must return **0** at archival (Phase 16). This
-      is this plan's own assertion; the 127-course catalog total is asserted by
-      `ayokoding-learning-path-05-manifests`, never here.
+      `evidence/phase-0-snapshot.txt`. The same command must return **0** at archival (Phase 9). This
+      is this plan's own assertion; the 127-course catalog total is asserted by the manifest plans
+      (`ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest`),
+      never here.
       **Date**: 2026-07-26. **Status**: Done. **Files Changed**: `evidence/phase-0-snapshot.txt`
       (appended). ABSENT count = **90** (none of the 90 slugs authored yet, as expected today).
 - [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
@@ -577,7 +586,7 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
 > [`syllabus/courses/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md) —
 > each of the six has a complete 295–425-line spec file with concrete `co-NN` concept enumeration,
 > `ex-NN` worked examples, a concrete prerequisite chain, and a capstone spec. **Author each course
-> body from its `$SYLLABUS_ROOT/<id>.md` spec, not from a fresh judgment call.**
+> body from its `<SYLLABUS_ROOT>/<id>.md` spec, not from a fresh judgment call.**
 >
 > Every course is split into a **stable spine** and **dated accuracy-note sidebars** (volatile
 > SDK/model/pricing/framework specifics), matching the pattern the existing AI-band courses use
@@ -591,7 +600,7 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
 2. [AI] **Skeleton** — create `<COURSES><course-id>/` (`_index.md` with `prerequisites: [...]` +
    `overview.md` + `learning/_index.md` + `drilling/_index.md`), mirroring the sibling bundle shape;
    the `course-id` slug and the prerequisite chain are **settled** — use the exact values declared in
-   `$SYLLABUS_ROOT/<course-id>.md`, not a fresh decision — acceptance: `test -d "<COURSES><course-id>"`,
+   `<SYLLABUS_ROOT>/<course-id>.md`, not a fresh decision — acceptance: `test -d "<COURSES><course-id>"`,
    `test -d "<COURSES><course-id>/learning"`, and `test -d "<COURSES><course-id>/drilling"` all exit 0,
    and `grep -F -q 'prerequisites:' "<COURSES><course-id>/_index.md"` exits 0.
 3. [AI] **Author learning track** — `overview.md` (purpose + `## Prerequisites` naming only earlier
@@ -631,7 +640,7 @@ Each course below is its own sub-phase (own branch → draft PR → 3-cycle revi
 deploy), applying the convention:
 
 - [x] [AI] Light eval gate (`evaluating-ai-output-essentials` — Annotated-concept, Python, settled per
-      `$SYLLABUS_ROOT/evaluating-ai-output-essentials.md`, 295 lines) — sits right after the first
+      `<SYLLABUS_ROOT>/evaluating-ai-output-essentials.md`, 295 lines) — sits right after the first
       working LLM call, before RAG/agents; answers "how will you know this works?" (DD-25) —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>evaluating-ai-output-essentials/overview.md"`
@@ -652,7 +661,7 @@ deploy), applying the convention:
       exits 0.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [x] [AI] Statistics for evals (`statistics-for-evaluation` — Annotated-concept, code-bearing, Python,
-      settled per `$SYLLABUS_ROOT/statistics-for-evaluation.md`, 368 lines) — scoped tightly to what
+      settled per `<SYLLABUS_ROOT>/statistics-for-evaluation.md`, 368 lines) — scoped tightly to what
       evals demand (judge concordance, significance testing), not a general statistics survey (DD-26);
       it is a **hard prerequisite** of `evaluating-ai-systems-in-depth`, so it is authored before (or
       in the same review cycle as) the deep-evals course — acceptance: all 9 convention steps complete;
@@ -682,7 +691,7 @@ deploy), applying the convention:
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 
 - [x] [AI] Deep evals (`evaluating-ai-systems-in-depth` — By Example, Python, settled per
-      `$SYLLABUS_ROOT/evaluating-ai-systems-in-depth.md`, 384 lines) — sits after agents; error
+      `<SYLLABUS_ROOT>/evaluating-ai-systems-in-depth.md`, 384 lines) — sits after agents; error
       analysis, task-specific criteria, LLM-as-judge with measured human agreement, CI gating,
       judge-scope reliability (DD-25); declares `statistics-for-evaluation` a **hard prerequisite** —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
@@ -716,7 +725,7 @@ deploy), applying the convention:
 
 - [x] [AI] Product patterns for probabilistic systems (`product-patterns-for-probabilistic-systems` —
       Annotated-concept, no code, settled per
-      `$SYLLABUS_ROOT/product-patterns-for-probabilistic-systems.md`, 370 lines) — product design
+      `<SYLLABUS_ROOT>/product-patterns-for-probabilistic-systems.md`, 370 lines) — product design
       patterns for probabilistic (not deterministic) outputs; no course owns this today (DD-28) —
       acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM.
       **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 20 files under
@@ -728,7 +737,7 @@ deploy), applying the convention:
       deployed to `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
 - [x] [AI] Inference serving and model deployment (`inference-serving-and-model-deployment` — By
-      Example, Python, settled per `$SYLLABUS_ROOT/inference-serving-and-model-deployment.md`, 405
+      Example, Python, settled per `<SYLLABUS_ROOT>/inference-serving-and-model-deployment.md`, 405
       lines) — vLLM/TGI, KV-cache, batching, GPU considerations; entirely absent from the library today
       (DD-28) — acceptance: all 9 convention steps complete; checkers report zero CRITICAL/HIGH/MEDIUM;
       every vLLM/TGI version claim sits in a dated accuracy-note sidebar, verified by the facts checker.
@@ -741,7 +750,7 @@ deploy), applying the convention:
       deployed to `prod-ayokoding-www`.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
 - [x] [AI] Fine-tuning and adaptation (`fine-tuning-and-adaptation` — By Example, Python, settled per
-      `$SYLLABUS_ROOT/fine-tuning-and-adaptation.md`, 423 lines) — fine-tuning/LoRA/PEFT versus RAG as
+      `<SYLLABUS_ROOT>/fine-tuning-and-adaptation.md`, 423 lines) — fine-tuning/LoRA/PEFT versus RAG as
       a foil (DD-28) — acceptance: all 9 convention steps complete; checkers report zero
       CRITICAL/HIGH/MEDIUM.
       **Date**: 2026-07-26. **Status**: Done. **Files Changed**: 97 files under
@@ -814,118 +823,24 @@ MERGED_COMMIT: be07b257cd86155a6a10bf3f7b476c8135cbb73c
 
 ---
 
-## Phase 2: Course-surgery contracts — evals scope, D9 naming/citation, D11 concept additions
-
-> **Sequencing note (inherited, not invented here):** the evals donor courses
-> (`creating-ai-powered-apps`, `agentic-ai`, `agent-orchestration-subagents-and-observability`) and the
-> D9/D11 target courses (the harness cluster plus `capstone-build-your-own-coding-agent`) are **not yet
-> authored anywhere** at this point in the build order — they are native-authored in Phase 7 (Band 5)
-> and Phase 10 (Band 8). DD-28's "trim the three donors to forward-links" therefore cannot be a
-> file-edit action here; there is nothing yet to edit. This phase **locks the contract** those future
-> authoring steps must honor and **bakes its acceptance criteria into Bands 5 and 8**, so the surgery is
-> applied **by construction** rather than retrofitted across six bodies afterwards.
->
-> **Manifest boundary.** The source plan closed this phase by re-running manifest integrity across
-> every published manifest. That step **is not here** — it inverts the wave order (this plan is Wave 2;
-> no manifest exists until Wave 3) and it is manifest-plan property either way. See
-> [README §The manifest ownership invariant](./README.md#the-manifest-ownership-invariant-binding--read-before-anything-else),
-> whose table lists every step that left this plan for the manifest plan.
-
-- [ ] [AI] **State the four-path blast radius (DD-28 binding rule)** — for the evals extraction, the D9
-      naming/citation additions, and the D11 concept additions, name every course and every manifest
-      each touches: the evals extraction touches `evaluating-ai-systems-in-depth` (Phase 1, done) plus
-      the three not-yet-authored donor courses (Band 5), and the `fundamentally-strong` and
-      `immediately-effective` manifests that will carry those donors once grown (the AI path's manifest
-      already carries the deep-evals course from its own plan's smoke-test spine); the D9/D11 additions
-      touch only the harness cluster (Band 5) + `capstone-build-your-own-coding-agent` (Band 8) and
-      every manifest carrying those IDs — the same two software-engineer-role manifests plus the fourth
-      path's manifest once Bands 5/8 grow it to include the harness cluster (DD-33) — acceptance: the
-      blast radius is written into this checklist (the two clauses above) before any of the three
-      surgeries is considered "applied". **Naming a manifest is not editing one** — the growth is
-      performed by `ayokoding-learning-path-05-manifests`.
-- [ ] [AI] **Lock the evals forward-link contract** — record, for Band 5's authoring of
-      `creating-ai-powered-apps`, `agentic-ai`, and `agent-orchestration-subagents-and-observability`,
-      that each course's evals-adjacent material MUST forward-link to `evaluating-ai-systems-in-depth`
-      rather than re-teaching it, in the style of the AI-band scope-guard (DD-11) — acceptance: this
-      requirement appears verbatim as an acceptance criterion on each of the three courses' Band 5
-      checklist items (verify by reading Phase 7 below), and
-      `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>creating-ai-powered-apps/overview.md"`
-      exits **2** today (that course does not exist yet, and `grep` exits 2 on a missing path — 1 is
-      reserved for a genuine no-match against a file that _does_ exist, per the rule stated at the
-      light-eval gate in Phase 3) and must exit **0** once Band 5 lands it. The intermediate **1** is
-      reachable only in the window where `overview.md` exists but omits the boundary line — which is
-      itself a real failure state, so all three exit codes are distinguishable here.
-      [Repo-grounded — measured 2026-07-22: the exact command above exited **2** with
-      `No such file or directory`. An earlier revision claimed 1, contradicting this file's own
-      correctly-measured rule.]
-- [ ] [AI] **Lock the D9 naming/citation contract** — record, for Band 5's authoring of
-      `agent-context-and-memory`, that it MUST include a context-engineering naming/lineage line citing
-      Lütke (2025-06-19), Karpathy (2025-06-25), Willison (2025-06-27), and Anthropic's Effective
-      Context Engineering methodology; and for the harness cluster (Band 5) plus
-      `capstone-build-your-own-coding-agent` (Band 8), that they MUST include the harness-engineering
-      equivalent citing Anthropic (2025-11-26) and Böckeler/Thoughtworks (2026-02-17) — **no course is
-      renamed** (D9 is explicit: "harness engineering" is unsettled terminology; cite the disagreement,
-      do not resolve it or adopt a side as structure) — acceptance: these citation requirements appear
-      as explicit acceptance criteria on the relevant Band 5 and Band 8 items below.
-      **Citation caveat carried forward**: the "OpenAI" attribution in the inherited D9 text is
-      `[Unverified]`. A candidate OpenAI publication exists at
-      `https://openai.com/index/harness-engineering/` ("Harness engineering: leveraging Codex in an
-      agent-first world," reported 2026-02-11), but the primary page returned **HTTP 403** and was not
-      read at verification time (2026-07-22) — the date/content rest on third-party summaries only, so
-      this stays `[Unverified]` pending a primary-source read (do not upgrade to fact). The reported
-      date is **early 2026**, later than the "late 2025" framing; that onset is therefore conditional on
-      the OpenAI lead. Band 5/8 authoring cites Anthropic and Böckeler only, and omits the OpenAI
-      attribution unless the primary page is read and a specific URL confirmed.
-- [ ] [AI] **Lock the D11 concept-addition contract** — record, for Band 5's authoring, the four
-      concept-level additions: cache-aware prefix ordering (framed as a general stable-before-variable
-      principle, not tied to one vendor's mechanism) → `agent-context-and-memory`; tool-count
-      degradation **and** tool-result token efficiency → `agent-tools-and-mcp`; train-vs-production
-      permission asymmetry (framed as a risk distinction, not a capability distinction) →
-      `agent-permissions-and-sandboxing` — acceptance: each concept appears as an explicit acceptance
-      criterion on the relevant Band 5 item below, naming the concept and its target course.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
-      `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
-      command return ≥1 and the phase gate fails.
-
-### Phase 2 Gate
-
-- [ ] [AI] Four-path blast radius stated for all three surgeries; forward-link, citation, and
-      concept-addition contracts locked as explicit Band 5 / Band 8 acceptance criteria.
-- [ ] [AI] "Harness engineering" is cited, not adopted as structure — no course renamed (D9); the
-      unverified OpenAI attribution is excluded.
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR opens for this phase** — Phase 2 is intermediate (see the
-      [`### Delivery Boundaries`](#delivery-boundaries) table): the contract-lock edits are committed
-      on the shared worktree, this phase's own gate above is green, and nothing is pushed for review
-      yet — the edits ride the first Band-5 course PR (`software-architecture`, Phase 7) rather than
-      opening a standalone PR of their own.
-
-> **Pause Safety**: the evals/D9/D11 contracts are locked and will be enforced when Band 5 and Band 8
-> author their target courses; no app content changed. Safe to stop. To resume: re-read this phase's
-> four bullets and confirm Phases 7 and 10 still carry the matching acceptance criteria.
-
----
-
-## Phases 3–11: Author the 84 native bodies, band by band
+## Phases 3–4: Author the 15 remaining native bodies — Band 1, then Band 2
 
 Every body is authored NATIVE into `<COURSES><course-id>/` (no legacy home, no re-home) per the
 **NEW-course authoring convention** in Phase 1. Bodies within a band are content-independent and
 **pipeline concurrently** through review, bounded by the cap. Per-course detail:
-`$SYLLABUS_ROOT/<course-id>.md` and the tracked
+`<SYLLABUS_ROOT>/<course-id>.md` and the tracked
 [Course Library Catalog](./tech-docs.md#course-library-catalog). Each band authors its own catalog
 rows as part of "convention complete".
 
-**Reconciliation rulings baked into authoring** (locked):
+> **Moved out.** The reconciliation rulings this preamble previously carried for `defensive-security`
+> / `detection-engineering-and-siem-operations` (DD-12) and the AI-band scope-guard
+> (`creating-ai-powered-apps` → `agentic-ai` → the harness cluster, DD-11) targeted Band 7 and
+> Band 5 respectively — neither is authored by this plan. They now live in
+> `ayokoding-learning-path-08-course-authoring-security-and-ops` and
+> `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`.
 
-- `defensive-security` is **By-Example hands-on** (Sigma/ELK/OpenSearch + IR + hardening) — author it
-  that way; the catalog's original "(concept)" label was WRONG and is corrected (DD-12).
-  `detection-engineering-and-siem-operations` owns the deep Wazuh decoder/rule/FP-tuning/dashboard
-  tier and declares `defensive-security` a prerequisite; draw the scope line explicitly in both.
-- **AI-band scope-guard** (DD-11): `creating-ai-powered-apps` (use-an-LLM-in-an-app) → `agentic-ai` (a
-  single survey that **forward-links each primitive to its harness-cluster course** and does NOT
-  re-teach at build-your-own depth) → the 5-course harness cluster (build-your-own depth). Bake the
-  cross-reference contract in.
+**Reconciliation ruling baked into authoring** (locked):
+
 - `async-python-and-fastapi-services` stays framework-concrete: defer async _concepts_ to
   `concurrency-and-parallelism` and framework _internals_ to `build-your-own-web-framework`;
   cross-link both.
@@ -1140,6 +1055,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       `async-python-and-fastapi-services` two cross-links both exit 0.
 - [ ] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
 - [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
+- [ ] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
+      cohort PR — see [§`vercel-function-cost-reduction` precondition](./README.md#vercel-function-cost-reduction-precondition)):
+      `test ! -f apps/ayokoding-www/src/app/layout.tsx` — acceptance: exits **0** (the old root layout
+      no longer exists, i.e. `vercel-function-cost-reduction`'s Phase 1 has merged to `origin/main`).
+      **This check MUST pass before the cohort's remaining PR merges** — if it fails, do not merge;
+      wait for `vercel-function-cost-reduction` Phase 1 to land first.
 - [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
 
 > **Pause Safety**: the web/platform productivity band is live and self-contained. Safe to stop. To
@@ -1147,551 +1068,45 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ---
 
-## Phase 5: Band 3 — Mobile & desktop platforms (10 bodies)
-
-- [ ] [AI] `just-enough-kotlin` (Primer · Kotlin) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `android-app-development` (By Example · Kotlin) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-swift` (Primer · Swift) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `ios-app-development` (By Example · Swift) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-dart` (Primer · Dart) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `hybrid-app-development` (By Example · Dart) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-csharp` (Primer · C#) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `windows-app-development` (By Example · C#) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `linux-app-development` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `building-production-cli-tools` (By Example · Go + Rust) — convention complete; checkers
-      clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
-      manifests.
-
-### Phase 5 Gate
-
-- [ ] [AI] All 10 Band-3 bodies exist:
-      `for s in just-enough-kotlin android-app-development just-enough-swift ios-app-development just-enough-dart hybrid-app-development just-enough-csharp windows-app-development linux-app-development building-production-cli-tools; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 10 before this phase).
-- [ ] [AI] Every primer passed `apps-ayokoding-www-primer-checker`; every By-Example body passed
-      `apps-ayokoding-www-by-example-checker`; facts + link checkers clean.
-- [ ] [AI] `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: five primer/platform pairs are live; each `just-enough-*` primer resolves the
-> prerequisite its paired platform course declares, so no dangling edge exists. Safe to stop. To
-> resume: re-run the section build.
+> **Numbering note.** Phases 5–11 (Bands 3–9: Mobile & desktop platforms, Concurrency
+> languages, Architecture/distributed/AI-harness, Low-level systems/JVM, Security/ops/quality/delivery,
+> Remaining capstones, Interview-technique) moved to the 7 successor plans — see
+> [README §Successor plans](./README.md#successor-plans). This plan's next phase is renumbered from
+> the original Phase 12 down to **Phase 5**, continuing directly from Phase 4 (Band 2) above.
 
 ---
 
-## Phase 6: Band 4 — Concurrency languages (4 bodies)
-
-- [ ] [AI] `just-enough-go` (Primer · Go) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `csp-style-concurrency` (By Example · Go) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-elixir` (Primer · Elixir) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `actor-model-concurrency` (By Example · Elixir) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
-      manifests.
-
-### Phase 6 Gate
-
-- [ ] [AI] All 4 Band-4 bodies exist:
-      `for s in just-enough-go csp-style-concurrency just-enough-elixir actor-model-concurrency; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 4 before this phase).
-- [ ] [AI] Both By-Example bodies declare `concurrency-and-parallelism` as a prerequisite:
-      `for s in csp-style-concurrency actor-model-concurrency; do grep -F -q 'concurrency-and-parallelism' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done | wc -l`
-      returns **0**.
-- [ ] [AI] Checkers clean; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: the two concurrency-paradigm tracks are live and complete; `Band 8`'s
-> `capstone-concurrency-showdown` and `capstone-concurrency-and-systems` now have their prerequisite
-> bodies present. Safe to stop. To resume: re-run the section build.
-
----
-
-## Phase 7: Band 5 — Architecture, distributed & AI/harness (15 bodies)
-
-> **This band applies the three contracts Phase 2 locked** (evals forward-link, D9 naming/citation,
-> D11 concept additions), by construction. Each target course below carries the contract as an
-> explicit acceptance criterion.
-
-- [ ] [AI] `software-architecture` (Annotated-concept · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `domain-driven-design` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `system-design` (Annotated-concept · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `event-driven-architecture` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `distributed-systems` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-web-framework` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-reactive-ui` (By Example · TypeScript) — convention complete; checkers
-      clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `creating-ai-powered-apps` (By Example · Python; use-an-LLM scope) — convention complete;
-      checkers clean; **Phase 2 evals forward-link contract applied**:
-      `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>creating-ai-powered-apps/overview.md"`
-      exits **0** (its evals material forward-links rather than re-teaching, DD-25/DD-28). Falsifiable
-      both ways: exits 1 before this step and exits 1 again if the forward-link is removed.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agentic-ai` (By Example · Python; survey + forward-links, no build-your-own depth) —
-      convention complete; checkers clean; **Phase 2 evals forward-link contract applied**:
-      `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>agentic-ai/overview.md"` exits **0** —
-      forward-link acceptance: `agentic-ai/overview.md` names and links **each** of the five
-      harness-cluster courses:
-      `for s in the-agent-loop agent-tools-and-mcp agent-context-and-memory agent-permissions-and-sandboxing agent-orchestration-subagents-and-observability; do grep -F -q "$s" "apps/ayokoding-www/content/en/learn/courses/agentic-ai/overview.md" || echo "MISSING $s"; done | wc -l`
-      returns **0** (returns 5 before this step), and no lesson under `<COURSES>agentic-ai/learning/`
-      builds a working agent-loop / tool / memory / permission / orchestration implementation — that
-      depth stays in the cluster courses (DD-11).
-
-  **Gherkin (binds) →** "The agentic-ai survey forward-links each primitive without re-teaching it"
-
-  ```gherkin
-  Scenario: The agentic-ai survey forward-links each primitive without re-teaching it
-    Given the agentic-ai survey course and the five harness-cluster courses are authored
-    When a reader reads the agentic-ai survey
-    Then it previews the agent loop, tools/MCP, memory/context, and evals and forward-links each to its cluster course
-    And it does not re-teach any primitive at build-your-own depth
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-
-- [ ] [AI] `browser-automation-with-cdp` (By Example · Python/CDP) — convention complete; checkers
-      clean; `remotebrowser` named only as an illustrative pickup, never a required dependency.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `the-agent-loop` (By Example · Python) — convention complete; checkers clean; **Phase 2 D9
-      citation contract applied**: a harness-engineering naming/lineage line is present citing Anthropic
-      (2025-11-26) and Böckeler/Thoughtworks (2026-02-17), presenting the containment dispute as
-      unresolved — no rename. Acceptance:
-      `for w in "harness engineering" "2025-11-26" "2026-02-17"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/the-agent-loop/overview.md" || echo "MISSING $w"; done | wc -l`
-      returns **0**.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-tools-and-mcp` (By Example · Python) — convention complete; checkers clean; **Phase 2
-      D9 + D11 contracts applied**: the harness-engineering citation line is present, and concept
-      coverage includes **tool-count degradation** (Berkeley Function-Calling Leaderboard + the
-      GeoEngine 46-vs-19-tool evidence) **and** **tool-result token efficiency**. Acceptance:
-      `for w in "harness engineering" "tool-count" "token efficiency"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/agent-tools-and-mcp/overview.md" || echo "MISSING $w"; done | wc -l`
-      returns **0**.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-context-and-memory` (Annotated-concept · Python) — convention complete; checkers
-      clean; **Phase 2 D9 + D11 contracts applied**: a context-engineering naming/lineage line is
-      present citing Lütke (2025-06-19), Karpathy (2025-06-25), Willison (2025-06-27), and Anthropic's
-      Effective Context Engineering methodology; concept coverage includes **cache-aware prefix
-      ordering**, framed as a general stable-before-variable principle, not tied to one vendor's
-      mechanism. Acceptance:
-      `for w in "context engineering" "2025-06-19" "2025-06-25" "2025-06-27" "prefix"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/agent-context-and-memory/overview.md" || echo "MISSING $w"; done | wc -l`
-      returns **0**.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `agent-permissions-and-sandboxing` (By Example · Python) — convention complete; checkers
-      clean; **Phase 2 D11 contract applied**: concept coverage includes the **train-vs-production
-      permission asymmetry**, framed as a risk distinction, not a capability distinction. Acceptance:
-      `grep -F -q -i "permission asymmetry" "apps/ayokoding-www/content/en/learn/courses/agent-permissions-and-sandboxing/overview.md"`
-      exits 0.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `agent-orchestration-subagents-and-observability` (Annotated-concept · Python) — convention
-      complete; checkers clean; **Phase 2 evals forward-link contract applied**:
-      `grep -F -q 'evaluating-ai-systems-in-depth' "<COURSES>agent-orchestration-subagents-and-observability/overview.md"`
-      exits **0** — runnable-example acceptance: each of the five harness-cluster courses ships a
-      runnable typed-Python worked example covering its slice of the loop / tools / memory /
-      permissions / orchestration, and each names `remotebrowser`'s bundled MCP or CDP browser only as
-      an illustrative pickup, never a required dependency (verified during each course's checker pass;
-      the by-example / annotated-concept maker conventions already require runnable examples — this
-      bind adds the remotebrowser-scope check).
-
-  **Gherkin (binds) →** "The harness cluster builds a working agent from runnable code"
-
-  ```gherkin
-  Scenario: The harness cluster builds a working agent from runnable code
-    Given the five harness-engineering courses are authored
-    When a reader builds an agent from them
-    Then the agent loop, tools/MCP, memory, permissions, and orchestration each ship runnable typed-Python examples
-    And each course names remotebrowser's bundled MCP or CDP browser only as an illustrative pickup
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` for this band = the three
-      software-engineer-role manifests **plus**
-      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (DD-33 — this band lands
-      eight of the nine courses that manifest walks). Name all four paths explicitly in the signal; a
-      signal that omits the AI path leaves it stuck on its six-course smoke-test spine.
-
-### Phase 7 Gate
-
-- [ ] [AI] All 15 Band-5 bodies exist:
-      `for s in software-architecture domain-driven-design system-design event-driven-architecture distributed-systems build-your-own-web-framework build-your-own-reactive-ui creating-ai-powered-apps agentic-ai browser-automation-with-cdp the-agent-loop agent-tools-and-mcp agent-context-and-memory agent-permissions-and-sandboxing agent-orchestration-subagents-and-observability; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 15 before this phase).
-- [ ] [AI] All three Phase-2 contracts verified applied: the three evals donors each forward-link
-      (`grep -F -q` exits 0 for each); the D9 citation loops return 0 for `the-agent-loop`,
-      `agent-tools-and-mcp`, and `agent-context-and-memory`; the D11 concept checks return 0 for
-      `agent-tools-and-mcp`, `agent-context-and-memory`, and `agent-permissions-and-sandboxing`.
-- [ ] [AI] `agentic-ai`'s five-forward-link loop returns 0 and no `agentic-ai` lesson implements a
-      cluster primitive at build-your-own depth (DD-11 scope-guard held).
-- [ ] [AI] Checkers clean across all 15; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded naming **four** manifests; zero manifest files
-      touched by this plan.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: the architecture band and the complete AI/harness cluster are live; the three
-> course surgeries are applied by construction rather than pending as retrofits. Safe to stop. To
-> resume: re-run the section build and re-verify the three contract loops.
-
----
-
-## Phase 8: Band 6 — Low-level systems, JVM & languages, internals builds (16 bodies)
-
-- [ ] [AI] `just-enough-c` (Primer · C) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `just-enough-cpp` (Primer · C++; declares `just-enough-c` a prerequisite) — convention
-      complete; checkers clean — acceptance:
-      `grep -F -q 'just-enough-c' "apps/ayokoding-www/content/en/learn/courses/just-enough-cpp/_index.md"`
-      exits 0.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `linux-os` (By Example · C + shell) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `windows-os` (By Example · C + PowerShell) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `system-programming` (By Example · C) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-rust` (Primer · Rust) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `modern-system-programming` (By Example · Rust) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-java` (Primer · Java) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `enterprise-java-and-the-jvm` (By Example · Java) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `lisp` (By Example · Scheme + Clojure) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-fsharp` (Primer · F#) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `type-systems` (By Example · OCaml + Haskell + F#) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `compilers-parsers-and-transpilers` (By Example · F#) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-git` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-database` (By Example · Python) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `build-your-own-raft` (By Example · Go) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
-      manifests.
-
-### Phase 8 Gate
-
-- [ ] [AI] All 16 Band-6 bodies exist:
-      `for s in just-enough-c just-enough-cpp linux-os windows-os system-programming just-enough-rust modern-system-programming just-enough-java enterprise-java-and-the-jvm lisp just-enough-fsharp type-systems compilers-parsers-and-transpilers build-your-own-git build-your-own-database build-your-own-raft; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 16 before this phase).
-- [ ] [AI] `just-enough-cpp` declares `just-enough-c` as its prerequisite (DD-14's dedicated on-ramp).
-- [ ] [AI] Checkers clean across all 16; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: the low-level/languages band is live; `build-your-own-raft`'s and
-> `build-your-own-database`'s prerequisite bodies (Bands 4 and 1) are already present, so no dangling
-> edge exists. Safe to stop. To resume: re-run the section build.
-
----
-
-## Phase 9: Band 7 — Security, ops, quality & delivery (11 bodies)
-
-- [ ] [AI] `it-and-application-security` (Annotated-concept · Python) — convention complete; checkers
-      clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `offensive-security` (By Example · Python + shell) — convention complete; checkers clean;
-      the body states its **lab-local, authorized-scope-only** rules of engagement — acceptance:
-      `for w in "authorized" "lab"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/offensive-security/overview.md" || echo "MISSING $w"; done | wc -l`
-      returns **0**.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `defensive-security` (By Example · Python + shell — **hands-on, NOT concept**, DD-12) —
-      convention complete; checkers clean; the body delivers Sigma-on-ELK/OpenSearch + the IR lifecycle + hardening as generalist blue-team breadth.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `detection-engineering-and-siem-operations` (By Example · XML/rules + config + Python;
-      declares `defensive-security` a prerequisite) — convention complete; checkers clean —
-      distinctness acceptance: this course has the reader author working Wazuh decoders, correlation
-      rules, and a dashboard with false-positive tuning; `defensive-security` retains the generalist
-      Sigma/ELK breadth, IR, and hardening as its distinct scope. Verify the prerequisite
-      (`grep -F -q 'defensive-security' "<COURSES>detection-engineering-and-siem-operations/_index.md"`
-      exits 0) and verify **no lesson title is duplicated** across the two courses' syllabi:
-      `comm -12 <(grep -h '^# ' apps/ayokoding-www/content/en/learn/courses/defensive-security/learning/*.md | sort -u) <(grep -h '^# ' apps/ayokoding-www/content/en/learn/courses/detection-engineering-and-siem-operations/learning/*.md | sort -u) | wc -l`
-      returns **0**. Falsifiable both ways: copying one lesson title between the two courses makes it
-      return 1.
-      **The two `<(...)` process substitutions are load-bearing — never unwrap them.** The flag `-h`
-      collides with `rtk grep --help`: a bare `grep -h '^# ' <file>` is rewritten by the harness hook
-      to an `rtk grep -h` call, which prints a ~19-line usage banner and exits **0**, so a line count
-      taken over it reads 19 no matter what the file contains. Inside `<(...)` the hook does not
-      rewrite the call, so real grep semantics apply. [Repo-grounded — measured 2026-07-22:
-      `cat <(grep -h '^# ' plans/in-progress/ayokoding-learning-path-04-course-authoring/README.md) | wc -l`
-      returns **1**, that README's single `#` heading, while the same grep issued bare returns the
-      banner.] If this clause is ever restructured out of the wrappers, use `command grep -h`, or drop
-      `-h` altogether and strip the `filename:` prefix with `sed 's/^[^:]*://'`.
-
-  **Gherkin (binds) →** "Hands-on detection engineering stays distinct from generalist defensive security"
-
-  ```gherkin
-  Scenario: Hands-on detection engineering stays distinct from generalist defensive security
-    Given the detection-engineering-and-siem-operations course is authored
-    When a reader compares it with the hands-on defensive-security course
-    Then it has the reader author working Wazuh decoders, correlation rules, and a dashboard with false-positive tuning
-    And defensive-security keeps the generalist Sigma/ELK breadth, IR, and hardening as its distinct scope
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-
-- [ ] [AI] `vulnerability-management-and-assessment` (By Example · Python) — convention complete;
-      checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `it-governance-grc` (Annotated-concept · no code) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `bare-metal-virtualization` (By Example · HCL/YAML/shell) — convention complete; checkers
-      clean; its `overview.md` states the two-altitude boundary against `self-hosting-essentials`
-      (DD-14) — acceptance:
-      `grep -F -q 'self-hosting-essentials' "apps/ayokoding-www/content/en/learn/courses/bare-metal-virtualization/overview.md"`
-      exits 0.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `self-managed-kubernetes-and-gitops` (By Example · YAML/CLI) — convention complete; checkers
-      clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `platform-engineering-and-devex` (Annotated-concept · no code) — convention complete;
-      checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `site-reliability-engineering` (Annotated-concept · Python) — convention complete; checkers
-      clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `analytics-and-experimentation` (By Example · Python) — convention complete; checkers clean;
-      its `overview.md` states the boundary against `statistics-for-evaluation` (DD-26) — acceptance:
-      `grep -F -q 'statistics-for-evaluation' "apps/ayokoding-www/content/en/learn/courses/analytics-and-experimentation/overview.md"`
-      exits 0.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
-      manifests.
-
-### Phase 9 Gate
-
-- [ ] [AI] All 11 Band-7 bodies exist:
-      `for s in it-and-application-security offensive-security defensive-security detection-engineering-and-siem-operations vulnerability-management-and-assessment it-governance-grc bare-metal-virtualization self-managed-kubernetes-and-gitops platform-engineering-and-devex site-reliability-engineering analytics-and-experimentation; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 11 before this phase).
-- [ ] [AI] `defensive-security` is authored By-Example hands-on (DD-12 label correction applied);
-      `detection-engineering-and-siem-operations` declares it as a prerequisite; the duplicate-lesson-title
-      `comm` check returns 0.
-- [ ] [AI] Both two-altitude boundaries stated (`bare-metal-virtualization` ↔ `self-hosting-essentials`;
-      `analytics-and-experimentation` ↔ `statistics-for-evaluation`).
-- [ ] [AI] `offensive-security` states its lab-local, authorized-scope-only rules of engagement.
-- [ ] [AI] Checkers clean across all 11; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: the security/ops band is live; Band 8's `capstone-secure-service`,
-> `capstone-data-pipeline`, and `capstone-build-your-own-pentest-engine` now have their prerequisite
-> bodies present. Safe to stop. To resume: re-run the section build.
-
----
-
-## Phase 10: Band 8 — Remaining capstones (8 bodies)
-
-> **Ordering constraint**: this band follows Band 5 because `capstone-build-your-own-coding-agent`
-> assembles the harness cluster, and follows Bands 4/7 because the concurrency and security capstones
-> assemble those bands' bodies.
-
-- [ ] [AI] `capstone-build-your-own-coding-agent` (Python; assembles the harness cluster) — convention
-      complete; checkers clean; **Phase 2 D9 citation contract applied**: a harness-engineering
-      naming/lineage line is present citing Anthropic (2025-11-26) and Böckeler/Thoughtworks
-      (2026-02-17) — no rename. Assembly acceptance: the capstone's done-bar produces a runnable
-      coding-agent CLI composed from the five cluster courses; a disallowed action **fails closed** and
-      every run emits a trace — verify the capstone's own runnable acceptance-criteria checklist names
-      all five source courses:
-      `for s in the-agent-loop agent-tools-and-mcp agent-context-and-memory agent-permissions-and-sandboxing agent-orchestration-subagents-and-observability; do grep -F -q "$s" "apps/ayokoding-www/content/en/learn/courses/capstone-build-your-own-coding-agent/overview.md" || echo "MISSING $s"; done | wc -l`
-      returns **0** (returns 5 before this step).
-
-  **Gherkin (binds) →** "The coding-agent capstone assembles the harness cluster into a working CLI"
-
-  ```gherkin
-  Scenario: The coding-agent capstone assembles the harness cluster into a working CLI
-    Given the harness cluster and the build-your-own-coding-agent capstone are authored
-    When a reader completes the capstone
-    Then they have a runnable coding-agent CLI built from the agent loop, tools/MCP, memory, permissions, and orchestration courses
-    And a disallowed action fails closed while every run emits a trace
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-
-- [ ] [AI] `capstone-build-your-own-pentest-engine` (TypeScript; swarm + MCP + CDP + security chaining)
-      — convention complete; checkers clean. Assembly acceptance: the done-bar produces a runnable
-      engine composed from swarm orchestration, MCP tooling, CDP browser driving, and
-      security-tool-chaining; **scope enforcement refuses an out-of-scope target**; the body restates
-      the lab-local, authorized-scope-only limits it inherits from `offensive-security`; and
-      `vacti-pentest-engine` is named only as an illustration, never a required dependency — verify:
-      `for w in "authorized" "out-of-scope"; do grep -F -q -i "$w" "apps/ayokoding-www/content/en/learn/courses/capstone-build-your-own-pentest-engine/overview.md" || echo "MISSING $w"; done | wc -l`
-      returns **0**.
-
-  **Gherkin (binds) →** "The pentest-engine capstone assembles the convergence track into a scoped engine"
-
-  ```gherkin
-  Scenario: The pentest-engine capstone assembles the convergence track into a scoped engine
-    Given the harness cluster, the CDP course, the security suite, and detection-engineering are authored
-    When a reader completes the build-your-own-pentest-engine capstone
-    Then they have a runnable engine from swarm orchestration, MCP tooling, CDP browser driving, and security-tool-chaining
-    And scope enforcement refuses an out-of-scope target while the capstone uses vacti-pentest-engine only as an illustration
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-
-- [ ] [AI] `capstone-real-world-delivery` (Python + TS + IaC; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/defensive-security.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-secure-service` (Python + shell; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/defensive-security.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-data-pipeline` (SQL + Python; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/defensive-security.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-concurrency-and-systems` (Go or Elixir + C; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/compilers-parsers-and-transpilers.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-concurrency-showdown` (Go + Elixir; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/compilers-parsers-and-transpilers.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `capstone-lead-at-altitude` (polyglot + prose; DD-20 — embedded spec in
-      `$SYLLABUS_ROOT/site-reliability-engineering.md`) — convention complete; checkers clean.
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` for this band = the three
-      software-engineer-role manifests **plus**
-      `<MANIFESTS>careers/immediately-effective/ai-engineer.yaml` (DD-33 —
-      `capstone-build-your-own-coding-agent` is the ninth of the nine courses that manifest walks).
-
-### Phase 10 Gate
-
-- [ ] [AI] All 8 Band-8 capstones exist:
-      `for s in capstone-build-your-own-coding-agent capstone-build-your-own-pentest-engine capstone-real-world-delivery capstone-secure-service capstone-data-pipeline capstone-concurrency-and-systems capstone-concurrency-showdown capstone-lead-at-altitude; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 8 before this phase).
-- [ ] [AI] Each of the six DD-20 inter-topic capstones was authored from its **embedded spec** in the
-      named `$SYLLABUS_ROOT` file, not invented — the goal, integrated-concepts checklist, ordered
-      steps, acceptance criteria, and done bar all trace to that spec.
-- [ ] [AI] The coding-agent capstone's five-source-course loop returns 0; the pentest capstone's
-      authorization/scope loop returns 0.
-- [ ] [AI] Checkers clean across all 8; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded naming **four** manifests; zero manifest files
-      touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: every capstone this plan owns is live; the AI path's full nine-course harness walk
-> now has all its bodies present, so the manifest plan can grow that path to its full DD-35-governed
-> composition (no longer a fixed 15-course figure — DD-35 superseded DD-33's original 6→15 math).
-> Safe to stop. To resume: re-run the section build.
-
----
-
-## Phase 11: Band 9 — Interview-technique courses (5 bodies)
-
-> These five were **deferred from the interview-ready MVP gate** (DD-27) so they never blocked the AI
-> path's authoring start. All four courses are written in a **refresh register** — they assume prior
-> professional experience (DL-6).
-
-- [ ] [AI] `coding-interview` (By Example · Python) — convention complete; checkers clean; refresh
-      register applied.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `take-home-and-live-coding` (By Example · Python) — convention complete; checkers clean;
-      refresh register applied.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `system-design-interview` (Annotated-concept · no code; forward-links `system-design`) —
-      convention complete; checkers clean; refresh register applied — acceptance:
-      `grep -F -q 'system-design' "apps/ayokoding-www/content/en/learn/courses/system-design-interview/overview.md"`
-      exits 0 (the rubric course forward-links the depth course rather than re-teaching it, DD-10).
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] `behavioral-and-leadership-interviews` (Annotated-concept · no code) — convention complete;
-      checkers clean — coverage acceptance: the learning track explicitly covers framing an employment
-      gap, a layoff, and a re-entry story, and treats senior/staff/EM leadership rounds as core (not
-      optional) material. Verify:
-      `for w in "employment gap" "layoff" "re-entry"; do grep -F -q -r -i "$w" "apps/ayokoding-www/content/en/learn/courses/behavioral-and-leadership-interviews/learning/" || echo "MISSING $w"; done | wc -l`
-      returns **0** (returns 3 before this step).
-
-  **Gherkin (binds) →** "The behavioral course covers the layoff and employment-gap narrative"
-
-  ```gherkin
-  Scenario: The behavioral course covers the layoff and employment-gap narrative
-    Given the behavioral-and-leadership-interviews course is authored
-    When an experienced re-entrant reads its learning track
-    Then it explicitly covers framing an employment gap, a layoff, or a re-entry story
-    And it treats senior/staff/EM leadership rounds as core material
-  ```
-
-  - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-
-- [ ] [AI] **Verify the refresh register across all four interview courses** — each course's
-      `overview.md` states it assumes prior professional experience and frames the material as
-      technique/breadth refresh, never a from-zero concept teach. Verify:
-      `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews; do grep -F -q -i "assumes" "apps/ayokoding-www/content/en/learn/courses/$s/overview.md" || echo "MISSING $s"; done | wc -l`
-      returns **0** (returns 4 before this phase, since none of the four directories exists yet).
-
-  **Gherkin (binds) →** "Interview courses are written in a refresh register"
-
-  ```gherkin
-  Scenario: Interview courses are written in a refresh register
-    Given the four new interview-technique courses are authored
-    When an experienced engineer reads them
-    Then each assumes prior professional experience and focuses on interview technique and breadth refresh
-    And none teaches core concepts from zero
-  ```
-
-- [ ] [AI] `capstone-interview-loop` (Python + prose; full mock loop: coding + system-design +
-      behavioral) — convention complete; checkers clean — acceptance: its `_index.md` declares all four
-      interview courses as prerequisites:
-      `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews; do grep -F -q "$s" "apps/ayokoding-www/content/en/learn/courses/capstone-interview-loop/_index.md" || echo "MISSING $s"; done | wc -l`
-      returns **0**.
-  - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] Apply the three per-band closing steps. **`GROW_MANIFESTS` for this band is only two
-      manifests**: `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
-      `<MANIFESTS>careers/fundamentally-strong/software-engineer.yaml`.
-      `careers/immediately-effective/software-engineer` does **not** grow — that path omits the
-      interview-technique band from its `courseOrder` by design (its reader reaches these courses via
-      their canonical pages). The signal MUST name exactly these two; naming three would cause the
-      manifest plan to grow a path the design excludes.
-
-### Phase 11 Gate
-
-- [ ] [AI] All 5 Band-9 bodies exist:
-      `for s in coding-interview take-home-and-live-coding system-design-interview behavioral-and-leadership-interviews capstone-interview-loop; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
-      returns **0** (returns 5 before this phase).
-- [ ] [AI] The refresh-register loop returns 0 across all four interview courses; the
-      employment-gap/layoff/re-entry loop returns 0; `capstone-interview-loop` declares all four as
-      prerequisites.
-- [ ] [AI] `system-design-interview` forward-links `system-design` rather than re-teaching depth
-      (DD-10).
-- [ ] [AI] Checkers clean across all 5; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded naming **exactly two** manifests; zero manifest
-      files touched.
-- [ ] [AI] Every sub-phase PR is `[AI]`-merged and deployed.
-
-> **Pause Safety**: all 90 authored bodies are now live. The library is content-complete from this
-> plan's side; every downstream signal is recorded. Safe to stop. To resume: re-run the section build
-> and the 90-slug presence check.
-
----
-
-## Phase 12: Section & Authored-Tree Verification
-
-- [ ] [AI] **Verify all 90 authored bodies are present** —
+## Phase 5: Section & Authored-Tree Verification
+
+- [ ] [AI] **Re-scope the authored-body register for the 21-course trim** — Phase 0 registered **90**
+      slugs (this plan's original nine-band scope); this plan's terminal scope is now **21** (the six
+      AI-engineering courses, Band 1, and Band 2 — see [README §Split history and terminal
+      scope](./README.md#split-history-and-terminal-scope)). The register's first 21 lines are already
+      exactly this plan's remaining slugs (confirmed: they are the AI-engineering + Band 1 + Band 2
+      course IDs, in that order); the other 69 lines name courses the 7 successor plans now own. Trim
+      the register in place: `head -21 evidence/authored-body-slugs.txt > /tmp/slugs21.txt && mv
+    /tmp/slugs21.txt evidence/authored-body-slugs.txt` — acceptance:
+      `wc -l < evidence/authored-body-slugs.txt` returns **21**, and every remaining line matches one of
+      this plan's 21 course IDs (`diff <(sort evidence/authored-body-slugs.txt) <(printf '%s\n'
+    evaluating-ai-output-essentials evaluating-ai-systems-in-depth statistics-for-evaluation
+    product-patterns-for-probabilistic-systems inference-serving-and-model-deployment
+    fine-tuning-and-adaptation nosql-databases graph-databases
+    database-internals-and-storage-engines data-engineering search-and-information-retrieval
+    api-design advanced-frontend backend-at-scale async-python-and-fastapi-services
+    self-hosting-essentials containers-and-orchestration cloud-and-iac
+    cicd-and-release-engineering build-automation-and-task-runners
+    information-architecture-and-seo | sort)` exits with no output). The original 90-slug register is
+      recorded verbatim in this checklist's own Phase 0 history above and in git history — this step
+      does not rewrite that history, only the live working file used by the checks below.
+- [ ] [AI] **Verify all 21 authored bodies are present** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      — acceptance: returns **0**. Falsifiable both ways: this returned **90** at the Phase-0 baseline,
-      and removing any one bundle makes it return 1.
+      — acceptance: returns **0**. Falsifiable both ways: this returned **90** at the Phase-0 baseline
+      (before the register was re-scoped to 21 by the step above), and removing any one bundle from the
+      re-scoped register makes it return 1.
 - [ ] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      — acceptance: returns **0** (returns 90 at baseline).
+      — acceptance: returns **0** (returns 21 against the re-scoped register if none of these 21 were
+      yet authored — not the case here, since Phase 1, Phase 3, and Phase 4 land before this phase).
 - [ ] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**.
@@ -1755,9 +1170,9 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [ ] [AI] **Verify zero manifest files were touched by this entire plan** — every phase before this
       one, whether or not it opens its own PR, carries the identical individual check on its own diff
       before that phase merges or folds into its delivery unit's PR (Phase 0's check, Phase 1's check,
-      Phase 2's check, and every "per-band closing steps" step 3, Phases 3–11); each of the **90
-      individual course sub-phases** nested inside Phase 1
-      and Bands 1–9 additionally carries its own instance of this check as **convention step 8** (see the
+      and Phase 3's and Phase 4's own "per-band closing steps" step 3); each of the **21
+      individual course sub-phases** nested inside Phase 1, Phase 3, and Phase 4 additionally carries
+      its own instance of this check as **convention step 8** (see the
       "NEW-course authoring convention"), asserted on that course's own branch before it merges — the
       closing-steps checks alone branch fresh from `origin/main` after every course in that band has
       already merged, so they can only ever see their own diff, never the already-merged course diffs;
@@ -1769,44 +1184,44 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       held:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path on this
-      branch makes it return ≥1; this check, plus every one of the 90 course sub-phases' own
+      branch makes it return ≥1; this check, plus every one of the 21 course sub-phases' own
       convention-step-8 check, plus every prior phase's own already-passed individual check, together
-      constitute the ownership invariant's terminal proof for Phases 0–12 (Phase 13, 14, and 15 each
-      carry — or, for Phase 14, do not need, since it commits nothing of its own — the same individual
-      check on their own diffs; Phase 16 re-asserts once more for its own diff).
-- [ ] [AI] **Verify every band-completion signal is complete** — each of the ten signals in this file
-      (Phase 1 + Bands 1–9) carries all five fields and a `MERGED_COMMIT` that resolves. Anchor the
+      constitute the ownership invariant's terminal proof for Phases 0–5 (Phase 6, 7, and 8 each
+      carry — or, for Phase 7, do not need, since it commits nothing of its own — the same individual
+      check on their own diffs; Phase 9 re-asserts once more for its own diff).
+- [ ] [AI] **Verify every band-completion signal is complete** — each of the three signals in this file
+      (Phase 1, Band 1, Band 2) carries all five fields and a `MERGED_COMMIT` that resolves. Anchor the
       count on the field's line-start form (`MERGED_COMMIT: <sha>` alone on its own line inside the
       fenced signal block per the [band-completion signal contract](./README.md#band-completion-signal-contract))
       so the checklist's own prose mentions of the bare substring `MERGED_COMMIT:` (this explanation,
-      the command below, and Phase 14's downstream-notification check all mention the literal
+      the command below, and Phase 7's downstream-notification check all mention the literal
       substring in prose) are never counted:
       `for c in $(grep -oE '^MERGED_COMMIT: [0-9a-f]{7,40}$' delivery.md | awk '{print $NF}'); do git cat-file -e "$c^{commit}" || echo "BAD $c"; done | wc -l`
       — acceptance: returns **0**, and `grep -cE '^MERGED_COMMIT: [0-9a-f]{7,40}$' delivery.md` returns
-      **10** (`-c` counts matching _lines_ here, which is exactly one per genuine signal block, not
+      **3** (`-c` counts matching _lines_ here, which is exactly one per genuine signal block, not
       substring occurrences — unlike the bare-substring form `grep -cF 'MERGED_COMMIT:' delivery.md`,
       which overcounts by however many prose lines in this checklist happen to mention the literal
       substring at the time; that count drifts as the checklist itself is edited, so do not trust a
       fixed number here — run `grep -nF 'MERGED_COMMIT:' delivery.md` to see the live count before
       reasoning about the bare-substring form). Falsifiable both ways: today, before any band lands,
-      both commands return **0** (not 10); once all ten signals are genuinely recorded, the second
-      returns exactly **10**.
+      both commands return **0** (not 3); once all three signals are genuinely recorded, the second
+      returns exactly **3**.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes
 > (Root Cause Orientation). Commit preexisting fixes separately with conventional-commit messages.
 
-### Phase 12 Gate
+### Phase 5 Gate
 
-- [ ] [AI] All three 90-body structural loops (presence, prerequisites, both tracks) return 0.
+- [ ] [AI] All three 21-body structural loops (presence, prerequisites, both tracks) return 0.
 - [ ] [AI] Supersession sweep resolved one way or the other: either the `Superseded by:` count in
       `<COURSES>*/overview.md` matches `evidence/supersession-sweep-slugs.txt`, or Q-A ruled B and
       `learnings.md` records the no-op — never left unresolved.
 - [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
 - [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no
       `learn/courses/` failure.
-- [ ] [AI] Zero manifest files touched across the whole plan's history; all ten band signals complete
+- [ ] [AI] Zero manifest files touched across the whole plan's history; all three band signals complete
       with resolvable `MERGED_COMMIT` SHAs.
-- [ ] [AI] Draft PR opened at Phase 12 — this unit's own boundary (see the
+- [ ] [AI] Draft PR opened at Phase 5 — this unit's own boundary (see the
       [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
       PR `[AI]`-merged; deployed.
 
@@ -1815,7 +1230,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ---
 
-## Phase 13: Manual Content Verification (Playwright MCP)
+## Phase 6: Manual Content Verification (Playwright MCP)
 
 > **Locale scope**: this plan's course content is authored `en`-only — per
 > [brd.md §Business-Scope Non-Goals](./brd.md#business-scope-non-goals), an Indonesian content mirror
@@ -1839,8 +1254,9 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       `test -d apps/ayokoding-www/content/en/learn/courses && test ! -d apps/ayokoding-www/content/id/learn/courses`
       — acceptance: exits 0 (the `en` bucket exists; no `id` mirror is expected or required).
 - [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify authored course pages** — for a sample of **nine** authored courses (one per
-      band) plus **two** AI-engineering courses, at breakpoints 375 / 768 / 1280 px, via Playwright MCP:
+- [ ] [AI] **Sample-verify authored course pages** — for a sample of **two** authored courses (one per
+      remaining band — Band 1 and Band 2) plus **two** AI-engineering courses, at breakpoints
+      375 / 768 / 1280 px, via Playwright MCP:
       `browser_navigate` to `/en/learn/courses/<course-id>`, `browser_resize`, then `browser_snapshot`
       — acceptance: each page renders its overview, learning track, and drilling track; `html[lang]` is
       `en`; `browser_console_messages` reports **zero** errors per page per breakpoint.
@@ -1852,45 +1268,45 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       confirm all five fixed sections are present in the rendered output — acceptance: five section
       headings visible in `browser_snapshot`.
 - [ ] [AI] Capture one screenshot per sampled course per breakpoint to
-      `evidence/phase-13-<course-id>-en-<breakpoint>px.png` — acceptance:
-      `git ls-files -- 'evidence/phase-13-*-en-*px.png' | grep -c .` returns **33** (11 courses × 3
+      `evidence/phase-6-<course-id>-en-<breakpoint>px.png` — acceptance:
+      `git ls-files -- 'evidence/phase-6-*-en-*px.png' | grep -c .` returns **12** (4 courses × 3
       breakpoints), once the captures are staged or committed with the rest of this phase's evidence.
       Counting with `git ls-files` rather than `find … | wc -l` keeps the number immune to RTK's
       `find` reformatting (see Phase 0's blocking-plan checks for the measurement).
-      Falsifiable both ways: returns 0 before this step and a number below 33 if any capture is skipped.
+      Falsifiable both ways: returns 0 before this step and a number below 12 if any capture is skipped.
 - [ ] [AI] Document the evidence in this checklist: reference each screenshot
       (`![alt](./evidence/...)`) and note the console/network status per sampled course — acceptance:
       every captured file is referenced.
 - [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad — acceptance: the exemption entry is present, so
       the archival gate can verify it was recorded rather than forgotten.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 13 is intermediate (see the
+- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 6 is intermediate (see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): its evidence commits fold into the
-      Phase 16 closeout PR rather than opening one of their own, so this phase still needs its own
+      Phase 9 closeout PR rather than opening one of their own, so this phase still needs its own
       individual gate on this phase's own diff before that PR opens:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
 
-### Phase 13 Gate
+### Phase 6 Gate
 
-- [ ] [AI] Eleven sampled courses verified across three breakpoints in `en`; zero console errors;
+- [ ] [AI] Four sampled courses verified across three breakpoints in `en`; zero console errors;
       prerequisite display and drilling-track rendering confirmed.
-- [ ] [AI] 33 screenshots present under `evidence/` and referenced in this checklist.
+- [ ] [AI] 12 screenshots present under `evidence/` and referenced in this checklist.
 - [ ] [AI] The rule-15 exemption is recorded with reasons (not silently omitted); the triad itself is
       **not** run here.
 - [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
 - [ ] [AI] **No PR opens for this phase** (intermediate — see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): the evidence commits are on the shared
       worktree, this phase's own gate above is green, and nothing is pushed for review yet — the
-      closeout PR for Phases 13–16 opens at Phase 16.
+      closeout PR for Phases 6–9 opens at Phase 9.
 
 > **Pause Safety**: the authored library is verified live and defect-clean in `en`. Safe to stop. To
-> resume: restart the dev server and re-open one sampled course per band.
+> resume: restart the dev server and re-open one sampled course per remaining band.
 
 ---
 
-## Phase 14: Final `origin/main` Integration & CI Verification
+## Phase 7: Final `origin/main` Integration & CI Verification
 
 - [ ] [AI] Confirm no plan PR is still open:
       `gh pr list --search "ayokoding-learning-path-04-course-authoring" --state open --json number --jq 'length'`
@@ -1903,27 +1319,31 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       Actions green; fix root causes and push follow-ups (own PR → review → `[AI]` merge) until green.
       **Any follow-up PR opened here carries the identical individual manifest-diff check on its own
       branch before it merges** — this hypothetical path has no dedicated content-authoring convention
-      to inherit the check from (unlike the 90 course sub-phases), so it is stated explicitly here:
+      to inherit the check from (unlike the 21 course sub-phases), so it is stated explicitly here:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** on the follow-up branch before merge. Falsifiable both ways: touching any file
       under that path makes it return ≥1.
 - [ ] [AI] Confirm `prod-ayokoding-www` serves the authored bodies — spot-check five canonical course
-      URLs across five different bands — acceptance: each returns 200 with the expected course title.
+      URLs spanning this plan's three course groups (AI-engineering, Band 1, Band 2) — acceptance: each
+      returns 200 with the expected course title.
       Re-dispatch `apps-ayokoding-www-deployer` if any earlier deploy lagged.
-- [ ] [AI] **Notify the downstream manifest plan** — confirm all ten band-completion signals are
+- [ ] [AI] **Notify the downstream manifest plans** — confirm all three band-completion signals are
       present in this file on `origin/main` and reachable by
-      [`ayokoding-learning-path-05-manifests`](../../backlog/ayokoding-learning-path-05-manifests/delivery.md)
+      [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/delivery.md)
+      (Band 1/Band 2 signals) and
+      [`ayokoding-learning-path-13-careers-ai-manifest`](../../backlog/ayokoding-learning-path-13-careers-ai-manifest/delivery.md)
+      (Phase 1 signal)
       — acceptance: two steps. (a) Resolve the literal path on `origin/main` — command (single line):
       `git ls-tree -r --name-only origin/main -- plans | grep -F 'ayokoding-learning-path-04-course-authoring/delivery.md'`
       — it prints **exactly one** path. (b) Feed that literal path to `git show` — command (single line):
       `git show "origin/main:<the printed path>" | grep -cE '^MERGED_COMMIT: [0-9a-f]{7,40}$'`
-      returns **10**.
+      returns **3**.
       **Never put a glob in a `git show <rev>:<path>` argument.** Unquoted,
       `plans/*/ayokoding-…/delivery.md` is a zsh pattern, and whenever it matches nothing zsh aborts
       the whole command line with `no matches found` before `git show` runs. Quoted, it fares no
       better: `git show` does **not** glob-expand its path argument, so it returns **zero bytes and
-      exits 0**, making the acceptance value of 10 silently unreachable. [Repo-grounded — both
-      measured 2026-07-22.] Uses the same anchored line-start form as Phase 12's band-completion-signal
+      exits 0**, making the acceptance value of 3 silently unreachable. [Repo-grounded — both
+      measured 2026-07-22.] Uses the same anchored line-start form as Phase 5's band-completion-signal
       check; the bare-substring form (`grep -cF 'MERGED_COMMIT:'`) is unreachable here too, for the
       same reason — it also matches this checklist's own prose mentions of the literal substring, so
       it overcounts by however many such prose lines exist at the time (that count drifts as the
@@ -1931,12 +1351,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       than trusting a fixed number here). Falsifiable both ways: today, before any band lands, this
       returns **0**.
 
-### Phase 14 Gate
+### Phase 7 Gate
 
 - [ ] [AI] Zero open plan PRs; every prior phase merged to `main`.
 - [ ] [AI] Full affected suite + build green on integrated `main`; final `main` CI run green.
 - [ ] [AI] `prod-ayokoding-www` serving the authored bodies (five spot-checks return 200).
-- [ ] [AI] All ten band signals present on `origin/main` and reachable downstream.
+- [ ] [AI] All three band signals present on `origin/main` and reachable downstream.
 
 > **Pause Safety**: the whole plan is integrated on `main`, green in CI, and live in production; the
 > downstream manifest plan has everything it needs. Safe to stop. To resume: re-run the affected suite
@@ -1944,7 +1364,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ---
 
-## Phase 15: Knowledge Capture
+## Phase 8: Knowledge Capture
 
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
@@ -1967,9 +1387,9 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       records its terminal routing state.
 - [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md` — acceptance: `learnings.md` is never silently empty.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 15 is intermediate (see the
+- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 8 is intermediate (see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): it commits the `learnings.md` triage
-      and any inline non-code fixes on the shared closeout branch and folds into the Phase 16 PR
+      and any inline non-code fixes on the shared closeout branch and folds into the Phase 9 PR
       rather than opening one of its own, so this phase still gets the same individual gate on its own
       diff (the code-routing rule above already forbids landing a manifest-touching fix inline; this
       re-asserts it mechanically rather than trusting the routing rule alone):
@@ -1977,7 +1397,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
 
-### Phase 15 Gate
+### Phase 8 Gate
 
 - [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
@@ -1986,14 +1406,14 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [ ] [AI] **No PR opens for this phase** (intermediate — see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): the `learnings.md` triage is committed
       on the shared closeout branch, this phase's own gate above is green, and nothing is pushed for
-      review yet — the closeout PR for Phases 13–16 opens at Phase 16.
+      review yet — the closeout PR for Phases 6–9 opens at Phase 9.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
 
 ---
 
-## Phase 16: Plan Archival
+## Phase 9: Plan Archival
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
 - [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
@@ -2001,19 +1421,22 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
 - [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised (per the Indonesian-mirror-deferred non-goal).
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 13
+- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 6
       — acceptance: `grep -F -q 'rule-15' learnings.md` exits 0. The triad itself is exempt here; the
       navigation-UI plan runs it against the surface it owns.
 - [ ] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
-      returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **90** — acceptance: both
-      hold. **This plan asserts 90, not 127.** The 127-course catalog total is
-      `ayokoding-learning-path-05-manifests`'s terminal assertion (90 authored here + 37 re-homed by
-      `ayokoding-learning-path-01-url-restructure`).
+      returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **21** — acceptance: both
+      hold. **This plan asserts 21, not 127.** The 127-course catalog total is the manifest plans'
+      (`ayokoding-learning-path-12-careers-se-manifests` / `ayokoding-learning-path-13-careers-ai-manifest`)
+      terminal assertion (21 authored here + 106 elsewhere:
+      33 shipped + 4 existing capstones re-homed by `ayokoding-learning-path-01-url-restructure`, plus
+      69 native bodies carried by the 7 successor plans — see
+      [README §Successor plans](./README.md#successor-plans)).
 - [ ] [AI] **Verify the ownership invariant held** — re-assert the same sound diff-based mechanism used
-      by every prior commit-producing phase's own individual check (Phase 0, Phase 1, Phase 2, every
-      band's per-band closing steps, every one of the 90 individual course sub-phases' own convention
-      step 8, Phase 12, Phase 13, and Phase 15), on this phase's own diff (a commit-message `--grep`
+      by every prior commit-producing phase's own individual check (Phase 0, Phase 1, Phase 3's and
+      Phase 4's per-band closing steps, every one of the 21 individual course sub-phases' own convention
+      step 8, Phase 5, Phase 6, and Phase 8), on this phase's own diff (a commit-message `--grep`
       filter is unsound: nothing mandates the plan identifier appear in commit messages, and a filter
       matching zero commits exits 0 and looks like success regardless of whether the invariant actually
       held):
@@ -2040,21 +1463,25 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
 - [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
 - [ ] [AI] Update any other READMEs that reference this plan (`plans/README.md`,
-      `plans/backlog/README.md`) and notify the four sibling split plans whose `Depends-on` tables name
-      this plan by folder path — acceptance: no sibling plan's link to this folder is left dangling
-      (re-run the BF-8 gate with each sibling's folder name substituted in the `grep -F`).
+      `plans/backlog/README.md`) and notify every sibling plan whose `Depends-on` table names this plan
+      by folder path — this now includes `ayokoding-learning-path-12-careers-se-manifests`,
+      `ayokoding-learning-path-13-careers-ai-manifest`, and the 7 successor
+      plans carved from this plan's former scope (see
+      [README §Successor plans](./README.md#successor-plans)) — acceptance: no sibling plan's link to
+      this folder is left dangling (re-run the BF-8 gate with each sibling's folder name substituted in
+      the `grep -F`).
 - [ ] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-04-course-authoring to done`.
 
-### Phase 16 Gate
+### Phase 9 Gate
 
-- [ ] [AI] All 90 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
-      90); the slug register holds 90 unique lines.
+- [ ] [AI] All 21 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
+      90); the slug register holds 21 unique lines.
 - [ ] [AI] Zero manifest files touched across the plan's entire history.
 - [ ] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
 - [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
       all READMEs updated; archival committed.
-- [ ] [AI] Draft PR opened for the Phase 13–16 closeout unit (manual verification evidence,
+- [ ] [AI] Draft PR opened for the Phase 6–9 closeout unit (manual verification evidence,
       `learnings.md` triage, and the archival move — this unit's own boundary; see the
       [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
       PR `[AI]`-merged; deployed (no-op).
@@ -2093,5 +1520,5 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 This plan is created in `plans/backlog/ayokoding-learning-path-04-course-authoring/`. When work
 starts it is promoted to `plans/in-progress/ayokoding-learning-path-04-course-authoring/` (no date
-prefix on either); the `git mv` in Phase 16 then archives it to
+prefix on either); the `git mv` in Phase 9 then archives it to
 `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/` using the completion date.
