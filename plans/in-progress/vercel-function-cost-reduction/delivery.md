@@ -976,22 +976,29 @@ Independent of Unit 1; runs in parallel in its own worktree.
   - **Files Changed**: `apps/wahidyankf-www/src/app/static-routes.unit.test.ts`.
   - **Result**: `npm exec nx run wahidyankf-www:test:unit` collected the test under `unit-fe` and
     reported exactly three failures, one each for `/`, `/cv`, and `/personal-projects`.
-- [ ] `[AI]` **Build-output proof** — `nx build wahidyankf-www`; the route table must show `ƒ` for
+- [x] `[AI]` **Build-output proof** — `nx build wahidyankf-www`; the route table must show `ƒ` for
       `/`, `/cv`, and `/personal-projects` before the fix. Same tiering rationale as Phase 1: the
       route table is build output and cannot be asserted from a cached `test:unit` run.
+  - **Date**: 2026-08-01. **Status**: done — reconciled from the Phase 0 baseline build record.
+  - **Files Changed**: none (throwaway baseline build).
+  - **Command**: `nx build wahidyankf-www`.
+  - **Result**: Phase 0 recorded the exact pre-fix route table: `ƒ /`, `○ /_not-found`, `ƒ /cv`, and
+    `ƒ /personal-projects`. Thus all three Phase 5 targets were dynamic before this unit changed
+    them; `robots.txt` and `sitemap.xml` were absent as well. See the Phase 0 build record above.
 - [x] `[AI]` **GREEN** — remove the `searchParams` props and read the query client-side.
-  - **Date**: 2026-08-01. **Status**: done.
-  - **Result**: all three route modules are synchronous and query-prop-free; their client content
-    reads `search` through `useSearchParams()` behind Suspense. Typecheck and 179 Unit tests pass.
+  - **Date**: 2026-08-02. **Status**: done — corrected after the delivery review found that a
+    whole-page Suspense boundary would remove portfolio content from static HTML.
+  - **Result**: all three route modules are synchronous and query-prop-free. Their client content
+    renders the unfiltered portfolio during SSR, then a post-hydration effect reads
+    `window.location.search` and re-seeds on `popstate`; CV handles `scrollTop` in a separate
+    post-hydration effect. No content module calls `useSearchParams()`, and no page wraps all content
+    in `<Suspense>`.
   - Files: `src/app/page.tsx:3-4`, `src/app/cv/page.tsx:10-11`,
     `src/app/personal-projects/page.tsx:10-11` — drop the prop.
-  - Read `useSearchParams()` inside the already-`"use client"` consumers
-    (`HomeContent.tsx:29-31`, `CvContent.tsx:477-484`, `PersonalProjectsContent.tsx:21-27`), each
-    wrapped in `<Suspense>`. These components already only use the value to seed `useState`, so this
-    is a prop swap, not a rewrite.
-  - Command: `nx build wahidyankf-www`
-  - Acceptance: all three routes show `○` in the route table (were `ƒ`). The production build fails
-    outright if a `<Suspense>` boundary is missing, so a passing build is real evidence.
+  - **Final verification**: `npm exec -- nx build wahidyankf-www --skip-nx-cache` emits `○ /`,
+    `○ /cv`, and `○ /personal-projects`; generated `index.html`, `cv.html`, and
+    `personal-projects.html` each contain their visible route heading. The static-content regression
+    suite and `test:quick` pass (20 files / 191 tests).
 - [x] `[AI]` **REFACTOR** — add `src/app/robots.ts` and `src/app/sitemap.ts` (neither exists today),
       modelled on `apps/ose-www/src/app/robots.ts` and its `sitemap-builder.ts`.
   - **Date**: 2026-08-02. **Status**: done.
