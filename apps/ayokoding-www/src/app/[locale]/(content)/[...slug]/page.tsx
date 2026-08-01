@@ -14,7 +14,6 @@ import {
   resolveCoursePathRenderData,
   buildCourseTitleIndex,
   buildArcTitleIndex,
-  toCoursePathClientData,
 } from "@/features/course-paths/shell/course-path-nav";
 import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
 import { CoursePageContent } from "@/features/course-paths/shell/course-page-content";
@@ -346,7 +345,6 @@ export default async function ContentPage({ params }: Props) {
   }
 
   const pathData = await loadRoutePathData(locale);
-  const clientPathData = toCoursePathClientData(pathData, locale);
   const canonicalCourseRenderData = resolveCoursePathRenderData(
     new URLSearchParams(),
     pathData,
@@ -361,7 +359,6 @@ export default async function ContentPage({ params }: Props) {
       <CoursePagePathContent
         {...contentProps}
         courseId={courseId}
-        pathData={clientPathData}
         fallbackPrev={page.prev}
         fallbackNext={page.next}
       />

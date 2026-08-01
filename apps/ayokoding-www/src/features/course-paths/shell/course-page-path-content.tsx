@@ -2,12 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import { CoursePageContent, type CoursePageContentProps } from "./course-page-content";
-import { resolveCoursePathClientRenderData, type CoursePathClientData } from "./course-path-nav";
+import {
+  EMPTY_COURSE_PATH_CLIENT_DATA,
+  resolveCoursePathClientRenderData,
+  type CoursePathClientData,
+} from "./course-path-nav";
 import { useRuntimeCoursePathData } from "./use-runtime-course-path-data";
 
 interface CoursePagePathContentProps extends Omit<CoursePageContentProps, "renderData" | "courseId"> {
   courseId: string;
-  pathData: CoursePathClientData;
+  /** Static pages start empty; opted-in path navigation refreshes this after hydration. */
+  pathData?: CoursePathClientData;
   fallbackPrev: CoursePageContentProps["renderData"]["prev"];
   fallbackNext: CoursePageContentProps["renderData"]["next"];
 }
@@ -19,7 +24,7 @@ interface CoursePagePathContentProps extends Omit<CoursePageContentProps, "rende
  */
 export function CoursePagePathContent({
   courseId,
-  pathData,
+  pathData = EMPTY_COURSE_PATH_CLIENT_DATA,
   fallbackPrev,
   fallbackNext,
   ...page

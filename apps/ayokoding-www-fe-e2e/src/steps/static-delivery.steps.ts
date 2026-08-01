@@ -76,12 +76,12 @@ Given("the ayokoding-www standalone package is running", async ({ page }) => {
 });
 
 When("navigation search and course-path data are requested through tRPC", async ({ page }) => {
-  const endpoint = (procedure: string, input: Record<string, string>) =>
+  const endpoint = (procedure: string, input: unknown) =>
     `/api/trpc/${procedure}?input=${encodeURIComponent(JSON.stringify({ json: input }))}`;
   const responses = await Promise.all([
     getResilient(page, endpoint("content.getTree", { locale: "en" })),
     getResilient(page, endpoint("search.query", { locale: "en", query: "AyoKoding" })),
-    getResilient(page, endpoint("coursePaths.getRouteData", { locale: "en" })),
+    getResilient(page, endpoint("coursePaths.getRouteData", "en")),
   ]);
   stateFor(page).runtimeDataResponses = responses;
 });
