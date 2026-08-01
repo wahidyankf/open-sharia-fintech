@@ -422,30 +422,23 @@ details. Staging branches: `stag-organiclever-app-web`, `stag-ose-app-web`.
 
 ## Related Repositories
 
-Four independent sibling repositories in the Open Sharia Enterprise family (no parent coordination repo):
+Four sibling repos, no parent coordination repo:
+[`ose-public`](https://github.com/wahidyankf/ose-public) (this repo, MIT — upstream source of truth),
+[`ose-primer`](https://github.com/wahidyankf/ose-primer) (MIT — downstream template),
+[`ose-private`](https://github.com/wahidyankf/ose-private) (proprietary — infra, not public), and
+[`beaver-nest`](https://github.com/wahidyankf/beaver-nest) (MIT — product on this ecosystem).
 
-- [`ose-public`](https://github.com/wahidyankf/ose-public) — this repo; upstream source of truth for
-  scaffolding. MIT licensed.
-- [`ose-primer`](https://github.com/wahidyankf/ose-primer) — downstream public template (scaffolding
-  layer: governance, AI agents, skills, conventions, CI harness, polyglot demo apps). MIT licensed.
-- [`ose-private`](https://github.com/wahidyankf/ose-private) — private infrastructure repo (GitHub Actions
-  runner stack, `coralpolyp` app). Proprietary; not publicly accessible.
-- [`beaver-nest`](https://github.com/wahidyankf/beaver-nest) — BeaverNest, a personal operating layer
-  built as a product within the OSE ecosystem. MIT licensed; scaffolded from this lineage but
-  **outside** the parity loop.
+Two cross-repo boundaries cover **different** repo sets — do not conflate:
 
-Two distinct cross-repo boundaries apply, and they cover different repository sets:
-
-- **Classifier-driven content parity** — between `ose-public` and `ose-primer` only, maintained via the
-  [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md)
-  workflow. `ose-private` and `beaver-nest` do not participate in it.
-- **`apps/rhino-cli` byte-identity** — spans `ose-public`, `ose-primer`, and `ose-private`. The tool must
-  be byte-identical (zero carve-outs) across those three repos, including its Gherkin behavior tree at
-  `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
+- **Content parity** — `ose-public` ↔ `ose-primer` only, via
+  [plan-multi-repo-parity-planning](./repo-governance/workflows/plan/plan-multi-repo-parity-planning.md).
+- **`apps/rhino-cli` byte-identity** — `ose-public`, `ose-primer`, `ose-private`; zero carve-outs,
+  including `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, per the
   [SDLC Gate Standard](./docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary).
-  `beaver-nest` carries a **fork** of that tool and is explicitly **not** bound by the byte-identity rule.
 
-See: [Related Repositories reference](./docs/reference/related-repositories.md).
+`beaver-nest` is in neither; it carries a **fork** of `rhino-cli`.
+
+**See**: [Related Repositories reference](./docs/reference/related-repositories.md).
 
 ## Models
 
