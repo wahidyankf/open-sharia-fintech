@@ -19,7 +19,7 @@ vi.mock("@/env", () => ({
   }),
 }));
 
-import BeStatusPage from "@/app/system/status/be/page";
+import BeStatusPage, { metadata } from "@/app/system/status/be/page";
 
 const feature = await loadFeature(
   path.resolve(
@@ -53,6 +53,17 @@ describeFeature(feature, ({ Scenario, AfterEachScenario }) => {
     // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:BE status page shows Not Configured when env unset
     And('the body contains "Not configured"', () => {
       expect(screen.getByText(/Not configured/i)).toBeInTheDocument();
+    });
+  });
+
+  Scenario("Backend health-check page is excluded from search indexes", ({ When, Then }) => {
+    When("a crawler requests GET /system/status/be", () => {
+      // Metadata is emitted server-side by Next.js for this route.
+    });
+
+    // @covers specs/apps/organiclever/behavior/organiclever-app-web/gherkin/health/system-status-be.feature:Backend health-check page is excluded from search indexes
+    Then("the response declares the page non-indexable", () => {
+      expect(metadata.robots).toMatchObject({ index: false });
     });
   });
 
