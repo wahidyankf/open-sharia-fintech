@@ -20,7 +20,7 @@ import {
   Package,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   CVEntry,
   cvData,
@@ -476,24 +476,27 @@ const WorkExperienceSection = ({
 // In the main CV component, update the type of topSkills
 export function CvContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search") ?? "";
-  const scrollTop = searchParams.get("scrollTop") === "true";
-  const [searchTerm, setSearchTerm] = useState(search);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showRecentOnly, setShowRecentOnly] = useState(false);
 
   useEffect(() => {
-    setSearchTerm(search);
-  }, [search]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   useEffect(() => {
-    if (scrollTop) {
+    if (new URLSearchParams(window.location.search).get("scrollTop") === "true") {
       window.scrollTo(0, 0);
       const newURL = new URL(window.location.href);
       newURL.searchParams.delete("scrollTop");
       router.replace(newURL.toString(), { scroll: false });
     }
-  }, [router, scrollTop]);
+  }, [router]);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/cv?search=${encodeURIComponent(term)}` : "/cv";

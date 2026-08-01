@@ -82,6 +82,7 @@ describe("Home component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchParams = new URLSearchParams();
+    window.history.replaceState({}, "", "/");
   });
 
   it("renders the main sections", () => {
@@ -104,7 +105,7 @@ describe("Home component", () => {
   });
 
   it("initializes search from the URL", () => {
-    mockSearchParams = new URLSearchParams("search=React");
+    window.history.replaceState({}, "", "/?search=React");
     render(<HomeContent />);
     expect(screen.getByTestId("search-component")).toHaveValue("React");
   });

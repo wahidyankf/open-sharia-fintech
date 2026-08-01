@@ -61,6 +61,7 @@ describe("Personal Projects component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockSearchParams = new URLSearchParams();
+    window.history.replaceState({}, "", "/personal-projects");
   });
 
   it("renders the main sections", () => {
@@ -79,7 +80,7 @@ describe("Personal Projects component", () => {
   });
 
   it("initializes search from the URL", () => {
-    mockSearchParams = new URLSearchParams("search=AyoKoding");
+    window.history.replaceState({}, "", "/personal-projects?search=AyoKoding");
     render(<PersonalProjectsContent />);
     expect(screen.getByTestId("search-component")).toHaveValue("AyoKoding");
     expect(screen.getByText("AyoKoding")).toBeInTheDocument();

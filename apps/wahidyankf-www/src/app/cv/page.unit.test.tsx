@@ -87,6 +87,7 @@ describe("CV component", () => {
     vi.clearAllMocks();
     vi.mocked(window.scrollTo).mockReset();
     mockSearchParams = new URLSearchParams();
+    window.history.replaceState({}, "", "/cv");
   });
 
   it("renders the main sections", () => {
@@ -106,7 +107,7 @@ describe("CV component", () => {
   });
 
   it("prefills and filters from a shared search URL", () => {
-    mockSearchParams = new URLSearchParams("search=Software");
+    window.history.replaceState({}, "", "/cv?search=Software");
     render(<CvContent />);
 
     expect(screen.getByTestId("search-component")).toHaveValue("Software");
@@ -174,7 +175,7 @@ describe("CV component", () => {
   });
 
   it("scrolls to top when scrollTop prop is true", () => {
-    mockSearchParams = new URLSearchParams("scrollTop=true");
+    window.history.replaceState({}, "", "/cv?scrollTop=true");
     render(<CvContent />);
     expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
   });

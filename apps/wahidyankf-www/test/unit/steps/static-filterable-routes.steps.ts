@@ -84,12 +84,13 @@ describeFeature(feature, ({ Scenario, Background }) => {
     Given("the app is running", () => {
       mockSearchParams = new URLSearchParams();
       renderedCv = undefined;
+      window.history.replaceState({}, "", "/cv");
     });
   });
 
   Scenario("Search-filtered portfolio routes are static yet still filterable", ({ When, Then, And }) => {
     When('a visitor opens the shared CV search URL for "TypeScript"', () => {
-      mockSearchParams = new URLSearchParams("search=TypeScript");
+      window.history.replaceState({}, "", "/cv?search=TypeScript");
       const { container } = render(React.createElement(CvContent));
       // vitest-cucumber registers each step as a separate test and the shared setup cleans the DOM
       // after each one. Preserve a clone of this exact render so the assertion steps observe the URL
@@ -99,7 +100,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     Then('the CV search input is prefilled with "TypeScript"', () => {
-      expect(mockSearchParams.get("search")).toBe("TypeScript");
+      expect(new URLSearchParams(window.location.search).get("search")).toBe("TypeScript");
       expect(within(getRenderedCv()).getByPlaceholderText("Search CV entries...")).toHaveValue("TypeScript");
     });
 

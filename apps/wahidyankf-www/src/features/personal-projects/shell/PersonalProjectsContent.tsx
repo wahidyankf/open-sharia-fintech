@@ -4,7 +4,7 @@ import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { projects, filterProjects } from "@/features/personal-projects/core/projects";
 import { Github, Globe, Youtube } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 
 const LinkIcon = ({ type }: { type: string }) => {
@@ -20,13 +20,17 @@ const LinkIcon = ({ type }: { type: string }) => {
 
 function ProjectsContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search") ?? "";
-  const [searchTerm, setSearchTerm] = useState(search);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setSearchTerm(search);
-  }, [search]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/personal-projects?search=${encodeURIComponent(term)}` : "/personal-projects";

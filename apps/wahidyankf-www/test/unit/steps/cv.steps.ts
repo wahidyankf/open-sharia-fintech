@@ -34,6 +34,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     Given("the app is running", () => {
       vi.mocked(window.scrollTo).mockClear();
       mockSearchParams = new URLSearchParams();
+      window.history.replaceState({}, "", "/cv");
     });
   });
 
@@ -68,11 +69,12 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("CV cross-linked via scrollTop query scrolls into the entries", ({ When, Then }) => {
-    When('a visitor opens the CV page with search term "TypeScript" and scrollTop true', () => {});
+    When('a visitor opens the CV page with search term "TypeScript" and scrollTop true', () => {
+      window.history.replaceState({}, "", "/cv?search=TypeScript&scrollTop=true");
+    });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV cross-linked via scrollTop query scrolls into the entries
     Then("the page scrolls past Highlights into the matching entries", () => {
-      mockSearchParams = new URLSearchParams("search=TypeScript&scrollTop=true");
       render(React.createElement(CvContent));
       expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
       expect(screen.getByRole("heading", { level: 1, name: "Curriculum Vitae" })).toBeInTheDocument();

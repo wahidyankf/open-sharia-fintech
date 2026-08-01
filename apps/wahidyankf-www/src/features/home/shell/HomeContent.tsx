@@ -2,7 +2,7 @@
 
 import { Briefcase, FolderOpen, Github, Linkedin, Mail, Star, Code, Package } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   cvData,
   getTopSkillsLastFiveYears,
@@ -28,9 +28,7 @@ export type FeaturedSkill = {
 
 export function HomeContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const search = searchParams.get("search") ?? "";
-  const [searchTerm, setSearchTerm] = useState(search);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const aboutMe = cvData.find((entry) => entry.type === "about");
   const topSkills = getTopSkillsLastFiveYears(cvData);
@@ -60,8 +58,14 @@ export function HomeContent() {
   );
 
   useEffect(() => {
-    setSearchTerm(search);
-  }, [search]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/?search=${encodeURIComponent(term)}` : "/";
