@@ -69,7 +69,12 @@ Bank the risk-free platform wins first, then remove the code causes in leverage 
    now-purposeless middleware, then bundle/cold-start hygiene.
 3. **Phase 5** — `apps/wahidyankf-www` static conversion and SEO files.
 4. **Phase 6** — secondary waste cleanups.
-5. **Phases 7–9** — steady-state measurement against the budget, Knowledge Capture, archival.
+5. **Phases 7–8** — Knowledge Capture and archival.
+
+Steady-state measurement against the budget is **not** in this plan. It was split out to
+[`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
+because grading needs a full clean billing cycle to close (earliest **2026-09-26**), which would
+otherwise hold this plan open for two months after the engineering finished.
 
 The fix is not novel architecture. `apps/ayokoding-www` **already contains the target pattern in
 three places**: `tools/ai-benchmark/page.tsx` and `tools/cost-of-living-calculator/page.tsx` are
@@ -91,8 +96,37 @@ static server components wrapping client content in `<Suspense>`, and
 - **Delivery Mode**: `worktree-to-pr` (repo default).
 - **Three independent delivery units** fan out in parallel: Unit 1 `ayokoding-www` (Phases 1–4),
   Unit 2 `wahidyankf-www` (Phase 5), Unit 3 secondary cleanups (Phase 6).
-- **Phase 0 opens no PR** and is almost entirely `[HUMAN]` — an agent cannot reach the Vercel
-  dashboard.
+- **Phase 0 runs on local `main` in the primary checkout** — no worktree, no branch, no PR. It emits
+  only dashboard settings, evidence markdown, and throwaway builds; the three worktrees are created
+  at the start of Phases 1, 5, and 6.
+- **Every `[HUMAN]` action in the plan sits in Phase 0** — one dashboard sitting. Phases 1–8 are
+  100% `[AI]`. The apex-redirect fix was hoisted out of Phase 6 to achieve this, which makes Unit 3
+  fully `[AI]` too.
+- Phase 0's _settings_ steps are `[HUMAN]` — the Vercel MCP has no billing, Spend Management,
+  Observability, firewall, Fluid Compute, or domain tool. Its _measurement_ steps are `[AI]` via that
+  MCP, and **steps 0.1, 0.6 and 0.8 are already done** (2026-08-01).
+
+## Measured baseline — 2026-08-01
+
+The per-project attribution DD-7 called for is no longer an inference. Measured through the Vercel
+MCP (`get_runtime_logs`), full data in
+[evidence/baseline-per-project.md](./evidence/baseline-per-project.md):
+
+- **`ayokoding-www` is 99.90% of all function volume** — 43,105 of 43,150 events across all seven
+  Vercel projects in 24h. The other five sites are cache-served; `web-ui` emits nothing at all.
+- **The `[...slug]` content catch-all alone is 85.6%** of that. The plan targets the right route.
+- **`middleware` (274,463) ≈ `function` (273,487) over 72h.** The circular-cost finding is measured,
+  and it settles the plan's one blocking unknown: middleware **does** execute on Next.js 16.2.6, so
+  Phase 3 must replace the redirects before deleting the file.
+- **Cross-check**: 91,162 invocations/day measured, against 85,250/day read off the billing
+  dashboard on 2026-07-30 — two independent sources within ~7%.
+- **Re-scoping**: `wahidyankf-www` (Unit 2) drew 45 invocations in 24h — ~0.1% of `ayokoding-www`.
+  It stays in scope as an SEO/correctness fix, not as a saving.
+- **New finding**: 49 × `504` in 24h — billed function time spent timing out, absent from the
+  original analysis.
+
+All source premises (Cause A, Cause B, the middleware, and every Unit 2/3 target) were re-verified
+against `main` at `225b2a7ea` on 2026-08-01 and still reproduce at the documented line numbers.
 
 ## Downstream dependents
 

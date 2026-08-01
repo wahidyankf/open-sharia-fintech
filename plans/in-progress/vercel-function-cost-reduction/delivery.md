@@ -8,9 +8,21 @@
 > `> **Pause Safety**:` note (the safe-to-stop state and how to resume). A phase is not complete
 > until its gate is green; do not start phase N+1 while any gate check fails.
 >
-> This plan **does** use `[HUMAN]` steps. Phase 0 is almost entirely `[HUMAN]` because no agent can
-> reach the Vercel dashboard, and Phase 7 requires reading a billing figure only the account owner
-> can see. Git-mechanical steps (worktree create/remove, branch, push, merge) remain `[AI]`.
+> This plan **does** use `[HUMAN]` steps, but fewer than it did. The **Vercel MCP**
+> (`plugin:vercel:vercel`) is authenticated as of 2026-08-01, which moves Phase 0's _measurement_
+> steps to `[AI]`. Its _settings_ steps stay `[HUMAN]`: the MCP exposes no billing, Spend
+> Management, Observability, firewall, Fluid Compute, or domain tool, and the invoice reading —
+> now split out to its own plan — needs an account owner. See
+> [tech-docs.md §Vercel MCP capability boundary](./tech-docs.md#vercel-mcp-capability-boundary) and
+> DD-8. Git-mechanical steps (worktree create/remove, branch, push, merge) remain `[AI]`.
+>
+> **MCP call shape** used throughout — address projects by **slug, never by opaque ID**:
+> `teamId: "wahidyan-kresna-fridayokas-projects"`, `projectId: "ayokoding-www"`. Both tool
+> parameters accept a slug in place of the `team_*`/`prj_*` ID, and these slugs are already public
+> (they appear in every deployment hostname), whereas the IDs are not — and this repo is public with
+> permanent history. See [tech-docs.md §Identifiers in a public repo](./tech-docs.md#identifiers-in-a-public-repo).
+> Widest usable window is `since: "72h"` — `7d` times out. Always pass `limit`, or `group_by`
+> silently truncates.
 
 ## Worktree
 
@@ -32,7 +44,14 @@ claude --worktree vercel-cost-ayokoding
 After any `git worktree add`, run `npm install` **and** `npm run doctor -- --fix` per the Worktree
 Toolchain Initialization requirement.
 
-Plan-document authoring and promotion happen on local `main` under the plan-docs-only carve-out;
+**Phase 0 runs in the primary checkout on local `main` — no worktree.** It produces no shippable
+code: its outputs are dashboard settings (not in the repo at all), evidence markdown inside this
+plan folder, and throwaway builds used only to read a route table. That is exactly the plan-docs-only
+carve-out, and provisioning three worktrees to hold zero code changes would be waste. **The three
+worktrees are created at the start of Phases 1, 5, and 6 respectively**, off `main` as it stands once
+Phase 0's gate is green.
+
+Plan-document authoring and promotion likewise happen on local `main`; from Phase 1 onward,
 execution-time delivery ticks go in the relevant worktree copy.
 
 See [Worktree Path Convention](../../../repo-governance/conventions/structure/worktree-path.md) and
@@ -49,35 +68,39 @@ merges once the hardened preconditions hold. See
 
 `1 main thread + N background agents`, **N=3**. The three code units touch disjoint apps and share
 no files, so they are independent DAG leaves and fan out to fill all three slots. Phase 0 gates all
-of them; Phase 7 joins them.
+of them; Phase 7 (Knowledge Capture) joins them.
 
 ### Dependency DAG
 
 ```mermaid
 flowchart TD
-  P0["Phase 0<br/>platform settings + baseline<br/>(HUMAN, no PR)"]
+  P0["Phase 0<br/>platform settings + baseline<br/>local main, no worktree, no PR"]
   U1A["Phase 1<br/>Cause A: root layout"]
   U1B["Phase 2<br/>Cause B: searchParams"]
   U1C["Phase 3<br/>middleware elimination"]
   U1D["Phase 4<br/>bundle + cold-start hygiene"]
   U2["Phase 5<br/>wahidyankf-www<br/>(Unit 2)"]
   U3["Phase 6<br/>secondary waste<br/>(Unit 3)"]
-  P7["Phase 7<br/>steady-state measurement<br/>(HUMAN)"]
-  P8["Phase 8<br/>Knowledge Capture"]
-  P9["Phase 9<br/>Archival + merge"]
+  P7["Phase 7<br/>Knowledge Capture"]
+  P8["Phase 8<br/>Archival + merge"]
+  SUCC["successor plan<br/>steady-state verification<br/>(backlog, earliest 2026-09-26)"]
 
   P0 --> U1A --> U1B --> U1C --> U1D --> P7
   P0 --> U2 --> P7
   P0 --> U3 --> P7
-  P7 --> P8 --> P9
+  P7 --> P8
+  P8 -.-> SUCC
 
   style P0 fill:#0072B2,color:#FFFFFF
-  style P7 fill:#0072B2,color:#FFFFFF
   style U1A fill:#D55E00,color:#FFFFFF
   style U2 fill:#009E73,color:#FFFFFF
   style U3 fill:#009E73,color:#FFFFFF
-  style P9 fill:#CC79A7,color:#FFFFFF
+  style P8 fill:#CC79A7,color:#FFFFFF
+  style SUCC fill:#999999,color:#FFFFFF
 ```
+
+The dashed edge is deliberate: the successor plan is **unblocked** by this plan's completion, not
+executed by it.
 
 Phases 1→2→3→4 are a dependent chain: Cause B's build verification needs Cause A fixed first; the
 middleware can only be deleted once nothing reads `x-pathname`; and tracing scope depends on which
@@ -90,34 +113,47 @@ routes ended up static. One chain, one worktree, one PR.
 | Unit 1        | Phases 1–4 (`apps/ayokoding-www`) | `worktrees/vercel-cost-ayokoding/` on `vercel-function-cost-reduction/ayokoding-www`   | Phase 1 (draft); reviewed and merged at the Phase 4 boundary |
 | Unit 2        | Phase 5 (`apps/wahidyankf-www`)   | `worktrees/vercel-cost-wahidyankf/` on `vercel-function-cost-reduction/wahidyankf-www` | Phase 5 (draft); reviewed and merged at the Phase 5 boundary |
 | Unit 3        | Phase 6 (secondary waste)         | `worktrees/vercel-cost-secondary/` on `vercel-function-cost-reduction/secondary-waste` | Phase 6 (draft); reviewed and merged at the Phase 6 boundary |
-| Closeout      | Phases 7–9                        | `worktrees/vercel-cost-ayokoding/` reused after Unit 1 merges                          | Phase 9                                                      |
+| Phase 0       | Phase 0 (settings + baseline)     | **primary checkout, local `main`** — no worktree, no code output                       | none (hard rule)                                             |
+| Closeout      | Phases 7–8                        | `worktrees/vercel-cost-ayokoding/` reused after Unit 1 merges                          | Phase 8                                                      |
 
 Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
 
 ---
 
-## Phase 0: Platform settings, baseline, and the middleware-behaviour question
+## Phase 0: All platform settings, the baseline, and the middleware-behaviour question
 
-> Almost every step here is `[HUMAN]` — an agent cannot authenticate to the Vercel dashboard. Do
-> them in the stated order: the baseline snapshot must precede disabling Observability, or the
-> per-project attribution is lost permanently.
+> **Runs in the primary checkout on local `main`** — no worktree, no branch, no PR. Nothing this
+> phase produces is shippable code: dashboard settings never touch the repo, evidence markdown is
+> plan-docs, and the baseline builds exist only to read a route table. The three worktrees are
+> created at the start of Phases 1, 5, and 6.
+>
+> The **settings** steps (0.2–0.5) are `[HUMAN]` — the Vercel MCP has no tool for any of them. The
+> **measurement** steps (0.1, 0.6, 0.7, 0.8) are `[AI]` via the MCP. Do them in the stated order: the
+> baseline snapshot must precede disabling Observability, or the per-project attribution is lost
+> permanently.
 
 ### 0.1 Capture the per-project baseline — DO THIS FIRST
 
-- [ ] `[HUMAN]` In Vercel → Observability, record **per-project** figures for the current cycle for
-      each of the six projects (`ayokoding-www`, `ose-www`, `organiclever-www`, `wahidyankf-www`,
-      `organiclever-app-web`, `ose-app-web`): Function Invocations, Function Duration (GB-Hrs), Edge
-      Middleware Invocations, Edge Requests.
-  - Acceptance: a table of six rows × four metrics is committed to
+- [x] `[AI]` Record **per-project** invocation volume for all seven projects (`ayokoding-www`,
+      `ose-www`, `organiclever-www`, `wahidyankf-www`, `organiclever-app-web`, `ose-app-web`, and
+      `web-ui`) via the MCP: `get_runtime_logs` with `environment: "production"`, `since: "24h"`,
+      `limit: 20`, and `group_by` run three ways — `source`, `route`, `statusCode`. Repeat `source`
+      at `since: "72h"` for a rate stable enough to project from.
+  - Acceptance: a table of seven rows is committed to
     `plans/in-progress/vercel-function-cost-reduction/evidence/baseline-per-project.md`. Before this
-    step the file does not exist; after it, `test -f` exits 0 and the file names all six projects.
-  - Rationale: aggregate billing cannot be split per project from repo evidence (DD-7). The
-    middleware-count ≈ function-count equality _implies_ `ayokoding-www` dominates, but this step
-    replaces inference with measurement — and step 0.5 destroys the ability to take it later.
+    step the file does not exist; after it, `test -f` exits 0 and the file names all seven projects.
+  - Rationale: aggregate billing cannot be split per project from repo evidence (DD-7), and step 0.5
+    destroys the ability to take this later.
+  - **Done 2026-08-01.** Result: `ayokoding-www` is **43,105 of 43,150** function events across all
+    seven projects — **99.90%**; `[...slug]` alone is **85.6%** of that. The DD-7 inference held.
+    Independent cross-check: 91,162 invocations/day measured versus 85,250/day read off the
+    dashboard on 2026-07-30, ~7% apart.
 - [ ] `[HUMAN]` Record the cycle-to-date Infrastructure Subtotal and the elapsed day count, so the
-      monthly extrapolation is reproducible.
+      monthly extrapolation is reproducible. **Still `[HUMAN]`** — the MCP exposes no billing or
+      usage tool, so no agent can read a currency figure (DD-8).
   - Acceptance: same evidence file states both numbers. Baseline for comparison: **$7.43 over ~4
     days as of 2026-07-30**.
+  - Append to the "What still needs a human" table already in the evidence file.
 
 ### 0.2 Install the spend safety rail
 
@@ -144,14 +180,23 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
 - [ ] `[HUMAN]` Firewall → Managed Rulesets: set **Bot Protection** to active (from its default
       "Off") and **AI Bots** to **deny** (from its default "Allow"), for the public sites.
   - Acceptance: both rulesets show as active/deny in the dashboard.
-- [ ] `[HUMAN]` **Mandatory indexability smoke-test** — documentation does not confirm that verified
-      crawlers such as Googlebot are auto-allowlisted, so verify rather than assume:
-      fetch a content page with a Googlebot user-agent and confirm a 200 with real HTML (not a
-      challenge page), and confirm `robots.txt` and `sitemap.xml` still resolve.
+- [ ] `[AI]` **Mandatory indexability smoke-test**, run immediately after the toggle — documentation
+      does not confirm that verified crawlers such as Googlebot are auto-allowlisted, so verify
+      rather than assume. No dashboard needed, so this half is `[AI]`:
+
+  ```bash
+  curl -sS -o /dev/null -D - -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" \
+    https://www.ayokoding.com/en/learn/courses/debugging-and-profiling/learning
+  curl -sSI https://www.ayokoding.com/robots.txt https://www.ayokoding.com/sitemap.xml
+  ```
+
   - Acceptance: the Googlebot-UA fetch returns 200 with page content. Falsifiable both ways: a
     challenge interstitial or a non-200 fails this check and triggers the rollback below.
-  - **Rollback if it fails**: set Bot Protection back to "Off" (single toggle, no deploy). Record the
-    outcome in the evidence file either way.
+  - Second signal, MCP-side: `get_runtime_logs` `group_by: statusCode` over `since: "24h"` must not
+    show a new mass of `403`s after the toggle. Baseline for comparison is in the evidence file
+    (200: 42,524 / 404: 731 / 307: 98 / 504: 49 / 206: 13).
+  - **Rollback if it fails**: `[HUMAN]` sets Bot Protection back to "Off" (single toggle, no
+    deploy). Record the outcome in the evidence file either way.
 
 ### 0.5 Disable Observability Plus (DD-1) — only after 0.1 is committed
 
@@ -160,19 +205,26 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
     ~$10/month.
   - Precondition: step 0.1's evidence file is committed. Do not proceed otherwise.
 
-### 0.6 Resolve the blocking middleware question empirically
+### 0.6 Resolve the blocking middleware question empirically — RESOLVED
 
-- [ ] `[AI]` Determine whether `middleware.ts` still executes on Next.js 16.2.6, because sources
-      conflict and a silent no-op is worse than a build error:
-      `curl -sS -o /dev/null -D - https://www.ayokoding.com/ | head -20`
-  - Acceptance: record whether a 307 to `/en` is returned. **If the redirect fires**, middleware is
-    live and Phase 3 must replace it before deleting it. **If it does not fire**, middleware is
-    already a silent no-op — Phase 3 becomes a pure cleanup, and the `/` → `/en` redirect is being
-    served by something else (identify what before changing anything).
+- [x] `[AI]` Determine whether `middleware.ts` still executes on Next.js 16.2.6, because sources
+      conflict and a silent no-op is worse than a build error. The MCP answers this directly rather
+      than by inference from a redirect: `get_runtime_logs`, `group_by: source`, `since: "72h"`.
+  - Acceptance: a non-zero `middleware` row proves execution. **If it executes**, Phase 3 must
+    replace the redirects before deleting it. **If it does not**, Phase 3 becomes a pure cleanup and
+    something else is serving `/` → `/en` (identify what before changing anything).
   - Falsifiable both ways: the two outcomes lead to materially different Phase 3 work, so this is
     not a formality.
-- [ ] `[AI]` Record the finding and its consequence in
-      `evidence/middleware-runtime-behaviour.md`.
+  - **Answer, 2026-08-01: middleware executes.** 274,463 `middleware`-source events in 72h, against
+    273,487 `function` events — a 0.36% gap, i.e. essentially one middleware invocation per function
+    invocation. Corroborated by `curl`: `https://ayokoding.com/` still redirects.
+  - **Consequence: Phase 3 takes the "replace before delete" branch.** The `/` → `/en` and
+    uppercase-locale redirects must land in `next.config.ts` and be verified before
+    `src/middleware.ts` is deleted.
+- [x] `[AI]` Record the finding and its consequence. Recorded in
+      [`evidence/baseline-per-project.md`](./evidence/baseline-per-project.md) (§Phase 0.6 resolved)
+      rather than a separate `middleware-runtime-behaviour.md` — it is the same measurement run and
+      splitting it would duplicate the numbers.
 
 ### 0.7 Repo baseline
 
@@ -185,20 +237,73 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
   - Acceptance: three routes show `ƒ` (`/`, `/cv`, `/personal-projects`).
 - [ ] `[AI]` Resolve preexisting failures in scope before any plan work begins.
 
+### 0.8 Source-premise re-verification — CONFIRMED 2026-08-01
+
+The plan's source evidence was gathered 2026-07-30. Re-checked on `main` at `225b2a7ea`; every claim
+still reproduces at the documented line numbers, so no phase needs rework:
+
+| Claim                                            | Re-checked result                                                          |
+| ------------------------------------------------ | -------------------------------------------------------------------------- |
+| Cause A — `headers()` in the root layout         | present, `src/app/layout.tsx:24-25`                                        |
+| Cause B — `await searchParams`                   | present, `[...slug]/page.tsx:365`; sole hit in the app                     |
+| `src/middleware.ts`                              | present                                                                    |
+| `outputFileTracingIncludes: { "/**": ... }`      | present, `next.config.ts:25-27`                                            |
+| `wahidyankf-www` three dynamic routes            | present, `page.tsx:3-4`, `cv/page.tsx:10-11`, `personal-projects:10-11`    |
+| `wahidyankf-www` has no `robots.ts`/`sitemap.ts` | confirmed absent                                                           |
+| `organiclever-app-web` `force-dynamic`           | **9 hits** — matches; the 10th is the `system/status/be` keeper            |
+| Storybook daily cron + no `ignoreCommand`        | both confirmed (`cron: "0 0 * * *"`; `vercel.json` has no `ignoreCommand`) |
+| apex → `www` redirect downgrades to HTTP         | still reproduces: `301` → `http://www.ayokoding.com`                       |
+
+The sibling `ai-benchmark-merged-chart` plan merged (PR #128, deployed 2026-08-01 06:46 WIB) and did
+**not** disturb any of the above. One naming drift to be aware of when reading Phase 4: that plan
+renamed the `light` capability class to `haiku`, so the query parameter is now `sortHaiku`, not
+`sortLight`.
+
+### 0.9 Fix the apex redirect chain — moved here from Phase 6
+
+- [ ] `[HUMAN]` Fix the `ayokoding.com` → `www.ayokoding.com` redirect chain, which currently
+      **downgrades HTTPS to HTTP** mid-chain (`301` to `http://www…`, then `308` to `https://www…`).
+  - A Vercel domain setting, not a repo change. Two extra edge round trips plus a security smell.
+  - **Why it lives in Phase 0**: it has no dependency on any code in Unit 3, and hoisting it here is
+    what makes Units 1–3 entirely `[AI]`. Grouping every dashboard action into one sitting is the
+    point.
+  - Re-verified still broken 2026-08-01 (step 0.8).
+- [ ] `[AI]` Verify the fix:
+      `curl -sS -o /dev/null -D - https://ayokoding.com/ | grep -i "^HTTP/\|^location:"`
+  - Acceptance: a single redirect straight to `https://www.ayokoding.com/`, with **no** `http://`
+    hop. Falsifiable both ways: today it emits `location: http://www.ayokoding.com`.
+
 ### Phase 0 Gate
+
+**Every `[HUMAN]` action in this plan is in this phase.** Once this gate is green, Phases 1–8 are
+100% `[AI]` — no further human step exists. (The successor plan's invoice reading is `[HUMAN]`, but
+that is a future reading which cannot be performed early by anyone.)
 
 - [ ] `[HUMAN]` Spend Management configured **with** the pause action enabled.
 - [ ] `[HUMAN]` Fluid Compute enabled and redeployed.
-- [ ] `[HUMAN]` Bot Protection active, AI Bots denying, **and** the indexability smoke-test passed
-      (or the rollback applied and recorded).
+- [ ] `[HUMAN]` Bot Protection active and AI Bots denying; `[AI]` indexability smoke-test passed (or
+      the rollback applied and recorded).
 - [ ] `[HUMAN]` Observability Plus disabled, with the per-project baseline committed beforehand.
-- [ ] `[AI]` Middleware runtime behaviour determined and recorded.
+- [ ] `[HUMAN]` Cycle-to-date Infrastructure Subtotal and elapsed-day count recorded (step 0.1).
+- [ ] `[HUMAN]` Apex redirect fixed; `[AI]` confirms no `http://` hop remains (step 0.9).
+- [x] `[AI]` Middleware runtime behaviour determined and recorded — **executes**; Phase 3 is the
+      replace-before-delete branch.
+- [x] `[AI]` Per-project baseline captured and committed (step 0.1, MCP-measured).
+- [x] `[AI]` Source premises re-verified against current `main` (step 0.8).
 - [ ] `[AI]` Both baseline builds recorded: 4 prerendered routes, 3 dynamic wahidyankf routes.
 - [ ] `[AI]` No PR opened in this phase.
 
+> **Deferred grading, stated honestly**: two Phase-0 actions cannot be _graded_ in Phase 0 even
+> though they are _performed_ here. Fluid Compute's acceptance ("Active CPU and Provisioned Memory
+> line items appear, Function Duration disappears") and Observability Plus's ("the Events line stops
+> accruing") both need the next cycle's billing data. Those confirmations belong to
+> [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md),
+> which carries them explicitly. Do not block Phase 1 on them.
+>
 > **Pause Safety**: this phase is a safe stop and is independently valuable — the platform changes
 > alone are projected to cut roughly $10 (Observability) plus a large share of the $36 Function
-> Duration line (Fluid Compute), with zero code risk. To resume: start Phase 1 in Unit 1's worktree.
+> Duration line (Fluid Compute), with zero code risk. To resume: create Unit 1's worktree and start
+> Phase 1.
 
 ---
 
@@ -350,9 +455,14 @@ only hot-path work is dead.
   - Acceptance: whatever is decided, the Docker build path still succeeds. Record the decision.
 - [ ] `[AI]` Confirm the sibling AI-benchmark route stays static.
   - `src/app/[locale]/tools/ai-benchmark/page.tsx` already wraps client content in `<Suspense>` with
-    `useSearchParams()` in `benchmark-content.tsx:18`, so its `sortOpus`/`sortSonnet`/`sortLight`/
-    `sortUnrated` query state is compliant. Verify this still holds after that plan merges.
+    `useSearchParams()` in `benchmark-content.tsx:18`, so its `sortOpus`/`sortSonnet`/`sortHaiku`/
+    `sortUnrated` query state is compliant. That plan merged as PR #128 on 2026-08-01; the parameter
+    is `sortHaiku`, renamed from `sortLight`.
   - Acceptance: the tools routes appear as `○`/`●` in the route table, not `ƒ`.
+  - Note the measured baseline makes this check sharper: those two tools routes drew **1,273 +
+    1,212** function invocations in 24h **despite already using the target pattern**, because Cause A
+    made every route dynamic. After Phase 1 their MCP invocation counts should collapse toward zero —
+    a falsifiable prediction, not a formality.
 
 ### Phase 4 Gate
 
@@ -364,6 +474,16 @@ only hot-path work is dead.
       `[AI]` merge once all five hardened preconditions hold.
 - [ ] `[AI]` Deploy to `prod-ayokoding-www` and verify live: a repeat request to a content page
       returns `x-vercel-cache: HIT` (was `MISS`).
+- [ ] `[AI]` **MCP post-deploy verification** — 24h after the production deploy, re-run
+      `get_runtime_logs` (`group_by: source` and `group_by: route`, `since: "24h"`,
+      `environment: "production"`) and compare against the baseline table.
+  - Acceptance, falsifiable in both directions against measured numbers, not impressions:
+    - `middleware` source count → **0** (was 43,422/24h). Non-zero means the middleware survived.
+    - `function` source count → down **≥90%** from 43,105/24h. This is the plan's real success
+      metric; a single `x-vercel-cache: HIT` proves one URL, this proves the fleet.
+    - `/[locale]/[...slug]` route count → down ≥90% from 36,881.
+    - `504` count → **0** (was 49/24h).
+  - Record the after-table in `evidence/baseline-per-project.md` beside the before-table.
 
 > **Pause Safety**: safe to stop. Unit 1 — the 65% line item — is fully delivered and deployed.
 
@@ -372,6 +492,13 @@ only hot-path work is dead.
 ## Phase 5: `apps/wahidyankf-www` — static conversion and SEO files (Unit 2)
 
 Independent of Unit 1; runs in parallel in its own worktree.
+
+> **Re-scoped by measurement (2026-08-01)**: this project drew **45** function invocations in 24h,
+> against `ayokoding-www`'s 43,105 — about 0.1%. Its contribution to the bill is a rounding error.
+> Keep the phase: the fix is a prop removal against already-`"use client"` consumers, and the missing
+> `robots.ts`/`sitemap.ts` plus the 404 `og-image.jpg` are real correctness defects. But **do not
+> attribute budget headroom to it**, and if capacity is ever contested, this is the unit to defer —
+> not Unit 1. Phase 7's savings table is corrected accordingly.
 
 - [ ] `[AI]` **RED** — assert the three routes are static.
   - Command: `nx build wahidyankf-www`
@@ -441,19 +568,15 @@ Independent of Units 1 and 2.
     add an `ignoreCommand` to `libs/web-ui/vercel.json`.
   - Acceptance: the workflow has a change-detection step guarding the push, and the `vercel.json`
     has an `ignoreCommand`. Falsifiable both ways: neither exists today.
-- [ ] `[HUMAN]` Fix the `ayokoding.com` → `www.ayokoding.com` redirect chain, which currently
-      **downgrades HTTPS to HTTP** mid-chain (`301` to `http://www…`, then `308` to `https://www…`).
-  - This is a Vercel domain/DNS setting, not a repo change. Two extra edge round trips plus a
-    security smell.
-  - Acceptance: `curl -sS -o /dev/null -D - https://ayokoding.com/` shows a single redirect straight
-    to `https://www.ayokoding.com/`, with no `http://` hop.
+    > The apex-redirect HTTPS-downgrade fix used to live here. It is a Vercel domain setting with no
+    > dependency on any code in this unit, so it moved to **step 0.9** to keep every `[HUMAN]` action in
+    > one sitting. **Unit 3 is now 100% `[AI]`.**
 
 ### Phase 6 Gate
 
 - [ ] `[AI]` Exactly one `force-dynamic` remains in `organiclever-app-web`, and route tables unchanged.
 - [ ] `[AI]` `/system/status/be` emits a server-rendered `noindex`.
 - [ ] `[AI]` Storybook deploy gated in both the workflow and `vercel.json`.
-- [ ] `[HUMAN]` Domain redirect chain no longer downgrades to HTTP.
 - [ ] `[AI]` `typecheck`, `lint`, `test:quick` exit 0; workflow lints clean (actionlint).
 - [ ] `[AI]` **Unit 3 delivery boundary** — review cycle, then `[AI]` merge.
 
@@ -461,40 +584,27 @@ Independent of Units 1 and 2.
 
 ---
 
-## Phase 7: Steady-state measurement against the budget
+## Steady-state measurement — split out to its own plan
 
-- [ ] `[HUMAN]` After a **full billing cycle** has elapsed with all three units merged and deployed,
-      read Vercel → Usage for the completed cycle and record every line item.
-  - Acceptance: the recorded **Infrastructure Subtotal for the full cycle is under $20.00** (hard
-    requirement), and the report states whether it is also under $10.00 (stretch).
-  - Also record: the on-demand charge above the subscription, which must be **$0.00**.
-- [ ] `[HUMAN]` Confirm the invoice total equals the $20 subscription with no additional line.
-- [ ] `[AI]` Compare against Phase 0.1's per-project baseline and record actual versus projected
-      savings per action, marking which figures were measured and which were estimated.
-  - Projected path from the ~$57/month gross baseline:
+Grading this plan's cost objective is **not** part of this plan. It moved, whole, to
+[`plans/backlog/vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md):
+the full-cycle invoice reading, the MCP volume verification, the Fluid-Compute and
+Observability-Plus billing-vocabulary confirmations, and the actual-versus-projected reconciliation.
 
-    | Action                            | Line item affected                    | Projected effect                    | Confidence                                                                 |
-    | --------------------------------- | ------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------- |
-    | Disable Observability Plus        | Observability Events                  | −$10/mo                             | **Measured rate**, certain                                                 |
-    | Eliminate middleware              | Edge Middleware Invocations           | −$5/mo                              | **Measured rate**, certain                                                 |
-    | Static conversion (ayokoding-www) | Function Duration + Invocations       | −$30/mo or more                     | Estimated; the 65% line item collapses when ~2,068 pages become CDN-served |
-    | Fluid Compute migration           | Function Duration on whatever remains | roughly halves the residue          | Estimated from Vercel's own comparison                                     |
-    | Bot/AI-bot blocking               | Invocations + Duration                | unknown but positive                | Unquantified — depends on the crawler share, which Phase 0.1 measures      |
-    | wahidyankf-www static             | Function Duration + Invocations       | small but complete for that project | Estimated                                                                  |
-    | **Projected total**               | —                                     | **~$2–4/mo gross**                  | Comfortably inside both targets                                            |
+**Why split**: grading is gated on a calendar nobody controls. The billing cycle runs the 26th to
+the 26th, and the Jul 26 – Aug 26 cycle contains pre-fix days, so the first clean cycle closes
+**2026-09-26**. Holding this plan open in `plans/in-progress/` for two months — blocking its own
+Knowledge Capture and archival — to wait on one dashboard reading is the wrong shape.
 
-- [ ] `[AI]` If the hard requirement is missed, open a follow-up plan rather than widening this one.
-
-### Phase 7 Gate
-
-- [ ] `[HUMAN]` Full-cycle gross metered usage **< $20.00**, on-demand charge **$0.00**.
-- [ ] `[AI]` Actual-versus-projected comparison committed to `evidence/`.
-
-> **Pause Safety**: the objective is either met and verified, or a follow-up is scoped. Safe to stop.
+**Carried risk, stated plainly**: this plan can now reach `plans/done/` without its cost objective
+ever being verified. That is a real cost of the split, accepted deliberately. The mitigations are
+that the successor plan carries a concrete earliest-run date and a hard `blockedBy` on this one, and
+that this plan's Knowledge Capture (below) must record the unverified projection as an explicitly
+open question rather than closing it out.
 
 ---
 
-## Phase 8: Knowledge Capture
+## Phase 7: Knowledge Capture
 
 - [ ] `[AI]` Triage `learnings.md` — every entry either finds a home (a convention, a doc, an idea
       two-pager) or is explicitly discarded with a reason.
@@ -509,16 +619,25 @@ Independent of Units 1 and 2.
 - [ ] `[AI]` Fold anything cross-cutting into the existing
       [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md)
       two-pager if it belongs there rather than creating a duplicate.
+- [ ] `[AI]` **Record the unverified projection as an open question** — mandatory, because the
+      steady-state grading was split out. State in `learnings.md` that the ~$57/mo → ~$2–4/mo
+      projection is **unverified at archival**, name
+      [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
+      as the plan that closes it, and note which projection rows were measured (Observability −$10,
+      middleware −$5) versus estimated (the −$30 static conversion, the largest row).
+  - Acceptance: `learnings.md` contains the open question and the successor plan's path. Falsifiable
+    both ways: absent that entry, this plan archives claiming an outcome it never measured.
 
-### Phase 8 Gate
+### Phase 7 Gate
 
 - [ ] `[AI]` `learnings.md` fully triaged, with no untriaged entries remaining.
+- [ ] `[AI]` The unverified-projection open question is recorded and points at the successor plan.
 
 > **Pause Safety**: safe to stop. All delivery is complete; only archival remains.
 
 ---
 
-## Phase 9: Plan archival, final push, and merge
+## Phase 8: Plan archival, final push, and merge
 
 - [ ] `[AI]` `git mv plans/in-progress/vercel-function-cost-reduction plans/done/YYYY-MM-DD__vercel-function-cost-reduction`
       using the actual completion date.
@@ -529,11 +648,19 @@ Independent of Units 1 and 2.
 - [ ] `[AI]` Fast-forward local `main` after the final push, so the base worktree does not silently
       diverge.
 - [ ] `[AI]` Remove all three worktrees after confirming each is clean and fully merged.
+- [ ] `[AI]` Confirm the successor plan
+      [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
+      exists in `plans/backlog/` and its precondition now passes.
+  - Acceptance: `test -f plans/backlog/vercel-cost-steady-state-verification/README.md` exits 0, and
+    both `test ! -f apps/ayokoding-www/src/app/layout.tsx` and
+    `test ! -f apps/ayokoding-www/src/middleware.ts` exit 0. This plan does **not** execute the
+    successor — it only leaves it executable.
 
-### Phase 9 Gate
+### Phase 8 Gate
 
 - [ ] `[AI]` Plan folder lives under `plans/done/` with a date prefix.
 - [ ] `[AI]` All three PRs merged; CI green on `main`.
 - [ ] `[AI]` All three worktrees removed; local `main` fast-forwarded.
+- [ ] `[AI]` Successor plan present and unblocked.
 
 > **Pause Safety**: plan complete.

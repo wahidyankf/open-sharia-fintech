@@ -299,6 +299,96 @@ memoized functions for each server request." It dedupes **within** one render pa
 right for the double `getBySlug`, and nothing more. Its stakes drop sharply once pages are static,
 since "per request" becomes "per build".
 
+## Vercel MCP capability boundary
+
+The Vercel MCP server (`plugin:vercel:vercel`, OAuth-authenticated 2026-08-01) changes which steps
+an agent can perform. Its surface was probed empirically rather than assumed — what follows is what
+the tools actually returned, not what their names suggest.
+
+### What the MCP makes `[AI]`-doable
+
+| Capability                    | Tool                                        | Plan step it unlocks                                        |
+| ----------------------------- | ------------------------------------------- | ----------------------------------------------------------- |
+| Per-project invocation counts | `get_runtime_logs` + `group_by: source`     | **0.1** — DD-7's attribution, without the billing dashboard |
+| Per-route function volume     | `get_runtime_logs` + `group_by: route`      | 0.1, and the Phase 1/2/4 before-and-after comparison        |
+| Status-code mix               | `get_runtime_logs` + `group_by: statusCode` | 0.1; surfaced the previously unknown 504s                   |
+| Middleware liveness           | `get_runtime_logs`, `source: middleware`    | **0.6** — the blocking question, answered by measurement    |
+| Deploy state and provenance   | `get_deployment`, `list_deployments`        | Phase 4/5 deploy verification                               |
+| Doc verification              | `search_vercel_documentation`               | re-checking the platform facts above as they change         |
+
+### What it cannot do — these stay `[HUMAN]`
+
+No tool exists for billing, usage, invoices, Spend Management, Observability Plus, the firewall/WAF,
+Fluid Compute, or domain configuration. The only mutating tools in the entire surface are
+`deploy_to_vercel`, `update_project_deployment_protection`, the `buy_*` purchase family, and the
+comment-toolbar tools. Therefore steps **0.2, 0.3, 0.4, 0.5**, the Phase 6 domain fix, and the
+invoice reading (now split out to
+[`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md))
+are unchanged — an agent still cannot reach those settings.
+
+`get_deployment` reports `type: "LAMBDAS"` and exposes no fluid-compute flag, so an agent cannot even
+_verify_ DD-3's migration; that check remains a human dashboard read.
+
+### Identifiers in a public repo
+
+`ose-public` is public and its history is permanent, so this plan addresses Vercel resources by
+**slug**, never by opaque ID.
+
+Vercel IDs (`team_*`, `prj_*`, `dpl_*`) are **identifiers, not credentials** — every API call still
+requires a bearer token, so an ID alone grants nothing. They are nonetheless not published here, for
+three reasons:
+
+1. Vercel's own tooling treats them as non-public: `vercel link` writes `orgId`/`projectId` into
+   `.vercel/project.json` and gitignores that directory, and Vercel's CI guidance stores
+   `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` as encrypted secrets rather than inline values.
+2. They are stable and non-rotatable in practice — unlike a token, you cannot cheaply revoke a
+   project ID if one day it turns out to matter.
+3. Committing them buys nothing: `get_runtime_logs`, `get_project`, `list_deployments`, and
+   `get_deployment` all accept a slug wherever they accept an ID (verified 2026-08-01 — the same
+   query returns identical data both ways).
+
+The slugs `wahidyan-kresna-fridayokas-projects` and `ayokoding-www` are already public: they appear
+in every preview and production deployment hostname, e.g.
+`ayokoding-www-wahidyan-kresna-fridayokas-projects.vercel.app`. Publishing them adds no information.
+
+Related hardening found while checking this: the repo `.gitignore` had **no `.vercel/` entry**. No
+`.vercel/` directory is tracked or present today, but any future `vercel link` would create one
+containing both IDs. An ignore rule was added.
+
+### Measured operational limits
+
+- `since: "24h"` and `since: "72h"` return; `since: "7d"` fails with `Aggregate query failed:
+timed out`. **72h is the widest usable window.**
+- `group_by` truncates to the top _N_ with a "showing top N" footer; pass `limit` explicitly or lose
+  rows silently.
+- `get_web_analytics` is unusable here: `400 web_analytics_not_enabled` on `ayokoding-www`. Web
+  Analytics is a separate product from Observability and is off. Do not plan around it.
+- Counts are **log events**, not billed units. They give attribution and volume, never dollars.
+
+## Measured baseline — supersedes the inference
+
+Full data in [evidence/baseline-per-project.md](./evidence/baseline-per-project.md), captured
+2026-08-01. The three findings that change how the plan should be read:
+
+1. **`ayokoding-www` is 99.90% of all function volume** (43,105 of 43,150 events across all seven
+   projects in 24h). DD-6 and DD-7 are confirmed by measurement.
+2. **The `[...slug]` content catch-all alone is 85.6%** of `ayokoding-www`'s function volume. The
+   plan's leverage ordering is correct.
+3. **`middleware` (274,463) ≈ `function` (273,487) over 72h** — a 0.36% gap. The circular-cost
+   finding is now measured. It also settles the Phase 0.6 question: middleware **does** execute on
+   16.2.6, so Phase 3 is the "replace before delete" branch.
+
+Cross-check: 91,162 function invocations/day measured here versus the dashboard's 85,250/day on
+2026-07-30 — two independent sources within ~7%.
+
+Two adjustments follow from the data:
+
+- **`wahidyankf-www` (Unit 2) has negligible cost impact** — 45 function events in 24h, 0.1% of
+  `ayokoding-www`'s. Its justification is SEO correctness and the missing `robots.ts`/`sitemap.ts`,
+  not savings. Keep it (the fix is a prop removal), but do not attribute budget headroom to it.
+- **49 × `504` in 24h** is a new finding not in the original analysis — billed function time spent
+  timing out, consistent with the cold-start content-index read.
+
 ## Design decisions
 
 ### DD-1 — Disable Observability Plus entirely, team-wide
@@ -358,6 +448,23 @@ Aggregate billing figures cannot be split per project from repo evidence. The mi
 ≈ function-count equality points hard at ayokoding-www as the dominant consumer, but that is
 inference. Since DD-1 disables the tool that can answer the question, the snapshot must be taken
 first — otherwise the plan's savings attribution is unfalsifiable.
+
+**Status: satisfied 2026-08-01**, ahead of DD-1, via the Vercel MCP rather than the dashboard — see
+[evidence/baseline-per-project.md](./evidence/baseline-per-project.md). The inference held: 99.90%.
+
+### DD-8 — Use the Vercel MCP for measurement, never as a substitute for the dashboard steps
+
+The MCP moves the _measurement_ half of Phase 0 from `[HUMAN]` to `[AI]` and gives every later phase
+a stronger success metric than a single `curl` — a before-and-after invocation count per route.
+
+It changes **nothing** about the settings half. The temptation to re-tag 0.2–0.5 as `[AI]` because
+"we have Vercel access now" must be resisted: the probe found no billing tool and no settings tool of
+any kind. Steps that were `[HUMAN]` because they need the dashboard stay `[HUMAN]`, and a step is
+re-tagged only where a _named tool_ was shown to return the required datum.
+
+Rejected alternative: `get_web_analytics` as the baseline source. It returns
+`400 web_analytics_not_enabled`, and enabling Web Analytics to measure a cost-reduction plan would
+add a metered product to cut a bill.
 
 ## File impact
 

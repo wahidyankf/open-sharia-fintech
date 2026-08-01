@@ -99,6 +99,11 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   — Fixes two shared `ayokoding-www` app-shell tap targets (the header's "Learn"/"Tools" nav links
   and the footer's "MIT" license link) measuring below the WCAG 2.5.8 24x24 CSS px minimum,
   deferred out of `ayokoding-www-ai-benchmark-responsive-overhaul`'s scope (Rule-15 `EWT-005`).
+- [vercel-cost-steady-state-verification](./vercel-cost-steady-state-verification/README.md)
+  — Grades whether [`vercel-function-cost-reduction`](../in-progress/vercel-function-cost-reduction/README.md)
+  actually hit its $20 invoice target, once a full clean billing cycle has closed. Split out of that
+  plan because the grading is calendar-gated (**earliest 2026-09-26**) while the engineering finishes
+  in days. Hard `blockedBy` that plan; single-file structure.
 
 Other candidate work lives as two-pager idea briefs in [`../ideas/`](../ideas/README.md); promote one
 here when it is ripe.
