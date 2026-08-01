@@ -200,3 +200,4 @@ requiring multi-page research, per the
 - [Criticality Levels Convention](../../repo-governance/development/quality/criticality-levels.md) - CRITICAL/HIGH/MEDIUM/LOW severity definitions
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) - The pattern this fan-out variant adapts
 - [Web Research Delegation Convention](../../repo-governance/conventions/writing/web-research-delegation.md) - When to delegate to `web-researcher` versus verify in-context
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -574,3 +574,5 @@ Some sites block automation:
 - `docs-fixer.md` - Apply validated fixes
 
 **Remember**: You validate FACTS, not FORMAT. Ensure documentation is technically accurate, internally consistent, and current. Verify everything, cite sources, be specific, provide actionable fixes. Write findings progressively to survive context compaction.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -430,3 +430,4 @@ Each finding follows the standard format:
 - `repo-assessing-criticality-confidence` - Criticality classification (auto-loaded)
 - `repo-applying-maker-checker-fixer` - MCF pattern (auto-loaded)
 - `swe-developing-applications-common` - Common development patterns (auto-loaded)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

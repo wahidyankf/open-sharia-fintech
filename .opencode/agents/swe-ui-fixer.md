@@ -96,3 +96,4 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix.
 - `repo-assessing-criticality-confidence` - Criticality and confidence assessment system
 - `repo-applying-maker-checker-fixer` - Three-stage quality workflow pattern
 - `repo-generating-validation-reports` - Progressive report writing with UUID chains
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

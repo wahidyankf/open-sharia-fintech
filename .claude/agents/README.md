@@ -197,6 +197,8 @@ Three-stage quality workflow:
 
 **Implementation**: Sync powered by `rhino-cli harness bindings generate` (~121ms, 25-60x faster than bash)
 
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
+
 **See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [AGENTS.md](../../AGENTS.md) for OpenCode documentation, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 
 ## Skills Integration

@@ -49,7 +49,8 @@ Repo maintains **multi-harness compatibility** with Claude Code, OpenCode, Amazo
 
 1. Edit agents/skills in `.claude/` first
 2. Run sync: `npm run generate:bindings`
-3. All secondary binding artifacts stay synced automatically
+
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](./repo-governance/development/practice/file-touch-discipline.md). 3. All secondary binding artifacts stay synced automatically
 
 **Format differences:**
 

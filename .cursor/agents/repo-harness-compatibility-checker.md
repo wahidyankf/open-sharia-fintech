@@ -401,3 +401,4 @@ count it in the findings total.
 - `repo-applying-maker-checker-fixer` - Mode-based filtering and iteration protocol
 - `repo-understanding-repository-architecture` - Six-layer governance model context
 - `docs-applying-content-quality` - Content quality standards for report writing
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -53,3 +53,4 @@ Progressive audit report in `generated-reports/` following the standard pattern.
 - **HIGH**: Missing Docker setup, missing Gherkin specs, missing workflow file
 - **MEDIUM**: Missing .env.example, missing specs:coverage target, incomplete tags
 - **LOW**: Missing OCI labels in Dockerfiles, missing .dockerignore
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

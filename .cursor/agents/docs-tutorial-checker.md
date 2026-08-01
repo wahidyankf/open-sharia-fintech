@@ -403,3 +403,4 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 - [Tutorial Convention](../../repo-governance/conventions/tutorials/general.md)
 - [Tutorial Naming Convention](../../repo-governance/conventions/tutorials/naming.md)
 - [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

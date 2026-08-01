@@ -152,3 +152,4 @@ and [Manual Behavioral Verification](../../repo-governance/development/quality/m
 - `swe-developing-e2e-test-with-playwright` - Playwright testing standards (auto-loaded)
 - `swe-developing-applications-common` - Common development workflow (auto-loaded)
 - `docs-applying-content-quality` - Content quality standards
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

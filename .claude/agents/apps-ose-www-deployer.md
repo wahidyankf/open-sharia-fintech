@@ -172,3 +172,4 @@ git pull origin main
 
 - [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
 - [Trunk Based Development](../../repo-governance/development/workflow/trunk-based-development.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

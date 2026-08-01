@@ -306,3 +306,4 @@ This enables checker to scope its next iteration to only changed areas.
 - `repo-applying-maker-checker-fixer` Skill — fixer role and confidence levels
 - [pdf-to-md-quality-gate workflow](../../repo-governance/workflows/content/pdf-to-md-quality-gate.md)
 - **Related Agents**: `pdf-to-md-maker.md`, `pdf-to-md-checker.md`
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

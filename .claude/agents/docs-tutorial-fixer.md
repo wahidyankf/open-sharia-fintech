@@ -393,3 +393,5 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - [Content Quality Principles](../../repo-governance/conventions/writing/quality.md) - Content standards (no time estimates rule)
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve tutorial quality while avoiding false positives and maintaining user trust.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

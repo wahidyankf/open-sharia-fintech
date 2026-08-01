@@ -522,3 +522,5 @@ When updating tutorials:
 - `.claude/agents/docs-maker.md` - Creates non-tutorial documentation
 
 **Remember**: Tutorials are learning-oriented. Focus on helping users achieve clear outcomes through step-by-step guidance. Explain WHY things work, not just HOW. Make learning accessible and progressive.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

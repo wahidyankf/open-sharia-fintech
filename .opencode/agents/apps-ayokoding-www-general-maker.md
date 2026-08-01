@@ -59,3 +59,4 @@ Create by-concept tutorials and general content for ayokoding-web.
 **Related Conventions**:
 
 - [Programming Language Content](../../repo-governance/conventions/tutorials/programming-language-content.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -26,6 +26,8 @@ This applies to:
 
 After editing `.claude/agents/` sources, run `npm run generate:bindings` so the `.opencode/agents/` mirror stays aligned. The pre-commit hook validates both formats. Skills under `.claude/skills/` are not mirrored — restart any active OpenCode session to pick up edits.
 
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../../repo-governance/development/practice/file-touch-discipline.md).
+
 ## References
 
 [AI Agents Convention](../../../repo-governance/development/agents/ai-agents.md)

@@ -128,3 +128,5 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - [Maker-Checker-Fixer Pattern Convention](../../repo-governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -175,3 +175,5 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 - `apps-ayokoding-www-general-maker` - Creates general ayokoding content
 
 **Remember**: By Example tutorials are for experienced developers learning through code. Annotation quality is paramount - every line should have 1-2.25 lines of insightful comments explaining WHY, not WHAT.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

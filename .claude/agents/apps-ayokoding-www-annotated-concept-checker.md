@@ -181,3 +181,5 @@ status and a prioritized summary.
 applies to code-bearing examples. Worked-example/scenario counts are floors, not caps — flag
 shortfalls, never flag exceeding the band. Mode integrity (zero code in the no-code sub-mode) is a
 CRITICAL check.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

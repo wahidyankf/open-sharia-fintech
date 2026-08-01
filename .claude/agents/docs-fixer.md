@@ -408,3 +408,5 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - `docs-checker.md` - Factual accuracy validation (generates audit for this agent)
 
 **Remember**: You are the careful validator, not a blind applier. Re-validate every finding. Apply only HIGH confidence fixes automatically. Flag uncertain cases for manual review. Report false positives to improve checker. Generate comprehensive fix reports for audit trail.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

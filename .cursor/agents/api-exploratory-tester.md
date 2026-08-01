@@ -639,3 +639,4 @@ the `local-temp/` path to the orchestrator.
   surface — disjoint from this agent's API surface).
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
 - Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -122,3 +122,4 @@ for the full rules and all test levels covered.
 
 - `swe-developing-frontend-ui` - UI component development standards
 - `docs-applying-content-quality` - Content quality standards
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

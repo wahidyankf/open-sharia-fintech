@@ -76,3 +76,4 @@ See `repo-applying-maker-checker-fixer` Skill for:
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -242,3 +242,5 @@ Update status, add summary, prioritize findings.
 - `apps-ayokoding-www-by-example-fixer` - Fixes By Example issues
 
 **Remember**: Annotation density is measured PER EXAMPLE, not tutorial-wide. Each example must meet the 1-2.25 ratio independently.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

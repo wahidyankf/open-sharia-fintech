@@ -465,3 +465,4 @@ You have access to the project's documentation and source code. When creating ne
 - `docs/tutorials/README.md` - Tutorials category index
 - `docs/how-to/README.md` - How-To category index
 - `docs/reference/README.md` - Reference category index
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

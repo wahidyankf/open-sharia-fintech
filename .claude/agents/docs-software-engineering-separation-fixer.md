@@ -432,3 +432,4 @@ See `repo-applying-maker-checker-fixer` Skill for:
 - **repo-assessing-criticality-confidence** - Criticality and confidence classification
 - **docs-applying-diataxis-framework** - Understanding tutorials vs. reference distinction
 - **docs-applying-content-quality** - Content quality standards for Prerequisites sections
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

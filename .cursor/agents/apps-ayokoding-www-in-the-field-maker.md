@@ -160,3 +160,5 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 - `apps-ayokoding-www-in-the-field-fixer` - Fixes in-the-field issues
 
 **Remember**: In-the-field tutorials teach production implementation patterns. Always show standard library first, then introduce frameworks with clear rationale. Code must be production-ready with proper error handling, security, and logging.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

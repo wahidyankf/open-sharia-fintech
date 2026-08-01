@@ -526,3 +526,4 @@ the `local-temp/` path to the orchestrator.
 - Static counterpart: `swe-ui-checker` (component-source token/a11y/pattern audit — `generated-reports/`).
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
 - Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

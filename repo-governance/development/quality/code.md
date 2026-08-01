@@ -159,6 +159,7 @@ Validates primary and secondary platform binding directory consistency before co
 2. If changed:
    - Validates primary binding directory (`.claude/`) source format (YAML, tools, model, skills)
    - Syncs primary to secondary binding directory (auto-sync)
+   - **Mirrors ship in the same commit as their `.claude/` source** — the hook stages them for you; a follow-up "sync commit" publishes a tree where source and mirror disagree ([File-Touch Discipline](../practice/file-touch-discipline.md))
    - Validates secondary binding directory (`.opencode/`) output (semantic equivalence)
 3. If unchanged: Skips validation (performance)
 

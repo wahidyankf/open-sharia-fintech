@@ -267,3 +267,5 @@ Use this agent when:
 - `docs-checker` - Validates other documentation
 
 **Remember**: README validation is about making content welcoming and accessible. Be constructive, specific, and actionable in your feedback. Help make READMEs that truly welcome contributors.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -42,3 +42,4 @@ Applies validated fixes from `ci-checker` audit reports. Re-validates each findi
 - Fix Nx tag declarations
 - Create missing `.dockerignore` files
 - Add missing OCI labels to Dockerfiles
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

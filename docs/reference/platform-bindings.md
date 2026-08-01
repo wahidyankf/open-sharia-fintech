@@ -286,3 +286,5 @@ To add a new generated binding:
   tiers and how they resolve to per-binding model IDs
 - `AGENTS.md` at repo root — canonical root instruction file read by most platforms
 - `CLAUDE.md` at repo root — Claude Code shim importing `AGENTS.md`
+
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).

@@ -300,3 +300,4 @@ In any README listing, folders appear in canonical order:
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
 - [Specs Validation Workflow](../../repo-governance/workflows/specs/specs-quality-gate.md) — Orchestrated validation workflow
 - Related agents: [specs-checker](./specs-checker.md), [specs-fixer](./specs-fixer.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

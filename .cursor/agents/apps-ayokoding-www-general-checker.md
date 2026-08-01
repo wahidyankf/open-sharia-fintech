@@ -63,3 +63,4 @@ See `repo-applying-maker-checker-fixer` Skill for:
 **Related Conventions**:
 
 - [Content Quality Principles](../../repo-governance/conventions/writing/quality.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -215,3 +215,5 @@ Update status, add summary, prioritize findings.
 - `apps-ayokoding-www-in-the-field-fixer` - Fixes in-the-field issues
 
 **Remember**: Standard library first is CRITICAL. Every framework must be justified by showing standard library limitations first.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -402,3 +402,4 @@ Before starting work, familiarize yourself with:
 - [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md) - Agent design standards
 - [Linking Convention](../../repo-governance/conventions/formatting/linking.md) - How links should be formatted
 - [Timestamp Format Convention](../../repo-governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

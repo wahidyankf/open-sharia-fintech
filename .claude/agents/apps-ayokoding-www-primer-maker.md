@@ -189,3 +189,5 @@ voice, heading hierarchy, accessibility).
 **Remember**: A Primer is authored at exactly By-Example pace (same structure, same density, same
 volume band) — the entire differentiator is **scope**. Every example must serve the "just enough
 to be productive" boundary; comprehensive depth belongs in a full By Example tutorial, not here.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

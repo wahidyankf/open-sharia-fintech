@@ -603,3 +603,4 @@ the `local-temp/` path to the orchestrator.
   Testing, Bach & Bolton); WCAG 2.2 (W3C); Core Web Vitals (Google); OWASP Web Security Testing Guide.
 - Agents Index: [`.claude/agents/README.md`](../../.claude/agents/README.md)
 - Dual-mode sync: `npm run generate:bindings` (powered by `rhino-cli harness bindings generate`)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

@@ -68,3 +68,4 @@ See `repo-applying-maker-checker-fixer` Skill for:
 
 - [ose-web Convention](../../repo-governance/conventions/structure/plans.md)
 - [Fixer Confidence Levels](../../repo-governance/development/quality/fixer-confidence-levels.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

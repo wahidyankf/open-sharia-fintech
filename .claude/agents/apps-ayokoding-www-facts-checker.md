@@ -143,3 +143,4 @@ Update status to "Complete", add summary.
 
 - [CLAUDE.md](../../CLAUDE.md)
 - [Factual Validation Convention](../../repo-governance/conventions/writing/factual-validation.md)
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

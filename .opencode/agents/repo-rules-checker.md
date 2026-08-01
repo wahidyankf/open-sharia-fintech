@@ -1271,3 +1271,5 @@ When preflight is unavailable (`[WARN]` logged in Step 0.5), the report uses a s
 - [AI Agents Convention](../../repo-governance/development/agents/ai-agents.md)
 - [Maker-Checker-Fixer Pattern](../../repo-governance/development/pattern/maker-checker-fixer.md)
 `````
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

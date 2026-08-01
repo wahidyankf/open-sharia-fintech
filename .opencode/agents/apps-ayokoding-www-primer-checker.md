@@ -176,3 +176,5 @@ constraint), light-consolidation capstone type, and ayokoding-web compliance val
 **Remember**: Annotation density is measured PER EXAMPLE, not tutorial-wide, exactly like By
 Example. Example count is a floor, not a cap. Scope discipline — "just enough to be productive,"
 never comprehensive coverage — is the CRITICAL check unique to this format.
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

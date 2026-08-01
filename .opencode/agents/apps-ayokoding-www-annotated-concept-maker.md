@@ -243,3 +243,5 @@ voice, heading hierarchy, accessibility).
 strict By-Example code-syntax format. Pick the mode first (standard vs. no-code sub-mode), then
 pick the right medium per concept — code, pseudocode, config, or diagram (or, in no-code
 sub-mode, a worked scenario producing a decision artifact).
+
+- [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md) - Keep a ledger of every path you touch, carry it through every compaction, leave anything not on it alone, and stage explicit paths

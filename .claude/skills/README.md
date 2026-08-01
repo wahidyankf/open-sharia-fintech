@@ -104,6 +104,8 @@ See `repo-applying-maker-checker-fixer` skill for complete workflow patterns.
 
 **No mirror copy**: Per [opencode.ai/docs/skills](https://opencode.ai/docs/skills/),
 OpenCode reads `.claude/skills/<name>/SKILL.md` natively. `rhino-cli harness bindings generate`
+
+Those regenerated mirrors are part of your change: they belong on your touched-file ledger and MUST land in the **same commit** as the `.claude/` source that produced them, never a follow-up sync commit. Verify with `npm run validate:sync`; never hand-edit a mirror. See [File-Touch Discipline](../../repo-governance/development/practice/file-touch-discipline.md).
 does NOT copy skills to `.opencode/skill/` or `.opencode/skills/`. Editing a
 skill here is immediately visible to both systems on the next session start.
 
