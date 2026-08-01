@@ -1035,9 +1035,11 @@ Independent of Unit 1; runs in parallel in its own worktree.
     `static-filterable-routes.feature`, its Vitest and Playwright step bindings, and the feature
     indexes.
   - **Result**: the direct CV query URL pre-fills `TypeScript`, shows a matching entry, and hides an
-    unrelated one. Current green CI records 20 unit files / 191 tests and 97.38% line coverage;
-    behavior coverage is 8 specs / 38 scenarios / 89 steps, E2E coverage has 0 new unbound
-    scenarios, and Chromium E2E has 30 passing tests.
+    unrelated one. Cycle-1 review added executable static-route and crawler-directive scenarios:
+    the former inspects both emitted manifests, while the latter fetches `robots.txt` and
+    `sitemap.xml` from the production server. Local fixer verification records 20 unit files / 199
+    tests, 8 specs / 40 scenarios / 95 steps, zero new unbound E2E scenarios, and 32 passing
+    Chromium tests.
 
 ### Phase 5 Gate
 
@@ -1052,14 +1054,19 @@ Independent of Unit 1; runs in parallel in its own worktree.
   - **Result**: the fresh no-cache build lists `○ /robots.txt` and `○ /sitemap.xml`; the Unit 2
     change set contains `src/app/robots.ts` and `src/app/sitemap.ts`.
 - [x] `[AI]` `nx run wahidyankf-www:test:quick` exits 0 — it chains `typecheck`, `lint`, `test:unit`,
-      `test:coverage`, and `test:specs`. Do **not** call `specs:coverage`; no such target exists on
-      this project either (same `targetDefaults`-does-not-create-targets reason as Phase 4).
+      `test:coverage`, and `test:specs`, with a non-cached `static-routes:validation` prerequisite.
+      That prerequisite runs `nx build wahidyankf-www --skip-nx-cache` and validates both emitted
+      manifests before the five-stage quick gate starts. Do **not** call `specs:coverage`; no such
+      target exists on this project either (same `targetDefaults`-does-not-create-targets reason as
+      Phase 4).
   - **Date**: 2026-08-02. **Status**: done.
   - **Files Changed**: none (verification only).
-  - **Result**: `npm exec -- nx run wahidyankf-www:test:quick --skip-nx-cache` exited 0 after
-    typecheck, lint, 20 test files / 191 unit tests, 97.38% line coverage, specs structure with 0
-    findings, and behavior coverage of 8 specs / 38 scenarios / 89 steps. Network access was needed
-    only for the configured `npx oxlint@latest` lint invocation.
+  - **Result**: before the Cycle-1 review correction, `npm exec -- nx run
+    wahidyankf-www:test:quick --skip-nx-cache` exited 0 after typecheck, lint, 20 test files / 191
+    unit tests, 97.38% line coverage, specs structure with 0 findings, and behavior coverage of 8
+    specs / 38 scenarios / 89 steps. The correction adds the uncached manifest proof and six BDD
+    steps; its replacement local gate is recorded with the corrective commit. Network access was
+    needed only for the configured `npx oxlint@latest` lint invocation.
 - [ ] `[AI]` **Unit 2 delivery boundary** — review cycle, then `[AI]` merge; deploy to
       `prod-wahidyankf-www` and confirm `x-vercel-cache: HIT` on a repeat request.
 

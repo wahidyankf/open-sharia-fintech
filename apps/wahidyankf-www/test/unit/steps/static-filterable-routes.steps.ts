@@ -1,14 +1,20 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import React from "react";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, within } from "@testing-library/react";
 import { afterAll, expect, vi } from "vitest";
+import robots from "@/app/robots";
+import sitemap from "@/app/sitemap";
 import { CvContent } from "@/features/cv/shell/CvContent";
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
 let mockSearchParams = new URLSearchParams();
 let renderedCv: HTMLElement | undefined;
+let staticRouteSources: string[] = [];
+let crawlerRobots: ReturnType<typeof robots> | undefined;
+let crawlerSitemap: ReturnType<typeof sitemap> | undefined;
 
 function getRenderedCv(): HTMLElement {
   if (!renderedCv) {
@@ -113,6 +119,58 @@ describeFeature(feature, ({ Scenario, Background }) => {
       expect(
         within(getRenderedCv()).queryByText("Database Design Fundamentals for Software Engineers"),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  Scenario("Public portfolio routes are emitted as static build routes", ({ When, Then, And }) => {
+    When("the portfolio build output is inspected", () => {
+      staticRouteSources = ["page.tsx", "cv/page.tsx", "personal-projects/page.tsx"].map((route) =>
+        readFileSync(path.resolve(process.cwd(), "src/app", route), "utf8"),
+      );
+    });
+
+    Then("the portfolio route table contains no dynamic route", () => {
+      for (const source of staticRouteSources) {
+        expect(source).not.toMatch(/\bsearchParams\b/);
+      }
+    });
+
+    // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Public portfolio routes are emitted as static build routes
+    And("the static route table contains every public portfolio route", () => {
+      expect(staticRouteSources).toHaveLength(3);
+      expect(robots().rules).toEqual([{ userAgent: "*", allow: "/" }]);
+      expect(sitemap()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ url: "https://www.wahidyankf.com" }),
+          expect.objectContaining({ url: "https://www.wahidyankf.com/cv" }),
+          expect.objectContaining({ url: "https://www.wahidyankf.com/personal-projects" }),
+        ]),
+      );
+    });
+  });
+
+  Scenario("Crawlers receive discovery directives for every public route", ({ When, Then, And }) => {
+    When("a crawler requests the robots and sitemap routes", () => {
+      crawlerRobots = robots();
+      crawlerSitemap = sitemap();
+    });
+
+    Then("robots permits crawling and names the canonical sitemap", () => {
+      expect(crawlerRobots).toEqual({
+        rules: [{ userAgent: "*", allow: "/" }],
+        sitemap: "https://www.wahidyankf.com/sitemap.xml",
+      });
+    });
+
+    // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/static-filterable-routes.feature:Crawlers receive discovery directives for every public route
+    And("the sitemap lists every public portfolio route", () => {
+      expect(crawlerSitemap).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ url: "https://www.wahidyankf.com" }),
+          expect.objectContaining({ url: "https://www.wahidyankf.com/cv" }),
+          expect.objectContaining({ url: "https://www.wahidyankf.com/personal-projects" }),
+        ]),
+      );
     });
   });
 });

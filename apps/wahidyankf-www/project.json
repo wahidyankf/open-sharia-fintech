@@ -63,6 +63,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["static-routes:validation"],
       "options": {
         "commands": [
           "npx nx run wahidyankf-www:typecheck",
@@ -74,6 +75,15 @@
         "parallel": false
       },
       "inputs": ["default", "specs"]
+    },
+    "static-routes:validation": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "npx nx run wahidyankf-www:build --skip-nx-cache && node apps/wahidyankf-www/scripts/validate-static-routes.mjs",
+        "cwd": "{workspaceRoot}"
+      },
+      "inputs": ["default", "{workspaceRoot}/specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/**/*.feature"]
     },
     "test:integration": {
       "executor": "nx:run-commands",
