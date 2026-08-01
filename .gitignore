@@ -178,3 +178,6 @@ specs/apps/a-demo/contracts/generated/
 
 # Downloaded CI tooling binaries (downloaded on-demand during local testing)
 actionlint
+
+# Vercel CLI link state — contains orgId/projectId, must not land in this public repo
+.vercel/
