@@ -40,9 +40,17 @@ export function CoursePagePathContent({
   const searchParams = useSearchParams();
   const hasPathContext = searchParams.has("path");
   const runtimePathData = useRuntimeCoursePathData(page.locale, pathData, hasPathContext);
-  const renderData = hasPathContext
-    ? resolveCoursePathClientRenderData(searchParams, runtimePathData, courseId, fallbackPrev, fallbackNext)
-    : canonicalRenderData;
+  // A path-aware view must not briefly erase canonical prerequisite links/badges while its
+  // optional client request is pending (or if it fails). Only a successful response may replace
+  // the compact server-rendered canonical chrome.
+  const runtimeRenderData =
+    hasPathContext && runtimePathData.isReady
+      ? resolveCoursePathClientRenderData(searchParams, runtimePathData.data, courseId, fallbackPrev, fallbackNext)
+      : null;
+  // An invalid or omitted-course path context is still the canonical view. Keep its original
+  // server-rendered links/badges rather than rebuilding a different fallback from runtime data.
+  const renderData =
+    runtimeRenderData?.activeContext === null ? canonicalRenderData : (runtimeRenderData ?? canonicalRenderData);
 
   return <CoursePageContent {...page} courseId={courseId} renderData={renderData} />;
 }

@@ -74,6 +74,24 @@ describeFeature(feature, ({ Background, Scenario, ScenarioOutline }) => {
     });
   });
 
+  Scenario("A repeat request to a deployed content page is served from the CDN", ({ Given, When, Then }) => {
+    Given("a Vercel preview or production deployment is selected for CDN verification", () => {
+      // The Playwright binding explicitly gates this assertion on a real deployment URL.
+      expect(
+        readFileSync(path.join(appRoot, "../ayokoding-www-fe-e2e/src/steps/static-delivery.steps.ts"), "utf8"),
+      ).toContain('VERCEL_CDN_VERIFY !== "true"');
+    });
+
+    When("the same deployed course lesson URL is requested again", () => {
+      expect(contentPageSource).toContain("generateStaticParams");
+    });
+
+    // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
+    Then("the deployed response is served from the CDN cache", () => {
+      expect(nextConfigSource).not.toMatch(/dynamic\s*=\s*["']force-dynamic["']/);
+    });
+  });
+
   Scenario("Runtime tRPC endpoints retain their filesystem assets", ({ Given, When, Then }) => {
     Given("the ayokoding-www standalone package is running", () => {
       expect(nextConfigSource).toContain('output: "standalone"');

@@ -74,7 +74,7 @@ export function MobileNav({
     pathData ?? { ...EMPTY_COURSE_PATH_CLIENT_DATA, manifests },
     open || searchParams.has("path"),
   );
-  const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData);
+  const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData.data);
   // Cycle 3.4 — the control that opened this drawer (header menu button or `PathBanner`'s "View
   // path" button) is a plain, context-driven trigger, not a `Dialog.Trigger`, so Radix's own
   // close-focus restoration never applies (see `use-mobile-nav-open.ts`). Restore it ourselves.
@@ -84,7 +84,7 @@ export function MobileNav({
   // MobileNav (hosted from `[locale]/layout.tsx` via `Header`, structurally disconnected from
   // `<ROUTE>`) detects the active path context itself — the same client-side pattern
   // `SidebarHost` uses for the desktop rail (Cycle 2.8).
-  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, runtimePathData.manifests);
+  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, runtimePathData.data.manifests);
 
   // Mount-effect read of the persisted preset width — mirrors the pattern
   // `useResizableWidth` (libs/web-ui) uses for the desktop rail. Only one of

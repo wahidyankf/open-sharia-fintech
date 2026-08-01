@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import { getResilient } from "../support/resilient-request";
 
@@ -66,6 +66,29 @@ When("the same URL is requested again", async ({ page }) => {
 // @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a content page remains cacheable
 Then("the response does not carry a no-store cache directive", async ({ page }) => {
   expect(stateFor(page).secondResponse?.headers()["cache-control"] ?? "").not.toMatch(/\bno-store\b/i);
+});
+
+// A local standalone runner cannot prove a Vercel CDN response. This deployment-bound verifier
+// runs only when a real preview/production URL is deliberately supplied; see Phase 4's deploy gate.
+Given("a Vercel preview or production deployment is selected for CDN verification", async ({ page }) => {
+  test.skip(
+    process.env.VERCEL_CDN_VERIFY !== "true",
+    "CDN-HIT verification requires VERCEL_CDN_VERIFY=true against a real Vercel deployment",
+  );
+  const response = await getResilient(page, lessonUrl);
+  expect(response.ok()).toBe(true);
+  stateFor(page).firstResponse = response;
+});
+
+When("the same deployed course lesson URL is requested again", async ({ page }) => {
+  const response = await getResilient(page, lessonUrl);
+  expect(response.ok()).toBe(true);
+  stateFor(page).secondResponse = response;
+});
+
+// @covers specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature:A repeat request to a deployed content page is served from the CDN
+Then("the deployed response is served from the CDN cache", async ({ page }) => {
+  expect(stateFor(page).secondResponse?.headers()["x-vercel-cache"]).toBe("HIT");
 });
 
 Given("the ayokoding-www standalone package is running", async ({ page }) => {

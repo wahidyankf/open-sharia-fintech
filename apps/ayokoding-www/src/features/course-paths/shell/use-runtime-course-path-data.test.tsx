@@ -1,4 +1,4 @@
-import { cleanup, render, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CoursePathClientData } from "./course-path-nav";
 
@@ -23,8 +23,8 @@ const fallback: CoursePathClientData = {
 };
 
 function RuntimePathDataHarness({ locale, enabled }: { locale: string; enabled: boolean }) {
-  useRuntimeCoursePathData(locale, fallback, enabled);
-  return null;
+  const runtimeData = useRuntimeCoursePathData(locale, fallback, enabled);
+  return <output>{String(runtimeData.isReady)}</output>;
 }
 
 afterEach(() => {
@@ -48,7 +48,19 @@ describe("useRuntimeCoursePathData", () => {
 
     await waitFor(() => {
       expect(getRouteDataMock).toHaveBeenCalledWith("fixture-path");
+      expect(screen.getByRole("status")).toHaveTextContent("true");
     });
+  });
+
+  it("keeps the fallback marked unready when the optional runtime request fails", async () => {
+    getRouteDataMock.mockRejectedValue(new Error("fixture endpoint unavailable"));
+
+    render(<RuntimePathDataHarness locale="failed-fixture-path" enabled />);
+
+    await waitFor(() => {
+      expect(getRouteDataMock).toHaveBeenCalledWith("failed-fixture-path");
+    });
+    expect(screen.getByRole("status")).toHaveTextContent("false");
   });
 
   it("deduplicates the shared fixture-path request when multiple consumers need it", async () => {

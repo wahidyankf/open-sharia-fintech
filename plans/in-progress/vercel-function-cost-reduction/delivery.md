@@ -1136,6 +1136,9 @@ apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
       `[AI]` merge once all five hardened preconditions hold.
 - [ ] `[AI]` Deploy to `prod-ayokoding-www` and verify live: a repeat request to a content page
       returns `x-vercel-cache: HIT` (was `MISS`).
+  - Run the deployment-bound Gherkin verifier with `VERCEL_CDN_VERIFY=true` and `BASE_URL` set to
+    the Vercel preview or production URL. The ordinary local standalone E2E scenario proves only
+    cacheability (`no-store` absent) because it has no Vercel CDN header to inspect.
 - [ ] `[AI]` **MCP post-deploy verification** — 24h after the production deploy, re-run
       `get_runtime_logs` (`group_by: source` and `group_by: route`, `since: "24h"`,
       `environment: "production"`) and compare against the baseline table.

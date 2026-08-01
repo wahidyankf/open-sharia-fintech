@@ -52,9 +52,9 @@ export function SidebarHost({
     pathData ?? { ...EMPTY_COURSE_PATH_CLIENT_DATA, manifests },
     searchParams.has("path"),
   );
-  const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData);
+  const courseTitles = initialTitles ?? courseTitlesFromClientData(runtimePathData.data);
 
-  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, runtimePathData.manifests);
+  const active = resolveActiveCourseFromLocation(pathname, searchParams, locale, runtimePathData.data.manifests);
 
   if (!active) {
     return <>{children}</>;

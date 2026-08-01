@@ -20,6 +20,12 @@ Feature: Statically delivered content pages
     When the same URL is requested again
     Then the response does not carry a no-store cache directive
 
+  @e2e @deployment
+  Scenario: A repeat request to a deployed content page is served from the CDN
+    Given a Vercel preview or production deployment is selected for CDN verification
+    When the same deployed course lesson URL is requested again
+    Then the deployed response is served from the CDN cache
+
   @unit @e2e
   Scenario: Runtime tRPC endpoints retain their filesystem assets
     Given the ayokoding-www standalone package is running

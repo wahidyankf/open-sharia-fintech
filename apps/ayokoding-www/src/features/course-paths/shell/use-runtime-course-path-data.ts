@@ -6,6 +6,12 @@ import type { CoursePathClientData } from "./course-path-nav";
 
 const requestsByLocale = new Map<string, Promise<CoursePathClientData>>();
 
+export interface RuntimeCoursePathData {
+  data: CoursePathClientData;
+  /** True only after the optional runtime refresh succeeds for the current locale. */
+  isReady: boolean;
+}
+
 function requestRuntimePathData(locale: string): Promise<CoursePathClientData> | null {
   const coursePaths = trpcClient.coursePaths;
   if (!coursePaths) return null;
@@ -31,8 +37,9 @@ export function useRuntimeCoursePathData(
   locale: string,
   fallback: CoursePathClientData,
   enabled: boolean,
-): CoursePathClientData {
+): RuntimeCoursePathData {
   const [data, setData] = useState(fallback);
+  const [loadedLocale, setLoadedLocale] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -51,7 +58,10 @@ export function useRuntimeCoursePathData(
 
     void request.then(
       (next) => {
-        if (active) setData(next);
+        if (active) {
+          setData(next);
+          setLoadedLocale(locale);
+        }
       },
       () => {
         // Keep the statically generated fallback when the optional runtime
@@ -64,5 +74,5 @@ export function useRuntimeCoursePathData(
     };
   }, [enabled, locale]);
 
-  return data;
+  return { data, isReady: enabled && loadedLocale === locale };
 }
