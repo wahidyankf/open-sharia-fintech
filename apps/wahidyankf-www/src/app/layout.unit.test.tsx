@@ -43,4 +43,8 @@ describe("RootLayout", () => {
     expect(metadata.openGraph?.images).toBeUndefined();
     expect(metadata.twitter?.images).toBeUndefined();
   });
+
+  it("uses the canonical public URL for OpenGraph metadata", () => {
+    expect(metadata.openGraph?.url).toBe("https://www.wahidyankf.com");
+  });
 });

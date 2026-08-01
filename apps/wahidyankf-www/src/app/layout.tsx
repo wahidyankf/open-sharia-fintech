@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://wahidyankf.com",
+    url: "https://www.wahidyankf.com",
     siteName: "Wahidyan Kresna Fridayoka",
     title: "Wahidyan Kresna Fridayoka | Software Engineer",
     description:
