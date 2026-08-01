@@ -42,7 +42,7 @@ nx run wahidyankf-www:test:quick
 nx run wahidyankf-www:test:integration
 
 # Gherkin spec coverage check
-nx run wahidyankf-www:specs:coverage
+nx run wahidyankf-www:test:specs
 ```
 
 ## Testing stack

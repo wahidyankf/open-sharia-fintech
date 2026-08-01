@@ -1035,8 +1035,9 @@ Independent of Unit 1; runs in parallel in its own worktree.
     `static-filterable-routes.feature`, its Vitest and Playwright step bindings, and the feature
     indexes.
   - **Result**: the direct CV query URL pre-fills `TypeScript`, shows a matching entry, and hides an
-    unrelated one. Unit tests (19 files / 187 tests), behavior coverage (8 specs / 38 scenarios / 89
-    steps), E2E coverage (0 new unbound scenarios), and Chromium E2E (30 tests) pass.
+    unrelated one. Current green CI records 20 unit files / 191 tests and 97.38% line coverage;
+    behavior coverage is 8 specs / 38 scenarios / 89 steps, E2E coverage has 0 new unbound
+    scenarios, and Chromium E2E has 30 passing tests.
 
 ### Phase 5 Gate
 
@@ -1056,7 +1057,7 @@ Independent of Unit 1; runs in parallel in its own worktree.
   - **Date**: 2026-08-02. **Status**: done.
   - **Files Changed**: none (verification only).
   - **Result**: `npm exec -- nx run wahidyankf-www:test:quick --skip-nx-cache` exited 0 after
-    typecheck, lint, 19 test files / 187 unit tests, 97.23% line coverage, specs structure with 0
+    typecheck, lint, 20 test files / 191 unit tests, 97.38% line coverage, specs structure with 0
     findings, and behavior coverage of 8 specs / 38 scenarios / 89 steps. Network access was needed
     only for the configured `npx oxlint@latest` lint invocation.
 - [ ] `[AI]` **Unit 2 delivery boundary** — review cycle, then `[AI]` merge; deploy to
