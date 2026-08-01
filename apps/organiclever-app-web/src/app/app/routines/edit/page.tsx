@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useRouter } from "next/navigation";
 import { EditRoutineScreen } from "@/contexts/routine/presentation";
 import { useAppRuntime } from "@/contexts/app-shell/presentation/app-runtime-context";

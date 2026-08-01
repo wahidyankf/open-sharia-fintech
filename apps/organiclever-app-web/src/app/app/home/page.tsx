@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useRouter } from "next/navigation";
 import type { Routine } from "@/contexts/routine/application";
 import { HomeScreen } from "@/contexts/app-shell/presentation/components/home/home-screen";
