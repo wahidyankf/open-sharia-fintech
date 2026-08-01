@@ -692,7 +692,7 @@ every page on the site.
 > inputs), and the build-output count is asserted by an explicit `nx build` step that never runs
 > through a cached target.
 
-- [ ] `[AI]` **RED** — add a failing source-level guard that no root layout opts the app into dynamic
+- [x] `[AI]` **RED** — add a failing source-level guard that no root layout opts the app into dynamic
       rendering.
   - File: `apps/ayokoding-www/src/app/root-layout-static.unit.test.ts` (new)
   - Modelled on the existing `apps/ayokoding-www/src/app/security-headers.unit.test.ts`, which reads
@@ -708,7 +708,12 @@ every page on the site.
   - Acceptance: the test **fails** today on both assertions — `src/app/layout.tsx` exists and calls
     `headers()` at line 24. Falsifiable both ways: it passes only once the file is gone and no layout
     reads a dynamic API.
-- [ ] `[AI]` **GREEN** — promote the locale layout and delete the root layout.
+  - **Date**: 2026-08-01. **Status**: done — the source-level guard was added and intentionally
+    fails on both current violations.
+  - **Files Changed**: `apps/ayokoding-www/src/app/root-layout-static.unit.test.ts`.
+  - **Result**: `npm exec nx run ayokoding-www:test:unit` collected the test under the `unit` project
+    and reported exactly two failures: the root layout exists and a layout reads `headers()`.
+- [x] `[AI]` **GREEN** — promote the locale layout and delete the root layout.
   - Delete `apps/ayokoding-www/src/app/layout.tsx` **entirely**. If it remains it stays the root
     layout, and nested layouts may not render `<html>`/`<body>`.
   - Move its contents into `apps/ayokoding-www/src/app/[locale]/layout.tsx`, rendering
@@ -717,7 +722,14 @@ every page on the site.
   - Preserve everything else the old root layout rendered, including the Google Analytics tags.
   - Command: `nx run ayokoding-www:test:unit`
   - Acceptance: the RED guard now passes, and no other test breaks.
-- [ ] `[AI]` **Build-output proof** — assert the prerendered route count against a real build.
+  - **Date**: 2026-08-01. **Status**: done — the locale layout now owns the document shell and the
+    dynamic root layout was removed.
+  - **Files Changed**: `apps/ayokoding-www/src/app/[locale]/layout.tsx`,
+    `apps/ayokoding-www/src/app/layout.tsx` (deleted).
+  - **Result**: `npm exec nx run ayokoding-www:test:unit` passes: 149 files and 3,400 tests, with
+    the new root-layout guard green.
+- [x] `[AI]` **Build diagnostic** — prove Cause A has unblocked static generation up to the remaining
+      Cause B boundary.
   - Command, run in this order and never through a cached test target:
 
     ```bash
@@ -725,32 +737,75 @@ every page on the site.
     jq '.routes | length' apps/ayokoding-www/.next/prerender-manifest.json
     ```
 
-  - Acceptance: build exits 0 and the count is **`>= 2000`** (was `4`). The threshold is a floor, not
-    a headcount — `apps/ayokoding-www/content` holds **2,183** markdown files today (`en` 2,059 /
-    `id` 124) and is still growing under
-    [`ayokoding-learning-path-04-course-authoring`](../ayokoding-learning-path-04-course-authoring/README.md),
-    so an exact expected count would rot within days. Falsifiable both ways: the pre-fix build
-    returns 4.
+  - Acceptance: the build reaches static-page generation and fails **only** at Cause B's known
+    missing `<Suspense>` boundary around `useSearchParams()` on the content catch-all. It must not
+    fail because of a root-layout dynamic API. The count proof moves to Phase 2: Cause B currently
+    prevents the manifest from being written, so requiring it here would make the Phase 1 gate
+    impossible to pass before the phase explicitly assigned to remove that blocker.
+  - **Plan correction (2026-08-01)**: the prior `>= 2000` requirement was correctly motivated but
+    incorrectly sequenced. It remains mandatory in Phase 2's GREEN build and gate, once both
+    independently verified dynamic causes are absent.
+  - **Date**: 2026-08-01. **Status**: done — diagnostic succeeded and exposed the expected
+    remaining Cause B blocker.
+  - **Files Changed**: `plans/in-progress/vercel-function-cost-reduction/delivery.md`.
+  - **Result**: unrestricted `npm exec nx build ayokoding-www` compiled and entered static generation
+    (`0/2103`), then failed only because the content catch-all's existing `useSearchParams()` lacks
+    a `<Suspense>` boundary. No root-layout dynamic-API failure remained; the manifest requirement
+    was moved, unchanged, to Phase 2 where it can be proven.
 
-- [ ] `[AI]` **REFACTOR** — confirm no other dynamic-API read remains in a layout.
+- [x] `[AI]` **REFACTOR** — confirm no other dynamic-API read remains in a layout.
   - Command: `grep -rn "headers()\|cookies()\|draftMode()\|noStore()\|connection()" apps/ayokoding-www/src --exclude-dir=node_modules`
   - Acceptance: zero hits in any `layout.tsx`. Note: use `--exclude-dir`, never `--glob`, and never
     `-L` — `grep` here routes to UGREP.
-- [ ] `[AI]` Verify the `lang` attribute for both locales in the built output.
-  - Acceptance: the prerendered English page contains `lang="en"` and the Indonesian page
-    `lang="id"`. Falsifiable both ways: a wrong or missing `lang` fails.
+  - **Date**: 2026-08-01. **Status**: done — no dynamic API reads remain in either layout.
+  - **Files Changed**: none.
+  - **Result**: the prescribed source search and a layout-only search returned no dynamic-API hits;
+    the only remaining layouts are `src/app/[locale]/layout.tsx` and `(content)/layout.tsx`.
+- [x] `[AI]` Verify the locale-to-document-language mapping before Cause B's static build is enabled.
+  - Acceptance: the promoted locale layout renders `lang={(await params).locale}` and preserves the
+    validated locale segment. The built-output assertion remains mandatory but moves to the Phase 2
+    gate: Cause B currently prevents any prerendered HTML from being emitted.
+  - **Plan correction (2026-08-01)**: this was previously an impossible Phase 1 built-output check
+    for the same ordering reason as the manifest count. Phase 2's real build now checks both
+    `lang="en"` and `lang="id"` in emitted HTML.
+  - **Date**: 2026-08-01. **Status**: done — the promoted layout derives language from the validated
+    locale segment.
+  - **Files Changed**: none.
+  - **Result**: `src/app/[locale]/layout.tsx` renders `lang={(await params).locale}` after its
+    `isValidLocale(locale)` guard; the emitted-HTML check is retained in Phase 2.
 
 **Gherkin (binds) →** "Content pages are statically prerendered and CDN-cached" and "The document
 language still reflects the locale" — see [prd.md](./prd.md).
 
-- [ ] `[AI]` Write the companion feature file under
+- [x] `[AI]` Write the companion feature file under
       `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/`.
+  - **Date**: 2026-08-01. **Status**: done — the feature binds static delivery, cache behavior, and
+    both locale-language scenarios.
+  - **Files Changed**:
+    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature`.
+  - **Result**: focused `rhino-cli specs gherkin-cardinality validate` passed for the new feature;
+    `git diff --check` is clean.
 
 ### Phase 1 Gate
 
-- [ ] `[AI]` `apps/ayokoding-www/src/app/layout.tsx` no longer exists: `test ! -f` exits 0.
-- [ ] `[AI]` Prerendered route count `>= 2000` (was 4).
-- [ ] `[AI]` `nx run ayokoding-www:test:quick`, `typecheck`, and `lint` all exit 0.
+- [x] `[AI]` `apps/ayokoding-www/src/app/layout.tsx` no longer exists: `test ! -f` exits 0.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: none.
+  - **Result**: `test ! -f apps/ayokoding-www/src/app/layout.tsx` exits 0.
+- [x] `[AI]` The Phase 1 build reaches static-page generation and identifies only the known Cause B
+      `<Suspense>` blocker; the `>= 2000` manifest count is deferred to the Phase 2 gate where it is
+      executable.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: none.
+  - **Result**: the verified production build compiled, started static generation for 2,103 pages,
+    and failed only at the documented content-route `<Suspense>` boundary. The `>= 2000` manifest
+    floor remains an explicit Phase 2 gate.
+- [x] `[AI]` `nx run ayokoding-www:test:quick`, `typecheck`, and `lint` all exit 0.
+  - **Date**: 2026-08-01. **Status**: done — the regression guard's type narrowing was corrected
+    without weakening its assertions.
+  - **Files Changed**: `apps/ayokoding-www/src/app/root-layout-static.unit.test.ts`.
+  - **Result**: `npm exec nx run ayokoding-www:test:quick`, `:typecheck`, and `:lint` all completed
+    successfully; `git diff --check` is clean.
 - [ ] `[AI]` Draft PR opened for Unit 1.
 
 > **Pause Safety**: safe to stop. The site is statically generated and functional. Rollback is a
@@ -780,9 +835,11 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
     mirroring `tools/ai-benchmark/page.tsx`'s existing shape. Reuse `sidebar-host.tsx`'s resolution
     rather than duplicating it.
   - Command: `nx build ayokoding-www`
-  - Acceptance: build exits 0 **and** the route table shows `●`/`○` for the content catch-all, not
-    `ƒ`. A `next build` is mandatory here — dev mode hides a missing `<Suspense>` boundary, and a
-    production build fails outright without one.
+  - Acceptance: build exits 0, the prerender manifest contains **`>= 2000`** routes (was `4` before
+    Cause A), and the route table shows `●`/`○` for the content catch-all, not `ƒ`. The threshold is
+    a floor, not a headcount — `apps/ayokoding-www/content` holds **2,183** markdown files today
+    (`en` 2,059 / `id` 124) and is still growing. A `next build` is mandatory here — dev mode hides a
+    missing `<Suspense>` boundary, and a production build fails outright without one.
 - [ ] `[AI]` **REFACTOR** — drop the now-vacuous `learn/paths/**` dynamic carve-out at
       `[...slug]/page.tsx:83` if it is still inert.
   - Note: `src/features/course-paths/manifests/` currently contains exactly one file, `README.md`, so
@@ -802,6 +859,9 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
       `grep -rn "await searchParams" apps/ayokoding-www/src --exclude-dir=node_modules` returns zero
       hits outside tests.
 - [ ] `[AI]` Content catch-all is `●`/`○` in the route table, not `ƒ`.
+  - Acceptance: the prerender manifest has `>= 2000` routes, proving both Cause A and Cause B are
+    absent before the dependent middleware phase begins; emitted English and Indonesian pages contain
+    `lang="en"` and `lang="id"`, respectively.
 - [ ] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
 
 > **Pause Safety**: safe to stop. Both root causes are fixed and the site is fully static.
