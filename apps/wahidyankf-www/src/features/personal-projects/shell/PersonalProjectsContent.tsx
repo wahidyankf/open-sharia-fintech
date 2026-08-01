@@ -4,7 +4,7 @@ import { Navigation } from "@/features/app-shell/shell/Navigation";
 import { projects, filterProjects } from "@/features/personal-projects/core/projects";
 import { Github, Globe, Youtube } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchComponent, HighlightText } from "@open-sharia-enterprise/web-ui";
 
 const LinkIcon = ({ type }: { type: string }) => {
@@ -18,13 +18,15 @@ const LinkIcon = ({ type }: { type: string }) => {
   }
 };
 
-function ProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
+function ProjectsContent() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+  const [searchTerm, setSearchTerm] = useState(search);
 
   useEffect(() => {
-    setSearchTerm(initialSearchTerm);
-  }, [initialSearchTerm]);
+    setSearchTerm(search);
+  }, [search]);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/personal-projects?search=${encodeURIComponent(term)}` : "/personal-projects";
@@ -83,12 +85,12 @@ function ProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
   );
 }
 
-export function PersonalProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
+export function PersonalProjectsContent() {
   return (
     <main className="flex min-h-screen flex-col bg-gray-900 p-4 pb-20 text-green-400 sm:p-8 md:p-12 lg:ml-80 lg:p-16 lg:pb-0">
       <Navigation />
       <div className="mx-auto w-full max-w-4xl flex-grow">
-        <ProjectsContent initialSearchTerm={initialSearchTerm} />
+        <ProjectsContent />
       </div>
     </main>
   );

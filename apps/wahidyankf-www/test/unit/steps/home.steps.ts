@@ -7,6 +7,7 @@ import { HomeContent } from "@/features/home/shell/HomeContent";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -32,7 +33,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the welcome heading
     Then('the H1 shows "Welcome to My Portfolio"', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("heading", { level: 1, name: "Welcome to My Portfolio" })).toBeInTheDocument();
     });
   });
@@ -42,7 +43,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the About Me card
     Then("an About Me card is visible", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("heading", { name: "About Me" })).toBeInTheDocument();
     });
   });
@@ -51,23 +52,23 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the home page", () => {});
 
     Then("a Skills & Expertise card is visible", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("heading", { name: "Skills & Expertise" })).toBeInTheDocument();
     });
 
     And('the card has a "Top Skills Used in The Last 5 Years" subsection', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByText("Top Skills Used in The Last 5 Years")).toBeInTheDocument();
     });
 
     And('the card has a "Top Programming Languages Used in The Last 5 Years" subsection', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByText("Top Programming Languages Used in The Last 5 Years")).toBeInTheDocument();
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the Skills & Expertise card with three subsections
     And('the card has a "Top Frameworks & Libraries Used in The Last 5 Years" subsection', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByText("Top Frameworks & Libraries Used in The Last 5 Years")).toBeInTheDocument();
     });
   });
@@ -76,18 +77,18 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the home page", () => {});
 
     Then("a Quick Links card is visible", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("heading", { name: "Quick Links" })).toBeInTheDocument();
     });
 
     And('the card contains a "View My CV" link to /cv', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("link", { name: "View My CV" })).toHaveAttribute("href", "/cv");
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the Quick Links card with two internal links
     And('the card contains a "Browse My Personal Projects" link to /personal-projects', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("link", { name: "Browse My Personal Projects" })).toHaveAttribute(
         "href",
         "/personal-projects",
@@ -99,13 +100,13 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the home page", () => {});
 
     Then("a Connect With Me card is visible", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByRole("heading", { name: "Connect With Me" })).toBeInTheDocument();
     });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/home/home.feature:Home renders the Connect With Me card with five external links
     And("the card has Github, GithubOrg, Linkedin, Website, and Email links", () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       const heading = screen.getByRole("heading", { name: "Connect With Me" });
       const section = heading.closest("section");
       expect(section).not.toBeNull();

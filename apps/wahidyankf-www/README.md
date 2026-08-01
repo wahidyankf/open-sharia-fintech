@@ -67,7 +67,7 @@ Platform-agnostic specifications for this app live at
   `components/`, `behavior/`
 - **Gherkin features**:
   [`specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/`](../../specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/README.md) —
-  7 feature files organized per feature module
+  feature files organized per feature module
 
 ## Architecture
 

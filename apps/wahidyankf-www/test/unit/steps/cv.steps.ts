@@ -7,9 +7,11 @@ import { CvContent } from "@/features/cv/shell/CvContent";
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
+let mockSearchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -31,6 +33,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
     Given("the app is running", () => {
       vi.mocked(window.scrollTo).mockClear();
+      mockSearchParams = new URLSearchParams();
     });
   });
 
@@ -39,7 +42,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV renders the Curriculum Vitae heading
     Then('the H1 shows "Curriculum Vitae"', () => {
-      render(React.createElement(CvContent, { initialSearchTerm: "", scrollTop: false }));
+      render(React.createElement(CvContent));
       expect(screen.getByRole("heading", { level: 1, name: "Curriculum Vitae" })).toBeInTheDocument();
     });
   });
@@ -49,7 +52,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV renders a search input
     Then('a search input with placeholder "Search CV entries..." is visible', () => {
-      render(React.createElement(CvContent, { initialSearchTerm: "", scrollTop: false }));
+      render(React.createElement(CvContent));
       expect(screen.getByPlaceholderText("Search CV entries...")).toBeInTheDocument();
     });
   });
@@ -59,7 +62,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV renders the Highlights section header
     Then('a "Highlights" section header is visible', () => {
-      render(React.createElement(CvContent, { initialSearchTerm: "", scrollTop: false }));
+      render(React.createElement(CvContent));
       expect(screen.getByRole("heading", { name: "Highlights" })).toBeInTheDocument();
     });
   });
@@ -69,7 +72,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/cv/cv.feature:CV cross-linked via scrollTop query scrolls into the entries
     Then("the page scrolls past Highlights into the matching entries", () => {
-      render(React.createElement(CvContent, { initialSearchTerm: "TypeScript", scrollTop: true }));
+      mockSearchParams = new URLSearchParams("search=TypeScript&scrollTop=true");
+      render(React.createElement(CvContent));
       expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
       expect(screen.getByRole("heading", { level: 1, name: "Curriculum Vitae" })).toBeInTheDocument();
       expect(screen.getByPlaceholderText("Search CV entries...")).toBeInTheDocument();

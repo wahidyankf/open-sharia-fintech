@@ -34,21 +34,12 @@ export const metadata: Metadata = {
     title: "Wahidyan Kresna Fridayoka | Software Engineer",
     description:
       "Portfolio and CV of Wahidyan Kresna Fridayoka, a seasoned Software Engineer specializing in Frontend Engineering and Engineering Management.",
-    images: [
-      {
-        url: "https://wahidyankf.com/og-image.jpg", // You'll need to create and host this image
-        width: 1200,
-        height: 630,
-        alt: "Wahidyan Kresna Fridayoka",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Wahidyan Kresna Fridayoka | Software Engineer",
     description:
       "Portfolio and CV of Wahidyan Kresna Fridayoka, a seasoned Software Engineer specializing in Frontend Engineering and Engineering Management.",
-    images: ["https://wahidyankf.com/og-image.jpg"], // Same as OpenGraph image
     creator: "@wahidyankf", // Replace with your Twitter handle if you have one
   },
   robots: {

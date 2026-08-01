@@ -1,5 +1,6 @@
 import { CvContent } from "@/features/cv/shell/CvContent";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "CV | Wahidyan Kresna Fridayoka",
@@ -7,7 +8,10 @@ export const metadata: Metadata = {
     "Full curriculum vitae of Wahidyan Kresna Fridayoka — work experience, skills, education, and certifications.",
 };
 
-export default async function CV({ searchParams }: { searchParams: Promise<{ search?: string; scrollTop?: string }> }) {
-  const { search, scrollTop } = await searchParams;
-  return <CvContent initialSearchTerm={search ?? ""} scrollTop={scrollTop === "true"} />;
+export default function CV() {
+  return (
+    <Suspense>
+      <CvContent />
+    </Suspense>
+  );
 }
