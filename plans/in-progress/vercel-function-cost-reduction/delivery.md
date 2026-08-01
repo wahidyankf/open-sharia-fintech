@@ -774,17 +774,10 @@ every page on the site.
   - **Result**: `src/app/[locale]/layout.tsx` renders `lang={(await params).locale}` after its
     `isValidLocale(locale)` guard; the emitted-HTML check is retained in Phase 2.
 
-**Gherkin (binds) →** "Content pages are statically prerendered and CDN-cached" and "The document
-language still reflects the locale" — see [prd.md](./prd.md).
-
-- [x] `[AI]` Write the companion feature file under
-      `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/`.
-  - **Date**: 2026-08-01. **Status**: done — the feature binds static delivery, cache behavior, and
-    both locale-language scenarios.
-  - **Files Changed**:
-    `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature`.
-  - **Result**: focused `rhino-cli specs gherkin-cardinality validate` passed for the new feature;
-    `git diff --check` is clean.
+> **Plan correction (2026-08-01)**: the executable static-delivery Gherkin contract moves to Phase
+> 2. Its assertions depend on both Cause A and Cause B being absent; binding it here makes Phase 1's
+> required quick gate fail for the deliberately retained Cause B RED state. Unit 1 remains one PR,
+> so the root-layout implementation still lands with its companion Gherkin before merge.
 
 ### Phase 1 Gate
 
@@ -806,7 +799,11 @@ language still reflects the locale" — see [prd.md](./prd.md).
   - **Files Changed**: `apps/ayokoding-www/src/app/root-layout-static.unit.test.ts`.
   - **Result**: `npm exec nx run ayokoding-www:test:quick`, `:typecheck`, and `:lint` all completed
     successfully; `git diff --check` is clean.
-- [ ] `[AI]` Draft PR opened for Unit 1.
+- [x] `[AI]` Draft PR opened for Unit 1.
+  - **Date**: 2026-08-01. **Status**: done.
+  - **Files Changed**: `plans/in-progress/vercel-function-cost-reduction/delivery.md`.
+  - **Result**: draft [PR #129](https://github.com/wahidyankf/ose-public/pull/129) is open from
+    `vercel-function-cost-reduction/ayokoding-www` to `main`.
 
 > **Pause Safety**: safe to stop. The site is statically generated and functional. Rollback is a
 > single revert commit restoring `app/layout.tsx`.
@@ -849,9 +846,15 @@ resolves `?path=` via `useSearchParams()` today. This phase removes the redundan
     is zero.
 - [ ] `[AI]` Verify `?path=` behaviour end-to-end against a real path context.
 
-**Gherkin (binds) →** "Course-path context survives the move to client-side resolution".
+**Gherkin (binds) →** "Content pages are statically prerendered and CDN-cached", "The document
+language still reflects the locale", and "Course-path context survives the move to client-side
+resolution" — see [prd.md](./prd.md).
 
-- [ ] `[AI]` Write the companion feature file.
+- [ ] `[AI]` Write the companion feature file and executable bindings.
+  - File: `specs/apps/ayokoding/behavior/ayokoding-www/gherkin/content/static-delivery.feature`
+    plus its app-side Vitest-Cucumber and `ayokoding-www-fe-e2e` Playwright-BDD bindings.
+  - Acceptance: the behavior-coverage and E2E-coverage validators both recognize every static
+    delivery, CDN-cache, and English/Indonesian document-language step.
 
 ### Phase 2 Gate
 
