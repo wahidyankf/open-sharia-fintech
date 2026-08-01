@@ -58,14 +58,14 @@
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if grep -rn -E --include='*.ts' --exclude-dir=node_modules --exclude-dir=.features-gen --exclude-dir=test-results --exclude-dir=playwright-report '\\$?test\\.skip\\([^,)]*\\)' .; then echo 'ERROR: unconditional test.skip() found in test files above - use test.skip(condition, reason) for legitimate environment guards, or remove'; exit 1; fi && npx bddgen && npx playwright test",
+        "command": "if grep -rn -E --include='*.ts' --exclude-dir=node_modules --exclude-dir=.features-gen --exclude-dir=test-results --exclude-dir=playwright-report '\\$?test\\.skip\\([^,)]*\\)' .; then echo 'ERROR: unconditional test.skip() found in test files above - use test.skip(condition, reason) for legitimate environment guards, or remove'; exit 1; fi && node scripts/run-docker-e2e.mjs",
         "cwd": "{projectRoot}"
       }
     },
     "test:e2e:ui": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && npx playwright test --ui",
+        "command": "node scripts/run-docker-e2e.mjs --ui",
         "cwd": "{projectRoot}"
       }
     },

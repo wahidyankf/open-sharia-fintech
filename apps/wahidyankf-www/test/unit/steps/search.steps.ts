@@ -6,9 +6,11 @@ import { expect, vi } from "vitest";
 import { HomeContent } from "@/features/home/shell/HomeContent";
 
 const mockPush = vi.fn();
+let mockSearchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -30,6 +32,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   Background(({ Given }) => {
     Given("the app is running", () => {
       mockPush.mockClear();
+      mockSearchParams = new URLSearchParams();
+      window.history.replaceState({}, "", "/");
     });
   });
 
@@ -37,7 +41,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the home page", () => {});
 
     And('the visitor types "TypeScript" in the search input', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       const input = screen.getByPlaceholderText("Search skills, languages, or frameworks...");
       fireEvent.change(input, { target: { value: "TypeScript" } });
     });
@@ -49,22 +53,26 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Matching content is highlighted with a yellow mark", ({ When, Then }) => {
-    When('a visitor opens the home page with search term "TypeScript"', () => {});
+    When('a visitor opens the home page with search term "TypeScript"', () => {
+      window.history.replaceState({}, "", "/?search=TypeScript");
+    });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/search.feature:Matching content is highlighted with a yellow mark
     Then('the matching pill wraps "TypeScript" in a mark element', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "TypeScript" }));
+      render(React.createElement(HomeContent));
       const marks = Array.from(document.querySelectorAll("mark"));
       expect(marks.some((mark) => /TypeScript/i.test(mark.textContent ?? ""))).toBe(true);
     });
   });
 
   Scenario("Non-matching About Me shows a placeholder", ({ When, Then }) => {
-    When('a visitor opens the home page with search term "NoSuchTerm"', () => {});
+    When('a visitor opens the home page with search term "NoSuchTerm"', () => {
+      window.history.replaceState({}, "", "/?search=NoSuchTerm");
+    });
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/search.feature:Non-matching About Me shows a placeholder
     Then('the About Me card shows "No matching content in the About Me section."', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "NoSuchTerm" }));
+      render(React.createElement(HomeContent));
       expect(screen.getByText("No matching content in the About Me section.")).toBeInTheDocument();
     });
   });
@@ -73,7 +81,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     When("a visitor opens the home page", () => {});
 
     And('the visitor clicks the "TypeScript" skill pill', () => {
-      render(React.createElement(HomeContent, { initialSearchTerm: "" }));
+      render(React.createElement(HomeContent));
       fireEvent.click(screen.getByRole("button", { name: "TypeScript" }));
     });
 

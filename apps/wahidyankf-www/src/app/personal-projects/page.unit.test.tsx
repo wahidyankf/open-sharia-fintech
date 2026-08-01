@@ -5,11 +5,13 @@ import { PersonalProjectsContent } from "@/features/personal-projects/shell/Pers
 
 // Mock declarations
 const mockPush = vi.fn();
+let mockSearchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
+  useSearchParams: () => mockSearchParams,
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -58,25 +60,35 @@ vi.mock("@/features/search/core/search", () => ({
 describe("Personal Projects component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
+    window.history.replaceState({}, "", "/personal-projects");
   });
 
   it("renders the main sections", () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
     expect(screen.getByText("Personal Projects")).toBeInTheDocument();
     expect(screen.getByTestId("search-component")).toBeInTheDocument();
     expect(screen.getByTestId("navigation")).toBeInTheDocument();
   });
 
   it("renders all projects initially", () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
     expect(screen.getByText("Open Sharia Enterprise (OSE)")).toBeInTheDocument();
     expect(screen.getByText("AyoKoding")).toBeInTheDocument();
     expect(screen.getByText("Organic Lever")).toBeInTheDocument();
     expect(screen.getByText("The Organic")).toBeInTheDocument();
   });
 
+  it("initializes search from the URL", () => {
+    window.history.replaceState({}, "", "/personal-projects?search=AyoKoding");
+    render(<PersonalProjectsContent />);
+    expect(screen.getByTestId("search-component")).toHaveValue("AyoKoding");
+    expect(screen.getByText("AyoKoding")).toBeInTheDocument();
+    expect(screen.queryByText("Organic Lever")).not.toBeInTheDocument();
+  });
+
   it("filters projects based on search term", async () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
     const searchInput = screen.getByTestId("search-component");
     fireEvent.change(searchInput, { target: { value: "AyoKoding" } });
 
@@ -88,7 +100,7 @@ describe("Personal Projects component", () => {
   });
 
   it("displays 'No projects found' message when no matches", async () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
     const searchInput = screen.getByTestId("search-component");
     fireEvent.change(searchInput, { target: { value: "NonexistentProject" } });
 
@@ -98,7 +110,7 @@ describe("Personal Projects component", () => {
   });
 
   it("updates URL when searching", async () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
     const searchInput = screen.getByTestId("search-component");
     fireEvent.change(searchInput, { target: { value: "AyoKoding" } });
 
@@ -108,7 +120,7 @@ describe("Personal Projects component", () => {
   });
 
   it("renders project links correctly", () => {
-    render(<PersonalProjectsContent initialSearchTerm="" />);
+    render(<PersonalProjectsContent />);
 
     const repositoryLinks = screen.getAllByRole("link", {
       name: /Repository/i,

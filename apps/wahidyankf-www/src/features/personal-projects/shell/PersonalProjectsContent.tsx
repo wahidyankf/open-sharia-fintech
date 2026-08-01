@@ -18,13 +18,19 @@ const LinkIcon = ({ type }: { type: string }) => {
   }
 };
 
-function ProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
+function ProjectsContent() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setSearchTerm(initialSearchTerm);
-  }, [initialSearchTerm]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/personal-projects?search=${encodeURIComponent(term)}` : "/personal-projects";
@@ -83,12 +89,12 @@ function ProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
   );
 }
 
-export function PersonalProjectsContent({ initialSearchTerm }: { initialSearchTerm: string }) {
+export function PersonalProjectsContent() {
   return (
     <main className="flex min-h-screen flex-col bg-gray-900 p-4 pb-20 text-green-400 sm:p-8 md:p-12 lg:ml-80 lg:p-16 lg:pb-0">
       <Navigation />
       <div className="mx-auto w-full max-w-4xl flex-grow">
-        <ProjectsContent initialSearchTerm={initialSearchTerm} />
+        <ProjectsContent />
       </div>
     </main>
   );

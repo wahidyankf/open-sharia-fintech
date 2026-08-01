@@ -26,9 +26,9 @@ export type FeaturedSkill = {
   duration: number;
 };
 
-export function HomeContent({ initialSearchTerm }: { initialSearchTerm: string }) {
+export function HomeContent() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const aboutMe = cvData.find((entry) => entry.type === "about");
   const topSkills = getTopSkillsLastFiveYears(cvData);
@@ -58,8 +58,14 @@ export function HomeContent({ initialSearchTerm }: { initialSearchTerm: string }
   );
 
   useEffect(() => {
-    setSearchTerm(initialSearchTerm);
-  }, [initialSearchTerm]);
+    const syncSearchTerm = () => {
+      setSearchTerm(new URLSearchParams(window.location.search).get("search") ?? "");
+    };
+
+    syncSearchTerm();
+    window.addEventListener("popstate", syncSearchTerm);
+    return () => window.removeEventListener("popstate", syncSearchTerm);
+  }, []);
 
   const updateURL = (term: string) => {
     const newURL = term ? `/?search=${encodeURIComponent(term)}` : "/";

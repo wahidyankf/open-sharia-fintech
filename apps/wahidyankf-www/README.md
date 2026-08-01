@@ -42,7 +42,7 @@ nx run wahidyankf-www:test:quick
 nx run wahidyankf-www:test:integration
 
 # Gherkin spec coverage check
-nx run wahidyankf-www:specs:coverage
+nx run wahidyankf-www:test:specs
 ```
 
 ## Testing stack
@@ -67,7 +67,7 @@ Platform-agnostic specifications for this app live at
   `components/`, `behavior/`
 - **Gherkin features**:
   [`specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/`](../../specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/README.md) —
-  7 feature files organized per feature module
+  feature files organized per feature module
 
 ## Architecture
 

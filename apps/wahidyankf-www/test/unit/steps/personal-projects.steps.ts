@@ -7,6 +7,7 @@ import { PersonalProjectsContent } from "@/features/personal-projects/shell/Pers
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@/features/app-shell/shell/Navigation", () => ({
@@ -35,7 +36,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page renders the heading
     Then('the H1 shows "Personal Projects"', () => {
-      render(React.createElement(PersonalProjectsContent, { initialSearchTerm: "" }));
+      render(React.createElement(PersonalProjectsContent));
       expect(screen.getByRole("heading", { level: 1, name: "Personal Projects" })).toBeInTheDocument();
     });
   });
@@ -45,7 +46,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page renders a search input
     Then('a search input with placeholder "Search projects..." is visible', () => {
-      render(React.createElement(PersonalProjectsContent, { initialSearchTerm: "" }));
+      render(React.createElement(PersonalProjectsContent));
       expect(screen.getByPlaceholderText("Search projects...")).toBeInTheDocument();
     });
   });
@@ -55,7 +56,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
 
     // @covers specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/personal-projects/personal-projects.feature:Personal projects page lists at least one project card
     Then("at least one project card is visible", () => {
-      render(React.createElement(PersonalProjectsContent, { initialSearchTerm: "" }));
+      render(React.createElement(PersonalProjectsContent));
       const headings = screen.getAllByRole("heading", { level: 2 });
       expect(headings.length).toBeGreaterThan(0);
     });
@@ -68,7 +69,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     Then(
       "every project card exposes a Repository, Website, or YouTube link where the project has that resource",
       () => {
-        render(React.createElement(PersonalProjectsContent, { initialSearchTerm: "" }));
+        render(React.createElement(PersonalProjectsContent));
         const links = screen.getAllByRole("link", { name: /Repository|Website|YouTube/i });
         expect(links.length).toBeGreaterThan(0);
       },

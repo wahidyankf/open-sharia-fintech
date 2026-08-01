@@ -1167,7 +1167,7 @@ Independent of Unit 1; runs in parallel in its own worktree.
 > attribute budget headroom to it**, and if capacity is ever contested, this is the unit to defer —
 > not Unit 1. Phase 7's savings table is corrected accordingly.
 
-- [ ] `[AI]` **RED** — add a failing source-level guard that the three routes take no `searchParams`.
+- [x] `[AI]` **RED** — add a failing source-level guard that the three routes take no `searchParams`.
   - File: `apps/wahidyankf-www/src/app/static-routes.unit.test.ts` (new)
   - This app's vitest globs differ from `ayokoding-www`'s: the `unit-fe` project collects
     `src/**/*.unit.test.{ts,tsx}` under **jsdom**, and there is no `test/unit/**` unit glob at all
@@ -1178,41 +1178,103 @@ Independent of Unit 1; runs in parallel in its own worktree.
   - Command: `nx run wahidyankf-www:test:unit`
   - Acceptance: the test **fails** today on all three — `page.tsx:3-4`, `cv/page.tsx:10-11`,
     `personal-projects/page.tsx:10-11`. Falsifiable both ways.
-- [ ] `[AI]` **Build-output proof** — `nx build wahidyankf-www`; the route table must show `ƒ` for
+  - **Date**: 2026-08-01. **Status**: done — the source-level guard was added and intentionally
+    fails for all three current dynamic routes.
+  - **Files Changed**: `apps/wahidyankf-www/src/app/static-routes.unit.test.ts`.
+  - **Result**: `npm exec nx run wahidyankf-www:test:unit` collected the test under `unit-fe` and
+    reported exactly three failures, one each for `/`, `/cv`, and `/personal-projects`.
+- [x] `[AI]` **Build-output proof** — `nx build wahidyankf-www`; the route table must show `ƒ` for
       `/`, `/cv`, and `/personal-projects` before the fix. Same tiering rationale as Phase 1: the
       route table is build output and cannot be asserted from a cached `test:unit` run.
-- [ ] `[AI]` **GREEN** — remove the `searchParams` props and read the query client-side.
+  - **Date**: 2026-08-01. **Status**: done — reconciled from the Phase 0 baseline build record.
+  - **Files Changed**: none (throwaway baseline build).
+  - **Command**: `nx build wahidyankf-www`.
+  - **Result**: Phase 0 recorded the exact pre-fix route table: `ƒ /`, `○ /_not-found`, `ƒ /cv`, and
+    `ƒ /personal-projects`. Thus all three Phase 5 targets were dynamic before this unit changed
+    them; `robots.txt` and `sitemap.xml` were absent as well. See the Phase 0 build record above.
+- [x] `[AI]` **GREEN** — remove the `searchParams` props and read the query client-side.
+  - **Date**: 2026-08-02. **Status**: done — corrected after the delivery review found that a
+    whole-page Suspense boundary would remove portfolio content from static HTML.
+  - **Result**: all three route modules are synchronous and query-prop-free. Their client content
+    renders the unfiltered portfolio during SSR, then a post-hydration effect reads
+    `window.location.search` and re-seeds on `popstate`; CV handles `scrollTop` in a separate
+    post-hydration effect. No content module calls `useSearchParams()`, and no page wraps all content
+    in `<Suspense>`.
   - Files: `src/app/page.tsx:3-4`, `src/app/cv/page.tsx:10-11`,
     `src/app/personal-projects/page.tsx:10-11` — drop the prop.
-  - Read `useSearchParams()` inside the already-`"use client"` consumers
-    (`HomeContent.tsx:29-31`, `CvContent.tsx:477-484`, `PersonalProjectsContent.tsx:21-27`), each
-    wrapped in `<Suspense>`. These components already only use the value to seed `useState`, so this
-    is a prop swap, not a rewrite.
-  - Command: `nx build wahidyankf-www`
-  - Acceptance: all three routes show `○` in the route table (were `ƒ`). The production build fails
-    outright if a `<Suspense>` boundary is missing, so a passing build is real evidence.
-- [ ] `[AI]` **REFACTOR** — add `src/app/robots.ts` and `src/app/sitemap.ts` (neither exists today),
+  - **Final verification**: `npm exec -- nx build wahidyankf-www --skip-nx-cache` emits `○ /`,
+    `○ /cv`, and `○ /personal-projects`; generated `index.html`, `cv.html`, and
+    `personal-projects.html` each contain their visible route heading. The static-content regression
+    suite and `test:quick` pass (20 files / 191 tests).
+- [x] `[AI]` **REFACTOR** — add `src/app/robots.ts` and `src/app/sitemap.ts` (neither exists today),
       modelled on `apps/ose-www/src/app/robots.ts` and its `sitemap-builder.ts`.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `src/app/robots.ts`, `src/app/sitemap.ts`, and
+    `src/app/seo-routes.unit.test.ts`.
+  - **Result**: the SEO route unit suite passes 18 files / 181 tests, typecheck passes, and the
+    verified production build emits `/robots.txt` and `/sitemap.xml` as static routes alongside the
+    three converted portfolio routes.
   - Acceptance: both routes prerender (`○` in the route table) and `robots.txt` names the sitemap.
     Falsifiable both ways: before this step, `test -f` on either file exits non-zero.
-- [ ] `[AI]` Fix the 404 `og-image.jpg` referenced at `src/app/layout.tsx:39,51` — either ship the
+- [x] `[AI]` Fix the 404 `og-image.jpg` referenced at `src/app/layout.tsx:39,51` — either ship the
       asset or remove the reference.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `apps/wahidyankf-www/src/app/layout.tsx` and
+    `apps/wahidyankf-www/src/app/layout.unit.test.tsx`.
+  - **Result**: no suitable local social image existed, so the stale OpenGraph and Twitter image
+    fields were removed. The focused RED/GREEN metadata test, typecheck, full unit suite (18 files /
+    182 tests), and production build all pass; the build still emits every route as static.
   - Acceptance: no metadata field points at a URL that 404s.
-- [ ] `[AI]` Verify a shared filtered URL still works: opening `/cv?search=<term>` pre-fills the
+- [x] `[AI]` Verify a shared filtered URL still works: opening `/cv?search=<term>` pre-fills the
       search box and filters results.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `apps/wahidyankf-www/src/app/cv/page.unit.test.tsx`.
+  - **Result**: `/cv?search=Software` seeds the search box with `Software`, renders the matching
+    `Software Engineer` entry, and excludes the unrelated education entry while using the real search
+    core. Typecheck and the full unit suite (18 files / 182 tests) pass.
 
 **Gherkin (binds) →** "Search-filtered portfolio routes are static yet still filterable".
 
-- [ ] `[AI]` Locate the existing `specs/` path for `wahidyankf-www` (do not invent one) and write the
+- [x] `[AI]` Locate the existing `specs/` path for `wahidyankf-www` (do not invent one) and write the
       companion feature file there.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `specs/apps/wahidyankf/behavior/wahidyankf-www/gherkin/search/`
+    `static-filterable-routes.feature`, its Vitest and Playwright step bindings, and the feature
+    indexes.
+  - **Result**: the direct CV query URL pre-fills `TypeScript`, shows a matching entry, and hides an
+    unrelated one. The uncached app `static-routes:validation` gate independently inspects the
+    emitted manifests for static-route proof. The complementary E2E scenarios are black-box HTTP
+    assertions: the required target builds a fresh production Docker image, waits for its health
+    check, then verifies every public HTML route plus `robots.txt` and `sitemap.xml` without reading
+    checkout artifacts. Local fixer verification records 20 unit files / 198 tests, 8 specs / 40
+    scenarios / 95 steps, zero new unbound E2E scenarios, and 32 passing Chromium tests.
 
 ### Phase 5 Gate
 
-- [ ] `[AI]` Zero `ƒ` routes in the `wahidyankf-www` route table (was 3).
-- [ ] `[AI]` `robots.ts` and `sitemap.ts` exist and prerender.
-- [ ] `[AI]` `nx run wahidyankf-www:test:quick` exits 0 — it chains `typecheck`, `lint`, `test:unit`,
-      `test:coverage`, and `test:specs`. Do **not** call `specs:coverage`; no such target exists on
-      this project either (same `targetDefaults`-does-not-create-targets reason as Phase 4).
+- [x] `[AI]` Zero `ƒ` routes in the `wahidyankf-www` route table (was 3).
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: none (verification only).
+  - **Result**: Phase 0 recorded `ƒ /`, `ƒ /cv`, and `ƒ /personal-projects`. A fresh no-cache
+    production build now prints `○` for all three and no `ƒ` marker.
+- [x] `[AI]` `robots.ts` and `sitemap.ts` exist and prerender.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: none (verification only).
+  - **Result**: the fresh no-cache build lists `○ /robots.txt` and `○ /sitemap.xml`; the Unit 2
+    change set contains `src/app/robots.ts` and `src/app/sitemap.ts`.
+- [x] `[AI]` `nx run wahidyankf-www:test:quick` exits 0 — it chains `typecheck`, `lint`, `test:unit`,
+      `test:coverage`, and `test:specs`, with a non-cached `static-routes:validation` prerequisite.
+      That prerequisite runs `nx build wahidyankf-www --skip-nx-cache` and validates both emitted
+      manifests before the five-stage quick gate starts. Do **not** call `specs:coverage`; no such
+      target exists on this project either (same `targetDefaults`-does-not-create-targets reason as
+      Phase 4).
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: none (verification only).
+  - **Result**: before the Cycle-1 review correction, an uncached `wahidyankf-www:test:quick` run
+    exited 0 after typecheck, lint, 20 test files / 191 unit tests, 97.38% line coverage, specs
+    structure with 0 findings, and behavior coverage of 8
+    specs / 38 scenarios / 89 steps. The correction adds the uncached manifest proof and six BDD
+    steps; its replacement local gate is recorded with the corrective commit. Network access was
+    needed only for the configured `npx oxlint@latest` lint invocation.
 - [ ] `[AI]` **Unit 2 delivery boundary** — review cycle, then `[AI]` merge; deploy to
       `prod-wahidyankf-www` and confirm `x-vercel-cache: HIT` on a repeat request.
 
