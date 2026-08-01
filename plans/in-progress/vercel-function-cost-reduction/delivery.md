@@ -486,6 +486,45 @@ renames, not one — `light` → `haiku` (DD-35), then camelCase → kebab-case.
     what makes Units 1–3 entirely `[AI]`. Grouping every dashboard action into one sitting is the
     point.
   - Re-verified still broken 2026-08-01 (step 0.8).
+  - **Root cause identified 2026-08-01 — the plan's own description of this step was wrong.** It is
+    **not** "a Vercel domain setting". The apex is not served by Vercel at all:
+
+    | Probe                          | Result                                                       |
+    | ------------------------------ | ------------------------------------------------------------ |
+    | `dig +short ayokoding.com`     | `198.185.159.144/145`, `198.49.23.144/145` — **Squarespace** |
+    | apex response `server:`        | `Squarespace`                                                |
+    | `dig +short www.ayokoding.com` | `cname.vercel-dns.com.` → `76.76.21.61` — **Vercel**         |
+    | `dig +short ayokoding.com NS`  | `ns-cloud-c{1,2,3,4}.googledomains.com.`                     |
+
+  - **The measured chain**, three hops where one would do:
+
+    ```text
+    https://ayokoding.com/   301  → http://www.ayokoding.com     server: Squarespace   <-- downgrade
+    http://www.ayokoding.com 308  → https://www.ayokoding.com/   server: Vercel
+    https://www.ayokoding.com/                                    server: Vercel
+    ```
+
+    Squarespace emits the `301` **and hardcodes `http://`**. Vercel then repairs it with a `308`.
+    Vercel cannot fix hop 1, because it never sees hop 1 — so no amount of Vercel configuration
+    resolves this. The step is unblocked, not impossible; it just belongs to a different console.
+
+  - **Fix — move the apex to Vercel, in the DNS panel that holds the `ns-cloud-*` zone** (Google
+    Domains, now operated by Squarespace; the same account that answers for `www`, since `www` is
+    already CNAME'd to Vercel from that zone):
+    1. Vercel → project `ayokoding-www` → Settings → Domains → add `ayokoding.com`, and choose the
+       **Redirect to `www.ayokoding.com`** option (Vercel issues `308` and preserves the scheme).
+    2. In the DNS zone, **replace the four Squarespace A records** on the apex with Vercel's single
+       apex A record, `76.76.21.21`. Leave the `www` CNAME untouched.
+    3. Wait for TTL expiry, then re-run step 0.9b.
+  - **Ordering matters — do step 1 before step 2.** Adding the domain in Vercel first means the
+    moment DNS cuts over there is already a listener; reversing the order leaves the apex dark for
+    the propagation window.
+  - **Reversible**: the four Squarespace A records are the entire rollback. Record them before
+    editing — `198.185.159.144`, `198.185.159.145`, `198.49.23.144`, `198.49.23.145`.
+  - **Why this is worth doing beyond the two round trips**: hop 1 is a plaintext `http://` URL, so
+    any apex visitor on a hostile network has one unencrypted request to intercept before HSTS can
+    apply. That is the real defect; the latency is secondary.
+
 - [ ] `[AI]` Verify the fix:
       `curl -sS -o /dev/null -D - https://ayokoding.com/ | grep -i "^HTTP/\|^location:"`
   - Acceptance: a single redirect straight to `https://www.ayokoding.com/`, with **no** `http://`
