@@ -10,6 +10,11 @@ Active project plans currently being worked on.
   Vercel usage from ~$57/mo to under $20/mo so the Pro plan's included credit absorbs it and the
   invoice stays at the $20 subscription. Fixes the root cause: `ayokoding-www` prerenders zero of
   its ~2,068 content pages.
+- [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md) — Four
+  authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
+  pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied
+  retroactively to every open plan in all three repos. Derived from the three-plan AI Model
+  Benchmark chain.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
