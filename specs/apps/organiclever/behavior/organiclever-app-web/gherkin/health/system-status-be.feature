@@ -11,7 +11,7 @@ Feature: BE Status Page
     Then the response status is 200
     And the body contains "Not configured"
 
-  @unit
+  @unit @e2e
   Scenario: Backend health-check page is excluded from search indexes
     When a crawler requests GET /system/status/be
     Then the response declares the page non-indexable
