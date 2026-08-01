@@ -109,11 +109,11 @@ and R-B were satisfied and the reversal is legitimate.
 ## Delivery at a glance
 
 - **Delivery Mode**: `worktree-to-pr` — see [`delivery.md`](./delivery.md#delivery-mode-worktree-to-pr).
-- **Worktree**: `worktrees/plan-decision-integrity-hardening/` in each repo — see
-  [`delivery.md` §Worktree](./delivery.md#worktree).
+- **Worktree**: one per delivery unit, `worktrees/plan-decision-integrity-hardening-<unit-slug>/` —
+  see [`delivery.md` §Worktree](./delivery.md#worktree).
 - **Phases**: ten (0-9). Phase 0 sets up and opens no PR; Phases 6 and 7 are the two sibling-repo
   propagation nodes and run in parallel.
-- **Delivery units**: six — see
+- **Delivery units**: seven — see
   [`delivery.md` §Delivery Boundaries](./delivery.md#delivery-boundaries).
 - **Target surfaces**: `repo-governance/`, `.claude/agents/`, `.claude/skills/`, `docs/explanation/`,
   and the open plan folders — in `ose-public`, `ose-primer`, and `ose-private`. No `apps/` or
