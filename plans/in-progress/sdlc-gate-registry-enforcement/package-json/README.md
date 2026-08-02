@@ -39,14 +39,16 @@ Worth stating because it bounds the blast radius: no script, dependency, version
 or Volta pin is touched by this plan. Verified — this prints `IDENTICAL` four times:
 
 ```sh
-node -e '
-const fs=require("fs");
-const live={"ose-public":"../../../../package.json"};  # and each sibling repo path
-for(const [r,p] of Object.entries(live)){
-  const a=JSON.parse(fs.readFileSync(`package-${r}.json`,"utf8"));
-  const b=JSON.parse(fs.readFileSync(p,"utf8"));
-  delete a["lint-staged"]; delete b["lint-staged"];
-  console.log(r+": "+(JSON.stringify(a)===JSON.stringify(b)?"IDENTICAL":"DIVERGED"));
+# Run from this folder. REPOS is the directory holding all four checkouts.
+REPOS=/path/to/ose-projects node -e '
+const fs = require("fs");
+const repos = process.env.REPOS;
+for (const r of ["ose-public", "ose-primer", "ose-private", "beaver-nest"]) {
+  const a = JSON.parse(fs.readFileSync(`package-${r}.json`, "utf8"));
+  const b = JSON.parse(fs.readFileSync(`${repos}/${r}/package.json`, "utf8"));
+  delete a["lint-staged"];
+  delete b["lint-staged"];
+  console.log(r + ": " + (JSON.stringify(a) === JSON.stringify(b) ? "IDENTICAL" : "DIVERGED"));
 }'
 ```
 
