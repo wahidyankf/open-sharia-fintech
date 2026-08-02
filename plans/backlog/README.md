@@ -77,6 +77,9 @@ its band-completion signal lands):
 
 Standalone plans (outside the `ayokoding-learning-path-*` programme):
 
+- [ayokoding-database-internals-ruff-config](./ayokoding-database-internals-ruff-config/README.md)
+  — Adds course-scoped Ruff configuration so annotation-heavy database-internals examples remain
+  formatter-stable without changing course behavior or shared lint policy.
 - [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md)
   — Bounds concurrency (and retries transient failures) in `ayokoding-www-fe-e2e`'s bulk-link-check
   helper, which currently fires every collected `href` at once.

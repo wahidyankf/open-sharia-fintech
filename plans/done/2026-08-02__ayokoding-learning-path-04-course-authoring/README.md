@@ -24,10 +24,9 @@ revision, everything from Band 3 onward (Bands 3–9, 69 course bodies) plus the
 scope contracts (0 course bodies; they target Band 5, which moved out) has been **carved out into
 seven new backlog plans** — see [§Successor plans](#successor-plans) below. This plan's terminal scope
 is now exactly Phase 0 (setup) + Phase 1 (6 AI courses) + Band 1 (5 courses) + Band 2 (10 courses) =
-**21 course bodies**, all either already merged to `origin/main` or actively in-flight on the currently
-open Band 2 cohort branch. This trim does not touch the historical status of any already-merged or
-already-authored checklist item — see [delivery.md](./delivery.md) for the real PR numbers and merge
-commits.
+**21 course bodies**, all present on `origin/main` as verified during this plan's 2026-08-02 final
+closeout. This trim does not touch the historical cohort status recorded in [delivery.md](./delivery.md)
+or its real PR numbers and merge commits.
 
 This is **Wave 2** of a five-plan split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
@@ -72,18 +71,15 @@ This plan's 21-course terminal scope exceeds the repo's 5-15-course delivery-uni
 new backlog plans. That is deliberate, not an oversight, and applies only to this plan among the
 course-authoring family. The 5-15 rule binds **new** backlog delivery-unit sizing, to prevent the
 pattern that caused three redundant plans to accumulate scope on one page before this split. It does
-not require retroactively fragmenting an **in-progress** plan's already-merged and already-in-flight
-execution history into smaller pieces: Phase 0, Phase 1, and Band 1 are fully merged to `origin/main`
-with real PR numbers and merge commits, and Band 2 is five-of-ten merged with the remaining five
-authored and committed on the active cohort branch awaiting its single cohort PR. Splitting this
-already-executing 21-course unit across two or more plan folders would require either un-merging real
-history or reassigning already-landed PRs to a different plan folder after the fact — both falsify the
-delivery record for no benefit, since the point of the sizing rule (bounding a single plan's blast
-radius before work starts) has already been satisfied by the band-by-band phase structure this plan
-used throughout its execution. The seven new successor plans (05–11 above), each newly authored and
-each sized within the 5-15-course band, are the vehicle for applying the rule going forward; this
-plan's 21-course exception is scoped to its own already-in-flight history and does not set precedent
-for any future plan.
+not require retroactively fragmenting an already-executed plan's history into smaller pieces. At the
+historical scope split, Phase 0, Phase 1, and Band 1 had merged while Band 2 had an open cohort branch;
+all 21 bodies had subsequently landed on `origin/main` by the 2026-08-02 closeout. Splitting that
+completed 21-course unit across two or more plan folders would require either un-merging real history
+or reassigning already-landed PRs to a different plan folder after the fact — both falsify the delivery
+record for no benefit, since the point of the sizing rule (bounding a single plan's blast radius before
+work starts) had already been satisfied by the band-by-band phase structure. The seven new successor
+plans (05–11 above), each newly authored and each sized within the 5-15-course band, apply the rule
+going forward; this plan's exception remains historical and does not set precedent.
 
 > **Programme decisions** — this plan cites the shared `R*`/`A*` decision ids (`R9`, `A6`, `A8`,
 > `A9`, `A12`) throughout; their definitions (folded from the retired shared programme file so this
@@ -318,8 +314,8 @@ step here that appends a course ID to a `.yaml` is a boundary violation, not a c
 
 **5.** `vercel-function-cost-reduction` is merged to `origin/main` — checkable via
 `test ! -f apps/ayokoding-www/src/app/layout.tsx` (see [§`vercel-function-cost-reduction`
-precondition](#vercel-function-cost-reduction-precondition) above). This precondition binds only
-the still-open Band-2 cohort PR, not Phase 0/1/Band-1, which are already merged and unaffected.
+precondition](#vercel-function-cost-reduction-precondition) above). This precondition formerly bound
+the historical Band-2 cohort PR; it does not apply to the completed 21-course body delivery.
 
 ### Downstream — what this plan hands off, and to whom
 
