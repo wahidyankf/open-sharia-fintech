@@ -19,29 +19,29 @@ Captured 2026-08-02 across all four repos. This table is the conformance baselin
 `lint-staged` is listed separately from `pre-commit` because it is the file-type dispatch mechanism
 the pre-commit hook delegates to, and it is where most of the drift hides.
 
-| Check                                                     | lint-staged     | pre-push         | PR gate                       | main-ci   | Verdict                                                                                               |
-| --------------------------------------------------------- | --------------- | ---------------- | ----------------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| `md naming validate`                                      | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                      |
-| `md frontmatter validate`                                 | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                      |
-| `convention emoji validate`                               | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                      |
-| `docker compose config`                                   | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                      |
-| Formatters (prettier, rustfmt, gofmt, shfmt, fantomas, …) | write           | —                | auto-commit                   | —         | Never verified anywhere                                                                               |
-| `env staged-guard validate`                               | — (hook step 1) | —                | —                             | —         | Staged-only — reads the git index; no CI counterpart can exist. Declare with `carve-out: staged-only` |
-| `harness bindings generate`                               | — (hook step 3) | —                | —                             | —         | Mutation, not a check. Declare as `type: mutation`                                                    |
-| lockfile sync                                             | — (hook step 4) | —                | —                             | —         | Mutation, inline shell. Extract to `git lockfile sync`, declare as `type: mutation`                   |
-| `commitlint`                                              | — (commit-msg)  | —                | —                             | —         | Message-text scope; no file surface. Declare on the `commit-msg` surface                              |
-| `harness bindings validate`                               | —               | path-gated       | —                             | —         | Violates rule — never reaches CI                                                                      |
-| `harness sync validate` / `validate:sync`                 | —               | —                | —                             | —         | Declared in `package.json`, invoked nowhere                                                           |
-| `md mermaid validate`                                     | yes             | —                | —                             | all files | Violates rule — absent from PR gate                                                                   |
-| `md heading-hierarchy validate`                           | yes             | —                | —                             | all files | Violates rule — absent from PR gate                                                                   |
-| `specs:structure-validation`                              | —               | via `test:quick` | pinned `--projects=rhino-cli` | `--all`   | Pinned scope, not affected scope                                                                      |
-| `markdownlint-cli2`                                       | yes             | —                | via `npm run lint:md`         | all files | Conforms                                                                                              |
-| `md links validate`                                       | —               | repo-wide        | repo-wide                     | repo-wide | Conforms                                                                                              |
-| `md readme-index validate`                                | —               | repo-wide        | repo-wide                     | repo-wide | Conforms; absent from the standard's tables                                                           |
-| `harness duplication validate`                            | —               | repo-wide        | repo-wide                     | repo-wide | Conforms; absent from the standard's tables                                                           |
-| `convention license validate`                             | —               | path-gated       | always                        | always    | Conforms; absent from the standard's tables                                                           |
-| `env validate`                                            | —               | repo-wide        | `validate-env.yml`            | repo-wide | Conforms via the standalone workflow                                                                  |
-| `deps:audit`                                              | —               | —                | —                             | —         | Cron-only, undeclared side-channel                                                                    |
+| Check                                                     | lint-staged     | pre-push         | PR gate                       | main-ci   | Verdict                                                                                                              |
+| --------------------------------------------------------- | --------------- | ---------------- | ----------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
+| `md naming validate`                                      | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                                     |
+| `md frontmatter validate`                                 | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                                     |
+| `convention emoji validate`                               | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                                     |
+| `docker compose config`                                   | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                                     |
+| Formatters (prettier, rustfmt, gofmt, shfmt, fantomas, …) | write           | —                | auto-commit                   | —         | Never verified anywhere                                                                                              |
+| `env staged-guard validate`                               | — (hook step 1) | —                | —                             | —         | Staged-only — reads the git index; no CI counterpart can exist. Declare with `carve-out: staged-only`                |
+| `harness bindings generate`                               | — (hook step 3) | —                | —                             | —         | Mutation, not a check. Declare as `type: mutation`                                                                   |
+| lockfile sync                                             | — (hook step 4) | —                | —                             | —         | Mutation, inline shell. Extract to `git lockfile sync`, declare as `type: mutation`                                  |
+| `commitlint`                                              | — (commit-msg)  | —                | —                             | —         | Message-text scope; no file surface. Declare on the `commit-msg` surface                                             |
+| `harness bindings validate`                               | —               | path-gated       | —                             | —         | Violates rule — never reaches CI                                                                                     |
+| `harness sync validate` / `validate:sync`                 | —               | —                | —                             | —         | Declared in `package.json`, invoked nowhere                                                                          |
+| `md mermaid validate`                                     | yes             | —                | —                             | all files | Violates rule — absent from PR gate                                                                                  |
+| `md heading-hierarchy validate`                           | yes             | —                | —                             | all files | Violates rule — absent from PR gate                                                                                  |
+| `specs:structure-validation`                              | —               | via `test:quick` | pinned `--projects=rhino-cli` | `--all`   | Pinned scope, not affected scope                                                                                     |
+| `markdownlint-cli2`                                       | yes             | —                | via `npm run lint:md`         | all files | Conforms                                                                                                             |
+| `md links validate`                                       | —               | repo-wide        | repo-wide                     | repo-wide | Conforms                                                                                                             |
+| `md readme-index validate`                                | —               | repo-wide        | repo-wide                     | repo-wide | Conforms; absent from the standard's tables                                                                          |
+| `harness duplication validate`                            | —               | repo-wide        | repo-wide                     | repo-wide | Conforms; absent from the standard's tables                                                                          |
+| `convention license validate`                             | —               | path-gated       | always                        | always    | Conforms; absent from the standard's tables                                                                          |
+| `env validate`                                            | —               | repo-wide        | `validate-env.yml`            | repo-wide | Conforms via the standalone workflow                                                                                 |
+| `deps:audit`                                              | —               | —                | —                             | —         | Correctly outside every gate (ratified rule 3). Stays out of the registry; gets its own descriptively-named workflow |
 
 Two further structural findings:
 
@@ -185,15 +185,9 @@ gates:
     restages: true
     surfaces:
       pre-commit: { scope: affected-file-type, glob: "apps/*/package.json" }
-
-  - id: deps-audit
-    type: check
-    command: "deps:audit"
-    kind: nx
-    wiring: hand-wired
-    surfaces:
-      cron: { scope: all-projects }
 ```
+
+`deps:audit` is deliberately **absent** — see [§2.2.3](#223-what-is-deliberately-outside-the-registry).
 
 Field contract:
 
@@ -209,10 +203,11 @@ Field contract:
 | `surfaces`  | yes            | Map of surface name to scope descriptor. At least one entry.                                                                             |
 | `carve-out` | no (checks)    | `staged-only` — the check reads the git index, so no CI counterpart can exist. Exempts it from the composition rule.                     |
 
-Surface names are `commit-msg`, `pre-commit`, `pre-push`, `ci`, and `cron`. Scope values are the five
-already ratified in the SDLC Gate Standard — `affected-file-type`, `all-file-type`,
-`affected-projects`, `all-projects`, `other` — plus `path-gated`, which is the qualifier the standard
-already applies in prose to the governance validators. No new scope vocabulary is introduced.
+Surface names are `commit-msg`, `pre-commit`, `pre-push`, and `ci` — **the four gate surfaces, and
+only those**. Scope values are the five already ratified in the SDLC Gate Standard —
+`affected-file-type`, `all-file-type`, `affected-projects`, `all-projects`, `other` — plus
+`path-gated`, which is the qualifier the standard already applies in prose to the governance
+validators. No new scope vocabulary is introduced.
 
 **Declaration order is execution order.** `gate run` executes a surface's entries top to bottom, so
 the registry preserves the ordering the hooks have today: the staged guard first, then the
@@ -253,6 +248,57 @@ bespoke dispatcher would have to re-earn.
 
 The emitter writes marker-first: it checks for the already-applied marker **before** locating the
 anchor, so a re-run replaces the block rather than appending a second copy.
+
+### 2.2.3 What is deliberately outside the registry
+
+The registry's completeness claim is scoped precisely: **it covers the four gate surfaces**
+(`commit-msg`, `pre-commit`, `pre-push`, `ci`). Anything one of those surfaces does is declared;
+anything absent from `gates:` is not run by any of them.
+
+Scheduled, non-gating pipelines are **outside** that boundary by design. They are not gate surfaces,
+they block nothing, and modelling them as one would make `gate validate` responsible for enforcing
+composition rules over things the composition rule does not govern.
+
+| Outside the registry           | Why                                                                                                                                                                                         | Where it lives                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `deps:audit`                   | Non-hermetic — reads a remote advisory database that moves independently of the code, so a green commit can turn red with no repository change. Ratified rule 3 keeps it out of every gate. | Its own dedicated workflow (below)                         |
+| `test:integration`, `test:e2e` | Uncacheable and heavy; ratified rule 3 keeps them out of every gate.                                                                                                                        | The per-app deploy pipelines (`*-test-local-deploy-*.yml`) |
+
+An earlier draft of this plan modelled `deps:audit` as a fifth `cron` surface inside the registry.
+That was dropped: a "surface" that no composition rule applies to, that emits no CI matrix row, and
+that no hook invokes is not a surface — it is a scheduled job wearing the word. Declaring it bought
+visibility at the price of blurring what the registry means. It now gets visibility the honest way,
+through a workflow whose name says what it does.
+
+#### The dependency-audit workflow
+
+`deps-audit.yml` is replaced by a new, descriptively-named workflow in all four repos:
+
+|          | Value                                             |
+| -------- | ------------------------------------------------- |
+| Filename | `dependency-vulnerability-audit.yml`              |
+| `name:`  | `Dependency Vulnerability Audit`                  |
+| Trigger  | `schedule` (unchanged cron) + `workflow_dispatch` |
+| Runs     | `nx run-many --all -t deps:audit`                 |
+
+The name is chosen to satisfy the mechanical derivation the naming convention requires:
+`Dependency Vulnerability Audit` → lowercase → spaces to hyphens → `dependency-vulnerability-audit`
+→ append `.yml`. It also states what the job actually does — scan dependencies for known
+vulnerabilities — rather than restating its own filename, which is what `name: deps-audit` does
+today.
+
+**This requires amending the naming convention**, and that amendment is in scope:
+
+1. `dependency` is not in the convention's cross-cutting `{domain}` list
+   (`commons`, `markdown`, `docs`, or a `{cli-name}`).
+2. `audit` is not in the fixed verb-and-qualifier vocabulary.
+3. The Cross-cutting workflows table lists only `pr-quality-gate.yml` and `validate-env.yml` —
+   neither `deps-audit.yml` nor `main-ci.yml` was ever registered there, so the current file set is
+   already out of agreement with its own convention.
+
+Related finding surfaced while checking this: `ose-primer` ships `name: Nightly Dependency Audit`
+inside a file named `deps-audit.yml`. That violates the `name:`-mirrors-filename rule outright. The
+rename fixes it as a side effect.
 
 ### 2.3 Why gate _sets_ may differ per repo but the schema may not
 
@@ -369,13 +415,15 @@ Order matters and is enforced by the phase gates:
 
 ## 3. Document Amendments
 
-| Document                                                     | Change                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/reference/sdlc-gate-standard.md`                       | Composition rule becomes `(pre-commit ∪ pre-push) == PR gate`. Stage table drops stage 5. Stage 5 section removed. Stage 3 and 4 tables corrected to include `md readme-index validate`, `harness duplication validate`, `convention license validate`. Registry described as the normative mechanism. Allowed Divergence gains the gate-entry-set rule. |
-| `repo-governance/development/workflow/git-hook-lifecycle.md` | Rewritten. Currently describes a pre-push that no longer exists, cites the non-existent target `specs:coverage`, and (in `ose-primer`) cites the non-existent workflow `validate-markdown.yml`. Its CI-parity table is replaced by a pointer to `gate list`, so it cannot restale. Created fresh in `ose-private`, which lacks it.                       |
-| `repo-governance/development/infra/nx-targets.md`            | Drops `main-ci` references.                                                                                                                                                                                                                                                                                                                              |
-| `docs/reference/system-architecture/ci-cd.md`                | Drops `main-ci` references; documents the matrix derivation.                                                                                                                                                                                                                                                                                             |
-| `AGENTS.md`                                                  | Git Hooks section updated to describe the shim form. Watch the instruction-size budget — this section should shrink, not grow.                                                                                                                                                                                                                           |
+| Document                                                              | Change                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/reference/sdlc-gate-standard.md`                                | Composition rule becomes `(pre-commit ∪ pre-push) == PR gate`. Stage table drops stage 5. Stage 5 section removed. Stage 3 and 4 tables corrected to include `md readme-index validate`, `harness duplication validate`, `convention license validate`. Registry described as the normative mechanism. Allowed Divergence gains the gate-entry-set rule. |
+| `repo-governance/development/workflow/git-hook-lifecycle.md`          | Rewritten. Currently describes a pre-push that no longer exists, cites the non-existent target `specs:coverage`, and (in `ose-primer`) cites the non-existent workflow `validate-markdown.yml`. Its CI-parity table is replaced by a pointer to `gate list`, so it cannot restale. Created fresh in `ose-private`, which lacks it.                       |
+| `repo-governance/development/infra/nx-targets.md`                     | Drops `main-ci` references.                                                                                                                                                                                                                                                                                                                              |
+| `docs/reference/system-architecture/ci-cd.md`                         | Drops `main-ci` references; documents the matrix derivation.                                                                                                                                                                                                                                                                                             |
+| `AGENTS.md`                                                           | Git Hooks section updated to describe the shim form. Watch the instruction-size budget — this section should shrink, not grow.                                                                                                                                                                                                                           |
+| `repo-governance/development/infra/github-actions-workflow-naming.md` | Adds `dependency` to the cross-cutting `{domain}` list and `audit` to the verb vocabulary, so `dependency-vulnerability-audit.yml` is legal. Registers it, `pr-quality-gate.yml`, and `validate-env.yml` in the Cross-cutting workflows table; removes `main-ci.yml`. See [§2.2.3](#223-what-is-deliberately-outside-the-registry).                      |
+| `.github/workflows/README.md`                                         | Row for `deps-audit.yml` replaced by `dependency-vulnerability-audit.yml`; `main-ci.yml` row removed.                                                                                                                                                                                                                                                    |
 
 ## 4. Risks and Mitigations
 

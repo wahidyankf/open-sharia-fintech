@@ -75,7 +75,7 @@ Three reinforcing reasons:
 3. **Retire `main-ci.yml`** in all four repos after folding its unique checks into the PR gate.
 4. Bring the **standard document back into agreement** with the implementation, in both directions.
 5. Close the four related findings surfaced by the same audit (bindings-in-CI, format verification,
-   the stale lifecycle doc, and the undeclared `deps:audit` cron).
+   the stale lifecycle doc, and the vaguely-named `deps:audit` workflow).
 
 ## Non-Goals
 
@@ -88,7 +88,7 @@ Three reinforcing reasons:
   (`setup-dotnet`, `setup-rust`, …) and stay hand-written. `gate validate` asserts their presence
   rather than emitting them.
 - **Moving heavy tiers into gates.** `test:integration`, `test:e2e`, and `deps:audit` remain
-  cron-only. See the note on `deps:audit` below.
+  cron-only, and stay outside the registry entirely. See the note on `deps:audit` below.
 
 ## Accepted Risk
 
@@ -117,21 +117,31 @@ Two mitigations were considered and **declined** in favour of the smaller surfac
 first mitigation is the documented remedy and should be reopened as a follow-up plan rather than
 treated as a defect of this one.
 
-## A Standing Rule This Plan Bends, and Why It Does Not Break It
+## A Standing Rule This Plan Upholds
 
 The ratified standard states, as rule 3 of the Gate Composition Rule, that
 `test:integration`, `test:e2e`, and `deps:audit` are **CRON-only, never in any gate**, because every
 gate check must be Nx-cacheable so hooks stay fast.
 
-`deps:audit` is in this plan's scope, and that rule is **preserved, not broken**. `deps:audit` is
-added to the _registry_ — so it becomes declared, visible, and covered by `gate validate` — under a
-`cron` surface, not a gate surface. It keeps its schedule and gains a descriptive, repo-consistent
-workflow name. It is **not** added to pre-commit, pre-push, or the PR gate.
+That rule is upheld without qualification. `deps:audit` is not added to pre-commit, pre-push, or the
+PR gate, and it is not added to the registry either.
 
 The reasoning is that a dependency audit is non-hermetic: the advisory database moves underneath the
-code, so a commit that was green can turn red with no change to the repository. That property is
-exactly why it must not gate a push, and exactly why it should still be _declared_ rather than living
-as an undeclared side-channel that the registry cannot see.
+code, so a commit that was green can turn red with no change to the repository. Gating on it would
+block every push in the repo the morning after an unrelated CVE publication — including the push that
+fixes it.
+
+An earlier draft proposed declaring it in the registry under a `cron` surface, to buy visibility
+without gating. That was **dropped after review**. A "surface" that no composition rule governs, that
+emits no CI matrix row, and that no hook invokes is not a surface — it is a scheduled job wearing the
+word, and modelling it as one would blur what the registry means. The registry's claim is precise and
+worth keeping precise: **it covers the four gate surfaces, completely**.
+
+`deps:audit` gets visibility the honest way instead — its own workflow, named for what it does:
+`dependency-vulnerability-audit.yml` (`name: Dependency Vulnerability Audit`), replacing the
+filename-restating `deps-audit.yml` in all four repos. Making that name legal requires a small
+amendment to the workflow-naming convention, which is in scope. See
+[tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry).
 
 ## Success Definition
 

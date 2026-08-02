@@ -23,8 +23,9 @@ carries at least one Gherkin scenario. These scenarios are the source for the co
 `repo-config.yml` gains a `gates:` section declaring **everything any surface does** — every
 pass/fail check (`type: check`) and every file-rewriting step (`type: mutation`) — each with a stable
 `id`, its command, and the scope it carries **per surface**. Scope values are exactly the five
-controlled values already ratified in the SDLC Gate Standard, plus the path-gated qualifier. Surface
-names add `commit-msg` and `cron` to the three gate surfaces.
+controlled values already ratified in the SDLC Gate Standard, plus the path-gated qualifier. Surfaces
+are the four gate surfaces and only those: `commit-msg`, `pre-commit`, `pre-push`, `ci`. Scheduled
+non-gating pipelines are outside the registry by design — see R-8.
 
 The completeness property is the point: after this change, anything absent from `gates:` is run by no
 surface. There is no third category living in prose.
@@ -66,7 +67,6 @@ Feature: Gate registry declaration
       | harness-bindings-generate | mutation |
       | lockfile-sync             | mutation |
       | test-quick                | check    |
-      | deps-audit                | check    |
 
   Scenario: An unknown type value is rejected at parse time
     Given repo-config.yml declares a gate with type "cleanup"
@@ -97,10 +97,16 @@ Feature: Gate enumeration
     And the array contains exactly the gates declaring surface "ci"
 
   Scenario: A surface with no declared gates yields an empty array, not an error
-    Given no gate declares surface "cron"
-    When "rhino-cli gate list --surface=cron --format=json" runs
+    Given no gate declares surface "commit-msg"
+    When "rhino-cli gate list --surface=commit-msg --format=json" runs
     Then it exits zero
     And the output is an empty JSON array
+
+  Scenario: An unknown surface name is rejected rather than returning empty
+    Given "cron" is not a valid surface name
+    When "rhino-cli gate list --surface=cron --format=json" runs
+    Then it exits non-zero
+    And the message names the four valid surfaces
 ```
 
 ## R-3 — Execution from the hooks
@@ -306,26 +312,60 @@ Feature: Formatting verification
     And the commit is not aborted for formatting alone
 ```
 
-## R-8 — `deps:audit` declared, cron preserved, renamed
+## R-8 — `deps:audit` excluded from the registry, given its own named workflow
+
+`deps:audit` is **not** a gate and is **not** in `gates:`. It is non-hermetic — it reads a remote
+advisory database that moves independently of the code — so a green commit can turn red with no
+repository change. Ratified rule 3 already keeps it out of every gate; this plan keeps it out of the
+registry too, because a scheduled job that no composition rule governs, that emits no CI matrix row,
+and that no hook invokes is not a surface.
+
+It gets visibility the honest way instead: a dedicated workflow whose name says what it does.
+`deps-audit.yml` is replaced by `dependency-vulnerability-audit.yml`
+(`name: Dependency Vulnerability Audit`) in all four repos. See
+[tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry).
 
 ```gherkin
-Feature: Declared cron surface
+Feature: Dependency audit lives outside the gate registry
 
-  Scenario: deps:audit is visible to the registry without gating a push
-    Given the registry declares gate "deps-audit" on surface "cron" only
-    When "rhino-cli gate list --surface=pre-push --format=json" runs
+  Scenario: deps:audit is absent from the registry entirely
+    Given the registry as shipped by this plan
+    When "rhino-cli gate list --format=json" runs
     Then the output contains no entry with id "deps-audit"
+    And the output contains no entry whose command is "deps:audit"
 
-  Scenario: The cron surface does not trigger the composition rule
-    Given gate "deps-audit" declares surface "cron" and no other surface
+  Scenario: Excluding it does not weaken the completeness claim
+    Given the registry declares no gate for "deps:audit"
     When "rhino-cli gate validate" runs
     Then it exits zero
+    And no gate surface invokes "deps:audit"
 
-  Scenario: The dependency-audit workflow carries one descriptive name in every repo
-    Given each repo ships a scheduled dependency-audit workflow
-    When the workflow "name:" fields are compared across the four repos
+  Scenario: The old workflow is gone and the new one carries a descriptive name
+    Given the rename is complete
+    Then ".github/workflows/deps-audit.yml" does not exist
+    And ".github/workflows/dependency-vulnerability-audit.yml" exists
+    And its "name:" field is "Dependency Vulnerability Audit"
+    And its schedule and dispatch triggers are unchanged from the workflow it replaces
+
+  Scenario: The new name satisfies the mechanical filename derivation
+    Given the workflow "name:" is "Dependency Vulnerability Audit"
+    When the naming convention's transformation is applied
+    Then the result is "dependency-vulnerability-audit.yml"
+    And that matches the filename exactly
+
+  Scenario: One identical name across all four repos
+    Given each repo ships the scheduled dependency-audit workflow
+    When the "name:" fields are compared across the four repos
     Then they are identical
-    And the name states what the workflow does rather than repeating the filename
+    And ose-primer no longer ships "Nightly Dependency Audit" inside a file named deps-audit.yml
+
+  Scenario: The naming convention is amended to make the new name legal
+    Given "dependency" is not in the cross-cutting domain list
+    And "audit" is not in the verb vocabulary
+    When the amendment lands
+    Then the convention lists both
+    And the Cross-cutting workflows table registers the new workflow
+    And that table no longer lists main-ci.yml
 ```
 
 ## R-9 — Documentation agrees with the implementation
@@ -380,10 +420,10 @@ Feature: Byte-identity and schema parity
 
 ## Out of Scope
 
-| Excluded                                           | Rationale                                                                                         |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Emitting per-language CI jobs from the registry    | They need per-language toolchain setup actions; `gate validate` asserts their presence instead    |
-| Adding `test:integration` / `test:e2e` to any gate | Ratified rule 3 — uncacheable tiers stay cron-only                                                |
-| Adding `deps:audit` to a gate surface              | Non-hermetic; see [brd.md](./brd.md#a-standing-rule-this-plan-bends-and-why-it-does-not-break-it) |
-| Restoring a full-repo sweep                        | Deliberately declined; see [brd.md §Accepted Risk](./brd.md#accepted-risk)                        |
-| Changing the five controlled scope values          | Ratified vocabulary reused verbatim                                                               |
+| Excluded                                              | Rationale                                                                                                                         |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Emitting per-language CI jobs from the registry       | They need per-language toolchain setup actions; `gate validate` asserts their presence instead                                    |
+| Adding `test:integration` / `test:e2e` to any gate    | Ratified rule 3 — uncacheable tiers stay cron-only                                                                                |
+| Adding `deps:audit` to a gate surface or the registry | Non-hermetic; excluded by decision — see R-8 and [tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry) |
+| Restoring a full-repo sweep                           | Deliberately declined; see [brd.md §Accepted Risk](./brd.md#accepted-risk)                                                        |
+| Changing the five controlled scope values             | Ratified vocabulary reused verbatim                                                                                               |

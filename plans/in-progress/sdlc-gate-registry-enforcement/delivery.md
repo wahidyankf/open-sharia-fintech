@@ -240,13 +240,47 @@ documents agree. Independently shippable — the other repos are untouched.
       (surface `commit-msg`) — acceptance: `... -- gate list --format=json | jq -e '[.[].id] | contains(["harness-bindings-generate","lockfile-sync","env-staged-guard","commitlint"])'`
       exits 0. This is the step that makes the registry a complete source of truth: after it, nothing
       any surface does lives outside `gates:`.
-- [ ] [AI] Declare `deps-audit` on the `cron` surface only (closes R-8) — acceptance:
-      `... -- gate list --surface=pre-push --format=json | jq -e '[.[].id] | index("deps-audit") == null'`
-      exits 0.
+- [ ] [AI] Confirm `deps:audit` is **absent** from the registry — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.command=="deps:audit")] | length == 0'`
+      exits 0. It is excluded by decision, not oversight; see
+      [tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry).
 - [ ] [AI] Declare `test-quick` and `compat-min-version` with `wiring: hand-wired` — acceptance:
       `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("test-quick") == null'`
       exits 0 (absent from the matrix) **and** `... -- gate list --format=text` names it (present in
       the registry).
+
+### 2.1a Dependency-audit workflow and its naming-convention amendment
+
+Ordered — the convention must permit the name before the file can legally carry it.
+
+- [ ] [AI] Amend `repo-governance/development/infra/github-actions-workflow-naming.md`: add
+      `dependency` to the cross-cutting `{domain}` list and `audit` to the verb-and-qualifier
+      vocabulary — acceptance:
+      `grep -c 'dependency' repo-governance/development/infra/github-actions-workflow-naming.md`
+      returns at least 1 in the domain table, and the same for `audit` in the vocabulary table; both
+      returned 0 in those tables before the edit.
+- [ ] [AI] Register the cross-cutting workflow set in that convention's Cross-cutting workflows
+      table: add `dependency-vulnerability-audit.yml`, remove `main-ci.yml` — acceptance: the table
+      lists `pr-quality-gate.yml`, `validate-env.yml`, and the new workflow, and
+      `grep -c 'main-ci' repo-governance/development/infra/github-actions-workflow-naming.md`
+      returns 0.
+- [ ] [AI] Create `.github/workflows/dependency-vulnerability-audit.yml` with
+      `name: Dependency Vulnerability Audit`, carrying over the existing `schedule` cron and
+      `workflow_dispatch` triggers and the `nx run-many --all -t deps:audit` step verbatim, plus this
+      repo's existing toolchain setup actions — acceptance: `actionlint .github/workflows/dependency-vulnerability-audit.yml`
+      exits 0.
+- [ ] [AI] Verify the name derives to the filename mechanically per the convention:
+      `Dependency Vulnerability Audit` → lowercase → spaces to hyphens →
+      `dependency-vulnerability-audit` → `.yml` — acceptance: derived string equals the filename
+      exactly. This is the check `ose-primer` fails today with `Nightly Dependency Audit` in
+      `deps-audit.yml`.
+- [ ] [AI] `git rm .github/workflows/deps-audit.yml` — acceptance:
+      `test ! -f .github/workflows/deps-audit.yml` and
+      `test -f .github/workflows/dependency-vulnerability-audit.yml`. Do not delete before the
+      replacement exists and lints — a window with neither workflow present means an unaudited night.
+- [ ] [AI] Update `.github/workflows/README.md`: replace the `deps-audit.yml` row, drop the
+      `main-ci.yml` row — acceptance: `grep -c 'deps-audit' .github/workflows/README.md` returns 0
+      and `grep -c 'dependency-vulnerability-audit' .github/workflows/README.md` returns at least 1.
 
 ### 2.2 Rewire the hooks
 
@@ -352,9 +386,12 @@ Independent of Phases 2, 4, 5. Closes half the byte-identity window.
       acceptance: `... -- repo-config validate` exits 0.
 - [ ] [AI] Apply the same surface rewire as Phase 2 sections 2.2 through 2.4 — acceptance:
       `... -- gate validate` exits 0; `test ! -f .github/workflows/main-ci.yml`.
-- [ ] [AI] Rename the dependency-audit workflow to the shared descriptive name agreed in Phase 2
-      (`ose-primer` currently uses `Nightly Dependency Audit`, the others `deps-audit`) — acceptance:
-      the `name:` field matches `ose-public`'s byte-for-byte.
+- [ ] [AI] Apply Phase 2 section 2.1a here: propagate the naming-convention amendment, create
+      `dependency-vulnerability-audit.yml`, delete `deps-audit.yml`, update the workflows README —
+      acceptance: `test ! -f .github/workflows/deps-audit.yml`; the new file's `name:` field matches
+      `ose-public`'s byte-for-byte; `actionlint` exits 0. This repo is the one that also fixes a
+      standing convention violation — it ships `name: Nightly Dependency Audit` inside a file named
+      `deps-audit.yml`, which the `name:`-mirrors-filename rule forbids.
 - [ ] [AI] Propagate the amended `sdlc-gate-standard.md` and the rewritten `git-hook-lifecycle.md`
       — acceptance: `grep -c 'validate-markdown.yml' repo-governance/development/workflow/git-hook-lifecycle.md`
       returns 0 (this repo's copy cites that non-existent workflow today).
@@ -451,15 +488,14 @@ archived in all four repos.
 
 ---
 
-## Open Decision
+## Settled Decisions
 
-One item is recorded as decided-with-recommendation rather than settled, and should be confirmed
-before Phase 2 section 2.1:
+No open decisions remain. The one item previously carried as decided-with-recommendation is now
+settled:
 
-**`deps:audit` placement.** This plan declares it on the `cron` surface only, preserving ratified
-rule 3 (uncacheable and non-hermetic tiers never gate a push) while making it visible to the
-registry. The alternative — declaring it on `ci` as well — would make a green commit turn red when
-the advisory database moves, with no change to the repository. If a gating dependency audit is
-wanted, say so and the plan adds `ci: { scope: all-projects }` to that one entry; the rest of the
-plan is unaffected. Rationale in
-[brd.md](./brd.md#a-standing-rule-this-plan-bends-and-why-it-does-not-break-it).
+**`deps:audit` placement — settled 2026-08-02.** Excluded from the registry entirely, not declared
+under a `cron` surface as the first draft proposed. It keeps its schedule and moves to its own
+descriptively-named workflow, `dependency-vulnerability-audit.yml`. The `cron` surface is removed
+from the schema; the registry covers the four gate surfaces and only those. Rationale in
+[brd.md §A Standing Rule This Plan Upholds](./brd.md#a-standing-rule-this-plan-upholds) and
+[tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry).
