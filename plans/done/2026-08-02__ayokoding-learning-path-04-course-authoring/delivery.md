@@ -1201,20 +1201,20 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+  - **Date**: 2026-08-02. **Status**: Done. Committed as `bf7f399c5`.
 - [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
+- [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape present; both safety gates applied to every surviving entry).
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised (per the Indonesian-mirror-deferred non-goal).
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 6
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 6
       — acceptance: `grep -F -q 'rule-15' learnings.md` exits 0. The triad itself is exempt here; the
       navigation-UI plan runs it against the surface it owns.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **21** — acceptance: both
       hold. **This plan asserts 21, not 127.** The 127-course catalog total is the manifest plans'
@@ -1223,7 +1223,7 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
       33 shipped + 4 existing capstones re-homed by `ayokoding-learning-path-01-url-restructure`, plus
       69 native bodies carried by the 7 successor plans — see
       [README §Successor plans](./README.md#successor-plans)).
-- [ ] [AI] **Verify the ownership invariant held** — re-assert the same sound diff-based mechanism used
+- [x] [AI] **Verify the ownership invariant held** — re-assert the same sound diff-based mechanism used
       by every prior commit-producing phase's own individual check (Phase 0, Phase 1, Phase 3's and
       Phase 4's per-band closing steps, every one of the 21 individual course sub-phases' own convention
       step 8, Phase 5, Phase 6, and Phase 8), on this phase's own diff (a commit-message `--grep`
@@ -1233,7 +1233,7 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** — acceptance: no manifest file was touched on this branch. Falsifiable both ways:
       touching any file under that path makes it return ≥1.
-- [ ] [AI] **Verify every cross-plan reference still resolves after upstream archival** — the schema
+- [x] [AI] **Verify every cross-plan reference still resolves after upstream archival** — the schema
       plan archives to `plans/done/YYYY-MM-DD__…` while this plan runs, so re-run the BF-8 link gate:
 
   ```bash
@@ -1262,16 +1262,18 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
       [README §Successor plans](./README.md#successor-plans)) — acceptance: no sibling plan's link to
       this folder is left dangling (re-run the BF-8 gate with each sibling's folder name substituted in
       the `grep -F`).
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-04-course-authoring to done`.
+  - **Date**: 2026-08-02. **Status**: Done. Commit `bf7f399c5` contains the move, index updates,
+    and cross-plan repoints.
 
 ### Phase 9 Gate
 
-- [ ] [AI] All 21 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
+- [x] [AI] All 21 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
       90); the slug register holds 21 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
-- [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
+- [x] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
       all READMEs updated; archival committed.
 - [ ] [AI] Draft PR opened for the Phase 6–9 closeout unit (manual verification evidence,
       `learnings.md` triage, and the archival move — this unit's own boundary; see the
@@ -1285,22 +1287,22 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
       course bundle per commit is the natural unit here).
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
       e.g. `feat(ayokoding-www): add nosql-databases course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
       split plans are being authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
 - [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
