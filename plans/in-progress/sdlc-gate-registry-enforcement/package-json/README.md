@@ -99,13 +99,34 @@ it into each. Because declaration order is execution order and `format-prettier`
 
 For `ose-public`, comparing the generated block to the live one in `package.json`:
 
-| Change                                                         | Deliberate?                                                                  |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Removed `*.go`, `*.{ex,exs}`, `*.cs`, `*.clj`, `*.dart`        | Yes — those five languages have zero tracked files here                      |
-| Added `apps/*/package.json` running `git lockfile sync`        | Yes — the lockfile step moves out of inline hook shell so it can be declared |
-| `--quiet` added to four `cargo run` invocations that lacked it | Yes — normalization; the hooks already used `--quiet`, `lint-staged` did not |
-| `--exclude apps/ayokoding-www/content` gains quotes            | Yes — an unquoted glob-shaped argument is shell-expandable                   |
-| 17 of 26 glob keys byte-identical                              | Unchanged                                                                    |
+| Change                                                          | Deliberate?                                                                  |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Removed `*.go`, `*.{ex,exs}`, `*.cs`, `*.clj`, `*.dart`         | Yes — those five languages have zero tracked files here                      |
+| Added `apps/*/package.json` running `git lockfile sync`         | Yes — the lockfile step moves out of inline hook shell so it can be declared |
+| `--quiet` added to 7 `cargo run` invocations across 4 glob keys | Yes — normalization; the hooks already used `--quiet`, `lint-staged` did not |
+| `--exclude apps/ayokoding-www/content` gains quotes             | Yes — an unquoted glob-shaped argument is shell-expandable                   |
+| 17 of 26 glob keys run the same command list                    | Unchanged in behaviour — see the note below                                  |
+
+`[Repo-grounded]` Both counts are measured, and the second needs its unit stated or it reads wrong.
+The emitter always writes a JSON **array**, while the live block writes single-command entries as
+bare **strings**. So of the 17 unchanged keys, only 1 is strictly JSON-equal; the other 16 change
+shape without changing what runs. "Byte-identical" would be the wrong word — the honest claim is that
+17 keys execute the same command list. Reproduce both numbers:
+
+```sh
+node -e '
+const fs = require("fs");
+const norm = (v) => JSON.stringify(Array.isArray(v) ? v : [v]);
+const live = JSON.parse(fs.readFileSync("<repo>/package.json", "utf8"))["lint-staged"];
+const tgt = JSON.parse(fs.readFileSync("lint-staged-ose-public.json", "utf8"));
+let same = 0, strict = 0;
+for (const k of Object.keys(tgt)) {
+  if (live[k] === undefined) continue;
+  if (norm(live[k]) === norm(tgt[k])) same++;
+  if (JSON.stringify(live[k]) === JSON.stringify(tgt[k])) strict++;
+}
+console.log(`same command list: ${same} of ${Object.keys(live).length}; strictly equal: ${strict}`);'
+```
 
 Nothing else changed. Any other difference at execution time is drift that landed after 2026-08-02
 and must be reconciled, not overwritten.

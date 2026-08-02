@@ -739,11 +739,15 @@ Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-
 
 - [ ] [AI] Move `WEBSITE_APP_PREFIXES` (`frontmatter_audit.rs`) into the registry as `args.exclude`
       on the gate that consumes it — acceptance: the const no longer exists
-      (`/usr/bin/grep -c "WEBSITE_APP_PREFIXES" apps/rhino-cli/src/` returns 0) and
+      (`/usr/bin/grep -rho "WEBSITE_APP_PREFIXES" apps/rhino-cli/src/ | /usr/bin/wc -l` returns 0;
+      it returns 3 today, so the clause flips). `-r` is required because the target is a directory —
+      without it grep exits 2 with "Is a directory" and never returns a count at all — and `-ho`
+      collapses per-file counts into one comparable number.
       `md frontmatter validate` still skips those trees, proven by a fixture under one of them that
       would otherwise fail.
 - [ ] [AI] Move the Amazon Q agent-definition name out of `bindings.rs` into the existing `harness`
-      section — acceptance: `/usr/bin/grep -c "ose-default" apps/rhino-cli/src/` returns 0, and
+      section — acceptance:
+      `/usr/bin/grep -rho "ose-default" apps/rhino-cli/src/ | /usr/bin/wc -l` returns 0 (5 today), and
       `harness bindings generate` still writes `.amazonq/cli-agents/ose-default.json` in `ose-public`
       because the **config** now says so.
 - [ ] [AI] Replace real-repo app names in test fixtures with synthetic names in
