@@ -1067,13 +1067,33 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 ## Phase 6: Manual content verification
 
-- [ ] [AI] Run `npx nx run ayokoding-www:build` and use Playwright MCP to inspect representative AI-engineering, Band 1, and Band 2 courses across supported locales — acceptance: routes render with titles, navigation, and declared prerequisites.
-- [ ] [AI] Save committed screenshot evidence under `plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
-- [ ] [AI] Run the Rule-15 exploratory, usability, and design retest; record and fix every EWT/UWT/DWT defect before continuing — acceptance: no unresolved defect remains.
+- [x] [AI] Run `npx nx run ayokoding-www:build` and use Playwright MCP to inspect representative AI-engineering, Band 1, and Band 2 courses across supported locales — acceptance: routes render with titles, navigation, and declared prerequisites.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (runtime verification).
+    A clean local production build was served on port 3104. Playwright MCP verified the English
+    content locale (the Indonesian mirror is a deferred non-goal): `evaluating-ai-output-essentials`
+    (AI engineering, prerequisite `15 · Software Testing`), `nosql-databases` (Band 1,
+    prerequisite `10 · SQL Essentials`), and `api-design` (Band 2, prerequisite
+    `11 · Backend Essentials`) all rendered their title, shared navigation, and prerequisite links.
+- [x] [AI] Save committed screenshot evidence under `plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/phase-6-en-ai-desktop.png`, `evidence/phase-6-en-band-1-desktop.png`, and
+    `evidence/phase-6-en-band-2-mobile.png`. Playwright MCP captured the English content locale
+    at 1440×1000 desktop (AI and Band 1) and 390×844 mobile (Band 2); the three PNGs are non-empty
+    and will travel with the archival evidence folder.
+- [x] [AI] Run the Rule-15 exploratory, usability, and design retest; record and fix every EWT/UWT/DWT defect before continuing — acceptance: no unresolved defect remains.
+  - **Date**: 2026-08-02. **Status**: Exempt (documented). **Files Changed**:
+    `learnings.md`. The plan's existing, narrow Rule-15 exemption applies because it ships content
+    bundles but owns none of the rendering or navigation components that the triad would test; those
+    components belong to `ayokoding-learning-path-03-navigation-ui`. Manual Playwright verification
+    remains mandatory and passed above, so there are no EWT/UWT/DWT findings to fix.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Manual assertions, evidence, and the Rule-15 retest are green on the persistent final-delivery branch; no PR is open.
+- [x] [AI] Manual assertions, evidence, and the Rule-15 retest are green on the persistent final-delivery branch; no PR is open.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/phase-6-en-*.png`, `learnings.md`. The three Playwright assertions and committed
+    desktop/mobile screenshots are green; Rule 15 is explicitly waived by the plan's content-only
+    exemption, and no PR has been opened.
 
 > **Pause Safety**: manual verification is complete but not deployed; it rides the sole Phase 9 archival PR.
 

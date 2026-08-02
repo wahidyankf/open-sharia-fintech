@@ -86,3 +86,13 @@ ayokoding-learning-path-04-course-authoring/evaluating-ai-output-essentials` —
   picking it up as a post-hoc PR-review finding. Worth confirming whether the per-course
   course-authoring checklist/template actually mandates adding `ruff.toml` whenever a course ships
   `.py` code, so this exact gap does not recur across the remaining courses.
+
+## Learning: rule-15 triad is expressly exempt for this content-only plan
+
+- **Context**: Phase 6 manually verified the rendered course pages through Playwright MCP.
+- **Observation**: the plan ships only course-content bundles; it owns neither the navigation nor the
+  rendering components that the Rule-15 exploratory, usability, and design triad would exercise.
+  Manual route verification remains mandatory and was completed; only the `rule-15` triad is waived.
+- **Why it might generalize**: the existing durable exemption in `README.md` and `tech-docs.md`
+  distinguishes content verification from an owner-surface UI retest. **Terminal routing**: retain
+  that existing documented exemption; no additional code or governance change is required.
