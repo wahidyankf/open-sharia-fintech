@@ -14,6 +14,11 @@ Active project plans currently being worked on.
   pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied
   retroactively to every open plan in all three repos. Derived from the three-plan AI Model
   Benchmark chain.
+- [sdlc-gate-registry-enforcement](./sdlc-gate-registry-enforcement/README.md) — Makes the already-ratified
+  Gate Composition Rule (`(pre-commit ∪ pre-push) == PR gate`) mechanically enforced via a `gates:`
+  registry in `repo-config.yml` plus `rhino-cli gate list/run/validate`, and retires `main-ci.yml`
+  after folding its unique checks into the PR gate. Closes seven drift findings from the 2026-08-02
+  four-repo audit; spans `ose-public`, `ose-primer`, `ose-private`, and `beaver-nest`.
 
 Ready-to-execute plans wait in [`../backlog/`](../backlog/README.md); promote one here when
 work begins.
