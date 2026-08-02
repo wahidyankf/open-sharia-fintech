@@ -1315,6 +1315,6 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 ### Note: plan location at archival time
 
 This plan is created in `plans/backlog/ayokoding-learning-path-04-course-authoring/`. When work
-starts it is promoted to `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/` (no date
+starts it is promoted to `plans/in-progress/ayokoding-learning-path-04-course-authoring/` (no date
 prefix on either); the `git mv` in Phase 9 then archives it to
 `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/` using the completion date.

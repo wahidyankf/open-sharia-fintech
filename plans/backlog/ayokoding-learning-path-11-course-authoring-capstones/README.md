@@ -18,10 +18,10 @@ This plan is a **further split of Band 8 out of**
 [`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 (itself Wave 2 of the five-way split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
-plan). Band 8 held eight course bodies as
-[Phase 10 of plan 04's own delivery checklist](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md);
-that phase's scope is carved out into this standalone folder, exactly as Bands 3+4, 5, 6a, 6b, 7, and
-9 were each carved into their own sibling plans. This plan owns **course bodies only**, exactly as
+plan). In the historical pre-split scope, Band 8 held eight course bodies as Phase 10; the compacted
+Plan 04 closeout checklist intentionally retains only Phases 0–9. That historical scope is carved out
+into this standalone folder, exactly as Bands 3+4, 5, 6a, 6b, 7, and 9 were each carved into their own
+sibling plans. This plan owns **course bodies only**, exactly as
 plan 04 did: no schema, no route, no component, no redirect — and, most importantly, **no manifest**.
 
 > **This band is the synthesis layer of the whole course library, by design.** Every other
