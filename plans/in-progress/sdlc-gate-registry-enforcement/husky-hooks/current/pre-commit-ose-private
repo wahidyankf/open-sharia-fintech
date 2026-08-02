@@ -6,26 +6,26 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env sta
 
 # Step 2: repo-config.yml schema-parity gate — staged-gated, only fires when repo-config.yml is staged
 if git diff --cached --name-only --diff-filter=ACM | grep -q '^repo-config\.yml$'; then
-	cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate
+  cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate
 fi
 
 # Step 3: D9 — IaC staged-file lint (infra-only deviation): terraform fmt + yamllint
 # for staged IaC files. Graceful skip if tools absent so a fresh clone can still commit.
 staged_tf=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^infra/on-premise/terraform/.*\.tf$' || true)
 if [ -n "$staged_tf" ]; then
-	if command -v terraform >/dev/null 2>&1; then
-		terraform fmt -check -recursive infra/on-premise/terraform/ || true
-	else
-		echo "terraform not found — skipping local Terraform fmt check. CI will enforce."
-	fi
+  if command -v terraform >/dev/null 2>&1; then
+    terraform fmt -check -recursive infra/on-premise/terraform/ || true
+  else
+    echo "terraform not found — skipping local Terraform fmt check. CI will enforce."
+  fi
 fi
 staged_yaml=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^infra/on-premise/ansible/|^\.github/.*\.ya?ml$|^\.yamllint\.yml$' || true)
 if [ -n "$staged_yaml" ]; then
-	if command -v yamllint >/dev/null 2>&1; then
-		yamllint infra/on-premise/ansible/ .github/
-	else
-		echo "yamllint not found — skipping local YAML lint. CI will enforce."
-	fi
+  if command -v yamllint >/dev/null 2>&1; then
+    yamllint infra/on-premise/ansible/ .github/
+  else
+    echo "yamllint not found — skipping local YAML lint. CI will enforce."
+  fi
 fi
 
 # Step 4: Per-file formatters + tool-linters + per-file validators (file-type dispatch)
@@ -37,12 +37,12 @@ cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness
 # Step 6: Lockfile sync — regenerate + stage package-lock.json for staged apps
 staged_pkg=$(git diff --cached --name-only --diff-filter=ACM | grep 'apps/.*/package\.json$' || true)
 if [ -n "$staged_pkg" ]; then
-	echo "$staged_pkg" | while IFS= read -r pkg_path; do
-		app_dir=$(dirname "$pkg_path")
-		if [ -f "$app_dir/package-lock.json" ]; then
-			echo "Syncing $app_dir/package-lock.json..."
-			npm install --package-lock-only --prefix "$app_dir" --silent
-			git add "$app_dir/package-lock.json"
-		fi
-	done
+  echo "$staged_pkg" | while IFS= read -r pkg_path; do
+    app_dir=$(dirname "$pkg_path")
+    if [ -f "$app_dir/package-lock.json" ]; then
+      echo "Syncing $app_dir/package-lock.json..."
+      npm install --package-lock-only --prefix "$app_dir" --silent
+      git add "$app_dir/package-lock.json"
+    fi
+  done
 fi

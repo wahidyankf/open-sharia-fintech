@@ -16,6 +16,15 @@ Twenty-four files: the twelve hooks as they will be, and — in [`current/`](./c
 they replace, captured verbatim. Both sides are complete files, so the replacement is reviewable in
 full rather than described.
 
+**The two sets are named differently on purpose.** The target-state shims carry `.sh`; the captures
+in `current/` do not. `ose-public`'s own `lint-staged` runs `shfmt -w` on every staged `*.sh`, so a
+capture named `*.sh` gets **reformatted on commit** — tabs for spaces, spacing normalized — and
+silently stops being the verbatim copy it claims to be. That happened once here and was caught by the
+byte-identity check below. Dropping the extension puts the captures outside the glob, which is also
+why they mirror the live hook filenames exactly. The trade is that `current/` is not shellcheck-swept
+in this repo; that is fine, since each file is already gated by its own repo's `*.sh`-free hook path
+and these are evidence, not shipped code.
+
 A husky v9 hook is a plain script with no framework preamble, so each `.sh` here **is** the entire
 file, not an excerpt. That is worth stating because the after-state is only 13 lines and could
 otherwise read as a fragment.
@@ -35,12 +44,29 @@ will too.
 
 `[Repo-grounded]` Captured 2026-08-02 from each repo's live `.husky/`. Two uses:
 
-1. **Phase 0 reconciliation.** Before overwriting, diff `current/<hook>-<repo>.sh` against the live
+1. **Phase 0 reconciliation.** Before overwriting, diff `current/<hook>-<repo>` against the live
    file. A non-empty diff means someone else changed that hook after 2026-08-02 — reconcile it rather
    than overwriting, exactly as [`repo-configs/`](../repo-configs/README.md) requires for the
    registry.
 2. **Evidence for the central claim.** The plan asserts the four repos' hooks have silently diverged.
    `current/` is that assertion made checkable rather than asserted.
+
+Both uses depend on the captures actually being verbatim, so verify that first — this prints
+`identical` twelve times:
+
+```sh
+for r in ose-public ose-primer ose-private beaver-nest; do
+  for h in commit-msg pre-commit pre-push; do
+    diff -q "<repo-root>/$r/.husky/$h" "current/$h-$r" >/dev/null \
+      && printf '%-13s %-11s identical\n' "$r" "$h" \
+      || printf '%-13s %-11s DIFFERS\n' "$r" "$h"
+  done
+done
+```
+
+`[Repo-grounded]` Ran 2026-08-02: twelve `identical`. A `DIFFERS` has two possible causes and they
+need opposite responses — either the live hook changed since capture (reconcile, per use 1), or a
+formatter rewrote the capture (re-capture, and check what glob matched it).
 
 ### Measured divergence before the plan
 
@@ -102,7 +128,7 @@ if [ -n "$RANGE" ]; then
 ```
 
 That excerpt is elided for readability only — the block in full, with all six regexes, is in
-[`current/pre-push-ose-public.sh`](./current/pre-push-ose-public.sh), and the three downstream repos'
+[`current/pre-push-ose-public`](./current/pre-push-ose-public), and the three downstream repos'
 copies sit beside it.
 
 Every one of those triggers becomes a `trigger:` list on a `scope: path-gated` gate, and `gate run`

@@ -1,0 +1,75 @@
+#!/usr/bin/env sh
+set -e
+
+# Pre-push: per-project test:quick (typecheck/lint/test:unit/test:coverage/test:specs) +
+# compat:min-version, plus repo-wide markdown lint, env-contract validation, and
+# changed-path-gated governance validators.
+# test:integration/test:e2e are CRON-only — NOT here.
+# If pre-push times out, run the nx commands below manually to warm cache, then push again.
+PARALLEL=$(( $(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4) - 1 ))
+npx nx affected -t test:quick --parallel="$PARALLEL"
+npx nx affected -t compat:min-version --parallel="$PARALLEL"
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs structure validate
+npm run lint:md
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness duplication validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate
+
+# Range used by the scoped checks below.
+# Upstream may be missing on first push of a branch; default to empty range in that case.
+RANGE=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 && echo '@{u}..HEAD' || echo "")
+if [ -n "$RANGE" ]; then
+  CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || echo "")
+
+  # Naming validators — scoped to pushes that touch the relevant trees.
+  if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agents/|\.cursor/agents/)'; then
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness naming validate
+  fi
+  if echo "$CHANGED" | grep -qE '^repo-governance/workflows/'; then
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance workflows naming validate
+  fi
+
+  # Vendored repo-governance audit — scoped to pushes that touch governance docs or AGENTS.md.
+  if echo "$CHANGED" | grep -qE 'repo-governance/.*\.md$|^AGENTS\.md'; then
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention license validate
+  fi
+
+  # Amazon Q binding bridge parity (also absorbs the former multi-harness-parity
+  # invariants — harness bindings validate covers the same binding-parity ground) —
+  # scoped to pushes that touch the binding surface.
+  if echo "$CHANGED" | grep -qE '^(\.amazonq/|AGENTS\.md$|docs/reference/platform-bindings\.md$|\.claude/|\.opencode/|\.codex/|\.github/|\.cursor/)'; then
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate
+  fi
+
+  # D9 — Terraform lint gate (terraform fmt -check + validate + tflint), scoped to
+  # pushes that touch the Terraform sources. IaC linting is heavier than the
+  # pre-commit config linters, so it also runs here at pre-push (infra-only deviation).
+  if echo "$CHANGED" | grep -qE '^infra/on-premise/terraform/'; then
+    ./scripts/lint-terraform.sh
+  fi
+
+  # Instruction-size budget gate: run when any auto-loaded instruction surface changes.
+  if echo "$CHANGED" | grep -qE '^(AGENTS\.md$|CLAUDE\.md$|repo-config\.yml$|\.amazonq/rules/|\.windsurf/rules/|\.cursor/rules/|\.junie/guidelines\.md$|\.github/copilot-instructions\.md$|CONVENTIONS\.md$)'; then
+    cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness instruction-size validate
+  fi
+
+  # D9 — Ansible + YAML lint (ansible-lint + yamllint), scoped to pushes that touch
+  # the Ansible sources, workflow YAML, or the yamllint config (infra-only deviation).
+  if echo "$CHANGED" | grep -qE '^infra/on-premise/ansible/|^\.github/.*\.ya?ml$|^\.yamllint\.yml$'; then
+    # Prefer a self-consistent pipx toolchain in ~/.local/bin and expand any
+    # literal ~ in PATH (ansible-lint spawns ansible-config as a subprocess).
+    PATH="$HOME/.local/bin:$(printf '%s' "$PATH" | sed "s|~|$HOME|g")"
+    export PATH
+    # ansible-lint depends on a complete, version-matched local ansible toolchain
+    # that not every contributor environment provides. Run it as a local advisory
+    # — the CI `infra-lint` job enforces ansible-lint authoritatively (hard gate),
+    # so a broken local ansible install must not block the push. yamllint below
+    # stays a hard local gate (it has no such external-toolchain dependency).
+    if ! ( cd infra/on-premise/ansible && ansible-lint ); then
+      echo "warning: ansible-lint did not pass locally; the CI infra-lint job enforces it — verify before merge." >&2
+    fi
+    yamllint infra/on-premise/ansible/ .github/
+  fi
+fi

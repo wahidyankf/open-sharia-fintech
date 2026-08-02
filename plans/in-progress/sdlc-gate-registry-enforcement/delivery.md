@@ -12,9 +12,11 @@ created: 2026-08-02
 
 # Delivery — SDLC Gate Registry Enforcement
 
-**Delivery Mode**: `worktree-to-pr` — each change-producing DAG leaf gets its own worktree and its own
-PR, strict 1-PR to 1-worktree. Every PR runs the PR-Review Maker to Fixer Cycle (default three
-sequential CI-gated cycles) before merge. `[AI]` merges by default.
+## Delivery Mode: worktree-to-pr
+
+Each change-producing DAG leaf gets its own worktree and its own PR, strict 1-PR to 1-worktree. Every
+PR runs the PR-Review Maker to Fixer Cycle (default three sequential CI-gated cycles) before merge.
+`[AI]` merges by default.
 
 **Concurrency**: N=3 background agents plus the main thread as orchestrator.
 
@@ -911,7 +913,7 @@ documents agree. Independently shippable — the other repos are untouched.
       `.husky/{commit-msg,pre-commit,pre-push}` diffs clean against
       `<plan>/husky-hooks/<hook>-ose-public.sh`. Before overwriting, confirm the pre-change state is
       the one the plan captured — acceptance: each live hook diffs clean against
-      `<plan>/husky-hooks/current/<hook>-ose-public.sh`; a non-empty diff means someone else changed
+      `<plan>/husky-hooks/current/<hook>-ose-public`; a non-empty diff means someone else changed
       the hook after 2026-08-02, so reconcile rather than overwrite.
 - [ ] [AI] Declare `md-mermaid`, `md-heading-hierarchy`, and the structural specs validator on the
       `ci` surface — acceptance:
