@@ -20,9 +20,14 @@ carries at least one Gherkin scenario. These scenarios are the source for the co
 
 ## R-1 — A declared gate registry
 
-`repo-config.yml` gains a `gates:` section declaring every check once: a stable `id`, the command to
-run, and the scope it carries **per surface**. Scope values are exactly the five controlled values
-already ratified in the SDLC Gate Standard, plus the path-gated qualifier.
+`repo-config.yml` gains a `gates:` section declaring **everything any surface does** — every
+pass/fail check (`type: check`) and every file-rewriting step (`type: mutation`) — each with a stable
+`id`, its command, and the scope it carries **per surface**. Scope values are exactly the five
+controlled values already ratified in the SDLC Gate Standard, plus the path-gated qualifier. Surface
+names add `commit-msg` and `cron` to the three gate surfaces.
+
+The completeness property is the point: after this change, anything absent from `gates:` is run by no
+surface. There is no third category living in prose.
 
 ```gherkin
 Feature: Gate registry declaration
@@ -46,6 +51,34 @@ Feature: Gate registry declaration
     When "rhino-cli repo-config validate" runs
     Then it exits non-zero
     And the message names the duplicated id
+
+  Scenario Outline: Every surface step is declared, whatever its type
+    Given the surfaces as shipped by this plan
+    When "rhino-cli gate list --format=json" runs
+    Then the output contains an entry with id "<id>"
+    And that entry reports type "<type>"
+
+    Examples:
+      | id                        | type     |
+      | env-staged-guard          | check    |
+      | commitlint                | check    |
+      | format-prettier           | mutation |
+      | harness-bindings-generate | mutation |
+      | lockfile-sync             | mutation |
+      | test-quick                | check    |
+      | deps-audit                | check    |
+
+  Scenario: An unknown type value is rejected at parse time
+    Given repo-config.yml declares a gate with type "cleanup"
+    When "rhino-cli repo-config validate" runs
+    Then it exits non-zero
+    And the message names the allowed type values
+
+  Scenario: A mutation may not declare a wiring value
+    Given a gate declares type "mutation" and wiring "matrix"
+    When "rhino-cli repo-config validate" runs
+    Then it exits non-zero
+    And the message states that wiring applies to checks only
 ```
 
 ## R-2 — Enumeration for the CI matrix
@@ -121,13 +154,26 @@ actually runs, and when a gate violates the composition rule itself.
 Feature: Gate conformance validation
 
   Scenario: A check declared for pre-commit but not for ci violates the composition rule
-    Given a gate declares surface "pre-commit"
+    Given a gate declares type "check" and surface "pre-commit"
     And that gate declares no surface "ci"
-    And that gate is not marked as a formatter carve-out
+    And that gate carries no carve-out
     When "rhino-cli gate validate" runs
     Then it exits non-zero
     And the message cites the Gate Composition Rule
     And the message names the gate id and the missing surface
+
+  Scenario: A mutation at pre-commit does not require a ci counterpart
+    Given a gate declares type "mutation" and surface "pre-commit"
+    And that gate declares no surface "ci"
+    When "rhino-cli gate validate" runs
+    Then it exits zero
+
+  Scenario: The staged-only carve-out exempts a check that cannot have a CI counterpart
+    Given gate "env-staged-guard" declares type "check" and surface "pre-commit" only
+    And it carries carve-out "staged-only"
+    When "rhino-cli gate validate" runs
+    Then it exits zero
+    And the exemption is reported in "gate list" output
 
   Scenario: A surface file that stops invoking the registry is caught
     Given the registry declares gates on surface "pre-push"
@@ -142,16 +188,52 @@ Feature: Gate conformance validation
     Then it exits non-zero
     And the message names the undeclared command
 
+  Scenario: A hand-wired gate is asserted present but not matrix-derived
+    Given gate "test-quick" declares wiring "hand-wired" on surface "ci"
+    And "pr-quality-gate.yml" contains a job invoking "test:quick"
+    When "rhino-cli gate validate" runs
+    Then it exits zero
+
+  Scenario: A hand-wired gate whose job was deleted is caught
+    Given gate "test-quick" declares wiring "hand-wired" on surface "ci"
+    And "pr-quality-gate.yml" contains no job invoking "test:quick"
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names the gate id and the surface file
+
+  Scenario: A hand-wired gate produces no matrix row
+    Given gate "test-quick" declares wiring "hand-wired" on surface "ci"
+    When "rhino-cli gate list --surface=ci --format=json" runs
+    Then the output contains no entry with id "test-quick"
+
+  Scenario: A hand-edited lint-staged block is caught
+    Given the "lint-staged" block in package.json differs from what the registry would emit
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names package.json and instructs to run "gate emit --surface=pre-commit"
+
   Scenario: The shipped configuration passes
     Given the registry and surfaces as shipped by this plan
     When "rhino-cli gate validate" runs
     Then it exits zero
+```
 
-  Scenario: The formatter carve-out is explicit, not implicit
-    Given a gate is marked with the formatter carve-out
-    When "rhino-cli gate validate" runs
-    Then that gate is exempt from the pre-commit-implies-ci requirement
-    And the exemption is reported in "gate list" output
+### R-4a — lint-staged is generated from the registry
+
+```gherkin
+Feature: Generated lint-staged block
+
+  Scenario: The emitter reproduces the registry's per-file entries
+    Given the registry declares per-file gates on surface "pre-commit"
+    When "rhino-cli gate emit --surface=pre-commit" runs
+    Then the "lint-staged" block in package.json contains one glob key per declared glob
+    And each key lists that glob's commands in declaration order
+
+  Scenario: Re-running the emitter is idempotent
+    Given "rhino-cli gate emit --surface=pre-commit" has already run
+    When it runs a second time
+    Then package.json is byte-identical to the first result
+    And the block appears exactly once
 ```
 
 ## R-5 — `main-ci.yml` retired without losing checks
@@ -200,9 +282,12 @@ Feature: Binding parity enforced server-side
 
 ## R-7 — Formatting is verified, not silently rewritten
 
-The formatter carve-out in the ratified standard exempts formatters from being _checks_ at
-pre-commit, where they auto-fix. It does not justify a `main` branch that can carry unformatted
-files. A verify pass is added on the CI surface.
+The ratified standard exempts formatters from being _checks_ at pre-commit, where they auto-fix.
+This plan expresses that structurally rather than as an exemption: formatters are declared
+`type: mutation`, and the composition rule applies only to `type: check`. That exemption does not
+justify a `main` branch carrying unformatted files, so a `format-verify` check is added on the CI
+surface — an ordinary check, needing no carve-out, since the rule runs pre-commit/pre-push ⇒ ci and
+never the reverse.
 
 ```gherkin
 Feature: Formatting verification

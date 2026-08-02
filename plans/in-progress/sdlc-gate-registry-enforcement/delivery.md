@@ -83,7 +83,7 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 
 - [ ] [AI] **RED** — add a failing test at
       `apps/rhino-cli/tests/repo_config_data_driven.rs` asserting that a `gates:` section
-      deserializes into a `Vec<GateEntry>` with `id`, `command`, `kind`, `surfaces` —
+      deserializes into a `Vec<GateEntry>` with `id`, `type`, `command`, `kind`, `surfaces` —
       command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --test repo_config_data_driven`
       — acceptance: fails with a missing-field or unknown-variant error naming `gates`. Confirm it
       fails _for that reason_, not a compile error unrelated to the new field.
@@ -91,10 +91,14 @@ Every code step below uses the RED / GREEN / REFACTOR template.
       `repo-config` domain model, per the field contract in
       [tech-docs §2.2](./tech-docs.md#22-registry-location-and-shape) — command: same as RED —
       acceptance: exits 0.
-- [ ] [AI] **REFACTOR** — enum values for `kind`, surface name, and `scope` are `#[serde(rename_all)]`
-      strict variants with deny-unknown-fields, so a typo fails rather than defaulting — acceptance:
-      a test asserting `scope: sometimes` is rejected exits 0, and the rejection message names the
-      allowed values.
+- [ ] [AI] **REFACTOR** — enum values for `type`, `kind`, `wiring`, `carve-out`, surface name, and
+      `scope` are `#[serde(rename_all)]` strict variants with deny-unknown-fields, so a typo fails
+      rather than defaulting — acceptance: a test asserting `scope: sometimes` is rejected exits 0,
+      and the rejection message names the allowed values. Same for `type: cleanup`.
+- [ ] [AI] Enforce the field-applicability rules from the contract table: `wiring` and `carve-out`
+      are valid only on `type: check`; `restages` only on `type: mutation` — acceptance: three tests,
+      one per misapplication, each asserting non-zero exit with a message naming the field and the
+      type it does not apply to. Verify the inverse: correctly-applied fields exit 0.
 - [ ] [AI] Extend `rhino-cli repo-config validate` to reject duplicate gate ids and a gate with an
       empty `surfaces` map — acceptance: two tests, one per condition, each asserting a non-zero exit
       and a message naming the offending id; both pass. Verify the inverse too: a registry with
@@ -103,7 +107,7 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 ### 1.2 `gate list`
 
 - [ ] [AI] **RED** — failing test: `gate list --surface=ci --format=json` returns only the gates
-      declaring the `ci` surface, each carrying `id`, `command`, `scope` — command:
+      declaring the `ci` surface, each carrying `id`, `type`, `command`, `scope` — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::list` — acceptance: fails
       because the command does not exist.
 - [ ] [AI] **GREEN** — implement `gate list` and wire it into `cli.rs` — acceptance: same command
@@ -112,6 +116,37 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 - [ ] [AI] **REFACTOR** — a surface with no declared gates returns `[]` and exit 0, not an error —
       acceptance: `... -- gate list --surface=cron --format=json` on a registry with no cron gates
       prints `[]` and exits 0.
+- [ ] [AI] `--format=json` omits `wiring: hand-wired` gates from the projection, so they never
+      produce a CI matrix row — acceptance: a test asserting `test-quick` is absent from
+      `gate list --surface=ci --format=json` exits 0, **and** a test asserting it is present in
+      `--format=text` exits 0. Both directions required.
+
+### 1.2a `git lockfile sync`
+
+The lockfile-sync step is inline shell in `.husky/pre-commit` today and cannot be declared until it
+is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-in-the-registry).
+
+- [ ] [AI] **RED** — failing test: given a staged `apps/<x>/package.json`, the command regenerates and
+      stages `apps/<x>/package-lock.json` — command:
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib git::lockfile` — acceptance: fails
+      because the command does not exist.
+- [ ] [AI] **GREEN** — implement `rhino-cli git lockfile sync`, porting the hook's existing logic
+      verbatim — acceptance: same command exits 0.
+- [ ] [AI] **REFACTOR** — no-op cleanly when no `package.json` is staged — acceptance: a test
+      asserting exit 0 with no git index mutation passes.
+
+### 1.2b `gate emit`
+
+- [ ] [AI] **RED** — failing test: `gate emit --surface=pre-commit` writes a `lint-staged` block
+      matching the registry's per-file gates — command:
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::emit` — acceptance: fails
+      because the command does not exist.
+- [ ] [AI] **GREEN** — implement `gate emit --surface=pre-commit` — acceptance: same command exits 0.
+- [ ] [AI] **REFACTOR** — the emitter is **marker-first**: it locates the already-applied marker
+      before the anchor, so a re-run replaces rather than appends — acceptance: a test running the
+      emitter twice asserts the second result is byte-identical to the first **and** that the block
+      appears exactly once. A test that only checks byte-equality would pass on a duplicated block if
+      both runs duplicated identically, so the occurrence count is required.
 
 ### 1.3 `gate run`
 
@@ -129,17 +164,21 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 
 ### 1.4 `gate validate`
 
-- [ ] [AI] **RED** — failing tests for all four checks in
+- [ ] [AI] **RED** — failing tests for all five checks in
       [tech-docs §2.4](./tech-docs.md#24-command-surface): composition-rule violation, missing
-      surface shim, undeclared CI command, orphan gate id — command:
+      surface shim, undeclared CI command, orphan gate id, stale emitted artifact — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate` — acceptance: fails
       because the command does not exist.
 - [ ] [AI] **GREEN** — implement `gate validate` — acceptance: same command exits 0.
-- [ ] [AI] **REFACTOR** — the `carve-out: formatter` exemption is applied only to the
-      composition-rule check, and `gate list` reports the exemption — acceptance: a test asserting a
-      formatter-marked gate with `ci` only passes validation exits 0, **and** a test asserting an
-      unmarked gate with `pre-commit` only _fails_ validation exits 0. Both directions must be
-      covered; one alone is not a check.
+- [ ] [AI] **REFACTOR** — the composition-rule check applies to `type: check` only, and
+      `carve-out: staged-only` exempts a check from it — acceptance: four tests, all required
+      because each covers a direction the others do not: a `type: mutation` gate with `pre-commit`
+      only **passes**; a `carve-out: staged-only` check with `pre-commit` only **passes**; an
+      unmarked `type: check` with `pre-commit` only **fails**; and `gate list` reports the
+      exemption. A one-direction test set would pass on a validator that never fires.
+- [ ] [AI] Implement check 3's `wiring` split — acceptance: a test asserting a `hand-wired` gate with
+      a matching workflow job **passes**, and a test asserting the same gate with its job deleted
+      **fails**, both exit 0.
 
 ### 1.5 Specs and coverage
 
@@ -161,7 +200,8 @@ Every code step below uses the RED / GREEN / REFACTOR template.
 
 ### Phase 1 Gate
 
-`gate list`, `gate run`, and `gate validate` exist and are tested; **no surface is wired to them yet**;
+`gate list`, `gate run`, `gate emit`, `gate validate`, and `git lockfile sync` exist and are tested;
+**no surface is wired to them yet**;
 `nx run rhino-cli:test:quick` green; PR merged.
 
 **Byte-identity window opens here.** `apps/rhino-cli` in `ose-public` now differs from `ose-primer`
@@ -190,19 +230,33 @@ documents agree. Independently shippable — the other repos are untouched.
 - [ ] [AI] Declare `harness-bindings` on the `ci` surface (closes R-6) — acceptance:
       `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("harness-bindings") != null'`
       exits 0.
-- [ ] [AI] Declare `format-verify` on the `ci` surface with `carve-out: formatter` (closes R-7) —
+- [ ] [AI] Declare the formatters as `type: mutation` on `pre-commit`, and `format-verify` as an
+      ordinary `type: check` on `ci` only (closes R-7) —
       acceptance: `... -- gate list --surface=ci --format=json | jq -e '[.[] | select(.id=="format-verify")] | length == 1'`
-      exits 0, and `... -- gate validate` exits 0 (the carve-out suppresses the composition-rule
-      demand for a pre-commit counterpart).
+      exits 0, and `... -- gate validate` exits 0 (a `ci`-only check is not a composition-rule
+      violation, and the mutations are not subject to the rule at all).
+- [ ] [AI] Declare the remaining mutations — `harness-bindings-generate` and `lockfile-sync` — and
+      the two surface-unique checks `env-staged-guard` (`carve-out: staged-only`) and `commitlint`
+      (surface `commit-msg`) — acceptance: `... -- gate list --format=json | jq -e '[.[].id] | contains(["harness-bindings-generate","lockfile-sync","env-staged-guard","commitlint"])'`
+      exits 0. This is the step that makes the registry a complete source of truth: after it, nothing
+      any surface does lives outside `gates:`.
 - [ ] [AI] Declare `deps-audit` on the `cron` surface only (closes R-8) — acceptance:
       `... -- gate list --surface=pre-push --format=json | jq -e '[.[].id] | index("deps-audit") == null'`
       exits 0.
+- [ ] [AI] Declare `test-quick` and `compat-min-version` with `wiring: hand-wired` — acceptance:
+      `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("test-quick") == null'`
+      exits 0 (absent from the matrix) **and** `... -- gate list --format=text` names it (present in
+      the registry).
 
 ### 2.2 Rewire the hooks
 
-- [ ] [AI] Replace the check list in `.husky/pre-commit` with `gate run --surface=pre-commit`,
-      keeping the two non-check steps (harness bindings **generate**, lockfile sync) as explicit hook
-      steps — acceptance: `bash .husky/pre-commit` on a staged no-op exits 0; and
+- [ ] [AI] Run `... -- gate emit --surface=pre-commit` to generate the `lint-staged` block in
+      `package.json` from the registry — acceptance: `git diff --stat package.json` shows the block
+      changed; `... -- gate validate` reports the emitted artifact fresh; running the emitter a
+      second time leaves `package.json` byte-identical and the block present exactly once.
+- [ ] [AI] Replace the check list in `.husky/pre-commit` with `gate run --surface=pre-commit`, which
+      now drives the mutations too (they are declared, so the hook no longer names them) —
+      acceptance: `bash .husky/pre-commit` on a staged no-op exits 0; and
       `grep -c 'gate run --surface=pre-commit' .husky/pre-commit` returns 1.
 - [ ] [AI] Replace the check list in `.husky/pre-push` with `gate run --surface=pre-push` —
       acceptance: `grep -c 'gate run --surface=pre-push' .husky/pre-push` returns 1; and

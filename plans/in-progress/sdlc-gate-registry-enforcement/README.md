@@ -47,12 +47,18 @@ read, plus a validator that fails when a surface silently drops a check.
 
 ## What Changes
 
-1. **A gate registry** — a new `gates:` section in `repo-config.yml` declares every check once: its
-   id, its command, and its scope **per surface**. This is the machine-readable promotion of the
-   markdown SSOT that already exists in the SDLC Gate Standard.
-2. **A rhino-cli `gate` command family** — `gate list` (enumerate, JSON for the CI matrix),
-   `gate run --surface=<…>` (execute, used by the hooks), and `gate validate` (the conformance gate:
-   fails when a declared check is missing from a surface, or a surface runs an undeclared check).
+1. **A gate registry** — a new `gates:` section in `repo-config.yml` declares **everything any
+   surface does**, once: every pass/fail check (`type: check`) and every file-rewriting step
+   (`type: mutation`), with its id, command, and scope **per surface**. Surfaces are `commit-msg`,
+   `pre-commit`, `pre-push`, `ci`, and `cron`. This is the machine-readable promotion of the markdown
+   SSOT that already exists in the SDLC Gate Standard — and because mutations are declared too,
+   anything absent from `gates:` is run by no surface at all.
+2. **A rhino-cli `gate` command family** — `gate list` (enumerate; JSON feeds the CI matrix),
+   `gate run --surface=<…>` (execute; used by the hooks), `gate emit` (regenerate the `lint-staged`
+   block from the registry), and `gate validate` (the conformance gate: fails when a declared check
+   is missing from a surface, a surface runs an undeclared check, or a generated artifact is stale).
+   One supporting command, `git lockfile sync`, extracts the inline lockfile shell so it can be
+   declared.
 3. **`main-ci.yml` is deleted** in all four repos, after its unique checks are folded into the PR
    gate. The Gate Composition Rule is amended to `(pre-commit ∪ pre-push) == PR gate`.
 4. **Four related findings closed** — `harness bindings validate` reaches CI, formatting gets a
