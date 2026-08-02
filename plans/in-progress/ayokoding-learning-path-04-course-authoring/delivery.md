@@ -961,25 +961,68 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     Prettier, markdownlint, Mermaid, XML, JSON, HTML-structure, local-artifact-link, and production
     build checks pass. The active five-course cohort is now complete and is ready for its single PR._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
+- [x] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
       manifests.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. Verified all ten
+    Band-2 IDs are catalogued in `tech-docs.md` and `<COURSES>_index.md`; the fresh
+    `origin/main...HEAD` manifest diff is empty. The completion signal below identifies the final
+    Band-2 content landing commit without asserting a new per-phase PR or deployment.
 
 ### Phase 4 Gate
 
-- [ ] [AI] All 10 Band-2 bodies exist:
+- [x] [AI] All 10 Band-2 bodies exist:
       `for s in api-design advanced-frontend backend-at-scale async-python-and-fastapi-services self-hosting-essentials containers-and-orchestration cloud-and-iac cicd-and-release-engineering build-automation-and-task-runners information-architecture-and-seo; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 10 before this phase).
-- [ ] [AI] The `self-hosting-essentials` exclusion loop returns 0 and the
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The ten-directory existence loop returned zero absent course IDs in the refreshed dedicated
+    worktree.
+- [x] [AI] The `self-hosting-essentials` exclusion loop returns 0 and the
       `async-python-and-fastapi-services` two cross-links both exit 0.
-- [ ] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    All five required self-hosting exclusions are stated in `overview.md`; both required FastAPI
+    scope-boundary links are present.
+- [x] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The recorded per-course checker evidence remains clean; a fresh `ayokoding-www:build` completed
+    static generation in the dedicated worktree and Markdown lint completed without findings. The
+    pinned Node 24.13.1 runtime and lockfile install were used.
+- [x] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. All ten catalog
+    rows and course-index entries are present, the Band-2 signal carries its five contract fields,
+    and `git diff --name-only origin/main...HEAD -- manifests/` returned no paths before this
+    plan-only documentation change.
+- [x] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
       terminal PR — see [§`vercel-function-cost-reduction` precondition](./README.md#vercel-function-cost-reduction-precondition)):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx` — acceptance: exits **0** (the old root layout
       no longer exists, i.e. `vercel-function-cost-reduction`'s Phase 1 has merged to `origin/main`).
       **This check MUST pass before the cohort's remaining PR merges** — if it fails, do not merge;
       wait for `vercel-function-cost-reduction` Phase 1 to land first.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    `test ! -f apps/ayokoding-www/src/app/layout.tsx` exited 0 in the refreshed worktree.
 - [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
+
+```text
+BAND: Phase 4 — Band 2 — Web, backend & platform productivity (10 bodies)
+PLAN: ayokoding-learning-path-04-course-authoring
+LANDED_COURSE_IDS:
+  api-design
+  advanced-frontend
+  backend-at-scale
+  async-python-and-fastapi-services
+  self-hosting-essentials
+  containers-and-orchestration
+  cloud-and-iac
+  cicd-and-release-engineering
+  build-automation-and-task-runners
+  information-architecture-and-seo
+GROW_MANIFESTS:
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
+```
 
 > **Pause Safety**: the web/platform productivity band is live and self-contained. Safe to stop. To
 > resume: re-run the section build.
