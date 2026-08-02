@@ -72,9 +72,6 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 interface Props {
   params: Promise<{ locale: string; slug: string[] }>;
-  // Tests and framework callers may provide additional route props, but this
-  // static route deliberately names and reads only `params`.
-  [unusedRouteProp: string]: unknown;
 }
 
 /**

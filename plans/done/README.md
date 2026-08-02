@@ -9,6 +9,11 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-02: ayokoding-learning-path-04-course-authoring](./2026-08-02__ayokoding-learning-path-04-course-authoring/README.md) —
+  Authored and verified the plan's 21-course retained scope across AI engineering, data depth, and
+  web/backend/platform productivity. Delivered with static-build repairs, Playwright evidence at
+  desktop and mobile breakpoints, a zero-manifest ownership invariant, and terminal Knowledge Capture
+  routing. Delivery Mode: `worktree-to-pr`. Completed 2026-08-02.
 - [2026-08-02: vercel-function-cost-reduction](./2026-08-02__vercel-function-cost-reduction/README.md) —
   Removed the request-time causes that kept `ayokoding-www` dynamic, deleted its hot-path
   middleware, tightened tracing, converted three `wahidyankf-www` routes to static delivery, and

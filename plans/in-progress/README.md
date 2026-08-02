@@ -4,11 +4,6 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [ayokoding-learning-path-04-course-authoring](./ayokoding-learning-path-04-course-authoring/README.md)
-  — Wave 2. Trimmed 2026-08-01 to its 21 already-merged/in-flight course bodies (6 net-new AI
-  courses + Band 1 Data-depth + Band 2 Web/backend/platform); the remaining 69 courses of its
-  original 90-course scope are split across 7 new backlog plans
-  (`ayokoding-learning-path-05` through `-11`).
 - [plan-decision-integrity-hardening](./plan-decision-integrity-hardening/README.md) — Four
   authoring-time rules plus a mechanical `plan-checker` Step 5o that stop a plan from shipping
   pre-loaded with its own successor, propagated to `ose-primer` and `ose-private` and applied

@@ -6,7 +6,7 @@ This plan authors **9 course bodies** of the shared course library — page bund
 `apps/ayokoding-www/content/en/learn/courses/`, each a standalone, path-neutral building block with a
 stable course ID, a canonical URL, a declared prerequisite list, a learning track, and a drilling
 track, per the shape
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#the-course-page-bundle)
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#the-course-page-bundle)
 defines and this plan inherits verbatim.
 
 A **course** is the unit of reading. A **path** is an ordered manifest of course IDs. This plan owns

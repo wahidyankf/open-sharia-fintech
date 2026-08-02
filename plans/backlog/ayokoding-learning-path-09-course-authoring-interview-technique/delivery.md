@@ -154,7 +154,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 ls-files` expands its own quoted pathspec so neither zsh nor RTK ever sees the `*`.
 - [ ] [AI] **Verify blocking plan #3 baseline — the parent plan's own Phase 0 established** — command
       (single line):
-      `git log --oneline -1 -- plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md | grep -c .`
+      `git log --oneline -1 -- plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md | grep -c .`
       — acceptance: returns **1** (the parent plan's `delivery.md` has at least one commit on
       `origin/main`, i.e. its own Phase 0 has run and been committed). This is a **baseline** check,
       not a full-completion check — see [tech-docs.md §Baseline

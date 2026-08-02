@@ -43,7 +43,7 @@ phase, inside one delivery checklist. That scope was large enough that deliverin
 continuously-running plan risked a long-lived, hard-to-audit in-progress state, so plan 04 was split:
 its terminal scope is now Band 1 + Band 2 + Phase 1 (21 bodies), and the other bands are carved into
 seven sibling plans, `05`-`11` (see plan 04's own
-[Successor plans table](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#successor-plans)).
+[Successor plans table](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#successor-plans)).
 Band 7 is a coherent, self-contained unit — eleven course bodies whose only shared dependency on the
 rest of the split family is a handful of already-existing prerequisite course IDs: `containers-and-orchestration`
 and `cicd-and-release-engineering`, authored natively in plan 04's own current Band 2;

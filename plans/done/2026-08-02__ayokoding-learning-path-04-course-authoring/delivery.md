@@ -448,6 +448,8 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The manifest diff returned `0` paths.
       **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Count = 0.
 
 ### Phase 0 Gate
@@ -961,25 +963,73 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     Prettier, markdownlint, Mermaid, XML, JSON, HTML-structure, local-artifact-link, and production
     build checks pass. The active five-course cohort is now complete and is ready for its single PR._
   - _Suggested executor: `apps-ayokoding-www-annotated-concept-maker`_
-- [ ] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
+- [x] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
       manifests.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. Verified all ten
+    Band-2 IDs are catalogued in `tech-docs.md` and `<COURSES>_index.md`; the fresh
+    `origin/main...HEAD` manifest diff is empty. The completion signal below identifies the final
+    Band-2 content landing commit without asserting a new per-phase PR or deployment.
 
 ### Phase 4 Gate
 
-- [ ] [AI] All 10 Band-2 bodies exist:
+- [x] [AI] All 10 Band-2 bodies exist:
       `for s in api-design advanced-frontend backend-at-scale async-python-and-fastapi-services self-hosting-essentials containers-and-orchestration cloud-and-iac cicd-and-release-engineering build-automation-and-task-runners information-architecture-and-seo; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 10 before this phase).
-- [ ] [AI] The `self-hosting-essentials` exclusion loop returns 0 and the
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The ten-directory existence loop returned zero absent course IDs in the refreshed dedicated
+    worktree.
+- [x] [AI] The `self-hosting-essentials` exclusion loop returns 0 and the
       `async-python-and-fastapi-services` two cross-links both exit 0.
-- [ ] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
-- [ ] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    All five required self-hosting exclusions are stated in `overview.md`; both required FastAPI
+    scope-boundary links are present.
+- [x] [AI] Every body passed its checkers with zero CRITICAL/HIGH/MEDIUM; build + `lint:md` exit 0.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The recorded per-course checker evidence remains clean; a fresh `ayokoding-www:build` completed
+    static generation in the dedicated worktree and Markdown lint completed without findings. The
+    pinned Node 24.13.1 runtime and lockfile install were used.
+- [x] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. All ten catalog
+    rows and course-index entries are present, the Band-2 signal carries its five contract fields,
+    and `git diff --name-only origin/main...HEAD -- manifests/` returned no paths before this
+    plan-only documentation change.
+- [x] [AI] **`vercel-function-cost-reduction` precondition holds** (hard gate on the remaining Band-2
       terminal PR — see [§`vercel-function-cost-reduction` precondition](./README.md#vercel-function-cost-reduction-precondition)):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx` — acceptance: exits **0** (the old root layout
       no longer exists, i.e. `vercel-function-cost-reduction`'s Phase 1 has merged to `origin/main`).
       **This check MUST pass before the cohort's remaining PR merges** — if it fails, do not merge;
       wait for `vercel-function-cost-reduction` Phase 1 to land first.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    `test ! -f apps/ayokoding-www/src/app/layout.tsx` exited 0 in the refreshed worktree.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. Committed the
+    verified Phase-4 evidence as `4c620a02e` (`docs(plans): record course authoring phase 4 evidence`)
+    on `ayokoding-learning-path-04-course-authoring-final-delivery`; no PR, push, merge, or deployment
+    occurred.
+
+```text
+BAND: Phase 4 — Band 2 — Web, backend & platform productivity (10 bodies)
+PLAN: ayokoding-learning-path-04-course-authoring
+LANDED_COURSE_IDS:
+  api-design
+  advanced-frontend
+  backend-at-scale
+  async-python-and-fastapi-services
+  self-hosting-essentials
+  containers-and-orchestration
+  cloud-and-iac
+  cicd-and-release-engineering
+  build-automation-and-task-runners
+  information-architecture-and-seo
+GROW_MANIFESTS:
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/interview-ready/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/immediately-effective/software-engineer.yaml
+  apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
+MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
+```
 
 > **Pause Safety**: the web/platform productivity band is live and self-contained. Safe to stop. To
 > resume: re-run the section build.
@@ -996,12 +1046,22 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ## Phase 5: Section and authored-tree verification
 
-- [ ] [AI] Verify the 21 historically authored course bundles and their catalogue rows using `npx nx run ayokoding-www:build` — acceptance: exits `0` and every expected course route resolves in the generated output.
-- [ ] [AI] Check the manifest-ownership boundary on the persistent final-delivery branch: `git diff --name-only origin/main...HEAD -- apps/ayokoding-www/src/features/course-paths/manifests/ | grep -c .` — acceptance: returns `0`.
+- [x] [AI] Verify the 21 historically authored course bundles and their catalogue rows using `npx nx run ayokoding-www:build` — acceptance: exits `0` and every expected course route resolves in the generated output.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/authored-body-slugs.txt` (corrected from the superseded 90-body scope to this plan's
+    21 owned bodies). A clean webpack-backed `ayokoding-www:build` completed successfully
+    (`.next/export-detail.json` reports `success: true`); every registered course body and its
+    `/en/learn/courses/<id>` prerendered route is present.
+- [x] [AI] Check the manifest-ownership boundary on the persistent final-delivery branch: `git diff --name-only origin/main...HEAD -- apps/ayokoding-www/src/features/course-paths/manifests/ | grep -c .` — acceptance: returns `0`.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The `origin/main...HEAD` manifest diff returned zero paths.
 
 ### Phase 5 Gate
 
-- [ ] [AI] The course-tree verification and ownership-boundary check are green, with no PR, merge, deployment, or new merge SHA.
+- [x] [AI] The course-tree verification and ownership-boundary check are green, with no PR, merge, deployment, or new merge SHA.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (verification only).
+    The authored-tree and ownership checks passed on the persistent final-delivery branch; no PR,
+    push, merge, deployment, or merge SHA was created.
 
 > **Pause Safety**: verification is committed only on the persistent final-delivery branch.
 
@@ -1009,13 +1069,33 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ## Phase 6: Manual content verification
 
-- [ ] [AI] Run `npx nx run ayokoding-www:build` and use Playwright MCP to inspect representative AI-engineering, Band 1, and Band 2 courses across supported locales — acceptance: routes render with titles, navigation, and declared prerequisites.
-- [ ] [AI] Save committed screenshot evidence under `plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
-- [ ] [AI] Run the Rule-15 exploratory, usability, and design retest; record and fix every EWT/UWT/DWT defect before continuing — acceptance: no unresolved defect remains.
+- [x] [AI] Run `npx nx run ayokoding-www:build` and use Playwright MCP to inspect representative AI-engineering, Band 1, and Band 2 courses across supported locales — acceptance: routes render with titles, navigation, and declared prerequisites.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (runtime verification).
+    A clean local production build was served on port 3104. Playwright MCP verified the English
+    content locale (the Indonesian mirror is a deferred non-goal): `evaluating-ai-output-essentials`
+    (AI engineering, prerequisite `15 · Software Testing`), `nosql-databases` (Band 1,
+    prerequisite `10 · SQL Essentials`), and `api-design` (Band 2, prerequisite
+    `11 · Backend Essentials`) all rendered their title, shared navigation, and prerequisite links.
+- [x] [AI] Save committed screenshot evidence under `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/phase-6-en-ai-desktop.png`, `evidence/phase-6-en-band-1-desktop.png`, and
+    `evidence/phase-6-en-band-2-mobile.png`. Playwright MCP captured the English content locale
+    at 1440×1000 desktop (AI and Band 1) and 390×844 mobile (Band 2); the three PNGs are non-empty
+    and will travel with the archival evidence folder.
+- [x] [AI] Run the Rule-15 exploratory, usability, and design retest; record and fix every EWT/UWT/DWT defect before continuing — acceptance: no unresolved defect remains.
+  - **Date**: 2026-08-02. **Status**: Exempt (documented). **Files Changed**:
+    `learnings.md`. The plan's existing, narrow Rule-15 exemption applies because it ships content
+    bundles but owns none of the rendering or navigation components that the triad would test; those
+    components belong to `ayokoding-learning-path-03-navigation-ui`. Manual Playwright verification
+    remains mandatory and passed above, so there are no EWT/UWT/DWT findings to fix.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Manual assertions, evidence, and the Rule-15 retest are green on the persistent final-delivery branch; no PR is open.
+- [x] [AI] Manual assertions, evidence, and the Rule-15 retest are green on the persistent final-delivery branch; no PR is open.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/phase-6-en-*.png`, `learnings.md`. The three Playwright assertions and committed
+    desktop/mobile screenshots are green; Rule 15 is explicitly waived by the plan's content-only
+    exemption, and no PR has been opened.
 
 > **Pause Safety**: manual verification is complete but not deployed; it rides the sole Phase 9 archival PR.
 
@@ -1023,13 +1103,25 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ## Phase 7: Final branch verification
 
-- [ ] [AI] Confirm the persistent final-delivery branch has no open PR: `gh pr list --head "$(git branch --show-current)" --state open --json number --jq 'length'` — acceptance: returns `0`.
-- [ ] [AI] Run the complete local quality suite on the persistent branch: `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage && npx nx run ayokoding-www:build` — acceptance: exits `0`.
-- [ ] [AI] Record any required downstream manifest handoff in `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md` — acceptance: it names only the historically completed course bodies and does not claim a new merge SHA.
+- [x] [AI] Confirm the persistent final-delivery branch has no open PR: `gh pr list --head "$(git branch --show-current)" --state open --json number --jq 'length'` — acceptance: returns `0`.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The sandbox does not expose the `gh` executable, so the equivalent GitHub REST query for
+    `ayokoding-learning-path-04-course-authoring-final-delivery` returned zero open pull-request
+    numbers.
+- [x] [AI] Run the complete local quality suite on the persistent branch: `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage && npx nx run ayokoding-www:build` — acceptance: exits `0`.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (verification only).
+    The affected suite's concurrent wrapper hit a nested-Nx coverage-directory race, so its same
+    targets were completed serially: typecheck, lint, behavior coverage (44 specs / 376 scenarios /
+    1,350 steps), unit tests (158 files / 3,462 passed), and isolated coverage (96.4% statements,
+    97.72% lines). The clean local production build was also served and manually verified in Phase 6.
+- [x] [AI] Record any required downstream manifest handoff in `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md` — acceptance: it names only the historically completed course bodies and does not claim a new merge SHA.
 
 ### Phase 7 Gate
 
-- [ ] [AI] No PR is open; the full local suite and build are green; the handoff is branch-local and ready for the sole Phase 9 archival PR.
+- [x] [AI] No PR is open; the full local suite and build are green; the handoff is branch-local and ready for the sole Phase 9 archival PR.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (gate verification).
+    The branch remains without an open PR, all required local target outcomes are green, and the
+    zero-manifest handoff is branch-local for the sole Phase 9 archival PR.
 
 > **Pause Safety**: final verification is green on the one persistent branch; nothing is deployed or merged yet.
 
@@ -1040,25 +1132,42 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason — acceptance: every
       entry has a route or a discard reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: `learnings.md`.
+    All entries pass the litmus through their recorded terminal routes: workflow correction, separate
+    code-homed backlog plan, or the existing Rule-15 exemption record.
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable —
       acceptance: `learnings.md` contains no raw secret.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only review).
+    The entries contain only public repository paths, public PR URLs, and generic branch examples;
+    no credential, token, private hostname, inventory, or secret is recorded.
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
       hostnames/inventories) stays in `ose-private` only and is NEVER cross-routed into
       `ose-public`/`ose-primer`; public-governance content may propagate via the existing parity loop —
       acceptance: no infra-private content appears in this repo's routed output.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (review only).
+    Every learning concerns this public repository's workflow, public course content, or its
+    documented Rule-15 scope; no infra-private material is routed or retained.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
       — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large); **code
       homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan and
       NEVER landed inline**. Note this plan's own artefacts are content, not code — a learning about
       the `course-paths` feature code is code-homed and goes to backlog — acceptance: every entry
       records its terminal routing state.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `repo-governance/workflows/plan/plan-execution.md`,
+    `plans/backlog/ayokoding-database-internals-ruff-config/README.md`, and `learnings.md`.
+    The workflow learning landed inline, the code-homed Ruff learning has one separate backlog home,
+    and the Rule-15 entry retains its existing documented home.
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md` — acceptance: `learnings.md` is never silently empty.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 8 is intermediate (see the
+  - **Date**: 2026-08-02. **Status**: Not applicable. **Files Changed**: none.
+    Three generalizable learnings surfaced and all have terminal routes, so the explicit-none escape
+    is neither needed nor appropriate.
+- [x] [AI] **Confirm no manifest file changed in this phase** — Phase 8 is intermediate (see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): it commits the `learnings.md` triage
       and any inline non-code fixes on the shared closeout branch and folds into the Phase 9 PR
       rather than opening one of its own, so this phase still gets the same individual gate on its own
@@ -1070,14 +1179,18 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ### Phase 8 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR opens for this phase** (intermediate — see the
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
+- [x] [AI] **No PR opens for this phase** (intermediate — see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): the `learnings.md` triage is committed
       on the shared closeout branch, this phase's own gate above is green, and nothing is pushed for
       review yet — the closeout PR for Phases 6–9 opens at Phase 9.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `learnings.md`, `repo-governance/workflows/plan/plan-execution.md`, and the Ruff backlog plan.
+    Every learning is terminal; no code-homed change landed inline; the manifest diff is zero; and no
+    PR has been opened.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
@@ -1088,20 +1201,20 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+  - **Date**: 2026-08-02. **Status**: Done. Committed as `bf7f399c5`.
 - [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
+- [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape present; both safety gates applied to every surviving entry).
-- [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised (per the Indonesian-mirror-deferred non-goal).
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 6
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 6
       — acceptance: `grep -F -q 'rule-15' learnings.md` exits 0. The triad itself is exempt here; the
       navigation-UI plan runs it against the surface it owns.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **21** — acceptance: both
       hold. **This plan asserts 21, not 127.** The 127-course catalog total is the manifest plans'
@@ -1110,7 +1223,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       33 shipped + 4 existing capstones re-homed by `ayokoding-learning-path-01-url-restructure`, plus
       69 native bodies carried by the 7 successor plans — see
       [README §Successor plans](./README.md#successor-plans)).
-- [ ] [AI] **Verify the ownership invariant held** — re-assert the same sound diff-based mechanism used
+- [x] [AI] **Verify the ownership invariant held** — re-assert the same sound diff-based mechanism used
       by every prior commit-producing phase's own individual check (Phase 0, Phase 1, Phase 3's and
       Phase 4's per-band closing steps, every one of the 21 individual course sub-phases' own convention
       step 8, Phase 5, Phase 6, and Phase 8), on this phase's own diff (a commit-message `--grep`
@@ -1120,7 +1233,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** — acceptance: no manifest file was touched on this branch. Falsifiable both ways:
       touching any file under that path makes it return ≥1.
-- [ ] [AI] **Verify every cross-plan reference still resolves after upstream archival** — the schema
+- [x] [AI] **Verify every cross-plan reference still resolves after upstream archival** — the schema
       plan archives to `plans/done/YYYY-MM-DD__…` while this plan runs, so re-run the BF-8 link gate:
 
   ```bash
@@ -1135,11 +1248,13 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
   repoint step has not landed, fix the references in **this plan's own files** and record it —
   never edit the other plan's folder.
 
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-04-course-authoring/ plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-04-course-authoring/ plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: the complete archived plan folder,
+    including `evidence/`. The plan moved from `in-progress/` to its completion-date folder.
       using today's **completion** date, not the creation date (the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan (`plans/README.md`,
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+- [x] [AI] Update any other READMEs that reference this plan (`plans/README.md`,
       `plans/backlog/README.md`) and notify every sibling plan whose `Depends-on` table names this plan
       by folder path — this now includes `ayokoding-learning-path-12-careers-se-manifests`,
       `ayokoding-learning-path-13-careers-ai-manifest`, and the 7 successor
@@ -1147,45 +1262,49 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       [README §Successor plans](./README.md#successor-plans)) — acceptance: no sibling plan's link to
       this folder is left dangling (re-run the BF-8 gate with each sibling's folder name substituted in
       the `grep -F`).
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-04-course-authoring to done`.
+  - **Date**: 2026-08-02. **Status**: Done. Commit `bf7f399c5` contains the move, index updates,
+    and cross-plan repoints.
 
 ### Phase 9 Gate
 
-- [ ] [AI] All 21 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
+- [x] [AI] All 21 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline of
       90); the slug register holds 21 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
-- [ ] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
+- [x] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
       all READMEs updated; archival committed.
 - [ ] [AI] Draft PR opened for the Phase 6–9 closeout unit (manual verification evidence,
       `learnings.md` triage, and the archival move — this unit's own boundary; see the
       [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
       PR `[AI]`-merged; deployed (no-op).
 
-> **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
-> resume: nothing — the plan is complete.
+> **Pause Safety**: the plan is archived and locally ready for its sole draft PR. Remote GitHub
+> authentication is required to push `ayokoding-learning-path-04-course-authoring-final-delivery`,
+> open the PR, run CI/review cycles, merge, and deploy. Resume from the push when authenticated;
+> the remote-only checkboxes above remain intentionally unticked.
 
 ---
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
       course bundle per commit is the natural unit here).
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
       e.g. `feat(ayokoding-www): add nosql-databases course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
       split plans are being authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
 - [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 

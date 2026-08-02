@@ -58,6 +58,9 @@ ayokoding-learning-path-04-course-authoring/evaluating-ai-output-essentials` —
   `<plan-id>-base` or provision directly onto a throwaway/detached ref) so it never collides with the
   first real phase branch.
 
+- **Terminal routing**: routed inline to `repo-governance/workflows/plan/plan-execution.md`; its
+  worktree-provisioning branch is now `<plan-identifier>-base`, preventing the ref-prefix collision.
+
 ## Learning: `database-internals-and-storage-engines` ships without a course-scoped `ruff.toml`
 
 - **Context**: PR #107's cycle-1 review (F5) flagged that this course ships 184 `.py` files across
@@ -86,3 +89,17 @@ ayokoding-learning-path-04-course-authoring/evaluating-ai-output-essentials` —
   picking it up as a post-hoc PR-review finding. Worth confirming whether the per-course
   course-authoring checklist/template actually mandates adding `ruff.toml` whenever a course ships
   `.py` code, so this exact gap does not recur across the remaining courses.
+
+- **Terminal routing**: code-homed and filed as the separate backlog plan
+  [`ayokoding-database-internals-ruff-config`](../../backlog/ayokoding-database-internals-ruff-config/README.md);
+  no code change lands inline in this plan.
+
+## Learning: rule-15 triad is expressly exempt for this content-only plan
+
+- **Context**: Phase 6 manually verified the rendered course pages through Playwright MCP.
+- **Observation**: the plan ships only course-content bundles; it owns neither the navigation nor the
+  rendering components that the Rule-15 exploratory, usability, and design triad would exercise.
+  Manual route verification remains mandatory and was completed; only the `rule-15` triad is waived.
+- **Why it might generalize**: the existing durable exemption in `README.md` and `tech-docs.md`
+  distinguishes content verification from an owner-surface UI retest. **Terminal routing**: retain
+  that existing documented exemption; no additional code or governance change is required.

@@ -155,10 +155,10 @@ Scenario: The Band-5 course library builds and validates green
 Full per-course concept/example/capstone detail lives in the cross-plan
 [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md).
 The table below is drawn from the parent plan's own settled
-[Course Library Catalog](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#course-library-catalog)
+[Course Library Catalog](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#course-library-catalog)
 [Repo-grounded]. **Volume-target bands** (floor, not cap) are inherited unchanged from the parent
 plan's own
-[volume-target table](../../in-progress/ayokoding-learning-path-04-course-authoring/prd.md)
+[volume-target table](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/prd.md)
 [Repo-grounded]: By Example ≥ 10 concepts / 75–85 examples; Annotated-concept, code-bearing ≥ 10
 concepts / 45–60 worked examples.
 

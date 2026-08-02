@@ -359,7 +359,7 @@ directories confirmed above):
   read-only reference paths
 - `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/` (`<SYLLABUS>`) —
   consumed, never copied or edited
-- `plans/in-progress/ayokoding-learning-path-04-course-authoring/` — read-only cross-reference; the
+- `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/` — read-only cross-reference; the
   parent plan's own files are never edited by this plan
 
 **No package-manifest changes**: this plan adds no entry to `package.json`, `go.mod`, `Cargo.toml`, or

@@ -6,7 +6,7 @@ Fill the shared course library with **9 course bodies** — the JVM/advanced-lan
 of Band 6 — so the four `careers/` path manifests can eventually reference a complete Band 6 without a
 truncated `courseOrder`. A path manifest is an ordered list of course IDs; an ID with no resolving body
 is an integrity failure, not a path — the same reasoning
-[`ayokoding-learning-path-04-course-authoring/brd.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/brd.md)
+[`ayokoding-learning-path-04-course-authoring/brd.md`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/brd.md)
 states for the library as a whole, scoped here to this plan's 9-course slice.
 
 Concretely it authors:
@@ -68,7 +68,7 @@ dependency-light band).
   are missing entirely.
 - `build-your-own-database` and `build-your-own-raft` are exactly the kind of "productive in target
   codebases" proof-of-transfer anchor
-  [`ayokoding-learning-path-04-course-authoring`'s DD-18](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#owned-by-this-plan)
+  [`ayokoding-learning-path-04-course-authoring`'s DD-18](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#owned-by-this-plan)
   names as the library's outcome anchor — durable principles (storage engines, consensus) evidenced by
   a runnable artefact, not subject matter for its own sake.
 - Splitting Band 6 unblocks parallel authoring: this plan and its low-level-systems sibling (`07`) can

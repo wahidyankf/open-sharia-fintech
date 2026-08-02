@@ -299,10 +299,10 @@ The resolved delivery mode also determines the push target at each phase gate (S
 
         ```bash
         git fetch origin
-        git worktree add -b <plan-identifier> worktrees/<plan-identifier> origin/main
+        git worktree add -b <plan-identifier>-base worktrees/<plan-identifier> origin/main
         ```
 
-        If the branch `<plan-identifier>` already exists (e.g., a prior worktree was removed but its branch kept), reuse it instead: `git worktree add worktrees/<plan-identifier> <plan-identifier>`.
+        If the branch `<plan-identifier>-base` already exists (e.g., a prior worktree was removed but its branch kept), reuse it instead: `git worktree add worktrees/<plan-identifier> <plan-identifier>-base`.
 
      3. If `git worktree add` fails (e.g., path already exists as a stale entry), run `git worktree prune` and retry once; if it still fails, terminate with status `fail` and emit the error output verbatim.
      4. Run `npm install && npm run doctor -- --fix` in the root repository worktree to initialize the toolchain, per [Worktree Toolchain Initialization](../../development/workflow/worktree-setup.md).

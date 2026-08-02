@@ -114,7 +114,7 @@ subagents capped per the orchestration convention). The main thread self-promote
 - `<SYLLABUS>` = `../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/`
   (cross-plan authoring source of truth — **never copied**)
 - `<PLAN04>` = the resolved location of `ayokoding-learning-path-04-course-authoring` — currently
-  `../../in-progress/ayokoding-learning-path-04-course-authoring/`; Phase 0 re-resolves this if that
+  `../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/`; Phase 0 re-resolves this if that
   plan has archived by execution time.
 
 ### Delivery Boundaries

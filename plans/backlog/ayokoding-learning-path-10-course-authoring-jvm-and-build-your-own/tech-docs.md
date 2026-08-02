@@ -15,7 +15,7 @@ This plan produces **content artefacts only**: 9 page bundles under
 `apps/ayokoding-www/content/en/learn/courses/<course-id>/`. It writes no TypeScript, no YAML data
 file, no route, no component, and no redirect rule. Its "architecture" is therefore the same
 **authoring architecture**
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#authoring-architecture)
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#authoring-architecture)
 defines, applied to this plan's 9-course slice.
 
 ## Programme decisions (inherited verbatim)
@@ -37,7 +37,7 @@ content touches most directly:
   performs no further syllabus authoring of its own.
 
 Full prose for these ids is not re-derived here — see
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s Programme decisions section](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#programme-decisions)
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s Programme decisions section](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#programme-decisions)
 for the authoritative text.
 
 ## The manifest ownership invariant (binding)
@@ -218,7 +218,7 @@ is redundant throughout.
 workflow, not code TDD — there is no failing test to write first, because the artefact under
 production is prose and worked examples validated by domain checkers, not application behaviour
 validated by assertions, exactly as
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s TDD exemption](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#the-per-course-authoring-convention-maker-checker-fixer-not-code-tdd)
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s TDD exemption](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#the-per-course-authoring-convention-maker-checker-fixer-not-code-tdd)
 states for the whole library.
 
 ### Licensing posture (programme A8)
@@ -281,7 +281,7 @@ own carve-out for content-only plans.
 
 Every artefact this plan produces is an **additive** new directory under `<COURSES>`. Nothing is
 moved, renamed, or deleted, so rollback is subtractive and total, mirroring
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s own Rollback section](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#rollback),
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s own Rollback section](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#rollback),
 adapted to this plan's two delivery boundaries (Cohort 1, Cohort 2):
 
 - **Per delivery boundary (Cohort)**: revert that cohort's merge commit. The cohort's course bodies

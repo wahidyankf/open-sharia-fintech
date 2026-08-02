@@ -12,7 +12,7 @@ Author **9 course bodies** — the JVM/advanced-language half of the original Ba
 `build-your-own-git`, `build-your-own-database`, `build-your-own-raft`.
 
 This plan is a **further split** of
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)'s
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)'s
 own **Band 6 — "Low-level systems, JVM & languages, internals builds"** (16 bodies), which is itself
 too large for the 5–15-course-per-plan sizing rule. Band 6 splits along a natural content seam into
 two sibling plans:
@@ -24,7 +24,7 @@ two sibling plans:
 - **This plan** — "JVM, Advanced Languages & Build-Your-Own Internals" (9 courses, listed above).
 
 7 + 9 = 16, matching Band 6's full course count in
-[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s Course Library Catalog](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#course-library-catalog)
+[`ayokoding-learning-path-04-course-authoring/tech-docs.md`'s Course Library Catalog](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#course-library-catalog)
 `[Repo-grounded]`.
 
 It owns no schema, no route, no component, no redirect — and, per the invariant every course-authoring
@@ -40,7 +40,7 @@ split plan carries, **no manifest**.
 > `software-engineer`-role `careers/` manifests. A step in this plan that creates, appends to,
 > reorders, or re-verifies a `.yaml` manifest is a **boundary violation**, not a
 > convenience — see
-> [`ayokoding-learning-path-04-course-authoring/README.md`'s own statement of this invariant](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#the-manifest-ownership-invariant-binding--read-before-anything-else),
+> [`ayokoding-learning-path-04-course-authoring/README.md`'s own statement of this invariant](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#the-manifest-ownership-invariant-binding--read-before-anything-else),
 > which this plan inherits verbatim.
 
 When this plan's 9 bodies land, it records a **band-completion signal** (see
@@ -170,7 +170,7 @@ artefact, per the
 This plan authors **9 of Band 6's 16 courses** — the JVM/advanced-language/build-your-own half. It
 therefore records its own **partial band-completion signal**, distinct from the low-level sibling
 plan's signal, using the same five-field contract
-[`ayokoding-learning-path-04-course-authoring/README.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)
+[`ayokoding-learning-path-04-course-authoring/README.md`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)
 defines:
 
 | Field               | Content                                                                                                                                                                                                                                                                                                                                                                 |
@@ -224,7 +224,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 9 courses is small enough for a single five-course cohort plus a four-course cohort, inheriting the
 sequential five-course delivery cadence
-[`ayokoding-learning-path-04-course-authoring`'s 2026-07-31 execution amendment](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md#delivery-mode-worktree-to-pr)
+[`ayokoding-learning-path-04-course-authoring`'s 2026-07-31 execution amendment](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md#delivery-mode-worktree-to-pr)
 established for its own remaining bodies:
 
 - **Cohort 1 (5 courses)**: `just-enough-java`, `enterprise-java-and-the-jvm`, `lisp`,
@@ -263,7 +263,7 @@ constraint (five-course cadence, build-your-own-last).
 ## Rule-15 three-tester retest — exemption recorded
 
 **Exempt, with reasons stated**, for the same reasons
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#rule-15-three-tester-retest--exemption-recorded)
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#rule-15-three-tester-retest--exemption-recorded)
 records and this plan inherits verbatim:
 
 1. **It ships no screen and no component.** Every artefact is a markdown page bundle under
@@ -301,7 +301,7 @@ and states the deferral inline.
 - **Cross-plan**:
   [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
-  [course-authoring baseline plan (04)](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  [course-authoring baseline plan (04)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [manifest plan (12-careers-se-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [vercel-function-cost-reduction](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 

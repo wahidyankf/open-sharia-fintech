@@ -15,13 +15,13 @@ courses fits the repo's 5–15-course plan-sizing rule as-is; no further splitti
 this band.
 
 This plan is a **further split of Band 8 out of**
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 (itself Wave 2 of the five-way split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
-plan). Band 8 held eight course bodies as
-[Phase 10 of plan 04's own delivery checklist](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md);
-that phase's scope is carved out into this standalone folder, exactly as Bands 3+4, 5, 6a, 6b, 7, and
-9 were each carved into their own sibling plans. This plan owns **course bodies only**, exactly as
+plan). In the historical pre-split scope, Band 8 held eight course bodies as Phase 10; the compacted
+Plan 04 closeout checklist intentionally retains only Phases 0–9. That historical scope is carved out
+into this standalone folder, exactly as Bands 3+4, 5, 6a, 6b, 7, and 9 were each carved into their own
+sibling plans. This plan owns **course bodies only**, exactly as
 plan 04 did: no schema, no route, no component, no redirect — and, most importantly, **no manifest**.
 
 > **This band is the synthesis layer of the whole course library, by design.** Every other
@@ -345,7 +345,7 @@ is forbidden.
   [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
@@ -354,7 +354,7 @@ is forbidden.
 ## Provenance
 
 This plan carves **Phase 10 (Band 8 — Remaining capstones, 8 bodies)** out of
-[`ayokoding-learning-path-04-course-authoring`'s own delivery checklist](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md),
+[`ayokoding-learning-path-04-course-authoring`'s own delivery checklist](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md),
 which is itself Wave 2 of the five-way split of the closed
 `plans/done/2026-07-21__shared-course-library-and-learning-paths/` plan. A sibling agent is trimming
 plan 04's own `README.md`, `tech-docs.md`, and `delivery.md` concurrently with this plan's authoring

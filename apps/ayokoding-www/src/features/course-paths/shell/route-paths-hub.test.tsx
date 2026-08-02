@@ -95,7 +95,6 @@ afterEach(cleanup);
 function renderPathsSlug(slug: string[]) {
   return ContentPage({
     params: Promise.resolve({ locale: "en", slug }),
-    searchParams: Promise.resolve({}),
   });
 }
 

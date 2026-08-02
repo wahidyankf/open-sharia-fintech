@@ -21,7 +21,7 @@ decided **when**, not **whether**.
 
 > **Why a standalone plan instead of a phase inside `ayokoding-learning-path-04-course-authoring`.**
 > Band 9 was originally Phase 11 of
-> [`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md).
+> [`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md).
 > **[Repo-grounded, 2026-08-01]** That plan has authored **21 of its 90 bodies** so far — the six
 > net-new AI-engineering courses plus Bands 1 and 2 (5 + 10 = 15), verified by
 > `git ls-files -- 'apps/ayokoding-www/content/en/learn/courses/*/_index.md' | awk -F/ 'NF==8' | wc -l`
@@ -80,7 +80,7 @@ orange, `#CA9161` tan) with black borders and WCAG-AA-contrasting text, per the
 Band 9 is the one band in the whole split whose manifest growth is **not** the usual three-manifest
 pattern. Quoted **verbatim** from the parent plan's own binding record
 ([`ayokoding-learning-path-04-course-authoring/README.md` §Band-completion signal
-contract](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)),
+contract](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#band-completion-signal-contract)),
 so this plan does not risk generalizing the exception back into the rule it is an exception to:
 
 > - **Band 9** → `<MANIFESTS>careers/interview-ready/software-engineer.yaml` and
@@ -161,7 +161,7 @@ every other band-split sibling plan's corpus — no shared file, no shared cours
 ## Not UI-bearing (Rule-15 exemption, reused reasoning)
 
 Reusing the parent plan's own [Rule-15 exemption
-reasoning](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#rule-15-three-tester-retest--exemption-recorded)
+reasoning](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#rule-15-three-tester-retest--exemption-recorded)
 verbatim in substance, scoped to this plan's 5 bodies:
 
 1. **This plan ships no screen and no component.** Every artefact is a markdown page bundle under
@@ -201,7 +201,7 @@ verification step in this plan exercises `en` only and states the deferral inlin
   → Phase 1 authoring → verification, manual test, CI readiness, knowledge capture, terminal archival PR.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
 - **Cross-plan**:
-  [parent course-authoring plan](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [SE-manifest plan (12, successor to 05-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)

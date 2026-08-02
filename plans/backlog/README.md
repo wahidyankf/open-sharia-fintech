@@ -18,10 +18,10 @@ own natural theme/stage boundaries, and every resulting plan carries a hard `blo
 [`vercel-function-cost-reduction`](../done/2026-08-02__vercel-function-cost-reduction/README.md) (treated
 as already merged), since it rewrites the same `apps/ayokoding-www` root layout/middleware every one
 of these plans lands content or manifests into. **Waves 1-2 have left this backlog**:
-`01-url-restructure`, `02-schema-and-prerequisite-dag`, and `03-navigation-ui` are done;
-[`04-course-authoring`](../in-progress/ayokoding-learning-path-04-course-authoring/README.md) is
-in-progress, trimmed to its 21 already-merged/in-flight courses (a documented exception to the
-5-15 rule — real execution history, not new backlog scoping).
+`01-url-restructure`, `02-schema-and-prerequisite-dag`, `03-navigation-ui`, and
+[`04-course-authoring`](../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
+are done; 04 delivered its 21-course retained scope (a documented exception to the 5-15 rule — real
+execution history, not new backlog scoping).
 
 **Course-authoring remainder** (splits `04`'s original Bands 3-9 + course-surgery contracts; 69
 courses total, `blockedBy 04`):
@@ -77,6 +77,9 @@ its band-completion signal lands):
 
 Standalone plans (outside the `ayokoding-learning-path-*` programme):
 
+- [ayokoding-database-internals-ruff-config](./ayokoding-database-internals-ruff-config/README.md)
+  — Adds course-scoped Ruff configuration so annotation-heavy database-internals examples remain
+  formatter-stable without changing course behavior or shared lint policy.
 - [harden-ayokoding-www-fe-e2e-bulk-link-concurrency](./harden-ayokoding-www-fe-e2e-bulk-link-concurrency/README.md)
   — Bounds concurrency (and retries transient failures) in `ayokoding-www-fe-e2e`'s bulk-link-check
   helper, which currently fires every collected `href` at once.

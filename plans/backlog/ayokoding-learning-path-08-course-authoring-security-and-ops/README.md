@@ -15,13 +15,13 @@ course library: `it-and-application-security`, `offensive-security`, `defensive-
 `apps/ayokoding-www/content/en/learn/courses/`.
 
 This plan is a **further split of Band 7 out of**
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 (itself Wave 2 of the five-way split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
 plan). Band 7 held eleven course bodies as a former phase of plan 04's own delivery checklist — plan
 04's delivery.md has since been trimmed and no longer carries that phase heading; the carve-out is now
 documented in
-[plan 04's own Successor plans table](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#successor-plans);
+[plan 04's own Successor plans table](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#successor-plans);
 that phase's scope is carved out into this standalone folder so the band can be delivered, reviewed,
 and archived independently of plan 04's remaining bands. **Eleven courses fits the repo's 5-15-course
 plan-sizing rule as-is** — no further merging or splitting is needed within this band.
@@ -37,7 +37,7 @@ plan-sizing rule as-is** — no further merging or splitting is needed within th
 > time this plan was authored, `ayokoding-learning-path-04-course-authoring` had not yet archived to
 > `plans/done/YYYY-MM-DD__…`. Every cross-plan link to it in this plan's own files therefore currently
 > points at
-> `../../in-progress/ayokoding-learning-path-04-course-authoring/`. [delivery.md Phase 0](./delivery.md#phase-0-environment-setup--baseline)
+> `../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/`. [delivery.md Phase 0](./delivery.md#phase-0-environment-setup--baseline)
 > resolves the actual path at execution time (the same `git ls-files`-based pattern plan 04 itself used
 > for its own upstream schema-plan reference) and re-points every reference in this plan's own files
 > before authoring begins, rather than guessing a completion date now.
@@ -231,7 +231,7 @@ forbidden.
   [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-12-careers-se-manifests` (downstream)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
@@ -239,10 +239,10 @@ forbidden.
 
 This plan carves **Phase 9 (Band 7 — Security, ops, quality & delivery, 11 bodies)** out of what was,
 at authoring time, a phase of
-[`ayokoding-learning-path-04-course-authoring`'s own delivery checklist](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md).
+[`ayokoding-learning-path-04-course-authoring`'s own delivery checklist](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md).
 Plan 04's `delivery.md` was concurrently trimmed and that phase heading no longer exists there; the
 carve-out is now documented in
-[plan 04's own Successor plans table](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#successor-plans),
+[plan 04's own Successor plans table](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#successor-plans),
 which is itself Wave 2 of the five-way split of the closed
 `plans/done/2026-07-21__shared-course-library-and-learning-paths/` plan. A sibling agent is trimming
 plan 04's own `README.md`, `tech-docs.md`, and `delivery.md` concurrently with this plan's authoring to

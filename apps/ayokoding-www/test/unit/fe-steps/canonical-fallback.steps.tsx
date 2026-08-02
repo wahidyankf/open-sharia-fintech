@@ -129,7 +129,6 @@ describeFeature(feature, ({ Scenario }) => {
     When("the course page renders", async () => {
       jsx = await ContentPage({
         params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-        searchParams: Promise.resolve({}),
       });
       cleanup();
       render(jsx);

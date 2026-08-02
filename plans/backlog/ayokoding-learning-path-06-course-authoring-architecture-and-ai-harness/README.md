@@ -14,7 +14,7 @@ constrain how this band's bodies are authored, and this plan is where they are l
 applied by construction.
 
 This plan is a **further split** of
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md),
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md),
 which originally owned all nine authoring bands plus these three contracts (as its own "Phase 2").
 Band 5 and the three contracts are carved out into this standalone plan so the band's 15 bodies —
 including the entire AI/harness cluster — can be authored, reviewed, and merged independently of the
@@ -278,7 +278,7 @@ Manual behavioural verification via Playwright MCP is **still mandatory and perf
 - [Delivery Checklist (delivery.md)](./delivery.md) — the phased, executable checklist.
 - [Learnings (learnings.md)](./learnings.md) — knowledge-capture running log.
 - **Cross-plan**:
-  [parent course-authoring plan](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  [parent course-authoring plan](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [SE-manifests plan](../ayokoding-learning-path-12-careers-se-manifests/README.md)
@@ -288,7 +288,7 @@ Manual behavioural verification via Playwright MCP is **still mandatory and perf
 ## Provenance
 
 This plan is carved out of
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md),
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md),
 which itself is Wave 2 of the five-way split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
 plan. The parent plan's own Phase 2 (the three course-surgery contracts) and Phase 7 (Band 5, 15
