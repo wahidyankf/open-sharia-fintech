@@ -23,18 +23,21 @@ flowchart LR
 | Phase(s) | Delivery unit | Worktree / branch | PR opens |
 | --- | --- | --- | --- |
 | 0 | Setup and baseline | — | no |
-| 1 | Scoped Ruff configuration | `worktrees/ayokoding-database-internals-ruff-config/` / `ayokoding-database-internals-ruff-config` | yes — at Phase 1 |
-| 2–3 | Knowledge Capture and archival | `worktrees/ayokoding-database-internals-ruff-config-closeout/` / `ayokoding-database-internals-ruff-config-closeout` | yes — at Phase 3 |
+| 1 | Scoped Ruff configuration | `worktrees/ayokoding-database-internals-ruff-config/` / `ayokoding-database-internals-ruff-config-base` | yes — at Phase 1 |
+| 2–3 | Knowledge Capture and archival | `worktrees/ayokoding-database-internals-ruff-config-closeout/` / `ayokoding-database-internals-ruff-config-closeout-base` | yes — at Phase 3 |
 | 4 | Cleanup | — | no |
 
-## Worktrees
+## Worktree
 
 Phase 1 uses `worktrees/ayokoding-database-internals-ruff-config/`. After its PR merges, Phases 2–3
 use `worktrees/ayokoding-database-internals-ruff-config-closeout/` from current `origin/main`.
 Both delivery units use `worktree-to-pr`; neither worktree may carry another plan's changes.
 
-## Phase 0: Baseline
+## Phase 0: Environment Setup and Baseline
 
+- [ ] [AI] Run `npm install` from the provisioned worktree — acceptance: dependencies install without an unresolved package error.
+- [ ] [AI] Run `npm run doctor -- --fix` from the provisioned worktree — acceptance: required local development tools are available.
+- [ ] [AI] Run `npx nx affected -t typecheck lint test:quick specs:coverage` — acceptance: every baseline target exits 0; fix any failure before Phase 1.
 - [ ] [AI] Run `test ! -f apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines/ruff.toml` — acceptance: it exits 0 and no file is changed.
 - [ ] [AI] Run `find apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines/{learning,drilling} -name '*.py' -print0 | xargs -0 awk 'length > max { max = length } END { print max }'` — acceptance: it prints one numeric longest-line baseline.
 - [ ] [AI] Record the exact baseline command and output in `plans/in-progress/ayokoding-database-internals-ruff-config/learnings.md` — acceptance: a fresh executor can reproduce the value.
@@ -42,6 +45,7 @@ Both delivery units use `worktree-to-pr`; neither worktree may carry another pla
 ### Phase 0 Gate
 
 - [ ] [AI] Re-run `test ! -f apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines/ruff.toml` — acceptance: it exits 0.
+- [ ] [AI] Re-run `npx nx affected -t typecheck lint test:quick specs:coverage` — acceptance: every baseline target exits 0.
 - [ ] [AI] Run `git ls-remote --heads origin "$(git branch --show-current)"` and `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` — acceptance: the first prints no ref and the second returns `0`.
 
 > **Pause Safety**: baseline is recorded and no remote delivery exists. Resume with:
@@ -52,7 +56,7 @@ Both delivery units use `worktree-to-pr`; neither worktree may carry another pla
 - [ ] [AI] Add `apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines/ruff.toml` with the baseline-derived, Ruff-supported line length and rationale — acceptance: it is the only runtime-adjacent file changed.
 - [ ] [AI] Run `ruff format --check apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines` — acceptance: it exits 0 without rewriting a source file.
 - [ ] [AI] Run `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/'` — acceptance: it prints no path.
-- [ ] [AI] Run `npx nx affected -t lint,test:quick` — acceptance: both affected targets exit 0.
+- [ ] [AI] Run `npx nx affected -t typecheck lint test:quick specs:coverage` — acceptance: every affected target exits 0.
 - [ ] [AI] Commit the scoped configuration as `fix(ayokoding-www): add database internals ruff config` — acceptance: `git show --name-only --format=HEAD` contains only the configuration and planned evidence.
 - [ ] [AI] Push `ayokoding-database-internals-ruff-config` and open its sole draft PR — acceptance: the PR contains the scoped configuration delivery unit only.
 - [ ] [AI] Run PR-Review Maker→Fixer Cycle 1 and wait for green CI — acceptance: one consolidated review is posted, every thread is resolved, and `gh pr checks <PR>` has no pending or failing check.
@@ -64,13 +68,16 @@ Both delivery units use `worktree-to-pr`; neither worktree may carry another pla
 
 - [ ] [AI] Run `ruff format --check apps/ayokoding-www/content/en/learn/courses/database-internals-and-storage-engines` — acceptance: it exits 0.
 - [ ] [AI] Run `gh pr checks <PR>` — acceptance: it has no pending or failing check.
-- [ ] [AI] Run `git merge-base --is-ancestor <phase-1-head> origin/main` after `git fetch origin` — acceptance: it exits 0.
+- [ ] [AI] Run `gh pr list --head ayokoding-database-internals-ruff-config-base --state all --json number,state,mergedAt` — acceptance: the Phase 1 PR reports `MERGED` with a non-null `mergedAt` value.
 
 > **Pause Safety**: configuration is merged and independently deployable. Resume with:
 > `git fetch origin && git log -1 --oneline origin/main`.
 
 ## Phase 2: Knowledge Capture
 
+- [ ] [AI] Verify the Phase 1 worktree is clean with `git -C worktrees/ayokoding-database-internals-ruff-config status --porcelain` and that its PR is merged with `gh pr list --head ayokoding-database-internals-ruff-config-base --state all --json number,state,mergedAt` — acceptance: the worktree is empty and the PR reports `MERGED` with `mergedAt`.
+- [ ] [HUMAN] Confirm deletion of the completed Phase 1 worktree and its merged branch — acceptance: explicit approval is recorded in the execution conversation.
+- [ ] [AI] Remove the Phase 1 worktree with `git worktree remove worktrees/ayokoding-database-internals-ruff-config` and run `git worktree prune` — acceptance: `git worktree list` contains no Phase 1 path.
 - [ ] [AI] Create `plans/in-progress/ayokoding-database-internals-ruff-config/learnings.md` if no entry was recorded earlier — acceptance: the file is present for the final triage.
 - [ ] [AI] Triage each `learnings.md` entry to exactly one durable home — acceptance: every entry records its terminal route and both Knowledge Capture safety gates.
 - [ ] [AI] Record `none` in `learnings.md` if no generalizable learning survives — acceptance: the explicit terminal record is present.
@@ -101,19 +108,19 @@ Both delivery units use `worktree-to-pr`; neither worktree may carry another pla
 
 - [ ] [AI] Run `git -C worktrees/ayokoding-database-internals-ruff-config-closeout status --short` — acceptance: it prints nothing.
 - [ ] [AI] Run `gh pr checks <PR>` — acceptance: it has no pending or failing check.
-- [ ] [AI] Run `git merge-base --is-ancestor <phase-3-head> origin/main` after `git fetch origin` — acceptance: it exits 0.
+- [ ] [AI] Run `gh pr list --head ayokoding-database-internals-ruff-config-closeout-base --state all --json number,state,mergedAt` — acceptance: the Phase 3 PR reports `MERGED` with a non-null `mergedAt` value.
 
 > **Pause Safety**: archival is merged and deployment is verified. Resume with:
 > `git fetch origin && git log -1 --oneline origin/main`.
 
 ## Phase 4: Cleanup
 
-- [ ] [AI] Verify `git -C worktrees/ayokoding-database-internals-ruff-config status --porcelain` and `git -C worktrees/ayokoding-database-internals-ruff-config-closeout status --porcelain` are empty — acceptance: neither worktree has uncommitted work.
-- [ ] [HUMAN] Confirm deletion of the two completed worktrees and their merged local branches — acceptance: explicit approval is recorded in the execution conversation.
-- [ ] [AI] Run `git worktree remove worktrees/ayokoding-database-internals-ruff-config`, `git worktree remove worktrees/ayokoding-database-internals-ruff-config-closeout`, and `git worktree prune` — acceptance: `git worktree list` contains neither path.
+- [ ] [AI] Verify `git -C worktrees/ayokoding-database-internals-ruff-config-closeout status --porcelain` is empty and its PR is merged with `gh pr list --head ayokoding-database-internals-ruff-config-closeout-base --state all --json number,state,mergedAt` — acceptance: the worktree is empty and the PR reports `MERGED` with `mergedAt`.
+- [ ] [HUMAN] Confirm deletion of the completed Phase 3 worktree and its merged branch — acceptance: explicit approval is recorded in the execution conversation.
+- [ ] [AI] Remove the Phase 3 worktree with `git worktree remove worktrees/ayokoding-database-internals-ruff-config-closeout` and run `git worktree prune` — acceptance: `git worktree list` contains no Phase 3 path.
 
 ### Phase 4 Gate
 
-- [ ] [AI] Run `git worktree list | rg 'ayokoding-database-internals-ruff-config'` — acceptance: it returns no match.
+- [ ] [AI] Run `git worktree list | rg 'ayokoding-database-internals-ruff-config'` — acceptance: it returns no match and both merged delivery branches are deleted locally and remotely.
 
 > **Pause Safety**: terminal cleanup is complete. Resume command: `git worktree list`.
