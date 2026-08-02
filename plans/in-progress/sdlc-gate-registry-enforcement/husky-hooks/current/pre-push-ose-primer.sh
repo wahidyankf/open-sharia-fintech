@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+set -e
+
+# Pre-push: test:quick + compat:min-version + spec validators + repo-wide cross-file gates + governance validators.
+# Heavy integration + e2e suites are CRON-only (scheduled tiered pipelines) — never in this hook.
+# If pre-push times out, run the nx commands below manually to warm cache, then push again.
+PARALLEL=$(($(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4) - 1))
+npx nx affected -t test:quick --parallel="$PARALLEL"
+npx nx affected -t compat:min-version --parallel="$PARALLEL"
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate --exclude plans/done --exclude apps/crud-be-elixir-phoenix/deps --exclude libs/elixir-cabbage/deps --exclude libs/elixir-gherkin/deps --exclude libs/elixir-openapi-codegen/deps --exclude apps/crud-be-kotlin-ktor/build --exclude libs/elixir-openapi-codegen/test --exclude apps/crud-be-kotlin-ktor/target
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness duplication validate
+
+# Naming validators — scoped to pushes that touch the relevant trees.
+# Upstream may be missing on first push of a branch; default to empty range in that case.
+RANGE=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 && echo '@{u}..HEAD' || echo "")
+if [ -n "$RANGE" ]; then
+	CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || echo "")
+	if echo "$CHANGED" | grep -qE '^(\.claude/agents/|\.opencode/agents/)'; then
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness naming validate
+	fi
+	if echo "$CHANGED" | grep -qE '^repo-governance/workflows/'; then
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance workflows naming validate
+	fi
+	if echo "$CHANGED" | grep -qE '^repo-governance/.*\.md$'; then
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-governance vendor validate repo-governance/
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention license validate
+	fi
+	# Harness binding-parity guard + cross-vendor invariants (color/tier maps absorbed):
+	# run when binding or parity-relevant surfaces change.
+	if echo "$CHANGED" | grep -qE '^(\.amazonq/|AGENTS\.md$|CLAUDE\.md$|docs/reference/platform-bindings\.md$|repo-governance/.*\.md$|\.claude/|\.opencode/|\.codex/|\.github/|\.cursor/|\.windsurf/|\.junie/|GEMINI\.md$|CONVENTIONS\.md$)'; then
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate
+	fi
+	# Instruction-size budget gate: run when any auto-loaded instruction surface changes.
+	if echo "$CHANGED" | grep -qE '^(AGENTS\.md$|CLAUDE\.md$|repo-config\.yml$|\.amazonq/rules/|\.windsurf/rules/|\.cursor/rules/|\.junie/guidelines\.md$|\.github/copilot-instructions\.md$|CONVENTIONS\.md$)'; then
+		cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness instruction-size validate
+	fi
+fi

@@ -903,9 +903,16 @@ documents agree. Independently shippable — the other repos are untouched.
       `... -- gate emit --surface=pre-commit` then
       `diff <(jq '."lint-staged"' package.json) <plan>/package-json/lint-staged-ose-public.json`
       is empty. This is the falsifiable test of the emitter, and it is a diff, not a judgement.
+- [ ] [AI] Verify the whole `package.json` matches the authored target, not only the emitted block —
+      acceptance: `diff package.json <plan>/package-json/package-ose-public.json` is empty. Catches an
+      accidental edit to a script, pin, or workspace glob that the `lint-staged`-only diff above
+      cannot see.
 - [ ] [AI] Verify the rewritten hooks match the authored targets — acceptance: each of
       `.husky/{commit-msg,pre-commit,pre-push}` diffs clean against
-      `<plan>/husky-hooks/<hook>-ose-public.sh`.
+      `<plan>/husky-hooks/<hook>-ose-public.sh`. Before overwriting, confirm the pre-change state is
+      the one the plan captured — acceptance: each live hook diffs clean against
+      `<plan>/husky-hooks/current/<hook>-ose-public.sh`; a non-empty diff means someone else changed
+      the hook after 2026-08-02, so reconcile rather than overwrite.
 - [ ] [AI] Declare `md-mermaid`, `md-heading-hierarchy`, and the structural specs validator on the
       `ci` surface — acceptance:
       `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("md-mermaid") != null and index("md-heading-hierarchy") != null'`

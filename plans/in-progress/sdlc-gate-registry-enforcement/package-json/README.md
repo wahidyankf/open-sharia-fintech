@@ -1,6 +1,6 @@
 ---
-title: "Target-State lint-staged Blocks — SDLC Gate Registry Enforcement"
-description: The lint-staged block gate emit must produce for each repo, used as the emitter's acceptance oracle
+title: "Target-State package.json — SDLC Gate Registry Enforcement"
+description: The complete post-change package.json for each of the four repos, plus the lint-staged block gate emit must produce
 category: explanation
 subcategory: plans
 tags:
@@ -10,28 +10,73 @@ tags:
 created: 2026-08-02
 ---
 
-# Target-State `lint-staged` Blocks
+# Target-State `package.json`
 
-One file per repo, holding the `lint-staged` object exactly as
-`rhino-cli gate emit --surface=pre-commit` must produce it. Paste each into that repo's
-`package.json` under the `"lint-staged"` key.
+Two files per repo, eight in total, because two different things need to be inspectable.
 
-| File                                                             | Repo          | Glob keys |
-| ---------------------------------------------------------------- | ------------- | --------- |
-| [`lint-staged-ose-public.json`](./lint-staged-ose-public.json)   | `ose-public`  | 22        |
-| [`lint-staged-ose-primer.json`](./lint-staged-ose-primer.json)   | `ose-primer`  | 23        |
-| [`lint-staged-ose-private.json`](./lint-staged-ose-private.json) | `ose-private` | 17        |
-| [`lint-staged-beaver-nest.json`](./lint-staged-beaver-nest.json) | `beaver-nest` | 18        |
+**`package-<repo>.json` — the complete file.** Every section reproduced verbatim from that repo's
+current `package.json`, with only the `"lint-staged"` object replaced by what this plan emits.
+Execution copies from here, so the four files are reviewable side by side before any repo is touched.
+Same treatment as [`repo-configs/`](../repo-configs/README.md).
 
-These are the emitter's **acceptance oracle**. Phase 1's `gate emit` is correct when:
+**`lint-staged-<repo>.json` — the emitted block alone.** This is what
+`rhino-cli gate emit --surface=pre-commit` writes, and therefore the unit the drift check diffs. It
+is not a duplicate of the above; it is the emitter's acceptance oracle, kept separate so the gate has
+something byte-exact to compare against.
+
+| Repo          | Complete file                                            | Emitted block                                                    | Glob keys (live → target) | Top-level keys |
+| ------------- | -------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------- | -------------- |
+| `ose-public`  | [`package-ose-public.json`](./package-ose-public.json)   | [`lint-staged-ose-public.json`](./lint-staged-ose-public.json)   | 26 → 22                   | 15             |
+| `ose-primer`  | [`package-ose-primer.json`](./package-ose-primer.json)   | [`lint-staged-ose-primer.json`](./lint-staged-ose-primer.json)   | 20 → 23                   | 14             |
+| `ose-private` | [`package-ose-private.json`](./package-ose-private.json) | [`lint-staged-ose-private.json`](./lint-staged-ose-private.json) | 18 → 17                   | 14             |
+| `beaver-nest` | [`package-beaver-nest.json`](./package-beaver-nest.json) | [`lint-staged-beaver-nest.json`](./lint-staged-beaver-nest.json) | 26 → 18                   | 15             |
+
+`[Repo-grounded]` Counts measured 2026-08-02 by parsing each repo's live `package.json`.
+
+## `lint-staged` is the only key that changes
+
+Worth stating because it bounds the blast radius: no script, dependency, version pin, workspace glob,
+or Volta pin is touched by this plan. Verified — this prints `IDENTICAL` four times:
+
+```sh
+node -e '
+const fs=require("fs");
+const live={"ose-public":"../../../../package.json"};  # and each sibling repo path
+for(const [r,p] of Object.entries(live)){
+  const a=JSON.parse(fs.readFileSync(`package-${r}.json`,"utf8"));
+  const b=JSON.parse(fs.readFileSync(p,"utf8"));
+  delete a["lint-staged"]; delete b["lint-staged"];
+  console.log(r+": "+(JSON.stringify(a)===JSON.stringify(b)?"IDENTICAL":"DIVERGED"));
+}'
+```
+
+A `DIVERGED` result is a Phase 0 finding: another change landed after 2026-08-02: reconcile it rather
+than overwriting, or the copy silently reverts someone else's work.
+
+## The two files must agree
+
+```sh
+# Should print MATCH four times.
+node -e '
+const fs=require("fs");
+for(const r of ["ose-public","ose-primer","ose-private","beaver-nest"]){
+  const full=JSON.parse(fs.readFileSync(`package-${r}.json`,"utf8"))["lint-staged"];
+  const blk=JSON.parse(fs.readFileSync(`lint-staged-${r}.json`,"utf8"));
+  console.log(r+": "+(JSON.stringify(full)===JSON.stringify(blk)?"MATCH":"DRIFT"));
+}'
+```
+
+## The emitter's acceptance oracle
+
+Phase 1's `gate emit` is correct when this diff is empty:
 
 ```sh
 rhino-cli gate emit --surface=pre-commit
 diff <(jq '."lint-staged"' package.json) <plan>/package-json/lint-staged-<repo>.json
 ```
 
-is empty. That is a diff, not a judgement — which is the point of authoring the target rather than
-describing it.
+That is a diff, not a judgement — which is the point of authoring the target rather than describing
+it.
 
 ## Why prettier keeps separate glob keys
 

@@ -1,0 +1,96 @@
+{
+  "name": "open-sharia-enterprise",
+  "version": "1.0.0",
+  "description": "Fintech application with monorepo architecture",
+  "private": true,
+  "workspaces": ["apps/*", "libs/*"],
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test:quick",
+    "lint": "nx run-many -t lint",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\"",
+    "format:md": "prettier --write \"**/*.md\"",
+    "format:md:check": "prettier --check \"**/*.md\"",
+    "affected:build": "nx affected -t build",
+    "affected:test": "nx affected -t test:quick",
+    "affected:lint": "nx affected -t lint",
+    "graph": "nx graph",
+    "nx": "nx",
+    "prepare": "husky",
+    "postinstall": "npm run doctor || true",
+    "generate:bindings": "cargo run --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate",
+    "sync:agents": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness sync opencode --agents-only",
+    "sync:skills": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness sync opencode --skills-only",
+    "sync:dry-run": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness sync opencode --dry-run",
+    "validate:sync": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness sync validate",
+    "validate:harness-bindings": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness bindings validate",
+    "validate:claude": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli harness claude validate",
+    "validate:opencode": "npm run validate:sync",
+    "validate:config": "npm run validate:claude && npm run generate:bindings && npm run validate:opencode",
+    "doctor": "nx run rhino-cli:build && ./apps/rhino-cli/dist/rhino-cli doctor"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "volta": {
+    "node": "24.16.0",
+    "npm": "11.16.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@hey-api/client-fetch": "^0.13.1",
+    "@hey-api/openapi-ts": "^0.96.0",
+    "@openapitools/openapi-generator-cli": "^2.30.2",
+    "@redocly/cli": "^2.22.1",
+    "@stoplight/spectral-cli": "^6.15.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.4",
+    "markdownlint-cli2": "^0.22.1",
+    "nx": "22.7.5",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tsx": "^4.22.4"
+  },
+  "lint-staged": {
+    "repo-config.yml": [
+      "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+    ],
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
+    ],
+    "*.{js,jsx,ts,tsx,mjs,cjs}": ["prettier --write"],
+    "*.json": ["prettier --write"],
+    "*.{yml,yaml}": ["prettier --write", "yamllint"],
+    "*.{css,scss}": ["prettier --write"],
+    "*.html": ["prettier --write"],
+    "*.sql": ["prettier --write"],
+    "*.rs": ["rustfmt --edition 2024"],
+    "*.sh": ["shfmt -w", "shellcheck --severity=warning"],
+    "*.tf": ["tofu fmt", "./scripts/lint-terraform.sh"],
+    ".github/workflows/*.{yml,yaml}": ["actionlint"],
+    "**/Dockerfile*": ["hadolint --failure-threshold warning"],
+    "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate"
+    ],
+    "*.feature": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+    ],
+    "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"],
+    "apps/*/package.json": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git lockfile sync"
+    ]
+  },
+  "dependencies": {
+    "lucide-react": "^1.17.0",
+    "tailwindcss": "^4.2.1"
+  }
+}

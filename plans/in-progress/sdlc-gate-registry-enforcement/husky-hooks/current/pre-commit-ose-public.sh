@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+set -e
+
+# Step 1: Environment staged guard — reject staged real .env files
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- env staged-guard validate
+
+# Step 1b: repo-config.yml schema-parity gate — staged-gated, only fires when repo-config.yml is staged
+if git diff --cached --name-only --diff-filter=ACM | grep -q '^repo-config\.yml$'; then
+	cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate
+fi
+
+# Step 2: Per-file formatters + tool-linters + per-file validators (file-type dispatch)
+npx lint-staged
+
+# Step 3: Regenerate + auto-stage harness bindings (config-sync)
+cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate
+
+# Step 4: Lockfile sync — regenerate + stage package-lock.json for staged apps
+staged_pkg=$(git diff --cached --name-only --diff-filter=ACM | grep 'apps/.*/package\.json$' || true)
+if [ -n "$staged_pkg" ]; then
+	echo "$staged_pkg" | while IFS= read -r pkg_path; do
+		app_dir=$(dirname "$pkg_path")
+		if [ -f "$app_dir/package-lock.json" ]; then
+			echo "Syncing $app_dir/package-lock.json..."
+			npm install --package-lock-only --prefix "$app_dir" --silent
+			git add "$app_dir/package-lock.json"
+		fi
+	done
+fi

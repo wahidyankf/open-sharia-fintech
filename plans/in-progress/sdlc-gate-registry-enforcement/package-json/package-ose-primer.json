@@ -1,0 +1,119 @@
+{
+  "name": "ose-primer",
+  "version": "1.0.0",
+  "description": "Repository template for OSE-style polyglot Nx monorepos",
+  "private": true,
+  "workspaces": ["apps/*", "libs/*"],
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test:quick",
+    "lint": "nx run-many -t lint",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\"",
+    "format:md": "prettier --write \"**/*.md\"",
+    "format:md:check": "prettier --check \"**/*.md\"",
+    "affected:build": "nx affected -t build",
+    "affected:test": "nx affected -t test:quick",
+    "affected:lint": "nx affected -t lint",
+    "graph": "nx graph",
+    "nx": "nx",
+    "prepare": "husky",
+    "postinstall": "npm run doctor || true",
+    "crud-be:dev": "cd infra/dev/crud-be-java-springboot && docker compose up",
+    "crud-be:dev:restart": "cd infra/dev/crud-be-java-springboot && docker compose down && docker compose up",
+    "crud-be:clean": "sudo chown -R $USER:$USER apps/crud-be-java-springboot/target && rm -rf apps/crud-be-java-springboot/target",
+    "dev:crud-be-golang-gin": "docker compose -f infra/dev/crud-be-golang-gin/docker-compose.yml up --build",
+    "dev:crud-be-java-springboot": "docker compose -f infra/dev/crud-be-java-springboot/docker-compose.yml up --build",
+    "dev:crud-be-java-vertx": "docker compose -f infra/dev/crud-be-java-vertx/docker-compose.yml up --build",
+    "dev:crud-be-elixir-phoenix": "docker compose -f infra/dev/crud-be-elixir-phoenix/docker-compose.yml up --build",
+    "dev:crud-be-fsharp-giraffe": "docker compose -f infra/dev/crud-be-fsharp-giraffe/docker-compose.yml up --build",
+    "dev:crud-be-csharp-aspnetcore": "docker compose -f infra/dev/crud-be-csharp-aspnetcore/docker-compose.yml up --build",
+    "dev:crud-be-kotlin-ktor": "docker compose -f infra/dev/crud-be-kotlin-ktor/docker-compose.yml up --build",
+    "dev:crud-be-python-fastapi": "docker compose -f infra/dev/crud-be-python-fastapi/docker-compose.yml up --build",
+    "dev:crud-be-rust-axum": "docker compose -f infra/dev/crud-be-rust-axum/docker-compose.yml up --build",
+    "dev:crud-be-ts-effect": "docker compose -f infra/dev/crud-be-ts-effect/docker-compose.yml up --build",
+    "dev:crud-be-clojure-pedestal": "docker compose -f infra/dev/crud-be-clojure-pedestal/docker-compose.yml up --build",
+    "dev:crud-fe-ts-nextjs": "docker compose -f infra/dev/crud-fe-ts-nextjs/docker-compose.yml up --build",
+    "dev:crud-fe-ts-tanstack-start": "docker compose -f infra/dev/crud-fe-ts-tanstack-start/docker-compose.yml up --build",
+    "dev:crud-fe-dart-flutterweb": "docker compose -f infra/dev/crud-fe-dart-flutterweb/docker-compose.yml up --build",
+    "dev:crud-fs-ts-nextjs": "docker compose -f infra/dev/crud-fs-ts-nextjs/docker-compose.yml up --build",
+    "generate:bindings": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate",
+    "sync:agents": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",
+    "sync:skills": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",
+    "sync:dry-run": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode --dry-run",
+    "validate:sync": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync validate",
+    "validate:claude": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness claude validate",
+    "validate:opencode": "npm run validate:sync",
+    "validate:config": "npm run validate:claude && npm run generate:bindings && npm run validate:opencode",
+    "harness:bindings-validation": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate",
+    "doctor": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- doctor"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "volta": {
+    "node": "24.16.0",
+    "npm": "11.10.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@hey-api/client-fetch": "0.13.1",
+    "@hey-api/openapi-ts": "0.94.5",
+    "@openapitools/openapi-generator-cli": "2.31.0",
+    "@redocly/cli": "2.25.1",
+    "@stoplight/spectral-cli": "6.15.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
+    "markdownlint-cli2": "0.22.0",
+    "nx": "22.6.2",
+    "prettier": "3.8.1",
+    "prettier-plugin-tailwindcss": "0.7.2",
+    "tsx": "4.21.0"
+  },
+  "lint-staged": {
+    "repo-config.yml": [
+      "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+    ],
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
+    ],
+    "*.{js,jsx,ts,tsx,mjs,cjs}": ["prettier --write"],
+    "*.json": ["prettier --write"],
+    "*.{yml,yaml}": ["prettier --write"],
+    "*.{css,scss}": ["prettier --write"],
+    "*.html": ["prettier --write"],
+    "*.sql": ["prettier --write"],
+    "*.rs": ["rustfmt --edition 2024"],
+    "*.sh": ["shfmt -w", "shellcheck --severity=warning"],
+    "*.fs": ["fantomas"],
+    "*.py": ["ruff format"],
+    "*.go": ["gofmt -w"],
+    "*.{ex,exs}": ["scripts/format-elixir.sh"],
+    "*.cs": ["dotnet csharpier format"],
+    "*.clj": ["cljfmt fix"],
+    "*.dart": ["dart format"],
+    ".github/workflows/*.{yml,yaml}": ["actionlint"],
+    "**/Dockerfile*": ["hadolint --failure-threshold warning"],
+    "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate"
+    ],
+    "*.feature": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+    ],
+    "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"],
+    "apps/*/package.json": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git lockfile sync"
+    ]
+  },
+  "dependencies": {
+    "tailwindcss": "4.2.2"
+  }
+}

@@ -12,18 +12,62 @@ created: 2026-08-02
 
 # Target-State Husky Hooks
 
-Three shims per repo, twelve files. Each replaces a hand-maintained hook with a single
-`gate run --surface=<name>` invocation.
+Twenty-four files: the twelve hooks as they will be, and — in [`current/`](./current/) — the twelve
+they replace, captured verbatim. Both sides are complete files, so the replacement is reviewable in
+full rather than described.
 
-| Hook         | Files                  | Replaces                                                       |
-| ------------ | ---------------------- | -------------------------------------------------------------- |
-| `commit-msg` | `commit-msg-<repo>.sh` | A one-line `commitlint` call                                   |
-| `pre-commit` | `pre-commit-<repo>.sh` | Four hand-ordered steps plus an inline lockfile loop           |
-| `pre-push`   | `pre-push-<repo>.sh`   | Seven repo-wide commands plus a hand-written path-gating block |
+A husky v9 hook is a plain script with no framework preamble, so each `.sh` here **is** the entire
+file, not an excerpt. That is worth stating because the after-state is only 13 lines and could
+otherwise read as a fragment.
 
-Copy each to `.husky/<hook>` in its repo, dropping the `.sh` extension. The extension exists only so
-these files are covered by `shellcheck --severity=warning` while they live in the plan folder — they
-pass it today, which is a cheap check that the shipped hooks will too.
+| Hook         | After (lines) | Before (lines, `ose-public`) | Replaces                                                       |
+| ------------ | ------------- | ---------------------------- | -------------------------------------------------------------- |
+| `commit-msg` | 9             | 1                            | A one-line `commitlint` call                                   |
+| `pre-commit` | 13            | 29                           | Four hand-ordered steps plus an inline lockfile loop           |
+| `pre-push`   | 13            | 39                           | Seven repo-wide commands plus a hand-written path-gating block |
+
+Copy each top-level `.sh` to `.husky/<hook>` in its repo, dropping the `.sh` extension. The extension
+exists only so these files are covered by `shellcheck --severity=warning` while they live in the plan
+folder — both the before and after sets pass it today, which is a cheap check that the shipped hooks
+will too.
+
+## What `current/` is for
+
+`[Repo-grounded]` Captured 2026-08-02 from each repo's live `.husky/`. Two uses:
+
+1. **Phase 0 reconciliation.** Before overwriting, diff `current/<hook>-<repo>.sh` against the live
+   file. A non-empty diff means someone else changed that hook after 2026-08-02 — reconcile it rather
+   than overwriting, exactly as [`repo-configs/`](../repo-configs/README.md) requires for the
+   registry.
+2. **Evidence for the central claim.** The plan asserts the four repos' hooks have silently diverged.
+   `current/` is that assertion made checkable rather than asserted.
+
+### Measured divergence before the plan
+
+`[Repo-grounded]` Each cell is `diff` against `ose-public`'s copy of the same hook:
+
+| Hook         | `ose-primer`       | `ose-private`       | `beaver-nest`      |
+| ------------ | ------------------ | ------------------- | ------------------ |
+| `commit-msg` | identical          | identical           | identical          |
+| `pre-commit` | identical          | 27 lines differ     | identical          |
+| `pre-push`   | **4 lines differ** | **56 lines differ** | **2 lines differ** |
+
+`pre-push` is the drift surface: it differs in **all three** downstream repos, and nothing detects
+that today. `ose-private`'s larger delta is partly legitimate (it carries an `iac-lint` pair the
+others lack) and partly drift — the plan does not assume which, it moves every one of those lines
+into `repo-config.yml` where the difference becomes declared data instead of divergent shell.
+
+Reproduce:
+
+```sh
+cd current
+for h in commit-msg pre-commit pre-push; do
+  for r in ose-primer ose-private beaver-nest; do
+    diff -q "$h-ose-public.sh" "$h-$r.sh" >/dev/null \
+      && echo "$h/$r: identical" || echo "$h/$r: differs"
+  done
+done
+```
 
 ## The whole point: they are identical across all four repos
 
@@ -33,13 +77,16 @@ inspectable: if these twelve files are not four identical triples, something is 
 should be declared.
 
 ```sh
-# Should print nothing.
+# Run from this folder. Should print nothing.
 for h in commit-msg pre-commit pre-push; do
   for r in ose-primer ose-private beaver-nest; do
     diff "$h-ose-public.sh" "$h-$r.sh"
   done
 done
 ```
+
+Run the same loop inside [`current/`](./current/) and it prints plenty — that contrast is the whole
+argument for the change.
 
 ## What disappears from `pre-push`
 
@@ -54,9 +101,14 @@ if [ -n "$RANGE" ]; then
     ...
 ```
 
+That excerpt is elided for readability only — the block in full, with all six regexes, is in
+[`current/pre-push-ose-public.sh`](./current/pre-push-ose-public.sh), and the three downstream repos'
+copies sit beside it.
+
 Every one of those triggers becomes a `trigger:` list on a `scope: path-gated` gate, and `gate run`
 computes the changed set itself. This is the single largest source of surface drift the audit found,
 because a maintainer adding a validator had to remember to add a matching regex here — in four repos.
+The divergence table above is what that costs: `pre-push` differs in all three downstream repos.
 
 ## What deliberately does not change
 

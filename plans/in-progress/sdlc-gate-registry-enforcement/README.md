@@ -134,11 +134,15 @@ delete capabilities `beaver-nest` depends on.
 - [delivery.md](./delivery.md) — phased, DAG-ordered execution checklist
 - [learnings.md](./learnings.md) — knowledge capture (populated during execution)
 
-Target-state artifacts, one file per repo:
+Target-state artifacts, per repo. Each is a **complete file**, not a diff or an excerpt, so execution
+copies rather than reconstructs:
 
-- [repo-configs/](./repo-configs/README.md) — `repo-config-<repo>.yml`
-- [husky-hooks/](./husky-hooks/README.md) — `commit-msg-<repo>.sh`, `pre-commit-<repo>.sh`, `pre-push-<repo>.sh`
-- [package-json/](./package-json/README.md) — `lint-staged-<repo>.json`
+- [repo-configs/](./repo-configs/README.md) — `repo-config-<repo>.yml`, the whole registry file
+- [husky-hooks/](./husky-hooks/README.md) — `commit-msg-<repo>.sh`, `pre-commit-<repo>.sh`,
+  `pre-push-<repo>.sh`, plus [`current/`](./husky-hooks/current/) holding the twelve hooks they
+  replace, captured verbatim
+- [package-json/](./package-json/README.md) — `package-<repo>.json`, the whole post-change file, plus
+  `lint-staged-<repo>.json`, the block `gate emit` must produce
 
 ## Related
 

@@ -229,16 +229,21 @@ folders hold the actual post-change files, one per repo:
 | Folder                                      | Contents                                                                                          |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [`repo-configs/`](./repo-configs/README.md) | `repo-config-<repo>.yml` — the full registry plus every existing section                          |
-| [`husky-hooks/`](./husky-hooks/README.md)   | `commit-msg-<repo>.sh`, `pre-commit-<repo>.sh`, `pre-push-<repo>.sh` — the post-rewire hook shims |
-| [`package-json/`](./package-json/README.md) | `lint-staged-<repo>.json` — the block `gate emit --surface=pre-commit` must produce               |
+| [`husky-hooks/`](./husky-hooks/README.md)   | `<hook>-<repo>.sh` — the post-rewire shims, plus `current/` holding the twelve hooks they replace |
+| [`package-json/`](./package-json/README.md) | `package-<repo>.json` — the full post-change file; `lint-staged-<repo>.json` — the emitted block  |
 
-Execution copies from these rather than re-deriving each surface per repo. Three things follow. The
-entry sets are reviewable **as a set** before any repo is touched. The per-repo divergences in
-[§2.2.4](#224-the-full-formatter-and-per-file-inventory) and
+Execution copies from these rather than re-deriving each surface per repo. Every artifact is a
+**complete file**, never an excerpt — the whole `repo-config.yml`, the whole `package.json`, the
+whole hook — so a reviewer reads what will exist rather than reconstructing it from a delta. Four
+things follow. The entry sets are reviewable **as a set** before any repo is touched. The per-repo
+divergences in [§2.2.4](#224-the-full-formatter-and-per-file-inventory) and
 [§2.3](#23-why-gate-sets-may-differ-per-repo-but-the-schema-may-not) are visible side by side instead
-of asserted in prose. And the `lint-staged` artifacts are a **falsifiable target**: Phase 1's emitter
-is correct when its output is byte-identical to the committed `package-json/lint-staged-<repo>.json`,
-which is a diff, not a judgement.
+of asserted in prose. `husky-hooks/current/` makes the before-state auditable too, and measuring it
+proves the drift this plan exists to stop: `pre-push` currently differs from `ose-public`'s copy in
+**all three** downstream repos (`ose-primer` 4 lines, `beaver-nest` 2, `ose-private` 56), and nothing
+detects it. And the `lint-staged` artifacts are a **falsifiable target**: Phase 1's emitter is correct
+when its output is byte-identical to the committed `package-json/lint-staged-<repo>.json`, which is a
+diff, not a judgement.
 
 Field contract:
 

@@ -1,0 +1,121 @@
+{
+  "name": "open-sharia-enterprise",
+  "version": "1.0.0",
+  "description": "Fintech application with monorepo architecture",
+  "private": true,
+  "workspaces": ["apps/*", "libs/*"],
+  "scripts": {
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test:quick",
+    "lint": "nx run-many -t lint",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\"",
+    "format:md": "prettier --write \"**/*.md\"",
+    "format:md:check": "prettier --check \"**/*.md\"",
+    "affected:build": "nx affected -t build",
+    "affected:test": "nx affected -t test:quick",
+    "affected:lint": "nx affected -t lint",
+    "graph": "nx graph",
+    "nx": "nx",
+    "prepare": "husky",
+    "postinstall": "npm run doctor || true",
+    "organiclever:dev": "docker compose --env-file infra/dev/organiclever-app/.env -f infra/dev/organiclever-app/docker-compose.yml up --build",
+    "organiclever:dev:restart": "docker compose --env-file infra/dev/organiclever-app/.env -f infra/dev/organiclever-app/docker-compose.yml down -v && docker compose --env-file infra/dev/organiclever-app/.env -f infra/dev/organiclever-app/docker-compose.yml up --build",
+    "dev:ayokoding-www": "docker compose -f infra/dev/ayokoding-www/docker-compose.yml up --build",
+    "dev:ose-www": "docker compose -f infra/dev/ose-www/docker-compose.yml up --build",
+    "dev:organiclever": "docker compose --env-file infra/dev/organiclever-app/.env -f infra/dev/organiclever-app/docker-compose.yml up --build",
+    "generate:bindings": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate",
+    "sync:agents": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",
+    "sync:skills": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode",
+    "sync:dry-run": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings generate --harness opencode --dry-run",
+    "validate:sync": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness sync validate",
+    "validate:claude": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness claude validate",
+    "validate:opencode": "npm run validate:sync",
+    "validate:config": "npm run validate:claude && npm run generate:bindings && npm run validate:opencode",
+    "harness:bindings-validation": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- harness bindings validate",
+    "doctor": "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- doctor"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "volta": {
+    "node": "24.16.0",
+    "npm": "11.11.0"
+  },
+  "devDependencies": {
+    "@bazel/buildifier": "8.2.1",
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@hey-api/openapi-ts": "0.94.2",
+    "@johnnymorganz/stylua-bin": "2.5.2",
+    "@openapitools/openapi-generator-cli": "2.30.2",
+    "@redocly/cli": "2.22.1",
+    "@stoplight/spectral-cli": "6.15.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "husky": "9.1.7",
+    "jsdom": "29.0.0",
+    "lint-staged": "16.4.0",
+    "markdownlint-cli2": "0.21.0",
+    "nx": "22.5.4",
+    "prettier": "3.8.1",
+    "prettier-plugin-sql": "0.20.0",
+    "prettier-plugin-tailwindcss": "0.7.2",
+    "tsx": "4.21.0"
+  },
+  "lint-staged": {
+    "repo-config.yml": [
+      "bash -c 'cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate' --"
+    ],
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md mermaid validate --exclude \"apps/ayokoding-www/content\"",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md naming validate --exempt \"*__linkedin__*.md\"",
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md frontmatter validate"
+    ],
+    "*.{js,jsx,ts,tsx,mjs,cjs}": ["prettier --write"],
+    "*.json": ["prettier --write"],
+    "*.{yml,yaml}": ["prettier --write"],
+    "*.{css,scss}": ["prettier --write"],
+    "*.html": ["prettier --write"],
+    "*.sql": ["prettier --write"],
+    "*.rs": ["rustfmt --edition 2024"],
+    "*.fs": ["fantomas"],
+    "*.py": ["ruff format"],
+    "*.sh": ["shfmt -w", "shellcheck --severity=warning"],
+    "*.tf": ["tofu fmt"],
+    "*.lua": ["stylua"],
+    "*.{c,h}": ["clang-format -i"],
+    "{BUILD,BUILD.bazel,*.bzl}": ["buildifier"],
+    ".github/workflows/*.{yml,yaml}": ["actionlint"],
+    "**/Dockerfile*": ["hadolint --failure-threshold warning"],
+    "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- convention emoji validate"
+    ],
+    "*.feature": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- specs gherkin-cardinality validate"
+    ],
+    "docker-compose*.{yml,yaml}": ["bash -c 'for f; do docker compose -f \"$f\" config > /dev/null; done' --"],
+    "apps/*/package.json": [
+      "cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- git lockfile sync"
+    ]
+  },
+  "dependencies": {
+    "lucide-react": "0.577.0",
+    "tailwindcss": "4.2.1"
+  },
+  "optionalDependencies": {
+    "@esbuild/linux-x64": "0.28.0",
+    "@next/swc-linux-x64-gnu": "16.2.6",
+    "@next/swc-linux-x64-musl": "16.2.6",
+    "@nx/nx-linux-x64-gnu": "22.5.4",
+    "@nx/nx-linux-x64-musl": "22.5.4",
+    "@rollup/rollup-linux-x64-gnu": "4.59.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.2.1",
+    "@tailwindcss/oxide-linux-x64-musl": "4.2.1",
+    "lightningcss-linux-x64-gnu": "1.32.0",
+    "lightningcss-linux-x64-musl": "1.32.0"
+  }
+}
