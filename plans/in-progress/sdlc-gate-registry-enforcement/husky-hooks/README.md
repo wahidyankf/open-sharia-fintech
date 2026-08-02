@@ -86,10 +86,11 @@ into `repo-config.yml` where the difference becomes declared data instead of div
 Reproduce:
 
 ```sh
+# Note the missing extension: files in current/ mirror the live hook names.
 cd current
 for h in commit-msg pre-commit pre-push; do
   for r in ose-primer ose-private beaver-nest; do
-    diff -q "$h-ose-public.sh" "$h-$r.sh" >/dev/null \
+    diff -q "$h-ose-public" "$h-$r" >/dev/null \
       && echo "$h/$r: identical" || echo "$h/$r: differs"
   done
 done
