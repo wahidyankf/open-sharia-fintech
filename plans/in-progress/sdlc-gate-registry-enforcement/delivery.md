@@ -1025,15 +1025,30 @@ Ordered — the convention must permit the name before the file can legally carr
 
 - [ ] [AI] Amend `repo-governance/development/infra/github-actions-workflow-naming.md`: add
       `dependency` to the cross-cutting `{domain}` list and `audit` to the verb-and-qualifier
-      vocabulary — acceptance:
-      `grep -c 'dependency' repo-governance/development/infra/github-actions-workflow-naming.md`
-      returns at least 1 in the domain table, and the same for `audit` in the vocabulary table; both
-      returned 0 in those tables before the edit.
-- [ ] [AI] Register the cross-cutting workflow set in that convention's Cross-cutting workflows
-      table: add `dependency-vulnerability-audit.yml`, remove `main-ci.yml` — acceptance: the table
-      lists `pr-quality-gate.yml`, `validate-env.yml`, and the new workflow, and
-      `grep -c 'main-ci' repo-governance/development/infra/github-actions-workflow-naming.md`
-      returns 0.
+      vocabulary. Both checks below must be **row-scoped**: a bare `grep -c 'audit'` already returns
+      1 today, matching the unrelated word "audits." in prose, so it would pass without the edit —
+      acceptance, run from the repo root:
+
+  ```sh
+  F=repo-governance/development/infra/github-actions-workflow-naming.md
+  grep -cF '| `audit`' "$F"                # 0 today, 1 after: the vocabulary row exists
+  grep -cE '^\| .\{domain\}.*dependency' "$F"  # 0 today, 1 after: the domain list names it
+  ```
+
+- [ ] [AI] Register the new workflow in that convention's Cross-cutting workflows table — acceptance,
+      from the repo root:
+
+  ```sh
+  F=repo-governance/development/infra/github-actions-workflow-naming.md
+  grep -cF '| `dependency-vulnerability-audit.yml`' "$F"  # 0 today, 1 after
+  grep -cF '| `pr-quality-gate.yml`' "$F"                 # 2 today and after (it also heads a
+                                                          # column in the per-language table at :295)
+  grep -cF '| `validate-env.yml`' "$F"                    # 1 today and after, untouched
+  ```
+
+  No `main-ci.yml` row is removed here: that table never listed it, so an earlier
+  `grep -c 'main-ci' returns 0` clause was satisfied before any edit and proved nothing.
+
 - [ ] [AI] Create `.github/workflows/dependency-vulnerability-audit.yml` with
       `name: Dependency Vulnerability Audit`, carrying over the existing `schedule` cron and
       `workflow_dispatch` triggers and the `nx run-many --all -t deps:audit` step verbatim, plus this
@@ -1104,8 +1119,20 @@ Ordered — do not delete before the fold-in is verified.
       appears in this checklist with a verdict for each; no command is unaccounted for.
 - [ ] [AI] `git rm .github/workflows/main-ci.yml` — acceptance:
       `test ! -f .github/workflows/main-ci.yml`.
-- [ ] [AI] Scrub references — acceptance: `grep -rn "main-ci" --exclude-dir=node_modules --exclude-dir=.nx --exclude-dir=.git .`
-      returns matches only inside `plans/done/` (immutable history) and this plan folder.
+- [ ] [AI] Scrub references from the **live** surfaces — the four tracked files that describe CI as it
+      currently works — acceptance:
+      `git ls-files -z | xargs -0 grep -l "main-ci" | grep -E '^(\.github/workflows/|docs/reference/|repo-governance/)'`
+      returns nothing. Today it returns six paths:
+      `.github/workflows/README.md`, `.github/workflows/main-ci.yml` (deleted by the step above),
+      `.github/workflows/pr-quality-gate.yml`, `docs/reference/sdlc-gate-standard.md`,
+      `docs/reference/system-architecture/ci-cd.md`, and
+      `repo-governance/development/infra/nx-targets.md`.
+- [ ] [AI] Leave the **narrative** references alone — acceptance: after the scrub,
+      `git ls-files -z | xargs -0 grep -l "main-ci"` still returns the `plans/backlog/`,
+      `plans/ideas/`, `plans/in-progress/README.md`, `plans/done/`, and
+      `apps/ose-www/content/updates/` matches. These are history and future-work notes describing a
+      world in which `main-ci.yml` existed; rewriting them would falsify the record. A repo-wide
+      "no match anywhere" clause is **unsatisfiable** and was the earlier form of this step.
 
 ### 2.5 Documents
 
@@ -1141,8 +1168,11 @@ Ordered — do not delete before the fold-in is verified.
       `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` and
       `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` — acceptance:
       `grep -cF 'across all three repos' repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
-      returns 0 for each file, **and** `grep -c 'beaver-nest'` returns non-zero for each. Verify the
-      inverse: today they return 1 and 0 respectively, so both flip. Unlike
+      returns 0 for each file, **and**
+      `grep -c 'beaver-nest' repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
+      returns non-zero for each. Both file arguments are required — a bare `grep -c` reads stdin and
+      reports on nothing. Verify the inverse: today they return 1 and 0 respectively, so both flip.
+      Unlike
       `multi-plans-execution.md`, these two do carry the literal phrase, so the disappearance half is
       non-vacuous here — the arrival half is still required, because deleting the sentence would
       satisfy disappearance alone.

@@ -66,9 +66,17 @@ tool cost. This is user-directed and recorded rather than inferred.
   repo's `repo-config.yml` claims the structure is "byte-identical across all three repos" — that
   claim is already false. The schema-parity gate does not catch it, because it validates each file
   against the schema rather than against the other repos.
-- **Every repo's header comment says "all three repos"** and lists six sections. With `beaver-nest`
-  joining the byte-identity boundary and `gates:` being added, that comment is wrong on both counts
-  in all four repos and is corrected as part of this plan.
+- **Every repo's header comment says "all three repos"**, and the section list is already
+  inconsistent between them: `ose-public`, `ose-private`, and `beaver-nest` list six, while
+  `ose-primer` lists seven — it documents its own extra `doctor:` section. With `beaver-nest` joining
+  the byte-identity boundary and `gates:` being added, the comment is wrong on the repo count in all
+  four and on the section count in all four, and is corrected as part of this plan. Measure with:
+
+  ```sh
+  sed -n '/Sections defined here/,/^$/p' <repo>/repo-config.yml | grep -c '^#   [a-z]'
+  ```
+
+  `[Repo-grounded]` Returns 6, 7, 6, 6 for `ose-public`, `ose-primer`, `ose-private`, `beaver-nest`.
 
 ## Related
 
