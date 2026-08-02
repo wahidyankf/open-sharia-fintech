@@ -1100,8 +1100,9 @@ Ordered — the convention must permit the name before the file can legally carr
       pass also runs on push to `main`, and split it: auto-fix-and-commit on `pull_request`, verify-only
       on `push` — acceptance: `actionlint` exits 0; the `push` path runs `format-verify` and performs
       no `git push`.
-- [ ] [AI] Update the `quality-gate` join job's `needs:` to depend on the matrix job, removing the 18
-      hand-listed job names it replaces. **This is the real hazard of the rewire**, not the branch
+- [ ] [AI] Update the `quality-gate` join job's `needs:` to depend on the matrix job, removing the 17
+      hand-listed job names it replaces (`.github/workflows/pr-quality-gate.yml:279-297`, verified by
+      count). **This is the real hazard of the rewire**, not the branch
       protection: the join job is `if: always()` and fails only on
       `contains(needs.*.result, 'failure')`, so a `needs:` list that omits the matrix job reports
       green while checking nothing — acceptance: `actionlint` exits 0; a deliberately failing matrix
@@ -1129,7 +1130,7 @@ Ordered — do not delete before the fold-in is verified.
       `repo-governance/development/infra/nx-targets.md`.
 - [ ] [AI] Leave the **narrative** references alone — acceptance: after the scrub,
       `git ls-files -z | xargs -0 grep -l "main-ci"` still returns matches, and every one of them
-      falls in exactly these five categories:
+      falls in exactly these six categories:
 
   ```sh
   # Every surviving path must match one of these prefixes. Anything else is a missed live surface.
@@ -1137,9 +1138,10 @@ Ordered — do not delete before the fold-in is verified.
     | grep -vE '^(plans/done/|plans/backlog/|plans/ideas/|plans/in-progress/README\.md$|plans/in-progress/sdlc-gate-registry-enforcement/|apps/ose-www/content/updates/)'
   ```
 
-  Returns nothing once the six live surfaces are scrubbed. Note the fifth category: **this plan's own
-  folder** discusses `main-ci.yml` throughout — it is the plan's subject — so the plan's documents are
-  themselves narrative references and must not be scrubbed. Omitting that category from the
+  Returns nothing once the six live surfaces are scrubbed. Note the fifth and sixth categories:
+  `plans/in-progress/README.md` and, separately, **this plan's own folder**, which discusses
+  `main-ci.yml` throughout — it is the plan's subject — so the plan's documents are themselves
+  narrative references and must not be scrubbed. Omitting the plan's-own-folder category from the
   enumeration was an earlier defect in this step. These are history, future-work notes, and this
   plan's own record; rewriting them would falsify it. A repo-wide "no match anywhere" clause is
   **unsatisfiable** and was the original form of this step.
