@@ -1124,12 +1124,25 @@ Ordered — do not delete before the fold-in is verified.
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md readme-index validate`
       exits 0.
 - [ ] [AI] Extend the three-repo byte-identity language to four repos in
-      `repo-governance/workflows/plan/multi-plans-execution.md`,
-      `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md`, and
-      `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` per
-      [tech-docs §3](./tech-docs.md#3-document-amendments) — acceptance:
-      `grep -c 'across all three repos' repo-governance/workflows/plan/multi-plans-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
-      returns 0 in each file. Also replace `plan-multi-repo-parity-planning.md`'s manual
+      `repo-governance/workflows/plan/multi-plans-execution.md` per
+      [tech-docs §3](./tech-docs.md#3-document-amendments). This file does **not** use the phrase
+      "across all three repos" — it enumerates the repos inline — so its acceptance clause must
+      target its own wording. Assert the **new** language arrived rather than the old one vanished —
+      a disappearance clause is satisfied by text that was never there — acceptance:
+      `grep -c 'beaver-nest' repo-governance/workflows/plan/multi-plans-execution.md` returns
+      non-zero, and
+      `grep -cF 'All three edit' repo-governance/workflows/plan/multi-plans-execution.md` returns 0.
+      Verify the inverse before the edit: they return 0 and 1 respectively today, so both flip.
+- [ ] [AI] Extend the same language in
+      `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` and
+      `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` — acceptance:
+      `grep -cF 'across all three repos' repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`
+      returns 0 for each file, **and** `grep -c 'beaver-nest'` returns non-zero for each. Verify the
+      inverse: today they return 1 and 0 respectively, so both flip. Unlike
+      `multi-plans-execution.md`, these two do carry the literal phrase, so the disappearance half is
+      non-vacuous here — the arrival half is still required, because deleting the sentence would
+      satisfy disappearance alone.
+- [ ] [AI] Replace `plan-multi-repo-parity-planning.md`'s manual
       `git -C ose-public ls-files ... | xargs md5` diff snippet with a pointer to
       `... -- parity manifest validate` — acceptance:
       `grep -c 'xargs md5' repo-governance/workflows/plan/plan-multi-repo-parity-planning.md` returns 0.
