@@ -142,7 +142,6 @@ describe("ContentPage — bogus careers arc 404s instead of rendering a fake 200
     await expect(
       ContentPage({
         params: Promise.resolve({ locale: "en", slug: ["learn", "paths", "careers", "asdkjhasdkjh"] }),
-        searchParams: Promise.resolve({}),
       }),
     ).rejects.toMatchObject({ digest: expect.stringContaining("NEXT_HTTP_ERROR_FALLBACK;404") });
   });

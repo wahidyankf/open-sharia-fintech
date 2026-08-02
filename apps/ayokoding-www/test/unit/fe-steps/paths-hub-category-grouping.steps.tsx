@@ -90,7 +90,6 @@ describeFeature(feature, ({ Scenario }) => {
     When("a reader opens the paths hub at /en/learn/paths", async () => {
       jsx = await ContentPage({
         params: Promise.resolve({ locale: "en", slug: ["learn", "paths"] }),
-        searchParams: Promise.resolve({}),
       });
       cleanup();
       render(jsx);
