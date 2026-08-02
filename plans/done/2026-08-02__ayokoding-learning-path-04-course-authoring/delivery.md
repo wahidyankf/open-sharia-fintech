@@ -1280,8 +1280,10 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
       [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
       PR `[AI]`-merged; deployed (no-op).
 
-> **Pause Safety**: the plan is archived and its final PR `[AI]`-merged to `main`. Terminal state. To
-> resume: nothing — the plan is complete.
+> **Pause Safety**: the plan is archived and locally ready for its sole draft PR. Remote GitHub
+> authentication is required to push `ayokoding-learning-path-04-course-authoring-final-delivery`,
+> open the PR, run CI/review cycles, merge, and deploy. Resume from the push when authenticated;
+> the remote-only checkboxes above remain intentionally unticked.
 
 ---
 
