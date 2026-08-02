@@ -44,6 +44,13 @@ have failed**. The fifth instance sharpens this — a clause can pass while nami
 _cannot execute_ in the environment it was pointed at, because a filtering layer supplied a
 plausible answer on the failing command's behalf.
 
+**Additional 2026-08-02 instances** (`vercel-function-cost-reduction`): an execution plan disabled
+the paid aggregate-observability product, then later required the aggregate query it had made
+unavailable; a `Googlebot` user-agent spoof was used to test a control that authenticates crawler
+identity by source IP; and an apex-domain remediation was assigned to Vercel before verifying that
+the apex was actually served elsewhere. These are all the same failure class: an acceptance clause
+or execution step describes a world its named control plane cannot observe or change.
+
 **Related sub-class — self-contradictory acceptance steps** (further instances 2026-07-23,
 `ayokoding-learning-path-01-url-restructure` Phases 1-2): a step is not vacuous but internally
 inconsistent — it mandates X and, elsewhere in the same phase, mandates not-X, so no execution can

@@ -192,7 +192,7 @@ halves share no prerequisite edge (see
 Per this plan's commissioning instructions, `vercel-function-cost-reduction` is treated as a hard
 `blockedBy` precondition, **to be satisfied before this plan's authoring PRs deploy**, even though it
 is currently `in-progress` rather than merged `[Repo-grounded — confirmed via directory listing:
-plans/in-progress/vercel-function-cost-reduction/]`. The reasoning, read from that plan's own
+plans/done/2026-08-02__vercel-function-cost-reduction/]`. The reasoning, read from that plan's own
 `README.md` and `tech-docs.md` `[Repo-grounded]`:
 
 - Root cause: `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages
@@ -303,7 +303,7 @@ and states the deferral inline.
   ·
   [course-authoring baseline plan (04)](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
   · [manifest plan (12-careers-se-manifests)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-  · [vercel-function-cost-reduction](../../in-progress/vercel-function-cost-reduction/README.md)
+  · [vercel-function-cost-reduction](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
 

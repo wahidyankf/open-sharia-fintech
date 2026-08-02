@@ -9,6 +9,14 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-08-02: vercel-function-cost-reduction](./2026-08-02__vercel-function-cost-reduction/README.md) —
+  Removed the request-time causes that kept `ayokoding-www` dynamic, deleted its hot-path
+  middleware, tightened tracing, converted three `wahidyankf-www` routes to static delivery, and
+  removed secondary always-on work. Delivery is tracked by PRs #129, #130, and #131; production
+  checks confirmed canonical redirects and CDN cache hits. The $57/mo → $2–4/mo projection remains
+  explicitly unverified and is owned by the
+  [steady-state successor](../backlog/vercel-cost-steady-state-verification/README.md). Delivery
+  Mode: `worktree-to-pr`. Completed 2026-08-02.
 - [2026-08-01: ayokoding-www-ai-benchmark-responsive-overhaul](./2026-08-01__ayokoding-www-ai-benchmark-responsive-overhaul/README.md) —
   Full responsive re-look of the AI Model Benchmark page: DOM bars replace the scale-coupled SVG
   chart, the 38-model roster gains progressive disclosure behind a `model-card`, the prose preamble

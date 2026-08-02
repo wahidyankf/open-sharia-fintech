@@ -271,7 +271,7 @@ propagated.
 
 ### Why the cost-reduction dependency is hard
 
-[`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md) found
+[`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md) found
 that `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages — every page view executes
 a serverless function, none is CDN-cached — driving 65% of a metered-usage overrun that would
 otherwise push the site's invoice above the flat $20/month Pro subscription. Landing eight more
@@ -349,7 +349,7 @@ is forbidden.
   · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
-  · [`vercel-function-cost-reduction` (hard dependency)](../../in-progress/vercel-function-cost-reduction/README.md)
+  · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
 

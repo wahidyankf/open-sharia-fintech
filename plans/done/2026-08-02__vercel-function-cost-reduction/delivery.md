@@ -140,7 +140,7 @@ Phase 0 opens **no PR** (hard rule); its evidence rides Unit 1's PR.
       `limit: 20`, and `group_by` run three ways — `source`, `route`, `statusCode`. Repeat `source`
       at `since: "72h"` for a rate stable enough to project from.
   - Acceptance: a table of seven rows is committed to
-    `plans/in-progress/vercel-function-cost-reduction/evidence/baseline-per-project.md`. Before this
+    `plans/done/2026-08-02__vercel-function-cost-reduction/evidence/baseline-per-project.md`. Before this
     step the file does not exist; after it, `test -f` exits 0 and the file names all seven projects.
   - Rationale: aggregate billing cannot be split per project from repo evidence (DD-7), and step 0.5
     destroys the ability to take this later.
@@ -747,7 +747,7 @@ every page on the site.
     independently verified dynamic causes are absent.
   - **Date**: 2026-08-01. **Status**: done — diagnostic succeeded and exposed the expected
     remaining Cause B blocker.
-  - **Files Changed**: `plans/in-progress/vercel-function-cost-reduction/delivery.md`.
+  - **Files Changed**: `plans/done/2026-08-02__vercel-function-cost-reduction/delivery.md`.
   - **Result**: unrestricted `npm exec nx build ayokoding-www` compiled and entered static generation
     (`0/2103`), then failed only because the content catch-all's existing `useSearchParams()` lacks
     a `<Suspense>` boundary. No root-layout dynamic-API failure remained; the manifest requirement
@@ -800,7 +800,7 @@ every page on the site.
     successfully; `git diff --check` is clean.
 - [x] `[AI]` Draft PR opened for Unit 1.
   - **Date**: 2026-08-01. **Status**: done.
-  - **Files Changed**: `plans/in-progress/vercel-function-cost-reduction/delivery.md`.
+  - **Files Changed**: `plans/done/2026-08-02__vercel-function-cost-reduction/delivery.md`.
   - **Result**: draft [PR #129](https://github.com/wahidyankf/ose-public/pull/129) is open from
     `vercel-function-cost-reduction/ayokoding-www` to `main`.
 
@@ -988,7 +988,13 @@ only hot-path work is dead.
   - **Date**: 2026-08-01. **Status**: done.
   - **Result**: neither `src/middleware.ts` nor `src/proxy.ts` exists, and searches find no
     `x-pathname` or former i18n-middleware reference.
-- [ ] `[AI]` Both redirects verified live against a preview deployment.
+- [x] `[AI]` Both redirects verified live against a preview deployment.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Deployment**: `https://ayokoding-h9piujouo-wahidyan-kresna-fridayokas-projects.vercel.app`
+    (`dpl_A6yX9sQjkTm6hqrYMSB8NhY48i5v`, commit `3e147e1599ad5c6bdc0974f5476db773f84d3408`).
+  - **Result**: protected-preview `vercel curl` checks returned `308 Location: /en` for `/` and
+    `308 Location: /en/learn` for `/EN/learn`; the latter is one canonical redirect hop. A repeated
+    `/en/learn` request changed from `x-vercel-cache: PRERENDER` to `x-vercel-cache: HIT`.
 - [x] `[AI]` `test:quick`, `typecheck`, `lint` exit 0.
 
 > **Pause Safety**: safe to stop. Middleware invocations (~$5/month at the measured rate) are gone.
@@ -1134,14 +1140,38 @@ apps/ayokoding-www/.next/server/app/api/trpc/\[trpc\]/route.js.nft.json`.
     out. Verified with `nx show project ayokoding-www`. Use the real names above.
 - [ ] `[AI]` **Unit 1 delivery boundary** — PR-Review Maker→Fixer Cycle (3 CI-gated cycles), then
       `[AI]` merge once all five hardened preconditions hold.
-- [ ] `[AI]` Deploy to `prod-ayokoding-www` and verify live: a repeat request to a content page
+- [x] `[AI]` Deploy to `prod-ayokoding-www` and verify live: a repeat request to a content page
       returns `x-vercel-cache: HIT` (was `MISS`).
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Deployment**: `dpl_G8XWg3LUhhg8UoRFCry5kp12ozCs`, commit
+    `3e147e1599ad5c6bdc0974f5476db773f84d3408`, live at `https://www.ayokoding.com`.
+  - **Result**: `curl --head https://www.ayokoding.com/en/learn/overview` changed from
+    `x-vercel-cache: PRERENDER` to `x-vercel-cache: HIT` on repeat. The deployment-bound
+    `VERCEL_CDN_VERIFY=true BASE_URL=https://www.ayokoding.com npx playwright test --grep
+'A repeat request to a deployed content page is served from the CDN'` passed 3/3 browser
+    projects. Live `/` and `/EN/learn` checks returned `308` to `/en` and `/en/learn`; live
+    `robots.txt` contains `Sitemap: https://www.ayokoding.com/sitemap.xml`.
   - Run the deployment-bound Gherkin verifier with `VERCEL_CDN_VERIFY=true` and `BASE_URL` set to
     the Vercel preview or production URL. The ordinary local standalone E2E scenario proves only
     cacheability (`no-store` absent) because it has no Vercel CDN header to inspect.
-- [ ] `[AI]` **MCP post-deploy verification** — 24h after the production deploy, re-run
+- [x] `[AI]` **MCP post-deploy verification** — 24h after the production deploy, re-run
       `get_runtime_logs` (`group_by: source` and `group_by: route`, `since: "24h"`,
       `environment: "production"`) and compare against the baseline table.
+  - **Date**: 2026-08-02. **Status**: corrected — not independently runnable after the completed
+    Phase 0.5 decision.
+  - **Evidence**: Phase 0.5 deliberately disabled Observability Plus and expressly says not to
+    plan later aggregate re-queries. The authenticated `vercel metrics
+vercel.function_invocation.count --project ayokoding-www --prod --since 1h --granularity 1h
+--json` command returned `payment_required` because that product is disabled. The base
+    deployment runtime-log endpoint streams live logs only and cannot reconstruct a 24-hour
+    source/route/status aggregate. This session does not expose the formerly used Vercel MCP
+    `get_runtime_logs` tool.
+  - **Resolution**: the production `x-vercel-cache: HIT`, route-table, and deployment-bound
+    Gherkin results remain the direct Phase 4 evidence. The unverified fleet-level projection is
+    carried explicitly to
+    [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md),
+    as Phase 7 requires. Re-enabling the paid telemetry product would reverse the completed
+    cost-reduction decision, so it is not an acceptable substitute.
   - Acceptance, falsifiable in both directions against measured numbers, not impressions:
     - `middleware` source count → **0** (was 43,422/24h). Non-zero means the middleware survived.
     - `function` source count → down **≥90%** from 43,105/24h. This is the plan's real success
@@ -1400,9 +1430,17 @@ open question rather than closing it out.
 
 ## Phase 7: Knowledge Capture
 
-- [ ] `[AI]` Triage `learnings.md` — every entry either finds a home (a convention, a doc, an idea
+- [x] `[AI]` Triage `learnings.md` — every entry either finds a home (a convention, a doc, an idea
       two-pager) or is explicitly discarded with a reason.
-- [ ] `[AI]` Candidate homes to consider, based on what this plan uncovered:
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Files Changed**: `learnings.md`, `apps/ayokoding-www/README.md`, and
+    `plans/ideas/acceptance-clause-vacuity.md`.
+  - **Result**: every captured entry has a terminal route or one-line discard reason after the
+    secret/sensitivity and repository-relevance gates.
+- [x] `[AI]` Candidate homes to consider, based on what this plan uncovered:
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Result**: static-delivery guidance is in the app README and test suite; billing ownership is
+    in the successor plan; provider-specific facts without an automatic guard were discarded.
   - The diagnostic that legacy-vs-Fluid billing is readable from line-item **names** alone.
   - The rule that a dynamic API in a root layout forfeits static generation for the entire app, and
     that the locale-segment root layout is the documented i18n fix.
@@ -1410,22 +1448,48 @@ open question rather than closing it out.
     boundary around `useSearchParams()`.
   - That Vercel's WAF blocks **before** the billing meter, making the free rulesets a cost control.
   - That Spend Management's pause action is off by default and lags by minutes.
-- [ ] `[AI]` Fold anything cross-cutting into the existing
+- [x] `[AI]` Fold anything cross-cutting into the existing
       [`nx-affected-cross-worktree-contamination`](../../ideas/nx-affected-cross-worktree-contamination.md)
       two-pager if it belongs there rather than creating a duplicate.
-- [ ] `[AI]` **Record the unverified projection as an open question** — mandatory, because the
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Result**: none of the findings concern Nx affected-set contamination. The cross-cutting
+    acceptance/control-plane findings were folded into the existing
+    `acceptance-clause-vacuity` two-pager instead of creating a duplicate.
+- [x] `[AI]` **Record the unverified projection as an open question** — mandatory, because the
       steady-state grading was split out. State in `learnings.md` that the ~$57/mo → ~$2–4/mo
       projection is **unverified at archival**, name
       [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
       as the plan that closes it, and note which projection rows were measured (Observability −$10,
       middleware −$5) versus estimated (the −$30 static conversion, the largest row).
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Result**: `learnings.md` now records the unverified $57/mo → $2–4/mo projection, separates
+    the two measured rows from the estimated static-conversion row, and names the successor plan.
   - Acceptance: `learnings.md` contains the open question and the successor plan's path. Falsifiable
     both ways: absent that entry, this plan archives claiming an outcome it never measured.
 
 ### Phase 7 Gate
 
-- [ ] `[AI]` `learnings.md` fully triaged, with no untriaged entries remaining.
-- [ ] `[AI]` The unverified-projection open question is recorded and points at the successor plan.
+- [x] `[AI]` `learnings.md` fully triaged, with no untriaged entries remaining.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Result**: the terminal-state table covers every captured candidate; no entry remains open.
+- [x] `[AI]` The unverified-projection open question is recorded and points at the successor plan.
+  - **Date**: 2026-08-02. **Status**: done.
+  - **Result**: the path and measured-versus-estimated rows are recorded in `learnings.md`.
+
+### Near-end Rule-15 / Rule-16 verification
+
+- **Date**: 2026-08-02. **Status**: no production regression found.
+- **Exploratory**: production redirect canonicalization, EN/ID overview content, and tRPC health,
+  language, content, search, and tree endpoints passed through direct HTTP checks; the content page
+  was a CDN `HIT`.
+- **Usability**: all emitted EN/ID navigation destinations returned `200`, with canonical redirects
+  and responsive viewport metadata; the localized Indonesian Learn route is `/id/belajar`, not the
+  non-emitted `/id/learn` alias.
+- **Design/accessibility**: production HTML had one `main` and `h1`, localized skip links and
+  labelled controls, ordered headings, focus-visible affordances, and an emitted responsive DOM.
+  The local browser-control service had no available browser, so this is DOM/HTTP and three-engine
+  deployment-verifier evidence rather than a visual viewport sign-off.
+- **Result**: no new findings, so no Rule-15 retest or Rule-16 API-fix cycle was required.
 
 > **Pause Safety**: safe to stop. All delivery is complete; only archival remains.
 
@@ -1433,16 +1497,16 @@ open question rather than closing it out.
 
 ## Phase 8: Plan archival, final push, and merge
 
-- [ ] `[AI]` `git mv plans/in-progress/vercel-function-cost-reduction plans/done/YYYY-MM-DD__vercel-function-cost-reduction`
+- [x] `[AI]` `git mv plans/done/2026-08-02__vercel-function-cost-reduction plans/done/YYYY-MM-DD__vercel-function-cost-reduction`
       using the actual completion date.
-- [ ] `[AI]` Update `plans/done/README.md` and `plans/in-progress/README.md` indexes.
+- [x] `[AI]` Update `plans/done/README.md` and `plans/in-progress/README.md` indexes.
 - [ ] `[AI]` Commit the archival move on the PR branch and push **before** the merge, per the
       Delivery Mode convention's Archival-in-PR requirement.
 - [ ] `[AI]` `[AI]` merge once all five hardened preconditions hold.
 - [ ] `[AI]` Fast-forward local `main` after the final push, so the base worktree does not silently
       diverge.
 - [ ] `[AI]` Remove all three worktrees after confirming each is clean and fully merged.
-- [ ] `[AI]` Confirm the successor plan
+- [x] `[AI]` Confirm the successor plan
       [`vercel-cost-steady-state-verification`](../../backlog/vercel-cost-steady-state-verification/README.md)
       exists in `plans/backlog/` and its precondition now passes.
   - Acceptance: `test -f plans/backlog/vercel-cost-steady-state-verification/README.md` exits 0, and
@@ -1452,9 +1516,9 @@ open question rather than closing it out.
 
 ### Phase 8 Gate
 
-- [ ] `[AI]` Plan folder lives under `plans/done/` with a date prefix.
+- [x] `[AI]` Plan folder lives under `plans/done/` with a date prefix.
 - [ ] `[AI]` All three PRs merged; CI green on `main`.
 - [ ] `[AI]` All three worktrees removed; local `main` fast-forwarded.
-- [ ] `[AI]` Successor plan present and unblocked.
+- [x] `[AI]` Successor plan present and unblocked.
 
 > **Pause Safety**: plan complete.

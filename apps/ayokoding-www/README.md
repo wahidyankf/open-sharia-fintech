@@ -105,6 +105,13 @@ the finite uppercase variants of `en` and `id` redirect to their lowercase canon
 lowercase destinations, preventing self-redirects while keeping this work out of request-time
 middleware.
 
+## Static delivery
+
+Content routes are statically generated. Keep dynamic Next.js request APIs out of the locale-root
+layout: one there makes every descendant route dynamic. Query-only course-path context resolves in
+client components behind Suspense instead. Verify this boundary with a production `nx build` and
+the emitted route table or prerender manifest; development mode is not equivalent evidence.
+
 ## Related
 
 - [ayokoding-www-be-e2e](../ayokoding-www-be-e2e/) - Backend E2E tests (consumes `behavior/ayokoding-be/gherkin/`)

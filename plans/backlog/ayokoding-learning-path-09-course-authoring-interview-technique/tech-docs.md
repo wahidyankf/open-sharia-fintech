@@ -134,7 +134,7 @@ This is a **new** hard `blockedBy` this plan carries that the parent plan's own 
 had, because it did not exist when the parent plan was authored.
 
 **Why authoring 5 more content pages is gated on a cost-reduction plan.**
-[`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md)
+[`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 (read in full for this plan's authoring) found that `apps/ayokoding-www` **prerenders zero of its
 ~2,068 content pages** — every page view executes a serverless function rather than being served from
 the CDN, because of two structural causes: (Cause A) the root layout calls `await headers()` purely to

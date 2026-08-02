@@ -266,7 +266,7 @@ the mandatory Playwright MCP manual verification, both run in this plan's
 
 ### The `vercel-function-cost-reduction` hard dependency
 
-`plans/in-progress/vercel-function-cost-reduction/` [Repo-grounded — read in full at authoring
+`plans/done/2026-08-02__vercel-function-cost-reduction/` [Repo-grounded — read in full at authoring
 time] cuts `ayokoding-www`'s gross Vercel infrastructure spend from ~$57/month to under the $20/month
 Pro-plan usage credit by fixing two rendering-dynamism causes in the app's root layout and its
 `[...slug]` content page, which today force **every single content-page view to execute a

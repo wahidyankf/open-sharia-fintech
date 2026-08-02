@@ -251,8 +251,8 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ### `vercel-function-cost-reduction` precondition
 
-[`vercel-function-cost-reduction`](../vercel-function-cost-reduction/README.md) (folder:
-`plans/in-progress/vercel-function-cost-reduction/`) is a **new hard `blockedBy` dependency**, added
+[`vercel-function-cost-reduction`](../done/2026-08-02__vercel-function-cost-reduction/README.md) (folder:
+`plans/done/2026-08-02__vercel-function-cost-reduction/`) is a **new hard `blockedBy` dependency**, added
 because that plan's Phases 1–3 change the same app and route tree this plan authors **~21 course
 bundles (~150 rendered pages)** into: it promotes `apps/ayokoding-www/src/app/[locale]/layout.tsx` to the app's root layout
 (deleting `apps/ayokoding-www/src/app/layout.tsx` outright, to fix dynamic rendering caused by a

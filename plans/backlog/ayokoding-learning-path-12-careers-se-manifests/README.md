@@ -302,7 +302,7 @@ phases to delivery units, branches, and PRs.
 
 ### Vercel cost-reduction dependency (hard, both plans)
 
-[`plans/in-progress/vercel-function-cost-reduction/`](../../in-progress/vercel-function-cost-reduction/README.md)
+[`plans/done/2026-08-02__vercel-function-cost-reduction/`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 fixes `apps/ayokoding-www`'s root layout (removes the `await headers()` call that opts every route
 into dynamic rendering) and its content route (`?path=` reading moves client-side), then deletes the
 now-purposeless middleware and converts static-eligible routes. **Treated here as already merged/done,

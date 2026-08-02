@@ -50,7 +50,7 @@ Every component, resolver, schema, and route it depends on is built by plans 01â
 ## The vercel-function-cost-reduction precondition
 
 This plan's `blockedBy` set gains a new hard entry not present in the retired source plan:
-`vercel-function-cost-reduction` (currently `plans/in-progress/vercel-function-cost-reduction/`,
+`vercel-function-cost-reduction` (currently `plans/done/2026-08-02__vercel-function-cost-reduction/`,
 read in full 2026-08-01). That plan fixes `apps/ayokoding-www` prerendering **zero** of its ~2,068
 content pages â€” every page view currently executes a serverless function because the root layout
 calls `await headers()` and the `[...slug]` catch-all reads `?path=` server-side, both of which force
