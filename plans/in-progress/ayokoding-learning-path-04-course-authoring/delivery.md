@@ -448,6 +448,8 @@ links validate` exited 0 with "All links valid! No broken links found."; grep fo
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**. Falsifiable both ways: touching any file under that path makes the
       command return ≥1 and the phase gate fails.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The manifest diff returned `0` paths.
       **Date**: 2026-07-26. **Status**: Done. **Files Changed**: none (read-only check). Count = 0.
 
 ### Phase 0 Gate
@@ -1130,25 +1132,42 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — keep only if a durable surface would
       catch this automatically next time; discard the rest with a one-line reason — acceptance: every
       entry has a route or a discard reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: `learnings.md`.
+    All entries pass the litmus through their recorded terminal routes: workflow correction, separate
+    code-homed backlog plan, or the existing Rule-15 exemption record.
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize any secret,
       credential, token, or private hostname to a `<placeholder>` token, or discard if unsanitizable —
       acceptance: `learnings.md` contains no raw secret.
-- [ ] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only review).
+    The entries contain only public repository paths, public PR URLs, and generic branch examples;
+    no credential, token, private hostname, inventory, or secret is recorded.
+- [x] [AI] Apply the **repo-relevance gate** — infra-private content (Terraform, k3s, Proxmox, real
       hostnames/inventories) stays in `ose-private` only and is NEVER cross-routed into
       `ose-public`/`ose-primer`; public-governance content may propagate via the existing parity loop —
       acceptance: no infra-private content appears in this repo's routed output.
-- [ ] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (review only).
+    Every learning concerns this public repository's workflow, public course content, or its
+    documented Rule-15 scope; no infra-private material is routed or retained.
+- [x] [AI] Route each surviving learning to exactly one durable home per the open-ended routing matrix
       — non-code homes may land inline (small edit) or as a `plans/backlog/` follow-up (large); **code
       homes (`apps/`, `libs/`, tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan and
       NEVER landed inline**. Note this plan's own artefacts are content, not code — a learning about
       the `course-paths` feature code is code-homed and goes to backlog — acceptance: every entry
       records its terminal routing state.
-- [ ] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `repo-governance/workflows/plan/plan-execution.md`,
+    `plans/backlog/ayokoding-database-internals-ruff-config/README.md`, and `learnings.md`.
+    The workflow learning landed inline, the code-homed Ruff learning has one separate backlog home,
+    and the Rule-15 entry retains its existing documented home.
+- [x] [AI] If no generalizable learning surfaced, record `No generalizable learnings — <reason>` in
       `learnings.md` — acceptance: `learnings.md` is never silently empty.
-- [ ] [AI] **Confirm no manifest file changed in this phase** — Phase 8 is intermediate (see the
+  - **Date**: 2026-08-02. **Status**: Not applicable. **Files Changed**: none.
+    Three generalizable learnings surfaced and all have terminal routes, so the explicit-none escape
+    is neither needed nor appropriate.
+- [x] [AI] **Confirm no manifest file changed in this phase** — Phase 8 is intermediate (see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): it commits the `learnings.md` triage
       and any inline non-code fixes on the shared closeout branch and folds into the Phase 9 PR
       rather than opening one of its own, so this phase still gets the same individual gate on its own
@@ -1160,14 +1179,18 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 ### Phase 8 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
-- [ ] [AI] **No PR opens for this phase** (intermediate — see the
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched (`git diff --name-only ... | grep -c .` returns 0).
+- [x] [AI] **No PR opens for this phase** (intermediate — see the
       [`### Delivery Boundaries`](#delivery-boundaries) table): the `learnings.md` triage is committed
       on the shared closeout branch, this phase's own gate above is green, and nothing is pushed for
       review yet — the closeout PR for Phases 6–9 opens at Phase 9.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `learnings.md`, `repo-governance/workflows/plan/plan-execution.md`, and the Ruff backlog plan.
+    Every learning is terminal; no code-homed change landed inline; the manifest diff is zero; and no
+    PR has been opened.
 
 > **Pause Safety**: `learnings.md` is fully triaged; nothing depends on querying it later. Safe to
 > stop. To resume: re-read `learnings.md` and confirm every entry is terminal.
