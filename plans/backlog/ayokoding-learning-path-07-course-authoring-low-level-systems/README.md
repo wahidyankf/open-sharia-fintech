@@ -295,7 +295,7 @@ An Indonesian mirror is explicitly deferred (recorded decision, not an omission)
   ·
   [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
   (downstream consumer)
-  · [`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md)
+  · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
   (hard dependency)
 
 ## Provenance

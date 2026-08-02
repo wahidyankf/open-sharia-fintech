@@ -86,7 +86,7 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 }));
 
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../render-course-path-page";
 
 const feature = await loadFeature(
   path.resolve(
@@ -104,9 +104,10 @@ describeFeature(feature, ({ Scenario }) => {
     });
 
     When("the course page renders", async () => {
-      jsx = await ContentPage({
-        params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-        searchParams: Promise.resolve({ path: "careers/does-not-exist/anywhere" }),
+      jsx = await renderCoursePathPage({
+        locale: "en",
+        slug: ["learn", "courses", "just-enough-python"],
+        search: { path: "careers/does-not-exist/anywhere" },
       });
       cleanup();
       render(jsx);

@@ -117,7 +117,7 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 }));
 
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../render-course-path-page";
 // eslint-disable-next-line import/first
 import { PathRail } from "@/features/course-paths/shell/path-rail";
 // eslint-disable-next-line import/first
@@ -154,9 +154,10 @@ describeFeature(feature, ({ Scenario }) => {
     let jsx: React.ReactElement;
 
     Given("a reader is on a course with an active path context", async () => {
-      jsx = await ContentPage({
-        params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "just-enough-python"] }),
-        searchParams: Promise.resolve({ path: fixtureManifest.pathId }),
+      jsx = await renderCoursePathPage({
+        locale: "en",
+        slug: ["learn", "courses", "just-enough-python"],
+        search: { path: fixtureManifest.pathId },
       });
     });
 

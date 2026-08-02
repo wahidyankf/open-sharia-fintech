@@ -35,9 +35,6 @@ export default defineConfig({
         "src/lib/trpc/client.ts",
         "src/lib/trpc/provider.tsx",
         "src/lib/trpc/server.ts",
-        // i18n middleware re-export shim and implementation (covered via fe-e2e)
-        "src/middleware.ts",
-        "src/features/i18n/shell/middleware.ts",
         // Content infrastructure adapters + scripts (covered via unit suite with mocked deps)
         "src/features/content/core/parser.ts",
         "src/features/content/shell/reader.ts",

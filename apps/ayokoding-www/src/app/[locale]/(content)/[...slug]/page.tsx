@@ -1,29 +1,23 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { serverCaller } from "@/lib/trpc/server";
 import { isValidLocale, type Locale } from "@/features/i18n/core/config";
 import { t } from "@/features/i18n/core/translations";
 import { contentUrl } from "@/features/content/core/content-url";
 import { slugFromSegments } from "@/features/content/core/slug";
-import { Breadcrumb } from "@/features/navigation/shell/breadcrumb";
-import { TableOfContents } from "@/features/navigation/shell/toc";
-import { PrevNext } from "@/features/navigation/shell/prev-next";
-import { MarkdownRenderer } from "@/features/content/shell/markdown-renderer";
 import { TRPCError } from "@trpc/server";
 import { createTRPCContext } from "@/features/app-shell/shell/trpc-init";
 import {
   courseIdFromSlug,
   resolveCoursePathRenderData,
-  coursePositionInManifest,
   buildCourseTitleIndex,
   buildArcTitleIndex,
-  type PrerequisiteLink,
 } from "@/features/course-paths/shell/course-path-nav";
 import { loadRoutePathData } from "@/features/course-paths/shell/route-path-data";
-import { PrerequisiteList } from "@/features/course-paths/shell/prerequisite-list";
-import { PathCourseLinks } from "@/features/course-paths/shell/path-course-links";
-import { PathBanner } from "@/features/course-paths/shell/path-banner";
+import { CoursePageContent } from "@/features/course-paths/shell/course-page-content";
+import { CoursePagePathContent } from "@/features/course-paths/shell/course-page-path-content";
 import {
   isLearnPathsSlug,
   resolvePathsRoute,
@@ -39,16 +33,9 @@ import { PathLanding } from "@/features/course-paths/shell/path-landing";
 import { EmptyPathListState } from "@/features/course-paths/shell/empty-path-list-state";
 
 /**
- * Widened from `false` (Phase 3, course-paths plan) — the `learn/paths/**` namespace (hub,
- * category, arc, and terminal path landings) is deliberately **excluded** from
- * `generateStaticParams` below and rendered on demand instead, because its render depends on
- * `manifest-repository.ts`'s `AYOKODING_WEB_MANIFESTS_DIR`-driven data, which must be read **fresh
- * per request** rather than baked in once at build time (the e2e suite proves this against a
- * fixture manifest set without a second, specially-configured production build). Every
- * already-enumerated content slug (every course, every loose page) is completely unaffected: it
- * stays exactly as static as before — `dynamicParams` only changes what happens for a slug
- * `generateStaticParams` does NOT return, which previously hard-404'd and now renders on demand
- * (still 404ing correctly when nothing resolves, e.g. a truly nonexistent course URL).
+ * Course-path landing pages may use deployment-provided manifests, so their
+ * unknown-at-build-time routes remain on demand while enumerated content stays
+ * statically generated.
  */
 export const dynamicParams = true;
 
@@ -76,10 +63,6 @@ export async function generateStaticParams({ params }: { params: { locale: strin
   for (const [key, meta] of index.contentMap) {
     if (!key.startsWith(`${params.locale}:`)) continue;
     if (meta.slug === "") continue;
-    // Course-paths plan (Phase 3): the `learn/paths/**` namespace is rendered on demand (see this
-    // file's `dynamicParams` doc comment above), never statically enumerated — even though real
-    // `_index.md` structural files already exist for the hub/category/arc roots, their render
-    // depends on freshly-loaded manifest data that a one-time static build cannot keep current.
     if (isLearnPathsSlug(meta.slug)) continue;
     slugs.push({ slug: meta.slug.split("/") });
   }
@@ -89,25 +72,9 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 interface Props {
   params: Promise<{ locale: string; slug: string[] }>;
-  // Only `page.tsx` receives `searchParams` in the App Router (never `layout.tsx`, at any nesting
-  // depth) — course-paths plan, Cycle 2.2. `generateMetadata` below does not use it.
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-/**
- * Adapt Next.js's `searchParams` object shape (a value can be absent, a single string, or a
- * string[] for a repeated key) to the plain `URLSearchParams` the upstream `parsePathContext`
- * expects. Repeated keys append in order; `undefined` values are skipped.
- */
-function urlSearchParamsFrom(raw: { [key: string]: string | string[] | undefined }): URLSearchParams {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(raw)) {
-    if (value === undefined) continue;
-    for (const v of Array.isArray(value) ? value : [value]) {
-      params.append(key, v);
-    }
-  }
-  return params;
+  // Tests and framework callers may provide additional route props, but this
+  // static route deliberately names and reads only `params`.
+  [unusedRouteProp: string]: unknown;
 }
 
 /**
@@ -319,7 +286,7 @@ async function renderPathsRoute(locale: string, slugStr: string) {
   );
 }
 
-export default async function ContentPage({ params, searchParams }: Props) {
+export default async function ContentPage({ params }: Props) {
   const { locale, slug } = await params;
   const slugStr = slugFromSegments(slug);
 
@@ -347,99 +314,58 @@ export default async function ContentPage({ params, searchParams }: Props) {
     throw err;
   }
 
-  // Path context only ever applies to course pages (courseIdFromSlug returns null for every
-  // other content page) — this is the one place ROUTE decides path-aware vs. canonical
-  // (Cycle 2.6's REFACTOR note); invalid, missing, and omitted-course contexts all converge on
-  // resolveCoursePathRenderData's single `activeContext === null` branch below.
+  // Course path chrome is client-resolved so this statically generated route
+  // never reads request query state. The Suspense fallback below is the same
+  // canonical render a reader receives without `?path=`.
   const courseId = courseIdFromSlug(slugStr);
-  let prev = page.prev;
-  let next = page.next;
-  let prerequisiteLinks: readonly PrerequisiteLink[] = [];
-  let pathBadges: readonly { pathId: string; title: string }[] = [];
-  let activePathId: string | undefined;
-  let activePathTitle: string | undefined;
-  let activeCoursePosition: { index: number; total: number } | undefined;
+  const breadcrumbSegments = buildBreadcrumbs(locale, slugStr, page.title);
+  const canonicalRenderData =
+    courseId === null
+      ? { activeContext: null, prerequisiteLinks: [], pathBadges: [], prev: page.prev, next: page.next }
+      : resolveCoursePathRenderData(
+          new URLSearchParams(),
+          await loadRoutePathData(locale),
+          courseId,
+          locale,
+          page.prev,
+          page.next,
+        );
+  const contentProps = {
+    locale,
+    slug: slugStr,
+    title: page.title,
+    html: page.html,
+    headings: page.headings,
+    date: page.date ?? undefined,
+    breadcrumbSegments,
+  };
 
-  if (courseId !== null) {
-    const pathData = await loadRoutePathData(locale);
-    const usp = urlSearchParamsFrom(await searchParams);
-    const renderData = resolveCoursePathRenderData(usp, pathData, courseId, locale, page.prev, page.next);
-
-    prev = renderData.prev;
-    next = renderData.next;
-    prerequisiteLinks = renderData.prerequisiteLinks;
-    pathBadges = renderData.pathBadges;
-    activePathId = renderData.activeContext?.pathId;
-    activePathTitle = renderData.activeContext?.manifest.title;
-    if (renderData.activeContext) {
-      activeCoursePosition = coursePositionInManifest(renderData.activeContext.manifest, courseId);
-    }
+  if (courseId === null) {
+    return <CoursePageContent {...contentProps} renderData={canonicalRenderData} />;
   }
 
-  const breadcrumbSegments = buildBreadcrumbs(locale, slugStr, page.title);
-  const pathContext =
-    activePathId !== undefined && activePathTitle !== undefined
-      ? {
-          pathId: activePathId,
-          pathTitle: activePathTitle,
-          learnLabel: t(locale as Locale, "navLearn"),
-          learnHref: `/${locale}/browse`,
-        }
-      : undefined;
+  const pathData = await loadRoutePathData(locale);
+  const canonicalCourseRenderData = resolveCoursePathRenderData(
+    new URLSearchParams(),
+    pathData,
+    courseId,
+    locale,
+    page.prev,
+    page.next,
+  );
 
   return (
-    <>
-      <article className="min-w-0 flex-1 px-6 py-8 lg:px-8">
-        <Breadcrumb
-          locale={locale}
-          slug={slugStr}
-          segments={breadcrumbSegments}
-          showCurrent={Boolean(pathContext)}
-          pathContext={pathContext}
-        />
-
-        <h1 className="mb-6 text-4xl font-extrabold tracking-tight">{page.title}</h1>
-
-        {/* Rendered immediately below the H1, above the body/syllabus (UWT-004 fix, phase-5
-            rule-15 retest) — the prior position (after the prerequisites, near the bottom) meant a
-            mobile reader had to scroll past the entire course body before learning they were even
-            inside a path, several page-heights after desktop/tablet readers see the equivalent
-            rail in the very first paint (Heuristic 1: Visibility of System Status). */}
-        {pathContext !== undefined && activeCoursePosition !== undefined && (
-          <PathBanner
-            locale={locale}
-            pathTitle={pathContext.pathTitle}
-            courseIndex={activeCoursePosition.index}
-            totalCourses={activeCoursePosition.total}
-          />
-        )}
-
-        <MarkdownRenderer html={page.html} locale={locale} />
-
-        <PrerequisiteList locale={locale} prerequisites={prerequisiteLinks} />
-
-        {pathContext === undefined && <PathCourseLinks locale={locale} paths={pathBadges} />}
-
-        {page.date && (
-          <p className="mt-8 text-sm text-muted-foreground">
-            {t(locale as Locale, "lastUpdated")}{" "}
-            {new Date(page.date).toLocaleDateString(locale === "id" ? "id-ID" : "en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        )}
-
-        <PrevNext locale={locale} prev={prev} next={next} pathId={activePathId} />
-      </article>
-
-      <aside className="hidden w-[200px] shrink-0 xl:block">
-        <div className="sticky top-20 p-4">
-          <TableOfContents headings={page.headings} label={t(locale as Locale, "onThisPage")} />
-        </div>
-      </aside>
-    </>
+    <Suspense
+      fallback={<CoursePageContent {...contentProps} courseId={courseId} renderData={canonicalCourseRenderData} />}
+    >
+      <CoursePagePathContent
+        {...contentProps}
+        courseId={courseId}
+        canonicalRenderData={canonicalCourseRenderData}
+        fallbackPrev={page.prev}
+        fallbackNext={page.next}
+      />
+    </Suspense>
   );
 }
 

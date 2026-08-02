@@ -1,6 +1,6 @@
 # Vercel Cost Steady-State Verification — grade the invoice against the $30 budget
 
-Verify that [`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md)
+Verify that [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 actually achieved its objective. That plan carries **three tiers**, and this plan grades against all
 three rather than a single number:
 
@@ -99,7 +99,7 @@ wrong, which is worth more than a pass.
 ## Baseline to compare against
 
 From
-[`vercel-function-cost-reduction/evidence/baseline-per-project.md`](../../in-progress/vercel-function-cost-reduction/evidence/baseline-per-project.md),
+[`vercel-function-cost-reduction/evidence/baseline-per-project.md`](../../done/2026-08-02__vercel-function-cost-reduction/evidence/baseline-per-project.md),
 captured 2026-08-01:
 
 | Metric                                | Pre-fix baseline           |
@@ -199,7 +199,7 @@ Feature: Steady-state Vercel cost verification
 history is permanent. `teamId: "wahidyan-kresna-fridayokas-projects"`,
 `projectId: "ayokoding-www"`. Both parameters accept a slug in place of the `team_*`/`prj_*` ID.
 See the parent plan's
-[tech-docs §Identifiers in a public repo](../../in-progress/vercel-function-cost-reduction/tech-docs.md#identifiers-in-a-public-repo).
+[tech-docs §Identifiers in a public repo](../../done/2026-08-02__vercel-function-cost-reduction/tech-docs.md#identifiers-in-a-public-repo).
 
 **Measured MCP limits** (from the parent plan's probe):
 

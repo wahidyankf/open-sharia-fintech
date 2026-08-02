@@ -164,7 +164,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 ### Why the cost-reduction dependency is hard
 
-[`vercel-function-cost-reduction`](../../in-progress/vercel-function-cost-reduction/README.md) found
+[`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md) found
 that `apps/ayokoding-www` prerenders **zero** of its ~2,068 content pages — every page view executes a
 serverless function, none is CDN-cached — and that this is 65% of a metered-usage overrun that would
 otherwise push the site's invoice above the flat $20/month Pro subscription. Landing eleven more
@@ -233,7 +233,7 @@ forbidden.
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
   · [`ayokoding-learning-path-12-careers-se-manifests` (downstream)](../ayokoding-learning-path-12-careers-se-manifests/README.md)
-  · [`vercel-function-cost-reduction` (hard dependency)](../../in-progress/vercel-function-cost-reduction/README.md)
+  · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
 
 ## Provenance
 

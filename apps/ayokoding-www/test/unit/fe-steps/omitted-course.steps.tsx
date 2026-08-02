@@ -88,7 +88,7 @@ vi.mock("@/features/course-paths/shell/manifest-repository", () => ({
 }));
 
 // eslint-disable-next-line import/first
-import ContentPage from "@/app/[locale]/(content)/[...slug]/page";
+import { renderCoursePathPage } from "../render-course-path-page";
 
 const feature = await loadFeature(
   path.resolve(
@@ -106,9 +106,10 @@ describeFeature(feature, ({ Scenario }) => {
     });
 
     When("a reader opens that course with that path's context", async () => {
-      jsx = await ContentPage({
-        params: Promise.resolve({ locale: "en", slug: ["learn", "courses", "capstone-forge-ready"] }),
-        searchParams: Promise.resolve({ path: fixtureManifest.pathId }),
+      jsx = await renderCoursePathPage({
+        locale: "en",
+        slug: ["learn", "courses", "capstone-forge-ready"],
+        search: { path: fixtureManifest.pathId },
       });
       cleanup();
       render(jsx);

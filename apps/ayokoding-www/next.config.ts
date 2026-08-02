@@ -17,13 +17,43 @@ const securityHeaders = [
   },
 ];
 
+const localeEntryRedirects = [
+  { source: "/", destination: "/en", permanent: true },
+  { source: "/EN", destination: "/en", permanent: true },
+  { source: "/En", destination: "/en", permanent: true },
+  { source: "/eN", destination: "/en", permanent: true },
+  { source: "/ID", destination: "/id", permanent: true },
+  { source: "/Id", destination: "/id", permanent: true },
+  { source: "/iD", destination: "/id", permanent: true },
+  { source: "/EN/:path*", destination: "/en/:path*", permanent: true },
+  { source: "/En/:path*", destination: "/en/:path*", permanent: true },
+  { source: "/eN/:path*", destination: "/en/:path*", permanent: true },
+  { source: "/ID/:path*", destination: "/id/:path*", permanent: true },
+  { source: "/Id/:path*", destination: "/id/:path*", permanent: true },
+  { source: "/iD/:path*", destination: "/id/:path*", permanent: true },
+];
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Redirect sources are case-sensitive. Without this explicit setting, Next
+  // treats `/EN/:path*` as a match for canonical `/en/:path*`, creating a
+  // permanent self-redirect loop. Keeping the finite locale rules below in
+  // config preserves static redirects without restoring request-time proxying.
+  experimental: {
+    caseSensitiveRoutes: true,
+  },
+  // Legacy markdown pages can exceed Next's 60s default during the full SSG
+  // fan-out; retain static generation instead of retrying them as failures.
+  staticPageGenerationTimeout: 180,
   poweredByHeader: false,
   transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
   outputFileTracingRoot: path.join(__dirname, "../../"),
   outputFileTracingIncludes: {
-    "/**": ["./content/**/*", "./generated/**/*"],
+    "/[locale]/[...slug]": ["./content/**/*", "./generated/**/*"],
+    // tRPC serves navigation, search, and course-path data from the standalone
+    // function at runtime. These are filesystem reads, so trace their assets
+    // independently of the static content route.
+    "/api/trpc/[trpc]": ["./content/**/*", "./generated/**/*", "./src/features/course-paths/manifests/**/*"],
   },
   serverExternalPackages: ["flexsearch"],
   images: {
@@ -44,7 +74,13 @@ const nextConfig: NextConfig = {
     // rules can't match one. learnReorgRedirects next so historical within-/en/learn/ renames
     // resolve to their canonical domain. courseRehomeRedirects before the six-domain legacy-bucket
     // module last, so its more specific per-course rules win over the broader per-domain wildcard.
-    return [...contentNamespaceRedirects, ...learnReorgRedirects, ...courseRehomeRedirects, ...learnThreeBucketRedirects];
+    return [
+      ...localeEntryRedirects,
+      ...contentNamespaceRedirects,
+      ...learnReorgRedirects,
+      ...courseRehomeRedirects,
+      ...learnThreeBucketRedirects,
+    ];
   },
 };
 

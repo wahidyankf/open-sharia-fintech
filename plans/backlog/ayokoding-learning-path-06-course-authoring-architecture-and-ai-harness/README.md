@@ -204,7 +204,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 
 This plan authors new content pages into `apps/ayokoding-www` — the same app
 `vercel-function-cost-reduction` is actively restructuring for static generation. Per that plan's own
-[README](../../in-progress/vercel-function-cost-reduction/README.md), its Phase 1 deletes
+[README](../../done/2026-08-02__vercel-function-cost-reduction/README.md), its Phase 1 deletes
 `apps/ayokoding-www/src/app/layout.tsx` (promoting the locale layout to root) and its Phase 2 removes
 the `searchParams` read from the content catch-all page — both touch the exact route tree this plan's
 15 new course pages render into. Authoring against the pre-fix dynamic-rendering shape risks the new

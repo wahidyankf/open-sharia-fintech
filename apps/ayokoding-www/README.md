@@ -73,13 +73,13 @@ IO, React, or wiring) → `shell/`.
 | `app-shell`    | `[shell]`       | —                                                                                                                           | tRPC root router + `trpc-init` + chrome (header, footer, mobile-nav, theme toggle)                                                                                        |
 | `content`      | `[core, shell]` | schemas, types, repository interface, tree-builder, shortcodes, parser                                                      | tRPC `content.*` router + fs reader/repository-fs/repository-memory + service + index-generator + markdown rendering components                                           |
 | `search`       | `[core, shell]` | search schemas                                                                                                              | tRPC `search.query` router + `generate-search-data` (fs) + search dialog/provider + `use-search` hook                                                                     |
-| `i18n`         | `[core, shell]` | config, locale schema, translations                                                                                         | tRPC `meta.languages` router + Next middleware + locale switcher + `use-locale` hook                                                                                      |
+| `i18n`         | `[core, shell]` | config, locale schema, translations                                                                                         | tRPC `meta.languages` router + `next.config.ts` entry redirects + locale switcher + `use-locale` hook                                                                     |
 | `navigation`   | `[core, shell]` | tree-node schema (+ locale re-export)                                                                                       | tRPC `content.getTree` router + sidebar/sidebar-tree/breadcrumb/prev-next/toc                                                                                             |
 | `course-paths` | `[core, shell]` | `PathManifest`/prerequisite schemas, manifest-integrity + prerequisite-DAG checks, path-context parsing, arc-hue derivation | route wiring (`route-path-data`, `paths-route`) + fs manifest repository + hub/category/arc/path landing pages + path rail/banner/card + prerequisite list + sidebar host |
 | `health`       | `[shell]`       | —                                                                                                                           | tRPC `meta.health` liveness probe                                                                                                                                         |
 
 Other modules and pages import feature code directly from the file in `core/` or `shell/`
-(e.g. `@/features/content/core/schemas`, `@/features/i18n/shell/middleware`). The cardinal
+(e.g. `@/features/content/core/schemas`, `@/features/content/shell/service`). The cardinal
 rule is one-directional: `shell/` may depend on `core/`, but `core/` must never depend on
 `shell/`.
 
@@ -97,19 +97,20 @@ container. Both perspectives execute inside this single `web` Next.js process. T
 rename `be` → `api` reflects this (the `organiclever` peer keeps `be` because
 `organiclever-be` is a real F#/Giraffe deployment).
 
-## i18n middleware ownership
+## i18n entry redirects
 
-The Next.js middleware lives at the conventional path `src/middleware.ts` but is reduced to
-a one-line re-export from the `i18n` feature module's shell zone:
+Locale entry redirects live in `next.config.ts`. The root route redirects permanently to `/en`, and
+the finite uppercase variants of `en` and `id` redirect to their lowercase canonical paths.
+`experimental.caseSensitiveRoutes` makes those uppercase sources distinct from their canonical
+lowercase destinations, preventing self-redirects while keeping this work out of request-time
+middleware.
 
-```ts
-export { middleware, config } from "./features/i18n/shell/middleware";
-```
+## Static delivery
 
-The actual implementation (locale negotiation, `/` redirect to `/<DEFAULT_LOCALE>`) lives in
-`src/features/i18n/shell/middleware.ts`. This keeps `next dev` and `next build` happy
-(they find the middleware where Next.js expects it) while putting all i18n code under the
-`i18n` feature module's ownership.
+Content routes are statically generated. Keep dynamic Next.js request APIs out of the locale-root
+layout: one there makes every descendant route dynamic. Query-only course-path context resolves in
+client components behind Suspense instead. Verify this boundary with a production `nx build` and
+the emitted route table or prerender manifest; development mode is not equivalent evidence.
 
 ## Related
 

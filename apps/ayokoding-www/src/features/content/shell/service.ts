@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import FlexSearch from "flexsearch";
+import { cache } from "react";
 import type { Locale } from "@/features/i18n/core/config";
 import type { ContentRepository } from "../core/repository";
 import type { ContentIndex, ContentMeta, TreeNode, PageLink, SearchResult, Heading } from "../core/types";
@@ -29,10 +30,16 @@ export class ContentService {
   private contentIndexPromise: Promise<ContentIndex> | null = null;
   private searchIndexes = new Map<string, FlexSearch.Document<SearchDoc, true>>();
   private docStore = new Map<string, SearchDoc>();
+  private readonly getBySlugCached: ContentService["getBySlugUncached"];
 
   constructor(repository: ContentRepository, searchDataPath?: string) {
     this.repository = repository;
     this.searchDataPath = searchDataPath ?? null;
+    // React.cache scopes this memoization to one Server Component render/request and keys it by
+    // `(locale, slug)`. It avoids duplicate Markdown reads/parses when metadata and page rendering
+    // resolve the same content simultaneously, without turning file content into a process-global
+    // cache that could outlive content changes in development.
+    this.getBySlugCached = cache((locale: string, slug: string) => this.getBySlugUncached(locale, slug));
   }
 
   async getIndex(): Promise<ContentIndex> {
@@ -56,6 +63,21 @@ export class ContentService {
   }
 
   async getBySlug(
+    locale: string,
+    slug: string,
+  ): Promise<
+    | (ContentMeta & {
+        html: string;
+        headings: Heading[];
+        prev: PageLink | null;
+        next: PageLink | null;
+      })
+    | null
+  > {
+    return this.getBySlugCached(locale, slug);
+  }
+
+  private async getBySlugUncached(
     locale: string,
     slug: string,
   ): Promise<

@@ -1,10 +1,15 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+const getRouteDataMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/trpc/client", () => ({
   trpcClient: {
     content: {
       getTree: { query: vi.fn().mockResolvedValue([]) },
+    },
+    coursePaths: {
+      getRouteData: { query: getRouteDataMock },
     },
   },
 }));
@@ -53,5 +58,16 @@ describe("Phase 3 — Header primary nav", () => {
 
     expect(screen.getByRole("link", { name: "Belajar" }).getAttribute("href")).toBe("/id/browse");
     expect(screen.getByRole("link", { name: "Alat" }).getAttribute("href")).toBe("/id/tools");
+  });
+
+  it("does not request course-path data until a path context or drawer needs it", async () => {
+    const { Header } = await import("./header");
+    render(<Header locale="en" />);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(getRouteDataMock).not.toHaveBeenCalled();
   });
 });

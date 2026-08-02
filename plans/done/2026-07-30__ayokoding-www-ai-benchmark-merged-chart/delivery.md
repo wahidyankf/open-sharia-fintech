@@ -1774,7 +1774,7 @@ behavior, and `how-to-read.tsx` are unchanged by this plan and were not re-audit
   > state (verified via `gh pr view --json state,mergeable,mergeStateStatus`, not assumed). Resolved
   > via `git fetch origin main` + `git merge origin/main --no-edit` (merge commit `b43b246`),
   > keeping main's new list entry and dropping this plan's own now-archived entry. The merge also
-  > surfaced a broken link: `plans/in-progress/vercel-function-cost-reduction/README.md` referenced
+  > surfaced a broken link: `plans/done/2026-08-02__vercel-function-cost-reduction/README.md` referenced
   > `../ayokoding-www-ai-benchmark-merged-chart/README.md`, which no longer existed after this
   > plan's own `git mv` to `done/`. Per Root Cause Orientation, fixed inline (commit `864c41c92`)
   > rather than deferred. Final push landed 4 commits total:

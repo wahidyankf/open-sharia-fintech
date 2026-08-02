@@ -15,7 +15,7 @@ retrofit rationale): plans `05` through `07` originally each delivered more than
 governance band allows (`04` alone scoped 90 courses; `05-manifests` scoped all four path manifests
 at once; `06`/`07` scoped 24 and 30 courses respectively). Every one of them is now split along its
 own natural theme/stage boundaries, and every resulting plan carries a hard `blockedBy` on
-[`vercel-function-cost-reduction`](../in-progress/vercel-function-cost-reduction/README.md) (treated
+[`vercel-function-cost-reduction`](../done/2026-08-02__vercel-function-cost-reduction/README.md) (treated
 as already merged), since it rewrites the same `apps/ayokoding-www` root layout/middleware every one
 of these plans lands content or manifests into. **Waves 1-2 have left this backlog**:
 `01-url-restructure`, `02-schema-and-prerequisite-dag`, and `03-navigation-ui` are done;
@@ -100,7 +100,7 @@ Standalone plans (outside the `ayokoding-learning-path-*` programme):
   and the footer's "MIT" license link) measuring below the WCAG 2.5.8 24x24 CSS px minimum,
   deferred out of `ayokoding-www-ai-benchmark-responsive-overhaul`'s scope (Rule-15 `EWT-005`).
 - [vercel-cost-steady-state-verification](./vercel-cost-steady-state-verification/README.md)
-  — Grades whether [`vercel-function-cost-reduction`](../in-progress/vercel-function-cost-reduction/README.md)
+  — Grades whether [`vercel-function-cost-reduction`](../done/2026-08-02__vercel-function-cost-reduction/README.md)
   held its $30 invoice ceiling and hit its $20 target, once a full clean billing cycle has closed. Split out of that
   plan because the grading is calendar-gated (**earliest 2026-09-26**) while the engineering finishes
   in days. Hard `blockedBy` that plan; single-file structure.
