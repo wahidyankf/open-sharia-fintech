@@ -37,7 +37,7 @@ This checklist authors **9 course bodies** into
 > **clean** state, `| grep -c .` reads `0` while `| wc -l` reads `1` (RTK's empty-output marker is a
 > lone newline, not true zero-byte emptiness). **Every zero-count assertion in this plan therefore
 > uses `| grep -c .`, never `| wc -l`.** See
-> [`ayokoding-learning-path-04-course-authoring/delivery.md`'s fuller RTK note](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md)
+> [`ayokoding-learning-path-04-course-authoring/delivery.md`'s fuller RTK note](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md)
 > (its own intro blockquote, near the top of the file) for the fully-measured detail this plan
 > inherits without re-deriving.
 
@@ -254,7 +254,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > Each course is authored as a full page bundle into `<COURSES><course-id>/`, from its
 > `<SYLLABUS_ROOT>/<course-id>.md` spec, following the NEW-course authoring convention
-> [`ayokoding-learning-path-04-course-authoring/delivery.md`](../../in-progress/ayokoding-learning-path-04-course-authoring/delivery.md#new-course-authoring-convention-applies-to-every-authoring-step-in-phases-1-and-311)
+> [`ayokoding-learning-path-04-course-authoring/delivery.md`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md#new-course-authoring-convention-applies-to-every-authoring-step-in-phases-1-and-311)
 > defines (V pre-verify → skeleton → learning track → drilling track → content checkers → fixers →
 > re-verify → manifest-isolation self-check → licensing self-check). This plan applies the same
 > nine-step convention to every one of its 9 courses without restating it verbatim per course.

@@ -138,7 +138,7 @@ No phase may create an additional worktree or branch. The final phase is the onl
       `test -d plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses`
       — acceptance: exits 0.
 - [ ] [AI] **Verify `ayokoding-learning-path-04-course-authoring`'s Phase 0 baseline is established** —
-      command: `test -f plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/phase-0-snapshot.txt`
+      command: `test -f plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/evidence/phase-0-snapshot.txt`
       — acceptance: exits 0. This confirms plan04's own toolchain-convergence and upstream-verification
       baseline exists; this plan does not need Band 2 or any other band of plan04 to have landed —
       only its Phase 0 baseline and its populated `<COURSES>` namespace (already checked above).

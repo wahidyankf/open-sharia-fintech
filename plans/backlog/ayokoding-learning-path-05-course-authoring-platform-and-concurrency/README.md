@@ -12,7 +12,7 @@ originally 10 courses) and **Band 4** ("Concurrency languages", originally 4 cou
 `apps/ayokoding-www/content/en/learn/courses/`.
 
 This plan is one of **seven** new plans splitting the remaining, not-yet-authored scope of
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
 (itself Wave 2 of the five-plan split of the closed
 [`shared-course-library-and-learning-paths`](../../done/2026-07-21__shared-course-library-and-learning-paths/README.md)
 plan). It owns **exactly** Bands 3 and 4, merged into one plan and renamed thematically **"Platform &
@@ -258,7 +258,7 @@ plan must reject it rather than guess.
   [`syllabus/` source of truth](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/README.md)
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
-  · [plan04 — course-authoring](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  · [plan04 — course-authoring](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   · [manifest plan — careers-se-manifests](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md)
   · [`vercel-function-cost-reduction`](../../done/2026-08-02__vercel-function-cost-reduction/README.md)
   · [URL-restructure plan](../../done/2026-07-23__ayokoding-learning-path-01-url-restructure/README.md)
@@ -267,7 +267,7 @@ plan must reject it rather than guess.
 ## Provenance
 
 This plan is one of seven folders produced by splitting the remaining, not-yet-authored scope of
-`plans/in-progress/ayokoding-learning-path-04-course-authoring/` — itself one of five folders produced
+`plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/` — itself one of five folders produced
 by splitting `plans/done/2026-07-21__shared-course-library-and-learning-paths/`. It owns exactly
 plan04's Band 3 ("Mobile & desktop platforms") merged with Band 4 ("Concurrency languages"), renamed
 "Platform & Concurrency Languages" to name the authoring shape both bands share. A sibling agent is

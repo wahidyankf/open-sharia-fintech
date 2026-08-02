@@ -57,7 +57,7 @@ The app has accreted real cost across four lines, every one measured against the
 
 ### Why this repo, and why now
 
-- The repo is mid-programme on `apps/ayokoding-www`: [`ayokoding-learning-path-04`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+- The repo is mid-programme on `apps/ayokoding-www`: [`ayokoding-learning-path-04`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   is shipping roughly one course per week, and the now-completed
   [`ayokoding-www-tools-ai-benchmark`](../../done/2026-07-30__ayokoding-www-tools-ai-benchmark/README.md) copied
   the `cost-of-living-calculator`'s FCIS layout. Every additional course the programme ships **multiplies

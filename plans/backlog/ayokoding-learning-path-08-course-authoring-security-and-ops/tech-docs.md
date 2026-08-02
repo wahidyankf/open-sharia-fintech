@@ -62,7 +62,7 @@ identically to plan 04's own rule.
   spec correction lands in one copy only.
 - **The immediate-ancestor reference is provisional, not fixed.**
   `ayokoding-learning-path-04-course-authoring` is `in-progress` at the time this plan is authored;
-  every reference to it currently reads `../../in-progress/ayokoding-learning-path-04-course-authoring/`.
+  every reference to it currently reads `../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/`.
   [delivery.md Phase 0](./delivery.md#phase-0-environment-setup--baseline) resolves the actual archived
   path (if plan 04 has archived by execution time) and re-points every reference in this plan's own
   files before authoring begins — mirroring plan 04's own reciprocal-repoint pattern for its Wave-1
@@ -197,7 +197,7 @@ decision travels with the plan that now authors the bodies it governs, rather th
 > **Decided.**
 >
 > — verbatim from
-> [`ayokoding-learning-path-04-course-authoring`'s README.md](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md#decisions-locked-inherited)
+> [`ayokoding-learning-path-04-course-authoring`'s README.md](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md#decisions-locked-inherited)
 
 Plan 04's own tech-docs expresses the same reconciliation as a design decision (its own `DD-12`), with
 additional authoring detail this plan also inherits: `defensive-security` (60) is **hands-on

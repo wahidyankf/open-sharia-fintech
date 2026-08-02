@@ -28,7 +28,7 @@ The plan cuts four cost lines the app currently spends:
 
 Solo-maintainer polyglot Nx monorepo (see [AGENTS.md](../../../AGENTS.md)). The repo already runs one
 hand-curated static-data tool — `cost-of-living-calculator` — and is mid-way through an active
-content programme ([`ayokoding-learning-path-04`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md))
+content programme ([`ayokoding-learning-path-04`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md))
 that is shipping roughly one course per week, plus the now-completed
 [`ayokoding-www-tools-ai-benchmark`](../../done/2026-07-30__ayokoding-www-tools-ai-benchmark/README.md), which
 shipped the same calculator-style surface. **Concurrent sessions are likely** during plan execution, so every

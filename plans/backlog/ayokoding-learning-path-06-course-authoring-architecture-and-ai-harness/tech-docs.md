@@ -14,7 +14,7 @@ This plan produces **content artefacts only**: 15 page bundles under
 locks three scope contracts governing how those bodies must be written. It writes no TypeScript, no
 YAML data file, no route, no component, and no redirect rule. Its "architecture" is therefore an
 **authoring architecture**, inherited unchanged from the parent plan
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md):
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md):
 where each body's authoritative spec lives, what shape the produced bundle takes, how scope
 contracts are locked before their target bodies exist, and how the landed band is handed to the
 manifest-growth plans.

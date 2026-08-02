@@ -966,7 +966,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
 - [x] [AI] Apply the three per-band closing steps. `GROW_MANIFESTS` = the three software-engineer-role
       manifests.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
-    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. Verified all ten
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. Verified all ten
     Band-2 IDs are catalogued in `tech-docs.md` and `<COURSES>_index.md`; the fresh
     `origin/main...HEAD` manifest diff is empty. The completion signal below identifies the final
     Band-2 content landing commit without asserting a new per-phase PR or deployment.
@@ -991,7 +991,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     pinned Node 24.13.1 runtime and lockfile install were used.
 - [x] [AI] Catalog rows added; band signal recorded; zero manifest files touched.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
-    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. All ten catalog
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. All ten catalog
     rows and course-index entries are present, the Band-2 signal carries its five contract fields,
     and `git diff --name-only origin/main...HEAD -- manifests/` returned no paths before this
     plan-only documentation change.
@@ -1005,7 +1005,7 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
     `test ! -f apps/ayokoding-www/src/app/layout.tsx` exited 0 in the refreshed worktree.
 - [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
-    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. Committed the
+    `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md`. Committed the
     verified Phase-4 evidence as `4c620a02e` (`docs(plans): record course authoring phase 4 evidence`)
     on `ayokoding-learning-path-04-course-authoring-final-delivery`; no PR, push, merge, or deployment
     occurred.
@@ -1076,7 +1076,7 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
     (AI engineering, prerequisite `15 · Software Testing`), `nosql-databases` (Band 1,
     prerequisite `10 · SQL Essentials`), and `api-design` (Band 2, prerequisite
     `11 · Backend Essentials`) all rendered their title, shared navigation, and prerequisite links.
-- [x] [AI] Save committed screenshot evidence under `plans/in-progress/ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
+- [x] [AI] Save committed screenshot evidence under `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/evidence/` — acceptance: evidence covers the tested locales and breakpoints.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
     `evidence/phase-6-en-ai-desktop.png`, `evidence/phase-6-en-band-1-desktop.png`, and
     `evidence/phase-6-en-band-2-mobile.png`. Playwright MCP captured the English content locale
@@ -1114,7 +1114,7 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
     targets were completed serially: typecheck, lint, behavior coverage (44 specs / 376 scenarios /
     1,350 steps), unit tests (158 files / 3,462 passed), and isolated coverage (96.4% statements,
     97.72% lines). The clean local production build was also served and manually verified in Phase 6.
-- [x] [AI] Record any required downstream manifest handoff in `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md` — acceptance: it names only the historically completed course bodies and does not claim a new merge SHA.
+- [x] [AI] Record any required downstream manifest handoff in `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/delivery.md` — acceptance: it names only the historically completed course bodies and does not claim a new merge SHA.
 
 ### Phase 7 Gate
 
@@ -1248,11 +1248,13 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
   repoint step has not landed, fix the references in **this plan's own files** and record it —
   never edit the other plan's folder.
 
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-04-course-authoring/ plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-04-course-authoring/ plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: the complete archived plan folder,
+    including `evidence/`. The plan moved from `in-progress/` to its completion-date folder.
       using today's **completion** date, not the creation date (the `evidence/` subfolder moves with it).
-- [ ] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan (`plans/README.md`,
+- [x] [AI] Update `plans/in-progress/README.md` — remove the plan entry.
+- [x] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
+- [x] [AI] Update any other READMEs that reference this plan (`plans/README.md`,
       `plans/backlog/README.md`) and notify every sibling plan whose `Depends-on` table names this plan
       by folder path — this now includes `ayokoding-learning-path-12-careers-se-manifests`,
       `ayokoding-learning-path-13-careers-ai-manifest`, and the 7 successor
@@ -1309,6 +1311,6 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 ### Note: plan location at archival time
 
 This plan is created in `plans/backlog/ayokoding-learning-path-04-course-authoring/`. When work
-starts it is promoted to `plans/in-progress/ayokoding-learning-path-04-course-authoring/` (no date
+starts it is promoted to `plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/` (no date
 prefix on either); the `git mv` in Phase 9 then archives it to
 `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/` using the completion date.

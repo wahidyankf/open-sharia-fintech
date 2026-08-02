@@ -15,7 +15,7 @@ file, no route, no component, and no redirect rule. It is one of **two plans spl
 band** (the original Band 6, "Low-level systems, JVM & languages, internals builds", 16 courses) that
 was too large for one plan under the 5–15-course-per-plan rule. Its "architecture" is therefore an
 **authoring architecture**, inherited near-verbatim from
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md):
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md):
 where each body's authoritative spec lives, what shape the produced bundle takes, and how a landed
 band is handed to the plan that composes it.
 
@@ -24,7 +24,7 @@ band is handed to the plan that composes it.
 Only the ids this plan's 7 courses actually invoke are reproduced here (folded from the same source
 `ayokoding-learning-path-04-course-authoring` already folds them from); the full programme decision
 table (`R9`, `A6`, `A8`, `A9`, `A12`) lives in that plan's
-[tech-docs.md §Programme decisions](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#programme-decisions).
+[tech-docs.md §Programme decisions](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#programme-decisions).
 
 - **`R9`** — every plan declares its UI-gate and API-gate posture explicitly; see
   [§UI-gate and API-gate posture](#ui-gate-and-api-gate-posture-r9) below.
@@ -44,7 +44,7 @@ table (`R9`, `A6`, `A8`, `A9`, `A12`) lives in that plan's
 
 The rationale for why this is an ownership rule rather than a scheduling problem is worked through in
 full in
-[`ayokoding-learning-path-04-course-authoring`'s tech-docs.md §Why the invariant exists](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#why-the-invariant-exists-and-why-no-wave-ordering-replaces-it) —
+[`ayokoding-learning-path-04-course-authoring`'s tech-docs.md §Why the invariant exists](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#why-the-invariant-exists-and-why-no-wave-ordering-replaces-it) —
 reproduced there rather than here to avoid drift between two copies of the same argument. This
 plan's own copy of the invariant is the **table** below, which is what an executor actually checks:
 
@@ -107,7 +107,7 @@ transcribes them; it does not re-decide them.
 
 Identical seven-step pipeline to every course in this programme (see
 [`ayokoding-learning-path-04-course-authoring`'s tech-docs.md §The per-course authoring
-convention](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#the-per-course-authoring-convention-maker-checker-fixer-not-code-tdd)
+convention](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#the-per-course-authoring-convention-maker-checker-fixer-not-code-tdd)
 for the full diagram); reproduced here as the numbered convention `delivery.md` applies to each of
 the 7 courses:
 

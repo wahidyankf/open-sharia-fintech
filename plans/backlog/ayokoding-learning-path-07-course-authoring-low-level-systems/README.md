@@ -20,7 +20,7 @@ library's low-level-systems band — landing under
 
 This is one of **two plans splitting a single band** that was originally too big for one plan under
 the repo's 5–15-course-per-plan rule. The source band —
-[`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)'s
+[`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)'s
 **Band 6, "Low-level systems, JVM & languages, internals builds"** (16 courses) — is split along a
 natural **C-family/OS vs. JVM/advanced-languages** seam:
 
@@ -40,7 +40,7 @@ never touches any file the sibling plan or `ayokoding-learning-path-04-course-au
 > **Source-of-truth note.** Every per-course detail below (format, concept/example counts, exact
 > prerequisite chain, one-line scope) is copied **verbatim** from
 > [`ayokoding-learning-path-04-course-authoring`'s tech-docs.md §Course Library
-> Catalog](../../in-progress/ayokoding-learning-path-04-course-authoring/tech-docs.md#low-level-systems-jvm--languages-internals-builds),
+> Catalog](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/tech-docs.md#low-level-systems-jvm--languages-internals-builds),
 > which is itself transcribed from the cross-plan
 > [`syllabus/courses/`](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
 > spec files — never invented fresh. This plan's own authoring steps point at the same
@@ -290,7 +290,7 @@ An Indonesian mirror is explicitly deferred (recorded decision, not an omission)
 - **Cross-plan**:
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   ·
-  [`ayokoding-learning-path-04-course-authoring`](../../in-progress/ayokoding-learning-path-04-course-authoring/README.md)
+  [`ayokoding-learning-path-04-course-authoring`](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
   (source band + trimmed baseline)
   ·
   [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md)
