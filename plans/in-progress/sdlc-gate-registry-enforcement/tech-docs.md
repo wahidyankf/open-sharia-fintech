@@ -19,6 +19,11 @@ Captured 2026-08-02 across all four repos. This table is the conformance baselin
 `lint-staged` is listed separately from `pre-commit` because it is the file-type dispatch mechanism
 the pre-commit hook delegates to, and it is where most of the drift hides.
 
+`[Repo-grounded]` — every verdict in the table below was captured by reading each repo's actual
+`.husky/*`, `package.json` `lint-staged` block, and `.github/workflows/*` files against
+`docs/reference/sdlc-gate-standard.md`'s ratified rules on the audit date above; Phase 0 re-verifies
+the table against current `main` before Phase 1 begins.
+
 | Check                                                     | lint-staged     | pre-push         | PR gate                       | main-ci   | Verdict                                                                                                              |
 | --------------------------------------------------------- | --------------- | ---------------- | ----------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------- |
 | `md naming validate`                                      | yes             | —                | —                             | —         | Violates rule — never reaches CI                                                                                     |
@@ -374,8 +379,35 @@ Two independent audits on 2026-08-02 produced the table below: what each repo's 
 **declares**, and — via `git ls-files` — what each repo's tracked sources **need**. They disagree
 badly in both directions.
 
-Every verify command below was checked against upstream documentation on 2026-08-02. Exit-code
-behaviour is called out because a formatter that prints diagnostics and exits 0 is useless as a gate.
+`[Web-cited]` — every verify command and exit-code claim below was checked against each formatter's
+own upstream documentation/CLI `--help` output on 2026-08-02, with excerpt and URL per claim:
+
+- `fantomas --check` exits 99 on a formatting failure and reserves 1 for internal errors, per
+  [the fantomas Formatting Check docs](https://fsprojects.github.io/fantomas/docs/end-users/FormattingCheck.html)
+  ("If the file does not require any formatting, exit code 0 is returned... [an unformatted file
+  returns] exit code 99").
+- `buildifier --mode=check` exits 4 on a formatting failure, per
+  [buildifier's own source](https://github.com/bazelbuild/buildtools/blob/main/buildifier/buildifier.go)
+  ("4: check mode failed (reformat is needed)").
+- `gofmt -l` always exits 0 and never fails on its own, per
+  [the `cmd/gofmt` package docs](https://pkg.go.dev/cmd/gofmt) (`-l` only lists files whose
+  formatting differs from gofmt's; it defines no distinct non-zero exit status for that case — see
+  the still-open [golang/go#76405](https://github.com/golang/go/issues/76405) proposal to add one,
+  which would be moot if `-l` already failed).
+- `dart format -o none --set-exit-if-changed` is the non-mutating check-mode invocation, per
+  [the `dart format` docs](https://dart.dev/tools/dart-format) ("To make dart format return an exit
+  code when formatting changes occur, add the `--set-exit-if-changed` flag" — combined with `-o none`
+  this returns exit code 1 when changes would occur, 0 otherwise).
+- `csharpier check` and `mix format --check-formatted` each ship an opt-out flag,
+  `--unformatted-as-warnings` and `--no-exit` respectively, that forces a 0 exit and must not appear,
+  per [the CSharpier CLI docs](https://csharpier.com/docs/CLI) ("`--unformatted-as-warnings`...
+  treats unformatted files as a warning instead of an error... the process will return an exit code
+  of 0") and [the `mix format` docs](https://hexdocs.pm/mix/Mix.Tasks.Format.html) ("`--no-exit` —
+  ...if you don't want the Mix task to fail (and return a non-zero exit code), but still want to
+  check for format errors and print them to the console").
+
+Exit-code behaviour is called out because a formatter that prints diagnostics and exits 0 is useless
+as a gate.
 
 | Formatter (mutation)       | Verify command (check)                      | Exit on unformatted           | public   | primer  | private  | beaver-nest |
 | -------------------------- | ------------------------------------------- | ----------------------------- | -------- | ------- | -------- | ----------- |
@@ -384,8 +416,8 @@ behaviour is called out because a formatter that prints diagnostics and exits 0 
 | `shfmt -w`                 | `shfmt -d`                                  | non-zero, prints a diff       | keep     | **add** | **add**  | keep        |
 | `fantomas`                 | `fantomas --check`                          | **99** (1 = internal error)   | keep     | keep    | **drop** | keep        |
 | `ruff format`              | `ruff format --check`                       | non-zero                      | keep     | keep    | **drop** | keep        |
-| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | **drop** | keep    | **drop** | **drop**    |
-| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | **drop** | keep    | **drop** | **drop**    |
+| `gofmt -w`                 | `test -z "$(gofmt -l .)"`                   | **always 0 unwrapped**        | **drop** | keep    | —        | **drop**    |
+| `scripts/format-elixir.sh` | `mix format --check-formatted`              | non-zero (unless `--no-exit`) | **drop** | keep    | —        | **drop**    |
 | `dotnet csharpier format`  | `dotnet csharpier check`                    | 1                             | **drop** | keep    | **drop** | **drop**    |
 | `cljfmt fix`               | `cljfmt check`                              | non-zero                      | **drop** | keep    | **drop** | **drop**    |
 | `dart format`              | `dart format -o none --set-exit-if-changed` | 1                             | **drop** | keep    | **drop** | **drop**    |
@@ -414,14 +446,18 @@ standalone binary rather than `clj -Tcljfmt` / `lein cljfmt`. Both hold today be
 mutation commands already rely on them, but Phase 0 confirms rather than assumes.
 
 `keep` = declared and needed. `drop` = **declared but the repo has zero tracked files of that type**.
-`add` = files exist with no formatter declared. `—` = correctly absent.
+`add` = files exist with no formatter declared. `—` = correctly absent — note `ose-private` never
+declares a `*.go` or `*.{ex,exs}` `lint-staged` key at all, so its `gofmt`/`format-elixir.sh` cells
+read `—` rather than `drop`, the same way `ose-primer`/`ose-private`'s `stylua`/`clang-format`/
+`buildifier` cells do.
 
-Measured tracked-file counts behind each verdict:
+`[Repo-grounded]` — measured tracked-file counts behind each verdict, via `git ls-files` by
+extension in each repo on 2026-08-02; Phase 0 re-verifies these before Phase 1 begins:
 
 | Language  | public | primer | private | beaver-nest |
 | --------- | ------ | ------ | ------- | ----------- |
 | Rust      | 237    | 284    | 234     | 217         |
-| Shell     | 377    | 8      | 13      | 10          |
+| Shell     | 389    | 8      | 13      | 10          |
 | F#        | 152    | 43     | **0**   | 15          |
 | Python    | 3552   | 74     | **0**   | 14          |
 | Go        | **0**  | 75     | **0**   | **0**       |
@@ -434,7 +470,7 @@ Measured tracked-file counts behind each verdict:
 | C         | 94     | **0**  | **0**   | **0**       |
 | Bazel     | 2      | **0**  | **0**   | **0**       |
 
-**Twenty declared formatter entries across the four repos run against zero files.** `beaver-nest`
+**Nineteen declared formatter entries across the four repos run against zero files.** `beaver-nest`
 alone carries nine, plus a `*.sql` prettier glob matching nothing. They are not harmless: each one is a `lint-staged` key a maintainer reads as
 "this repo formats Dart", a tool `npm run doctor` may install, and — under this plan — a formatter
 that would demand a `verifies`-linked CI job for a language the repo does not have.
@@ -518,6 +554,14 @@ hand-written block inside `.husky/pre-commit`, not through `lint-staged`, so `ga
 per-file registry would not reproduce it. It must be declared as an ordinary
 `scope: affected-file-type, glob: "*.tf"` mutation like every other formatter, and the inline hook
 block deleted — otherwise the registry's completeness claim is false in that repo on day one.
+
+**This deliberately substitutes `tofu` for `terraform`.** `ose-private`'s current
+`.husky/pre-commit` invokes the HashiCorp `terraform` binary (`terraform fmt -check -recursive
+infra/on-premise/terraform/`), not OpenTofu. Phase 4 declares the new `lint-staged`/registry mutation
+as `tofu fmt` / `tofu fmt -check` instead, matching `ose-public`'s existing choice and the `tofu`
+binary `npm run doctor -- --fix` already provisions in every repo (Phase 0). `tofu` and `terraform`
+are drop-in CLI-compatible for `.tf` files, so this is a tool-name standardization, not a behavior
+change.
 
 ### 2.3 Why gate sets may differ per repo but the schema may not
 
@@ -678,17 +722,17 @@ Everything else in the three-repo set matches: no `Only in` files, `Cargo.toml`/
 the nine source divergences are repo-specific data hardcoded into shared source**, not behaviour the
 fork chose:
 
-| File                                               | Divergence                                                                                                                | Class                           |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `application/agents/bindings.rs`                   | `.amazonq/cli-agents/ose-default.json` and the embedded agent-definition JSON name                                        | Repo-name data                  |
-| `application/repo_governance/frontmatter_audit.rs` | `WEBSITE_APP_PREFIXES` lists `apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-app-web/`, `apps/wahidyankf-www/` | Gate exclusion data             |
-| `domain/git/staged_files.rs`                       | `STAGED_SKIP_PREFIXES` lists `apps/ayokoding-www/content`, `apps/ose-www/content`                                         | Gate exclusion data             |
-| `application/git/pre_commit.rs`                    | a `step4_stage_ayokoding` step running `git add apps/ayokoding-www/content/`, plus skip-path literals                     | Gate data in **dead code**      |
-| `application/domain_coverage/mod.rs`               | test fixtures named `organiclever-be`, `ose-be`                                                                           | Test fixture data               |
-| `commands/specs_validate_counts.rs`                | test fixtures named `organiclever`, `ose`                                                                                 | Test fixture data               |
-| `commands/specs_coverage.rs`                       | an integration test pinned to `ose-be` being present in `specs.domain-areas`                                              | Test fixture data               |
-| `application/doctor/tools.rs`                      | a doc comment naming `apps/ose-be/global.json`                                                                            | Doc comment                     |
-| `application/docs/naming.rs`                       | **beaver-nest adds `ROADMAP.md` and `SECURITY.md`** to the always-exempt basenames                                        | **Capability, upstream-worthy** |
+| File                                               | Divergence                                                                                                                                                                                                                      | Class                           |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `application/agents/bindings.rs`                   | canonical hardcodes `.amazonq/cli-agents/ose-default.json` and the embedded agent-definition JSON name — `beaver-nest`'s copy hardcodes `beaver-nest-default.json` / `"beaver-nest-default"` instead                            | Repo-name data                  |
+| `application/repo_governance/frontmatter_audit.rs` | canonical hardcodes `WEBSITE_APP_PREFIXES` as `apps/ayokoding-www/`, `apps/ose-www/`, `apps/organiclever-app-web/`, `apps/wahidyankf-www/` — `beaver-nest`'s copy carries an empty list instead                                 | Gate exclusion data             |
+| `domain/git/staged_files.rs`                       | canonical hardcodes `STAGED_SKIP_PREFIXES` as `apps/ayokoding-www/content`, `apps/ose-www/content` plus two entries shared with `beaver-nest` — `beaver-nest`'s copy carries only `plans/done`, `apps/rhino-cli/tests/fixtures` | Gate exclusion data             |
+| `application/git/pre_commit.rs`                    | a `step4_stage_ayokoding` step running `git add apps/ayokoding-www/content/`, plus skip-path literals                                                                                                                           | Gate data in **dead code**      |
+| `application/domain_coverage/mod.rs`               | test fixtures named `organiclever-be`, `ose-be`                                                                                                                                                                                 | Test fixture data               |
+| `commands/specs_validate_counts.rs`                | test fixtures named `organiclever`, `ose`                                                                                                                                                                                       | Test fixture data               |
+| `commands/specs_coverage.rs`                       | an integration test pinned to `ose-be` being present in `specs.domain-areas`                                                                                                                                                    | Test fixture data               |
+| `application/doctor/tools.rs`                      | a doc comment naming `apps/ose-be/global.json`                                                                                                                                                                                  | Doc comment                     |
+| `application/docs/naming.rs`                       | **beaver-nest adds `ROADMAP.md` and `SECURITY.md`** to the always-exempt basenames                                                                                                                                              | **Capability, upstream-worthy** |
 
 The fork is therefore mostly an artefact of the canonical source hard-coding `ose-public`'s app
 names. Extract that data and the fork mostly dissolves — which is why this belongs in this plan
@@ -739,7 +783,12 @@ must never appear in a manifest or a diff report.
 
 Byte-identity is a cross-repo invariant and every gate runs inside one repo, so no single mechanism
 covers it. The plan uses two, split on exactly the hermeticity line
-[§2.2.3](#223-what-is-deliberately-outside-the-registry) already draws.
+[§2.2.3](#223-what-is-deliberately-outside-the-registry) already draws. This design fulfills
+[`plans/ideas/tri-repo-rhino-cli-byte-identity-gate.md`](../../ideas/tri-repo-rhino-cli-byte-identity-gate.md)
+(surfaced 2026-07-17), answering its open questions on run location (hermetic gate: locally, in
+`pre-push` and `ci`; audit: scheduled workflow), cadence (audit runs on a schedule, not per-commit),
+and the `ose-private` auth model (the audit is unauthenticated-fetch, per B below). The idea brief is
+retired in Phase 6.
 
 **A. `parity manifest validate` — an ordinary registry gate (hermetic, blocking).**
 `apps/rhino-cli/parity-manifest.sha256` is a committed file listing every boundary path and its
@@ -817,18 +866,21 @@ other two downstream repos. The audit is what makes that a defensible trade — 
 
 ## 3. Document Amendments
 
-| Document                                                              | Change                                                                                                                                                                                                                                                                                                                                                                            |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/reference/sdlc-gate-standard.md`                                | Composition rule becomes `(pre-commit ∪ pre-push) == PR gate`. Stage table drops stage 5. Stage 5 section removed. Stage 3 and 4 tables corrected to include `md readme-index validate`, `harness duplication validate`, `convention license validate`. Registry described as the normative mechanism. Allowed Divergence gains the gate-entry-set rule.                          |
-| `repo-governance/development/workflow/git-hook-lifecycle.md`          | Rewritten. Currently describes a pre-push that no longer exists, cites the non-existent target `specs:coverage`, and (in `ose-primer`) cites the non-existent workflow `validate-markdown.yml`. Its CI-parity table is replaced by a pointer to `gate list`, so it cannot restale. Created fresh in `ose-private`, which lacks it.                                                |
-| `repo-governance/development/infra/nx-targets.md`                     | Drops `main-ci` references.                                                                                                                                                                                                                                                                                                                                                       |
-| `docs/reference/system-architecture/ci-cd.md`                         | Drops `main-ci` references; documents the matrix derivation.                                                                                                                                                                                                                                                                                                                      |
-| `AGENTS.md`                                                           | Git Hooks section updated to describe the shim form. Watch the instruction-size budget — this section should shrink, not grow.                                                                                                                                                                                                                                                    |
-| `repo-governance/development/infra/github-actions-workflow-naming.md` | Adds `dependency` to the cross-cutting `{domain}` list and `audit` to the verb vocabulary, so `dependency-vulnerability-audit.yml` is legal. Registers it, `pr-quality-gate.yml`, and `validate-env.yml` in the Cross-cutting workflows table; removes `main-ci.yml`. See [§2.2.3](#223-what-is-deliberately-outside-the-registry).                                               |
-| `.github/workflows/README.md`                                         | Row for `deps-audit.yml` replaced by `dependency-vulnerability-audit.yml`; `main-ci.yml` row removed; row added for `rhino-cli-parity-audit.yml`.                                                                                                                                                                                                                                 |
-| `docs/reference/related-repositories.md`                              | Line 118's "`beaver-nest` carries a **fork** ... explicitly **not** bound by the byte-identity rule" is deleted. The byte-identity boundary becomes four repos. The two-boundary framing stays — content parity is still `ose-public` ↔ `ose-primer` only — but the byte-identity boundary now matches the four-repo set. See [§2.8.6](#286-the-governance-change-this-requires). |
-| `AGENTS.md` (Related Repositories)                                    | "`apps/rhino-cli` byte-identity spans `ose-public`, `ose-primer`, `ose-private`" becomes all four; "`beaver-nest` ... carries a **fork** of `rhino-cli`" is removed. The sentence distinguishing the two boundaries must be rewritten, not merely edited — the current wording's whole point is that the sets differ.                                                             |
-| `docs/reference/sdlc-gate-standard.md` (byte-identity section)        | Boundary extended to four repos; `tests/` added to the file set; the manifest gate and the cross-repo audit documented as the enforcement, replacing "second-pass target" prose.                                                                                                                                                                                                  |
+| Document                                                                          | Change                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/reference/sdlc-gate-standard.md`                                            | Composition rule becomes `(pre-commit ∪ pre-push) == PR gate`. Stage table drops stage 5. Stage 5 section removed. Stage 3 and 4 tables corrected to include `md readme-index validate`, `harness duplication validate`, `convention license validate`. Registry described as the normative mechanism. Allowed Divergence gains the gate-entry-set rule.                                |
+| `repo-governance/development/workflow/git-hook-lifecycle.md`                      | Rewritten. Currently describes a pre-push that no longer exists, cites the non-existent target `specs:coverage`, and (in `ose-primer`) cites the non-existent workflow `validate-markdown.yml`. Its CI-parity table is replaced by a pointer to `gate list`, so it cannot restale. Created fresh in `ose-private`, which lacks it.                                                      |
+| `repo-governance/development/infra/nx-targets.md`                                 | Drops `main-ci` references.                                                                                                                                                                                                                                                                                                                                                             |
+| `docs/reference/system-architecture/ci-cd.md`                                     | Drops `main-ci` references; documents the matrix derivation.                                                                                                                                                                                                                                                                                                                            |
+| `AGENTS.md`                                                                       | Git Hooks section updated to describe the shim form. Watch the instruction-size budget — this section should shrink, not grow.                                                                                                                                                                                                                                                          |
+| `repo-governance/development/infra/github-actions-workflow-naming.md`             | Adds `dependency` to the cross-cutting `{domain}` list and `audit` to the verb vocabulary, so `dependency-vulnerability-audit.yml` is legal. Registers it, `pr-quality-gate.yml`, and `validate-env.yml` in the Cross-cutting workflows table; removes `main-ci.yml`. See [§2.2.3](#223-what-is-deliberately-outside-the-registry).                                                     |
+| `.github/workflows/README.md`                                                     | Row for `deps-audit.yml` replaced by `dependency-vulnerability-audit.yml`; `main-ci.yml` row removed; row added for `rhino-cli-parity-audit.yml`.                                                                                                                                                                                                                                       |
+| `docs/reference/related-repositories.md`                                          | Line 118's "`beaver-nest` carries a **fork** ... explicitly **not** bound by the byte-identity rule" is deleted. The byte-identity boundary becomes four repos. The two-boundary framing stays — content parity is still `ose-public` ↔ `ose-primer` only — but the byte-identity boundary now matches the four-repo set. See [§2.8.6](#286-the-governance-change-this-requires).       |
+| `AGENTS.md` (Related Repositories)                                                | "`apps/rhino-cli` byte-identity spans `ose-public`, `ose-primer`, `ose-private`" becomes all four; "`beaver-nest` ... carries a **fork** of `rhino-cli`" is removed. The sentence distinguishing the two boundaries must be rewritten, not merely edited — the current wording's whole point is that the sets differ.                                                                   |
+| `docs/reference/sdlc-gate-standard.md` (byte-identity section)                    | Boundary extended to four repos; `tests/` added to the file set; the manifest gate and the cross-repo audit documented as the enforcement, replacing "second-pass target" prose.                                                                                                                                                                                                        |
+| `repo-governance/workflows/plan/multi-plans-execution.md`                         | The scheduling rule's "byte-identical propagation across `ose-public`/`ose-primer`/`ose-private`" is extended to name all four bound repos, so the multi-plan scheduler serializes a `beaver-nest`-touching plan against a concurrent `apps/rhino-cli` edit elsewhere too.                                                                                                              |
+| `repo-governance/workflows/plan/plan-multi-repo-parity-planning-and-execution.md` | "`apps/rhino-cli` byte-identity across all three repos" is extended to "all four bound repos", matching [§2.8.6](#286-the-governance-change-this-requires).                                                                                                                                                                                                                             |
+| `repo-governance/workflows/plan/plan-multi-repo-parity-planning.md`               | The "byte-identical across all three repos" language is extended to four repos; the literal `git -C ose-public ls-files ... across all three repos` manual `md5`-diff snippet is replaced with a pointer to `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- parity manifest validate`, so it cannot silently diverge from the mechanism this plan introduces. |
 
 ## 4. Risks and Mitigations
 
@@ -889,3 +941,71 @@ must be **de-forked** before any repo copies it too. Copying a canonical that st
 
 Phases 2 through 5 remain mutually independent and fan out up to the plan's concurrency cap. Phase 6
 is the terminal cleanup node.
+
+## 6. Rollback
+
+Rollback is cheap here for one structural reason: **every phase lands as its own PR, and no phase
+writes state outside the repo it touches.** There is no migration, no data conversion, and no
+external system to unwind — the whole change is source files plus CI configuration. Reverting a
+phase's landed commit restores the prior gate behaviour exactly, because the prior gate behaviour
+_is_ the prior content of `.husky/`, `package.json`, and `.github/workflows/`.
+
+### The revert command depends on how the PR was merged
+
+Both `allow_merge_commit` and `allow_squash_merge` are enabled on these repos, and recent history
+shows **most merged PRs land as single-parent squash commits**. `git revert -m 1` works only against
+a true two-parent merge commit and hard-fails on a squash commit with
+`error: mainline was specified but commit ... is not a merge`. So determine the shape first:
+
+```sh
+# Prints the sha plus its parents, so: 3 = merge commit (use -m 1); 2 = squash commit (omit -m).
+git rev-list --parents -n 1 <sha> | wc -w
+```
+
+Throughout the table below, **`git revert <phase-sha>`** means: `git revert -m 1 <sha>` if that
+command reports 3 (sha plus two parents), and plain `git revert <sha>` if it reports 2. Never resolve
+this by trying `-m 1` and reacting to the error — check first, because a failed revert mid-rollback
+leaves a dirty tree that another actor may be sharing. `[Repo-grounded]` — the 3-vs-2 mapping was
+independently re-verified against this repo's live history on 2026-08-02: `git rev-list --parents -n 1`
+on an actual two-parent merge commit (`3ac60d2e8`) returned `3`, and on an actual single-parent
+commit (`7d3034a76`) returned `2`.
+
+### Per-phase rollback
+
+| Phase   | Rollback action                                                                       | What returns                                                                                  | Residue                                                                                                                             |
+| ------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 0       | None needed — no PR, no merge                                                         | n/a                                                                                           | Baseline notes in the plan folder only                                                                                              |
+| 1       | `git revert <phase-sha>` in `ose-public`                                              | The `gate` subcommand disappears; hooks were not yet rewired, so nothing depended on it       | None                                                                                                                                |
+| 1b      | `git revert <phase-sha>` in `ose-public`                                              | Canonical returns to the forked state and the parity manifest is deleted                      | The byte-identity window **stays open** — see below                                                                                 |
+| 2       | `git revert <phase-sha>` in `ose-public`                                              | Hand-written hooks and `main-ci.yml` return verbatim; the registry stays but nothing reads it | Branch protection still names `"Quality gate"`, which is correct in both states                                                     |
+| 3, 4, 5 | `git revert <phase-sha>` in that repo only                                            | That repo's hooks and workflows return; the other repos are unaffected                        | `apps/rhino-cli` in that repo now diverges from canonical — the parity gate fails there until re-propagated or `ose-public` reverts |
+| 6       | `git revert <phase-sha>` in `ose-public`; move the plan folder back to `in-progress/` | Plan-folder-only change; no executable surface                                                | None                                                                                                                                |
+
+Locate a phase's landed sha with `gh pr list --head <branch> --state merged --json mergeCommit` —
+not `git merge-base --is-ancestor`, which false-negatives on squash-merged PRs in these repos.
+`[Web-cited]` — `mergeCommit` is a valid `gh pr list --json` field per
+[the official `gh pr list` manual](https://cli.github.com/manual/gh_pr_list), checked 2026-08-02,
+which lists the accepted `--json` field names including `mergeCommit` (locally,
+`gh pr list --json` with no value also prints the identical accepted field names).
+`[Repo-grounded]` — the squash-merge false-negative on `git merge-base --is-ancestor`
+was independently reproduced against this repo's own merged-PR history on 2026-08-02.
+
+### The one asymmetry worth stating
+
+Reverting Phase 1b **after** Phases 3, 4, or 5 have merged does not restore a consistent world: those
+repos now hold the de-forked canonical while `ose-public` holds the forked one, so
+`parity manifest validate` fails everywhere. The correct rollback in that situation is to revert the
+downstream phases **first**, then 1b — the reverse of the DAG edge order in §5. This is the same
+sequencing constraint that made Phase 1b blocking in the first place, applied backwards.
+
+### What rollback does not need to undo
+
+- **No secret, credential, or environment value is created, moved, or read by any phase.** The
+  registry declares command names and globs; the workflows it emits read the same repository
+  variables the current workflows already read.
+- **No git history rewrite is used anywhere in this plan.** Rollback is `git revert`, never
+  `reset --hard`, `push --force`, or a branch deletion — per
+  [No Destructive Git Operations](../../../repo-governance/development/workflow/no-destructive-git-operations.md).
+- **The retired `deps-audit.yml` is renamed, not deleted.** Reverting Phase 2 restores the original
+  filename and `name:` field together, so a scheduled run that fires mid-rollback finds one workflow
+  under one name in either state.

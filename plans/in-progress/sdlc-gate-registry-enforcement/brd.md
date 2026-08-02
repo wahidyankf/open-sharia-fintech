@@ -30,7 +30,9 @@ That rule was expressed as prose plus a set of markdown tables. Prose does not f
 
 An audit on 2026-08-02 compared the four surfaces in all four repos against the ratified rule. The
 implementation violates the rule in both directions, and the standard document itself has drifted
-away from what the surfaces actually run.
+away from what the surfaces actually run. `[Repo-grounded]` — see
+[tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today) for the per-check table
+this section summarizes; every claim below traces to a row there.
 
 **Business consequence, stated plainly**: the repo believes it has one quality bar and actually has
 four different ones. A contributor reading the standard is misled about what will catch their
@@ -51,7 +53,7 @@ mistake. Concretely, today:
 - `apps/rhino-cli` has **already drifted** out of byte-identity between `ose-public` and the two
   other bound repos, under a rule that permits zero carve-outs, and no surface in any repo is capable
   of noticing.
-- Every repo advertises formatters for languages it does not have — 20 `lint-staged` entries across
+- Every repo advertises formatters for languages it does not have — 19 `lint-staged` entries across
   the four repos match zero tracked files — while two repos lint shell scripts they never format.
 
 None of these are exotic. Each is a routine path.

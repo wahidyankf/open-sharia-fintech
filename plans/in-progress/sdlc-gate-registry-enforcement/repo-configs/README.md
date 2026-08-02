@@ -32,9 +32,14 @@ concurrently by other actors, so confirm nothing else has landed since:
 
 ```sh
 # Strip the banner and the gates section, then compare against the live file.
-diff <(sed -n '/^# repo-config.yml/,/^gates:/p' repo-config-<repo>.yml | sed '$d') \
-     <(cat <repo>/repo-config.yml)
+# The range starts at the schema line, so the `# TARGET STATE` banner is skipped;
+# the two `sed '$d'` passes drop the trailing `gates:` line and its blank separator.
+diff <(sed -n '/^# repo-config.yml/,/^gates:/p' repo-config-<repo>.yml | sed '$d' | sed '$d') \
+     <repo>/repo-config.yml
 ```
+
+Verified against `ose-public` at authoring time: the command above prints nothing. Each per-repo
+file carries the same command in its own banner.
 
 A non-empty diff is a Phase 0 finding: reconcile it rather than overwriting, or the copy silently
 reverts someone else's change.

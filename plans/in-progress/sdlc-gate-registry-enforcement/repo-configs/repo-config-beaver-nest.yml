@@ -7,8 +7,10 @@
 # adds.
 #
 # Before copying, re-verify the unchanged part still matches:
-#   diff <(sed -n '1,/^gates:/p' <this file> | sed '$d') \
-#        <(cat beaver-nest/repo-config.yml)
+#   diff <(sed -n '/^# repo-config.yml/,/^gates:/p' <this file> | sed '$d' | sed '$d') \
+#        beaver-nest/repo-config.yml
+# The range starts at the schema line, skipping this banner; the two `sed '$d'`
+# passes drop the trailing `gates:` line and the blank line separating it.
 # A non-empty diff means another change landed since 2026-08-02 — reconcile
 # rather than overwrite.
 #

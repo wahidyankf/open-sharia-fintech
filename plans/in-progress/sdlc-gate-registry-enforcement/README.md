@@ -29,7 +29,11 @@ directions** in **all four repos**.
 ## Why This Plan Exists
 
 This is **not** a design change. The target state is already normative. An audit on 2026-08-02 across
-all four repos found the four gate surfaces no longer satisfy the rule they are documented to satisfy:
+all four repos found the four gate surfaces no longer satisfy the rule they are documented to
+satisfy. `[Repo-grounded]` — every row below was captured by reading each repo's actual `.husky/*`,
+`package.json`, and `.github/workflows/*` files against the ratified standard; see
+[tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today) for the full per-check
+table this summarizes:
 
 | Drift                                                                         | Evidence                                                                                                                                            |
 | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -39,7 +43,7 @@ all four repos found the four gate surfaces no longer satisfy the rule they are 
 | The PR gate's specs job is pinned to **one hardcoded project**                | `pr-quality-gate.yml` `specs-gate` runs `--projects=rhino-cli`; the standard says affected-scoped                                                   |
 | Formatting is **never verified** anywhere, in any of **14** languages         | The PR `format` job auto-commits fixes rather than failing; `main-ci.yml` has no format job                                                         |
 | Shell is linted but **never formatted** in two repos                          | `ose-primer` and `ose-private` run `shellcheck` with no `shfmt`; `ose-private` also formats terraform in a hook block, outside `lint-staged`        |
-| **20 declared formatters match zero tracked files**                           | `ose-public` declares Go/Elixir/C#/Clojure/Dart formatters for languages it has none of; `beaver-nest` declares nine                                |
+| **19 declared formatters match zero tracked files**                           | `ose-public` declares Go/Elixir/C#/Clojure/Dart formatters for languages it has none of; `beaver-nest` declares nine                                |
 | The `rhino-cli` byte-identity boundary is **already violated**                | `src/application/agents/sync_validator.rs` differs between `ose-public` and the two other bound repos, under a **zero-carve-out** rule              |
 | **No surface in any repo can detect** that violation                          | Byte-identity is a cross-repo property; every gate runs inside one repo. There is no manifest, no comparison, and no validator anywhere             |
 | `beaver-nest`'s "fork" is mostly `ose-public`'s app names hardcoded in source | 8 of 9 divergences are repo-specific data (`STAGED_SKIP_PREFIXES`, `WEBSITE_APP_PREFIXES`, `.amazonq/cli-agents/ose-default.json`, test fixtures)   |
@@ -143,3 +147,4 @@ Target-state artifacts, one file per repo:
 - [Nx Targets](../../../repo-governance/development/infra/nx-targets.md) — references `main-ci.yml`
 - [CI/CD System Architecture](../../../docs/reference/system-architecture/ci-cd.md) — references `main-ci.yml`
 - [`2026-07-01__standardize-rhino-cli-sdlc-parity`](../../done/2026-07-01__standardize-rhino-cli-sdlc-parity/README.md) — the predecessor that ratified the rule
+- [`tri-repo-rhino-cli-byte-identity-gate`](../../ideas/tri-repo-rhino-cli-byte-identity-gate.md) — the idea brief this plan fulfills: R-11/R-12's hermetic parity gate plus the scheduled unauthenticated-fetch audit ([tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit)) answer its open questions on run location, cadence, and the `ose-private` auth model. Retired in Phase 6.

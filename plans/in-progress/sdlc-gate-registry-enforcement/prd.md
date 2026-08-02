@@ -18,6 +18,76 @@ carries at least one Gherkin scenario. These scenarios are the source for the co
 `apps/` never lands without its Gherkin, per
 [Feature-Change Completeness](../../../repo-governance/development/quality/feature-change-completeness.md).
 
+## Product Overview
+
+SDLC Gate Registry Enforcement replaces twelve hand-written, drift-prone surface files
+(`.husky/pre-commit`, `.husky/pre-push`, `pr-quality-gate.yml`, `main-ci.yml` — across all four bound
+repos) with a single declared `gates:` registry per repo plus thin invocation shims. From a
+consumer's point of view: the maintainer running hooks locally, CI runners invoking `gate list` /
+`gate run`, and any agent authoring a new gate entry all read and act on the same source of truth
+instead of four independently-drifting surfaces. `gate validate` turns the previously-prose Gate
+Composition Rule into a mechanical check, `main-ci.yml` retires without losing any check it uniquely
+carried, and the same generate-and-validate shape is extended to keep `apps/rhino-cli` byte-identical
+across all four repos this plan touches (`ose-public`, `ose-primer`, `ose-private`, `beaver-nest`).
+
+## Personas
+
+This is a tooling/CI-governance product with no external end users — its "customers" are the
+solo-maintainer's own hats and the agents that consume the registry on their behalf:
+
+- **Repo maintainer (local)** — runs hooks and the `gate` CLI directly on a workstation, authors new
+  `repo-config.yml` `gates:` entries, and wants one place that answers "what will gate my change, and
+  where" (see [brd.md §Stakeholders](./brd.md#stakeholders)).
+- **CI runner (`pr-quality-gate.yml`)** — invokes `gate list --format=json` to build its job matrix
+  and `gate validate` to assert the composition rule holds server-side (R-2, R-4).
+- **Contributing agent authoring a gate** — an agent (e.g. `repo-rules-maker`, or a plan executor)
+  adding or editing a `gates:` entry, relying on `repo-config validate` / `gate validate` to catch a
+  malformed or incomplete declaration before it is pushed (R-1, R-4).
+- **Downstream-repo maintainer/agent** (`ose-primer`, `ose-private`, `beaver-nest`) — consumes the
+  byte-identical `rhino-cli` gate engine while declaring repo-specific registry data, and relies on
+  `rhino-cli parity manifest validate` / the scheduled parity audit for the byte-identity guarantee
+  (R-10, R-11, R-12, R-13).
+
+## User Stories
+
+- As the **repo maintainer**, I want a single `gates:` section in `repo-config.yml` declaring every
+  check and mutation per surface, so that I no longer hand-maintain twelve divergent surface files
+  across four repos. (R-1)
+- As a **CI runner**, I want `gate list --surface=ci --format=json` to emit a machine-readable
+  projection, so that `pr-quality-gate.yml` can build its job matrix instead of hand-listing jobs.
+  (R-2)
+- As the **pre-push hook**, I want `gate run --surface=pre-push` to execute every declared gate in
+  declaration order and stop at the first failure, so that hooks become thin invocation shims with no
+  embedded check list. (R-3)
+- As the **repo maintainer**, I want `gate validate` to fail whenever a surface silently drops a
+  declared check (or a workflow hardcodes an undeclared one), so that the Gate Composition Rule is
+  mechanically enforced rather than trusted to prose. (R-4)
+- As a **contributor staging files**, I want the `lint-staged` block in `package.json` generated from
+  the registry, so that pre-commit's per-file gates can never hand-drift from what is declared. (R-4a)
+- As the **repo maintainer**, I want every check that today exists only in `main-ci.yml` folded into
+  the PR gate before that workflow is deleted, so that retiring dead weight never silently drops
+  coverage. (R-5)
+- As a **reviewer**, I want `harness bindings validate` to run in CI (not only pre-push), so that an
+  unsynced mirror pushed with hooks bypassed is still caught before it reaches `main`. (R-6)
+- As the **repo maintainer**, I want a dedicated `format-verify-*` check per formatter on the CI
+  surface, so that an unformatted file in any of the fourteen supported languages fails the build
+  instead of reaching `main` silently. (R-7, R-7a)
+- As the **repo maintainer**, I want `deps:audit` to stay outside the gate registry and live in its
+  own descriptively-named workflow, so that a non-hermetic advisory-database check never blocks a
+  push for a reason unrelated to the change it contains. (R-8)
+- As a **contributor reading the SDLC Gate Standard**, I want the standard and
+  `git-hook-lifecycle.md` to describe exactly what the surfaces run, so that documentation cannot
+  drift silently from the implementation again. (R-9)
+- As a **downstream-repo maintainer/agent**, I want the gate engine to stay byte-identical to
+  canonical while my repo's own gate entries differ, so that I get the same enforcement guarantee
+  without forking behavior. (R-10, R-11)
+- As an **agent auditing cross-repo parity**, I want a scheduled, non-blocking workflow to report
+  byte-identity divergence, so that coordinated drift is visible without putting a network fetch on
+  the critical path of every merge. (R-12)
+- As the **`beaver-nest` maintainer**, I want repo-specific data (app-name lists, exclusion prefixes)
+  declared in `repo-config.yml` instead of hardcoded in shared source, so that byte-identity across
+  four repos becomes reachable at all. (R-13)
+
 ## R-1 — A declared gate registry
 
 `repo-config.yml` gains a `gates:` section declaring **everything any surface does** — every
@@ -82,6 +152,20 @@ Feature: Gate registry declaration
     When "rhino-cli repo-config validate" runs
     Then it exits non-zero
     And the message states that wiring applies to checks only
+
+  Scenario: lockfile-sync regenerates the lockfile and restages it
+    Given a staged package.json changes a dependency
+    And package-lock.json is stale with respect to it
+    When the gate with id "lockfile-sync" runs on surface "pre-commit"
+    Then package-lock.json is regenerated
+    And the regenerated package-lock.json is staged
+    And the commit proceeds with both files in the same commit
+
+  Scenario: lockfile-sync is a no-op when the lockfile is already current
+    Given a staged package.json matches package-lock.json
+    When the gate with id "lockfile-sync" runs on surface "pre-commit"
+    Then package-lock.json is unchanged
+    And nothing additional is staged
 ```
 
 ## R-2 — Enumeration for the CI matrix
@@ -215,6 +299,39 @@ Feature: Gate conformance validation
     When "rhino-cli gate list --surface=ci --format=json" runs
     Then the output contains no entry with id "test-quick"
 
+  Scenario: A hand-wired gate is still listed in text output
+    Given gate "test-quick" declares wiring "hand-wired" on surface "ci"
+    When "rhino-cli gate list --surface=ci --format=text" runs
+    Then the output contains an entry with id "test-quick"
+    And that entry is marked as hand-wired
+    # text output is for humans auditing completeness; json output feeds the
+    # matrix, which must not double-run a job that already exists by hand.
+
+  Scenario Outline: A field applied to the wrong gate type is rejected
+    Given a gate declares type "<type>"
+    And it carries the field "<field>"
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names the gate id and the misapplied field
+
+    Examples:
+      | type     | field     |
+      | check    | restages  |
+      | mutation | carve-out |
+
+  Scenario: A gate declaring no surfaces at all is rejected
+    Given a gate declares an empty "surfaces" map
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names the gate id
+    And the message states that a gate must declare at least one surface
+
+  Scenario: A verifies field naming no existing gate is caught
+    Given a gate carries "verifies" naming an id no gate declares
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names both the referring gate id and the orphan id
+
   Scenario: A hand-edited lint-staged block is caught
     Given the "lint-staged" block in package.json differs from what the registry would emit
     When "rhino-cli gate validate" runs
@@ -336,6 +453,18 @@ Feature: Formatting verification
     Then it exits non-zero
     And the wrapper treats non-empty "gofmt -l" output as failure
 
+  Scenario: The Elixir formatter script gains a check mode that fails
+    Given a tracked ".ex" file is not formatted
+    When the gate with id "format-verify-elixir" runs
+    Then it exits non-zero
+    And no tracked file is rewritten
+
+  Scenario: The Elixir check mode passes on formatted sources
+    Given every tracked ".ex" and ".exs" file is formatted
+    When the gate with id "format-verify-elixir" runs
+    Then it exits zero
+    And no tracked file is rewritten
+
   Scenario Outline: Non-standard failure exit codes still fail the gate
     Given a tracked "<ext>" file is not formatted
     When the gate with id "<verify-id>" runs
@@ -371,7 +500,7 @@ Feature: Formatting verification
 
 ## R-7a — Each repo declares only the formatters it actually needs
 
-A `git ls-files` audit found **20 declared formatter entries across the four repos that match zero
+A `git ls-files` audit found **19 declared formatter entries across the four repos that match zero
 tracked files** — `ose-public` declaring Go, Elixir, C#, Clojure and Dart formatters for languages it
 does not contain; `beaver-nest` declaring nine. Three defects run the other way: `ose-primer` and
 `ose-private` `shellcheck` shell scripts they never format, and `ose-private` has tracked `.tf` files
@@ -453,6 +582,7 @@ Feature: Dependency audit lives outside the gate registry
 
   Scenario: The old workflow is gone and the new one carries a descriptive name
     Given the rename is complete
+    When the ".github/workflows" directory is listed
     Then ".github/workflows/deps-audit.yml" does not exist
     And ".github/workflows/dependency-vulnerability-audit.yml" exists
     And its "name:" field is "Dependency Vulnerability Audit"
@@ -669,3 +799,25 @@ Feature: Repo-specific data lives in configuration
 | Changing the five controlled scope values             | Ratified vocabulary reused verbatim                                                                                               |
 | Blocking a merge on cross-repo parity                 | Non-hermetic; R-12 audits and reports, it does not gate                                                                           |
 | Extending byte-identity beyond `apps/rhino-cli`       | The boundary gains `tests/` and one manifest file; no other shared directory is drawn in                                          |
+
+## Product Risks
+
+Product-level risks — UX and feature-interaction risk for the registry's consumers — distinct from
+`brd.md`'s business risk (the accepted loss of a full-repo sweep, see
+[brd.md §Accepted Risk](./brd.md#accepted-risk)):
+
+- **A malformed `gates:` entry silently misapplies or drops a check.** A maintainer or agent
+  authoring a new gate mistypes a scope, type, or surface value. Mitigated by `repo-config validate`
+  failing at parse time and naming the offending gate id (R-1).
+- **A hand-wired CI job is deleted without updating the registry.** `wiring: hand-wired` gates
+  (R-4's `test-quick` scenarios) assert presence rather than generating the job; deleting the job
+  without touching `repo-config.yml` would silently lose coverage if `gate validate` did not catch
+  it. Mitigated by the corresponding "hand-wired gate whose job was deleted is caught" scenario (R-4).
+- **A formatter ships without its verify counterpart, or vice versa.** A new mutation-type formatter
+  gate added without a matching `format-verify-*` check leaves a language auto-rewritten but never
+  verified on CI; the reverse leaves a check with nothing to enforce. Mitigated by the "formatter
+  without a verifying check fails validation" scenario (R-7).
+- **A downstream repo's registry data set diverges from what its tracked files actually need**,
+  e.g. a repo keeps a formatter entry for a language it no longer tracks, or omits one for a
+  language it just added. Mitigated by the presence-based declaration rule and its Gherkin coverage
+  (R-7a).
