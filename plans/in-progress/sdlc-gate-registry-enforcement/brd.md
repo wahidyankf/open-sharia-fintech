@@ -212,7 +212,12 @@ The plan is done when, in all four repos:
 2. `.husky/pre-commit` and `.husky/pre-push` contain no hand-maintained check list — they invoke
    `gate run`.
 3. `pr-quality-gate.yml` derives its check jobs from `gate list --format=json`.
-4. `main-ci.yml` does not exist, and no document references it.
+4. `main-ci.yml` does not exist, and no document **describing current CI** references it — the live
+   surfaces under `.github/workflows/`, `docs/reference/`, and `repo-governance/`. Historical and
+   narrative references stay: completed plans, backlog and idea notes, this plan's own folder, and a
+   published `ose-www` update all describe a world in which the workflow existed, and rewriting them
+   would falsify the record rather than complete the migration. See
+   [delivery.md §2.4](./delivery.md).
 5. `harness bindings validate` runs in CI.
 6. A formatting violation fails a surface rather than being silently rewritten.
 7. `docs/reference/sdlc-gate-standard.md` and

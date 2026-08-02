@@ -1128,11 +1128,21 @@ Ordered — do not delete before the fold-in is verified.
       `docs/reference/system-architecture/ci-cd.md`, and
       `repo-governance/development/infra/nx-targets.md`.
 - [ ] [AI] Leave the **narrative** references alone — acceptance: after the scrub,
-      `git ls-files -z | xargs -0 grep -l "main-ci"` still returns the `plans/backlog/`,
-      `plans/ideas/`, `plans/in-progress/README.md`, `plans/done/`, and
-      `apps/ose-www/content/updates/` matches. These are history and future-work notes describing a
-      world in which `main-ci.yml` existed; rewriting them would falsify the record. A repo-wide
-      "no match anywhere" clause is **unsatisfiable** and was the earlier form of this step.
+      `git ls-files -z | xargs -0 grep -l "main-ci"` still returns matches, and every one of them
+      falls in exactly these five categories:
+
+  ```sh
+  # Every surviving path must match one of these prefixes. Anything else is a missed live surface.
+  git ls-files -z | xargs -0 grep -l "main-ci" \
+    | grep -vE '^(plans/done/|plans/backlog/|plans/ideas/|plans/in-progress/README\.md$|plans/in-progress/sdlc-gate-registry-enforcement/|apps/ose-www/content/updates/)'
+  ```
+
+  Returns nothing once the six live surfaces are scrubbed. Note the fifth category: **this plan's own
+  folder** discusses `main-ci.yml` throughout — it is the plan's subject — so the plan's documents are
+  themselves narrative references and must not be scrubbed. Omitting that category from the
+  enumeration was an earlier defect in this step. These are history, future-work notes, and this
+  plan's own record; rewriting them would falsify it. A repo-wide "no match anywhere" clause is
+  **unsatisfiable** and was the original form of this step.
 
 ### 2.5 Documents
 
