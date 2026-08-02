@@ -45,10 +45,41 @@ mistake. Concretely, today:
   `harness sync validate` runs in no workflow at all.
 - A specs-structure break in any project other than `rhino-cli` passes the PR gate, because that job
   is pinned to `--projects=rhino-cli`.
-- Unformatted code reaches `main` uncaught, because no surface ever _verifies_ formatting — the PR
-  job auto-commits fixes and does not run at all on a direct push to `main`.
+- Unformatted code reaches `main` uncaught in **any of fourteen languages**, because no surface ever
+  _verifies_ formatting — the PR job auto-commits fixes and does not run at all on a direct push to
+  `main`.
+- `apps/rhino-cli` has **already drifted** out of byte-identity between `ose-public` and the two
+  other bound repos, under a rule that permits zero carve-outs, and no surface in any repo is capable
+  of noticing.
+- Every repo advertises formatters for languages it does not have — 20 `lint-staged` entries across
+  the four repos match zero tracked files — while two repos lint shell scripts they never format.
 
 None of these are exotic. Each is a routine path.
+
+## The Same Defect, One Layer Down
+
+The audit found the byte-identity boundary has the identical shape of failure as the Gate Composition
+Rule: ratified prose, zero enforcement, silent drift.
+
+`src/application/agents/sync_validator.rs` carries `opencode-go/wrong` in `ose-public` and
+`zai-coding-plan/wrong` in `ose-primer` and `ose-private`. It is a one-line negative test fixture and
+nothing behaves differently — which is exactly why it survived a zero-carve-out rule. Byte-identity is
+a **cross-repo** property, and every gate in this ecosystem runs inside a **single** repo. The rule was
+never enforceable as written, in any repo, by any surface that exists.
+
+The more consequential finding is what `beaver-nest`'s fork actually contains. Eight of its nine source
+divergences are `ose-public`'s own app names hardcoded into supposedly-shared source —
+`STAGED_SKIP_PREFIXES` naming `apps/ayokoding-www/content`, `WEBSITE_APP_PREFIXES` naming four `ose`
+websites, an Amazon Q agent definition named `ose-default`, and test fixtures asserting on
+`organiclever-be`. The fork was not buying `beaver-nest` a capability. It was absorbing a defect.
+
+Roughly 700 lines of that hardcoding sit in `application/git/pre_commit.rs`, a pre-commit pipeline
+reachable only from a command wired to **no CLI subcommand** — dead code, replicated byte-for-byte
+into two other repos, and the single largest source of the divergence pressure.
+
+This is why the byte-identity work belongs in this plan rather than a successor. The remedy for
+"repo-specific data hardcoded in shared source" is "declare it in `repo-config.yml`" — which is the
+mechanism this plan is already building for gate exclusion lists. Doing it twice would be the waste.
 
 ## Why Now
 
@@ -76,11 +107,14 @@ Three reinforcing reasons:
 4. Bring the **standard document back into agreement** with the implementation, in both directions.
 5. Close the four related findings surfaced by the same audit (bindings-in-CI, format verification,
    the stale lifecycle doc, and the vaguely-named `deps:audit` workflow).
+6. Make the **`rhino-cli` byte-identity boundary mechanically enforced** and extend it to all four
+   repos, closing the live violation the audit found.
 
 ## Non-Goals
 
 - **Changing which checks exist.** This plan re-homes and enforces the existing check set; it does
-  not add new categories of validation.
+  not add new categories of validation. Formatter _entries_ are pruned per repo to the languages each
+  repo actually tracks, which removes dead declarations rather than removing validation.
 - **Changing the scope model.** The five controlled scope values in the SDLC Gate Standard
   (`affected file-type`, `all file-type`, `affected projects`, `all projects`, `other`) stay exactly
   as ratified. The registry encodes them; it does not redefine them.
@@ -116,6 +150,30 @@ Two mitigations were considered and **declined** in favour of the smaller surfac
 **This risk is accepted deliberately.** If cross-PR interaction breakage is observed in practice, the
 first mitigation is the documented remedy and should be reopened as a follow-up plan rather than
 treated as a defect of this one.
+
+## A Governance Change, Stated Plainly
+
+Extending byte-identity from three repos to four is an **amendment**, not a clarification. Three
+documents currently say the opposite and become false:
+`docs/reference/related-repositories.md` ("`beaver-nest` carries a **fork** ... explicitly **not**
+bound by the byte-identity rule"), `AGENTS.md` ("spans `ose-public`, `ose-primer`, `ose-private`"),
+and the SDLC Gate Standard's boundary section.
+
+**`beaver-nest` gives up the right to diverge.** After this plan, a `rhino-cli` change it needs lands
+in `ose-public` first and propagates, exactly as for the other two downstream repos. That is a real
+constraint and should be weighed as one.
+
+It is worth accepting because the audit shows the fork was not exercising that right for anything
+`beaver-nest` wanted. Its one genuine divergence — exempting `ROADMAP.md` and `SECURITY.md` from
+`md naming validate` — is a plain improvement that every repo should have, and the plan upstreams it
+into canonical **before** any repo copies canonical down. The rest was inherited defect.
+
+A second, smaller acceptance: **coordinated drift stays undetectable by any gate.** A repo that edits
+boundary source and regenerates its manifest in the same commit passes its own checks. Only the
+scheduled cross-repo audit sees it, and that audit is non-blocking by design, because making it
+blocking would put a network fetch and another repository's moving `HEAD` on the critical path of
+every merge — the same non-hermeticity this plan cites to keep `deps:audit` out of every gate. Drift
+is reported, not prevented.
 
 ## A Standing Rule This Plan Upholds
 

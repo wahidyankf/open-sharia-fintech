@@ -18,8 +18,14 @@ sequential CI-gated cycles) before merge. `[AI]` merges by default.
 
 **Concurrency**: N=3 background agents plus the main thread as orchestrator.
 
-**DAG**: see [tech-docs §5](./tech-docs.md#5-delivery-dag). Phase 1 blocks Phases 2 through 5. Phases
-2, 3, 4, 5 are mutually independent. Phase 6 is terminal.
+**DAG**: see [tech-docs §5](./tech-docs.md#5-delivery-dag). Phase 1 blocks Phase 1b, and **Phase 1b
+blocks Phases 2 through 5** — canonical `apps/rhino-cli` must be de-forked before any repo copies it.
+Phases 2, 3, 4, 5 are mutually independent. Phase 6 is terminal.
+
+**Target state is authored, not derived.** Phases 2 through 5 copy from
+[`repo-configs/`](./repo-configs/README.md), [`husky-hooks/`](./husky-hooks/README.md), and
+[`package-json/`](./package-json/README.md) and verify by diff. An acceptance clause reading "diffs
+clean against the authored artifact" is falsifiable; "the registry is correct" is not.
 
 ## Worktree Specification
 
@@ -27,6 +33,7 @@ sequential CI-gated cycles) before merge. `[AI]` merges by default.
 | ----- | -------------------------------- | ------------------------------ | ------------- |
 | 0     | none (primary checkout)          | `main`                         | all four      |
 | 1     | `worktrees/gate-engine/`         | `gate-registry/engine`         | `ose-public`  |
+| 1b    | `worktrees/gate-defork/`         | `gate-registry/defork`         | `ose-public`  |
 | 2     | `worktrees/gate-rewire-public/`  | `gate-registry/rewire-public`  | `ose-public`  |
 | 3     | `worktrees/gate-rewire-primer/`  | `gate-registry/rewire-primer`  | `ose-primer`  |
 | 4     | `worktrees/gate-rewire-private/` | `gate-registry/rewire-private` | `ose-private` |
@@ -61,13 +68,25 @@ execution-time tick marks go in the worktree copy.
       table is amended in the same commit with the row that changed and why.
 - [ ] [AI] Record the branch-protection required-status-check names currently configured for each
       repo: `gh api repos/wahidyankf/<repo>/branches/main/protection --jq '.required_status_checks.contexts'`
-      — acceptance: the list is written into this checklist. Phase 2 must re-point these before the
-      matrix renames any job.
+      — acceptance: the list is written into this checklist. In `ose-public` this returned
+      `["Quality gate"]` on 2026-08-02 — a single context, matching the `quality-gate` join job's
+      `name:`, which this plan keeps. Phase 6 verifies it is unchanged; no re-pointing is expected.
+- [ ] [AI] Record the byte-identity baseline across all four repos — acceptance: `diff -rq` output
+      over `apps/rhino-cli/{src,tests}` and the gherkin tree is written into this checklist for every
+      pair. The 2026-08-02 audit found `sync_validator.rs` differing in `ose-public` and nine source
+      files differing in `beaver-nest`; re-verify rather than assume, since these repos are edited
+      concurrently by other actors.
+- [ ] [AI] Record the tracked-file counts per language per repo that drive formatter pruning —
+      `git ls-files` by extension — acceptance: the counts in
+      [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory) still hold, or
+      the table is amended in the same commit. A language gaining its first file changes which
+      formatters a repo must declare.
 
 ### Phase 0 Gate
 
-Green baseline in all four repos, audit table re-verified, required-status-check names recorded.
-Do not start Phase 1 until all four hold.
+Green baseline in all four repos, audit table re-verified, required-status-check names recorded,
+byte-identity baseline captured, per-language file counts confirmed. Do not start Phase 1 until all
+hold.
 
 ---
 
@@ -164,9 +183,10 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
 
 ### 1.4 `gate validate`
 
-- [ ] [AI] **RED** — failing tests for all five checks in
+- [ ] [AI] **RED** — failing tests for all six checks in
       [tech-docs §2.4](./tech-docs.md#24-command-surface): composition-rule violation, missing
-      surface shim, undeclared CI command, orphan gate id, stale emitted artifact — command:
+      surface shim, undeclared CI command, orphan gate id, stale emitted artifact, and a formatter
+      mutation with no `verifies`-linked check — command:
       `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib gate::validate` — acceptance: fails
       because the command does not exist.
 - [ ] [AI] **GREEN** — implement `gate validate` — acceptance: same command exits 0.
@@ -204,8 +224,127 @@ is a real command. See [tech-docs §2.2.1](./tech-docs.md#221-why-mutations-are-
 **no surface is wired to them yet**;
 `nx run rhino-cli:test:quick` green; PR merged.
 
-**Byte-identity window opens here.** `apps/rhino-cli` in `ose-public` now differs from `ose-primer`
-and `ose-private`. Phases 3 and 4 close it and must start immediately after this gate.
+**Byte-identity window opens here.** `apps/rhino-cli` in `ose-public` now differs from every other
+repo. Phase 1b widens the window further before closing it — do **not** start Phases 3, 4 or 5 from
+this gate, only from the Phase 1b gate. Copying canonical now would propagate the hardcoded app names
+Phase 1b exists to remove.
+
+---
+
+## Phase 1b — De-fork Canonical Source and Add the Parity Manifest (`ose-public`, PR #1b)
+
+Delivery unit: `apps/rhino-cli`'s canonical source contains no repository's app names, the dead
+pre-commit pipeline is gone, `beaver-nest`'s two improvements are upstreamed, and a checksum manifest
+plus its gate exist. Independently shippable: after this PR, canonical is copyable to any repo
+without carrying `ose-public`-specific data into it.
+
+**This phase blocks Phases 2, 3, 4, and 5.** Copying a canonical that still hardcodes `ose-public`'s
+app names would either recreate `beaver-nest`'s fork or delete capabilities it depends on. See
+[tech-docs §2.8.5](./tech-docs.md#285-convergence-sequence--upstream-before-downstream).
+
+### 1b.1 Delete the dead pre-commit pipeline
+
+Blast radius is seven sites — [tech-docs §2.8.2](./tech-docs.md#282-the-dead-pre-commit-pipeline).
+
+- [ ] [AI] **RED** — prove the pipeline is unreachable before deleting it: assert that no CLI
+      subcommand dispatches to `commands/git_pre_commit.rs` — acceptance:
+      `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- --help > /tmp/help-before.txt`
+      succeeds, and `/usr/bin/grep -rn "git_pre_commit" apps/rhino-cli/src/cli.rs` returns no match.
+      Record `help-before.txt`; it is the acceptance oracle for the deletion.
+- [ ] [AI] **GREEN** — delete `application/git/pre_commit.rs` and `commands/git_pre_commit.rs`;
+      remove `pub mod git_pre_commit;` from `commands.rs`; remove
+      `pub use crate::application::git::pre_commit::{Deps, run};` from `internal/git.rs`; re-home or
+      remove `infrastructure/git/mod.rs`'s `Deps` implementation; delete
+      `domain/git/staged_files.rs` once orphaned; update the stale reference in
+      `application/fs/mock.rs` — acceptance: `cargo build --release` exits 0,
+      `nx run rhino-cli:test:quick` exits 0, and `rhino-cli --help` output is **byte-identical** to
+      `help-before.txt` (`diff` exits 0). A changed help surface means the code was not dead.
+- [ ] [AI] **REFACTOR** — confirm the largest hardcoded-paths site is gone — acceptance:
+      `/usr/bin/grep -rn "ayokoding" apps/rhino-cli/src/` returns no match. Verify the inverse holds
+      pre-edit: the same command returns matches before the deletion.
+
+### 1b.2 Extract repo-specific data into `repo-config.yml`
+
+- [ ] [AI] Move `WEBSITE_APP_PREFIXES` (`frontmatter_audit.rs`) into the registry as `args.exclude`
+      on the gate that consumes it — acceptance: the const no longer exists
+      (`/usr/bin/grep -c "WEBSITE_APP_PREFIXES" apps/rhino-cli/src/` returns 0) and
+      `md frontmatter validate` still skips those trees, proven by a fixture under one of them that
+      would otherwise fail.
+- [ ] [AI] Move the Amazon Q agent-definition name out of `bindings.rs` into the existing `harness`
+      section — acceptance: `/usr/bin/grep -c "ose-default" apps/rhino-cli/src/` returns 0, and
+      `harness bindings generate` still writes `.amazonq/cli-agents/ose-default.json` in `ose-public`
+      because the **config** now says so.
+- [ ] [AI] Replace real-repo app names in test fixtures with synthetic names in
+      `domain_coverage/mod.rs`, `specs_validate_counts.rs`, and `specs_coverage.rs` — acceptance:
+      `/usr/bin/grep -rn "organiclever\|ose-be\|ose-www\|wahidyankf" apps/rhino-cli/src/` returns no
+      match, and the test suite still passes. Fixtures must name no real repository's apps, so the
+      same source compiles and passes in all four repos.
+- [ ] [AI] Genericize the `apps/ose-be/global.json` doc comment in `doctor/tools.rs` — acceptance:
+      covered by the grep clause above.
+
+### 1b.3 Upstream `beaver-nest`'s improvements
+
+Direction matters: these flow **up** into canonical before any repo copies canonical **down**.
+
+- [ ] [AI] **RED** — add a failing test asserting `ROADMAP.md` and `SECURITY.md` are exempt from
+      `md naming validate` — command:
+      `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib docs::naming` — acceptance: fails
+      on canonical, which currently exempts neither.
+- [ ] [AI] **GREEN** — add both basenames to `is_naming_exempt`'s always-exempt list in `naming.rs`,
+      matching `beaver-nest`'s implementation — acceptance: the same test passes, and
+      `md naming validate` exits 0 on a `ROADMAP.md` fixture.
+- [ ] [AI] Port `beaver-nest`'s corrected `frontmatter_audit.rs` test and the `specs_coverage.rs`
+      comment explaining why the misleading integration test was removed — acceptance: the test
+      suite passes and the two files no longer differ from `beaver-nest`'s.
+
+### 1b.4 Close the live three-repo violation
+
+- [ ] [AI] Adopt `zai-coding-plan/wrong` in `sync_validator.rs`'s
+      `validate_agent_equivalence_fails_on_model_mismatch` fixture, matching `ose-primer` and
+      `ose-private` — acceptance:
+      `diff <(git show HEAD:apps/rhino-cli/src/application/agents/sync_validator.rs) apps/rhino-cli/src/application/agents/sync_validator.rs`
+      shows exactly one changed line, and the model-mismatch test still **fails** on a mismatched
+      model (verify by temporarily supplying a matching model and observing the test fail to fire).
+
+### 1b.5 Parity manifest and its gate
+
+- [ ] [AI] **RED** — failing tests for `parity manifest generate` and `parity manifest validate` —
+      command: `cargo test --manifest-path apps/rhino-cli/Cargo.toml --lib parity` — acceptance:
+      fails because the commands do not exist.
+- [ ] [AI] **GREEN** — implement both. The boundary set is `apps/rhino-cli/src/**`,
+      `apps/rhino-cli/tests/**`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`, and
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/**`, enumerated via `git ls-files` so untracked
+      files cannot enter — acceptance: same command exits 0.
+- [ ] [AI] **REFACTOR** — four properties, each needing its own test because each covers a direction
+      the others do not: generation is idempotent (second run byte-identical); an edit to a `src/`
+      file fails validation; an edit to a `tests/` file **also** fails validation; and an untracked
+      file under `tests/fixtures/` is absent from the manifest and does not fail validation —
+      acceptance: all four pass. The untracked case is not hypothetical: `ose-public`'s tree carries
+      two untracked `.env` fixtures today, which must never be read, hashed, or listed.
+- [ ] [AI] Write the failure message per
+      [tech-docs §2.8.4](./tech-docs.md#284-enforcement--a-hermetic-gate-plus-a-non-hermetic-audit) —
+      acceptance: the message names the file, states it is byte-identical across all four repos, and
+      names `parity manifest generate` as the deliberate remedy.
+- [ ] [AI] Declare the `parity-manifest` gate on `pre-push` and `ci`, and **confirm the generator is
+      absent from every surface** — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.command=="parity manifest generate")] | length == 0'`
+      exits 0. Verify the inverse: adding it to `pre-commit` makes that same command return false.
+- [ ] [AI] Generate the manifest and commit it — acceptance:
+      `... -- parity manifest validate` exits 0, and re-running `generate` leaves the file unchanged.
+
+### 1b.6 Land
+
+- [ ] [AI] Commit with scope `rhino-cli`; harness mirrors ride the same commit — acceptance:
+      `npm run validate:sync` exits 0 and `git status --porcelain` is empty after commit.
+- [ ] [AI] Push, open the PR, run the PR-Review Maker to Fixer Cycle, merge.
+
+### Phase 1b Gate
+
+Canonical `apps/rhino-cli` contains no repository's app names; `rhino-cli --help` is unchanged from
+the Phase 1 baseline; `ROADMAP.md`/`SECURITY.md` are exempt in canonical; `parity manifest validate`
+exits 0; `nx run rhino-cli:test:quick` green; PR merged.
+
+**Only now may any repo copy canonical.** Phases 2 through 5 unblock here, not at Phase 1.
 
 ---
 
@@ -216,12 +355,31 @@ documents agree. Independently shippable — the other repos are untouched.
 
 ### 2.1 Populate the registry
 
-- [ ] [AI] Write the `gates:` section of `repo-config.yml` covering every row of the audit table in
-      [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today), preserving each
-      check's current excludes verbatim into `args.exclude` — acceptance:
+- [ ] [AI] Copy the `gates:` section from
+      [`repo-configs/repo-config-ose-public.yml`](./repo-configs/repo-config-ose-public.yml) into
+      `repo-config.yml`. The target state is authored in this plan, not derived at execution time —
+      acceptance:
       `cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- repo-config validate`
-      exits 0, and `... -- gate list --format=json | jq 'length'` equals the audit table's check
-      count.
+      exits 0, and `diff <(yq '.gates' repo-config.yml) <(yq '.gates' <plan>/repo-configs/repo-config-ose-public.yml)`
+      is empty.
+- [ ] [AI] Confirm the registry covers every row of the audit table in
+      [tech-docs §1](./tech-docs.md#1-audit-baseline--what-actually-runs-today), with each check's
+      current excludes preserved verbatim in `args.exclude` — acceptance: every audit-table command
+      appears in `... -- gate list --format=json`, checked row by row with a per-row verdict rather
+      than a single count comparison. A count match can hide one missing check offsetting one extra.
+- [ ] [AI] Prune the five formatter entries `ose-public` declares for languages it does not track
+      (Go, Elixir, C#, Clojure, Dart) — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 9'`
+      exits 0, and every surviving formatter's glob matches at least one path in `git ls-files`.
+      Verify the inverse: the pre-edit registry fails that same glob-coverage check for exactly five
+      entries.
+- [ ] [AI] Verify the emitted `lint-staged` block matches the authored target — acceptance:
+      `... -- gate emit --surface=pre-commit` then
+      `diff <(jq '."lint-staged"' package.json) <plan>/package-json/lint-staged-ose-public.json`
+      is empty. This is the falsifiable test of the emitter, and it is a diff, not a judgement.
+- [ ] [AI] Verify the rewritten hooks match the authored targets — acceptance: each of
+      `.husky/{commit-msg,pre-commit,pre-push}` diffs clean against
+      `<plan>/husky-hooks/<hook>-ose-public.sh`.
 - [ ] [AI] Declare `md-mermaid`, `md-heading-hierarchy`, and the structural specs validator on the
       `ci` surface — acceptance:
       `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("md-mermaid") != null and index("md-heading-hierarchy") != null'`
@@ -230,11 +388,18 @@ documents agree. Independently shippable — the other repos are untouched.
 - [ ] [AI] Declare `harness-bindings` on the `ci` surface (closes R-6) — acceptance:
       `... -- gate list --surface=ci --format=json | jq -e '[.[].id] | index("harness-bindings") != null'`
       exits 0.
-- [ ] [AI] Declare the formatters as `type: mutation` on `pre-commit`, and `format-verify` as an
-      ordinary `type: check` on `ci` only (closes R-7) —
-      acceptance: `... -- gate list --surface=ci --format=json | jq -e '[.[] | select(.id=="format-verify")] | length == 1'`
-      exits 0, and `... -- gate validate` exits 0 (a `ci`-only check is not a composition-rule
-      violation, and the mutations are not subject to the rule at all).
+- [ ] [AI] Declare **every** formatter in
+      [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory) as
+      `type: mutation` on `pre-commit`, each paired with a `format-verify-*` `type: check` on `ci`
+      only, linked by `verifies` (closes R-7) — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.type=="mutation" and .category=="formatter") | .id] - [.[] | select(.verifies) | .verifies] | length == 0'`
+      exits 0 (no formatter lacks a verifier), and `... -- gate validate` exits 0. Verify the inverse
+      before the edit: deleting one `verifies` field makes both non-zero. **Not** a single
+      `format-verify` — one `prettier --check` leaves thirteen languages unverified.
+- [ ] [AI] Build the two verify commands that need more than a flag — wrap `gofmt -l` so non-empty
+      output fails, and add a check mode to `scripts/format-elixir.sh` (or call
+      `mix format --check-formatted` directly) — acceptance: each exits non-zero on a deliberately
+      unformatted fixture and 0 on a formatted one.
 - [ ] [AI] Declare the remaining mutations — `harness-bindings-generate` and `lockfile-sync` — and
       the two surface-unique checks `env-staged-guard` (`carve-out: staged-only`) and `commitlint`
       (surface `commit-msg`) — acceptance: `... -- gate list --format=json | jq -e '[.[].id] | contains(["harness-bindings-generate","lockfile-sync","env-staged-guard","commitlint"])'`
@@ -315,13 +480,15 @@ Ordered — the convention must permit the name before the file can legally carr
       pass also runs on push to `main`, and split it: auto-fix-and-commit on `pull_request`, verify-only
       on `push` — acceptance: `actionlint` exits 0; the `push` path runs `format-verify` and performs
       no `git push`.
-- [ ] [AI] Update the `quality-gate` join job's `needs:` to depend on the matrix job — acceptance:
-      `actionlint` exits 0; a deliberately failing matrix entry turns `quality-gate` red in a scratch
-      run.
-- [ ] [HUMAN] Re-point branch-protection required status checks to the `quality-gate` join job before
-      merge, using the names recorded in Phase 0 — acceptance: `gh api` reports `quality-gate` in
-      `required_status_checks.contexts`, and no removed job name remains. **Human-gated**: this is a
-      repository-settings change outside the git tree, and a wrong value silently unblocks merges.
+- [ ] [AI] Update the `quality-gate` join job's `needs:` to depend on the matrix job, removing the 18
+      hand-listed job names it replaces. **This is the real hazard of the rewire**, not the branch
+      protection: the join job is `if: always()` and fails only on
+      `contains(needs.*.result, 'failure')`, so a `needs:` list that omits the matrix job reports
+      green while checking nothing — acceptance: `actionlint` exits 0; a deliberately failing matrix
+      entry turns `quality-gate` red in a scratch run; and the inverse, that removing the matrix job
+      from `needs:` leaves `quality-gate` green despite that same failing entry, is demonstrated once
+      and reverted. Keep the job's `name: Quality gate` **byte-identical** — see the Phase 6
+      verification.
 
 ### 2.4 Retire `main-ci.yml`
 
@@ -377,13 +544,27 @@ Independent of Phases 2, 4, 5. Closes half the byte-identity window.
 - [ ] [AI] Create the worktree; `npm install`; `npm run doctor -- --fix`. Note: `ose-primer`'s
       polyglot demo apps need their language toolchains fetched before pre-push will pass in a fresh
       worktree.
-- [ ] [AI] Copy `apps/rhino-cli` from the merged `ose-public` Phase 1 result — acceptance: `src/`,
-      `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE` and
-      `specs/apps/rhino/behavior/rhino-cli/gherkin/` are byte-identical to `ose-public`, verified by
-      `diff -r`.
+- [ ] [AI] Copy `apps/rhino-cli` from the merged `ose-public` **Phase 1b** result — acceptance:
+      `src/`, `tests/`, `Cargo.toml`, `Cargo.lock`, `project.json`, `LICENSE`,
+      `parity-manifest.sha256` and `specs/apps/rhino/behavior/rhino-cli/gherkin/` are byte-identical
+      to `ose-public`, verified by `diff -r`, and `... -- parity manifest validate` exits 0 against
+      the copied manifest without regenerating it. Copying from the Phase 1 result instead would
+      reintroduce the hardcoded app names Phase 1b removed.
 - [ ] [AI] Author `ose-primer`'s `gates:` section, preserving its own excludes (its `md links validate`
       carries the polyglot `deps`/`build`/`target` excludes) and adding its per-language gates —
       acceptance: `... -- repo-config validate` exits 0.
+- [ ] [AI] Add the `shfmt -w` mutation and its `shfmt -d` verifier (8 tracked `.sh` files,
+      `shellcheck`-ed but never formatted), and add prettier globs for the 46 tracked `.sql` and 3
+      tracked `.html` files no glob currently covers — acceptance:
+      `... -- gate list --format=json | jq -e '[.[].id] | index("format-shfmt") != null'` exits 0,
+      and every tracked file extension in `git ls-files` that has a formatter in
+      [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory) is matched by
+      exactly one glob.
+- [ ] [AI] Confirm no formatter is pruned here. `ose-primer` is the polyglot repo and is the **only**
+      repo tracking Go, Elixir, C#, Clojure, and Dart — acceptance: every `category: formatter`
+      gate's glob matches at least one path in `git ls-files`, with zero entries removed. The two
+      formatters needing wrapper work — `gofmt` (prints paths, exits 0) and the Elixir script (no
+      check mode) — are `ose-primer`-only, so that work lands here and nowhere else.
 - [ ] [AI] Apply the same surface rewire as Phase 2 sections 2.2 through 2.4 — acceptance:
       `... -- gate validate` exits 0; `test ! -f .github/workflows/main-ci.yml`.
 - [ ] [AI] Apply Phase 2 section 2.1a here: propagate the naming-convention amendment, create
@@ -409,12 +590,28 @@ Independent of Phases 2, 4, 5. Closes half the byte-identity window.
 Independent of Phases 2, 3, 5. Closes the other half of the byte-identity window.
 
 - [ ] [AI] Create the worktree; `npm install`; `npm run doctor -- --fix`.
-- [ ] [AI] Copy `apps/rhino-cli` from the merged `ose-public` Phase 1 result — acceptance: `diff -r`
-      reports no difference across the byte-identity file set.
+- [ ] [AI] Copy `apps/rhino-cli` from the merged `ose-public` **Phase 1b** result — acceptance:
+      `diff -r` reports no difference across the byte-identity file set (now including `tests/` and
+      `parity-manifest.sha256`), and `... -- parity manifest validate` exits 0 without regenerating.
 - [ ] [AI] Author `ose-private`'s `gates:` section. It carries entries the others do not — the
       `iac-lint` pair (`./scripts/lint-terraform.sh`, `yamllint`) at pre-commit, pre-push, and CI —
       acceptance: `... -- repo-config validate` exits 0 and `... -- gate validate` exits 0, proving
       the schema tolerates a repo-specific entry set.
+- [ ] [AI] Migrate the inline IaC formatting out of `.husky/pre-commit`. This repo formats terraform
+      through a hand-written hook block rather than `lint-staged`, so `gate emit` reading the
+      per-file registry would not reproduce it and the completeness claim would be false here on day
+      one. Declare it as an ordinary `scope: affected-file-type, glob: "*.tf"` mutation with
+      `category: formatter` plus its `format-verify-*` counterpart, then delete the inline block —
+      acceptance: `grep -c 'fmt' .husky/pre-commit` returns 0, and
+      `... -- gate list --surface=pre-commit --format=json | jq -e '[.[] | select(.surfaces."pre-commit".glob=="*.tf")] | length == 1'`
+      exits 0. Verify the inverse first: the same `jq` returns false on the pre-edit registry.
+- [ ] [AI] Add the `shfmt -w` mutation and its `shfmt -d` verifier (13 tracked `.sh` files,
+      `shellcheck`-ed but never formatted) — acceptance:
+      `... -- gate list --format=json | jq -e '[.[].id] | index("format-shfmt") != null'` exits 0.
+- [ ] [AI] Prune the five formatter entries this repo declares for languages it does not track — F#,
+      Python, C#, Clojure, Dart are all **zero** tracked files here — acceptance:
+      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 4'`
+      exits 0 (prettier, rustfmt, shfmt, tofu — the four it actually needs).
 - [ ] [AI] Note the pre-existing local surplus: this repo's pre-push already runs
       `specs structure validate` and `npm run lint:md`, and its PR gate already has
       `markdown-per-file`. Fold these into registry declarations rather than deleting them —
@@ -436,25 +633,54 @@ repos — **the byte-identity window is now closed**; PR merged.
 
 ---
 
-## Phase 5 — `beaver-nest` (PR #5)
+## Phase 5 — `beaver-nest` Joins the Byte-Identity Boundary (PR #5)
 
-Independent of Phases 2, 3, 4. `beaver-nest` carries a **fork** of `rhino-cli` and is outside the
-byte-identity boundary, so this is a port, not a copy.
+Independent of Phases 2, 3, 4. Blocked by Phase 1b.
+
+`beaver-nest` **stops being a fork**. Phase 1b removed the reason it was one: eight of its nine
+source divergences were `ose-public`'s app names hardcoded into shared source, and the ninth — its
+`ROADMAP.md`/`SECURITY.md` naming exemptions — is now in canonical. So this becomes a copy like
+Phases 3 and 4, not a port. See
+[tech-docs §2.8.6](./tech-docs.md#286-the-governance-change-this-requires) for the governance
+amendment this depends on.
 
 - [ ] [AI] Create the worktree; `npm install`; `npm run doctor -- --fix`.
-- [ ] [AI] Port the gate engine into the fork, reconciling any fork-local divergence in the
-      `repo-config` domain model — acceptance:
-      `cargo test --manifest-path apps/rhino-cli/Cargo.toml` exits 0; record every reconciliation in
-      [learnings.md](./learnings.md).
-- [ ] [AI] Author `beaver-nest`'s `gates:` section — acceptance: `... -- repo-config validate` exits 0.
+- [ ] [AI] **Verify Phase 1b actually absorbed the fork before overwriting anything.** Diff the
+      current `beaver-nest` source against merged canonical and confirm every remaining difference is
+      one Phase 1b intended to erase — acceptance: `diff -rq` over the boundary set reports only
+      files whose divergence is listed in
+      [tech-docs §2.8.1](./tech-docs.md#281-audit-result), and **zero** unlisted differences. Any
+      unlisted difference is an unmigrated capability: stop, upstream it into `ose-public` first, and
+      re-run. This step is the guard against silently deleting work.
+- [ ] [AI] Confirm the two upstreamed improvements are present in canonical **before** the copy —
+      acceptance: `/usr/bin/grep -c 'ROADMAP.md' <canonical>/apps/rhino-cli/src/application/docs/naming.rs`
+      returns a non-zero count, and the same for `SECURITY.md`. Copying without this check is what
+      would delete them.
+- [ ] [AI] Copy `apps/rhino-cli` from the merged `ose-public` Phase 1b result — acceptance: `diff -r`
+      reports no difference across the boundary set, and `... -- parity manifest validate` exits 0
+      without regenerating.
+- [ ] [AI] Confirm `md naming validate` still passes on this repo's own `ROADMAP.md` and
+      `SECURITY.md` after the copy — acceptance: the command exits 0. This is the falsifiable proof
+      that the copy preserved the capability rather than reverting it.
+- [ ] [AI] Author `beaver-nest`'s `gates:` section from
+      [`repo-configs/repo-config-beaver-nest.yml`](./repo-configs/repo-config-beaver-nest.yml),
+      which prunes the **nine** formatter entries this repo declares for languages it does not track
+      (Go, Elixir, C#, Clojure, Dart, Lua, C, Bazel, Terraform) plus the `*.sql` prettier glob, which
+      matches zero tracked files here — acceptance:
+      `... -- repo-config validate` exits 0, and
+      `... -- gate list --format=json | jq -e '[.[] | select(.category=="formatter")] | length == 5'`
+      exits 0 (prettier, rustfmt, shfmt, fantomas, ruff — the five languages it actually tracks).
 - [ ] [AI] Apply the surface rewire and `main-ci.yml` retirement — acceptance:
       `... -- gate validate` exits 0; `test ! -f .github/workflows/main-ci.yml`.
-- [ ] [AI] Propagate the amended standard, the rewritten hook-lifecycle doc, and this plan folder.
+- [ ] [AI] Propagate the amended standard, the rewritten hook-lifecycle doc, the governance amendment
+      removing the fork language, and this plan folder.
 - [ ] [AI] Commit, push, PR, review cycle, CI green, merge, fast-forward local `main`.
 
 ### Phase 5 Gate
 
-`gate validate` exits 0 in `beaver-nest`; PR merged.
+`gate validate` exits 0 in `beaver-nest`; `apps/rhino-cli` byte-identical to `ose-public`;
+`parity manifest validate` exits 0; `md naming validate` passes on this repo's `ROADMAP.md` and
+`SECURITY.md`; no document in any repo still calls `beaver-nest` a fork of `rhino-cli`; PR merged.
 
 ---
 
@@ -469,6 +695,35 @@ Terminal node. Blocked by Phases 2, 3, 4, and 5.
       `pre-commit` with no `ci` and no carve-out, confirm `gate validate` exits non-zero, then revert
       — acceptance: non-zero on the scratch state, zero after revert. A validator that never fails is
       not a validator.
+- [ ] [AI] Verify byte-identity across **all four** repos directly, not via the manifest —
+      acceptance: `diff -r` over `apps/rhino-cli/{src,tests}`, `Cargo.toml`, `Cargo.lock`,
+      `project.json`, `LICENSE`, `parity-manifest.sha256`, and
+      `specs/apps/rhino/behavior/rhino-cli/gherkin/` reports **zero** differences for every pair, and
+      the four `parity-manifest.sha256` files are byte-identical to one another. This is the
+      independent check: the manifests agreeing with their own repos proves nothing about the repos
+      agreeing with each other.
+- [ ] [AI] Prove the parity gate fails on real drift: edit one boundary file in a scratch worktree,
+      confirm `parity manifest validate` exits non-zero and names the file, then discard the scratch
+      — acceptance: non-zero before discard, zero after.
+- [ ] [AI] Confirm the cross-repo audit workflow runs and reports in each repo — acceptance:
+      `gh workflow run rhino-cli-parity-audit.yml` succeeds in all four and each run concludes
+      `success` against the converged state. Verify the inverse once in a scratch branch: a
+      deliberately divergent manifest makes the audit conclude `failure`.
+- [ ] [AI] Confirm no repo declares a formatter for a language it does not track — acceptance: for
+      each repo, every `category: formatter` gate's glob matches at least one path in
+      `git ls-files`, checked mechanically rather than by review.
+- [ ] [AI] Verify branch protection still resolves, in every repo that has it —
+      `gh api repos/wahidyankf/<repo>/branches/main/protection --jq '.required_status_checks.contexts'`
+      — acceptance: the output equals the value Phase 0 recorded, and every context in it names a job
+      that still exists in `pr-quality-gate.yml`. In `ose-public` the required set is the single
+      context `"Quality gate"`, which is the `quality-gate` join job's `name:` — a job this plan
+      keeps, so **the expected result is that nothing changed**. This step is read-only verification,
+      not reconfiguration, which is why it is `[AI]` and why it sits at the end rather than gating a
+      merge.
+- [ ] [HUMAN] **Only if the step above fails**: update the required-status-check contexts in
+      repository settings. Human-gated because it is a settings change outside the git tree, it is
+      not covered by any PR review, and a wrong value silently unblocks every future merge. If the
+      verification passes, this step is struck as not-applicable rather than performed.
 - [ ] [AI] Triage [learnings.md](./learnings.md) — each entry gets a home in `docs/`,
       `repo-governance/`, or is discarded with a reason — acceptance: no untriaged entry remains.
 - [ ] [AI] Remove all six worktrees and prune — acceptance: `git worktree list` shows only the

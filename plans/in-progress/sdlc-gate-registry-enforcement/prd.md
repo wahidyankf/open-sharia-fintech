@@ -64,6 +64,9 @@ Feature: Gate registry declaration
       | env-staged-guard          | check    |
       | commitlint                | check    |
       | format-prettier           | mutation |
+      | format-rustfmt            | mutation |
+      | format-verify-prettier    | check    |
+      | format-verify-rustfmt     | check    |
       | harness-bindings-generate | mutation |
       | lockfile-sync             | mutation |
       | test-quick                | check    |
@@ -291,25 +294,133 @@ Feature: Binding parity enforced server-side
 The ratified standard exempts formatters from being _checks_ at pre-commit, where they auto-fix.
 This plan expresses that structurally rather than as an exemption: formatters are declared
 `type: mutation`, and the composition rule applies only to `type: check`. That exemption does not
-justify a `main` branch carrying unformatted files, so a `format-verify` check is added on the CI
+justify a `main` branch carrying unformatted files, so a `format-verify-*` check is added on the CI
 surface — an ordinary check, needing no carve-out, since the rule runs pre-commit/pre-push ⇒ ci and
 never the reverse.
+
+**One verify gate per formatter.** The four repos run up to fourteen formatters (prettier, rustfmt,
+gofmt, fantomas, ruff, csharpier, cljfmt, dart, the Elixir script, shfmt, tofu, stylua, clang-format,
+buildifier — see [tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory)).
+A single `prettier --check` would verify only prettier-owned file types and leave the other thirteen
+languages exactly as unverified as they are today. `gate validate` therefore enforces the pairing
+mechanically, so a formatter added later cannot arrive without its check.
 
 ```gherkin
 Feature: Formatting verification
 
-  Scenario: An unformatted file fails the CI surface
-    Given a tracked file is not formatted per its language formatter
+  Scenario Outline: An unformatted file fails the CI surface, whatever its language
+    Given a tracked "<ext>" file is not formatted per its language formatter
     And the commit is pushed directly to main with hooks bypassed
     When the PR gate runs on the push event
-    Then the formatting verify gate fails
+    Then the gate with id "<verify-id>" fails
     And the failure names the offending file
+
+    Examples:
+      | ext | verify-id              |
+      | md  | format-verify-prettier |
+      | rs  | format-verify-rustfmt  |
+      | go  | format-verify-gofmt    |
+      | fs  | format-verify-fantomas |
+      | sh  | format-verify-shfmt    |
+
+  Scenario: A formatter without a verifying check fails validation
+    Given a gate declares type "mutation" and a formatter command
+    And no gate declares a "verifies" field naming that gate id
+    When "rhino-cli gate validate" runs
+    Then it exits non-zero
+    And the message names the unverified formatter
+
+  Scenario: gofmt is wrapped because it cannot fail on its own
+    Given a tracked ".go" file is not formatted
+    When the gate with id "format-verify-gofmt" runs
+    Then it exits non-zero
+    And the wrapper treats non-empty "gofmt -l" output as failure
+
+  Scenario Outline: Non-standard failure exit codes still fail the gate
+    Given a tracked "<ext>" file is not formatted
+    When the gate with id "<verify-id>" runs
+    Then it exits with code "<code>"
+    And the gate treats any non-zero exit as failure
+
+    Examples:
+      | ext   | verify-id                | code |
+      | fs    | format-verify-fantomas   | 99   |
+      | bzl   | format-verify-buildifier | 4    |
+
+  Scenario Outline: No verify gate carries a flag that suppresses failure
+    Given the gate with id "<verify-id>"
+    When its command is read
+    Then it does not contain "<forbidden-flag>"
+
+    Examples:
+      | verify-id                | forbidden-flag             |
+      | format-verify-elixir     | --no-exit                  |
+      | format-verify-csharpier  | --unformatted-as-warnings  |
+
+  Scenario: The dart verify gate does not rewrite files
+    Given the gate with id "format-verify-dart"
+    When its command is read
+    Then it contains "-o none"
 
   Scenario: Formatters still auto-fix at pre-commit
     Given an unformatted file is staged
     When the pre-commit surface runs
     Then the file is rewritten in place and re-staged
     And the commit is not aborted for formatting alone
+```
+
+## R-7a — Each repo declares only the formatters it actually needs
+
+A `git ls-files` audit found **20 declared formatter entries across the four repos that match zero
+tracked files** — `ose-public` declaring Go, Elixir, C#, Clojure and Dart formatters for languages it
+does not contain; `beaver-nest` declaring nine. Three defects run the other way: `ose-primer` and
+`ose-private` `shellcheck` shell scripts they never format, and `ose-private` has tracked `.tf` files
+outside `lint-staged` entirely.
+
+The rule is presence-based: a formatter is declared **if and only if** the repo has at least one
+tracked file matching its glob. Entry sets therefore differ per repo; the schema and engine do not
+([tech-docs §2.2.4](./tech-docs.md#224-the-full-formatter-and-per-file-inventory)).
+
+```gherkin
+Feature: Presence-based formatter declaration
+
+  Scenario Outline: A repo declares no formatter for a language it does not contain
+    Given "<repo>" tracks zero "<ext>" files
+    When "rhino-cli gate list --format=json" runs in that repo
+    Then no gate declares a glob matching "<ext>"
+
+    Examples:
+      | repo        | ext   |
+      | ose-public  | .go   |
+      | ose-public  | .dart |
+      | ose-private | .fs   |
+      | ose-private | .py   |
+      | beaver-nest | .lua  |
+      | beaver-nest | .tf   |
+
+  Scenario Outline: A repo declares a formatter for every language it does contain
+    Given "<repo>" tracks at least one "<ext>" file
+    When "rhino-cli gate list --format=json" runs in that repo
+    Then exactly one type "mutation" gate declares a glob matching "<ext>"
+    And exactly one type "check" gate verifies it
+
+    Examples:
+      | repo        | ext  |
+      | ose-primer  | .sh  |
+      | ose-primer  | .sql |
+      | ose-private | .sh  |
+      | ose-private | .tf  |
+
+  Scenario: Pruning does not breach byte-identity
+    Given the four repos declare different formatter entry sets
+    When apps/rhino-cli is compared across them
+    Then the boundary file set is byte-identical
+    And "rhino-cli repo-config validate" exits zero in each repo
+
+  Scenario: Adopting a new language is not blocked by the rule
+    Given a repo tracks zero ".go" files
+    When a commit introduces the first ".go" file
+    Then no gate fails for the absence of a Go formatter
 ```
 
 ## R-8 — `deps:audit` excluded from the registry, given its own named workflow
@@ -394,17 +505,18 @@ Feature: Standard and implementation agree
 
 ## R-10 — Cross-repo parity preserved
 
-The `apps/rhino-cli` byte-identity boundary spans `ose-public`, `ose-primer`, and `ose-private` with
-zero carve-outs. The registry is **data**, not source: gate entry _sets_ may differ per repo (they
-follow each repo's actual app and tool set), while the schema and the engine are identical.
+The `apps/rhino-cli` byte-identity boundary spans **all four repos** with zero carve-outs (extended
+from three by R-11; see [tech-docs §2.8.6](./tech-docs.md#286-the-governance-change-this-requires)).
+The registry is **data**, not source: gate entry _sets_ may differ per repo (they follow each repo's
+actual app and tool set), while the schema and the engine are identical.
 
 ```gherkin
 Feature: Byte-identity and schema parity
 
-  Scenario: The engine is byte-identical across the three bound repos
+  Scenario: The engine is byte-identical across all four bound repos
     Given the gate engine lands in apps/rhino-cli
-    When src/, Cargo.toml, Cargo.lock, project.json and LICENSE are compared
-    Then ose-public, ose-primer and ose-private are byte-identical
+    When src/, tests/, Cargo.toml, Cargo.lock, project.json and LICENSE are compared
+    Then ose-public, ose-primer, ose-private and beaver-nest are byte-identical
 
   Scenario: Registry values may differ per repo but the schema may not
     Given ose-private declares an "iac-lint" gate that ose-public does not
@@ -412,10 +524,138 @@ Feature: Byte-identity and schema parity
     Then each exits zero
     And each gate entry conforms to the same schema
 
-  Scenario: beaver-nest carries the same guarantee through its fork
-    Given beaver-nest carries a fork of rhino-cli
-    When the fork port completes
+  Scenario: beaver-nest carries the same guarantee without a fork
+    Given beaver-nest has joined the byte-identity boundary
+    When the rewire completes
     Then "rhino-cli gate validate" exits zero in beaver-nest
+    And "rhino-cli parity manifest validate" exits zero in beaver-nest
+```
+
+## R-11 — `rhino-cli` byte-identity is mechanically enforced across all four repos
+
+The
+[rhino-cli Byte-Identity Boundary](../../../docs/reference/sdlc-gate-standard.md#rhino-cli-byte-identity-boundary)
+is ratified prose that nothing enforces, and it is **already violated**:
+`src/application/agents/sync_validator.rs` differs between `ose-public` and the other two bound
+repos. This plan extends the boundary to four repos, adds `apps/rhino-cli/tests/` to the file set,
+and makes it enforceable.
+
+Enforcement splits on hermeticity, exactly as [R-8](#r-8--depsaudit-excluded-from-the-registry-given-its-own-named-workflow)
+splits `deps:audit`: a committed checksum manifest is checked by an ordinary gate, and the cross-repo
+comparison — which needs the network and another repo's moving `HEAD` — is a scheduled workflow
+outside the registry.
+
+```gherkin
+Feature: Byte-identity manifest
+
+  Scenario: An unannounced edit to byte-identical source fails the gate
+    Given apps/rhino-cli/parity-manifest.sha256 is committed and current
+    And a tracked file in the boundary set is edited
+    When the gate with id "parity-manifest" runs
+    Then it exits non-zero
+    And the message names the file
+    And the message states the file is byte-identical across all four repos
+    And the message names "rhino-cli parity manifest generate" as the deliberate remedy
+
+  Scenario: The manifest never regenerates itself
+    Given a tracked file in the boundary set is edited and staged
+    When the pre-commit surface runs
+    Then no gate rewrites apps/rhino-cli/parity-manifest.sha256
+    And "rhino-cli gate list --surface=pre-commit --format=json" contains no entry
+      whose command is "parity manifest generate"
+
+  Scenario: The manifest covers tests/ as well as src/
+    Given apps/rhino-cli/tests/agents.rs is edited
+    When the gate with id "parity-manifest" runs
+    Then it exits non-zero
+
+  Scenario: Untracked files never enter the manifest
+    Given an untracked file exists under apps/rhino-cli/tests/fixtures/
+    When "rhino-cli parity manifest generate" runs
+    Then the untracked file is absent from the manifest
+    And the gate with id "parity-manifest" exits zero
+
+  Scenario: Regeneration is idempotent
+    Given "rhino-cli parity manifest generate" has run
+    When it runs a second time
+    Then apps/rhino-cli/parity-manifest.sha256 is byte-identical to the first result
+
+  Scenario: The live three-repo violation is closed
+    Given sync_validator.rs carried "opencode-go/wrong" in ose-public
+    And it carried "zai-coding-plan/wrong" in ose-primer and ose-private
+    When convergence completes
+    Then all four repos carry the identical fixture string
+    And the model-mismatch test still fails on a mismatched model
+```
+
+## R-12 — Cross-repo drift is audited, not gated
+
+The manifest gate cannot catch coordinated drift: a repo that edits boundary source **and**
+regenerates its manifest passes its own gate. Detecting that requires a reference, which requires the
+network, which disqualifies it from being a gate under this plan's own hermeticity rule.
+
+```gherkin
+Feature: Cross-repo parity audit
+
+  Scenario: The audit workflow is scheduled, never a gate
+    Given the workflow rhino-cli-parity-audit.yml
+    When its triggers are read
+    Then they are "schedule" and "workflow_dispatch" only
+    And it carries no "push" or "pull_request" trigger
+    And "rhino-cli gate list --format=json" contains no entry invoking it
+
+  Scenario: A downstream repo detects manifest divergence from canonical
+    Given ose-public's parity-manifest.sha256 differs from ose-primer's
+    When rhino-cli-parity-audit.yml runs in ose-primer
+    Then it reports failure
+    And the report names each differing path
+
+  Scenario: ose-private can read canonical without credentials
+    Given ose-public is a public repository
+    When rhino-cli-parity-audit.yml runs in ose-private
+    Then it fetches ose-public's manifest unauthenticated
+    And no ose-private content is transmitted
+
+  Scenario: The workflow name derives mechanically from its filename
+    Given the workflow file rhino-cli-parity-audit.yml
+    When its "name" field is lowercased and spaces become hyphens
+    Then the result equals the filename without its extension
+```
+
+## R-13 — Repo-specific data leaves shared source
+
+Eight of `beaver-nest`'s nine source divergences are `ose-public`'s app names hardcoded into
+byte-identical source. Until that data moves into `repo-config.yml`, byte-identity across four repos
+is unreachable — which is why this requirement is a precondition of R-11, not a companion to it.
+
+```gherkin
+Feature: Repo-specific data lives in configuration
+
+  Scenario: No repo's app names appear in shared source
+    Given the byte-identity file set after convergence
+    When it is searched for "ayokoding", "organiclever", "wahidyankf" and "ose-www"
+    Then the only matches are in test fixtures that name no real repository's apps
+
+  Scenario: The dead pre-commit pipeline is removed
+    Given commands/git_pre_commit.rs is wired to no CLI subcommand
+    When it and application/git/pre_commit.rs are deleted
+    Then "cargo build --release" succeeds
+    And the full test suite passes
+    And "rhino-cli --help" lists the same commands as before the deletion
+
+  Scenario: Gate exclusion lists move to the registry
+    Given WEBSITE_APP_PREFIXES was a hardcoded const in frontmatter_audit.rs
+    When convergence completes
+    Then those paths are declared as "args.exclude" on the gate that consumes them
+    And the const no longer exists in source
+
+  Scenario: beaver-nest's naming exemptions are upstreamed before any copy
+    Given beaver-nest exempts ROADMAP.md and SECURITY.md from md naming validate
+    And canonical ose-public does not
+    When Phase 1b completes
+    Then canonical exempts both
+    And "md naming validate" passes on a ROADMAP.md fixture in ose-public
+    And this holds before any downstream repo copies canonical
 ```
 
 ## Out of Scope
@@ -427,3 +667,5 @@ Feature: Byte-identity and schema parity
 | Adding `deps:audit` to a gate surface or the registry | Non-hermetic; excluded by decision — see R-8 and [tech-docs §2.2.3](./tech-docs.md#223-what-is-deliberately-outside-the-registry) |
 | Restoring a full-repo sweep                           | Deliberately declined; see [brd.md §Accepted Risk](./brd.md#accepted-risk)                                                        |
 | Changing the five controlled scope values             | Ratified vocabulary reused verbatim                                                                                               |
+| Blocking a merge on cross-repo parity                 | Non-hermetic; R-12 audits and reports, it does not gate                                                                           |
+| Extending byte-identity beyond `apps/rhino-cli`       | The boundary gains `tests/` and one manifest file; no other shared directory is drawn in                                          |

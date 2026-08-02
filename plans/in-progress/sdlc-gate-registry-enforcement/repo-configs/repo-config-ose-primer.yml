@@ -1,0 +1,769 @@
+# TARGET STATE — do not copy this banner into the repo.
+#
+# This is the COMPLETE repo-config.yml as it should look in ose-primer AFTER the
+# sdlc-gate-registry-enforcement plan lands. Everything above the `gates:`
+# section is this repo's CURRENT content, reproduced verbatim as of 2026-08-02
+# and unchanged by this plan. The `gates:` section at the end is what the plan
+# adds.
+#
+# Before copying, re-verify the unchanged part still matches:
+#   diff <(sed -n '1,/^gates:/p' <this file> | sed '$d') \
+#        <(cat ose-primer/repo-config.yml)
+# A non-empty diff means another change landed since 2026-08-02 — reconcile
+# rather than overwrite.
+#
+# repo-config.yml — schema: rhino-cli/repo-config/v1
+#
+# Unified repository configuration. Structure is byte-identical across all three
+# repos (ose-public, ose-primer, ose-private); values reflect each repo's actual
+# project set and surfaces. rhino-cli commands read their relevant section.
+#
+# Sections defined here:
+#   harness          — all-harness binding registry (§3.2); EVERY `harness` command reads this list
+#   coverage         — per-project test-level registry (specs:behavior:coverage + specs:domain:coverage)
+#   specs            — spec-tree structure config (specs:structure-validation)
+#   instruction-size — per-surface instruction-file byte budgets (rhino-cli harness instruction-size validate)
+#   env-contract     — surface registry for rhino-cli env validate (code↔config drift detection)
+#   env-injection    — value-less injection manifest for rhino-cli env validate (manifest-consistency)
+#   doctor           — tools from doctor's full roster this repo's toolchain does not need (rhino-cli doctor)
+
+harness:
+  # Authoritative harness registry — all 11 supported coding-agent harnesses.
+  # Fields per entry:
+  #   name        — harness identifier
+  #   tier        — source | generated | source-config | native
+  #   agent-dir   — directory of per-agent files (naming/duplication checks)
+  #   skills-dir  — directory of skill files (source tier only)
+  #   rules-dir   — directory of injected rules (generated tier only)
+  #   mirrors     — source agent-dir this entry must mirror (generated tier)
+  #   config      — config file path (source-config tier)
+  #   forbid-dir  — directory that must NOT exist (source-config tier)
+  #   shadow      — thin-pointer file to check for no-shadowing (native tier)
+  #   instruction — instruction surfaces this harness reads (instruction-size budget)
+  #
+  # Adding a 12th harness = one entry here; every harness command picks it up automatically.
+  - { name: claude-code, tier: source, agent-dir: .claude/agents, skills-dir: .claude/skills, instruction: [CLAUDE.md] }
+  - { name: opencode, tier: generated, agent-dir: .opencode/agents, mirrors: .claude/agents }
+  - name: amazonq
+    tier: generated
+    rules-dir: .amazonq/rules
+    instruction:
+      - .amazonq/rules/*.md
+  - name: codex
+    tier: source-config
+    config: .codex/config.toml
+    forbid-dir: .codex/agents
+    instruction:
+      - AGENTS.md
+  - {
+      name: copilot,
+      tier: native,
+      shadow: .github/copilot-instructions.md,
+      instruction: [AGENTS.md, .github/copilot-instructions.md],
+    }
+  - name: cursor
+    tier: generated
+    agent-dir: .cursor/agents
+    mirrors: .claude/agents
+    shadow: .cursor/rules
+    instruction: [AGENTS.md, .cursor/rules]
+  - { name: windsurf, tier: native, shadow: .windsurf/rules, instruction: [AGENTS.md, .windsurf/rules] }
+  - { name: junie, tier: native, shadow: .junie/guidelines.md, instruction: [AGENTS.md, .junie/guidelines.md] }
+  - { name: antigravity, tier: native, shadow: GEMINI.md, instruction: [AGENTS.md, GEMINI.md] }
+  - { name: pi, tier: native, instruction: [AGENTS.md, CLAUDE.md] }
+  - { name: aider, tier: native, shadow: CONVENTIONS.md, instruction: [AGENTS.md, CONVENTIONS.md] }
+
+coverage:
+  # Explicit per-project test-level registry. One entry per Nx project (apps,
+  # libs, *-e2e). No convention-derived defaults — every project is listed.
+  # A scenario's level envelope P = union of `levels` across ALL entries whose
+  # `specs` glob matches that scenario's feature file.
+  # `levels` = the test levels this project runs at.
+  # `specs`  = the feature-file glob this project owns (surface-precise for apps;
+  #             per-project for libs).
+  projects:
+    # rhino-cli (tooling)
+    - name: rhino-cli
+      levels: [unit, integration]
+      specs: "specs/apps/rhino/behavior/rhino-cli/**"
+
+    # crud domain — backends (11 polyglot implementations of the same spec)
+    - name: crud-be-clojure-pedestal
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-csharp-aspnetcore
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-elixir-phoenix
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-fsharp-giraffe
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-golang-gin
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-java-springboot
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-java-vertx
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-kotlin-ktor
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-python-fastapi
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-rust-axum
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-ts-effect
+      levels: [unit, integration]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+    - name: crud-be-e2e
+      levels: [e2e]
+      specs: "specs/apps/crud/behavior/crud-be/**"
+
+    # crud domain — frontends
+    - name: crud-fe-dart-flutterweb
+      levels: [unit]
+      specs: "specs/apps/crud/behavior/crud-web/**"
+    - name: crud-fe-ts-nextjs
+      levels: [unit]
+      specs: "specs/apps/crud/behavior/crud-web/**"
+    - name: crud-fe-ts-tanstack-start
+      levels: [unit]
+      specs: "specs/apps/crud/behavior/crud-web/**"
+    - name: crud-fe-e2e
+      levels: [e2e]
+      specs: "specs/apps/crud/behavior/crud-web/**"
+
+    # crud domain — fullstack
+    - name: crud-fs-ts-nextjs
+      levels: [unit]
+      specs: "specs/apps/crud/behavior/crud-web/**"
+
+    # libs
+    - name: golang-commons
+      levels: [unit]
+      specs: "specs/libs/golang-commons/**"
+    - name: ts-ui
+      levels: [unit]
+      specs: "specs/libs/ts-ui/**"
+    - name: clojure-openapi-codegen
+      levels: [unit]
+      specs: "specs/libs/clojure-openapi-codegen/**"
+    - name: elixir-openapi-codegen
+      levels: [unit]
+      specs: "specs/libs/elixir-openapi-codegen/**"
+    - name: elixir-cabbage
+      levels: [unit]
+      specs: "specs/libs/elixir-cabbage/**"
+    - name: elixir-gherkin
+      levels: [unit]
+      specs: "specs/libs/elixir-gherkin/**"
+    - name: ts-ui-tokens
+      levels: [unit]
+      specs: "specs/libs/ts-ui-tokens/**"
+
+    # crud-contracts is deliberately excluded from this registry, matching
+    # ose-public's precedent for organiclever-contracts/ose-contracts: every
+    # test-level target (test:unit/test:integration/test:e2e) is a documented
+    # no-op ("target not applicable for this project") for contracts projects
+    # — their real quality gate is OpenAPI spectral linting, not a
+    # Gherkin-driven test level this registry models. Verified via `find
+    # specs/apps/crud/containers/contracts` — no behavior/gherkin subtree
+    # exists (paths/schemas/examples/generated only, same shape as public's
+    # excluded contracts projects). Adding a levels: [] or levels: [unit]
+    # entry here would misleadingly claim behavior-spec coverage that
+    # doesn't exist.
+
+specs:
+  # Areas that must carry a ddd/ folder (bounded-context registry). Lifts the
+  # hardcoded apps_with_ddd() allowlist into explicit config.
+  # An area NOT listed must NOT carry ddd/ (unlisted area with ddd/ = error).
+  # crud is intentionally NOT listed: it is a polyglot reference/demo app (11
+  # backend implementations sharing one flat CRUD feature set), not a
+  # DDD-modeled production codebase like ose/organiclever. A bounded-context
+  # registry requires each context's `code` path to be a single directory
+  # whose subdirectories match its declared `layers` exactly — that
+  # presupposes one bounded-context-organized codebase, not 11 independently
+  # structured polyglot implementations. Forcing crud into ddd-areas would
+  # require restructuring all 11 backends into identical DDD layering, which
+  # is out of scope for SDLC parity.
+  ddd-areas: []
+
+  # Areas eligible for specs:domain:coverage (explicit allowlist; distinct from
+  # ddd-areas). A project NOT listed is skipped even if it has domain/** features.
+  # Today: the crud-be backends that own domain-bounded-context feature files.
+  domain-areas:
+    - crud-be-clojure-pedestal
+    - crud-be-csharp-aspnetcore
+    - crud-be-elixir-phoenix
+    - crud-be-fsharp-giraffe
+    - crud-be-golang-gin
+    - crud-be-java-springboot
+    - crud-be-java-vertx
+    - crud-be-kotlin-ktor
+    - crud-be-python-fastapi
+    - crud-be-rust-axum
+    - crud-be-ts-effect
+
+instruction-size:
+  surfaces:
+    - glob: "AGENTS.md"
+      target: 24000
+      warn: 27000
+      fail: 30000
+    - glob: "**/AGENTS.md"
+      target: 24000
+      warn: 27000
+      fail: 30000
+    - glob: "CLAUDE.md"
+      target: 6000
+      warn: 8000
+      fail: 10000
+    - glob: ".amazonq/rules/*.md"
+      target: 4000
+      warn: 8000
+      fail: 12000
+    - glob: ".windsurf/rules/*.md"
+      target: 6000
+      warn: 9000
+      fail: 12000
+    - glob: ".cursor/rules/*.mdc"
+      target: 4000
+      warn: 8000
+      fail: 12000
+    - glob: ".junie/guidelines.md"
+      target: 6000
+      warn: 8000
+      fail: 10000
+    - glob: ".github/copilot-instructions.md"
+      target: 6000
+      warn: 8000
+      fail: 10000
+    - glob: "CONVENTIONS.md"
+      target: 10000
+      warn: 13000
+      fail: 16000
+  resolved_tree:
+    root: "CLAUDE.md"
+    target: 30000
+    warn: 34000
+    fail: 38000
+
+env-contract:
+  # Surface registry for rhino-cli env validate (code↔config drift detection).
+  # ose-primer is a scaffold template repo; its CRUD demo apps use Docker Compose
+  # environment injection at test time rather than .env.example files.
+  # Surfaces will be registered here when apps adopt .env.example conventions.
+  surfaces: []
+
+env-injection:
+  # Value-less injection contract (extends env-contract:).
+  # ose-primer scaffold apps use Docker Compose injection; no .env.example conventions yet.
+  apps: []
+  ci-harness: []
+
+doctor:
+  # Tools from doctor's full roster (apps/rhino-cli/src/application/doctor/tools.rs)
+  # that ose-primer's own toolchain does not invoke, so `doctor` stays dormant for
+  # them instead of hard-failing a plain (non-`--fix`) run. Verified: ose-primer's
+  # package.json lint-staged config never calls shfmt/tofu/clang-format (it
+  # shellchecks *.sh without formatting them, has no *.tf files, and its only
+  # *.c/*.h files are vendored Elixir NIF deps under deps/, never lint-staged'd).
+  skip-tools: [shfmt, tofu, clang-format]
+
+gates:
+  # ---------------------------------------------------------------- commit-msg
+  - id: commitlint
+    type: check
+    command: 'npx --no -- commitlint --edit "$1"'
+    kind: external
+    surfaces:
+      commit-msg: { scope: other }
+
+  # -------------------------------------------- pre-commit: guards before work
+  - id: env-staged-guard
+    type: check
+    command: env staged-guard validate
+    kind: rhino-cli
+    carve-out: staged-only
+    surfaces:
+      pre-commit: { scope: other }
+
+  - id: repo-config-schema
+    type: check
+    command: repo-config validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: repo-config.yml }
+      ci: { scope: other }
+
+  # ----------------------------------------- formatters (10) + verifiers (10)
+  # ose-primer is the polyglot repo and the ONLY one tracking Go, Elixir, C#,
+  # Clojure and Dart. Nothing is pruned here; shfmt is ADDED (8 tracked .sh
+  # files, shellcheck-ed but never formatted), and the prettier glob gains
+  # `sql` and `html` for 46 and 3 tracked files no glob currently covers.
+  - id: format-prettier
+    type: mutation
+    category: formatter
+    command: prettier --write
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+
+  - id: format-verify-prettier
+    type: check
+    command: prettier --check
+    kind: external
+    verifies: format-prettier
+    surfaces:
+      ci:
+        scope: affected-file-type
+        glob: "*.{md,json,yml,yaml,css,scss,html,sql,ts,tsx,js,jsx,mjs,cjs}"
+
+  - id: format-rustfmt
+    type: mutation
+    category: formatter
+    command: rustfmt --edition 2024
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.rs" }
+
+  - id: format-verify-rustfmt
+    type: check
+    command: rustfmt --edition 2024 --check
+    kind: external
+    verifies: format-rustfmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.rs" }
+
+  - id: format-shfmt
+    type: mutation
+    category: formatter
+    command: shfmt -w
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: format-verify-shfmt
+    type: check
+    command: shfmt -d
+    kind: external
+    verifies: format-shfmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: format-fantomas
+    type: mutation
+    category: formatter
+    command: fantomas
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.fs" }
+
+  - id: format-verify-fantomas
+    type: check
+    # Exits 99 when files need formatting; 1 means an unexpected error. Any
+    # non-zero must fail the gate — never test for exit code 1 alone.
+    command: fantomas --check
+    kind: external
+    verifies: format-fantomas
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.fs" }
+
+  - id: format-ruff
+    type: mutation
+    category: formatter
+    command: ruff format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.py" }
+
+  - id: format-verify-ruff
+    type: check
+    command: ruff format --check
+    kind: external
+    verifies: format-ruff
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.py" }
+
+  - id: format-gofmt
+    type: mutation
+    category: formatter
+    command: gofmt -w
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.go" }
+
+  - id: format-verify-gofmt
+    type: check
+    # gofmt has NO failing check mode: `gofmt -l` prints offending paths and
+    # exits 0 regardless. Two upstream feature requests to add one are still
+    # open. The wrapper below is mandatory — a bare `gofmt -l` gate never fails.
+    command: 'test -z "$(gofmt -l .)"'
+    kind: external
+    verifies: format-gofmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.go" }
+
+  - id: format-elixir
+    type: mutation
+    category: formatter
+    command: scripts/format-elixir.sh
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.{ex,exs}" }
+
+  - id: format-verify-elixir
+    type: check
+    # Non-zero by default. Do NOT add --no-exit, which suppresses the failure.
+    command: mix format --check-formatted
+    kind: external
+    verifies: format-elixir
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.{ex,exs}" }
+
+  - id: format-csharpier
+    type: mutation
+    category: formatter
+    command: dotnet csharpier format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.cs" }
+
+  - id: format-verify-csharpier
+    type: check
+    # Subcommand form, not `--check`. Exits 1 on unformatted files. Do NOT add
+    # --unformatted-as-warnings, which forces exit 0.
+    command: dotnet csharpier check
+    kind: external
+    verifies: format-csharpier
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.cs" }
+
+  - id: format-cljfmt
+    type: mutation
+    category: formatter
+    command: cljfmt fix
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.clj" }
+
+  - id: format-verify-cljfmt
+    type: check
+    # Assumes the standalone cljfmt binary on PATH, which `npm run doctor`
+    # provisions here (the mutation above already relies on it). In a toolchain
+    # without it the form is `clj -Tcljfmt check` or `lein cljfmt check`.
+    command: cljfmt check
+    kind: external
+    verifies: format-cljfmt
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.clj" }
+
+  - id: format-dart
+    type: mutation
+    category: formatter
+    command: dart format
+    kind: external
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.dart" }
+
+  - id: format-verify-dart
+    type: check
+    # `-o none` stops the verify pass rewriting files before it exits.
+    command: dart format -o none --set-exit-if-changed
+    kind: external
+    verifies: format-dart
+    surfaces:
+      ci: { scope: affected-file-type, glob: "*.dart" }
+
+  # -------------------------------------------------- per-file checks (12)
+  - id: markdownlint
+    type: check
+    command: markdownlint-cli2
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-mermaid
+    type: check
+    command: md mermaid validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-heading-hierarchy
+    type: check
+    command: md heading-hierarchy validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-naming
+    type: check
+    command: md naming validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: md-frontmatter
+    type: check
+    command: md frontmatter validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.md" }
+      ci: { scope: all-file-type }
+
+  - id: actionlint
+    type: check
+    command: actionlint
+    kind: external
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: ".github/workflows/*.{yml,yaml}"
+      ci: { scope: all-file-type }
+
+  - id: shellcheck
+    type: check
+    command: shellcheck --severity=warning
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.sh" }
+      ci: { scope: affected-file-type, glob: "*.sh" }
+
+  - id: hadolint
+    type: check
+    command: hadolint --failure-threshold warning
+    kind: external
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "**/Dockerfile*" }
+      ci: { scope: affected-file-type, glob: "**/Dockerfile*" }
+
+  - id: convention-emoji
+    type: check
+    command: convention emoji validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "*.{json,toml,ts,tsx,js,jsx,mjs,cjs,rs,go,py,cs,clj,dart,ex,exs,fs}"
+      ci: { scope: all-file-type }
+
+  - id: specs-gherkin-cardinality
+    type: check
+    command: specs gherkin-cardinality validate
+    kind: rhino-cli
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "*.feature" }
+      ci: { scope: all-file-type }
+
+  - id: docker-compose-config
+    type: check
+    command: docker compose config
+    kind: external
+    surfaces:
+      pre-commit:
+        scope: affected-file-type
+        glob: "docker-compose*.{yml,yaml}"
+      ci: { scope: all-file-type }
+
+  # ------------------------------------- pre-commit mutations, run last (order)
+  - id: harness-bindings-generate
+    type: mutation
+    command: harness bindings generate
+    kind: rhino-cli
+    restages: true
+    surfaces:
+      pre-commit: { scope: other }
+
+  - id: lockfile-sync
+    type: mutation
+    command: git lockfile sync
+    kind: rhino-cli
+    restages: true
+    surfaces:
+      pre-commit: { scope: affected-file-type, glob: "apps/*/package.json" }
+
+  # ------------------------------------------------------ pre-push + ci checks
+  - id: test-quick
+    type: check
+    command: "test:quick"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: compat-min-version
+    type: check
+    command: "compat:min-version"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: specs-structure
+    type: check
+    command: "specs:structure-validation"
+    kind: nx
+    wiring: hand-wired
+    surfaces:
+      pre-push: { scope: affected-projects }
+      ci: { scope: affected-projects }
+
+  - id: env-validate
+    type: check
+    command: env validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: other }
+      ci: { scope: other }
+
+  - id: md-links
+    type: check
+    command: md links validate
+    kind: rhino-cli
+    args:
+      exclude:
+        - plans/done
+        - deps
+        - build
+        - target
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: md-readme-index
+    type: check
+    command: md readme-index validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: harness-duplication
+    type: check
+    command: harness duplication validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: all-file-type }
+      ci: { scope: all-file-type }
+
+  - id: parity-manifest
+    type: check
+    command: parity manifest validate
+    kind: rhino-cli
+    surfaces:
+      pre-push: { scope: other }
+      ci: { scope: other }
+
+  # --------------------------------------------- path-gated governance checks
+  - id: harness-naming
+    type: check
+    command: harness naming validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .claude/agents/
+          - .opencode/agents/
+      ci: { scope: other }
+
+  - id: workflows-naming
+    type: check
+    command: repo-governance workflows naming validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/workflows/
+      ci: { scope: other }
+
+  - id: vendor-independence
+    type: check
+    command: repo-governance vendor validate repo-governance/
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: convention-license
+    type: check
+    command: convention license validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: harness-bindings
+    type: check
+    command: harness bindings validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - .amazonq/
+          - .claude/
+          - .opencode/
+          - .codex/
+          - .cursor/
+          - .windsurf/
+          - .junie/
+          - .github/
+          - AGENTS.md
+          - CLAUDE.md
+          - GEMINI.md
+          - CONVENTIONS.md
+          - docs/reference/platform-bindings.md
+          - repo-governance/
+      ci: { scope: other }
+
+  - id: instruction-size
+    type: check
+    command: harness instruction-size validate
+    kind: rhino-cli
+    surfaces:
+      pre-push:
+        scope: path-gated
+        trigger:
+          - AGENTS.md
+          - CLAUDE.md
+          - repo-config.yml
+          - .amazonq/rules/
+          - .windsurf/rules/
+          - .cursor/rules/
+          - .junie/guidelines.md
+          - .github/copilot-instructions.md
+          - CONVENTIONS.md
+      ci: { scope: other }
