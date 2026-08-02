@@ -1001,7 +1001,12 @@ MERGED_COMMIT: 7e9f5add4db37dad1568690127b4aef8b084e620
       wait for `vercel-function-cost-reduction` Phase 1 to land first.
   - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
     `test ! -f apps/ayokoding-www/src/app/layout.tsx` exited 0 in the refreshed worktree.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or in-repository merge SHA occurs before Phase 9.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `plans/in-progress/ayokoding-learning-path-04-course-authoring/delivery.md`. Committed the
+    verified Phase-4 evidence as `4c620a02e` (`docs(plans): record course authoring phase 4 evidence`)
+    on `ayokoding-learning-path-04-course-authoring-final-delivery`; no PR, push, merge, or deployment
+    occurred.
 
 ```text
 BAND: Phase 4 — Band 2 — Web, backend & platform productivity (10 bodies)
@@ -1039,12 +1044,22 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 ## Phase 5: Section and authored-tree verification
 
-- [ ] [AI] Verify the 21 historically authored course bundles and their catalogue rows using `npx nx run ayokoding-www:build` — acceptance: exits `0` and every expected course route resolves in the generated output.
-- [ ] [AI] Check the manifest-ownership boundary on the persistent final-delivery branch: `git diff --name-only origin/main...HEAD -- apps/ayokoding-www/src/features/course-paths/manifests/ | grep -c .` — acceptance: returns `0`.
+- [x] [AI] Verify the 21 historically authored course bundles and their catalogue rows using `npx nx run ayokoding-www:build` — acceptance: exits `0` and every expected course route resolves in the generated output.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**:
+    `evidence/authored-body-slugs.txt` (corrected from the superseded 90-body scope to this plan's
+    21 owned bodies). A clean webpack-backed `ayokoding-www:build` completed successfully
+    (`.next/export-detail.json` reports `success: true`); every registered course body and its
+    `/en/learn/courses/<id>` prerendered route is present.
+- [x] [AI] Check the manifest-ownership boundary on the persistent final-delivery branch: `git diff --name-only origin/main...HEAD -- apps/ayokoding-www/src/features/course-paths/manifests/ | grep -c .` — acceptance: returns `0`.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (read-only verification).
+    The `origin/main...HEAD` manifest diff returned zero paths.
 
 ### Phase 5 Gate
 
-- [ ] [AI] The course-tree verification and ownership-boundary check are green, with no PR, merge, deployment, or new merge SHA.
+- [x] [AI] The course-tree verification and ownership-boundary check are green, with no PR, merge, deployment, or new merge SHA.
+  - **Date**: 2026-08-02. **Status**: Done. **Files Changed**: none (verification only).
+    The authored-tree and ownership checks passed on the persistent final-delivery branch; no PR,
+    push, merge, deployment, or merge SHA was created.
 
 > **Pause Safety**: verification is committed only on the persistent final-delivery branch.
 
