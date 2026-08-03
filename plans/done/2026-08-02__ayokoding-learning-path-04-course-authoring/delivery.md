@@ -90,6 +90,13 @@ This path is the one and only worktree for the entire plan. Provision it once fr
 `origin/main`, create the persistent `final-delivery` branch after Phase 0, and use neither
 per-course/cohort/stage worktrees nor per-phase branches. Remove it only after the final PR merges.
 
+**Completion reconciliation (2026-08-03).** The historical final-delivery branch was
+squash-merged by PR #132 and subsequently deleted from `origin`, so the retained local branch cannot
+be fast-forwarded or rebased without replaying already-delivered history. This documentation-only
+remediation starts from fresh `origin/main` commit `2dee2b973`; `git merge-base --is-ancestor
+origin/main HEAD` passed before the correction. The user authorized its direct push to `origin/main`
+and requested this worktree's deletion after that push completes.
+
 ## Delivery Mode: worktree-to-pr
 
 This plan has one delivery unit: all change-producing work is committed on the persistent
@@ -1203,10 +1210,20 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 
 - [x] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
   - **Date**: 2026-08-02. **Status**: Done. Committed as `bf7f399c5`.
-- [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
-- [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+- [x] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
+  - **Event Date**: 2026-08-02. **Recorded**: 2026-08-03. **Status**: Done. **Files Changed**:
+    `delivery.md` (completion evidence only). Draft PR [#132](https://github.com/wahidyankf/ose-public/pull/132)
+    was the plan's sole delivery PR. Its three consolidated review cycles completed, and every
+    non-skipped GitHub Actions check concluded `SUCCESS`.
+- [x] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
+  - **Event Date**: 2026-08-02. **Recorded**: 2026-08-03. **Status**: Done. **Files Changed**:
+    `delivery.md` (completion evidence only). PR #132 merged to `main` as
+    `0afd9cc278c0693b3fc5c5ecee1b8bfa32d9a776`. The closeout deployment was a no-op; on
+    2026-08-03, all 21 delivered public course routes returned HTTP 200.
 
-- [ ] [AI] Verify ALL delivery checklist items are ticked.
+- [x] [AI] Verify ALL delivery checklist items are ticked.
+  - **Date**: 2026-08-03. **Status**: Done. **Files Changed**: `delivery.md` (completion evidence
+    only). `rg -n '^\\s*- \\[ \\]' delivery.md` returned no remaining unchecked checklist item.
 - [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape present; both safety gates applied to every surviving entry).
 - [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
@@ -1275,15 +1292,17 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 - [x] [AI] The BF-8 cross-plan link gate is green after the schema plan's archival.
 - [x] [AI] Plan folder is under `plans/done/YYYY-MM-DD__ayokoding-learning-path-04-course-authoring/`;
       all READMEs updated; archival committed.
-- [ ] [AI] Draft PR opened for the Phase 6–9 closeout unit (manual verification evidence,
+- [x] [AI] Draft PR opened for the Phase 6–9 closeout unit (manual verification evidence,
       `learnings.md` triage, and the archival move — this unit's own boundary; see the
       [`### Delivery Boundaries`](#delivery-boundaries) table); 3-cycle PR-Review complete; CI green;
       PR `[AI]`-merged; deployed (no-op).
+  - **Event Date**: 2026-08-02. **Recorded**: 2026-08-03. **Status**: Done. **Files Changed**:
+    `delivery.md` (completion evidence only). PR #132 contains the archival commit, three completed
+    review cycles, and green CI; its merged `main` commit is `0afd9cc278c0693b3fc5c5ecee1b8bfa32d9a776`.
 
-> **Pause Safety**: the plan is archived and locally ready for its sole draft PR. Remote GitHub
-> authentication is required to push `ayokoding-learning-path-04-course-authoring-final-delivery`,
-> open the PR, run CI/review cycles, merge, and deploy. Resume from the push when authenticated;
-> the remote-only checkboxes above remain intentionally unticked.
+> **Completion**: the plan's sole delivery PR (#132) is merged and its complete evidence is recorded
+> above. The documentation-only reconciliation commit is authorized to go directly to `origin/main`.
+> The user requested deletion of this worktree after that push completes.
 
 ---
 
@@ -1305,8 +1324,11 @@ MERGED_COMMIT: 8bca5d45b5e27cb037319f88fbdb343183bfeb3d
 - [x] [AI] `npx nx affected -t test:quick test:unit` exits 0.
 - [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
 - [x] [AI] `npm run lint:md` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
+  - **Date**: 2026-08-03. **Status**: Done. **Files Changed**: `delivery.md` (completion evidence
+    only). The affected typecheck, lint, quick-test, and behavior-coverage suite completed with no
+    failing target; pre-existing lint warnings remained warnings and introduced no failure to fix.
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
 > This follows the root cause orientation principle — proactively fix preexisting errors encountered
