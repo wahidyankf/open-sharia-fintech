@@ -395,25 +395,38 @@ A file is excluded from `guard-env-file-access` when **both** hold:
 Everything else stays denied. A dotfile `.env*` under `content/` is still denied, and a
 `<word>.env` outside any content tree is still denied.
 
-**Per-repo exclusion list** — each repo enumerates its own content trees, because the harness
-permission surfaces need exact subtree paths (Codex accepts `write` only on an exact path or a
-trailing `/**`, never on a glob):
+**The exclusion is expressed by pattern shape, not by an enumerated path list.** Every guard keys on
+a **dotfile** basename — `.env`, `.env.local` — so a `<word>.env` fixture falls outside the deny
+without any per-tree entry. A new content tree needs no configuration change.
 
-| Repo          | Excluded content trees                                     |
-| ------------- | ---------------------------------------------------------- |
-| `ose-public`  | `apps/ayokoding-www/content/**`, `apps/ose-www/content/**` |
-| `ose-primer`  | _(none yet — no `apps/*/content` tree)_                    |
-| `ose-private` | _(none yet — no `apps/*/content` tree)_                    |
-| `beaver-nest` | _(none yet — no `apps/*/content` tree)_                    |
+| Surface                                  | Carries the exclusion as                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `.claude/hooks/block-env-file-access.sh` | Bash-branch allow for `apps/*/content/**` where the char before `.env` is not `/` or `.`  |
+| `.claude/settings.json`                  | `Read`/`Edit` allow for `apps/*/content/**/*.env`; deny globs were dotfile-shaped already |
+| `.opencode/opencode.json`                | `apps/*/content/**/*.env: allow` in the read and edit permission maps                     |
+| `~/.codex/config.toml` (untracked)       | deny globs written `**/.env*`, **never** `**/*.env*`                                      |
+| `rhino-cli env staged-guard validate`    | no change — already keys on a dotfile `.env*` basename                                    |
 
-Enforcement surfaces carrying the exclusion: `.claude/hooks/block-env-file-access.sh` (file-tool and
-Bash branches), `.claude/settings.json` allow rules, `.opencode/opencode.json` read/edit permission
-maps, and the Codex permission profile in `~/.codex/config.toml`. `rhino-cli env staged-guard
-validate` needs no change — it keys on a dotfile `.env*` basename, so a content fixture was never in
-its scope.
+**The Codex surface is the one that bites.** Its deny globs were originally `**/*.env`; the leading
+`*` matched `kata.env` and blocked the whole course. Adding a narrower `apps/<app>/content/** =
+"write"` does **not** reopen the files — Codex keeps the broader deny in force, contrary to the
+"more specific overrides broader" wording in its own documentation. It also rejects a glob with
+`write` outright:
 
-Adding a new content tree means adding a row above **and** an entry in each enforcement surface;
-the Codex profile cannot express `apps/*/content/**` as a glob.
+```
+Error loading configuration: filesystem glob path `...` only supports `deny` access;
+use an exact path or trailing `/**` for `write` subtree access
+```
+
+So the deny itself must be shaped correctly — `**/.env`, `**/.env.local`, `**/.env.*.local`,
+`**/.env.development`, `**/.env.test`, `**/.env.production`, `**/.env.staging`, `**/.env.preview` —
+which also brings that profile in line with the dotfile assumption the rest of this repo already
+makes.
+
+**Residual gap, accepted deliberately**: a real env file named without a leading dot (`prod.env`)
+is not covered by any guard here. That gap predates the exclusion — every surface in the table was
+already dotfile-keyed — and a 2026-08-03 sweep of both Codex workspace roots found no such file:
+every non-dotfile `*.env` on disk was an ayokoding course fixture. Name real env files as dotfiles.
 
 See also: [`env-file-access.md`](./env-file-access.md)
 
