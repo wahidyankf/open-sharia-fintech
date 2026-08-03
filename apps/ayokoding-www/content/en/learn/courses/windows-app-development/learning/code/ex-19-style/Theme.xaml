@@ -1,0 +1,6 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style x:Key="TaskButtonStyle" TargetType="Button">
+    <Setter Property="Padding" Value="12,6" />
+  </Style>
+</ResourceDictionary>

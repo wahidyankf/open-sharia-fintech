@@ -127,22 +127,57 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
 > _Executor: repo-setup-manager_
 
-- [ ] [AI] Enter/provision the worktree and install dependencies: `npm install`
+- [x] [AI] Enter/provision the worktree and install dependencies: `npm install`
       — acceptance: exits 0, `node_modules/` synchronized.
-- [ ] [AI] Converge the toolchain: `npm run doctor -- --fix`
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Provisioned the sole declared worktree from `origin/main` at `278bbb6c8`; `npm install` exited 0.
+
+- [x] [AI] Converge the toolchain: `npm run doctor -- --fix`
       — acceptance: exits 0 with no unresolved drift.
-- [ ] [AI] **Verify `ayokoding-learning-path-01-url-restructure` merged** — command (single line):
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: `npm run doctor -- --fix` exited 0 with no output or unresolved drift.
+
+- [x] [AI] **Verify `ayokoding-learning-path-01-url-restructure` merged** — command (single line):
       `test -d apps/ayokoding-www/content/en/learn/courses && test -f apps/ayokoding-www/content/en/learn/courses/_index.md`
       — acceptance: both exit 0.
-- [ ] [AI] **Verify `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged** — command:
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The populated courses namespace and its `_index.md` both exist; the prerequisite command exited 0.
+
+- [x] [AI] **Verify `ayokoding-learning-path-02-schema-and-prerequisite-dag` merged** — command:
       `test -d plans/done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses`
       — acceptance: exits 0.
-- [ ] [AI] **Verify `ayokoding-learning-path-04-course-authoring`'s Phase 0 baseline is established** —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The authoritative syllabus course-spec directory exists; the prerequisite command exited 0.
+
+- [x] [AI] **Verify `ayokoding-learning-path-04-course-authoring`'s Phase 0 baseline is established** —
       command: `test -f plans/done/2026-08-02__ayokoding-learning-path-04-course-authoring/evidence/phase-0-snapshot.txt`
       — acceptance: exits 0. This confirms plan04's own toolchain-convergence and upstream-verification
       baseline exists; this plan does not need Band 2 or any other band of plan04 to have landed —
       only its Phase 0 baseline and its populated `<COURSES>` namespace (already checked above).
-- [ ] [AI] **Verify `vercel-function-cost-reduction`'s checkable precondition holds** — command
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Plan 04's recorded Phase 0 snapshot is present; the prerequisite command exited 0.
+
+- [x] [AI] **Verify `vercel-function-cost-reduction`'s checkable precondition holds** — command
       (single line):
       `test ! -f apps/ayokoding-www/src/app/layout.tsx && test ! -f apps/ayokoding-www/src/middleware.ts`
       — acceptance: both `test` conditions pass (both files absent — `app/layout.tsx` deleted with its
@@ -151,10 +186,24 @@ No phase may create an additional worktree or branch. The final phase is the onl
       **still exists**, so this exact command fails today; once
       `vercel-function-cost-reduction` lands, both files are gone and the command passes. Do not
       proceed past this check if it fails — this plan does not start on a promise.
-- [ ] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Both dynamic-rendering causes are absent (`src/app/layout.tsx` and `src/middleware.ts`); the checkable precondition exited 0.
+
+- [x] [AI] Establish content baselines: `npx nx run ayokoding-www:build` and
       `npx nx run ayokoding-www:test:unit`
       — acceptance: both exit 0; record pass state in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] **Confirm all fourteen course slugs are absent (no collision)** under `<COURSES>`:
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/phase-0-snapshot.txt`
+  - **Notes**: `ayokoding-www:build` and `ayokoding-www:test:unit` exited 0; both results are recorded in the Phase 0 snapshot.
+
+- [x] [AI] **Confirm all fourteen course slugs are absent (no collision)** under `<COURSES>`:
 
   ```bash
   for s in just-enough-kotlin android-app-development just-enough-swift ios-app-development \
@@ -169,7 +218,13 @@ No phase may create an additional worktree or branch. The final phase is the onl
   `mkdir -p apps/ayokoding-www/content/en/learn/courses/just-enough-kotlin` makes the loop print
   `EXISTS just-enough-kotlin`.
 
-- [ ] [AI] **Create the authored-body slug register** — write the 14 slugs this plan authors, one per
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The collision loop produced zero `EXISTS` lines; all 14 target course directories are available.
+
+- [x] [AI] **Create the authored-body slug register** — write the 14 slugs this plan authors, one per
       line, to `evidence/authored-body-slugs.txt`:
 
   ```bash
@@ -194,14 +249,34 @@ No phase may create an additional worktree or branch. The final phase is the onl
   — acceptance: `wc -l < evidence/authored-body-slugs.txt` returns **14**, and
   `sort evidence/authored-body-slugs.txt | uniq -d | wc -l` returns **0**.
 
-- [ ] [AI] **Record the authored-body baseline** —
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/authored-body-slugs.txt`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Created the ordered 14-slug register; line-count and duplicate checks both passed.
+
+- [x] [AI] **Record the authored-body baseline** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **14** today (none authored yet); record in `evidence/phase-0-snapshot.txt`.
       The same command must return **0** at archival (Phase 7).
-- [ ] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/phase-0-snapshot.txt`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The authored-body absence loop returned 14 and the Phase 0 snapshot records that baseline.
+
+- [x] [AI] Confirm `learnings.md` exists in the plan folder with its H1 — command:
       `test -f learnings.md && head -1 learnings.md` — acceptance: file present and the first line is
       `# Learnings: ayokoding-learning-path-05-course-authoring-platform-and-concurrency`.
-- [ ] [AI] **Cross-plan link gate** — confirm every `../ayokoding-learning-path-*` reference in this
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: `learnings.md` is present with the required Plan 05 H1.
+
+- [x] [AI] **Cross-plan link gate** — confirm every `../ayokoding-learning-path-*` reference in this
       plan's own files resolves:
 
   ```bash
@@ -214,27 +289,94 @@ No phase may create an additional worktree or branch. The final phase is the onl
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The scoped link validator exited 0 and produced no Plan 05 matching failure line.
+
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       — acceptance: returns **0**.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The manifest-history diff count is 0; the ownership invariant holds.
 
 ### Phase 0 Gate
 
 > All checks below must pass before starting Phase 1.
 
-- [ ] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
-- [ ] [AI] All four upstream plans verified: URL-restructure merged (populated `<COURSES>`), schema
+- [x] [AI] `npm install` exited 0 and `npm run doctor -- --fix` reports no unresolved drift.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Both Phase 0 toolchain commands exited 0.
+
+- [x] [AI] All four upstream plans verified: URL-restructure merged (populated `<COURSES>`), schema
       plan merged (`syllabus/courses/` present), plan04's Phase 0 baseline present, and the
       `vercel-function-cost-reduction` checkable precondition (both files absent) holds.
-- [ ] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
-- [ ] [AI] All 14 slugs confirmed absent (zero `EXISTS` lines).
-- [ ] [AI] `evidence/authored-body-slugs.txt` holds 14 unique slugs; the ABSENT-count baseline of 14
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: All four required upstream conditions passed their explicit commands.
+
+- [x] [AI] `ayokoding-www:build` + `test:unit` baselines recorded green.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/phase-0-snapshot.txt`
+  - **Notes**: The recorded build and unit-test baselines are green.
+
+- [x] [AI] All 14 slugs confirmed absent (zero `EXISTS` lines).
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The collision loop printed no existing Plan 05 course directory.
+
+- [x] [AI] `evidence/authored-body-slugs.txt` holds 14 unique slugs; the ABSENT-count baseline of 14
       is recorded in `evidence/phase-0-snapshot.txt`.
-- [ ] [AI] Cross-plan link gate green.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR was opened for this phase and nothing was pushed** —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/authored-body-slugs.txt`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/evidence/phase-0-snapshot.txt`
+  - **Notes**: The slug register has 14 distinct rows and its recorded absent-count is 14.
+
+- [x] [AI] Cross-plan link gate green.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The scoped validator found no unresolved Plan 05 cross-plan link.
+
+- [x] [AI] Zero manifest files touched.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The manifest-history diff count remains 0.
+
+- [x] [AI] **No PR was opened for this phase and nothing was pushed** —
       `git ls-remote --heads origin "$(git branch --show-current)" | grep -c .` returns **0**, and
       `gh pr list --head "$(git branch --show-current)" --json number --jq 'length'` returns **0**.
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: The branch has no remote head and `gh pr list` returned 0; Phase 0 neither pushed nor opened a PR.
 
 > **Pause Safety**: only the toolchain, the four upstream preconditions, and the slug register were
 > established — no course body exists yet, nothing is pushed, and no PR exists. Safe to stop
@@ -284,9 +426,15 @@ No phase may create an additional worktree or branch. The final phase is the onl
 Each course below is its own sub-step inside this phase's single delivery unit (Band 3 lands as one
 PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying the convention:
 
-- [ ] [AI] `just-enough-kotlin` (Primer · Kotlin, `<SYLLABUS>courses/just-enough-kotlin.md`) — Kotlin
+- [x] [AI] `just-enough-kotlin` (Primer · Kotlin, `<SYLLABUS>courses/just-enough-kotlin.md`) — Kotlin
       syntax, null-safety, coroutines — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-kotlin/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored the 24-file Kotlin primer (78 annotated examples, 26 concepts, capstone, and five-section drilling). Independent primer/facts/link rechecks found zero CRITICAL/HIGH/MEDIUM issues; `ayokoding-www:build` and `npm run lint:md` pass. Kotlin and Gradle executables are unavailable in this worktree, so source-level runner validation is recorded in lieu of local execution.
 
   **Gherkin (underpins) →** "Each just-enough primer correctly unlocks its paired platform course"
 
@@ -298,37 +446,92 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
     And the platform course does not re-teach the language syntax its paired primer already covers
   ```
 
-- [ ] [AI] `android-app-development` (By Example · Kotlin, `<SYLLABUS>courses/android-app-development.md`)
+- [x] [AI] `android-app-development` (By Example · Kotlin, `<SYLLABUS>courses/android-app-development.md`)
       — native Android with the SDK — all 9 convention steps complete; checkers clean; additionally:
       `grep -F -q 'just-enough-kotlin' "<COURSES>android-app-development/_index.md"` exits 0 (the
       paired-primer prerequisite is declared).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-swift` (Primer · Swift, `<SYLLABUS>courses/just-enough-swift.md`) — Swift syntax,
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/android-app-development/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored the Android course with 78 source-matched examples, a deterministic offline-first capstone, and six topic-specific katas. Independent final review found no CRITICAL/HIGH issues; its sole MEDIUM blank bullet was removed. `ayokoding-www:build` and Markdown checks pass; the declared Kotlin prerequisite is in frontmatter.
+
+- [x] [AI] `just-enough-swift` (Primer · Swift, `<SYLLABUS>courses/just-enough-swift.md`) — Swift syntax,
       optionals — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `ios-app-development` (By Example · Swift, `<SYLLABUS>courses/ios-app-development.md`) — native
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-swift/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored 78 executable Swift examples, a runnable capstone, and five-section drilling. Independent review reported zero CRITICAL/HIGH/MEDIUM findings; the scoped structural checks and site validation pass.
+
+- [x] [AI] `ios-app-development` (By Example · Swift, `<SYLLABUS>courses/ios-app-development.md`) — native
       iOS with the SDK — all 9 convention steps complete; checkers clean; additionally:
       `grep -F -q 'just-enough-swift' "<COURSES>ios-app-development/_index.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-dart` (Primer · Dart, `<SYLLABUS>courses/just-enough-dart.md`) — Dart syntax,
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/ios-app-development/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the iOS course with 78 source-matched examples, capstone, and five-section drilling. The capstone parser, deterministic reset fixture, and UI-test flow validate cleanly; no CRITICAL/HIGH/MEDIUM findings remain.
+
+- [x] [AI] `just-enough-dart` (Primer · Dart, `<SYLLABUS>courses/just-enough-dart.md`) — Dart syntax,
       async, Flutter idioms — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `hybrid-app-development` (By Example · Dart, `<SYLLABUS>courses/hybrid-app-development.md`) —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-dart/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored 78 source-matched Dart examples, executable capstone, and five-section drilling. Independent review had one MEDIUM wording correction, now fixed; no CRITICAL/HIGH findings remain.
+
+- [x] [AI] `hybrid-app-development` (By Example · Dart, `<SYLLABUS>courses/hybrid-app-development.md`) —
       cross-platform from one Dart codebase — all 9 convention steps complete; checkers clean;
       additionally: `grep -F -q 'just-enough-dart' "<COURSES>hybrid-app-development/_index.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-csharp` (Primer · C#, `<SYLLABUS>courses/just-enough-csharp.md`) — C# syntax,
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/hybrid-app-development/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and remediated all 78 topic-specific Flutter/Dart examples, capstone, and five-section drilling. Independent final review reported zero CRITICAL/HIGH/MEDIUM findings, including capstone Mermaid and behavioral test coverage.
+
+- [x] [AI] `just-enough-csharp` (Primer · C#, `<SYLLABUS>courses/just-enough-csharp.md`) — C# syntax,
       LINQ, async, .NET — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `windows-app-development` (By Example · C#, `<SYLLABUS>courses/windows-app-development.md`) —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-csharp/**`, `apps/ayokoding-www/content/en/learn/_index.md`, `apps/ayokoding-www/content/en/learn/courses/_index.md`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and remediated the C# primer with 78 runnable, colocated net10 projects and source files, a passing xUnit capstone, and five drills. Final independent review and generated-index validation reported zero CRITICAL/HIGH/MEDIUM findings.
+
+- [x] [AI] `windows-app-development` (By Example · C#, `<SYLLABUS>courses/windows-app-development.md`) —
       native Windows desktop — all 9 convention steps complete; checkers clean; additionally:
       `grep -F -q 'just-enough-csharp' "<COURSES>windows-app-development/_index.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `linux-app-development` (By Example · Python, `<SYLLABUS>courses/linux-app-development.md`) —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/windows-app-development/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the Windows course with 78 source-matched C# probes, genuine Windows project/XAML/API artifacts for host-bound topics, a WPF/SQLite capstone with three passing tests, and five-section drilling. Final review found zero CRITICAL/HIGH/MEDIUM findings; the WinUI compiler's macOS boundary is explicitly documented and structurally validated against the actual WinUI scaffold.
+
+- [x] [AI] `linux-app-development` (By Example · Python, `<SYLLABUS>courses/linux-app-development.md`) —
       native Linux desktop, packaging — all 9 convention steps complete; checkers clean; additionally:
       `grep -F -q 'just-enough-python' "<COURSES>linux-app-development/_index.md"` exits 0 (builds on
       the existing library primer without re-teaching it).
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/linux-app-development/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and remediated the Linux course with 78 source-matched examples and synchronized rendered snippets, a live Unix-socket daemon/CLI capstone with a short-path pytest success test, and all five drilling sections. Final independent review reported zero CRITICAL/HIGH/MEDIUM findings; scoped format, Markdown lint, runtime checks, and pytest pass.
 
   **Gherkin (binds) →** "linux-app-development builds on the existing Python primer without re-teaching it"
 
@@ -340,12 +543,18 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
     And it teaches native Linux desktop development and packaging without repeating Python syntax
   ```
 
-- [ ] [AI] `building-production-cli-tools` (By Example · Go + Rust,
+- [x] [AI] `building-production-cli-tools` (By Example · Go + Rust,
       `<SYLLABUS>courses/building-production-cli-tools.md`) — distributable CLI tools — all 9 convention
       steps complete; checkers clean; additionally both prerequisites are declared:
       `grep -F -q 'just-enough-go' "<COURSES>building-production-cli-tools/_index.md"` exits 0 **and**
       `grep -F -q 'just-enough-rust' "<COURSES>building-production-cli-tools/_index.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/building-production-cli-tools/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the Go/Rust CLI course with 78 source-matched examples, a standalone TTY-aware capstone, successful two-target cross-build verification, and five-section drilling. Final review found zero CRITICAL/HIGH/MEDIUM findings; scoped checks, capstone tests, and Go/Rust compilation pass.
 
   **Gherkin (binds) →** "building-production-cli-tools builds on both Go and Rust primers"
 
@@ -359,10 +568,10 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 **Per-band closing steps** (applied once, in this phase's own gate):
 
-- [ ] [AI] Add each landed course's row to
+- [x] [AI] Add each landed course's row to
       [tech-docs §Course Library Catalog](./tech-docs.md#course-library-catalog) (already present at
       authoring time; confirm no drift against the settled spec) and its ID to `<COURSES>_index.md`.
-- [ ] [AI] Record the band-completion signal in this file with all five fields — `GROW_MANIFESTS` is
+- [x] [AI] Record the band-completion signal in this file with all five fields — `GROW_MANIFESTS` is
       the three software-engineer-role manifests:
 
   ```text
@@ -385,23 +594,33 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
   ```
 
-- [ ] [AI] Confirm zero manifest files were touched:
+  **Recorded signal**
+
+  ```text
+  BAND: Band 3 — Mobile & desktop platforms
+  PLAN: ayokoding-learning-path-05-course-authoring-platform-and-concurrency
+  LANDED_COURSE_IDS: just-enough-kotlin, android-app-development, just-enough-swift, ios-app-development, just-enough-dart, hybrid-app-development, just-enough-csharp, windows-app-development, linux-app-development, building-production-cli-tools
+  GROW_MANIFESTS: unchanged (zero files touched)
+  CATALOG: generated indexes validated; settled catalog rows confirmed
+  ```
+
+- [x] [AI] Confirm zero manifest files were touched:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0**.
 
 ### Phase 1 Gate
 
-- [ ] [AI] All 10 Band-3 bodies exist:
+- [x] [AI] All 10 Band-3 bodies exist:
       `for s in just-enough-kotlin android-app-development just-enough-swift ios-app-development just-enough-dart hybrid-app-development just-enough-csharp windows-app-development linux-app-development building-production-cli-tools; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 10 before this phase).
-- [ ] [AI] Every primer passed `apps-ayokoding-www-primer-checker`; every By-Example body passed
+- [x] [AI] Every primer passed `apps-ayokoding-www-primer-checker`; every By-Example body passed
       `apps-ayokoding-www-by-example-checker`; facts + link checkers clean.
-- [ ] [AI] Every primer/platform pair's prerequisite grep passes (6 pairing checks: kotlin→android,
+- [x] [AI] Every primer/platform pair's prerequisite grep passes (6 pairing checks: kotlin→android,
       swift→ios, dart→hybrid, csharp→windows, plus linux-app-development→just-enough-python and
       building-production-cli-tools→{just-enough-go, just-enough-rust}).
-- [ ] [AI] `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded with all five fields; zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+- [x] [AI] `npx nx run ayokoding-www:build` + `npm run lint:md` exit 0.
+- [x] [AI] Catalog rows added; band signal recorded with all five fields; zero manifest files touched.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
       of this phase's band-completion signal above.
 
 > **Pause Safety**: all four primer/platform pairs plus the two standalone platform courses are live;
