@@ -222,7 +222,12 @@ plans/in-progress/complex-feature/
 
 - **`brd.md`** — WHY: business goal, impact, affected roles, business-level success metrics, business-scope Non-Goals, business risks. Solo-maintainer repo — no sign-off / sponsor / stakeholder ceremony language.
 - **`prd.md`** — WHAT: product overview, personas, user stories, Gherkin acceptance criteria, product scope (in + out), product risks.
-- **`tech-docs.md`** — HOW: architecture, design decisions with rationale, file-impact, dependencies, rollback.
+- **`tech-docs.md`** — HOW: architecture, design decisions with rationale, an annotated file-impact tree,
+  dependencies, rollback. Its `## File-Impact Analysis` is a root-relative fenced `text` tree with
+  `[E]`/`[N]`/`[D]`/`[G]` markers as the primary scope view. Add `### More Detail` directly below it
+  only for non-obvious mechanics, ordering, discovery criteria, or archival follow-up; it never
+  replaces the tree or contains delivery checkboxes. See [Plans Organization Convention §File-Impact
+  Analysis Format](../../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
 - **`delivery.md`** — DO: sequential `- [ ]` checklist organized by phase; one concrete action per checkbox. Opens with the `[AI]`/`[HUMAN]` executor legend; each phase ends with a `### Phase N Gate` (must-pass verification) followed by a Pause Safety note.
 
 **Benefits**: narrow PR diff per concern (business PRs touch brd.md only; product PRs touch prd.md only), sharper agent validation (plan-checker asserts placement per file), industry-norm alignment (BRD + PRD are recognized doc types).

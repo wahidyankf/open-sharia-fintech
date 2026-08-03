@@ -82,6 +82,10 @@ Validate that completed plan implementation:
 - Design decisions are reflected in code
 - Dependencies are properly integrated
 - Testing strategy is executed
+- Delivered paths reconcile to `tech-docs.md`'s annotated File-Impact Analysis tree and their
+  `[E]`/`[N]`/`[D]`/`[G]` actions. `### More Detail` provides context only; it cannot authorize an
+  undeclared path. A scope change requires a plan amendment recorded before execution, not a
+  retrospective justification.
 
 ### 3. Delivery Checklist Completion
 

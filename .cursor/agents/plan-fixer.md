@@ -108,6 +108,19 @@ When the audit reports misplaced content per the [Content-Placement Rules](../..
 
 After moving content, update any cross-references that pointed at the old location and verify both files still satisfy the per-file required-sections list.
 
+#### File-Impact Tree Repairs (per [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule))
+
+When plan-checker flags a missing or malformed file-impact tree, reconstruct the `## File-Impact
+Analysis` as a root-relative fenced `text` tree before editing supporting prose. Preserve every
+repo-grounded target already named by the plan, give each `[E]`, `[N]`, `[D]`, or `[G]`, and retain a
+bounded pattern only when the plan states how its members are discovered. If non-obvious mechanics
+remain, move them into a `### More Detail` section immediately below the tree; do not leave a
+prose-bullet list as the primary scope, invent paths, or move delivery checkboxes out of `delivery.md`.
+
+This is HIGH-confidence only when the existing targets are repo-grounded and mechanically mappable.
+If the plan's intended footprint is genuinely ambiguous, preserve the finding as MEDIUM for author
+clarification rather than guessing a tree.
+
 #### PR Step / Delivery Mode Reconciliation (per [Plans Organization Convention §Delivery Mode](../../repo-governance/conventions/structure/plans.md#delivery-mode))
 
 When plan-checker flags a HIGH finding for a PR step under a direct-push Delivery Mode, resolve it

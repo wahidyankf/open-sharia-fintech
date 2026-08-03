@@ -116,7 +116,8 @@ Run plan validation to identify completeness, accuracy, and hallucination issues
 
 - Structure (folder name, file layout, mandatory sections)
 - Requirements (BRD + PRD content placement, Gherkin)
-- Technical documentation (architecture, design decisions, diagrams)
+- Technical documentation (architecture, design decisions, diagrams, and the annotated file-impact
+  tree; `### More Detail` is optional supporting context, never a replacement for the tree)
 - Delivery checklist (granularity, TDD shape, execution-grade clarity)
 - Operational readiness (Step 5b — quality gates, CI verification, env setup)
 - Manual behavioral assertions (Step 5c — Playwright MCP / curl)

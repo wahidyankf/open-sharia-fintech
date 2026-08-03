@@ -333,6 +333,10 @@ Read the plan in full, reconcile against any prior run's state, and build the li
 **Orchestrator action**:
 
 - Read the plan at `{input.plan-path}` — all five docs if present (`README.md`, `brd.md`, `prd.md`, `tech-docs.md`, `delivery.md`) or the legacy four-doc layout (`requirements.md` in place of `brd.md` + `prd.md`).
+- Read `tech-docs.md`'s annotated `## File-Impact Analysis` tree before materializing tasks. Treat it
+  as the plan's declared footprint: reconcile each delivery path against its `[E]`/`[N]`/`[D]`/`[G]`
+  marker and surface a mismatch before touching an undeclared path. `### More Detail` supplies
+  context only; it does not expand the footprint.
 - Locate the delivery checklist — typically `delivery.md` adjacent to the plan, or embedded in a single-file plan's `README.md`.
 - **Resume Reconciliation (Iron Rule 10)**: parse every checkbox top-to-bottom. For each `- [x]`, count it as done and skip it. For each `- [ ]`, queue it for task creation in reading order. If a stale Task list from a prior run disagrees with disk, delete it and rebuild.
 - **Full granularity parsing (Iron Rule 1)**: identify every `- [ ]` AND every nested `- [ ]` sub-bullet. Nested sub-bullets are NOT rolled into their parent — each gets its own task.

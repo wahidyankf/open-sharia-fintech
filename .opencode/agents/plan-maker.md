@@ -162,6 +162,13 @@ tests are written BEFORE implementation. Gherkin acceptance criteria in `prd.md`
 source of first failing tests. Document which test level (unit/integration/E2E) covers each
 acceptance criterion.
 
+**File-Impact Analysis (HARD RULE)**: Write `tech-docs.md`'s `## File-Impact Analysis` as the
+primary annotated file tree defined by the [Plans Organization Convention](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
+The tree is rooted at `.`, marks every target `[E]`, `[N]`, `[D]`, or `[G]`, and carries the
+scan-first scope. Add `### More Detail` immediately below it only for non-obvious mechanics,
+ordering, discovery criteria, or archival follow-up; do not substitute prose bullets for the tree
+or put delivery checkboxes there.
+
 **Vercel MCP availability (conditional — resolve BEFORE writing the delivery checklist)**: if the
 plan touches a Vercel-deployed surface, probe for a connected, authenticated Vercel MCP server and
 record the outcome in `tech-docs.md`. The answer decides executor tags in Step 6, so it cannot be

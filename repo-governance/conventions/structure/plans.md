@@ -392,6 +392,41 @@ If the author cannot comfortably fit both the condensed BRD and condensed PRD se
 - **`learnings.md`** (transient): a running log of generalizable learnings accrued while executing `delivery.md` — appended to in the moment an executor notices something worth keeping, not reconstructed from memory afterward. It is committed and moves with the plan folder through the lifecycle, but it is **never the system of record** — it is drained by the Knowledge Capture phase before archival and MAY be deleted from `plans/done/` at any later date. See the [Knowledge Capture Convention](../../development/quality/knowledge-capture.md) for the full running-log format, the open-ended triage matrix, and the two mandatory safety gates.
 - **`evidence/`** (optional): committed folder for testing evidence produced during plan execution — screenshots (one per breakpoint per locale), saved curl responses, Lighthouse reports, and other file-based artifacts referenced from `delivery.md` implementation notes. Created when the plan's first manual verification step runs. Moves with the plan folder on archival to `done/`. Binary files (PNG/JPG) are committed alongside the text files. See [Evidence Capture Convention](../../development/quality/evidence-capture.md).
 
+### File-Impact Analysis Format (HARD RULE)
+
+Every substantive plan's `tech-docs.md` (or the Technical Approach section of a permitted
+single-file plan) MUST contain a `## File-Impact Analysis` whose primary view is one root-relative,
+annotated file tree. The tree is the scan-first source of truth for scope: a reviewer must be able
+to identify every planned path, its repository location, and its intended action without assembling
+information from prose bullets.
+
+Use a fenced `text` block rooted at `.`. Annotate each leaf or bounded path family with its action:
+**[E]** edit, **[N]** new file/pattern, **[D]** delete, or **[G]** generated/regenerated. A `*`
+pattern is allowed only for a bounded, named family; state how its exact members will be discovered
+before editing. Do not use an unbounded directory or a vague phrase such as “update related files”
+in place of a path. Keep a short purpose beside each entry when the filename alone is insufficient.
+
+When the tree cannot carry non-obvious execution context without becoming unreadable, place a
+`### More Detail` section immediately after it. This section may explain cross-cutting mechanics,
+ordering, discovery criteria, or archival follow-up, but it MUST map back to the tree and MUST NOT
+replace it, repeat every path, or contain delivery checkboxes. Execution steps remain in
+`delivery.md`.
+
+```text
+.
+├── apps/example/
+│   ├── project.json [E] — register the new target
+│   ├── src/Feature.ts [N] — feature boundary
+│   └── src/Legacy.ts [D] — superseded implementation
+└── specs/apps/example/feature.feature [E] — companion behavior
+```
+
+### More Detail
+
+`src/Feature.ts` is introduced only after the existing boundary is characterized. The exact test
+files under the affected project are discovered from its project configuration and recorded in the
+execution ledger before they are edited.
+
 ### The Knowledge Capture Phase (Final Phase Before Archival)
 
 Every substantive plan's `delivery.md` MUST end with a **Knowledge Capture** phase, immediately

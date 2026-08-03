@@ -448,6 +448,10 @@ Delegate via the Agent tool. Provide a self-contained handoff prompt containing 
    `plans/in-progress/<identifier>/` (no date prefix); for `target-stage=backlog` this is
    `plans/backlog/<identifier>/` (also no date prefix). Do NOT place an
    `in-progress` plan under `backlog/` or vice versa.
+8. **File-impact instruction**: make `tech-docs.md`'s `## File-Impact Analysis` a root-relative,
+   annotated file tree using `[E]`/`[N]`/`[D]`/`[G]` markers. It is the primary scope view; add
+   `### More Detail` directly below it only for non-obvious mechanics, ordering, discovery criteria,
+   or archival follow-up. Follow [Plans Organization Convention §File-Impact Analysis Format](../../conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
 
 `plan-maker` emits the final Knowledge Capture phase in `delivery.md` plus a `learnings.md`
 scaffold in the plan folder as part of every generated plan, per the
@@ -487,7 +491,10 @@ Read the created plan files and verify structural completeness before the qualit
    ([§PRs Open at Delivery Boundaries](../../conventions/structure/plans.md#prs-open-at-delivery-boundaries-not-every-phase-hard-rule))
 8. Verify `delivery.md` opens with the `[AI]`/`[HUMAN]` executor legend and that every step only a human can perform is tagged `[HUMAN]`
 9. Verify every phase ends with a `### Phase N Gate` (must-pass verification) followed by a `> **Pause Safety**:` note
-10. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`
+10. Verify `tech-docs.md` has a `## File-Impact Analysis` whose primary view is one root-relative,
+    annotated file tree with `[E]`/`[N]`/`[D]`/`[G]` markers. If `### More Detail` exists, verify it
+    immediately follows the tree and provides context rather than a second prose scope list.
+11. If structural gaps found: provide a focused prompt to `plan-maker` or fix trivially via `Edit`
 
 **Output**: Plan structurally complete. Ready for quality gate.
 

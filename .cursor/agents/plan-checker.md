@@ -86,6 +86,13 @@ Per the [Content-Placement Rules](../../repo-governance/conventions/structure/pl
 - Implementation approach is clear
 - Dependencies are listed
 - Testing strategy is defined
+- **File-impact tree (HARD RULE)**: `tech-docs.md` has a `## File-Impact Analysis` whose primary
+  view is a root-relative fenced `text` tree. Each planned path or bounded pattern carries `[E]`,
+  `[N]`, `[D]`, or `[G]`; the tree, not prose bullets, is the scan-first scope. Flag a missing tree,
+  missing action markers, an unbounded/vague target, or prose as the primary view as **HIGH**. A
+  `### More Detail` section is optional, but when present must immediately follow the tree and only
+  explain mechanics, ordering, discovery criteria, or archival follow-up; it cannot replace the tree
+  or contain delivery checkboxes. See [Plans Organization Convention §File-Impact Analysis Format](../../repo-governance/conventions/structure/plans.md#file-impact-analysis-format-hard-rule).
 
 #### Diagram Format Check
 
