@@ -633,19 +633,40 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 > These four bodies are content-independent and **pipeline concurrently** through review, bounded by
 > the cap. Applies the same **Course authoring convention** defined in Phase 1.
 
-- [ ] [AI] `just-enough-go` (Primer · Go, `<SYLLABUS>courses/just-enough-go.md`) — Go syntax, goroutines
+- [x] [AI] `just-enough-go` (Primer · Go, `<SYLLABUS>courses/just-enough-go.md`) — Go syntax, goroutines
       — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `csp-style-concurrency` (By Example · Go, `<SYLLABUS>courses/csp-style-concurrency.md`) —
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-go/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the Go primer with 78 source-matched, annotated examples, complete rendered source and test blocks, a passing capstone, and five executable before/after drills. Final review reported zero CRITICAL/HIGH/MEDIUM findings.
+
+- [x] [AI] `csp-style-concurrency` (By Example · Go, `<SYLLABUS>courses/csp-style-concurrency.md`) —
       channels, CSP concurrency — all 9 convention steps complete; checkers clean; additionally both
       prerequisites are declared: `grep -F -q 'just-enough-go' "<COURSES>csp-style-concurrency/_index.md"`
       exits 0 **and**
       `grep -F -q 'concurrency-and-parallelism' "<COURSES>csp-style-concurrency/_index.md"` exits 0.
   - _Suggested executor: `apps-ayokoding-www-by-example-maker`_
-- [ ] [AI] `just-enough-elixir` (Primer · Elixir, `<SYLLABUS>courses/just-enough-elixir.md`) — Elixir
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/csp-style-concurrency/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the CSP course with 78 annotated, source-matched Go examples, controlled race/deadlock diagnostics, a race-tested worker-pool capstone, and five distinct before/after drills. Final review reported zero CRITICAL/HIGH/MEDIUM findings.
+
+- [x] [AI] `just-enough-elixir` (Primer · Elixir, `<SYLLABUS>courses/just-enough-elixir.md`) — Elixir
       syntax, pattern matching — all 9 convention steps complete; checkers clean.
   - _Suggested executor: `apps-ayokoding-www-primer-maker`_
-- [ ] [AI] `actor-model-concurrency` (By Example · Elixir, `<SYLLABUS>courses/actor-model-concurrency.md`)
+
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/just-enough-elixir/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the Elixir primer with 78 annotated, source-matched examples, real IEx/Mix workflows, passing Mix/ExUnit capstones, and five linked runnable drills. Final review reported zero CRITICAL/HIGH/MEDIUM findings; generated Mix artifacts are ignored and were moved to Trash after validation.
+
+- [x] [AI] `actor-model-concurrency` (By Example · Elixir, `<SYLLABUS>courses/actor-model-concurrency.md`)
       — actors, supervision trees — all 9 convention steps complete; checkers clean; additionally both
       prerequisites are declared:
       `grep -F -q 'just-enough-elixir' "<COURSES>actor-model-concurrency/_index.md"` exits 0 **and**
@@ -662,12 +683,18 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
     And neither declares the other as a prerequisite, since they teach independent paradigms
   ```
 
+  **Implementation notes**
+  - **Date**: 2026-08-03
+  - **Status**: complete
+  - **Files Changed**: `apps/ayokoding-www/content/en/learn/courses/actor-model-concurrency/**`, `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md`
+  - **Notes**: Authored and independently remediated the actor course with 78 annotated, source-matched examples; concrete GenServer, Registry, supervision, dynamic-supervisor, restart-limit, and recovery demonstrations; a registry-addressed Mix/ExUnit capstone; and five linked runnable drills. All examples, drills, capstone tests, scoped Markdown lint, source-render parity, prerequisite checks, and final review passed with zero CRITICAL/HIGH/MEDIUM findings.
+
 **Per-band closing steps**:
 
-- [ ] [AI] Add each landed course's row to
+- [x] [AI] Add each landed course's row to
       [tech-docs §Course Library Catalog](./tech-docs.md#course-library-catalog) and its ID to
       `<COURSES>_index.md`.
-- [ ] [AI] Record the band-completion signal:
+- [x] [AI] Record the band-completion signal:
 
   ```text
   BAND: Band 4 — Concurrency languages
@@ -683,7 +710,17 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
   apps/ayokoding-www/src/features/course-paths/manifests/careers/fundamentally-strong/software-engineer.yaml
   ```
 
-- [ ] [AI] Confirm zero manifest files were touched:
+  **Recorded signal**
+
+  ```text
+  BAND: Band 4 — Concurrency languages
+  PLAN: ayokoding-learning-path-05-course-authoring-platform-and-concurrency
+  LANDED_COURSE_IDS: just-enough-go, csp-style-concurrency, just-enough-elixir, actor-model-concurrency
+  GROW_MANIFESTS: unchanged (zero files touched)
+  CATALOG: generated indexes validated; settled catalog rows confirmed
+  ```
+
+- [x] [AI] Confirm zero manifest files were touched:
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0**.
 
@@ -699,14 +736,14 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ### Phase 2 Gate
 
-- [ ] [AI] All 4 Band-4 bodies exist:
+- [x] [AI] All 4 Band-4 bodies exist:
       `for s in just-enough-go csp-style-concurrency just-enough-elixir actor-model-concurrency; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done | wc -l`
       returns **0** (returns 4 before this phase).
-- [ ] [AI] Both By-Example bodies declare `concurrency-and-parallelism` and their paired primer as
+- [x] [AI] Both By-Example bodies declare `concurrency-and-parallelism` and their paired primer as
       prerequisites (4 pairing checks total).
-- [ ] [AI] Checkers clean; build + `lint:md` exit 0.
-- [ ] [AI] Catalog rows added; band signal recorded with all five fields; zero manifest files touched.
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+- [x] [AI] Checkers clean; build + `lint:md` exit 0.
+- [x] [AI] Catalog rows added; band signal recorded with all five fields; zero manifest files touched.
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
       of this phase's band-completion signal above.
 
 > **Pause Safety**: both concurrency-paradigm tracks are live and complete;
