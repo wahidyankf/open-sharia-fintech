@@ -90,8 +90,8 @@ the accessible-diagram width guideline — `THIS` is the shared anchor node in b
 flowchart TD
     P01["01 · url-restructure<br/>DONE"]:::done
     P02["02 · schema-and-<br/>prerequisite-dag<br/>DONE"]:::done
-    P04(["04 · course-authoring<br/>IN-PROGRESS (baseline)"]):::inprogress
-    VCR(["vercel-function-cost-<br/>reduction<br/>IN-PROGRESS"]):::inprogress
+    P04(["04 · course-authoring<br/>DONE (21-course baseline)"]):::done
+    VCR(["vercel-function-cost-<br/>reduction<br/>DONE"]):::done
     THIS(["THIS PLAN · 10 ·<br/>course-authoring-jvm-and-<br/>build-your-own"]):::this
 
     P01 -->|"populated flat courses/<br/>namespace + redirects"| THIS
@@ -100,7 +100,6 @@ flowchart TD
     VCR -->|"prerendering restored — do not<br/>compound the cost defect with<br/>9 more dynamic pages"| THIS
 
     classDef done fill:#0173B2,stroke:#000000,color:#FFFFFF
-    classDef inprogress fill:#CA9161,stroke:#000000,color:#000000
     classDef this fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
 ```
 

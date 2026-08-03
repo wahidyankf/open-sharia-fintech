@@ -11,7 +11,7 @@ delivery PR, the three reviewer lenses may fan out concurrently; the review cycl
 strictly sequential. Cleanup is the terminal node and depends on both merged delivery units.
 
 ```mermaid
-flowchart LR
+flowchart TD
   P0["Phase 0: baseline"] --> P1["Phase 1: configuration PR"]
   P1 --> P2["Phase 2: Knowledge Capture"]
   P2 --> P3["Phase 3: archival PR"]
@@ -20,12 +20,12 @@ flowchart LR
 
 ### Delivery Boundaries
 
-| Phase(s) | Delivery unit | Worktree / branch | PR opens |
-| --- | --- | --- | --- |
-| 0 | Setup and baseline | — | no |
-| 1 | Scoped Ruff configuration | `worktrees/ayokoding-database-internals-ruff-config/` / `ayokoding-database-internals-ruff-config-base` | yes — at Phase 1 |
-| 2–3 | Knowledge Capture and archival | `worktrees/ayokoding-database-internals-ruff-config-closeout/` / `ayokoding-database-internals-ruff-config-closeout-base` | yes — at Phase 3 |
-| 4 | Cleanup | — | no |
+| Phase(s) | Delivery unit                  | Worktree / branch                                                                                                         | PR opens         |
+| -------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 0        | Setup and baseline             | —                                                                                                                         | no               |
+| 1        | Scoped Ruff configuration      | `worktrees/ayokoding-database-internals-ruff-config/` / `ayokoding-database-internals-ruff-config-base`                   | yes — at Phase 1 |
+| 2–3      | Knowledge Capture and archival | `worktrees/ayokoding-database-internals-ruff-config-closeout/` / `ayokoding-database-internals-ruff-config-closeout-base` | yes — at Phase 3 |
+| 4        | Cleanup                        | —                                                                                                                         | no               |
 
 ## Worktree
 

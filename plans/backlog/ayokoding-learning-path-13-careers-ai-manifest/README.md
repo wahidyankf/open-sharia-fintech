@@ -124,8 +124,8 @@ flowchart LR
         P2["schema-and-prerequisite-dag"]:::done
         P3["navigation-ui"]:::done
     end
-    subgraph CA["Course-authoring successor plans feeding THIS plan"]
-        CA1["04 · Phase 1 — 6 AI courses"]:::ca
+    subgraph CA["Completed baseline and successor plans feeding THIS plan"]
+        CA1["04 · Phase 1<br/>6 AI courses — done"]:::done
         CA3["06 · architecture-<br/>and-ai-harness<br/>(8 of 9 harness courses)"]:::ca
         CA8["11 · capstones<br/>(9th harness-cluster course)"]:::ca
     end
@@ -198,7 +198,7 @@ flowchart TD
 | `blockedBy` | `ayokoding-learning-path-01-url-restructure`                              | transitive (done)                                                                                                                                                                       |
 | `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | transitive (done)                                                                                                                                                                       |
 | _(no edge)_ | `ayokoding-learning-path-12-careers-se-manifests`                         | this plan starts independently; Plan 12 consumes this plan's whole merged delivery in its Phase 8 cross-check                                                                           |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Phase 1 — 6 AI courses)    | hard — this plan's Phase 1 GREEN step needs these six courses to author the manifest's AI-engineer-role spine                                                                           |
+| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Phase 1 — 6 AI courses)    | hard, satisfied — these six courses merged before Plan 04's 2026-08-02 archival, so this plan's Phase 1 GREEN step can author the manifest's AI-engineer-role spine                     |
 | `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | hard for growth — 8 of the 9 AI/harness-cluster courses                                                                                                                                 |
 | `blockedBy` | `ayokoding-learning-path-11-course-authoring-capstones`                   | hard for growth — the 9th/final AI/harness-cluster course                                                                                                                               |
 | `blockedBy` | `vercel-function-cost-reduction`                                          | hard, new — see [§Vercel cost-reduction dependency](#vercel-cost-reduction-dependency-hard-both-plans) below                                                                            |

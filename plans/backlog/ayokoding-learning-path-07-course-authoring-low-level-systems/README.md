@@ -70,7 +70,7 @@ handoff contract; see [Band-completion signal contract](#band-completion-signal-
 flowchart LR
     P1["01 url-restructure<br/>(done)"]:::upstream
     P2["02 schema-and-<br/>prerequisite-dag (done)"]:::upstream
-    P4["04 course-authoring<br/>(baseline; trimmed of<br/>Band 6)"]:::upstream
+    P4["04 course-authoring<br/>done; Band 6 moved"]:::upstream
     VCR["vercel-function-<br/>cost-reduction"]:::upstream
 
     THIS(["07 course-authoring-<br/>low-level-systems<br/>THIS PLAN"]):::this
@@ -104,7 +104,8 @@ border**. Fills use the repo's verified accessible palette per the
 [tech-docs.md §Dependency-edge investigation against plan 10](./tech-docs.md#dependency-edge-investigation-against-plan-10)
 for the full evidence trail: every one of plan 10's 9 courses' declared prerequisites was checked
 against this plan's 7 course IDs, and none references any of them. The two plans run **fully in
-parallel** once their shared upstream (`04`, trimmed) and `vercel-function-cost-reduction` are merged.
+parallel** now that their shared upstream (`04`, trimmed) and
+`vercel-function-cost-reduction` are merged.
 
 ## Manifest-ownership boundary
 
@@ -177,7 +178,7 @@ No per-course, cohort, stage, or phase worktree/branch/PR is permitted.
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **blockedBy** | `ayokoding-learning-path-01-url-restructure`                                                                                                                                                                                                      | **Transitive hard** — via `04`'s own hard `blockedBy`; not independently re-verified here (see Phase 0).                                                |
 | **blockedBy** | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                                                                                                                                          | **Transitive hard** — via `04`'s own hard `blockedBy`; not independently re-verified here (see Phase 0).                                                |
-| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                                                                                     | **Hard, baseline** — merged with Band 6 trimmed out of its own scope (no duplicate-authoring race).                                                     |
+| **blockedBy** | `ayokoding-learning-path-04-course-authoring`                                                                                                                                                                                                     | **Hard, satisfied baseline** — merged and archived with Band 6 trimmed out of its own scope (no duplicate-authoring race).                              |
 | **blockedBy** | `vercel-function-cost-reduction`                                                                                                                                                                                                                  | **Hard, new** — treated as merged/done; see [Phase 0](./delivery.md) for the concrete checkable signal.                                                 |
 | **blocks**    | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                                                                                                                                              | **None** — see the dependency-edge investigation above; runs fully in parallel.                                                                         |
 | **blocks**    | `ayokoding-learning-path-12-careers-se-manifests`                                                                                                                                                                                                 | Hard — 7 authored bodies + this band's completion signal; that plan's three `software-engineer` manifests must not grow until this band's signal lands. |
@@ -210,7 +211,7 @@ merged). Checked against every prerequisite cell in
 `just-enough-cpp` (`just-enough-c`), `linux-os` (`just-enough-c`, `just-enough-bash`), `windows-os`
 (`just-enough-c`), `system-programming` (`just-enough-c`, `linux-os`), `just-enough-rust` (—),
 `modern-system-programming` (`just-enough-rust`). This plan therefore carries **no hard `blockedBy`
-edge to any of the five further-split sibling plans** — only to `04` (baseline) and
+edge to any of the five further-split sibling plans** — only to the completed `04` baseline and
 `vercel-function-cost-reduction` (new), stated above.
 
 **Why `vercel-function-cost-reduction` is a hard dependency for a content plan.** This plan adds 7
@@ -309,17 +310,9 @@ This plan is one of **two** folders produced by splitting
   (JVM / advanced languages / build-your-own internals), authored by a different agent, not created
   by this plan.
 
-`ayokoding-learning-path-04-course-authoring` itself is the **source plan** for the split: it is
-being concurrently trimmed (by a sibling agent, per this plan's own authoring instructions) to remove
-Band 6 from its own scope — its own Band 6 phase, band-completion-signal slot, and this plan's 7
-slugs (plus the sibling plan's 9) are removed from its `evidence/authored-body-slugs.txt` and
-`delivery.md`. **As of this plan's own authoring time (2026-08-01), that trim has not yet landed**:
-plan04's register still lists all 90 original slugs including this plan's 7, and its Phase 8 (Band 6,
-16 bodies) is still present, unstarted `[Repo-grounded — verified live against plan04's current
-`evidence/authored-body-slugs.txt`and`delivery.md`]`. This plan's Phase 0 hard-gates on that trim
-landing before authoring begins (see [delivery.md](./delivery.md)) — this is the concrete, checkable
-form of the "hard, baseline" dependency on `04` stated above. Note this plan does **not** assert a
-specific resulting total for plan04's register (e.g. a fixed "74"): five further sibling plans are
-concurrently carving out plan04's _other_ remaining bands too (see
-[§Verified independence from the other course-authoring split plans](#verified-independence-from-the-other-course-authoring-split-plans) below), so plan04's
-eventual total is out of this plan's control and is not predicted here.
+`ayokoding-learning-path-04-course-authoring` is the **source plan** for the split. Its completed
+closeout trimmed Band 6 from its scope — its Band-6 phase, band-completion-signal slot, and these
+seven slugs (plus the sibling plan's nine) are absent from its terminal 21-course scope. The archived
+plan is therefore the concrete, checkable source of the now-satisfied baseline dependency stated
+above; this plan's Phase 0 verifies that archived baseline before authoring begins (see
+[delivery.md](./delivery.md)).

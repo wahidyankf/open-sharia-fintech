@@ -115,7 +115,7 @@ reorders, or re-verifies one of those three manifests.**
 `ayokoding-learning-path-13-careers-ai-manifest` owns exactly
 `.../careers/immediately-effective/ai-engineer.yaml` under the identical invariant, scoped to its own
 one manifest. Neither plan touches the other's manifest file. The seven course-authoring successor
-plans (`ayokoding-learning-path-04` through `-11`, per the mapping in
+plans (Plan 04's completed retained scope and the seven `05`-`11` successors, per the mapping in
 [tech-docs §Growth signal routing](./tech-docs.md#growth-signal-routing-from-the-seven-course-authoring-successor-plans))
 own course **bodies only** and never edit a manifest under either plan's scope.
 
@@ -185,12 +185,16 @@ flowchart LR
         P2["schema-and-prerequisite-dag"]:::done
         P3["navigation-ui"]:::done
     end
-    subgraph CA["Seven course-authoring successor plans (04-11, in flight)"]
-        CA1["04 · Band 1,2 + 6 AI courses"]:::ca
+    subgraph CA1Done["Completed Plan 04 baseline"]
+        CA1["04 · Bands 1-2<br/>+ 6 AI courses — done"]:::done
+    end
+    subgraph CAEarly["Successors 05-08 (in flight)"]
         CA2["05 · platform-and-concurrency"]:::ca
         CA3["06 · architecture-<br/>and-ai-harness"]:::ca
         CA4["07 · low-level-systems"]:::ca
         CA5["08 · security-and-ops"]:::ca
+    end
+    subgraph CALate["Successors 09-11 (in flight)"]
         CA6["09 · interview-technique"]:::ca
         CA7["10 · jvm-and-build-your-own"]:::ca
         CA8["11 · capstones"]:::ca
@@ -226,7 +230,7 @@ flowchart LR
     classDef infra fill:#CC78BC,stroke:#000000,color:#000000
 ```
 
-**Accessibility note.** Group membership is carried by the four labelled subgraph containers and by
+**Accessibility note.** Group membership is carried by the labelled subgraph containers and by
 node shape (rectangle = foundational, stadium = course-authoring successor, hexagon = this split's two
 manifest plans) as well as by fill; this plan's node additionally carries a thicker border. Edge kind
 is carried by line style (solid = hard blocking edge; dotted = partial/staged or signal-only edge) and
@@ -287,7 +291,7 @@ phases to delivery units, branches, and PRs.
 | `blockedBy` | `ayokoding-learning-path-03-navigation-ui`                                | hard — merged to `origin/main` first (done)                                                                                        |
 | `blockedBy` | `ayokoding-learning-path-01-url-restructure`                              | transitive, via the navigation plan (done)                                                                                         |
 | `blockedBy` | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                  | transitive, via the navigation plan (done)                                                                                         |
-| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)       | hard for this plan's own growth — Bands 1,2 must land before Phase 4.1 processes them                                              |
+| `blockedBy` | `ayokoding-learning-path-04-course-authoring` (Bands 1,2 + Phase 1)       | hard, satisfied — Plan 04's Bands 1,2 and Phase 1 merged before its 2026-08-02 archival, so Phase 4.1 may process their signal     |
 | `blockedBy` | `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`    | hard for growth — old Band 3+4                                                                                                     |
 | `blockedBy` | `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness` | hard for growth — old Band 5 (this plan's SE-manifest slice only; the AI-manifest slice is plan 13's)                              |
 | `blockedBy` | `ayokoding-learning-path-07-course-authoring-low-level-systems`           | hard for growth — old Band 6 (half)                                                                                                |

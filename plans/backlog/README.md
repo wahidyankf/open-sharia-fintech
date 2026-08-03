@@ -24,7 +24,7 @@ are done; 04 delivered its 21-course retained scope (a documented exception to t
 execution history, not new backlog scoping).
 
 **Course-authoring remainder** (splits `04`'s original Bands 3-9 + course-surgery contracts; 69
-courses total, `blockedBy 04`):
+courses total; Plan 04's retained baseline is complete):
 
 - [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   — 14 courses (old Band 3 + Band 4 merged): mobile/desktop platforms paired with their language
@@ -45,8 +45,8 @@ courses total, `blockedBy 04`):
   — 8 courses (old Band 8; `blockedBy 05, 06, 08`, the most dependency-heavy successor plan): the
   remaining cross-band synthesis capstones.
 
-**Careers manifests** (splits old `05-manifests`; needs all of `04`-`11` merged, `blockedBy` each as
-its band-completion signal lands):
+**Careers manifests** (splits old `05-manifests`; Plan 04's retained baseline is complete; needs the
+`05`-`11` band-completion signals, `blockedBy` those plans as each lands):
 
 - [ayokoding-learning-path-12-careers-se-manifests](./ayokoding-learning-path-12-careers-se-manifests/README.md)
   — the three `software-engineer`-role manifests (`interview-ready`, `immediately-effective`,
