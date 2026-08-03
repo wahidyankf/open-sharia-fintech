@@ -379,6 +379,42 @@ canonical identifier for this policy is **`guard-env-file-access`**.
 Exceptions: project scripts under `apps/`, `libs/`, and `scripts/` are exempt (they are part of the
 app's own startup/setup logic, not AI-agent operations).
 
+### Content-fixture exclusion
+
+Course and teaching material sometimes ships an env file as a **worked example** — an
+ayokoding-www self-hosting kata that demonstrates a secret committed to a repo, for instance. Those
+files are published curriculum, not real environment files, and blocking them stops agents from
+authoring, linting, or even `git stash`-ing the course they belong to.
+
+A file is excluded from `guard-env-file-access` when **both** hold:
+
+1. It lives under an app's published content tree — `apps/<app>/content/**`.
+2. Its basename ends in `.env` and is **not** a dotfile — `kata.env`, `app.env` qualify;
+   `.env`, `.env.local` do not.
+
+Everything else stays denied. A dotfile `.env*` under `content/` is still denied, and a
+`<word>.env` outside any content tree is still denied.
+
+**Per-repo exclusion list** — each repo enumerates its own content trees, because the harness
+permission surfaces need exact subtree paths (Codex accepts `write` only on an exact path or a
+trailing `/**`, never on a glob):
+
+| Repo          | Excluded content trees                                     |
+| ------------- | ---------------------------------------------------------- |
+| `ose-public`  | `apps/ayokoding-www/content/**`, `apps/ose-www/content/**` |
+| `ose-primer`  | _(none yet — no `apps/*/content` tree)_                    |
+| `ose-private` | _(none yet — no `apps/*/content` tree)_                    |
+| `beaver-nest` | _(none yet — no `apps/*/content` tree)_                    |
+
+Enforcement surfaces carrying the exclusion: `.claude/hooks/block-env-file-access.sh` (file-tool and
+Bash branches), `.claude/settings.json` allow rules, `.opencode/opencode.json` read/edit permission
+maps, and the Codex permission profile in `~/.codex/config.toml`. `rhino-cli env staged-guard
+validate` needs no change — it keys on a dotfile `.env*` basename, so a content fixture was never in
+its scope.
+
+Adding a new content tree means adding a row above **and** an entry in each enforcement surface;
+the Codex profile cannot express `apps/*/content/**` as a glob.
+
 See also: [`env-file-access.md`](./env-file-access.md)
 
 ## 10. IaC Forward Scaffold

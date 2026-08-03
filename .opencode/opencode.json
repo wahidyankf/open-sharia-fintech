@@ -28,7 +28,8 @@
       "**/.env.production": "deny",
       "**/.env.staging": "deny",
       "**/.env.test": "deny",
-      "**/.env.example": "allow"
+      "**/.env.example": "allow",
+      "apps/*/content/**/*.env": "allow"
     },
     "edit": {
       "*": "allow",
@@ -38,7 +39,8 @@
       "**/.env.production": "deny",
       "**/.env.staging": "deny",
       "**/.env.test": "deny",
-      "**/.env.example": "allow"
+      "**/.env.example": "allow",
+      "apps/*/content/**/*.env": "allow"
     },
     "bash": {
       "*": "allow"
