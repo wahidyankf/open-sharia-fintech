@@ -828,42 +828,69 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 > narrow** — the Playwright manual behavioural verification below is mandatory and performed, with
 > committed evidence.
 
-- [ ] [AI] Confirm `en` is the content locale for this plan's course bodies — command:
+- [x] [AI] Confirm `en` is the content locale for this plan's course bodies — command:
       `test -d apps/ayokoding-www/content/en/learn/courses/just-enough-kotlin && test ! -d apps/ayokoding-www/content/id/learn/courses/just-enough-kotlin`
-      — acceptance: exits 0.
-- [ ] [AI] Start dev server: `npx nx dev ayokoding-www` — acceptance: server up on port 3101.
-- [ ] [AI] **Sample-verify authored course pages** — for a sample of **six** authored courses (each
+      — passed (exit 0).
+- [x] [AI] Start local verification server on port 3101 — the clean development-server attempt
+      exposed a host watcher limit, so the passing production build was served locally instead;
+      all checked course responses returned HTTP 200.
+- [x] [AI] **Sample-verify authored course pages** — for a sample of **six** authored courses (each
       primer/platform pair once, plus `linux-app-development`), at breakpoints 375 / 768 / 1280 px,
       via Playwright MCP: `browser_navigate` to `/en/learn/courses/<course-id>`, `browser_resize`,
       then `browser_snapshot` — acceptance: each page renders its overview, learning track, and
       drilling track; `html[lang]` is `en`; `browser_console_messages` reports **zero** errors per
-      page per breakpoint.
-- [ ] [AI] **Verify prerequisite rendering** — on `android-app-development`, confirm the declared
+      page per breakpoint. Sampled `android-app-development`, `just-enough-swift`,
+      `hybrid-app-development`, `just-enough-csharp`, `linux-app-development`, and
+      `actor-model-concurrency`; every sampled page at every breakpoint had HTTP 200,
+      `html[lang="en"]`, overview/learning/drilling navigation, zero console or page errors, and no
+      failed local-network requests.
+- [x] [AI] **Verify prerequisite rendering** — on `android-app-development`, confirm the declared
       `just-enough-kotlin` prerequisite is displayed and its link resolves to that primer's canonical
-      page — acceptance: the link target returns 200 and the landed page is `just-enough-kotlin`.
-- [ ] [AI] **Verify a drilling track renders** — open `csp-style-concurrency/drilling/overview.md` and
-      confirm all five fixed sections are present in the rendered output — acceptance: five section
-      headings visible in `browser_snapshot`.
-- [ ] [AI] Capture one screenshot per sampled course per breakpoint to
-      `evidence/phase-4-<course-id>-en-<breakpoint>px.png` — acceptance:
-      `git ls-files -- 'evidence/phase-4-*-en-*px.png' | grep -c .` returns **18** (6 courses × 3
-      breakpoints), once the captures are staged or committed.
-- [ ] [AI] Document the evidence in this checklist: reference each screenshot
-      (`![alt](./evidence/...)`) and note the console/network status per sampled course.
-- [ ] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
+      page — passed: the displayed link target is `/en/learn/courses/just-enough-kotlin`, its request
+      returned HTTP 200, and Playwright landed on the canonical primer page.
+- [x] [AI] **Verify a drilling track renders** — open the rendered
+      `csp-style-concurrency/drilling/overview` route (the `.md` suffix is the content-source filename,
+      not a public URL) and confirm all five fixed sections are present in the rendered output — passed:
+      `Recall Q&A`, `Applied problems`, `Code katas`, `Self-check checklist`, and
+      `Elaborative interrogation and self-explanation` were visible in `browser_snapshot`.
+- [x] [AI] Capture one screenshot per sampled course per breakpoint to
+      `evidence/phase-4-<course-id>-en-<breakpoint>px.png` — passed: 18 screenshots (6 courses × 3
+      breakpoints) are present with the requested viewport widths.
+- [x] [AI] Document the evidence in this checklist: every sampled course returned HTTP 200 with zero
+      console, page, or failed-local-network errors at all three breakpoints.
+  - `actor-model-concurrency`: ![375 px Actor-Model Concurrency](./evidence/phase-4-actor-model-concurrency-en-375px.png)
+    ![768 px Actor-Model Concurrency](./evidence/phase-4-actor-model-concurrency-en-768px.png)
+    ![1280 px Actor-Model Concurrency](./evidence/phase-4-actor-model-concurrency-en-1280px.png)
+  - `android-app-development`: ![375 px Android App Development](./evidence/phase-4-android-app-development-en-375px.png)
+    ![768 px Android App Development](./evidence/phase-4-android-app-development-en-768px.png)
+    ![1280 px Android App Development](./evidence/phase-4-android-app-development-en-1280px.png)
+  - `hybrid-app-development`: ![375 px Hybrid App Development](./evidence/phase-4-hybrid-app-development-en-375px.png)
+    ![768 px Hybrid App Development](./evidence/phase-4-hybrid-app-development-en-768px.png)
+    ![1280 px Hybrid App Development](./evidence/phase-4-hybrid-app-development-en-1280px.png)
+  - `just-enough-csharp`: ![375 px Just Enough C Sharp](./evidence/phase-4-just-enough-csharp-en-375px.png)
+    ![768 px Just Enough C Sharp](./evidence/phase-4-just-enough-csharp-en-768px.png)
+    ![1280 px Just Enough C Sharp](./evidence/phase-4-just-enough-csharp-en-1280px.png)
+  - `just-enough-swift`: ![375 px Just Enough Swift](./evidence/phase-4-just-enough-swift-en-375px.png)
+    ![768 px Just Enough Swift](./evidence/phase-4-just-enough-swift-en-768px.png)
+    ![1280 px Just Enough Swift](./evidence/phase-4-just-enough-swift-en-1280px.png)
+  - `linux-app-development`: ![375 px Linux App Development](./evidence/phase-4-linux-app-development-en-375px.png)
+    ![768 px Linux App Development](./evidence/phase-4-linux-app-development-en-768px.png)
+    ![1280 px Linux App Development](./evidence/phase-4-linux-app-development-en-1280px.png)
+
+- [x] [AI] **Record the rule-15 exemption in `learnings.md`** with its three reasons and a pointer to
       the navigation-UI plan that carries the triad.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0**.
+      — passed: `0`.
 
 ### Phase 4 Gate
 
-- [ ] [AI] Six sampled courses verified across three breakpoints in `en`; zero console errors;
+- [x] [AI] Six sampled courses verified across three breakpoints in `en`; zero console errors;
       prerequisite display and drilling-track rendering confirmed.
-- [ ] [AI] 18 screenshots present under `evidence/` and referenced in this checklist.
-- [ ] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate): the evidence commits are on the shared
+- [x] [AI] 18 screenshots present under `evidence/` and referenced in this checklist.
+- [x] [AI] The rule-15 exemption is recorded with reasons; the triad itself is **not** run here.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate): the evidence commits are on the shared
       worktree, this phase's own gate above is green, and nothing is pushed for review yet — the
       closeout PR for Phases 4–7 opens at Phase 7.
 
@@ -874,18 +901,19 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ## Phase 5: Pre-archival Quality & CI Preparation
 
-- [ ] [AI] Run the full affected suite on the persistent final-delivery branch:
+- [x] [AI] Run the full affected suite on the persistent final-delivery branch:
       `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage` +
-      `npx nx run ayokoding-www:build` — acceptance: all exit 0 before the terminal PR is opened.
-- [ ] [AI] Resolve every failure on the persistent final-delivery branch — acceptance: the terminal PR
-      needs no follow-up branch or PR.
+      `npx nx run ayokoding-www:build` — passed: both commands exited 0. The build generated all
+      2,264 static pages successfully.
+- [x] [AI] Resolve every failure on the persistent final-delivery branch — passed: no failures remain;
+      the terminal PR needs no follow-up branch or PR.
 
 ### Phase 5 Gate
 
-- [ ] [AI] Full affected suite + build green on the persistent final-delivery branch.
-- [ ] [AI] Both band signals are prepared without a merge SHA; downstream notification waits for the
+- [x] [AI] Full affected suite + build green on the persistent final-delivery branch.
+- [x] [AI] Both band signals are prepared without a merge SHA; downstream notification waits for the
       terminal PR merge.
-- [ ] [AI] **No PR opens for this phase**: nothing is pushed for review until Phase 7.
+- [x] [AI] **No PR opens for this phase**: nothing is pushed for review until Phase 7.
 
 > **Pause Safety**: the branch is ready for archival and terminal review. Safe to stop. To resume:
 > re-run the affected suite on the persistent final-delivery branch.
@@ -897,27 +925,30 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 > _Triage every surviving `learnings.md` entry before archival. See the
 > [Knowledge Capture Convention](../../../repo-governance/development/quality/knowledge-capture.md)._
 
-- [ ] [AI] Apply the litmus test to every `learnings.md` entry — keep only entries where a durable
-      surface would catch this automatically next time; discard the rest with a one-line reason.
-- [ ] [AI] Apply the **secret/sensitivity gate** to every surviving entry — sanitize to `<placeholder>`
-      tokens or discard if the entry cannot be sanitized without losing its meaning.
-- [ ] [AI] Apply the **repo-relevance gate** to every surviving entry — infra-private content stays in
-      `ose-private` only.
-- [ ] [AI] Route each surviving entry to exactly one durable home. **Code homes (`apps/`, `libs/`,
+- [x] [AI] Apply the litmus test to every `learnings.md` entry — passed: the rule-15 entry points to
+      its durable README rule and is terminally routed inline; the remaining observations are
+      explicitly recorded as non-generalizable.
+- [x] [AI] Apply the **secret/sensitivity gate** to every surviving entry — passed; the entry contains
+      no credentials, personal data, or internal infrastructure details.
+- [x] [AI] Apply the **repo-relevance gate** to every surviving entry — passed; it is specific to this
+      public repository's content-only plan.
+- [x] [AI] Route each surviving entry to exactly one durable home. **Code homes (`apps/`, `libs/`,
       tests) are ALWAYS filed as a separate `plans/backlog/<slug>/` plan and NEVER landed inline.**
-- [ ] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
-      `No generalizable learnings — <reason>` instead of individual entries.
-- [ ] [AI] **Confirm no manifest file changed in this phase** —
+      The sole surviving entry is routed inline to README §Rule-15; no code-home learning exists.
+- [x] [AI] If execution genuinely surfaced no generalizable learning, record the explicit escape
+      `No generalizable learnings — <reason>` instead of individual entries — passed for the remaining
+      execution observations.
+- [x] [AI] **Confirm no manifest file changed in this phase** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-      — acceptance: returns **0**.
+      — passed: `0`.
 
 ### Phase 6 Gate
 
-- [ ] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
+- [x] [AI] Every `learnings.md` entry is terminal (routed inline / filed as backlog / discarded with
       reason) or the explicit "none" escape is present.
-- [ ] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
-- [ ] [AI] Zero manifest files touched.
-- [ ] [AI] **No PR opens for this phase** (intermediate): the `learnings.md` triage is committed on
+- [x] [AI] No code-homed learning landed inline in this plan's own commits/PRs.
+- [x] [AI] Zero manifest files touched.
+- [x] [AI] **No PR opens for this phase** (intermediate): the `learnings.md` triage is committed on
       the shared closeout branch, this phase's own gate above is green, and nothing is pushed for
       review yet — the closeout PR for Phases 4–7 opens at Phase 7.
 
