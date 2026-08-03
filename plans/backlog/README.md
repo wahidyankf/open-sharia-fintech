@@ -23,12 +23,9 @@ of these plans lands content or manifests into. **Waves 1-2 have left this backl
 are done; 04 delivered its 21-course retained scope (a documented exception to the 5-15 rule — real
 execution history, not new backlog scoping).
 
-**Course-authoring remainder** (splits `04`'s original Bands 3-9 + course-surgery contracts; 69
-courses total; Plan 04's retained baseline is complete):
+**Course-authoring backlog** (the remaining 55 of `04`'s original Bands 3-9 + course-surgery
+contracts; Plan 04's retained baseline is complete and Plan 05 is active):
 
-- [ayokoding-learning-path-05-course-authoring-platform-and-concurrency](./ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
-  — 14 courses (old Band 3 + Band 4 merged): mobile/desktop platforms paired with their language
-  primers, plus the two concurrency languages.
 - [ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness](./ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   — 15 courses (old Band 5 + the three course-surgery scope contracts): software architecture,
   distributed systems, and the AI/agent-harness cluster.

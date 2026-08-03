@@ -346,7 +346,7 @@ is forbidden.
   ·
   [`syllabus/courses/` catalog](../../done/2026-07-24__ayokoding-learning-path-02-schema-and-prerequisite-dag/syllabus/courses/README.md)
   · [`ayokoding-learning-path-04-course-authoring` (baseline)](../../done/2026-08-02__ayokoding-learning-path-04-course-authoring/README.md)
-  · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
+  · [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md)
   · [`ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`](../ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness/README.md)
   · [`ayokoding-learning-path-08-course-authoring-security-and-ops`](../ayokoding-learning-path-08-course-authoring-security-and-ops/README.md)
   · [`vercel-function-cost-reduction` (hard dependency)](../../done/2026-08-02__vercel-function-cost-reduction/README.md)

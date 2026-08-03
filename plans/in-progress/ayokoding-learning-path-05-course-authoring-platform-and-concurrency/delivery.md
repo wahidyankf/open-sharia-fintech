@@ -71,15 +71,15 @@ preconditions, and deploys once.
 
 ## Depends-on
 
-| Relation        | Plan (full folder name)                                                                                           | Nature                                                                                                                                                                                        |
-| --------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`                                                                      | Hard, transitive via 04. Populated flat `<COURSES>` bucket + `<COURSES>_index.md`.                                                                                                            |
-| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                          | Hard, transitive via 04. `syllabus/` specs + the `prerequisites` frontmatter contract.                                                                                                        |
-| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`                                                                     | Hard. Its Phase 0 baseline + populated `<COURSES>` namespace — not Band 2 specifically.                                                                                                       |
-| **blockedBy**   | `vercel-function-cost-reduction`                                                                                  | Hard, new. Root layout + middleware fix landed against the same `apps/ayokoding-www` app/route tree.                                                                                          |
-| **blocks**      | [`ayokoding-learning-path-12-careers-se-manifests`](../ayokoding-learning-path-12-careers-se-manifests/README.md) | Needs this plan's band-completion signals to grow the three `software-engineer`-role manifests.                                                                                               |
-| **blocks**      | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                              | Needs `just-enough-go` (Band 4) as `build-your-own-raft`'s declared prerequisite (verified against plan04's own catalog row and independently confirmed by that plan's own dependency table). |
-| **independent** | Every other new sibling splitting plan04's remaining scope                                                        | No shared file, no shared prerequisite edge. Bands are mutually content-independent per plan04's own finding.                                                                                 |
+| Relation        | Plan (full folder name)                                                                                                      | Nature                                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **blockedBy**   | `ayokoding-learning-path-01-url-restructure`                                                                                 | Hard, transitive via 04. Populated flat `<COURSES>` bucket + `<COURSES>_index.md`.                                                                                                            |
+| **blockedBy**   | `ayokoding-learning-path-02-schema-and-prerequisite-dag`                                                                     | Hard, transitive via 04. `syllabus/` specs + the `prerequisites` frontmatter contract.                                                                                                        |
+| **blockedBy**   | `ayokoding-learning-path-04-course-authoring`                                                                                | Hard. Its Phase 0 baseline + populated `<COURSES>` namespace — not Band 2 specifically.                                                                                                       |
+| **blockedBy**   | `vercel-function-cost-reduction`                                                                                             | Hard, new. Root layout + middleware fix landed against the same `apps/ayokoding-www` app/route tree.                                                                                          |
+| **blocks**      | [`ayokoding-learning-path-12-careers-se-manifests`](../../backlog/ayokoding-learning-path-12-careers-se-manifests/README.md) | Needs this plan's band-completion signals to grow the three `software-engineer`-role manifests.                                                                                               |
+| **blocks**      | `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own`                                                         | Needs `just-enough-go` (Band 4) as `build-your-own-raft`'s declared prerequisite (verified against plan04's own catalog row and independently confirmed by that plan's own dependency table). |
+| **independent** | Every other new sibling splitting plan04's remaining scope                                                                   | No shared file, no shared prerequisite edge. Bands are mutually content-independent per plan04's own finding.                                                                                 |
 
 **Start precondition (hard gate, checked in Phase 0)**: `ayokoding-learning-path-01-url-restructure`,
 `ayokoding-learning-path-02-schema-and-prerequisite-dag`, and `vercel-function-cost-reduction` are all
@@ -705,7 +705,7 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] Move: `git mv plans/backlog/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/ plans/done/YYYY-MM-DD__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`
+- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/ plans/done/YYYY-MM-DD__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`
       using today's **completion** date, not the creation date (the `evidence/` subfolder moves with
       it).
 - [ ] [AI] Update `plans/backlog/README.md` and `plans/in-progress/README.md` — remove the plan entry
@@ -762,9 +762,8 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ### Note: plan location at archival time
 
-This plan is created in `plans/backlog/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`.
-When work starts it is promoted to
+This plan was promoted from `plans/backlog/` to
 `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/` (no date
-prefix on either); the `git mv` in Phase 7 then archives it to
+prefix on either). The `git mv` in Phase 7 then archives it to
 `plans/done/YYYY-MM-DD__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/` using
 the completion date.
