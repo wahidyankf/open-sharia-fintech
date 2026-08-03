@@ -1,6 +1,6 @@
 # Learning Path — Course Authoring: Platform & Concurrency Languages
 
-**Status**: In Progress
+**Status**: Completed 2026-08-04
 
 ## Delivery amendment — one final PR
 

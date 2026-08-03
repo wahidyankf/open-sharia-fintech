@@ -451,7 +451,7 @@ owns its own `<MANIFESTS>careers/careers-ai-manifest.unit.test.ts`.
       newly-available course IDs into all three of this plan's manifests at each path's correct
       topological position, then re-run integrity + prerequisite-consistency + no-forked-body —
       command: `npx nx run ayokoding-www:test:unit` — acceptance: exits 0.
-- [ ] [AI] On `ayokoding-learning-path-05-course-authoring-platform-and-concurrency`'s signal landing,
+- [ ] [AI] On [`ayokoding-learning-path-05-course-authoring-platform-and-concurrency`](../../done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/delivery.md)'s delivered signal,
       repeat the same append-and-reverify — acceptance: exits 0.
 - [ ] [AI] On `ayokoding-learning-path-06-course-authoring-architecture-and-ai-harness`'s signal
       landing, append **only its SE-manifest-growth slice** (never the AI/harness-cluster courses,

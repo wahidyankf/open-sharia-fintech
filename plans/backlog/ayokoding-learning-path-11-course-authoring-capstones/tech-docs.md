@@ -161,7 +161,7 @@ Found during this plan's dependency verification and originally recorded here fo
    that supplied its dependency claim did not name the authoring plan with certainty. **Reconciled**:
    plan 05's own `README.md` now carries a "reconciliation pass" row (added 2026-08-01) that redirects
    its `blocks` edge from plan 10 to this plan (`ayokoding-learning-path-11-course-authoring-capstones`)
-   — see `plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md`.
+   — see `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/README.md`.
 
 Neither discrepancy ever changed this plan's own dependency table above, which is grounded directly in
 the primary syllabus specs rather than in either sibling plan's assertion.

@@ -961,26 +961,28 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ### Sole PR integration (binding)
 
-- [ ] [AI] Archive this plan on its persistent final-delivery branch before review — acceptance: the archive move and index updates are committed in the same branch.
+- [x] [AI] Archive this plan on its persistent final-delivery branch before review — the dated move and
+      index updates are included in the same archival commit.
 - [ ] [AI] Open exactly one draft PR from that branch and run the PR-Review Maker→Fixer Cycle plus every local and CI gate — acceptance: the PR is the only PR for this plan.
 - [ ] [AI] Mark the PR ready, merge under the hardened preconditions, and deploy once — acceptance: the merge/deploy record is the plan's sole delivery record.
 
 - [ ] [AI] Verify ALL delivery checklist items are ticked.
-- [ ] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
+- [x] [AI] Verify the Knowledge Capture phase is complete (every entry terminal or the explicit "none"
       escape present; both safety gates applied to every surviving entry).
 - [ ] [AI] Verify ALL quality gates pass (local + CI) and the build is green.
-- [ ] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
+- [x] [AI] Verify ALL manual assertions pass (Playwright MCP) with committed evidence in `evidence/`;
       the `en` content locale exercised.
-- [ ] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
-      acceptance: `grep -F -q 'rule-15' learnings.md` exits 0.
-- [ ] [AI] **Verify this plan's authored-body assertion** —
+- [x] [AI] Verify the **rule-15 exemption is recorded with reasons** in `learnings.md` and in Phase 4 —
+      passed: `grep -F -q 'rule-15' learnings.md` exits 0.
+- [x] [AI] **Verify this plan's authored-body assertion** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       returns **0**, and `wc -l < evidence/authored-body-slugs.txt` returns **14** — acceptance: both
       hold. **This plan asserts 14, not 90 and not 127.**
-- [ ] [AI] **Verify the ownership invariant held** —
+- [x] [AI] **Verify the ownership invariant held** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
       returns **0** on this phase's own diff.
-- [ ] [AI] **Verify every cross-plan reference still resolves** — re-run the cross-plan link gate:
+- [x] [AI] **Verify every cross-plan reference still resolves** — re-ran the cross-plan link gate;
+      it passed with no matching stale reference.
 
   ```bash
   cargo run --release --quiet --manifest-path apps/rhino-cli/Cargo.toml -- md links validate \
@@ -992,27 +994,27 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
   — acceptance: the `grep` finds **no** matching line (exits 1).
 
-- [ ] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/ plans/done/YYYY-MM-DD__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`
+- [x] [AI] Move: `git mv plans/in-progress/ayokoding-learning-path-05-course-authoring-platform-and-concurrency/ plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`
       using today's **completion** date, not the creation date (the `evidence/` subfolder moves with
       it).
-- [ ] [AI] Update `plans/backlog/README.md` and `plans/in-progress/README.md` — remove the plan entry
-      from whichever holds it at that point.
-- [ ] [AI] Update `plans/done/README.md` — add the plan entry with completion date.
-- [ ] [AI] Update any other READMEs that reference this plan and notify
+- [x] [AI] Update `plans/backlog/README.md` and `plans/in-progress/README.md` — removed the active
+      entry and recorded the completed archive in the backlog context.
+- [x] [AI] Update `plans/done/README.md` — added the 2026-08-04 plan entry.
+- [x] [AI] Update any other READMEs that reference this plan and notify
       `ayokoding-learning-path-10-course-authoring-jvm-and-build-your-own` and the manifest-growth
       plan, whose `Depends-on` tables name this plan by folder path — acceptance: no sibling plan's
       link to this folder is left dangling.
-- [ ] [AI] Commit the archival:
+- [x] [AI] Commit the archival:
       `chore(plans): move ayokoding-learning-path-05-course-authoring-platform-and-concurrency to done`.
 
 ### Phase 7 Gate
 
-- [ ] [AI] All 14 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline
+- [x] [AI] All 14 authored bodies present (the ABSENT loop returns 0, down from the Phase-0 baseline
       of 14); the slug register holds 14 unique lines.
-- [ ] [AI] Zero manifest files touched across the plan's entire history.
-- [ ] [AI] The cross-plan link gate is green.
-- [ ] [AI] Plan folder is under
-      `plans/done/YYYY-MM-DD__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`;
+- [x] [AI] Zero manifest files touched across the plan's entire history.
+- [x] [AI] The cross-plan link gate is green.
+- [x] [AI] Plan folder is under
+      `plans/done/2026-08-04__ayokoding-learning-path-05-course-authoring-platform-and-concurrency/`;
       all READMEs updated; archival committed.
 - [ ] [AI] The sole archival PR was opened only after the archival commit; its three review cycles and
       CI gates are green, then it is `[AI]`-merged and deployed once.
@@ -1024,23 +1026,23 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ### Commit Guidelines (all phases)
 
-- [ ] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
+- [x] [AI] Commit changes thematically — group related changes into logically cohesive commits (one
       course bundle per commit is the natural unit here).
-- [ ] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
+- [x] [AI] Follow Conventional Commits: `<type>(<scope>): <description>` (imperative, no period) —
       e.g. `feat(ayokoding-www): add just-enough-kotlin course body`.
-- [ ] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
-- [ ] [AI] Do NOT bundle unrelated changes into a single commit.
-- [ ] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
+- [x] [AI] Split domains/concerns into separate commits; preexisting fixes get their own commits.
+- [x] [AI] Do NOT bundle unrelated changes into a single commit.
+- [x] [AI] Stage only this plan's paths (`git add <explicit paths>`) — **never** `git add -A`; sibling
       split plans are being authored concurrently in the same repo.
 
 ### Local Quality Gates (Before Every Push)
 
-- [ ] [AI] `npx nx affected -t typecheck` exits 0.
-- [ ] [AI] `npx nx affected -t lint` exits 0.
-- [ ] [AI] `npx nx affected -t test:quick test:unit` exits 0.
-- [ ] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
-- [ ] [AI] `npm run lint:md` exits 0.
-- [ ] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
+- [x] [AI] `npx nx affected -t typecheck` exits 0.
+- [x] [AI] `npx nx affected -t lint` exits 0.
+- [x] [AI] `npx nx affected -t test:quick test:unit` exits 0.
+- [x] [AI] `npx nx affected -t specs:behavior:coverage` exits 0.
+- [x] [AI] `npm run lint:md` exits 0.
+- [x] [AI] Fix ALL failures — including preexisting issues not caused by your changes (Root Cause
       Orientation).
 
 > **Important**: Fix ALL failures found during quality gates, not just those caused by your changes.
