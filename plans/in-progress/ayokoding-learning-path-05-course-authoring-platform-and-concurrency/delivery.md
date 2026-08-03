@@ -754,21 +754,21 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ## Phase 3: Section & Authored-Tree Verification
 
-- [ ] [AI] **Verify all 14 authored bodies are present** —
+- [x] [AI] **Verify all 14 authored bodies are present** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s" || echo "ABSENT $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**. Falsifiable both ways: this returned **14** at the Phase-0 baseline,
       and removing any one bundle makes it return 1.
-- [ ] [AI] **Verify every authored body declares prerequisites** —
+- [x] [AI] **Verify every authored body declares prerequisites** —
       `while read -r s; do grep -F -q 'prerequisites:' "apps/ayokoding-www/content/en/learn/courses/$s/_index.md" || echo "MISSING $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0** (returns 14 at baseline).
-- [ ] [AI] **Verify every authored body has both tracks** —
+- [x] [AI] **Verify every authored body has both tracks** —
       `while read -r s; do test -d "apps/ayokoding-www/content/en/learn/courses/$s/learning" && test -d "apps/ayokoding-www/content/en/learn/courses/$s/drilling" || echo "INCOMPLETE $s"; done < evidence/authored-body-slugs.txt | wc -l`
       — acceptance: returns **0**.
-- [ ] [AI] Run affected quality gates from the worktree:
+- [x] [AI] Run affected quality gates from the worktree:
       `npx nx affected -t typecheck lint test:quick test:unit specs:behavior:coverage`
       — acceptance: exits 0. Fix ALL failures, including preexisting ones (Root Cause Orientation).
-- [ ] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
-- [ ] [AI] Run link + heading-hierarchy + markdown validation:
+- [x] [AI] Build the site: `npx nx run ayokoding-www:build` — acceptance: exits 0.
+- [x] [AI] Run link + heading-hierarchy + markdown validation:
       `cargo run --release --manifest-path apps/rhino-cli/Cargo.toml -- md heading-hierarchy validate` + `npm run lint:md`, plus the scoped link gate:
 
   ```bash
@@ -793,9 +793,9 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
     And link, heading-hierarchy, and markdownlint validation report no errors across the 14 course bodies
   ```
 
-- [ ] [AI] **Verify zero manifest files were touched by this entire plan** —
+- [x] [AI] **Verify zero manifest files were touched by this entire plan** —
       `git diff --name-only origin/main...HEAD -- 'apps/ayokoding-www/src/features/course-paths/manifests/' | grep -c .`
-- [ ] [AI] **Verify both band-completion signals are complete** — anchor the count on the field's
+- [x] [AI] **Verify both band-completion signals are complete** — anchor the count on the field's
       are never counted:
       returns **2** (one genuine signal block per band).
 
@@ -804,12 +804,12 @@ PR at the end of Phase 1, per the grouped-cohort delivery mode above), applying 
 
 ### Phase 3 Gate
 
-- [ ] [AI] All three 14-body structural loops (presence, prerequisites, both tracks) return 0.
-- [ ] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
-- [ ] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure among
+- [x] [AI] All three 14-body structural loops (presence, prerequisites, both tracks) return 0.
+- [x] [AI] Affected `typecheck / lint / test:quick / test:unit / specs:behavior:coverage` exit 0.
+- [x] [AI] Build + heading-hierarchy + markdownlint green; the scoped link gate finds no failure among
       this plan's 14 course paths.
-- [ ] [AI] Zero manifest files touched across the whole plan's history; both band signals complete
-- [ ] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
+- [x] [AI] Zero manifest files touched across the whole plan's history; both band signals complete
+- [x] [AI] Commit this phase's checked artifacts on the persistent final-delivery branch — acceptance: no PR, merge, deployment, or `FINAL_PR` occurs before Phase 7.
       green; PR `[AI]`-merged; deployed.
 
 > **Pause Safety**: the authored library passes every automated gate. Safe to stop. To resume: re-run
